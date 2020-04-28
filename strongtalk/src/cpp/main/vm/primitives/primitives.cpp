@@ -361,9 +361,9 @@ PrimitiveDescriptor * Primitives::lookup( primitiveFunctionType fn ) {
 void Primitives::lookup_and_patch() {
 
     // get primitive call info
-    Frame        f               = DeltaProcess::active()->last_frame();
+    Frame        f = DeltaProcess::active()->last_frame();
     CodeIterator it( f.hp() );
-    Oop          * selector_addr = it.aligned_oop( 1 );
+    Oop * selector_addr = it.aligned_oop( 1 );
 
     SymbolOop sel = SymbolOop( *selector_addr );
     st_assert( sel->is_symbol(), "symbol expected" );
@@ -421,20 +421,20 @@ void primitives_init() {
 // For debugging/profiling
 void Primitives::clear_counters() {
 
-    behaviorPrimitives::_numberOfCalls          = 0;
-    byteArrayPrimitives::number_of_calls        = 0;
-    callBackPrimitives::number_of_calls         = 0;
-    doubleByteArrayPrimitives::number_of_calls  = 0;
-    debugPrimitives::number_of_calls            = 0;
-    doubleOopPrimitives::number_of_calls        = 0;
-    methodOopPrimitives::number_of_calls        = 0;
-    mixinOopPrimitives::number_of_calls         = 0;
-    objArrayPrimitives::number_of_calls         = 0;
-    oopPrimitives::number_of_calls              = 0;
-    processOopPrimitives::number_of_calls       = 0;
-    proxyOopPrimitives::number_of_calls         = 0;
-    smiOopPrimitives::number_of_calls           = 0;
-    SystemPrimitives::number_of_calls           = 0;
+    behaviorPrimitives::_numberOfCalls         = 0;
+    byteArrayPrimitives::number_of_calls       = 0;
+    callBackPrimitives::number_of_calls        = 0;
+    doubleByteArrayPrimitives::number_of_calls = 0;
+    debugPrimitives::number_of_calls           = 0;
+    doubleOopPrimitives::number_of_calls       = 0;
+    methodOopPrimitives::number_of_calls       = 0;
+    mixinOopPrimitives::number_of_calls        = 0;
+    objArrayPrimitives::number_of_calls        = 0;
+    oopPrimitives::number_of_calls             = 0;
+    processOopPrimitives::number_of_calls      = 0;
+    proxyOopPrimitives::number_of_calls        = 0;
+    smiOopPrimitives::number_of_calls          = 0;
+    SystemPrimitives::number_of_calls          = 0;
 
 }
 

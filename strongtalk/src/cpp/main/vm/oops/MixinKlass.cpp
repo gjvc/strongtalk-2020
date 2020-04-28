@@ -20,7 +20,7 @@ Oop MixinKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
     int      size = non_indexable_size();
     // allocate
-    Oop      * result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop * result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( result == nullptr )
         return nullptr;
     MixinOop obj = as_mixinOop( result );

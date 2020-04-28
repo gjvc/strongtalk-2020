@@ -335,8 +335,8 @@ CommentNode * NodeFactory::CommentNode( const char * comment ) {
 
 
 void initNodes() {
-    Node::currentID             = Node::currentCommentID = 0;
-    Node::lastScopeInfo         = ( ScopeInfo ) - 1;
+    Node::currentID              = Node::currentCommentID = 0;
+    Node::lastScopeInfo          = ( ScopeInfo ) -1;
     Node::lastByteCodeIndex      = IllegalByteCodeIndex;
     NodeFactory::_cumulativeCost = 0;
 }
@@ -502,10 +502,10 @@ void NonTrivialNode::setDest( BasicBlock * bb, PseudoRegister * d ) {
     st_assert( bb or not _destDef, "shouldn't have a def" );
     if ( _destDef )
         _dest->removeDef( bb, _destDef );
-    _dest = d;
+    _dest        = d;
     if ( bb )
         _destDef = _dest->addDef( bb, ( NonTrivialNode * )
-    this );
+            this );
 }
 
 
@@ -570,7 +570,7 @@ void Node::removeNext( Node * n ) {
 Node * Node::endOfList() const {
     if ( _next == nullptr )
         return ( Node * )
-    this;
+            this;
     Node * n = _next;
     for ( ; n->_next; n = n->_next ) {
         st_assert( n->hasSingleSuccessor(), ">1 successors" );
@@ -678,11 +678,11 @@ BasicBlock * BasicNode::newBasicBlock() {
 
     int len = 0;
     _basicBlock = new BasicBlock( ( Node * )
-    this, ( Node * )
-    this, 1 );
+                                      this, ( Node * )
+                                      this, 1 );
 
     Node * n = ( Node * )
-    this;
+        this;
     for ( ; not n->endsBasicBlock() and n->next() not_eq nullptr; n = n->next() ) {
         n->_num        = len++;
         n->_basicBlock = _basicBlock;
@@ -745,7 +745,7 @@ MergeNode * CallNode::nlrTestPoint() const {
 }
 
 
-CallNode::CallNode( MergeNode * n, GrowableArray < PseudoRegister * > *a, GrowableArray < PseudoRegister * > *e ) {
+CallNode::CallNode( MergeNode * n, GrowableArray <PseudoRegister *> * a, GrowableArray <PseudoRegister *> * e ) {
     if ( n not_eq nullptr )
         append1( n );
     exprStack   = e;
@@ -849,8 +849,7 @@ BlockCreateNode::BlockCreateNode( BlockPseudoRegister * b, GrowableArray <Pseudo
         case MethodOopDescriptor::expects_context:
             _context = b->scope()->context();
             break;
-        default:
-            fatal( "unexpected incoming info" );
+        default: fatal( "unexpected incoming info" );
     };
 }
 
@@ -936,8 +935,8 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor * pdesc, MergeNode * nlrTestPo
 
 
 InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister * result, PseudoRegister * error, PseudoRegister * recv, PseudoRegister * arg1, bool_t arg1_is_smi, PseudoRegister * arg2, bool_t arg2_is_smi ) {
-    _operation = op;
-    _dest      = result;
+    _operation   = op;
+    _dest        = result;
     _error       = error;
     _src         = recv;
     _arg1        = arg1;
@@ -1257,7 +1256,7 @@ Node * InterruptCheckNode::clone( PseudoRegister * from, PseudoRegister * to ) c
 
 Node * BlockCreateNode::clone( PseudoRegister * from, PseudoRegister * to ) const {
     // NB: use scope's current sig, not the receiver's sig!
-    BlockCreateNode * n = NodeFactory::BlockCreateNode( ( BlockPseudoRegister * )TRANSLATE( block() ), exprStack );
+    BlockCreateNode * n = NodeFactory::BlockCreateNode( ( BlockPseudoRegister * ) TRANSLATE( block() ), exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
     n->_dest = _dest;        // don't give it a new dest!
     return n;
@@ -1266,7 +1265,7 @@ Node * BlockCreateNode::clone( PseudoRegister * from, PseudoRegister * to ) cons
 
 Node * BlockMaterializeNode::clone( PseudoRegister * from, PseudoRegister * to ) const {
     // NB: use scope's current sig, not the receiver's sig!
-    BlockMaterializeNode * n = NodeFactory::BlockMaterializeNode( ( BlockPseudoRegister * )TRANSLATE( block() ), exprStack );
+    BlockMaterializeNode * n = NodeFactory::BlockMaterializeNode( ( BlockPseudoRegister * ) TRANSLATE( block() ), exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
     n->_dest = _dest;        // don't give it a new dest!
     return n;
@@ -1487,8 +1486,8 @@ void CallNode::makeUses( BasicBlock * bb ) {
     uplevelDefs = new GrowableArray <Definition *>( InitialSize );
     uplevelUsed = new GrowableArray <PseudoRegister *>( InitialSize );
     uplevelDefd = new GrowableArray <PseudoRegister *>( InitialSize );
-    GrowableArray < BlockPseudoRegister * > *blks = theCompiler->blockClosures;
-    for ( int i1 = 0; i1 < nblocks; i1++ ) {
+    GrowableArray <BlockPseudoRegister *> * blks = theCompiler->blockClosures;
+    for ( int                             i1     = 0; i1 < nblocks; i1++ ) {
         BlockPseudoRegister * blk = blks->at( i1 );
         if ( !blk->escapes() ) continue;
 
@@ -1498,14 +1497,14 @@ void CallNode::makeUses( BasicBlock * bb ) {
         if ( !home->isSenderOrSame( scope() ) ) continue;
 
         // ok, this block is live
-        GrowableArray < PseudoRegister * > *uplevelRead = blk->uplevelRead();
-        int j = uplevelRead->length() - 1;
+        GrowableArray <PseudoRegister *> * uplevelRead = blk->uplevelRead();
+        int                              j             = uplevelRead->length() - 1;
         for ( ; j >= 0; j-- ) {
             PseudoRegister * r = uplevelRead->at( j );
             uplevelUses->append( bb->addUse( this, r ) );
             uplevelUsed->append( r );
         }
-        GrowableArray < PseudoRegister * > *uplevelWritten = blk->uplevelWritten();
+        GrowableArray <PseudoRegister *> * uplevelWritten = blk->uplevelWritten();
         for ( j = uplevelWritten->length() - 1; j >= 0; j-- ) {
             PseudoRegister * r = uplevelWritten->at( j );
             uplevelDefs->append( bb->addDef( this, r ) );
@@ -1938,8 +1937,8 @@ void BlockMaterializeNode::eliminate( BasicBlock * bb, PseudoRegister * r, bool_
 
 void BasicNode::removeUpToMerge() {
     BasicBlock * thisBasicBlock = _basicBlock;
-    Node * n            = ( Node * )
-    this;
+    Node       * n              = ( Node * )
+        this;
     for ( ; n and n->hasSinglePredecessor(); ) {
         while ( n->nSuccessors() > 1 ) {
             int i = n->nSuccessors() - 1;
@@ -1968,7 +1967,7 @@ void BasicNode::removeUpToMerge() {
         }
         n            = nextn;
     }
-    BasicBlock * nextBB = n ? n->bb() : nullptr;
+    BasicBlock * nextBB         = n ? n->bb() : nullptr;
 }
 
 
@@ -2014,7 +2013,7 @@ void TypeTestNode::eliminate( BasicBlock * bb, PseudoRegister * rr, bool_t rem, 
         return;
 
     eliminate( bb, rr, ( ConstPseudoRegister * )
-    nullptr, ( KlassOop ) badOop );
+        nullptr, ( KlassOop ) badOop );
 }
 
 
@@ -2022,7 +2021,7 @@ void TypeTestNode::eliminate( BasicBlock * bb, PseudoRegister * r, ConstPseudoRe
     // remove node and all successor branches (except for one if receiver is known)
     if ( _deleted )
         return;
-    GrowableArray < Node * > *successors = _nxt;
+    GrowableArray <Node *> * successors = _nxt;
     _nxt = new GrowableArray <Node *>( 1 );
     Oop constant = c ? c->constant : 0;
     Node * keep = nullptr;
@@ -2161,8 +2160,7 @@ void BranchNode::eliminateBranch( int op1, int op2, int res ) {
             return;        // can't handle yet
         case VCBranchOp:
             return;        // can't handle yet
-        default:
-            fatal( "unexpected branch type" );
+        default: fatal( "unexpected branch type" );
     }
     int nodeToRemove;
     if ( ok ) {
@@ -2495,15 +2493,14 @@ bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
             case tCmpArithOp:
                 warning( "possible performance bug: constant folding of tCmpArithOp not implemented" );
                 return false;
-            default           :
-                fatal1( "unknown tagged opcode %ld", _op );
+            default           : fatal1( "unknown tagged opcode %ld", _op );
         }
         bool_t ok = not result->is_mark();
         if ( ok ) {
             // constant-fold this operation
             if ( CompilerDebug )
                 cout( PrintCopyPropagation )->print( "*constant-folding N%d --> %#x\n", _id, result );
-            _constResult   = new_ConstPReg( scope(), result );
+            _constResult = new_ConstPReg( scope(), result );
             // first, discard the error branch (if there)
             Node * discard = next1();
             if ( discard not_eq nullptr ) {
@@ -3074,13 +3071,13 @@ void AbstractArrayAtNode::assert_in_bounds( PseudoRegister * r, LoopHeaderNode *
 }
 
 
-void AbstractArrayAtNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray < KlassOop> *
+void AbstractArrayAtNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *
 > & klasses ) const {
 // ArrayAt node tests index for smi_t-ness
-regs.
-append( _arg );
-klasses.
-append ( make_smi_type() );
+    regs.
+        append( _arg );
+    klasses.
+        append( make_smi_type() );
 }
 
 
@@ -3097,24 +3094,24 @@ void AbstractArrayAtNode::assert_preg_type( PseudoRegister * r, GrowableArray <K
 }
 
 
-void ArrayAtPutNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray < KlassOop> *
+void ArrayAtPutNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *
 > & klasses ) const {
 // atPut node tests element for smi_t-ness if character array
-AbstractArrayAtNode::collectTypeTests( regs, klasses
-);
-if (
-stores_smi_elements( _access_type )
-) {
-regs.
-append( elem );
-st_assert          ( klasses
-.first()->first() == smiKlassObj, "must be smi_t type for index" );
-klasses.
-append( klasses
-.
-first()
-);    // reuse smi_t type descriptor
-}
+    AbstractArrayAtNode::collectTypeTests( regs, klasses
+    );
+    if (
+        stores_smi_elements( _access_type )
+        ) {
+        regs.
+            append( elem );
+        st_assert          ( klasses
+                                 .first()->first() == smiKlassObj, "must be smi_t type for index" );
+        klasses.
+            append( klasses
+                        .
+                            first()
+        );    // reuse smi_t type descriptor
+    }
 }
 
 
@@ -3130,26 +3127,26 @@ void ArrayAtPutNode::assert_preg_type( PseudoRegister * r, GrowableArray <KlassO
 }
 
 
-void TArithRRNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray < KlassOop> *
+void TArithRRNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *
 > & klasses ) const {
 // tests receiver and/or arg for smi_t-ness
-if (
-canFail()
-) {
-GrowableArray <KlassOop> * t = make_smi_type();
-if ( not _arg1IsInt ) {
-regs.
-append( _src );
-klasses.
-append( t );
-}
-if ( not _arg2IsInt ) {
-regs.
-append( _oper );
-klasses.
-append( t );
-}
-}
+    if (
+        canFail()
+        ) {
+        GrowableArray <KlassOop> * t = make_smi_type();
+        if ( not _arg1IsInt ) {
+            regs.
+                append( _src );
+            klasses.
+                append( t );
+        }
+        if ( not _arg2IsInt ) {
+            regs.
+                append( _oper );
+            klasses.
+                append( t );
+        }
+    }
 }
 
 
@@ -3168,12 +3165,12 @@ void TArithRRNode::assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop
 }
 
 
-void TypeTestNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray < KlassOop> *
+void TypeTestNode::collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *
 > & klasses ) const {
-regs.
-append( _src );
-klasses.
-append( _classes );
+    regs.
+        append( _src );
+    klasses.
+        append( _classes );
 }
 
 
@@ -3815,7 +3812,7 @@ void ContextInitNode::verify() const {
         PseudoRegister * r = contents()->at( i )->preg();
         if ( _src == nullptr and r->_location.isContextLocation() ) {
             ( ( ContextInitNode * )
-            this )->print();
+                this )->print();
             scope()->print();
             error( "ContextInitNode %#lx: context eliminated but temp %d is context location", this, i );
         }
@@ -3913,7 +3910,7 @@ void UncommonNode::verify() const {
     if ( _deleted )
         return;
     if ( ( Node * ) this not_eq bb()->_last )
-    error( "UncommonNode %#lx: not last node in BasicBlock", this );
+        error( "UncommonNode %#lx: not last node in BasicBlock", this );
     NonTrivialNode::verify();
 }
 
@@ -3922,7 +3919,7 @@ void TypeTestNode::verify() const {
     if ( _deleted )
         return;
     if ( ( Node * ) this not_eq bb()->_last )
-    error( "TypeTestNode %#lx: not last node in BasicBlock", this );
+        error( "TypeTestNode %#lx: not last node in BasicBlock", this );
     NonTrivialNode::verify();
 }
 

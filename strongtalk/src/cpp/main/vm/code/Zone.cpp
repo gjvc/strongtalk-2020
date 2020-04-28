@@ -527,15 +527,15 @@ void Zone::print() {
 
 struct nm_hist_elem {
     NativeMethod * nm;
-    int          count;
-    int          size;
-    int          sic_count;
-    int          sic_size;
+    int count;
+    int size;
+    int sic_count;
+    int sic_size;
 };
 
 
 static int compareOop( const void * m1, const void * m2 ) {
-    ResourceMark        rm;
+    ResourceMark rm;
     struct nm_hist_elem * nativeMethod1 = ( struct nm_hist_elem * ) m1;
     struct nm_hist_elem * nativeMethod2 = ( struct nm_hist_elem * ) m2;
     return nativeMethod2->nm->method() - nativeMethod1->nm->method();

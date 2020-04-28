@@ -262,7 +262,6 @@ void Bootstrap::parse_objects() {
 }
 
 
-
 void Bootstrap::object_error_func( const char * str ) {
     fatal( str );
 }
@@ -429,25 +428,25 @@ Oop Bootstrap::readNextObject() {
             object_case_func <MethodOop>( m );
             break;
         case 'k': // 
-            fatal( "blockClosure" );
+        fatal( "blockClosure" );
             break;
         case 'l': // 
-            fatal( "context" );
+        fatal( "context" );
             break;
         case 'm': // 
-            fatal( "proxy" );
+        fatal( "proxy" );
             break;
         case 'n': // 
             object_case_func <MixinOop>( m );
             break;
         case 'o': // 
-            fatal( "weakArrayOop" );
+        fatal( "weakArrayOop" );
             break;
         case 'p': // 
             object_case_func <ProcessOop>( m );
             break;
         default: // 
-            fatal( "unknown object typeByte" );
+        fatal( "unknown object typeByte" );
     }
 
     return m;
@@ -468,14 +467,14 @@ void Bootstrap::read_mark( MarkOop * mark_addr ) {
             m = MarkOopDescriptor::tagged_prototype();
             break;
         default: //
-            fatal( "expecting a markup" );
+        fatal( "expecting a markup" );
     }
     *mark_addr = m;
 }
 
 
 double Bootstrap::read_double() {
-    double  value;
+    double value;
     uint8_t * str = ( uint8_t * ) &value;
 
     for ( int i = 0; i < 8; i++ ) {

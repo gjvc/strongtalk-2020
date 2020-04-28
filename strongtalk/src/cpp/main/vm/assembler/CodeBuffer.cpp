@@ -16,7 +16,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 MacroAssembler * theMacroAssembler = nullptr;
 
 

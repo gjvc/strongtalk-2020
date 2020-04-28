@@ -94,7 +94,7 @@ int PseudoRegisterMapping::spillablePRegIndex() {
     int i    = size();
     while ( i-- > 0 ) {
         PseudoRegister * preg = _pseudoRegisters->at( i );
-        int            rloc   = regLoc( i );
+        int rloc = regLoc( i );
         if ( preg not_eq nullptr and _locations->isRegister( rloc ) and not PseudoRegisterLocker::locks( preg ) and _locations->nofUses( rloc ) < uses ) {
             uses = _locations->nofUses( rloc );
             i0   = i;
@@ -373,9 +373,9 @@ Register PseudoRegisterMapping::use( PseudoRegister * preg, Register hint ) {
     if ( i < 0 and preg->_location.isContextLocation() ) {
         // preg refers to context temporary
         // determine context temporary address
-        PseudoRegister       * context = theCompiler->contextList->at( preg->_location.contextNo() )->context();
+        PseudoRegister * context  = theCompiler->contextList->at( preg->_location.contextNo() )->context();
         PseudoRegisterLocker lock( context );
-        Address              addr      = Address( use( context ), Mapping::contextOffset( preg->_location.tempNo() ) );
+        Address              addr = Address( use( context ), Mapping::contextOffset( preg->_location.tempNo() ) );
         // determine a target register
         int                  loc;
         if ( hint == noreg ) {

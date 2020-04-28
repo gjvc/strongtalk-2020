@@ -20,14 +20,15 @@
 //  - save stacks in heap.
 
 class DeltaVirtualFrame;
+
 class CompiledVirtualFrame;
 
 class StackChunkBuilder : public ResourceObject {
 
     private:
         // These numbers enable calculation of the corresponding deoptimized interpreter stack.
-        int        _virtualFrameCount;      // Number of VirtualFrame collected
-        int        _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
+        int _virtualFrameCount;      // Number of VirtualFrame collected
+        int _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
         static int * _framePointer;          // Frame pointer of the resulting frame
 
         static int header_size() {

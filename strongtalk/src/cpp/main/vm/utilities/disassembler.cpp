@@ -170,7 +170,7 @@ static void printRelocInfo( RelocationInformationIterator * iter, ConsoleOutputS
 static void printRelocInfo( const NativeMethod * nm, const char * pc, int lendis, ConsoleOutputStream * stream ) {
 
     RelocationInformationIterator iter( nm );
-    char                          * addr;
+    char * addr;
 
     while ( iter.next() ) {
         addr = ( char * ) iter.word_addr();

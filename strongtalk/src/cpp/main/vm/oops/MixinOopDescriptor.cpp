@@ -13,7 +13,7 @@
 int MixinOopDescriptor::inst_var_offset( SymbolOop name, int non_indexable_size ) const {
     ObjectArrayOop array  = instVars();
     int            length = array->length();
-    for ( int   index  = 1; index <= length; index++ ) {
+    for ( int      index  = 1; index <= length; index++ ) {
         if ( array->obj_at( index ) == name ) {
             return non_indexable_size - ( length - index + 1 );
         }
@@ -48,7 +48,7 @@ void MixinOopDescriptor::add_method( MethodOop method ) {
     ObjectArrayOop old_array = methods();
     SymbolOop      selector  = method->selector();
     // Find out if a method with the same selector exists.
-    for ( int   index     = 1; index <= old_array->length(); index++ ) {
+    for ( int      index     = 1; index <= old_array->length(); index++ ) {
         st_assert( old_array->obj_at( index )->is_method(), "must be method" );
         MethodOop m = MethodOop( old_array->obj_at( index ) );
         if ( m->selector() == selector ) {
@@ -72,7 +72,7 @@ MethodOop MixinOopDescriptor::remove_method_at( int index ) {
 
 bool_t MixinOopDescriptor::includes_method( MethodOop method ) {
     ObjectArrayOop array = methods();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         MethodOop m = MethodOop( array->obj_at( index ) );
         if ( m == method )
             return true;
@@ -94,7 +94,7 @@ SymbolOop MixinOopDescriptor::instVar_at( int index ) const {
 void MixinOopDescriptor::add_instVar( SymbolOop name ) {
     ObjectArrayOop old_array = instVars();
     // Find out if it already exists.
-    for ( int   index     = 1; index <= old_array->length(); index++ ) {
+    for ( int      index     = 1; index <= old_array->length(); index++ ) {
         st_assert( old_array->obj_at( index )->is_symbol(), "must be symbol" );
         if ( old_array->obj_at( index ) == name )
             return;
@@ -113,7 +113,7 @@ SymbolOop MixinOopDescriptor::remove_instVar_at( int index ) {
 
 bool_t MixinOopDescriptor::includes_instVar( SymbolOop name ) {
     ObjectArrayOop array = instVars();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         SymbolOop elem = SymbolOop( array->obj_at( index ) );
         if ( elem == name )
             return true;
@@ -135,7 +135,7 @@ SymbolOop MixinOopDescriptor::classVar_at( int index ) const {
 void MixinOopDescriptor::add_classVar( SymbolOop name ) {
     ObjectArrayOop old_array = classVars();
     // Find out if it already exists.
-    for ( int   index     = 1; index <= old_array->length(); index++ ) {
+    for ( int      index     = 1; index <= old_array->length(); index++ ) {
         SymbolOop elem = SymbolOop( old_array->obj_at( index ) );
         if ( elem == name )
             return;
@@ -154,7 +154,7 @@ SymbolOop MixinOopDescriptor::remove_classVar_at( int index ) {
 
 bool_t MixinOopDescriptor::includes_classVar( SymbolOop name ) {
     ObjectArrayOop array = classVars();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         SymbolOop elem = SymbolOop( array->obj_at( index ) );
         if ( elem == name )
             return true;
@@ -183,7 +183,7 @@ void MixinOopDescriptor::apply_mixin( MixinOop m ) {
 
 void MixinOopDescriptor::customize_for( KlassOop klass ) {
     ObjectArrayOop array = methods();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         MethodOop m = MethodOop( array->obj_at( index ) );
         m->customize_for( klass, this );
     }
@@ -192,7 +192,7 @@ void MixinOopDescriptor::customize_for( KlassOop klass ) {
 
 void MixinOopDescriptor::uncustomize_methods() {
     ObjectArrayOop array = methods();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         MethodOop m = MethodOop( array->obj_at( index ) );
         m->uncustomize_for( this );
     }

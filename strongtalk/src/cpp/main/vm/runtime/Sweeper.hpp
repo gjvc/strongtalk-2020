@@ -28,7 +28,7 @@ class Sweeper : public CHeapAllocatedObject {
         }
 
 
-        static int          _sweepSeconds;
+        static int       _sweepSeconds;
         static bool_t    _isRunning;
         static MethodOop _activeMethod;
         static NativeMethod * _activeNativeMethod;

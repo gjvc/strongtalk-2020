@@ -11,7 +11,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
 
@@ -24,11 +23,11 @@ Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 
 
 Oop ByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
-    KlassOop k       = as_klassOop();
-    int      ni_size = non_indexable_size();
+    KlassOop k        = as_klassOop();
+    int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
     // allocate
-    Oop      * result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, ( MemOop * ) &k, permit_scavenge );
+    Oop * result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, ( MemOop * ) &k, permit_scavenge );
 
     if ( not result )
         return nullptr;
@@ -107,7 +106,7 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream )
 void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
     uint8_t * p = ByteArrayOop( obj )->bytes();
     Oop     * l = ByteArrayOop( obj )->length_addr();
-    int     len = ByteArrayOop( obj )->length();
+    int len = ByteArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
     // indexables

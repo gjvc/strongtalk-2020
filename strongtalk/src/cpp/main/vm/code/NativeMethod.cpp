@@ -23,7 +23,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 void NativeMethodFlags::clear() {
     st_assert( sizeof( NativeMethodFlags ) == sizeof( int ), "using more than one word for NativeMethodFlags" );
     *( int * ) this = 0;
@@ -55,8 +54,8 @@ NativeMethod * new_nativeMethod( Compiler * c ) {
 
 void * NativeMethod::operator new( size_t size ) {
     st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
-    int  nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( uint16_t ), oopSize );
-    void * p               = Universe::code->allocate( nativeMethod_size );
+    int nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( uint16_t ), oopSize );
+    void * p = Universe::code->allocate( nativeMethod_size );
     if ( not p ) fatal( "out of Space in code cache" );
     return p;
 }
@@ -124,7 +123,7 @@ NativeMethod::NativeMethod( Compiler * c ) :
     _nativeMethodFlags.clear();
     _nativeMethodFlags.isUncommonRecompiled = c->is_uncommon_compile();
 
-    _nativeMethodFlags.level    = c->level();
+    _nativeMethodFlags.level   = c->level();
     _nativeMethodFlags.version = c->version();
     _nativeMethodFlags.isBlock = c->is_block_compile() ? 1 : 0;
 
@@ -486,7 +485,7 @@ bool_t NativeMethod::depends_on_invalid_klass() {
 
     // Check dependents
     NativeMethodScopes * ns = scopes();
-    for ( int          i    = ns->dependent_length() - 1; i >= 0; i-- ) {
+    for ( int i = ns->dependent_length() - 1; i >= 0; i-- ) {
         if ( ns->dependent_at( i )->is_invalid() )
             return true;
     }
@@ -526,7 +525,7 @@ ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptorOrNUL
     // called a lot, so watch out for performance bugs
 
     st_assert( contains( pc ), "NativeMethod must contain pc into frame" );
-    int                      offset  = pc - instructionsStart();
+    int offset = pc - instructionsStart();
     ProgramCounterDescriptor * start = stream ? stream : pcs();
     ProgramCounterDescriptor * end   = pcsEnd() - 1;
 
@@ -691,8 +690,8 @@ void NativeMethod::verify_expression_stacks_at( const char * pc ) {
     ProgramCounterDescriptor * pd = containingProgramCounterDescriptor( pc );
     if ( not pd ) fatal( "ProgramCounterDescriptor not found" );
 
-    ScopeDescriptor * sd          = scopes()->at( pd->_scope, pc );
-    int             byteCodeIndex = pd->_byteCode;
+    ScopeDescriptor * sd = scopes()->at( pd->_scope, pc );
+    int byteCodeIndex = pd->_byteCode;
     while ( sd ) {
         sd->verify_expression_stack( byteCodeIndex );
         ScopeDescriptor * next = sd->sender();
@@ -973,8 +972,8 @@ void NativeMethod::print_inlining_database() {
 
 void NativeMethod::print_inlining_database_on( ConsoleOutputStream * stream ) {
     // WARNING: this method is for debugging only -- it's not used to actually file out the DB
-    ResourceMark                               rm;
-    RecompilationScope                         * root     = NonDummyRecompilationScope::constructRScopes( this, false );
+    ResourceMark rm;
+    RecompilationScope * root = NonDummyRecompilationScope::constructRScopes( this, false );
     GrowableArray <ProgramCounterDescriptor *> * uncommon = uncommonBranchList();
     root->print_inlining_database_on( stream, uncommon );
 }

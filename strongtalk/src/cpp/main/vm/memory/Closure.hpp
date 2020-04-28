@@ -110,6 +110,7 @@ class ObjectLayoutClosure : StackAllocatedObject {
 
 
 class Process;
+
 class Frame;
 
 // A FrameClosure is used for iterating though frames

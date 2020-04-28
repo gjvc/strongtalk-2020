@@ -65,7 +65,7 @@ SymbolTable::SymbolTable() {
 
 SymbolOop SymbolTable::basic_add( const char * name, int len, int hashValue ) {
     SymbolKlass * sk = ( SymbolKlass * ) Universe::symbolKlassObj()->klass_part();
-    SymbolOop   str  = sk->allocateSymbol( name, len );
+    SymbolOop str = sk->allocateSymbol( name, len );
     basic_add( str, hashValue );
     return str;
 }
@@ -73,10 +73,10 @@ SymbolOop SymbolTable::basic_add( const char * name, int len, int hashValue ) {
 
 bool_t SymbolTable::is_present( SymbolOop sym ) {
 
-    const char       * name    = ( const char * ) sym->bytes();
-    int              len       = sym->length();
-    int              hashValue = hash( name, len );
-    SymbolTableEntry * bucket  = bucketFor( hashValue );
+    const char * name = ( const char * ) sym->bytes();
+    int len       = sym->length();
+    int hashValue = hash( name, len );
+    SymbolTableEntry * bucket = bucketFor( hashValue );
 
     if ( bucket->is_empty() )
         return false;
@@ -242,8 +242,8 @@ void SymbolTable::relocate() {
 
 
 bool_t SymbolTableLink::verify( int i ) {
-    bool_t                flag = true;
-    for ( SymbolTableLink * l  = this; l; l = l->next ) {
+    bool_t flag = true;
+    for ( SymbolTableLink * l = this; l; l = l->next ) {
         if ( not l->symbol->is_symbol() ) {
             error( "entry %#lx in symbol table isn't a symbol", l->symbol );
             flag = false;
@@ -264,8 +264,8 @@ int SymbolTableEntry::length() {
         return 1;
     if ( not get_link() )
         return 0;
-    int                   count = 0;
-    for ( SymbolTableLink * l   = get_link(); l; l = l->next )
+    int count = 0;
+    for ( SymbolTableLink * l = get_link(); l; l = l->next )
         count++;
     return count;
 }

@@ -10,6 +10,7 @@
 #include "vm/memory/Space.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/memory/WaterMark.hpp"
+
 class NewGeneration : public Generation {
 
         friend class RememberedSet;
@@ -21,7 +22,7 @@ class NewGeneration : public Generation {
         friend class OopNativeCode;
 
     private:
-        EdenSpace     _edenSpace;
+        EdenSpace _edenSpace;
         SurvivorSpace * _fromSpace;
         SurvivorSpace * _toSpace;
 

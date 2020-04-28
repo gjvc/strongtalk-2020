@@ -66,7 +66,6 @@ class Integer : ValueObject {
         SMIOop as_smi( bool_t & ok ) const;
 
 
-
         bool_t is_zero() const;
 
         bool_t is_not_zero() const;

@@ -40,8 +40,8 @@ PRIM_DECL_3( objArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop 
     if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    KlassOop k       = KlassOop( receiver );
-    int      ni_size = k->klass_part()->non_indexable_size();
+    KlassOop k        = KlassOop( receiver );
+    int      ni_size  = k->klass_part()->non_indexable_size();
     int      obj_size = ni_size + 1 + SMIOop( argument )->value();
 
     // allocate
@@ -71,11 +71,11 @@ PRIM_DECL_2( objArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    KlassOop k        = KlassOop( receiver );
-    int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + SMIOop( argument )->value();
+    KlassOop       k        = KlassOop( receiver );
+    int            ni_size  = k->klass_part()->non_indexable_size();
+    int            obj_size = ni_size + 1 + SMIOop( argument )->value();
     // allocate
-    ObjectArrayOop obj = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
     // header
     MemOop( obj )->initialize_header( k->klass_part()->has_untagged_contents(), k );
     // instance variables
@@ -226,11 +226,11 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
     Handle     saved_receiver( receiver );
 
     // allocation of object array
-    KlassOop k       = receiver->klass();
-    int      ni_size = k->klass_part()->non_indexable_size();
-    int         obj_size = ni_size + 1 + SMIOop( size )->value();
+    KlassOop       k        = receiver->klass();
+    int            ni_size  = k->klass_part()->non_indexable_size();
+    int            obj_size = ni_size + 1 + SMIOop( size )->value();
     // allocate
-    ObjectArrayOop obj = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
 
     ObjectArrayOop src = saved_receiver.as_objArray();
 

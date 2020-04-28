@@ -37,7 +37,7 @@ NameNode * LogicalAddress::physical_address_at( int pc_offset ) {
 
 int LogicalAddress::length() {
     LogicalAddress * current = this;
-    int            result    = 1;
+    int result = 1;
     while ( current->next() ) {
         current = current->next();
         result++;

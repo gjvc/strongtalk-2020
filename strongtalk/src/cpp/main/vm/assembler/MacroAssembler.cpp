@@ -11,7 +11,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 MacroAssembler::MacroAssembler( CodeBuffer * code ) :
     Assembler( code ) {
 }

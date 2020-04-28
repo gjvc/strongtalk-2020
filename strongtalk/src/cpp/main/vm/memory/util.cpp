@@ -115,7 +115,7 @@ void set_oops( Oop * to, int count, Oop value ) {
 
 
 char * copy_string( const char * s ) {
-    int  len   = strlen( s ) + 1;
+    int len = strlen( s ) + 1;
     char * str = new_resource_array <char>( len );
     strcpy( str, s );
     return str;
@@ -123,7 +123,7 @@ char * copy_string( const char * s ) {
 
 
 char * copy_c_heap_string( const char * s ) {
-    int  len   = strlen( s ) + 1;
+    int len = strlen( s ) + 1;
     char * str = new_c_heap_array <char>( len );
     strcpy( str, s );
     return str;

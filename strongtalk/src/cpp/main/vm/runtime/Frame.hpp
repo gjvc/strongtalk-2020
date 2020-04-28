@@ -50,9 +50,13 @@ const int compiled_frame_magic_oop_offset      = -1;
 const int minimum_size_for_deoptimized_frame   = 4;
 
 class InlineCacheIterator;
+
 class InterpretedInlineCache;
+
 class CompiledInlineCache;
+
 class Compiled_DLLCache;
+
 class NativeMethod;
 
 class Frame : ValueObject {

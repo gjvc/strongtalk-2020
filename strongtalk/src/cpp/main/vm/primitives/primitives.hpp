@@ -76,7 +76,9 @@ class InterpretedPrimitiveCache : public ValueObject {
 // Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
 
 class PseudoRegister;
+
 class Expression;
+
 class Node;
 
 // _flags
@@ -139,6 +141,7 @@ class PrimitiveDescriptor {
             return isBitSet( _flags, 18 );
         }
 
+
         // can_fail: can primitive fail with arguments of correct type?  (NB: even if not can_fail(), primitive will fail if argument types are wrong)
         bool_t can_invoke_delta() const {
             return can_perform_NonLocalReturn();
@@ -189,6 +192,7 @@ class PrimitiveDescriptor {
         const char * error( int index ) const {
             return _errors[ index ];
         }
+
 
         // Comparison operation
         int compare( const char * str, int len );

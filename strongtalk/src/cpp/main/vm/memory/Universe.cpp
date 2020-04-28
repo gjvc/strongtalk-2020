@@ -85,11 +85,11 @@ ObjectArrayOop Universe::_asciiCharacters     = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_systemDictionaryObj = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_objectIDTable       = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_pic_free_list       = ObjectArrayOop( badOop );
-Oop         Universe::_callBack_receiver      = Oop( badOop );
-SymbolOop   Universe::_callBack_selector   = SymbolOop( badOop );
-Oop         Universe::_dll_lookup_receiver = Oop( badOop );
-SymbolOop   Universe::_dll_lookup_selector = SymbolOop( badOop );
-MethodOop   Universe::_sweeper_method      = nullptr;
+Oop            Universe::_callBack_receiver   = Oop( badOop );
+SymbolOop      Universe::_callBack_selector   = SymbolOop( badOop );
+Oop            Universe::_dll_lookup_receiver = Oop( badOop );
+SymbolOop      Universe::_dll_lookup_selector = SymbolOop( badOop );
+MethodOop      Universe::_sweeper_method      = nullptr;
 
 
 void Universe::genesis() {
@@ -363,8 +363,8 @@ const char * Universe::klass_name( KlassOop k ) {
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
         } else if ( assoc->value()->klass() == k ) {
-            SymbolOop name     = assoc->key();
-            char      * result = new_resource_array <char>( name->length() + 7 );
+            SymbolOop name = assoc->key();
+            char * result = new_resource_array <char>( name->length() + 7 );
             sprintf( result, "%s class", name->as_string() );
             return result;
         }
@@ -847,7 +847,8 @@ Space * Universe::spaceFor( void * p ) {
         return new_gen.eden();
 
     {
-        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )
+            if ( s->contains( p ) )
                 return s;
     }
 

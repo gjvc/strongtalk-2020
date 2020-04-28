@@ -23,16 +23,16 @@ class DeltaVirtualFrame;
 class RecompilerFrame : public PrintableResourceObject {
 
     protected:
-        Frame           _frame;                                      // my frame
+        Frame _frame;                                      // my frame
         RecompilerFrame * _caller;           //
         RecompilerFrame * _callee;            // caller / callee RecompilerFrame (or nullptr)
-        int             _num;                // stack frame number (0 = most recent)
-        int             _distance;           // recompilation search "distance" (measured in # of interpreted frames)
-        int             _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
-        int             _ncallers;           // number of callers
-        int             _sends;              // sends caused by this frame
-        int             _cumulSends;         // sends including sends from nested blocks
-        int             _loopDepth;          // loop depth of callee
+        int _num;                // stack frame number (0 = most recent)
+        int _distance;           // recompilation search "distance" (measured in # of interpreted frames)
+        int _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
+        int _ncallers;           // number of callers
+        int _sends;              // sends caused by this frame
+        int _cumulSends;         // sends including sends from nested blocks
+        int _loopDepth;          // loop depth of callee
 
         RecompilerFrame( Frame frame, const RecompilerFrame * callee );
 

@@ -75,7 +75,7 @@ CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
 
 RecompilerFrame * RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame * callee ) {
     RecompilerFrame * rf;
-    int             dist = callee ? callee->distance() : -1;
+    int dist = callee ? callee->distance() : -1;
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
         dist++;
@@ -138,8 +138,8 @@ bool_t RecompilerFrame::hasBlockArgs() const {
 
 
 GrowableArray <BlockClosureOop> * RecompilerFrame::blockArgs() const {
-    DeltaVirtualFrame               * vf     = top_vframe();
-    int                             nargs    = top_method()->number_of_arguments();
+    DeltaVirtualFrame * vf = top_vframe();
+    int nargs = top_method()->number_of_arguments();
     GrowableArray <BlockClosureOop> * blocks = new GrowableArray <BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
@@ -166,7 +166,7 @@ LookupKey * InterpretedRecompilerFrame::key() const {
     ( ( InterpretedRecompilerFrame * ) this )->_lookupKey = LookupKey::allocate( _receiverKlass, sel );
     // Note: this code should really be factored out somewhere; it's duplicated (at least) in LookupCache
     if ( is_super() ) {
-        DeltaVirtualFrame * senderVF          = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
+        DeltaVirtualFrame * senderVF = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
         MethodOop sendingMethod       = senderVF->method()->home();
         KlassOop  sendingMethodHolder = _receiverKlass->klass_part()->lookup_method_holder_for( sendingMethod );
         if ( sendingMethodHolder ) {
@@ -229,7 +229,7 @@ int RecompilerFrame::computeSends( MethodOop m ) {
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::predicted_send:
             case ByteCodes::SendType::accessor_send   : {
-                InterpretedInlineCache         * ic = iter.ic();
+                InterpretedInlineCache * ic = iter.ic();
                 InterpretedInlineCacheIterator it( ic );
                 while ( not it.at_end() ) {
                     int count;
@@ -257,8 +257,8 @@ int RecompilerFrame::computeSends( MethodOop m ) {
 }
 
 
-static CompiledRecompilerFrame * this_rframe  = nullptr;
-static int                     sum_ics_result = 0;
+static CompiledRecompilerFrame * this_rframe = nullptr;
+static int sum_ics_result = 0;
 
 
 static void sum_ics( CompiledInlineCache * ic ) {

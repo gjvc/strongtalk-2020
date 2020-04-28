@@ -171,7 +171,7 @@ void RememberedSet::print_set_for_space( OldSpace * sp ) {
 
 
 int RememberedSet::number_of_dirty_pages_in( OldSpace * sp ) {
-    int  count          = 0;
+    int count = 0;
     char * current_byte = byte_for( sp->bottom() );
     char * end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
@@ -230,7 +230,7 @@ bool_t RememberedSet::has_page_dirty_objects( OldSpace * sp, char * page ) {
 
 
 int RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace * sp ) {
-    int  count          = 0;
+    int count = 0;
     char * current_byte = byte_for( sp->bottom() );
     char * end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
@@ -280,7 +280,7 @@ bool_t RememberedSet::is_object_dirty( MemOop obj ) {
 
 void RememberedSet::clear( const char * start, const char * end ) {
     int * from = ( int * ) start;
-    int count  = ( int * ) end - from;
+    int count = ( int * ) end - from;
     set_words( from, count, AllBitsSet );
 }
 
@@ -324,7 +324,7 @@ void RememberedSet::set_size( MemOop obj, int size ) {
 
 int RememberedSet::get_size( MemOop obj ) {
     uint8_t * p = ( uint8_t * ) byte_for( obj->addr() );
-    uint8_t h   = *p++;
+    uint8_t h = *p++;
     if ( h <= lim_0 + 1 )
         return h + lim_0;
     if ( h == lim_0 + 2 )

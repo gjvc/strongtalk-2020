@@ -309,8 +309,8 @@ Digit IntegerOps::scale( Digit * array, Digit factor, int length ) {
 
 
 Digit * IntegerOps::copyDigits( Digit * source, int length, int toCopy ) {
-    Digit     * x = new_resource_array <Digit>( length );
-    for ( int i   = toCopy - 1; i >= 0; i-- )
+    Digit * x = new_resource_array <Digit>( length );
+    for ( int i = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
     return x;
 }
@@ -473,8 +473,8 @@ void IntegerOps::unsigned_quo( Integer & x, Integer & y, Integer & z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit        * qr = qr_decomposition( x, y );
-        int          i    = xl;
+        Digit * qr = qr_decomposition( x, y );
+        int i = xl;
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
@@ -513,7 +513,7 @@ void IntegerOps::signed_div( Integer & x, Integer & y, Integer & z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit        * qr = qr_decomposition( x, y );
+        Digit * qr = qr_decomposition( x, y );
 
         int i = xl;
         while ( i >= yl and qr[ i ] == 0 )
@@ -560,7 +560,7 @@ void IntegerOps::signed_mod( Integer & x, Integer & y, Integer & z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit        * qr = qr_decomposition( x, y );
+        Digit * qr = qr_decomposition( x, y );
 
         if ( not sd_all_zero( qr, 0, yl ) ) {
             Digit     carry = 0;
@@ -588,8 +588,8 @@ void IntegerOps::unsigned_rem( Integer & x, Integer & y, Integer & z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit        * qr = qr_decomposition( x, y );
-        int          i    = yl - 1;
+        Digit * qr = qr_decomposition( x, y );
+        int i = yl - 1;
         while ( i >= 0 and qr[ i ] == 0 )
             i--;
         // i < 0 or qr[i] not_eq 0

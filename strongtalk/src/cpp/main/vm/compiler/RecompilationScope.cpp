@@ -23,7 +23,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope * s, int byteCodeIndex ) :
     _senderByteCodeIndex( byteCodeIndex ) {
     _sender = s;
@@ -379,10 +378,10 @@ static void getCallees( const NativeMethod * nm, GrowableArray <ProgramCounterDe
                 if ( useInfo ) {
                     CompiledInlineCacheIterator it( sd );
                     while ( not it.at_end() ) {
-                        NativeMethod    * callee = it.compiled_method();
+                        NativeMethod * callee = it.compiled_method();
                         MethodOop m = it.interpreted_method();
                         ScopeDescriptor * desc;
-                        int             count;
+                        int count;
                         if ( callee not_eq nullptr ) {
                             // compiled target
                             desc  = callee->scopes()->root();
@@ -410,8 +409,8 @@ NonDummyRecompilationScope * NonDummyRecompilationScope::constructRScopes( const
     // construct nm's RecompilationScope tree and return the root
     // level > 0 means recursive invocation through a PICRecompilationScope (level
     // is the recursion depth); trusted means PICs info is considered accurate
-    NonDummyRecompilationScope                   * current = nullptr;
-    NonDummyRecompilationScope                   * root    = nullptr;
+    NonDummyRecompilationScope * current = nullptr;
+    NonDummyRecompilationScope * root    = nullptr;
     GrowableArray <ProgramCounterDescriptor *>   * taken_uncommon;
     GrowableArray <ProgramCounterDescriptor *>   * untaken_uncommon;
     GrowableArray <ProgramCounterDescriptor *>   * uninlinable;
@@ -482,8 +481,8 @@ void NonDummyRecompilationScope::constructSubScopes( bool_t trusted ) {
             case ByteCodes::SendType::accessor_send:
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::primitive_send  : {
-                NonDummyRecompilationScope           * s  = nullptr;
-                InterpretedInlineCache               * ic = iter.ic();
+                NonDummyRecompilationScope * s  = nullptr;
+                InterpretedInlineCache     * ic = iter.ic();
                 for ( InterpretedInlineCacheIterator it( ic ); not it.at_end(); it.advance() ) {
                     if ( it.is_compiled() ) {
                         NativeMethod               * nm = it.compiled_method();

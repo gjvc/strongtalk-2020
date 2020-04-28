@@ -20,7 +20,9 @@
 // The global theRecompilation is set only during a recompilation.
 
 class Recompilation;
+
 class Recompilee;
+
 class RecompilerFrame;
 
 extern Recompilation * theRecompilation;
@@ -34,8 +36,8 @@ class Recompilation : public VM_Operation {
         NativeMethod      * _nativeMethod;       // trigger NativeMethod (if compiled, nullptr otherwise)
         NativeMethod      * _newNativeMethod;    // new NativeMethod replacing trigger (if any)
         DeltaVirtualFrame * _deltaVirtualFrame;  // VirtualFrame of trigger method/NativeMethod (NOT COMPLETELY INITIALIZED)
-        bool_t            _isUncommonBranch;    // recompiling because of uncommon branch?
-        bool_t            _recompiledTrigger;   // is newNM the new version of _nm?
+        bool_t _isUncommonBranch;    // recompiling because of uncommon branch?
+        bool_t _recompiledTrigger;   // is newNM the new version of _nm?
 
     public:
 
@@ -202,7 +204,7 @@ class CompiledRecompilee : public Recompilee {
 };
 
 
-extern int   nstages;                     // # of recompilation stages
+extern int nstages;                     // # of recompilation stages
 extern smi_t * compileCounts;           // # of compilations indexed by stage
 extern int   * recompileLimits;         // recompilation limits indexed by stage
 

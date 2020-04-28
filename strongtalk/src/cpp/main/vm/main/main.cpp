@@ -8,7 +8,7 @@
 #include "vm/runtime/vmOperations.hpp"
 
 
-int main( int argc, char *argv[] ) {
+int main( int argc, char * argv[] ) {
     os::set_args( argc, argv );
     return vm_main( argc, argv );
 }

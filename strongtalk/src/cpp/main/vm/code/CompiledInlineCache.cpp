@@ -85,7 +85,7 @@ Oop nativeMethod_substitute() {
 const char * CompiledInlineCache::normalLookup( Oop recv ) {
 
     ResourceMark resourceMark;
-    const char   * entry_point;
+    const char * entry_point;
 
     // The assertion below is turned into an if so we can see possible problems in the fast version as well - gri 6/21/96
     //
@@ -111,8 +111,8 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
         _console->cr();
     }
 
-    KlassOop  klass = recv->klass();
-    SymbolOop sel   = selector();
+    KlassOop     klass  = recv->klass();
+    SymbolOop    sel    = selector();
     LookupResult result = LookupCache::ic_normal_lookup( klass, sel );
 
     if ( result.is_empty() ) {
@@ -126,8 +126,8 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
         //
         // FIX THIS (gri 6/10/96)
         BlockScavenge bs; // make sure that no scavenge happens
-        KlassOop msgKlass = KlassOop( Universe::find_global( "Message" ) );
-        Oop      obj      = msgKlass->klass_part()->allocateObject();
+        KlassOop      msgKlass = KlassOop( Universe::find_global( "Message" ) );
+        Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         MemOop         msg  = MemOop( obj );
         ObjectArrayOop args = oopFactory::new_objArray( 0 );
@@ -256,7 +256,7 @@ extern "C" const char * zombie_nativeMethod( const char * return_addr ) {
     VerifyNoScavenge vna;
     if ( Interpreter::contains( return_addr ) ) {
         // NativeMethod called from interpreted code
-        Frame                  f    = DeltaProcess::active()->last_frame();
+        Frame f = DeltaProcess::active()->last_frame();
         InterpretedInlineCache * ic = f.current_interpretedIC();
         LOG_EVENT1( "zombie NativeMethod called => interpreted InlineCache 0x%x cleared", ic );
         ic->cleanup();
@@ -298,7 +298,7 @@ KlassOop CompiledInlineCache::sending_method_holder() {
 
 const char * CompiledInlineCache::superLookup( Oop recv ) {
     ResourceMark resourceMark;
-    const char   * entry_point;
+    const char * entry_point;
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
 
     KlassOop  recv_klass = recv->klass();
@@ -448,7 +448,7 @@ void CompiledInlineCache::cleanup() {
         } else {
             // compiled target
             NativeMethod * old_nm = findNativeMethod( destination() );
-            LookupResult result   = LookupCache::lookup( &old_nm->_lookupKey );
+            LookupResult result = LookupCache::lookup( &old_nm->_lookupKey );
             // Nothing to do if lookup result is the same
             if ( result.matches( old_nm ) )
                 return;
@@ -567,7 +567,7 @@ InterpretedInlineCache * CompiledInlineCache::inlineCache() const {
     NativeMethod             * nm     = findNativeMethod( addr );
     ProgramCounterDescriptor * pcdesc = nm->containingProgramCounterDescriptor( addr );
     ScopeDescriptor          * scope  = pcdesc->containingDesc( nm );
-    CodeIterator             iter     = CodeIterator( scope->method(), pcdesc->_byteCode );
+    CodeIterator iter = CodeIterator( scope->method(), pcdesc->_byteCode );
     return iter.ic();
 }
 
@@ -632,8 +632,8 @@ PrimitiveDescriptor * PrimitiveInlineCache::primitive() {
 
 
 char * PrimitiveInlineCache::end_addr() {
-    PrimitiveDescriptor * pd   = primitive();
-    int                 offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
+    PrimitiveDescriptor * pd = primitive();
+    int offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
     return next_instruction_address() + offset;
 }
 

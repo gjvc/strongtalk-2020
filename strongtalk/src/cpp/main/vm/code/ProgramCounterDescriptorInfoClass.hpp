@@ -10,9 +10,9 @@
 
 class ProgramCounterDescriptorNode : public ResourceObject {
     public:
-        int _pcOffset;
+        int       _pcOffset;
         ScopeInfo _scopeInfo;
-        int _byteCodeIndex;
+        int       _byteCodeIndex;
 };
 
 class ProgramCounterDescriptorInfoClass : public ResourceObject {

@@ -131,8 +131,8 @@ Expression * Inliner::genRealSend() {
 void Inliner::tryInlineSend() {
     const SymbolOop sel = _info->_selector;
 
-    UnknownExpression * u             = _info->_receiver->findUnknown();
-    bool_t            usingInliningDB = _sender->rscope->isDatabaseScope();
+    UnknownExpression * u = _info->_receiver->findUnknown();
+    bool_t usingInliningDB = _sender->rscope->isDatabaseScope();
     // first, use type feedback
     if ( TypeFeedback and u ) {
         st_assert( _sendKind not_eq SuperSend, "shouldn't PolymorphicInlineCache-predict super sends" );
@@ -199,7 +199,7 @@ Expression * Inliner::inlineMerge( SendInfo * info ) {
     Expression * res = nullptr;                            // final (merged) result
     st_assert( info->_receiver->isMergeExpression(), "must be a merge" );
     MergeExpression * r = ( MergeExpression * ) info->_receiver;                // receiver type
-    SymbolOop       sel = info->_selector;
+    SymbolOop sel = info->_selector;
 
     int nexprs = r->exprs->length();
     int ncases = nexprs - ( r->containsUnknown() ? 1 : 0 );
@@ -214,14 +214,14 @@ Expression * Inliner::inlineMerge( SendInfo * info ) {
 
     // build list of cases to inline
     // (add only immediate klasses (currently only smis) at first, collect others in ...2 lists
-    GrowableArray <InlinedScope *> * scopes        = new GrowableArray <InlinedScope *>( nexprs );
-    GrowableArray <InlinedScope *> * scopes2       = new GrowableArray <InlinedScope *>( nexprs );
-    GrowableArray <Expression *>   * exprs         = new GrowableArray <Expression *>( nexprs );
-    GrowableArray <Expression *>   * exprs2        = new GrowableArray <Expression *>( nexprs );
-    GrowableArray <Expression *>   * others        = new GrowableArray <Expression *>( nexprs );
+    GrowableArray <InlinedScope *> * scopes  = new GrowableArray <InlinedScope *>( nexprs );
+    GrowableArray <InlinedScope *> * scopes2 = new GrowableArray <InlinedScope *>( nexprs );
+    GrowableArray <Expression *>   * exprs   = new GrowableArray <Expression *>( nexprs );
+    GrowableArray <Expression *>   * exprs2  = new GrowableArray <Expression *>( nexprs );
+    GrowableArray <Expression *>   * others  = new GrowableArray <Expression *>( nexprs );
     GrowableArray <KlassOop> * klasses  = new GrowableArray <KlassOop>( nexprs );
     GrowableArray <KlassOop> * klasses2 = new GrowableArray <KlassOop>( nexprs );
-    const bool_t                   containsUnknown = r->containsUnknown();
+    const bool_t containsUnknown = r->containsUnknown();
 
     for ( int i = 0; i < nexprs; i++ ) {
         Expression * nth = r->exprs->at( i )->shallowCopy( r->preg(), nullptr );
@@ -421,7 +421,7 @@ void Inliner::reportInline( const char * prefix ) {
     SymbolOop selector    = info()->_selector;
     int       length      = selector->length();
     int       klassLength = strlen( klassName );
-    char      * buffer    = new_resource_array <char>( klassLength + length + prefixLen + 3 );
+    char * buffer = new_resource_array <char>( klassLength + length + prefixLen + 3 );
     strcpy( buffer, prefix );
     strcpy( buffer + prefixLen, klassName );
     strcpy( buffer + klassLength + prefixLen, ">>" );
@@ -434,8 +434,8 @@ void Inliner::reportInline( const char * prefix ) {
 
 Expression * Inliner::picPredict() {
     // check PICs for information
-    const int          byteCodeIndex = _sender->byteCodeIndex();
-    RecompilationScope * rscope      = _sender->rscope;
+    const int byteCodeIndex = _sender->byteCodeIndex();
+    RecompilationScope * rscope = _sender->rscope;
 
     if ( not rscope->hasSubScopes( byteCodeIndex ) ) {
         // note: not fully implemented yet -- if no subScopes, should check to see if send should be made unlikely (e.g. sends in prim. failure branches)
@@ -467,8 +467,8 @@ Expression * Inliner::picPredict() {
 
     // extract klasses from PolymorphicInlineCache
     GrowableArray <Expression *> klasses( 5 );
-    MergeExpression              * allKlasses                 = new MergeExpression( _info->_receiver->preg(), nullptr );
-    int                          i                            = 0;
+    MergeExpression * allKlasses = new MergeExpression( _info->_receiver->preg(), nullptr );
+    int i = 0;
     for ( ; i < predictedReceivers->length(); i++ ) {
         RecompilationScope * r    = predictedReceivers->at( i );
         Expression         * expr = r->receiverExpression( _info->_receiver->preg() );
@@ -488,7 +488,7 @@ Expression * Inliner::picPredict() {
     int nstatic = _info->_receiver->nklasses();
     if ( npic not_eq 0 and _info->_receiver->isMergeExpression() ) {
         Expression * newReceiver = _info->_receiver;
-        for ( int  i             = ( ( MergeExpression * ) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
+        for ( int i = ( ( MergeExpression * ) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
             Expression * e = ( ( MergeExpression * ) _info->_receiver )->exprs->at( i );
             if ( e->isUnknownExpression() )
                 continue;
@@ -530,7 +530,7 @@ Expression * Inliner::picPredict() {
                 // if so, add other boolean to prediction.  Reduces the number
                 // of uncommon branches; not doing so appears to be overly
                 // aggressive (as observed experimentally)
-                Oop            c   = expr->constant();
+                Oop c = expr->constant();
                 PseudoRegister * p = _info->_receiver->preg();
                 if ( c == trueObj and not _info->_receiver->findKlass( falseObj->klass() ) ) {
                     Expression * f   = new ConstantExpression( falseObj, p, nullptr );
@@ -546,8 +546,8 @@ Expression * Inliner::picPredict() {
         cout( PrintInlining )->print_cr( "" );
 
     // mark unknown branch as unlikely
-    UnknownExpression * u           = _info->_receiver->findUnknown();
-    const bool_t      canBeUnlikely = theCompiler->useUncommonTraps;
+    UnknownExpression * u = _info->_receiver->findUnknown();
+    const bool_t canBeUnlikely = theCompiler->useUncommonTraps;
     if ( u and canBeUnlikely and not rscope->isNotUncommonAt( byteCodeIndex ) ) {
         _info->_receiver = _info->_receiver->makeUnknownUnlikely( _sender );
     }
@@ -730,12 +730,12 @@ RecompilationScope * Inliner::makeBlockRScope( const Expression * receiver, Look
     // must compute rscope differently -- primitiveValue has no inline cache, so must get callee NativeMethod or method manually
     InlinedScope       * parent  = receiver->preg()->scope();
     RecompilationScope * rparent = parent->rscope;
-    const int          level     = rparent->isNullScope() ? 1 : ( ( NonDummyRecompilationScope * ) rparent )->level();
+    const int level = rparent->isNullScope() ? 1 : ( ( NonDummyRecompilationScope * ) rparent )->level();
     if ( rparent->isCompiled() ) {
         // get type feedback info from compiled block NativeMethod
         NativeMethod * parentNM = rparent->get_nativeMethod();
         // search for corresponding noninlined block NativeMethod
-        int          blockIndex = 0;
+        int blockIndex = 0;
         for ( blockIndex = parentNM->number_of_noninlined_blocks(); blockIndex >= 1; blockIndex-- ) {
             if ( parentNM->noninlined_block_method_at( blockIndex ) == method and checkSenderPath( parent, parentNM->noninlined_block_scope_at( blockIndex )->parent() ) ) {
                 break;      // found it
@@ -796,8 +796,8 @@ InlinedScope * Inliner::makeScope( const Expression * receiver, const KlassOop k
     const KlassOop methodHolder = klass->klass_part()->lookup_method_holder_for( method );
 
     if ( method->is_blockMethod() ) {
-        RecompilationScope * rs         = makeBlockRScope( receiver, calleeInfo->_lookupKey, method );
-        bool_t             isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
+        RecompilationScope * rs = makeBlockRScope( receiver, calleeInfo->_lookupKey, method );
+        bool_t isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
         if ( receiver->preg()->isBlockPReg() ) {
             InlinedScope * parent = receiver->preg()->scope();
             calleeInfo->_receiver = parent->self();
@@ -810,8 +810,8 @@ InlinedScope * Inliner::makeScope( const Expression * receiver, const KlassOop k
 
     } else {
         // normal method
-        RecompilationScope * rs         = _sender->rscope->subScope( _sender->byteCodeIndex(), calleeInfo->_lookupKey );
-        bool_t             isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
+        RecompilationScope * rs = _sender->rscope->subScope( _sender->byteCodeIndex(), calleeInfo->_lookupKey );
+        bool_t isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
         _callee = MethodScope::new_MethodScope( method, methodHolder, _sender, rs, calleeInfo );
         _callee->set_self( receiver->asReceiver() );
     }
@@ -838,9 +838,9 @@ Expression * Inliner::inlineBlockInvocation( SendInfo * info ) {
     initialize( info, NormalSend );
     Expression * blockExpression = info->_receiver;
     st_assert( blockExpression->preg()->isBlockPReg(), "must be a BlockPR" );
-    const BlockPseudoRegister * block  = ( BlockPseudoRegister * ) blockExpression->preg();
+    const BlockPseudoRegister * block = ( BlockPseudoRegister * ) blockExpression->preg();
     const MethodOop method = block->closure()->method();
-    const InlinedScope        * parent = block->closure()->parent_scope();
+    const InlinedScope * parent = block->closure()->parent_scope();
 
     // should decide here whether to actually inline -- fix this
     if ( CompilerDebug )

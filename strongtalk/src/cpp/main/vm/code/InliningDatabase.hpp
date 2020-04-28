@@ -101,9 +101,9 @@ class InliningDatabase : AllStatic {
         static const char * _directory;
 
         static InliningDatabaseKey * _table;
-        static uint32_t            _table_size;      // Size of table power of 2
-        static uint32_t            _table_size_mask; // nthMask(table_size)
-        static uint32_t            _table_no;        // Number of elements in the table
+        static uint32_t _table_size;      // Size of table power of 2
+        static uint32_t _table_size_mask; // nthMask(table_size)
+        static uint32_t _table_no;        // Number of elements in the table
 
     public:
         // Accessor for the root of the database

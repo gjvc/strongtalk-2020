@@ -9,6 +9,7 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 class NameNode;
+
 class ScopeDescriptorRecorder;
 
 // A LogicalAddress describes a source level location.
@@ -18,10 +19,10 @@ class ScopeDescriptorRecorder;
 class LogicalAddress : public ResourceObject {
 
     private:
-        NameNode       * _physicalAddress;
-        int            _pcOffset;
+        NameNode * _physicalAddress;
+        int _pcOffset;
         LogicalAddress * _next;
-        int            _offset;
+        int _offset;
 
     public:
         LogicalAddress( NameNode * physical_address, int pc_offset = 0 );

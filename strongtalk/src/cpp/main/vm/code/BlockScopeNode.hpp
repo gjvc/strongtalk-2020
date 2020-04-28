@@ -9,6 +9,7 @@
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
+
 class BlockScopeNode : public ScopeDescriptorNode {
 
     public:

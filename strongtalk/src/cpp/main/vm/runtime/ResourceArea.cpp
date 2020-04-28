@@ -148,7 +148,7 @@ int Resources::used() {
 }
 
 
-static bool_t     in_rsrc;
+static bool_t in_rsrc;
 static const char * p_rsrc;
 
 
@@ -263,8 +263,8 @@ NoGCVerifier::~NoGCVerifier() {
 
 
 char * AllocatePageAligned( int size, const char * name ) {
-    int  page_size = Universe::page_size();
-    char * block   = ( char * ) align( os::malloc( size + page_size ), page_size );
+    int page_size = Universe::page_size();
+    char * block = ( char * ) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
         lprintf( "Malloc (page-aligned) %s: 0x%08x = %#lx\n", name, size, block );
 

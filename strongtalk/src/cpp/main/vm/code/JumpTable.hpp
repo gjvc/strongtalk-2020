@@ -19,7 +19,9 @@
 //   make JumpTable growable
 
 class JumpTableEntry;
+
 class JumpTable;
+
 class NativeMethod;
 
 class JumpTableID : ValueObject {
@@ -93,8 +95,8 @@ class JumpTable : public ValueObject {
 
     public:
         const char * _entries;
-        int        length;        // max. number of IDs
-        int        usedIDs;        // # of used ID
+        int length;        // max. number of IDs
+        int usedIDs;        // # of used ID
 
     public:
         JumpTable();

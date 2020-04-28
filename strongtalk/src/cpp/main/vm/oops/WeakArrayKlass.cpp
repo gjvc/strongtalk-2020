@@ -197,8 +197,8 @@ void WeakArrayRegister::follow_contents() {
 
     for ( int i = 0; i < weakArrays->length(); i++ ) {
 
-        WeakArrayOop w                  = weakArrays->at( i );
-        int          non_indexable_size = nis->at( i );
+        WeakArrayOop w                            = weakArrays->at( i );
+        int          non_indexable_size           = nis->at( i );
         bool_t       encounted_near_death_objects = false;
         int          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
@@ -219,8 +219,8 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 
     for ( int i = 0; i < weakArrays->length(); i++ ) {
 
-        WeakArrayOop w                  = weakArrays->at( i );
-        int          non_indexable_size = nis->at( i );
+        WeakArrayOop w                            = weakArrays->at( i );
+        int          non_indexable_size           = nis->at( i );
         bool_t       encounted_near_death_objects = false;
         int          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
@@ -239,10 +239,10 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 
 // NotificationQueue
 
-Oop  * NotificationQueue::array = nullptr;
-int  NotificationQueue::size    = 100;
-int  NotificationQueue::first   = 0;
-int  NotificationQueue::last    = 0;
+Oop * NotificationQueue::array = nullptr;
+int  NotificationQueue::size  = 100;
+int  NotificationQueue::first = 0;
+int  NotificationQueue::last  = 0;
 
 
 bool_t NotificationQueue::is_empty() {
@@ -267,12 +267,12 @@ void NotificationQueue::put( Oop obj ) {
     if ( array == nullptr )
         array = new_c_heap_array <Oop>( size );
     if ( succ( last ) == first ) {
-        int       new_size    = size * 2;
-        int       new_last    = 0;
+        int new_size = size * 2;
+        int new_last = 0;
         // allocate new_array
-        Oop       * new_array = new_c_heap_array <Oop>( new_size );
+        Oop * new_array = new_c_heap_array <Oop>( new_size );
         // copy from array to new_array
-        for ( int i           = first; i not_eq last; i = succ( i ) )
+        for ( int i = first; i not_eq last; i = succ( i ) )
             new_array[ new_last++ ] = array[ i ];
         free( array );
         // replace array

@@ -132,9 +132,9 @@ bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char * buffer, int ma
 
 
 char * DoubleByteArrayOopDescriptor::as_string() {
-    int  len     = length();
-    char * str   = new_resource_array <char>( len + 1 );
-    int  index   = 0;
+    int len = length();
+    char * str = new_resource_array <char>( len + 1 );
+    int index    = 0;
     for ( ; index < len; index++ ) {
         str[ index ] = ( char ) doubleByte_at( index + 1 );
     }

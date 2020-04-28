@@ -114,12 +114,12 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
 
 bool_t ChunkKlass::isValid() {
     uint8_t * p = asByte();
-    bool_t  ok;
+    bool_t ok;
     if ( p[ 0 ] == invalid or p[ 0 ] < MaxDistance ) {
         ok = false;
     } else {
-        uint8_t * e  = next()->asByte() - 1;
-        int     ovfl = isUsed() ? usedOvfl : unusedOvfl;
+        uint8_t * e = next()->asByte() - 1;
+        int ovfl = isUsed() ? usedOvfl : unusedOvfl;
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
     return ok;
@@ -162,7 +162,7 @@ HeapChunk * FreeList::get() {
 
 
 int FreeList::length() const {
-    int             i   = 0;
+    int i = 0;
     HeapChunk       * f = anchor();
     for ( HeapChunk * p = f->next(); p not_eq f; p = p->next() )
         i++;
@@ -251,7 +251,7 @@ void ZoneHeap::removeFromFreeList( ChunkKlass * m ) {
 bool_t ZoneHeap::addToFreeList( ChunkKlass * m ) {
     m->verify();
     HeapChunk * p = ( HeapChunk * ) blockAddr( m );
-    int       sz  = m->size();
+    int sz = m->size();
     if ( sz <= nfree ) {
         _freeList[ sz - 1 ].append( p );
         return false;
@@ -267,8 +267,8 @@ void * ZoneHeap::allocFromLists( int wantedBytes ) {
     st_assert( wantedBytes % blockSize == 0, "not a multiple of blockSize" );
     int wantedBlocks = wantedBytes >> log2BS;
     st_assert( wantedBlocks > 0, "negative alloc size" );
-    int  blocks = wantedBlocks - 1;
-    void * p    = nullptr;
+    int blocks = wantedBlocks - 1;
+    void * p = nullptr;
     while ( not p and ++blocks <= nfree ) {
         p = _freeList[ blocks - 1 ].get();
     }
@@ -293,8 +293,8 @@ void * ZoneHeap::allocFromLists( int wantedBytes ) {
 //#ifdef LOG_LOTSA_STUFF
             if ( not bootstrappingInProgress ) LOG_EVENT( "zoneHeap: splitting allocated block" );
 //#endif
-            int        freeChunkSize = blocks - wantedBlocks;
-            ChunkKlass * freeChunk   = m->next();
+            int freeChunkSize = blocks - wantedBlocks;
+            ChunkKlass * freeChunk = m->next();
             freeChunk->markUnused( freeChunkSize );
             addToFreeList( freeChunk );
         }
@@ -321,13 +321,13 @@ void * ZoneHeap::allocate( int wantedBytes ) {
 
 
 void ZoneHeap::deallocate( void * p, int bytes ) {
-    ChunkKlass * m          = mapAddr( p );
-    int        myChunkSize  = m->size();
-    int        blockedBytes = myChunkSize << log2BS;
+    ChunkKlass * m = mapAddr( p );
+    int myChunkSize  = m->size();
+    int blockedBytes = myChunkSize << log2BS;
     _bytesUsed -= blockedBytes;
     _ifrag -= blockedBytes - bytes;
     m->markUnused( myChunkSize );
-    bool_t    big = addToFreeList( m );
+    bool_t big = addToFreeList( m );
     HeapChunk * c = ( HeapChunk * ) p;
     if ( _combineOnDeallocation or big )
         combine( c );    // always keep bigList combined
@@ -433,7 +433,7 @@ int ZoneHeap::combineAll() {
         HeapChunk       * f = _freeList[ i ].anchor();
         for ( HeapChunk * c = f->next(); c not_eq f; ) {
             HeapChunk * c1 = c;
-            int       sz   = combine( c );
+            int sz = combine( c );
             if ( c1 == c ) fatal( "infinite loop detected while combining blocks" );
             if ( sz > biggest )
                 biggest = sz;
@@ -536,12 +536,12 @@ void ZoneHeap::verify() const {
     }
 
     // verify free lists
-    int             i   = 0;
+    int i = 0;
     for ( ; i < nfree; i++ ) {
-        int             j        = 0;
-        int             lastSize = 0;
-        HeapChunk       * f      = _freeList[ i ].anchor();
-        for ( HeapChunk * h      = f->next(); h not_eq f; h = h->next(), j++ ) {
+        int j        = 0;
+        int lastSize = 0;
+        HeapChunk       * f = _freeList[ i ].anchor();
+        for ( HeapChunk * h = f->next(); h not_eq f; h = h->next(), j++ ) {
             ChunkKlass * p = mapAddr( h );
             if ( not p->verify() )
                 lprintf( " in free list %ld (elem %ld) of heap %#lx", i, j, this );
@@ -558,7 +558,7 @@ void ZoneHeap::verify() const {
             }
         }
     }
-    int             j   = 0;
+    int j = 0;
     HeapChunk       * f = _bigList->anchor();
     for ( HeapChunk * h = f->next(); h not_eq f; h = h->next(), j++ ) {
         ChunkKlass * p = mapAddr( h );

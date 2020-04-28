@@ -26,7 +26,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 constexpr int max_fast_allocate_size   = 9;
 constexpr int max_fast_alien_call_size = 7;
 
@@ -70,12 +69,12 @@ const char * StubRoutines::_alien_call_entries[max_fast_alien_call_size + 1];
 
 extern "C" {
 
-extern char   * method_entry_point;
+extern char * method_entry_point;
 extern bool_t have_nlr_through_C;
 extern Oop    nlr_result;
 extern int    nlr_home;
 extern int    nlr_home_id;
-extern char   * C_frame_return_addr;
+extern char * C_frame_return_addr;
 
 extern int * last_Delta_fp;    // ebp of the last Delta frame before a C call
 extern Oop * last_Delta_sp;    // esp of the last Delta frame before a C call
@@ -287,7 +286,7 @@ static bool_t validateContextChain( BlockClosureOop block ) {
 
     // Patch the blockClosure
     MethodOop method = block->method();
-    NativeMethod * nm   = block->jump_table_entry()->block_nativeMethod();
+    NativeMethod * nm = block->jump_table_entry()->block_nativeMethod();
 
     LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
     {
@@ -311,7 +310,7 @@ static void deoptimize_context_and_patch_block( BlockClosureOop block ) {
 
     // Patch the blockClosure
     MethodOop method = block->method();
-    NativeMethod * nm   = block->jump_table_entry()->block_nativeMethod();
+    NativeMethod * nm = block->jump_table_entry()->block_nativeMethod();
 
     LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
 
@@ -1029,7 +1028,7 @@ const char * StubRoutines::generate_nlr_return_from_Delta( MacroAssembler * masm
 //-----------------------------------------------------------------------------------------
 // single_step_stub
 
-extern "C" int    * frame_breakpoint;   // dispatch table
+extern "C" int * frame_breakpoint;   // dispatch table
 extern "C" doFn   original_table[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
 extern "C" void single_step_handler();
 
@@ -1294,7 +1293,7 @@ const char * StubRoutines::generate_handle_C_callback_stub( MacroAssembler * mas
     // Incomming arguments:
     // eax = index               (passed on to Delta)
 
-    Label      stackOK;
+    Label stackOK;
     const char * entry_point = masm->pc();
 
     // create link
@@ -1578,11 +1577,11 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     Label isSMI, isDirect, startMove, isPointer, nextArg, moveLoopHead, moveLoopEnd, moveLoopTest, argLoopExit, argLoopTest, pushArgs;
     Label sizeLoopTest, sizeLoopStart;
 
-    Address    fnptr( ebp, 8 );
-    Address    result( ebp, 12 );
-    Address    argCount( ebp, 16 );
-    Address    argArray( ebp, 20 );
-    Address    proc( ebp, -16 );
+    Address fnptr( ebp, 8 );
+    Address result( ebp, 12 );
+    Address argCount( ebp, 16 );
+    Address argArray( ebp, 20 );
+    Address proc( ebp, -16 );
     const char * entry_point = masm->pc();
 
     masm->enter();
@@ -1687,10 +1686,10 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
 
 
 const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args ) {
-    Label      no_result, ptr_result, short_ptr_result, short_result, pushArgs;
-    Address    fnptr( ebp, 8 );
-    Address    result( ebp, 12 );
-    Address    proc( ebp, -8 );
+    Label   no_result, ptr_result, short_ptr_result, short_result, pushArgs;
+    Address fnptr( ebp, 8 );
+    Address result( ebp, 12 );
+    Address proc( ebp, -8 );
     const char * entry_point = masm->pc();
 
     masm->enter();
@@ -1814,7 +1813,7 @@ const char * StubRoutines::alien_call_entry( int args ) {
 // Initialization
 
 bool_t     StubRoutines::_is_initialized = false;
-const char * StubRoutines::_code         = nullptr;
+const char * StubRoutines::_code = nullptr;
 
 
 const char * StubRoutines::generateStubRoutine( MacroAssembler * masm, const char * title, const char * gen( MacroAssembler * ) ) {
@@ -1854,9 +1853,9 @@ void StubRoutines::init() {
     if ( _is_initialized )
         return;
 
-    _code                 = os::exec_memory( _code_size );
+    _code = os::exec_memory( _code_size );
 
-    ResourceMark   rm;
+    ResourceMark rm;
     CodeBuffer     * code = new CodeBuffer( _code, _code_size );
     MacroAssembler * masm = new MacroAssembler( code );
 

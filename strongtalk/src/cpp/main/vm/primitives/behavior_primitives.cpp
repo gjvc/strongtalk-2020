@@ -72,7 +72,7 @@ PRIM_DECL_2( behaviorPrimitives::setSuperclass, Oop receiver, Oop newSuper ) {
     if ( not( newSuper->is_klass() or newSuper == nilObj ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    Klass    * receiverClass = KlassOop( receiver )->klass_part();
+    Klass * receiverClass = KlassOop( receiver )->klass_part();
     KlassOop newSuperclass;
     if ( receiverClass->superKlass() == newSuper )
         return receiver; // no change

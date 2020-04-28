@@ -29,6 +29,7 @@ class ResourceObject;
 class TopLevelBlockScopeNode;
 
 class LogicalAddress;
+
 class ProgramCounterDescriptorInfoClass;
 
 // Interface to generate scope information for a NativeMethod
@@ -39,7 +40,7 @@ class ScopeDescriptorRecorder : public ResourceObject {
         Array     * _oops;
         Array     * _values;
         ByteArray * _codes;
-        ProgramCounterDescriptorInfoClass *_programCounterDescriptorInfo;
+        ProgramCounterDescriptorInfoClass * _programCounterDescriptorInfo;
 
         GrowableArray <KlassOop> * _dependents;
         int _dependentsEnd;

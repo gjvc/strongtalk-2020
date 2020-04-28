@@ -72,6 +72,7 @@ PRIM_DECL_1( callBackPrimitives::unregister, Oop proxy ) {
 
 typedef int     (__CALLING_CONVENTION * mytype)( int a, int b );
 
+
 PRIM_DECL_1( callBackPrimitives::invokePascal, Oop proxy ) {
     PROLOGUE_1( "invokePascal", proxy );
     if ( not proxy->is_proxy() )

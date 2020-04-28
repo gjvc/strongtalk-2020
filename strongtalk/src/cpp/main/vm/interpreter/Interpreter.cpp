@@ -48,7 +48,7 @@ static constexpr int max_nof_temps  = 256;
 static constexpr int max_nof_floats = 256;
 
 
-bool_t     Interpreter::_is_initialized    = false;
+bool_t     Interpreter::_is_initialized = false;
 const char * Interpreter::_code_begin_addr = nullptr;
 const char * Interpreter::_code_end_addr   = nullptr;
 

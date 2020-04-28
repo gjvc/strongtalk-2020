@@ -28,7 +28,7 @@ class RecompilationScope : public PrintableResourceObject {
 
     protected:
         NonDummyRecompilationScope * _sender;
-        const int                  _senderByteCodeIndex;
+        const int _senderByteCodeIndex;
 
     public:
         int _invocationCount;        // estimated # of invocations (-1 == unknown)
@@ -445,17 +445,17 @@ class InlinedRecompilationScope : public NonDummyRecompilationScope {
 //
 class PICRecompilationScope : public NonDummyRecompilationScope {
 
-    // a scope called by the recompilee via a compiled PolymorphicInlineCache
+        // a scope called by the recompilee via a compiled PolymorphicInlineCache
     protected:
         const NativeMethod             * caller;    // calling NativeMethod
         const CompiledInlineCache      * _sd;    // calling InlineCache
         const ProgramCounterDescriptor * programCounterDescriptor;    // calling programCounterDescriptor
         const KlassOop klass;            // receiver klass
-        const NativeMethod             * nm;        // called NativeMethod (or nullptr if interpreted)
+        const NativeMethod * nm;        // called NativeMethod (or nullptr if interpreted)
         const MethodOop _method;    // called method
         const bool_t    trusted;        // is PolymorphicInlineCache info trusted?
         bool_t          _extended;        // subScopes computed?
-        const ScopeDescriptor          * _desc;    // scope (or nullptr if interpreted)
+        const ScopeDescriptor * _desc;    // scope (or nullptr if interpreted)
 
     public:
         PICRecompilationScope( const NativeMethod * caller, ProgramCounterDescriptor * pc, CompiledInlineCache * s, KlassOop k, ScopeDescriptor * d, NativeMethod * n, MethodOop m, int nsends, int level, bool_t trusted );
@@ -571,7 +571,7 @@ class InliningDatabaseRecompilationScope : public NonDummyRecompilationScope {
 
 class UntakenRecompilationScope : public NonDummyRecompilationScope {
         //  send/inline cache that was never executed (either an empty ic or an untaken uncommon branch)
-        const bool_t                   isUncommon;            // true iff untaken uncommon branch
+        const bool_t isUncommon;            // true iff untaken uncommon branch
         const ProgramCounterDescriptor * pc;
     public:
         UntakenRecompilationScope( NonDummyRecompilationScope * sender, ProgramCounterDescriptor * pc, bool_t isUnlikely );

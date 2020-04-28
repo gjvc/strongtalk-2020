@@ -13,7 +13,7 @@
 class NonInlinedBlockScopeNode : public ResourceObject {
 
     public:
-        int                      _offset;
+        int _offset;
         NonInlinedBlockScopeNode * _next;
         MethodOop _method;
         ScopeInfo _parent;

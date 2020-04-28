@@ -766,7 +766,7 @@ void NodeBuilder::self_send( InterpretedInlineCache * ic ) {
 void NodeBuilder::super_send( InterpretedInlineCache * ic ) {
     int      nofArgs = ic->selector()->number_of_arguments();
     //LookupKey* key = ic->lookupKey(0);
-    KlassOop klass = _scope->selfKlass()->klass_part()->superKlass();
+    KlassOop klass   = _scope->selfKlass()->klass_part()->superKlass();
     LookupKey  * key    = LookupKey::allocate( klass, LookupCache::method_lookup( klass, ic->selector() ) );
     SendInfo   * info   = new SendInfo( _scope, key, _scope->self() );
     Expression * result = _inliner->inlineSuperSend( info );

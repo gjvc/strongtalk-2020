@@ -34,10 +34,10 @@
 class Lock {
 
     private:
-        pthread_mutex_t *_mutex;
+        pthread_mutex_t * _mutex;
 
     public:
-        Lock( pthread_mutex_t *mutex );
+        Lock( pthread_mutex_t * mutex );
         ~Lock();
 
 };
@@ -47,8 +47,8 @@ class Event : public CHeapAllocatedObject {
 
     private:
         bool_t          _signalled;
-        pthread_mutex_t _mutex{ };
-        pthread_cond_t  _notifier{ };
+        pthread_mutex_t _mutex{};
+        pthread_cond_t  _notifier{};
 
     public:
         void signal();
@@ -70,9 +70,9 @@ class Event : public CHeapAllocatedObject {
 class Thread : CHeapAllocatedObject {
 
     public:
-        static Thread *find( pthread_t threadId ) {
+        static Thread * find( pthread_t threadId ) {
             for ( int32_t index = 0; index < _threads->length(); index++ ) {
-                Thread *candidate = _threads->at( index );
+                Thread * candidate = _threads->at( index );
                 if ( candidate == nullptr )
                     continue;
                 if ( pthread_equal( threadId, candidate->_threadId ) )
@@ -93,25 +93,25 @@ class Thread : CHeapAllocatedObject {
 
 
     private:
-        Event                          _suspendEvent;
-        static GrowableArray<Thread *> *_threads;
-        pthread_t                      _threadId;
-        clockid_t                      _clockId;
-        int32_t                        _thread_index;
-        void *_stackLimit;
+        Event                           _suspendEvent;
+        static GrowableArray <Thread *> * _threads;
+        pthread_t                       _threadId;
+        clockid_t                       _clockId;
+        int32_t                         _thread_index;
+        void                            * _stackLimit;
 
 
         static void init() {
             ThreadCritical lock;
-            _threads = new( true ) GrowableArray<Thread *>( 10, true );
+            _threads = new( true ) GrowableArray <Thread *>( 10, true );
 
         }
 
 
-        Thread( pthread_t threadId, void *stackLimit ) :
-                _threadId( threadId ), _suspendEvent( false ), _stackLimit( stackLimit ) {
+        Thread( pthread_t threadId, void * stackLimit ) :
+            _threadId( threadId ), _suspendEvent( false ), _stackLimit( stackLimit ) {
             ThreadCritical lock;
-            pthread_getcpuclockid( _threadId, & _clockId );
+            pthread_getcpuclockid( _threadId, &_clockId );
             _thread_index = _threads->length();
             _threads->push( this );
         };
@@ -125,7 +125,7 @@ class Thread : CHeapAllocatedObject {
 
         double get_cpu_time() {
             struct timespec cpu;
-            clock_gettime( _clockId, & cpu );
+            clock_gettime( _clockId, &cpu );
             return ( ( double ) cpu.tv_sec ) + ( ( double ) cpu.tv_nsec ) / 1e9;
         }
 
@@ -139,12 +139,12 @@ class DLLLoadError {
 class DLL : CHeapAllocatedObject {
 
     private:
-        char *_name;
-        void *_handle;
+        char * _name;
+        void * _handle;
 
 
-        DLL( const char *name ) {
-            char *errbuf = new char[1024];
+        DLL( const char * name ) {
+            char * errbuf = new char[1024];
             _handle = dlopen( name, RTLD_NOW | RTLD_GLOBAL | RTLD_NODELETE );
             checkHandle( _handle, "could not find library: %s" );
             _name = ( char * ) malloc( strlen( name ) + 1 );
@@ -152,9 +152,9 @@ class DLL : CHeapAllocatedObject {
         }
 
 
-        void checkHandle( void *handle, const char *format ) {
+        void checkHandle( void * handle, const char * format ) {
             if ( handle == nullptr ) {
-                char *message = ( char * ) malloc( 200 );
+                char * message = ( char * ) malloc( 200 );
                 sprintf( message, format, dlerror() );
                 st_assert( handle != nullptr, message );
                 free( message );
@@ -163,7 +163,7 @@ class DLL : CHeapAllocatedObject {
 
 
         ~DLL() {
-            char *errbuf = new char[1024];
+            char * errbuf = new char[1024];
             if ( _handle )
                 dlclose( _handle );
             if ( _name )
@@ -177,8 +177,8 @@ class DLL : CHeapAllocatedObject {
 
 
     public:
-        dll_func lookup( const char *funcname ) {
-            char *errbuf = new char[1024];
+        dll_func lookup( const char * funcname ) {
+            char     * errbuf = new char[1024];
             dll_func function = dll_func( dlsym( _handle, funcname ) );
 
             checkHandle( ( void * ) function, "could not find function: %s" );

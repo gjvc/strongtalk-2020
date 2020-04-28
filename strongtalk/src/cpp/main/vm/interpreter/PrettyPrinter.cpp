@@ -35,7 +35,7 @@ class scopeNode;
 class astNode : public ResourceObject {
 
     protected:
-        int       _byteCodeIndex;
+        int _byteCodeIndex;
         scopeNode * _scopeNode;
 
     public:
@@ -108,8 +108,8 @@ class astNode : public ResourceObject {
 
 class PrintWrapper {
     private:
-        astNode           * _astNode;
-        bool_t            _hit;
+        astNode * _astNode;
+        bool_t _hit;
         prettyPrintStream * _output;
     public:
         PrintWrapper( astNode * astNode, prettyPrintStream * output );
@@ -130,7 +130,7 @@ static bool_t print_selector_with_arguments( prettyPrintStream * output, SymbolO
         output->print( selector->as_string() );
         output->space();
         astNode * arg = arguments->at( 0 );
-        bool_t  wrap  = should_wrap( 1, arg );
+        bool_t wrap = should_wrap( 1, arg );
         if ( wrap )
             output->print( "(" );
         bool_t result = arg->print( output );
@@ -151,8 +151,8 @@ static bool_t print_selector_with_arguments( prettyPrintStream * output, SymbolO
         output->print_char( c );
         if ( c == ':' ) {
             output->space();
-            astNode * a  = arguments->at( --arg );
-            bool_t  wrap = should_wrap( 2, a );
+            astNode * a = arguments->at( --arg );
+            bool_t wrap = should_wrap( 2, a );
             if ( wrap )
                 output->print( "(" );
             a->print( output );
@@ -177,7 +177,7 @@ class PrintTemps : public TempDecoder {
 
     public:
         GrowableArray <astNode *> * _elements;
-        scopeNode                 * _scope;
+        scopeNode * _scope;
 
 
         void decode( MethodOop method, scopeNode * scope ) {
@@ -241,7 +241,7 @@ class leafNode : public astNode {
 class paramNode : public leafNode {
 
     private:
-        int        _no;
+        int _no;
         const char * _str;
 
     public:
@@ -310,8 +310,8 @@ class listNode : public astNode {
 
     protected:
         GrowableArray <astNode *> * _elements;
-        const char                * _beginSym;
-        const char                * _endSym;
+        const char * _beginSym;
+        const char * _endSym;
 
     public:
         listNode( const char * begin_sym, const char * end_sym ) :
@@ -368,8 +368,8 @@ class scopeNode : public astNode {
         MethodOop _methodOop;
         KlassOop  _klassOop;
         int       _in;
-        int               _hotByteCodeIndex;
-        int               _frameIndex;
+        int       _hotByteCodeIndex;
+        int       _frameIndex;
         DeltaVirtualFrame * _deltaVirtualFrame;
         ScopeDescriptor   * _scopeDescriptor;
         scopeNode         * _parentScope;
@@ -503,7 +503,7 @@ class scopeNode : public astNode {
 
         const char * heap_temp_string( int byteCodeIndex, int no, int context_level ) {
             if ( is_block_method() ) {
-                int       level = context_level;
+                int level = context_level;
                 if ( is_context_allocated() ) {
                     level--;
                     if ( context_level == 0 ) {
@@ -511,7 +511,7 @@ class scopeNode : public astNode {
                         return res ? res->as_string() : create_name( "ht", no );
                     }
                 }
-                scopeNode * n   = new scopeNode( method()->parent(), _klassOop, 0 );
+                scopeNode * n = new scopeNode( method()->parent(), _klassOop, 0 );
                 return n->heap_temp_string( byteCodeIndex, no, level );
             } else {
                 ByteArrayOop res = find_heap_temp( method(), byteCodeIndex, no );
@@ -537,8 +537,8 @@ class scopeNode : public astNode {
             p.decode( method(), this );
             if ( p._elements->length() == 0 )
                 return nullptr;
-            listNode  * l = new listNode( "|", "|" );
-            for ( int i   = 0; i < p._elements->length(); i++ )
+            listNode * l = new listNode( "|", "|" );
+            for ( int i = 0; i < p._elements->length(); i++ )
                 l->add( p._elements->at( i ) );
             return l;
         }
@@ -550,8 +550,8 @@ class scopeNode : public astNode {
             if ( p._elements->length() == 0 )
                 return nullptr;
 
-            listNode  * l = new listNode( nullptr, "|" );
-            for ( int i   = 0; i < p._elements->length(); i++ ) {
+            listNode * l = new listNode( nullptr, "|" );
+            for ( int i = 0; i < p._elements->length(); i++ ) {
                 l->add( p._elements->at( i ) );
             }
             return l;
@@ -569,7 +569,7 @@ class scopeNode : public astNode {
 
         astNode * stack_temp_at( int no ) {
             ByteArrayOop res = find_stack_temp( method(), 0, no );
-            const char   * name = res ? res->as_string() : create_name( "t", no );
+            const char * name = res ? res->as_string() : create_name( "t", no );
             if ( not fr() )
                 return new nameNode( name );
             char * value = fr()->temp_at( no )->print_value_string();
@@ -627,7 +627,7 @@ class scopeNode : public astNode {
                     output->print( " [expression stack:" );
                     output->newline();
                     GrowableArray <Oop> * stack = fr()->expression_stack();
-                    for ( int           index   = 0; index < stack->length(); index++ ) {
+                    for ( int index = 0; index < stack->length(); index++ ) {
                         output->print( " - " );
                         stack->at( index )->print_value();
                         output->newline();
@@ -954,7 +954,7 @@ class blockNode : public codeNode {
 
 
         int width( prettyPrintStream * output ) {
-            int     w   = output->width_of_string( "[" ) + output->width_of_string( "]" );
+            int w = output->width_of_string( "[" ) + output->width_of_string( "]" );
             astNode * p = _scopeNode->params();
             if ( p )
                 w += p->width( output ) + 2 * output->width_of_space();
@@ -1015,7 +1015,7 @@ class assignment : public astNode {
 class messageNode : public astNode {
 
     private:
-        astNode                   * _receiver;
+        astNode * _receiver;
         SymbolOop                 _selector;
         GrowableArray <astNode *> * _arguments;
         bool_t                    _is_prim;
@@ -1228,8 +1228,8 @@ class literalNode : public leafNode {
 class symbolNode : public astNode {
 
     private:
-        SymbolOop  _value;
-        bool_t     _isOuter;
+        SymbolOop _value;
+        bool_t    _isOuter;
         const char * _str;
 
     public:
@@ -1260,7 +1260,7 @@ class doubleByteArrayNode : public astNode {
 
     private:
         DoubleByteArrayOop _value;
-        char               * _str;
+        char * _str;
 
     public:
         doubleByteArrayNode( int byteCodeIndex, scopeNode * scope, DoubleByteArrayOop value ) :
@@ -1289,7 +1289,7 @@ class byteArrayNode : public astNode {
 
     private:
         ByteArrayOop _value;
-        const char   * _str;
+        const char * _str;
 
     public:
         byteArrayNode( int byteCodeIndex, scopeNode * scope, ByteArrayOop value ) :
@@ -1318,7 +1318,7 @@ class byteArrayNode : public astNode {
 class smiNode : public leafNode {
 
     private:
-        int  _value;
+        int _value;
         char * _str;
 
     public:
@@ -1339,7 +1339,7 @@ class doubleNode : public leafNode {
 
     private:
         double _value;
-        char   * _str;
+        char * _str;
 
     public:
         doubleNode( int byteCodeIndex, scopeNode * scope, double value ) :
@@ -1359,7 +1359,7 @@ class doubleNode : public leafNode {
 class characterNode : public leafNode {
 
     private:
-        Oop  _value;
+        Oop _value;
         char * _str;
 
     public:
@@ -1387,8 +1387,8 @@ class characterNode : public leafNode {
 class objArrayNode : public astNode {
 
     private:
-        ObjectArrayOop _value;
-        bool_t         _isOuter;
+        ObjectArrayOop            _value;
+        bool_t                    _isOuter;
         GrowableArray <astNode *> * _elements;
 
     public:
@@ -1433,10 +1433,10 @@ class objArrayNode : public astNode {
 class dllNode : public astNode {
 
     private:
-        astNode                   * _dllName;
-        astNode                   * _funcName;
+        astNode * _dllName;
+        astNode * _funcName;
         GrowableArray <astNode *> * _arguments;
-        astNode                   * _proxy;
+        astNode * _proxy;
 
     public:
         dllNode( int byteCodeIndex, scopeNode * scope, SymbolOop dll_name, SymbolOop func_name ) :
@@ -1487,7 +1487,7 @@ class dllNode : public astNode {
 class stackTempNode : public leafNode {
 
     private:
-        int        _offset;
+        int _offset;
         const char * _str;
 
     public:
@@ -1507,8 +1507,8 @@ class stackTempNode : public leafNode {
 class heapTempNode : public leafNode {
 
     private:
-        int        _offset;
-        int        _contextLevel;
+        int _offset;
+        int _contextLevel;
         const char * _str;
 
     public:
@@ -1546,7 +1546,7 @@ class floatNode : public leafNode {
 class instVarNode : public leafNode {
 
     private:
-        Oop        _obj;
+        Oop _obj;
         const char * _str;
 
     public:
@@ -1570,7 +1570,7 @@ class instVarNode : public leafNode {
 class classVarNode : public leafNode {
 
     private:
-        Oop        _obj;
+        Oop _obj;
         const char * _str;
 
     public:
@@ -1614,7 +1614,7 @@ class assocNode : public leafNode {
 
     private:
         AssociationOop _assoc;
-        const char     * _str;
+        const char * _str;
 
     public:
         assocNode( int byteCodeIndex, scopeNode * scope, AssociationOop assoc ) :
@@ -1634,7 +1634,7 @@ class cascadeSendNode : public astNode {
 
     private:
         GrowableArray <messageNode *> * _messages;
-        astNode                       * _receiver;
+        astNode * _receiver;
 
     public:
         cascadeSendNode( int byteCodeIndex, scopeNode * scope, messageNode * first ) :
@@ -1781,7 +1781,7 @@ astNode * generate( scopeNode * scope );
 class MethodPrettyPrinter : public MethodClosure {
     private:
         GrowableArray <astNode *> * _stack; // expression stack
-        scopeNode                 * _scope; // debugging scope
+        scopeNode * _scope; // debugging scope
 
         // the receiver is on the stack
         void normal_send( SymbolOop selector, bool_t is_prim = false );
@@ -2067,7 +2067,7 @@ MethodPrettyPrinter::MethodPrettyPrinter( scopeNode * scope ) {
 
 
 void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
-    int         nargs = selector->number_of_arguments();
+    int nargs = selector->number_of_arguments();
     messageNode * msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
     GrowableArray <astNode *> * arguments = new GrowableArray <astNode *>( 10 );
@@ -2084,7 +2084,7 @@ void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
 
 
 void MethodPrettyPrinter::special_send( astNode * receiver, SymbolOop selector, bool_t is_prim ) {
-    int         nargs = selector->number_of_arguments();
+    int nargs = selector->number_of_arguments();
     messageNode * msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
     GrowableArray <astNode *> * arguments = new GrowableArray <astNode *>( 10 );
@@ -2161,9 +2161,9 @@ class StackChecker {
 
     public:
         MethodPrettyPrinter * _methodPrettyPrinter;
-        int                 _size;
-        const char          * _name;
-        int                 _offset;
+        int _size;
+        const char * _name;
+        int _offset;
 
 
         StackChecker( const char * name, MethodPrettyPrinter * pp, int offset = 0 ) {
@@ -2334,7 +2334,7 @@ ByteArrayOop byteArrayPrettyPrintStream::asByteArray() {
 
 
 ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass, int byteCodeIndex ) {
-    ResourceMark               rm;
+    ResourceMark rm;
     byteArrayPrettyPrintStream * stream = new byteArrayPrettyPrintStream();
     PrettyPrinter::print( method, klass, byteCodeIndex, stream );
     return stream->asByteArray();

@@ -135,13 +135,13 @@ static inline const char * get_disp( const char * p ) {
 class PolymorphicInlineCacheContents {
     public:
         // smi_t case
-        char      * smi_nativeMethod;
+        char * smi_nativeMethod;
         MethodOop smi_methodOop;
 
         // NativeMethod entries
         KlassOop nativeMethod_klasses[PolymorphicInlineCache::max_nof_entries];
-        char     * nativeMethods[PolymorphicInlineCache::max_nof_entries];
-        int      n;    // nativeMethods index
+        char * nativeMethods[PolymorphicInlineCache::max_nof_entries];
+        int n;    // nativeMethods index
 
         // methodOop entries
         KlassOop  methodOop_klasses[PolymorphicInlineCache::max_nof_entries];
@@ -515,7 +515,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::cleanup( NativeMethod ** nm ) {
             }
         } else {
             // Compiled NativeMethod
-            NativeMethod * nm   = it.compiled_method();
+            NativeMethod * nm = it.compiled_method();
             LookupResult result = LookupCache::lookup( &nm->_lookupKey );
             if ( result.matches( nm ) ) {
                 contents.append_NativeMethod_entry( it.get_klass(), it.get_call_addr() );
@@ -587,8 +587,8 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, Polymo
 
     }
 
-    char      * p1 = p;
-    for ( int i    = 0; i < c->m; i++ ) {
+    char * p1 = p;
+    for ( int i = 0; i < c->m; i++ ) {
         st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
         put_word( p, int( c->methodOop_klasses[ i ] ) );
         put_word( p, int( c->methodOops[ i ] ) );
@@ -701,7 +701,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
 
     PolymorphicInlineCache * old_pic          = ic->pic();
     NativeMethod           * old_nativeMethod = ic->target();
-    bool_t                 switch_to_MIC      = false;
+    bool_t switch_to_MIC = false;
 
     // 3 possible cases:
     //
@@ -836,7 +836,7 @@ void PolymorphicInlineCache::print() {
 
 void PolymorphicInlineCache::verify() {
     // check for multiple entries for same class
-    ResourceMark             rm;
+    ResourceMark rm;
     GrowableArray <KlassOop> * k = klasses();
 
     for ( int i = 0; i < k->length() - 1; i++ ) {

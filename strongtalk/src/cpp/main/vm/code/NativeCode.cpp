@@ -16,7 +16,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 void OopNativeCode::remember() {
     Unimplemented(); //  if (rememberLink.isEmpty()) Memory->code->rememberLink.add(&rememberLink);
 }

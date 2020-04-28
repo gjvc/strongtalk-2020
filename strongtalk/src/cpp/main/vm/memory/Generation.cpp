@@ -11,6 +11,8 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/lprintf.hpp"
 #include "vm/memory/WaterMark.hpp"
+
+
 void Generation::print() {
     _console->print( " total %6dK, %d%% used ", capacity() / 1024, ( 100 * used() ) / capacity() );
     _console->print_cr( " [%#x, %#x[", _lowBoundary, _highBoundary );
@@ -234,8 +236,8 @@ Oop * OldGeneration::allocate_in_next_space( int size ) {
     // 4/5/96 Lars
     warning( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
-        int      space_size = _currentSpace->capacity();
-        OldSpace * s        = new OldSpace( "old", space_size );
+        int space_size = _currentSpace->capacity();
+        OldSpace * s = new OldSpace( "old", space_size );
 
         if ( ( const char * ) s->bottom() < Universe::new_gen._highBoundary ) fatal( "allocation of old Space before new Space" );
 
@@ -305,7 +307,7 @@ void OldGeneration::object_iterate_from( OldWaterMark * mark, ObjectClosure * bl
 
 
 void OldGeneration::verify() {
-    int      n = 0;
+    int n = 0;
     OldSpace * p;
     FOR_EACH_OLD_SPACE( s ) {
         n++;

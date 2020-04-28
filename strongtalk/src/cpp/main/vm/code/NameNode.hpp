@@ -157,5 +157,6 @@ class IllegalName : public NameNode {
             return true;
         }
 
+
         void generate( ScopeDescriptorRecorder * rec, bool_t is_last );
 };

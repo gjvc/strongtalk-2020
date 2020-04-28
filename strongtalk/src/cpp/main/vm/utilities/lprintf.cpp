@@ -13,8 +13,8 @@
 
 std::ofstream theLogFileOutputStream;
 static char   fname[256];
-const char    * CURRENT_LOG_FILE  = "strongtalk.log";
-const char    * PREVIOUS_LOG_FILE = "strongtalk.log.old";
+const char * CURRENT_LOG_FILE  = "strongtalk.log";
+const char * PREVIOUS_LOG_FILE = "strongtalk.log.old";
 
 
 // don't use #include files for the things below because this would include the conflicting definitions of lprintf et al.
@@ -76,7 +76,7 @@ extern "C" void lputc( const char c ) {
 
     if ( PrintVMMessages ) {
 //        std::cout << c;
-        printf("%c",c);
+        printf( "%c", c );
         if ( AlwaysFlushVMMessages )
             std::cout.flush();
     }

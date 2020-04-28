@@ -530,7 +530,7 @@ extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
         lprintf( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObj( recv );
-    int i     = nofArgs;
+    int i = nofArgs;
     Oop * arg = ( Oop * ) ( ebp + ( nofArgs + 2 ) * oopSize );
     while ( i-- > 0 ) {
         arg--;
@@ -1353,9 +1353,9 @@ void ArithRRNode::gen() {
 void ArithRCNode::gen() {
     BasicNode::gen();
     PseudoRegister * arg1 = _src;
-    int            y      = _oper;
-    Register       x;
-    bool_t         result = setupRegister( _dest, arg1, _op, x, temp1 );
+    int      y      = _oper;
+    Register x;
+    bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );
     if ( result )
         store( x, _dest, temp2, temp3 );
@@ -1994,7 +1994,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
     //       must already exist since it was materialized when the first uplevel-
     //       accessing block was created.
     // Urs 4/96
-    BlockPseudoRegister        * blk    = block();
+    BlockPseudoRegister * blk = block();
     GrowableArray <Location *> * copies = blk->contextCopies();
     if ( copies == nullptr )
         return;
@@ -2143,7 +2143,7 @@ void LoopHeaderNode::gen() {
 
 void LoopHeaderNode::generateTypeTests( Label & cont, Label & failure ) {
     // test all values against expected classes
-    Label          * ok;
+    Label * ok;
     const Register klassReg = temp2;
     const int      len      = _tests->length() - 1;
     int            last;                        // last case that generates a test
@@ -2233,7 +2233,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label & prev, Label & failure ) {
         // without an index range check, we need to check it here.
         PseudoRegister      * loopArray = _upperLoad->src();
         AbstractArrayAtNode * atNode;
-        int                 i           = _arrayAccesses->length() - 1;
+        int i = _arrayAccesses->length() - 1;
         for ( ; i >= 0; i-- ) {
             atNode = _arrayAccesses->at( i );
             if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )

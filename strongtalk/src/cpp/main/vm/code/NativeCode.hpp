@@ -10,7 +10,6 @@
 #include "vm/memory/Universe.hpp"
 
 
-
 class NativeMethod;
 
 // NativeCodeBase is the superclass of all things containing native code.

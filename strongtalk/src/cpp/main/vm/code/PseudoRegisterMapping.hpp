@@ -39,13 +39,13 @@ class PseudoRegisterClosure : public PrintableResourceObject {
 class PseudoRegisterMapping : public PrintableResourceObject {
 
     private:
-        MacroAssembler                   * _macroAssembler;              // the low_level assembler (for spill code generation, etc.)
-        bool_t                           _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
-        Locations                        * _locations;                   // the locations freelist
+        MacroAssembler * _macroAssembler;              // the low_level assembler (for spill code generation, etc.)
+        bool_t _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
+        Locations * _locations;                   // the locations freelist
         GrowableArray <PseudoRegister *> * _pseudoRegisters;             // the PseudoRegisters; a nullptr entry means the slot is not used
-        GrowableArray <int>              * _registerLocations;           // the register to which a PseudoRegister is mapped or -1
-        GrowableArray <int>              * _stackLocations;              // the stack location to which a PseudoRegister is mapped or -1
-        GrowableArray <int>              * _temporaryLocations;          // a list of temporary locations used by instances of Temporary (these locations will be freed when the mapping is copied)
+        GrowableArray <int> * _registerLocations;           // the register to which a PseudoRegister is mapped or -1
+        GrowableArray <int> * _stackLocations;              // the stack location to which a PseudoRegister is mapped or -1
+        GrowableArray <int> * _temporaryLocations;          // a list of temporary locations used by instances of Temporary (these locations will be freed when the mapping is copied)
 
         // Helper routines
         int size() const {
@@ -265,7 +265,7 @@ class PseudoRegisterLocker : StackAllocatedObject {
 class Temporary : StackAllocatedObject {
     private:
         PseudoRegisterMapping * _mapping;
-        int                   _regLoc;
+        int _regLoc;
 
     public:
         Temporary( PseudoRegisterMapping * mapping, Register hint = noreg );

@@ -13,7 +13,8 @@
 constexpr int max_tasks = 10;
 int           num_tasks = 0;
 
-std::array<PeriodicTask*,max_tasks>tasks;
+std::array <PeriodicTask *, max_tasks> tasks;
+
 
 bool_t pending_tasks( int delay_time ) {
     bool_t result = false;

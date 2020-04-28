@@ -17,11 +17,11 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-ProfiledNode ** FlatProfiler::_table  = nullptr;
+ProfiledNode ** FlatProfiler::_table = nullptr;
 int          FlatProfiler::_tableSize = 1024;
 
-DeltaProcess      * FlatProfiler::_deltaProcess     = nullptr;
-FlatProfilerTask  * FlatProfiler::_flatProfilerTask = nullptr;
+DeltaProcess     * FlatProfiler::_deltaProcess     = nullptr;
+FlatProfilerTask * FlatProfiler::_flatProfilerTask = nullptr;
 Timer             FlatProfiler::_timer;
 
 int FlatProfiler::_gc_ticks        = 0;
@@ -438,7 +438,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
         FlatProfiler::interpreted_update( method, fr.receiver()->klass(), where );
 
     } else if ( fr.is_compiled_frame() ) {
-        NativeMethod                  * nm = findNativeMethod( fr.pc() );
+        NativeMethod * nm = findNativeMethod( fr.pc() );
         RelocationInformationIterator iter( nm );
         while ( iter.next() ) {
             if ( iter.is_call() and iter.call_end() == fr.pc() ) {

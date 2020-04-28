@@ -275,7 +275,9 @@ class InterpretedVirtualFrame : public DeltaVirtualFrame {
 };
 
 class DeferredExpression;
+
 class ScopeDescriptor;
+
 class NameDescriptor;
 
 class CompiledVirtualFrame : public DeltaVirtualFrame {
@@ -307,7 +309,7 @@ class CompiledVirtualFrame : public DeltaVirtualFrame {
 
     protected:
         ScopeDescriptor * _scopeDescriptor;
-        int             _byteCodeIndex;
+        int _byteCodeIndex;
 
         static ContextOop compute_canonical_context( ScopeDescriptor * sd, const CompiledVirtualFrame * vf, ContextOop con = nullptr );
 
@@ -368,7 +370,7 @@ class CompiledVirtualFrame : public DeltaVirtualFrame {
 class DeferredExpression : public ResourceObject {
     private:
         CompiledVirtualFrame const * const _frame;
-        NameDescriptor * expression;
+        NameDescriptor             * expression;
     public:
         DeferredExpression( CompiledVirtualFrame const * const aframe, NameDescriptor * expression ) :
             _frame( aframe ), expression( expression ) {

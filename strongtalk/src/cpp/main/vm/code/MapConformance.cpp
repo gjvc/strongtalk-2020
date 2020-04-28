@@ -90,7 +90,7 @@ bool_t operator==( MappingEntry x, MappingEntry y ) {
 
 
 int MappingTask::number_of_targets() {
-    int               result    = 0;
+    int result = 0;
     for ( MappingTask * current = this; current; current = current->next() ) {
         if ( current->dst.has_reg() )
             result++;
@@ -220,7 +220,7 @@ void MappingTask::generate_code( MapConformance * mc ) {
         }
     } else {
         //Use register in target or free register
-        Variable          temp;
+        Variable temp;
         for ( MappingTask * current = this; current; current = current->next() ) {
             if ( current->dst.has_reg() )
                 temp = current->dst.reg();

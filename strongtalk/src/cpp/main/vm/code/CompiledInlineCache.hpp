@@ -77,7 +77,9 @@ constexpr int receiver_static_bit_no = 5;
 // (more precisely, it's the same as the return address of the callee)
 
 class LookupKey;
+
 class PolymorphicInlineCache;
+
 class InterpretedInlineCache;
 
 class CompiledInlineCache : public AbstractCompiledInlineCache {
@@ -226,7 +228,6 @@ class CompiledInlineCache : public AbstractCompiledInlineCache {
 
 
 class PrimitiveDescriptor;
-
 
 
 class PrimitiveInlineCache : public AbstractCompiledInlineCache {

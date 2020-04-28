@@ -96,13 +96,13 @@ constexpr auto roundBits( auto x, const auto n ) { return roundMask( x, nthMask(
 
 // -----------------------------------------------------------------------------
 
-constexpr size_t INTEGER_TAG    = 0;
+constexpr size_t INTEGER_TAG  = 0;
 constexpr size_t MEMOOP_TAG   = 1;
 constexpr size_t MARK_TAG     = 3;
 constexpr size_t MARK_TAG_BIT = 2;    // if ( (Oop & MARK_TAG_BIT) not_eq 0 )  then Oop is a markOop
-constexpr size_t TAG_SIZE       = 2;
-constexpr size_t TAG_MASK       = nthMask( TAG_SIZE );
-constexpr size_t Num_Tags       = nthBit( TAG_SIZE );
+constexpr size_t TAG_SIZE     = 2;
+constexpr size_t TAG_MASK     = nthMask( TAG_SIZE );
+constexpr size_t Num_Tags     = nthBit( TAG_SIZE );
 
 
 // -----------------------------------------------------------------------------
@@ -198,6 +198,7 @@ class tagged_ptr_t {
             static_assert( num_tags >= TAG_TYPE::num_tags, "enum defines too many flags" );
             assert( ( ptr & bitmask() ) == 0 );
         }
+
 
         tagged_ptr_t( tagged_ptr_t const & ) noexcept = default;
         tagged_ptr_t( tagged_ptr_t && ) noexcept = default;

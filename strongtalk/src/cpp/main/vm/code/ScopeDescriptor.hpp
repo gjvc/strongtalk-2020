@@ -78,7 +78,9 @@ constexpr int IllegalDescOffset = -2;
 //
 
 class NativeMethodScopes;
+
 class PseudoRegister;
+
 class Expression;
 
 class ScopeDescriptor : public PrintableResourceObject {        // abstract
@@ -86,8 +88,8 @@ class ScopeDescriptor : public PrintableResourceObject {        // abstract
     protected:
         // Creation information
         const NativeMethodScopes * _scopes;
-        int                      _offset;
-        const char               * _pc;
+        int _offset;
+        const char * _pc;
 
     protected:
         // Cached information
@@ -286,7 +288,7 @@ class ScopeDescriptor : public PrintableResourceObject {        // abstract
 class MethodScopeDescriptor : public ScopeDescriptor {
     protected:
         // Cached information
-        LookupKey      _key;
+        LookupKey _key;
         NameDescriptor * _self_name;
 
     public:
@@ -416,7 +418,7 @@ class NonInlinedBlockScopeDescriptor : public PrintableResourceObject {
     protected:
         // Creation information
         const NativeMethodScopes * _scopes;
-        int                      _offset;
+        int _offset;
 
     protected:
         // Cached information

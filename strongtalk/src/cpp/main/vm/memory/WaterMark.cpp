@@ -13,6 +13,8 @@
 #include "vm/utilities/lprintf.hpp"
 #include "vm/memory/Space.hpp"
 #include "vm/memory/WaterMark.hpp"
+
+
 Oop * OldWaterMark::pseudo_allocate( int size ) {
     Oop * p = _point;
     if ( p + size < _space->end() ) {

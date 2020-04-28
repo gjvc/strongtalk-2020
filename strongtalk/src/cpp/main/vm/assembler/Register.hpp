@@ -43,7 +43,6 @@ class Register : public ValueObject {
 };
 
 
-
 // Available registers
 const Register eax = Register( 0, ' ' );
 const Register ecx = Register( 1, ' ' );

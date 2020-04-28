@@ -17,7 +17,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 void setKlassVirtualTableFromMethodKlass( Klass * k ) {
     MethodKlass o;
     k->set_vtbl_value( o.vtbl_value() );

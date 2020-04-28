@@ -84,7 +84,7 @@ class ResourceArea {
 
     public:
         ResourceAreaChunk * _resourceAreaChunk;  // current chunk
-        int               _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
+        int _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
 
     public:
 
@@ -132,8 +132,8 @@ class Resources {
 
     private:
         ResourceAreaChunk * freeChunks;          // list of unused chunks
-        int               _allocated;           // total number of bytes allocated
-        bool_t            _in_consistent_state; //
+        int    _allocated;           // total number of bytes allocated
+        bool_t _in_consistent_state; //
         ResourceAreaChunk * getFromFreeList( int min_capacity );
 
     public:

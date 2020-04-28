@@ -23,7 +23,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )
 
 
@@ -43,7 +42,7 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
 
     KlassOop k        = KlassOop( receiver );
     int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument)->value() * 2, oopSize ) / oopSize;
+    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, oopSize ) / oopSize;
 
     // allocate
     DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
@@ -165,8 +164,8 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
     ASSERT_RECEIVER;
 
     ResourceMark resourceMark;
-    int          len      = DoubleByteArrayOop( receiver )->length();
-    char         * buffer = new_resource_array <char>( len );
+    int          len = DoubleByteArrayOop( receiver )->length();
+    char * buffer = new_resource_array <char>( len );
 
     for ( int i   = 0; i < len; i++ ) {
         int c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );

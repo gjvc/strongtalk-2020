@@ -31,7 +31,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceSystemPrims, "system" )
 
 
@@ -281,7 +280,7 @@ PRIM_DECL_0( SystemPrimitives::elapsedTime ) {
 PRIM_DECL_1( SystemPrimitives::writeSnapshot, Oop fileName ) {
     PROLOGUE_1( "writeSnapshot", fileName );
     SnapshotDescriptor sd;
-    const char         * name = "fisk.snap";
+    const char * name = "fisk.snap";
     sd.write_on( name );
     if ( sd.has_error() )
         return markSymbol( sd.error_symbol() );
@@ -623,7 +622,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int  len   = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char * str = new_c_heap_array <char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     // Potential memory leak, but this is temporary
@@ -661,7 +660,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
 
     ResourceMark resourceMark;
 
-    int  len   = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
+    int len = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
     char * str = new_resource_array <char>( len + 1 );
     file_name->is_byteArray() ? ByteArrayOop( file_name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( file_name )->copy_null_terminated( str, len + 1 );
 
@@ -698,7 +697,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
         return falseObj;
     }
 
-    bool_t             end_of_table;
+    bool_t end_of_table;
     RecompilationScope * rs = InliningDatabase::select_and_remove( &end_of_table );
     if ( rs ) {
         VM_OptimizeRScope op( rs );
@@ -722,7 +721,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int  len   = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char * str = new_resource_array <char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::mangle_name( str ) );
@@ -737,7 +736,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int  len   = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char * str = new_resource_array <char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::unmangle_name( str ) );
@@ -768,7 +767,7 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
         return markSymbol( vmSymbols::not_active() );
 
 //    uint32_t * array = SlidingSystemAverage::update();
-    std::array<uint32_t,SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
+    std::array <uint32_t, SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
 
     ObjectArrayOop result = oopFactory::new_objArray( SlidingSystemAverage::number_of_cases - 1 );
 
@@ -873,8 +872,8 @@ class ReferencesToClosure : public ObjectClosure {
         }
 
 
-        int                 _limit;
-        Oop                 _target;
+        int _limit;
+        Oop _target;
         GrowableArray <Oop> * _result;
 
 
@@ -910,7 +909,7 @@ PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
 
     int            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( int   index  = 1; index <= length; index++ ) {
+    for ( int      index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -1005,7 +1004,7 @@ class AllObjectsClosure : public ObjectClosure {
         }
 
 
-        int                 _limit;
+        int _limit;
         GrowableArray <Oop> * _result;
 
 
@@ -1032,7 +1031,7 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
 
     int            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( int   index  = 1; index <= length; index++ ) {
+    for ( int      index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -1056,7 +1055,7 @@ PRIM_DECL_0( SystemPrimitives::flush_dead_code ) {
 PRIM_DECL_0( SystemPrimitives::command_line_args ) {
     PROLOGUE_0( "command_line_args" );
 
-    int  argc    = os::argc();
+    int argc = os::argc();
     char ** argv = os::argv();
 
     ObjectArrayOop result = oopFactory::new_objArray( argc );
@@ -1134,9 +1133,9 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
 
     } else { // LargeInteger
         BlockScavenge bs;
-        Integer       * largeAddress = &ByteArrayOop( address )->number();
-        bool_t        ok;
-        int           intAddress     = largeAddress->as_int( ok );
+        Integer * largeAddress = &ByteArrayOop( address )->number();
+        bool_t ok;
+        int    intAddress      = largeAddress->as_int( ok );
         if ( intAddress == 0 or not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
         free( ( void * ) intAddress );

@@ -11,7 +11,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceSmiPrims, "smi_t" )
 
 

@@ -12,8 +12,8 @@
 
 
 Oop ObjectArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t tenured ) {
-    KlassOop k       = as_klassOop();
-    int      ni_size = non_indexable_size();
+    KlassOop k        = as_klassOop();
+    int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + size;
 
     // allocate
@@ -59,8 +59,8 @@ KlassOop ObjectArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 
 
 ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( int size ) {
-    KlassOop k       = Universe::objArrayKlassObj();
-    int      ni_size = k->klass_part()->non_indexable_size();
+    KlassOop k        = Universe::objArrayKlassObj();
+    int      ni_size  = k->klass_part()->non_indexable_size();
     int      obj_size = ni_size + 1 + size;
 
     // allocate
@@ -113,7 +113,7 @@ void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream
     assert_objArray( obj, "Argument must be objArray" );
     ObjectArrayOop array = ObjectArrayOop( obj );
     int            len   = array->length();
-    int         n     = min( MaxElementPrintSize, len );
+    int            n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
 
     for ( int i = 1; i <= n and stream->position() < MaxPrintLen; i++ ) {
@@ -150,8 +150,8 @@ int ObjectArrayKlass::oop_scavenge_contents( Oop obj ) {
 
     // indexables
     ObjectArrayOop o = ObjectArrayOop( obj );
-    Oop         * base = o->objs( 1 );
-    Oop         * end  = base + o->length();
+    Oop * base = o->objs( 1 );
+    Oop * end  = base + o->length();
     while ( base < end ) {
         scavenge_oop( base++ );
     }
@@ -167,8 +167,8 @@ int ObjectArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
 
     // indexables
     ObjectArrayOop o = ObjectArrayOop( obj );
-    Oop         * base = o->objs( 1 );
-    Oop         * end  = base + o->length();
+    Oop * base = o->objs( 1 );
+    Oop * end  = base + o->length();
     while ( base < end )
         scavenge_tenured_oop( base++ );
 

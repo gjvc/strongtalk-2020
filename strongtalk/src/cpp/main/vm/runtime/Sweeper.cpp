@@ -18,8 +18,8 @@
 // Delta process is in a well-defined state (see SweeperTask).
 // We might change the sweeper to sweep at preempt time like in the Self system.
 
-Sweeper      * Sweeper::_head               = nullptr;
-int          Sweeper::_sweepSeconds         = 0;
+Sweeper * Sweeper::_head = nullptr;
+int          Sweeper::_sweepSeconds = 0;
 bool_t       Sweeper::_isRunning    = false;
 MethodOop    Sweeper::_activeMethod = nullptr;
 NativeMethod * Sweeper::_activeNativeMethod = nullptr;
@@ -52,8 +52,8 @@ void Sweeper::clear_active_frame() {
 
 
 void Sweeper::step_all() {
-    _isRunning        = true;
-    ResourceMark  rm;
+    _isRunning = true;
+    ResourceMark rm;
     for ( Sweeper * n = head(); n; n = n->next() )
         n->step();
     _sweepSeconds++;
@@ -163,8 +163,8 @@ int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
 
 int MethodSweeper::klass_task( KlassOop klass ) {
-    int   result = 0;
-    Klass * k    = klass->klass_part();
+    int result = 0;
+    Klass * k = klass->klass_part();
 
     // Fix the customized methods
     result += method_dict_task( k->methods() );
@@ -196,9 +196,9 @@ void MethodSweeper::task() {
         method_task( m );
     }
 
-    ObjectArrayOop array  = Universe::systemDictionaryObj();
-    int            length = array->length();
-    int         number_of_entries = length / _fractionPerTask;
+    ObjectArrayOop array             = Universe::systemDictionaryObj();
+    int            length            = array->length();
+    int            number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep )
         _console->print( "*method sweep: %d entries...", number_of_entries );
     TraceTime t( "MethodSweep ", PrintCodeSweep );

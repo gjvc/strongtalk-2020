@@ -40,7 +40,7 @@ JumpTable::JumpTable() {
 
 
 JumpTableID JumpTable::allocate( int number_of_entries ) {
-    int            id      = newID();
+    int id = newID();
     JumpTableEntry * entry = major_at( id );
 
     st_assert( entry->is_unused(), "cannot allocate used jump entry" );
@@ -131,7 +131,7 @@ const char * JumpTable::compile_new_block( BlockClosureOop blk ) {
     // Called from the compile_block stub routine (see StubRoutines)
     BlockScavenge bs;
     ResourceMark  rm;
-    NativeMethod  * nm = compile_block( blk );
+    NativeMethod * nm = compile_block( blk );
 
     // return the entry point for the new NativeMethod.
     return nm->entryPoint();
@@ -140,7 +140,7 @@ const char * JumpTable::compile_new_block( BlockClosureOop blk ) {
 
 NativeMethod * JumpTable::compile_block( BlockClosureOop closure ) {
     // compute the scope for noninlined block
-    int                            index;
+    int index;
     NativeMethod                   * parent = closure->jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor * scope  = parent->noninlined_block_scope_at( index );
 
@@ -168,8 +168,8 @@ void JumpTable::verify() {
     ResourceMark resourceMark;
     int          prev = -1;
 
-    bool_t    * check = new_resource_array <bool_t>( length );
-    for ( int i       = 0; i < length; i++ )
+    bool_t * check = new_resource_array <bool_t>( length );
+    for ( int i = 0; i < length; i++ )
         check[ i ] = false;
 
     int j = 0;
@@ -308,7 +308,7 @@ MethodOop JumpTableEntry::block_method() const {
         st_assert( nm not_eq nullptr, "NativeMethod must exists" );
         return nm->method();
     } else {
-        int            index;
+        int index;
         JumpTableEntry * pe = parent_entry( index );
         // find methodOop inside the NativeMethod:
         return pe->method()->noninlined_block_method_at( index );

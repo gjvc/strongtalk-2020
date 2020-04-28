@@ -125,8 +125,8 @@ bool_t InliningPolicy::isBuiltinMethod() const {
 
 
 KlassOop CompilerInliningPolicy::nthArgKlass( int i ) const {
-    int        first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
-    Expression * e   = _sender->exprStack()->at( first + i );
+    int first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
+    Expression * e = _sender->exprStack()->at( first + i );
     return e->hasKlass() ? e->klass() : nullptr;
 }
 

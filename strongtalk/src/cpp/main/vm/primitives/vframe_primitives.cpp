@@ -163,8 +163,8 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    DeltaVirtualFrame   * df      = ( DeltaVirtualFrame * ) vf;
-    GrowableArray <Oop> * temps   = new GrowableArray <Oop>( 10 );
+    DeltaVirtualFrame   * df    = ( DeltaVirtualFrame * ) vf;
+    GrowableArray <Oop> * temps = new GrowableArray <Oop>( 10 );
     MethodOop method    = df->method();
     int       tempCount = method->number_of_stack_temporaries();
 

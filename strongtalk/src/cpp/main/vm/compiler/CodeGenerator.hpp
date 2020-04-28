@@ -26,14 +26,14 @@ class DebugInfoWriter;
 class CodeGenerator : public NodeVisitor {
 
     private:
-        MacroAssembler         * _masm;               // the low-level assembler
-        PseudoRegisterMapping  * _currentMapping;     // currently used mapping of PseudoRegisters
+        MacroAssembler        * _masm;               // the low-level assembler
+        PseudoRegisterMapping * _currentMapping;     // currently used mapping of PseudoRegisters
         GrowableArray <Stub *> _mergeStubs;          // a stack of yet to generate merge stubs
-        DebugInfoWriter        * _debugInfoWriter;    // keeps track of PseudoRegister location changes and updates debug info
-        int                    _maxNofStackTmps;     // the maximum number of stack allocated variables so far
-        Node                   * _previousNode;       // the previous node in the same basic block or nullptr info used to patch temporary initialization
-        Register               _nilReg;              // the register holding nilObj used to initialize the stack frame
-        CodeBuffer             * _pushCode;           // the code area that can be patched with push instructions
+        DebugInfoWriter * _debugInfoWriter;    // keeps track of PseudoRegister location changes and updates debug info
+        int _maxNofStackTmps;     // the maximum number of stack allocated variables so far
+        Node * _previousNode;       // the previous node in the same basic block or nullptr info used to patch temporary initialization
+        Register _nilReg;              // the register holding nilObj used to initialize the stack frame
+        CodeBuffer * _pushCode;           // the code area that can be patched with push instructions
 
     private:
         // Helper routines for mapping

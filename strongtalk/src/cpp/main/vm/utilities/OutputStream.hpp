@@ -122,9 +122,9 @@ class StringOutputStream : public ConsoleOutputStream {
 
     protected:
         std::string _string;
-        char        * buffer;
-        int         buffer_pos;
-        int         buffer_length;
+        char * buffer;
+        int buffer_pos;
+        int buffer_length;
 
     public:
         StringOutputStream( const int initial_size = 1 * 1024 );

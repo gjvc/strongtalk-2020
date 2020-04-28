@@ -11,7 +11,7 @@
 
 class SnapshotDescriptor : StackAllocatedObject {
     private:
-        FILE   * _file;
+        FILE * _file;
         bool_t _has_error;
 
         // HEADER

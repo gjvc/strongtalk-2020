@@ -10,8 +10,8 @@
 
 
 PersistentHandle * PersistentHandle::_first = nullptr;
-int              Handles::_top              = 0;
-int              Handles::_size             = 20;
+int              Handles::_top  = 0;
+int              Handles::_size = 20;
 Oop              Handles::_array[20];
 
 

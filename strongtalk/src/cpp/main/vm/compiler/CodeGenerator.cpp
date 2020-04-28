@@ -28,7 +28,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 // Computes the byte offset from the beginning of an Oop
 static inline int byteOffset( int offset ) {
     st_assert( offset >= 0, "bad offset" );

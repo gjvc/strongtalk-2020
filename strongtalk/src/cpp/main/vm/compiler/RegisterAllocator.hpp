@@ -43,8 +43,8 @@ class RegCandidate : public ResourceObject {
 
     public:
         PseudoRegister * _pseudoRegister;    // PseudoRegister to be allocated
-        Location       _location;           // possible location for it
-        int            _ndefs;              // required # definitions of loc
+        Location _location;           // possible location for it
+        int      _ndefs;              // required # definitions of loc
 
     public:
         RegCandidate( PseudoRegister * reg, Location l, int n ) {

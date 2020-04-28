@@ -38,8 +38,8 @@ class ByteArray : public ResourceObject {
 
     private:
         uint8_t * _array;
-        int     _top;
-        int     _max;
+        int _top;
+        int _max;
 
         void extend();
 

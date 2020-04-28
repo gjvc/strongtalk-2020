@@ -22,7 +22,7 @@ class Reflection : AllStatic {
     private:
         // Variables used for schema change
         static GrowableArray <ClassChange *> * _classChanges; // Class changes
-        static GrowableArray <MemOop>        * _converted;     // Converted objects
+        static GrowableArray <MemOop> * _converted;     // Converted objects
 
         static int invocations_offset() {
             return 3;

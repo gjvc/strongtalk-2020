@@ -358,14 +358,14 @@ void Recompilation::recompile_block( Recompilee * r ) {
     st_assert( recompilee not_eq nullptr, "must have block recompilee" );
 
     DeltaVirtualFrame * vf = r->rframe()->top_vframe();
-    Oop               block;
+    Oop block;
     if ( recompilee and recompilee->is_block() ) {
         DeltaVirtualFrame * sender = vf->sender_delta_frame();
         if ( sender == nullptr )
             return;              // pathological case (not sure it can happen)
         GrowableArray <Oop> * exprs = sender->expression_stack();
         // primitiveValue takes block as first argument
-        int                 nargs   = recompilee->method()->nofArgs();
+        int nargs = recompilee->method()->nofArgs();
         block = exprs->at( nargs );
     } else {
         block = receiverOf( vf );

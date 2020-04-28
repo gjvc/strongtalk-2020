@@ -22,7 +22,7 @@ class Bootstrap : CHeapAllocatedObject {
 
     private:
 
-        Oop           * _oop_table;
+        Oop * _oop_table;
         int           _number_of_oops;
         int           _max_number_of_oops;
         bool_t        _new_format;

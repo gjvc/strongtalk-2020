@@ -102,7 +102,6 @@ void VM_OptimizeBlockMethod::doit() {
 }
 
 
-
 static void load_image() {
 
     ResourceMark resourceMark;

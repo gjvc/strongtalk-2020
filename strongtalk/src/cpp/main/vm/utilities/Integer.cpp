@@ -17,6 +17,7 @@ int Integer::length() const {
     return abs( _signed_length );
 }
 
+
 int Integer::length_in_bits() const {
 
     if ( is_zero() ) {
@@ -136,7 +137,6 @@ void Integer::print() {
         i++;
     }
 }
-
 
 
 void Integer::set_length( int l ) {

@@ -24,9 +24,9 @@
 
 bool_t verifyOften = false;
 
-int                compilationCount = 0;
-Compiler           * theCompiler    = nullptr;
-Compiler           * lastCompiler   = nullptr;        // for debugging
+int compilationCount = 0;
+Compiler           * theCompiler  = nullptr;
+Compiler           * lastCompiler = nullptr;        // for debugging
 BasicBlockIterator * last_bbIterator;
 
 
@@ -85,7 +85,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor * scope 
 
     st_assert( blk->isCompiledBlock(), "must be compiled block" );
     JumpTableEntry * e = blk->jump_table_entry();
-    int            sub_index;
+    int sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
     int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();
@@ -670,9 +670,10 @@ void Compiler::computeBlockInfo() {
         }
 
         // first is for NativeMethod itself
-        int       block_index = 1;
-        for ( int i           = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
-            
+        int block_index = 1;
+
+        for ( int i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+
             BlockPseudoRegister * blk = bbIterator->exposedBlks->at( i );
             if ( blk->isUsed() ) {
                 st_assert( block_index <= nblocks, "nblocks too small" );

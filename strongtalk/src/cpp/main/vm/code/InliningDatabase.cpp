@@ -22,7 +22,7 @@
 
 const char * InliningDatabase::_directory = nullptr;
 
-InliningDatabaseKey * InliningDatabase::_table         = nullptr;
+InliningDatabaseKey * InliningDatabase::_table = nullptr;
 uint32_t            InliningDatabase::_table_size      = 0;
 uint32_t            InliningDatabase::_table_size_mask = 0;
 uint32_t            InliningDatabase::_table_no        = 0;
@@ -43,14 +43,14 @@ const char * InliningDatabase::directory() {
 }
 
 
-const char quote          = '_';
+const char quote = '_';
 const char * quote_string = "_\\/:; *?~|><,+=@%&!-";
 
 
 const char * InliningDatabase::mangle_name( const char * str ) {
     char * result = new_resource_array <char>( 100 );
-    int  i        = 0;
-    int  j        = 0;
+    int i         = 0;
+    int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
         int c = str[ i ];
         if ( strchr( quote_string, c ) ) {
@@ -73,8 +73,8 @@ const char * InliningDatabase::mangle_name( const char * str ) {
 
 const char * InliningDatabase::unmangle_name( const char * str ) {
     char * result = new_resource_array <char>( 100 );
-    int  i        = 0;
-    int  j        = 0;
+    int i         = 0;
+    int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
         int c = str[ i ];
         if ( c == quote ) {
@@ -278,8 +278,8 @@ bool_t scan_key( RecompilationScope * sender, char * line, KlassOop * receiver_k
     char * class_name = line;
     char * method_id  = sub + 2;
 
-    bool_t class_side    = false;
-    char   * class_start = strstr( class_name, " class" );
+    bool_t class_side = false;
+    char * class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;
@@ -446,8 +446,8 @@ bool_t scan_key( char * line, LookupKey * key ) {
     char * class_name = line;
     char * method_id  = sub + 2;
 
-    bool_t class_side    = false;
-    char   * class_start = strstr( class_name, " class" );
+    bool_t class_side = false;
+    char * class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;
@@ -702,8 +702,8 @@ void InliningDatabase::add_lookup_entry( LookupKey * outer, LookupKey * inner ) 
             allocate_table( 4 * 1024 );
         } else {
             // Expand table
-            InliningDatabaseKey * old_table    = _table;
-            uint32_t            old_table_size = _table_size;
+            InliningDatabaseKey * old_table = _table;
+            uint32_t old_table_size = _table_size;
             allocate_table( _table_size * 2 );
             for ( uint32_t index = 0; index < old_table_size; index++ ) {
                 if ( old_table[ index ].is_filled() )

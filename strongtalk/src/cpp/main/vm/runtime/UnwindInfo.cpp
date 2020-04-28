@@ -11,10 +11,10 @@
 
 
 extern "C" bool_t have_nlr_through_C;
-extern "C" char   * C_frame_return_addr;
-extern "C" int    nlr_home;
-extern "C" int    nlr_home_id;
-extern "C" Oop    nlr_result;
+extern "C" char * C_frame_return_addr;
+extern "C" int nlr_home;
+extern "C" int nlr_home_id;
+extern "C" Oop nlr_result;
 
 
 UnwindInfo::UnwindInfo() {

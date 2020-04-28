@@ -11,7 +11,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 class ByteArrayKlass : public MemOopKlass {
 
     public:

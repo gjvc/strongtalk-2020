@@ -22,7 +22,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceBlockPrims, "block" )
 
 
@@ -137,7 +136,7 @@ PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
     }
 
     if ( have_nlr_through_C ) {
-        UnwindInfo       enabler;
+        UnwindInfo enabler;
         PersistentHandle * result = new PersistentHandle( res );
         Delta::call( block, vmSymbols::value(), nlr_result );
         // Now since we have to continue the first non-local-return the nlr_result must be correct.

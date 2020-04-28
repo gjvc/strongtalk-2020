@@ -23,7 +23,7 @@ class RecompilationPolicy : public ResourceObject {
 
     protected:
         GrowableArray <RecompilerFrame *> * _stack;
-        const char                        * _msg;                // for (performance) debugging: reason for not going up, etc.
+        const char * _msg;                // for (performance) debugging: reason for not going up, etc.
 
         RecompilerFrame * senderOf( RecompilerFrame * rf );    // return rf->sender() and update stack if necessary
         RecompilerFrame * parentOfBlock( BlockClosureOop blk );    // block's parent frame (or nullptr)

@@ -57,8 +57,6 @@ class AllStatic {
 };
 
 
-
-
 // Base class for objects allocated by the C runtime.
 class CHeapAllocatedObject {
     public:

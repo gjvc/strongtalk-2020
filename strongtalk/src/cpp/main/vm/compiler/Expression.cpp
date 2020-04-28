@@ -241,7 +241,7 @@ void MergeExpression::mergeInto( Expression * other, Node * n ) {
     int       len = exprs->length();
     for ( int i   = 0; i < len; i++ ) {
         Expression * e = exprs->at( i );
-        for ( int  j   = i + 1; j < len; j++ ) {
+        for ( int j = i + 1; j < len; j++ ) {
             Expression * e2 = exprs->at( j );
             st_assert( not e->equals( e2 ), "duplicate expr" );
             st_assert( not( e->hasKlass() and e2->hasKlass() and e->klass() == e2->klass() ), "duplicate klasses" );
@@ -366,16 +366,16 @@ bool_t MergeExpression::hasKlass() const {
     // possibly an unlikely unknown
     if ( exprs->length() > 2 )
         return false;
-    Expression * e1       = exprs->at( 0 );
-    bool_t     haveKlass1 = e1->hasKlass();
+    Expression * e1 = exprs->at( 0 );
+    bool_t haveKlass1 = e1->hasKlass();
     if ( exprs->length() == 1 )
         return haveKlass1;    // only one expr
     UnknownExpression * u1 = e1->findUnknown();
     if ( u1 and not u1->isUnlikely() )
         return false;  // 1st = likely unknown
-    Expression        * e2       = exprs->at( 1 );
-    bool_t            haveKlass2 = e2->hasKlass();
-    UnknownExpression * u2       = e2->findUnknown();
+    Expression * e2 = exprs->at( 1 );
+    bool_t haveKlass2 = e2->hasKlass();
+    UnknownExpression * u2 = e2->findUnknown();
     if ( u2 and not u2->isUnlikely() )
         return false;  // 2nd = likely unknown
     if ( haveKlass1 and haveKlass2 )
@@ -424,7 +424,7 @@ KlassExpression * ConstantExpression::asKlassExpression() const {
 
 Expression * MergeExpression::convertToKlass( PseudoRegister * p, Node * n ) const {
     MergeExpression * e = new MergeExpression( p, n );
-    for ( int       i   = 0; i < exprs->length(); i++ ) {
+    for ( int i = 0; i < exprs->length(); i++ ) {
         Expression * expr = exprs->at( i )->convertToKlass( p, n );
         e->add( expr );
     }

@@ -17,7 +17,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDoublePrims, "double" )
 
 
@@ -351,8 +350,8 @@ PRIM_DECL_1( doubleOopPrimitives::printString, Oop receiver ) {
     PROLOGUE_1( "printString", receiver );
     ASSERT_RECEIVER;
     ResourceMark resourceMark;
-    char         * result = new_resource_array <char>( 4 * 1024 );
-    int          len      = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
+    char * result = new_resource_array <char>( 4 * 1024 );
+    int len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
     while ( len > 1 and result[ len - 1 ] == '0' and result[ len - 2 ] not_eq '.' )
         len--;
     result[ len ]    = '\0';
@@ -383,7 +382,7 @@ PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     ASSERT_RECEIVER;
     BlockScavenge bs;
 
-    double  value  = DoubleOop( receiver )->value();
+    double value = DoubleOop( receiver )->value();
     uint8_t * addr = ( uint8_t * ) &value;
 
     ByteArrayOop result = oopFactory::new_byteArray( 8 );

@@ -47,8 +47,8 @@ class PolymorphicInlineCache {
 
     private:
         CompiledInlineCache * _ic;                   // the ic linked to this PolymorphicInlineCache
-        int16_t             _codeSize;              // size of code in bytes
-        int16_t             _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
+        int16_t _codeSize;              // size of code in bytes
+        int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
 
         static int nof_entries( const char * pic_stub );    // the no. of methodOop entries for a given stub routine
 

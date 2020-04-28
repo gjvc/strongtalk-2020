@@ -40,7 +40,7 @@ GenericGrowableArray::GenericGrowableArray( int initial_size, int initial_len, v
 
 void GenericGrowableArray::grow( int j ) {
     void ** newData;
-    int  oldMax = _maxLength;
+    int oldMax = _maxLength;
     if ( _maxLength == 0 ) fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
     while ( j >= _maxLength )
         _maxLength = _maxLength * 2;
@@ -68,7 +68,7 @@ bool_t GenericGrowableArray::raw_contains( const void * elem ) const {
 
 GenericGrowableArray * GenericGrowableArray::raw_copy() const {
     GenericGrowableArray * copy = new GenericGrowableArray( _maxLength, _length, nullptr );
-    for ( int            i      = 0; i < _length; i++ ) {
+    for ( int i = 0; i < _length; i++ ) {
         copy->_data[ i ] = _data[ i ];
     }
     return copy;

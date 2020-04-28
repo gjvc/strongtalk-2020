@@ -11,8 +11,6 @@
 #include "vm/compiler/Node.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
-
-
 // keeps track of effects of copy propagation (for debugging info)
 
 class CopyPropagationInfo : public PrintableResourceObject {

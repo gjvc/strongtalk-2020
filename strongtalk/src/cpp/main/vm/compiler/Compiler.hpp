@@ -13,7 +13,7 @@
 #include "vm/compiler/CodeGenerator.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
-extern int      compilationCount;
+extern int compilationCount;
 extern Compiler * theCompiler;
 
 class CodeGenerator;
@@ -34,33 +34,33 @@ class Compiler : public PrintableResourceObject {
         int                            _totalNofFloatTemporaries;           // the number of floatTemporaries for this NativeMethod
         int                            _float_section_size;                 // the size of the float section on the stack in oops
         int                            _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
-        CodeBuffer                     * _code;                              // the buffer used for code generation
-        int                            _nextLevel;                          // optimization level for NativeMethod being created
-        bool_t                         _hasInlinableSendsRemaining;         // no inlinable sends remaining?
-        bool_t                         _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
+        CodeBuffer * _code;                              // the buffer used for code generation
+        int    _nextLevel;                          // optimization level for NativeMethod being created
+        bool_t _hasInlinableSendsRemaining;         // no inlinable sends remaining?
+        bool_t _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
 
     public:
-        LookupKey                                * key;
-        CompiledInlineCache                      * ic;                       // sending inline cache
-        NativeMethod                             * parentNativeMethod;       // NativeMethod of lexical parent (or nullptr if not compiling a block method)
+        LookupKey           * key;
+        CompiledInlineCache * ic;                       // sending inline cache
+        NativeMethod        * parentNativeMethod;       // NativeMethod of lexical parent (or nullptr if not compiling a block method)
         MethodOop method;                    // top-level method being compiled
-        NonInlinedBlockScopeDescriptor           * blockScope;               // or nullptr if not compiling a block method
-        RecompilationScope                       * recompileeRScope;         // recompilee's rscope (or nullptr)
-        int                                      countID;                   // recompile counter ID
-        JumpTableID                              main_jumpTable_id;         // jump table id
-        JumpTableID                              promoted_jumpTable_id;     // promoted jump table entry for block method only
-        bool_t                                   useUncommonTraps;          // ok to use uncommon traps?
-        ScopeDescriptorRecorder                  * rec;                      //
-        InlinedScope                             * topScope;                 // top scope
-        BasicBlock                               * firstBasicBlock;          // first basic block
+        NonInlinedBlockScopeDescriptor * blockScope;               // or nullptr if not compiling a block method
+        RecompilationScope             * recompileeRScope;         // recompilee's rscope (or nullptr)
+        int         countID;                   // recompile counter ID
+        JumpTableID main_jumpTable_id;         // jump table id
+        JumpTableID promoted_jumpTable_id;     // promoted jump table entry for block method only
+        bool_t      useUncommonTraps;          // ok to use uncommon traps?
+        ScopeDescriptorRecorder * rec;                      //
+        InlinedScope            * topScope;                 // top scope
+        BasicBlock              * firstBasicBlock;          // first basic block
         GrowableArray <NonLocalReturnTestNode *> * nlrTestPoints;            // needed to fix up NonLocalReturn points after node generation
         GrowableArray <InlinedScope *>           * scopes;                   // list of all scopes (indexed by scope ID)
         GrowableArray <InlinedScope *>           * contextList;              // list of all scopes with run-time contexts
         GrowableArray <BlockPseudoRegister *>    * blockClosures;            // list of all block literals created so far
-        Node                                     * firstNode;                // the very first node of the intermediate representation
-        PerformanceDebugger                      * reporter;                 // for reporting performance info
-        StringOutputStream                       * messages;                 // debug messages
-        std::array<int, LastLimit>inlineLimit;                               // limits for current compilation
+        Node                * firstNode;                // the very first node of the intermediate representation
+        PerformanceDebugger * reporter;                 // for reporting performance info
+        StringOutputStream  * messages;                 // debug messages
+        std::array <int, LastLimit> inlineLimit;                               // limits for current compilation
 
     private:
         void initialize( RecompilationScope * remote_scope = nullptr );

@@ -74,9 +74,9 @@ class Zone : public CHeapAllocatedObject {
 
     protected:
         NativeMethod * LRUhand;          // for LRU algorithm; sweeps through iZone
-        bool_t       _needsCompaction;  //
-        bool_t       _needsLRUSweep;    //
-        bool_t       _needsSweep;       //
+        bool_t _needsCompaction;  //
+        bool_t _needsLRUSweep;    //
+        bool_t _needsSweep;       //
 
         int    compactTime;                // time of last compaction
         int    compactDuration;            // duration of last compaction

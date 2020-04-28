@@ -348,7 +348,7 @@ const char * CompiledLoop::checkLoopVar() {
 
     NonTrivialNode * n2 = findDefInLoop( n1->src() );
     PseudoRegister * operand;
-    ArithOpCode    op;
+    ArithOpCode op;
     if ( n2->isTArithNode() ) {
         operand = ( ( TArithRRNode * ) n2 )->operand();
         op      = ( ( TArithRRNode * ) n2 )->op();
@@ -373,9 +373,9 @@ const char * CompiledLoop::checkLoopVar() {
 
     // at this point, we finally know for sure whether the loop is counting up or down
     // check that loop is bounded at all
-    BranchOpCode   branchOp          = _loopBranch->op();
-    bool_t         loopVarMustBeLeft = ( branchOp == GTBranchOp or branchOp == GEBranchOp ) ^not _isCountingUp;
-    NonTrivialNode * compare         = ( NonTrivialNode * ) _loopBranch->firstPrev();
+    BranchOpCode branchOp          = _loopBranch->op();
+    bool_t       loopVarMustBeLeft = ( branchOp == GTBranchOp or branchOp == GEBranchOp ) ^not _isCountingUp;
+    NonTrivialNode * compare = ( NonTrivialNode * ) _loopBranch->firstPrev();
     if ( loopVarMustBeLeft not_eq ( compare->src() == _loopVar ) ) {
         return "loopVar is on wrong side of comparison (loop not bounded)";
     }
@@ -558,7 +558,7 @@ class TTHoister : public Closure <InlinedScope *> {
 
     public:
         GrowableArray <HoistedTypeTest *> * hoistableTests;
-        CompiledLoop                      * theLoop;
+        CompiledLoop * theLoop;
 
 
         TTHoister( CompiledLoop * l, GrowableArray <HoistedTypeTest *> * h ) {
@@ -669,8 +669,8 @@ bool_t CompiledLoop::isEquivalentType( GrowableArray <KlassOop> * klasses1, Grow
 class BoundsCheckRemover : public Closure <Usage *> {
 
     public:
-        CompiledLoop                          * theLoop;
-        PseudoRegister                        * theLoopPReg;
+        CompiledLoop   * theLoop;
+        PseudoRegister * theLoopPReg;
         GrowableArray <AbstractArrayAtNode *> * theArrayList;
 
 
@@ -718,7 +718,7 @@ void CompiledLoop::findRegCandidates() {
 
     GrowableArray <LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
-    const int        len               = _bbs->length();
+    const int len = _bbs->length();
     const BasicBlock * startBasicBlock = _startOfLoop->bb();
 
     int i;

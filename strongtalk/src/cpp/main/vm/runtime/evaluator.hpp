@@ -14,6 +14,7 @@
 // -----------------------------------------------------------------------------
 
 class TokenStream;
+
 typedef class OopDescriptor * Oop;
 
 

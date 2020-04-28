@@ -27,7 +27,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
     double new_count = ( double ) invocation_count() / decay_factor;
     set_invocation_count( ( int ) new_count );
@@ -574,7 +573,7 @@ int MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass ) {
         }
         extern bool_t SuperSendsAreAlwaysInlined;
         if ( ByteCodes::is_super_send( c.code() ) and SuperSendsAreAlwaysInlined and receiverKlass ) {
-            KlassOop mh = receiverKlass->klass_part()->lookup_method_holder_for( this );
+            KlassOop  mh          = receiverKlass->klass_part()->lookup_method_holder_for( this );
             // TODO: the following is wrong. A super send may use a different selector than
             // the containing method. It's bad style, but legal. Need to lookup the selector
             // for the send, not the containing method's selector. slr 13/04/2010
@@ -1185,7 +1184,7 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
     if ( not is_customized() )
         return;
 
-    KlassOop klass = mixin->primary_invocation();
+    KlassOop klass         = mixin->primary_invocation();
     st_assert( klass->is_klass(), "primary invocation muyst be present" );
 
     CodeIterator c( this );

@@ -25,7 +25,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 ByteArrayOop oopFactory::new_byteArray( int size ) {
     ByteArrayKlass * bk = ( ByteArrayKlass * ) Universe::byteArrayKlassObj()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
@@ -44,7 +43,7 @@ ByteArrayOop oopFactory::new_byteArray( const char * name ) {
 
 
 ObjectArrayOop oopFactory::new_objArray( int size ) {
-    ObjectArrayKlass * ok   = ( ObjectArrayKlass * ) Universe::objArrayKlassObj()->klass_part();
+    ObjectArrayKlass * ok = ( ObjectArrayKlass * ) Universe::objArrayKlassObj()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
     return result;
@@ -54,7 +53,7 @@ ObjectArrayOop oopFactory::new_objArray( int size ) {
 ObjectArrayOop oopFactory::new_objArray( GrowableArray <Oop> * array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
-    int              size = array->length();
+    int size = array->length();
     ObjectArrayKlass * ok = ( ObjectArrayKlass * ) Universe::objArrayKlassObj()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
@@ -110,7 +109,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_
 
 
 VirtualFrameOop oopFactory::new_vframe( ProcessOop process, int index ) {
-    BlockScavenge     bs;
+    BlockScavenge bs;
     VirtualFrameKlass * vk = ( VirtualFrameKlass * ) Universe::vframeKlassObj()->klass_part();
 
     VirtualFrameOop result = VirtualFrameOop( vk->allocateObject() );

@@ -2420,12 +2420,12 @@ class LoopHeaderNode : public TrivialNode {
         LoadOffsetNode * _upperLoad;            // loads array size that is the upper bound
         GrowableArray <AbstractArrayAtNode *> * _arrayAccesses;     // arrays indexed by loopVar
 
-        LoopHeaderNode                      * _enclosingLoop;      // enclosing loop or nullptr
+        LoopHeaderNode * _enclosingLoop;      // enclosing loop or nullptr
         // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
-        GrowableArray <HoistedTypeTest *> * _tests;              // type tests hoisted out of loop
-        GrowableArray <LoopHeaderNode *>    * _nestedLoops;        // nested loops (nullptr if none)
-        GrowableArray <LoopRegCandidate *>  * _registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-        bool_t                            _activated;            // gen() does nothing until activated
+        GrowableArray <HoistedTypeTest *>  * _tests;              // type tests hoisted out of loop
+        GrowableArray <LoopHeaderNode *>   * _nestedLoops;        // nested loops (nullptr if none)
+        GrowableArray <LoopRegCandidate *> * _registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
+        bool_t                             _activated;            // gen() does nothing until activated
         int                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
         LoopHeaderNode();
@@ -3866,7 +3866,7 @@ class NodeFactory : AllStatic {
 
         static class MergeNode * MergeNode( Node * prev1, Node * prev2 );
 
-        static class  MergeNode * MergeNode( int byteCodeIndex );
+        static class MergeNode * MergeNode( int byteCodeIndex );
 
         static class SendNode * SendNode( LookupKey * key, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack, bool_t superSend, SendInfo * info );
 

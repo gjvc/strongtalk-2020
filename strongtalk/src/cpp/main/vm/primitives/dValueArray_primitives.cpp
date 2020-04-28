@@ -12,7 +12,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )
 
 
@@ -32,8 +31,8 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
 
     int length = SMIOop( argument )->value();
 
-    KlassOop k       = KlassOop( receiver );
-    int      ni_size = k->klass_part()->non_indexable_size();
+    KlassOop            k        = KlassOop( receiver );
+    int                 ni_size  = k->klass_part()->non_indexable_size();
     int                 obj_size = ni_size + 1 + roundTo( length * sizeof( double ), oopSize ) / oopSize;
     // allocate
     doubleValueArrayOop obj      = as_doubleValueArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );

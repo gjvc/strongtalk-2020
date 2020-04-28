@@ -24,8 +24,8 @@ void setKlassVirtualTableFromContextKlass( Klass * k ) {
 
 
 Oop ContextKlass::allocateObjectSize( int num_of_temps, bool_t permit_scavenge, bool_t tenured ) {
-    KlassOop k        = as_klassOop();
-    int      obj_size = ContextOopDescriptor::header_size() + num_of_temps;
+    KlassOop   k        = as_klassOop();
+    int        obj_size = ContextOopDescriptor::header_size() + num_of_temps;
     // allocate
     ContextOop obj      = as_contextOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
     // header

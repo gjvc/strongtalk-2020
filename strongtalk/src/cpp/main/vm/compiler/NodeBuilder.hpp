@@ -13,19 +13,33 @@
 
 
 class Node;
+
 class AssignNode;
+
 class TypeTestNode;
+
 class ContextInitNode;
+
 class NonTrivialNode;
+
 class MergeNode;
+
 class Inliner;
+
 class InlinedScope;
+
 class ConstantExpression;
+
 class PseudoRegister;
+
 class Expression;
+
 class ExpressionStack;
+
 class BlockPseudoRegister;
+
 class SendInfo;
+
 class SinglyAssignedPseudoRegister;
 
 

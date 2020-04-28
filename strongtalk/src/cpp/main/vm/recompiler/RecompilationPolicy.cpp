@@ -23,7 +23,7 @@ Recompilee * RecompilationPolicy::findRecompilee() {
         for ( int i = 0; i < 10 and rf; i++, rf = senderOf( rf ) );   // create 10 frames
         printStack();
     }
-    RecompilerFrame * r  = findTopInlinableFrame();
+    RecompilerFrame * r = findTopInlinableFrame();
     if ( r ) {
         if ( PrintRecompilation )
             r->print();
@@ -44,9 +44,9 @@ void RecompilationPolicy::cleanupStaleInlineCaches() {
 RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
     // go up the stack until finding a frame that (probably) won't be inlined into its caller
     RecompilerInliningPolicy p;
-    RecompilerFrame          * current    = _stack->at( 0 );    // current choice for stopping
-    RecompilerFrame          * prev       = nullptr;            // prev. value of current
-    RecompilerFrame          * prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
+    RecompilerFrame * current    = _stack->at( 0 );    // current choice for stopping
+    RecompilerFrame * prev       = nullptr;            // prev. value of current
+    RecompilerFrame * prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
     _msg = nullptr;
 
     while ( 1 ) {
@@ -249,7 +249,7 @@ RecompilerFrame * RecompilationPolicy::senderOrParentOf( RecompilerFrame * rf ) 
         // bug: should check how often block is created / invoked
         GrowableArray <BlockClosureOop> * blockArgs = rf->blockArgs();
         RecompilerFrame                 * max       = nullptr;
-        for ( int                       i           = 0; i < blockArgs->length(); i++ ) {
+        for ( int i = 0; i < blockArgs->length(); i++ ) {
             BlockClosureOop blk = blockArgs->at( i );
             //JumpTableEntry* e = blk->jump_table_entry();
             RecompilerFrame * home = parentOfBlock( blk );
@@ -303,7 +303,7 @@ RecompilerFrame * RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
     }
     // try to find context's RecompilerFrame
     RecompilerFrame * parent = _stack->first();
-    for ( int       i        = 0; i < MaxRecompilationSearchLength; i++ ) {
+    for ( int i = 0; i < MaxRecompilationSearchLength; i++ ) {
         parent = senderOf( parent );
         if ( not parent )
             break;

@@ -14,14 +14,14 @@
 // For each physical location (register, stack position or context temporary), there is a corresponding location and vice versa.
 
 enum class Mode {
-    // mode/bits		3...................31	describes
-    //			        3..9	10..16	17..31
-    specialLoc,     //	--------id------------	sentinel values/global locations
-    registerLoc,    //	--------regLoc--------	register locations
-    stackLoc,       //	--------offset--------	stack locations
-    contextLoc1,    //	ctxtNo	offset	scID	context locations during compilation (scope ID identifies InlinedScope)
-    contextLoc2,    //	ctxtNo	offset	scOffs	context locations (scOffs is scope offset within encoded scopes)
-    floatLoc,       //	0	floatNo	scopeN  float locations
+        // mode/bits		3...................31	describes
+        //			        3..9	10..16	17..31
+        specialLoc,     //	--------id------------	sentinel values/global locations
+        registerLoc,    //	--------regLoc--------	register locations
+        stackLoc,       //	--------offset--------	stack locations
+        contextLoc1,    //	ctxtNo	offset	scID	context locations during compilation (scope ID identifies InlinedScope)
+        contextLoc2,    //	ctxtNo	offset	scOffs	context locations (scOffs is scope offset within encoded scopes)
+        floatLoc,       //	0	floatNo	scopeN  float locations
 };
 
 
@@ -248,9 +248,9 @@ const Location topOfFloatStack        = Location::specialLocation( 5 );    // on
 class IntFreeList : public PrintableResourceObject {
 
     protected:
-        int                 _first;     // the first available integer
+        int _first;     // the first available integer
         GrowableArray <int> * _list;    // the list
-        std::vector<int>    _vector;
+        std::vector <int> _vector;
 
         void grow();
 

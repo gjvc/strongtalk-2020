@@ -99,10 +99,10 @@ void VirtualFrame::print_value() const {
 // ------------- DeltaVirtualFrame --------------
 
 GrowableArray <Oop> * DeltaVirtualFrame::arguments() const {
-    int                 nargs    = method()->number_of_arguments();
+    int nargs = method()->number_of_arguments();
     GrowableArray <Oop> * result = new GrowableArray <Oop>( nargs );
     VirtualFrame        * s      = sender();
-    for ( int           index    = 0; index < nargs; index++ ) {
+    for ( int index = 0; index < nargs; index++ ) {
         result->push( argument_at( index ) );
     }
     return result;
@@ -382,7 +382,7 @@ Oop CompiledVirtualFrame::temp_at( int offset ) const {
 class ContextTempFindClosure : public NameDescriptorClosure {
     public:
         NameDescriptor * result;
-        int            i;
+        int i;
 
 
         ContextTempFindClosure( int index ) {
@@ -453,9 +453,9 @@ ContextOop CompiledVirtualFrame::compiled_context() const {
 
 
 GrowableArray <DeferredExpression *> * CompiledVirtualFrame::deferred_expression_stack() const {
-    GrowableArray <int>                  * mapping = method()->expression_stack_mapping( byteCodeIndex() );
-    GrowableArray <DeferredExpression *> * result  = new GrowableArray <DeferredExpression *>( mapping->length() );
-    for ( int                            index     = 0; index < mapping->length(); index++ ) {
+    GrowableArray <int> * mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray <DeferredExpression *> * result = new GrowableArray <DeferredExpression *>( mapping->length() );
+    for ( int                            index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor * nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
         result->push( new DeferredExpression( this, nd ) );
     }
@@ -468,8 +468,8 @@ GrowableArray <Oop> * CompiledVirtualFrame::expression_stack() const {
     GrowableArray <Oop> * result  = new GrowableArray <Oop>( mapping->length() );
 
     for ( int i = 0; i < mapping->length(); i++ ) {
-        NameDescriptor * nd  = _scopeDescriptor->exprStackElem( mapping->at( i ) );
-        Oop            value = resolve_name( nd, this );
+        NameDescriptor * nd = _scopeDescriptor->exprStackElem( mapping->at( i ) );
+        Oop value = resolve_name( nd, this );
         result->push( value );
     }
 
@@ -604,7 +604,7 @@ Oop CompiledVirtualFrame::filler_oop() {
 
 int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor * d ) const {
     ScopeDescriptor * s = _scopeDescriptor;
-    int             b   = byteCodeIndex();
+    int b = byteCodeIndex();
     while ( not s->is_equal( d ) ) {
         b = s->senderByteCodeIndex();
         st_assert( s->sender(), "make sure we have a sender" );
@@ -853,8 +853,8 @@ Oop CompiledBlockVirtualFrame::receiver() const {
 
 
 DeltaVirtualFrame * CompiledBlockVirtualFrame::parent() const {
-    ScopeDescriptor * ps                 = parent_scope();
-    int             parent_byteCodeIndex = byteCodeIndex_for( ps );
+    ScopeDescriptor * ps = parent_scope();
+    int parent_byteCodeIndex = byteCodeIndex_for( ps );
     return CompiledVirtualFrame::new_vframe( &_frame, ps, parent_byteCodeIndex );
 }
 
@@ -1050,7 +1050,7 @@ GrowableArray <Oop> * DeoptimizedVirtualFrame::expression_stack() const {
     int exp_size = locals - temps;
 
     GrowableArray <Oop> * array = new GrowableArray <Oop>( exp_size );
-    for ( int           index   = 0; index < exp_size; index++ ) {
+    for ( int index = 0; index < exp_size; index++ ) {
         array->push( expression_at( index ) );
     }
 

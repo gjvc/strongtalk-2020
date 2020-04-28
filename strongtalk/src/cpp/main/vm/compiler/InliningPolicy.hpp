@@ -57,6 +57,7 @@ class InliningPolicy : public ResourceObject {
 
 
 class Expression;
+
 class InlinedScope;
 
 // inlining policy of compiler
@@ -76,6 +77,7 @@ class CompilerInliningPolicy : public InliningPolicy {
 
 
 class RecompilerFrame;
+
 class DeltaVirtualFrame;
 
 // "inlining policy" of recompiler (i.e., guesses whether method will be inlined or not

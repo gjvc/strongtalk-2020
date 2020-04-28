@@ -15,7 +15,7 @@
 class Interpreter : AllStatic {
 
     public:
-        static bool_t     _is_initialized;              // true if Interpreter has been initialized
+        static bool_t _is_initialized;              // true if Interpreter has been initialized
         static const char * _code_begin_addr;            // the first byte of the interpreter's code
         static const char * _code_end_addr;              // the first byte after the interpreter's code
         static int        * _invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
@@ -47,7 +47,7 @@ class Interpreter : AllStatic {
 
         static const char * _restart_primitiveValue;
         static const char * _nlr_single_step_continuation_entry;
-        static Label      _nlr_single_step_continuation; // used by single step stub routine
+        static Label _nlr_single_step_continuation; // used by single step stub routine
         static const char * _redo_bytecode_after_deoptimization;
         static const char * _illegal;
 

@@ -86,7 +86,7 @@ struct CodeTableEntry : ValueObject {
 
 class CodeTable : public PrintableCHeapAllocatedObject {
     protected:
-        int            tableSize;
+        int tableSize;
         CodeTableEntry * buckets;
 
 

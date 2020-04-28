@@ -13,7 +13,7 @@
 class ReservedSpace : public ValueObject {
     private:
         const char * _base;
-        int        _size;
+        int _size;
     public:
         ReservedSpace( int size );
 

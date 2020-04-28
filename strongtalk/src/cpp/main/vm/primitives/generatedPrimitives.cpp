@@ -27,16 +27,16 @@ const char * GeneratedPrimitives::_smiOopPrimitives_div       = nullptr;
 const char * GeneratedPrimitives::_smiOopPrimitives_quo       = nullptr;
 const char * GeneratedPrimitives::_smiOopPrimitives_remainder = nullptr;
 
-const char * GeneratedPrimitives::_double_add                 = nullptr;
-const char * GeneratedPrimitives::_double_subtract            = nullptr;
-const char * GeneratedPrimitives::_double_multiply            = nullptr;
-const char * GeneratedPrimitives::_double_divide              = nullptr;
-const char * GeneratedPrimitives::_double_from_smi            = nullptr;
+const char * GeneratedPrimitives::_double_add      = nullptr;
+const char * GeneratedPrimitives::_double_subtract = nullptr;
+const char * GeneratedPrimitives::_double_multiply = nullptr;
+const char * GeneratedPrimitives::_double_divide   = nullptr;
+const char * GeneratedPrimitives::_double_from_smi = nullptr;
 
-std::array<const char *, 10>GeneratedPrimitives::_primitiveValue;
-std::array<const char *, 10>GeneratedPrimitives::_primitiveNew;
-std::array<const char *, 10>GeneratedPrimitives::_allocateBlock;
-std::array<const char *, 3>GeneratedPrimitives::_allocateContext;
+std::array <const char *, 10>GeneratedPrimitives::_primitiveValue;
+std::array <const char *, 10>GeneratedPrimitives::_primitiveNew;
+std::array <const char *, 10>GeneratedPrimitives::_allocateBlock;
+std::array <const char *, 3> GeneratedPrimitives::_allocateContext;
 const char * GeneratedPrimitives::_primitiveInlineAllocations = nullptr;
 
 extern "C" void scavenge_and_allocate( int size );
@@ -246,7 +246,7 @@ const char * GeneratedPrimitives::allocateContext( int n ) {
 
 bool_t     GeneratedPrimitives::_is_initialized = false;
 //char GeneratedPrimitives::_code[GeneratedPrimitives::_code_size];
-const char * GeneratedPrimitives::_code         = nullptr;
+const char * GeneratedPrimitives::_code = nullptr;
 
 
 const char * GeneratedPrimitives::patch( const char * name, const char * entry_point ) {
@@ -272,8 +272,8 @@ void GeneratedPrimitives::init() {
     ResourceMark resourceMark;
     _code = os::exec_memory( _code_size );
 
-    CodeBuffer          * code = new CodeBuffer( _code, _code_size );
-    MacroAssembler      * masm = new MacroAssembler( code );
+    CodeBuffer     * code = new CodeBuffer( _code, _code_size );
+    MacroAssembler * masm = new MacroAssembler( code );
     PrimitivesGenerator gen( masm );
 
     // add generators here

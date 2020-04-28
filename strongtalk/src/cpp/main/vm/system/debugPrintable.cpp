@@ -135,7 +135,7 @@ void pss() { // print all stack
 void pd() { // print stack
     // Retrieve the frame pointer of the current frame
     {
-        Command      c( "pd" );
+        Command c( "pd" );
         // Prints the stack of the current Delta process
         DeltaProcess * p = DeltaProcess::active();
         _console->print( " for process: " );

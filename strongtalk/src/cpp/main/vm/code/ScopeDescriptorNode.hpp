@@ -28,6 +28,7 @@ enum {
 //
 
 constexpr int INVALID_OFFSET = -1;
+
 class LogicalAddress;
 
 class ScopeDescriptorNode : public ResourceObject {

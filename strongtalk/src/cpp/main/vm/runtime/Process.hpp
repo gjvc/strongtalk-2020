@@ -20,7 +20,9 @@
 //   - DeltaProcess
 
 class Thread;
+
 class Event;
+
 class VM_Operation;
 
 
@@ -75,8 +77,8 @@ class Process : public PrintableCHeapAllocatedObject {
         void basic_transfer( Process * target );
 
         // OS data associated with the process
-        Thread         * _thread;            // Native thread
-        int            _thread_id;          // Native thread id (set by OS when created)
+        Thread * _thread;            // Native thread
+        int _thread_id;          // Native thread id (set by OS when created)
         Event          * _event;             // Thread lock
         char           * _stack_limit;       // lower limit of stack
         static Process * _current_process;   //  active Delta process or vm process
@@ -161,8 +163,8 @@ extern "C" void check_stack_overflow();
 class DeltaProcess : public Process {
 
     private:
-        Oop          _receiver;      // receiver of the initial message.
-        SymbolOop    _selector;      // selector of the initial message.
+        Oop       _receiver;      // receiver of the initial message.
+        SymbolOop _selector;      // selector of the initial message.
         DeltaProcess * _next;          // the next process in the list (see Processes).
         ProcessOop   _processObj;    // the Delta level process object.
         ProcessState _state;         // process state.
@@ -373,11 +375,11 @@ class DeltaProcess : public Process {
 
         // Static operations
     private:
-        static DeltaProcess    * _active_delta_process;
-        static DeltaProcess    * _main_process;
-        static DeltaProcess    * _scheduler_process;
-        static bool_t          _is_idle;
-        static volatile char   * _active_stack_limit;    //
+        static DeltaProcess * _active_delta_process;
+        static DeltaProcess * _main_process;
+        static DeltaProcess * _scheduler_process;
+        static bool_t _is_idle;
+        static volatile char * _active_stack_limit;    //
         static volatile bool_t _interrupt;              //
 
         // The launch function for a new thread

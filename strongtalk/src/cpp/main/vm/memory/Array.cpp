@@ -59,7 +59,7 @@ ByteArray::ByteArray( int size ) {
 
 
 void ByteArray::extend() {
-    int     newMax     = _max * 2;
+    int newMax = _max * 2;
     uint8_t * newArray = new_resource_array <uint8_t>( newMax );
 
     for ( int i = 0; i < _top; i++ )
@@ -108,7 +108,7 @@ void ByteArray::alignToWord() {
 
 void ByteArray::copy_to( int *& addr ) {
     int * fromAddr = ( int * ) start();
-    int len        = size() / sizeof( int );
+    int len = size() / sizeof( int );
 
     for ( int i = 0; i < len; i++ ) {
         *addr++ = *fromAddr++;

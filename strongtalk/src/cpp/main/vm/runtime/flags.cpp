@@ -23,7 +23,7 @@ class BooleanFlag {
     public:
         const char * _name;
         bool_t     * _value;
-        bool_t     _default;
+        bool_t _default;
         const char * _description;
 
 
@@ -58,7 +58,7 @@ class IntegerFlag {
     public:
         const char * _name;
         int        * _value;
-        int        _default;
+        int _default;
         const char * _description;
 
 

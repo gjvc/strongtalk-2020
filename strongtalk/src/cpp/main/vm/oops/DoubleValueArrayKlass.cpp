@@ -14,7 +14,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     fatal( "should never call allocateObject in doubleValueArrayKlass" );
     return badOop;
@@ -24,8 +23,8 @@ Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenure
 Oop DoubleValueArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
 
     //
-    KlassOop k       = as_klassOop();
-    int      ni_size = non_indexable_size();
+    KlassOop k        = as_klassOop();
+    int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + roundTo( size * sizeof( double ), oopSize ) / oopSize;
 
     // allocate
@@ -86,7 +85,7 @@ void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * s
 void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
     double * p = doubleValueArrayOop( obj )->double_start();
     Oop    * l = doubleValueArrayOop( obj )->length_addr();
-    int    len = doubleValueArrayOop( obj )->length();
+    int len = doubleValueArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
     blk->begin_indexables();

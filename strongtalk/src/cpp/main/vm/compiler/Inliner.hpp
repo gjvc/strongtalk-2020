@@ -21,8 +21,11 @@ enum SendKind {
 };
 
 class Scope;
+
 class ScopeDescriptor;
+
 class RecompilationScope;
+
 class UntakenRecompilationScope;
 
 
@@ -32,8 +35,8 @@ class Inliner : public PrintableResourceObject {
         void reportInline( const char * prefix ); // Add a comment node delimiting an inlined send
 
     protected:
-        InlinedScope                 * _sender;         // scope containing the send
-        SendKind                     _sendKind;         //
+        InlinedScope * _sender;         // scope containing the send
+        SendKind _sendKind;         //
         InlinedScope                 * _callee;         // scope being inlined (or nullptr)
         SendInfo                     * _info;           // send being inlined
         Expression                   * _result;         // result expression
@@ -41,7 +44,7 @@ class Inliner : public PrintableResourceObject {
         NodeBuilder                  * _generator;      // current generator (sender's or callee's)
         MergeNode                    * _merge;          // where multiple versions merge (nullptr if only one)
         const char                   * _msg;            // reason for not inlining the send
-        bool_t                       _lastLookupFailed; // last tryLookup failed because no method found
+        bool_t _lastLookupFailed; // last tryLookup failed because no method found
 
 
     public:

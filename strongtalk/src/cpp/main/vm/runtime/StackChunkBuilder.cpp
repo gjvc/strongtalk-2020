@@ -15,10 +15,10 @@
 
 
 GrowableArray <const CompiledVirtualFrame *> * frames;
-GrowableArray <ContextOop>                   * contexts;
+GrowableArray <ContextOop> * contexts;
 
 bool_t StackChunkBuilder::_is_deoptimizing = false;
-int    * StackChunkBuilder::_framePointer  = nullptr;
+int * StackChunkBuilder::_framePointer = nullptr;
 
 
 StackChunkBuilder::StackChunkBuilder( int * fp, int size ) {

@@ -12,6 +12,7 @@
 
 static Closure <Definition *> * theDefIterator;
 
+
 void Usage::print() {
     lprintf( "Use %#lx (N%ld)", PrintHexAddresses ? this : 0, _node->id() );
 }

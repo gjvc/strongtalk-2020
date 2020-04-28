@@ -76,11 +76,11 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, O
     SymbolOop sel;
     {
         // message not understood...
-        BlockScavenge bs; // make sure that no scavenge happens
-        KlassOop msgKlass = KlassOop( Universe::find_global( "Message" ) );
-        Oop            obj  = msgKlass->klass_part()->allocateObject();
-        ObjectArrayOop args = oopFactory::new_objArray( nofArgs );
-        for ( int     index    = 0; index < nofArgs; index++ )
+        BlockScavenge  bs; // make sure that no scavenge happens
+        KlassOop       msgKlass = KlassOop( Universe::find_global( "Message" ) );
+        Oop            obj      = msgKlass->klass_part()->allocateObject();
+        ObjectArrayOop args     = oopFactory::new_objArray( nofArgs );
+        for ( int      index    = 0; index < nofArgs; index++ )
             args->obj_at_put( index + 1, argArray[ index ] );
 
         st_assert( obj->is_mem(), "just checkin'..." );

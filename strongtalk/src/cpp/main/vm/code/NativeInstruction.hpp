@@ -15,8 +15,8 @@ typedef class OopDescriptor * Oop;
 
 class NativeInstruction : ValueObject {
 
-    // The base class for different kinds of native instruction abstractions.
-    // Provides the primitive operations to manipulate code relative to this.
+        // The base class for different kinds of native instruction abstractions.
+        // Provides the primitive operations to manipulate code relative to this.
 
     protected:
         char * addr_at( int offset ) const {

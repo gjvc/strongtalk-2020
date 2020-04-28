@@ -26,8 +26,11 @@
 #define PFLAG_DEF( name )      BASIC_FLAG_DEF(name, protected:)
 
 class ConstantExpression;
+
 class MergeExpression;
+
 class KlassExpression;
+
 class UnknownExpression;
 
 
@@ -37,11 +40,11 @@ class Expression : public PrintableResourceObject {    // abstract base class
         PseudoRegister * _pseudoRegister;        // PseudoRegister holding it
         Node           * _node;                  // defining node or nullptr if unknown
         InlinedScope   * _unlikelyScope;         // scope/byteCodeIndex making unknown unlikely
-        int            _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
+        int _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
 
     public:
         Expression * next;                    // used for splittable MergeExprs
-        int        flags;
+        int flags;
 
         Expression( PseudoRegister * p, Node * n );
 

@@ -10,6 +10,7 @@
 #include "allocation.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/memory/WaterMark.hpp"
+
 class ObjectClosure;
 
 class Space : public CHeapAllocatedObject {

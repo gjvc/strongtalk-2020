@@ -70,13 +70,13 @@ char * ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // NOTE: The resulting string is allocated in Cheap
 
     assert_byteArray( this, "should be a byte array" );
-    smi_t     t     = length();               // Copy and 'escape' null chars.
+    smi_t     t = length();               // Copy and 'escape' null chars.
     smi_t     i;
-    for ( int i     = length() - 1; i >= 0; i-- )
+    for ( int i = length() - 1; i >= 0; i-- )
         if ( byte_at( i ) == '\0' )
             t++;
     // t is total length of result string.
-    char      * res = new_c_heap_array <char>( t + 1 );
+    char * res = new_c_heap_array <char>( t + 1 );
     res[ t-- ] = '\0';
     for ( int i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
@@ -199,9 +199,9 @@ int ByteArrayOopDescriptor::hash_value() {
 
 
 const char * ByteArrayOopDescriptor::as_string() {
-    int  len     = length();
-    char * str   = new_resource_array <char>( len + 1 );
-    int  index   = 0;
+    int len = length();
+    char * str = new_resource_array <char>( len + 1 );
+    int index    = 0;
     for ( ; index < len; index++ ) {
         str[ index ] = byte_at( index + 1 );
     }

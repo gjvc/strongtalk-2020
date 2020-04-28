@@ -21,7 +21,7 @@ class AgeTable : public CHeapAllocatedObject {
         enum {
             table_size = MarkOopDescriptor::max_age + 1
         };
-        std::array<int, table_size>_sizes;
+        std::array <int, table_size> _sizes;
         AgeTable();
 
 

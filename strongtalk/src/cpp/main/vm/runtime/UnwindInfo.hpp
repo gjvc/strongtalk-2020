@@ -10,6 +10,7 @@
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
+
 class CompiledVirtualFrame;
 
 // UnwindInfo is a wrapper calls allowing a primitive like unwindprotect to call delta even though a non local return is in progress.

@@ -9,9 +9,10 @@
 
 #include <array>
 
-std::array<const char *, REGISTER_COUNT>registerNames = {
+std::array <const char *, REGISTER_COUNT> registerNames = {
     "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
 };
+
 
 const char * Register::name() const {
     return ( const char * ) ( isValid() ? registerNames[ _number ] : "noreg" );

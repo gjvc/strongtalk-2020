@@ -71,11 +71,11 @@ void BlockClosureOopDescriptor::deoptimize() {
     if ( not isCompiledBlock() )
         return; // do nothing if unoptimized
 
-    ContextOop con                         = lexical_scope();
+    ContextOop con = lexical_scope();
     if ( con == nilObj )
         return;     // do nothing if lexical scope is nil
 
-    int                            index;
+    int index;
     NativeMethod                   * nm    = jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor * scope = nm->noninlined_block_scope_at( index );
 

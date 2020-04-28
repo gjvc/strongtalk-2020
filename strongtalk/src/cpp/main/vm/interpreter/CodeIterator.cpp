@@ -13,7 +13,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 bool_t Interpreted_DLLCache::async() const {
     uint8_t * p = ( uint8_t * ) this;                // p point to first Oop in DLL call
     while ( ByteCodes::Code( *--p ) == ByteCodes::Code::halt );    // search back for DLL call bytecode
@@ -211,7 +210,7 @@ MethodOop CodeIterator::block_method() {
 void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar_name or code() == ByteCodes::Code::store_classVar_pop_name or code() == ByteCodes::Code::store_classVar_name, "must be class variable byte code" );
 
-    Oop       * p  = aligned_oop( 1 );
+    Oop * p = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     AssociationOop assoc = to_klass->klass_part()->lookup_class_var( name );
@@ -230,7 +229,7 @@ void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
 void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop            * p       = aligned_oop( 1 );
+    Oop * p = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     if ( code() == ByteCodes::Code::push_classVar )
@@ -246,7 +245,7 @@ void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
 void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop            * p       = aligned_oop( 1 );
+    Oop * p = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     AssociationOop new_assoc = to_klass->klass_part()->lookup_class_var( old_assoc->key() );
@@ -267,7 +266,7 @@ void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_
 void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar_name or code() == ByteCodes::Code::store_instVar_pop_name or code() == ByteCodes::Code::store_instVar_name or code() == ByteCodes::Code::return_instVar_name, "must be instance variable byte code" );
 
-    Oop       * p  = aligned_oop( 1 );
+    Oop * p = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     int offset = to_klass->klass_part()->lookup_inst_var( name );

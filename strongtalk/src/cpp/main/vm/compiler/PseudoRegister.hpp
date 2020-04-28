@@ -26,35 +26,38 @@
 // TempPseudoRegisters: local to one BasicBlock, used for certain hard-coded idioms (e.g. loading an uplevel-accessed value)
 
 class RegisterEqClass;
+
 class DefinitionUsageInfo;
+
 class CopyPropagationInfo;
+
 class BlockPseudoRegister;
 
 
 class PseudoRegister : public PrintableResourceObject {
 
     protected:
-        int16_t          _id;               // unique id
-        int16_t          _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-        int16_t          _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-        int16_t          _softUsageCount;   // number of "soft" uses
-        LogicalAddress   * _logicalAddress; // for new backend only: logical address if created or nullptr
+        int16_t _id;               // unique id
+        int16_t _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+        int16_t _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+        int16_t _softUsageCount;   // number of "soft" uses
+        LogicalAddress * _logicalAddress; // for new backend only: logical address if created or nullptr
         static const int AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
     public:
         static int                                      currentNo;              // id of next PseudoRegister created
         GrowableArray <PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
-        InlinedScope                                    * _scope;               // scope to which this belongs
-        Location                                        _location;              // real location assigned to this preg
-        CopyPropagationInfo                             * _copyPropagationInfo; // to follow effects of copy propagation
-        GrowableArray <PseudoRegister *>                * cpRegs;               // registers copy-propagated away by this
-        int                                             regClass;               // register equivalence class number
-        PseudoRegister                                  * regClassLink;         // next element in class
-        int                                             _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
-        GrowableArray <BlockPseudoRegister *>           * _uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
-        GrowableArray <BlockPseudoRegister *>           * _uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
-        bool_t                                          _debug;                 // value/loc needed for debugging info?
-        int                                             _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
+        InlinedScope * _scope;               // scope to which this belongs
+        Location _location;              // real location assigned to this preg
+        CopyPropagationInfo * _copyPropagationInfo; // to follow effects of copy propagation
+        GrowableArray <PseudoRegister *> * cpRegs;               // registers copy-propagated away by this
+        int                              regClass;               // register equivalence class number
+        PseudoRegister * regClassLink;         // next element in class
+        int                                   _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
+        GrowableArray <BlockPseudoRegister *> * _uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
+        GrowableArray <BlockPseudoRegister *> * _uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
+        bool_t                                _debug;                 // value/loc needed for debugging info?
+        int                                   _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
 
     protected:
         void initialize() {
@@ -466,7 +469,7 @@ class SinglyAssignedPseudoRegister : public PseudoRegister {
 
 class BlockPseudoRegister : public SinglyAssignedPseudoRegister {
     protected:
-        CompileTimeClosure               * _closure;            // the compile-time closure representation
+        CompileTimeClosure * _closure;            // the compile-time closure representation
         bool_t                           _memoized;                // is this a memoized block?
         bool_t                           _escapes;            // does the block escape?
         GrowableArray <Node *>           * _escapeNodes;            // list of all nodes where the block escapes (or nullptr)

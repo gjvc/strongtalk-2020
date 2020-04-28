@@ -8,7 +8,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 const char * PrimitivesGenerator::allocateBlock( int n ) {
 
     KlassOopDescriptor ** block_klass;

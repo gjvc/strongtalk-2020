@@ -60,10 +60,13 @@ extern "C" KlassOop nineArgumentBlockKlassObj;
 extern "C" KlassOop doubleValueArrayKlassObj;
 
 class SymbolTable;
+
 class AgeTable;
+
 class Zone;
 
 class klassOopClosure;
+
 class OopClosure;
 
 class Universe : AllStatic {

@@ -13,7 +13,9 @@
 
 
 class InterpretedPrimitiveCache;
+
 class Interpreted_DLLCache;
+
 class InterpretedInlineCache;
 
 // CodeIterator is a simple but fast iterator for scanning byte code instructions in a methodOop.
@@ -22,8 +24,8 @@ class CodeIterator : public StackAllocatedObject {
 
     private:
         MethodOop _methodOop;
-        uint8_t   * _current;
-        uint8_t   * _end;
+        uint8_t * _current;
+        uint8_t * _end;
 
         void align();
 
@@ -167,6 +169,7 @@ class CodeIterator : public StackAllocatedObject {
         void set_code( uint8_t code ) {
             *_current = code;
         }
+
 
         void set_code( ByteCodes::Code code ) {
             *_current = static_cast<uint8_t>( code );

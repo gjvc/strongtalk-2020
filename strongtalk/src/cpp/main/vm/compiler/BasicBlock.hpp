@@ -19,7 +19,9 @@
 class Node;
 
 class BasicBlockIterator;
+
 class DefinitionUsageInfo;
+
 class BlockPseudoRegister;
 
 
@@ -49,8 +51,8 @@ class BasicBlock : public PrintableResourceObject {
         bool_t _visited;
 
     public: // was "protected:" originally
-        Node    * _first;            //
-        Node    * _last;             //
+        Node * _first;            //
+        Node * _last;             //
         int16_t _nodeCount;         // number of nodes in this BasicBlock
 
     protected:
@@ -183,7 +185,7 @@ class BasicBlock : public PrintableResourceObject {
 class DefinitionUsageInfo : public PrintableResourceObject {
 
     public:
-        PseudoRegister       * _pseudoRegister;
+        PseudoRegister * _pseudoRegister;
         SList <Usage *>      _usages;    // uses (in order of nodes within BasicBlock)
         SList <Definition *> _definitions;
 

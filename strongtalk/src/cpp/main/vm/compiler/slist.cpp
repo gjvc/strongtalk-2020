@@ -30,7 +30,7 @@ GenericSListElem * GenericSList::findL( void * token, slistFindFn f ) const {
 void * GenericSList::nthL( int n ) const {
     st_assert( n < length(), "non-existing element" );
     GenericSListElem * e = headL();
-    for ( int        i   = 0; i < n; i++, e = e->nextL() );
+    for ( int i = 0; i < n; i++, e = e->nextL() );
     return e->dataL();
 }
 

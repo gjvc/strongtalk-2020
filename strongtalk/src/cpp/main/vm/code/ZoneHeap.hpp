@@ -221,9 +221,9 @@ class ChunkKlass {
 
 
         ChunkKlass * prev() {
-            ChunkKlass * p  = asChunkKlass( asByte() - 1 );
-            int        ovfl = p->isUsed() ? usedOvfl : unusedOvfl;
-            int        len;
+            ChunkKlass * p = asChunkKlass( asByte() - 1 );
+            int ovfl = p->isUsed() ? usedOvfl : unusedOvfl;
+            int len;
             if ( c( -1 ) not_eq ovfl ) {
                 len = p->size();
             } else {
@@ -248,10 +248,10 @@ class ZoneHeap : public CHeapAllocatedObject {
         int nfree;                  // number of free lists
 
     protected:
-        int        log2BS;         // log2(blockSize)
-        int        _bytesUsed;     // used bytes (rounded to block size)
-        int        _total;         // total bytes allocated so far
-        int        _ifrag;         // bytes wasted by internal fragmentation
+        int log2BS;         // log2(blockSize)
+        int _bytesUsed;     // used bytes (rounded to block size)
+        int _total;         // total bytes allocated so far
+        int _ifrag;         // bytes wasted by internal fragmentation
         const char * _base;         // for deallocation
         const char * base;          // base addr of heap (aligned to block size)
 
@@ -262,7 +262,7 @@ class ZoneHeap : public CHeapAllocatedObject {
 
     public:
         ZoneHeap * _newHeap;                 // only set when growing a heap (i.e. replacing it)
-        bool_t   _combineOnDeallocation;    // do eager block combination on deallocs?
+        bool_t _combineOnDeallocation;    // do eager block combination on deallocs?
 
     public:
         ZoneHeap( int s, int bs );

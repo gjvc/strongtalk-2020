@@ -602,7 +602,7 @@ bool_t evaluator::process_line( const char * line ) {
 void evaluator::read_eval_loop() {
     ResourceMark resourceMark;
 
-    char *line;
+    char * line;
     while ( ( line = readline( "Eval> " ) ) not_eq nullptr ) {
         if ( strlen( line ) > 0 ) {
             add_history( line );

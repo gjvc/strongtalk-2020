@@ -43,8 +43,11 @@ struct NativeMethodFlags {
 //  6) dependency information
 
 class ProgramCounterDescriptor;
+
 class PrimitiveInlineCache;
+
 class Compiler;
+
 class nativeMethod_patch;
 
 

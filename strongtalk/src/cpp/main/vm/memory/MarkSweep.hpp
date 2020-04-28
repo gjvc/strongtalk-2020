@@ -34,9 +34,9 @@ class MarkSweep : AllStatic {
         // the hcode pointer offsets saved before and
         // and retrieved after the garbage collection.
         static GrowableArray <int>    * hcode_offsets;
-        static int                    hcode_pos;
+        static int hcode_pos;
         // resource area for non-aligned oops requiring relocation (eg. in nativeMethods)
-        static OopRelocations         * _oopRelocations;
+        static OopRelocations * _oopRelocations;
 
     private:
         static void mark_sweep_phase1( Oop * p );

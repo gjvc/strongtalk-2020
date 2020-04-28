@@ -28,7 +28,7 @@ typedef struct {
 class OopChunk : public ResourceObject {
 
     private:
-        oopAssoc       oop_start[1000];
+        oopAssoc oop_start[1000];
         const oopAssoc * oop_end;
         oopAssoc       * next;
 
@@ -67,7 +67,7 @@ class OopChunk : public ResourceObject {
 class OopRelocations : public ResourceObject {
     private:
         GrowableArray <OopChunk *> * chunks;
-        OopChunk                   * current;
+        OopChunk * current;
 
 
         void newChunk() {
@@ -100,7 +100,7 @@ class OopRelocations : public ResourceObject {
 GrowableArray <MemOop> * MarkSweep::_stack;
 GrowableArray <int>    * MarkSweep::hcode_offsets;
 int                    MarkSweep::hcode_pos;
-OopRelocations         * MarkSweep::_oopRelocations;
+OopRelocations * MarkSweep::_oopRelocations;
 
 
 void oopVerify( Oop * p ) {

@@ -171,7 +171,7 @@ Oop MemOopKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
     if ( obj == falseObj )
         return obj;
 
-    int len     = MemOop( obj )->size();
+    int len = MemOop( obj )->size();
     // Important to preserve obj (in case of scavenge).
     Oop * clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, ( MemOop * ) &obj );
     Oop * to    = clone;

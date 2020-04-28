@@ -58,20 +58,23 @@ struct CostParam {
 // The PerformanceDebugger reports info useful for finding performance bugs (e.g., contexts and blocks that can't be eliminated and the reasons why).
 
 class PrimitiveDescriptor;
+
 class Compiler;
+
 class BlockPseudoRegister;
+
 class InlinedScope;
 
 
 class PerformanceDebugger : public ResourceObject {
 
     private:
-        Compiler                              * _compiler;
+        Compiler * _compiler;
         bool_t                                _compileAlreadyReported;          // have we already reported something for this compile?
         GrowableArray <BlockPseudoRegister *> * _blockPseudoRegisters;
         GrowableArray <char *>                * _reports;                                // list of reports already printed (to avoid duplicates)
-        StringOutputStream                    * _stringStream;
-        GrowableArray <InlinedScope *>        * _notInlinedBecauseNativeMethodTooBig;
+        StringOutputStream * _stringStream;
+        GrowableArray <InlinedScope *> * _notInlinedBecauseNativeMethodTooBig;
 
     public:
         PerformanceDebugger( Compiler * c );

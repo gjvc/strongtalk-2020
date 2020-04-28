@@ -78,6 +78,7 @@ class PSoftUsage : public Usage {
 };
 
 class PseudoRegister;
+
 class BasicBlock;
 
 // a PseudoRegisterBasicBlockIndex is an index into a particular element of a BasicBlockDefinitionAndUsageTable
@@ -85,7 +86,7 @@ class PseudoRegisterBasicBlockIndex : public PrintableResourceObject {
 
     public:
         BasicBlock * _basicBlock;             // BasicBlock containing some of PseudoRegister's definitions/uses
-        int        _index;           // index into BasicBlock's BasicBlockDefinitionAndUsageTable
+        int _index;           // index into BasicBlock's BasicBlockDefinitionAndUsageTable
 
         PseudoRegisterBasicBlockIndex( BasicBlock * b, int i, PseudoRegister * pr ) {
             _basicBlock = b;

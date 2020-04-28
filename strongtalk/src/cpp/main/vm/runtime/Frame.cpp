@@ -131,7 +131,7 @@ InterpretedInlineCache * Frame::current_interpretedIC() const {
     if ( is_interpreted_frame() ) {
         MethodOop m             = method();
         int       byteCodeIndex = m->byteCodeIndex_from( hp() );
-        uint8_t   * codeptr     = m->codes( byteCodeIndex );
+        uint8_t * codeptr = m->codes( byteCodeIndex );
         if ( ByteCodes::is_send_code( ByteCodes::Code( *codeptr ) ) ) {
             InterpretedInlineCache * ic = as_InterpretedIC( ( const char * ) hp() );
             st_assert( ic->send_code_addr() == codeptr, "found wrong ic" );
@@ -241,7 +241,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray <Oop> * stack = vf->expression_stack();
-            for ( int           index   = 0; index < stack->length(); index++ ) {
+            for ( int index = 0; index < stack->length(); index++ ) {
                 stream->print( "    %3d: ", index );
                 stack->at( index )->print_value_on( stream );
                 stream->cr();
@@ -499,8 +499,8 @@ void Frame::restore_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Readjust hcode pointer
-    uint8_t * obj  = hp();
-    int     offset = MarkSweep::next_heap_code_offset();
+    uint8_t * obj = hp();
+    int offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
         lprintf( "[0x%lx+%d]\n", obj, offset );
     set_hp( obj + offset );

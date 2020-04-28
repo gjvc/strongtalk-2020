@@ -73,8 +73,8 @@ const char * Klass::name_from_format( Format format ) {
             return "Oops";
         case Format::proxy_klass:
             return "ExternalProxy";
-        // case Format::process_klass:
-        // return "Process";
+            // case Format::process_klass:
+            // return "Process";
         case Format::objArray_klass:
             return "IndexedInstanceVariables";
         case Format::byteArray_klass:
@@ -202,7 +202,7 @@ SymbolOop Klass::inst_var_name_at( int offset ) const {
     Klass * current_klass = ( Klass * ) this;
     int current_offset = non_indexable_size();
     do {
-        MixinOop m = current_klass->mixin();
+        MixinOop  m = current_klass->mixin();
         for ( int i = m->number_of_instVars(); i > 0; i-- ) {
             current_offset--;
             if ( offset == current_offset )
@@ -299,7 +299,7 @@ AssociationOop Klass::remove_classVar_at( int index ) {
 
 bool_t Klass::includes_classVar( SymbolOop name ) {
     ObjectArrayOop array = classVars();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == name )
             return true;
@@ -310,7 +310,7 @@ bool_t Klass::includes_classVar( SymbolOop name ) {
 
 AssociationOop Klass::local_lookup_class_var( SymbolOop name ) {
     ObjectArrayOop array = classVars();
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_association(), "must be symbol" );
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == name )
@@ -365,7 +365,7 @@ MethodOop Klass::local_lookup( SymbolOop selector ) {
                 } else {
                     BlockScavenge bs;
                     // Make customized version for klass
-                    MethodOop new_method = method->copy_for_customization();
+                    MethodOop     new_method = method->copy_for_customization();
                     new_method->customize_for( as_klassOop(), mixin() );
                     add_method( new_method );
                     return new_method;
@@ -405,7 +405,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
 
     ObjectArrayOop array = methods();
     // Find out if a method with the same selector exists.
-    for ( int   index = 1; index <= array->length(); index++ ) {
+    for ( int      index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_method(), "must be method" );
         if ( MethodOop( array->obj_at( index ) ) == m )
             return true;

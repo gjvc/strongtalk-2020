@@ -19,6 +19,7 @@ class NewWaterMark : ValueObject {
 };
 
 class OldSpace;
+
 class OldWaterMark : ValueObject {
     public:
         OldSpace * _space;

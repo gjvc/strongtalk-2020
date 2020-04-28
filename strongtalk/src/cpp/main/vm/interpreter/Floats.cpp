@@ -192,7 +192,7 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
             masm->fld1();
             break;
 
-        // unary functions
+            // unary functions
         case abs:
             masm->fabs();
             break;
@@ -215,7 +215,7 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
         case ln:
             masm->int3(); /* Unimplemented */        break;
 
-        // binary functions
+            // binary functions
         case add:
             masm->faddp();
             break;
@@ -233,7 +233,7 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
             masm->fprem();
             break;
 
-        // unary functions to Oop
+            // unary functions to Oop
         case is_zero:
             generate_tst( masm, Assembler::Condition::zero );
             break;
@@ -243,8 +243,8 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
         case oopify:
             masm->hlt();    /* see InterpreterGenerator */    break;
 
-        // binary functions to Oop
-        // (Note: This is comparing ST(1) with ST while the bits in the FPU status word (assume comparison of ST with ST(1) -> reverse the conditions).
+            // binary functions to Oop
+            // (Note: This is comparing ST(1) with ST while the bits in the FPU status word (assume comparison of ST with ST(1) -> reverse the conditions).
         case is_equal:
             generate_cmp( masm, Assembler::Condition::equal );
             break;
@@ -289,7 +289,7 @@ void Floats::init( MacroAssembler * masm ) {
 
     _console->print_cr( "yes" );
     _console->print_cr( "%%system-init:  Floats::init" );
-    _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size());
+    _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size() );
     _console->print_cr( "%%system-init: number_of_functions %ld", number_of_functions );
 //    st_assert( _function_names.size() == number_of_functions, "Floats: number of _functions_names not equal number_of_functions" );
     _console->print_cr( "hello" );

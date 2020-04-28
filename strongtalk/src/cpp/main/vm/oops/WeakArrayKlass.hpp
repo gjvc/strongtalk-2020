@@ -96,7 +96,7 @@ class WeakArrayRegister : AllStatic {
 
     private:
         // Variables
-        static bool_t                       during_registration;
+        static bool_t during_registration;
         static GrowableArray <WeakArrayOop> * weakArrays;
         static GrowableArray <int>          * nis;
 

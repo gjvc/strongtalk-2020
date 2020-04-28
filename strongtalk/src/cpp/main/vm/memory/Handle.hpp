@@ -24,8 +24,8 @@ class BaseHandle {
 
     private:
         const char * _label;
-        bool_t     _log;
-        Oop        _saved;
+        bool_t _log;
+        Oop    _saved;
         BaseHandle * _next;
         BaseHandle * _prev;
 
@@ -81,7 +81,7 @@ class StackHandle : public BaseHandle, StackAllocatedObject {
 class PersistentHandle : public CHeapAllocatedObject {
 
     private:
-        Oop                     _saved;
+        Oop _saved;
         PersistentHandle        * _next;
         PersistentHandle        * _prev;
         static PersistentHandle * _first;

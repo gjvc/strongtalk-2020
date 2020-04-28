@@ -10,6 +10,7 @@
 #include "vm/memory/Generation.hpp"
 #include "vm/memory/Space.hpp"
 #include "vm/memory/WaterMark.hpp"
+
 class OldGeneration : public Generation {
         friend class RememberedSet;
 

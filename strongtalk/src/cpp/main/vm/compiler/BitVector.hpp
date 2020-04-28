@@ -95,8 +95,8 @@ class BitVector : public PrintableResourceObject {
 
         int * copyBitString( int len ) {
             st_assert( len >= _maxLength, "can't shorten" );
-            int blen    = bitsLength( len );
-            int * bs    = new_resource_array <int>( blen );
+            int blen = bitsLength( len );
+            int * bs = new_resource_array <int>( blen );
             int blength = bitsLength( _maxLength );
             copy_words( _bits, bs, blength );
             if ( blength < blen )

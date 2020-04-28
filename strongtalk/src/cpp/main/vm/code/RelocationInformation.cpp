@@ -27,7 +27,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, int off ) {
 
     st_assert( 0 <= static_cast<int>(t) and static_cast<int>(t) < ( 1 << reloc_type_width ), "wrong type" );
@@ -43,7 +42,7 @@ int RelocationInformation::print( NativeMethod * m, int last_offset ) {
         return 0;
 
     int current_offset = offset() + last_offset;
-    int * addr         = ( int * ) ( m->instructionsStart() + current_offset );
+    int * addr = ( int * ) ( m->instructionsStart() + current_offset );
     printIndent();
     if ( isOop() ) {
         _console->print( "embedded Oop   @0x%lx = ", addr );

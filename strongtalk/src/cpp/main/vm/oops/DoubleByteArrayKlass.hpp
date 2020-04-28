@@ -10,7 +10,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 class DoubleByteArrayKlass : public MemOopKlass {
 
     public:

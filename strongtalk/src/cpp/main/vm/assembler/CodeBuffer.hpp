@@ -21,7 +21,7 @@ class CodeBuffer : public PrintableResourceObject {
         RelocationInformation * _locsStart;
         RelocationInformation * _locsEnd;
         RelocationInformation * _locsOverflow;
-        int                   _last_reloc_offset;
+        int _last_reloc_offset;
 
         const char * _decode_begin;
 
