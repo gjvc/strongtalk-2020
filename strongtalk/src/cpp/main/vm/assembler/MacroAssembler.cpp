@@ -221,7 +221,7 @@ void MacroAssembler::store_check( Register obj, Register tmp ) {
     st_assert( obj not_eq tmp, "registers must be different" );
     Label no_store;
     cmpl( obj, ( int ) Universe::new_gen.boundary() );        // assumes boundary between new_gen and old_gen is fixed
-    jcc( Assembler::less, no_store );                      // avoid marking dirty if target is a new object
+    jcc( Assembler::Condition::less, no_store );                      // avoid marking dirty if target is a new object
     movl( tmp, Address( ( int ) &byte_map_base, RelocationInformation::RelocationType::external_word_type ) );
     shrl( obj, card_shift );
     movb( Address( tmp, obj, Address::times_1 ), 0 );
@@ -231,31 +231,31 @@ void MacroAssembler::store_check( Register obj, Register tmp ) {
 
 void MacroAssembler::fpu_mask_and_cond_for( Condition cc, int & mask, Condition & cond ) {
     switch ( cc ) {
-        case equal:
+        case Condition::equal:
             mask = 0x4000;
-            cond = notZero;
+            cond = Condition::notZero;
             break;
-        case notEqual:
+        case Condition::notEqual:
             mask = 0x4000;
-            cond = zero;
+            cond = Condition::zero;
             break;
-        case less:
+        case Condition::less:
             mask = 0x0100;
-            cond = notZero;
+            cond = Condition::notZero;
             break;
-        case lessEqual:
+        case Condition::lessEqual:
             mask = 0x4500;
-            cond = notZero;
+            cond = Condition::notZero;
             break;
-        case greater:
+        case Condition::greater:
             mask = 0x4500;
-            cond = zero;
+            cond = Condition::zero;
             break;
-        case greaterEqual:
+        case Condition::greaterEqual:
             mask = 0x0100;
-            cond = zero;
+            cond = Condition::zero;
             break;
-        default        : Unimplemented();
+        default: Unimplemented();
     };
 }
 

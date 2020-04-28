@@ -7,7 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/code/NameDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

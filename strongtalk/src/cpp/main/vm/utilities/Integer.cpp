@@ -10,7 +10,7 @@
 #include "vm/utilities/double.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 
 
 int Integer::length() const {

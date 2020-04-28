@@ -13,7 +13,7 @@
 
 // -----------------------------------------------------------------------------
 
-typedef class smiOopDescriptor * SMIOop;
+typedef class SMIOopDescriptor * SMIOop;
 
 // 0, 1 in SMIOop format
 //#define smiOop_zero  SMIOop( (0L << TAG_SIZE) + INTEGER_TAG )
@@ -43,7 +43,7 @@ inline SMIOop smiOopFromValue( smi_t value ) {
 }
 
 
-class smiOopDescriptor : public OopDescriptor {
+class SMIOopDescriptor : public OopDescriptor {
 
     public:
         friend SMIOop smiOopFromValue( smi_t value );

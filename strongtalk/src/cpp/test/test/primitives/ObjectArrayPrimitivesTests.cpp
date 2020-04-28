@@ -23,7 +23,7 @@
 extern "C" int expansion_count;
 
 
-class ObjectArrayPrimsTests : public ::testing::Test {
+class ObjectArrayPrimitivesTests : public ::testing::Test {
 
     protected:
         void SetUp() override {
@@ -41,7 +41,7 @@ class ObjectArrayPrimsTests : public ::testing::Test {
 };
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldAllocateArrayOfCorrectSize ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateArrayOfCorrectSize ) {
 
     HandleMark handles;
     Handle     arrayClassHandle( arrayClass );
@@ -55,7 +55,7 @@ TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldAllocateArrayOfCorrectSize ) {
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldAllocateTenuredArrayOfCorrectSize ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredArrayOfCorrectSize ) {
 
     HandleMark handles;
     Handle     arrayClassHandle( arrayClass );
@@ -70,35 +70,35 @@ TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldAllocateTenuredArrayOfCorrectS
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWithNonObjectArray ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonObjectArray ) {
     Oop result = objArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
     ASSERT_TRUE( result->is_mark() );
     ASSERT_EQ( ( const char * ) markSymbol( vmSymbols::invalid_klass() ), ( const char * ) result );
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWithNonInteger ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonInteger ) {
     Oop result = objArrayPrimitives::allocateSize2( falseObj, arrayClass, arrayClass );
     ASSERT_TRUE( result->is_mark() );
     ASSERT_EQ( ( const char * ) markSymbol( vmSymbols::first_argument_has_wrong_type() ), ( const char * ) result );
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWithNegativeSize ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNegativeSize ) {
     Oop result = objArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( -1 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );
     ASSERT_EQ( ( const char * ) markSymbol( vmSymbols::negative_size() ), ( const char * ) result );
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWhenTenuredNotBoolean ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean ) {
     Oop result = objArrayPrimitives::allocateSize2( Universe::nilObj(), smiOopFromValue( 10 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );
     ASSERT_EQ( ( const char * ) markSymbol( vmSymbols::second_argument_has_wrong_type() ), ( const char * ) result );
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
     int size   = Universe::new_gen.eden()->free() / oopSize;
     Oop result = objArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );
@@ -106,7 +106,7 @@ TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
 }
 
 
-TEST_F( ObjectArrayPrimsTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
     int size   = Universe::old_gen.free() / oopSize;
     Oop result = objArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );

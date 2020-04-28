@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -20,6 +21,7 @@ class InlinedScope; //
 //
 // For each node a code pattern is generated during code generation.
 // Note: offsets in nodes are always in oops!
+
 
 class Node;                     // abstract
 class TrivialNode;              // abstract; has no definitions/uses; most generate no code
@@ -49,8 +51,8 @@ class AbstractBranchNode;               // nodes with (potentially) >1 sucessors
 class TArithRRNode;                     // tagged arithmetic nodes
 class CallNode;                         // abstract
 class SendNode;                         // Delta send
-class PrimitiveNode;                         // primitive call
-class BlockCreateNode;                  // inital block clone (possibly memoized)
+class PrimitiveNode;                    // primitive call
+class BlockCreateNode;                  // initial block clone (possibly memoized)
 class BlockMaterializeNode;     // create block (testing for memoization)
 class InterruptCheckNode;       // interrupt check / stack overflow test
 class DLLNode;                  // DLL call
@@ -68,6 +70,7 @@ class ContextZapNode;           // zap context (new backend only)
 class UncommonNode;             // uncommon branch
 
 void initNodes();               // to be called before each compilation
+void printNodes( Node * n );    // print n and its successors
 
 
 class PrimitiveDescriptor;
@@ -81,12 +84,12 @@ class PseudoRegisterMapping;
 class BasicNode : public PrintableResourceObject {
 
     protected:
+        int16_t _id;                      // unique node id for debugging
+        int16_t _num;                     // node number within basic block
+        int16_t _byteCodeIndex;           // byteCodeIndex within the sc
         BasicBlock            * _basicBlock;            // basic block to which this instance belongs
-        int16_t               _id;            // unique node id for debugging
-        int16_t               _num;           // node number within basic block
-        InlinedScope          * _scope;         // scope to which this instance belongs
-        int16_t               _byteCodeIndex; // byteCodeIndex within the sc
-        PseudoRegisterMapping * _pseudoRegisterMapping;       // the mapping at that node, if any (will be modified during code generation)
+        InlinedScope          * _scope;                 // scope to which this instance belongs
+        PseudoRegisterMapping * _pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
 
     public:
         Label  _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
@@ -914,9 +917,9 @@ class LoadUplevelNode : public LoadNode {
     private:
         Usage          * _context0Use;   //
         PseudoRegister * _context0;      // starting context
-        int            _nofLevels;      // no. of indirections to follow via context home field
-        int            _offset;         // offset of temporary in final context
-        SymbolOop      _name;           // temporary name (for printing)
+        int       _nofLevels;      // no. of indirections to follow via context home field
+        int       _offset;         // offset of temporary in final context
+        SymbolOop _name;           // temporary name (for printing)
 
     protected:
         LoadUplevelNode( PseudoRegister * dst, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name );
@@ -1027,8 +1030,8 @@ class StoreOffsetNode : public StoreNode {
     private:
         PseudoRegister * _base;              // base address (object containing the slot)
         Usage          * _baseUse;           //
-        int            _offset;             // offset in words
-        bool_t         _needsStoreCheck;    // does store need a GC store check?
+        int    _offset;             // offset in words
+        bool_t _needsStoreCheck;    // does store need a GC store check?
 
     protected:
         StoreOffsetNode( PseudoRegister * s, PseudoRegister * b, int o, bool_t nsc ) :
@@ -1111,10 +1114,10 @@ class StoreUplevelNode : public StoreNode {
     private:
         Usage          * _context0Use;       //
         PseudoRegister * _context0;          // starting context
-        int            _nofLevels;          // no. of indirections to follow via context home field
-        int            _offset;             // offset of temporary in final context
-        bool_t         _needsStoreCheck;    // generate a store check if true
-        SymbolOop      _name;               // temporary name (for printing)
+        int       _nofLevels;          // no. of indirections to follow via context home field
+        int       _offset;             // offset of temporary in final context
+        bool_t    _needsStoreCheck;    // generate a store check if true
+        SymbolOop _name;               // temporary name (for printing)
 
     protected:
         StoreUplevelNode( PseudoRegister * src, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name, bool_t needsStoreCheck );
@@ -1658,9 +1661,9 @@ class MergeNode : public AbstractMergeNode {
         MergeNode( Node * prev1, Node * prev2 );
 
     public:
-        bool_t _isLoopStart;         // does this node start a loop?
-        bool_t isLoopEnd;           // does this node end a loop? (i.e., first node after loop)
-        bool_t didStartBasicBlock;  // used for debugging / assertion checks
+        bool_t _isLoopStart;        // does this node start a loop?
+        bool_t _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
+        bool_t _didStartBasicBlock; // used for debugging / assertion checks
 
         int cost() const {
             return 0;
@@ -1705,7 +1708,7 @@ class MergeNode : public AbstractMergeNode {
 class ArithNode : public NonTrivialNode {    // abstract
         // NB: ArithNodes are not used for tagged int arithmetic -- see TArithNode
     protected:
-        ArithOpCode         _op;
+        ArithOpCode _op;
         ConstPseudoRegister * _constResult;    // non-nullptr if constant-folded
 
         ArithNode( ArithOpCode op, PseudoRegister * src, PseudoRegister * dst ) {
@@ -1827,6 +1830,7 @@ class ArithRRNode : public ArithNode {  // reg op reg => reg
 
 
 class FloatArithRRNode : public ArithRRNode {  // for untagged float operations
+
         FloatArithRRNode( ArithOpCode o, PseudoRegister * s, PseudoRegister * o2, PseudoRegister * d ) :
             ArithRRNode( o, s, o2, d ) {
         }
@@ -1981,6 +1985,7 @@ class AbstractBranchNode : public NonTrivialNode {
         };
     protected:
         GrowableArray <Node *> * _nxt;            /* elem 0 is next1 */
+
     public:
 
         Node * next1() const {
@@ -2035,11 +2040,11 @@ class TArithRRNode : public AbstractBranchNode {
         // tagged arithmetic operation; next() is success case, next1()
         // is failure (leaving ORed operands in Temp1 for tag test)
     protected:
-        ArithOpCode         _op;
-        PseudoRegister      * _oper;
-        Usage               * _operUse;
-        bool_t              _arg1IsInt;            // is _src a smi_t?
-        bool_t              _arg2IsInt;            // is _oper a smi_t?
+        ArithOpCode _op;
+        PseudoRegister * _oper;
+        Usage          * _operUse;
+        bool_t _arg1IsInt;            // is _src a smi_t?
+        bool_t _arg2IsInt;            // is _oper a smi_t?
         ConstPseudoRegister * _constResult;            // non-nullptr if constant-folded
 
         TArithRRNode( ArithOpCode o, PseudoRegister * s, PseudoRegister * o2, PseudoRegister * d, bool_t a1, bool_t a2 );
@@ -2151,14 +2156,14 @@ class CallNode : public AbstractBranchNode {
         CallNode( MergeNode * n, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * exprs );
 
     public:
-        GrowableArray <PseudoRegister *> * exprStack;    // current expr. stack for debugging info (nullptr if not needed)
-        GrowableArray <Usage *>          * argUses;    // uses for args and receiver
-        GrowableArray <PseudoRegister *> * uplevelUsed;    // PseudoRegisters potentially uplevel-read during this call (nullptr if not needed)
-        GrowableArray <PseudoRegister *> * uplevelDefd;    // PseudoRegisters potentially uplevel-written during this call (nullptr if not needed)
-        GrowableArray <Usage *>          * uplevelUses;    // uses for uplevel-read names
-        GrowableArray <Definition *>     * uplevelDefs;    // definitions for uplevel-written names
+        GrowableArray <PseudoRegister *> * exprStack;   // current expr. stack for debugging info (nullptr if not needed)
+        GrowableArray <Usage *>          * argUses;     // uses for args and receiver
+        GrowableArray <PseudoRegister *> * uplevelUsed; // PseudoRegisters potentially uplevel-read during this call (nullptr if not needed)
+        GrowableArray <PseudoRegister *> * uplevelDefd; // PseudoRegisters potentially uplevel-written during this call (nullptr if not needed)
+        GrowableArray <Usage *>          * uplevelUses; // uses for uplevel-read names
+        GrowableArray <Definition *>     * uplevelDefs; // definitions for uplevel-written names
         GrowableArray <PseudoRegister *> * args;        // args including receiver (at index 0, followed by first arg), or nullptr
-        int                              nblocks;    // number of possibly live blocks at this point (for uplevel access computation)
+        int                              nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
 
         bool_t hasDest() const {
             return true;
@@ -2207,10 +2212,11 @@ class CallNode : public AbstractBranchNode {
 
 
 class SendNode : public CallNode {
+
     protected:
         LookupKey * _key;      // lookup key (for selector)
-        bool_t    _superSend;  // is it a super send?
-        SendInfo  * _info;      // to set CompiledInlineCache flags (counting, uninlinable, etc.)
+        bool_t _superSend;  // is it a super send?
+        SendInfo * _info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
 
         SendNode( LookupKey * key, MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * exprStk, bool_t superSend, SendInfo * info );
 
@@ -2394,28 +2400,33 @@ class InterruptCheckNode : public PrimitiveNode {
         friend class NodeFactory;
 };
 
+
 class HoistedTypeTest;
+
 class LoopRegCandidate;
 
 
-// a LoopHeaderNode is inserted before every loop; usually it is a no-op
-// for optimized integer loops, it does the pre-loop type tests
+//
+// a LoopHeaderNode is inserted before every loop; usually it is a no-op for optimized integer loops, it does the pre-loop type tests
+//
 class LoopHeaderNode : public TrivialNode {
+
     protected:
         // info for integer loops
-        bool_t                                _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
-        PseudoRegister                        * _loopVar;                    // loop variable
-        PseudoRegister                        * _lowerBound;                    // lower bound
-        PseudoRegister                        * _upperBound;                    // upper bound (or nullptr; mutually exclusive with boundArray)
-        LoadOffsetNode                        * _upperLoad;                // loads array size that is the upper bound
-        GrowableArray <AbstractArrayAtNode *> * _arrayAccesses;    // arrays indexed by loopVar
+        bool_t _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
+        PseudoRegister * _loopVar;              // loop variable
+        PseudoRegister * _lowerBound;           // lower bound
+        PseudoRegister * _upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
+        LoadOffsetNode * _upperLoad;            // loads array size that is the upper bound
+        GrowableArray <AbstractArrayAtNode *> * _arrayAccesses;     // arrays indexed by loopVar
+
+        LoopHeaderNode                      * _enclosingLoop;      // enclosing loop or nullptr
         // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
-        GrowableArray <HoistedTypeTest *>     * _tests;        // type tests hoisted out of loop
-        bool_t                                _activated;                    // gen() does nothing until activated
-        LoopHeaderNode                        * _enclosingLoop;            // enclosing loop or nullptr
-        GrowableArray <LoopHeaderNode *>      * _nestedLoops;        // nested loops (nullptr if none)
-        int                                   _nofCalls;                    // number of non-inlined calls in loop (excluding unlikely code)
-        GrowableArray <LoopRegCandidate *>    * _registerCandidates;// candidates for reg. allocation within loop (best comes first); nullptr if none
+        GrowableArray <HoistedTypeTest *> * _tests;              // type tests hoisted out of loop
+        GrowableArray <LoopHeaderNode *>    * _nestedLoops;        // nested loops (nullptr if none)
+        GrowableArray <LoopRegCandidate *>  * _registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
+        bool_t                            _activated;            // gen() does nothing until activated
+        int                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
         LoopHeaderNode();
 
@@ -2546,6 +2557,7 @@ class BlockCreateNode : public PrimitiveNode {
         // Initializes block (closure) location with closure if it's
         // not a memoized block; and with 0 otherwise
         // src is nullptr (but non-nullptr for subclass instances)
+
     protected:
         PseudoRegister * _context;    // context or parameter/self that's copied into the block (or nullptr)
         Usage          * _contextUse;    // use of _context
@@ -2556,6 +2568,7 @@ class BlockCreateNode : public PrimitiveNode {
         BlockCreateNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
 
     public:
+
         bool_t isBlockCreateNode() const {
             return true;
         }
@@ -2591,6 +2604,7 @@ class BlockCreateNode : public PrimitiveNode {
         int cost() const {
             return 2 * oopSize;
         }    // hope it's memoized
+
         Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
 
 
@@ -2647,6 +2661,7 @@ class BlockMaterializeNode : public BlockCreateNode {
         int cost() const {
             return 5 * oopSize;
         } // assume blk is memoized
+
         Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
 
         void makeUses( BasicBlock * bb );
@@ -2674,11 +2689,11 @@ class BlockMaterializeNode : public BlockCreateNode {
 class ContextCreateNode : public PrimitiveNode {
         // src is parent context, dest is register holding created context
     protected:
-        int                              _nofTemps;            // no. of temps in context
-        int                              _contextSize;            // size of compiled context
+        int                              _nofTemps;             // no. of temps in context
+        int                              _contextSize;          // size of compiled context
         int                              _contextNo;            // context number (index into compiler's contextList)
-        GrowableArray <PseudoRegister *> * _parentContexts;        // context chain above parent context (if any)
-        GrowableArray <Usage *>          * _parentContextUses;        // for _parentContexts
+        GrowableArray <PseudoRegister *> * _parentContexts;     // context chain above parent context (if any)
+        GrowableArray <Usage *>          * _parentContextUses;  // for _parentContexts
 
         ContextCreateNode( PseudoRegister * parent, PseudoRegister * context, int nofTemps, GrowableArray <PseudoRegister *> * expr_stack );
 
@@ -2771,11 +2786,10 @@ class ContextCreateNode : public PrimitiveNode {
 class ContextInitNode : public NonTrivialNode {
         // initializes contents of context; src is context (if _src == nullptr context was eliminated)
     protected:
-        GrowableArray <Expression *>           * _initializers;        // arguments/nil to be copied into context
-        GrowableArray <Definition *>           * _contentDefs;
-        GrowableArray <Usage *>                * _initializerUses;
-        GrowableArray <BlockMaterializeNode *> * _materializedBlocks;    // blocks that must be materialized
-        // if this context is created
+        GrowableArray <Expression *>           * _initializers;         // arguments/nil to be copied into context
+        GrowableArray <Definition *>           * _contentDefs;          //
+        GrowableArray <Usage *>                * _initializerUses;      //
+        GrowableArray <BlockMaterializeNode *> * _materializedBlocks;   // blocks that must be materialized if this context is created
 
         ContextInitNode( ContextCreateNode * creator );
 
@@ -2879,7 +2893,8 @@ class ContextInitNode : public NonTrivialNode {
 
 
 class ContextZapNode : public NonTrivialNode {
-// placeholder for context zap code; zapping is only needed if the node isActive().
+
+        // placeholder for context zap code; zapping is only needed if the node isActive().
     private:
         ContextZapNode( PseudoRegister * context ) {
             _src = context;
@@ -3003,7 +3018,7 @@ class BranchNode : public AbstractBranchNode {
         // conditional branches expect CCs to be set by previous node (backend specific?)
         // usually after a node that sets CCs
     protected:
-        BranchOpCode _op;                // branch untaken is likely
+        BranchOpCode _op;                       // branch untaken is likely
         bool_t       _taken_is_uncommon;        // true if branch taken is uncommon
 
         BranchNode( BranchOpCode op, bool_t taken_is_uncommon ) {
@@ -3064,12 +3079,11 @@ class BranchNode : public AbstractBranchNode {
 
 
 class TypeTestNode : public AbstractBranchNode {
-        // n-way map test; next(i) is the ith class [i=1..n], next() is the
-        // "otherwise" branch
+        // n-way map test; next(i) is the ith class [i=1..n], next() is the "otherwise" branch
         // _src is the register containing the receiver
     protected:
         GrowableArray <KlassOop> * _classes;    // classes to test for
-        bool_t                   _hasUnknown;                // can recv be anything? (if false, recv class
+        bool_t _hasUnknown;                // can recv be anything? (if false, recv class
         // guaranteed to be in classes list)
 
         bool_t needsKlassLoad() const;        // does test need object's klass?
@@ -3175,18 +3189,17 @@ class TypeTestNode : public AbstractBranchNode {
 
 
 class AbstractArrayAtNode : public AbstractBranchNode {
-        // array access: test index type & range, load element
-        // next() is the success case, next1() the failure
+        // array access: test index type & range, load element next() is the success case, next1() the failure
     protected:
         // _src is the array, _dest the result
-        PseudoRegister * _arg;                    // index value
-        Usage          * _argUse;
-        bool_t         _intArg;                // need not test for int if true
-        PseudoRegister * _error;            // where to move the error string
-        Definition     * _errorDef;
-        bool_t         _needBoundsCheck;    // need array bounds check?
-        int            _dataOffset;            // where start of array is (Oop offset)
-        int            _sizeOffset;            // where size of array is (Oop offset)
+        PseudoRegister * _arg;          // index value
+        Usage          * _argUse;       //
+        PseudoRegister * _error;        // where to move the error string
+        Definition     * _errorDef;     //
+        bool_t _needBoundsCheck;        // need array bounds check?
+        bool_t _intArg;                 // need not test for int if true
+        int    _dataOffset;             // where start of array is (Oop offset)
+        int    _sizeOffset;             // where size of array is (Oop offset)
 
         AbstractArrayAtNode( PseudoRegister * r, PseudoRegister * idx, bool_t ia, PseudoRegister * res, PseudoRegister * _err, int dataOffset, int sizeOffset ) {
             _src             = r;
@@ -3266,25 +3279,26 @@ class AbstractArrayAtNode : public AbstractBranchNode {
 
 
 class ArrayAtNode : public AbstractArrayAtNode {
+
     public:
         enum AccessType {
-            byte_at,                // corresponds to primitiveIndexedByteAt:ifFail:
-            double_byte_at,            // corresponds to primitiveIndexedDoubleByteAt:ifFail:
-            character_at,            // corresponds to primitiveIndexedDoubleByteCharacterAt:ifFail:
-            object_at                // corresponds to primitiveIndexedObjectAt:ifFail:
+            byte_at,        // corresponds to primitiveIndexedByteAt:ifFail:
+            double_byte_at, // corresponds to primitiveIndexedDoubleByteAt:ifFail:
+            character_at,   // corresponds to primitiveIndexedDoubleByteCharacterAt:ifFail:
+            object_at       // corresponds to primitiveIndexedObjectAt:ifFail:
         };
 
     protected:
         AccessType _access_type;
 
-        ArrayAtNode( AccessType access_type,        // specifies the operation
-                     PseudoRegister * array,            // holds the array
-                     PseudoRegister * index,            // holds the index
-                     bool_t smiIndex,        // true if index is known to be a smi_t, false otherwise
-                     PseudoRegister * result,            // where the result is stored
-                     PseudoRegister * error,            // where the error symbol is stored if the operation fails
-                     int data_offset,        // data offset in oops relative to array
-                     int length_offset        // array length offset in oops relative to array
+        ArrayAtNode( AccessType access_type,    // specifies the operation
+                     PseudoRegister * array,    // holds the array
+                     PseudoRegister * index,    // holds the index
+                     bool_t smiIndex,           // true if index is known to be a smi_t, false otherwise
+                     PseudoRegister * result,   // where the result is stored
+                     PseudoRegister * error,    // where the error symbol is stored if the operation fails
+                     int data_offset,           // data offset in oops relative to array
+                     int length_offset          // array length offset in oops relative to array
         );
 
     public:
@@ -3350,9 +3364,9 @@ class ArrayAtNode : public AbstractArrayAtNode {
 
 
 class AbstractArrayAtPutNode : public AbstractArrayAtNode {
-        // array store: test index type & range, store element
-        // next() is the success case, next1() the failure
+
     protected:
+        // array store: test index type & range, store element next() is the success case, next1() the failure
         PseudoRegister * elem;
         Usage          * elemUse;
 
@@ -3383,11 +3397,12 @@ class AbstractArrayAtPutNode : public AbstractArrayAtNode {
 
 
 class ArrayAtPutNode : public AbstractArrayAtPutNode {
+
     public:
         enum AccessType {
             byte_at_put,            // corresponds to primitiveIndexedByteAt:put:ifFail:
-            double_byte_at_put,            // corresponds to primitiveIndexedDoubleByteAt:put:ifFail:
-            object_at_put            // corresponds to primitiveIndexedObjectAt:put:ifFail:
+            double_byte_at_put,     // corresponds to primitiveIndexedDoubleByteAt:put:ifFail:
+            object_at_put           // corresponds to primitiveIndexedObjectAt:put:ifFail:
         };
 
 
@@ -3402,16 +3417,16 @@ class ArrayAtPutNode : public AbstractArrayAtPutNode {
         bool_t     _smi_element;
         bool_t     _needs_element_range_check;
 
-        ArrayAtPutNode( AccessType access_type,        // specifies the operation
-                        PseudoRegister * array,            // holds the array
-                        PseudoRegister * index,            // holds the index
-                        bool_t smi_index,        // true if index is known to be a smi_t, false otherwise
-                        PseudoRegister * element,        // holds the element
-                        bool_t smi_element,        // true if element is known to be a smi_t, false otherwise
-                        PseudoRegister * result,            // where the result is stored
-                        PseudoRegister * error,            // where the error symbol is stored if the operation fails
-                        int data_offset,        // data offset in oops relative to array
-                        int length_offset,        // array length offset in oops relative to array
+        ArrayAtPutNode( AccessType access_type,     // specifies the operation
+                        PseudoRegister * array,     // holds the array
+                        PseudoRegister * index,     // holds the index
+                        bool_t smi_index,           // true if index is known to be a smi_t, false otherwise
+                        PseudoRegister * element,   // holds the element
+                        bool_t smi_element,         // true if element is known to be a smi_t, false otherwise
+                        PseudoRegister * result,    // where the result is stored
+                        PseudoRegister * error,     // where the error symbol is stored if the operation fails
+                        int data_offset,            // data offset in oops relative to array
+                        int length_offset,          // array length offset in oops relative to array
                         bool_t needs_store_check    // indicates whether a store check is necessary or not
         );
 
@@ -3504,31 +3519,32 @@ class ArrayAtPutNode : public AbstractArrayAtPutNode {
 
 
 class InlinedPrimitiveNode : public AbstractBranchNode {
+
     public:
-        enum Operation {
-            obj_klass,                // corresponds to primitiveClass
-            obj_hash,                // corresponds to primitiveHash
-            proxy_byte_at,            // corresponds to primitiveProxyByteAt:ifFail:
-            proxy_byte_at_put,            // corresponds to primitiveProxyByteAt:put:ifFail:
+        enum class Operation {
+                obj_klass,                  // corresponds to primitiveClass
+                obj_hash,                   // corresponds to primitiveHash
+                proxy_byte_at,              // corresponds to primitiveProxyByteAt:ifFail:
+                proxy_byte_at_put,          // corresponds to primitiveProxyByteAt:put:ifFail:
         };
 
     private:
-        Operation      _op;
-        // _src is	_recv;			// receiver or nullptr
-        PseudoRegister * _arg1;            // 1st argument or nullptr
-        PseudoRegister * _arg2;            // 2nd argument or nullptr
-        PseudoRegister * _error;            // primitive error or nullptr if primitive can't fail
-        Usage          * _arg1_use;
-        Usage          * _arg2_use;
-        Definition     * _error_def;
-        bool_t         _arg1_is_smi;        // true if 1st argument is known to be a smi_t
-        bool_t         _arg2_is_smi;        // true if 2nd argument is known to be a smi_t
+        PseudoRegister * _arg1;         // 1st argument or nullptr
+        PseudoRegister * _arg2;         // 2nd argument or nullptr
+        PseudoRegister * _error;        // primitive error or nullptr if primitive can't fail
+        Usage          * _arg1_use;     //
+        Usage          * _arg2_use;     //
+        Definition     * _error_def;    //
+        bool_t    _arg1_is_smi;    // true if 1st argument is known to be a smi_t
+        bool_t    _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+        Operation _operation;      //
+        // _src is	_recv;			    // receiver or nullptr
 
         InlinedPrimitiveNode( Operation op, PseudoRegister * result, PseudoRegister * error, PseudoRegister * recv, PseudoRegister * arg1, bool_t arg1_is_smi, PseudoRegister * arg2, bool_t arg2_is_smi );
 
     public:
         Operation op() const {
-            return _op;
+            return _operation;
         }
 
 
@@ -3627,6 +3643,7 @@ class UncommonNode : public NonTrivialNode {
         int cost() const {
             return 4;
         } // fix this
+
         bool_t isExitNode() const {
             return true;
         }
@@ -3665,6 +3682,7 @@ class UncommonNode : public NonTrivialNode {
         friend class NodeFactory;
 };
 
+
 class UncommonSendNode : public UncommonNode {
 
     private:
@@ -3697,12 +3715,13 @@ class UncommonSendNode : public UncommonNode {
         friend class NodeFactory;
 };
 
+
 class FixedCodeNode : public TrivialNode {
 
     public:
-        enum FixedCodeKind {
-            dead_end,                // dead-end marker (for compiler debugging)
-            inc_counter                // increment invocation counter
+        enum class FixedCodeKind {
+                dead_end,           // dead-end marker (for compiler debugging)
+                inc_counter         // increment invocation counter
         };
 
     protected:
@@ -3716,12 +3735,12 @@ class FixedCodeNode : public TrivialNode {
 
     public:
         bool_t isExitNode() const {
-            return _kind == dead_end;
+            return _kind == FixedCodeKind::dead_end;
         }
 
 
         bool_t isDeadEndNode() const {
-            return _kind == dead_end;
+            return _kind == FixedCodeKind::dead_end;
         }
 
 
@@ -3804,95 +3823,92 @@ class CommentNode : public TrivialNode {
 class NodeFactory : AllStatic {
 
     public:
-        static int cumulativeCost;                    // cumulative cost of all nodes generated so far
+        static int _cumulativeCost; // cumulative cost of all nodes generated so far
 
         static void registerNode( Node * n ) {
-            cumulativeCost += n->cost();
+            _cumulativeCost += n->cost();
         }
 
 
-        static PrologueNode * PrologueNode( LookupKey * key, int nofArgs, int nofTemps );
+        static class PrologueNode * PrologueNode( LookupKey * key, int nofArgs, int nofTemps );
 
-        static LoadOffsetNode * LoadOffsetNode( PseudoRegister * dst, PseudoRegister * base, int offs, bool_t isArray );
+        static class LoadOffsetNode * LoadOffsetNode( PseudoRegister * dst, PseudoRegister * base, int offs, bool_t isArray );
 
-        static LoadUplevelNode * LoadUplevelNode( PseudoRegister * dst, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name );
+        static class LoadUplevelNode * LoadUplevelNode( PseudoRegister * dst, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name );
 
-        static LoadIntNode * LoadIntNode( PseudoRegister * dst, int value );
+        static class LoadIntNode * LoadIntNode( PseudoRegister * dst, int value );
 
-        static StoreOffsetNode * StoreOffsetNode( PseudoRegister * src, PseudoRegister * base, int offs, bool_t needStoreCheck );
+        static class StoreOffsetNode * StoreOffsetNode( PseudoRegister * src, PseudoRegister * base, int offs, bool_t needStoreCheck );
 
-        static StoreUplevelNode * StoreUplevelNode( PseudoRegister * src, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck );
+        static class StoreUplevelNode * StoreUplevelNode( PseudoRegister * src, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck );
 
-        static AssignNode * AssignNode( PseudoRegister * src, PseudoRegister * dst );
+        static class AssignNode * AssignNode( PseudoRegister * src, PseudoRegister * dst );
 
-        static ReturnNode * ReturnNode( PseudoRegister * res, int byteCodeIndex );
+        static class ReturnNode * ReturnNode( PseudoRegister * res, int byteCodeIndex );
 
-        static InlinedReturnNode * InlinedReturnNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dst );
+        static class InlinedReturnNode * InlinedReturnNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dst );
 
-        static NonLocalReturnSetupNode * NonLocalReturnSetupNode( PseudoRegister * result, int byteCodeIndex );
+        static class NonLocalReturnSetupNode * NonLocalReturnSetupNode( PseudoRegister * result, int byteCodeIndex );
 
-        static NonLocalReturnContinuationNode * NonLocalReturnContinuationNode( int byteCodeIndex );
+        static class NonLocalReturnContinuationNode * NonLocalReturnContinuationNode( int byteCodeIndex );
 
-        static NonLocalReturnTestNode * NonLocalReturnTestNode( int byteCodeIndex );
+        static class NonLocalReturnTestNode * NonLocalReturnTestNode( int byteCodeIndex );
 
-        static ArithRRNode * ArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
+        static class ArithRRNode * ArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
 
-        static ArithRCNode * ArithRCNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, int o2 );
+        static class ArithRCNode * ArithRCNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, int o2 );
 
-        static TArithRRNode * TArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2, bool_t a1, bool_t a2 );
+        static class TArithRRNode * TArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2, bool_t a1, bool_t a2 );
 
-        static FloatArithRRNode * FloatArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
+        static class FloatArithRRNode * FloatArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
 
-        static FloatUnaryArithNode * FloatUnaryArithNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op );
+        static class FloatUnaryArithNode * FloatUnaryArithNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op );
 
-        static MergeNode * MergeNode( Node * prev1, Node * prev2 );
+        static class MergeNode * MergeNode( Node * prev1, Node * prev2 );
 
-        static class MergeNode * MergeNode( int byteCodeIndex );
+        static class  MergeNode * MergeNode( int byteCodeIndex );
 
-        static SendNode * SendNode( LookupKey * key, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack, bool_t superSend, SendInfo * info );
+        static class SendNode * SendNode( LookupKey * key, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack, bool_t superSend, SendInfo * info );
 
-        static PrimitiveNode * PrimitiveNode( PrimitiveDescriptor * pdesc, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+        static class PrimitiveNode * PrimitiveNode( PrimitiveDescriptor * pdesc, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
 
-        static DLLNode * DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+        static class DLLNode * DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
 
-        static InterruptCheckNode * InterruptCheckNode( GrowableArray <PseudoRegister *> * expr_stack );
+        static class InterruptCheckNode * InterruptCheckNode( GrowableArray <PseudoRegister *> * expr_stack );
 
-        static LoopHeaderNode * LoopHeaderNode();
+        static class LoopHeaderNode * LoopHeaderNode();
 
-        static BlockCreateNode * BlockCreateNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
+        static class BlockCreateNode * BlockCreateNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
 
-        static BlockMaterializeNode * BlockMaterializeNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
+        static class BlockMaterializeNode * BlockMaterializeNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
 
-        static ContextCreateNode * ContextCreateNode( PseudoRegister * parent, PseudoRegister * context, int nofTemps, GrowableArray <PseudoRegister *> * expr_stack );
+        static class ContextCreateNode * ContextCreateNode( PseudoRegister * parent, PseudoRegister * context, int nofTemps, GrowableArray <PseudoRegister *> * expr_stack );
 
         static class ContextCreateNode * ContextCreateNode( PseudoRegister * b, const class ContextCreateNode * n, GrowableArray <PseudoRegister *> * expr_stack );
 
-        static ContextInitNode * ContextInitNode( class ContextCreateNode * creator );
+        static class ContextInitNode * ContextInitNode( class ContextCreateNode * creator );
 
         static class ContextInitNode * ContextInitNode( PseudoRegister * b, const class ContextInitNode * n );
 
-        static ContextZapNode * ContextZapNode( PseudoRegister * context );
+        static class ContextZapNode * ContextZapNode( PseudoRegister * context );
 
-        static BranchNode * BranchNode( BranchOpCode op, bool_t taken_is_uncommon = false );
+        static class BranchNode * BranchNode( BranchOpCode op, bool_t taken_is_uncommon = false );
 
-        static TypeTestNode * TypeTestNode( PseudoRegister * recv, GrowableArray <KlassOop> * classes, bool_t hasUnknown );
+        static class TypeTestNode * TypeTestNode( PseudoRegister * recv, GrowableArray <KlassOop> * classes, bool_t hasUnknown );
 
-        static ArrayAtNode * ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smiIndex, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset );
+        static class ArrayAtNode * ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smiIndex, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset );
 
-        static ArrayAtPutNode * ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smi_index, PseudoRegister * element, bool_t smi_element, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset, bool_t needs_store_check );
+        static class ArrayAtPutNode * ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smi_index, PseudoRegister * element, bool_t smi_element, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset, bool_t needs_store_check );
 
-        static InlinedPrimitiveNode * InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister * result, PseudoRegister * error = nullptr, PseudoRegister * recv = nullptr, PseudoRegister * arg1 = nullptr, bool_t arg1_is_smi = false, PseudoRegister * arg2 = nullptr, bool_t arg2_is_smi = false );
+        static class InlinedPrimitiveNode * InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister * result, PseudoRegister * error = nullptr, PseudoRegister * recv = nullptr, PseudoRegister * arg1 = nullptr, bool_t arg1_is_smi = false, PseudoRegister * arg2 = nullptr, bool_t arg2_is_smi = false );
 
-        static UncommonNode * UncommonNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex );
+        static class UncommonNode * UncommonNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex );
 
-        static UncommonSendNode * UncommonSendNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex, int args );
+        static class UncommonSendNode * UncommonSendNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex, int args );
 
-        static FixedCodeNode * FixedCodeNode( FixedCodeNode::FixedCodeKind k );
+        static class FixedCodeNode * FixedCodeNode( FixedCodeNode::FixedCodeKind k );
 
-        static NopNode * NopNode();
+        static class NopNode * NopNode();
 
-        static CommentNode * CommentNode( const char * comment );
+        static class CommentNode * CommentNode( const char * comment );
 };
-
-void printNodes( Node * n );   // print n and its successors
-

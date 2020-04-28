@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
@@ -31,7 +33,7 @@ int hash( const char * name, int len );
 
 struct SymbolTableLink {
     // instance variable
-    SymbolOop       symbol;
+    SymbolOop symbol;
     SymbolTableLink * next;
 
     // memory operations
@@ -88,10 +90,10 @@ struct SymbolTableEntry {
 class SymbolTable : public CHeapAllocatedObject {
 
     private:
-        SymbolTableEntry buckets[symbol_table_size];
-        SymbolTableLink  * free_list;
-        SymbolTableLink  * first_free_link;
-        SymbolTableLink  * end_block;
+        std::array <SymbolTableEntry, symbol_table_size> buckets;
+        SymbolTableLink * free_list;
+        SymbolTableLink * first_free_link;
+        SymbolTableLink * end_block;
 
     public:
         SymbolTable();

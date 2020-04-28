@@ -18,11 +18,11 @@ const char * PrimitivesGenerator::double_op( arith_op op ) {
     masm->movl( ebx, Address( esp, +oopSize ) );
     masm->movl( edx, doubleKlass_addr() );
     masm->testb( ebx, 0x01 );
-    masm->jcc( Assembler::zero, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::zero, error_first_argument_has_wrong_type );
 
     // 	klass test for argument
     masm->cmpl( edx, Address( ebx, +3 ) );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
 
     // 	allocate_double
     test_for_scavenge( eax, 4 * oopSize, need_scavenge );

@@ -104,16 +104,15 @@ class AlienIntegerCallout5Tests : public ::testing::Test {
         }
 
 
-        HeapResourceMark                    * rm;
+        HeapResourceMark * rm;
         GrowableArray <PersistentHandle **> * handles;
-        PersistentHandle                    * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
-        PersistentHandle                    * directAlien, * invalidFunctionAlien;
-        SMIOop                                             smi0, smi1, smim1;
-        static const int                                   argCount = 5;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
-        char                                address[8];
-
+        PersistentHandle * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
+        PersistentHandle * directAlien, * invalidFunctionAlien;
+        SMIOop                          smi0, smi1, smim1;
+        static const int                argCount = 5;
+        std::array<void*,argCount>intCalloutFunctions;
+        std::array<void*,argCount>intPointerCalloutFunctions;
+        char address[8];
 
         void allocateAlien( PersistentHandle *& alienHandle, int arraySize, int alienSize, void * ptr = nullptr ) {
             ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( arraySize ) );
@@ -156,11 +155,13 @@ class AlienIntegerCallout5Tests : public ::testing::Test {
 
 
         Oop asOop( int value ) {
-            int          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+            int size = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+
             ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( size ) );
             IntegerOps::int_to_Integer( value, valueOop->number() );
             bool_t ok;
-            Oop    result         = valueOop->number().as_smi( ok );
+
+            Oop result = valueOop->number().as_smi( ok );
             return ok ? result : valueOop;
         }
 
@@ -175,25 +176,28 @@ class AlienIntegerCallout5Tests : public ::testing::Test {
             byteArrayPrimitives::alienSetAddress( asOop( ( int ) argument ), handle->as_oop() );
         }
 
-
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
-            Oop       result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
+
+            Oop result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
 
             EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
             checkIntResult( "wrong result", argValue, resultAlien );
         }
 
 
-        void checkArgnPtrPassed( int argIndex, Oop pointer, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, Oop pointer, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
+
+            Oop result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
 
             EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
             checkIntResult( "wrong result", -1, resultAlien );
@@ -201,10 +205,13 @@ class AlienIntegerCallout5Tests : public ::testing::Test {
 
 
         void checkIllegalArgnPassed( int argIndex, Oop pointer ) {
-            Oop       arg[argCount];
+
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
+
+            Oop result = byteArrayPrimitives::alienCallResult5( arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
 
             SymbolOop symbol;
             switch ( argIndex ) {

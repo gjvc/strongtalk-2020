@@ -297,7 +297,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
 
         int float_section_size() const {
-            return total_number_of_floats() * floatSize / oopSize;
+            return total_number_of_floats() * SIZEOF_FLOAT / oopSize;
         }
 
 

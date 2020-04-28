@@ -41,8 +41,8 @@ class UncommonSendNodeTests : public ::testing::Test {
             theCompiler->enterScope( topScope );
             topScope->createTemporaries( 1 );
 
-            NodeFactory::cumulativeCost = 0;
-            exprStack                   = new GrowableArray <PseudoRegister *>( 10 );
+            NodeFactory::_cumulativeCost = 0;
+            exprStack                    = new GrowableArray <PseudoRegister *>( 10 );
         }
 
 
@@ -78,7 +78,7 @@ class UncommonSendNodeTests : public ::testing::Test {
 TEST_F( UncommonSendNodeTests, construction ) {
     node = NodeFactory::UncommonSendNode( exprStack, 0, 0 );
 
-    ASSERT_EQ( 4, NodeFactory::cumulativeCost );
+    ASSERT_EQ( 4, NodeFactory::_cumulativeCost );
     ASSERT_TRUE( node->isUncommonSendNode() );
 }
 

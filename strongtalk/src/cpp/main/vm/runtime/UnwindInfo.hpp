@@ -8,7 +8,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 class CompiledVirtualFrame;
 

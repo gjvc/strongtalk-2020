@@ -767,12 +767,13 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
     if ( not UseSlidingSystemAverage )
         return markSymbol( vmSymbols::not_active() );
 
-    uint32_t * array = SlidingSystemAverage::update();
+//    uint32_t * array = SlidingSystemAverage::update();
+    std::array<uint32_t,SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
 
     ObjectArrayOop result = oopFactory::new_objArray( SlidingSystemAverage::number_of_cases - 1 );
 
     for ( int i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
-        result->obj_at_put( i, smiOopFromValue( array[ i ] ) );
+        result->obj_at_put( i, smiOopFromValue( _array[ i ] ) );
     }
 
     return result;

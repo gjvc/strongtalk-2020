@@ -11,7 +11,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/runtime/main.hpp"
+#include "vm/main/main.hpp"
 #include "vm/utilities/LongInteger64.hpp"
 #include "vm/system/os.hpp"
 #include "vm/utilities/GrowableArray.hpp"
@@ -636,12 +636,6 @@ void os_init() {
 
 void os_exit() {
     ThreadCritical::release();
-}
-
-
-int main( int argc, char *argv[] ) {
-    os::set_args( argc, argv );
-    return vm_main( argc, argv );
 }
 
 

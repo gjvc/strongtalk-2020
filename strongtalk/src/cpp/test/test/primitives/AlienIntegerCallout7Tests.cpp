@@ -133,16 +133,16 @@ class AlienIntegerCallout7Tests : public ::testing::Test {
         }
 
 
-        HeapResourceMark                    * rm;
+        HeapResourceMark * rm;
         GrowableArray <PersistentHandle **> * handles;
-        PersistentHandle                    * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
-        PersistentHandle                    * directAlien, * invalidFunctionAlien;
-        SMIOop                                             smi0, smi1, smim1;
-        static const int                                   argCount = 7;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
-        Oop                                 zeroes[argCount];
-        char                                address[8];
+        PersistentHandle * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
+        PersistentHandle * directAlien, * invalidFunctionAlien;
+        SMIOop                          smi0, smi1, smim1;
+        static const int                argCount = 7;
+        std::array <void *, argCount>   intCalloutFunctions;
+        std::array <void *, argCount>   intPointerCalloutFunctions;
+        std::array <Oop, argCount>      zeroes;
+        char                            address[8];
 
 
         void allocateAlien( PersistentHandle *& alienHandle, int arraySize, int alienSize, void * ptr = nullptr ) {
@@ -206,19 +206,21 @@ class AlienIntegerCallout7Tests : public ::testing::Test {
         }
 
 
-        Oop callout( Oop arg[], Oop result, Oop address ) {
+        Oop callout( std::array <Oop, argCount> arg, Oop result, Oop address ) {
             return byteArrayPrimitives::alienCallResult7( arg[ 6 ], arg[ 5 ], arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], result, address );
         }
 
 
-        Oop callout( Oop arg[] ) {
+        Oop callout( std::array <Oop, argCount> arg ) {
             return callout( arg, resultAlien->as_oop(), functionAlien->as_oop() );
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
             Oop       result = callout( arg );
@@ -228,12 +230,15 @@ class AlienIntegerCallout7Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPtrPassed( int argIndex, Oop pointer, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, Oop pointer, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
             checkIntResult( "wrong result", -1, resultAlien );
@@ -241,10 +246,13 @@ class AlienIntegerCallout7Tests : public ::testing::Test {
 
 
         void checkIllegalArgnPassed( int argIndex, Oop pointer ) {
-            Oop       arg[argCount];
+
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             SymbolOop symbol;
             switch ( argIndex ) {
@@ -286,7 +294,8 @@ TEST_F( AlienIntegerCallout7Tests, alienCallResult7ShouldCallIntArgFunction ) {
 
 
 TEST_F( AlienIntegerCallout7Tests, alienCallResult7ShouldCallSumFunction ) {
-    Oop arg[argCount];
+    std::array <Oop, argCount> arg;
+
     byteArrayPrimitives::alienSignedLongAtPut( asOop( -1 ), smi1, addressAlien->as_oop() );
     for ( int index = 0; index < argCount; index++ )
         arg[ index ] = addressAlien->as_oop();

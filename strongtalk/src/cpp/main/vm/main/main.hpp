@@ -6,8 +6,3 @@
 
 #pragma once
 
-
-int vm_main( int argc, char * argv[] );
-int createVMProcess();
-int vmProcessMain( void * ignored );
-extern "C" void load_image();

@@ -930,7 +930,7 @@ void InlinedScope::generateDebugInfo() {
 void MethodScope::generateDebugInfo() {
     ScopeDescriptorRecorder * rec = theCompiler->scopeDescRecorder();
     const bool_t visible = true;
-    _scopeInfo = rec->addMethodScope( _key, _method, _self->preg()->createLogicalAddress(), allocatesCompiledContext(), isLite(), _scopeID, _sender ? _sender->ScopeInfo() : nullptr, _senderByteCodeIndex, visible );
+    _scopeInfo = rec->addMethodScope( _key, _method, _self->preg()->createLogicalAddress(), allocatesCompiledContext(), isLite(), _scopeID, _sender ? _sender->getScopeInfo() : nullptr, _senderByteCodeIndex, visible );
     InlinedScope::generateDebugInfo();
 }
 
@@ -942,7 +942,7 @@ void BlockScope::generateDebugInfo() {
     } else {
         st_assert( _parent->isInlinedScope(), "oops" );
         const bool_t visible = true;
-        _scopeInfo = rec->addBlockScope( _method, ( ( InlinedScope * ) _parent )->ScopeInfo(), allocatesCompiledContext(), isLite(), _scopeID, _sender->ScopeInfo(), _senderByteCodeIndex, visible );
+        _scopeInfo = rec->addBlockScope( _method, ( ( InlinedScope * ) _parent )->getScopeInfo(), allocatesCompiledContext(), isLite(), _scopeID, _sender->getScopeInfo(), _senderByteCodeIndex, visible );
     }
     InlinedScope::generateDebugInfo();
 }

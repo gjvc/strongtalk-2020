@@ -6,7 +6,7 @@
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/VirtualFrame.hpp"

@@ -7,8 +7,9 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/oopFactory.hpp"
 
+//SymbolOop vm_symbols[terminating_enum];
+std::array <SymbolOop, terminating_enum> vm_symbols;
 
-SymbolOop vm_symbols[terminating_enum];
 
 #define VMSYMBOL_INIT( name, string ) \
   vm_symbols[ VMSYMBOL_ENUM_NAME( name ) ] = oopFactory::new_symbol( string );

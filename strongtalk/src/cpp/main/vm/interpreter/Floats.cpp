@@ -3,6 +3,8 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+#include <array>
+
 #include "vm/interpreter/Floats.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utilities/OutputStream.hpp"
@@ -10,9 +12,8 @@
 #include "vm/runtime/flags.hpp"
 
 
-const char * Floats::_function_table[max_number_of_functions];
-
-const char * Floats::_function_names[] = {
+std::array <const char *, Floats::max_number_of_functions>Floats::_function_table{};
+std::array <const char *, Floats::max_number_of_functions>Floats::_function_names{
     "zero", //
     "one", //
     "abs", //
@@ -186,11 +187,12 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
         case zero:
             masm->fldz();
             break;
+
         case one:
             masm->fld1();
             break;
 
-            // unary functions
+        // unary functions
         case abs:
             masm->fabs();
             break;
@@ -213,7 +215,7 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
         case ln:
             masm->int3(); /* Unimplemented */        break;
 
-            // binary functions
+        // binary functions
         case add:
             masm->faddp();
             break;
@@ -231,37 +233,35 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
             masm->fprem();
             break;
 
-            // unary functions to Oop
+        // unary functions to Oop
         case is_zero:
-            generate_tst( masm, Assembler::zero );
+            generate_tst( masm, Assembler::Condition::zero );
             break;
         case is_not_zero:
-            generate_tst( masm, Assembler::notZero );
+            generate_tst( masm, Assembler::Condition::notZero );
             break;
         case oopify:
             masm->hlt();    /* see InterpreterGenerator */    break;
 
-            // binary functions to Oop
-            // (Note: This is comparing ST(1) with ST while the bits in the FPU
-            //        status word (assume comparison of ST with ST(1) -> reverse
-            //        the conditions).
+        // binary functions to Oop
+        // (Note: This is comparing ST(1) with ST while the bits in the FPU status word (assume comparison of ST with ST(1) -> reverse the conditions).
         case is_equal:
-            generate_cmp( masm, Assembler::equal );
+            generate_cmp( masm, Assembler::Condition::equal );
             break;
         case is_not_equal:
-            generate_cmp( masm, Assembler::notEqual );
+            generate_cmp( masm, Assembler::Condition::notEqual );
             break;
         case is_less:
-            generate_cmp( masm, Assembler::greater );
+            generate_cmp( masm, Assembler::Condition::greater );
             break;
         case is_less_equal:
-            generate_cmp( masm, Assembler::greaterEqual );
+            generate_cmp( masm, Assembler::Condition::greaterEqual );
             break;
         case is_greater:
-            generate_cmp( masm, Assembler::less );
+            generate_cmp( masm, Assembler::Condition::less );
             break;
         case is_greater_equal:
-            generate_cmp( masm, Assembler::lessEqual );
+            generate_cmp( masm, Assembler::Condition::lessEqual );
             break;
 
         default: ShouldNotReachHere();
@@ -269,13 +269,14 @@ void Floats::generate( MacroAssembler * masm, Function f ) {
     masm->ret( 0 );
     _function_table[ f ] = entry_point;
 
+    int length = masm->pc() - entry_point;
+    const char * name = function_name_for( f );
+    _console->print_cr( "%%float-generate: Float function index [%d]: name [%s], length [%d] bytes, entry point [0x%x]", f, name, length, entry_point );
     if ( PrintInterpreter ) {
-        int        length = masm->pc() - entry_point;
-        const char * name = function_name_for( f );
-        _console->print_cr( "Float function %d: %s (%d bytes), entry point = 0x%x", f, name, length, entry_point );
         masm->code()->decode();
         _console->cr();
     }
+
 }
 
 
@@ -286,20 +287,27 @@ void Floats::init( MacroAssembler * masm ) {
     if ( is_initialized() )
         return;
 
+    _console->print_cr( "yes" );
     _console->print_cr( "%%system-init:  Floats::init" );
-    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq number_of_functions ) {
-        fatal( "Floats: number of _functions_names not equal number_of_functions" );
-    }
+    _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size());
+    _console->print_cr( "%%system-init: number_of_functions %ld", number_of_functions );
+//    st_assert( _function_names.size() == number_of_functions, "Floats: number of _functions_names not equal number_of_functions" );
+    _console->print_cr( "hello" );
+//    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq number_of_functions ) {
+//        fatal( "Floats: number of _functions_names not equal number_of_functions" );
+//    }
 
     // pre-initialize whole table
     // (make sure there's an entry for each index so that illegal indices
     // can be caught during execution without additional index range check)
-    for ( int i = max_number_of_functions; i-- > 0; )
+    for ( int i = max_number_of_functions; i-- > 0; ) {
         _function_table[ i ] = masm->pc();
+        _console->print_cr( "%%system-init:  Floats::init() _function_table index [%ld] pc [0x%08x]", i, masm->pc() );
+    }
     masm->hlt();
 
+    _console->print_cr( "Undefined float functions entry point" );
     if ( PrintInterpreter ) {
-        _console->print_cr( "Undefined float functions entry point" );
         masm->code()->decode();
         _console->cr();
     }

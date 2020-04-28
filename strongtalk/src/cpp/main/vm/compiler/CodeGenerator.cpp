@@ -452,13 +452,13 @@ void CodeGenerator::finalize(InlinedScope* scope) {
     if (klass == smiKlassObj) {
       // receiver must be a smi_t, check smi_t tag only
       _masm->testl(self_reg, MEMOOP_TAG);			// testl instead of test => no alignment nop's needed later
-      _masm->jcc(Assembler::notZero, CompiledInlineCache::normalLookupRoutine());
+      _masm->jcc(Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine());
     } else {
       assert(self_reg not_eq temp1, "choose another register");
       _masm->testl(self_reg, MEMOOP_TAG);			// testl instead of test => no alignment nop's needed later
-      _masm->jcc(Assembler::zero, CompiledInlineCache::normalLookupRoutine());
+      _masm->jcc(Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine());
       _masm->cmpl(Address(self_reg, memOopDescriptor::klass_byte_offset()), klass);
-      _masm->jcc(Assembler::notEqual, CompiledInlineCache::normalLookupRoutine());
+      _masm->jcc(Assembler::Condition::notEqual, CompiledInlineCache::normalLookupRoutine());
     }
   } else {
     // If this is a block method and we expect a context
@@ -504,7 +504,7 @@ void CodeGenerator::finalize(InlinedScope* scope) {
     _masm->incl(temp1);
     _masm->cmpl(temp1, theCompiler->get_invocation_counter_limit());
     _masm->movl(Address(int(addr), RelocationInformation::RelocationType::internal_word_type), temp1);
-    _masm->jcc(Assembler::greaterEqual, recompile_stub_call);
+    _masm->jcc(Assembler::Condition::greaterEqual, recompile_stub_call);
     //
     // need to fix this:
     // 1. put call to recompiler at end (otherwise we cannot provide debugging info easily)
@@ -549,7 +549,7 @@ void CodeGenerator::storeCheck( Register obj ) {
     Temporary indx( _currentMapping );
     Label     no_store;
     _masm->cmpl( obj, ( int ) Universe::new_gen.boundary() );                  // assumes boundary between new_gen and old_gen is unchanging
-    _masm->jcc( Assembler::less, no_store );                                // avoid marking dirty if target is a new object
+    _masm->jcc( Assembler::Condition::less, no_store );                                // avoid marking dirty if target is a new object
     _masm->movl( base.reg(), Address( int( &byte_map_base ), RelocationInformation::RelocationType::external_word_type ) );
     _masm->movl( indx.reg(), obj );                        // do not destroy obj (a preg may be mapped to it)
     _masm->shrl( indx.reg(), card_shift );                    // divide obj by card_size
@@ -868,7 +868,7 @@ void CodeGenerator::endOfBasicBlock( Node * node ) {
 void CodeGenerator::updateDebuggingInfo( Node * node ) {
     ScopeDescriptorRecorder * rec = theCompiler->scopeDescRecorder();
     int pc_offset = assembler()->offset();
-    rec->addProgramCounterDescriptor( pc_offset, node->scope()->ScopeInfo(), node->byteCodeIndex() );
+    rec->addProgramCounterDescriptor( pc_offset, node->scope()->getScopeInfo(), node->byteCodeIndex() );
     _debugInfoWriter->write_debug_info( _currentMapping, pc_offset );
 }
 
@@ -926,12 +926,12 @@ void CodeGenerator::aPrologueNode( PrologueNode * node ) {
         if ( klass == smiKlassObj ) {
             // receiver must be a smi_t, check smi_t tag only
             _masm->test( use( recv ), MEMOOP_TAG );
-            _masm->jcc( Assembler::notZero, CompiledInlineCache::normalLookupRoutine() );
+            _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
         } else {
             _masm->test( use( recv ), MEMOOP_TAG );
-            _masm->jcc( Assembler::zero, CompiledInlineCache::normalLookupRoutine() );
+            _masm->jcc( Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine() );
             _masm->cmpl( Address( use( recv ), MemOopDescriptor::klass_byte_offset() ), klass );
-            _masm->jcc( Assembler::notEqual, CompiledInlineCache::normalLookupRoutine() );
+            _masm->jcc( Assembler::Condition::notEqual, CompiledInlineCache::normalLookupRoutine() );
         }
     } else {
         // If this is a block method and we expect a context
@@ -988,7 +988,7 @@ void CodeGenerator::aPrologueNode( PrologueNode * node ) {
         _masm->incl( temp1 );
         _masm->cmpl( temp1, theCompiler->get_invocation_counter_limit() );
         _masm->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
-        _masm->jcc( Assembler::greaterEqual, recompile_stub_call );
+        _masm->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
         //
         // need to fix this:
         // 1. put call to recompiler at end (otherwise we cannot provide debugging info easily)
@@ -1012,7 +1012,7 @@ void CodeGenerator::aPrologueNode( PrologueNode * node ) {
 
     _masm->bind( start );
     _masm->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
-    _masm->jcc( Assembler::less, handle_stack_overflow );
+    _masm->jcc( Assembler::Condition::less, handle_stack_overflow );
     _masm->bind( continue_after_stack_overflow );
 }
 
@@ -1340,7 +1340,7 @@ void CodeGenerator::aTArithRRNode( TArithRRNode * node ) {
     if ( tags not_eq noreg ) {
         // check tags
         _masm->test( tags, MEMOOP_TAG );
-        jcc( Assembler::notZero, node, node->next( 1 ) );
+        jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
     }
     Register reg = targetRegister( op, z, x );
     if ( y->isConstPReg() ) {
@@ -1527,7 +1527,7 @@ void CodeGenerator::aBlockMaterializeNode( BlockMaterializeNode * node ) {
         Register closure_reg = use( node->block() );
         st_assert( MemoizedBlockNameDescriptor::uncreatedBlockValue() == Oop( 0 ), "change the code generation here" );
         _masm->testl( closure_reg, closure_reg );
-        jcc( Assembler::notZero, node, node->next(), true );
+        jcc( Assembler::Condition::notZero, node, node->next(), true );
         materializeBlock( node );
         jmp( node, node->next(), true );            // will be eliminated since next() is the likely successor
         bb_needs_jump = false;
@@ -1634,11 +1634,11 @@ static void testForSingleKlass(Register obj, klassOop klass, Register klassReg, 
   } else {
     // compare against obj's klass - must check if smi_t first
     theMacroAssm->test(obj, MEMOOP_TAG);
-    theMacroAssm->jcc(Assembler::zero, failure);
+    theMacroAssm->jcc(Assembler::Condition::zero, failure);
     theMacroAssm->movl(klassReg, Address(obj, memOopDescriptor::klass_byte_offset()));
     theMacroAssm->cmpl(klassReg, klass);
   }
-  theMacroAssm->jcc(Assembler::notEqual, failure);
+  theMacroAssm->jcc(Assembler::Condition::notEqual, failure);
   theMacroAssm->jmp(success);	// this jump will be eliminated since this is the likely successor
 }
 */
@@ -1658,11 +1658,11 @@ void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register k
     } else {
         // compare against obj's klass - must check if smi_t first
         _masm->test( obj, MEMOOP_TAG );
-        _masm->jcc( Assembler::zero, failure );
+        _masm->jcc( Assembler::Condition::zero, failure );
         _masm->movl( klassReg, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
         _masm->cmpl( klassReg, klass );
     }
-    _masm->jcc( Assembler::notEqual, failure );
+    _masm->jcc( Assembler::Condition::notEqual, failure );
     _masm->jmp( success );    // this jump will be eliminated since this is the likely successor
 }
 
@@ -1863,7 +1863,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
        } else {
 	 const Register t = movePRegToReg(_lowerBound ? _lowerBound : _loopVar, tempReg);
 	 theMacroAssm->cmpl(boundReg, smiOopFromValue(1));
-	 theMacroAssm->jcc(Assembler::less, failure);
+	 theMacroAssm->jcc(Assembler::Condition::less, failure);
        }
       }
 
@@ -1872,7 +1872,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
       const Register t = movePRegToReg(atNode->src(), tempReg);
       theMacroAssm->movl(t, Address(t, byteOffset(atNode->sizeOffset())));
       theMacroAssm->cmpl(boundReg, t);
-      theMacroAssm->jcc(Assembler::above, failure);
+      theMacroAssm->jcc(Assembler::Condition::above, failure);
     }
   }
 }
@@ -1974,7 +1974,7 @@ void CodeGenerator::aNonLocalReturnSetupNode( NonLocalReturnSetupNode * node ) {
     Temporary home( _currentMapping, NonLocalReturn_home_reg );            // try to allocate temporary home into right register
     uplevelBase( scope->context(), scope->homeContext() + 1, home.reg() );    // compute home
     _masm->testl( home.reg(), home.reg() );                    // check if zapped
-    _masm->jcc( Assembler::zero, NonLocalReturn_error );                // zero -> home has been zapped
+    _masm->jcc( Assembler::Condition::zero, NonLocalReturn_error );                // zero -> home has been zapped
     // load result into temporary register (NonLocalReturn_result_reg might still be in use - but try to use it if possible)
     PseudoRegister * resultPReg = scope->resultPR;
     _currentMapping->killRegisters( resultPReg );                // no PseudoRegisters are used anymore except result
@@ -2031,32 +2031,32 @@ void CodeGenerator::aNonLocalReturnContinuationNode( NonLocalReturnContinuationN
 Assembler::Condition CodeGenerator::mapToCC( BranchOpCode op ) {
     switch ( op ) {
         case EQBranchOp:
-            return Assembler::equal;
+            return Assembler::Condition::equal;
         case NEBranchOp:
-            return Assembler::notEqual;
+            return Assembler::Condition::notEqual;
         case LTBranchOp:
-            return Assembler::less;
+            return Assembler::Condition::less;
         case LEBranchOp:
-            return Assembler::lessEqual;
+            return Assembler::Condition::lessEqual;
         case GTBranchOp:
-            return Assembler::greater;
+            return Assembler::Condition::greater;
         case GEBranchOp:
-            return Assembler::greaterEqual;
+            return Assembler::Condition::greaterEqual;
         case LTUBranchOp:
-            return Assembler::below;
+            return Assembler::Condition::below;
         case LEUBranchOp:
-            return Assembler::belowEqual;
+            return Assembler::Condition::belowEqual;
         case GTUBranchOp:
-            return Assembler::above;
+            return Assembler::Condition::above;
         case GEUBranchOp:
-            return Assembler::aboveEqual;
+            return Assembler::Condition::aboveEqual;
         case VSBranchOp:
-            return Assembler::overflow;
+            return Assembler::Condition::overflow;
         case VCBranchOp:
-            return Assembler::noOverflow;
+            return Assembler::Condition::noOverflow;
     }
     ShouldNotReachHere();
-    return Assembler::zero;
+    return Assembler::Condition::zero;
 }
 
 
@@ -2101,11 +2101,11 @@ void CodeGenerator::aTypeTestNode( TypeTestNode * node ) {
                 // compare against obj's klass - must check if smi_t first
                 Temporary objKlass( _currentMapping );
                 _masm->test( obj, MEMOOP_TAG );
-                _masm->jcc( Assembler::zero, node->next()->_label );
+                _masm->jcc( Assembler::Condition::zero, node->next()->_label );
                 _masm->movl( objKlass.reg(), Address( obj, MemOopDescriptor::klass_byte_offset() ) );
                 _masm->cmpl( objKlass.reg(), klass );
             }
-            jcc( Assembler::notEqual, node, node->next() );
+            jcc( Assembler::Condition::notEqual, node, node->next() );
             jmp( node, node->next( 1 ) );            // this jump will be eliminated since this is the likely successor
             bb_needs_jump = false;            // no jump necessary at end of basic block
             return;
@@ -2134,14 +2134,14 @@ void CodeGenerator::aTypeTestNode( TypeTestNode * node ) {
                 if ( ignoreNoUnknownForNow or node->hasUnknown() ) {
                     st_assert( ignoreNoUnknownForNow or node->likelySuccessor() == node->next( 2 ), "code pattern is not optimal" );
                     _masm->cmpl( obj, bool1 );
-                    jcc( Assembler::equal, node, node->next( 1 ) );
+                    jcc( Assembler::Condition::equal, node, node->next( 1 ) );
                     _masm->cmpl( obj, bool2 );
-                    jcc( Assembler::notEqual, node, node->next() );
+                    jcc( Assembler::Condition::notEqual, node, node->next() );
                     jmp( node, node->next( 2 ) );        // this jump will be eliminated since this is the likely successor
                 } else {
                     st_assert( node->likelySuccessor() == node->next( 1 ), "code pattern is not optimal" );
                     _masm->cmpl( obj, bool2 );
-                    jcc( Assembler::equal, node, node->next( 2 ) );
+                    jcc( Assembler::Condition::equal, node, node->next( 2 ) );
                     jmp( node, node->next( 1 ) );        // this jump will be eliminated since this is the likely successor
                 }
                 bb_needs_jump                      = false;            // no jump necessary at end of basic block
@@ -2162,20 +2162,20 @@ void CodeGenerator::aTypeTestNode( TypeTestNode * node ) {
         if ( klass == trueObj->klass() ) {
             // only one instance: compare with trueObj
             _masm->cmpl( obj, trueObj );
-            jcc( Assembler::equal, node, node->next( i + 1 ) );
+            jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
         } else if ( klass == falseObj->klass() ) {
             // only one instance: compare with falseObj
             _masm->cmpl( obj, falseObj );
-            jcc( Assembler::equal, node, node->next( i + 1 ) );
+            jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
         } else if ( klass == nilObj->klass() ) {
             // only one instance: compare with nilObj
             _masm->cmpl( obj, nilObj );
-            jcc( Assembler::equal, node, node->next( i + 1 ) );
+            jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
         } else if ( klass == smiKlassObj ) {
             // check smi_t tag only if not checked already, otherwise ignore
             if ( not smiHasBeenChecked ) {
                 _masm->test( obj, MEMOOP_TAG );
-                jcc( Assembler::zero, node, node->next( i + 1 ) );
+                jcc( Assembler::Condition::zero, node, node->next( i + 1 ) );
                 smiHasBeenChecked = true;
             }
         } else {
@@ -2188,10 +2188,10 @@ void CodeGenerator::aTypeTestNode( TypeTestNode * node ) {
                         _masm->test( obj, MEMOOP_TAG );
                         if ( smiCase not_eq nullptr ) {
                             // jump to smiCase if there's one
-                            jcc( Assembler::zero, node, smiCase );
+                            jcc( Assembler::Condition::zero, node, smiCase );
                         } else {
                             // node hasUnknown & smiCase cannot happen => jump to unknown case (end of typetest)
-                            _masm->jcc( Assembler::zero, unknownCase );
+                            _masm->jcc( Assembler::Condition::zero, unknownCase );
                         }
                     }
                     smiHasBeenChecked = true;
@@ -2200,7 +2200,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode * node ) {
                 klassHasBeenLoaded = true;
             }
             _masm->cmpl( objKlass.reg(), klass );
-            jcc( Assembler::equal, node, node->next( i + 1 ) );
+            jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
         }
     }
     // bind label in any case to avoid unbound label assertion bug
@@ -2228,7 +2228,7 @@ void CodeGenerator::aNonLocalReturnTestNode( NonLocalReturnTestNode * node ) {
     // check if arrived at the right frame
     Label L;
     _masm->cmpl( NonLocalReturn_home_reg, frame_reg );
-    _masm->jcc( Assembler::notEqual, L );
+    _masm->jcc( Assembler::Condition::notEqual, L );
     // check if arrived at the right scope within the frame
     int id = scope->scopeID();
     if ( id == 0 ) {
@@ -2238,7 +2238,7 @@ void CodeGenerator::aNonLocalReturnTestNode( NonLocalReturnTestNode * node ) {
         _masm->cmpl( NonLocalReturn_homeId_reg, id );
     }
     _currentMapping->releaseNonLocalReturnRegisters();
-    jcc( Assembler::equal, node, node->next( 1 ) );
+    jcc( Assembler::Condition::equal, node, node->next( 1 ) );
     _currentMapping->acquireNonLocalReturnRegisters();
     // otherwise continue NonLocalReturn
     _masm->bind( L );
@@ -2276,14 +2276,14 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
     Label indexNotSmi;
     if ( not node->index_is_smi() ) {
         _masm->test( offset.reg(), MEMOOP_TAG );
-        jcc_error( Assembler::notZero, node, indexNotSmi );
+        jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
     }
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
         const int size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
-        jcc_error( Assembler::aboveEqual, node, indexOutOfBounds );
+        jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }
     // load element
     st_assert( TAG_SIZE == 2, "check this code" );
@@ -2322,7 +2322,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
             // check index first, must be 0 <= result_reg < asciiCharacters()->length()
             ObjectArrayOop chars = Universe::asciiCharacters();
             _masm->cmpl( result_reg, chars->length() );
-            jcc_error( Assembler::aboveEqual, node, indexOutOfBounds );
+            jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
             // get character out of chars array
             _masm->movl( offset.reg(), chars );
             _masm->movl( result_reg, Address( offset.reg(), result_reg, Address::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
@@ -2354,7 +2354,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
         _masm->bind( exit );
         Register r = def( error );
         _masm->test( r, 0 );
-        jcc( Assembler::notZero, node, node->next( 1 ) );
+        jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
     }
 }
 
@@ -2374,14 +2374,14 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
     Label indexNotSmi;
     if ( not node->index_is_smi() ) {
         _masm->test( offset.reg(), MEMOOP_TAG );
-        jcc_error( Assembler::notZero, node, indexNotSmi );
+        jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
     }
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
         const int size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
-        jcc_error( Assembler::aboveEqual, node, indexOutOfBounds );
+        jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }
     // store element
     st_assert( TAG_SIZE == 2, "check this code" );
@@ -2394,13 +2394,13 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
             // do element smi_t check if necessary
             if ( not node->element_is_smi() ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
-                jcc_error( Assembler::notZero, node, elementNotSmi );
+                jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
             _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (int) byte
             // do element range check if necessary
             if ( node->element_needs_range_check() ) {
                 _masm->cmpl( elt.reg(), 0x100 );
-                jcc_error( Assembler::aboveEqual, node, elementOutOfRange );
+                jcc_error( Assembler::Condition::aboveEqual, node, elementOutOfRange );
             }
             // store the element
             if ( elt.reg().hasByteRegister() ) {
@@ -2424,13 +2424,13 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
             // do element smi_t check if necessary
             if ( not node->element_is_smi() ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
-                jcc_error( Assembler::notZero, node, elementNotSmi );
+                jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
             _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (int) double byte
             // do element range check if necessary
             if ( node->element_needs_range_check() ) {
                 _masm->cmpl( elt.reg(), 0x10000 );
-                jcc_error( Assembler::aboveEqual, node, elementOutOfRange );
+                jcc_error( Assembler::Condition::aboveEqual, node, elementOutOfRange );
             }
             // store the element
             if ( elt.reg().hasByteRegister() ) {
@@ -2490,32 +2490,32 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
         _masm->bind( exit );
         Register r = def( error );
         _masm->test( r, 0 );
-        jcc( Assembler::notZero, node, node->next( 1 ) );
+        jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
     }
 }
 
 
 void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
     switch ( node->op() ) {
-        case InlinedPrimitiveNode::obj_klass: {
+        case InlinedPrimitiveNode::Operation::obj_klass: {
             Label                is_smi;
             PseudoRegisterLocker lock( node->src() );
             Register             obj_reg   = use( node->src() );
             Register             klass_reg = def( node->dst() );
             _masm->movl( klass_reg, Universe::smiKlassObj() );
             _masm->test( obj_reg, MEMOOP_TAG );
-            _masm->jcc( Assembler::zero, is_smi );
+            _masm->jcc( Assembler::Condition::zero, is_smi );
             _masm->movl( klass_reg, Address( obj_reg, MemOopDescriptor::klass_byte_offset() ) );
             _masm->bind( is_smi );
         };
             break;
-        case InlinedPrimitiveNode::obj_hash: {
+        case InlinedPrimitiveNode::Operation::obj_hash: {
             Unimplemented();
             // Implemented for the smi_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
-        case InlinedPrimitiveNode::proxy_byte_at: {
+        case InlinedPrimitiveNode::Operation::proxy_byte_at: {
             PseudoRegister * proxy  = node->src();
             PseudoRegister * index  = node->arg1();
             PseudoRegister * result = node->dst();
@@ -2528,7 +2528,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
             Label                indexNotSmi;
             if ( not node->arg1_is_smi() ) {
                 _masm->test( offset.reg(), MEMOOP_TAG );
-                jcc_error( Assembler::notZero, node, indexNotSmi );
+                jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
             }
             // load element
             st_assert( TAG_SIZE == 2, "check this code" );
@@ -2561,11 +2561,11 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
                 _masm->bind( exit );
                 Register r = def( error );
                 _masm->test( r, 0 );
-                jcc( Assembler::notZero, node, node->next( 1 ) );
+                jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
             }
         }
             break;
-        case InlinedPrimitiveNode::proxy_byte_at_put: {
+        case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
             bool_t const_val = node->arg2()->isConstPReg();
             PseudoRegister * proxy = node->src();
             PseudoRegister * index = node->arg1();
@@ -2595,14 +2595,14 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
             Label indexNotSmi;
             if ( not node->arg1_is_smi() ) {
                 _masm->test( offset.reg(), MEMOOP_TAG );
-                jcc_error( Assembler::notZero, node, indexNotSmi );
+                jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
             }
             // do value smi_t check if necessary
             Label valueNotSmi;
             if ( not node->arg2_is_smi() ) {
                 st_assert( not const_val, "constant shouldn't need a smi_t check" );
                 _masm->test( val.reg(), MEMOOP_TAG );
-                jcc_error( Assembler::notZero, node, valueNotSmi );
+                jcc_error( Assembler::Condition::notZero, node, valueNotSmi );
             }
             // store element
             st_assert( TAG_SIZE == 2, "check this code" );
@@ -2647,7 +2647,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
                 _masm->bind( exit );
                 Register r = def( error );
                 _masm->test( r, 0 );
-                jcc( Assembler::notZero, node, node->next( 1 ) );
+                jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
             }
         }
             break;
@@ -2667,11 +2667,11 @@ void CodeGenerator::anUncommonNode( UncommonNode * node ) {
 
 void CodeGenerator::aFixedCodeNode( FixedCodeNode * node ) {
     switch ( node->kind() ) {
-        case FixedCodeNode::dead_end:
+        case FixedCodeNode::FixedCodeKind::dead_end:
             _masm->hlt();
             setMapping( nullptr );
             break;
-        case FixedCodeNode::inc_counter:
+        case FixedCodeNode::FixedCodeKind::inc_counter:
             incrementInvocationCounter();
             break;
         default: fatal1( "unexpected FixedCodeNode kind %d", node->kind() );

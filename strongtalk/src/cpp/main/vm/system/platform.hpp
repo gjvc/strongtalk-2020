@@ -142,6 +142,9 @@ typedef uint64_t  address_t;    //
 #endif
 
 
+constexpr int SIZEOF_FLOAT = sizeof( double );
+
+
 // -----------------------------------------------------------------------------
 
 constexpr size_t st_log2( size_t n ) {

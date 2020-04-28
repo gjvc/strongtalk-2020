@@ -14,7 +14,6 @@
 #include "vm/oops/DoubleValueArrayKlass.hpp"
 #include "vm/system/sizes.hpp"
 
-
 #include <gtest/gtest.h>
 
 // reinstate once status of dValueArray* is firmly established
@@ -45,7 +44,7 @@ class DoubleValueArrayKlassTests : public ::testing::Test {
 
 };
 
-TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleDoubleValueArray ) {
+TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleValueArray ) {
     eden_top = eden_end;
     ASSERT_TRUE( theClass->klass_part()->oop_is_doubleValueArray() );
 }

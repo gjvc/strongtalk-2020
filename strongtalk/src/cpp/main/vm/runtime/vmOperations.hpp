@@ -233,3 +233,10 @@ class VM_OptimizeBlockMethod : public VM_Operation {
         }
 };
 
+
+
+
+int vm_main( int argc, char * argv[] );
+int createVMProcess();
+int vmProcessMain( void * ignored );
+extern "C" void load_image();

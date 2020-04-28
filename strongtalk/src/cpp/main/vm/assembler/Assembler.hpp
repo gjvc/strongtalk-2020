@@ -8,6 +8,7 @@
 #include "vm/assembler/CodeBuffer.hpp"
 #include "vm/assembler/Label.hpp"
 #include "vm/assembler/Address.hpp"
+#include "vm/assembler/x86_registers.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 
@@ -90,7 +91,7 @@ class Assembler : public ResourceObject {
         void link_to( Label & L, Label & appendix );
 
     public:
-        enum Condition {
+        enum class Condition {
             zero         = 0x4, //
             notZero      = 0x5, //
             equal        = 0x4, //

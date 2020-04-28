@@ -7,47 +7,37 @@
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
+#include <array>
 
-const char * BranchOpName[] = {
+std::array<const char *, 13>BranchOpName = {
     "B=", "B#", "B<", "B<=", "Bu<", "Bu<=", "B>", "B>=", "Bu>", "Bu>=", "Bovfl", "Bnofvl",
 
     "last (INVALID)"
 };
 
-
-const char * ArithOpName[] = {
+std::array<const char *, 34>ArithOpName = {
     "nil (INVALID)", "test",
 
-    // untagged operations
-    "+", "-", "*", "div", "mod", "and", "or", "xor", "shift", "cmp",
+     "+",  "-",  "*",  "div",  "mod",  "and",   "or",  "xor",  "shift",   "cmp", // untagged operations
+    "t+", "t-", "t*", "tdiv", "tmod", "tand",  "tor", "txor", "tshift",  "tcmp", // tagged operations
+    "f+", "f-", "f*", "fdiv", "fmod", "fcmp", "fneg", "fabs",    "f^2", "f2oop", // untagged float operations
 
-    // tagged operations
-    "t+", "t-", "t*", "tdiv", "tmod", "tand", "tor", "txor", "tshift", "tcmp",
-
-    // untagged float operations
-    "f+", "f-", "f*", "fdiv", "fmod", "fcmp", "fneg", "fabs", "f^2", "f2oop",
-
-    // tagged float operation
-    "f2float",
+    "f2float", // tagged float operation
 
     "last (INVALID)"
 };
 
 
-bool_t ArithOpIsCommutative[] = {
+std::array<bool_t, 34>ArithOpIsCommutative = {
     false, true,
 
-    // untagged operations
-    true, false, true, false, false, true, true, true, false, false,
+    true, false, true, false, false, true, true, true, false, false, // untagged operations
 
-    // tagged operations
-    true, false, true, false, false, true, true, true, false, false,
+    true, false, true, false, false, true, true, true, false, false, // tagged operations
 
-    // untagged float operations
-    true, false, true, false, false, false, false, false, false, false,
+    true, false, true, false, false, false, false, false, false, false, // untagged float operations
 
-    // tagged float operation
-    false,
+    false, // tagged float operation
 
     false
 };

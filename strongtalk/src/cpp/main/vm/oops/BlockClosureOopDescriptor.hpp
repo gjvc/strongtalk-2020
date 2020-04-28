@@ -7,7 +7,7 @@
 
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/system/sizes.hpp"
 
 

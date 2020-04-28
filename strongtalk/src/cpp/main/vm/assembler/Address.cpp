@@ -7,6 +7,7 @@
 #include "vm/code/RelocationInformation.hpp"
 #include "vm/assembler/Register.hpp"
 #include "vm/assembler/Address.hpp"
+#include "vm/assembler/x86_registers.hpp"
 
 
 Address::Address() {

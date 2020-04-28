@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,7 +6,6 @@
 
 #pragma once
 
-//#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 
 
@@ -19,7 +19,6 @@ class Register : public ValueObject {
 
     public:
         Register( void );
-
 
         explicit Register( int number, char f );    // f is only to make sure that an int is not accidentally converted into a Register...
 
@@ -42,6 +41,7 @@ class Register : public ValueObject {
         // debugging
         const char * name() const;
 };
+
 
 
 // Available registers

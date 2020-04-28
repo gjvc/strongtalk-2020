@@ -9,7 +9,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
 
 
@@ -54,8 +54,8 @@ class Klass : ValueObject {
         SMIOop         _has_untagged_contents;
         ObjectArrayOop _classVars;
         ObjectArrayOop _methods;
-        KlassOop _superKlass;
-        MixinOop _mixin;
+        KlassOop       _superKlass;
+        MixinOop       _mixin;
 
     public:
         friend KlassOop as_klassOop( void * p );
@@ -201,27 +201,28 @@ class Klass : ValueObject {
 
         virtual Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
 
-        enum class Format {    // Format of a vm klass
-            no_klass,               //
-            mem_klass,              //
-            association_klass,      //
-            blockClosure_klass,     //
-            byteArray_klass,        //
-            symbol_klass,           //
-            context_klass,          //
-            doubleByteArray_klass,  //
-            doubleValueArray_klass, //
-            double_klass,           //
-            klass_klass,            //
-            method_klass,           //
-            mixin_klass,            //
-            objArray_klass,         //
-            weakArray_klass,        //
-            process_klass,          //
-            vframe_klass,           //
-            proxy_klass,            //
-            smi_klass,              //
-            special_klass           //
+        // KlassFormat
+        enum class Format {
+                no_klass,               //
+                mem_klass,              //
+                association_klass,      //
+                blockClosure_klass,     //
+                byteArray_klass,        //
+                symbol_klass,           //
+                context_klass,          //
+                doubleByteArray_klass,  //
+                doubleValueArray_klass, //
+                double_klass,           //
+                klass_klass,            //
+                method_klass,           //
+                mixin_klass,            //
+                objArray_klass,         //
+                weakArray_klass,        //
+                process_klass,          //
+                vframe_klass,           //
+                proxy_klass,            //
+                smi_klass,              //
+                special_klass           //
         };
 
 

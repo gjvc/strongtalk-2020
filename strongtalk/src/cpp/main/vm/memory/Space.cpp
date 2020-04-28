@@ -14,7 +14,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 extern "C" {
 Oop * eden_bottom = nullptr;
 Oop * eden_top    = nullptr;
@@ -62,7 +61,7 @@ void Space::prepare_for_compaction( OldWaterMark * mark ) {
         if ( m->is_gc_marked() ) {
             if ( first_free ) {
                 first_free->set_mark( q );
-                 lprintf("[%#lx] = [%#lx], [%#lx]\n", first_free, first_free->mark(), q);
+                lprintf( "first_free [%#lx] = first_free->mark() [%#lx], q [%#lx]\n", first_free, first_free->mark(), q );
                 first_free = nullptr;
             }
 
@@ -82,14 +81,14 @@ void Space::prepare_for_compaction( OldWaterMark * mark ) {
         } else {
             if ( not first_free ) {
                 first_free = m;
-                // lprintf("First free %#lx\n", q);
+                lprintf( "First free %#lx\n", q );
             }
             q += m->size();
         }
     }
     if ( first_free ) {
         first_free->set_mark( q );
-        // lprintf("[%#lx] = %#lx, %#lx\n", first_free, first_free->mark(), q);
+        lprintf( "[%#lx] = %#lx, %#lx\n", first_free, first_free->mark(), q );
     }
     mark->_point = new_top;
 }
@@ -107,7 +106,7 @@ void Space::compact( OldWaterMark * mark ) {
     while ( q < t ) {
         MemOop m = as_memOop( q );
         if ( m->mark()->is_smi() ) {
-            // lprintf("Expanding %#lx -> %#lx\n", q, *q);
+            lprintf( "Expanding %#lx -> %#lx\n", q, *q );
             q = ( Oop * ) *q;
         } else {
             int size = m->gc_retrieve_size();
@@ -117,7 +116,7 @@ void Space::compact( OldWaterMark * mark ) {
 
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
-                // lprintf("copy %#lx -> %#lx (%d)\n", q, new_top, size);
+                lprintf( "copy %#lx -> %#lx (%d)\n", q, new_top, size );
                 st_assert( ( *new_top )->is_mark(), "should be header" );
             }
             mark->_space->update_offsets( new_top, new_top + size );

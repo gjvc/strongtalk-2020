@@ -97,4 +97,3 @@ class MemOopKlass : public Klass {
 };
 
 void setKlassVirtualTableFromMemOopKlass( Klass * k );
-

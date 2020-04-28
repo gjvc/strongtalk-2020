@@ -60,7 +60,7 @@ class Compiler : public PrintableResourceObject {
         Node                                     * firstNode;                // the very first node of the intermediate representation
         PerformanceDebugger                      * reporter;                 // for reporting performance info
         StringOutputStream                       * messages;                 // debug messages
-        int                                      inlineLimit[LastLimit];    // limits for current compilation
+        std::array<int, LastLimit>inlineLimit;                               // limits for current compilation
 
     private:
         void initialize( RecompilationScope * remote_scope = nullptr );

@@ -274,7 +274,7 @@ class InlinedScope : public Scope {
         }
 
 
-        ScopeInfo ScopeInfo() const {
+        ScopeInfo getScopeInfo() const {
             return _scopeInfo;
         }
 

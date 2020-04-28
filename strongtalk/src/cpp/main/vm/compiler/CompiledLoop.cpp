@@ -427,6 +427,7 @@ void CompiledLoop::optimizeIntegerLoop() {
     if ( not OptimizeLoops ) fatal( "if OptimizeIntegerLoops is set, OptimizeLoops must be set too" );
     if ( not isIntegerLoop() )
         return;
+
     // activate loop header (will check upper bound for smi_t-ness etc.)
     PseudoRegister * u = _loopSizeLoad ? nullptr : _upperBound;
     _loopHeader->activate( _loopVar, _lowerBound, u, _loopSizeLoad );
@@ -486,6 +487,7 @@ void CompiledLoop::removeTagChecks() {
 
 
 void CompiledLoop::removeLoopVarOverflow() {
+
     // bug: should remove overflow only if increment is constant and not too large -- fix this
     Node * n = _incNode->next();
     st_assert( n->isBranchNode(), "must be branch" );

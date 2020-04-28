@@ -8,7 +8,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/smiKlass.hpp"
+#include "vm/oops/SMIKlass.hpp"
 #include "vm/oops/VirtualFrameOopDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/system/sizes.hpp"

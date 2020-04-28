@@ -1,20 +1,23 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
+
+#include <array>
 
 #include "vm/assembler/Location.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
 
-static const char * specialLocNames[nofSpecialLocations] = {
-    "illegalLocation",  //
-    "unAllocated",  //
-    "noRegister",  //
-    "topOfStack",  //
-    "resultOfNonLocalReturn",  //
-    "topOfFloatStack" //
+static std::array <const char *, nofSpecialLocations> specialLocNames{
+    "illegalLocation",          //
+    "unAllocated",              //
+    "noRegister",               //
+    "topOfStack",               //
+    "resultOfNonLocalReturn",   //
+    "topOfFloatStack"           //
 };
 
 
@@ -42,34 +45,34 @@ const char * Location::name() const {
 
     char * s;
     switch ( mode() ) {
-        case specialLoc: {
+        case Mode::specialLoc: {
             const char * name = specialLocNames[ id() ];
             s = new_resource_array <char>( strlen( name ) );
             sprintf( s, name );
             break;
         }
-        case registerLoc: {
+        case Mode::registerLoc: {
             const char * name = Mapping::asRegister( *this ).name();
             s                 = new_resource_array <char>( 8 );
             sprintf( s, name );
             break;
         }
-        case stackLoc: {
+        case Mode::stackLoc: {
             s = new_resource_array <char>( 8 );
             sprintf( s, "S%d", offset() );
             break;
         }
-        case contextLoc1: {
+        case Mode::contextLoc1: {
             s = new_resource_array <char>( 24 );
             sprintf( s, "C0x%08x,%d(%d)", contextNo(), tempNo(), scopeID() );
             break;
         }
-        case contextLoc2: {
+        case Mode::contextLoc2: {
             s = new_resource_array <char>( 24 );
             sprintf( s, "C%d,%d[%d]", contextNo(), tempNo(), scopeOffs() );
             break;
         }
-        case floatLoc: {
+        case Mode::floatLoc: {
             s = new_resource_array <char>( 16 );
             sprintf( s, "F%d(%d)", floatNo(), scopeNo() );
             break;

@@ -1,10 +1,10 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/system/posix.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/arguments.hpp"

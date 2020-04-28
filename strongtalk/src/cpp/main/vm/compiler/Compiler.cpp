@@ -139,7 +139,7 @@ int Compiler::version() const {
 
 int Compiler::estimatedSize() const {
     // estimated target NativeMethod size (bytes)
-    return NodeFactory::cumulativeCost;
+    return NodeFactory::_cumulativeCost;
 }
 
 
@@ -480,7 +480,7 @@ NativeMethod * Compiler::compile() {
         _console->cr();
         _console->print_cr( "Start of debugging info." );
     }
-    topScope->generateDebugInfo();    // must come before gen to set ScopeInfo
+    topScope->generateDebugInfo();    // must come before gen to set getScopeInfo
     topScope->generateDebugInfoForNonInlinedBlocks();
 
     // generate machine code
@@ -637,8 +637,8 @@ void Compiler::computeBlockInfo() {
                 st_assert( p->scope() == s or p->isBlockPReg(), "oops" );
                 Location loc = Mapping::contextTemporary( i, size, s->scopeID() );
                 if ( p->isBlockPReg() ) {
-                    // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info
-                    // isn't lost.  Thus we need to create a fake destination here if the context exists.
+                    // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
+                    // Thus we need to create a fake destination here if the context exists.
                     SinglyAssignedPseudoRegister * dest = new SinglyAssignedPseudoRegister( s, loc, true, true, PrologueByteCodeIndex, EpilogueByteCodeIndex );
                     Expression                   * e    = new UnknownExpression( dest, nullptr );
                     //contextPR->scope()->contextInitializer()->initialize(j, init);
@@ -672,6 +672,7 @@ void Compiler::computeBlockInfo() {
         // first is for NativeMethod itself
         int       block_index = 1;
         for ( int i           = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+            
             BlockPseudoRegister * blk = bbIterator->exposedBlks->at( i );
             if ( blk->isUsed() ) {
                 st_assert( block_index <= nblocks, "nblocks too small" );

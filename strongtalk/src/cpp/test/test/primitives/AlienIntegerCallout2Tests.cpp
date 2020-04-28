@@ -84,15 +84,15 @@ class AlienIntegerCallout2Tests : public ::testing::Test {
         }
 
 
-        HeapResourceMark                    * rm;
+        HeapResourceMark * rm;
         GrowableArray <PersistentHandle **> * handles;
-        PersistentHandle                    * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
-        PersistentHandle                    * directAlien, * invalidFunctionAlien;
-        SMIOop                                             smi0, smi1, smim1;
-        static constexpr int                               argCount = 2;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
-        char                                address[8];
+        PersistentHandle * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
+        PersistentHandle * directAlien, * invalidFunctionAlien;
+        SMIOop                          smi0, smi1, smim1;
+        static constexpr int            argCount = 2;
+        std::array <void *, argCount>   intCalloutFunctions;
+        std::array <void *, argCount>   intPointerCalloutFunctions;
+        char                            address[8];
 
 
         void allocateAlien( PersistentHandle *& alienHandle, int arraySize, int alienSize, void * ptr = nullptr ) {
@@ -156,7 +156,7 @@ class AlienIntegerCallout2Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             Oop arg0   = argIndex == 0 ? asOop( argValue ) : smi0;
             Oop arg1   = argIndex == 1 ? asOop( argValue ) : smi0;
@@ -167,7 +167,7 @@ class AlienIntegerCallout2Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPtrPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             byteArrayPrimitives::alienSignedLongAtPut( asOop( argValue ), smi1, pointerAlien->as_oop() );
             Oop arg0   = argIndex == 0 ? pointerAlien->as_oop() : smi0;

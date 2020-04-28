@@ -44,7 +44,7 @@ typedef class WeakArrayOopDescriptor        * WeakArrayOop;
 typedef class ProcessOopDescriptor          * ProcessOop;
 typedef class ProxyOopDescriptor            * ProxyOop;
 typedef class VirtualFrameOopDescriptor     * VirtualFrameOop;
-typedef class smiOopDescriptor              * SMIOop;
+typedef class SMIOopDescriptor              * SMIOop;
 
 
 // -----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ typedef class ScopeDescriptorNode * ScopeInfo;
 //
 
 // The "*Descriptor" classes describe the format of ST objects so the fields can be accessed from C++.
-// NOTE: "Oop" pointers to xxxDescriptor structures (e.g., Oop, proxyOop) are TAGGED and thus should not be used to access the fields.
+// "*Oop" pointers to "*Descriptor" structures (e.g., Oop, proxyOop) are TAGGED and thus should not be used to access the fields.
 // Instead, convert the xxxOop to a xxxDescriptor* with the ->addr() function, then work with the xxxDescriptor* pointer.
 
 // xxxOop pointers are tagged.

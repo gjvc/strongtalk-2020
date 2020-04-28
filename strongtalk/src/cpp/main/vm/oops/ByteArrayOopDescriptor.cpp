@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -7,11 +8,9 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
-#include "vm/compiler/BasicBlock.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
@@ -210,11 +209,11 @@ const char * ByteArrayOopDescriptor::as_string() {
     return str;
 }
 
-
+//
 //const char *ByteArrayOopDescriptor::as_string() {
 //    return as_std_string().c_str();
 //}
-
+//
 
 const std::string & ByteArrayOopDescriptor::as_std_string() {
 
@@ -225,6 +224,7 @@ const std::string & ByteArrayOopDescriptor::as_std_string() {
     }
     s += '\0';
 
+    return s;
 }
 
 

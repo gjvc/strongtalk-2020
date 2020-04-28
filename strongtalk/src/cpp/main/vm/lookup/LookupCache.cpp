@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -8,7 +9,6 @@
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 
@@ -17,9 +17,8 @@ int LookupCache::number_of_primary_hits;
 int LookupCache::number_of_secondary_hits;
 int LookupCache::number_of_misses;
 
-
-static CacheElement primary[primary_cache_size];
-static CacheElement secondary[secondary_cache_size];
+static std::array <CacheElement, primary_cache_size>   primary;
+static std::array <CacheElement, secondary_cache_size> secondary;
 
 
 int LookupCache::primary_cache_address() {
@@ -178,7 +177,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
 
     // Check Inlining database
     if ( UseInliningDatabase and UseInliningDatabaseEagerly and compile ) {
-        ResourceMark       rm;
+        ResourceMark rm;
         RecompilationScope * rs = InliningDatabase::lookup_and_remove( key );
         if ( rs ) {
             if ( TraceInliningDatabase ) {
@@ -188,7 +187,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
             }
 
             // Remove old NativeMethod if present
-            NativeMethod      * old_nm = Universe::code->lookup( rs->key() );
+            NativeMethod * old_nm = Universe::code->lookup( rs->key() );
             VM_OptimizeRScope op( rs );
             VMProcess::execute( &op );
             if ( old_nm )

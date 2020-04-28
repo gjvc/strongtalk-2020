@@ -9,7 +9,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
-
+#include <array>
 
 
 
@@ -19,9 +19,9 @@ class InterpreterStatistics : AllStatic {
 
     private:
 
-        static bool_t   _is_initialized;            // true if InterpreterStatistics has been initialized
-        static uint32_t _bytecode_counters[];
-        static int      _bytecode_generation_order[];
+        static bool_t                                                                    _is_initialized;            // true if InterpreterStatistics has been initialized
+        static std::array <uint32_t, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)> _bytecode_counters;
+        static std::array <int, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>      _bytecode_generation_order;
 
         static void reset_bytecode_counters();
 
@@ -29,14 +29,7 @@ class InterpreterStatistics : AllStatic {
 
     public:
 
-        static bool_t is_initialized() {
-            return _is_initialized;
-        }
-
-
-        static uint32_t * bytecode_counters() {
-            return _bytecode_counters;
-        }
+        static bool_t is_initialized();
 
 
         static ByteCodes::Code ith_bytecode_to_generate( int i );

@@ -156,7 +156,7 @@ const char * CompilerInliningPolicy::shouldInline( InlinedScope * s, InlinedScop
     _sender    = s;
     _methodOop = callee->method();
     _receiver  = callee->self();
-    if ( NodeFactory::cumulativeCost > MaxNmInstrSize ) {
+    if ( NodeFactory::_cumulativeCost > MaxNmInstrSize ) {
         theCompiler->reporter->report_toobig( callee );
         return "method getting too big";
     }

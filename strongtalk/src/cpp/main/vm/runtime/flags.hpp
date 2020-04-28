@@ -10,7 +10,7 @@
 #include <cstring>
 
 // Debug flags control various aspects of the VM and are accessible by Delta programs.
-// use FlagSetting to temporarily change some debug flag.
+// Use FlagSetting to temporarily change some debug flag.
 // When the FlagSetting instance goes out of scope the original value is restored by the destructor.
 
 class FlagSetting {
@@ -28,7 +28,7 @@ class FlagSetting {
 
 
         ~FlagSetting() {
-            *_flag = _value;
+            *_flag = _value; // restore original value
         }
 };
 

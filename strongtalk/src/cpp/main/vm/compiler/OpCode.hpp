@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <array>
 #include "vm/system/platform.hpp"
 
 
@@ -78,7 +79,6 @@ enum ArithOpCode {
     LastArithOp
 };
 
-
-extern const char * BranchOpName[];      // indexed by BranchOpCode
-extern const char * ArithOpName[];       // indexed by ArithOpCode
-extern bool_t     ArithOpIsCommutative[];   // indexed by ArithOpCode
+extern std::array<const char *, 13>BranchOpName; // indexed by BranchOpCode
+extern std::array<const char *, 34>ArithOpName; // indexed by ArithOpCode
+extern std::array<bool_t, 34>ArithOpIsCommutative; // indexed by ArithOpCode

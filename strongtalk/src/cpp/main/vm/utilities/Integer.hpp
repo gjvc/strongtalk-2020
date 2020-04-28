@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/memory/allocation.hpp"
-#include "vm/oops/smiKlass.hpp"
+#include "vm/oops/SMIKlass.hpp"
 
 
 // -----------------------------------------------------------------------------

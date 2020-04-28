@@ -9,6 +9,14 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/Bootstrap.hpp"
+#include "vm/runtime/arguments.hpp"
+#include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/flags.hpp"
+#include "vm/runtime/Process.hpp"
+#include "vm/code/InliningDatabase.hpp"
+#include "vm/system/os.hpp"
+#include "vm/runtime/init.hpp"
 
 
 void VM_Operation::evaluate() {
@@ -91,4 +99,57 @@ void VM_OptimizeRScope::doit() {
 void VM_OptimizeBlockMethod::doit() {
     Compiler c( _closure, _scope );
     _nativeMethod = c.compile();
+}
+
+
+
+static void load_image() {
+
+    ResourceMark resourceMark;
+
+    Bootstrap bootstrap( image_basename );
+    bootstrap.load();
+
+    vmSymbols::initialize();
+
+    bootstrappingInProgress = false;
+}
+
+
+int vmProcessMain( void * ignored ) {
+    Processes::start( new VMProcess );
+    return 0;
+}
+
+
+int createVMProcess() {
+
+    int ignored;
+    os::create_thread( &vmProcessMain, nullptr, &ignored );
+
+    return 0;
+}
+
+
+int vm_main( int argc, char * argv[] ) {
+
+    parse_arguments( argc, argv );
+    init_globals();
+
+    load_image();
+    _console->print_cr( "%%status-image-loaded" );
+
+    if ( UseInliningDatabase )
+        InliningDatabase::load_index_file();
+
+    DeltaProcess::createMainProcess();
+    _console->print_cr( "%%status-main-process-created" );
+
+    createVMProcess();
+    _console->print_cr( "%%vm-process-created" );
+
+    os::sleep( 10 * 1000 );
+    DeltaProcess::runMainProcess();
+
+    return 0;
 }

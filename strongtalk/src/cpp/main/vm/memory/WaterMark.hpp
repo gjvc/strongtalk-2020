@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "allocation.hpp"
+#include "vm/memory/allocation.hpp"
 #include "vm/memory/util.hpp"
 
 

@@ -3,13 +3,14 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+#include <array>
+
 #include "vm/primitives/PrimitivesGenerator.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/primitives/primitives.hpp"
 #include "vm/system/os.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/system/sizes.hpp"
 
 
 
@@ -32,10 +33,10 @@ const char * GeneratedPrimitives::_double_multiply            = nullptr;
 const char * GeneratedPrimitives::_double_divide              = nullptr;
 const char * GeneratedPrimitives::_double_from_smi            = nullptr;
 
-const char * GeneratedPrimitives::_primitiveValue[10];
-const char * GeneratedPrimitives::_primitiveNew[10];
-const char * GeneratedPrimitives::_allocateBlock[10];
-const char * GeneratedPrimitives::_allocateContext[3];
+std::array<const char *, 10>GeneratedPrimitives::_primitiveValue;
+std::array<const char *, 10>GeneratedPrimitives::_primitiveNew;
+std::array<const char *, 10>GeneratedPrimitives::_allocateBlock;
+std::array<const char *, 3>GeneratedPrimitives::_allocateContext;
 const char * GeneratedPrimitives::_primitiveInlineAllocations = nullptr;
 
 extern "C" void scavenge_and_allocate( int size );
@@ -59,7 +60,7 @@ void PrimitivesGenerator::test_for_scavenge( Register dst, int size, Label & nee
     masm->movl( dst, Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->addl( dst, size );
     masm->cmpl( dst, Address( ( int ) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
-    masm->jcc( Assembler::greater, need_scavenge );
+    masm->jcc( Assembler::Condition::greater, need_scavenge );
     masm->movl( Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ), dst );
 }
 

@@ -346,7 +346,7 @@ static void verifyOopCode( Register reg ) {
         warning( ": verifyOop should not be called" );
     Label L;
     theMacroAssembler->test( reg, MARK_TAG_BIT );
-    theMacroAssembler->jcc( Assembler::zero, L );
+    theMacroAssembler->jcc( Assembler::Condition::zero, L );
     theMacroAssembler->hlt();
     theMacroAssembler->bind( L );
 }
@@ -676,7 +676,7 @@ static void storeO( ConstPseudoRegister * src, PseudoRegister * dst, Register te
 
 static void set_floats_base( Node * node, Register base, bool_t enforce = false ) {
     // Stores aligned ebp value into base
-    st_assert( floatSize == 8, "check this code" );
+    st_assert( SIZEOF_FLOAT == 8, "check this code" );
     st_assert( node->isAccessingFloats(), "must be a node accessing floats" );
     st_assert( base == temp3, "check this code" );
     if ( node->hasSinglePredecessor() and node->firstPrev()->isAccessingFloats() and not enforce ) {
@@ -684,7 +684,7 @@ static void set_floats_base( Node * node, Register base, bool_t enforce = false 
         // already set => no extra code necessary
     } else {
         theMacroAssembler->movl( base, ebp );
-        theMacroAssembler->andl( base, -floatSize );
+        theMacroAssembler->andl( base, -SIZEOF_FLOAT );
     }
 }
 
@@ -743,31 +743,31 @@ static void incCounter() {
 static Assembler::Condition mapToCC( BranchOpCode op ) {
     switch ( op ) {
         case EQBranchOp:
-            return Assembler::equal;
+            return Assembler::Condition::equal;
         case NEBranchOp:
-            return Assembler::notEqual;
+            return Assembler::Condition::notEqual;
         case LTBranchOp:
-            return Assembler::less;
+            return Assembler::Condition::less;
         case LEBranchOp:
-            return Assembler::lessEqual;
+            return Assembler::Condition::lessEqual;
         case GTBranchOp:
-            return Assembler::greater;
+            return Assembler::Condition::greater;
         case GEBranchOp:
-            return Assembler::greaterEqual;
+            return Assembler::Condition::greaterEqual;
         case LTUBranchOp:
-            return Assembler::below;
+            return Assembler::Condition::below;
         case LEUBranchOp:
-            return Assembler::belowEqual;
+            return Assembler::Condition::belowEqual;
         case GTUBranchOp:
-            return Assembler::above;
+            return Assembler::Condition::above;
         case GEUBranchOp:
-            return Assembler::aboveEqual;
+            return Assembler::Condition::aboveEqual;
         case VSBranchOp:
-            return Assembler::overflow;
+            return Assembler::Condition::overflow;
         case VCBranchOp:
-            return Assembler::noOverflow;
+            return Assembler::Condition::noOverflow;
         default: ShouldNotReachHere();
-            return Assembler::zero;
+            return Assembler::Condition::zero;
     }
 }
 
@@ -799,7 +799,7 @@ static void continueNonLocalReturn( Register temp1, Register temp2 ) {
 
 void BasicNode::gen() {
     ScopeDescriptorRecorder * rec = theCompiler->scopeDescRecorder();
-    rec->addProgramCounterDescriptor( theMacroAssembler->offset(), _scope->ScopeInfo(), _byteCodeIndex );
+    rec->addProgramCounterDescriptor( theMacroAssembler->offset(), _scope->getScopeInfo(), _byteCodeIndex );
 }
 
 
@@ -811,7 +811,7 @@ static void checkRecompilation( Label & recompile_stub_call, Register t ) {
         theMacroAssembler->incl( t );
         theMacroAssembler->cmpl( t, theCompiler->get_invocation_counter_limit() );
         theMacroAssembler->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), t );
-        theMacroAssembler->jcc( Assembler::greaterEqual, recompile_stub_call );
+        theMacroAssembler->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
     }
 }
 
@@ -836,7 +836,7 @@ static void verify_context_chain( Register closure, int chain_length, Register t
     }
     // check if there was any context that has been deoptimized
     theMacroAssembler->testl( sum, MarkOopDescriptor::context_forward_bit_mask() );
-    theMacroAssembler->jcc( Assembler::notZero, StubRoutines::deoptimize_block_entry(), RelocationInformation::RelocationType::runtime_call_type );
+    theMacroAssembler->jcc( Assembler::Condition::notZero, StubRoutines::deoptimize_block_entry(), RelocationInformation::RelocationType::runtime_call_type );
     // otherwise continue
 }
 
@@ -872,13 +872,13 @@ void PrologueNode::gen() {
         if ( klass == smiKlassObj ) {
             // receiver must be a smi_t, check smi_t tag only
             theMacroAssembler->test( recv, MEMOOP_TAG );
-            theMacroAssembler->jcc( Assembler::notZero, CompiledInlineCache::normalLookupRoutine() );
+            theMacroAssembler->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
         } else {
             // receiver could be a smi_t, check smi_t tag before loading class
             theMacroAssembler->test( recv, MEMOOP_TAG );
-            theMacroAssembler->jcc( Assembler::zero, CompiledInlineCache::normalLookupRoutine() );
+            theMacroAssembler->jcc( Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine() );
             theMacroAssembler->cmpl( Address( recv, MemOopDescriptor::klass_byte_offset() ), klass );
-            theMacroAssembler->jcc( Assembler::notEqual, CompiledInlineCache::normalLookupRoutine() );
+            theMacroAssembler->jcc( Assembler::Condition::notEqual, CompiledInlineCache::normalLookupRoutine() );
         }
     } else {
         // If this is a block method and we expect a context then the incoming context chain must be checked.
@@ -908,9 +908,9 @@ void PrologueNode::gen() {
     // allocate float temporaries
     int nofFloats = theCompiler->totalNofFloatTemporaries();
     if ( nofFloats > 0 ) {
-        st_assert( floatSize == oopSize * 2, "check this code" );
+        st_assert( SIZEOF_FLOAT == oopSize * 2, "check this code" );
         st_assert( first_float_offset == -4, "check this code" );
-        int float_section_size = nofFloats * ( floatSize / oopSize ) + 2;    // 2 additional words for filler & float alignment
+        int float_section_size = nofFloats * ( SIZEOF_FLOAT / oopSize ) + 2;    // 2 additional words for filler & float alignment
         frame_size += 1 + float_section_size;            // magic word & floats
         theMacroAssembler->pushl( Floats::magic );                // magic word
         theMacroAssembler->subl( esp, float_section_size * oopSize );    // add one word for float alignment
@@ -970,7 +970,7 @@ void PrologueNode::gen() {
     checkRecompilation( recompile_stub_call, temp2 );
 
     theMacroAssembler->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
-    theMacroAssembler->jcc( Assembler::less, handle_stack_overflow );
+    theMacroAssembler->jcc( Assembler::Condition::less, handle_stack_overflow );
     theMacroAssembler->bind( continue_after_stack_overflow );
 }
 
@@ -1276,7 +1276,7 @@ void TArithRRNode::gen() {
             if ( not _arg1IsInt ) {
                 // tag check necessary for arg1
                 theMacroAssembler->test( x, MEMOOP_TAG );
-                theMacroAssembler->jcc( Assembler::notZero, next( 1 )->_label );
+                theMacroAssembler->jcc( Assembler::Condition::notZero, next( 1 )->_label );
             }
             arithRCOp( _op, x, int( y ) );            // y is SMIOop -> needs no relocation info
             if ( result )
@@ -1311,7 +1311,7 @@ void TArithRRNode::gen() {
         if ( tags not_eq noreg ) {
             // check tags
             theMacroAssembler->test( tags, MEMOOP_TAG );
-            theMacroAssembler->jcc( Assembler::notZero, next( 1 )->_label );
+            theMacroAssembler->jcc( Assembler::Condition::notZero, next( 1 )->_label );
         }
         // perform operation
         arithRROp( _op, x, y );
@@ -1455,10 +1455,10 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
         case f2FloatArithOp: {
             Label is_smi, is_float, done;
             theMacroAssembler->test( reg, MEMOOP_TAG );            // check if smi_t
-            theMacroAssembler->jcc( Assembler::zero, is_smi );
+            theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
             theMacroAssembler->movl( temp, Address( reg, MemOopDescriptor::klass_byte_offset() ) );    // get object klass
             theMacroAssembler->cmpl( temp, doubleKlass_addr() );        // check if floatOop
-            theMacroAssembler->jcc( Assembler::equal, is_float );
+            theMacroAssembler->jcc( Assembler::Condition::equal, is_float );
             theMacroAssembler->hlt(); // not yet implemented		// cannot be converted
 
             // convert smi_t
@@ -1591,10 +1591,10 @@ void ContextZapNode::gen() {
 void FixedCodeNode::gen() {
     BasicNode::gen();
     switch ( _kind ) {
-        case dead_end:
+        case FixedCodeNode::FixedCodeKind::dead_end:
             theMacroAssembler->hlt();
             break;
-        case inc_counter:
+        case FixedCodeNode::FixedCodeKind::inc_counter:
             incCounter();
             break;
         default: fatal1( "unexpected FixedCodeNode kind %d", _kind );
@@ -1641,7 +1641,7 @@ void NonLocalReturnSetupNode::gen() {
     Label    NonLocalReturn_error;
     Register home = uplevelBase( scope()->context(), scope()->homeContext() + 1, temp1 );
     theMacroAssembler->testl( home, home );
-    theMacroAssembler->jcc( Assembler::zero, NonLocalReturn_error ); // zero -> home has been zapped
+    theMacroAssembler->jcc( Assembler::Condition::zero, NonLocalReturn_error ); // zero -> home has been zapped
     if ( home not_eq Mapping::asRegister( NonLocalReturnHomeLoc ) ) {
         theMacroAssembler->movl( Mapping::asRegister( NonLocalReturnHomeLoc ), home );
     }
@@ -1672,7 +1672,7 @@ void NonLocalReturnTestNode::gen() {
     // arrived at the right frame?
     Label L;
     theMacroAssembler->cmpl( Mapping::asRegister( NonLocalReturnHomeLoc ), ebp );
-    theMacroAssembler->jcc( Assembler::notEqual, L );
+    theMacroAssembler->jcc( Assembler::Condition::notEqual, L );
     // arrived at the right scope within a frame?
     int id = scope()->scopeID();
     if ( id == 0 ) {
@@ -1681,7 +1681,7 @@ void NonLocalReturnTestNode::gen() {
     } else {
         theMacroAssembler->cmpl( Mapping::asRegister( NonLocalReturnHomeIdLoc ), id );
     }
-    theMacroAssembler->jcc( Assembler::equal, next1()->_label );
+    theMacroAssembler->jcc( Assembler::Condition::equal, next1()->_label );
     // continue non-local return
     theMacroAssembler->bind( L );
 }
@@ -1709,11 +1709,11 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
     } else {
         // compare against obj's klass - must check if smi_t first
         theMacroAssembler->test( obj, MEMOOP_TAG );
-        theMacroAssembler->jcc( Assembler::zero, failure );
+        theMacroAssembler->jcc( Assembler::Condition::zero, failure );
         theMacroAssembler->movl( klassReg, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
         theMacroAssembler->cmpl( klassReg, klass );
     }
-    theMacroAssembler->jcc( Assembler::notEqual, failure );
+    theMacroAssembler->jcc( Assembler::Condition::notEqual, failure );
     theMacroAssembler->jmp( success );    // this jump will be eliminated since this is the likely successor
 }
 
@@ -1729,13 +1729,13 @@ static bool_t testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2
     if ( klass1 == bool1->klass() and klass2 == bool2->klass() ) {
         if ( hasUnknown ) {
             theMacroAssembler->cmpl( obj, bool1 );
-            theMacroAssembler->jcc( Assembler::equal, success1 );
+            theMacroAssembler->jcc( Assembler::Condition::equal, success1 );
             theMacroAssembler->cmpl( obj, bool2 );
-            theMacroAssembler->jcc( Assembler::notEqual, failure );
+            theMacroAssembler->jcc( Assembler::Condition::notEqual, failure );
             theMacroAssembler->jmp( success2 );    // this jump will be eliminated since this is the likely successor
         } else {
             theMacroAssembler->cmpl( obj, bool2 );
-            theMacroAssembler->jcc( Assembler::equal, success2 );
+            theMacroAssembler->jcc( Assembler::Condition::equal, success2 );
             theMacroAssembler->jmp( success1 );    // this jump will be eliminated since this is the likely successor
         }
         return true;
@@ -1771,7 +1771,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
     // generate code
     if ( smi_case >= 0 ) {
         theMacroAssembler->test( obj, MEMOOP_TAG );
-        theMacroAssembler->jcc( Assembler::zero, *next->at( smi_case ) );
+        theMacroAssembler->jcc( Assembler::Condition::zero, *next->at( smi_case ) );
     }
 
     bool_t    klassHasBeenLoaded = false;
@@ -1796,7 +1796,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
             }
             theMacroAssembler->cmpl( klassReg, klass );
         }
-        theMacroAssembler->jcc( Assembler::equal, *labels.at( i ) );
+        theMacroAssembler->jcc( Assembler::Condition::equal, *labels.at( i ) );
     }
     if ( hasUnknown ) {
         theMacroAssembler->jmp( *( next->first() ) );
@@ -1874,11 +1874,11 @@ void TypeTestNode::gen() {
       } else {
         // compare against obj's klass - must check if smi_t first
 	theMacroAssm->test(obj, MEMOOP_TAG);
-	theMacroAssm->jcc(Assembler::zero, next()->label);
+	theMacroAssm->jcc(Assembler::Condition::zero, next()->label);
         theMacroAssm->movl(klassReg, Address(obj, memOopDescriptor::klass_byte_offset()));
         theMacroAssm->cmpl(klassReg, klass);
       }
-      theMacroAssm->jcc(Assembler::notEqual, next()->label);
+      theMacroAssm->jcc(Assembler::Condition::notEqual, next()->label);
       theMacroAssm->jmp(next(1)->label);	// this jump will be eliminated since this is the likely successor
       bb_needs_jump = false;			// no jump necessary at end of basic block
       return;
@@ -1897,14 +1897,14 @@ void TypeTestNode::gen() {
 	if (hasUnknown()) {
 	  assert(likelySuccessor() == next(2), "code pattern is not optimal");
 	  theMacroAssm->cmpl(obj, bool1);
-	  theMacroAssm->jcc(Assembler::equal, next(1)->label);
+	  theMacroAssm->jcc(Assembler::Condition::equal, next(1)->label);
           theMacroAssm->cmpl(obj, bool2);
-          theMacroAssm->jcc(Assembler::notEqual, next()->label);
+          theMacroAssm->jcc(Assembler::Condition::notEqual, next()->label);
 	  theMacroAssm->jmp(next(2)->label);	// this jump will be eliminated since this is the likely successor
 	} else {
 	  assert(likelySuccessor() == next(1), "code pattern is not optimal");
           theMacroAssm->cmpl(obj, bool2);
-	  theMacroAssm->jcc(Assembler::equal, next(2)->label);
+	  theMacroAssm->jcc(Assembler::Condition::equal, next(2)->label);
 	  theMacroAssm->jmp(next(1)->label);	// this jump will be eliminated since this is the likely successor
 	}
 	bb_needs_jump = false;			// no jump necessary at end of basic block
@@ -1936,7 +1936,7 @@ void TypeTestNode::gen() {
   // generate code
   if (smi_case not_eq nullptr) {
     theMacroAssm->test(obj, MEMOOP_TAG);
-    theMacroAssm->jcc(Assembler::zero, smi_case->label);
+    theMacroAssm->jcc(Assembler::Condition::zero, smi_case->label);
   }
 
   bool_t klassHasBeenLoaded = false;
@@ -1961,7 +1961,7 @@ void TypeTestNode::gen() {
       }
       theMacroAssm->cmpl(klassReg, klass);
     }
-    theMacroAssm->jcc(Assembler::equal, nodes.at(i)->label);
+    theMacroAssm->jcc(Assembler::Condition::equal, nodes.at(i)->label);
   }
   if (hasUnknown()) {
     theMacroAssm->jmp(next()->label);
@@ -2107,7 +2107,7 @@ void BlockMaterializeNode::gen() {
         Register t = movePRegToReg( block(), temp1 );
         st_assert( MemoizedBlockNameDescriptor::uncreatedBlockValue() == Oop( 0 ), "change the code generation here" );
         theMacroAssembler->testl( t, t );
-        theMacroAssembler->jcc( Assembler::notZero, L );
+        theMacroAssembler->jcc( Assembler::Condition::notZero, L );
         materialize();
         theMacroAssembler->bind( L );
     }
@@ -2252,7 +2252,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label & prev, Label & failure ) {
                 } else {
                     const Register t = movePRegToReg( _lowerBound ? _lowerBound : _loopVar, tempReg );
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
-                    theMacroAssembler->jcc( Assembler::less, failure );
+                    theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }
             }
 
@@ -2261,7 +2261,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label & prev, Label & failure ) {
             const Register t = movePRegToReg( atNode->src(), tempReg );
             theMacroAssembler->movl( t, Address( t, byteOffset( atNode->sizeOffset() ) ) );
             theMacroAssembler->cmpl( boundReg, t );
-            theMacroAssembler->jcc( Assembler::above, failure );
+            theMacroAssembler->jcc( Assembler::Condition::above, failure );
         }
     }
 }
@@ -2300,13 +2300,13 @@ void ArrayAtNode::gen() {
     Label indexNotSmi;
     if ( not _intArg ) {
         theMacroAssembler->test( index, MEMOOP_TAG );
-        jcc_error( this, Assembler::notZero, indexNotSmi );
+        jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
     }
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( _needBoundsCheck ) {
         theMacroAssembler->cmpl( index, size );
-        jcc_error( this, Assembler::aboveEqual, indexOutOfBounds );
+        jcc_error( this, Assembler::Condition::aboveEqual, indexOutOfBounds );
     }
     // load element
     Register t = answerPRegReg( _dest, temp3 );
@@ -2332,7 +2332,7 @@ void ArrayAtNode::gen() {
             // check index first, must be 0 <= t < asciiCharacters()->length()
             ObjectArrayOop chars = Universe::asciiCharacters();
             theMacroAssembler->cmpl( t, chars->length() );
-            jcc_error( this, Assembler::aboveEqual, indexOutOfBounds );
+            jcc_error( this, Assembler::Condition::aboveEqual, indexOutOfBounds );
             // get character out of chars array
             theMacroAssembler->movl( temp1, chars );
             theMacroAssembler->movl( t, Address( temp1, t, Address::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
@@ -2387,13 +2387,13 @@ void ArrayAtPutNode::gen() {
     Label indexNotSmi;
     if ( not _intArg ) {
         theMacroAssembler->test( index, MEMOOP_TAG );
-        jcc_error( this, Assembler::notZero, indexNotSmi );
+        jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
     }
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( _needBoundsCheck ) {
         theMacroAssembler->cmpl( index, size );
-        jcc_error( this, Assembler::aboveEqual, indexOutOfBounds );
+        jcc_error( this, Assembler::Condition::aboveEqual, indexOutOfBounds );
     }
     // store element
     Label    elementNotSmi, elementOutOfRange;
@@ -2404,12 +2404,12 @@ void ArrayAtPutNode::gen() {
         case byte_at_put:
             if ( not _smi_element ) {
                 theMacroAssembler->test( element, MEMOOP_TAG );
-                jcc_error( this, Assembler::notZero, elementNotSmi );
+                jcc_error( this, Assembler::Condition::notZero, elementNotSmi );
             }
             theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (int) byte
             if ( _needs_element_range_check ) {
                 theMacroAssembler->cmpl( element, 0x100 );
-                jcc_error( this, Assembler::aboveEqual, elementOutOfRange );
+                jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );
             }
             theMacroAssembler->sarl( index, TAG_SIZE );    // adjust index
             theMacroAssembler->movb( Address( array, index, Address::times_1, byteOffset( _dataOffset ) ), element );
@@ -2418,12 +2418,12 @@ void ArrayAtPutNode::gen() {
         case double_byte_at_put:
             if ( not _smi_element ) {
                 theMacroAssembler->test( element, MEMOOP_TAG );
-                jcc_error( this, Assembler::notZero, elementNotSmi );
+                jcc_error( this, Assembler::Condition::notZero, elementNotSmi );
             }
             theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (int) double byte
             if ( _needs_element_range_check ) {
                 theMacroAssembler->cmpl( element, 0x10000 );
-                jcc_error( this, Assembler::aboveEqual, elementOutOfRange );
+                jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );
             }
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );    // adjust index
             theMacroAssembler->leal( array, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
@@ -2486,26 +2486,26 @@ void ArrayAtPutNode::gen() {
 
 void InlinedPrimitiveNode::gen() {
     BasicNode::gen();
-    switch ( _op ) {
-        case InlinedPrimitiveNode::obj_klass: {
+    switch ( _operation ) {
+        case InlinedPrimitiveNode::Operation::obj_klass: {
             Register obj   = movePRegToReg( _src, temp1 );            // obj is read_only
             Register klass = temp2;
             Label    is_smi;
             theMacroAssembler->movl( klass, Universe::smiKlassObj() );
             theMacroAssembler->test( obj, MEMOOP_TAG );
-            theMacroAssembler->jcc( Assembler::zero, is_smi );
+            theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
             theMacroAssembler->movl( klass, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
             theMacroAssembler->bind( is_smi );
             store( klass, _dest, temp1, temp3 );
         }
             break;
-        case InlinedPrimitiveNode::obj_hash: {
+        case InlinedPrimitiveNode::Operation::obj_hash: {
             Unimplemented();
             // Implemented for the smi_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
-        case InlinedPrimitiveNode::proxy_byte_at: {
+        case InlinedPrimitiveNode::Operation::proxy_byte_at: {
             Register proxy = temp1;
             load( _src, proxy );            // proxy is modified
             Register index = temp2;
@@ -2515,7 +2515,7 @@ void InlinedPrimitiveNode::gen() {
             // do index smi_t check if necessary
             if ( not _arg1_is_smi ) {
                 theMacroAssembler->test( index, MEMOOP_TAG );
-                jcc_error( this, Assembler::notZero, indexNotSmi );
+                jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
             }
             // load element
             theMacroAssembler->movl( proxy, Address( proxy, pointer_offset ) );    // unbox proxy
@@ -2541,7 +2541,7 @@ void InlinedPrimitiveNode::gen() {
             }
         }
             break;
-        case InlinedPrimitiveNode::proxy_byte_at_put: {
+        case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
             bool_t   const_val = _arg2->isConstPReg();
             Register proxy     = temp1;
             load( _src, proxy );            // proxy is modified
@@ -2560,13 +2560,13 @@ void InlinedPrimitiveNode::gen() {
             // do index smi_t check if necessary
             if ( not _arg1_is_smi ) {
                 theMacroAssembler->test( index, MEMOOP_TAG );
-                jcc_error( this, Assembler::notZero, indexNotSmi );
+                jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
             }
             // do value smi_t check if necessary
             if ( not _arg2_is_smi ) {
                 st_assert( not const_val, "constant shouldn't need a smi_t check" );
                 theMacroAssembler->test( value, MEMOOP_TAG );
-                jcc_error( this, Assembler::notZero, valueNotSmi );
+                jcc_error( this, Assembler::Condition::notZero, valueNotSmi );
             }
             // store element
             theMacroAssembler->movl( proxy, Address( proxy, pointer_offset ) );    // unbox proxy

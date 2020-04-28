@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <array>
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "allocation.hpp"
@@ -20,8 +21,7 @@ class AgeTable : public CHeapAllocatedObject {
         enum {
             table_size = MarkOopDescriptor::max_age + 1
         };
-        int _sizes[table_size];
-
+        std::array<int, table_size>_sizes;
         AgeTable();
 
 

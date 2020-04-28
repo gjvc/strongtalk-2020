@@ -9,7 +9,8 @@
 #include "vm/oops/Klass.hpp"
 
 
-class smiKlass : public Klass {
+class SMIKlass : public Klass {
+
     public:
         friend void setKlassVirtualTableFromSmiKlass( Klass * k );
 
@@ -53,4 +54,3 @@ class smiKlass : public Klass {
 };
 
 void setKlassVirtualTableFromSmiKlass( Klass * k );
-

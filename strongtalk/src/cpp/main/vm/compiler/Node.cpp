@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -25,7 +26,7 @@ int                 BasicNode::lastByteCodeIndex;
 ScopeInfo           BasicNode::lastScopeInfo;
 PrimitiveDescriptor * InterruptCheckNode::_intrCheck;
 
-int NodeFactory::cumulativeCost;
+int NodeFactory::_cumulativeCost;
 
 
 PrologueNode * NodeFactory::PrologueNode( LookupKey * key, int nofArgs, int nofTemps ) {
@@ -336,8 +337,8 @@ CommentNode * NodeFactory::CommentNode( const char * comment ) {
 void initNodes() {
     Node::currentID             = Node::currentCommentID = 0;
     Node::lastScopeInfo         = ( ScopeInfo ) - 1;
-    Node::lastByteCodeIndex     = IllegalByteCodeIndex;
-    NodeFactory::cumulativeCost = 0;
+    Node::lastByteCodeIndex      = IllegalByteCodeIndex;
+    NodeFactory::_cumulativeCost = 0;
 }
 
 
@@ -699,13 +700,13 @@ BasicBlock * BasicNode::newBasicBlock() {
 MergeNode::MergeNode( Node * prev1, Node * prev2 ) :
     AbstractMergeNode( prev1, prev2 ) {
     _byteCodeIndex = max( prev1->byteCodeIndex(), prev2->byteCodeIndex() );
-    _isLoopStart   = isLoopEnd = didStartBasicBlock = false;
+    _isLoopStart   = _isLoopEnd = _didStartBasicBlock = false;
 }
 
 
 MergeNode::MergeNode( int byteCodeIndex ) {
     _byteCodeIndex = byteCodeIndex;
-    _isLoopStart   = isLoopEnd = didStartBasicBlock = false;
+    _isLoopStart   = _isLoopEnd = _didStartBasicBlock = false;
 }
 
 
@@ -714,8 +715,8 @@ BasicBlock * MergeNode::newBasicBlock() {
         return _basicBlock;
 
     // receiver starts a new BasicBlock
-    didStartBasicBlock = true;
-    _basicBlock        = Node::newBasicBlock();
+    _didStartBasicBlock = true;
+    _basicBlock         = Node::newBasicBlock();
 
     return _basicBlock;
 }
@@ -935,8 +936,8 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor * pdesc, MergeNode * nlrTestPo
 
 
 InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister * result, PseudoRegister * error, PseudoRegister * recv, PseudoRegister * arg1, bool_t arg1_is_smi, PseudoRegister * arg2, bool_t arg2_is_smi ) {
-    _op          = op;
-    _dest        = result;
+    _operation = op;
+    _dest      = result;
     _error       = error;
     _src         = recv;
     _arg1        = arg1;
@@ -948,13 +949,13 @@ InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister * resul
 
 bool_t InlinedPrimitiveNode::canFail() const {
     switch ( op() ) {
-        case obj_klass:
+        case Operation::obj_klass:
             return false;
-        case obj_hash:
+        case Operation::obj_hash:
             return false;
-        case proxy_byte_at:
+        case Operation::proxy_byte_at:
             return not arg1_is_smi();
-        case proxy_byte_at_put:
+        case Operation::proxy_byte_at_put:
             return not arg1_is_smi() or not arg2_is_smi();
     };
     ShouldNotReachHere();
@@ -964,13 +965,13 @@ bool_t InlinedPrimitiveNode::canFail() const {
 
 bool_t InlinedPrimitiveNode::canBeEliminated() const {
     switch ( op() ) {
-        case obj_klass:
+        case Operation::obj_klass:
             return true;
-        case obj_hash:
+        case Operation::obj_hash:
             return true;
-        case proxy_byte_at:
+        case Operation::proxy_byte_at:
             return not canFail();
-        case proxy_byte_at_put:
+        case Operation::proxy_byte_at_put:
             return false;
     };
     ShouldNotReachHere();
@@ -3566,17 +3567,17 @@ const char * InlinedPrimitiveNode::print_string( const char * buf, bool_t printA
     const char * b = buf;
     my_sprintf( buf, "%s := ", _dest->safeName() );
     const char * op_name;
-    switch ( _op ) {
-        case obj_klass:
+    switch ( _operation ) {
+        case InlinedPrimitiveNode::Operation::obj_klass:
             op_name = "obj_klass";
             break;
-        case obj_hash:
+        case InlinedPrimitiveNode::Operation::obj_hash:
             op_name = "obj_hash";
             break;
-        case proxy_byte_at:
+        case InlinedPrimitiveNode::Operation::proxy_byte_at:
             op_name = "proxy_byte_at";
             break;
-        case proxy_byte_at_put:
+        case InlinedPrimitiveNode::Operation::proxy_byte_at_put:
             op_name = "proxy_byte_at_put";
             break;
         default:
@@ -3728,7 +3729,7 @@ void StoreUplevelNode::verify() const {
 void MergeNode::verify() const {
     if ( _deleted )
         return;
-    if ( _isLoopStart and isLoopEnd )
+    if ( _isLoopStart and _isLoopEnd )
         error( "MergeNode %#x: cannot be both start and end of loop" );
     TrivialNode::verify();
 }

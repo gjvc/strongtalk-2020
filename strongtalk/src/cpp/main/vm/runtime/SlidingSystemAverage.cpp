@@ -15,8 +15,8 @@
 
 // -----------------------------------------------------------------------------
 
-char         SlidingSystemAverage::_buffer[buffer_size];
-uint32_t     SlidingSystemAverage::_stat[number_of_cases];
+std::array <char, SlidingSystemAverage::buffer_size>        SlidingSystemAverage::_buffer{};
+std::array <uint32_t, SlidingSystemAverage::number_of_cases>SlidingSystemAverage::_stat;
 uint32_t     SlidingSystemAverage::_position;
 
 
@@ -30,7 +30,7 @@ void SlidingSystemAverage::reset() {
 }
 
 
-uint32_t * SlidingSystemAverage::update() {
+std::array <uint32_t, SlidingSystemAverage::number_of_cases> SlidingSystemAverage::update() {
     // clear the array;
     uint32_t index = 0;
     for ( ; index < number_of_cases; index++ ) {

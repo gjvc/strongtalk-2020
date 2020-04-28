@@ -87,7 +87,7 @@ const char * PrimitivesGenerator::allocateContext_var() {
     masm->addl( edx, eax );
 // Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::times_1, 3*oopSize));
     masm->cmpl( edx, Address( ( int ) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
-    masm->jcc( Assembler::greater, need_scavenge );
+    masm->jcc( Assembler::Condition::greater, need_scavenge );
     masm->movl( Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ), edx );
 
     masm->bind( fill_object );
@@ -108,7 +108,7 @@ const char * PrimitivesGenerator::allocateContext_var() {
 
     masm->bind( _loop_end );
     masm->cmpl( ebx, edx );
-    masm->jcc( Assembler::below, _loop );
+    masm->jcc( Assembler::Condition::below, _loop );
 
     masm->incl( eax );
     masm->ret( 0 );

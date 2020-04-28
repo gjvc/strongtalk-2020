@@ -24,7 +24,7 @@
 class PrimitivesGenerator : StackAllocatedObject {
 
     private:
-        
+
         MacroAssembler * masm;
 
 
@@ -120,7 +120,7 @@ class GeneratedPrimitives : AllStatic {
     private:
         static constexpr int _code_size = 1024 * 1024; // simply increase if too small (assembler will crash if too small)
 
-        static bool_t     _is_initialized;            // true if GeneratedPrimitives has been initialized
+        static bool_t _is_initialized;            // true if GeneratedPrimitives has been initialized
         //  static char _code[_code_size];		// the code buffer for the primitives
         static const char * _code;        // the code buffer for the primitives
 
@@ -141,11 +141,12 @@ class GeneratedPrimitives : AllStatic {
         static const char * _double_divide;
         static const char * _double_from_smi;
 
-        static const char * _primitiveValue[];
-        static const char * _primitiveNew[];
-        static const char * _allocateBlock[];
-        static const char * _allocateContext[];
         static const char * _primitiveInlineAllocations;
+
+        static std::array <const char *, 10> _primitiveValue;
+        static std::array <const char *, 10> _primitiveNew;
+        static std::array <const char *, 10> _allocateBlock;
+        static std::array <const char *, 3>  _allocateContext;
 
         // helpers for generation and patch
         static const char * patch( const char * name, const char * entry_point );

@@ -860,7 +860,7 @@ NameNode * BlockPseudoRegister::locNameNode( bool_t mustBeLegal ) const {
     st_assert( not _location.isTemporaryRegister(), "shouldn't be in temp reg" );
     // for now, always use MemoizedName to describe block (even if always created)
     // makes debugging info easier to read (can see which locs must be blocks)
-    return new MemoizedName( _location, closure()->method(), closure()->parent_scope()->ScopeInfo() );
+    return new MemoizedName( _location, closure()->method(), closure()->parent_scope()->getScopeInfo() );
 }
 
 
@@ -872,7 +872,7 @@ NameNode * PseudoRegister::nameNode( bool_t mustBeLegal ) const {
         return r->nameNode( mustBeLegal );
     } else if ( r->isBlockPReg() ) {
         CompileTimeClosure * c = ( ( BlockPseudoRegister * ) r )->closure();
-        return new BlockValueName( c->method(), c->parent_scope()->ScopeInfo() );
+        return new BlockValueName( c->method(), c->parent_scope()->getScopeInfo() );
     } else {
         // hack: initial nilling of locals isn't represented yet
         // fix this -- should at least check if it's a local

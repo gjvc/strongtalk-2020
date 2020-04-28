@@ -19,7 +19,7 @@ class FlatProfilerTask;
 class NativeMethod;
 
 
-enum TickPosition {
+enum class TickPosition {
     in_code,        //
     in_primitive,   //
     in_compiler,    //

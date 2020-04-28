@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,13 +7,13 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 
-// Floats describes the floating point operations of the interpreter and implements stub routines used to execute this operations. Note:
-// The Floats stub routines are *inside* the interpreter code.
+// Floats describes the floating point operations of the interpreter and implements stub routines used to execute this operations.
+// Note: The Floats stub routines are *inside* the interpreter code.
 
 class Floats : AllStatic {
 
@@ -68,8 +69,8 @@ class Floats : AllStatic {
         };
 
     private:
-        static bool_t     _is_initialized;    // true if Floats has been initialized
-        static const char * _function_names[];
+        static bool_t                                             _is_initialized;    // true if Floats has been initialized
+        static std::array <const char *, max_number_of_functions> _function_names;
 
         static void generate_tst( MacroAssembler * masm, Assembler::Condition cc );
 
@@ -79,8 +80,8 @@ class Floats : AllStatic {
 
     public:
         // Dispatch (interpreter)
-        // Note: _function_table is bigger than number_of_functions to catch illegal (byte) indices
-        static const char * _function_table[max_number_of_functions];
+        // Note: _function_table is bigger than number_of_functions to catch illegal (byte) indices // XXX
+        static std::array <const char *, max_number_of_functions> _function_table;
 
         // Debugging/Printing
         static const char * function_name_for( Function f );

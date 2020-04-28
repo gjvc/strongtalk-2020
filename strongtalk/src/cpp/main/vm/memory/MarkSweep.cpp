@@ -18,12 +18,15 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/WaterMark.hpp"
+
 typedef struct {
     Oop anOop;
     Oop * oopPointer;
 } oopAssoc;
 
+
 class OopChunk : public ResourceObject {
+
     private:
         oopAssoc       oop_start[1000];
         const oopAssoc * oop_end;
@@ -31,7 +34,7 @@ class OopChunk : public ResourceObject {
 
     public:
         OopChunk() {
-            oop_end = oop_start + 1000 - 1;// account for pre-increment in append
+            oop_end = oop_start + 1000 - 1; // account for pre-increment in append
             next    = oop_start - 1;
         }
 

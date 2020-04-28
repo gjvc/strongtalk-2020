@@ -7,6 +7,8 @@
 
 #include "vm/assembler/Register.hpp"
 #include "vm/assembler/Location.hpp"
+#include "vm/assembler/x86_registers.hpp"
+#include <array>
 
 // Register usage
 constexpr int nofArgRegisters   = 0;            // max. number of arguments (excl. receiver) passed in registers
@@ -22,8 +24,10 @@ constexpr int first_float_offset = -4;          // offset of first float relativ
 class Mapping : AllStatic {
 
     private:
-        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
-        static int      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
+//        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
+//        static int      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
+        static std::array <Location, nofLocalRegisters + 1> _localRegisters;
+        static std::array <int, REGISTER_COUNT + 1>         _localRegisterIndex;
 
     public:
         // initialization

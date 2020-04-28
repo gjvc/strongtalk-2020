@@ -1,10 +1,10 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #pragma once
-
 
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
@@ -79,7 +79,7 @@
     s( to_by_do,                            "to:by:do:" )                        \
     s( value,                               "value" )                            \
     s( value_,                              "value:" )                           \
-    s( if_true,                              "ifTrue:" )                         \
+    s( if_true,                             "ifTrue:" )                          \
     s( if_true_false,                       "ifTrue:ifFalse:" )                  \
     s( if_false,                            "ifFalse:" )                         \
     s( if_false_true,                       "ifFalse:ifTrue:" )                  \
@@ -154,7 +154,7 @@
 
 /* error and error_ are for compiler's type prediction */
 
-#define VMSYMBOL_SUFFIX  _enum
+#define VMSYMBOL_SUFFIX  STR(_enum)
 #define VMSYMBOL_ENUM_NAME( name ) name##VMSYMBOL_SUFFIX
 
 #define VMSYMBOL_ENUM( name, string ) VMSYMBOL_ENUM_NAME(name),
@@ -166,7 +166,8 @@ enum {
 #define VMSYMBOL_DECL( name, string ) \
     static SymbolOop name () { return vm_symbols[ VMSYMBOL_ENUM_NAME( name ) ]; }
 
-extern "C" SymbolOop vm_symbols[];
+//extern "C" SymbolOop vm_symbols[];
+extern std::array <SymbolOop, terminating_enum> vm_symbols;
 
 class vmSymbols : AllStatic {
 
@@ -207,5 +208,3 @@ inline SymbolOop unmarkSymbol( Oop sym ) {
     st_assert( res->is_symbol(), "must be symbol" );
     return SymbolOop( res );
 }
-
-

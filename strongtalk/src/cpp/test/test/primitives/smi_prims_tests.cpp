@@ -17,7 +17,7 @@ typedef Oop (__CALLING_CONVENTION * smifntype)( SMIOop, SMIOop );
 extern "C" int expansion_count;
 
 
-class SmiPrimsTests : public ::testing::Test {
+class SmiPrimitivessTests : public ::testing::Test {
 
     protected:
         void SetUp() override {
@@ -39,12 +39,12 @@ class SmiPrimsTests : public ::testing::Test {
 };
 
 
-TEST_F( SmiPrimsTests, quoShouldReturnDivideReceiverByArgument ) {
+TEST_F( SmiPrimitivessTests, quoShouldReturnDivideReceiverByArgument ) {
     ASSERT_EQ( 5, SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) ) )->value() );
 }
 
 
-TEST_F( SmiPrimsTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI ) {
+TEST_F( SmiPrimitivessTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI ) {
     Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
     ASSERT_EQ( ( int ) markSymbol( vmSymbols::receiver_has_wrong_type() ), ( int ) result );
 }

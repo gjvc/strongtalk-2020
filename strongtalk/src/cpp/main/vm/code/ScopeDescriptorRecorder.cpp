@@ -287,8 +287,8 @@ Location ScopeDescriptorRecorder::convert_location( Location loc ) {
         return loc;
     int scope_id = loc.scopeID();
 
-    // Find the ScopeInfo with the right scope_id
-    ScopeInfo scope = theCompiler->scopes->at( scope_id )->ScopeInfo();
+    // Find the getScopeInfo with the right scope_id
+    ScopeInfo scope = theCompiler->scopes->at( scope_id )->getScopeInfo();
     st_assert( scope, "scope must exist" );
     if ( scope->_offset == INVALID_OFFSET ) {
         _console->print_cr( loc.name() );

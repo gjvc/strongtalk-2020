@@ -91,8 +91,8 @@ class AlienIntegerCallout3Tests : public ::testing::Test {
         PersistentHandle                    * directAlien, * invalidFunctionAlien;
         SMIOop                                             smi0, smi1, smim1;
         static const int                                   argCount = 3;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
+        std::array<void*,argCount>intCalloutFunctions;
+        std::array<void*,argCount>intPointerCalloutFunctions;
         char                                address[8];
 
 
@@ -157,7 +157,7 @@ class AlienIntegerCallout3Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             Oop arg0   = argIndex == 0 ? asOop( argValue ) : smi0;
             Oop arg1   = argIndex == 1 ? asOop( argValue ) : smi0;
@@ -169,7 +169,7 @@ class AlienIntegerCallout3Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPtrPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             byteArrayPrimitives::alienSignedLongAtPut( asOop( argValue ), smi1, pointerAlien->as_oop() );
             Oop arg0   = argIndex == 0 ? pointerAlien->as_oop() : smi0;

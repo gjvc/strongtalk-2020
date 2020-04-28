@@ -68,19 +68,19 @@ class TickCounter {
 
         void update( TickPosition where ) {
             switch ( where ) {
-                case in_code:
+                case TickPosition::in_code:
                     ticks_in_code++;
                     break;
-                case in_primitive:
+                case TickPosition::in_primitive:
                     ticks_in_primitives++;
                     break;
-                case in_compiler:
+                case TickPosition::in_compiler:
                     ticks_in_compiler++;
                     break;
-                case in_pic:
+                case TickPosition::in_pic:
                     ticks_in_pics++;
                     break;
-                case other:
+                case TickPosition::other:
                     ticks_in_other++;
                     break;
             }
@@ -404,14 +404,14 @@ void FlatProfiler::record_tick_for_running_frame( Frame fr ) {
         if ( method == nullptr )
             return;
         st_assert( method->is_method(), "must be method" );
-        FlatProfiler::interpreted_update( method, fr.receiver()->klass(), in_code );
+        FlatProfiler::interpreted_update( method, fr.receiver()->klass(), TickPosition::in_code );
 
     } else if ( fr.is_compiled_frame() ) {
-        FlatProfiler::compiled_update( findNativeMethod( fr.pc() ), in_code );
+        FlatProfiler::compiled_update( findNativeMethod( fr.pc() ), TickPosition::in_code );
 
     } else if ( PolymorphicInlineCache::in_heap( fr.pc() ) ) {
         PolymorphicInlineCache * pic = PolymorphicInlineCache::find( fr.pc() );
-        FlatProfiler::compiled_update( findNativeMethod( ( const char * ) pic->compiled_ic() ), in_pic );
+        FlatProfiler::compiled_update( findNativeMethod( ( const char * ) pic->compiled_ic() ), TickPosition::in_pic );
 
     } else if ( StubRoutines::contains( fr.pc() ) ) {
         FlatProfiler::_stub_ticks++;
@@ -422,9 +422,9 @@ void FlatProfiler::record_tick_for_running_frame( Frame fr ) {
 void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
 
     // The tick happened in VM code
-    TickPosition where = other;
+    TickPosition where = TickPosition::other;
     if ( theCompiler ) {
-        where = in_compiler;
+        where = TickPosition::in_compiler;
     }
     if ( fr.is_interpreted_frame() ) {
         MethodOop method = fr.method();
@@ -433,7 +433,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
         st_assert( method->is_method(), "must be method" );
         int byteCodeIndex = method->byteCodeIndex_from( fr.hp() );
         if ( ByteCodes::code_type( ( ByteCodes::Code ) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::primitive_call ) {
-            where = in_primitive;
+            where = TickPosition::in_primitive;
         }
         FlatProfiler::interpreted_update( method, fr.receiver()->klass(), where );
 
@@ -443,7 +443,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
         while ( iter.next() ) {
             if ( iter.is_call() and iter.call_end() == fr.pc() ) {
                 if ( iter.type() == RelocationInformation::RelocationType::primitive_type )
-                    where = in_primitive;
+                    where = TickPosition::in_primitive;
             }
         }
         FlatProfiler::compiled_update( nm, where );

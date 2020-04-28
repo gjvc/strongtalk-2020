@@ -23,7 +23,6 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/interpreter/Interpreter.hpp"
 #include "vm/system/sizes.hpp"
 
 
@@ -388,7 +387,7 @@ const char * StubRoutines::generate_megamorphic_ic( MacroAssembler * masm ) {
     const char * entry_point = masm->pc();
     masm->popl( ebx );                // get return address (MIC cache)
     masm->test( eax, MEMOOP_TAG );            // check if smi_t
-    masm->jcc( Assembler::zero, is_smi );        // if so, get smi_t class directly
+    masm->jcc( Assembler::Condition::zero, is_smi );        // if so, get smi_t class directly
     masm->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // otherwise, load receiver class
 
     // probe primary cache
@@ -405,9 +404,9 @@ const char * StubRoutines::generate_megamorphic_ic( MacroAssembler * masm ) {
     masm->andl( edi, ( primary_cache_size - 1 ) << 4 );
     // probe cache
     masm->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * oopSize ) );
-    masm->jcc( Assembler::notEqual, probe_secondary_cache );
+    masm->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
     masm->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * oopSize ) );
-    masm->jcc( Assembler::notEqual, probe_secondary_cache );
+    masm->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
     masm->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * oopSize ) );
 
     // call method
@@ -417,7 +416,7 @@ const char * StubRoutines::generate_megamorphic_ic( MacroAssembler * masm ) {
     // tos: return address of megamorphic send in compiled code (ic)
     masm->bind( call_method );
     masm->test( ecx, MEMOOP_TAG );            // check if methodOop
-    masm->jcc( Assembler::notZero, is_methodOop );    // otherwise
+    masm->jcc( Assembler::Condition::notZero, is_methodOop );    // otherwise
     masm->jmp( ecx );                // call NativeMethod
 
     // call methodOop - setup registers
@@ -445,9 +444,9 @@ const char * StubRoutines::generate_megamorphic_ic( MacroAssembler * masm ) {
     masm->andl( edi, ( secondary_cache_size - 1 ) << 4 );
     // probe cache
     masm->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * oopSize ) );
-    masm->jcc( Assembler::notEqual, do_lookup );
+    masm->jcc( Assembler::Condition::notEqual, do_lookup );
     masm->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * oopSize ) );
-    masm->jcc( Assembler::notEqual, do_lookup );
+    masm->jcc( Assembler::Condition::notEqual, do_lookup );
     masm->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * oopSize ) );
     masm->jmp( call_method );
 
@@ -471,7 +470,7 @@ const char * StubRoutines::generate_megamorphic_ic( MacroAssembler * masm ) {
     masm->popl( eax );                // restore receiver
     masm->reset_last_Delta_frame();
     masm->testl( ecx, ecx );            // test if method has been found in lookup cache
-    masm->jcc( Assembler::notZero, call_method );
+    masm->jcc( Assembler::Condition::notZero, call_method );
 
     // method not found in the lookup cache - full lookup needed (message not understood may happen)
     // eax: receiver
@@ -595,7 +594,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
 //    masm->andl( eax, 0xf ); // padding required for 16-byte alignment
 //    masm->bind( align_stack );
 //    masm->cmpl( eax, 0 );
-//    masm->jcc( MacroAssembler::lessEqual, convert_args );
+//    masm->jcc( MacroAssembler::Condition::lessEqual, convert_args );
 //    masm->pushl( 0 );
 //    masm->subl( eax, 4 ); // align stack
 //    masm->jmp( align_stack );
@@ -603,7 +602,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
 //    // end stack alignment mod
 
     masm->testl( ebx, ebx );                            // if number of arguments not_eq 0 then
-    masm->jcc( MacroAssembler::notZero, loop_entry );   // convert arguments
+    masm->jcc( MacroAssembler::Condition::notZero, loop_entry );   // convert arguments
 
     // done with all the arguments
     masm->bind( no_arguments );
@@ -625,7 +624,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
     // check no. of arguments
     masm->popl( ebx );                // must be the same as esp after popping
     masm->cmpl( ebx, esp );
-    masm->jcc( Assembler::notEqual, wrong_call );
+    masm->jcc( Assembler::Condition::notEqual, wrong_call );
 
     // top of stack contains DLL state
     masm->movl( ebx, esp );             // get DLL state address
@@ -659,7 +658,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
     masm->pushl( eax );                                 // push converted argument
     masm->addl( ecx, oopSize );                         // go to previous argument
     masm->decl( ebx );                                  // decrement argument counter
-    masm->jcc( MacroAssembler::zero, no_arguments );    // continue until no arguments
+    masm->jcc( MacroAssembler::Condition::zero, no_arguments );    // continue until no arguments
 
     // loop
     masm->bind( loop_entry );
@@ -668,7 +667,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
     // ecx: current argument address
     masm->movl( eax, Address( ecx ) );                  // get argument
     masm->testb( eax, MEMOOP_TAG );                        // check if smi_t or proxy
-    masm->jcc( MacroAssembler::zero, smi_argument );
+    masm->jcc( MacroAssembler::Condition::zero, smi_argument );
 
     // boxed argument -> unbox it
     masm->movl( eax, Address( eax, pointer_offset ) );  // unbox proxy
@@ -792,7 +791,7 @@ const char * StubRoutines::generate_verify_context_chain( MacroAssembler * masm 
     masm->popl( self_reg );
     masm->reset_last_Delta_frame();
     masm->testl( ebx, ebx );
-    masm->jcc( MacroAssembler::zero, deoptimize );
+    masm->jcc( MacroAssembler::Condition::zero, deoptimize );
     masm->ret( 0 );
 
     masm->bind( deoptimize );
@@ -911,9 +910,9 @@ const char * StubRoutines::generate_call_delta( MacroAssembler * masm ) {
     masm->reset_last_Delta_frame();
     // test for stack corruption
     masm->testl( edi, edi );
-    masm->jcc( Assembler::equal, _stack_ok );
+    masm->jcc( Assembler::Condition::equal, _stack_ok );
     masm->cmpl( esp, edi );
-    masm->jcc( Assembler::less, _stack_ok );
+    masm->jcc( Assembler::Condition::less, _stack_ok );
     // break because of stack corruption
     //masm->int3();
 
@@ -922,14 +921,14 @@ const char * StubRoutines::generate_call_delta( MacroAssembler * masm ) {
     masm->movl( ebx, nofArgs );    // get no. of arguments
     masm->movl( ecx, args );    // pointer to first argument
     masm->testl( ebx, ebx );
-    masm->jcc( Assembler::zero, _no_args );
+    masm->jcc( Assembler::Condition::zero, _no_args );
 
     masm->bind( _loop );
     masm->movl( edx, Address( ecx ) );    // get argument
     masm->addl( ecx, oopSize );        // advance to next argument
     masm->pushl( edx );            // push argument on stack
     masm->decl( ebx );            // decrement argument counter
-    masm->jcc( Assembler::notZero, _loop );    // until no arguments
+    masm->jcc( Assembler::Condition::notZero, _loop );    // until no arguments
 
     // call Delta method
     masm->bind( _no_args );
@@ -937,7 +936,7 @@ const char * StubRoutines::generate_call_delta( MacroAssembler * masm ) {
     masm->xorl( ebx, ebx );            // _restore_ebx
     masm->movl( edx, method );
     masm->test( edx, MEMOOP_TAG );
-    masm->jcc( Assembler::zero, _is_compiled );
+    masm->jcc( Assembler::Condition::zero, _is_compiled );
     masm->movl( ecx, edx );
     masm->movl( edx, Address( ( int ) &method_entry_point, RelocationInformation::RelocationType::external_word_type ) );
 
@@ -967,7 +966,7 @@ const char * StubRoutines::generate_call_delta( MacroAssembler * masm ) {
     masm->bind( _nlr_test );
     masm->movl( ecx, Address( ebp, -2 * oopSize ) );    // get pushed value of _last_Delta_sp
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::zero, _nlr_setup );
+    masm->jcc( Assembler::Condition::zero, _nlr_setup );
 
     masm->movl( edx, Address( ecx, -oopSize ) ); // get return address of the first C function called
     // store return address for nlr_return_from_Delta
@@ -1074,7 +1073,7 @@ const char * StubRoutines::generate_single_step_stub( MacroAssembler * masm ) {
 
 //  masm->int3();
     masm->cmpl( ebp, Address( ( int ) &frame_breakpoint, RelocationInformation::RelocationType::external_word_type ) );
-    masm->jcc( Assembler::greaterEqual, is_break );
+    masm->jcc( Assembler::Condition::greaterEqual, is_break );
     masm->jmp( Address( noreg, ebx, Address::times_4, ( int ) original_table ) );
 
     masm->bind( is_break );
@@ -1134,7 +1133,7 @@ const char * StubRoutines::generate_unpack_unoptimized_frames( MacroAssembler * 
     masm->call( ( const char * ) unpack_frame_array, RelocationInformation::RelocationType::runtime_call_type );
     // Restore the nlr state
     masm->cmpl( Address( ( int ) &nlr_through_unpacking, RelocationInformation::RelocationType::external_word_type ), 0 );
-    masm->jcc( Assembler::equal, _return );
+    masm->jcc( Assembler::Condition::equal, _return );
     masm->movl( Address( ( int ) &nlr_through_unpacking, RelocationInformation::RelocationType::external_word_type ), 0 );
     masm->movl( nlr_result_reg, Address( ( int ) &nlr_result, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( nlr_home_reg, Address( ( int ) &nlr_home, RelocationInformation::RelocationType::external_word_type ) );
@@ -1318,7 +1317,7 @@ const char * StubRoutines::generate_handle_C_callback_stub( MacroAssembler * mas
     masm->addl( esp, 2 * oopSize );    // pop the arguments
     masm->popl( esi );
     masm->cmpl( esi, esp );
-    masm->jcc( Assembler::equal, stackOK );
+    masm->jcc( Assembler::Condition::equal, stackOK );
     masm->int3();
     masm->bind( stackOK );
 
@@ -1408,7 +1407,7 @@ const char * StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler 
     masm->popl( ebx );                // get return address (PolymorphicInlineCache table pointer)
     masm->movl( edx, Address( ( int ) &smiKlassObj, RelocationInformation::RelocationType::external_word_type ) );
     masm->test( eax, MEMOOP_TAG );            // check if smi_t
-    masm->jcc( Assembler::zero, loop );        // if so, class is already in ecx
+    masm->jcc( Assembler::Condition::zero, loop );        // if so, class is already in ecx
     masm->movl( edx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // otherwise, load receiver class
 
     // eax: receiver
@@ -1420,7 +1419,7 @@ const char * StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler 
         // compare receiver klass with klass in PolymorphicInlineCache table at index
         masm->cmpl( edx, Address( ebx, i * PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size + PolymorphicInlineCache::PolymorphicInlineCache_methodOop_klass_offset ) );
         masm->movl( ecx, Address( ebx, i * PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size + PolymorphicInlineCache::PolymorphicInlineCache_methodOop_offset ) );
-        masm->jcc( Assembler::equal, found );
+        masm->jcc( Assembler::Condition::equal, found );
     }
     st_assert( ic_normal_lookup_entry() not_eq nullptr, "ic_normal_lookup_entry must be generated before" );
     masm->jmp( ic_normal_lookup_entry(), RelocationInformation::RelocationType::runtime_call_type );
@@ -1441,20 +1440,20 @@ void StubRoutines::alien_arg_size( MacroAssembler * masm, Label & nextArg ) {
 
     masm->movl( ecx, Address( eax ) );                        // load current arg
     masm->testl( ecx, MEMOOP_TAG );
-    masm->jcc( Assembler::equal, isSMI );
+    masm->jcc( Assembler::Condition::equal, isSMI );
 
     masm->movl( esi, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );// get class
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );// get non-indexable size
     // start of the byte array's bytes
     masm->leal( ecx, Address( ecx, esi, Address::times_1, -MEMOOP_TAG ) );
     masm->testl( ecx, MEMOOP_TAG );
-    masm->jcc( Assembler::notEqual, isUnsafe );
+    masm->jcc( Assembler::Condition::notEqual, isUnsafe );
     masm->addl( ecx, 4 );
 
     masm->movl( esi, Address( ecx ) );                        // load the size
     masm->testl( esi, esi );                                // direct?
-    masm->jcc( Assembler::equal, isPointer );               // pointer == 0
-    masm->jcc( Assembler::greater, isDirect );              // direct > 0
+    masm->jcc( Assembler::Condition::equal, isPointer );               // pointer == 0
+    masm->jcc( Assembler::Condition::greater, isDirect );              // direct > 0
 
     masm->addl( edx, esi );                                 // indirect so size negative
     masm->jmp( nextArg );
@@ -1473,13 +1472,13 @@ void StubRoutines::alien_arg_size( MacroAssembler * masm, Label & nextArg ) {
 void StubRoutines::push_alignment_spacers( MacroAssembler * masm ) {
     Label pushArgs;
     masm->andl( edx, 0xf );                                   // push spacers to align stack
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->subl( edx, 4 );
     masm->pushl( 0 );
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->subl( edx, 4 );
     masm->pushl( 0 );
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->subl( edx, 4 );
     masm->pushl( 0 );
     masm->bind( pushArgs );                                   // end of stack alignment spacers
@@ -1489,14 +1488,14 @@ void StubRoutines::push_alignment_spacers( MacroAssembler * masm ) {
 void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
     Label isSMI, isPointer, isDirect, isUnsafe, startMove, moveLoopTest, moveLoopHead;
     masm->testl( eax, MEMOOP_TAG );
-    masm->jcc( Assembler::equal, isSMI );
+    masm->jcc( Assembler::Condition::equal, isSMI );
 
     masm->movl( esi, Address( eax, sizeof( MemOopDescriptor ) - MEMOOP_TAG ) );
     // load the first ivar
     //   either SMIOop for normal alien
     //   or MemOop for unsafe alien
     masm->testl( esi, MEMOOP_TAG );
-    masm->jcc( Assembler::notEqual, isUnsafe );
+    masm->jcc( Assembler::Condition::notEqual, isUnsafe );
 
     masm->movl( esi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );
@@ -1504,8 +1503,8 @@ void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
 
     masm->movl( esi, Address( eax ) );                        // load the size
     masm->testl( esi, esi );                                // direct?
-    masm->jcc( Assembler::equal, isPointer );               // pointer == 0
-    masm->jcc( Assembler::greater, isDirect );              // direct > 0
+    masm->jcc( Assembler::Condition::equal, isPointer );               // pointer == 0
+    masm->jcc( Assembler::Condition::greater, isDirect );              // direct > 0
     // indirect < 0
     masm->movl( eax, Address( eax, 4 ) );                     // load the indirect start address
     masm->jmp( startMove );
@@ -1533,20 +1532,20 @@ void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
     masm->bind( moveLoopTest );                             // continue?
     masm->subl( esi, 4 );
     masm->cmpl( esi, 0 );
-    masm->jcc( Assembler::greaterEqual, moveLoopHead );     // y - next iteration
+    masm->jcc( Assembler::Condition::greaterEqual, moveLoopHead );     // y - next iteration
     // n - less than four bytes remain
     masm->addl( esi, 3 );                                   // adjust offset for byte moves
-    masm->jcc( Assembler::less, nextArg );                  // y - exact multiple of four bytes
+    masm->jcc( Assembler::Condition::less, nextArg );                  // y - exact multiple of four bytes
     // n - 1-3 bytes need to be moved
     masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
     masm->movb( Address( esp, esi, Address::times_1 ), ecx );
     masm->decl( esi );
-    masm->jcc( Assembler::less, nextArg );                  // y - one extra byte
+    masm->jcc( Assembler::Condition::less, nextArg );                  // y - one extra byte
     // n - 2-3 extra bytes
     masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
     masm->movb( Address( esp, esi, Address::times_1 ), ecx );
     masm->decl( esi );
-    masm->jcc( Assembler::less, nextArg );                  // y - two extra bytes
+    masm->jcc( Assembler::Condition::less, nextArg );                  // y - two extra bytes
     // n - three extra bytes
     masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
     masm->movb( Address( esp, esi, Address::times_1 ), ecx );
@@ -1609,7 +1608,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     masm->bind( sizeLoopTest );                             // end of size calculation
     masm->subl( eax, 4 );
     masm->cmpl( eax, edi );
-    masm->jcc( Assembler::greaterEqual, sizeLoopStart );
+    masm->jcc( Assembler::Condition::greaterEqual, sizeLoopStart );
 
     push_alignment_spacers( masm );
     //masm->int3();
@@ -1622,7 +1621,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
 
     masm->subl( ebx, 4 );
     masm->cmpl( ebx, edi );
-    masm->jcc( Assembler::less, argLoopExit );
+    masm->jcc( Assembler::Condition::less, argLoopExit );
 
     masm->jmp( argLoopStart );
     masm->bind( argLoopExit );
@@ -1645,7 +1644,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     masm->movl( ecx, result );                      // result alien
 
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, no_result );       // is a result required?
+    masm->jcc( Assembler::Condition::equal, no_result );       // is a result required?
 
     //masm->int3(); //debug
     // get the start of the alien area
@@ -1657,11 +1656,11 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     // ecx now points to start of alien contents
     masm->movl( esi, Address( ecx ) );
     masm->testl( esi, esi );
-    masm->jcc( Assembler::less, ptr_result );
-    masm->jcc( Assembler::equal, short_result );
+    masm->jcc( Assembler::Condition::less, ptr_result );
+    masm->jcc( Assembler::Condition::equal, short_result );
 
     masm->cmpl( esi, 4 );                           // direct result
-    masm->jcc( Assembler::equal, short_result );
+    masm->jcc( Assembler::Condition::equal, short_result );
     masm->movl( Address( ecx, 8 ), edx );
     masm->bind( short_result );
     masm->movl( Address( ecx, 4 ), eax );
@@ -1671,7 +1670,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     masm->bind( ptr_result );                       // indirect result
     masm->cmpl( esi, -4 );
     masm->movl( esi, Address( ecx, 4 ) );
-    masm->jcc( Assembler::equal, short_ptr_result );
+    masm->jcc( Assembler::Condition::equal, short_ptr_result );
     masm->movl( Address( esi, 4 ), edx );
     masm->bind( short_ptr_result );
     masm->movl( Address( esi ), eax );
@@ -1709,13 +1708,13 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
     }
 
     masm->andl( edx, 0xf );
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->pushl( 0 );
     masm->subl( edx, 4 );
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->pushl( 0 );
     masm->subl( edx, 4 );
-    masm->jcc( Assembler::equal, pushArgs );
+    masm->jcc( Assembler::Condition::equal, pushArgs );
     masm->pushl( 0 );
     masm->subl( edx, 4 );
     masm->bind( pushArgs );
@@ -1749,7 +1748,7 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
     masm->movl( ecx, result );                      // result alien
 
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, no_result );       // is a result required?
+    masm->jcc( Assembler::Condition::equal, no_result );       // is a result required?
 
     //masm->int3(); //debug
     // get the start of the alien area
@@ -1761,11 +1760,11 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
     // ecx now points to start of alien contents
     masm->movl( esi, Address( ecx ) );
     masm->testl( esi, esi );
-    masm->jcc( Assembler::less, ptr_result );
-    masm->jcc( Assembler::equal, short_result );
+    masm->jcc( Assembler::Condition::less, ptr_result );
+    masm->jcc( Assembler::Condition::equal, short_result );
 
     masm->cmpl( esi, 4 );                           // direct result
-    masm->jcc( Assembler::equal, short_result );
+    masm->jcc( Assembler::Condition::equal, short_result );
     masm->movl( Address( ecx, 8 ), edx );
     masm->bind( short_result );
     masm->movl( Address( ecx, 4 ), eax );
@@ -1775,7 +1774,7 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
     masm->bind( ptr_result );                       // indirect/pointer result
     masm->cmpl( esi, -4 );
     masm->movl( esi, Address( ecx, 4 ) );
-    masm->jcc( Assembler::equal, short_ptr_result );
+    masm->jcc( Assembler::Condition::equal, short_ptr_result );
     masm->movl( Address( esi, 4 ), edx );
     masm->bind( short_ptr_result );
     masm->movl( Address( esi ), eax );

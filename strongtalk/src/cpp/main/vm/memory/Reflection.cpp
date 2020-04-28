@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -12,6 +13,8 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/WaterMark.hpp"
+
+
 GrowableArray <ClassChange *> * Reflection::_classChanges = nullptr;
 GrowableArray <MemOop> * Reflection::_converted = nullptr;
 

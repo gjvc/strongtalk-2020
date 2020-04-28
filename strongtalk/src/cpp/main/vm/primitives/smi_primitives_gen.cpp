@@ -19,15 +19,15 @@ const char * PrimitivesGenerator::smiOopPrimitives_add() {
 
     masm->movl( eax, receiver );
     masm->addl( eax, argument );
-    masm->jcc( Assembler::overflow, _overflow );
+    masm->jcc( Assembler::Condition::overflow, _overflow );
     masm->testb( eax, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->ret( 8 );
 
     masm->bind( _overflow );
     masm->movl( eax, argument );
     masm->testb( eax, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->jmp( error_overflow );
 
     return entry_point;
@@ -43,15 +43,15 @@ const char * PrimitivesGenerator::smiOopPrimitives_subtract() {
 
     masm->movl( eax, receiver );
     masm->subl( eax, argument );
-    masm->jcc( Assembler::overflow, _overflow );
+    masm->jcc( Assembler::Condition::overflow, _overflow );
     masm->testb( eax, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->ret( 8 );
 
     masm->bind( _overflow );
     masm->movl( eax, argument );
     masm->testb( eax, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->jmp( error_overflow );
 
     return entry_point;
@@ -68,10 +68,10 @@ const char * PrimitivesGenerator::smiOopPrimitives_multiply() {
     masm->movl( edx, argument );
     masm->movl( eax, receiver );
     masm->testb( edx, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->sarl( edx, 2 );
     masm->imull( edx );
-    masm->jcc( Assembler::overflow, error_overflow );
+    masm->jcc( Assembler::Condition::overflow, error_overflow );
     masm->ret( 8 );
 
     return entry_point;
@@ -109,23 +109,23 @@ const char * PrimitivesGenerator::smiOopPrimitives_mod() {
     masm->movl( eax, receiver );
     masm->movl( ecx, argument );
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, error_division_by_zero );
+    masm->jcc( Assembler::Condition::equal, error_division_by_zero );
 
     masm->testb( ecx, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
 
     masm->sarl( ecx, 2 );
     masm->sarl( eax, 2 );
     masm->cdq();
     masm->idivl( ecx );
-    masm->jcc( Assembler::overflow, error_overflow );
+    masm->jcc( Assembler::Condition::overflow, error_overflow );
 
     masm->movl( eax, edx );
     masm->testl( eax, eax );
-    masm->jcc( Assembler::equal, _equal );
+    masm->jcc( Assembler::Condition::equal, _equal );
 
     masm->xorl( edx, ecx );
-    masm->jcc( Assembler::negative, _positive );
+    masm->jcc( Assembler::Condition::negative, _positive );
 
     masm->bind( _equal );
     masm->shll( eax, 2 );
@@ -166,23 +166,23 @@ const char * PrimitivesGenerator::smiOopPrimitives_div() {
     masm->movl( ecx, argument );
     masm->movl( eax, receiver );
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, error_division_by_zero );
+    masm->jcc( Assembler::Condition::equal, error_division_by_zero );
 
     masm->testb( ecx, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
 
     masm->sarl( ecx, 2 );
     masm->sarl( eax, 2 );
     masm->cdq();
     masm->idivl( ecx );
 
-    masm->jcc( Assembler::overflow, error_overflow );
+    masm->jcc( Assembler::Condition::overflow, error_overflow );
 
     masm->testl( edx, edx );
-    masm->jcc( Assembler::equal, _equal );
+    masm->jcc( Assembler::Condition::equal, _equal );
 
     masm->xorl( ecx, edx );
-    masm->jcc( Assembler::negative, _positive );
+    masm->jcc( Assembler::Condition::negative, _positive );
 
     masm->bind( _equal );
     masm->shll( eax, 2 );
@@ -207,20 +207,20 @@ const char * PrimitivesGenerator::smiOopPrimitives_quo() {
     masm->movl( eax, receiver );
 
     masm->testb( eax, 0x03 );
-    masm->jcc( Assembler::notEqual, error_receiver_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_receiver_has_wrong_type );
 
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, error_division_by_zero );
+    masm->jcc( Assembler::Condition::equal, error_division_by_zero );
 
     masm->testb( ecx, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
 
     masm->sarl( ecx, 2 );
     masm->sarl( eax, 2 );
     masm->cdq();
     masm->idivl( ecx );
 
-    masm->jcc( Assembler::overflow, error_overflow );
+    masm->jcc( Assembler::Condition::overflow, error_overflow );
     masm->shll( eax, 2 );
     masm->ret( 8 );
 
@@ -237,14 +237,14 @@ const char * PrimitivesGenerator::smiOopPrimitives_remainder() {
     masm->movl( ecx, argument );
     masm->movl( eax, receiver );
     masm->testl( ecx, ecx );
-    masm->jcc( Assembler::equal, error_division_by_zero );
+    masm->jcc( Assembler::Condition::equal, error_division_by_zero );
     masm->testb( ecx, 0x03 );
-    masm->jcc( Assembler::notEqual, error_first_argument_has_wrong_type );
+    masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
     masm->sarl( ecx, 2 );
     masm->sarl( eax, 2 );
     masm->cdq();
     masm->idivl( ecx );
-    masm->jcc( Assembler::overflow, error_overflow );
+    masm->jcc( Assembler::Condition::overflow, error_overflow );
     masm->movl( eax, edx );
     masm->sarl( eax, 2 );
     masm->ret( 8 );

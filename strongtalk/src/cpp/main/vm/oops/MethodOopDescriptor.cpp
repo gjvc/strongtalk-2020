@@ -148,7 +148,7 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
 
 int MethodOopDescriptor::float_offset( int float_no ) const {
     st_assert( 0 <= float_no and float_no < number_of_float_temporaries(), "float_no out of range" );
-    return float_section_start_offset() - float_no * floatSize / oopSize - 1;
+    return float_section_start_offset() - float_no * SIZEOF_FLOAT / oopSize - 1;
 }
 
 

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <array>
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 
@@ -41,11 +42,11 @@ class SlidingSystemAverage : AllStatic {
         static void add( char type );
 
         // Returns the update statistics array
-        static uint32_t * update();
+        static std::array <uint32_t, SlidingSystemAverage::number_of_cases> update();
 
     private:
-        static char     _buffer[buffer_size];    // Buffer for the ticks
-        static uint32_t _stat[number_of_cases];  // Results from buffer
-        static uint32_t _position;                    // Current pos in buffer
+        static std::array <char, buffer_size>         _buffer;
+        static std::array <uint32_t, number_of_cases> _stat;
+        static uint32_t                               _position;                    // Current pos in buffer
 };
 

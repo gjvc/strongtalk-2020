@@ -377,7 +377,7 @@ void NodeBuilder::while_node( WhileNode * node ) {
     MergeNode * loop  = NodeFactory::MergeNode( loop_byteCodeIndex );
     MergeNode * exit  = NodeFactory::MergeNode( node->end_byteCodeIndex() );
     MergeNode * entry = nullptr;    // entry point into loop (start of condition)
-    exit->isLoopEnd = true;
+    exit->_isLoopEnd = true;
     if ( node->body_code() not_eq nullptr ) {
         // set up entry point
         entry = NodeFactory::MergeNode( node->expr_code()->begin_byteCodeIndex() );
@@ -433,7 +433,7 @@ void NodeBuilder::while_node( WhileNode * node ) {
         if ( theCompiler->is_uncommon_compile() ) {
             // Make sure the invocation counter is incremented at least once per iteration; otherwise uncommon
             // nativeMethods containing loops but no sends won't be recompiled early enough.
-            append( NodeFactory::FixedCodeNode( FixedCodeNode::inc_counter ) );
+            append( NodeFactory::FixedCodeNode( FixedCodeNode::FixedCodeKind::inc_counter ) );
         }
         wloop->set_endOfBody( current() );
         append( entry );
@@ -1384,22 +1384,22 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
     Assembler::Condition cc1;
     switch ( f ) {
         case Floats::is_equal:
-            cc1 = Assembler::equal;
+            cc1 = Assembler::Condition::equal;
             break;
         case Floats::is_not_equal:
-            cc1 = Assembler::notEqual;
+            cc1 = Assembler::Condition::notEqual;
             break;
         case Floats::is_less:
-            cc1 = Assembler::less;
+            cc1 = Assembler::Condition::less;
             break;
         case Floats::is_less_equal:
-            cc1 = Assembler::lessEqual;
+            cc1 = Assembler::Condition::lessEqual;
             break;
         case Floats::is_greater:
-            cc1 = Assembler::greater;
+            cc1 = Assembler::Condition::greater;
             break;
         case Floats::is_greater_equal:
-            cc1 = Assembler::greaterEqual;
+            cc1 = Assembler::Condition::greaterEqual;
             break;
         default             : fatal1( "bad float comparison code %d", f );
     }
@@ -1413,10 +1413,10 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
     append( NodeFactory::ArithRCNode( new NoResultPseudoRegister( _scope ), fpu_status, TestArithOp, mask ) );
     BranchOpCode cc2;
     switch ( cond ) {
-        case Assembler::zero:
+        case Assembler::Condition::zero:
             cc2 = EQBranchOp;
             break;
-        case Assembler::notZero:
+        case Assembler::Condition::notZero:
             cc2 = NEBranchOp;
             break;
         default                : ShouldNotReachHere();

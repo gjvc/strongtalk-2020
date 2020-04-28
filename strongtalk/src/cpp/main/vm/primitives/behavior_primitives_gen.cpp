@@ -30,7 +30,7 @@ const char * PrimitivesGenerator::primitiveNew( int n ) {
     masm->bind( fill_object );
     masm->movl( ebx, _stop );
     masm->testl( ebx, ebx );
-    masm->jcc( Assembler::notEqual, _break );
+    masm->jcc( Assembler::Condition::notEqual, _break );
     masm->bind( no_break );
     masm->movl( ebx, klass_addr );
     masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
@@ -70,7 +70,7 @@ const char * PrimitivesGenerator::inline_allocation() {
     masm->movl( ebx, klass_addr );
     masm->movl( edx, count_addr );
     masm->testl( edx, 1 );
-    masm->jcc( Assembler::notEqual, exit );
+    masm->jcc( Assembler::Condition::notEqual, exit );
     masm->sarl( edx, 3 );
     masm->bind( loop );
 
@@ -90,7 +90,7 @@ const char * PrimitivesGenerator::inline_allocation() {
     //masm->jmp(loop);
     masm->bind( loop_test );
     masm->decl( edx );
-    masm->jcc( Assembler::notEqual, loop );
+    masm->jcc( Assembler::Condition::notEqual, loop );
     masm->bind( exit );
     masm->ret( 2 * oopSize );
 

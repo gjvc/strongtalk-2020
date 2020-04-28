@@ -80,8 +80,8 @@ constexpr int MaxSearch = 50;    // max. # of nodes to search backwards
 
 NonTrivialNode * findDefinitionOf( Node * endNode, const PseudoRegister * r, int max = MaxSearch ) {
     // search backwards for a definition of r
-    Node      * current = endNode;
-    for ( int i         = 0; i < max and current not_eq nullptr; i++ ) {
+    Node * current = endNode;
+    for ( int i = 0; i < max and current not_eq nullptr; i++ ) {
         if ( current->_deleted )
             continue;
         if ( current->hasSinglePredecessor() ) {
@@ -93,7 +93,7 @@ NonTrivialNode * findDefinitionOf( Node * endNode, const PseudoRegister * r, int
             st_assert( current->isMergeNode(), "must be a merge" );
             MergeNode      * merge     = ( MergeNode * ) current;
             NonTrivialNode * candidate = nullptr;    // possible def of r
-            for ( int      j           = merge->nPredecessors() - 1; j >= 0; j-- ) {
+            for ( int j = merge->nPredecessors() - 1; j >= 0; j-- ) {
                 Node           * prev = merge->prev( j );
                 NonTrivialNode * cand = findDefinitionOf( prev, r, max - i );
                 if ( cand == nullptr or ( candidate and cand not_eq candidate ) )
@@ -119,7 +119,7 @@ void propagateTo( BasicBlock * useBasicBlock, Usage * use, NonTrivialNode * from
             return;
         }
         PseudoRegister * replaced = fromNode->dest();
-        bool_t         ok         = toNode->copyPropagate( useBasicBlock, use, src, true );
+        bool_t ok = toNode->copyPropagate( useBasicBlock, use, src, true );
 
         if ( not ok ) {
             // This if statement has been added by Lars Bak 29-4-96 to work around the type check node elimination problem. (Ask Urs for details).
@@ -159,7 +159,7 @@ bool_t regAssignedBetween( const PseudoRegister * r, const Node * startNode, Nod
             DefinitionUsageInfo * dui = bb->duInfo.info->at( i );
             if ( dui->_pseudoRegister == r and not dui->_definitions.isEmpty() ) {
                 // yes, it has a def
-                hasDefs                            = true;
+                hasDefs = true;
                 for ( SListElem <Definition *> * d = dui->_definitions.head(); d; d = d->next() ) {
                     if ( d->data()->_node == n )
                         return true;
@@ -241,7 +241,7 @@ void BasicBlock::localCopyPropagate() {
     }
 
     for ( int i = 0; i < len; i++ ) {
-        constexpr int       BIG   = 9999999;
+        constexpr int BIG = 9999999;
         DefinitionUsageInfo * dui = duInfo.info->at( i );
         PseudoRegister      * r   = dui->_pseudoRegister;
         if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() and usedTwice.isAllocated( r->_location.number() ) ) {
@@ -253,8 +253,8 @@ void BasicBlock::localCopyPropagate() {
         SListElem <Definition *> * d;
         for ( d = dui->_definitions.head(); d and u; d = nextd ) {
             // try to find a use of the def at d
-            nextd                          = d->next();
-            const Definition     * def     = d->data();
+            nextd = d->next();
+            const Definition * def = d->data();
             SList <Definition *> * srcDefs = nullptr;    // redefinition of src that defines this def (if any)
             if ( def->_node->hasSrc() ) {
                 PseudoRegister * src = def->_node->src();
@@ -277,8 +277,8 @@ void BasicBlock::localCopyPropagate() {
                     }
                 }
             }
-            const int            d_id      = def->_node->num();
-            int                  u_id;
+            const int d_id = def->_node->num();
+            int       u_id;
             // find a use in a node following the current def
             for ( ; u and ( u_id = u->data()->_node->num() ) <= d_id; u = u->next() );
             if ( not u )
@@ -318,8 +318,8 @@ void BasicBlock::makeUses() {
 
 
 void BasicBlock::renumber() {
-    int        count = 0;
-    for ( Node * n   = _first; n not_eq _last->next(); n = n->next() )
+    int count = 0;
+    for ( Node * n = _first; n not_eq _last->next(); n = n->next() )
         n->setNum( count++ );
     _nodeCount = count;
 }
@@ -449,7 +449,9 @@ void BasicBlock::localAlloc( GrowableArray <BitVector *> * hardwired, GrowableAr
     GrowableArray <RegisterEqClass *> regClasses( _nodeCount + 1 );
     regClasses.append( nullptr );        // first reg class has index 1
 
-    int       use_count[REGISTER_COUNT], def_count[REGISTER_COUNT];
+    int use_count[REGISTER_COUNT], def_count[REGISTER_COUNT];
+//    std::array <int, REGISTER_COUNT> use_count, def_count;
+
     for ( int i = 0; i < REGISTER_COUNT; i++ )
         use_count[ i ] = def_count[ i ] = 0;
 
@@ -458,11 +460,11 @@ void BasicBlock::localAlloc( GrowableArray <BitVector *> * hardwired, GrowableAr
             continue;
         nn->markAllocated( use_count, def_count );
         if ( nn->isAssignNode() ) {
-            NonTrivialNode * n       = ( NonTrivialNode * ) nn;
-            PseudoRegister * src     = n->src();
-            PseudoRegister * dest    = n->dest();
-            bool_t         localSrc  = src->isLocalTo( this );
-            bool_t         localDest = dest->isLocalTo( this );
+            NonTrivialNode * n    = ( NonTrivialNode * ) nn;
+            PseudoRegister * src  = n->src();
+            PseudoRegister * dest = n->dest();
+            bool_t localSrc  = src->isLocalTo( this );
+            bool_t localDest = dest->isLocalTo( this );
             if ( src->_location.isRegisterLocation() ) {
                 if ( dest->_location.equals( unAllocated ) and localDest ) {
                     // PR = PR2(reg)
@@ -512,7 +514,7 @@ void BasicBlock::localAlloc( GrowableArray <BitVector *> * hardwired, GrowableAr
             if ( temp == nofLocalRegisters )
                 break;        // ran out of regs
             // ok, allocate Mapping::localRegisters[temp] to the preg and equivalent pregs
-            Location             t      = Mapping::localRegister( temp++ );
+            Location t = Mapping::localRegister( temp++ );
             PseudoRegister       * frst = r->regClass ? regClasses.at( r->regClass )->first : r;
             for ( PseudoRegister * pr   = frst; pr; pr = pr->regClassLink ) {
                 doAlloc( pr, t );
@@ -607,7 +609,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray <BitVector *> * hardwired, Growab
             continue;
         }
         BitVector * liveRange = lives->at( i );
-        for ( int tempNo      = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
+        for ( int tempNo = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
             if ( liveRange->isDisjointFrom( hardwired->at( tempNo ) ) ) {
                 Location temp = Mapping::localRegister( tempNo );
                 doAlloc( r, temp );
@@ -731,15 +733,15 @@ bool_t BasicBlock::contains( const Node * which ) const {
 
 
 void BasicBlock::verify() {
-    int        count = 0;
-    for ( Node * n   = _first; n not_eq _last->next(); n = n->next() ) {
+    int count = 0;
+    for ( Node * n = _first; n not_eq _last->next(); n = n->next() ) {
         count++;
         if ( n->_deleted )
             continue;
         n->verify();
         if ( n->bb() not_eq this )
             error( "BasicBlock %#lx: Node %#lx doesn't point back to me", this, n );
-        if ( n == _last and not n->endsBasicBlock() and not( n->next() and n->next()->isMergeNode() and ( ( MergeNode * ) ( n->next() ) )->didStartBasicBlock ) ) {
+        if ( n == _last and not n->endsBasicBlock() and not( n->next() and n->next()->isMergeNode() and ( ( MergeNode * ) ( n->next() ) )->_didStartBasicBlock ) ) {
             error( "BasicBlock %#lx: last Node %#lx isn't endsBasicBlock()", this, n );
         }
         if ( n->endsBasicBlock() and n not_eq _last )
@@ -797,7 +799,7 @@ void BasicBlock::dfs( GrowableArray <BasicBlock *> * list, int loopDepth ) {
       MergeNode* m = (MergeNode*)first;
       if (m->_isLoopStart) {
         loopDepth++;
-      } else if (m->isLoopEnd) {
+      } else if (m->_isLoopEnd) {
         assert(loopDepth > 0, "bad loop end marker");
         loopDepth--;
       }
@@ -1018,7 +1020,7 @@ GrowableArray <BasicBlock *> * BasicBlockIterator::code_generation_order() {
     GrowableArray <BasicBlock *> * list = new GrowableArray <BasicBlock *>( _basicBlockCount );    // eventually holds all reachable BBs again
     GrowableArray <BasicBlock *> work( _basicBlockCount );                // may hold only a part of all BBs at any given time
     // setup starting point
-    BasicBlock                   * bb   = _first->bb();
+    BasicBlock * bb = _first->bb();
     work.push( bb->after_visit() );
     // compute order
     add_BBs_to_list( *list, work );
@@ -1071,10 +1073,10 @@ void BasicBlockIterator::globalCopyPropagate() {
         PseudoRegister * r = pregTable->at( i );
         if ( not r or r->isConstPReg() or not r->canCopyPropagate() )
             continue;
-        Definition * def    = nullptr;
+        Definition * def = nullptr;
         // get definition
-        int        dulength = r->_dus.length();
-        int        e        = 0;
+        int dulength = r->_dus.length();
+        int e        = 0;
         for ( ; e < dulength; e++ ) {
             PseudoRegisterBasicBlockIndex * index = r->_dus.at( e );
             DefinitionUsageInfo           * info  = index->_basicBlock->duInfo.info->at( index->_index );
@@ -1108,7 +1110,7 @@ void BasicBlockIterator::globalCopyPropagate() {
             DefinitionUsageInfo           * info  = bb->duInfo.info->at( index->_index );
             // caution: propagateTo may eliminate nodes and thus shorten
             // info->uses
-            int                           j       = 0;
+            int j = 0;
             while ( j < info->_usages.length() ) {
                 int oldLen = info->_usages.length();
                 info->propagateTo( bb, info->_pseudoRegister, def, info->_usages.at( j ), true );
@@ -1167,12 +1169,12 @@ void DefinitionUsageInfo::propagateTo( BasicBlock * useBasicBlock, Usage * use, 
 
 void DefinitionUsageInfo::propagateTo( BasicBlock * useBasicBlock, const PseudoRegister * r, const Definition * def, Usage * use, const bool_t global ) {
     // def reaches use; try to eliminate r's use by using copy propagation
-    NonTrivialNode * fromNode   = def->_node;
-    const bool_t   isAssignment = fromNode->isAssignmentLike();
-    NonTrivialNode * toNode     = use->_node;
-    const bool_t   hasSrc       = fromNode->hasSrc();
-    PseudoRegister * fromPR     = hasSrc ? fromNode->src() : nullptr;
-    const bool_t   isConst      = hasSrc and fromPR->isConstPReg();
+    NonTrivialNode * fromNode = def->_node;
+    const bool_t isAssignment = fromNode->isAssignmentLike();
+    NonTrivialNode * toNode = use->_node;
+    const bool_t hasSrc = fromNode->hasSrc();
+    PseudoRegister * fromPR = hasSrc ? fromNode->src() : nullptr;
+    const bool_t isConst = hasSrc and fromPR->isConstPReg();
 
     if ( isAssignment and isConst and toNode->canCopyPropagateOop() ) {
         // loadOop r1, Oop; ...; r2 := op(r1)    --->

@@ -13,7 +13,7 @@
 // Locations serve as abstractions for physical addresses.
 // For each physical location (register, stack position or context temporary), there is a corresponding location and vice versa.
 
-enum Mode {
+enum class Mode {
     // mode/bits		3...................31	describes
     //			        3..9	10..16	17..31
     specialLoc,     //	--------id------------	sentinel values/global locations
@@ -69,32 +69,32 @@ class Location : public ResourceObject /* but usually used as ValueObj */ {
 
         // factory
         static Location specialLocation( int id ) {
-            return Location( specialLoc, id );
+            return Location( Mode::specialLoc, id );
         }
 
 
         static Location registerLocation( int number ) {
-            return Location( registerLoc, number );
+            return Location( Mode::registerLoc, number );
         }
 
 
         static Location stackLocation( int offset ) {
-            return Location( stackLoc, offset );
+            return Location( Mode::stackLoc, offset );
         }
 
 
         static Location compiledContextLocation( int contextNo, int tempNo, int id ) {
-            return Location( contextLoc1, contextNo, tempNo, id );
+            return Location( Mode::contextLoc1, contextNo, tempNo, id );
         }
 
 
         static Location runtimeContextLocation( int contextNo, int tempNo, int offs ) {
-            return Location( contextLoc2, contextNo, tempNo, offs );
+            return Location( Mode::contextLoc2, contextNo, tempNo, offs );
         }
 
 
         static Location floatLocation( int scopeNo, int tempNo ) {
-            return Location( floatLoc, 0, tempNo, scopeNo );
+            return Location( Mode::floatLoc, 0, tempNo, scopeNo );
         }
 
 
@@ -105,56 +105,56 @@ class Location : public ResourceObject /* but usually used as ValueObj */ {
 
 
         int id() const {
-            st_assert( mode() == specialLoc, "not a special location" );
+            st_assert( mode() == Mode::specialLoc, "not a special location" );
             return ( _loc >> _fPos ) & _fMask;
         }
 
 
         int number() const {
-            st_assert( mode() == registerLoc, "not a register location" );
+            st_assert( mode() == Mode::registerLoc, "not a register location" );
             return ( _loc >> _fPos ) & _fMask;
         }
 
 
         int offset() const {
-            st_assert( mode() == stackLoc, "not a stack location" );
+            st_assert( mode() == Mode::stackLoc, "not a stack location" );
             int t = _loc >> _fPos;
             return _loc < 0 ? ( t | ~_fMask ) : t;
         }
 
 
         int contextNo() const {
-            st_assert( mode() == contextLoc1 or mode() == contextLoc2, "not a context location" );
+            st_assert( mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2, "not a context location" );
             return ( _loc >> _f1Pos ) & _f1Mask;
         }
 
 
         int tempNo() const {
-            st_assert( mode() == contextLoc1 or mode() == contextLoc2, "not a context location" );
+            st_assert( mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2, "not a context location" );
             return ( _loc >> _f2Pos ) & _f2Mask;
         }
 
 
         int scopeID() const {
-            st_assert( mode() == contextLoc1, "not a compiled context location" );
+            st_assert( mode() == Mode::contextLoc1, "not a compiled context location" );
             return ( _loc >> _f3Pos ) & _f3Mask;
         }
 
 
         int scopeOffs() const {
-            st_assert( mode() == contextLoc2, "not a runtime context location" );
+            st_assert( mode() == Mode::contextLoc2, "not a runtime context location" );
             return ( _loc >> _f3Pos ) & _f3Mask;
         }
 
 
         int floatNo() const {
-            st_assert( mode() == floatLoc, "not a float location" );
+            st_assert( mode() == Mode::floatLoc, "not a float location" );
             return ( _loc >> _f2Pos ) & _f2Mask;
         }
 
 
         int scopeNo() const {
-            st_assert( mode() == floatLoc, "not a float location" );
+            st_assert( mode() == Mode::floatLoc, "not a float location" );
             return ( _loc >> _f3Pos ) & _f3Mask;
         }
 
@@ -165,27 +165,27 @@ class Location : public ResourceObject /* but usually used as ValueObj */ {
 
         // predicates
         bool_t isSpecialLocation() const {
-            return mode() == specialLoc;
+            return mode() == Mode::specialLoc;
         }
 
 
         bool_t isRegisterLocation() const {
-            return mode() == registerLoc;
+            return mode() == Mode::registerLoc;
         }
 
 
         bool_t isStackLocation() const {
-            return mode() == stackLoc;
+            return mode() == Mode::stackLoc;
         }
 
 
         bool_t isContextLocation() const {
-            return mode() == contextLoc1 or mode() == contextLoc2;
+            return mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2;
         }
 
 
         bool_t isFloatLocation() const {
-            return mode() == floatLoc;
+            return mode() == Mode::floatLoc;
         }
 
 

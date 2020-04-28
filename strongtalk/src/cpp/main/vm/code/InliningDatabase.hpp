@@ -7,7 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/lookup/LookupKey.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 
 
 class InliningDatabaseKey {

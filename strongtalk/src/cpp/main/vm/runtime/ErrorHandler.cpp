@@ -5,7 +5,7 @@
 
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/lookup/LookupCache.hpp"
 

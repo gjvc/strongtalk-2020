@@ -944,7 +944,7 @@ void Assembler::jmp( Label & L ) {
 
 
 void Assembler::jcc( Condition cc, Label & L ) {
-    st_assert( ( 0 <= cc ) and ( cc < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<int>(cc) ) and ( static_cast<int>(cc) < 16 ), "illegal cc" );
     if ( L.is_bound() ) {
         constexpr int short_size = 2;
         constexpr int long_size  = 6;
@@ -952,12 +952,12 @@ void Assembler::jcc( Condition cc, Label & L ) {
         st_assert( offs <= 0, "assembler error" );
         if ( isByte( offs - short_size ) ) {
             // 0111 tttn #8-bit disp
-            emit_byte( 0x70 | cc );
+            emit_byte( 0x70 | static_cast<int>(cc) );
             emit_byte( ( offs - short_size ) & 0xFF );
         } else {
             // 0000 1111 1000 tttn #32-bit disp
             emit_byte( 0x0F );
-            emit_byte( 0x80 | cc );
+            emit_byte( 0x80 | static_cast<int>(cc) );
             emit_long( offs - long_size );
         }
     } else {
@@ -965,8 +965,8 @@ void Assembler::jcc( Condition cc, Label & L ) {
         // Note: could eliminate cond. jumps to this jump if condition
         //       is the same however, seems to be rather unlikely case.
         emit_byte( 0x0F );
-        emit_byte( 0x80 | cc );
-        Displacement disp( L, Displacement::conditional_jump, cc );
+        emit_byte( 0x80 | static_cast<int>(cc) );
+        Displacement disp( L, Displacement::conditional_jump, static_cast<int>(cc) );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }
@@ -974,10 +974,10 @@ void Assembler::jcc( Condition cc, Label & L ) {
 
 
 void Assembler::jcc( Condition cc, const char * dst, RelocationInformation::RelocationType rtype ) {
-    st_assert( ( 0 <= cc ) and ( cc < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<int>(cc) ) and ( static_cast<int>(cc) < 16 ), "illegal cc" );
     // 0000 1111 1000 tttn #32-bit disp
     emit_byte( 0x0F );
-    emit_byte( 0x80 | cc );
+    emit_byte( 0x80 | static_cast<int>(cc) );
     emit_data( ( int ) dst - ( ( int ) _code_pos + sizeof( int32_t ) ), rtype );
 }
 

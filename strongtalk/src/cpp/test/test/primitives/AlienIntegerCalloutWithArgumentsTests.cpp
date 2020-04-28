@@ -61,7 +61,7 @@ class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
             allocateAlien( pointerAlien, 8, 0, &address );
             allocateAlien( invalidFunctionAlien, 8, 0 );
 
-            memset( address, 0, 8 );
+            std::fill( &address[0], &address[8], '\0');
 
             intCalloutFunctions[ 0 ]        = reinterpret_cast<void *>(returnFirst2);
             intCalloutFunctions[ 1 ]        = reinterpret_cast<void *>(returnSecond2);
@@ -80,16 +80,16 @@ class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
         }
 
 
-        HeapResourceMark                    * rm;
+        HeapResourceMark * rm;
         GrowableArray <PersistentHandle **> * handles;
-        PersistentHandle                    * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
-        PersistentHandle                    * directAlien, * invalidFunctionAlien;
-        SMIOop                                             smi0, smi1, smim1;
-        static const int                                   argCount = 2;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
-        Oop                                 zeroes[argCount];
-        char                                address[16];
+        PersistentHandle * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
+        PersistentHandle * directAlien, * invalidFunctionAlien;
+        SMIOop                          smi0, smi1, smim1;
+        static const int                argCount = 2;
+        std::array <void *, argCount>   intCalloutFunctions;
+        std::array <void *, argCount>   intPointerCalloutFunctions;
+        std::array <Oop, argCount>      zeroes;
+        std::array <char, 16>           address;
 
 
         void allocateAlien( PersistentHandle *& alienHandle, int arraySize, int alienSize, void * ptr = nullptr ) {
@@ -153,37 +153,44 @@ class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
         }
 
 
-        Oop callout( Oop arg[], Oop result, Oop address ) {
+        Oop callout( std::array <Oop, argCount> arg, Oop result, Oop address ) {
+
             ObjectArrayOop argOops = oopFactory::new_objArray( 2 );
-            for ( int   index   = 0; index < 2; index++ )
+
+            for ( int index = 0; index < 2; index++ )
                 argOops->obj_at_put( index + 1, arg[ index ] );
+
             return byteArrayPrimitives::alienCallResultWithArguments( argOops, result, address );
         }
 
 
-        Oop callout( Oop arg[] ) {
+        Oop callout( std::array <Oop, argCount> arg ) {
             return callout( arg, resultAlien->as_oop(), functionAlien->as_oop() );
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
             checkIntResult( "wrong result", argValue, resultAlien );
         }
 
 
-        void checkArgnPtrPassed( int argIndex, Oop pointer, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, Oop pointer, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             EXPECT_TRUE( result == resultAlien->as_oop() ) << "Should return result alien";
             checkIntResult( "wrong result", -1, resultAlien );
@@ -191,10 +198,12 @@ class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
 
 
         void checkIllegalArgnPassed( int argIndex, Oop pointer ) {
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             checkMarkedSymbol( "wrong type", result, vmSymbols::argument_has_wrong_type() );
         }
@@ -213,7 +222,8 @@ TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResult1Should16ByteAlign
     Oop fnAddress = asOop( ( int ) &argAlignment2 );
     byteArrayPrimitives::alienSetAddress( fnAddress, functionAlien->as_oop() );
 
-    Oop arg[argCount];
+    std::array <Oop, argCount> arg;
+
     arg[ 1 ] = smi0;
     for ( int size = -4; size > -20; size -= 4 ) {
         arg[ 0 ] = addressAlien->as_oop();

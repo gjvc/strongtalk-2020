@@ -9,7 +9,7 @@
 #include "allocation.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 
 

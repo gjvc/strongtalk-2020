@@ -226,7 +226,7 @@ DoubleOop Interpreter::oopify_FloatValue() {
     st_assert( *( f.hp() - 3 ) == static_cast<int>(ByteCodes::Code::float_unary_op_to_oop) and *( f.hp() - 1 ) == Floats::oopify, "not called by Floats::oopify" );
     int float_index = *( f.hp() - 2 );
     st_assert( 0 <= float_index and float_index < max_nof_floats, "illegal float index" );
-    double * float_address = ( double * ) ( ( const char * ) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * floatSize ) + float_index * floatSize );
+    double * float_address = ( double * ) ( ( const char * ) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT ) + float_index * SIZEOF_FLOAT );
     return oopFactory::new_double( *float_address );
 }
 

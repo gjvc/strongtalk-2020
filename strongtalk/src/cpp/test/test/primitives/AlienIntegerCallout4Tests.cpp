@@ -101,8 +101,8 @@ class AlienIntegerCallout4Tests : public ::testing::Test {
         PersistentHandle                    * directAlien, * invalidFunctionAlien;
         SMIOop                                             smi0, smi1, smim1;
         static const int                                   argCount = 4;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
+        std::array<void*,argCount>intCalloutFunctions;
+        std::array<void*,argCount>intPointerCalloutFunctions;
         char                                address[8];
 
 
@@ -167,7 +167,7 @@ class AlienIntegerCallout4Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             Oop arg0   = argIndex == 0 ? asOop( argValue ) : smi0;
             Oop arg1   = argIndex == 1 ? asOop( argValue ) : smi0;
@@ -180,7 +180,7 @@ class AlienIntegerCallout4Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPtrPassed( int argIndex, Oop pointer, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, Oop pointer, std::array<void*,argCount>functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
             Oop arg0   = argIndex == 0 ? pointer : smi0;
             Oop arg1   = argIndex == 1 ? pointer : smi0;

@@ -57,7 +57,7 @@ void InterpreterGenerator::check_ebx() {
         return;
     // check if ebx is 000000xx
     _macroAssembler->testl( ebx, 0xFFFFFF00 );
-    _macroAssembler->jcc( Assembler::notZero, _ebx_wrong );
+    _macroAssembler->jcc( Assembler::Condition::notZero, _ebx_wrong );
 }
 
 
@@ -66,7 +66,7 @@ void InterpreterGenerator::check_oop( Register reg ) {
         return;
     // check if reg contains an Oop
     _macroAssembler->testb( reg, MARK_TAG_BIT );
-    _macroAssembler->jcc( Assembler::notZero, _obj_wrong );
+    _macroAssembler->jcc( Assembler::Condition::notZero, _obj_wrong );
 }
 
 
@@ -99,7 +99,7 @@ void InterpreterGenerator::stack_check_pop() {
     // ;_print "pop:  esp = 0x%x", esp, 0
     // ;_print "      tos = 0x%x", eax, 0
     _macroAssembler->cmpl( eax, STACK_CHECKER_MAGIC_VALUE );
-    _macroAssembler->jcc( Assembler::notEqual, _stack_missaligned );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _stack_missaligned );
     _macroAssembler->bind( L );
     _macroAssembler->popl( eax );
 }
@@ -136,7 +136,7 @@ Address InterpreterGenerator::temp_addr( Register temp_no ) {
 
 
 Address InterpreterGenerator::float_addr( Register float_no ) {
-    return Address( ebp, float_no, Address::times_8, float_0_offset - ( max_nof_floats - 1 ) * floatSize, RelocationInformation::RelocationType::none );
+    return Address( ebp, float_no, Address::times_8, float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT, RelocationInformation::RelocationType::none );
 }
 
 
@@ -186,14 +186,14 @@ void InterpreterGenerator::generateStopInterpreterAt() {
     _macroAssembler->movl( edx, Address( int( &StopInterpreterAt ), RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->cmpl( edx, Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->popl( edx );
-    _macroAssembler->jcc( Assembler::above, cont );
+    _macroAssembler->jcc( Assembler::Condition::above, cont );
     _macroAssembler->int3();
     _macroAssembler->bind( cont );
 
     if ( StopInterpreterAt > 0 ) {
         Label cont2;
         _macroAssembler->cmpl( Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ), StopInterpreterAt );
-        _macroAssembler->jcc( Assembler::less, cont2 );
+        _macroAssembler->jcc( Assembler::Condition::less, cont2 );
         _macroAssembler->int3();
         _macroAssembler->bind( cont2 );
     }
@@ -565,7 +565,7 @@ const char * InterpreterGenerator::allocate_temps_n() {
     _macroAssembler->pushl( eax );
     _macroAssembler->bind( entry );
     _macroAssembler->decb( ebx );
-    _macroAssembler->jcc( Assembler::notZero, loop );
+    _macroAssembler->jcc( Assembler::Condition::notZero, loop );
     load_ebx();
     jump_ebx();
 
@@ -595,7 +595,7 @@ const char * InterpreterGenerator::set_self_via_context() {
     _macroAssembler->movl( ecx, edx );            // save current context
     _macroAssembler->movl( edx, Address( edx, ContextOopDescriptor::parent_byte_offset() ) );
     _macroAssembler->test( edx, MEMOOP_TAG );            // check if parent is_smi
-    _macroAssembler->jcc( Assembler::notZero, loop );        // if not, current context is not home context
+    _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // if not, current context is not home context
     _macroAssembler->movl( edx, Address( ecx, ContextOopDescriptor::temp0_byte_offset() ) );
     _macroAssembler->movl( self_addr(), edx );        // set self in activation frame
     jump_ebx();
@@ -623,7 +623,7 @@ const char * InterpreterGenerator::with_context_temp( bool_t store, int tempNo, 
         _macroAssembler->bind( _loop );
         _macroAssembler->movl( ecx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );
         _macroAssembler->decb( ebx );
-        _macroAssembler->jcc( Assembler::notZero, _loop );
+        _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
         for ( int i = 0; i < contextNo; i++ )
             _macroAssembler->movl( ecx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );
@@ -633,7 +633,7 @@ const char * InterpreterGenerator::with_context_temp( bool_t store, int tempNo, 
     if ( not store and tempNo == 1 and contextNo == 1 ) {
         Label not_frame;
         _macroAssembler->testl( ecx, 1 ); // test for a frame in the context
-        _macroAssembler->jcc( Assembler::notZero, not_frame );
+        _macroAssembler->jcc( Assembler::Condition::notZero, not_frame );
         _macroAssembler->int3();
         _macroAssembler->bind( not_frame );
     }
@@ -696,7 +696,7 @@ const char * InterpreterGenerator::copy_params_into_context( bool_t self, int pa
         _macroAssembler->addl( ecx, 4 );
         _macroAssembler->incl( esi );
         _macroAssembler->decb( eax );
-        _macroAssembler->jcc( Assembler::notZero, _loop );
+        _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
         for ( int i = 0; i < paramsCount; i++ ) {
             _macroAssembler->movb( ebx, Address( esi, 1 + i ) );    // get i.th parameter index
@@ -913,7 +913,7 @@ const char * InterpreterGenerator::control_cond( ByteCodes::Code code ) {
         advance_aligned( codeSize );
     }
     _macroAssembler->cmpl( eax, cond );                    // if tos # cond
-    _macroAssembler->jcc( Assembler::notEqual, _else );            // then jump to else part
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _else );            // then jump to else part
     if ( isByte ) {
         _macroAssembler->addl( esi, codeSize );                    // skip info & offset byte
     }
@@ -923,7 +923,7 @@ const char * InterpreterGenerator::control_cond( ByteCodes::Code code ) {
 
     _macroAssembler->bind( _else );
     _macroAssembler->cmpl( eax, not_cond );                    // if tos # ~cond
-    _macroAssembler->jcc( Assembler::notEqual, _boolean_expected );        // then non-boolean arguments
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _boolean_expected );        // then non-boolean arguments
 
     // jump relative to next instr (must happen after the check for non-booleans)
     if ( isByte ) {
@@ -975,7 +975,7 @@ const char * InterpreterGenerator::control_while( ByteCodes::Code code ) {
     const char * ep = entry_point();
 
     _macroAssembler->cmpl( eax, cond );                       // if tos # cond
-    _macroAssembler->jcc( Assembler::notEqual, _exit ); // then jump to else part
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _exit ); // then jump to else part
 
     if ( isByte ) {
         _macroAssembler->movb( ebx, Address( esi, codeSize - 1 ) );
@@ -992,12 +992,12 @@ const char * InterpreterGenerator::control_while( ByteCodes::Code code ) {
     _macroAssembler->incl( edx );
     _macroAssembler->movl( Address( ( int ) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ), edx );
     _macroAssembler->cmpl( edx, Address( ( int ) &Interpreter::_interpreter_loop_counter_limit, RelocationInformation::RelocationType::external_word_type ) );
-    _macroAssembler->jcc( Assembler::greater, _overflow );
+    _macroAssembler->jcc( Assembler::Condition::greater, _overflow );
     jump_ebx();
 
     _macroAssembler->bind( _exit );
     _macroAssembler->cmpl( eax, not_cond );                                     // if tos # ~cond
-    _macroAssembler->jcc( Assembler::notEqual, _boolean_expected );       // then non-boolean arguments
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _boolean_expected );       // then non-boolean arguments
 
     // advance to next instruction (must happen after the check for non-booleans)
     if ( isByte ) {
@@ -1128,14 +1128,14 @@ const char * InterpreterGenerator::float_allocate() {
         // check stack pointer (must point to esi save location, temp0 is in eax)
         _macroAssembler->leal( ecx, Address( ebp, esi_offset ) );
         _macroAssembler->cmpl( esp, ecx );
-        _macroAssembler->jcc( Assembler::equal, L1 );
+        _macroAssembler->jcc( Assembler::Condition::equal, L1 );
         _macroAssembler->call_C( ( const char * ) Interpreter::wrong_esp, RelocationInformation::RelocationType::runtime_call_type );
         should_not_reach_here();
         _macroAssembler->bind( L1 );
 
         // check eax (corresponds now to temp0, must be initialized to nil)
         _macroAssembler->cmpl( eax, nil_addr() );
-        _macroAssembler->jcc( Assembler::equal, L2 );
+        _macroAssembler->jcc( Assembler::Condition::equal, L2 );
         _macroAssembler->call_C( ( const char * ) Interpreter::wrong_eax, RelocationInformation::RelocationType::runtime_call_type );
         should_not_reach_here();
         _macroAssembler->bind( L2 );
@@ -1147,31 +1147,31 @@ const char * InterpreterGenerator::float_allocate() {
     // allocate additional temps in multiples of 2 (to compensate for one float)
     _macroAssembler->movb( ebx, Address( esi, -3 ) );        // get nofTemps
     _macroAssembler->testl( ebx, ebx );            // allocate no additional temps if nofTemps = 0
-    _macroAssembler->jcc( Assembler::zero, tDone );
+    _macroAssembler->jcc( Assembler::Condition::zero, tDone );
     _macroAssembler->movl( eax, nil_addr() );
     _macroAssembler->bind( tLoop );
     _macroAssembler->pushl( eax );                // push nil
     _macroAssembler->pushl( eax );                // push nil
     _macroAssembler->decl( ebx );
-    _macroAssembler->jcc( Assembler::notZero, tLoop );
+    _macroAssembler->jcc( Assembler::Condition::notZero, tLoop );
     _macroAssembler->bind( tDone );
 
     // allocate floats
     _macroAssembler->movb( ebx, Address( esi, -2 ) );        // get nofFloats
     _macroAssembler->testl( ebx, ebx );            // allocate no additional floats if nofFloats = 0
-    _macroAssembler->jcc( Assembler::zero, fDone );
+    _macroAssembler->jcc( Assembler::Condition::zero, fDone );
     _macroAssembler->xorl( eax, eax );            // use 0 to initialize the stack with 0.0
     _macroAssembler->bind( fLoop );
     _macroAssembler->pushl( eax );                // push 0.0 (allocate a double)
     _macroAssembler->pushl( eax );
     _macroAssembler->decb( ebx );
-    _macroAssembler->jcc( Assembler::notZero, fLoop );
+    _macroAssembler->jcc( Assembler::Condition::notZero, fLoop );
     _macroAssembler->bind( fDone );
 
     // allocate floats expression stack
-    st_assert( floatSize == 8, "change the constant for shll below" );
+    st_assert( SIZEOF_FLOAT == 8, "change the constant for shll below" );
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get floats expression stack size
-    _macroAssembler->shll( ebx, 3 );                // multiply with floatSize
+    _macroAssembler->shll( ebx, 3 );                // multiply with FLOAT_SIZE
     _macroAssembler->subl( esp, ebx );            // adjust esp
     restore_ebx();
 
@@ -1189,10 +1189,10 @@ const char * InterpreterGenerator::float_floatify() {
     const char * ep = entry_point();
     _macroAssembler->addl( esi, 2 );                // advance to next instruction
     _macroAssembler->testb( eax, MEMOOP_TAG );            // check if smi_t
-    _macroAssembler->jcc( Assembler::zero, is_smi );
+    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );
     _macroAssembler->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // check if float
     _macroAssembler->cmpl( ecx, doubleKlass_addr() );
-    _macroAssembler->jcc( Assembler::notEqual, _float_expected );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _float_expected );
 
     // unbox DoubleOop
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get float number
@@ -1274,9 +1274,9 @@ const char * InterpreterGenerator::float_op( int nof_args, bool_t returns_float 
     _macroAssembler->movb( ebx, Address( esi, -2 ) );        // get float number
     _macroAssembler->leal( edx, float_addr( ebx ) );        // get float address
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get function number
-    _macroAssembler->movl( ecx, Address( noreg, ebx, Address::times_4, int( Floats::_function_table ), RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( ecx, Address( noreg, ebx, Address::times_4, int( Floats::_function_table[0] ), RelocationInformation::RelocationType::external_word_type ) );
     for ( int i = 0; i < nof_args; i++ )
-        _macroAssembler->fld_d( Address( edx, -i * floatSize ) );
+        _macroAssembler->fld_d( Address( edx, -i * SIZEOF_FLOAT ) );
     _macroAssembler->call( ecx );                // invoke operation
     load_ebx();                    // get next byte code
     if ( returns_float ) {
@@ -1325,7 +1325,7 @@ const char * InterpreterGenerator::call_primitive() {
     call_C( eax );                    // eax: = primitive call(...)
     if ( _debug ) {                    // (Pascal calling conv. => args are popped by callee)
         _macroAssembler->testb( eax, MARK_TAG_BIT );
-        _macroAssembler->jcc( Assembler::notZero, _primitive_result_wrong );
+        _macroAssembler->jcc( Assembler::Condition::notZero, _primitive_result_wrong );
     }
     load_ebx();
     jump_ebx();
@@ -1341,7 +1341,7 @@ const char * InterpreterGenerator::call_primitive_can_fail() {
     _macroAssembler->movl( eax, Address( esi, -2 * oopSize ) );    // get primitive entry point
     call_C( eax );                    // eax: = primitive call(...) (Pascal calling conv.)
     _macroAssembler->testb( eax, MARK_TAG_BIT );        // if not marked then
-    _macroAssembler->jcc( Assembler::notZero, failed );
+    _macroAssembler->jcc( Assembler::Condition::notZero, failed );
     _macroAssembler->movl( ecx, Address( esi, -oopSize ) );    // get jump offset
     _macroAssembler->addl( esi, ecx );            // jump over failure block
     load_ebx();
@@ -1401,7 +1401,7 @@ const char * InterpreterGenerator::call_DLL( bool_t async ) {
     _macroAssembler->pushl( eax );                                 // push last argument
     _macroAssembler->movl( edx, Address( esi, -1 - oopSize ) );    // get dll function ptr
     _macroAssembler->testl( edx, edx );                            // test if function has been looked up already
-    _macroAssembler->jcc( Assembler::notZero, L );                 // and continue - otherwise lookup dll function & patch
+    _macroAssembler->jcc( Assembler::Condition::notZero, L );                 // and continue - otherwise lookup dll function & patch
     call_C( ( const char * ) DLLs::lookup_and_patch_Interpreted_DLLCache );    // eax: = returns dll function ptr
     _macroAssembler->movl( edx, eax );                             // move dll function ptr into right register
     _macroAssembler->bind( L );                                    // and continue
@@ -1559,7 +1559,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     _macroAssembler->reset_last_Delta_frame();
     if ( _debug ) {
         _macroAssembler->test( eax, MARK_TAG_BIT );
-        _macroAssembler->jcc( Assembler::notZero, _primitive_result_wrong );
+        _macroAssembler->jcc( Assembler::Condition::notZero, _primitive_result_wrong );
     }
     load_ebx();
     jump_ebx();
@@ -1577,7 +1577,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     restore_ebx();                  // ebx: = 0
     _macroAssembler->reset_last_Delta_frame();
     _macroAssembler->test( eax, MARK_TAG_BIT );          // if not marked then
-    _macroAssembler->jcc( Assembler::notZero, _deoptimized_return_from_primitive_call_with_failure_block_failed );
+    _macroAssembler->jcc( Assembler::Condition::notZero, _deoptimized_return_from_primitive_call_with_failure_block_failed );
     _macroAssembler->movl( ecx, Address( esi, -oopSize ) );      // load jump offset
     _macroAssembler->addl( esi, ecx );                  // and jump over failure block
     load_ebx();
@@ -1766,11 +1766,11 @@ void InterpreterGenerator::generate_method_entry_code() {
     load_ebx();                                // get first byte code of method
     _macroAssembler->cmpl( edx, 0xFFFF << MethodOopDescriptor::_invocation_count_offset );    // make sure cmpl uses imm32 field
     Interpreter::_invocation_counter_addr = ( int * ) ( _macroAssembler->pc() - oopSize );// compute invocation counter address
-    _macroAssembler->jcc( Assembler::aboveEqual, counter_overflow );            // treat invocation counter overflow
+    _macroAssembler->jcc( Assembler::Condition::aboveEqual, counter_overflow );            // treat invocation counter overflow
     _macroAssembler->bind( start_execution );                        // continuation point after overflow
     _macroAssembler->movl( eax, edi );                        // initialize temp0
     _macroAssembler->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
-    _macroAssembler->jcc( Assembler::lessEqual, handle_stack_overflow );
+    _macroAssembler->jcc( Assembler::Condition::lessEqual, handle_stack_overflow );
     _macroAssembler->bind( continue_from_stack_overflow );
     jump_ebx();                                // start execution
 
@@ -1815,7 +1815,7 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->movl( ecx, Address( eax, BlockClosureOopDescriptor::method_or_entry_byte_offset() ) );    // get methodOop/jump table entry out of closure
     _macroAssembler->reset_last_Delta_frame();                    // if called from the interpreter, the last Delta frame is setup
     _macroAssembler->test( ecx, MEMOOP_TAG );                        // if methodOop then
-    _macroAssembler->jcc( Assembler::notZero, is_interpreted );            //   start methodOop execution
+    _macroAssembler->jcc( Assembler::Condition::notZero, is_interpreted );            //   start methodOop execution
     _macroAssembler->jmp( ecx );                            // else jump to jump table entry
 
     _macroAssembler->bind( is_interpreted );
@@ -1853,7 +1853,7 @@ void InterpreterGenerator::generate_inline_cache_miss_handler() {
     // This can happen because the inline cache miss may call "doesNotUnderstand:"
     call_C( ( const char * ) InterpretedInlineCache::inline_cache_miss );
     _macroAssembler->testl( eax, eax );
-    _macroAssembler->jcc( Assembler::equal, _normal_return );
+    _macroAssembler->jcc( Assembler::Condition::equal, _normal_return );
     _macroAssembler->movl( ecx, Address( eax ) ); // pop arguments
     _macroAssembler->movl( eax, Address( eax, oopSize ) ); // doesNotUnderstand: result
     _macroAssembler->addl( esp, ecx ); // pop arguments
@@ -1888,7 +1888,7 @@ void InterpreterGenerator::check_smi_tags() {
     _macroAssembler->movl( ecx, eax );      // copy it to ecx
     _macroAssembler->orl( ecx, edx );       // or tag bits
     _macroAssembler->test( ecx, MEMOOP_TAG );  // if one of them is set then
-    _macroAssembler->jcc( Assembler::notZero, _smi_send_failure );    // arguments are not bot smis
+    _macroAssembler->jcc( Assembler::Condition::notZero, _smi_send_failure );    // arguments are not bot smis
     // edx: receiver
     // eax: argument
 }
@@ -1899,7 +1899,7 @@ const char * InterpreterGenerator::smi_add() {
     const char * ep = entry_point();
     check_smi_tags();
     _macroAssembler->addl( eax, edx );
-    _macroAssembler->jcc( Assembler::overflow, overflow );
+    _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
     advance_aligned( 1 + 2 * oopSize );
     load_ebx();
     jump_ebx();
@@ -1918,7 +1918,7 @@ const char * InterpreterGenerator::smi_sub() {
     const char * ep = entry_point();
     check_smi_tags();
     _macroAssembler->subl( edx, eax );
-    _macroAssembler->jcc( Assembler::overflow, overflow );
+    _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
     advance_aligned( 1 + 2 * oopSize );
     _macroAssembler->movl( eax, edx );
     load_ebx();
@@ -1940,7 +1940,7 @@ const char * InterpreterGenerator::smi_mul() {
     _macroAssembler->movl( ecx, eax );                // save argument for overflow case
     _macroAssembler->sarl( edx, TAG_SIZE );
     _macroAssembler->imull( eax, edx );
-    _macroAssembler->jcc( Assembler::overflow, overflow );
+    _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
     advance_aligned( 1 + 2 * oopSize );
     load_ebx();
     jump_ebx();
@@ -1966,22 +1966,22 @@ const char * InterpreterGenerator::smi_compare_op( ByteCodes::Code code ) {
     Assembler::Condition cc;
     switch ( code ) {
         case ByteCodes::Code::smi_equal:
-            cc = Assembler::equal;
+            cc = Assembler::Condition::equal;
             break;
         case ByteCodes::Code::smi_not_equal:
-            cc = Assembler::notEqual;
+            cc = Assembler::Condition::notEqual;
             break;
         case ByteCodes::Code::smi_less:
-            cc = Assembler::less;
+            cc = Assembler::Condition::less;
             break;
         case ByteCodes::Code::smi_less_equal:
-            cc = Assembler::lessEqual;
+            cc = Assembler::Condition::lessEqual;
             break;
         case ByteCodes::Code::smi_greater:
-            cc = Assembler::greater;
+            cc = Assembler::Condition::greater;
             break;
         case ByteCodes::Code::smi_greater_equal:
-            cc = Assembler::greaterEqual;
+            cc = Assembler::Condition::greaterEqual;
             break;
         default: ShouldNotReachHere();
     }
@@ -2029,7 +2029,7 @@ const char * InterpreterGenerator::smi_shift() {
     load_ebx();
     _macroAssembler->sarl( eax, TAG_SIZE );                // convert argument (shift count) into int (sets zero flag)
     _macroAssembler->movl( ecx, eax );                // move shift count into CL
-    _macroAssembler->jcc( Assembler::negative, shift_right );        // shift right or shift left?
+    _macroAssembler->jcc( Assembler::Condition::negative, shift_right );        // shift right or shift left?
 
     // shift left
     _macroAssembler->shll( edx );                    // else receiver << (argument mod 32)
@@ -2297,9 +2297,9 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
     _macroAssembler->movl( eax, edi );            //   eax: = last context used
     _macroAssembler->movl( edi, Address( edi, ContextOopDescriptor::parent_byte_offset() ) );
     _macroAssembler->test( edi, MEMOOP_TAG );            //   edi: = edi.home
-    _macroAssembler->jcc( Assembler::notZero, loop );        // until is_smi(edi)
+    _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // until is_smi(edi)
     _macroAssembler->testl( edi, edi );            // if edi = 0 then
-    _macroAssembler->jcc( Assembler::zero, zapped_context );    //   context has been zapped
+    _macroAssembler->jcc( Assembler::Condition::zero, zapped_context );    //   context has been zapped
     _macroAssembler->movl( Address( int( &nlr_home_context ), RelocationInformation::RelocationType::external_word_type ), eax );
     // else save the context containing the home (edi points to home stack frame)
     _macroAssembler->movb( ebx, Address( esi, 1 ) );        // get no. of arguments to pop
@@ -2327,18 +2327,18 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
 
     _macroAssembler->movl( ecx, context_addr() );        // get potential context
     _macroAssembler->test( ecx, MEMOOP_TAG );            // if is_smi(ecx) then
-    _macroAssembler->jcc( Assembler::zero, no_zapping );    //   can't be a context pointer
+    _macroAssembler->jcc( Assembler::Condition::zero, no_zapping );    //   can't be a context pointer
     _macroAssembler->movl( edx, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );    // else isOop: get its class
     _macroAssembler->cmpl( edx, contextKlass_addr() );    // if class # ContextKlass then
-    _macroAssembler->jcc( Assembler::notEqual, no_zapping );    //   is not a context
+    _macroAssembler->jcc( Assembler::Condition::notEqual, no_zapping );    //   is not a context
     _macroAssembler->movl( ebx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );    // else is context: get home
     _macroAssembler->cmpl( ebx, ebp );            // if home # ebp then
-    _macroAssembler->jcc( Assembler::notEqual, no_zapping );    //   is not a methoc context
+    _macroAssembler->jcc( Assembler::Condition::notEqual, no_zapping );    //   is not a methoc context
     _macroAssembler->movl( Address( ecx, ContextOopDescriptor::parent_byte_offset() ), 0 );    // else method context: zap home
 
     _macroAssembler->bind( no_zapping );
     _macroAssembler->cmpl( edi, ebp );
-    _macroAssembler->jcc( Assembler::notEqual, StubRoutines::continue_NonLocalReturn_entry() );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, StubRoutines::continue_NonLocalReturn_entry() );
 
     // home found
     // eax: NonLocalReturn result
@@ -2423,7 +2423,7 @@ const char * InterpreterGenerator::access_send( bool_t self ) {
     _macroAssembler->test( eax, MEMOOP_TAG );                // check if smi_t
     _macroAssembler->movl( ecx, method_addr );                // get cached method (assuming infrequent cache misses)
     _macroAssembler->movl( edx, klass_addr );                // get cached klass
-    _macroAssembler->jcc( Assembler::zero, _inline_cache_miss );    // if smi_t then it's a cache miss
+    _macroAssembler->jcc( Assembler::Condition::zero, _inline_cache_miss );    // if smi_t then it's a cache miss
     _macroAssembler->movl( edi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     // eax: receiver
@@ -2433,7 +2433,7 @@ const char * InterpreterGenerator::access_send( bool_t self ) {
     // edi: receiver klass
     // esi: next instruction
     _macroAssembler->cmpl( edx, edi );            // compare with inline cache
-    _macroAssembler->jcc( Assembler::notEqual, _inline_cache_miss );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
 
     Address primitive_addr = Address( ecx, MethodOopDescriptor::codes_byte_offset() + oopSize );
     _macroAssembler->movl( edx, primitive_addr );        // get instVar offset
@@ -2490,7 +2490,7 @@ const char * InterpreterGenerator::normal_send( ByteCodes::Code code, bool_t all
     _macroAssembler->test( eax, MEMOOP_TAG );            // check if smi_t
     _macroAssembler->movl( ecx, method_addr );            // get cached method (assuming infrequent cache misses)
     _macroAssembler->movl( edx, klass_addr );            // get cached klass
-    _macroAssembler->jcc( Assembler::zero, is_smi );
+    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );
     _macroAssembler->movl( edi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     _macroAssembler->bind( compare_class );
@@ -2501,12 +2501,12 @@ const char * InterpreterGenerator::normal_send( ByteCodes::Code code, bool_t all
     // edi: receiver klass
     // esi: next instruction
     _macroAssembler->cmpl( edx, edi );            // compare with inline cache
-    _macroAssembler->jcc( Assembler::notEqual, _inline_cache_miss );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
 
     if ( allow_methodOop and allow_nativeMethod ) {
         // make case distinction at run-time
         _macroAssembler->test( ecx, MEMOOP_TAG );            // check if NativeMethod
-        _macroAssembler->jcc( Assembler::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte alligned
+        _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte alligned
     }
 
     if ( allow_methodOop ) {
@@ -2538,7 +2538,7 @@ const char * InterpreterGenerator::normal_send( ByteCodes::Code code, bool_t all
         _macroAssembler->movl( edx, primitive_addr );        // get primitive address
         call_C( edx );                // eax: = primitive call
         _macroAssembler->test( eax, MARK_TAG_BIT );
-        _macroAssembler->jcc( Assembler::notZero, _failed );
+        _macroAssembler->jcc( Assembler::Condition::notZero, _failed );
         load_ebx();
         if ( pop_tos )
             _macroAssembler->popl( eax );        // discard result if not used
@@ -2590,7 +2590,7 @@ const char * InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     load_recv( arg_spec );
     advance_aligned( length );
     _macroAssembler->test( eax, MEMOOP_TAG );            // check if smi_t
-    _macroAssembler->jcc( Assembler::zero, is_smi );        // otherwise
+    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );        // otherwise
     _macroAssembler->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     // probe primary cache
@@ -2607,12 +2607,12 @@ const char * InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     _macroAssembler->andl( edi, ( primary_cache_size - 1 ) << 4 );
     // probe cache
     _macroAssembler->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * oopSize ) );
-    _macroAssembler->jcc( Assembler::notEqual, probe_secondary_cache );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
     _macroAssembler->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * oopSize ) );
-    _macroAssembler->jcc( Assembler::notEqual, probe_secondary_cache );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
     _macroAssembler->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * oopSize ) );
     _macroAssembler->test( ecx, MEMOOP_TAG );            // check if NativeMethod
-    _macroAssembler->jcc( Assembler::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
+    _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
 
     _macroAssembler->bind( is_methodOop );
     call_method();
@@ -2644,12 +2644,12 @@ const char * InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     _macroAssembler->andl( edi, ( secondary_cache_size - 1 ) << 4 );
     // probe cache
     _macroAssembler->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * oopSize ) );
-    _macroAssembler->jcc( Assembler::notEqual, _inline_cache_miss );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
     _macroAssembler->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * oopSize ) );
-    _macroAssembler->jcc( Assembler::notEqual, _inline_cache_miss );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
     _macroAssembler->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * oopSize ) );
     _macroAssembler->test( ecx, MEMOOP_TAG );            // check if NativeMethod
-    _macroAssembler->jcc( Assembler::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
+    _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
     _macroAssembler->jmp( is_methodOop );
 
     return ep;
@@ -2693,7 +2693,7 @@ const char * InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
 
     _macroAssembler->movl( edx, smiKlass_addr() );        // preload smi_t klass
     _macroAssembler->testl( eax, MEMOOP_TAG );            // check if smi_t
-    _macroAssembler->jcc( Assembler::zero, loop );        // otherwise
+    _macroAssembler->jcc( Assembler::Condition::zero, loop );        // otherwise
     _macroAssembler->movl( edx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get receiver klass
 
     // search pic for appropriate entry
@@ -2704,9 +2704,9 @@ const char * InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     // edx: receiver class
     // esi: next instruction
     _macroAssembler->cmpl( edx, Address( ebx, ecx, Address::times_8, data_offset - 1 * oopSize, RelocationInformation::RelocationType::none ) );
-    _macroAssembler->jcc( Assembler::equal, found );
+    _macroAssembler->jcc( Assembler::Condition::equal, found );
     _macroAssembler->decl( ecx );
-    _macroAssembler->jcc( Assembler::notZero, loop );
+    _macroAssembler->jcc( Assembler::Condition::notZero, loop );
 
     // cache miss
     _macroAssembler->jmp( _inline_cache_miss );
@@ -2719,7 +2719,7 @@ const char * InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     // esi: next instruction
     _macroAssembler->movl( ecx, Address( ebx, ecx, Address::times_8, data_offset - 2 * oopSize, RelocationInformation::RelocationType::none ) );
     _macroAssembler->testl( ecx, MEMOOP_TAG );
-    _macroAssembler->jcc( Assembler::zero, is_nativeMethod );
+    _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );
     restore_ebx();
 
     // methodOop found
@@ -2759,7 +2759,7 @@ const char * InterpreterGenerator::special_primitive_send_hint() {
 
 
 const char * InterpreterGenerator::compare( bool_t equal ) {
-    Assembler::Condition cond = equal ? Assembler::equal : Assembler::notEqual;
+    Assembler::Condition cond = equal ? Assembler::Condition::equal : Assembler::Condition::notEqual;
 
     Label _return_true;
 

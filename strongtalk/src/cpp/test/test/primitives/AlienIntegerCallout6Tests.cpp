@@ -117,15 +117,15 @@ class AlienIntegerCallout6Tests : public ::testing::Test {
         }
 
 
-        HeapResourceMark                    * rm;
+        HeapResourceMark * rm;
         GrowableArray <PersistentHandle **> * handles;
-        PersistentHandle                    * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
-        PersistentHandle                    * directAlien, * invalidFunctionAlien;
-        SMIOop                                             smi0, smi1, smim1;
-        static const int                                   argCount = 6;
-        void                                * intCalloutFunctions[argCount];
-        void                                * intPointerCalloutFunctions[argCount];
-        char                                address[8];
+        PersistentHandle * resultAlien, * addressAlien, * pointerAlien, * functionAlien;
+        PersistentHandle * directAlien, * invalidFunctionAlien;
+        SMIOop                          smi0, smi1, smim1;
+        static const int                argCount = 6;
+        std::array <void *, argCount>   intCalloutFunctions;
+        std::array <void *, argCount>   intPointerCalloutFunctions;
+        char                            address[8];
 
 
         void allocateAlien( PersistentHandle *& alienHandle, int arraySize, int alienSize, void * ptr = nullptr ) {
@@ -189,14 +189,15 @@ class AlienIntegerCallout6Tests : public ::testing::Test {
         }
 
 
-        Oop callout( Oop arg[] ) {
+        Oop callout( std::array <Oop, argCount> arg ) {
             return byteArrayPrimitives::alienCallResult6( arg[ 5 ], arg[ 4 ], arg[ 3 ], arg[ 2 ], arg[ 1 ], arg[ 0 ], resultAlien->as_oop(), functionAlien->as_oop() );
         }
 
 
-        void checkArgnPassed( int argIndex, int argValue, void ** functionArray ) {
+        void checkArgnPassed( int argIndex, int argValue, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? asOop( argValue ) : smi0;
             Oop       result = callout( arg );
@@ -206,9 +207,10 @@ class AlienIntegerCallout6Tests : public ::testing::Test {
         }
 
 
-        void checkArgnPtrPassed( int argIndex, Oop pointer, void ** functionArray ) {
+        void checkArgnPtrPassed( int argIndex, Oop pointer, std::array <void *, argCount> functionArray ) {
             setAddress( functionAlien, functionArray[ argIndex ] );
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
             Oop       result = callout( arg );
@@ -219,10 +221,12 @@ class AlienIntegerCallout6Tests : public ::testing::Test {
 
 
         void checkIllegalArgnPassed( int argIndex, Oop pointer ) {
-            Oop       arg[argCount];
+            std::array <Oop, argCount> arg;
+
             for ( int index = 0; index < argCount; index++ )
                 arg[ index ] = argIndex == index ? pointer : smi0;
-            Oop       result = callout( arg );
+
+            Oop result = callout( arg );
 
             SymbolOop symbol;
             switch ( argIndex ) {

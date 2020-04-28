@@ -3,26 +3,26 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/oops/smiKlass.hpp"
+#include "vm/oops/SMIKlass.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
 
-KlassOop smiKlass::create_subclass( MixinOop mixin, Format format ) {
+KlassOop SMIKlass::create_subclass( MixinOop mixin, Format format ) {
     return nullptr;
 }
 
 
 void setKlassVirtualTableFromSmiKlass( Klass * k ) {
-    smiKlass o;
+    SMIKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
 
 
-Oop smiKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop SMIKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
     return obj;
 }
 
 
-void smiKlass::oop_print_value( Oop obj, ConsoleOutputStream * stream ) {
+void SMIKlass::oop_print_value( Oop obj, ConsoleOutputStream * stream ) {
     stream->print( "%d", SMIOop( obj )->value() );
 }

@@ -127,6 +127,7 @@ KlassOop MemOopKlass::create_subclass( MixinOop mixin, KlassOop instSuper, Klass
 
 
 KlassOop MemOopKlass::create_subclass( MixinOop mixin, Format format ) {
+
     st_assert( can_be_subclassed(), "must be able to subclass this" );
     if ( format == Format::mem_klass )
         return MemOopKlass::create_class( as_klassOop(), mixin );

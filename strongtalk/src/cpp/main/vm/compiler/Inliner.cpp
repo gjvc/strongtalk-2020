@@ -338,7 +338,7 @@ Expression * Inliner::inlineMerge( SendInfo * info ) {
         info->_needRealSend = false;
     } else if ( others->isEmpty() ) {
         // typecase cannot fail
-        _generator->append_exit( NodeFactory::FixedCodeNode( FixedCodeNode::dead_end ) );
+        _generator->append_exit( NodeFactory::FixedCodeNode( FixedCodeNode::FixedCodeKind::dead_end ) );
     }
 
     return res;

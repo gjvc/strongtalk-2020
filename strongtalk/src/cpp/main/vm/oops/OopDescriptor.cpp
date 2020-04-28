@@ -4,7 +4,7 @@
 //
 
 #include "vm/oops/OopDescriptor.hpp"
-#include "vm/oops/smiOopDescriptor.hpp"
+#include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utilities/OutputStream.hpp"

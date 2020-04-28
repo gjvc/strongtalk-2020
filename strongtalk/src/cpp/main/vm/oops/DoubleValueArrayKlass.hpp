@@ -90,4 +90,3 @@ class DoubleValueArrayKlass : public MemOopKlass {
 };
 
 void setKlassVirtualTableFromDoubleValueArrayKlass( Klass * k );
-

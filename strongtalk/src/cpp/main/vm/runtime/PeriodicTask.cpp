@@ -5,9 +5,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/system/macros.hpp"
-#include "vm/memory/util.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/system/os.hpp"
@@ -16,8 +13,7 @@
 constexpr int max_tasks = 10;
 int           num_tasks = 0;
 
-PeriodicTask * tasks[max_tasks];
-
+std::array<PeriodicTask*,max_tasks>tasks;
 
 bool_t pending_tasks( int delay_time ) {
     bool_t result = false;

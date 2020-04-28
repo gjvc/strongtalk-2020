@@ -76,16 +76,15 @@ class CompiledLoop : public PrintableResourceObject {
         Node           * _startOfCond;               //
         Node           * _endOfCond;                 //
         BranchNode     * _loopBranch;                // branch ending loop condition
-        int            _firstNodeID, _lastNodeID;   // all node IDs in loop are between these two
+        int            _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
 
-        // the instance variables below are set as a result of recognize()
-        // and are valid only if isIntegerLoop()
-        bool_t         _isIntegerLoop;              // is this loop a recognized integer loop?
+        // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
+        bool_t         _isIntegerLoop;               // is this loop a recognized integer loop?
         PseudoRegister * _loopVar;                   // suspected loop variable
         PseudoRegister * _lowerBound;                // lower bound of for-like loop (see comment in findLowerBound)
         PseudoRegister * _upperBound;                // upper bound
         PseudoRegister * _increment;                 // increment of loopVar
-        bool_t         _isCountingUp;               // true if loop is counting up, false if counting down
+        bool_t         _isCountingUp;                // true if loop is counting up, false if counting down
         NonTrivialNode * _incNode;                   // node incrementing loop var
         PseudoRegister * _loopArray;                 // array whose size is upper bound (or nullptr)
         LoadOffsetNode * _loopSizeLoad;              // node loading loopArray's size
@@ -129,8 +128,8 @@ class CompiledLoop : public PrintableResourceObject {
         }
 
 
-        void optimize();              // perform general loop optimization
-        void optimizeIntegerLoop();          // perform integer loop optimization
+        void optimize();                // perform general loop optimization
+        void optimizeIntegerLoop();     // perform integer loop optimization
 
         void print();
 

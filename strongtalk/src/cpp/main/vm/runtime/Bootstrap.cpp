@@ -14,7 +14,7 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/oops/KlassKlass.hpp"
-#include "vm/oops/smiKlass.hpp"
+#include "vm/oops/SMIKlass.hpp"
 #include "vm/oops/DoubleByteArrayKlass.hpp"
 #include "vm/oops/ObjectArrayKlass.hpp"
 #include "vm/oops/SymbolKlass.hpp"
