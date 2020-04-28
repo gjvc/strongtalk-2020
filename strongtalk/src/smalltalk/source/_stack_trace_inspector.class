@@ -1,0 +1,20 @@
+Class
+on:!
+35449368!
+instance creation!
+0Process:Instance! !
+#categories!
+instance creation!
+private - accessing! !
+openOn:!
+35449631!
+instance creation!
+0Process:! !
+removeDebugger:!
+35450142!
+private - accessing!
+1StackTraceInspector:! !
+debuggers!
+35449860!
+private - accessing!
+1Dict[Process,StackTraceInspector]! !

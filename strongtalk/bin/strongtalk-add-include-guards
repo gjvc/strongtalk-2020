@@ -1,0 +1,191 @@
+#! /usr/bin/env python3
+
+import optparse
+import os
+import pathlib
+import re
+import shutil
+import sys
+import tempfile
+
+
+# -----------------------------------------------------------------------------
+
+class LineBasedFile( object ):
+
+    def __init__( self, filename, encoding='utf-8', line_ending='\n' ):
+        self._filename      = pathlib.Path( filename )
+        self._encoding      = encoding
+        self._line_ending   = line_ending
+        self._lines         = []
+
+
+    def read( self ):
+        with open( self.filename, 'r' ) as stream:
+            self._lines = stream.readlines()
+
+
+    def temp( self ):
+
+        kwargs = {}
+        kwargs[ 'dir' ] = pathlib.Path( self.filename ).parent
+        kwargs[ 'prefix' ] = '.' + pathlib.Path( self.filename ).name + '.'
+        kwargs[ 'delete' ] = False
+        with tempfile.NamedTemporaryFile( **kwargs ) as temp:
+            print( f'tempfile-write: {temp.name}  filename: {self.filename}' )
+            for line in self.lines:
+                temp.write( line.encode( self._encoding ) )
+            return temp
+
+
+    def replace( self ):
+        temp = self.temp()
+        shutil.move( temp.name, self.filename )
+
+
+    @property
+    def filename( self ):
+        return self._filename.resolve()
+
+
+    @property
+    def lines( self, line_ending='\n' ):
+        for line in self._lines:
+            yield line.rstrip() + line_ending
+
+
+# -----------------------------------------------------------------------------
+
+class HeaderFile( LineBasedFile ):
+
+    def __init__( self, filename, strongtalk_root, **kwargs ):
+        super().__init__( filename, **kwargs ) 
+
+        self._strongtalk_root   = strongtalk_root
+        self._commentBlock      = []
+        self._contentBlock      = []
+
+
+    @property
+    def guard( self ):
+
+        # STRONGTALK_SMALLTALK_STRONGTALK_2020_STRONGTALK_SRC_CPP_MAIN_VM_MEMORY_SNAPSHOT_HPP 
+        #  --strongtalk-root src/cpp/main/vm
+
+        root    = pathlib.Path( self._strongtalk_root )
+        path    = pathlib.Path( self.filename )
+        result  = path.parts[ len( root.parts ): ]
+        path    = '_'.join( result )
+        path    = re.sub( '[/\.-]', '_', path )
+        guard   = f'strongtalk_{path}'.upper()
+
+        return guard
+
+
+    def findBlocks( self ):
+
+        state = 1
+        for i, line in enumerate( self.lines ):
+
+            if state == 1:
+
+                if i == 0:
+                    if line.startswith( '/*' ) and line.endswith( '*/' ):
+                        self._commentBlock.append( line )
+                else:
+                    if line.startswith( '/*' ):
+                        self._commentBlock.append( line )
+                        state = 2
+
+            elif state == 2:
+                self._commentBlock.append( line )
+                if line.startswith( '*/' ):
+                    state = 3
+            
+            elif state == 3:
+                self._contentBlock.append( line )
+
+
+    def addIncludeGuards( self ):
+
+        self.findBlocks()
+        if any( [ ( self.guard in line ) for line in self.lines ] ): return
+
+        lines = []
+        lines.extend( self._commentBlock )
+        lines.append( '' )
+        lines.append( f'#ifndef {self.guard}' )
+        lines.append( f'#define {self.guard}' )
+        lines.append( '' )
+        lines.extend( self._contentBlock )
+        lines.append( '' )
+        lines.append( f'#endif // {self.guard}' )
+        lines.append( '' )
+
+        self._lines = lines
+
+
+# -----------------------------------------------------------------------------
+
+class FileTree( object ):
+
+    def __init__( self, root ):
+        self._root      = pathlib.Path( root )
+        self._mappings  = None
+
+    @property
+    def root( self ):
+        return self._root.resolve()
+
+    def files( self, root=None, suffix=None, relative=False ):
+
+        if root is None:
+            root=self.root
+
+        for root, _, files in os.walk( root, topdown=False ):
+            for name in files:
+                if suffix and not name.endswith( suffix ):
+                    continue
+                if relative:
+                    yield pathlib.Path( name )
+                else:
+                    yield ( pathlib.Path( root ) / name ).resolve()
+
+
+class StrongTalkTree( FileTree ):
+
+    @property
+    def hpp_files( self ):
+        for f in self.files( suffix='.hpp' ): yield f
+
+
+def run( options, args ):
+
+    stt = StrongTalkTree( options.strongtalk_root )
+    for hpp_file in stt.hpp_files:
+        header = HeaderFile( hpp_file, options.strongtalk_root )
+        header.read()
+        header.addIncludeGuards()
+        header.temp()
+        if options.replace:
+            header.replace()
+
+
+# -----------------------------------------------------------------------------
+
+def main():
+
+    parser = optparse.OptionParser()
+    parser.add_option( '--strongtalk-root',     action='store',         default=None )
+    parser.add_option( '--transform-cpp-files', action='store_true',    default=True )
+    parser.add_option( '--replace',             action='store_true',    default=False )
+    options, args = parser.parse_args()
+
+    run( options, args )
+
+
+# -----------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    sys.exit( main() )
+

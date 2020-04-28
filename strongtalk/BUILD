@@ -1,0 +1,120 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+##
+
+
+# -----------------------------------------------------------------------------
+
+cxx_arch            = [ '-m32' ]
+cxx_lang            = [ '-std=c++2a' ]
+cxx_optimisation    = [ '-O0' ]
+cxx_debug           = [ '-ggdb3' ]
+cxx_features        = [ '-f' + f for f in [ 'no-operator-names', 'permissive' ] ]
+cxx_no_features     = [ '-f' + f for f in [ ] ]
+cxx_warnings        = [ '-W' + W for W in [ 'all' ] ]
+cxx_no_warnings     = [ '-W' + W for W in [ 'no-write-strings', 'no-unused-parameter' ] ]
+
+
+# -----------------------------------------------------------------------------
+
+src_cpp_prefix      = 'src/cpp'
+libstrongtalk_root  = src_cpp_prefix + '/main'
+test_root           = src_cpp_prefix + '/test'
+
+
+# -----------------------------------------------------------------------------
+
+libstrongtalk_source_dirs   = [ libstrongtalk_root + '/vm/' ]
+libstrongtalk_includes      = [ '-I' + I for I in libstrongtalk_source_dirs ]
+libstrongtalk_defines       = [ '-D' + D for D in [ 'DELTA_COMPILER', 'ASSERT', 'DEBUG', '__LINUX__' ] ]
+
+libstrongtalk_headers       = glob([ libstrongtalk_root + '/vm/**/*.hpp'] )      + [ libstrongtalk_root + '/vm/prims/prims.inc' ]
+libstrongtalk_sources       = glob([ libstrongtalk_root + '/vm/**/*.cpp'], exclude=[ libstrongtalk_root + '/vm/runtime/main.cpp' ])
+
+
+# -----------------------------------------------------------------------------
+
+test_include_dirs   = [ test_root + '/' + x for x in [ 'memory', 'runtime', 'utilities' ] ]
+test_includes       = [ '-I' + x for x in test_include_dirs ]
+
+cxx_options         = cxx_arch + cxx_lang + cxx_optimisation + cxx_debug + cxx_features + cxx_no_features + cxx_warnings + cxx_no_warnings
+cxx_options_main    = cxx_options + libstrongtalk_includes + libstrongtalk_defines
+
+
+# -----------------------------------------------------------------------------
+
+linker_options      = [ '-l' + lib for lib in [ 'pthread', 'dl', 'rt', 'm' ] ]
+
+
+# -----------------------------------------------------------------------------
+
+cc_library(
+    name        = 'libstrongtalk',
+    hdrs        = libstrongtalk_headers,
+    srcs        = libstrongtalk_sources,
+    copts       = cxx_options_main,
+    linkopts    = cxx_arch + linker_options
+)
+
+cc_binary(
+    name        = 'strongtalk',
+    srcs        = [ libstrongtalk_root + '/vm/runtime/main.cpp' ],
+#    copts       = libstrongtalk_includes + libstrongtalk_defines + cxx_options,
+    deps        = [ 'libstrongtalk' ],
+    data        = [ 'bst/817502cd675d1853e73d0235ba16aaa2-strongtalk.bst' ],
+)
+
+
+
+## -----------------------------------------------------------------------------
+#
+load( "@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive" )
+
+http_archive(
+    name        = "gtest",
+    url         = "https://github.com/google/googletest/archive/release-1.7.0.zip",
+    sha256      = "b58cb7547a28b2c718d1e38aee18a3659c9e3ff52440297e965f5edffe34b6d0",
+    build_file  = "@//:gtest.BUILD",
+)
+
+cc_library(
+    name = "main",
+    srcs = glob(
+        ["googletest-release-1.7.0/src/*.cc"],
+        exclude = ["googletest-release-1.7.0/src/gtest-all.cc"]
+    ),
+    hdrs = glob([
+        "googletest-release-1.7.0/include/**/*.h",
+        "googletest-release-1.7.0/src/*.h"
+    ]),
+    copts = [
+        "-Iexternal/gtest/googletest-release-1.7.0/include"
+    ],
+    linkopts = ["-pthread"],
+    visibility = ["//visibility:public"],
+)
+
+#TEST_SOURCES_EXCLUSIONS = [
+#    'test/compiler/compiler_tests.cpp', # CRASH
+#    'test/interpreter/missingMethodBuilderTest.cpp', # CRASH -- differs from cmake version
+#    'test/memory/contextKlassTests.cpp', # CRASH
+#    'test/memory/methodLookupTests.cpp', # vm shows errors, tests pass
+#    'test/memory/proxyPrimsTest.cpp', # vm shows errors, tests pass
+#    'test/prims/alienIntegerCallout0Tests.cpp', # FAILS
+#    'test/prims/alienIntegerCallout1Tests.cpp', # FAILS
+#    'test/prims/byteArrayPrimsTests.cpp', # FAILS
+#]
+#TEST_SOURCES = glob( [ 'test/**/*.cpp', 'test/**/*.hpp' ], exclude=TEST_SOURCES_EXCLUSIONS )
+#
+#cc_test(
+#    name    = 'strongtalk-test',
+#    srcs    = TEST_SOURCES,
+#    copts   = LIBSTRONGTALK_INCLUDES + LIBSTRONGTALK_DEFINES + CXX_OPTIONS,
+#    deps    = [ ':libstrongtalk', ':easyunit' ],
+#    data    = [ 'bst/817502cd675d1853e73d0235ba16aaa2-strongtalk.bst' ],
+#    args    = [ '-b bst/817502cd675d1853e73d0235ba16aaa2-strongtalk.bst' ],
+#    size    = 'small',
+#)
+#

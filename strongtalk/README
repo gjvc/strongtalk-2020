@@ -1,0 +1,14 @@
+
+INDEX
+
+
+QUICK START
+
+    make init
+    make strongtalk-exe
+    make strongtalk-exe-run
+
+
+SEE ALSO
+
+

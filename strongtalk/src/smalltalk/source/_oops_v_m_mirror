@@ -1,0 +1,39 @@
+Class
+#categories!
+iteration!
+printing!
+accessing! !
+#extensionsAreSubtypes!
+true! !
+#superclassTypeString!
+VMMirror! !
+#group!
+reflection! !
+#subtype!
+true! !
+safePrintString!
+35725965!
+printing!
+0Str! !
+iterateInstanceVariables:!
+1721939!
+iteration!
+0ObjectIterator:! !
+#branded!
+true! !
+#comment!
+Low level mirror on a regular object.
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#revision!
+$Revision: 1.2 $! !
+instVarAt:!
+35734685!
+accessing!
+0SmallInt:Object! !
+instVarAt:put:!
+35733343!
+accessing!
+0SmallInt:Object:! !
+#abstract!
+false! !

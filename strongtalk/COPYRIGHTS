@@ -1,0 +1,123 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+##
+
+
+//
+// STRONGTALK COPYRIGHTS
+// Copyright notices in (perhaps reverse) chronological order
+//
+
+
+Smalltalk Virtual Machine by LongView Technologies LLC
+
+
+Copyright 1996, Animorphic Systems.
+
+
+Copyright (c) 1994 - 1996, LongView Technologies L.L.C.
+
+
+Strongtalk (TM) Virtual Machine -- proprietary information of
+LongView Technologies L.L.C. (c) 1994 - 1996.
+
+LongView Technologies L.L.C. ("LongView") grants to you the non-
+exclusive, non-assignable right to use the Strongtalk (TM) Virtual
+Machine as well as the associated Strongtalk components .bst file
+and source database ("this software") on one computer system solely
+for evaluation purposes. This software shall not be copied or used
+for any other purpose. You may not decompile, dissassemble, or
+reverse	engineer this software. You may not disclose the results of
+any benchmark testing of this software to any third party without
+LongView's prior written permission. In addition to the restrictions
+set forth in this notice, any use of this software is subject to the
+terms of the Nondisclosure Agreement, if any. All rights not expressly
+granted are reserved by LongView.
+
+This software is provided "as is", without any warranty of any kind.
+To the maximum extent permitted by law, LongView disclaims all
+warranties, either express or implied, including but not limited
+to implied warranties of merchantability, fitness for a particular
+purpose and nonfringement. The entire risk arising out of the use
+of this software remains with you.
+
+To the maximum extent permitted by law, in no event shall LongView
+be liable for any damages whatsoever arising out of the use of this
+software, even if LongView has been advised of the possibility of
+such damages.
+
+
+
+(c) 1994-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
+Use and distribution of this software is subject to the terms of the attached license.
+
+
+
+Copyright (c) 2006, Sun Microsystems, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Sun Microsystems nor the names of its contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+
+
+
+
+Copyright (c) 2007, Strongtalk Group
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of the Strongtalk Group nor the names of its contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+
+
+
+
+Copyright (c) 2010, Stephen Rees
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
+	  disclaimer in the documentation and/or other materials provided with the distribution.
+    * Neither the name of Sun Microsystems nor the names of its contributors may be used to endorse or promote products derived
+	  from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
+
+
+
+

@@ -1,0 +1,55 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+##
+
+
+# -----------------------------------------------------------------------------
+
++UseNewBackend
++WizardMode
+
+
+# -----------------------------------------------------------------------------
+
+-VerifyAfterGC
+-VerifyAfterScavenge
+-VerifyBeforeGC
+-VerifyBeforeScavenge
+-VerifyCode
+-VerifyDebugInfo
+-VerifyZoneOften
+
+
+# -----------------------------------------------------------------------------
+
+-PrintInterpreter
++TraceDLLLookup
++TraceDLLCalls
+-GenTraceCalls
+-TraceApplyChange
+-PrintCompilation
+-PrintRecompilation
+-CompiledCodeOnly
+
+
+# -----------------------------------------------------------------------------
+
+-UseInliningDatabase
+-UseInliningDatabaseEagerly
+-UseRecompilation
+-PrintInliningDatabaseCompilation
+
+
+# -----------------------------------------------------------------------------
+
+MaxElementPrintSize=2048
+JumpTableSize=16384
+OldSize=8192
+ThreadStackSize=1024
+StackPrintLimit=1024
+
+
+# src/cpp/main/vm/runtime/debug.hpp
+

@@ -1,0 +1,35 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+
+# parameters ------------------------------------------------------------------
+
+arch=i386-linux-gnu
+build_meta_system=cmake
+build_toolchain=gnu
+build_type=debug
+strongtalk_bst=${_ROOT}/res/bst/fc5d675f9e4375d86d9f267bb57ba91e-strongtalk.bst
+strongtalkrc=${_ROOT}/etc/strongtalk/strongtalkrc-default
+
+
+# binary ----------------------------------------------------------------------
+
+binary=${_ROOT}/.${build_meta_system}/${build_toolchain}/${build_type}/src/cpp/main/strongtalk
+[[ ! -x ${binary} ]] && { echo "uhoh: ${build_type} binary not found";  exit 111; }
+
+
+# go --------------------------------------------------------------------------
+
+export LD_LIBRARY_PATH=${_ROOT}/lib/${arch}
+
+gdb <<__GDB_EOF__
+set confirm off
+file ${binary}
+set args "${@}"
+run
+backtrace
+__GDB_EOF__
+

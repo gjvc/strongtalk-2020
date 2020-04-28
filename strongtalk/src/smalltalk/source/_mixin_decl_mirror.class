@@ -1,0 +1,52 @@
+Class
+on:!
+34269481!
+Unclassified!
+0Mixin:Instance! !
+createInvocationValueOf:named:superclass:ifFail:!
+34268480!
+Unclassified!
+0MixinDeclMirror:Symbol:ClassMirror:[Str]:ClassVMMirror! !
+#categories!
+Unclassified!
+private! !
+addTypeStructureForMixin:!
+34271687!
+private!
+1MixinVMMirror:! !
+superclassType:body:!
+34269738!
+Unclassified!
+0Str:ClassMirror:Instance! !
+createInvocationOf:named:superclass:ifFail:!
+34268024!
+Unclassified!
+0MixinMirror:Symbol:ClassMirror:[Str]:ClassVMMirror! !
+validate:name:superclass:ifFail:!
+34273031!
+private!
+1MixinVMMirror:Symbol:ClassMirror:[Str]:! !
+cleanUp!
+34267805!
+Unclassified!
+0! !
+init!
+34269285!
+Unclassified!
+0! !
+computeDependentsOf:!
+34272610!
+private!
+1MixinDeclMirror:Array[Class]! !
+addTypeStructureForInvocation:!
+34271206!
+private!
+1ClassVMMirror:! !
+addSuperclassTypeStructureForInvocation:!
+34270668!
+private!
+1ClassVMMirror:! !
+addBasicTypeStructureForInvocation:!
+34270004!
+private!
+1ClassVMMirror:! !

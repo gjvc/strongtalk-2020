@@ -1,0 +1,81 @@
+Delta define: #ArraySortTest as: (
+(Class subclassOf: 'TestCase' instanceVariables: '')) !
+
+(Delta mirrorFor: #ArraySortTest) revision: '$Revision:$'!
+
+(Delta mirrorFor: #ArraySortTest) group: 'Collections-Tests'!
+
+(Delta mirrorFor: #ArraySortTest)
+comment: 
+''!
+
+! (Delta mirrorFor: #ArraySortTest) methodsFor: 'tests' !
+
+
+testSortOneElement
+	
+	|array expected|
+	array := Array with: 1.
+	expected := Array with: 1.
+	
+	array newSortUsing: [:a :b| a < b].
+	self assert: array = expected!
+
+testSortSimpleCollection
+
+	self should: [#(5 3 1) asSortedCollection asArray = #(1 3 5)].
+	self should: [#(1 3 5) asSortedCollection asArray = #(1 3 5)].
+	self should: [#(1 5 3) asSortedCollection asArray = #(1 3 5)].
+	self should: [#(1 2 1)asSortedCollection asArray = #(1 1 2)].
+	self should: [#(1 2 1 2)asSortedCollection asArray = #(1 1 2 2)].!
+
+testSortThreeElementsRandom
+	
+	|array expected|
+	array := Array with: 3 with: 1 with: 2.
+	expected := Array with: 1 with: 2 with: 3.
+	
+	array newSortUsing: [:a :b| a < b].
+	self assert: array = expected!
+
+testSortThreeElementsReversed
+	
+	|array expected|
+	array := Array with: 3 with: 2 with: 1.
+	expected := Array with: 1 with: 2 with: 3.
+	
+	array sortUsing: [:a :b| a < b].
+	self assert: array = expected!
+
+testSortTwoElements
+	
+	|array expected|
+	array := Array with: 1 with: 2.
+	expected := Array with: 1 with: 2.
+	
+	array newSortUsing: [:a :b| a < b].
+	self assert: array = expected!
+
+testSortTwoElementsReversed
+	
+	|array expected|
+	array := Array with: 2 with: 1.
+	expected := Array with: 1 with: 2.
+	
+	array newSortUsing: [:a :b| a < b].
+	self assert: array = expected!
+
+testSortedCollection
+	|r c s index|
+	r := Random new.
+	1 to: 500 do:
+		[:j|	c := Array[Int] new: j.
+			1 to: j do:
+				[ :i <Int> |
+					c at: i put: (r next * (SmallInteger maxVal - 1)) asInteger	].
+			"Transcript show: 'c size = '; print: c size; cr."
+			self should: [ |blk|
+									blk := [ :i1 <Int> :i2 <Int> | i1 < i2 ].
+									(c sortUsing: blk) isSortedBy: blk ]
+				description: 'collection should be sorted'].! !
+

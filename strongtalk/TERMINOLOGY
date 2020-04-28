@@ -1,0 +1,158 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+##
+
+# -----------------------------------------------------------------------------
+
+NOMENCLATURE
+
+    This is Strongtalk-2020
+
+
+COMPILER
+RECOMPILER
+
+
+SOURCE FILES
+
+    .dlt    "delta" files
+    .gr     "group" files, used for denoting a group of .dlt files
+
+
+
+TYPE FEEDBACK
+
+    RecompilationScope is the source for type feedback.
+
+
+PRIMTIIVES
+
+    Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
+
+
+    CODE GENERATION
+
+        src/perl/primDefFilter
+            generates prims.src file
+
+        src/smalltalk/StrongtalkSource/DeltaPrimitiveGenerator.dlt
+            reads prims.src file
+
+
+NON-LOCAL RETURNS
+
+
+CALLING CONVENTIONS
+
+    "stdcall" / "Pascal" calling convention
+        A routine that uses the Pascal calling convention must preserve EBX, EBP, ESI, EDI.
+        (source Microsoft Development Library, MASM 6.1 Programmer's Guide)
+
+    "cdecl" / "C" calling convention
+        A routine that uses the C calling convention must preserve EBP, ESI, EDI.
+
+
+INLINE CACHING
+
+    The goal of inline caching is to speed up runtime method binding by remembering
+    the results of a previous method lookup directly at the call site.
+
+        anamorphic,     // send has never been executed => no type information	(size = 0)
+        monomorphic,    // only one receiver type available			(size = 1)
+        polymorphic,    // more than one receiver type available		(size > 1)
+        megamorphic     // many receiver types, only last one is available	(size = 1)
+
+
+    Initially, a call site is considered to be in the "anamorphic" state.
+
+    Once the language runtime reaches a particular uninitialized call site, it
+    performs the dynamic lookup, stores the result at the call site and changes its
+    state to "monomorphic".
+
+    A "polymorphic" call site decides which of a limited set of known methods to
+    invoke based on the type that it is currently presented with. In other words,
+    with polymorphic inline caching, multiple method lookup results can be recorded
+    at the same call site. 
+
+    Because every call site in a program can potentially see every type in the
+    system, there usually is an upper bound to how many lookup results are recorded
+    at each call site.  Once that upper bound is reached, call sites become
+    "megamorphic" and no more inline caching is performed.
+
+    The abbreviations "MIC", "PIC" are used for MegamorphicInlineCache and PolymorphicInlineCache
+    A MegamorphicInlineCache is also known as a "megamorphic PolymorphicInlineCache".
+
+
+
+MESSAGE SENDS
+
+    Normal sends
+        message sent to a selector on a receiver
+
+    Super sends
+        message sent to a selector on a super class of a receiver
+
+
+
+
+JumpTable
+
+CodeTable
+
+CodeTableLink
+
+
+NATIVE METHODS
+
+    NativeMethod objects are the compiled code versions of Delta methods.
+
+    A NativeMethod consists of, in order:
+
+         1) header
+         2) machine instructions (mostly in NCodeBase)
+         3) oop location informatio	(in OopNativeCode)
+         4) mapping from block_closure_index to NonInlinedBlockScope offset
+         5) debugging information
+         6) dependency information
+
+
+MEMORY ALLOCATION MODEL
+
+  All classes in the virtual machine must be subclassed by one of the following allocation classes:
+
+   "For objects allocated in the resource area."
+   - ResourceObject
+     - PrintableResourceObject
+
+   "For objects allocated in the C-heap (managed by: free & malloc)."
+   - CHeapAllocatedObject
+     - PrintableCHeapAllocatedObject
+
+   "For objects allocated on the stack."
+   - StackAllocatedObject
+     - PrintableStackAllocatedObject
+
+   "For embedded objects."
+   - ValueObject
+
+   "For classes used as name spaces."
+   - AllStatic
+
+   "The printable subclasses are used for debugging and define virtual
+    member functions for printing. Classes that avoid allocating the
+    vtbl entries in the objects should therefore not the printable subclasses"
+
+
+GLYPH
+
+
+
+# -----------------------------------------------------------------------------
+
+
+SEE ALSO
+
+    https://en.wikipedia.org/wiki/Inline_caching
+

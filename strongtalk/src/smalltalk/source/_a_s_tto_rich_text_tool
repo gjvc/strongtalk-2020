@@ -1,0 +1,288 @@
+Class
+insertCommentIntervals!
+34232454!
+private!
+1! !
+#categories!
+node traversal!
+private!
+private - initialization!
+builders!
+accessing! !
+primitiveNode:!
+34228257!
+node traversal!
+0DeltaPrimitiveNode:! !
+insertSelectorAndCodeIntervals!
+34232772!
+private!
+1! !
+commentBuilder!
+34219004!
+builders!
+0[Character,^E]! !
+temporaryNode:!
+34228987!
+node traversal!
+0DeltaTemporary:! !
+returnStatNode:!
+34228630!
+node traversal!
+0DeltaReturnStat:! !
+typeexpressionBuilder!
+34220663!
+builders!
+0[Character,^E]! !
+assignmentNode:!
+34221106!
+node traversal!
+0DeltaAssignment:! !
+findInferenceClauseIntervalFrom:!
+34231005!
+private!
+1Tuple[Int,Int]:Tuple[Int,Int]! !
+parseTree:!
+34217812!
+accessing!
+0ParseTree[ASTNode]:! !
+selectorBuilder!
+34220256!
+builders!
+0[Character,^E]! !
+addToResultCheckOverlap:!
+34229706!
+private!
+1Tuple[[Character,^E],Tuple[Int,Int]]:! !
+#typeArgumentString!
+E ! !
+literalNode:!
+34223627!
+node traversal!
+0DeltaLiteral:! !
+#branded!
+true! !
+currentParseTree:!
+34230831!
+private!
+1ParseTree[ASTNode]:! !
+defaultBuilder!
+34219406!
+builders!
+0[Character,^E]! !
+classVarNode:!
+34221680!
+node traversal!
+0DeltaInstVar:! !
+codeBodyNode:!
+34221851!
+node traversal!
+0DeltaCodeBody:! !
+result:!
+34234388!
+private!
+1SeqCltn[Tuple[[Character,^E],Tuple[Int,Int]]]:! !
+#revision!
+$Revision: 1.8 $! !
+addToResult:!
+34229445!
+private!
+1Tuple[[Character,^E],Tuple[Int,Int]]:! !
+selectorBuilder:!
+34220496!
+builders!
+0[Character,^E]:! !
+currentParseTree!
+34230664!
+private!
+1ParseTree[ASTNode]! !
+findTypeExprIntervalFrom:!
+34231954!
+private!
+1Tuple[Int,Int]:Tuple[Int,Int]! !
+parseTrees!
+34218027!
+accessing!
+0Cltn[ParseTree[ASTNode]]! !
+blockNode:!
+34221286!
+node traversal!
+0DeltaBlock:Self! !
+dllCallNode:!
+34222200!
+node traversal!
+0DeltaDLLCall:! !
+methodDeclNode:!
+34224163!
+node traversal!
+0DeltaMethod:! !
+messageNode:!
+34223773!
+node traversal!
+0DeltaMessage:! !
+#comment!
+Tool generating information for printing sources with rich text.
+
+The tool generates a sequencable collection of elements of type E.
+The generated collection will have the same size as the source.
+E is the type of the rich text used for each character, e.g. Glyph.
+
+The elements in the resulting collection are built by the 5 builders:
+
+	selectorBuilder <[Character,^E]>
+	typeexpressionBuilder <[Character,^E]>
+	inferenceclauseBuilder <[Character,^E]>
+	codeBuilder <[Character,^E]>
+	commentBuilder <[Character,^E]>
+
+The tool has to be parameterized with these 5 builder blocks. 
+It is also possible to set a default builder block
+
+	defaultBuilder <[Str, ^E]>
+	
+which will be used if one of the above mentioned are not specified.
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+tupleNode:!
+34229272!
+node traversal!
+0DeltaTule:! !
+initialize!
+34236105!
+private - initialization!
+1! !
+inferenceclauseBuilder!
+34219814!
+builders!
+0[Character,^E]! !
+result!
+34234214!
+private!
+1SeqCltn[Tuple[[Character,^E],Tuple[Int,Int]]]! !
+normalSendNode:!
+34225601!
+node traversal!
+0DeltaSend:! !
+codeBuilder!
+34218617!
+builders!
+0[Character,^E]! !
+#group!
+ast! !
+varNode:!
+34235553!
+private!
+1DeltaVar:! !
+cascadedSendNode:!
+34221466!
+node traversal!
+0DeltaCascadedSend:! !
+typeexpressionBuilder:!
+34220921!
+builders!
+0[Character,^E]:! !
+compute!
+34217061!
+accessing!
+0SeqCltn[E]! !
+selectorEnd:!
+34234826!
+private!
+1Int:! !
+sortResult!
+34235026!
+private!
+1! !
+parameterNode:!
+34225801!
+node traversal!
+0DeltaParameter:! !
+codeBuilder:!
+34218845!
+builders!
+0[Character,^E]:! !
+#extensionsAreSubtypes!
+true! !
+inferenceclauseBuilder:!
+34220075!
+builders!
+0[Character,^E]:! !
+parseTrees:!
+34218190!
+accessing!
+0Cltn[ParseTree[ASTNode]]:! !
+guaranteedNode:!
+34222878!
+node traversal!
+0DeltaGuaranteed:! !
+superSendNode:!
+34228811!
+node traversal!
+0DeltaSuperSend:! !
+#superclassTypeString!
+DeltaASTTool! !
+source!
+34235399!
+private!
+1Str! !
+commentBuilder:!
+34219241!
+builders!
+0[Character,^E]:! !
+#isGeneric!
+true! !
+#instanceVariableString!
+result <SeqCltn[Tuple[[Character,^E],Tuple[Int,Int]]]>
+parseTrees <Cltn[ParseTree[ASTNode]]>
+currentParseTree <ParseTree[ASTNode]>
+selectorEnd <Int>
+selectorBuilder <[Character,^E]>
+codeBuilder <[Character,^E]>
+commentBuilder <[Character,^E]>
+typeexpressionBuilder <[Character,^E]>
+inferenceclauseBuilder <[Character,^E]>
+defaultBuilder <[Character,^E]>
+! !
+refNode:!
+34228491!
+node traversal!
+0DeltaRef:! !
+genericApplicationExpressionNode:!
+34222372!
+node traversal!
+0DeltaGenericApplicationExpression:! !
+polyMsgSignatureNode:!
+34227335!
+node traversal!
+0PolyMsgSignature:! !
+findReturnTypeExprIntervalFrom:!
+34231512!
+private!
+1Tuple[Int,Int]:Tuple[Int,Int]! !
+defaultBuilder:!
+34219649!
+builders!
+0[Character,^E]:! !
+messagePatternNode:!
+34223980!
+node traversal!
+0MessagePattern:! !
+#subtype!
+true! !
+instVarNode:!
+34223457!
+node traversal!
+0DeltaInstVar:! !
+#abstract!
+false! !
+methodNode:!
+34224344!
+node traversal!
+0DeltaMethod:! !
+selectorEnd!
+34234567!
+private!
+1Int! !
+msgSignatureNode:!
+34224545!
+node traversal!
+0DeltaMsgSignature:! !

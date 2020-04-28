@@ -1,0 +1,135 @@
+Class
+tryDLLLoad:ifSuccess:!
+36086888!
+Dynamic Linked Libraries!
+0Str:[X]:! !
+#categories!
+platform classes!
+testing!
+constants!
+command line!
+Dynamic Linked Libraries!
+initialization!
+os streams!
+environment!
+private-clipboard access!
+clipboard access!
+private!
+os specific!
+time! !
+DLLInitialize!
+36084575!
+Dynamic Linked Libraries!
+0! !
+localSYSTEMTIME!
+36096031!
+time!
+0SYSTEMTIME! !
+errorStream!
+36093445!
+os streams!
+0CharOutputStream! !
+environmentVariableAt:ifAbsent:!
+36091964!
+environment!
+2Str:[^X def]:Str|X! !
+closeClipboard!
+36095213!
+private-clipboard access!
+1! !
+emptyClipboard!
+36095404!
+private-clipboard access!
+1! !
+DLLLookup:in:!
+36085726!
+Dynamic Linked Libraries!
+0Str:Str:! !
+wordSize!
+36091829!
+constants!
+0Int! !
+getCommandLine!
+36091054!
+command line!
+0! !
+DLLLibrary:!
+36084842!
+Dynamic Linked Libraries!
+0:! !
+usesCrLfConvention!
+36095884!
+testing!
+0Boolean! !
+pathClass!
+36093694!
+platform classes!
+0FilePath class! !
+DLLMapName:!
+36086103!
+Dynamic Linked Libraries!
+0Str:Str! !
+singleMatchWildcardCharacter!
+36091667!
+constants!
+0Character! !
+patternClass!
+36093860!
+platform classes!
+0FilePattern class! !
+commandLineTokens!
+36089813!
+command line!
+0InputStream[Str]! !
+commandLine!
+36089357!
+command line!
+0Str! !
+multipleMatchWildcardCharacter!
+36091503!
+constants!
+0Character! !
+clipboardTextIfAbsent:!
+36088340!
+clipboard access!
+2[^X def]:Str|X! !
+DLLLoad2:!
+36085077!
+Dynamic Linked Libraries!
+0:! !
+initialize!
+36093134!
+initialization!
+0! !
+getArguments!
+36090523!
+command line!
+0OrdCltn[Str]! !
+tryDLLLoad:ifFail:!
+36086572!
+Dynamic Linked Libraries!
+0Str:[X]:ExternalProxy! !
+skipSpacesIn:!
+36094975!
+private!
+1CharInputStream:! !
+currentThreadId!
+36093282!
+os specific!
+0! !
+parseArgFrom:!
+36094026!
+private!
+1CharInputStream:Str! !
+clipboardText:!
+36087135!
+clipboard access!
+0Str:! !
+openClipboard!
+36095648!
+private-clipboard access!
+1! !
+DLLLoad:!
+36085474!
+Dynamic Linked Libraries!
+0:! !

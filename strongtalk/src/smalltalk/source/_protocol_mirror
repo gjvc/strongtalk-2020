@@ -1,0 +1,344 @@
+Class
+isMemOop!
+34358599!
+Unclassified!
+0! !
+#categories!
+Unclassified!
+accessing!
+typechecking! !
+rename:to:!
+34364476!
+Unclassified!
+0Symbol:Symbol:! !
+parseMessage:ifFail:!
+34363014!
+Unclassified!
+0Str:[Str,Int]:ParseTree! !
+isAssociationOop!
+34358143!
+Unclassified!
+0! !
+selectorsFor:!
+34366834!
+Unclassified!
+0Str:OrdCltn[Symbol]! !
+messages!
+34360997!
+Unclassified!
+0Dict[Symbol,Type]! !
+typecheckInterface!
+34371413!
+typechecking!
+0! !
+initializeSuperProtocol:subtype:branded:!
+34357653!
+Unclassified!
+0Str:Boolean:Boolean:! !
+typecheckTypeArguments!
+34372181!
+typechecking!
+0! !
+convert:toGeneric:ifFail:!
+34354591!
+Unclassified!
+0Mirror:GenericMirror:[Str]:! !
+createMessageTypeStructure!
+34355640!
+Unclassified!
+0! !
+isSubtype!
+34359522!
+Unclassified!
+0Boolean! !
+adjustBounds!
+34352618!
+Unclassified!
+0! !
+basicLocator!
+34353339!
+Unclassified!
+0BasicMixinLocator! !
+isSmiOop!
+34359393!
+Unclassified!
+0! !
+convertToGenericClass:ifFail:!
+34354843!
+Unclassified!
+0ProtocolMirror:[Str]:! !
+isProtocol!
+34359266!
+Unclassified!
+0! !
+subtype!
+34369161!
+Unclassified!
+0Boolean! !
+scope:!
+34366680!
+Unclassified!
+0Scope:! !
+nameNew:ifFail:!
+34362097!
+Unclassified!
+0Symbol:[Str]:! !
+selectorsMatching:!
+34367025!
+Unclassified!
+0Str:Set[Symbol]! !
+localPrimaryInterface!
+34360253!
+Unclassified!
+0! !
+branded:!
+34353692!
+Unclassified!
+0Boolean:! !
+isMeta!
+34358728!
+Unclassified!
+0Boolean! !
+setSuperProtocol:!
+34367384!
+Unclassified!
+0Str:! !
+comment:!
+34354069!
+Unclassified!
+0Str:! !
+#revision!
+$Revision: 1.15 $! !
+instanceSide!
+34357946!
+Unclassified!
+0ProtocolMirror! !
+isBranded!
+34358294!
+Unclassified!
+0Boolean! !
+addMessage:ifFail:!
+34352034!
+Unclassified!
+0Str::ParseTree! !
+basicDefinitionString!
+34353006!
+Unclassified!
+0Str! !
+isMetaSide!
+34358880!
+Unclassified!
+0! !
+#branded!
+true! !
+komment!
+34359833!
+Unclassified!
+0! !
+asProtocol!
+34352860!
+Unclassified!
+0! !
+subtype:!
+34369315!
+Unclassified!
+0Boolean:! !
+nestInGenericWithTypeArguments:!
+34362475!
+Unclassified!
+0Str:! !
+#comment!
+This class represents a mirror on a protocol declaration.
+
+The mirror is on the run-time representation of a protocol,
+of class Protocol, that only retains its name.
+
+The protocol is used as a key to look up source code and type information.
+The mirror allows certain manipulations of these.
+
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+fileNameExtension!
+34357317!
+Unclassified!
+0Str! !
+nameExisting:ifFail:!
+34361744!
+Unclassified!
+0Symbol:[Str]:! !
+isSymbolOop!
+34359701!
+Unclassified!
+0! !
+branded!
+34353513!
+Unclassified!
+0Boolean! !
+superProtocol:!
+34369711!
+Unclassified!
+0Str:! !
+reflectee!
+34363882!
+Unclassified!
+0Protocol! !
+typeArgumentString!
+34370122!
+Unclassified!
+0Str! !
+#group!
+reflection! !
+typecheckDeclaration!
+34371244!
+typechecking!
+0! !
+typecheck!
+34371097!
+typechecking!
+0! !
+hasSelector:!
+34357460!
+Unclassified!
+0Symbol:Boolean! !
+parseMethod:ifFail:!
+34363267!
+Unclassified!
+0Str:[Str,Int]:ParseTree! !
+typeInfo!
+34370295!
+Unclassified!
+0ProtocolUpdate! !
+methodAt:ifFail:!
+34361165!
+Unclassified!
+2Symbol:[^X def]:Message|X! !
+notSubtype!
+34362868!
+Unclassified!
+0! !
+messageAt:ifFail:!
+34360766!
+Unclassified!
+2Symbol:[^X def]:Message|X! !
+#extensionsAreSubtypes!
+true! !
+createTypeStructure!
+34356028!
+Unclassified!
+0! !
+superprotocolString!
+34369946!
+Unclassified!
+0Str! !
+unbranded!
+34370483!
+Unclassified!
+0! !
+localSecondaryInterface!
+34360533!
+Unclassified!
+0! !
+methodsFor:!
+34361555!
+Unclassified!
+0String:! !
+reflectee:!
+34364039!
+Unclassified!
+0Protocol:! !
+setupInitialTypeInfo!
+34368100!
+Unclassified!
+0! !
+isMixin!
+34359139!
+Unclassified!
+0! !
+addMessage:category:ifFail:!
+34351610!
+Unclassified!
+0Str:Str::ParseTree! !
+sourceForSelector:!
+34368726!
+Unclassified!
+0Symbol:Str! !
+#superclassTypeString!
+Mirror! !
+classSide!
+34353879!
+Unclassified!
+0ProtocolMirror! !
+removeMethod:ifAbsent:!
+34364204!
+Unclassified!
+0Symbol:[]:! !
+superProtocol!
+34369505!
+Unclassified!
+0ProtocolMirror! !
+#instanceVariableString!
+reflectee sourceInfo ! !
+publicMethodsFor:!
+34363681!
+Unclassified!
+0String:! !
+shortDescription!
+34370620!
+accessing!
+0Str! !
+privateMethodsFor:!
+34363479!
+Unclassified!
+0String:! !
+convertToProtocol:ifFail:!
+34355374!
+Unclassified!
+0ProtocolMirror:[Str]:! !
+convertToGenericProtocol:ifFail:!
+34355075!
+Unclassified!
+0ProtocolMirror:[Str]:! !
+isMarkOop!
+34358472!
+Unclassified!
+0! !
+scope!
+34366534!
+Unclassified!
+0Scope! !
+typecheckSuperprotocol!
+34372011!
+typechecking!
+0! !
+#subtype!
+true! !
+methodsDo:!
+34361393!
+Unclassified!
+0[Message]:! !
+typecheckSelector:!
+34371578!
+typechecking!
+0Symbol:! !
+renameGroup:!
+34365521!
+Unclassified!
+0Dict[Symbo,Symbol]:! !
+#abstract!
+false! !
+sourceInfo!
+34368920!
+Unclassified!
+0ProtocolSourceHandler! !
+isMethodOop!
+34359007!
+Unclassified!
+0! !
+convert:ifFail:!
+34354402!
+Unclassified!
+0Mirror:[Str]:! !
+addMethod:visibility:category:ifFail:!
+34352367!
+Unclassified!
+0Str:Symbol:Str::ParseTree! !

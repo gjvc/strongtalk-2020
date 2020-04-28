@@ -1,0 +1,216 @@
+Delta define: #AlienTest as: (
+(Class subclassOf: 'TestCase' instanceVariables: 'alien')) !
+
+(Delta mirrorFor: #AlienTest) revision: '$Revision:$'!
+
+(Delta mirrorFor: #AlienTest) group: 'Aliens test'!
+
+(Delta mirrorFor: #AlienTest)
+comment: 
+''!
+
+! (Delta mirrorFor: #AlienTest) classSide methodsFor: 'test case' !
+
+
+isAbstract
+
+	^self == AlienTest! !
+
+! (Delta mirrorFor: #AlienTest) methodsFor: 'fixture' !
+
+
+dataSize
+
+	^8! !
+
+! (Delta mirrorFor: #AlienTest) methodsFor: 'testing' !
+
+
+testAsAlien
+
+	self assert: alien asAlien == alien!
+
+testBoolAccess
+
+	self assert: (alien boolAt: 1 put: true).
+	self assert: (alien boolAt: 1).
+	self deny: (alien boolAt: 1 put: false).
+	self deny: (alien boolAt: 1)!
+
+testDataSize
+
+	self assert: alien dataSize == self dataSize!
+
+testDoubleAccess
+
+	alien doubleAt: 1 put: 1.0.
+	self assert: (alien doubleAt: 1) = 1.0.
+	alien doubleAt: 1 put: 1.23456.
+	self assert: ((alien doubleAt: 1) - 1.23456) abs < 0.000000000001!
+
+testDoubleIndexOutOfRange
+
+	self should: [alien doubleAt: 0 put: 1.0] raise: Error.
+	self should: [alien doubleAt: self dataSize - 6 put: 1.0] raise: Error.
+	self should: [alien doubleAt: self dataSize - 6] raise: Error.
+	self should: [alien doubleAt: 0] raise: Error!
+
+testFloatAccess
+
+	alien floatAt: 1 put: 1.0.
+	self assert: (alien floatAt: 1) = 1.0.
+	alien floatAt: 1 put: 1.23456.
+	self assert: ((alien floatAt: 1) - 1.23456) abs < 0.0000001.
+	self deny: ((alien floatAt: 1) - 1.23456) abs < 0.00000001!
+
+testFloatIndexOutOfRange
+
+	self should: [alien doubleAt: 0 put: 1.0] raise: Error.
+	self should: [alien doubleAt: self dataSize - 6 put: 1.0] raise: Error.
+	self should: [alien doubleAt: self dataSize - 6] raise: Error.
+	self should: [alien doubleAt: 0] raise: Error!
+
+testReplaceFromToWithStartingAt
+
+	|replacement|
+	replacement := ByteArray withAll: #(1 2 255).
+	
+	alien replaceFrom: 1 to: 3 with: replacement startingAt: 1.
+	1 to: 3 do: [:i|
+		self assert: (replacement at: i) == (alien unsignedByteAt: i)
+			description: 'Wrong value at ', i printString].
+			
+	alien replaceFrom: 2 to: 4 with: replacement startingAt: 1.
+	1 to: 3 do: [:i|
+		self assert: (replacement at: i) == (alien unsignedByteAt: i + 1)
+			description: 'Wrong value at ', i printString].!
+
+testReplaceFromToWithStartingAtWithString
+
+	|replacement|
+	replacement := '1234'.
+	
+	alien replaceFrom: 1 to: 4 with: replacement startingAt: 1.
+	self assert: replacement = alien strcpy!
+
+testSignedByteAccess
+
+	1 to: 4 do: [:index|
+		self assert: (alien signedByteAt: index put: index) == index].
+	1 to: 4 do: [:index|
+		self assert: (alien signedByteAt: index) == index].
+	1 to: 4 do: [:index|
+		alien signedByteAt: index put: index negated].
+	1 to: 4 do: [:index|
+		self assert: (alien signedByteAt: index) == index negated].
+	self assert: alien asSignedByte == -1!
+
+testSignedByteIndexOutOfRange
+
+	self should: [alien signedByteAt: 0] raise: Error.
+	self should: [alien signedByteAt: self dataSize + 1] raise: Error.
+	self should: [alien signedByteAt: 0 put: 1] raise: Error.
+	self should: [alien signedByteAt: self dataSize + 1 put: 1] raise: Error!
+
+testSignedLongAccess
+
+	|long|
+	long := (256 * 256 + 1) negated.
+	self assert: (alien signedLongAt: 1 put: long) = long.
+	self assert: (alien signedLongAt: 1) = long.
+	self assert: (alien unsignedByteAt: 1) == 255.
+	self assert: (alien unsignedByteAt: 3) == 254.
+	self assert: alien asSignedLong = long!
+
+testSignedLongIndexOutOfRange
+
+	self should: [alien signedLongAt: 0] raise: Error.
+	self should: [alien signedLongAt: self dataSize - 2] raise: Error.
+	self should: [alien signedLongAt: 0 put: 1] raise: Error.
+	self should: [alien signedLongAt: self dataSize - 2 put: 1] raise: Error!
+
+testSignedShortAccess
+
+	1 to: 4 do: [:index|
+		alien unsignedByteAt: index put: 255].
+	self assert: (alien signedShortAt: 1) == -1.
+	self assert: (alien signedShortAt: 1 put: 255) == 255.
+	self assert: (alien signedShortAt: 1) == 255.
+	self assert: alien asSignedShort == 255!
+
+testSignedShortIndexOutOfRange
+
+	self should: [alien signedShortAt: 0 put: 1] raise: Error.
+	self should: [alien signedShortAt: self dataSize put: 1] raise: Error.
+	self should: [alien signedShortAt: 0] raise: Error.
+	self should: [alien signedShortAt: self dataSize] raise: Error!
+
+testStrcpyUTF8FromUnimplemented
+
+	|replacement|
+	replacement := '1234'.
+	
+	alien replaceFrom: 1 to: 4 with: replacement startingAt: 1.
+	self should: [alien strcpyUTF8From: 1]
+		raise: Error
+		withExceptionDo: [:ex| self assert: 'A hook for unimplemented code has been encountered' = ex messageText]!
+
+testStrcpyUTF8Unimplemented
+
+	|replacement|
+	replacement := '1234'.
+	
+	alien replaceFrom: 1 to: 4 with: replacement startingAt: 1.
+	self should: [alien strcpyUTF8]
+		raise: Error
+		withExceptionDo: [:ex| self assert: 'A hook for unimplemented code has been encountered' = ex messageText]!
+
+testUnsignedByteAccess
+
+	1 to: 4 do: [:index|
+		self assert: (alien unsignedByteAt: index put: index) == index].
+	1 to: 4 do: [:index|
+		self assert: (alien unsignedByteAt: index) == index].
+	self assert: (alien asUnsignedByte == 1)!
+
+testUnsignedByteIndexOutOfRange
+
+	self should: [alien unsignedByteAt: 0] raise: Error.
+	self should: [alien unsignedByteAt: self dataSize + 1] raise: Error.
+	self should: [alien unsignedByteAt: 0 put: 1] raise: Error.
+	self should: [alien unsignedByteAt: self dataSize + 1 put: 1] raise: Error!
+
+testUnsignedLongAccess
+
+	|long|
+	long := 256 * 256 + 1.
+	self assert: (alien unsignedLongAt: 1 put: long) == long.
+	self assert: (alien unsignedLongAt: 1) == long.
+	self assert: (alien unsignedByteAt: 1) == 1.
+	self assert: (alien unsignedByteAt: 3) == 1.
+	self assert: alien asUnsignedLong = long!
+
+testUnsignedLongIndexOutOfRange
+
+	self should: [alien unsignedLongAt: 0] raise: Error.
+	self should: [alien unsignedLongAt: self dataSize - 2] raise: Error.
+	self should: [alien unsignedLongAt: 0 put: 1] raise: Error.
+	self should: [alien unsignedLongAt: self dataSize - 2 put: 1] raise: Error!
+
+testUnsignedShortAccess
+
+	1 to: 4 do: [:index|
+		alien unsignedByteAt: index put: index].
+	self assert: (alien unsignedShortAt: 1) == (2 * 256 + 1).
+	self assert: (alien unsignedShortAt: 2 put: 65535) == 65535.
+	self assert: (alien unsignedByteAt: 2) == 255.
+	self assert: (alien unsignedByteAt: 3) == 255.
+	self assert: alien asUnsignedShort == (255 * 256 + 1)!
+
+testUnsignedShortIndexOutOfRange
+
+	self should: [self unsignedShortAt: 0 put: 1] raise: Error.
+	self should: [self unsignedShortAt: self dataSize put: 1] raise: Error.
+	self should: [self unsignedShortAt: 0] raise: Error.
+	self should: [self unsignedShortAt: self dataSize] raise: Error! !
+

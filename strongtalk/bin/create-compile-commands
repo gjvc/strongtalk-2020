@@ -1,0 +1,34 @@
+#! /usr/bin/env bash
+
+# locus -----------------------------------------------------------------------
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[ 0 ]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+readonly _PREFIX=$( dirname ${_ROOT} )
+
+
+# execute ---------------------------------------------------------------------
+
+machine_name=i686
+platform_name=w64-mingw32
+gcc_version=9.3
+target_system=posix
+include_name=mingw_w64
+build_type=debug
+
+toolchain_name=${machine_name}-${platform_name}
+runtime_prefix=/usr/${toolchain_name}
+libgcc_prefix=/usr/lib/gcc/${toolchain_name}/${gcc_version}-${target_system}
+gpluspplus=/usr/bin/${toolchain_name}-g++-${target_system}
+
+
+# execute ---------------------------------------------------------------------
+
+make --directory ${_ROOT} --always-make --dry-run \
+    | grep ${gpluspplus} \
+    | grep ' -c ' \
+    | jq --raw-input '[inputs|{directory:".", command:., file: match(" [^ ]+$").string[1:]}]' \
+    >| ${_ROOT}/compile_commands.json
+

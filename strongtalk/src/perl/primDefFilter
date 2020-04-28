@@ -1,0 +1,49 @@
+#! /usr/bin/env perl
+
+#use warnings;
+#use strict;
+
+use Cwd;
+use File::Basename;
+use File::Spec;
+
+my $root = Cwd::realpath( dirname( dirname( dirname( __FILE__ ) ) ) );
+my $directory = "$root/src/cpp/main/vm/primitives";
+
+opendir(DIR, $directory) || die "Can't open [$directory]\n";
+@filenames = readdir(DIR);
+closedir(DIR);
+
+sub generate {
+  local($filename) = @_;
+  local($inside)   = 0;
+  open(FILE,"$directory/$filename") || die "Can't open $filename";
+  for (<FILE>) {
+    chop;   # remove the newline
+    if ($inside) {
+       if (/^[ \t]*\/\/%/) {
+         printf "!\n";
+         $inside = 0;
+       } else {
+         if (/^[ \t]*\/\/(.*)/) {
+           printf "%s\n", $1;
+         } else {
+           die "Wrong format inside primitive definition";
+         }
+       }
+    } else {
+       if (/^[ \t]*\/\/%prim/) {
+         $inside = 1;
+       }
+    } 
+  }
+  if ($inside) {
+    die "Primitive definition not completed";
+  }
+  close(FILE)
+}
+
+for (@filenames) {
+  &generate($_) if $_ =~ /[a-zA-Z]+_primitives.hpp$/
+}
+printf "!\n"

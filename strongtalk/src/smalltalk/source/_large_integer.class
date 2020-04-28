@@ -1,0 +1,17 @@
+Class
+forFloat:!
+35477697!
+restricted-to floats!
+0Float:LargeInteger! !
+test!
+35478279!
+testing!
+0! !
+#categories!
+restricted-to integers!
+testing!
+restricted-to floats! !
+forSmallInteger:!
+35477967!
+restricted-to integers!
+0SmallInteger:LargeInteger! !

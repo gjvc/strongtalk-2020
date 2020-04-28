@@ -1,0 +1,122 @@
+Class
+outlinerFor:open:!
+35454754!
+private!
+1Activation:Boolean:! !
+#categories!
+private!
+private-initialization!
+accessing!
+menus!
+control! !
+windowTitle!
+35450507!
+accessing!
+0Str! !
+#group!
+outliner! !
+initProcess:!
+35455914!
+private-initialization!
+1Process:! !
+#extensionsAreSubtypes!
+true! !
+processMenu!
+35453201!
+menus!
+0Menu! !
+abortProcess!
+35450720!
+control!
+0! !
+hasMenu!
+35452880!
+menus!
+0Boolean! !
+process:!
+35455020!
+private!
+1Process:! !
+#branded!
+true! !
+addActivationsTo:!
+35453871!
+private!
+1Column[Visual]:! !
+stepNext:!
+35452083!
+control!
+0Activation:! !
+#superclassTypeString!
+ProgrammingEnvironment! !
+closeRequest:!
+35450956!
+control!
+0[]:! !
+continueProcess!
+35451478!
+control!
+0! !
+#revision!
+$Revision: 1.1 $! !
+#classVariableString!
+Debuggers <Dict[Process, StackTraceInspector]>! !
+#instanceVariableString!
+process <Process>
+activationOutliners <Column[Visual]>! !
+resumeAfter:!
+35455544!
+private!
+1:! !
+stepReturn:!
+35452346!
+control!
+0Activation:! !
+singleStep:!
+35451816!
+control!
+0Activation:! !
+closeTopWindow!
+35451246!
+control!
+0! !
+ActivationOutliner!
+35453720!
+private!
+1! !
+step:setup:!
+35455710!
+private!
+1::! !
+process!
+35450364!
+accessing!
+0Process! !
+buildBareVisualTop:!
+35454483!
+private!
+1Boolean:Visual! !
+#subtype!
+true! !
+remove!
+35455393!
+private!
+1! !
+#comment!
+Display for process stack trace (abort, continue, and command line debug possible).
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+rebuild!
+35455166!
+private!
+1! !
+menuBar!
+35453016!
+menus!
+0Menu! !
+transferToConsoleDebugger!
+35452613!
+control!
+0! !

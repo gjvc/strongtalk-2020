@@ -1,0 +1,126 @@
+Class
+#categories!
+evaluating!
+Camp Smalltalk!
+exceptions!
+arity! !
+#group!
+base! !
+critical!
+34560796!
+evaluating!
+0R! !
+#extensionsAreSubtypes!
+true! !
+forkAt:!
+34562265!
+evaluating!
+0Int:Process! !
+whileFalse:!
+34566196!
+evaluating!
+0[]:Object! !
+value!
+34563550!
+evaluating!
+0R! !
+valueWithPossibleArgument:!
+36424365!
+evaluating!
+0Object:R! !
+time!
+34563226!
+evaluating!
+0Int! !
+valueWithArguments:!
+34563872!
+evaluating!
+0Array[Object]:R! !
+#typeArgumentString!
+(R covar) ! !
+verify!
+34564068!
+evaluating!
+0! !
+ifCurtailed:!
+34562459!
+evaluating!
+0[]:R! !
+whileTrue:!
+34566825!
+evaluating!
+0[]:Object! !
+#branded!
+true! !
+profile!
+34562887!
+evaluating!
+0! !
+#supportedProtocolString!
+[^R]! !
+repeat!
+34563029!
+evaluating!
+0BottomType! !
+arity!
+34560661!
+arity!
+0Integer! !
+sunitEnsure:!
+34560294!
+Camp Smalltalk!
+0:! !
+#superclassTypeString!
+Block! !
+ensure:!
+34561797!
+evaluating!
+0[]:R! !
+#revision!
+$Revision: 1.4 $! !
+#isGeneric!
+true! !
+verify:!
+34565043!
+evaluating!
+0:! !
+newProcess!
+34562730!
+evaluating!
+0Process! !
+whileTrue!
+34566669!
+evaluating!
+0Object! !
+fork!
+34562094!
+evaluating!
+0Process! !
+whileFalse!
+34566038!
+evaluating!
+0Object! !
+sunitOn:do:!
+34560463!
+Camp Smalltalk!
+0::! !
+#subtype!
+true! !
+#comment!
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.   $Revision: 1.4 $
+! !
+#abstract!
+false! !
+userTime!
+34563384!
+evaluating!
+0Int! !
+valueIfFail:!
+34563705!
+evaluating!
+2[^X def]:R|X! !
+on:do:!
+34567301!
+exceptions!
+0::! !

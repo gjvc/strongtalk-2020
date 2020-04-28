@@ -1,0 +1,404 @@
+Class
+#categories!
+Unclassified!
+typechecking! !
+typecheckSupportedProtocol!
+34398662!
+typechecking!
+0! !
+#instanceVariableString!
+mixin ! !
+rename:to:!
+34393630!
+Unclassified!
+0Symbol:Symbol:! !
+instanceVariableString!
+34386142!
+Unclassified!
+0Str! !
+reflect:!
+34391846!
+Unclassified!
+0Class:! !
+selectorsMatching:!
+34394462!
+Unclassified!
+0Str:Set[Symbol]! !
+selectorsFor:!
+34394280!
+Unclassified!
+0Str:OrdCltn[Symbol]! !
+#extensionsAreSubtypes!
+true! !
+typecheckInterface!
+34397956!
+typechecking!
+0! !
+typecheckTypeArguments!
+34398834!
+typechecking!
+0! !
+convert:toGeneric:ifFail:!
+34380347!
+Unclassified!
+0Mirror:GenericMirror:[Str]:! !
+extensionsAreSubtypes:!
+34385061!
+Unclassified!
+0Boolean:! !
+createTypeStructureForObject!
+34383564!
+Unclassified!
+0! !
+classVariableString!
+34378934!
+Unclassified!
+0Str! !
+compiledMethodAt:ifFail:!
+34379746!
+Unclassified!
+2Symbol:[^X def]:Method|X! !
+classVariables:!
+34379101!
+Unclassified!
+0Str:! !
+protocols:!
+34390577!
+Unclassified!
+0Str:! !
+comment!
+34379441!
+Unclassified!
+0Str! !
+#branded!
+true! !
+subtype!
+34395011!
+Unclassified!
+0Boolean! !
+scope:!
+34394133!
+Unclassified!
+0Scope:! !
+classProtocols:!
+34378773!
+Unclassified!
+0Str:! !
+methodAt:ifFail:!
+34387673!
+Unclassified!
+2Symbol:[^X def]:DeltaMethod|X! !
+superclass:!
+34395313!
+Unclassified!
+0Str:! !
+initializeDelta!
+34385583!
+Unclassified!
+0! !
+typecheckClassVars!
+34397486!
+typechecking!
+0! !
+branded:!
+34378620!
+Unclassified!
+0Boolean:! !
+typecheckSuperclassClause!
+34398492!
+typechecking!
+0! !
+referenceToSelf!
+34391324!
+Unclassified!
+0DeltaClassId! !
+initializeSubclassOf:instanceVariables:classInstanceVariables:!
+35411142!
+Unclassified!
+0Str:Str:Str:! !
+pools:!
+34390235!
+Unclassified!
+0Str:! !
+installed!
+34385981!
+Unclassified!
+0Boolean! !
+comment:!
+34379592!
+Unclassified!
+0Str:! !
+#revision!
+$Revision: 1.18 $! !
+referencesToAssociation:!
+34391628!
+Unclassified!
+0Association:Cltn[MethodLocator]! !
+isBranded!
+34386822!
+Unclassified!
+0Boolean! !
+isSubtype!
+34387121!
+Unclassified!
+0Boolean! !
+typecheckInstVars!
+34397802!
+typechecking!
+0! !
+supportedProtocol:!
+34395480!
+Unclassified!
+0Str:! !
+removeInstanceVariable:ifAbsent:!
+34393193!
+Unclassified!
+0Symbol:[]:! !
+basicLocator!
+34378449!
+Unclassified!
+0BasicMixinLocator! !
+komment!
+34387275!
+Unclassified!
+0! !
+mixin!
+34388253!
+Unclassified!
+0MixinDeclMirror! !
+extensionsAreSubtypes!
+34384885!
+Unclassified!
+0Boolean! !
+subtype:!
+34395159!
+Unclassified!
+0Boolean:! !
+nestInGenericWithTypeArguments:!
+34389683!
+Unclassified!
+0Str:! !
+isMixinInvocation!
+34386976!
+Unclassified!
+0Boolean! !
+convertToClass:ifFail:!
+34380593!
+Unclassified!
+0ClassMirror:[Str,^DoesNotMatter]:! !
+extensionsAreNotSubtypes!
+34384715!
+Unclassified!
+0! !
+#comment!
+This class implements the user-level reflective interface for classes.
+Classes are in fact implemented as mixin invocations. When a ClassMirror
+is created, it creates a mixin for itself. All changes made to a class are implemented
+by asking the mixin to change accordingly.
+
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+nameExisting:ifFail:!
+34388393!
+Unclassified!
+0Symbol:[Str]:! !
+notSubtype!
+34389881!
+Unclassified!
+0! !
+removeClassVariable:ifFail:!
+34392475!
+Unclassified!
+0Symbol:[Str]:! !
+classVariablesDo:!
+34379263!
+Unclassified!
+0[VarDecl]:! !
+addClassVariable:ifFail:!
+34375537!
+Unclassified!
+0VarDecl:[Str]:! !
+instanceVariablesDo:!
+34386484!
+Unclassified!
+0[VarDecl]:! !
+initializeSubclassOf:instanceVariables:!
+34385724!
+Unclassified!
+0Str:Str:! !
+typecheckSelectorInterface:!
+34398293!
+typechecking!
+0Symbol:! !
+typeArgumentString!
+34395822!
+Unclassified!
+0Str! !
+basicDefinitionString!
+35357283!
+Unclassified!
+0Str! !
+addPool:ifFail:!
+34376217!
+Unclassified!
+0Str:Str:! !
+#group!
+reflection! !
+sourceInfo!
+34394846!
+Unclassified!
+0MixinSourceHandler! !
+sourceForSelector:!
+34394660!
+Unclassified!
+0Symbol:Str! !
+compiledMethodsDo:!
+34379981!
+Unclassified!
+0[Method]:! !
+typecheck!
+34397348!
+typechecking!
+0! !
+hasSelector:!
+34385239!
+Unclassified!
+0Symbol:Boolean! !
+typeForNode:inMethod:!
+34395987!
+Unclassified!
+0ASTNode:Method:ObjectType! !
+parseMethod:ifFail:!
+34390023!
+Unclassified!
+0Str:[Str,Int]:ParseTree! !
+abstract!
+34375247!
+Unclassified!
+0! !
+classInstanceVariableString!
+35426465!
+Unclassified!
+0! !
+nameNew:ifFail:!
+34388814!
+Unclassified!
+0Symbol:[Str]:! !
+classInstanceVariables:!
+35410956!
+Unclassified!
+0Str:! !
+removeClassVariable:ifAbsent:!
+34392257!
+Unclassified!
+0Symbol:[]:! !
+createTypeStructure!
+34382001!
+Unclassified!
+0! !
+typeNameForNode:inMethod:!
+34396195!
+Unclassified!
+0ASTNode:Method:String! !
+unbranded!
+34396407!
+Unclassified!
+0! !
+methodsFor:!
+34388065!
+Unclassified!
+0String:! !
+convertToGenericClass:ifFail:!
+34381457!
+Unclassified!
+0ProtocolMirror:[Str]:! !
+#superclassTypeString!
+AbstractClassMirror! !
+removeMethod:ifAbsent:!
+34393417!
+Unclassified!
+0Symbol:[]:! !
+recompileAllMethodsIfFail:!
+34390926!
+Unclassified!
+0[]:! !
+publicMethodsFor:!
+34390728!
+Unclassified!
+0String:! !
+recompileMethod:ifFail:!
+34391112!
+Unclassified!
+0Symbol:[Str]:! !
+initialize!
+34385424!
+Unclassified!
+0! !
+privateMethodsFor:!
+34390378!
+Unclassified!
+0String:! !
+convertToGenericProtocol:ifFail:!
+34381759!
+Unclassified!
+0ProtocolMirror:[Str]:! !
+removeDefinitionIfFail:!
+34392692!
+Unclassified!
+0[]:! !
+scope!
+34393990!
+Unclassified!
+0Scope! !
+#subtype!
+true! !
+methodsDo:!
+34387897!
+Unclassified!
+0[DeltaMethod]:! !
+typecheckSelector:!
+34398112!
+typechecking!
+0Symbol:! !
+instanceVariables:!
+34386315!
+Unclassified!
+0Str:! !
+renameGroup:!
+34393814!
+Unclassified!
+0Dict[Symbol,Symbol]:! !
+supportedProtocolString!
+34395647!
+Unclassified!
+0Str! !
+#abstract!
+false! !
+verifyNoCyclesFor:ifFail:!
+34396545!
+Unclassified!
+0Symbol:[Symbol,^DoesNotMatter]:! !
+addInstanceVariable:ifFail:!
+34375736!
+Unclassified!
+0VarDecl:[Str]:! !
+typecheckDeclaration!
+34397642!
+typechecking!
+0! !
+convert:ifFail:!
+34380158!
+Unclassified!
+0Mirror:[Str]:! !
+addMethod:visibility:category:ifFail:!
+34375946!
+Unclassified!
+0Str:Symbol::[Str]:ParseTree! !
+isAbstract!
+34386668!
+Unclassified!
+0Boolean! !
+abstract:!
+34375385!
+Unclassified!
+0Boolean:! !

@@ -1,0 +1,102 @@
+//
+//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+//
+
+
+#include "vm/runtime/SlidingSystemAverage.hpp"
+#include "vm/runtime/Process.hpp"
+#include "vm/compiler/Compiler.hpp"
+#include "vm/runtime/Frame.hpp"
+#include "vm/runtime/PeriodicTask.hpp"
+#include "vm/code/PolymorphicInlineCache.hpp"
+#include "vm/code/StubRoutines.hpp"
+
+
+// -----------------------------------------------------------------------------
+
+char         SlidingSystemAverage::_buffer[buffer_size];
+uint32_t     SlidingSystemAverage::_stat[number_of_cases];
+uint32_t     SlidingSystemAverage::_position;
+
+
+
+// -----------------------------------------------------------------------------
+
+void SlidingSystemAverage::reset() {
+    for ( int i = 0; i < buffer_size; i++ ) {
+        _buffer[ i ] = nowhere;
+    }
+}
+
+
+uint32_t * SlidingSystemAverage::update() {
+    // clear the array;
+    uint32_t index = 0;
+    for ( ; index < number_of_cases; index++ ) {
+        _stat[ index ] = 0;
+    }
+
+    index = _position;
+    do {
+        _stat[ _buffer[ index ] ]++;
+        index = ( index + 1 ) % buffer_size;
+    } while ( index not_eq _position );
+
+    return _stat;
+}
+
+
+void SlidingSystemAverage::add( char type ) {
+    _buffer[ _position ] = type;
+    _position = ( _position + 1 ) % buffer_size;
+}
+
+
+// The sweeper task is activated every second (1000 milliseconds).
+class SystemAverageTask : public PeriodicTask {
+
+    public:
+        SystemAverageTask() :
+            PeriodicTask( 10 ) {
+        }
+
+
+        void task() {
+            char type = '\0';
+            if ( last_Delta_fp ) {
+                if ( theCompiler ) {
+                    type = SlidingSystemAverage::in_compiler;
+                } else if ( garbageCollectionInProgress ) {
+                    type = SlidingSystemAverage::in_garbage_collect;
+                } else if ( DeltaProcess::is_idle() ) {
+                    type = SlidingSystemAverage::is_idle;
+                } else {
+                    type = SlidingSystemAverage::in_vm;
+                }
+            } else {
+                // interpreted code / compiled code / runtime routine
+                Frame fr = DeltaProcess::active()->profile_top_frame();
+                if ( fr.is_interpreted_frame() ) {
+                    type = SlidingSystemAverage::in_interpreted_code;
+                } else if ( fr.is_compiled_frame() ) {
+                    type = SlidingSystemAverage::in_compiled_code;
+                } else if ( PolymorphicInlineCache::in_heap( fr.pc() ) ) {
+                    type = SlidingSystemAverage::in_pic_code;
+                } else if ( StubRoutines::contains( fr.pc() ) ) {
+                    type = SlidingSystemAverage::in_stub_code;
+                }
+            }
+            SlidingSystemAverage::add( type );
+        }
+};
+
+
+void systemAverage_init() {
+    _console->print_cr( "%%system-init:  systemAverage_init" );
+
+    SlidingSystemAverage::reset();
+    if ( UseSlidingSystemAverage ) {
+        ( new SystemAverageTask )->enroll();
+    }
+}

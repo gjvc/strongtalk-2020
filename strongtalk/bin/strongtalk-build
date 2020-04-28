@@ -1,0 +1,250 @@
+#! /usr/bin/env python3
+
+import datetime
+import multiprocessing
+import optparse
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+
+
+# -----------------------------------------------------------------------------
+
+def runCommand( argv, tail_output=None, **kwargs ):
+
+    cwd = kwargs.get( 'cwd' )
+    p = subprocess.Popen( argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, bufsize=1, universal_newlines=True )
+    try:
+        for stdout_line in iter( p.stdout.readline, '' ):
+            print( f'{datetime.datetime.utcnow()}  {stdout_line.rstrip()}' )
+
+    except Exception as e:
+        print( f'{e}' )
+        p.stdout.close()
+
+
+# -----------------------------------------------------------------------------
+
+class SmalltalkSourceTree( object ):
+
+    def __init__( self, **kwargs ):
+
+        self._meta_build_system = kwargs.get( 'meta_build_system'   )
+        self._build_system      = kwargs.get( 'build_system'        )
+        self._build_toolchain   = kwargs.get( 'build_toolchain'     )
+        self._build_type        = kwargs.get( 'build_type'          )
+        self._cmake_build_type  = kwargs.get( 'cmake_build_type'    )
+        self._make_binary       = kwargs.get( 'make_binary'         )
+        self._ninja_binary      = kwargs.get( 'ninja_binary'        )
+        self._root              = kwargs.get( 'root'                )
+        self._scan_build_binary = kwargs.get( 'scan_build_binary'   )
+        self._verbose           = kwargs.get( 'verbose'             )
+
+
+    # properties ------------------------------------------------------------------
+
+    @property
+    def root( self ):
+        return self._root
+
+    @property
+    def meta_build_system( self ):
+        return self._meta_build_system.lower()
+
+    @property
+    def meta_build_system_root( self ):
+        return f'{self.root}/build/{self.meta_build_system}'
+
+    @property
+    def build_system( self ):
+        return self._build_system.lower()
+
+    @property
+    def build_toolchain( self ):
+        return self._build_toolchain.lower()
+
+    @property
+    def build_output_dir( self ):
+        if self._meta_build_system == 'cmake':
+            return f'{self.root}/build/{self.meta_build_system}/{self.build_system}/{self.build_toolchain}/{self.build_type}'
+
+    @property
+    def build_type( self ):
+        return self._build_type.lower()
+
+    @property
+    def cmake_build_system_name( self ):
+        if self.build_system == 'make': return 'Unix Makefiles'
+        if self.build_system == 'ninja': return 'Ninja'
+
+    @property
+    def cmake_build_type( self ):
+        if self.build_type == 'debug': return 'Debug'
+        if self.build_type == 'release': return 'RelWithDebInfo'
+
+    @property
+    def cmake_binary( self ):
+        return '/usr/bin/cmake'
+
+    @property
+    def cmake_c_compiler( self ):
+        if self.build_toolchain.lower() == 'llvm': return '/usr/lib/ccache/clang'
+        if self.build_toolchain.lower() == 'gnu': return '/usr/lib/ccache/gcc'
+        if self.build_toolchain.lower() == 'gnu-wine': return '/usr/bin/winegcc-stable'
+
+    @property
+    def cmake_cxx_compiler( self ):
+        if self.build_toolchain.lower() == 'llvm': return '/usr/lib/ccache/clang++'
+        if self.build_toolchain.lower() == 'gnu': return '/usr/lib/ccache/g++'
+        if self.build_toolchain.lower() == 'gnu-wine': return '/usr/bin/wineg++-stable'
+
+
+    @property
+    def cmake_c_linker( self ):
+        if self.build_toolchain.lower() == 'llvm': return '/usr/bin/lld'
+        if self.build_toolchain.lower() == 'gnu': return '/usr/bin/ld.gold'
+
+    @property
+    def cmake_cxx_linker( self ):
+        if self.build_toolchain.lower() == 'llvm': return '/usr/bin/lld'
+        if self.build_toolchain.lower() == 'gnu': return '/usr/bin/ld.gold'
+
+
+    @property
+    def make_binary( self ):
+        return self._make_binary
+
+    @property
+    def ninja_binary( self ):
+        return self._ninja_binary
+
+    @property
+    def ninja_build_type( self ):
+        return self._ninja_build_type
+
+    @property
+    def scan_build_binary( self ):
+        return self._scan_build_binary
+
+    @property
+    def verbose( self ):
+        return self._verbose
+
+    @property
+    def cmake_verbose_makefile( self ):
+        return ( 'OFF', 'ON' )[ int( self._verbose ) ]
+
+    @property
+    def cmake_export_compile_commands( self ):
+        return ( 'OFF', 'ON' )[ int( self._verbose ) ]
+
+
+    # actions ---------------------------------------------------------------------
+
+    def generate_build_files( self ):
+        if self.meta_build_system == 'cmake': return self.generate_build_files_via_cmake()
+
+
+    def generate_build_files_via_cmake( self ):
+        if not os.path.exists( self.build_output_dir ):
+            os.makedirs( self.build_output_dir )
+
+        argv = []
+        argv.append( self.cmake_binary )
+        argv.append( f'-DCMAKE_BUILD_TYPE={self.cmake_build_type}' )
+        argv.append( f'-DCMAKE_CXX_COMPILER={self.cmake_cxx_compiler}' )
+        argv.append( f'-DCMAKE_CXX_COMPILER_LAUNCHER=/usr/bin/ccache')
+        argv.append( f'-DCMAKE_C_COMPILER={self.cmake_c_compiler}' )
+        argv.append( f'-DCMAKE_C_COMPILER_LAUNCHER=/usr/bin/ccache')
+        argv.append( f'-DCMAKE_EXE_LINKER_FLAGS="-Wl,-L/usr/lib/i386-linux-gnu/wine/"' )
+#        argv.append( f'-DCMAKE_EXPORT_COMPILE_COMMANDS={self.cmake_export_compile_commands}' )
+        if self.verbose:
+            argv.append( f'-DCMAKE_VERBOSE_MAKEFILE={self.cmake_verbose_makefile}' )
+        argv.extend( [ f'-G', f'{self.cmake_build_system_name}' ] )
+        argv.append( f'{self.root}' )
+
+        runCommand( argv, cwd=self.build_output_dir )
+
+
+    def build( self, args ):
+        if not os.path.exists( self.build_output_dir ):
+            self.generate_build_files()
+
+        if self.build_system == 'make': return self.build_via_make( args )
+        if self.build_system == 'ninja': return self.build_via_ninja( args )
+
+
+    def build_via_make( self, args ):
+        argv = [ self.make_binary, '--jobs', str( multiprocessing.cpu_count() ) ] + args
+        runCommand( argv, cwd=self.build_output_dir )
+
+
+    def build_via_ninja( self, args ):
+        argv = [ self.ninja_binary ]
+        if self.verbose: argv.append( '--verbose' )
+        argv.extend( args )
+        runCommand( argv, cwd=self.build_output_dir )
+
+
+    def clean( self ):
+        assert self.root != self.meta_build_system_root
+        if os.path.exists( self.meta_build_system_root ):
+            shutil.rmtree( self.meta_build_system_root )
+
+
+# -----------------------------------------------------------------------------
+
+def run( options, args ):
+
+    sst = SmalltalkSourceTree( **vars( options ) )
+    if options.clean: sst.clean()
+    if options.generate: sst.generate_build_files()
+    if options.build: sst.build( args )
+
+
+def parse_args():
+
+    parser  = optparse.OptionParser()
+    root    = pathlib.Path( __file__ ).parent.parent.resolve()
+
+    # properties ------------------------------------------------------------------
+    parser.add_option( '--root',                        action='store',      default=root )
+    parser.add_option( '--meta-build-system',           action='store',      default='cmake' )
+    parser.add_option( '--build-system',                action='store',      default='ninja' )
+    parser.add_option( '--build-toolchain',             action='store',      default='gnu' )
+    parser.add_option( '--build-type',                  action='store',      default='debug' )
+
+    parser.add_option( '--cmake-binary',                action='store',      default='/usr/bin/cmake' )
+    parser.add_option( '--ninja-binary',                action='store',      default='/usr/bin/ninja' )
+    parser.add_option( '--make-binary',                 action='store',      default='/usr/bin/make' )
+    parser.add_option( '--scan-build-binary',           action='store',      default='/usr/bin/scan-build' )
+
+    # actions ---------------------------------------------------------------------
+    parser.add_option( '--clean',                       action='store_true', default=False )
+    parser.add_option( '--generate',                    action='store_true', default=False )
+    parser.add_option( '--build',                       action='store_true', default=True )
+    parser.add_option( '--verbose',                     action='store_true', default=False )
+
+    options, args = parser.parse_args()
+
+    if options.build_toolchain.lower() not in ( 'gnu', 'gnu-wine', 'llvm' ):
+        raise Exception( 'unknown value for --build-toolchain' )
+
+    if options.meta_build_system.lower()not in ( 'cmake', 'ninja' ):
+        raise Exception( 'unknown value for --build-meta-system' )
+
+    return options, args
+
+
+def main():
+    options, args = parse_args()
+    run( options, args )
+
+
+# -----------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    sys.exit( main() )
+

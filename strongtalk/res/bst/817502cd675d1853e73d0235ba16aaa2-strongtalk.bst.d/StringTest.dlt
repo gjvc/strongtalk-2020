@@ -1,0 +1,43 @@
+Delta define: #StringTest as: (
+(Class subclassOf: 'TestCase' instanceVariables: '')) !
+
+(Delta mirrorFor: #StringTest) revision: '$Revision:$'!
+
+(Delta mirrorFor: #StringTest) group: 'Unclassified'!
+
+(Delta mirrorFor: #StringTest)
+comment: 
+''!
+
+! (Delta mirrorFor: #StringTest) methodsFor: 'testing' !
+
+
+testBeginsWith
+
+	| source |
+	source := 'Elvis' asString.
+	self assert: (source beginsWith: 'El').
+	self assert: ('Elvis' beginsWith: 'El').
+	self deny: (source beginsWith: 'vis').
+	self deny: (source beginsWith: 'the').!
+
+testEndsWith
+
+	| source |
+	source := 'Elvis' asString.
+	self assert: (source endsWith: 'vis').
+	self assert: ('Elvis' endsWith: 'vis').
+	self deny: (source endsWith: 'El').
+	self deny: (source endsWith: 'the').!
+
+testIndexOfSubCollectionStartingAtIfAbsent
+
+	| source |
+	source := 'Elvis' asString.
+	self assert: (source indexOfSubCollection: 'vis'
+								startingAt: 1
+								ifAbsent: [self fail]) = 3.
+	self assert: (source indexOfSubCollection: 'lv'
+								startingAt: 1
+								ifAbsent: [self fail]) = 2.! !
+

@@ -1,0 +1,208 @@
+Class
+accessMethodNode:!
+34487308!
+node traversal!
+0Object:Self! !
+#categories!
+node traversal! !
+unaryTypeExprNode:!
+34495303!
+node traversal!
+0UnaryTypeExpr:! !
+primitiveCallNode:!
+34492450!
+node traversal!
+0:! !
+primitiveNode:!
+34492613!
+node traversal!
+0DeltaPrimitive:Self! !
+genericApplicationTypeNode:!
+34489101!
+node traversal!
+0GenericApplicationType:! !
+receiverNode:!
+34493164!
+node traversal!
+0DeltaReceiver:Self! !
+typeVarNode:!
+34494958!
+node traversal!
+0TypeVar:! !
+returnInstVarNode:!
+34493524!
+node traversal!
+0:! !
+cascadedSendNode:!
+34488225!
+node traversal!
+0DeltaCascadedSend:Self! !
+tupleTypeNode:!
+34494434!
+node traversal!
+0TupleType:! !
+temporaryNode:!
+34494247!
+node traversal!
+0DeltaTemporary:Self! !
+returnStatNode:!
+34493686!
+node traversal!
+0DeltaReturnStat:Self! !
+protocolOverrideNode:!
+34492979!
+node traversal!
+0ProtocolOverride:! !
+assignmentNode:!
+34487665!
+node traversal!
+0DeltaAssignment:Self! !
+ifNode:!
+34489643!
+node traversal!
+0Object:Self! !
+unionTypeNode:!
+34495481!
+node traversal!
+0UnionType:! !
+loopNode:!
+34490181!
+node traversal!
+0Object:Self! !
+blockApplicationTypeNode:!
+34487854!
+node traversal!
+0BlockApplicationType:! !
+parameterNode:!
+34491722!
+node traversal!
+0DeltaParameter:Self! !
+#group!
+ast! !
+unaryGenAppNode:!
+34495125!
+node traversal!
+0DeltaUnaryGenApp:! !
+#extensionsAreSubtypes!
+true! !
+guaranteedNode:!
+34489484!
+node traversal!
+0:! !
+codeBodyNode:!
+34488603!
+node traversal!
+0CodeBody:! !
+literalNode:!
+34489998!
+node traversal!
+0DeltaLiteral:Self! !
+#branded!
+true! !
+globalVarNode:!
+34489297!
+node traversal!
+0DeltaGlobalVar:Self! !
+instVarNode:!
+34489815!
+node traversal!
+0DeltaInstVar:Self! !
+superVarNode:!
+34494062!
+node traversal!
+0DeltaSuperVar:Self! !
+classVarNode:!
+34488418!
+node traversal!
+0DeltaClassVar:Self! !
+poolVarNode:!
+34492102!
+node traversal!
+0DeltaPoolVar:Self! !
+protocolMergeNode:!
+34492800!
+node traversal!
+0ProtocolMerge:! !
+superSendNode:!
+34493875!
+node traversal!
+0DeltaSuperSend:Self! !
+genericApplicationExpressionNode:!
+34488924!
+node traversal!
+0:! !
+tuplelNode:!
+34494604!
+node traversal!
+0DeltaLiteral:Self! !
+#superclassTypeString!
+Object! !
+#revision!
+$Revision: 1.2 $! !
+refNode:!
+34493349!
+node traversal!
+0DeltaRef:Self! !
+andOrNode:!
+34487490!
+node traversal!
+0Object:Self! !
+polyMsgSignatureNode:!
+34491909!
+node traversal!
+0PolyMsgSignature:Self! !
+predictPrimitiveNode:!
+34492285!
+node traversal!
+0:! !
+mixinDerivationNode:!
+34491070!
+node traversal!
+0:! !
+methodNode:!
+34490719!
+node traversal!
+0DeltaMethod:Self! !
+blockNode:!
+34488046!
+node traversal!
+0DeltaBlock:Self! !
+dllCallNode:!
+34488768!
+node traversal!
+0:! !
+messagePatternNode:!
+34490538!
+node traversal!
+0MessagePattern:! !
+#subtype!
+true! !
+messageNode:!
+34490355!
+node traversal!
+0DeltaMessage:Self! !
+#comment!
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+mixinCompositionNode:!
+34490900!
+node traversal!
+0:! !
+mixinInvocationNode:!
+34491239!
+node traversal!
+0:! !
+normalSend:!
+34491408!
+node traversal!
+0:! !
+normalSendNode:!
+34491563!
+node traversal!
+0:! !
+typeFormalNode:!
+34494786!
+node traversal!
+0TypeFormal:! !

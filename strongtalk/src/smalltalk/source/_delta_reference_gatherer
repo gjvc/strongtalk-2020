@@ -1,0 +1,166 @@
+Class
+#categories!
+Unclassified! !
+unaryTypeExprNode:!
+34516152!
+Unclassified!
+0DeltaUnaryTypeExpr:Self! !
+primitiveCallNode:!
+34513340!
+Unclassified!
+0:! !
+primitiveNode:!
+34513554!
+Unclassified!
+0DeltaPrimitive:Self! !
+note:!
+34512699!
+Unclassified!
+0Symbol:! !
+genericApplicationTypeNode:!
+34510971!
+Unclassified!
+0:! !
+#group!
+ast! !
+typeVarNode:!
+34515973!
+Unclassified!
+0TypeVar:! !
+cascadedSendNode:!
+34510080!
+Unclassified!
+0DeltaCascadedSend:Self! !
+tupleTypeNode:!
+34515430!
+Unclassified!
+0TupleType:Self! !
+protocolMergeNode:!
+34513752!
+Unclassified!
+0ProtocolMerge:! !
+returnStatNode:!
+34514675!
+Unclassified!
+0DeltaReturnStat:Self! !
+protocolOverrideNode:!
+34513959!
+Unclassified!
+0:! !
+assignmentNode:!
+34509465!
+Unclassified!
+0DeltaAssignment:Self! !
+references:!
+34514489!
+Unclassified!
+0OrdCltn[Symbol]:OrdCltn[Symbol]! !
+unionTypeNode:!
+34516350!
+Unclassified!
+0:! !
+blockApplicationTypeNode:!
+34509678!
+Unclassified!
+0BlockApplicationType:Self! !
+parameterNode:!
+34512898!
+Unclassified!
+0DeltaParameter:Self! !
+#extensionsAreSubtypes!
+true! !
+guaranteedNode:!
+34511211!
+Unclassified!
+0:! !
+temporaryNode:!
+34515061!
+Unclassified!
+0DeltaTemporary:Self! !
+literalNode:!
+34511569!
+Unclassified!
+0DeltaLiteral:Self! !
+typeIdNode:!
+34515792!
+Unclassified!
+0DeltaTypeId:Self! !
+#branded!
+true! !
+messageNode:!
+34511811!
+Unclassified!
+0DeltaMessage:Self! !
+codeBodyNode:!
+34510301!
+Unclassified!
+0CodeBody:! !
+normalSendNode:!
+34512514!
+Unclassified!
+0:! !
+genericApplicationExpressionNode:!
+34510725!
+Unclassified!
+0:! !
+#superclassTypeString!
+DeltaASTTool! !
+references!
+34514328!
+Unclassified!
+0OrdCltn[Symbol]! !
+#revision!
+$Revision: 1.2 $! !
+#instanceVariableString!
+references ! !
+refNode:!
+34514153!
+Unclassified!
+0DeltaRef:Self! !
+tupleNode:!
+34515246!
+Unclassified!
+0DeltaTuple:! !
+polyMsgSignatureNode:!
+34513082!
+Unclassified!
+0PolyMsgSignature:Self! !
+methodNode:!
+34512025!
+Unclassified!
+0DeltaMethod:Self! !
+blockNode:!
+34509898!
+Unclassified!
+0DeltaBlock:Self! !
+dllCallNode:!
+34510570!
+Unclassified!
+0:! !
+#subtype!
+true! !
+statementListNode:!
+34514865!
+Unclassified!
+0DeltaStatementList:Self! !
+#comment!
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+initialize!
+34511406!
+Unclassified!
+0! !
+varNode:!
+34516537!
+Unclassified!
+0DeltaTemporary:Self! !
+typeErrorNode:!
+34515628!
+Unclassified!
+0DeltaTypeError:Self! !
+msgSignatureNode:!
+34512257!
+Unclassified!
+0DeltaMsgSignature:Self! !

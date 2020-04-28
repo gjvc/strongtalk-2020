@@ -1,0 +1,14 @@
+
+
+DEBIAN
+
+    g++-mingw-w64-i686-win32
+    ccache
+
+
+REDHAT
+
+
+
+OTHER
+

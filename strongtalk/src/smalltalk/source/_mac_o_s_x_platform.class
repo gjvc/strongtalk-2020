@@ -1,0 +1,135 @@
+Class
+tryDLLLoad:ifSuccess:!
+36122466!
+Dynamic Linked Libraries!
+0Str:[X]:! !
+#categories!
+Dynamic Linked Libraries!
+clipboard access!
+command line!
+constants!
+environment!
+initialization!
+os specific!
+os streams!
+platform classes!
+private!
+private-clipboard access!
+testing!
+time! !
+DLLInitialize!
+36060822!
+Dynamic Linked Libraries!
+0! !
+localSYSTEMTIME!
+36069959!
+time!
+0SYSTEMTIME! !
+pathClass!
+36068266!
+platform classes!
+0FilePath class! !
+environmentVariableAt:ifAbsent:!
+36067283!
+environment!
+2Str:[^X def]:Str|X! !
+closeClipboard!
+36069140!
+private-clipboard access!
+1! !
+parseArgFrom:!
+36068598!
+private!
+1CharInputStream:Str! !
+DLLLookup:in:!
+36061955!
+Dynamic Linked Libraries!
+0Str:Str:! !
+wordSize!
+36067148!
+constants!
+0Int! !
+emptyClipboard!
+36069331!
+private-clipboard access!
+1! !
+DLLLibrary:!
+36061089!
+Dynamic Linked Libraries!
+0:! !
+usesCrLfConvention!
+36069811!
+testing!
+0Boolean! !
+initialize!
+36067700!
+initialization!
+0! !
+DLLMapName:!
+36062332!
+Dynamic Linked Libraries!
+0Str:Str! !
+singleMatchWildcardCharacter!
+36066986!
+constants!
+0Character! !
+errorStream!
+36068017!
+os streams!
+0CharOutputStream! !
+commandLineTokens!
+36065537!
+command line!
+0InputStream[Str]! !
+commandLine!
+36065381!
+command line!
+0Str! !
+clipboardText:!
+36063159!
+clipboard access!
+0Str:! !
+clipboardTextIfAbsent:!
+36064364!
+clipboard access!
+2[^X def]:Str|X! !
+DLLLoad2:!
+36122768!
+Dynamic Linked Libraries!
+0:! !
+patternClass!
+36068433!
+platform classes!
+0FilePattern class! !
+getArguments!
+36066247!
+command line!
+0OrdCltn[Str]! !
+tryDLLLoad:ifFail:!
+36062596!
+Dynamic Linked Libraries!
+0Str:[X]:ExternalProxy! !
+skipSpacesIn:!
+36068902!
+private!
+1CharInputStream:! !
+currentThreadId!
+36067848!
+os specific!
+0! !
+DLLLoad:!
+36061657!
+Dynamic Linked Libraries!
+0:! !
+multipleMatchWildcardCharacter!
+36066822!
+constants!
+0Character! !
+openClipboard!
+36069575!
+private-clipboard access!
+1! !
+getCommandLine!
+36066488!
+command line!
+0! !

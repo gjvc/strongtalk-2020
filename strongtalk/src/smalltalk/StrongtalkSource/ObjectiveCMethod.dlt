@@ -1,0 +1,123 @@
+Delta define: #ObjectiveCMethod as: (
+(Class subclassOf: 'Alien' instanceVariables: '') classVariables: 'MethodGetReturnType
+NSMethodSignature') !
+
+(Delta mirrorFor: #ObjectiveCMethod) revision: '$Revision:$'!
+
+(Delta mirrorFor: #ObjectiveCMethod) group: 'OSX-ObjectiveCSupport'!
+
+(Delta mirrorFor: #ObjectiveCMethod)
+comment: 
+'/*
+ *  Method Template
+ */
+typedef struct objc_method *Method;
+
+struct objc_method {
+    SEL method_name;
+    char *method_types;
+    IMP method_imp;
+};
+
+
+   Copyright 2008 Cadence Design Systems, Inc.
+   
+   Licensed under the Apache License, Version 2.0 (the ''''License''''); you may not use this file except in compliance with the License.  You may obtain a copy of the License at  http://www.apache.org/licenses/LICENSE-2.0
+'!
+
+! (Delta mirrorFor: #ObjectiveCMethod) classSide methodsFor: 'initialization' !
+
+
+initialize
+
+	SystemInitializer
+		addInitializer: self
+		after: ObjectiveCAlien.
+	Platform == MacOSXPlatform ifFalse: [^self].
+	MethodGetReturnType := self lookup: 'method_getReturnType' inLibrary: '/usr/lib/libobjc.dylib'.
+	"Following moved to lazy initializer - must run on main thread after Processor initialized"
+	"NSMethodSignature := ObjectiveCClassAlien
+          											lookup: 'NSMethodSignature'
+            										inFramework: 'Foundation'"!
+
+initializeNSMethodSignature
+
+	| sem |
+	sem := Semaphore new.
+	MainProcess soleInstance schedule: [
+		NSMethodSignature := ObjectiveCClassAlien
+    		      											lookup: 'NSMethodSignature'
+            												inFramework: 'Foundation'.
+		sem signal].
+	sem wait! !
+
+! (Delta mirrorFor: #ObjectiveCMethod) classSide methodsFor: 'instance creation' !
+
+
+dataSize
+	"typedef struct objc_method *Method;
+
+	struct objc_method {
+	    SEL method_name;
+	    char *method_types;
+	    IMP method_imp;
+	};"
+
+	^12! !
+
+! (Delta mirrorFor: #ObjectiveCMethod) classSide methodsFor: 'restricted' !
+
+
+NSMethodSignature
+
+	NSMethodSignature isNil
+		ifTrue: [self initializeNSMethodSignature].
+	^NSMethodSignature! !
+
+! (Delta mirrorFor: #ObjectiveCMethod) methodsFor: 'accessing' !
+
+
+implementation
+	^Alien forPointer: (self unsignedLongAt: 9)!
+
+methodTypes
+	^Alien forPointer: (self unsignedLongAt: 5)!
+
+methodTypesString
+	^(Alien forPointer: (self unsignedLongAt: 5)) strcpy!
+
+rawSelector
+	^Alien forPointer: (self unsignedLongAt: 1)!
+
+returnLength
+
+	^self signature methodReturnLength!
+
+returnType
+
+	^self signature methodReturnType!
+
+selector
+	^ObjectiveCAlien forPointer: (self unsignedLongAt: 1)!
+
+signature ^<Alien>
+
+	^(ObjectiveCMethodSignature new)
+		unsignedLongAt: 1 put: ((self NSMethodSignature signatureWithObjCTypes: self methodTypes) asUnsignedLong);
+		yourself! !
+
+! (Delta mirrorFor: #ObjectiveCMethod) methodsFor: 'instance initalization' !
+
+
+selector: selector "<ObjectiveCAlien>" methodTypes: string "<char * Alien>" implementation: functionPointer "<id (*IMP)(id, SEL, ...) Alien> ^<self>"
+	self unsignedLongAt: 1 put: (selector unsignedLongAt: 1).
+	self unsignedLongAt: 5 put: string address.
+	self unsignedLongAt: 9 put: (functionPointer unsignedLongAt: 1)! !
+
+! (Delta mirrorFor: #ObjectiveCMethod) methodsFor: 'private ' !
+
+
+NSMethodSignature
+
+	^self class NSMethodSignature! !
+

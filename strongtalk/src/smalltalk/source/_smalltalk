@@ -1,0 +1,27 @@
+Class
+#extensionsAreSubtypes!
+true! !
+#revision!
+$Revision: 1.25 $! !
+#group!
+base! !
+#subtype!
+true! !
+#branded!
+true! !
+#comment!
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+#classVariableString!
+InitializingTypeInfo <Boolean>
+	ClassesWithSubclasses <IdentitySet[Class]> 
+	Cache <IdentityDict[Symbol, GlobalAssociation]>
+	DependencyObject <NotifyingObject>
+		"We have an explicit dependency object since one has to mix in
+			NotifyingObject mixin to get dependency behavior. Smalltalk is
+			currently just a class, so this is not possible."
+	FileInDirectory <FilePath>! !
+#superclassTypeString!
+Object! !

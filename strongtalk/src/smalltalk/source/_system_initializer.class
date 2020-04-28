@@ -1,0 +1,74 @@
+Class
+#categories!
+library class initialization!
+command line arguments! !
+argumentsDo:!
+2976119!
+command line arguments!
+0:! !
+parseInteger:ifFail:!
+8612724!
+command line arguments!
+0::! !
+commandLineArguments!
+2986300!
+command line arguments!
+0OrderedCollection[Str]! !
+#instanceVariableString!
+initializers! !
+runBaseClassInitializers!
+8616224!
+library class initialization!
+0! !
+processCommandLineArguments!
+8613128!
+command line arguments!
+0Boolean! !
+runNonCriticalClassInitializers!
+36032467!
+library class initialization!
+0! !
+findRunner:ifAbsent:!
+8611919!
+command line arguments!
+0::! !
+runScript:!
+35731238!
+command line arguments!
+0Str:! !
+run!
+8615852!
+library class initialization!
+0! !
+benchmarkDictionary!
+8602026!
+command line arguments!
+0! !
+processArguments:!
+2988073!
+command line arguments!
+0:! !
+initializers!
+36032000!
+library class initialization!
+0! !
+runDefaultProgram!
+8615173!
+command line arguments!
+0! !
+lower:!
+8612440!
+command line arguments!
+0:! !
+addInitializer:after:!
+36262279!
+library class initialization!
+0::! !
+addInitializer:!
+36054762!
+library class initialization!
+0:! !
+runBenchmarks:!
+8613996!
+command line arguments!
+0InputStream[Str]:! !

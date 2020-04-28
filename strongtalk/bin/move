@@ -1,0 +1,11 @@
+#! /bin/bash
+
+for l in *; do
+
+    [[ ! -L $l ]] && continue
+
+    s=$(readlink $l)
+    rm -v $l
+    mv -v $s $l
+
+done

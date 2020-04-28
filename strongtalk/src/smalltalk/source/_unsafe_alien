@@ -1,0 +1,33 @@
+Class
+#subtype!
+true! !
+#categories!
+accessing!
+initialization!
+conversion! !
+#superclassTypeString!
+Object! !
+#group!
+Alien! !
+object!
+36478701!
+accessing!
+0! !
+asAlien!
+36478832!
+conversion!
+0! !
+#branded!
+true! !
+#extensionsAreSubtypes!
+true! !
+#abstract!
+false! !
+nonPointerObject:!
+36478956!
+initialization!
+0IndexedByteInstanceVariables:! !
+#instanceVariableString!
+nonPointerObject <IndexedByteInstanceVariables>! !
+#revision!
+$Revision:$! !

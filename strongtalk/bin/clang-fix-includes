@@ -1,0 +1,22 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+clang_tidy_config_file=${_ROOT}/etc/clang-tidy/old-new-style-casts.yaml
+
+SOURCE_ROOT="${_ROOT}/src/cpp/main"
+OUTPUT_DIR=${_ROOT}/.cmake/clang/debug
+
+[[ ! -d ${_ROOT}/build/log ]] && mkdir -p ${_ROOT}/build/log
+STDOUTERR_LOG=${_ROOT}/build/log/${_BASENAME}.$(date '+%Y-%m-%d.%H%M%S').${USER}.log
+exec &> >( tee -a ${STDOUTERR_LOG} )
+
+
+# ----------------------------------------------------------------------------
+
+cd ${SOURCE_ROOT} && find vm/ -name '*.cpp' | \
+    xargs -I% -n1 -c "( cd ${SOURCE_ROOT} && /usr/bin/clang-include-fixer -db=yaml % )"
+

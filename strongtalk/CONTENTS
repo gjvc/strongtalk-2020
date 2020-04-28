@@ -1,0 +1,12 @@
+
+
+CONTENTS
+
+    ext/
+        ext/capstone/   https://github.com/aquynh/capstone
+        ext/googletest/ https://github.com/google/googletest.git
+        ext/nasm/       https://ftp.osuosl.org/pub/blfs/conglomeration/nasm/nasm-2.14.tar.xz
+        ext/mps/        https://github.com/Ravenbrook/mps.git
+        ext/udis86/     http://sourceforge.net/projects/udis86/files/udis86/1.7/udis86-1.7.2.tar.gz
+        ext/zydis/      https://github.com/zyantific/zydis
+

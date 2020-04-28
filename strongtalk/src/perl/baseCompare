@@ -1,0 +1,32 @@
+#! /usr/bin/env perl
+
+use warnings;
+use strict;
+
+local($sub)  = $ARGV[0];
+local($file) = $ARGV[1];
+
+sub dirname {
+    local($name) = @_;
+    $name =~ s/\\/\//g;
+    $name =~ tr/A-Z/a-z/;
+    return $name;
+}
+
+$Baseline  = &dirname($ENV{'DeltaBaselineDir'});
+$Delta     = &dirname($ENV{'DeltaDir'});
+
+$localfile = "$Delta/$sub/$file";
+$basefile  = "$Baseline/$sub/$file";
+
+die "Local file: $localfile does not exist!\n" if ! -f $localfile;
+die "Base file:  $basefile does not exist!\n"  if ! -f $basefile;
+chop($result =  `cmp $basefile $localfile`);
+if ($result ne "") {
+  printf STDERR "\n[%s/%s]\n", $sub, $file;
+  open(LINES, "diff $basefile $localfile |");
+  while (<LINES>) { 
+    chop;
+    printf STDERR "  %s\n", $_;
+  }
+}

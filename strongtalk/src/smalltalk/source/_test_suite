@@ -1,0 +1,69 @@
+Class
+tests!
+30997826!
+Accessing!
+0! !
+#categories!
+Dependencies!
+Accessing!
+Running! !
+#superclassTypeString!
+NotifyingObject! !
+#group!
+SUnit! !
+run:!
+33930129!
+Running!
+0:! !
+removeDependentFromHierarchy:!
+33932531!
+Dependencies!
+0:! !
+#extensionsAreSubtypes!
+true! !
+addTests:!
+30996067!
+Accessing!
+0:! !
+addTest:!
+30995928!
+Accessing!
+0:! !
+resources!
+30996982!
+Accessing!
+0! !
+name:!
+30996597!
+Accessing!
+0:! !
+addDependentToHierarchy:!
+33932292!
+Dependencies!
+0:! !
+run!
+30997311!
+Running!
+0! !
+#subtype!
+true! !
+#instanceVariableString!
+tests resources name! !
+#branded!
+true! !
+#comment!
+This is a Composite of Tests, either TestCases or other TestSuites. The common protocol is #run: aTestResult and the dependencies protocol! !
+#abstract!
+false! !
+defaultResources!
+30996245!
+Accessing!
+0! !
+name!
+30996482!
+Accessing!
+0! !
+resources:!
+30997169!
+Accessing!
+0:! !

@@ -1,0 +1,135 @@
+Class
+tryDLLLoad:ifSuccess:!
+36074840!
+Dynamic Linked Libraries!
+0Str:[X]:! !
+#categories!
+platform classes!
+testing!
+constants!
+command line!
+Dynamic Linked Libraries!
+initialization!
+os streams!
+environment!
+private-clipboard access!
+clipboard access!
+private!
+os specific!
+time! !
+DLLInitialize!
+36072658!
+Dynamic Linked Libraries!
+0! !
+localSYSTEMTIME!
+36081863!
+time!
+0SYSTEMTIME! !
+errorStream!
+36079932!
+os streams!
+0CharOutputStream! !
+environmentVariableAt:ifAbsent:!
+36079201!
+environment!
+2Str:[^X def]:Str|X! !
+closeClipboard!
+36081048!
+private-clipboard access!
+1! !
+parseArgFrom:!
+36080508!
+private!
+1CharInputStream:Str! !
+DLLLookup:in:!
+36073849!
+Dynamic Linked Libraries!
+0Str:Str:! !
+wordSize!
+36079067!
+constants!
+0Int! !
+getCommandLine!
+36078410!
+command line!
+0! !
+DLLLibrary:!
+36072924!
+Dynamic Linked Libraries!
+0:! !
+usesCrLfConvention!
+36081716!
+testing!
+0Boolean! !
+initialize!
+36079617!
+initialization!
+0! !
+DLLMapName:!
+36074225!
+Dynamic Linked Libraries!
+0Str:Str! !
+singleMatchWildcardCharacter!
+36078906!
+constants!
+0Character! !
+pathClass!
+36080180!
+platform classes!
+0FilePath class! !
+commandLineTokens!
+36077461!
+command line!
+0InputStream[Str]! !
+commandLine!
+36077306!
+command line!
+0Str! !
+multipleMatchWildcardCharacter!
+36078743!
+constants!
+0Character! !
+clipboardTextIfAbsent:!
+36076290!
+clipboard access!
+2[^X def]:Str|X! !
+DLLLoad2:!
+36073158!
+Dynamic Linked Libraries!
+0:! !
+patternClass!
+36080344!
+platform classes!
+0FilePattern class! !
+getArguments!
+36078170!
+command line!
+0OrdCltn[Str]! !
+tryDLLLoad:ifFail:!
+36074525!
+Dynamic Linked Libraries!
+0Str:[X]:ExternalProxy! !
+skipSpacesIn:!
+36080811!
+private!
+1CharInputStream:! !
+currentThreadId!
+36079764!
+os specific!
+0! !
+DLLLoad:!
+36073552!
+Dynamic Linked Libraries!
+0:! !
+clipboardText:!
+36075086!
+clipboard access!
+0Str:! !
+openClipboard!
+36081481!
+private-clipboard access!
+1! !
+emptyClipboard!
+36081238!
+private-clipboard access!
+1! !

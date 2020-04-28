@@ -1,0 +1,171 @@
+Class
+#categories!
+Unclassified! !
+print:!
+34505040!
+Unclassified!
+0:! !
+receiverNode:!
+34505568!
+Unclassified!
+0:! !
+typeVarNode:!
+34507212!
+Unclassified!
+0:! !
+cascadedSendNode:!
+34499105!
+Unclassified!
+0:! !
+codeBodyNode:!
+34499544!
+Unclassified!
+0:! !
+returnStatNode:!
+34505946!
+Unclassified!
+0:! !
+assignmentNode:!
+34498454!
+Unclassified!
+0:! !
+ifNode:!
+34500124!
+Unclassified!
+0:! !
+loopNode:!
+34503060!
+Unclassified!
+0:! !
+inlinedBlockNode:!
+34501095!
+Unclassified!
+0:! !
+#group!
+ast! !
+write:!
+34507362!
+Unclassified!
+0:! !
+ln!
+34502863!
+Unclassified!
+0! !
+#extensionsAreSubtypes!
+true! !
+temporaryNode:!
+34506781!
+Unclassified!
+0:! !
+literalNode:!
+34502614!
+Unclassified!
+0:! !
+#branded!
+true! !
+indent:!
+34500724!
+Unclassified!
+0:! !
+parameterNode:!
+34504411!
+Unclassified!
+0:! !
+superVarNode:!
+34506590!
+Unclassified!
+0:! !
+classVarNode:!
+34499353!
+Unclassified!
+0:! !
+intersperse:with:!
+34501340!
+Unclassified!
+0::! !
+superSendNode:!
+34506374!
+Unclassified!
+0:! !
+print:within:!
+34505351!
+Unclassified!
+0::! !
+#superclassTypeString!
+DeltaASTTool! !
+primitiveCallNode:!
+34504835!
+Unclassified!
+0:! !
+#revision!
+$Revision: 1.1 $! !
+selfSendNode:!
+34506161!
+Unclassified!
+0:! !
+#instanceVariableString!
+stream indent prec ! !
+refNode:!
+34505760!
+Unclassified!
+0:! !
+normalSendNode:!
+34504173!
+Unclassified!
+0:! !
+tupleNode:!
+34506975!
+Unclassified!
+0:! !
+initialize!
+34500908!
+Unclassified!
+0! !
+predictPrimitiveNode:!
+34504605!
+Unclassified!
+0:! !
+methodNode:!
+34503855!
+Unclassified!
+0DeltaMethod:Self! !
+komment!
+34502148!
+Unclassified!
+0! !
+blockNode:!
+34498695!
+Unclassified!
+0:! !
+#subtype!
+true! !
+messageNode:!
+34503635!
+Unclassified!
+0:! !
+#comment!
+Instance variables:
+
+	stream		output stream
+
+	indent		current indentation level, starting with 0 (no indentation)
+
+	prec			current precedence level (of enclosing expression),
+					starting with 0 (lowest precedence):
+
+					0	precedence of keyword messages
+					1	precedence of binary messages
+					2	precedence of unary messages
+	
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+print:on:!
+34505179!
+Unclassified!
+0::! !
+andOrNode:!
+34498104!
+Unclassified!
+0:! !

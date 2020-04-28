@@ -1,0 +1,593 @@
+Delta define: #VM as: (
+(Class subclassOf: 'Object' instanceVariables: '') classVariables: 'GCProcess GCSemaphore ScavengeCount AllocFailureCount Expansions LastCollection') !
+
+(Delta mirrorFor: #VM) revision: '$Revision: 1.5 $'!
+
+(Delta mirrorFor: #VM) group: 'base'!
+
+(Delta mirrorFor: #VM)
+comment: 
+'(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.'!
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'allocation' !
+
+
+new: class
+
+	^{{primitiveNew: class
+			tenured: false
+			ifFail: [:e| self handleNew: class failure: e]}}!
+
+new: indexableClass size: size
+
+	^{{primitiveIndexedObjectNew: indexableClass
+			size: size
+			tenured: false
+			ifFail: [:e| self handleNew: indexableClass
+										size: size
+										failure: e]}}!
+
+newBytes: byteClass size: size
+
+	^{{primitiveIndexedByteNew: byteClass
+			size: size
+			tenured: false
+			ifFail: [:e| self handleNewBytes: byteClass
+										size: size
+										failure: e]}}!
+
+newDoubleBytes: doubleByteClass size: size
+
+	^{{primitiveIndexedDoubleByteNew: doubleByteClass
+			size: size
+			tenured: false
+			ifFail: [:e| self handleNewDoubleBytes: doubleByteClass
+										size: size
+										failure: e]}}! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'benchmarking' !
+
+
+benchmarkNew: iterations
+
+	|elapsed|
+	self resetProfiler.
+	self engageProfiler.
+	elapsed := Time millisecondsToRun: [
+								VM privateBenchmarkNew: iterations].
+	self disengageProfiler.
+	self printProfile.
+	Transcript cr; show: elapsed printString.!
+
+benchmarkNewNew: iterations
+
+	|elapsed|
+	self resetProfiler.
+	self engageProfiler.
+	self resetAllocCounts.
+	elapsed := Time millisecondsToRun: [
+								VM privateBenchmarkNewNew: iterations].
+	self disengageProfiler.
+	self printProfile.
+	Transcript cr; show: elapsed printString.
+	Transcript cr; show: self allocFailures printString!
+
+privateBenchmarkNew: iterations
+
+	iterations timesRepeat: [Object new3]!
+
+privateBenchmarkNewNew: iterations
+
+	iterations timesRepeat: [VM new: Object]! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'boolean flags' !
+
+
+compiledCodeOnly: value <True|False>
+	self booleanAt: #CompiledCodeOnly put: value!
+
+traceDoubleByteArrayPrimitives: value <True|False>
+	self booleanAt: #TraceDoubleByteArrayPrims put: value!
+
+traceProxyPrimitives: value <True|False>
+	self booleanAt: #TraceProxyPrims put: value!
+
+useInliningDatabase ^<Boolean>
+
+	^VM booleanAt: #UseInliningDatabase!
+
+useInliningDatabase: f <Boolean>
+
+	VM booleanAt: #UseInliningDatabase put: f!
+
+wizardMode ^<True|False>
+	^self booleanAt: #WizardMode!
+
+wizardMode: value <True|False>
+	self booleanAt: #WizardMode put: value! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'debugging' !
+
+
+invocationCounterLimit ^ <Int>
+
+	^{{primitiveInterpreterInvocationCounterLimit}}!
+
+invocationCounterLimit: limit <Int>
+
+	{{primitiveSetInterpreterInvocationCounterLimitTo: limit
+		ifFail: [ :err <Symbol> | self error: err ]}}!
+
+printCompilation ^<Boolean>
+
+	^self vmFlagAt: #PrintCompilation!
+
+printCompilation: flag <Boolean>
+
+	self vmFlagAt: #PrintCompilation put: flag!
+
+printInlining ^<Boolean>
+
+	^self vmFlagAt: #PrintInlining!
+
+printInlining: flag <Boolean>
+
+	flag
+		ifTrue: [ self printCompilation: flag. ].
+	self vmFlagAt: #PrintInlining put: flag!
+
+printScavenge ^<Boolean>
+
+	^self vmFlagAt: #PrintScavenge!
+
+printScavenge: flag <Boolean>
+
+	self vmFlagAt: #PrintScavenge put: flag!
+
+printZone
+
+	{{primitivePrintZone}}!
+
+recompilation ^<Boolean>
+
+	^self vmFlagAt: #UseRecompilation!
+
+recompilation: flag <Boolean>
+
+	self vmFlagAt: #UseRecompilation put: flag! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'garbage collection' !
+
+
+collectGarbage
+
+	{{self primitiveGarbageCollect}}.
+	WeakArray signalFinalization!
+
+deferredGC
+
+	GCSemaphore := Semaphore new.
+	[self collectGarbage.
+	GCSemaphore signal] fork!
+
+initializeGCProcess
+
+GCProcess := [| delay |
+							delay := Delay forMilliseconds: 500.
+							[delay wait.
+							VM objectMemorySize > 0.95
+								ifTrue: [VM collectGarbage]] repeat] fork!
+
+isGCPending
+
+	^GCSemaphore notNil!
+
+needsNewGCProcess
+
+	^GCProcess isNil
+		or: [(GCProcess running
+					or: [GCProcess suspended]) not]!
+
+objectMemorySize
+
+	^{{self primitiveObjectMemorySize}}!
+
+scavengeGarbage
+	"Collect very recent garbage.  This is fast, but does not collect all garbage.
+		(i.e. it scavenges the object nursery) "
+
+	{{self primitiveScavenge}}.
+	WeakArray signalFinalization!
+
+startGCProcess
+
+	self needsNewGCProcess
+		ifTrue: [self initializeGCProcess]!
+
+stopGCProcess
+
+	self needsNewGCProcess
+		ifFalse: [GCProcess terminate]!
+
+waitForGC
+
+	GCSemaphore isNil
+		ifTrue: [self deferredGC]
+		ifFalse:[GCSemaphore wait.
+					GCSemaphore := nil]! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'integer flags' !
+
+
+numberOfBlockAllocations
+	^self smallIntegerAt: #NumberOfBlockAllocations!
+
+numberOfContextAllocations
+	^self smallIntegerAt: #NumberOfContextAllocations!
+
+survivorSpaceSize
+
+	^(self smallIntegerAt: #SurvivorSize) * 1024! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'integer operations' !
+
+
+numberOfMethodInvocations
+	^{{primitiveNumberOfMethodInvocations}}!
+
+numberOfNMethodInvocations
+	^{{primitiveNumberOfNMethodInvocations}}! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'lookup' !
+
+
+numberOfLookupCacheMisses
+	"Number of lookups that missed both the primary and secondary lookup cache"
+	^{{primitiveNumberOfLookupCacheMisses}}!
+
+numberOfPrimaryLookupCacheHits
+	"Number of lookups where the result were located in the primary cache"
+	^{{primitiveNumberOfPrimaryLookupCacheHits}}!
+
+numberOfSecondaryLookupCacheHits
+	"Number of lookups where the result were located in the secondary cache"
+	^{{primitiveNumberOfPrimaryLookupCacheHits}}! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'private' !
+
+
+booleanAt: name <Symbol> ^<SmallInteger>
+	^{{primitiveBooleanFlagAt: name ifFail: [:err | self error: self]}}!
+
+booleanAt: name <Symbol> put: value <True|False> ^<SmallInteger>
+	^{{primitiveBooleanFlagAt: name put: value ifFail: [:err | self error: err]}}!
+
+error: msg <Symbol> ^ <Boolean>
+	"ignore flags that are not defined in product version"
+	^ false!
+
+smallIntegerAt: name <Symbol> ^<SmallInteger>
+	^{{primitiveSmallIntegerFlagAt: name ifFail: [:err | self error: self]}}!
+
+smallIntegerAt: name <Symbol> put: value <SmallInteger> ^<SmallInteger>
+	^{{primitiveSmallIntegerFlagAt: name put: value  ifFail: [:err | self error: self]}}!
+
+vmFlagAt: name <Symbol>  ^<Boolean>
+
+	^{{primitiveBooleanFlagAt: name
+			ifFail: [ :err <Symbol> | self error: err ]}}!
+
+vmFlagAt: name <Symbol> put:  flag <Boolean>
+
+	{{primitiveBooleanFlagAt: name put: flag
+			ifFail: [ :err <Symbol> | self error: err ]}}! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'private - allocation' !
+
+
+K
+
+	^1024!
+
+allocFailures
+
+	^AllocFailureCount!
+
+allocate: allocateBlock ifExpand: expansionBlock
+
+	^allocateBlock
+			value: false
+			value: [:e|
+							self reportNonAllocationFailure: e.
+							self spaceToScavenge
+									ifTrue: [self scavengeAndAllocate: allocateBlock
+															ifExpand: expansionBlock]
+									ifFalse: [self collectAndAllocate: allocateBlock
+															ifExpand: expansionBlock]]!
+
+canCollect
+
+	^self canScavenge!
+
+canScavenge
+
+	^{{primitiveCanScavenge}}!
+
+collectAndAllocate: allocateBlock ifExpand: expansionBlock
+
+	self collectIfPossible.
+	self growIfNecessary.
+	^[allocateBlock
+			value: false
+			value: [:e|
+						self reportNonAllocationFailure: e.
+						allocateBlock
+							value: true
+							value: [:e1|
+										self reportNonAllocationFailure: e1.
+										expansionBlock value.
+										allocateBlock
+											value: true
+											value: [:e2| nil error: e2]]]]
+			ensure: [self shrinkIfPossible]!
+
+collectIfPossible
+
+	self canCollect
+		ifTrue: [self collectGarbage]!
+
+expand
+
+	|expansionSize|
+	expansionSize := (self smallIntegerAt: #ObjectHeapExpandSize) * self K.
+	self expand: expansionSize!
+
+expand: expansionSize
+
+	{{primitiveExpandMemory: expansionSize}}!
+
+expand: class size: size
+
+	|nonIndexableSizeInOops|
+	nonIndexableSizeInOops := self fixedSize: class.
+	self expand: (nonIndexableSizeInOops + size) * self oopSize!
+
+expandBytes: class size: size
+
+	|nonIndexableSizeInOops|
+	nonIndexableSizeInOops := self fixedSize: class.
+	self expand: (nonIndexableSizeInOops * self oopSize + size)!
+
+expandDoubleBytes: class size: size
+
+	|nonIndexableSizeInOops|
+	nonIndexableSizeInOops := self fixedSize: class.
+	self expand: (nonIndexableSizeInOops * self oopSize + (size * 2))!
+
+expansionCount
+
+	^ {{primitiveExpansions}}!
+
+expansionSize
+
+	^(self smallIntegerAt: #ObjectHeapExpandSize) * self K!
+
+fixedSize: class
+
+	^ {{primitiveBehaviorNonIndexableSizeOf: class ifFail: [:err| nil error: err]}} + 1!
+
+freeSpace
+
+	^{{primitiveFreeSpace}}!
+
+growBarrier
+
+	^(self smallIntegerAt: #ObjectHeapExpandSize) * VM K!
+
+growIfNecessary
+
+	self freeSpace < self growBarrier
+		ifTrue: [self expand]!
+
+handleFailure: error allocate: allocateBlock ifExpand: expansionBlock
+
+	self reportNonAllocationFailure: error.
+	^self spaceToScavenge
+				ifTrue: [self scavengeAndAllocate: allocateBlock
+										ifExpand: expansionBlock]
+				ifFalse: [self collectAndAllocate: allocateBlock
+										ifExpand: expansionBlock]!
+
+handleNew: class failure: error
+
+	self incFailureCount.
+	^self handleFailure: error
+			allocate: [:tenured :failBlock| self new: class tenured: tenured ifFail: failBlock]
+			ifExpand: [self expand]!
+
+handleNew: class size: size failure: error
+
+	self incFailureCount.
+	^self handleFailure: error
+			allocate: [:tenured :failBlock| self new: class size: size tenured: tenured ifFail: failBlock]
+			ifExpand: [self expand: class size: size]!
+
+handleNewBytes: class size: size failure: error
+
+	self incFailureCount.
+	^self handleFailure: error
+			allocate: [:tenured :failBlock|
+								self newBytes: class
+										size: size
+										tenured: tenured
+										ifFail: failBlock]
+			ifExpand: [self expandBytes: class size: size]!
+
+handleNewDoubleBytes: class size: size failure: error
+
+	self incFailureCount.
+	^self handleFailure: error
+			allocate: [:tenured :failBlock|
+								self newDoubleBytes: class
+										size: size
+										tenured: tenured
+										ifFail: failBlock]
+			ifExpand: [self expandDoubleBytes: class size: size]!
+
+incFailureCount
+
+	AllocFailureCount isNil
+		ifTrue: [AllocFailureCount := 1]
+		ifFalse: [AllocFailureCount := AllocFailureCount + 1]!
+
+new: class ifFail: failureBlock
+
+	^{{primitiveNew: class
+			ifFail: [:e| failureBlock value: e]}}!
+
+new: class size: size ifFail: failureBlock
+
+	^{{primitiveNew: class
+			ifFail: [:e| failureBlock value: e]}}!
+
+new: class size: size tenured: tenured ifFail: failureBlock
+
+	^{{primitiveIndexedObjectNew: class
+			size: size
+			tenured: tenured
+			ifFail: [:e| failureBlock value: e]}}!
+
+new: class tenured: tenured ifFail: failureBlock
+
+	^{{primitiveNew: class
+			tenured: tenured
+			ifFail: [:e| failureBlock value: e]}}!
+
+newBytes: class size: size tenured: tenured ifFail: failureBlock
+
+	^{{primitiveIndexedByteNew: class
+			size: size
+			tenured: tenured
+			ifFail: [:e| failureBlock value: e]}}!
+
+newDoubleBytes: class size: size tenured: tenured ifFail: failureBlock
+
+	^{{primitiveIndexedDoubleByteNew: class
+			size: size
+			tenured: tenured
+			ifFail: [:e| failureBlock value: e]}}!
+
+oopSize
+
+	^{{primitiveSizeOfOop}}!
+
+reportNonAllocationFailure: errorSymbol
+
+	(errorSymbol == #FailedAllocation)
+		ifFalse: [nil error: errorSymbol printString, ' reported during allocation']!
+
+resetAllocCounts
+
+	ScavengeCount := 0.
+	AllocFailureCount := 0.!
+
+resetScavengeCount
+
+	ScavengeCount := 0!
+
+scavengeAndAllocate: allocateBlock ifExpand: expansionBlock
+
+	|expansions |
+	expansions := self expansionCount.
+	self scavengeIfPossible.
+	^(expansions ~~ self expansionCount)
+			ifTrue: [self collectAndAllocate: allocateBlock
+								ifExpand: expansionBlock]
+			ifFalse: [allocateBlock
+								value: false
+								value: [:e1| self reportNonAllocationFailure: e1.
+													allocateBlock
+															value: true
+															value: [:e2| self reportNonAllocationFailure: e2.
+																				self collectAndAllocate: allocateBlock
+																						ifExpand: expansionBlock]]]!
+
+scavengeIfPossible
+
+	self canScavenge
+		ifTrue: [self scavengeGarbage]!
+
+shrink: size
+
+	{{primitiveShrinkMemory: size}}!
+
+shrinkBarrier
+
+	^(self smallIntegerAt: #ObjectHeapExpandSize) * 3 * VM K!
+
+shrinkIfPossible
+
+	self freeSpace > self shrinkBarrier
+		ifTrue: [|amountToShrink|
+						amountToShrink := self freeSpace - self shrinkBarrier.
+						self shrink: amountToShrink]!
+
+spaceToScavenge
+
+	^self freeSpace > (2 * self survivorSpaceSize)	! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'profiling' !
+
+
+disengageProfiler
+
+	{{primitiveFlatProfilerDisengage}}.!
+
+engageProfiler
+
+	{{primitiveFlatProfilerEngage: Processor activeProcess ifFail: [:e| nil error: e]}}.!
+
+printProfile
+
+	{{primitiveFlatProfilerPrint}}!
+
+resetProfiler
+	{{primitiveFlatProfilerReset}}! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'system control' !
+
+
+quit
+	"Terminate the virtual machine"
+
+	{{primitiveQuit}}.!
+
+quitUI
+	"Terminate the user interface"
+	
+	{{<user ExternalProxy PostQuitMessage> arg: 0}}.
+! !
+
+! (Delta mirrorFor: #VM) classSide methodsFor: 'wrappers' !
+
+
+nmethodHistogram: blk
+	{{primitiveClearNMethodCounters}}.
+	blk value.
+	{{primitivePrintNMethodCounterHistogram: 20 ifFail: [:err | self error: err]}}!
+
+traceLookupMissesFor: blk <[]>
+	|a b c| 
+	a := VM numberOfPrimaryLookupCacheHits.
+	b := VM numberOfSecondaryLookupCacheHits.
+	c := VM numberOfLookupCacheMisses.
+
+	blk  value.
+
+	Transcript
+					show:  (VM numberOfPrimaryLookupCacheHits - a) printString; tab
+				;	show:  (VM numberOfSecondaryLookupCacheHits - b) printString; tab
+				;	show:  (VM numberOfLookupCacheMisses - c) printString; cr.
+! !
+

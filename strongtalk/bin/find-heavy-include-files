@@ -1,0 +1,21 @@
+#! /bin/bash
+
+
+# -----------------------------------------------------------------------------
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+
+# -----------------------------------------------------------------------------
+
+find ${_ROOT}/src/cpp/main/ -name '*.[ch]pp' \
+    | xargs grep -c '#include' \
+    | awk -F: '// { print $2,$1; }' \
+    | sort -rn \
+    | awk '( $1 > 0 ) { print $0; }' \
+    | column -t 
+
+

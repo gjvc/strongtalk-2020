@@ -1,0 +1,62 @@
+Class
+testWithThree!
+34007286!
+testing!
+0! !
+#categories!
+testing!
+private! !
+call:with:with:!
+34002331!
+private!
+1:::! !
+#superclassTypeString!
+TestCase! !
+invokeWithThree!
+34007123!
+testing!
+0! !
+testWithNone!
+34006664!
+testing!
+0! !
+invokeWithTwo!
+34007446!
+testing!
+0! !
+invokeWithOne!
+34006822!
+testing!
+0! !
+#extensionsAreSubtypes!
+true! !
+call:!
+34002027!
+private!
+1:! !
+invokeWithNone!
+34006526!
+testing!
+0! !
+call:with:!
+34002174!
+private!
+1::! !
+#subtype!
+true! !
+#branded!
+true! !
+#abstract!
+false! !
+call:with:with:with:!
+34002498!
+private!
+1::::! !
+testWithOne!
+34006967!
+testing!
+0! !
+testWithTwo!
+34007754!
+testing!
+0! !

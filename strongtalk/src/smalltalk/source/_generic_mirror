@@ -1,0 +1,78 @@
+Class
+#subtype!
+true! !
+#categories!
+Unclassified! !
+typeArgumentString!
+34263909!
+Unclassified!
+0Str! !
+convertToGeneric:ifFail:!
+34261334!
+Unclassified!
+0GenericMirror:[Str]:! !
+body!
+34261064!
+Unclassified!
+0Mirror! !
+adjustBounds!
+34260905!
+Unclassified!
+0! !
+body:!
+34261196!
+Unclassified!
+0Mirror:! !
+#revision!
+$Revision: 1.2 $! !
+#instanceVariableString!
+body ! !
+definitionString!
+34262384!
+Unclassified!
+0Str! !
+reflectee!
+34263619!
+Unclassified!
+0T! !
+nameNew:ifFail:!
+34263421!
+Unclassified!
+0Symbol:[Str]:! !
+#superclassTypeString!
+Mirror! !
+#group!
+reflection! !
+#extensionsAreSubtypes!
+true! !
+createTypeStructure!
+34262201!
+Unclassified!
+0! !
+fileName!
+34262635!
+Unclassified!
+0Str! !
+convertTypeTo:!
+34261765!
+Unclassified!
+0GenericMirror:! !
+#branded!
+true! !
+#comment!
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+#abstract!
+false! !
+sourceInfo!
+34263766!
+Unclassified!
+0! !
+nameExisting:ifFail:!
+34262992!
+Unclassified!
+0Symbol:[Str]:! !
+initializeTypeArgs:body:!
+34262780!
+Unclassified!
+0Str:Mirror:! !

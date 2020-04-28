@@ -1,0 +1,181 @@
+Class
+deny:!
+34523912!
+Accessing!
+0:! !
+#categories!
+Dependencies!
+Accessing!
+Running!
+Private!
+Printing! !
+logFailure:!
+34529886!
+Running!
+0:! !
+#group!
+SUnit! !
+run:!
+34530620!
+Running!
+0:! !
+should:raise:description:!
+34525620!
+Accessing!
+0:::! !
+runCase!
+34530758!
+Running!
+0! !
+#extensionsAreSubtypes!
+true! !
+should:raise:withExceptionDo:!
+34525885!
+Accessing!
+0:::! !
+executeShould:inScopeOf:withExceptionDo:!
+34528178!
+Private!
+1:::! !
+shouldnt:raise:!
+34526482!
+Accessing!
+0::! !
+shouldnt:!
+34526148!
+Accessing!
+0:! !
+performTest!
+34528484!
+Private!
+1! !
+assert:description:resumable:!
+34523514!
+Accessing!
+0:::! !
+failureLog!
+34529491!
+Running!
+0! !
+runCaseAsFailure:!
+34530933!
+Running!
+0:! !
+debugAsFailure!
+34529101!
+Running!
+0! !
+signalFailure:!
+34526978!
+Accessing!
+0:! !
+should:raise:!
+34525400!
+Accessing!
+0::! !
+#branded!
+true! !
+selector!
+34524938!
+Accessing!
+0! !
+addDependentToHierarchy:!
+34527148!
+Dependencies!
+0:! !
+removeDependentFromHierarchy:!
+34527355!
+Dependencies!
+0:! !
+setUp!
+34531173!
+Running!
+0! !
+echo!
+34527563!
+Printing!
+0! !
+#superclassTypeString!
+NotifyingObject! !
+setTestSelector:!
+34528642!
+Private!
+1:! !
+assert:!
+34523071!
+Accessing!
+0:! !
+deny:description:!
+34524060!
+Accessing!
+0::! !
+#revision!
+$Revision:$! !
+shouldnt:raise:description:!
+34526708!
+Accessing!
+0:::! !
+deny:description:resumable:!
+34524248!
+Accessing!
+0:::! !
+#instanceVariableString!
+testSelector! !
+should:!
+34525066!
+Accessing!
+0:! !
+printOn:!
+34527711!
+Printing!
+0:! !
+resources!
+34524502!
+Accessing!
+0! !
+shouldnt:description:!
+34526294!
+Accessing!
+0::! !
+run!
+34530444!
+Running!
+0! !
+executeShould:inScopeOf:!
+34527930!
+Private!
+1::! !
+assert:description:!
+34523274!
+Accessing!
+0::! !
+#subtype!
+true! !
+#comment!
+A TestCase is a Command representing the future running of a test case. Create one with the class method #selector: aSymbol, passing the name of the method to be run when the test case runs.
+
+When you discover a new fixture, subclass TestCase, declare instance variables for the objects in the fixture, override #setUp to initialize the variables, and possibly override# tearDown to deallocate any external resources allocated in #setUp.
+
+When you are writing a test case method, send #assert: aBoolean when you want to check for an expected value. For example, you might say "self assert: socket isOpen" to test whether or not a socket is open at a point in a test.! !
+#abstract!
+false! !
+tearDown!
+34531280!
+Running!
+0! !
+isLogging!
+34529644!
+Running!
+0! !
+openDebuggerOnFailingTestMethod!
+34530100!
+Running!
+0! !
+debug!
+34528794!
+Running!
+0! !
+should:description:!
+34525212!
+Accessing!
+0::! !

@@ -1,0 +1,6 @@
+"TextTestRunner run: NLRAlignmentTest buildSuite."
+[Bootstrap new deterministicallyTestSystem.
+TextTestRunner runAll".
+Smalltalk recompileAllMethods"]
+  on: Error
+  do: [:err | Transcript cr; print: err; cr. err pass] !

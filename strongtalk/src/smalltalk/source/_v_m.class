@@ -1,0 +1,411 @@
+Class
+recompilation:!
+35623703!
+debugging!
+0Boolean:! !
+#categories!
+debugging!
+private!
+garbage collection!
+system control!
+integer flags!
+boolean flags!
+integer operations!
+lookup!
+wrappers!
+allocation!
+private - allocation!
+profiling!
+benchmarking! !
+vmFlagAt:!
+35628849!
+private!
+1Symbol:Boolean! !
+nmethodHistogram:!
+35640737!
+wrappers!
+0:! !
+numberOfPrimaryLookupCacheHits!
+35627202!
+lookup!
+0! !
+growBarrier!
+35633033!
+private - allocation!
+1! !
+quitUI!
+35640539!
+system control!
+0! !
+numberOfContextAllocations!
+35626241!
+integer flags!
+0! !
+compiledCodeOnly:!
+35620577!
+boolean flags!
+0True|False:! !
+expansionCount!
+35632316!
+private - allocation!
+1! !
+useInliningDatabase!
+35621176!
+boolean flags!
+0Boolean! !
+expand!
+35631026!
+private - allocation!
+1! !
+new:ifFail:!
+35635614!
+private - allocation!
+1::! !
+shrinkIfPossible!
+35639226!
+private - allocation!
+1! !
+new:tenured:ifFail:!
+35636347!
+private - allocation!
+1:::! !
+traceDoubleByteArrayPrimitives:!
+35620768!
+boolean flags!
+0True|False:! !
+resetProfiler!
+35640214!
+profiling!
+0! !
+privateBenchmarkNew:!
+35620210!
+benchmarking!
+0:! !
+collectIfPossible!
+36012760!
+private - allocation!
+1! !
+disengageProfiler!
+35639695!
+profiling!
+0! !
+allocate:ifExpand:!
+35629603!
+private - allocation!
+1::! !
+printScavenge:!
+35623220!
+debugging!
+0Boolean:! !
+smallIntegerAt:!
+35628367!
+private!
+1Symbol:SmallInteger! !
+booleanAt:put:!
+35627921!
+private!
+1Symbol:True|False:SmallInteger! !
+freeSpace!
+35632881!
+private - allocation!
+1! !
+survivorSpaceSize!
+35626427!
+integer flags!
+0! !
+K!
+35629326!
+private - allocation!
+1! !
+printInlining:!
+35622828!
+debugging!
+0Boolean:! !
+invocationCounterLimit:!
+35622064!
+debugging!
+0Int:! !
+printCompilation!
+35622313!
+debugging!
+0Boolean! !
+quit!
+35640369!
+system control!
+0! !
+expand:!
+35631270!
+private - allocation!
+1:! !
+printScavenge!
+35623057!
+debugging!
+0Boolean! !
+booleanAt:!
+35627709!
+private!
+1Symbol:SmallInteger! !
+shrink:!
+35638874!
+private - allocation!
+1:! !
+isGCPending!
+35624607!
+garbage collection!
+0! !
+handleFailure:allocate:ifExpand:!
+35633409!
+private - allocation!
+1:::! !
+growIfNecessary!
+35633216!
+private - allocation!
+1! !
+new:!
+35618216!
+allocation!
+0:! !
+allocFailures!
+35629452!
+private - allocation!
+1! !
+stopGCProcess!
+35625648!
+garbage collection!
+0! !
+collectAndAllocate:ifExpand:!
+35630250!
+private - allocation!
+1::! !
+wizardMode!
+35621540!
+boolean flags!
+0True|False! !
+numberOfBlockAllocations!
+35626059!
+integer flags!
+0! !
+new:size:ifFail:!
+35635829!
+private - allocation!
+1:::! !
+engageProfiler!
+35639856!
+profiling!
+0! !
+initializeGCProcess!
+35624296!
+garbage collection!
+0! !
+scavengeAndAllocate:ifExpand:!
+35637962!
+private - allocation!
+1::! !
+needsNewGCProcess!
+35624755!
+garbage collection!
+0! !
+privateBenchmarkNewNew:!
+35620390!
+benchmarking!
+0:! !
+newDoubleBytes:size:!
+35619049!
+allocation!
+0::! !
+objectMemorySize!
+35624971!
+garbage collection!
+0! !
+canCollect!
+36012614!
+private - allocation!
+1! !
+recompilation!
+35623537!
+debugging!
+0Boolean! !
+shrinkBarrier!
+35639037!
+private - allocation!
+1! !
+expand:size:!
+35631451!
+private - allocation!
+1::! !
+numberOfMethodInvocations!
+35626606!
+integer operations!
+0! !
+numberOfLookupCacheMisses!
+35626956!
+lookup!
+0! !
+numberOfNMethodInvocations!
+35626786!
+integer operations!
+0! !
+printProfile!
+35640063!
+profiling!
+0! !
+numberOfSecondaryLookupCacheHits!
+35627453!
+lookup!
+0! !
+wizardMode:!
+35621703!
+boolean flags!
+0True|False:! !
+incFailureCount!
+35635363!
+private - allocation!
+1! !
+reportNonAllocationFailure:!
+35637352!
+private - allocation!
+1:! !
+useInliningDatabase:!
+35621354!
+boolean flags!
+0Boolean:! !
+scavengeIfPossible!
+35638686!
+private - allocation!
+1! !
+benchmarkNew:!
+35619393!
+benchmarking!
+0:! !
+fixedSize:!
+35632662!
+private - allocation!
+1:! !
+invocationCounterLimit!
+35621878!
+debugging!
+0Int! !
+newBytes:size:tenured:ifFail:!
+35636600!
+private - allocation!
+1::::! !
+handleNewDoubleBytes:size:failure:!
+35634931!
+private - allocation!
+1:::! !
+error:!
+35628167!
+private!
+1Symbol:Boolean! !
+expandDoubleBytes:size:!
+35632018!
+private - allocation!
+1::! !
+new:size:tenured:ifFail:!
+35636055!
+private - allocation!
+1::::! !
+traceProxyPrimitives:!
+35620982!
+boolean flags!
+0True|False:! !
+printZone!
+35623397!
+debugging!
+0! !
+expandBytes:size:!
+35631732!
+private - allocation!
+1::! !
+handleNew:size:failure:!
+35634160!
+private - allocation!
+1:::! !
+waitForGC!
+35625835!
+garbage collection!
+0! !
+collectGarbage!
+35623892!
+garbage collection!
+0! !
+newBytes:size:!
+35618743!
+allocation!
+0::! !
+canScavenge!
+35630094!
+private - allocation!
+1! !
+smallIntegerAt:put:!
+35628589!
+private!
+1Symbol:SmallInteger:SmallInteger! !
+deferredGC!
+35624088!
+garbage collection!
+0! !
+new:size:!
+35618430!
+allocation!
+0::! !
+startGCProcess!
+35625456!
+garbage collection!
+0! !
+oopSize!
+35637202!
+private - allocation!
+1! !
+traceLookupMissesFor:!
+35640992!
+wrappers!
+0[]:! !
+resetAllocCounts!
+35637625!
+private - allocation!
+1! !
+printInlining!
+35622665!
+debugging!
+0Boolean! !
+resetScavengeCount!
+35637806!
+private - allocation!
+1! !
+printCompilation:!
+35622482!
+debugging!
+0Boolean:! !
+benchmarkNewNew:!
+35619759!
+benchmarking!
+0:! !
+expansionSize!
+35632475!
+private - allocation!
+1! !
+handleNewBytes:size:failure:!
+35634517!
+private - allocation!
+1:::! !
+vmFlagAt:put:!
+35629072!
+private!
+1Symbol:Boolean:! !
+newDoubleBytes:size:tenured:ifFail:!
+35636895!
+private - allocation!
+1::::! !
+spaceToScavenge!
+35639524!
+private - allocation!
+1! !
+scavengeGarbage!
+35625140!
+garbage collection!
+0! !
+handleNew:failure:!
+35633843!
+private - allocation!
+1::! !

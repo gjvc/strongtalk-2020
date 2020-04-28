@@ -1,0 +1,283 @@
+Class
+tests!
+35969723!
+accessing!
+0! !
+#categories!
+test processing!
+constants!
+processing!
+interface opening!
+accessing!
+updating!
+initialize!
+notificaition!
+private-control! !
+details!
+35968586!
+accessing!
+0! !
+passColor!
+35970688!
+constants!
+0! !
+#extensionsAreSubtypes!
+true! !
+debugTest!
+35977208!
+processing!
+0! !
+failuresList!
+35982122!
+updating!
+0! !
+updateFailures:!
+35984476!
+updating!
+0:! !
+updateErrors:!
+35984299!
+updating!
+0:! !
+font!
+35975047!
+interface opening!
+0! !
+runWindow!
+35983311!
+updating!
+0! !
+debugFailureTest:!
+35976804!
+processing!
+0:! !
+runTests!
+35977720!
+processing!
+0! !
+#branded!
+true! !
+debugState!
+35970288!
+constants!
+0! !
+updateDetails:!
+35983964!
+updating!
+0:! !
+refreshButtonState!
+35970965!
+constants!
+0! !
+runButtonLabel!
+35971103!
+constants!
+0! !
+listBoxPopUpMenu!
+35975445!
+interface opening!
+0Menu! !
+update:with:!
+36003273!
+updating!
+0::! !
+windowLabel!
+35971512!
+constants!
+0! !
+selectedSuite!
+35978611!
+processing!
+0! !
+#revision!
+$Revision:$! !
+displayPassFail:!
+35981933!
+updating!
+0:! !
+updatePassFail:!
+35984915!
+updating!
+0:! !
+refreshButtonLabel!
+35970823!
+constants!
+0! !
+#comment!
+Test runner for SUnit tests. To launch doit on the following:-
+
+	(TestRunner open)! !
+runOneButtonLabel!
+35971375!
+constants!
+0! !
+showResult!
+35979706!
+test processing!
+0! !
+failures!
+35969019!
+accessing!
+0! !
+updatePartColors:!
+35984679!
+updating!
+0:! !
+#group!
+Unclassified! !
+selectedSuite:!
+35978754!
+processing!
+0:! !
+displayFailures:!
+35981714!
+updating!
+0:! !
+errors!
+35968716!
+accessing!
+0! !
+updateWindow:!
+35985181!
+updating!
+0:! !
+selectedFailureTest!
+35978456!
+processing!
+0! !
+selectedErrorTest!
+35978307!
+processing!
+0! !
+displayErrors:!
+35981501!
+updating!
+0:! !
+refreshWindow!
+35982808!
+updating!
+0! !
+showResultSummary!
+35980533!
+test processing!
+0! !
+displayDetails:!
+35981315!
+updating!
+0:! !
+errorColor!
+35970418!
+constants!
+0! !
+buildTests!
+35981087!
+updating!
+0! !
+updateAll!
+35983719!
+updating!
+0! !
+failColor!
+35970552!
+constants!
+0! !
+formatTime:!
+35969151!
+accessing!
+0:! !
+selectTestClass:!
+35978078!
+processing!
+0Class:! !
+textViewOn:!
+35975837!
+interface opening!
+0:! !
+runOneTest!
+35977321!
+processing!
+0! !
+errorsList!
+35968844!
+accessing!
+0! !
+timeSinceLastPassAsString:!
+35969850!
+accessing!
+0:! !
+refreshWindow:!
+35982960!
+updating!
+0:! !
+showResultDefects!
+35980005!
+test processing!
+0! !
+suite!
+35969585!
+accessing!
+0! !
+#superclassTypeString!
+ProgrammingEnvironment mixin |> (NotifyingObject mixin |> Application)! !
+passFail!
+35969453!
+accessing!
+0! !
+debugButtonLabel!
+35970150!
+constants!
+0! !
+visualAllocated!
+36003133!
+notificaition!
+0! !
+browseSelectedTest!
+35972383!
+interface opening!
+0! !
+debugErrorTest:!
+35976355!
+processing!
+0:! !
+#instanceVariableString!
+result details passFail failures errors tests testSuite passFailText detailsText lastPass testsList selectedFailureTest selectedErrorTest selectedSuite ! !
+initialize!
+35971702!
+initialize!
+0! !
+closeRequest:!
+35976158!
+private-control!
+1[]:! !
+errorLog!
+35979551!
+test processing!
+0! !
+buildBareVisualTop:!
+36004634!
+interface opening!
+0:! !
+#subtype!
+true! !
+addSubclass!
+35972131!
+interface opening!
+0! !
+#abstract!
+false! !
+selectedTestClass!
+35979361!
+processing!
+0! !
+runButtonState!
+35971241!
+constants!
+0! !
+refreshTests!
+36003479!
+updating!
+0! !
+frameWithBorderAndBackdrop:!
+35975231!
+interface opening!
+0:! !

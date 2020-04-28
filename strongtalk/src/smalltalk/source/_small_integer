@@ -1,0 +1,274 @@
+Class
+#categories!
+comparison!
+operations!
+converting!
+restricted-double dispatching!
+bit operations-un-mixed-mode!
+operations-un-mixed-mode!
+bit operations!
+patch!
+private!
+proxy operations!
+private-proxy double dispatching!
+accessing!
+file out!
+printing!
+restricted-to large integers!
+debugging! !
+identityHash!
+35510376!
+accessing!
+0Int! !
+bitOr:!
+35510777!
+bit operations!
+4X:Self|X! !
+#extensionsAreSubtypes!
+true! !
+bitXor:!
+35511272!
+bit operations!
+4X:Self|X! !
+#group!
+base! !
+addFromSmallInteger:!
+35525049!
+restricted-double dispatching!
+0SmallInteger:Int! !
+*!
+35514747!
+operations!
+4Number:X! !
++!
+35515076!
+operations!
+4Number:X! !
+-!
+35515390!
+operations!
+4Number:X! !
+#branded!
+true! !
+nonPrimitiveMultiply:error:!
+35522740!
+private!
+1Number:Symbol:Number! !
+printString!
+35519780!
+printing!
+0Str! !
+externalBitAnd:!
+35524441!
+proxy operations!
+0ExternalData:ExternalData! !
+multiplyFromSmallInteger:!
+35526611!
+restricted-double dispatching!
+0SmallInteger:Int! !
+<!
+35512168!
+comparison!
+0Number:Boolean! !
+>=!
+35513049!
+comparison!
+0Number:Boolean! !
+>!
+35512843!
+comparison!
+0Number:Boolean! !
+nonPrimitiveEqual:!
+35521765!
+private!
+1Object:Boolean! !
+nonPrimitiveDiv:error:!
+35521449!
+private!
+1Number:Symbol:Int! !
+-!!!
+35517786!
+operations-un-mixed-mode!
+0SmallInt:SmallInt! !
+bitAndFromProxy:!
+35523999!
+private-proxy double dispatching!
+1ExternalProxy:ExternalProxy! !
+#revision!
+$Revision: 1.10 $! !
+asSmallInteger!
+35514093!
+converting!
+0SmallInt! !
+#classVariableString!
+MinVal <Integer>
+		MaxVal <Integer>
+		! !
+//!
+35516008!
+operations!
+0Number:Int! !
+rawBitShift:!
+35511535!
+bit operations!
+0Int:Int! !
+bitAnd:!
+35510513!
+bit operations!
+4X:Self|X! !
+/!
+35515719!
+operations!
+4Number:X! !
+asObject!
+35514232!
+debugging!
+0Object! !
+subtractFromSmallInteger:!
+35526864!
+restricted-double dispatching!
+0SmallInteger:Int! !
+fileOutOn:!
+35514485!
+file out!
+0Dumper:! !
+#comment!
+Implements limited precision integer arithmetic, overflowing into
+infinite precision arithmetic.  This class should normally not be
+referred to directly by user code.
+
+Tags: %BlueBook
+
+(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.   $Revision: 1.9 $
+! !
+/!!!
+35518237!
+operations-un-mixed-mode!
+0SmallInt:SmallInt! !
+moduloFromSmallInteger:!
+35526372!
+restricted-double dispatching!
+0SmallInteger:SmallInteger! !
+@=!
+35513264!
+comparison!
+0ExternalData:Boolean! !
+asLargeInteger!
+35527116!
+restricted-to large integers!
+0LargeInteger! !
+\!!!
+35518685!
+operations-un-mixed-mode!
+0SmallInt:SmallInt! !
+hasBitsSet:!
+35524843!
+proxy operations!
+0ExternalData:Boolean! !
+lessFromSmallInteger:!
+35526140!
+restricted-double dispatching!
+0SmallInteger:Boolean! !
+digitsForAbs:!
+35520438!
+private!
+1Int:Int! !
+bitAndFromInteger:!
+35525297!
+restricted-double dispatching!
+0Integer:Integer! !
+times:ifFail:!
+35519129!
+operations-un-mixed-mode!
+2SmallInt:[^X def]:SmallInt|X! !
+bareBitShift:!
+35511792!
+bit operations-un-mixed-mode!
+0SmallInt:SmallInt! !
+<=!
+35512395!
+comparison!
+0Number:Boolean! !
+printCharacter!
+35519543!
+patch!
+0! !
+~=!
+35513724!
+comparison!
+0Object:Boolean! !
+asAlien!
+36428120!
+converting!
+0Alien|SmallInt! !
+externalBitOr:!
+35524643!
+proxy operations!
+0ExternalData:ExternalData! !
+nonPrimitiveQuo:error:!
+35523190!
+private!
+1Number:Symbol:Int! !
+*!!!
+35516889!
+operations-un-mixed-mode!
+0SmallInt:SmallInt! !
+bitShift:!
+36427879!
+bit operations!
+0Int:Int! !
+\\!
+35516321!
+operations!
+4Number:X! !
+bitXorFromInteger:!
+35525703!
+restricted-double dispatching!
+0Integer:Integer! !
+bitOrFromInteger:!
+35525501!
+restricted-double dispatching!
+0Integer:Integer! !
+nonPrimitiveSubtract:error:!
+35523509!
+private!
+1Number:Symbol:Number! !
+#superclassTypeString!
+Integer! !
+=!
+35512607!
+comparison!
+0Object:Boolean! !
+nonPrimitiveModulo:error:!
+35522184!
+private!
+1Number:Symbol:Number! !
+equalFromSmallInteger:!
+35525907!
+restricted-double dispatching!
+0SmallInteger:Boolean! !
+nonPrimitiveAdd:error:!
+35521010!
+private!
+1Number:Symbol:Number! !
+asFloat!
+35513942!
+converting!
+0Float! !
+bitOrFromProxy:!
+35524229!
+private-proxy double dispatching!
+1ExternalProxy:ExternalProxy! !
+#subtype!
+true! !
+#abstract!
+false! !
+quo:!
+35516642!
+operations!
+0Number:Int! !
++!!!
+35517346!
+operations-un-mixed-mode!
+0SmallInt:SmallInt! !

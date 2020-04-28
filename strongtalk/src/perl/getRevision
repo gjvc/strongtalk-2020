@@ -1,0 +1,19 @@
+#! /usr/bin/env perl
+
+use warnings;
+use strict;
+
+local($name) = $ARGV[0];
+sub getRevision {
+  local($filename) = @_;
+  open(FILE,$filename) || die "could not open file: $filename";
+  while(<FILE>) {
+    if (/\Revision:\s*(\S+)\s+/) {
+      close(FILE);
+      return $1;
+    }
+  }
+  close(FILE);
+  return "";
+}
+printf "%s", &getRevision($name);

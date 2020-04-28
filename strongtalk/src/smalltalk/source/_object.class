@@ -1,0 +1,56 @@
+Class
+#categories!
+private!
+reflection!
+instance creation!
+utility!
+file out!
+squeak support! !
+primitiveNew!
+35566812!
+private!
+1Instance! !
+yourself!
+35568451!
+utility!
+0Self! !
+new3!
+35565613!
+instance creation!
+0Instance! !
+isSupportedBy:!
+35568264!
+reflection!
+0Object:Boolean! !
+ensureNotifiedAtStartupAfter:!
+36261023!
+squeak support!
+0:! !
+coerce:do:else:!
+35567670!
+reflection!
+2Object:[Instance,^Y def]:[^X def]:Y|X! !
+fileOutSignature!
+35564876!
+file out!
+0Integer! !
+coerce:do:!
+35567474!
+reflection!
+0Object:[Instance]:! !
+new2!
+35565316!
+instance creation!
+0! !
+coerce:else:!
+35567960!
+reflection!
+2Object:[^X def]:Instance|X! !
+coerce:!
+35567254!
+reflection!
+0Object:Instance! !
+new!
+35565028!
+instance creation!
+0Instance! !

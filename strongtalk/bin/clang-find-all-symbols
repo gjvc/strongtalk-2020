@@ -1,0 +1,38 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+SOURCE_ROOT="${_ROOT}/src/cpp/main"
+OUTPUT_DIR=${_ROOT}/.cmake/clang/debug
+
+[[ ! -d ${_ROOT}/build/log ]] && mkdir -p ${_ROOT}/build/log
+STDOUTERR_LOG=${_ROOT}/build/log/${_BASENAME}.$(date '+%Y-%m-%d.%H%M%S').${USER}.log
+exec &> >( tee -a ${STDOUTERR_LOG} )
+
+
+# execute --------------------------------------------------------------------
+
+run_find_all_symbols_py=a/usr/share/clang/run-find-all-symbols.py
+
+echo "info: using run-find-all-symbols.py from [${run_find_all_symbols_py}]"
+echo "info: running run-find-all-symbols.py in [${SOURCE_ROOT}]"
+#( cd ${SOURCE_ROOT} && find vm/ -name '*.cpp' | ${run_find_all_symbols_py} -binary /usr/bin/find-all-symbols -j $(nproc --all) -p $(dirname ${compile_commands_json}) -saving-path ${OUTPUT_DIR}/find_all_symbols_db.yaml )
+( cd ${OUTPUT_DIR} && /usr/bin/python2.7 ${run_find_all_symbols_py} -binary /usr/bin/find-all-symbols -j $(nproc --all) )
+
+
+# find_all_symbols_db.yaml ---------------------------------------------------
+
+find_all_symbols_db_yaml=${OUTPUT_DIR}/find_all_symbols_db.yaml
+
+if [[ ! -f ${find_all_symbols_db_yaml} ]]; then
+    echo "uhoh: symbol index file [${find_all_symbols_db_yaml}] does not exist"
+    exit 111
+fi
+if [[ ! -L ${SOURCE_ROOT}/find_all_symbols_db.yaml ]]; then
+    echo "info: creating symlink from ${SOURCE_ROOT}/find_all_symbols_db.yaml to ${find_all_symbols_db_yaml}"
+    ln -s ${find_all_symbols_db_yaml} ${SOURCE_ROOT}/find_all_symbols_db.yaml
+fi
+

@@ -1,0 +1,37 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+
+# -----------------------------------------------------------------------------
+
+case $( lsb_release --short --id ) in
+    (Debian) run_clang_tidy_py=/usr/lib/llvm-9/share/clang/run-clang-tidy.py ;;
+    (*) { echo "uhoh: unknown Linux release $( lsb_release --short --id )"; exit 111; } ;;
+esac
+
+cd ${_ROOT}/obj/cmake/debug/clang/
+${run_clang_tidy_py} --fix --checks='-*,modernize-avoid-bind'
+${run_clang_tidy_py} --fix --checks='-*,modernize-deprecated-headers'
+${run_clang_tidy_py} --fix --checks='-*,modernize-loop-convert'
+${run_clang_tidy_py} --fix --checks='-*,modernize-make-shared'
+${run_clang_tidy_py} --fix --checks='-*,modernize-make-unique'
+${run_clang_tidy_py} --fix --checks='-*,modernize-pass-by-value'
+${run_clang_tidy_py} --fix --checks='-*,modernize-raw-string-literal'
+${run_clang_tidy_py} --fix --checks='-*,modernize-redundant-void-arg'
+${run_clang_tidy_py} --fix --checks='-*,modernize-replace-auto-ptr'
+${run_clang_tidy_py} --fix --checks='-*,modernize-shrink-to-fit'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-auto'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-bool-literals'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-default-member-init'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-emplace'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-equals-default'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-equals-delete'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-nullptr'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-override'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-transparent-functors'
+${run_clang_tidy_py} --fix --checks='-*,modernize-use-using'
+

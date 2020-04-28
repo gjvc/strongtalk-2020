@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+
+# boilerplate -----------------------------------------------------------------
+
+set -eu
+_DIRNAME=$( cd "$( dirname "${BASH_SOURCE[ 0 ]}" )" && pwd )
+_BASENAME=$( basename ${BASH_SOURCE[ 0 ]} )
+_ROOT=$( dirname ${_DIRNAME} )
+
+ 
+# environment -----------------------------------------------------------------
+
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONPATH=${_ROOT}/src/python
+
+
+# execute ---------------------------------------------------------------------
+
+VENV_ROOT=${_ROOT}/.venv
+[[ ! -d ${VENV_ROOT} ]] && { echo "info: venv [${VENV_ROOT}] is missing; run 'bin/venv-init'";  exit 111; }
+exec ${VENV_ROOT}/bin/python "${@}"
+

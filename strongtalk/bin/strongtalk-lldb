@@ -1,0 +1,13 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+BUID_TYPE=debug
+lldb <<__LLDB_EOF__
+file ${_ROOT}/.cmake/clang/${BUID_TYPE}/src/cpp/main/strongtalk
+settings set target.run-args "${@}"
+run
+__LLDB_EOF__

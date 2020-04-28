@@ -1,0 +1,54 @@
+#! /bin/bash
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+clang_tidy_config_file=${_ROOT}/etc/clang-tidy/old-new-style-casts.yaml
+
+SOURCE_ROOT="${_ROOT}/src/cpp/main"
+OUTPUT_DIR=${_ROOT}/.cmake/clang/debug
+
+[[ ! -d ${_ROOT}/build/log ]] && mkdir -p ${_ROOT}/build/log
+STDOUTERR_LOG=${_ROOT}/build/log/${_BASENAME}.$(date '+%Y-%m-%d.%H%M%S').${USER}.log
+exec &> >( tee -a ${STDOUTERR_LOG} )
+
+
+# compile_commands.json -------------------------------------------------------
+
+compile_commands_json=$( find ${OUTPUT_DIR} -name compile_commands.json )
+if [[ -z "${compile_commands_json}" ]]; then
+    echo "uhoh: compile_commands.json not found -- try running a clang build first via bin/strongtalk-build"
+    exit 111;
+fi
+echo "info: found compile_commands.json at [${compile_commands_json}]"
+
+if [[ ! -L ${SOURCE_ROOT}/compile_commands.json ]]; then
+    echo "info: creating symlink from ${SOURCE_ROOT}/compile_commands.json to ${compile_commands_json}"
+    ( cd ${SOURCE_ROOT} && ln -s ${compile_commands_json} )
+fi
+
+
+# .clang-tidy ----------------------------------------------------------------
+
+if [[ ! -f ${clang_tidy_config_file} ]]; then
+    echo "uhoh: clang-tidy config file [${clang_tidy_config_file}] does not exist"
+    exit 111
+fi
+if [[ ! -L ${SOURCE_ROOT}/.clang-tidy ]]; then
+    echo "info: creating symlink from ${SOURCE_ROOT}/.clang-tidy to ${clang_tidy_config_file}"
+    ln -s ${clang_tidy_config_file} ${SOURCE_ROOT}/.clang-tidy
+fi
+
+
+# execute --------------------------------------------------------------------
+
+SRC_PYTHON=${_ROOT}/src/python
+run_clang_tidy_py=${SRC_PYTHON}/run-clang-tidy.py
+
+echo "info: using run-clang-tidy.py from [${run_clang_tidy_py}]"
+echo "info: running run-clang-tidy.py in [${SOURCE_ROOT}]"
+echo "info: using config file [${clang_tidy_config_file}]"
+( cd ${SOURCE_ROOT} && find vm/ -name '*.cpp' | ${run_clang_tidy_py} -j $(nproc --all) -fix )    
+

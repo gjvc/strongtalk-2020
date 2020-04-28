@@ -1,0 +1,11 @@
+"$Revision:$"!
+Delta fileInFromFile: (FilePath for: 'DictionaryMerge.dlt') !
+Delta fileInFromFile: (FilePath for: 'DictionaryOverride.dlt') !
+Delta fileInFromFile: (FilePath for: 'InliningDatabase.dlt') !
+Delta fileInFromFile: (FilePath for: 'SequenceableVirtualCollector.dlt') !
+Delta fileInFromFile: (FilePath for: 'SequenceableVirtualSelector.dlt') !
+Delta fileInFromFile: (FilePath for: 'SystemMonitorData.dlt') !
+Delta fileInFromFile: (FilePath for: 'VirtualCollector.dlt') !
+Delta fileInFromFile: (FilePath for: 'VirtualDictCollector.dlt') !
+Delta fileInFromFile: (FilePath for: 'VirtualSelector.dlt') !
+Delta fileInFromFile: (FilePath for: 'VirtualDictSelector.dlt') !

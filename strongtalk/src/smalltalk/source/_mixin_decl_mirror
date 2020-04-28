@@ -1,0 +1,665 @@
+Class
+#categories!
+Unclassified!
+accessing!
+loading type info!
+typechecking! !
+rename:to:!
+34323899!
+Unclassified!
+0Symbol:Symbol:! !
+hasFullTypeInfoLoaded!
+34343812!
+loading type info!
+0Boolean! !
+superclassTypeString!
+34329719!
+Unclassified!
+0Str! !
+changeMethod:to:!
+34280395!
+Unclassified!
+0MethodDecl:MethodDecl:! !
+typecheckTypeArguments!
+34348772!
+typechecking!
+0! !
+convert:toGeneric:ifFail:!
+34290145!
+Unclassified!
+0Mirror:GenericMirror:[Str]:! !
+vmInvocations!
+34334465!
+Unclassified!
+0OrdCltn[ClassVMMirror]! !
+createTypeStructureForObject!
+34341178!
+loading type info!
+0! !
+masterInvocation!
+34306936!
+Unclassified!
+0Class! !
+compiledMethodAt:ifFail:!
+34287339!
+Unclassified!
+2Symbol:[^X def]:Method|X! !
+formatFor:mixinFormat:formats:ifFail:!
+34292885!
+Unclassified!
+0ClassVMMirror:Symbol:VarDict[Class,Symbol]:[Str,^DoesNotMatter]:Symbol! !
+removeAllClassVariables!
+34319869!
+Unclassified!
+0! !
+typeInfoAddInstanceVariable:!
+34331418!
+Unclassified!
+0VarDecl:! !
+convertToGenericMixin:ifFail:!
+34290396!
+Unclassified!
+0GenericMirror:[Str]:! !
+compileMethod:ifFail:!
+34286745!
+Unclassified!
+0DeltaMethod:[Str]:Method! !
+subtype!
+34328697!
+Unclassified!
+0Boolean! !
+scope:!
+34327261!
+Unclassified!
+0Scope:! !
+heir:checkSelector:withSignature:!
+34296255!
+Unclassified!
+0Decl:Symbol:MsgSignature:! !
+formatsOf:mixinFormat:ifFail:!
+34294087!
+Unclassified!
+0Cltn[Class]:Symbol:[Str,^DoesNotMatter]:VarDict[Class,Symbol]! !
+makeChange:ifFail:!
+34306460!
+Unclassified!
+0[MixinVMMirror,^MixinVMMirror]:[Str]:! !
+insertMethod:visibility:category:ifFail:!
+34299441!
+Unclassified!
+0Str:Symbol:Symbol:[Str]:ParseTree! !
+instanceVariableAt:ifAbsent:!
+34301759!
+Unclassified!
+0Symbol:[]:! !
+branded:!
+34277761!
+Unclassified!
+0Boolean:! !
+isMeta!
+34304886!
+Unclassified!
+0Boolean! !
+typecheckSuperclassClause!
+34348413!
+typechecking!
+0! !
+instanceVariables:!
+34302262!
+Unclassified!
+0Str:! !
+cloneConformingToShape:!
+34285368!
+Unclassified!
+0ClassMirror:MixinVMMirror! !
+comment:!
+34286586!
+Unclassified!
+0Str:! !
+prepareInvocation2:mixinFormat:oldClasses:newClasses:ifFail:!
+34313672!
+Unclassified!
+0Class:Symbol:OrderedCollection[Class]:OrderedCollection[ClassMirror]:[Str,^DoesNotMatter]:Array[Class|Symbol]! !
+isSubtype!
+34305040!
+Unclassified!
+0Boolean! !
+prepareInvocation:mixinFormat:oldClasses:newClasses:ifFail:!
+34315426!
+Unclassified!
+0Class:Symbol:OrderedCollection[Class]:OrderedCollection[ClassMirror]:[Str,^DoesNotMatter]:Array[Class|Symbol]! !
+nonSubtypeHeir:checkSelector:withSignature:!
+34309629!
+Unclassified!
+0Decl:Symbol:MsgSignature:! !
+removeInstanceVariable:ifAbsent:!
+34322178!
+Unclassified!
+0Symbol:[]:! !
+classVariableAt:ifAbsent:!
+34283277!
+Unclassified!
+0Symbol:[]:VarDecl! !
+mixin!
+35999541!
+Unclassified!
+0MixinMirror! !
+removePool:ifAbsent:!
+34323717!
+Unclassified!
+0Str:[]:! !
+subtype:!
+34328852!
+Unclassified!
+0Boolean:! !
+convertToMixin:changingClass:to:ifFail:!
+34290691!
+Unclassified!
+0MixinDeclMirror:ClassMirror:ClassMirror:[Str,^DoesNotMatter]:! !
+updateDependenciesFrom:to:!
+34333724!
+Unclassified!
+0::! !
+setName:ifFail:!
+34328053!
+Unclassified!
+0Symbol:[Str]:! !
+extensionsAreNotSubtypes!
+34292277!
+Unclassified!
+0! !
+nameExisting:ifFail:!
+34308724!
+Unclassified!
+0Symbol:[Str]:! !
+notSubtype!
+34311427!
+Unclassified!
+0! !
+removeClassVariable:ifFail:!
+34321545!
+Unclassified!
+0Symbol:[Str]:! !
+addClassVariable:ifFail:!
+34273855!
+Unclassified!
+0VarDecl:[Str]:! !
+instanceVariablesDo:!
+34303584!
+Unclassified!
+0[VarDecl]:! !
+changeInstanceVariablesTo:!
+34279483!
+Unclassified!
+0Cltn[VarDecl]:! !
+typecheckSelectorInterface:!
+34347722!
+typechecking!
+0Symbol:! !
+superclassType!
+34329043!
+Unclassified!
+0ClassNode! !
+conformBodyTypeTo:!
+34288636!
+Unclassified!
+0ClassMirror:! !
+#group!
+reflection! !
+sourceInfo!
+34328461!
+Unclassified!
+0MixinSourceHandler! !
+compiledMethodsDo:!
+34287574!
+Unclassified!
+0[Method]:! !
+parseMethod:ifFail:!
+34312494!
+Unclassified!
+0Str:[Str,Int]:ParseTree[DeltaMethod]! !
+typeInfo!
+34330975!
+Unclassified!
+0SideUpdate! !
+abstract!
+34273525!
+Unclassified!
+0! !
+#extensionsAreSubtypes!
+true! !
+nameNew:ifFail:!
+34309034!
+Unclassified!
+0Symbol:[Str]:! !
+conform:toShape:!
+34287751!
+Unclassified!
+0MixinVMMirror:ClassMirror:MixinVMMirror! !
+removeClassVariable:ifAbsent:!
+34321009!
+Unclassified!
+0Symbol:[]:! !
+createTypeStructure!
+34336670!
+loading type info!
+0! !
+install:ifFail:!
+34301094!
+Unclassified!
+0MixinVMMirror:[Str,^DoesNotMatter]:MixinDeclMirror! !
+typeNameForNode:inMethod:!
+34333217!
+Unclassified!
+0ASTNode:Method:String! !
+masterInvocation:ifFail:!
+34307109!
+Unclassified!
+0Class:[Str]:! !
+noteFilteredSendersOf:!
+34311569!
+Unclassified!
+0Symbol:! !
+superclassType:!
+34329216!
+Unclassified!
+0Str:! !
+reflectee:!
+34319708!
+Unclassified!
+0Mixin:! !
+convertToMixin:ifFail:!
+34291852!
+Unclassified!
+0MixinDeclMirror:[Str]:! !
+compileMethod:within:ifFail:!
+34286989!
+Unclassified!
+0DeltaMethod:ClassVMMirror|MixinVMMirror:[Str]:Method! !
+sourceForSelector:!
+34328266!
+Unclassified!
+0Symbol:Str! !
+body!
+35418817!
+Unclassified!
+0ClassMirror! !
+removeMethod:ifAbsent:!
+34322627!
+Unclassified!
+0Symbol:[]:! !
+combinedFormatOfMixinFormat:andSuperclassFormat:ifFail:!
+34286026!
+Unclassified!
+0Symbol:Symbol:[Str,^DoesNotMatter]:Symbol! !
+inheritsFrom:!
+35999362!
+Unclassified!
+0Mixin:Boolean! !
+combinedFormatOfMixin:andSuperclass:ifFail:!
+34285723!
+Unclassified!
+0Mixin:Class:[Str,^DoesNotMatter]:Symbol! !
+mixinDecl!
+34308371!
+Unclassified!
+0MixinVMMirror! !
+changeToMixin:oldClasses:newClasses:ifFail:!
+34281271!
+Unclassified!
+0MixinVMMirror:OrderedCollection[Class]:OrderedCollection[ClassMirror]:[Str,^DoesNotMatter]:MixinDeclMirror! !
+recompileAllMethodsIfFail:!
+34317742!
+Unclassified!
+0[]:! !
+recompileMethod:ifFail:!
+34317990!
+Unclassified!
+0Symbol:[]:! !
+reflect:!
+34318989!
+Unclassified!
+0MixinVMMirror:! !
+classVariablesDo:!
+34285092!
+Unclassified!
+0[VarDecl]:! !
+typeInfoRemoveInstanceVariable:!
+34333012!
+Unclassified!
+0Symbol:! !
+scope!
+34327109!
+Unclassified!
+0Scope! !
+invocations!
+34304281!
+Unclassified!
+0Cltn[AbstractClassMirror]! !
+#subtype!
+true! !
+methodsDo:!
+34307923!
+Unclassified!
+0[DeltaMethod]:! !
+typecheckSelector:!
+34347022!
+typechecking!
+0Symbol:! !
+addMethod:to:!
+34274812!
+Unclassified!
+0DeltaMethod:ClassVMMirror:! !
+addPool:ifFail:!
+34275897!
+Unclassified!
+0Str:[Str]:! !
+nonSubtypeHeirsCheckSelector:withSignature:!
+34310896!
+Unclassified!
+0Symbol:MsgSignature:! !
+#abstract!
+false! !
+addInstanceVariable:ifFail:!
+34274241!
+Unclassified!
+0VarDecl:[Str]:! !
+typeInfoAddClassVariable:!
+34331154!
+Unclassified!
+0VarDecl:! !
+addMethod:visibility:category:ifFail:!
+34275288!
+Unclassified!
+0Str:Symbol:Symbol:[Str]:ParseTree! !
+isAbstract!
+34304531!
+Unclassified!
+0Boolean! !
+addInvocation:!
+34274557!
+Unclassified!
+0Class:! !
+abstract:!
+34273665!
+Unclassified!
+0Boolean:! !
+typecheckSupportedProtocol!
+34348591!
+typechecking!
+0! !
+mixinDecl:!
+34308522!
+Unclassified!
+0MixinVMMirror:! !
+instanceVariableString!
+34302078!
+Unclassified!
+0Str! !
+selectorsFor:!
+34327415!
+Unclassified!
+0Str:OrdCltn[Symbol]! !
+body:!
+34277537!
+Unclassified!
+0ClassMirror:! !
+typecheckInterface!
+34346859!
+typechecking!
+0! !
+extensionsAreSubtypes:!
+34292654!
+Unclassified!
+0Boolean:! !
+createMethodTypeStructure!
+34335905!
+loading type info!
+0! !
+classVariableString!
+34283603!
+Unclassified!
+0Str! !
+classVariables:!
+34283913!
+Unclassified!
+0Str:! !
+changeClassVariablesTo:!
+34277947!
+Unclassified!
+0Cltn[VarDecl]:! !
+protocols:!
+34317382!
+Unclassified!
+0Str:! !
+comment!
+34286432!
+Unclassified!
+0Str! !
+#branded!
+true! !
+poolString!
+34313225!
+Unclassified!
+0Str! !
+uninstall!
+34333577!
+Unclassified!
+0! !
+methodAt:ifFail:!
+34307652!
+Unclassified!
+2Symbol:[^X def]:DeltaMethod|X! !
+pools:!
+34313383!
+Unclassified!
+0Str:! !
+removeDefinitionIfFail:!
+34321895!
+Unclassified!
+0[]:! !
+immediateHeirs!
+34298812!
+Unclassified!
+0OrdCltn[ClassMirror]! !
+#revision!
+$Revision: 1.23 $! !
+invocationInfo!
+34304031!
+Unclassified!
+0AbstractInvocationData! !
+referencesToAssociation:!
+34318518!
+Unclassified!
+0Association:Cltn[MethodLocator]! !
+isBranded!
+34304706!
+Unclassified!
+0Boolean! !
+#classVariableString!
+InvocationInfo <VarDict[Mixin, AbstractInvocationData]>! !
+basicDefinitionString!
+34276075!
+Unclassified!
+0Str! !
+supportedProtocol:!
+34329899!
+Unclassified!
+0Str:! !
+basicLocator!
+34276413!
+Unclassified!
+0BasicMixinLocator! !
+heirsCheckSelector:withSignature:!
+34298338!
+Unclassified!
+0Symbol:MsgSignature:! !
+komment!
+34305220!
+Unclassified!
+0! !
+changePoolsTo:!
+34281084!
+Unclassified!
+0Cltn[Str]:! !
+extensionsAreSubtypes!
+34292448!
+Unclassified!
+0Boolean! !
+nestInGenericWithTypeArguments:!
+34309368!
+Unclassified!
+0Str:! !
+typecheckClassVars!
+34346350!
+typechecking!
+0! !
+#comment!
+This class represents a mirror on a mixin declaration.
+
+The mirror maintains an instance variable, mixinDecl, which is a low level mirror
+(a MixinVMMirror) on the actual mixin. Changes are accomplished by forwarding
+to this low level mirror. The actual mixin being reflected is also available thru mixinDecl.
+
+Changes to the structure of the mixin are accomplished by creating an uninstalled copy
+of the mixin, and performing the changes on it, and the installing the changes atomically
+using the changed copy as a constructor which is passed to the VM. The VM also receives
+a list of all invocations and their dependent subclasses, so that it can modify them atomically
+at the same time.
+
+This process is done using the makeChange:ifFail: method, which in turn invokes the
+install:ifFail: method.
+
+Methods are simply added to the mixin, and copied down to invocations. This is not done atomically
+at this point.
+
+ (c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.! !
+typeInfoInstanceVariables:!
+34332187!
+Unclassified!
+0Str:! !
+handleInterfaceChangeFrom:to:!
+34294685!
+Unclassified!
+0MethodDecl:MethodDecl:! !
+selectorsMatching:!
+34327607!
+Unclassified!
+0Str:Set[Symbol]! !
+initializeSuperclassType:body:!
+34299206!
+Unclassified!
+0::! !
+typeArgumentString!
+34330490!
+Unclassified!
+0Str! !
+renameGroup:!
+34325530!
+Unclassified!
+0Dict[Symbol,Symbol]:! !
+typeInfoClassVariables:!
+34331621!
+Unclassified!
+0Str:! !
+convert:ifFail:!
+34289952!
+Unclassified!
+0Mirror:[Str]:! !
+typecheck!
+34345614!
+typechecking!
+0! !
+hasSelector:!
+34295959!
+Unclassified!
+0Symbol:Boolean! !
+removeAllInstanceVariables!
+34320434!
+Unclassified!
+0! !
+typeForNode:inMethod:!
+34330760!
+Unclassified!
+0ASTNode:Method:ObjectType! !
+#instanceVariableString!
+mixinDecl sourceInfo ! !
+conformToShape:!
+34289401!
+Unclassified!
+0ClassMirror:! !
+typeInfoRemoveClassVariable:!
+34332746!
+Unclassified!
+0Symbol:! !
+loadMsgSelector:!
+34344024!
+loading type info!
+0Symbol:DeltaMethod! !
+unbranded!
+34333436!
+Unclassified!
+0! !
+methodsFor:!
+34308179!
+Unclassified!
+0String:! !
+typecheckDeclaration!
+34346524!
+typechecking!
+0! !
+#superclassTypeString!
+MixinMirror! !
+classProtocols:!
+34283104!
+Unclassified!
+0Str:! !
+publicMethodsFor:!
+34317540!
+Unclassified!
+0String:! !
+shortDescription!
+34335362!
+accessing!
+0Str! !
+privateMethodsFor:!
+34317179!
+Unclassified!
+0String:! !
+localScope!
+34306272!
+Unclassified!
+0Scope! !
+installed!
+34301520!
+Unclassified!
+0Boolean! !
+reflectee!
+34319492!
+Unclassified!
+0Mixin! !
+typecheckInstVars!
+34346691!
+typechecking!
+0! !
+supportedProtocolString!
+34330304!
+Unclassified!
+0Str! !
+heirScope!
+34298029!
+Unclassified!
+0Scope! !
+|>!
+34334710!
+Unclassified!
+0ClassMirror:ClassMirror! !
+loadSelector:!
+34344813!
+loading type info!
+0Symbol:DeltaMethod! !
+install!
+34300951!
+Unclassified!
+0! !

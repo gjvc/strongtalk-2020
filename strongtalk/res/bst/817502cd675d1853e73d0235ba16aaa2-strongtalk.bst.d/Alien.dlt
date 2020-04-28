@@ -1,0 +1,690 @@
+Delta define: #Alien as: (
+(Class subclassOf: 'ByteArray' instanceVariables: '') classVariables: 'GCMallocedAliens LoadedLibraries') !
+
+(Delta mirrorFor: #Alien) revision: '$Revision:$'!
+
+(Delta mirrorFor: #Alien) group: 'Aliens'!
+
+(Delta mirrorFor: #Alien)
+comment: 
+''!
+
+! (Delta mirrorFor: #Alien) classSide methodsFor: 'class initialization' !
+
+
+initialize
+
+	LoadedLibraries isNil ifTrue: 
+		[LoadedLibraries := Dictionary new].
+	GCMallocedAliens isNil ifTrue:
+		[GCMallocedAliens := AlienWeakTable newForOwner: self]! !
+
+! (Delta mirrorFor: #Alien) classSide methodsFor: 'instance creation' !
+
+
+atAddress: pointer <Integer> ^<X>
+
+	^(self primitiveNew: 8)
+		size: self dataSize negated;
+		addressField: pointer;
+		yourself!
+
+atAddress: pointer <Integer> dataSize: dataSize <Integer> ^<X>
+
+	^(self primitiveNew: 8)
+		size: dataSize negated;
+		addressField: pointer;
+		yourself!
+
+autoFreeAfter: action <[X, ^ Y]>
+	"Evaluate the action, which must be a 1-argument block.
+	 The argument passed to the action is a block the action
+	 can use to register Aliens created inside the action.
+	 Such aliens will be freed as soon as the action completes.
+	 Return the value returned from the action. See usage
+	 example at the bottom of the method. "
+	
+	| toFree |
+	toFree := OrderedCollection new.
+	^[action value: [:alien | toFree add: alien]]
+		ensure: [toFree do: [:each | each free]]
+		
+"
+	Alien autoFreeAfter:
+		[:autoFree | | foo bar |
+		foo := autoFree value: (Alien newCString: 'foo').
+		bar := autoFree value: (Alien newCString: 'bar').
+		...]
+"!
+
+dataSize
+
+	^self subclassResponsibility!
+
+ensureLoaded: libraryName
+
+	^self loadedLibraries
+		at: libraryName
+		ifAbsentPut: [(Alien new: 4)
+								unsignedLongAt: 1 put: (self primLoadLibrary: libraryName);
+								yourself]!
+
+forLong: long
+
+	((long > 16r7FFFFFFF) or: [long < -16r80000000])
+		ifTrue: [self error: 'Out of range'].
+	^(self new: 4)
+		signedLongAt: 1 put: long;
+		yourself!
+
+forPointer: pointer <Integer> ^<X>
+
+	^(self primitiveNew: 8)
+		size: 0;
+		addressField: pointer;
+		yourself!
+
+forULong: ulong
+
+	((ulong > 16rFFFFFFFF) or: [ulong < 0])
+		ifTrue: [self error: 'Out of range'].
+	^(self new: 4)
+		unsignedLongAt: 1 put: ulong;
+		yourself!
+
+new
+
+	^self new: self dataSize!
+
+new: size <Integer> ^ <X>
+
+	^(self primitiveNew: size + 4)
+		size: size;
+		initialize!
+
+newC
+
+	^self newC: self dataSize!
+
+newC: size <Integer> ^ <X>
+
+	^(self primitiveNew: 8)
+		size: size negated;
+		addressField: (self Ccalloc: size);
+		initialize!
+
+newCString: string <String> ^ <Alien>
+
+	^(Alien rawNewC: string size + 1)
+		replaceFrom: 1
+		to: string size
+		with: string
+		startingAt: 1;
+		unsignedByteAt: string size + 1 put: 0;
+		yourself!
+
+newForCallbackArgs
+
+	^(self new: 8)
+		size: self dataSize negated;
+		yourself!
+
+newGC
+
+	^self newGC: self dataSize!
+
+newGC: size <Integer> ^<X>
+
+	| alien address |
+	alien := self primitiveNew: 8.
+	alien size: size negated.
+	address := self Ccalloc: size.
+	self gcMallocedAliens add: alien.
+	^alien
+		addressField: address;
+		initialize
+		!
+
+rawNewC: size <Integer> ^ <X>
+
+	^(self primitiveNew: 8)
+		size: size negated;
+		addressField: (self Cmalloc: size);
+		initialize!
+
+thunk: address <Integer> ^ <Alien>
+
+	^self forPointer: address! !
+
+! (Delta mirrorFor: #Alien) classSide methodsFor: 'libraries' !
+
+
+lookup: symbolName <String> inLibrary: libraryName <String> ^ <Alien>
+
+	^self forPointer: ((Alien ensureLoaded: libraryName)
+										primFindSymbol: symbolName)!
+
+lookupOrNil: symbolName <String> inLibrary: libraryName <String> ^ <Alien>
+
+	^[self lookup: symbolName inLibrary: libraryName]
+			on: NotFoundError
+			do: [:err| nil]!
+
+primLoadLibrary: libraryName
+
+	^(Platform DLLLoad2: libraryName) asInteger! !
+
+! (Delta mirrorFor: #Alien) classSide methodsFor: 'private - accessing' !
+
+
+gcMallocedAliens ^<WeakSet>
+
+	GCMallocedAliens isNil
+		ifTrue: [GCMallocedAliens := WeakSet new.
+					GCMallocedAliens addWeakDependent: (
+						BlockDependent updateBlock: [:aspect :alien | alien free])].
+	^GCMallocedAliens!
+
+loadedLibraries
+
+	LoadedLibraries isNil ifTrue: 
+		[LoadedLibraries := Dictionary new].
+	^LoadedLibraries! !
+
+! (Delta mirrorFor: #Alien) classSide methodsFor: 'private - memory allocation' !
+
+
+Ccalloc: size <Integer> ^ <Integer>
+
+	^{{self primitiveAlienCalloc: size
+			ifFail: [:err| self error: 'Failed to calloc alien: ', err]}}!
+
+Cmalloc: size <Integer> ^ <Integer>
+
+	^{{self primitiveAlienMalloc: size
+			ifFail: [:err| self error: 'Failed to malloc alien: ', err]}}! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'accessing' !
+
+
+address ^<Integer>
+
+	^self size <= 0
+		ifTrue: [self addressField]
+		ifFalse: [self error: 'One cannot take the address of direct Alien instances; they may move']!
+
+boolAt: index <Integer> ^<Boolean>
+
+	^(self at: 1) ~~ 0!
+
+boolAt: index <Integer> put: value <Boolean> ^<Boolean>
+
+	self at: 1 put: (value ifTrue: [1] ifFalse: [0]).
+	^value!
+
+dataSize ^<Integer>
+
+	^self size abs!
+
+doubleAt: index <Integer> ^<Float>
+
+	^{{self primitiveAlienDoubleAt: index
+				ifFail: [:err| self error: 'Unable to get double ', err] }}!
+
+doubleAt: index <Integer> put: double <Float> ^<Float>
+
+	^{{self primitiveAlienDoubleAt: index
+				put: double
+				ifFail: [:err| self error: 'Unable to set double ', err] }}!
+
+floatAt: index <Integer> ^<Double>
+
+	^{{self primitiveAlienFloatAt: index
+				ifFail: [:err| self error: 'Unable to get float ', err] }}!
+
+floatAt: index <Integer> put: double <Float> ^<Float>
+
+	^{{self primitiveAlienFloatAt: index
+				put: double
+				ifFail: [:err| self error: 'Unable to set float ', err] }}!
+
+pointer
+
+	self isPointer ifTrue: [^self].
+	^self class forPointer: self address!
+
+signedByteAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienSignedByteAt: index
+				ifFail: [:err| self error: 'Unable to get signed byte ', err] }}!
+
+signedByteAt: index <Integer> put: byte <Integer> ^<Integer>
+
+	^{{self primitiveAlienSignedByteAt: index
+				put: byte
+				ifFail: [:err| self error: 'Unable to set signed byte ', err] }}!
+
+signedLongAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienSignedLongAt: index
+				ifFail: [:err| self error: 'Unable to get signed long ', err] }}!
+
+signedLongAt: index <Integer> put: long <Integer>^<Integer>
+
+	^{{self primitiveAlienSignedLongAt: index
+				put: long
+				ifFail: [:err| self error: 'Unable to get signed long ', err] }}!
+
+signedShortAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienSignedShortAt: index
+				ifFail: [:err| self error: 'Unable to get signed short ', err] }}!
+
+signedShortAt: index <Integer> put: short <Integer> ^<Integer>
+
+	^{{self primitiveAlienSignedShortAt: index
+				put: short
+				ifFail: [:err| self error: 'Unable to set signed short ', err] }}!
+
+strcpy
+
+	^self strcpyFrom: 1!
+
+strcpyFrom: startIndex
+
+	|string length offset|
+	length := self strlenStartingAt: startIndex.
+	string := String new: length.
+	offset := startIndex - 1.
+	1 to: length do: [:i|
+		string at: i put: (Character value: (self unsignedByteAt: i + offset))].
+	^string!
+
+strcpyUTF8
+
+	^self strcpyUTF8From: 1!
+
+strcpyUTF8From: startIndex
+
+	^self unimplemented!
+
+strlen
+
+	^self strlenStartingAt: 1!
+
+strlenStartingAt: startIndex
+
+	self dataSize == 0
+		ifTrue: [^self rawStrlenStartingAt: startIndex].
+	startIndex to: self dataSize do: [:i| (self unsignedByteAt: i) == 0
+																ifTrue: [^ i - startIndex]].
+	^self dataSize - startIndex + 1!
+
+unsignedByteAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienUnsignedByteAt: index
+				ifFail: [:err| self error: 'Unable to get unsigned byte ', err] }}!
+
+unsignedByteAt: index <Integer> put: byte <Integer|Character> ^<Integer>
+
+	|c|
+	c := byte isCharacter
+				ifTrue: [byte asciiValue]
+				ifFalse: [byte].
+	^{{self primitiveAlienUnsignedByteAt: index
+				put: c
+				ifFail: [:err| self error: 'Unable to set unsigned byte ', err] }}!
+
+unsignedLongAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienUnsignedLongAt: index
+				ifFail: [:err| self error: 'Unable to get unsigned long ', err] }}!
+
+unsignedLongAt: index <Integer> put: long <Integer>^<Integer>
+
+	^{{self primitiveAlienUnsignedLongAt: index
+				put: long
+				ifFail: [:err| self error: 'Unable to set unsigned long ', err] }}!
+
+unsignedShortAt: index <Integer> ^<Integer>
+
+	^{{self primitiveAlienUnsignedShortAt: index
+				ifFail: [:err| self error: 'Unable to get unsigned short ', err] }}!
+
+unsignedShortAt: index <Integer> put: short <Integer>^<Integer>
+
+	^{{self primitiveAlienUnsignedShortAt: index
+				put: short
+				ifFail: [:err| self error: 'Unable to set unsigned short ', err] }}! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'callouts' !
+
+
+asAliens: array <Array> ^ <Array[Alien]>
+
+	^array collect: [:el| el asAlien]!
+
+primFFICallResult: result <Alien>
+
+	{{self primitiveAlienCallResult: result ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject> with: arg1 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject> with: arg1 <Alien|SmallInteger> with: arg2 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			with: arg3 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			with: arg3 asAlien
+			with: arg4 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			with: arg3 asAlien
+			with: arg4 asAlien
+			with: arg5 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			with: arg3 asAlien
+			with: arg4 asAlien
+			with: arg5 asAlien
+			with: arg6 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			with: arg1 asAlien
+			with: arg2 asAlien
+			with: arg3 asAlien
+			with: arg4 asAlien
+			with: arg5 asAlien
+			with: arg6 asAlien
+			with: arg7 asAlien
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger>
+with: arg8 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: { arg1. arg2. arg3. arg4. arg5. arg6. arg7. arg8 })
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger>
+with: arg8 <Alien|SmallInteger>
+with: arg9 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: { arg1. arg2. arg3. arg4. arg5. arg6. arg7. arg8. arg9 })
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger>
+with: arg8 <Alien|SmallInteger>
+with: arg9 <Alien|SmallInteger>
+with: arg10 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: { arg1. arg2. arg3. arg4. arg5. arg6. arg7. arg8. arg9. arg10 })
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger>
+with: arg8 <Alien|SmallInteger>
+with: arg9 <Alien|SmallInteger>
+with: arg10 <Alien|SmallInteger>
+with: arg11 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: { arg1. arg2. arg3. arg4. arg5. arg6. arg7. arg8. arg9. arg10. arg11 })
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+with: arg1 <Alien|SmallInteger>
+with: arg2 <Alien|SmallInteger>
+with: arg3 <Alien|SmallInteger>
+with: arg4 <Alien|SmallInteger>
+with: arg5 <Alien|SmallInteger>
+with: arg6 <Alien|SmallInteger>
+with: arg7 <Alien|SmallInteger>
+with: arg8 <Alien|SmallInteger>
+with: arg9 <Alien|SmallInteger>
+with: arg10 <Alien|SmallInteger>
+with: arg11 <Alien|SmallInteger>
+with: arg12 <Alien|SmallInteger> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: { arg1. arg2. arg3. arg4. arg5. arg6. arg7. arg8. arg9. arg10. arg11. arg12 })
+			ifFail: [:err| self error: err]}}.
+	^result!
+
+primFFICallResult: result <Alien|UndefinedObject>
+withArguments: arguments <Array[Alien|SmallInteger]> ^ <Alien>
+
+	{{self primitiveAlienCallResult: result
+			withArguments: (self asAliens: arguments)
+			ifFail: [:err| self error: err]}}.
+	^result! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'converting' !
+
+
+asAlien
+
+	^self!
+
+asExternalProxy ^<ExternalProxy>
+
+	^ExternalProxy
+		forHigh: (self unsignedShortAt: 3)
+		low: (self unsignedShortAt: 1)!
+
+asSignedByte
+
+	^self signedByteAt: 1!
+
+asSignedLong
+
+	^self signedLongAt: 1!
+
+asSignedShort
+
+	^self signedShortAt: 1!
+
+asUnsignedByte
+
+	^self unsignedByteAt: 1!
+
+asUnsignedLong
+
+	^self unsignedLongAt: 1!
+
+asUnsignedShort
+
+	^self unsignedShortAt: 1! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'instance initialization' !
+
+
+initialize
+	"Subclasses may override to perform specific initialization"! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'memory management' !
+
+
+free
+
+	{{primitiveAlienFree: self addressField
+		ifFail: [:err| self error: 'Could not free alien: ', err]}}.
+	self addressField: 0!
+
+freeAfter: aBlock <[Alien]>
+
+	^[aBlock value: self]
+		ensure: [self free]! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'private - accessing' !
+
+
+addressField ^<Integer>
+
+	^{{ self primitiveAlienAddressIfFail: [:err| self error: 'failed to get address of alien ', err] }}!
+
+addressField: anInteger <Integer>
+
+	^{{ self primitiveAlienAddress: anInteger
+					ifFail: [:err| self error: 'failed to set address of alien ', err] }}!
+
+at: index <Integer> ^ <SmallInteger>
+
+	^self unsignedByteAt: index!
+
+at: index <Integer> put: byte <SmallInteger> ^ <SmallInteger>
+
+	^self unsignedByteAt: index put: byte!
+
+primFindSymbol: symbolName <String> ^ <Integer>
+
+	|result library|
+	result := ExternalProxy new.
+	library := self asExternalProxy.
+	{{primitiveDLLLookup: symbolName asSymbol
+			in: library
+			result: result
+			ifFail: [:err | err == #NotFound
+									ifTrue: [NotFoundError signal]
+									ifFalse: [self error: err]]}}.
+	^result asInteger	!
+
+rawStrlenStartingAt: startIndex
+
+	|index|
+	index := startIndex.
+	[(self unsignedByteAt: index) == 0]
+		whileFalse: [index := index + 1].
+	^index - startIndex!
+
+signedFourByteLimit
+
+	^self smallIntLimit * 4!
+
+size ^<Integer>
+
+	^{{self primitiveAlienSizeIfFail: [:err| self error: 'failed to get alien size: ', err] }}!
+
+size: anInteger <Integer>
+
+	{{self primitiveAlienSize: anInteger
+				ifFail: [:err| self error: 'failed to set alien size: ', err] }}!
+
+smallIntLimit
+
+	^SmallInteger maxVal + 1!
+
+strlenThroughPointerAt: index
+
+	^(Alien forPointer: (self unsignedLongAt: index))
+		rawStrlenStartingAt: 1!
+
+unsignedFourByteLimit
+
+	^self smallIntLimit * 8! !
+
+! (Delta mirrorFor: #Alien) methodsFor: 'testing' !
+
+
+isPointer
+
+	^self size == 0! !
+

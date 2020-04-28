@@ -1,0 +1,98 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+##
+
+
+# -----------------------------------------------------------------------------
+
++ActivationShowCode
++CompilerDebug
+-TryNewBackend
++UseNewMakeConformant
+-BreakAtWarning
+-CompiledCodeOnly
+-EliminateContexts
+-EnableTasks
+-UseInliningDatabase
+-UseRecompilation
+-WizardMode
+
+
+# -----------------------------------------------------------------------------
+
+-PrintInterpreter
+-PrintStubRoutines
++UsePrimitiveMethods
++VerifyCode
++VerifyDebugInfo
+
+# -----------------------------------------------------------------------------
+
++PrintCompilation
++PrintInlining
++PrintRecompilation
+-PrintCode
+-PrintCodeGeneration
+-PrintCompilation
+-PrintDebugInfo
+-PrintScavenge
+-PrintStackAtScavenge
+-PrintUncommonBranches
+-PrintUncommonBranches
+
+
+# -----------------------------------------------------------------------------
+
+-VerifyAfterGC
+-VerifyAfterScavenge
+-VerifyBeforeScavenge
+-VerifyDebugInfo
+
+
+# -----------------------------------------------------------------------------
+
+-TraceDLLLookup
+-TraceBootstrap
+-TraceDLLCalls
++TraceExpansion
+-TraceMessageSend
+
+
+# -----------------------------------------------------------------------------
+
+
+
+# -----------------------------------------------------------------------------
+
+#-EliminateUnneededNodes
+#-GlobalCopyPropagate
+#-LocalCopyPropagate
+
+
+# ./src/cpp/main/vm/runtime/debug.hpp
+
+
+EdenSize=1024
+OldSize=4096
+CodeSize=128
+
+ReservedCodeSize=256
+SurvivorSize=1024
+#TraceInterpreterFramesAt=100
+#StopInterpreterAt=100000
+
+# CodeSize               20*K, "size of code cache (in Kbytes)"                           
+# EdenSize               512, "size of eden (in Kbytes)"                                 
+# OldSize                3*K, "initial size of oldspace (in Kbytes)"                     
+# PICSize                128, "size of PolymorphicInlineCache cache (in Kbytes)"         
+# ThreadStackSize        512, "Size (in K) of each thread's stack"                       
+# JumpTableSize           8*K, "size of jump table"                                           
+# ObjectHeapExpandSize    512, "Chunk size (in Kbytes) by which the object heap grows"     
+# ReservedCodeSize       10*K, "Maximum size of code cache (in Kbytes)"                       
+# ReservedPICSize         4*K, "Maximum size of PolymorphicInlineCache cache (in Kbytes)"  
+# SurvivorSize             64, "size of survivor spaces (in Kbytes)"                       
+# 
+# 
+# 

@@ -1,0 +1,111 @@
+Class
+newForCallbackArgs!
+36486047!
+instance creation!
+0! !
+#categories!
+instance creation!
+class initialization!
+private - memory allocation!
+private - accessing!
+libraries! !
+loadedLibraries!
+36488249!
+private - accessing!
+1! !
+newGC!
+36486240!
+instance creation!
+0! !
+autoFreeAfter:!
+36482974!
+instance creation!
+0[X,^Y]:! !
+forPointer:!
+36484503!
+instance creation!
+0Integer:X! !
+ensureLoaded:!
+36483923!
+instance creation!
+0:! !
+dataSize!
+36483770!
+instance creation!
+0! !
+newC:!
+36485492!
+instance creation!
+0Integer:X! !
+newGC:!
+36486388!
+instance creation!
+0Integer:X! !
+initialize!
+36482176!
+class initialization!
+0! !
+newC!
+36485346!
+instance creation!
+0! !
+new!
+36485001!
+instance creation!
+0! !
+lookupOrNil:inLibrary:!
+36487441!
+libraries!
+0String:String:Alien! !
+gcMallocedAliens!
+36487905!
+private - accessing!
+1WeakSet! !
+thunk:!
+36508334!
+instance creation!
+0Integer:Alien! !
+forULong:!
+36484727!
+instance creation!
+0:! !
+newCString:!
+36485734!
+instance creation!
+0String:Alien! !
+atAddress:dataSize:!
+36482707!
+instance creation!
+0Integer:Integer:X! !
+atAddress:!
+36482464!
+instance creation!
+0Integer:X! !
+new:!
+36485145!
+instance creation!
+0Integer:X! !
+rawNewC:!
+36486731!
+instance creation!
+0Integer:X! !
+forLong:!
+36484225!
+instance creation!
+0:! !
+primLoadLibrary:!
+36487715!
+libraries!
+0:! !
+Ccalloc:!
+36488480!
+private - memory allocation!
+1Integer:Integer! !
+Cmalloc:!
+36488742!
+private - memory allocation!
+1Integer:Integer! !
+lookup:inLibrary:!
+36487172!
+libraries!
+0String:String:Alien! !

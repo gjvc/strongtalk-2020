@@ -1,0 +1,21 @@
+#! /bin/bash
+
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+
+# execute ---------------------------------------------------------------------
+
+cd ${_ROOT}
+touch ${_ROOT}/WORKSPACE
+
+export CC=/usr/bin/gcc
+export CXX=/usr/bin/g++
+
+export CC=/usr/bin/clang
+export CXX=/usr/bin/clang++
+
+bazel clean
+bazel build strongtalk "${@}"
+

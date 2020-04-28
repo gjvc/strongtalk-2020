@@ -1,0 +1,144 @@
+//
+//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+//
+
+#include "vm/system/platform.hpp"
+#include "vm/system/asserts.hpp"
+#include "vm/utilities/OutputStream.hpp"
+#include "vm/memory/Closure.hpp"
+#include "vm/runtime/Process.hpp"
+
+#include "vm/memory/SnapshotDescriptor.hpp"
+
+
+void SnapshotDescriptor::read_header() {
+    read_revision();
+    read_sizes();
+}
+
+
+void SnapshotDescriptor::write_header() {
+    write_revision();
+    write_sizes();
+}
+
+
+void SnapshotDescriptor::read_sizes() {
+
+}
+
+
+void SnapshotDescriptor::write_sizes() {
+
+}
+
+
+static const char * revision_format = "Delta snapshot revision: %d.%d\n";
+
+
+void SnapshotDescriptor::read_revision() {
+    fprintf( _file, revision_format, Universe::major_version(), Universe::snapshot_version() );
+}
+
+
+void SnapshotDescriptor::write_revision() {
+    int major, snap;
+    if ( fscanf( _file, revision_format, &major, &snap ) not_eq 2 )
+        error( "reading revision" );
+    if ( Universe::major_version() not_eq major )
+        error( "major revision number conflict" );
+    if ( Universe::snapshot_version() not_eq snap )
+        error( "snapshot revision number conflict" );
+}
+
+
+class ReadClosure : public OopClosure {
+
+    private:
+        void do_oop( Oop * o ) {
+
+        }
+
+
+        SnapshotDescriptor * _snapshotDescriptor;
+
+    public:
+        ReadClosure( SnapshotDescriptor * s ) {
+            this->_snapshotDescriptor = s;
+        }
+};
+
+class WriteClosure : public OopClosure {
+
+    private:
+        void do_oop( Oop * o ) {
+            fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
+        }
+
+
+        SnapshotDescriptor * _snapshotDescriptor;
+
+    public:
+        WriteClosure( SnapshotDescriptor * s ) {
+            this->_snapshotDescriptor = s;
+        }
+};
+
+
+void SnapshotDescriptor::read_roots() {
+    ReadClosure blk( this );
+    Universe::root_iterate( &blk );
+}
+
+
+void SnapshotDescriptor::write_roots() {
+    WriteClosure blk( this );
+    Universe::root_iterate( &blk );
+}
+
+
+void SnapshotDescriptor::read_spaces() {
+
+}
+
+
+void SnapshotDescriptor::write_spaces() {
+
+}
+
+
+void SnapshotDescriptor::read_zone() {
+    // Not implemented yet
+}
+
+
+void SnapshotDescriptor::write_zone() {
+    // Not implemented yet
+}
+
+
+void SnapshotDescriptor::read_from( const char * name ) {
+    read_header();
+    read_spaces();
+    read_roots();
+    read_zone();
+}
+
+
+void SnapshotDescriptor::write_on( const char * name ) {
+    write_header();
+    write_spaces();
+    write_roots();
+    write_zone();
+}
+
+
+void SnapshotDescriptor::error( const char * msg ) {
+    fatal( msg );
+}
+
+
+SymbolOop SnapshotDescriptor::error_symbol() {
+    return nullptr;
+}

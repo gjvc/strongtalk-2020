@@ -1,0 +1,98 @@
+Delta define: #ClassDefinitionOutliner as: (
+(Class subclassOf: 'ClassOrMixinDefinitionOutliner[AbstractClassMirror]' instanceVariables: 'superclassOutliner <SuperclassOutliner>
+classInstanceVariableOutliner <InstanceVariableOutliner>
+addingClassInstanceVariables <Boolean>')) !
+
+(Delta mirrorFor: #ClassDefinitionOutliner) revision: '$Revision: 1.4 $'!
+
+(Delta mirrorFor: #ClassDefinitionOutliner) group: 'outliner'!
+
+(Delta mirrorFor: #ClassDefinitionOutliner)
+comment: 
+'(c) 1995-1997 Sun Microsystems, Inc. ALL RIGHTS RESERVED. 
+Use and distribution of this software is subject to the terms of the attached source license.'!
+
+! (Delta mirrorFor: #ClassDefinitionOutliner) methodsFor: 'private' !
+
+
+addingClassInstanceVariables ^ <Boolean>
+
+	^addingClassInstanceVariables!
+
+addingClassInstanceVariables: value <Boolean>
+
+	addingClassInstanceVariables := value!
+
+classInstanceVariableOutliner ^ <InstanceVariableOutliner>
+
+	^classInstanceVariableOutliner!
+
+classInstanceVariableOutliner: outliner <InstanceVariableOutliner>
+
+	classInstanceVariableOutliner := outliner!
+
+insertRemainingDefinition: col <Column[Visual]>
+
+	super insertRemainingDefinition: col.
+ 	(self mirror classSide instanceVariableString isEmpty not or: [ self addingClassInstanceVariables ])
+		ifTrue: [		self classInstanceVariableOutliner: (ClassInstanceVariableOutliner for: self mirror classSide).
+							col add: (self addChild: self classInstanceVariableOutliner) imbeddedVisual ]
+		ifFalse: [	self classInstanceVariableOutliner: nil ].
+!
+
+insertSuperDefinition: col <Column[Visual]>
+
+	self mirror superclass notNil
+		ifTrue: [		self superclassOutliner: (SuperclassOutliner for: self mirror).
+							col add: (self addChild: self superclassOutliner) imbeddedVisual ]
+		ifFalse: [	self superclassOutliner: nil ]
+!
+
+superclassOutliner ^ <SuperclassOutliner>
+
+	^superclassOutliner!
+
+superclassOutliner: o <SuperclassOutliner>
+
+	superclassOutliner := o! !
+
+! (Delta mirrorFor: #ClassDefinitionOutliner) methodsFor: 'dependencies' !
+
+
+update: aspect <Object> with: value <Object>
+
+	super update: aspect with: value.
+	self inSessionProcessDo: [
+		aspect = #superclassType
+			ifTrue: [	self updateHeaders ].
+	]! !
+
+! (Delta mirrorFor: #ClassDefinitionOutliner) methodsFor: 'accessing' !
+
+
+outlinerForLocator: loc <DeltaLocator[Mirror]> 
+
+^SuperclassClauseLocator coerce: loc
+	do:[: l <SuperclassClauseLocator> | self superclassOutliner]
+	else:[super outlinerForLocator: loc]! !
+
+! (Delta mirrorFor: #ClassDefinitionOutliner) methodsFor: 'private-initialization' !
+
+
+initialize
+
+	super initialize.
+	self addingClassInstanceVariables: false! !
+
+! (Delta mirrorFor: #ClassDefinitionOutliner) methodsFor: 'control' !
+
+
+addClassInstanceVariables
+
+	self open: true.
+	self addingClassInstanceVariables: true.
+	[ self updateBody ] ensure: [ self addingClassInstanceVariables: false ].
+	self classInstanceVariableOutliner notNil
+		ifTrue: [ self inSessionProcessDo: [ 
+							self classInstanceVariableOutliner becomeFocusIfFail: [] ] ]! !
+

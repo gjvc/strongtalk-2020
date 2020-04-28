@@ -1,0 +1,11 @@
+Class
+#group!
+Collections-Tests! !
+#categories!
+testing! !
+testIsSortedBy!
+33565868!
+testing!
+0! !
+#superclassTypeString!
+TestCase! !

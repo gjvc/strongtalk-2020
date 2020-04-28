@@ -1,0 +1,72 @@
+Delta define: #Callback as: (
+(Class subclassOf: 'CallBack' instanceVariables: '')) !
+
+(Delta mirrorFor: #Callback) revision: '$Revision:$'!
+
+(Delta mirrorFor: #Callback) group: 'Aliens'!
+
+(Delta mirrorFor: #Callback)
+comment: 
+''!
+
+! (Delta mirrorFor: #Callback) classSide methodsFor: 'instance creation' !
+
+
+block: block <[Alien, Alien]> argsClass: class <Alien class> ^ <Callback>
+
+	|callback|
+	callback := self new.
+	CallBackArray add: callback.
+	{{primitiveCallBackRegisterCCall: CallBackArray size
+		result: callback
+		ifFail: [:err | self error: err]}}.
+	callback
+		block: block
+		argsProxy: class newForCallbackArgs.
+	^callback!
+
+block: block <[Alien, Alien]> stdcallArgsClass: class <Alien class> ^ <Callback>
+
+	|callback|
+	callback := self new.
+	CallBackArray add: callback.
+	{{primitiveCallBackRegisterPascalCall: CallBackArray size
+		numberOfArguments: ((class dataSize + 3) // 4)
+		result: callback
+		ifFail: [:err | self error: err]}}.
+	callback
+		block: block
+		argsProxy: class newForCallbackArgs.
+	^callback! !
+
+! (Delta mirrorFor: #Callback) methodsFor: 'accessing' !
+
+
+thunk ^<Alien>	^Alien thunk: self asInteger! !
+
+! (Delta mirrorFor: #Callback) methodsFor: 'evaluation' !
+
+
+evaluate: stack
+
+	^block value: stack! !
+
+! (Delta mirrorFor: #Callback) methodsFor: 'instance initialization' !
+
+
+block: block <[Alien, Alien]> argsProxy: args <Alien>
+
+	self block: [:stack|
+						|result|
+						result := FFICallbackReturnValue new.
+						args addressField: stack asInteger.
+						block value: args value: result.
+						result value]! !
+
+! (Delta mirrorFor: #Callback) methodsFor: 'restricted-accessing' !
+
+
+index
+
+	^self smallIntegerAt: 1! !
+

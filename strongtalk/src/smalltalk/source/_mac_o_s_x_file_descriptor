@@ -1,0 +1,26 @@
+Class
+#categories!
+accessing!
+private! !
+blockSize!
+33889367!
+accessing!
+0Int! !
+#superclassTypeString!
+UnixFileDescriptor! !
+lseek:position:whence:!
+33998784!
+private!
+1:Int:Int:! !
+stat:ifFail:!
+36013321!
+accessing!
+0::! !
+size!
+33889585!
+accessing!
+0Int! !
+StatBuffer!
+36013969!
+private!
+1! !

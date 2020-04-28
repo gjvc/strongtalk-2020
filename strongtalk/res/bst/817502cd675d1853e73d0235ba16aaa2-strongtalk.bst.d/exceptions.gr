@@ -1,0 +1,8 @@
+"$Revision:$"!
+Delta fileInFromFile: (FilePath for: 'BlockExceptionDescriptor.dlt') !
+Delta fileInFromFile: (FilePath for: 'BlockExceptionHandler.dlt') !
+Delta fileInFromFile: (FilePath for: 'BlockExceptionSelector.dlt') !
+Delta fileInFromFile: (FilePath for: 'Exception.dlt') !
+Delta fileInFromFile: (FilePath for: 'LinkedExceptionHandler.dlt') !
+Delta fileInFromFile: (FilePath for: 'TestException.dlt') !
+Delta fileInFromFile: (FilePath for: 'ExceptionSelector.str') !

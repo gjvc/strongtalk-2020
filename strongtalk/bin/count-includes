@@ -1,0 +1,18 @@
+#! /bin/bash
+
+
+# -----------------------------------------------------------------------------
+
+set -eu
+readonly _DIRNAME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+readonly _BASENAME=$( basename ${BASH_SOURCE[0]} )
+readonly _ROOT=$( dirname ${_DIRNAME} )
+
+
+# -----------------------------------------------------------------------------
+
+find ${_ROOT}/src/cpp -name '*.[ch]pp' \
+    | xargs -n1 grep -c '#include' \
+    | paste -s -d+ \
+    | bc
+

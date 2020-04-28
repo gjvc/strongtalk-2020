@@ -1,0 +1,16 @@
+
+res/bst/NOTES ---------------------------------------------------------------
+
+    res/bst/6baa282048bc4e695036d30f2054dea0-strongtalk.bst
+        Windows -- depends on KERNEL32.DLL
+
+    res/bst/fc5d675f9e4375d86d9f267bb57ba91e-strongtalk.bst
+        Windows -- depends on KERNEL32.DLL
+
+    res/bst/817502cd675d1853e73d0235ba16aaa2-strongtalk.bst
+        Windows -- depends on KERNEL32.DLL
+        OS X -- contains references to ObjectiveC
+
+    res/bst/4d92f2aa2caf41fc1e607e605cd3d1ab-strongtalk.bst
+        Linux
+

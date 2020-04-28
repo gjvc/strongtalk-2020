@@ -1,0 +1,78 @@
+#! /usr/bin/env python3
+
+import optparse
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+
+def findExuberantCtags( options ):
+
+    for candidate in ( '/usr/bin/etags.ctags', '/usr/bin/ctags' ):
+        if not os.path.exists( candidate ): continue
+        p = subprocess.Popen( [ candidate, '--version' ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+        out, err = p.communicate()
+        out = out.decode( 'utf-8' )
+
+        for line in out.split( '\n' ):
+            match = re.search( 'Exuberant Ctags (?P<version>[0-9\.]+)', line )
+            if not match: continue
+            version = match.group( 'version' )
+            if options.verbose: print( f'found version {version} of exuberant ctags at {candidate}' )
+            return candidate
+
+
+def parse_args():
+
+    parser              = optparse.OptionParser()
+    root                = pathlib.Path( __file__ ).parent.parent.resolve()
+    ctags_options_file  = pathlib.Path( root ) / pathlib.Path( 'etc/ctags/ctags.options' )
+    cpp_source_root     = pathlib.Path( root ) / pathlib.Path( 'src/cpp/main/vm' )
+    ctags_output_file   = pathlib.Path( root ) / 'tags'
+
+    parser.add_option( '--root',               action='store',      default=root )
+    parser.add_option( '--verbose',            action='store_true', default=False )
+    parser.add_option( '--ctags-options-file', action='store',      default=ctags_options_file )
+    parser.add_option( '--ctags-output-file',  action='store',      default=ctags_output_file )
+    parser.add_option( '--cpp-source-root',    action='store',      default=cpp_source_root )
+
+    options, args = parser.parse_args()
+
+    return options, args
+
+
+def getArgv( options ):
+
+    argv = []
+    argv.append( findExuberantCtags( options ) )
+    if options.verbose:
+        argv.append( '--verbose' )
+    argv.append( '--recurse=yes' )
+    argv.append( '-o' )
+    argv.append( options.ctags_output_file )
+    argv.append( f'--options={options.ctags_options_file}' )
+    argv.append( options.cpp_source_root )
+
+    return argv
+
+
+def run( options, args ):
+
+    argv = getArgv( options )
+    p = subprocess.Popen( argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=options.root )
+    out, err = p.communicate()
+    out = out.decode( 'utf-8' )
+    if err: print( err )
+    if out: print( out )
+
+
+def main():
+    options, args = parse_args()
+    run( options, args )
+
+
+if __name__ == '__main__':
+    sys.exit( main() )
+

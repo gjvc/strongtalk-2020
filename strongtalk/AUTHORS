@@ -1,0 +1,66 @@
+
+##
+##  (C) 1994 - 2020, The Strongtalk authors and contributors
+##  See "COPYRIGHTS" file for full licence & copyright terms
+##
+
+
+AUTHORS
+
+
+    Lars Bak
+
+        the VM wizard.
+
+
+    Gilad Bracha
+
+        wrote the typechecker, the reflective interface support, and mixins at
+        the Smalltalk level.
+
+
+    Steffen Grarup
+
+        who worked not only on the VM, especially the garbage collector; but on
+        the Smalltalk side, where he wrote the programming environment, as well as the
+        source code manager and other things.
+
+
+    Robert Griesemer
+
+        wrote the interpreter, the interpreter generator, most of the compiler,
+        and other VM stuff. (He also wrote an even better compiler than the one running
+        in this version, but it wasn't quite finished enough for us to use for this
+        release- it would have been considerably faster).
+
+
+    David Griswold
+
+        wrote the typed "Blue Book" libraries, and the glyph-based user-interface
+        framework, the widgets and the HTML browser, and also managed the group.
+
+
+    Urs Hölzle
+
+        of course worked on the compiler and the tricky inlining infrastructure
+        that it used, and other VM stuff.
+
+
+    Srdjan Mitrovic
+
+        joined and did most of the adaptation of the technology to Java.
+
+
+    Stephen L. Rees
+
+
+    George Cox
+
+        Cleaned up the code to C++20 standard
+
+
+
+SEE ALSO
+
+    http://strongtalk.org/history.html
+

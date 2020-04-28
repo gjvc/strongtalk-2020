@@ -1,0 +1,33 @@
+Class
+#categories!
+initialization!
+adding! !
+add:finalizing:!
+35562053!
+adding!
+0::! !
+#superclassTypeString!
+Object! !
+#group!
+Aliens! !
+#subtype!
+true! !
+initializeWithOwner:!
+35641842!
+initialization!
+0:! !
+#branded!
+true! !
+#extensionsAreSubtypes!
+true! !
+#abstract!
+false! !
+#instanceVariableString!
+accessProtect <Semaphore>
+firstUnusedIndex <Integer>
+lastUsedIndex <Integer>
+weakArray <WeakArray>
+strongArray <Array>
+owner <Object>! !
+#revision!
+$Revision:$! !

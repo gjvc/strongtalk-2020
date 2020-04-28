@@ -1,0 +1,59 @@
+Delta define: #MacOSXFileDescriptor as: (
+(Class subclassOf: 'UnixFileDescriptor' instanceVariables: '')) !
+
+(Delta mirrorFor: #MacOSXFileDescriptor) revision: '$Revision:$'!
+
+(Delta mirrorFor: #MacOSXFileDescriptor) group: 'Unclassified'!
+
+(Delta mirrorFor: #MacOSXFileDescriptor)
+comment: 
+''!
+
+! (Delta mirrorFor: #MacOSXFileDescriptor) methodsFor: 'accessing' !
+
+
+blockSize ^<Int>
+    "Use the sector size"
+    ^self stat: [:buffer| buffer blockSize]
+    		ifFail: [4096]!
+
+size ^<Int>
+    "Use the sector size"
+    ^self stat: [:buffer| buffer fileSize]
+    		ifFail: [0]!
+
+stat: block ifFail: failBlock
+
+    | statBuffer <StatBuffer> 
+    	status <ExternalProxy> |
+    statBuffer := self StatBuffer new.
+    statBuffer allocate.
+    [ status := {{<libc ExternalProxy fstat>
+            			name: self handle
+            			buffer: statBuffer    }}.
+	^status asSmallInteger == -1
+		ifTrue: [failBlock value]
+		ifFalse: [ block value: statBuffer ]]
+			ensure: [ statBuffer free]
+
+	! !
+
+! (Delta mirrorFor: #MacOSXFileDescriptor) methodsFor: 'private' !
+
+
+StatBuffer
+
+	^MacOSXStatBuffer!
+
+lseek: handle position: p <Int> whence: whence <Int>
+    "%todo: support large integer positions for extremely large files"
+    | padding |
+    padding := p < 0
+    					ifTrue: [-1]
+    					ifFalse: [0].
+   ^ {{<libc ExternalProxy lseek>
+        				fd: handle
+        				offsetLow: p
+        				offsetHigh: padding
+        				whence: whence }}! !
+

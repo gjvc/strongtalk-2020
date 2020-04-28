@@ -1,0 +1,48 @@
+Class
+#categories!
+testing!
+private - test support! !
+unimplementedText!
+35013900!
+private - test support!
+1! !
+#superclassTypeString!
+TestCase! !
+#group!
+Aliens test! !
+testLookupInLibraryWin32!
+35026558!
+testing!
+0! !
+testNewGCShouldBeFreedAfterGC!
+35659902!
+testing!
+0! !
+testLookupClockWin32!
+35080294!
+testing!
+0! !
+testNewForCallbackArgs!
+35080565!
+testing!
+0! !
+testLookupOrNilInLibraryWin32!
+35028427!
+testing!
+0! !
+libcName!
+35137841!
+private - test support!
+1! !
+testPrimLoadLibraryWin32!
+35014720!
+testing!
+0! !
+testNewCString!
+35008701!
+testing!
+0! !
+testEnsureLoadedWin32!
+35011617!
+testing!
+0! !

@@ -1,0 +1,10 @@
+GPATH
+GRTAGS
+GTAGS
+obj/
+src/smalltalk/source/strongtalkchange.log
+src/smalltalk/source/strongtalkrestore.log
+strongtalk.log
+tags
+var/
+\#*\#

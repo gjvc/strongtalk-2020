@@ -1,0 +1,74 @@
+Class
+#categories!
+running!
+tests! !
+#superclassTypeString!
+TestCase! !
+testPeekShouldReturnFirstCharacter!
+33972509!
+tests!
+0! !
+testCharStreamShouldHaveCorrectContents!
+33970066!
+tests!
+0! !
+testModifyingWrittenFileShouldUpdateContents!
+33971577!
+tests!
+0! !
+#extensionsAreSubtypes!
+true! !
+#instanceVariableString!
+file			<FilePath>
+write			<ReadWriteStream>
+read			<ReadStream>
+sz				<Integer>
+charFile	<FilePath>
+in				<CharInputStream>
+s				<ReadString>! !
+testContentsWrittenShouldMatchReadStreamContents!
+33970511!
+tests!
+0! !
+testContentsWrittenShouldReturnCorrectlySizedCollection!
+33971238!
+tests!
+0! !
+testReadStreamShouldHaveCorrectContents!
+33972771!
+tests!
+0! !
+#subtype!
+true! !
+#branded!
+true! !
+#abstract!
+false! !
+testPeekShouldReturnCorrectByte!
+33972201!
+tests!
+0! !
+tearDown!
+33961529!
+running!
+0! !
+close:!
+33946225!
+running!
+0:! !
+testCharStreamContentsRemainingShouldHaveCorrectContents!
+33969727!
+tests!
+0! !
+testReadStreamShouldHaveCorrectSize!
+33973224!
+tests!
+0! !
+setUp!
+33989424!
+running!
+0! !
+testWrittenFileShouldHaveCorrectSize!
+33973536!
+tests!
+0! !

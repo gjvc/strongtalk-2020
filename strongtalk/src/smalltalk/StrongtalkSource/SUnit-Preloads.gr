@@ -1,0 +1,5 @@
+"$Revision:$"!
+Delta fileInFromFile: (FilePath for: 'TestFailure.dlt') !
+Delta fileInFromFile: (FilePath for: 'ResumableTestFailure.dlt') !
+Delta fileInFromFile: (FilePath for: 'SUnitDelay.dlt') !
+Delta fileInFromFile: (FilePath for: 'SUnitNameResolver.dlt') !

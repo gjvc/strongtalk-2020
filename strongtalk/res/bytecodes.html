@@ -1,0 +1,672 @@
+<html>1
+
+  <head>
+    <link rel="stylesheet" href="css/tachyons.min.css"/>
+    <style>
+      tr {
+          class: .striped--near-white
+      }
+      
+    </style>
+  </head>
+
+  <body class="w-100 sans-serif">
+
+    <table class="collapse ba br2 b--black-10 pv2 ph3">
+      <tr>
+        <td style="text-align: right">11/14/2001 </td><td></td><td></td><td></td><td></td><td></td><td colspan="5">Bytecode Table </td><td></td><td></td><td></td><td></td><td colspan="2">b = byte </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td colspan="5"></td><td></td><td></td><td></td><td></td><td colspan="2">w = word (aligned) </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td colspan="5"></td><td></td><td></td><td></td><td></td><td colspan="2">o = oop (aligned) </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>fa</td><td></td><td colspan="5">Copyright (c) 1994 - 1996 LongView Technologies L.L.C. </td><td></td><td></td><td></td><td></td><td colspan="2">grey: not intercepted on sst </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td colspan="5"></td><td></td><td></td><td></td><td></td><td colspan="2">yellow: not implemented </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">-1 </td><td style="text-align: right">0 </td><td style="text-align: right">1 </td><td style="text-align: right">2 </td><td style="text-align: right">3 </td><td style="text-align: right">4 </td><td style="text-align: right" colspan="5">5 6 7 8 9 </td><td>A </td><td>B </td><td>C </td><td>D </td><td colspan="2">E F </td>
+      </tr>
+      <tr>
+         <td style="text-align: right">0 </td><td>push temp #0 </td><td>push temp #1 </td><td>push temp #2 </td><td>push temp #3 </td><td>push temp #4 </td><td>push temp #5 </td><td></td><td>push temp <br/>#255-b [b] </td><td>push arg #n-1 </td><td>push arg #n-2 </td><td>push arg #n-3 </td><td>push arg #n-1- <br/>b [b] </td><td>allocate 1 <br/>temp </td><td>allocate 2 <br/>temps </td><td>allocate 3 <br/>temps </td><td>allocate b <br/>temps (0 is <br/>256) [b] </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>store &amp; pop </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store temp </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td style="text-align: right">1 </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>temp #255-b </td><td>push -b [b] </td><td>push b+1 [b] </td><td>push lit [o] </td><td>push tos </td><td>push self </td><td>push nil </td><td>push true </td><td>push false </td>
+      </tr>
+      <tr>
+        <td></td><td>temp #0 </td><td>temp #1 </td><td>temp #2 </td><td>temp #3 </td><td>temp #4 </td><td>temp #5 </td><td>#255-b [b] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>[b] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>^ instVar </td><td>push classVar </td><td>store &amp; pop </td><td>store classVar </td><td></td><td>push instVar </td><td>store &amp; pop </td><td>store instVar </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">2 </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>name [o] </td><td>[w] </td><td>classVar [w] </td><td>[w] </td><td>^ instVar [w] </td><td>[w] </td><td>instVar [w] </td><td>[w] </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>store &amp; pop </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>allocate floats </td><td></td><td>move float </td><td></td><td>nullary float op </td><td>unary float op </td><td>binary float op </td><td colspan="2">unary float op - binary float op - </td><td></td><td></td><td></td><td></td><td>push instVar </td><td></td><td>store instVar </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">3 </td><td></td><td>floatify [b] </td><td></td><td>set float [bww] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>instVar name </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>(0 is 256) [b] </td><td></td><td>[bb] </td><td></td><td>[bb] </td><td>[bb] </td><td>[bb] </td><td>&gt; oop [bb] </td><td>&gt; oop [bb] </td><td></td><td></td><td></td><td></td><td>name [o] </td><td></td><td>name [o] </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>[o] </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>push new </td><td>push new </td><td>push new </td><td>push new </td><td>install new </td><td>install new </td><td>install new </td><td>install new </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>push temp #b </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td>store &amp; pop </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>push temp #0 </td><td>push temp #1 </td><td>push temp #2 </td><td></td><td></td><td></td><td></td><td></td><td>closure with </td><td>closure with </td><td>closure with </td><td>closure with </td><td>context for </td><td>context for </td><td>context for </td><td>context for </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">4 </td><td></td><td></td><td></td><td>via context 0 </td><td>temp #0 via </td><td>temp #1 via </td><td>temp #2 via </td><td>temp #b via </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>via context 0 </td><td>via context 0 </td><td>via context 0 </td><td></td><td></td><td></td><td></td><td></td><td>context (0 arg </td><td>context (1 arg </td><td>context (2 arg </td><td>context (b arg </td><td>method with 0 </td><td>method with 1 </td><td>method with 2 </td><td>method with b </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>[b] </td><td>context 0 </td><td>context 0 </td><td>context 0 </td><td>context 0 [b] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [bo]
+        </td>
+        <td>vars
+        </td>
+        <td>var
+        </td>
+        <td>vars
+        </td>
+        <td>vars [b]
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>push new
+        </td>
+        <td>push new
+        </td>
+        <td>push new
+        </td>
+        <td>push new
+        </td>
+        <td>
+        </td>
+        <td>install new
+        </td>
+        <td>install new
+        </td>
+        <td>install new
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>push temp #b
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>push temp #0
+        </td>
+        <td>push temp #1
+        </td>
+        <td>push temp #2
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>closure with
+        </td>
+        <td>closure with
+        </td>
+        <td>closure with
+        </td>
+        <td>closure with
+        </td>
+        <td>
+        </td>
+        <td>context for
+        </td>
+        <td>context for
+        </td>
+        <td>context for
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">5
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>via context 1
+        </td>
+        <td>temp #0 via
+        </td>
+        <td>temp #1 via
+        </td>
+        <td>temp #2 via
+        </td>
+        <td>temp #b via
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>pop tos
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>via context 1
+        </td>
+        <td>via context 1
+        </td>
+        <td>via context 1
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>tos (0 arg
+        </td>
+        <td>tos (1 arg
+        </td>
+        <td>tos (2 arg
+        </td>
+        <td>tos (b arg
+        </td>
+        <td>
+        </td>
+        <td>block with 1
+        </td>
+        <td>block with 2
+        </td>
+        <td>block with b
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>[b]
+        </td>
+        <td>context 1
+        </td>
+        <td>context 1
+        </td>
+        <td>context 1
+        </td>
+        <td>context 1 [b]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [o]
+        </td>
+        <td>block) [bo]
+        </td>
+        <td>
+        </td>
+        <td>var
+        </td>
+        <td>vars
+        </td>
+        <td>vars [b]
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>push temp
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>store &amp; pop
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>copy self &amp; b
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>push temp #0
+        </td>
+        <td>push temp #1
+        </td>
+        <td>push temp #2
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>copy 2 args
+        </td>
+        <td>copy b (0 is
+        </td>
+        <td>
+        </td>
+        <td>copy self &amp; 1
+        </td>
+        <td>copy self &amp; 2
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>#b1 via </td><td>temp #0 via </td><td>temp #1 via </td><td>temp #2 via </td><td>temp #b1 via </td><td>set self via </td><td>copy 1 arg </td><td></td><td></td><td>copy self into </td><td></td><td></td><td>(0 is 256) args </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">6 </td><td>via context b </td><td>via context b </td><td>via context b </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>into context </td><td>256) args into </td><td></td><td>arg into </td><td>args into </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>context b2 (0 </td><td>context b (0 is </td><td>context b (0 is </td><td>context b (0 is </td><td>context b2 (0 </td><td>context </td><td>into context [b] </td><td></td><td></td><td>context </td><td></td><td></td><td>into context </td>
+      </tr>
+      <tr>
+        <td></td><td>(0 is 256) [b] </td><td>(0 is 256) [b] </td><td>(0 is 256) [b] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>[bb] </td><td>context [b...] </td><td></td><td>context [b] </td><td>context [bb] </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>is 256) [bb] </td><td>256) [b] </td><td>256) [b] </td><td>256) [b] </td><td>is 256) [bb] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>[b...] </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>loop start &amp; </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>loop start &amp; </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">7
+        </td><td>ifTrue [bb] </td><td>ifFalse [bb] </td><td>and [b] </td><td>or [b] </td><td>whileTrue [b] </td><td>whileFalse [b] </td><td>jump [b] </td><td></td><td>ifTrue [bw] </td><td>ifFalse [bw] </td><td>and [w] </td><td>or [w] </td><td>whileTrue [w] </td><td>whileFalse [w] </td><td>jump [w] </td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>jump [bb] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>jump [ww] </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">8 </td><td>interpreted <br/>send, 0 args <br/>[oo] </td><td>interpreted <br/>send, 1 arg <br/>[oo] </td><td>interpreted <br/>send, 2 args <br/>[oo] </td><td>interpreted <br/>send, n args <br/>[boo] </td><td>interpreted <br/>send &amp; pop, 0 <br/>args [oo] </td><td>interpreted <br/>send &amp; pop, 1 <br/>arg [oo] </td><td>interpreted <br/>send &amp; pop, 2 <br/>args [oo] </td><td>interpreted <br/>send &amp; pop, n <br/>args [boo] </td><td>interpreted <br/>send, self [oo] </td><td>interpreted <br/>send &amp; pop, <br/>self [oo] </td><td>interpreted <br/>send, super <br/>[oo] </td><td>interpreted <br/>send &amp; pop, <br/>super [oo] </td><td>return tos &amp; <br/>pop 0 args </td><td>return tos &amp; <br/>pop 1 arg </td><td>return tos &amp; <br/>pop 2 args </td><td>return tos &amp; <br/>pop n args [b] </td>
+      </tr>
+      <tr>
+        <td style="text-align: right">9 </td><td>polymorphic <br/>send, 0 args <br/>[oo] </td><td>polymorphic <br/>send, 1 arg <br/>[oo] </td><td>polymorphic <br/>send, 2 args <br/>[oo] </td><td>polymorphic <br/>send, n args <br/>[boo] </td><td>polymorphic <br/>send &amp; pop, 0 <br/>args [oo] </td><td>polymorphic <br/>send &amp; pop, 1 <br/>arg [oo] </td><td>polymorphic <br/>send &amp; pop, 2 <br/>args [oo] </td><td>polymorphic <br/>send &amp; pop, n <br/>args [boo] </td><td>polymorphic <br/>send, self [oo] </td><td>polymorphic <br/>send &amp; pop, <br/>self [oo] </td><td>polymorphic <br/>send, super <br/>[oo] </td><td>polymorphic <br/>send &amp; pop, <br/>super [oo] </td><td>return self &amp; <br/>pop 0 args </td><td>return self &amp; <br/>pop 1 arg </td><td>return self &amp; <br/>pop 2 args </td><td>return self &amp; <br/>pop n args [b] </td>
+      </tr>
+      <tr>
+        <td></td><td>compiled </td><td>compiled </td><td>compiled </td><td>compiled </td><td colspan="4">compiled send compiled send compiled send compiled send </td><td></td><td>compiled send </td><td>compiled </td><td colspan="2">compiled send zap, return tos </td><td>zap, return </td><td>non-local </td><td>non-local </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>compiled </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td>A </td><td>send, 0 args </td><td>send, 1 arg </td><td>send, 2 args </td><td>send, n args </td><td>&amp; pop, 0 args </td><td>&amp; pop, 1 arg </td><td>&amp; pop, 2 args </td><td>&amp; pop, n args </td><td></td><td>&amp; pop, self </td><td>send, super </td><td>&amp; pop, super </td><td>&amp; pop n args </td><td>self &amp; pop n </td><td>return tos &amp; </td><td>return self &amp; </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>send, self [wo] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>[wo] </td><td>[wo] </td><td>[wo] </td><td>[bwo] </td><td>[wo] </td><td>[wo] </td><td>[wo] </td><td>[bwo] </td><td></td><td>[wo] </td><td>[wo] </td><td>[wo] </td><td>[b] </td><td>args [b] </td><td>pop n args [b] </td><td>pop n args [b] </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>predict ^ </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td></td><td>predict ^ </td><td>primitive call, </td><td></td><td></td><td></td><td></td><td></td><td>self send, </td><td></td><td></td><td>primitive send </td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>primitive call
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>primitive call,
+        </td>
+        <td>sync. DLL call,
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td colspan="2">primitive send, primitive send,
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td colspan="3">primitive send, primitive send, primitive send,
+        </td>
+      </tr>
+      <tr>
+        <td>B
+        </td>
+        <td>
+        </td>
+        <td>primitive call
+        </td>
+        <td>failure block
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>access
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>&amp; pop, super
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>[w]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>failure block
+        </td>
+        <td>n args [oowb]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>0 args [oo]
+        </td>
+        <td>super [oo]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>1 arg [oo]
+        </td>
+        <td>2 args [oo]
+        </td>
+        <td>n args [boo]
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>[w]
+        </td>
+        <td>[ww]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>method [oo]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>[oo]
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td>[ww] </td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>primitive call </td><td>primitive call </td><td>primitive call </td><td>primitive call </td><td>async. DLL </td><td>primitive call </td><td>primitive call </td><td></td><td></td><td>primitive send </td><td></td><td>primitive send </td><td></td><td>primitive send </td><td>primitive send </td><td>primitive send </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>send, access </td><td colspan="2">primitive send, </td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td>C </td><td>lookup &amp; </td><td>lookup &amp; </td><td>lookup &amp; </td><td>lookup &amp; </td><td>call, n args </td><td>lookup &amp; </td><td>lookup &amp; </td><td></td><td></td><td>&amp; pop, 0 args </td><td></td><td>&amp; pop, self </td><td></td><td>&amp; pop, 1 arg </td><td>pop, 2 args </td><td>&amp; pop, n args </td>
+      </tr>
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>method [oo] </td><td></td><td>self [oo] </td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr>
+        <td></td><td>patch [o] </td><td>patch [o] </td><td>patch [ow] </td><td>patch [ow] </td><td>[oowb] </td><td>patch [o] </td><td>patch [ow] </td><td></td><td></td><td>[oo] </td><td></td><td>[oo] </td><td></td><td>[oo] </td><td>[oo] </td><td>[boo] </td>
+      </tr>
+      <tr>
+        <td>D </td><td>megamorphic <br/>send, 0 args <br/>[oo] </td><td>megamorphic <br/>send, 1 arg <br/>[oo] </td><td>megamorphic <br/>send, 2 args <br/>[oo] </td><td>megamorphic <br/>send, n args <br/>[boo] </td><td>megamorphic <br/>send &amp; pop, 0 <br/>args [oo] </td><td>megamorphic <br/>send &amp; pop, 1 <br/>arg [oo] </td><td>megamorphic <br/>send &amp; pop, 2 <br/>args [oo] </td><td>megamorphic <br/>send &amp; pop, n <br/>args [boo] </td><td>megamorphic <br/>send, self [oo] </td><td>megamorphic <br/>send &amp; pop, <br/>self [oo] </td><td>megamorphic <br/>send, super <br/>[oo] </td><td>megamorphic <br/>send &amp; pop, <br/>super [oo] </td><td></td><td>special <br/>primitive call <br/>hint, 1 arg [b] </td><td></td><td></td>
+      </tr>
+      <tr>
+        <td>E </td><td>smi +, <br/>predicted [oo] </td><td>smi -, <br/>predicted [oo] </td><td>smi *, <br/>predicted [oo] </td><td>smi //, <br/>predicted [oo] </td><td>smi \\, <br/>predicted [oo] </td><td>#@ [oo] </td><td>smi =, <br/>predicted [oo] </td><td>smi ~=, <br/>predicted [oo] </td><td>smi &lt;, <br/>predicted [oo] </td><td>smi &lt;=, <br/>predicted [oo] </td><td>smi &gt;, <br/>predicted [oo] </td><td>smi &gt;=, <br/>predicted [oo] </td><td>at:, predicted <br/>[oo] </td><td>at:put:, <br/>predicted [oo] </td><td>#== </td><td>~~ </td>
+      </tr>
+      <tr>
+        <td>F </td><td>push <br/>globalVar [o] </td><td>store &amp; pop <br/>globalVar [o] </td><td>store <br/>globalVar [o] </td><td>push classVar <br/>name [o] </td><td>store &amp; pop <br/>classVar <br/>name [o] </td><td>store classVar <br/>name [o] </td><td>smi and, <br/>predicted [oo] </td><td>smi or, <br/>predicted [oo] </td><td>smi xor, <br/>predicted [oo] </td><td>smi shift <br/>predicted [oo] </td><td></td><td></td><td></td><td></td><td></td><td>halt </td>
+      </tr>
+    </table>
+
+
+  </body>
+</html>

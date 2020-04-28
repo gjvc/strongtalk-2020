@@ -1,0 +1,5 @@
+"$Revision:$"!
+Delta fileInFromFile: (FilePath for: 'TestCase.dlt') !
+Delta fileInFromFile: (FilePath for: 'TestResource.dlt') !
+Delta fileInFromFile: (FilePath for: 'TestResult.dlt') !
+Delta fileInFromFile: (FilePath for: 'TestSuite.dlt') !

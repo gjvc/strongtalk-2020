@@ -1,0 +1,11 @@
+#! /usr/bin/env perl
+
+use warnings;
+use strict;
+
+while (<STDIN>) { 
+  chop;
+  printf STDERR "  deleting $_\n";
+  unlink $_;
+}
+
