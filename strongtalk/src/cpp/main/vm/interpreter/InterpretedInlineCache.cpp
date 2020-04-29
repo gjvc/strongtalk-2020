@@ -390,7 +390,7 @@ void InterpretedInlineCache::replace( NativeMethod * nm ) {
         }
             // did not find klass
             break;
-        default: fatal( "unknown send type" );
+        default: st_fatal( "unknown send type" );
     }
     LOG_EVENT3( "interpreted InlineCache at 0x%x: new NativeMethod 0x%x for klass 0x%x replaces old entry", this, nm, nm->_lookupKey.klass() );
 }
@@ -579,7 +579,7 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
-                fatal( "lookup error in scheduler" );
+                st_fatal( "lookup error in scheduler" );
             } else {
                 DeltaProcess::active()->suspend( ProcessState::lookup_error );
             }
@@ -778,7 +778,7 @@ MethodOop InterpretedInlineCacheIterator::interpreted_method() const {
 NativeMethod * InterpretedInlineCacheIterator::compiled_method() const {
     if ( not is_compiled() )
         return nullptr;
-    if ( not _nativeMethod->isNativeMethod() ) fatal( "not an NativeMethod" ); // cheap test
+    if ( not _nativeMethod->isNativeMethod() ) st_fatal( "not an NativeMethod" ); // cheap test
     _nativeMethod->verify();    // very slow
     return _nativeMethod;
 }

@@ -175,7 +175,7 @@ ZoneHeap::ZoneHeap( int s, int bs ) {
     st_assert( s % bs == 0, "size not a multiple of blockSize" );
     size = s;
     if ( bs & ( bs - 1 ) ) {
-        fatal1( "heap block size (%ld) is not a power of 2", bs );
+        st_fatal1( "heap block size (%ld) is not a power of 2", bs );
     }
     blockSize = bs;
     log2BS    = 0;
@@ -434,7 +434,7 @@ int ZoneHeap::combineAll() {
         for ( HeapChunk * c = f->next(); c not_eq f; ) {
             HeapChunk * c1 = c;
             int sz = combine( c );
-            if ( c1 == c ) fatal( "infinite loop detected while combining blocks" );
+            if ( c1 == c ) st_fatal( "infinite loop detected while combining blocks" );
             if ( sz > biggest )
                 biggest = sz;
         }

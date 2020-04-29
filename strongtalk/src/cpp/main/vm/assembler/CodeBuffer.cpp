@@ -46,7 +46,7 @@ const char * CodeBuffer::decode_begin() {
 
 
 void CodeBuffer::set_code_end( const char * end ) {
-    if ( ( const char * ) end < _codeStart or _codeOverflow < ( const char * ) end ) fatal( "code end out of bounds" );
+    if ( ( const char * ) end < _codeStart or _codeOverflow < ( const char * ) end ) st_fatal( "code end out of bounds" );
     _codeEnd = ( char * ) end;
 }
 
@@ -65,7 +65,7 @@ void CodeBuffer::relocate( const char * at, RelocationInformation::RelocationTyp
         int offset = len - _last_reloc_offset;
         _last_reloc_offset = len;
         *_locsEnd++ = RelocationInformation( rtype, offset );
-        if ( _locsEnd >= _locsOverflow ) fatal( "routine is too long to compile" );
+        if ( _locsEnd >= _locsOverflow ) st_fatal( "routine is too long to compile" );
     }
 }
 

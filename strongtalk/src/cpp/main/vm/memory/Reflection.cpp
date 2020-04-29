@@ -40,7 +40,7 @@ void Reflection::forward( MemOop old_obj, MemOop new_obj ) {
         return;
     if ( old_obj->is_forwarded() ) {
         if ( old_obj->forwardee() not_eq new_obj ) {
-            fatal( "inconsistent forwarding" );
+            st_fatal( "inconsistent forwarding" );
         }
         return;
     }

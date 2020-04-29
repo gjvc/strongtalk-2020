@@ -47,7 +47,7 @@ const char * Recompilation::methodOop_invocation_counter_overflow( Oop receiver,
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
         const char * msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
         LOG_EVENT3( "invocation counter overflow with broken methodOop 0x%x (recv = 0x%x) %s", method, receiver, msg );
-        fatal( "invocation counter overflow with illegal method - internal error" );
+        st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
         // continuing here is probably catastrophal because the invocation counter
         // increment might have modified the jump table entries anyway.

@@ -364,7 +364,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                 }
                 default:
                     _console->print_cr( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
-                    fatal( "aborting" );
+                    st_fatal( "aborting" );
             }
         }
     } while ( c.advance() );
@@ -998,7 +998,7 @@ int MethodOopDescriptor::end_byteCodeIndex() const {
         if ( byte_at( last_entry - i ) not_eq static_cast<int>( ByteCodes::Code::halt ) )
             return last_entry + 1 - i;
 
-    fatal( "should never reach the point" );
+    st_fatal( "should never reach the point" );
     return 0;
 }
 

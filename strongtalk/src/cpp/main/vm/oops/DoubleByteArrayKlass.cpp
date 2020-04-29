@@ -11,7 +11,7 @@
 
 
 Oop DoubleByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
-    fatal( "should never call allocateObject in doubleByteArrayKlass" );
+    st_fatal( "should never call allocateObject in doubleByteArrayKlass" );
     return badOop;
 }
 
@@ -70,13 +70,13 @@ void setKlassVirtualTableFromDoubleByteArrayKlass( Klass * k ) {
 
 
 bool_t DoubleByteArrayKlass::oop_verify( Oop obj ) {
-    assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
+    st_assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
     return DoubleByteArrayOop( obj )->verify();
 }
 
 
 void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
+    st_assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
     DoubleByteArrayOop array = DoubleByteArrayOop( obj );
     int                len   = array->length();
     int                n     = min( MaxElementPrintSize, len );

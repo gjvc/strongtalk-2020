@@ -100,7 +100,7 @@ void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder * rec, int sende
 
 
 void ScopeDescriptorNode::verify( ScopeDescriptor * sd ) {
-    if ( _senderByteCodeIndex not_eq IllegalByteCodeIndex and _senderByteCodeIndex not_eq sd->senderByteCodeIndex() ) fatal( "senderByteCodeIndex is wrong" );
+    if ( _senderByteCodeIndex not_eq IllegalByteCodeIndex and _senderByteCodeIndex not_eq sd->senderByteCodeIndex() ) st_fatal( "senderByteCodeIndex is wrong" );
 }
 
 

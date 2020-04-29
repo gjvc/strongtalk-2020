@@ -543,7 +543,7 @@ class Node : public BasicNode {
             if ( i == 0 )
                 return _next;
             else {
-                fatal( "single next" );
+                st_fatal( "single next" );
                 return nullptr;
             }
         }
@@ -557,7 +557,7 @@ class Node : public BasicNode {
         virtual Node * prev( int n ) const {
             if ( n == 0 )
                 return _prev;
-            else fatal( "single prev" );
+            else st_fatal( "single prev" );
             return nullptr;
         }
 
@@ -588,7 +588,7 @@ class Node : public BasicNode {
         virtual void setNext( int i, Node * n ) {
             if ( i == 0 )
                 setNext( n );
-            else fatal( "subclass" );
+            else st_fatal( "subclass" );
         }
 
 

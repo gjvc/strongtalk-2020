@@ -49,7 +49,7 @@ class VerifyNoScavenge : public StackAllocatedObject {
 
         virtual ~VerifyNoScavenge() {
             if ( _scavengeCount not_eq Universe::scavengeCount ) {
-                fatal( "scavenge should not have happened" );
+                st_fatal( "scavenge should not have happened" );
             }
         }
 };
@@ -66,7 +66,7 @@ class VerifyNoAllocation : public VerifyNoScavenge {
 
         virtual ~VerifyNoAllocation() {
             if ( _top_of_eden not_eq Universe::new_gen.eden()->top() ) {
-                fatal( "allocation should not have happened" );
+                st_fatal( "allocation should not have happened" );
             }
         }
 };

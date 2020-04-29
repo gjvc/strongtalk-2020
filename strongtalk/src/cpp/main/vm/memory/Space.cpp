@@ -30,7 +30,7 @@ void Space::clear() {
 
 void Space::switch_pointers( Oop from, Oop to ) {
     // FIX LATER
-    fatal( "not implemented yet" );
+    st_fatal( "not implemented yet" );
 }
 
 
@@ -140,7 +140,7 @@ Oop * NewSpace::object_start( Oop * p ) {
         if ( q > p )
             return prev;
     }
-    fatal( "should never reach this point" );
+    st_fatal( "should never reach this point" );
     return nullptr;
 }
 

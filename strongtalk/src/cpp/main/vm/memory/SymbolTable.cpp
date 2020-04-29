@@ -107,6 +107,7 @@ SymbolOop SymbolTable::lookup( const char * name, int len ) {
                     return l->symbol;
         }
     }
+
     return basic_add( name, len, hashValue );
 }
 

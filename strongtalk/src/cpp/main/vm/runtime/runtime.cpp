@@ -12,6 +12,6 @@ char * MaxSP;
 
 // verifyMethod: called by interpreter to verify some value is a methodOop
 extern "C" void verifyMethod( Oop method ) {
-    if ( not method->is_method() ) fatal( "not a method" );
+    if ( not method->is_method() ) st_fatal( "not a method" );
     method->verify();
 }

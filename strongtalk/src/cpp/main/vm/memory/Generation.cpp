@@ -239,7 +239,7 @@ Oop * OldGeneration::allocate_in_next_space( int size ) {
         int space_size = _currentSpace->capacity();
         OldSpace * s = new OldSpace( "old", space_size );
 
-        if ( ( const char * ) s->bottom() < Universe::new_gen._highBoundary ) fatal( "allocation of old Space before new Space" );
+        if ( ( const char * ) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
 
         append_space( s );
     }

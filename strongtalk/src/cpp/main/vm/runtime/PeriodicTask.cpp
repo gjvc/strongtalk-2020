@@ -71,7 +71,7 @@ bool_t PeriodicTask::is_enrolled() const {
 
 
 void PeriodicTask::enroll() {
-    if ( num_tasks == max_tasks ) fatal( "Overflow in PeriodicTask table" );
+    if ( num_tasks == max_tasks ) st_fatal( "Overflow in PeriodicTask table" );
     tasks[ num_tasks++ ] = this;
 }
 

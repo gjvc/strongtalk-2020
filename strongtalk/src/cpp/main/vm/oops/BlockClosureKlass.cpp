@@ -47,7 +47,7 @@ KlassOop BlockClosureKlass::blockKlassFor( int numberOfArguments ) {
             return Universe::nineArgumentBlockKlassObj();
             break;
     }
-    fatal( "cannot handle block with more than 9 arguments" );
+    st_fatal( "cannot handle block with more than 9 arguments" );
     return nullptr;
 }
 
@@ -152,7 +152,7 @@ int BlockClosureKlass::number_of_arguments() const {
         return 8;
     if ( k == Universe::nineArgumentBlockKlassObj() )
         return 9;
-    fatal( "unknown block closure class" );
+    st_fatal( "unknown block closure class" );
     return 0;
 }
 

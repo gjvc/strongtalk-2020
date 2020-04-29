@@ -158,10 +158,10 @@ extern "C" void inline_cache_miss() {
 
 
 extern "C" void verifyPIC( Oop pic ) {
-    if ( not Universe::is_heap( ( Oop * ) pic ) ) fatal( "pic should be in heap" );
-    if ( not pic->is_objArray() ) fatal( "pic should be an objArray" );
+    if ( not Universe::is_heap( ( Oop * ) pic ) ) st_fatal( "pic should be in heap" );
+    if ( not pic->is_objArray() ) st_fatal( "pic should be an objArray" );
     int length = ObjectArrayOop( pic )->length();
-    if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) fatal( "pic has wrong length field" );
+    if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) st_fatal( "pic has wrong length field" );
 }
 
 
@@ -196,12 +196,12 @@ void Interpreter::warning_illegal( int ebx, int esi ) {
 
 
 void Interpreter::wrong_eax() {
-    fatal( "interpreter bug: eax doesn't contain the right value" );
+    st_fatal( "interpreter bug: eax doesn't contain the right value" );
 }
 
 
 void Interpreter::wrong_esp() {
-    fatal( "interpreter bug: esp doesn't contain the right value" );
+    st_fatal( "interpreter bug: esp doesn't contain the right value" );
 }
 
 

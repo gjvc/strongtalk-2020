@@ -23,9 +23,16 @@
 #include "vm/system/os.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
+#include "vm/runtime/vmOperations.hpp"
 
 #include <vector>
 #include <windows.h>
+
+
+HINSTANCE _hInstance     = nullptr;
+HINSTANCE _hPrevInstance = nullptr;
+int       _nCmdShow      = 0;
+
 
 const auto STACK_SIZE = ThreadStackSize * 1024;
 
@@ -40,7 +47,7 @@ int WINAPI startThread( void * params );
 class Thread : public CHeapAllocatedObject {
 
     private:
-        static std::vector <Thread *>   _threads;
+//        static std::vector <Thread *>   _threads;
         static GrowableArray <Thread *> * threads;
         static Event * thread_created;
         HANDLE thread_handle;
@@ -65,6 +72,8 @@ class Thread : public CHeapAllocatedObject {
 
         Thread( HANDLE handle, int id, void * stackLimit ) :
             thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
+            _console->print_cr( "Thread::Thread()" );
+
             int index = threads->find( nullptr, equals );
             if ( index < 0 )
                 threads->append( this );
@@ -74,12 +83,15 @@ class Thread : public CHeapAllocatedObject {
 
 
         virtual ~Thread() {
+            _console->print_cr( "Thread::~Thread()" );
             int index = threads->find( this );
             threads->at_put( index, nullptr );
         }
 
 
         static Thread * createThread( int main( void * parameter ), void * parameter, int * id_addr ) {
+            _console->print_cr( "Thread::createThread()" );
+
             ThreadCritical tc;
             thread_start   params;
             params.main      = main;
@@ -116,10 +128,9 @@ class Thread : public CHeapAllocatedObject {
 };
 
 
-int WINAPI
+int WINAPI startThread( void * params ) {
+    _console->print_cr( "::startThread()" );
 
-
-startThread( void * params ) {
     char * spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
     int stackHeadroom = 2 * os::vm_page_size();
@@ -137,7 +148,6 @@ Event * Thread::thread_created = nullptr;
 GrowableArray <Thread *> * Thread::threads = nullptr;
 
 static HANDLE main_process;
-//static HANDLE main_thread;
 static int    main_thread_id;
 static HANDLE watcher_thread;
 static Thread * main_thread;
@@ -187,6 +197,8 @@ void os::breakpoint() {
 
 
 Thread * os::starting_thread( int * id_addr ) {
+    _console->print_cr( "os::starting_thread()" );
+
     *id_addr = main_thread_id;
     return main_thread;
 }
@@ -203,9 +215,11 @@ void * os::stack_limit( Thread * thread ) {
 
 
 void os::terminate_thread( Thread * thread ) {
+    _console->print_cr( "os::terminate_thread()" );
+
     HANDLE handle = thread->thread_handle;
     delete thread;
-    thread = nullptr;
+//    thread = nullptr;
 
     TerminateThread( handle, 0 );
     CloseHandle( handle );
@@ -219,7 +233,7 @@ void os::delete_event( Event * event ) {
 
 Event * os::create_event( bool_t initial_state ) {
     HANDLE result = CreateEvent( nullptr, TRUE, initial_state, nullptr );
-    if ( result == nullptr ) fatal( "CreateEvent failed" );
+    if ( result == nullptr ) st_fatal( "CreateEvent failed" );
     return ( Event * ) result;
 }
 
@@ -427,11 +441,6 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS * exceptionInfo 
 }
 
 
-HINSTANCE _hInstance     = nullptr;
-HINSTANCE _hPrevInstance = nullptr;
-int       _nCmdShow      = 0;
-
-
 void * os::get_hInstance() {
     return ( void * ) _hInstance;
 }
@@ -531,6 +540,8 @@ void os::free( void * p ) {
 
 
 void os::transfer( Thread * from_thread, Event * from_event, Thread * to_thread, Event * to_event ) {
+    _console->print_cr( "os::transfer()" );
+
     ResetEvent( ( HANDLE ) from_event );
     SetEvent( ( HANDLE ) to_event );
     WaitForSingleObject( ( HANDLE ) from_event, INFINITE );
@@ -538,6 +549,8 @@ void os::transfer( Thread * from_thread, Event * from_event, Thread * to_thread,
 
 
 void os::transfer_and_continue( Thread * from_thread, Event * from_event, Thread * to_thread, Event * to_event ) {
+    _console->print_cr( "os::transfer_and_continue()" );
+
     ResetEvent( ( HANDLE ) from_event );
     SetEvent( ( HANDLE ) to_event );
 }
@@ -606,15 +619,18 @@ static int number_of_ctrl_c = 0;
 
 
 bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
+
     if ( CTRL_BREAK_EVENT == dwCtrlType ) {
         _console->print_cr( "%%break" );
         intercept_for_single_step();
+
     } else {
-        if ( number_of_ctrl_c < 10 ) {
+        if ( number_of_ctrl_c < 4 ) {
             _console->print_cr( "%%break-loading-breakrc" );
             process_settings_file( ".breakrc", false );
         } else {
             lprintf( "\n{aborting}\n" );
+
 #ifdef __GNUC__
             __asm__("int3;");
 #else
@@ -625,6 +641,7 @@ bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
         }
         number_of_ctrl_c++;
     }
+
     return TRUE;
 }
 
@@ -647,6 +664,8 @@ int os::_vm_page_size = 0;
 
 
 void os::initialize_system_info() {
+    _console->print_cr( "os::initialize_system_info()" );
+
     SYSTEM_INFO si;
     GetSystemInfo( &si );
     _vm_page_size = si.dwPageSize;
@@ -742,6 +761,8 @@ void os_init_processor_affinity() {
 
 
 void os_init() {
+    _console->print_cr( "os_init" );
+
     ThreadCritical::intialize();
     Thread::initialize();
 
@@ -755,17 +776,17 @@ void os_init() {
     SetConsoleCtrlHandler( &HandlerRoutine, TRUE );
 
     HANDLE threadHandle;
+
     // Initialize main_process and main_thread
     main_process = GetCurrentProcess();  // Remember main_process is a pseudo handle
     if ( not DuplicateHandle( main_process, GetCurrentThread(), main_process, &threadHandle, THREAD_ALL_ACCESS, FALSE, 0 ) ) {
-        fatal( "DuplicateHandle failed\n" );
+        st_fatal( "DuplicateHandle failed\n" );
     }
     main_thread_id = ( int ) GetCurrentThreadId();
 
     main_thread = new Thread( threadHandle, main_thread_id, nullptr );
 
     // Setup Windows Exceptions
-
     SetUnhandledExceptionFilter( topLevelExceptionFilter );
 
     // Create the watcher thread
@@ -779,12 +800,10 @@ void os_init() {
 
 
 void os_exit() {
+    _console->print_cr( "os_exit" );
     Thread::release();
     ThreadCritical::release();
 }
-
-
-extern int vm_main( int argc, char * argv[] );
 
 
 void os::set_args( int argc, char * argv[] ) {
@@ -799,22 +818,6 @@ int os::argc() {
 char ** os::argv() {
     return __argv;
 }
-
-
-#ifdef _WINDOWS
-
-int CALLBACK WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow) {
-  // Save all parameters
-  _hInstance     = hInst;
-  _hPrevInstance = hPrevInst;
-  _nCmdShow      = cmdShow;
-  return vm_main(__argc, __argv);
-}
-#else
-//int main(int argc, char**argv) {
-//    return vm_main(argc, argv);
-//}
-#endif
 
 
 #endif

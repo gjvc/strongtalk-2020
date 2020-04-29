@@ -41,7 +41,7 @@ GenericGrowableArray::GenericGrowableArray( int initial_size, int initial_len, v
 void GenericGrowableArray::grow( int j ) {
     void ** newData;
     int oldMax = _maxLength;
-    if ( _maxLength == 0 ) fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
+    if ( _maxLength == 0 ) st_fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
     while ( j >= _maxLength )
         _maxLength = _maxLength * 2;
     // _console->print_cr( "GenericGrowableArray::grow from [%d] to [%d]", oldMax, max );

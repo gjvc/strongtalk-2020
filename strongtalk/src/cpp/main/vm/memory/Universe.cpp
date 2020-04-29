@@ -120,7 +120,7 @@ void Universe::genesis() {
     ReservedSpace rs( current_sizes._reserved_object_size );
 
     if ( not rs.is_reserved() ) {
-        fatal( "could not reserve enough space for object heap" );
+        st_fatal( "could not reserve enough space for object heap" );
     }
 
     int new_size = ReservedSpace::page_align_size( current_sizes._eden_size + 2 * current_sizes._surv_size );
@@ -161,7 +161,7 @@ void Universe::cleanup_after_bootstrap() {
 
 
 void Universe::check_root( Oop * p ) {
-    if ( *p == badOop ) fatal( "badOop found in roots" );
+    if ( *p == badOop ) st_fatal( "badOop found in roots" );
 }
 
 

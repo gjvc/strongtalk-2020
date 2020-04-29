@@ -1063,7 +1063,7 @@ Expression * PrimitiveInliner::tryInline() {
                 break;
             }
             break;
-        default: fatal1( "bad primitive group %d", _primitiveDescriptor->group() );
+        default: st_fatal1( "bad primitive group %d", _primitiveDescriptor->group() );
             break;
     }
 

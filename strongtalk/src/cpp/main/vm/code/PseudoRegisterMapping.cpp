@@ -108,7 +108,7 @@ void PseudoRegisterMapping::ensureOneFreeRegister() {
     if ( not _locations->freeRegisters() ) {
         // no free registers available => find a register to spill
         int i = spillablePRegIndex();
-        if ( i < 0 ) fatal( "too many temporaries or locked pregs: out of spillable registers" );
+        if ( i < 0 ) st_fatal( "too many temporaries or locked pregs: out of spillable registers" );
         // _console->print("WARNING: Register spilling - check if this works\n");
         spillRegister( regLoc( i ) );
         st_assert( _locations->freeRegisters(), "at least one register should be available now" );
@@ -1009,13 +1009,13 @@ void PseudoRegisterMapping::verify() {
             // verify mapping for entry i
             int rloc = regLoc( i );
             int sloc = stkLoc( i );
-            if ( rloc < 0 and sloc < 0 ) fatal( "no location associated with preg" );
+            if ( rloc < 0 and sloc < 0 ) st_fatal( "no location associated with preg" );
             int rlocUses = 0;
             int slocUses = 0;
             int j        = size();
             while ( j-- > 0 ) {
                 if ( used( j ) ) {
-                    if ( i not_eq j and _pseudoRegisters->at( i ) == _pseudoRegisters->at( j ) ) fatal( "preg found twice in mapping" );
+                    if ( i not_eq j and _pseudoRegisters->at( i ) == _pseudoRegisters->at( j ) ) st_fatal( "preg found twice in mapping" );
                     if ( rloc >= 0 and regLoc( j ) == rloc )
                         rlocUses++;
                     if ( sloc >= 0 and stkLoc( j ) == sloc )
@@ -1023,8 +1023,8 @@ void PseudoRegisterMapping::verify() {
                 }
             }
             // check locations usage counter
-            if ( rloc >= 0 and _locations->nofUses( rloc ) not_eq rlocUses ) fatal( "inconsistent nofUses (register locations)" );
-            if ( sloc >= 0 and _locations->nofUses( sloc ) not_eq slocUses ) fatal( "inconsistent nofUses (stack locations)" );
+            if ( rloc >= 0 and _locations->nofUses( rloc ) not_eq rlocUses ) st_fatal( "inconsistent nofUses (register locations)" );
+            if ( sloc >= 0 and _locations->nofUses( sloc ) not_eq slocUses ) st_fatal( "inconsistent nofUses (stack locations)" );
             // compute total usage
             if ( rloc >= 0 )
                 totalUses++;
@@ -1036,18 +1036,18 @@ void PseudoRegisterMapping::verify() {
     i = _temporaryLocations->length();
     while ( i-- > 0 ) {
         int rloc = _temporaryLocations->at( i );
-        if ( _locations->nofUses( rloc ) not_eq 1 ) fatal( "inconsistent nofUses (temporaries)" );
+        if ( _locations->nofUses( rloc ) not_eq 1 ) st_fatal( "inconsistent nofUses (temporaries)" );
         totalUses++;
     }
     // check NonLocalReturn registers if in use
     if ( NonLocalReturninProgress() ) {
-        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_result_reg ) ) not_eq 1 ) fatal( "inconsistent nofUses (NonLocalReturn_result_reg)" );
-        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_home_reg ) ) not_eq 1 ) fatal( "inconsistent nofUses (NonLocalReturn_home_reg  )" );
-        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_homeId_reg ) ) not_eq 1 ) fatal( "inconsistent nofUses (NonLocalReturn_homeId_reg)" );
+        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_result_reg ) ) not_eq 1 ) st_fatal( "inconsistent nofUses (NonLocalReturn_result_reg)" );
+        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_home_reg ) ) not_eq 1 ) st_fatal( "inconsistent nofUses (NonLocalReturn_home_reg  )" );
+        if ( _locations->nofUses( _locations->registerAsLocation( NonLocalReturn_homeId_reg ) ) not_eq 1 ) st_fatal( "inconsistent nofUses (NonLocalReturn_homeId_reg)" );
         totalUses += 3;
     }
     // check total uses
-    if ( _locations->nofTotalUses() not_eq totalUses ) fatal( "inconsistent totalUses" );
+    if ( _locations->nofTotalUses() not_eq totalUses ) st_fatal( "inconsistent totalUses" );
 }
 
 

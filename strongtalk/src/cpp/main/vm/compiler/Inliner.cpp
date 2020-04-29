@@ -122,7 +122,7 @@ Expression * Inliner::genRealSend() {
         case SendKind::SuperSend:
             _generator->gen_super_send( _info, nofArgs, _resultPR );
             break;
-        default: fatal1( "illegal SendKind %d", _sendKind );
+        default: st_fatal1( "illegal SendKind %d", _sendKind );
     }
     return new UnknownExpression( _resultPR, _generator->current() );
 }

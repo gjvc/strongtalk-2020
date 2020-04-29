@@ -33,7 +33,7 @@ bool_t VirtualFrame::equal( const VirtualFrame * virtualFrame ) const {
 
 Oop VirtualFrame::callee_argument_at( int index ) const {
     _console->print_cr( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
-    fatal( "aborting" );
+    st_fatal( "aborting" );
     return nullptr;
 }
 
@@ -345,7 +345,7 @@ CompiledVirtualFrame * CompiledVirtualFrame::new_vframe( const Frame * fr, Scope
         return new CompiledTopLevelBlockVirtualFrame( fr, sd, byteCodeIndex );
     if ( sd->isBlockScope() )
         return new CompiledBlockVirtualFrame( fr, sd, byteCodeIndex );
-    fatal( "unknown scope desc" );
+    st_fatal( "unknown scope desc" );
     return nullptr;
 }
 
@@ -846,7 +846,7 @@ Oop CompiledBlockVirtualFrame::receiver() const {
     if ( nd ) {
         return resolve_name( nd, this );
     } else {
-        fatal( "self is unknown" );    // can't handle this yet -- fix this
+        st_fatal( "self is unknown" );    // can't handle this yet -- fix this
         return nullptr;
     }
 }

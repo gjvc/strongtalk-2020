@@ -25,7 +25,7 @@ Oop SavedRegisters::fetch( int register_number, int * frame_pointer ) {
     if ( frame_pointer not_eq stored_frame_pointer ) {
         _console->print_cr( "Cannot fetch register from non-bottom frame:" );
         _console->print_cr( " register number = %d, fp = 0x%lx", register_number, frame_pointer );
-        fatal( "vm aborted" );
+        st_fatal( "vm aborted" );
     }
     if ( register_number == eax.number() )
         return saved_eax;
@@ -39,7 +39,7 @@ Oop SavedRegisters::fetch( int register_number, int * frame_pointer ) {
         return saved_esi;
     if ( register_number == edi.number() )
         return saved_edi;
-    fatal( "cannot fetch esp or ebp from saved registers" );
+    st_fatal( "cannot fetch esp or ebp from saved registers" );
     return nullptr;
 }
 

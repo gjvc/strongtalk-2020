@@ -110,7 +110,7 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) 
 void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
 
     const int MaxPrintLen = 255;    // to prevent excessive output -Urs
-    assert_objArray( obj, "Argument must be objArray" );
+    st_assert_objArray( obj, "Argument must be objArray" );
     ObjectArrayOop array = ObjectArrayOop( obj );
     int            len   = array->length();
     int            n     = min( MaxElementPrintSize, len );

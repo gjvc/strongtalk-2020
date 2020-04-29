@@ -35,7 +35,7 @@ char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
     // Clength is set to length of the copy (may be longer due to escaping).
     // Presence of null chars can be detected by comparing Clength to length().
 
-    assert_byteArray( this, "should be a byte array" );
+    st_assert_byteArray( this, "should be a byte array" );
     Clength = length();
     char * res = copy_string( ( const char * ) bytes(), Clength );
     if ( strlen( res ) == ( uint32_t ) Clength )
@@ -69,7 +69,7 @@ char * ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // contains '\0', these will be escaped in the copy, i.e. "....\0...".
     // NOTE: The resulting string is allocated in Cheap
 
-    assert_byteArray( this, "should be a byte array" );
+    st_assert_byteArray( this, "should be a byte array" );
     smi_t     t = length();               // Copy and 'escape' null chars.
     smi_t     i;
     for ( int i = length() - 1; i >= 0; i-- )

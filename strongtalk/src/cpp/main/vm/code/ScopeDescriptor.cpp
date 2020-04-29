@@ -95,7 +95,7 @@ NameDescriptor * ScopeDescriptor::temporary( int index, bool_t canFail ) {
             i++;
         }
     }
-    if ( not result and not canFail ) fatal1( "couldn't find temporary %d", index );
+    if ( not result and not canFail ) st_fatal1( "couldn't find temporary %d", index );
     return result;
 }
 
@@ -121,7 +121,7 @@ NameDescriptor * ScopeDescriptor::contextTemporary( int index, bool_t canFail ) 
             i++;
         }
     }
-    if ( not result and not canFail ) fatal1( "couldn't find context temporary %d", index );
+    if ( not result and not canFail ) st_fatal1( "couldn't find context temporary %d", index );
     return result;
 }
 

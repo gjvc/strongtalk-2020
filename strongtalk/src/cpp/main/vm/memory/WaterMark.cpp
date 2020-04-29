@@ -21,7 +21,7 @@ Oop * OldWaterMark::pseudo_allocate( int size ) {
         _point = p + size;
     } else {
         lprintf( "crossing Space\n" );
-        fatal( "not implemented yet" );
+        st_fatal( "not implemented yet" );
     }
     return p;
 }

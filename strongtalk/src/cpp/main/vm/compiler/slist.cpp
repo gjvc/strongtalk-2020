@@ -65,7 +65,7 @@ void GenericSList::removeL( void * p ) {
     GenericSListElem * prev = nullptr;
     GenericSListElem * e    = headL();
     for ( ; e and e->dataL() not_eq p; prev = e, e = e->nextL() );
-    if ( e == nullptr ) fatal( "not in list" );
+    if ( e == nullptr ) st_fatal( "not in list" );
     removeAfterL( prev );
     st_assert( not includesL( p ), "remove doesn't work" );
 }

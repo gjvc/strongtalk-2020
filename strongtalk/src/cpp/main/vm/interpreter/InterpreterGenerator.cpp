@@ -2182,43 +2182,43 @@ void InterpreterGenerator::generate_error_handler_code() {
     should_not_reach_here();
 
     _macroAssembler->bind( _boolean_expected );
-    _macroAssembler->movl( ecx, boolean_expected );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::boolean_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _float_expected );
-    _macroAssembler->movl( ecx, float_expected );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::float_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _NonLocalReturn_to_dead_frame );
-    _macroAssembler->movl( ecx, nonlocal_return_error );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::nonlocal_return_error ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _halted );
-    _macroAssembler->movl( ecx, halted );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::halted ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _stack_missaligned );
-    _macroAssembler->movl( ecx, stack_missaligned );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::stack_missaligned ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _ebx_wrong );
-    _macroAssembler->movl( ecx, ebx_wrong );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::ebx_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _obj_wrong );
-    _macroAssembler->movl( ecx, obj_wrong );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::obj_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _last_Delta_fp_wrong );
-    _macroAssembler->movl( ecx, last_Delta_fp_wrong );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _primitive_result_wrong );
-    _macroAssembler->movl( ecx, primitive_result_wrong );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::primitive_result_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _illegal = _macroAssembler->pc();
-    _macroAssembler->movl( ecx, illegal_code );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::illegal_code ) );
     _macroAssembler->jmp( suspend );
 
     Interpreter::_illegal = _illegal;

@@ -107,7 +107,7 @@ int ResourceArea::used() {
 char * ResourceArea::allocate_bytes( int size ) {
 
     if ( size < 0 ) {
-        fatal( "negative size in allocate_bytes" );
+        st_fatal( "negative size in allocate_bytes" );
     }
     st_assert( size >= 0, "negative size in allocate_bytes" );
 

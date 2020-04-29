@@ -424,7 +424,7 @@ const char * CompiledLoop::checkUpperBound() {
 
 void CompiledLoop::optimizeIntegerLoop() {
     // need general loop opts as well (for array type checks)
-    if ( not OptimizeLoops ) fatal( "if OptimizeIntegerLoops is set, OptimizeLoops must be set too" );
+    if ( not OptimizeLoops ) st_fatal( "if OptimizeIntegerLoops is set, OptimizeLoops must be set too" );
     if ( not isIntegerLoop() )
         return;
 

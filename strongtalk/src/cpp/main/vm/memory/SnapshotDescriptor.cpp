@@ -135,7 +135,7 @@ void SnapshotDescriptor::write_on( const char * name ) {
 
 
 void SnapshotDescriptor::error( const char * msg ) {
-    fatal( msg );
+    st_fatal( msg );
 }
 
 

@@ -491,14 +491,14 @@ TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegiste
 
 
 PseudoRegister * NonTrivialNode::dest() const {
-    if ( not hasDest() ) fatal( "has no dest" );
+    if ( not hasDest() ) st_fatal( "has no dest" );
     return _dest;
 }
 
 
 void NonTrivialNode::setDest( BasicBlock * bb, PseudoRegister * d ) {
     // bb == nullptr means don't update definitions
-    if ( not hasDest() ) fatal( "has no dest" );
+    if ( not hasDest() ) st_fatal( "has no dest" );
     st_assert( bb or not _destDef, "shouldn't have a def" );
     if ( _destDef )
         _dest->removeDef( bb, _destDef );
@@ -510,7 +510,7 @@ void NonTrivialNode::setDest( BasicBlock * bb, PseudoRegister * d ) {
 
 
 PseudoRegister * NonTrivialNode::src() const {
-    if ( not hasSrc() ) fatal( "has no src" );
+    if ( not hasSrc() ) st_fatal( "has no src" );
     return _src;
 }
 
@@ -584,7 +584,7 @@ void AbstractMergeNode::removeMe() {
         _prev = firstPrev();
         TrivialNode::removeMe();
     } else {
-        fatal( "not implemented yet" );
+        st_fatal( "not implemented yet" );
     }
 }
 
@@ -596,7 +596,7 @@ void AbstractMergeNode::movePrev( Node * from, Node * to ) {
             return;
         }
     }
-    fatal( "from not found" );
+    st_fatal( "from not found" );
 }
 
 
@@ -617,7 +617,7 @@ void AbstractBranchNode::removeMe() {
         }
         NonTrivialNode::removeMe();
     } else {
-        fatal( "not implemented yet" );
+        st_fatal( "not implemented yet" );
     }
 }
 
@@ -849,7 +849,7 @@ BlockCreateNode::BlockCreateNode( BlockPseudoRegister * b, GrowableArray <Pseudo
         case MethodOopDescriptor::expects_context:
             _context = b->scope()->context();
             break;
-        default: fatal( "unexpected incoming info" );
+        default: st_fatal( "unexpected incoming info" );
     };
 }
 
@@ -1923,7 +1923,7 @@ void BranchNode::eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing
         NonTrivialNode::eliminate( bb, r, removing, cp );
     } else {
         // caller has to handle this
-        fatal( "removing branch node with > 1 successor" );
+        st_fatal( "removing branch node with > 1 successor" );
     }
 }
 
@@ -1998,7 +1998,7 @@ void PrimitiveNode::eliminate( BasicBlock * bb, PseudoRegister * r, bool_t rem, 
                 // so reset location first
                 arg->_location = unAllocated;
             } else {
-                fatal( "internal compiler error" );
+                st_fatal( "internal compiler error" );
                 //fatal("Urs thinks all args should be topOfStack");
             }
             CHECK( arg, r );
@@ -2160,7 +2160,7 @@ void BranchNode::eliminateBranch( int op1, int op2, int res ) {
             return;        // can't handle yet
         case BranchOpCode::VCBranchOp:
             return;        // can't handle yet
-        default: fatal( "unexpected branch type" );
+        default: st_fatal( "unexpected branch type" );
     }
     int nodeToRemove;
     if ( ok ) {
@@ -2323,7 +2323,7 @@ bool_t NonTrivialNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister
     if ( _srcUse == u ) {
         CP_HELPER( _src, _srcUse, return );
     } else {
-        fatal( "copyPropagate: not the source use" );
+        st_fatal( "copyPropagate: not the source use" );
     }
     return false;
 }
@@ -2493,7 +2493,7 @@ bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
             case ArithOpCode::tCmpArithOp:
                 warning( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
                 return false;
-            default           : fatal1( "unknown tagged opcode %ld", _op );
+            default           : st_fatal1( "unknown tagged opcode %ld", _op );
         }
         bool_t ok = not result->is_mark();
         if ( ok ) {
@@ -2546,7 +2546,7 @@ bool_t TArithRRNode::doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister
             _arg2IsInt = true;
         CP_HELPER( _oper, _operUse, res = );
     } else {
-        fatal( "copyPropagate: not the source use" );
+        st_fatal( "copyPropagate: not the source use" );
     }
     removeFailureIfPossible();
     return res;
@@ -2593,7 +2593,7 @@ bool_t TypeTestNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
             CP_HELPER( _src, _srcUse, return );
         }
     } else {
-        fatal( "don't have this use" );
+        st_fatal( "don't have this use" );
     }
     return false;
 }
@@ -3089,7 +3089,7 @@ void AbstractArrayAtNode::assert_preg_type( PseudoRegister * r, GrowableArray <K
         n->addArray( this );
         removeFailureIfPossible();
     } else if ( r not_eq _arg ) {
-        fatal( "array can't be an integer" );
+        st_fatal( "array can't be an integer" );
     }
 }
 

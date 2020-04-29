@@ -100,7 +100,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
         _console->print_cr( "interpreter call at [0x%x]", begin_addr() );
         _console->print_cr( "NativeMethod entry point [0x%x]", Interpreter::_last_native_called );
         InterpretedInlineCache * ic = as_InterpretedIC( next_instruction_address() );
-        fatal( "please notify VM people" );
+        st_fatal( "please notify VM people" );
     }
 
     if ( TraceLookup ) {
@@ -151,7 +151,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
-                fatal( "lookup error in scheduler" );
+                st_fatal( "lookup error in scheduler" );
             } else {
                 DeltaProcess::active()->suspend( ProcessState::lookup_error );
             }

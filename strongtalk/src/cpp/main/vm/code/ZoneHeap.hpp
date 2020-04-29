@@ -139,7 +139,7 @@ class ChunkKlass {
 
     public:
         ChunkKlass() {
-            fatal( "shouldn't create" );
+            st_fatal( "shouldn't create" );
         }
 
 

@@ -75,7 +75,7 @@ void sweepTrigger() {
 
 static void idOverflowError( int delta ) {
     // fix this - maybe eliminate NativeMethod IDs altogether?
-    fatal( "zone: NativeMethod ID table overflowed" );
+    st_fatal( "zone: NativeMethod ID table overflowed" );
 }
 
 
@@ -129,7 +129,7 @@ NativeMethod * Zone::allocate( int size ) {
         n = ( NativeMethod * ) _methodHeap->allocate( size );
         if ( n == nullptr ) {
             print();
-            fatal( "cannot allocate enough Space for NativeMethod" );
+            st_fatal( "cannot allocate enough Space for NativeMethod" );
         }
     }
 

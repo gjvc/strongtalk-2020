@@ -29,7 +29,7 @@ void CacheElement::verify() {
             _console->print( "  result = (" );
             _lookupResult.print_on( _console );
             _console->print_cr( ")" );
-            fatal( "LookupCache verify failed" );
+            st_fatal( "LookupCache verify failed" );
         }
         const NativeMethod * nm = Universe::code->lookup( &_lookupKey );
         if ( _lookupResult.is_method() and nm ) {

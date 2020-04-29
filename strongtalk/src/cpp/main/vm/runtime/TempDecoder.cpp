@@ -47,7 +47,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     }
 
     { // scan global stack temps
-        assert_smi( current, "expecting smi_t" );
+        st_assert_smi( current, "expecting smi_t" );
         int offset = SMIOop( current )->value();
         NEXT;
         while ( current->is_byteArray() ) {
@@ -57,7 +57,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     }
 
     { // scan global stack float temps
-        assert_smi( current, "expecting smi_t" );
+        st_assert_smi( current, "expecting smi_t" );
         st_assert( SMIOop(current)->value() == 0, "should be zero" )
         int fno = SMIOop( current )->value();
         NEXT;
@@ -68,7 +68,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     }
 
     { // scan global heap temps
-        assert_smi( current, "expecting smi_t" );
+        st_assert_smi( current, "expecting smi_t" );
         int offset = SMIOop( current )->value();
         NEXT;
         while ( current->is_byteArray() ) {
@@ -82,14 +82,14 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     }
     { // scan inlined temps
         while ( 1 ) {
-            assert_smi( current, "expecting smi_t" );
+            st_assert_smi( current, "expecting smi_t" );
             int begin = SMIOop( current )->value();
             NEXT;
-            assert_smi( current, "expecting smi_t" );
+            st_assert_smi( current, "expecting smi_t" );
             int end = SMIOop( current )->value();
             NEXT;
             // Oop temps
-            assert_smi( current, "expecting smi_t" );
+            st_assert_smi( current, "expecting smi_t" );
             int offset = SMIOop( current )->value();
             NEXT;
             while ( current->is_byteArray() ) {
@@ -100,7 +100,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
                 NEXT;
             }
             // Floats
-            assert_smi( current, "expecting smi_t" );
+            st_assert_smi( current, "expecting smi_t" );
             offset = SMIOop( current )->value();
             NEXT;
             while ( current->is_byteArray() ) {

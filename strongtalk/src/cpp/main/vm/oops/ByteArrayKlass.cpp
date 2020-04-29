@@ -79,13 +79,13 @@ void setKlassVirtualTableFromByteArrayKlass( Klass * k ) {
 
 
 bool_t ByteArrayKlass::oop_verify( Oop obj ) {
-    assert_byteArray( obj, "Argument must be byteArray" );
+    st_assert_byteArray( obj, "Argument must be byteArray" );
     return ByteArrayOop( obj )->verify();
 }
 
 
 void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_byteArray( obj, "Argument must be byteArray" );
+    st_assert_byteArray( obj, "Argument must be byteArray" );
     ByteArrayOop array = ByteArrayOop( obj );
     int          len   = array->length();
     int          n     = min( MaxElementPrintSize, len );

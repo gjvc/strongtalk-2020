@@ -20,9 +20,9 @@ extern Compiler * theCompiler;
 
 void Interpreted_DLLCache::verify() {
     // check oops
-    if ( not dll_name()->is_symbol() ) fatal( "dll name is not a SymbolOop" );
-    if ( not funct_name()->is_symbol() ) fatal( "function name is not a SymbolOop" );
-    if ( number_of_arguments() < 0 ) fatal( "illegal number of arguments" );
+    if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
+    if ( not funct_name()->is_symbol() ) st_fatal( "function name is not a SymbolOop" );
+    if ( number_of_arguments() < 0 ) st_fatal( "illegal number of arguments" );
 }
 
 
@@ -50,12 +50,12 @@ void Compiled_DLLCache::verify() {
     test_at( static_cast<int>( Layout_constants::test_2_instruction_offset ) )->verify();
     NativeCall::verify();
     // check oops
-    if ( not dll_name()->is_symbol() ) fatal( "dll name is not a SymbolOop" );
-    if ( not function_name()->is_symbol() ) fatal( "function name is not a SymbolOop" );
+    if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
+    if ( not function_name()->is_symbol() ) st_fatal( "function name is not a SymbolOop" );
     // check destination
     char * d = destination();
     if ( d not_eq StubRoutines::lookup_DLL_entry( true ) and d not_eq StubRoutines::lookup_DLL_entry( false ) and d not_eq StubRoutines::call_DLL_entry( true ) and d not_eq StubRoutines::call_DLL_entry( false ) ) {
-        fatal1( "Compiled_DLLCache destination 0x%x incorrect", d );
+        st_fatal1( "Compiled_DLLCache destination 0x%x incorrect", d );
     }
 }
 

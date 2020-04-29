@@ -56,7 +56,7 @@ void * NativeMethod::operator new( size_t size ) {
     st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
     int nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( uint16_t ), oopSize );
     void * p = Universe::code->allocate( nativeMethod_size );
-    if ( not p ) fatal( "out of Space in code cache" );
+    if ( not p ) st_fatal( "out of Space in code cache" );
     return p;
 }
 
@@ -218,7 +218,7 @@ void NativeMethod::check_store() {
         if ( iter.type() == RelocationInformation::RelocationType::oop_type ) {
             Oop obj = *iter.oop_addr();
             if ( obj->is_mem() and obj->is_new() ) {
-                fatal( "must be tenured Oop in compiled code" );
+                st_fatal( "must be tenured Oop in compiled code" );
             }
         }
     }
@@ -688,7 +688,7 @@ void NativeMethod::verify() {
 void NativeMethod::verify_expression_stacks_at( const char * pc ) {
 
     ProgramCounterDescriptor * pd = containingProgramCounterDescriptor( pc );
-    if ( not pd ) fatal( "ProgramCounterDescriptor not found" );
+    if ( not pd ) st_fatal( "ProgramCounterDescriptor not found" );
 
     ScopeDescriptor * sd = scopes()->at( pd->_scope, pc );
     int byteCodeIndex = pd->_byteCode;

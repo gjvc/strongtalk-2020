@@ -279,7 +279,7 @@ void MethodPrinterClosure::normal_send( InterpretedInlineCache * ic ) {
     _outputStream->print( " " );
     Oop s = Oop( ic->selector() );
     if ( not s->is_smi() and Universe::is_heap( ( Oop * ) s ) ) {
-        assert_symbol( ic->selector(), "selector in ic must be a symbol" );
+        st_assert_symbol( ic->selector(), "selector in ic must be a symbol" );
         ic->selector()->print_value_on( _outputStream );
     } else {
         _outputStream->print( "INVALID SELECTOR, 0x%lx", s );

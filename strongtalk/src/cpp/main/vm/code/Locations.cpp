@@ -73,7 +73,7 @@ void Locations::extendTo( int newValue ) {
 
 int Locations::allocateRegister() {
     int i = _firstFreeRegister;
-    if ( not isRegister( i ) ) fatal( "out of registers" );
+    if ( not isRegister( i ) ) st_fatal( "out of registers" );
     _firstFreeRegister = _freeList->at( i );
     _freeList->at_put( i, -1 ); // initialize reference count
     verify();
@@ -250,7 +250,7 @@ Register Locations::locationAsRegister( int loc ) const {
             return edi;
         case 5:
             return esi;
-        default: fatal( "inconsistency - adjust this code" );
+        default: st_fatal( "inconsistency - adjust this code" );
     }
     ShouldNotReachHere();
     return eax;
@@ -314,25 +314,25 @@ void Locations::verify() {
     // verify arguments reference counts
     i = 0;
     while ( i < _nofArguments ) {
-        if ( _freeList->at( i ) > 0 ) fatal( "bug in argument reference counts" );
+        if ( _freeList->at( i ) > 0 ) st_fatal( "bug in argument reference counts" );
         i++;
     }
     // verify register free list
     i = _firstFreeRegister;
     while ( i not_eq sentinel ) {
-        if ( not isRegister( i ) ) fatal( "bug in registers free list" );
+        if ( not isRegister( i ) ) st_fatal( "bug in registers free list" );
         nofFreeRegisters++;
         i = _freeList->at( i );
     }
-    if ( nofFreeRegisters > _nofRegisters ) fatal( "too many free registers" );
+    if ( nofFreeRegisters > _nofRegisters ) st_fatal( "too many free registers" );
     // verify stack locs free list
     i = _firstFreeStackTmp;
     while ( i not_eq sentinel ) {
-        if ( not isStackTmp( i ) ) fatal( "bug in stack locs free list" );
+        if ( not isStackTmp( i ) ) st_fatal( "bug in stack locs free list" );
         nofFreeStackTmps++;
         i = _freeList->at( i );
     }
-    if ( nofFreeStackTmps > _freeList->length() - _nofRegisters - _nofArguments ) fatal( "too many free stack locs" );
+    if ( nofFreeStackTmps > _freeList->length() - _nofRegisters - _nofArguments ) st_fatal( "too many free stack locs" );
     // verify used locations
     i = _freeList->length();
     while ( i-- > _nofArguments ) {
@@ -340,5 +340,5 @@ void Locations::verify() {
             nofUsedLocations++;
     }
     // verify total number
-    if ( _nofArguments + nofFreeRegisters + nofFreeStackTmps + nofUsedLocations not_eq _freeList->length() ) fatal( "locations data structure is leaking" );
+    if ( _nofArguments + nofFreeRegisters + nofFreeStackTmps + nofUsedLocations not_eq _freeList->length() ) st_fatal( "locations data structure is leaking" );
 }

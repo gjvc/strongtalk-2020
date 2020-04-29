@@ -51,7 +51,7 @@ Oop Delta::call_generic( DeltaCallCache * ic, Oop receiver, Oop selector, int no
         JumpTableEntry * entry = ic->result().entry();
         if ( entry not_eq nullptr and entry->method()->isZombie() ) { // is a zombie NativeMethod => do a new lookup
             LookupResult result = ic->lookup( receiver->klass(), SymbolOop( selector ) );
-            if ( result.is_empty() ) fatal( "lookup failure - not treated" );
+            if ( result.is_empty() ) st_fatal( "lookup failure - not treated" );
             return _call_delta( result.value(), receiver, nofArgs, args );
         }
         return _call_delta( ic->result().value(), receiver, nofArgs, args );
@@ -104,7 +104,7 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, O
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
-                fatal( "lookup error in scheduler" );
+                st_fatal( "lookup error in scheduler" );
             } else {
                 DeltaProcess::active()->suspend( ProcessState::lookup_error );
             }

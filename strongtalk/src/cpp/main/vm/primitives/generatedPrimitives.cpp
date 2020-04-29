@@ -16,7 +16,6 @@
 
 // -----------------------------------------------------------------------------
 
-// entry points
 const char * GeneratedPrimitives::_allocateContext_var = nullptr;
 
 const char * GeneratedPrimitives::_smiOopPrimitives_add       = nullptr;
@@ -119,50 +118,10 @@ const char * GeneratedPrimitives::primitiveValue( int n ) {
     return _primitiveValue[ n ];
 }
 
-
-extern "C" Oop primitiveNew0( Oop );
-extern "C" Oop primitiveNew1( Oop );
-extern "C" Oop primitiveNew2( Oop );
-extern "C" Oop primitiveNew3( Oop );
-extern "C" Oop primitiveNew4( Oop );
-extern "C" Oop primitiveNew5( Oop );
-extern "C" Oop primitiveNew6( Oop );
-extern "C" Oop primitiveNew7( Oop );
-extern "C" Oop primitiveNew8( Oop );
-extern "C" Oop primitiveNew9( Oop );
-
-
 const char * GeneratedPrimitives::primitiveNew( int n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     st_assert( 0 <= n and n <= 9, "index out of range" )
     return _primitiveNew[ n ];
-
-    /*
-    switch ( n ) {
-        case 0:
-            return ( const char * ) ::primitiveNew0;
-        case 1:
-            return ( const char * ) ::primitiveNew1;
-        case 2:
-            return ( const char * ) ::primitiveNew2;
-        case 3:
-            return ( const char * ) ::primitiveNew3;
-        case 4:
-            return ( const char * ) ::primitiveNew4;
-        case 5:
-            return ( const char * ) ::primitiveNew5;
-        case 6:
-            return ( const char * ) ::primitiveNew6;
-        case 7:
-            return ( const char * ) ::primitiveNew7;
-        case 8:
-            return ( const char * ) ::primitiveNew8;
-        case 9:
-            return ( const char * ) ::primitiveNew9;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
-     */
 }
 
 
@@ -185,33 +144,6 @@ const char * GeneratedPrimitives::allocateBlock( int n ) {
         return ( const char * ) ::allocateBlock;        // convenience
     st_assert( 0 <= n and n <= 9, "index out of range" )
     return _allocateBlock[ n ];
-
-    /*
-    switch ( n ) {
-        case 0:
-            return ( const char * ) ::allocateBlock0;
-        case 1:
-            return ( const char * ) ::allocateBlock1;
-        case 2:
-            return ( const char * ) ::allocateBlock2;
-        case 3:
-            return ( const char * ) ::allocateBlock3;
-        case 4:
-            return ( const char * ) ::allocateBlock4;
-        case 5:
-            return ( const char * ) ::allocateBlock5;
-        case 6:
-            return ( const char * ) ::allocateBlock6;
-        case 7:
-            return ( const char * ) ::allocateBlock7;
-        case 8:
-            return ( const char * ) ::allocateBlock8;
-        case 9:
-            return ( const char * ) ::allocateBlock9;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
-     */
 }
 
 
@@ -225,21 +157,12 @@ const char * GeneratedPrimitives::allocateContext( int n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     if ( n == -1 )
         return _allocateContext_var;        // convenience
-    if ( n == -1 )
-        return ( const char * ) ::allocateContext;        // convenience
+
+//    if ( n == -1 )
+//        return ( const char * ) ::allocateContext;        // convenience
+
     st_assert( 0 <= n and n <= 2, "index out of range" )
     return _allocateContext[ n ];
-
-    switch ( n ) {
-        case 0:
-            return ( const char * ) ::allocateContext0;
-        case 1:
-            return ( const char * ) ::allocateContext1;
-        case 2:
-            return ( const char * ) ::allocateContext2;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
 }
 
 // Initialization

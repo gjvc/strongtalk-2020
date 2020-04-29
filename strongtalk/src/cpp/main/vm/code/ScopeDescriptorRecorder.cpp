@@ -50,7 +50,7 @@ const uint8_t ScopeDescriptorHeaderByte::_contextBitNum      = _codeWidth + 5;  
 
 NameNode * newValueName( Oop value ) {
     if ( value->is_block() ) {
-        fatal( "should never be a block" );
+        st_fatal( "should never be a block" );
         return nullptr;
     } else {
         return new ValueName( value );
@@ -293,7 +293,7 @@ Location ScopeDescriptorRecorder::convert_location( Location loc ) {
     if ( scope->_offset == INVALID_OFFSET ) {
         _console->print_cr( loc.name() );
         theCompiler->print_code( false );
-        fatal( "compiler error: context location appears outside its scope" );    // Urs 5/96
+        st_fatal( "compiler error: context location appears outside its scope" );    // Urs 5/96
     }
     return Location::runtimeContextLocation( loc.contextNo(), loc.tempNo(), scope->_offset );
 }
@@ -375,7 +375,7 @@ NativeMethodScopes * _scopes;
 
 ScopeDescriptor * _getNextScopeDescriptor() {
     _sd = _scopes->getNext( _sd );
-    if ( _sd == nullptr ) fatal( "out of ScopeDescriptor instances" );
+    if ( _sd == nullptr ) st_fatal( "out of ScopeDescriptor instances" );
     return _sd;
 }
 

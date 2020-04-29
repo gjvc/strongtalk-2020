@@ -523,8 +523,8 @@ class VerifyOopClosure : public OopClosure {
 
 
 void Frame::verify() const {
-    if ( fp() == nullptr ) fatal( "fp cannot be nullptr" );
-    if ( sp() == nullptr ) fatal( "sp cannot be nullptr" );
+    if ( fp() == nullptr ) st_fatal( "fp cannot be nullptr" );
+    if ( sp() == nullptr ) st_fatal( "sp cannot be nullptr" );
     VerifyOopClosure blk;
     blk.fr = ( Frame * ) this;
     ( ( Frame * ) this )->oop_iterate( &blk );

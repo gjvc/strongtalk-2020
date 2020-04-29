@@ -22,7 +22,7 @@ void Variable::print() {
     } else if ( is_top_of_stack() ) {
         _console->print( "tos" );
     } else {
-        fatal( "invalid variable" );
+        st_fatal( "invalid variable" );
     }
 }
 

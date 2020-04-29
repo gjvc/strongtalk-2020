@@ -82,7 +82,7 @@ RecompilerFrame * RecompilerFrame::new_RFrame( Frame frame, const RecompilerFram
     } else if ( frame.is_compiled_frame() ) {
         rf = new CompiledRecompilerFrame( frame, callee );
     } else {
-        fatal( "not a Delta frame" );
+        st_fatal( "not a Delta frame" );
     }
     rf->init();
     rf->set_distance( dist );
@@ -250,7 +250,7 @@ int RecompilerFrame::computeSends( MethodOop m ) {
             case ByteCodes::SendType::primitive_send  : // send to method containing predicted primitive
             case ByteCodes::SendType::no_send:
                 break;
-            default: fatal1( "unexpected send type 0x%08x", iter.send() );
+            default: st_fatal1( "unexpected send type 0x%08x", iter.send() );
         }
     } while ( iter.advance() );
     return sends;
@@ -310,7 +310,7 @@ void InterpretedRecompilerFrame::init() {
                     break;
                 case ByteCodes::LoopType::no_loop:
                     break;
-                default: fatal1( "unexpected loop type 0x%08x", iter.loopType() );
+                default: st_fatal1( "unexpected loop type 0x%08x", iter.loopType() );
             }
             if ( not iter.advance() )
                 break;

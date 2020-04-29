@@ -432,7 +432,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::vm_type( Oop behavior ) {
             return vmSymbols::proxy_klass();
         case Klass::Format::smi_klass:
             return vmSymbols::smi_klass();
-        default: fatal( "wrong format for klass" );
+        default: st_fatal( "wrong format for klass" );
     }
     return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 }

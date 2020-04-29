@@ -779,7 +779,7 @@ ByteCodes::Code ByteCodes::interpreted_send_code_for( ByteCodes::Code code ) {
         case ByteCodes::Code::objArray_at_put:
             return ByteCodes::Code::interpreted_send_2;
 
-        default                : fatal( "not a send bytecode" );
+        default                : st_fatal( "not a send bytecode" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -813,7 +813,7 @@ ByteCodes::Code ByteCodes::compiled_send_code_for( ByteCodes::Code code ) {
         case ByteCodes::Code::interpreted_send_super_pop:
             return ByteCodes::Code::compiled_send_super_pop;
 
-        default                : fatal( "no corresponding compiled send code" );
+        default                : st_fatal( "no corresponding compiled send code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -826,7 +826,7 @@ ByteCodes::Code ByteCodes::access_send_code_for( ByteCodes::Code code ) {
             return ByteCodes::Code::access_send_0;
         case ByteCodes::Code::interpreted_send_self:
             return ByteCodes::Code::access_send_self;
-        default: fatal( "no corresponding access send code" );
+        default: st_fatal( "no corresponding access send code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -861,7 +861,7 @@ ByteCodes::Code ByteCodes::primitive_send_code_for( ByteCodes::Code code ) {
         case ByteCodes::Code::interpreted_send_super_pop:
             return ByteCodes::Code::primitive_send_super_pop;
 
-        default: fatal( "no corresponding primitive send code" );
+        default: st_fatal( "no corresponding primitive send code" );
     }
 
     ShouldNotReachHere();
@@ -896,7 +896,7 @@ ByteCodes::Code ByteCodes::polymorphic_send_code_for( ByteCodes::Code code ) {
         case ByteCodes::Code::interpreted_send_super_pop:
             return ByteCodes::Code::polymorphic_send_super_pop;
 
-        default: fatal( "no corresponding polymorphic send code" );
+        default: st_fatal( "no corresponding polymorphic send code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -930,7 +930,7 @@ ByteCodes::Code ByteCodes::megamorphic_send_code_for( ByteCodes::Code code ) {
             return ByteCodes::Code::megamorphic_send_self_pop;
         case ByteCodes::Code::interpreted_send_super_pop:
             return ByteCodes::Code::megamorphic_send_super_pop;
-        default: fatal( "no corresponding megamorphic send code" );
+        default: st_fatal( "no corresponding megamorphic send code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -955,7 +955,7 @@ ByteCodes::Code ByteCodes::original_primitive_call_code_for( Code code ) {
         case ByteCodes::Code::primitive_call_self_failure_lookup:
             return ByteCodes::Code::primitive_call_self_failure_lookup;
 
-        default: fatal( "no corresponding primitive call code" );
+        default: st_fatal( "no corresponding primitive call code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;
@@ -972,7 +972,7 @@ ByteCodes::Code ByteCodes::primitive_call_code_for( Code code ) {
             return ByteCodes::Code::primitive_call_failure;
         case ByteCodes::Code::primitive_call_self_failure_lookup:
             return ByteCodes::Code::primitive_call_self_failure;
-        default: fatal( "no corresponding primitive call code" );
+        default: st_fatal( "no corresponding primitive call code" );
     }
     ShouldNotReachHere();
     return ByteCodes::Code::halt;

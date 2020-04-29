@@ -25,7 +25,7 @@ static std::array <const char *, nofSpecialLocations> specialLocNames{
 
 void Location::overflow( Mode mode, int f1, int f2, int f3 ) {
     // should handle field overflow somehow - for now: fatal error
-    fatal( "Location field overflow - please notify the compiler folks" );
+    st_fatal( "Location field overflow - please notify the compiler folks" );
 }
 
 

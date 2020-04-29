@@ -38,8 +38,8 @@ void Mapping::initialize() {
 // C++ won't compile array with 0 elements
 //int      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
 
-std::array <Location, nofLocalRegisters + 1> Mapping::_localRegisters;      //
-std::array <int, REGISTER_COUNT + 1>         Mapping::_localRegisterIndex;  //
+std::array <Location, nofLocalRegisters> Mapping::_localRegisters;      //
+std::array <int, REGISTER_COUNT>         Mapping::_localRegisterIndex;  //
 
 
 Location Mapping::localRegister( int i ) {

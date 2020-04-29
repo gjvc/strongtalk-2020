@@ -157,7 +157,7 @@ void BlockScope::initialize( MethodOop method, KlassOop methodHolder, Scope * p,
                 break;
             case MethodOopDescriptor::expects_self:
                 _context = self()->preg();
-                fatal( "self not known yet -- fix this" );
+                st_fatal( "self not known yet -- fix this" );
                 break;
             case MethodOopDescriptor::expects_parameter:    // fix this -- should find which
             Unimplemented();
@@ -166,10 +166,10 @@ void BlockScope::initialize( MethodOop method, KlassOop methodHolder, Scope * p,
                 if ( p->isInlinedScope() ) {
                     _context = ( ( InlinedScope * ) p )->context();
                 } else {
-                    fatal( "shouldn't inline" );    // shouldn't inline block unless parent was inlined, too
+                    st_fatal( "shouldn't inline" );    // shouldn't inline block unless parent was inlined, too
                 }
                 break;
-            default: fatal( "unexpected incoming info" );
+            default: st_fatal( "unexpected incoming info" );
         }
     }
 }
@@ -418,7 +418,7 @@ void InlinedScope::epilogue() {
     while ( not _subScopes->isEmpty() and not _subScopes->last()->hasBeenGenerated() )
         _subScopes->pop();
     for ( int i = 0; i < _subScopes->length(); i++ ) {
-        if ( not _subScopes->at( i )->hasBeenGenerated() ) fatal( "unused scopes should be at end" );
+        if ( not _subScopes->at( i )->hasBeenGenerated() ) st_fatal( "unused scopes should be at end" );
     }
 
     if ( _nofSends > 0 and containsNonLocalReturn() ) {

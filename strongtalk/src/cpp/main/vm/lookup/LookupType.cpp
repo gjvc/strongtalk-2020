@@ -42,7 +42,7 @@ char * lookupTypeName( LookupType l ) {
         case SuperLookupType:
             strcpy( name, "SuperLookup" );
             break;
-        default: fatal( "Unknown lookupType" );
+        default: st_fatal( "Unknown lookupType" );
     }
 
     bool_t hasFlag = false;
@@ -55,7 +55,7 @@ char * lookupTypeName( LookupType l ) {
         case Comparing:
             addFlag( hasFlag, name, "comparing " );
             break;
-        default: fatal1( "invalid count type %ld", countType( l ) );
+        default: st_fatal1( "invalid count type %ld", countType( l ) );
     }
     if ( isBitSet( l, DirtySendBit ) )
         addFlag( hasFlag, name, "dirty " );

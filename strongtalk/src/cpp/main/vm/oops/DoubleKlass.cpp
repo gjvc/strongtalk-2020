@@ -34,14 +34,14 @@ void setKlassVirtualTableFromDoubleKlass( Klass * k ) {
 
 
 void DoubleKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_double( obj, "obj must be double" );
+    st_assert_double( obj, "obj must be double" );
     stream->print( "%1.10gd ", DoubleOop( obj )->value() );
     oop_print_value_on( obj, stream );
 }
 
 
 void DoubleKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_double( obj, "obj must be double" );
+    st_assert_double( obj, "obj must be double" );
     stream->print( "%1.10gd", DoubleOop( obj )->value() );
 }
 

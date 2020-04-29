@@ -11,7 +11,6 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/main/main.hpp"
 #include "vm/utilities/LongInteger64.hpp"
 #include "vm/system/os.hpp"
 #include "vm/utilities/GrowableArray.hpp"
@@ -90,7 +89,7 @@ void os_dump_context() {
 static int32_t main_thread_id;
 
 static int32_t _argc;
-static char    ** _argv;
+static char ** _argv;
 
 
 int32_t os::argc() {
@@ -110,7 +109,7 @@ void os::set_args( int32_t argc, char * argv[] ) {
 
 
 GrowableArray <Thread *> * Thread::_threads = nullptr;
-static Thread            * main_thread;
+static Thread * main_thread;
 
 extern void intercept_for_single_step();
 
@@ -562,8 +561,9 @@ void install_dummy_handler() {
     sigemptyset( &sa.sa_mask );
     sa.sa_flags     = SA_RESTART | SA_SIGINFO;
     sa.sa_sigaction = segv_repeated;
-    if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 )
-        /* Handle error */;
+    if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
+        printf( "SIGSEGV\n" );
+    }
 }
 
 
@@ -598,16 +598,18 @@ void install_signal_handlers() {
     struct sigaction sa;
 
     sigemptyset( &sa.sa_mask );
-    sa.sa_flags     = SA_RESTART; /* Restart functions if
-	                               interrupted by handler */
+    sa.sa_flags     = SA_RESTART; // Restart functions if interrupted by handler
     sa.sa_handler   = suspendHandler;
-    if ( sigaction( SIGUSR1, &sa, nullptr ) == -1 )
-        /* Handle error */;
+    if ( sigaction( SIGUSR1, &sa, nullptr ) == -1 ) {
+        printf( "SIGUSR1\n" );
+    }
 
     sa.sa_flags |= SA_SIGINFO;
     sa.sa_sigaction = handler;
-    if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 )
-        /* Handle error */;
+    if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
+        printf( "SIGSEGV\n" );
+    }
+
 }
 
 

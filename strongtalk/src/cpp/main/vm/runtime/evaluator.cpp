@@ -537,7 +537,7 @@ bool_t evaluator::process_line( const char * line ) {
             return true;
         }
         if ( stream.is_break() ) {
-            fatal( "evaluator break" );
+            st_fatal( "evaluator break" );
             return true;
         }
         if ( stream.is_events() ) {

@@ -22,7 +22,7 @@ struct KlassOopDescriptor * ClassChange::new_class_from( KlassOopDescriptor * ol
 
     KlassOopDescriptor * result = new_super_klass->klass_part()->create_subclass( new_mixin, format );
     if ( result == nullptr ) {
-        fatal( "class creation failed - internal error" );
+        st_fatal( "class creation failed - internal error" );
     }
 
     // %cleanup code
@@ -81,7 +81,7 @@ memConverter * ClassChange::create_converter_for( KlassOopDescriptor * old_class
         case Klass::Format::proxy_klass:
             return new proxyConverter( old_class, new_class );
     }
-    fatal( "cannot create converter for type" );
+    st_fatal( "cannot create converter for type" );
     return nullptr;
 }
 

@@ -313,7 +313,7 @@ LookupResult interpreter_super_lookup( SymbolOop selector ) {
     // NB: lookup for current method can fail if the method was deleted while still on the stack
 
     if ( sendingMethodHolder == nullptr ) {
-        fatal( "sending method holder not found; this might be caused by a programming change -- fix this" );
+        st_fatal( "sending method holder not found; this might be caused by a programming change -- fix this" );
     }
     KlassOop  superKlass  = sendingMethodHolder->klass_part()->superKlass();
     MethodOop superMethod = LookupCache::method_lookup( superKlass, selector );

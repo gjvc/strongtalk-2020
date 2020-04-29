@@ -37,7 +37,7 @@ void VirtualSpace::initialize( ReservedSpace reserved, int committed_size, bool_
 
     _low_to_high = low_to_high;
 
-    if ( low_boundary() == nullptr ) fatal( "os::reserve_memory failed" );
+    if ( low_boundary() == nullptr ) st_fatal( "os::reserve_memory failed" );
 
     // initialize committed area
     _low  = low_to_high ? low_boundary() : high_boundary();
@@ -94,11 +94,11 @@ void VirtualSpace::expand( int size ) {
     st_assert( uncommitted_size() >= size, "not Space enough" );
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
-        if ( not os::commit_memory( high(), size ) ) fatal( "os::commit_memory failed" );
+        if ( not os::commit_memory( high(), size ) ) st_fatal( "os::commit_memory failed" );
         _high += size;
     } else {
         _low -= size;
-        if ( not os::commit_memory( low(), size ) ) fatal( "os::commit_memory failed" );
+        if ( not os::commit_memory( low(), size ) ) st_fatal( "os::commit_memory failed" );
     }
 }
 
@@ -108,9 +108,9 @@ void VirtualSpace::shrink( int size ) {
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
         _high -= size;
-        if ( not os::uncommit_memory( high(), size ) ) fatal( "os::uncommit_memory failed" );
+        if ( not os::uncommit_memory( high(), size ) ) st_fatal( "os::uncommit_memory failed" );
     } else {
-        if ( not os::uncommit_memory( low(), size ) ) fatal( "os::uncommit_memory failed" );
+        if ( not os::uncommit_memory( low(), size ) ) st_fatal( "os::uncommit_memory failed" );
         _low += size;
     }
 }

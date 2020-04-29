@@ -263,7 +263,7 @@ void Bootstrap::parse_objects() {
 
 
 void Bootstrap::object_error_func( const char * str ) {
-    fatal( str );
+    st_fatal( str );
 }
 
 
@@ -398,10 +398,10 @@ Oop Bootstrap::readNextObject() {
 
             // Objects
         case 'a': // 
-        fatal( "klass" );
+        st_fatal( "klass" );
             break;
         case 'b': // 
-        fatal( "smi_t" );
+        st_fatal( "smi_t" );
             break;
         case 'c': // 
             object_case_func <MemOop>( m );
@@ -428,25 +428,25 @@ Oop Bootstrap::readNextObject() {
             object_case_func <MethodOop>( m );
             break;
         case 'k': // 
-        fatal( "blockClosure" );
+        st_fatal( "blockClosure" );
             break;
         case 'l': // 
-        fatal( "context" );
+        st_fatal( "context" );
             break;
         case 'm': // 
-        fatal( "proxy" );
+        st_fatal( "proxy" );
             break;
         case 'n': // 
             object_case_func <MixinOop>( m );
             break;
         case 'o': // 
-        fatal( "weakArrayOop" );
+        st_fatal( "weakArrayOop" );
             break;
         case 'p': // 
             object_case_func <ProcessOop>( m );
             break;
         default: // 
-        fatal( "unknown object typeByte" );
+        st_fatal( "unknown object typeByte" );
     }
 
     return m;
@@ -467,7 +467,7 @@ void Bootstrap::read_mark( MarkOop * mark_addr ) {
             m = MarkOopDescriptor::tagged_prototype();
             break;
         default: //
-        fatal( "expecting a markup" );
+        st_fatal( "expecting a markup" );
     }
     *mark_addr = m;
 }

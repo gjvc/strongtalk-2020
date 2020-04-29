@@ -511,34 +511,34 @@ void Klass::print_name_on( ConsoleOutputStream * stream ) {
 
 
 int Klass::oop_scavenge_contents( Oop obj ) {
-    fatal( "should not call Klass::oop_scavenge_contents" );
+    st_fatal( "should not call Klass::oop_scavenge_contents" );
     return 0;
 }
 
 
 int Klass::oop_scavenge_tenured_contents( Oop obj ) {
-    fatal( "should not call Klass::oop_scavenge_promotion" );
+    st_fatal( "should not call Klass::oop_scavenge_promotion" );
     return 0;
 }
 
 
 void Klass::oop_follow_contents( Oop obj ) {
-    fatal( "should not call Klass::oop_follow_contents" );
+    st_fatal( "should not call Klass::oop_follow_contents" );
 }
 
 
 void Klass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    fatal( "should not call layout_iterate on Klass" );
+    st_fatal( "should not call layout_iterate on Klass" );
 }
 
 
 void Klass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
-    fatal( "should not call oop_iterate on Klass" );
+    st_fatal( "should not call oop_iterate on Klass" );
 }
 
 
 void Klass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
-    fatal( "should not call Klass::oop_print_on" );
+    st_fatal( "should not call Klass::oop_print_on" );
 }
 
 

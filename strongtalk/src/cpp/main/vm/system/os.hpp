@@ -163,6 +163,7 @@ class os {
 
 // A critical region for controlling thread transfer at interrupts
 class ThreadCritical {
+
     private:
         static bool_t _initialized;
 

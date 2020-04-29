@@ -90,7 +90,7 @@ void JumpTable::init() {
 
 int JumpTable::newID() {
     int id = _firstFree;
-    if ( id >= length - 2 ) fatal( "grow not implemented" );
+    if ( id >= length - 2 ) st_fatal( "grow not implemented" );
     _firstFree = major_at( _firstFree )->next_free();
     usedIDs++;
     return id;
@@ -370,7 +370,7 @@ void JumpTableEntry::print() {
         return;
     }
 
-    fatal( "unknown jump table entry" );
+    st_fatal( "unknown jump table entry" );
 }
 
 

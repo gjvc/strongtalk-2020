@@ -15,7 +15,7 @@
 
 
 Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
-    fatal( "should never call allocateObject in doubleValueArrayKlass" );
+    st_fatal( "should never call allocateObject in doubleValueArrayKlass" );
     return badOop;
 }
 
@@ -68,13 +68,13 @@ void setKlassVirtualTableFromDoubleValueArrayKlass( Klass * k ) {
 
 
 bool_t DoubleValueArrayKlass::oop_verify( Oop obj ) {
-    assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
+    st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     return doubleValueArrayOop( obj )->verify();
 }
 
 
 void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
+    st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     doubleValueArrayOop array = doubleValueArrayOop( obj );
     int                 len   = array->length();
     int                 n     = min( MaxElementPrintSize, len );

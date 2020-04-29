@@ -57,7 +57,7 @@ NativeMethod * CodeTable::lookup( const LookupKey * L ) {
 void CodeTable::add( NativeMethod * nm ) {
 
     if ( lookup( &nm->_lookupKey ) ) {
-        fatal2( "adding duplicate key to code table: %#lx and new %#lx", lookup( &nm->_lookupKey ), nm );
+        st_fatal2( "adding duplicate key to code table: %#lx and new %#lx", lookup( &nm->_lookupKey ), nm );
     }
     CodeTableEntry * bucket = bucketFor( nm->_lookupKey.hash() );
 
@@ -90,7 +90,7 @@ void CodeTable::remove( NativeMethod * nm ) {
 
     CodeTableEntry * bucket = bucketFor( nm->_lookupKey.hash() );
     if ( bucket->is_empty() ) {
-        fatal( "trying to remove NativeMethod that is not present" );
+        st_fatal( "trying to remove NativeMethod that is not present" );
     }
 
     if ( bucket->is_nativeMethod() ) {
@@ -115,7 +115,7 @@ void CodeTable::remove( NativeMethod * nm ) {
             }
             current = current->_next;
         }
-        fatal( "trying to remove NativeMethod that is not present" );
+        st_fatal( "trying to remove NativeMethod that is not present" );
     }
 
 }

@@ -482,7 +482,7 @@ static void verifyNonLocalReturnCode() {
 
 
 extern "C" void verifySmi( Oop obj ) {
-    if ( not obj->is_smi() ) fatal( "should be a smi_t" );
+    if ( not obj->is_smi() ) st_fatal( "should be a smi_t" );
 }
 
 
@@ -500,9 +500,9 @@ static void verifySmiCode( Register reg ) {
 
 
 extern "C" void verifyObj( Oop obj ) {
-    if ( not obj->is_smi() and not obj->is_mem() ) fatal( "should be an ordinary Oop" );
+    if ( not obj->is_smi() and not obj->is_mem() ) st_fatal( "should be an ordinary Oop" );
     KlassOop klass = obj->klass();
-    if ( klass == nullptr or not klass->is_mem() ) fatal( "should be an ordinary MemOop" );
+    if ( klass == nullptr or not klass->is_mem() ) st_fatal( "should be an ordinary MemOop" );
     if ( obj->is_block() )
         BlockClosureOop( obj )->verify();
 }
@@ -1597,7 +1597,7 @@ void FixedCodeNode::gen() {
         case FixedCodeNode::FixedCodeKind::inc_counter:
             incCounter();
             break;
-        default: fatal1( "unexpected FixedCodeNode kind %d", _kind );
+        default: st_fatal1( "unexpected FixedCodeNode kind %d", _kind );
     }
 }
 
@@ -2006,7 +2006,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
             continue;      // not uplevel-accessed (eliminated)
         if ( r->isBlockPReg() )
             continue;          // ditto
-        if ( not r->_location.isContextLocation() ) fatal( "expected context location" );
+        if ( not r->_location.isContextLocation() ) st_fatal( "expected context location" );
         if ( scopeWithContext->isSenderOrSame( _scope ) ) {
             store( val, r, t1, t2 );
         }
@@ -2550,7 +2550,7 @@ void InlinedPrimitiveNode::gen() {
             Register value;
             if ( const_val ) {
                 // value doesn't have to be loaded -> do nothing here
-                if ( not _arg2_is_smi ) fatal( "proxy_byte_at_put: should not happen - internal error" );
+                if ( not _arg2_is_smi ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );
                 //if (not _arg2_is_smi) fatal("proxy_byte_at_put: should not happen - tell Robert");
             } else {
                 value = temp3;

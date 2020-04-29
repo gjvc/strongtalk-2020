@@ -1031,7 +1031,7 @@ nextExpression:;
                     exprNodes->at( j )->print();
                     lprintf( "\n" );
                 }
-                fatal( "compiler error" );
+                st_fatal( "compiler error" );
             }
         }
     }
@@ -1293,7 +1293,7 @@ void NodeBuilder::float_nullary( Floats::Function f, int to ) {
         case Floats::one:
             float_set( to, oopFactory::new_double( 1.0 ) );
             break;
-        default        : fatal1( "bad float nullary code %d", f );
+        default        : st_fatal1( "bad float nullary code %d", f );
     }
 }
 
@@ -1318,7 +1318,7 @@ void NodeBuilder::float_unary( Floats::Function f, int fno ) {
         case Floats::tan    : Unimplemented();
         case Floats::exp    : Unimplemented();
         case Floats::ln    : Unimplemented();
-        default        : fatal1( "bad float unary code %d", f );
+        default        : st_fatal1( "bad float unary code %d", f );
     }
     PseudoRegister * preg = float_at( fno );
     append( NodeFactory::FloatUnaryArithNode( preg, preg, op ) );
@@ -1345,7 +1345,7 @@ void NodeBuilder::float_binary( Floats::Function f, int fno ) {
         case Floats::modulo:
             op = ArithOpCode::fModArithOp;
             break;
-        default         : fatal1( "bad float binary code %d", f );
+        default         : st_fatal1( "bad float binary code %d", f );
     }
     PseudoRegister * op1 = float_at( fno );
     PseudoRegister * op2 = float_at( fno + 1 );
@@ -1373,7 +1373,7 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
             _expressionStack->push( result, scope(), scope()->byteCodeIndex() );
         }
             break;
-        default: fatal1( "bad float unaryToOop code %d", f );
+        default: st_fatal1( "bad float unaryToOop code %d", f );
     }
 }
 
@@ -1401,7 +1401,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
         case Floats::is_greater_equal:
             cc1 = Assembler::Condition::greaterEqual;
             break;
-        default             : fatal1( "bad float comparison code %d", f );
+        default             : st_fatal1( "bad float comparison code %d", f );
     }
     int                  mask;
     Assembler::Condition cond;

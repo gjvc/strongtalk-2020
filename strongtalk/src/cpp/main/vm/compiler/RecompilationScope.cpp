@@ -502,7 +502,7 @@ void NonDummyRecompilationScope::constructSubScopes( bool_t trusted ) {
                 break;
             case ByteCodes::SendType::no_send:
                 break;
-            default: fatal1( "unexpected send type %d", iter.send() );
+            default: st_fatal1( "unexpected send type %d", iter.send() );
         }
     } while ( iter.advance() );
 }

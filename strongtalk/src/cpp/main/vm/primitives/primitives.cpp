@@ -223,7 +223,7 @@ void PrimitiveDescriptor::print() {
             break;
         case PrimitiveGroup::NormalPrimitive:
             break;
-        default: fatal( "Unknown primitive group" );
+        default: st_fatal( "Unknown primitive group" );
     }
     _console->cr();
 }
@@ -361,36 +361,36 @@ PrimitiveDescriptor * Primitives::lookup( primitiveFunctionType fn ) {
 void Primitives::lookup_and_patch() {
 
     // get primitive call info
-    Frame        f = DeltaProcess::active()->last_frame();
-    CodeIterator it( f.hp() );
-    Oop * selector_addr = it.aligned_oop( 1 );
+    Frame        frame = DeltaProcess::active()->last_frame();
+    CodeIterator codeIterator( frame.hp() );
+    Oop * selectorAddress = codeIterator.aligned_oop( 1 );
 
-    SymbolOop sel = SymbolOop( *selector_addr );
-    st_assert( sel->is_symbol(), "symbol expected" );
+    SymbolOop selectorSymbol = SymbolOop( *selectorAddress );
+    st_assert( selectorSymbol->is_symbol(), "symbol expected" );
 
-    // do lookup
-    PrimitiveDescriptor * pdesc = Primitives::lookup( sel );
-    if ( pdesc not_eq nullptr and not pdesc->is_internal() ) {
+    // lookup primitive by symbol
+    PrimitiveDescriptor * primitiveDescriptor = Primitives::lookup( selectorSymbol );
+    if ( primitiveDescriptor not_eq nullptr and not primitiveDescriptor->is_internal() ) {
         // primitive found => patch bytecode & cache
-        *f.hp()        = uint8_t( ByteCodes::primitive_call_code_for( ByteCodes::Code( *f.hp() ) ) );
-        *selector_addr = Oop( pdesc->fn() );
+        *frame.hp()      = static_cast<uint8_t>( ByteCodes::primitive_call_code_for( static_cast<ByteCodes::Code>( *frame.hp() ) ) );
+        *selectorAddress = Oop( primitiveDescriptor->fn() );
     } else {
         // advance hp so that it points to the next instruction
-        it.advance();
-        f.set_hp( it.hp() );
+        codeIterator.advance();
+        frame.set_hp( codeIterator.hp() );
 
         {
             ResourceMark resourceMark;
             // primitive not found => process error
             _console->print_cr( "primitive lookup error" );
-            sel->print_value();
+            selectorSymbol->print_value();
             _console->print_cr( " not found" );
 
         }
         if ( DeltaProcess::active()->is_scheduler() ) {
             ResourceMark resourceMark;
             DeltaProcess::active()->trace_stack();
-            fatal( "primitive lookup error in scheduler" );
+            st_fatal( "primitive lookup error in scheduler" );
 
         } else {
             DeltaProcess::active()->suspend( ProcessState::primitive_lookup_error );
@@ -485,7 +485,7 @@ PrimitiveDescriptor * InterpretedPrimitiveCache::pdesc() const {
         case ByteCodes::Code::primitive_call_self_failure_lookup:
             return Primitives::lookup( SymbolOop( c.oop_at( 1 ) ) );
 
-        default: fatal( "Wrong bytecode" );
+        default: st_fatal( "Wrong bytecode" );
     }
     return nullptr;
 }
@@ -506,7 +506,7 @@ bool_t InterpretedPrimitiveCache::has_receiver() const {
         case ByteCodes::Code::primitive_call_failure_lookup:
             return false;
 
-        default: fatal( "Wrong bytecode" );
+        default: st_fatal( "Wrong bytecode" );
     }
     return false;
 }
@@ -527,7 +527,7 @@ SymbolOop InterpretedPrimitiveCache::name() const {
         case ByteCodes::Code::primitive_call_self_failure_lookup:
             return SymbolOop( c.oop_at( 1 ) );
 
-        default: fatal( "Wrong bytecode" );
+        default: st_fatal( "Wrong bytecode" );
     }
     return nullptr;
 }
@@ -555,7 +555,7 @@ bool_t InterpretedPrimitiveCache::has_failure_code() const {
         case ByteCodes::Code::primitive_call_self:
             return false;
 
-        default: fatal( "Wrong bytecode" );
+        default: st_fatal( "Wrong bytecode" );
     }
     return false;
 }
@@ -586,9 +586,8 @@ PrimitiveDescriptor * Primitives::_context_allocate2;
 PrimitiveDescriptor * Primitives::verified_lookup( const char * selector ) {
     PrimitiveDescriptor * result = lookup( selector );
     if ( result == nullptr ) {
-        _console->print_cr( "Verified primitive lookup failed" );
-        _console->print_cr( " selector = %s", selector );
-        fatal( "aborted" );
+        _console->print_cr( "Verified primitive lookup failed: selector = [%s]", selector);
+        st_fatal( "aborted" );
     }
     return result;
 }
@@ -624,9 +623,8 @@ void Primitives::initialize() {
 
 
 void Primitives::patch( const char * name, const char * entry_point ) {
-    _console->print_cr( "%%primitives-init:  name [%s], entry_point [0x%0x]", name, entry_point );
-    st_assert( entry_point, "just checking" );
+    _console->print_cr( "%%primitives-init: patch(),  name [%s], entry_point [0x%0x]", name, entry_point );
+    st_assert( entry_point, "entry_point is null" );
     PrimitiveDescriptor * pdesc = verified_lookup( name );
     pdesc->_fn = ( primitiveFunctionType ) entry_point;
 }
-

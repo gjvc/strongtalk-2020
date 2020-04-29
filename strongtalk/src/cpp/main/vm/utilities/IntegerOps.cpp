@@ -126,7 +126,7 @@ Digit IntegerOps::as_Digit( char c ) {
     if ( 'a' <= c and c <= 'z' )
         return Digit( c - 'a' ) + 10;
 
-    fatal( "illegal digit" );
+    st_fatal( "illegal digit" );
     return 0;
 }
 
@@ -253,7 +253,7 @@ void IntegerOps::unsigned_sub( Integer & x, Integer & y, Integer & z ) {
         z[ i ] = xmy( x[ i ], 0, c );
         i++;
     }
-    if ( c not_eq 0 ) fatal( "negative result" );
+    if ( c not_eq 0 ) st_fatal( "negative result" );
     while ( i > 0 and z[ i - 1 ] == 0 )
         i--;
     z.set_length( i );
@@ -416,8 +416,8 @@ Digit * IntegerOps::qr_decomposition( Integer & dividend, Integer & y0 ) {
 
     int dividendLength = dividend.length();
     int divisorLength  = y0.length();
-    if ( dividendLength < divisorLength ) fatal( "division not needed" );
-    if ( divisorLength == 0 ) fatal( "division by zero" );
+    if ( dividendLength < divisorLength ) st_fatal( "division not needed" );
+    if ( divisorLength == 0 ) st_fatal( "division by zero" );
 
     // initialize qr
     Digit * x = copyDigits( dividend.digits(), dividendLength + 1, dividendLength );
@@ -436,7 +436,7 @@ Digit * IntegerOps::qr_decomposition( Integer & dividend, Integer & y0 ) {
         y = copyDigits( y, divisorLength, divisorLength );
         Digit c = scale( y, d, divisorLength );
 
-        if ( c not_eq 0 ) fatal( "qr_decomposition broken" );
+        if ( c not_eq 0 ) st_fatal( "qr_decomposition broken" );
     }
 
     Digit y1 = y[ divisorLength - 1 ];
@@ -806,7 +806,7 @@ int IntegerOps::string_to_Integer_result_size_in_bytes( const char * s, int base
             i++;
         return Integer::length_to_size_in_bytes( i / 9 + 1 );
     }
-    fatal( "string conversion with base not equal to 10" );
+    st_fatal( "string conversion with base not equal to 10" );
     return -1;
 }
 
@@ -816,7 +816,7 @@ int IntegerOps::Integer_to_string_result_size_in_bytes( Integer & x, int base ) 
     if ( base == 10 ) {
         return ( x.length() + 1 ) * 10; // add one for sign & zero
     }
-    fatal( "string conversion with base not equal to 10" );
+    st_fatal( "string conversion with base not equal to 10" );
     return -1;
 }
 

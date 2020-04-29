@@ -362,7 +362,7 @@ static BasicBlock * thisBasicBlock;
 
 
 static void duChecker( PseudoRegisterBasicBlockIndex * p ) {
-    if ( p->_basicBlock == thisBasicBlock ) fatal( "should not be in middle of list" );
+    if ( p->_basicBlock == thisBasicBlock ) st_fatal( "should not be in middle of list" );
 }
 
 

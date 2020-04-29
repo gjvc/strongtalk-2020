@@ -122,14 +122,20 @@ void Process::external_resume_current() {
 
 
 void Process::basic_transfer( Process * target ) {
-    if ( TraceProcessEvents ) {
+    _console->print_cr( "Process::basic_transfer()" );
+
+//    if ( TraceProcessEvents ) {
         _console->print( "Process: " );
         print();
         _console->print( " -> " );
         target->print();
         _console->cr();
-    }
+//    }
+
+    _console->print_cr( "Process::basic_transfer()  calling os::transfer()" );
     os::transfer( _thread, _event, target->_thread, target->_event );
+
+    _console->print_cr( "Process::basic_transfer()  calling applyStepping()" );
     applyStepping();
 }
 
@@ -138,6 +144,8 @@ void Process::basic_transfer( Process * target ) {
 
 VMProcess::VMProcess() {
     st_assert( vm_process() == nullptr, "we may only allocate one VMProcess" );
+
+    _console->print_cr( "VMProcess::VMProcess()" );
 
     _vm_process   = this;
     _vm_operation = nullptr;
@@ -148,6 +156,7 @@ VMProcess::VMProcess() {
 
 
 void VMProcess::transfer_to( DeltaProcess * target ) {
+    _console->print_cr( "VMProcess::transfer_to()" );
 
     {
         ThreadCritical tc;
@@ -165,6 +174,7 @@ void VMProcess::transfer_to( DeltaProcess * target ) {
 
 
 void VMProcess::terminate( DeltaProcess * proc ) {
+    _console->print_cr( "VMProcess::terminate()" );
 
     st_assert( Process::current()->is_vmProcess(), "can only be called from vm process" );
     st_assert( proc->is_deltaProcess(), "must be deltaProcess" );
@@ -183,6 +193,7 @@ void VMProcess::terminate( DeltaProcess * proc ) {
 void VMProcess::activate_system() {
 
     // Find the Delta level 'Processor'
+    _console->print_cr( "VMProcess::activate_system()  calling Universe::find_global()" );
     ProcessOop proc = ProcessOop( Universe::find_global( "Processor" ) );
     if ( not proc->is_process() ) {
         KlassOop scheduler_klass = KlassOop( Universe::find_global( "ProcessorScheduler" ) );
@@ -192,16 +203,24 @@ void VMProcess::activate_system() {
     }
 
     // Create the initial process
-    DeltaProcess::set_scheduler( new DeltaProcess( proc, oopFactory::new_symbol( "start" ) ) );
+    _console->print_cr( "VMProcess::activate_system()  calling DeltaProcess::DeltaProcess()" );
+    DeltaProcess * p = new DeltaProcess( proc, oopFactory::new_symbol( "start" ) );
+
+    _console->print_cr( "VMProcess::activate_system()  calling DeltaProcess::set_scheduler()" );
+    DeltaProcess::set_scheduler( p );
 
     // Bind the scheduler to Processor
+    _console->print_cr( "VMProcess::activate_system()  calling proc->set_process()" );
+
     proc->set_process( DeltaProcess::scheduler() );
     DeltaProcess::scheduler()->set_processObj( proc );
 
     // Transfer control to the scheduler
+    _console->print_cr( "VMProcess::activate_system()  calling transfer_to()" );
     transfer_to( DeltaProcess::scheduler() );
 
-    // Call the ever running loop handling vm operations
+    // handle vm operations
+    _console->print_cr( "VMProcess::activate_system()  calling loop()" );
     loop();
 }
 
@@ -231,7 +250,7 @@ void VMProcess::execute( VM_Operation * op ) {
 
     if ( Sweeper::is_running() ) {
         // We cannot perform a vm operations when running the sweeper since the sweeper is run outside the active process.
-        fatal( "VMProcess is called during sweeper run" );
+        st_fatal( "VMProcess is called during sweeper run" );
     }
 
     if ( DeltaProcess::active()->in_vm_operation() ) {
@@ -257,6 +276,11 @@ bool_t DeltaProcess::stepping = false;
 
 VMProcess    * VMProcess::_vm_process   = nullptr;
 VM_Operation * VMProcess::_vm_operation = nullptr;
+
+
+VMProcess::~VMProcess() {
+    _console->print_cr( "VMProcess::~VMProcess()" );
+}
 
 
 // ======= DeltaProcess ========
@@ -353,11 +377,13 @@ void DeltaProcess::transfer_to_vm() {
 
 
 void DeltaProcess::suspend_at_creation() {
+
     // This is called as soon a DeltaProcess is created
-    // Let's wait until we're given the torch.
     _console->print_cr( "%%status-delta-process-suspend-at-creation: thread_id [%d]", this->thread_id() );
 
+    // Let's wait until we're given the torch.
     os::wait_for_event( _event );
+
 }
 
 
@@ -468,10 +494,12 @@ void DeltaProcess::runMainProcess() {
 // Code entry point for at Delta process
 int DeltaProcess::launch_delta( DeltaProcess * process ) {
 
+    //
     _console->print_cr( "%%delta-process-launch-delta-process:  thread_id [%d]", process->thread_id() );
 
     // Wait until we get the torch
     process->suspend_at_creation();
+    DeltaProcess::set_active( process );
 
     // We have the torch
     st_assert( process == DeltaProcess::active(), "process consistency check" );
@@ -480,12 +508,15 @@ int DeltaProcess::launch_delta( DeltaProcess * process ) {
     DeltaProcess * p = ( DeltaProcess * ) process;
     Oop result = Delta::call( p->receiver(), p->selector() );
 
+    _console->print_cr( "DeltaProcess::launch_delta()  have_nlr_through_C = [%d]", have_nlr_through_C );
     if ( have_nlr_through_C ) {
+
         if ( nlr_home_id == ErrorHandler::aborting_nlr_home_id() ) {
             p->set_state( ProcessState::aborted );
         } else {
             p->set_state( ProcessState::NonLocalReturn_error );
         }
+
     } else {
         p->set_state( ProcessState::completed );
     }
@@ -517,7 +548,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThrea
     _time_stamp  = 0;
     _isCallback  = false;
 
-    LOG_EVENT1( "creating process %#lx", this );
+    LOG_EVENT1( "creating process [%#lx]", this );
 
     set_last_Delta_fp( nullptr );
     set_last_Delta_sp( nullptr );
@@ -575,7 +606,7 @@ void DeltaProcess::check_stack_overflow() {
     } else if ( not active()->is_scheduler() ) {
         active()->suspend( ProcessState::stack_overflow );
     } else {
-        fatal( "Stack overflow in scheduler" );
+        st_fatal( "Stack overflow in scheduler" );
     }
 }
 
@@ -586,6 +617,9 @@ extern "C" void check_stack_overflow() {
 
 
 DeltaProcess::~DeltaProcess() {
+
+    _console->print_cr( "DeltaProcess::~DeltaProcess()" );
+
     processObj()->set_process( nullptr );
     if ( Processes::includes( this ) ) {
         Processes::remove( this );
@@ -970,7 +1004,7 @@ extern "C" void unpack_frame_array() {
     } while ( pos <= length );
 
     if ( must_find_nlr_target and not nlr_target_found ) {
-        fatal( "Target for NonLocalReturn not found when unpacking frame" );
+        st_fatal( "Target for NonLocalReturn not found when unpacking frame" );
     }
 
     st_assert ( current_sp == old_sp, "We have not reached the end" );
@@ -1448,8 +1482,7 @@ void Processes::remove( DeltaProcess * p ) {
 
 
 bool_t Processes::includes( DeltaProcess * p ) {
-    ALL_PROCESSES( q )
-        if ( q == p )
+    ALL_PROCESSES( q )if ( q == p )
             return true;
     return false;
 }
@@ -1611,35 +1644,35 @@ extern "C" void suspend_on_error( InterpreterErrorConstants error_code ) {
 
     // Real errors
     switch ( error_code ) {
-        case primitive_lookup_failed:
+        case InterpreterErrorConstants::primitive_lookup_failed:
             handle_error( ProcessState::primitive_lookup_error );
-        case boolean_expected:
+        case InterpreterErrorConstants::boolean_expected:
             handle_error( ProcessState::boolean_error );
-        case nonlocal_return_error:
+        case InterpreterErrorConstants::nonlocal_return_error:
             handle_error( ProcessState::NonLocalReturn_error );
-        case float_expected:
+        case InterpreterErrorConstants::float_expected:
             handle_error( ProcessState::float_error );
     }
 
     // Interpreter errors
     switch ( error_code ) {
-        case halted:
+        case InterpreterErrorConstants::halted:
             handle_interpreter_error( "executed halt bytecode" );
-        case illegal_code:
+        case InterpreterErrorConstants::illegal_code:
             handle_interpreter_error( "illegal code" );
-        case not_implemented:
+        case InterpreterErrorConstants::not_implemented:
             handle_interpreter_error( "not implemented" );
-        case stack_missaligned:
+        case InterpreterErrorConstants::stack_missaligned:
             handle_interpreter_error( "stack misaligned" );
-        case ebx_wrong:
+        case InterpreterErrorConstants::ebx_wrong:
             handle_interpreter_error( "ebx wrong" );
-        case obj_wrong:
+        case InterpreterErrorConstants::obj_wrong:
             handle_interpreter_error( "obj wrong" );
-        case nlr_offset_wrong:
+        case InterpreterErrorConstants::nlr_offset_wrong:
             handle_interpreter_error( "NonLocalReturn offset wrong" );
-        case last_Delta_fp_wrong:
+        case InterpreterErrorConstants::last_Delta_fp_wrong:
             handle_interpreter_error( "last Delta frame wrong" );
-        case primitive_result_wrong:
+        case InterpreterErrorConstants::primitive_result_wrong:
             handle_interpreter_error( "ilast C entry frame wrong" );
     }
     ShouldNotReachHere();

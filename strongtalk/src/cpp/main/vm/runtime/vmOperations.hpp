@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -176,6 +177,9 @@ class VM_OptimizeMethod : public VM_Operation {
         }
 };
 
+// -----------------------------------------------------------------------------
+
+
 class RecompilationScope;
 
 class VM_OptimizeRScope : public VM_Operation {
@@ -203,8 +207,11 @@ class VM_OptimizeRScope : public VM_Operation {
         }
 };
 
-class NonInlinedBlockScopeDescriptor;
 
+// -----------------------------------------------------------------------------
+
+
+class NonInlinedBlockScopeDescriptor;
 
 class VM_OptimizeBlockMethod : public VM_Operation {
 

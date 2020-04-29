@@ -60,7 +60,7 @@ struct CodeTableEntry : ValueObject {
 
 
     void set_nativeMethod( const NativeMethod * nm ) {
-        assert_oop_aligned( nm );
+        st_assert_oop_aligned( nm );
         _nativeMethodOrLink = ( void * ) ( ( int ) nm + 1 );
     }
 
@@ -71,7 +71,7 @@ struct CodeTableEntry : ValueObject {
 
 
     void set_link( CodeTableLink * l ) {
-        assert_oop_aligned( l );
+        st_assert_oop_aligned( l );
         _nativeMethodOrLink = ( void * ) l;
     }
 

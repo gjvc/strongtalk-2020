@@ -148,7 +148,7 @@ void StubRoutines::wrong_DLL_call() {
 
     if ( DeltaProcess::active()->is_scheduler() ) {
         DeltaProcess::active()->trace_stack();
-        fatal( "DLL error in scheduler" );
+        st_fatal( "DLL error in scheduler" );
     } else {
         DeltaProcess::active()->suspend( ProcessState::DLL_lookup_error );
     }

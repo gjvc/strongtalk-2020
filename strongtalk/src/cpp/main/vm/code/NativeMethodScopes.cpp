@@ -31,7 +31,7 @@ ScopeDescriptor * NativeMethodScopes::at( int offset, const char * pc ) const {
         case NON_INLINED_BLOCK_CODE:
             return nullptr;
     }
-    fatal( "Unknown ScopeDescriptor code in NativeMethodScopes" );
+    st_fatal( "Unknown ScopeDescriptor code in NativeMethodScopes" );
     return nullptr;
 }
 
@@ -42,7 +42,7 @@ NonInlinedBlockScopeDescriptor * NativeMethodScopes::noninlined_block_scope_at( 
     ScopeDescriptorHeaderByte b;
     b.unpack( peek_next_char( offset ) );
     if ( b.code() not_eq NON_INLINED_BLOCK_CODE ) {
-        fatal( "Not an noninlined scope desc as expected" );
+        st_fatal( "Not an noninlined scope desc as expected" );
     }
     return new NonInlinedBlockScopeDescriptor( ( NativeMethodScopes * ) this, offset );
 }
@@ -133,7 +133,7 @@ NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, bool_t & is
                 nd                             = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
                 break;
             }
-            default: fatal1( "no such name desc (code 0x%08x)", b.code() );
+            default: st_fatal1( "no such name desc (code 0x%08x)", b.code() );
         }
     }
     nd->offset = startOffset;

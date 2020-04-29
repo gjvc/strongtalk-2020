@@ -53,7 +53,7 @@ bool_t SymbolKlass::verify( Oop obj ) {
 
 
 void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
-    assert_symbol( obj, "dispatch check" );
+    st_assert_symbol( obj, "dispatch check" );
     SymbolOop array = SymbolOop( obj );
     int       len   = array->length();
     int       n     = min( MaxElementPrintSize, len );
@@ -71,7 +71,7 @@ void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
 
 
 void SymbolKlass::print( Oop obj ) {
-    assert_symbol( obj, "dispatch check" );
+    st_assert_symbol( obj, "dispatch check" );
     _console->print( "'" );
     SymbolOop( obj )->print_symbol_on();
     _console->print( "' " );
@@ -79,6 +79,6 @@ void SymbolKlass::print( Oop obj ) {
 
 
 Oop SymbolKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
-    assert_symbol( obj, "dispatch check" );
+    st_assert_symbol( obj, "dispatch check" );
     return obj;
 }

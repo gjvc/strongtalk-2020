@@ -92,7 +92,7 @@ WhileNode::WhileNode( MethodOop method, MethodInterval * parent, int begin_byteC
         case ByteCodes::Code::whileFalse_word:
             _cond = false;
             break;
-        default: fatal( "expecting while jump" );
+        default: st_fatal( "expecting while jump" );
     }
     int jump_end = c.next_byteCodeIndex();
 
@@ -140,7 +140,7 @@ IfNode::IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeInd
             case ByteCodes::Code::jump_else_word:
                 end_offset = c.word_at( 1 );
                 break;
-            default: fatal( "expecting an else jump" );
+            default: st_fatal( "expecting an else jump" );
         }
         _else_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex + else_offset, next_byteCodeIndex + else_offset + end_offset );
         set_end_byteCodeIndex( else_code()->end_byteCodeIndex() );
@@ -245,22 +245,22 @@ int MethodClosure::float_at( int index ) {
 // CustomizedMethodClosure
 
 void CustomizedMethodClosure::push_instVar_name( SymbolOop name ) {
-    fatal( "instance variable not resolved" );
+    st_fatal( "instance variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::store_instVar_name( SymbolOop name ) {
-    fatal( "instance variable not resolved" );
+    st_fatal( "instance variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::push_classVar_name( SymbolOop name ) {
-    fatal( "class variable not resolved" );
+    st_fatal( "class variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::store_classVar_name( SymbolOop name ) {
-    fatal( "class variable not resolved" );
+    st_fatal( "class variable not resolved" );
 }
 
 
@@ -313,13 +313,13 @@ void SpecializedMethodClosure::dll_call_node( DLLCallNode * node ) {
 
 void MethodIterator::unknown_code( uint8_t code ) {
     _console->print_cr( "Unknown code found 0x%x", code );
-    fatal( "aborting" );
+    st_fatal( "aborting" );
 }
 
 
 void MethodIterator::should_never_encounter( uint8_t code ) {
     _console->print_cr( "Should never iterate through code 0x%x", code );
-    fatal( "aborting" );
+    st_fatal( "aborting" );
 }
 
 

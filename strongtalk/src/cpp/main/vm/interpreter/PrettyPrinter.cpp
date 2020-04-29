@@ -76,7 +76,7 @@ class astNode : public ResourceObject {
 
 
         virtual void add( astNode * statement ) {
-            fatal( "subclass should implement add" );
+            st_fatal( "subclass should implement add" );
         }
 
 
@@ -2139,7 +2139,7 @@ void MethodPrettyPrinter::method_return( int nofArgs ) {
         if ( code->is_code() ) {
             code->add( new statement( byteCodeIndex(), scope(), expr, not scope()->is_block_method() ) );
         } else {
-            fatal1( "Stack size = %d", _size() );
+            st_fatal1( "Stack size = %d", _size() );
         }
     }
 }
@@ -2152,7 +2152,7 @@ void MethodPrettyPrinter::nonlocal_return( int nofArgs ) {
     if ( code->is_code() ) {
         ( ( codeNode * ) code )->add( new statement( byteCodeIndex(), scope(), expr, true ) );
     } else {
-        fatal1( "Stack size = %d", _size() );
+        st_fatal1( "Stack size = %d", _size() );
     }
 }
 
@@ -2178,7 +2178,7 @@ class StackChecker {
             if ( _methodPrettyPrinter->_size() not_eq _size + _offset ) {
                 _console->print_cr( "StackTracer found misaligned stack" );
                 _console->print_cr( "Expecting %d but found %d", _size + _offset, _methodPrettyPrinter->_size() );
-                fatal( "aborting" );
+                st_fatal( "aborting" );
             }
         }
 };

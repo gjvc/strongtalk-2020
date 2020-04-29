@@ -773,7 +773,7 @@ bool_t SinglyAssignedPseudoRegister::isLiveAt( Node * n ) const {
     bool_t live = basic_isLiveAt( s, n->byteCodeIndex() );
     if ( not live or not _location.isTemporaryRegister() )
         return live;
-    fatal( "cannot handle temp registers" );
+    st_fatal( "cannot handle temp registers" );
     return false;
 }
 
@@ -790,7 +790,7 @@ bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope * s, int byteC
     int bs = byteCodeIndex;
     int bc = creationStartByteCodeIndex;
     InlinedScope * ss = findAncestor( s, bs, creationScope(), bc );
-    if ( not _scope->isSenderOrSame( ss ) ) fatal( "bad scope arg in basic_isLiveAt" );
+    if ( not _scope->isSenderOrSame( ss ) ) st_fatal( "bad scope arg in basic_isLiveAt" );
 
     // Attention: Originally, the live range of a PseudoRegister excluded its defining node.
     // The new backend however requires them to be live at the beginning as well.

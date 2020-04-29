@@ -18,14 +18,14 @@ ReservedSpace::ReservedSpace( int size ) {
 
 
 ReservedSpace ReservedSpace::first_part( int partition_size ) {
-    if ( partition_size > size() ) fatal( "partition failed" );
+    if ( partition_size > size() ) st_fatal( "partition failed" );
     ReservedSpace result( base(), partition_size );
     return result;
 }
 
 
 ReservedSpace ReservedSpace::last_part( int partition_size ) {
-    if ( partition_size > size() ) fatal( "partition failed" );
+    if ( partition_size > size() ) st_fatal( "partition failed" );
     ReservedSpace result( base() + partition_size, size() - partition_size );
     return result;
 }

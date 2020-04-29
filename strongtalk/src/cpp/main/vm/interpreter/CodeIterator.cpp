@@ -292,7 +292,7 @@ void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
     int       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
-        fatal( "instance variable not found" );
+        st_fatal( "instance variable not found" );
     }
     if ( code() == ByteCodes::Code::push_instVar )
         set_code( ByteCodes::Code::push_instVar_name );
@@ -314,7 +314,7 @@ void CodeIterator::recustomize_inst_var_code( KlassOop from_klass, KlassOop to_k
     int       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
-        fatal( "instance variable not found" );
+        st_fatal( "instance variable not found" );
     }
     int new_offset = to_klass->klass_part()->lookup_inst_var( name );
     if ( new_offset >= 0 ) {

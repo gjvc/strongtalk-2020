@@ -21,5 +21,5 @@ void MethodScopeNode::generate( ScopeDescriptorRecorder * rec, int senderScopeOf
 
 void MethodScopeNode::verify( ScopeDescriptor * sd ) {
     ScopeDescriptorNode::verify( sd );
-    if ( not sd->isMethodScope() ) fatal( "MethodScope expected" );
+    if ( not sd->isMethodScope() ) st_fatal( "MethodScope expected" );
 }

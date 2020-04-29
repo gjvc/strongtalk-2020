@@ -124,7 +124,7 @@ class TopLevelBlockScopeNode : public ScopeDescriptorNode {
 
         void verify( ScopeDescriptor * sd ) {
             ScopeDescriptorNode::verify( sd );
-            if ( not sd->isTopLevelBlockScope() ) fatal( "TopLevelBlockScope expected" );
+            if ( not sd->isTopLevelBlockScope() ) st_fatal( "TopLevelBlockScope expected" );
         }
 };
 
