@@ -8,8 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
-#include "vm/primitives/primitive_tracing.hpp"
+ #include "vm/primitives/primitive_tracing.hpp"
 
 
 // Primitives for double value arrays
@@ -32,7 +31,7 @@ class doubleValueArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'doubleValueArrayPrimitives::allocateSize' }
         //%
-        static PRIM_DECL_2( allocateSize, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION allocateSize( Oop receiver, Oop argument );
 
         //%prim
         // <IndexedFloatValueInstanceVariables>
@@ -40,7 +39,7 @@ class doubleValueArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedFloatValue)
         //              name  = 'doubleValueArrayPrimitives::size' }
         //%
-        static PRIM_DECL_1( size, Oop receiver );
+        static Oop __CALLING_CONVENTION size( Oop receiver );
 
         //%prim
         // <IndexedFloatValueInstanceVariables>
@@ -50,7 +49,7 @@ class doubleValueArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedFloatValue)
         //              name  = 'doubleValueArrayPrimitives::at' }
         //%
-        static PRIM_DECL_2( at, Oop receiver, Oop index );
+        static Oop __CALLING_CONVENTION at( Oop receiver, Oop index );
 
         //%prim
         // <IndexedFloatValueInstanceVariables>
@@ -61,7 +60,7 @@ class doubleValueArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedFloatValue)
         //              name  = 'doubleValueArrayPrimitives::atPut' }
         //%
-        static PRIM_DECL_3( atPut, Oop receiver, Oop index, Oop value );
+        static Oop __CALLING_CONVENTION atPut( Oop receiver, Oop index, Oop value );
 
 };
 

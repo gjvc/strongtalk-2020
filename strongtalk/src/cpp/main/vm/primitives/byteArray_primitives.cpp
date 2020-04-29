@@ -33,7 +33,7 @@ int byteArrayPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert( receiver->is_byteArray(), "receiver must be byte array" )
 
 
-PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::allocateSize( Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "receiver must byte array class" );
     if ( not argument->is_smi() )
@@ -56,7 +56,8 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
+    Oop * base = ( Oop * )
+        obj->addr();
     Oop * end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = argument;
@@ -64,12 +65,13 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     //               obj->byte_at_put(index, '\000')'
     base = &base[ ni_size + 1 ];
     while ( base < end )
-        *base++ = ( Oop ) 0;
+        *base++ = ( Oop )
+            0;
     return obj;
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop tenured ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::allocateSize2( Oop receiver, Oop argument, Oop tenured ) {
     PROLOGUE_3( "allocateSize2", receiver, argument, tenured )
 
     // These should be ordinary checks in case ST code erroneously passes an invalid value.
@@ -96,7 +98,7 @@ PRIM_DECL_3( byteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::size, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::size( Oop receiver ) {
     PROLOGUE_1( "size", receiver );
     ASSERT_RECEIVER;
     // do the operation
@@ -104,7 +106,7 @@ PRIM_DECL_1( byteArrayPrimitives::size, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::numberOfArguments, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::numberOfArguments( Oop receiver ) {
     PROLOGUE_1( "numberOfArguments", receiver );
     ASSERT_RECEIVER;
     // do the operation
@@ -112,7 +114,7 @@ PRIM_DECL_1( byteArrayPrimitives::numberOfArguments, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::at, Oop receiver, Oop index ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::at( Oop receiver, Oop index ) {
     PROLOGUE_2( "at", receiver, index );
     ASSERT_RECEIVER;
 
@@ -129,7 +131,7 @@ PRIM_DECL_2( byteArrayPrimitives::at, Oop receiver, Oop index ) {
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::atPut( Oop receiver, Oop index, Oop value ) {
     PROLOGUE_3( "atPut", receiver, index, value );
     ASSERT_RECEIVER;
 
@@ -156,7 +158,7 @@ PRIM_DECL_3( byteArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::compare, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::compare( Oop receiver, Oop argument ) {
     PROLOGUE_2( "comare", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -173,7 +175,7 @@ PRIM_DECL_2( byteArrayPrimitives::compare, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::intern, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::intern( Oop receiver ) {
     PROLOGUE_1( "intern", receiver );
     ASSERT_RECEIVER;
 
@@ -181,7 +183,7 @@ PRIM_DECL_1( byteArrayPrimitives::intern, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::characterAt( Oop receiver, Oop index ) {
     PROLOGUE_2( "characterAt", receiver, index );
     ASSERT_RECEIVER;
 
@@ -201,7 +203,7 @@ PRIM_DECL_2( byteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::at_all_put( Oop receiver, Oop value ) {
     PROLOGUE_2( "at_all_put", receiver, value );
     ASSERT_RECEIVER;
 
@@ -233,7 +235,7 @@ Oop simplified( ByteArrayOop result ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oop number ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerFromSmallInteger( Oop receiver, Oop number ) {
     PROLOGUE_2( "largeIntegerFromSmallInteger", receiver, number );
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
 
@@ -252,7 +254,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oo
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromDouble, Oop receiver, Oop number ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerFromDouble( Oop receiver, Oop number ) {
     PROLOGUE_2( "largeIntegerFromDouble", receiver, number );
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
 
@@ -270,7 +272,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromDouble, Oop receiver, Oop numb
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::largeIntegerFromString, Oop receiver, Oop argument, Oop base ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerFromString( Oop receiver, Oop argument, Oop base ) {
     PROLOGUE_3( "largeIntegerFromString", receiver, argument, base );
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
 
@@ -291,7 +293,7 @@ PRIM_DECL_3( byteArrayPrimitives::largeIntegerFromString, Oop receiver, Oop argu
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerAdd, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerAdd( Oop receiver, Oop argument ) {
     PROLOGUE_2( "largeIntegerAdd", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -316,7 +318,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerAdd, Oop receiver, Oop argument ) 
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerSubtract, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerSubtract( Oop receiver, Oop argument ) {
     PROLOGUE_2( "largeIntegerSubtract", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -340,9 +342,9 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerSubtract, Oop receiver, Oop argume
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerMultiply, Oop
-    receiver, Oop
-                 argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerMultiply( Oop
+                                                                    receiver, Oop
+                                                                    argument ) {
     PROLOGUE_2( "largeIntegerMultiply", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -396,42 +398,42 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerMultiply, Oop
   if (not x->number().is_valid() or not y->number().is_valid()) return markSymbol(vmSymbols::argument_is_invalid())
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerQuo, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerQuo( Oop receiver, Oop argument ) {
     DIVISION( receiver, argument, quo_result_size_in_bytes, quo, "largeIntegerQuo" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerDiv, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerDiv( Oop receiver, Oop argument ) {
     DIVISION( receiver, argument, div_result_size_in_bytes, Div, "largeIntegerDiv" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerMod, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerMod( Oop receiver, Oop argument ) {
     DIVISION( receiver, argument, mod_result_size_in_bytes, Mod, "largeIntegerMod" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerRem, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerRem( Oop receiver, Oop argument ) {
     DIVISION( receiver, argument, rem_result_size_in_bytes, rem, "largeIntegerRem" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerAnd, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerAnd( Oop receiver, Oop argument ) {
     BIT_OP( receiver, argument, and_result_size_in_bytes, And, "largeIntegerAnd" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerOr, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerOr( Oop receiver, Oop argument ) {
     BIT_OP( receiver, argument, or_result_size_in_bytes, Or, "largeIntegerOr" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerXor, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerXor( Oop receiver, Oop argument ) {
     BIT_OP( receiver, argument, xor_result_size_in_bytes, Xor, "largeIntegerXor" );
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerShift, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerShift( Oop receiver, Oop argument ) {
     PROLOGUE_2( "largeIntegerShift", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -451,7 +453,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerShift, Oop receiver, Oop argument 
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerCompare, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerCompare( Oop receiver, Oop argument ) {
     PROLOGUE_2( "largeIntegerCompare", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -476,7 +478,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerCompare, Oop receiver, Oop argumen
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::largeIntegerToFloat, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerToFloat( Oop receiver ) {
     PROLOGUE_1( "largeIntegerToFloat", receiver );
     ASSERT_RECEIVER;
 
@@ -491,7 +493,7 @@ PRIM_DECL_1( byteArrayPrimitives::largeIntegerToFloat, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::largeIntegerToString, Oop receiver, Oop base ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerToString( Oop receiver, Oop base ) {
     PROLOGUE_1( "largeIntegerToString", receiver );
     ASSERT_RECEIVER;
 
@@ -511,15 +513,15 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerToString, Oop receiver, Oop base )
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::largeIntegerHash, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::largeIntegerHash( Oop receiver ) {
     PROLOGUE_1( "largeIntegerHash", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( IntegerOps::hash( ByteArrayOop( receiver )->number() ) );
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::hash, Oop
-    receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::hash( Oop
+                                                    receiver ) {
     PROLOGUE_1( "hash", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( ByteArrayOop( receiver )->hash_value() );
@@ -662,7 +664,7 @@ Oop unsafeContents( Oop unsafeAlien ) {
   *((type*)(((char*)alienContents(receiver)) + alienIndex(argument) - 1))
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienUnsignedByteAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedByteAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedByteAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, uint8_t );
@@ -671,7 +673,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienUnsignedByteAt, Oop receiver, Oop argumen
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedByteAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienUnsignedByteAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, uint8_t );
@@ -683,9 +685,9 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argu
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienSignedByteAt, Oop
-    receiver, Oop
-                 argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedByteAt( Oop
+                                                                 receiver, Oop
+                                                                 argument ) {
     PROLOGUE_2( "alienSignedByteAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, char );
@@ -694,7 +696,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSignedByteAt, Oop
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienSignedByteAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedByteAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienSignedByteAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, char );
@@ -706,7 +708,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedByteAtPut, Oop receiver, Oop argume
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienUnsignedShortAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedShortAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedShortAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, uint16_t );
@@ -715,7 +717,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienUnsignedShortAt, Oop receiver, Oop argume
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienUnsignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedShortAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienUnsignedShortAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, uint16_t );
@@ -727,7 +729,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedShortAtPut, Oop receiver, Oop arg
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienSignedShortAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedShortAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSignedShortAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, int16_t );
@@ -736,7 +738,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSignedShortAt, Oop receiver, Oop argument
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienSignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedShortAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienSignedShortAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, int16_t );
@@ -748,7 +750,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedShortAtPut, Oop receiver, Oop argum
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienUnsignedLongAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedLongAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedLongAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, uint32_t );
@@ -764,7 +766,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienUnsignedLongAt, Oop receiver, Oop argumen
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienUnsignedLongAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
 
     PROLOGUE_3( "alienUnsignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
@@ -788,7 +790,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienSignedLongAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedLongAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSignedLongAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, int32_t );
@@ -804,7 +806,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSignedLongAt, Oop receiver, Oop argument 
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSignedLongAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienSignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, int32_t );
@@ -828,7 +830,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienDoubleAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienDoubleAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienDoubleAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, double );
@@ -840,7 +842,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienDoubleAt, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienDoubleAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienDoubleAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienDoubleAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, double );
@@ -853,7 +855,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienDoubleAtPut, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienFloatAt, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienFloatAt( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienFloatAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, float );
@@ -865,7 +867,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienFloatAt, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienFloatAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienFloatAtPut( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienFloatAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, float );
@@ -878,7 +880,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienFloatAtPut, Oop receiver, Oop argument1, 
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::alienGetSize, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienGetSize( Oop receiver ) {
     PROLOGUE_1( "alienGetSize", receiver );
     checkAlienReceiver( receiver );
 
@@ -886,7 +888,7 @@ PRIM_DECL_1( byteArrayPrimitives::alienGetSize, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienSetSize, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSetSize( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSetSize", receiver, argument );
     checkAlienReceiver( receiver );
     if ( not argument->is_smi() )
@@ -897,7 +899,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetSize, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_1( byteArrayPrimitives::alienGetAddress, Oop receiver ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienGetAddress( Oop receiver ) {
     PROLOGUE_1( "alienGetAddress", receiver );
     checkAlienReceiver( receiver );
 
@@ -914,7 +916,7 @@ PRIM_DECL_1( byteArrayPrimitives::alienGetAddress, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienSetAddress( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSetAddress", receiver, argument );
     checkAlienReceiver( receiver );
     if ( alienSize( receiver ) > 0 )
@@ -975,7 +977,7 @@ void break_on_error( void * address, Oop result ) {
 }
 
 
-PRIM_DECL_2( byteArrayPrimitives::alienCallResult0, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult0( Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienCallResult0", receiver, argument );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResult( argument );
@@ -993,7 +995,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienCallResult0, Oop receiver, Oop argument )
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienCallResult1, Oop receiver, Oop argument1, Oop argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult1( Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienCallResult1", receiver, argument1, argument2 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1012,7 +1014,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienCallResult1, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_4( byteArrayPrimitives::alienCallResult2, Oop receiver, Oop argument1, Oop argument2, Oop argument3 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult2( Oop receiver, Oop argument1, Oop argument2, Oop argument3 ) {
     PROLOGUE_4( "alienCallResult2", receiver, argument1, argument2, argument3 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1032,7 +1034,7 @@ PRIM_DECL_4( byteArrayPrimitives::alienCallResult2, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_5( byteArrayPrimitives::alienCallResult3, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult3( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4 ) {
     PROLOGUE_5( "alienCallResult3", receiver, argument1, argument2, argument3, argument4 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1053,7 +1055,7 @@ PRIM_DECL_5( byteArrayPrimitives::alienCallResult3, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_6( byteArrayPrimitives::alienCallResult4, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult4( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5 ) {
     PROLOGUE_6( "alienCallResult4", receiver, argument1, argument2, argument3, argument4, argument5 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1075,7 +1077,7 @@ PRIM_DECL_6( byteArrayPrimitives::alienCallResult4, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_7( byteArrayPrimitives::alienCallResult5, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult5( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6 ) {
     PROLOGUE_7( "alienCallResult5", receiver, argument1, argument2, argument3, argument4, argument5, argument6 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1098,7 +1100,7 @@ PRIM_DECL_7( byteArrayPrimitives::alienCallResult5, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_8( byteArrayPrimitives::alienCallResult6, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult6( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7 ) {
     PROLOGUE_8( "alienCallResult6", receiver, argument1, argument2, argument3, argument4, argument5, argument6, argument7 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1122,16 +1124,16 @@ PRIM_DECL_8( byteArrayPrimitives::alienCallResult6, Oop receiver, Oop argument1,
 }
 
 
-PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
-    receiver, Oop
-                 argument1, Oop
-                 argument2, Oop
-                 argument3, Oop
-                 argument4, Oop
-                 argument5, Oop
-                 argument6, Oop
-                 argument7, Oop
-                 argument8 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResult7( Oop
+                                                                receiver, Oop
+                                                                argument1, Oop
+                                                                argument2, Oop
+                                                                argument3, Oop
+                                                                argument4, Oop
+                                                                argument5, Oop
+                                                                argument6, Oop
+                                                                argument7, Oop
+                                                                argument8 ) {
     PROLOGUE_9( "alienCallResult7", receiver, argument1, argument2, argument3, argument4, argument5, argument6, argument7, argument8 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1155,10 +1157,10 @@ PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
 }
 
 
-PRIM_DECL_3( byteArrayPrimitives::alienCallResultWithArguments, Oop
-    receiver, Oop
-                 argument1, Oop
-                 argument2 ) {
+Oop __CALLING_CONVENTION byteArrayPrimitives::alienCallResultWithArguments( Oop
+                                                                            receiver, Oop
+                                                                            argument1, Oop
+                                                                            argument2 ) {
     PROLOGUE_3( "alienCallResultWithArguments", receiver, argument1, argument2 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );

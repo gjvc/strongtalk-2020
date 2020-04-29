@@ -7,7 +7,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives applying to all objects
 
@@ -27,7 +26,7 @@ class oopPrimitives : AllStatic {
         //   Internal { error = #(RecieverHasWrongType)
         //              name  = 'oopPrimitives::become' }
         //%
-        static PRIM_DECL_2( become, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION become( Oop receiver, Oop argument );
 
         //%prim
         // <Object> primitiveInstVarAt: index     <SmallInteger>
@@ -35,7 +34,7 @@ class oopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'oopPrimitives::instVarAt' }
         //%
-        static PRIM_DECL_2( instVarAt, Oop receiver, Oop index );
+        static Oop __CALLING_CONVENTION instVarAt( Oop receiver, Oop index );
 
         //%prim
         // <Reciever> primitiveInstVarNameFor: obj       <Object>
@@ -44,7 +43,7 @@ class oopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'oopPrimitives::instance_variable_name_at' }
         //%
-        static PRIM_DECL_2( instance_variable_name_at, Oop obj, Oop index );
+        static Oop __CALLING_CONVENTION instance_variable_name_at( Oop obj, Oop index );
 
         //%prim
         // <NoReceiver> primitiveInstVarOf: obj       <Object>
@@ -54,47 +53,47 @@ class oopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'oopPrimitives::instVarAtPut' }
         //%
-        static PRIM_DECL_3( instVarAtPut, Oop receiver, Oop index, Oop value );
+        static Oop __CALLING_CONVENTION instVarAtPut( Oop receiver, Oop index, Oop value );
 
         //%prim
         // <Object> primitiveHash ^<SmallInteger> =
         //   Internal { name = 'oopPrimitives::hash' }
         //%
-        static PRIM_DECL_1( hash, Oop receiver );
+        static Oop __CALLING_CONVENTION hash( Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveHashOf: obj <Object> ^<SmallInteger> =
         //   Internal { name = 'oopPrimitives::hash_of' }
         //%
-        static PRIM_DECL_1( hash_of, Oop obj );
+        static Oop __CALLING_CONVENTION hash_of( Oop obj );
 
         //%prim
         // <Object> primitiveShallowCopyIfFail: failBlock <PrimFailBlock> ^<Object> =
         //   Internal { error = #(ReceiverHasWrongType)
         //              name  = 'oopPrimitives::shallowCopy' }
         //%
-        static PRIM_DECL_1( shallowCopy, Oop receiver );
+        static Oop __CALLING_CONVENTION shallowCopy( Oop receiver );
 
         //%prim
         // <Object> primitiveCopyTenuredIfFail: failBlock <PrimFailBlock> ^<Object> =
         //   Internal { error = #(NotOops)
         //              name  = 'oopPrimitives::copy_tenured' }
         //%
-        static PRIM_DECL_1( copy_tenured, Oop receiver );
+        static Oop __CALLING_CONVENTION copy_tenured( Oop receiver );
 
         //%prim
         // <Object> primitiveEqual: anObject <Object> ^<Boolean> =
         //   Internal { flags = #Pure
         //		  name  = 'oopPrimitives::equal' }
         //%
-        static PRIM_DECL_2( equal, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION equal( Oop receiver, Oop argument );
 
         //%prim
         // <Object> primitiveNotEqual: anObject <Object> ^<Boolean> =
         //   Internal { flags = #Pure
         //		  name  = 'oopPrimitives::not_equal' }
         //%
-        static PRIM_DECL_2( not_equal, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION not_equal( Oop receiver, Oop argument );
 
         //%prim
         // <Object> primitiveOopSize ^<SmallInteger> =
@@ -102,7 +101,7 @@ class oopPrimitives : AllStatic {
         //     flags = #Pure
         //     name = 'oopPrimitives::oop_size'}
         //%
-        static PRIM_DECL_1( oop_size, Oop receiver );
+        static Oop __CALLING_CONVENTION oop_size( Oop receiver );
 
         //%prim
         // <Object> primitiveClass ^<Self class> =
@@ -110,7 +109,7 @@ class oopPrimitives : AllStatic {
         //     flags = #(Pure LastDeltaFrameNotNeeded)
         //     name = 'oopPrimitives::klass'}
         //%
-        static PRIM_DECL_1( klass, Oop receiver );
+        static Oop __CALLING_CONVENTION klass( Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveClassOf: obj <Object> ^<Behavior> =
@@ -118,25 +117,25 @@ class oopPrimitives : AllStatic {
         //     flags = #(Pure LastDeltaFrameNotNeeded)
         //     name = 'oopPrimitives::klass_of'}
         //%
-        static PRIM_DECL_1( klass_of, Oop obj );
+        static Oop __CALLING_CONVENTION klass_of( Oop obj );
 
         //%prim
         // <Object> primitivePrint ^<Self> =
         //   Internal { name = 'oopPrimitives::print'}
         //%
-        static PRIM_DECL_1( print, Oop receiver );
+        static Oop __CALLING_CONVENTION print( Oop receiver );
 
         //%prim
         // <Object> primitivePrintValue ^<Self> =
         //   Internal { name = 'oopPrimitives::printValue'}
         //%
-        static PRIM_DECL_1( printValue, Oop receiver );
+        static Oop __CALLING_CONVENTION printValue( Oop receiver );
 
         //%prim
         // <Object> primitiveAsObjectID ^<SmallInteger> =
         //   Internal { name = 'oopPrimitives::asObjectID'}
         //%
-        static PRIM_DECL_1( asObjectID, Oop receiver );
+        static Oop __CALLING_CONVENTION asObjectID( Oop receiver );
 
         //%prim
         // <Object> primitivePerform: selector  <CompressedSymbol>
@@ -145,7 +144,7 @@ class oopPrimitives : AllStatic {
         //              error = #(SelectorHasWrongNumberOfArguments)
         //            }
         //%
-        static PRIM_DECL_2( perform, Oop receiver, Oop selector );
+        static Oop __CALLING_CONVENTION perform( Oop receiver, Oop selector );
 
         //%prim
         // <Object> primitivePerform: selector  <CompressedSymbol>
@@ -156,7 +155,7 @@ class oopPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //            }
         //%
-        static PRIM_DECL_3( performWith, Oop receiver, Oop selector, Oop arg1 );
+        static Oop __CALLING_CONVENTION performWith( Oop receiver, Oop selector, Oop arg1 );
 
         //%prim
         // <Object> primitivePerform: selector  <CompressedSymbol>
@@ -168,7 +167,7 @@ class oopPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //            }
         //%
-        static PRIM_DECL_4( performWithWith, Oop receiver, Oop selector, Oop arg1, Oop arg2 );
+        static Oop __CALLING_CONVENTION performWithWith( Oop receiver, Oop selector, Oop arg1, Oop arg2 );
 
         //%prim
         // <Object> primitivePerform: selector  <CompressedSymbol>
@@ -181,7 +180,7 @@ class oopPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //            }
         //%
-        static PRIM_DECL_5( performWithWithWith, Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 );
+        static Oop __CALLING_CONVENTION performWithWithWith( Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 );
 
         //%prim
         // <Object> primitivePerform: selector  <CompressedSymbol>
@@ -192,6 +191,6 @@ class oopPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //            }
         //%
-        static PRIM_DECL_3( performArguments, Oop receiver, Oop selector, Oop args );
+        static Oop __CALLING_CONVENTION performArguments( Oop receiver, Oop selector, Oop args );
 };
 

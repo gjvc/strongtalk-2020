@@ -223,7 +223,7 @@ void MacroAssembler::store_check( Register obj, Register tmp ) {
     jcc( Assembler::Condition::less, no_store );                      // avoid marking dirty if target is a new object
     movl( tmp, Address( ( int ) &byte_map_base, RelocationInformation::RelocationType::external_word_type ) );
     shrl( obj, card_shift );
-    movb( Address( tmp, obj, Address::times_1 ), 0 );
+    movb( Address( tmp, obj, Address::ScaleFactor::times_1 ), 0 );
     bind( no_store );
 }
 

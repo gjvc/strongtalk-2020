@@ -17,7 +17,7 @@ class Node;
 // helper functions / data structures for compiler support; e.g. compiler parameters (inlining limits etc.)
 
 // kinds of inlining limits
-enum InlineLimitType {
+enum class InlineLimitType {
     NormalFnLimit,          // "size" of normal method (see msgCost)
     BlockArgFnLimit,        // size of method with block args
     BlockFnLimit,           // size of block method (value, value: etc)
@@ -31,7 +31,7 @@ enum InlineLimitType {
 
 typedef bool_t (* checkLocalSendFn)( SymbolOop sel );
 
-enum InlineFnType {
+enum class InlineFnType {
     NormalFn,               // normal method
     BlockArgFn,             // method with one or more block args
     BlockFn                 // block method (value, value: etc)

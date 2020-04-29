@@ -7,8 +7,8 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
+
 // Primitives for processes
 
 class processOopPrimitives : AllStatic {
@@ -28,7 +28,7 @@ class processOopPrimitives : AllStatic {
         //              error = #(ProcessAllocationFailed)
         //              name  = 'processOopPrimitives::create' }
         //%
-        static PRIM_DECL_2( create, Oop receiver, Oop block );
+        static Oop __CALLING_CONVENTION create( Oop receiver, Oop block );
 
         //%prim
         // <NoReceiver> primitiveProcessYield ^<Process> =
@@ -37,7 +37,7 @@ class processOopPrimitives : AllStatic {
         //              doc   = 'Returns current process when regaining control.'
         //              name  = 'processOopPrimitives::yield' }
         //%
-        static PRIM_DECL_0( yield );
+        static Oop __CALLING_CONVENTION yield();
 
         //%prim
         // <NoReceiver> primitiveProcessStop ^<Process> =
@@ -46,21 +46,21 @@ class processOopPrimitives : AllStatic {
         //              doc   = 'Returns current process when regaining control.'
         //              name  = 'processOopPrimitives::stop' }
         //%
-        static PRIM_DECL_0( stop );
+        static Oop __CALLING_CONVENTION stop();
 
         //%prim
         // <Process> primitiveRecordMainProcessIfFail: failBlock <PrimFailBlock> ^<Object> =
         //   Internal { doc   = 'Records the receiver as the main process'
         //              name  = 'processOopPrimitives::setMainProcess' }
         //%
-        static PRIM_DECL_1( setMainProcess, Oop process );
+        static Oop __CALLING_CONVENTION setMainProcess( Oop process );
 
         //%prim
         // <NoReceiver> primitiveProcessActiveProcess ^<Object> =
         //   Internal { doc   = 'Returns the active process'
         //              name  = 'processOopPrimitives::activeProcess' }
         //%
-        static PRIM_DECL_0( activeProcess );
+        static Oop __CALLING_CONVENTION activeProcess();
 
         //%prim
         // <NoReceiver> primitiveProcessTransferTo: process   <Process>
@@ -70,7 +70,7 @@ class processOopPrimitives : AllStatic {
         //              error = #(NotInScheduler ProcessCannotContinue Dead)
         //              name  = 'processOopPrimitives::transferTo' }
         //%
-        static PRIM_DECL_1( transferTo, Oop process );
+        static Oop __CALLING_CONVENTION transferTo( Oop process );
 
         //%prim
         // <Process> primitiveProcessSetMode: mode       <Symbol>
@@ -82,7 +82,7 @@ class processOopPrimitives : AllStatic {
         //              error = #(InScheduler Dead)
         //              name  = 'processOopPrimitives::set_mode' }
         //%
-        static PRIM_DECL_3( set_mode, Oop process, Oop mode, Oop value );
+        static Oop __CALLING_CONVENTION set_mode( Oop process, Oop mode, Oop value );
 
         //%prim
         // <NoReceiver> primitiveProcessStartEvaluator: process   <Process>
@@ -93,7 +93,7 @@ class processOopPrimitives : AllStatic {
         //              error = #(NotInScheduler ProcessCannotContinue Dead)
         //              name  = 'processOopPrimitives::start_evaluator' }
         //%
-        static PRIM_DECL_1( start_evaluator, Oop process );
+        static Oop __CALLING_CONVENTION start_evaluator( Oop process );
 
         //%prim
         // <Process> primitiveProcessTerminateIfFail: failBlock <PrimFailBlock> ^<Self> =
@@ -102,7 +102,7 @@ class processOopPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //              name  = 'processOopPrimitives::terminate' }
         //%
-        static PRIM_DECL_1( terminate, Oop receiver );
+        static Oop __CALLING_CONVENTION terminate( Oop receiver );
 
         //%prim
         // <Process> primitiveProcessStatus ^<Symbol> =
@@ -124,7 +124,7 @@ class processOopPrimitives : AllStatic {
         //              doc  = '  #StackOverflow          - Stack exhausted.'
         //              name = 'processOopPrimitives::status' }
         //%
-        static PRIM_DECL_1( status, Oop process );
+        static Oop __CALLING_CONVENTION status( Oop process );
 
         //%prim
         // <Process> primitiveProcessSchedulerWait: milliseconds <SmallInteger>
@@ -133,7 +133,7 @@ class processOopPrimitives : AllStatic {
         //              doc   = 'Returns whether the timer expired.'
         //              name  = 'processOopPrimitives::scheduler_wait' }
         //%
-        static PRIM_DECL_1( scheduler_wait, Oop milliseconds );
+        static Oop __CALLING_CONVENTION scheduler_wait( Oop milliseconds );
 
         //%prim
         // <Process> primitiveProcessTraceStack: size <SmallInteger>
@@ -142,21 +142,21 @@ class processOopPrimitives : AllStatic {
         //              errors = #(Dead)
         //              name   = 'processOopPrimitives::trace_stack' }
         //%
-        static PRIM_DECL_2( trace_stack, Oop receiver, Oop size );
+        static Oop __CALLING_CONVENTION trace_stack( Oop receiver, Oop size );
 
         //%prim
         // <NoReceiver> primitiveProcessEnterCritical ^<Process> =
         //   Internal { doc    = 'Disables preemption in active process.'
         //              name   = 'processOopPrimitives::enter_critical' }
         //%
-        static PRIM_DECL_0( enter_critical );
+        static Oop __CALLING_CONVENTION enter_critical();
 
         //%prim
         // <NoReceiver> primitiveProcessLeaveCritical ^<Process> =
         //   Internal { doc    = 'Enables preemption in active process'
         //              name   = 'processOopPrimitives::leave_critical' }
         //%
-        static PRIM_DECL_0( leave_critical );
+        static Oop __CALLING_CONVENTION leave_critical();
 
         //%prim
         // <NoReceiver> primitiveProcessYieldInCritical ^<Process> =
@@ -165,21 +165,21 @@ class processOopPrimitives : AllStatic {
         //              doc   = 'Returns current process when regaining control.'
         //              name  = 'processOopPrimitives::yield_in_critical' }
         //%
-        static PRIM_DECL_0( yield_in_critical );
+        static Oop __CALLING_CONVENTION yield_in_critical();
 
         //%prim
         // <Process> primitiveProcessUserTime ^<Float> =
         //   Internal { doc   = 'Returns time, in seconds, the process has spent in user code'
         //              name  = 'processOopPrimitives::user_time' }
         //%
-        static PRIM_DECL_1( user_time, Oop receiver );
+        static Oop __CALLING_CONVENTION user_time( Oop receiver );
 
         //%prim
         // <Process> primitiveProcessSystemTime ^<Float> =
         //   Internal { doc   = 'Returns time, in seconds, the process has spent in system code'
         //              name  = 'processOopPrimitives::user_time' }
         //%
-        static PRIM_DECL_1( system_time, Oop receiver );
+        static Oop __CALLING_CONVENTION system_time( Oop receiver );
 
         //%prim
         // <Process> primitiveProcessStackLimit: limit <SmallInteger>
@@ -190,7 +190,7 @@ class processOopPrimitives : AllStatic {
         //              doc    = 'if it is the active process'
         //              name   = 'processOopPrimitives::stack' }
         //%
-        static PRIM_DECL_2( stack, Oop receiver, Oop limit );
+        static Oop __CALLING_CONVENTION stack( Oop receiver, Oop limit );
 
 };
 

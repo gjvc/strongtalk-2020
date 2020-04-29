@@ -1751,7 +1751,7 @@ class ArithNode : public NonTrivialNode {    // abstract
 
 
         bool_t isCmpNode() const {
-            return _op == tCmpArithOp;
+            return _op == ArithOpCode::tCmpArithOp;
         }
 
 

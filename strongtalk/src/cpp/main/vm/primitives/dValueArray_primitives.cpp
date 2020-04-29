@@ -20,7 +20,7 @@ int doubleValueArrayPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert(receiver->is_doubleValueArray(), "receiver must be double value array")
 
 
-PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION doubleValueArrayPrimitives::allocateSize( Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_doubleValueArray(), "receiver must double byte array class" );
     if ( not argument->is_smi() )
@@ -50,7 +50,7 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
 }
 
 
-PRIM_DECL_1( doubleValueArrayPrimitives::size, Oop receiver ) {
+Oop __CALLING_CONVENTION doubleValueArrayPrimitives::size( Oop receiver ) {
     PROLOGUE_1( "size", receiver );
     ASSERT_RECEIVER;
 
@@ -59,7 +59,7 @@ PRIM_DECL_1( doubleValueArrayPrimitives::size, Oop receiver ) {
 }
 
 
-PRIM_DECL_2( doubleValueArrayPrimitives::at, Oop receiver, Oop index ) {
+Oop __CALLING_CONVENTION doubleValueArrayPrimitives::at( Oop receiver, Oop index ) {
     PROLOGUE_2( "at", receiver, index );
     ASSERT_RECEIVER;
 
@@ -75,7 +75,7 @@ PRIM_DECL_2( doubleValueArrayPrimitives::at, Oop receiver, Oop index ) {
 }
 
 
-PRIM_DECL_3( doubleValueArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
+Oop __CALLING_CONVENTION doubleValueArrayPrimitives::atPut( Oop receiver, Oop index, Oop value ) {
     PROLOGUE_3( "atPut", receiver, index, value );
     ASSERT_RECEIVER;
 

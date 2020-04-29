@@ -98,14 +98,14 @@ class FreeList : private HeapChunk {
 
 // -----------------------------------------------------------------------------
 
-enum chunkState {
-    ZeroDistance = 0,    //
-    MaxDistance  = 128,  //
-    unused       = 128,  //
-    unusedOvfl   = 190,  //
-    used         = 192,  //
-    usedOvfl     = 254,  //
-    invalid      = 255   //
+enum class chunkState {
+        ZeroDistance = 0,    //
+        MaxDistance  = 128,  //
+        unused       = 128,  //
+        unusedOvfl   = 190,  //
+        used         = 192,  //
+        usedOvfl     = 254,  //
+        invalid      = 255   //
 };
 
 
@@ -116,8 +116,8 @@ constexpr int minHeaderSize = 1;
 constexpr int maxHeaderSize = 4;
 
 
-constexpr int MaxDistLog    = log2( MaxDistance );
-constexpr int maxOneByteLen = ( usedOvfl - used );
+constexpr int MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
+constexpr int maxOneByteLen = ( static_cast<int>( chunkState::usedOvfl ) - static_cast<int>(chunkState::used ) );
 
 class ChunkKlass;
 
@@ -133,7 +133,7 @@ class ChunkKlass {
 
 
         uint8_t n( int which ) {
-            return c( which ) - unused;
+            return c( which ) - static_cast<uint8_t>( chunkState::unused );
         }
 
 
@@ -152,12 +152,12 @@ class ChunkKlass {
 
 
         void markUsed( int nChunks ) {
-            markSize( nChunks, used );
+            markSize( nChunks, chunkState::used );
         }
 
 
         void markUnused( int nChunks ) {
-            markSize( nChunks, unused );
+            markSize( nChunks, chunkState::unused );
         }
 
 
@@ -171,7 +171,7 @@ class ChunkKlass {
 
 
         void invalidate() {
-            asByte()[ 0 ] = invalid;
+            asByte()[ 0 ] = static_cast<uint8_t>( chunkState::invalid );
         }
 
 
@@ -181,7 +181,7 @@ class ChunkKlass {
 
 
         bool_t isUsed() {
-            return state() >= used;
+            return state() >= chunkState::used;
         }
 
 
@@ -191,17 +191,17 @@ class ChunkKlass {
 
 
         int headerSize() {        // size of header in bytes
-            int ovfl = isUsed() ? usedOvfl : unusedOvfl;
+            int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
             return c( 0 ) == ovfl ? maxHeaderSize : minHeaderSize;
         }
 
 
         int size() {        // size of this block
-            int ovfl = isUsed() ? usedOvfl : unusedOvfl;
+            int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
             int len;
-            st_assert( c( 0 ) not_eq invalid and c( 0 ) >= MaxDistance, "invalid chunk" );
+            st_assert( c( 0 ) not_eq static_cast<uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
             if ( c( 0 ) not_eq ovfl ) {
-                len = c( 0 ) + 1 - ( isUsed() ? used : unused );
+                len = c( 0 ) + 1 - ( isUsed() ? static_cast<uint8_t>( chunkState::used ) : static_cast<uint8_t>( chunkState::unused ) );
             } else {
                 len = ( ( ( n( 1 ) << MaxDistLog ) + n( 2 ) ) << MaxDistLog ) + n( 3 );
             }
@@ -222,7 +222,7 @@ class ChunkKlass {
 
         ChunkKlass * prev() {
             ChunkKlass * p = asChunkKlass( asByte() - 1 );
-            int ovfl = p->isUsed() ? usedOvfl : unusedOvfl;
+            int ovfl = static_cast<int>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
             int len;
             if ( c( -1 ) not_eq ovfl ) {
                 len = p->size();

@@ -552,7 +552,7 @@ void CodeGenerator::storeCheck( Register obj ) {
     _masm->movl( base.reg(), Address( int( &byte_map_base ), RelocationInformation::RelocationType::external_word_type ) );
     _masm->movl( indx.reg(), obj );                        // do not destroy obj (a preg may be mapped to it)
     _masm->shrl( indx.reg(), card_shift );                    // divide obj by card_size
-    _masm->movb( Address( base.reg(), indx.reg(), Address::times_1 ), 0 );    // clear entry
+    _masm->movb( Address( base.reg(), indx.reg(), Address::ScaleFactor::times_1 ), 0 );    // clear entry
     _masm->bind( no_store );
 }
 
@@ -1080,7 +1080,7 @@ void CodeGenerator::aStoreUplevelNode( StoreUplevelNode * node ) {
 
 
 void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *& x, PseudoRegister *& y, bool_t & x_attr, bool_t & y_attr ) {
-    if ( x->isConstPReg() and ArithOpIsCommutative[ op ] ) {
+    if ( x->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
         PseudoRegister * t1 = x;
         x = y;
         y = t1;
@@ -1094,44 +1094,44 @@ void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *& x, PseudoReg
 void CodeGenerator::arithRROp( ArithOpCode op, Register x, Register y ) { // x := x op y
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
-        case TestArithOp:
+        case ArithOpCode::TestArithOp:
             _masm->testl( x, y );
             break;
-        case tAddArithOp  : // fall through
-        case AddArithOp:
+        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::AddArithOp:
             _masm->addl( x, y );
             break;
-        case tSubArithOp  : // fall through
-        case SubArithOp:
+        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::SubArithOp:
             _masm->subl( x, y );
             break;
-        case tMulArithOp:
+        case ArithOpCode::tMulArithOp:
             _masm->sarl( x, TAG_SIZE );
-        case MulArithOp:
+        case ArithOpCode::MulArithOp:
             _masm->imull( x, y );
             break;
-        case tDivArithOp  : // fall through
-        case DivArithOp  : Unimplemented();
+        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case tModArithOp  : // fall through
-        case ModArithOp  : Unimplemented();
+        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case tAndArithOp  : // fall through
-        case AndArithOp:
+        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::AndArithOp:
             _masm->andl( x, y );
             break;
-        case tOrArithOp   : // fall through
-        case OrArithOp:
+        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::OrArithOp:
             _masm->orl( x, y );
             break;
-        case tXOrArithOp  : // fall through
-        case XOrArithOp:
+        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::XOrArithOp:
             _masm->xorl( x, y );
             break;
-        case tShiftArithOp: Unimplemented();
-        case ShiftArithOp: Unimplemented();
-        case tCmpArithOp  : // fall through
-        case CmpArithOp:
+        case ArithOpCode::tShiftArithOp: Unimplemented();
+        case ArithOpCode::ShiftArithOp: Unimplemented();
+        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
             break;
         default: ShouldNotReachHere();
@@ -1142,29 +1142,29 @@ void CodeGenerator::arithRROp( ArithOpCode op, Register x, Register y ) { // x :
 void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x op y
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
-        case TestArithOp:
+        case ArithOpCode::TestArithOp:
             _masm->testl( x, y );
             break;
-        case tAddArithOp  : // fall through
-        case AddArithOp:
+        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::AddArithOp:
             if ( y == 0 ) {
                 warning( "code generated to add 0 (no load required)" );
             } else {
                 _masm->addl( x, y );
             }
             break;
-        case tSubArithOp  : // fall through
-        case SubArithOp:
+        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::SubArithOp:
             if ( y == 0 ) {
                 warning( "code generated to subtract 0 (no load required)" );
             } else {
                 _masm->subl( x, y );
             }
             break;
-        case tMulArithOp:
+        case ArithOpCode::tMulArithOp:
             y = arithmetic_shift_right( y, TAG_SIZE );
 
-        case MulArithOp:
+        case ArithOpCode::MulArithOp:
             // catch a few trivial cases (since certain optimizations happen
             // after inlining of primitives, these cases cannot be handled in
             // the primitive inliner alone => phase ordering problem).
@@ -1190,25 +1190,25 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x o
                     break;
             }
             break;
-        case tDivArithOp  : // fall through
-        case DivArithOp  : Unimplemented();
+        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case tModArithOp  : // fall through
-        case ModArithOp  : Unimplemented();
+        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case tAndArithOp  : // fall through
-        case AndArithOp:
+        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::AndArithOp:
             _masm->andl( x, y );
             break;
-        case tOrArithOp   : // fall through
-        case OrArithOp:
+        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::OrArithOp:
             _masm->orl( x, y );
             break;
-        case tXOrArithOp  : // fall through
-        case XOrArithOp:
+        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::XOrArithOp:
             _masm->xorl( x, y );
             break;
-        case tShiftArithOp:
+        case ArithOpCode::tShiftArithOp:
             if ( y < 0 ) {
                 // shift right
                 int shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
@@ -1220,9 +1220,9 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x o
                 _masm->shll( x, shift_count );
             }
             break;
-        case ShiftArithOp: Unimplemented();
-        case tCmpArithOp  : // fall through
-        case CmpArithOp:
+        case ArithOpCode::ShiftArithOp: Unimplemented();
+        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
             break;
         default: ShouldNotReachHere();
@@ -1233,7 +1233,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x o
 void CodeGenerator::arithROOp( ArithOpCode op, Register x, Oop y ) { // x := x op y
     st_assert( not y->is_smi(), "check this code" );
     switch ( op ) {
-        case CmpArithOp:
+        case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
             break;
         default           : ShouldNotReachHere();
@@ -1251,7 +1251,7 @@ void CodeGenerator::arithRXOp( ArithOpCode op, Register x, Oop y ) { // x := x o
 
 
 bool_t CodeGenerator::producesResult( ArithOpCode op ) {
-    return ( op not_eq TestArithOp ) and ( op not_eq CmpArithOp ) and ( op not_eq tCmpArithOp );
+    return ( op not_eq ArithOpCode::TestArithOp ) and ( op not_eq ArithOpCode::CmpArithOp ) and ( op not_eq ArithOpCode::tCmpArithOp );
 }
 
 
@@ -2029,29 +2029,29 @@ void CodeGenerator::aNonLocalReturnContinuationNode( NonLocalReturnContinuationN
 
 Assembler::Condition CodeGenerator::mapToCC( BranchOpCode op ) {
     switch ( op ) {
-        case EQBranchOp:
+        case BranchOpCode::EQBranchOp:
             return Assembler::Condition::equal;
-        case NEBranchOp:
+        case BranchOpCode::NEBranchOp:
             return Assembler::Condition::notEqual;
-        case LTBranchOp:
+        case BranchOpCode::LTBranchOp:
             return Assembler::Condition::less;
-        case LEBranchOp:
+        case BranchOpCode::LEBranchOp:
             return Assembler::Condition::lessEqual;
-        case GTBranchOp:
+        case BranchOpCode::GTBranchOp:
             return Assembler::Condition::greater;
-        case GEBranchOp:
+        case BranchOpCode::GEBranchOp:
             return Assembler::Condition::greaterEqual;
-        case LTUBranchOp:
+        case BranchOpCode::LTUBranchOp:
             return Assembler::Condition::below;
-        case LEUBranchOp:
+        case BranchOpCode::LEUBranchOp:
             return Assembler::Condition::belowEqual;
-        case GTUBranchOp:
+        case BranchOpCode::GTUBranchOp:
             return Assembler::Condition::above;
-        case GEUBranchOp:
+        case BranchOpCode::GEUBranchOp:
             return Assembler::Condition::aboveEqual;
-        case VSBranchOp:
+        case BranchOpCode::VSBranchOp:
             return Assembler::Condition::overflow;
-        case VCBranchOp:
+        case BranchOpCode::VCBranchOp:
             return Assembler::Condition::noOverflow;
     }
     ShouldNotReachHere();
@@ -2294,11 +2294,11 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
             if ( result_reg.hasByteRegister() ) {
                 // result_reg has byte register -> can use byte load instruction
                 _masm->xorl( result_reg, result_reg );    // clear destination register
-                _masm->movb( result_reg, Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+                _masm->movb( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
             } else {
                 // result_reg has no byte register -> cannot use byte load instruction
                 // instead of doing better register selection use word load & mask for now
-                _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+                _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
                 _masm->andl( result_reg, 0x000000FF );    // clear uppper 3 bytes
             }
             _masm->shll( result_reg, TAG_SIZE );    // make result a smi_t
@@ -2307,7 +2307,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
         case ArrayAtNode::double_byte_at: {
             Register result_reg = def( result );
             _masm->sarl( offset.reg(), TAG_SIZE - 1 );// adjust index
-            _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+            _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
             _masm->andl( result_reg, 0x0000FFFF );    // clear upper 2 bytes
             _masm->shll( result_reg, TAG_SIZE );    // make result a smi_t
         }
@@ -2315,7 +2315,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
         case ArrayAtNode::character_at: {
             Register result_reg = def( result );
             _masm->sarl( offset.reg(), TAG_SIZE - 1 );// adjust index
-            _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+            _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
             _masm->andl( result_reg, 0x0000FFFF );    // clear upper 2 bytes
             // use result_reg as index into asciiCharacters()
             // check index first, must be 0 <= result_reg < asciiCharacters()->length()
@@ -2324,12 +2324,12 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode * node ) {
             jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
             // get character out of chars array
             _masm->movl( offset.reg(), chars );
-            _masm->movl( result_reg, Address( offset.reg(), result_reg, Address::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
+            _masm->movl( result_reg, Address( offset.reg(), result_reg, Address::ScaleFactor::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
         }
             break;
         case ArrayAtNode::object_at:
             // offset already shifted => no scaling necessary
-            _masm->movl( def( result ), Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+            _masm->movl( def( result ), Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
             break;
         default: ShouldNotReachHere();
             break;
@@ -2404,15 +2404,15 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
             // store the element
             if ( elt.reg().hasByteRegister() ) {
                 // elt.reg() has byte register -> can use byte store instruction
-                _masm->movb( Address( array_reg, offset.reg(), Address::times_1, data_offset ), elt.reg() );
+                _masm->movb( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ), elt.reg() );
             } else {
                 // elt.reg() has no byte register -> cannot use byte store instruction
                 // instead of doing a better register selection use word load/store & mask for now
                 Temporary field( _currentMapping );
-                _masm->movl( field.reg(), Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+                _masm->movl( field.reg(), Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
                 _masm->andl( field.reg(), 0xFFFFFF00 );    // mask out lower byte
                 _masm->orl( field.reg(), elt.reg() );    // move elt (elt < 0x100 => no masking of elt needed)
-                _masm->movl( Address( array_reg, offset.reg(), Address::times_1, data_offset ), field.reg() );
+                _masm->movl( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ), field.reg() );
             }
             st_assert( not node->needs_store_check(), "just checking" );
         }
@@ -2434,17 +2434,17 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
             // store the element
             if ( elt.reg().hasByteRegister() ) {
                 // elt.reg() has byte register -> can use byte store instructions
-                _masm->movb( Address( array_reg, offset.reg(), Address::times_1, data_offset + 0 ), elt.reg() );
+                _masm->movb( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset + 0 ), elt.reg() );
                 _masm->shrl( elt.reg(), 8 );        // shift 2nd byte into low-byte position
-                _masm->movb( Address( array_reg, offset.reg(), Address::times_1, data_offset + 1 ), elt.reg() );
+                _masm->movb( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset + 1 ), elt.reg() );
             } else {
                 // elt.reg() has no byte register -> cannot use byte store instructions
                 // instead of doing a better register selection use word load/store & mask for now
                 Temporary field( _currentMapping );
-                _masm->movl( field.reg(), Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+                _masm->movl( field.reg(), Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
                 _masm->andl( field.reg(), 0xFFFF0000 );    // mask out lower two bytes
                 _masm->orl( field.reg(), elt.reg() );    // move elt (elt < 0x10000 => no masking of elt needed)
-                _masm->movl( Address( array_reg, offset.reg(), Address::times_1, data_offset ), field.reg() );
+                _masm->movl( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ), field.reg() );
             }
             st_assert( not node->needs_store_check(), "just checking" );
         }
@@ -2452,11 +2452,11 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode * node ) {
         case ArrayAtPutNode::object_at_put:
             // offset already shifted => no scaling necessary
             if ( node->needs_store_check() ) {
-                _masm->leal( offset.reg(), Address( array_reg, offset.reg(), Address::times_1, data_offset ) );
+                _masm->leal( offset.reg(), Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
                 _masm->movl( Address( offset.reg() ), use( element ) );
                 storeCheck( offset.reg() );
             } else {
-                _masm->movl( Address( array_reg, offset.reg(), Address::times_1, data_offset ), use( element ) );
+                _masm->movl( Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ), use( element ) );
             }
             break;
         default: ShouldNotReachHere();
@@ -2537,11 +2537,11 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
             if ( result_reg.hasByteRegister() ) {
                 // result_reg has byte register -> can use byte load instruction
                 _masm->xorl( result_reg, result_reg );                // clear destination register
-                _masm->movb( result_reg, Address( base.reg(), offset.reg(), Address::times_1, 0 ) );
+                _masm->movb( result_reg, Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ) );
             } else {
                 // result_reg has no byte register -> cannot use byte load instruction
                 // instead of doing better register selection use word load & mask for now
-                _masm->movl( result_reg, Address( base.reg(), offset.reg(), Address::times_1, 0 ) );
+                _masm->movl( result_reg, Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ) );
                 _masm->andl( result_reg, 0x000000FF );                // clear uppper 3 bytes
             }
             _masm->shll( result_reg, TAG_SIZE );                // make result a smi_t
@@ -2610,21 +2610,21 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
             if ( const_val ) {
                 SMIOop constant = SMIOop( ( ( ConstPseudoRegister * ) value )->constant );
                 st_assert( constant->is_smi(), "should be a smi_t" );
-                _masm->movb( Address( base.reg(), offset.reg(), Address::times_1, 0 ), constant->value() & 0xFF );
+                _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), constant->value() & 0xFF );
             } else {
                 _masm->sarl( val.reg(), TAG_SIZE );                // convert (smi_t)value into int
                 if ( val.reg().hasByteRegister() ) {
                     // val.reg() has byte register -> can use byte store instruction
-                    _masm->movb( Address( base.reg(), offset.reg(), Address::times_1, 0 ), val.reg() );
+                    _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), val.reg() );
                 } else {
                     // val.reg() has no byte register -> cannot use byte store instruction
                     // instead of doing a better register selection use word load/store & mask for now
                     Temporary field( _currentMapping );
-                    _masm->movl( field.reg(), Address( base.reg(), offset.reg(), Address::times_1, 0 ) );
+                    _masm->movl( field.reg(), Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ) );
                     _masm->andl( val.reg(), 0x000000FF );            // make sure value is one byte only
                     _masm->andl( field.reg(), 0xFFFFFF00 );            // mask out lower byte of target field
                     _masm->orl( field.reg(), val.reg() );            // move value byte into target field
-                    _masm->movl( Address( base.reg(), offset.reg(), Address::times_1, 0 ), field.reg() );
+                    _masm->movl( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), field.reg() );
                 }
             }
             // handle error cases if not uncommon

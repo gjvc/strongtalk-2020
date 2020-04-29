@@ -235,21 +235,21 @@ void Compiler::initLimits() {
     _hasInlinableSendsRemaining = true;
 
 #ifdef LATER
-    inlineLimit[NormalFnLimit] 	     = getLimit(limits[NormalFnLimit],		level);
-    inlineLimit[BlockFnLimit] 	     = getLimit(limits[BlockFnLimit],		level);
-    inlineLimit[BlockArgFnLimit]       = getLimit(limits[BlockArgFnLimit],	level);
-    inlineLimit[NormalFnInstrLimit]    = getLimit(limits[NormalFnInstrLimit],	level);
-    inlineLimit[BlockFnInstrLimit]     = getLimit(limits[BlockFnInstrLimit],	level);
-    inlineLimit[BlockArgFnInstrLimit]  = getLimit(limits[BlockArgFnInstrLimit],	level);
-    inlineLimit[SplitCostLimit]        = getLimit(limits[SplitCostLimit],		level);
-    inlineLimit[NmInstrLimit]          = getLimit(limits[NmInstrLimit],		level);
+    inlineLimit[InlineLimitIType::NormalFnLimit] 	     = getLimit(limits[InlineLimitIType::NormalFnLimit],		level);
+    inlineLimit[InlineLimitIType::BlockFnLimit] 	     = getLimit(limits[InlineLimitIType::BlockFnLimit],		level);
+    inlineLimit[InlineLimitIType::BlockArgFnLimit]       = getLimit(limits[InlineLimitIType::BlockArgFnLimit],	level);
+    inlineLimit[InlineLimitIType::NormalFnInstrLimit]    = getLimit(limits[InlineLimitIType::NormalFnInstrLimit],	level);
+    inlineLimit[InlineLimitIType::BlockFnInstrLimit]     = getLimit(limits[InlineLimitIType::BlockFnInstrLimit],	level);
+    inlineLimit[InlineLimitIType::BlockArgFnInstrLimit]  = getLimit(limits[InlineLimitIType::BlockArgFnInstrLimit],	level);
+    inlineLimit[InlineLimitIType::SplitCostLimit]        = getLimit(limits[InlineLimitIType::SplitCostLimit],		level);
+    inlineLimit[InlineLimitIType::NmInstrLimit]          = getLimit(limits[InlineLimitIType::NmInstrLimit],		level);
 
     if (CompilerAdjustLimits) {
-      // adjust NmInstrLimit if top-level method is large
+      // adjust InlineLimitIType::NmInstrLimit if top-level method is large
       int cost = sicCost((MethodKlass*)method->klass(), topScope, costP);
       if (cost > NormalMethodLen) {
-        float l = (float)cost / NormalMethodLen * inlineLimit[NmInstrLimit];
-        inlineLimit[NmInstrLimit] = min(int(l), CompilerInstructionsSize / 3);
+        float l = (float)cost / NormalMethodLen * inlineLimit[InlineLimitIType::NmInstrLimit];
+        inlineLimit[InlineLimitIType::NmInstrLimit] = min(int(l), CompilerInstructionsSize / 3);
       }
     }
 #endif

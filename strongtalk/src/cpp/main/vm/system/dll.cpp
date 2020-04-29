@@ -45,9 +45,9 @@ bool_t Compiled_DLLCache::async() const {
 
 void Compiled_DLLCache::verify() {
     // check layout
-    mov_at( mov_edx_instruction_offset )->verify();
-    test_at( test_1_instruction_offset )->verify();
-    test_at( test_2_instruction_offset )->verify();
+    mov_at( static_cast<int>( Layout_constants::mov_edx_instruction_offset ) )->verify();
+    test_at( static_cast<int>( Layout_constants::test_1_instruction_offset ) )->verify();
+    test_at( static_cast<int>( Layout_constants::test_2_instruction_offset ) )->verify();
     NativeCall::verify();
     // check oops
     if ( not dll_name()->is_symbol() ) fatal( "dll name is not a SymbolOop" );

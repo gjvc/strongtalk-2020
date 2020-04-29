@@ -27,7 +27,7 @@ TRACE_FUNC( TraceCallBackPrims, "callBack" )
 int callBackPrimitives::number_of_calls;
 
 
-PRIM_DECL_2( callBackPrimitives::initialize, Oop receiver, Oop selector ) {
+Oop __CALLING_CONVENTION callBackPrimitives::initialize( Oop receiver, Oop selector ) {
     PROLOGUE_2( "initialize", receiver, selector );
     if ( not selector->is_symbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
@@ -36,7 +36,7 @@ PRIM_DECL_2( callBackPrimitives::initialize, Oop receiver, Oop selector ) {
 }
 
 
-PRIM_DECL_3( callBackPrimitives::registerPascalCall, Oop index, Oop nofArgs, Oop result ) {
+Oop __CALLING_CONVENTION callBackPrimitives::registerPascalCall( Oop index, Oop nofArgs, Oop result ) {
     PROLOGUE_3( "registerPascalCall", index, nofArgs, result );
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -49,7 +49,7 @@ PRIM_DECL_3( callBackPrimitives::registerPascalCall, Oop index, Oop nofArgs, Oop
 }
 
 
-PRIM_DECL_2( callBackPrimitives::registerCCall, Oop index, Oop result ) {
+Oop __CALLING_CONVENTION callBackPrimitives::registerCCall( Oop index, Oop result ) {
     PROLOGUE_2( "registerCCall", index, result );
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -60,7 +60,7 @@ PRIM_DECL_2( callBackPrimitives::registerCCall, Oop index, Oop result ) {
 }
 
 
-PRIM_DECL_1( callBackPrimitives::unregister, Oop proxy ) {
+Oop __CALLING_CONVENTION callBackPrimitives::unregister( Oop proxy ) {
     PROLOGUE_1( "unregister", proxy );
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -73,7 +73,7 @@ PRIM_DECL_1( callBackPrimitives::unregister, Oop proxy ) {
 typedef int     (__CALLING_CONVENTION * mytype)( int a, int b );
 
 
-PRIM_DECL_1( callBackPrimitives::invokePascal, Oop proxy ) {
+Oop __CALLING_CONVENTION callBackPrimitives::invokePascal( Oop proxy ) {
     PROLOGUE_1( "invokePascal", proxy );
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -82,7 +82,7 @@ PRIM_DECL_1( callBackPrimitives::invokePascal, Oop proxy ) {
 }
 
 
-PRIM_DECL_1( callBackPrimitives::invokeC, Oop proxy ) {
+Oop __CALLING_CONVENTION callBackPrimitives::invokeC( Oop proxy ) {
     PROLOGUE_1( "invokeC", proxy );
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );

@@ -22,6 +22,7 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/utilities/lprintf.hpp"
 
 
 extern "C" void UncommonTrap() {

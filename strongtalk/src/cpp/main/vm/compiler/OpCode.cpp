@@ -46,16 +46,18 @@ std::array <bool_t, 34> ArithOpIsCommutative = {
 void opcode_init() {
     _console->print_cr( "%%system-init:  opcode_init" );
 
-    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq LastBranchOp + 1 ) {
-        fatal( "forgot to change BranchOpName after changing BranchOpCode" );
-    }
-
-    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq LastArithOp + 1 ) {
-        fatal( "forgot to change ArithOpName after changing ArithOpCode" );
-    }
-
-    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq LastArithOp + 1 ) {
-        fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
-    }
+    // check sizes
+//
+//    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq BranchOpCode::LastBranchOp + 1 ) {
+//        fatal( "forgot to change BranchOpName after changing BranchOpCode" );
+//    }
+//
+//    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq ArithOpCode::LastArithOp + 1 ) {
+//        fatal( "forgot to change ArithOpName after changing ArithOpCode" );
+//    }
+//
+//    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq ArithOpCode::LastArithOp + 1 ) {
+//        fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
+//    }
 
 }

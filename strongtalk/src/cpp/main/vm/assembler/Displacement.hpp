@@ -52,7 +52,7 @@ class Displacement : public ValueObject {
             next_mask = ( 1 << next_size ) - 1,             //
         };
 
-        enum Type {             // info field usage
+        enum class Type {             // info field usage
             call,               // unused
             absolute_jump,      // unused
             conditional_jump,   // condition code

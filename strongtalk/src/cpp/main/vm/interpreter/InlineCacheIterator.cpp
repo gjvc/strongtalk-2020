@@ -49,16 +49,16 @@ void InlineCache::replace( NativeMethod * nm ) {
 void InlineCache::print() {
     const char * s;
     switch ( shape() ) {
-        case anamorphic:
+        case InlineCacheShape::anamorphic:
             s = "Anamorphic";
             break;
-        case monomorphic:
+        case InlineCacheShape::monomorphic:
             s = "Monomorphic";
             break;
-        case polymorphic:
+        case InlineCacheShape::polymorphic:
             s = "Polymorphic";
             break;
-        case megamorphic:
+        case InlineCacheShape::megamorphic:
             s = "Megamorphic";
             break;
         default         : ShouldNotReachHere();
@@ -116,21 +116,21 @@ void CompiledInlineCacheIterator::init_iteration() {
     _index = 0;
     if ( _ic->is_empty() ) {
         _number_of_targets = 0;
-        _shape             = anamorphic;
+        _shape             = InlineCacheShape::anamorphic;
     } else if ( _ic->is_monomorphic() ) {
         _number_of_targets = 1;
-        _shape             = monomorphic;
+        _shape             = InlineCacheShape::monomorphic;
         PolymorphicInlineCache * pic = _ic->pic();
         if ( pic )
             _picit = new PolymorphicInlineCacheIterator( pic );  // calls an interpreted method
     } else if ( _ic->is_polymorphic() ) {
         PolymorphicInlineCache * pic = _ic->pic();
         _number_of_targets = pic->number_of_targets();
-        _shape             = polymorphic;
+        _shape             = InlineCacheShape::polymorphic;
         _picit             = new PolymorphicInlineCacheIterator( pic );
     } else if ( _ic->is_megamorphic() ) {
         _number_of_targets = 0;
-        _shape             = megamorphic;
+        _shape             = InlineCacheShape::megamorphic;
     } else {
         ShouldNotReachHere();
     }

@@ -139,13 +139,13 @@ class PolymorphicInlineCacheContents {
         MethodOop smi_methodOop;
 
         // NativeMethod entries
-        KlassOop nativeMethod_klasses[PolymorphicInlineCache::max_nof_entries];
-        char * nativeMethods[PolymorphicInlineCache::max_nof_entries];
+        KlassOop nativeMethod_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+        char * nativeMethods[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
         int n;    // nativeMethods index
 
         // methodOop entries
-        KlassOop  methodOop_klasses[PolymorphicInlineCache::max_nof_entries];
-        MethodOop methodOops[PolymorphicInlineCache::max_nof_entries];
+        KlassOop  methodOop_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+        MethodOop methodOops[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
         int       m;    // methodOops index
 
         void append_NativeMethod_entry( KlassOop klass, char * entry );
@@ -179,11 +179,11 @@ class PolymorphicInlineCacheContents {
 
 
         int code_size() const {
-            int methodOop_size = number_of_interpreted_targets() * PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size;
+            int methodOop_size = number_of_interpreted_targets() * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size );
             if ( has_nativeMethods() ) {
-                return PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_offset + n * PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_entry_size + methodOop_size;
+                return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_offset ) + n * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) + methodOop_size;
             } else {
-                return PolymorphicInlineCache::PolymorphicInlineCache_methodOop_only_offset + methodOop_size;
+                return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset ) + methodOop_size;
             }
         }
 
@@ -238,14 +238,14 @@ PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlin
         // PolymorphicInlineCache without nativeMethods
         _state             = at_methodOop;
         _methodOop_counter = PolymorphicInlineCache::nof_entries( get_disp( _pos + 1 ) );
-        _pos += PolymorphicInlineCache::PolymorphicInlineCache_methodOop_only_offset;
+        _pos += static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset);
     } else {
         // nativeMethods -> handle smis first
-        const char * dest = get_disp( _pos + PolymorphicInlineCache::PolymorphicInlineCache_smi_nativeMethodOffset );
+        const char * dest = get_disp( _pos + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_smi_nativeMethodOffset ) );
         if ( dest == CompiledInlineCache::normalLookupRoutine() or _pic->contains( dest ) ) {
             // no smis or smi_t case is treated in methodOop section
             _state = at_nativeMethod;
-            _pos += PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_entry_offset;
+            _pos += static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset );
         } else {
             // smi_t entry is treated here
             _state = at_smi_nativeMethod;
@@ -260,7 +260,7 @@ void PolymorphicInlineCacheIterator::computeNextState() {
     } else if ( *_pos == call_opcode ) {
         _state             = at_methodOop;
         _methodOop_counter = PolymorphicInlineCache::nof_entries( get_disp( _pos + 1 ) );
-        _pos += PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_offset - PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_entry_offset;
+        _pos += static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_offset ) - static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset );
     } else {
         st_assert( *_pos == jmp_opcode, "jump to lookup routine expected" );
         _state = at_the_end;
@@ -272,17 +272,17 @@ void PolymorphicInlineCacheIterator::advance() {
     switch ( _state ) {
         case at_smi_nativeMethod:
             st_assert( _pos == _pic->entry(), "must be at beginning" );
-            _pos += PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_entry_offset;
+            _pos += static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset );
             _state = at_nativeMethod;
             computeNextState();
             break;
         case at_nativeMethod:
-            _pos += PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_entry_size;
+            _pos += static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size );
             computeNextState();
             break;
         case at_methodOop:
             if ( --_methodOop_counter > 0 ) {
-                _pos += PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size;
+                _pos += static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size );
             } else {
                 _state = at_the_end;
             }
@@ -298,10 +298,10 @@ KlassOop * PolymorphicInlineCacheIterator::klass_addr() const {
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no klass stored -> no klass address available
         case at_nativeMethod:
-            offs = PolymorphicInlineCache::PolymorphicInlineCache_NativeMethod_klass_offset;
+            offs = static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_klass_offset);
             break;
         case at_methodOop:
-            offs = PolymorphicInlineCache::PolymorphicInlineCache_methodOop_klass_offset;
+            offs = static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_klass_offset);
             break;
         case at_the_end: ShouldNotCallThis();            // no klass stored -> no klass address available
         default: ShouldNotReachHere();
@@ -314,10 +314,10 @@ int * PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
     int offs;
     switch ( state() ) {
         case at_smi_nativeMethod:
-            offs = PolymorphicInlineCache::PolymorphicInlineCache_smi_nativeMethodOffset;
+            offs = static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_smi_nativeMethodOffset);
             break;
         case at_nativeMethod:
-            offs = PolymorphicInlineCache::PolymorphicInlineCache_nativeMethodOffset;
+            offs = static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_nativeMethodOffset);
             break;
         case at_methodOop: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
         case at_the_end: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
@@ -333,7 +333,7 @@ MethodOop * PolymorphicInlineCacheIterator::methodOop_addr() const {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
         case at_nativeMethod    : ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
         case at_methodOop:
-            offs = PolymorphicInlineCache::PolymorphicInlineCache_methodOop_offset;
+            offs = static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_offset);
             break;
         case at_the_end    : ShouldNotCallThis();
         default            : ShouldNotReachHere();
@@ -432,7 +432,7 @@ void PolymorphicInlineCacheIterator::set_methodOop( MethodOop method ) {
 
 SymbolOop * PolymorphicInlineCache::MegamorphicInlineCache_selector_address() const {
     st_assert( is_megamorphic(), "not a MIC" );
-    return ( SymbolOop * ) ( entry() + MegamorphicInlineCache_selector_offset );
+    return ( SymbolOop * ) ( entry() + static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_selector_offset ) );
 }
 
 
@@ -576,14 +576,14 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, Polymo
     if ( c->smi_methodOop == nullptr ) {
         // no smi_t methodOop
         put_disp( p, StubRoutines::PolymorphicInlineCache_stub_entry( c->m ) );
-        st_assert( entry + PolymorphicInlineCache_methodOop_only_offset == p, "constant inconsistent" );
+        st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset ) == p, "constant inconsistent" );
 
     } else {
         // handle smi_t methodOop first
         put_disp( p, StubRoutines::PolymorphicInlineCache_stub_entry( 1 + c->m ) );
         put_word( p, int( smiKlassObj ) );
         put_word( p, int( c->smi_methodOop ) );
-        st_assert( entry + PolymorphicInlineCache_methodOop_only_offset + PolymorphicInlineCache_methodOop_entry_size == p, "constant value inconsistent with code pattern" );
+        st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) == p, "constant value inconsistent with code pattern" );
 
     }
 
@@ -594,7 +594,7 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, Polymo
         put_word( p, int( c->methodOops[ i ] ) );
     }
 
-    st_assert( p1 + c->m * PolymorphicInlineCache_methodOop_entry_size == p, "constant value inconsistent with code pattern" );
+    st_assert( p1 + c->m * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) == p, "constant value inconsistent with code pattern" );
     return p - entry;
 }
 
@@ -626,20 +626,20 @@ int PolymorphicInlineCache::code_for_polymorphic_case( char * entry, Polymorphic
         // mov edx, [eax.klass]
         put_shrt( p, mov_opcode );
         put_byte( p, MemOopDescriptor::klass_byte_offset() );
-        st_assert( entry + PolymorphicInlineCache_NativeMethod_entry_offset == p, "constant value inconsistent with code pattern" );
+        st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset ) == p, "constant value inconsistent with code pattern" );
         // handle nativeMethods
         for ( int i = 0; i < c->n; i++ ) {
             // cmp edx, klass(i)
             st_assert( c->nativeMethod_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
             put_shrt( p, cmp_opcode );
-            st_assert( entry + PolymorphicInlineCache_NativeMethod_entry_offset + i * PolymorphicInlineCache_NativeMethod_entry_size + PolymorphicInlineCache_NativeMethod_klass_offset == p, "constant value inconsistent with code pattern" );
+            st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset ) + i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_klass_offset ) == p, "constant value inconsistent with code pattern" );
             put_word( p, int( c->nativeMethod_klasses[ i ] ) );
             // je NativeMethod(j)
             put_shrt( p, jz_opcode );
-            st_assert( entry + PolymorphicInlineCache_NativeMethod_entry_offset + i * PolymorphicInlineCache_NativeMethod_entry_size + PolymorphicInlineCache_nativeMethodOffset == p, "constant value inconsistent with code pattern" );
+            st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset ) + i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_nativeMethodOffset ) == p, "constant value inconsistent with code pattern" );
             put_disp( p, c->nativeMethods[ i ] );
         }
-        st_assert( entry + PolymorphicInlineCache_NativeMethod_entry_offset + c->n * PolymorphicInlineCache_NativeMethod_entry_size == p, "constant value inconsistent with code pattern" );
+        st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset ) + c->n * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) == p, "constant value inconsistent with code pattern" );
         if ( c->smi_methodOop not_eq nullptr or c->m > 0 ) {
             // handle methodOops
             if ( fixup not_eq nullptr )
@@ -664,9 +664,9 @@ int PolymorphicInlineCache::code_for_megamorphic_case( char * entry ) {
 
     put_byte( p, call_opcode );
     put_disp( p, StubRoutines::megamorphic_ic_entry() );
-    st_assert( entry + MegamorphicInlineCache_selector_offset == p, "layout constant inconsistent with code pattern" );
+    st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_selector_offset ) == p, "layout constant inconsistent with code pattern" );
     put_word( p, int( selector() ) );    // used for fast lookup
-    st_assert( entry + MegamorphicInlineCache_code_size == p, "layout constant inconsistent with code pattern" );
+    st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ) == p, "layout constant inconsistent with code pattern" );
 
     return p - entry;
 }
@@ -713,7 +713,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
         // ic contains pic
         st_assert( old_nativeMethod == nullptr, "just checking" );
         st_assert( not old_pic->is_megamorphic(), "MICs should not change anymore" );
-        if ( old_pic->number_of_targets() >= max_nof_entries ) {
+        if ( old_pic->number_of_targets() >= static_cast<int>( PolymorphicInlineCache::Consts::max_nof_entries ) ) {
             if ( UseMICs ) {
                 // switch to MIC, keep only no lookup result
                 switch_to_MIC = true;
@@ -745,7 +745,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
 
     PolymorphicInlineCache * new_pic = nullptr;
     if ( switch_to_MIC ) {
-        new_pic = new( MegamorphicInlineCache_code_size ) PolymorphicInlineCache( ic );
+        new_pic = new( static_cast<size_t>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ) ) PolymorphicInlineCache( ic );
     } else {
         int allocated_code_size = contents.code_size();
         new_pic = new( allocated_code_size ) PolymorphicInlineCache( ic, &contents, allocated_code_size );
@@ -770,7 +770,7 @@ PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache * ic ) {
     _ic              = ic;
     _numberOfTargets = 0; // indicates megamorphic case
     _codeSize        = code_for_megamorphic_case( entry() );
-    st_assert( code_size() == MegamorphicInlineCache_code_size, "Please adjust PolymorphicInlineCacheContents::code_size()" );
+    st_assert( code_size() == static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ), "Please adjust PolymorphicInlineCacheContents::code_size()" );
 }
 
 

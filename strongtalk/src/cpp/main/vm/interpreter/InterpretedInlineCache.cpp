@@ -275,7 +275,7 @@ void InterpretedInlineCache::cleanup() {
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
             JumpTableEntry * entry = ( JumpTableEntry * ) first_word();
             NativeMethod   * nm    = entry->method();
-            LookupResult   result  = LookupCache::lookup( &nm->_lookupKey );
+            LookupResult result = LookupCache::lookup( &nm->_lookupKey );
             if ( not result.matches( nm ) ) {
                 replace( result, receiver_klass );
             }
@@ -290,7 +290,7 @@ void InterpretedInlineCache::cleanup() {
             if ( first_word()->is_smi() ) {
                 JumpTableEntry * entry = ( JumpTableEntry * ) first_word();
                 NativeMethod   * nm    = entry->method();
-                LookupResult   result  = LookupCache::lookup( &nm->_lookupKey );
+                LookupResult result = LookupCache::lookup( &nm->_lookupKey );
                 if ( not result.matches( nm ) ) {
                     replace( result, receiver_klass );
                 }
@@ -318,20 +318,20 @@ void InterpretedInlineCache::cleanup() {
             //   in case of a super send we do not have to cleanup because
             //   no nativeMethods are compiled for super sends.
             if ( not ByteCodes::is_super_send( send_code() ) ) {
-                ObjectArrayOop pic = pic_array();
-                for ( int   index = pic->length(); index > 0; index -= 2 ) {
+                ObjectArrayOop pic   = pic_array();
+                for ( int      index = pic->length(); index > 0; index -= 2 ) {
                     KlassOop klass = KlassOop( pic->obj_at( index ) );
                     st_assert( klass->is_klass(), "receiver klass must be klass" );
                     Oop first = pic->obj_at( index - 1 );
                     if ( first->is_smi() ) {
                         JumpTableEntry * entry = ( JumpTableEntry * ) first;
                         NativeMethod   * nm    = entry->method();
-                        LookupResult   result  = LookupCache::lookup( &nm->_lookupKey );
+                        LookupResult result = LookupCache::lookup( &nm->_lookupKey );
                         if ( not result.matches( nm ) ) {
                             pic->obj_at_put( index - 1, result.value() );
                         }
                     } else {
-                        MethodOop method = MethodOop( first );
+                        MethodOop method    = MethodOop( first );
                         st_assert( method->is_method(), "first word in interpreter InlineCache must be method" );
                         LookupKey    key( klass, selector() );
                         LookupResult result = LookupCache::lookup( &key );
@@ -378,8 +378,8 @@ void InterpretedInlineCache::replace( NativeMethod * nm ) {
             set( send_code(), entry_point, nm->_lookupKey.klass() );
             break;
         case ByteCodes::SendType::polymorphic_send: {
-            ObjectArrayOop pic = pic_array();
-            for ( int   index = pic->length(); index > 0; index -= 2 ) {
+            ObjectArrayOop pic   = pic_array();
+            for ( int      index = pic->length(); index > 0; index -= 2 ) {
                 KlassOop receiver_klass = KlassOop( pic->obj_at( index ) );
                 st_assert( receiver_klass->is_klass(), "receiver klass must be klass" );
                 if ( receiver_klass == nm->_lookupKey.klass() ) {
@@ -551,13 +551,13 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
     {
         // message not understood...
         BlockScavenge bs; // make sure that no scavenge happens
-        KlassOop msgKlass = KlassOop( Universe::find_global( "Message" ) );
-        Oop      obj      = msgKlass->klass_part()->allocateObject();
+        KlassOop      msgKlass = KlassOop( Universe::find_global( "Message" ) );
+        Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         msg = MemOop( obj );
         int            nofArgs = ic->selector()->number_of_arguments();
         ObjectArrayOop args    = oopFactory::new_objArray( nofArgs );
-        for ( int   i       = 1; i <= nofArgs; i++ ) {
+        for ( int      i       = 1; i <= nofArgs; i++ ) {
             args->obj_at_put( i, f->expr( nofArgs - i ) );
         }
         // for now: assume instance variables are there...
@@ -626,9 +626,9 @@ Oop * InterpretedInlineCache::inline_cache_miss() {
     NoGCVerifier noGC;
 
     // get ic info
-    Frame                  f         = DeltaProcess::active()->last_frame();
-    InterpretedInlineCache * ic      = f.current_interpretedIC();
-    ByteCodes::Code        send_code = ic->send_code();
+    Frame f = DeltaProcess::active()->last_frame();
+    InterpretedInlineCache * ic = f.current_interpretedIC();
+    ByteCodes::Code send_code = ic->send_code();
 
     Oop receiver = ic->argument_spec() == ByteCodes::ArgumentSpec::args_only // Are we at a self or super send?
                    ? f.receiver()                                //  yes: take receiver of frame
@@ -688,18 +688,18 @@ void InterpretedInlineCacheIterator::init_iteration() {
             if ( _ic->is_empty() ) {
                 // anamorphic call site (has never been executed => no type information)
                 _number_of_targets = 0;
-                _info              = anamorphic;
+                _info              = InlineCacheShape::anamorphic;
             } else {
                 // monomorphic call site
                 _number_of_targets = 1;
-                _info              = monomorphic;
+                _info              = InlineCacheShape::monomorphic;
                 set_klass( _ic->second_word() );
                 set_method( _ic->first_word() );
             }
             break;
         case ByteCodes::SendType::compiled_send:
             _number_of_targets = 1;
-            _info              = monomorphic;
+            _info              = InlineCacheShape::monomorphic;
             set_klass( _ic->second_word() );
             st_assert( _ic->first_word()->is_smi(), "must have JumpTableEntry" );
             set_method( _ic->first_word() );
@@ -708,7 +708,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
         case ByteCodes::SendType::accessor_send   : // fall through
         case ByteCodes::SendType::primitive_send:
             _number_of_targets = 1;
-            _info              = monomorphic;
+            _info              = InlineCacheShape::monomorphic;
             set_klass( _ic->second_word() );
             set_method( _ic->first_word() );
             st_assert( is_interpreted(), "bad type" );
@@ -716,23 +716,23 @@ void InterpretedInlineCacheIterator::init_iteration() {
         case ByteCodes::SendType::megamorphic_send:
             // no type information stored
             _number_of_targets = 0;
-            _info              = megamorphic;
+            _info              = InlineCacheShape::megamorphic;
             break;
         case ByteCodes::SendType::polymorphic_send:
             // information on many types
             _pic               = ObjectArrayOop( _ic->second_word() );
             _number_of_targets = _pic->length() / 2;
-            _info              = polymorphic;
+            _info              = InlineCacheShape::polymorphic;
             set_klass( _pic->obj_at( 2 ) );
             set_method( _pic->obj_at( 1 ) );
             break;
         case ByteCodes::SendType::predicted_send:
             if ( _ic->is_empty() or _ic->second_word() == smiKlassObj ) {
                 _number_of_targets = 1;
-                _info              = monomorphic;
+                _info              = InlineCacheShape::monomorphic;
             } else {
                 _number_of_targets = 2;
-                _info              = polymorphic;
+                _info              = InlineCacheShape::polymorphic;
             }
             set_klass( smiKlassObj );
             set_method( interpreter_normal_lookup( smiKlassObj, selector() ).value() );
@@ -740,7 +740,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
             break;
         default: ShouldNotReachHere();
     }
-    st_assert( ( number_of_targets() > 1 ) == ( _info == polymorphic ), "inconsistency" );
+    st_assert( ( number_of_targets() > 1 ) == ( _info == InlineCacheShape::polymorphic ), "inconsistency" );
 }
 
 

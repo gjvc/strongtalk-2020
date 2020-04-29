@@ -361,7 +361,7 @@ Expression * PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression * ar
 
     // n2: overflow check & treatment of overflow
     const bool_t taken_is_uncommon = true;
-    BranchNode         * n2           = NodeFactory::BranchNode( VSBranchOp, taken_is_uncommon );
+    BranchNode         * n2           = NodeFactory::BranchNode( BranchOpCode::VSBranchOp, taken_is_uncommon );
     AssignNode         * n2Err;
     ConstantExpression * n2Expression = nullptr;
     if ( shouldUseUncommonTrap() ) {
@@ -445,7 +445,7 @@ Expression * PrimitiveInliner::smi_Div( Expression * x, Expression * y ) {
         if ( is_power_of_2( d ) ) {
             // replace it with shift
             ConstPseudoRegister * preg = new_ConstPReg( _scope, smiOopFromValue( -log2( d ) ) );
-            return smi_BitOp( tShiftArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
+            return smi_BitOp( ArithOpCode::tShiftArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
         }
     }
     // otherwise leave it alone
@@ -460,7 +460,7 @@ Expression * PrimitiveInliner::smi_Mod( Expression * x, Expression * y ) {
         if ( is_power_of_2( d ) ) {
             // replace it with mask
             ConstPseudoRegister * preg = new_ConstPReg( _scope, smiOopFromValue( d - 1 ) );
-            return smi_BitOp( tAndArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
+            return smi_BitOp( ArithOpCode::tAndArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
         }
     }
     // otherwise leave it alone
@@ -472,7 +472,7 @@ Expression * PrimitiveInliner::smi_Shift( Expression * arg1, Expression * arg2 )
     if ( parameter( 1 )->preg()->isConstPReg() ) {
         // inline if the shift count is a constant
         st_assert( arg2->is_smi(), "type check should have failed" );
-        return smi_BitOp( tShiftArithOp, arg1, arg2 );
+        return smi_BitOp( ArithOpCode::tShiftArithOp, arg1, arg2 );
     }
     // otherwise leave it alone
     return nullptr;
@@ -481,33 +481,33 @@ Expression * PrimitiveInliner::smi_Shift( Expression * arg1, Expression * arg2 )
 
 static BranchOpCode Not( BranchOpCode cond ) {
     switch ( cond ) {
-        case EQBranchOp:
-            return NEBranchOp;
-        case NEBranchOp:
-            return EQBranchOp;
-        case LTBranchOp:
-            return GEBranchOp;
-        case LEBranchOp:
-            return GTBranchOp;
-        case GTBranchOp:
-            return LEBranchOp;
-        case GEBranchOp:
-            return LTBranchOp;
-        case LTUBranchOp:
-            return GEUBranchOp;
-        case LEUBranchOp:
-            return GTUBranchOp;
-        case GTUBranchOp:
-            return LEUBranchOp;
-        case GEUBranchOp:
-            return LTUBranchOp;
-        case VSBranchOp:
-            return VCBranchOp;
-        case VCBranchOp:
-            return VSBranchOp;
+        case BranchOpCode::EQBranchOp:
+            return BranchOpCode::NEBranchOp;
+        case BranchOpCode::NEBranchOp:
+            return BranchOpCode::EQBranchOp;
+        case BranchOpCode::LTBranchOp:
+            return BranchOpCode::GEBranchOp;
+        case BranchOpCode::LEBranchOp:
+            return BranchOpCode::GTBranchOp;
+        case BranchOpCode::GTBranchOp:
+            return BranchOpCode::LEBranchOp;
+        case BranchOpCode::GEBranchOp:
+            return BranchOpCode::LTBranchOp;
+        case BranchOpCode::LTUBranchOp:
+            return BranchOpCode::GEUBranchOp;
+        case BranchOpCode::LEUBranchOp:
+            return BranchOpCode::GTUBranchOp;
+        case BranchOpCode::GTUBranchOp:
+            return BranchOpCode::LEUBranchOp;
+        case BranchOpCode::GEUBranchOp:
+            return BranchOpCode::LTUBranchOp;
+        case BranchOpCode::VSBranchOp:
+            return BranchOpCode::VCBranchOp;
+        case BranchOpCode::VCBranchOp:
+            return BranchOpCode::VSBranchOp;
     }
     ShouldNotReachHere();
-    return EQBranchOp;
+    return BranchOpCode::EQBranchOp;
 }
 
 
@@ -558,10 +558,10 @@ Expression * PrimitiveInliner::smi_Comparison( BranchOpCode cond, Expression * a
     ConstantExpression  * n1Expression;
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::ArithRRNode( new NoResultPseudoRegister( _scope ), arg1->preg(), tCmpArithOp, arg2->preg() );
+        n1 = NodeFactory::ArithRRNode( new NoResultPseudoRegister( _scope ), arg1->preg(), ArithOpCode::tCmpArithOp, arg2->preg() );
     } else {
         // tag error can occur
-        n1           = NodeFactory::TArithRRNode( new NoResultPseudoRegister( _scope ), arg1->preg(), tCmpArithOp, arg2->preg(), intArg1, intArg2 );
+        n1           = NodeFactory::TArithRRNode( new NoResultPseudoRegister( _scope ), arg1->preg(), ArithOpCode::tCmpArithOp, arg2->preg(), intArg1, intArg2 );
         n1PReg       = new_ConstPReg( _scope, vmSymbols::first_argument_has_wrong_type() );
         n1Err        = NodeFactory::AssignNode( n1PReg, errPReg );
         n1Expression = new ConstantExpression( n1PReg->constant, errPReg, n1Err );
@@ -760,9 +760,9 @@ Expression * PrimitiveInliner::obj_equal() {
     PseudoRegister * arg1 = parameter( 0 )->preg();
     PseudoRegister * arg2 = parameter( 1 )->preg();
     // comparison
-    _gen->append( NodeFactory::ArithRRNode( new NoResultPseudoRegister( _scope ), arg1, CmpArithOp, arg2 ) );
+    _gen->append( NodeFactory::ArithRRNode( new NoResultPseudoRegister( _scope ), arg1, ArithOpCode::CmpArithOp, arg2 ) );
     SinglyAssignedPseudoRegister * resPReg = new SinglyAssignedPseudoRegister( _scope );
-    return generate_cond( EQBranchOp, _gen, resPReg );
+    return generate_cond( BranchOpCode::EQBranchOp, _gen, resPReg );
 }
 
 
@@ -897,20 +897,20 @@ Expression * PrimitiveInliner::tryInline() {
     const char * name = _primitiveDescriptor->name();
     Expression * res  = nullptr;
     switch ( _primitiveDescriptor->group() ) {
-        case IntArithmeticPrimitive:
+        case PrimitiveGroup::IntArithmeticPrimitive:
             if ( number_of_parameters() == 2 ) {
                 Expression * x = parameter( 0 );
                 Expression * y = parameter( 1 );
                 if ( equal( name, "primitiveAdd:ifFail:" ) ) {
-                    res = smi_ArithmeticOp( tAddArithOp, x, y );
+                    res = smi_ArithmeticOp( ArithOpCode::tAddArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveSubtract:ifFail:" ) ) {
-                    res = smi_ArithmeticOp( tSubArithOp, x, y );
+                    res = smi_ArithmeticOp( ArithOpCode::tSubArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveMultiply:ifFail:" ) ) {
-                    res = smi_ArithmeticOp( tMulArithOp, x, y );
+                    res = smi_ArithmeticOp( ArithOpCode::tMulArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveDiv:ifFail:" ) ) {
@@ -922,15 +922,15 @@ Expression * PrimitiveInliner::tryInline() {
                     break;
                 }
                 if ( equal( name, "primitiveBitAnd:ifFail:" ) ) {
-                    res = smi_BitOp( tAndArithOp, x, y );
+                    res = smi_BitOp( ArithOpCode::tAndArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveBitOr:ifFail:" ) ) {
-                    res = smi_BitOp( tOrArithOp, x, y );
+                    res = smi_BitOp( ArithOpCode::tOrArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveBitXor:ifFail:" ) ) {
-                    res = smi_BitOp( tXOrArithOp, x, y );
+                    res = smi_BitOp( ArithOpCode::tXOrArithOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveRawBitShift:ifFail:" ) ) {
@@ -939,41 +939,41 @@ Expression * PrimitiveInliner::tryInline() {
                 }
             }
             break;
-        case IntComparisonPrimitive:
+        case PrimitiveGroup::IntComparisonPrimitive:
             if ( number_of_parameters() == 2 ) {
                 Expression * x = parameter( 0 );
                 Expression * y = parameter( 1 );
                 if ( equal( name, "primitiveSmallIntegerEqual:ifFail:" ) ) {
-                    res = smi_Comparison( EQBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::EQBranchOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveSmallIntegerNotEqual:ifFail:" ) ) {
-                    res = smi_Comparison( NEBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::NEBranchOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveLessThan:ifFail:" ) ) {
-                    res = smi_Comparison( LTBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::LTBranchOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveLessThanOrEqual:ifFail:" ) ) {
-                    res = smi_Comparison( LEBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::LEBranchOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveGreaterThan:ifFail:" ) ) {
-                    res = smi_Comparison( GTBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::GTBranchOp, x, y );
                     break;
                 }
                 if ( equal( name, "primitiveGreaterThanOrEqual:ifFail:" ) ) {
-                    res = smi_Comparison( GEBranchOp, x, y );
+                    res = smi_Comparison( BranchOpCode::GEBranchOp, x, y );
                     break;
                 }
             }
             break;
-        case FloatArithmeticPrimitive:
+        case PrimitiveGroup::FloatArithmeticPrimitive:
             break;
-        case FloatComparisonPrimitive:
+        case PrimitiveGroup::FloatComparisonPrimitive:
             break;
-        case ObjArrayPrimitive:
+        case PrimitiveGroup::ObjArrayPrimitive:
             if ( equal( name, "primitiveIndexedObjectSize" ) ) {
                 res = array_size();
                 break;
@@ -987,7 +987,7 @@ Expression * PrimitiveInliner::tryInline() {
                 break;
             }
             break;
-        case ByteArrayPrimitive:
+        case PrimitiveGroup::ByteArrayPrimitive:
             if ( equal( name, "primitiveIndexedByteSize" ) ) {
                 res = array_size();
                 break;
@@ -1001,7 +1001,7 @@ Expression * PrimitiveInliner::tryInline() {
                 break;
             }
             break;
-        case DoubleByteArrayPrimitive:
+        case PrimitiveGroup::DoubleByteArrayPrimitive:
             if ( equal( name, "primitiveIndexedDoubleByteSize" ) ) {
                 res = array_size();
                 break;
@@ -1019,13 +1019,13 @@ Expression * PrimitiveInliner::tryInline() {
                 break;
             }
             break;
-        case BlockPrimitive:
+        case PrimitiveGroup::BlockPrimitive:
             if ( strncmp( name, "primitiveValue", 14 ) == 0 ) {
                 res = block_primitiveValue();
                 break;
             }
             break;
-        case NormalPrimitive:
+        case PrimitiveGroup::NormalPrimitive:
             if ( strncmp( name, "primitiveNew", 12 ) == 0 ) {
                 res = obj_new();
                 break;
@@ -1144,8 +1144,8 @@ Expression * PrimitiveInliner::genCall( bool_t canFail ) {
     BranchNode * branch = nullptr;
     if ( _failure_block not_eq nullptr and canFail ) {
         // primitive with failure block; failed if MARK_TAG_BIT is set in result -> add a branch node here
-        _gen->append( NodeFactory::ArithRCNode( new NoResultPseudoRegister( _scope ), pcall->dest(), TestArithOp, MARK_TAG_BIT ) );
-        branch = NodeFactory::BranchNode( NEBranchOp );
+        _gen->append( NodeFactory::ArithRCNode( new NoResultPseudoRegister( _scope ), pcall->dest(), ArithOpCode::TestArithOp, MARK_TAG_BIT ) );
+        branch = NodeFactory::BranchNode( BranchOpCode::NEBranchOp );
         _gen->append( branch );
     }
 
@@ -1160,7 +1160,7 @@ Expression * PrimitiveInliner::genCall( bool_t canFail ) {
     if ( branch not_eq nullptr ) {
         // add failure block if primitive can fail -> reset MARK_TAG_BIT first
         SinglyAssignedPseudoRegister * errPReg      = new SinglyAssignedPseudoRegister( _scope );
-        ArithRCNode                  * failure_exit = NodeFactory::ArithRCNode( errPReg, pcall->dst(), AndArithOp, ~MARK_TAG_BIT );
+        ArithRCNode                  * failure_exit = NodeFactory::ArithRCNode( errPReg, pcall->dst(), ArithOpCode::AndArithOp, ~MARK_TAG_BIT );
         branch->append( 1, failure_exit );
         resExpression = merge_failure_block( ok_exit, resExpression, failure_exit, new KlassExpression( Universe::symbolKlassObj(), errPReg, failure_exit ), false );
     }

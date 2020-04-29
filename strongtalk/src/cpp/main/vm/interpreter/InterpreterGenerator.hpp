@@ -16,7 +16,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 constexpr int float_0_offset  = oopSize * ( frame_temp_offset - 3 );
 constexpr int temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
 constexpr int temp_0_offset   = oopSize * frame_temp_offset;
@@ -35,7 +34,7 @@ constexpr int max_nof_floats = 256;
 class InterpreterGenerator : StackAllocatedObject {
     private:
         MacroAssembler * _macroAssembler;    // used to generate code
-        bool_t         _debug;              // indicates debug mode
+        bool_t _debug;              // indicates debug mode
 
         bool_t _stack_check;            //
 
@@ -52,11 +51,11 @@ class InterpreterGenerator : StackAllocatedObject {
         Label _NonLocalReturn_to_dead_frame;    // NonLocalReturn error
         Label _halted;                          // halt executed
 
-        Label      _stack_missaligned;       // assertion errors
-        Label      _ebx_wrong;               //
-        Label      _obj_wrong;               //
-        Label      _last_Delta_fp_wrong;     //
-        Label      _primitive_result_wrong;  //
+        Label _stack_missaligned;       // assertion errors
+        Label _ebx_wrong;               //
+        Label _obj_wrong;               //
+        Label _last_Delta_fp_wrong;     //
+        Label _primitive_result_wrong;  //
         const char * _illegal;           //
 
         // Debugging

@@ -29,9 +29,9 @@ class MethodInterval : public ResourceObject {
         MethodInterval * _parent;            // enclosing interval (or nullptr if top-level)
         MethodOop _method;
         int       _begin_byteCodeIndex;
-        int            _end_byteCodeIndex;
-        bool_t         _in_primitive_failure;            // currently in primitive failure block?
-        IntervalInfo   * _info;
+        int       _end_byteCodeIndex;
+        bool_t    _in_primitive_failure;            // currently in primitive failure block?
+        IntervalInfo * _info;
 
         void initialize( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock );
 
@@ -187,7 +187,7 @@ class OrNode : public CondNode {
 
 class WhileNode : public InlineSendNode {
     protected:
-        bool_t         _cond;
+        bool_t _cond;
         MethodInterval * _expr_code;
         MethodInterval * _body_code;
 
@@ -225,9 +225,9 @@ class WhileNode : public InlineSendNode {
 
 class IfNode : public InlineSendNode {
     protected:
-        bool_t         _cond;
-        bool_t         _ignore_else_while_printing;
-        bool_t         _produces_result;
+        bool_t _cond;
+        bool_t _ignore_else_while_printing;
+        bool_t _produces_result;
         MethodInterval * _then_code;
         MethodInterval * _else_code;
 
@@ -293,8 +293,8 @@ class ExternalCallNode : public MethodInterval {
 class PrimitiveCallNode : public ExternalCallNode {
     protected:
         PrimitiveDescriptor * _pdesc;
-        bool_t              _has_receiver;
-        SymbolOop           _name;
+        bool_t    _has_receiver;
+        SymbolOop _name;
 
         // Constructors
         PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc );
@@ -857,7 +857,7 @@ class MethodIterator : StackAllocatedObject {
 
         void should_never_encounter( uint8_t code );
 
-        MethodInterval               * _interval;
+        MethodInterval * _interval;
         static MethodIntervalFactory defaultFactory;      // default factory
 
     public:

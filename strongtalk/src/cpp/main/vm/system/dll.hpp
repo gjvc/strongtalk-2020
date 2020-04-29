@@ -65,7 +65,7 @@ class Interpreted_DLLCache : public ValueObject {
 
 class Compiled_DLLCache : public NativeCall {
     private:
-        enum Layout_constants {
+        enum class Layout_constants {
             test_2_instruction_offset  = -NativeCall::instruction_size - NativeTest::instruction_size,   //
             test_1_instruction_offset  = test_2_instruction_offset - NativeTest::instruction_size,       //
             mov_edx_instruction_offset = test_1_instruction_offset - NativeMov::instruction_size,       //
@@ -84,17 +84,17 @@ class Compiled_DLLCache : public NativeCall {
 
     public:
         SymbolOop dll_name() {
-            return SymbolOop( test_at( test_1_instruction_offset )->data() );
+            return SymbolOop( test_at( static_cast<int>( Layout_constants::test_1_instruction_offset ) )->data() );
         }
 
 
         SymbolOop function_name() {
-            return SymbolOop( test_at( test_2_instruction_offset )->data() );
+            return SymbolOop( test_at( static_cast<int>( Layout_constants::test_2_instruction_offset ) )->data() );
         }
 
 
         dll_func entry_point() {
-            return ( dll_func ) mov_at( mov_edx_instruction_offset )->data();
+            return ( dll_func ) mov_at( static_cast<int>( Layout_constants::mov_edx_instruction_offset ) )->data();
         }
 
 
@@ -102,7 +102,7 @@ class Compiled_DLLCache : public NativeCall {
 
 
         void set_entry_point( dll_func f ) {
-            mov_at( mov_edx_instruction_offset )->set_data( int( f ) );
+            mov_at( static_cast<int>( Layout_constants::mov_edx_instruction_offset ) )->set_data( int( f ) );
         }
 
 

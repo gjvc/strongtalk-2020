@@ -38,7 +38,7 @@ class tagged_ptr {
 
 
                 std::uintptr_t * p;
-                std::size_t    i;
+                std::size_t i;
 
 
             public:
@@ -67,7 +67,7 @@ class tagged_ptr {
 
     private:
         union {
-            T              * _ptr;
+            T * _ptr;
             std::uintptr_t _bits{};
         };
 

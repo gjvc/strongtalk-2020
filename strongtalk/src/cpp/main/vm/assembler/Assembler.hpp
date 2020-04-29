@@ -112,7 +112,7 @@ class Assembler : public ResourceObject {
                 positive     = 0x9, //
         };
 
-        enum Constants {
+        enum class Constants {
             sizeOfCall = 5            // length of call instruction in bytes
         };
 

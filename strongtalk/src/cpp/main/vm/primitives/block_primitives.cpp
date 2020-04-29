@@ -14,12 +14,10 @@
 #include "vm/oops/ProxyOopDescriptor.hpp"
 #include "vm/oops/BlockClosureKlass.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/primitives/block_primitives.hpp"
 #include "vm/runtime/UnwindInfo.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/oops/ContextKlass.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceBlockPrims, "block" )
@@ -125,7 +123,7 @@ extern "C" bool_t have_nlr_through_C;
 extern "C" Oop    nlr_result;
 
 
-PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
+Oop __CALLING_CONVENTION unwindprotect( Oop receiver, Oop protectBlock ) {
     PROLOGUE_2( "unwindprotect", receiver, protectBlock );
     Oop block, res;
     {
@@ -148,7 +146,7 @@ PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
 }
 
 
-PRIM_DECL_1( blockRepeat, Oop receiver ) {
+Oop __CALLING_CONVENTION blockRepeat( Oop receiver ) {
     PROLOGUE_1( "blockRepeat", receiver );
     do
         Delta::call( receiver, vmSymbols::value() );
@@ -157,13 +155,13 @@ PRIM_DECL_1( blockRepeat, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( block_method, Oop receiver ) {
+Oop __CALLING_CONVENTION block_method( Oop receiver ) {
     PROLOGUE_1( "block_method", receiver );
     return BlockClosureOop( receiver )->method();
 }
 
 
-PRIM_DECL_1( block_is_optimized, Oop receiver ) {
+Oop __CALLING_CONVENTION block_is_optimized( Oop receiver ) {
     PROLOGUE_1( "blockRepeat", receiver );
     return BlockClosureOop( receiver )->isCompiledBlock() ? trueObj : falseObj;
 }

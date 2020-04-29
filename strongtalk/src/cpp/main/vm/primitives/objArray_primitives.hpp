@@ -8,7 +8,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for obj arrays
 
@@ -32,7 +31,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'objArrayPrimitives::allocateSize2' }
         //%
-        static PRIM_DECL_3( allocateSize2, Oop receiver, Oop argument, Oop tenured );
+        static Oop __CALLING_CONVENTION allocateSize2( Oop receiver, Oop argument, Oop tenured );
 
         //%prim
         // <IndexedInstanceVariables class>
@@ -42,7 +41,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'objArrayPrimitives::allocateSize' }
         //%
-        static PRIM_DECL_2( allocateSize, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION allocateSize( Oop receiver, Oop argument );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -50,7 +49,7 @@ class objArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedObject)
         //              name  = 'objArrayPrimitives::size' }
         //%
-        static PRIM_DECL_1( size, Oop receiver );
+        static Oop __CALLING_CONVENTION size( Oop receiver );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -60,7 +59,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedObject)
         //              name  = 'objArrayPrimitives::at' }
         //%
-        static PRIM_DECL_2( at, Oop receiver, Oop index );
+        static Oop __CALLING_CONVENTION at( Oop receiver, Oop index );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -71,7 +70,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedObject)
         //              name  = 'objArrayPrimitives::atPut' }
         //%
-        static PRIM_DECL_3( atPut, Oop receiver, Oop index, Oop value );
+        static Oop __CALLING_CONVENTION atPut( Oop receiver, Oop index, Oop value );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -79,7 +78,7 @@ class objArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedObject)
         //              name  = 'objArrayPrimitives::at_all_put' }
         //%
-        static PRIM_DECL_2( at_all_put, Oop receiver, Oop obj );
+        static Oop __CALLING_CONVENTION at_all_put( Oop receiver, Oop obj );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -92,7 +91,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(IndexedObject)
         //              name  = 'objArrayPrimitives::replace_from_to' }
         //%
-        static PRIM_DECL_5( replace_from_to, Oop receiver, Oop from, Oop to, Oop source, Oop start );
+        static Oop __CALLING_CONVENTION replace_from_to( Oop receiver, Oop from, Oop to, Oop source, Oop start );
 
         //%prim
         // <IndexedInstanceVariables>
@@ -104,7 +103,7 @@ class objArrayPrimitives : AllStatic {
         //              flags = #(IndexedObject)
         //              name  = 'objArrayPrimitives::copy_size' }
         //%
-        static PRIM_DECL_4( copy_size, Oop receiver, Oop from, Oop start, Oop size );
+        static Oop __CALLING_CONVENTION copy_size( Oop receiver, Oop from, Oop start, Oop size );
 
 };
 

@@ -23,7 +23,7 @@
 //
 // unused..unusedOvfl-1:unused, length n+1
 // used..usedOvfl-1	used, length n - used + 1
-// unusedOvfl:          unused, encoded length in next (prev) 3 bytes
+// chunkState:: unusedOvfl:          unused, encoded length in next (prev) 3 bytes
 // usedOvfl:		used, encoded length in next (prev) 3 bytes
 //
 
@@ -40,18 +40,18 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
     uint8_t * p = asByte();
     uint8_t * e = p + nChunks - 1;
     if ( nChunks < maxOneByteLen ) {
-        p[ 0 ] = e[ 0 ] = s + nChunks - 1;
+        p[ 0 ] = e[ 0 ] = static_cast<int>(s) + nChunks - 1;
     } else {
         st_assert( nChunks < ( 1 << ( 3 * MaxDistLog ) ), "chunk too large" );
         unsigned mask = nthMask( MaxDistLog );
-        p[ 0 ] = e[ 0 ]  = ( s == used ) ? usedOvfl : unusedOvfl;
-        p[ 1 ] = e[ -3 ] = unused + ( nChunks >> ( 2 * MaxDistLog ) );
-        p[ 2 ] = e[ -2 ] = unused + ( ( nChunks >> MaxDistLog ) & mask );
-        p[ 3 ] = e[ -1 ] = unused + ( nChunks & mask );
+        p[ 0 ] = e[ 0 ]  = static_cast<uint8_t>( ( s == chunkState::used ) ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        p[ 1 ] = e[ -3 ] = static_cast<uint8_t>( chunkState::unused ) + ( nChunks >> ( 2 * MaxDistLog ) );
+        p[ 2 ] = e[ -2 ] = static_cast<uint8_t>( chunkState::unused ) + ( ( nChunks >> MaxDistLog ) & mask );
+        p[ 3 ] = e[ -1 ] = static_cast<uint8_t>( chunkState::unused ) + ( nChunks & mask );
     }
     st_assert( size() == nChunks, "incorrect size encoding" );
     // mark distance for used blocks
-    if ( s == unused ) {
+    if ( s == chunkState::unused ) {
         // don't mark unused blocks - not necessary, and would be a performance
         // bug (start: *huge* free block, shrinks with every alloc -> quadratic)
         // however, the first distance byte must be correct (for findStart)
@@ -59,19 +59,19 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
             p[ headerSize() ] = headerSize();
     } else {
         if ( nChunks < maxOneByteLen ) {
-            st_assert( maxOneByteLen <= MaxDistance, "oops!" );
+            st_assert( maxOneByteLen <= static_cast<int>(chunkState::MaxDistance), "oops!" );
             for ( int i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
                 p[ i ] = i;
         } else {
-            int max = min( nChunks - 4, MaxDistance );
+            int max = min( static_cast<int>(nChunks - 4), static_cast<int>( chunkState::MaxDistance ) );
             int i   = maxHeaderSize;
             for ( ; i < max; i++ )
                 p[ i ] = i;
-            // fill rest with large distance values (don't use MaxDistance - 1 because
-            // the elems MaxDistance..MaxDistance+maxHeaderSize-1 would point *into*
+            // fill rest with large distance values (don't use chunkState::MaxDistance - 1 because
+            // the elems chunkState::MaxDistance..MaxDistance+maxHeaderSize-1 would point *into*
             // the header)
             for ( ; i < nChunks - maxHeaderSize; i++ )
-                p[ i ] = MaxDistance - maxHeaderSize;
+                p[ i ] = static_cast<int>( chunkState::MaxDistance ) - maxHeaderSize;
         }
     }
 }
@@ -83,9 +83,9 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
     uint8_t    * start = mapStart->asByte();
     uint8_t    * end   = mapEnd->asByte();
     ChunkKlass * m;
-    if ( *p < MaxDistance ) {
+    if ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) ) {
         // we're outside the header, so just walk down the trail
-        while ( *p < MaxDistance )
+        while ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) )
             p -= *p;
         st_assert( p >= start, "not found" );
         m = asChunkKlass( p );
@@ -94,11 +94,11 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
         // first walk up to first non-header byte
         // (note that first distance byte of unused blocks is correct, but
         // the others aren't)
-        while ( *p >= MaxDistance and p < end )
+        while ( *p >= static_cast<uint8_t>( chunkState::MaxDistance ) and p < end )
             p++;
         if ( p < end ) {
             // find start of this block
-            while ( *p < MaxDistance )
+            while ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) )
                 p -= *p;
             st_assert( p >= start, "not found" );
         }
@@ -106,7 +106,7 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
         while ( not m->contains( this->asByte() ) )
             m = m->prev();
     }
-    st_assert( m->verify(), "invalid chunk map" );
+    st_assert( m->verify(), " chunkState::invalid chunk map" );
     st_assert( m->contains( this->asByte() ), "wrong chunk" );
     return m;
 }
@@ -115,11 +115,11 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
 bool_t ChunkKlass::isValid() {
     uint8_t * p = asByte();
     bool_t ok;
-    if ( p[ 0 ] == invalid or p[ 0 ] < MaxDistance ) {
+    if ( p[ 0 ] == static_cast<uint8_t>( chunkState::invalid ) or p[ 0 ] < static_cast<uint8_t>( chunkState::MaxDistance ) ) {
         ok = false;
     } else {
         uint8_t * e = next()->asByte() - 1;
-        int ovfl = isUsed() ? usedOvfl : unusedOvfl;
+        int ovfl = isUsed() ? static_cast<int>( chunkState::usedOvfl ) : static_cast<int>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
     return ok;
@@ -476,7 +476,7 @@ const void * ZoneHeap::nextUsed( const void * p ) const {
         ChunkKlass * m1 = _heapKlass;
         for ( ; m1 < _lastCombine; m1 = m1->next() );
         st_assert( m1 == _lastCombine, "lastCombine not found" );
-        st_assert( _lastCombine->verify(), "invalid lastCombine" );
+        st_assert( _lastCombine->verify(), " chunkState::invalid lastCombine" );
 
         ChunkKlass * n = _lastCombine;
         for ( ; n <= m; n = n->next() );
@@ -569,7 +569,7 @@ void ZoneHeap::verify() const {
         }
     }
     if ( not _lastCombine->verify() )
-        error( "invalid lastCombine in heap %#lx", this );
+        error( " chunkState::invalid lastCombine in heap %#lx", this );
 
 }
 

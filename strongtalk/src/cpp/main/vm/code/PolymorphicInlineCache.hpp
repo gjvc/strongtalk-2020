@@ -25,7 +25,7 @@ class PolymorphicInlineCacheContents;
 class PolymorphicInlineCache {
 
     public:
-        enum Consts {
+        enum class Consts {
             max_nof_entries = 4,            // the maximal number of PolymorphicInlineCache entries
 
             // PolymorphicInlineCache layout constants
@@ -46,7 +46,7 @@ class PolymorphicInlineCache {
         };
 
     private:
-        CompiledInlineCache * _ic;                   // the ic linked to this PolymorphicInlineCache
+        CompiledInlineCache * _ic;      // the ic linked to this PolymorphicInlineCache
         int16_t _codeSize;              // size of code in bytes
         int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
 

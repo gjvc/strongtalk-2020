@@ -15,8 +15,11 @@
 class DispatchTable : AllStatic {
 
     private:
-        enum Mode {
-            normal_mode = 0, step_mode = 1, next_mode = 2, return_mode = 3
+        enum class Mode {
+            normal_mode = 0,    //
+            step_mode = 1,      //
+            next_mode = 2,      //
+            return_mode = 3     //
         };
 
         static Mode mode;
@@ -40,22 +43,22 @@ class DispatchTable : AllStatic {
 
         // answers whether the dispatch table is in single step mode.
         static bool_t in_normal_mode() {
-            return mode == normal_mode;
+            return mode == Mode::normal_mode;
         }
 
 
         static bool_t in_step_mode() {
-            return mode == step_mode;
+            return mode == Mode::step_mode;
         }
 
 
         static bool_t in_next_mode() {
-            return mode == next_mode;
+            return mode == Mode::next_mode;
         }
 
 
         static bool_t in_return_mode() {
-            return mode == return_mode;
+            return mode == Mode::return_mode;
         }
 };
 

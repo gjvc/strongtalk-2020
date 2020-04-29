@@ -24,7 +24,7 @@
 // receiver and therefore be monomorphic!
 //
 
-enum InlineCacheShape {
+enum class InlineCacheShape {
 
     anamorphic,     // send has never been executed => no type information (size = 0)
     monomorphic,    // only one receiver type available	(size = 1)

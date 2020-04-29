@@ -33,7 +33,7 @@ int processOopPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert(receiver->is_process(), "receiver must be process")
 
 
-PRIM_DECL_2( processOopPrimitives::create, Oop receiver, Oop block ) {
+Oop __CALLING_CONVENTION processOopPrimitives::create( Oop receiver, Oop block ) {
     PROLOGUE_2( "create", receiver, block )
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_process(), "must be process class" );
     if ( block->klass() not_eq Universe::zeroArgumentBlockKlassObj() )
@@ -48,7 +48,7 @@ PRIM_DECL_2( processOopPrimitives::create, Oop receiver, Oop block ) {
 }
 
 
-PRIM_DECL_0( processOopPrimitives::yield ) {
+Oop __CALLING_CONVENTION processOopPrimitives::yield() {
     PROLOGUE_0( "yield" );
     if ( not DeltaProcess::active()->is_scheduler() ) {
         DeltaProcess::active()->suspend( ProcessState::yielded );
@@ -74,7 +74,7 @@ void print_nativeMethod( NativeMethod * nm ) {
 }
 
 
-PRIM_DECL_0( processOopPrimitives::stop ) {
+Oop __CALLING_CONVENTION processOopPrimitives::stop() {
     PROLOGUE_0( "stop" );
     //PrintFrameClosure pfc;
     //DeltaProcess::active()->frame_iterate(&pfc);
@@ -86,7 +86,7 @@ PRIM_DECL_0( processOopPrimitives::stop ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::setMainProcess, Oop receiver ) {
+Oop __CALLING_CONVENTION processOopPrimitives::setMainProcess( Oop receiver ) {
     PROLOGUE_1( "setMainProcess", receiver );
 
     if ( not receiver->is_process() )
@@ -100,7 +100,7 @@ PRIM_DECL_1( processOopPrimitives::setMainProcess, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::transferTo, Oop process ) {
+Oop __CALLING_CONVENTION processOopPrimitives::transferTo( Oop process ) {
     PROLOGUE_1( "transferTo", process );
 
     // Check if argument is a processOop
@@ -126,7 +126,7 @@ PRIM_DECL_1( processOopPrimitives::transferTo, Oop process ) {
 }
 
 
-PRIM_DECL_3( processOopPrimitives::set_mode, Oop process, Oop mode, Oop value ) {
+Oop __CALLING_CONVENTION processOopPrimitives::set_mode( Oop process, Oop mode, Oop value ) {
     PROLOGUE_3( "set_mode", process, mode, value );
 
     // Check if argument is a processOop
@@ -161,7 +161,7 @@ PRIM_DECL_3( processOopPrimitives::set_mode, Oop process, Oop mode, Oop value ) 
 extern "C" void single_step_handler();
 
 
-PRIM_DECL_1( processOopPrimitives::start_evaluator, Oop process ) {
+Oop __CALLING_CONVENTION processOopPrimitives::start_evaluator( Oop process ) {
     PROLOGUE_1( "start_evaluator", process );
 
     // Check if argument is a processOop
@@ -188,7 +188,7 @@ PRIM_DECL_1( processOopPrimitives::start_evaluator, Oop process ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::terminate, Oop receiver ) {
+Oop __CALLING_CONVENTION processOopPrimitives::terminate( Oop receiver ) {
     PROLOGUE_1( "terminate", receiver );
     ASSERT_RECEIVER;
 
@@ -207,7 +207,7 @@ PRIM_DECL_1( processOopPrimitives::terminate, Oop receiver ) {
 }
 
 
-PRIM_DECL_0( processOopPrimitives::activeProcess ) {
+Oop __CALLING_CONVENTION processOopPrimitives::activeProcess() {
     PROLOGUE_0( "activeProcess" );
 
     ProcessOop p = DeltaProcess::active()->processObj();
@@ -217,7 +217,7 @@ PRIM_DECL_0( processOopPrimitives::activeProcess ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::status, Oop process ) {
+Oop __CALLING_CONVENTION processOopPrimitives::status( Oop process ) {
     PROLOGUE_1( "status", process );
 
     // Check if argument is a processOop
@@ -228,7 +228,7 @@ PRIM_DECL_1( processOopPrimitives::status, Oop process ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::scheduler_wait, Oop milliseconds ) {
+Oop __CALLING_CONVENTION processOopPrimitives::scheduler_wait( Oop milliseconds ) {
     PROLOGUE_1( "scheduler_wait", milliseconds );
 
     // Check if argument is a smi_t
@@ -239,7 +239,7 @@ PRIM_DECL_1( processOopPrimitives::scheduler_wait, Oop milliseconds ) {
 }
 
 
-PRIM_DECL_2( processOopPrimitives::trace_stack, Oop receiver, Oop size ) {
+Oop __CALLING_CONVENTION processOopPrimitives::trace_stack( Oop receiver, Oop size ) {
     PROLOGUE_2( "trace_stack", receiver, size );
     ASSERT_RECEIVER;
 
@@ -261,21 +261,21 @@ PRIM_DECL_2( processOopPrimitives::trace_stack, Oop receiver, Oop size ) {
 }
 
 
-PRIM_DECL_0( processOopPrimitives::enter_critical ) {
+Oop __CALLING_CONVENTION processOopPrimitives::enter_critical() {
     PROLOGUE_0( "enter_critical" );
     // %fix this when implementing preemption
     return DeltaProcess::active()->processObj();
 }
 
 
-PRIM_DECL_0( processOopPrimitives::leave_critical ) {
+Oop __CALLING_CONVENTION processOopPrimitives::leave_critical() {
     PROLOGUE_0( "leave_critical" );
     // %fix this when implementing preemption
     return DeltaProcess::active()->processObj();
 }
 
 
-PRIM_DECL_0( processOopPrimitives::yield_in_critical ) {
+Oop __CALLING_CONVENTION processOopPrimitives::yield_in_critical() {
     PROLOGUE_0( "yield_in_critical" );
     // %fix this when implementing preemption
     if ( not DeltaProcess::active()->is_scheduler() ) {
@@ -285,21 +285,21 @@ PRIM_DECL_0( processOopPrimitives::yield_in_critical ) {
 }
 
 
-PRIM_DECL_1( processOopPrimitives::user_time, Oop receiver ) {
+Oop __CALLING_CONVENTION processOopPrimitives::user_time( Oop receiver ) {
     PROLOGUE_1( "enter_critical", receiver );
     ASSERT_RECEIVER;
     return oopFactory::new_double( ProcessOop( receiver )->user_time() );
 }
 
 
-PRIM_DECL_1( processOopPrimitives::system_time, Oop receiver ) {
+Oop __CALLING_CONVENTION processOopPrimitives::system_time( Oop receiver ) {
     PROLOGUE_1( "enter_critical", receiver );
     ASSERT_RECEIVER;
     return oopFactory::new_double( ProcessOop( receiver )->system_time() );
 }
 
 
-PRIM_DECL_2( processOopPrimitives::stack, Oop receiver, Oop limit ) {
+Oop __CALLING_CONVENTION processOopPrimitives::stack( Oop receiver, Oop limit ) {
     PROLOGUE_2( "stack", receiver, limit );
     ASSERT_RECEIVER;
 

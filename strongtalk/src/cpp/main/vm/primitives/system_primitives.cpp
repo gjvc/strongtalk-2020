@@ -37,7 +37,7 @@ TRACE_FUNC( TraceSystemPrims, "system" )
 int SystemPrimitives::number_of_calls;
 
 
-PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop primary, Oop superclass, Oop format ) {
+Oop __CALLING_CONVENTION SystemPrimitives::createNamedInvocation( Oop mixin, Oop name, Oop primary, Oop superclass, Oop format ) {
     PROLOGUE_5( "createNamedInvocation", mixin, primary, name, superclass, format )
 
     // Check argument types
@@ -87,7 +87,7 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
 }
 
 
-PRIM_DECL_3( SystemPrimitives::createInvocation, Oop mixin, Oop superclass, Oop format ) {
+Oop __CALLING_CONVENTION SystemPrimitives::createInvocation( Oop mixin, Oop superclass, Oop format ) {
     PROLOGUE_3( "createInvocation", mixin, superclass, format )
 
     // Check argument types
@@ -121,7 +121,7 @@ PRIM_DECL_3( SystemPrimitives::createInvocation, Oop mixin, Oop superclass, Oop 
 }
 
 
-PRIM_DECL_1( SystemPrimitives::applyChange, Oop change ) {
+Oop __CALLING_CONVENTION SystemPrimitives::applyChange( Oop change ) {
     PROLOGUE_1( "applyChange", change )
 
     // Check argument types
@@ -134,14 +134,14 @@ PRIM_DECL_1( SystemPrimitives::applyChange, Oop change ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::canScavenge ) {
+Oop __CALLING_CONVENTION SystemPrimitives::canScavenge() {
     PROLOGUE_0( "canScavenge" )
 
     return Universe::can_scavenge() ? trueObj : falseObj;
 }
 
 
-PRIM_DECL_1( SystemPrimitives::scavenge, Oop receiver ) {
+Oop __CALLING_CONVENTION SystemPrimitives::scavenge( Oop receiver ) {
     PROLOGUE_1( "scavenge", receiver )
     Oop         rec = receiver;
     VM_Scavenge op( &rec );
@@ -151,13 +151,13 @@ PRIM_DECL_1( SystemPrimitives::scavenge, Oop receiver ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::oopSize ) {
+Oop __CALLING_CONVENTION SystemPrimitives::oopSize() {
     PROLOGUE_0( "oopSize" )
-    return smiOopFromValue( ::oopSize );
+    return smiOopFromValue(::oopSize );
 }
 
 
-PRIM_DECL_1( SystemPrimitives::garbageGollect, Oop receiver ) {
+Oop __CALLING_CONVENTION SystemPrimitives::garbageGollect( Oop receiver ) {
     PROLOGUE_1( "garbageGollect", receiver );
     Oop               rec = receiver;
     VM_GarbageCollect op( &rec );
@@ -167,7 +167,7 @@ PRIM_DECL_1( SystemPrimitives::garbageGollect, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
+Oop __CALLING_CONVENTION SystemPrimitives::expandMemory( Oop sizeOop ) {
     PROLOGUE_1( "expandMemory", sizeOop );
     if ( not sizeOop->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
@@ -179,7 +179,7 @@ PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::shrinkMemory, Oop sizeOop ) {
+Oop __CALLING_CONVENTION SystemPrimitives::shrinkMemory( Oop sizeOop ) {
     PROLOGUE_1( "shrinkMemory", sizeOop );
     if ( not sizeOop->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -194,13 +194,13 @@ extern "C" int expansion_count;
 extern "C" void single_step_handler();
 
 
-PRIM_DECL_0( SystemPrimitives::expansions ) {
+Oop __CALLING_CONVENTION SystemPrimitives::expansions() {
     PROLOGUE_0( "expansions" )
     return smiOopFromValue( expansion_count );
 }
 
 
-PRIM_DECL_0( SystemPrimitives::breakpoint ) {
+Oop __CALLING_CONVENTION SystemPrimitives::breakpoint() {
     PROLOGUE_0( "breakpoint" )
     {
         ResourceMark resourceMark;
@@ -211,20 +211,20 @@ PRIM_DECL_0( SystemPrimitives::breakpoint ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::vmbreakpoint ) {
+Oop __CALLING_CONVENTION SystemPrimitives::vmbreakpoint() {
     PROLOGUE_0( "vmbreakpoint" )
     os::breakpoint();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::getLastError ) {
+Oop __CALLING_CONVENTION SystemPrimitives::getLastError() {
     PROLOGUE_0( "getLastError" )
     return smiOopFromValue( os::error_code() ); //%TODO% fix this to support errors > 30 bits in length
 }
 
 
-PRIM_DECL_0( SystemPrimitives::halt ) {
+Oop __CALLING_CONVENTION SystemPrimitives::halt() {
     PROLOGUE_0( "halt" )
 
     // I think this is obsolete, hlt is a privileged instruction, and Object>>halt uses
@@ -245,7 +245,7 @@ static Oop fake_time() {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::userTime ) {
+Oop __CALLING_CONVENTION SystemPrimitives::userTime() {
     PROLOGUE_0( "userTime" )
     if ( UseTimers ) {
         os::updateTimes();
@@ -256,7 +256,7 @@ PRIM_DECL_0( SystemPrimitives::userTime ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::systemTime ) {
+Oop __CALLING_CONVENTION SystemPrimitives::systemTime() {
     PROLOGUE_0( "systemTime" )
     if ( UseTimers ) {
         os::updateTimes();
@@ -267,7 +267,7 @@ PRIM_DECL_0( SystemPrimitives::systemTime ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::elapsedTime ) {
+Oop __CALLING_CONVENTION SystemPrimitives::elapsedTime() {
     PROLOGUE_0( "elapsedTime" )
     if ( UseTimers ) {
         return oopFactory::new_double( os::elapsedTime() );
@@ -277,7 +277,7 @@ PRIM_DECL_0( SystemPrimitives::elapsedTime ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::writeSnapshot, Oop fileName ) {
+Oop __CALLING_CONVENTION SystemPrimitives::writeSnapshot( Oop fileName ) {
     PROLOGUE_1( "writeSnapshot", fileName );
     SnapshotDescriptor sd;
     const char * name = "fisk.snap";
@@ -288,14 +288,14 @@ PRIM_DECL_1( SystemPrimitives::writeSnapshot, Oop fileName ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::globalAssociationKey, Oop receiver ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationKey( Oop receiver ) {
     PROLOGUE_1( "globalAssociationKey", receiver );
     st_assert( receiver->is_association(), "receiver must be association" );
     return AssociationOop( receiver )->key();
 }
 
 
-PRIM_DECL_2( SystemPrimitives::globalAssociationSetKey, Oop receiver, Oop key ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationSetKey( Oop receiver, Oop key ) {
     PROLOGUE_2( "globalAssociationSetKey", receiver, key );
     st_assert( receiver->is_association(), "receiver must be association" );
     if ( not key->is_symbol() )
@@ -305,14 +305,14 @@ PRIM_DECL_2( SystemPrimitives::globalAssociationSetKey, Oop receiver, Oop key ) 
 }
 
 
-PRIM_DECL_1( SystemPrimitives::globalAssociationValue, Oop receiver ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationValue( Oop receiver ) {
     PROLOGUE_1( "globalAssociationValue", receiver );
     st_assert( receiver->is_association(), "receiver must be association" );
     return AssociationOop( receiver )->value();
 }
 
 
-PRIM_DECL_2( SystemPrimitives::globalAssociationSetValue, Oop receiver, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationSetValue( Oop receiver, Oop value ) {
     PROLOGUE_2( "globalAssociationSetValue", receiver, value );
     st_assert( receiver->is_association(), "receiver must be association" );
     AssociationOop( receiver )->set_value( value );
@@ -320,14 +320,14 @@ PRIM_DECL_2( SystemPrimitives::globalAssociationSetValue, Oop receiver, Oop valu
 }
 
 
-PRIM_DECL_1( SystemPrimitives::globalAssociationIsConstant, Oop receiver ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationIsConstant( Oop receiver ) {
     PROLOGUE_1( "globalAssociationIsConstant", receiver );
     st_assert( receiver->is_association(), "receiver must be association" );
     return AssociationOop( receiver )->is_constant() ? trueObj : falseObj;
 }
 
 
-PRIM_DECL_2( SystemPrimitives::globalAssociationSetConstant, Oop receiver, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::globalAssociationSetConstant( Oop receiver, Oop value ) {
     PROLOGUE_2( "globalAssociationSetConstant", receiver, value );
     st_assert( receiver->is_association(), "receiver must be association" );
     Oop old_value = AssociationOop( receiver )->is_constant() ? trueObj : falseObj;
@@ -343,7 +343,7 @@ PRIM_DECL_2( SystemPrimitives::globalAssociationSetConstant, Oop receiver, Oop v
 }
 
 
-PRIM_DECL_1( SystemPrimitives::smalltalk_at, Oop index ) {
+Oop __CALLING_CONVENTION SystemPrimitives::smalltalk_at( Oop index ) {
     PROLOGUE_1( "smalltalk_at", index );
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -355,7 +355,7 @@ PRIM_DECL_1( SystemPrimitives::smalltalk_at, Oop index ) {
 }
 
 
-PRIM_DECL_2( SystemPrimitives::smalltalk_at_put, Oop key, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::smalltalk_at_put( Oop key, Oop value ) {
     PROLOGUE_2( "smalltalk_at_put", key, value );
 
     BlockScavenge  bs;
@@ -365,7 +365,7 @@ PRIM_DECL_2( SystemPrimitives::smalltalk_at_put, Oop key, Oop value ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::smalltalk_remove_at, Oop index ) {
+Oop __CALLING_CONVENTION SystemPrimitives::smalltalk_remove_at( Oop index ) {
     PROLOGUE_1( "smalltalk_remove_at", index );
 
     if ( not index->is_smi() )
@@ -382,47 +382,47 @@ PRIM_DECL_1( SystemPrimitives::smalltalk_remove_at, Oop index ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::smalltalk_size ) {
+Oop __CALLING_CONVENTION SystemPrimitives::smalltalk_size() {
     PROLOGUE_0( "smalltalk_size" );
     return smiOopFromValue( Universe::systemDictionaryObj()->length() );
 }
 
 
-PRIM_DECL_0( SystemPrimitives::smalltalk_array ) {
+Oop __CALLING_CONVENTION SystemPrimitives::smalltalk_array() {
     PROLOGUE_0( "smalltalk_array" );
     return Universe::systemDictionaryObj();
 }
 
 
-PRIM_DECL_0( SystemPrimitives::quit ) {
+Oop __CALLING_CONVENTION SystemPrimitives::quit() {
     PROLOGUE_0( "quit" );
     exit( EXIT_SUCCESS );
     return badOop;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::printPrimitiveTable ) {
+Oop __CALLING_CONVENTION SystemPrimitives::printPrimitiveTable() {
     PROLOGUE_0( "printPrimitiveTable" );
     Primitives::print_table();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::print_memory ) {
+Oop __CALLING_CONVENTION SystemPrimitives::print_memory() {
     PROLOGUE_0( "print_memory" );
     Universe::print();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::print_zone ) {
+Oop __CALLING_CONVENTION SystemPrimitives::print_zone() {
     PROLOGUE_0( "print_zone" );
     Universe::code->print();
     return trueObj;
 }
 
 
-PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
+Oop __CALLING_CONVENTION SystemPrimitives::defWindowProc( Oop resultProxy ) {
     PROLOGUE_1( "defWindowProc", resultProxy );
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -433,7 +433,7 @@ PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::windowsHInstance, Oop resultProxy ) {
+Oop __CALLING_CONVENTION SystemPrimitives::windowsHInstance( Oop resultProxy ) {
     PROLOGUE_1( "windowsHInstance", resultProxy );
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -442,7 +442,7 @@ PRIM_DECL_1( SystemPrimitives::windowsHInstance, Oop resultProxy ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::windowsHPrevInstance, Oop resultProxy ) {
+Oop __CALLING_CONVENTION SystemPrimitives::windowsHPrevInstance( Oop resultProxy ) {
     PROLOGUE_1( "windowsHPrevInstance", resultProxy );
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -451,13 +451,13 @@ PRIM_DECL_1( SystemPrimitives::windowsHPrevInstance, Oop resultProxy ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::windowsNCmdShow ) {
+Oop __CALLING_CONVENTION SystemPrimitives::windowsNCmdShow() {
     PROLOGUE_0( "windowsNCmdShow" );
     return smiOopFromValue( os::get_nCmdShow() );
 }
 
 
-PRIM_DECL_1( SystemPrimitives::characterFor, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::characterFor( Oop value ) {
     PROLOGUE_1( "characterFor", value );
 
     // check value type
@@ -472,7 +472,7 @@ PRIM_DECL_1( SystemPrimitives::characterFor, Oop value ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::traceStack ) {
+Oop __CALLING_CONVENTION SystemPrimitives::traceStack() {
     PROLOGUE_0( "traceStack" );
     DeltaProcess::active()->trace_stack();
     return trueObj;
@@ -480,21 +480,21 @@ PRIM_DECL_0( SystemPrimitives::traceStack ) {
 
 // Flat Profiler Primitives
 
-PRIM_DECL_0( SystemPrimitives::flat_profiler_reset ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flat_profiler_reset() {
     PROLOGUE_0( "flat_profiler_reset" );
     FlatProfiler::reset();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::flat_profiler_process ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flat_profiler_process() {
     PROLOGUE_0( "flat_profiler_process" );
     DeltaProcess * proc = FlatProfiler::process();
     return proc == nullptr ? nilObj : proc->processObj();
 }
 
 
-PRIM_DECL_1( SystemPrimitives::flat_profiler_engage, Oop process ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flat_profiler_engage( Oop process ) {
     PROLOGUE_1( "flat_profiler_engage", process );
 
     // check value type
@@ -506,42 +506,42 @@ PRIM_DECL_1( SystemPrimitives::flat_profiler_engage, Oop process ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::flat_profiler_disengage ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flat_profiler_disengage() {
     PROLOGUE_0( "flat_profiler_disengage" );
     DeltaProcess * proc = FlatProfiler::disengage();
     return proc == nullptr ? nilObj : proc->processObj();
 }
 
 
-PRIM_DECL_0( SystemPrimitives::flat_profiler_print ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flat_profiler_print() {
     PROLOGUE_0( "flat_profiler_print" );
     FlatProfiler::print( 0 );
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::notificationQueueGet ) {
+Oop __CALLING_CONVENTION SystemPrimitives::notificationQueueGet() {
     PROLOGUE_0( "notificationQueueGet" );
     if ( NotificationQueue::is_empty() )
-        return markSymbol( vmSymbols::empty_queue() );
+    return markSymbol( vmSymbols::empty_queue() );
     return NotificationQueue::get();
 }
 
 
-PRIM_DECL_1( SystemPrimitives::notificationQueuePut, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::notificationQueuePut( Oop value ) {
     PROLOGUE_1( "notificationQueuePut", value );
     NotificationQueue::put( value );
     return value;
 }
 
 
-PRIM_DECL_1( SystemPrimitives::hadNearDeathExperience, Oop value ) {
+Oop __CALLING_CONVENTION SystemPrimitives::hadNearDeathExperience( Oop value ) {
     PROLOGUE_1( "hadNearDeathExperience", value );
     return ( value->is_mem() and MemOop( value )->mark()->is_near_death() ) ? trueObj : falseObj;
 }
 
 
-PRIM_DECL_2( SystemPrimitives::dll_setup, Oop receiver, Oop selector ) {
+Oop __CALLING_CONVENTION SystemPrimitives::dll_setup( Oop receiver, Oop selector ) {
     PROLOGUE_2( "dll_setup", receiver, selector );
 
     if ( not selector->is_symbol() )
@@ -555,7 +555,7 @@ PRIM_DECL_2( SystemPrimitives::dll_setup, Oop receiver, Oop selector ) {
 }
 
 
-PRIM_DECL_3( SystemPrimitives::dll_lookup, Oop name, Oop library, Oop result ) {
+Oop __CALLING_CONVENTION SystemPrimitives::dll_lookup( Oop name, Oop library, Oop result ) {
     PROLOGUE_3( "dll_lookup", name, library, result );
 
     if ( not name->is_symbol() )
@@ -577,7 +577,7 @@ PRIM_DECL_3( SystemPrimitives::dll_lookup, Oop name, Oop library, Oop result ) {
 }
 
 
-PRIM_DECL_2( SystemPrimitives::dll_load, Oop name, Oop library ) {
+Oop __CALLING_CONVENTION SystemPrimitives::dll_load( Oop name, Oop library ) {
     PROLOGUE_2( "dll_load", name, library );
 
     if ( not name->is_symbol() )
@@ -596,7 +596,7 @@ PRIM_DECL_2( SystemPrimitives::dll_load, Oop name, Oop library ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::dll_unload, Oop library ) {
+Oop __CALLING_CONVENTION SystemPrimitives::dll_unload( Oop library ) {
     PROLOGUE_1( "dll_unload", library );
 
     if ( not library->is_proxy() )
@@ -607,13 +607,13 @@ PRIM_DECL_1( SystemPrimitives::dll_unload, Oop library ) {
 
 // Inlining Database
 
-PRIM_DECL_0( SystemPrimitives::inlining_database_directory ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_directory() {
     PROLOGUE_0( "inlining_database_directory" );
     return oopFactory::new_symbol( InliningDatabase::directory() );
 }
 
 
-PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_set_directory( Oop name ) {
     PROLOGUE_1( "inlining_database_set_directory", name );
 
     // Check type on argument
@@ -631,7 +631,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::inlining_database_file_out_class, Oop receiver_class ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_file_out_class( Oop receiver_class ) {
     PROLOGUE_1( "inlining_database_file_out_class", receiver_class );
 
     // Check type on argument
@@ -643,7 +643,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_file_out_class, Oop receiver_cl
 }
 
 
-PRIM_DECL_0( SystemPrimitives::inlining_database_file_out_all ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_file_out_all() {
     PROLOGUE_0( "inlining_database_file_out_all" );
 
     // File out all nativeMethods
@@ -651,7 +651,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_file_out_all ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_compile( Oop file_name ) {
     PROLOGUE_1( "inlining_database_compile", file_name );
 
     // Check type on argument
@@ -691,7 +691,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_compile_next() {
     PROLOGUE_0( "inlining_database_compile_next" );
     if ( not UseInliningDatabase ) {
         return falseObj;
@@ -712,7 +712,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_mangle( Oop name ) {
     PROLOGUE_1( "inlining_database_mangle", name );
 
     // Check type on argument
@@ -728,7 +728,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_demangle( Oop name ) {
     PROLOGUE_1( "inlining_database_demangle", name );
     // Check type on argument
     if ( not name->is_byteArray() and not name->is_doubleByteArray() )
@@ -743,7 +743,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
 }
 
 
-PRIM_DECL_2( SystemPrimitives::inlining_database_add_entry, Oop receiver_class, Oop method_selector ) {
+Oop __CALLING_CONVENTION SystemPrimitives::inlining_database_add_entry( Oop receiver_class, Oop method_selector ) {
     PROLOGUE_2( "inlining_database_add_entry", receiver_class, method_selector );
 
     // Check type of argument
@@ -760,11 +760,11 @@ PRIM_DECL_2( SystemPrimitives::inlining_database_add_entry, Oop receiver_class, 
 }
 
 
-PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
+Oop __CALLING_CONVENTION SystemPrimitives::sliding_system_average() {
     PROLOGUE_0( "system_sliding_average" );
 
     if ( not UseSlidingSystemAverage )
-        return markSymbol( vmSymbols::not_active() );
+    return markSymbol( vmSymbols::not_active() );
 
 //    uint32_t * array = SlidingSystemAverage::update();
     std::array <uint32_t, SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
@@ -806,7 +806,7 @@ class InstancesOfClosure : public ObjectClosure {
 };
 
 
-PRIM_DECL_2( SystemPrimitives::instances_of, Oop klass, Oop limit ) {
+Oop __CALLING_CONVENTION SystemPrimitives::instances_of( Oop klass, Oop limit ) {
     PROLOGUE_2( "instances_of", klass, limit );
 
     // Check type of argument
@@ -894,7 +894,7 @@ class ReferencesToClosure : public ObjectClosure {
 };
 
 
-PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
+Oop __CALLING_CONVENTION SystemPrimitives::references_to( Oop obj, Oop limit ) {
     PROLOGUE_2( "references_to", obj, limit );
 
     // Check type of argument
@@ -969,7 +969,7 @@ class ReferencesToInstancesOfClosure : public ObjectClosure {
 };
 
 
-PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit ) {
+Oop __CALLING_CONVENTION SystemPrimitives::references_to_instances_of( Oop klass, Oop limit ) {
     PROLOGUE_2( "references_to_instances_of", klass, limit );
 
     // Check type of argument
@@ -1016,7 +1016,7 @@ class AllObjectsClosure : public ObjectClosure {
 };
 
 
-PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
+Oop __CALLING_CONVENTION SystemPrimitives::all_objects( Oop limit ) {
     PROLOGUE_1( "all_objects", limit );
 
     // Check type of argument
@@ -1038,21 +1038,21 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::flush_code_cache ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flush_code_cache() {
     PROLOGUE_0( "flush_code_cache" );
     Universe::code->flush();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::flush_dead_code ) {
+Oop __CALLING_CONVENTION SystemPrimitives::flush_dead_code() {
     PROLOGUE_0( "flush_dead_code" );
     Universe::code->flushZombies();
     return trueObj;
 }
 
 
-PRIM_DECL_0( SystemPrimitives::command_line_args ) {
+Oop __CALLING_CONVENTION SystemPrimitives::command_line_args() {
     PROLOGUE_0( "command_line_args" );
 
     int argc = os::argc();
@@ -1068,31 +1068,31 @@ PRIM_DECL_0( SystemPrimitives::command_line_args ) {
 }
 
 
-PRIM_DECL_0( SystemPrimitives::current_thread_id ) {
+Oop __CALLING_CONVENTION SystemPrimitives::current_thread_id() {
     PROLOGUE_0( "current_thread_id" );
     return smiOopFromValue( os::current_thread_id() );
 }
 
 
-PRIM_DECL_0( SystemPrimitives::object_memory_size ) {
+Oop __CALLING_CONVENTION SystemPrimitives::object_memory_size() {
     PROLOGUE_0( "object_memory_size" );
     return oopFactory::new_double( double( Universe::old_gen.used() ) / Universe::old_gen.capacity() );
 }
 
 
-PRIM_DECL_0( SystemPrimitives::freeSpace ) {
+Oop __CALLING_CONVENTION SystemPrimitives::freeSpace() {
     PROLOGUE_0( "freeSpace" );
     return smiOopFromValue( Universe::old_gen.free() );
 }
 
 
-PRIM_DECL_0( SystemPrimitives::nurseryFreeSpace ) {
+Oop __CALLING_CONVENTION SystemPrimitives::nurseryFreeSpace() {
     PROLOGUE_0( "nurseryFreeSpace" );
     return smiOopFromValue( Universe::new_gen.eden()->free() );
 }
 
 
-PRIM_DECL_1( SystemPrimitives::alienMalloc, Oop size ) {
+Oop __CALLING_CONVENTION SystemPrimitives::alienMalloc( Oop size ) {
     PROLOGUE_0( "alienMalloc" );
 
     if ( not size->is_smi() )
@@ -1106,7 +1106,7 @@ PRIM_DECL_1( SystemPrimitives::alienMalloc, Oop size ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::alienCalloc, Oop size ) {
+Oop __CALLING_CONVENTION SystemPrimitives::alienCalloc( Oop size ) {
     PROLOGUE_0( "alienCalloc" );
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
@@ -1119,7 +1119,7 @@ PRIM_DECL_1( SystemPrimitives::alienCalloc, Oop size ) {
 }
 
 
-PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
+Oop __CALLING_CONVENTION SystemPrimitives::alienFree( Oop address ) {
     PROLOGUE_0( "alienFree" );
 
     if ( not address->is_smi() and not( address->is_byteArray() and address->klass() == Universe::find_global( "LargeInteger" ) ) )

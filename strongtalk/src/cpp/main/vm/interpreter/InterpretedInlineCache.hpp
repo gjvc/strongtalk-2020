@@ -164,7 +164,7 @@ class InterpretedInlineCacheIterator : public InlineCacheIterator {
         int              _index;                // the current entry no.
         KlassOop         _klass;                // the current klass
         MethodOop        _method;               // the current method
-        NativeMethod     * _nativeMethod;        // current NativeMethod (nullptr if none)
+        NativeMethod * _nativeMethod;        // current NativeMethod (nullptr if none)
 
         void set_method( Oop m );               // set _method and _nativeMethod
         void set_klass( Oop k );                // don't assign to _klass directly

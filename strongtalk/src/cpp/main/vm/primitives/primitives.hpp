@@ -6,7 +6,6 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 
@@ -26,7 +25,7 @@
 // WARNING: do not change the element order of enum PrimitiveGroup
 // without adjusting the Smalltalk DeltaPrimitiveGenerator code to match!
 
-enum PrimitiveGroup {
+enum class PrimitiveGroup {
     NormalPrimitive,            //
 
     IntComparisonPrimitive,     // Integer comparison primitive
@@ -125,7 +124,7 @@ class PrimitiveDescriptor {
 
 
         bool_t is_special_prim() const {
-            return group() not_eq NormalPrimitive;
+            return group() not_eq PrimitiveGroup::NormalPrimitive;
         }
 
 

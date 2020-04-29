@@ -26,49 +26,49 @@ int smiOopPrimitives::number_of_calls;
   return a op b ? trueObj : falseObj
 
 
-PRIM_DECL_2( smiOopPrimitives::lessThan, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::lessThan( Oop receiver, Oop argument ) {
     PROLOGUE_2( "lessThan", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( < );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::greaterThan, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::greaterThan( Oop receiver, Oop argument ) {
     PROLOGUE_2( "greaterThan", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( > );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::lessThanOrEqual, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::lessThanOrEqual( Oop receiver, Oop argument ) {
     PROLOGUE_2( "lessThanOrEqual", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( <= );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::greaterThanOrEqual, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::greaterThanOrEqual( Oop receiver, Oop argument ) {
     PROLOGUE_2( "greaterThanOrEqual", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( >= );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::equal, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::equal( Oop receiver, Oop argument ) {
     PROLOGUE_2( "equal", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( == );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::notEqual, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::notEqual( Oop receiver, Oop argument ) {
     PROLOGUE_2( "notEqual", receiver, argument );
     ASSERT_RECEIVER;
     SMI_RELATIONAL_OP( not_eq );
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::bitAnd, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::bitAnd( Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitAnd", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -77,7 +77,7 @@ PRIM_DECL_2( smiOopPrimitives::bitAnd, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::bitOr, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::bitOr( Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitOr", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -86,7 +86,7 @@ PRIM_DECL_2( smiOopPrimitives::bitOr, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::bitXor, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::bitXor( Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitXor", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -95,7 +95,7 @@ PRIM_DECL_2( smiOopPrimitives::bitXor, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::bitShift, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::bitShift( Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitShift", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -126,7 +126,7 @@ PRIM_DECL_2( smiOopPrimitives::bitShift, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_2( smiOopPrimitives::rawBitShift, Oop receiver, Oop argument ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::rawBitShift( Oop receiver, Oop argument ) {
     PROLOGUE_2( "rawBitShift", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -144,7 +144,7 @@ PRIM_DECL_2( smiOopPrimitives::rawBitShift, Oop receiver, Oop argument ) {
 }
 
 
-PRIM_DECL_1( smiOopPrimitives::asObject, Oop receiver ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::asObject( Oop receiver ) {
     PROLOGUE_1( "asObject", receiver );
     ASSERT_RECEIVER;
     int id = SMIOop( receiver )->value();
@@ -154,7 +154,7 @@ PRIM_DECL_1( smiOopPrimitives::asObject, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( smiOopPrimitives::printCharacter, Oop receiver ) {
+Oop __CALLING_CONVENTION smiOopPrimitives::printCharacter( Oop receiver ) {
     PROLOGUE_1( "printCharacter", receiver );
     ASSERT_RECEIVER;
     lprintf( "%c", SMIOop( receiver )->value() );

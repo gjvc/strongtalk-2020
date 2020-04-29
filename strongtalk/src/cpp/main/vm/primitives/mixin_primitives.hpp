@@ -7,7 +7,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for mixins
 
@@ -28,7 +27,7 @@ class mixinOopPrimitives : AllStatic {
         //                                       ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name  = 'mixinOopPrimitives::number_of_methods' }
         //%
-        static PRIM_DECL_1( number_of_methods, Oop mixin );
+        static Oop __CALLING_CONVENTION number_of_methods( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -37,7 +36,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'mixinOopPrimitives::method_at' }
         //%
-        static PRIM_DECL_2( method_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION method_at( Oop mixin, Oop index );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -46,7 +45,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled)
         //              name  = 'mixinOopPrimitives::add_method' }
         //%
-        static PRIM_DECL_2( add_method, Oop mixin, Oop method );
+        static Oop __CALLING_CONVENTION add_method( Oop mixin, Oop method );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -55,7 +54,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal {  error = #(IsInstalled OutOfBounds)
         //               name  = 'mixinOopPrimitives::remove_method_at' }
         //%
-        static PRIM_DECL_2( remove_method_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION remove_method_at( Oop mixin, Oop index );
 
 
         //%prim
@@ -63,7 +62,7 @@ class mixinOopPrimitives : AllStatic {
         //               methodsIfFail: failBlock <PrimFailBlock> ^<Symbol> =
         //   Internal { name  = 'mixinOopPrimitives::methods' }
         //%
-        static PRIM_DECL_1( methods, Oop mixin );
+        static Oop __CALLING_CONVENTION methods( Oop mixin );
 
 
         // INSTANCE VARIABLES
@@ -73,7 +72,7 @@ class mixinOopPrimitives : AllStatic {
         //                                                 ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name = 'mixinOopPrimitives::number_of_instance_variables' }
         //%
-        static PRIM_DECL_1( number_of_instance_variables, Oop mixin );
+        static Oop __CALLING_CONVENTION number_of_instance_variables( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -82,7 +81,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'mixinOopPrimitives::instance_variable_at' }
         //%
-        static PRIM_DECL_2( instance_variable_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION instance_variable_at( Oop mixin, Oop index );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -91,7 +90,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled OutOfBounds)
         //              name = 'mixinOopPrimitives::add_instance_variable' }
         //%
-        static PRIM_DECL_2( add_instance_variable, Oop mixin, Oop name );
+        static Oop __CALLING_CONVENTION add_instance_variable( Oop mixin, Oop name );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -100,14 +99,14 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled OutOfBounds)
         //              name  = 'mixinOopPrimitives::remove_instance_variable_at' }
         //%
-        static PRIM_DECL_2( remove_instance_variable_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION remove_instance_variable_at( Oop mixin, Oop index );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
         //     instanceVariablesIfFail: failBlock <PrimFailBlock> ^<Symbol> =
         //   Internal { name  = 'mixinOopPrimitives::instance_variables' }
         //%
-        static PRIM_DECL_1( instance_variables, Oop mixin );
+        static Oop __CALLING_CONVENTION instance_variables( Oop mixin );
 
         // CLASS VARIABLES
 
@@ -116,7 +115,7 @@ class mixinOopPrimitives : AllStatic {
         //                                              ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name  = 'mixinOopPrimitives::number_of_class_variables' }
         //%
-        static PRIM_DECL_1( number_of_class_variables, Oop mixin );
+        static Oop __CALLING_CONVENTION number_of_class_variables( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -125,7 +124,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'mixinOopPrimitives::class_variable_at' }
         //%
-        static PRIM_DECL_2( class_variable_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION class_variable_at( Oop mixin, Oop index );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -134,7 +133,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal {  error = #(IsInstalled OutOfBounds)
         //               name = 'mixinOopPrimitives::add_class_variable' }
         //%
-        static PRIM_DECL_2( add_class_variable, Oop mixin, Oop name );
+        static Oop __CALLING_CONVENTION add_class_variable( Oop mixin, Oop name );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
@@ -143,14 +142,14 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled OutOfBounds)
         //              name  = 'mixinOopPrimitives::remove_class_variable_at' }
         //%
-        static PRIM_DECL_2( remove_class_variable_at, Oop mixin, Oop index );
+        static Oop __CALLING_CONVENTION remove_class_variable_at( Oop mixin, Oop index );
 
         //%prim
         // <NoReceiver> primitiveMixin: mixin     <Mixin>
         //        classVariablesIfFail: failBlock <PrimFailBlock> ^<Symbol> =
         //   Internal { name  = 'mixinOopPrimitives::class_variables' }
         //%
-        static PRIM_DECL_1( class_variables, Oop mixin );
+        static Oop __CALLING_CONVENTION class_variables( Oop mixin );
 
 
         // PRIMARY INVOCATION
@@ -160,7 +159,7 @@ class mixinOopPrimitives : AllStatic {
         //                                         ifFail: failBlock <PrimFailBlock> ^<Class> =
         //   Internal { name = 'mixinOopPrimitives::primary_invocation' }
         //%
-        static PRIM_DECL_1( primary_invocation, Oop mixin );
+        static Oop __CALLING_CONVENTION primary_invocation( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixinSetPrimaryInvocationOf: mixin <Mixin>
@@ -169,7 +168,7 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled)
         //              name  = 'mixinOopPrimitives::set_primary_invocation' }
         //%
-        static PRIM_DECL_2( set_primary_invocation, Oop mixin, Oop klass );
+        static Oop __CALLING_CONVENTION set_primary_invocation( Oop mixin, Oop klass );
 
         // CLASS MIXIN
 
@@ -178,7 +177,7 @@ class mixinOopPrimitives : AllStatic {
         //                                  ifFail: failBlock <PrimFailBlock> ^<Mixin> =
         //   Internal { name = 'mixinOopPrimitives::class_mixin' }
         //%
-        static PRIM_DECL_1( class_mixin, Oop mixin );
+        static Oop __CALLING_CONVENTION class_mixin( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixinSetClassMixinOf: mixin      <Mixin>
@@ -187,28 +186,28 @@ class mixinOopPrimitives : AllStatic {
         //   Internal { error = #(IsInstalled)
         //              name  = 'mixinOopPrimitives::set_class_mixin' }
         //%
-        static PRIM_DECL_2( set_class_mixin, Oop mixin, Oop class_mixin );
+        static Oop __CALLING_CONVENTION set_class_mixin( Oop mixin, Oop class_mixin );
 
         //%prim
         // <NoReceiver> primitiveMixinIsInstalled: mixin <Mixin>
         //                                 ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name = 'mixinOopPrimitives::is_installed' }
         //%
-        static PRIM_DECL_1( is_installed, Oop mixin );
+        static Oop __CALLING_CONVENTION is_installed( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixinSetInstalled: mixin <Mixin>
         //                                  ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name = 'mixinOopPrimitives::set_installed' }
         //%
-        static PRIM_DECL_1( set_installed, Oop mixin );
+        static Oop __CALLING_CONVENTION set_installed( Oop mixin );
 
         //%prim
         // <NoReceiver> primitiveMixinSetUnInstalled: mixin <Mixin>
         //                                    ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name = 'mixinOopPrimitives::set_uninstalled' }
         //%
-        static PRIM_DECL_1( set_uninstalled, Oop mixin );
+        static Oop __CALLING_CONVENTION set_uninstalled( Oop mixin );
 
 };
 

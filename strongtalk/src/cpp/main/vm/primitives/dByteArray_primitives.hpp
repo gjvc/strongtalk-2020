@@ -7,7 +7,6 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/objectIDTable.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for byte arrays
 
@@ -30,7 +29,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'doubleByteArrayPrimitives::allocateSize' }
         //%
-        static PRIM_DECL_2( allocateSize, Oop receiver, Oop argument );
+        static Oop __CALLING_CONVENTION allocateSize( Oop receiver, Oop argument );
 
         //%prim
         // <NoReceiver>
@@ -42,7 +41,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'doubleByteArrayPrimitives::allocateSize2' }
         //%
-        static PRIM_DECL_3( allocateSize2, Oop receiver, Oop argument, Oop tenured );
+        static Oop __CALLING_CONVENTION allocateSize2( Oop receiver, Oop argument, Oop tenured );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -50,7 +49,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedDoubleByte)
         //              name  = 'doubleByteArrayPrimitives::size' }
         //%
-        static PRIM_DECL_1( size, Oop receiver );
+        static Oop __CALLING_CONVENTION size( Oop receiver );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -60,7 +59,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedDoubleByte)
         //              name  = 'doubleByteArrayPrimitives::at' }
         //%
-        static PRIM_DECL_2( at, Oop receiver, Oop index );
+        static Oop __CALLING_CONVENTION at( Oop receiver, Oop index );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -71,7 +70,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedDoubleByte)
         //              name  = 'doubleByteArrayPrimitives::atPut' }
         //%
-        static PRIM_DECL_3( atPut, Oop receiver, Oop index, Oop value );
+        static Oop __CALLING_CONVENTION atPut( Oop receiver, Oop index, Oop value );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -80,7 +79,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //   Internal { flags = #Function
         //              name  = 'doubleByteArrayPrimitives::compare' }
         //%
-        static PRIM_DECL_2( compare, Oop receiver, Oop argumentw );
+        static Oop __CALLING_CONVENTION compare( Oop receiver, Oop argumentw );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -88,7 +87,7 @@ class doubleByteArrayPrimitives : AllStatic {
         //   Internal { error = #(ValueOutOfBounds)
         //              name  = 'doubleByteArrayPrimitives::intern' }
         //%
-        static PRIM_DECL_1( intern, Oop receiver );
+        static Oop __CALLING_CONVENTION intern( Oop receiver );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
@@ -98,14 +97,14 @@ class doubleByteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedDoubleByte)
         //              name  = 'doubleByteArrayPrimitives::characterAt' }
         //%
-        static PRIM_DECL_2( characterAt, Oop receiver, Oop index );
+        static Oop __CALLING_CONVENTION characterAt( Oop receiver, Oop index );
 
         //%prim
         // <IndexedDoubleByteInstanceVariables>
         //   primitiveIndexedDoubleByteHash ^<SmallInteger> =
         //   Internal { name  = 'doubleByteArrayPrimitives::hash' }
         //%
-        static PRIM_DECL_1( hash, Oop receiver );
+        static Oop __CALLING_CONVENTION hash( Oop receiver );
 };
 
 

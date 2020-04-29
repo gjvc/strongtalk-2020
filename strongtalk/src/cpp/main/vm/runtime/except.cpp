@@ -44,7 +44,7 @@ void traceCompiledFrame( Frame & f ) {
     lprintf( "Found NativeMethod: 0x%x\n", nm );
     nm->print_value_on( _console );
 
-    _console->print_cr( "\n @%d called from [%#x]", vf->scope()->offset(), f.pc() - Assembler::sizeOfCall );
+    _console->print_cr( "\n @%d called from [%#x]", vf->scope()->offset(), f.pc() - static_cast<int>( Assembler::Constants::sizeOfCall ) );
 
     trace( vf, 0, 10 );
 }

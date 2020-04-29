@@ -54,19 +54,19 @@ void Inliner::initialize( SendInfo * info, SendKind kind ) {
 
 
 Expression * Inliner::inlineNormalSend( SendInfo * info ) {
-    initialize( info, NormalSend );
+    initialize( info, SendKind::NormalSend );
     return inlineSend();
 }
 
 
 Expression * Inliner::inlineSuperSend( SendInfo * info ) {
-    initialize( info, SuperSend );
+    initialize( info, SendKind::SuperSend );
     return inlineSend();
 }
 
 
 Expression * Inliner::inlineSelfSend( SendInfo * info ) {
-    initialize( info, SelfSend );
+    initialize( info, SendKind::SelfSend );
     return inlineSend();
 }
 
@@ -113,13 +113,13 @@ Expression * Inliner::genRealSend() {
         cout( PrintInlining )->print( "%*s*sending %s %s%s\n", depth, "", _info->_selector->as_string(), uninlinable ? "(unlinlinable) " : "", _info->_counting ? "(counting) " : "" );
     }
     switch ( _sendKind ) {
-        case NormalSend:
+        case SendKind::NormalSend:
             _generator->gen_normal_send( _info, nofArgs, _resultPR );
             break;
-        case SelfSend:
+        case SendKind::SelfSend:
             _generator->gen_self_send( _info, nofArgs, _resultPR );
             break;
-        case SuperSend:
+        case SendKind::SuperSend:
             _generator->gen_super_send( _info, nofArgs, _resultPR );
             break;
         default: fatal1( "illegal SendKind %d", _sendKind );
@@ -135,7 +135,7 @@ void Inliner::tryInlineSend() {
     bool_t usingInliningDB = _sender->rscope->isDatabaseScope();
     // first, use type feedback
     if ( TypeFeedback and u ) {
-        st_assert( _sendKind not_eq SuperSend, "shouldn't PolymorphicInlineCache-predict super sends" );
+        st_assert( _sendKind not_eq SendKind::SuperSend, "shouldn't PolymorphicInlineCache-predict super sends" );
         // note: when compiling using the inlining database, picPredict won't actually look at any PICs, just at the inlining DB
         _info->_receiver = picPredict();
     }
@@ -626,15 +626,15 @@ InlinedScope * Inliner::tryLookup( Expression * receiver ) {
     // NB: _info->receiver is the overall receiver (e.g. a merge expr), receiver is the particular branch we're looking at right now
     st_assert( receiver->hasKlass(), "should know klass" );
 
-    const KlassOop klass = ( _sendKind == SuperSend ) ? _sender->methodHolder() : receiver->klass();
+    const KlassOop klass = ( _sendKind == SendKind::SuperSend ) ? _sender->methodHolder() : receiver->klass();
     if ( klass == nullptr ) {
         _info->uninlinable = true;
-        st_assert( _sendKind == SuperSend, "shouldn't happen for normal sends" );
+        st_assert( _sendKind == SendKind::SuperSend, "shouldn't happen for normal sends" );
         return notify( "super send in Object" );
     }
 
     const SymbolOop selector = _info->_selector;
-    const MethodOop method   = ( _sendKind == SuperSend ) ? LookupCache::compile_time_super_lookup( klass, selector ) : LookupCache::compile_time_normal_lookup( klass, selector );
+    const MethodOop method   = ( _sendKind == SendKind::SuperSend ) ? LookupCache::compile_time_super_lookup( klass, selector ) : LookupCache::compile_time_normal_lookup( klass, selector );
     _lastLookupFailed = method == nullptr;
 
     if ( _lastLookupFailed ) {
@@ -644,7 +644,7 @@ InlinedScope * Inliner::tryLookup( Expression * receiver ) {
     }
 
     // Construct a lookup key
-    LookupKey * key = _sendKind == SuperSend ? LookupKey::allocate( receiver->klass(), method ) : LookupKey::allocate( receiver->klass(), selector );
+    LookupKey * key = _sendKind == SendKind::SuperSend ? LookupKey::allocate( receiver->klass(), method ) : LookupKey::allocate( receiver->klass(), selector );
 
     if ( CompilerDebug )
         cout( PrintInlining )->print( "%*s found %s --> %#x\n", _sender->depth, "", key->print_string(), PrintHexAddresses ? method : 0 );
@@ -652,10 +652,10 @@ InlinedScope * Inliner::tryLookup( Expression * receiver ) {
     // NB: use receiver->klass() (not klass) for the scope -- klass may be the method holder (for super sends)
     // was bug -- Urs 3/16/96
     InlinedScope * callee = makeScope( receiver, receiver->klass(), key, method );
-    st_assert( _sendKind not_eq SuperSend or callee not_eq nullptr, "Super send must be inlined" );
+    st_assert( _sendKind not_eq SendKind::SuperSend or callee not_eq nullptr, "Super send must be inlined" );
 
     _msg = inliningPolicy.shouldInline( _sender, callee );
-    if ( _sendKind == SuperSend ) {
+    if ( _sendKind == SendKind::SuperSend ) {
         // for now, always inline super sends because run-time system can't handle them yet fix this later -- Urs 12/95
         SuperSendsAreAlwaysInlined = true;
         st_assert( not _info->_predicted, "shouldn't PolymorphicInlineCache-predict super sends" );
@@ -835,7 +835,7 @@ void Inliner::print() {
 
 
 Expression * Inliner::inlineBlockInvocation( SendInfo * info ) {
-    initialize( info, NormalSend );
+    initialize( info, SendKind::NormalSend );
     Expression * blockExpression = info->_receiver;
     st_assert( blockExpression->preg()->isBlockPReg(), "must be a BlockPR" );
     const BlockPseudoRegister * block = ( BlockPseudoRegister * ) blockExpression->preg();

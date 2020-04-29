@@ -15,7 +15,7 @@
 class Address : public ValueObject {
 
     public:
-        enum ScaleFactor {
+        enum class ScaleFactor {
             no_scale = -1, //
             times_1  = 0, //
             times_2  = 1, //

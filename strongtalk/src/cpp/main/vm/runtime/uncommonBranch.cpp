@@ -178,7 +178,7 @@ void uncommon_trap() {
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - Assembler::sizeOfCall );
+            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<int>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )

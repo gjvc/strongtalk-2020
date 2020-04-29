@@ -460,7 +460,7 @@ TypeTestNode::TypeTestNode( PseudoRegister * rr, GrowableArray <KlassOop> * clas
 ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister * arg2, PseudoRegister * dst ) :
     ArithNode( op, arg1, dst ) {
     _oper = arg2;
-    if ( _src->isConstPReg() and ArithOpIsCommutative[ _op ] ) {
+    if ( _src->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister * t1 = _src;
         _src                = _oper;
@@ -470,7 +470,7 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister 
 
 
 TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister * arg2, PseudoRegister * dst, bool_t arg1IsInt, bool_t arg2IsInt ) {
-    if ( arg1->isConstPReg() and ArithOpIsCommutative[ op ] ) {
+    if ( arg1->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister * t1 = arg1;
         arg1 = arg2;
@@ -2126,39 +2126,39 @@ void BranchNode::eliminateBranch( int op1, int op2, int res ) {
     // is a constant (res)
     bool_t ok;
     switch ( _op ) {
-        case EQBranchOp:
+        case BranchOpCode::EQBranchOp:
             ok = op1 == op2;
             break;
-        case NEBranchOp:
+        case BranchOpCode::NEBranchOp:
             ok = op1 not_eq op2;
             break;
-        case LTBranchOp:
+        case BranchOpCode::LTBranchOp:
             ok = op1 < op2;
             break;
-        case LEBranchOp:
+        case BranchOpCode::LEBranchOp:
             ok = op1 <= op2;
             break;
-        case GTBranchOp:
+        case BranchOpCode::GTBranchOp:
             ok = op1 > op2;
             break;
-        case GEBranchOp:
+        case BranchOpCode::GEBranchOp:
             ok = op1 >= op2;
             break;
-        case LTUBranchOp:
+        case BranchOpCode::LTUBranchOp:
             ok = ( unsigned ) op1 < ( unsigned ) op2;
             break;
-        case LEUBranchOp:
+        case BranchOpCode::LEUBranchOp:
             ok = ( unsigned ) op1 <= ( unsigned ) op2;
             break;
-        case GTUBranchOp:
+        case BranchOpCode::GTUBranchOp:
             ok = ( unsigned ) op1 > ( unsigned ) op2;
             break;
-        case GEUBranchOp:
+        case BranchOpCode::GEUBranchOp:
             ok = ( unsigned ) op1 >= ( unsigned ) op2;
             break;
-        case VSBranchOp:
+        case BranchOpCode::VSBranchOp:
             return;        // can't handle yet
-        case VCBranchOp:
+        case BranchOpCode::VCBranchOp:
             return;        // can't handle yet
         default: fatal( "unexpected branch type" );
     }
@@ -2398,23 +2398,23 @@ bool_t ArithNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d,
         int c2 = ( int ) operConst();
         int res;
         switch ( _op ) {
-            case AddArithOp:
+            case ArithOpCode::AddArithOp:
                 res = c1 + c2;
                 break;
 
-            case SubArithOp:
+            case ArithOpCode::SubArithOp:
                 res = c1 - c2;
                 break;
 
-            case AndArithOp:
+            case ArithOpCode::AndArithOp:
                 res = c1 & c2;
                 break;
 
-            case OrArithOp:
+            case ArithOpCode::OrArithOp:
                 res = c1 | c2;
                 break;
 
-            case XOrArithOp:
+            case ArithOpCode::XOrArithOp:
                 res = c1 ^ c2;
                 break;
 
@@ -2463,35 +2463,35 @@ bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
         Oop c2 = ( ( ConstPseudoRegister * ) _oper )->constant;
         Oop result;
         switch ( _op ) {
-            case tAddArithOp:
+            case ArithOpCode::tAddArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_add( c1, c2 );
                 break;
-            case tSubArithOp:
+            case ArithOpCode::tSubArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_subtract( c1, c2 );
                 break;
-            case tMulArithOp:
+            case ArithOpCode::tMulArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_multiply( c1, c2 );
                 break;
-            case tDivArithOp:
+            case ArithOpCode::tDivArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_div( c1, c2 );
                 break;
-            case tModArithOp:
+            case ArithOpCode::tModArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_mod( c1, c2 );
                 break;
-            case tAndArithOp:
+            case ArithOpCode::tAndArithOp:
                 result = smiOopPrimitives::bitAnd( c1, c2 );
                 break;
-            case tOrArithOp:
+            case ArithOpCode::tOrArithOp:
                 result = smiOopPrimitives::bitOr( c1, c2 );
                 break;
-            case tXOrArithOp:
+            case ArithOpCode::tXOrArithOp:
                 result = smiOopPrimitives::bitXor( c1, c2 );
                 break;
-            case tShiftArithOp:
-                warning( "possible performance bug: constant folding of tShiftArithOp not implemented" );
+            case ArithOpCode::tShiftArithOp:
+                warning( "possible performance bug: constant folding of ArithOpCode::tShiftArithOp not implemented" );
                 return false;
-            case tCmpArithOp:
-                warning( "possible performance bug: constant folding of tCmpArithOp not implemented" );
+            case ArithOpCode::tCmpArithOp:
+                warning( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
                 return false;
             default           : fatal1( "unknown tagged opcode %ld", _op );
         }
@@ -2512,7 +2512,7 @@ bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
             // now, discard the overflow check
             discard = next();
             st_assert( discard->isBranchNode(), "must be a cond. branch" );
-            st_assert( ( ( BranchNode * ) discard )->op() == VSBranchOp, "expected an overflow check" );
+            st_assert( ( ( BranchNode * ) discard )->op() == BranchOpCode::VSBranchOp, "expected an overflow check" );
             discard->bb()->remove( discard );// SLR should this be removeNext(discard)? and should it be after removeUpToMerge()?
             // and the "overflow taken" code
             discard = discard->next1();
@@ -3366,7 +3366,7 @@ const char * NonLocalReturnTestNode::print_string( const char * buf, bool_t prin
 
 
 const char * ArithNode::opName() const {
-    return ArithOpName[ _op ];
+    return ArithOpName[ static_cast<int>( _op ) ];
 }
 
 
@@ -3399,7 +3399,7 @@ const char * FloatUnaryArithNode::print_string( const char * buf, bool_t printAd
 
 const char * TArithRRNode::print_string( const char * buf, bool_t printAddr ) const {
     const char * b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ _op ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<int>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((TArithRRNode*)%#lx)", this );
     return b;
@@ -3417,7 +3417,7 @@ const char * ArithRCNode::print_string( const char * buf, bool_t printAddr ) con
 
 const char * BranchNode::print_string( const char * buf, bool_t printAddr ) const {
     const char * b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ _op ], id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<int>( _op ) ], id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((BranchNode*)%#lx)", this );
     return b;
@@ -3866,7 +3866,7 @@ void TArithRRNode::verify() const {
     if ( _deleted )
         return;
     AbstractBranchNode::verify( true );
-    if ( ( _op < tAddArithOp ) or ( tCmpArithOp < _op ) ) {
+    if ( ( _op < ArithOpCode::tAddArithOp ) or ( ArithOpCode::tCmpArithOp < _op ) ) {
         error( "TArithRRNode %#lx: wrong opcode %ld", this, _op );
     }
 }

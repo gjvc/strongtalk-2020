@@ -59,7 +59,7 @@ const char * StubRoutines::_handleCCallbackStub          = nullptr;
 const char * StubRoutines::_oopifyFloat                  = nullptr;
 const char * StubRoutines::_alienCallWithArgsEntry       = nullptr;
 
-const char * StubRoutines::_PolymorphicInlineCache_stub_entries[PolymorphicInlineCache::max_nof_entries + 1]; // entry 0 ignored
+const char * StubRoutines::_PolymorphicInlineCache_stub_entries[ static_cast<int>( PolymorphicInlineCache::Consts::max_nof_entries ) + 1]; // entry 0 ignored
 const char * StubRoutines::_allocate_entries[max_fast_allocate_size + 1];
 const char * StubRoutines::_alien_call_entries[max_fast_alien_call_size + 1];
 
@@ -589,7 +589,7 @@ const char * StubRoutines::generate_call_DLL( MacroAssembler * masm, bool_t asyn
 //    // following is to allow 16-byte stack alignment for Darwin (OSX)
 //    masm->movl( eax, ebx );
 //    masm->negl( eax );
-//    masm->leal( eax, Address( esp, eax, Address::times_4 ) ); // esp - 4 x nargs
+//    masm->leal( eax, Address( esp, eax, Address::ScaleFactor::times_4 ) ); // esp - 4 x nargs
 //    masm->andl( eax, 0xf ); // padding required for 16-byte alignment
 //    masm->bind( align_stack );
 //    masm->cmpl( eax, 0 );
@@ -1057,7 +1057,7 @@ const char * StubRoutines::generate_single_step_stub( MacroAssembler * masm ) {
     masm->xorl( ebx, ebx );
     masm->movb( ebx, Address( esi ) );
     // execute bytecode
-    masm->jmp( Address( noreg, ebx, Address::times_4, ( int ) original_table ) );
+    masm->jmp( Address( noreg, ebx, Address::ScaleFactor::times_4, ( int ) original_table ) );
 
 //   then the calling stub
 // end slr mod
@@ -1073,7 +1073,7 @@ const char * StubRoutines::generate_single_step_stub( MacroAssembler * masm ) {
 //  masm->int3();
     masm->cmpl( ebp, Address( ( int ) &frame_breakpoint, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( Assembler::Condition::greaterEqual, is_break );
-    masm->jmp( Address( noreg, ebx, Address::times_4, ( int ) original_table ) );
+    masm->jmp( Address( noreg, ebx, Address::ScaleFactor::times_4, ( int ) original_table ) );
 
     masm->bind( is_break );
     masm->movl( Address( ebp, -2 * oopSize ), esi );    // save esi
@@ -1091,7 +1091,7 @@ const char * StubRoutines::generate_single_step_stub( MacroAssembler * masm ) {
 //  end slr mod
 
 //  assert(single_step_handler, "%fix this");
-    masm->jmp( Address( noreg, noreg, Address::no_scale, ( int ) &single_step_fn ) );
+    masm->jmp( Address( noreg, noreg, Address::ScaleFactor::no_scale, ( int ) &single_step_fn ) );
 //  masm->jmp((char*)single_step_handler, RelocationInformation::RelocationType::runtime_call_type);
 //  masm->jmp(single_step_handler, RelocationInformation::RelocationType::runtime_call_type);
     //	Should not reach here
@@ -1416,8 +1416,8 @@ const char * StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler 
     masm->bind( loop );
     for ( int i = 0; i < pic_size; i++ ) {
         // compare receiver klass with klass in PolymorphicInlineCache table at index
-        masm->cmpl( edx, Address( ebx, i * PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size + PolymorphicInlineCache::PolymorphicInlineCache_methodOop_klass_offset ) );
-        masm->movl( ecx, Address( ebx, i * PolymorphicInlineCache::PolymorphicInlineCache_methodOop_entry_size + PolymorphicInlineCache::PolymorphicInlineCache_methodOop_offset ) );
+        masm->cmpl( edx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_klass_offset ) ) );
+        masm->movl( ecx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_offset ) ) );
         masm->jcc( Assembler::Condition::equal, found );
     }
     st_assert( ic_normal_lookup_entry() not_eq nullptr, "ic_normal_lookup_entry must be generated before" );
@@ -1444,7 +1444,7 @@ void StubRoutines::alien_arg_size( MacroAssembler * masm, Label & nextArg ) {
     masm->movl( esi, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );// get class
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );// get non-indexable size
     // start of the byte array's bytes
-    masm->leal( ecx, Address( ecx, esi, Address::times_1, -MEMOOP_TAG ) );
+    masm->leal( ecx, Address( ecx, esi, Address::ScaleFactor::times_1, -MEMOOP_TAG ) );
     masm->testl( ecx, MEMOOP_TAG );
     masm->jcc( Assembler::Condition::notEqual, isUnsafe );
     masm->addl( ecx, 4 );
@@ -1498,7 +1498,7 @@ void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
 
     masm->movl( esi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );
-    masm->leal( eax, Address( eax, esi, Address::times_1, 4 - MEMOOP_TAG ) ); // start of the oops in the array
+    masm->leal( eax, Address( eax, esi, Address::ScaleFactor::times_1, 4 - MEMOOP_TAG ) ); // start of the oops in the array
 
     masm->movl( esi, Address( eax ) );                        // load the size
     masm->testl( esi, esi );                                // direct?
@@ -1519,14 +1519,14 @@ void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
 
     masm->bind( startMove );
     masm->pushl( 0 );                                       // pad odd sizes with zero
-    masm->leal( esp, Address( esp, esi, Address::times_1, 4 ) ); // move stack pointer by size of data
+    masm->leal( esp, Address( esp, esi, Address::ScaleFactor::times_1, 4 ) ); // move stack pointer by size of data
     masm->andl( esp, -4 );                                  // ensure stack 4-byte aligned
 
     masm->negl( esi );                                      // negate size to use as offset
     masm->jmp( moveLoopTest );
     masm->bind( moveLoopHead );
-    masm->movl( ecx, Address( eax, esi, Address::times_1 ) );
-    masm->movl( Address( esp, esi, Address::times_1 ), ecx );
+    masm->movl( ecx, Address( eax, esi, Address::ScaleFactor::times_1 ) );
+    masm->movl( Address( esp, esi, Address::ScaleFactor::times_1 ), ecx );
 
     masm->bind( moveLoopTest );                             // continue?
     masm->subl( esi, 4 );
@@ -1536,25 +1536,25 @@ void StubRoutines::push_alien_arg( MacroAssembler * masm, Label & nextArg ) {
     masm->addl( esi, 3 );                                   // adjust offset for byte moves
     masm->jcc( Assembler::Condition::less, nextArg );                  // y - exact multiple of four bytes
     // n - 1-3 bytes need to be moved
-    masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
-    masm->movb( Address( esp, esi, Address::times_1 ), ecx );
+    masm->movb( ecx, Address( eax, esi, Address::ScaleFactor::times_1 ) );
+    masm->movb( Address( esp, esi, Address::ScaleFactor::times_1 ), ecx );
     masm->decl( esi );
     masm->jcc( Assembler::Condition::less, nextArg );                  // y - one extra byte
     // n - 2-3 extra bytes
-    masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
-    masm->movb( Address( esp, esi, Address::times_1 ), ecx );
+    masm->movb( ecx, Address( eax, esi, Address::ScaleFactor::times_1 ) );
+    masm->movb( Address( esp, esi, Address::ScaleFactor::times_1 ), ecx );
     masm->decl( esi );
     masm->jcc( Assembler::Condition::less, nextArg );                  // y - two extra bytes
     // n - three extra bytes
-    masm->movb( ecx, Address( eax, esi, Address::times_1 ) );
-    masm->movb( Address( esp, esi, Address::times_1 ), ecx );
+    masm->movb( ecx, Address( eax, esi, Address::ScaleFactor::times_1 ) );
+    masm->movb( Address( esp, esi, Address::ScaleFactor::times_1 ), ecx );
     masm->jmp( nextArg );                                   // finished
 
     masm->bind( isUnsafe );
 
     masm->movl( eax, Address( esi, MemOopDescriptor::klass_byte_offset() ) );
     masm->movl( eax, Address( eax, KlassOopDescriptor::nonIndexableSizeOffset() ) );
-    masm->leal( esi, Address( esi, eax, Address::times_1, 4 - MEMOOP_TAG ) ); // start of the bytes in the array
+    masm->leal( esi, Address( esi, eax, Address::ScaleFactor::times_1, 4 - MEMOOP_TAG ) ); // start of the bytes in the array
     masm->pushl( esi );
     masm->jmp( nextArg );
 
@@ -1592,7 +1592,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
 
     masm->movl( edi, argArray );                              // start of the oops in the array
     masm->movl( ebx, argCount );
-    masm->leal( ebx, Address( edi, ebx, Address::times_1 ) );   // upper bounds of array
+    masm->leal( ebx, Address( edi, ebx, Address::ScaleFactor::times_1 ) );   // upper bounds of array
 
     masm->movl( edx, esp );                                   // start of size calculation
 
@@ -1651,7 +1651,7 @@ const char * StubRoutines::generate_alien_call_with_args( MacroAssembler * masm 
     masm->movl( esi, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );
 
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );
-    masm->leal( ecx, Address( ecx, esi, Address::times_1, 4 - MEMOOP_TAG ) );
+    masm->leal( ecx, Address( ecx, esi, Address::ScaleFactor::times_1, 4 - MEMOOP_TAG ) );
     // ecx now points to start of alien contents
     masm->movl( esi, Address( ecx ) );
     masm->testl( esi, esi );
@@ -1755,7 +1755,7 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
     masm->movl( esi, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );
 
     masm->movl( esi, Address( esi, KlassOopDescriptor::nonIndexableSizeOffset() ) );
-    masm->leal( ecx, Address( ecx, esi, Address::times_1, 4 - MEMOOP_TAG ) );
+    masm->leal( ecx, Address( ecx, esi, Address::ScaleFactor::times_1, 4 - MEMOOP_TAG ) );
     // ecx now points to start of alien contents
     masm->movl( esi, Address( ecx ) );
     masm->testl( esi, esi );
@@ -1791,7 +1791,7 @@ const char * StubRoutines::generate_alien_call( MacroAssembler * masm, int args 
 
 const char * StubRoutines::PolymorphicInlineCache_stub_entry( int pic_size ) {
     st_assert( _is_initialized, "StubRoutines not initialized yet" );
-    st_assert( 1 <= pic_size and pic_size <= PolymorphicInlineCache::max_nof_entries, "pic size out of range" )
+    st_assert( 1 <= pic_size and pic_size <= static_cast<int>( PolymorphicInlineCache::Consts::max_nof_entries ), "pic size out of range" )
     return _PolymorphicInlineCache_stub_entries[ pic_size ];
 }
 
@@ -1887,7 +1887,7 @@ void StubRoutines::init() {
     _oopifyFloat                  = generateStubRoutine( masm, "oopify_float", generate_oopify_float );
     _alienCallWithArgsEntry       = generateStubRoutine( masm, "alien_call_with_args", generate_alien_call_with_args );
 
-    for ( int pic_size = 1; pic_size <= PolymorphicInlineCache::max_nof_entries; pic_size++ ) {
+    for ( int pic_size = 1; pic_size <= static_cast<int>( PolymorphicInlineCache::Consts::max_nof_entries ); pic_size++ ) {
         _PolymorphicInlineCache_stub_entries[ pic_size ] = generateStubRoutine( masm, "PolymorphicInlineCache stub", generate_PolymorphicInlineCache_stub, pic_size );
     }
 

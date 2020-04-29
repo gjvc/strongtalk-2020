@@ -5,7 +5,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/utilities/objectIDTable.hpp"
-#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
@@ -34,28 +33,28 @@ int VirtualFrameOopPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert(receiver->is_vframe(), "receiver must be VirtualFrame")
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::process, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::process( Oop receiver ) {
     PROLOGUE_1( "process", receiver );
     ASSERT_RECEIVER;
     return VirtualFrameOop( receiver )->process();
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::index, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::index( Oop receiver ) {
     PROLOGUE_1( "index", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( VirtualFrameOop( receiver )->index() );
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::time_stamp, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::time_stamp( Oop receiver ) {
     PROLOGUE_1( "time_stamp", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( VirtualFrameOop( receiver )->time_stamp() );
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::is_smalltalk_activation, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::is_smalltalk_activation( Oop receiver ) {
     PROLOGUE_1( "is_smalltalk_activation", receiver );
     ASSERT_RECEIVER;
 
@@ -70,7 +69,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::is_smalltalk_activation, Oop receiver ) 
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::byte_code_index, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::byte_code_index( Oop receiver ) {
     PROLOGUE_1( "byte_code_index", receiver );
     ASSERT_RECEIVER;
 
@@ -88,7 +87,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::byte_code_index, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::expression_stack, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::expression_stack( Oop receiver ) {
     PROLOGUE_1( "expression_stack", receiver );
     ASSERT_RECEIVER;
 
@@ -110,7 +109,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::expression_stack, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::method, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::method( Oop receiver ) {
     PROLOGUE_1( "method", receiver );
     ASSERT_RECEIVER;
 
@@ -128,7 +127,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::method, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::receiver( Oop receiver ) {
     PROLOGUE_1( "receiver", receiver );
 
     st_assert( receiver->is_vframe(), "receiver must be VirtualFrame" )
@@ -147,7 +146,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::temporaries( Oop receiver ) {
     PROLOGUE_1( "temporaries", receiver );
 
     st_assert( receiver->is_vframe(), "receiver must be VirtualFrame" );
@@ -194,7 +193,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::arguments, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::arguments( Oop receiver ) {
     PROLOGUE_1( "arguments", receiver );
     ASSERT_RECEIVER;
 
@@ -230,7 +229,7 @@ class vframeStream : public byteArrayPrettyPrintStream {
 };
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::pretty_print, Oop receiver ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::pretty_print( Oop receiver ) {
     PROLOGUE_1( "receiver", receiver );
     ASSERT_RECEIVER;
 
@@ -283,7 +282,7 @@ void deoptimize( DeltaProcess * process ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::single_step, Oop activation ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::single_step( Oop activation ) {
     PROLOGUE_1( "single_step", activation );
 
     ProcessOop process = VirtualFrameOop( activation )->process();
@@ -304,7 +303,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::single_step, Oop activation ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::step_next, Oop activation ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::step_next( Oop activation ) {
     PROLOGUE_1( "step_next", activation );
 
     ResourceMark resourceMark;
@@ -332,7 +331,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::step_next, Oop activation ) {
 }
 
 
-PRIM_DECL_1( VirtualFrameOopPrimitives::step_return, Oop activation ) {
+Oop __CALLING_CONVENTION VirtualFrameOopPrimitives::step_return( Oop activation ) {
     PROLOGUE_1( "step_return", activation );
 
     ResourceMark resourceMark;

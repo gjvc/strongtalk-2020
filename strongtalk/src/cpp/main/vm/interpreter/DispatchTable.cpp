@@ -123,7 +123,7 @@ void DispatchTable::reset() {
     for ( int i = 0; i < static_cast<int>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         dispatch_table[ i ] = original_table[ i ];
     }
-    mode = normal_mode;
+    mode = Mode::normal_mode;
 }
 
 
@@ -141,7 +141,7 @@ void DispatchTable::patch_with_sst_stub() {
 void DispatchTable::intercept_for_step( int * fr ) {
     if ( not in_step_mode() ) {
         patch_with_sst_stub();
-        mode = step_mode;
+        mode = Mode::step_mode;
 
         //slr mod - the original value depends on the memory addresses of method bytecodes
         //    being < 0x80000000 as in 32 bit Windows
@@ -157,7 +157,7 @@ void DispatchTable::intercept_for_next( int * fr ) {
     frame_breakpoint = fr;
     if ( not in_next_mode() ) {
         patch_with_sst_stub();
-        mode = next_mode;
+        mode = Mode::next_mode;
     }
 }
 
@@ -192,7 +192,7 @@ void DispatchTable::intercept_for_return( int * fr ) {
                 dispatch_table[ i ] = original_table[ i ];
             }
         }
-        mode = next_mode;
+        mode = Mode::next_mode;
     }
 }
 

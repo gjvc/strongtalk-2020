@@ -3,8 +3,6 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-//#pragma once
-
 #include "vm/primitives/primitives.hpp"
 #include "vm/memory/oopFactory.hpp"
 #include "vm/compiler/Expression.hpp"

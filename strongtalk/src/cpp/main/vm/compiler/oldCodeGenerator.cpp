@@ -742,29 +742,29 @@ static void incCounter() {
 
 static Assembler::Condition mapToCC( BranchOpCode op ) {
     switch ( op ) {
-        case EQBranchOp:
+        case BranchOpCode::EQBranchOp:
             return Assembler::Condition::equal;
-        case NEBranchOp:
+        case BranchOpCode::NEBranchOp:
             return Assembler::Condition::notEqual;
-        case LTBranchOp:
+        case BranchOpCode::LTBranchOp:
             return Assembler::Condition::less;
-        case LEBranchOp:
+        case BranchOpCode::LEBranchOp:
             return Assembler::Condition::lessEqual;
-        case GTBranchOp:
+        case BranchOpCode::GTBranchOp:
             return Assembler::Condition::greater;
-        case GEBranchOp:
+        case BranchOpCode::GEBranchOp:
             return Assembler::Condition::greaterEqual;
-        case LTUBranchOp:
+        case BranchOpCode::LTUBranchOp:
             return Assembler::Condition::below;
-        case LEUBranchOp:
+        case BranchOpCode::LEUBranchOp:
             return Assembler::Condition::belowEqual;
-        case GTUBranchOp:
+        case BranchOpCode::GTUBranchOp:
             return Assembler::Condition::above;
-        case GEUBranchOp:
+        case BranchOpCode::GEUBranchOp:
             return Assembler::Condition::aboveEqual;
-        case VSBranchOp:
+        case BranchOpCode::VSBranchOp:
             return Assembler::Condition::overflow;
-        case VCBranchOp:
+        case BranchOpCode::VCBranchOp:
             return Assembler::Condition::noOverflow;
         default: ShouldNotReachHere();
             return Assembler::Condition::zero;
@@ -1088,7 +1088,7 @@ void DLLNode::gen() {
 
 
 static bool_t producesResult( ArithOpCode op ) {
-    return ( op not_eq TestArithOp ) and ( op not_eq CmpArithOp ) and ( op not_eq tCmpArithOp );
+    return ( op not_eq ArithOpCode::TestArithOp ) and ( op not_eq ArithOpCode::CmpArithOp ) and ( op not_eq ArithOpCode::tCmpArithOp );
 }
 
 
@@ -1147,44 +1147,44 @@ static bool_t setupRegisters( PseudoRegister * dst, PseudoRegister * arg1, Arith
 static void arithRROp( ArithOpCode op, Register x, Register y ) {
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
-        case TestArithOp:
+        case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case tAddArithOp  : // fall through
-        case AddArithOp:
+        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case tSubArithOp  : // fall through
-        case SubArithOp:
+        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
-        case tMulArithOp:
+        case ArithOpCode::tMulArithOp:
             theMacroAssembler->sarl( x, TAG_SIZE );
-        case MulArithOp:
+        case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, y );
             break;
-        case tDivArithOp  : // fall through
-        case DivArithOp  : Unimplemented();
+        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case tModArithOp  : // fall through
-        case ModArithOp  : Unimplemented();
+        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case tAndArithOp  : // fall through
-        case AndArithOp:
+        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case tOrArithOp   : // fall through
-        case OrArithOp:
+        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case tXOrArithOp  : // fall through
-        case XOrArithOp:
+        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
-        case tShiftArithOp: Unimplemented();
-        case ShiftArithOp: Unimplemented();
-        case tCmpArithOp  : // fall through
-        case CmpArithOp:
+        case ArithOpCode::tShiftArithOp: Unimplemented();
+        case ArithOpCode::ShiftArithOp: Unimplemented();
+        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
         default           : ShouldNotReachHere();
@@ -1195,41 +1195,41 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
 static void arithRCOp( ArithOpCode op, Register x, int y ) {
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
-        case TestArithOp:
+        case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case tAddArithOp  : // fall through
-        case AddArithOp:
+        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case tSubArithOp  : // fall through
-        case SubArithOp:
+        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
-        case tMulArithOp:
+        case ArithOpCode::tMulArithOp:
             y = arithmetic_shift_right( y, TAG_SIZE );
-        case MulArithOp:
+        case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, x, y );
             break;
-        case tDivArithOp  : // fall through
-        case DivArithOp  : Unimplemented();
+        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case tModArithOp  : // fall through
-        case ModArithOp  : Unimplemented();
+        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case tAndArithOp  : // fall through
-        case AndArithOp:
+        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case tOrArithOp   : // fall through
-        case OrArithOp:
+        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case tXOrArithOp  : // fall through
-        case XOrArithOp:
+        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
-        case tShiftArithOp:
+        case ArithOpCode::tShiftArithOp:
             if ( y < 0 ) {
                 // shift right
                 int shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
@@ -1241,9 +1241,9 @@ static void arithRCOp( ArithOpCode op, Register x, int y ) {
                 theMacroAssembler->shll( x, shift_count );
             }
             break;
-        case ShiftArithOp: Unimplemented();
-        case tCmpArithOp  : // fall through
-        case CmpArithOp:
+        case ArithOpCode::ShiftArithOp: Unimplemented();
+        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
         default           : ShouldNotReachHere();
@@ -1254,7 +1254,7 @@ static void arithRCOp( ArithOpCode op, Register x, int y ) {
 static void arithROOp( ArithOpCode op, Register x, Oop y ) {
     st_assert( not y->is_smi(), "check this code" );
     switch ( op ) {
-        case CmpArithOp:
+        case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
         default           : ShouldNotReachHere();
@@ -1364,22 +1364,22 @@ void ArithRCNode::gen() {
 
 static void floatArithRROp( ArithOpCode op ) {
     switch ( op ) {
-        case fAddArithOp:
+        case ArithOpCode::fAddArithOp:
             theMacroAssembler->faddp();
             break;
-        case fSubArithOp:
+        case ArithOpCode::fSubArithOp:
             theMacroAssembler->fsubp();
             break;
-        case fMulArithOp:
+        case ArithOpCode::fMulArithOp:
             theMacroAssembler->fmulp();
             break;
-        case fDivArithOp:
+        case ArithOpCode::fDivArithOp:
             theMacroAssembler->fdivp();
             break;
-        case fModArithOp:
+        case ArithOpCode::fModArithOp:
             theMacroAssembler->fprem();
             break;
-        case fCmpArithOp:
+        case ArithOpCode::fCmpArithOp:
             theMacroAssembler->fcompp();
             break;
         default         : ShouldNotReachHere();
@@ -1389,8 +1389,8 @@ static void floatArithRROp( ArithOpCode op ) {
 
 void FloatArithRRNode::gen() {
     BasicNode::gen();
-    bool_t   noResult = ( _op == fCmpArithOp );
-    bool_t   exchange = ( _op == fModArithOp or _op == fCmpArithOp );
+    bool_t   noResult = ( _op == ArithOpCode::fCmpArithOp );
+    bool_t   exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
     Register base     = temp3;
     set_floats_base( this, base );
     fload( _src, base, temp1 );
@@ -1398,9 +1398,9 @@ void FloatArithRRNode::gen() {
     if ( exchange )
         theMacroAssembler->fxch();    // is paired with next instruction => no extra cycles
     floatArithRROp( _op );
-    if ( _op == fCmpArithOp ) {
+    if ( _op == ArithOpCode::fCmpArithOp ) {
         // operation set FPU condition codes -> result is FPU status word
-        st_assert( not Mapping::isFloatTemporary( _dest->_location ), "fCmpArithOp doesn't produce a float" );
+        st_assert( not Mapping::isFloatTemporary( _dest->_location ), "ArithOpCode::fCmpArithOp doesn't produce a float" );
         if ( _dest->_location.isRegisterLocation() and _dest->_location.number() == eax.number() ) {
             // store FPU status word in eax
             theMacroAssembler->fwait();
@@ -1432,16 +1432,16 @@ static Oop oopify_float() {
 static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
     st_assert( reg not_eq temp, "registers must be different" );
     switch ( op ) {
-        case fNegArithOp:
+        case ArithOpCode::fNegArithOp:
             theMacroAssembler->fchs();
             break;
-        case fAbsArithOp:
+        case ArithOpCode::fAbsArithOp:
             theMacroAssembler->fabs();
             break;
-        case fSqrArithOp:
+        case ArithOpCode::fSqrArithOp:
             theMacroAssembler->fmul( 0 );
             break;
-        case f2OopArithOp  : {
+        case ArithOpCode::f2OopArithOp  : {
             theMacroAssembler->pushl( reg );                // reserve Space for the result
             theMacroAssembler->pushad();                    // make sure no register is destroyed (no scavenge)
 //	theMacroAssm->int3();
@@ -1452,7 +1452,7 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
             theMacroAssembler->popl( reg );                // get result
         }
             break;
-        case f2FloatArithOp: {
+        case ArithOpCode::f2FloatArithOp: {
             Label is_smi, is_float, done;
             theMacroAssembler->test( reg, MEMOOP_TAG );            // check if smi_t
             theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
@@ -2315,18 +2315,18 @@ void ArrayAtNode::gen() {
         case byte_at:
             theMacroAssembler->sarl( index, TAG_SIZE );    // adjust index
             theMacroAssembler->xorl( t, t );            // clear destination register
-            theMacroAssembler->movb( t, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+            theMacroAssembler->movb( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             theMacroAssembler->shll( t, TAG_SIZE );        // make result a smi_t
             break;
         case double_byte_at:
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );    // adjust index
-            theMacroAssembler->movl( t, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+            theMacroAssembler->movl( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             theMacroAssembler->andl( t, 0x0000FFFF );    // clear upper 2 bytes
             theMacroAssembler->shll( t, TAG_SIZE );        // make result a smi_t
             break;
         case character_at: {
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );// adjust index
-            theMacroAssembler->movl( t, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+            theMacroAssembler->movl( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             theMacroAssembler->andl( t, 0x0000FFFF );    // clear upper 2 bytes
             // use t as index into asciiCharacters()
             // check index first, must be 0 <= t < asciiCharacters()->length()
@@ -2335,12 +2335,12 @@ void ArrayAtNode::gen() {
             jcc_error( this, Assembler::Condition::aboveEqual, indexOutOfBounds );
             // get character out of chars array
             theMacroAssembler->movl( temp1, chars );
-            theMacroAssembler->movl( t, Address( temp1, t, Address::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
+            theMacroAssembler->movl( t, Address( temp1, t, Address::ScaleFactor::times_4, byteOffset( chars->klass()->klass_part()->non_indexable_size() + 1 ) ) );
         }
             break;
         case object_at:
             // smi_t index is already shifted the right way => no index adjustment necessary
-            theMacroAssembler->movl( t, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+            theMacroAssembler->movl( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             break;
         default: ShouldNotReachHere();
             break;
@@ -2412,7 +2412,7 @@ void ArrayAtPutNode::gen() {
                 jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );
             }
             theMacroAssembler->sarl( index, TAG_SIZE );    // adjust index
-            theMacroAssembler->movb( Address( array, index, Address::times_1, byteOffset( _dataOffset ) ), element );
+            theMacroAssembler->movb( Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ), element );
             st_assert( not _needs_store_check, "just checking" );
             break;
         case double_byte_at_put:
@@ -2426,7 +2426,7 @@ void ArrayAtPutNode::gen() {
                 jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );
             }
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );    // adjust index
-            theMacroAssembler->leal( array, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+            theMacroAssembler->leal( array, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             st_assert( temp2 not_eq array and temp2 not_eq element, "check this code" );
             theMacroAssembler->movl( temp2, element );    // copy element (since element might be used afterwards)
             theMacroAssembler->shrl( temp2, 8 );        // shift 2nd byte into low-byte position
@@ -2440,11 +2440,11 @@ void ArrayAtPutNode::gen() {
         case object_at_put:
             // smi_t index is already shifted the right way => no index adjustment necessary
             if ( _needs_store_check ) {
-                theMacroAssembler->leal( array, Address( array, index, Address::times_1, byteOffset( _dataOffset ) ) );
+                theMacroAssembler->leal( array, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
                 theMacroAssembler->movl( Address( array ), element );
                 theMacroAssembler->store_check( array, temp3 );
             } else {
-                theMacroAssembler->movl( Address( array, index, Address::times_1, byteOffset( _dataOffset ) ), element );
+                theMacroAssembler->movl( Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ), element );
             }
             break;
         default: ShouldNotReachHere();
@@ -2521,7 +2521,7 @@ void InlinedPrimitiveNode::gen() {
             theMacroAssembler->movl( proxy, Address( proxy, pointer_offset ) );    // unbox proxy
             theMacroAssembler->sarl( index, TAG_SIZE );                // adjust index
             theMacroAssembler->xorl( result, result );                // clear destination register
-            theMacroAssembler->movb( result, Address( proxy, index, Address::times_1, 0 ) );
+            theMacroAssembler->movb( result, Address( proxy, index, Address::ScaleFactor::times_1, 0 ) );
             theMacroAssembler->shll( result, TAG_SIZE );                // make result a smi_t
             // continue
             st_assert( result not_eq temp1 and result not_eq temp2, "just checking" );
@@ -2574,10 +2574,10 @@ void InlinedPrimitiveNode::gen() {
             if ( const_val ) {
                 SMIOop constant = SMIOop( ( ( ConstPseudoRegister * ) _arg2 )->constant );
                 st_assert( constant->is_smi(), "should be a smi_t" );
-                theMacroAssembler->movb( Address( proxy, index, Address::times_1, 0 ), constant->value() & 0xFF );
+                theMacroAssembler->movb( Address( proxy, index, Address::ScaleFactor::times_1, 0 ), constant->value() & 0xFF );
             } else {
                 theMacroAssembler->sarl( value, TAG_SIZE );                // adjust value
-                theMacroAssembler->movb( Address( proxy, index, Address::times_1, 0 ), value );
+                theMacroAssembler->movb( Address( proxy, index, Address::ScaleFactor::times_1, 0 ), value );
             }
             // handle error cases if not uncommon
             if ( canFail() and not next( 1 )->isUncommonNode() ) {

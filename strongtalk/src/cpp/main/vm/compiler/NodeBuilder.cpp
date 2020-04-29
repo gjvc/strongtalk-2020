@@ -1266,7 +1266,7 @@ void NodeBuilder::float_floatify( Floats::Function f, int fno ) {
     } else {
         // put in a type test - fix this!
     }
-    append( NodeFactory::FloatUnaryArithNode( float_at( fno ), t->preg(), f2FloatArithOp ) );
+    append( NodeFactory::FloatUnaryArithNode( float_at( fno ), t->preg(), ArithOpCode::f2FloatArithOp ) );
 }
 
 
@@ -1304,13 +1304,13 @@ void NodeBuilder::float_unary( Floats::Function f, int fno ) {
     ArithOpCode op;
     switch ( f ) {
         case Floats::abs:
-            op = fAbsArithOp;
+            op = ArithOpCode::fAbsArithOp;
             break;
         case Floats::negated:
-            op = fNegArithOp;
+            op = ArithOpCode::fNegArithOp;
             break;
         case Floats::squared:
-            op = fSqrArithOp;
+            op = ArithOpCode::fSqrArithOp;
             break;
         case Floats::sqrt    : Unimplemented();
         case Floats::sin    : Unimplemented();
@@ -1331,19 +1331,19 @@ void NodeBuilder::float_binary( Floats::Function f, int fno ) {
     ArithOpCode op;
     switch ( f ) {
         case Floats::add:
-            op = fAddArithOp;
+            op = ArithOpCode::fAddArithOp;
             break;
         case Floats::subtract:
-            op = fSubArithOp;
+            op = ArithOpCode::fSubArithOp;
             break;
         case Floats::multiply:
-            op = fMulArithOp;
+            op = ArithOpCode::fMulArithOp;
             break;
         case Floats::divide:
-            op = fDivArithOp;
+            op = ArithOpCode::fDivArithOp;
             break;
         case Floats::modulo:
-            op = fModArithOp;
+            op = ArithOpCode::fModArithOp;
             break;
         default         : fatal1( "bad float binary code %d", f );
     }
@@ -1362,13 +1362,13 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
         case Floats::is_zero: // fall through
         case Floats::is_not_zero: {
             ConstPseudoRegister * zero = new_ConstPReg( _scope, oopFactory::new_double( 0.0 ) );
-            NodeFactory::FloatArithRRNode( new NoResultPseudoRegister( _scope ), src, fCmpArithOp, zero );
-            BranchOpCode cond = f == Floats::is_zero ? EQBranchOp : NEBranchOp;
+            NodeFactory::FloatArithRRNode( new NoResultPseudoRegister( _scope ), src, ArithOpCode::fCmpArithOp, zero );
+            BranchOpCode cond = f == Floats::is_zero ? BranchOpCode::EQBranchOp : BranchOpCode::NEBranchOp;
             _expressionStack->push( PrimitiveInliner::generate_cond( cond, this, res ), scope(), scope()->byteCodeIndex() );
         }
             break;
         case Floats::oopify: {
-            append( NodeFactory::FloatUnaryArithNode( res, src, f2OopArithOp ) );
+            append( NodeFactory::FloatUnaryArithNode( res, src, ArithOpCode::f2OopArithOp ) );
             Expression * result = new KlassExpression( doubleKlassObj, res, current() );
             _expressionStack->push( result, scope(), scope()->byteCodeIndex() );
         }
@@ -1409,15 +1409,15 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
     PseudoRegister               * op1        = float_at( fno );
     PseudoRegister               * op2        = float_at( fno + 1 );
     SinglyAssignedPseudoRegister * fpu_status = new SinglyAssignedPseudoRegister( _scope, Mapping::asLocation( eax ), false, false, byteCodeIndex(), byteCodeIndex() );
-    append( NodeFactory::FloatArithRRNode( fpu_status, op1, fCmpArithOp, op2 ) );
-    append( NodeFactory::ArithRCNode( new NoResultPseudoRegister( _scope ), fpu_status, TestArithOp, mask ) );
+    append( NodeFactory::FloatArithRRNode( fpu_status, op1, ArithOpCode::fCmpArithOp, op2 ) );
+    append( NodeFactory::ArithRCNode( new NoResultPseudoRegister( _scope ), fpu_status, ArithOpCode::TestArithOp, mask ) );
     BranchOpCode cc2;
     switch ( cond ) {
         case Assembler::Condition::zero:
-            cc2 = EQBranchOp;
+            cc2 = BranchOpCode::EQBranchOp;
             break;
         case Assembler::Condition::notZero:
-            cc2 = NEBranchOp;
+            cc2 = BranchOpCode::NEBranchOp;
             break;
         default                : ShouldNotReachHere();
     }

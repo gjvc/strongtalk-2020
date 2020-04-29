@@ -225,11 +225,11 @@ const char * CompiledLoop::findUpperBound() {
     // Now see if it's a simple comparison involving the loop variable
     // and make an initial guess about the loop variable.
     // NB: code generator inverts loop condition, i.e., branch leaves loop
-    if ( op == LTBranchOp or op == LEBranchOp ) {
+    if ( op == BranchOpCode::LTBranchOp or op == BranchOpCode::LEBranchOp ) {
         // upperBound > loopVar
         _loopVar    = operand;
         _upperBound = n->src();
-    } else if ( op == GTBranchOp or op == GEBranchOp ) {
+    } else if ( op == BranchOpCode::GTBranchOp or op == BranchOpCode::GEBranchOp ) {
         // loopVar < upperBound
         _loopVar    = n->src();
         _upperBound = operand;
@@ -359,7 +359,7 @@ const char * CompiledLoop::checkLoopVar() {
         return "loopVar def not an arithmetic operation";
     }
     _incNode            = n2;
-    if ( op not_eq tAddArithOp and op not_eq tSubArithOp )
+    if ( op not_eq ArithOpCode::tAddArithOp and op not_eq ArithOpCode::tSubArithOp )
         return "loopVar def isn't an add/sub";
     if ( _incNode->src() == _loopVar ) {
         if ( not isIncrement( operand, op ) )
@@ -374,7 +374,7 @@ const char * CompiledLoop::checkLoopVar() {
     // at this point, we finally know for sure whether the loop is counting up or down
     // check that loop is bounded at all
     BranchOpCode branchOp          = _loopBranch->op();
-    bool_t       loopVarMustBeLeft = ( branchOp == GTBranchOp or branchOp == GEBranchOp ) ^not _isCountingUp;
+    bool_t       loopVarMustBeLeft = ( branchOp == BranchOpCode::GTBranchOp or branchOp == BranchOpCode::GEBranchOp ) ^not _isCountingUp;
     NonTrivialNode * compare = ( NonTrivialNode * ) _loopBranch->firstPrev();
     if ( loopVarMustBeLeft not_eq ( compare->src() == _loopVar ) ) {
         return "loopVar is on wrong side of comparison (loop not bounded)";
@@ -391,7 +391,7 @@ bool_t CompiledLoop::isIncrement( PseudoRegister * p, ArithOpCode op ) {
         Oop c         = ( ( ConstPseudoRegister * ) p )->constant;
         if ( not c->is_smi() )
             return false;
-        _isCountingUp = ( SMIOop( c )->value() > 0 ) ^ ( op == tSubArithOp );
+        _isCountingUp = ( SMIOop( c )->value() > 0 ) ^ ( op == ArithOpCode::tSubArithOp );
         return true;
     } else {
         // fix this: need to check sign in loop header
@@ -492,7 +492,7 @@ void CompiledLoop::removeLoopVarOverflow() {
     Node * n = _incNode->next();
     st_assert( n->isBranchNode(), "must be branch" );
     BranchNode * overflowCheck = ( BranchNode * ) n;
-    st_assert( overflowCheck->op() == VSBranchOp, "should be overflow check" );
+    st_assert( overflowCheck->op() == BranchOpCode::VSBranchOp, "should be overflow check" );
     if ( CompilerDebug or PrintLoopOpts ) {
         cout( PrintLoopOpts )->print( "*removing overflow check at node N%d\n", overflowCheck->id() );
     }

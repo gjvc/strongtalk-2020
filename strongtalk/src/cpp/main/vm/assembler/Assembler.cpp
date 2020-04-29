@@ -103,27 +103,27 @@ void Assembler::emit_arith( int op1, int op2, Register dst, Register src ) {
 void Assembler::emit_operand( Register reg, Register base, Register index, Address::ScaleFactor scale, int disp, RelocationInformation::RelocationType rtype ) {
     if ( base.isValid() ) {
         if ( index.isValid() ) {
-            st_assert( scale not_eq Address::no_scale, "inconsistent address" );
+            st_assert( scale not_eq Address::ScaleFactor::no_scale, "inconsistent address" );
             // [base + index*scale + disp]
             if ( disp == 0 and rtype == RelocationInformation::RelocationType::none ) {
                 // [base + index*scale]
                 // [00 reg 100][ss index base]
                 st_assert( index not_eq esp and base not_eq ebp, "illegal addressing mode" );
                 emit_byte( 0x04 | reg.number() << 3 );
-                emit_byte( scale << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
             } else if ( is8bit( disp ) and rtype == RelocationInformation::RelocationType::none ) {
                 // [base + index*scale + imm8]
                 // [01 reg 100][ss index base] imm8
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x44 | reg.number() << 3 );
-                emit_byte( scale << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_byte( disp & 0xFF );
             } else {
                 // [base + index*scale + imm32]
                 // [10 reg 100][ss index base] imm32
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x84 | reg.number() << 3 );
-                emit_byte( scale << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_data( disp, rtype );
             }
         } else if ( base == esp ) {
@@ -168,12 +168,12 @@ void Assembler::emit_operand( Register reg, Register base, Register index, Addre
         }
     } else {
         if ( index.isValid() ) {
-            st_assert( scale not_eq Address::no_scale, "inconsistent address" );
+            st_assert( scale not_eq Address::ScaleFactor::no_scale, "inconsistent address" );
             // [index*scale + disp]
             // [00 reg 100][ss index 101] imm32
             st_assert( index not_eq esp, "illegal addressing mode" );
             emit_byte( 0x04 | reg.number() << 3 );
-            emit_byte( scale << 6 | index.number() << 3 | 0x05 );
+            emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | 0x05 );
             emit_data( disp, rtype );
         } else {
             // [disp]
@@ -751,25 +751,25 @@ void Assembler::bind_to( Label & L, int pos ) {
         int          fixup_pos = L.pos();
         int          imm32     = 0;
         switch ( disp.type() ) {
-            case Displacement::call: {
+            case Displacement::Type::call: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE8, "call expected" );
                 imm32 = pos - ( fixup_pos + sizeof( int ) );
             }
                 break;
-            case Displacement::absolute_jump: {
+            case Displacement::Type::absolute_jump: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE9, "jmp expected" );
                 imm32          = pos - ( fixup_pos + sizeof( int ) );
                 if ( imm32 == 0 and EliminateJumpsToJumps )
                     tellRobert = true;
             }
                 break;
-            case Displacement::conditional_jump: {
+            case Displacement::Type::conditional_jump: {
                 st_assert( byte_at( fixup_pos - 2 ) == 0x0F, "jcc expected" );
                 st_assert( byte_at( fixup_pos - 1 ) == ( 0x80 | disp.info() ), "jcc expected" );
                 imm32 = pos - ( fixup_pos + sizeof( int ) );
             }
                 break;
-            case Displacement::ic_info: {
+            case Displacement::Type::ic_info: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xA9, "test eax expected" );
                 int offs = pos - ( fixup_pos - InlineCacheInfo::info_offset );
                 st_assert( ( ( offs << InlineCacheInfo::number_of_flags ) >> InlineCacheInfo::number_of_flags ) == offs, "NonLocalReturn offset out of bounds" );
@@ -829,7 +829,7 @@ void Assembler::bind( Label & L ) {
         }
         st_assert( not _unbound_label.is_unbound(), "assembler error" );
         // try to eliminate jumps to next instruction
-        while ( L.is_unbound() and ( L.pos() + int( sizeof( int ) ) == offset() ) and ( Displacement( long_at( L.pos() ) ).type() == Displacement::absolute_jump ) ) {
+        while ( L.is_unbound() and ( L.pos() + int( sizeof( int ) ) == offset() ) and ( Displacement( long_at( L.pos() ) ).type() == Displacement::Type::absolute_jump ) ) {
             // previous instruction is jump jumping immediately after it => eliminate it
             constexpr int long_size = 5;
             st_assert( byte_at( offset() - long_size ) == 0xE9, "jmp expected" );
@@ -866,7 +866,7 @@ void Assembler::call( Label & L ) {
     } else {
         // 1110 1000 #32-bit disp
         emit_byte( 0xE8 );
-        Displacement disp( L, Displacement::call, 0 );
+        Displacement disp( L, Displacement::Type::call, 0 );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }
@@ -936,7 +936,7 @@ void Assembler::jmp( Label & L ) {
         }
         // 1110 1001 #32-bit disp
         emit_byte( 0xE9 );
-        Displacement disp( L, Displacement::absolute_jump, 0 );
+        Displacement disp( L, Displacement::Type::absolute_jump, 0 );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }
@@ -966,7 +966,7 @@ void Assembler::jcc( Condition cc, Label & L ) {
         //       is the same however, seems to be rather unlikely case.
         emit_byte( 0x0F );
         emit_byte( 0x80 | static_cast<int>(cc) );
-        Displacement disp( L, Displacement::conditional_jump, static_cast<int>(cc) );
+        Displacement disp( L, Displacement::Type::conditional_jump, static_cast<int>(cc) );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }
@@ -992,7 +992,7 @@ void Assembler::ic_info( Label & L, int flags ) {
         emit_long( ( offs << InlineCacheInfo::number_of_flags ) | flags );
     } else {
         emit_byte( 0xA9 );
-        Displacement disp( L, Displacement::ic_info, flags );
+        Displacement disp( L, Displacement::Type::ic_info, flags );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }

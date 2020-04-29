@@ -16,8 +16,8 @@ class MissingMethodBuilder : public ResourceObject {
 
     private:
         HeapCodeBuffer _buffer;
-        SymbolOop _selector;
-        MethodOop _method;
+        SymbolOop      _selector;
+        MethodOop      _method;
 
     public:
         MissingMethodBuilder( SymbolOop selector ) :

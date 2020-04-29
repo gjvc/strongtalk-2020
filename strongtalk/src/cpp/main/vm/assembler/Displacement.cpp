@@ -53,16 +53,16 @@ Displacement::Displacement( Label & L, Displacement::Type type, int info ) {
 void Displacement::print() {
     const char * s;
     switch ( type() ) {
-        case call:
+        case Displacement::Type::call:
             s = "call";
             break;
-        case absolute_jump:
+        case Displacement::Type::absolute_jump:
             s = "jmp ";
             break;
-        case conditional_jump:
+        case Displacement::Type::conditional_jump:
             s = "jcc ";
             break;
-        case ic_info:
+        case Displacement::Type::ic_info:
             s = "nlr ";
             break;
         default:
@@ -80,9 +80,9 @@ void Displacement::init( Label & L, Displacement::Type type, int info ) {
         next = L.pos();
         st_assert( next > 0, "Displacements must be at positions > 0" );
     }
-    st_assert( ( next & ~next_mask ) == 0, "next field too small" );
-    st_assert( ( type & ~type_mask ) == 0, "type field too small" );
-    st_assert( ( info & ~info_mask ) == 0, "info field too small" );
-    _data = ( next << next_pos ) | ( type << type_pos ) | ( info << info_pos );
+//    st_assert( ( next & ~next_mask ) == 0, "next field too small" );
+//    st_assert( ( type & ~type_mask ) == 0, "type field too small" );
+//    st_assert( ( info & ~info_mask ) == 0, "info field too small" );
+    _data = ( next << next_pos ) | ( static_cast<int>(type) << static_cast<int>(type_pos) ) | ( info << info_pos );
 }
 
