@@ -21,6 +21,7 @@ message ( STATUS "CMAKE_VERSION = [${CMAKE_VERSION}]" )
 message ( STATUS "CMAKE_C_COMPILER = [${CMAKE_C_COMPILER}]" )
 message ( STATUS "CMAKE_CXX_COMPILER = [${CMAKE_CXX_COMPILER}]" )
 
+set ( CMAKE_SYSTEM_NAME Windows )
 
 # ccache ----------------------------------------------------------------------
 
@@ -43,14 +44,11 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
         set ( gcc-version ${gcc-version-major}-${gcc-version-minor} )
         set ( machine-name i686 )
         set ( runtime-platform w64-mingw32 )
-        set ( runtime-variant -posix )
-        set ( word-size 32 )
+        set ( runtime-variant posix )
 
-        set( mingw-w64-link-flags -L /usr/${machine-name}-${runtime-platform}/lib -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -Wl,-Bdynamic,--no-whole-archive )
-        set( platform-link-flags ${mingw-w64-link-flags} )
+        set ( platform-link-flags -L /usr/${machine-name}-${runtime-platform}/lib -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -Wl,-Bdynamic,--no-whole-archive )
 
     endif ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
-
 
 
     if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
@@ -61,20 +59,17 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
         set ( machine-name i686 )
         set ( runtime-platform linux-gnu )
         set ( runtime-variant ${gcc-version-major} )
-        set ( word-size 32 )
 
-        set ( libgcc-prefix /usr/lib/gcc/${toolchain-name}/${gcc-version-major}/${word-size} ) # /usr/lib/gcc/x86_64-linux-gnu/9/32/
-        set( platform-link-flags -ldl -lpthread -lreadline )
+        set ( platform-link-flags -ldl -lpthread -lreadline )
 
     endif ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
 
 
     set ( toolchain-name ${machine-name}-${runtime-platform} ) # i686-w64-mingw32
     set ( runtime-prefix /usr/${toolchain-name} ) # i686-w64-mingw32
-    set ( libgcc-prefix /usr/lib/gcc/${toolchain-name}/${gcc-version}-${runtime-variant} ) # i686-w64-mingw323 9.3 posix
 
-    set ( gcc /usr/bin/${toolchain-name}-gcc-${runtime-variant} ) # i686-w64-mingw32 posix
-    set ( g++ /usr/bin/${toolchain-name}-g++-${runtime-variant} ) # i686-w64-mingw32 posix
+    set ( gcc /usr/bin/${toolchain-name}-gcc-${runtime-variant} ) # i686-w64-mingw32-gcc-posix
+    set ( g++ /usr/bin/${toolchain-name}-g++-${runtime-variant} ) # i686-w64-mingw32-g++-posix
 
     set ( CMAKE_FIND_ROOT_PATH ${runtime-prefix} )
     set ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
@@ -100,7 +95,6 @@ set ( cpp-main-dir ${cpp-src-dir}/main )
 set ( cpp-test-dir ${cpp-src-dir}/test )
 
 
-
 # cmake -----------------------------------------------------------------------
 
 set ( CMAKE_CXX_STANDARD 20 )
@@ -120,26 +114,18 @@ message ( STATUS ">>> ${CMAKE_CXX_COMPILER_ID}" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
 
-if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
-    # ...clang...
-
-elseif ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
     add_compile_options ( -fpermissive )
     add_compile_options ( -fcheck-new )
     add_compile_options ( -fconcepts )
     add_compile_options ( -O0 )
     add_compile_options ( -g3 )
-    add_compile_options ( -ggdb )
     add_compile_options ( -gdwarf-2 )
     add_compile_options ( -m32 )
-    add_compile_options ( -save-temps )
 
     add_link_options ( -m32 )
     add_link_options ( -static-libgcc )
     add_link_options ( -static-libstdc++ )
-
-elseif ( CMAKE_CXX_COMPILER_ID STREQUAL "Intel" )
-    # ...Intel...
 
 elseif ( CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" )
     # ...MSVC...
@@ -151,7 +137,6 @@ endif ()
 
 file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" )
 list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
-
 
 
 # library ---------------------------------------------------------------------
@@ -175,6 +160,7 @@ target_link_libraries ( st20-main-binary
                                 -Wl,--whole-archive
                                     -Wl,--start-group
                                         st20-main-library-static
+                                        winpthread
                                     -Wl,--end-group
                                 -Wl,--no-whole-archive
                             -Wl,-Bdynamic
@@ -215,7 +201,7 @@ target_link_libraries ( st20-test-binary
                                         st20-test-library-static
                                         gtest
                                     -Wl,--end-group
-                                -Wl,--no-whole-archive
+                                    -Wl,--no-whole-archive
                             -Wl,-Bdynamic
                         -Wl,--as-needed
                         ${platform-link-flags}
@@ -233,7 +219,7 @@ message ( STATUS "" )
 
 # ccache ----------------------------------------------------------------------
 
-set( ccache-show-stats-command CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/var/ccache ccache --show-stats )
-set( ccache-zero-stats-command CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/var/ccache ccache --zero-stats )
+set ( ccache-show-stats-command CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/var/ccache ccache --show-stats )
+set ( ccache-zero-stats-command CCACHE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/var/ccache ccache --zero-stats )
 add_custom_command ( TARGET st20-test-binary POST_BUILD COMMAND ${ccache-show-stats-command} VERBATIM )
 add_custom_command ( TARGET st20-main-binary POST_BUILD COMMAND ${ccache-show-stats-command} VERBATIM )

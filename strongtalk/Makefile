@@ -366,14 +366,14 @@ include $(wildcard $(strongtalk-main-lib-depends))
  
 $(strongtalk-main-exe) : $(strongtalk-main-lib-objects) $(strongtalk-main-exe-objects)
 	$(g++) \
-		-o $(strongtalk-main-exe) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
 		$(strongtalk-main-lib-objects) \
 		$(strongtalk-main-exe-objects) \
 		$(libnasm-a-flags) \
 		$(libudis86-a-flags) \
-		$(platform-flags)
+		$(platform-flags) \
+		-o $(strongtalk-main-exe)
 
 $(strongtalk-main-exe-depends) :
 include $(wildcard $(strongtalk-main-exe-depends))
@@ -395,7 +395,6 @@ $(strongtalk-test-exe) : $(strongtalk-test-exe-objects) $(strongtalk-main-lib-ob
 	$(g++) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
-		$(strongtalk-objects) \
 		$(strongtalk-test-exe-objects) \
 		$(strongtalk-main-lib-objects) \
 		$(libudis86-a-flags) \
@@ -467,7 +466,7 @@ spdlog :
 # udis86 ----------------------------------------------------------------------
 
 udis86 :
-	cd $(ROOT)/ext/udis86 && make distclean
+	-cd $(ROOT)/ext/udis86 && make distclean
 	cd $(ROOT)/ext/udis86 && ./configure --host $(machine-name)-$(runtime-platform) --prefix $(ROOT)/$(udis86-object-dir)
 	cd $(ROOT)/ext/udis86 && make install
 
