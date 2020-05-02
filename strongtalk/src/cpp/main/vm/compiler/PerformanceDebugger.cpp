@@ -96,7 +96,7 @@ void PerformanceDebugger::report_context( InlinedScope * s ) {
     int                          nused   = 0;
     for ( int                    i       = 0; i < len; i++ ) {
         PseudoRegister * r = temps->at( i )->preg();
-        if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPReg() and not r->isUnused() ) )
+        if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPseudoRegister() and not r->isUnused() ) )
             nused++;
     }
     if ( nused == 0 ) {
@@ -107,7 +107,7 @@ void PerformanceDebugger::report_context( InlinedScope * s ) {
             PseudoRegister * r = temps->at( j )->preg();
             if ( r->uplevelR() or r->uplevelW() ) {
                 _stringStream->print( "%d ", j );
-            } else if ( r->isBlockPReg() and not r->isUnused() ) {
+            } else if ( r->isBlockPseudoRegister() and not r->isUnused() ) {
                 _stringStream->print( "%d (non-inlined block)", j );
             }
         }

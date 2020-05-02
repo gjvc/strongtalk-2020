@@ -287,15 +287,14 @@ void Floats::init( MacroAssembler * masm ) {
     if ( is_initialized() )
         return;
 
-    _console->print_cr( "yes" );
     _console->print_cr( "%%system-init:  Floats::init" );
     _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size() );
     _console->print_cr( "%%system-init: number_of_functions %ld", number_of_functions );
-//    st_assert( _function_names.size() == number_of_functions, "Floats: number of _functions_names not equal number_of_functions" );
-    _console->print_cr( "hello" );
-//    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq number_of_functions ) {
-//        fatal( "Floats: number of _functions_names not equal number_of_functions" );
-//    }
+
+    st_assert( _function_names.size() == number_of_functions, "Floats: number of _functions_names not equal number_of_functions" );
+    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq number_of_functions ) {
+        st_fatal( "Floats: number of _functions_names not equal number_of_functions" );
+    }
 
     // pre-initialize whole table
     // (make sure there's an entry for each index so that illegal indices

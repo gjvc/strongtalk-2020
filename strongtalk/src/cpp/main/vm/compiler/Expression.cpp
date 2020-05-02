@@ -538,7 +538,7 @@ Expression * KlassExpression::shallowCopy( PseudoRegister * p, Node * n ) const 
 
 
 Expression * BlockExpression::shallowCopy( PseudoRegister * p, Node * n ) const {
-    if ( p->isBlockPReg() ) {
+    if ( p->isBlockPseudoRegister() ) {
         return new BlockExpression( ( BlockPseudoRegister * ) p, n );
     } else {
         // remove block info (might be a performance bug -- should keep
@@ -702,7 +702,7 @@ void ExpressionStack::push( Expression * expr, InlinedScope * currentScope, int 
     // Set r's startByteCodeIndex if it is an expr stack entry and not already set,
     // currentScope is the scope doing the push.
     PseudoRegister * r = expr->preg();
-    if ( r->isSAPReg() ) {
+    if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister * sr = ( SinglyAssignedPseudoRegister * ) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
@@ -722,7 +722,7 @@ void ExpressionStack::push2nd( Expression * expr, InlinedScope * currentScope, i
     // Set r's startByteCodeIndex if it is an expr stack entry and not already set,
     // currentScope is the scope doing the push.
     PseudoRegister * r = expr->preg();
-    if ( r->isSAPReg() ) {
+    if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister * sr = ( SinglyAssignedPseudoRegister * ) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
@@ -744,7 +744,7 @@ void ExpressionStack::assign_top( Expression * expr ) {
 Expression * ExpressionStack::pop() {
     Expression     * e = GrowableArray <Expression *>::pop();
     PseudoRegister * r = e->preg();
-    if ( r->isSAPReg() ) {
+    if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister * sr = ( SinglyAssignedPseudoRegister * ) r;
         if ( sr->scope() == _scope ) {
             // endByteCodeIndex may be assigned several times

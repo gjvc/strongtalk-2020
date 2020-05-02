@@ -61,7 +61,7 @@ VirtualFrame * VirtualFrame::new_vframe( Frame * f ) {
 
         ScopeDescriptor * sd = nm->scopes()->at( pd->_scope, pc );
         st_assert( sd, "ScopeDescriptor not found" );
-        return CompiledVirtualFrame::new_vframe( f, sd, pd->_byteCode );
+        return CompiledVirtualFrame::new_vframe( f, sd, pd->_byteCodeIndex );
     }
 
     return new cVFrame( f );

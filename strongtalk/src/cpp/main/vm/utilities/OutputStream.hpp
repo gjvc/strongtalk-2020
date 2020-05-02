@@ -159,5 +159,3 @@ class FileOutputStream : public ConsoleOutputStream {
 
 // Standard output
 extern ConsoleOutputStream * _console;
-
-ConsoleOutputStream * getStd();

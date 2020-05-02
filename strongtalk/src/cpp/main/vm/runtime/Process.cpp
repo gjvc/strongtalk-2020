@@ -125,11 +125,11 @@ void Process::basic_transfer( Process * target ) {
     _console->print_cr( "Process::basic_transfer()" );
 
 //    if ( TraceProcessEvents ) {
-        _console->print( "Process: " );
-        print();
-        _console->print( " -> " );
-        target->print();
-        _console->cr();
+    _console->print( "transfer from this process [" );
+    this->print();
+    _console->print( "] to  [" );
+    target->print();
+    _console->print_cr( "]" );
 //    }
 
     _console->print_cr( "Process::basic_transfer()  calling os::transfer()" );
@@ -196,9 +196,17 @@ void VMProcess::activate_system() {
     _console->print_cr( "VMProcess::activate_system()  calling Universe::find_global()" );
     ProcessOop proc = ProcessOop( Universe::find_global( "Processor" ) );
     if ( not proc->is_process() ) {
+
+        _console->print_cr( "VMProcess::activate_system()  Universe::find_global( \"ProcessorScheduler\" )" );
         KlassOop scheduler_klass = KlassOop( Universe::find_global( "ProcessorScheduler" ) );
+
+        _console->print_cr( "VMProcess::activate_system()  ProcessOop( scheduler_klass->klass_part()->allocateObject() ) )" );
         proc = ProcessOop( scheduler_klass->klass_part()->allocateObject() );
+
+        _console->print_cr( "VMProcess::activate_system()  Universe::find_global_association( \"Processor\" )" );
         AssociationOop assoc = Universe::find_global_association( "Processor" );
+
+        _console->print_cr( "VMProcess::activate_system()  assoc->set_value( proc )" );
         assoc->set_value( proc );
     }
 

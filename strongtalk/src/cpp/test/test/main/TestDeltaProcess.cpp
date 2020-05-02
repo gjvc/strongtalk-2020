@@ -18,6 +18,11 @@ VMProcess        * vmProcess;
 Thread           * vmThread;
 
 
+Oop newProcess() {
+    return Delta::call( Universe::find_global( "Process" ), oopFactory::new_symbol( "new" ) );
+}
+
+
 int TestDeltaProcess::launch_tests( DeltaProcess * process ) {
 
     process->suspend_at_creation();

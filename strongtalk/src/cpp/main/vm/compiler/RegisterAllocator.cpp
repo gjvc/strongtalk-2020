@@ -44,7 +44,7 @@ void RegisterAllocator::allocate( GrowableArray <PseudoRegister *> * globals ) {
         st_assert( r->ndefs() + r->nuses() > 0 or r->incorrectDU(), "PseudoRegister is unused" );
         if ( r->_location != unAllocated ) {
             // already allocated
-        } else if ( r->isConstPReg() ) {
+        } else if ( r->isConstPseudoRegister() ) {
             // don't allocate constants for now
         } else {
             // collect for later allocation

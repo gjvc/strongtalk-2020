@@ -43,7 +43,7 @@ GrowableArray <RecompilationScope *> * NullRecompilationScope::subScopes( int by
 static int compare_pcDescs( ProgramCounterDescriptor ** a, ProgramCounterDescriptor ** b ) {
     // to sort by descending scope and ascending byteCodeIndex
     int diff = ( *b )->_scope - ( *a )->_scope;
-    return diff ? diff : ( *a )->_byteCode - ( *b )->_byteCode;
+    return diff ? diff : ( *a )->_byteCodeIndex - ( *b )->_byteCodeIndex;
 }
 
 
@@ -66,7 +66,7 @@ InlinedRecompilationScope::InlinedRecompilationScope( NonDummyRecompilationScope
 
 
 PICRecompilationScope::PICRecompilationScope( const NativeMethod * c, ProgramCounterDescriptor * pc, CompiledInlineCache * s, KlassOop k, ScopeDescriptor * dsc, NativeMethod * n, MethodOop m, int ns, int lev, bool_t tr ) :
-    NonDummyRecompilationScope( nullptr, pc->_byteCode, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc ) {
+    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc ) {
     _invocationCount = ns;
     _extended        = false;
 }
@@ -84,7 +84,7 @@ InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummy
 
 
 UntakenRecompilationScope::UntakenRecompilationScope( NonDummyRecompilationScope * sender, ProgramCounterDescriptor * p, bool_t u ) :
-    NonDummyRecompilationScope( sender, p->_byteCode, nullptr, 0 ), isUncommon( u ), pc( p ) {
+    NonDummyRecompilationScope( sender, p->_byteCodeIndex, nullptr, 0 ), isUncommon( u ), pc( p ) {
     int i = 0;    // to allow setting breakpoints
 }
 
@@ -452,7 +452,7 @@ NonDummyRecompilationScope * NonDummyRecompilationScope::constructRScopes( const
         // enter uninlinable sends
         while ( uninlinable->nonEmpty() and ( u      = uninlinable->top() )->_scope == s->offset() ) {
             // only add uninlinable markers for sends that have no inlined cases
-            int byteCodeIndex = u->_byteCode;
+            int byteCodeIndex = u->_byteCodeIndex;
             if ( not current->hasSubScopes( byteCodeIndex ) ) {
                 new UninlinableRecompilationScope( current, byteCodeIndex );    // will add it as subscope of current
             }
@@ -662,7 +662,9 @@ void RecompilationScope::printTree( int byteCodeIndex, int level ) const {
 
 void NonDummyRecompilationScope::printTree( int senderByteCodeIndex, int level ) const {
     RecompilationScope::printTree( senderByteCodeIndex, level );
-    int       u             = 0;          // current position in uncommon
+
+    int u = 0;          // current position in uncommon
+
     for ( int byteCodeIndex = 0; byteCodeIndex < ncodes; byteCodeIndex++ ) {
         if ( _subScopes[ byteCodeIndex ] ) {
             for ( int j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
@@ -672,7 +674,7 @@ void NonDummyRecompilationScope::printTree( int senderByteCodeIndex, int level )
         int j = u;
         for ( ; j < uncommon.length() and uncommon.at( j )->byteCodeIndex() < byteCodeIndex; u++, j++ );
         if ( j < uncommon.length() and uncommon.at( j )->byteCodeIndex() == byteCodeIndex ) {
-            _console->print_cr( "  %*s%3ld: uncommon", level * 2, "", byteCodeIndex );
+            _console->print_cr( "  %*s%3ld: uncommson", level * 2, "", byteCodeIndex );
         }
     }
 }
@@ -767,7 +769,7 @@ void InlinedRecompilationScope::print_inlining_database_on( ConsoleOutputStream 
                 _subScopes[ i ]->at( j )->print_inlining_database_on( stream, uncommon, i, level + 1 );
             }
         }
-        if ( current_uncommon and current_uncommon->_byteCode == i ) {
+        if ( current_uncommon and current_uncommon->_byteCodeIndex == i ) {
             // NativeMethod has an uncommon branch at this byteCodeIndex
             stream->print_cr( "%*s%d uncommon", ( level + 1 ) * 2, "", i );
             // advance to next uncommon branch

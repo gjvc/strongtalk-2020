@@ -387,7 +387,7 @@ const char * CompiledLoop::checkLoopVar() {
 bool_t CompiledLoop::isIncrement( PseudoRegister * p, ArithOpCode op ) {
     // is p a suitable increment (i.e., a positive constant or loop-invariant variable)?
     _increment = p;
-    if ( p->isConstPReg() ) {
+    if ( p->isConstPseudoRegister() ) {
         Oop c         = ( ( ConstPseudoRegister * ) p )->constant;
         if ( not c->is_smi() )
             return false;

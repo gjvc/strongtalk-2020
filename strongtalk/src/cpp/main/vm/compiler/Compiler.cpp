@@ -580,7 +580,7 @@ void Compiler::computeBlockInfo() {
                     break;
                 }
 
-                if ( r->isBlockPReg() and not r->isUnused() ) { // this block still forces a context
+                if ( r->isBlockPseudoRegister() and not r->isUnused() ) { // this block still forces a context
                     noUplevelAccesses = false;
                     break;
                 }
@@ -634,9 +634,9 @@ void Compiler::computeBlockInfo() {
 
             if ( p->isUsed() ) {
                 // allocate p to context temp
-                st_assert( p->scope() == s or p->isBlockPReg(), "oops" );
+                st_assert( p->scope() == s or p->isBlockPseudoRegister(), "oops" );
                 Location loc = Mapping::contextTemporary( i, size, s->scopeID() );
-                if ( p->isBlockPReg() ) {
+                if ( p->isBlockPseudoRegister() ) {
                     // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
                     // Thus we need to create a fake destination here if the context exists.
                     SinglyAssignedPseudoRegister * dest = new SinglyAssignedPseudoRegister( s, loc, true, true, PrologueByteCodeIndex, EpilogueByteCodeIndex );

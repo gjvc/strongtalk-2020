@@ -603,7 +603,7 @@ static Register moveLocToReg( Location src, Register temp ) {
 static Register movePRegToReg( PseudoRegister * src, Register temp ) {
     // Returns the src register if a register has been assigned to src,
     // otherwise loads the value src into register temp and returns temp.
-    if ( src->isConstPReg() ) {
+    if ( src->isConstPseudoRegister() ) {
         theMacroAssembler->movl( temp, ( ( ConstPseudoRegister * ) src )->constant );
         return temp;
     } else {
@@ -628,7 +628,7 @@ static inline Register answerPRegReg( PseudoRegister * src, Register temp ) {
 
 static void load( PseudoRegister * src, Register dst ) {
     // Loads src into register dst.
-    if ( src->isConstPReg() ) {
+    if ( src->isConstPseudoRegister() ) {
         theMacroAssembler->movl( dst, ( ( ConstPseudoRegister * ) src )->constant );
     } else {
         Mapping::load( src->_location, dst );
@@ -639,7 +639,7 @@ static void load( PseudoRegister * src, Register dst ) {
 static void fload( PseudoRegister * src, Register base, Register temp ) {
     st_assert( base not_eq temp, "registers must be different" );
     // Loads src into FPU ST
-    if ( src->isConstPReg() ) {
+    if ( src->isConstPseudoRegister() ) {
         theMacroAssembler->movl( temp, ( ( ConstPseudoRegister * ) src )->constant );
         theMacroAssembler->fld_d( Address( temp, byteOffset( DoubleOopDescriptor::value_offset() ) ) ); // unbox float
     } else {
@@ -650,21 +650,21 @@ static void fload( PseudoRegister * src, Register base, Register temp ) {
 
 static void store( Register src, PseudoRegister * dst, Register temp1, Register temp2, bool_t needsStoreCheck = true ) {
     // Stores register src to dst.
-    st_assert( not dst->isConstPReg(), "destination cannot be a constant" );
+    st_assert( not dst->isConstPseudoRegister(), "destination cannot be a constant" );
     Mapping::store( src, dst->_location, temp1, temp2, needsStoreCheck );
 }
 
 
 static void fstore( PseudoRegister * dst, Register base ) {
     // Stores FPU ST to dst and pops ST
-    st_assert( not dst->isConstPReg(), "destination cannot be a constant" );
+    st_assert( not dst->isConstPseudoRegister(), "destination cannot be a constant" );
     Mapping::fstore( dst->_location, base );
 }
 
 
 static void storeO( ConstPseudoRegister * src, PseudoRegister * dst, Register temp1, Register temp2, bool_t needsStoreCheck = true ) {
     // Stores constant src to dst.
-    st_assert( not dst->isConstPReg(), "destination cannot be a constant" );
+    st_assert( not dst->isConstPseudoRegister(), "destination cannot be a constant" );
     Mapping::storeO( src->constant, dst->_location, temp1, temp2, needsStoreCheck );
 }
 
@@ -698,7 +698,7 @@ static void assign( Node * node, PseudoRegister * src, PseudoRegister * dst, Reg
             set_floats_base( node, base );
             fload( src, base, temp1 );
             fstore( dst, base );
-        } else if ( src->isConstPReg() ) {
+        } else if ( src->isConstPseudoRegister() ) {
             // assign constants directly without loading into temporary register first
             storeO( ( ConstPseudoRegister * ) src, dst, temp1, temp2, needsStoreCheck );
         } else {
@@ -1109,7 +1109,7 @@ static bool_t setupRegister( PseudoRegister * dst, PseudoRegister * arg, ArithOp
         }
     } else {
         // operation generates no result, use argument register directly
-        st_assert( dst->isNoPReg(), "dst should be a noPReg" );
+        st_assert( dst->isNoPseudoRegister(), "dst should be a noPReg" );
         x = movePRegToReg( arg, t );
     }
     return result;
@@ -1136,7 +1136,7 @@ static bool_t setupRegisters( PseudoRegister * dst, PseudoRegister * arg1, Arith
         }
     } else {
         // operation generates no result, use argument registers directly
-        st_assert( dst->isNoPReg(), "dst should be a noPReg" );
+        st_assert( dst->isNoPseudoRegister(), "dst should be a noPReg" );
         x = movePRegToReg( arg1, t1 );
         y = movePRegToReg( arg2, t2 );
     }
@@ -1266,7 +1266,7 @@ void TArithRRNode::gen() {
     BasicNode::gen();
     PseudoRegister * arg1 = _src;
     PseudoRegister * arg2 = _oper;
-    if ( arg2->isConstPReg() ) {
+    if ( arg2->isConstPseudoRegister() ) {
         Oop y = ( ( ConstPseudoRegister * ) arg2 )->constant;
         st_assert( y->is_smi() == _arg2IsInt, "flag value inconsistent" );
         if ( _arg2IsInt ) {
@@ -1327,7 +1327,7 @@ void ArithRRNode::gen() {
     BasicNode::gen();
     PseudoRegister * arg1 = _src;
     PseudoRegister * arg2 = _oper;
-    if ( arg2->isConstPReg() ) {
+    if ( arg2->isConstPseudoRegister() ) {
         Oop      y      = ( ( ConstPseudoRegister * ) arg2 )->constant;
         Register x;
         bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
@@ -1570,7 +1570,7 @@ void ContextInitNode::gen() {
     for ( int i = nofTemps() - 1; i >= 0; i-- ) {
         PseudoRegister * src = _initializers->at( i )->preg();
         PseudoRegister * dest;
-        if ( src->isBlockPReg() and wasEliminated() ) {
+        if ( src->isBlockPseudoRegister() and wasEliminated() ) {
             // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
             continue;                // there's no assignment (context was eliminated)
         }
@@ -2004,7 +2004,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
         PseudoRegister * r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
         if ( r->_location == unAllocated )
             continue;      // not uplevel-accessed (eliminated)
-        if ( r->isBlockPReg() )
+        if ( r->isBlockPseudoRegister() )
             continue;          // ditto
         if ( not r->_location.isContextLocation() ) st_fatal( "expected context location" );
         if ( scopeWithContext->isSenderOrSame( _scope ) ) {
@@ -2154,7 +2154,7 @@ void LoopHeaderNode::generateTypeTests( Label & cont, Label & failure ) {
         HoistedTypeTest * t = _tests->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister
-        if ( t->_testedPR->isConstPReg() ) {
+        if ( t->_testedPR->isConstPseudoRegister() ) {
             guarantee( t->_testedPR->_location == unAllocated, "code assumes ConstPseudoRegisters are unallocated" );
             handleConstantTypeTest( ( ConstPseudoRegister * ) t->_testedPR, t->_klasses );
         } else {
@@ -2183,7 +2183,7 @@ void LoopHeaderNode::generateTypeTests( Label & cont, Label & failure ) {
 void LoopHeaderNode::generateIntegerLoopTest( PseudoRegister * p, Label & prev, Label & failure ) {
     const Register klassReg = temp2;
     if ( p not_eq nullptr ) {
-        if ( p->isConstPReg() ) {
+        if ( p->isConstPseudoRegister() ) {
             // no run-time test necessary
             handleConstantTypeTest( ( ConstPseudoRegister * ) p, nullptr );
         } else if ( p->_location == unAllocated ) {
@@ -2241,7 +2241,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label & prev, Label & failure ) {
         }
         if ( i >= 0 ) {
             // loopVar is used to index into array; make sure lower & upper bound is within array range
-            if ( _lowerBound not_eq nullptr and _lowerBound->isConstPReg() and ( ( ConstPseudoRegister * ) _lowerBound )->constant->is_smi() and ( ( ConstPseudoRegister * ) _lowerBound )->constant >= smiOopFromValue( 1 ) ) {
+            if ( _lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ( ( ConstPseudoRegister * ) _lowerBound )->constant->is_smi() and ( ( ConstPseudoRegister * ) _lowerBound )->constant >= smiOopFromValue( 1 ) ) {
                 // loopVar iterates from smi_const to array size, so no test necessary
             } else {
                 // test lower bound
@@ -2542,7 +2542,7 @@ void InlinedPrimitiveNode::gen() {
         }
             break;
         case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
-            bool_t   const_val = _arg2->isConstPReg();
+            bool_t   const_val = _arg2->isConstPseudoRegister();
             Register proxy     = temp1;
             load( _src, proxy );            // proxy is modified
             Register index = temp2;

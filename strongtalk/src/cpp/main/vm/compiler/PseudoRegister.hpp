@@ -114,37 +114,37 @@ class PseudoRegister : public PrintableResourceObject {
         }
 
 
-        virtual bool_t isSAPReg() const {
+        virtual bool_t isSinglyAssignedPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isArgSAPReg() const {
+        virtual bool_t isArgSinglyAssignedPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isSplitPReg() const {
+        virtual bool_t isSplitPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isTempPReg() const {
+        virtual bool_t isTempPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isNoPReg() const {
+        virtual bool_t isNoPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isBlockPReg() const {
+        virtual bool_t isBlockPseudoRegister() const {
             return false;
         }
 
 
-        virtual bool_t isConstPReg() const {
+        virtual bool_t isConstPseudoRegister() const {
             return false;
         }
 
@@ -374,7 +374,7 @@ class TemporaryPseudoRegister : public PseudoRegister {
         }
 
 
-        bool_t isTempPReg() const {
+        bool_t isTempPseudoRegister() const {
             return true;
         }
 
@@ -448,7 +448,7 @@ class SinglyAssignedPseudoRegister : public PseudoRegister {
         bool_t isLiveAt( Node * n ) const;
 
 
-        bool_t isSAPReg() const {
+        bool_t isSinglyAssignedPseudoRegister() const {
             return true;
         }
 
@@ -482,7 +482,7 @@ class BlockPseudoRegister : public SinglyAssignedPseudoRegister {
         BlockPseudoRegister( InlinedScope * scope, CompileTimeClosure * closure, int beg, int end );
 
 
-        bool_t isBlockPReg() const {
+        bool_t isBlockPseudoRegister() const {
             return true;
         }
 
@@ -577,7 +577,7 @@ class NoResultPseudoRegister : public PseudoRegister {    // "no result" registe
         }
 
 
-        virtual bool_t isNoPReg() const {
+        virtual bool_t isNoPseudoRegister() const {
             return true;
         }
 
@@ -620,7 +620,7 @@ class ConstPseudoRegister : public PseudoRegister {
         friend ConstPseudoRegister * findConstPReg( Node * n, Oop c );
 
 
-        bool_t isConstPReg() const {
+        bool_t isConstPseudoRegister() const {
             return true;
         }
 
@@ -668,7 +668,7 @@ class SplitPReg : public SinglyAssignedPseudoRegister {
   bool_t	isSinglyAssigned() const		{ return true; }
   bool_t	extendLiveRange(Node* n);
   bool_t	isLiveAt(Node* n) const;
-  bool_t	isSplitPReg() const 	    		{ return true; }
+  bool_t	isSplitPseudoRegister() const 	    		{ return true; }
   char*	prefix() const				{ return "SplitP"; }
   char*	name() const;
 };

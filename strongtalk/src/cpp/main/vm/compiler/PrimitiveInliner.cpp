@@ -439,7 +439,7 @@ Expression * PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression * arg1, Exp
 
 
 Expression * PrimitiveInliner::smi_Div( Expression * x, Expression * y ) {
-    if ( y->preg()->isConstPReg() ) {
+    if ( y->preg()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
         int d = SMIOop( ( ( ConstPseudoRegister * ) y->preg() )->constant )->value();
         if ( is_power_of_2( d ) ) {
@@ -454,7 +454,7 @@ Expression * PrimitiveInliner::smi_Div( Expression * x, Expression * y ) {
 
 
 Expression * PrimitiveInliner::smi_Mod( Expression * x, Expression * y ) {
-    if ( y->preg()->isConstPReg() ) {
+    if ( y->preg()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
         int d = SMIOop( ( ( ConstPseudoRegister * ) y->preg() )->constant )->value();
         if ( is_power_of_2( d ) ) {
@@ -469,7 +469,7 @@ Expression * PrimitiveInliner::smi_Mod( Expression * x, Expression * y ) {
 
 
 Expression * PrimitiveInliner::smi_Shift( Expression * arg1, Expression * arg2 ) {
-    if ( parameter( 1 )->preg()->isConstPReg() ) {
+    if ( parameter( 1 )->preg()->isConstPseudoRegister() ) {
         // inline if the shift count is a constant
         st_assert( arg2->is_smi(), "type check should have failed" );
         return smi_BitOp( ArithOpCode::tShiftArithOp, arg1, arg2 );
@@ -875,7 +875,7 @@ Expression * PrimitiveInliner::proxy_byte_at_put() {
 
 Expression * PrimitiveInliner::block_primitiveValue() {
     PseudoRegister * r = parameter( 0 )->preg();
-    if ( r->isBlockPReg() ) {
+    if ( r->isBlockPseudoRegister() ) {
         // we know the identity of the block -- inline it if possible
         Inliner    * inliner = _gen->inliner();
         SendInfo   * info    = new SendInfo( _scope, parameter( 0 ), _primitiveDescriptor->selector() );

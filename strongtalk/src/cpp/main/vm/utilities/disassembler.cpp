@@ -190,7 +190,7 @@ static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const ch
         return;
     }
 
-    stream->print( "bc = %03ld ", pcs->_byteCode );
+    stream->print( "bc = %03ld ", pcs->_byteCodeIndex );
     if ( pcs->is_prologue() ) {
         stream->print( "prologue " );
     } else if ( pcs->is_epilogue() ) {

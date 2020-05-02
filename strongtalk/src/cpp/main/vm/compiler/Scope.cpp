@@ -373,7 +373,7 @@ void InlinedScope::createContextTemporaries( int nofTemps ) {
 
 
 void InlinedScope::contextTemporariesAtPut( int no, Expression * e ) {
-    st_assert( not e->preg()->isSAPReg() or e->preg()->isBlockPReg() or ( ( SinglyAssignedPseudoRegister * ) e->preg() )->isInContext(), "not in context" );
+    st_assert( not e->preg()->isSinglyAssignedPseudoRegister() or e->preg()->isBlockPseudoRegister() or ( ( SinglyAssignedPseudoRegister * ) e->preg() )->isInContext(), "not in context" );
     _contextTemporaries->at_put( no, e );
 }
 

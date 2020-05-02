@@ -284,7 +284,7 @@ Node * CodeScope::copyPath( Node * n, Node * start, Node * end,
                  start, start->id(), end, end->id(), n, n->id() );
         n = n->append( new CommentNode( s ) );
     }
-    assert( not oldPR or not oldPR->isBlockPReg(), "cannot handle BlockPseudoRegisters" );
+    assert( not oldPR or not oldPR->isBlockPseudoRegister(), "cannot handle BlockPseudoRegisters" );
     for ( Node * c = start; true; c = c->next() ) {
         assert( c->isSplittable(), "can't handle branches yet" );
         Node * copy = c->copy( oldPR, newPR );

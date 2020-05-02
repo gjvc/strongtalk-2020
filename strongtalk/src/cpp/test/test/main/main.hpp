@@ -16,12 +16,6 @@ void setProcessRefs( DeltaProcess * process, ProcessOop processObj );
 void start_vm_process( TestDeltaProcess * testProcess );
 void stop_vm_process();
 
-
-Oop newProcess() {
-    return Delta::call( Universe::find_global( "Process" ), oopFactory::new_symbol( "new" ) );
-}
-
-
 extern TestDeltaProcess * testProcess;
 extern VMProcess        * vmProcess;
 extern Thread           * vmThread;

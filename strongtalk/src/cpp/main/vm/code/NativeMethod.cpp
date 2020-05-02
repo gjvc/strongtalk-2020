@@ -691,7 +691,7 @@ void NativeMethod::verify_expression_stacks_at( const char * pc ) {
     if ( not pd ) st_fatal( "ProgramCounterDescriptor not found" );
 
     ScopeDescriptor * sd = scopes()->at( pd->_scope, pc );
-    int byteCodeIndex = pd->_byteCode;
+    int byteCodeIndex = pd->_byteCodeIndex;
     while ( sd ) {
         sd->verify_expression_stack( byteCodeIndex );
         ScopeDescriptor * next = sd->sender();
@@ -937,7 +937,7 @@ bool_t NativeMethod::in_delta_code_at( const char * pc ) const {
     ProgramCounterDescriptor * pd = containingProgramCounterDescriptorOrNULL( pc );
     if ( pd == nullptr )
         return false;
-    return not( pd->_byteCode == PrologueByteCodeIndex or pd->_byteCode == EpilogueByteCodeIndex );
+    return not( pd->_byteCodeIndex == PrologueByteCodeIndex or pd->_byteCodeIndex == EpilogueByteCodeIndex );
 }
 
 
@@ -982,7 +982,7 @@ void NativeMethod::print_inlining_database_on( ConsoleOutputStream * stream ) {
 static int compare_pcDescs( ProgramCounterDescriptor ** a, ProgramCounterDescriptor ** b ) {
     // to sort by ascending scope and ascending byteCodeIndex
     int diff = ( *a )->_scope - ( *b )->_scope;
-    return diff ? diff : ( *a )->_byteCode - ( *b )->_byteCode;
+    return diff ? diff : ( *a )->_byteCodeIndex - ( *b )->_byteCodeIndex;
 }
 
 

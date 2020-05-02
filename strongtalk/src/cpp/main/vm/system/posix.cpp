@@ -191,7 +191,7 @@ Thread * os::create_thread( int32_t threadStart( void * parameter ), void * para
 
         int32_t status = pthread_create( &threadId, &attr, &mainWrapper, &threadArgs );
         if ( status != 0 ) {
-            fatal1( "Unable to create thread. status = %d", status );
+            st_fatal1( "Unable to create thread. status = %d", status );
         }
     }
     threadCreated->waitFor();
@@ -630,7 +630,7 @@ void os_init() {
         pthread_t watcherThread;
         int32_t   status = pthread_create( &watcherThread, nullptr, &watcherMain, nullptr );
         if ( status != 0 ) {
-            fatal( "Unable to create thread" );
+            st_fatal( "Unable to create thread" );
         }
     }
 }

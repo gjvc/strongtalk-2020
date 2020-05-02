@@ -72,7 +72,7 @@ CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode * n ) {
         return;
     }
     r   = n->src();
-    if ( r->isConstPReg() )
+    if ( r->isConstPseudoRegister() )
         return;   // can always eliminate if defined by constant  (was bug; fixed 7/26/96 -Urs)
     // (as int32_t as constants aren't register-allocated)
     PseudoRegister * eliminatee = n->dest();
@@ -88,7 +88,7 @@ CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode * n ) {
 
 
 bool_t CopyPropagationInfo::isConstant() const {
-    return r->isConstPReg();
+    return r->isConstPseudoRegister();
 }
 
 

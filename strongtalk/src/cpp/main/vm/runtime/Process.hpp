@@ -73,7 +73,7 @@ class Process : public PrintableCHeapAllocatedObject {
 
         // OS data associated with the process
         Thread * _thread;                   // Native thread
-        int _thread_id;                     // Native thread id (set by OS when created)
+        int _thread_id;                     // Native thread id (set by OS when created) pthread_t
         Event          * _event;            // Thread lock
         char           * _stack_limit;      // lower limit of stack
         static Process * _current_process;  // active Delta process or vm process

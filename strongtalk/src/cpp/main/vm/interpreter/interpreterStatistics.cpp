@@ -24,10 +24,8 @@ void InterpreterStatistics::reset_bytecode_counters() {
 
 
 void InterpreterStatistics::reset_bytecode_generation_order() {
-    for ( int count = 0; auto x : _bytecode_generation_order ) {
-        x = count++;
-    }
-
+    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ )
+        _bytecode_generation_order[ i ] = i;
 }
 
 

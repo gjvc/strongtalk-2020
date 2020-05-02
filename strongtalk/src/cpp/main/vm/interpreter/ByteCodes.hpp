@@ -86,7 +86,7 @@ class ByteCodes : AllStatic {
                 NUMBER_OF_FORMATS
         };
 
-        enum class CodeType {         // Instruction classification
+        enum class CodeType {       // Instruction classification
                 local_access,       // loads & stores of temps and args
                 instVar_access,     // loads & stores of instVars
                 context_access,     // loads & stores of context temps
@@ -94,7 +94,7 @@ class ByteCodes : AllStatic {
                 global_access,      // loads & stores to global variables
                 new_closure,        // closure creation
                 new_context,        // context creation
-                control_struc,      // control structures (incl. local return)
+                control_structure,  // control structures (incl. local return)
                 message_send,       // all sends
                 nonlocal_return,    // non-local returns
                 primitive_call,     // primitive calls

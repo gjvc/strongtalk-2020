@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -8,18 +9,8 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "vm/memory/RememberedSet.hpp"
-#include "vm/memory/Space.hpp"
-#include "vm/runtime/VirtualSpace.hpp"
-#include "vm/runtime/ReservedSpace.hpp"
-#include "vm/memory/Generation.hpp"
-#include "vm/memory/SpaceSizes.hpp"
-#include "vm/memory/Universe.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/oops/Klass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/code/NativeCode.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
@@ -81,7 +72,7 @@ void ByteCodes::def( Code code, const char * name, Format format, CodeType code_
         st_assert( send_type not_eq ByteCodes::SendType::no_send, "inconsistency between argument_spec and send_type" );
     }
 
-    if ( code_type == ByteCodes::CodeType::control_struc ) {
+    if ( code_type == ByteCodes::CodeType::control_structure ) {
         // not intercepted on single step
         st_assert( not single_step, "control structures cannot be single-stepped" );
     }
@@ -254,22 +245,22 @@ void ByteCodes::init() {
     def( ByteCodes::Code::copy_self_2_into_context, "copy_self_2_into_context", ByteCodes::Format::BBB, ByteCodes::CodeType::context_access, no_sst );
     def( ByteCodes::Code::copy_self_n_into_context, "copy_self_n_into_context", ByteCodes::Format::BBS, ByteCodes::CodeType::context_access, no_sst );
 
-    def( ByteCodes::Code::ifTrue_byte, "ifTrue_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::ifFalse_byte, "ifFalse_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::and_byte, "and_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::or_byte, "or_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::whileTrue_byte, "whileTrue_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::whileFalse_byte, "whileFalse_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::jump_else_byte, "jump_else_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::jump_loop_byte, "jump_loop_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::ifTrue_word, "ifTrue_word", ByteCodes::Format::BBL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::ifFalse_word, "ifFalse_word", ByteCodes::Format::BBL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::and_word, "and_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::or_word, "or_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::whileTrue_word, "whileTrue_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::whileFalse_word, "whileFalse_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::jump_else_word, "jump_else_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_struc, no_sst );
-    def( ByteCodes::Code::jump_loop_word, "jump_loop_word", ByteCodes::Format::BLL, ByteCodes::CodeType::control_struc, no_sst );
+    def( ByteCodes::Code::ifTrue_byte, "ifTrue_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::ifFalse_byte, "ifFalse_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::and_byte, "and_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::or_byte, "or_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::whileTrue_byte, "whileTrue_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::whileFalse_byte, "whileFalse_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::jump_else_byte, "jump_else_byte", ByteCodes::Format::BB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::jump_loop_byte, "jump_loop_byte", ByteCodes::Format::BBB, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::ifTrue_word, "ifTrue_word", ByteCodes::Format::BBL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::ifFalse_word, "ifFalse_word", ByteCodes::Format::BBL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::and_word, "and_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::or_word, "or_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::whileTrue_word, "whileTrue_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::whileFalse_word, "whileFalse_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::jump_else_word, "jump_else_word", ByteCodes::Format::BL, ByteCodes::CodeType::control_structure, no_sst );
+    def( ByteCodes::Code::jump_loop_word, "jump_loop_word", ByteCodes::Format::BLL, ByteCodes::CodeType::control_structure, no_sst );
 
     def( ByteCodes::Code::interpreted_send_0, "interpreted_send_0", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_0_args, ByteCodes::SendType::interpreted_send );
     def( ByteCodes::Code::interpreted_send_1, "interpreted_send_1", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::interpreted_send );
@@ -405,7 +396,7 @@ void ByteCodes::init() {
     def( ByteCodes::Code::unimplemented_fc );
     def( ByteCodes::Code::unimplemented_fd );
     def( ByteCodes::Code::unimplemented_fe );
-    def( ByteCodes::Code::halt, "halt", ByteCodes::Format::B, ByteCodes::CodeType::control_struc, no_sst );
+    def( ByteCodes::Code::halt, "halt", ByteCodes::Format::B, ByteCodes::CodeType::control_structure, no_sst );
 
     // check if all bytecodes have been initialized
     for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
@@ -517,8 +508,8 @@ const char * ByteCodes::code_type_as_string( CodeType code_type ) {
             return "new_closure";
         case ByteCodes::CodeType::new_context:
             return "new_context";
-        case ByteCodes::CodeType::control_struc:
-            return "control_struc";
+        case ByteCodes::CodeType::control_structure:
+            return "control_structure";
         case ByteCodes::CodeType::message_send:
             return "message_send";
         case ByteCodes::CodeType::nonlocal_return:
@@ -1224,49 +1215,50 @@ static const char * arguments_as_string( ByteCodes::ArgumentSpec spec ) {
 
 
 static void generate_HTML_for( ByteCodes::Code code ) {
-    _console->print( "<TD>%02X<SUB>H</SUB><TD><B>%s</B><TD>", int( code ), ByteCodes::name( code ) );
+
+    _console->print( "<td>%02X<sub>H</sub><td><B>%s</B><td>", int( code ), ByteCodes::name( code ) );
     print_format( ByteCodes::format( code ) );
-    _console->print( "<TD>%s", ByteCodes::single_step( code ) ? "intercepted" : "" );
+    _console->print( "<td>%s", ByteCodes::single_step( code ) ? "intercepted" : "" );
     if ( ByteCodes::code_type( code ) == ByteCodes::CodeType::message_send ) {
-        _console->print( "<TD>%s", ByteCodes::send_type_as_string( ByteCodes::send_type( code ) ) );
-        _console->print( "<TD>%s", arguments_as_string( ByteCodes::argument_spec( code ) ) );
+        _console->print( "<td>%s", ByteCodes::send_type_as_string( ByteCodes::send_type( code ) ) );
+        _console->print( "<td>%s", arguments_as_string( ByteCodes::argument_spec( code ) ) );
     }
-    _console->print_cr( "<TR>" );
+    _console->print_cr( "<tr>" );
 }
 
 
 static void generate_HTML_for( ByteCodes::CodeType type ) {
     {
-        Markup tag( "H3" );
+        Markup tag( "h3" );
         _console->print_cr( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
     }
     {
-        Markup tag( "TABLE" );
-        _console->print( "<TH>Code<TH>Name<TH>Format<TH>Single step" );
+        Markup tag( "table" );
+        _console->print( "<th>Code<th>Name<th>Format<th>Single step" );
         if ( type == ByteCodes::CodeType::message_send )
-            _console->print( "<TH>Send type<TH>Arguments" );
-        _console->print_cr( "<TR>" );
+            _console->print( "<th>Send type<th>Arguments" );
+        _console->print_cr( "<tr>" );
         for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
             if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type )
                 generate_HTML_for( code );
         }
     }
-    _console->print_cr( "<HR>" );
+    _console->print_cr( "<hr/>" );
 }
 
 
 static void generate_HTML_docu() {
-    Markup tag( "HTML" );
+    Markup tag( "html" );
     _console->print_cr( "<!-- do not modify - use delta +GenerateHTML to generate -->" );
     {
-        Markup tag( "HEAD" );
-        markup( "TITLE", "Delta ByteCodes" );
+        Markup tag( "head" );
+        markup( "title", "Delta ByteCodes" );
     }
     {
-        Markup    tag( "BODY" );
+        Markup    tag( "body" );
         {
-            Markup tag( "H2" );
+            Markup tag( "h2" );
             _console->print_cr( "Delta ByteCodes (Version %d)", ByteCodes::version() );
         }
         for ( int i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ )

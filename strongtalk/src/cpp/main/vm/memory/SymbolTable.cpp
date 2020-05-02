@@ -339,11 +339,15 @@ void SymbolTable::print_histogram() {
     lprintf( "%8s %3.2f\n", "Average", ( ( float ) total / ( float ) symbol_table_size ) );
     lprintf( "%s\n", "Histogram:" );
     lprintf( " %s %29s\n", "Length", "Number chains that length" );
+
+
     for ( int i           = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             lprintf( "%6d %10d\n", i, results[ i ] );
         }
     }
+
+
     int       line_length = 70;
     lprintf( "%s %30s\n", " Length", "Number chains that length" );
     for ( int i = 0; i < results_length; i++ ) {

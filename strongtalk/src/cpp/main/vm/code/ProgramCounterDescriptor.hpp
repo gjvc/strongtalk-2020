@@ -16,9 +16,9 @@
 class ProgramCounterDescriptor : public ValueObject {
 
     public:
-        uint16_t _pc;         // offset from start of method (could be uint16_t)
-        uint16_t _scope;      // scope index
-        int16_t  _byteCode;   // can be negative (PrologueByteCodeIndex et al)
+        uint16_t _pc;               // offset from start of method (could be uint16_t)
+        uint16_t _scope;            // scope index
+        int16_t  _byteCodeIndex;    // can be negative (PrologueByteCodeIndex et al)
 
     public:
         // Constructor (only used for static in NativeMethod.cpp)
@@ -32,27 +32,27 @@ class ProgramCounterDescriptor : public ValueObject {
 
 
         bool_t equals( const ProgramCounterDescriptor * other ) const {
-            return _pc == other->_pc and _scope == other->_scope and _byteCode == other->_byteCode;
+            return _pc == other->_pc and _scope == other->_scope and _byteCodeIndex == other->_byteCodeIndex;
         }
 
 
         bool_t operator==( const ProgramCounterDescriptor & rhs ) const {
-            return ( _pc == rhs._pc ) and ( _scope == rhs._scope ) and ( _byteCode == rhs._byteCode );
+            return ( _pc == rhs._pc ) and ( _scope == rhs._scope ) and ( _byteCodeIndex == rhs._byteCodeIndex );
         }
 
 
         bool_t source_equals( const ProgramCounterDescriptor * other ) const {
-            return _scope == other->_scope and _byteCode == other->_byteCode;
+            return _scope == other->_scope and _byteCodeIndex == other->_byteCodeIndex;
         }
 
 
         bool_t is_prologue() const {
-            return _byteCode == PrologueByteCodeIndex;
+            return _byteCodeIndex == PrologueByteCodeIndex;
         }
 
 
         bool_t is_epilogue() const {
-            return _byteCode == EpilogueByteCodeIndex;
+            return _byteCodeIndex == EpilogueByteCodeIndex;
         }
 
 

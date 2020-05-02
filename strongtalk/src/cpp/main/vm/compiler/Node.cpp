@@ -407,7 +407,7 @@ AssignNode::AssignNode( PseudoRegister * s, PseudoRegister * d ) :
     StoreNode( s ) {
     _dest = d;
     st_assert( d, "dest is nullptr" );
-    // Fix this Lars assert(not s->isNoPReg(), "source must be a real PseudoRegister");
+    // Fix this Lars assert(not s->isNoPseudoRegister(), "source must be a real PseudoRegister");
     st_assert( s not_eq d, "creating dummy assignment" );
 }
 
@@ -460,7 +460,7 @@ TypeTestNode::TypeTestNode( PseudoRegister * rr, GrowableArray <KlassOop> * clas
 ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister * arg2, PseudoRegister * dst ) :
     ArithNode( op, arg1, dst ) {
     _oper = arg2;
-    if ( _src->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( _op ) ] ) { // is this _op or op ? XXX ???
+    if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister * t1 = _src;
         _src                = _oper;
@@ -470,7 +470,7 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister 
 
 
 TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister * arg1, PseudoRegister * arg2, PseudoRegister * dst, bool_t arg1IsInt, bool_t arg2IsInt ) {
-    if ( arg1->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
+    if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister * t1 = arg1;
         arg1 = arg2;
@@ -899,7 +899,7 @@ void ContextInitNode::notifyNoContext() {
             BlockMaterializeNode * n = _materializedBlocks->at( i );
             n->eliminate( n->bb(), nullptr, true, false );
             PseudoRegister * blk = n->src();
-            st_assert( blk->isBlockPReg(), "must be a block" );
+            st_assert( blk->isBlockPseudoRegister(), "must be a block" );
 
             // remove use of block
             for ( int j = _initializers->length() - 1; j >= 0; j-- ) {
@@ -1363,7 +1363,7 @@ void PrologueNode::makeUses( BasicBlock * bb ) {
 void NonTrivialNode::makeUses( BasicBlock * bb ) {
     _basicBlock = bb;
     st_assert( not hasSrc() or _srcUse, "should have srcUse" );
-    st_assert( not hasDest() or _destDef or _dest->isNoPReg(), "should have destDef" );
+    st_assert( not hasDest() or _destDef or _dest->isNoPseudoRegister(), "should have destDef" );
 }
 
 
@@ -1557,7 +1557,7 @@ void ContextInitNode::makeUses( BasicBlock * bb ) {
     _initializerUses = new GrowableArray <Usage *>( i, i, nullptr );
     while ( i-- > 0 ) {
         PseudoRegister * r = contents()->at( i )->preg();
-        if ( r->isBlockPReg() ) {
+        if ( r->isBlockPseudoRegister() ) {
             _contentDefs->at_put( i, nullptr );      // there is no assignment to the block
         } else {
             _contentDefs->at_put( i, bb->addDef( this, r ) );
@@ -2379,19 +2379,19 @@ bool_t CallNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, 
 
 
 bool_t ArithRRNode::operIsConst() const {
-    return _oper->isConstPReg();
+    return _oper->isConstPseudoRegister();
 }
 
 
 int ArithRRNode::operConst() const {
     st_assert( operIsConst(), "not a constant" );
-    return _oper->isConstPReg();
+    return _oper->isConstPseudoRegister();
 }
 
 
 bool_t ArithNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
     bool_t success = doCopyPropagate( bb, u, d, replace );
-    if ( _src->isConstPReg() and operIsConst() ) {
+    if ( _src->isConstPseudoRegister() and operIsConst() ) {
         st_assert( success, "CP must have worked" );
         // can constant-fold this operation
         int c1 = ( int ) ( ( ConstPseudoRegister * ) _src )->constant;
@@ -2456,7 +2456,7 @@ bool_t ArithRRNode::doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister 
 
 bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
     bool_t res = doCopyPropagate( bb, u, d, replace );
-    if ( _src->isConstPReg() and _oper->isConstPReg() ) {
+    if ( _src->isConstPseudoRegister() and _oper->isConstPseudoRegister() ) {
         st_assert( res, "CP must have worked" );
         // can constant-fold this operation
         Oop c1 = ( ( ConstPseudoRegister * ) _src )->constant;
@@ -2538,11 +2538,11 @@ bool_t TArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister *
 bool_t TArithRRNode::doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
     bool_t res;
     if ( u == _srcUse ) {
-        if ( d->isConstPReg() and ( ( ConstPseudoRegister * ) d )->constant->is_smi() )
+        if ( d->isConstPseudoRegister() and ( ( ConstPseudoRegister * ) d )->constant->is_smi() )
             _arg1IsInt = true;
         CP_HELPER( _src, _srcUse, res = );
     } else if ( u == _operUse ) {
-        if ( d->isConstPReg() and ( ( ConstPseudoRegister * ) d )->constant->is_smi() )
+        if ( d->isConstPseudoRegister() and ( ( ConstPseudoRegister * ) d )->constant->is_smi() )
             _arg2IsInt = true;
         CP_HELPER( _oper, _operUse, res = );
     } else {
@@ -2554,7 +2554,7 @@ bool_t TArithRRNode::doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister
 
 
 bool_t FloatArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
-    if ( d->isConstPReg() and not( ( ConstPseudoRegister * ) d )->constant->is_double() ) {
+    if ( d->isConstPseudoRegister() and not( ( ConstPseudoRegister * ) d )->constant->is_double() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
@@ -2565,7 +2565,7 @@ bool_t FloatArithRRNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegist
 
 
 bool_t FloatUnaryArithNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
-    if ( d->isConstPReg() and not( ( ConstPseudoRegister * ) d )->constant->is_double() ) {
+    if ( d->isConstPseudoRegister() and not( ( ConstPseudoRegister * ) d )->constant->is_double() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
@@ -2577,7 +2577,7 @@ bool_t FloatUnaryArithNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoReg
 
 bool_t TypeTestNode::copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace ) {
     if ( u == _srcUse ) {
-        if ( d->isConstPReg() ) {
+        if ( d->isConstPseudoRegister() ) {
             // we know the receiver - the type test is unnecessary!
             ConstPseudoRegister * c = ( ConstPseudoRegister * ) d;
             // The code below has been disabled by Lars Bak 4-19-96 per request by Urs
@@ -2830,7 +2830,7 @@ SimpleBitVector CallNode::trashedMask() {
 
 void computeEscapingBlocks( Node * n, PseudoRegister * src, GrowableArray <BlockPseudoRegister *> * l, const char * msg ) {
     // helper function for computing exposed blocks
-    if ( src->isBlockPReg() ) {
+    if ( src->isBlockPseudoRegister() ) {
         BlockPseudoRegister * r = ( BlockPseudoRegister * ) src;
         r->markEscaped( n );
         if ( not l->contains( r ) )
@@ -3665,7 +3665,7 @@ void NonTrivialNode::verify() const {
         src()->verify();
     if ( hasDest() ) {
         dest()->verify();
-        if ( dest()->isConstPReg() ) {
+        if ( dest()->isConstPseudoRegister() ) {
             error( "Node %#lx: dest %#lx is ConstPR", this, dest() );
         }
     }
@@ -3820,7 +3820,7 @@ void ContextInitNode::verify() const {
         // Should check if we're missing something here or if we can remove the code completely.
         // - gri 9/10/96
         /*
-    if (r->isSAPReg() and not r->isBlockPReg() and not ((SinglyAssignedPseudoRegister*)r)->isInContext()) {
+    if (r->isSinglyAssignedPseudoRegister() and not r->isBlockPseudoRegister() and not ((SinglyAssignedPseudoRegister*)r)->isInContext()) {
     // I'm not sure what the isInContext() flag is supposed to do....but the error is triggered
     // in the test suite (when running the standard tests).  Could be because of copy propagation.
     // If the assertion does make sense, please also put it in ContextInitNode::initialize().

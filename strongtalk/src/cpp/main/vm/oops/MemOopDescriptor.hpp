@@ -56,7 +56,7 @@ class MemOopDescriptor : public OopDescriptor {
         friend MemOop as_memOop( void * p );
 
 
-        // conversion from MemOop to memOopDescriptor*
+        // conversion from MemOop to miemOopDescriptor*
         MemOopDescriptor * addr() const {
             MemOopDescriptor * address = reinterpret_cast<MemOopDescriptor *>( reinterpret_cast<uintptr_t>( this ) - MEMOOP_TAG );
 //            _console->print_cr( "this [%#lx], address [%#lx]", this, address );
@@ -116,6 +116,7 @@ class MemOopDescriptor : public OopDescriptor {
 
 
         Klass * blueprint() const {
+//            return klass_field()->klass_part(); // Member access into incomplete type 'class KlassOopDescriptor'
             // "return klass_field()->klass_part();" has #include problems
             return ( Klass * ) ( ( ( const char * ) klass_field() ) + sizeof( MemOopDescriptor ) - MEMOOP_TAG );
         }

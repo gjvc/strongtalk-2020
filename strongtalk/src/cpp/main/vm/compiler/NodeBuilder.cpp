@@ -523,7 +523,7 @@ void NodeBuilder::access_temporary( int no, int context, bool_t push ) {
             Expression     * contextTemp = s->contextTemporary( no );
             PseudoRegister * src         = contextTemp->preg();
             Expression     * res;
-            if ( src->isBlockPReg() ) {
+            if ( src->isBlockPseudoRegister() ) {
                 // don't copy around blocks; see ContextInitializeNode et al.
                 res = contextTemp;
             } else {
@@ -645,12 +645,12 @@ void NodeBuilder::materialize( PseudoRegister * r, GrowableArray <BlockPseudoReg
     if ( materialized == nullptr )
         return;
 
-    bool_t isBlockPReg = r->isBlockPReg();
+    bool_t isBlockPseudoRegister = r->isBlockPseudoRegister();
     bool_t contains    = materialized->contains( ( BlockPseudoRegister * ) r );
 
     // make sure the block (and all parent blocks / uplevel-accessed blocks) exist
     // materialized is a list of blocks already materialized (nullptr if none)
-    if ( r->isBlockPReg() and ( materialized == nullptr or not materialized->contains( ( BlockPseudoRegister * ) r ) ) ) {
+    if ( r->isBlockPseudoRegister() and ( materialized == nullptr or not materialized->contains( ( BlockPseudoRegister * ) r ) ) ) {
         BlockPseudoRegister * blk = ( BlockPseudoRegister * ) r;
         append( NodeFactory::BlockMaterializeNode( blk, copyCurrentExprStack() ) );
         if ( materialized == nullptr )

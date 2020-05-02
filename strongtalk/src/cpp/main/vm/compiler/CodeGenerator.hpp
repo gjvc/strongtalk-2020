@@ -34,6 +34,7 @@ class CodeGenerator : public NodeVisitor {
         Node * _previousNode;       // the previous node in the same basic block or nullptr info used to patch temporary initialization
         Register _nilReg;              // the register holding nilObj used to initialize the stack frame
         CodeBuffer * _pushCode;           // the code area that can be patched with push instructions
+        int _nofCompilations;
 
     private:
         // Helper routines for mapping
@@ -146,6 +147,7 @@ class CodeGenerator : public NodeVisitor {
 
         void initialize( InlinedScope * scope );        // call this before code generation
         void finalize( InlinedScope * scope );        // call this at end of code generation
+        void finalize2( InlinedScope * scope );        // call this at end of code generation
 
     public:
         void beginOfBasicBlock( Node * node );

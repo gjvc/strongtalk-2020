@@ -182,8 +182,8 @@ void BasicBlock::bruteForceCopyPropagate() {
     for ( int i = 0; i < len; i++ ) {        // forall def/use info lists
         DefinitionUsageInfo  * dui = duInfo.info->at( i );
         const PseudoRegister * r   = dui->_pseudoRegister;
-        if ( not r->isSAPReg() or not r->_location.equals( unAllocated ) ) {
-            // optimize only SAPseudoRegisters for now
+        if ( not r->isSinglyAssignedPseudoRegister() or not r->_location.equals( unAllocated ) ) {
+            // optimize only SinglyAssignedPseudoRegisters for now
             // preallocated PseudoRegister may have aliases - don't do copy-propagation
             continue;
         }
@@ -408,7 +408,7 @@ int BasicBlock::addUDHelper( PseudoRegister * r ) {
 Usage * BasicBlock::addUse( NonTrivialNode * n, PseudoRegister * r, bool_t soft ) {
     st_assert( not soft, "soft use" );
     st_assert( contains( n ), "node isn't in this BasicBlock" );
-    if ( r->isNoPReg() )
+    if ( r->isNoPseudoRegister() )
         return nullptr;
     Usage * u = soft ? new PSoftUsage( n ) : new Usage( n );
     r->incUses( u );
@@ -420,7 +420,7 @@ Usage * BasicBlock::addUse( NonTrivialNode * n, PseudoRegister * r, bool_t soft 
 
 Definition * BasicBlock::addDef( NonTrivialNode * n, PseudoRegister * r ) {
     st_assert( contains( n ), "node isn't in this BasicBlock" );
-    if ( r->isNoPReg() )
+    if ( r->isNoPseudoRegister() )
         return nullptr;
     Definition * d = new Definition( n );
     r->incDefs( d );
@@ -1071,7 +1071,7 @@ void BasicBlockIterator::globalCopyPropagate() {
 
     for ( int i = 0; i < pregTable->length(); i++ ) {
         PseudoRegister * r = pregTable->at( i );
-        if ( not r or r->isConstPReg() or not r->canCopyPropagate() )
+        if ( not r or r->isConstPseudoRegister() or not r->canCopyPropagate() )
             continue;
         Definition * def = nullptr;
         // get definition
@@ -1174,7 +1174,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock * useBasicBlock, const PseudoR
     NonTrivialNode * toNode = use->_node;
     const bool_t hasSrc = fromNode->hasSrc();
     PseudoRegister * fromPR = hasSrc ? fromNode->src() : nullptr;
-    const bool_t isConst = hasSrc and fromPR->isConstPReg();
+    const bool_t isConst = hasSrc and fromPR->isConstPseudoRegister();
 
     if ( isAssignment and isConst and toNode->canCopyPropagateOop() ) {
         // loadOop r1, Oop; ...; r2 := op(r1)    --->

@@ -194,7 +194,7 @@ int CodeGenerator::maxNofStackTmps() {
 
 
 Register CodeGenerator::def( PseudoRegister * preg ) const {
-    st_assert( not preg->isConstPReg(), "cannot assign to ConstPseudoRegister" );
+    st_assert( not preg->isConstPseudoRegister(), "cannot assign to ConstPseudoRegister" );
     st_assert( not preg->_location.isContextLocation(), "cannot assign into context yet" );
     return _currentMapping->def( preg );
 }
@@ -394,6 +394,7 @@ void CodeGenerator::initialize( InlinedScope * scope ) {
 
 
 void CodeGenerator::finalize( InlinedScope * scope ) {
+
     // first generate stubs if there are any
     generateMergeStubs();
 
@@ -430,108 +431,98 @@ void CodeGenerator::finalize( InlinedScope * scope ) {
 }
 
 
-/*
-void CodeGenerator::finalize(InlinedScope* scope) {
-  // This routine is called at the very end of code generation for one
-  // NativeMethod; it provides the entry points & sets up the stack frame
-  // (i.e., this is the first code executed when entering a NativeMethod).
-  // Note: _currentMapping is not used since this is one fixed code pattern.
+void CodeGenerator::finalize2( InlinedScope * scope ) {
 
-  // first generate stubs if there are any
-  generateMergeStubs();
+    // This routine is called at the very end of code generation for one NativeMethod; it provides the entry points & sets up the stack frame
+    // (i.e., this is the first code executed when entering a NativeMethod). Note: _currentMapping is not used since this is one fixed code pattern.
 
-  // set unverified entry point
-  _masm->align(oopSize);
-  theCompiler->set_entry_point_offset(_masm->offset());
+    // first generate stubs if there are any
+    generateMergeStubs();
 
-  // verify receiver
-  if (scope->isMethodScope()) {
-    // check class
-    klassOop klass = scope->selfKlass();
-    if (klass == smiKlassObj) {
-      // receiver must be a smi_t, check smi_t tag only
-      _masm->testl(self_reg, MEMOOP_TAG);			// testl instead of test => no alignment nop's needed later
-      _masm->jcc(Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine());
+    // set unverified entry point
+    _masm->align( oopSize );
+    theCompiler->set_entry_point_offset( _masm->offset() );
+
+    // verify receiver
+    if ( scope->isMethodScope() ) {
+        // check class
+        KlassOop klass = scope->selfKlass();
+        if ( klass == smiKlassObj ) {
+            // receiver must be a smi_t, check smi_t tag only
+            _masm->testl( self_reg, MEMOOP_TAG );            // testl instead of test => no alignment nop's needed later
+            _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
+        } else {
+            st_assert( self_reg not_eq temp1, "choose another register" );
+            _masm->testl( self_reg, MEMOOP_TAG );            // testl instead of test => no alignment nop's needed later
+            _masm->jcc( Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine() );
+            _masm->cmpl( Address( self_reg, MemOopDescriptor::klass_byte_offset() ), klass );
+            _masm->jcc( Assembler::Condition::notEqual, CompiledInlineCache::normalLookupRoutine() );
+        }
     } else {
-      assert(self_reg not_eq temp1, "choose another register");
-      _masm->testl(self_reg, MEMOOP_TAG);			// testl instead of test => no alignment nop's needed later
-      _masm->jcc(Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine());
-      _masm->cmpl(Address(self_reg, memOopDescriptor::klass_byte_offset()), klass);
-      _masm->jcc(Assembler::Condition::notEqual, CompiledInlineCache::normalLookupRoutine());
+        // If this is a block method and we expect a context then the incoming context chain must be checked.
+        // The context chain may contain a deoptimized contextOop. (see StubRoutines::verify_context_chain for details)
+        if ( scope->method()->block_info() == MethodOopDescriptor::expects_context ) {
+            const bool_t use_fast_check = false;
+            _masm->call( StubRoutines::verify_context_chain(), RelocationInformation::RelocationType::runtime_call_type );
+        }
     }
-  } else {
-    // If this is a block method and we expect a context
-    // then the incoming context chain must be checked.
-    // The context chain may contain a deoptimized contextOop.
-    // (see StubRoutines::verify_context_chain for details)
-    if (scope->method()->block_info() == MethodOopDescriptor::expects_context) {
-      const bool_t use_fast_check = false;
-      if (use_fast_check) {
-        // look in old backend for this code
-        Unimplemented();
-      } else {
-        _masm->call(StubRoutines::verify_context_chain(), RelocationInformation::RelocationType::runtime_call_type);
-      }
+
+    // set verified entry point (for callers who know the receiver is correct)
+    _masm->align( oopSize );
+    theCompiler->set_verified_entry_point_offset( _masm->offset() );
+
+    // build stack frame & initialize locals
+    _masm->enter();
+    int n          = maxNofStackTmps();
+    int frame_size = 2 + n;    // return address, old ebp + stack temps
+    // make sure frame is big enough for deoptimization
+    if ( frame_size < minimum_size_for_deoptimized_frame ) {
+        // add the difference to
+        n += minimum_size_for_deoptimized_frame - frame_size;
     }
-  }
+    if ( n == 1 ) {
+        _masm->pushl( nilObj );
+    } else if ( n > 1 ) {
+        _masm->movl( temp1, nilObj );
+        while ( n-- > 0 ) _masm->pushl( temp1 );
+    }
 
-  // set verified entry point (for callers who know the receiver is correct)
-  _masm->align(oopSize);
-  theCompiler->set_verified_entry_point_offset(_masm->offset());
+    // increment invocation counter & check for overflow (trigger recompilation)
+    Label recompile_stub_call;
+    if ( RecompilationPolicy::needRecompileCounter( theCompiler ) ) {
+        char * addr = nativeMethodAddress() + NativeMethod::invocationCountOffset();
+        _masm->movl( temp1, Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+        _masm->incl( temp1 );
+        _masm->cmpl( temp1, theCompiler->get_invocation_counter_limit() );
+        _masm->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
+        _masm->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
+        //
+        // need to fix this:
+        // 1. put call to recompiler at end (otherwise we cannot provide debugging info easily)
+        // 2. check if everything is still ok (e.g. does the recompiler call ever return? if not, no jump needed)
+        // 3. check recompiler call stub routine (should not setup stack frame because registers cannot be seen!) - seems to be fixed
+    }
 
-  // build stack frame & initialize locals
-  _masm->enter();
-  int n = maxNofStackTmps();
-  int frame_size = 2 + n;	// return address, old ebp + stack temps
-  // make sure frame is big enough for deoptimization
-  if (frame_size < minimum_size_for_deoptimized_frame) {
-    // add the difference to
-    n += minimum_size_for_deoptimized_frame - frame_size;
-  }
-  if (n == 1) {
-    _masm->pushl(nilObj);
-  } else if (n > 1) {
-    _masm->movl(temp1, nilObj);
-    while (n-- > 0) _masm->pushl(temp1);
-  }
+    // jump to start of code
 
-  // increment invocation counter & check for overflow (trigger recompilation)
-  Label recompile_stub_call;
-  if (RecompilationPolicy::needRecompileCounter(theCompiler)) {
-    char* addr = nativeMethodAddress() + NativeMethod::invocationCountOffset();
-    _masm->movl(temp1, Address(int(addr), RelocationInformation::RelocationType::internal_word_type));
-    _masm->incl(temp1);
-    _masm->cmpl(temp1, theCompiler->get_invocation_counter_limit());
-    _masm->movl(Address(int(addr), RelocationInformation::RelocationType::internal_word_type), temp1);
-    _masm->jcc(Assembler::Condition::greaterEqual, recompile_stub_call);
-    //
-    // need to fix this:
-    // 1. put call to recompiler at end (otherwise we cannot provide debugging info easily)
-    // 2. check if everything is still ok (e.g. does the recompiler call ever return? if not, no jump needed)
-    // 3. check recompiler call stub routine (should not setup stack frame because registers cannot be seen!) - seems to be fixed
-  }
-
-  // jump to start of code
-
-  // call to recompiler - if the NativeMethod turns zombie, this will be overwritten by a call to the zombie handler
-  // (see also comment in NativeMethod)
-  _masm->bind(recompile_stub_call);
-  // write debug info
-  theCompiler->set_special_handler_call_offset(theMacroAssm->offset());
-  _masm->call(StubRoutines::recompile_stub_entry(), RelocationInformation::RelocationType::runtime_call_type);
+    // call to recompiler - if the NativeMethod turns zombie, this will be overwritten by a call to the zombie handler
+    // (see also comment in NativeMethod)
+    _masm->bind( recompile_stub_call );
+    // write debug info
+    theCompiler->set_special_handler_call_offset( _masm->offset() );
+    _masm->call( StubRoutines::recompile_stub_entry(), RelocationInformation::RelocationType::runtime_call_type );
 
 
-  // store nofCompilations at end of code for easier debugging
-  if (CompilerDebug) _masm->movl(eax, nofCompilations);
+    // store nofCompilations at end of code for easier debugging
+    if ( CompilerDebug ) _masm->movl( eax, _nofCompilations );
 
-  if (PrintCodeGeneration) {
-    _console->print("---\n");
-    _console->print("entry point\n");
-    _masm->code()->decode();
-    _console->print("---\n");
-  }
+    if ( PrintCodeGeneration ) {
+        _console->print( "---\n" );
+        _console->print( "entry point\n" );
+        _masm->code()->decode();
+        _console->print( "---\n" );
+    }
 }
-*/
 
 
 void CodeGenerator::zapContext( PseudoRegister * context ) {
@@ -584,7 +575,7 @@ void CodeGenerator::assign( PseudoRegister * dst, PseudoRegister * src, bool_t n
     st_assert( t.reg() == reg, "should be the same" );
 
     // get/load source
-    if ( src->isConstPReg() ) {
+    if ( src->isConstPseudoRegister() ) {
         value = ( ( ConstPseudoRegister * ) src )->constant;
         state = is_const;
     } else if ( src->_location == resultOfNonLocalReturn ) {
@@ -1081,7 +1072,7 @@ void CodeGenerator::aStoreUplevelNode( StoreUplevelNode * node ) {
 
 
 void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *& x, PseudoRegister *& y, bool_t & x_attr, bool_t & y_attr ) {
-    if ( x->isConstPReg() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
+    if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
         PseudoRegister * t1 = x;
         x = y;
         y = t1;
@@ -1305,7 +1296,7 @@ void CodeGenerator::anArithRRNode( ArithRRNode * node ) {
     PseudoRegisterLocker lock( z, x, y );
     Register             reg = targetRegister( op, z, x );
 
-    if ( y->isConstPReg() ) {
+    if ( y->isConstPseudoRegister() ) {
         arithRXOp( op, reg, ( ( ConstPseudoRegister * ) y )->constant );
     } else {
         arithRROp( op, reg, use( y ) );
@@ -1359,7 +1350,7 @@ void CodeGenerator::aTArithRRNode( TArithRRNode * node ) {
         jcc( Assembler::Condition::notZero, node, node->next( 1 ) );
     }
     Register reg = targetRegister( op, z, x );
-    if ( y->isConstPReg() ) {
+    if ( y->isConstPseudoRegister() ) {
         arithRXOp( op, reg, ( ( ConstPseudoRegister * ) y )->constant );
     } else {
         arithRROp( op, reg, use( y ) );
@@ -1421,7 +1412,7 @@ void CodeGenerator::aContextInitNode( ContextInitNode * node ) {
     for ( int i = node->nofTemps(); i-- > 0; ) {
         PseudoRegister * src = node->initialValue( i )->preg();
         PseudoRegister * dst;
-        if ( src->isBlockPReg() ) {
+        if ( src->isBlockPseudoRegister() ) {
             // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
             if ( node->wasEliminated() ) {
                 continue;                // there's no assignment (context was eliminated)
@@ -1485,7 +1476,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode * node ) {
             if ( r->_location == unAllocated )
                 continue;      // not uplevel-accessed (eliminated)
 
-            if ( r->isBlockPReg() )
+            if ( r->isBlockPseudoRegister() )
                 continue;          // ditto
 
             if ( not r->_location.isContextLocation() ) st_fatal( "expected context location" );
@@ -1711,7 +1702,7 @@ void CodeGenerator::generateTypeTests( LoopHeaderNode * node, Label & failure ) 
         HoistedTypeTest * t = node->tests()->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister
-        if ( t->_testedPR->isConstPReg() ) {
+        if ( t->_testedPR->isConstPseudoRegister() ) {
             guarantee( t->_testedPR->_location == unAllocated, "code assumes ConstPRegs are unallocated" );
             //handleConstantTypeTest((ConstPseudoRegister*)t->testedPR, t->klasses);
         } else {
@@ -1734,7 +1725,7 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
   for (int i = 0; i <= last; i++) {
     HoistedTypeTest* t = _tests->at(i);
     if (t->testedPR->loc == unAllocated) continue;	// optimized away, or ConstPseudoRegister
-    if (t->testedPR->isConstPReg()) {
+    if (t->testedPR->isConstPseudoRegister()) {
       guarantee(t->testedPR->loc == unAllocated, "code assumes ConstPseudoRegisters are unallocated");
       handleConstantTypeTest((ConstPseudoRegister*)t->testedPR, t->klasses);
     } else {
@@ -1777,7 +1768,7 @@ void CodeGenerator::handleConstantTypeTest(ConstPseudoRegister* r, GrowableArray
 
 void CodeGenerator::generateIntegerLoopTest( PseudoRegister * preg, LoopHeaderNode * node, Label & failure ) {
     if ( preg not_eq nullptr ) {
-        if ( preg->isConstPReg() ) {
+        if ( preg->isConstPseudoRegister() ) {
             // no run-time test necessary
             //handleConstantTypeTest((ConstPseudoRegister*)preg, nullptr);
         } else if ( preg->_location == unAllocated ) {
@@ -1801,7 +1792,7 @@ void CodeGenerator::generateIntegerLoopTest( PseudoRegister * preg, LoopHeaderNo
 void LoopHeaderNode::generateIntegerLoopTest(PseudoRegister* p, Label& prev, Label& failure) {
   const Register klassReg = temp2;
   if (p not_eq nullptr) {
-    if (p->isConstPReg()) {
+    if (p->isConstPseudoRegister()) {
       // no run-time test necessary
       handleConstantTypeTest((ConstPseudoRegister*)p, nullptr);
     } else if (p->loc == unAllocated) {
@@ -1859,7 +1850,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode * node, Label & failu
     // loopVar is used to index into array; make sure lower & upper bound is within array range
     PseudoRegister * lo = node->lowerBound();
     PseudoRegister * hi = node->upperBound();
-    if ( lo not_eq nullptr and lo->isConstPReg() and ( ( ConstPseudoRegister * ) lo )->constant->is_smi() and ( ( ConstPseudoRegister * ) lo )->constant >= smiOopFromValue( 1 ) ) {
+    if ( lo not_eq nullptr and lo->isConstPseudoRegister() and ( ( ConstPseudoRegister * ) lo )->constant->is_smi() and ( ( ConstPseudoRegister * ) lo )->constant >= smiOopFromValue( 1 ) ) {
 
     } else {
         // test lower bound
@@ -1891,7 +1882,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
     }
     if (i >= 0) {
       // loopVar is used to index into array; make sure lower & upper bound is within array range
-      if (_lowerBound not_eq nullptr and _lowerBound->isConstPReg() and ((ConstPseudoRegister*)_lowerBound)->constant->is_smi() and ((ConstPseudoRegister*)_lowerBound)->constant >= smiOopFromValue(1)) {
+      if (_lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ((ConstPseudoRegister*)_lowerBound)->constant->is_smi() and ((ConstPseudoRegister*)_lowerBound)->constant >= smiOopFromValue(1)) {
 	// loopVar iterates from smi_const to array size, so no test necessary
       } else {
 	// test lower bound
@@ -2618,7 +2609,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode * node ) {
             break;
 
         case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
-            bool_t const_val = node->arg2()->isConstPReg();
+            bool_t const_val = node->arg2()->isConstPseudoRegister();
             PseudoRegister * proxy = node->src();
             PseudoRegister * index = node->arg1();
             PseudoRegister * value = node->arg2();

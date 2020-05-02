@@ -15,27 +15,12 @@
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/system/os.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/vmOperations.hpp"
 
 #include "test/runtime/testProcess.hpp"
 #include "test/main/TestDeltaProcess.hpp"
 
 #include <gtest/gtest.h>
-
-
-void console_init();
-
-
-static void load_image() {
-
-    ResourceMark resourceMark;
-
-    Bootstrap bootstrap( image_basename );
-    bootstrap.load();
-
-    vmSymbols::initialize();
-
-    bootstrappingInProgress = false;
-}
 
 
 void addTestToProcesses() {
@@ -138,4 +123,3 @@ int main( int argc, char * argv[] ) {
 
     return EXIT_SUCCESS;
 }
-

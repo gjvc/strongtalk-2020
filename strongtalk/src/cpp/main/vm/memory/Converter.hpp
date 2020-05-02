@@ -42,6 +42,7 @@ class memConverter : public ResourceObject {
             int       old_header_size = _oldKlass->klass_part()->oop_header_size();
             int       new_header_size = _newKlass->klass_part()->oop_header_size();
             int       n               = _oldKlass->klass_part()->number_of_instance_variables();
+
             for ( int old_index       = 0; old_index < n; old_index++ ) {
                 SymbolOop name = _oldKlass->klass_part()->inst_var_name_at( old_index + old_header_size );
                 st_assert( name->is_symbol(), "instance variable name must be symbol" );
@@ -82,6 +83,7 @@ class memConverter : public ResourceObject {
             if ( src->mark()->is_near_death() )
                 dst->mark_as_dying();
             dst->set_identity_hash( src->identity_hash() );
+
             // Instance variables
             for ( int i = 0; i < _mapping->length(); i += 2 ) {
                 int from = _mapping->at( i );
@@ -208,7 +210,9 @@ class objArrayConverter : public memConverter {
         void transfer( MemOop src, MemOop dst ) {
             memConverter::transfer( src, dst );
             if ( _sourceIsObjArray ) {
+
                 int       length = ObjectArrayOop( src )->length();
+
                 for ( int i      = 1; i <= length; i++ )
                     ObjectArrayOop( dst )->obj_at_put( i, ObjectArrayOop( src )->obj_at( i ) );
             }
@@ -305,10 +309,3 @@ class ConvertOopClosure : public ObjectClosure {
             obj->oop_iterate( &blk );
         }
 };
-
-
-
-
-
-
-

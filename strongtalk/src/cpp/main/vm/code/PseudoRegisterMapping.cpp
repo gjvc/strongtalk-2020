@@ -323,7 +323,7 @@ void PseudoRegisterMapping::killDeadsAt( Node * node, PseudoRegister * exception
     int i = size();
     while ( i-- > 0 ) {
         PseudoRegister * preg = _pseudoRegisters->at( i );
-        if ( preg not_eq nullptr and preg not_eq exception and ( not preg->isLiveAt( node ) or preg->isConstPReg() ) )
+        if ( preg not_eq nullptr and preg not_eq exception and ( not preg->isLiveAt( node ) or preg->isConstPseudoRegister() ) )
             kill( preg );
     }
 }
@@ -349,7 +349,7 @@ void PseudoRegisterMapping::cleanupContextReferences() {
 // (kind of academic subtlety).
 
 Register PseudoRegisterMapping::def( PseudoRegister * preg, Register hint ) {
-    st_assert( not preg->isSAPReg() or index( preg ) < 0, "SAPseudoRegisters can be defined only once" );
+    st_assert( not preg->isSinglyAssignedPseudoRegister() or index( preg ) < 0, "SinglyAssignedPseudoRegisters can be defined only once" );
     int i = index( preg );
     st_assert( i < 0 or not hasStkLoc( i ) or not _locations->isArgument( stkLoc( i ) ), "cannot assign to parameters" );
     kill( preg );
@@ -424,7 +424,7 @@ Register PseudoRegisterMapping::use( PseudoRegister * preg, Register hint ) {
 
 Register PseudoRegisterMapping::use( PseudoRegister * preg ) {
     Register reg;
-    if ( preg->isConstPReg() and not isDefined( preg ) ) {
+    if ( preg->isConstPseudoRegister() and not isDefined( preg ) ) {
         reg = def( preg );
         _macroAssembler->movl( reg, ( ( ConstPseudoRegister * ) preg )->constant );
     } else {

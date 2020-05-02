@@ -568,7 +568,7 @@ InterpretedInlineCache * CompiledInlineCache::inlineCache() const {
     NativeMethod             * nm     = findNativeMethod( addr );
     ProgramCounterDescriptor * pcdesc = nm->containingProgramCounterDescriptor( addr );
     ScopeDescriptor          * scope  = pcdesc->containingDesc( nm );
-    CodeIterator iter = CodeIterator( scope->method(), pcdesc->_byteCode );
+    CodeIterator iter = CodeIterator( scope->method(), pcdesc->_byteCodeIndex );
     return iter.ic();
 }
 

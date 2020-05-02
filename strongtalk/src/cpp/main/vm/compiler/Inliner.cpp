@@ -714,7 +714,7 @@ RecompilationScope * Inliner::makeBlockRScope( const Expression * receiver, Look
     // create an InlinedScope for this block method
     if ( not TypeFeedback )
         return new NullRecompilationScope;
-    if ( not receiver->preg()->isBlockPReg() ) {
+    if ( not receiver->preg()->isBlockPseudoRegister() ) {
         return new NullRecompilationScope;      // block parent is in a different NativeMethod -- won't inline
     }
 
@@ -798,7 +798,7 @@ InlinedScope * Inliner::makeScope( const Expression * receiver, const KlassOop k
     if ( method->is_blockMethod() ) {
         RecompilationScope * rs = makeBlockRScope( receiver, calleeInfo->_lookupKey, method );
         bool_t isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
-        if ( receiver->preg()->isBlockPReg() ) {
+        if ( receiver->preg()->isBlockPseudoRegister() ) {
             InlinedScope * parent = receiver->preg()->scope();
             calleeInfo->_receiver = parent->self();
             _callee = BlockScope::new_BlockScope( method, methodHolder, parent, _sender, rs, calleeInfo );
@@ -837,7 +837,7 @@ void Inliner::print() {
 Expression * Inliner::inlineBlockInvocation( SendInfo * info ) {
     initialize( info, SendKind::NormalSend );
     Expression * blockExpression = info->_receiver;
-    st_assert( blockExpression->preg()->isBlockPReg(), "must be a BlockPR" );
+    st_assert( blockExpression->preg()->isBlockPseudoRegister(), "must be a BlockPR" );
     const BlockPseudoRegister * block = ( BlockPseudoRegister * ) blockExpression->preg();
     const MethodOop method = block->closure()->method();
     const InlinedScope * parent = block->closure()->parent_scope();

@@ -249,6 +249,7 @@ class NullRecompilationScope : public RecompilationScope {
         void print_short();
 };
 
+
 class UninlinableRecompilationScope : public NullRecompilationScope {
         // scope marking "callee" of an uninlinable or megamorphic send
     public:
@@ -646,7 +647,7 @@ class RUncommonBranch : public PrintableResourceObject {
 
 
         int byteCodeIndex() const {
-            return programCounterDescriptor->_byteCode;
+            return programCounterDescriptor->_byteCodeIndex;
         }
 
 

@@ -173,9 +173,3 @@ void console_init() {
     _console = new( true ) ConsoleOutputStream;
     _console->print_cr( "%%system-init:  ConsoleOutputStream-open" );
 }
-
-
-ConsoleOutputStream * getStd() {
-    console_init();
-    return _console;
-}

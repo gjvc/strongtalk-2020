@@ -19,7 +19,7 @@ class Floats : AllStatic {
 
     public:
         static constexpr smi_t magic                   = 0x0badbabe;
-        static constexpr smi_t max_number_of_functions = 256;
+        static constexpr smi_t max_number_of_functions = 25;
 
         // Function codes for float operations.
         // When changing these codes, make sure that the bytecode compiler is updated as well!

@@ -1209,7 +1209,7 @@ class AssignNode : public StoreNode {
 
 
         bool_t hasConstantSrc() const {
-            return _src->isConstPReg();
+            return _src->isConstPseudoRegister();
         }
 
 
@@ -1229,7 +1229,7 @@ class AssignNode : public StoreNode {
 
 
         const char * action() const {
-            return _dest->isSAPReg() ? "passed as an argument" : "assigned to a local";
+            return _dest->isSinglyAssignedPseudoRegister() ? "passed as an argument" : "assigned to a local";
         }
 
 
@@ -2581,7 +2581,7 @@ class BlockCreateNode : public PrimitiveNode {
 
 
         BlockPseudoRegister * block() const {
-            st_assert( _dest->isBlockPReg(), "must be BlockPseudoRegister" );
+            st_assert( _dest->isBlockPseudoRegister(), "must be BlockPseudoRegister" );
             return ( BlockPseudoRegister * ) _dest;
         }
 

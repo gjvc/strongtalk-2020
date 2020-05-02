@@ -11,9 +11,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
-
-
 // remembered set for GC, implemented as a card-marking byte array with one byte per card
 // Card size is 512 bytes
 // NB: Card size must be >= 512 because of the offset_array in oldspace

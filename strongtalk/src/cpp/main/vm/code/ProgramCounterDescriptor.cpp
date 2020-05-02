@@ -12,8 +12,8 @@
 
 ProgramCounterDescriptor::ProgramCounterDescriptor( uint16_t pc, uint16_t scope, uint16_t byteCode ) {
     _pc       = pc;
-    _scope    = scope;
-    _byteCode = byteCode;
+    _scope         = scope;
+    _byteCodeIndex = byteCode;
 }
 
 
@@ -29,7 +29,7 @@ ScopeDescriptor * ProgramCounterDescriptor::containingDesc( const NativeMethod *
 
 void ProgramCounterDescriptor::print( NativeMethod * nm ) {
     printIndent();
-    lprintf( "ProgramCounterDescriptor %#lx: pc: %#lx; scope: %5ld; byte code: %ld\n", this, real_pc( nm ), _scope, ( int32_t ) _byteCode );
+    lprintf( "ProgramCounterDescriptor %#lx: pc: %#lx; scope: %5ld; byte code: %ld\n", this, real_pc( nm ), _scope, ( int32_t ) _byteCodeIndex );
 }
 
 

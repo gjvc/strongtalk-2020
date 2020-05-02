@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -94,7 +95,7 @@ bool_t PseudoRegister::isLocalTo( BasicBlock * bb ) const {
     // is this a preg local to bb? (i.e. can it be allocated to temp regs?)
     // treat ConstPseudoRegisters as non-local so they don't get allocated prematurely
     // (possible performance bug)
-    return _location.equals( unAllocated ) and not uplevelR() and not _debug and not incorrectDU() and not isConstPReg() and _dus.length() == 1 and _dus.first()->_basicBlock == bb;
+    return _location.equals( unAllocated ) and not uplevelR() and not _debug and not incorrectDU() and not isConstPseudoRegister() and _dus.length() == 1 and _dus.first()->_basicBlock == bb;
 }
 
 
@@ -223,7 +224,7 @@ void PseudoRegister::incUses( Usage * use ) {
         _softUsageCount++;
     InlinedScope * s = use->_node->scope();
     _weight += computeWeight( s );
-    st_assert( _weight >= _usageCount + _definitionCount or isConstPReg(), "weight too small" );
+    st_assert( _weight >= _usageCount + _definitionCount or isConstPseudoRegister(), "weight too small" );
 }
 
 
@@ -233,7 +234,7 @@ void PseudoRegister::decUses( Usage * use ) {
         _softUsageCount--;
     InlinedScope * s = use->_node->scope();
     _weight -= computeWeight( s );
-    st_assert( _weight >= _usageCount + _definitionCount or isConstPReg(), "weight too small" );
+    st_assert( _weight >= _usageCount + _definitionCount or isConstPseudoRegister(), "weight too small" );
 }
 
 
@@ -241,7 +242,7 @@ void PseudoRegister::incDefs( Definition * def ) {
     _definitionCount++;
     InlinedScope * s = def->_node->scope();
     _weight += computeWeight( s );
-    st_assert( _weight >= _usageCount + _definitionCount or isConstPReg(), "weight too small" );
+    st_assert( _weight >= _usageCount + _definitionCount or isConstPseudoRegister(), "weight too small" );
 }
 
 
@@ -249,7 +250,7 @@ void PseudoRegister::decDefs( Definition * def ) {
     _definitionCount--;
     InlinedScope * s = def->_node->scope();
     _weight -= computeWeight( s );
-    st_assert( _weight >= _usageCount + _definitionCount or isConstPReg(), "weight too small" );
+    st_assert( _weight >= _usageCount + _definitionCount or isConstPseudoRegister(), "weight too small" );
 }
 
 
@@ -525,7 +526,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
 
     st_assert( not _softUsageCount or _debug, "nsoftUses should imply debug" );
 
-    if ( isBlockPReg() and not withUses and not uplevelR() ) {
+    if ( isBlockPseudoRegister() and not withUses and not uplevelR() ) {
         // blocks can always be eliminated - can describe with BlockValueDesc
         return true;
     }
@@ -539,9 +540,9 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
             return true;
         }
         if ( _definitionCount > 1 ) {
-            if ( isBlockPReg() ) {
+            if ( isBlockPseudoRegister() ) {
                 // ok; we know all definitions of a block are equivalent
-            } else if ( isSAPReg() and checkEquivalentDefs() ) {
+            } else if ( isSinglyAssignedPseudoRegister() and checkEquivalentDefs() ) {
                 // ok, all definitions are the same
             } else {
                 if ( not checkEquivalentDefs() ) {
@@ -566,7 +567,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
         if ( defNode->hasConstantSrc() ) {
             // constant assignment - easy to handle
             ok = true;
-        } else if ( defNode->hasSrc() and ( defSrc = defNode->src() )->isSAPReg() and not defSrc->_location.isRegisterLocation() ) {
+        } else if ( defNode->hasSrc() and ( defSrc = defNode->src() )->isSinglyAssignedPseudoRegister() and not defSrc->_location.isRegisterLocation() ) {
 
             // can substitute defSrc if its lifetime encompasses ours and if
             // it is singly-assigned and not a temp reg (last cond. is necessary to
@@ -575,7 +576,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
             // performance problem)
 
             ok = defSrc->scope()->isSenderOf( _scope );
-            if ( not ok and defSrc->scope() == _scope and isSAPReg() ) {
+            if ( not ok and defSrc->scope() == _scope and isSinglyAssignedPseudoRegister() ) {
                 // same scope, ok if defSrc lives int32_t enough
                 ok = byteCodeIndexGE( ( ( SinglyAssignedPseudoRegister * ) defSrc )->endByteCodeIndex(), endByteCodeIndex() );
             }
@@ -701,7 +702,7 @@ void PseudoRegister::updateCPInfo( NonTrivialNode * n ) {
         }
     } else {
         _copyPropagationInfo = new_CPInfo( n );
-        st_assert( not _debug or _copyPropagationInfo or isBlockPReg(), "couldn't create info" );
+        st_assert( not _debug or _copyPropagationInfo or isBlockPseudoRegister(), "couldn't create info" );
         if ( _copyPropagationInfo ) {
             PseudoRegister * r = _copyPropagationInfo->r;
             // if we're eliminating a debug-visible PseudoRegister, the replacement
@@ -868,9 +869,9 @@ NameNode * PseudoRegister::nameNode( bool_t mustBeLegal ) const {
     PseudoRegister * r = cpReg();
     if ( not( r->_location.equals( unAllocated ) ) ) {
         return r->locNameNode( mustBeLegal );
-    } else if ( r->isConstPReg() ) {
+    } else if ( r->isConstPseudoRegister() ) {
         return r->nameNode( mustBeLegal );
-    } else if ( r->isBlockPReg() ) {
+    } else if ( r->isBlockPseudoRegister() ) {
         CompileTimeClosure * c = ( ( BlockPseudoRegister * ) r )->closure();
         return new BlockValueName( c->method(), c->parent_scope()->getScopeInfo() );
     } else {
@@ -1124,7 +1125,7 @@ bool_t PseudoRegister::verify() const {
         definitions += info->_definitions.length();
         uses += info->_usages.length();
     }
-    if ( definitions not_eq _definitionCount and not incorrectD() and not isConstPReg() ) {
+    if ( definitions not_eq _definitionCount and not incorrectD() and not isConstPseudoRegister() ) {
         // ConstPseudoRegisters have fake def
         ok = false;
         error( "PseudoRegister %#lx %s: wrong def count (%ld instead of %ld)", this, name(), _definitionCount, definitions );
@@ -1180,7 +1181,7 @@ bool_t BlockPseudoRegister::verify() const {
     // check uplevel-accessed vars: if they are blocks, they must be exposed
     if ( _uplevelRead ) {
         for ( int i = 0; i < _uplevelRead->length(); i++ ) {
-            if ( _uplevelRead->at( i )->isBlockPReg() ) {
+            if ( _uplevelRead->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister * blk = ( BlockPseudoRegister * ) _uplevelRead->at( i );
                 if ( not blk->escapes() ) {
                     error( "BlockPseudoRegister %#lx is uplevel-accessed by escaping BlockPseudoRegister %#lx but isn't marked escaping itself", blk, this );
@@ -1189,7 +1190,7 @@ bool_t BlockPseudoRegister::verify() const {
             }
         }
         for ( int i = 0; i < _uplevelWritten->length(); i++ ) {
-            if ( _uplevelWritten->at( i )->isBlockPReg() ) {
+            if ( _uplevelWritten->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister * blk = ( BlockPseudoRegister * ) _uplevelRead->at( i );
                 error( "BlockPseudoRegister %#lx is uplevel-written by escaping BlockPseudoRegister %#lx, but BlockPseudoRegisters should never be assigned", blk, this );
                 ok                        = false;

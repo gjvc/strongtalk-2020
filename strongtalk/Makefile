@@ -46,7 +46,7 @@ gcc-version-minor 	:= 3
 gcc-version     	:= $(gcc-version-major)-$(gcc-version-minor)
 machine-name        := i686
 runtime-platform    := w64-mingw32
-runtime-variant     := -posix
+runtime-variant     := posix
 endif
 
 
@@ -60,20 +60,20 @@ gcc-version-minor 	:= 3
 gcc-version     	:= $(gcc-version-major)-$(gcc-version-minor)
 machine-name        := i686
 runtime-platform    := linux-gnu
-runtime-variant     := -$(gcc-version-major)
+runtime-variant     := $(gcc-version-major)
 endif
 
 
 # gcc -------------------------------------------------------------------------
 
 toolchain-name  := $(machine-name)-$(runtime-platform)
-object-path 	:= obj/$(toolchain-name)$(runtime-variant)/$(build-type)
+object-path 	:= obj/$(toolchain-name)-$(runtime-variant)/$(build-type)
 
 
 # gcc -------------------------------------------------------------------------
 
-g++ := /usr/bin/$(toolchain-name)-g++$(runtime-variant)
-gcc := /usr/bin/$(toolchain-name)-gcc$(runtime-variant)
+g++ := /usr/bin/$(toolchain-name)-g++-$(runtime-variant)
+gcc := /usr/bin/$(toolchain-name)-gcc-$(runtime-variant)
 export CC=$(ccache) $(gcc)
 export CXX=$(ccache) $(g++)
 
@@ -158,7 +158,7 @@ cxx-language-flags              := $(addprefix -std=,$(cxx-language-options))
 cxx-machine-options             := 32
 cxx-machine-flags               := $(addprefix -m,$(cxx-machine-options))
 
-cxx-no-warning-options          := unused-parameter
+cxx-no-warning-options          := comment unused-parameter
 cxx-no-warning-flags            := $(addprefix -Wno-,$(cxx-no-warning-options))
 
 cxx-optimisation-options        := 0
@@ -199,77 +199,141 @@ mingw-w64-link-flags = \
 
 # strongtalk-main-{sources,objects,depends} -------------------------------------
 
-strongtalk-main-lib-sources             := $(wildcard src/cpp/main/vm/*/*.cpp)
-strongtalk-main-lib-sources             := $(filter-out src/cpp/main/vm/main/%.cpp,$(strongtalk-main-lib-sources))
-strongtalk-main-lib-objects             := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-lib-sources))
-strongtalk-main-lib-depends             := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-lib-sources))
-
-strongtalk-main-lib-cxx-include-paths   := $(nasm-include-paths) $(udis86-include-paths) src/cpp/main
-strongtalk-main-lib-cxx-include-flags   := $(addprefix -I ,$(strongtalk-main-lib-cxx-include-paths))
-strongtalk-main-lib-define-values    	:= 
-strongtalk-main-lib-define-flags        := $(addprefix -D ,$(strongtalk-main-lib-define-values))
-
-strongtalk-main-exe                     := $(object-path)/strongtalk-main.exe
-strongtalk-main-exe-sources             := $(wildcard src/cpp/main/vm/main/*.cpp)
-strongtalk-main-exe-objects             := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-exe-sources))
-strongtalk-main-exe-depends             := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-exe-sources))
-
-
-# strongtalk-test-{sources,objects,depends} ---------------------------------
-
-strongtalk-test-exe-sources             := $(wildcard src/cpp/test/test/*/*.cpp)
-strongtalk-test-exe-objects             := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-exe-sources))
-strongtalk-test-exe-depends             := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-exe-sources))
-
-strongtalk-test-cxx-include-paths    	:= src/cpp/test src/cpp/main $(googletest-include-paths)
-strongtalk-test-cxx-include-flags    	:= $(addprefix -I ,$(strongtalk-test-cxx-include-paths))
-strongtalk-test-define-values        	:= 
-strongtalk-test-define-flags         	:= $(addprefix -D ,$(strongtalk-test-define-values))
-
-strongtalk-test-exe                  	:= $(object-path)/strongtalk-test.exe
-
-
-# targets ---------------------------------------------------------------------
-
-.PHONY : default strongtalk-main-exe strongtalk-test-exe googletest 
-.PHONY : init init-ext init-wine 
-
 default : strongtalk-main-exe strongtalk-test-exe
 
-help  : 
-	@echo ""
-	@echo "NAME"
-	@echo ""
-	@echo "    strongtalk-2020"
-	@echo ""
-	@echo ""
-	@echo "TARGETS"
-	@echo ""
-	@echo "    make wine-kill-all"
-	@echo "        kill all wine processex via wineserver --kill"
-	@echo ""
-	@echo "    make wine-strongtalk-main-exe"
-	@echo "        build and run strongtalk.exe under wine"
-	@echo ""
-	@echo "    make wine-strongtalk-test-exe"
-	@echo "        build and run strongtalk-test.exe under wine"
-	@echo ""
-	@echo "    make strongtalk-main-exe"
-	@echo "        build strongtalk.exe"
-	@echo ""
-	@echo "    make strongtalk-main-exe-run"
-	@echo "        build and run strongtalk.exe"
-	@echo ""
-	@echo "    make strongtalk-test-exe"
-	@echo "        build strongtalk-test.exe"
-	@echo ""
-	@echo "    make strongtalk-test-exe-run"
-	@echo "        build and run strongtalk-test.exe"
-	@echo ""
-	@echo "META"
-	@echo ""
-	@echo "    this file is [$(THIS-FILE)]"
-	@echo ""
+clean : strongtalk-main-lib-clean strongtalk-main-exe-clean 
+
+
+# strongtalk-main -----------------------------------------------------------
+
+strongtalk-main-cxx-include-paths   := $(nasm-include-paths) $(udis86-include-paths) src/cpp/main
+strongtalk-main-cxx-include-flags   := $(addprefix -I ,$(strongtalk-main-cxx-include-paths))
+
+strongtalk-main-define-values    	:= 
+strongtalk-main-define-flags        := $(addprefix -D ,$(strongtalk-main-define-values))
+
+
+# strongtalk-main-lib -------------------------------------------------------
+
+strongtalk-main-lib-sources         := $(wildcard src/cpp/main/vm/*/*.cpp)
+strongtalk-main-lib-sources         := $(filter-out src/cpp/main/vm/main/%.cpp,$(strongtalk-main-lib-sources))
+strongtalk-main-lib-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-lib-sources))
+strongtalk-main-lib-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-lib-sources))
+strongtalk-main-lib        			:= $(object-path)/libstrongtalk.a
+strongtalk-main-lib-link-flags      := -L $(object-path) -Wl,-Bstatic,--whole-archive -l strongtalk -Wl,--no-whole-archive,--Bdynamic
+
+strongtalk-main-lib : $(strongtalk-main-lib)
+
+$(strongtalk-main-lib-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
+	-@mkdir -p $(dir $@)
+	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-main-cxx-include-flags) -c $< -o $@
+
+$(strongtalk-main-lib-depends) :
+include $(wildcard $(strongtalk-main-lib-depends))
+
+$(strongtalk-main-lib) : $(strongtalk-main-lib-objects)
+	ar rcs $(strongtalk-main-lib)  $(strongtalk-main-lib-objects)
+
+strongtalk-main-lib-clean : 
+	-rm $(strongtalk-main-lib)
+	-rm $(strongtalk-main-lib-depends)
+	-rm $(strongtalk-main-lib-objects)
+
+
+# strongtalk-main-exe -------------------------------------------------------
+
+strongtalk-main-exe-sources         := $(wildcard src/cpp/main/vm/main/*.cpp)
+strongtalk-main-exe-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-exe-sources))
+strongtalk-main-exe-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-exe-sources))
+strongtalk-main-exe                 := $(object-path)/strongtalk-main.exe
+
+strongtalk-main-exe : $(strongtalk-main-exe)
+
+$(strongtalk-main-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
+	-@mkdir -p $(dir $@)
+	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-main-cxx-include-flags) -c $< -o $@
+
+$(strongtalk-main-exe-depends) :
+include $(wildcard $(strongtalk-main-exe-depends))
+
+$(strongtalk-main-exe) : $(strongtalk-main-exe-objects) $(strongtalk-main-lib)
+	$(g++) \
+		$(cxx-link-flags) \
+		$(libgcc-link-flags) \
+		$(strongtalk-main-exe-objects) \
+		$(strongtalk-main-lib-link-flags) \
+		$(libnasm-a-flags) \
+		$(libudis86-a-flags) \
+		$(platform-flags) \
+		-o $(strongtalk-main-exe)
+
+strongtalk-main-exe-clean : 
+	-rm $(strongtalk-main-exe)
+	-rm $(strongtalk-main-exe-depends)
+	-rm $(strongtalk-main-exe-objects)
+
+
+# strongtalk-test-lib -------------------------------------------------------
+
+strongtalk-test-cxx-include-paths   := src/cpp/test src/cpp/main $(googletest-include-paths)
+strongtalk-test-cxx-include-flags   := $(addprefix -I ,$(strongtalk-test-cxx-include-paths))
+
+strongtalk-test-define-values       := 
+strongtalk-test-define-flags        := $(addprefix -D ,$(strongtalk-test-define-values))
+
+strongtalk-test-lib-sources         := $(wildcard src/cpp/test/vm/*/*.cpp)
+strongtalk-test-lib-sources         := $(filter-out src/cpp/test/test/main/%.cpp,$(strongtalk-test-lib-sources))
+strongtalk-test-lib-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-lib-sources))
+strongtalk-test-lib-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-lib-sources))
+strongtalk-test-lib                 := $(object-path)/libstrongtalktest.a
+strongtalk-test-lib-link-flags      := -L $(object-path) -Wl,-Bstatic,--whole-archive -l strongtalktest -Wl,--no-whole-archive,--Bdynamic
+
+strongtalk-test-lib : $(strongtalk-test-lib)
+
+$(strongtalk-test-lib-depends) :
+include $(wildcard $(strongtalk-test-lib-depends))
+
+$(strongtalk-test-lib) : $(strongtalk-test-lib-objects)
+	ar rcs $(strongtalk-test-lib) $(strongtalk-test-lib-objects)
+
+strongtalk-test-lib-clean : 
+	-rm $(strongtalk-test-lib)
+	-rm $(strongtalk-test-lib-depends)
+	-rm $(strongtalk-test-lib-objects)
+
+
+# strongtalk-test-exe -------------------------------------------------------
+
+strongtalk-test-exe-sources 		:= $(wildcard src/cpp/test/test/main/*.cpp)
+strongtalk-test-exe-objects 		:= $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-exe-sources))
+strongtalk-test-exe-depends 		:= $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-exe-sources))
+strongtalk-test-exe     			:= $(object-path)/strongtalk-test.exe
+
+$(strongtalk-test-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
+	-@mkdir -p $(dir $@)
+	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-test-cxx-include-flags) -c $< -o $@
+
+$(strongtalk-test-exe-depends) :
+include $(wildcard $(strongtalk-test-exe-depends))
+
+strongtalk-test-exe : $(strongtalk-test-exe)
+
+$(strongtalk-test-exe) : $(strongtalk-test-exe-objects) $(strongtalk-test-lib) $(strongtalk-main-lib)
+	$(g++) \
+		$(cxx-link-flags) \
+		$(libgcc-link-flags) \
+		$(strongtalk-test-exe-objects) \
+		$(strongtalk-test-lib-link-flags) \
+		$(strongtalk-main-lib-link-flags) \
+		$(libudis86-a-flags) \
+		$(libgtest-a-flags) \
+		$(platform-flags) \
+		-o $(strongtalk-test-exe)
+
+strongtalk-test-exe-clean : 
+	-rm $(strongtalk-test-exe)
+	-rm $(strongtalk-test-exe-depends)
+	-rm $(strongtalk-test-exe-objects)
 
 
 # environment -----------------------------------------------------------------
@@ -283,20 +347,9 @@ init-wine :
 	$(wineboot) --init
 
 
-# executables -----------------------------------------------------------------
-
-strongtalk-main-exe : $(strongtalk-main-exe)
-
-strongtalk-main-exe-run : $(strongtalk-exe)
-	$(strongtalk-main-exe)
-
-strongtalk-test-exe : $(strongtalk-test-exe)
-
-strongtalk-test-exe-run : $(strongtalk-test-exe)
-	$(strongtalk-test-exe)
-
-
 # wine ------------------------------------------------------------------------
+
+.PHONY : wine-kill-all wine-strongtalk-main-exe wine-strongtalk-test-exe
 
 wine-kill-all :
 	-$(wineserver) --kill
@@ -310,6 +363,8 @@ wine-strongtalk-test-exe : $(strongtalk-test-exe)
 
 # valgrind --------------------------------------------------------------------
 
+.PHONY : valgrind-strongtalk-main-exe valgrind-strongtalk-test-exe
+
 valgrind-strongtalk-main-exe :
 	$(valgrind) $(valgrind-options) $(wine) $(strongtalk-main-exe)
 
@@ -319,30 +374,12 @@ valgrind-strongtalk-test-exe :
 
 # tags ------------------------------------------------------------------------
 
+.PHONY : tags
+
 tags : GPATH GRTAGS GTAGS
 
-GPATH GRTAGS GTAGS : $(strongtalk-sources) $(strongtalk-test-lib-sources)
+GPATH GRTAGS GTAGS : $(strongtalk-main-lib-sources) $(strongtalk-test-lib-sources)
 	gtags --verbose --statistics $<
-
-
-# clean -----------------------------------------------------------------------
-
-clean : clean-main clean-test
-
-clean-main :
-	-rm $(strongtalk-main-lib-objects)
-	-rm $(strongtalk-main-lib-depends)
-	-rm $(strongtalk-main-exe-objects)
-	-rm $(strongtalk-main-exe-depends)
-	-rm $(strongtalk-main-exe)
-
-clean-test :
-	-rm $(strongtalk-test-lib-depends)
-	-rm $(strongtalk-test-exe-objects)
-	-rm $(strongtalk-test-exe-depends)
-	-rm $(strongtalk-test-exe)
-
-.PHONY : clean clean-main
 
 
 # strongtalk.exe --------------------------------------------------------------
@@ -354,53 +391,6 @@ endif
 ifeq ($(toolchain-name),i686-linux-gnu)
 platform-flags := -ldl -lpthread -lreadline
 endif
-
-$(strongtalk-main-exe-objects) $(strongtalk-main-lib-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
-	-@mkdir -p $(dir $@)
-	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-main-lib-cxx-include-flags) -c $< -o $@
-
-$(strongtalk-main-lib-depends) :
-include $(wildcard $(strongtalk-main-lib-depends))
-
-# make: *** No rule to make target 'src/cpp/main/vm/main/*.cpp', needed by 'obj/i686-linux-gnu-9//src/cpp/main/vm/main/*.cpp.o'.  Stop.
- 
-$(strongtalk-main-exe) : $(strongtalk-main-lib-objects) $(strongtalk-main-exe-objects)
-	$(g++) \
-		$(cxx-link-flags) \
-		$(libgcc-link-flags) \
-		$(strongtalk-main-lib-objects) \
-		$(strongtalk-main-exe-objects) \
-		$(libnasm-a-flags) \
-		$(libudis86-a-flags) \
-		$(platform-flags) \
-		-o $(strongtalk-main-exe)
-
-$(strongtalk-main-exe-depends) :
-include $(wildcard $(strongtalk-main-exe-depends))
-
-$(strongtalk-main-lib-depends) :
-include $(wildcard $(strongtalk-main-lib-depends))
-
-
-# strongtalk-test.exe ----------------------------------------------------------
-
-$(strongtalk-test-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
-	-@mkdir -p $(dir $@)
-	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-test-cxx-include-flags) -c $< -o $@
-
-$(strongtalk-test-exe-depends) :
-include $(wildcard $(strongtalk-test-exe-depends))
-
-$(strongtalk-test-exe) : $(strongtalk-test-exe-objects) $(strongtalk-main-lib-objects)
-	$(g++) \
-		$(cxx-link-flags) \
-		$(libgcc-link-flags) \
-		$(strongtalk-test-exe-objects) \
-		$(strongtalk-main-lib-objects) \
-		$(libudis86-a-flags) \
-		$(libgtest-a-flags) \
-		$(platform-flags) \
-		-o $(strongtalk-test-exe)
 
 
 # ccache ----------------------------------------------------------------------
@@ -437,7 +427,13 @@ doxygen-generate :
 # googletest ------------------------------------------------------------------
 
 googletest :
-	cmake -G Ninja -D CMAKE_SYSTEM_NAME=$(cmake-system-name) -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) -D CMAKE_CXX_COMPILER=$(g++) -S $(googletest-root-dir) -B $(googletest-object-dir)
+	cmake \
+		-G Ninja \
+		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+		-D CMAKE_CXX_COMPILER=$(g++) \
+		-S $(googletest-root-dir) \
+		-B $(googletest-object-dir)
 	ninja -C $(googletest-object-dir)
 
 
@@ -458,7 +454,14 @@ nasm :
 # spdlog ----------------------------------------------------------------------
 
 spdlog :
-	cmake -G Ninja -D CMAKE_SYSTEM_NAME=$(cmake-system-name) -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) -D CMAKE_CXX_COMPILER=$(g++) -D CMAKE_C_COMPILER=$(gcc) -S $(spdlog-root-dir) -B $(spdlog-object-dir)
+	cmake \
+		-G Ninja \
+		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+		-D CMAKE_CXX_COMPILER=$(g++) \
+		-D CMAKE_C_COMPILER=$(gcc) \
+		-S $(spdlog-root-dir) \
+		-B $(spdlog-object-dir)
 	ninja -C $(spdlog-object-dir)
 
 
@@ -474,6 +477,12 @@ udis86 :
 # zydis -----------------------------------------------------------------------
 
 zydis :
-	cmake -G Ninja -D CMAKE_SYSTEM_NAME=$(cmake-system-name) -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) -D CMAKE_CXX_COMPILER=$(g++) -S $(zydis-root-dir) -B $(zydis-object-dir)
+	cmake \
+		-G Ninja \
+		-D CMAKE_CXX_COMPILER=$(g++) \
+		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+		-S $(zydis-root-dir) \
+		-B $(zydis-object-dir)
 	ninja -C $(zydis-object-dir)
 

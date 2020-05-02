@@ -18,9 +18,8 @@ class AgeTable : public CHeapAllocatedObject {
 
     public:
 
-        enum {
-            table_size = MarkOopDescriptor::max_age + 1
-        };
+        static constexpr size_t table_size = MarkOopDescriptor::max_age + 1;
+
         std::array <int, table_size> _sizes;
         AgeTable();
 

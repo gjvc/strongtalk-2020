@@ -28,5 +28,3 @@ class SpaceSizes : ValueObject {
         // Reads debug variables for initial settings.
         void initialize();
 };
-
-
