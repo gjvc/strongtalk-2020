@@ -64,8 +64,8 @@ class ByteCodes : AllStatic {
 
 
         enum class Format {   // Format of instruction: * means align to Oop
-                B,          // {byte}
-                BB,         // {byte, byte}
+                B,            // {byte}
+                BB,          // {byte, byte}
                 BBB,        // {byte, byte, byte}
                 BBBB,       // {byte, byte, byte, byte}
                 BBO,        // {byte, byte, *, Oop}
@@ -81,7 +81,7 @@ class ByteCodes : AllStatic {
                 BBLO,       // {byte, byte, *, int32_t, Oop}
                 BOOLB,      // {byte, *, Oop, Oop, int32_t, byte}
                 BBS,        // {byte, byte = number of bytes to follow, {byte}*}
-                UNDEF,      // for undefined codes
+                UNDEFINED,  // for undefined codes
 
                 NUMBER_OF_FORMATS
         };
@@ -432,6 +432,7 @@ class ByteCodes : AllStatic {
 
         };
 
+
     private:
         static const char * _entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
         static const char * _name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
@@ -457,7 +458,9 @@ class ByteCodes : AllStatic {
 
         // Testers
         static bool_t is_defined( Code code ) {
-            return 0 <= static_cast<int>(code) and static_cast<int>(code) < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES) and _format[ static_cast<int>(code) ] not_eq ByteCodes::Format::UNDEF;
+            return 0 <= static_cast<int>(code)
+                   and static_cast<int>(code) < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)
+                   and _format[ static_cast<int>(code) ] not_eq ByteCodes::Format::UNDEFINED;
         }
 
 
@@ -476,47 +479,47 @@ class ByteCodes : AllStatic {
 
 
         // Bytecode specification
-        static const char * entry_point( Code code ) {
+        static const char * entry_point( const Code code ) {
             return _entry_point[ static_cast<int>(code) ];
         }
 
 
-        static const char * name( Code code ) {
+        static const char * name( const Code code ) {
             return _name[ static_cast<int>(code) ];
         }
 
 
-        static Format format( Code code ) {
+        static Format format( const Code code ) {
             return _format[ static_cast<int>(code) ];
         }
 
 
-        static CodeType code_type( Code code ) {
+        static CodeType code_type( const Code code ) {
             return _code_type[ static_cast<int>(code) ];
         }
 
 
-        static ArgumentSpec argument_spec( Code code ) {
+        static ArgumentSpec argument_spec( const Code code ) {
             return _argument_spec[ static_cast<int>(code) ];
         }
 
 
-        static SendType send_type( Code code ) {
+        static SendType send_type( const Code code ) {
             return _send_type[ static_cast<int>(code) ];
         }
 
 
-        static bool_t single_step( Code code ) {
+        static bool_t single_step( const Code code ) {
             return _single_step[ static_cast<int>(code) ];
         }
 
 
-        static bool_t pop_tos( Code code ) {
+        static bool_t pop_tos( const Code code ) {
             return _pop_tos[ static_cast<int>(code) ];
         }
 
 
-        static LoopType loop_type( Code code );
+        static LoopType loop_type( const Code code );
 
         // Helpers for printing
         static const char * format_as_string( Format format );

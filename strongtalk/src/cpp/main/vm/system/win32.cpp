@@ -122,7 +122,8 @@ void os::delete_event( Event * event ) {
 
 Event * os::create_event( bool_t initial_state ) {
     HANDLE result = CreateEvent( nullptr, TRUE, initial_state, nullptr );
-    if ( result == nullptr ) st_fatal( "CreateEvent failed" );
+    if ( result == nullptr ) st_fatal( "CreateEvent() failed" );
+    _console->print_cr( "CreateEvent() succeeded" );
     return ( Event * ) result;
 }
 
@@ -714,7 +715,7 @@ char ** os::argv() {
     return __argv;
 }
 
-
+#if 0
 LRESULT CALLBACK WndProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam ) {
     switch ( msg ) {
         case WM_DESTROY:
@@ -750,5 +751,7 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
     os::set_args( __argc, __argv );
     return vm_main( __argc, __argv );
 }
+
+#endif
 
 #endif

@@ -586,7 +586,7 @@ PrimitiveDescriptor * Primitives::_context_allocate2;
 PrimitiveDescriptor * Primitives::verified_lookup( const char * selector ) {
     PrimitiveDescriptor * result = lookup( selector );
     if ( result == nullptr ) {
-        _console->print_cr( "Verified primitive lookup failed: selector = [%s]", selector);
+        _console->print_cr( "Verified primitive lookup failed: selector = [%s]", selector );
         st_fatal( "aborted" );
     }
     return result;
@@ -623,8 +623,8 @@ void Primitives::initialize() {
 
 
 void Primitives::patch( const char * name, const char * entry_point ) {
-    _console->print_cr( "%%primitives-init: patch(),  name [%s], entry_point [0x%0x]", name, entry_point );
-    st_assert( entry_point, "entry_point is null" );
+    st_assert( entry_point, "\"%%primitives-init: patch()  entry_point is null" );
+    _console->print_cr( "%%primitives-init: patch()  entry_point [0x%0x], name [%s]", entry_point, name );
     PrimitiveDescriptor * pdesc = verified_lookup( name );
     pdesc->_fn = ( primitiveFunctionType ) entry_point;
 }

@@ -154,7 +154,7 @@
 
 /* error and error_ are for compiler's type prediction */
 
-#define VMSYMBOL_SUFFIX  STR(_enum)
+#define VMSYMBOL_SUFFIX  _enum
 #define VMSYMBOL_ENUM_NAME( name ) name##VMSYMBOL_SUFFIX
 
 #define VMSYMBOL_ENUM( name, string ) VMSYMBOL_ENUM_NAME(name),

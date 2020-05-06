@@ -29,7 +29,7 @@ bool_t                      ByteCodes::_pop_tos[static_cast<int>(ByteCodes::Code
 
 
 void ByteCodes::def( Code code ) {
-    def( code, "undefined", ByteCodes::Format::UNDEF, ByteCodes::CodeType::miscellaneous, false, ByteCodes::ArgumentSpec::no_args, ByteCodes::SendType::no_send, false );
+    def( code, "undefined", ByteCodes::Format::UNDEFINED, ByteCodes::CodeType::miscellaneous, false, ByteCodes::ArgumentSpec::no_args, ByteCodes::SendType::no_send, false );
 }
 
 
@@ -49,7 +49,7 @@ void ByteCodes::def( Code code, const char * name, Format format, CodeType code_
     st_assert( _name[ static_cast<int>(code) ] == nullptr, "bytecode defined twice" );
 
     // plausibility checks for arguments (compare with naming convention)
-    if ( format == ByteCodes::Format::UNDEF ) {
+    if ( format == ByteCodes::Format::UNDEFINED ) {
         // bytecode name should be "undefined"
         for ( int i = 0; i < 9; i++ ) {
             st_assert( name[ i ] == "undefined"[ i ], "inconsistency with naming convention" );
@@ -460,8 +460,8 @@ const char * ByteCodes::format_as_string( Format format ) {
             return "BOOLB";
         case ByteCodes::Format::BBS:
             return "BBS";
-        case ByteCodes::Format::UNDEF:
-            return "UNDEF";
+        case ByteCodes::Format::UNDEFINED:
+            return "UNDEFINED";
     }
     ShouldNotReachHere();
     return nullptr;

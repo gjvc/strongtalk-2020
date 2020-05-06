@@ -74,6 +74,7 @@ object-path 	:= obj/$(toolchain-name)-$(runtime-variant)/$(build-type)
 
 g++ := /usr/bin/$(toolchain-name)-g++-$(runtime-variant)
 gcc := /usr/bin/$(toolchain-name)-gcc-$(runtime-variant)
+ar  := /usr/bin/$(toolchain-name)-ar
 export CC=$(ccache) $(gcc)
 export CXX=$(ccache) $(g++)
 
@@ -149,7 +150,7 @@ cxx-arch-flags            		:= $(addprefix -march=,$(cxx-arch-options))
 cxx-debug-options               := dwarf-2 gdb 3
 cxx-debug-flags                 := $(addprefix -g,$(cxx-debug-options))
 
-cxx-feature-options             := diagnostics-color=always permissive concepts
+cxx-feature-options             := diagnostics-color=always permissive concepts check-new
 cxx-feature-flags               := $(addprefix -f,$(cxx-feature-options))
 
 cxx-language-options            := c++2a
@@ -193,8 +194,12 @@ libgcc-link-flags = \
 	-static-libgcc \
     -static-libstdc++
 
+
+ifeq ($(runtime-variant),posix)
 mingw-w64-link-flags = \
 	-L /usr/$(machine-name)-$(runtime-platform)/lib -Wl,-Bstatic,--whole-archive -l winpthread -Wl,-Bdynamic,--no-whole-archive
+endif
+
 
 
 # strongtalk-main-{sources,objects,depends} -------------------------------------
@@ -232,7 +237,7 @@ $(strongtalk-main-lib-depends) :
 include $(wildcard $(strongtalk-main-lib-depends))
 
 $(strongtalk-main-lib) : $(strongtalk-main-lib-objects)
-	ar rcs $(strongtalk-main-lib)  $(strongtalk-main-lib-objects)
+	@$(ar) rcs $(strongtalk-main-lib)  $(strongtalk-main-lib-objects)
 
 strongtalk-main-lib-clean : 
 	-rm $(strongtalk-main-lib)
@@ -263,7 +268,6 @@ $(strongtalk-main-exe) : $(strongtalk-main-exe-objects) $(strongtalk-main-lib)
 		$(strongtalk-main-exe-objects) \
 		$(strongtalk-main-lib-link-flags) \
 		$(libnasm-a-flags) \
-		$(libudis86-a-flags) \
 		$(platform-flags) \
 		-o $(strongtalk-main-exe)
 
@@ -294,7 +298,7 @@ $(strongtalk-test-lib-depends) :
 include $(wildcard $(strongtalk-test-lib-depends))
 
 $(strongtalk-test-lib) : $(strongtalk-test-lib-objects)
-	ar rcs $(strongtalk-test-lib) $(strongtalk-test-lib-objects)
+	$(ar) rcs $(strongtalk-test-lib) $(strongtalk-test-lib-objects)
 
 strongtalk-test-lib-clean : 
 	-rm $(strongtalk-test-lib)
@@ -325,7 +329,6 @@ $(strongtalk-test-exe) : $(strongtalk-test-exe-objects) $(strongtalk-test-lib) $
 		$(strongtalk-test-exe-objects) \
 		$(strongtalk-test-lib-link-flags) \
 		$(strongtalk-main-lib-link-flags) \
-		$(libudis86-a-flags) \
 		$(libgtest-a-flags) \
 		$(platform-flags) \
 		-o $(strongtalk-test-exe)
@@ -469,9 +472,10 @@ spdlog :
 # udis86 ----------------------------------------------------------------------
 
 udis86 :
-	-cd $(ROOT)/ext/udis86 && make distclean
+	-cd $(ROOT)/ext/udis86 && aclocal
+	-cd $(ROOT)/ext/udis86 && automake
 	cd $(ROOT)/ext/udis86 && ./configure --host $(machine-name)-$(runtime-platform) --prefix $(ROOT)/$(udis86-object-dir)
-	cd $(ROOT)/ext/udis86 && make install
+	cd $(ROOT)/ext/udis86 && make 
 
 
 # zydis -----------------------------------------------------------------------

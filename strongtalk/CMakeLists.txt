@@ -4,9 +4,10 @@
 ##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 ##
 
+
 # cmake -----------------------------------------------------------------------
 
-cmake_minimum_required ( VERSION 3.6 )
+cmake_minimum_required ( VERSION 3.0 )
 project ( st20 )
 set ( CMAKE_SYSTEM_NAME Windows )
 
@@ -36,6 +37,13 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
         set ( platform-link-flags "-L /usr/${machine-name}-${runtime-platform}/lib -Wl,-Bstatic,--whole-archive -Wl,-lwinpthread -Wl,-Bdynamic,--no-whole-archive" )
 
+        set ( CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES /usr/lib/gcc/${TOOLCHAIN_PREFIX}/${gcc-version}-${runtime-variant} )
+        set ( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER )
+        set ( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
+        set ( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
+        set ( CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY )
+
+
     endif ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
 
 
@@ -58,6 +66,8 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
+
+# cmake -----------------------------------------------------------------------
 
 set ( object-path ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}-${runtime-variant}/${build-type} )
 
@@ -145,8 +155,8 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 
 # library ---------------------------------------------------------------------
 
-include_directories( SYSTEM ${object-path}/debug/ext/nasm/include )
-include_directories( SYSTEM ${object-path}/debug/ext/udis86/include )
+include_directories ( SYSTEM ${object-path}/debug/ext/nasm/include )
+include_directories ( SYSTEM ${object-path}/debug/ext/udis86/include )
 
 add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
 target_include_directories ( st20-main-library-object PRIVATE ${cpp-main-dir} )
@@ -163,13 +173,13 @@ add_executable ( st20-main-binary ${st20-main-binary-sources} )
 target_include_directories ( st20-main-binary PRIVATE ${cpp-main-dir} )
 target_link_libraries ( st20-main-binary
                         -Wl,--no-as-needed
-                            -Wl,-Bstatic
-                                -Wl,--whole-archive
-                                    -Wl,--start-group
-                                        st20-main-library-static
-                                    -Wl,--end-group
-                                -Wl,--no-whole-archive
-                            -Wl,-Bdynamic
+                        -Wl,-Bstatic
+                        -Wl,--whole-archive
+                        -Wl,--start-group
+                        st20-main-library-static
+                        -Wl,--end-group
+                        -Wl,--no-whole-archive
+                        -Wl,-Bdynamic
                         -Wl,--as-needed
                         ${platform-link-flags}
                         )
@@ -200,15 +210,15 @@ target_link_directories ( st20-test-binary PRIVATE obj/${toolchain-name}-${runti
 
 target_link_libraries ( st20-test-binary
                         -Wl,--no-as-needed
-                            -Wl,-Bstatic
-                                -Wl,--whole-archive
-                                    -Wl,--start-group
-                                        st20-main-library-static
-                                        st20-test-library-static
-                                        gtest
-                                    -Wl,--end-group
-                                -Wl,--no-whole-archive
-                            -Wl,-Bdynamic
+                        -Wl,-Bstatic
+                        -Wl,--whole-archive
+                        -Wl,--start-group
+                        st20-main-library-static
+                        st20-test-library-static
+                        gtest
+                        -Wl,--end-group
+                        -Wl,--no-whole-archive
+                        -Wl,-Bdynamic
                         -Wl,--as-needed
                         ${platform-link-flags}
                         )

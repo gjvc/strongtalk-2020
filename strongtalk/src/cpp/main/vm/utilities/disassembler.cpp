@@ -11,7 +11,7 @@
 #include "vm/code/RelocationInformation.hpp"
 
 #include "disasm.h"
-#include "udis86.h"
+//#include "udis86.h"
 #include "vm/system/sizes.hpp"
 
 
@@ -48,8 +48,7 @@ static void st_disasm( const char * begin, const char * end, const NativeMethod 
     size_t      outbufsize{ sizeof( output ) };
     int32_t     data_size{ 4 }; //
 
-    ud_t ud_obj;
-
+//    ud_t ud_obj;
 //    ud_init( &ud_obj );
 //    ud_set_input_file( &ud_obj, stdin );
 //    ud_set_input_buffer( &ud_obj, begin, static_cast<size_t>( end - begin ) );

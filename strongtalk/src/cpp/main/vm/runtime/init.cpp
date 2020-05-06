@@ -55,4 +55,3 @@ void exit_globals() {
     os_exit();
 
 }
-

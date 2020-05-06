@@ -13,7 +13,7 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 
-// ScopeDescriptorRecorder provides the interface to generate scopeDescs for optimized methods (nativeMethods).
+// ScopeDescriptorRecorder provides the interface to generate ScopeDescriptor instances for optimized methods (nativeMethods).
 // To retrieve the generated information, use NativeMethodScopes
 
 class Array;
@@ -37,9 +37,9 @@ class ScopeDescriptorRecorder : public ResourceObject {
 
     private:
         bool_t _hasCodeBeenGenerated;
-        Array     * _oops;
-        Array     * _values;
-        ByteArray * _codes;
+        Array                             * _oops;
+        Array                             * _values;
+        ByteArray                         * _codes;
         ProgramCounterDescriptorInfoClass * _programCounterDescriptorInfo;
 
         GrowableArray <KlassOop> * _dependents;
@@ -60,45 +60,51 @@ class ScopeDescriptorRecorder : public ResourceObject {
                                  int npcDesc );  // estimated number of ProgramCounterDescriptors
 
         // Adds a method scope
-        ScopeInfo addMethodScope( LookupKey * key,                        // lookup key
+        ScopeInfo addMethodScope( LookupKey * key,                      // lookup key
                                   MethodOop method,                     // result of the lookup
-                                  LogicalAddress * receiver_location,          // location of receiver
-                                  bool_t allocates_compiled_context, // tells whether the code allocates a context
-                                  bool_t lite = false, int scopeID = 0, ScopeInfo senderScope = nullptr, int senderByteCodeIndex = IllegalByteCodeIndex, bool_t visible = false );
+                                  LogicalAddress * receiver_location,   // location of receiver
+                                  bool_t allocates_compiled_context,    // tells whether the code allocates a context
+                                  bool_t lite = false,                  //
+                                  int scopeID = 0,                      //
+                                  ScopeInfo senderScope = nullptr,      //
+                                  int senderByteCodeIndex = IllegalByteCodeIndex,
+                                  bool_t visible = false );
 
 
         // Adds an inlined block scope
-        ScopeInfo addBlockScope( MethodOop method,                     // block method
-                                 ScopeInfo parent,                     // parent scope
-                                 bool_t allocates_compiled_context, // tells whether the code allocates a context
-                                 bool_t lite = false, int scopeID = 0, ScopeInfo senderScope = nullptr, int senderByteCodeIndex = IllegalByteCodeIndex, bool_t visible = false );
+        ScopeInfo addBlockScope( MethodOop method,                      // block method
+                                 ScopeInfo parent,                      // parent scope
+                                 bool_t allocates_compiled_context,     // tells whether the code allocates a context
+                                 bool_t lite = false, int scopeID = 0,  //
+                                 ScopeInfo senderScope = nullptr,       //
+                                 int senderByteCodeIndex = IllegalByteCodeIndex,
+                                 bool_t visible = false );
 
         // Adds a top level block scope
-        ScopeInfo addTopLevelBlockScope( MethodOop method,                     // block method
-                                         LogicalAddress * receiver_location,          // location of receiver
-                                         KlassOop receiver_klass,             // receiver klass
-                                         bool_t allocates_compiled_context );// tells whether the code allocates a context
+        ScopeInfo addTopLevelBlockScope( MethodOop method,                      // block method
+                                         LogicalAddress * receiver_location,    // location of receiver
+                                         KlassOop receiver_klass,               // receiver klass
+                                         bool_t allocates_compiled_context );   // tells whether the code allocates a context
 
         // Adds an noninlined block scope
         // Used for retrieving information about block closure stubs
         NonInlinedBlockScopeNode * addNonInlinedBlockScope( MethodOop block_method, ScopeInfo parent );
 
         // Interface for adding name nodes.
-        void addTemporary( ScopeInfo scope, int index, LogicalAddress * location ); // all entries [0..max(index)] must be filled.
-        void addContextTemporary( ScopeInfo scope, int index, LogicalAddress * location ); // all entries [0..max(index)] must be filled.
+        void addTemporary( ScopeInfo scope, int index, LogicalAddress * location );         // all entries [0..max(index)] must be filled.
+        void addContextTemporary( ScopeInfo scope, int index, LogicalAddress * location );  // all entries [0..max(index)] must be filled.
         void addExprStack( ScopeInfo scope, int byteCodeIndex, LogicalAddress * location ); // sparse array = some entries may be left empty.
 
         LogicalAddress * createLogicalAddress( NameNode * initial_value );
 
         void changeLogicalAddress( LogicalAddress * location, NameNode * new_value, int pc_offset );
 
-        // Providing the locations of the arguments is superfluous but is convenient for
-        // verification.
+        // Providing the locations of the arguments is superfluous but is convenient for verification.
         //  - for top level scopes the argument locations are fixed (on the stack provided by the caller).
         //  - for inlined scopes the expression stack of the caller describes the argument locations.
+        //
         // %implementation-note:
-        // For now the argument locations are saved since the function to compute expression stack has
-        // not been implemented.
+        // For now the argument locations are saved since the function to compute expression stack has not been implemented.
         void addArgument( ScopeInfo scope, int index, LogicalAddress * location );
 
         // Interface for creating the pc-offset <-> (ScopeDescriptor, byteCodeIndex) mapping.
@@ -137,8 +143,7 @@ class ScopeDescriptorRecorder : public ResourceObject {
 
         void emit_illegal_node( bool_t is_last );
 
-        // Returns true if was possible to save exprOffset and nextOffset in the
-        // two pre-allocated bytes.
+        // Returns true if was possible to save exprOffset and nextOffset in the two pre-allocated bytes.
         int updateScopeDescHeader( int offset, int next );
 
         void updateExtScopeDescHeader( int offset, int next );
@@ -248,23 +253,29 @@ class nameDescHeaderByte : public ValueObject {
 
 
         void pack( uint8_t code, bool_t is_last, uint8_t i ) {
-            st_assert( code <= _maxCode, "code to high" );
-            st_assert( i <= _noIndex, "index to high" );
-            _byte     = addBits( i << _codeWidth, code );
+            st_assert( code <= _maxCode, "code too high" );
+            st_assert( i <= _noIndex, "index too high" );
+
+            _byte = addBits( i << _codeWidth, code );
+
             if ( is_last )
                 _byte = setNthBit( _byte, _isLastBitNum );
         }
 
 
         void pack_illegal( bool_t is_last ) {
-            _byte     = addBits( _illegalIndex << _codeWidth, 0 );
+
+            _byte = addBits( _illegalIndex << _codeWidth, 0 );
+
             if ( is_last )
                 _byte = setNthBit( _byte, _isLastBitNum );
         }
 
 
         void pack_termination( bool_t is_last ) {
-            _byte     = addBits( _terminationIndex << _codeWidth, 0 );
+
+            _byte = addBits( _terminationIndex << _codeWidth, 0 );
+
             if ( is_last )
                 _byte = setNthBit( _byte, _isLastBitNum );
         }
