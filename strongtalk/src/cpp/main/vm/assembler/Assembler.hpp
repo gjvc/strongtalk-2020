@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2020, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -70,25 +71,25 @@ class Assembler : public ResourceObject {
 
         void emit_data( int data, RelocationInformation::RelocationType rtype );
 
-        void emit_arith_b( int op1, int op2, Register dst, int imm8 );
+        void emit_arith_b( int op1, int op2, const Register & dst, int imm8 );
 
-        void emit_arith( int op1, int op2, Register dst, int imm32 );
+        void emit_arith( int op1, int op2, const Register & dst, int imm32 );
 
-        void emit_arith( int op1, int op2, Register dst, Oop obj );
+        void emit_arith( int op1, int op2, const Register & dst, Oop obj );
 
-        void emit_arith( int op1, int op2, Register dst, Register src );
+        void emit_arith( int op1, int op2, const Register & dst, const Register & src );
 
-        void emit_operand( Register reg, Register base, Register index, Address::ScaleFactor scale, int disp, RelocationInformation::RelocationType rtype );
+        void emit_operand( const Register & reg, const Register & base, const Register & index, Address::ScaleFactor scale, int disp, RelocationInformation::RelocationType rtype );
 
-        void emit_operand( Register r, Address a );
+        void emit_operand( const Register & r, const Address & a );
 
         void emit_farith( int b1, int b2, int i );
 
-        void print( Label & L );
+        void print( const Label & L );
 
-        void bind_to( Label & L, int pos );
+        void bind_to( const Label & L, int pos );
 
-        void link_to( Label & L, Label & appendix );
+        void link_to( const Label & L, const Label & appendix );
 
     public:
         enum class Condition {
@@ -143,154 +144,154 @@ class Assembler : public ResourceObject {
 
         void pushl( Oop obj );
 
-        void pushl( Register src );
+        void pushl( const Register & src );
 
-        void pushl( Address src );
+        void pushl( const Address & src );
 
-        void popl( Register dst );
+        void popl( const Register & dst );
 
-        void popl( Address dst );
+        void popl( const Address & dst );
 
         // Moves
-        void movb( Register dst, Address src );
+        void movb( const Register & dst, const Address & src );
 
-        void movb( Address dst, int imm8 );
+        void movb( const Address & dst, int imm8 );
 
-        void movb( Address dst, Register src );
+        void movb( const Address & dst, const Register & src );
 
-        void movw( Register dst, Address src );
+        void movw( const Register & dst, const Address & src );
 
-        void movw( Address dst, Register src );
+        void movw( const Address & dst, const Register & src );
 
-        void movl( Register dst, int imm32 );
+        void movl( const Register & dst, int imm32 );
 
-        void movl( Register dst, Oop obj );
+        void movl( const Register & dst, Oop obj );
 
-        void movl( Register dst, Register src );
+        void movl( const Register & dst, const Register & src );
 
-        void movl( Register dst, Address src );
+        void movl( const Register & dst, const Address & src );
 
-        void movl( Address dst, int imm32 );
+        void movl( const Address & dst, int imm32 );
 
-        void movl( Address dst, Oop obj );
+        void movl( const Address & dst, Oop obj );
 
-        void movl( Address dst, Register src );
+        void movl( const Address & dst, const Register & src );
 
-        void movsxb( Register dst, Address src );
+        void movsxb( const Register & dst, const Address & src );
 
-        void movsxb( Register dst, Register src );
+        void movsxb( const Register & dst, const Register & src );
 
-        void movsxw( Register dst, Address src );
+        void movsxw( const Register & dst, const Address & src );
 
-        void movsxw( Register dst, Register src );
+        void movsxw( const Register & dst, const Register & src );
 
         // Conditional moves (P6 only)
-        void cmovccl( Condition cc, Register dst, int imm32 );
+        void cmovccl( Condition cc, const Register & dst, int imm32 );
 
-        void cmovccl( Condition cc, Register dst, Oop obj );
+        void cmovccl( Condition cc, const Register & dst, Oop obj );
 
-        void cmovccl( Condition cc, Register dst, Register src );
+        void cmovccl( Condition cc, const Register & dst, const Register & src );
 
-        void cmovccl( Condition cc, Register dst, Address src );
+        void cmovccl( Condition cc, const Register & dst, const Address & src );
 
         // Arithmetics
-        void adcl( Register dst, int imm32 );
+        void adcl( const Register & dst, int imm32 );
 
-        void adcl( Register dst, Register src );
+        void adcl( const Register & dst, const Register & src );
 
-        void addl( Address dst, int imm32 );
+        void addl( const Address & dst, int imm32 );
 
-        void addl( Register dst, int imm32 );
+        void addl( const Register & dst, int imm32 );
 
-        void addl( Register dst, Register src );
+        void addl( const Register & dst, const Register & src );
 
-        void addl( Register dst, Address src );
+        void addl( const Register & dst, const Address & src );
 
-        void andl( Register dst, int imm32 );
+        void andl( const Register & dst, int imm32 );
 
-        void andl( Register dst, Register src );
+        void andl( const Register & dst, const Register & src );
 
-        void cmpl( Address dst, int imm32 );
+        void cmpl( const Address & dst, int imm32 );
 
-        void cmpl( Address dst, Oop obj );
+        void cmpl( const Address & dst, Oop obj );
 
-        void cmpl( Register dst, int imm32 );
+        void cmpl( const Register & dst, int imm32 );
 
-        void cmpl( Register dst, Oop obj );
+        void cmpl( const Register & dst, Oop obj );
 
-        void cmpl( Register dst, Register src );
+        void cmpl( const Register & dst, const Register & src );
 
-        void cmpl( Register dst, Address src );
+        void cmpl( const Register & dst, const Address & src );
 
-        void decb( Register dst );
+        void decb( const Register & dst );
 
-        void decl( Register dst );
+        void decl( const Register & dst );
 
-        void decl( Address dst );
+        void decl( const Address & dst );
 
-        void idivl( Register src );
+        void idivl( const Register & src );
 
-        void imull( Register src );
+        void imull( const Register & src );
 
-        void imull( Register dst, Register src );
+        void imull( const Register & dst, const Register & src );
 
-        void imull( Register dst, Register src, int value );
+        void imull( const Register & dst, const Register & src, int value );
 
-        void incl( Register dst );
+        void incl( const Register & dst );
 
-        void incl( Address dst );
+        void incl( const Address & dst );
 
-        void leal( Register dst, Address src );
+        void leal( const Register & dst, const Address & src );
 
-        void mull( Register src );
+        void mull( const Register & src );
 
-        void negl( Register dst );
+        void negl( const Register & dst );
 
-        void notl( Register dst );
+        void notl( const Register & dst );
 
-        void orl( Register dst, int imm32 );
+        void orl( const Register & dst, int imm32 );
 
-        void orl( Register dst, Register src );
+        void orl( const Register & dst, const Register & src );
 
-        void orl( Register dst, Address src );
+        void orl( const Register & dst, const Address & src );
 
-        void rcll( Register dst, int imm8 );
+        void rcll( const Register & dst, int imm8 );
 
-        void sarl( Register dst, int imm8 );
+        void sarl( const Register & dst, int imm8 );
 
-        void sarl( Register dst );
+        void sarl( const Register & dst );
 
-        void sbbl( Register dst, int imm32 );
+        void sbbl( const Register & dst, int imm32 );
 
-        void sbbl( Register dst, Register src );
+        void sbbl( const Register & dst, const Register & src );
 
-        void shldl( Register dst, Register src );
+        void shldl( const Register & dst, const Register & src );
 
-        void shll( Register dst, int imm8 );
+        void shll( const Register & dst, int imm8 );
 
-        void shll( Register dst );
+        void shll( const Register & dst );
 
-        void shrdl( Register dst, Register src );
+        void shrdl( const Register & dst, const Register & src );
 
-        void shrl( Register dst, int imm8 );
+        void shrl( const Register & dst, int imm8 );
 
-        void shrl( Register dst );
+        void shrl( const Register & dst );
 
-        void subl( Register dst, int imm32 );
+        void subl( const Register & dst, int imm32 );
 
-        void subl( Register dst, Register src );
+        void subl( const Register & dst, const Register & src );
 
-        void subl( Register dst, Address src );
+        void subl( const Register & dst, const Address & src );
 
-        void testb( Register dst, int imm8 );
+        void testb( const Register & dst, int imm8 );
 
-        void testl( Register dst, int imm32 );
+        void testl( const Register & dst, int imm32 );
 
-        void testl( Register dst, Register src );
+        void testl( const Register & dst, const Register & src );
 
-        void xorl( Register dst, int imm32 );
+        void xorl( const Register & dst, int imm32 );
 
-        void xorl( Register dst, Register src );
+        void xorl( const Register & dst, const Register & src );
 
         // Miscellaneous
         void cdq();
@@ -305,27 +306,27 @@ class Assembler : public ResourceObject {
 
         // Labels
 
-        void bind( Label & L );            // binds an unbound label L to the current code position
-        void merge( Label & L, Label & with );    // merges L and with, L is the merged label
+        void bind( const Label & L );            // binds an unbound label L to the current code position
+        void merge( const Label & L, const Label & with );    // merges L and with, L is the merged label
 
         // Calls
-        void call( Label & L );
+        void call( const Label & L );
 
         void call( const char * entry, RelocationInformation::RelocationType rtype );
 
-        void call( Register reg );
+        void call( const Register & reg );
 
-        void call( Address adr );
+        void call( const Address & adr );
 
         // Jumps
         void jmp( const char * entry, RelocationInformation::RelocationType rtype );
 
-        void jmp( Register reg );
+        void jmp( const Register & reg );
 
-        void jmp( Address adr );
+        void jmp( const Address & adr );
 
         // Label operations & relative jumps (PPUM Appendix D)
-        void jmp( Label & L );        // unconditional jump to L
+        void jmp( const Label & L );        // unconditional jump to L
 
         // jccI is the generic conditional branch generator to run-time routines, while jcc is used for branches to labels.
         // jcc takes a branch opcode (cc) and a label (L) and generates either a backward branch or a forward branch and links it to the label fixup chain.
@@ -346,7 +347,7 @@ class Assembler : public ResourceObject {
         void jcc( Condition cc, Label & L );
 
         // Support for inline cache information (see also InlineCacheInfo)
-        void ic_info( Label & L, int flags );
+        void ic_info( const Label & L, int flags );
 
         // Floating-point operations
         void fld1();
@@ -354,33 +355,33 @@ class Assembler : public ResourceObject {
         void fldz();
 
         // %note: _s 32 bits, _d 64 bits
-        void fld_s( Address a );
+        void fld_s( const Address & a );
 
-        void fld_d( Address a );
+        void fld_d( const Address & a );
 
-        void fstp_s( Address a );
+        void fstp_s( const Address & a );
 
-        void fstp_d( Address a );
+        void fstp_d( const Address & a );
 
-        void fild_s( Address a );
+        void fild_s( const Address & a );
 
-        void fild_d( Address a );
+        void fild_d( const Address & a );
 
-        void fistp_s( Address a );
+        void fistp_s( const Address & a );
 
-        void fistp_d( Address a );
+        void fistp_d( const Address & a );
 
         void fabs();
 
         void fchs();
 
-        void fadd_d( Address a );
+        void fadd_d( const Address & a );
 
-        void fsub_d( Address a );
+        void fsub_d( const Address & a );
 
-        void fmul_d( Address a );
+        void fmul_d( const Address & a );
 
-        void fdiv_d( Address a );
+        void fdiv_d( const Address & a );
 
         void fadd( int i );
 
@@ -420,12 +421,12 @@ class Assembler : public ResourceObject {
 
 
         // For compatibility with old assembler only - should be removed at some point
-        void Load( Register base, int disp, Register dst ) {
+        void Load( const Register & base, int disp, const Register & dst ) {
             movl( dst, Address( base, disp ) );
         }
 
 
-        void Store( Register src, Register base, int disp ) {
+        void Store( const Register & src, const Register & base, int disp ) {
             movl( Address( base, disp ), src );
         }
 
