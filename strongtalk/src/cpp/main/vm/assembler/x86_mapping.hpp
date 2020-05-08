@@ -87,9 +87,9 @@ class Mapping : AllStatic {
         //
         static void load( const Location & src, const Register & dst );
 
-        static void store( Register src, Location dst, Register temp1, Register temp2, bool_t needsStoreCheck );
+        static void store( Register src, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck );
 
-        static void storeO( Oop obj, Location dst, Register temp1, Register temp2, bool_t needsStoreCheck );
+        static void storeO( Oop obj, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck );
 
         // helper functions for float code
         static void fload( const Location & src, const Register & base );

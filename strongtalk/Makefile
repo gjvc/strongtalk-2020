@@ -26,8 +26,8 @@ MAKEFLAGS   += --no-builtin-rules
 MAKEFLAGS   += --warn-undefined-variables
 MAKEFLAGS   += --jobs $(shell nproc)
 
-null 		:=
-space   	:= ${null} ${null}
+null        :=
+space       := ${null} ${null}
 
 
 # ccache ----------------------------------------------------------------------
@@ -41,9 +41,9 @@ export CCACHE_DIR=$(ROOT)/var/ccache
 ifeq ($(platform),mingw)
 build-type          := debug
 cmake-system-name   := Windows
-gcc-version-major 	:= 9
-gcc-version-minor 	:= 3
-gcc-version     	:= $(gcc-version-major)-$(gcc-version-minor)
+gcc-version-major   := 9
+gcc-version-minor   := 3
+gcc-version         := $(gcc-version-major)-$(gcc-version-minor)
 machine-name        := i686
 runtime-platform    := w64-mingw32
 runtime-variant     := posix
@@ -55,9 +55,9 @@ endif
 ifeq ($(platform),linux)
 build-type          := debug
 cmake-system-name   := Linux
-gcc-version-major 	:= 9
-gcc-version-minor 	:= 3
-gcc-version     	:= $(gcc-version-major)-$(gcc-version-minor)
+gcc-version-major   := 9
+gcc-version-minor   := 3
+gcc-version         := $(gcc-version-major)-$(gcc-version-minor)
 machine-name        := i686
 runtime-platform    := linux-gnu
 runtime-variant     := $(gcc-version-major)
@@ -81,7 +81,7 @@ export CXX=$(ccache) $(g++)
 
 # wine ------------------------------------------------------------------------
 
-wine   		:= /usr/bin/wine
+wine        := /usr/bin/wine
 wineboot    := /usr/bin/wineboot
 wineserver  := /usr/lib/wine/wineserver64
 export WINEARCH=win32
@@ -89,7 +89,7 @@ export WINEARCH=win32
 
 # valgrind --------------------------------------------------------------------
 
-valgrind            := /usr/bin/valgrind
+valgrind                := /usr/bin/valgrind
 valgrind-options 	:= --trace-children=yes --vex-iropt-register-updates=allregs-at-mem-access
 
 
@@ -145,7 +145,7 @@ libudis86-a-flags               := -L $(udis86-library-paths) -l udis86
 # compiler flags --------------------------------------------------------------
 
 cxx-arch-options             	:= native
-cxx-arch-flags            		:= $(addprefix -march=,$(cxx-arch-options))
+cxx-arch-flags                  := $(addprefix -march=,$(cxx-arch-options))
 
 cxx-debug-options               := dwarf-2 gdb 3
 cxx-debug-flags                 := $(addprefix -g,$(cxx-debug-options))
@@ -191,15 +191,13 @@ cxx-link-flags = \
     $(cxx-machine-flags)
 
 libgcc-link-flags = \
-	-static-libgcc \
+    -static-libgcc \
     -static-libstdc++
-
 
 ifeq ($(runtime-variant),posix)
 mingw-w64-link-flags = \
 	-L /usr/$(machine-name)-$(runtime-platform)/lib -Wl,-Bstatic,--whole-archive -l winpthread -Wl,-Bdynamic,--no-whole-archive
 endif
-
 
 
 # strongtalk-main-{sources,objects,depends} -------------------------------------
@@ -214,7 +212,7 @@ clean : strongtalk-main-lib-clean strongtalk-main-exe-clean
 strongtalk-main-cxx-include-paths   := $(nasm-include-paths) $(udis86-include-paths) src/cpp/main
 strongtalk-main-cxx-include-flags   := $(addprefix -I ,$(strongtalk-main-cxx-include-paths))
 
-strongtalk-main-define-values    	:= 
+strongtalk-main-define-values       := 
 strongtalk-main-define-flags        := $(addprefix -D ,$(strongtalk-main-define-values))
 
 
@@ -224,7 +222,7 @@ strongtalk-main-lib-sources         := $(wildcard src/cpp/main/vm/*/*.cpp)
 strongtalk-main-lib-sources         := $(filter-out src/cpp/main/vm/main/%.cpp,$(strongtalk-main-lib-sources))
 strongtalk-main-lib-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-lib-sources))
 strongtalk-main-lib-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-lib-sources))
-strongtalk-main-lib        			:= $(object-path)/libstrongtalk.a
+strongtalk-main-lib                 := $(object-path)/libstrongtalk.a
 strongtalk-main-lib-link-flags      := -L $(object-path) -Wl,-Bstatic,--whole-archive -l strongtalk -Wl,--no-whole-archive,--Bdynamic
 
 strongtalk-main-lib : $(strongtalk-main-lib)
@@ -308,10 +306,10 @@ strongtalk-test-lib-clean :
 
 # strongtalk-test-exe -------------------------------------------------------
 
-strongtalk-test-exe-sources 		:= $(wildcard src/cpp/test/test/main/*.cpp)
-strongtalk-test-exe-objects 		:= $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-exe-sources))
-strongtalk-test-exe-depends 		:= $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-exe-sources))
-strongtalk-test-exe     			:= $(object-path)/strongtalk-test.exe
+strongtalk-test-exe-sources         := $(wildcard src/cpp/test/test/main/*.cpp)
+strongtalk-test-exe-objects 	    := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-exe-sources))
+strongtalk-test-exe-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-exe-sources))
+strongtalk-test-exe                 := $(object-path)/strongtalk-test.exe
 
 $(strongtalk-test-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
 	-@mkdir -p $(dir $@)

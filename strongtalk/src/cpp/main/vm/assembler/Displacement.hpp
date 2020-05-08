@@ -60,7 +60,7 @@ class Displacement : public ValueObject {
         };
 
 
-        void init( Label & L, Type type, int info );
+        void init( const Label & L, Type type, int info );
 
         int data() const;
 
@@ -68,13 +68,13 @@ class Displacement : public ValueObject {
 
         Type type() const;
 
-        void next( Label & L ) const;
+        void next( const Label & L ) const;
 
-        void link_to( Label & L );
+        void link_to( const Label & L );
 
         Displacement( int data );
 
-        Displacement( Label & L, Type type, int info );
+        Displacement( const Label & L, Type type, int info );
 
         void print();
 

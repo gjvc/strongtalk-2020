@@ -2,6 +2,9 @@
 
 CONTENTS
 
+    doc/
+        ROADMAP.TXT
+
     ext/
         ext/capstone/   https://github.com/aquynh/capstone
         ext/googletest/ https://github.com/google/googletest.git

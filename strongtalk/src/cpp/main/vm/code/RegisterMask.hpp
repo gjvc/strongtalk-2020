@@ -6,10 +6,17 @@
 #pragma once
 
 
+#include <vm/runtime/ResourceObject.hpp>
+#include <vm/assembler/Location.hpp>
+#include <vm/compiler/BitVector.hpp>
+
 #if 0
 
 // A RegisterMask tells the scavenger which registers / stack locs are
 // live.  (One bit per location.)
+
+class RegisterMask;
+
 
 inline RegisterMask & allocate( RegisterMask & s1, RegisterMask s2 ) {
     setBits( s1, s2 );
@@ -47,7 +54,7 @@ void printAllocated( RegisterMask r );
 
 // like a RegisterMask, but has arbitrary length (i.e., bits for stack temps and regs)
 
-class LongRegisterMask : ResourceObj {
+class LongRegisterMask : ResourceObject {
         BitVector * bv;
     public:
         LongRegisterMask();

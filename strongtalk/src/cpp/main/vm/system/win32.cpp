@@ -27,8 +27,8 @@ static FILETIME process_user_time;
 static FILETIME process_kernel_time;
 static FILETIME process_exit_time;
 
-Event * Thread::thread_created = nullptr;
-GrowableArray <Thread *> * Thread::threads = nullptr;
+Event * Thread::_thread_created = nullptr;
+GrowableArray <Thread *> * Thread::_threads = nullptr;
 
 
 extern void intercept_for_single_step();
@@ -40,12 +40,12 @@ int WINAPI startThread( void * params ) {
     char * spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
     int stackHeadroom = 2 * os::vm_page_size();
-    ( ( thread_start * ) params )->stackLimit = spptr - STACK_SIZE + stackHeadroom;
+    ( ( thread_start_t * ) params )->stackLimit = spptr - STACK_SIZE + stackHeadroom;
 
-    int (* main)( void * ) = ( ( thread_start * ) params )->main;
-    void * parameter = ( ( thread_start * ) params )->parameter;
+    int (* main)( void * ) = ( ( thread_start_t * ) params )->main;
+    void * parameter = ( ( thread_start_t * ) params )->parameter;
 
-    os::signal_event( Thread::thread_created );
+    os::signal_event( Thread::_thread_created );
     return main( parameter );
 }
 
@@ -100,14 +100,14 @@ Thread * os::create_thread( int main( void * parameter ), void * parameter, int 
 
 
 void * os::stack_limit( Thread * thread ) {
-    return thread->stack_limit;
+    return thread->_stack_limit;
 }
 
 
 void os::terminate_thread( Thread * thread ) {
     _console->print_cr( "os::terminate_thread()" );
 
-    HANDLE handle = thread->thread_handle;
+    HANDLE handle = thread->_thread_handle;
 //    delete thread;
 
     TerminateThread( handle, 0 );
@@ -452,12 +452,12 @@ void os::transfer_and_continue( Thread * from_thread, Event * from_event, Thread
 
 
 void os::suspend_thread( Thread * thread ) {
-    SuspendThread( thread->thread_handle );
+    SuspendThread( thread->_thread_handle );
 }
 
 
 void os::resume_thread( Thread * thread ) {
-    ResumeThread( thread->thread_handle );
+    ResumeThread( thread->_thread_handle );
 }
 
 
@@ -469,7 +469,7 @@ void os::sleep( int ms ) {
 void os::fetch_top_frame( Thread * thread, int ** sp, int ** fp, char ** pc ) {
     CONTEXT context;
     context.ContextFlags = CONTEXT_CONTROL;
-    if ( GetThreadContext( thread->thread_handle, &context ) ) {
+    if ( GetThreadContext( thread->_thread_handle, &context ) ) {
         *sp = ( int * ) context.Esp;
         *fp = ( int * ) context.Ebp;
         *pc = ( char * ) context.Eip;

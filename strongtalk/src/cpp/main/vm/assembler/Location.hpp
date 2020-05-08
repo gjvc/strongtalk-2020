@@ -14,8 +14,9 @@
 // For each physical location (register, stack position or context temporary), there is a corresponding location and vice versa.
 
 enum class Mode {
-        // mode/bits		3...................31	describes
+        //
         //			        3..9	10..16	17..31
+        // mode/bits		3...................31	describes
         specialLoc,     //	--------id------------	sentinel values/global locations
         registerLoc,    //	--------regLoc--------	register locations
         stackLoc,       //	--------offset--------	stack locations

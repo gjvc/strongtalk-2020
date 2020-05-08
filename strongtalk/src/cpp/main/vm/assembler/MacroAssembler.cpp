@@ -77,14 +77,14 @@ void MacroAssembler::reset_last_Delta_frame() {
 }
 
 
-void MacroAssembler::call_C( Label & L ) {
+void MacroAssembler::call_C( const Label & L ) {
     set_last_Delta_frame_before_call();
     call( L );
     reset_last_Delta_frame();
 }
 
 
-void MacroAssembler::call_C( Label & L, Label & nlrTestPoint ) {
+void MacroAssembler::call_C( const Label & L, const Label & nlrTestPoint ) {
     set_last_Delta_frame_before_call();
     call( L );
     Assembler::ic_info( nlrTestPoint, 0 );
@@ -107,14 +107,14 @@ void MacroAssembler::call_C( const char * entry, RelocationInformation::Relocati
 }
 
 
-void MacroAssembler::call_C( Register entry ) {
+void MacroAssembler::call_C( const Register & entry ) {
     set_last_Delta_frame_before_call();
     call( entry );
     reset_last_Delta_frame();
 }
 
 
-void MacroAssembler::call_C( Register entry, Label & nlrTestPoint ) {
+void MacroAssembler::call_C( const Register & entry, const Label & nlrTestPoint ) {
     set_last_Delta_frame_before_call();
     call( entry );
     Assembler::ic_info( nlrTestPoint, 0 );
@@ -145,7 +145,7 @@ void MacroAssembler::call_C( Register entry, Label & nlrTestPoint ) {
 */
 
 
-void MacroAssembler::call_C( const char * entry, Register arg1 ) {
+void MacroAssembler::call_C( const char * entry, const Register & arg1 ) {
 
     Label L1, L2;
     jmp( L1 );
@@ -161,7 +161,7 @@ void MacroAssembler::call_C( const char * entry, Register arg1 ) {
 }
 
 
-void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2 ) {
+void MacroAssembler::call_C( const char * entry, const Register & arg1, const Register & arg2 ) {
     Label L1, L2;
     jmp( L1 );
 
@@ -177,7 +177,7 @@ void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2 ) 
 }
 
 
-void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2, Register arg3 ) {
+void MacroAssembler::call_C( const char * entry, const Register & arg1, const Register & arg2, const Register & arg3 ) {
     Label L1, L2;
     jmp( L1 );
 
@@ -194,7 +194,7 @@ void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2, R
 }
 
 
-void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2, Register arg3, Register arg4 ) {
+void MacroAssembler::call_C( const char * entry, const Register & arg1, const Register & arg2, const Register & arg3, const Register & arg4 ) {
     Label L1, L2;
     jmp( L1 );
 
@@ -212,7 +212,7 @@ void MacroAssembler::call_C( const char * entry, Register arg1, Register arg2, R
 }
 
 
-void MacroAssembler::store_check( Register obj, Register tmp ) {
+void MacroAssembler::store_check( const Register & obj, const Register & tmp ) {
     // Does a store check for the Oop in register obj.
     // The content of register obj is destroyed afterwards.
     // Note: Could be optimized by hardwiring the byte map base address in the code - however relocation would be necessary whenever the base changes.
@@ -228,7 +228,7 @@ void MacroAssembler::store_check( Register obj, Register tmp ) {
 }
 
 
-void MacroAssembler::fpu_mask_and_cond_for( Condition cc, int & mask, Condition & cond ) {
+void MacroAssembler::fpu_mask_and_cond_for( const Condition & cc, int & mask, Condition & cond ) {
     switch ( cc ) {
         case Condition::equal:
             mask = 0x4000;

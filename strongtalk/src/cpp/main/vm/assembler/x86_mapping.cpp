@@ -181,7 +181,8 @@ void Mapping::load( const Location & src, const Register & dst ) {
 }
 
 
-void Mapping::store( Register src, Location dst, Register temp1, Register temp2, bool_t needsStoreCheck ) {
+void Mapping::store( Register src, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck ) {
+    
     st_assert( src not_eq temp1 and src not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
         case Mode::specialLoc: {
@@ -219,7 +220,8 @@ void Mapping::store( Register src, Location dst, Register temp1, Register temp2,
 }
 
 
-void Mapping::storeO( Oop obj, Location dst, Register temp1, Register temp2, bool_t needsStoreCheck ) {
+void Mapping::storeO( Oop obj, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck ) {
+
     st_assert( temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
         case Mode::specialLoc: {

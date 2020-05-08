@@ -31,30 +31,29 @@
 
 const auto STACK_SIZE = ThreadStackSize * 1024;
 
-typedef struct _thread_start {
+typedef struct {
     int (* main)( void * );
     void * parameter;
     void * stackLimit;
-} thread_start;
+} thread_start_t;
 
 int WINAPI startThread( void * params );
-
 
 
 class Thread : public CHeapAllocatedObject {
 
     private:
-//        static std::vector <Thread *>   _threads;
-        static GrowableArray <Thread *> * threads;
-        static Event * thread_created;
-        HANDLE thread_handle;
-        int    thread_id;
-        void * stack_limit;
+        static std::vector <Thread *>   _threads_;
+        static GrowableArray <Thread *> * _threads;
+        static Event * _thread_created;
+        HANDLE _thread_handle;
+        int    _thread_id;
+        void * _stack_limit;
 
 
         static void initialize() {
-            threads        = new( true ) GrowableArray <Thread *>( 10, true );
-            thread_created = os::create_event( false );
+            _threads        = new( true ) GrowableArray <Thread *>( 10, true );
+            _thread_created = os::create_event( false );
         }
 
 
@@ -68,21 +67,21 @@ class Thread : public CHeapAllocatedObject {
 
 
         Thread( HANDLE handle, int id, void * stackLimit ) :
-            thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
+            _thread_handle( handle ), _thread_id( id ), _stack_limit( stackLimit ) {
             _console->print_cr( "Thread::Thread()" );
 
-            int index = threads->find( nullptr, equals );
+            int index = _threads->find( nullptr, equals );
             if ( index < 0 )
-                threads->append( this );
+                _threads->append( this );
             else
-                threads->at_put( index, this );
+                _threads->at_put( index, this );
         }
 
 
         virtual ~Thread() {
             _console->print_cr( "Thread::~Thread()" );
-            int index = threads->find( this );
-            threads->at_put( index, nullptr );
+            int index = _threads->find( this );
+            _threads->at_put( index, nullptr );
         }
 
 
@@ -90,27 +89,27 @@ class Thread : public CHeapAllocatedObject {
             _console->print_cr( "Thread::createThread()" );
 
             ThreadCritical tc;
-            thread_start   params;
+            thread_start_t params;
             params.main      = main;
             params.parameter = parameter;
 
-            os::reset_event( thread_created );
+            os::reset_event( _thread_created );
             HANDLE result = CreateThread( nullptr, STACK_SIZE, ( LPTHREAD_START_ROUTINE ) startThread, &params, 0, reinterpret_cast<LPDWORD>( id_addr ) );
             if ( result == nullptr )
                 return nullptr;
 
-            os::wait_for_event( thread_created );
+            os::wait_for_event( _thread_created );
 
             return new Thread( result, *id_addr, params.stackLimit );
         }
 
 
         static Thread * findThread( int thread_id ) {
-            for ( int i = 0; i < threads->length(); i++ ) {
-                Thread * thread = threads->at( i );
+            for ( int i = 0; i < _threads->length(); i++ ) {
+                Thread * thread = _threads->at( i );
                 if ( thread == nullptr )
                     continue;
-                if ( thread->thread_id == thread_id )
+                if ( thread->_thread_id == thread_id )
                     return thread;
             }
             return nullptr;

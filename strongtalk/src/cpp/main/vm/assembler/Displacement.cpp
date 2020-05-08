@@ -34,18 +34,18 @@ int Displacement::data() const {
 }
 
 
-void Displacement::next( Label & L ) const {
+void Displacement::next( const Label & L ) const {
     int n = ( ( _data >> next_pos ) & next_mask );
     n > 0 ? L.link_to( n ) : L.unuse();
 }
 
 
-void Displacement::link_to( Label & L ) {
+void Displacement::link_to( const Label & L ) {
     init( L, type(), info() );
 }
 
 
-Displacement::Displacement( Label & L, Displacement::Type type, int info ) {
+Displacement::Displacement( const Label & L, Displacement::Type type, int info ) {
     init( L, type, info );
 }
 
@@ -73,7 +73,7 @@ void Displacement::print() {
 }
 
 
-void Displacement::init( Label & L, Displacement::Type type, int info ) {
+void Displacement::init( const Label & L, Displacement::Type type, int info ) {
     st_assert( not L.is_bound(), "label is bound" );
     int next = 0;
     if ( L.is_unbound() ) {
