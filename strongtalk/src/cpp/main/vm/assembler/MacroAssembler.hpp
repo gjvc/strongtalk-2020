@@ -36,26 +36,26 @@ class MacroAssembler : public Assembler {
         void set_last_Delta_frame_after_call();    // assumes that the return address has been pushed already
         void reset_last_Delta_frame();
 
-        void call_C( Label & L );
+        void call_C( const Label & L );
 
-        void call_C( Label & L, Label & nlrTestPoint );
+        void call_C( const Label & L, const Label & nlrTestPoint );
 
         void call_C( const char * entry, RelocationInformation::RelocationType rtype );
 
         void call_C( const char * entry, RelocationInformation::RelocationType rtype, Label & nlrTestPoint );
 
-        void call_C( Register entry );
+        void call_C( const Register & entry );
 
-        void call_C( Register entry, Label & nlrTestPoint );
+        void call_C( const Register & entry, const Label & nlrTestPoint );
 
         // C calls to run-time routines with arguments (args are not preserved)
-        void call_C( const char * entry, Register arg1 );
+        void call_C( const char * entry, const Register &arg1 );
 
-        void call_C( const char * entry, Register arg1, Register arg2 );
+        void call_C( const char * entry, const Register &arg1, const Register &arg2 );
 
-        void call_C( const char * entry, Register arg1, Register arg2, Register arg3 );
+        void call_C( const char * entry, const Register &arg1, const Register &arg2, const Register &arg3 );
 
-        void call_C( const char * entry, Register arg1, Register arg2, Register arg3, Register arg4 );
+        void call_C( const char * entry, const Register &arg1, const Register &arg2, const Register &arg3, const Register &arg4 );
 
         // Stores
         void store_check( Register obj, Register tmp );
