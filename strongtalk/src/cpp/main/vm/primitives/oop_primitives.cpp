@@ -61,7 +61,7 @@ class TwoWayBecomeClosure : public ObjectClosure, public OopClosure {
 };
 
 
-Oop __CALLING_CONVENTION oopPrimitives::become( Oop receiver, Oop argument ) {
+PRIM_DECL_2( oopPrimitives::become, Oop receiver, Oop argument ) {
     PROLOGUE_2( "become", receiver, argument )
     if ( receiver->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -81,7 +81,7 @@ Oop __CALLING_CONVENTION oopPrimitives::become( Oop receiver, Oop argument ) {
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::instVarAt( Oop receiver, Oop index ) {
+PRIM_DECL_2( oopPrimitives::instVarAt, Oop receiver, Oop index ) {
     PROLOGUE_2( "instVarAt", receiver, index )
     if ( not receiver->is_mem() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
@@ -97,7 +97,7 @@ Oop __CALLING_CONVENTION oopPrimitives::instVarAt( Oop receiver, Oop index ) {
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::instance_variable_name_at( Oop obj, Oop index ) {
+PRIM_DECL_2( oopPrimitives::instance_variable_name_at, Oop obj, Oop index ) {
     PROLOGUE_2( "instance_variable_name_at", obj, index )
     if ( not obj->is_mem() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
@@ -113,7 +113,7 @@ Oop __CALLING_CONVENTION oopPrimitives::instance_variable_name_at( Oop obj, Oop 
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::instVarAtPut( Oop receiver, Oop index, Oop value ) {
+PRIM_DECL_3( oopPrimitives::instVarAtPut, Oop receiver, Oop index, Oop value ) {
     PROLOGUE_3( "instVarAtPut", receiver, index, value )
     if ( not receiver->is_mem() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
@@ -129,61 +129,61 @@ Oop __CALLING_CONVENTION oopPrimitives::instVarAtPut( Oop receiver, Oop index, O
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::hash( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::hash, Oop receiver ) {
     PROLOGUE_1( "hash", receiver )
     return smiOopFromValue( receiver->identity_hash() );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::hash_of( Oop obj ) {
+PRIM_DECL_1( oopPrimitives::hash_of, Oop obj ) {
     PROLOGUE_1( "hash_of", obj )
     return smiOopFromValue( obj->identity_hash() );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::shallowCopy( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::shallowCopy, Oop receiver ) {
     PROLOGUE_1( "shallowCopy", receiver )
     return receiver->shallow_copy( false );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::copy_tenured( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::copy_tenured, Oop receiver ) {
     PROLOGUE_1( "copy_tenured", receiver )
     return receiver->shallow_copy( true );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::equal( Oop receiver, Oop argument ) {
+PRIM_DECL_2( oopPrimitives::equal, Oop receiver, Oop argument ) {
     PROLOGUE_2( "equal", receiver, argument )
     return receiver == argument ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::not_equal( Oop receiver, Oop argument ) {
+PRIM_DECL_2( oopPrimitives::not_equal, Oop receiver, Oop argument ) {
     PROLOGUE_2( "not_equal", receiver, argument )
     return receiver not_eq argument ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::oop_size( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::oop_size, Oop receiver ) {
     PROLOGUE_1( "oop_size", receiver )
     return smiOopFromValue( receiver->is_mem() ? MemOop( receiver )->size() : 0 );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::klass( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::klass, Oop receiver ) {
     PROLOGUE_1( "klass", receiver )
     return receiver->klass();
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::klass_of( Oop obj ) {
+PRIM_DECL_1( oopPrimitives::klass_of, Oop obj ) {
     PROLOGUE_1( "klass_of", obj )
     return obj->klass();
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::print( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::print, Oop receiver ) {
     PROLOGUE_1( "print", receiver )
     ResourceMark resourceMark;
     receiver->print();
@@ -191,7 +191,7 @@ Oop __CALLING_CONVENTION oopPrimitives::print( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::printValue( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::printValue, Oop receiver ) {
     PROLOGUE_1( "printString", receiver )
     ResourceMark resourceMark;
     receiver->print_value();
@@ -199,37 +199,37 @@ Oop __CALLING_CONVENTION oopPrimitives::printValue( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::asObjectID( Oop receiver ) {
+PRIM_DECL_1( oopPrimitives::asObjectID, Oop receiver ) {
     PROLOGUE_1( "asObjectID", receiver )
     return SMIOop( objectIDTable::insert( receiver ) );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::perform( Oop receiver, Oop selector ) {
+PRIM_DECL_2( oopPrimitives::perform, Oop receiver, Oop selector ) {
     PROLOGUE_2( "perform", receiver, selector );
     return Delta::call( receiver, selector );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::performWith( Oop receiver, Oop selector, Oop arg1 ) {
+PRIM_DECL_3( oopPrimitives::performWith, Oop receiver, Oop selector, Oop arg1 ) {
     PROLOGUE_3( "performWith", receiver, selector, arg1 );
     return Delta::call( receiver, selector, arg1 );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::performWithWith( Oop receiver, Oop selector, Oop arg1, Oop arg2 ) {
+PRIM_DECL_4( oopPrimitives::performWithWith, Oop receiver, Oop selector, Oop arg1, Oop arg2 ) {
     PROLOGUE_4( "performWithWith", receiver, selector, arg1, arg2 );
     return Delta::call( receiver, selector, arg1, arg2 );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::performWithWithWith( Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 ) {
+PRIM_DECL_5( oopPrimitives::performWithWithWith, Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 ) {
     PROLOGUE_5( "performWithWithWith", receiver, selector, arg1, arg2, arg3 );
     return Delta::call( receiver, selector, arg1, arg2, arg3 );
 }
 
 
-Oop __CALLING_CONVENTION oopPrimitives::performArguments( Oop receiver, Oop selector, Oop args ) {
+PRIM_DECL_3( oopPrimitives::performArguments, Oop receiver, Oop selector, Oop args ) {
     PROLOGUE_3( "performArguments", receiver, selector, args );
     if ( not args->is_objArray() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );

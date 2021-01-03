@@ -8,6 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for doubles
 //
@@ -30,7 +31,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::lessThan' }
         //%
-        static Oop __CALLING_CONVENTION lessThan( Oop receiver, Oop argument );
+        static PRIM_DECL_2( lessThan, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatGreaterThan: aNumber   <Float>
@@ -39,7 +40,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::greaterThan' }
         //%
-        static Oop __CALLING_CONVENTION greaterThan( Oop receiver, Oop argument );
+        static PRIM_DECL_2( greaterThan, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatLessThanOrEqual: aNumber   <Float>
@@ -48,7 +49,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::lessThanOrEqual' }
         //%
-        static Oop __CALLING_CONVENTION lessThanOrEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( lessThanOrEqual, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatGreaterThanOrEqual: aNumber   <Float>
@@ -57,7 +58,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::greaterThanOrEqual' }
         //%
-        static Oop __CALLING_CONVENTION greaterThanOrEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( greaterThanOrEqual, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatEqual: aNumber   <Float>
@@ -66,7 +67,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::equal' }
         //%
-        static Oop __CALLING_CONVENTION equal( Oop receiver, Oop argument );
+        static PRIM_DECL_2( equal, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatNotEqual: aNumber   <Float>
@@ -75,7 +76,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleCompare LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::notEqual' }
         //%
-        static Oop __CALLING_CONVENTION notEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( notEqual, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatMod: aNumber   <Float>
@@ -84,7 +85,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::mod' }
         //%
-        static Oop __CALLING_CONVENTION mod( Oop receiver, Oop argument );
+        static PRIM_DECL_2( mod, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatCosine ^<Float> =
@@ -92,7 +93,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::cosine' }
         //%
-        static Oop __CALLING_CONVENTION cosine( Oop receiver );
+        static PRIM_DECL_1( cosine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatSine ^<Float> =
@@ -100,7 +101,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::sine' }
         //%
-        static Oop __CALLING_CONVENTION sine( Oop receiver );
+        static PRIM_DECL_1( sine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatTangentIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -108,7 +109,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::tangent' }
         //%
-        static Oop __CALLING_CONVENTION tangent( Oop receiver );
+        static PRIM_DECL_1( tangent, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatArcCosineIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -116,7 +117,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::arcCosine' }
         //%
-        static Oop __CALLING_CONVENTION arcCosine( Oop receiver );
+        static PRIM_DECL_1( arcCosine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatArcSineIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -124,7 +125,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::arcSine' }
         //%
-        static Oop __CALLING_CONVENTION arcSine( Oop receiver );
+        static PRIM_DECL_1( arcSine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatArcTangentIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -132,7 +133,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::arcTangent' }
         //%
-        static Oop __CALLING_CONVENTION arcTangent( Oop receiver );
+        static PRIM_DECL_1( arcTangent, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatHyperbolicCosineIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -140,7 +141,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::hyperbolicCosine' }
         //%
-        static Oop __CALLING_CONVENTION hyperbolicCosine( Oop receiver );
+        static PRIM_DECL_1( hyperbolicCosine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatHyperbolicSineIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -148,7 +149,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::hyperbolicSine' }
         //%
-        static Oop __CALLING_CONVENTION hyperbolicSine( Oop receiver );
+        static PRIM_DECL_1( hyperbolicSine, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatHyperbolicTangentIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -156,7 +157,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::hyperbolicTangent' }
         //%
-        static Oop __CALLING_CONVENTION hyperbolicTangent( Oop receiver );
+        static PRIM_DECL_1( hyperbolicTangent, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatSqrtIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -165,7 +166,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::sqrt' }
         //%
-        static Oop __CALLING_CONVENTION sqrt( Oop receiver );
+        static PRIM_DECL_1( sqrt, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatSquared ^<Float> =
@@ -173,7 +174,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::squared' }
         //%
-        static Oop __CALLING_CONVENTION squared( Oop receiver );
+        static PRIM_DECL_1( squared, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatLnIfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -182,7 +183,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::ln' }
         //%
-        static Oop __CALLING_CONVENTION ln( Oop receiver );
+        static PRIM_DECL_1( ln, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatExp ^<Float> =
@@ -190,7 +191,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::exp' }
         //%
-        static Oop __CALLING_CONVENTION exp( Oop receiver );
+        static PRIM_DECL_1( exp, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatLog10IfFail: failBlock <PrimFailBlock> ^<Float> =
@@ -199,7 +200,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::log10' }
         //%
-        static Oop __CALLING_CONVENTION log10( Oop receiver );
+        static PRIM_DECL_1( log10, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatIsNan ^<Boolean> =
@@ -207,7 +208,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::isNan' }
         //%
-        static Oop __CALLING_CONVENTION isNan( Oop receiver );
+        static PRIM_DECL_1( isNan, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatIsFinite ^<Boolean> =
@@ -215,7 +216,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::isFinite' }
         //%
-        static Oop __CALLING_CONVENTION isFinite( Oop receiver );
+        static PRIM_DECL_1( isFinite, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatFloor ^<Float> =
@@ -223,7 +224,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::floor' }
         //%
-        static Oop __CALLING_CONVENTION floor( Oop receiver );
+        static PRIM_DECL_1( floor, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatSmallIntegerFloorIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
@@ -232,7 +233,7 @@ class doubleOopPrimitives : AllStatic {
         //              error = #(ConversionFailed)
         //              name  = 'doubleOopPrimitives::smi_floor' }
         //%
-        static Oop __CALLING_CONVENTION smi_floor( Oop receiver );
+        static PRIM_DECL_1( smi_floor, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatCeiling ^<Float> =
@@ -240,7 +241,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::ceiling' }
         //%
-        static Oop __CALLING_CONVENTION ceiling( Oop receiver );
+        static PRIM_DECL_1( ceiling, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatExponent ^<SmallInteger> =
@@ -248,7 +249,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::exponent' }
         //%
-        static Oop __CALLING_CONVENTION exponent( Oop receiver );
+        static PRIM_DECL_1( exponent, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatMantissa ^<Float> =
@@ -256,7 +257,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::mantissa' }
         //%
-        static Oop __CALLING_CONVENTION mantissa( Oop receiver );
+        static PRIM_DECL_1( mantissa, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatTruncated  ^<Float> =
@@ -264,7 +265,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::truncated' }
         //%
-        static Oop __CALLING_CONVENTION truncated( Oop receiver );
+        static PRIM_DECL_1( truncated, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatTimesTwoPower: aNumber   <SmallInteger>
@@ -274,7 +275,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::timesTwoPower' }
         //%
-        static Oop __CALLING_CONVENTION timesTwoPower( Oop receiver, Oop argument );
+        static PRIM_DECL_2( timesTwoPower, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatRoundedAsSmallIntegerIfFail: failBlock <PrimFailBlock>  ^<SmallInteger> =
@@ -283,7 +284,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::roundedAsSmallInteger' }
         //%
-        static Oop __CALLING_CONVENTION roundedAsSmallInteger( Oop receiver );
+        static PRIM_DECL_1( roundedAsSmallInteger, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatAsSmallIntegerIfFail: failBlock <PrimFailBlock>  ^<SmallInteger> =
@@ -292,7 +293,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure DoubleArith)
         //              name  = 'doubleOopPrimitives::asSmallInteger' }
         //%
-        static Oop __CALLING_CONVENTION asSmallInteger( Oop receiver );
+        static PRIM_DECL_1( asSmallInteger, Oop receiver );
 
         //%prim
         // <Float> primitiveFloatPrintFormat: format    <IndexedByteInstanceVariables>
@@ -301,7 +302,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #Function
         //              name  = 'doubleOopPrimitives::printFormat' }
         //%
-        static Oop __CALLING_CONVENTION printFormat( Oop receiver, Oop argument );
+        static PRIM_DECL_2( printFormat, Oop receiver, Oop argument );
 
         //%prim
         // <Float> primitiveFloatPrintString ^<IndexedByteInstanceVariables> =
@@ -309,7 +310,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #Function
         //              name  = 'doubleOopPrimitives::printString' }
         //%
-        static Oop __CALLING_CONVENTION printString( Oop receiver );
+        static PRIM_DECL_1( printString, Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveFloatMaxValue ^<Float> =
@@ -317,7 +318,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure)
         //              name  = 'doubleOopPrimitives::min_positive_value' }
         //%
-        static Oop __CALLING_CONVENTION max_value();
+        static PRIM_DECL_0( max_value );
 
         //%prim
         // <NoReceiver> primitiveFloatMinPositiveValue ^<Float> =
@@ -325,14 +326,14 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure)
         //              name  = 'doubleOopPrimitives::min_positive_value' }
         //%
-        static Oop __CALLING_CONVENTION min_positive_value();
+        static PRIM_DECL_0( min_positive_value );
 
         //%prim
         // <Float> primitiveFloatStoreString ^<ByteArray> =
         //   Internal { flags = #(Function)
         //              name  = 'doubleOopPrimitives::store_string' }
         //%
-        static Oop __CALLING_CONVENTION store_string( Oop receiver );
+        static PRIM_DECL_1( store_string, Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveMandelbrotAtRe: re        <Float>
@@ -343,7 +344,7 @@ class doubleOopPrimitives : AllStatic {
         //              flags = #(Pure LastDeltaFrameNotNeeded)
         //              name  = 'doubleOopPrimitives::mandelbrot' }
         //%
-        static Oop __CALLING_CONVENTION mandelbrot( Oop re, Oop im, Oop n );
+        static PRIM_DECL_3( mandelbrot, Oop re, Oop im, Oop n );
 };
 
 //%prim

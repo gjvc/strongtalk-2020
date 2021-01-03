@@ -151,7 +151,6 @@ constexpr size_t st_log2( size_t n ) {
     return ( ( n < 2 ) ? 1 : 1 + st_log2( n / 2 ) );
 }
 
-
 constexpr int BitsPerByte    = 8;
 constexpr int LogBitsPerByte = st_log2( BitsPerByte );
 

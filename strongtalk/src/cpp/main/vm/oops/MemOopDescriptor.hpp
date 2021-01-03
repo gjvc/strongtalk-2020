@@ -238,7 +238,7 @@ class MemOopDescriptor : public OopDescriptor {
 
         // GC operations (see discussion in Universe.cpp for rationale)
         void gc_store_size();            // Store object size in age field and remembered set
-        int gc_retrieve_size();        // Retrieve object size from age field and remembered set
+        int gc_retrieve_size();          // Retrieve object size from age field and remembered set
 
         // accessors
         Oop * oops( int which = 0 ) {
@@ -274,7 +274,7 @@ class MemOopDescriptor : public OopDescriptor {
         void print_on( ConsoleOutputStream * stream );
 
         // bootstrappingInProgress operations
-        void bootstrap_object( Bootstrap * stream );
+        void bootstrap_object( Bootstrap *  stream );
 
         void bootstrap_header( Bootstrap * stream );
 

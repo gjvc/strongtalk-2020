@@ -69,7 +69,7 @@ void VM_DeoptimizeStacks::doit() {
 
 
 void VM_TerminateProcess::doit() {
-    DeltaProcess * caller = calling_process();
+    DeltaProcess *caller = calling_process();
     // must reset calling process in case stack does not get freed, but before terminate in case stack does get freed
     set_calling_process( nullptr );
     VMProcess::terminate( _target );
@@ -115,7 +115,7 @@ void load_image() {
 }
 
 
-int vmProcessMain( void * ignored ) {
+int vmProcessMain( void *ignored ) {
     Processes::start( new VMProcess );
     return 0;
 }
@@ -124,13 +124,14 @@ int vmProcessMain( void * ignored ) {
 int createVMProcess() {
 
     int ignored;
+    _console->print_cr( "createVMProcess() calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
     os::create_thread( &vmProcessMain, nullptr, &ignored );
 
     return 0;
 }
 
 
-int vm_main( int argc, char * argv[] ) {
+int vm_main( int argc, char *argv[] ) {
 
     parse_arguments( argc, argv );
     init_globals();
@@ -147,7 +148,6 @@ int vm_main( int argc, char * argv[] ) {
     createVMProcess();
     _console->print_cr( "%%vm-process-created" );
 
-    os::sleep( 10 * 1000 );
     DeltaProcess::runMainProcess();
 
     return 0;

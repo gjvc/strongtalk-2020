@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for blocks
 
@@ -225,7 +226,7 @@ extern "C" ContextOop allocateContext2();
 //     name  = 'allocateContext2' }
 //%
 
-Oop __CALLING_CONVENTION unwindprotect( Oop receiver, Oop protectBlock );
+PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock );
 //%prim
 // <BlockWithoutArguments> primitiveUnwindProtect: protect   <BlockWithoutArguments>
 //                                         ifFail: failBlock <PrimFailBlock> ^<Object> =
@@ -237,7 +238,7 @@ Oop __CALLING_CONVENTION unwindprotect( Oop receiver, Oop protectBlock );
 //     name  = 'unwindprotect' }
 //%
 
-Oop __CALLING_CONVENTION blockRepeat( Oop receiver );
+PRIM_DECL_1( blockRepeat, Oop receiver );
 //%prim
 // <BlockWithoutArguments> primitiveRepeat ^<BottomType> =
 //   Internal {
@@ -246,7 +247,7 @@ Oop __CALLING_CONVENTION blockRepeat( Oop receiver );
 //     name  = 'blockRepeat' }
 //%
 
-Oop __CALLING_CONVENTION block_method( Oop receiver );
+PRIM_DECL_1( block_method, Oop receiver );
 //%prim
 // <Block> primitiveBlockMethod ^<Method> =
 //   Internal {
@@ -254,7 +255,7 @@ Oop __CALLING_CONVENTION block_method( Oop receiver );
 //     name  = 'block_method' }
 //%
 
-Oop __CALLING_CONVENTION block_is_optimized( Oop receiver );
+PRIM_DECL_1( block_is_optimized, Oop receiver );
 //%prim
 // <Block> primitiveBlockIsOptimized ^<Boolean> =
 //   Internal {

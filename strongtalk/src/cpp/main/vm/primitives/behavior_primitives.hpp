@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 
@@ -31,7 +32,7 @@ class behaviorPrimitives : AllStatic {
         //              name  = 'behaviorPrimitives::allocate3'
         //              flags = #Allocate }
         //%
-        static Oop __CALLING_CONVENTION allocate3( Oop receiver, Oop tenured );
+        static PRIM_DECL_2( allocate3, Oop receiver, Oop tenured );
 
         //%prim
         // <Behavior> primitiveNew2IfFail: failBlock <PrimFailBlock> ^<Instance> =
@@ -39,7 +40,7 @@ class behaviorPrimitives : AllStatic {
         //              name  = 'behaviorPrimitives::allocate2'
         //              flags = #Allocate }
         //%
-        static Oop __CALLING_CONVENTION allocate2( Oop receiver );
+        static PRIM_DECL_1( allocate2, Oop receiver );
 
         //%prim
         // <Behavior> primitiveNewIfFail: failBlock <PrimFailBlock> ^<Instance> =
@@ -47,7 +48,7 @@ class behaviorPrimitives : AllStatic {
         //              name  = 'behaviorPrimitives::allocate'
         //              flags = #Allocate }
         //%
-        static Oop __CALLING_CONVENTION allocate( Oop receiver );
+        static PRIM_DECL_1( allocate, Oop receiver );
 
         // MIXIN
 
@@ -56,55 +57,55 @@ class behaviorPrimitives : AllStatic {
         //                                ifFail: failBlock <PrimFailBlock> ^<Mixin> =
         //   Internal { name = 'behaviorPrimitives::mixinOf' }
         //%
-        static Oop __CALLING_CONVENTION mixinOf( Oop behavior );
+        static PRIM_DECL_1( mixinOf, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorHeaderSizeOf: behavior <Behavior>
         //                                     ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name = 'behaviorPrimitives::headerSize' }
         //%
-        static Oop __CALLING_CONVENTION headerSize( Oop behavior );
+        static PRIM_DECL_1( headerSize, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorNonIndexableSizeOf: behavior <Behavior>
         //                                           ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name = 'behaviorPrimitives::nonIndexableSize' }
         //%
-        static Oop __CALLING_CONVENTION nonIndexableSize( Oop behavior );
+        static PRIM_DECL_1( nonIndexableSize, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorIsSpecializedClass: behavior  <Behavior>
         //                                           ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name  = 'behaviorPrimitives::is_specialized_class' }
         //%
-        static Oop __CALLING_CONVENTION is_specialized_class( Oop behavior );
+        static PRIM_DECL_1( is_specialized_class, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorCanBeSubclassed: behavior  <Behavior>
         //                                        ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name  = 'behaviorPrimitives::can_be_subclassed' }
         //%
-        static Oop __CALLING_CONVENTION can_be_subclassed( Oop behavior );
+        static PRIM_DECL_1( can_be_subclassed, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorCanHaveInstanceVariables: behavior <Behavior>
         //                                                 ifFail: failBlock <PrimFailBlock> ^<Boolean> =
         //   Internal { name  = 'behaviorPrimitives::can_have_instance_variables' }
         //%
-        static Oop __CALLING_CONVENTION can_have_instance_variables( Oop behavior );
+        static PRIM_DECL_1( can_have_instance_variables, Oop behavior );
 
         //%prim
         // <Behavior> primitiveSuperclass ^<Behavior|Nil> =
         //   Internal { name  = 'behaviorPrimitives::superclass' }
         //%
-        static Oop __CALLING_CONVENTION superclass( Oop receiver );
+        static PRIM_DECL_1( superclass, Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveSuperclassOf: class <Behavior>
         //                             ifFail: failBlock <PrimFailBlock> ^<Behavior|Nil> =
         //   Internal { name  = 'behaviorPrimitives::superclass_of' }
         //%
-        static Oop __CALLING_CONVENTION superclass_of( Oop klass );
+        static PRIM_DECL_1( superclass_of, Oop klass );
 
         //%prim
         // <NoReceiver> primitiveSetSuperclassOf: behavior  <Behavior>
@@ -113,7 +114,7 @@ class behaviorPrimitives : AllStatic {
         //   Internal { error = #(NotAClass)
         //              name  = 'behaviorPrimitives::setSuperclass' }
         //%
-        static Oop __CALLING_CONVENTION setSuperclass( Oop receiver, Oop newSuper );
+        static PRIM_DECL_2( setSuperclass, Oop receiver, Oop newSuper );
 
         // CLASS VARIABLES
 
@@ -124,7 +125,7 @@ class behaviorPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'behaviorPrimitives::classVariableAt' }
         //%
-        static Oop __CALLING_CONVENTION classVariableAt( Oop behavior, Oop index );
+        static PRIM_DECL_2( classVariableAt, Oop behavior, Oop index );
 
 
         //%prim
@@ -133,7 +134,7 @@ class behaviorPrimitives : AllStatic {
         //   Internal { error = #(OutOfBounds)
         //              name  = 'behaviorPrimitives::classVariables' }
         //%
-        static Oop __CALLING_CONVENTION classVariables( Oop behavior );
+        static PRIM_DECL_1( classVariables, Oop behavior );
 
         // METHODS
 
@@ -142,7 +143,7 @@ class behaviorPrimitives : AllStatic {
         //                          ifFail: failBlock <PrimFailBlock> ^<Behavior> =
         //   Internal { name  = 'behaviorPrimitives::printMethod' }
         //%
-        static Oop __CALLING_CONVENTION printMethod( Oop receiver, Oop name );
+        static PRIM_DECL_2( printMethod, Oop receiver, Oop name );
 
         //%prim
         // <Behavior> primitiveMethodFor: selector  <CompressedSymbol>
@@ -151,14 +152,14 @@ class behaviorPrimitives : AllStatic {
         //              error = #(NotFound)
         //            }
         //%
-        static Oop __CALLING_CONVENTION methodFor( Oop receiver, Oop selector );
+        static PRIM_DECL_2( methodFor, Oop receiver, Oop selector );
 
         //%prim
         // <NoReceiver> primitiveBehaviorFormat: behavior  <Behavior>
         //                               ifFail: failBlock <PrimFailBlock> ^<Symbol> =
         //   Internal { name  = 'behaviorPrimitives::format' }
         //%
-        static Oop __CALLING_CONVENTION format( Oop behavior );
+        static PRIM_DECL_1( format, Oop behavior );
 
         //%prim
         // <NoReceiver> primitiveBehaviorVMType: behavior  <Behavior>
@@ -168,7 +169,7 @@ class behaviorPrimitives : AllStatic {
         //               doc   = 'Block, Context, Process, Proxy, Activation, Mixin, and Class'
         //               name  = 'behaviorPrimitives::vm_type' }
         //%
-        static Oop __CALLING_CONVENTION vm_type( Oop behavior );
+        static PRIM_DECL_1( vm_type, Oop behavior );
 
         //%prim
         // <Behavior> primitiveBehaviorIsClassOf: obj  <Object> ^<Boolean> =
@@ -176,7 +177,7 @@ class behaviorPrimitives : AllStatic {
         //              flags = #(LastDeltaFrameNotNeeded)
         //              name  = 'behaviorPrimitives::is_class_of' }
         //%
-        static Oop __CALLING_CONVENTION is_class_of( Oop receiver, Oop obj );
+        static PRIM_DECL_2( is_class_of, Oop receiver, Oop obj );
 };
 
 //%prim

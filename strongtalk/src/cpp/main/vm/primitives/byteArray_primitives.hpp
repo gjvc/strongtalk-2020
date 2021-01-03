@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/memory/SymbolTable.hpp"
 
@@ -34,7 +35,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'byteArrayPrimitives::allocateSize' }
         //%
-        static Oop __CALLING_CONVENTION allocateSize( Oop receiver, Oop argument );
+        static PRIM_DECL_2( allocateSize, Oop receiver, Oop argument );
 
         //%prim
         // <NoReceiver>
@@ -46,7 +47,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Allocate)
         //              name  = 'byteArrayPrimitives::allocateSize2' }
         //%
-        static Oop __CALLING_CONVENTION allocateSize2( Oop receiver, Oop argument, Oop tenured );
+        static PRIM_DECL_3( allocateSize2, Oop receiver, Oop argument, Oop tenured );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -54,7 +55,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedByte)
         //              name  = 'byteArrayPrimitives::size' }
         //%
-        static Oop __CALLING_CONVENTION size( Oop receiver );
+        static PRIM_DECL_1( size, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -62,7 +63,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedByte)
         //              name  = 'byteArrayPrimitives::numberOfArguments' }
         //%
-        static Oop __CALLING_CONVENTION numberOfArguments( Oop receiver );
+        static PRIM_DECL_1( numberOfArguments, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -72,7 +73,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::at' }
         //%
-        static Oop __CALLING_CONVENTION at( Oop receiver, Oop index );
+        static PRIM_DECL_2( at, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -83,7 +84,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::atPut' }
         //%
-        static Oop __CALLING_CONVENTION atPut( Oop receiver, Oop index, Oop value );
+        static PRIM_DECL_3( atPut, Oop receiver, Oop index, Oop value );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -91,7 +92,7 @@ class byteArrayPrimitives : AllStatic {
         //                        ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
         //   Internal { name = 'byteArrayPrimitives::compare' }
         //%
-        static Oop __CALLING_CONVENTION compare( Oop receiver, Oop argument );
+        static PRIM_DECL_2( compare, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -99,7 +100,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { error = #(ValueOutOfBounds)
         //              name  = 'byteArrayPrimitives::intern' }
         //%
-        static Oop __CALLING_CONVENTION intern( Oop receiver );
+        static PRIM_DECL_1( intern, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -109,7 +110,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::characterAt' }
         //%
-        static Oop __CALLING_CONVENTION characterAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( characterAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -117,7 +118,7 @@ class byteArrayPrimitives : AllStatic {
         //                         ifFail: failBlock <PrimFailBlock> ^<Self> =
         //   Internal { name  = 'byteArrayPrimitives::at_all_put' }
         //%
-        static Oop __CALLING_CONVENTION at_all_put( Oop receiver, Oop c );
+        static PRIM_DECL_2( at_all_put, Oop receiver, Oop c );
 
 
         // SUPPORT FOR LARGE INTEGER
@@ -129,7 +130,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function)
         //              name  = 'byteArrayPrimitives::largeIntegerFromSmallInteger' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerFromSmallInteger( Oop receiver, Oop number );
+        static PRIM_DECL_2( largeIntegerFromSmallInteger, Oop receiver, Oop number );
 
         //%prim
         // <IndexedByteInstanceVariables class>
@@ -138,7 +139,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function)
         //              name  = 'byteArrayPrimitives::largeIntegerFromDouble' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerFromDouble( Oop receiver, Oop number );
+        static PRIM_DECL_2( largeIntegerFromDouble, Oop receiver, Oop number );
 
         //%prim
         // <IndexedByteInstanceVariables class>
@@ -149,7 +150,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerFromString' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerFromString( Oop receiver, Oop argument, Oop base );
+        static PRIM_DECL_3( largeIntegerFromString, Oop receiver, Oop argument, Oop base );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -159,7 +160,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerAdd' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerAdd( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerAdd, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -169,7 +170,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerSubtract' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerSubtract( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerSubtract, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -179,7 +180,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerMultiply' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerMultiply( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerMultiply, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -189,7 +190,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerQuo' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerQuo( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerQuo, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -199,7 +200,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerDiv' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerDiv( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerDiv, Oop receiver, Oop argument );
 
 
         //%prim
@@ -210,7 +211,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerMod' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerMod( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerMod, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -220,7 +221,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerRem' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerRem( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerRem, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -230,7 +231,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerAnd' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerAnd( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerAnd, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -240,7 +241,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerXor' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerXor( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerXor, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -250,7 +251,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerOr' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerOr( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerOr, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -260,7 +261,7 @@ class byteArrayPrimitives : AllStatic {
         //              flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerShift' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerShift( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerShift, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -269,7 +270,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerCompare' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerCompare( Oop receiver, Oop argument );
+        static PRIM_DECL_2( largeIntegerCompare, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -277,7 +278,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerToFloat' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerToFloat( Oop receiver );
+        static PRIM_DECL_1( largeIntegerToFloat, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -286,7 +287,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerToString' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerToString( Oop receiver, Oop base );
+        static PRIM_DECL_2( largeIntegerToString, Oop receiver, Oop base );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -294,7 +295,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedByte)
         //              name  = 'byteArrayPrimitives::hash' }
         //%
-        static Oop __CALLING_CONVENTION hash( Oop receiver );
+        static PRIM_DECL_1( hash, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -302,7 +303,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Pure IndexedByte)
         //              name  = 'byteArrayPrimitives::largeIntegerHash' }
         //%
-        static Oop __CALLING_CONVENTION largeIntegerHash( Oop receiver );
+        static PRIM_DECL_1( largeIntegerHash, Oop receiver );
 
         // Aliens primitives
 
@@ -312,7 +313,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienGetSize' }
         //%
-        static Oop __CALLING_CONVENTION alienGetSize( Oop receiver );
+        static PRIM_DECL_1( alienGetSize, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -321,7 +322,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSetSize' }
         //%
-        static Oop __CALLING_CONVENTION alienSetSize( Oop receiver, Oop argument );
+        static PRIM_DECL_2( alienSetSize, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -329,7 +330,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienGetAddress' }
         //%
-        static Oop __CALLING_CONVENTION alienGetAddress( Oop receiver );
+        static PRIM_DECL_1( alienGetAddress, Oop receiver );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -338,7 +339,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSetAddress' }
         //%
-        static Oop __CALLING_CONVENTION alienSetAddress( Oop receiver, Oop argument );
+        static PRIM_DECL_2( alienSetAddress, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -347,7 +348,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedByteAt' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedByteAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienUnsignedByteAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -357,7 +358,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedByteAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedByteAtPut( Oop receiver, Oop index, Oop value );
+        static PRIM_DECL_3( alienUnsignedByteAtPut, Oop receiver, Oop index, Oop value );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -366,7 +367,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedByteAt' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedByteAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienSignedByteAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -376,7 +377,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedByteAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedByteAtPut( Oop receiver, Oop index, Oop value );
+        static PRIM_DECL_3( alienSignedByteAtPut, Oop receiver, Oop index, Oop value );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -385,7 +386,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedShortAt' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedShortAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienUnsignedShortAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -395,7 +396,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedShortAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedShortAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienUnsignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -404,7 +405,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedShortAt' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedShortAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienSignedShortAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -414,7 +415,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedShortAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedShortAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienSignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -423,7 +424,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedLongAt' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedLongAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienUnsignedLongAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -433,7 +434,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienUnsignedLongAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienUnsignedLongAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienUnsignedLongAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -442,7 +443,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedLongAt' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedLongAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienSignedLongAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -452,7 +453,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienSignedLongAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienSignedLongAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienSignedLongAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -461,7 +462,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienDoubleAt' }
         //%
-        static Oop __CALLING_CONVENTION alienDoubleAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienDoubleAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -471,7 +472,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienDoubleAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienDoubleAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienDoubleAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -480,7 +481,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienFloatAt' }
         //%
-        static Oop __CALLING_CONVENTION alienFloatAt( Oop receiver, Oop index );
+        static PRIM_DECL_2( alienFloatAt, Oop receiver, Oop index );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -490,7 +491,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienFloatAtPut' }
         //%
-        static Oop __CALLING_CONVENTION alienFloatAtPut( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienFloatAtPut, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -499,7 +500,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult0' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult0( Oop receiver, Oop argument );
+        static PRIM_DECL_2( alienCallResult0, Oop receiver, Oop argument );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -509,7 +510,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult1' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult1( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienCallResult1, Oop receiver, Oop argument1, Oop argument2 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -520,7 +521,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult2' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult2( Oop receiver, Oop argument1, Oop argument2, Oop argument3 );
+        static PRIM_DECL_4( alienCallResult2, Oop receiver, Oop argument1, Oop argument2, Oop argument3 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -532,7 +533,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult3' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult3( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4 );
+        static PRIM_DECL_5( alienCallResult3, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -545,7 +546,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult4' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult4( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5 );
+        static PRIM_DECL_6( alienCallResult4, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -559,7 +560,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult5' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult5( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6 );
+        static PRIM_DECL_7( alienCallResult5, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -574,7 +575,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult6' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult6( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7 );
+        static PRIM_DECL_8( alienCallResult6, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -590,7 +591,7 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResult7' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResult7( Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7, Oop argument8 );
+        static PRIM_DECL_9( alienCallResult7, Oop receiver, Oop argument1, Oop argument2, Oop argument3, Oop argument4, Oop argument5, Oop argument6, Oop argument7, Oop argument8 );
 
         //%prim
         // <IndexedByteInstanceVariables>
@@ -600,6 +601,6 @@ class byteArrayPrimitives : AllStatic {
         //   Internal { flags = #(Function IndexedByte)
         //              name  = 'byteArrayPrimitives::alienCallResultWithArguments' }
         //%
-        static Oop __CALLING_CONVENTION alienCallResultWithArguments( Oop receiver, Oop argument1, Oop argument2 );
+        static PRIM_DECL_3( alienCallResultWithArguments, Oop receiver, Oop argument1, Oop argument2 );
 };
 

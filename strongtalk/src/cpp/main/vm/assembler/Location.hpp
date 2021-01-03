@@ -198,22 +198,22 @@ class Location : public ResourceObject /* but usually used as ValueObj */ {
         }
 
 
-        bool_t operator==( Location & rhs ) const {
+        bool operator==( Location & rhs ) const {
             return rhs._loc == _loc;
         }
 
 
-        bool_t operator==( const Location & rhs ) const {
+        bool operator==( const Location & rhs ) const {
             return rhs._loc == _loc;
         }
 
 
-        bool_t operator!=( Location & rhs ) const {
+        bool operator!=( Location & rhs ) const {
             return rhs._loc != _loc;
         }
 
 
-        bool_t operator!=( const Location & rhs ) const {
+        bool operator!=( const Location & rhs ) const {
             return rhs._loc != _loc;
         }
 

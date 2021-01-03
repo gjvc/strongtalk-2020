@@ -29,6 +29,7 @@
 #include "vm/system/sizes.hpp"
 
 
+
 TRACE_FUNC( TraceMethodPrims, "method" )
 
 
@@ -37,35 +38,35 @@ int methodOopPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert(receiver->is_method(), "receiver must be method")
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::selector( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::selector, Oop receiver ) {
     PROLOGUE_1( "selector", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->selector();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::debug_info( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::debug_info, Oop receiver ) {
     PROLOGUE_1( "debug_info", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->debugInfo();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::size_and_flags( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::size_and_flags, Oop receiver ) {
     PROLOGUE_1( "size_and_flags", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->size_and_flags();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::fileout_body( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::fileout_body, Oop receiver ) {
     PROLOGUE_1( "fileout_body", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->fileout_body();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::setSelector( Oop receiver, Oop name ) {
+PRIM_DECL_2( methodOopPrimitives::setSelector, Oop receiver, Oop name ) {
     PROLOGUE_2( "setSelector", receiver, name );
     ASSERT_RECEIVER;
     if ( not name->is_symbol() )
@@ -75,21 +76,21 @@ Oop __CALLING_CONVENTION methodOopPrimitives::setSelector( Oop receiver, Oop nam
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::numberOfArguments( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::numberOfArguments, Oop receiver ) {
     PROLOGUE_1( "numberOfArguments", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( MethodOop( receiver )->number_of_arguments() );
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::outer( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::outer, Oop receiver ) {
     PROLOGUE_1( "outer", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->selector_or_method();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::setOuter( Oop receiver, Oop method ) {
+PRIM_DECL_2( methodOopPrimitives::setOuter, Oop receiver, Oop method ) {
     PROLOGUE_2( "setOuter", receiver, method );
     ASSERT_RECEIVER;
     MethodOop( receiver )->set_selector_or_method( Oop( method ) );
@@ -97,7 +98,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::setOuter( Oop receiver, Oop method
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::referenced_instance_variable_names( Oop receiver, Oop mixin ) {
+PRIM_DECL_2( methodOopPrimitives::referenced_instance_variable_names, Oop receiver, Oop mixin ) {
     PROLOGUE_2( "referenced_instance_variable_names", receiver, mixin );
     ASSERT_RECEIVER;
     if ( not mixin->is_mixin() )
@@ -107,28 +108,28 @@ Oop __CALLING_CONVENTION methodOopPrimitives::referenced_instance_variable_names
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::referenced_class_variable_names( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::referenced_class_variable_names, Oop receiver ) {
     PROLOGUE_1( "referenced_class_variable_names", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->referenced_class_variable_names();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::referenced_global_names( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::referenced_global_names, Oop receiver ) {
     PROLOGUE_1( "referenced_global_names", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->referenced_global_names();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::senders( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::senders, Oop receiver ) {
     PROLOGUE_1( "senders", receiver );
     ASSERT_RECEIVER;
     return MethodOop( receiver )->senders();
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::prettyPrint( Oop receiver, Oop klass ) {
+PRIM_DECL_2( methodOopPrimitives::prettyPrint, Oop receiver, Oop klass ) {
     PROLOGUE_2( "prettyPrint", receiver, klass );
     ASSERT_RECEIVER;
     if ( klass == nilObj ) {
@@ -142,7 +143,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::prettyPrint( Oop receiver, Oop kla
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::prettyPrintSource( Oop receiver, Oop klass ) {
+PRIM_DECL_2( methodOopPrimitives::prettyPrintSource, Oop receiver, Oop klass ) {
     PROLOGUE_2( "prettyPrintSource", receiver, klass );
     ASSERT_RECEIVER;
     ByteArrayOop a;
@@ -157,7 +158,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::prettyPrintSource( Oop receiver, O
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::printCodes( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::printCodes, Oop receiver ) {
     PROLOGUE_1( "printCodes", receiver );
     ASSERT_RECEIVER;
     {
@@ -168,7 +169,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::printCodes( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::constructMethod( Oop selector_or_method, Oop flags, Oop nofArgs, Oop debugInfo, Oop bytes, Oop oops ) {
+PRIM_DECL_6( methodOopPrimitives::constructMethod, Oop selector_or_method, Oop flags, Oop nofArgs, Oop debugInfo, Oop bytes, Oop oops ) {
     PROLOGUE_6( "constructMethod", selector_or_method, flags, nofArgs, debugInfo, bytes, oops );
     if ( not selector_or_method->is_symbol() and ( selector_or_method not_eq nilObj ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -187,7 +188,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::constructMethod( Oop selector_or_m
         return markSymbol( vmSymbols::method_construction_failed() );
     }
 
-    MethodKlass * k = ( MethodKlass * ) Universe::methodKlassObj()->klass_part();
+    MethodKlass * k    = ( MethodKlass * ) Universe::methodKlassObj()->klass_part();
     MethodOop result = k->constructMethod( selector_or_method, SMIOop( flags )->value(), SMIOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
     if ( result )
         return result;
@@ -207,7 +208,7 @@ static Oop allocate_block_for( MethodOop method, Oop self ) {
 
     // allocate the context for the block (make room for the self)
     ContextKlass * ok = ( ContextKlass * ) contextKlassObj->klass_part();
-    ContextOop con = ContextOop( ok->allocateObjectSize( 1 ) );
+    ContextOop   con  = ContextOop( ok->allocateObjectSize( 1 ) );
     con->kill();
     con->obj_at_put( 0, self );
 
@@ -220,7 +221,7 @@ static Oop allocate_block_for( MethodOop method, Oop self ) {
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::allocate_block( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::allocate_block, Oop receiver ) {
     PROLOGUE_1( "allocate_block", receiver );
     ASSERT_RECEIVER;
 
@@ -231,7 +232,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::allocate_block( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::allocate_block_self( Oop receiver, Oop self ) {
+PRIM_DECL_2( methodOopPrimitives::allocate_block_self, Oop receiver, Oop self ) {
     PROLOGUE_2( "allocate_block_self", receiver, self );
     ASSERT_RECEIVER;
 
@@ -254,7 +255,7 @@ static SymbolOop symbol_from_method_inlining_info( MethodOopDescriptor::Method_I
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::set_inlining_info( Oop receiver, Oop info ) {
+PRIM_DECL_2( methodOopPrimitives::set_inlining_info, Oop receiver, Oop info ) {
     PROLOGUE_2( "set_inlining_info", receiver, info );
     ASSERT_RECEIVER;
     if ( not info->is_symbol() )
@@ -277,7 +278,7 @@ Oop __CALLING_CONVENTION methodOopPrimitives::set_inlining_info( Oop receiver, O
 }
 
 
-Oop __CALLING_CONVENTION methodOopPrimitives::inlining_info( Oop receiver ) {
+PRIM_DECL_1( methodOopPrimitives::inlining_info, Oop receiver ) {
     PROLOGUE_1( "inlining_info", receiver );
     ASSERT_RECEIVER;
     return symbol_from_method_inlining_info( MethodOop( receiver )->method_inlining_info() );

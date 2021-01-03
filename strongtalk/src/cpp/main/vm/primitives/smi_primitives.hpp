@@ -8,6 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for small integers
 
@@ -27,7 +28,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::lessThan' }
         //%
-        static Oop __CALLING_CONVENTION lessThan( Oop receiver, Oop argument );
+        static PRIM_DECL_2( lessThan, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveGreaterThan: aNumber   <SmallInteger>
@@ -35,7 +36,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::greaterThan' }
         //%
-        static Oop __CALLING_CONVENTION greaterThan( Oop receiver, Oop argument );
+        static PRIM_DECL_2( greaterThan, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveLessThanOrEqual: aNumber   <SmallInteger>
@@ -43,7 +44,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::lessThanOrEqual' }
         //%
-        static Oop __CALLING_CONVENTION lessThanOrEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( lessThanOrEqual, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveGreaterThanOrEqual: aNumber   <SmallInteger>
@@ -51,7 +52,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::greaterThanOrEqual' }
         //%
-        static Oop __CALLING_CONVENTION greaterThanOrEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( greaterThanOrEqual, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveSmallIntegerEqual: aNumber   <SmallInteger>
@@ -59,7 +60,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::equal' }
         //%
-        static Oop __CALLING_CONVENTION equal( Oop receiver, Oop argument );
+        static PRIM_DECL_2( equal, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveSmallIntegerNotEqual: aNumber   <SmallInteger>
@@ -67,7 +68,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::notEqual' }
         //%
-        static Oop __CALLING_CONVENTION notEqual( Oop receiver, Oop argument );
+        static PRIM_DECL_2( notEqual, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveBitAnd: aNumber   <SmallInteger>
@@ -75,7 +76,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::bitAnd' }
         //%
-        static Oop __CALLING_CONVENTION bitAnd( Oop receiver, Oop argument );
+        static PRIM_DECL_2( bitAnd, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveBitOr: aNumber   <SmallInteger>
@@ -83,7 +84,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::bitOr' }
         //%
-        static Oop __CALLING_CONVENTION bitOr( Oop receiver, Oop argument );
+        static PRIM_DECL_2( bitOr, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveBitXor: aNumber   <SmallInteger>
@@ -91,7 +92,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::bitXor' }
         //%
-        static Oop __CALLING_CONVENTION bitXor( Oop receiver, Oop argument );
+        static PRIM_DECL_2( bitXor, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveBitShift: aNumber   <SmallInteger>
@@ -99,7 +100,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::bitShift' }
         //%
-        static Oop __CALLING_CONVENTION bitShift( Oop receiver, Oop argument );
+        static PRIM_DECL_2( bitShift, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveRawBitShift: aNumber   <SmallInteger>
@@ -107,7 +108,7 @@ class smiOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
         //              name  = 'smiOopPrimitives::rawBitShift' }
         //%
-        static Oop __CALLING_CONVENTION rawBitShift( Oop receiver, Oop argument );
+        static PRIM_DECL_2( rawBitShift, Oop receiver, Oop argument );
 
         //%prim
         // <SmallInteger> primitiveAsObjectIfFail: failBlock <PrimFailBlock> ^<Object> =
@@ -115,7 +116,7 @@ class smiOopPrimitives : AllStatic {
         //              flags = #Function
         //              name  = 'smiOopPrimitives::asObject' }
         //%
-        static Oop __CALLING_CONVENTION asObject( Oop receiver );
+        static PRIM_DECL_1( asObject, Oop receiver );
 
         // For debugging only
         //%prim
@@ -124,7 +125,7 @@ class smiOopPrimitives : AllStatic {
         //              flags = #Function
         //              name  = 'smiOopPrimitives::printCharacter' }
         //%
-        static Oop __CALLING_CONVENTION printCharacter( Oop receiver );
+        static PRIM_DECL_1( printCharacter, Oop receiver );
 };
 
 // Assembler optimized primitives

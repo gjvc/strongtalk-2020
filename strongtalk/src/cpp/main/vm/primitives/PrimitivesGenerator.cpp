@@ -8,6 +8,7 @@
 #include "vm/system/sizes.hpp"
 
 
+
 const char * PrimitivesGenerator::allocateBlock( int n ) {
 
     KlassOopDescriptor ** block_klass;
@@ -84,7 +85,7 @@ const char * PrimitivesGenerator::allocateContext_var() {
     masm->movl( edx, ecx );
     masm->addl( edx, 3 * oopSize );
     masm->addl( edx, eax );
-// Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::ScaleFactor::times_1, 3*oopSize));
+// Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::times_1, 3*oopSize));
     masm->cmpl( edx, Address( ( int ) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( Assembler::Condition::greater, need_scavenge );
     masm->movl( Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ), edx );

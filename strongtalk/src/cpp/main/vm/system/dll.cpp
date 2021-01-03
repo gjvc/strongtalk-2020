@@ -45,9 +45,9 @@ bool_t Compiled_DLLCache::async() const {
 
 void Compiled_DLLCache::verify() {
     // check layout
-    mov_at( static_cast<int>( Layout_constants::mov_edx_instruction_offset ) )->verify();
-    test_at( static_cast<int>( Layout_constants::test_1_instruction_offset ) )->verify();
-    test_at( static_cast<int>( Layout_constants::test_2_instruction_offset ) )->verify();
+    mov_at( mov_edx_instruction_offset )->verify();
+    test_at( test_1_instruction_offset )->verify();
+    test_at( test_2_instruction_offset )->verify();
     NativeCall::verify();
     // check oops
     if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
@@ -141,7 +141,7 @@ dll_func DLLs::lookup_and_patch_Interpreted_DLLCache() {
 
 dll_func DLLs::lookup_and_patch_Compiled_DLLCache() {
     // get DLL call info
-    Frame f = DeltaProcess::active()->last_frame();
+    Frame             f       = DeltaProcess::active()->last_frame();
     Compiled_DLLCache * cache = compiled_DLLCache_from_return_address( f.pc() );
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
     // do lookup, patch & return entry point

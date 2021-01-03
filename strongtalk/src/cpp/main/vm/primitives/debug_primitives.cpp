@@ -21,6 +21,8 @@
 #include "vm/primitives/debug_primitives.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/system/sizes.hpp"
+
 
 
 TRACE_FUNC( TraceDebugPrims, "debug" )
@@ -29,7 +31,7 @@ TRACE_FUNC( TraceDebugPrims, "debug" )
 int debugPrimitives::number_of_calls;
 
 
-Oop __CALLING_CONVENTION debugPrimitives::boolAt( Oop name ) {
+PRIM_DECL_1( debugPrimitives::boolAt, Oop name ) {
     PROLOGUE_1( "boolAt", name )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -40,7 +42,7 @@ Oop __CALLING_CONVENTION debugPrimitives::boolAt( Oop name ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::boolAtPut( Oop name, Oop value ) {
+PRIM_DECL_2( debugPrimitives::boolAtPut, Oop name, Oop value ) {
     PROLOGUE_2( "boolAtPut", name, value )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -58,7 +60,7 @@ Oop __CALLING_CONVENTION debugPrimitives::boolAtPut( Oop name, Oop value ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::smiAt( Oop name ) {
+PRIM_DECL_1( debugPrimitives::smiAt, Oop name ) {
     PROLOGUE_1( "smiAt", name )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -69,7 +71,7 @@ Oop __CALLING_CONVENTION debugPrimitives::smiAt( Oop name ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::smiAtPut( Oop name, Oop value ) {
+PRIM_DECL_2( debugPrimitives::smiAtPut, Oop name, Oop value ) {
     PROLOGUE_2( "smiAtPut", name, value )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -82,42 +84,42 @@ Oop __CALLING_CONVENTION debugPrimitives::smiAtPut( Oop name, Oop value ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearLookupCache() {
+PRIM_DECL_0( debugPrimitives::clearLookupCache ) {
     PROLOGUE_0( "clearLookupCache" )
     LookupCache::flush();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearLookupCacheStatistics() {
+PRIM_DECL_0( debugPrimitives::clearLookupCacheStatistics ) {
     PROLOGUE_0( "clearLookupCacheStatistics" )
     LookupCache::clear_statistics();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printLookupCacheStatistics() {
+PRIM_DECL_0( debugPrimitives::printLookupCacheStatistics ) {
     PROLOGUE_0( "printLookupCacheStatistics" )
     LookupCache::print_statistics();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printMemoryLayout() {
+PRIM_DECL_0( debugPrimitives::printMemoryLayout ) {
     PROLOGUE_0( "printMemoryLayout" )
     Universe::print_layout();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::decodeAllMethods() {
+PRIM_DECL_0( debugPrimitives::decodeAllMethods ) {
     PROLOGUE_0( "decodeAllMethods" )
     Universe::decode_methods();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printMethodCodes( Oop receiver, Oop sel ) {
+PRIM_DECL_2( debugPrimitives::printMethodCodes, Oop receiver, Oop sel ) {
     PROLOGUE_2( "printMethodCodes", receiver, sel )
     if ( not sel->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -135,7 +137,7 @@ Oop __CALLING_CONVENTION debugPrimitives::printMethodCodes( Oop receiver, Oop se
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::generateIR( Oop receiver, Oop sel ) {
+PRIM_DECL_2( debugPrimitives::generateIR, Oop receiver, Oop sel ) {
     _console->print_cr( "primitiveGenerateIR called..." );
     ResourceMark resourceMark;    // needed to avoid memory leaks!
     PROLOGUE_2( "generateIR", receiver, sel )
@@ -153,7 +155,7 @@ Oop __CALLING_CONVENTION debugPrimitives::generateIR( Oop receiver, Oop sel ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::optimizeMethod( Oop receiver, Oop sel ) {
+PRIM_DECL_2( debugPrimitives::optimizeMethod, Oop receiver, Oop sel ) {
     PROLOGUE_2( "optimizeMethod", receiver, sel );
 
     if ( not sel->is_byteArray() )
@@ -172,7 +174,7 @@ Oop __CALLING_CONVENTION debugPrimitives::optimizeMethod( Oop receiver, Oop sel 
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::decodeMethod( Oop receiver, Oop sel ) {
+PRIM_DECL_2( debugPrimitives::decodeMethod, Oop receiver, Oop sel ) {
     PROLOGUE_2( "decodeMethod", receiver, sel );
     if ( not sel->is_symbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -191,39 +193,39 @@ Oop __CALLING_CONVENTION debugPrimitives::decodeMethod( Oop receiver, Oop sel ) 
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::timerStart() {
+PRIM_DECL_0( debugPrimitives::timerStart ) {
     PROLOGUE_0( "timerStart" );
     os::timerStart();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::timerStop() {
+PRIM_DECL_0( debugPrimitives::timerStop ) {
     PROLOGUE_0( "timerStop" );
     os::timerStop();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::timerPrintBuffer() {
+PRIM_DECL_0( debugPrimitives::timerPrintBuffer ) {
     PROLOGUE_0( "timerPrintBuffer" );
     os::timerPrintBuffer();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::interpreterInvocationCounterLimit() {
+PRIM_DECL_0( debugPrimitives::interpreterInvocationCounterLimit ) {
     PROLOGUE_0( "interpreterInvocationCounterLimit" );
     int limit = Interpreter::get_invocation_counter_limit();
     if ( limit < smi_min )
-    limit = smi_min;
+        limit = smi_min;
     else if ( limit > smi_max )
-    limit = smi_max;
+        limit = smi_max;
     return smiOopFromValue( limit );
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::setInterpreterInvocationCounterLimit( Oop limit ) {
+PRIM_DECL_1( debugPrimitives::setInterpreterInvocationCounterLimit, Oop limit ) {
     PROLOGUE_1( "setInterpreterInvocationCounterLimit", limit );
     if ( not limit->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -245,7 +247,7 @@ class ClearInvocationCounterClosure : public ObjectClosure {
 };
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearInvocationCounters() {
+PRIM_DECL_0( debugPrimitives::clearInvocationCounters ) {
     PROLOGUE_0( "clearInvocationCounters" );
     ClearInvocationCounterClosure blk;
     Universe::object_iterate( &blk );
@@ -258,7 +260,7 @@ class CollectMethodClosure : public ObjectClosure {
 
     private:
         GrowableArray <MethodOop> * _col;
-        int _cutoff;
+        int                       _cutoff;
 
     public:
         CollectMethodClosure( GrowableArray <MethodOop> * col, int cutoff ) {
@@ -280,13 +282,13 @@ static int compare_method_counters( MethodOop * a, MethodOop * b ) {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printInvocationCounterHistogram( Oop size ) {
+PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     PROLOGUE_1( "printInvocationCounterHistogram", size );
 
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    ResourceMark rm;
+    ResourceMark              rm;
     GrowableArray <MethodOop> * col = new GrowableArray <MethodOop>( 1024 );
 
     // Collect the methods
@@ -307,7 +309,7 @@ Oop __CALLING_CONVENTION debugPrimitives::printInvocationCounterHistogram( Oop s
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearInlineCaches() {
+PRIM_DECL_0( debugPrimitives::clearInlineCaches ) {
     PROLOGUE_0( "clearInlineCaches" );
 
     Universe::flush_inline_caches_in_methods();
@@ -322,7 +324,7 @@ Oop __CALLING_CONVENTION debugPrimitives::clearInlineCaches() {
   for (NativeMethod *var = Universe::code->first_nm(); var; var = Universe::code->next_nm(var))
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearNativeMethodCounters() {
+PRIM_DECL_0( debugPrimitives::clearNativeMethodCounters ) {
     PROLOGUE_0( "clearNativeMethodCounters" );
     FOR_ALL_NMETHOD( nm )nm->set_invocation_count( 0 );
     return trueObj;
@@ -334,7 +336,7 @@ static int compare_NativeMethod_counters( NativeMethod ** a, NativeMethod ** b )
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printNativeMethodCounterHistogram( Oop size ) {
+PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     PROLOGUE_1( "printNativeMethodCounterHistogram", size );
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -383,7 +385,7 @@ class SumMethodInvocationClosure : public ObjectClosure {
 };
 
 
-Oop __CALLING_CONVENTION debugPrimitives::numberOfMethodInvocations() {
+PRIM_DECL_0( debugPrimitives::numberOfMethodInvocations ) {
     PROLOGUE_0( "numberOfMethodInvocations" );
     SumMethodInvocationClosure blk;
     Universe::object_iterate( &blk );
@@ -391,7 +393,7 @@ Oop __CALLING_CONVENTION debugPrimitives::numberOfMethodInvocations() {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::numberOfNativeMethodInvocations() {
+PRIM_DECL_0( debugPrimitives::numberOfNativeMethodInvocations ) {
     PROLOGUE_0( "numberOfNativeMethodInvocations" );
     int sum = 0;
     FOR_ALL_NMETHOD( nm )sum += nm->invocation_count();
@@ -399,32 +401,32 @@ Oop __CALLING_CONVENTION debugPrimitives::numberOfNativeMethodInvocations() {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::numberOfPrimaryLookupCacheHits() {
+PRIM_DECL_0( debugPrimitives::numberOfPrimaryLookupCacheHits ) {
     PROLOGUE_0( "numberOfPrimaryLookupCacheHits" );
     return smiOopFromValue( LookupCache::number_of_primary_hits );
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::numberOfSecondaryLookupCacheHits() {
+PRIM_DECL_0( debugPrimitives::numberOfSecondaryLookupCacheHits ) {
     PROLOGUE_0( "numberOfSecondaryLookupCacheHits" );
     return smiOopFromValue( LookupCache::number_of_secondary_hits );
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::numberOfLookupCacheMisses() {
+PRIM_DECL_0( debugPrimitives::numberOfLookupCacheMisses ) {
     PROLOGUE_0( "numberOfLookupCacheMisses" );
     return smiOopFromValue( LookupCache::number_of_misses );
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::clearPrimitiveCounters() {
+PRIM_DECL_0( debugPrimitives::clearPrimitiveCounters ) {
     PROLOGUE_0( "clearPrimitiveCounters" );
     Primitives::clear_counters();
     return trueObj;
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printPrimitiveCounters() {
+PRIM_DECL_0( debugPrimitives::printPrimitiveCounters ) {
     PROLOGUE_0( "printPrimitiveCounters" );
     Primitives::print_counters();
     return trueObj;
@@ -434,8 +436,8 @@ Oop __CALLING_CONVENTION debugPrimitives::printPrimitiveCounters() {
 class Counter : public ResourceObject {
     public:
         const char * title;
-        int total_size;
-        int number;
+        int        total_size;
+        int        number;
 
 
         Counter( const char * t ) {
@@ -471,21 +473,21 @@ class Counter : public ResourceObject {
 
 class ObjectHistogram : public ObjectClosure {
     private:
-        Counter * doubles;
-        Counter * blocks;
-        Counter * objArrays;
-        Counter * symbols;
-        Counter * byteArrays;
-        Counter * doubleByteArrays;
-        Counter * klasses;
-        Counter * processes;
-        Counter * vframes;
-        Counter * methods;
-        Counter * proxies;
-        Counter * mixins;
-        Counter * associations;
-        Counter * contexts;
-        Counter * memOops;
+        Counter                   * doubles;
+        Counter                   * blocks;
+        Counter                   * objArrays;
+        Counter                   * symbols;
+        Counter                   * byteArrays;
+        Counter                   * doubleByteArrays;
+        Counter                   * klasses;
+        Counter                   * processes;
+        Counter                   * vframes;
+        Counter                   * methods;
+        Counter                   * proxies;
+        Counter                   * mixins;
+        Counter                   * associations;
+        Counter                   * contexts;
+        Counter                   * memOops;
         GrowableArray <Counter *> * counters;
     public:
         ObjectHistogram();
@@ -574,7 +576,7 @@ void ObjectHistogram::print() {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::printObjectHistogram() {
+PRIM_DECL_0( debugPrimitives::printObjectHistogram ) {
     PROLOGUE_0( "printObjectHistogram" );
     ResourceMark    rm;
     ObjectHistogram blk;
@@ -584,7 +586,7 @@ Oop __CALLING_CONVENTION debugPrimitives::printObjectHistogram() {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::deoptimizeStacks() {
+PRIM_DECL_0( debugPrimitives::deoptimizeStacks ) {
     PROLOGUE_0( "deoptimizeStacks" );
     VM_DeoptimizeStacks op;
     // The operation takes place in the vmProcess
@@ -593,7 +595,7 @@ Oop __CALLING_CONVENTION debugPrimitives::deoptimizeStacks() {
 }
 
 
-Oop __CALLING_CONVENTION debugPrimitives::verify() {
+PRIM_DECL_0( debugPrimitives::verify ) {
     PROLOGUE_0( "verify" );
     Universe::verify();
     return trueObj;

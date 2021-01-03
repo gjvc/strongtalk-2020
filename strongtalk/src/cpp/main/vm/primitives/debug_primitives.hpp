@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for debugging
 
@@ -27,7 +28,7 @@ class debugPrimitives : AllStatic {
         //      error = #(NotFound)
         //      name  = 'debugPrimitives::boolAt' }
         //%
-        static Oop __CALLING_CONVENTION boolAt( Oop name );
+        static PRIM_DECL_1( boolAt, Oop name );
 
         //%prim
         // <NoReceiver> primitiveBooleanFlagAt: name      <Symbol>
@@ -37,7 +38,7 @@ class debugPrimitives : AllStatic {
         //      error = #(NotFound)
         //      name  = 'debugPrimitives::boolAtPut' }
         //%
-        static Oop __CALLING_CONVENTION boolAtPut( Oop name, Oop value );
+        static PRIM_DECL_2( boolAtPut, Oop name, Oop value );
 
         //%prim
         // <NoReceiver> primitiveSmallIntegerFlagAt: name      <Symbol>
@@ -46,7 +47,7 @@ class debugPrimitives : AllStatic {
         //      error = #(NotFound)
         //      name  = 'debugPrimitives::smiAt' }
         //%
-        static Oop __CALLING_CONVENTION smiAt( Oop name );
+        static PRIM_DECL_1( smiAt, Oop name );
 
         //%prim
         // <NoReceiver> primitiveSmallIntegerFlagAt: name      <Symbol>
@@ -56,37 +57,37 @@ class debugPrimitives : AllStatic {
         //      error = #(NotFound)
         //      name  = 'debugPrimitives::smiAtPut' }
         //%
-        static Oop __CALLING_CONVENTION smiAtPut( Oop name, Oop value );
+        static PRIM_DECL_2( smiAtPut, Oop name, Oop value );
 
         //%prim
         // <NoReceiver> primitiveClearLookupCache ^<Object> =
         //   Internal { name  = 'debugPrimitives::clearLookupCache' }
         //%
-        static Oop __CALLING_CONVENTION clearLookupCache();
+        static PRIM_DECL_0( clearLookupCache );
 
         //%prim
         // <NoReceiver> primitiveClearLookupCacheStatistics ^<Object> =
         //   Internal { name  = 'debugPrimitives::clearLookupCacheStatistics' }
         //%
-        static Oop __CALLING_CONVENTION clearLookupCacheStatistics();
+        static PRIM_DECL_0( clearLookupCacheStatistics );
 
         //%prim
         // <NoReceiver> primitivePrintLookupCacheStatistics ^<Object> =
         //   Internal { name  = 'debugPrimitives::printLookupCacheStatistics' }
         //%
-        static Oop __CALLING_CONVENTION printLookupCacheStatistics();
+        static PRIM_DECL_0( printLookupCacheStatistics );
 
         //%prim
         // <NoReceiver> primitivePrintLayout ^<Object> =
         //   Internal { name  = 'debugPrimitives::printMemoryLayout' }
         //%
-        static Oop __CALLING_CONVENTION printMemoryLayout();
+        static PRIM_DECL_0( printMemoryLayout );
 
         //%prim
         // <NoReceiver> primitiveDecodeAllMethods ^<Object> =
         //   Internal { name  = 'debugPrimitives::decodeAllMethods' }
         //%
-        static Oop __CALLING_CONVENTION decodeAllMethods();
+        static PRIM_DECL_0( decodeAllMethods );
 
         //%prim
         // <Object> primitivePrintMethodCodes: selector <Symbol>
@@ -94,7 +95,7 @@ class debugPrimitives : AllStatic {
         //   Internal { error = #(NotFound)
         //              name  = 'debugPrimitives::printMethodCodes' }
         //%
-        static Oop __CALLING_CONVENTION printMethodCodes( Oop receiver, Oop sel );
+        static PRIM_DECL_2( printMethodCodes, Oop receiver, Oop sel );
 
         //%prim
         // <Object> primitiveGenerateIR: selector <Symbol>
@@ -102,7 +103,7 @@ class debugPrimitives : AllStatic {
         //   Internal { error = #(NotFound)
         //              name  = 'debugPrimitives::generateIR' }
         //%
-        static Oop __CALLING_CONVENTION generateIR( Oop receiver, Oop sel );
+        static PRIM_DECL_2( generateIR, Oop receiver, Oop sel );
 
         //%prim
         // <Object> primitiveOptimizeMethod: selector <Symbol>
@@ -110,7 +111,7 @@ class debugPrimitives : AllStatic {
         //   Internal { error = #(NotFound)
         //              name  = 'debugPrimitives::optimizeMethod' }
         //%
-        static Oop __CALLING_CONVENTION optimizeMethod( Oop receiver, Oop sel );
+        static PRIM_DECL_2( optimizeMethod, Oop receiver, Oop sel );
 
         //%prim
         // <Object> primitiveDecodeMethod: selector <Symbol>
@@ -118,88 +119,88 @@ class debugPrimitives : AllStatic {
         //   Internal { error = #(NotFound)
         //              name  = 'debugPrimitives::decodeMethod' }
         //%
-        static Oop __CALLING_CONVENTION decodeMethod( Oop receiver, Oop sel );
+        static PRIM_DECL_2( decodeMethod, Oop receiver, Oop sel );
 
         //%prim
         // <NoReceiver> primitiveTimerStart ^<Object> =
         //   Internal { name  = 'debugPrimitives::timerStart' }
         //%
-        static Oop __CALLING_CONVENTION timerStart();
+        static PRIM_DECL_0( timerStart );
 
         //%prim
         // <NoReceiver> primitiveTimerStop ^<Object> =
         //   Internal { name  = 'debugPrimitives::timerStop' }
         //%
-        static Oop __CALLING_CONVENTION timerStop();
+        static PRIM_DECL_0( timerStop );
 
         //%prim
         // <NoReceiver> primitiveTimerPrintBuffer ^<Object> =
         //   Internal { name  = 'debugPrimitives::timerPrintBuffer' }
         //%
-        static Oop __CALLING_CONVENTION timerPrintBuffer();
+        static PRIM_DECL_0( timerPrintBuffer );
 
         //%prim
         // <NoReceiver> primitiveInterpreterInvocationCounterLimit ^<SmallInteger> =
         //   Internal { name = 'debugPrimitives::interpreterInvocationCounterLimit' }
         //%
-        static Oop __CALLING_CONVENTION interpreterInvocationCounterLimit();
+        static PRIM_DECL_0( interpreterInvocationCounterLimit );
 
         //%prim
         // <NoReceiver> primitiveSetInterpreterInvocationCounterLimitTo: limit <SmallInteger>
         //                                                       ifFail: failBlock <PrimFailBlock> ^ <Object> =
         //   Internal { name = 'debugPrimitives::setInterpreterInvocationCounterLimit' }
         //%
-        static Oop __CALLING_CONVENTION setInterpreterInvocationCounterLimit( Oop limit );
+        static PRIM_DECL_1( setInterpreterInvocationCounterLimit, Oop limit );
 
         //%prim
         // <NoReceiver> primitiveClearInvocationCounters ^<Object> =
         //   Internal { name  = 'debugPrimitives::clearInvocationCounters' }
         //%
-        static Oop __CALLING_CONVENTION clearInvocationCounters();
+        static PRIM_DECL_0( clearInvocationCounters );
 
         //%prim
         // <NoReceiver> primitivePrintInvocationCounterHistogram: size <SmallInteger>
         //                                                ifFail: failBlock <PrimFailBlock> ^<Object> =
         //   Internal { name  = 'debugPrimitives::printInvocationCounterHistogram' }
         //%
-        static Oop __CALLING_CONVENTION printInvocationCounterHistogram( Oop size );
+        static PRIM_DECL_1( printInvocationCounterHistogram, Oop size );
 
         //%prim
         // <NoReceiver> primitivePrintObjectHistogram ^<Object> =
         //   Internal { name  = 'debugPrimitives::printObjectHistogram' }
         //%
-        static Oop __CALLING_CONVENTION printObjectHistogram();
+        static PRIM_DECL_0( printObjectHistogram );
 
         //%prim
         // <NoReceiver> primitiveClearInlineCaches ^<Object> =
         //   Internal {name  = 'debugPrimitives::clearInlineCaches' }
         //%
-        static Oop __CALLING_CONVENTION clearInlineCaches();
+        static PRIM_DECL_0( clearInlineCaches );
 
         //%prim
         // <NoReceiver> primitiveClearNativeMethodCounters ^<Object> =
         //   Internal { name  = 'debugPrimitives::clearNativeMethodCounters' }
         //%
-        static Oop __CALLING_CONVENTION clearNativeMethodCounters();
+        static PRIM_DECL_0( clearNativeMethodCounters );
 
         //%prim
         // <NoReceiver> primitivePrintNativeMethodCounterHistogram: size <SmallInteger>
         //                                        ifFail: failBlock <PrimFailBlock> ^<Object> =
         //   Internal { name  = 'debugPrimitives::printNativeMethodCounterHistogram' }
         //%
-        static Oop __CALLING_CONVENTION printNativeMethodCounterHistogram( Oop size );
+        static PRIM_DECL_1( printNativeMethodCounterHistogram, Oop size );
 
         //%prim
         // <NoReceiver> primitiveNumberOfMethodInvocations ^<SmallInteger> =
         //   Internal { name  = 'debugPrimitives::numberOfMethodInvocations' }
         //%
-        static Oop __CALLING_CONVENTION numberOfMethodInvocations();
+        static PRIM_DECL_0( numberOfMethodInvocations );
 
         //%prim
         // <NoReceiver> primitiveNumberOfNativeMethodInvocations ^<SmallInteger> =
         //   Internal { name  = 'debugPrimitives::numberOfNativeMethodInvocations' }
         //%
-        static Oop __CALLING_CONVENTION numberOfNativeMethodInvocations();
+        static PRIM_DECL_0( numberOfNativeMethodInvocations );
 
         // Accessors to LookupCache statistics
 
@@ -207,31 +208,31 @@ class debugPrimitives : AllStatic {
         // <NoReceiver> primitiveNumberOfPrimaryLookupCacheHits ^<SmallInteger> =
         //   Internal { name  = 'debugPrimitives::numberOfPrimaryLookupCacheHits' }
         //%
-        static Oop __CALLING_CONVENTION numberOfPrimaryLookupCacheHits();
+        static PRIM_DECL_0( numberOfPrimaryLookupCacheHits );
 
         //%prim
         // <NoReceiver> primitiveNumberOfSecondaryLookupCacheHits ^<SmallInteger> =
         //   Internal { name  = 'debugPrimitives::numberOfSecondaryLookupCacheHits' }
         //%
-        static Oop __CALLING_CONVENTION numberOfSecondaryLookupCacheHits();
+        static PRIM_DECL_0( numberOfSecondaryLookupCacheHits );
 
         //%prim
         // <NoReceiver> primitiveNumberOfLookupCacheMisses ^<SmallInteger> =
         //   Internal { name  = 'debugPrimitives::numberOfLookupCacheMisses' }
         //%
-        static Oop __CALLING_CONVENTION numberOfLookupCacheMisses();
+        static PRIM_DECL_0( numberOfLookupCacheMisses );
 
         //%prim
         // <NoReceiver> primitiveClearPrimitiveCounters ^<Object> =
         //   Internal { name  = 'debugPrimitives::clearPrimitiveCounters' }
         //%
-        static Oop __CALLING_CONVENTION clearPrimitiveCounters();
+        static PRIM_DECL_0( clearPrimitiveCounters );
 
         //%prim
         // <NoReceiver> primitivePrintPrimitiveCounters ^<Object> =
         //   Internal { name  = 'debugPrimitives::printPrimitiveCounters' }
         //%
-        static Oop __CALLING_CONVENTION printPrimitiveCounters();
+        static PRIM_DECL_0( printPrimitiveCounters );
 
         //%prim
         // <NoReceiver> primitiveDeoptimizeStacks ^<Object> =
@@ -239,13 +240,13 @@ class debugPrimitives : AllStatic {
         //              flags = #(NonLocalReturn)
         //              name  = 'debugPrimitives::deoptimizeStacks' }
         //%
-        static Oop __CALLING_CONVENTION deoptimizeStacks();
+        static PRIM_DECL_0( deoptimizeStacks );
 
         //%prim
         // <NoReceiver> primitiveVerify ^<Object> =
         //   Internal { doc   = 'Verify the system'
         //              name  = 'debugPrimitives::verify' }
         //%
-        static Oop __CALLING_CONVENTION verify();
+        static PRIM_DECL_0( verify );
 };
 

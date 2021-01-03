@@ -17,6 +17,7 @@
 #include "vm/system/sizes.hpp"
 
 
+
 TRACE_FUNC( TraceDoublePrims, "double" )
 
 
@@ -48,41 +49,40 @@ static Oop new_double( double value ) {
   return new_double(DoubleOop(receiver)->value() op DoubleOop(argument)->value())
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::lessThan( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::lessThan, Oop receiver, Oop argument ) {
     PROLOGUE_2( "lessThan", receiver, argument );
     DOUBLE_RELATIONAL_OP( < );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::greaterThan( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::greaterThan, Oop receiver, Oop argument ) {
     PROLOGUE_2( "greaterThan", receiver, argument );
     DOUBLE_RELATIONAL_OP( > );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::lessThanOrEqual( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::lessThanOrEqual, Oop receiver, Oop argument ) {
     PROLOGUE_2( "lessThanOrEqual", receiver, argument );
     DOUBLE_RELATIONAL_OP( <= );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::greaterThanOrEqual( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::greaterThanOrEqual, Oop receiver, Oop argument ) {
     PROLOGUE_2( "greaterThanOrEqual", receiver, argument );
     DOUBLE_RELATIONAL_OP( >= );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::equal( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::equal, Oop receiver, Oop argument ) {
     PROLOGUE_2( "equal", receiver, argument );
     DOUBLE_RELATIONAL_OP( == );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::notEqual( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::notEqual, Oop receiver, Oop argument ) {
     PROLOGUE_2( "notEqual", receiver, argument );
     DOUBLE_RELATIONAL_OP( not_eq );
 }
-
 
 /*
 PRIM_DECL_2(doubleOopPrimitives::add, Oop receiver, Oop argument) {
@@ -107,7 +107,7 @@ PRIM_DECL_2(doubleOopPrimitives::divide, Oop receiver, Oop argument) {
 }
 */
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::mod( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::mod, Oop receiver, Oop argument ) {
     PROLOGUE_2( "mod", receiver, argument );
     ASSERT_RECEIVER;
     if ( not argument->is_double() )
@@ -118,119 +118,119 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::mod( Oop receiver, Oop argument ) 
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::cosine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::cosine, Oop receiver ) {
     PROLOGUE_1( "cosine", receiver );
     ASSERT_RECEIVER;
     return new_double( cos( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::sine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::sine, Oop receiver ) {
     PROLOGUE_1( "sine", receiver );
     ASSERT_RECEIVER;
     return new_double( sin( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::tangent( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::tangent, Oop receiver ) {
     PROLOGUE_1( "tangent", receiver );
     ASSERT_RECEIVER;
     return new_double( tan( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::arcCosine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::arcCosine, Oop receiver ) {
     PROLOGUE_1( "arcCosine", receiver );
     ASSERT_RECEIVER;
     return new_double( acos( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::arcSine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::arcSine, Oop receiver ) {
     PROLOGUE_1( "arcSine", receiver );
     ASSERT_RECEIVER;
     return new_double( asin( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::arcTangent( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::arcTangent, Oop receiver ) {
     PROLOGUE_1( "arcTangent", receiver );
     ASSERT_RECEIVER;
     return new_double( atan( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::hyperbolicCosine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::hyperbolicCosine, Oop receiver ) {
     PROLOGUE_1( "hyperbolicCosine", receiver );
     ASSERT_RECEIVER;
     return new_double( cosh( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::hyperbolicSine( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::hyperbolicSine, Oop receiver ) {
     PROLOGUE_1( "hyperbolicSine", receiver );
     ASSERT_RECEIVER;
     return new_double( sinh( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::hyperbolicTangent( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::hyperbolicTangent, Oop receiver ) {
     PROLOGUE_1( "hyperbolicTangent", receiver );
     ASSERT_RECEIVER;
     return new_double( tanh( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::sqrt( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::sqrt, Oop receiver ) {
     PROLOGUE_1( "sqrt", receiver );
     ASSERT_RECEIVER;
     return new_double( ::sqrt( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::squared( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::squared, Oop receiver ) {
     PROLOGUE_1( "squared", receiver );
     ASSERT_RECEIVER;
     return new_double( DoubleOop( receiver )->value() * 2 );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::ln( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::ln, Oop receiver ) {
     PROLOGUE_1( "ln", receiver );
     ASSERT_RECEIVER;
     return new_double( log( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::exp( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::exp, Oop receiver ) {
     PROLOGUE_1( "exp", receiver );
     ASSERT_RECEIVER;
     return new_double( ::exp( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::log10( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::log10, Oop receiver ) {
     PROLOGUE_1( "log10", receiver );
     ASSERT_RECEIVER;
     return new_double( ::log10( DoubleOop( receiver )->value() ) );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::isNan( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::isNan, Oop receiver ) {
     PROLOGUE_1( "isNan", receiver );
     ASSERT_RECEIVER;
     return std::isnan( DoubleOop( receiver )->value() ) ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::isFinite( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::isFinite, Oop receiver ) {
     PROLOGUE_1( "isFinite", receiver );
     ASSERT_RECEIVER;
     return std::isfinite( DoubleOop( receiver )->value() ) ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::floor( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::floor, Oop receiver ) {
     PROLOGUE_1( "floor", receiver );
     ASSERT_RECEIVER;
     double result = ::floor( DoubleOop( receiver )->value() );
@@ -238,7 +238,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::floor( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::smi_floor( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::smi_floor, Oop receiver ) {
     PROLOGUE_1( "smi_floor", receiver );
     ASSERT_RECEIVER;
     double result = ::floor( DoubleOop( receiver )->value() );
@@ -254,7 +254,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::smi_floor( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::ceiling( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::ceiling, Oop receiver ) {
     PROLOGUE_1( "ceiling", receiver );
     ASSERT_RECEIVER;
     double result = ceil( DoubleOop( receiver )->value() );
@@ -262,7 +262,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::ceiling( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::exponent( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::exponent, Oop receiver ) {
     PROLOGUE_1( "exponent", receiver );
     ASSERT_RECEIVER;
     int result;
@@ -271,7 +271,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::exponent( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::mantissa( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::mantissa, Oop receiver ) {
     PROLOGUE_1( "mantissa", receiver );
     ASSERT_RECEIVER;
     int exp;
@@ -279,7 +279,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::mantissa( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::truncated( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::truncated, Oop receiver ) {
     PROLOGUE_1( "truncated", receiver );
     ASSERT_RECEIVER;
     double value = DoubleOop( receiver )->value();
@@ -287,7 +287,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::truncated( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::timesTwoPower( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::timesTwoPower, Oop receiver, Oop argument ) {
     PROLOGUE_2( "timesTwoPower", receiver, argument )
     ASSERT_RECEIVER;
     if ( not argument->is_smi() )
@@ -296,7 +296,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::timesTwoPower( Oop receiver, Oop a
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::roundedAsSmallInteger( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::roundedAsSmallInteger, Oop receiver ) {
     PROLOGUE_1( "roundedAsSmallInteger", receiver );
     ASSERT_RECEIVER;
     if ( DoubleOop( receiver )->value() < 0.0 ) {
@@ -312,7 +312,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::roundedAsSmallInteger( Oop receive
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::asSmallInteger( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
     PROLOGUE_1( "asSmallInteger", receiver );
     ASSERT_RECEIVER;
     double value = DoubleOop( receiver )->value();
@@ -329,7 +329,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::asSmallInteger( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::printFormat( Oop receiver, Oop argument ) {
+PRIM_DECL_2( doubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     PROLOGUE_2( "printFormat", receiver, argument );
     ASSERT_RECEIVER;
     const int size = 100;
@@ -347,12 +347,12 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::printFormat( Oop receiver, Oop arg
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::printString( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::printString, Oop receiver ) {
     PROLOGUE_1( "printString", receiver );
     ASSERT_RECEIVER;
     ResourceMark resourceMark;
-    char * result = new_resource_array <char>( 4 * 1024 );
-    int len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
+    char         * result = new_resource_array <char>( 4 * 1024 );
+    int          len      = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
     while ( len > 1 and result[ len - 1 ] == '0' and result[ len - 2 ] not_eq '.' )
         len--;
     result[ len ]    = '\0';
@@ -366,24 +366,24 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::printString( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::max_value() {
+PRIM_DECL_0( doubleOopPrimitives::max_value ) {
     PROLOGUE_0( "max_value" );
     return new_double( DBL_MAX );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::min_positive_value() {
+PRIM_DECL_0( doubleOopPrimitives::min_positive_value ) {
     PROLOGUE_0( "min_positive_value" );
     return new_double( DBL_MIN );
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::store_string( Oop receiver ) {
+PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     PROLOGUE_1( "printFormat", receiver );
     ASSERT_RECEIVER;
     BlockScavenge bs;
 
-    double value = DoubleOop( receiver )->value();
+    double  value  = DoubleOop( receiver )->value();
     uint8_t * addr = ( uint8_t * ) &value;
 
     ByteArrayOop result = oopFactory::new_byteArray( 8 );
@@ -394,7 +394,7 @@ Oop __CALLING_CONVENTION doubleOopPrimitives::store_string( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION doubleOopPrimitives::mandelbrot( Oop re, Oop im, Oop n ) {
+PRIM_DECL_3( doubleOopPrimitives::mandelbrot, Oop re, Oop im, Oop n ) {
     PROLOGUE_3( "mandelbrot", re, im, n );
 
     if ( not re->is_double() )

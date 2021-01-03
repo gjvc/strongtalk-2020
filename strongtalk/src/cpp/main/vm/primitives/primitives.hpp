@@ -6,6 +6,7 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 
@@ -25,7 +26,7 @@
 // WARNING: do not change the element order of enum PrimitiveGroup
 // without adjusting the Smalltalk DeltaPrimitiveGenerator code to match!
 
-enum class PrimitiveGroup {
+enum PrimitiveGroup {
     NormalPrimitive,            //
 
     IntComparisonPrimitive,     // Integer comparison primitive
@@ -75,9 +76,7 @@ class InterpretedPrimitiveCache : public ValueObject {
 // Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
 
 class PseudoRegister;
-
 class Expression;
-
 class Node;
 
 // _flags
@@ -124,7 +123,7 @@ class PrimitiveDescriptor {
 
 
         bool_t is_special_prim() const {
-            return group() not_eq PrimitiveGroup::NormalPrimitive;
+            return group() not_eq NormalPrimitive;
         }
 
 
@@ -139,7 +138,6 @@ class PrimitiveDescriptor {
         bool_t can_fail() const {
             return isBitSet( _flags, 18 );
         }
-
 
         // can_fail: can primitive fail with arguments of correct type?  (NB: even if not can_fail(), primitive will fail if argument types are wrong)
         bool_t can_invoke_delta() const {
@@ -191,7 +189,6 @@ class PrimitiveDescriptor {
         const char * error( int index ) const {
             return _errors[ index ];
         }
-
 
         // Comparison operation
         int compare( const char * str, int len );

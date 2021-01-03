@@ -21,10 +21,10 @@ TRACE_FUNC( TraceBehaviorPrims, "behavior" )
 
 int behaviorPrimitives::_numberOfCalls;
 
-#define ASSERT_RECEIVER st_assert(receiver->is_klass(), "receiver must klass")
+#define ASSERT_RECEIVER st_assert(receiver->is_klass(), "receiver must be klass object")
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::allocate3( Oop receiver, Oop tenured ) {
+PRIM_DECL_2( behaviorPrimitives::allocate3, Oop receiver, Oop tenured ) {
     PROLOGUE_2( "allocate3", receiver, tenured )
     ASSERT_RECEIVER;
     if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
@@ -36,28 +36,28 @@ Oop __CALLING_CONVENTION behaviorPrimitives::allocate3( Oop receiver, Oop tenure
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::allocate2( Oop receiver ) {
+PRIM_DECL_1( behaviorPrimitives::allocate2, Oop receiver ) {
     PROLOGUE_1( "allocate2", receiver )
     ASSERT_RECEIVER;
     return receiver->primitive_allocate();
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::allocate( Oop receiver ) {
+PRIM_DECL_1( behaviorPrimitives::allocate, Oop receiver ) {
     PROLOGUE_1( "allocate", receiver )
     ASSERT_RECEIVER;
     return receiver->primitive_allocate();
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::superclass( Oop receiver ) {
+PRIM_DECL_1( behaviorPrimitives::superclass, Oop receiver ) {
     PROLOGUE_1( "superclass", receiver );
     ASSERT_RECEIVER;
     return KlassOop( receiver )->klass_part()->superKlass();
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::superclass_of( Oop klass ) {
+PRIM_DECL_1( behaviorPrimitives::superclass_of, Oop klass ) {
     PROLOGUE_1( "superclass_of", klass );
     if ( not klass->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -65,14 +65,14 @@ Oop __CALLING_CONVENTION behaviorPrimitives::superclass_of( Oop klass ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::setSuperclass( Oop receiver, Oop newSuper ) {
+PRIM_DECL_2( behaviorPrimitives::setSuperclass, Oop receiver, Oop newSuper ) {
     PROLOGUE_2( "setSuperclass", receiver, newSuper );
     if ( not receiver->is_klass() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( not( newSuper->is_klass() or newSuper == nilObj ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    Klass * receiverClass = KlassOop( receiver )->klass_part();
+    Klass    * receiverClass = KlassOop( receiver )->klass_part();
     KlassOop newSuperclass;
     if ( receiverClass->superKlass() == newSuper )
         return receiver; // no change
@@ -105,7 +105,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::setSuperclass( Oop receiver, Oop ne
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::mixinOf( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::mixinOf, Oop behavior ) {
     PROLOGUE_1( "mixinOf", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -114,7 +114,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::mixinOf( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::headerSize( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::headerSize, Oop behavior ) {
     PROLOGUE_1( "headerSize", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -123,7 +123,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::headerSize( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::nonIndexableSize( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::nonIndexableSize, Oop behavior ) {
     PROLOGUE_1( "nonIndexableSize", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -132,7 +132,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::nonIndexableSize( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::is_specialized_class( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::is_specialized_class, Oop behavior ) {
     PROLOGUE_1( "is_specialized_class", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -141,7 +141,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::is_specialized_class( Oop behavior 
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::can_be_subclassed( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::can_be_subclassed, Oop behavior ) {
     PROLOGUE_1( "can_be_subclassed", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -150,7 +150,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::can_be_subclassed( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::can_have_instance_variables( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::can_have_instance_variables, Oop behavior ) {
     PROLOGUE_1( "can_have_instance_variables", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -160,7 +160,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::can_have_instance_variables( Oop be
 
 // OPERATIONS FOR CLASS VARIABLES
 
-Oop __CALLING_CONVENTION behaviorPrimitives::classVariableAt( Oop behavior, Oop index ) {
+PRIM_DECL_2( behaviorPrimitives::classVariableAt, Oop behavior, Oop index ) {
     PROLOGUE_2( "classVariableAt", behavior, index );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -174,7 +174,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::classVariableAt( Oop behavior, Oop 
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::classVariables( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::classVariables, Oop behavior ) {
     PROLOGUE_1( "classVariables", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -183,7 +183,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::classVariables( Oop behavior ) {
 
 // OPERATIONS FOR METHODS
 
-Oop __CALLING_CONVENTION behaviorPrimitives::printMethod( Oop receiver, Oop name ) {
+PRIM_DECL_2( behaviorPrimitives::printMethod, Oop receiver, Oop name ) {
     PROLOGUE_2( "printMethod", receiver, name );
     ASSERT_RECEIVER;
     if ( not name->is_byteArray() )
@@ -195,7 +195,6 @@ Oop __CALLING_CONVENTION behaviorPrimitives::printMethod( Oop receiver, Oop name
     m->print_codes();
     return receiver;
 }
-
 
 /*
 
@@ -364,7 +363,7 @@ PRIM_DECL_1(behaviorPrimitives::new9, Oop receiver){
 
 */
 
-Oop __CALLING_CONVENTION behaviorPrimitives::methodFor( Oop receiver, Oop selector ) {
+PRIM_DECL_2( behaviorPrimitives::methodFor, Oop receiver, Oop selector ) {
     PROLOGUE_2( "methodFor", receiver, selector );
     ASSERT_RECEIVER;
 
@@ -378,7 +377,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::methodFor( Oop receiver, Oop select
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::format( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::format, Oop behavior ) {
     PROLOGUE_1( "format", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -388,7 +387,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::format( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::vm_type( Oop behavior ) {
+PRIM_DECL_1( behaviorPrimitives::vm_type, Oop behavior ) {
     PROLOGUE_1( "format", behavior );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -438,7 +437,7 @@ Oop __CALLING_CONVENTION behaviorPrimitives::vm_type( Oop behavior ) {
 }
 
 
-Oop __CALLING_CONVENTION behaviorPrimitives::is_class_of( Oop receiver, Oop obj ) {
+PRIM_DECL_2( behaviorPrimitives::is_class_of, Oop receiver, Oop obj ) {
     PROLOGUE_2( "is_class_of", receiver, obj );
     ASSERT_RECEIVER;
     return obj->klass() == receiver ? trueObj : falseObj;

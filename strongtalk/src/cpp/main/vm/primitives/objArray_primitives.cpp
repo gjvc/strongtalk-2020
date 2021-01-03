@@ -23,7 +23,7 @@ int objArrayPrimitives::number_of_calls;
 #define ASSERT_RECEIVER st_assert(receiver->is_objArray(), "receiver must be object array")
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize2( Oop receiver, Oop argument, Oop tenured ) {
+PRIM_DECL_3( objArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop tenured ) {
     PROLOGUE_3( "allocateSize2", receiver, argument, tenured );
     //Changed assertion to simple test.
     // st_assert(receiver->is_klass() and klassOop(receiver)->klass_part()->oop_is_objArray(),
@@ -40,8 +40,8 @@ Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize2( Oop receiver, Oop ar
     if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    KlassOop k        = KlassOop( receiver );
-    int      ni_size  = k->klass_part()->non_indexable_size();
+    KlassOop k       = KlassOop( receiver );
+    int      ni_size = k->klass_part()->non_indexable_size();
     int      obj_size = ni_size + 1 + SMIOop( argument )->value();
 
     // allocate
@@ -62,7 +62,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize2( Oop receiver, Oop ar
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize( Oop receiver, Oop argument ) {
+PRIM_DECL_2( objArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument );
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_objArray(), "receiver must object array class" );
     if ( not argument->is_smi() )
@@ -71,11 +71,11 @@ Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize( Oop receiver, Oop arg
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    KlassOop       k        = KlassOop( receiver );
-    int            ni_size  = k->klass_part()->non_indexable_size();
-    int            obj_size = ni_size + 1 + SMIOop( argument )->value();
+    KlassOop k        = KlassOop( receiver );
+    int      ni_size  = k->klass_part()->non_indexable_size();
+    int      obj_size = ni_size + 1 + SMIOop( argument )->value();
     // allocate
-    ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ObjectArrayOop obj = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
     // header
     MemOop( obj )->initialize_header( k->klass_part()->has_untagged_contents(), k );
     // instance variables
@@ -88,7 +88,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::allocateSize( Oop receiver, Oop arg
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::size( Oop receiver ) {
+PRIM_DECL_1( objArrayPrimitives::size, Oop receiver ) {
     PROLOGUE_1( "size", receiver );
     ASSERT_RECEIVER;
     // do the operation
@@ -96,7 +96,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::size( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::at( Oop receiver, Oop index ) {
+PRIM_DECL_2( objArrayPrimitives::at, Oop receiver, Oop index ) {
     PROLOGUE_2( "at", receiver, index );
     ASSERT_RECEIVER;
 
@@ -113,7 +113,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::at( Oop receiver, Oop index ) {
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::atPut( Oop receiver, Oop index, Oop value ) {
+PRIM_DECL_3( objArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
     PROLOGUE_3( "atPut", receiver, index, value );
     ASSERT_RECEIVER;
 
@@ -131,7 +131,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::atPut( Oop receiver, Oop index, Oop
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::at_all_put( Oop receiver, Oop obj ) {
+PRIM_DECL_2( objArrayPrimitives::at_all_put, Oop receiver, Oop obj ) {
     PROLOGUE_2( "at_all_put", receiver, obj );
     ASSERT_RECEIVER;
 
@@ -149,7 +149,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::at_all_put( Oop receiver, Oop obj )
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::replace_from_to( Oop receiver, Oop from, Oop to, Oop source, Oop start ) {
+PRIM_DECL_5( objArrayPrimitives::replace_from_to, Oop receiver, Oop from, Oop to, Oop source, Oop start ) {
     PROLOGUE_5( "replace_from_to", receiver, from, to, source, start );
     ASSERT_RECEIVER;
 
@@ -192,7 +192,7 @@ Oop __CALLING_CONVENTION objArrayPrimitives::replace_from_to( Oop receiver, Oop 
 }
 
 
-Oop __CALLING_CONVENTION objArrayPrimitives::copy_size( Oop receiver, Oop from, Oop start, Oop size ) {
+PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, Oop size ) {
     PROLOGUE_4( "copy_size", receiver, from, start, size );
     ASSERT_RECEIVER;
 
@@ -226,11 +226,11 @@ Oop __CALLING_CONVENTION objArrayPrimitives::copy_size( Oop receiver, Oop from, 
     Handle     saved_receiver( receiver );
 
     // allocation of object array
-    KlassOop       k        = receiver->klass();
-    int            ni_size  = k->klass_part()->non_indexable_size();
-    int            obj_size = ni_size + 1 + SMIOop( size )->value();
+    KlassOop k       = receiver->klass();
+    int      ni_size = k->klass_part()->non_indexable_size();
+    int         obj_size = ni_size + 1 + SMIOop( size )->value();
     // allocate
-    ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ObjectArrayOop obj = as_objArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
 
     ObjectArrayOop src = saved_receiver.as_objArray();
 

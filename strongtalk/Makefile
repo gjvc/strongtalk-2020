@@ -1,183 +1,164 @@
-#! /usr/bin/env make
 
-##
-##  (C) 1994 - 2020, The Strongtalk authors and contributors
-##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
-##
-
-
-# make ------------------------------------------------------------------------
-
-ifeq ($(platform),)
-platform := mingw
-endif
+####
+####  (C) 1994 - 2020, The Strongtalk authors and contributors
+####  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+####
 
 
-# make ------------------------------------------------------------------------
+# ==== ESSENTIALS =============================================================
 
-THIS-FILE   := $(abspath $(firstword $(MAKEFILE_LIST)))
-THIS-DIR    := $(dir $(THIS-FILE))
-ROOT        := $(THIS-DIR:/=)
+# GNU make --------------------------------------------------------------------
 
 .SHELLFLAGS := -eu -o pipefail -c
 SHELL       := /bin/bash
 
+MAKEFLAGS   += --jobs $(shell nproc)
+MAKEFLAGS   += --keep-going
 MAKEFLAGS   += --no-builtin-rules
 MAKEFLAGS   += --warn-undefined-variables
-MAKEFLAGS   += --jobs $(shell nproc)
 
-null        :=
-space       := ${null} ${null}
+null 		:=
+space   	:= $(null) $(null)
 
+
+# location --------------------------------------------------------------------
+
+this-file       := $(abspath $(firstword $(MAKEFILE_LIST)))
+this-file-dir   := $(dir $(this-file))
+ROOT            := $(this-file-dir:/=)
+
+
+# ==== TOOLS ==================================================================
 
 # ccache ----------------------------------------------------------------------
 
 ccache := /usr/bin/ccache
-export CCACHE_DIR=$(ROOT)/var/ccache
+export CCACHE_DIR=$(ROOT)/.ccache
 
 
-# mingw-w64 -------------------------------------------------------------------
+# cmake -----------------------------------------------------------------------
 
-ifeq ($(platform),mingw)
-build-type          := debug
-cmake-system-name   := Windows
-gcc-version-major   := 9
-gcc-version-minor   := 3
-gcc-version         := $(gcc-version-major)-$(gcc-version-minor)
-machine-name        := i686
-runtime-platform    := w64-mingw32
-runtime-variant     := posix
-endif
+cmake-program           := /usr/bin/cmake
+cmake-system-name       := Windows
+cmake-generator-name    := Ninja
+ninja-program           := /usr/bin/ninja
 
 
-# i686-linux-gnu --------------------------------------------------------------
+# git -------------------------------------------------------------------------
 
-ifeq ($(platform),linux)
-build-type          := debug
-cmake-system-name   := Linux
-gcc-version-major   := 9
-gcc-version-minor   := 3
-gcc-version         := $(gcc-version-major)-$(gcc-version-minor)
-machine-name        := i686
-runtime-platform    := linux-gnu
-runtime-variant     := $(gcc-version-major)
-endif
-
-
-# gcc -------------------------------------------------------------------------
-
-toolchain-name  := $(machine-name)-$(runtime-platform)
-object-path 	:= obj/$(toolchain-name)-$(runtime-variant)/$(build-type)
-
-
-# gcc -------------------------------------------------------------------------
-
-g++ := /usr/bin/$(toolchain-name)-g++-$(runtime-variant)
-gcc := /usr/bin/$(toolchain-name)-gcc-$(runtime-variant)
-ar  := /usr/bin/$(toolchain-name)-ar
-export CC=$(ccache) $(gcc)
-export CXX=$(ccache) $(g++)
+git-current-branch      := $(shell git branch --show-current)
+git-current-revision    := $(shell git rev-parse $(git-branch))
 
 
 # wine ------------------------------------------------------------------------
 
-wine        := /usr/bin/wine
-wineboot    := /usr/bin/wineboot
-wineserver  := /usr/lib/wine/wineserver64
+wine   	                := /usr/bin/wine
+wine-windows-version    := win95
+wine-winedbg            := /usr/bin/winedbg
+wine-wineserver         := /usr/bin/wineserver
+wine-winetricks         := /usr/bin/winetricks
+
 export WINEARCH=win32
 
 
-# valgrind --------------------------------------------------------------------
+# toolchain -------------------------------------------------------------------
 
-valgrind                := /usr/bin/valgrind
-valgrind-options 	:= --trace-children=yes --vex-iropt-register-updates=allregs-at-mem-access
+arch                := i686
+platform            := w64-mingw32
+compiler-family     := gnu
+compiler-version    := 10
+runtime             := win32
+toolchain-name      := $(arch)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
+
+ar   		        := /usr/bin/$(arch)-$(platform)-gcc-ar-$(runtime)
+ar-flags            := Dcrs
+
+cc-compiler         := /usr/bin/$(arch)-$(platform)-gcc-$(runtime)
+cxx-compiler        := /usr/bin/$(arch)-$(platform)-g++-$(runtime)
+
+export CC=$(ccache) $(cc-compiler)
+export CXX=$(ccache) $(cxx-compiler)
+
+
+# object files ----------------------------------------------------------------
+
+build-type          ?= debug
+object-path         := $(toolchain-name)/$(build-type)
+object-root         := obj/$(object-path)
+
+
+# ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
+
+# third-party packages --------------------------------------------------------
+
+external-package-path           := src/ext
+external-package-root           := $(ROOT)/$(external-package-path)
+external-package-object-root    := $(ROOT)/$(object-root)/$(external-package-path)
 
 
 # googletest ------------------------------------------------------------------
 
-googletest-root-dir             := ext/googletest
-googletest-cmake-toolchain-file := src/cmake/$(runtime-platform).cmake
-googletest-include-paths        := $(googletest-root-dir)/googletest/include
-googletest-object-dir           := $(object-path)/ext/googletest
-libgtest-a                      := $(googletest-object-dir)/lib/libgtest.a
-libgtest-a-flags                := -L $(googletest-object-dir)/lib -l gtest
-
-
-# capstone --------------------------------------------------------------------
-
-capstone-cmake-toolchain-file   := src/cmake/$(runtime-platform).cmake
-capstone-include-paths          := $(capstone-root-dir)/capstone/include
-capstone-object-dir             := $(object-path)/ext/capstone
-capstone-root-dir               := ext/capstone
-libcapstone-a                   := $(capstone-object-dir)/libcapstone.a
-libcapstone-a-flags             := -L $(capstone-object-dir) -l capstone
-
-
-# zydis -----------------------------------------------------------------------
-
-zydis-cmake-toolchain-file      := src/cmake/$(runtime-platform).cmake
-zydis-include-paths             := $(zydis-root-dir)/zydis/include
-zydis-object-dir                := $(object-path)/ext/zydis
-zydis-root-dir                  := ext/zydis
-libzydis-a                      := $(zydis-object-dir)/libzydis.a
-libzydis-a-flags                := -L $(zydis-object-dir) -l zydis
+googletest-root-dir         := $(external-package-root)/googletest
+googletest-include-paths    := $(googletest-root-dir)/googletest/include
+googletest-object-dir       := $(external-package-object-root)/googletest
+libgtest-a                  := $(googletest-object-dir)/lib/libgtest.a
+libgtest-a-flags            := -L $(googletest-object-dir)/lib -l gtest
 
 
 # nasm ------------------------------------------------------------------------
 
-nasm-root-dir                   := ext/nasm
-nasm-object-dir                 := $(object-path)/ext/nasm
-nasm-include-paths              := $(object-path)/ext/nasm/include
-libnasm-a                       := $(object-path)/ext/nasm/lib/libnasm.a
-libnasm-a-flags                 := -L $(nasm-object-dir)/lib -l nasm
+nasm-root-dir               := $(external-package-root)/nasm
+nasm-object-dir             := $(external-package-object-root)/nasm
+nasm-include-paths          := $(external-package-object-root)/nasm/include
+libnasm-a                   := $(external-package-object-root)/nasm/lib/libnasm.a
+libnasm-a-flags             := -L $(nasm-object-dir)/lib -l nasm
 
 
-# udis86 ----------------------------------------------------------------------
-
-udis86-root-dir                 := ext/udis86
-udis86-object-dir               := $(object-path)/ext/udis86
-udis86-include-paths            := $(object-path)/ext/udis86/include
-udis86-library-paths            := $(object-path)/ext/udis86/lib
-libudis86-a                     := $(object-path)/ext/udis86/lib/libudis86.a
-libudis86-a-flags               := -L $(udis86-library-paths) -l udis86
-
+# ==== BUILDING ===============================================================
 
 # compiler flags --------------------------------------------------------------
 
-cxx-arch-options             	:= native
-cxx-arch-flags                  := $(addprefix -march=,$(cxx-arch-options))
+cxx-arch-options            := 
+cxx-arch-flags            	:= $(addprefix -march=,$(cxx-arch-options))
 
-cxx-debug-options               := dwarf-2 gdb 3
-cxx-debug-flags                 := $(addprefix -g,$(cxx-debug-options))
+cxx-debug-options           := dwarf
+cxx-debug-flags             := $(addprefix -g,$(cxx-debug-options))
 
-cxx-feature-options             := diagnostics-color=always permissive concepts check-new
-cxx-feature-flags               := $(addprefix -f,$(cxx-feature-options))
+cxx-depends-options         := 
+cxx-depends-flags           = -MMD -MP -MT $@ -MF $(object-root)/$*.cpp.d
 
-cxx-language-options            := c++2a
-cxx-language-flags              := $(addprefix -std=,$(cxx-language-options))
+cxx-feature-options         := permissive
+cxx-feature-flags           := $(addprefix -f,$(cxx-feature-options))
 
-cxx-machine-options             := 32
-cxx-machine-flags               := $(addprefix -m,$(cxx-machine-options))
+cxx-language-options        := c++2a
+cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 
-cxx-no-warning-options          := comment unused-parameter
-cxx-no-warning-flags            := $(addprefix -Wno-,$(cxx-no-warning-options))
+cxx-machine-options         := 32
+cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
-cxx-optimisation-options        := 0
-cxx-optimisation-flags          := $(addprefix -O,$(cxx-optimisation-options))
+cxx-no-warning-options      := unused-parameter
+cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
-cxx-other-options               := pipe pedantic
-cxx-other-flags                 := $(addprefix -,$(cxx-other-options))
+ifeq ($(build-type),release)
+cxx-optimisation-options    := 3
+else
+cxx-optimisation-options    := 0
+endif
+cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 
-cxx-warning-options             := all extra
-cxx-warning-flags               := $(addprefix -W,$(cxx-warning-options))
+cxx-other-options           :=
+cxx-other-flags             := $(addprefix -,$(cxx-other-options))
 
-cxx-depends-flags               = -MMD -MP -MT $@ -MF $(object-path)/$*.cpp.d
-cxx-define-flags                = 
+cxx-other-long-options      := diagnostics-color=always
+cxx-other-long-flags        := $(addprefix --,$(cxx-other-options))
+
+cxx-warning-options-all-all := $(shell $(cxx-compiler) -Q --help=warning | sed -e 's/^\s*\-W\(\S*\)\s*\[\w*\]/\1 /gp;d' | tr -d '\n' )
+cxx-warning-options         :=
+cxx-warning-flags           := $(addprefix -W,$(cxx-warning-options))
 
 cxx-compile-flags = \
     $(cxx-arch-flags) \
     $(cxx-debug-flags) \
-    $(cxx-define-flags) \
     $(cxx-depends-flags) \
     $(cxx-feature-flags) \
     $(cxx-language-flags) \
@@ -185,213 +166,250 @@ cxx-compile-flags = \
     $(cxx-no-warning-flags) \
     $(cxx-optimisation-flags) \
     $(cxx-other-flags) \
+    $(cxx-other-long-flags) \
     $(cxx-warning-flags) \
 
 cxx-link-flags = \
     $(cxx-machine-flags)
 
-libgcc-link-flags = \
+libgcc-link-flags := \
     -static-libgcc \
     -static-libstdc++
 
-ifeq ($(runtime-variant),posix)
-mingw-w64-link-flags = \
-	-L /usr/$(machine-name)-$(runtime-platform)/lib -Wl,-Bstatic,--whole-archive -l winpthread -Wl,-Bdynamic,--no-whole-archive
+ifeq ( $(runtime), posix )
+    libgcc-link-flags := $(libgcc-link-flags) -lwinpthread
 endif
 
 
-# strongtalk-main-{sources,objects,depends} -------------------------------------
+# ==== RULES ====================================================================
 
-default : strongtalk-main-exe strongtalk-test-exe
+# st20-main-lib -----------------------------------------------------------------
 
-clean : strongtalk-main-lib-clean strongtalk-main-exe-clean 
+st20-main-lib               := $(object-root)/st20-main-lib.a
+st20-main-lib-sources       := $(wildcard src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
+st20-main-lib-sources       := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-main-lib-sources))
+st20-main-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
+st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-lib-sources))
 
+st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(udis86-include-paths)
+st20-main-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-main-lib-cxx-include-paths-external))
+st20-main-lib-cxx-include-paths-internal := src/cpp/main
+st20-main-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-main-lib-cxx-include-paths-internal))
+st20-main-lib-cxx-include-flags          := $(st20-main-lib-cxx-include-flags-external) $(st20-main-lib-cxx-include-flags-internal)
 
-# strongtalk-main -----------------------------------------------------------
-
-strongtalk-main-cxx-include-paths   := $(nasm-include-paths) $(udis86-include-paths) src/cpp/main
-strongtalk-main-cxx-include-flags   := $(addprefix -I ,$(strongtalk-main-cxx-include-paths))
-
-strongtalk-main-define-values       := 
-strongtalk-main-define-flags        := $(addprefix -D ,$(strongtalk-main-define-values))
-
-
-# strongtalk-main-lib -------------------------------------------------------
-
-strongtalk-main-lib-sources         := $(wildcard src/cpp/main/vm/*/*.cpp)
-strongtalk-main-lib-sources         := $(filter-out src/cpp/main/vm/main/%.cpp,$(strongtalk-main-lib-sources))
-strongtalk-main-lib-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-lib-sources))
-strongtalk-main-lib-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-lib-sources))
-strongtalk-main-lib                 := $(object-path)/libstrongtalk.a
-strongtalk-main-lib-link-flags      := -L $(object-path) -Wl,-Bstatic,--whole-archive -l strongtalk -Wl,--no-whole-archive,--Bdynamic
-
-strongtalk-main-lib : $(strongtalk-main-lib)
-
-$(strongtalk-main-lib-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
-	-@mkdir -p $(dir $@)
-	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-main-cxx-include-flags) -c $< -o $@
-
-$(strongtalk-main-lib-depends) :
-include $(wildcard $(strongtalk-main-lib-depends))
-
-$(strongtalk-main-lib) : $(strongtalk-main-lib-objects)
-	@$(ar) rcs $(strongtalk-main-lib)  $(strongtalk-main-lib-objects)
-
-strongtalk-main-lib-clean : 
-	-rm $(strongtalk-main-lib)
-	-rm $(strongtalk-main-lib-depends)
-	-rm $(strongtalk-main-lib-objects)
+st20-main-lib-define-values := 
+st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
 
 
-# strongtalk-main-exe -------------------------------------------------------
+# st20-main-exe -----------------------------------------------------------------
 
-strongtalk-main-exe-sources         := $(wildcard src/cpp/main/vm/main/*.cpp)
-strongtalk-main-exe-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-main-exe-sources))
-strongtalk-main-exe-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-main-exe-sources))
-strongtalk-main-exe                 := $(object-path)/strongtalk-main.exe
-
-strongtalk-main-exe : $(strongtalk-main-exe)
-
-$(strongtalk-main-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
-	-@mkdir -p $(dir $@)
-	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-main-cxx-include-flags) -c $< -o $@
-
-$(strongtalk-main-exe-depends) :
-include $(wildcard $(strongtalk-main-exe-depends))
-
-$(strongtalk-main-exe) : $(strongtalk-main-exe-objects) $(strongtalk-main-lib)
-	$(g++) \
-		$(cxx-link-flags) \
-		$(libgcc-link-flags) \
-		$(strongtalk-main-exe-objects) \
-		$(strongtalk-main-lib-link-flags) \
-		$(libnasm-a-flags) \
-		$(platform-flags) \
-		-o $(strongtalk-main-exe)
-
-strongtalk-main-exe-clean : 
-	-rm $(strongtalk-main-exe)
-	-rm $(strongtalk-main-exe-depends)
-	-rm $(strongtalk-main-exe-objects)
+st20-main-exe               := $(object-root)/st20-main.exe
+st20-main-exe-sources       := $(wildcard src/cpp/main/vm/main/*.cpp)
+st20-main-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-exe-sources))
+st20-main-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-exe-sources))
 
 
-# strongtalk-test-lib -------------------------------------------------------
+# st20-test-exe -----------------------------------------------------------------
 
-strongtalk-test-cxx-include-paths   := src/cpp/test src/cpp/main $(googletest-include-paths)
-strongtalk-test-cxx-include-flags   := $(addprefix -I ,$(strongtalk-test-cxx-include-paths))
+st20-test-lib               := $(object-root)/st20-test-lib.a
+st20-test-lib-sources       := $(wildcard src/cpp/test/test/*/*.cpp)
+st20-test-lib-sources       := $(filter-out src/cpp/test/test/main/%.cpp,$(st20-test-lib-sources))
+st20-test-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-lib-sources))
+st20-test-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-test-lib-sources))
 
-strongtalk-test-define-values       := 
-strongtalk-test-define-flags        := $(addprefix -D ,$(strongtalk-test-define-values))
+st20-test-exe               := $(object-root)/st20-test.exe
+st20-test-exe-sources       := $(wildcard src/cpp/test/test/main/*.cpp)
+st20-test-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-exe-sources))
+st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-test-exe-sources))
 
-strongtalk-test-lib-sources         := $(wildcard src/cpp/test/vm/*/*.cpp)
-strongtalk-test-lib-sources         := $(filter-out src/cpp/test/test/main/%.cpp,$(strongtalk-test-lib-sources))
-strongtalk-test-lib-objects         := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-lib-sources))
-strongtalk-test-lib-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-lib-sources))
-strongtalk-test-lib                 := $(object-path)/libstrongtalktest.a
-strongtalk-test-lib-link-flags      := -L $(object-path) -Wl,-Bstatic,--whole-archive -l strongtalktest -Wl,--no-whole-archive,--Bdynamic
+st20-test-lib-cxx-include-paths-external := $(googletest-include-paths)
+st20-test-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-test-lib-cxx-include-paths-external))
+st20-test-lib-cxx-include-paths-internal := src/cpp/main src/cpp/test
+st20-test-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-test-lib-cxx-include-paths-internal))
+st20-test-lib-cxx-include-flags          := $(st20-test-lib-cxx-include-flags-external) $(st20-test-lib-cxx-include-flags-internal)
 
-strongtalk-test-lib : $(strongtalk-test-lib)
-
-$(strongtalk-test-lib-depends) :
-include $(wildcard $(strongtalk-test-lib-depends))
-
-$(strongtalk-test-lib) : $(strongtalk-test-lib-objects)
-	$(ar) rcs $(strongtalk-test-lib) $(strongtalk-test-lib-objects)
-
-strongtalk-test-lib-clean : 
-	-rm $(strongtalk-test-lib)
-	-rm $(strongtalk-test-lib-depends)
-	-rm $(strongtalk-test-lib-objects)
+st20-test-define-values := 
+st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
 
 
-# strongtalk-test-exe -------------------------------------------------------
+# ==== TARGETS ==================================================================
 
-strongtalk-test-exe-sources         := $(wildcard src/cpp/test/test/main/*.cpp)
-strongtalk-test-exe-objects 	    := $(patsubst %.cpp,$(object-path)/%.cpp.o,$(strongtalk-test-exe-sources))
-strongtalk-test-exe-depends         := $(patsubst %.cpp,$(object-path)/%.cpp.d,$(strongtalk-test-exe-sources))
-strongtalk-test-exe                 := $(object-path)/strongtalk-test.exe
+# targets -----------------------------------------------------------------------
 
-$(strongtalk-test-exe-objects) : $(object-path)/%.cpp.o : %.cpp $(object-path)/%.cpp.d
-	-@mkdir -p $(dir $@)
-	$(ccache) $(g++) $(cxx-compile-flags) $(strongtalk-test-cxx-include-flags) -c $< -o $@
+.PHONY : default st20-main-exe st20-test-exe 
+.PHONY : googletest nasm
+.PHONY : init init-3rd-party init-wine 
 
-$(strongtalk-test-exe-depends) :
-include $(wildcard $(strongtalk-test-exe-depends))
+default : st20-main-exe st20-test-exe
 
-strongtalk-test-exe : $(strongtalk-test-exe)
-
-$(strongtalk-test-exe) : $(strongtalk-test-exe-objects) $(strongtalk-test-lib) $(strongtalk-main-lib)
-	$(g++) \
-		$(cxx-link-flags) \
-		$(libgcc-link-flags) \
-		$(strongtalk-test-exe-objects) \
-		$(strongtalk-test-lib-link-flags) \
-		$(strongtalk-main-lib-link-flags) \
-		$(libgtest-a-flags) \
-		$(platform-flags) \
-		-o $(strongtalk-test-exe)
-
-strongtalk-test-exe-clean : 
-	-rm $(strongtalk-test-exe)
-	-rm $(strongtalk-test-exe-depends)
-	-rm $(strongtalk-test-exe-objects)
+help  : 
+	@echo ""
+	@echo "NAME"
+	@echo ""
+	@echo "    st20-2020"
+	@echo ""
+	@echo ""
+	@echo "TARGETS"
+	@echo ""
+	@echo "    make wine-kill-all"
+	@echo "        kill all wine processex via wine-wineserver --kill"
+	@echo ""
+	@echo "    make wine-st20-main-exe"
+	@echo "        build and run strongtalk.exe under wine"
+	@echo ""
+	@echo "    make wine-st20-test-exe"
+	@echo "        build and run st20-test.exe under wine"
+	@echo ""
+	@echo "    make st20-main-exe"
+	@echo "        build strongtalk.exe"
+	@echo ""
+	@echo "    make st20-main-exe-run"
+	@echo "        build and run strongtalk.exe"
+	@echo ""
+	@echo "    make st20-test-exe"
+	@echo "        build st20-test.exe"
+	@echo ""
+	@echo "    make st20-test-exe-run"
+	@echo "        build and run st20-test.exe"
+	@echo ""
+	@echo "META"
+	@echo ""
+	@echo "    this file is [$(THIS-FILE)]"
+	@echo ""
 
 
 # environment -----------------------------------------------------------------
 
-init : init-ext init-wine
+ext-build : googletest nasm
 
-init-ext : capstone googletest nasm udis86 zydis
+wine-init :
+	-$(wine-wineserver) --kill=9
+	-rm -rf ~/.wine/
+	$(wine-winetricks) $(wine-windows-version)
 
-init-wine :
-	-$(wineserver) --kill=9
-	$(wineboot) --init
+
+# executables -----------------------------------------------------------------
+
+st20-main-exe : $(st20-main-exe)
+
+st20-main-exe-run : $(st20-exe)
+	$(wine) $(st20-main-exe)
+
+st20-test-exe : $(st20-test-exe)
+
+st20-test-exe-run : $(st20-test-exe)
+	$(st20-test-exe)
+
+st20-main-lib : st20-main-lib-a
+
+st20-test-lib : st20-test-lib-a
 
 
 # wine ------------------------------------------------------------------------
 
-.PHONY : wine-kill-all wine-strongtalk-main-exe wine-strongtalk-test-exe
-
 wine-kill-all :
-	-$(wineserver) --kill
+	-$(wine-wineserver) --kill
 
-wine-strongtalk-main-exe : $(strongtalk-exe)
-	$(wine) $(strongtalk-main-exe)
+wine-st20-main-exe : $(st20-exe)
+	$(wine) $(st20-main-exe)
 
-wine-strongtalk-test-exe : $(strongtalk-test-exe)
-	$(wine) $(strongtalk-test-exe)
-
-
-# valgrind --------------------------------------------------------------------
-
-.PHONY : valgrind-strongtalk-main-exe valgrind-strongtalk-test-exe
-
-valgrind-strongtalk-main-exe :
-	$(valgrind) $(valgrind-options) $(wine) $(strongtalk-main-exe)
-
-valgrind-strongtalk-test-exe :
-	$(valgrind) $(valgrind-options) $(wine) $(strongtalk-test-exe)
+wine-st20-test-exe : $(st20-test-exe)
+	$(wine) $(st20-test-exe)
 
 
 # tags ------------------------------------------------------------------------
 
-.PHONY : tags
-
 tags : GPATH GRTAGS GTAGS
 
-GPATH GRTAGS GTAGS : $(strongtalk-main-lib-sources) $(strongtalk-test-lib-sources)
+GPATH GRTAGS GTAGS : $(st20-sources) $(st20-test-lib-sources)
 	gtags --verbose --statistics $<
 
 
-# strongtalk.exe --------------------------------------------------------------
+# clean -----------------------------------------------------------------------
 
-ifeq ($(toolchain-name),i686-w64-mingw32)
-platform-flags :=  $(mingw-w64-link-flags)
-endif
+clean : clean-main clean-test
 
-ifeq ($(toolchain-name),i686-linux-gnu)
-platform-flags := -ldl -lpthread -lreadline
-endif
+clean-main :
+	-@rm $(st20-main-lib-objects)
+	-@rm $(st20-main-lib-depends)
+	-@rm $(st20-main-exe-objects)
+	-@rm $(st20-main-exe-depends)
+	-@rm $(st20-main-exe)
+
+clean-test :
+	-@rm $(st20-test-lib-depends)
+	-@rm $(st20-test-exe-objects)
+	-@rm $(st20-test-exe-depends)
+	-@rm $(st20-test-exe)
+
+.PHONY : clean clean-main
+
+
+# st20-main-lib-a -------------------------------------------------------
+
+st20-main-lib-a := $(object-root)/libst20-main-lib-static.a
+st20-main-lib-a : $(st20-main-lib-a)
+
+$(st20-main-lib-a) : $(st20-main-lib-objects)
+	@$(ar) $(ar-flags) $(st20-main-lib-a) $(st20-main-lib-objects)
+
+
+# st20-test-lib-a -------------------------------------------------------
+
+st20-test-lib-a := $(object-root)/libst20-test-lib-static.a
+st20-test-lib-a : $(st20-test-lib-a)
+
+$(st20-test-lib-a) : $(st20-test-lib-objects)
+	@$(ar) $(ar-flags) $(st20-test-lib-a) $(st20-test-lib-objects)
+
+
+# st20-main.exe ---------------------------------------------------------
+
+$(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
+	-@mkdir -p $(dir $@)
+	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-main-lib-cxx-include-flags) -c $< -o $@
+	@echo ok: $@ from $<
+
+$(st20-main-exe) : $(st20-main-exe-objects) $(st20-main-lib-a)
+	@$(cxx-compiler) \
+		$(cxx-link-flags) \
+		$(libgcc-link-flags) \
+		$(st20-main-exe-objects) \
+		$(st20-main-lib-a) \
+		$(libnasm-a-flags) \
+		-o $(st20-main-exe)
+	@echo ok: $@ linked 
+
+$(st20-main-exe-depends) :
+include $(wildcard $(st20-main-exe-depends))
+
+$(st20-main-lib-depends) :
+include $(wildcard $(st20-main-lib-depends))
+
+
+# st20-test.exe ----------------------------------------------------------
+
+$(st20-test-exe-objects) $(st20-test-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
+	-@mkdir -p $(dir $@)
+	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-test-lib-cxx-include-flags) -c $< -o $@
+	@echo ok: $@ from $<
+
+$(st20-test-exe) : $(st20-test-exe-objects) $(st20-main-lib-a) $(st20-test-lib-a)
+	@$(cxx-compiler) \
+		$(cxx-link-flags) \
+		$(libgcc-link-flags) \
+		$(st20-test-exe-objects) \
+		$(st20-test-lib-a) \
+		$(st20-main-lib-a) \
+		$(libgtest-a-flags) \
+		-o $(st20-test-exe)
+	@echo ok: $@ linked
+
+$(st20-test-exe-depends) :
+include $(wildcard $(st20-test-exe-depends))
+
+$(st20-test-lib-depends) :
+include $(wildcard $(st20-test-lib-depends))
 
 
 # ccache ----------------------------------------------------------------------
@@ -406,85 +424,116 @@ ccache-zero-stats : $(CCACHE_DIR)/ccache.conf
 	@ccache --zero-stats
 
 $(CCACHE_DIR)/ccache.conf : | $(CCACHE_DIR)
-	@echo "max_size = 32G" | tee $(CCACHE_DIR)/ccache.conf
+	touch $(CCACHE_DIR)/ccache.conf
 
 $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
 
 
-# capstone --------------------------------------------------------------------
-
-capstone :
-	cmake -G Ninja -D CMAKE_SYSTEM_NAME=$(cmake-system-name) -S $(capstone-root-dir) -B $(capstone-object-dir)
-	ninja -C $(capstone-object-dir)
-
-
-# doxygen ---------------------------------------------------------------------
-
-doxygen-generate :
-	doxygen etc/doxygen/strongtalk.conf
-
-
 # googletest ------------------------------------------------------------------
 
 googletest :
-	cmake \
-		-G Ninja \
-		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
-		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
-		-D CMAKE_CXX_COMPILER=$(g++) \
-		-S $(googletest-root-dir) \
-		-B $(googletest-object-dir)
-	ninja -C $(googletest-object-dir)
+	$(cmake-program) \
+        -G $(cmake-generator-name) \
+        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+        -S $(googletest-root-dir) \
+        -B $(googletest-object-dir)
+	$(ninja-program) -C $(googletest-object-dir)
 
 
 # nasm ------------------------------------------------------------------------
 
 nasm :
-	-cd $(ROOT)/ext/nasm && make distclean
-	cd $(ROOT)/ext/nasm && ./configure --host $(machine-name)-$(runtime-platform) --prefix $(ROOT)/$(nasm-object-dir)
-	cd $(ROOT)/ext/nasm && make libnasm.a
-	objcopy --remove-leading-char $(ROOT)/ext/nasm/libnasm.a $(ROOT)/ext/nasm/libnasm.a
-	install --verbose $(ROOT)/ext/nasm/config/* 	-D --target-directory $(nasm-object-dir)/include/config
-	install --verbose $(ROOT)/ext/nasm/include/* 	-D --target-directory $(nasm-object-dir)/include
-	install --verbose $(ROOT)/ext/nasm/disasm/* 	-D --target-directory $(nasm-object-dir)/include
-	install --verbose $(ROOT)/ext/nasm/x86/* 		-D --target-directory $(nasm-object-dir)/include
-	install --verbose $(ROOT)/ext/nasm/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
+	cd $(nasm-root-dir) && make distclean || /bin/true
+	cd $(nasm-root-dir) && ./configure --host $(arch)-$(platform) --prefix $(nasm-object-dir)
+	cd $(nasm-root-dir) && make libnasm.a
+	objcopy --remove-leading-char $(nasm-root-dir)/libnasm.a $(nasm-root-dir)/libnasm.a
+	install --verbose $(nasm-root-dir)/config/* 	-D --target-directory $(nasm-object-dir)/include/config
+	install --verbose $(nasm-root-dir)/disasm/* 	-D --target-directory $(nasm-object-dir)/include
+	install --verbose $(nasm-root-dir)/include/* 	-D --target-directory $(nasm-object-dir)/include
+	install --verbose $(nasm-root-dir)/x86/* 		-D --target-directory $(nasm-object-dir)/include
+	install --verbose $(nasm-root-dir)/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
 
 
-# spdlog ----------------------------------------------------------------------
+# ==== UNUSED =================================================================
 
-spdlog :
-	cmake \
-		-G Ninja \
-		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
-		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
-		-D CMAKE_CXX_COMPILER=$(g++) \
-		-D CMAKE_C_COMPILER=$(gcc) \
-		-S $(spdlog-root-dir) \
-		-B $(spdlog-object-dir)
-	ninja -C $(spdlog-object-dir)
+## capstone --------------------------------------------------------------------
+#
+#capstone-root-dir           := $(external-package-root)/capstone
+#capstone-object-dir         := $(object-root)/$(external-package-root)/capstone
+#capstone-include-paths      := $(capstone-root-dir)/capstone/include
+#libcapstone-a               := $(capstone-object-dir)/libcapstone.a
+#libcapstone-a-flags         := -L $(capstone-object-dir) -l capstone
+#
+## udis86 ----------------------------------------------------------------------
+#
+#udis86-root-dir             := $(external-package-root)/udis86
+#udis86-object-dir           := $(external-package-object-root)/udis86
+#udis86-include-paths        := $(external-package-object-root)/udis86/include
+#udis86-library-paths        := $(external-package-object-root)/udis86/lib
+#libudis86-a                 := $(external-package-object-root)/udis86/lib/libudis86.a
+#libudis86-a-flags           := -L $(udis86-library-paths) -l udis86
+#
+## zydis -----------------------------------------------------------------------
+#
+#zydis-root-dir              := $(external-package-root)/zydis
+#zydis-object-dir            := $(external-package-object-root)/zydis
+#zydis-include-paths         := $(zydis-root-dir)/zydis/include
+#libzydis-a                  := $(zydis-object-dir)/libzydis.a
+#libzydis-a-flags            := -L $(zydis-object-dir) -l zydis
+## capstone --------------------------------------------------------------------
+#
+#capstone :
+#	$(cmake-program) \
+#        -G $(cmake-generator-name) \
+#        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+#        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+#        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+#        -S $(capstone-root-dir) \
+#        -B $(capstone-object-dir)
+#	ninja -C $(capstone-object-dir)
+#
+#
+## doxygen ---------------------------------------------------------------------
+#
+#doxygen-generate :
+#	doxygen etc/doxygen/strongtalk.conf
 
 
-
-# udis86 ----------------------------------------------------------------------
-
-udis86 :
-	-cd $(ROOT)/ext/udis86 && aclocal
-	-cd $(ROOT)/ext/udis86 && automake
-	cd $(ROOT)/ext/udis86 && ./configure --host $(machine-name)-$(runtime-platform) --prefix $(ROOT)/$(udis86-object-dir)
-	cd $(ROOT)/ext/udis86 && make 
-
-
-# zydis -----------------------------------------------------------------------
-
-zydis :
-	cmake \
-		-G Ninja \
-		-D CMAKE_CXX_COMPILER=$(g++) \
-		-D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
-		-D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
-		-S $(zydis-root-dir) \
-		-B $(zydis-object-dir)
-	ninja -C $(zydis-object-dir)
+## spdlog ----------------------------------------------------------------------
+#
+#spdlog :
+#	$(cmake-program) \
+#        -G $(cmake-generator-name) \
+#        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+#        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+#        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+#        -S $(spdlog-root-dir) \
+#        -B $(spdlog-object-dir)
+#	$(ninja-program) -C $(spdlog-object-dir)
+#
+#
+#
+## udis86 ----------------------------------------------------------------------
+#
+#udis86 :
+#	cd $(udis86-root-dir) && make distclean || /bin/true
+#	cd $(udis86-root-dir) && ./configure --host $(arch)-$(platform) --prefix $(ROOT)/$(udis86-object-dir)
+#	cd $(udis86-root-dir) && make install
+#
+#
+## zydis -----------------------------------------------------------------------
+#
+#zydis :
+#	$(cmake-program) \
+#        -G $(cmake-generator-name) \
+#        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+#        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+#        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+#        -S $(zydis-root-dir) \
+#        -B $(zydis-object-dir)
+#	$(ninja-program) -C $(zydis-object-dir)
+#
 

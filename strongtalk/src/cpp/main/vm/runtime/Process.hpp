@@ -14,10 +14,13 @@
 #include "vm/runtime/VirtualFrame.hpp"
 
 
+// Class hierarchy
+// - Process
+//   - VMProcess
+//   - DeltaProcess
+
 class Thread;
-
 class Event;
-
 class VM_Operation;
 
 
@@ -72,11 +75,11 @@ class Process : public PrintableCHeapAllocatedObject {
         void basic_transfer( Process * target );
 
         // OS data associated with the process
-        Thread * _thread;                   // Native thread
-        int _thread_id;                     // Native thread id (set by OS when created) pthread_t
-        Event          * _event;            // Thread lock
-        char           * _stack_limit;      // lower limit of stack
-        static Process * _current_process;  // active Delta process or vm process
+        Thread         * _thread;            // Native thread
+        int            _thread_id;          // Native thread id (set by OS when created)
+        Event          * _event;             // Thread lock
+        char           * _stack_limit;       // lower limit of stack
+        static Process * _current_process;   //  active Delta process or vm process
 };
 
 
@@ -85,7 +88,6 @@ class VMProcess : public Process {
 
     public:
         VMProcess();
-        ~VMProcess();
 
 
         // tester
@@ -159,8 +161,8 @@ extern "C" void check_stack_overflow();
 class DeltaProcess : public Process {
 
     private:
-        Oop       _receiver;      // receiver of the initial message.
-        SymbolOop _selector;      // selector of the initial message.
+        Oop          _receiver;      // receiver of the initial message.
+        SymbolOop    _selector;      // selector of the initial message.
         DeltaProcess * _next;          // the next process in the list (see Processes).
         ProcessOop   _processObj;    // the Delta level process object.
         ProcessState _state;         // process state.
@@ -182,7 +184,7 @@ class DeltaProcess : public Process {
 
         DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThread = true );
 
-        ~DeltaProcess();
+        virtual ~DeltaProcess();
 
         void setIsCallback( bool_t isCallback );
 
@@ -371,12 +373,12 @@ class DeltaProcess : public Process {
 
         // Static operations
     private:
-        static DeltaProcess  * _active_delta_process;   //
-        static DeltaProcess  * _main_process;           //
-        static DeltaProcess  * _scheduler_process;      //
-        static volatile char * _active_stack_limit;     //
+        static DeltaProcess    * _active_delta_process;
+        static DeltaProcess    * _main_process;
+        static DeltaProcess    * _scheduler_process;
+        static bool_t          _is_idle;
+        static volatile char   * _active_stack_limit;    //
         static volatile bool_t _interrupt;              //
-        static bool_t          _is_idle;                //
 
         // The launch function for a new thread
         static int launch_delta( DeltaProcess * process );
@@ -489,14 +491,14 @@ class Processes : AllStatic {
 
         static void restore_heap_code_pointers();
 
-        // Verification
+        // Verifycation
         static void verify();
 
         static void print();
 
+        // Deoptimization
 
     public:
-        // Deoptimization
         // deoptimizes frames dependent on a NativeMethod
         static void deoptimize_wrt( NativeMethod * nm );
 
@@ -529,21 +531,21 @@ extern "C" void set_stack_overflow_for( DeltaProcess * currentProcess );
 extern "C" void suspend_on_NonLocalReturn_error();
 
 
-enum class InterpreterErrorConstants {
-        start_of_runtime_system_errors = 512,                                   //
-        primitive_lookup_failed        = 1 + start_of_runtime_system_errors,    //
-        boolean_expected               = 2 + start_of_runtime_system_errors,    //
-        nonlocal_return_error          = 3 + start_of_runtime_system_errors,    //
-        halted                         = 4 + start_of_runtime_system_errors,    //
-        illegal_code                   = 5 + start_of_runtime_system_errors,    //
-        not_implemented                = 6 + start_of_runtime_system_errors,    //
-        stack_missaligned              = 7 + start_of_runtime_system_errors,    //
-        ebx_wrong                      = 8 + start_of_runtime_system_errors,    //
-        obj_wrong                      = 9 + start_of_runtime_system_errors,    //
-        nlr_offset_wrong               = 10 + start_of_runtime_system_errors,   //
-        last_Delta_fp_wrong            = 11 + start_of_runtime_system_errors,   //
-        primitive_result_wrong         = 12 + start_of_runtime_system_errors,   //
-        float_expected                 = 13 + start_of_runtime_system_errors,   //
+enum InterpreterErrorConstants {
+    start_of_runtime_system_errors = 512,                                   //
+    primitive_lookup_failed        = 1 + start_of_runtime_system_errors,    //
+    boolean_expected               = 2 + start_of_runtime_system_errors,    //
+    nonlocal_return_error          = 3 + start_of_runtime_system_errors,    //
+    halted                         = 4 + start_of_runtime_system_errors,    //
+    illegal_code                   = 5 + start_of_runtime_system_errors,    //
+    not_implemented                = 6 + start_of_runtime_system_errors,    //
+    stack_missaligned              = 7 + start_of_runtime_system_errors,    //
+    ebx_wrong                      = 8 + start_of_runtime_system_errors,    //
+    obj_wrong                      = 9 + start_of_runtime_system_errors,    //
+    nlr_offset_wrong               = 10 + start_of_runtime_system_errors,   //
+    last_Delta_fp_wrong            = 11 + start_of_runtime_system_errors,   //
+    primitive_result_wrong         = 12 + start_of_runtime_system_errors,   //
+    float_expected                 = 13 + start_of_runtime_system_errors,   //
 };
 
 void trace_stack( int thread_id );

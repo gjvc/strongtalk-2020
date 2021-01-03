@@ -275,6 +275,7 @@ const char * Interpreter::redo_send_entry() {
 
 
 //char* Interpreter::restart_primitiveValue() 			{ return access((char*)::restart_primitiveValue); }
+
 const char * Interpreter::nlr_single_step_continuation_entry() {
     return access( Interpreter::_nlr_single_step_continuation_entry );
 }
@@ -404,6 +405,8 @@ char* Interpreter::deoptimized_return_from_primitive_call_with_failure_block_res
 char* Interpreter::deoptimized_return_from_dll_call() 						{ return access((char*)::deoptimized_return_from_dll_call); }
 char* Interpreter::deoptimized_return_from_dll_call_restore() 					{ return access((char*)::deoptimized_return_from_dll_call_restore); }
 */
+
+
 // Interpreter initialization
 
 void Interpreter::init() {
@@ -415,4 +418,3 @@ void Interpreter::init() {
 
     _is_initialized = true;
 }
-

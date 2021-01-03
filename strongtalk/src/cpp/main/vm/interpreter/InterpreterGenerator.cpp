@@ -71,8 +71,6 @@ void InterpreterGenerator::check_oop( Register reg ) {
 
 // -----------------------------------------------------------------------------
 
-
-
 //
 // Stack checker
 //
@@ -153,14 +151,14 @@ Address InterpreterGenerator::field_addr( Register obj, Register smi_offset ) {
 // Instruction sequencing
 
 void InterpreterGenerator::skip_words( int n ) {
-    _macroAssembler->addl( esi, ( n + 1 ) * oopSize );    // advance
-    _macroAssembler->andl( esi, -oopSize );        // align
+    _macroAssembler->addl( esi, ( n + 1 ) * oopSize ); // advance
+    _macroAssembler->andl( esi, -oopSize ); // align
 }
 
 
 void InterpreterGenerator::advance_aligned( int n ) {
-    _macroAssembler->addl( esi, n + oopSize - 1 );    // advance
-    _macroAssembler->andl( esi, -oopSize );        // align
+    _macroAssembler->addl( esi, n + oopSize - 1 ); // advance
+    _macroAssembler->andl( esi, -oopSize ); // align
 }
 
 
@@ -1723,7 +1721,7 @@ extern "C" {
 const char * method_entry_point = nullptr;   // for interpreter_asm.asm (remove if not used anymore)
 const char * block_entry_point  = nullptr;   // for interpreter_asm.asm (remove if not used anymore)
 const char * active_stack_limit();           // address of pointer to the current process' stack limit
-void check_stack_overflow();                //
+void check_stack_overflow();                 //
 
 }
 
@@ -1753,38 +1751,36 @@ void InterpreterGenerator::generate_method_entry_code() {
     // ecx: methodOop
     // edi: initial value for temp0
     // parameters on the stack
-    _macroAssembler->bind( start_setup );
-    _macroAssembler->enter();                            // setup new stack frame
-    _macroAssembler->pushl( eax );                            // install receiver
-    _macroAssembler->movl( edx, Address( ecx, counter_offset ) );            // get method invocation counter
-    _macroAssembler->leal( esi, Address( ecx, code_offset ) );                // set bytecode pointer to first instruction
-    _macroAssembler->addl( edx, 1 << MethodOopDescriptor::_invocation_count_offset );    // increment invocation counter (only upper word)
-    _macroAssembler->pushl( esi );                            // initialize esi stack location for profiler
-    _macroAssembler->movl( Address( ecx, counter_offset ), edx );            // store method invocation counter
-    load_ebx();                                // get first byte code of method
-    _macroAssembler->cmpl( edx, 0xFFFF << MethodOopDescriptor::_invocation_count_offset );    // make sure cmpl uses imm32 field
-    Interpreter::_invocation_counter_addr = ( int * ) ( _macroAssembler->pc() - oopSize );// compute invocation counter address
-    _macroAssembler->jcc( Assembler::Condition::aboveEqual, counter_overflow );            // treat invocation counter overflow
-    _macroAssembler->bind( start_execution );                        // continuation point after overflow
-    _macroAssembler->movl( eax, edi );                        // initialize temp0
+    _macroAssembler->bind( start_setup );                                                   //
+    _macroAssembler->enter();                                                               // setup new stack frame
+    _macroAssembler->pushl( eax );                                                          // install receiver
+    _macroAssembler->movl( edx, Address( ecx, counter_offset ) );                           // get method invocation counter
+    _macroAssembler->leal( esi, Address( ecx, code_offset ) );                              // set bytecode pointer to first instruction
+    _macroAssembler->addl( edx, 1 << MethodOopDescriptor::_invocation_count_offset );       // increment invocation counter (only upper word)
+    _macroAssembler->pushl( esi );                                                          // initialize esi stack location for profiler
+    _macroAssembler->movl( Address( ecx, counter_offset ), edx );                           // store method invocation counter
+    load_ebx();                                                                             // get first byte code of method
+    _macroAssembler->cmpl( edx, 0xFFFF << MethodOopDescriptor::_invocation_count_offset );  // make sure cmpl uses imm32 field
+    Interpreter::_invocation_counter_addr = ( int * ) ( _macroAssembler->pc() - oopSize );  // compute invocation counter address
+    _macroAssembler->jcc( Assembler::Condition::aboveEqual, counter_overflow );             // treat invocation counter overflow
+    _macroAssembler->bind( start_execution );                                               // continuation point after overflow
+    _macroAssembler->movl( eax, edi );                                                      // initialize temp0
     _macroAssembler->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
-    _macroAssembler->jcc( Assembler::Condition::lessEqual, handle_stack_overflow );
-    _macroAssembler->bind( continue_from_stack_overflow );
-    jump_ebx();                                // start execution
+    _macroAssembler->jcc( Assembler::Condition::lessEqual, handle_stack_overflow );         //
+    _macroAssembler->bind( continue_from_stack_overflow );                                  //
+    jump_ebx();                                                                             // start execution
 
     // invocation counter overflow
     _macroAssembler->bind( counter_overflow );
     // not necessary to store esi since it has been just initialized
-    _macroAssembler->pushl( edi );                            // move tos on stack (temp0, always here)
-    _macroAssembler->set_last_Delta_frame_before_call();
-    _macroAssembler->call( handle_counter_overflow );                    // introduce extra frame to pass arguments
-    _macroAssembler->reset_last_Delta_frame();
-    _macroAssembler->popl( edi );                            // restore edi, used to initialize eax
-    // Should check here if recompilation created a NativeMethod for this
-    // methodOop. If so, one should redo the send and thus start the
-    // NativeMethod.
-    // If an NativeMethod has been created, invocation_counter_overflow
-    // returns the continuation pc, otherwise it returns nullptr.
+    _macroAssembler->pushl( edi );                                                          // move tos on stack (temp0, always here)
+    _macroAssembler->set_last_Delta_frame_before_call();                                    //
+    _macroAssembler->call( handle_counter_overflow );                                       // introduce extra frame to pass arguments
+    _macroAssembler->reset_last_Delta_frame();                                              //
+    _macroAssembler->popl( edi );                                                           // restore edi, used to initialize eax
+
+    // Should check here if recompilation created a NativeMethod for this methodOop. If so, one should redo the send and thus start the NativeMethod.
+    // If an NativeMethod has been created, invocation_counter_overflow returns the continuation pc, otherwise it returns nullptr.
     // For now: simply continue with interpreted version.
     restore_esi();
     restore_ebx();
@@ -1802,19 +1798,19 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->ret( 0 );
 
 
-// This generates the code sequence called to activate block execution.
-// It is jumped to from one of the primitiveValue primitives. eax is
-// expected to hold the receiver (i.e., the block closure).
+    // This generates the code sequence called to activate block execution.
+    // It is jumped to from one of the primitiveValue primitives. eax is
+    // expected to hold the receiver (i.e., the block closure).
 
     // eax: receiver (block closure)
     // primitiveValue parameters on the stack
     block_entry_point = _macroAssembler->pc();
     _macroAssembler->bind( _block_entry );
     _macroAssembler->movl( ecx, Address( eax, BlockClosureOopDescriptor::method_or_entry_byte_offset() ) );    // get methodOop/jump table entry out of closure
-    _macroAssembler->reset_last_Delta_frame();                    // if called from the interpreter, the last Delta frame is setup
-    _macroAssembler->test( ecx, MEMOOP_TAG );                        // if methodOop then
-    _macroAssembler->jcc( Assembler::Condition::notZero, is_interpreted );            //   start methodOop execution
-    _macroAssembler->jmp( ecx );                            // else jump to jump table entry
+    _macroAssembler->reset_last_Delta_frame();                                                  // if called from the interpreter, the last Delta frame is setup
+    _macroAssembler->test( ecx, MEMOOP_TAG ); // if methodOop then
+    _macroAssembler->jcc( Assembler::Condition::notZero, is_interpreted ); // start methodOop execution
+    _macroAssembler->jmp( ecx ); // else jump to jump table entry
 
     _macroAssembler->bind( is_interpreted );
     // eax: receiver (block closure)
@@ -3300,7 +3296,7 @@ const char * InterpreterGenerator::generate_instruction( ByteCodes::Code code ) 
 
 void InterpreterGenerator::info( const char * name ) {
 
-    _console->print_cr( "%%interpreter-generate:  [%s]", name );
+    _console->print_cr( "%%interpreter-generate [%s]", name );
 
     if ( not PrintInterpreter ) {
         return;
@@ -3368,8 +3364,8 @@ void InterpreterGenerator::generate_all() {
             int length = _macroAssembler->pc() - start;
             const char * name = ByteCodes::name( ( ByteCodes::Code ) i );
             _console->print_cr( "bytecode # [0x%02x], address [0x%0x], size [0x%04x], name [%s]", i, entry, length, name );
-//            _macroAssembler->code()->decode();
-//            _console->cr();
+            _macroAssembler->code()->decode();
+            _console->cr();
         }
 
     }
@@ -3399,9 +3395,8 @@ void interpreter_init() {
 
     const bool_t debug = true; // change this to switch between debug/optimized version
 
-    InterpreterGenerator g( code, debug );
-    g.generate_all();
-    _console->print_cr( "%%interpreter-size [0x%0x]", code->code_size() );
+    InterpreterGenerator( code, debug ).generate_all();
+    _console->print_cr( "%%interpreter-size [%d] [0x%0x] bytes", code->code_size(), code->code_size() );
 
     Interpreter::init();
 }

@@ -8,6 +8,7 @@
 #include "vm/system/sizes.hpp"
 
 
+
 const char * PrimitivesGenerator::double_op( arith_op op ) {
     Label need_scavenge, fill_object;
 

@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 // Primitives for VirtualFrame
 
@@ -26,21 +27,21 @@ class VirtualFrameOopPrimitives : AllStatic {
         //   Internal { flags = #(Pure)
         //              name  = 'VirtualFrameOopPrimitives::process' }
         //%
-        static Oop __CALLING_CONVENTION process( Oop receiver );
+        static PRIM_DECL_1( process, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationIndex ^<SmallInteger> =
         //   Internal { flags = #(Pure)
         //              name  = 'VirtualFrameOopPrimitives::index' }
         //%
-        static Oop __CALLING_CONVENTION index( Oop receiver );
+        static PRIM_DECL_1( index, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationTimeStamp ^<SmallInteger> =
         //   Internal { flags = #(Pure)
         //              name  = 'VirtualFrameOopPrimitives::time_stamp' }
         //%
-        static Oop __CALLING_CONVENTION time_stamp( Oop receiver );
+        static PRIM_DECL_1( time_stamp, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationIsSmalltalkActivationIfFail: failBlock <PrimFailBlock> ^<Boolean> =
@@ -48,7 +49,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid)
         //              name  = 'VirtualFrameOopPrimitives::is_smalltalk_activation' }
         //%
-        static Oop __CALLING_CONVENTION is_smalltalk_activation( Oop receiver );
+        static PRIM_DECL_1( is_smalltalk_activation, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationByteCodeIndexIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
@@ -56,7 +57,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::byte_code_index' }
         //%
-        static Oop __CALLING_CONVENTION byte_code_index( Oop receiver );
+        static PRIM_DECL_1( byte_code_index, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationExpressionStackIfFail: failBlock <PrimFailBlock> ^<IndexedInstanceVariables> =
@@ -64,7 +65,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::expression_stack' }
         //%
-        static Oop __CALLING_CONVENTION expression_stack( Oop receiver );
+        static PRIM_DECL_1( expression_stack, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationMethodIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
@@ -72,7 +73,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::method' }
         //%
-        static Oop __CALLING_CONVENTION method( Oop receiver );
+        static PRIM_DECL_1( method, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationReceiverIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
@@ -80,7 +81,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::receiver' }
         //%
-        static Oop __CALLING_CONVENTION receiver( Oop recv );
+        static PRIM_DECL_1( receiver, Oop recv );
 
         //%prim
         // <Activation> primitiveActivationTemporariesIfFail: failBlock <PrimFailBlock> ^<IndexedInstanceVariables> =
@@ -88,7 +89,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::temporaries' }
         //%
-        static Oop __CALLING_CONVENTION temporaries( Oop receiver );
+        static PRIM_DECL_1( temporaries, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationArgumentsIfFail: failBlock <PrimFailBlock> ^<IndexedInstanceVariables> =
@@ -96,7 +97,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::arguments' }
         //%
-        static Oop __CALLING_CONVENTION arguments( Oop receiver );
+        static PRIM_DECL_1( arguments, Oop receiver );
 
         //%prim
         // <Activation> primitiveActivationPrettyPrintIfFail: failBlock <PrimFailBlock> ^<IndexedByteInstanceVariables> =
@@ -104,7 +105,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              errors = #(ActivationIsInvalid ExternalActivation)
         //              name   = 'VirtualFrameOopPrimitives::pretty_print' }
         //%
-        static Oop __CALLING_CONVENTION pretty_print( Oop receiver );
+        static PRIM_DECL_1( pretty_print, Oop receiver );
 
         //%prim
         // <NoReceiver> primitiveActivationSingleStep: activation <Activation>
@@ -114,7 +115,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              error = #(ProcessCannotContinue Dead)
         //              name  = 'VirtualFrameOopPrimitives::single_step' }
         //%
-        static Oop __CALLING_CONVENTION single_step( Oop activation );
+        static PRIM_DECL_1( single_step, Oop activation );
 
         //%prim
         // <NoReceiver> primitiveActivationStepNext: activation <Activation>
@@ -124,7 +125,7 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              error = #(ProcessCannotContinue Dead)
         //              name  = 'VirtualFrameOopPrimitives::step_next' }
         //%
-        static Oop __CALLING_CONVENTION step_next( Oop activation );
+        static PRIM_DECL_1( step_next, Oop activation );
 
         //%prim
         // <NoReceiver> primitiveActivationStepReturn: activation <Activation>
@@ -134,6 +135,6 @@ class VirtualFrameOopPrimitives : AllStatic {
         //              error = #(ProcessCannotContinue Dead)
         //              name  = 'VirtualFrameOopPrimitives::step_return' }
         //%
-        static Oop __CALLING_CONVENTION step_return( Oop activation );
+        static PRIM_DECL_1( step_return, Oop activation );
 
 };

@@ -34,7 +34,7 @@ int proxyOopPrimitives::number_of_calls;
 
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::getSmi( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::getSmi, Oop receiver ) {
     PROLOGUE_1( "getSmi", receiver );
     ASSERT_RECEIVER;
     uint32_t value   = ( uint32_t ) ProxyOop( receiver )->get_pointer();
@@ -45,7 +45,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::getSmi( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::set( Oop receiver, Oop value ) {
+PRIM_DECL_2( proxyOopPrimitives::set, Oop receiver, Oop value ) {
     PROLOGUE_2( "getSmi", receiver, value );
     ASSERT_RECEIVER;
     if ( value->is_smi() ) {
@@ -58,7 +58,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::set( Oop receiver, Oop value ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::setHighLow( Oop receiver, Oop high, Oop low ) {
+PRIM_DECL_3( proxyOopPrimitives::setHighLow, Oop receiver, Oop high, Oop low ) {
     PROLOGUE_3( "setHighLow", receiver, high, low );
     ASSERT_RECEIVER;
     if ( not high->is_smi() )
@@ -73,7 +73,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::setHighLow( Oop receiver, Oop high,
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::getHigh( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::getHigh, Oop receiver ) {
     PROLOGUE_1( "getHigh", receiver );
     ASSERT_RECEIVER;
     uint32_t value = ( int ) ProxyOop( receiver )->get_pointer();
@@ -82,7 +82,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::getHigh( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::getLow( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::getLow, Oop receiver ) {
     PROLOGUE_1( "getLow", receiver );
     ASSERT_RECEIVER;
     uint32_t value = ( int ) ProxyOop( receiver )->get_pointer();
@@ -91,21 +91,21 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::getLow( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::isNull( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::isNull, Oop receiver ) {
     PROLOGUE_1( "isNull", receiver );
     ASSERT_RECEIVER;
     return ProxyOop( receiver )->is_null() ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::isAllOnes( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::isAllOnes, Oop receiver ) {
     PROLOGUE_1( "isAllOnes", receiver );
     ASSERT_RECEIVER;
     return ProxyOop( receiver )->is_allOnes() ? trueObj : falseObj;
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::malloc( Oop receiver, Oop size ) {
+PRIM_DECL_2( proxyOopPrimitives::malloc, Oop receiver, Oop size ) {
     PROLOGUE_2( "malloc", receiver, size );
     ASSERT_RECEIVER;
     if ( not size->is_smi() )
@@ -115,7 +115,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::malloc( Oop receiver, Oop size ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::calloc( Oop receiver, Oop size ) {
+PRIM_DECL_2( proxyOopPrimitives::calloc, Oop receiver, Oop size ) {
     PROLOGUE_2( "calloc", receiver, size );
     ASSERT_RECEIVER;
     if ( not size->is_smi() )
@@ -125,7 +125,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::calloc( Oop receiver, Oop size ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::free( Oop receiver ) {
+PRIM_DECL_1( proxyOopPrimitives::free, Oop receiver ) {
     PROLOGUE_1( "free", receiver );
     ASSERT_RECEIVER;
     os::free( ProxyOop( receiver )->get_pointer() );
@@ -134,7 +134,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::free( Oop receiver ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::byteAt( Oop receiver, Oop offset ) {
+PRIM_DECL_2( proxyOopPrimitives::byteAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "byteAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -146,7 +146,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::byteAt( Oop receiver, Oop offset ) 
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::byteAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::byteAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "byteAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -161,7 +161,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::byteAtPut( Oop receiver, Oop offset
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::doubleByteAt( Oop receiver, Oop offset ) {
+PRIM_DECL_2( proxyOopPrimitives::doubleByteAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "doubleByteAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -173,7 +173,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::doubleByteAt( Oop receiver, Oop off
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::doubleByteAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::doubleByteAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "doubleByteAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -188,7 +188,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::doubleByteAtPut( Oop receiver, Oop 
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::smiAt( Oop receiver, Oop offset ) {
+PRIM_DECL_2( proxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "smiAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -204,7 +204,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::smiAt( Oop receiver, Oop offset ) {
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::smiAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::smiAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "smiAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -219,7 +219,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::smiAtPut( Oop receiver, Oop offset,
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::subProxyAt( Oop receiver, Oop offset, Oop result ) {
+PRIM_DECL_3( proxyOopPrimitives::subProxyAt, Oop receiver, Oop offset, Oop result ) {
     PROLOGUE_3( "subProxyAt", receiver, offset, result );
     ASSERT_RECEIVER;
     if ( not offset->is_smi() )
@@ -234,7 +234,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::subProxyAt( Oop receiver, Oop offse
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::proxyAt( Oop receiver, Oop offset, Oop result ) {
+PRIM_DECL_3( proxyOopPrimitives::proxyAt, Oop receiver, Oop offset, Oop result ) {
     PROLOGUE_3( "proxyAt", receiver, offset, result );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -249,7 +249,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::proxyAt( Oop receiver, Oop offset, 
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::proxyAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::proxyAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "proxyAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -264,7 +264,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::proxyAtPut( Oop receiver, Oop offse
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::singlePrecisionFloatAt( Oop receiver, Oop offset ) {
+PRIM_DECL_2( proxyOopPrimitives::singlePrecisionFloatAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "singlePrecisionFloatAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -276,7 +276,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::singlePrecisionFloatAt( Oop receive
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::singlePrecisionFloatAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::singlePrecisionFloatAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "singlePrecisionFloatAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -291,7 +291,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::singlePrecisionFloatAtPut( Oop rece
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::doublePrecisionFloatAt( Oop receiver, Oop offset ) {
+PRIM_DECL_2( proxyOopPrimitives::doublePrecisionFloatAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "doublePrecisionFloatAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -303,7 +303,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::doublePrecisionFloatAt( Oop receive
 }
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::doublePrecisionFloatAtPut( Oop receiver, Oop offset, Oop value ) {
+PRIM_DECL_3( proxyOopPrimitives::doublePrecisionFloatAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "doublePrecisionFloatAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
     if ( not offset->is_smi() )
@@ -334,7 +334,7 @@ static bool_t convert_to_arg( Oop arg, int * addr ) {
 typedef void * (__CALLING_CONVENTION * call_out_func_0)();
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut0( Oop receiver, Oop result ) {
+PRIM_DECL_2( proxyOopPrimitives::callOut0, Oop receiver, Oop result ) {
     PROLOGUE_2( "callOut0", receiver, result );
     ASSERT_RECEIVER_ACCESS;
 
@@ -354,7 +354,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::callOut0( Oop receiver, Oop result 
 typedef void * (__CALLING_CONVENTION * call_out_func_1)( int a );
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut1( Oop receiver, Oop arg1, Oop result ) {
+PRIM_DECL_3( proxyOopPrimitives::callOut1, Oop receiver, Oop arg1, Oop result ) {
     PROLOGUE_3( "callOut1", receiver, arg1, result );
     ASSERT_RECEIVER_ACCESS;
 
@@ -377,7 +377,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::callOut1( Oop receiver, Oop arg1, O
 typedef void * (__CALLING_CONVENTION * call_out_func_2)( int a, int b );
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut2( Oop receiver, Oop arg1, Oop arg2, Oop result ) {
+PRIM_DECL_4( proxyOopPrimitives::callOut2, Oop receiver, Oop arg1, Oop arg2, Oop result ) {
     PROLOGUE_4( "callOut2", receiver, arg1, arg2, result );
     ASSERT_RECEIVER_ACCESS;
 
@@ -402,7 +402,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::callOut2( Oop receiver, Oop arg1, O
 typedef void * (__CALLING_CONVENTION * call_out_func_3)( int a, int b, int c );
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut3( Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop result ) {
+PRIM_DECL_5( proxyOopPrimitives::callOut3, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop result ) {
     PROLOGUE_5( "callOut3", receiver, arg1, arg2, arg3, result );
     ASSERT_RECEIVER_ACCESS;
 
@@ -429,7 +429,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::callOut3( Oop receiver, Oop arg1, O
 typedef void * (__CALLING_CONVENTION * call_out_func_4)( int a, int b, int c, int d );
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut4( Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop result ) {
+PRIM_DECL_6( proxyOopPrimitives::callOut4, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop result ) {
     PROLOGUE_6( "callOut4", receiver, arg1, arg2, arg3, arg4, result );
     ASSERT_RECEIVER_ACCESS;
 
@@ -458,7 +458,7 @@ Oop __CALLING_CONVENTION proxyOopPrimitives::callOut4( Oop receiver, Oop arg1, O
 typedef void * (__CALLING_CONVENTION * call_out_func_5)( int a, int b, int c, int d, int e );
 
 
-Oop __CALLING_CONVENTION proxyOopPrimitives::callOut5( Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop result ) {
+PRIM_DECL_7( proxyOopPrimitives::callOut5, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop result ) {
     PROLOGUE_7( "callOut5", receiver, arg1, arg2, arg3, arg4, arg5, result );
     ASSERT_RECEIVER_ACCESS;
 

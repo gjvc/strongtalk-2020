@@ -38,7 +38,7 @@ void report_vm_state() {
 
 
 void report_error( const char * title, const char * format, ... ) {
-    os::fatalExit( EXIT_FAILURE );
+    //os::fatalExit( EXIT_FAILURE );
 
     char    buffer[2048];
     va_list ap;

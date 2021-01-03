@@ -26,7 +26,7 @@ TRACE_FUNC( TraceMixinPrims, "mixin" )
 int mixinOopPrimitives::number_of_calls;
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_methods( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::number_of_methods, Oop mixin ) {
     PROLOGUE_1( "number_of_methods", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -36,7 +36,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_methods( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::method_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::method_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "method_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -51,7 +51,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::method_at( Oop mixin, Oop index ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::add_method( Oop mixin, Oop method ) {
+PRIM_DECL_2( mixinOopPrimitives::add_method, Oop mixin, Oop method ) {
     PROLOGUE_2( "add_method", mixin, method );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -70,7 +70,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::add_method( Oop mixin, Oop method )
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::remove_method_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::remove_method_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "remove_method_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -90,7 +90,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::remove_method_at( Oop mixin, Oop in
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::methods( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::methods, Oop mixin ) {
     PROLOGUE_1( "methods", mixin );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -99,7 +99,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::methods( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_instance_variables( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::number_of_instance_variables, Oop mixin ) {
     PROLOGUE_1( "number_of_instance_variables", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -109,7 +109,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_instance_variables( Oop m
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::instance_variable_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::instance_variable_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "instance_variable_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -124,7 +124,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::instance_variable_at( Oop mixin, Oo
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::add_instance_variable( Oop mixin, Oop name ) {
+PRIM_DECL_2( mixinOopPrimitives::add_instance_variable, Oop mixin, Oop name ) {
     PROLOGUE_2( "add_instance_variable", mixin, name );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -142,7 +142,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::add_instance_variable( Oop mixin, O
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::remove_instance_variable_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::remove_instance_variable_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "remove_instance_variable_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -163,7 +163,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::remove_instance_variable_at( Oop mi
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::instance_variables( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::instance_variables, Oop mixin ) {
     PROLOGUE_1( "instance_variables", mixin );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -172,7 +172,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::instance_variables( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_class_variables( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::number_of_class_variables, Oop mixin ) {
     PROLOGUE_1( "number_of_class_variables", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -182,7 +182,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::number_of_class_variables( Oop mixi
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::class_variable_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::class_variable_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "class_variable_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -197,7 +197,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::class_variable_at( Oop mixin, Oop i
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::add_class_variable( Oop mixin, Oop name ) {
+PRIM_DECL_2( mixinOopPrimitives::add_class_variable, Oop mixin, Oop name ) {
     PROLOGUE_2( "add_class_variable", mixin, name );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -215,7 +215,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::add_class_variable( Oop mixin, Oop 
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::remove_class_variable_at( Oop mixin, Oop index ) {
+PRIM_DECL_2( mixinOopPrimitives::remove_class_variable_at, Oop mixin, Oop index ) {
     PROLOGUE_2( "remove_class_variable_at", mixin, index );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -235,7 +235,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::remove_class_variable_at( Oop mixin
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::class_variables( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::class_variables, Oop mixin ) {
     PROLOGUE_1( "class_variables", mixin );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -244,7 +244,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::class_variables( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::primary_invocation( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::primary_invocation, Oop mixin ) {
     PROLOGUE_1( "primary_invocation", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -254,7 +254,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::primary_invocation( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::set_primary_invocation( Oop mixin, Oop klass ) {
+PRIM_DECL_2( mixinOopPrimitives::set_primary_invocation, Oop mixin, Oop klass ) {
     PROLOGUE_2( "class_mixin", mixin, klass );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -271,7 +271,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::set_primary_invocation( Oop mixin, 
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::class_mixin( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::class_mixin, Oop mixin ) {
     PROLOGUE_1( "class_mixin", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -281,7 +281,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::class_mixin( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::set_class_mixin( Oop mixin, Oop class_mixin ) {
+PRIM_DECL_2( mixinOopPrimitives::set_class_mixin, Oop mixin, Oop class_mixin ) {
     PROLOGUE_2( "class_mixin", mixin, class_mixin );
     // Check parameters
     if ( not mixin->is_mixin() )
@@ -298,7 +298,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::set_class_mixin( Oop mixin, Oop cla
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::is_installed( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::is_installed, Oop mixin ) {
     PROLOGUE_1( "is_installed", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -308,7 +308,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::is_installed( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::set_installed( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::set_installed, Oop mixin ) {
     PROLOGUE_1( "set_installed", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
@@ -325,7 +325,7 @@ Oop __CALLING_CONVENTION mixinOopPrimitives::set_installed( Oop mixin ) {
 }
 
 
-Oop __CALLING_CONVENTION mixinOopPrimitives::set_uninstalled( Oop mixin ) {
+PRIM_DECL_1( mixinOopPrimitives::set_uninstalled, Oop mixin ) {
     PROLOGUE_1( "set_uninstalled", mixin );
     // Check parameter
     if ( not mixin->is_mixin() )
