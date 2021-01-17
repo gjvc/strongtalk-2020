@@ -530,7 +530,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->float_allocate( iter.byte_at( 2 ), iter.byte_at( 3 ) );
                 break;
             case ByteCodes::Code::float_floatify_pop:
-                blk->float_floatify( Floats::floatify, blk->float_at( iter.byte_at( 1 ) ) );
+                blk->float_floatify( Floats::Function::floatify, blk->float_at( iter.byte_at( 1 ) ) );
                 break;
             case ByteCodes::Code::float_move:
                 blk->float_move( blk->float_at( iter.byte_at( 1 ) ), blk->float_at( iter.byte_at( 2 ) ) );

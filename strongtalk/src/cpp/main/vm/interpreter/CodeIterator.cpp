@@ -10,7 +10,6 @@
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 bool_t Interpreted_DLLCache::async() const {

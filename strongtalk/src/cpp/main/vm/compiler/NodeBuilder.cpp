@@ -1287,10 +1287,10 @@ void NodeBuilder::float_nullary( Floats::Function f, int to ) {
     // float(to) := f()
     // f refers to one of the functions in Floats
     switch ( f ) {
-        case Floats::zero:
+        case Floats::Function::zero:
             float_set( to, oopFactory::new_double( 0.0 ) );
             break;
-        case Floats::one:
+        case Floats::Function::one:
             float_set( to, oopFactory::new_double( 1.0 ) );
             break;
         default        : st_fatal1( "bad float nullary code %d", f );
@@ -1303,21 +1303,21 @@ void NodeBuilder::float_unary( Floats::Function f, int fno ) {
     // f refers to one of the functions in Floats
     ArithOpCode op;
     switch ( f ) {
-        case Floats::abs:
+        case Floats::Function::abs:
             op = ArithOpCode::fAbsArithOp;
             break;
-        case Floats::negated:
+        case Floats::Function::negated:
             op = ArithOpCode::fNegArithOp;
             break;
-        case Floats::squared:
+        case Floats::Function::squared:
             op = ArithOpCode::fSqrArithOp;
             break;
-        case Floats::sqrt    : Unimplemented();
-        case Floats::sin    : Unimplemented();
-        case Floats::cos    : Unimplemented();
-        case Floats::tan    : Unimplemented();
-        case Floats::exp    : Unimplemented();
-        case Floats::ln    : Unimplemented();
+        case Floats::Function::sqrt    : Unimplemented();
+        case Floats::Function::sin    : Unimplemented();
+        case Floats::Function::cos    : Unimplemented();
+        case Floats::Function::tan    : Unimplemented();
+        case Floats::Function::exp    : Unimplemented();
+        case Floats::Function::ln    : Unimplemented();
         default        : st_fatal1( "bad float unary code %d", f );
     }
     PseudoRegister * preg = float_at( fno );
@@ -1330,19 +1330,19 @@ void NodeBuilder::float_binary( Floats::Function f, int fno ) {
     // f refers to one of the functions in Floats
     ArithOpCode op;
     switch ( f ) {
-        case Floats::add:
+        case Floats::Function::add:
             op = ArithOpCode::fAddArithOp;
             break;
-        case Floats::subtract:
+        case Floats::Function::subtract:
             op = ArithOpCode::fSubArithOp;
             break;
-        case Floats::multiply:
+        case Floats::Function::multiply:
             op = ArithOpCode::fMulArithOp;
             break;
-        case Floats::divide:
+        case Floats::Function::divide:
             op = ArithOpCode::fDivArithOp;
             break;
-        case Floats::modulo:
+        case Floats::Function::modulo:
             op = ArithOpCode::fModArithOp;
             break;
         default         : st_fatal1( "bad float binary code %d", f );
@@ -1359,15 +1359,15 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
     PseudoRegister               * src = float_at( fno );
     SinglyAssignedPseudoRegister * res = new SinglyAssignedPseudoRegister( _scope );
     switch ( f ) {
-        case Floats::is_zero: // fall through
-        case Floats::is_not_zero: {
+        case Floats::Function::is_zero: // fall through
+        case Floats::Function::is_not_zero: {
             ConstPseudoRegister * zero = new_ConstPReg( _scope, oopFactory::new_double( 0.0 ) );
             NodeFactory::FloatArithRRNode( new NoResultPseudoRegister( _scope ), src, ArithOpCode::fCmpArithOp, zero );
-            BranchOpCode cond = f == Floats::is_zero ? BranchOpCode::EQBranchOp : BranchOpCode::NEBranchOp;
+            BranchOpCode cond = f == Floats::Function::is_zero ? BranchOpCode::EQBranchOp : BranchOpCode::NEBranchOp;
             _expressionStack->push( PrimitiveInliner::generate_cond( cond, this, res ), scope(), scope()->byteCodeIndex() );
         }
             break;
-        case Floats::oopify: {
+        case Floats::Function::oopify: {
             append( NodeFactory::FloatUnaryArithNode( res, src, ArithOpCode::f2OopArithOp ) );
             Expression * result = new KlassExpression( doubleKlassObj, res, current() );
             _expressionStack->push( result, scope(), scope()->byteCodeIndex() );
@@ -1383,22 +1383,22 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
     // f refers to one of the functions in Floats
     Assembler::Condition cc1;
     switch ( f ) {
-        case Floats::is_equal:
+        case Floats::Function::is_equal:
             cc1 = Assembler::Condition::equal;
             break;
-        case Floats::is_not_equal:
+        case Floats::Function::is_not_equal:
             cc1 = Assembler::Condition::notEqual;
             break;
-        case Floats::is_less:
+        case Floats::Function::is_less:
             cc1 = Assembler::Condition::less;
             break;
-        case Floats::is_less_equal:
+        case Floats::Function::is_less_equal:
             cc1 = Assembler::Condition::lessEqual;
             break;
-        case Floats::is_greater:
+        case Floats::Function::is_greater:
             cc1 = Assembler::Condition::greater;
             break;
-        case Floats::is_greater_equal:
+        case Floats::Function::is_greater_equal:
             cc1 = Assembler::Condition::greaterEqual;
             break;
         default             : st_fatal1( "bad float comparison code %d", f );

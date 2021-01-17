@@ -25,7 +25,7 @@ class Floats : AllStatic {
         // When changing these codes, make sure that the bytecode compiler is updated as well!
         // (use delta +GenerateSmalltalk to generate an updated file-in file for Smalltalk).
 
-        enum Function {
+        enum class Function {
             // nullary functions
             zero,               // float(i) := 0.0
             one,                // float(i) := 1.0
