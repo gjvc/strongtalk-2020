@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -667,5 +667,3 @@ PrimitiveInlineCache * PrimitiveIC_from_return_addr( const char * return_addr ) 
 PrimitiveInlineCache * PrimitiveIC_from_relocInfo( const char * displacement_address ) {
     return ( PrimitiveInlineCache * ) nativeCall_from_relocInfo( displacement_address );
 }
-
-

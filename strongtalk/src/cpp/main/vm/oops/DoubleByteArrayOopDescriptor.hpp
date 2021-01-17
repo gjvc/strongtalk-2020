@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -103,5 +103,3 @@ class DoubleByteArrayOopDescriptor : public MemOopDescriptor {
 inline DoubleByteArrayOop as_doubleByteArrayOop( void * p ) {
     return DoubleByteArrayOop( as_memOop( p ) );
 }
-
-

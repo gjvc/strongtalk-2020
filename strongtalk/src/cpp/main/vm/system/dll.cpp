@@ -1,6 +1,6 @@
 
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -192,4 +192,3 @@ Compiled_DLLCache * compiled_DLLCache_from_return_address( const char * return_a
 Compiled_DLLCache * compiled_DLLCache_from_relocInfo( const char * displacement_address ) {
     return ( Compiled_DLLCache * ) nativeCall_from_relocInfo( displacement_address );
 }
-

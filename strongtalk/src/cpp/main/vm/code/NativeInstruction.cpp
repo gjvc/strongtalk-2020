@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -44,4 +44,3 @@ void NativeTest::verify() {
 void NativeTest::print() {
     _console->print_cr( "0x%x: test eax, 0x%x", instruction_address(), data() );
 }
-

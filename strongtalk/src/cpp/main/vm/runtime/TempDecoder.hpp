@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -77,4 +77,3 @@ ByteArrayOop find_stack_temp( MethodOop method, int byteCodeIndex, int no );
 ByteArrayOop find_heap_temp( MethodOop method, int byteCodeIndex, int no );
 
 ByteArrayOop find_stack_float_temp( MethodOop method, int byteCodeIndex, int fno );
-

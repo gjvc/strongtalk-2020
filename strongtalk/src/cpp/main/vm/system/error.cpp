@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -94,4 +94,3 @@ void report_subclass_responsibility( const char * file_name, int line_no ) {
 void report_unimplemented( const char * file_name, int line_no ) {
     report_error( "Unimplemented Error", "Unimplemented()\n%s, %d", file_name, line_no );
 }
-

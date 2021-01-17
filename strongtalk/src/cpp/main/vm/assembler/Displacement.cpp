@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -85,4 +85,3 @@ void Displacement::init( const Label & L, Displacement::Type type, int info ) {
     st_assert( ( info & ~info_mask ) == 0, "info field too small" );
     _data = ( next << next_pos ) | ( static_cast<int>(type) << static_cast<int>(type_pos) ) | ( info << info_pos );
 }
-

@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -96,4 +96,3 @@ PRIM_DECL_3( doubleValueArrayPrimitives::atPut, Oop receiver, Oop index, Oop val
     doubleValueArrayOop( receiver )->double_at_put( SMIOop( index )->value(), DoubleOop( value )->value() );
     return receiver;
 }
-

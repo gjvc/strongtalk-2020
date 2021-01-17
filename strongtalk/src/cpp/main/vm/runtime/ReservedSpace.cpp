@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -40,4 +40,3 @@ int ReservedSpace::align_size( int size, int page_size ) {
     int adjust = size == 0 ? page_size : ( page_size - ( size % page_size ) ) % page_size;
     return size + adjust;
 }
-

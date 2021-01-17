@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -332,4 +332,3 @@ APPLY_TO_INTEGER_FLAGS( DECLARE_INTEGER_FLAG )
 
 // debug() is intended as a "start debugging" hook to be called from the C++ debugger.  It sets up everything for debugging.
 extern "C" void debug();
-

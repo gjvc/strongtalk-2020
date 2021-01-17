@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -163,4 +163,3 @@ TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldIgnoreResultWhenResultA
     Oop result = byteArrayPrimitives::alienCallResult0( nilObj, fnAlien );
     EXPECT_TRUE( !result->is_mark() ) << "Should not be marked";
 }
-

@@ -1,6 +1,6 @@
 
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -202,4 +202,3 @@ bool_t Integer::is_valid() const {
 int Integer::size_in_bytes() const {
     return length_to_size_in_bytes( length() );
 }
-

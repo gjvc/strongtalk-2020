@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -305,6 +305,3 @@ int MemOopDescriptor::gc_retrieve_size() {
         return Universe::remembered_set->get_size( this );
     return mark()->age();
 }
-
-
-

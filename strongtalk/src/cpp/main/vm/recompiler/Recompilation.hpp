@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -210,4 +210,3 @@ extern int   * recompileLimits;         // recompilation limits indexed by stage
 
 constexpr int MaxRecompilationLevels = 4;           // max. # recompilation levels
 constexpr int MaxVersions            = 4 - 1;       // desired max. # NativeMethod recompilations
-

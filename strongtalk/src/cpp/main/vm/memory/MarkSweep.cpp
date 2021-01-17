@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -292,4 +292,3 @@ void MarkSweep::mark_sweep_phase3() {
     // we converted these pointers in phase1.
     Processes::restore_heap_code_pointers();
 }
-

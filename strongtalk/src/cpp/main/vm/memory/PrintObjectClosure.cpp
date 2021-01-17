@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -143,4 +143,3 @@ void PrintObjectClosure::do_indexable_long( int index, int32_t * l ) {
     _stream->fill_to( value_col );
     _stream->print_cr( "0x%lx", *l );
 }
-

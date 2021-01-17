@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -629,4 +629,3 @@ void Primitives::patch( const char * name, const char * entry_point ) {
     PrimitiveDescriptor * pdesc = verified_lookup( name );
     pdesc->_fn = ( primitiveFunctionType ) entry_point;
 }
-

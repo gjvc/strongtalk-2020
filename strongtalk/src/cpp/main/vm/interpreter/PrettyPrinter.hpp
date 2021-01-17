@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -194,4 +194,3 @@ class PrettyPrinter : AllStatic {
         // Pretty prints the method with the byteCodeIndex highlighted into a byteArray.
         static ByteArrayOop print_in_byteArray( MethodOop method, KlassOop klass = nullptr, int byteCodeIndex = -1 );
 };
-

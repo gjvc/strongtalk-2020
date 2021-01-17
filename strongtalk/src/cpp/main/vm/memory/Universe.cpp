@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -98,7 +98,7 @@ void Universe::genesis() {
 
     _console->print_cr( "%%system-genesis:  -----------------------------------------------------------------------------" );
     _console->print_cr( "%%system-genesis:  Strongtalk Delta Virtual Machine, %d.%d%s (%s, %s)", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    _console->print_cr( "%%system-genesis:  (C) 1994 - 2020, The Strongtalk authors and contributors" );
+    _console->print_cr( "%%system-genesis:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
     _console->print_cr( "%%system-genesis:  -----------------------------------------------------------------------------" );
 
     _console->print_cr( "%vm-backend-implementation [%s]", UseNewBackend | TryNewBackend ? "new" : "old" );

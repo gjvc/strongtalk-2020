@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -93,4 +93,3 @@ EventLogEvent * EventLog::nextEvent( EventLogEvent * e, EventLogEvent * start, E
 EventLogEvent * EventLog::prevEvent( EventLogEvent * e, EventLogEvent * start, EventLogEvent * end ) {
     return ( e == start ? end : e ) - 1;
 }
-

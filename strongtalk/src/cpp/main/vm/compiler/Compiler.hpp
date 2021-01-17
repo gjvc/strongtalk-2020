@@ -1,5 +1,5 @@
 //
-//  (C) 1994 - 2020, The Strongtalk authors and contributors
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
@@ -198,5 +198,3 @@ class Compiler : public PrintableResourceObject {
 // This will print the message to _console if the PrintXXX flag is set or to the compiler's string buffer otherwise.
 ConsoleOutputStream * cout( bool_t flag );    // for compiler debugging; returns stdout or compiler-internal string stream depending on flag
 void print_cout();        // prints hidden messages of current compilation
-
-
