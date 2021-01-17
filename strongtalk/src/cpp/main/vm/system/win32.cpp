@@ -7,10 +7,6 @@
 
 #include "vm/system/win32.hpp"
 
-#include <windows.h>
-
-LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
-
 
 LRESULT CALLBACK WndProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam ) {
 

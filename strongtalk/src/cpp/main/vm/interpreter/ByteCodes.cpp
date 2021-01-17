@@ -409,12 +409,12 @@ void ByteCodes::init() {
 
 ByteCodes::LoopType ByteCodes::loop_type( Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::jump_loop_byte      : // fall through
+        case ByteCodes::Code::jump_loop_byte: // fall through
         case ByteCodes::Code::jump_loop_word:
             return ByteCodes::LoopType::loop_start;
-        case ByteCodes::Code::whileTrue_byte      : // fall through
-        case ByteCodes::Code::whileFalse_byte     : // fall through
-        case ByteCodes::Code::whileTrue_word      : // fall through
+        case ByteCodes::Code::whileTrue_byte: // fall through
+        case ByteCodes::Code::whileFalse_byte: // fall through
+        case ByteCodes::Code::whileTrue_word: // fall through
         case ByteCodes::Code::whileFalse_word:
             return ByteCodes::LoopType::loop_end;
         default:
@@ -564,13 +564,13 @@ const char * ByteCodes::loop_type_as_string( LoopType loop_type ) {
 
 bool_t ByteCodes::is_self_send( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_self        : // fall through
-        case ByteCodes::Code::compiled_send_self        : // fall through
-        case ByteCodes::Code::polymorphic_send_self        : // fall through
-        case ByteCodes::Code::megamorphic_send_self        : // fall through
-        case ByteCodes::Code::interpreted_send_self_pop    : // fall through
-        case ByteCodes::Code::compiled_send_self_pop        : // fall through
-        case ByteCodes::Code::polymorphic_send_self_pop    : // fall through
+        case ByteCodes::Code::interpreted_send_self: // fall through
+        case ByteCodes::Code::compiled_send_self: // fall through
+        case ByteCodes::Code::polymorphic_send_self: // fall through
+        case ByteCodes::Code::megamorphic_send_self: // fall through
+        case ByteCodes::Code::interpreted_send_self_pop: // fall through
+        case ByteCodes::Code::compiled_send_self_pop: // fall through
+        case ByteCodes::Code::polymorphic_send_self_pop: // fall through
         case ByteCodes::Code::megamorphic_send_self_pop:
             return true;
         default:
@@ -583,13 +583,13 @@ bool_t ByteCodes::is_self_send( ByteCodes::Code code ) {
 
 bool_t ByteCodes::is_super_send( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_super        : // fall through
-        case ByteCodes::Code::compiled_send_super        : // fall through
-        case ByteCodes::Code::polymorphic_send_super        : // fall through
-        case ByteCodes::Code::megamorphic_send_super        : // fall through
-        case ByteCodes::Code::interpreted_send_super_pop    : // fall through
-        case ByteCodes::Code::compiled_send_super_pop    : // fall through
-        case ByteCodes::Code::polymorphic_send_super_pop    : // fall through
+        case ByteCodes::Code::interpreted_send_super: // fall through
+        case ByteCodes::Code::compiled_send_super: // fall through
+        case ByteCodes::Code::polymorphic_send_super: // fall through
+        case ByteCodes::Code::megamorphic_send_super: // fall through
+        case ByteCodes::Code::interpreted_send_super_pop: // fall through
+        case ByteCodes::Code::compiled_send_super_pop: // fall through
+        case ByteCodes::Code::polymorphic_send_super_pop: // fall through
         case ByteCodes::Code::megamorphic_send_super_pop:
             return true;
         default:
@@ -602,7 +602,7 @@ bool_t ByteCodes::is_super_send( ByteCodes::Code code ) {
 
 bool_t ByteCodes::has_access_send_code( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_0        : // fall through
+        case ByteCodes::Code::interpreted_send_0: // fall through
         case ByteCodes::Code::interpreted_send_self:
             return true;
         default:
@@ -1135,7 +1135,7 @@ static void generate_heap_code_methods() {
     }
 
     st_assert( Floats::is_initialized(), "Floats must be initialized" );
-    for ( int i = 0; i < Floats::number_of_functions; i++ ) {
+    for ( int i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
         Floats::Function f = Floats::Function( i );
         generate_float_function_constant_method( f );
     }

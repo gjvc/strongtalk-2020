@@ -49,19 +49,19 @@ static constexpr int max_nof_floats = 256;
 
 
 bool_t     Interpreter::_is_initialized = false;
-const char * Interpreter::_code_begin_addr = nullptr;
-const char * Interpreter::_code_end_addr   = nullptr;
+const char *Interpreter::_code_begin_addr = nullptr;
+const char *Interpreter::_code_end_addr   = nullptr;
 
 int Interpreter::_interpreter_loop_counter       = 0;
 int Interpreter::_interpreter_loop_counter_limit = 0;
 
 
-bool_t Interpreter::contains( const char * pc ) {
+bool_t Interpreter::contains( const char *pc ) {
     return ( _code_begin_addr <= pc and pc < _code_end_addr ) or ( pc == StubRoutines::single_step_continuation() );
 }
 
 //extern "C" const char * InterpreterCodeStatus() { return "\x01\x00\x00\x00\x00\x00"; }
-extern "C" const char * InterpreterCodeStatus() {
+extern "C" const char *InterpreterCodeStatus() {
     return "\x00\x01\x01\x01\x01\x01";
 }
 
@@ -158,7 +158,7 @@ extern "C" void inline_cache_miss() {
 
 
 extern "C" void verifyPIC( Oop pic ) {
-    if ( not Universe::is_heap( ( Oop * ) pic ) ) st_fatal( "pic should be in heap" );
+    if ( not Universe::is_heap( (Oop *) pic ) ) st_fatal( "pic should be in heap" );
     if ( not pic->is_objArray() ) st_fatal( "pic should be an objArray" );
     int length = ObjectArrayOop( pic )->length();
     if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) st_fatal( "pic has wrong length field" );
@@ -173,18 +173,18 @@ void Interpreter::trace_bytecode() {
         if ( TraceInterpreterFramesAt < NumberOfBytecodesExecuted ) {
             Frame f = DeltaProcess::active()->last_frame();
             lprintf( "Frame: fp = %#lx, sp = %#lx]\n", f.fp(), f.sp() );
-            for ( Oop  * p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
+            for ( Oop  *p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
                 lprintf( "\t[%#lx]: ", p );
                 ( *p )->print_value();
                 lprintf( "\n" );
             }
-            uint8_t    * ip   = DeltaProcess::active()->last_frame().hp();
-            const char * name = ByteCodes::name( ( ByteCodes::Code ) *ip );
+            uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
+            const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
             _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
-        uint8_t    * ip   = DeltaProcess::active()->last_frame().hp();
-        const char * name = ByteCodes::name( ( ByteCodes::Code ) *ip );
+        uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
+        const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
         _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
     }
 }
@@ -223,21 +223,21 @@ void Interpreter::wrong_primitive_result() {
 DoubleOop Interpreter::oopify_FloatValue() {
     // Called from float_oopify. Get the float argument by inspecting the stack and the argument of the Floats::oopify operation.
     Frame f = DeltaProcess::active()->last_frame();
-    st_assert( *( f.hp() - 3 ) == static_cast<int>(ByteCodes::Code::float_unary_op_to_oop) and *( f.hp() - 1 ) == Floats::oopify, "not called by Floats::oopify" );
+    st_assert( *( f.hp() - 3 ) == static_cast<int>(ByteCodes::Code::float_unary_op_to_oop) and *( f.hp() - 1 ) == static_cast<int>( Floats::Function::oopify ), "not called by Floats::oopify" );
     int float_index = *( f.hp() - 2 );
     st_assert( 0 <= float_index and float_index < max_nof_floats, "illegal float index" );
-    double * float_address = ( double * ) ( ( const char * ) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT ) + float_index * SIZEOF_FLOAT );
+    double *float_address = (double *) ( (const char *) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT ) + float_index * SIZEOF_FLOAT );
     return oopFactory::new_double( *float_address );
 }
 
 
-int * Interpreter::_invocation_counter_addr = nullptr;
+int *Interpreter::_invocation_counter_addr = nullptr;
 
 
 void Interpreter::set_invocation_counter_limit( int new_limit ) {
     st_assert( _invocation_counter_addr not_eq nullptr, "invocation counter address unknown" );
     st_assert( 0 <= new_limit and new_limit <= MethodOopDescriptor::_invocation_count_max, "illegal counter limit" );
-    st_assert( *( ( uint8_t * ) _invocation_counter_addr - 2 ) == 0x81, "not a cmp edx, imm32 instruction anymore?" )
+    st_assert( *( (uint8_t *) _invocation_counter_addr - 2 ) == 0x81, "not a cmp edx, imm32 instruction anymore?" )
     *_invocation_counter_addr = new_limit << MethodOopDescriptor::_invocation_count_offset;
 }
 
@@ -248,16 +248,16 @@ int Interpreter::get_invocation_counter_limit() {
 }
 
 
-static int * loop_counter_addr() {
+static int *loop_counter_addr() {
     return nullptr;
 }
 
 
-static int * loop_counter_limit_addr();
+static int *loop_counter_limit_addr();
 
 // entry points accessors
 
-const char * Interpreter::access( const char * entry_point ) {
+const char *Interpreter::access( const char *entry_point ) {
     st_assert( entry_point, "code not generated yet" );
     return entry_point;
 }
@@ -269,107 +269,107 @@ extern "C" void redo_bytecode_after_deoptimization();
 extern "C" void illegal();
 
 
-const char * Interpreter::redo_send_entry() {
+const char *Interpreter::redo_send_entry() {
     return access( _redo_send_entry );
 }
 
 
 //char* Interpreter::restart_primitiveValue() 			{ return access((char*)::restart_primitiveValue); }
 
-const char * Interpreter::nlr_single_step_continuation_entry() {
+const char *Interpreter::nlr_single_step_continuation_entry() {
     return access( Interpreter::_nlr_single_step_continuation_entry );
 }
 
 //char* Interpreter::redo_bytecode_after_deoptimization()		{ return access((char*)::redo_bytecode_after_deoptimization); }
 //char* Interpreter::illegal()					{ return access((char*)::illegal); }
 
-const char * Interpreter::restart_primitiveValue() {
+const char *Interpreter::restart_primitiveValue() {
     return access( _restart_primitiveValue );
 }
 
 
-Label & Interpreter::nlr_single_step_continuation() {
+Label &Interpreter::nlr_single_step_continuation() {
     st_assert( _nlr_single_step_continuation.is_bound(), "code not generated yet" );
     return _nlr_single_step_continuation;
 }
 
 
-const char * Interpreter::redo_bytecode_after_deoptimization() {
+const char *Interpreter::redo_bytecode_after_deoptimization() {
     return access( _redo_bytecode_after_deoptimization );
 }
 
 
-const char * Interpreter::illegal() {
+const char *Interpreter::illegal() {
     return access( _illegal );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_without_receiver() {
+const char *Interpreter::deoptimized_return_from_send_without_receiver() {
     return access( _dr_from_send_without_receiver );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_without_receiver_restore() {
+const char *Interpreter::deoptimized_return_from_send_without_receiver_restore() {
     return access( _dr_from_send_without_receiver_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_without_receiver_pop() {
+const char *Interpreter::deoptimized_return_from_send_without_receiver_pop() {
     return access( _dr_from_send_without_receiver_pop );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_without_receiver_pop_restore() {
+const char *Interpreter::deoptimized_return_from_send_without_receiver_pop_restore() {
     return access( _dr_from_send_without_receiver_pop_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_with_receiver() {
+const char *Interpreter::deoptimized_return_from_send_with_receiver() {
     return access( _dr_from_send_with_receiver );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_with_receiver_restore() {
+const char *Interpreter::deoptimized_return_from_send_with_receiver_restore() {
     return access( _dr_from_send_with_receiver_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_with_receiver_pop() {
+const char *Interpreter::deoptimized_return_from_send_with_receiver_pop() {
     return access( _dr_from_send_with_receiver_pop );
 }
 
 
-const char * Interpreter::deoptimized_return_from_send_with_receiver_pop_restore() {
+const char *Interpreter::deoptimized_return_from_send_with_receiver_pop_restore() {
     return access( _dr_from_send_with_receiver_pop_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_primitive_call_without_failure_block() {
+const char *Interpreter::deoptimized_return_from_primitive_call_without_failure_block() {
     return access( _dr_from_primitive_call_without_failure_block );
 }
 
 
-const char * Interpreter::deoptimized_return_from_primitive_call_without_failure_block_restore() {
+const char *Interpreter::deoptimized_return_from_primitive_call_without_failure_block_restore() {
     return access( _dr_from_primitive_call_without_failure_block_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_primitive_call_with_failure_block() {
+const char *Interpreter::deoptimized_return_from_primitive_call_with_failure_block() {
     return access( _dr_from_primitive_call_with_failure_block );
 }
 
 
-const char * Interpreter::deoptimized_return_from_primitive_call_with_failure_block_restore() {
+const char *Interpreter::deoptimized_return_from_primitive_call_with_failure_block_restore() {
     return access( _dr_from_primitive_call_with_failure_block_restore );
 }
 
 
-const char * Interpreter::deoptimized_return_from_dll_call() {
+const char *Interpreter::deoptimized_return_from_dll_call() {
     return access( _dr_from_dll_call );
 }
 
 
-const char * Interpreter::deoptimized_return_from_dll_call_restore() {
+const char *Interpreter::deoptimized_return_from_dll_call_restore() {
     return access( _dr_from_dll_call_restore );
 }
 

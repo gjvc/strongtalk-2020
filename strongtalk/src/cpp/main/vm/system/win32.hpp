@@ -27,6 +27,8 @@
 #include <vector>
 #include <windows.h>
 
+LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
+
 const auto STACK_SIZE = ThreadStackSize * 1024;
 
 typedef struct _thread_start {
