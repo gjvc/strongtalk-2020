@@ -613,16 +613,16 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->pop();
                 break;
             case ByteCodes::Code::push_new_closure_context_0:
-                blk->allocate_closure( context_as_scope, 0, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::context_as_scope, 0, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_context_1:
-                blk->allocate_closure( context_as_scope, 1, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::context_as_scope, 1, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_context_2:
-                blk->allocate_closure( context_as_scope, 2, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::context_as_scope, 2, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_context_n:
-                blk->allocate_closure( context_as_scope, iter.byte_at( 1 ), MethodOop( iter.oop_at( 2 ) ) );
+                blk->allocate_closure( AllocationType::context_as_scope, iter.byte_at( 1 ), MethodOop( iter.oop_at( 2 ) ) );
                 break;
             case ByteCodes::Code::install_new_context_method_0:
                 blk->allocate_context( 0, true );
@@ -665,16 +665,16 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->pop();
                 break;
             case ByteCodes::Code::push_new_closure_tos_0:
-                blk->allocate_closure( tos_as_scope, 0, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::tos_as_scope, 0, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_tos_1:
-                blk->allocate_closure( tos_as_scope, 1, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::tos_as_scope, 1, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_tos_2:
-                blk->allocate_closure( tos_as_scope, 2, MethodOop( iter.oop_at( 1 ) ) );
+                blk->allocate_closure( AllocationType::tos_as_scope, 2, MethodOop( iter.oop_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_new_closure_tos_n:
-                blk->allocate_closure( tos_as_scope, iter.byte_at( 1 ), MethodOop( iter.oop_at( 2 ) ) );
+                blk->allocate_closure( AllocationType::tos_as_scope, iter.byte_at( 1 ), MethodOop( iter.oop_at( 2 ) ) );
                 break;
             case ByteCodes::Code::only_pop:
                 blk->pop();

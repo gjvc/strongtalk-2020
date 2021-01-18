@@ -334,10 +334,10 @@ void MethodPrinterClosure::allocate_closure( AllocationType type, int nofArgs, M
     indent();
     _outputStream->print( "allocate closure" );
     switch ( type ) {
-        case tos_as_scope:
+        case AllocationType::tos_as_scope:
             _outputStream->print( "{tos}" );
             break;
-        case context_as_scope:
+        case AllocationType::context_as_scope:
             _outputStream->print( "{context}" );
             break;
     }

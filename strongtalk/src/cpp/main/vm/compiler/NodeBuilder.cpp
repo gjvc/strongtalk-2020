@@ -1042,7 +1042,7 @@ nextExpression:;
 
 void NodeBuilder::allocate_closure( AllocationType type, int nofArgs, MethodOop method ) {
     PseudoRegister * context;
-    if ( type == tos_as_scope ) {
+    if ( type == AllocationType::tos_as_scope ) {
         context = exprStack()->pop()->preg();
     } else {
         context = _scope->context();

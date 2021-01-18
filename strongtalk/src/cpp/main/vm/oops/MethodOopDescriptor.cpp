@@ -749,7 +749,7 @@ class ExpressionStackMapper : public MethodClosure {
 
 
         void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
-            if ( type == tos_as_scope )
+            if ( type == AllocationType::tos_as_scope )
                 map_pop();
             map_push();
         }
