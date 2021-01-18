@@ -3,15 +3,27 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+
 #pragma once
 
+#include <iostream>
+#include <string_view>
+#include <experimental/source_location>
+
+
+inline void log( std::string_view message, const std::experimental::source_location &location = std::experimental::source_location::current() ) {
+    std::cout << "info:"
+              << location.file_name() << ':'
+              << location.line() << ' '
+              << message << '\n';
+}
 
 // -----------------------------------------------------------------------------
 
 extern "C" {
-void error( const char * m, ... );               //
-void warning( const char * m, ... );             //
-void compiler_warning( const char * m, ... );    //
+void error( const char *m, ... );               //
+void warning( const char *m, ... );             //
+void compiler_warning( const char *m, ... );    //
 void breakpoint();                               // called at every warning
 void error_breakpoint();                         // called at every error or fatal
 }
@@ -66,21 +78,21 @@ void error_breakpoint();                         // called at every error or fat
 
 // -----------------------------------------------------------------------------
 
-void report_assertion_failure( const char * code_str, const char * file_name, int line_no, const char * message );
+void report_assertion_failure( const char *code_str, const char *file_name, int line_no, const char *message );
 
-void report_fatal( const char * file_name, int line_no, const char * format, ... );
+void report_fatal( const char *file_name, int line_no, const char *format, ... );
 
-void report_should_not_call( const char * file_name, int line_no );
+void report_should_not_call( const char *file_name, int line_no );
 
-void report_should_not_reach_here( const char * file_name, int line_no );
+void report_should_not_reach_here( const char *file_name, int line_no );
 
-void report_subclass_responsibility( const char * file_name, int line_no );
+void report_subclass_responsibility( const char *file_name, int line_no );
 
-void report_unimplemented( const char * file_name, int line_no );
+void report_unimplemented( const char *file_name, int line_no );
 
 void report_vm_state();
 
-void report_error( const char * title, const char * format, ... );
+void report_error( const char *title, const char *format, ... );
 
 
 // -----------------------------------------------------------------------------

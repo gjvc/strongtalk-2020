@@ -197,31 +197,31 @@ SymbolOop PrimitiveDescriptor::selector() const {
 void PrimitiveDescriptor::print() {
     _console->print( "%48s %d %s%s%s%s%s%s%s%s%s", name(), number_of_parameters(), has_receiver() ? "R" : "_", can_fail() ? "F" : "_", can_scavenge() ? "S" : "_", can_walk_stack() ? "W" : "_", can_perform_NonLocalReturn() ? "N" : "_", can_be_constant_folded() ? "C" : "_", can_invoke_delta() ? "D" : "_", is_internal() ? "I" : "_", needs_delta_fp_code() ? "P" : "_" );
     switch ( group() ) {
-        case IntComparisonPrimitive:
+        case PrimitiveGroup::IntComparisonPrimitive:
             _console->print( ", smi_t compare" );
             break;
-        case IntArithmeticPrimitive:
+        case PrimitiveGroup::IntArithmeticPrimitive:
             _console->print( ", smi_t arith" );
             break;
-        case FloatComparisonPrimitive:
+        case PrimitiveGroup::FloatComparisonPrimitive:
             _console->print( ", double compare" );
             break;
-        case FloatArithmeticPrimitive:
+        case PrimitiveGroup::FloatArithmeticPrimitive:
             _console->print( ", double arith" );
             break;
-        case ByteArrayPrimitive:
+        case PrimitiveGroup::ByteArrayPrimitive:
             _console->print( ", byte array op." );
             break;
-        case DoubleByteArrayPrimitive:
+        case PrimitiveGroup::DoubleByteArrayPrimitive:
             _console->print( ", double-byte array op." );
             break;
-        case ObjArrayPrimitive:
+        case PrimitiveGroup::ObjArrayPrimitive:
             _console->print( ", array op." );
             break;
-        case BlockPrimitive:
+        case PrimitiveGroup::BlockPrimitive:
             _console->print( ", block/context" );
             break;
-        case NormalPrimitive:
+        case PrimitiveGroup::NormalPrimitive:
             break;
         default: st_fatal( "Unknown primitive group" );
     }
@@ -296,7 +296,7 @@ void PrimitiveDescriptor::verify() {
         if ( can_perform_NonLocalReturn() )
             error( "canbeConstantFolded implies not canPerformNonLocalReturn" );
     }
-    if ( group() == BlockPrimitive ) {
+    if ( group() == PrimitiveGroup::BlockPrimitive ) {
         if ( not can_walk_stack() )
             error( "blocks must have can_walk_stack" );
     }

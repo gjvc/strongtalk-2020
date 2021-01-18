@@ -9,8 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
-//#include "Space.hpp"
-//#include "Universe.hpp"
+#include "vm/oops/OopDescriptor.hpp"
 
 // A generation is a bunch of spaces of similarly-aged objects
 
@@ -59,21 +58,29 @@ class Generation : ValueObject {
 //    for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
 //}
 
-#define SCAVENGE_TEMPLATE( p ) \
+inline void SCAVENGE_TEMPLATE( const auto & p ) {
     *((Oop*) p) = Oop(*p)->scavenge();
+}
 
-//inline void SCAVENGE_TEMPLATE( const auto p ) {
-//    *((Oop*) p) = Oop(*p)->scavenge();
-//}
+inline void VERIFY_TEMPLATE( const auto & p ) {
+    if (not Oop(*p)->verify()) {
+        lprintf("\tof object at %#lx\n", p);
+    }
+}
 
-#define VERIFY_TEMPLATE( p ) \
-    if (not Oop(*p)->verify()) lprintf("\tof object at %#lx\n", p);
+inline void RELOCATE_TEMPLATE( const auto & p ) {
+    *((Oop*) p) = Oop(*p)->relocate();
+}
+
+
+inline void SPACE_VERIFY_TEMPLATE( const auto & s ) {
+    s->verify();
+}
+
 
 #define SWITCH_POINTERS_TEMPLATE( p ) \
     if ((Oop) *p == (Oop) from) *((Oop*) p) = (Oop) to;
 
-#define RELOCATE_TEMPLATE( p ) \
-    *((Oop*) p) = Oop(*p)->relocate();
 
 #define APPLY_TO_YOUNG_SPACES( t ) \
     t( new_gen.eden() ) \
@@ -83,12 +90,6 @@ class Generation : ValueObject {
 #define APPLY_TO_OLD_SPACES( t ) \
     { FOR_EACH_OLD_SPACE(s) { t(s); } }
 
-
-//#define SPACE_VERIFY_TEMPLATE( s ) \
-//    s->verify();
-inline void SPACE_VERIFY_TEMPLATE( auto & s ) {
-    s->verify();
-}
 
 
 // ------------------------------------------------------------------------------

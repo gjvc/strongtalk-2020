@@ -182,7 +182,7 @@ NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, const char 
 void NativeMethodScopes::verify() {
     // Verify all oops
     FOR_EACH_OOPADDR( addr ) {
-        VERIFY_TEMPLATE( addr )
+        VERIFY_TEMPLATE( addr );
     }
 
     // Verify all scopedesc
