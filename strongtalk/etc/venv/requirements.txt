@@ -7,7 +7,7 @@
 # etc/venv/requirement.txt ----------------------------------------------------
 
 colander==0.9.9
-Flask==0.10.1
+Flask==1.0
 iso8601==0.1.8
 itsdangerous==1.1.0
 Jinja2==2.11.2
