@@ -531,7 +531,7 @@ extern "C" void set_stack_overflow_for( DeltaProcess * currentProcess );
 extern "C" void suspend_on_NonLocalReturn_error();
 
 
-enum InterpreterErrorConstants {
+enum class InterpreterErrorConstants {
     start_of_runtime_system_errors = 512,                                   //
     primitive_lookup_failed        = 1 + start_of_runtime_system_errors,    //
     boolean_expected               = 2 + start_of_runtime_system_errors,    //

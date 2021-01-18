@@ -1610,35 +1610,35 @@ extern "C" void suspend_on_error( InterpreterErrorConstants error_code ) {
 
     // Real errors
     switch ( error_code ) {
-        case primitive_lookup_failed:
+        case InterpreterErrorConstants::primitive_lookup_failed:
             handle_error( ProcessState::primitive_lookup_error );
-        case boolean_expected:
+        case InterpreterErrorConstants::boolean_expected:
             handle_error( ProcessState::boolean_error );
-        case nonlocal_return_error:
+        case InterpreterErrorConstants::nonlocal_return_error:
             handle_error( ProcessState::NonLocalReturn_error );
-        case float_expected:
+        case InterpreterErrorConstants::float_expected:
             handle_error( ProcessState::float_error );
     }
 
     // Interpreter errors
     switch ( error_code ) {
-        case halted:
+        case InterpreterErrorConstants::halted:
             handle_interpreter_error( "executed halt bytecode" );
-        case illegal_code:
+        case InterpreterErrorConstants::illegal_code:
             handle_interpreter_error( "illegal code" );
-        case not_implemented:
+        case InterpreterErrorConstants::not_implemented:
             handle_interpreter_error( "not implemented" );
-        case stack_missaligned:
+        case InterpreterErrorConstants::stack_missaligned:
             handle_interpreter_error( "stack misaligned" );
-        case ebx_wrong:
+        case InterpreterErrorConstants::ebx_wrong:
             handle_interpreter_error( "ebx wrong" );
-        case obj_wrong:
+        case InterpreterErrorConstants::obj_wrong:
             handle_interpreter_error( "obj wrong" );
-        case nlr_offset_wrong:
+        case InterpreterErrorConstants::nlr_offset_wrong:
             handle_interpreter_error( "NonLocalReturn offset wrong" );
-        case last_Delta_fp_wrong:
+        case InterpreterErrorConstants::last_Delta_fp_wrong:
             handle_interpreter_error( "last Delta frame wrong" );
-        case primitive_result_wrong:
+        case InterpreterErrorConstants::primitive_result_wrong:
             handle_interpreter_error( "ilast C entry frame wrong" );
     }
     ShouldNotReachHere();
