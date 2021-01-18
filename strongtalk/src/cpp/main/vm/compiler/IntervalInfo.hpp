@@ -20,27 +20,27 @@
 
 class IntervalInfo : public PrintableResourceObject {
 
-    private:
-        MethodInterval * _interval;      // my interval
-        InlinedScope   * _scope;         // my scope
+private:
+    MethodInterval *_interval;      // my interval
+    InlinedScope   *_scope;         // my scope
 
-    public:
-        IntervalInfo( MethodInterval * interval, InlinedScope * scope );
-
-
-        MethodInterval * interval() const {
-            return _interval;
-        }
+public:
+    IntervalInfo( MethodInterval *interval, InlinedScope *scope );
 
 
-        InlinedScope * scope() const {
-            return _scope;
-        }
+    MethodInterval *interval() const {
+        return _interval;
+    }
 
 
-        bool_t dominates( int byteCodeIndex, IntervalInfo * other, int otherByteCodeIndex ) const; // does bytecode (receiver, byteCodeIndex) dominate (other, otherByteCodeIndex)?
-        bool_t isParentOf( IntervalInfo * other ) const; // is receiver a parent of other?
+    InlinedScope *scope() const {
+        return _scope;
+    }
 
-        void print();
+
+    bool_t dominates( int byteCodeIndex, IntervalInfo *other, int otherByteCodeIndex ) const; // does bytecode (receiver, byteCodeIndex) dominate (other, otherByteCodeIndex)?
+    bool_t isParentOf( IntervalInfo *other ) const; // is receiver a parent of other?
+
+    void print();
 
 };

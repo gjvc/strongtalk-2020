@@ -14,30 +14,30 @@
 
 class DebugInfo : public ValueObject {
 
-    private:
-        void (* _interceptorEntryPoint)( int * );     // entry point of the dispatch table entry point
-        int * _frameBreakpoint;                       // pointer to the target frame for stepping, if any
+private:
+    void (*_interceptorEntryPoint)( int * );     // entry point of the dispatch table entry point
+    int *_frameBreakpoint;                       // pointer to the target frame for stepping, if any
 
-    public:
-        DebugInfo() :
+public:
+    DebugInfo() :
             _interceptorEntryPoint( nullptr ), _frameBreakpoint( nullptr ) {
-        }
+    }
 
 
-        void interceptForStep();
+    void interceptForStep();
 
-        void interceptForNext( int * fr );
+    void interceptForNext( int *fr );
 
-        void interceptForReturn( int * fr );
+    void interceptForReturn( int *fr );
 
-        void apply();
+    void apply();
 
-        void reset();
+    void reset();
 
 
-        void resetInterceptor() {
-            _interceptorEntryPoint = nullptr; // TODO: should we use breakpoint() or similar?
-            _frameBreakpoint       = nullptr;
-        }
+    void resetInterceptor() {
+        _interceptorEntryPoint = nullptr; // TODO: should we use breakpoint() or similar?
+        _frameBreakpoint       = nullptr;
+    }
 
 };

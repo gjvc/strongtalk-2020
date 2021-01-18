@@ -67,7 +67,7 @@ Klass::Format Klass::format_from_symbol( SymbolOop format ) {
 }
 
 
-const char * Klass::name_from_format( Format format ) {
+const char *Klass::name_from_format( Format format ) {
     switch ( format ) {
         case Format::mem_klass:
             return "Oops";
@@ -122,7 +122,7 @@ bool_t Klass::has_same_inst_vars_as( KlassOop klass ) {
     if ( as_klassOop() == klass )
         return true;
 
-    Klass * classPart = klass->klass_part();
+    Klass *classPart = klass->klass_part();
     // Check instance size
     int ivars      = number_of_instance_variables();
     int classIvars = classPart->number_of_instance_variables();
@@ -169,7 +169,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 
     // Meta class
     KlassOop meta_klass = KlassOop( metaMetaClass->klass_part()->allocateObject() );
-    Klass * mk = meta_klass->klass_part();
+    Klass *mk = meta_klass->klass_part();
     mk->set_untagged_contents( false );
     mk->set_classVars( class_vars );
     mk->set_methods( oopFactory::new_objArray( 0 ) );
@@ -179,7 +179,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     setKlassVirtualTableFromKlassKlass( mk );
 
     KlassOop klass = KlassOop( mk->allocateObject() );
-    Klass * k = klass->klass_part();
+    Klass *k = klass->klass_part();
 
     k->set_untagged_contents( false );
     k->set_classVars( class_vars );
@@ -199,7 +199,7 @@ KlassOop Klass::create_generic_class( KlassOop super_class, MixinOop mixin, int 
 
 
 SymbolOop Klass::inst_var_name_at( int offset ) const {
-    Klass * current_klass = ( Klass * ) this;
+    Klass *current_klass = (Klass *) this;
     int current_offset = non_indexable_size();
     do {
         MixinOop  m = current_klass->mixin();
@@ -332,7 +332,7 @@ AssociationOop Klass::lookup_class_var( SymbolOop name ) {
 MethodOop Klass::local_lookup( SymbolOop selector ) {
     ObjectArrayOop array;
     int            length;
-    Oop * current;
+    Oop *current;
 
     // Find out if there is a customized method matching the selector.
     array  = methods();
@@ -379,7 +379,7 @@ MethodOop Klass::local_lookup( SymbolOop selector ) {
 
 
 MethodOop Klass::lookup( SymbolOop selector ) {
-    Klass * current = this;
+    Klass *current = this;
     while ( true ) {
         MethodOop result = current->local_lookup( selector );
         if ( result )
@@ -455,7 +455,7 @@ void Klass::print_klass() {
 }
 
 
-char * Klass::delta_name() {
+char *Klass::delta_name() {
     bool_t    meta   = false;
     int       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
     SymbolOop name   = nullptr;
@@ -473,7 +473,7 @@ char * Klass::delta_name() {
     }
 
     int length = name->length() + ( meta ? 7 : 1 );
-    char * toReturn = new_resource_array <char>( length );
+    char *toReturn = new_resource_array<char>( length );
     strncpy( toReturn, name->chars(), name->length() );
 
     if ( meta )
@@ -484,7 +484,7 @@ char * Klass::delta_name() {
 }
 
 
-void Klass::print_name_on( ConsoleOutputStream * stream ) {
+void Klass::print_name_on( ConsoleOutputStream *stream ) {
     int       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
     SymbolOop name   = nullptr;
 
@@ -527,27 +527,27 @@ void Klass::oop_follow_contents( Oop obj ) {
 }
 
 
-void Klass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void Klass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     st_fatal( "should not call layout_iterate on Klass" );
 }
 
 
-void Klass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void Klass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     st_fatal( "should not call oop_iterate on Klass" );
 }
 
 
-void Klass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void Klass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     st_fatal( "should not call Klass::oop_print_on" );
 }
 
 
-void Klass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void Klass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     oop_print_on( obj, stream );
 }
 
 
-void Klass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void Klass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
     if ( obj == trueObj ) {
         stream->print( "true" );
     } else if ( obj == falseObj ) {
@@ -566,13 +566,13 @@ bool_t Klass::oop_verify( Oop obj ) {
 }
 
 
-void Klass::bootstrap_klass_part_one( Bootstrap * stream ) {
+void Klass::bootstrap_klass_part_one( Bootstrap *stream ) {
     stream->read_oop( reinterpret_cast<Oop *>(&_non_indexable_size) );
     stream->read_oop( reinterpret_cast<Oop *>(&_has_untagged_contents) );
 }
 
 
-void Klass::bootstrap_klass_part_two( Bootstrap * stream ) {
+void Klass::bootstrap_klass_part_two( Bootstrap *stream ) {
     stream->read_oop( reinterpret_cast<Oop *>(&_classVars) );
     stream->read_oop( reinterpret_cast<Oop *>(&_methods) );
     stream->read_oop( reinterpret_cast<Oop *>(&_superKlass) );

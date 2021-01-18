@@ -16,53 +16,53 @@
 
 class RegisterAllocator : public ResourceObject {
 
-    private:
-        IntFreeList * _stackLocs;
+private:
+    IntFreeList *_stackLocs;
 
-    public:
-        RegisterAllocator();
+public:
+    RegisterAllocator();
 
-        void preAllocate( PseudoRegister * r );
+    void preAllocate( PseudoRegister *r );
 
-        void allocate( GrowableArray <PseudoRegister *> * globals );
+    void allocate( GrowableArray<PseudoRegister *> *globals );
 
-        bool_t allocateConst( ConstPseudoRegister * r, Location preferred = unAllocated );
+    bool_t allocateConst( ConstPseudoRegister *r, Location preferred = unAllocated );
 
 
-        int nofStackTemps() {
-            return _stackLocs->length();
-        }
+    int nofStackTemps() {
+        return _stackLocs->length();
+    }
 };
 
 
-extern RegisterAllocator * theAllocator;
+extern RegisterAllocator *theAllocator;
 
 
 // helper structure for local register allocation
 class RegCandidate : public ResourceObject {
 
-    public:
-        PseudoRegister * _pseudoRegister;    // PseudoRegister to be allocated
-        Location _location;           // possible location for it
-        int      _ndefs;              // required # definitions of loc
+public:
+    PseudoRegister *_pseudoRegister;    // PseudoRegister to be allocated
+    Location _location;           // possible location for it
+    int      _ndefs;              // required # definitions of loc
 
-    public:
-        RegCandidate( PseudoRegister * reg, Location l, int n ) {
-            _pseudoRegister = reg;
-            _location       = l;
-            _ndefs          = n;
-        }
+public:
+    RegCandidate( PseudoRegister *reg, Location l, int n ) {
+        _pseudoRegister = reg;
+        _location       = l;
+        _ndefs          = n;
+    }
 };
 
 class RegisterEqClass : public ResourceObject {
 
-    public:
-        // holds PseudoRegisters belonging to equivalence class
-        // PseudoRegisters are linked through regClassLink
-        PseudoRegister * first;
-        PseudoRegister * last;
+public:
+    // holds PseudoRegisters belonging to equivalence class
+    // PseudoRegisters are linked through regClassLink
+    PseudoRegister *first;
+    PseudoRegister *last;
 
-        RegisterEqClass( PseudoRegister * f );
+    RegisterEqClass( PseudoRegister *f );
 
-        void append( PseudoRegister * other );
+    void append( PseudoRegister *other );
 };

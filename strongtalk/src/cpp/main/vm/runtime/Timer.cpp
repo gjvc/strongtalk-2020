@@ -55,7 +55,7 @@ void ElapsedTimer::print() {
 
 
 TimeStamp::TimeStamp() :
-    counter( 0, 0 ) {
+        counter( 0, 0 ) {
 }
 
 
@@ -72,7 +72,7 @@ double TimeStamp::seconds() {
 }
 
 
-TraceTime::TraceTime( const char * title, bool_t doit ) {
+TraceTime::TraceTime( const char *title, bool_t doit ) {
     active = doit;
     if ( active ) {
         _console->print( "[%s", title );

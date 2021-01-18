@@ -17,66 +17,66 @@ extern LookupResult interpreter_super_lookup( SymbolOop selector );
 
 class LookupCache : AllStatic {
 
-    private:
-        static int primary_cache_address();
+private:
+    static int primary_cache_address();
 
-        static int secondary_cache_address();
+    static int secondary_cache_address();
 
-        static std::uint32_t hash_value( LookupKey * key );
+    static std::uint32_t hash_value( LookupKey *key );
 
-        static int number_of_primary_hits;
-        static int number_of_secondary_hits;
-        static int number_of_misses;
+    static int number_of_primary_hits;
+    static int number_of_secondary_hits;
+    static int number_of_misses;
 
-        static LookupResult ic_lookup( KlassOop receiver_klass, Oop selector_or_method );
+    static LookupResult ic_lookup( KlassOop receiver_klass, Oop selector_or_method );
 
-        static LookupResult lookup( LookupKey * key, bool_t compile );
+    static LookupResult lookup( LookupKey *key, bool_t compile );
 
-        static LookupResult cache_miss_lookup( LookupKey * key, bool_t compile );
+    static LookupResult cache_miss_lookup( LookupKey *key, bool_t compile );
 
-        static NativeMethod * compile_method( LookupKey * key, MethodOop method );
+    static NativeMethod *compile_method( LookupKey *key, MethodOop method );
 
-    public:
-        // Lookup probe into the lookup cache
-        static LookupResult lookup_probe( LookupKey * key );
+public:
+    // Lookup probe into the lookup cache
+    static LookupResult lookup_probe( LookupKey *key );
 
-        // Lookup support for inline cache (returns methodOop or jump_table_entry).
-        static LookupResult ic_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
+    // Lookup support for inline cache (returns methodOop or jump_table_entry).
+    static LookupResult ic_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
 
-        static LookupResult ic_super_lookup( KlassOop receiver_klass, KlassOop sending_method_holder, SymbolOop selector );
+    static LookupResult ic_super_lookup( KlassOop receiver_klass, KlassOop sending_method_holder, SymbolOop selector );
 
-        // Lookup support for interpreter  (returns methodOop or jump_table_entry).
-        friend LookupResult interpreter_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
+    // Lookup support for interpreter  (returns methodOop or jump_table_entry).
+    friend LookupResult interpreter_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
 
-        friend LookupResult interpreter_super_lookup( SymbolOop selector );
+    friend LookupResult interpreter_super_lookup( SymbolOop selector );
 
-        // Lookup support for compiler
-        static MethodOop method_lookup( KlassOop receiver_klass, SymbolOop selector );
+    // Lookup support for compiler
+    static MethodOop method_lookup( KlassOop receiver_klass, SymbolOop selector );
 
-        static MethodOop compile_time_normal_lookup( KlassOop receiver_klass, SymbolOop selector );    // returns nullptr if not found
-        static MethodOop compile_time_super_lookup( KlassOop receiver_klass, SymbolOop selector );    // returns nullptr if not found
+    static MethodOop compile_time_normal_lookup( KlassOop receiver_klass, SymbolOop selector );    // returns nullptr if not found
+    static MethodOop compile_time_super_lookup( KlassOop receiver_klass, SymbolOop selector );    // returns nullptr if not found
 
-        // Lookup support for LookupKey
-        static LookupResult lookup( LookupKey * key );
+    // Lookup support for LookupKey
+    static LookupResult lookup( LookupKey *key );
 
-        // Lookup support for megamorphic sends (no super sends)
-        static Oop normal_lookup( KlassOop receiver_klass, SymbolOop selector );            // returns {methodOop or jump table entry}
+    // Lookup support for megamorphic sends (no super sends)
+    static Oop normal_lookup( KlassOop receiver_klass, SymbolOop selector );            // returns {methodOop or jump table entry}
 
-        // Flushing
-        static void flush( LookupKey * key );
+    // Flushing
+    static void flush( LookupKey *key );
 
-        static void flush();
+    static void flush();
 
-        // Clear all entries in the cache.
-        static void verify();
+    // Clear all entries in the cache.
+    static void verify();
 
-        static void clear_statistics();
+    static void clear_statistics();
 
-        static void print_statistics();
+    static void print_statistics();
 
-        friend class InterpreterGenerator;
+    friend class InterpreterGenerator;
 
-        friend class StubRoutines;
+    friend class StubRoutines;
 
-        friend class debugPrimitives;
+    friend class debugPrimitives;
 };

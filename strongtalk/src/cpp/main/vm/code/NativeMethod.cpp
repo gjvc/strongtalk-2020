@@ -25,7 +25,7 @@
 
 void NativeMethodFlags::clear() {
     st_assert( sizeof( NativeMethodFlags ) == sizeof( int ), "using more than one word for NativeMethodFlags" );
-    *( int * ) this = 0;
+    *(int *) this = 0;
 }
 
 
@@ -35,7 +35,7 @@ static int scope_length;
 static int nof_noninlined_blocks;
 
 
-NativeMethod * new_nativeMethod( Compiler * c ) {
+NativeMethod *new_nativeMethod( Compiler *c ) {
 
     // This grossness is brought to you by the great way in which C++ handles non-standard allocation...
     instruction_length    = roundTo( c->code()->code_size(), oopSize );
@@ -43,7 +43,7 @@ NativeMethod * new_nativeMethod( Compiler * c ) {
     scope_length          = roundTo( c->scopeDescRecorder()->size(), oopSize );
     nof_noninlined_blocks = c->number_of_noninlined_blocks();
 
-    NativeMethod * nm = new NativeMethod( c );
+    NativeMethod *nm = new NativeMethod( c );
     if ( c->is_method_compile() ) {
         Universe::code->addToCodeTable( nm );
     }
@@ -52,16 +52,16 @@ NativeMethod * new_nativeMethod( Compiler * c ) {
 }
 
 
-void * NativeMethod::operator new( std::size_t size ) {
+void *NativeMethod::operator new( std::size_t size ) {
     st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
     int nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), oopSize );
-    void * p = Universe::code->allocate( nativeMethod_size );
+    void *p = Universe::code->allocate( nativeMethod_size );
     if ( not p ) st_fatal( "out of Space in code cache" );
     return p;
 }
 
 
-void NativeMethod::initForTesting( int size, LookupKey * key ) {
+void NativeMethod::initForTesting( int size, LookupKey *key ) {
     this->_lookupKey.initialize( key->klass(), key->selector_or_method() );
 
     _instructionsLength       = size - ( sizeof( NativeMethod ) );
@@ -85,8 +85,8 @@ void NativeMethod::initForTesting( int size, LookupKey * key ) {
 }
 
 
-NativeMethod::NativeMethod( Compiler * c ) :
-    _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
+NativeMethod::NativeMethod( Compiler *c ) :
+        _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
 
     LookupCache::verify();
 
@@ -159,7 +159,7 @@ NativeMethod::NativeMethod( Compiler * c ) :
             Universe::code->jump_table()->at( _promotedId )->set_destination( entryPoint() );
         }
     }
-    if ( this == ( NativeMethod * ) catchThisOne )
+    if ( this == (NativeMethod *) catchThisOne )
         warning( "caught NativeMethod" );
 
     // turned off because they're very slow  -Urs 4/96
@@ -169,7 +169,7 @@ NativeMethod::NativeMethod( Compiler * c ) :
 }
 
 
-NativeMethod * NativeMethod::parent() {
+NativeMethod *NativeMethod::parent() {
     if ( is_block() ) {
         int index = 0;
         return Universe::code->jump_table()->at( _mainId )->parent_nativeMethod( index );
@@ -178,8 +178,8 @@ NativeMethod * NativeMethod::parent() {
 }
 
 
-NativeMethod * NativeMethod::outermost() {
-    NativeMethod * p = parent();
+NativeMethod *NativeMethod::outermost() {
+    NativeMethod *p = parent();
     if ( p == nullptr )
         return this;
     return p->outermost();
@@ -192,7 +192,7 @@ int NativeMethod::level() const {
 }
 
 
-JumpTableEntry * NativeMethod::jump_table_entry() const {
+JumpTableEntry *NativeMethod::jump_table_entry() const {
     return Universe::code->jump_table()->at( _mainId );
 }
 
@@ -203,8 +203,8 @@ void NativeMethod::setVersion( int v ) {
 }
 
 
-ScopeDescriptor * NativeMethod::containingScopeDesc( const char * pc ) const {
-    ProgramCounterDescriptor * pcd = containingProgramCounterDescriptor( pc );
+ScopeDescriptor *NativeMethod::containingScopeDesc( const char *pc ) const {
+    ProgramCounterDescriptor *pcd = containingProgramCounterDescriptor( pc );
     if ( not pcd )
         return nullptr;
     return pcd->containingDesc( this );
@@ -254,7 +254,7 @@ KlassOop NativeMethod::receiver_klass() const {
 }
 
 
-void NativeMethod::moveTo( void * p, int size ) {
+void NativeMethod::moveTo( void *p, int size ) {
 #ifdef NOT_IMPLEMENTED
     NativeMethod* to = (NativeMethod*)p;
     if (this == to) return;
@@ -325,7 +325,7 @@ void NativeMethod::makeOld() {
 }
 
 
-void NativeMethod::forwardLinkedSends( NativeMethod * to ) {
+void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
     // the to NativeMethod is about to replace the receiver; replace receiver in all inline caches
     Unimplemented();
 }
@@ -361,7 +361,7 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
 
     // overwrite call to recompiler by call to zombie handler
     LOG_EVENT2( "%s NativeMethod 0x%x becomes zombie", ( is_method() ? "normal" : "block" ), this );
-    NativeCall * call = nativeCall_at( specialHandlerCall() );
+    NativeCall *call = nativeCall_at( specialHandlerCall() );
 
     // Fix this:
     //   CODE NEEDED UNTIL Lars IMPLEMENTS CORRECT DEOPTIMIZATION FOR BLOCK NMETHODS
@@ -380,8 +380,8 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
     // call (note that this code can be savely overwritten, since there's no
     // relocation info nor oops associated with it).
 
-    const char * enter = "\x55\x8b\xec";
-    char       * p     = verifiedEntryPoint();
+    const char *enter = "\x55\x8b\xec";
+    char       *p     = verifiedEntryPoint();
     guarantee( p[ 0 ] == enter[ 0 ] and p[ 1 ] == enter[ 1 ] and p[ 2 ] == enter[ 2 ], "not \"push ebp, mov ebp esp\" - check this" );
 
     // overwrite with "nop, jmp specialHandlerCall" (nop first so it can be replaced by int3 for debugging)
@@ -397,8 +397,8 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
         _console->print_cr( "%s NativeMethod 0x%x becomes zombie", ( is_method() ? "normal" : "block" ), this );
         if ( WizardMode ) {
             _console->print_cr( "entry code sequence:" );
-            char * beg = ( char * ) min( int( specialHandlerCall() ), int( entryPoint() ), int( verifiedEntryPoint() ) );
-            char * end = ( char * ) max( int( specialHandlerCall() ), int( entryPoint() ), int( verifiedEntryPoint() ) );
+            char *beg = (char *) min( int( specialHandlerCall() ), int( entryPoint() ), int( verifiedEntryPoint() ) );
+            char *end = (char *) max( int( specialHandlerCall() ), int( entryPoint() ), int( verifiedEntryPoint() ) );
             Disassembler::decode( beg, end + 10 );
         }
     }
@@ -440,7 +440,7 @@ void NativeMethod::validate_noninlined_block_scope_index( int index ) const {
 }
 
 
-NonInlinedBlockScopeDescriptor * NativeMethod::noninlined_block_scope_at( int noninlined_block_index ) const {
+NonInlinedBlockScopeDescriptor *NativeMethod::noninlined_block_scope_at( int noninlined_block_index ) const {
     validate_noninlined_block_scope_index( noninlined_block_index );
     int offset = noninlined_block_offsets()[ noninlined_block_index - 1 ];
     return scopes()->noninlined_block_scope_at( offset );
@@ -453,7 +453,7 @@ void NativeMethod::noninlined_block_at_put( int noninlined_block_index, int offs
 }
 
 
-JumpTableEntry * NativeMethod::noninlined_block_jumpEntry_at( int noninlined_block_index ) const {
+JumpTableEntry *NativeMethod::noninlined_block_jumpEntry_at( int noninlined_block_index ) const {
     validate_noninlined_block_scope_index( noninlined_block_index );
     JumpTableID id = is_block() ? _promotedId : _mainId;
     return Universe::code->jump_table()->at( id.sub( noninlined_block_index ) );
@@ -484,7 +484,7 @@ bool_t NativeMethod::depends_on_invalid_klass() {
         return true;
 
     // Check dependents
-    NativeMethodScopes * ns = scopes();
+    NativeMethodScopes *ns = scopes();
     for ( int i = ns->dependent_length() - 1; i >= 0; i-- ) {
         if ( ns->dependent_at( i )->is_invalid() )
             return true;
@@ -495,7 +495,7 @@ bool_t NativeMethod::depends_on_invalid_klass() {
 }
 
 
-void NativeMethod::add_family( GrowableArray <NativeMethod *> * result ) {
+void NativeMethod::add_family( GrowableArray<NativeMethod *> *result ) {
     // Add myself
     result->append( this );
 
@@ -504,30 +504,30 @@ void NativeMethod::add_family( GrowableArray <NativeMethod *> * result ) {
 
     // Add all filled JumpTable entries to the family
     for ( int minor = 1; minor <= number_of_noninlined_blocks(); minor++ ) {
-        JumpTableEntry * entry = Universe::code->jump_table()->at( JumpTableID( major, minor ) );
-        NativeMethod   * bm    = entry->block_nativeMethod();
+        JumpTableEntry *entry = Universe::code->jump_table()->at( JumpTableID( major, minor ) );
+        NativeMethod   *bm    = entry->block_nativeMethod();
         if ( bm )
             bm->add_family( result );
     }
 }
 
 
-GrowableArray <NativeMethod *> * NativeMethod::invalidation_family() {
-    GrowableArray <NativeMethod *> * result = new GrowableArray <NativeMethod *>( 10 );
+GrowableArray<NativeMethod *> *NativeMethod::invalidation_family() {
+    GrowableArray<NativeMethod *> *result = new GrowableArray<NativeMethod *>( 10 );
     add_family( result ); // Call the recusive function
     return result;
 }
 
 
-ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptorOrNULL( const char * pc, ProgramCounterDescriptor * stream ) const {
+ProgramCounterDescriptor *NativeMethod::containingProgramCounterDescriptorOrNULL( const char *pc, ProgramCounterDescriptor *stream ) const {
 
     // returns ProgramCounterDescriptor that is closest one before or == to pc, or nullptr if no stored programCounterDescriptor exists
     // called a lot, so watch out for performance bugs
 
     st_assert( contains( pc ), "NativeMethod must contain pc into frame" );
     int offset = pc - instructionsStart();
-    ProgramCounterDescriptor * start = stream ? stream : pcs();
-    ProgramCounterDescriptor * end   = pcsEnd() - 1;
+    ProgramCounterDescriptor *start = stream ? stream : pcs();
+    ProgramCounterDescriptor *end   = pcsEnd() - 1;
 
     // return if only one programCounterDescriptor is present.
     if ( start == end )
@@ -536,7 +536,7 @@ ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptorOrNUL
     st_assert( start <= end, "no ProgramCounterDescriptors to search" );
 
     // binary search to find approximate location
-    ProgramCounterDescriptor * middle = nullptr;
+    ProgramCounterDescriptor *middle = nullptr;
 
     int l = 0;
     int h = end - start;
@@ -562,8 +562,8 @@ ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptorOrNUL
         middle--;
 
     st_assert( start <= middle and middle <= end, "should have found a ProgramCounterDescriptor" );
-    ProgramCounterDescriptor * d       = stream ? stream : pcs();
-    ProgramCounterDescriptor * closest = d;
+    ProgramCounterDescriptor *d       = stream ? stream : pcs();
+    ProgramCounterDescriptor *closest = d;
     for ( ; d <= end; d++ ) {
         if ( d->_pc <= offset and ( closest == nullptr or closest->_pc <= d->_pc ) ) {
             closest = d;
@@ -584,10 +584,10 @@ ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptorOrNUL
 static ProgramCounterDescriptor prologue_pd( 0, 0, PrologueByteCodeIndex );
 
 
-ProgramCounterDescriptor * NativeMethod::containingProgramCounterDescriptor( const char * pc, ProgramCounterDescriptor * start ) const {
+ProgramCounterDescriptor *NativeMethod::containingProgramCounterDescriptor( const char *pc, ProgramCounterDescriptor *start ) const {
 
     // returns ProgramCounterDescriptor that is closest one before or == to pc
-    ProgramCounterDescriptor * p = containingProgramCounterDescriptorOrNULL( pc, start );
+    ProgramCounterDescriptor *p = containingProgramCounterDescriptorOrNULL( pc, start );
 
     // in prologue; there is no ProgramCounterDescriptor stored in the NativeMethod (to save Space), so we have to create one
     return p ? p : &prologue_pd;
@@ -600,9 +600,9 @@ int NativeMethod::estimatedInvocationCount() const {
 }
 
 
-static int cmp_addrs( const void * p1, const void * p2 ) {
-    char ** r1 = ( char ** ) p1;
-    char ** r2 = ( char ** ) p2;
+static int cmp_addrs( const void *p1, const void *p2 ) {
+    char **r1 = (char **) p1;
+    char **r2 = (char **) p2;
     return *r1 - *r2;
 }
 
@@ -621,7 +621,7 @@ void NativeMethod::relocate() {
 }
 
 
-bool_t NativeMethod::switch_pointers( Oop from, Oop to, GrowableArray <NativeMethod *> * nativeMethods_to_invalidate ) {
+bool_t NativeMethod::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
     _lookupKey.switch_pointers( from, to );
     scopes()->switch_pointers( from, to, nativeMethods_to_invalidate );
     check_store();
@@ -671,13 +671,13 @@ void NativeMethod::verify() {
 
     scopes()->verify();
 
-    for ( ProgramCounterDescriptor * p = pcs(); p < pcsEnd(); p++ ) {
+    for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ ) {
         if ( not p->verify( this ) ) {
             _console->print_cr( "\t\tin NativeMethod at %#lx (pcs)", this );
         }
     }
 
-    if ( findNativeMethod( ( char * ) instructionsEnd() - oopSize ) not_eq this ) {
+    if ( findNativeMethod( (char *) instructionsEnd() - oopSize ) not_eq this ) {
         error( "findNativeMethod did not find this NativeMethod (%#lx)", this );
     }
 
@@ -685,16 +685,16 @@ void NativeMethod::verify() {
 }
 
 
-void NativeMethod::verify_expression_stacks_at( const char * pc ) {
+void NativeMethod::verify_expression_stacks_at( const char *pc ) {
 
-    ProgramCounterDescriptor * pd = containingProgramCounterDescriptor( pc );
+    ProgramCounterDescriptor *pd = containingProgramCounterDescriptor( pc );
     if ( not pd ) st_fatal( "ProgramCounterDescriptor not found" );
 
-    ScopeDescriptor * sd = scopes()->at( pd->_scope, pc );
+    ScopeDescriptor *sd = scopes()->at( pd->_scope, pc );
     int byteCodeIndex = pd->_byteCodeIndex;
     while ( sd ) {
         sd->verify_expression_stack( byteCodeIndex );
-        ScopeDescriptor * next = sd->sender();
+        ScopeDescriptor *next = sd->sender();
         if ( next )
             byteCodeIndex = sd->senderByteCodeIndex();
 
@@ -788,7 +788,7 @@ void NativeMethod::printLocs() {
     RelocationInformationIterator iter( this );
     int                           last_offset = 0;
 
-    for ( RelocationInformation * l = locs(); l < locsEnd(); l++ ) {
+    for ( RelocationInformation *l = locs(); l < locsEnd(); l++ ) {
         iter.next();
         last_offset = l->print( this, last_offset );
         if ( iter.type() == RelocationInformation::RelocationType::uncommon_type and iter.wasUncommonTrapExecuted() )
@@ -804,13 +804,13 @@ void NativeMethod::printPcs() {
     printIndent();
     lprintf( "pc-bytecode offsets:\n" );
     Indent++;
-    for ( ProgramCounterDescriptor * p = pcs(); p < pcsEnd(); p++ )
+    for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ )
         p->print( this );
     Indent--;
 }
 
 
-void NativeMethod::print_value_on( ConsoleOutputStream * stream ) {
+void NativeMethod::print_value_on( ConsoleOutputStream *stream ) {
     stream->print( "NativeMethod" );
     if ( WizardMode )
         stream->print( " (0x%lx)", this );
@@ -819,7 +819,7 @@ void NativeMethod::print_value_on( ConsoleOutputStream * stream ) {
 }
 
 
-static ScopeDescriptor * print_scope_node( NativeMethodScopes * scopes, ScopeDescriptor * sd, int level, ConsoleOutputStream * stream, bool_t with_debug_info ) {
+static ScopeDescriptor *print_scope_node( NativeMethodScopes *scopes, ScopeDescriptor *sd, int level, ConsoleOutputStream *stream, bool_t with_debug_info ) {
     // indent
     stream->fill_to( 2 + level * 2 );
 
@@ -830,7 +830,7 @@ static ScopeDescriptor * print_scope_node( NativeMethodScopes * scopes, ScopeDes
         sd->print( 4 + level * 2, UseNewBackend );
 
     // print sons
-    ScopeDescriptor * son = scopes->getNext( sd );
+    ScopeDescriptor *son = scopes->getNext( sd );
     while ( son and son->sender_scope_offset() == sd->offset() ) {
         son = print_scope_node( scopes, son, level + 1, stream, with_debug_info );
     }
@@ -838,22 +838,22 @@ static ScopeDescriptor * print_scope_node( NativeMethodScopes * scopes, ScopeDes
 }
 
 
-void NativeMethod::print_inlining( ConsoleOutputStream * stream, bool_t with_debug_info ) {
+void NativeMethod::print_inlining( ConsoleOutputStream *stream, bool_t with_debug_info ) {
     // Takes advantage of the fact that the scope tree is stored in a depth first traversal order.
     ResourceMark resourceMark;
     if ( stream == nullptr )
         stream = _console;
     stream->print_cr( "NativeMethod inlining structure" );
-    ScopeDescriptor * result = print_scope_node( scopes(), scopes()->root(), 0, stream, with_debug_info );
+    ScopeDescriptor *result = print_scope_node( scopes(), scopes()->root(), 0, stream, with_debug_info );
     if ( result not_eq nullptr )
         warning( "print_inlining returned prematurely" );
 }
 
 
-NativeMethod * nativeMethodContaining( const char * pc, char * likelyEntryPoint ) {
+NativeMethod *nativeMethodContaining( const char *pc, char *likelyEntryPoint ) {
     st_assert( Universe::code->contains( pc ), "should contain address" );
     if ( likelyEntryPoint and Universe::code->contains( likelyEntryPoint ) ) {
-        NativeMethod * result = nativeMethod_from_insts( likelyEntryPoint );
+        NativeMethod *result = nativeMethod_from_insts( likelyEntryPoint );
         if ( result->contains( pc ) )
             return result;
     }
@@ -861,27 +861,27 @@ NativeMethod * nativeMethodContaining( const char * pc, char * likelyEntryPoint 
 }
 
 
-NativeMethod * findNativeMethod( const void * start ) {
-    NativeMethod * m = Universe::code->findNativeMethod( start );
+NativeMethod *findNativeMethod( const void *start ) {
+    NativeMethod *m = Universe::code->findNativeMethod( start );
     st_assert( m->encompasses( start ), "returned wrong NativeMethod" );
     return m;
 }
 
 
-NativeMethod * findNativeMethod_maybe( void * start ) {
-    NativeMethod * m = Universe::code->findNativeMethod_maybe( start );
+NativeMethod *findNativeMethod_maybe( void *start ) {
+    NativeMethod *m = Universe::code->findNativeMethod_maybe( start );
     st_assert( not m or m->encompasses( start ), "returned wrong NativeMethod" );
     return m;
 }
 
 
-bool_t includes( const void * p, const void * from, void * to ) {
+bool_t includes( const void *p, const void *from, void *to ) {
     return from <= p and p < to;
 }
 
 
-bool_t NativeMethod::encompasses( const void * p ) const {
-    return includes( p, ( const void * ) this, pcsEnd() );
+bool_t NativeMethod::encompasses( const void *p ) const {
+    return includes( p, (const void *) this, pcsEnd() );
 }
 
 
@@ -903,7 +903,7 @@ ProgramCounterDescriptor* NativeMethod::correspondingPC(ScopeDescriptor* sd, int
 #endif
 
 
-CompiledInlineCache * NativeMethod::IC_at( const char * p ) const {
+CompiledInlineCache *NativeMethod::IC_at( const char *p ) const {
     RelocationInformationIterator iter( this );
     while ( iter.next() )
         if ( iter.type() == RelocationInformation::RelocationType::ic_type )
@@ -913,7 +913,7 @@ CompiledInlineCache * NativeMethod::IC_at( const char * p ) const {
 }
 
 
-PrimitiveInlineCache * NativeMethod::primitiveIC_at( const char * p ) const {
+PrimitiveInlineCache *NativeMethod::primitiveIC_at( const char *p ) const {
     RelocationInformationIterator iter( this );
     while ( iter.next() )
         if ( iter.type() == RelocationInformation::RelocationType::primitive_type )
@@ -923,18 +923,18 @@ PrimitiveInlineCache * NativeMethod::primitiveIC_at( const char * p ) const {
 }
 
 
-Oop * NativeMethod::embeddedOop_at( const char * p ) const {
+Oop *NativeMethod::embeddedOop_at( const char *p ) const {
     RelocationInformationIterator iter( this );
     while ( iter.next() )
         if ( iter.type() == RelocationInformation::RelocationType::oop_type )
-            if ( iter.oop_addr() == ( Oop * ) p )
+            if ( iter.oop_addr() == (Oop *) p )
                 return iter.oop_addr();
     return nullptr;
 }
 
 
-bool_t NativeMethod::in_delta_code_at( const char * pc ) const {
-    ProgramCounterDescriptor * pd = containingProgramCounterDescriptorOrNULL( pc );
+bool_t NativeMethod::in_delta_code_at( const char *pc ) const {
+    ProgramCounterDescriptor *pd = containingProgramCounterDescriptorOrNULL( pc );
     if ( pd == nullptr )
         return false;
     return not( pd->_byteCodeIndex == PrologueByteCodeIndex or pd->_byteCodeIndex == EpilogueByteCodeIndex );
@@ -943,7 +943,7 @@ bool_t NativeMethod::in_delta_code_at( const char * pc ) const {
 
 // Support for preemption:
 
-void NativeMethod::overwrite_for_trapping( nativeMethod_patch * data ) {
+void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
     RelocationInformationIterator iter( this );
     while ( iter.next() ) {
         switch ( iter.type() ) {
@@ -960,7 +960,7 @@ void NativeMethod::overwrite_for_trapping( nativeMethod_patch * data ) {
 }
 
 
-void NativeMethod::restore_from_patch( nativeMethod_patch * data ) {
+void NativeMethod::restore_from_patch( nativeMethod_patch *data ) {
     Unimplemented();
 }
 
@@ -970,30 +970,30 @@ void NativeMethod::print_inlining_database() {
 }
 
 
-void NativeMethod::print_inlining_database_on( ConsoleOutputStream * stream ) {
+void NativeMethod::print_inlining_database_on( ConsoleOutputStream *stream ) {
     // WARNING: this method is for debugging only -- it's not used to actually file out the DB
     ResourceMark rm;
-    RecompilationScope * root = NonDummyRecompilationScope::constructRScopes( this, false );
-    GrowableArray <ProgramCounterDescriptor *> * uncommon = uncommonBranchList();
+    RecompilationScope *root = NonDummyRecompilationScope::constructRScopes( this, false );
+    GrowableArray<ProgramCounterDescriptor *> *uncommon = uncommonBranchList();
     root->print_inlining_database_on( stream, uncommon );
 }
 
 
-static int compare_pcDescs( ProgramCounterDescriptor ** a, ProgramCounterDescriptor ** b ) {
+static int compare_pcDescs( ProgramCounterDescriptor **a, ProgramCounterDescriptor **b ) {
     // to sort by ascending scope and ascending byteCodeIndex
     int diff = ( *a )->_scope - ( *b )->_scope;
     return diff ? diff : ( *a )->_byteCodeIndex - ( *b )->_byteCodeIndex;
 }
 
 
-GrowableArray <ProgramCounterDescriptor *> * NativeMethod::uncommonBranchList() {
+GrowableArray<ProgramCounterDescriptor *> *NativeMethod::uncommonBranchList() {
     // return a list of *all* uncommon branches (taken or not) of nm, sorted by scope and byteCodeIndex
     // (for inlining DB)
-    GrowableArray <ProgramCounterDescriptor *> * uncommon = new GrowableArray <ProgramCounterDescriptor *>( 20 );
-    RelocationInformationIterator              iter( this );
+    GrowableArray<ProgramCounterDescriptor *> *uncommon = new GrowableArray<ProgramCounterDescriptor *>( 20 );
+    RelocationInformationIterator             iter( this );
     while ( iter.next() ) {
         if ( iter.type() == RelocationInformation::RelocationType::uncommon_type ) {
-            uncommon->append( containingProgramCounterDescriptor( ( const char * ) iter.word_addr() ) );
+            uncommon->append( containingProgramCounterDescriptor( (const char *) iter.word_addr() ) );
         }
     }
 
@@ -1003,8 +1003,8 @@ GrowableArray <ProgramCounterDescriptor *> * NativeMethod::uncommonBranchList() 
 
 
 void NativeMethod::decay_invocation_count( double decay_factor ) {
-    double new_count = ( double ) invocation_count() / decay_factor;
-    set_invocation_count( ( int ) new_count );
+    double new_count = (double) invocation_count() / decay_factor;
+    set_invocation_count( (int) new_count );
 }
 
 

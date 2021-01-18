@@ -36,25 +36,25 @@ RelocationInformation::RelocationInformation( RelocationInformation::RelocationT
 }
 
 
-int RelocationInformation::print( NativeMethod * m, int last_offset ) {
+int RelocationInformation::print( NativeMethod *m, int last_offset ) {
 
     if ( not isValid() )
         return 0;
 
     int current_offset = offset() + last_offset;
-    int * addr = ( int * ) ( m->instructionsStart() + current_offset );
+    int *addr = (int *) ( m->instructionsStart() + current_offset );
     printIndent();
     if ( isOop() ) {
         _console->print( "embedded Oop   @0x%lx = ", addr );
         Oop( *addr )->print_value();
     } else {
         st_assert( isCall(), "must be a call" );
-        const char * target = ( const char * ) ( *addr + ( int ) addr + oopSize );
+        const char *target = (const char *) ( *addr + (int) addr + oopSize );
         if ( isInlineCache() ) {
             _console->print( "inline cache   @0x%lx", addr );
         } else if ( isPrimitive() ) {
             _console->print( "primitive call @0x%lx = ", addr );
-            PrimitiveDescriptor * pd = Primitives::lookup( ( primitiveFunctionType ) target );
+            PrimitiveDescriptor *pd = Primitives::lookup( (primitiveFunctionType) target );
             if ( pd not_eq nullptr ) {
                 _console->print( "(%s)", pd->name() );
             } else {
@@ -72,7 +72,7 @@ int RelocationInformation::print( NativeMethod * m, int last_offset ) {
 }
 
 
-RelocationInformationIterator::RelocationInformationIterator( const NativeMethod * nm ) {
+RelocationInformationIterator::RelocationInformationIterator( const NativeMethod *nm ) {
     _current = nm->locs() - 1;
     _end     = nm->locsEnd();
     _address = nm->instructionsStart();
@@ -81,7 +81,7 @@ RelocationInformationIterator::RelocationInformationIterator( const NativeMethod
 
 bool_t RelocationInformationIterator::wasUncommonTrapExecuted() const {
     st_assert( _current->isUncommonTrap(), "not an uncommon branch" );
-    return callDestination() == ( const char * ) StubRoutines::used_uncommon_trap_entry();
+    return callDestination() == (const char *) StubRoutines::used_uncommon_trap_entry();
 }
 
 

@@ -9,26 +9,26 @@
 #include "vm/memory/util.hpp"
 
 
-extern "C" Oop * eden_top;
-extern "C" Oop * eden_end;
+extern "C" Oop *eden_top;
+extern "C" Oop *eden_end;
 
 class EdenMark : ValueObject {
 
-    private:
-        Oop * old_eden_top;
+private:
+    Oop *old_eden_top;
 
-    public:
-        EdenMark() {
-            old_eden_top = eden_top;
-        }
-
-
-        ~EdenMark() {
-            eden_top = old_eden_top;
-        }
+public:
+    EdenMark() {
+        old_eden_top = eden_top;
+    }
 
 
-        void setToEnd() {
-            eden_top = eden_end;
-        }
+    ~EdenMark() {
+        eden_top = old_eden_top;
+    }
+
+
+    void setToEnd() {
+        eden_top = eden_end;
+    }
 };

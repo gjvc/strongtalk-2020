@@ -26,10 +26,10 @@ ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool_t allocates_com
     _visible                    = visible;
     _allocates_compiled_context = allocates_compiled_context;
 
-    _arg_list          = new GrowableArray <LogicalAddress *>( INITIAL_ARG_SIZE );
-    _temp_list         = new GrowableArray <LogicalAddress *>( INITIAL_TEMP_SIZE );
-    _context_temp_list = new GrowableArray <LogicalAddress *>( INITIAL_CONTEXT_TEMP_SIZE );
-    _expr_stack_list   = new GrowableArray <LogicalAddress *>( INITIAL_EXPR_STACK_SIZE );
+    _arg_list          = new GrowableArray<LogicalAddress *>( INITIAL_ARG_SIZE );
+    _temp_list         = new GrowableArray<LogicalAddress *>( INITIAL_TEMP_SIZE );
+    _context_temp_list = new GrowableArray<LogicalAddress *>( INITIAL_CONTEXT_TEMP_SIZE );
+    _expr_stack_list   = new GrowableArray<LogicalAddress *>( INITIAL_EXPR_STACK_SIZE );
 
     _offset     = INVALID_OFFSET;
     _scopesHead = nullptr;
@@ -49,7 +49,7 @@ void ScopeDescriptorNode::addNested( ScopeInfo scope ) {
 }
 
 
-void ScopeDescriptorNode::generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader ) {
+void ScopeDescriptorNode::generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader ) {
     _offset = rec->_codes->size();
 
     rec->genScopeDescHeader( code(), _lite, has_args(), has_temps(), has_context_temps(), has_expr_stack(), has_context(), bigHeader );
@@ -63,7 +63,7 @@ void ScopeDescriptorNode::generate( ScopeDescriptorRecorder * rec, int senderSco
 }
 
 
-void ScopeDescriptorNode::generateNameDescs( ScopeDescriptorRecorder * rec ) {
+void ScopeDescriptorNode::generateNameDescs( ScopeDescriptorRecorder *rec ) {
     st_assert( has_nameDescs(), "must have nameDescs" );
     if ( has_args() )
         generate_solid( _arg_list, rec );
@@ -76,7 +76,7 @@ void ScopeDescriptorNode::generateNameDescs( ScopeDescriptorRecorder * rec ) {
 }
 
 
-void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder * rec, int senderScopeOffset ) {
+void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder *rec, int senderScopeOffset ) {
     if ( has_nameDescs() ) {
         generateNameDescs( rec );
         if ( not rec->updateScopeDescHeader( _offset, rec->_codes->size() ) ) {
@@ -99,13 +99,13 @@ void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder * rec, int sende
 }
 
 
-void ScopeDescriptorNode::verify( ScopeDescriptor * sd ) {
+void ScopeDescriptorNode::verify( ScopeDescriptor *sd ) {
     if ( _senderByteCodeIndex not_eq IllegalByteCodeIndex and _senderByteCodeIndex not_eq sd->senderByteCodeIndex() ) st_fatal( "senderByteCodeIndex is wrong" );
 }
 
 
 // XXX
-ScopeDescriptor * _getNextScopeDescriptor();
+ScopeDescriptor *_getNextScopeDescriptor();
 
 
 void ScopeDescriptorNode::verifyBody() {
@@ -141,7 +141,7 @@ ScopeInfo ScopeDescriptorNode::find_scope( int scope_id ) {
 }
 
 
-void ScopeDescriptorNode::generate_solid( GrowableArray <LogicalAddress *> * list, ScopeDescriptorRecorder * rec ) {
+void ScopeDescriptorNode::generate_solid( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec ) {
     // Dump all the elements
     for ( int i = 0; i < list->length(); i++ ) {
         st_assert( list->at( i ), "must be a solid array" );
@@ -152,7 +152,7 @@ void ScopeDescriptorNode::generate_solid( GrowableArray <LogicalAddress *> * lis
 }
 
 
-void ScopeDescriptorNode::generate_sparse( GrowableArray <LogicalAddress *> * list, ScopeDescriptorRecorder * rec ) {
+void ScopeDescriptorNode::generate_sparse( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec ) {
     // Dump all the elements
     for ( int i = 0; i < list->length(); i++ ) {
         if ( list->at( i ) ) {

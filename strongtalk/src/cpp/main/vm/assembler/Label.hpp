@@ -26,42 +26,42 @@
 
 class Label : public ValueObject {
 
-    private:
-        // _pos encodes both the binding state (via its sign)
-        // and the binding position (via its value) of a label.
-        //
-        // _pos <  0	bound label, pos() returns the target (jump) position
-        // _pos == 0	unused label
-        // _pos >  0	unbound label, pos() returns the last displacement (see .cpp file) in the chain
-        int _pos;
+private:
+    // _pos encodes both the binding state (via its sign)
+    // and the binding position (via its value) of a label.
+    //
+    // _pos <  0	bound label, pos() returns the target (jump) position
+    // _pos == 0	unused label
+    // _pos >  0	unbound label, pos() returns the last displacement (see .cpp file) in the chain
+    int _pos;
 
 
-        int pos() const;
+    int pos() const;
 
 
-        void bind_to( int pos );
+    void bind_to( int pos );
 
-        void link_to( int pos );
+    void link_to( int pos );
 
-        void unuse();
-
-
-    public:
-        bool_t is_bound() const;
-
-        bool_t is_unbound() const;
-
-        bool_t is_unused() const;
+    void unuse();
 
 
-        Label();
+public:
+    bool_t is_bound() const;
 
-        ~Label();
+    bool_t is_unbound() const;
+
+    bool_t is_unused() const;
 
 
-        friend class Assembler;
+    Label();
 
-        friend class MacroAssembler;
+    ~Label();
 
-        friend class Displacement;
+
+    friend class Assembler;
+
+    friend class MacroAssembler;
+
+    friend class Displacement;
 };

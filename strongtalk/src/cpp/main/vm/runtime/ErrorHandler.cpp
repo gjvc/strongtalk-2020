@@ -31,11 +31,11 @@ void ErrorHandler::abort_compilation() {
 }
 
 
-typedef Oop (xxx_nlr_at_func)( int * frame_pointer, Oop * stack_pointer );
+typedef Oop (xxx_nlr_at_func)( int *frame_pointer, Oop *stack_pointer );
 
 
 void ErrorHandler::abort_current_process() {
-    xxx_nlr_at_func * provoke_nlr_at = ( xxx_nlr_at_func * ) StubRoutines::provoke_nlr_at();
+    xxx_nlr_at_func *provoke_nlr_at = (xxx_nlr_at_func *) StubRoutines::provoke_nlr_at();
     nlr_home    = 0;
     nlr_home_id = aborting_nlr_home_id();
     nlr_result  = smiOop_zero;
@@ -46,7 +46,7 @@ void ErrorHandler::abort_current_process() {
 //extern "C" void continue_nlr_in_delta(int* frame_pointer, Oop* stack_pointer);
 
 void ErrorHandler::continue_nlr_in_delta() {
-    xxx_nlr_at_func * _continue_nlr_in_delta = ( xxx_nlr_at_func * ) StubRoutines::continue_nlr_in_delta();
+    xxx_nlr_at_func *_continue_nlr_in_delta = (xxx_nlr_at_func *) StubRoutines::continue_nlr_in_delta();
     _continue_nlr_in_delta( DeltaProcess::active()->last_Delta_fp(), DeltaProcess::active()->last_Delta_sp() );
     ShouldNotReachHere();
 }

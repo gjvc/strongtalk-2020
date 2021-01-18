@@ -23,7 +23,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )
 
 
@@ -43,10 +42,10 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
 
     KlassOop k        = KlassOop( receiver );
     int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument)->value() * 2, oopSize ) / oopSize;
+    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, oopSize ) / oopSize;
 
     // allocate
-    DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
 
     // header
     MemOop( obj )->initialize_header( true, k );
@@ -55,15 +54,15 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = argument;
     // %optimized 'for (int index = 1; index <= size; index++)
     //               obj->doubleByte_at_put(index, 0)'
     base = &base[ ni_size + 1 ];
     while ( base < end )
-        *base++ = ( Oop ) 0;
+        *base++ = (Oop) 0;
 
     return obj;
 }
@@ -133,7 +132,7 @@ PRIM_DECL_3( doubleByteArrayPrimitives::atPut, Oop receiver, Oop index, Oop valu
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value as double byte
-    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
     if ( v >= ( 1 << 16 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -165,8 +164,8 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
     ASSERT_RECEIVER;
 
     ResourceMark resourceMark;
-    int          len      = DoubleByteArrayOop( receiver )->length();
-    char         * buffer = new_resource_array <char>( len );
+    int          len = DoubleByteArrayOop( receiver )->length();
+    char *buffer = new_resource_array<char>( len );
 
     for ( int i   = 0; i < len; i++ ) {
         int c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );

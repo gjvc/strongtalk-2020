@@ -8,9 +8,9 @@
 #include "vm/runtime/VirtualFrame.hpp"
 
 
-VirtualFrame * VirtualFrameOopDescriptor::get_vframe() {
+VirtualFrame *VirtualFrameOopDescriptor::get_vframe() {
 
-    DeltaProcess * proc = process()->process();
+    DeltaProcess *proc = process()->process();
 
     // Check process
     if ( proc == nullptr )
@@ -20,7 +20,7 @@ VirtualFrame * VirtualFrameOopDescriptor::get_vframe() {
     if ( proc->time_stamp() not_eq time_stamp() )
         return nullptr;
 
-    VirtualFrame * vf = proc->last_delta_vframe();
+    VirtualFrame *vf = proc->last_delta_vframe();
 
     for ( int i = 1; i < index() and vf; i++ ) {
         vf = vf->sender();

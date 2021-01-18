@@ -9,33 +9,33 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 class ProgramCounterDescriptorNode : public ResourceObject {
-    public:
-        int       _pcOffset;
-        ScopeInfo _scopeInfo;
-        int       _byteCodeIndex;
+public:
+    int       _pcOffset;
+    ScopeInfo _scopeInfo;
+    int       _byteCodeIndex;
 };
 
 class ProgramCounterDescriptorInfoClass : public ResourceObject {
 
-    protected:
-        ProgramCounterDescriptorNode * _nodes;
-        int _end;
-        int _size;
+protected:
+    ProgramCounterDescriptorNode *_nodes;
+    int _end;
+    int _size;
 
-    public:
-        ProgramCounterDescriptorInfoClass( int size );
-
-
-        int length() {
-            return _end;
-        }
+public:
+    ProgramCounterDescriptorInfoClass( int size );
 
 
-        void extend( int newSize );
+    int length() {
+        return _end;
+    }
 
-        void add( int pcOffset, ScopeInfo scope, int byteCodeIndex );
 
-        void mark_scopes();
+    void extend( int newSize );
 
-        void copy_to( int *& addr );
+    void add( int pcOffset, ScopeInfo scope, int byteCodeIndex );
+
+    void mark_scopes();
+
+    void copy_to( int *&addr );
 };

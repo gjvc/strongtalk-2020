@@ -20,7 +20,7 @@ bool_t ObjectArrayOopDescriptor::verify() {
 }
 
 
-void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
     for ( int i = 1; i <= length(); i++ )
@@ -128,7 +128,7 @@ void ObjectArrayOopDescriptor::replace_and_fill( int from, int start, ObjectArra
 
 
 void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
-    Oop * p = objs( 1 );
+    Oop *p = objs( 1 );
     int len = length();
 
     for ( int i = 1; i <= len; i++ )
@@ -137,7 +137,7 @@ void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
 
 
 void WeakArrayOopDescriptor::follow_contents_after_registration() {
-    Oop * p = objs( 1 );
+    Oop *p = objs( 1 );
     int len = length();
 
     for ( int i = 1; i <= len; i++ )

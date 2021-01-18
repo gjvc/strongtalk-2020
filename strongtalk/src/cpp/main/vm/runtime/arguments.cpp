@@ -12,25 +12,25 @@
 #include <fstream>
 
 
-const char * image_basename = "strongtalk.bst";
-const char * rc_basename    = ".strongtalkrc";
+const char *image_basename = "strongtalk.bst";
+const char *rc_basename    = ".strongtalkrc";
 
 
-static void set_bool_flag( const char * name, bool_t value ) {
+static void set_bool_flag( const char *name, bool_t value ) {
     bool_t s = value;
     if ( not debugFlags::boolAtPut( name, &s ) )
         fprintf( stderr, "Boolean flag [%s] unknown.\n", name );
 }
 
 
-static void set_int_flag( const char * name, int value ) {
+static void set_int_flag( const char *name, int value ) {
     int v = value;
     if ( not debugFlags::intAtPut( name, &v ) )
         fprintf( stderr, "Integer flag [%s] unknown.\n", name );
 }
 
 
-static void process_token( const char * token ) {
+static void process_token( const char *token ) {
     if ( token[ 0 ] == '-' )
         set_bool_flag( &token[ 1 ], false );
     else if ( token[ 0 ] == '+' )
@@ -45,7 +45,7 @@ static void process_token( const char * token ) {
 }
 
 
-void process_settings_file( const char * file_name, bool_t quiet ) {
+void process_settings_file( const char *file_name, bool_t quiet ) {
 
     std::ifstream stream( file_name, std::fstream::binary );
 
@@ -114,7 +114,7 @@ void print_credits() {
 }
 
 
-void parse_arguments( int argc, char * argv[] ) {
+void parse_arguments( int argc, char *argv[] ) {
     bool_t parse_files = true;
 
     if ( argc > 1 and strcmp( argv[ 1 ], "-t" ) == 0 ) {

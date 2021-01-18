@@ -10,24 +10,24 @@
 
 class LongInteger64 {
 
-    private:
-        std::uint32_t _low;
-        std::uint32_t _high;
+private:
+    std::uint32_t _low;
+    std::uint32_t _high;
 
-        LongInteger64();
+    LongInteger64();
 
-    public:
-        LongInteger64( std::uint32_t low, std::uint32_t high );
+public:
+    LongInteger64( std::uint32_t low, std::uint32_t high );
 
-        LongInteger64( double value );
+    LongInteger64( double value );
 
-        LongInteger64 operator-( const LongInteger64 & rhs );
+    LongInteger64 operator-( const LongInteger64 &rhs );
 
-        LongInteger64 operator+( const LongInteger64 & rhs );
+    LongInteger64 operator+( const LongInteger64 &rhs );
 
-        bool_t operator==( const LongInteger64 & rhs );
+    bool_t operator==( const LongInteger64 &rhs );
 
-        bool_t operator!=( const LongInteger64 & rhs );
+    bool_t operator!=( const LongInteger64 &rhs );
 
-        double as_double();
+    double as_double();
 };

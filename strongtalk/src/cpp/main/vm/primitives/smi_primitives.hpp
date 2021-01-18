@@ -13,119 +13,119 @@
 // Primitives for small integers
 
 class smiOopPrimitives : AllStatic {
-    private:
-        static void inc_calls() {
-            number_of_calls++;
-        }
+private:
+    static void inc_calls() {
+        number_of_calls++;
+    }
 
 
-    public:
-        static int number_of_calls;
+public:
+    static int number_of_calls;
 
-        //%prim
-        // <SmallInteger> primitiveLessThan: aNumber   <SmallInteger>
-        //                           ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::lessThan' }
-        //%
-        static PRIM_DECL_2( lessThan, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveLessThan: aNumber   <SmallInteger>
+    //                           ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::lessThan' }
+    //%
+    static PRIM_DECL_2( lessThan, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveGreaterThan: aNumber   <SmallInteger>
-        //                              ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::greaterThan' }
-        //%
-        static PRIM_DECL_2( greaterThan, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveGreaterThan: aNumber   <SmallInteger>
+    //                              ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::greaterThan' }
+    //%
+    static PRIM_DECL_2( greaterThan, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveLessThanOrEqual: aNumber   <SmallInteger>
-        //                                  ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::lessThanOrEqual' }
-        //%
-        static PRIM_DECL_2( lessThanOrEqual, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveLessThanOrEqual: aNumber   <SmallInteger>
+    //                                  ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::lessThanOrEqual' }
+    //%
+    static PRIM_DECL_2( lessThanOrEqual, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveGreaterThanOrEqual: aNumber   <SmallInteger>
-        //                                     ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::greaterThanOrEqual' }
-        //%
-        static PRIM_DECL_2( greaterThanOrEqual, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveGreaterThanOrEqual: aNumber   <SmallInteger>
+    //                                     ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::greaterThanOrEqual' }
+    //%
+    static PRIM_DECL_2( greaterThanOrEqual, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveSmallIntegerEqual: aNumber   <SmallInteger>
-        //                                    ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::equal' }
-        //%
-        static PRIM_DECL_2( equal, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveSmallIntegerEqual: aNumber   <SmallInteger>
+    //                                    ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::equal' }
+    //%
+    static PRIM_DECL_2( equal, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveSmallIntegerNotEqual: aNumber   <SmallInteger>
-        //                                       ifFail: failBlock <PrimFailBlock> ^<Boolean> =
-        //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::notEqual' }
-        //%
-        static PRIM_DECL_2( notEqual, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveSmallIntegerNotEqual: aNumber   <SmallInteger>
+    //                                       ifFail: failBlock <PrimFailBlock> ^<Boolean> =
+    //   Internal { flags = #(Pure SmiCompare LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::notEqual' }
+    //%
+    static PRIM_DECL_2( notEqual, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveBitAnd: aNumber   <SmallInteger>
-        //                         ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::bitAnd' }
-        //%
-        static PRIM_DECL_2( bitAnd, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveBitAnd: aNumber   <SmallInteger>
+    //                         ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::bitAnd' }
+    //%
+    static PRIM_DECL_2( bitAnd, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveBitOr: aNumber   <SmallInteger>
-        //                        ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::bitOr' }
-        //%
-        static PRIM_DECL_2( bitOr, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveBitOr: aNumber   <SmallInteger>
+    //                        ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::bitOr' }
+    //%
+    static PRIM_DECL_2( bitOr, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveBitXor: aNumber   <SmallInteger>
-        //                         ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::bitXor' }
-        //%
-        static PRIM_DECL_2( bitXor, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveBitXor: aNumber   <SmallInteger>
+    //                         ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::bitXor' }
+    //%
+    static PRIM_DECL_2( bitXor, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveBitShift: aNumber   <SmallInteger>
-        //                           ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::bitShift' }
-        //%
-        static PRIM_DECL_2( bitShift, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveBitShift: aNumber   <SmallInteger>
+    //                           ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::bitShift' }
+    //%
+    static PRIM_DECL_2( bitShift, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveRawBitShift: aNumber   <SmallInteger>
-        //                              ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
-        //              name  = 'smiOopPrimitives::rawBitShift' }
-        //%
-        static PRIM_DECL_2( rawBitShift, Oop receiver, Oop argument );
+    //%prim
+    // <SmallInteger> primitiveRawBitShift: aNumber   <SmallInteger>
+    //                              ifFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { flags = #(Pure SmiArith LastDeltaFrameNotNeeded)
+    //              name  = 'smiOopPrimitives::rawBitShift' }
+    //%
+    static PRIM_DECL_2( rawBitShift, Oop receiver, Oop argument );
 
-        //%prim
-        // <SmallInteger> primitiveAsObjectIfFail: failBlock <PrimFailBlock> ^<Object> =
-        //   Internal { error = #(OutOfBounds)
-        //              flags = #Function
-        //              name  = 'smiOopPrimitives::asObject' }
-        //%
-        static PRIM_DECL_1( asObject, Oop receiver );
+    //%prim
+    // <SmallInteger> primitiveAsObjectIfFail: failBlock <PrimFailBlock> ^<Object> =
+    //   Internal { error = #(OutOfBounds)
+    //              flags = #Function
+    //              name  = 'smiOopPrimitives::asObject' }
+    //%
+    static PRIM_DECL_1( asObject, Oop receiver );
 
-        // For debugging only
-        //%prim
-        // <SmallInteger> primitivePrintCharacterIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
-        //   Internal { error = #(OutOfBounds)
-        //              flags = #Function
-        //              name  = 'smiOopPrimitives::printCharacter' }
-        //%
-        static PRIM_DECL_1( printCharacter, Oop receiver );
+    // For debugging only
+    //%prim
+    // <SmallInteger> primitivePrintCharacterIfFail: failBlock <PrimFailBlock> ^<SmallInteger> =
+    //   Internal { error = #(OutOfBounds)
+    //              flags = #Function
+    //              name  = 'smiOopPrimitives::printCharacter' }
+    //%
+    static PRIM_DECL_1( printCharacter, Oop receiver );
 };
 
 // Assembler optimized primitives

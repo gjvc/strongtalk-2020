@@ -29,73 +29,73 @@
 
 class AssociationOopDescriptor : public MemOopDescriptor {
 
-    protected:
-        SymbolOop _key;
-        Oop       _value;
-        Oop       _is_constant;
+protected:
+    SymbolOop _key;
+    Oop       _value;
+    Oop       _is_constant;
 
-    public:
-        AssociationOopDescriptor * addr() const {
-            return ( AssociationOopDescriptor * ) MemOopDescriptor::addr();
-        }
-
-
-        friend AssociationOop as_associationOop( void * p );
+public:
+    AssociationOopDescriptor *addr() const {
+        return (AssociationOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( AssociationOopDescriptor ) / oopSize;
-        }
+    friend AssociationOop as_associationOop( void *p );
 
 
-        void bootstrap_object( Bootstrap * stream );
+    // sizing
+    static int header_size() {
+        return sizeof( AssociationOopDescriptor ) / oopSize;
+    }
 
 
-        SymbolOop key() const {
-            return addr()->_key;
-        }
+    void bootstrap_object( Bootstrap *stream );
 
 
-        void set_key( SymbolOop k ) {
-            STORE_OOP( &addr()->_key, k );
-        }
+    SymbolOop key() const {
+        return addr()->_key;
+    }
 
 
-        Oop value() const {
-            return addr()->_value;
-        }
+    void set_key( SymbolOop k ) {
+        STORE_OOP( &addr()->_key, k );
+    }
 
 
-        void set_value( Oop v ) {
-            STORE_OOP( &addr()->_value, v );
-        }
+    Oop value() const {
+        return addr()->_value;
+    }
 
 
-        bool_t is_constant() const {
-            return addr()->_is_constant == trueObj;
-        }
+    void set_value( Oop v ) {
+        STORE_OOP( &addr()->_value, v );
+    }
 
 
-        void set_is_constant( bool_t v );
+    bool_t is_constant() const {
+        return addr()->_is_constant == trueObj;
+    }
 
 
-        static int key_offset() {
-            return 2;
-        } // offset of the key field in words
+    void set_is_constant( bool_t v );
 
-        static int value_offset() {
-            return 3;
-        } // offset of the value field in words
 
-        static int is_constant_offset() {
-            return 4;
-        } // offset of the is_constant field in words
+    static int key_offset() {
+        return 2;
+    } // offset of the key field in words
 
-        friend class AssociationKlass;
+    static int value_offset() {
+        return 3;
+    } // offset of the value field in words
+
+    static int is_constant_offset() {
+        return 4;
+    } // offset of the is_constant field in words
+
+    friend class AssociationKlass;
 };
 
 
-inline AssociationOop as_associationOop( void * p ) {
+inline AssociationOop as_associationOop( void *p ) {
     return AssociationOop( as_memOop( p ) );
 }

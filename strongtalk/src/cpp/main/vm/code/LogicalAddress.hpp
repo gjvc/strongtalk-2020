@@ -18,36 +18,36 @@ class ScopeDescriptorRecorder;
 
 class LogicalAddress : public ResourceObject {
 
-    private:
-        NameNode * _physicalAddress;
-        int _pcOffset;
-        LogicalAddress * _next;
-        int _offset;
+private:
+    NameNode *_physicalAddress;
+    int _pcOffset;
+    LogicalAddress *_next;
+    int _offset;
 
-    public:
-        LogicalAddress( NameNode * physical_address, int pc_offset = 0 );
-
-
-        NameNode * physical_address() const {
-            return _physicalAddress;
-        }
+public:
+    LogicalAddress( NameNode *physical_address, int pc_offset = 0 );
 
 
-        int pc_offset() const {
-            return _pcOffset;
-        }
+    NameNode *physical_address() const {
+        return _physicalAddress;
+    }
 
 
-        LogicalAddress * next() const {
-            return _next;
-        }
+    int pc_offset() const {
+        return _pcOffset;
+    }
 
 
-        void append( NameNode * physical_address, int pc_offset );
+    LogicalAddress *next() const {
+        return _next;
+    }
 
-        NameNode * physical_address_at( int pc_offset );
 
-        void generate( ScopeDescriptorRecorder * rec );
+    void append( NameNode *physical_address, int pc_offset );
 
-        int length();
+    NameNode *physical_address_at( int pc_offset );
+
+    void generate( ScopeDescriptorRecorder *rec );
+
+    int length();
 };

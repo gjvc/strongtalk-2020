@@ -7,7 +7,7 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/oopFactory.hpp"
 
-std::array <SymbolOop, terminating_enum> vm_symbols;
+std::array<SymbolOop, terminating_enum> vm_symbols;
 
 
 #define VMSYMBOL_INIT( name, string ) \
@@ -21,7 +21,7 @@ void vmSymbols::initialize() {
 
 void vmSymbols::switch_pointers( Oop from, Oop to ) {
     for ( int i = 0; i < terminating_enum; i++ ) {
-        Oop * p = ( Oop * ) &vm_symbols[ i ];
+        Oop *p = (Oop *) &vm_symbols[ i ];
         SWITCH_POINTERS_TEMPLATE( p )
     }
 }
@@ -29,14 +29,14 @@ void vmSymbols::switch_pointers( Oop from, Oop to ) {
 
 void vmSymbols::follow_contents() {
     for ( int i = 0; i < terminating_enum; i++ ) {
-        MarkSweep::follow_root( ( Oop * ) &vm_symbols[ i ] );
+        MarkSweep::follow_root( (Oop *) &vm_symbols[ i ] );
     }
 }
 
 
 void vmSymbols::relocate() {
     for ( int i = 0; i < terminating_enum; i++ ) {
-        Oop * p = ( Oop * ) &vm_symbols[ i ];
+        Oop *p = (Oop *) &vm_symbols[ i ];
         RELOCATE_TEMPLATE( p );
     }
 }

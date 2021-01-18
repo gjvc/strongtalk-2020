@@ -28,14 +28,14 @@ MethodOop LookupResult::method_or_null() const {
 }
 
 
-JumpTableEntry * LookupResult::entry() const {
+JumpTableEntry *LookupResult::entry() const {
     st_assert( not is_empty(), "cannot be empty" );
-    return is_entry() ? ( JumpTableEntry * ) _result : nullptr;
+    return is_entry() ? (JumpTableEntry *) _result : nullptr;
 }
 
 
-NativeMethod * LookupResult::get_nativeMethod() const {
-    JumpTableEntry * e = entry();
+NativeMethod *LookupResult::get_nativeMethod() const {
+    JumpTableEntry *e = entry();
     return e ? e->method() : nullptr;
 }
 
@@ -47,14 +47,14 @@ bool_t LookupResult::matches( MethodOop m ) const {
 }
 
 
-bool_t LookupResult::matches( NativeMethod * nm ) const {
+bool_t LookupResult::matches( NativeMethod *nm ) const {
     if ( is_empty() )
         return false;
     return is_entry() ? entry()->method() == nm : false;
 }
 
 
-void LookupResult::print_on( ConsoleOutputStream * stream ) const {
+void LookupResult::print_on( ConsoleOutputStream *stream ) const {
     if ( is_empty() ) {
         stream->print( "empty" );
     } else {
@@ -64,7 +64,7 @@ void LookupResult::print_on( ConsoleOutputStream * stream ) const {
 }
 
 
-void LookupResult::print_short_on( ConsoleOutputStream * stream ) const {
+void LookupResult::print_short_on( ConsoleOutputStream *stream ) const {
     if ( is_empty() ) {
         stream->print( "empty" );
     } else {
@@ -78,7 +78,7 @@ LookupResult::LookupResult( MethodOop method ) {
 }
 
 
-LookupResult::LookupResult( const NativeMethod * nm ) {
+LookupResult::LookupResult( const NativeMethod *nm ) {
     set( nm );
 }
 
@@ -114,7 +114,7 @@ void LookupResult::set( MethodOop method ) {
 }
 
 
-void LookupResult::set( const NativeMethod * nm ) {
+void LookupResult::set( const NativeMethod *nm ) {
     st_assert( Oop(nm)->is_smi(), "NativeMethod must be aligned" );
     _result = Oop( nm->jump_table_entry()->entry_point() );
 }

@@ -7,14 +7,14 @@
 
 
 CacheElement::CacheElement() :
-    _lookupKey(), _lookupResult() {
+        _lookupKey(), _lookupResult() {
 }
 
 
 void CacheElement::verify() {
     st_assert( sizeof( CacheElement ) == 16, "checking structure layout" );
-    st_assert( ( int ) &_lookupKey - ( int ) this == 0, "checking structure layout" );
-    st_assert( ( int ) &_lookupResult - ( int ) this == 8, "checking structure layout" );
+    st_assert( (int) &_lookupKey - (int) this == 0, "checking structure layout" );
+    st_assert( (int) &_lookupResult - (int) this == 8, "checking structure layout" );
 
     if ( _lookupKey.klass() or _lookupKey.selector_or_method() ) {
         if ( _lookupResult.is_empty() ) {
@@ -31,7 +31,7 @@ void CacheElement::verify() {
             _console->print_cr( ")" );
             st_fatal( "LookupCache verify failed" );
         }
-        const NativeMethod * nm = Universe::code->lookup( &_lookupKey );
+        const NativeMethod *nm = Universe::code->lookup( &_lookupKey );
         if ( _lookupResult.is_method() and nm ) {
             error( "key %s has interpreted method in lookupTable but should have NativeMethod %#x", _lookupKey.print_string(), nm );
         } else if ( _lookupResult.is_entry() and _lookupResult.get_nativeMethod() not_eq nm ) {
@@ -50,7 +50,7 @@ void CacheElement::clear() {
 }
 
 
-void CacheElement::initialize( LookupKey * k, LookupResult r ) {
+void CacheElement::initialize( LookupKey *k, LookupResult r ) {
     _lookupKey    = *k;
     _lookupResult = r;
 }

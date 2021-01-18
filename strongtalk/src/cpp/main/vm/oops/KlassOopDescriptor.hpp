@@ -30,43 +30,43 @@
 
 class KlassOopDescriptor : public MemOopDescriptor {
 
-    private:
-        Klass _klass_part;
+private:
+    Klass _klass_part;
 
-    public:
-        KlassOop addr() const {
-            return ( KlassOop ) MemOopDescriptor::addr();
-        }
-
-
-        Klass * klass_part() const {
-            return &addr()->_klass_part;
-        }
+public:
+    KlassOop addr() const {
+        return (KlassOop) MemOopDescriptor::addr();
+    }
 
 
-        bool_t is_invalid() const {
-            return mark()->is_klass_invalid();
-        }
+    Klass *klass_part() const {
+        return &addr()->_klass_part;
+    }
 
 
-        void set_invalid( bool_t value ) {
-            set_mark( value ? mark()->set_klass_invalid() : mark()->clear_klass_invalid() );
-        }
+    bool_t is_invalid() const {
+        return mark()->is_klass_invalid();
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( KlassOopDescriptor ) / oopSize;
-        }
+    void set_invalid( bool_t value ) {
+        set_mark( value ? mark()->set_klass_invalid() : mark()->clear_klass_invalid() );
+    }
 
 
-        // debugging
-        void print_superclasses();
+    // sizing
+    static int header_size() {
+        return sizeof( KlassOopDescriptor ) / oopSize;
+    }
 
-        void bootstrap_object( Bootstrap * stream );
+
+    // debugging
+    void print_superclasses();
+
+    void bootstrap_object( Bootstrap *stream );
 
 
-        static int nonIndexableSizeOffset() {
-            return ( int ) ( &KlassOop( nullptr )->klass_part()->_non_indexable_size );
-        }
+    static int nonIndexableSizeOffset() {
+        return (int) ( &KlassOop( nullptr )->klass_part()->_non_indexable_size );
+    }
 };

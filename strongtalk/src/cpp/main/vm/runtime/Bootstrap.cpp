@@ -34,12 +34,12 @@
 
 // -----------------------------------------------------------------------------
 
-Bootstrap::Bootstrap( const std::string & name ) {
+Bootstrap::Bootstrap( const std::string &name ) {
     _filename           = name;
     _number_of_oops     = 0;
     _max_number_of_oops = 512 * 1024;
     _objectCount        = 0;
-    _oop_table          = new_c_heap_array <Oop>( _max_number_of_oops );
+    _oop_table          = new_c_heap_array<Oop>( _max_number_of_oops );
 }
 
 
@@ -143,7 +143,7 @@ void Bootstrap::extend_oop_table() {
     int new_size = _max_number_of_oops * 2;
 
     _console->print_cr( "Expanding boot table to [0x%08x]", new_size );
-    Oop * new_oop_table = new_c_heap_array <Oop>( new_size );
+    Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
     for ( int i = 0; i < _max_number_of_oops; i++ )
         new_oop_table[ i ] = _oop_table[ i ];
@@ -187,7 +187,7 @@ int Bootstrap::get_integer() {
 
 
 std::uint16_t Bootstrap::read_doubleByte() {
-    return ( std::uint16_t ) get_integer();
+    return (std::uint16_t) get_integer();
 }
 
 
@@ -198,7 +198,7 @@ char Bootstrap::read_byte() {
 
 // -----------------------------------------------------------------------------
 
-void Bootstrap::read_oop( Oop * oop_addr ) {
+void Bootstrap::read_oop( Oop *oop_addr ) {
     *oop_addr = readNextObject();
 }
 
@@ -262,14 +262,14 @@ void Bootstrap::parse_objects() {
 }
 
 
-void Bootstrap::object_error_func( const char * str ) {
+void Bootstrap::object_error_func( const char *str ) {
     st_fatal( str );
 }
 
 
 // -----------------------------------------------------------------------------
 
-template <typename T>
+template<typename T>
 void Bootstrap::insert_symbol( MemOop m ) {
     static_cast<T>( m )->bootstrap_object( this );
 
@@ -282,13 +282,13 @@ void Bootstrap::insert_symbol( MemOop m ) {
 }
 
 
-void Bootstrap::klass_case_func( void (* function)( Klass * ), MemOop m ) {
+void Bootstrap::klass_case_func( void (*function)( Klass * ), MemOop m ) {
     function( KlassOop( m )->klass_part() );
     KlassOop( m )->bootstrap_object( this );
 }
 
 
-template <typename T>
+template<typename T>
 void Bootstrap::object_case_func( MemOop m ) {
     static_cast<T>( m )->bootstrap_object( this );
 }
@@ -404,28 +404,28 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "smi_t" );
             break;
         case 'c': // 
-            object_case_func <MemOop>( m );
+            object_case_func<MemOop>( m );
             break;
         case 'd': // 
-            object_case_func <ByteArrayOop>( m );
+            object_case_func<ByteArrayOop>( m );
             break;
         case 'e': // 
-            object_case_func <DoubleByteArrayOop>( m );
+            object_case_func<DoubleByteArrayOop>( m );
             break;
         case 'f': // 
-            object_case_func <ObjectArrayOop>( m );
+            object_case_func<ObjectArrayOop>( m );
             break;
         case 'g': // 
-            insert_symbol <SymbolOop>( m );
+            insert_symbol<SymbolOop>( m );
             break;
         case 'h': // 
-            object_case_func <DoubleOop>( m );
+            object_case_func<DoubleOop>( m );
             break;
         case 'i': // 
-            object_case_func <AssociationOop>( m );
+            object_case_func<AssociationOop>( m );
             break;
         case 'j': // 
-            object_case_func <MethodOop>( m );
+            object_case_func<MethodOop>( m );
             break;
         case 'k': // 
         st_fatal( "blockClosure" );
@@ -437,13 +437,13 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "proxy" );
             break;
         case 'n': // 
-            object_case_func <MixinOop>( m );
+            object_case_func<MixinOop>( m );
             break;
         case 'o': // 
         st_fatal( "weakArrayOop" );
             break;
         case 'p': // 
-            object_case_func <ProcessOop>( m );
+            object_case_func<ProcessOop>( m );
             break;
         default: // 
         st_fatal( "unknown object typeByte" );
@@ -455,7 +455,7 @@ Oop Bootstrap::readNextObject() {
 
 // -----------------------------------------------------------------------------
 
-void Bootstrap::read_mark( MarkOop * mark_addr ) {
+void Bootstrap::read_mark( MarkOop *mark_addr ) {
     MarkOop m;
     char    typeByte = _stream.get();
 
@@ -475,7 +475,7 @@ void Bootstrap::read_mark( MarkOop * mark_addr ) {
 
 double Bootstrap::read_double() {
     double value;
-    std::uint8_t * str = ( std::uint8_t * ) &value;
+    std::uint8_t *str = (std::uint8_t *) &value;
 
     for ( int i = 0; i < 8; i++ ) {
         char c{};

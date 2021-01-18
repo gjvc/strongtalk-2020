@@ -10,8 +10,8 @@
 
 #include <array>
 
-std::array <std::uint32_t, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>InterpreterStatistics::_bytecode_counters;
-std::array <int, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>     InterpreterStatistics::_bytecode_generation_order;
+std::array<std::uint32_t, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>InterpreterStatistics::_bytecode_counters;
+std::array<int, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>          InterpreterStatistics::_bytecode_generation_order;
 
 bool_t       InterpreterStatistics::_is_initialized = false;
 

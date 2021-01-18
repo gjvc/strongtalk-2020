@@ -14,32 +14,32 @@ constexpr int REGISTER_COUNT = 8;    // total number of registers
 
 class Register : public ValueObject {
 
-    private:
-        int _number;
+private:
+    int _number;
 
-    public:
-        Register( void );
+public:
+    Register( void );
 
-        explicit Register( int number, char f );    // f is only to make sure that an int is not accidentally converted into a Register...
+    explicit Register( int number, char f );    // f is only to make sure that an int is not accidentally converted into a Register...
 
-        // attributes
-        int number() const;
-
-
-        bool_t isValid() const;
+    // attributes
+    int number() const;
 
 
-        bool_t hasByteRegister() const;
+    bool_t isValid() const;
 
 
-        bool_t operator==( const Register & rhs ) const;
+    bool_t hasByteRegister() const;
 
 
-        bool_t operator!=( const Register & rhs ) const;
+    bool_t operator==( const Register &rhs ) const;
 
 
-        // debugging
-        const char * name() const;
+    bool_t operator!=( const Register &rhs ) const;
+
+
+    // debugging
+    const char *name() const;
 };
 
 

@@ -20,86 +20,86 @@
 //    [length      ]      offset
 
 class DoubleByteArrayOopDescriptor : public MemOopDescriptor {
-    public:
-        friend DoubleByteArrayOop as_doubleByteArrayOop( void * p );
+public:
+    friend DoubleByteArrayOop as_doubleByteArrayOop( void *p );
 
-        void bootstrap_object( Bootstrap * stream );
-
-
-        // accessors
-        DoubleByteArrayOopDescriptor * addr() const {
-            return ( DoubleByteArrayOopDescriptor * ) MemOopDescriptor::addr();
-        }
+    void bootstrap_object( Bootstrap *stream );
 
 
-        bool_t is_within_bounds( int index ) const {
-            return 1 <= index and index <= length();
-        }
+    // accessors
+    DoubleByteArrayOopDescriptor *addr() const {
+        return (DoubleByteArrayOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        Oop * addr_as_oops() const {
-            return ( Oop * ) addr();
-        }
+    bool_t is_within_bounds( int index ) const {
+        return 1 <= index and index <= length();
+    }
 
 
-        // returns the location of the length field
-        Oop * length_addr() const {
-            return &addr_as_oops()[ blueprint()->non_indexable_size() ];
-        }
+    Oop *addr_as_oops() const {
+        return (Oop *) addr();
+    }
 
 
-        smi_t length() const {
-            Oop len = *length_addr();
-            st_assert( len->is_smi(), "length of indexable should be smi_t" );
-            return SMIOop( len )->value();
-        }
+    // returns the location of the length field
+    Oop *length_addr() const {
+        return &addr_as_oops()[ blueprint()->non_indexable_size() ];
+    }
 
 
-        void set_length( smi_t len ) {
-            *length_addr() = ( Oop ) smiOopFromValue( len );
-        }
+    smi_t length() const {
+        Oop len = *length_addr();
+        st_assert( len->is_smi(), "length of indexable should be smi_t" );
+        return SMIOop( len )->value();
+    }
 
 
-        // returns the location where the double bytes start
-        std::uint16_t * doubleBytes() const {
-            return ( std::uint16_t * ) &length_addr()[ 1 ];
-        }
+    void set_length( smi_t len ) {
+        *length_addr() = (Oop) smiOopFromValue( len );
+    }
 
 
-        std::uint16_t * doubleByte_at_addr( int which ) const {
-            st_assert( which > 0 and which <= length(), "index out of bounds" );
-            return &doubleBytes()[ which - 1 ];
-        }
+    // returns the location where the double bytes start
+    std::uint16_t *doubleBytes() const {
+        return (std::uint16_t *) &length_addr()[ 1 ];
+    }
 
 
-        std::uint16_t doubleByte_at( int which ) const {
-            return *doubleByte_at_addr( which );
-        }
+    std::uint16_t *doubleByte_at_addr( int which ) const {
+        st_assert( which > 0 and which <= length(), "index out of bounds" );
+        return &doubleBytes()[ which - 1 ];
+    }
 
 
-        void doubleByte_at_put( int which, std::uint16_t contents ) {
-            *doubleByte_at_addr( which ) = contents;
-        }
+    std::uint16_t doubleByte_at( int which ) const {
+        return *doubleByte_at_addr( which );
+    }
 
 
-        // three way compare
-        int compare( DoubleByteArrayOop arg );
+    void doubleByte_at_put( int which, std::uint16_t contents ) {
+        *doubleByte_at_addr( which ) = contents;
+    }
 
-        // Returns the hash value for the string
-        int hash_value();
 
-        // copy string to buffer as null terminated ascii string.
-        bool_t copy_null_terminated( char * buffer, int max_length );
+    // three way compare
+    int compare( DoubleByteArrayOop arg );
 
-        char * as_string();
+    // Returns the hash value for the string
+    int hash_value();
 
-        // memory operations
-        bool_t verify();
+    // copy string to buffer as null terminated ascii string.
+    bool_t copy_null_terminated( char *buffer, int max_length );
 
-        friend class doubleByteArrayKlass;
+    char *as_string();
+
+    // memory operations
+    bool_t verify();
+
+    friend class doubleByteArrayKlass;
 };
 
 
-inline DoubleByteArrayOop as_doubleByteArrayOop( void * p ) {
+inline DoubleByteArrayOop as_doubleByteArrayOop( void *p ) {
     return DoubleByteArrayOop( as_memOop( p ) );
 }

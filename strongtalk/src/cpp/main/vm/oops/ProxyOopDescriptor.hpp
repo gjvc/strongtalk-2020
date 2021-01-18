@@ -25,129 +25,129 @@ const int pointer_offset = sizeof( MemOopDescriptor ) - MEMOOP_TAG;
 
 class ProxyOopDescriptor : public MemOopDescriptor {
 
-    private:
-        void * _pointer;
+private:
+    void *_pointer;
 
-    protected:
-        ProxyOopDescriptor * addr() const {
-            return ( ProxyOopDescriptor * ) MemOopDescriptor::addr();
-        }
-
-
-    public:
-        // field offsets for code generation
-        static int pointer_byte_offset() {
-            return ( 2 * oopSize ) - MEMOOP_TAG;
-        }
+protected:
+    ProxyOopDescriptor *addr() const {
+        return (ProxyOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        friend ProxyOop as_proxyOop( void * p );
+public:
+    // field offsets for code generation
+    static int pointer_byte_offset() {
+        return ( 2 * oopSize ) - MEMOOP_TAG;
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( ProxyOopDescriptor ) / oopSize;
-        }
+    friend ProxyOop as_proxyOop( void *p );
 
 
-        void * get_pointer() const {
-            return addr()->_pointer;
-        }
+    // sizing
+    static int header_size() {
+        return sizeof( ProxyOopDescriptor ) / oopSize;
+    }
 
 
-        void set_pointer( void * ptr ) {
-            addr()->_pointer = ptr;
-        }
+    void *get_pointer() const {
+        return addr()->_pointer;
+    }
 
 
-        void null_pointer() {
-            set_pointer( nullptr );
-        }
+    void set_pointer( void *ptr ) {
+        addr()->_pointer = ptr;
+    }
 
 
-        bool_t is_null() const {
-            return get_pointer() == nullptr;
-        }
+    void null_pointer() {
+        set_pointer( nullptr );
+    }
 
 
-        bool_t is_allOnes() const {
-            return get_pointer() == ( void * ) -1;
-        }
+    bool_t is_null() const {
+        return get_pointer() == nullptr;
+    }
 
 
-        smi_t foreign_hash() const {
-            return smi_t( get_pointer() ) >> TAG_SIZE;
-        }
+    bool_t is_allOnes() const {
+        return get_pointer() == (void *) -1;
+    }
 
 
-        bool_t same_pointer_as( ProxyOop x ) const {
-            return get_pointer() == x->get_pointer();
-        }
+    smi_t foreign_hash() const {
+        return smi_t( get_pointer() ) >> TAG_SIZE;
+    }
 
 
-        void bootstrap_object( Bootstrap * stream );
-
-    private:
-        std::uint8_t * addr_at( int offset ) const {
-            return ( ( std::uint8_t * ) get_pointer() ) + offset;
-        }
+    bool_t same_pointer_as( ProxyOop x ) const {
+        return get_pointer() == x->get_pointer();
+    }
 
 
-    public:
-        std::uint8_t byte_at( int offset ) const {
-            return *addr_at( offset );
-        }
+    void bootstrap_object( Bootstrap *stream );
+
+private:
+    std::uint8_t *addr_at( int offset ) const {
+        return ( (std::uint8_t *) get_pointer() ) + offset;
+    }
 
 
-        void byte_at_put( int offset, std::uint8_t c ) {
-            *addr_at( offset ) = c;
-        }
+public:
+    std::uint8_t byte_at( int offset ) const {
+        return *addr_at( offset );
+    }
 
 
-        std::uint16_t doubleByte_at( int offset ) const {
-            return *( ( std::uint16_t * ) addr_at( offset ) );
-        }
+    void byte_at_put( int offset, std::uint8_t c ) {
+        *addr_at( offset ) = c;
+    }
 
 
-        void doubleByte_at_put( int offset, std::uint16_t db ) {
-            *( ( std::uint16_t * ) addr_at( offset ) ) = db;
-        }
+    std::uint16_t doubleByte_at( int offset ) const {
+        return *( (std::uint16_t *) addr_at( offset ) );
+    }
 
 
-        std::int32_t long_at( int offset ) const {
-            return *( ( std::int32_t * ) addr_at( offset ) );
-        }
+    void doubleByte_at_put( int offset, std::uint16_t db ) {
+        *( (std::uint16_t *) addr_at( offset ) ) = db;
+    }
 
 
-        void long_at_put( int offset, std::int32_t l ) {
-            *( ( std::int32_t * ) addr_at( offset ) ) = l;
-        }
+    std::int32_t long_at( int offset ) const {
+        return *( (std::int32_t *) addr_at( offset ) );
+    }
 
 
-        float float_at( int offset ) const {
-            return *( ( float * ) addr_at( offset ) );
-        }
+    void long_at_put( int offset, std::int32_t l ) {
+        *( (std::int32_t *) addr_at( offset ) ) = l;
+    }
 
 
-        void float_at_put( int offset, float f ) {
-            *( ( float * ) addr_at( offset ) ) = f;
-        }
+    float float_at( int offset ) const {
+        return *( (float *) addr_at( offset ) );
+    }
 
 
-        double double_at( int offset ) const {
-            return *( ( double * ) addr_at( offset ) );
-        }
+    void float_at_put( int offset, float f ) {
+        *( (float *) addr_at( offset ) ) = f;
+    }
 
 
-        void double_at_put( int offset, double d ) {
-            *( ( double * ) addr_at( offset ) ) = d;
-        }
+    double double_at( int offset ) const {
+        return *( (double *) addr_at( offset ) );
+    }
 
 
-        friend class ProxyKlass;
+    void double_at_put( int offset, double d ) {
+        *( (double *) addr_at( offset ) ) = d;
+    }
+
+
+    friend class ProxyKlass;
 };
 
 
-inline ProxyOop as_proxyOop( void * p ) {
+inline ProxyOop as_proxyOop( void *p ) {
     return ProxyOop( as_memOop( p ) );
 }

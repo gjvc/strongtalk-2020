@@ -50,17 +50,17 @@ void LookupKey::switch_pointers( Oop from, Oop to ) {
 
 
 void LookupKey::oops_do( void f( Oop * ) ) {
-    f( ( Oop * ) &_klass );
-    f( ( Oop * ) &_selector_or_method );
+    f( (Oop *) &_klass );
+    f( (Oop *) &_selector_or_method );
 }
 
 
-void LookupKey::print_on( ConsoleOutputStream * stream ) const {
+void LookupKey::print_on( ConsoleOutputStream *stream ) const {
     print_inlining_database_on( stream );
 }
 
 
-void LookupKey::print_inlining_database_on( ConsoleOutputStream * stream ) const {
+void LookupKey::print_inlining_database_on( ConsoleOutputStream *stream ) const {
     if ( klass() ) {
         klass()->klass_part()->print_name_on( stream );
     } else {
@@ -86,15 +86,15 @@ void LookupKey::print() const {
 }
 
 
-char * LookupKey::print_string() const {
-    StringOutputStream * stream = new StringOutputStream( 50 );
+char *LookupKey::print_string() const {
+    StringOutputStream *stream = new StringOutputStream( 50 );
     print_on( stream );
     return stream->as_string();
 }
 
 
-LookupKey * LookupKey::allocate( KlassOop klass, Oop selector_or_method ) {
-    LookupKey * result = new_resource_array <LookupKey>( 1 );
+LookupKey *LookupKey::allocate( KlassOop klass, Oop selector_or_method ) {
+    LookupKey *result = new_resource_array<LookupKey>( 1 );
     result->initialize( klass, selector_or_method );
     return result;
 }
@@ -111,7 +111,7 @@ LookupKey::LookupKey( KlassOop klass, Oop selector_or_method ) {
 }
 
 
-LookupKey::LookupKey( LookupKey * key ) {
+LookupKey::LookupKey( LookupKey *key ) {
     _klass              = key->klass();
     _selector_or_method = key->selector_or_method();
 }
@@ -148,7 +148,7 @@ bool_t LookupKey::is_block_type() const {
 }
 
 
-bool_t LookupKey::equal( const LookupKey * p ) const {
+bool_t LookupKey::equal( const LookupKey *p ) const {
     return klass() == p->klass() and selector_or_method() == p->selector_or_method();
 }
 

@@ -12,7 +12,7 @@ KlassOop SMIKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-void setKlassVirtualTableFromSmiKlass( Klass * k ) {
+void setKlassVirtualTableFromSmiKlass( Klass *k ) {
     SMIKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -23,6 +23,6 @@ Oop SMIKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
 }
 
 
-void SMIKlass::oop_print_value( Oop obj, ConsoleOutputStream * stream ) {
+void SMIKlass::oop_print_value( Oop obj, ConsoleOutputStream *stream ) {
     stream->print( "%d", SMIOop( obj )->value() );
 }

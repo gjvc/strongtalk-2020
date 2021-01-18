@@ -30,15 +30,15 @@
 
 
 
-ChunkKlass * asChunkKlass( std::uint8_t * c ) {
-    return ( ChunkKlass * ) c;
+ChunkKlass *asChunkKlass( std::uint8_t *c ) {
+    return (ChunkKlass *) c;
 }
 
 
 void ChunkKlass::markSize( int nChunks, chunkState s ) {
     // write header
-    std::uint8_t * p = asByte();
-    std::uint8_t * e = p + nChunks - 1;
+    std::uint8_t *p = asByte();
+    std::uint8_t *e = p + nChunks - 1;
     if ( nChunks < maxOneByteLen ) {
         p[ 0 ] = e[ 0 ] = static_cast<int>(s) + nChunks - 1;
     } else {
@@ -77,12 +77,12 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
 }
 
 
-ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd ) {
+ChunkKlass *ChunkKlass::findStart( ChunkKlass *mapStart, ChunkKlass *mapEnd ) {
     // this points into the middle of a chunk; return start of chunk
-    std::uint8_t    * p     = asByte();
-    std::uint8_t    * start = mapStart->asByte();
-    std::uint8_t    * end   = mapEnd->asByte();
-    ChunkKlass * m;
+    std::uint8_t *p     = asByte();
+    std::uint8_t *start = mapStart->asByte();
+    std::uint8_t *end   = mapEnd->asByte();
+    ChunkKlass   *m;
     if ( *p < static_cast<std::uint8_t>( chunkState::MaxDistance ) ) {
         // we're outside the header, so just walk down the trail
         while ( *p < static_cast<std::uint8_t>( chunkState::MaxDistance ) )
@@ -113,12 +113,12 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
 
 
 bool_t ChunkKlass::isValid() {
-    std::uint8_t * p = asByte();
+    std::uint8_t *p = asByte();
     bool_t ok;
     if ( p[ 0 ] == static_cast<std::uint8_t>( chunkState::invalid ) or p[ 0 ] < static_cast<std::uint8_t>( chunkState::MaxDistance ) ) {
         ok = false;
     } else {
-        std::uint8_t * e = next()->asByte() - 1;
+        std::uint8_t *e = next()->asByte() - 1;
         int ovfl = isUsed() ? static_cast<int>( chunkState::usedOvfl ) : static_cast<int>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
@@ -140,21 +140,21 @@ bool_t ChunkKlass::verify() {
 }
 
 
-void FreeList::append( HeapChunk * h ) {
+void FreeList::append( HeapChunk *h ) {
     insert( h );
 }
 
 
-void FreeList::remove( HeapChunk * h ) {
+void FreeList::remove( HeapChunk *h ) {
     h->remove();
 }
 
 
-HeapChunk * FreeList::get() {
+HeapChunk *FreeList::get() {
     if ( isEmpty() ) {
         return nullptr;
     } else {
-        HeapChunk * res = anchor()->next();
+        HeapChunk *res = anchor()->next();
         remove( res );
         return res;
     }
@@ -163,8 +163,8 @@ HeapChunk * FreeList::get() {
 
 int FreeList::length() const {
     int i = 0;
-    HeapChunk       * f = anchor();
-    for ( HeapChunk * p = f->next(); p not_eq f; p = p->next() )
+    HeapChunk       *f = anchor();
+    for ( HeapChunk *p = f->next(); p not_eq f; p = p->next() )
         i++;
     return i;
 }
@@ -187,12 +187,12 @@ ZoneHeap::ZoneHeap( int s, int bs ) {
     nfree = 30;
 //    _base = AllocateHeap( size + blockSize, "zone" );
     _base = os::exec_memory( size + blockSize ); //, "zone");
-    base  = ( const char * ) ( ( int( _base ) + blockSize - 1 ) / blockSize * blockSize );
+    base  = (const char *) ( ( int( _base ) + blockSize - 1 ) / blockSize * blockSize );
     st_assert( int( base ) % blockSize == 0, "base not aligned to blockSize" );
-    _heapKlass = ( ChunkKlass * ) ( AllocateHeap( mapSize() + 2, "zone free map" ) + 1 );
+    _heapKlass = (ChunkKlass *) ( AllocateHeap( mapSize() + 2, "zone free map" ) + 1 );
     // + 2 for sentinels
-    _freeList  = new_c_heap_array <FreeList>( nfree );
-    _bigList   = new_c_heap_array <FreeList>( 1 );
+    _freeList  = new_c_heap_array<FreeList>( nfree );
+    _bigList   = new_c_heap_array<FreeList>( 1 );
     _newHeap   = nullptr;
     clear();
 }
@@ -227,13 +227,13 @@ void ZoneHeap::clear() {
 #define between( p, low, high ) ((void *)(p) >= (void *)(low) and (void *)(p) < (void *)(high))
 
 
-bool_t ZoneHeap::contains( const void * p ) const {
+bool_t ZoneHeap::contains( const void *p ) const {
     return between( p, base, base + capacity() ) or between( p, _freeList, _freeList + nfree );
 }
 
 
 ZoneHeap::~ZoneHeap() {
-    set_oops( ( Oop * ) base, capacity() / oopSize, nullptr );
+    set_oops( (Oop *) base, capacity() / oopSize, nullptr );
     free( const_cast<char *>(_base) );
     free( _heapKlass - 1 );        // -1 to get rid of sentinel
     free( _freeList );
@@ -241,16 +241,16 @@ ZoneHeap::~ZoneHeap() {
 }
 
 
-void ZoneHeap::removeFromFreeList( ChunkKlass * m ) {
+void ZoneHeap::removeFromFreeList( ChunkKlass *m ) {
     m->verify();
-    HeapChunk * p = ( HeapChunk * ) blockAddr( m );
+    HeapChunk *p = (HeapChunk *) blockAddr( m );
     p->remove();
 }
 
 
-bool_t ZoneHeap::addToFreeList( ChunkKlass * m ) {
+bool_t ZoneHeap::addToFreeList( ChunkKlass *m ) {
     m->verify();
-    HeapChunk * p = ( HeapChunk * ) blockAddr( m );
+    HeapChunk *p = (HeapChunk *) blockAddr( m );
     int sz = m->size();
     if ( sz <= nfree ) {
         _freeList[ sz - 1 ].append( p );
@@ -263,30 +263,30 @@ bool_t ZoneHeap::addToFreeList( ChunkKlass * m ) {
 }
 
 
-void * ZoneHeap::allocFromLists( int wantedBytes ) {
+void *ZoneHeap::allocFromLists( int wantedBytes ) {
     st_assert( wantedBytes % blockSize == 0, "not a multiple of blockSize" );
     int wantedBlocks = wantedBytes >> log2BS;
     st_assert( wantedBlocks > 0, "negative alloc size" );
     int blocks = wantedBlocks - 1;
-    void * p = nullptr;
+    void *p = nullptr;
     while ( not p and ++blocks <= nfree ) {
         p = _freeList[ blocks - 1 ].get();
     }
     if ( not p ) {
-        HeapChunk * f = _bigList->anchor();
-        HeapChunk * c = f->next();
+        HeapChunk *f = _bigList->anchor();
+        HeapChunk *c = f->next();
         for ( ; c not_eq f and c->size < wantedBlocks; c = c->next() );
         if ( c == f ) {
             if ( not _combineOnDeallocation and combineAll() >= wantedBlocks )
                 return allocFromLists( wantedBytes );
         } else {
-            p      = ( void * ) c;
+            p      = (void *) c;
             blocks = c->size;
             _bigList->remove( c );
         }
     }
     if ( p ) {
-        ChunkKlass * m = mapAddr( p );
+        ChunkKlass *m = mapAddr( p );
         st_assert( m->size() == blocks, "inconsistent sizes" );
         m->markUsed( wantedBlocks );
         if ( blocks > wantedBlocks ) {
@@ -294,7 +294,7 @@ void * ZoneHeap::allocFromLists( int wantedBytes ) {
             if ( not bootstrappingInProgress ) LOG_EVENT( "zoneHeap: splitting allocated block" );
 //#endif
             int freeChunkSize = blocks - wantedBlocks;
-            ChunkKlass * freeChunk = m->next();
+            ChunkKlass *freeChunk = m->next();
             freeChunk->markUnused( freeChunkSize );
             addToFreeList( freeChunk );
         }
@@ -303,11 +303,11 @@ void * ZoneHeap::allocFromLists( int wantedBytes ) {
 }
 
 
-void * ZoneHeap::allocate( int wantedBytes ) {
+void *ZoneHeap::allocate( int wantedBytes ) {
     st_assert( wantedBytes > 0, "Heap::allocate: size <= 0" );
     int rounded = ( ( wantedBytes + blockSize - 1 ) >> log2BS ) << log2BS;
 
-    void * p = allocFromLists( rounded );
+    void *p = allocFromLists( rounded );
     if ( p ) {
         _bytesUsed += rounded;
         _total += rounded;
@@ -320,15 +320,15 @@ void * ZoneHeap::allocate( int wantedBytes ) {
 }
 
 
-void ZoneHeap::deallocate( void * p, int bytes ) {
-    ChunkKlass * m = mapAddr( p );
+void ZoneHeap::deallocate( void *p, int bytes ) {
+    ChunkKlass *m = mapAddr( p );
     int myChunkSize  = m->size();
     int blockedBytes = myChunkSize << log2BS;
     _bytesUsed -= blockedBytes;
     _ifrag -= blockedBytes - bytes;
     m->markUnused( myChunkSize );
     bool_t big = addToFreeList( m );
-    HeapChunk * c = ( HeapChunk * ) p;
+    HeapChunk *c = (HeapChunk *) p;
     if ( _combineOnDeallocation or big )
         combine( c );    // always keep bigList combined
 
@@ -341,19 +341,19 @@ void ZoneHeap::deallocate( void * p, int bytes ) {
 #define INC( p, n )   p = asChunkKlass(p->asByte() + n)
 
 
-const char * ZoneHeap::compact( void move( const char * from, char * to, int nbytes ) ) {
+const char *ZoneHeap::compact( void move( const char *from, char *to, int nbytes ) ) {
 
     if ( usedBytes() == capacity() )
         return nullptr;
 
-    ChunkKlass * m   = _heapKlass;
-    ChunkKlass * end = heapEnd();
+    ChunkKlass *m   = _heapKlass;
+    ChunkKlass *end = heapEnd();
 
-    ChunkKlass * freeChunk = m;
+    ChunkKlass *freeChunk = m;
     while ( freeChunk->isUsed() ) {                // find 1st unused blk
         freeChunk = freeChunk->next();
     }
-    ChunkKlass * usedChunk = freeChunk;
+    ChunkKlass *usedChunk = freeChunk;
 
     while ( true ) {
         while ( usedChunk->isUnused() )
@@ -382,29 +382,29 @@ const char * ZoneHeap::compact( void move( const char * from, char * to, int nby
 }
 
 
-int ZoneHeap::combine( HeapChunk *& c ) {
+int ZoneHeap::combine( HeapChunk *&c ) {
     // Try to combine c with its neighbors; on return, c will point to
     // the next element in the freeList, and the return value will indicate
     // the size of the combined block.
-    ChunkKlass * cm = mapAddr( ( const char * ) c );
+    ChunkKlass *cm = mapAddr( (const char *) c );
     st_assert( cm < heapEnd(), "beyond heap" );
-    ChunkKlass * cmnext = cm->next();
-    ChunkKlass * cm1;
+    ChunkKlass *cmnext = cm->next();
+    ChunkKlass *cm1;
     if ( cm == _heapKlass ) {
         cm1 = cm;
     } else {
         cm1 = cm->prev();            // try to combine with prev
         while ( cm1->isUnused() ) {        // will terminate because of sentinel
-            ChunkKlass * free = cm1;
-            cm1               = free->prev();
+            ChunkKlass *free = cm1;
+            cm1              = free->prev();
             removeFromFreeList( free );
             free->invalidate();        // make sure it doesn't look valid
         }
         cm1 = cm1->next();
     }
-    ChunkKlass * cm2    = cmnext;        // try to combine with next
+    ChunkKlass *cm2    = cmnext;        // try to combine with next
     while ( cm2->isUnused() ) {        // will terminate because of sentinel
-        ChunkKlass * free = cm2;
+        ChunkKlass *free = cm2;
         cm2 = cm2->next();
         removeFromFreeList( free );
         free->invalidate();            // make sure it doesn't look valid
@@ -430,9 +430,9 @@ int ZoneHeap::combine( HeapChunk *& c ) {
 int ZoneHeap::combineAll() {
     int       biggest      = 0;
     for ( int i            = 0; i < nfree; i++ ) {
-        HeapChunk       * f = _freeList[ i ].anchor();
-        for ( HeapChunk * c = f->next(); c not_eq f; ) {
-            HeapChunk * c1 = c;
+        HeapChunk       *f = _freeList[ i ].anchor();
+        for ( HeapChunk *c = f->next(); c not_eq f; ) {
+            HeapChunk *c1 = c;
             int sz = combine( c );
             if ( c1 == c ) st_fatal( "infinite loop detected while combining blocks" );
             if ( sz > biggest )
@@ -447,7 +447,7 @@ int ZoneHeap::combineAll() {
 }
 
 
-const void * ZoneHeap::firstUsed() const {
+const void *ZoneHeap::firstUsed() const {
     if ( usedBytes() == 0 )
         return nullptr;
 
@@ -460,11 +460,11 @@ const void * ZoneHeap::firstUsed() const {
 
 
 // return next used chunk with address > p
-const void * ZoneHeap::nextUsed( const void * p ) const {
-    ChunkKlass * m = mapAddr( p );
+const void *ZoneHeap::nextUsed( const void *p ) const {
+    ChunkKlass *m = mapAddr( p );
     if ( m->isValid() and not _lastCombine->contains( m->asByte() ) ) {
         if ( VerifyZoneOften ) {
-            ChunkKlass * m1 = _heapKlass;
+            ChunkKlass *m1 = _heapKlass;
             for ( ; m1 < m; m1 = m1->next() );
             st_assert( m1 == m, "m isn't a valid chunk" );
         }
@@ -473,12 +473,12 @@ const void * ZoneHeap::nextUsed( const void * p ) const {
     } else {
         // m is pointing into the middle of a block (because of block combination)
 
-        ChunkKlass * m1 = _heapKlass;
+        ChunkKlass *m1 = _heapKlass;
         for ( ; m1 < _lastCombine; m1 = m1->next() );
         st_assert( m1 == _lastCombine, "lastCombine not found" );
         st_assert( _lastCombine->verify(), " chunkState::invalid lastCombine" );
 
-        ChunkKlass * n = _lastCombine;
+        ChunkKlass *n = _lastCombine;
         for ( ; n <= m; n = n->next() );
         m = n;
         st_assert( m->isValid(), "something's wrong" );
@@ -493,7 +493,7 @@ const void * ZoneHeap::nextUsed( const void * p ) const {
     if ( m == heapEnd() ) {
         return nullptr;                    // was last one
     } else {
-        const void * next = blockAddr( m );
+        const void *next = blockAddr( m );
         st_assert( next > p, "must be monotonic" );
         st_assert( not( int( next ) & 1 ), "must be even" );
         return next;
@@ -501,32 +501,32 @@ const void * ZoneHeap::nextUsed( const void * p ) const {
 }
 
 
-const void * ZoneHeap::findStartOfBlock( const void * start ) const {
+const void *ZoneHeap::findStartOfBlock( const void *start ) const {
     // used a lot -- help the optimizer a bit
     if ( _newHeap and _newHeap->contains( start ) )
         return _newHeap->findStartOfBlock( start );
 
     const int blockSz = blockSize;
-    start = ( void * ) ( int( start ) & ~( blockSz - 1 ) );
+    start = (void *) ( int( start ) & ~( blockSz - 1 ) );
     st_assert( contains( start ), "start not in this zone" );
-    ChunkKlass * m = mapAddr( start )->findStart( _heapKlass, heapEnd() );
+    ChunkKlass *m = mapAddr( start )->findStart( _heapKlass, heapEnd() );
     return blockAddr( m );
 }
 
 
-int ZoneHeap::sizeOfBlock( void * p ) const {
+int ZoneHeap::sizeOfBlock( void *p ) const {
     return mapAddr( p )->size() << log2BS;
 }
 
 
 void ZoneHeap::verify() const {
-    ChunkKlass * m   = _heapKlass;
-    ChunkKlass * end = heapEnd();
+    ChunkKlass *m   = _heapKlass;
+    ChunkKlass *end = heapEnd();
     if ( end->isUnused() or end->size() not_eq 1 )
-        error( "wrong end-sentinel %d in heap %#lx", *( std::uint8_t * ) end, this );
-    ChunkKlass * begin = asChunkKlass( _heapKlass->asByte() - 1 );
+        error( "wrong end-sentinel %d in heap %#lx", *(std::uint8_t *) end, this );
+    ChunkKlass *begin = asChunkKlass( _heapKlass->asByte() - 1 );
     if ( begin->isUnused() or begin->size() not_eq 1 )
-        error( "wrong begin-sentinel %d in heap %#lx", *( std::uint8_t * ) begin, this );
+        error( "wrong begin-sentinel %d in heap %#lx", *(std::uint8_t *) begin, this );
 
     // verify map structure
     while ( m < end ) {
@@ -540,9 +540,9 @@ void ZoneHeap::verify() const {
     for ( ; i < nfree; i++ ) {
         int j        = 0;
         int lastSize = 0;
-        HeapChunk       * f = _freeList[ i ].anchor();
-        for ( HeapChunk * h = f->next(); h not_eq f; h = h->next(), j++ ) {
-            ChunkKlass * p = mapAddr( h );
+        HeapChunk       *f = _freeList[ i ].anchor();
+        for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
+            ChunkKlass *p = mapAddr( h );
             if ( not p->verify() )
                 lprintf( " in free list %ld (elem %ld) of heap %#lx", i, j, this );
             if ( p->isUsed() ) {
@@ -559,9 +559,9 @@ void ZoneHeap::verify() const {
         }
     }
     int j = 0;
-    HeapChunk       * f = _bigList->anchor();
-    for ( HeapChunk * h = f->next(); h not_eq f; h = h->next(), j++ ) {
-        ChunkKlass * p = mapAddr( h );
+    HeapChunk       *f = _bigList->anchor();
+    for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
+        ChunkKlass *p = mapAddr( h );
         if ( not p->verify() )
             lprintf( " in bigList (elem %ld) of heap %#lx", j, this );
         if ( p->isUsed() ) {

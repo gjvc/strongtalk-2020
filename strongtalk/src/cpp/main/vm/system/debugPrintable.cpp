@@ -26,23 +26,23 @@
 
 class Command {
 
-    private:
-        ResourceMark resourceMark;
+private:
+    ResourceMark resourceMark;
 
-    public:
-        Command( const char * str ) {
-            _console->cr();
-            _console->print_cr( "Executing [%s]", str );
-        }
+public:
+    Command( const char *str ) {
+        _console->cr();
+        _console->print_cr( "Executing [%s]", str );
+    }
 
 
-        ~Command() {
-            flush_logFile();
-        }
+    ~Command() {
+        flush_logFile();
+    }
 };
 
 
-void pp( void * p ) {
+void pp( void *p ) {
 
     Command     c( "pp" );
     FlagSetting fl( PrintVMMessages, true );
@@ -51,11 +51,11 @@ void pp( void * p ) {
         return;
     }
 
-    if ( Universe::is_heap( ( Oop * ) p ) ) {
-        MemOop obj = as_memOop( Universe::object_start( ( Oop * ) p ) );
+    if ( Universe::is_heap( (Oop *) p ) ) {
+        MemOop obj = as_memOop( Universe::object_start( (Oop *) p ) );
         obj->print();
         if ( obj->is_method() ) {
-            int byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( ( std::uint8_t * ) p );
+            int byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( (std::uint8_t *) p );
             PrettyPrinter::print( MethodOop( obj ), nullptr, byteCodeIndex );
         }
         return;
@@ -70,11 +70,11 @@ void pp( void * p ) {
 
 // pv: print vm-printable object
 void pv( int p ) {
-    ( ( PrintableResourceObject * ) p )->print();
+    ( (PrintableResourceObject *) p )->print();
 }
 
 
-void pp_short( void * p ) {
+void pp_short( void *p ) {
     Command     c( "pp_short" );
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
@@ -89,14 +89,14 @@ void pp_short( void * p ) {
 }
 
 
-void pk( Klass * p ) {
+void pk( Klass *p ) {
     Command     c( "pk" );
     FlagSetting fl( PrintVMMessages, true );
     p->print_klass();
 }
 
 
-void pr( void * m ) {
+void pr( void *m ) {
     Command c( "pr" );
     Universe::remembered_set->print_set_for_object( MemOop( m ) );
 }
@@ -105,7 +105,7 @@ void pr( void * m ) {
 void ps() { // print stack
     {
         // Prints the stack of the current Delta process
-        DeltaProcess * p = DeltaProcess::active();
+        DeltaProcess *p = DeltaProcess::active();
         if ( not p )
             return;
         Command c( "ps" );
@@ -137,7 +137,7 @@ void pd() { // print stack
     {
         Command c( "pd" );
         // Prints the stack of the current Delta process
-        DeltaProcess * p = DeltaProcess::active();
+        DeltaProcess *p = DeltaProcess::active();
         _console->print( " for process: " );
         p->print();
         _console->cr();
@@ -221,31 +221,31 @@ void events() {
 }
 
 
-NativeMethod * find( int addr ) {
+NativeMethod *find( int addr ) {
     Command c( "find" );
-    return findNativeMethod( ( void * ) addr );
+    return findNativeMethod( (void *) addr );
 }
 
 
 MethodOop findm( int hp ) {
     Command c( "findm" );
-    return MethodOopDescriptor::methodOop_from_hcode( ( std::uint8_t * ) hp );
+    return MethodOopDescriptor::methodOop_from_hcode( (std::uint8_t *) hp );
 }
 
 // int versions of all methods to avoid having to type casts in the debugger
 
 void pp( int p ) {
-    pp( ( void * ) p );
+    pp( (void *) p );
 }
 
 
 void pp_short( int p ) {
-    pp_short( ( void * ) p );
+    pp_short( (void *) p );
 }
 
 
 void pk( int p ) {
-    pk( ( Klass * ) p );
+    pk( (Klass *) p );
 }
 
 
@@ -261,7 +261,7 @@ void pm( int m ) {
 }
 
 
-void print_codes( const char * class_name, const char * selector ) {
+void print_codes( const char *class_name, const char *selector ) {
     Command c( "print_codes" );
     _console->print_cr( "Finding %s in %s.", selector, class_name );
     Oop result = Universe::find_global( class_name );

@@ -11,12 +11,12 @@
 
 class CallBack : AllStatic {
 
-    public:
-        static void initialize( Oop receiver, SymbolOop selector );
+public:
+    static void initialize( Oop receiver, SymbolOop selector );
 
-        static void * registerPascalCall( int index, int nofArgs );
+    static void *registerPascalCall( int index, int nofArgs );
 
-        static void * registerCCall( int index );
+    static void *registerCCall( int index );
 
-        static void unregister( void * block );
+    static void unregister( void *block );
 };

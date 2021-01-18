@@ -16,22 +16,22 @@
 #include "vm/system/sizes.hpp"
 
 
-MacroAssembler * theMacroAssembler = nullptr;
+MacroAssembler *theMacroAssembler = nullptr;
 
 
 CodeBuffer::CodeBuffer( int instsSize, int locsSize ) {
-    _codeStart         = _codeEnd = new_resource_array <char>( instsSize );
+    _codeStart         = _codeEnd = new_resource_array<char>( instsSize );
     _codeOverflow      = _codeStart + instsSize;
-    _locsStart         = _locsEnd = ( RelocationInformation * ) new_resource_array <char>( locsSize );
-    _locsOverflow      = ( RelocationInformation * ) ( ( const char * ) _locsStart + locsSize );
+    _locsStart         = _locsEnd = (RelocationInformation *) new_resource_array<char>( locsSize );
+    _locsOverflow      = (RelocationInformation *) ( (const char *) _locsStart + locsSize );
     _last_reloc_offset = code_size();
     _decode_begin      = nullptr;
 }
 
 
-CodeBuffer::CodeBuffer( const char * code_start, int code_size ) {
-    _codeStart         = ( const char * ) code_start;
-    _codeEnd           = ( char * ) code_start;
+CodeBuffer::CodeBuffer( const char *code_start, int code_size ) {
+    _codeStart         = (const char *) code_start;
+    _codeEnd           = (char *) code_start;
     _codeOverflow      = _codeStart + code_size;
     _locsStart         = _locsEnd = nullptr;
     _locsOverflow      = nullptr;
@@ -40,18 +40,18 @@ CodeBuffer::CodeBuffer( const char * code_start, int code_size ) {
 }
 
 
-const char * CodeBuffer::decode_begin() {
-    return _decode_begin == nullptr ? ( const char * ) _codeStart : _decode_begin;
+const char *CodeBuffer::decode_begin() {
+    return _decode_begin == nullptr ? (const char *) _codeStart : _decode_begin;
 }
 
 
-void CodeBuffer::set_code_end( const char * end ) {
-    if ( ( const char * ) end < _codeStart or _codeOverflow < ( const char * ) end ) st_fatal( "code end out of bounds" );
-    _codeEnd = ( char * ) end;
+void CodeBuffer::set_code_end( const char *end ) {
+    if ( (const char *) end < _codeStart or _codeOverflow < (const char *) end ) st_fatal( "code end out of bounds" );
+    _codeEnd = (char *) end;
 }
 
 
-void CodeBuffer::relocate( const char * at, RelocationInformation::RelocationType rtype ) {
+void CodeBuffer::relocate( const char *at, RelocationInformation::RelocationType rtype ) {
     st_assert( code_begin() <= at and at <= code_end(), "cannot relocate data outside code boundaries" );
     if ( _locsEnd == nullptr ) {
         // no Space for relocation information provided => code cannot be relocated
@@ -71,17 +71,17 @@ void CodeBuffer::relocate( const char * at, RelocationInformation::RelocationTyp
 
 
 void CodeBuffer::decode() {
-    Disassembler::decode( ( const char * ) decode_begin(), ( const char * ) code_end() );
+    Disassembler::decode( (const char *) decode_begin(), (const char *) code_end() );
     _decode_begin = code_end();
 }
 
 
 void CodeBuffer::decode_all() {
-    Disassembler::decode( ( const char * ) code_begin(), ( const char * ) code_end() );
+    Disassembler::decode( (const char *) code_begin(), (const char *) code_end() );
 }
 
 
-void CodeBuffer::copyTo( NativeMethod * nm ) {
+void CodeBuffer::copyTo( NativeMethod *nm ) {
 
     const char hlt = '\xF4';
 
@@ -91,11 +91,11 @@ void CodeBuffer::copyTo( NativeMethod * nm ) {
     while ( reloc_size() % oopSize not_eq 0 )
         *_locsEnd++ = RelocationInformation( RelocationInformation::RelocationType::oop_type, 0 ); // align relocation info
 
-    copy_oops( ( Oop * ) _codeStart, ( Oop * ) nm->instructionsStart(), code_size() / oopSize );
-    copy_oops( ( Oop * ) _locsStart, ( Oop * ) nm->locs(), reloc_size() / oopSize );
+    copy_oops( (Oop *) _codeStart, (Oop *) nm->instructionsStart(), code_size() / oopSize );
+    copy_oops( (Oop *) _locsStart, (Oop *) nm->locs(), reloc_size() / oopSize );
 
     // Fix the pc relative information after the move
-    int delta = ( const char * ) _codeStart - ( const char * ) nm->instructionsStart();
+    int delta = (const char *) _codeStart - (const char *) nm->instructionsStart();
     nm->fix_relocation_at_move( delta );
 }
 

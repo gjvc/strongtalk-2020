@@ -12,39 +12,47 @@
 
 #include <gtest/gtest.h>
 
-typedef Oop (__CALLING_CONVENTION * smifntype)( SMIOop, SMIOop );
+typedef Oop (__CALLING_CONVENTION *smifntype)( SMIOop, SMIOop );
 
 extern "C" int expansion_count;
 
 
 class SmiPrimitivessTests : public ::testing::Test {
 
-    protected:
-        void SetUp() override {
+protected:
+    void SetUp() override {
 
-            quoSymbol = oopFactory::new_symbol( "primitiveQuo:ifFail:" );
-            PrimitiveDescriptor * prim = Primitives::lookup( quoSymbol );
-            smiQuo = smifntype( prim->fn() );
-        }
-
-
-        void TearDown() override {
-
-        }
+        quoSymbol = oopFactory::new_symbol( "primitiveQuo:ifFail:" );
+        PrimitiveDescriptor *prim = Primitives::lookup( quoSymbol );
+        smiQuo = smifntype( prim->fn() );
+    }
 
 
-        smifntype smiQuo;
-        SymbolOop quoSymbol;
+    void TearDown() override {
+
+    }
+
+
+    smifntype smiQuo;
+    SymbolOop quoSymbol;
 
 };
 
 
-TEST_F( SmiPrimitivessTests, quoShouldReturnDivideReceiverByArgument ) {
-    ASSERT_EQ( 5, SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) ) )->value() );
+TEST_F( SmiPrimitivessTests, quoShouldReturnDivideReceiverByArgument
+) {
+ASSERT_EQ( 5,
+SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) )
+)->
+value()
+);
 }
 
 
-TEST_F( SmiPrimitivessTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI ) {
-    Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
-    ASSERT_EQ( ( int ) markSymbol( vmSymbols::receiver_has_wrong_type() ), ( int ) result );
+TEST_F( SmiPrimitivessTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI
+) {
+Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
+ASSERT_EQ( ( int )
+markSymbol( vmSymbols::receiver_has_wrong_type() ),
+( int ) result );
 }

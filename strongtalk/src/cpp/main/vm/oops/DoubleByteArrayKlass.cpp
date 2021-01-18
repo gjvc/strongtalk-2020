@@ -22,7 +22,7 @@ Oop DoubleByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, 
     int      obj_size = ni_size + 1 + roundTo( size * 2, oopSize ) / oopSize;
 
     // allocate
-    Oop * result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, ( MemOop * ) &k, permit_scavenge );
+    Oop *result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
     if ( result == nullptr )
         return nullptr;
 
@@ -35,15 +35,15 @@ Oop DoubleByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, 
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     // %optimized 'for (int index = 1; index <= size; index++)
     //               obj->doubleByte_at_put(index, 0)'
     base = &base[ ni_size + 1 ];
     while ( base < end )
-        *base++ = ( Oop ) 0;
+        *base++ = (Oop) 0;
 
     return obj;
 }
@@ -63,7 +63,7 @@ KlassOop DoubleByteArrayKlass::create_class( KlassOop super_class, MixinOop mixi
 }
 
 
-void setKlassVirtualTableFromDoubleByteArrayKlass( Klass * k ) {
+void setKlassVirtualTableFromDoubleByteArrayKlass( Klass *k ) {
     DoubleByteArrayKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -75,7 +75,7 @@ bool_t DoubleByteArrayKlass::oop_verify( Oop obj ) {
 }
 
 
-void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
     DoubleByteArrayOop array = DoubleByteArrayOop( obj );
     int                len   = array->length();
@@ -96,9 +96,9 @@ void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * st
 }
 
 
-void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    std::uint16_t * p = DoubleByteArrayOop( obj )->doubleBytes();
-    Oop      * l = DoubleByteArrayOop( obj )->length_addr();
+void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
+    std::uint16_t *p = DoubleByteArrayOop( obj )->doubleBytes();
+    Oop           *l = DoubleByteArrayOop( obj )->length_addr();
     int len = DoubleByteArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
@@ -110,8 +110,8 @@ void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * bl
 }
 
 
-void DoubleByteArrayKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
-    Oop * l = DoubleByteArrayOop( obj )->length_addr();
+void DoubleByteArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
+    Oop *l = DoubleByteArrayOop( obj )->length_addr();
     MemOopKlass::oop_oop_iterate( obj, blk );
     blk->do_oop( l );
 }

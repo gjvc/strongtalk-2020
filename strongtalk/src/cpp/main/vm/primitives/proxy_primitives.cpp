@@ -37,11 +37,11 @@ int proxyOopPrimitives::number_of_calls;
 PRIM_DECL_1( proxyOopPrimitives::getSmi, Oop receiver ) {
     PROLOGUE_1( "getSmi", receiver );
     ASSERT_RECEIVER;
-    std::uint32_t value   = ( std::uint32_t ) ProxyOop( receiver )->get_pointer();
+    std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->get_pointer();
     std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
-    return smiOopFromValue( ( int ) value );
+    return smiOopFromValue( (int) value );
 }
 
 
@@ -49,7 +49,7 @@ PRIM_DECL_2( proxyOopPrimitives::set, Oop receiver, Oop value ) {
     PROLOGUE_2( "getSmi", receiver, value );
     ASSERT_RECEIVER;
     if ( value->is_smi() ) {
-        ProxyOop( receiver )->set_pointer( ( void * ) SMIOop( value )->value() );
+        ProxyOop( receiver )->set_pointer( (void *) SMIOop( value )->value() );
     } else if ( value->is_proxy() ) {
         ProxyOop( receiver )->set_pointer( ProxyOop( value )->get_pointer() );
     } else
@@ -65,10 +65,10 @@ PRIM_DECL_3( proxyOopPrimitives::setHighLow, Oop receiver, Oop high, Oop low ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not low->is_smi() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    std::uint32_t h     = ( std::uint32_t ) SMIOop( high )->value();
-    std::uint32_t l     = ( std::uint32_t ) SMIOop( low )->value();
+    std::uint32_t h     = (std::uint32_t) SMIOop( high )->value();
+    std::uint32_t l     = (std::uint32_t) SMIOop( low )->value();
     std::uint32_t value = ( h << 16 ) | l;
-    ProxyOop( receiver )->set_pointer( ( void * ) value );
+    ProxyOop( receiver )->set_pointer( (void *) value );
     return receiver;
 }
 
@@ -76,7 +76,7 @@ PRIM_DECL_3( proxyOopPrimitives::setHighLow, Oop receiver, Oop high, Oop low ) {
 PRIM_DECL_1( proxyOopPrimitives::getHigh, Oop receiver ) {
     PROLOGUE_1( "getHigh", receiver );
     ASSERT_RECEIVER;
-    std::uint32_t value = ( int ) ProxyOop( receiver )->get_pointer();
+    std::uint32_t value = (int) ProxyOop( receiver )->get_pointer();
     value = value >> 16;
     return smiOopFromValue( value );
 }
@@ -85,7 +85,7 @@ PRIM_DECL_1( proxyOopPrimitives::getHigh, Oop receiver ) {
 PRIM_DECL_1( proxyOopPrimitives::getLow, Oop receiver ) {
     PROLOGUE_1( "getLow", receiver );
     ASSERT_RECEIVER;
-    std::uint32_t value = ( int ) ProxyOop( receiver )->get_pointer();
+    std::uint32_t value = (int) ProxyOop( receiver )->get_pointer();
     value &= 0x0000ffff;
     return smiOopFromValue( value );
 }
@@ -196,11 +196,11 @@ PRIM_DECL_2( proxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    std::uint32_t value   = ( std::uint32_t ) ProxyOop( receiver )->long_at( SMIOop( offset )->value() );
+    std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->long_at( SMIOop( offset )->value() );
     std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
-    return smiOopFromValue( ( int ) value );
+    return smiOopFromValue( (int) value );
 }
 
 
@@ -229,7 +229,7 @@ PRIM_DECL_3( proxyOopPrimitives::subProxyAt, Oop receiver, Oop offset, Oop resul
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( result )->set_pointer( ( void * ) ( ( const char * ) ProxyOop( receiver )->get_pointer() + SMIOop( offset )->value() ) );
+    ProxyOop( result )->set_pointer( (void *) ( (const char *) ProxyOop( receiver )->get_pointer() + SMIOop( offset )->value() ) );
     return result;
 }
 
@@ -244,7 +244,7 @@ PRIM_DECL_3( proxyOopPrimitives::proxyAt, Oop receiver, Oop offset, Oop result )
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( result )->set_pointer( ( void * ) ProxyOop( receiver )->long_at( SMIOop( offset )->value() ) );
+    ProxyOop( result )->set_pointer( (void *) ProxyOop( receiver )->long_at( SMIOop( offset )->value() ) );
     return result;
 }
 
@@ -259,7 +259,7 @@ PRIM_DECL_3( proxyOopPrimitives::proxyAtPut, Oop receiver, Oop offset, Oop value
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->long_at_put( SMIOop( offset )->value(), ( std::int32_t ) ProxyOop( value )->get_pointer() );
+    ProxyOop( receiver )->long_at_put( SMIOop( offset )->value(), (std::int32_t) ProxyOop( value )->get_pointer() );
     return receiver;
 }
 
@@ -272,7 +272,7 @@ PRIM_DECL_2( proxyOopPrimitives::singlePrecisionFloatAt, Oop receiver, Oop offse
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    return oopFactory::new_double( ( double ) ProxyOop( receiver )->float_at( SMIOop( offset )->value() ) );
+    return oopFactory::new_double( (double) ProxyOop( receiver )->float_at( SMIOop( offset )->value() ) );
 }
 
 
@@ -286,7 +286,7 @@ PRIM_DECL_3( proxyOopPrimitives::singlePrecisionFloatAtPut, Oop receiver, Oop of
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->float_at_put( SMIOop( offset )->value(), ( float ) DoubleOop( value )->value() );
+    ProxyOop( receiver )->float_at_put( SMIOop( offset )->value(), (float) DoubleOop( value )->value() );
     return receiver;
 }
 
@@ -318,20 +318,20 @@ PRIM_DECL_3( proxyOopPrimitives::doublePrecisionFloatAtPut, Oop receiver, Oop of
 }
 
 
-static bool_t convert_to_arg( Oop arg, int * addr ) {
+static bool_t convert_to_arg( Oop arg, int *addr ) {
     if ( arg->is_smi() ) {
         *addr = SMIOop( arg )->value();
         return true;
     }
     if ( arg->is_proxy() ) {
-        *addr = ( int ) ProxyOop( arg )->get_pointer();
+        *addr = (int) ProxyOop( arg )->get_pointer();
         return true;
     }
     return false;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_0)();
+typedef void *(__CALLING_CONVENTION *call_out_func_0)();
 
 
 PRIM_DECL_2( proxyOopPrimitives::callOut0, Oop receiver, Oop result ) {
@@ -345,13 +345,13 @@ PRIM_DECL_2( proxyOopPrimitives::callOut0, Oop receiver, Oop result ) {
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    call_out_func_0 f = ( call_out_func_0 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_0 f = (call_out_func_0) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )() );
     return result;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_1)( int a );
+typedef void *(__CALLING_CONVENTION *call_out_func_1)( int a );
 
 
 PRIM_DECL_3( proxyOopPrimitives::callOut1, Oop receiver, Oop arg1, Oop result ) {
@@ -368,13 +368,13 @@ PRIM_DECL_3( proxyOopPrimitives::callOut1, Oop receiver, Oop arg1, Oop result ) 
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    call_out_func_1 f = ( call_out_func_1 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_1 f = (call_out_func_1) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )( a1 ) );
     return result;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_2)( int a, int b );
+typedef void *(__CALLING_CONVENTION *call_out_func_2)( int a, int b );
 
 
 PRIM_DECL_4( proxyOopPrimitives::callOut2, Oop receiver, Oop arg1, Oop arg2, Oop result ) {
@@ -393,13 +393,13 @@ PRIM_DECL_4( proxyOopPrimitives::callOut2, Oop receiver, Oop arg1, Oop arg2, Oop
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
-    call_out_func_2 f = ( call_out_func_2 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_2 f = (call_out_func_2) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )( a1, a2 ) );
     return result;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_3)( int a, int b, int c );
+typedef void *(__CALLING_CONVENTION *call_out_func_3)( int a, int b, int c );
 
 
 PRIM_DECL_5( proxyOopPrimitives::callOut3, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop result ) {
@@ -420,13 +420,13 @@ PRIM_DECL_5( proxyOopPrimitives::callOut3, Oop receiver, Oop arg1, Oop arg2, Oop
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::fourth_argument_has_wrong_type() );
 
-    call_out_func_3 f = ( call_out_func_3 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_3 f = (call_out_func_3) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )( a1, a2, a3 ) );
     return result;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_4)( int a, int b, int c, int d );
+typedef void *(__CALLING_CONVENTION *call_out_func_4)( int a, int b, int c, int d );
 
 
 PRIM_DECL_6( proxyOopPrimitives::callOut4, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop result ) {
@@ -449,13 +449,13 @@ PRIM_DECL_6( proxyOopPrimitives::callOut4, Oop receiver, Oop arg1, Oop arg2, Oop
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::fifth_argument_has_wrong_type() );
 
-    call_out_func_4 f = ( call_out_func_4 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_4 f = (call_out_func_4) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )( a1, a2, a3, a4 ) );
     return result;
 }
 
 
-typedef void * (__CALLING_CONVENTION * call_out_func_5)( int a, int b, int c, int d, int e );
+typedef void *(__CALLING_CONVENTION *call_out_func_5)( int a, int b, int c, int d, int e );
 
 
 PRIM_DECL_7( proxyOopPrimitives::callOut5, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop result ) {
@@ -480,7 +480,7 @@ PRIM_DECL_7( proxyOopPrimitives::callOut5, Oop receiver, Oop arg1, Oop arg2, Oop
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::sixth_argument_has_wrong_type() );
 
-    call_out_func_5 f = ( call_out_func_5 ) ProxyOop( receiver )->get_pointer();
+    call_out_func_5 f = (call_out_func_5) ProxyOop( receiver )->get_pointer();
     ProxyOop( result )->set_pointer( ( *f )( a1, a2, a3, a4, a5 ) );
     return result;
 }

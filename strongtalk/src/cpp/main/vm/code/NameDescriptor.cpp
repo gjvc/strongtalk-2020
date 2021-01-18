@@ -62,39 +62,39 @@ void IllegalNameDescriptor::print() {
 }
 
 
-bool_t LocationNameDescriptor::equal( NameDescriptor * other ) const {
+bool_t LocationNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isLocation() ) {
-        return location() == ( ( LocationNameDescriptor * ) other )->location();
+        return location() == ( (LocationNameDescriptor *) other )->location();
     }
     return false;
 }
 
 
-bool_t ValueNameDescriptor::equal( NameDescriptor * other ) const {
+bool_t ValueNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isValue() ) {
-        return value() == ( ( ValueNameDescriptor * ) other )->value();
+        return value() == ( (ValueNameDescriptor *) other )->value();
     }
     return false;
 }
 
 
-bool_t BlockValueNameDescriptor::equal( NameDescriptor * other ) const {
+bool_t BlockValueNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isBlockValue() ) {
-        return block_method() == ( ( BlockValueNameDescriptor * ) other )->block_method() and parent_scope()->s_equivalent( ( ( BlockValueNameDescriptor * ) other )->parent_scope() );
+        return block_method() == ( (BlockValueNameDescriptor *) other )->block_method() and parent_scope()->s_equivalent( ( (BlockValueNameDescriptor *) other )->parent_scope() );
     }
     return false;
 }
 
 
-bool_t MemoizedBlockNameDescriptor::equal( NameDescriptor * other ) const {
+bool_t MemoizedBlockNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isMemoizedBlock() ) {
-        return location() == ( ( MemoizedBlockNameDescriptor * ) other )->location() and block_method() == ( ( MemoizedBlockNameDescriptor * ) other )->block_method() and parent_scope()->s_equivalent( ( ( MemoizedBlockNameDescriptor * ) other )->parent_scope() );
+        return location() == ( (MemoizedBlockNameDescriptor *) other )->location() and block_method() == ( (MemoizedBlockNameDescriptor *) other )->block_method() and parent_scope()->s_equivalent( ( (MemoizedBlockNameDescriptor *) other )->parent_scope() );
     }
     return false;
 }
 
 
-bool_t IllegalNameDescriptor::equal( NameDescriptor * other ) const {
+bool_t IllegalNameDescriptor::equal( NameDescriptor *other ) const {
     return other->isIllegal();
 }
 
@@ -102,13 +102,13 @@ bool_t IllegalNameDescriptor::equal( NameDescriptor * other ) const {
 extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs );
 
 
-Oop BlockValueNameDescriptor::value( const Frame * fr ) const {
+Oop BlockValueNameDescriptor::value( const Frame *fr ) const {
     // create a block closure
     if ( MaterializeEliminatedBlocks or StackChunkBuilder::is_deoptimizing() ) {
         BlockClosureOop blk = BlockClosureOop( allocateBlock( smiOopFromValue( block_method()->number_of_arguments() ) ) );
         blk->set_method( block_method() );
 
-        CompiledVirtualFrame * vf = CompiledVirtualFrame::new_vframe( fr, parent_scope(), 0 );
+        CompiledVirtualFrame *vf = CompiledVirtualFrame::new_vframe( fr, parent_scope(), 0 );
         blk->set_lexical_scope( vf->canonical_context() );
         return blk;
     } else {
@@ -121,9 +121,9 @@ Oop BlockValueNameDescriptor::value( const Frame * fr ) const {
 }
 
 
-Oop MemoizedBlockNameDescriptor::value( const Frame * fr ) const {
+Oop MemoizedBlockNameDescriptor::value( const Frame *fr ) const {
     // check if the block has been created
-    CompiledVirtualFrame * vf = fr ? CompiledVirtualFrame::new_vframe( fr, parent_scope(), 0 ) : nullptr;
+    CompiledVirtualFrame *vf = fr ? CompiledVirtualFrame::new_vframe( fr, parent_scope(), 0 ) : nullptr;
 
     Oop stored_value = CompiledVirtualFrame::resolve_location( location(), vf );
     if ( stored_value not_eq uncreatedBlockValue() ) {

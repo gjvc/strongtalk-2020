@@ -14,25 +14,25 @@
 
 class MissingMethodBuilder : public ResourceObject {
 
-    private:
-        HeapCodeBuffer _buffer;
-        SymbolOop      _selector;
-        MethodOop      _method;
+private:
+    HeapCodeBuffer _buffer;
+    SymbolOop      _selector;
+    MethodOop      _method;
 
-    public:
-        MissingMethodBuilder( SymbolOop selector ) :
+public:
+    MissingMethodBuilder( SymbolOop selector ) :
             _selector( selector ) {
-            _method = nullptr;
-        };
+        _method = nullptr;
+    };
 
-        void build();
+    void build();
 
-        ByteArrayOop bytes();
+    ByteArrayOop bytes();
 
-        ObjectArrayOop oops();
+    ObjectArrayOop oops();
 
 
-        MethodOop method() {
-            return _method;
-        };
+    MethodOop method() {
+        return _method;
+    };
 };

@@ -15,77 +15,77 @@
 
 class ContextKlass : public MemOopKlass {
 
-    public:
-        // testers
-        bool_t oop_is_context() const {
-            return true;
-        }
+public:
+    // testers
+    bool_t oop_is_context() const {
+        return true;
+    }
 
 
-        // allocation properties
-        bool_t can_inline_allocation() const {
-            return false;
-        }
+    // allocation properties
+    bool_t can_inline_allocation() const {
+        return false;
+    }
 
 
-        // reflective properties
-        bool_t can_have_instance_variables() const {
-            return false;
-        }
+    // reflective properties
+    bool_t can_have_instance_variables() const {
+        return false;
+    }
 
 
-        bool_t can_be_subclassed() const {
-            return false;
-        }
+    bool_t can_be_subclassed() const {
+        return false;
+    }
 
 
-        // allocation
-        Oop allocateObjectSize( int num_of_temps, bool_t permit_scavenge = true, bool_t tenured = false );
+    // allocation
+    Oop allocateObjectSize( int num_of_temps, bool_t permit_scavenge = true, bool_t tenured = false );
 
-        static ContextOop allocate_context( int num_of_temps );
+    static ContextOop allocate_context( int num_of_temps );
 
-        // creates invocation
-        KlassOop create_subclass( MixinOop mixin, Format format );
-
-
-        // Format
-        Format format() {
-            return Format::context_klass;
-        }
+    // creates invocation
+    KlassOop create_subclass( MixinOop mixin, Format format );
 
 
-        // scavenge
-        int oop_scavenge_contents( Oop obj );
-
-        int oop_scavenge_tenured_contents( Oop obj );
-
-        void oop_follow_contents( Oop obj );
-
-        // iterators
-        void oop_oop_iterate( Oop obj, OopClosure * blk );
-
-        void oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk );
+    // Format
+    Format format() {
+        return Format::context_klass;
+    }
 
 
-        // sizing
-        int oop_header_size() const {
-            return ContextOopDescriptor::header_size();
-        }
+    // scavenge
+    int oop_scavenge_contents( Oop obj );
+
+    int oop_scavenge_tenured_contents( Oop obj );
+
+    void oop_follow_contents( Oop obj );
+
+    // iterators
+    void oop_oop_iterate( Oop obj, OopClosure *blk );
+
+    void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
 
 
-        int oop_size( Oop obj ) const;
-
-        // printing support
-        void oop_print_value_on( Oop obj, ConsoleOutputStream * stream );
-
-        void oop_print_on( Oop obj, ConsoleOutputStream * stream );
+    // sizing
+    int oop_header_size() const {
+        return ContextOopDescriptor::header_size();
+    }
 
 
-        const char * name() const {
-            return "context";
-        }
+    int oop_size( Oop obj ) const;
+
+    // printing support
+    void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );
+
+    void oop_print_on( Oop obj, ConsoleOutputStream *stream );
 
 
-        // class creation
-        friend void setKlassVirtualTableFromContextKlass( Klass * k );
+    const char *name() const {
+        return "context";
+    }
+
+
+    // class creation
+    friend void setKlassVirtualTableFromContextKlass( Klass *k );
 };

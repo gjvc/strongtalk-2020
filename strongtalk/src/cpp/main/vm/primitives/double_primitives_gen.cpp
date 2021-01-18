@@ -8,11 +8,10 @@
 #include "vm/system/sizes.hpp"
 
 
-
-const char * PrimitivesGenerator::double_op( arith_op op ) {
+const char *PrimitivesGenerator::double_op( arith_op op ) {
     Label need_scavenge, fill_object;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     // 	Tag test for argument
     masm->movl( ebx, Address( esp, +oopSize ) );
@@ -75,10 +74,10 @@ const char * PrimitivesGenerator::double_op( arith_op op ) {
 }
 
 
-const char * PrimitivesGenerator::double_from_smi() {
+const char *PrimitivesGenerator::double_from_smi() {
     Label need_scavenge, fill_object;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     test_for_scavenge( eax, 4 * oopSize, need_scavenge );
 

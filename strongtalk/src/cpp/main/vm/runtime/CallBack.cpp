@@ -18,23 +18,23 @@ void CallBack::initialize( Oop receiver, SymbolOop selector ) {
 }
 
 
-static char * store_byte( char * chunk, char b ) {
+static char *store_byte( char *chunk, char b ) {
     *chunk = b;
     return chunk + sizeof( char );
 }
 
 
-static char * store_long( char * chunk, std::int32_t l ) {
-    *( ( std::int32_t * ) chunk ) = l;
+static char *store_long( char *chunk, std::int32_t l ) {
+    *( (std::int32_t *) chunk ) = l;
     return chunk + sizeof( std::int32_t );
 }
 
 
 // stdcall
-void * CallBack::registerPascalCall( int index, int nofArgs ) {
+void *CallBack::registerPascalCall( int index, int nofArgs ) {
 
-    void * result = malloc( 15 );
-    char * chunk  = ( char * ) result;
+    void *result = malloc( 15 );
+    char *chunk  = (char *) result;
 
     // MOV ECX, index
     chunk = store_byte( chunk, '\xB9' );
@@ -46,16 +46,16 @@ void * CallBack::registerPascalCall( int index, int nofArgs ) {
 
     // JMP _handleCCallStub
     chunk = store_byte( chunk, '\xE9' );
-    chunk = store_long( chunk, ( ( std::int32_t ) StubRoutines::handle_pascal_callback_stub() ) - ( 4 + ( std::int32_t ) chunk ) );
+    chunk = store_long( chunk, ( (std::int32_t) StubRoutines::handle_pascal_callback_stub() ) - ( 4 + (std::int32_t) chunk ) );
 
     return result;
 }
 
 
 // cdecl
-void * CallBack::registerCCall( int index ) {
-    void * result = malloc( 10 );
-    char * chunk  = ( char * ) result;
+void *CallBack::registerCCall( int index ) {
+    void *result = malloc( 10 );
+    char *chunk  = (char *) result;
 
     // MOV ECX, index
     chunk = store_byte( chunk, '\xB9' );
@@ -63,15 +63,15 @@ void * CallBack::registerCCall( int index ) {
 
     // JMP _handleCCallStub
     chunk = store_byte( chunk, '\xE9' );
-    chunk = store_long( chunk, ( ( std::int32_t ) StubRoutines::handle_C_callback_stub() ) - ( 4 + ( std::int32_t ) chunk ) );
+    chunk = store_long( chunk, ( (std::int32_t) StubRoutines::handle_C_callback_stub() ) - ( 4 + (std::int32_t) chunk ) );
 
     return result;
 }
 
 
-void CallBack::unregister( void * block ) {
+void CallBack::unregister( void *block ) {
     st_assert( block, "block is not valid" );
-    free( ( char * ) block );
+    free( (char *) block );
 }
 
 
@@ -79,14 +79,14 @@ void CallBack::unregister( void * block ) {
 // - handlePascalCallBackStub
 // - handleCCallBackStub
 
-typedef void * (__CALLING_CONVENTION * call_out_func_4)( int a, int b, int c, int d );
+typedef void *(__CALLING_CONVENTION *call_out_func_4)( int a, int b, int c, int d );
 
 extern "C" {
 extern bool_t have_nlr_through_C;
 }
 
-extern "C" volatile void * handleCallBack( int index, int params ) {
-    DeltaProcess * proc = nullptr;
+extern "C" volatile void *handleCallBack( int index, int params ) {
+    DeltaProcess *proc = nullptr;
 
     if ( Universe::callBack_receiver()->is_nil() ) {
         warning( "callBack receiver is not set" );
@@ -110,23 +110,23 @@ extern "C" volatile void * handleCallBack( int index, int params ) {
 
     st_assert( DeltaProcess::active()->thread_id() == os::current_thread_id(), "check for process torch" );
 
-    void * result;
+    void *result;
 
     // convert return result
 
     if ( have_nlr_through_C ) {
         // Continues the NonLocalReturn after at the next Delta frame
-        BaseHandle * handle = DeltaProcess::active()->firstHandle();
-        if ( handle and ( ( const char * ) handle < ( const char * ) DeltaProcess::active()->last_Delta_fp() ) )
+        BaseHandle *handle = DeltaProcess::active()->firstHandle();
+        if ( handle and ( (const char *) handle < (const char *) DeltaProcess::active()->last_Delta_fp() ) )
             handle->pop();
 
         ErrorHandler::continue_nlr_in_delta();
     }
 
     if ( res->is_smi() ) {
-        result = ( void * ) SMIOop( res )->value();
+        result = (void *) SMIOop( res )->value();
     } else if ( res->is_proxy() ) {
-        result = ( void * ) ProxyOop( res )->get_pointer();
+        result = (void *) ProxyOop( res )->get_pointer();
     } else {
         warning( "Wrong return type for call back, returning nullptr" );
         result = nullptr;

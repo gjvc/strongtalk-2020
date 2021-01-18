@@ -7,7 +7,7 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-void KlassOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void KlassOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 
     klass_part()->bootstrap_klass_part_one( stream );
     MemOopDescriptor::bootstrap_header( stream );

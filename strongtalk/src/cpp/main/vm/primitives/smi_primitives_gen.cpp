@@ -10,12 +10,12 @@
 #include "vm/primitives/PrimitivesGenerator.hpp"
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_add() {
+const char *PrimitivesGenerator::smiOopPrimitives_add() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
     Label   _overflow;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     masm->movl( eax, receiver );
     masm->addl( eax, argument );
@@ -34,12 +34,12 @@ const char * PrimitivesGenerator::smiOopPrimitives_add() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_subtract() {
+const char *PrimitivesGenerator::smiOopPrimitives_subtract() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
     Label   _overflow;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     masm->movl( eax, receiver );
     masm->subl( eax, argument );
@@ -58,11 +58,11 @@ const char * PrimitivesGenerator::smiOopPrimitives_subtract() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_multiply() {
+const char *PrimitivesGenerator::smiOopPrimitives_multiply() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     // masm->int3();
     masm->movl( edx, argument );
@@ -78,12 +78,12 @@ const char * PrimitivesGenerator::smiOopPrimitives_multiply() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_mod() {
+const char *PrimitivesGenerator::smiOopPrimitives_mod() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
     Label   _equal, _positive;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     // PUBLIC _smiOopPrimitives_mod@8
     //
@@ -140,12 +140,12 @@ const char * PrimitivesGenerator::smiOopPrimitives_mod() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_div() {
+const char *PrimitivesGenerator::smiOopPrimitives_div() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
     Label   _equal, _positive;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     // ; Intel definition of div delivers:
     // ;   x = (x/y)*y + (x%y)
@@ -197,11 +197,11 @@ const char * PrimitivesGenerator::smiOopPrimitives_div() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_quo() {
+const char *PrimitivesGenerator::smiOopPrimitives_quo() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     masm->movl( ecx, argument );
     masm->movl( eax, receiver );
@@ -228,11 +228,11 @@ const char * PrimitivesGenerator::smiOopPrimitives_quo() {
 }
 
 
-const char * PrimitivesGenerator::smiOopPrimitives_remainder() {
+const char *PrimitivesGenerator::smiOopPrimitives_remainder() {
     Address argument = Address( esp, 4 );
     Address receiver = Address( esp, 8 );
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     masm->movl( ecx, argument );
     masm->movl( eax, receiver );

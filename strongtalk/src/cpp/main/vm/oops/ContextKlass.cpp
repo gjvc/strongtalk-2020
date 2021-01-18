@@ -17,7 +17,7 @@
 #include "ContextKlass.hpp"
 
 
-void setKlassVirtualTableFromContextKlass( Klass * k ) {
+void setKlassVirtualTableFromContextKlass( Klass *k ) {
     ContextKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -27,7 +27,7 @@ Oop ContextKlass::allocateObjectSize( int num_of_temps, bool_t permit_scavenge, 
     KlassOop   k        = as_klassOop();
     int        obj_size = ContextOopDescriptor::header_size() + num_of_temps;
     // allocate
-    ContextOop obj      = as_contextOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ContextOop obj      = as_contextOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
     obj->set_klass_field( k );
     //%clean the up later
@@ -45,7 +45,7 @@ KlassOop ContextKlass::create_subclass( MixinOop mixin, Format format ) {
 
 
 ContextOop ContextKlass::allocate_context( int num_of_temps ) {
-    ContextKlass * ck = ( ContextKlass * ) contextKlassObj->klass_part();
+    ContextKlass *ck = (ContextKlass *) contextKlassObj->klass_part();
     return ContextOop( ck->allocateObjectSize( num_of_temps ) );
 }
 
@@ -54,7 +54,7 @@ int ContextKlass::oop_scavenge_contents( Oop obj ) {
     int size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_header();
-    scavenge_oop( ( Oop * ) &ContextOop( obj )->addr()->_parent );
+    scavenge_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
     // temporaries
     MemOop( obj )->scavenge_body( ContextOopDescriptor::header_size(), size );
     return size;
@@ -65,7 +65,7 @@ int ContextKlass::oop_scavenge_tenured_contents( Oop obj ) {
     int size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
-    scavenge_tenured_oop( ( Oop * ) &ContextOop( obj )->addr()->_parent );
+    scavenge_tenured_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
     // temporaries
     MemOop( obj )->scavenge_tenured_body( ContextOopDescriptor::header_size(), size );
     return size;
@@ -75,34 +75,34 @@ int ContextKlass::oop_scavenge_tenured_contents( Oop obj ) {
 void ContextKlass::oop_follow_contents( Oop obj ) {
     // header
     MemOop( obj )->follow_header();
-    MarkSweep::reverse_and_push( ( Oop * ) &ContextOop( obj )->addr()->_parent );
+    MarkSweep::reverse_and_push( (Oop *) &ContextOop( obj )->addr()->_parent );
     // temporaries
 
     // we have to find the header word in order to compute object size.
     // %implementation note:
     //   implement this another way if possible
-    Oop * root_or_mark = ( Oop * ) MemOop( obj )->mark();
+    Oop *root_or_mark = (Oop *) MemOop( obj )->mark();
     while ( not Oop( root_or_mark )->is_mark() ) {
-        root_or_mark = ( Oop * ) *root_or_mark;
+        root_or_mark = (Oop *) *root_or_mark;
     }
     int len = MarkOop( root_or_mark )->hash() - 1;
     MemOop( obj )->follow_body( ContextOopDescriptor::header_size(), ContextOopDescriptor::header_size() + len );
 }
 
 
-void ContextKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void ContextKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
-    blk->do_oop( ( Oop * ) &ContextOop( obj )->addr()->_parent );
+    blk->do_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
     // temporaries
     MemOop( obj )->oop_iterate_body( blk, ContextOopDescriptor::header_size(), oop_size( obj ) );
 }
 
 
-void ContextKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void ContextKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
-    blk->do_oop( "home", ( Oop * ) &ContextOop( obj )->addr()->_parent );
+    blk->do_oop( "home", (Oop *) &ContextOop( obj )->addr()->_parent );
     // temporaries
     MemOop( obj )->layout_iterate_body( blk, ContextOopDescriptor::header_size(), oop_size( obj ) );
 }
@@ -113,7 +113,7 @@ int ContextKlass::oop_size( Oop obj ) const {
 }
 
 
-void ContextKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void ContextKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     MemOopKlass::oop_print_value_on( obj, stream );
     st_assert( obj->is_context(), "must be context" );
     ContextOop con = ContextOop( obj );
@@ -123,7 +123,7 @@ void ContextKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
 }
 
 
-void ContextKlass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void ContextKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     MemOopKlass::oop_print_value_on( obj, stream );
     stream->cr();
     st_assert( obj->is_context(), "must be context" );

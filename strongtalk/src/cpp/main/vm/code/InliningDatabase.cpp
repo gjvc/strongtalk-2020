@@ -20,35 +20,35 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-const char * InliningDatabase::_directory = nullptr;
+const char *InliningDatabase::_directory = nullptr;
 
-InliningDatabaseKey * InliningDatabase::_table = nullptr;
+InliningDatabaseKey *InliningDatabase::_table = nullptr;
 std::uint32_t            InliningDatabase::_table_size      = 0;
 std::uint32_t            InliningDatabase::_table_size_mask = 0;
 std::uint32_t            InliningDatabase::_table_no        = 0;
 
 
-const char * InliningDatabase::default_directory() {
+const char *InliningDatabase::default_directory() {
     return "./.inlining";
 }
 
 
-void InliningDatabase::set_directory( const char * dir ) {
+void InliningDatabase::set_directory( const char *dir ) {
     _directory = dir;
 }
 
 
-const char * InliningDatabase::directory() {
+const char *InliningDatabase::directory() {
     return _directory == nullptr ? default_directory() : _directory;
 }
 
 
 const char quote = '_';
-const char * quote_string = "_\\/:; *?~|><,+=@%&!-";
+const char *quote_string = "_\\/:; *?~|><,+=@%&!-";
 
 
-const char * InliningDatabase::mangle_name( const char * str ) {
-    char * result = new_resource_array <char>( 100 );
+const char *InliningDatabase::mangle_name( const char *str ) {
+    char *result = new_resource_array<char>( 100 );
     int i         = 0;
     int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
@@ -71,8 +71,8 @@ const char * InliningDatabase::mangle_name( const char * str ) {
 }
 
 
-const char * InliningDatabase::unmangle_name( const char * str ) {
-    char * result = new_resource_array <char>( 100 );
+const char *InliningDatabase::unmangle_name( const char *str ) {
+    char *result = new_resource_array<char>( 100 );
     int i         = 0;
     int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
@@ -105,38 +105,38 @@ const char * InliningDatabase::unmangle_name( const char * str ) {
 }
 
 
-const char * InliningDatabase::selector_string( SymbolOop selector ) {
+const char *InliningDatabase::selector_string( SymbolOop selector ) {
     StringOutputStream stream( 100 );
     selector->print_symbol_on( &stream );
     return stream.as_string();
 }
 
 
-char * InliningDatabase::method_string( MethodOop method ) {
+char *InliningDatabase::method_string( MethodOop method ) {
     StringOutputStream stream( 100 );
     method->print_inlining_database_on( &stream );
     return stream.as_string();
 }
 
 
-char * InliningDatabase::klass_string( KlassOop klass ) {
+char *InliningDatabase::klass_string( KlassOop klass ) {
     StringOutputStream stream( 100 );
     klass->klass_part()->print_name_on( &stream );
     return stream.as_string();
 }
 
 
-bool_t check_directory( const char * dir_name ) {
+bool_t check_directory( const char *dir_name ) {
     return os::check_directory( dir_name );
 }
 
 
-const char * InliningDatabase::compute_file_name( LookupKey * outer, LookupKey * inner, bool_t create_directories ) {
-    char * name = new_resource_array <char>( 1024 );
+const char *InliningDatabase::compute_file_name( LookupKey *outer, LookupKey *inner, bool_t create_directories ) {
+    char *name = new_resource_array<char>( 1024 );
 
     // Outer key
-    const char * outer_klass_name    = mangle_name( klass_string( outer->klass() ) );
-    const char * outer_selector_name = mangle_name( selector_string( outer->selector() ) );
+    const char *outer_klass_name    = mangle_name( klass_string( outer->klass() ) );
+    const char *outer_selector_name = mangle_name( selector_string( outer->selector() ) );
 
     if ( create_directories ) {
         if ( not check_directory( directory() ) )
@@ -157,8 +157,8 @@ const char * InliningDatabase::compute_file_name( LookupKey * outer, LookupKey *
 
     if ( inner ) {
         // Inner key
-        const char * inner_klass_name  = mangle_name( klass_string( inner->klass() ) );
-        const char * inner_method_name = mangle_name( method_string( inner->method() ) );
+        const char *inner_klass_name  = mangle_name( klass_string( inner->klass() ) );
+        const char *inner_method_name = mangle_name( method_string( inner->method() ) );
 
         if ( create_directories ) {
             if ( not check_directory( name ) )
@@ -179,14 +179,14 @@ const char * InliningDatabase::compute_file_name( LookupKey * outer, LookupKey *
 }
 
 
-bool_t InliningDatabase::file_out( NativeMethod * nm, ConsoleOutputStream * index_st ) {
+bool_t InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_st ) {
     ResourceMark resourceMark;
 
-    LookupKey * outer_key = nullptr;
-    LookupKey * inner_key = nullptr;
+    LookupKey *outer_key = nullptr;
+    LookupKey *inner_key = nullptr;
 
     if ( nm->is_block() ) {
-        NativeMethod * outer = nm->outermost();
+        NativeMethod *outer = nm->outermost();
         if ( outer->isZombie() )
             return false;
         outer_key = &outer->_lookupKey;
@@ -198,7 +198,7 @@ bool_t InliningDatabase::file_out( NativeMethod * nm, ConsoleOutputStream * inde
 
 
     // construct NativeMethod's RecompilationScope tree; we only want the inlined scopes, so use trusted = false
-    RecompilationScope * rs = NonDummyRecompilationScope::constructRScopes( nm, false );
+    RecompilationScope *rs = NonDummyRecompilationScope::constructRScopes( nm, false );
     // Ignore nativeMethods with small inlining trees
     if ( rs->inlining_database_size() < InliningDatabasePruningLimit )
         return false;
@@ -215,7 +215,7 @@ bool_t InliningDatabase::file_out( NativeMethod * nm, ConsoleOutputStream * inde
         index_st->cr();
     }
 
-    const char * file_name = compute_file_name( outer_key, inner_key, true );
+    const char *file_name = compute_file_name( outer_key, inner_key, true );
     if ( file_name == nullptr )
         return false;
 
@@ -224,7 +224,7 @@ bool_t InliningDatabase::file_out( NativeMethod * nm, ConsoleOutputStream * inde
     }
     FileOutputStream out( file_name );
     if ( out.is_open() ) {
-        GrowableArray <ProgramCounterDescriptor *> * uncommon = nm->uncommonBranchList();
+        GrowableArray<ProgramCounterDescriptor *> *uncommon = nm->uncommonBranchList();
         if ( TraceInliningDatabase )
             rs->printTree( 0, 0 );
         rs->print_inlining_database_on( &out, uncommon );
@@ -234,9 +234,9 @@ bool_t InliningDatabase::file_out( NativeMethod * nm, ConsoleOutputStream * inde
 }
 
 
-char * find_type( const char * line, bool_t * is_super, bool_t * is_block ) {
+char *find_type( const char *line, bool_t *is_super, bool_t *is_block ) {
 
-    char * sub = nullptr;
+    char *sub = nullptr;
 
     // Find "::", "^^" or "->"
     sub = const_cast<char *>( strstr( line + 1, "::" ) );
@@ -265,21 +265,21 @@ char * find_type( const char * line, bool_t * is_super, bool_t * is_block ) {
 
 
 // Returns whether the key was succesfully scanned
-bool_t scan_key( RecompilationScope * sender, char * line, KlassOop * receiver_klass, MethodOop * method ) {
+bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klass, MethodOop *method ) {
     bool_t is_super;
     bool_t is_block;
 
-    char * sub = find_type( line, &is_super, &is_block );
+    char *sub = find_type( line, &is_super, &is_block );
     if ( sub == nullptr )
         return false;
 
     *sub = '\0';
 
-    char * class_name = line;
-    char * method_id  = sub + 2;
+    char *class_name = line;
+    char *method_id  = sub + 2;
 
     bool_t class_side = false;
-    char * class_start = strstr( class_name, " class" );
+    char *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;
@@ -292,9 +292,9 @@ bool_t scan_key( RecompilationScope * sender, char * line, KlassOop * receiver_k
         rec = rec->klass();
     *receiver_klass = rec;
 
-    GrowableArray <int> * byteCodeIndexs = new GrowableArray <int>( 10 );
+    GrowableArray<int> *byteCodeIndexs = new GrowableArray<int>( 10 );
 
-    char      * byteCodeIndexs_string = strstr( method_id, " " );
+    char      *byteCodeIndexs_string = strstr( method_id, " " );
 
     if ( byteCodeIndexs_string ) {
         *byteCodeIndexs_string++ = '\0';
@@ -309,7 +309,7 @@ bool_t scan_key( RecompilationScope * sender, char * line, KlassOop * receiver_k
                 byteCodeIndexs_string++;
         }
     }
-    SymbolOop selector                = oopFactory::new_symbol( method_id );
+    SymbolOop selector               = oopFactory::new_symbol( method_id );
 
 
     if ( is_super ) {
@@ -344,7 +344,7 @@ bool_t scan_key( RecompilationScope * sender, char * line, KlassOop * receiver_k
 
 // Returns the index where the scan terminated.
 // index is 0 is the scan failed
-int scan_prefix( const char * line, int * byteCodeIndex, int * level ) {
+int scan_prefix( const char *line, int *byteCodeIndex, int *level ) {
     int index;
 
     int l = 0;
@@ -360,12 +360,12 @@ int scan_prefix( const char * line, int * byteCodeIndex, int * level ) {
 
 
 // Returns whether the uncommon word was succesfully scanned
-bool_t scan_uncommon( const char * line ) {
+bool_t scan_uncommon( const char *line ) {
     return strcmp( line, "uncommon" ) == 0;
 }
 
 
-static bool_t create_rscope( char * line, GrowableArray <InliningDatabaseRecompilationScope *> * stack ) {
+static bool_t create_rscope( char *line, GrowableArray<InliningDatabaseRecompilationScope *> *stack ) {
 
     // remove the cr
     int len = strlen( line );
@@ -377,7 +377,7 @@ static bool_t create_rscope( char * line, GrowableArray <InliningDatabaseRecompi
     MethodOop method         = nullptr;
     KlassOop  receiver_klass = nullptr;
 
-    RecompilationScope * result = nullptr;
+    RecompilationScope *result = nullptr;
 
     if ( stack->isEmpty() ) {
         // the root scope
@@ -392,7 +392,7 @@ static bool_t create_rscope( char * line, GrowableArray <InliningDatabaseRecompi
 
         while ( stack->length() > level )
             stack->pop();
-        InliningDatabaseRecompilationScope * sender = stack->top();
+        InliningDatabaseRecompilationScope *sender = stack->top();
         if ( scan_uncommon( &line[ index ] ) ) {
             sender->mark_as_uncommon( byteCodeIndex );
         } else if ( scan_key( sender, &line[ index ], &receiver_klass, &method ) ) {
@@ -409,7 +409,7 @@ int      InliningDatabase::local_number_of_nativeMethods_written = 0;
 KlassOop InliningDatabase::local_klass                           = nullptr;
 
 
-void InliningDatabase::local_file_out_all( NativeMethod * nm ) {
+void InliningDatabase::local_file_out_all( NativeMethod *nm ) {
     if ( nm->isZombie() )
         return;
     if ( file_out( nm ) ) {
@@ -418,8 +418,8 @@ void InliningDatabase::local_file_out_all( NativeMethod * nm ) {
 }
 
 
-const char * InliningDatabase::index_file_name() {
-    char * name = new_resource_array <char>( 1024 );
+const char *InliningDatabase::index_file_name() {
+    char *name = new_resource_array<char>( 1024 );
     if ( not check_directory( directory() ) )
         return nullptr;
     strcpy( name, directory() );
@@ -428,7 +428,7 @@ const char * InliningDatabase::index_file_name() {
 }
 
 
-bool_t scan_key( char * line, LookupKey * key ) {
+bool_t scan_key( char *line, LookupKey *key ) {
 
     int len = strlen( line );
     if ( len > 1 and line[ len - 1 ] == '\n' )
@@ -437,17 +437,17 @@ bool_t scan_key( char * line, LookupKey * key ) {
     bool_t is_super;
     bool_t is_block;
 
-    char * sub = find_type( line, &is_super, &is_block );
+    char *sub = find_type( line, &is_super, &is_block );
     if ( sub == nullptr )
         return false;
 
     *sub = '\0';
 
-    char * class_name = line;
-    char * method_id  = sub + 2;
+    char *class_name = line;
+    char *method_id  = sub + 2;
 
     bool_t class_side = false;
-    char * class_start = strstr( class_name, " class" );
+    char *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;
@@ -460,9 +460,9 @@ bool_t scan_key( char * line, LookupKey * key ) {
         rec = rec->klass();
 
 
-    GrowableArray <int> * byteCodeIndexs = new GrowableArray <int>( 10 );
+    GrowableArray<int> *byteCodeIndexs = new GrowableArray<int>( 10 );
 
-    char      * byteCodeIndexs_string = strstr( method_id, " " );
+    char      *byteCodeIndexs_string = strstr( method_id, " " );
 
     if ( byteCodeIndexs_string ) {
         *byteCodeIndexs_string++ = '\0';
@@ -477,7 +477,7 @@ bool_t scan_key( char * line, LookupKey * key ) {
                 byteCodeIndexs_string++;
         }
     }
-    SymbolOop selector                = oopFactory::new_symbol( method_id );
+    SymbolOop selector               = oopFactory::new_symbol( method_id );
 
     if ( is_block ) {
         MethodOop met = rec->klass_part()->lookup( selector );
@@ -543,7 +543,7 @@ void InliningDatabase::load_index_file() {
 }
 
 
-void InliningDatabase::local_file_out_klass( NativeMethod * nm ) {
+void InliningDatabase::local_file_out_klass( NativeMethod *nm ) {
     if ( nm->isZombie() )
         return;
     if ( nm->receiver_klass() == local_klass ) {
@@ -562,9 +562,9 @@ int InliningDatabase::file_out( KlassOop klass ) {
 }
 
 
-RecompilationScope * InliningDatabase::file_in_from( std::ifstream & stream ) {
+RecompilationScope *InliningDatabase::file_in_from( std::ifstream &stream ) {
 
-    auto stack = new GrowableArray <InliningDatabaseRecompilationScope *>( 10 );
+    auto stack = new GrowableArray<InliningDatabaseRecompilationScope *>( 10 );
 
     char line[1000];
 
@@ -586,22 +586,22 @@ RecompilationScope * InliningDatabase::file_in_from( std::ifstream & stream ) {
 }
 
 
-RecompilationScope * InliningDatabase::file_in( const char * file_path ) {
+RecompilationScope *InliningDatabase::file_in( const char *file_path ) {
 
     std::ifstream stream( file_path );
 
     if ( not stream.good() ) {
         return nullptr;
     }
-    RecompilationScope * result = file_in_from( stream );
+    RecompilationScope *result = file_in_from( stream );
 
     stream.close();
     return result;
 }
 
 
-RecompilationScope * InliningDatabase::file_in( LookupKey * outer, LookupKey * inner ) {
-    const char * file_name = compute_file_name( outer, inner, false );
+RecompilationScope *InliningDatabase::file_in( LookupKey *outer, LookupKey *inner ) {
+    const char *file_name = compute_file_name( outer, inner, false );
     if ( file_name == nullptr ) {
         if ( TraceInliningDatabase ) {
             _console->print( "Failed opening file for " );
@@ -614,7 +614,7 @@ RecompilationScope * InliningDatabase::file_in( LookupKey * outer, LookupKey * i
         }
         return nullptr;
     }
-    RecompilationScope * result = file_in( file_name );
+    RecompilationScope *result = file_in( file_name );
 
     if ( TraceInliningDatabase and result == nullptr ) {
         _console->print( "Failed parsing file for " );
@@ -630,10 +630,10 @@ RecompilationScope * InliningDatabase::file_in( LookupKey * outer, LookupKey * i
 }
 
 
-std::uint32_t InliningDatabase::index_for( LookupKey * outer, LookupKey * inner ) {
-    std::uint32_t hash = ( std::uint32_t ) outer->klass()->identity_hash() ^( std::uint32_t ) outer->selector()->identity_hash();
+std::uint32_t InliningDatabase::index_for( LookupKey *outer, LookupKey *inner ) {
+    std::uint32_t hash = (std::uint32_t) outer->klass()->identity_hash() ^(std::uint32_t) outer->selector()->identity_hash();
     if ( inner ) {
-        hash ^= ( std::uint32_t ) inner->klass()->identity_hash() ^ ( std::uint32_t ) inner->selector()->identity_hash();
+        hash ^= (std::uint32_t) inner->klass()->identity_hash() ^ (std::uint32_t) inner->selector()->identity_hash();
     }
     return hash & _table_size_mask;
 }
@@ -657,14 +657,14 @@ void InliningDatabase::reset_lookup_table() {
 }
 
 
-RecompilationScope * InliningDatabase::select_and_remove( bool_t * end_of_table ) {
+RecompilationScope *InliningDatabase::select_and_remove( bool_t *end_of_table ) {
 
     if ( _table_no == 0 )
         return nullptr;
 
     for ( std::uint32_t index = 0; index < _table_size; index++ ) {
         if ( _table[ index ].is_filled() and _table[ index ].is_outer() ) {
-            RecompilationScope * result = file_in( &_table[ index ]._outer );
+            RecompilationScope *result = file_in( &_table[ index ]._outer );
             _table[ index ].set_deleted();
             _table_no--;
             *end_of_table = false;
@@ -687,7 +687,7 @@ void InliningDatabase::allocate_table( std::uint32_t size ) {
     _table_size      = size;
     _table_size_mask = size - 1;
     _table_no        = 0;
-    _table           = new_c_heap_array <InliningDatabaseKey>( _table_size );
+    _table           = new_c_heap_array<InliningDatabaseKey>( _table_size );
 
     for ( std::uint32_t index = 0; index < _table_size; index++ ) {
         _table[ index ].clear();
@@ -696,13 +696,13 @@ void InliningDatabase::allocate_table( std::uint32_t size ) {
 }
 
 
-void InliningDatabase::add_lookup_entry( LookupKey * outer, LookupKey * inner ) {
+void InliningDatabase::add_lookup_entry( LookupKey *outer, LookupKey *inner ) {
     if ( _table_no * 2 >= _table_size ) {
         if ( _table == nullptr ) {
             allocate_table( 4 * 1024 );
         } else {
             // Expand table
-            InliningDatabaseKey * old_table = _table;
+            InliningDatabaseKey *old_table = _table;
             std::uint32_t old_table_size = _table_size;
             allocate_table( _table_size * 2 );
             for ( std::uint32_t index = 0; index < old_table_size; index++ ) {
@@ -740,7 +740,7 @@ void InliningDatabase::add_lookup_entry( LookupKey * outer, LookupKey * inner ) 
 }
 
 
-bool_t InliningDatabase::lookup( LookupKey * outer, LookupKey * inner ) {
+bool_t InliningDatabase::lookup( LookupKey *outer, LookupKey *inner ) {
     if ( _table_no == 0 )
         return false;
 
@@ -756,7 +756,7 @@ bool_t InliningDatabase::lookup( LookupKey * outer, LookupKey * inner ) {
 }
 
 
-RecompilationScope * InliningDatabase::lookup_and_remove( LookupKey * outer, LookupKey * inner ) {
+RecompilationScope *InliningDatabase::lookup_and_remove( LookupKey *outer, LookupKey *inner ) {
     if ( _table_no == 0 )
         return nullptr;
 

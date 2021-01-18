@@ -16,8 +16,8 @@
 //   the i386 code with delta specific information.
 
 class Disassembler : AllStatic {
-    public:
-        static void decode( const NativeMethod * nm, ConsoleOutputStream * stream = _console );
+public:
+    static void decode( const NativeMethod *nm, ConsoleOutputStream *stream = _console );
 
-        static void decode( const char * begin, const char * end, ConsoleOutputStream * stream = _console );
+    static void decode( const char *begin, const char *end, ConsoleOutputStream *stream = _console );
 };

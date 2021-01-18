@@ -13,37 +13,37 @@
 
 // A Watermark points into a Space and is used during scavenge to keep track of progress.
 class NewWaterMark : ValueObject {
-    public:
-        Oop * _point;
+public:
+    Oop *_point;
 
 };
 
 class OldSpace;
 
 class OldWaterMark : ValueObject {
-    public:
-        OldSpace * _space;
-        Oop      * _point;
+public:
+    OldSpace *_space;
+    Oop      *_point;
 
-        Oop * pseudo_allocate( int size );
+    Oop *pseudo_allocate( int size );
 };
 
 
-inline bool_t operator==( const NewWaterMark & x, const NewWaterMark & y ) {
+inline bool_t operator==( const NewWaterMark &x, const NewWaterMark &y ) {
     return x._point == y._point;
 }
 
 
-inline bool_t operator!=( const NewWaterMark & x, const NewWaterMark & y ) {
+inline bool_t operator!=( const NewWaterMark &x, const NewWaterMark &y ) {
     return not( x == y );
 }
 
 
-inline bool_t operator==( const OldWaterMark & x, const OldWaterMark & y ) {
+inline bool_t operator==( const OldWaterMark &x, const OldWaterMark &y ) {
     return ( x._space == y._space ) and ( x._point == y._point );
 }
 
 
-inline bool_t operator!=( const OldWaterMark & x, const OldWaterMark & y ) {
+inline bool_t operator!=( const OldWaterMark &x, const OldWaterMark &y ) {
     return not( x == y );
 }

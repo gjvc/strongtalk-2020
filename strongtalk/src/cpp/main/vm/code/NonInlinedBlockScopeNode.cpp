@@ -9,7 +9,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder * rec ) {
+void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder *rec ) {
 
     _offset = rec->_codes->size();
     rec->genScopeDescHeader( code(), false, false, false, false, false, false, false );

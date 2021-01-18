@@ -11,7 +11,7 @@
 
 
 extern "C" bool_t have_nlr_through_C;
-extern "C" char * C_frame_return_addr;
+extern "C" char *C_frame_return_addr;
 extern "C" int nlr_home;
 extern "C" int nlr_home_id;
 extern "C" Oop nlr_result;
@@ -28,7 +28,7 @@ UnwindInfo::UnwindInfo() {
     // Save patch information
     st_assert( last_Delta_fp, "last_Delta_fp must be set" );
     saved_C_frame_return_addr          = C_frame_return_addr;
-    saved_C_frame_return_addr_location = ( char ** ) ( last_Delta_sp - 1 );
+    saved_C_frame_return_addr_location = (char **) ( last_Delta_sp - 1 );
     saved_patch_return_address         = *saved_C_frame_return_addr_location;
 
     // Restore original return address
@@ -56,22 +56,22 @@ UnwindInfo::~UnwindInfo() {
 }
 
 
-void UnwindInfo::update_nlr_targets( CompiledVirtualFrame * f, ContextOop con ) {
+void UnwindInfo::update_nlr_targets( CompiledVirtualFrame *f, ContextOop con ) {
     // Convert the nlr information if:
     //    nlr_home     is the frame pointer of f
     // and nlr_home_id  is the offset of f's scope
-    if ( f->fr().fp() == ( int * ) nlr_home() and f->scope()->offset() == nlr_home_id() ) {
+    if ( f->fr().fp() == (int *) nlr_home() and f->scope()->offset() == nlr_home_id() ) {
         _nlr_home_context = con;
     }
 }
 
 
-UnwindInfo * UnwindInfo::next() const {
+UnwindInfo *UnwindInfo::next() const {
     return _next;
 }
 
 
-void UnwindInfo::set_next( UnwindInfo * next ) {
+void UnwindInfo::set_next( UnwindInfo *next ) {
     _next = next;
 }
 

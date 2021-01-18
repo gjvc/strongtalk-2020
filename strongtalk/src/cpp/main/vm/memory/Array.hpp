@@ -12,80 +12,80 @@
 
 class Array : public ResourceObject {
 
-    private:
-        int _index;
-        int _size;
-        int _offset;
-        int * _values;
+private:
+    int _index;
+    int _size;
+    int _offset;
+    int *_values;
 
-    public:
-        Array( int size );
-
-
-        int length() {
-            return _index;
-        }
+public:
+    Array( int size );
 
 
-        void extend( int newSize );
+    int length() {
+        return _index;
+    }
 
-        int insertIfAbsent( int value );  // returns index for value
-        void copy_to( int *& addr );
+
+    void extend( int newSize );
+
+    int insertIfAbsent( int value );  // returns index for value
+    void copy_to( int *&addr );
 };
 
 
 class ByteArray : public ResourceObject {
 
-    private:
-        std::uint8_t * _array;
-        int _top;
-        int _max;
+private:
+    std::uint8_t *_array;
+    int _top;
+    int _max;
 
-        void extend();
+    void extend();
 
-    public:
-        int size() {
-            return _top;
-        }
-
-
-        std::uint8_t * start() {
-            return _array;
-        }
+public:
+    int size() {
+        return _top;
+    }
 
 
-        ByteArray( int size );
+    std::uint8_t *start() {
+        return _array;
+    }
 
 
-        void appendByte( std::uint8_t p ) {
-            if ( _top + ( int ) sizeof( std::uint8_t ) > _max )
-                extend();
-            _array[ _top++ ] = p;
-        }
+    ByteArray( int size );
 
 
-        void appendHalf( int16_t p );
-
-        void appendWord( int p );
-
-
-        void putByteAt( std::uint8_t p, int offset ) {
-            st_assert( offset < _max, "index out of bound" );
-            _array[ offset ] = p;
-        }
+    void appendByte( std::uint8_t p ) {
+        if ( _top + (int) sizeof( std::uint8_t ) > _max )
+            extend();
+        _array[ _top++ ] = p;
+    }
 
 
-        void putHalfAt( int16_t p, int offset );
+    void appendHalf( int16_t p );
+
+    void appendWord( int p );
 
 
-        // Cut off some of the generated code.
-        void setTop( int offset ) {
-            st_assert( _top >= offset, "A smaller top is expected" );
-            _top = offset;
-        }
+    void putByteAt( std::uint8_t p, int offset ) {
+        st_assert( offset < _max, "index out of bound" );
+        _array[ offset ] = p;
+    }
 
 
-        void alignToWord();
+    void putHalfAt( int16_t p, int offset );
 
-        void copy_to( int *& addr );
+
+    // Cut off some of the generated code.
+    void setTop( int offset ) {
+        st_assert( _top >= offset, "A smaller top is expected" );
+        _top = offset;
+    }
+
+
+    void alignToWord();
+
+    void copy_to( int *&addr );
 };

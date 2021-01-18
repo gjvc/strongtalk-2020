@@ -17,7 +17,7 @@
 #include "vm/utilities/disassembler.hpp"
 #include "vm/code/MapConformance.hpp"
 
-extern Compiler * theCompiler;
+extern Compiler *theCompiler;
 
 
 //
@@ -38,7 +38,7 @@ extern Compiler * theCompiler;
 //
 //
 
-int PseudoRegisterMapping::index( PseudoRegister * preg ) {
+int PseudoRegisterMapping::index( PseudoRegister *preg ) {
     st_assert( preg not_eq nullptr, "no preg specified" );
     // try cashed index first
     int i = preg->_map_index_cache;
@@ -56,7 +56,7 @@ int PseudoRegisterMapping::index( PseudoRegister * preg ) {
 }
 
 
-void PseudoRegisterMapping::set_entry( int i, PseudoRegister * preg, int rloc, int sloc ) {
+void PseudoRegisterMapping::set_entry( int i, PseudoRegister *preg, int rloc, int sloc ) {
     st_assert( preg not_eq nullptr, "no preg specified" );
     st_assert( not _locations->isLocation( rloc ) or _locations->isRegister( rloc ), "should be a register location if at all" );
     st_assert( not _locations->isLocation( sloc ) or _locations->isArgument( sloc ) or _locations->isStackTmp( sloc ), "should be a stack location if at all" );
@@ -93,7 +93,7 @@ int PseudoRegisterMapping::spillablePRegIndex() {
     int i0   = -1;
     int i    = size();
     while ( i-- > 0 ) {
-        PseudoRegister * preg = _pseudoRegisters->at( i );
+        PseudoRegister *preg = _pseudoRegisters->at( i );
         int rloc = regLoc( i );
         if ( preg not_eq nullptr and _locations->isRegister( rloc ) and not PseudoRegisterLocker::locks( preg ) and _locations->nofUses( rloc ) < uses ) {
             uses = _locations->nofUses( rloc );
@@ -183,20 +183,20 @@ void PseudoRegisterMapping::destroy() {
 }
 
 
-PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler * assm, int nofArgs, int nofRegs, int nofTemps ) {
+PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, int nofArgs, int nofRegs, int nofTemps ) {
     constexpr int initialSize = 8;
     _macroAssembler           = assm;
     _nonLocalReturnInProgress = false;
     _locations                = new Locations( nofArgs, nofRegs, nofTemps );
-    _pseudoRegisters          = new GrowableArray <PseudoRegister *>( initialSize );
-    _registerLocations        = new GrowableArray <int>( initialSize );
-    _stackLocations           = new GrowableArray <int>( initialSize );
-    _temporaryLocations       = new GrowableArray <int>( 2 );
+    _pseudoRegisters          = new GrowableArray<PseudoRegister *>( initialSize );
+    _registerLocations        = new GrowableArray<int>( initialSize );
+    _stackLocations           = new GrowableArray<int>( initialSize );
+    _temporaryLocations       = new GrowableArray<int>( 2 );
     verify();
 }
 
 
-PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping * m ) {
+PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping *m ) {
     _macroAssembler           = m->_macroAssembler;
     _nonLocalReturnInProgress = m->_nonLocalReturnInProgress;
     _locations                = new Locations( m->_locations );
@@ -223,7 +223,7 @@ bool_t PseudoRegisterMapping::isInjective() {
 }
 
 
-bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping * with ) {
+bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
     // checks conformity on the intersection of this and with
     if ( NonLocalReturninProgress() not_eq with->NonLocalReturninProgress() )
         return false;
@@ -241,7 +241,7 @@ bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping * with ) {
 }
 
 
-void PseudoRegisterMapping::mapToArgument( PseudoRegister * preg, int argNo ) {
+void PseudoRegisterMapping::mapToArgument( PseudoRegister *preg, int argNo ) {
     st_assert( index( preg ) < 0, "preg for argument defined twice" );
     int loc = _locations->argumentAsLocation( argNo );
     _locations->use( loc );
@@ -250,7 +250,7 @@ void PseudoRegisterMapping::mapToArgument( PseudoRegister * preg, int argNo ) {
 }
 
 
-void PseudoRegisterMapping::mapToTemporary( PseudoRegister * preg, int tempNo ) {
+void PseudoRegisterMapping::mapToTemporary( PseudoRegister *preg, int tempNo ) {
     st_assert( index( preg ) < 0, "preg for argument defined twice" );
     int loc = _locations->temporaryAsLocation( tempNo );
     _locations->allocate( loc );
@@ -259,7 +259,7 @@ void PseudoRegisterMapping::mapToTemporary( PseudoRegister * preg, int tempNo ) 
 }
 
 
-void PseudoRegisterMapping::mapToRegister( PseudoRegister * preg, Register reg ) {
+void PseudoRegisterMapping::mapToRegister( PseudoRegister *preg, Register reg ) {
     st_assert( index( preg ) < 0, "preg for register defined twice" );
     int loc = _locations->registerAsLocation( reg );
     _locations->allocate( loc );
@@ -268,7 +268,7 @@ void PseudoRegisterMapping::mapToRegister( PseudoRegister * preg, Register reg )
 }
 
 
-void PseudoRegisterMapping::kill( PseudoRegister * preg ) {
+void PseudoRegisterMapping::kill( PseudoRegister *preg ) {
     int i = index( preg );
     if ( i >= 0 ) {
         if ( PrintPRegMapping ) {
@@ -287,7 +287,7 @@ void PseudoRegisterMapping::kill( PseudoRegister * preg ) {
 }
 
 
-void PseudoRegisterMapping::killAll( PseudoRegister * exception ) {
+void PseudoRegisterMapping::killAll( PseudoRegister *exception ) {
     int i = size();
     while ( i-- > 0 ) {
         if ( used( i ) and _pseudoRegisters->at( i ) not_eq exception ) {
@@ -309,7 +309,7 @@ void PseudoRegisterMapping::killAll( PseudoRegister * exception ) {
 }
 
 
-void PseudoRegisterMapping::killDeadsAt( Node * node, PseudoRegister * exception ) {
+void PseudoRegisterMapping::killDeadsAt( Node *node, PseudoRegister *exception ) {
     while ( node->isTrivial() or node->isMergeNode() )
         node = node->next();
     // In case of a ReturnNode resultPR & scope context are needed
@@ -322,7 +322,7 @@ void PseudoRegisterMapping::killDeadsAt( Node * node, PseudoRegister * exception
     st_assert( node->id() >= 0, "should not be a comment" );
     int i = size();
     while ( i-- > 0 ) {
-        PseudoRegister * preg = _pseudoRegisters->at( i );
+        PseudoRegister *preg = _pseudoRegisters->at( i );
         if ( preg not_eq nullptr and preg not_eq exception and ( not preg->isLiveAt( node ) or preg->isConstPseudoRegister() ) )
             kill( preg );
     }
@@ -332,7 +332,7 @@ void PseudoRegisterMapping::killDeadsAt( Node * node, PseudoRegister * exception
 void PseudoRegisterMapping::cleanupContextReferences() {
     int i = size();
     while ( i-- > 0 ) {
-        PseudoRegister * preg = _pseudoRegisters->at( i );
+        PseudoRegister *preg = _pseudoRegisters->at( i );
         if ( preg not_eq nullptr and preg->_location.isContextLocation() ) {
             // refers to a context temporary -> kill it
             kill( preg );
@@ -348,7 +348,7 @@ void PseudoRegisterMapping::cleanupContextReferences() {
 // is already in the hint register it will be used even though it is not actually available
 // (kind of academic subtlety).
 
-Register PseudoRegisterMapping::def( PseudoRegister * preg, Register hint ) {
+Register PseudoRegisterMapping::def( PseudoRegister *preg, Register hint ) {
     st_assert( not preg->isSinglyAssignedPseudoRegister() or index( preg ) < 0, "SinglyAssignedPseudoRegisters can be defined only once" );
     int i = index( preg );
     st_assert( i < 0 or not hasStkLoc( i ) or not _locations->isArgument( stkLoc( i ) ), "cannot assign to parameters" );
@@ -368,12 +368,12 @@ Register PseudoRegisterMapping::def( PseudoRegister * preg, Register hint ) {
 }
 
 
-Register PseudoRegisterMapping::use( PseudoRegister * preg, Register hint ) {
+Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
     int i = index( preg );
     if ( i < 0 and preg->_location.isContextLocation() ) {
         // preg refers to context temporary
         // determine context temporary address
-        PseudoRegister * context  = theCompiler->contextList->at( preg->_location.contextNo() )->context();
+        PseudoRegister *context   = theCompiler->contextList->at( preg->_location.contextNo() )->context();
         PseudoRegisterLocker lock( context );
         Address              addr = Address( use( context ), Mapping::contextOffset( preg->_location.tempNo() ) );
         // determine a target register
@@ -422,11 +422,11 @@ Register PseudoRegisterMapping::use( PseudoRegister * preg, Register hint ) {
 }
 
 
-Register PseudoRegisterMapping::use( PseudoRegister * preg ) {
+Register PseudoRegisterMapping::use( PseudoRegister *preg ) {
     Register reg;
     if ( preg->isConstPseudoRegister() and not isDefined( preg ) ) {
         reg = def( preg );
-        _macroAssembler->movl( reg, ( ( ConstPseudoRegister * ) preg )->constant );
+        _macroAssembler->movl( reg, ( (ConstPseudoRegister *) preg )->constant );
     } else {
         reg = use( preg, noreg );
     }
@@ -434,7 +434,7 @@ Register PseudoRegisterMapping::use( PseudoRegister * preg ) {
 }
 
 
-void PseudoRegisterMapping::move( PseudoRegister * dst, PseudoRegister * src ) {
+void PseudoRegisterMapping::move( PseudoRegister *dst, PseudoRegister *src ) {
     st_assert( dst->_location not_eq topOfStack, "parameter passing cannot be handled here" );
     kill( dst ); // remove any previous definition
     int i = index( src );
@@ -470,7 +470,7 @@ void PseudoRegisterMapping::saveRegister( int loc ) {
 }
 
 
-void PseudoRegisterMapping::saveRegisters( PseudoRegister * exception ) {
+void PseudoRegisterMapping::saveRegisters( PseudoRegister *exception ) {
     int i = size();
     while ( i-- > 0 ) {
         if ( used( i ) and hasRegLoc( i ) and not hasStkLoc( i ) and _pseudoRegisters->at( i ) not_eq exception ) {
@@ -481,7 +481,7 @@ void PseudoRegisterMapping::saveRegisters( PseudoRegister * exception ) {
 }
 
 
-void PseudoRegisterMapping::killRegisters( PseudoRegister * exception ) {
+void PseudoRegisterMapping::killRegisters( PseudoRegister *exception ) {
     int i = size();
     while ( i-- > 0 ) {
         if ( used( i ) and hasRegLoc( i ) and _pseudoRegisters->at( i ) not_eq exception ) {
@@ -498,7 +498,7 @@ void PseudoRegisterMapping::killRegisters( PseudoRegister * exception ) {
 }
 
 
-void PseudoRegisterMapping::killRegister( PseudoRegister * preg ) {
+void PseudoRegisterMapping::killRegister( PseudoRegister *preg ) {
     int i = index( preg );
     st_assert( i >= 0, "preg must have been defined" )
     if ( hasRegLoc( i ) ) {
@@ -592,16 +592,16 @@ void PseudoRegisterMapping::makeInjective() {
 }
 
 
-void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping * with ) {
+void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
 
     int j = with->size();
 
     // determine which entries have to be adjusted (save values on the stack)
 
-    const char * begin_of_code = _macroAssembler->pc();
+    const char *begin_of_code = _macroAssembler->pc();
 
-    GrowableArray <int> src( 4 );
-    GrowableArray <int> dst( 4 );
+    GrowableArray<int> src( 4 );
+    GrowableArray<int> dst( 4 );
 
 
     while ( j-- > 0 ) {
@@ -689,7 +689,7 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping * with ) {
     }
 
 
-    const char * end_of_code = _macroAssembler->pc();
+    const char *end_of_code = _macroAssembler->pc();
 
     if ( PrintMakeConformantCode and begin_of_code < end_of_code ) {
         _console->print_cr( "MakeConformant:" );
@@ -705,21 +705,21 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping * with ) {
 // Helper class to make mappings conformant
 
 class ConformanceHelper : public MapConformance {
-    private:
-        MacroAssembler * _masm;
+private:
+    MacroAssembler *_masm;
 
-    public:
-        void generate( MacroAssembler * masm, Variable temp1, Variable temp2 );
+public:
+    void generate( MacroAssembler *masm, Variable temp1, Variable temp2 );
 
-        void move( Variable src, Variable dst );
+    void move( Variable src, Variable dst );
 
-        void push( Variable src );
+    void push( Variable src );
 
-        void pop( Variable dst );
+    void pop( Variable dst );
 };
 
 
-void ConformanceHelper::generate( MacroAssembler * masm, Variable temp1, Variable temp2 ) {
+void ConformanceHelper::generate( MacroAssembler *masm, Variable temp1, Variable temp2 ) {
     _masm = masm;
     MapConformance::generate( temp1, temp2 );
     _masm = nullptr;
@@ -774,7 +774,7 @@ void ConformanceHelper::pop( Variable dst ) {
 }
 
 
-void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping * with ) {
+void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
     // set up ConformanceHelper
     bool_t            makeConformant = false;
     Variable          unused         = Variable::unused();
@@ -847,10 +847,10 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping * with ) {
         guarantee( temp1 not_eq temp2 or temp1 == unused, "should not be the same" );
 
         // make conformant
-        const char * begin_of_code = _macroAssembler->pc();
+        const char *begin_of_code = _macroAssembler->pc();
         chelper.generate( _macroAssembler, temp1, temp2 );
 
-        const char * end_of_code = _macroAssembler->pc();
+        const char *end_of_code = _macroAssembler->pc();
         if ( PrintMakeConformantCode ) {
             chelper.print();
             _console->print_cr( "(using R%d & R%d as temporary registers)", temp1.register_number(), temp2.register_number() );
@@ -866,7 +866,7 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping * with ) {
 }
 
 
-void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping * with ) {
+void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     //guarantee(NonLocalReturninProgress() == with->NonLocalReturninProgress(), "cannot be made conformant");
 
     if ( PrintPRegMapping and WizardMode ) {
@@ -902,9 +902,9 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping * with ) {
 }
 
 
-void PseudoRegisterMapping::iterate( PseudoRegisterClosure * closure ) {
+void PseudoRegisterMapping::iterate( PseudoRegisterClosure *closure ) {
     for ( int i = size(); i-- > 0; ) {
-        PseudoRegister * preg = _pseudoRegisters->at( i );
+        PseudoRegister *preg = _pseudoRegisters->at( i );
         if ( preg not_eq nullptr ) {
             preg->_map_index_cache = i;
             closure->preg_do( preg );
@@ -913,7 +913,7 @@ void PseudoRegisterMapping::iterate( PseudoRegisterClosure * closure ) {
 }
 
 
-Location PseudoRegisterMapping::locationFor( PseudoRegister * preg ) {
+Location PseudoRegisterMapping::locationFor( PseudoRegister *preg ) {
     int i = index( preg );
     st_assert( i >= 0, "preg must be defined" );
     Location loc = illegalLocation;
@@ -1053,28 +1053,28 @@ void PseudoRegisterMapping::verify() {
 
 // Implementation of PseudoRegisterLocker
 
-PseudoRegisterLocker * PseudoRegisterLocker::_top;
+PseudoRegisterLocker *PseudoRegisterLocker::_top;
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister * r0 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0 ) {
     st_assert( r0 not_eq nullptr, "PseudoRegister must be defined" );
     lock( r0, nullptr, nullptr );
 }
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister * r0, PseudoRegister * r1 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1 ) {
     st_assert( r0 not_eq nullptr and r1 not_eq nullptr, "PRegs must be defined" );
     lock( r0, r1, nullptr );
 }
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister * r0, PseudoRegister * r1, PseudoRegister * r2 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) {
     st_assert( r0 not_eq nullptr and r1 not_eq nullptr and r2 not_eq nullptr, "PRegs must be defined" );
     lock( r0, r1, r2 );
 }
 
 
-bool_t PseudoRegisterLocker::holds( PseudoRegister * preg ) const {
+bool_t PseudoRegisterLocker::holds( PseudoRegister *preg ) const {
     st_assert( preg not_eq nullptr, "undefined preg" );
     int i = sizeof( _pregs ) / sizeof( PseudoRegister * );
     while ( i-- > 0 ) {
@@ -1085,9 +1085,9 @@ bool_t PseudoRegisterLocker::holds( PseudoRegister * preg ) const {
 }
 
 
-bool_t PseudoRegisterLocker::locks( PseudoRegister * preg ) {
+bool_t PseudoRegisterLocker::locks( PseudoRegister *preg ) {
     st_assert( preg not_eq nullptr, "undefined preg" );
-    PseudoRegisterLocker * p = _top;
+    PseudoRegisterLocker *p = _top;
     while ( p not_eq nullptr and not p->holds( preg ) )
         p = p->_prev;
     // p == nullptr or p->holds(preg)
@@ -1097,13 +1097,13 @@ bool_t PseudoRegisterLocker::locks( PseudoRegister * preg ) {
 
 // Implementation of Temporary
 
-Temporary::Temporary( PseudoRegisterMapping * mapping, Register hint ) {
+Temporary::Temporary( PseudoRegisterMapping *mapping, Register hint ) {
     _mapping = mapping;
     _regLoc  = mapping->allocateTemporary( hint );
 }
 
 
-Temporary::Temporary( PseudoRegisterMapping * mapping, PseudoRegister * preg ) {
+Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *preg ) {
     // old code - keep around for time comparison purposes
     const bool_t old_code = false;
     if ( old_code ) {

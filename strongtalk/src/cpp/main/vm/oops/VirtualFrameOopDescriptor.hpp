@@ -26,67 +26,67 @@
 
 class VirtualFrameOopDescriptor : public MemOopDescriptor {
 
-    private:
-        ProcessOop _process;
-        SMIOop     _index;
-        SMIOop     _time_stamp;
+private:
+    ProcessOop _process;
+    SMIOop     _index;
+    SMIOop     _time_stamp;
 
-    protected:
-        VirtualFrameOopDescriptor * addr() const {
-            return ( VirtualFrameOopDescriptor * ) MemOopDescriptor::addr();
-        }
-
-
-    public:
-        // accessors
-        ProcessOop process() const {
-            return addr()->_process;
-        }
+protected:
+    VirtualFrameOopDescriptor *addr() const {
+        return (VirtualFrameOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        void set_process( ProcessOop p ) {
-            STORE_OOP( &addr()->_process, p );
-        }
+public:
+    // accessors
+    ProcessOop process() const {
+        return addr()->_process;
+    }
 
 
-        int index() const {
-            return addr()->_index->value();
-        }
+    void set_process( ProcessOop p ) {
+        STORE_OOP( &addr()->_process, p );
+    }
 
 
-        void set_index( int i ) {
-            STORE_OOP( &addr()->_index, smiOopFromValue( i ) );
-        }
+    int index() const {
+        return addr()->_index->value();
+    }
 
 
-        int time_stamp() const {
-            return addr()->_time_stamp->value();
-        }
+    void set_index( int i ) {
+        STORE_OOP( &addr()->_index, smiOopFromValue( i ) );
+    }
 
 
-        void set_time_stamp( int t ) {
-            STORE_OOP( &addr()->_time_stamp, smiOopFromValue( t ) );
-        }
+    int time_stamp() const {
+        return addr()->_time_stamp->value();
+    }
 
 
-        friend VirtualFrameOop as_vframeOop( void * p );
+    void set_time_stamp( int t ) {
+        STORE_OOP( &addr()->_time_stamp, smiOopFromValue( t ) );
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( VirtualFrameOopDescriptor ) / oopSize;
-        }
+    friend VirtualFrameOop as_vframeOop( void *p );
 
 
-        // get the corresponding VirtualFrame, returns nullptr it fails.
-        VirtualFrame * get_vframe();
+    // sizing
+    static int header_size() {
+        return sizeof( VirtualFrameOopDescriptor ) / oopSize;
+    }
 
-    private:
-        friend class VirtualFrameKlass;
+
+    // get the corresponding VirtualFrame, returns nullptr it fails.
+    VirtualFrame *get_vframe();
+
+private:
+    friend class VirtualFrameKlass;
 };
 
 
-inline VirtualFrameOop as_vframeOop( void * p ) {
+inline VirtualFrameOop as_vframeOop( void *p ) {
 //    return VirtualFrameOop( as_memOop( p ) );
     return static_cast<VirtualFrameOop>( as_memOop( p ));
 }

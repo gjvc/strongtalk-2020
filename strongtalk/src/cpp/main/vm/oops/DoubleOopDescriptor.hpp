@@ -16,56 +16,56 @@
 //   [Double]   (contains untagged values)
 
 class DoubleOopDescriptor : public MemOopDescriptor {
-    private:
+private:
 
-        double _value;
-
-
-        // conversion to untagged doubleOopDescriptor*
-        DoubleOopDescriptor * addr() const {
-            return ( DoubleOopDescriptor * ) MemOopDescriptor::addr();
-        }
+    double _value;
 
 
-    public:
-        // type conversion
-        friend DoubleOop as_doubleOop( void * p );
+    // conversion to untagged doubleOopDescriptor*
+    DoubleOopDescriptor *addr() const {
+        return (DoubleOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( DoubleOopDescriptor ) / oopSize;
-        }
+public:
+    // type conversion
+    friend DoubleOop as_doubleOop( void *p );
 
 
-        static int object_size() {
-            return header_size();
-        }
+    // sizing
+    static int header_size() {
+        return sizeof( DoubleOopDescriptor ) / oopSize;
+    }
 
 
-        static int value_offset() {
-            return sizeof( MemOopDescriptor ) / oopSize;
-        }
+    static int object_size() {
+        return header_size();
+    }
 
 
-        // value accessors
-        double value() const {
-            return addr()->_value;
-        }
+    static int value_offset() {
+        return sizeof( MemOopDescriptor ) / oopSize;
+    }
 
 
-        void set_value( double v ) {
-            addr()->_value = v;
-        }
+    // value accessors
+    double value() const {
+        return addr()->_value;
+    }
 
 
-        // bootstrappingInProgress
-        void bootstrap_object( Bootstrap * stream );
+    void set_value( double v ) {
+        addr()->_value = v;
+    }
 
-        friend class DoubleKlass;
+
+    // bootstrappingInProgress
+    void bootstrap_object( Bootstrap *stream );
+
+    friend class DoubleKlass;
 };
 
 
-inline DoubleOop as_doubleOop( void * p ) {
+inline DoubleOop as_doubleOop( void *p ) {
     return DoubleOop( as_memOop( p ) );
 }

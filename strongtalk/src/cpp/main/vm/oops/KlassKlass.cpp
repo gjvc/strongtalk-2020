@@ -10,7 +10,7 @@
 #include "vm/memory/vmSymbols.hpp"
 
 
-void setKlassVirtualTableFromKlassKlass( Klass * k ) {
+void setKlassVirtualTableFromKlassKlass( Klass *k ) {
     KlassKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -37,13 +37,13 @@ int KlassKlass::oop_scavenge_contents( Oop obj ) {
 
     // header
     MemOop( obj )->scavenge_header();
-    Klass * k = KlassOop( obj )->klass_part();
-    scavenge_oop( ( Oop * ) &k->_non_indexable_size );
-    scavenge_oop( ( Oop * ) &k->_has_untagged_contents );
-    scavenge_oop( ( Oop * ) &k->_classVars );
-    scavenge_oop( ( Oop * ) &k->_methods );
-    scavenge_oop( ( Oop * ) &k->_superKlass );
-    scavenge_oop( ( Oop * ) &k->_mixin );
+    Klass *k = KlassOop( obj )->klass_part();
+    scavenge_oop( (Oop *) &k->_non_indexable_size );
+    scavenge_oop( (Oop *) &k->_has_untagged_contents );
+    scavenge_oop( (Oop *) &k->_classVars );
+    scavenge_oop( (Oop *) &k->_methods );
+    scavenge_oop( (Oop *) &k->_superKlass );
+    scavenge_oop( (Oop *) &k->_mixin );
 
     // instance variables
     MemOop( obj )->scavenge_body( KlassOopDescriptor::header_size(), size );
@@ -56,13 +56,13 @@ int KlassKlass::oop_scavenge_tenured_contents( Oop obj ) {
 
     // header
     MemOop( obj )->scavenge_tenured_header();
-    Klass * k = KlassOop( obj )->klass_part();
-    scavenge_tenured_oop( ( Oop * ) &k->_non_indexable_size );
-    scavenge_tenured_oop( ( Oop * ) &k->_has_untagged_contents );
-    scavenge_tenured_oop( ( Oop * ) &k->_classVars );
-    scavenge_tenured_oop( ( Oop * ) &k->_methods );
-    scavenge_tenured_oop( ( Oop * ) &k->_superKlass );
-    scavenge_tenured_oop( ( Oop * ) &k->_mixin );
+    Klass *k = KlassOop( obj )->klass_part();
+    scavenge_tenured_oop( (Oop *) &k->_non_indexable_size );
+    scavenge_tenured_oop( (Oop *) &k->_has_untagged_contents );
+    scavenge_tenured_oop( (Oop *) &k->_classVars );
+    scavenge_tenured_oop( (Oop *) &k->_methods );
+    scavenge_tenured_oop( (Oop *) &k->_superKlass );
+    scavenge_tenured_oop( (Oop *) &k->_mixin );
 
     // instance variables
     MemOop( obj )->scavenge_tenured_body( KlassOopDescriptor::header_size(), size );
@@ -74,13 +74,13 @@ void KlassKlass::oop_follow_contents( Oop obj ) {
 
     // header
     MemOop( obj )->follow_header();
-    Klass * k = KlassOop( obj )->klass_part();
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_non_indexable_size );
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_has_untagged_contents );
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_classVars );
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_methods );
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_superKlass );
-    MarkSweep::reverse_and_push( ( Oop * ) &k->_mixin );
+    Klass *k = KlassOop( obj )->klass_part();
+    MarkSweep::reverse_and_push( (Oop *) &k->_non_indexable_size );
+    MarkSweep::reverse_and_push( (Oop *) &k->_has_untagged_contents );
+    MarkSweep::reverse_and_push( (Oop *) &k->_classVars );
+    MarkSweep::reverse_and_push( (Oop *) &k->_methods );
+    MarkSweep::reverse_and_push( (Oop *) &k->_superKlass );
+    MarkSweep::reverse_and_push( (Oop *) &k->_mixin );
 
     // instance variables
     MemOop( obj )->follow_body( KlassOopDescriptor::header_size(), non_indexable_size() );
@@ -89,7 +89,7 @@ void KlassKlass::oop_follow_contents( Oop obj ) {
 
 bool_t KlassKlass::oop_verify( Oop obj ) {
     st_assert( obj->is_klass(), "must be class" );
-    Klass * k = KlassOop( obj )->klass_part();
+    Klass *k = KlassOop( obj )->klass_part();
 
 //    if ( not k->oop_is_smi() ) {
 //        int a = k->non_indexable_size();
@@ -105,12 +105,12 @@ bool_t KlassKlass::oop_verify( Oop obj ) {
 }
 
 
-void KlassKlass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void KlassKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     MemOopKlass::oop_print_on( obj, stream );
 }
 
 
-void KlassKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void KlassKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     if ( PrintObjectID ) {
         MemOop( obj )->print_id_on( stream );
         stream->print( "-" );
@@ -120,34 +120,34 @@ void KlassKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
 }
 
 
-void KlassKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void KlassKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
     // header
     MemOop( obj )->layout_iterate_header( blk );
-    Klass * k = KlassOop( obj )->klass_part();
-    blk->do_oop( "size", ( Oop * ) &k->_non_indexable_size );
-    blk->do_oop( "untag", ( Oop * ) &k->_has_untagged_contents );
-    blk->do_oop( "classVars", ( Oop * ) &k->_classVars );
-    blk->do_oop( "methods", ( Oop * ) &k->_methods );
-    blk->do_oop( "super", ( Oop * ) &k->_superKlass );
-    blk->do_oop( "mixin", ( Oop * ) &k->_mixin );
+    Klass *k = KlassOop( obj )->klass_part();
+    blk->do_oop( "size", (Oop *) &k->_non_indexable_size );
+    blk->do_oop( "untag", (Oop *) &k->_has_untagged_contents );
+    blk->do_oop( "classVars", (Oop *) &k->_classVars );
+    blk->do_oop( "methods", (Oop *) &k->_methods );
+    blk->do_oop( "super", (Oop *) &k->_superKlass );
+    blk->do_oop( "mixin", (Oop *) &k->_mixin );
 
     // instance variables
     MemOop( obj )->layout_iterate_body( blk, KlassOopDescriptor::header_size(), non_indexable_size() );
 }
 
 
-void KlassKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void KlassKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 
     // header
     MemOop( obj )->oop_iterate_header( blk );
-    Klass * k = KlassOop( obj )->klass_part();
-    blk->do_oop( ( Oop * ) &k->_non_indexable_size );
-    blk->do_oop( ( Oop * ) &k->_has_untagged_contents );
-    blk->do_oop( ( Oop * ) &k->_classVars );
-    blk->do_oop( ( Oop * ) &k->_methods );
-    blk->do_oop( ( Oop * ) &k->_superKlass );
-    blk->do_oop( ( Oop * ) &k->_mixin );
+    Klass *k = KlassOop( obj )->klass_part();
+    blk->do_oop( (Oop *) &k->_non_indexable_size );
+    blk->do_oop( (Oop *) &k->_has_untagged_contents );
+    blk->do_oop( (Oop *) &k->_classVars );
+    blk->do_oop( (Oop *) &k->_methods );
+    blk->do_oop( (Oop *) &k->_superKlass );
+    blk->do_oop( (Oop *) &k->_mixin );
 
     // instance variables
     MemOop( obj )->oop_iterate_body( blk, KlassOopDescriptor::header_size(), non_indexable_size() );

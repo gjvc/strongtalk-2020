@@ -15,64 +15,64 @@
 
 class FlagSetting {
 
-    private:
-        bool_t _value;
-        bool_t * _flag;
+private:
+    bool_t _value;
+    bool_t *_flag;
 
-    public:
-        FlagSetting( bool_t & fl, bool_t newValue ) {
-            _flag  = &fl;
-            _value = fl;
-            fl     = newValue;
-        }
+public:
+    FlagSetting( bool_t &fl, bool_t newValue ) {
+        _flag  = &fl;
+        _value = fl;
+        fl     = newValue;
+    }
 
 
-        ~FlagSetting() {
-            *_flag = _value; // restore original value
-        }
+    ~FlagSetting() {
+        *_flag = _value; // restore original value
+    }
 };
 
 
 class debugFlags {
 
-    public:
-        static bool_t boolAt( const char * name, int len, bool_t * value );
+public:
+    static bool_t boolAt( const char *name, int len, bool_t *value );
 
 
-        static bool_t boolAt( const char * name, bool_t * value ) {
-            return boolAt( name, strlen( name ), value );
-        }
+    static bool_t boolAt( const char *name, bool_t *value ) {
+        return boolAt( name, strlen( name ), value );
+    }
 
 
-        static bool_t boolAtPut( const char * name, int len, bool_t * value );
+    static bool_t boolAtPut( const char *name, int len, bool_t *value );
 
 
-        static bool_t boolAtPut( const char * name, bool_t * value ) {
-            return boolAtPut( name, strlen( name ), value );
-        }
+    static bool_t boolAtPut( const char *name, bool_t *value ) {
+        return boolAtPut( name, strlen( name ), value );
+    }
 
 
-        static bool_t intAt( const char * name, int len, int * value );
+    static bool_t intAt( const char *name, int len, int *value );
 
 
-        static bool_t intAt( const char * name, int * value ) {
-            return intAt( name, strlen( name ), value );
-        }
+    static bool_t intAt( const char *name, int *value ) {
+        return intAt( name, strlen( name ), value );
+    }
 
 
-        static bool_t intAtPut( const char * name, int len, int * value );
+    static bool_t intAtPut( const char *name, int len, int *value );
 
 
-        static bool_t intAtPut( const char * name, int * value ) {
-            return intAtPut( name, strlen( name ), value );
-        }
+    static bool_t intAtPut( const char *name, int *value ) {
+        return intAtPut( name, strlen( name ), value );
+    }
 
 
-        static void printFlags();
+    static void printFlags();
 
-        static void print_on( ConsoleOutputStream * stream );
+    static void print_on( ConsoleOutputStream *stream );
 
-        static void print_diff_on( ConsoleOutputStream * stream );
+    static void print_diff_on( ConsoleOutputStream *stream );
 };
 
 

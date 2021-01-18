@@ -156,7 +156,7 @@ class InterpretedInlineCacheIterator : public InlineCacheIterator {
 
 private:
     InterpretedInlineCache *_ic;            // the inline cache
-    ObjectArrayOop _pic;            // the PolymorphicInlineCache if there is one
+    ObjectArrayOop         _pic;            // the PolymorphicInlineCache if there is one
 
     // state machine
     int              _number_of_targets;    // the no. of InlineCache entries
@@ -164,7 +164,7 @@ private:
     int              _index;                // the current entry no.
     KlassOop         _klass;                // the current klass
     MethodOop        _method;               // the current method
-    NativeMethod *_nativeMethod;        // current NativeMethod (nullptr if none)
+    NativeMethod     *_nativeMethod;        // current NativeMethod (nullptr if none)
 
     void set_method( Oop m );               // set _method and _nativeMethod
     void set_klass( Oop k );                // don't assign to _klass directly

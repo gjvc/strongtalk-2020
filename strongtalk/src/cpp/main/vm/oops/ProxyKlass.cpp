@@ -6,7 +6,7 @@
 #include "vm/oops/ProxyKlass.hpp"
 
 
-void setKlassVirtualTableFromProxyKlass( Klass * k ) {
+void setKlassVirtualTableFromProxyKlass( Klass *k ) {
     ProxyKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -16,7 +16,7 @@ Oop ProxyKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
     int      size = non_indexable_size();
     // allocate
-    Oop * result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
         return nullptr;
     ProxyOop obj = as_proxyOop( result );
@@ -71,7 +71,7 @@ void ProxyKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-void ProxyKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void ProxyKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
     blk->do_long( "pointer", &ProxyOop( obj )->addr()->_pointer );
@@ -80,7 +80,7 @@ void ProxyKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
 }
 
 
-void ProxyKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void ProxyKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
     // instance variables

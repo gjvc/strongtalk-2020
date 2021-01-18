@@ -26,7 +26,7 @@
 
 // ------------- VirtualFrame --------------
 
-bool_t VirtualFrame::equal( const VirtualFrame * virtualFrame ) const {
+bool_t VirtualFrame::equal( const VirtualFrame *virtualFrame ) const {
     return _frame.fp() == virtualFrame->_frame.fp();
 }
 
@@ -38,7 +38,7 @@ Oop VirtualFrame::callee_argument_at( int index ) const {
 }
 
 
-VirtualFrame * VirtualFrame::new_vframe( Frame * f ) {
+VirtualFrame *VirtualFrame::new_vframe( Frame *f ) {
 
     if ( f->is_interpreted_frame() )
         return new InterpretedVirtualFrame( f );
@@ -50,16 +50,16 @@ VirtualFrame * VirtualFrame::new_vframe( Frame * f ) {
         return new DeoptimizedVirtualFrame( f );
 
     if ( f->is_compiled_frame() ) {
-        NativeMethod * nm = f->code();
+        NativeMethod *nm = f->code();
         st_assert( nm, "NativeMethod not found in compiled frame" );
 
         // NB: pc points *after* the current instruction (e.g., call), so must adjust it
         // to get the right byteCodeIndex; -1 will do portably    -Urs 2/96
-        const char               * pc = f->pc() - 1;
-        ProgramCounterDescriptor * pd = nm->containingProgramCounterDescriptor( pc );
+        const char               *pc = f->pc() - 1;
+        ProgramCounterDescriptor *pd = nm->containingProgramCounterDescriptor( pc );
         st_assert( pd, "ProgramCounterDescriptor not found" );
 
-        ScopeDescriptor * sd = nm->scopes()->at( pd->_scope, pc );
+        ScopeDescriptor *sd = nm->scopes()->at( pd->_scope, pc );
         st_assert( sd, "ScopeDescriptor not found" );
         return CompiledVirtualFrame::new_vframe( f, sd, pd->_byteCodeIndex );
     }
@@ -68,7 +68,7 @@ VirtualFrame * VirtualFrame::new_vframe( Frame * f ) {
 }
 
 
-VirtualFrame * VirtualFrame::sender() const {
+VirtualFrame *VirtualFrame::sender() const {
     st_assert( is_top(), "just checking" );
     Frame s = _frame.sender();
     if ( s.is_first_frame() )
@@ -77,8 +77,8 @@ VirtualFrame * VirtualFrame::sender() const {
 }
 
 
-VirtualFrame * VirtualFrame::top() const {
-    VirtualFrame * vf = ( VirtualFrame * ) this;
+VirtualFrame *VirtualFrame::top() const {
+    VirtualFrame *vf = (VirtualFrame *) this;
     while ( not vf->is_top() )
         vf = vf->sender();
     return vf;
@@ -93,15 +93,15 @@ void VirtualFrame::print() {
 
 
 void VirtualFrame::print_value() const {
-    ( ( VirtualFrame * ) this )->print();
+    ( (VirtualFrame *) this )->print();
 }
 
 // ------------- DeltaVirtualFrame --------------
 
-GrowableArray <Oop> * DeltaVirtualFrame::arguments() const {
+GrowableArray<Oop> *DeltaVirtualFrame::arguments() const {
     int nargs = method()->number_of_arguments();
-    GrowableArray <Oop> * result = new GrowableArray <Oop>( nargs );
-    VirtualFrame        * s      = sender();
+    GrowableArray<Oop> *result = new GrowableArray<Oop>( nargs );
+    VirtualFrame       *s      = sender();
     for ( int index = 0; index < nargs; index++ ) {
         result->push( argument_at( index ) );
     }
@@ -126,16 +126,16 @@ void DeltaVirtualFrame::print() {
 
 
 void DeltaVirtualFrame::print_activation( int index ) const {
-    ( ( VirtualFrame * ) this )->VirtualFrame::print();
-    PrettyPrinter::print( index, ( DeltaVirtualFrame * ) this );
+    ( (VirtualFrame *) this )->VirtualFrame::print();
+    PrettyPrinter::print( index, (DeltaVirtualFrame *) this );
 }
 
 
-DeltaVirtualFrame * DeltaVirtualFrame::sender_delta_frame() const {
-    VirtualFrame * f = sender();
+DeltaVirtualFrame *DeltaVirtualFrame::sender_delta_frame() const {
+    VirtualFrame *f = sender();
     while ( f not_eq nullptr ) {
         if ( f->is_delta_frame() )
-            return ( DeltaVirtualFrame * ) f;
+            return (DeltaVirtualFrame *) f;
         f = f->sender();
     }
     return nullptr;
@@ -200,17 +200,17 @@ Oop InterpretedVirtualFrame::expression_at( int index ) const {
 }
 
 
-Oop * InterpretedVirtualFrame::expression_addr( int offset ) const {
-    return ( Oop * ) &( ( Oop * ) _frame.sp() )[ offset ];
+Oop *InterpretedVirtualFrame::expression_addr( int offset ) const {
+    return (Oop *) &( (Oop *) _frame.sp() )[ offset ];
 }
 
 
-GrowableArray <Oop> * InterpretedVirtualFrame::expression_stack() const {
+GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
 
     int last_temp_number = method()->number_of_stack_temporaries() - 1;
     int size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
     st_assert( size >= 0, "expr stack size must be non-negative" );
-    GrowableArray <Oop> * result = new GrowableArray <Oop>( size );
+    GrowableArray<Oop> *result = new GrowableArray<Oop>( size );
 
     for ( int i = 0; i < size; i++ ) {
         Oop value = expression_at( i );
@@ -236,12 +236,12 @@ GrowableArray <Oop> * InterpretedVirtualFrame::expression_stack() const {
 }
 
 
-std::uint8_t * InterpretedVirtualFrame::hp() const {
+std::uint8_t *InterpretedVirtualFrame::hp() const {
     return _frame.hp();
 }
 
 
-void InterpretedVirtualFrame::set_hp( std::uint8_t * p ) {
+void InterpretedVirtualFrame::set_hp( std::uint8_t *p ) {
     _frame.set_hp( p );
 }
 
@@ -272,7 +272,7 @@ void InterpretedVirtualFrame::expression_at_put( int offset, Oop obj ) {
 }
 
 
-bool_t InterpretedVirtualFrame::equal( const VirtualFrame * f ) const {
+bool_t InterpretedVirtualFrame::equal( const VirtualFrame *f ) const {
     if ( not f->is_interpreted_frame() )
         return false;
     return VirtualFrame::equal( f );
@@ -285,13 +285,13 @@ int InterpretedVirtualFrame::byteCodeIndex() const {
 
 
 MethodOop InterpretedVirtualFrame::method() const {
-    MemOop m = as_memOop( Universe::object_start( ( Oop * ) ( hp() - 1 ) ) );
+    MemOop m = as_memOop( Universe::object_start( (Oop *) ( hp() - 1 ) ) );
     st_assert( m->is_method(), "must be method" );
     return MethodOop( m );
 }
 
 
-DeltaVirtualFrame * InterpretedVirtualFrame::parent() const {
+DeltaVirtualFrame *InterpretedVirtualFrame::parent() const {
     MethodOop m = method();
 
     // Return nullptr if method is outer.
@@ -306,10 +306,10 @@ DeltaVirtualFrame * InterpretedVirtualFrame::parent() const {
     // NB: the parent may still be alive even though it cannot be
     //     found on this stack. It might reside on another stack.
 
-    for ( VirtualFrame * p = sender(); p; p = p->sender() ) {
+    for ( VirtualFrame *p = sender(); p; p = p->sender() ) {
         if ( p->is_interpreted_frame() )
-            if ( ( ( InterpretedVirtualFrame * ) p )->interpreter_context() == target )
-                return ( DeltaVirtualFrame * ) p;
+            if ( ( (InterpretedVirtualFrame *) p )->interpreter_context() == target )
+                return (DeltaVirtualFrame *) p;
     }
 
     warning( "parent frame is not found on same stack" );
@@ -338,7 +338,7 @@ void InterpretedVirtualFrame::verify() const {
 
 // ------------- CompiledVirtualFrame --------------
 
-CompiledVirtualFrame * CompiledVirtualFrame::new_vframe( const Frame * fr, ScopeDescriptor * sd, int byteCodeIndex ) {
+CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) {
     if ( sd->isMethodScope() )
         return new CompiledMethodVirtualFrame( fr, sd, byteCodeIndex );
     if ( sd->isTopLevelBlockScope() )
@@ -358,14 +358,14 @@ void CompiledVirtualFrame::rewind_byteCodeIndex() {
 }
 
 
-CompiledVirtualFrame::CompiledVirtualFrame( const Frame * fr, ScopeDescriptor * sd, int byteCodeIndex ) :
-    DeltaVirtualFrame( fr ) {
+CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+        DeltaVirtualFrame( fr ) {
     this->_scopeDescriptor = sd;
     _byteCodeIndex = byteCodeIndex;
 }
 
 
-VirtualFrame * CompiledVirtualFrame::sender() const {
+VirtualFrame *CompiledVirtualFrame::sender() const {
     if ( _scopeDescriptor->isTop() )
         return VirtualFrame::sender();
     return CompiledVirtualFrame::new_vframe( &_frame, _scopeDescriptor->sender(), _scopeDescriptor->senderByteCodeIndex() );
@@ -380,21 +380,21 @@ Oop CompiledVirtualFrame::temp_at( int offset ) const {
 
 
 class ContextTempFindClosure : public NameDescriptorClosure {
-    public:
-        NameDescriptor * result;
-        int i;
+public:
+    NameDescriptor *result;
+    int i;
 
 
-        ContextTempFindClosure( int index ) {
-            i      = index;
-            result = nullptr;
-        }
+    ContextTempFindClosure( int index ) {
+        i      = index;
+        result = nullptr;
+    }
 
 
-        void context_temp( int no, NameDescriptor * a, char * pc ) {
-            if ( no == i )
-                result = a;
-        }
+    void context_temp( int no, NameDescriptor *a, char *pc ) {
+        if ( no == i )
+            result = a;
+    }
 };
 
 
@@ -408,7 +408,7 @@ Oop CompiledVirtualFrame::context_temp_at( int offset ) const {
 
 
 Oop CompiledVirtualFrame::expression_at( int index ) const {
-    GrowableArray <DeferredExpression *> * stack = deferred_expression_stack();
+    GrowableArray<DeferredExpression *> *stack = deferred_expression_stack();
     if ( stack->length() <= index ) {
         // Hack for Robert 1/15/96, probably wrong expression stack
         return oopFactory::new_symbol( "invalid stack element" );
@@ -418,18 +418,18 @@ Oop CompiledVirtualFrame::expression_at( int index ) const {
 
 
 class CollectContextInfoClosure : public NameDescriptorClosure {
-    public:
-        GrowableArray <NameDescriptor *> * result;
+public:
+    GrowableArray<NameDescriptor *> *result;
 
 
-        CollectContextInfoClosure() {
-            result = new GrowableArray <NameDescriptor *>( 10 );
-        }
+    CollectContextInfoClosure() {
+        result = new GrowableArray<NameDescriptor *>( 10 );
+    }
 
 
-        void context_temp( int no, NameDescriptor * a, char * pc ) {
-            result->append( a );
-        }
+    void context_temp( int no, NameDescriptor *a, char *pc ) {
+        result->append( a );
+    }
 };
 
 extern "C" ContextOop allocateContext( SMIOop nofVars );
@@ -452,23 +452,23 @@ ContextOop CompiledVirtualFrame::compiled_context() const {
 }
 
 
-GrowableArray <DeferredExpression *> * CompiledVirtualFrame::deferred_expression_stack() const {
-    GrowableArray <int> * mapping = method()->expression_stack_mapping( byteCodeIndex() );
-    GrowableArray <DeferredExpression *> * result = new GrowableArray <DeferredExpression *>( mapping->length() );
-    for ( int                            index    = 0; index < mapping->length(); index++ ) {
-        NameDescriptor * nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
+GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_stack() const {
+    GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<DeferredExpression *> *result = new GrowableArray<DeferredExpression *>( mapping->length() );
+    for ( int                           index   = 0; index < mapping->length(); index++ ) {
+        NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
         result->push( new DeferredExpression( this, nd ) );
     }
     return result;
 }
 
 
-GrowableArray <Oop> * CompiledVirtualFrame::expression_stack() const {
-    GrowableArray <int> * mapping = method()->expression_stack_mapping( byteCodeIndex() );
-    GrowableArray <Oop> * result  = new GrowableArray <Oop>( mapping->length() );
+GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
+    GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<Oop> *result  = new GrowableArray<Oop>( mapping->length() );
 
     for ( int i = 0; i < mapping->length(); i++ ) {
-        NameDescriptor * nd = _scopeDescriptor->exprStackElem( mapping->at( i ) );
+        NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( i ) );
         Oop value = resolve_name( nd, this );
         result->push( value );
     }
@@ -491,10 +491,10 @@ GrowableArray <Oop> * CompiledVirtualFrame::expression_stack() const {
 }
 
 
-bool_t CompiledVirtualFrame::equal( const VirtualFrame * f ) const {
+bool_t CompiledVirtualFrame::equal( const VirtualFrame *f ) const {
     if ( not f->is_compiled_frame() )
         return false;
-    return VirtualFrame::equal( f ) and scope()->is_equal( ( ( CompiledVirtualFrame * ) f )->scope() );
+    return VirtualFrame::equal( f ) and scope()->is_equal( ( (CompiledVirtualFrame *) f )->scope() );
 }
 
 
@@ -508,12 +508,12 @@ MethodOop CompiledVirtualFrame::method() const {
 }
 
 
-NativeMethod * CompiledVirtualFrame::code() const {
+NativeMethod *CompiledVirtualFrame::code() const {
     return _frame.code();
 }
 
 
-Oop CompiledVirtualFrame::resolve_location( Location loc, const CompiledVirtualFrame * vf, ContextOop con ) {
+Oop CompiledVirtualFrame::resolve_location( Location loc, const CompiledVirtualFrame *vf, ContextOop con ) {
 
     // Context location
     if ( loc.isStackLocation() ) {
@@ -523,7 +523,7 @@ Oop CompiledVirtualFrame::resolve_location( Location loc, const CompiledVirtualF
     // Context location
     if ( loc.isContextLocation() ) {
         if ( vf ) {
-            ScopeDescriptor * scope = vf->code()->scopes()->at( loc.scopeOffs(), vf->fr().pc() );
+            ScopeDescriptor *scope = vf->code()->scopes()->at( loc.scopeOffs(), vf->fr().pc() );
             st_assert( scope->allocates_compiled_context(), "must have context" );
             st_assert( scope->compiled_context()->isLocation(), "context must be a location" );
             ContextOop context = ContextOop( resolve_location( scope->compiled_context()->location(), vf ) );
@@ -547,7 +547,7 @@ Oop CompiledVirtualFrame::resolve_location( Location loc, const CompiledVirtualF
 }
 
 
-Oop CompiledVirtualFrame::resolve_name( NameDescriptor * nd, const CompiledVirtualFrame * vf, ContextOop con ) {
+Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtualFrame *vf, ContextOop con ) {
     // takes a NameDescriptor & looks up the Oop it describes
     // (on the stack, in contexts, etc.)
 
@@ -602,8 +602,8 @@ Oop CompiledVirtualFrame::filler_oop() {
 }
 
 
-int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor * d ) const {
-    ScopeDescriptor * s = _scopeDescriptor;
+int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor *d ) const {
+    ScopeDescriptor *s = _scopeDescriptor;
     int b = byteCodeIndex();
     while ( not s->is_equal( d ) ) {
         b = s->senderByteCodeIndex();
@@ -617,28 +617,28 @@ int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor * d ) const {
 #define CHECK( n )  if (n->isIllegal()) ok = false
 
 class VerifyNDClosure : public NameDescriptorClosure {
-    public:
-        bool_t ok;
+public:
+    bool_t ok;
 
 
-        VerifyNDClosure() {
-            ok = true;
-        }
+    VerifyNDClosure() {
+        ok = true;
+    }
 
 
-        void arg( int no, NameDescriptor * a, char * pc ) {
-            CHECK( a );
-        }
+    void arg( int no, NameDescriptor *a, char *pc ) {
+        CHECK( a );
+    }
 
 
-        void temp( int no, NameDescriptor * a, char * pc ) {
-            CHECK( a );
-        }
+    void temp( int no, NameDescriptor *a, char *pc ) {
+        CHECK( a );
+    }
 
 
-        void context_temp( int no, NameDescriptor * a, char * pc ) {
-            CHECK( a );
-        }
+    void context_temp( int no, NameDescriptor *a, char *pc ) {
+        CHECK( a );
+    }
 };
 
 
@@ -659,19 +659,19 @@ void CompiledVirtualFrame::verify_debug_info() const {
 
 
 class Indenting : public ValueObject {
-    public:
-        Indenting() {
-            _console->inc();
-        }
+public:
+    Indenting() {
+        _console->inc();
+    }
 
 
-        ~Indenting() {
-            _console->dec();
-        }
+    ~Indenting() {
+        _console->dec();
+    }
 };
 
 
-void traceFrame( const CompiledVirtualFrame * vf, ContextOop con ) {
+void traceFrame( const CompiledVirtualFrame *vf, ContextOop con ) {
     if ( TraceCanonicalContext ) {
         FlagSetting flag( TraceCanonicalContext, false );
         _console->cr();
@@ -685,13 +685,13 @@ void traceFrame( const CompiledVirtualFrame * vf, ContextOop con ) {
 }
 
 
-ContextOop CompiledVirtualFrame::compute_canonical_parent_context( ScopeDescriptor * scope, const CompiledVirtualFrame * vf, ContextOop con ) {
-    CompiledVirtualFrame * parent_vf = ( not vf or not vf->parent() or not vf->parent()->is_compiled_frame() ) ? nullptr : ( CompiledVirtualFrame * ) vf->parent();
+ContextOop CompiledVirtualFrame::compute_canonical_parent_context( ScopeDescriptor *scope, const CompiledVirtualFrame *vf, ContextOop con ) {
+    CompiledVirtualFrame *parent_vf = ( not vf or not vf->parent() or not vf->parent()->is_compiled_frame() ) ? nullptr : (CompiledVirtualFrame *) vf->parent();
     return compute_canonical_context( scope->parent( true ), parent_vf, con );
 }
 
 
-ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor * scope, const CompiledVirtualFrame * vf, ContextOop con ) {
+ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *scope, const CompiledVirtualFrame *vf, ContextOop con ) {
     // Computes the canonical contextOop for a scope desc.
     //
     // Recipe:
@@ -744,7 +744,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor * sc
         StringOutputStream stream( 50 );
         stream.print( "eliminated context in " );
         scope->selector()->print_symbol_on( &stream );
-        return ( ContextOop ) oopFactory::new_symbol( stream.as_string() );      // unsafe cast
+        return (ContextOop) oopFactory::new_symbol( stream.as_string() );      // unsafe cast
     }
 
     // collect all NameDescs
@@ -756,7 +756,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor * sc
 
     // fill in the meat
     for ( int i = 0; i < blk.result->length(); i++ ) {
-        NameDescriptor * nd = blk.result->at( i );
+        NameDescriptor *nd = blk.result->at( i );
         result->obj_at_put( i, resolve_name( nd, vf, comp_context ) );
     }
 
@@ -804,8 +804,8 @@ void CompiledVirtualFrame::verify() const {
 }
 // ------------- compiledMethodVFrame --------------
 
-CompiledMethodVirtualFrame::CompiledMethodVirtualFrame( const Frame * fr, ScopeDescriptor * sd, int byteCodeIndex ) :
-    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+CompiledMethodVirtualFrame::CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -831,8 +831,8 @@ ContextOop CompiledMethodVirtualFrame::canonical_context() const {
 
 // ------------- CompiledBlockVirtualFrame --------------
 
-CompiledBlockVirtualFrame::CompiledBlockVirtualFrame( const Frame * fr, ScopeDescriptor * sd, int byteCodeIndex ) :
-    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+CompiledBlockVirtualFrame::CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -842,7 +842,7 @@ bool_t CompiledBlockVirtualFrame::is_top() const {
 
 
 Oop CompiledBlockVirtualFrame::receiver() const {
-    NameDescriptor * nd = _scopeDescriptor->self();
+    NameDescriptor *nd = _scopeDescriptor->self();
     if ( nd ) {
         return resolve_name( nd, this );
     } else {
@@ -852,8 +852,8 @@ Oop CompiledBlockVirtualFrame::receiver() const {
 }
 
 
-DeltaVirtualFrame * CompiledBlockVirtualFrame::parent() const {
-    ScopeDescriptor * ps = parent_scope();
+DeltaVirtualFrame *CompiledBlockVirtualFrame::parent() const {
+    ScopeDescriptor *ps = parent_scope();
     int parent_byteCodeIndex = byteCodeIndex_for( ps );
     return CompiledVirtualFrame::new_vframe( &_frame, ps, parent_byteCodeIndex );
 }
@@ -870,16 +870,16 @@ ContextOop CompiledBlockVirtualFrame::canonical_context() const {
 }
 
 
-ScopeDescriptor * CompiledBlockVirtualFrame::parent_scope() const {
-    ScopeDescriptor * result = scope()->parent();
+ScopeDescriptor *CompiledBlockVirtualFrame::parent_scope() const {
+    ScopeDescriptor *result = scope()->parent();
     st_assert( result, "parent should be within same NativeMethod" );
     return result;
 }
 
 // ------------- CompiledTopLevelBlockVirtualFrame --------------
 
-CompiledTopLevelBlockVirtualFrame::CompiledTopLevelBlockVirtualFrame( const Frame * fr, ScopeDescriptor * sd, int byteCodeIndex ) :
-    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+CompiledTopLevelBlockVirtualFrame::CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -888,7 +888,7 @@ Oop CompiledTopLevelBlockVirtualFrame::receiver() const {
 }
 
 
-DeltaVirtualFrame * CompiledTopLevelBlockVirtualFrame::parent() const {
+DeltaVirtualFrame *CompiledTopLevelBlockVirtualFrame::parent() const {
     MethodOop m = method();
     if ( not m->expectsContext() )
         return nullptr;
@@ -900,14 +900,14 @@ DeltaVirtualFrame * CompiledTopLevelBlockVirtualFrame::parent() const {
         return nullptr;
 
     // Now we have to search for the parent on the stack.
-    ScopeDescriptor * ps                  = parent_scope();
-    NativeMethod    * parent_nativeMethod = ps->scopes()->my_nativeMethod();
+    ScopeDescriptor *ps                  = parent_scope();
+    NativeMethod    *parent_nativeMethod = ps->scopes()->my_nativeMethod();
 
     Frame v = fr().sender();
     do {
         if ( v.is_compiled_frame() ) {
             if ( v.code() == parent_nativeMethod ) {
-                CompiledVirtualFrame * result = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( &v );
+                CompiledVirtualFrame *result = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &v );
                 // Run throuch the scopes and find a matching one
                 while ( result ) {
                     st_assert( result->is_compiled_frame(), "must be compiled frame" );
@@ -915,7 +915,7 @@ DeltaVirtualFrame * CompiledTopLevelBlockVirtualFrame::parent() const {
                         if ( result->compiled_context() == parent_context )
                             return result;
                     }
-                    result = result->is_top() ? nullptr : ( CompiledVirtualFrame * ) result->sender();
+                    result = result->is_top() ? nullptr : (CompiledVirtualFrame *) result->sender();
                 }
             }
         }
@@ -936,8 +936,8 @@ ContextOop CompiledTopLevelBlockVirtualFrame::canonical_context() const {
 }
 
 
-ScopeDescriptor * CompiledTopLevelBlockVirtualFrame::parent_scope() const {
-    ScopeDescriptor * result = scope()->parent( true );
+ScopeDescriptor *CompiledTopLevelBlockVirtualFrame::parent_scope() const {
+    ScopeDescriptor *result = scope()->parent( true );
     st_assert( result, "parent scope must be present" );
     return result;
 }
@@ -968,16 +968,16 @@ int DeoptimizedVirtualFrame::end_of_expressions() const {
 }
 
 
-DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame * fr ) :
-    DeltaVirtualFrame( fr ) {
+DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
+        DeltaVirtualFrame( fr ) {
     // the first frame in the array is located at position 3 (after #frames, #locals)
     this->_offset     = StackChunkBuilder::first_frame_index;
     this->_frameArray = retrieve_frame_array();
 }
 
 
-DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame * fr, int offset ) :
-    DeltaVirtualFrame( fr ) {
+DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, int offset ) :
+        DeltaVirtualFrame( fr ) {
     this->_offset     = offset;
     this->_frameArray = retrieve_frame_array();
 }
@@ -1002,15 +1002,15 @@ int DeoptimizedVirtualFrame::byteCodeIndex() const {
 }
 
 
-VirtualFrame * DeoptimizedVirtualFrame::sender() const {
+VirtualFrame *DeoptimizedVirtualFrame::sender() const {
     return is_top() ? VirtualFrame::sender() : new DeoptimizedVirtualFrame( &_frame, _offset + end_of_expressions() );
 }
 
 
-bool_t DeoptimizedVirtualFrame::equal( const VirtualFrame * f ) const {
+bool_t DeoptimizedVirtualFrame::equal( const VirtualFrame *f ) const {
     if ( not f->is_deoptimized_frame() )
         return false;
-    return VirtualFrame::equal( f ) and _offset == ( ( DeoptimizedVirtualFrame * ) f )->_offset;
+    return VirtualFrame::equal( f ) and _offset == ( (DeoptimizedVirtualFrame *) f )->_offset;
 }
 
 
@@ -1044,12 +1044,12 @@ ContextOop DeoptimizedVirtualFrame::canonical_context() const {
 }
 
 
-GrowableArray <Oop> * DeoptimizedVirtualFrame::expression_stack() const {
+GrowableArray<Oop> *DeoptimizedVirtualFrame::expression_stack() const {
     int locals   = end_of_expressions() - first_temp_offset;
     int temps    = method()->number_of_stack_temporaries();
     int exp_size = locals - temps;
 
-    GrowableArray <Oop> * array = new GrowableArray <Oop>( exp_size );
+    GrowableArray<Oop> *array = new GrowableArray<Oop>( exp_size );
     for ( int index = 0; index < exp_size; index++ ) {
         array->push( expression_at( index ) );
     }
@@ -1071,18 +1071,18 @@ void cVFrame::print() {
 
 
 void cVFrame::print_value() const {
-    ( ( VirtualFrame * ) this )->print();
+    ( (VirtualFrame *) this )->print();
 }
 
 // ------------- cChunk --------------
 
-VirtualFrame * cChunk::sender() const {
+VirtualFrame *cChunk::sender() const {
     return cVFrame::sender();
 }
 
 
 void cChunk::print_value() const {
-    ( ( cChunk * ) this )->print();
+    ( (cChunk *) this )->print();
 }
 
 

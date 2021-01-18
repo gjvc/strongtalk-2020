@@ -14,26 +14,26 @@
 
 
 class Notifier {
-    public:
-        static Notifier * current;
+public:
+    static Notifier *current;
 
-        virtual void error( const char * m, va_list argptr ) = 0;
+    virtual void error( const char *m, va_list argptr ) = 0;
 
-        virtual void warning( const char * m, va_list argptr ) = 0;
+    virtual void warning( const char *m, va_list argptr ) = 0;
 
-        virtual void compiler_warning( const char * m, va_list argptr ) = 0;
+    virtual void compiler_warning( const char *m, va_list argptr ) = 0;
 };
 
 
 class DebugNotifier : public Notifier, public CHeapAllocatedObject {
-    public:
-        DebugNotifier() {
-        }
+public:
+    DebugNotifier() {
+    }
 
 
-        void error( const char * m, va_list ap );
+    void error( const char *m, va_list ap );
 
-        void warning( const char * m, va_list ap );
+    void warning( const char *m, va_list ap );
 
-        void compiler_warning( const char * m, va_list ap );
+    void compiler_warning( const char *m, va_list ap );
 };

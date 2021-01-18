@@ -6,7 +6,7 @@
 #include "vm/oops/ProcessKlass.hpp"
 
 
-void setKlassVirtualTableFromProcessKlass( Klass * k ) {
+void setKlassVirtualTableFromProcessKlass( Klass *k ) {
     ProcessKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -17,7 +17,7 @@ Oop ProcessKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     int      size = non_indexable_size();
 
     // allocate
-    Oop * result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
         return nullptr;
     ProcessOop obj = as_processOop( result );
@@ -74,16 +74,16 @@ void ProcessKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-void ProcessKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void ProcessKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
-    blk->do_long( "process", ( void ** ) &ProcessOop( obj )->addr()->_process );
+    blk->do_long( "process", (void **) &ProcessOop( obj )->addr()->_process );
     // instance variables
     MemOop( obj )->layout_iterate_body( blk, ProcessOopDescriptor::header_size(), non_indexable_size() );
 }
 
 
-void ProcessKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void ProcessKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
     // instance variables

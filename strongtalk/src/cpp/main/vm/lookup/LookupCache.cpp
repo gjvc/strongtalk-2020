@@ -17,8 +17,8 @@ int LookupCache::number_of_primary_hits;
 int LookupCache::number_of_secondary_hits;
 int LookupCache::number_of_misses;
 
-static std::array <CacheElement, primary_cache_size>   primary;
-static std::array <CacheElement, secondary_cache_size> secondary;
+static std::array<CacheElement, primary_cache_size>   primary;
+static std::array<CacheElement, secondary_cache_size> secondary;
 
 
 int LookupCache::primary_cache_address() {
@@ -48,7 +48,7 @@ void LookupCache::flush() {
 }
 
 
-void LookupCache::flush( LookupKey * key ) {
+void LookupCache::flush( LookupKey *key ) {
     // Flush the entry associated the the lookup key k
     int primary_index   = hash_value( key ) % primary_cache_size;
     int secondary_index = primary_index % secondary_cache_size;
@@ -79,12 +79,12 @@ void LookupCache::verify() {
 }
 
 
-std::uint32_t LookupCache::hash_value( LookupKey * key ) {
-    return ( ( std::uint32_t ) key->klass() ^ ( std::uint32_t ) key->selector_or_method() ) / sizeof( CacheElement );
+std::uint32_t LookupCache::hash_value( LookupKey *key ) {
+    return ( (std::uint32_t) key->klass() ^ (std::uint32_t) key->selector_or_method() ) / sizeof( CacheElement );
 }
 
 
-LookupResult LookupCache::lookup_probe( LookupKey * key ) {
+LookupResult LookupCache::lookup_probe( LookupKey *key ) {
     st_assert( key->verify(), "Lookupkey: verify failed" );
 
     int primary_index = hash_value( key ) % primary_cache_size;
@@ -110,7 +110,7 @@ LookupResult LookupCache::lookup_probe( LookupKey * key ) {
 }
 
 
-LookupResult LookupCache::lookup( LookupKey * key, bool_t compile ) {
+LookupResult LookupCache::lookup( LookupKey *key, bool_t compile ) {
 
     // The cache is implemented as a 2-way associative cache.
     // Recipe for finding a lookup result.
@@ -160,7 +160,7 @@ LookupResult LookupCache::lookup( LookupKey * key, bool_t compile ) {
 }
 
 
-LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
+LookupResult LookupCache::cache_miss_lookup( LookupKey *key, bool_t compile ) {
 
     // Tracing
     if ( TraceLookupAtMiss ) {
@@ -178,7 +178,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
     // Check Inlining database
     if ( UseInliningDatabase and UseInliningDatabaseEagerly and compile ) {
         ResourceMark rm;
-        RecompilationScope * rs = InliningDatabase::lookup_and_remove( key );
+        RecompilationScope *rs = InliningDatabase::lookup_and_remove( key );
         if ( rs ) {
             if ( TraceInliningDatabase ) {
                 _console->print( "ID compile: " );
@@ -187,7 +187,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
             }
 
             // Remove old NativeMethod if present
-            NativeMethod * old_nm = Universe::code->lookup( rs->key() );
+            NativeMethod *old_nm = Universe::code->lookup( rs->key() );
             VM_OptimizeRScope op( rs );
             VMProcess::execute( &op );
             if ( old_nm )
@@ -201,7 +201,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey * key, bool_t compile ) {
     }
 
     // Check the code table
-    const NativeMethod * nm = Universe::code->lookup( key );
+    const NativeMethod *nm = Universe::code->lookup( key );
     if ( nm ) {
         LookupResult result( nm ); // unnecessary?
         // was: return nm;
@@ -254,7 +254,7 @@ MethodOop LookupCache::method_lookup( KlassOop receiver_klass, SymbolOop selecto
 }
 
 
-NativeMethod * LookupCache::compile_method( LookupKey * key, MethodOop method ) {
+NativeMethod *LookupCache::compile_method( LookupKey *key, MethodOop method ) {
     if ( not DeltaProcess::active()->in_vm_operation() ) {
         VM_OptimizeMethod op( key, method );
         VMProcess::execute( &op );
@@ -323,7 +323,7 @@ LookupResult interpreter_super_lookup( SymbolOop selector ) {
 }
 
 
-LookupResult LookupCache::lookup( LookupKey * key ) {
+LookupResult LookupCache::lookup( LookupKey *key ) {
     return ic_lookup( key->klass(), key->selector_or_method() );
 }
 
@@ -337,8 +337,8 @@ Oop LookupCache::normal_lookup( KlassOop receiver_klass, SymbolOop selector ) {
 }
 
 
-static void print_counter( const char * title, int counter, int total ) {
-    lprintf( "%20s: %3.1f%% (%d)\n", title, total == 0 ? 0.0 : 100.0 * ( double ) counter / ( double ) total, counter );
+static void print_counter( const char *title, int counter, int total ) {
+    lprintf( "%20s: %3.1f%% (%d)\n", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
 }
 
 

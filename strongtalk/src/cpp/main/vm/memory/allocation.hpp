@@ -42,53 +42,53 @@
 // Base class for objects used as value objects.
 // Calling new or delete will result in fatal error.
 class ValueObject {
-    public:
-        void * operator new( std::size_t size ) throw();
+public:
+    void *operator new( std::size_t size ) throw();
 
-        void operator delete( void * p );
+    void operator delete( void *p );
 };
 
 // Base class for classes that constitute name spaces.
 class AllStatic {
-    public:
-        void * operator new( std::size_t size ) = delete;
+public:
+    void *operator new( std::size_t size ) = delete;
 
-        void operator delete( void * p ) = delete;
+    void operator delete( void *p ) = delete;
 };
 
 
 // Base class for objects allocated by the C runtime.
 class CHeapAllocatedObject {
-    public:
-        void * operator new( std::size_t size );
+public:
+    void *operator new( std::size_t size );
 
-        void operator delete( void * p );
+    void operator delete( void *p );
 
-        void * new_array( std::size_t size );
+    void *new_array( std::size_t size );
 };
 
 // Base class for objects with printing behavior allocated on the c-heap
 class PrintableCHeapAllocatedObject : public CHeapAllocatedObject {
-    public:
-        virtual void print() = 0;
+public:
+    virtual void print() = 0;
 
-        virtual void print_short();
+    virtual void print_short();
 };
 
 // Base class for objects allocated only on the stack.
 // Calling new or delete will result in fatal error.
 class StackAllocatedObject {
-    public:
-        void * operator new( std::size_t size );
+public:
+    void *operator new( std::size_t size );
 
-        void operator delete( void * p );
+    void operator delete( void *p );
 };
 
 
 // Base class for objects with printing behavior allocated only on the stack
 class PrintableStackAllocatedObject : StackAllocatedObject {
-    public:
-        virtual void print() = 0;
+public:
+    virtual void print() = 0;
 
-        virtual void print_short();
+    virtual void print_short();
 };

@@ -15,9 +15,9 @@
 
 // -----------------------------------------------------------------------------
 
-std::array <char, SlidingSystemAverage::buffer_size>        SlidingSystemAverage::_buffer{};
-std::array <std::uint32_t, SlidingSystemAverage::number_of_cases>SlidingSystemAverage::_stat;
-std::uint32_t     SlidingSystemAverage::_position;
+std::array<char, SlidingSystemAverage::buffer_size>             SlidingSystemAverage::_buffer{};
+std::array<std::uint32_t, SlidingSystemAverage::number_of_cases>SlidingSystemAverage::_stat;
+std::uint32_t                                                   SlidingSystemAverage::_position;
 
 
 
@@ -30,7 +30,7 @@ void SlidingSystemAverage::reset() {
 }
 
 
-std::array <std::uint32_t, SlidingSystemAverage::number_of_cases> SlidingSystemAverage::update() {
+std::array<std::uint32_t, SlidingSystemAverage::number_of_cases> SlidingSystemAverage::update() {
     // clear the array;
     std::uint32_t index = 0;
     for ( ; index < number_of_cases; index++ ) {
@@ -56,39 +56,39 @@ void SlidingSystemAverage::add( char type ) {
 // The sweeper task is activated every second (1000 milliseconds).
 class SystemAverageTask : public PeriodicTask {
 
-    public:
-        SystemAverageTask() :
+public:
+    SystemAverageTask() :
             PeriodicTask( 10 ) {
-        }
+    }
 
 
-        void task() {
-            char type = '\0';
-            if ( last_Delta_fp ) {
-                if ( theCompiler ) {
-                    type = SlidingSystemAverage::in_compiler;
-                } else if ( garbageCollectionInProgress ) {
-                    type = SlidingSystemAverage::in_garbage_collect;
-                } else if ( DeltaProcess::is_idle() ) {
-                    type = SlidingSystemAverage::is_idle;
-                } else {
-                    type = SlidingSystemAverage::in_vm;
-                }
+    void task() {
+        char type = '\0';
+        if ( last_Delta_fp ) {
+            if ( theCompiler ) {
+                type = SlidingSystemAverage::in_compiler;
+            } else if ( garbageCollectionInProgress ) {
+                type = SlidingSystemAverage::in_garbage_collect;
+            } else if ( DeltaProcess::is_idle() ) {
+                type = SlidingSystemAverage::is_idle;
             } else {
-                // interpreted code / compiled code / runtime routine
-                Frame fr = DeltaProcess::active()->profile_top_frame();
-                if ( fr.is_interpreted_frame() ) {
-                    type = SlidingSystemAverage::in_interpreted_code;
-                } else if ( fr.is_compiled_frame() ) {
-                    type = SlidingSystemAverage::in_compiled_code;
-                } else if ( PolymorphicInlineCache::in_heap( fr.pc() ) ) {
-                    type = SlidingSystemAverage::in_pic_code;
-                } else if ( StubRoutines::contains( fr.pc() ) ) {
-                    type = SlidingSystemAverage::in_stub_code;
-                }
+                type = SlidingSystemAverage::in_vm;
             }
-            SlidingSystemAverage::add( type );
+        } else {
+            // interpreted code / compiled code / runtime routine
+            Frame fr = DeltaProcess::active()->profile_top_frame();
+            if ( fr.is_interpreted_frame() ) {
+                type = SlidingSystemAverage::in_interpreted_code;
+            } else if ( fr.is_compiled_frame() ) {
+                type = SlidingSystemAverage::in_compiled_code;
+            } else if ( PolymorphicInlineCache::in_heap( fr.pc() ) ) {
+                type = SlidingSystemAverage::in_pic_code;
+            } else if ( StubRoutines::contains( fr.pc() ) ) {
+                type = SlidingSystemAverage::in_stub_code;
+            }
         }
+        SlidingSystemAverage::add( type );
+    }
 };
 
 

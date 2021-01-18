@@ -11,46 +11,56 @@
 
 #include <gtest/gtest.h>
 
-extern "C" Oop * eden_top;
-extern "C" Oop * eden_end;
+extern "C" Oop *eden_top;
+extern "C" Oop *eden_end;
 
 
 class BlockClosureKlassTests : public ::testing::Test {
 
-    protected:
+protected:
 
-        KlassOop theClass;
-        Oop      * oldEdenTop;
-
-
-        void SetUp() override {
-            theClass   = KlassOop( Universe::find_global( "BlockWithoutArguments" ) );
-            oldEdenTop = eden_top;
-        }
+    KlassOop theClass;
+    Oop *oldEdenTop;
 
 
-        void TearDown() override {
-            eden_top = oldEdenTop;
-            MarkSweep::collect();
-        }
+    void SetUp() override {
+        theClass   = KlassOop( Universe::find_global( "BlockWithoutArguments" ) );
+        oldEdenTop = eden_top;
+    }
+
+
+    void TearDown() override {
+        eden_top = oldEdenTop;
+        MarkSweep::collect();
+    }
 
 
 };
 
 
-TEST_F( BlockClosureKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
-    eden_top = eden_end;
-    ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObject( false ) ) );
+TEST_F( BlockClosureKlassTests, allocateShouldFailWhenAllowedAndNoSpace
+) {
+eden_top = eden_end;
+ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObject( false ) ) );
 }
 
 
-TEST_F( BlockClosureKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
-    ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObject( false, true ) ) );
+TEST_F( BlockClosureKlassTests, allocateShouldAllocateTenuredWhenRequired
+) {
+ASSERT_TRUE( Universe::old_gen
+.
+contains( theClass
+->klass_part()->allocateObject( false, true ) ) );
 }
 
 
-TEST_F( BlockClosureKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
-    eden_top = eden_end;
-    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
-    ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObject( true ) ) );
+TEST_F( BlockClosureKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
+) {
+eden_top = eden_end;
+ASSERT_TRUE( Universe::new_gen
+.eden()->free() < 4 * oopSize );
+ASSERT_TRUE( Universe::new_gen
+.
+contains( theClass
+->klass_part()->allocateObject( true ) ) );
 }

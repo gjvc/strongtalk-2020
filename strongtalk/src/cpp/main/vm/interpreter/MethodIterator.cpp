@@ -18,17 +18,17 @@
 
 // MethodInterval
 
-MethodInterval::MethodInterval( MethodOop method, MethodInterval * parent ) {
+MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent ) {
     initialize( method, parent, 1, method->end_byteCodeIndex(), false );
 }
 
 
-MethodInterval::MethodInterval( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock ) {
+MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock ) {
     initialize( method, parent, begin_byteCodeIndex, end_byteCodeIndex, failBlock );
 }
 
 
-void MethodInterval::initialize( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock ) {
+void MethodInterval::initialize( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock ) {
     _method               = method;
     _parent               = parent;
     _begin_byteCodeIndex  = begin_byteCodeIndex;
@@ -40,23 +40,23 @@ void MethodInterval::initialize( MethodOop method, MethodInterval * parent, int 
 
 // InlineSendNode
 
-InlineSendNode::InlineSendNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int end_byteCodeIndex ) :
-    MethodInterval( method, parent, begin_byteCodeIndex, end_byteCodeIndex ) {
+InlineSendNode::InlineSendNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex ) :
+        MethodInterval( method, parent, begin_byteCodeIndex, end_byteCodeIndex ) {
 }
 
 
 // CondNode
 
-CondNode::CondNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ) {
+CondNode::CondNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
+        InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ) {
     _expr_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex() );
 }
 
 
 // AndNode
 
-AndNode::AndNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
-    CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
+AndNode::AndNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
+        CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
 }
 
 
@@ -67,8 +67,8 @@ SymbolOop AndNode::selector() const {
 
 // OrNode
 
-OrNode::OrNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
-    CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
+OrNode::OrNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) :
+        CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
 }
 
 
@@ -79,8 +79,8 @@ SymbolOop OrNode::selector() const {
 
 // WhileNode
 
-WhileNode::WhileNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex ) {
+WhileNode::WhileNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) :
+        InlineSendNode( method, parent, begin_byteCodeIndex ) {
 
     CodeIterator c( method, next_byteCodeIndex + cond_offset + end_offset );
     switch ( c.code() ) {
@@ -118,8 +118,8 @@ SymbolOop WhileNode::selector() const {
 
 // IfNode
 
-IfNode::IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex ) {
+IfNode::IfNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) :
+        InlineSendNode( method, parent, begin_byteCodeIndex ) {
     bool_t has_else_branch;
     int    else_jump_size;
     _cond                       = cond;
@@ -162,14 +162,14 @@ SymbolOop IfNode::selector() const {
 
 // ExternalCallNode
 
-ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex ) :
-    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex ) :
+        MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     _failure_code = nullptr;
 }
 
 
-ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int end_offset ) :
-    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ) {
+ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int end_offset ) :
+        MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ) {
     st_assert( end_offset > 0, "wrong offset" );
     _failure_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex(), true );
 }
@@ -177,8 +177,8 @@ ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval * parent, i
 
 // PrimitiveCallNode
 
-PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) :
+        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _has_receiver = has_receiver;
     _name         = ( name == nullptr ) ? pdesc->selector() : name;
@@ -187,8 +187,8 @@ PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval * parent,
 
 // DLLCallNode
 
-PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc, int end_offset ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ) {
+PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, int end_offset ) :
+        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ) {
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _has_receiver = has_receiver;
     _name         = ( name == nullptr ) ? pdesc->selector() : name;
@@ -203,7 +203,7 @@ int PrimitiveCallNode::number_of_parameters() const {
 }
 
 
-void DLLCallNode::initialize( Interpreted_DLLCache * cache ) {
+void DLLCallNode::initialize( Interpreted_DLLCache *cache ) {
     _dll_name      = cache->dll_name();
     _function_name = cache->funct_name();
     _nofArgs       = cache->number_of_arguments();
@@ -212,8 +212,8 @@ void DLLCallNode::initialize( Interpreted_DLLCache * cache ) {
 }
 
 
-DLLCallNode::DLLCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache * cache ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+DLLCallNode::DLLCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache *cache ) :
+        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     initialize( cache );
 }
 
@@ -275,7 +275,7 @@ void CustomizedMethodClosure::store_classVar( AssociationOop assoc ) {
 
 // SpecializedMethodClosure
 
-void SpecializedMethodClosure::if_node( IfNode * node ) {
+void SpecializedMethodClosure::if_node( IfNode *node ) {
     MethodIterator iter( node->then_code(), this );
     if ( node->else_code() not_eq nullptr ) {
         MethodIterator iter( node->else_code(), this );
@@ -283,12 +283,12 @@ void SpecializedMethodClosure::if_node( IfNode * node ) {
 }
 
 
-void SpecializedMethodClosure::cond_node( CondNode * node ) {
+void SpecializedMethodClosure::cond_node( CondNode *node ) {
     MethodIterator iter( node->expr_code(), this );
 }
 
 
-void SpecializedMethodClosure::while_node( WhileNode * node ) {
+void SpecializedMethodClosure::while_node( WhileNode *node ) {
     MethodIterator iter( node->expr_code(), this );
     if ( node->body_code() not_eq nullptr ) {
         MethodIterator iter( node->body_code(), this );
@@ -296,14 +296,14 @@ void SpecializedMethodClosure::while_node( WhileNode * node ) {
 }
 
 
-void SpecializedMethodClosure::primitive_call_node( PrimitiveCallNode * node ) {
+void SpecializedMethodClosure::primitive_call_node( PrimitiveCallNode *node ) {
     if ( node->failure_code() not_eq nullptr ) {
         MethodIterator iter( node->failure_code(), this );
     }
 }
 
 
-void SpecializedMethodClosure::dll_call_node( DLLCallNode * node ) {
+void SpecializedMethodClosure::dll_call_node( DLLCallNode *node ) {
     if ( node->failure_code() not_eq nullptr ) {
         MethodIterator iter( node->failure_code(), this );
     }
@@ -328,7 +328,7 @@ static inline std::uint8_t map0to256( std::uint8_t ch ) {
 }
 
 
-void MethodIterator::dispatch( MethodClosure * blk ) {
+void MethodIterator::dispatch( MethodClosure *blk ) {
 
     bool_t oldFailState = blk->in_primitive_failure_block();
     blk->set_primitive_failure( _interval->in_primitive_failure_block() );
@@ -426,7 +426,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->pop();
                 break;
             case ByteCodes::Code::push_neg_n:
-                blk->push_literal( smiOopFromValue( -( int ) iter.byte_at( 1 ) ) );
+                blk->push_literal( smiOopFromValue( -(int) iter.byte_at( 1 ) ) );
                 break;
             case ByteCodes::Code::push_succ_n:
                 blk->push_literal( smiOopFromValue( iter.byte_at( 1 ) + 1 ) );
@@ -536,7 +536,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->float_move( blk->float_at( iter.byte_at( 1 ) ), blk->float_at( iter.byte_at( 2 ) ) );
                 break;
             case ByteCodes::Code::float_set:
-                blk->float_set( blk->float_at( iter.byte_at( 1 ) ), *( DoubleOop * ) iter.aligned_oop( 2 ) );
+                blk->float_set( blk->float_at( iter.byte_at( 1 ) ), *(DoubleOop *) iter.aligned_oop( 2 ) );
                 break;
             case ByteCodes::Code::float_nullary_op:
                 blk->float_nullary( Floats::Function( iter.byte_at( 2 ) ), blk->float_at( iter.byte_at( 1 ) ) );
@@ -752,28 +752,28 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             }
             case ByteCodes::Code::ifTrue_byte: {
-                IfNode * node = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.byte_at( 2 ), iter.byte_at( 1 ) );
+                IfNode *node = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.byte_at( 2 ), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifFalse_byte: {
-                IfNode * node      = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.byte_at( 2 ), iter.byte_at( 1 ) );
+                IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.byte_at( 2 ), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::and_byte: {
-                AndNode * node     = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
+                AndNode *node      = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::or_byte: {
-                OrNode * node      = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
+                OrNode *node       = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -789,35 +789,35 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 should_never_encounter( static_cast<std::uint8_t>(ByteCodes::Code::jump_else_byte) );
                 break;
             case ByteCodes::Code::jump_loop_byte: {
-                WhileNode * node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 2 ), iter.byte_at( 1 ) );
+                WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 2 ), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->while_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifTrue_word: {
-                IfNode * node      = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.word_at( 2 ), iter.byte_at( 1 ) );
+                IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.word_at( 2 ), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifFalse_word: {
-                IfNode * node      = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.word_at( 2 ), iter.byte_at( 1 ) );
+                IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.word_at( 2 ), iter.byte_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::and_word: {
-                AndNode * node     = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
+                AndNode *node      = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::or_word: {
-                OrNode * node      = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
+                OrNode *node       = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -833,7 +833,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 should_never_encounter( static_cast<std::uint8_t>(ByteCodes::Code::jump_else_word) );
                 break;
             case ByteCodes::Code::jump_loop_word: {
-                WhileNode * node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + oopSize ), iter.word_at( 1 ) );
+                WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + oopSize ), iter.word_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->while_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -960,8 +960,8 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             case ByteCodes::Code::prim_call: // fall through
             case ByteCodes::Code::primitive_call_self: {
-                PrimitiveDescriptor * pdesc = Primitives::lookup( ( primitiveFunctionType ) iter.word_at( 1 ) );
-                PrimitiveCallNode   * node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc );
+                PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
+                PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc );
                 // %hack: this assertion fails
                 // assert(pdesc->has_receiver() == (iter.code() == ByteCodes::Code::primitive_call_self), "just checking");
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
@@ -970,12 +970,12 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             }
             case ByteCodes::Code::predict_primitive_call:
-                blk->predict_primitive_call( Primitives::lookup( ( primitiveFunctionType ) iter.word_at( 1 ) ), -1 );
+                blk->predict_primitive_call( Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) ), -1 );
                 break;
             case ByteCodes::Code::primitive_call_failure: // fall through
             case ByteCodes::Code::primitive_call_self_failure: {
-                PrimitiveDescriptor * pdesc = Primitives::lookup( ( primitiveFunctionType ) iter.word_at( 1 ) );
-                PrimitiveCallNode   * node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + oopSize ) );
+                PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
+                PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + oopSize ) );
                 st_assert( pdesc->has_receiver() == ( iter.code() == ByteCodes::Code::primitive_call_self_failure ), "just checking" );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->primitive_call_node( node );
@@ -983,10 +983,10 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             }
             case ByteCodes::Code::predict_primitive_call_failure:
-                blk->predict_primitive_call( Primitives::lookup( ( primitiveFunctionType ) iter.word_at( 1 ) ), iter.next_byteCodeIndex() + iter.word_at( 1 + oopSize ) );
+                blk->predict_primitive_call( Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) ), iter.next_byteCodeIndex() + iter.word_at( 1 + oopSize ) );
                 break;
             case ByteCodes::Code::dll_call_sync: {
-                DLLCallNode * node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
+                DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->dll_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -1002,7 +1002,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
             case ByteCodes::Code::primitive_call_self_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
-                PrimitiveCallNode * node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_lookup, name, nullptr );
+                PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_lookup, name, nullptr );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -1015,7 +1015,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
             case ByteCodes::Code::primitive_call_self_failure_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
-                PrimitiveCallNode * node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + oopSize ) );
+                PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + oopSize ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -1025,7 +1025,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->predict_primitive_call( Primitives::lookup( SymbolOop( iter.word_at( 1 ) ) ), iter.byteCodeIndex() + iter.word_at( 1 + oopSize ) );
                 break;
             case ByteCodes::Code::dll_call_async: {
-                DLLCallNode * node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
+                DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->dll_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -1136,14 +1136,14 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
 }
 
 
-MethodIterator::MethodIterator( MethodOop m, MethodClosure * blk, AbstractMethodIntervalFactory * f ) {
+MethodIterator::MethodIterator( MethodOop m, MethodClosure *blk, AbstractMethodIntervalFactory *f ) {
     factory   = f;
     _interval = factory->new_MethodInterval( m, nullptr );
     dispatch( blk );
 }
 
 
-MethodIterator::MethodIterator( MethodInterval * interval, MethodClosure * blk, AbstractMethodIntervalFactory * f ) {
+MethodIterator::MethodIterator( MethodInterval *interval, MethodClosure *blk, AbstractMethodIntervalFactory *f ) {
     factory   = f;
     _interval = interval;
     dispatch( blk );
@@ -1151,49 +1151,49 @@ MethodIterator::MethodIterator( MethodInterval * interval, MethodClosure * blk, 
 
 
 MethodIntervalFactory         MethodIterator::defaultFactory;
-AbstractMethodIntervalFactory * MethodIterator::factory;
+AbstractMethodIntervalFactory *MethodIterator::factory;
 
 
-MethodInterval * MethodIntervalFactory::new_MethodInterval( MethodOop method, MethodInterval * parent ) {
+MethodInterval *MethodIntervalFactory::new_MethodInterval( MethodOop method, MethodInterval *parent ) {
     return new MethodInterval( method, parent );
 }
 
 
-MethodInterval * MethodIntervalFactory::new_MethodInterval( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failureBlock ) {
+MethodInterval *MethodIntervalFactory::new_MethodInterval( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failureBlock ) {
     return new MethodInterval( method, parent, begin_byteCodeIndex, end_byteCodeIndex, failureBlock );
 }
 
 
-AndNode * MethodIntervalFactory::new_AndNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) {
+AndNode *MethodIntervalFactory::new_AndNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) {
     return new AndNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset );
 }
 
 
-OrNode * MethodIntervalFactory::new_OrNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) {
+OrNode *MethodIntervalFactory::new_OrNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) {
     return new OrNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset );
 }
 
 
-WhileNode * MethodIntervalFactory::new_WhileNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) {
+WhileNode *MethodIntervalFactory::new_WhileNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) {
     return new WhileNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, cond_offset, end_offset );
 }
 
 
-IfNode * MethodIntervalFactory::new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) {
+IfNode *MethodIntervalFactory::new_IfNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) {
     return new IfNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, cond, else_offset, structure );
 }
 
 
-PrimitiveCallNode * MethodIntervalFactory::new_PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc ) {
+PrimitiveCallNode *MethodIntervalFactory::new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) {
     return new PrimitiveCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, has_receiver, name, pdesc );
 }
 
 
-PrimitiveCallNode * MethodIntervalFactory::new_PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc, int end_offset ) {
+PrimitiveCallNode *MethodIntervalFactory::new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, int end_offset ) {
     return new PrimitiveCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, has_receiver, name, pdesc, end_offset );
 }
 
 
-DLLCallNode * MethodIntervalFactory::new_DLLCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache * cache ) {
+DLLCallNode *MethodIntervalFactory::new_DLLCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache *cache ) {
     return new DLLCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, cache );
 }

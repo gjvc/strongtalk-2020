@@ -17,7 +17,7 @@ Oop ObjectArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool
     int      obj_size = ni_size + 1 + size;
 
     // allocate
-    Oop * result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, ( MemOop * ) &k, permit_scavenge );
+    Oop *result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
     if ( not result )
         return nullptr;
 
@@ -29,8 +29,8 @@ Oop ObjectArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );
@@ -73,8 +73,8 @@ ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( int size ) {
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );
@@ -83,16 +83,16 @@ ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( int size ) {
 }
 
 
-void setKlassVirtualTableFromObjArrayKlass( Klass * k ) {
+void setKlassVirtualTableFromObjArrayKlass( Klass *k ) {
     ObjectArrayKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
 
 
-void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
     // Retrieve length information in case the iterator mutates the object
-    Oop * p = ObjectArrayOop( obj )->objs( 0 );
+    Oop *p = ObjectArrayOop( obj )->objs( 0 );
     int len = ObjectArrayOop( obj )->length();
 
     // header + instance variables
@@ -107,7 +107,7 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) 
 }
 
 
-void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
 
     const int MaxPrintLen = 255;    // to prevent excessive output -Urs
     st_assert_objArray( obj, "Argument must be objArray" );
@@ -128,9 +128,9 @@ void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream
 }
 
 
-void ObjectArrayKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void ObjectArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
-    Oop * p = ObjectArrayOop( obj )->objs( 0 );
+    Oop *p = ObjectArrayOop( obj )->objs( 0 );
     int len = ObjectArrayOop( obj )->length();
 
     // header + instance variables
@@ -150,8 +150,8 @@ int ObjectArrayKlass::oop_scavenge_contents( Oop obj ) {
 
     // indexables
     ObjectArrayOop o = ObjectArrayOop( obj );
-    Oop * base = o->objs( 1 );
-    Oop * end  = base + o->length();
+    Oop *base = o->objs( 1 );
+    Oop *end  = base + o->length();
     while ( base < end ) {
         scavenge_oop( base++ );
     }
@@ -167,8 +167,8 @@ int ObjectArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
 
     // indexables
     ObjectArrayOop o = ObjectArrayOop( obj );
-    Oop * base = o->objs( 1 );
-    Oop * end  = base + o->length();
+    Oop *base = o->objs( 1 );
+    Oop *end  = base + o->length();
     while ( base < end )
         scavenge_tenured_oop( base++ );
 
@@ -179,8 +179,8 @@ int ObjectArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
 void ObjectArrayKlass::oop_follow_contents( Oop obj ) {
 
     // Retrieve length information since header information  mutates the object
-    Oop * base = ObjectArrayOop( obj )->objs( 1 );
-    Oop * end  = base + ObjectArrayOop( obj )->length();
+    Oop *base = ObjectArrayOop( obj )->objs( 1 );
+    Oop *end  = base + ObjectArrayOop( obj )->length();
 
     // header + instance variables
     MemOopKlass::oop_follow_contents( obj );

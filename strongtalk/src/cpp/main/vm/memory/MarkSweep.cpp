@@ -21,89 +21,89 @@
 
 typedef struct {
     Oop anOop;
-    Oop * oopPointer;
+    Oop *oopPointer;
 } oopAssoc;
 
 
 class OopChunk : public ResourceObject {
 
-    private:
-        oopAssoc oop_start[1000];
-        const oopAssoc * oop_end;
-        oopAssoc       * next;
+private:
+    oopAssoc oop_start[1000];
+    const oopAssoc *oop_end;
+    oopAssoc       *next;
 
-    public:
-        OopChunk() {
-            oop_end = oop_start + 1000 - 1; // account for pre-increment in append
-            next    = oop_start - 1;
+public:
+    OopChunk() {
+        oop_end = oop_start + 1000 - 1; // account for pre-increment in append
+        next    = oop_start - 1;
+    }
+
+
+    bool_t isFull() {
+        return next >= oop_end;
+    }
+
+
+    Oop *append( Oop *anOop ) {
+        st_assert( not isFull(), "Cannot append to full OopChunk" );
+        st_assert( ( *anOop )->is_mem(), "Must be a mem Oop" );
+        next++;
+        next->anOop      = *anOop;
+        next->oopPointer = anOop;
+        return &next->anOop;
+    }
+
+
+    void fixupOops() {
+        oopAssoc *current = next;
+        while ( current >= oop_start ) {
+            st_assert( current->anOop->is_mem(), "Fixed up Oop should be MemOop" );
+            *( current->oopPointer ) = current->anOop;
+            current--;
         }
-
-
-        bool_t isFull() {
-            return next >= oop_end;
-        }
-
-
-        Oop * append( Oop * anOop ) {
-            st_assert( not isFull(), "Cannot append to full OopChunk" );
-            st_assert( ( *anOop )->is_mem(), "Must be a mem Oop" );
-            next++;
-            next->anOop      = *anOop;
-            next->oopPointer = anOop;
-            return &next->anOop;
-        }
-
-
-        void fixupOops() {
-            oopAssoc * current = next;
-            while ( current >= oop_start ) {
-                st_assert( current->anOop->is_mem(), "Fixed up Oop should be MemOop" );
-                *( current->oopPointer ) = current->anOop;
-                current--;
-            }
-        }
+    }
 };
 
 class OopRelocations : public ResourceObject {
-    private:
-        GrowableArray <OopChunk *> * chunks;
-        OopChunk * current;
+private:
+    GrowableArray<OopChunk *> *chunks;
+    OopChunk *current;
 
 
-        void newChunk() {
-            current = new OopChunk();
-            chunks->append( current );
-        }
+    void newChunk() {
+        current = new OopChunk();
+        chunks->append( current );
+    }
 
 
-    public:
-        OopRelocations() {
-            chunks = new GrowableArray <OopChunk *>( 10 );
+public:
+    OopRelocations() {
+        chunks = new GrowableArray<OopChunk *>( 10 );
+        newChunk();
+    }
+
+
+    Oop *relocate( Oop *toMove ) {
+        if ( current->isFull() ) {
             newChunk();
         }
+        return current->append( toMove );
+    }
 
 
-        Oop * relocate( Oop * toMove ) {
-            if ( current->isFull() ) {
-                newChunk();
-            }
-            return current->append( toMove );
-        }
-
-
-        void fixupOops() {
-            while ( chunks->nonEmpty() )
-                chunks->pop()->fixupOops();
-        }
+    void fixupOops() {
+        while ( chunks->nonEmpty() )
+            chunks->pop()->fixupOops();
+    }
 };
 
-GrowableArray <MemOop> * MarkSweep::_stack;
-GrowableArray <int>    * MarkSweep::hcode_offsets;
+GrowableArray<MemOop> *MarkSweep::_stack;
+GrowableArray<int>    *MarkSweep::hcode_offsets;
 int                    MarkSweep::hcode_pos;
-OopRelocations * MarkSweep::_oopRelocations;
+OopRelocations *MarkSweep::_oopRelocations;
 
 
-void oopVerify( Oop * p ) {
+void oopVerify( Oop *p ) {
     ( *p )->verify();
 }
 
@@ -144,7 +144,7 @@ Oop MarkSweep::collect( Oop p ) {
     }
 
     if ( PrintGC ) {
-        _console->print( " %.1fM -> %.1fM", ( double ) old_used / ( double ) ( 1024 * 1024 ), ( double ) Universe::old_gen.used() / ( double ) ( 1024 * 1024 ) );
+        _console->print( " %.1fM -> %.1fM", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
     }
 
     return p;
@@ -152,8 +152,8 @@ Oop MarkSweep::collect( Oop p ) {
 
 
 void MarkSweep::allocate() {
-    _stack          = new GrowableArray <MemOop>( 200 );
-    hcode_offsets   = new GrowableArray <int>( 100 );
+    _stack          = new GrowableArray<MemOop>( 200 );
+    hcode_offsets   = new GrowableArray<int>( 100 );
     hcode_pos       = 0;
     _oopRelocations = new OopRelocations();
 }
@@ -165,13 +165,13 @@ void MarkSweep::deallocate() {
 }
 
 
-void MarkSweep::trace( const char * msg ) {
+void MarkSweep::trace( const char *msg ) {
     if ( TraceGC )
         _console->print( "%s", msg );
 }
 
 
-MemOop MarkSweep::reverse( Oop * p ) {
+MemOop MarkSweep::reverse( Oop *p ) {
     Oop obj = *p;
 
     // Return nullptr if non MemOop
@@ -206,21 +206,21 @@ MemOop MarkSweep::reverse( Oop * p ) {
 }
 
 
-void MarkSweep::reverse_and_push( Oop * p ) {
+void MarkSweep::reverse_and_push( Oop *p ) {
     MemOop m = reverse( p );
     if ( m )
         _stack->push( m );
 }
 
 
-void MarkSweep::reverse_and_follow( Oop * p ) {
+void MarkSweep::reverse_and_follow( Oop *p ) {
     MemOop m = reverse( p );
     if ( m )
         m->follow_contents(); // Follow contents of the marked object
 }
 
 
-void MarkSweep::follow_root( Oop * p ) {
+void MarkSweep::follow_root( Oop *p ) {
     reverse_and_follow( p );
     while ( not _stack->isEmpty() )
         _stack->pop()->follow_contents();
@@ -237,7 +237,7 @@ int MarkSweep::next_heap_code_offset() {
 }
 
 
-void MarkSweep::mark_sweep_phase1( Oop * p ) {
+void MarkSweep::mark_sweep_phase1( Oop *p ) {
     // Recursively traverse all live objects and mark them by reversing pointers.
     EventMarker em( "1 reverse pointers" );
 

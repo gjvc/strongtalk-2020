@@ -23,7 +23,7 @@ void NewGeneration::swap_spaces() {
     eden()->clear();
     from()->clear();
     {
-        SurvivorSpace * s = from();
+        SurvivorSpace *s = from();
         _fromSpace = to();
         _toSpace   = s;
     }
@@ -42,17 +42,17 @@ void NewGeneration::initialize( ReservedSpace rs, int eden_size, int surv_size )
 
     _virtualSpace.initialize( rs, rs.size() );
 
-    const char * eden_start = _virtualSpace.low();
-    const char * from_start = eden_start + eden_size;
-    const char * to_start   = from_start + surv_size;
-    const char * to_end     = to_start + surv_size;
+    const char *eden_start = _virtualSpace.low();
+    const char *from_start = eden_start + eden_size;
+    const char *to_start   = from_start + surv_size;
+    const char *to_end     = to_start + surv_size;
 
     _fromSpace = new SurvivorSpace();
     _toSpace   = new SurvivorSpace();
 
-    eden()->initialize( "eden", ( Oop * ) eden_start, ( Oop * ) from_start );
-    from()->initialize( "from", ( Oop * ) from_start, ( Oop * ) to_start );
-    to()->initialize( "to", ( Oop * ) to_start, ( Oop * ) to_end );
+    eden()->initialize( "eden", (Oop *) eden_start, (Oop *) from_start );
+    from()->initialize( "from", (Oop *) from_start, (Oop *) to_start );
+    to()->initialize( "to", (Oop *) to_start, (Oop *) to_end );
 
     eden()->next_space = from();
     from()->next_space = to();
@@ -63,14 +63,14 @@ void NewGeneration::initialize( ReservedSpace rs, int eden_size, int surv_size )
 }
 
 
-void NewGeneration::prepare_for_compaction( OldWaterMark * mark ) {
+void NewGeneration::prepare_for_compaction( OldWaterMark *mark ) {
     // %note same order as in compact
     from()->prepare_for_compaction( mark );
     eden()->prepare_for_compaction( mark );
 }
 
 
-void NewGeneration::compact( OldWaterMark * mark ) {
+void NewGeneration::compact( OldWaterMark *mark ) {
     // %note same order as in prepare_for_compaction
     from()->compact( mark );
     from()->clear();
@@ -79,7 +79,7 @@ void NewGeneration::compact( OldWaterMark * mark ) {
 }
 
 
-Oop * NewGeneration::object_start( Oop * p ) {
+Oop *NewGeneration::object_start( Oop *p ) {
     if ( eden()->contains( p ) )
         return eden()->object_start( p );
     return from()->object_start( p );
@@ -121,7 +121,7 @@ void NewGeneration::print() {
 }
 
 
-void NewGeneration::object_iterate( ObjectClosure * blk ) {
+void NewGeneration::object_iterate( ObjectClosure *blk ) {
     eden()->object_iterate( blk );
     from()->object_iterate( blk );
 }
@@ -157,7 +157,7 @@ void OldGeneration::initialize( ReservedSpace rs, int initial_size ) {
 }
 
 
-bool_t OldGeneration::contains( void * p ) {
+bool_t OldGeneration::contains( void *p ) {
     FOR_EACH_OLD_SPACE( s ) {
         if ( s->contains( p ) )
             return true;
@@ -187,7 +187,7 @@ int OldGeneration::free() {
 }
 
 
-void OldGeneration::scavenge_contents_from( OldWaterMark * mark ) {
+void OldGeneration::scavenge_contents_from( OldWaterMark *mark ) {
     mark->_space->scavenge_contents_from( mark );
     while ( mark->_space not_eq _currentSpace ) {
         *mark = mark->_space->_nextSpace->bottom_mark();
@@ -211,42 +211,42 @@ int OldGeneration::shrink( int size ) {
 }
 
 
-void OldGeneration::prepare_for_compaction( OldWaterMark * mark ) {
+void OldGeneration::prepare_for_compaction( OldWaterMark *mark ) {
     // %note same order as in compact
     FOR_EACH_OLD_SPACE( s )s->prepare_for_compaction( mark );
 }
 
 
-void OldGeneration::compact( OldWaterMark * mark ) {
+void OldGeneration::compact( OldWaterMark *mark ) {
     // %note same order as in prepare_for_compaction
     FOR_EACH_OLD_SPACE( s )s->compact( mark );
 }
 
 
-void OldGeneration::append_space( OldSpace * last ) {
+void OldGeneration::append_space( OldSpace *last ) {
     _oldSpace->_nextSpace = last;
     _oldSpace = last;
     last->_nextSpace = nullptr;
 }
 
 
-Oop * OldGeneration::allocate_in_next_space( int size ) {
+Oop *OldGeneration::allocate_in_next_space( int size ) {
     // Scavenge breaks the there is more than one old Space chunks
     // Fix this with VirtualSpace
     // 4/5/96 Lars
     warning( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
         int space_size = _currentSpace->capacity();
-        OldSpace * s = new OldSpace( "old", space_size );
+        OldSpace *s = new OldSpace( "old", space_size );
 
-        if ( ( const char * ) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
+        if ( (const char *) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
 
         append_space( s );
     }
     _currentSpace = _currentSpace->_nextSpace;
 
-    const char * sStart = ( const char * ) _currentSpace->bottom();
-    const char * sEnd   = ( const char * ) _currentSpace->end();
+    const char *sStart = (const char *) _currentSpace->bottom();
+    const char *sEnd   = (const char *) _currentSpace->end();
     if ( sStart < _lowBoundary )
         _lowBoundary  = sStart;
     if ( sEnd > _highBoundary )
@@ -292,14 +292,14 @@ int OldGeneration::number_of_pages_with_dirty_objects() {
 }
 
 
-void OldGeneration::object_iterate( ObjectClosure * blk ) {
+void OldGeneration::object_iterate( ObjectClosure *blk ) {
     FOR_EACH_OLD_SPACE( s )s->object_iterate( blk );
 }
 
 
-void OldGeneration::object_iterate_from( OldWaterMark * mark, ObjectClosure * blk ) {
+void OldGeneration::object_iterate_from( OldWaterMark *mark, ObjectClosure *blk ) {
     mark->_space->object_iterate_from( mark, blk );
-    for ( OldSpace * s = mark->_space->_nextSpace; s not_eq nullptr; s = s->_nextSpace ) {
+    for ( OldSpace *s = mark->_space->_nextSpace; s not_eq nullptr; s = s->_nextSpace ) {
         *mark = s->bottom_mark();
         s->object_iterate_from( mark, blk );
     }
@@ -308,7 +308,7 @@ void OldGeneration::object_iterate_from( OldWaterMark * mark, ObjectClosure * bl
 
 void OldGeneration::verify() {
     int n = 0;
-    OldSpace * p;
+    OldSpace *p;
     FOR_EACH_OLD_SPACE( s ) {
         n++;
         p = s;
@@ -319,9 +319,9 @@ void OldGeneration::verify() {
 }
 
 
-static int addr_cmp( OldSpace ** s1, OldSpace ** s2 ) {
-    const char * s1start = ( const char * ) ( *s1 )->bottom();
-    const char * s2start = ( const char * ) ( *s2 )->bottom();
+static int addr_cmp( OldSpace **s1, OldSpace **s2 ) {
+    const char *s1start = (const char *) ( *s1 )->bottom();
+    const char *s2start = (const char *) ( *s2 )->bottom();
     if ( s1start < s2start )
         return -1;
     else if ( s1start > s2start )
@@ -331,7 +331,7 @@ static int addr_cmp( OldSpace ** s1, OldSpace ** s2 ) {
 }
 
 
-Oop * OldGeneration::object_start( Oop * p ) {
+Oop *OldGeneration::object_start( Oop *p ) {
     FOR_EACH_OLD_SPACE( s ) {
         if ( s->contains( p ) )
             return s->object_start( p );

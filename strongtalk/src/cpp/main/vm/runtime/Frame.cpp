@@ -20,29 +20,29 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-std::uint8_t * Frame::hp() const {
+std::uint8_t *Frame::hp() const {
     // Lars, please check -- assertion fails
     // st_assert(is_nullptrinterpreted_frame(), "must be interpreted");
     return *hp_addr();
 }
 
 
-void Frame::set_hp( std::uint8_t * hp ) {
+void Frame::set_hp( std::uint8_t *hp ) {
     // st_assert(is_interpreted_frame(), "must be interpreted");
     *hp_addr() = hp;
 }
 
 
-void Frame::patch_pc( const char * pc ) {
-    const char ** pc_addr = ( const char ** ) sp() - 1;
+void Frame::patch_pc( const char *pc ) {
+    const char **pc_addr = (const char **) sp() - 1;
     *pc_addr = pc;
 }
 
 
-ObjectArrayOop * Frame::frame_array_addr() const {
+ObjectArrayOop *Frame::frame_array_addr() const {
     st_assert( frame_size() >= minimum_size_for_deoptimized_frame, "Compiler frame is too small for deoptimization" );
 //    st_assert( is_deoptimized_frame(), "must be deoptimized frame" );
-    return ( ObjectArrayOop * ) addr_at( frame_frame_array_offset );
+    return (ObjectArrayOop *) addr_at( frame_frame_array_offset );
 }
 
 
@@ -53,14 +53,14 @@ ObjectArrayOop Frame::frame_array() const {
 }
 
 
-Oop ** Frame::real_sender_sp_addr() const {
+Oop **Frame::real_sender_sp_addr() const {
 //    st_assert( is_deoptimized_frame(), "must be deoptimized frame" );
-    return ( Oop ** ) addr_at( frame_real_sender_sp_offset );
+    return (Oop **) addr_at( frame_real_sender_sp_offset );
 }
 
 
-void Frame::patch_fp( int * fp ) {
-    Frame previous( nullptr, ( ( int * ) sp() ) - frame_sender_sp_offset, nullptr );
+void Frame::patch_fp( int *fp ) {
+    Frame previous( nullptr, ( (int *) sp() ) - frame_sender_sp_offset, nullptr );
     previous.set_link( fp );
 }
 
@@ -73,15 +73,15 @@ MethodOop Frame::method() const {
     if ( frame_size() < minimum_size_for_deoptimized_frame )
         return nullptr;
 
-    std::uint8_t * h = hp();
+    std::uint8_t *h = hp();
     if ( not Universe::old_gen.contains( h ) )
         return nullptr;
-    MemOop obj = as_memOop( Universe::object_start( ( Oop * ) h ) );
+    MemOop obj = as_memOop( Universe::object_start( (Oop *) h ) );
     return obj->is_method() ? MethodOop( obj ) : nullptr;
 }
 
 
-NativeMethod * Frame::code() const {
+NativeMethod *Frame::code() const {
     st_assert( is_compiled_frame(), "no code" );
     return findNativeMethod( pc() );
 }
@@ -102,22 +102,22 @@ bool_t Frame::is_deoptimized_frame() const {
 }
 
 
-InlineCacheIterator * Frame::sender_ic_iterator() const {
+InlineCacheIterator *Frame::sender_ic_iterator() const {
     return is_entry_frame() ? nullptr : sender().current_ic_iterator();
 }
 
 
-InlineCacheIterator * Frame::current_ic_iterator() const {
+InlineCacheIterator *Frame::current_ic_iterator() const {
 
     if ( is_interpreted_frame() ) {
-        InterpretedInlineCache * ic = current_interpretedIC();
+        InterpretedInlineCache *ic = current_interpretedIC();
         if ( ic and not ByteCodes::is_send_code( ic->send_code() ) )
             return nullptr;
         return ic ? new InterpretedInlineCacheIterator( ic ) : nullptr;
     }
 
     if ( is_compiled_frame() ) {
-        CompiledInlineCache * ic = current_compiledIC();
+        CompiledInlineCache *ic = current_compiledIC();
         return ic->inlineCache() ? new CompiledInlineCacheIterator( ic ) : nullptr; // a perform, not a send
     }
 
@@ -126,14 +126,14 @@ InlineCacheIterator * Frame::current_ic_iterator() const {
 }
 
 
-InterpretedInlineCache * Frame::current_interpretedIC() const {
+InterpretedInlineCache *Frame::current_interpretedIC() const {
 
     if ( is_interpreted_frame() ) {
         MethodOop m             = method();
         int       byteCodeIndex = m->byteCodeIndex_from( hp() );
-        std::uint8_t * codeptr = m->codes( byteCodeIndex );
+        std::uint8_t *codeptr = m->codes( byteCodeIndex );
         if ( ByteCodes::is_send_code( ByteCodes::Code( *codeptr ) ) ) {
-            InterpretedInlineCache * ic = as_InterpretedIC( ( const char * ) hp() );
+            InterpretedInlineCache *ic = as_InterpretedIC( (const char *) hp() );
             st_assert( ic->send_code_addr() == codeptr, "found wrong ic" );
             return ic;
         } else {
@@ -145,7 +145,7 @@ InterpretedInlineCache * Frame::current_interpretedIC() const {
 }
 
 
-CompiledInlineCache * Frame::current_compiledIC() const {
+CompiledInlineCache *Frame::current_compiledIC() const {
     return is_compiled_frame() ? CompiledIC_from_return_addr( pc() )  // may fail if current frame isn't at a send -- caller must know
                                : nullptr;
 }
@@ -161,13 +161,13 @@ bool_t Frame::has_next_Delta_fp() const {
 }
 
 
-int * Frame::next_Delta_fp() const {
-    return ( int * ) at( frame_next_Delta_fp_offset );
+int *Frame::next_Delta_fp() const {
+    return (int *) at( frame_next_Delta_fp_offset );
 }
 
 
-Oop * Frame::next_Delta_sp() const {
-    return ( Oop * ) at( frame_next_Delta_sp_offset );
+Oop *Frame::next_Delta_sp() const {
+    return (Oop *) at( frame_next_Delta_sp_offset );
 }
 
 
@@ -185,7 +185,7 @@ bool_t Frame::is_first_delta_frame() const {
 }
 
 
-const char * Frame::print_name() const {
+const char *Frame::print_name() const {
     if ( is_interpreted_frame() )
         return "interpreted";
     if ( is_compiled_frame() )
@@ -206,13 +206,13 @@ void Frame::print() const {
     _console->print_cr( "]" );
 
     if ( PrintLongFrames ) {
-        for ( Oop * p = sp(); p < ( Oop * ) fp(); p++ )
+        for ( Oop *p = sp(); p < (Oop *) fp(); p++ )
             _console->print_cr( "  - 0x%lx: 0x%lx", p, *p );
     }
 }
 
 
-static void print_context_chain( ContextOop con, ConsoleOutputStream * stream ) {
+static void print_context_chain( ContextOop con, ConsoleOutputStream *stream ) {
     if ( con ) {
         // Print out the contexts chain
         stream->print( "    context " );
@@ -227,12 +227,12 @@ static void print_context_chain( ContextOop con, ConsoleOutputStream * stream ) 
 }
 
 
-void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
+void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
     ResourceMark resourceMark;
     stream->print( " - " );
     if ( is_interpreted_frame() ) {
         stream->print( "I " );
-        InterpretedVirtualFrame * vf = ( InterpretedVirtualFrame * ) VirtualFrame::new_vframe( this );
+        InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) VirtualFrame::new_vframe( this );
         vf->method()->print_value_on( stream );
         if ( ActivationShowByteCodeIndex ) {
             stream->print( " byteCodeIndex=0x%08x ", vf->byteCodeIndex() );
@@ -240,7 +240,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
         _console->print_cr( " @ 0x%lx", fp() );
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
-            GrowableArray <Oop> * stack = vf->expression_stack();
+            GrowableArray<Oop> *stack = vf->expression_stack();
             for ( int index = 0; index < stack->length(); index++ ) {
                 stream->print( "    %3d: ", index );
                 stack->at( index )->print_value_on( stream );
@@ -252,7 +252,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
 
     if ( is_compiled_frame() ) {
         stream->print( "C " );
-        CompiledVirtualFrame * vf = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( this );
+        CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
         vf->code()->print_value_on( stream );
         _console->print_cr( " @ 0x%lx", fp() );
@@ -264,7 +264,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
             print_context_chain( vf->compiled_context(), stream );
             if ( vf->is_top() )
                 break;
-            vf = ( CompiledVirtualFrame * ) vf->sender();
+            vf = (CompiledVirtualFrame *) vf->sender();
             st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
         }
         return;
@@ -275,7 +275,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
         frame_array()->print_value();
         _console->print_cr( " @ 0x%lx", fp() );
 
-        DeoptimizedVirtualFrame * vf = ( DeoptimizedVirtualFrame * ) VirtualFrame::new_vframe( this );
+        DeoptimizedVirtualFrame *vf = (DeoptimizedVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_deoptimized_frame(), "should be deoptimized VirtualFrame" );
         while ( true ) {
             stream->print( "    " );
@@ -284,7 +284,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
             print_context_chain( vf->deoptimized_context(), stream );
             if ( vf->is_top() )
                 break;
-            vf = ( DeoptimizedVirtualFrame * ) vf->sender();
+            vf = (DeoptimizedVirtualFrame *) vf->sender();
             st_assert( vf->is_deoptimized_frame(), "should be deoptimized VirtualFrame" );
         }
         return;
@@ -294,10 +294,10 @@ void Frame::print_for_deoptimization( ConsoleOutputStream * stream ) {
 }
 
 
-void Frame::layout_iterate( FrameLayoutClosure * blk ) {
+void Frame::layout_iterate( FrameLayoutClosure *blk ) {
     if ( is_interpreted_frame() ) {
-        Oop       * eos = temp_addr( 0 );
-        for ( Oop * p   = sp(); p <= eos; p++ )
+        Oop       *eos = temp_addr( 0 );
+        for ( Oop *p   = sp(); p <= eos; p++ )
             blk->do_stack( eos - p, p );
         blk->do_hp( hp_addr() );
         blk->do_receiver( receiver_addr() );
@@ -317,22 +317,22 @@ bool_t Frame::has_compiled_float_marker() const {
 }
 
 
-bool_t Frame::oop_iterate_interpreted_float_frame( OopClosure * blk ) {
+bool_t Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
     MethodOop m = MethodOopDescriptor::methodOop_from_hcode( hp() );
     // Return if this activation has no floats (the marker is conservative)
     if ( not m->has_float_temporaries() )
         return false;
 
     // Iterator from stack pointer to end of float section
-    Oop       * end = ( Oop * ) addr_at( m->float_section_start_offset() - m->float_section_size() );
-    for ( Oop * p   = sp(); p <= end; p++ ) {
+    Oop       *end = (Oop *) addr_at( m->float_section_start_offset() - m->float_section_size() );
+    for ( Oop *p   = sp(); p <= end; p++ ) {
         blk->do_oop( p );
     }
 
     // Skip the float section and magic_value
 
     // Iterate from just before the float section to the first temp
-    for ( Oop * q = ( Oop * ) addr_at( m->float_section_start_offset() + 2 ); q <= temp_addr( 0 ); q++ ) {
+    for ( Oop *q = (Oop *) addr_at( m->float_section_start_offset() + 2 ); q <= temp_addr( 0 ); q++ ) {
         blk->do_oop( q );
     }
 
@@ -343,19 +343,19 @@ bool_t Frame::oop_iterate_interpreted_float_frame( OopClosure * blk ) {
 }
 
 
-bool_t Frame::oop_iterate_compiled_float_frame( OopClosure * blk ) {
+bool_t Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
     warning( "oop_iterate_compiled_float_frame not implemented" );
     return false;
 }
 
 
-void Frame::oop_iterate( OopClosure * blk ) {
+void Frame::oop_iterate( OopClosure *blk ) {
     if ( is_interpreted_frame() ) {
         if ( has_interpreted_float_marker() and oop_iterate_interpreted_float_frame( blk ) )
             return;
 
         // lprintf("Frame: fp = %#lx, sp = %#lx]\n", fp(), sp());
-        for ( Oop * p = sp(); p <= temp_addr( 0 ); p++ ) {
+        for ( Oop *p = sp(); p <= temp_addr( 0 ); p++ ) {
             // lprintf("\t[%#lx]: ", p);
             // (*p)->short_print();
             // lprintf("\n");
@@ -373,7 +373,7 @@ void Frame::oop_iterate( OopClosure * blk ) {
             return;
 
         // All oops are [sp..fp[
-        for ( Oop * p = sp(); p < ( Oop * ) fp(); p++ ) {
+        for ( Oop *p = sp(); p < (Oop *) fp(); p++ ) {
             blk->do_oop( p );
         }
         return;
@@ -382,7 +382,7 @@ void Frame::oop_iterate( OopClosure * blk ) {
     if ( is_entry_frame() ) {
         // Need to iterate over the arguments passed to the frame called by the entry frame,
         // but not the rest of the cruft (esi, edi, last sp and last fp) - slr 09/08.
-        for ( Oop * p = sp(); p < ( Oop * ) fp() - 4; p++ ) {
+        for ( Oop *p = sp(); p < (Oop *) fp() - 4; p++ ) {
             blk->do_oop( p );
         }
         return;
@@ -390,12 +390,12 @@ void Frame::oop_iterate( OopClosure * blk ) {
 
     if ( is_deoptimized_frame() ) {
         // Expression stack
-        Oop       * end = ( Oop * ) fp() + frame_real_sender_sp_offset;
+        Oop       *end = (Oop *) fp() + frame_real_sender_sp_offset;
         // All oops are [sp..end[
-        for ( Oop * p   = sp(); p < end; p++ ) {
+        for ( Oop *p   = sp(); p < end; p++ ) {
             blk->do_oop( p );
         }
-        blk->do_oop( ( Oop * ) frame_array_addr() );
+        blk->do_oop( (Oop *) frame_array_addr() );
         return;
     }
 }
@@ -409,15 +409,15 @@ bool_t Frame::follow_roots_interpreted_float_frame() {
         return false;
 
     // Iterator from stack pointer to end of float section
-    Oop       * end = ( Oop * ) addr_at( m->float_section_start_offset() - m->float_section_size() );
-    for ( Oop * p   = sp(); p <= end; p++ ) {
+    Oop       *end = (Oop *) addr_at( m->float_section_start_offset() - m->float_section_size() );
+    for ( Oop *p   = sp(); p <= end; p++ ) {
         MarkSweep::follow_root( p );
     }
 
     // Skip the float section and magic_value
 
     // Iterate from just before the float section to the first temp
-    for ( Oop * q = ( Oop * ) addr_at( m->float_section_start_offset() + 2 ); q <= temp_addr( 0 ); q++ ) {
+    for ( Oop *q = (Oop *) addr_at( m->float_section_start_offset() + 2 ); q <= temp_addr( 0 ); q++ ) {
         MarkSweep::follow_root( q );
     }
 
@@ -440,10 +440,10 @@ void Frame::follow_roots() {
             return;
 
         // Follow the roots of the frame
-        for ( Oop * p = sp(); p <= temp_addr( 0 ); p++ ) {
+        for ( Oop *p = sp(); p <= temp_addr( 0 ); p++ ) {
             MarkSweep::follow_root( p );
         }
-        MarkSweep::follow_root( ( Oop * ) hp_addr() );
+        MarkSweep::follow_root( (Oop *) hp_addr() );
         MarkSweep::follow_root( receiver_addr() );
         return;
     }
@@ -452,7 +452,7 @@ void Frame::follow_roots() {
         if ( has_compiled_float_marker() and follow_roots_compiled_float_frame() )
             return;
 
-        for ( Oop * p = sp(); p < ( Oop * ) fp(); p++ )
+        for ( Oop *p = sp(); p < (Oop *) fp(); p++ )
             MarkSweep::follow_root( p );
         return;
     }
@@ -464,7 +464,7 @@ void Frame::follow_roots() {
         //}
         // Should be the following to match oop_iterate() (used by scavenge) slr - 11/09
         // %TODO how to test?
-        for ( Oop * p = sp(); p < ( Oop * ) fp() - 4; p++ ) {
+        for ( Oop *p = sp(); p < (Oop *) fp() - 4; p++ ) {
             MarkSweep::follow_root( p );
         }
         return;
@@ -472,10 +472,10 @@ void Frame::follow_roots() {
 
     if ( is_deoptimized_frame() ) {
         // Expression stack
-        Oop       * end = ( Oop * ) fp() + frame_real_sender_sp_offset;
-        for ( Oop * p   = sp(); p < end; p++ )
+        Oop       *end = (Oop *) fp() + frame_real_sender_sp_offset;
+        for ( Oop *p   = sp(); p < end; p++ )
             MarkSweep::follow_root( p );
-        MarkSweep::follow_root( ( Oop * ) frame_array_addr() );
+        MarkSweep::follow_root( (Oop *) frame_array_addr() );
         return;
     }
 }
@@ -485,8 +485,8 @@ void Frame::convert_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Adjust hcode pointer to object start
-    std::uint8_t * h   = hp();
-    std::uint8_t * obj = ( std::uint8_t * ) as_memOop( Universe::object_start( ( Oop * ) h ) );
+    std::uint8_t *h   = hp();
+    std::uint8_t *obj = (std::uint8_t *) as_memOop( Universe::object_start( (Oop *) h ) );
     set_hp( obj );
     // Save the offset
     MarkSweep::add_heap_code_offset( h - obj );
@@ -499,7 +499,7 @@ void Frame::restore_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Readjust hcode pointer
-    std::uint8_t * obj = hp();
+    std::uint8_t *obj = hp();
     int offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
         lprintf( "[0x%lx+%d]\n", obj, offset );
@@ -508,17 +508,17 @@ void Frame::restore_heap_code_pointer() {
 
 
 class VerifyOopClosure : public OopClosure {
-    public:
-        Frame * fr;
+public:
+    Frame *fr;
 
 
-        void do_oop( Oop * o ) {
-            Oop obj = *o;
-            if ( not obj->verify() ) {
-                lprintf( "Verify failed in frame:\n" );
-                fr->print();
-            }
+    void do_oop( Oop *o ) {
+        Oop obj = *o;
+        if ( not obj->verify() ) {
+            lprintf( "Verify failed in frame:\n" );
+            fr->print();
         }
+    }
 };
 
 
@@ -526,8 +526,8 @@ void Frame::verify() const {
     if ( fp() == nullptr ) st_fatal( "fp cannot be nullptr" );
     if ( sp() == nullptr ) st_fatal( "sp cannot be nullptr" );
     VerifyOopClosure blk;
-    blk.fr = ( Frame * ) this;
-    ( ( Frame * ) this )->oop_iterate( &blk );
+    blk.fr = (Frame *) this;
+    ( (Frame *) this )->oop_iterate( &blk );
 }
 
 
@@ -558,7 +558,7 @@ Frame Frame::delta_sender() const {
 bool_t Frame::should_be_deoptimized() const {
     if ( not is_compiled_frame() )
         return false;
-    NativeMethod * nm = code();
+    NativeMethod *nm = code();
     if ( TraceApplyChange ) {
         _console->print( "checking (%s) ", nm->is_marked_for_deoptimization() ? "true" : "false" );
         nm->print_value_on( _console );

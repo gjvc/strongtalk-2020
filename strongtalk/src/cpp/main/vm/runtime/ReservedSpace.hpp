@@ -11,42 +11,42 @@
 // ReservedSpace is a data structure for reserving a contiguous chunk of memory.
 
 class ReservedSpace : public ValueObject {
-    private:
-        const char * _base;
-        int _size;
-    public:
-        ReservedSpace( int size );
+private:
+    const char *_base;
+    int _size;
+public:
+    ReservedSpace( int size );
 
 
-        ReservedSpace( const char * base, int size ) {
-            _base = base;
-            _size = size;
-        }
+    ReservedSpace( const char *base, int size ) {
+        _base = base;
+        _size = size;
+    }
 
 
-        // Accessors
-        const char * base() {
-            return _base;
-        }
+    // Accessors
+    const char *base() {
+        return _base;
+    }
 
 
-        int size() {
-            return _size;
-        }
+    int size() {
+        return _size;
+    }
 
 
-        bool_t is_reserved() {
-            return _base not_eq nullptr;
-        }
+    bool_t is_reserved() {
+        return _base not_eq nullptr;
+    }
 
 
-        // Splitting
-        ReservedSpace first_part( int partition_size );
+    // Splitting
+    ReservedSpace first_part( int partition_size );
 
-        ReservedSpace last_part( int partition_size );
+    ReservedSpace last_part( int partition_size );
 
-        // Alignment
-        static int page_align_size( int size );
+    // Alignment
+    static int page_align_size( int size );
 
-        static int align_size( int size, int page_size );
+    static int align_size( int size, int page_size );
 };

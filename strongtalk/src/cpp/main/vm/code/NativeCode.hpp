@@ -16,64 +16,64 @@ class NativeMethod;
 
 class NativeCodeBase : public PrintableCHeapAllocatedObject {
 
-    protected:
-        int _instructionsLength;
+protected:
+    int _instructionsLength;
 
-    public:
-        void * operator new( std::size_t size ) throw() {
-            SubclassResponsibility();
-            return nullptr;
-        }
-
-
-        virtual char * instructionsStart() const = 0;       // beginning of instructions part
-
-        virtual int size() const = 0;                       // size in bytes
-
-        int instructionsLength() const {
-            return _instructionsLength;
-        }
+public:
+    void *operator new( std::size_t size ) throw() {
+        SubclassResponsibility();
+        return nullptr;
+    }
 
 
-        char * instructionsEnd() const {
-            return instructionsStart() + instructionsLength();
-        }
+    virtual char *instructionsStart() const = 0;       // beginning of instructions part
+
+    virtual int size() const = 0;                       // size in bytes
+
+    int instructionsLength() const {
+        return _instructionsLength;
+    }
 
 
-        bool_t contains( const void * p ) const {
-            return ( void * ) instructionsStart() <= p and p < ( void * ) instructionsEnd();
-        }
+    char *instructionsEnd() const {
+        return instructionsStart() + instructionsLength();
+    }
 
 
-        virtual bool_t isNativeMethod() const {
-            return false;
-        }
+    bool_t contains( const void *p ) const {
+        return (void *) instructionsStart() <= p and p < (void *) instructionsEnd();
+    }
 
 
-        virtual bool_t isPIC() const {
-            return false;
-        }
+    virtual bool_t isNativeMethod() const {
+        return false;
+    }
 
 
-        virtual bool_t isCountStub() const {
-            return false;
-        }
+    virtual bool_t isPIC() const {
+        return false;
+    }
 
 
-        virtual bool_t isAgingStub() const {
-            return false;
-        }
+    virtual bool_t isCountStub() const {
+        return false;
+    }
 
 
-        virtual void moveTo( void * to, int size ) = 0; // (possibly overlapping) copy
-        virtual void relocate() {
-        }
+    virtual bool_t isAgingStub() const {
+        return false;
+    }
 
 
-        virtual void verify() = 0;
+    virtual void moveTo( void *to, int size ) = 0; // (possibly overlapping) copy
+    virtual void relocate() {
+    }
 
-    protected:
-        void verify2( const char * name );
+
+    virtual void verify() = 0;
+
+protected:
+    void verify2( const char *name );
 };
 
 
@@ -86,45 +86,45 @@ class RelocationInformation;
 
 class OopNativeCode : public NativeCodeBase {
 
-    protected:
-        void check_store( Oop x, char * bound ) {
-            if ( Universe::new_gen.is_new( x, bound ) )
-                remember();
-        }
+protected:
+    void check_store( Oop x, char *bound ) {
+        if ( Universe::new_gen.is_new( x, bound ) )
+            remember();
+    }
 
 
-        int _locsLen;                // relocation info length (bytes)
+    int _locsLen;                // relocation info length (bytes)
 
-    public:
+public:
 
-        RelocationInformation * locs() const {
-            return ( RelocationInformation * ) instructionsEnd();
-        }
-
-
-        int locsLen() const {
-            return _locsLen;
-        }
+    RelocationInformation *locs() const {
+        return (RelocationInformation *) instructionsEnd();
+    }
 
 
-        RelocationInformation * locsEnd() const {
-            return ( RelocationInformation * ) ( ( const char * ) locs() + _locsLen );
-        }
+    int locsLen() const {
+        return _locsLen;
+    }
 
 
-        virtual bool_t isNativeMethod() const {
-            return false;
-        }
+    RelocationInformation *locsEnd() const {
+        return (RelocationInformation *) ( (const char *) locs() + _locsLen );
+    }
 
 
-        // Memory operations: return true if need to invalidate instruction cache
-        virtual bool_t switch_pointers( Oop from, Oop to, GrowableArray <NativeMethod *> * nativeMethods_to_invalidate );
+    virtual bool_t isNativeMethod() const {
+        return false;
+    }
 
-        void relocate();
 
-        void remember();
+    // Memory operations: return true if need to invalidate instruction cache
+    virtual bool_t switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
 
-        virtual void verify();
+    void relocate();
+
+    void remember();
+
+    virtual void verify();
 };
 
-NativeCodeBase * findThing( void * addr );   // returns nullptr if addr not in a zone
+NativeCodeBase *findThing( void *addr );   // returns nullptr if addr not in a zone

@@ -119,18 +119,18 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, bool_t &is_la
             case BLOCKVALUE_CODE: {
                 Oop blkMethod = unpackOopFromIndex( index, offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                int parent_scope_offset = unpackValueAt( offset );
-                ScopeDescriptor *parent_scope = at( parent_scope_offset, pc );
-                nd                            = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
+                int             parent_scope_offset = unpackValueAt( offset );
+                ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
+                nd                                  = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
                 break;
             }
             case MEMOIZEDBLOCK_CODE: {
                 Location l         = Location( unpackValueFromIndex( index, offset ) );
                 Oop      blkMethod = unpackOopAt( offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                int parent_scope_offset = unpackValueAt( offset );
-                ScopeDescriptor *parent_scope = at( parent_scope_offset, pc );
-                nd                            = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
+                int             parent_scope_offset = unpackValueAt( offset );
+                ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
+                nd                                  = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
                 break;
             }
             default: st_fatal1( "no such name desc (code 0x%08x)", b.code() );
@@ -142,8 +142,8 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, bool_t &is_la
 
 
 void NativeMethodScopes::iterate( int &offset, UnpackClosure *closure ) const {
-    char *pc = my_nativeMethod()->instructionsStart();
-    bool_t is_last;
+    char           *pc = my_nativeMethod()->instructionsStart();
+    bool_t         is_last;
     NameDescriptor *nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
     if ( nd == nullptr )
         return;        // if at termination byte
@@ -157,10 +157,10 @@ void NativeMethodScopes::iterate( int &offset, UnpackClosure *closure ) const {
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, const char *pc ) const {
-    int    pc_offset         = pc - my_nativeMethod()->instructionsStart();
-    int    current_pc_offset = 0;
-    bool_t is_last;
-    NameDescriptor *result = unpackNameDescAt( offset, is_last, pc );
+    int            pc_offset         = pc - my_nativeMethod()->instructionsStart();
+    int            current_pc_offset = 0;
+    bool_t         is_last;
+    NameDescriptor *result           = unpackNameDescAt( offset, is_last, pc );
     if ( result == nullptr )
         return nullptr;    // if at termination byte
     while ( not is_last ) {

@@ -41,7 +41,7 @@ void TestDeltaProcess::removeFromProcesses() {
 Oop newProcess();
 
 
-void setProcessRefs( DeltaProcess * process, ProcessOop processObj ) {
+void setProcessRefs( DeltaProcess *process, ProcessOop processObj ) {
     processObj->set_process( process );
     process->set_processObj( processObj );
 }
@@ -64,7 +64,7 @@ void initializeSmalltalkEnvironment() {
     AssociationOop processorAssoc = Universe::find_global_association( "Processor" );
     processorAssoc->set_value( processor.as_oop() );
 
-    DeltaProcess * scheduler = new TestDeltaProcess( &TestDeltaProcess::launch_scheduler );
+    DeltaProcess *scheduler = new TestDeltaProcess( &TestDeltaProcess::launch_scheduler );
     DeltaProcess::set_scheduler( scheduler );
 
     Delta::call( processor.as_oop(), initialize.as_oop() );
@@ -74,21 +74,21 @@ void initializeSmalltalkEnvironment() {
 }
 
 
-static int vmLoopLauncher( DeltaProcess * testProcess ) {
+static int vmLoopLauncher( DeltaProcess *testProcess ) {
     vmProcess->transfer_to( testProcess );
     vmProcess->loop();
     return 0;
 }
 
 
-void start_vm_process( TestDeltaProcess * testProcess ) {
+void start_vm_process( TestDeltaProcess *testProcess ) {
 
     int threadId;
     vmProcess = new VMProcess();
     DeltaProcess::initialize_async_dll_event();
 
     ::testProcess = testProcess; // set it before the next line starts the system
-    vmThread      = os::create_thread( ( int ( * )( void * ) ) &vmLoopLauncher, testProcess, &threadId );
+    vmThread      = os::create_thread( (int ( * )( void * )) &vmLoopLauncher, testProcess, &threadId );
 }
 
 
@@ -97,7 +97,7 @@ void stop_vm_process() {
 }
 
 
-int main( int argc, char * argv[] ) {
+int main( int argc, char *argv[] ) {
 
     std::cout << std::endl;
     std::cout << "-----------------------------------------------------------------------------" << std::endl;

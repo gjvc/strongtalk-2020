@@ -9,7 +9,7 @@
 
 
 ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( int sz ) {
-    _nodes = new_resource_array <ProgramCounterDescriptorNode>( sz );
+    _nodes = new_resource_array<ProgramCounterDescriptorNode>( sz );
     _end   = 0;
     _size  = sz;
 }
@@ -17,7 +17,7 @@ ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( int sz ) {
 
 void ProgramCounterDescriptorInfoClass::extend( int newSize ) {
 
-    ProgramCounterDescriptorNode * newNodes = new_resource_array <ProgramCounterDescriptorNode>( newSize );
+    ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 
     for ( int i = 0; i < _end; i++ )
         newNodes[ i ] = _nodes[ i ];
@@ -64,10 +64,10 @@ void ProgramCounterDescriptorInfoClass::mark_scopes() {
 }
 
 
-void ProgramCounterDescriptorInfoClass::copy_to( int *& addr ) {
+void ProgramCounterDescriptorInfoClass::copy_to( int *&addr ) {
     for ( int i = 0; i < _end; i++ ) {
-        ProgramCounterDescriptor * pc = ( ProgramCounterDescriptor * ) addr;
-        pc->_pc       = _nodes[ i ]._pcOffset;
+        ProgramCounterDescriptor *pc = (ProgramCounterDescriptor *) addr;
+        pc->_pc            = _nodes[ i ]._pcOffset;
         pc->_scope         = _nodes[ i ]._scopeInfo ? _nodes[ i ]._scopeInfo->_offset : IllegalByteCodeIndex;
         pc->_byteCodeIndex = _nodes[ i ]._byteCodeIndex;
         addr += sizeof( ProgramCounterDescriptor ) / sizeof( int );
@@ -75,7 +75,7 @@ void ProgramCounterDescriptorInfoClass::copy_to( int *& addr ) {
 }
 
 
-void LocationName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
+void LocationName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
     int      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, LOCATION_CODE, is_last, index ) )
@@ -83,14 +83,14 @@ void LocationName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
 }
 
 
-void ValueName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
+void ValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     int index = rec->getOopIndex( _value );
     if ( not genHeaderByte( rec, VALUE_CODE, is_last, index ) )
         rec->genIndex( index );
 }
 
 
-void MemoizedName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
+void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
     int      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, MEMOIZEDBLOCK_CODE, is_last, index ) )
@@ -100,7 +100,7 @@ void MemoizedName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
 }
 
 
-void BlockValueName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
+void BlockValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     int index = rec->getOopIndex( Oop( _blockMethod ) );
     if ( not genHeaderByte( rec, BLOCKVALUE_CODE, is_last, index ) )
         rec->genIndex( index );

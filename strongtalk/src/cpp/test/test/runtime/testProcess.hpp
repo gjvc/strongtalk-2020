@@ -13,13 +13,13 @@ extern void removeTestFromProcesses();
 
 class AddTestProcess : public ValueObject {
 
-    public:
-        AddTestProcess() {
-            addTestToProcesses();
-        }
+public:
+    AddTestProcess() {
+        addTestToProcesses();
+    }
 
 
-        ~AddTestProcess() {
-            removeTestFromProcesses();
-        }
+    ~AddTestProcess() {
+        removeTestFromProcesses();
+    }
 };

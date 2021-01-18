@@ -39,8 +39,8 @@ ResourceMark::~ResourceMark() {
         lprintf( "deallocating to mark %#lx\n", _top );
     }
 
-    ResourceAreaChunk * prevc;
-    ResourceAreaChunk * c = _resourceArea->_resourceAreaChunk;
+    ResourceAreaChunk *prevc;
+    ResourceAreaChunk *c = _resourceArea->_resourceAreaChunk;
     for ( ; c not_eq _resourceAreaChunk; c = prevc ) {
         // deallocate all chunks behind marked _resourceAreaChunk
         prevc = c->_prev;

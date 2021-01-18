@@ -24,49 +24,49 @@
 
 class LookupKey : ValueObject {
 
-    protected:
-        KlassOop _klass;
-        Oop      _selector_or_method;
+protected:
+    KlassOop _klass;
+    Oop      _selector_or_method;
 
-    public:
-        LookupKey();
-        LookupKey( KlassOop klass, Oop selector_or_method );
-        LookupKey( LookupKey * key );
+public:
+    LookupKey();
+    LookupKey( KlassOop klass, Oop selector_or_method );
+    LookupKey( LookupKey *key );
 
-        KlassOop klass() const;
-        Oop selector_or_method() const;
-        SymbolOop selector() const;
-        MethodOop method() const;
-
-
-        // Lookup type
-        bool_t is_super_type() const;
-        bool_t is_normal_type() const;
-        bool_t is_block_type() const;
+    KlassOop klass() const;
+    Oop selector_or_method() const;
+    SymbolOop selector() const;
+    MethodOop method() const;
 
 
-        bool_t equal( const LookupKey * p ) const;
-        void initialize( KlassOop klass, Oop selector_or_method );
-        void clear();
-        int hash() const;
-        void switch_pointers( Oop from, Oop to );
+    // Lookup type
+    bool_t is_super_type() const;
+    bool_t is_normal_type() const;
+    bool_t is_block_type() const;
 
-        void relocate();
-        bool_t verify() const;
-        void oops_do( void f( Oop * ) );
 
-        // Printing support output format is:
-        //   "class::selector" for normal sends and
-        //   "class^^selector" for super sends.
-        //   "class->selector {byteCodeIndex}+" for block keys
-        void print() const;
+    bool_t equal( const LookupKey *p ) const;
+    void initialize( KlassOop klass, Oop selector_or_method );
+    void clear();
+    int hash() const;
+    void switch_pointers( Oop from, Oop to );
 
-        char * print_string() const;
+    void relocate();
+    bool_t verify() const;
+    void oops_do( void f( Oop * ) );
 
-        void print_on( ConsoleOutputStream * stream ) const;
+    // Printing support output format is:
+    //   "class::selector" for normal sends and
+    //   "class^^selector" for super sends.
+    //   "class->selector {byteCodeIndex}+" for block keys
+    void print() const;
 
-        void print_inlining_database_on( ConsoleOutputStream * stream ) const;
+    char *print_string() const;
 
-        // For resource allocation.
-        static LookupKey * allocate( KlassOop klass, Oop selector_or_method );
+    void print_on( ConsoleOutputStream *stream ) const;
+
+    void print_inlining_database_on( ConsoleOutputStream *stream ) const;
+
+    // For resource allocation.
+    static LookupKey *allocate( KlassOop klass, Oop selector_or_method );
 };

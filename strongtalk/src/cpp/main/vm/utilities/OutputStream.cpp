@@ -12,19 +12,19 @@
 
 constexpr std::size_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
 
-ConsoleOutputStream * _console;
+ConsoleOutputStream *_console;
 
 
 // -----------------------------------------------------------------------------
 
-void ConsoleOutputStream::basic_print( const char * str ) {
+void ConsoleOutputStream::basic_print( const char *str ) {
 
     for ( int i = 0; i < strlen( str ); i++ )
         put( str[ i ] );
 }
 
 
-void ConsoleOutputStream::print( const char * format, ... ) {
+void ConsoleOutputStream::print( const char *format, ... ) {
     char buffer[BUFLEN];
 
     va_list ap;
@@ -38,7 +38,7 @@ void ConsoleOutputStream::print( const char * format, ... ) {
 }
 
 
-void ConsoleOutputStream::print_cr( const char * format, ... ) {
+void ConsoleOutputStream::print_cr( const char *format, ... ) {
     char    buffer[BUFLEN];
     va_list ap;
     va_start( ap, format );
@@ -52,7 +52,7 @@ void ConsoleOutputStream::print_cr( const char * format, ... ) {
 }
 
 
-void ConsoleOutputStream::vprint( const char * format, va_list argptr ) {
+void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
     char buffer[BUFLEN];
     if ( vsnprintf( buffer, BUFLEN, format, argptr ) < 0 ) {
         warning( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
@@ -77,7 +77,7 @@ void ConsoleOutputStream::indent() {
 }
 
 
-void ConsoleOutputStream::vprint_cr( const char * format, va_list argptr ) {
+void ConsoleOutputStream::vprint_cr( const char *format, va_list argptr ) {
     vprint( format, argptr );
     cr();
 }
@@ -111,9 +111,9 @@ void ConsoleOutputStream::cr() {
 
 
 StringOutputStream::StringOutputStream( const int initial_size ) :
-    ConsoleOutputStream() {
+        ConsoleOutputStream() {
     buffer_length = initial_size;
-    buffer        = new_resource_array <char>( buffer_length );
+    buffer        = new_resource_array<char>( buffer_length );
     buffer_pos    = 0;
 }
 
@@ -121,8 +121,8 @@ StringOutputStream::StringOutputStream( const int initial_size ) :
 void StringOutputStream::put( char c ) {
     if ( buffer_pos >= buffer_length ) {
         // grow string buffer
-        char * oldbuf = buffer;
-        buffer = new_resource_array <char>( buffer_length * 2 );
+        char *oldbuf = buffer;
+        buffer = new_resource_array<char>( buffer_length * 2 );
         strncpy( buffer, oldbuf, buffer_length );
         buffer_length *= 2;
     }
@@ -134,8 +134,8 @@ void StringOutputStream::put( char c ) {
 // -----------------------------------------------------------------------------
 
 
-char * StringOutputStream::as_string() {
-    char * copy = new_resource_array <char>( buffer_pos + 1 );
+char *StringOutputStream::as_string() {
+    char *copy = new_resource_array<char>( buffer_pos + 1 );
     memcpy( copy, buffer, buffer_pos );
     copy[ buffer_pos ] = '\0';
     return copy;
@@ -151,7 +151,7 @@ ByteArrayOop StringOutputStream::as_byteArray() {
 }
 
 
-FileOutputStream::FileOutputStream( const char * file_name ) {
+FileOutputStream::FileOutputStream( const char *file_name ) {
     _file.open( file_name );
 }
 

@@ -11,6 +11,6 @@
 #include <string>
 
 
-std::string format_time_point( std::chrono::system_clock::time_point & point );
+std::string format_time_point( std::chrono::system_clock::time_point &point );
 
-void log_line( const std::string & line );
+void log_line( const std::string &line );

@@ -24,7 +24,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDebugPrims, "debug" )
 
 
@@ -239,11 +238,11 @@ PRIM_DECL_1( debugPrimitives::setInterpreterInvocationCounterLimit, Oop limit ) 
 
 
 class ClearInvocationCounterClosure : public ObjectClosure {
-    private:
-        void do_object( MemOop obj ) {
-            if ( obj->is_method() )
-                MethodOop( obj )->set_invocation_count( 0 );
-        }
+private:
+    void do_object( MemOop obj ) {
+        if ( obj->is_method() )
+            MethodOop( obj )->set_invocation_count( 0 );
+    }
 };
 
 
@@ -258,26 +257,26 @@ PRIM_DECL_0( debugPrimitives::clearInvocationCounters ) {
 // Collects all methods with invocation counter >= cutoff
 class CollectMethodClosure : public ObjectClosure {
 
-    private:
-        GrowableArray <MethodOop> * _col;
-        int                       _cutoff;
+private:
+    GrowableArray<MethodOop> *_col;
+    int _cutoff;
 
-    public:
-        CollectMethodClosure( GrowableArray <MethodOop> * col, int cutoff ) {
-            this->_col    = col;
-            this->_cutoff = cutoff;
-        }
+public:
+    CollectMethodClosure( GrowableArray<MethodOop> *col, int cutoff ) {
+        this->_col    = col;
+        this->_cutoff = cutoff;
+    }
 
 
-        void do_object( MemOop obj ) {
-            if ( obj->is_method() )
-                if ( MethodOop( obj )->invocation_count() >= _cutoff )
-                    _col->push( MethodOop( obj ) );
-        }
+    void do_object( MemOop obj ) {
+        if ( obj->is_method() )
+            if ( MethodOop( obj )->invocation_count() >= _cutoff )
+                _col->push( MethodOop( obj ) );
+    }
 };
 
 
-static int compare_method_counters( MethodOop * a, MethodOop * b ) {
+static int compare_method_counters( MethodOop *a, MethodOop *b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -288,8 +287,8 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    ResourceMark              rm;
-    GrowableArray <MethodOop> * col = new GrowableArray <MethodOop>( 1024 );
+    ResourceMark rm;
+    GrowableArray<MethodOop> *col = new GrowableArray<MethodOop>( 1024 );
 
     // Collect the methods
     CollectMethodClosure blk( col, SMIOop( size )->value() );
@@ -331,7 +330,7 @@ PRIM_DECL_0( debugPrimitives::clearNativeMethodCounters ) {
 }
 
 
-static int compare_NativeMethod_counters( NativeMethod ** a, NativeMethod ** b ) {
+static int compare_NativeMethod_counters( NativeMethod **a, NativeMethod **b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -341,8 +340,8 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    ResourceMark                   rm;
-    GrowableArray <NativeMethod *> * col = new GrowableArray <NativeMethod *>( 1024 );
+    ResourceMark                  rm;
+    GrowableArray<NativeMethod *> *col = new GrowableArray<NativeMethod *>( 1024 );
     // Collect the nativeMethods
     FOR_ALL_NMETHOD( nm )col->push( nm );
 
@@ -354,7 +353,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     int end = ( col->length() > SMIOop( size )->value() ) ? SMIOop( size )->value() : col->length();
 
     for ( int i = 0; i < end; i++ ) {
-        NativeMethod * m = col->at( i );
+        NativeMethod *m = col->at( i );
         _console->print( "[%d] ", m->invocation_count() );
         m->scopes()->print_partition();
         m->method()->pretty_print();
@@ -365,23 +364,23 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
 
 
 class SumMethodInvocationClosure : public ObjectClosure {
-    private:
-        int sum;
-    public:
-        SumMethodInvocationClosure() {
-            sum = 0;
-        }
+private:
+    int sum;
+public:
+    SumMethodInvocationClosure() {
+        sum = 0;
+    }
 
 
-        void do_object( MemOop obj ) {
-            if ( obj->is_method() )
-                sum += MethodOop( obj )->invocation_count();
-        }
+    void do_object( MemOop obj ) {
+        if ( obj->is_method() )
+            sum += MethodOop( obj )->invocation_count();
+    }
 
 
-        int result() {
-            return sum;
-        }
+    int result() {
+        return sum;
+    }
 };
 
 
@@ -434,78 +433,78 @@ PRIM_DECL_0( debugPrimitives::printPrimitiveCounters ) {
 
 
 class Counter : public ResourceObject {
-    public:
-        const char * title;
-        int        total_size;
-        int        number;
+public:
+    const char *title;
+    int total_size;
+    int number;
 
 
-        Counter( const char * t ) {
-            title      = t;
-            total_size = 0;
-            number     = 0;
-        }
+    Counter( const char *t ) {
+        title      = t;
+        total_size = 0;
+        number     = 0;
+    }
 
 
-        void update( MemOop obj ) {
-            total_size += obj->size();
-            number++;
-        }
+    void update( MemOop obj ) {
+        total_size += obj->size();
+        number++;
+    }
 
 
-        void print( const char * prefix ) {
-            _console->print( "%s%s", prefix, title );
-            _console->fill_to( 22 );
-            _console->print_cr( "%6d %8d", number, total_size * oopSize );
-        }
+    void print( const char *prefix ) {
+        _console->print( "%s%s", prefix, title );
+        _console->fill_to( 22 );
+        _console->print_cr( "%6d %8d", number, total_size * oopSize );
+    }
 
 
-        void add( Counter * i ) {
-            total_size += i->total_size;
-            number += i->number;
-        }
+    void add( Counter *i ) {
+        total_size += i->total_size;
+        number += i->number;
+    }
 
 
-        static int compare( Counter ** a, Counter ** b ) {
-            return ( *b )->total_size - ( *a )->total_size;
-        }
+    static int compare( Counter **a, Counter **b ) {
+        return ( *b )->total_size - ( *a )->total_size;
+    }
 };
 
 class ObjectHistogram : public ObjectClosure {
-    private:
-        Counter                   * doubles;
-        Counter                   * blocks;
-        Counter                   * objArrays;
-        Counter                   * symbols;
-        Counter                   * byteArrays;
-        Counter                   * doubleByteArrays;
-        Counter                   * klasses;
-        Counter                   * processes;
-        Counter                   * vframes;
-        Counter                   * methods;
-        Counter                   * proxies;
-        Counter                   * mixins;
-        Counter                   * associations;
-        Counter                   * contexts;
-        Counter                   * memOops;
-        GrowableArray <Counter *> * counters;
-    public:
-        ObjectHistogram();
+private:
+    Counter *doubles;
+    Counter *blocks;
+    Counter *objArrays;
+    Counter *symbols;
+    Counter *byteArrays;
+    Counter *doubleByteArrays;
+    Counter *klasses;
+    Counter *processes;
+    Counter *vframes;
+    Counter *methods;
+    Counter *proxies;
+    Counter *mixins;
+    Counter *associations;
+    Counter *contexts;
+    Counter *memOops;
+    GrowableArray<Counter *> *counters;
+public:
+    ObjectHistogram();
 
-        Counter * counter( MemOop obj );
-
-
-        void do_object( MemOop obj ) {
-            counter( obj )->update( obj );
-        }
+    Counter *counter( MemOop obj );
 
 
-        void print();
+    void do_object( MemOop obj ) {
+        counter( obj )->update( obj );
+    }
+
+
+    void print();
 };
 
 
 ObjectHistogram::ObjectHistogram() {
-    counters = new GrowableArray <Counter *>( 20 );
+    counters = new GrowableArray<Counter *>( 20 );
     counters->push( doubles          = new Counter( "doubles" ) );
     counters->push( blocks           = new Counter( "blocks" ) );
     counters->push( objArrays        = new Counter( "arrays" ) );
@@ -524,7 +523,7 @@ ObjectHistogram::ObjectHistogram() {
 }
 
 
-Counter * ObjectHistogram::counter( MemOop obj ) {
+Counter *ObjectHistogram::counter( MemOop obj ) {
     if ( obj->is_double() )
         return doubles;
     if ( obj->is_block() )
@@ -561,11 +560,11 @@ void ObjectHistogram::print() {
     _console->print( "Object Histogram" );
     _console->fill_to( 22 );
     _console->print_cr( "number    bytes" );
-    Counter * total = new Counter( "Total" );
+    Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
 
     for ( int i = 0; i < counters->length(); i++ ) {
-        Counter * c = counters->at( i );
+        Counter *c = counters->at( i );
         if ( c->number > 0 ) {
             c->print( " - " );
             total->add( c );

@@ -17,41 +17,41 @@ class CompiledVirtualFrame;
 
 class UnwindInfo : public StackAllocatedObject {
 
-    private:
-        // NonLocalReturn state
-        int        _nlr_home;
-        int        _nlr_home_id;
-        ContextOop _nlr_home_context;
+private:
+    // NonLocalReturn state
+    int        _nlr_home;
+    int        _nlr_home_id;
+    ContextOop _nlr_home_context;
 
-    public:
-        Oop _nlr_result;
+public:
+    Oop _nlr_result;
 
-    private:
+private:
 
-        bool_t _is_compiled;
+    bool_t _is_compiled;
 
-        // Link to next unwindinfo
-        UnwindInfo * _next;
+    // Link to next unwindinfo
+    UnwindInfo *_next;
 
-        // Return address patch state
-        char * saved_C_frame_return_addr;                //
-        char ** saved_C_frame_return_addr_location;      //
-        char * saved_patch_return_address;               //
+    // Return address patch state
+    char *saved_C_frame_return_addr;                //
+    char **saved_C_frame_return_addr_location;      //
+    char *saved_patch_return_address;               //
 
-    public:
-        UnwindInfo();
+public:
+    UnwindInfo();
 
-        ~UnwindInfo();
+    ~UnwindInfo();
 
-        UnwindInfo * next() const;
+    UnwindInfo *next() const;
 
-        void set_next( UnwindInfo * next );
+    void set_next( UnwindInfo *next );
 
-        int nlr_home() const;
+    int nlr_home() const;
 
-        int nlr_home_id() const;
+    int nlr_home_id() const;
 
-        ContextOop nlr_home_context() const;
+    ContextOop nlr_home_context() const;
 
-        void update_nlr_targets( CompiledVirtualFrame * f, ContextOop con );
+    void update_nlr_targets( CompiledVirtualFrame *f, ContextOop con );
 };

@@ -20,12 +20,12 @@
 
 class SavedRegisters : AllStatic {
 
-    public:
-        static Oop fetch( int register_number, int * frame_pointer );
+public:
+    static Oop fetch( int register_number, int *frame_pointer );
 
-        static void clear();
+    static void clear();
 
 //  static void save_registers();
-        static void generate_save_registers( MacroAssembler * masm );
+    static void generate_save_registers( MacroAssembler *masm );
 
 };

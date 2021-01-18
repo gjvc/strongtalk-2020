@@ -17,11 +17,11 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-ProfiledNode ** FlatProfiler::_table = nullptr;
+ProfiledNode **FlatProfiler::_table = nullptr;
 int          FlatProfiler::_tableSize = 1024;
 
-DeltaProcess     * FlatProfiler::_deltaProcess     = nullptr;
-FlatProfilerTask * FlatProfiler::_flatProfilerTask = nullptr;
+DeltaProcess     *FlatProfiler::_deltaProcess     = nullptr;
+FlatProfilerTask *FlatProfiler::_flatProfilerTask = nullptr;
 Timer             FlatProfiler::_timer;
 
 int FlatProfiler::_gc_ticks        = 0;
@@ -35,300 +35,300 @@ static constexpr int col3 = 30;    // position of output column 3
 static constexpr int col4 = 55;    // position of output column 4
 
 class TickCounter {
-    public:
-        int ticks_in_code;
-        int ticks_in_primitives;
-        int ticks_in_compiler;
-        int ticks_in_pics;
-        int ticks_in_other;
+public:
+    int ticks_in_code;
+    int ticks_in_primitives;
+    int ticks_in_compiler;
+    int ticks_in_pics;
+    int ticks_in_other;
 
 
-        TickCounter() {
-            ticks_in_code       = 0;
-            ticks_in_primitives = 0;
-            ticks_in_compiler   = 0;
-            ticks_in_pics       = 0;
-            ticks_in_other      = 0;
+    TickCounter() {
+        ticks_in_code       = 0;
+        ticks_in_primitives = 0;
+        ticks_in_compiler   = 0;
+        ticks_in_pics       = 0;
+        ticks_in_other      = 0;
+    }
+
+
+    int total() const {
+        return ticks_in_code + ticks_in_primitives + ticks_in_compiler + ticks_in_pics + ticks_in_other;
+    }
+
+
+    void add( TickCounter *a ) {
+        ticks_in_code += a->ticks_in_code;
+        ticks_in_primitives += a->ticks_in_primitives;
+        ticks_in_compiler += a->ticks_in_compiler;
+        ticks_in_pics += a->ticks_in_pics;
+        ticks_in_other += a->ticks_in_other;
+    }
+
+
+    void update( TickPosition where ) {
+        switch ( where ) {
+            case TickPosition::in_code:
+                ticks_in_code++;
+                break;
+            case TickPosition::in_primitive:
+                ticks_in_primitives++;
+                break;
+            case TickPosition::in_compiler:
+                ticks_in_compiler++;
+                break;
+            case TickPosition::in_pic:
+                ticks_in_pics++;
+                break;
+            case TickPosition::other:
+                ticks_in_other++;
+                break;
         }
+    }
 
 
-        int total() const {
-            return ticks_in_code + ticks_in_primitives + ticks_in_compiler + ticks_in_pics + ticks_in_other;
-        }
+    void print_code( ConsoleOutputStream *stream, int total_ticks ) {
+        stream->print( "%5.1f%% %3d ", total() * 100.0 / total_ticks, ticks_in_code );
+    }
 
 
-        void add( TickCounter * a ) {
-            ticks_in_code += a->ticks_in_code;
-            ticks_in_primitives += a->ticks_in_primitives;
-            ticks_in_compiler += a->ticks_in_compiler;
-            ticks_in_pics += a->ticks_in_pics;
-            ticks_in_other += a->ticks_in_other;
-        }
-
-
-        void update( TickPosition where ) {
-            switch ( where ) {
-                case TickPosition::in_code:
-                    ticks_in_code++;
-                    break;
-                case TickPosition::in_primitive:
-                    ticks_in_primitives++;
-                    break;
-                case TickPosition::in_compiler:
-                    ticks_in_compiler++;
-                    break;
-                case TickPosition::in_pic:
-                    ticks_in_pics++;
-                    break;
-                case TickPosition::other:
-                    ticks_in_other++;
-                    break;
-            }
-        }
-
-
-        void print_code( ConsoleOutputStream * stream, int total_ticks ) {
-            stream->print( "%5.1f%% %3d ", total() * 100.0 / total_ticks, ticks_in_code );
-        }
-
-
-        void print_other( ConsoleOutputStream * stream ) {
-            if ( ticks_in_primitives > 0 )
-                stream->print( "prim=%d ", ticks_in_primitives );
-            if ( ticks_in_compiler > 0 )
-                stream->print( "comp=%d ", ticks_in_compiler );
-            if ( ticks_in_pics > 0 )
-                stream->print( "pics=%d ", ticks_in_pics );
-            if ( ticks_in_other > 0 )
-                stream->print( "other=%d ", ticks_in_other );
-        }
+    void print_other( ConsoleOutputStream *stream ) {
+        if ( ticks_in_primitives > 0 )
+            stream->print( "prim=%d ", ticks_in_primitives );
+        if ( ticks_in_compiler > 0 )
+            stream->print( "comp=%d ", ticks_in_compiler );
+        if ( ticks_in_pics > 0 )
+            stream->print( "pics=%d ", ticks_in_pics );
+        if ( ticks_in_other > 0 )
+            stream->print( "other=%d ", ticks_in_other );
+    }
 };
 
 class ProfiledNode : public CHeapAllocatedObject {
 
-    private:
-        ProfiledNode * _next;
+private:
+    ProfiledNode *_next;
 
-    public:
-        TickCounter ticks;
+public:
+    TickCounter ticks;
 
-    public:
-        ProfiledNode() {
-            _next = nullptr;
+public:
+    ProfiledNode() {
+        _next = nullptr;
+    }
+
+
+    ~ProfiledNode() {
+        if ( _next )
+            delete _next;
+    }
+
+
+    void set_next( ProfiledNode *n ) {
+        _next = n;
+    }
+
+
+    ProfiledNode *next() {
+        return _next;
+    }
+
+
+    void update( TickPosition where ) {
+        ticks.update( where );
+    }
+
+
+    int total_ticks() {
+        return ticks.total();
+    }
+
+
+    virtual bool_t is_interpreted() const {
+        return false;
+    }
+
+
+    virtual bool_t is_compiled() const {
+        return false;
+    }
+
+
+    virtual bool_t match( MethodOop m, KlassOop k ) {
+        return false;
+    }
+
+
+    virtual bool_t match( NativeMethod *nm ) {
+        return false;
+    }
+
+
+    static void print_title( ConsoleOutputStream *stream ) {
+        stream->fill_to( col2 );
+        stream->print( "Receiver" );
+        stream->fill_to( col3 );
+        stream->print( "Method" );
+        stream->fill_to( col4 );
+        stream->print_cr( "Leaf ticks" );
+    }
+
+
+    static void print_total( ConsoleOutputStream *stream, TickCounter *t, int total, const char *msg ) {
+        t->print_code( stream, total );
+        stream->print( msg );
+        stream->fill_to( col4 );
+        t->print_other( stream );
+        stream->cr();
+    }
+
+
+    virtual MethodOop method() = 0;
+
+    virtual KlassOop receiver_klass() = 0;
+
+
+    void print_receiver_klass_on( ConsoleOutputStream *stream ) {
+        receiver_klass()->klass_part()->print_name_on( stream );
+    }
+
+
+    virtual void print_method_on( ConsoleOutputStream *stream ) {
+        MethodOop m = method();
+        if ( m->is_blockMethod() ) {
+            stream->print( "[] " );
+            m->enclosing_method_selector()->print_symbol_on( stream );
+        } else {
+            m->selector()->print_symbol_on( stream );
         }
 
-
-        ~ProfiledNode() {
-            if ( _next )
-                delete _next;
-        }
-
-
-        void set_next( ProfiledNode * n ) {
-            _next = n;
-        }
-
-
-        ProfiledNode * next() {
-            return _next;
-        }
-
-
-        void update( TickPosition where ) {
-            ticks.update( where );
-        }
-
-
-        int total_ticks() {
-            return ticks.total();
-        }
-
-
-        virtual bool_t is_interpreted() const {
-            return false;
-        }
-
-
-        virtual bool_t is_compiled() const {
-            return false;
-        }
-
-
-        virtual bool_t match( MethodOop m, KlassOop k ) {
-            return false;
-        }
-
-
-        virtual bool_t match( NativeMethod * nm ) {
-            return false;
-        }
-
-
-        static void print_title( ConsoleOutputStream * stream ) {
-            stream->fill_to( col2 );
-            stream->print( "Receiver" );
-            stream->fill_to( col3 );
-            stream->print( "Method" );
-            stream->fill_to( col4 );
-            stream->print_cr( "Leaf ticks" );
-        }
-
-
-        static void print_total( ConsoleOutputStream * stream, TickCounter * t, int total, const char * msg ) {
-            t->print_code( stream, total );
-            stream->print( msg );
-            stream->fill_to( col4 );
-            t->print_other( stream );
-            stream->cr();
-        }
-
-
-        virtual MethodOop method() = 0;
-
-        virtual KlassOop receiver_klass() = 0;
-
-
-        void print_receiver_klass_on( ConsoleOutputStream * stream ) {
-            receiver_klass()->klass_part()->print_name_on( stream );
-        }
-
-
-        virtual void print_method_on( ConsoleOutputStream * stream ) {
-            MethodOop m = method();
-            if ( m->is_blockMethod() ) {
-                stream->print( "[] " );
-                m->enclosing_method_selector()->print_symbol_on( stream );
-            } else {
-                m->selector()->print_symbol_on( stream );
+        if ( ProfilerShowMethodHolder ) {
+            KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
+            if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
+                _console->print( ", in " );
+                method_holder->klass_part()->print_name_on( _console );
             }
-
-            if ( ProfilerShowMethodHolder ) {
-                KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
-                if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
-                    _console->print( ", in " );
-                    method_holder->klass_part()->print_name_on( _console );
-                }
-            }
         }
+    }
 
 
-        virtual void print( ConsoleOutputStream * stream, int total_ticks ) {
-            ticks.print_code( stream, total_ticks );
-            stream->fill_to( col2 );
-            print_receiver_klass_on( stream );
-            stream->fill_to( col3 );
+    virtual void print( ConsoleOutputStream *stream, int total_ticks ) {
+        ticks.print_code( stream, total_ticks );
+        stream->fill_to( col2 );
+        print_receiver_klass_on( stream );
+        stream->fill_to( col3 );
 
-            print_method_on( stream );
-            stream->fill_to( col4 );
+        print_method_on( stream );
+        stream->fill_to( col4 );
 
-            ticks.print_other( stream );
-            stream->cr();
-        }
+        ticks.print_other( stream );
+        stream->cr();
+    }
 
 
-        // for sorting
-        static int compare( ProfiledNode ** a, ProfiledNode ** b ) {
-            return ( *b )->total_ticks() - ( *a )->total_ticks();
-        }
+    // for sorting
+    static int compare( ProfiledNode **a, ProfiledNode **b ) {
+        return ( *b )->total_ticks() - ( *a )->total_ticks();
+    }
 };
 
 class InterpretedNode : public ProfiledNode {
-    private:
-        MethodOop _method;
-        KlassOop  _receiver_klass;
-    public:
-        InterpretedNode( MethodOop method, KlassOop receiver_klass, TickPosition where ) :
+private:
+    MethodOop _method;
+    KlassOop  _receiver_klass;
+public:
+    InterpretedNode( MethodOop method, KlassOop receiver_klass, TickPosition where ) :
             ProfiledNode() {
-            _method         = method;
-            _receiver_klass = receiver_klass;
-            update( where );
-        }
+        _method         = method;
+        _receiver_klass = receiver_klass;
+        update( where );
+    }
 
 
-        bool_t is_interpreted() const {
-            return true;
-        }
+    bool_t is_interpreted() const {
+        return true;
+    }
 
 
-        bool_t match( MethodOop m, KlassOop k ) {
-            return _method == m and _receiver_klass == k;
-        }
+    bool_t match( MethodOop m, KlassOop k ) {
+        return _method == m and _receiver_klass == k;
+    }
 
 
-        MethodOop method() {
-            return _method;
-        }
+    MethodOop method() {
+        return _method;
+    }
 
 
-        KlassOop receiver_klass() {
-            return _receiver_klass;
-        }
+    KlassOop receiver_klass() {
+        return _receiver_klass;
+    }
 
 
-        static void print_title( ConsoleOutputStream * stream ) {
-            stream->print( "       Int" );
-            ProfiledNode::print_title( stream );
-        }
+    static void print_title( ConsoleOutputStream *stream ) {
+        stream->print( "       Int" );
+        ProfiledNode::print_title( stream );
+    }
 
 
-        void print( ConsoleOutputStream * stream, int total_ticks ) {
-            ProfiledNode::print( stream, total_ticks );
-        }
+    void print( ConsoleOutputStream *stream, int total_ticks ) {
+        ProfiledNode::print( stream, total_ticks );
+    }
 };
 
 class CompiledNode : public ProfiledNode {
 
-    private:
-        NativeMethod * _nativeMethod;
+private:
+    NativeMethod *_nativeMethod;
 
-    public:
-        CompiledNode( NativeMethod * nm, TickPosition where ) :
+public:
+    CompiledNode( NativeMethod *nm, TickPosition where ) :
             ProfiledNode() {
-            this->_nativeMethod = nm;
-            update( where );
+        this->_nativeMethod = nm;
+        update( where );
+    }
+
+
+    bool_t is_compiled() const {
+        return true;
+    }
+
+
+    bool_t match( NativeMethod *m ) {
+        return _nativeMethod == m;
+    }
+
+
+    MethodOop method() {
+        return _nativeMethod->method();
+    }
+
+
+    KlassOop receiver_klass() {
+        return _nativeMethod->receiver_klass();
+    }
+
+
+    static void print_title( ConsoleOutputStream *stream ) {
+        stream->print( "       Opt" );
+        ProfiledNode::print_title( stream );
+    }
+
+
+    void print( ConsoleOutputStream *stream, int total_ticks ) {
+        ProfiledNode::print( stream, total_ticks );
+    }
+
+
+    void print_method_on( ConsoleOutputStream *stream ) {
+        if ( _nativeMethod->isUncommonRecompiled() ) {
+            stream->print( "Uncommom recompiled " );
         }
-
-
-        bool_t is_compiled() const {
-            return true;
+        ProfiledNode::print_method_on( stream );
+        if ( CompilerDebug ) {
+            stream->print( " %#x ", _nativeMethod );
         }
-
-
-        bool_t match( NativeMethod * m ) {
-            return _nativeMethod == m;
-        }
-
-
-        MethodOop method() {
-            return _nativeMethod->method();
-        }
-
-
-        KlassOop receiver_klass() {
-            return _nativeMethod->receiver_klass();
-        }
-
-
-        static void print_title( ConsoleOutputStream * stream ) {
-            stream->print( "       Opt" );
-            ProfiledNode::print_title( stream );
-        }
-
-
-        void print( ConsoleOutputStream * stream, int total_ticks ) {
-            ProfiledNode::print( stream, total_ticks );
-        }
-
-
-        void print_method_on( ConsoleOutputStream * stream ) {
-            if ( _nativeMethod->isUncommonRecompiled() ) {
-                stream->print( "Uncommom recompiled " );
-            }
-            ProfiledNode::print_method_on( stream );
-            if ( CompilerDebug ) {
-                stream->print( " %#x ", _nativeMethod );
-            }
-        }
+    }
 };
 
 
@@ -343,7 +343,7 @@ void FlatProfiler::interpreted_update( MethodOop method, KlassOop klass, TickPos
     if ( not _table[ index ] ) {
         _table[ index ] = new InterpretedNode( method, klass, where );
     } else {
-        for ( ProfiledNode * node = _table[ index ]; node; node = node->next() ) {
+        for ( ProfiledNode *node = _table[ index ]; node; node = node->next() ) {
             if ( node->match( method, klass ) ) {
                 node->update( where );
                 return;
@@ -355,12 +355,12 @@ void FlatProfiler::interpreted_update( MethodOop method, KlassOop klass, TickPos
 }
 
 
-void FlatProfiler::compiled_update( NativeMethod * nm, TickPosition where ) {
+void FlatProfiler::compiled_update( NativeMethod *nm, TickPosition where ) {
     int index = entry( nm->_mainId.major() );
     if ( not _table[ index ] ) {
         _table[ index ] = new CompiledNode( nm, where );
     } else {
-        for ( ProfiledNode * node = _table[ index ]; node; node = node->next() ) {
+        for ( ProfiledNode *node = _table[ index ]; node; node = node->next() ) {
             if ( node->match( nm ) ) {
                 node->update( where );
                 return;
@@ -373,13 +373,13 @@ void FlatProfiler::compiled_update( NativeMethod * nm, TickPosition where ) {
 
 
 class FlatProfilerTask : public PeriodicTask {
-    public:
-        FlatProfilerTask( int interval_time ) :
+public:
+    FlatProfilerTask( int interval_time ) :
             PeriodicTask( interval_time ) {
-        }
+    }
 
 
-        void task();
+    void task();
 };
 
 
@@ -410,8 +410,8 @@ void FlatProfiler::record_tick_for_running_frame( Frame fr ) {
         FlatProfiler::compiled_update( findNativeMethod( fr.pc() ), TickPosition::in_code );
 
     } else if ( PolymorphicInlineCache::in_heap( fr.pc() ) ) {
-        PolymorphicInlineCache * pic = PolymorphicInlineCache::find( fr.pc() );
-        FlatProfiler::compiled_update( findNativeMethod( ( const char * ) pic->compiled_ic() ), TickPosition::in_pic );
+        PolymorphicInlineCache *pic = PolymorphicInlineCache::find( fr.pc() );
+        FlatProfiler::compiled_update( findNativeMethod( (const char *) pic->compiled_ic() ), TickPosition::in_pic );
 
     } else if ( StubRoutines::contains( fr.pc() ) ) {
         FlatProfiler::_stub_ticks++;
@@ -432,13 +432,13 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
             return;
         st_assert( method->is_method(), "must be method" );
         int byteCodeIndex = method->byteCodeIndex_from( fr.hp() );
-        if ( ByteCodes::code_type( ( ByteCodes::Code ) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::primitive_call ) {
+        if ( ByteCodes::code_type( (ByteCodes::Code) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::primitive_call ) {
             where = TickPosition::in_primitive;
         }
         FlatProfiler::interpreted_update( method, fr.receiver()->klass(), where );
 
     } else if ( fr.is_compiled_frame() ) {
-        NativeMethod * nm = findNativeMethod( fr.pc() );
+        NativeMethod *nm = findNativeMethod( fr.pc() );
         RelocationInformationIterator iter( nm );
         while ( iter.next() ) {
             if ( iter.is_call() and iter.call_end() == fr.pc() ) {
@@ -481,7 +481,7 @@ void FlatProfiler::record_tick() {
 
     {
         FlagSetting( processSemaphore, true );
-        DeltaProcess * p = DeltaProcess::active();
+        DeltaProcess *p = DeltaProcess::active();
         if ( p->last_Delta_fp() ) {
             record_tick_for_calling_frame( p->last_frame() );
         } else {
@@ -492,7 +492,7 @@ void FlatProfiler::record_tick() {
 
 
 void FlatProfiler::allocate_table() {
-    _table = new_c_heap_array <ProfiledNode *>( _tableSize );
+    _table = new_c_heap_array<ProfiledNode *>( _tableSize );
     for ( int i = 0; i < _tableSize; i++ )
         _table[ i ] = nullptr;
 }
@@ -503,7 +503,7 @@ void FlatProfiler::reset() {
     _flatProfilerTask = nullptr;
 
     for ( int i = 0; i < _tableSize; i++ ) {
-        ProfiledNode * n = _table[ i ];
+        ProfiledNode *n = _table[ i ];
         if ( n ) {
             delete n;
             _table[ i ] = nullptr;
@@ -518,7 +518,7 @@ void FlatProfiler::reset() {
 }
 
 
-void FlatProfiler::engage( DeltaProcess * p ) {
+void FlatProfiler::engage( DeltaProcess *p ) {
     _deltaProcess = p;
     if ( _flatProfilerTask == nullptr ) {
         _flatProfilerTask = new FlatProfilerTask( 10 );
@@ -528,14 +528,14 @@ void FlatProfiler::engage( DeltaProcess * p ) {
 }
 
 
-DeltaProcess * FlatProfiler::disengage() {
+DeltaProcess *FlatProfiler::disengage() {
     if ( not _flatProfilerTask )
         return nullptr;
     _flatProfilerTask->deroll();
     delete _flatProfilerTask;
     _flatProfilerTask = nullptr;
     _timer.stop();
-    DeltaProcess * p = process();
+    DeltaProcess *p = process();
     _deltaProcess = nullptr;
     return _deltaProcess;
 }
@@ -546,14 +546,14 @@ bool_t FlatProfiler::is_active() {
 }
 
 
-static int compare_nodes( const void * p1, const void * p2 ) {
-    ProfiledNode ** pn1 = ( ProfiledNode ** ) p1;
-    ProfiledNode ** pn2 = ( ProfiledNode ** ) p2;
+static int compare_nodes( const void *p1, const void *p2 ) {
+    ProfiledNode **pn1 = (ProfiledNode **) p1;
+    ProfiledNode **pn2 = (ProfiledNode **) p2;
     return ( *pn2 )->total_ticks() - ( *pn1 )->total_ticks();
 }
 
 
-void print_ticks( const char * title, int ticks, int total ) {
+void print_ticks( const char *title, int ticks, int total ) {
     if ( ticks > 0 )
         _console->print_cr( "total [%5.1f%%]  ticks [%3d]  title [%s]", ticks * 100.0 / total, ticks, title );
 }
@@ -564,10 +564,10 @@ void FlatProfiler::print( int cutoff ) {
     ResourceMark resourceMark;
     double       secs = _timer.seconds();
 
-    GrowableArray <ProfiledNode *> * array = new GrowableArray <ProfiledNode *>( 200 );
+    GrowableArray<ProfiledNode *> *array = new GrowableArray<ProfiledNode *>( 200 );
 
     for ( int i = 0; i < _tableSize; i++ ) {
-        for ( ProfiledNode * node = _table[ i ]; node; node = node->next() )
+        for ( ProfiledNode *node = _table[ i ]; node; node = node->next() )
             array->append( node );
     }
 
@@ -590,7 +590,7 @@ void FlatProfiler::print( int cutoff ) {
     int    index                 = 0;
 
     for ( ; index < array->length(); index++ ) {
-        ProfiledNode * n = array->at( index );
+        ProfiledNode *n = array->at( index );
         if ( n->is_interpreted() ) {
             interpreted_ticks.add( &n->ticks );
             if ( not has_interpreted_ticks ) {
@@ -622,7 +622,7 @@ void FlatProfiler::print( int cutoff ) {
     TickCounter compiled_ticks;
 
     for ( int i = 0; i < array->length(); i++ ) {
-        ProfiledNode * n = array->at( i );
+        ProfiledNode *n = array->at( i );
         if ( n->is_compiled() ) {
             compiled_ticks.add( &n->ticks );
             if ( not has_compiled_ticks ) {

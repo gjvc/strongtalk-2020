@@ -12,11 +12,11 @@
 
 
 void initializeSmalltalkEnvironment();
-void setProcessRefs( DeltaProcess * process, ProcessOop processObj );
-void start_vm_process( TestDeltaProcess * testProcess );
+void setProcessRefs( DeltaProcess *process, ProcessOop processObj );
+void start_vm_process( TestDeltaProcess *testProcess );
 void stop_vm_process();
 
-extern TestDeltaProcess * testProcess;
-extern VMProcess        * vmProcess;
-extern Thread           * vmThread;
-extern Event            * done;
+extern TestDeltaProcess *testProcess;
+extern VMProcess        *vmProcess;
+extern Thread           *vmThread;
+extern Event            *done;

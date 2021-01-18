@@ -25,7 +25,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceByteArrayPrims, "byteArray" )
 
 
@@ -45,10 +44,10 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
 
     KlassOop k        = KlassOop( receiver );
     int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument)->value(), oopSize ) / oopSize;
+    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value(), oopSize ) / oopSize;
 
     // allocate
-    ByteArrayOop obj = as_byteArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    ByteArrayOop obj = as_byteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
 
     // header
     MemOop( obj )->initialize_header( true, k );
@@ -57,15 +56,15 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
 
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = argument;
     // %optimized 'for (int index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'
     base = &base[ ni_size + 1 ];
     while ( base < end )
-        *base++ = ( Oop ) 0;
+        *base++ = (Oop) 0;
     return obj;
 }
 
@@ -88,8 +87,8 @@ PRIM_DECL_3( byteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop
     if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    MemOopKlass * theKlass = ( MemOopKlass * ) KlassOop( receiver )->klass_part();
-    Oop         result     = theKlass->allocateObjectSize( SMIOop( argument )->value(), false, tenured == trueObj );
+    MemOopKlass *theKlass = (MemOopKlass *) KlassOop( receiver )->klass_part();
+    Oop result = theKlass->allocateObjectSize( SMIOop( argument )->value(), false, tenured == trueObj );
     if ( result == nullptr )
         return markSymbol( vmSymbols::failed_allocation() );
 
@@ -147,7 +146,7 @@ PRIM_DECL_3( byteArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value range (must be byte)
-    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -211,7 +210,7 @@ PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check value range (must be byte)
-    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -243,8 +242,8 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oo
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
-    int          i = SMIOop( number )->value();
-    ByteArrayOop z;
+    int           i = SMIOop( number )->value();
+    ByteArrayOop  z;
 
     z = ByteArrayOop( KlassOop( receiver )->klass_part()->allocateObjectSize( IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) );
     IntegerOps::int_to_Integer( i, z->number() );
@@ -261,8 +260,8 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromDouble, Oop receiver, Oop numb
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
-    double       x = DoubleOop( number )->value();
-    ByteArrayOop z;
+    double        x = DoubleOop( number )->value();
+    ByteArrayOop  z;
 
     z = ByteArrayOop( KlassOop( receiver )->klass_part()->allocateObjectSize( IntegerOps::double_to_Integer_result_size_in_bytes( x ) ) );
     IntegerOps::double_to_Integer( x, z->number() );
@@ -342,8 +341,8 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerSubtract, Oop receiver, Oop argume
 
 
 PRIM_DECL_2( byteArrayPrimitives::largeIntegerMultiply, Oop
-    receiver, Oop
-                 argument ) {
+        receiver, Oop
+                     argument ) {
     PROLOGUE_2( "largeIntegerMultiply", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -520,15 +519,15 @@ PRIM_DECL_1( byteArrayPrimitives::largeIntegerHash, Oop receiver ) {
 
 
 PRIM_DECL_1( byteArrayPrimitives::hash, Oop
-    receiver ) {
+        receiver ) {
     PROLOGUE_1( "hash", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( ByteArrayOop( receiver )->hash_value() );
 }
 
 
-PersistentHandle * _largeIntegerClass = nullptr;
-PersistentHandle * _unsafeAlienClass  = nullptr;
+PersistentHandle *_largeIntegerClass = nullptr;
+PersistentHandle *_unsafeAlienClass  = nullptr;
 
 
 KlassOop largeIntegerClass() {
@@ -685,8 +684,8 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argu
 
 
 PRIM_DECL_2( byteArrayPrimitives::alienSignedByteAt, Oop
-    receiver, Oop
-                 argument ) {
+        receiver, Oop
+                     argument ) {
     PROLOGUE_2( "alienSignedByteAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, char );
@@ -873,7 +872,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienFloatAtPut, Oop receiver, Oop argument1, 
     if ( not argument2->is_double() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    alienAt( receiver, argument1, float ) = ( float ) DoubleOop( argument2 )->value();
+    alienAt( receiver, argument1, float ) = (float) DoubleOop( argument2 )->value();
 
     return argument2;
 }
@@ -905,8 +904,8 @@ PRIM_DECL_1( byteArrayPrimitives::alienGetAddress, Oop receiver ) {
 //  if (alienSize(receiver) > 0)
 //    return markSymbol(vmSymbols::illegal_state());
 
-    std::uint32_t address = ( std::uint32_t ) alienAddress( receiver );
-    int      size    = IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( address );
+    std::uint32_t address = (std::uint32_t) alienAddress( receiver );
+    int           size    = IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( address );
 
     Oop largeInteger = Universe::find_global( "LargeInteger" );
     Oop z            = KlassOop( largeInteger )->klass_part()->allocateObjectSize( size );
@@ -932,32 +931,32 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
-    alienAddress( receiver ) = ( void * ) value;
+    alienAddress( receiver ) = (void *) value;
 
     return receiver;
 }
 
 
-typedef void ( __CALLING_CONVENTION * call_out_func_0 )( void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_0 )( void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_1 )( void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_1 )( void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_2 )( void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_2 )( void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_3 )( void *, void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_3 )( void *, void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_4 )( void *, void *, void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_4 )( void *, void *, void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_5 )( void *, void *, void *, void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_5 )( void *, void *, void *, void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_6 )( void *, void *, void *, void *, void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_6 )( void *, void *, void *, void *, void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_7 )( void *, void *, void *, void *, void *, void *, void *, void *, void * );
+typedef void ( __CALLING_CONVENTION *call_out_func_7 )( void *, void *, void *, void *, void *, void *, void *, void *, void * );
 
-typedef void ( __CALLING_CONVENTION * call_out_func_args)( void *, void *, Oop, Oop * );
+typedef void ( __CALLING_CONVENTION *call_out_func_args)( void *, void *, Oop, Oop * );
 
 
-void break_on_error( void * address, Oop result ) {
+void break_on_error( void *address, Oop result ) {
     if ( false )
         return;
     if ( not result->is_byteArray() )
@@ -981,10 +980,10 @@ PRIM_DECL_2( byteArrayPrimitives::alienCallResult0, Oop receiver, Oop argument )
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResult( argument );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument );
-    call_out_func_0  entry          = call_out_func_0( StubRoutines::alien_call_entry( 0 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument );
+    call_out_func_0 entry = call_out_func_0( StubRoutines::alien_call_entry( 0 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ) );
 
     Oop result = resultHandle->as_oop();
@@ -1000,10 +999,10 @@ PRIM_DECL_3( byteArrayPrimitives::alienCallResult1, Oop receiver, Oop argument1,
     checkAlienCalloutResultArgs( argument1 );
     checkAlienCalloutArg1( argument2 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_1  entry          = call_out_func_1( StubRoutines::alien_call_entry( 1 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_1 entry = call_out_func_1( StubRoutines::alien_call_entry( 1 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1020,10 +1019,10 @@ PRIM_DECL_4( byteArrayPrimitives::alienCallResult2, Oop receiver, Oop argument1,
     checkAlienCalloutArg1( argument2 );
     checkAlienCalloutArg2( argument3 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_2  entry          = call_out_func_2( StubRoutines::alien_call_entry( 2 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_2 entry = call_out_func_2( StubRoutines::alien_call_entry( 2 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1041,10 +1040,10 @@ PRIM_DECL_5( byteArrayPrimitives::alienCallResult3, Oop receiver, Oop argument1,
     checkAlienCalloutArg2( argument3 );
     checkAlienCalloutArg3( argument4 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_3  entry          = call_out_func_3( StubRoutines::alien_call_entry( 3 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_3 entry = call_out_func_3( StubRoutines::alien_call_entry( 3 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ), alienArg( argument4 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1063,10 +1062,10 @@ PRIM_DECL_6( byteArrayPrimitives::alienCallResult4, Oop receiver, Oop argument1,
     checkAlienCalloutArg3( argument4 );
     checkAlienCalloutArg4( argument5 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_4  entry          = call_out_func_4( StubRoutines::alien_call_entry( 4 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_4 entry = call_out_func_4( StubRoutines::alien_call_entry( 4 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ), alienArg( argument4 ), alienArg( argument5 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1086,10 +1085,10 @@ PRIM_DECL_7( byteArrayPrimitives::alienCallResult5, Oop receiver, Oop argument1,
     checkAlienCalloutArg4( argument5 );
     checkAlienCalloutArg5( argument6 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_5  entry          = call_out_func_5( StubRoutines::alien_call_entry( 5 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_5 entry = call_out_func_5( StubRoutines::alien_call_entry( 5 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ), alienArg( argument4 ), alienArg( argument5 ), alienArg( argument6 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1110,10 +1109,10 @@ PRIM_DECL_8( byteArrayPrimitives::alienCallResult6, Oop receiver, Oop argument1,
     checkAlienCalloutArg5( argument6 );
     checkAlienCalloutArg6( argument7 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_6  entry          = call_out_func_6( StubRoutines::alien_call_entry( 6 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_6 entry = call_out_func_6( StubRoutines::alien_call_entry( 6 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ), alienArg( argument4 ), alienArg( argument5 ), alienArg( argument6 ), alienArg( argument7 ) );
 
     Oop result = resultHandle->as_oop();
@@ -1124,15 +1123,15 @@ PRIM_DECL_8( byteArrayPrimitives::alienCallResult6, Oop receiver, Oop argument1,
 
 
 PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
-    receiver, Oop
-                 argument1, Oop
-                 argument2, Oop
-                 argument3, Oop
-                 argument4, Oop
-                 argument5, Oop
-                 argument6, Oop
-                 argument7, Oop
-                 argument8 ) {
+        receiver, Oop
+                     argument1, Oop
+                     argument2, Oop
+                     argument3, Oop
+                     argument4, Oop
+                     argument5, Oop
+                     argument6, Oop
+                     argument7, Oop
+                     argument8 ) {
     PROLOGUE_9( "alienCallResult7", receiver, argument1, argument2, argument3, argument4, argument5, argument6, argument7, argument8 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1144,10 +1143,10 @@ PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
     checkAlienCalloutArg6( argument7 );
     checkAlienCalloutArg7( argument8 );
 
-    PersistentHandle * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_7  entry          = call_out_func_7( StubRoutines::alien_call_entry( 7 ) );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_7 entry = call_out_func_7( StubRoutines::alien_call_entry( 7 ) );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), alienArg( argument2 ), alienArg( argument3 ), alienArg( argument4 ), alienArg( argument5 ), alienArg( argument6 ), alienArg( argument7 ), alienArg( argument8 ) );
     Oop result = resultHandle->as_oop();
     break_on_error( address, result );
@@ -1157,21 +1156,21 @@ PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
 
 
 PRIM_DECL_3( byteArrayPrimitives::alienCallResultWithArguments, Oop
-    receiver, Oop
-                 argument1, Oop
-                 argument2 ) {
+        receiver, Oop
+                     argument1, Oop
+                     argument2 ) {
     PROLOGUE_3( "alienCallResultWithArguments", receiver, argument1, argument2 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
 
-    int                length         = ObjectArrayOop( argument2 )->length();
-    for ( int          index          = 1; index <= length; index++ ) {
+    int       length = ObjectArrayOop( argument2 )->length();
+    for ( int index  = 1; index <= length; index++ ) {
         checkAlienCalloutArg( ObjectArrayOop(argument2)->obj_at(index), vmSymbols::argument_has_wrong_type() );
     }
-    PersistentHandle   * resultHandle = new PersistentHandle( argument1 );
-    call_out_func_args entry          = call_out_func_args( StubRoutines::alien_call_with_args_entry() );
+    PersistentHandle *resultHandle = new PersistentHandle( argument1 );
+    call_out_func_args entry = call_out_func_args( StubRoutines::alien_call_with_args_entry() );
 
-    void * address = alienAddress( receiver );
+    void *address = alienAddress( receiver );
     entry( address, alienResult2( resultHandle ), smiOopFromValue( length ), ObjectArrayOop( argument2 )->objs( 1 ) );
     Oop result = resultHandle->as_oop();
     break_on_error( address, result );

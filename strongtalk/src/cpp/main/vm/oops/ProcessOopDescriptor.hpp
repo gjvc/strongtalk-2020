@@ -17,61 +17,61 @@
 
 class ProcessOopDescriptor : public MemOopDescriptor {
 
-    protected:
-        DeltaProcess * _process;
+protected:
+    DeltaProcess *_process;
 
 
-        ProcessOopDescriptor * addr() {
-            return ( ProcessOopDescriptor * ) MemOopDescriptor::addr();
-        }
+    ProcessOopDescriptor *addr() {
+        return (ProcessOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-    public:
-        friend ProcessOop as_processOop( void * p );
+public:
+    friend ProcessOop as_processOop( void *p );
 
 
-        DeltaProcess * process() {
-            return addr()->_process;
-        }
+    DeltaProcess *process() {
+        return addr()->_process;
+    }
 
 
-        void set_process( DeltaProcess * p ) {
-            st_assert( Oop(p)->is_smi(), "not a smi_t" );
-            addr()->_process = p;
-        }
+    void set_process( DeltaProcess *p ) {
+        st_assert( Oop(p)->is_smi(), "not a smi_t" );
+        addr()->_process = p;
+    }
 
 
-        // Returns whether the process is alive.
-        bool_t is_live() {
-            return process() not_eq nullptr;
-        }
+    // Returns whether the process is alive.
+    bool_t is_live() {
+        return process() not_eq nullptr;
+    }
 
 
-        // Yields to the scheduling process.
-        void yield();
+    // Yields to the scheduling process.
+    void yield();
 
-        // Returns the status of the process as symbol
-        SymbolOop status_symbol();
+    // Returns the status of the process as symbol
+    SymbolOop status_symbol();
 
-        // Timing
-        double user_time();
+    // Timing
+    double user_time();
 
-        double system_time();
-
-
-        // sizing
-        static int header_size() {
-            return sizeof( ProcessOopDescriptor ) / oopSize;
-        }
+    double system_time();
 
 
-        // bootstrappingInProgress
-        void bootstrap_object( Bootstrap * stream );
+    // sizing
+    static int header_size() {
+        return sizeof( ProcessOopDescriptor ) / oopSize;
+    }
 
-        friend class ProcessKlass;
+
+    // bootstrappingInProgress
+    void bootstrap_object( Bootstrap *stream );
+
+    friend class ProcessKlass;
 };
 
 
-inline ProcessOop as_processOop( void * p ) {
+inline ProcessOop as_processOop( void *p ) {
     return ProcessOop( as_memOop( p ) );
 }

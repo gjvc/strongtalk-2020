@@ -82,49 +82,49 @@
 
 
 // Opcodes for code pattern generation/parsing
-static const char     test_opcode     = '\xa8';
-static const char     call_opcode     = '\xe8';
-static const char     jmp_opcode      = '\xe9';
+static const char          test_opcode     = '\xa8';
+static const char          call_opcode     = '\xe8';
+static const char          jmp_opcode      = '\xe9';
 static const std::uint16_t jz_opcode       = 0x840f;
 static const std::uint16_t mov_opcode      = 0x508b;
 static const std::uint16_t cmp_opcode      = 0xfa81;
-static constexpr int  cmp_opcode_size = sizeof( std::uint16_t );
+static constexpr int       cmp_opcode_size = sizeof( std::uint16_t );
 
 
 // -----------------------------------------------------------------------------
 
 // Helper routines for code pattern generation/parsing
-static inline void put_byte( char *& p, std::uint8_t b ) {
+static inline void put_byte( char *&p, std::uint8_t b ) {
     *p++ = b;
 }
 
 
-static inline void put_shrt( char *& p, std::uint16_t s ) {
-    *( std::uint16_t * ) p = s;
+static inline void put_shrt( char *&p, std::uint16_t s ) {
+    *(std::uint16_t *) p = s;
     p += sizeof( std::uint16_t );
 }
 
 
-static inline void put_word( char *& p, int w ) {
-    *( int * ) p = w;
+static inline void put_word( char *&p, int w ) {
+    *(int *) p = w;
     p += sizeof( int );
 }
 
 
-static inline void put_disp( char *& p, const char * d ) {
-    put_word( p, ( int ) ( d - p - sizeof( int ) ) );
+static inline void put_disp( char *&p, const char *d ) {
+    put_word( p, (int) ( d - p - sizeof( int ) ) );
 }
 
 
 // -----------------------------------------------------------------------------
 
-static inline int get_shrt( const char * p ) {
-    return *( std::uint16_t * ) p;
+static inline int get_shrt( const char *p ) {
+    return *(std::uint16_t *) p;
 }
 
 
-static inline const char * get_disp( const char * p ) {
-    return *( int * ) p + p + sizeof( int );
+static inline const char *get_disp( const char *p ) {
+    return *(int *) p + p + sizeof( int );
 }
 
 
@@ -133,71 +133,71 @@ static inline const char * get_disp( const char * p ) {
 
 // Structure for storing the entries of a PolymorphicInlineCache
 class PolymorphicInlineCacheContents {
-    public:
-        // smi_t case
-        char * smi_nativeMethod;
-        MethodOop smi_methodOop;
+public:
+    // smi_t case
+    char *smi_nativeMethod;
+    MethodOop smi_methodOop;
 
-        // NativeMethod entries
-        KlassOop nativeMethod_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
-        char * nativeMethods[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
-        int n;    // nativeMethods index
+    // NativeMethod entries
+    KlassOop nativeMethod_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+    char *nativeMethods[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+    int n;    // nativeMethods index
 
-        // methodOop entries
-        KlassOop  methodOop_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
-        MethodOop methodOops[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
-        int       m;    // methodOops index
+    // methodOop entries
+    KlassOop  methodOop_klasses[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+    MethodOop methodOops[static_cast<int>(PolymorphicInlineCache::Consts::max_nof_entries)];
+    int       m;    // methodOops index
 
-        void append_NativeMethod_entry( KlassOop klass, char * entry );
+    void append_NativeMethod_entry( KlassOop klass, char *entry );
 
-        void append_method( KlassOop klass, MethodOop method );
+    void append_method( KlassOop klass, MethodOop method );
 
 
-        int number_of_compiled_targets() const {
-            return ( smi_nativeMethod ? 1 : 0 ) + n;
+    int number_of_compiled_targets() const {
+        return ( smi_nativeMethod ? 1 : 0 ) + n;
+    }
+
+
+    int number_of_interpreted_targets() const {
+        return ( smi_methodOop ? 1 : 0 ) + m;
+    }
+
+
+    int number_of_targets() const {
+        return number_of_compiled_targets() + number_of_interpreted_targets();
+    }
+
+
+    bool_t has_smi_case() const {
+        return ( smi_methodOop not_eq nullptr ) or ( smi_nativeMethod not_eq nullptr );
+    }
+
+
+    bool_t has_nativeMethods() const {
+        return ( n > 0 ) or ( smi_nativeMethod not_eq nullptr );
+    }
+
+
+    int code_size() const {
+        int methodOop_size = number_of_interpreted_targets() * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size );
+        if ( has_nativeMethods() ) {
+            return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_offset ) + n * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) + methodOop_size;
+        } else {
+            return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset ) + methodOop_size;
         }
+    }
 
 
-        int number_of_interpreted_targets() const {
-            return ( smi_methodOop ? 1 : 0 ) + m;
-        }
-
-
-        int number_of_targets() const {
-            return number_of_compiled_targets() + number_of_interpreted_targets();
-        }
-
-
-        bool_t has_smi_case() const {
-            return ( smi_methodOop not_eq nullptr ) or ( smi_nativeMethod not_eq nullptr );
-        }
-
-
-        bool_t has_nativeMethods() const {
-            return ( n > 0 ) or ( smi_nativeMethod not_eq nullptr );
-        }
-
-
-        int code_size() const {
-            int methodOop_size = number_of_interpreted_targets() * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size );
-            if ( has_nativeMethods() ) {
-                return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_offset ) + n * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_size ) + methodOop_size;
-            } else {
-                return static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset ) + methodOop_size;
-            }
-        }
-
-
-        PolymorphicInlineCacheContents() {
-            smi_nativeMethod = nullptr;
-            smi_methodOop    = nullptr;
-            n                = 0;
-            m                = 0;
-        }
+    PolymorphicInlineCacheContents() {
+        smi_nativeMethod = nullptr;
+        smi_methodOop    = nullptr;
+        n                = 0;
+        m                = 0;
+    }
 };
 
 
-void PolymorphicInlineCacheContents::append_NativeMethod_entry( KlassOop klass, char * entry ) {
+void PolymorphicInlineCacheContents::append_NativeMethod_entry( KlassOop klass, char *entry ) {
     // add new entry
     if ( klass == smiKlassObj ) {
         st_assert( not has_smi_case(), "cannot overwrite smi_t case" );
@@ -226,7 +226,7 @@ void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop me
 
 // Implementation of PolymorphicInlineCache_Iterators
 
-PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache * pic ) {
+PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic ) {
     _pic = pic;
     _pos = pic->entry();
     // determine initial state
@@ -241,7 +241,7 @@ PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlin
         _pos += static_cast<int>(PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_only_offset);
     } else {
         // nativeMethods -> handle smis first
-        const char * dest = get_disp( _pos + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_smi_nativeMethodOffset ) );
+        const char *dest = get_disp( _pos + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_smi_nativeMethodOffset ) );
         if ( dest == CompiledInlineCache::normalLookupRoutine() or _pic->contains( dest ) ) {
             // no smis or smi_t case is treated in methodOop section
             _state = at_nativeMethod;
@@ -293,7 +293,7 @@ void PolymorphicInlineCacheIterator::advance() {
 }
 
 
-KlassOop * PolymorphicInlineCacheIterator::klass_addr() const {
+KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
     int offs;
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no klass stored -> no klass address available
@@ -306,11 +306,11 @@ KlassOop * PolymorphicInlineCacheIterator::klass_addr() const {
         case at_the_end: ShouldNotCallThis();            // no klass stored -> no klass address available
         default: ShouldNotReachHere();
     }
-    return ( KlassOop * ) ( _pos + offs );
+    return (KlassOop *) ( _pos + offs );
 }
 
 
-int * PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
+int *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
     int offs;
     switch ( state() ) {
         case at_smi_nativeMethod:
@@ -323,11 +323,11 @@ int * PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
         case at_the_end: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
         default: ShouldNotReachHere();
     }
-    return ( int * ) ( _pos + offs );
+    return (int *) ( _pos + offs );
 }
 
 
-MethodOop * PolymorphicInlineCacheIterator::methodOop_addr() const {
+MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
     int offs;
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
@@ -338,7 +338,7 @@ MethodOop * PolymorphicInlineCacheIterator::methodOop_addr() const {
         case at_the_end    : ShouldNotCallThis();
         default            : ShouldNotReachHere();
     }
-    return ( MethodOop * ) ( _pos + offs );
+    return (MethodOop *) ( _pos + offs );
 }
 
 
@@ -349,14 +349,14 @@ void PolymorphicInlineCacheIterator::print() {
 
 // Implementation of PICs
 
-bool_t PolymorphicInlineCache::in_heap( const char * addr ) {
+bool_t PolymorphicInlineCache::in_heap( const char *addr ) {
     return Universe::code->_picHeap->contains( addr );
 }
 
 
-PolymorphicInlineCache * PolymorphicInlineCache::find( const char * addr ) {
+PolymorphicInlineCache *PolymorphicInlineCache::find( const char *addr ) {
     if ( Universe::code->_picHeap->contains( addr ) ) {
-        PolymorphicInlineCache * result = ( PolymorphicInlineCache * ) Universe::code->_picHeap->findStartOfBlock( addr );
+        PolymorphicInlineCache *result = (PolymorphicInlineCache *) Universe::code->_picHeap->findStartOfBlock( addr );
         return result;
     }
     return nullptr;
@@ -369,9 +369,9 @@ KlassOop PolymorphicInlineCacheIterator::get_klass() const {
 }
 
 
-char * PolymorphicInlineCacheIterator::get_call_addr() const {
-    int * a = nativeMethod_disp_addr();
-    return ( char * ) a + sizeof( int ) + *a;
+char *PolymorphicInlineCacheIterator::get_call_addr() const {
+    int *a = nativeMethod_disp_addr();
+    return (char *) a + sizeof( int ) + *a;
 }
 
 
@@ -395,7 +395,7 @@ bool_t PolymorphicInlineCacheIterator::is_interpreted() const {
 }
 
 
-NativeMethod * PolymorphicInlineCacheIterator::compiled_method() const {
+NativeMethod *PolymorphicInlineCacheIterator::compiled_method() const {
     if ( not is_compiled() )
         return nullptr;
     return findNativeMethod( get_call_addr() - sizeof( NativeMethod ) );
@@ -418,10 +418,10 @@ void PolymorphicInlineCacheIterator::set_klass( KlassOop klass ) {
 }
 
 
-void PolymorphicInlineCacheIterator::set_nativeMethod( NativeMethod * nm ) {
+void PolymorphicInlineCacheIterator::set_nativeMethod( NativeMethod *nm ) {
     st_assert( get_klass() == nm->_lookupKey.klass(), "mismatched receiver klass" );
-    int * a = nativeMethod_disp_addr();
-    *a = nm->verifiedEntryPoint() - ( const char * ) a - sizeof( int );
+    int *a = nativeMethod_disp_addr();
+    *a = nm->verifiedEntryPoint() - (const char *) a - sizeof( int );
 }
 
 
@@ -430,13 +430,13 @@ void PolymorphicInlineCacheIterator::set_methodOop( MethodOop method ) {
 }
 
 
-SymbolOop * PolymorphicInlineCache::MegamorphicInlineCache_selector_address() const {
+SymbolOop *PolymorphicInlineCache::MegamorphicInlineCache_selector_address() const {
     st_assert( is_megamorphic(), "not a MIC" );
-    return ( SymbolOop * ) ( entry() + static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_selector_offset ) );
+    return (SymbolOop *) ( entry() + static_cast<int>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_selector_offset ) );
 }
 
 
-PolymorphicInlineCache * PolymorphicInlineCache::replace( NativeMethod * nm ) {
+PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
     // nothing to do in megamorphic case
     if ( is_megamorphic() )
         return this;
@@ -476,7 +476,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::replace( NativeMethod * nm ) {
 }
 
 
-PolymorphicInlineCache * PolymorphicInlineCache::cleanup( NativeMethod ** nm ) {
+PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
     // nothing to do in megamorphic case
     if ( is_megamorphic() )
         return this;
@@ -515,7 +515,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::cleanup( NativeMethod ** nm ) {
             }
         } else {
             // Compiled NativeMethod
-            NativeMethod * nm = it.compiled_method();
+            NativeMethod *nm = it.compiled_method();
             LookupResult result = LookupCache::lookup( &nm->_lookupKey );
             if ( result.matches( nm ) ) {
                 contents.append_NativeMethod_entry( it.get_klass(), it.get_call_addr() );
@@ -558,7 +558,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::cleanup( NativeMethod ** nm ) {
 }
 
 
-int PolymorphicInlineCache::nof_entries( const char * pic_stub ) {
+int PolymorphicInlineCache::nof_entries( const char *pic_stub ) {
     int i = 1;
     while ( true ) {
         if ( pic_stub == StubRoutines::PolymorphicInlineCache_stub_entry( i ) )
@@ -570,8 +570,8 @@ int PolymorphicInlineCache::nof_entries( const char * pic_stub ) {
 }
 
 
-int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, PolymorphicInlineCacheContents * c ) {
-    char * p = const_cast<char *>(entry);
+int PolymorphicInlineCache::code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c ) {
+    char *p = const_cast<char *>(entry);
     put_byte( p, call_opcode );
     if ( c->smi_methodOop == nullptr ) {
         // no smi_t methodOop
@@ -587,7 +587,7 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, Polymo
 
     }
 
-    char * p1 = p;
+    char *p1 = p;
     for ( int i = 0; i < c->m; i++ ) {
         st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
         put_word( p, int( c->methodOop_klasses[ i ] ) );
@@ -599,14 +599,14 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char * entry, Polymo
 }
 
 
-int PolymorphicInlineCache::code_for_polymorphic_case( char * entry, PolymorphicInlineCacheContents * c ) {
+int PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c ) {
 
     if ( c->has_nativeMethods() ) {
         // nativeMethods & methodOops
         // test al, MEMOOP_TAG
 
-        char * p     = entry;
-        char * fixup = nullptr;
+        char *p     = entry;
+        char *fixup = nullptr;
         put_byte( p, test_opcode );
         put_byte( p, MEMOOP_TAG );
         // jz ...
@@ -658,9 +658,9 @@ int PolymorphicInlineCache::code_for_polymorphic_case( char * entry, Polymorphic
 }
 
 
-int PolymorphicInlineCache::code_for_megamorphic_case( char * entry ) {
+int PolymorphicInlineCache::code_for_megamorphic_case( char *entry ) {
 
-    char * p = entry;
+    char *p = entry;
 
     put_byte( p, call_opcode );
     put_disp( p, StubRoutines::megamorphic_ic_entry() );
@@ -672,22 +672,22 @@ int PolymorphicInlineCache::code_for_megamorphic_case( char * entry ) {
 }
 
 
-void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache * pic, KlassOop klass, void * method ) {
+void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method ) {
     Unimplemented();
 }
 
 
-void * PolymorphicInlineCache::operator new( std::size_t size, int code_size ) {
+void *PolymorphicInlineCache::operator new( std::size_t size, int code_size ) {
     return Universe::code->_picHeap->allocate( size + code_size );
 }
 
 
-void PolymorphicInlineCache::operator delete( void * p ) {
+void PolymorphicInlineCache::operator delete( void *p ) {
     Universe::code->_picHeap->deallocate( p, 0 );
 }
 
 
-PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache * ic, KlassOop klass, LookupResult result ) {
+PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *ic, KlassOop klass, LookupResult result ) {
     st_assert( not result.is_empty(), "lookup result cannot be empty" );
 
     PolymorphicInlineCacheContents contents;
@@ -699,8 +699,8 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
         contents.append_method( klass, result.method() );
     }
 
-    PolymorphicInlineCache * old_pic          = ic->pic();
-    NativeMethod           * old_nativeMethod = ic->target();
+    PolymorphicInlineCache *old_pic          = ic->pic();
+    NativeMethod           *old_nativeMethod = ic->target();
     bool_t switch_to_MIC = false;
 
     // 3 possible cases:
@@ -743,7 +743,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
 
     st_assert( switch_to_MIC or contents.number_of_interpreted_targets() > 0 or contents.number_of_compiled_targets() > 1, "no PolymorphicInlineCache required for only 1 compiled target" );
 
-    PolymorphicInlineCache * new_pic = nullptr;
+    PolymorphicInlineCache *new_pic = nullptr;
     if ( switch_to_MIC ) {
         new_pic = new( static_cast<std::size_t>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ) ) PolymorphicInlineCache( ic );
     } else {
@@ -757,7 +757,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
 }
 
 
-PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache * ic, PolymorphicInlineCacheContents * contents, int allocated_code_size ) {
+PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, int allocated_code_size ) {
     st_assert( contents->number_of_targets() >= 1, "at least one entry needed for non-megamorphic case" );
     _ic              = ic;
     _numberOfTargets = contents->number_of_targets();
@@ -766,7 +766,7 @@ PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache * ic, Polymo
 }
 
 
-PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache * ic ) {
+PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic ) {
     _ic              = ic;
     _numberOfTargets = 0; // indicates megamorphic case
     _codeSize        = code_for_megamorphic_case( entry() );
@@ -774,9 +774,9 @@ PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache * ic ) {
 }
 
 
-GrowableArray <KlassOop> * PolymorphicInlineCache::klasses() const {
-    GrowableArray <KlassOop> * k = new GrowableArray <KlassOop>( 2 );
-    PolymorphicInlineCacheIterator it( ( PolymorphicInlineCache * ) this );
+GrowableArray<KlassOop> *PolymorphicInlineCache::klasses() const {
+    GrowableArray<KlassOop> *k = new GrowableArray<KlassOop>( 2 );
+    PolymorphicInlineCacheIterator it( (PolymorphicInlineCache *) this );
     while ( not it.at_end() ) {
         k->append( it.get_klass() );
         it.advance();
@@ -788,15 +788,15 @@ GrowableArray <KlassOop> * PolymorphicInlineCache::klasses() const {
 void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
     if ( is_megamorphic() ) {
         // cannot use PolymorphicInlineCacheIterator (0 entries) -> deal with MIC directly
-        f( ( Oop * ) MegamorphicInlineCache_selector_address() );
+        f( (Oop *) MegamorphicInlineCache_selector_address() );
     } else {
         PolymorphicInlineCacheIterator it( this );
         while ( not it.at_end() ) {
             switch ( it.state() ) {
                 case PolymorphicInlineCacheIterator::at_methodOop:
-                    f( ( Oop * ) it.methodOop_addr() );  // fall through
+                    f( (Oop *) it.methodOop_addr() );  // fall through
                 case PolymorphicInlineCacheIterator::at_nativeMethod:
-                    f( ( Oop * ) it.klass_addr() );
+                    f( (Oop *) it.klass_addr() );
             }
             it.advance();
         }
@@ -821,7 +821,7 @@ void PolymorphicInlineCache::print() {
         switch ( it.state() ) {
             case PolymorphicInlineCacheIterator::at_smi_nativeMethod: // fall through
             case PolymorphicInlineCacheIterator::at_nativeMethod:
-                printf( "\t-    NativeMethod  : %#x (entry %#x)\n", ( int ) it.compiled_method(), ( int ) it.get_call_addr() );
+                printf( "\t-    NativeMethod  : %#x (entry %#x)\n", (int) it.compiled_method(), (int) it.get_call_addr() );
                 break;
             case PolymorphicInlineCacheIterator::at_methodOop:
                 printf( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
@@ -837,7 +837,7 @@ void PolymorphicInlineCache::print() {
 void PolymorphicInlineCache::verify() {
     // check for multiple entries for same class
     ResourceMark rm;
-    GrowableArray <KlassOop> * k = klasses();
+    GrowableArray<KlassOop> *k = klasses();
 
     for ( int i = 0; i < k->length() - 1; i++ ) {
         for ( int j = i + 1; j < k->length(); j++ ) {

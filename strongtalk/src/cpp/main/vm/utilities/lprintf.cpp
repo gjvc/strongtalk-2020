@@ -13,8 +13,8 @@
 
 std::ofstream theLogFileOutputStream;
 static char   fname[256];
-const char * CURRENT_LOG_FILE  = "strongtalk.log";
-const char * PREVIOUS_LOG_FILE = "strongtalk.log.old";
+const char *CURRENT_LOG_FILE  = "strongtalk.log";
+const char *PREVIOUS_LOG_FILE = "strongtalk.log.old";
 
 
 // don't use #include files for the things below because this would include the conflicting definitions of lprintf et al.
@@ -43,7 +43,7 @@ static void check_log_file() {
 }
 
 
-extern "C" void lprintf( const char * m, ... ) {
+extern "C" void lprintf( const char *m, ... ) {
 
     char    buf[1024];
     va_list ap;
@@ -83,7 +83,7 @@ extern "C" void lputc( const char c ) {
 
 }
 
-extern "C" void lputs( const char * str ) {
+extern "C" void lputs( const char *str ) {
     check_log_file();
     if ( LogVMMessages ) {
         theLogFileOutputStream << str;
@@ -105,7 +105,7 @@ void flush_logFile() {
 }
 
 
-extern "C" void my_sprintf( char *& buf, const char * format, ... ) {
+extern "C" void my_sprintf( char *&buf, const char *format, ... ) {
 
     // like sprintf, but updates the buf pointer so that subsequent sprintfs append to the string
     va_list ap;
@@ -116,8 +116,8 @@ extern "C" void my_sprintf( char *& buf, const char * format, ... ) {
     buf += strlen( buf );
 }
 
-extern "C" void my_sprintf_len( char *& buf, const int len, const char * format, ... ) {
-    const char * oldbuf = buf;
+extern "C" void my_sprintf_len( char *&buf, const int len, const char *format, ... ) {
+    const char *oldbuf = buf;
 
     va_list ap;
     va_start( ap, format );

@@ -19,53 +19,53 @@
 
 class LookupResult : ValueObject {
 
-    protected:
-        Oop _result; // methodOop or JumpTableEntry
+protected:
+    Oop _result; // methodOop or JumpTableEntry
 
-    public:
-        LookupResult();
-
-
-        LookupResult( MethodOop method );
+public:
+    LookupResult();
 
 
-        LookupResult( const NativeMethod * nm );
+    LookupResult( MethodOop method );
 
 
-        void clear();
+    LookupResult( const NativeMethod *nm );
 
 
-        bool_t is_empty() const;
+    void clear();
 
 
-        bool_t is_method() const;
+    bool_t is_empty() const;
 
 
-        bool_t is_entry() const;
+    bool_t is_method() const;
 
 
-        bool_t matches( MethodOop m ) const; // Checks whether the result is methodOop m.
-        bool_t matches( NativeMethod * nm ) const; // Checks whether the result is NativeMethod nm.
-
-        Oop value() const;
+    bool_t is_entry() const;
 
 
-        MethodOop method() const;
+    bool_t matches( MethodOop m ) const; // Checks whether the result is methodOop m.
+    bool_t matches( NativeMethod *nm ) const; // Checks whether the result is NativeMethod nm.
 
-        MethodOop method_or_null() const;
-
-        JumpTableEntry * entry() const;
-
-        NativeMethod * get_nativeMethod() const;
+    Oop value() const;
 
 
-        void set( MethodOop method );
+    MethodOop method() const;
+
+    MethodOop method_or_null() const;
+
+    JumpTableEntry *entry() const;
+
+    NativeMethod *get_nativeMethod() const;
 
 
-        void set( const NativeMethod * nm );
+    void set( MethodOop method );
 
 
-        void print_on( ConsoleOutputStream * stream ) const;
+    void set( const NativeMethod *nm );
 
-        void print_short_on( ConsoleOutputStream * stream ) const;
+
+    void print_on( ConsoleOutputStream *stream ) const;
+
+    void print_short_on( ConsoleOutputStream *stream ) const;
 };

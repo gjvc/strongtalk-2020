@@ -27,7 +27,7 @@ Oop ByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t
     int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
     // allocate
-    Oop * result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, ( MemOop * ) &k, permit_scavenge );
+    Oop *result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
 
     if ( not result )
         return nullptr;
@@ -38,15 +38,15 @@ Oop ByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t
     // instance variables
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     // indexables
-    Oop * base = ( Oop * ) obj->addr();
-    Oop * end  = base + obj_size;
+    Oop *base = (Oop *) obj->addr();
+    Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     // %optimized 'for (int index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'
     base = &base[ ni_size + 1 ];
     while ( base < end )
-        *base++ = ( Oop ) 0;
+        *base++ = (Oop) 0;
     return obj;
 }
 
@@ -65,14 +65,14 @@ KlassOop ByteArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 }
 
 
-void ByteArrayKlass::initialize_object( ByteArrayOop obj, const char * value, int len ) {
+void ByteArrayKlass::initialize_object( ByteArrayOop obj, const char *value, int len ) {
     for ( int i = 1; i <= len; i++ ) {
         obj->byte_at_put( i, value[ i - 1 ] );
     }
 }
 
 
-void setKlassVirtualTableFromByteArrayKlass( Klass * k ) {
+void setKlassVirtualTableFromByteArrayKlass( Klass *k ) {
     ByteArrayKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -84,7 +84,7 @@ bool_t ByteArrayKlass::oop_verify( Oop obj ) {
 }
 
 
-void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_byteArray( obj, "Argument must be byteArray" );
     ByteArrayOop array = ByteArrayOop( obj );
     int          len   = array->length();
@@ -103,9 +103,9 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream )
 }
 
 
-void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    std::uint8_t * p = ByteArrayOop( obj )->bytes();
-    Oop     * l = ByteArrayOop( obj )->length_addr();
+void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
+    std::uint8_t *p = ByteArrayOop( obj )->bytes();
+    Oop          *l = ByteArrayOop( obj )->length_addr();
     int len = ByteArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
@@ -119,8 +119,8 @@ void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
 }
 
 
-void ByteArrayKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
-    Oop * l = ByteArrayOop( obj )->length_addr();
+void ByteArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
+    Oop *l = ByteArrayOop( obj )->length_addr();
     // header + instance variables
     MemOopKlass::oop_oop_iterate( obj, blk );
     blk->do_oop( l );

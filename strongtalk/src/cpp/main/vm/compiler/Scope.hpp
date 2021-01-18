@@ -44,771 +44,771 @@ class RecompilationScope;
 // SendInfo holds various data about a send before/while it is being inlined
 
 class SendInfo : public PrintableResourceObject {
-    public:
-        InlinedScope   * _senderScope;      //
-        Expression     * _receiver;         //
-        LookupKey      * _lookupKey;        //
-        PseudoRegister * _resultRegister;   // register where result should end up
-        SymbolOop _selector;                //
-        bool_t    _needRealSend;            // need a real (non-inlined) send
-        bool_t    _counting;                // count # sends? (for non-inlined send)
-        int       _sendCount;               // estimated # of invocations (< 0 == unknown)
-        bool_t    _predicted;               // was receiver type-predicted?
-        bool_t    uninlinable;              // was send considered uninlinable?
-        bool_t    _receiverStatic;          // receiver type is statically known
-        bool_t    _inPrimitiveFailure;      // sent from within prim. failure block
+public:
+    InlinedScope   *_senderScope;      //
+    Expression     *_receiver;         //
+    LookupKey      *_lookupKey;        //
+    PseudoRegister *_resultRegister;   // register where result should end up
+    SymbolOop _selector;                //
+    bool_t    _needRealSend;            // need a real (non-inlined) send
+    bool_t    _counting;                // count # sends? (for non-inlined send)
+    int       _sendCount;               // estimated # of invocations (< 0 == unknown)
+    bool_t    _predicted;               // was receiver type-predicted?
+    bool_t    uninlinable;              // was send considered uninlinable?
+    bool_t    _receiverStatic;          // receiver type is statically known
+    bool_t    _inPrimitiveFailure;      // sent from within prim. failure block
 
-    protected:
-        void init();
+protected:
+    void init();
 
-    public:
-        SendInfo( InlinedScope * sen, Expression * r, SymbolOop s ) {
-            _senderScope = sen;
-            _receiver    = r;
-            _selector    = s;
-            _lookupKey   = nullptr;
-            init();
-        }
+public:
+    SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) {
+        _senderScope = sen;
+        _receiver    = r;
+        _selector    = s;
+        _lookupKey   = nullptr;
+        init();
+    }
 
 
-        SendInfo( InlinedScope * senderScope, LookupKey * lookupKey, Expression * r );
+    SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *r );
 
-        void computeNSends( RecompilationScope * rscope, int byteCodeIndex );
+    void computeNSends( RecompilationScope *rscope, int byteCodeIndex );
 
-        void print();
+    void print();
 };
 
 
 // Scope definitions
 
 class Scope : public PrintableResourceObject {
-    private:
-        static smi_t _currentScopeID;            // for scope descs
+private:
+    static smi_t _currentScopeID;            // for scope descs
 
-    public:
-        // scopes are numbered starting at 0
-        static void initialize() {
-            _currentScopeID = 0;
-        }
-
-
-        smi_t currentScopeID() {
-            return _currentScopeID++;
-        }
+public:
+    // scopes are numbered starting at 0
+    static void initialize() {
+        _currentScopeID = 0;
+    }
 
 
-        virtual smi_t scopeID() const = 0;
+    smi_t currentScopeID() {
+        return _currentScopeID++;
+    }
 
 
-        // test functions
-        virtual bool_t isInlinedScope() const {
-            return false;
-        }
+    virtual smi_t scopeID() const = 0;
 
 
-        virtual bool_t isMethodScope() const {
-            return false;
-        }
+    // test functions
+    virtual bool_t isInlinedScope() const {
+        return false;
+    }
 
 
-        virtual bool_t isBlockScope() const {
-            return false;
-        }
+    virtual bool_t isMethodScope() const {
+        return false;
+    }
 
 
-        virtual bool_t isOutlinedScope() const {
-            return false;
-        }
+    virtual bool_t isBlockScope() const {
+        return false;
+    }
 
 
-        virtual bool_t isOutlinedMethodScope() const {
-            return false;
-        }
+    virtual bool_t isOutlinedScope() const {
+        return false;
+    }
 
 
-        virtual bool_t isOutlinedBlockScope() const {
-            return false;
-        }
+    virtual bool_t isOutlinedMethodScope() const {
+        return false;
+    }
 
 
-        virtual KlassOop selfKlass() const = 0;
-
-        virtual SymbolOop selector() const = 0;
-
-        virtual MethodOop method() const = 0;
-
-        virtual Scope * parent() const = 0;    // lexically enclosing scope or nullptr (if MethodScope)
-        virtual InlinedScope * sender() const = 0;    // caller scope
-        virtual KlassOop methodHolder() const = 0;    // for super sends
-
-        virtual bool_t allocatesInterpretedContext() const = 0;// true if the scope allocates its own context in the interpreter
-        virtual bool_t allocatesCompiledContext() const = 0;    // true if the scope allocates a context in the compiled code
-        virtual bool_t expectsContext() const = 0;    // true if the scope has an incoming context in the interpreter
-        bool_t needsContextZapping() const {
-            return ( parent() == nullptr ) and allocatesCompiledContext();
-        }
+    virtual bool_t isOutlinedBlockScope() const {
+        return false;
+    }
 
 
-        virtual Scope * home() const = 0;    // the home scope
-        bool_t isTop() const {
-            return sender() == nullptr;
-        }
+    virtual KlassOop selfKlass() const = 0;
+
+    virtual SymbolOop selector() const = 0;
+
+    virtual MethodOop method() const = 0;
+
+    virtual Scope *parent() const = 0;    // lexically enclosing scope or nullptr (if MethodScope)
+    virtual InlinedScope *sender() const = 0;    // caller scope
+    virtual KlassOop methodHolder() const = 0;    // for super sends
+
+    virtual bool_t allocatesInterpretedContext() const = 0;// true if the scope allocates its own context in the interpreter
+    virtual bool_t allocatesCompiledContext() const = 0;    // true if the scope allocates a context in the compiled code
+    virtual bool_t expectsContext() const = 0;    // true if the scope has an incoming context in the interpreter
+    bool_t needsContextZapping() const {
+        return ( parent() == nullptr ) and allocatesCompiledContext();
+    }
 
 
-        bool_t isInlined() const {
-            return sender() not_eq nullptr;
-        }
+    virtual Scope *home() const = 0;    // the home scope
+    bool_t isTop() const {
+        return sender() == nullptr;
+    }
 
 
-        virtual bool_t isSenderOf( InlinedScope * s ) const {
-            return false;
-        } // isSenderOf = this is a proper caller of s
-        bool_t isSenderOrSame( InlinedScope * s ) {
-            return ( Scope * ) s == this or isSenderOf( s );
-        }
+    bool_t isInlined() const {
+        return sender() not_eq nullptr;
+    }
 
 
-        virtual bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) = 0;
+    virtual bool_t isSenderOf( InlinedScope *s ) const {
+        return false;
+    } // isSenderOf = this is a proper caller of s
+    bool_t isSenderOrSame( InlinedScope *s ) {
+        return (Scope *) s == this or isSenderOf( s );
+    }
 
 
-        virtual void genCode() {
-            ShouldNotCallThis();
-        }
+    virtual bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) = 0;
+
+
+    virtual void genCode() {
+        ShouldNotCallThis();
+    }
 };
 
 
 class InlinedScope : public Scope {
 
-    protected:
-        int _scopeID;                   //
-        InlinedScope * _sender;                    // nullptr for top scope
-        int       _senderByteCodeIndex;       // call position in sender (if inlined)
-        ScopeInfo _scopeInfo;                 // for debugging information (see scopeDescRecoder.hpp)
-        LookupKey * _key;                       //
-        KlassOop  _methodHolder;              // not_eq receiver klass only for methods invoked by super sends
-        MethodOop _method;
-        int       _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
-        int       _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
-        bool_t    _primFailure;               // true if in a primitive call failure branch
-        bool_t    _endsDead;                  // true if method ends with dead code
-        Expression * _self;                      // the receiver
-        NodeBuilder _gen;                       // the generator of the intermediate representation
+protected:
+    int _scopeID;                   //
+    InlinedScope *_sender;                    // nullptr for top scope
+    int       _senderByteCodeIndex;       // call position in sender (if inlined)
+    ScopeInfo _scopeInfo;                 // for debugging information (see scopeDescRecoder.hpp)
+    LookupKey *_key;                       //
+    KlassOop  _methodHolder;              // not_eq receiver klass only for methods invoked by super sends
+    MethodOop _method;
+    int       _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
+    int       _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
+    bool_t    _primFailure;               // true if in a primitive call failure branch
+    bool_t    _endsDead;                  // true if method ends with dead code
+    Expression *_self;                      // the receiver
+    NodeBuilder _gen;                       // the generator of the intermediate representation
 
-        PseudoRegister * _context;            // context (either passed in or created here), if any
-        GrowableArray <Expression *>     * _arguments;          // the arguments
-        GrowableArray <Expression *>     * _temporaries;        // the (originally) stack-allocated temporaries
-        GrowableArray <Expression *>     * _floatTemporaries;   // the (originally) stack-allocated float temporaries
-        GrowableArray <Expression *>     * _contextTemporaries; // the (originally) heap-allocated temporaries
-        GrowableArray <Expression *>     * _exprStackElems;     // the expression stack elems for debugging (indexed by byteCodeIndex)
-        GrowableArray <InlinedScope *>   * _subScopes;          // the inlined scopes
-        GrowableArray <CompiledLoop *>   * _loops;              // loops contained in this scope
-        GrowableArray <NonTrivialNode *> * _typeTests;          // type test-like nodes contained in this scope
-        GrowableArray <PseudoRegister *> * _pregsBegSorted;     // the scope's PseudoRegisters sorted with begByteCodeIndex (used for regAlloc)
-        GrowableArray <PseudoRegister *> * _pregsEndSorted;     // the scope's PseudoRegisters sorted with endByteCodeIndex (used for regAlloc)
+    PseudoRegister *_context;            // context (either passed in or created here), if any
+    GrowableArray<Expression *>     *_arguments;          // the arguments
+    GrowableArray<Expression *>     *_temporaries;        // the (originally) stack-allocated temporaries
+    GrowableArray<Expression *>     *_floatTemporaries;   // the (originally) stack-allocated float temporaries
+    GrowableArray<Expression *>     *_contextTemporaries; // the (originally) heap-allocated temporaries
+    GrowableArray<Expression *>     *_exprStackElems;     // the expression stack elems for debugging (indexed by byteCodeIndex)
+    GrowableArray<InlinedScope *>   *_subScopes;          // the inlined scopes
+    GrowableArray<CompiledLoop *>   *_loops;              // loops contained in this scope
+    GrowableArray<NonTrivialNode *> *_typeTests;          // type test-like nodes contained in this scope
+    GrowableArray<PseudoRegister *> *_pregsBegSorted;     // the scope's PseudoRegisters sorted with begByteCodeIndex (used for regAlloc)
+    GrowableArray<PseudoRegister *> *_pregsEndSorted;     // the scope's PseudoRegisters sorted with endByteCodeIndex (used for regAlloc)
 
-        // float temporaries
-        int _firstFloatIndex;    // the (stack) float temporary index for the first float
+    // float temporaries
+    int _firstFloatIndex;    // the (stack) float temporary index for the first float
 
-        // for node builders
-        MergeNode       * _returnPoint;           // starting point for shared return code
-        MergeNode       * _NonLocalReturneturnPoint;         // starting point for shared non-local return code
-        MergeNode       * _nlrTestPoint;          // where NonLocalReturns coming from callees will jump to (or nullptr)
-        ContextInitNode * _contextInitializer;    // node initializing context (if any)
-        bool_t _hasBeenGenerated;      // true iff genCode() was called
+    // for node builders
+    MergeNode       *_returnPoint;           // starting point for shared return code
+    MergeNode       *_NonLocalReturneturnPoint;         // starting point for shared non-local return code
+    MergeNode       *_nlrTestPoint;          // where NonLocalReturns coming from callees will jump to (or nullptr)
+    ContextInitNode *_contextInitializer;    // node initializing context (if any)
+    bool_t _hasBeenGenerated;      // true iff genCode() was called
 
-    public:
-        // for node builders
-        MergeNode * returnPoint() {
-            return _returnPoint;
-        }
+public:
+    // for node builders
+    MergeNode *returnPoint() {
+        return _returnPoint;
+    }
 
 
-        MergeNode * nlrPoint() {
-            return _NonLocalReturneturnPoint;
-        }
+    MergeNode *nlrPoint() {
+        return _NonLocalReturneturnPoint;
+    }
 
 
-        MergeNode * nlrTestPoint();        // returns a lazily generated nlrTestPoint
-        ContextInitNode * contextInitializer() {
-            return _contextInitializer;
-        }
+    MergeNode *nlrTestPoint();        // returns a lazily generated nlrTestPoint
+    ContextInitNode *contextInitializer() {
+        return _contextInitializer;
+    }
 
 
-        bool_t has_nlrTestPoint() {
-            return _nlrTestPoint not_eq nullptr;
-        }
+    bool_t has_nlrTestPoint() {
+        return _nlrTestPoint not_eq nullptr;
+    }
 
 
-        void set_contextInitializer( ContextInitNode * n ) {
-            _contextInitializer = n;
-        }
+    void set_contextInitializer( ContextInitNode *n ) {
+        _contextInitializer = n;
+    }
 
 
-    public:
-        RecompilationScope * rscope;         // equiv. scope in recompilee (if any) - used for type feedback
-        bool_t predicted;      // was receiver type-predicted?
-        int    depth;          // call nesting level (top = 0)
-        int    loopDepth;      // loop nesting level (top = 0)
-        Expression     * result;         // result of normal return (nullptr if none)
-        Expression     * nlrResult;      // NonLocalReturn result (non-nullptr only for blocks)
-        PseudoRegister * resultPR;       // pseudo register containing result
+public:
+    RecompilationScope *rscope;         // equiv. scope in recompilee (if any) - used for type feedback
+    bool_t predicted;      // was receiver type-predicted?
+    int    depth;          // call nesting level (top = 0)
+    int    loopDepth;      // loop nesting level (top = 0)
+    Expression     *result;         // result of normal return (nullptr if none)
+    Expression     *nlrResult;      // NonLocalReturn result (non-nullptr only for blocks)
+    PseudoRegister *resultPR;       // pseudo register containing result
 
-    protected:
-        InlinedScope();
+protected:
+    InlinedScope();
 
-        void initialize( MethodOop method, KlassOop methodHolder, InlinedScope * sender, RecompilationScope * rs, SendInfo * info );
+    void initialize( MethodOop method, KlassOop methodHolder, InlinedScope *sender, RecompilationScope *rs, SendInfo *info );
 
-    public:
-        smi_t scopeID() const {
-            return _scopeID;
-        }
+public:
+    smi_t scopeID() const {
+        return _scopeID;
+    }
 
 
-        InlinedScope * sender() const {
-            return _sender;
-        }
+    InlinedScope *sender() const {
+        return _sender;
+    }
 
 
-        int senderByteCodeIndex() const {
-            return _senderByteCodeIndex;
-        }
+    int senderByteCodeIndex() const {
+        return _senderByteCodeIndex;
+    }
 
 
-        ScopeInfo getScopeInfo() const {
-            return _scopeInfo;
-        }
+    ScopeInfo getScopeInfo() const {
+        return _scopeInfo;
+    }
 
 
-        virtual int byteCodeIndex() const {
-            return gen()->byteCodeIndex();
-        }
+    virtual int byteCodeIndex() const {
+        return gen()->byteCodeIndex();
+    }
 
 
-        bool_t isInlinedScope() const {
-            return true;
-        }
+    bool_t isInlinedScope() const {
+        return true;
+    }
 
 
-        int nofArguments() const {
-            return _arguments->length();
-        }
+    int nofArguments() const {
+        return _arguments->length();
+    }
 
 
-        bool_t hasTemporaries() const {
-            return _temporaries not_eq nullptr;
-        }
+    bool_t hasTemporaries() const {
+        return _temporaries not_eq nullptr;
+    }
 
 
-        int nofTemporaries() const {
-            return _temporaries->length();
-        }
+    int nofTemporaries() const {
+        return _temporaries->length();
+    }
 
 
-        bool_t hasFloatTemporaries() const {
-            return _floatTemporaries not_eq nullptr;
-        }
+    bool_t hasFloatTemporaries() const {
+        return _floatTemporaries not_eq nullptr;
+    }
 
 
-        int nofFloatTemporaries() const {
-            return _floatTemporaries->length();
-        }
+    int nofFloatTemporaries() const {
+        return _floatTemporaries->length();
+    }
 
 
-        int firstFloatIndex() const {
-            st_assert( _firstFloatIndex >= 0, "not yet computed" );
-            return _firstFloatIndex;
-        }
+    int firstFloatIndex() const {
+        st_assert( _firstFloatIndex >= 0, "not yet computed" );
+        return _firstFloatIndex;
+    }
 
 
-        bool_t allocatesInterpretedContext() const {
-            return _method->allocatesInterpretedContext();
-        }
+    bool_t allocatesInterpretedContext() const {
+        return _method->allocatesInterpretedContext();
+    }
 
 
-        bool_t allocatesCompiledContext() const;
+    bool_t allocatesCompiledContext() const;
 
 
-        bool_t expectsContext() const {
-            return _method->expectsContext();
-        }
+    bool_t expectsContext() const {
+        return _method->expectsContext();
+    }
 
 
-        bool_t isSenderOf( InlinedScope * s ) const;
+    bool_t isSenderOf( InlinedScope *s ) const;
 
 
-        GrowableArray <Expression *> * contextTemporaries() const {
-            return _contextTemporaries;
-        }
+    GrowableArray<Expression *> *contextTemporaries() const {
+        return _contextTemporaries;
+    }
 
 
-        int nofBytes() const {
-            return _method->end_byteCodeIndex() - 1;
-        }
+    int nofBytes() const {
+        return _method->end_byteCodeIndex() - 1;
+    }
 
 
-        int nofSends() const {
-            return _nofSends;
-        }
+    int nofSends() const {
+        return _nofSends;
+    }
 
 
-        bool_t containsNonLocalReturn() const {
-            return _method->containsNonLocalReturn();
-        }
+    bool_t containsNonLocalReturn() const {
+        return _method->containsNonLocalReturn();
+    }
 
 
-        bool_t primFailure() const {
-            return _primFailure;
-        }
+    bool_t primFailure() const {
+        return _primFailure;
+    }
 
 
-        Expression * self() const {
-            return _self;
-        }
+    Expression *self() const {
+        return _self;
+    }
 
 
-        void set_self( Expression * e );
+    void set_self( Expression *e );
 
 
-        NodeBuilder * gen() const {
-            return static_cast<NodeBuilder *>( const_cast< NodeBuilder * >( &_gen ));
-        }
+    NodeBuilder *gen() const {
+        return static_cast<NodeBuilder *>( const_cast< NodeBuilder * >( &_gen ));
+    }
 
 
-        GrowableArray <Expression *> * exprStackElems() const {
-            return _exprStackElems;
-        }
+    GrowableArray<Expression *> *exprStackElems() const {
+        return _exprStackElems;
+    }
 
 
-        void addSubScope( InlinedScope * s );
+    void addSubScope( InlinedScope *s );
 
 
-        KlassOop selfKlass() const {
-            return _key->klass();
-        }
+    KlassOop selfKlass() const {
+        return _key->klass();
+    }
 
 
-        LookupKey * key() const {
-            return _key;
-        }
+    LookupKey *key() const {
+        return _key;
+    }
 
 
-        KlassOop methodHolder() const {
-            return _methodHolder;
-        }
+    KlassOop methodHolder() const {
+        return _methodHolder;
+    }
 
 
-        MethodOop method() const {
-            return _method;
-        }
+    MethodOop method() const {
+        return _method;
+    }
 
 
-        SymbolOop selector() const {
-            return _key->selector();
-        }
+    SymbolOop selector() const {
+        return _key->selector();
+    }
 
 
-        bool_t isLite() const;
+    bool_t isLite() const;
 
 
-        Expression * argument( int no ) const {
-            return _arguments->at( no );
-        }
+    Expression *argument( int no ) const {
+        return _arguments->at( no );
+    }
 
 
-        Expression * temporary( int no ) const {
-            return _temporaries->at( no );
-        }
+    Expression *temporary( int no ) const {
+        return _temporaries->at( no );
+    }
 
 
-        Expression * floatTemporary( int no ) const {
-            return _floatTemporaries->at( no );
-        }
+    Expression *floatTemporary( int no ) const {
+        return _floatTemporaries->at( no );
+    }
 
 
-        void set_temporary( int no, Expression * t ) {
-            _temporaries->at_put( no, t );
-        }
+    void set_temporary( int no, Expression *t ) {
+        _temporaries->at_put( no, t );
+    }
 
 
-        Expression * contextTemporary( int no ) const {
-            return _contextTemporaries->at( no );
-        }
+    Expression *contextTemporary( int no ) const {
+        return _contextTemporaries->at( no );
+    }
 
 
-        PseudoRegister * context() const {
-            return _context;
-        }
+    PseudoRegister *context() const {
+        return _context;
+    }
 
 
-        virtual void setContext( PseudoRegister * ctx ) {
-            _context = ctx;
-        }
+    virtual void setContext( PseudoRegister *ctx ) {
+        _context = ctx;
+    }
 
 
-        ExpressionStack * exprStack() const {
-            return gen()->exprStack();
-        }
+    ExpressionStack *exprStack() const {
+        return gen()->exprStack();
+    }
 
 
-        Node * current() const {
-            return gen()->current();
-        }
+    Node *current() const {
+        return gen()->current();
+    }
 
 
-        virtual bool_t is_self_initialized() const {
-            return true;
-        }
+    virtual bool_t is_self_initialized() const {
+        return true;
+    }
 
 
-        virtual void set_self_initialized() {
-            ShouldNotCallThis();
-        }
+    virtual void set_self_initialized() {
+        ShouldNotCallThis();
+    }
 
 
-        bool_t hasBeenGenerated() const {
-            return _hasBeenGenerated;
-        }
+    bool_t hasBeenGenerated() const {
+        return _hasBeenGenerated;
+    }
 
 
-        void createTemporaries( int nofTemps );
+    void createTemporaries( int nofTemps );
 
-        void createFloatTemporaries( int nofFloats );
+    void createFloatTemporaries( int nofFloats );
 
-        void createContextTemporaries( int nofTemps );
+    void createContextTemporaries( int nofTemps );
 
-        void contextTemporariesAtPut( int no, Expression * e );
+    void contextTemporariesAtPut( int no, Expression *e );
 
-        int homeContext() const;            // the home context level
-        InlinedScope * find_scope( int context, int & nofIndirections, OutlinedScope *& out );    // find enclosing scope
-        void addResult( Expression * e );
+    int homeContext() const;            // the home context level
+    InlinedScope *find_scope( int context, int &nofIndirections, OutlinedScope *&out );    // find enclosing scope
+    void addResult( Expression *e );
 
-        void genCode();
+    void genCode();
 
-        void addSend( GrowableArray <PseudoRegister *> * exprStack, bool_t isSend );
+    void addSend( GrowableArray<PseudoRegister *> *exprStack, bool_t isSend );
 
 
-        GrowableArray <NonTrivialNode *> * typeTests() const {
-            return _typeTests;
-        }
+    GrowableArray<NonTrivialNode *> *typeTests() const {
+        return _typeTests;
+    }
 
 
-        GrowableArray <CompiledLoop *> * loops() const {
-            return _loops;
-        }
+    GrowableArray<CompiledLoop *> *loops() const {
+        return _loops;
+    }
 
 
-        void addTypeTest( NonTrivialNode * t );
+    void addTypeTest( NonTrivialNode *t );
 
-        CompiledLoop * addLoop();
+    CompiledLoop *addLoop();
 
-        void setExprForByteCodeIndex( int byteCodeIndex, Expression * expr );
+    void setExprForByteCodeIndex( int byteCodeIndex, Expression *expr );
 
-        void set2ndExprForByteCodeIndex( int byteCodeIndex, Expression * expr );
+    void set2ndExprForByteCodeIndex( int byteCodeIndex, Expression *expr );
 
-        virtual void collectContextInfo( GrowableArray <InlinedScope *> * scopeList );
+    virtual void collectContextInfo( GrowableArray<InlinedScope *> *scopeList );
 
-        virtual void generateDebugInfo();
+    virtual void generateDebugInfo();
 
-        void generateDebugInfoForNonInlinedBlocks();
+    void generateDebugInfoForNonInlinedBlocks();
 
-        void optimizeLoops();
+    void optimizeLoops();
 
-        void subScopesDo( Closure <InlinedScope *> * c );        // apply f to receiver and all subscopes
+    void subScopesDo( Closure<InlinedScope *> *c );        // apply f to receiver and all subscopes
 
-    protected:
-        void initializeArguments();
+protected:
+    void initializeArguments();
 
 
-        virtual void initializeSelf() {
-        }
+    virtual void initializeSelf() {
+    }
 
 
-        virtual void prologue();
+    virtual void prologue();
 
-        virtual void epilogue();
+    virtual void epilogue();
 
-    public:
-        int descOffset();
+public:
+    int descOffset();
 
-    protected:
-        // int calleeSize(RecompilationScope* rs);
-        void markLocalsDebugVisible( GrowableArray <PseudoRegister *> * exprStack );
+protected:
+    // int calleeSize(RecompilationScope* rs);
+    void markLocalsDebugVisible( GrowableArray<PseudoRegister *> *exprStack );
 
-    public:
-        // for global register allocation
-        void addToPRegsBegSorted( PseudoRegister * r );
+public:
+    // for global register allocation
+    void addToPRegsBegSorted( PseudoRegister *r );
 
-        void addToPRegsEndSorted( PseudoRegister * r );
+    void addToPRegsEndSorted( PseudoRegister *r );
 
-        void allocatePRegs( IntFreeList * f );
+    void allocatePRegs( IntFreeList *f );
 
-        int allocateFloatTemporaries( int firstFloatIndex );    // returns the number of float temps allocated for
-        // this and all subscopes; sets _firstFloatIndex
+    int allocateFloatTemporaries( int firstFloatIndex );    // returns the number of float temps allocated for
+    // this and all subscopes; sets _firstFloatIndex
 
-    public:
-        void print();
+public:
+    void print();
 
-        void printTree();
+    void printTree();
 
-        // see Compiler::number_of_noninlined_blocks
-        int number_of_noninlined_blocks();
+    // see Compiler::number_of_noninlined_blocks
+    int number_of_noninlined_blocks();
 
-        // see Compiler::copy_noninlined_block_info
-        void copy_noninlined_block_info( NativeMethod * nm );
+    // see Compiler::copy_noninlined_block_info
+    void copy_noninlined_block_info( NativeMethod *nm );
 
-        friend class OutlinedScope;
+    friend class OutlinedScope;
 };
 
 
 class MethodScope : public InlinedScope {     // ordinary methods
-    protected:
-        MethodScope();
+protected:
+    MethodScope();
 
-        void initialize( MethodOop method, KlassOop methodHolder, InlinedScope * sen, RecompilationScope * rs, SendInfo * info );
+    void initialize( MethodOop method, KlassOop methodHolder, InlinedScope *sen, RecompilationScope *rs, SendInfo *info );
 
-    public:
-        static MethodScope * new_MethodScope( MethodOop method, KlassOop methodHolder, InlinedScope * sen, RecompilationScope * rs, SendInfo * info );
-
-
-        bool_t isMethodScope() const {
-            return true;
-        }
+public:
+    static MethodScope *new_MethodScope( MethodOop method, KlassOop methodHolder, InlinedScope *sen, RecompilationScope *rs, SendInfo *info );
 
 
-        Scope * parent() const {
-            return nullptr;
-        }
+    bool_t isMethodScope() const {
+        return true;
+    }
 
 
-        Scope * home() const {
-            return ( Scope * ) this;
-        }
+    Scope *parent() const {
+        return nullptr;
+    }
 
 
-        bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
+    Scope *home() const {
+        return (Scope *) this;
+    }
 
-        void generateDebugInfo();
 
-        // debugging
-        void print_short();
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
 
-        void print();
+    void generateDebugInfo();
+
+    // debugging
+    void print_short();
+
+    void print();
 };
 
 
 class BlockScope : public InlinedScope {        // block methods
-    protected:
-        Scope * _parent;                // lexically enclosing scope
-        bool_t _self_is_initialized;            // true if self has been loaded
-        void initialize( MethodOop method, KlassOop methodHolder, Scope * p, InlinedScope * s, RecompilationScope * rs, SendInfo * info );
+protected:
+    Scope *_parent;                // lexically enclosing scope
+    bool_t _self_is_initialized;            // true if self has been loaded
+    void initialize( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
-        void initializeSelf();
+    void initializeSelf();
 
-        BlockScope();
+    BlockScope();
 
-    public:
-        static BlockScope * new_BlockScope( MethodOop method, KlassOop methodHolder, Scope * p, InlinedScope * s, RecompilationScope * rs, SendInfo * info );
-
-
-        bool_t isBlockScope() const {
-            return true;
-        }
+public:
+    static BlockScope *new_BlockScope( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
 
-        bool_t is_self_initialized() const {
-            return _self_is_initialized;
-        }
+    bool_t isBlockScope() const {
+        return true;
+    }
 
 
-        void set_self_initialized() {
-            _self_is_initialized = true;
-        }
+    bool_t is_self_initialized() const {
+        return _self_is_initialized;
+    }
 
 
-        Scope * parent() const {
-            return _parent;
-        }
+    void set_self_initialized() {
+        _self_is_initialized = true;
+    }
 
 
-        Scope * home() const {
-            return _parent->home();
-        }
+    Scope *parent() const {
+        return _parent;
+    }
 
 
-        KlassOop selfKlass() const {
-            return _parent->selfKlass();
-        }
+    Scope *home() const {
+        return _parent->home();
+    }
 
 
-        bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
+    KlassOop selfKlass() const {
+        return _parent->selfKlass();
+    }
 
-        void generateDebugInfo();
 
-        void setContext( PseudoRegister * newContext );
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
 
-        // debugging
-        void print_short();
+    void generateDebugInfo();
 
-        void print();
+    void setContext( PseudoRegister *newContext );
+
+    // debugging
+    void print_short();
+
+    void print();
 };
 
 
 class OutlinedScope : public Scope {        // abstract; a scope outside of the current compilation
-    protected:
-        NativeMethod    * _nm;                // NativeMethod containing this scope
-        ScopeDescriptor * _scope;
+protected:
+    NativeMethod    *_nm;                // NativeMethod containing this scope
+    ScopeDescriptor *_scope;
 
-    public:
-        OutlinedScope( NativeMethod * nm, ScopeDescriptor * scope );
-
-
-        bool_t isOutlinedScope() const {
-            return true;
-        }
+public:
+    OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope );
 
 
-        SymbolOop selector() const {
-            return _scope->selector();
-        }
+    bool_t isOutlinedScope() const {
+        return true;
+    }
 
 
-        Expression * receiverExpression( PseudoRegister * p ) const;
-
-        MethodOop method() const;
-
-
-        NativeMethod * nm() const {
-            return _nm;
-        }
+    SymbolOop selector() const {
+        return _scope->selector();
+    }
 
 
-        InlinedScope * sender() const {
-            return nullptr;
-        }
+    Expression *receiverExpression( PseudoRegister *p ) const;
+
+    MethodOop method() const;
 
 
-        ScopeDescriptor * scope() const {
-            return _scope;
-        }
+    NativeMethod *nm() const {
+        return _nm;
+    }
 
 
-        bool_t allocatesInterpretedContext() const {
-            return method()->allocatesInterpretedContext();
-        }
+    InlinedScope *sender() const {
+        return nullptr;
+    }
 
 
-        bool_t allocatesCompiledContext() const {
-            return _scope->allocates_compiled_context();
-        }
+    ScopeDescriptor *scope() const {
+        return _scope;
+    }
 
 
-        bool_t expectsContext() const {
-            return method()->expectsContext();
-        }
+    bool_t allocatesInterpretedContext() const {
+        return method()->allocatesInterpretedContext();
+    }
 
 
-        // debugging
-        void print_short( const char * name );
+    bool_t allocatesCompiledContext() const {
+        return _scope->allocates_compiled_context();
+    }
 
-        void print( const char * name );
+
+    bool_t expectsContext() const {
+        return method()->expectsContext();
+    }
+
+
+    // debugging
+    void print_short( const char *name );
+
+    void print( const char *name );
 };
 
-OutlinedScope * new_OutlinedScope( NativeMethod * nm, ScopeDescriptor * sc );
+OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *sc );
 
 
 class OutlinedMethodScope : public OutlinedScope {
-    public:
-        OutlinedMethodScope( NativeMethod * nm, ScopeDescriptor * s ) :
+public:
+    OutlinedMethodScope( NativeMethod *nm, ScopeDescriptor *s ) :
             OutlinedScope( nm, s ) {
-        }
+    }
 
 
-        bool_t isOutlinedMethodScope() const {
-            return true;
-        }
+    bool_t isOutlinedMethodScope() const {
+        return true;
+    }
 
 
-        bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
-            ShouldNotCallThis();
-            return false;
-        }
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
+        ShouldNotCallThis();
+        return false;
+    }
 
 
-        KlassOop selfKlass() const {
-            return _scope->selfKlass();
-        }
+    KlassOop selfKlass() const {
+        return _scope->selfKlass();
+    }
 
 
-        smi_t scopeID() const {
-            return _scope->scopeID();
-        }
+    smi_t scopeID() const {
+        return _scope->scopeID();
+    }
 
 
-        Scope * parent() const {
-            return nullptr;
-        }
+    Scope *parent() const {
+        return nullptr;
+    }
 
 
-        Scope * home() const {
-            return ( Scope * ) this;
-        }
+    Scope *home() const {
+        return (Scope *) this;
+    }
 
 
-        KlassOop methodHolder() const;
+    KlassOop methodHolder() const;
 
-        // debugging
-        void print_short();
+    // debugging
+    void print_short();
 
-        void print();
+    void print();
 };
 
 
 class OutlinedBlockScope : public OutlinedScope {
-    protected:
-        OutlinedScope * _parent;            // parent or nullptr (if non-LIFO)
+protected:
+    OutlinedScope *_parent;            // parent or nullptr (if non-LIFO)
 
-    public:
-        OutlinedBlockScope( NativeMethod * nm, ScopeDescriptor * sen );
-
-
-        bool_t isOutlinedBlockScope() const {
-            return true;
-        }
+public:
+    OutlinedBlockScope( NativeMethod *nm, ScopeDescriptor *sen );
 
 
-        bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
-            ShouldNotCallThis();
-            return false;
-        }
+    bool_t isOutlinedBlockScope() const {
+        return true;
+    }
 
 
-        Scope * parent() const {
-            return _parent;
-        }
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
+        ShouldNotCallThis();
+        return false;
+    }
 
 
-        Scope * home() const {
-            return _parent ? _parent->home() : nullptr;
-        }
+    Scope *parent() const {
+        return _parent;
+    }
 
 
-        KlassOop selfKlass() const {
-            return _parent->selfKlass();
-        }
+    Scope *home() const {
+        return _parent ? _parent->home() : nullptr;
+    }
 
 
-        smi_t scopeID() const {
-            return _scope->scopeID();
-        }
+    KlassOop selfKlass() const {
+        return _parent->selfKlass();
+    }
 
 
-        KlassOop methodHolder() const {
-            return _parent->methodHolder();
-        }
+    smi_t scopeID() const {
+        return _scope->scopeID();
+    }
 
 
-        // debugging
-        void print_short();
+    KlassOop methodHolder() const {
+        return _parent->methodHolder();
+    }
 
-        void print();
+
+    // debugging
+    void print_short();
+
+    void print();
 };

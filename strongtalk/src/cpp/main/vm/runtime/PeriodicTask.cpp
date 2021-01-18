@@ -13,7 +13,7 @@
 constexpr int max_tasks = 10;
 int           num_tasks = 0;
 
-std::array <PeriodicTask *, max_tasks> tasks;
+std::array<PeriodicTask *, max_tasks> tasks;
 
 
 bool_t pending_tasks( int delay_time ) {
@@ -38,7 +38,7 @@ void real_time_tick( int delay_time ) {
             return;
 
         for ( int i = 0; i < num_tasks; i++ ) {
-            PeriodicTask * task = tasks[ i ];
+            PeriodicTask *task = tasks[ i ];
             if ( task->_counter >= task->_interval ) {
                 task->task();
                 task->_counter = 0;

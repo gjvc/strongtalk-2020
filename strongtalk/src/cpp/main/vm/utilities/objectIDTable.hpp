@@ -12,20 +12,20 @@
 
 class objectIDTable : AllStatic {
 
-    private:
-        static ObjectArrayOop array();
+private:
+    static ObjectArrayOop array();
 
-    public:
-        static int insert( Oop obj );
+public:
+    static int insert( Oop obj );
 
-        static Oop at( int index );
+    static Oop at( int index );
 
-        static int find_index( Oop obj );
+    static int find_index( Oop obj );
 
-        static bool_t is_index_ok( int index );
+    static bool_t is_index_ok( int index );
 
-        static void allocateSize( int size );
+    static void allocateSize( int size );
 
-        static void cleanup_after_bootstrap();
+    static void cleanup_after_bootstrap();
 
 };

@@ -14,58 +14,58 @@
 // the names of parameters and temporaries.
 
 class TempDecoder {
-    private:
-        int _num_of_params;
+private:
+    int _num_of_params;
 
-        bool_t is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo );
+    bool_t is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo );
 
-    public:
-        virtual void decode( MethodOop method, int byteCodeIndex = 0 );
-
-
-        // arguments are numbered from 1 to n
-        virtual void parameter( ByteArrayOop name, int index ) {
-        }
+public:
+    virtual void decode( MethodOop method, int byteCodeIndex = 0 );
 
 
-        virtual void stack_temp( ByteArrayOop name, int no ) {
-        }
+    // arguments are numbered from 1 to n
+    virtual void parameter( ByteArrayOop name, int index ) {
+    }
 
 
-        virtual void stack_float_temp( ByteArrayOop name, int fno ) {
-        }
+    virtual void stack_temp( ByteArrayOop name, int no ) {
+    }
 
 
-        virtual void heap_temp( ByteArrayOop name, int no ) {
-        }
+    virtual void stack_float_temp( ByteArrayOop name, int fno ) {
+    }
 
 
-        virtual void heap_parameter( ByteArrayOop name, int no ) {
-        }
+    virtual void heap_temp( ByteArrayOop name, int no ) {
+    }
 
 
-        virtual void no_debug_info() {
-        }
+    virtual void heap_parameter( ByteArrayOop name, int no ) {
+    }
+
+
+    virtual void no_debug_info() {
+    }
 };
 
 class TempPrinter : public TempDecoder {
-    private:
+private:
 
-    public:
-        void decode( MethodOop method, int byteCodeIndex = 0 );
+public:
+    void decode( MethodOop method, int byteCodeIndex = 0 );
 
-        // arguments are numbered from 1 to n
-        void parameter( ByteArrayOop name, int index );
+    // arguments are numbered from 1 to n
+    void parameter( ByteArrayOop name, int index );
 
-        void stack_temp( ByteArrayOop name, int no );
+    void stack_temp( ByteArrayOop name, int no );
 
-        void stack_float_temp( ByteArrayOop name, int fno );
+    void stack_float_temp( ByteArrayOop name, int fno );
 
-        void heap_temp( ByteArrayOop name, int no );
+    void heap_temp( ByteArrayOop name, int no );
 
-        void heap_parameter( ByteArrayOop name, int no );
+    void heap_parameter( ByteArrayOop name, int no );
 
-        void no_debug_info();
+    void no_debug_info();
 };
 
 // Returns the name of parameter number if found, nullptr otherwise.

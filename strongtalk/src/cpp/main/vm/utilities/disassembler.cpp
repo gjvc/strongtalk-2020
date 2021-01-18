@@ -23,13 +23,13 @@ constexpr int MAX_OUTBUF_SIZE{ 256 };
 
 static char tohex( std::uint8_t c );
 
-static const char * bintohex( const char * data, int bytes );
+static const char *bintohex( const char *data, int bytes );
 
-static void printRelocInfo( RelocationInformationIterator * iter, ConsoleOutputStream * stream );
+static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputStream *stream );
 
-static void printRelocInfo( const NativeMethod * nm, const char * pc, int lendis, ConsoleOutputStream * stream );
+static void printRelocInfo( const NativeMethod *nm, const char *pc, int lendis, ConsoleOutputStream *stream );
 
-static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const char * pc, ConsoleOutputStream * stream );
+static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const char *pc, ConsoleOutputStream *stream );
 
 
 // -----------------------------------------------------------------------------
@@ -42,11 +42,11 @@ static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const ch
 
 // -----------------------------------------------------------------------------
 
-static void st_disasm( const char * begin, const char * end, const NativeMethod * nm, ConsoleOutputStream * stream ) {
+static void st_disasm( const char *begin, const char *end, const NativeMethod *nm, ConsoleOutputStream *stream ) {
 
-    static char output[MAX_OUTBUF_SIZE];
-    std::size_t      outbufsize{ sizeof( output ) };
-    std::int32_t     data_size{ 4 }; //
+    static char  output[MAX_OUTBUF_SIZE];
+    std::size_t  outbufsize{ sizeof( output ) };
+    std::int32_t data_size{ 4 }; //
 
 //    ud_t ud_obj;
 //    ud_init( &ud_obj );
@@ -56,7 +56,7 @@ static void st_disasm( const char * begin, const char * end, const NativeMethod 
 //    ud_set_syntax( &ud_obj, UD_SYN_INTEL );
 
 
-    for ( const char * pc = begin; pc < end; pc += data_size ) {
+    for ( const char *pc = begin; pc < end; pc += data_size ) {
 
         // std::int32_t disasm(std::uint8_t *data, std::int32_t data_size, char *output, int outbufsize, int segsize,
         //               int64_t offset, int autosync, iflag_t *prefer)
@@ -78,17 +78,17 @@ static void st_disasm( const char * begin, const char * end, const NativeMethod 
 
 
 static char tohex( std::uint8_t c ) {
-    const char * digits = "0123456789ABCDEF";
+    const char *digits = "0123456789ABCDEF";
     if ( c > 0xf )
         return '?';
     return digits[ c ];
 }
 
 
-static const char * bintohex( const char * data, int bytes ) {
+static const char *bintohex( const char *data, int bytes ) {
     static char buf[MAX_HEXBUF_SIZE];
 
-    char * p = buf;
+    char *p = buf;
     while ( bytes-- ) {
         *p++ = tohex( ( *data & 0xF0 ) >> 4 );
         *p++ = tohex( *data & 0x0F );
@@ -100,11 +100,11 @@ static const char * bintohex( const char * data, int bytes ) {
 }
 
 
-static void printRelocInfo( RelocationInformationIterator * iter, ConsoleOutputStream * stream ) {
+static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputStream *stream ) {
 
-    PrimitiveDescriptor * pd;
-    const char          * target;
-    int                 * addr;
+    PrimitiveDescriptor *pd;
+    const char          *target;
+    int                 *addr;
 
     stream->print( "[reloc @ " );
     addr = iter->word_addr();
@@ -124,9 +124,9 @@ static void printRelocInfo( RelocationInformationIterator * iter, ConsoleOutputS
 
         case RelocationInformation::RelocationType::primitive_type:
             stream->print( "%p, primitive call, ", addr );
-            target = ( const char * ) ( *addr + ( int ) addr + oopSize );
+            target = (const char *) ( *addr + (int) addr + oopSize );
 
-            pd = Primitives::lookup( ( primitiveFunctionType ) target );
+            pd = Primitives::lookup( (primitiveFunctionType) target );
             if ( pd not_eq nullptr ) {
                 stream->print( "(%s)", pd->name() );
             } else {
@@ -166,13 +166,13 @@ static void printRelocInfo( RelocationInformationIterator * iter, ConsoleOutputS
 }
 
 
-static void printRelocInfo( const NativeMethod * nm, const char * pc, int lendis, ConsoleOutputStream * stream ) {
+static void printRelocInfo( const NativeMethod *nm, const char *pc, int lendis, ConsoleOutputStream *stream ) {
 
     RelocationInformationIterator iter( nm );
-    char * addr;
+    char *addr;
 
     while ( iter.next() ) {
-        addr = ( char * ) iter.word_addr();
+        addr = (char *) iter.word_addr();
         if ( addr > pc and addr < ( pc + lendis ) ) {
             printRelocInfo( &iter, stream );
             break;
@@ -181,8 +181,8 @@ static void printRelocInfo( const NativeMethod * nm, const char * pc, int lendis
 }
 
 
-static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const char * pc, ConsoleOutputStream * stream ) {
-    ProgramCounterDescriptor * pcs;
+static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const char *pc, ConsoleOutputStream *stream ) {
+    ProgramCounterDescriptor *pcs;
 
     pcs = nm->containingProgramCounterDescriptor( pc, nullptr );
     if ( not pcs ) {
@@ -199,11 +199,11 @@ static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const ch
 }
 
 
-void Disassembler::decode( const NativeMethod * nm, ConsoleOutputStream * stream ) {
+void Disassembler::decode( const NativeMethod *nm, ConsoleOutputStream *stream ) {
     st_disasm( nm->instructionsStart(), nm->instructionsEnd(), nm, stream );
 }
 
 
-void Disassembler::decode( const char * begin, const char * end, ConsoleOutputStream * stream ) {
+void Disassembler::decode( const char *begin, const char *end, ConsoleOutputStream *stream ) {
     st_disasm( begin, end, nullptr, stream );
 }

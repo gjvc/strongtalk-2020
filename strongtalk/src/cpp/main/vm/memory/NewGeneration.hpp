@@ -13,103 +13,103 @@
 
 class NewGeneration : public Generation {
 
-        friend class RememberedSet;
+    friend class RememberedSet;
 
-        friend class Universe;
+    friend class Universe;
 
-        friend class MarkSweep;
+    friend class MarkSweep;
 
-        friend class OopNativeCode;
+    friend class OopNativeCode;
 
-    private:
-        EdenSpace _edenSpace;
-        SurvivorSpace * _fromSpace;
-        SurvivorSpace * _toSpace;
+private:
+    EdenSpace _edenSpace;
+    SurvivorSpace *_fromSpace;
+    SurvivorSpace *_toSpace;
 
-    public:
-        EdenSpace * eden() {
-            return &_edenSpace;
-        }
-
-
-        SurvivorSpace * from() {
-            return _fromSpace;
-        }
+public:
+    EdenSpace *eden() {
+        return &_edenSpace;
+    }
 
 
-        SurvivorSpace * to() {
-            return _toSpace;
-        }
+    SurvivorSpace *from() {
+        return _fromSpace;
+    }
 
 
-        // Space enquiries
-        int capacity();
-
-        int used();
-
-        int free();
-
-        void print();
-
-        void object_iterate( ObjectClosure * blk );
-
-        void verify();
+    SurvivorSpace *to() {
+        return _toSpace;
+    }
 
 
-        bool_t would_fit( int size ) {
-            return _toSpace->would_fit( size );
-        }
+    // Space enquiries
+    int capacity();
+
+    int used();
+
+    int free();
+
+    void print();
+
+    void object_iterate( ObjectClosure *blk );
+
+    void verify();
 
 
-        void swap_spaces();
+    bool_t would_fit( int size ) {
+        return _toSpace->would_fit( size );
+    }
 
 
-        bool_t contains( void * p ) {
-            return ( const char * ) p >= _lowBoundary and ( const char * ) p < _highBoundary;
-        }
+    void swap_spaces();
 
 
-        Oop * object_start( Oop * p );
+    bool_t contains( void *p ) {
+        return (const char *) p >= _lowBoundary and (const char *) p < _highBoundary;
+    }
 
 
-        Oop * allocate( int size ) {
-            return eden()->allocate( size );
-        }
+    Oop *object_start( Oop *p );
 
 
-        Oop * allocate_in_survivor_space( int size ) {
-            return _toSpace->allocate( size );
-        }
+    Oop *allocate( int size ) {
+        return eden()->allocate( size );
+    }
 
 
-        const char * boundary() {
-            return _highBoundary;
-        }
+    Oop *allocate_in_survivor_space( int size ) {
+        return _toSpace->allocate( size );
+    }
 
 
-    protected:
+    const char *boundary() {
+        return _highBoundary;
+    }
+
+
+protected:
 //        inline bool_t is_new( MemOop p, char *boundary ); // inlined in generation.dcl.h
 //        inline bool_t is_new( Oop p, char *boundary ); // ditto
 
-        inline bool_t is_new( MemOop p, char * boundary ) {
-            return ( const char * ) p < boundary;
-        }
+    inline bool_t is_new( MemOop p, char *boundary ) {
+        return (const char *) p < boundary;
+    }
 
 
-        inline bool_t is_new( Oop p, char * boundary ) {
-            return p->is_mem() and is_new( MemOop( p ), boundary );
-        }
+    inline bool_t is_new( Oop p, char *boundary ) {
+        return p->is_mem() and is_new( MemOop( p ), boundary );
+    }
 
 
-    private:
-        // called by Universe
-        void initialize( ReservedSpace rs, int eden_size, int surv_size );
+private:
+    // called by Universe
+    void initialize( ReservedSpace rs, int eden_size, int surv_size );
 
-        // phase2 of mark sweep
-        void prepare_for_compaction( OldWaterMark * mark );
+    // phase2 of mark sweep
+    void prepare_for_compaction( OldWaterMark *mark );
 
-        // phase3 of mark sweep
-        void compact( OldWaterMark * mark );
+    // phase3 of mark sweep
+    void compact( OldWaterMark *mark );
 
-        void switch_pointers( Oop from, Oop to );
+    void switch_pointers( Oop from, Oop to );
 };

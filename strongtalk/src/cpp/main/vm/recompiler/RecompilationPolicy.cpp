@@ -11,19 +11,19 @@
 #include "vm/interpreter/Interpreter.hpp"
 
 
-RecompilationPolicy::RecompilationPolicy( RecompilerFrame * first ) {
-    _stack = new GrowableArray <RecompilerFrame *>( 50 );
+RecompilationPolicy::RecompilationPolicy( RecompilerFrame *first ) {
+    _stack = new GrowableArray<RecompilerFrame *>( 50 );
     _stack->push( first );
 }
 
 
-Recompilee * RecompilationPolicy::findRecompilee() {
-    RecompilerFrame * rf = _stack->at( 0 );
+Recompilee *RecompilationPolicy::findRecompilee() {
+    RecompilerFrame *rf = _stack->at( 0 );
     if ( PrintRecompilation2 ) {
         for ( int i = 0; i < 10 and rf; i++, rf = senderOf( rf ) );   // create 10 frames
         printStack();
     }
-    RecompilerFrame * r = findTopInlinableFrame();
+    RecompilerFrame *r = findTopInlinableFrame();
     if ( r ) {
         if ( PrintRecompilation )
             r->print();
@@ -41,12 +41,12 @@ void RecompilationPolicy::cleanupStaleInlineCaches() {
 }
 
 
-RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
+RecompilerFrame *RecompilationPolicy::findTopInlinableFrame() {
     // go up the stack until finding a frame that (probably) won't be inlined into its caller
     RecompilerInliningPolicy p;
-    RecompilerFrame * current    = _stack->at( 0 );    // current choice for stopping
-    RecompilerFrame * prev       = nullptr;            // prev. value of current
-    RecompilerFrame * prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
+    RecompilerFrame *current    = _stack->at( 0 );    // current choice for stopping
+    RecompilerFrame *prev       = nullptr;            // prev. value of current
+    RecompilerFrame *prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
     _msg = nullptr;
 
     while ( 1 ) {
@@ -62,7 +62,7 @@ RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
         }
 
         // before going up the stack further, check if doing so would get us into compiled code
-        RecompilerFrame * next = senderOrParentOf( current );
+        RecompilerFrame *next = senderOrParentOf( current );
 
         if ( next ) {
             if ( next->num() > MaxRecompilationSearchLength ) {
@@ -80,7 +80,7 @@ RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
                 // method; later, if that gets executed often, it will trigger another recompile that
                 // will lead to next (or its caller) to be reoptimized.  At that point, optimization can take
                 // advantage of the better type information in the compiled version of current
-                LookupKey * k = next->key();
+                LookupKey *k = next->key();
                 if ( next->is_compiled() ) {
                     _msg = "(not going up into optimized code)";
                     break;
@@ -100,7 +100,7 @@ RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
                 break;
             }
         }
-        prev                   = current;
+        prev                  = current;
 
         if ( not current->is_blockMethod() )
             prevMethod = current;
@@ -117,7 +117,7 @@ RecompilerFrame * RecompilationPolicy::findTopInlinableFrame() {
 }
 
 
-void RecompilationPolicy::checkCurrent( RecompilerFrame *& current, RecompilerFrame *& prev, RecompilerFrame *& prevMethod ) {
+void RecompilationPolicy::checkCurrent( RecompilerFrame *&current, RecompilerFrame *&prev, RecompilerFrame *&prevMethod ) {
     // current is the provisional recompilation candidate; perform a few sanity checks on it
     if ( current->is_blockMethod() and current->is_interpreted() ) {
         // can't recompile blocks in isolation, and this block is too big to inline
@@ -142,7 +142,7 @@ void RecompilationPolicy::checkCurrent( RecompilerFrame *& current, RecompilerFr
             checkCurrent( current, prev, prevMethod );
         _msg = "(can't recompile super nativeMethods yet)";
     } else if ( current->is_compiled() ) {
-        const char * msg2;
+        const char *msg2;
         if ( ( msg2 = shouldNotRecompileNativeMethod( current->nm() ) ) not_eq nullptr ) {
             current = nullptr;
             _msg    = msg2;
@@ -158,9 +158,9 @@ void RecompilationPolicy::checkCurrent( RecompilerFrame *& current, RecompilerFr
     // Inserted after several hours of debugging by Lars
     if ( current->is_compiled() ) {
         if ( EnableOptimizedCodeRecompilation ) {
-            LookupKey    * k          = current->key();
-            NativeMethod * running_nm = current->nm();
-            NativeMethod * newest_nm  = k ? Universe::code->lookup( k ) : nullptr;
+            LookupKey    *k          = current->key();
+            NativeMethod *running_nm = current->nm();
+            NativeMethod *newest_nm  = k ? Universe::code->lookup( k ) : nullptr;
             // NB: newest_nm is always nullptr for block nativeMethods
             if ( k and running_nm and running_nm->is_method() and running_nm not_eq newest_nm ) {
                 // ideally, should determine how many stack frames nm covers, then recompile
@@ -178,7 +178,7 @@ void RecompilationPolicy::checkCurrent( RecompilerFrame *& current, RecompilerFr
 }
 
 
-const char * RecompilationPolicy::shouldNotRecompileNativeMethod( NativeMethod * nm ) {
+const char *RecompilationPolicy::shouldNotRecompileNativeMethod( NativeMethod *nm ) {
     // if nm should not be recompiled, return a string with the reason; otherwise, return nullptr
     if ( nm->isUncommonRecompiled() ) {
         if ( RecompilationPolicy::shouldRecompileUncommonNativeMethod( nm ) ) {
@@ -198,15 +198,15 @@ const char * RecompilationPolicy::shouldNotRecompileNativeMethod( NativeMethod *
 }
 
 
-RecompilerFrame * RecompilationPolicy::senderOf( RecompilerFrame * rf ) {
-    RecompilerFrame * sender = rf->caller();
+RecompilerFrame *RecompilationPolicy::senderOf( RecompilerFrame *rf ) {
+    RecompilerFrame *sender = rf->caller();
     if ( sender and sender->num() == _stack->length() )
         _stack->push( sender );
     return sender;
 }
 
 
-void RecompilationPolicy::fixBlockParent( RecompilerFrame * rf ) {
+void RecompilationPolicy::fixBlockParent( RecompilerFrame *rf ) {
     // find the parent method and increase its counter so it will be recompiled next time
     MethodOop blk = rf->top_method();
     st_assert( blk->is_blockMethod(), "must be a block" );
@@ -219,12 +219,12 @@ void RecompilationPolicy::fixBlockParent( RecompilerFrame * rf ) {
 }
 
 
-RecompilerFrame * RecompilationPolicy::senderOrParentOf( RecompilerFrame * rf ) {
+RecompilerFrame *RecompilationPolicy::senderOrParentOf( RecompilerFrame *rf ) {
     // "go up" on the stack to find a better recompilee;
     // for normal methods, that's the sender; for block methods, it's the home method
     // (*not* enclosing scope) unless that method is already optimized
     if ( rf->is_blockMethod() ) {
-        RecompilerFrame * parent = parentOf( rf );
+        RecompilerFrame *parent = parentOf( rf );
         if ( parent == nullptr ) {
             // can't find the parent (e.g. because it's a non-LIFO block)
             fixBlockParent( rf );
@@ -247,12 +247,12 @@ RecompilerFrame * RecompilationPolicy::senderOrParentOf( RecompilerFrame * rf ) 
     } else if ( rf->hasBlockArgs() ) {
         // go up to highest home of any block arg
         // bug: should check how often block is created / invoked
-        GrowableArray <BlockClosureOop> * blockArgs = rf->blockArgs();
-        RecompilerFrame                 * max       = nullptr;
+        GrowableArray<BlockClosureOop> *blockArgs = rf->blockArgs();
+        RecompilerFrame                *max       = nullptr;
         for ( int i = 0; i < blockArgs->length(); i++ ) {
             BlockClosureOop blk = blockArgs->at( i );
             //JumpTableEntry* e = blk->jump_table_entry();
-            RecompilerFrame * home = parentOfBlock( blk );
+            RecompilerFrame *home = parentOfBlock( blk );
             if ( home == nullptr )
                 continue;
             if ( max == nullptr or home->num() > max->num() )
@@ -266,7 +266,7 @@ RecompilerFrame * RecompilationPolicy::senderOrParentOf( RecompilerFrame * rf ) 
 }
 
 
-RecompilerFrame * RecompilationPolicy::parentOf( RecompilerFrame * rf ) {
+RecompilerFrame *RecompilationPolicy::parentOf( RecompilerFrame *rf ) {
     st_assert( rf->is_blockMethod(), "shouldn't call" );
     // use caller VirtualFrame's receiver instead of rf's receiver because VirtualFrame may not be set up correctly
     // for most recent frame [this may not be true anymore -- Urs 10/96]
@@ -280,7 +280,7 @@ RecompilerFrame * RecompilationPolicy::parentOf( RecompilerFrame * rf ) {
     // Yes this assumes that the caller invokes primitiveValue on self; if we change that the
     // code here breaks.
 
-    DeltaVirtualFrame * sender = rf->top_vframe()->sender_delta_frame();
+    DeltaVirtualFrame *sender = rf->top_vframe()->sender_delta_frame();
     if ( sender == nullptr )
         return nullptr;
 
@@ -290,19 +290,19 @@ RecompilerFrame * RecompilationPolicy::parentOf( RecompilerFrame * rf ) {
 }
 
 
-RecompilerFrame * RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
+RecompilerFrame *RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
     if ( blk->is_pure() )
         return nullptr;
 
     ContextOop ctx = blk->lexical_scope();
     st_assert( ctx->is_context(), "make sure we have a context" );
 
-    int * fp = ctx->parent_fp();
+    int *fp = ctx->parent_fp();
     if ( fp == nullptr ) {
         return nullptr;    // non-LIFO block
     }
     // try to find context's RecompilerFrame
-    RecompilerFrame * parent = _stack->first();
+    RecompilerFrame *parent = _stack->first();
     for ( int i = 0; i < MaxRecompilationSearchLength; i++ ) {
         parent = senderOf( parent );
         if ( not parent )
@@ -321,7 +321,7 @@ void RecompilationPolicy::printStack() {    // for debugging
 }
 
 
-bool_t RecompilationPolicy::needRecompileCounter( Compiler * c ) {
+bool_t RecompilationPolicy::needRecompileCounter( Compiler *c ) {
     if ( not UseRecompilation )
         return false;
     if ( c->version() == MaxVersions )
@@ -334,14 +334,14 @@ bool_t RecompilationPolicy::needRecompileCounter( Compiler * c ) {
 }
 
 
-bool_t RecompilationPolicy::shouldRecompileAfterUncommonTrap( NativeMethod * nm ) {
+bool_t RecompilationPolicy::shouldRecompileAfterUncommonTrap( NativeMethod *nm ) {
     // called after nm encountered an uncommon trap; should it be recompiled into
     // less optimized form (without uncommon branches)?
     return nm->uncommon_trap_counter() >= UncommonRecompileLimit;
 }
 
 
-bool_t RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod * nm ) {
+bool_t RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod *nm ) {
     st_assert( nm->isUncommonRecompiled(), "expected an uncommon NativeMethod" );
     // nm looks like a recompilation candidate; can it really be optimized?
     // isUncommonRecompiled nativeMethods were created after the original NativeMethod encountered

@@ -12,44 +12,44 @@
 
 // -----------------------------------------------------------------------------
 
-typedef class OopDescriptor * Oop;
+typedef class OopDescriptor *Oop;
 constexpr int oopSize = sizeof( Oop );
 
 
 // -----------------------------------------------------------------------------
 
-typedef Oop     (__CALLING_CONVENTION * primitiveFunctionType)( ... );
+typedef Oop     (__CALLING_CONVENTION *primitiveFunctionType)( ... );
 //typedef void    (__CALLING_CONVENTION * oopsDoFn)( Oop * p );
-typedef void    (__CALLING_CONVENTION * doFn)();
+typedef void    (__CALLING_CONVENTION *doFn)();
 
 
 // -----------------------------------------------------------------------------
 
-typedef class OopDescriptor                 * Oop;
-typedef class MarkOopDescriptor             * MarkOop;
-typedef class MemOopDescriptor              * MemOop;
-typedef class AssociationOopDescriptor      * AssociationOop;
-typedef class BlockClosureOopDescriptor     * BlockClosureOop;
-typedef class ByteArrayOopDescriptor        * ByteArrayOop;
-typedef class SymbolOopDescriptor           * SymbolOop;
-typedef class ContextOopDescriptor          * ContextOop;
-typedef class DoubleByteArrayOopDescriptor  * DoubleByteArrayOop;
-typedef class DoubleOopDescriptor           * DoubleOop;
-typedef class DoubleValueArrayOopDescriptor * doubleValueArrayOop;
-typedef class KlassOopDescriptor            * KlassOop;
-typedef class MethodOopDescriptor           * MethodOop;
-typedef class MixinOopDescriptor            * MixinOop;
-typedef class ObjectArrayOopDescriptor      * ObjectArrayOop;
-typedef class WeakArrayOopDescriptor        * WeakArrayOop;
-typedef class ProcessOopDescriptor          * ProcessOop;
-typedef class ProxyOopDescriptor            * ProxyOop;
-typedef class VirtualFrameOopDescriptor     * VirtualFrameOop;
-typedef class SMIOopDescriptor              * SMIOop;
+typedef class OopDescriptor                 *Oop;
+typedef class MarkOopDescriptor             *MarkOop;
+typedef class MemOopDescriptor              *MemOop;
+typedef class AssociationOopDescriptor      *AssociationOop;
+typedef class BlockClosureOopDescriptor     *BlockClosureOop;
+typedef class ByteArrayOopDescriptor        *ByteArrayOop;
+typedef class SymbolOopDescriptor           *SymbolOop;
+typedef class ContextOopDescriptor          *ContextOop;
+typedef class DoubleByteArrayOopDescriptor  *DoubleByteArrayOop;
+typedef class DoubleOopDescriptor           *DoubleOop;
+typedef class DoubleValueArrayOopDescriptor *doubleValueArrayOop;
+typedef class KlassOopDescriptor            *KlassOop;
+typedef class MethodOopDescriptor           *MethodOop;
+typedef class MixinOopDescriptor            *MixinOop;
+typedef class ObjectArrayOopDescriptor      *ObjectArrayOop;
+typedef class WeakArrayOopDescriptor        *WeakArrayOop;
+typedef class ProcessOopDescriptor          *ProcessOop;
+typedef class ProxyOopDescriptor            *ProxyOop;
+typedef class VirtualFrameOopDescriptor     *VirtualFrameOop;
+typedef class SMIOopDescriptor              *SMIOop;
 
 
 // -----------------------------------------------------------------------------
 
-typedef class ScopeDescriptorNode * ScopeInfo;
+typedef class ScopeDescriptorNode *ScopeInfo;
 
 //
 // oopDescriptor ("object-orientated pointer descriptor") is the top of the Oop hierarchy.
@@ -75,124 +75,124 @@ class ConsoleOutputStream;
 
 class OopDescriptor {
 
-    protected:
+protected:
 
-    public:
-        // The _mark instance variable is here rather than in MemOop (where it belongs) because many C++ compilers have trouble with empty objects (size 0),
-        // i.e., give them nonzero length which messes up all the subclasses.
+public:
+    // The _mark instance variable is here rather than in MemOop (where it belongs) because many C++ compilers have trouble with empty objects (size 0),
+    // i.e., give them nonzero length which messes up all the subclasses.
 
-        // So, to be perfectly clear, not all oopDescriptor classes truly have a _mark word; only the ones below MemOop do.
-        MarkOop _mark;
+    // So, to be perfectly clear, not all oopDescriptor classes truly have a _mark word; only the ones below MemOop do.
+    MarkOop _mark;
 
-    public:
-        // Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
-        OopDescriptor();
-
-
-        // tag checks
-        int tag() const {
-            return maskBits( int( this ), TAG_MASK );
-        }
+public:
+    // Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
+    OopDescriptor();
 
 
-        bool_t is_smi() const {
-            return tag() == INTEGER_TAG;
-        }
+    // tag checks
+    int tag() const {
+        return maskBits( int( this ), TAG_MASK );
+    }
 
 
-        bool_t is_mem() const {
-            return tag() == MEMOOP_TAG;
-        }
+    bool_t is_smi() const {
+        return tag() == INTEGER_TAG;
+    }
 
 
-        bool_t is_mark() const {
-            return tag() == MARK_TAG;
-        }
+    bool_t is_mem() const {
+        return tag() == MEMOOP_TAG;
+    }
 
 
-        // tag dispatchers (inlined in Oop.inline.h)
-        Klass * blueprint() const;
-
-        KlassOop klass() const;
-
-        smi_t identity_hash();
-
-        // memory management
-        Oop scavenge();
-
-        Oop relocate();
-
-        // generation testers (inlined in Oop.inline.h)
-        bool_t is_old() const;
-
-        bool_t is_new() const;
-
-        Generation * my_generation();
-
-        // type test operations (inlined in Oop.inline.h)
-        bool_t is_double() const;
-
-        bool_t is_block() const;
-
-        bool_t is_byteArray() const;
-
-        bool_t is_doubleByteArray() const;
-
-        bool_t is_doubleValueArray() const;
-
-        bool_t is_symbol() const;
-
-        bool_t is_objArray() const;
-
-        bool_t is_weakArray() const;
-
-        bool_t is_klass() const;
-
-        bool_t is_process() const;
-
-        bool_t is_vframe() const;
-
-        bool_t is_method() const;
-
-        bool_t is_proxy() const;
-
-        bool_t is_mixin() const;
-
-        bool_t is_association() const;
-
-        bool_t is_context() const;
-
-        bool_t is_indexable() const;
+    bool_t is_mark() const {
+        return tag() == MARK_TAG;
+    }
 
 
-        // Returns is the Oop is the nil object
-        bool_t is_nil() const {
-            return this == nilObj;
-        }
+    // tag dispatchers (inlined in Oop.inline.h)
+    Klass *blueprint() const;
+
+    KlassOop klass() const;
+
+    smi_t identity_hash();
+
+    // memory management
+    Oop scavenge();
+
+    Oop relocate();
+
+    // generation testers (inlined in Oop.inline.h)
+    bool_t is_old() const;
+
+    bool_t is_new() const;
+
+    Generation *my_generation();
+
+    // type test operations (inlined in Oop.inline.h)
+    bool_t is_double() const;
+
+    bool_t is_block() const;
+
+    bool_t is_byteArray() const;
+
+    bool_t is_doubleByteArray() const;
+
+    bool_t is_doubleValueArray() const;
+
+    bool_t is_symbol() const;
+
+    bool_t is_objArray() const;
+
+    bool_t is_weakArray() const;
+
+    bool_t is_klass() const;
+
+    bool_t is_process() const;
+
+    bool_t is_vframe() const;
+
+    bool_t is_method() const;
+
+    bool_t is_proxy() const;
+
+    bool_t is_mixin() const;
+
+    bool_t is_association() const;
+
+    bool_t is_context() const;
+
+    bool_t is_indexable() const;
 
 
-        // Primitives
-        Oop primitive_allocate( bool_t allow_scavenge = true, bool_t tenured = false );
+    // Returns is the Oop is the nil object
+    bool_t is_nil() const {
+        return this == nilObj;
+    }
 
-        Oop primitive_allocate_size( int size );
 
-        Oop shallow_copy( bool_t tenured );
+    // Primitives
+    Oop primitive_allocate( bool_t allow_scavenge = true, bool_t tenured = false );
 
-        bool_t verify();
+    Oop primitive_allocate_size( int size );
 
-        // printing functions for VM debugging
-        void print_on( ConsoleOutputStream * stream );        // First level print
-        void print_value_on( ConsoleOutputStream * stream );  // Prints Oop as <ClassName>(<objectID>).
+    Oop shallow_copy( bool_t tenured );
 
-        // printing on default output stream
-        void print();
+    bool_t verify();
 
-        void print_value();
+    // printing functions for VM debugging
+    void print_on( ConsoleOutputStream *stream );        // First level print
+    void print_value_on( ConsoleOutputStream *stream );  // Prints Oop as <ClassName>(<objectID>).
 
-        // return the print strings
-        char * print_string();
+    // printing on default output stream
+    void print();
 
-        char * print_value_string();
+    void print_value();
 
-        friend class memOopKlass;
+    // return the print strings
+    char *print_string();
+
+    char *print_value_string();
+
+    friend class memOopKlass;
 };

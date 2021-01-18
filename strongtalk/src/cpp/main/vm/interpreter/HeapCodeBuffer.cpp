@@ -45,11 +45,11 @@ void HeapCodeBuffer::pushOop( Oop arg ) {
 ByteArrayOop HeapCodeBuffer::bytes() {
     BlockScavenge bs;
     align();
-    Klass * klass = Universe::byteArrayKlassObj()->klass_part();
+    Klass *klass = Universe::byteArrayKlassObj()->klass_part();
     ByteArrayOop result = ByteArrayOop( klass->allocateObjectSize( byteLength() ) );
 
     for ( int i = 0; i < byteLength(); i++ )
-        result->byte_at_put( i + 1, ( std::uint8_t ) _bytes->at( i ) );
+        result->byte_at_put( i + 1, (std::uint8_t) _bytes->at( i ) );
 
     return result;
 }
@@ -57,7 +57,7 @@ ByteArrayOop HeapCodeBuffer::bytes() {
 
 ObjectArrayOop HeapCodeBuffer::oops() {
     BlockScavenge bs;
-    Klass * klass = Universe::objArrayKlassObj()->klass_part();
+    Klass *klass = Universe::objArrayKlassObj()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( klass->allocateObjectSize( oopLength() ) );
 
     for ( int i = 0; i < oopLength(); i++ )

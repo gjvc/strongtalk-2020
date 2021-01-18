@@ -164,23 +164,23 @@ void TempPrinter::no_debug_info() {
 
 
 class FindParam : public TempDecoder {
-    private:
-        int the_no;
-    public:
-        ByteArrayOop result;
+private:
+    int the_no;
+public:
+    ByteArrayOop result;
 
 
-        void find( MethodOop method, int no ) {
-            result = nullptr;
-            the_no = no;
-            decode( method, 0 );
-        }
+    void find( MethodOop method, int no ) {
+        result = nullptr;
+        the_no = no;
+        decode( method, 0 );
+    }
 
 
-        void parameter( ByteArrayOop name, int no ) {
-            if ( the_no == no )
-                result = name;
-        }
+    void parameter( ByteArrayOop name, int no ) {
+        if ( the_no == no )
+            result = name;
+    }
 };
 
 
@@ -192,69 +192,69 @@ ByteArrayOop find_parameter_name( MethodOop method, int no ) {
 
 
 class FindStackTemp : public TempDecoder {
-    private:
-        int the_no;
-    public:
-        ByteArrayOop result;
+private:
+    int the_no;
+public:
+    ByteArrayOop result;
 
 
-        void find( MethodOop method, int byteCodeIndex, int no ) {
-            result = nullptr;
-            the_no = no;
-            TempDecoder::decode( method, byteCodeIndex );
-        }
+    void find( MethodOop method, int byteCodeIndex, int no ) {
+        result = nullptr;
+        the_no = no;
+        TempDecoder::decode( method, byteCodeIndex );
+    }
 
 
-        void stack_temp( ByteArrayOop name, int no ) {
-            if ( the_no == no )
-                result = name;
-        }
+    void stack_temp( ByteArrayOop name, int no ) {
+        if ( the_no == no )
+            result = name;
+    }
 };
 
 class FindStackFloatTemp : public TempDecoder {
-    private:
-        int the_fno;
-    public:
-        ByteArrayOop result;
+private:
+    int the_fno;
+public:
+    ByteArrayOop result;
 
 
-        void find( MethodOop method, int byteCodeIndex, int fno ) {
-            result  = nullptr;
-            the_fno = fno;
-            TempDecoder::decode( method, byteCodeIndex );
-        }
+    void find( MethodOop method, int byteCodeIndex, int fno ) {
+        result  = nullptr;
+        the_fno = fno;
+        TempDecoder::decode( method, byteCodeIndex );
+    }
 
 
-        void stack_float_temp( ByteArrayOop name, int fno ) {
-            if ( the_fno == fno )
-                result = name;
-        }
+    void stack_float_temp( ByteArrayOop name, int fno ) {
+        if ( the_fno == fno )
+            result = name;
+    }
 };
 
 class FindHeapTemp : public TempDecoder {
-    private:
-        int the_no;
-    public:
-        ByteArrayOop result;
+private:
+    int the_no;
+public:
+    ByteArrayOop result;
 
 
-        void find( MethodOop method, int byteCodeIndex, int no ) {
-            result = nullptr;
-            the_no = no;
-            TempDecoder::decode( method, byteCodeIndex );
-        }
+    void find( MethodOop method, int byteCodeIndex, int no ) {
+        result = nullptr;
+        the_no = no;
+        TempDecoder::decode( method, byteCodeIndex );
+    }
 
 
-        void heap_temp( ByteArrayOop name, int no ) {
-            if ( the_no == no )
-                result = name;
-        }
+    void heap_temp( ByteArrayOop name, int no ) {
+        if ( the_no == no )
+            result = name;
+    }
 
 
-        void heap_parameter( ByteArrayOop name, int no ) {
-            if ( the_no == no )
-                result = name;
-        }
+    void heap_parameter( ByteArrayOop name, int no ) {
+        if ( the_no == no )
+            result = name;
+    }
 
 };
 

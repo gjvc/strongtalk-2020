@@ -19,11 +19,11 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/Timer.hpp"
 
-NativeMethod  * recompilee = nullptr;            // method being recompiled
-Recompilation * theRecompilation;
+NativeMethod  *recompilee = nullptr;            // method being recompiled
+Recompilation *theRecompilation;
 
 
-const char * Recompilation::methodOop_invocation_counter_overflow( Oop receiver, MethodOop method ) {
+const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, MethodOop method ) {
 
     // called by the interpreter whenever a method's invocation counter reaches the limit
     // returns continuation pc or nullptr if continuing in interpreter
@@ -35,8 +35,8 @@ const char * Recompilation::methodOop_invocation_counter_overflow( Oop receiver,
     // The following tests are for debugging only and should be removed at some point - gri 7/11/96.
     // If the method is illegal, recompilation is simply aborted.
     bool_t ok = false;
-    if ( Universe::is_heap( ( Oop * ) method ) ) {
-        MemOop obj = as_memOop( Universe::object_start( ( Oop * ) method ) );
+    if ( Universe::is_heap( (Oop *) method ) ) {
+        MemOop obj = as_memOop( Universe::object_start( (Oop *) method ) );
         if ( obj->is_method() ) {
             ok = true;
         }
@@ -45,7 +45,7 @@ const char * Recompilation::methodOop_invocation_counter_overflow( Oop receiver,
     if ( not ok ) {
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
-        const char * msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
+        const char *msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
         LOG_EVENT3( "invocation counter overflow with broken methodOop 0x%x (recv = 0x%x) %s", method, receiver, msg );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
@@ -69,16 +69,16 @@ const char * Recompilation::methodOop_invocation_counter_overflow( Oop receiver,
 }
 
 
-const char * Recompilation::nativeMethod_invocation_counter_overflow( Oop receiver, char * retpc ) {
+const char *Recompilation::nativeMethod_invocation_counter_overflow( Oop receiver, char *retpc ) {
     // called by an NativeMethod whenever the NativeMethod's invocation counter reaches its limit
     // retpc is the recompilee's return PC (i.e., the pc of the NativeMethod which triggered
     // the invocation counter overflow).
     ResourceMark resourceMark;
-    NativeMethod * trigger = findNativeMethod( retpc );
+    NativeMethod *trigger = findNativeMethod( retpc );
     LOG_EVENT3( "nativeMethod_invocation_counter_overflow: receiver = %#x, pc = %#x (NativeMethod %#x)", receiver, retpc, trigger );
-    const char        * continuationAddr = trigger->verifiedEntryPoint();   // where to continue
-    DeltaVirtualFrame * vf               = DeltaProcess::active()->last_delta_vframe();
-    st_assert( vf->is_compiled_frame() and ( ( CompiledVirtualFrame * ) vf )->code() == trigger, "stack isn't set up right" );
+    const char        *continuationAddr = trigger->verifiedEntryPoint();   // where to continue
+    DeltaVirtualFrame *vf               = DeltaProcess::active()->last_delta_vframe();
+    st_assert( vf->is_compiled_frame() and ( (CompiledVirtualFrame *) vf )->code() == trigger, "stack isn't set up right" );
     DeltaProcess::active()->trace_stack();
     if ( UseRecompilation ) {
         Recompilation recomp( receiver, trigger );
@@ -94,12 +94,12 @@ const char * Recompilation::nativeMethod_invocation_counter_overflow( Oop receiv
 }
 
 
-NativeMethod * compile_method( LookupKey * key, MethodOop m ) {
+NativeMethod *compile_method( LookupKey *key, MethodOop m ) {
 
     if ( UseInliningDatabase and not m->is_blockMethod() ) {
         // Find entry in inlining database matching the key.
         // If entry found we use the stored RecompilationScope a basis for the compile.
-        RecompilationScope * rscope = InliningDatabase::lookup_and_remove( key );
+        RecompilationScope *rscope = InliningDatabase::lookup_and_remove( key );
         if ( rscope ) {
             VM_OptimizeRScope op( rscope );
             VMProcess::execute( &op );
@@ -131,7 +131,7 @@ void Recompilation::init() {
         // should compute receiver via context (although receiver isn't actually used
         // for block RFrames right now) -- fix this
         if ( _receiver->is_context() ) {
-            ContextOop ctx = ( ContextOop ) _receiver;
+            ContextOop ctx = (ContextOop) _receiver;
         } else {
             st_assert( _receiver == nilObj, "expected nil" );
         }
@@ -142,13 +142,13 @@ void Recompilation::init() {
 void Recompilation::doit() {
     ResourceMark resourceMark;
     if ( PrintRecompilation ) {
-        lprintf( "recompilation trigger: %s (%#x)\n", _method->selector()->as_string(), isCompiled() ? ( const char * ) _nativeMethod : ( const char * ) _method );
+        lprintf( "recompilation trigger: %s (%#x)\n", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
     }
 
     _deltaVirtualFrame = calling_process()->last_delta_vframe();
     // trigger is the frame that triggered its counter
     // caution: that frame may be in a bad state, so don't access data within it
-    RecompilerFrame * first;
+    RecompilerFrame *first;
     if ( isCompiled() ) {
         first = new CompiledRecompilerFrame( _deltaVirtualFrame->fr() );
     } else {
@@ -159,7 +159,7 @@ void Recompilation::doit() {
     if ( handleStaleInlineCache( first ) ) {
         // called obsolete method/NativeMethod -- no need to recompile
     } else {
-        Recompilee * r;
+        Recompilee *r;
         if ( _isUncommonBranch ) {
             st_assert( isCompiled(), "must be compiled" );
             r = Recompilee::new_Recompilee( first );
@@ -197,18 +197,18 @@ void Recompilation::doit() {
 }
 
 
-bool_t Recompilation::handleStaleInlineCache( RecompilerFrame * first ) {
+bool_t Recompilation::handleStaleInlineCache( RecompilerFrame *first ) {
 
     // check if the trigger was an interpreted method that has already been compiled; return true if so
-    LookupKey * key = first->key();
+    LookupKey *key = first->key();
     if ( not key )
         return false;
-    NativeMethod * nm = Universe::code->lookup( key );
+    NativeMethod *nm = Universe::code->lookup( key );
     if ( nm == nullptr )
         return false;
 
     // yes, we already have a compiled method; see if the sending inline cache points to that NativeMethod
-    InlineCacheIterator * it = first->caller()->fr().current_ic_iterator();
+    InlineCacheIterator *it = first->caller()->fr().current_ic_iterator();
     if ( not it )
         return false;    // no inline cache (perform)
     st_assert( it->selector() == key->selector(), "selector mismatch" );
@@ -217,7 +217,7 @@ bool_t Recompilation::handleStaleInlineCache( RecompilerFrame * first ) {
     if ( it->at_end() ) {
         // NB: this is possible -- inline cache could have been modified after the call, so now the called method is no longer in it
     } else {
-        NativeMethod * target = it->compiled_method();
+        NativeMethod *target = it->compiled_method();
         st_assert( not target or target == nm or target->_lookupKey.equal( &nm->_lookupKey ), "inconsistent target" );
         if ( not target or target not_eq nm ) {
             // yes, the inline cache still calls the interpreted method rather than the compiled one,
@@ -247,22 +247,22 @@ bool_t Recompilation::handleStaleInlineCache( RecompilerFrame * first ) {
 }
 
 
-Oop Recompilation::receiverOf( DeltaVirtualFrame * vf ) const {
+Oop Recompilation::receiverOf( DeltaVirtualFrame *vf ) const {
     return _deltaVirtualFrame->equal( vf ) ? _receiver : vf->receiver();
 }
 
 
 //#ifdef HEAVY_CLEANUP
 class CleanupInlineCaches : public ObjectClosure {
-        void do_object( MemOop obj ) {
-            if ( obj->is_method() )
-                MethodOop( obj )->cleanup_inline_caches();
-        }
+    void do_object( MemOop obj ) {
+        if ( obj->is_method() )
+            MethodOop( obj )->cleanup_inline_caches();
+    }
 };
 //#endif
 
 
-void Recompilation::recompile( Recompilee * r ) {
+void Recompilation::recompile( Recompilee *r ) {
 
     // recompile r
     recompilee = r->is_compiled() ? r->code() : nullptr;    // previous version (if any)
@@ -284,16 +284,16 @@ void Recompilation::recompile( Recompilee * r ) {
     recompilee = nullptr;
 
     // now install _newNM in calling inline cache
-    VirtualFrame        * vf = r->rframe()->top_vframe();
-    InlineCacheIterator * it = vf->fr().sender_ic_iterator();
+    VirtualFrame        *vf = r->rframe()->top_vframe();
+    InlineCacheIterator *it = vf->fr().sender_ic_iterator();
     if ( it ) {
         // Replace the element in the inline cache
         if ( it->is_interpreted_ic() ) {
-            InterpretedInlineCache * ic = it->interpreted_ic();
+            InterpretedInlineCache *ic = it->interpreted_ic();
             if ( not ic->is_empty() )
                 ic->replace( _newNativeMethod );
         } else {
-            CompiledInlineCache * ic = it->compiled_ic();
+            CompiledInlineCache *ic = it->compiled_ic();
             if ( not ic->is_empty() )
                 ic->replace( _newNativeMethod );
         }
@@ -309,9 +309,9 @@ void Recompilation::recompile( Recompilee * r ) {
 }
 
 
-void Recompilation::recompile_method( Recompilee * r ) {
+void Recompilation::recompile_method( Recompilee *r ) {
     // recompile method r
-    LookupKey * key = r->key();
+    LookupKey *key = r->key();
     MethodOop m = r->method();
 
     LookupResult res = LookupCache::lookup( key );
@@ -344,7 +344,7 @@ void Recompilation::recompile_method( Recompilee * r ) {
 }
 
 
-void Recompilation::recompile_block( Recompilee * r ) {
+void Recompilation::recompile_block( Recompilee *r ) {
     st_assert( r->rframe()->is_blockMethod(), "must be block recompilation" );
     if ( recompilee == nullptr ) {
         // Urs please fix this.
@@ -357,13 +357,13 @@ void Recompilation::recompile_block( Recompilee * r ) {
     }
     st_assert( recompilee not_eq nullptr, "must have block recompilee" );
 
-    DeltaVirtualFrame * vf = r->rframe()->top_vframe();
+    DeltaVirtualFrame *vf = r->rframe()->top_vframe();
     Oop block;
     if ( recompilee and recompilee->is_block() ) {
-        DeltaVirtualFrame * sender = vf->sender_delta_frame();
+        DeltaVirtualFrame *sender = vf->sender_delta_frame();
         if ( sender == nullptr )
             return;              // pathological case (not sure it can happen)
-        GrowableArray <Oop> * exprs = sender->expression_stack();
+        GrowableArray<Oop> *exprs = sender->expression_stack();
         // primitiveValue takes block as first argument
         int nargs = recompilee->method()->nofArgs();
         block = exprs->at( nargs );
@@ -378,11 +378,11 @@ void Recompilation::recompile_block( Recompilee * r ) {
 }
 
 
-Recompilee * Recompilee::new_Recompilee( RecompilerFrame * rf ) {
+Recompilee *Recompilee::new_Recompilee( RecompilerFrame *rf ) {
     if ( rf->is_compiled() ) {
-        return new CompiledRecompilee( rf, ( ( CompiledRecompilerFrame * ) rf )->nm() );
+        return new CompiledRecompilee( rf, ( (CompiledRecompilerFrame *) rf )->nm() );
     } else {
-        InterpretedRecompilerFrame * irf = ( InterpretedRecompilerFrame * ) rf;
+        InterpretedRecompilerFrame *irf = (InterpretedRecompilerFrame *) rf;
         // Urs, please check this!
         st_assert( irf->key() not_eq nullptr, "must have a key" );
         return new InterpretedRecompilee( irf, irf->key(), irf->top_method() );
@@ -390,7 +390,7 @@ Recompilee * Recompilee::new_Recompilee( RecompilerFrame * rf ) {
 }
 
 
-LookupKey * CompiledRecompilee::key() const {
+LookupKey *CompiledRecompilee::key() const {
     return &_nativeMethod->_lookupKey;
 }
 

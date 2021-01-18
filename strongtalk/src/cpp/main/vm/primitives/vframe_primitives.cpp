@@ -61,7 +61,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::is_smalltalk_activation, Oop receiver ) 
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -76,7 +76,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::byte_code_index, Oop receiver ) {
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -84,7 +84,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::byte_code_index, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    return smiOopFromValue( ( ( DeltaVirtualFrame * ) vf )->byteCodeIndex() );
+    return smiOopFromValue( ( (DeltaVirtualFrame *) vf )->byteCodeIndex() );
 }
 
 
@@ -94,7 +94,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::expression_stack, Oop receiver ) {
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -104,7 +104,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::expression_stack, Oop receiver ) {
 
     BlockScavenge bs;
 
-    GrowableArray <Oop> * stack = ( ( DeltaVirtualFrame * ) vf )->expression_stack();
+    GrowableArray<Oop> *stack = ( (DeltaVirtualFrame *) vf )->expression_stack();
 
     return oopFactory::new_objArray( stack );
 }
@@ -116,7 +116,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::method, Oop receiver ) {
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -124,7 +124,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::method, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    return ( ( DeltaVirtualFrame * ) vf )->method();
+    return ( (DeltaVirtualFrame *) vf )->method();
 }
 
 
@@ -135,7 +135,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -143,7 +143,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    return ( ( DeltaVirtualFrame * ) vf )->receiver();
+    return ( (DeltaVirtualFrame *) vf )->receiver();
 }
 
 
@@ -155,7 +155,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     BlockScavenge bs;
     ResourceMark  rm;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -163,8 +163,8 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    DeltaVirtualFrame   * df      = ( DeltaVirtualFrame * ) vf;
-    GrowableArray <Oop> * temps   = new GrowableArray <Oop>( 10 );
+    DeltaVirtualFrame  *df    = (DeltaVirtualFrame *) vf;
+    GrowableArray<Oop> *temps = new GrowableArray<Oop>( 10 );
     MethodOop method    = df->method();
     int       tempCount = method->number_of_stack_temporaries();
 
@@ -200,7 +200,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::arguments, Oop receiver ) {
 
     ResourceMark resourceMark;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -210,23 +210,23 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::arguments, Oop receiver ) {
 
     BlockScavenge bs;
 
-    GrowableArray <Oop> * stack = ( ( DeltaVirtualFrame * ) vf )->arguments();
+    GrowableArray<Oop> *stack = ( (DeltaVirtualFrame *) vf )->arguments();
 
     return oopFactory::new_objArray( stack );
 }
 
 
 class vframeStream : public byteArrayPrettyPrintStream {
-        void begin_highlight() {
-            set_highlight( true );
-            print_char( 27 );
-        }
+    void begin_highlight() {
+        set_highlight( true );
+        print_char( 27 );
+    }
 
 
-        void end_highlight() {
-            set_highlight( false );
-            print_char( 27 );
-        }
+    void end_highlight() {
+        set_highlight( false );
+        print_char( 27 );
+    }
 };
 
 
@@ -237,7 +237,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::pretty_print, Oop receiver ) {
     ResourceMark  rm;
     BlockScavenge bs;
 
-    VirtualFrame * vf = VirtualFrameOop( receiver )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( receiver )->get_vframe();
 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
@@ -245,38 +245,38 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::pretty_print, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    byteArrayPrettyPrintStream * stream = new vframeStream;
-    PrettyPrinter::print_body( ( DeltaVirtualFrame * ) vf, stream );
+    byteArrayPrettyPrintStream *stream = new vframeStream;
+    PrettyPrinter::print_body( (DeltaVirtualFrame *) vf, stream );
 
     return stream->asByteArray();
 }
 
 
 class DeoptimizeProcess : public FrameClosure {
-    private:
-        DeltaProcess * theProcess;
-    public:
-        void begin_process( Process * process ) {
-            if ( process->is_deltaProcess() )
-                theProcess = ( DeltaProcess * ) process;
-            else
-                theProcess = nullptr;
-        }
-
-
-        void end_process( Process * process ) {
+private:
+    DeltaProcess *theProcess;
+public:
+    void begin_process( Process *process ) {
+        if ( process->is_deltaProcess() )
+            theProcess = (DeltaProcess *) process;
+        else
             theProcess = nullptr;
-        }
+    }
 
 
-        void do_frame( Frame * fr ) {
-            if ( theProcess and fr->is_compiled_frame() )
-                theProcess->deoptimize_stretch( fr, fr );
-        }
+    void end_process( Process *process ) {
+        theProcess = nullptr;
+    }
+
+
+    void do_frame( Frame *fr ) {
+        if ( theProcess and fr->is_compiled_frame() )
+            theProcess->deoptimize_stretch( fr, fr );
+    }
 };
 
 
-void deoptimize( DeltaProcess * process ) {
+void deoptimize( DeltaProcess *process ) {
     ResourceMark      rm;
     DeoptimizeProcess op;
     process->frame_iterate( &op );
@@ -296,7 +296,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::single_step, Oop activation ) {
     if ( not ProcessOop( process )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( process )->process();
+    DeltaProcess *proc = ProcessOop( process )->process();
     deoptimize( proc );
     proc->setupSingleStep();
 
@@ -321,10 +321,10 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::step_next, Oop activation ) {
     if ( not ProcessOop( process )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( process )->process();
+    DeltaProcess *proc = ProcessOop( process )->process();
     deoptimize( proc );
 
-    VirtualFrame * vf = VirtualFrameOop( activation )->get_vframe();
+    VirtualFrame *vf = VirtualFrameOop( activation )->get_vframe();
 
     proc->setupStepNext( vf->fr().fp() );
 
@@ -353,11 +353,11 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::step_return, Oop activation ) {
         HandleMark hm;
         Handle     activationHandle( activation );
 
-        DeltaProcess * proc = ProcessOop( process )->process();
+        DeltaProcess *proc = ProcessOop( process )->process();
         deoptimize( proc );
 
-        VirtualFrame * vf           = VirtualFrameOop( activationHandle.as_oop() )->get_vframe();
-        int          * framePointer = vf->fr().fp();
+        VirtualFrame *vf           = VirtualFrameOop( activationHandle.as_oop() )->get_vframe();
+        int          *framePointer = vf->fr().fp();
 
         proc->setupStepReturn( framePointer );
 

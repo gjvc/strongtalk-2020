@@ -26,8 +26,8 @@ constexpr int debugTableSize = 256;
 struct CodeTableLink : public CHeapAllocatedObject {
 
     // instance variable
-    NativeMethod  * _nativeMethod;
-    CodeTableLink * _next;
+    NativeMethod  *_nativeMethod;
+    CodeTableLink *_next;
 
     // memory operations
     bool_t verify( int i );
@@ -36,7 +36,7 @@ struct CodeTableLink : public CHeapAllocatedObject {
 struct CodeTableEntry : ValueObject {
 
     // methods are tagged, links are not.
-    void * _nativeMethodOrLink;
+    void *_nativeMethodOrLink;
 
 
     bool_t is_empty() {
@@ -45,7 +45,7 @@ struct CodeTableEntry : ValueObject {
 
 
     bool_t is_nativeMethod() {
-        return ( int ) _nativeMethodOrLink & 1;
+        return (int) _nativeMethodOrLink & 1;
     }
 
 
@@ -54,25 +54,25 @@ struct CodeTableEntry : ValueObject {
     }
 
 
-    NativeMethod * get_nativeMethod() {
-        return ( NativeMethod * ) ( ( int ) _nativeMethodOrLink - 1 );
+    NativeMethod *get_nativeMethod() {
+        return (NativeMethod *) ( (int) _nativeMethodOrLink - 1 );
     }
 
 
-    void set_nativeMethod( const NativeMethod * nm ) {
+    void set_nativeMethod( const NativeMethod *nm ) {
         st_assert_oop_aligned( nm );
-        _nativeMethodOrLink = ( void * ) ( ( int ) nm + 1 );
+        _nativeMethodOrLink = (void *) ( (int) nm + 1 );
     }
 
 
-    CodeTableLink * get_link() {
-        return ( CodeTableLink * ) _nativeMethodOrLink;
+    CodeTableLink *get_link() {
+        return (CodeTableLink *) _nativeMethodOrLink;
     }
 
 
-    void set_link( CodeTableLink * l ) {
+    void set_link( CodeTableLink *l ) {
         st_assert_oop_aligned( l );
-        _nativeMethodOrLink = ( void * ) l;
+        _nativeMethodOrLink = (void *) l;
     }
 
 
@@ -85,47 +85,47 @@ struct CodeTableEntry : ValueObject {
 };
 
 class CodeTable : public PrintableCHeapAllocatedObject {
-    protected:
-        int tableSize;
-        CodeTableEntry * buckets;
+protected:
+    int tableSize;
+    CodeTableEntry *buckets;
 
 
-        CodeTableEntry * at( int index ) {
-            return &buckets[ index ];
-        }
+    CodeTableEntry *at( int index ) {
+        return &buckets[ index ];
+    }
 
 
-        CodeTableEntry * bucketFor( int hash ) {
-            return at( hash & ( tableSize - 1 ) );
-        }
+    CodeTableEntry *bucketFor( int hash ) {
+        return at( hash & ( tableSize - 1 ) );
+    }
 
 
-        CodeTableLink * new_link( NativeMethod * nm, CodeTableLink * n = nullptr );
+    CodeTableLink *new_link( NativeMethod *nm, CodeTableLink *n = nullptr );
 
-    public:
-        CodeTable( int size );
+public:
+    CodeTable( int size );
 
-        void clear();
+    void clear();
 
-        NativeMethod * lookup( const LookupKey * L );
+    NativeMethod *lookup( const LookupKey *L );
 
-        bool_t verify();
+    bool_t verify();
 
-        void print();
+    void print();
 
-        void print_stats();
+    void print_stats();
 
-        // Tells whether a NativeMethod is present
-        bool_t is_present( NativeMethod * nm );
+    // Tells whether a NativeMethod is present
+    bool_t is_present( NativeMethod *nm );
 
-        // Removes a NativeMethod from the table
-        void remove( NativeMethod * nm );
+    // Removes a NativeMethod from the table
+    void remove( NativeMethod *nm );
 
-    protected:
-        // should always add through zone->addToCodeTable()
-        void add( NativeMethod * nm );
+protected:
+    // should always add through zone->addToCodeTable()
+    void add( NativeMethod *nm );
 
-        void addIfAbsent( NativeMethod * nm ); // add only if not there yet
+    void addIfAbsent( NativeMethod *nm ); // add only if not there yet
 
-        friend class Zone;
+    friend class Zone;
 };

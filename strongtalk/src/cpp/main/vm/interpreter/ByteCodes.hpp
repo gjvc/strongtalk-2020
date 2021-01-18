@@ -438,8 +438,8 @@ public:
 
 
 private:
-    static const char *_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static const char *_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static const char   *_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static const char   *_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
     static Format       _format[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
     static CodeType     _code_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
     static ArgumentSpec _argument_spec[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];

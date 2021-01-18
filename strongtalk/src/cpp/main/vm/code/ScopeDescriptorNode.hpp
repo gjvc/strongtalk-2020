@@ -33,97 +33,97 @@ class LogicalAddress;
 
 class ScopeDescriptorNode : public ResourceObject {
 
-    public:
-        MethodOop _method;
-        bool_t    _allocates_compiled_context;
-        int       _scopeID;
-        bool_t    _lite;
-        int       _senderByteCodeIndex;
-        bool_t    _visible;
+public:
+    MethodOop _method;
+    bool_t    _allocates_compiled_context;
+    int       _scopeID;
+    bool_t    _lite;
+    int       _senderByteCodeIndex;
+    bool_t    _visible;
 
-        GrowableArray <LogicalAddress *> * _arg_list;
-        GrowableArray <LogicalAddress *> * _temp_list;
-        GrowableArray <LogicalAddress *> * _context_temp_list;
-        GrowableArray <LogicalAddress *> * _expr_stack_list;
+    GrowableArray<LogicalAddress *> *_arg_list;
+    GrowableArray<LogicalAddress *> *_temp_list;
+    GrowableArray<LogicalAddress *> *_context_temp_list;
+    GrowableArray<LogicalAddress *> *_expr_stack_list;
 
-        int _offset; // byte offset to the encoded scopeDesc Initial value is  INVALID_OFFSET
+    int _offset; // byte offset to the encoded scopeDesc Initial value is  INVALID_OFFSET
 
-        bool_t _usedInPcs;
+    bool_t _usedInPcs;
 
-    public:
-        bool_t has_args() const;
+public:
+    bool_t has_args() const;
 
-        bool_t has_temps() const;
+    bool_t has_temps() const;
 
-        bool_t has_context_temps() const;
+    bool_t has_context_temps() const;
 
-        bool_t has_expr_stack() const;
+    bool_t has_expr_stack() const;
 
-        bool_t has_context() const;
+    bool_t has_context() const;
 
-        bool_t has_nameDescs() const;
+    bool_t has_nameDescs() const;
 
-        ScopeInfo _scopesHead;
-        ScopeInfo _scopesTail;
-        ScopeInfo _next;
+    ScopeInfo _scopesHead;
+    ScopeInfo _scopesTail;
+    ScopeInfo _next;
 
-        ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, int scopeID, bool_t lite, int senderByteCodeIndex, bool_t visible );
+    ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, int scopeID, bool_t lite, int senderByteCodeIndex, bool_t visible );
 
-        void addNested( ScopeInfo scope );
+    void addNested( ScopeInfo scope );
 
-        virtual std::uint8_t code() = 0;
+    virtual std::uint8_t code() = 0;
 
-        virtual void generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader );
+    virtual void generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader );
 
-        void generateBody( ScopeDescriptorRecorder * rec, int senderScopeOffset );
+    void generateBody( ScopeDescriptorRecorder *rec, int senderScopeOffset );
 
-        void generateNameDescs( ScopeDescriptorRecorder * rec );
+    void generateNameDescs( ScopeDescriptorRecorder *rec );
 
-        void generate_solid( GrowableArray <LogicalAddress *> * list, ScopeDescriptorRecorder * rec );
+    void generate_solid( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec );
 
-        void generate_sparse( GrowableArray <LogicalAddress *> * list, ScopeDescriptorRecorder * rec );
+    void generate_sparse( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec );
 
-        bool_t computeVisibility();
+    bool_t computeVisibility();
 
-        ScopeInfo find_scope( int scope_id );
+    ScopeInfo find_scope( int scope_id );
 
-        virtual void verify( ScopeDescriptor * sd );
+    virtual void verify( ScopeDescriptor *sd );
 
-        void verifyBody();
+    void verifyBody();
 
 };
 
 
 class TopLevelBlockScopeNode : public ScopeDescriptorNode {
 
-    public:
-        LogicalAddress * _receiverLocation;
-        KlassOop _receiverKlass;
+public:
+    LogicalAddress *_receiverLocation;
+    KlassOop _receiverKlass;
 
 
-        std::uint8_t code() {
-            return TOP_LEVEL_BLOCK_CODE;
-        }
+    std::uint8_t code() {
+        return TOP_LEVEL_BLOCK_CODE;
+    }
 
 
-    public:
+public:
 
-        TopLevelBlockScopeNode( MethodOop method, LogicalAddress * receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) :
+    TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) :
             ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ) {
-            _receiverLocation = receiver_location;
-            _receiverKlass    = receiver_klass;
-        }
+        _receiverLocation = receiver_location;
+        _receiverKlass    = receiver_klass;
+    }
 
 
-        void generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader ) {
-            ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
-            _receiverLocation->generate( rec );
-            rec->genOop( _receiverKlass );
-        }
+    void generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader ) {
+        ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
+        _receiverLocation->generate( rec );
+        rec->genOop( _receiverKlass );
+    }
 
 
-        void verify( ScopeDescriptor * sd ) {
-            ScopeDescriptorNode::verify( sd );
-            if ( not sd->isTopLevelBlockScope() ) st_fatal( "TopLevelBlockScope expected" );
-        }
+    void verify( ScopeDescriptor *sd ) {
+        ScopeDescriptorNode::verify( sd );
+        if ( not sd->isTopLevelBlockScope() ) st_fatal( "TopLevelBlockScope expected" );
+    }
 };

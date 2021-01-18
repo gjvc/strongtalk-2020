@@ -31,26 +31,26 @@ enum class EventLogEventStatus {
 
 
 struct EventLogEvent /* no superclass - never allocated individually */ {
-    const char * _name;                 // in printf format
+    const char *_name;                 // in printf format
     EventLogEventStatus _status;        // for nested events
-    const void * args[EVENT_PARAMS];    //
+    const void *args[EVENT_PARAMS];    //
 };
 
 
 struct EventLog : public CHeapAllocatedObject {
 
-    EventLogEvent * _eventBuffer;    // event buffer
-    EventLogEvent * _end;            //
-    EventLogEvent * _next;           // where the next entry will go
+    EventLogEvent *_eventBuffer;    // event buffer
+    EventLogEvent *_end;            //
+    EventLogEvent *_next;           // where the next entry will go
     int _nestingDepth;               // current nesting depth
 
     EventLog();
 
     void init();
 
-    EventLogEvent * nextEvent( EventLogEvent * e, EventLogEvent * start, EventLogEvent * end );
+    EventLogEvent *nextEvent( EventLogEvent *e, EventLogEvent *start, EventLogEvent *end );
 
-    EventLogEvent * prevEvent( EventLogEvent * e, EventLogEvent * start, EventLogEvent * end );
+    EventLogEvent *prevEvent( EventLogEvent *e, EventLogEvent *start, EventLogEvent *end );
 
 
     void inc() {
@@ -58,20 +58,20 @@ struct EventLog : public CHeapAllocatedObject {
     }
 
 
-    void log( EventLogEvent * e ) {
+    void log( EventLogEvent *e ) {
         *_next = *e;
         inc();
     }
 
 
-    void log( const char * name ) {
+    void log( const char *name ) {
         _next->_name   = name;
         _next->_status = EventLogEventStatus::atomic;
         inc();
     }
 
 
-    void log( const char * name, const void * p1 ) {
+    void log( const char *name, const void *p1 ) {
         _next->_name   = name;
         _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
@@ -79,7 +79,7 @@ struct EventLog : public CHeapAllocatedObject {
     }
 
 
-    void log( const char * name, const void * p1, const void * p2 ) {
+    void log( const char *name, const void *p1, const void *p2 ) {
         _next->_name   = name;
         _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
@@ -88,7 +88,7 @@ struct EventLog : public CHeapAllocatedObject {
     }
 
 
-    void log( const char * name, const void * p1, const void * p2, const void * p3 ) {
+    void log( const char *name, const void *p1, const void *p2, const void *p3 ) {
         _next->_name   = name;
         _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
@@ -108,52 +108,52 @@ struct EventLog : public CHeapAllocatedObject {
     void printPartial( int n );
 };
 
-extern EventLog * eventLog;
+extern EventLog *eventLog;
 
 class EventMarker : StackAllocatedObject {    // for events which have a duration
-    public:
-        EventLogEvent event;
-        EventLogEvent * here;
+public:
+    EventLogEvent event;
+    EventLogEvent *here;
 
 
-        EventMarker( const char * n ) {
-            init( n, 0, 0, 0 );
+    EventMarker( const char *n ) {
+        init( n, 0, 0, 0 );
+    }
+
+
+    EventMarker( const char *n, const void *p1 ) {
+        init( n, p1, 0, 0 );
+    }
+
+
+    EventMarker( const char *n, const void *p1, const void *p2 ) {
+        init( n, p1, p2, 0 );
+    }
+
+
+    EventMarker( const char *n, const void *p1, const void *p2, const void *p3 ) {
+        init( n, p1, p2, p3 );
+    }
+
+
+    void init( const char *n, const void *p1, const void *p2, const void *p3 ) {
+        here = eventLog->_next;
+        eventLog->log( n, p1, p2, p3 );
+        here->_status = EventLogEventStatus::starting;
+        event = *here;
+        eventLog->_nestingDepth++;
+    }
+
+
+    ~EventMarker() {
+        eventLog->_nestingDepth--;
+        // optimization to make log less verbose; this isn't totally failproof but that's ok
+        if ( here == eventLog->_next - 1 ) {
+            *here = event;
+            here->_status = EventLogEventStatus::atomic;       // nothing happened inbetween
+        } else {
+            event._status = EventLogEventStatus::ending;
+            eventLog->log( &event );
         }
-
-
-        EventMarker( const char * n, const void * p1 ) {
-            init( n, p1, 0, 0 );
-        }
-
-
-        EventMarker( const char * n, const void * p1, const void * p2 ) {
-            init( n, p1, p2, 0 );
-        }
-
-
-        EventMarker( const char * n, const void * p1, const void * p2, const void * p3 ) {
-            init( n, p1, p2, p3 );
-        }
-
-
-        void init( const char * n, const void * p1, const void * p2, const void * p3 ) {
-            here = eventLog->_next;
-            eventLog->log( n, p1, p2, p3 );
-            here->_status = EventLogEventStatus::starting;
-            event = *here;
-            eventLog->_nestingDepth++;
-        }
-
-
-        ~EventMarker() {
-            eventLog->_nestingDepth--;
-            // optimization to make log less verbose; this isn't totally failproof but that's ok
-            if ( here == eventLog->_next - 1 ) {
-                *here = event;
-                here->_status = EventLogEventStatus::atomic;       // nothing happened inbetween
-            } else {
-                event._status = EventLogEventStatus::ending;
-                eventLog->log( &event );
-            }
-        }
+    }
 };

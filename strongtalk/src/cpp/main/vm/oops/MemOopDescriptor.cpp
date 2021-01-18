@@ -13,7 +13,7 @@
 #include "vm/utilities/objectIDTable.hpp"
 
 
-MemOop as_memOop( void * p ) {
+MemOop as_memOop( void *p ) {
     st_assert( ( int( p ) & TAG_MASK ) == 0, "not an aligned C pointer" );
     return MemOop( int( p ) + MEMOOP_TAG );
 }
@@ -24,15 +24,15 @@ int MemOopDescriptor::scavenge_contents() {
 }
 
 
-void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure * blk, int begin, int end ) {
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure *blk, int begin, int end ) {
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q ) {
-        int       offset = p - ( Oop * ) addr();
+        int       offset = p - (Oop *) addr();
         // Compute the instance variable name at the current offset
         SymbolOop name   = blueprint()->inst_var_name_at( offset );
-        const char * n = "instVar?";
+        const char *n = "instVar?";
         if ( name ) {
             StringOutputStream stream( 50 );
             name->print_symbol_on( &stream );
@@ -44,9 +44,9 @@ void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure * blk, int begin
 
 
 Oop MemOopDescriptor::scavenge() {
-    st_assert( ( not Universe::should_scavenge( this ) ) == ( ( ( const char * ) this > Universe::old_gen._lowBoundary ) or Universe::new_gen.to()->contains( this ) ), "just checking" );
+    st_assert( ( not Universe::should_scavenge( this ) ) == ( ( (const char *) this > Universe::old_gen._lowBoundary ) or Universe::new_gen.to()->contains( this ) ), "just checking" );
 
-    if ( ( ( const char * ) this > Universe::old_gen._lowBoundary ) or Universe::new_gen.to()->contains( this ) ) {
+    if ( ( (const char *) this > Universe::old_gen._lowBoundary ) or Universe::new_gen.to()->contains( this ) ) {
         return this;
     } else if ( this->is_forwarded() ) {
         return Oop( this->forwardee() );
@@ -67,7 +67,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
     int s = size();
     st_assert( Universe::should_scavenge( this ) and not is_forwarded(), "shouldn't be scavenging" );
     bool_t is_new;
-    Oop * x = Universe::allocate_in_survivor_space( this, s, is_new );
+    Oop *x = Universe::allocate_in_survivor_space( this, s, is_new );
 
 #ifdef VERBOSE_SCAVENGING
     lprintf("{copy %s %#lx -> %#lx (%d)}\n", blueprint()->name(), oops(), x, s);
@@ -89,12 +89,12 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
 }
 
 
-void MemOopDescriptor::oop_iterate( OopClosure * blk ) {
+void MemOopDescriptor::oop_iterate( OopClosure *blk ) {
     blueprint()->oop_oop_iterate( this, blk );
 }
 
 
-void MemOopDescriptor::layout_iterate( ObjectLayoutClosure * blk ) {
+void MemOopDescriptor::layout_iterate( ObjectLayoutClosure *blk ) {
     blueprint()->oop_layout_iterate( this, blk );
 }
 
@@ -124,28 +124,28 @@ void MemOopDescriptor::set_identity_hash( smi_t h ) {
 }
 
 
-void MemOopDescriptor::bootstrap_header( Bootstrap * stream ) {
+void MemOopDescriptor::bootstrap_header( Bootstrap *stream ) {
     if ( stream->new_format() ) {
-        stream->read_oop( ( Oop * ) &addr()->_klass_field );
+        stream->read_oop( (Oop *) &addr()->_klass_field );
         set_mark( blueprint()->has_untagged_contents() ? MarkOopDescriptor::untagged_prototype() : MarkOopDescriptor::tagged_prototype() );
     } else {
         stream->read_mark( &addr()->_mark );
-        stream->read_oop( ( Oop * ) &addr()->_klass_field );
+        stream->read_oop( (Oop *) &addr()->_klass_field );
     }
 }
 
 
-void MemOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void MemOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     bootstrap_header( stream );
     bootstrap_body( stream, header_size() );
 }
 
 
-void MemOopDescriptor::bootstrap_body( Bootstrap * stream, int h_size ) {
+void MemOopDescriptor::bootstrap_body( Bootstrap *stream, int h_size ) {
     int offset = h_size;
     int s      = blueprint()->non_indexable_size();
     while ( offset < s ) {
-        stream->read_oop( ( Oop * ) addr() + offset );
+        stream->read_oop( (Oop *) addr() + offset );
         offset++;
     }
 }
@@ -167,12 +167,12 @@ Oop MemOopDescriptor::instVarAtPut( int index, Oop value ) {
 }
 
 
-void MemOopDescriptor::print_on( ConsoleOutputStream * stream ) {
+void MemOopDescriptor::print_on( ConsoleOutputStream *stream ) {
     blueprint()->oop_print_on( this, stream );
 }
 
 
-void MemOopDescriptor::print_id_on( ConsoleOutputStream * stream ) {
+void MemOopDescriptor::print_id_on( ConsoleOutputStream *stream ) {
     int id;
     if ( garbageCollectionInProgress or not( id = objectIDTable::insert( MemOop( this ) ) ) )
         stream->print( "(%#-6lx)", addr() );
@@ -195,8 +195,8 @@ void MemOopDescriptor::scavenge_header() {
 
 
 void MemOopDescriptor::scavenge_body( int begin, int end ) {
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q )
         scavenge_oop( p++ );
@@ -204,8 +204,8 @@ void MemOopDescriptor::scavenge_body( int begin, int end ) {
 
 
 void MemOopDescriptor::scavenge_tenured_body( int begin, int end ) {
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q )
         scavenge_tenured_oop( p++ );
@@ -218,28 +218,28 @@ void MemOopDescriptor::follow_header() {
 
 
 void MemOopDescriptor::follow_body( int begin, int end ) {
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q )
         MarkSweep::reverse_and_push( p++ );
 }
 
 
-void MemOopDescriptor::layout_iterate_header( ObjectLayoutClosure * blk ) {
+void MemOopDescriptor::layout_iterate_header( ObjectLayoutClosure *blk ) {
     blk->do_mark( &addr()->_mark );
-    blk->do_oop( "klass", ( Oop * ) &addr()->_klass_field );
+    blk->do_oop( "klass", (Oop *) &addr()->_klass_field );
 }
 
 
-void MemOopDescriptor::oop_iterate_header( OopClosure * blk ) {
-    blk->do_oop( ( Oop * ) &addr()->_klass_field );
+void MemOopDescriptor::oop_iterate_header( OopClosure *blk ) {
+    blk->do_oop( (Oop *) &addr()->_klass_field );
 }
 
 
-void MemOopDescriptor::oop_iterate_body( OopClosure * blk, int begin, int end ) {
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+void MemOopDescriptor::oop_iterate_body( OopClosure *blk, int begin, int end ) {
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q )
         blk->do_oop( p++ );
@@ -257,8 +257,8 @@ void MemOopDescriptor::initialize_header( bool_t has_untagged_contents, KlassOop
 
 void MemOopDescriptor::initialize_body( int begin, int end ) {
     Oop value = nilObj;
-    Oop * p = ( Oop * ) addr();
-    Oop * q = p + end;
+    Oop *p = (Oop *) addr();
+    Oop *q = p + end;
     p += begin;
     while ( p < q )
         Universe::store( p++, value, false );

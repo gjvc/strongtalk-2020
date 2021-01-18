@@ -9,7 +9,7 @@
 #include "vm/oops/DoubleKlass.hpp"
 
 
-void DoubleOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void DoubleOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
     set_value( stream->read_double() );
 }

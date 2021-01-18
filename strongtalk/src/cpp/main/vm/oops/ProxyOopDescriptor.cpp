@@ -7,8 +7,8 @@
 #include "vm/runtime/Bootstrap.hpp"
 
 
-void ProxyOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void ProxyOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
-    set_pointer( ( void * ) stream->get_integer() );
+    set_pointer( (void *) stream->get_integer() );
     MemOopDescriptor::bootstrap_body( stream, header_size() );
 }

@@ -29,7 +29,7 @@ bool_t ByteArrayOopDescriptor::verify() {
 }
 
 
-char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
+char *ByteArrayOopDescriptor::copy_null_terminated( int &Clength ) {
     // Copy the bytes() part. Always add trailing '\0'. If byte array
     // contains '\0', these will be escaped in the copy, i.e. "....\0...".
     // Clength is set to length of the copy (may be longer due to escaping).
@@ -37,8 +37,8 @@ char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
 
     st_assert_byteArray( this, "should be a byte array" );
     Clength = length();
-    char * res = copy_string( ( const char * ) bytes(), Clength );
-    if ( strlen( res ) == ( std::uint32_t ) Clength )
+    char *res = copy_string( (const char *) bytes(), Clength );
+    if ( strlen( res ) == (std::uint32_t) Clength )
         return res;                   // Simple case, no '\0' in byte array.
 
     // Simple case failed ...
@@ -48,7 +48,7 @@ char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
         if ( byte_at( i ) == '\0' )
             t++;
     // t is total length of result string.
-    res = new_resource_array <char>( t + 1 );
+    res = new_resource_array<char>( t + 1 );
     res[ t-- ] = '\0';
     Clength = t;
     for ( int i = length() - 1; i >= 0; i-- ) {
@@ -64,7 +64,7 @@ char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
 }
 
 
-char * ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
+char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // Copy the bytes() part. Always add trailing '\0'. If byte array
     // contains '\0', these will be escaped in the copy, i.e. "....\0...".
     // NOTE: The resulting string is allocated in Cheap
@@ -76,7 +76,7 @@ char * ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
         if ( byte_at( i ) == '\0' )
             t++;
     // t is total length of result string.
-    char * res = new_c_heap_array <char>( t + 1 );
+    char *res = new_c_heap_array<char>( t + 1 );
     res[ t-- ] = '\0';
     for ( int i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
@@ -91,7 +91,7 @@ char * ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
 }
 
 
-bool_t ByteArrayOopDescriptor::copy_null_terminated( char * buffer, int max_length ) {
+bool_t ByteArrayOopDescriptor::copy_null_terminated( char *buffer, int max_length ) {
     // %not optimized
 
     int len = length();
@@ -112,7 +112,7 @@ bool_t ByteArrayOopDescriptor::copy_null_terminated( char * buffer, int max_leng
 }
 
 
-void ByteArrayOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
 
     stream->read_oop( length_addr() );
@@ -131,7 +131,7 @@ static int sub_sign( int a, int b ) {
 }
 
 
-int compare_as_bytes( const std::uint8_t * a, const std::uint8_t * b ) {
+int compare_as_bytes( const std::uint8_t *a, const std::uint8_t *b ) {
     // machine dependent code; little endian code
     if ( a[ 0 ] - b[ 0 ] )
         return sub_sign( a[ 0 ], b[ 0 ] );
@@ -145,17 +145,17 @@ int compare_as_bytes( const std::uint8_t * a, const std::uint8_t * b ) {
 
 int ByteArrayOopDescriptor::compare( ByteArrayOop arg ) {
     // Get the addresses of the length fields
-    const std::uint32_t * a = ( std::uint32_t * ) length_addr();
-    const std::uint32_t * b = ( std::uint32_t * ) arg->length_addr();
+    const std::uint32_t *a = (std::uint32_t *) length_addr();
+    const std::uint32_t *b = (std::uint32_t *) arg->length_addr();
 
     // Get the word sizes of the arays
     int a_size = roundTo( SMIOop( *a++ )->value() * sizeof( char ), sizeof( int ) ) / sizeof( int );
     int b_size = roundTo( SMIOop( *b++ )->value() * sizeof( char ), sizeof( int ) ) / sizeof( int );
 
-    const std::uint32_t * a_end = a + min( a_size, b_size );
+    const std::uint32_t *a_end = a + min( a_size, b_size );
     while ( a < a_end ) {
         if ( *b++ not_eq *a++ )
-            return compare_as_bytes( ( const std::uint8_t * ) ( a - 1 ), ( const std::uint8_t * ) ( b - 1 ) );
+            return compare_as_bytes( (const std::uint8_t *) ( a - 1 ), (const std::uint8_t *) ( b - 1 ) );
     }
     return sub_sign( a_size, b_size );
 }
@@ -198,9 +198,9 @@ int ByteArrayOopDescriptor::hash_value() {
 }
 
 
-const char * ByteArrayOopDescriptor::as_string() {
+const char *ByteArrayOopDescriptor::as_string() {
     int len = length();
-    char * str = new_resource_array <char>( len + 1 );
+    char *str = new_resource_array<char>( len + 1 );
     int index    = 0;
     for ( ; index < len; index++ ) {
         str[ index ] = byte_at( index + 1 );
@@ -215,7 +215,7 @@ const char * ByteArrayOopDescriptor::as_string() {
 //}
 //
 
-const std::string & ByteArrayOopDescriptor::as_std_string() {
+const std::string &ByteArrayOopDescriptor::as_std_string() {
 
     std::string s{};
 

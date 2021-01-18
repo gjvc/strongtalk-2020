@@ -70,13 +70,14 @@ PRIM_DECL_1( callBackPrimitives::unregister, Oop proxy ) {
 }
 
 
-typedef int     (__CALLING_CONVENTION * mytype)( int a, int b );
+typedef int     (__CALLING_CONVENTION *mytype)( int a, int b );
+
 
 PRIM_DECL_1( callBackPrimitives::invokePascal, Oop proxy ) {
     PROLOGUE_1( "invokePascal", proxy );
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    mytype f = ( mytype ) ProxyOop( proxy )->get_pointer();
+    mytype f = (mytype) ProxyOop( proxy )->get_pointer();
     return smiOopFromValue( ( *f )( 10, 5 ) );
 }
 
@@ -85,6 +86,6 @@ PRIM_DECL_1( callBackPrimitives::invokeC, Oop proxy ) {
     PROLOGUE_1( "invokeC", proxy );
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    primitiveFunctionType f = ( primitiveFunctionType ) ProxyOop( proxy )->get_pointer();
-    return smiOopFromValue( ( int ) ( *f )( 10, 5 ) );
+    primitiveFunctionType f = (primitiveFunctionType) ProxyOop( proxy )->get_pointer();
+    return smiOopFromValue( (int) ( *f )( 10, 5 ) );
 }

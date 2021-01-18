@@ -33,61 +33,61 @@ class InlinedScope;
 
 class CompileTimeClosure : public PrintableResourceObject {
 
-    protected:
-        InlinedScope * _parent_scope;           // scope to which the closure belongs
-        MethodOop _method;                   // block method
-        PseudoRegister * _context;                // parent context
-        int         _nofArgs;                  // number of arguments for the block
-        JumpTableID _id;                       // unique identification of this closure within the parent NativeMethod.
-        NonInlinedBlockScopeNode * _noninlined_block_scope; // an NonInlinedScopeDesc
+protected:
+    InlinedScope *_parent_scope;           // scope to which the closure belongs
+    MethodOop _method;                   // block method
+    PseudoRegister *_context;                // parent context
+    int         _nofArgs;                  // number of arguments for the block
+    JumpTableID _id;                       // unique identification of this closure within the parent NativeMethod.
+    NonInlinedBlockScopeNode *_noninlined_block_scope; // an NonInlinedScopeDesc
 
-    public:
-        CompileTimeClosure( InlinedScope * s, MethodOop method, PseudoRegister * context, int nofArgs ) {
-            _parent_scope           = s;
-            _method                 = method;
-            _context                = context;
-            _nofArgs                = nofArgs;
-            _noninlined_block_scope = nullptr;
-        }
-
-
-        InlinedScope * parent_scope() const {
-            return _parent_scope;
-        }
+public:
+    CompileTimeClosure( InlinedScope *s, MethodOop method, PseudoRegister *context, int nofArgs ) {
+        _parent_scope           = s;
+        _method                 = method;
+        _context                = context;
+        _nofArgs                = nofArgs;
+        _noninlined_block_scope = nullptr;
+    }
 
 
-        MethodOop method() const {
-            return _method;
-        }
+    InlinedScope *parent_scope() const {
+        return _parent_scope;
+    }
 
 
-        PseudoRegister * context() const {
-            return _context;
-        }
+    MethodOop method() const {
+        return _method;
+    }
 
 
-        int nofArgs() const {
-            return _nofArgs;
-        }
+    PseudoRegister *context() const {
+        return _context;
+    }
 
 
-        JumpTableID id() const {
-            return _id;
-        }
+    int nofArgs() const {
+        return _nofArgs;
+    }
 
 
-        NonInlinedBlockScopeNode * noninlined_block_scope();
+    JumpTableID id() const {
+        return _id;
+    }
 
-        void generateDebugInfo();
+
+    NonInlinedBlockScopeNode *noninlined_block_scope();
+
+    void generateDebugInfo();
 
 
-        void set_id( JumpTableID id ) {
-            _id = id;
-        }    // sets the indices for computing the jump table entry
+    void set_id( JumpTableID id ) {
+        _id = id;
+    }    // sets the indices for computing the jump table entry
 
-        const char * jump_table_entry();            // returns the code entry point for the jump table entry
+    const char *jump_table_entry();            // returns the code entry point for the jump table entry
 
-        void print();
+    void print();
 
-        virtual bool_t verify() const;
+    virtual bool_t verify() const;
 };

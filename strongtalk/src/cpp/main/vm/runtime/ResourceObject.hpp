@@ -40,11 +40,11 @@
 
 class ResourceObject {
 
-    public:
+public:
 
-        void * operator new( std::size_t size, bool_t on_C_heap = false );
+    void *operator new( std::size_t size, bool_t on_C_heap = false );
 
-        void operator delete( void * p, int ); // use explicit free() to deallocate heap-allocated objects
+    void operator delete( void *p, int ); // use explicit free() to deallocate heap-allocated objects
 
 };
 
@@ -52,8 +52,8 @@ class ResourceObject {
 // Base class for objects allocated in the resource area with printing behavior.
 class PrintableResourceObject : public ResourceObject {
 
-    public:
-        virtual void print() = 0;
+public:
+    virtual void print() = 0;
 
-        virtual void print_short();
+    virtual void print_short();
 };

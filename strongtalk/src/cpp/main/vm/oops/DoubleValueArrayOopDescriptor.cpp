@@ -23,7 +23,7 @@ bool_t DoubleValueArrayOopDescriptor::verify() {
 }
 
 
-void DoubleValueArrayOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void DoubleValueArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
 
     // Clear eventual padding area

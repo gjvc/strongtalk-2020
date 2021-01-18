@@ -18,7 +18,7 @@
 Array::Array( int sz ) {
     _size   = sz;
     _index  = 0;
-    _values = new_resource_array <int>( sz );
+    _values = new_resource_array<int>( sz );
 }
 
 
@@ -34,7 +34,7 @@ int Array::insertIfAbsent( int value ) {
 
 
 void Array::extend( int newSize ) {
-    int * newValues = new_resource_array <int>( newSize );
+    int *newValues = new_resource_array<int>( newSize );
 
     for ( int i = 0; i < _index; i++ )
         newValues[ i ] = _values[ i ];
@@ -44,7 +44,7 @@ void Array::extend( int newSize ) {
 }
 
 
-void Array::copy_to( int *& addr ) {
+void Array::copy_to( int *&addr ) {
     for ( int i = 0; i < length(); i++ ) {
         *addr++ = _values[ i ];
     }
@@ -52,7 +52,7 @@ void Array::copy_to( int *& addr ) {
 
 
 ByteArray::ByteArray( int size ) {
-    _array = new_resource_array <std::uint8_t>( size );
+    _array = new_resource_array<std::uint8_t>( size );
     _max   = size;
     _top   = 0;
 }
@@ -60,7 +60,7 @@ ByteArray::ByteArray( int size ) {
 
 void ByteArray::extend() {
     int newMax = _max * 2;
-    std::uint8_t * newArray = new_resource_array <std::uint8_t>( newMax );
+    std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
     for ( int i = 0; i < _top; i++ )
         newArray[ i ] = _array[ i ];
@@ -72,19 +72,19 @@ void ByteArray::extend() {
 
 void ByteArray::appendHalf( int16_t p ) {
 
-    if ( _top + ( int ) sizeof( int16_t ) > _max )
+    if ( _top + (int) sizeof( int16_t ) > _max )
         extend();
 
     // Saving the half as two bytes to avoid alignment problem.
     _array[ _top++ ] = p >> BYTE_WIDTH;
-    _array[ _top++ ] = ( std::uint8_t ) lowerBits( p, 8 );
+    _array[ _top++ ] = (std::uint8_t) lowerBits( p, 8 );
 }
 
 
 void ByteArray::putHalfAt( int16_t p, int offset ) {
     // Saving the half as two bytes to avoid alignment problem.
     _array[ offset ]     = p >> BYTE_WIDTH;
-    _array[ offset + 1 ] = ( std::uint8_t ) lowerBits( p, 8 );
+    _array[ offset + 1 ] = (std::uint8_t) lowerBits( p, 8 );
 }
 
 
@@ -92,7 +92,7 @@ void ByteArray::appendWord( int p ) {
     if ( _top + sizeof( int ) > _max )
         extend();
     st_assert( size() % sizeof( int ) == 0, "Not word aligned" );
-    int * s = ( int * ) &_array[ _top ];
+    int *s = (int *) &_array[ _top ];
     *s = p;
     _top += sizeof( int );
 }
@@ -106,8 +106,8 @@ void ByteArray::alignToWord() {
 }
 
 
-void ByteArray::copy_to( int *& addr ) {
-    int * fromAddr = ( int * ) start();
+void ByteArray::copy_to( int *&addr ) {
+    int *fromAddr = (int *) start();
     int len = size() / sizeof( int );
 
     for ( int i = 0; i < len; i++ ) {

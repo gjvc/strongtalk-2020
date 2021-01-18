@@ -28,182 +28,182 @@ class BlockPseudoRegister;
 // a BasicBlockDefinitionAndUsageTable contains all definitions and uses of a BasicBlock
 class BasicBlockDefinitionAndUsageTable : public PrintableResourceObject {
 
-    public:
-        GrowableArray <DefinitionUsageInfo *> * info;        // one element per PseudoRegister used / defined
-        BasicBlockDefinitionAndUsageTable() {
-            info = nullptr;
-        }
+public:
+    GrowableArray<DefinitionUsageInfo *> *info;        // one element per PseudoRegister used / defined
+    BasicBlockDefinitionAndUsageTable() {
+        info = nullptr;
+    }
 
 
-        void print_short() {
-            lprintf( "BasicBlockDefinitionAndUsageTable [%#lx[", this );
-        }
+    void print_short() {
+        lprintf( "BasicBlockDefinitionAndUsageTable [%#lx[", this );
+    }
 
 
-        void print();
+    void print();
 };
 
 
 // BasicBlock is used by the Compiler to perform local optimizations and code generation
 class BasicBlock : public PrintableResourceObject {
 
-    protected:
-        bool_t _visited;
+protected:
+    bool_t _visited;
 
-    public: // was "protected:" originally
-        Node * _first;            //
-        Node * _last;             //
-        int16_t _nodeCount;         // number of nodes in this BasicBlock
+public: // was "protected:" originally
+    Node *_first;            //
+    Node *_last;             //
+    int16_t _nodeCount;         // number of nodes in this BasicBlock
 
-    protected:
-        int16_t _id;                // unique BasicBlock id
-        int16_t _loopDepth;         // the loop nesting level
-        int16_t _genCount;          // code already generated?
+protected:
+    int16_t _id;                // unique BasicBlock id
+    int16_t _loopDepth;         // the loop nesting level
+    int16_t _genCount;          // code already generated?
 
-    public:
-        BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters
-        static int                        genCounter;    // to enumerate BBs in code-generation order
+public:
+    BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters
+    static int                        genCounter;    // to enumerate BBs in code-generation order
 
-    public:
-        BasicBlock( Node * f, Node * l, int n ) {
-            init( f, l, n );
-            _visited = false;
-        }
-
-
-        BasicBlock * after_visit() {
-            _visited = true;
-            return this;
-        }
+public:
+    BasicBlock( Node *f, Node *l, int n ) {
+        init( f, l, n );
+        _visited = false;
+    }
 
 
-        BasicBlock * before_visit() {
-            _visited = false;
-            return this;
-        }
+    BasicBlock *after_visit() {
+        _visited = true;
+        return this;
+    }
 
 
-        bool_t visited() const {
-            return _visited;
-        }
+    BasicBlock *before_visit() {
+        _visited = false;
+        return this;
+    }
 
 
-        // successor/predecessor functionality
-        bool_t hasSingleSuccessor() const;
-
-        bool_t hasSinglePredecessor() const;
-
-        int nPredecessors() const;
-
-        int nSuccessors() const;
-
-        bool_t isPredecessor( const BasicBlock * n ) const;
-
-        bool_t isSuccessor( const BasicBlock * n ) const;
-
-        BasicBlock * next() const;
-
-        BasicBlock * next1() const;
-
-        BasicBlock * next( int i ) const;
-
-        BasicBlock * firstPrev() const;
-
-        BasicBlock * prev( int i ) const;
+    bool_t visited() const {
+        return _visited;
+    }
 
 
-        int id() const {
-            return this == nullptr ? -1 : _id;
-        }
+    // successor/predecessor functionality
+    bool_t hasSingleSuccessor() const;
+
+    bool_t hasSinglePredecessor() const;
+
+    int nPredecessors() const;
+
+    int nSuccessors() const;
+
+    bool_t isPredecessor( const BasicBlock *n ) const;
+
+    bool_t isSuccessor( const BasicBlock *n ) const;
+
+    BasicBlock *next() const;
+
+    BasicBlock *next1() const;
+
+    BasicBlock *next( int i ) const;
+
+    BasicBlock *firstPrev() const;
+
+    BasicBlock *prev( int i ) const;
 
 
-        int loopDepth() const {
-            return _loopDepth;
-        }
+    int id() const {
+        return this == nullptr ? -1 : _id;
+    }
 
 
-        void setGenCount() {
-            _genCount = genCounter++;
-        }
+    int loopDepth() const {
+        return _loopDepth;
+    }
 
 
-        int genCount() const {
-            return _genCount;
-        }
+    void setGenCount() {
+        _genCount = genCounter++;
+    }
 
 
-        void localCopyPropagate();
+    int genCount() const {
+        return _genCount;
+    }
 
-        void bruteForceCopyPropagate();
 
-        void makeUses();
+    void localCopyPropagate();
 
-        Usage * addUse( NonTrivialNode * n, PseudoRegister * r, bool_t soft = false );
+    void bruteForceCopyPropagate();
 
-        Definition * addDef( NonTrivialNode * n, PseudoRegister * r );
+    void makeUses();
 
-        void remove( Node * n );                // remove node
-        void addAfter( Node * prev, Node * newNode );    // add node after prev
-        void localAlloc( GrowableArray <BitVector *> * hardwired, GrowableArray <PseudoRegister *> * localRegs, GrowableArray <BitVector *> * lives );
+    Usage *addUse( NonTrivialNode *n, PseudoRegister *r, bool_t soft = false );
 
-    protected:
-        void init( Node * first, Node * last, int n );
+    Definition *addDef( NonTrivialNode *n, PseudoRegister *r );
 
-        void slowLocalAlloc( GrowableArray <BitVector *> * hardwired, GrowableArray <PseudoRegister *> * localRegs, GrowableArray <BitVector *> * lives );
+    void remove( Node *n );                // remove node
+    void addAfter( Node *prev, Node *newNode );    // add node after prev
+    void localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArray<PseudoRegister *> *localRegs, GrowableArray<BitVector *> *lives );
 
-        void doAlloc( PseudoRegister * r, Location l );
+protected:
+    void init( Node *first, Node *last, int n );
 
-    public:
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * l );
+    void slowLocalAlloc( GrowableArray<BitVector *> *hardwired, GrowableArray<PseudoRegister *> *localRegs, GrowableArray<BitVector *> *lives );
 
-        void apply( NodeVisitor * v );
+    void doAlloc( PseudoRegister *r, Location l );
 
-        bool_t verifyLabels();
+public:
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
-        bool_t contains( const Node * n ) const;
+    void apply( NodeVisitor *v );
 
-        void verify();
+    bool_t verifyLabels();
 
-        void dfs( GrowableArray <BasicBlock *> * list, int depth );
+    bool_t contains( const Node *n ) const;
 
-        void print_short();
+    void verify();
 
-        void print_code( bool_t suppressTrivial );
+    void dfs( GrowableArray<BasicBlock *> *list, int depth );
 
-        void print();
+    void print_short();
 
-    protected:
-        int addUDHelper( PseudoRegister * r );
+    void print_code( bool_t suppressTrivial );
 
-        void renumber();
+    void print();
 
-        friend class BasicBlockIterator;
+protected:
+    int addUDHelper( PseudoRegister *r );
+
+    void renumber();
+
+    friend class BasicBlockIterator;
 };
 
 
 // DefinitionUsageInfo represents PseudoRegister's definitions/uses within BasicBlock
 class DefinitionUsageInfo : public PrintableResourceObject {
 
-    public:
-        PseudoRegister * _pseudoRegister;
-        SList <Usage *>      _usages;    // uses (in order of nodes within BasicBlock)
-        SList <Definition *> _definitions;
+public:
+    PseudoRegister *_pseudoRegister;
+    SList<Usage *>      _usages;    // uses (in order of nodes within BasicBlock)
+    SList<Definition *> _definitions;
 
 
-        DefinitionUsageInfo( PseudoRegister * r ) {
-            _pseudoRegister = r;
-        }
+    DefinitionUsageInfo( PseudoRegister *r ) {
+        _pseudoRegister = r;
+    }
 
 
-        void getLiveRange( int & firstNodeID, int & lastNodeId );
+    void getLiveRange( int &firstNodeID, int &lastNodeId );
 
-        void propagateTo( BasicBlock * bb, const PseudoRegister * r, const Definition * def, Usage * use, const bool_t global );
+    void propagateTo( BasicBlock *bb, const PseudoRegister *r, const Definition *def, Usage *use, const bool_t global );
 
-        void propagateTo( BasicBlock * useBB, Usage * use, const NonTrivialNode * fromNode, PseudoRegister * src, NonTrivialNode * toNode, const bool_t global );
+    void propagateTo( BasicBlock *useBB, Usage *use, const NonTrivialNode *fromNode, PseudoRegister *src, NonTrivialNode *toNode, const bool_t global );
 
-        void print_short();
+    void print_short();
 
-        void print();
+    void print();
 };
 
-typedef void (* BBDoFn)( BasicBlock * b );
+typedef void (*BBDoFn)( BasicBlock *b );

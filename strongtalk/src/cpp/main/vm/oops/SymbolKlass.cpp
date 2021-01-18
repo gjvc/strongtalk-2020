@@ -9,7 +9,7 @@
 #include "vm/runtime/Delta.hpp"
 
 
-SymbolOop SymbolKlass::allocateSymbol( const char * value, int len ) {
+SymbolOop SymbolKlass::allocateSymbol( const char *value, int len ) {
     _console->print_cr( "symbol [%s]", value );
     SymbolOop sym = as_symbolOop( Universe::allocate_tenured( object_size( len ) ) );
     sym->init_untagged_contents_mark();
@@ -34,7 +34,7 @@ KlassOop SymbolKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 }
 
 
-void setKlassVirtualTableFromSymbolKlass( Klass * k ) {
+void setKlassVirtualTableFromSymbolKlass( Klass *k ) {
     SymbolKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -52,7 +52,7 @@ bool_t SymbolKlass::verify( Oop obj ) {
 }
 
 
-void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_symbol( obj, "dispatch check" );
     SymbolOop array = SymbolOop( obj );
     int       len   = array->length();

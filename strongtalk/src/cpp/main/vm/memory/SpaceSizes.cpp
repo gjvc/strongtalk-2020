@@ -28,8 +28,8 @@ void SpaceSizes::initialize() {
 }
 
 
-static int GetNumericEnvironmentVariable( const char * name, int factor, int def ) {
-    char * n = getenv( name );
+static int GetNumericEnvironmentVariable( const char *name, int factor, int def ) {
+    char *n = getenv( name );
     if ( n ) {
         int l = def;
         if ( sscanf( n, "%ld", &l ) == 1 ) {
@@ -42,7 +42,7 @@ static int GetNumericEnvironmentVariable( const char * name, int factor, int def
 }
 
 
-static int getSize( const char * name, int def ) {
+static int getSize( const char *name, int def ) {
     const int blockSize = 4 * 1024;
     int       size      = GetNumericEnvironmentVariable( name, 1024, def );
     return roundTo( size, blockSize );

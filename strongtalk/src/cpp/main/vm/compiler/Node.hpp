@@ -70,7 +70,7 @@ class ContextZapNode;           // zap context (new backend only)
 class UncommonNode;             // uncommon branch
 
 void initNodes();               // to be called before each compilation
-void printNodes( Node * n );    // print n and its successors
+void printNodes( Node *n );    // print n and its successors
 
 
 class PrimitiveDescriptor;
@@ -83,389 +83,389 @@ class PseudoRegisterMapping;
 
 class BasicNode : public PrintableResourceObject {
 
-    protected:
-        int16_t _id;                      // unique node id for debugging
-        int16_t _num;                     // node number within basic block
-        int16_t _byteCodeIndex;           // byteCodeIndex within the sc
-        BasicBlock            * _basicBlock;            // basic block to which this instance belongs
-        InlinedScope          * _scope;                 // scope to which this instance belongs
-        PseudoRegisterMapping * _pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
+protected:
+    int16_t _id;                      // unique node id for debugging
+    int16_t _num;                     // node number within basic block
+    int16_t _byteCodeIndex;           // byteCodeIndex within the sc
+    BasicBlock            *_basicBlock;            // basic block to which this instance belongs
+    InlinedScope          *_scope;                 // scope to which this instance belongs
+    PseudoRegisterMapping *_pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
 
-    public:
-        Label  _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
-        bool_t _dontEliminate; // for special cases: must not eliminate this node
-        bool_t _deleted;       // node has been deleted
+public:
+    Label  _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
+    bool_t _dontEliminate; // for special cases: must not eliminate this node
+    bool_t _deleted;       // node has been deleted
 
-        int id() const {
-            return this == nullptr ? -1 : _id;
-        }
+    int id() const {
+        return this == nullptr ? -1 : _id;
+    }
 
 
-        BasicBlock * bb() const {
-            return _basicBlock;
-        }
+    BasicBlock *bb() const {
+        return _basicBlock;
+    }
 
 
-        int num() const {
-            return _num;
-        }
+    int num() const {
+        return _num;
+    }
 
 
-        InlinedScope * scope() const {
-            return _scope;
-        }
+    InlinedScope *scope() const {
+        return _scope;
+    }
 
 
-        int byteCodeIndex() const {
-            return _byteCodeIndex;
-        }
+    int byteCodeIndex() const {
+        return _byteCodeIndex;
+    }
 
 
-        void setBasicBlock( BasicBlock * b ) {
-            _basicBlock = b;
-        }
+    void setBasicBlock( BasicBlock *b ) {
+        _basicBlock = b;
+    }
 
 
-        void setNum( int n ) {
-            _num = n;
-        }
+    void setNum( int n ) {
+        _num = n;
+    }
 
 
-        void setScope( InlinedScope * s );
+    void setScope( InlinedScope *s );
 
-        static int       currentID;              // current node ID
-        static int       currentCommentID;       // current ID for comment nodes
-        static ScopeInfo lastScopeInfo;          // for programCounterDescriptor generation
-        static int       lastByteCodeIndex;      //
+    static int       currentID;              // current node ID
+    static int       currentCommentID;       // current ID for comment nodes
+    static ScopeInfo lastScopeInfo;          // for programCounterDescriptor generation
+    static int       lastByteCodeIndex;      //
 
-        BasicNode();
+    BasicNode();
 
 
-        virtual bool_t isPrologueNode() const {
-            return false;
-        }
+    virtual bool_t isPrologueNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isAssignNode() const {
-            return false;
-        }
+    virtual bool_t isAssignNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isTArithNode() const {
-            return false;
-        }
+    virtual bool_t isTArithNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isArithNode() const {
-            return false;
-        }
+    virtual bool_t isArithNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isNonLocalReturnSetupNode() const {
-            return false;
-        }
+    virtual bool_t isNonLocalReturnSetupNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isNonLocalReturnTestNode() const {
-            return false;
-        }
+    virtual bool_t isNonLocalReturnTestNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isNonLocalReturnContinuationNode() const {
-            return false;
-        }
+    virtual bool_t isNonLocalReturnContinuationNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isReturnNode() const {
-            return false;
-        }
+    virtual bool_t isReturnNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isInlinedReturnNode() const {
-            return false;
-        }
+    virtual bool_t isInlinedReturnNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isLoopHeaderNode() const {
-            return false;
-        }
+    virtual bool_t isLoopHeaderNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isExitNode() const {
-            return false;
-        }
+    virtual bool_t isExitNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isMergeNode() const {
-            return false;
-        }
+    virtual bool_t isMergeNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isBranchNode() const {
-            return false;
-        }
+    virtual bool_t isBranchNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isBlockCreateNode() const {
-            return false;
-        }
+    virtual bool_t isBlockCreateNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isContextCreateNode() const {
-            return false;
-        }
+    virtual bool_t isContextCreateNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isContextInitNode() const {
-            return false;
-        }
+    virtual bool_t isContextInitNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isContextZapNode() const {
-            return false;
-        }
+    virtual bool_t isContextZapNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isCommentNode() const {
-            return false;
-        }
+    virtual bool_t isCommentNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isSendNode() const {
-            return false;
-        }
+    virtual bool_t isSendNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isCallNode() const {
-            return false;
-        }
+    virtual bool_t isCallNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isStoreNode() const {
-            return false;
-        }
+    virtual bool_t isStoreNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isDeadEndNode() const {
-            return false;
-        }
+    virtual bool_t isDeadEndNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isTypeTestNode() const {
-            return false;
-        }
+    virtual bool_t isTypeTestNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isUncommonNode() const {
-            return false;
-        }
+    virtual bool_t isUncommonNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isUncommonSendNode() const {
-            return false;
-        }
+    virtual bool_t isUncommonSendNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isNopNode() const {
-            return false;
-        }
+    virtual bool_t isNopNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isCmpNode() const {
-            return false;
-        }
+    virtual bool_t isCmpNode() const {
+        return false;
+    }
 
 
-        virtual bool_t isArraySizeLoad() const {
-            return false;
-        }
+    virtual bool_t isArraySizeLoad() const {
+        return false;
+    }
 
 
-        virtual bool_t isAccessingFloats() const {
-            return false;
-        }
+    virtual bool_t isAccessingFloats() const {
+        return false;
+    }
 
 
-        virtual bool_t isTrivial() const = 0;
+    virtual bool_t isTrivial() const = 0;
 
-    protected:
-        virtual Node * clone( PseudoRegister * from, PseudoRegister * to ) const {
-            SubclassResponsibility();
-            return nullptr;
-        }
+protected:
+    virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
+        SubclassResponsibility();
+        return nullptr;
+    }
 
 
-        void genProgramCounterDescriptor();
+    void genProgramCounterDescriptor();
 
-    public:
-        // for splitting: rough estimate of Space cost of node (in bytes)
-        virtual int cost() const {
-            return oopSize;
-        }
+public:
+    // for splitting: rough estimate of Space cost of node (in bytes)
+    virtual int cost() const {
+        return oopSize;
+    }
 
 
-        virtual bool_t hasDest() const {
-            return false;
-        }
+    virtual bool_t hasDest() const {
+        return false;
+    }
 
 
-        virtual bool_t canCopyPropagate() const {
-            return false;
-        }
+    virtual bool_t canCopyPropagate() const {
+        return false;
+    }
 
 
-        // canCopyPropagate: can node replace a use with copy-propagated PseudoRegister?
-        // if true, must implement copyPropagate below
-        bool_t canCopyPropagate( Node * fromNode ) const; // can copy-propagate from fromNode to receiver?
-        virtual bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false ) = 0;
+    // canCopyPropagate: can node replace a use with copy-propagated PseudoRegister?
+    // if true, must implement copyPropagate below
+    bool_t canCopyPropagate( Node *fromNode ) const; // can copy-propagate from fromNode to receiver?
+    virtual bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false ) = 0;
 
 
-        virtual bool_t canCopyPropagateOop() const {
-            return false;
-        }
+    virtual bool_t canCopyPropagateOop() const {
+        return false;
+    }
 
 
-        // canCopyPropagateOop: can node replace a use with a copy-propagated Oop?
-        // if true, must handle ConstPseudoRegisters; implies canCopyPropagate
-        virtual bool_t isAssignmentLike() const {
-            return false;
-        }
+    // canCopyPropagateOop: can node replace a use with a copy-propagated Oop?
+    // if true, must handle ConstPseudoRegisters; implies canCopyPropagate
+    virtual bool_t isAssignmentLike() const {
+        return false;
+    }
 
 
-        // isAssignmentLike: node copies src to dest (implies hasSrc/Dest)
-        virtual bool_t shouldCopyWhenSplitting() const {
-            return false;
-        }
+    // isAssignmentLike: node copies src to dest (implies hasSrc/Dest)
+    virtual bool_t shouldCopyWhenSplitting() const {
+        return false;
+    }
 
 
-        virtual bool_t hasSrc() const {
-            return false;
-        }
+    virtual bool_t hasSrc() const {
+        return false;
+    }
 
 
-        virtual bool_t hasConstantSrc() const {
-            return false;
-        }
+    virtual bool_t hasConstantSrc() const {
+        return false;
+    }
 
 
-        virtual Oop constantSrc() const {
-            ShouldNotCallThis();
-            return 0;
-        }
+    virtual Oop constantSrc() const {
+        ShouldNotCallThis();
+        return 0;
+    }
 
 
-        virtual bool_t canChangeDest() const {
-            st_assert( hasDest(), "shouldn't call" );
-            return true;
-        }
+    virtual bool_t canChangeDest() const {
+        st_assert( hasDest(), "shouldn't call" );
+        return true;
+    }
 
 
-        virtual bool_t endsBasicBlock() const = 0;
+    virtual bool_t endsBasicBlock() const = 0;
 
 
-        virtual bool_t startsBasicBlock() const {
-            return false;
-        }
+    virtual bool_t startsBasicBlock() const {
+        return false;
+    }
 
 
-        int loopDepth() const {
-            return _basicBlock->loopDepth();
-        }
+    int loopDepth() const {
+        return _basicBlock->loopDepth();
+    }
 
 
-        virtual BasicBlock * newBasicBlock();
+    virtual BasicBlock *newBasicBlock();
 
 
-        virtual void makeUses( BasicBlock * bb ) {
-        }
+    virtual void makeUses( BasicBlock *bb ) {
+    }
 
 
-        virtual void removeUses( BasicBlock * bb ) {
-        }
+    virtual void removeUses( BasicBlock *bb ) {
+    }
 
 
-        virtual void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false ) = 0;
+    virtual void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false ) = 0;
 
 
-        virtual bool_t canBeEliminated() const {
-            return not _dontEliminate;
-        }
+    virtual bool_t canBeEliminated() const {
+        return not _dontEliminate;
+    }
 
 
-        virtual void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * lst ) {
-        }
+    virtual void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *lst ) {
+    }
 
 
-        virtual void markAllocated( int * use_count, int * def_count ) = 0;
+    virtual void markAllocated( int *use_count, int *def_count ) = 0;
 
-        virtual SimpleBitVector trashedMask();
+    virtual SimpleBitVector trashedMask();
 
-        virtual void gen();
+    virtual void gen();
 
 
-        virtual void apply( NodeVisitor * v ) {
-            ShouldNotCallThis();
-        }
+    virtual void apply( NodeVisitor *v ) {
+        ShouldNotCallThis();
+    }
 
 
-        virtual Node * likelySuccessor() const = 0;    // most likely code path
-        virtual Node * uncommonSuccessor() const = 0;    // code path taken only in uncommon situations
-        void removeUpToMerge();            // remove all nodes from this to next merge
-        Node * copy( PseudoRegister * from, PseudoRegister * to ) const;    // make a copy, substituting 'to' wherever 'from' is used
+    virtual Node *likelySuccessor() const = 0;    // most likely code path
+    virtual Node *uncommonSuccessor() const = 0;    // code path taken only in uncommon situations
+    void removeUpToMerge();            // remove all nodes from this to next merge
+    Node *copy( PseudoRegister *from, PseudoRegister *to ) const;    // make a copy, substituting 'to' wherever 'from' is used
 
-        // for type test / loop optimization
-        // If a node includes one or more type tests of its argument(s), it should return true for doesTypeTests
-        // and implement the other four methods in this group.  It can then benefit from type test optimizations
-        // (e.g., moving a test out of a loop).
-        virtual bool_t doesTypeTests() const {
-            return false;
-        }          // does node perform any type test?
+    // for type test / loop optimization
+    // If a node includes one or more type tests of its argument(s), it should return true for doesTypeTests
+    // and implement the other four methods in this group.  It can then benefit from type test optimizations
+    // (e.g., moving a test out of a loop).
+    virtual bool_t doesTypeTests() const {
+        return false;
+    }          // does node perform any type test?
 
-        virtual bool_t hasUnknownCode() const {
-            return false;
-        }          // does handle unknown cases? (with real code, not uncommon branch)
+    virtual bool_t hasUnknownCode() const {
+        return false;
+    }          // does handle unknown cases? (with real code, not uncommon branch)
 
-        virtual void collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *> & klasses ) const {
-            ShouldNotCallThis();
-        }
+    virtual void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
+        ShouldNotCallThis();
+    }
 
 
-        // return a list of pregs tested and, for each preg, a list of its types
-        virtual void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n ) {
-        } // assert that the klass of r (used by the reciver) is oneof(klasses)
+    // return a list of pregs tested and, for each preg, a list of its types
+    virtual void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
+    } // assert that the klass of r (used by the reciver) is oneof(klasses)
 
-        virtual void assert_in_bounds( PseudoRegister * r, LoopHeaderNode * n ) {
-        }// assert that r (used by the reciver) is within array bounds
+    virtual void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
+    }// assert that r (used by the reciver) is within array bounds
 
-        virtual void print_short();
+    virtual void print_short();
 
 
-        virtual void print() {
-            print_short();
-        }
+    virtual void print() {
+        print_short();
+    }
 
 
-        virtual const char * print_string( const char * buf, bool_t printAddr = true ) const = 0;
+    virtual const char *print_string( const char *buf, bool_t printAddr = true ) const = 0;
 
-        void printID() const;
+    void printID() const;
 
 
-        virtual void verify() const {
-        }
+    virtual void verify() const {
+    }
 
-        // Mappings
-        //
-        // Note: make sure, mapping at node is always unchanged, once it is set.
+    // Mappings
+    //
+    // Note: make sure, mapping at node is always unchanged, once it is set.
 
-        PseudoRegisterMapping * mapping() const;
+    PseudoRegisterMapping *mapping() const;
 
 
-        bool_t hasMapping() const {
-            return _pseudoRegisterMapping not_eq nullptr;
-        }
+    bool_t hasMapping() const {
+        return _pseudoRegisterMapping not_eq nullptr;
+    }
 
 
-        void setMapping( PseudoRegisterMapping * mapping );
+    void setMapping( PseudoRegisterMapping *mapping );
 };
 
 
@@ -474,913 +474,913 @@ class BasicNode : public PrintableResourceObject {
 
 class Node : public BasicNode {
 
-    protected:
-        Node * _prev;
-        Node * _next;
+protected:
+    Node *_prev;
+    Node *_next;
 
 
-        Node() {
-            _prev = nullptr;
-            _next = nullptr;
-        }
+    Node() {
+        _prev = nullptr;
+        _next = nullptr;
+    }
 
 
-    public:
-        virtual bool_t endsBasicBlock() const;
+public:
+    virtual bool_t endsBasicBlock() const;
 
-        virtual Node * likelySuccessor() const;
+    virtual Node *likelySuccessor() const;
 
-        virtual Node * uncommonSuccessor() const;
+    virtual Node *uncommonSuccessor() const;
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        virtual void verify() const;
+    virtual void verify() const;
 
-        friend class NodeFactory;
-
-
-        virtual bool_t hasSingleSuccessor() const {
-            return true;
-        }
+    friend class NodeFactory;
 
 
-        virtual bool_t hasSinglePredecessor() const {
-            return true;
-        }
+    virtual bool_t hasSingleSuccessor() const {
+        return true;
+    }
 
 
-        virtual int nPredecessors() const {
-            return _prev ? 1 : 0;
-        }
+    virtual bool_t hasSinglePredecessor() const {
+        return true;
+    }
 
 
-        virtual int nSuccessors() const {
-            return _next ? 1 : 0;
-        }
+    virtual int nPredecessors() const {
+        return _prev ? 1 : 0;
+    }
 
 
-        virtual bool_t isPredecessor( const Node * n ) const {
-            return _prev == n;
-        }
+    virtual int nSuccessors() const {
+        return _next ? 1 : 0;
+    }
 
 
-        virtual bool_t isSuccessor( const Node * n ) const {
-            return _next == n;
-        }
+    virtual bool_t isPredecessor( const Node *n ) const {
+        return _prev == n;
+    }
 
 
-        Node * next() const {
+    virtual bool_t isSuccessor( const Node *n ) const {
+        return _next == n;
+    }
+
+
+    Node *next() const {
+        return _next;
+    }
+
+
+    virtual Node *next1() const {
+        return nullptr;
+    }
+
+
+    virtual Node *next( int i ) const {
+        if ( i == 0 )
             return _next;
-        }
-
-
-        virtual Node * next1() const {
+        else {
+            st_fatal( "single next" );
             return nullptr;
         }
+    }
 
 
-        virtual Node * next( int i ) const {
-            if ( i == 0 )
-                return _next;
-            else {
-                st_fatal( "single next" );
-                return nullptr;
-            }
-        }
+    virtual Node *firstPrev() const {
+        return _prev;
+    }
 
 
-        virtual Node * firstPrev() const {
+    virtual Node *prev( int n ) const {
+        if ( n == 0 )
             return _prev;
-        }
+        else st_fatal( "single prev" );
+        return nullptr;
+    }
 
 
-        virtual Node * prev( int n ) const {
-            if ( n == 0 )
-                return _prev;
-            else st_fatal( "single prev" );
-            return nullptr;
-        }
+    virtual void setPrev( Node *p ) {
+        st_assert( _prev == nullptr, "already set" );
+        _prev = p;
+    }
 
 
-        virtual void setPrev( Node * p ) {
-            st_assert( _prev == nullptr, "already set" );
-            _prev = p;
-        }
+    virtual void movePrev( Node *from, Node *to ) {
+        st_assert( _prev == from, "mismatched prev link" );
+        _prev = to;
+    }
 
 
-        virtual void movePrev( Node * from, Node * to ) {
-            st_assert( _prev == from, "mismatched prev link" );
-            _prev = to;
-        }
+    void setNext( Node *n ) {
+        st_assert( _next == nullptr, "already set" );
+        _next = n;
+    }
 
 
-        void setNext( Node * n ) {
-            st_assert( _next == nullptr, "already set" );
-            _next = n;
-        }
+    virtual void setNext1( Node *n ) {
+        ShouldNotCallThis();
+    }
 
 
-        virtual void setNext1( Node * n ) {
-            ShouldNotCallThis();
-        }
+    virtual void setNext( int i, Node *n ) {
+        if ( i == 0 )
+            setNext( n );
+        else st_fatal( "subclass" );
+    }
 
 
-        virtual void setNext( int i, Node * n ) {
-            if ( i == 0 )
-                setNext( n );
-            else st_fatal( "subclass" );
-        }
+    virtual void moveNext( Node *from, Node *to ) {
+        st_assert( _next == from, "mismatched next link" );
+        _next = to;
+    }
 
 
-        virtual void moveNext( Node * from, Node * to ) {
-            st_assert( _next == from, "mismatched next link" );
-            _next = to;
-        }
+protected:
+    virtual void removeMe();
+
+    Node *endOfList() const;
+
+public:  // really should be private, but C++ has instance-based rather than class-based privacy -- don't you love it?
+    virtual void removePrev( Node *n );
+
+public:
+    virtual void removeNext( Node *n );            // cut the next link between this and n
+    Node *append( Node *p ) {
+        setNext( p );
+        p->setPrev( this );
+        return p;
+    }
 
 
-    protected:
-        virtual void removeMe();
-
-        Node * endOfList() const;
-
-    public:  // really should be private, but C++ has instance-based rather than class-based privacy -- don't you love it?
-        virtual void removePrev( Node * n );
-
-    public:
-        virtual void removeNext( Node * n );            // cut the next link between this and n
-        Node * append( Node * p ) {
-            setNext( p );
-            p->setPrev( this );
-            return p;
-        }
+    Node *append1( Node *p ) {
+        setNext1( p );
+        p->setPrev( this );
+        return p;
+    }
 
 
-        Node * append1( Node * p ) {
-            setNext1( p );
-            p->setPrev( this );
-            return p;
-        }
+    Node *append( int i, Node *p ) {
+        setNext( i, p );
+        p->setPrev( this );
+        return p;
+    }
 
 
-        Node * append( int i, Node * p ) {
-            setNext( i, p );
-            p->setPrev( this );
-            return p;
-        }
+    Node *appendEnd( Node *p ) {
+        return endOfList()->append( p );
+    }
 
 
-        Node * appendEnd( Node * p ) {
-            return endOfList()->append( p );
-        }
+    void insertNext( Node *n ) {
+        st_assert( hasSingleSuccessor(), ">1 successors" );
+        n->setNext( _next );
+        n->setPrev( this );
+        _next->movePrev( this, n );
+        _next = n;
+    }
 
 
-        void insertNext( Node * n ) {
-            st_assert( hasSingleSuccessor(), ">1 successors" );
-            n->setNext( _next );
-            n->setPrev( this );
-            _next->movePrev( this, n );
-            _next = n;
-        }
+    void insertPrev( Node *n ) {
+        st_assert( n->hasSinglePredecessor(), "where to insert?" );
+        n->setPrev( _prev );
+        n->setNext( this );
+        _prev->moveNext( this, n );
+        _prev = n;
+    }
 
 
-        void insertPrev( Node * n ) {
-            st_assert( n->hasSinglePredecessor(), "where to insert?" );
-            n->setPrev( _prev );
-            n->setNext( this );
-            _prev->moveNext( this, n );
-            _prev = n;
-        }
-
-
-        friend class NodeBuilder;
+    friend class NodeBuilder;
 };
 
 
 class TrivialNode : public Node {
-    public:
-        bool_t isTrivial() const {
-            return true;
-        }
+public:
+    bool_t isTrivial() const {
+        return true;
+    }
 
 
-        int cost() const {
-            return 0;
-        }
+    int cost() const {
+        return 0;
+    }
 
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false ) {
-            return false;
-        }
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false ) {
+        return false;
+    }
 
 
-        void markAllocated( int * use_count, int * def_count ) {
-        }
+    void markAllocated( int *use_count, int *def_count ) {
+    }
 
 
-        // may need to implement several inherited dummy methods here -- most will do nothing
-        friend class NodeFactory;
+    // may need to implement several inherited dummy methods here -- most will do nothing
+    friend class NodeFactory;
 };
 
 
 class NonTrivialNode : public Node {
 
-    protected:
-        PseudoRegister * _dest;      // not all nodes actually have src & dest,
-        PseudoRegister * _src;       // but they're declared here for convenience
-        Usage          * _srcUse;    // and easier code sharing
-        Definition     * _destDef;   //
+protected:
+    PseudoRegister *_dest;      // not all nodes actually have src & dest,
+    PseudoRegister *_src;       // but they're declared here for convenience
+    Usage          *_srcUse;    // and easier code sharing
+    Definition     *_destDef;   //
 
-        NonTrivialNode();
+    NonTrivialNode();
 
-    public:
-        bool_t isTrivial() const {
-            return false;
-        }
-
-
-        PseudoRegister * src() const;
-
-        PseudoRegister * dest() const;
+public:
+    bool_t isTrivial() const {
+        return false;
+    }
 
 
-        PseudoRegister * dst() const {
-            return dest();
-        }
+    PseudoRegister *src() const;
+
+    PseudoRegister *dest() const;
 
 
-        void setDest( BasicBlock * bb, PseudoRegister * d );
+    PseudoRegister *dst() const {
+        return dest();
+    }
 
-        virtual bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
 
-        void makeUses( BasicBlock * bb );
+    void setDest( BasicBlock *bb, PseudoRegister *d );
 
-        void removeUses( BasicBlock * bb );
+    virtual bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-        void verify() const;
+    void makeUses( BasicBlock *bb );
 
-        friend class NodeFactory;
+    void removeUses( BasicBlock *bb );
+
+    void verify() const;
+
+    friend class NodeFactory;
 };
 
 
 class PrologueNode : public NonTrivialNode {
 
-    protected:
+protected:
 
-        LookupKey * _key;
-        const int _nofArgs;
-        const int _nofTemps;
+    LookupKey *_key;
+    const int _nofArgs;
+    const int _nofTemps;
 
 
-        PrologueNode( LookupKey * key, int nofArgs, int nofTemps ) :
+    PrologueNode( LookupKey *key, int nofArgs, int nofTemps ) :
             _nofArgs( nofArgs ), _nofTemps( nofTemps ) {
-            _key = key;
-        }
+        _key = key;
+    }
 
 
-    public:
-        bool_t isPrologueNode() const {
-            return true;
-        }
+public:
+    bool_t isPrologueNode() const {
+        return true;
+    }
 
 
-        virtual bool_t canChangeDest() const {
-            return false;
-        }    // has no dest
+    virtual bool_t canChangeDest() const {
+        return false;
+    }    // has no dest
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void makeUses( BasicBlock * bb );
-
-
-        void removeUses( BasicBlock * bb ) {
-            ShouldNotCallThis();
-        }
+    void makeUses( BasicBlock *bb );
 
 
-        void gen();
+    void removeUses( BasicBlock *bb ) {
+        ShouldNotCallThis();
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aPrologueNode( this );
-        }
+    void gen();
 
 
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    void apply( NodeVisitor *v ) {
+        v->aPrologueNode( this );
+    }
 
 
-        void markAllocated( int * use_count, int * def_count ) {
-        }
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void markAllocated( int *use_count, int *def_count ) {
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class LoadNode : public NonTrivialNode {
 
-    protected:
-        LoadNode( PseudoRegister * d ) {
-            _dest = d;
-            st_assert( d, "dest is nullptr" );
-        }
+protected:
+    LoadNode( PseudoRegister *d ) {
+        _dest = d;
+        st_assert( d, "dest is nullptr" );
+    }
 
 
-    public:
-        bool_t hasDest() const {
-            return true;
-        }
+public:
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        void makeUses( BasicBlock * basicBlock );
+    void makeUses( BasicBlock *basicBlock );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class LoadIntNode : public LoadNode {
 
-    protected:
-        int _value;        // constant (vm-level, not an Oop) to be loaded
+protected:
+    int _value;        // constant (vm-level, not an Oop) to be loaded
 
-        LoadIntNode( PseudoRegister * dst, int value ) :
+    LoadIntNode( PseudoRegister *dst, int value ) :
             LoadNode( dst ) {
-            _value = value;
-        }
+        _value = value;
+    }
 
 
-    public:
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+public:
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        int value() {
-            return _value;
-        }
+    int value() {
+        return _value;
+    }
 
 
-        void gen();
+    void gen();
 
 
-        void apply( NodeVisitor * v ) {
-            v->aLoadIntNode( this );
-        }
+    void apply( NodeVisitor *v ) {
+        v->aLoadIntNode( this );
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class LoadOffsetNode : public LoadNode {
 
-    public:
-        // _src is base address (e.g. object containing a slot)
-        int    _offset;          // offset in words
-        bool_t _isArraySize;     // is this load implementing an array size primitive?
+public:
+    // _src is base address (e.g. object containing a slot)
+    int    _offset;          // offset in words
+    bool_t _isArraySize;     // is this load implementing an array size primitive?
 
-    protected:
-        LoadOffsetNode( PseudoRegister * dst, PseudoRegister * b, int offs, bool_t arr ) :
+protected:
+    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, int offs, bool_t arr ) :
             LoadNode( dst ) {
-            _src         = b;
-            _offset      = offs;
-            _isArraySize = arr;
-        }
+        _src         = b;
+        _offset      = offs;
+        _isArraySize = arr;
+    }
 
 
-    public:
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+public:
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        PseudoRegister * base() const {
-            return _src;
-        }
+    PseudoRegister *base() const {
+        return _src;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t isArraySizeLoad() const {
-            return _isArraySize;
-        }
+    bool_t isArraySizeLoad() const {
+        return _isArraySize;
+    }
 
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aLoadOffsetNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aLoadOffsetNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class LoadUplevelNode : public LoadNode {
 
-    private:
-        Usage          * _context0Use;   //
-        PseudoRegister * _context0;      // starting context
-        int       _nofLevels;      // no. of indirections to follow via context home field
-        int       _offset;         // offset of temporary in final context
-        SymbolOop _name;           // temporary name (for printing)
+private:
+    Usage          *_context0Use;   //
+    PseudoRegister *_context0;      // starting context
+    int       _nofLevels;      // no. of indirections to follow via context home field
+    int       _offset;         // offset of temporary in final context
+    SymbolOop _name;           // temporary name (for printing)
 
-    protected:
-        LoadUplevelNode( PseudoRegister * dst, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name );
+protected:
+    LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name );
 
-    public:
-        PseudoRegister * context0() const {
-            return _context0;
-        }
-
-
-        int nofLevels() const {
-            return _nofLevels;
-        }
+public:
+    PseudoRegister *context0() const {
+        return _context0;
+    }
 
 
-        int offset() const {
-            return _offset;
-        }
+    int nofLevels() const {
+        return _nofLevels;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+    int offset() const {
+        return _offset;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aLoadUplevelNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aLoadUplevelNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class StoreNode : public NonTrivialNode {
 
-    protected:
-        StoreNode( PseudoRegister * s ) {
-            _src = s;
-            st_assert( _src, "src is nullptr" );
-        }
+protected:
+    StoreNode( PseudoRegister *s ) {
+        _src = s;
+        st_assert( _src, "src is nullptr" );
+    }
 
 
-    public:
-        bool_t isStoreNode() const {
-            return true;
-        }
+public:
+    bool_t isStoreNode() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        virtual bool_t needsStoreCheck() const {
-            return false;
-        }
+    virtual bool_t needsStoreCheck() const {
+        return false;
+    }
 
 
-        virtual const char * action() const = 0;        // for debugging messages
-        virtual void setStoreCheck( bool_t ncs ) {
-        }
+    virtual const char *action() const = 0;        // for debugging messages
+    virtual void setStoreCheck( bool_t ncs ) {
+    }
 
 
-        void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n );
+    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * l );
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class StoreOffsetNode : public StoreNode {
-        // store into data slot, do check-store if necessary
-        // _src is value being stored, may be a ConstPseudoRegister*
-    private:
-        PseudoRegister * _base;              // base address (object containing the slot)
-        Usage          * _baseUse;           //
-        int    _offset;             // offset in words
-        bool_t _needsStoreCheck;    // does store need a GC store check?
+    // store into data slot, do check-store if necessary
+    // _src is value being stored, may be a ConstPseudoRegister*
+private:
+    PseudoRegister *_base;              // base address (object containing the slot)
+    Usage          *_baseUse;           //
+    int    _offset;             // offset in words
+    bool_t _needsStoreCheck;    // does store need a GC store check?
 
-    protected:
-        StoreOffsetNode( PseudoRegister * s, PseudoRegister * b, int o, bool_t nsc ) :
+protected:
+    StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, int o, bool_t nsc ) :
             StoreNode( s ) {
-            _base = b;
-            st_assert( b, "base is nullptr" );
-            _offset          = o;
-            _needsStoreCheck = nsc;
-        }
+        _base = b;
+        st_assert( b, "base is nullptr" );
+        _offset          = o;
+        _needsStoreCheck = nsc;
+    }
 
 
-    public:
-        PseudoRegister * base() const {
-            return _base;
-        }
+public:
+    PseudoRegister *base() const {
+        return _base;
+    }
 
 
-        int offset() const {
-            return _offset;
-        }
+    int offset() const {
+        return _offset;
+    }
 
 
-        bool_t needsStoreCheck() const {
-            return _needsStoreCheck;
-        }
+    bool_t needsStoreCheck() const {
+        return _needsStoreCheck;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        void setStoreCheck( bool_t ncs ) {
-            _needsStoreCheck = ncs;
-        }
+    void setStoreCheck( bool_t ncs ) {
+        _needsStoreCheck = ncs;
+    }
 
 
-        const char * action() const {
-            return "stored into an object";
-        }
+    const char *action() const {
+        return "stored into an object";
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
 
-        void gen();
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aStoreOffsetNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aStoreOffsetNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class StoreUplevelNode : public StoreNode {
-        // when node is created, it is not known whether store will be to stack/reg or context
-        // _src may be a ConstPseudoRegister*
-    private:
-        Usage          * _context0Use;       //
-        PseudoRegister * _context0;          // starting context
-        int       _nofLevels;          // no. of indirections to follow via context home field
-        int       _offset;             // offset of temporary in final context
-        bool_t    _needsStoreCheck;    // generate a store check if true
-        SymbolOop _name;               // temporary name (for printing)
+    // when node is created, it is not known whether store will be to stack/reg or context
+    // _src may be a ConstPseudoRegister*
+private:
+    Usage          *_context0Use;       //
+    PseudoRegister *_context0;          // starting context
+    int       _nofLevels;          // no. of indirections to follow via context home field
+    int       _offset;             // offset of temporary in final context
+    bool_t    _needsStoreCheck;    // generate a store check if true
+    SymbolOop _name;               // temporary name (for printing)
 
-    protected:
-        StoreUplevelNode( PseudoRegister * src, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name, bool_t needsStoreCheck );
+protected:
+    StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needsStoreCheck );
 
-    public:
-        PseudoRegister * context0() const {
-            return _context0;
-        }
-
-
-        int nofLevels() const {
-            return _nofLevels;
-        }
+public:
+    PseudoRegister *context0() const {
+        return _context0;
+    }
 
 
-        int offset() const {
-            return _offset;
-        }
+    int nofLevels() const {
+        return _nofLevels;
+    }
 
 
-        bool_t needsStoreCheck() const {
-            return _needsStoreCheck;
-        }
+    int offset() const {
+        return _offset;
+    }
 
 
-        void setStoreCheck( bool_t ncs ) {
-            _needsStoreCheck = ncs;
-        }
+    bool_t needsStoreCheck() const {
+        return _needsStoreCheck;
+    }
 
 
-        const char * action() const {
-            return "stored into a context temporary";
-        }
+    void setStoreCheck( bool_t ncs ) {
+        _needsStoreCheck = ncs;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+    const char *action() const {
+        return "stored into a context temporary";
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aStoreUplevelNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aStoreUplevelNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class AssignNode : public StoreNode {
-        // _src may be a ConstPseudoRegister*
-    protected:
-        AssignNode( PseudoRegister * s, PseudoRegister * d );
+    // _src may be a ConstPseudoRegister*
+protected:
+    AssignNode( PseudoRegister *s, PseudoRegister *d );
 
-    public:
-        int cost() const {
-            return oopSize / 2;
-        }  // assume 50% eliminated
-        bool_t isAccessingFloats() const;
-
-
-        bool_t isAssignNode() const {
-            return true;
-        }
+public:
+    int cost() const {
+        return oopSize / 2;
+    }  // assume 50% eliminated
+    bool_t isAccessingFloats() const;
 
 
-        bool_t hasDest() const {
-            return true;
-        }
+    bool_t isAssignNode() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        bool_t hasConstantSrc() const {
-            return _src->isConstPseudoRegister();
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return true;
-        }
+    bool_t hasConstantSrc() const {
+        return _src->isConstPseudoRegister();
+    }
 
 
-        bool_t shouldCopyWhenSplitting() const {
-            return true;
-        }
+    bool_t isAssignmentLike() const {
+        return true;
+    }
 
 
-        bool_t canBeEliminated() const;
-
-        Oop constantSrc() const;
-
-
-        const char * action() const {
-            return _dest->isSinglyAssignedPseudoRegister() ? "passed as an argument" : "assigned to a local";
-        }
+    bool_t shouldCopyWhenSplitting() const {
+        return true;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t canBeEliminated() const;
 
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+    Oop constantSrc() const;
 
 
-        void apply( NodeVisitor * v ) {
-            v->anAssignNode( this );
-        }
+    const char *action() const {
+        return _dest->isSinglyAssignedPseudoRegister() ? "passed as an argument" : "assigned to a local";
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    protected:
-        void genOop();
+    void makeUses( BasicBlock *bb );
 
-        friend class NodeFactory;
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
+
+
+    void apply( NodeVisitor *v ) {
+        v->anAssignNode( this );
+    }
+
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+protected:
+    void genOop();
+
+    friend class NodeFactory;
 };
 
 
 class AbstractReturnNode : public NonTrivialNode {
 
-    protected:
-        AbstractReturnNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dest ) {
-            _byteCodeIndex = byteCodeIndex;
-            _src           = src;
-            _dest          = dest;
-        }
+protected:
+    AbstractReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) {
+        _byteCodeIndex = byteCodeIndex;
+        _src           = src;
+        _dest          = dest;
+    }
 
 
-    public:
-        bool_t canBeEliminated() const {
-            return false;
-        }
+public:
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        bool_t isReturnNode() const {
-            return true;
-        }
+    bool_t isReturnNode() const {
+        return true;
+    }
 
 
-        bool_t endsBasicBlock() const {
-            return true;
-        }
+    bool_t endsBasicBlock() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return true;
-        }
+    bool_t isAssignmentLike() const {
+        return true;
+    }
 
 
-        bool_t hasDest() const {
-            return true;
-        }
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * l );
-
-
-        void markAllocated( int * use_count, int * def_count ) {
-        }
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
 
-        friend class NodeFactory;
+    void markAllocated( int *use_count, int *def_count ) {
+    }
+
+
+    friend class NodeFactory;
 };
 
 
 class InlinedReturnNode : public AbstractReturnNode {
 
-        // should replace with AssignNode + ContextZap (if needed)
-    protected:
-        InlinedReturnNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dest ) :
+    // should replace with AssignNode + ContextZap (if needed)
+protected:
+    InlinedReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
             AbstractReturnNode( byteCodeIndex, src, dest ) {
-        }
+    }
 
 
-    public:
-        bool_t isInlinedReturnNode() const {
-            return true;
-        }
+public:
+    bool_t isInlinedReturnNode() const {
+        return true;
+    }
 
 
-        bool_t endsBasicBlock() const {
-            return NonTrivialNode::endsBasicBlock();
-        }
+    bool_t endsBasicBlock() const {
+        return NonTrivialNode::endsBasicBlock();
+    }
 
 
-        bool_t isTrivial() const {
-            return true;
-        }
+    bool_t isTrivial() const {
+        return true;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return true;
-        }
+    bool_t canBeEliminated() const {
+        return true;
+    }
 
 
-        bool_t shouldCopyWhenSplitting() const {
-            return true;
-        }
+    bool_t shouldCopyWhenSplitting() const {
+        return true;
+    }
 
 
-        int cost() const {
-            return 0;
-        }
+    int cost() const {
+        return 0;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->anInlinedReturnNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->anInlinedReturnNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
@@ -1392,193 +1392,193 @@ class InlinedReturnNode : public AbstractReturnNode {
 // (Functionality is split up because the NonLocalReturnContinuationNode may be shared with NonLocalReturnTestNode)
 
 class NonLocalReturnSetupNode : public AbstractReturnNode {
-        Usage * _resultUse;
-        Usage * _contextUse;            // needs context to load home FP
-    protected:
-        NonLocalReturnSetupNode( PseudoRegister * result, int byteCodeIndex );
+    Usage *_resultUse;
+    Usage *_contextUse;            // needs context to load home FP
+protected:
+    NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex );
 
-    public:
-        bool_t isExitNode() const {
-            return true;
-        }
-
-
-        bool_t isNonLocalReturnSetupNode() const {
-            return true;
-        }
+public:
+    bool_t isExitNode() const {
+        return true;
+    }
 
 
-        // uses hardwired regs, has no src or dest
-        bool_t canCopyPropagate() const {
-            return false;
-        }
+    bool_t isNonLocalReturnSetupNode() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return false;
-        }
+    // uses hardwired regs, has no src or dest
+    bool_t canCopyPropagate() const {
+        return false;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }  // otherwise breaks nonlocal_return
-        bool_t isAssignmentLike() const {
-            return false;
-        }
+    bool_t canCopyPropagateOop() const {
+        return false;
+    }
 
 
-        bool_t hasDest() const {
-            return false;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }  // otherwise breaks nonlocal_return
+    bool_t isAssignmentLike() const {
+        return false;
+    }
 
 
-        bool_t canChangeDest() const {
-            return false;
-        }    // has no dest
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void gen();
+    bool_t hasDest() const {
+        return false;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aNonLocalReturnSetupNode( this );
-        }
+    bool_t canChangeDest() const {
+        return false;
+    }    // has no dest
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aNonLocalReturnSetupNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class NonLocalReturnContinuationNode : public AbstractReturnNode {
-    protected:
-        NonLocalReturnContinuationNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dest ) :
+protected:
+    NonLocalReturnContinuationNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
             AbstractReturnNode( byteCodeIndex, src, dest ) {
-        }
+    }
 
 
-    public:
-        bool_t isExitNode() const {
-            return true;
-        }
+public:
+    bool_t isExitNode() const {
+        return true;
+    }
 
 
-        bool_t isNonLocalReturnContinuationNode() const {
-            return true;
-        }
+    bool_t isNonLocalReturnContinuationNode() const {
+        return true;
+    }
 
 
-        // uses hardwired regs, has no src or dest
-        bool_t canCopyPropagate() const {
-            return false;
-        }
+    // uses hardwired regs, has no src or dest
+    bool_t canCopyPropagate() const {
+        return false;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return false;
-        }
+    bool_t canCopyPropagateOop() const {
+        return false;
+    }
 
 
-        bool_t hasSrc() const {
-            return false;
-        }
+    bool_t hasSrc() const {
+        return false;
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return false;
-        }
+    bool_t isAssignmentLike() const {
+        return false;
+    }
 
 
-        bool_t hasDest() const {
-            return false;
-        }
+    bool_t hasDest() const {
+        return false;
+    }
 
 
-        bool_t canChangeDest() const {
-            return false;
-        }    // has no dest
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t canChangeDest() const {
+        return false;
+    }    // has no dest
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aNonLocalReturnContinuationNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aNonLocalReturnContinuationNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 // normal method return
 class ReturnNode : public AbstractReturnNode {
-    private:
-        Usage * _resultUse;
+private:
+    Usage *_resultUse;
 
-    protected:
-        ReturnNode( PseudoRegister * res, int byteCodeIndex );
+protected:
+    ReturnNode( PseudoRegister *res, int byteCodeIndex );
 
-    public:
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-
-        bool_t isExitNode() const {
-            return true;
-        }
+public:
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        bool_t hasSrc() const {
-            return false;
-        }
+    bool_t isExitNode() const {
+        return true;
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return false;
-        }
+    bool_t hasSrc() const {
+        return false;
+    }
 
 
-        bool_t hasDest() const {
-            return false;
-        }
+    bool_t isAssignmentLike() const {
+        return false;
+    }
 
 
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+    bool_t hasDest() const {
+        return false;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aReturnNode( this );
-        }
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aReturnNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
@@ -1586,818 +1586,818 @@ class ReturnNode : public AbstractReturnNode {
 // originally: MergeNodeClassTemplate(AbstractMergeNode, Node, GrowableArray<Node*>, TrivialNode, 3)
 
 class AbstractMergeNode : public TrivialNode {
-    private:
-        enum {
-            N = 3         /* n-way merge */
-        };
+private:
+    enum {
+        N = 3         /* n-way merge */
+    };
 
-    protected:
-        GrowableArray <Node *> * _prevs;
+protected:
+    GrowableArray<Node *> *_prevs;
 
-    public:
-        AbstractMergeNode() {
-            _prevs = new GrowableArray <Node *>( N );
-        }
-
-
-        AbstractMergeNode( Node * prev1, Node * prev2 ) {
-            _prevs = new GrowableArray <Node *>( N );
-            _prevs->append( prev1 );
-            prev1->setNext( this );
-            _prevs->append( prev2 );
-            prev2->setNext( this );
-        }
+public:
+    AbstractMergeNode() {
+        _prevs = new GrowableArray<Node *>( N );
+    }
 
 
-        bool_t hasSinglePredecessor() const {
-            return _prevs->length() <= 1;
-        }
+    AbstractMergeNode( Node *prev1, Node *prev2 ) {
+        _prevs = new GrowableArray<Node *>( N );
+        _prevs->append( prev1 );
+        prev1->setNext( this );
+        _prevs->append( prev2 );
+        prev2->setNext( this );
+    }
 
 
-        int nPredecessors() const {
-            return _prevs->length();
-        }
+    bool_t hasSinglePredecessor() const {
+        return _prevs->length() <= 1;
+    }
 
 
-        Node * firstPrev() const {
-            return _prevs->isEmpty() ? nullptr : _prevs->at( 0 );
-        }
+    int nPredecessors() const {
+        return _prevs->length();
+    }
 
 
-        void setPrev( Node * p ) {
-            st_assert( p, "should be something" );
-            st_assert( not _prevs->contains( p ), "shouldn't already be there" );
-            _prevs->append( p );
-        }
+    Node *firstPrev() const {
+        return _prevs->isEmpty() ? nullptr : _prevs->at( 0 );
+    }
 
 
-        Node * prev( int n ) const {
-            return _prevs->at( n );
-        }
+    void setPrev( Node *p ) {
+        st_assert( p, "should be something" );
+        st_assert( not _prevs->contains( p ), "shouldn't already be there" );
+        _prevs->append( p );
+    }
 
 
-    protected:
-        void removeMe();
+    Node *prev( int n ) const {
+        return _prevs->at( n );
+    }
 
 
-        virtual void removePrev( Node * n ) {
-            /* cut the _prev link between this and n	*/
-            _prevs->remove( n );
-        }
+protected:
+    void removeMe();
 
 
-    public:
-        void movePrev( Node * from, Node * to );
+    virtual void removePrev( Node *n ) {
+        /* cut the _prev link between this and n	*/
+        _prevs->remove( n );
+    }
 
-        bool_t isPredecessor( const Node * n ) const;
+
+public:
+    void movePrev( Node *from, Node *to );
+
+    bool_t isPredecessor( const Node *n ) const;
 };
 
 
 class MergeNode : public AbstractMergeNode {
 
-    protected:
-        MergeNode( int byteCodeIndex );
+protected:
+    MergeNode( int byteCodeIndex );
 
-        MergeNode( Node * prev1, Node * prev2 );
+    MergeNode( Node *prev1, Node *prev2 );
 
-    public:
-        bool_t _isLoopStart;        // does this node start a loop?
-        bool_t _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
-        bool_t _didStartBasicBlock; // used for debugging / assertion checks
+public:
+    bool_t _isLoopStart;        // does this node start a loop?
+    bool_t _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
+    bool_t _didStartBasicBlock; // used for debugging / assertion checks
 
-        int cost() const {
-            return 0;
-        }
-
-
-        bool_t isTrivial() const {
-            return _prevs->length() <= 1;
-        }
+    int cost() const {
+        return 0;
+    }
 
 
-        bool_t startsBasicBlock() const {
-            return _prevs->length() > 1 or _isLoopStart;
-        }
+    bool_t isTrivial() const {
+        return _prevs->length() <= 1;
+    }
 
 
-        bool_t isMergeNode() const {
-            return true;
-        }
+    bool_t startsBasicBlock() const {
+        return _prevs->length() > 1 or _isLoopStart;
+    }
 
 
-        BasicBlock * newBasicBlock();
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void gen();
+    bool_t isMergeNode() const {
+        return true;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aMergeNode( this );
-        }
+    BasicBlock *newBasicBlock();
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aMergeNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class ArithNode : public NonTrivialNode {    // abstract
-        // NB: ArithNodes are not used for tagged int arithmetic -- see TArithNode
-    protected:
-        ArithOpCode _op;
-        ConstPseudoRegister * _constResult;    // non-nullptr if constant-folded
+    // NB: ArithNodes are not used for tagged int arithmetic -- see TArithNode
+protected:
+    ArithOpCode _op;
+    ConstPseudoRegister *_constResult;    // non-nullptr if constant-folded
 
-        ArithNode( ArithOpCode op, PseudoRegister * src, PseudoRegister * dst ) {
-            _op          = op;
-            _src         = src;
-            _dest        = dst;
-            _constResult = nullptr;
-        }
-
-
-    public:
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    ArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) {
+        _op          = op;
+        _src         = src;
+        _dest        = dst;
+        _constResult = nullptr;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+public:
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        bool_t hasDest() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return _constResult not_eq nullptr;
-        }
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        bool_t isArithNode() const {
-            return true;
-        }
+    bool_t isAssignmentLike() const {
+        return _constResult not_eq nullptr;
+    }
 
 
-        bool_t isCmpNode() const {
-            return _op == ArithOpCode::tCmpArithOp;
-        }
+    bool_t isArithNode() const {
+        return true;
+    }
 
 
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    bool_t isCmpNode() const {
+        return _op == ArithOpCode::tCmpArithOp;
+    }
 
 
-        ArithOpCode op() const {
-            return _op;
-        }
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
 
-        virtual bool_t operIsConst() const = 0;
+    ArithOpCode op() const {
+        return _op;
+    }
 
-        virtual int operConst() const = 0;
 
-        virtual bool_t doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t repl );
+    virtual bool_t operIsConst() const = 0;
 
-        const char * opName() const;
+    virtual int operConst() const = 0;
 
-        friend class NodeFactory;
+    virtual bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t repl );
+
+    const char *opName() const;
+
+    friend class NodeFactory;
 };
 
 
 class ArithRRNode : public ArithNode {  // reg op reg => reg
 
-    protected:
-        PseudoRegister * _oper;
-        Usage          * _operUse;
+protected:
+    PseudoRegister *_oper;
+    Usage          *_operUse;
 
-        ArithRRNode( ArithOpCode o, PseudoRegister * s, PseudoRegister * o2, PseudoRegister * d );
+    ArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d );
 
-    public:
-        PseudoRegister * operand() const {
-            return _oper;
-        }
-
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        bool_t operIsConst() const;
-
-        int operConst() const;
-
-        bool_t doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace );
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+public:
+    PseudoRegister *operand() const {
+        return _oper;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->anArithRRNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    bool_t operIsConst() const;
+
+    int operConst() const;
+
+    bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace );
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->anArithRRNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class FloatArithRRNode : public ArithRRNode {  // for untagged float operations
 
-        FloatArithRRNode( ArithOpCode o, PseudoRegister * s, PseudoRegister * o2, PseudoRegister * d ) :
+    FloatArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d ) :
             ArithRRNode( o, s, o2, d ) {
-        }
+    }
 
 
-    public:
-        bool_t isAccessingFloats() const {
-            return true;
-        }
+public:
+    bool_t isAccessingFloats() const {
+        return true;
+    }
 
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aFloatArithRRNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aFloatArithRRNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class FloatUnaryArithNode : public ArithNode {
-        // unary untagged float operation; src is an untagged float, dest is either another
-        // untagged float or a floatOop
-        FloatUnaryArithNode( ArithOpCode op, PseudoRegister * src, PseudoRegister * dst ) :
+    // unary untagged float operation; src is an untagged float, dest is either another
+    // untagged float or a floatOop
+    FloatUnaryArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
             ArithNode( op, src, dst ) {
-        }
+    }
 
 
-    public:
-        bool_t isAccessingFloats() const {
-            return true;
-        }
+public:
+    bool_t isAccessingFloats() const {
+        return true;
+    }
 
 
-        bool_t isCmpNode() const {
-            return false;
-        }
+    bool_t isCmpNode() const {
+        return false;
+    }
 
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
 
-        bool_t operIsConst() const {
-            return false;
-        }
+    bool_t operIsConst() const {
+        return false;
+    }
 
 
-        int operConst() const {
-            ShouldNotCallThis();
-            return 0;
-        }
+    int operConst() const {
+        ShouldNotCallThis();
+        return 0;
+    }
 
 
-        void gen();
+    void gen();
 
 
-        void apply( NodeVisitor * v ) {
-            v->aFloatUnaryArithNode( this );
-        }
+    void apply( NodeVisitor *v ) {
+        v->aFloatUnaryArithNode( this );
+    }
 
 
-        void verify() const;
+    void verify() const;
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class ArithRCNode : public ArithNode {  // reg op const => reg
-        // used to compare against non-Oop constants (e.g. for markOop test)
-        // DO NOT USE to add a reg and an Oop constant -- use ArithRR + ConstPseudoRegisters for that
-    protected:
-        int _oper;
+    // used to compare against non-Oop constants (e.g. for markOop test)
+    // DO NOT USE to add a reg and an Oop constant -- use ArithRR + ConstPseudoRegisters for that
+protected:
+    int _oper;
 
 
-        ArithRCNode( ArithOpCode o, PseudoRegister * s, int o2, PseudoRegister * d ) :
+    ArithRCNode( ArithOpCode o, PseudoRegister *s, int o2, PseudoRegister *d ) :
             ArithNode( o, s, d ) {
-            _oper = o2;
-        }
+        _oper = o2;
+    }
 
 
-    public:
-        int operand() const {
-            return _oper;
-        }
+public:
+    int operand() const {
+        return _oper;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->anArithRCNode( this );
-        }
+    void gen();
 
 
-        bool_t operIsConst() const {
-            return true;
-        }
+    void apply( NodeVisitor *v ) {
+        v->anArithRCNode( this );
+    }
 
 
-        int operConst() const {
-            return _oper;
-        }
+    bool_t operIsConst() const {
+        return true;
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    int operConst() const {
+        return _oper;
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 // node with >1 successor; supplies linking code (next(i) et al.) and some default behavior
 class AbstractBranchNode : public NonTrivialNode {
-        // next() is the fall-through case, next1() the taken branch
-    public:
-        virtual bool_t canFail() const = 0;        // does node have a failure branch?
-        virtual Node * failureBranch() const {
-            return next1();
-        }
+    // next() is the fall-through case, next1() the taken branch
+public:
+    virtual bool_t canFail() const = 0;        // does node have a failure branch?
+    virtual Node *failureBranch() const {
+        return next1();
+    }
 
 
-        bool_t endsBasicBlock() const {
-            return true;
-        }
+    bool_t endsBasicBlock() const {
+        return true;
+    }
 
 
-    protected:
-        AbstractBranchNode() {
-            _nxt = new GrowableArray <Node *>( EstimatedSuccessors );
-        }
+protected:
+    AbstractBranchNode() {
+        _nxt = new GrowableArray<Node *>( EstimatedSuccessors );
+    }
 
 
-        void removeFailureIfPossible();
+    void removeFailureIfPossible();
 
-        void verify( bool_t verifySuccessors ) const;
+    void verify( bool_t verifySuccessors ) const;
 
-        // ---------- node linking code --------------
-    private:
-        enum {
-            EstimatedSuccessors = 2  // most nodes have only 2 successors
-        };
-    protected:
-        GrowableArray <Node *> * _nxt;            /* elem 0 is next1 */
+    // ---------- node linking code --------------
+private:
+    enum {
+        EstimatedSuccessors = 2  // most nodes have only 2 successors
+    };
+protected:
+    GrowableArray<Node *> *_nxt;            /* elem 0 is next1 */
 
-    public:
+public:
 
-        Node * next1() const {
-            return _nxt->length() ? _nxt->at( 0 ) : nullptr;
-        }
-
-
-        bool_t hasSingleSuccessor() const {
-            return next1() == nullptr;
-        }
+    Node *next1() const {
+        return _nxt->length() ? _nxt->at( 0 ) : nullptr;
+    }
 
 
-        int nSuccessors() const {
-            return _nxt->length() + ( _next ? 1 : 0 );
-        }
+    bool_t hasSingleSuccessor() const {
+        return next1() == nullptr;
+    }
 
 
-        Node * next() const {
-            return _next;
-        }
+    int nSuccessors() const {
+        return _nxt->length() + ( _next ? 1 : 0 );
+    }
 
 
-        Node * next( int i ) const {
-            return i == 0 ? _next : _nxt->at( i - 1 );
-        }
+    Node *next() const {
+        return _next;
+    }
 
 
-        void removeMe();
-
-        void removeNext( Node * n );
-
-
-        void setNext1( Node * n ) {
-            st_assert( _nxt->length() == 0, "already set" );
-            _nxt->append( n );
-        }
+    Node *next( int i ) const {
+        return i == 0 ? _next : _nxt->at( i - 1 );
+    }
 
 
-        void setNext( Node * n ) {
-            NonTrivialNode::setNext( n );
-        }
+    void removeMe();
+
+    void removeNext( Node *n );
 
 
-        void setNext( int i, Node * n );
+    void setNext1( Node *n ) {
+        st_assert( _nxt->length() == 0, "already set" );
+        _nxt->append( n );
+    }
 
-        void moveNext( Node * from, Node * to );
 
-        bool_t isSuccessor( const Node * n ) const;
+    void setNext( Node *n ) {
+        NonTrivialNode::setNext( n );
+    }
+
+
+    void setNext( int i, Node *n );
+
+    void moveNext( Node *from, Node *to );
+
+    bool_t isSuccessor( const Node *n ) const;
 };
 
 class TArithRRNode : public AbstractBranchNode {
-        // tagged arithmetic operation; next() is success case, next1()
-        // is failure (leaving ORed operands in Temp1 for tag test)
-    protected:
-        ArithOpCode _op;
-        PseudoRegister * _oper;
-        Usage          * _operUse;
-        bool_t _arg1IsInt;            // is _src a smi_t?
-        bool_t _arg2IsInt;            // is _oper a smi_t?
-        ConstPseudoRegister * _constResult;            // non-nullptr if constant-folded
+    // tagged arithmetic operation; next() is success case, next1()
+    // is failure (leaving ORed operands in Temp1 for tag test)
+protected:
+    ArithOpCode _op;
+    PseudoRegister *_oper;
+    Usage          *_operUse;
+    bool_t _arg1IsInt;            // is _src a smi_t?
+    bool_t _arg2IsInt;            // is _oper a smi_t?
+    ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
-        TArithRRNode( ArithOpCode o, PseudoRegister * s, PseudoRegister * o2, PseudoRegister * d, bool_t a1, bool_t a2 );
+    TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool_t a1, bool_t a2 );
 
-    public:
-        ArithOpCode op() const {
-            return _op;
-        }
-
-
-        PseudoRegister * operand() const {
-            return _oper;
-        }
+public:
+    ArithOpCode op() const {
+        return _op;
+    }
 
 
-        bool_t arg1IsInt() const {
-            return _arg1IsInt;
-        }
+    PseudoRegister *operand() const {
+        return _oper;
+    }
 
 
-        bool_t arg2IsInt() const {
-            return _arg2IsInt;
-        }
+    bool_t arg1IsInt() const {
+        return _arg1IsInt;
+    }
 
 
-        bool_t canFail() const {
-            return not( _arg1IsInt and _arg2IsInt );
-        }
+    bool_t arg2IsInt() const {
+        return _arg2IsInt;
+    }
 
 
-        bool_t isTArithNode() const {
-            return true;
-        }
+    bool_t canFail() const {
+        return not( _arg1IsInt and _arg2IsInt );
+    }
 
 
-        bool_t isAssignmentLike() const {
-            return _constResult not_eq nullptr;
-        }
+    bool_t isTArithNode() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t isAssignmentLike() const {
+        return _constResult not_eq nullptr;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        bool_t hasDest() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t doesTypeTests() const {
-            return true;
-        }
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        bool_t hasUnknownCode() const;
-
-        void collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *> & klasses ) const;
-
-        void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n );
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
-
-        Node * likelySuccessor() const;
-
-        Node * uncommonSuccessor() const;
-
-        void gen();
+    bool_t doesTypeTests() const {
+        return true;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aTArithRRNode( this );
-        }
+    bool_t hasUnknownCode() const;
+
+    void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
+
+    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aTArithRRNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-    protected:
-        bool_t doCopyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    void verify() const;
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+protected:
+    bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    friend class NodeFactory;
 };
 
 
 class CallNode : public AbstractBranchNode {
-        // next1 is the NonLocalReturn branch (if there is one)
-        // dest() is the return value
-    protected:
-        CallNode( MergeNode * n, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * exprs );
+    // next1 is the NonLocalReturn branch (if there is one)
+    // dest() is the return value
+protected:
+    CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprs );
 
-    public:
-        GrowableArray <PseudoRegister *> * exprStack;   // current expr. stack for debugging info (nullptr if not needed)
-        GrowableArray <Usage *>          * argUses;     // uses for args and receiver
-        GrowableArray <PseudoRegister *> * uplevelUsed; // PseudoRegisters potentially uplevel-read during this call (nullptr if not needed)
-        GrowableArray <PseudoRegister *> * uplevelDefd; // PseudoRegisters potentially uplevel-written during this call (nullptr if not needed)
-        GrowableArray <Usage *>          * uplevelUses; // uses for uplevel-read names
-        GrowableArray <Definition *>     * uplevelDefs; // definitions for uplevel-written names
-        GrowableArray <PseudoRegister *> * args;        // args including receiver (at index 0, followed by first arg), or nullptr
-        int                              nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
+public:
+    GrowableArray<PseudoRegister *> *exprStack;   // current expr. stack for debugging info (nullptr if not needed)
+    GrowableArray<Usage *>          *argUses;     // uses for args and receiver
+    GrowableArray<PseudoRegister *> *uplevelUsed; // PseudoRegisters potentially uplevel-read during this call (nullptr if not needed)
+    GrowableArray<PseudoRegister *> *uplevelDefd; // PseudoRegisters potentially uplevel-written during this call (nullptr if not needed)
+    GrowableArray<Usage *>          *uplevelUses; // uses for uplevel-read names
+    GrowableArray<Definition *>     *uplevelDefs; // definitions for uplevel-written names
+    GrowableArray<PseudoRegister *> *args;        // args including receiver (at index 0, followed by first arg), or nullptr
+    int                             nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
 
-        bool_t hasDest() const {
-            return true;
-        }
-
-
-        bool_t isCallNode() const {
-            return true;
-        }
+    bool_t hasDest() const {
+        return true;
+    }
 
 
-        bool_t canChangeDest() const {
-            return false;
-        }
+    bool_t isCallNode() const {
+        return true;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    bool_t canChangeDest() const {
+        return false;
+    }
 
 
-        virtual bool_t canInvokeDelta() const = 0;    // can call invoke Delta code?
-        MergeNode * nlrTestPoint() const;
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
-        Node * likelySuccessor() const;
 
-        Node * uncommonSuccessor() const;
+    virtual bool_t canInvokeDelta() const = 0;    // can call invoke Delta code?
+    MergeNode *nlrTestPoint() const;
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    Node *likelySuccessor() const;
 
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * ll );
+    Node *uncommonSuccessor() const;
 
-        void makeUses( BasicBlock * bb );
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-        void removeUses( BasicBlock * bb );
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
 
-        void markAllocated( int * use_count, int * def_count );
+    void makeUses( BasicBlock *bb );
 
-        SimpleBitVector trashedMask();
+    void removeUses( BasicBlock *bb );
 
-        void nlrCode();            // generate NonLocalReturn code sequence
-        void verify() const;
+    void markAllocated( int *use_count, int *def_count );
 
-        friend class NodeFactory;
+    SimpleBitVector trashedMask();
+
+    void nlrCode();            // generate NonLocalReturn code sequence
+    void verify() const;
+
+    friend class NodeFactory;
 };
 
 
 class SendNode : public CallNode {
 
-    protected:
-        LookupKey * _key;      // lookup key (for selector)
-        bool_t _superSend;  // is it a super send?
-        SendInfo * _info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
+protected:
+    LookupKey *_key;      // lookup key (for selector)
+    bool_t _superSend;  // is it a super send?
+    SendInfo *_info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
 
-        SendNode( LookupKey * key, MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * exprStk, bool_t superSend, SendInfo * info );
+    SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool_t superSend, SendInfo *info );
 
-    public:
-        bool_t isSendNode() const {
-            return true;
-        }
-
-
-        bool_t isSuperSend() const {
-            return _superSend;
-        }
+public:
+    bool_t isSendNode() const {
+        return true;
+    }
 
 
-        bool_t isCounting() const;
-
-        bool_t isUninlinable() const;
-
-        bool_t staticReceiver() const;
+    bool_t isSuperSend() const {
+        return _superSend;
+    }
 
 
-        bool_t canInvokeDelta() const {
-            return true;
-        }
+    bool_t isCounting() const;
+
+    bool_t isUninlinable() const;
+
+    bool_t staticReceiver() const;
 
 
-        bool_t canFail() const {
-            return false;
-        }
+    bool_t canInvokeDelta() const {
+        return true;
+    }
 
 
-        int cost() const {
-            return oopSize * 5;
-        }      // include InlineCache + some param pushing
-        PseudoRegister * recv() const;
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * ll );
-
-        void gen();
+    bool_t canFail() const {
+        return false;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aSendNode( this );
-        }
+    int cost() const {
+        return oopSize * 5;
+    }      // include InlineCache + some param pushing
+    PseudoRegister *recv() const;
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
+
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aSendNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class PrimitiveNode : public CallNode {
 
-    protected:
-        PrimitiveDescriptor * _pdesc;
+protected:
+    PrimitiveDescriptor *_pdesc;
 
-        PrimitiveNode( PrimitiveDescriptor * pdesc, MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+    PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
-    public:
-        bool_t canBeEliminated() const;
+public:
+    bool_t canBeEliminated() const;
 
-        bool_t canInvokeDelta() const;
+    bool_t canInvokeDelta() const;
 
-        bool_t canFail() const;
-
-
-        PrimitiveDescriptor * pdesc() const {
-            return _pdesc;
-        }
+    bool_t canFail() const;
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * ll );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void gen();
+    PrimitiveDescriptor *pdesc() const {
+        return _pdesc;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aPrimitiveNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aPrimitiveNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class DLLNode : public CallNode {
-    protected:
-        SymbolOop _dll_name;
-        SymbolOop _function_name;
-        dll_func  _function;
-        bool_t    _async;
+protected:
+    SymbolOop _dll_name;
+    SymbolOop _function_name;
+    dll_func  _function;
+    bool_t    _async;
 
-        DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+    DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
-    public:
-        bool_t canInvokeDelta() const;
-
-
-        bool_t canFail() const {
-            return true;
-        }
+public:
+    bool_t canInvokeDelta() const;
 
 
-        int nofArguments() const {
-            return args == nullptr ? 0 : args->length();
-        }
+    bool_t canFail() const {
+        return true;
+    }
 
 
-        SymbolOop dll_name() const {
-            return _dll_name;
-        }
+    int nofArguments() const {
+        return args == nullptr ? 0 : args->length();
+    }
 
 
-        SymbolOop function_name() const {
-            return _function_name;
-        }
+    SymbolOop dll_name() const {
+        return _dll_name;
+    }
 
 
-        dll_func function() const {
-            return _function;
-        }
+    SymbolOop function_name() const {
+        return _function_name;
+    }
 
 
-        bool_t async() const {
-            return _async;
-        }
+    dll_func function() const {
+        return _function;
+    }
 
 
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * ll );
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void gen();
+    bool_t async() const {
+        return _async;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aDLLNode( this );
-        }
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aDLLNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class InterruptCheckNode : public PrimitiveNode {
-    protected:
-        static PrimitiveDescriptor * _intrCheck;
+protected:
+    static PrimitiveDescriptor *_intrCheck;
 
 
-        InterruptCheckNode( GrowableArray <PseudoRegister *> * exprs ) :
+    InterruptCheckNode( GrowableArray<PseudoRegister *> *exprs ) :
             PrimitiveNode( _intrCheck, nullptr, nullptr, exprs ) {
-        }
+    }
 
 
-    public:
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+public:
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            Unimplemented();
-        }
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        Unimplemented();
+    }
 
-        friend void node_init();
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend void node_init();
+
+    friend class NodeFactory;
 };
 
 
@@ -2411,1410 +2411,1410 @@ class LoopRegCandidate;
 //
 class LoopHeaderNode : public TrivialNode {
 
-    protected:
-        // info for integer loops
-        bool_t _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
-        PseudoRegister * _loopVar;              // loop variable
-        PseudoRegister * _lowerBound;           // lower bound
-        PseudoRegister * _upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
-        LoadOffsetNode * _upperLoad;            // loads array size that is the upper bound
-        GrowableArray <AbstractArrayAtNode *> * _arrayAccesses;     // arrays indexed by loopVar
+protected:
+    // info for integer loops
+    bool_t _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
+    PseudoRegister *_loopVar;              // loop variable
+    PseudoRegister *_lowerBound;           // lower bound
+    PseudoRegister *_upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
+    LoadOffsetNode *_upperLoad;            // loads array size that is the upper bound
+    GrowableArray<AbstractArrayAtNode *> *_arrayAccesses;     // arrays indexed by loopVar
 
-        LoopHeaderNode * _enclosingLoop;      // enclosing loop or nullptr
-        // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
-        GrowableArray <HoistedTypeTest *>  * _tests;              // type tests hoisted out of loop
-        GrowableArray <LoopHeaderNode *>   * _nestedLoops;        // nested loops (nullptr if none)
-        GrowableArray <LoopRegCandidate *> * _registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-        bool_t                             _activated;            // gen() does nothing until activated
-        int                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
+    LoopHeaderNode *_enclosingLoop;      // enclosing loop or nullptr
+    // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
+    GrowableArray<HoistedTypeTest *>  *_tests;              // type tests hoisted out of loop
+    GrowableArray<LoopHeaderNode *>   *_nestedLoops;        // nested loops (nullptr if none)
+    GrowableArray<LoopRegCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
+    bool_t                            _activated;            // gen() does nothing until activated
+    int                               _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
-        LoopHeaderNode();
+    LoopHeaderNode();
 
-    public:
-        bool_t isLoopHeaderNode() const {
-            return true;
-        }
-
-
-        bool_t isActivated() const {
-            return _activated;
-        }
+public:
+    bool_t isLoopHeaderNode() const {
+        return true;
+    }
 
 
-        bool_t isInnerLoop() const {
-            return _nestedLoops == nullptr;
-        }
+    bool_t isActivated() const {
+        return _activated;
+    }
 
 
-        bool_t isIntegerLoop() const {
-            return _integerLoop;
-        }
+    bool_t isInnerLoop() const {
+        return _nestedLoops == nullptr;
+    }
 
 
-        PseudoRegister * loopVar() const {
-            return _loopVar;
-        }
+    bool_t isIntegerLoop() const {
+        return _integerLoop;
+    }
 
 
-        PseudoRegister * lowerBound() const {
-            return _lowerBound;
-        }
+    PseudoRegister *loopVar() const {
+        return _loopVar;
+    }
 
 
-        PseudoRegister * upperBound() const {
-            return _upperBound;
-        }
+    PseudoRegister *lowerBound() const {
+        return _lowerBound;
+    }
 
 
-        LoadOffsetNode * upperLoad() const {
-            return _upperLoad;
-        }
+    PseudoRegister *upperBound() const {
+        return _upperBound;
+    }
 
 
-        GrowableArray <AbstractArrayAtNode *> * arrayAccesses() const {
-            return _arrayAccesses;
-        }
+    LoadOffsetNode *upperLoad() const {
+        return _upperLoad;
+    }
 
 
-        GrowableArray <HoistedTypeTest *> * tests() const {
-            return _tests;
-        }
+    GrowableArray<AbstractArrayAtNode *> *arrayAccesses() const {
+        return _arrayAccesses;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const {
-            ShouldNotCallThis();
-            return nullptr;
-        }
+    GrowableArray<HoistedTypeTest *> *tests() const {
+        return _tests;
+    }
 
 
-        int nofCallsInLoop() const {
-            return _nofCalls;
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
+        ShouldNotCallThis();
+        return nullptr;
+    }
 
 
-        void set_nofCallsInLoop( int n ) {
-            _nofCalls = n;
-        }
+    int nofCallsInLoop() const {
+        return _nofCalls;
+    }
 
 
-        void activate( PseudoRegister * loopVar, PseudoRegister * lowerBound, PseudoRegister * upperBound, LoadOffsetNode * upperLoad );
-
-        void activate();                        // for non-integer loops
-        void addArray( AbstractArrayAtNode * n );
-
-
-        LoopHeaderNode * enclosingLoop() const {
-            return _enclosingLoop;
-        }
+    void set_nofCallsInLoop( int n ) {
+        _nofCalls = n;
+    }
 
 
-        void set_enclosingLoop( LoopHeaderNode * l );
+    void activate( PseudoRegister *loopVar, PseudoRegister *lowerBound, PseudoRegister *upperBound, LoadOffsetNode *upperLoad );
+
+    void activate();                        // for non-integer loops
+    void addArray( AbstractArrayAtNode *n );
 
 
-        GrowableArray <LoopHeaderNode *> * nestedLoops() const {
-            return _nestedLoops;
-        }
+    LoopHeaderNode *enclosingLoop() const {
+        return _enclosingLoop;
+    }
 
 
-        void addNestedLoop( LoopHeaderNode * l );
+    void set_enclosingLoop( LoopHeaderNode *l );
 
 
-        GrowableArray <LoopRegCandidate *> * registerCandidates() const {
-            return _registerCandidates;
-        }
+    GrowableArray<LoopHeaderNode *> *nestedLoops() const {
+        return _nestedLoops;
+    }
 
 
-        void addRegisterCandidate( LoopRegCandidate * c );
-
-        void gen();
+    void addNestedLoop( LoopHeaderNode *l );
 
 
-        void apply( NodeVisitor * v ) {
-            v->aLoopHeaderNode( this );
-        }
+    GrowableArray<LoopRegCandidate *> *registerCandidates() const {
+        return _registerCandidates;
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void addRegisterCandidate( LoopRegCandidate *c );
 
-        friend class NodeFactory;
+    void gen();
 
-        friend class CompiledLoop;
 
-    protected:
-        void generateTypeTests( Label & cont, Label & failure );
+    void apply( NodeVisitor *v ) {
+        v->aLoopHeaderNode( this );
+    }
 
-        void generateIntegerLoopTests( Label & cont, Label & failure );
 
-        void generateArrayLoopTests( Label & cont, Label & failure );
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
 
-        void generateIntegerLoopTest( PseudoRegister * p, Label & cont, Label & failure );
+    friend class NodeFactory;
 
-        void handleConstantTypeTest( ConstPseudoRegister * r, GrowableArray <KlassOop> * klasses );
+    friend class CompiledLoop;
+
+protected:
+    void generateTypeTests( Label &cont, Label &failure );
+
+    void generateIntegerLoopTests( Label &cont, Label &failure );
+
+    void generateArrayLoopTests( Label &cont, Label &failure );
+
+    void generateIntegerLoopTest( PseudoRegister *p, Label &cont, Label &failure );
+
+    void handleConstantTypeTest( ConstPseudoRegister *r, GrowableArray<KlassOop> *klasses );
 };
 
 
 class BlockCreateNode : public PrimitiveNode {
-        // Initializes block (closure) location with closure if it's
-        // not a memoized block; and with 0 otherwise
-        // src is nullptr (but non-nullptr for subclass instances)
+    // Initializes block (closure) location with closure if it's
+    // not a memoized block; and with 0 otherwise
+    // src is nullptr (but non-nullptr for subclass instances)
 
-    protected:
-        PseudoRegister * _context;    // context or parameter/self that's copied into the block (or nullptr)
-        Usage          * _contextUse;    // use of _context
+protected:
+    PseudoRegister *_context;    // context or parameter/self that's copied into the block (or nullptr)
+    Usage          *_contextUse;    // use of _context
 
-        void materialize();                // generates code to materialize the block
-        void copyIntoContexts( Register val, Register t1, Register t2 );    // helper for above
+    void materialize();                // generates code to materialize the block
+    void copyIntoContexts( Register val, Register t1, Register t2 );    // helper for above
 
-        BlockCreateNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
+    BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
 
-    public:
+public:
 
-        bool_t isBlockCreateNode() const {
-            return true;
-        }
-
-
-        // block creation nodes are like assignments if memoized, so don't end BBs here
-        bool_t endsBasicBlock() const {
-            return not isMemoized() or NonTrivialNode::endsBasicBlock();
-        }
+    bool_t isBlockCreateNode() const {
+        return true;
+    }
 
 
-        BlockPseudoRegister * block() const {
-            st_assert( _dest->isBlockPseudoRegister(), "must be BlockPseudoRegister" );
-            return ( BlockPseudoRegister * ) _dest;
-        }
+    // block creation nodes are like assignments if memoized, so don't end BBs here
+    bool_t endsBasicBlock() const {
+        return not isMemoized() or NonTrivialNode::endsBasicBlock();
+    }
 
 
-        bool_t isMemoized() const {
-            return block()->isMemoized();
-        }
+    BlockPseudoRegister *block() const {
+        st_assert( _dest->isBlockPseudoRegister(), "must be BlockPseudoRegister" );
+        return (BlockPseudoRegister *) _dest;
+    }
 
 
-        bool_t hasConstantSrc() const {
-            return false;
-        }
+    bool_t isMemoized() const {
+        return block()->isMemoized();
+    }
 
 
-        bool_t hasSrc() const {
-            return false;
-        }
+    bool_t hasConstantSrc() const {
+        return false;
+    }
 
 
-        int cost() const {
-            return 2 * oopSize;
-        }    // hope it's memoized
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t hasSrc() const {
+        return false;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return not _dontEliminate;
-        }
+    int cost() const {
+        return 2 * oopSize;
+    }    // hope it's memoized
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void gen();
+    bool_t canBeEliminated() const {
+        return not _dontEliminate;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aBlockCreateNode( this );
-        }
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aBlockCreateNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend void node_init();
+    void verify() const;
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend void node_init();
+
+    friend class NodeFactory;
 };
 
 
 class BlockMaterializeNode : public BlockCreateNode {
-        // Materializes (creates) a block if it has not been materialized yet (no-op if not a memoized block)
-        // src and dest are the BlockPseudoRegister
-    protected:
-        BlockMaterializeNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack ) :
+    // Materializes (creates) a block if it has not been materialized yet (no-op if not a memoized block)
+    // src and dest are the BlockPseudoRegister
+protected:
+    BlockMaterializeNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack ) :
             BlockCreateNode( b, expr_stack ) {
-            _src = _dest;
-        }
+        _src = _dest;
+    }
 
 
-    public:
-        bool_t endsBasicBlock() const {
-            return true;
-        }
+public:
+    bool_t endsBasicBlock() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        int cost() const {
-            return 5 * oopSize;
-        } // assume blk is memoized
+    int cost() const {
+        return 5 * oopSize;
+    } // assume blk is memoized
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aBlockMaterializeNode( this );
-        }
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aBlockMaterializeNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class ContextCreateNode : public PrimitiveNode {
-        // src is parent context, dest is register holding created context
-    protected:
-        int                              _nofTemps;             // no. of temps in context
-        int                              _contextSize;          // size of compiled context
-        int                              _contextNo;            // context number (index into compiler's contextList)
-        GrowableArray <PseudoRegister *> * _parentContexts;     // context chain above parent context (if any)
-        GrowableArray <Usage *>          * _parentContextUses;  // for _parentContexts
+    // src is parent context, dest is register holding created context
+protected:
+    int                             _nofTemps;             // no. of temps in context
+    int                             _contextSize;          // size of compiled context
+    int                             _contextNo;            // context number (index into compiler's contextList)
+    GrowableArray<PseudoRegister *> *_parentContexts;     // context chain above parent context (if any)
+    GrowableArray<Usage *>          *_parentContextUses;  // for _parentContexts
 
-        ContextCreateNode( PseudoRegister * parent, PseudoRegister * context, int nofTemps, GrowableArray <PseudoRegister *> * expr_stack );
+    ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack );
 
-        ContextCreateNode( PseudoRegister * b, const ContextCreateNode * n, GrowableArray <PseudoRegister *> * expr_stack ); // for cloning
+    ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ); // for cloning
 
-    public:
-        bool_t hasSrc() const {
-            return _src not_eq nullptr;
-        }
-
-
-        bool_t canChangeDest() const {
-            return false;
-        }
+public:
+    bool_t hasSrc() const {
+        return _src not_eq nullptr;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    bool_t canChangeDest() const {
+        return false;
+    }
 
 
-        bool_t isContextCreateNode() const {
-            return true;
-        }
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        bool_t canFail() const {
-            return false;
-        }
+    bool_t isContextCreateNode() const {
+        return true;
+    }
 
 
-        PseudoRegister * context() const {
-            return _dest;
-        }
+    bool_t canFail() const {
+        return false;
+    }
 
 
-        int nofTemps() const {
-            return _nofTemps;
-        }
+    PseudoRegister *context() const {
+        return _dest;
+    }
 
 
-        int sizeOfContext() const {
-            return _contextSize;
-        }
+    int nofTemps() const {
+        return _nofTemps;
+    }
 
 
-        void set_sizeOfContext( int s ) {
-            _contextSize = s;
-        }
+    int sizeOfContext() const {
+        return _contextSize;
+    }
 
 
-        int contextNo() const {
-            return _contextNo;
-        }
+    void set_sizeOfContext( int s ) {
+        _contextSize = s;
+    }
 
 
-        void set_contextNo( int s ) {
-            _contextNo = s;
-        }
+    int contextNo() const {
+        return _contextNo;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void gen();
+    void set_contextNo( int s ) {
+        _contextNo = s;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aContextCreateNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aContextCreateNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend void node_init();
+    void verify() const;
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend void node_init();
+
+    friend class NodeFactory;
 };
 
 
 class ContextInitNode : public NonTrivialNode {
-        // initializes contents of context; src is context (if _src == nullptr context was eliminated)
-    protected:
-        GrowableArray <Expression *>           * _initializers;         // arguments/nil to be copied into context
-        GrowableArray <Definition *>           * _contentDefs;          //
-        GrowableArray <Usage *>                * _initializerUses;      //
-        GrowableArray <BlockMaterializeNode *> * _materializedBlocks;   // blocks that must be materialized if this context is created
+    // initializes contents of context; src is context (if _src == nullptr context was eliminated)
+protected:
+    GrowableArray<Expression *>           *_initializers;         // arguments/nil to be copied into context
+    GrowableArray<Definition *>           *_contentDefs;          //
+    GrowableArray<Usage *>                *_initializerUses;      //
+    GrowableArray<BlockMaterializeNode *> *_materializedBlocks;   // blocks that must be materialized if this context is created
 
-        ContextInitNode( ContextCreateNode * creator );
+    ContextInitNode( ContextCreateNode *creator );
 
-        ContextInitNode( PseudoRegister * b, const ContextInitNode * node );    // for cloning
+    ContextInitNode( PseudoRegister *b, const ContextInitNode *node );    // for cloning
 
-    public:
-        bool_t hasSrc() const {
-            return _src not_eq nullptr;
-        }
-
-
-        bool_t hasDest() const {
-            return false;
-        }
+public:
+    bool_t hasSrc() const {
+        return _src not_eq nullptr;
+    }
 
 
-        bool_t isContextInitNode() const {
-            return true;
-        }
+    bool_t hasDest() const {
+        return false;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t isContextInitNode() const {
+        return true;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t wasEliminated() const {
-            return _src == nullptr;
-        }
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        GrowableArray <Expression *> * contents() const {
-            return scope()->contextTemporaries();
-        }
+    bool_t wasEliminated() const {
+        return _src == nullptr;
+    }
 
 
-        int nofTemps() const {
-            return _initializers->length();
-        }
+    GrowableArray<Expression *> *contents() const {
+        return scope()->contextTemporaries();
+    }
 
 
-        Expression * contextTemp( int i ) const {
-            return contents()->at( i );
-        }
+    int nofTemps() const {
+        return _initializers->length();
+    }
 
 
-        Expression * initialValue( int i ) const {
-            return _initializers->at( i );
-        }
+    Expression *contextTemp( int i ) const {
+        return contents()->at( i );
+    }
 
 
-        void addBlockMaterializer( BlockMaterializeNode * n );
-
-        ContextCreateNode * creator() const;
-
-        void notifyNoContext();
+    Expression *initialValue( int i ) const {
+        return _initializers->at( i );
+    }
 
 
-        bool_t hasNoContext() const {
-            return _src == nullptr;
-        }
+    void addBlockMaterializer( BlockMaterializeNode *n );
+
+    ContextCreateNode *creator() const;
+
+    void notifyNoContext();
 
 
-        void initialize( int no, Expression * expr );        // to copy something into the context right after creation
-        int positionOfContextTemp( int i ) const;    // position of ith context temp in compiled context
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * l );
-
-        void gen();
+    bool_t hasNoContext() const {
+        return _src == nullptr;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aContextInitNode( this );
-        }
+    void initialize( int no, Expression *expr );        // to copy something into the context right after creation
+    int positionOfContextTemp( int i ) const;    // position of ith context temp in compiled context
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aContextInitNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend void node_init();
+    void verify() const;
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend void node_init();
+
+    friend class NodeFactory;
 };
 
 
 class ContextZapNode : public NonTrivialNode {
 
-        // placeholder for context zap code; zapping is only needed if the node isActive().
-    private:
-        ContextZapNode( PseudoRegister * context ) {
-            _src = context;
-            st_assert( _src, "src is nullptr" );
-        }
+    // placeholder for context zap code; zapping is only needed if the node isActive().
+private:
+    ContextZapNode( PseudoRegister *context ) {
+        _src = context;
+        st_assert( _src, "src is nullptr" );
+    }
 
 
-    public:
-        bool_t isActive() const {
-            return scope()->needsContextZapping();
-        }
+public:
+    bool_t isActive() const {
+        return scope()->needsContextZapping();
+    }
 
 
-        bool_t isContextZapNode() const {
-            return true;
-        }
+    bool_t isContextZapNode() const {
+        return true;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t shouldCopyWhenSplitting() const {
-            return true;
-        }
+    bool_t shouldCopyWhenSplitting() const {
+        return true;
+    }
 
 
-        PseudoRegister * context() const {
-            return _src;
-        }
+    PseudoRegister *context() const {
+        return _src;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aContextZapNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aContextZapNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class NonLocalReturnTestNode : public AbstractBranchNode {
-        // placeholder for NonLocalReturn test code: tests if NonLocalReturn reached home scope, zaps context (if needed), then
-        // returns from method (if home scope found) or continues the NonLocalReturn
-        // next() is the "continue NonLocalReturn" branch, next1() the "found home" branch
-    protected:
-        NonLocalReturnTestNode( int byteCodeIndex );
+    // placeholder for NonLocalReturn test code: tests if NonLocalReturn reached home scope, zaps context (if needed), then
+    // returns from method (if home scope found) or continues the NonLocalReturn
+    // next() is the "continue NonLocalReturn" branch, next1() the "found home" branch
+protected:
+    NonLocalReturnTestNode( int byteCodeIndex );
 
-    public:
-        bool_t isNonLocalReturnTestNode() const {
-            return true;
-        }
-
-
-        bool_t canChangeDest() const {
-            return false;
-        }
+public:
+    bool_t isNonLocalReturnTestNode() const {
+        return true;
+    }
 
 
-        bool_t canBeEliminated() const {
-            return false;
-        }
+    bool_t canChangeDest() const {
+        return false;
+    }
 
 
-        bool_t canFail() const {
-            return false;
-        }
+    bool_t canBeEliminated() const {
+        return false;
+    }
 
 
-        void fixup();                // connect next() and next1() to sender scopes
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
+    bool_t canFail() const {
+        return false;
+    }
 
 
-        // void eliminate(BasicBlock* bb, PseudoRegister* r, bool_t removing = false, bool_t cp = false);
-        void markAllocated( int * use_count, int * def_count ) {
-        };
+    void fixup();                // connect next() and next1() to sender scopes
 
-        Node * likelySuccessor() const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        Node * uncommonSuccessor() const;
+    void makeUses( BasicBlock *bb );
 
-        void gen();
+    void removeUses( BasicBlock *bb );
 
 
-        void apply( NodeVisitor * v ) {
-            v->aNonLocalReturnTestNode( this );
-        }
+    // void eliminate(BasicBlock* bb, PseudoRegister* r, bool_t removing = false, bool_t cp = false);
+    void markAllocated( int *use_count, int *def_count ) {
+    };
+
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aNonLocalReturnTestNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class BranchNode : public AbstractBranchNode {
-        // next() is the target of an untaken branch, next1() the taken
-        // conditional branches expect CCs to be set by previous node (backend specific?)
-        // usually after a node that sets CCs
-    protected:
-        BranchOpCode _op;                       // branch untaken is likely
-        bool_t       _taken_is_uncommon;        // true if branch taken is uncommon
+    // next() is the target of an untaken branch, next1() the taken
+    // conditional branches expect CCs to be set by previous node (backend specific?)
+    // usually after a node that sets CCs
+protected:
+    BranchOpCode _op;                       // branch untaken is likely
+    bool_t       _taken_is_uncommon;        // true if branch taken is uncommon
 
-        BranchNode( BranchOpCode op, bool_t taken_is_uncommon ) {
-            _op                = op;
-            _taken_is_uncommon = taken_is_uncommon;
-        }
-
-
-    public:
-        BranchOpCode op() const {
-            return _op;
-        }
+    BranchNode( BranchOpCode op, bool_t taken_is_uncommon ) {
+        _op                = op;
+        _taken_is_uncommon = taken_is_uncommon;
+    }
 
 
-        bool_t isBranchNode() const {
-            return true;
-        }
+public:
+    BranchOpCode op() const {
+        return _op;
+    }
 
 
-        bool_t canFail() const {
-            return false;
-        }
+    bool_t isBranchNode() const {
+        return true;
+    }
 
 
-        void eliminateBranch( int op1, int op2, int res );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-
-        void markAllocated( int * use_count, int * def_count ) {
-        }
+    bool_t canFail() const {
+        return false;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    void eliminateBranch( int op1, int op2, int res );
 
-        Node * likelySuccessor() const;
-
-        Node * uncommonSuccessor() const;
-
-        void gen();
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
 
-        void apply( NodeVisitor * v ) {
-            v->aBranchNode( this );
-        }
+    void markAllocated( int *use_count, int *def_count ) {
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    void gen();
 
 
-        void verify() {
-            AbstractBranchNode::verify( false );
-        }
+    void apply( NodeVisitor *v ) {
+        v->aBranchNode( this );
+    }
 
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+
+    void verify() {
+        AbstractBranchNode::verify( false );
+    }
+
+
+    friend class NodeFactory;
 };
 
 
 class TypeTestNode : public AbstractBranchNode {
-        // n-way map test; next(i) is the ith class [i=1..n], next() is the "otherwise" branch
-        // _src is the register containing the receiver
-    protected:
-        GrowableArray <KlassOop> * _classes;    // classes to test for
-        bool_t _hasUnknown;                // can recv be anything? (if false, recv class
-        // guaranteed to be in classes list)
+    // n-way map test; next(i) is the ith class [i=1..n], next() is the "otherwise" branch
+    // _src is the register containing the receiver
+protected:
+    GrowableArray<KlassOop> *_classes;    // classes to test for
+    bool_t _hasUnknown;                // can recv be anything? (if false, recv class
+    // guaranteed to be in classes list)
 
-        bool_t needsKlassLoad() const;        // does test need object's klass?
-        TypeTestNode( PseudoRegister * r, GrowableArray <KlassOop> * classes, bool_t hasUnknown );
+    bool_t needsKlassLoad() const;        // does test need object's klass?
+    TypeTestNode( PseudoRegister *r, GrowableArray<KlassOop> *classes, bool_t hasUnknown );
 
-    public:
-        GrowableArray <KlassOop> * classes() const {
-            return _classes;
-        }
-
-
-        bool_t hasUnknown() const {
-            return _hasUnknown;
-        }
+public:
+    GrowableArray<KlassOop> *classes() const {
+        return _classes;
+    }
 
 
-        bool_t canFail() const {
-            return _hasUnknown;
-        }
+    bool_t hasUnknown() const {
+        return _hasUnknown;
+    }
 
 
-        Node * failureBranch() const {
-            return next();
-        }
+    bool_t canFail() const {
+        return _hasUnknown;
+    }
 
 
-        void setUnknown( bool_t u ) {
-            _hasUnknown = u;
-        }
+    Node *failureBranch() const {
+        return next();
+    }
 
 
-        bool_t isTypeTestNode() const {
-            return true;
-        }
+    void setUnknown( bool_t u ) {
+        _hasUnknown = u;
+    }
 
 
-        bool_t hasSrc() const {
-            return true;
-        }
+    bool_t isTypeTestNode() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        int cost() const {
-            return 2 * oopSize * ( _classes->length() + needsKlassLoad() ? 1 : 0 );
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        Node * smiCase() const;            // the continuation for the smi_t case, nullptr if there is none
-
-        bool_t doesTypeTests() const {
-            return true;
-        }
+    int cost() const {
+        return 2 * oopSize * ( _classes->length() + needsKlassLoad() ? 1 : 0 );
+    }
 
 
-        bool_t hasUnknownCode() const;            // is there code (send) for unknown case?
-        void collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *> & klasses ) const;
+    Node *smiCase() const;            // the continuation for the smi_t case, nullptr if there is none
 
-        void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n );
-
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, ConstPseudoRegister * c, KlassOop m );
-
-        void eliminateUnnecessary( KlassOop m );
-
-        Node * likelySuccessor() const;
-
-        Node * uncommonSuccessor() const;
-
-        void gen();
+    bool_t doesTypeTests() const {
+        return true;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aTypeTestNode( this );
-        }
+    bool_t hasUnknownCode() const;            // is there code (send) for unknown case?
+    void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
+
+    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegister *c, KlassOop m );
+
+    void eliminateUnnecessary( KlassOop m );
+
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->aTypeTestNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class AbstractArrayAtNode : public AbstractBranchNode {
-        // array access: test index type & range, load element next() is the success case, next1() the failure
-    protected:
-        // _src is the array, _dest the result
-        PseudoRegister * _arg;          // index value
-        Usage          * _argUse;       //
-        PseudoRegister * _error;        // where to move the error string
-        Definition     * _errorDef;     //
-        bool_t _needBoundsCheck;        // need array bounds check?
-        bool_t _intArg;                 // need not test for int if true
-        int    _dataOffset;             // where start of array is (Oop offset)
-        int    _sizeOffset;             // where size of array is (Oop offset)
+    // array access: test index type & range, load element next() is the success case, next1() the failure
+protected:
+    // _src is the array, _dest the result
+    PseudoRegister *_arg;          // index value
+    Usage          *_argUse;       //
+    PseudoRegister *_error;        // where to move the error string
+    Definition     *_errorDef;     //
+    bool_t _needBoundsCheck;        // need array bounds check?
+    bool_t _intArg;                 // need not test for int if true
+    int    _dataOffset;             // where start of array is (Oop offset)
+    int    _sizeOffset;             // where size of array is (Oop offset)
 
-        AbstractArrayAtNode( PseudoRegister * r, PseudoRegister * idx, bool_t ia, PseudoRegister * res, PseudoRegister * _err, int dataOffset, int sizeOffset ) {
-            _src             = r;
-            _arg             = idx;
-            _intArg          = ia;
-            _dest            = res;
-            _error           = _err;
-            _dataOffset      = dataOffset;
-            _sizeOffset      = sizeOffset;
-            _dontEliminate   = true;
-            _needBoundsCheck = true;
-        }
-
-
-    public:
-        bool_t hasSrc() const {
-            return true;
-        }
+    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, int dataOffset, int sizeOffset ) {
+        _src             = r;
+        _arg             = idx;
+        _intArg          = ia;
+        _dest            = res;
+        _error           = _err;
+        _dataOffset      = dataOffset;
+        _sizeOffset      = sizeOffset;
+        _dontEliminate   = true;
+        _needBoundsCheck = true;
+    }
 
 
-        bool_t hasDest() const {
-            return _dest not_eq nullptr;
-        }
+public:
+    bool_t hasSrc() const {
+        return true;
+    }
 
 
-        bool_t canFail() const = 0;
+    bool_t hasDest() const {
+        return _dest not_eq nullptr;
+    }
 
 
-        int cost() const {
-            return 20 + ( _intArg ? 0 : 12 );
-        } // fix this
-        bool_t canCopyPropagate() const {
-            return true;
-        }
+    bool_t canFail() const = 0;
 
 
-        int sizeOffset() const {
-            return _sizeOffset;
-        }
+    int cost() const {
+        return 20 + ( _intArg ? 0 : 12 );
+    } // fix this
+    bool_t canCopyPropagate() const {
+        return true;
+    }
 
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+    int sizeOffset() const {
+        return _sizeOffset;
+    }
 
 
-        bool_t doesTypeTests() const {
-            return true;
-        }
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
 
-        bool_t needsBoundsCheck() const {
-            return _needBoundsCheck;
-        }
+    bool_t doesTypeTests() const {
+        return true;
+    }
 
 
-        bool_t hasUnknownCode() const;
+    bool_t needsBoundsCheck() const {
+        return _needBoundsCheck;
+    }
 
-        void collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *> & klasses ) const;
 
-        void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n );
+    bool_t hasUnknownCode() const;
 
-        void assert_in_bounds( PseudoRegister * r, LoopHeaderNode * n );
+    void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
-        void makeUses( BasicBlock * bb );
+    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
-        void removeUses( BasicBlock * bb );
+    void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n );
 
-        void markAllocated( int * use_count, int * def_count );
+    void makeUses( BasicBlock *bb );
 
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    void removeUses( BasicBlock *bb );
 
-        Node * likelySuccessor() const;
+    void markAllocated( int *use_count, int *def_count );
 
-        Node * uncommonSuccessor() const;
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-        friend class NodeFactory;
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    friend class NodeFactory;
 };
 
 
 class ArrayAtNode : public AbstractArrayAtNode {
 
-    public:
-        enum AccessType {
-            byte_at,        // corresponds to primitiveIndexedByteAt:ifFail:
-            double_byte_at, // corresponds to primitiveIndexedDoubleByteAt:ifFail:
-            character_at,   // corresponds to primitiveIndexedDoubleByteCharacterAt:ifFail:
-            object_at       // corresponds to primitiveIndexedObjectAt:ifFail:
-        };
+public:
+    enum AccessType {
+        byte_at,        // corresponds to primitiveIndexedByteAt:ifFail:
+        double_byte_at, // corresponds to primitiveIndexedDoubleByteAt:ifFail:
+        character_at,   // corresponds to primitiveIndexedDoubleByteCharacterAt:ifFail:
+        object_at       // corresponds to primitiveIndexedObjectAt:ifFail:
+    };
 
-    protected:
-        AccessType _access_type;
+protected:
+    AccessType _access_type;
 
-        ArrayAtNode( AccessType access_type,    // specifies the operation
-                     PseudoRegister * array,    // holds the array
-                     PseudoRegister * index,    // holds the index
-                     bool_t smiIndex,           // true if index is known to be a smi_t, false otherwise
-                     PseudoRegister * result,   // where the result is stored
-                     PseudoRegister * error,    // where the error symbol is stored if the operation fails
-                     int data_offset,           // data offset in oops relative to array
-                     int length_offset          // array length offset in oops relative to array
-        );
+    ArrayAtNode( AccessType access_type,    // specifies the operation
+                 PseudoRegister *array,    // holds the array
+                 PseudoRegister *index,    // holds the index
+                 bool_t smiIndex,           // true if index is known to be a smi_t, false otherwise
+                 PseudoRegister *result,   // where the result is stored
+                 PseudoRegister *error,    // where the error symbol is stored if the operation fails
+                 int data_offset,           // data offset in oops relative to array
+                 int length_offset          // array length offset in oops relative to array
+    );
 
-    public:
-        AccessType access_type() const {
-            return _access_type;
-        }
-
-
-        PseudoRegister * array() const {
-            return _src;
-        }
+public:
+    AccessType access_type() const {
+        return _access_type;
+    }
 
 
-        PseudoRegister * index() const {
-            return _arg;
-        }
+    PseudoRegister *array() const {
+        return _src;
+    }
 
 
-        PseudoRegister * error() const {
-            return _error;
-        }
+    PseudoRegister *index() const {
+        return _arg;
+    }
 
 
-        bool_t index_is_smi() const {
-            return _intArg;
-        }
+    PseudoRegister *error() const {
+        return _error;
+    }
 
 
-        bool_t index_needs_bounds_check() const {
-            return _needBoundsCheck;
-        }
+    bool_t index_is_smi() const {
+        return _intArg;
+    }
 
 
-        bool_t canFail() const {
-            return not index_is_smi() or index_needs_bounds_check();
-        }
+    bool_t index_needs_bounds_check() const {
+        return _needBoundsCheck;
+    }
 
 
-        int data_word_offset() const {
-            return _dataOffset;
-        }
+    bool_t canFail() const {
+        return not index_is_smi() or index_needs_bounds_check();
+    }
 
 
-        int size_word_offset() const {
-            return _sizeOffset;
-        }
+    int data_word_offset() const {
+        return _dataOffset;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
-
-        void gen();
+    int size_word_offset() const {
+        return _sizeOffset;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->anArrayAtNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    void gen();
 
 
-        friend class NodeFactory;
+    void apply( NodeVisitor *v ) {
+        v->anArrayAtNode( this );
+    }
+
+
+    friend class NodeFactory;
 };
 
 
 class AbstractArrayAtPutNode : public AbstractArrayAtNode {
 
-    protected:
-        // array store: test index type & range, store element next() is the success case, next1() the failure
-        PseudoRegister * elem;
-        Usage          * elemUse;
+protected:
+    // array store: test index type & range, store element next() is the success case, next1() the failure
+    PseudoRegister *elem;
+    Usage          *elemUse;
 
 
-        AbstractArrayAtPutNode( PseudoRegister * arr, PseudoRegister * idx, bool_t ia, PseudoRegister * el, PseudoRegister * res, PseudoRegister * _err, int doff, int soff ) :
+    AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool_t ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, int doff, int soff ) :
             AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
-            elem = el;
-        }
+        elem = el;
+    }
 
 
-    public:
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace = false );
+public:
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
 
-        bool_t canCopyPropagateOop() const {
-            return true;
-        }
+    bool_t canCopyPropagateOop() const {
+        return true;
+    }
 
 
-        void makeUses( BasicBlock * bb );
+    void makeUses( BasicBlock *bb );
 
-        void removeUses( BasicBlock * bb );
+    void removeUses( BasicBlock *bb );
 
-        void markAllocated( int * use_count, int * def_count );
+    void markAllocated( int *use_count, int *def_count );
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class ArrayAtPutNode : public AbstractArrayAtPutNode {
 
-    public:
-        enum AccessType {
-            byte_at_put,            // corresponds to primitiveIndexedByteAt:put:ifFail:
-            double_byte_at_put,     // corresponds to primitiveIndexedDoubleByteAt:put:ifFail:
-            object_at_put           // corresponds to primitiveIndexedObjectAt:put:ifFail:
-        };
+public:
+    enum AccessType {
+        byte_at_put,            // corresponds to primitiveIndexedByteAt:put:ifFail:
+        double_byte_at_put,     // corresponds to primitiveIndexedDoubleByteAt:put:ifFail:
+        object_at_put           // corresponds to primitiveIndexedObjectAt:put:ifFail:
+    };
 
 
-        static bool_t stores_smi_elements( AccessType t ) {
-            return t not_eq object_at_put;
-        }
+    static bool_t stores_smi_elements( AccessType t ) {
+        return t not_eq object_at_put;
+    }
 
 
-    protected:
-        AccessType _access_type;
-        bool_t     _needs_store_check;
-        bool_t     _smi_element;
-        bool_t     _needs_element_range_check;
+protected:
+    AccessType _access_type;
+    bool_t     _needs_store_check;
+    bool_t     _smi_element;
+    bool_t     _needs_element_range_check;
 
-        ArrayAtPutNode( AccessType access_type,     // specifies the operation
-                        PseudoRegister * array,     // holds the array
-                        PseudoRegister * index,     // holds the index
-                        bool_t smi_index,           // true if index is known to be a smi_t, false otherwise
-                        PseudoRegister * element,   // holds the element
-                        bool_t smi_element,         // true if element is known to be a smi_t, false otherwise
-                        PseudoRegister * result,    // where the result is stored
-                        PseudoRegister * error,     // where the error symbol is stored if the operation fails
-                        int data_offset,            // data offset in oops relative to array
-                        int length_offset,          // array length offset in oops relative to array
-                        bool_t needs_store_check    // indicates whether a store check is necessary or not
-        );
+    ArrayAtPutNode( AccessType access_type,     // specifies the operation
+                    PseudoRegister *array,     // holds the array
+                    PseudoRegister *index,     // holds the index
+                    bool_t smi_index,           // true if index is known to be a smi_t, false otherwise
+                    PseudoRegister *element,   // holds the element
+                    bool_t smi_element,         // true if element is known to be a smi_t, false otherwise
+                    PseudoRegister *result,    // where the result is stored
+                    PseudoRegister *error,     // where the error symbol is stored if the operation fails
+                    int data_offset,            // data offset in oops relative to array
+                    int length_offset,          // array length offset in oops relative to array
+                    bool_t needs_store_check    // indicates whether a store check is necessary or not
+    );
 
-    public:
-        AccessType access_type() const {
-            return _access_type;
-        }
-
-
-        PseudoRegister * array() const {
-            return _src;
-        }
+public:
+    AccessType access_type() const {
+        return _access_type;
+    }
 
 
-        PseudoRegister * index() const {
-            return _arg;
-        }
+    PseudoRegister *array() const {
+        return _src;
+    }
 
 
-        PseudoRegister * element() const {
-            return elem;
-        }
+    PseudoRegister *index() const {
+        return _arg;
+    }
 
 
-        PseudoRegister * error() const {
-            return _error;
-        }
+    PseudoRegister *element() const {
+        return elem;
+    }
 
 
-        bool_t index_is_smi() const {
-            return _intArg;
-        }
+    PseudoRegister *error() const {
+        return _error;
+    }
 
 
-        bool_t element_is_smi() const {
-            return _smi_element;
-        }
+    bool_t index_is_smi() const {
+        return _intArg;
+    }
 
 
-        bool_t index_needs_bounds_check() const {
-            return _needBoundsCheck;
-        }
+    bool_t element_is_smi() const {
+        return _smi_element;
+    }
 
 
-        bool_t element_needs_range_check() const {
-            return _needs_element_range_check;
-        }
+    bool_t index_needs_bounds_check() const {
+        return _needBoundsCheck;
+    }
 
 
-        bool_t canFail() const {
-            return not index_is_smi() or index_needs_bounds_check() or ( access_type() not_eq object_at_put and ( not element_is_smi() or element_needs_range_check() ) );
-        }
+    bool_t element_needs_range_check() const {
+        return _needs_element_range_check;
+    }
 
 
-        bool_t needs_store_check() const {
-            return _needs_store_check;
-        }
+    bool_t canFail() const {
+        return not index_is_smi() or index_needs_bounds_check() or ( access_type() not_eq object_at_put and ( not element_is_smi() or element_needs_range_check() ) );
+    }
 
 
-        int data_word_offset() const {
-            return _dataOffset;
-        }
+    bool_t needs_store_check() const {
+        return _needs_store_check;
+    }
 
 
-        int size_word_offset() const {
-            return _sizeOffset;
-        }
+    int data_word_offset() const {
+        return _dataOffset;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
-
-        void collectTypeTests( GrowableArray <PseudoRegister *> & regs, GrowableArray <GrowableArray <KlassOop> *> & klasses ) const;
-
-        void assert_preg_type( PseudoRegister * r, GrowableArray <KlassOop> * klasses, LoopHeaderNode * n );
-
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * l );
-
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
-
-        void gen();
+    int size_word_offset() const {
+        return _sizeOffset;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->anArrayAtPutNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
+    void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
+
+    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    void gen();
 
 
-        friend class NodeFactory;
+    void apply( NodeVisitor *v ) {
+        v->anArrayAtPutNode( this );
+    }
+
+
+    friend class NodeFactory;
 };
 
 
 class InlinedPrimitiveNode : public AbstractBranchNode {
 
-    public:
-        enum class Operation {
-                obj_klass,                  // corresponds to primitiveClass
-                obj_hash,                   // corresponds to primitiveHash
-                proxy_byte_at,              // corresponds to primitiveProxyByteAt:ifFail:
-                proxy_byte_at_put,          // corresponds to primitiveProxyByteAt:put:ifFail:
-        };
+public:
+    enum class Operation {
+        obj_klass,                  // corresponds to primitiveClass
+        obj_hash,                   // corresponds to primitiveHash
+        proxy_byte_at,              // corresponds to primitiveProxyByteAt:ifFail:
+        proxy_byte_at_put,          // corresponds to primitiveProxyByteAt:put:ifFail:
+    };
 
-    private:
-        PseudoRegister * _arg1;         // 1st argument or nullptr
-        PseudoRegister * _arg2;         // 2nd argument or nullptr
-        PseudoRegister * _error;        // primitive error or nullptr if primitive can't fail
-        Usage          * _arg1_use;     //
-        Usage          * _arg2_use;     //
-        Definition     * _error_def;    //
-        bool_t    _arg1_is_smi;    // true if 1st argument is known to be a smi_t
-        bool_t    _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
-        Operation _operation;      //
-        // _src is	_recv;			    // receiver or nullptr
+private:
+    PseudoRegister *_arg1;         // 1st argument or nullptr
+    PseudoRegister *_arg2;         // 2nd argument or nullptr
+    PseudoRegister *_error;        // primitive error or nullptr if primitive can't fail
+    Usage          *_arg1_use;     //
+    Usage          *_arg2_use;     //
+    Definition     *_error_def;    //
+    bool_t    _arg1_is_smi;    // true if 1st argument is known to be a smi_t
+    bool_t    _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+    Operation _operation;      //
+    // _src is	_recv;			    // receiver or nullptr
 
-        InlinedPrimitiveNode( Operation op, PseudoRegister * result, PseudoRegister * error, PseudoRegister * recv, PseudoRegister * arg1, bool_t arg1_is_smi, PseudoRegister * arg2, bool_t arg2_is_smi );
+    InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi );
 
-    public:
-        Operation op() const {
-            return _operation;
-        }
-
-
-        PseudoRegister * arg1() const {
-            return _arg1;
-        }
+public:
+    Operation op() const {
+        return _operation;
+    }
 
 
-        PseudoRegister * arg2() const {
-            return _arg2;
-        }
+    PseudoRegister *arg1() const {
+        return _arg1;
+    }
 
 
-        PseudoRegister * error() const {
-            return _error;
-        }
+    PseudoRegister *arg2() const {
+        return _arg2;
+    }
 
 
-        bool_t arg1_is_smi() const {
-            return _arg1_is_smi;
-        }
+    PseudoRegister *error() const {
+        return _error;
+    }
 
 
-        bool_t arg2_is_smi() const {
-            return _arg2_is_smi;
-        }
+    bool_t arg1_is_smi() const {
+        return _arg1_is_smi;
+    }
 
 
-        bool_t hasSrc() const {
-            return _src not_eq nullptr;
-        }
+    bool_t arg2_is_smi() const {
+        return _arg2_is_smi;
+    }
 
 
-        bool_t hasDest() const {
-            return _dest not_eq nullptr;
-        }
+    bool_t hasSrc() const {
+        return _src not_eq nullptr;
+    }
 
 
-        bool_t canFail() const;
-
-        void makeUses( BasicBlock * bb );
-
-        void removeUses( BasicBlock * bb );
-
-        void markAllocated( int * use_count, int * def_count );
-
-        bool_t canBeEliminated() const;
-
-        void eliminate( BasicBlock * bb, PseudoRegister * r, bool_t removing = false, bool_t cp = false );
+    bool_t hasDest() const {
+        return _dest not_eq nullptr;
+    }
 
 
-        bool_t canCopyPropagate() const {
-            return false;
-        }
+    bool_t canFail() const;
+
+    void makeUses( BasicBlock *bb );
+
+    void removeUses( BasicBlock *bb );
+
+    void markAllocated( int *use_count, int *def_count );
+
+    bool_t canBeEliminated() const;
+
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
 
-        bool_t canCopyPropagateOop() const {
-            return false;
-        }
+    bool_t canCopyPropagate() const {
+        return false;
+    }
 
 
-        bool_t copyPropagate( BasicBlock * bb, Usage * u, PseudoRegister * d, bool_t replace );
-
-        Node * likelySuccessor() const;
-
-        Node * uncommonSuccessor() const;
-
-        void gen();
+    bool_t canCopyPropagateOop() const {
+        return false;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->anInlinedPrimitiveNode( this );
-        }
+    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace );
+
+    Node *likelySuccessor() const;
+
+    Node *uncommonSuccessor() const;
+
+    void gen();
 
 
-        void verify() const;
+    void apply( NodeVisitor *v ) {
+        v->anInlinedPrimitiveNode( this );
+    }
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class UncommonNode : public NonTrivialNode {
-        GrowableArray <PseudoRegister *> * exprStack;
+    GrowableArray<PseudoRegister *> *exprStack;
 
-    protected:
-        UncommonNode( GrowableArray <PseudoRegister *> * e, int byteCodeIndex );
+protected:
+    UncommonNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex );
 
-    public:
-        bool_t isUncommonNode() const {
-            return true;
-        }
-
-
-        int cost() const {
-            return 4;
-        } // fix this
-
-        bool_t isExitNode() const {
-            return true;
-        }
+public:
+    bool_t isUncommonNode() const {
+        return true;
+    }
 
 
-        bool_t isendsBasicBlock() const {
-            return true;
-        }
+    int cost() const {
+        return 4;
+    } // fix this
+
+    bool_t isExitNode() const {
+        return true;
+    }
 
 
-        virtual Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t isendsBasicBlock() const {
+        return true;
+    }
 
 
-        void markAllocated( int * use_count, int * def_count ) {
-        }
+    virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        void gen();
+    void markAllocated( int *use_count, int *def_count ) {
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->anUncommonNode( this );
-        }
+    void gen();
 
 
-        void verify() const;
-
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
-
-
-        GrowableArray <PseudoRegister *> * expressionStack() const {
-            return exprStack;
-        }
+    void apply( NodeVisitor *v ) {
+        v->anUncommonNode( this );
+    }
 
 
-        friend class NodeFactory;
+    void verify() const;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+
+    GrowableArray<PseudoRegister *> *expressionStack() const {
+        return exprStack;
+    }
+
+
+    friend class NodeFactory;
 };
 
 
 class UncommonSendNode : public UncommonNode {
 
-    private:
-        int _argCount;
+private:
+    int _argCount;
 
-    protected:
-        UncommonSendNode( GrowableArray <PseudoRegister *> * e, int byteCodeIndex, int argCount = 0 );
+protected:
+    UncommonSendNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex, int argCount = 0 );
 
-    public:
-        int args() const {
-            return _argCount;
-        }
-
-
-        bool_t isUncommonSendNode() const {
-            return true;
-        }
+public:
+    int args() const {
+        return _argCount;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t isUncommonSendNode() const {
+        return true;
+    }
 
-        void verify() const;
 
-        void makeUses( BasicBlock * bb );
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void verify() const;
 
-        void computeEscapingBlocks( GrowableArray <BlockPseudoRegister *> * ll );
+    void makeUses( BasicBlock *bb );
 
-        friend class NodeFactory;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
+
+    friend class NodeFactory;
 };
 
 
 class FixedCodeNode : public TrivialNode {
 
-    public:
-        enum class FixedCodeKind {
-                dead_end,           // dead-end marker (for compiler debugging)
-                inc_counter         // increment invocation counter
-        };
+public:
+    enum class FixedCodeKind {
+        dead_end,           // dead-end marker (for compiler debugging)
+        inc_counter         // increment invocation counter
+    };
 
-    protected:
-        const FixedCodeKind _kind;
+protected:
+    const FixedCodeKind _kind;
 
 
-        FixedCodeNode( FixedCodeKind k ) :
+    FixedCodeNode( FixedCodeKind k ) :
             _kind( k ) {
-        }
+    }
 
 
-    public:
-        bool_t isExitNode() const {
-            return _kind == FixedCodeKind::dead_end;
-        }
+public:
+    bool_t isExitNode() const {
+        return _kind == FixedCodeKind::dead_end;
+    }
 
 
-        bool_t isDeadEndNode() const {
-            return _kind == FixedCodeKind::dead_end;
-        }
+    bool_t isDeadEndNode() const {
+        return _kind == FixedCodeKind::dead_end;
+    }
 
 
-        FixedCodeKind kind() const {
-            return _kind;
-        }
+    FixedCodeKind kind() const {
+        return _kind;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-        void gen();
-
-
-        void apply( NodeVisitor * v ) {
-            v->aFixedCodeNode( this );
-        }
+    void gen();
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aFixedCodeNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
 class NopNode : public TrivialNode {
-    protected:
-        NopNode() {
-        }
+protected:
+    NopNode() {
+    }
 
 
-    public:
-        bool_t isNopNode() const {
-            return true;
-        }
+public:
+    bool_t isNopNode() const {
+        return true;
+    }
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        void apply( NodeVisitor * v ) {
-            v->aNopNode( this );
-        }
+    void apply( NodeVisitor *v ) {
+        v->aNopNode( this );
+    }
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
 
-        friend class NodeFactory;
+    friend class NodeFactory;
 };
 
 
 class CommentNode : public TrivialNode {
-    protected:
-        CommentNode( const char * s );
+protected:
+    CommentNode( const char *s );
 
-    public:
-        const char * comment;
-
-
-        bool_t isCommentNode() const {
-            return true;
-        }
+public:
+    const char *comment;
 
 
-        Node * clone( PseudoRegister * from, PseudoRegister * to ) const;
+    bool_t isCommentNode() const {
+        return true;
+    }
 
 
-        void apply( NodeVisitor * v ) {
-            v->aCommentNode( this );
-        }
+    Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-        const char * print_string( const char * buf, bool_t printAddr = true ) const;
+    void apply( NodeVisitor *v ) {
+        v->aCommentNode( this );
+    }
 
-        friend class NodeFactory;
+
+    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+
+    friend class NodeFactory;
 };
 
 
@@ -3822,93 +3822,93 @@ class CommentNode : public TrivialNode {
 
 class NodeFactory : AllStatic {
 
-    public:
-        static int _cumulativeCost; // cumulative cost of all nodes generated so far
+public:
+    static int _cumulativeCost; // cumulative cost of all nodes generated so far
 
-        static void registerNode( Node * n ) {
-            _cumulativeCost += n->cost();
-        }
+    static void registerNode( Node *n ) {
+        _cumulativeCost += n->cost();
+    }
 
 
-        static class PrologueNode * PrologueNode( LookupKey * key, int nofArgs, int nofTemps );
+    static class PrologueNode *PrologueNode( LookupKey *key, int nofArgs, int nofTemps );
 
-        static class LoadOffsetNode * LoadOffsetNode( PseudoRegister * dst, PseudoRegister * base, int offs, bool_t isArray );
+    static class LoadOffsetNode *LoadOffsetNode( PseudoRegister *dst, PseudoRegister *base, int offs, bool_t isArray );
 
-        static class LoadUplevelNode * LoadUplevelNode( PseudoRegister * dst, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name );
+    static class LoadUplevelNode *LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name );
 
-        static class LoadIntNode * LoadIntNode( PseudoRegister * dst, int value );
+    static class LoadIntNode *LoadIntNode( PseudoRegister *dst, int value );
 
-        static class StoreOffsetNode * StoreOffsetNode( PseudoRegister * src, PseudoRegister * base, int offs, bool_t needStoreCheck );
+    static class StoreOffsetNode *StoreOffsetNode( PseudoRegister *src, PseudoRegister *base, int offs, bool_t needStoreCheck );
 
-        static class StoreUplevelNode * StoreUplevelNode( PseudoRegister * src, PseudoRegister * context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck );
+    static class StoreUplevelNode *StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck );
 
-        static class AssignNode * AssignNode( PseudoRegister * src, PseudoRegister * dst );
+    static class AssignNode *AssignNode( PseudoRegister *src, PseudoRegister *dst );
 
-        static class ReturnNode * ReturnNode( PseudoRegister * res, int byteCodeIndex );
+    static class ReturnNode *ReturnNode( PseudoRegister *res, int byteCodeIndex );
 
-        static class InlinedReturnNode * InlinedReturnNode( int byteCodeIndex, PseudoRegister * src, PseudoRegister * dst );
+    static class InlinedReturnNode *InlinedReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dst );
 
-        static class NonLocalReturnSetupNode * NonLocalReturnSetupNode( PseudoRegister * result, int byteCodeIndex );
+    static class NonLocalReturnSetupNode *NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex );
 
-        static class NonLocalReturnContinuationNode * NonLocalReturnContinuationNode( int byteCodeIndex );
+    static class NonLocalReturnContinuationNode *NonLocalReturnContinuationNode( int byteCodeIndex );
 
-        static class NonLocalReturnTestNode * NonLocalReturnTestNode( int byteCodeIndex );
+    static class NonLocalReturnTestNode *NonLocalReturnTestNode( int byteCodeIndex );
 
-        static class ArithRRNode * ArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
+    static class ArithRRNode *ArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 );
 
-        static class ArithRCNode * ArithRCNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, int o2 );
+    static class ArithRCNode *ArithRCNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, int o2 );
 
-        static class TArithRRNode * TArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2, bool_t a1, bool_t a2 );
+    static class TArithRRNode *TArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2, bool_t a1, bool_t a2 );
 
-        static class FloatArithRRNode * FloatArithRRNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op, PseudoRegister * o2 );
+    static class FloatArithRRNode *FloatArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 );
 
-        static class FloatUnaryArithNode * FloatUnaryArithNode( PseudoRegister * dst, PseudoRegister * src, ArithOpCode op );
+    static class FloatUnaryArithNode *FloatUnaryArithNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op );
 
-        static class MergeNode * MergeNode( Node * prev1, Node * prev2 );
+    static class MergeNode *MergeNode( Node *prev1, Node *prev2 );
 
-        static class MergeNode * MergeNode( int byteCodeIndex );
+    static class MergeNode *MergeNode( int byteCodeIndex );
 
-        static class SendNode * SendNode( LookupKey * key, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack, bool_t superSend, SendInfo * info );
+    static class SendNode *SendNode( LookupKey *key, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool_t superSend, SendInfo *info );
 
-        static class PrimitiveNode * PrimitiveNode( PrimitiveDescriptor * pdesc, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+    static class PrimitiveNode *PrimitiveNode( PrimitiveDescriptor *pdesc, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class DLLNode * DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode * nlrTestPoint, GrowableArray <PseudoRegister *> * args, GrowableArray <PseudoRegister *> * expr_stack );
+    static class DLLNode *DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class InterruptCheckNode * InterruptCheckNode( GrowableArray <PseudoRegister *> * expr_stack );
+    static class InterruptCheckNode *InterruptCheckNode( GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class LoopHeaderNode * LoopHeaderNode();
+    static class LoopHeaderNode *LoopHeaderNode();
 
-        static class BlockCreateNode * BlockCreateNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
+    static class BlockCreateNode *BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class BlockMaterializeNode * BlockMaterializeNode( BlockPseudoRegister * b, GrowableArray <PseudoRegister *> * expr_stack );
+    static class BlockMaterializeNode *BlockMaterializeNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class ContextCreateNode * ContextCreateNode( PseudoRegister * parent, PseudoRegister * context, int nofTemps, GrowableArray <PseudoRegister *> * expr_stack );
+    static class ContextCreateNode *ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class ContextCreateNode * ContextCreateNode( PseudoRegister * b, const class ContextCreateNode * n, GrowableArray <PseudoRegister *> * expr_stack );
+    static class ContextCreateNode *ContextCreateNode( PseudoRegister *b, const class ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack );
 
-        static class ContextInitNode * ContextInitNode( class ContextCreateNode * creator );
+    static class ContextInitNode *ContextInitNode( class ContextCreateNode *creator );
 
-        static class ContextInitNode * ContextInitNode( PseudoRegister * b, const class ContextInitNode * n );
+    static class ContextInitNode *ContextInitNode( PseudoRegister *b, const class ContextInitNode *n );
 
-        static class ContextZapNode * ContextZapNode( PseudoRegister * context );
+    static class ContextZapNode *ContextZapNode( PseudoRegister *context );
 
-        static class BranchNode * BranchNode( BranchOpCode op, bool_t taken_is_uncommon = false );
+    static class BranchNode *BranchNode( BranchOpCode op, bool_t taken_is_uncommon = false );
 
-        static class TypeTestNode * TypeTestNode( PseudoRegister * recv, GrowableArray <KlassOop> * classes, bool_t hasUnknown );
+    static class TypeTestNode *TypeTestNode( PseudoRegister *recv, GrowableArray<KlassOop> *classes, bool_t hasUnknown );
 
-        static class ArrayAtNode * ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smiIndex, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset );
+    static class ArrayAtNode *ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset );
 
-        static class ArrayAtPutNode * ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister * array, PseudoRegister * index, bool_t smi_index, PseudoRegister * element, bool_t smi_element, PseudoRegister * result, PseudoRegister * error, int data_offset, int length_offset, bool_t needs_store_check );
+    static class ArrayAtPutNode *ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset, bool_t needs_store_check );
 
-        static class InlinedPrimitiveNode * InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister * result, PseudoRegister * error = nullptr, PseudoRegister * recv = nullptr, PseudoRegister * arg1 = nullptr, bool_t arg1_is_smi = false, PseudoRegister * arg2 = nullptr, bool_t arg2_is_smi = false );
+    static class InlinedPrimitiveNode *InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error = nullptr, PseudoRegister *recv = nullptr, PseudoRegister *arg1 = nullptr, bool_t arg1_is_smi = false, PseudoRegister *arg2 = nullptr, bool_t arg2_is_smi = false );
 
-        static class UncommonNode * UncommonNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex );
+    static class UncommonNode *UncommonNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex );
 
-        static class UncommonSendNode * UncommonSendNode( GrowableArray <PseudoRegister *> * exprStack, int byteCodeIndex, int args );
+    static class UncommonSendNode *UncommonSendNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex, int args );
 
-        static class FixedCodeNode * FixedCodeNode( FixedCodeNode::FixedCodeKind k );
+    static class FixedCodeNode *FixedCodeNode( FixedCodeNode::FixedCodeKind k );
 
-        static class NopNode * NopNode();
+    static class NopNode *NopNode();
 
-        static class CommentNode * CommentNode( const char * comment );
+    static class CommentNode *CommentNode( const char *comment );
 };

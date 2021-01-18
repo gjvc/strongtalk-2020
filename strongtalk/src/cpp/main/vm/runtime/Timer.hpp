@@ -13,53 +13,53 @@
 // Timers for simple measurements
 
 class Timer {
-    private:
-        double _userTime;
-        double _systemTime;
-    public:
-        void start();
+private:
+    double _userTime;
+    double _systemTime;
+public:
+    void start();
 
-        void stop();
+    void stop();
 
-        void print();
+    void print();
 
-        double seconds();
+    double seconds();
 };
 
 
 class ElapsedTimer {
 
-    private:
-        LongInteger64 _counter;
+private:
+    LongInteger64 _counter;
 
-    public:
-        ElapsedTimer() :
+public:
+    ElapsedTimer() :
             _counter( 0, 0 ) {
-        }
+    }
 
 
-        void start();
+    void start();
 
-        void stop();
+    void stop();
 
-        void print();
+    void print();
 
-        double seconds();
+    double seconds();
 };
 
 
 class TimeStamp {
-    private:
-        LongInteger64 counter;
+private:
+    LongInteger64 counter;
 
-    public:
-        TimeStamp();
+public:
+    TimeStamp();
 
-        // update to current elapsed time
-        void update();
+    // update to current elapsed time
+    void update();
 
-        // returns seconds since updated
-        double seconds();
+    // returns seconds since updated
+    double seconds();
 };
 
 // TraceTime is used for tracing the execution time of a block
@@ -70,11 +70,11 @@ class TimeStamp {
 //
 
 class TraceTime {
-    private:
-        bool_t       active;
-        ElapsedTimer t;
-    public:
-        TraceTime( const char * title, bool_t doit = true );
+private:
+    bool_t       active;
+    ElapsedTimer t;
+public:
+    TraceTime( const char *title, bool_t doit = true );
 
-        ~TraceTime();
+    ~TraceTime();
 };

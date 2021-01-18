@@ -32,117 +32,117 @@ LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 const auto STACK_SIZE = ThreadStackSize * 1024;
 
 typedef struct _thread_start {
-    int (* main)( void * );
-    void * parameter;
-    void * stackLimit;
+    int (*main)( void * );
+    void *parameter;
+    void *stackLimit;
 } thread_start;
 
-int WINAPI startThread( void * params );
+int WINAPI startThread( void *params );
 
 class Thread : public CHeapAllocatedObject {
 
-    private:
-        static std::vector <Thread *>   _threads;
-        static GrowableArray <Thread *> * threads;
-        static Event * thread_created;
-        HANDLE thread_handle;
-        int    thread_id;
-        void * stack_limit;
+private:
+    static std::vector<Thread *>   _threads;
+    static GrowableArray<Thread *> *threads;
+    static Event *thread_created;
+    HANDLE thread_handle;
+    int    thread_id;
+    void *stack_limit;
 
 
-        static void initialize() {
-            threads        = new( true ) GrowableArray <Thread *>( 10, true );
-            thread_created = os::create_event( false );
-        }
+    static void initialize() {
+        threads        = new( true ) GrowableArray<Thread *>( 10, true );
+        thread_created = os::create_event( false );
+    }
 
 
-        static void release() {
-        }
+    static void release() {
+    }
 
 
-        static bool_t equals( void * token, Thread * element ) {
-            return token == ( void * ) element;
-        }
+    static bool_t equals( void *token, Thread *element ) {
+        return token == (void *) element;
+    }
 
 
-        Thread( HANDLE handle, int id, void * stackLimit ) :
+    Thread( HANDLE handle, int id, void *stackLimit ) :
             thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
-            int index = threads->find( nullptr, equals );
-            if ( index < 0 )
-                threads->append( this );
-            else
-                threads->at_put( index, this );
-        }
+        int index = threads->find( nullptr, equals );
+        if ( index < 0 )
+            threads->append( this );
+        else
+            threads->at_put( index, this );
+    }
 
 
-        virtual ~Thread() {
-            int index = threads->find( this );
-            threads->at_put( index, nullptr );
-        }
+    virtual ~Thread() {
+        int index = threads->find( this );
+        threads->at_put( index, nullptr );
+    }
 
 
-        static Thread * createThread( int main( void * parameter ), void * parameter, int * id_addr ) {
-            ThreadCritical tc;
-            thread_start   params;
-            params.main      = main;
-            params.parameter = parameter;
+    static Thread *createThread( int main( void *parameter ), void *parameter, int *id_addr ) {
+        ThreadCritical tc;
+        thread_start   params;
+        params.main      = main;
+        params.parameter = parameter;
 
-            os::reset_event( thread_created );
-            HANDLE result = CreateThread( nullptr, STACK_SIZE, ( LPTHREAD_START_ROUTINE ) startThread, &params, 0, reinterpret_cast<LPDWORD>( id_addr ) );
-            if ( result == nullptr )
-                return nullptr;
-
-            os::wait_for_event( thread_created );
-
-            return new Thread( result, *id_addr, params.stackLimit );
-        }
-
-
-        static Thread * findThread( int thread_id ) {
-            for ( int i = 0; i < threads->length(); i++ ) {
-                Thread * thread = threads->at( i );
-                if ( thread == nullptr )
-                    continue;
-                if ( thread->thread_id == thread_id )
-                    return thread;
-            }
+        os::reset_event( thread_created );
+        HANDLE result = CreateThread( nullptr, STACK_SIZE, (LPTHREAD_START_ROUTINE) startThread, &params, 0, reinterpret_cast<LPDWORD>( id_addr ) );
+        if ( result == nullptr )
             return nullptr;
+
+        os::wait_for_event( thread_created );
+
+        return new Thread( result, *id_addr, params.stackLimit );
+    }
+
+
+    static Thread *findThread( int thread_id ) {
+        for ( int i = 0; i < threads->length(); i++ ) {
+            Thread *thread = threads->at( i );
+            if ( thread == nullptr )
+                continue;
+            if ( thread->thread_id == thread_id )
+                return thread;
         }
+        return nullptr;
+    }
 
 
-        friend class os;
+    friend class os;
 
-        friend int WINAPI startThread( void * );
-        friend void os_init();
-        friend void os_exit();
+    friend int WINAPI startThread( void * );
+    friend void os_init();
+    friend void os_exit();
 };
 
 
 int WINAPI
 
 
-startThread( void * params ) {
-    char * spptr;
+startThread( void *params ) {
+    char *spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
     int stackHeadroom = 2 * os::vm_page_size();
-    ( ( thread_start * ) params )->stackLimit = spptr - STACK_SIZE + stackHeadroom;
+    ( (thread_start *) params )->stackLimit = spptr - STACK_SIZE + stackHeadroom;
 
-    int (* main)( void * ) = ( ( thread_start * ) params )->main;
-    void * parameter = ( ( thread_start * ) params )->parameter;
+    int (*main)( void * ) = ( (thread_start *) params )->main;
+    void *parameter = ( (thread_start *) params )->parameter;
 
     os::signal_event( Thread::thread_created );
     return main( parameter );
 }
 
 
-Event * Thread::thread_created = nullptr;
-GrowableArray <Thread *> * Thread::threads = nullptr;
+Event *Thread::thread_created = nullptr;
+GrowableArray<Thread *> *Thread::threads = nullptr;
 
 static HANDLE main_process;
 //static HANDLE main_thread;
 static int    main_thread_id;
 static HANDLE watcher_thread;
-static Thread * main_thread;
+static Thread *main_thread;
 
 static FILETIME process_creation_time;
 static FILETIME process_exit_time;
@@ -152,26 +152,26 @@ static FILETIME process_kernel_time;
 extern void intercept_for_single_step();
 
 
-static inline double fileTimeAsDouble( FILETIME * time ) {
-    const double high   = ( double ) ( ( std::uint32_t ) ~0 );
+static inline double fileTimeAsDouble( FILETIME *time ) {
+    const double high   = (double) ( (std::uint32_t) ~0 );
     const double split  = 10000000.0;
     double       result = ( time->dwLowDateTime / split ) + time->dwHighDateTime * ( high / split );
     return result;
 }
 
 
-int os::getenv( const char * name, char * buffer, int len ) {
+int os::getenv( const char *name, char *buffer, int len ) {
     int result = GetEnvironmentVariable( name, buffer, len );
     return result not_eq 0;
 }
 
 
-bool_t os::move_file( const char * from, const char * to ) {
+bool_t os::move_file( const char *from, const char *to ) {
     return MoveFileEx( from, to, MOVEFILE_REPLACE_EXISTING ) ? true : false;
 }
 
 
-bool_t os::check_directory( const char * dir_name ) {
+bool_t os::check_directory( const char *dir_name ) {
     bool_t result = CreateDirectory( dir_name, nullptr ) ? true : false;
     if ( not result ) {
         int error = GetLastError();
@@ -188,23 +188,23 @@ void os::breakpoint() {
 }
 
 
-Thread * os::starting_thread( int * id_addr ) {
+Thread *os::starting_thread( int *id_addr ) {
     *id_addr = main_thread_id;
     return main_thread;
 }
 
 
-Thread * os::create_thread( int main( void * parameter ), void * parameter, int * id_addr ) {
+Thread *os::create_thread( int main( void *parameter ), void *parameter, int *id_addr ) {
     return Thread::createThread( main, parameter, id_addr );
 }
 
 
-void * os::stack_limit( Thread * thread ) {
+void *os::stack_limit( Thread *thread ) {
     return thread->stack_limit;
 }
 
 
-void os::terminate_thread( Thread * thread ) {
+void os::terminate_thread( Thread *thread ) {
     HANDLE handle = thread->thread_handle;
     delete thread;
     thread = nullptr;
@@ -214,15 +214,15 @@ void os::terminate_thread( Thread * thread ) {
 }
 
 
-void os::delete_event( Event * event ) {
-    CloseHandle( ( HANDLE ) event );
+void os::delete_event( Event *event ) {
+    CloseHandle( (HANDLE) event );
 }
 
 
-Event * os::create_event( bool_t initial_state ) {
+Event *os::create_event( bool_t initial_state ) {
     HANDLE result = CreateEvent( nullptr, TRUE, initial_state, nullptr );
     if ( result == nullptr ) st_fatal( "CreateEvent failed" );
-    return ( Event * ) result;
+    return (Event *) result;
 }
 
 
@@ -241,7 +241,7 @@ double os::systemTime() {
 }
 
 
-double os::user_time_for( Thread * thread ) {
+double os::user_time_for( Thread *thread ) {
     FILETIME creation_time;
     FILETIME exit_time;
     FILETIME user_time;
@@ -253,7 +253,7 @@ double os::user_time_for( Thread * thread ) {
 }
 
 
-double os::system_time_for( Thread * thread ) {
+double os::system_time_for( Thread *thread ) {
     FILETIME creation_time;
     FILETIME exit_time;
     FILETIME user_time;
@@ -324,29 +324,29 @@ void os::fatalExit( int num ) {
 }
 
 
-dll_func os::dll_lookup( const char * name, DLL * library ) {
-    dll_func result = ( dll_func ) GetProcAddress( ( HINSTANCE ) library, name );
+dll_func os::dll_lookup( const char *name, DLL *library ) {
+    dll_func result = (dll_func) GetProcAddress( (HINSTANCE) library, name );
     return result;
 }
 
 
-DLL * os::dll_load( const char * name ) {
+DLL *os::dll_load( const char *name ) {
     HINSTANCE lib = LoadLibrary( name );
-    return ( DLL * ) lib;
+    return (DLL *) lib;
 }
 
 
-bool_t os::dll_unload( DLL * library ) {
-    return FreeLibrary( ( HINSTANCE ) library ) ? true : false;
+bool_t os::dll_unload( DLL *library ) {
+    return FreeLibrary( (HINSTANCE) library ) ? true : false;
 }
 
 
-const char * os::dll_extension() {
+const char *os::dll_extension() {
     return ".dll";
 }
 
 
-const char * exception_name( std::uint32_t code ) {
+const char *exception_name( std::uint32_t code ) {
     switch ( code ) {
         case EXCEPTION_ACCESS_VIOLATION:
             return "Access violation";
@@ -396,11 +396,11 @@ const char * exception_name( std::uint32_t code ) {
 }
 
 
-void trace_stack_at_exception( int * sp, int * fp, const char * pc );
-void suspend_process_at_stack_overflow( int * sp, int * fp, const char * pc );
+void trace_stack_at_exception( int *sp, int *fp, const char *pc );
+void suspend_process_at_stack_overflow( int *sp, int *fp, const char *pc );
 
 
-LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS * exceptionInfo ) {
+LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
     std::uint32_t code = exceptionInfo->ExceptionRecord->ExceptionCode;
 
@@ -415,7 +415,7 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS * exceptionInfo 
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
         lprintf( "  Oops, we encountered a stack overflow.\n" );
         lprintf( "  You should check your program for infinite recursion!\n" );
-        suspend_process_at_stack_overflow( ( int * ) exceptionInfo->ContextRecord->Esp, ( int * ) exceptionInfo->ContextRecord->Ebp, ( const char * ) exceptionInfo->ContextRecord->Eip );
+        suspend_process_at_stack_overflow( (int *) exceptionInfo->ContextRecord->Esp, (int *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
         lprintf( "  Continue execution ?\n" );
     } else {
         // Do not report vm state when getting stack overflow
@@ -423,7 +423,7 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS * exceptionInfo 
     }
 
     if ( os::message_box( "Exception caught", "Do you want a stack trace?" ) ) {
-        trace_stack_at_exception( ( int * ) exceptionInfo->ContextRecord->Esp, ( int * ) exceptionInfo->ContextRecord->Ebp, ( const char * ) exceptionInfo->ContextRecord->Eip );
+        trace_stack_at_exception( (int *) exceptionInfo->ContextRecord->Esp, (int *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -434,13 +434,13 @@ HINSTANCE _hPrevInstance = nullptr;
 int       _nCmdShow      = 0;
 
 
-void * os::get_hInstance() {
-    return ( void * ) _hInstance;
+void *os::get_hInstance() {
+    return (void *) _hInstance;
 }
 
 
-void * os::get_prevInstance() {
-    return ( void * ) _hPrevInstance;
+void *os::get_prevInstance() {
+    return (void *) _hPrevInstance;
 }
 
 
@@ -466,12 +466,12 @@ void os::timerPrintBuffer() {
 
 // Virtual Memory
 
-char * os::reserve_memory( int size ) {
-    return ( char * ) VirtualAlloc( nullptr, size, MEM_RESERVE, PAGE_READWRITE );
+char *os::reserve_memory( int size ) {
+    return (char *) VirtualAlloc( nullptr, size, MEM_RESERVE, PAGE_READWRITE );
 }
 
 
-bool_t os::commit_memory( const char * addr, int size ) {
+bool_t os::commit_memory( const char *addr, int size ) {
     bool_t result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         int error = GetLastError();
@@ -481,28 +481,28 @@ bool_t os::commit_memory( const char * addr, int size ) {
 }
 
 
-bool_t os::uncommit_memory( const char * addr, int size ) {
+bool_t os::uncommit_memory( const char *addr, int size ) {
     return VirtualFree( const_cast<char *>( addr ), size, MEM_DECOMMIT ) ? true : false;
 }
 
 
-bool_t os::release_memory( const char * addr, int size ) {
+bool_t os::release_memory( const char *addr, int size ) {
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
 
-bool_t os::guard_memory( const char * addr, int size ) {
+bool_t os::guard_memory( const char *addr, int size ) {
     DWORD old_status;
     return VirtualProtect( const_cast<char *>( addr ), size, PAGE_READWRITE | PAGE_GUARD, &old_status ) ? true : false;
 }
 
 
-const char * os::exec_memory( int size ) {
+const char *os::exec_memory( int size ) {
     return reinterpret_cast<char *>( VirtualAlloc( nullptr, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE ) );
 }
 
 
-void * os::malloc( int size ) {
+void *os::malloc( int size ) {
     if ( not ThreadCritical::initialized() ) {
         return ::malloc( size );
     } else {
@@ -512,7 +512,7 @@ void * os::malloc( int size ) {
 }
 
 
-void * os::calloc( int size, char filler ) {
+void *os::calloc( int size, char filler ) {
     if ( not ThreadCritical::initialized() ) {
         return ::calloc( size, filler );
     } else {
@@ -522,7 +522,7 @@ void * os::calloc( int size, char filler ) {
 }
 
 
-void os::free( void * p ) {
+void os::free( void *p ) {
     if ( not ThreadCritical::initialized() ) {
         ::free( p );
     } else {
@@ -532,25 +532,25 @@ void os::free( void * p ) {
 }
 
 
-void os::transfer( Thread * from_thread, Event * from_event, Thread * to_thread, Event * to_event ) {
-    ResetEvent( ( HANDLE ) from_event );
-    SetEvent( ( HANDLE ) to_event );
-    WaitForSingleObject( ( HANDLE ) from_event, INFINITE );
+void os::transfer( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
+    ResetEvent( (HANDLE) from_event );
+    SetEvent( (HANDLE) to_event );
+    WaitForSingleObject( (HANDLE) from_event, INFINITE );
 }
 
 
-void os::transfer_and_continue( Thread * from_thread, Event * from_event, Thread * to_thread, Event * to_event ) {
-    ResetEvent( ( HANDLE ) from_event );
-    SetEvent( ( HANDLE ) to_event );
+void os::transfer_and_continue( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
+    ResetEvent( (HANDLE) from_event );
+    SetEvent( (HANDLE) to_event );
 }
 
 
-void os::suspend_thread( Thread * thread ) {
+void os::suspend_thread( Thread *thread ) {
     SuspendThread( thread->thread_handle );
 }
 
 
-void os::resume_thread( Thread * thread ) {
+void os::resume_thread( Thread *thread ) {
     ResumeThread( thread->thread_handle );
 }
 
@@ -560,12 +560,12 @@ void os::sleep( int ms ) {
 }
 
 
-void os::fetch_top_frame( Thread * thread, int ** sp, int ** fp, char ** pc ) {
+void os::fetch_top_frame( Thread *thread, int **sp, int **fp, char **pc ) {
     CONTEXT context;
     context.ContextFlags = CONTEXT_CONTROL;
     if ( GetThreadContext( thread->thread_handle, &context ) ) {
-        *sp = ( int * ) context.Esp;
-        *fp = ( int * ) context.Ebp;
+        *sp = (int *) context.Esp;
+        *fp = (int *) context.Ebp;
         *pc = reinterpret_cast<char *>( context.Eip );
     } else {
         *sp = nullptr;
@@ -580,29 +580,29 @@ int os::current_thread_id() {
 }
 
 
-void os::wait_for_event( Event * event ) {
-    WaitForSingleObject( ( HANDLE ) event, INFINITE );
+void os::wait_for_event( Event *event ) {
+    WaitForSingleObject( (HANDLE) event, INFINITE );
 }
 
 
-void os::reset_event( Event * event ) {
-    ResetEvent( ( HANDLE ) event );
+void os::reset_event( Event *event ) {
+    ResetEvent( (HANDLE) event );
 }
 
 
-void os::signal_event( Event * event ) {
-    SetEvent( ( HANDLE ) event );
+void os::signal_event( Event *event ) {
+    SetEvent( (HANDLE) event );
 }
 
 
-bool_t os::wait_for_event_or_timer( Event * event, int timeout_in_ms ) {
-    return WAIT_TIMEOUT == WaitForSingleObject( ( HANDLE ) event, timeout_in_ms );
+bool_t os::wait_for_event_or_timer( Event *event, int timeout_in_ms ) {
+    return WAIT_TIMEOUT == WaitForSingleObject( (HANDLE) event, timeout_in_ms );
 }
 
 
 extern "C" bool_t WizardMode;
 
-void process_settings_file( const char * file_name, bool_t quiet );
+void process_settings_file( const char *file_name, bool_t quiet );
 
 static int number_of_ctrl_c = 0;
 
@@ -656,14 +656,14 @@ void os::initialize_system_info() {
 }
 
 
-int os::message_box( const char * title, const char * message ) {
+int os::message_box( const char *title, const char *message ) {
     int result = MessageBox( nullptr, message, title, MB_YESNO | MB_ICONERROR | MB_SYSTEMMODAL | MB_DEFAULT_DESKTOP_ONLY );
 //    int result = IDYES; // ugly hack to reduce DLL depends
     return result == IDYES;
 }
 
 
-const char * os::platform_class_name() {
+const char *os::platform_class_name() {
     return "Win32Platform";
 }
 
@@ -698,23 +698,23 @@ ThreadCritical::~ThreadCritical() {
 }
 
 
-void (* handler)( void * fp, void * sp, void * pc ) = nullptr;
+void (*handler)( void *fp, void *sp, void *pc ) = nullptr;
 bool_t handling_exception;
 
 
-LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS * exceptionInfo ) {
+LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
     lprintf( "Caught exception.\n" );
     if ( true and handler and not handling_exception ) {
         handling_exception = true;
-        handler( ( void * ) exceptionInfo->ContextRecord->Ebp, ( void * ) exceptionInfo->ContextRecord->Esp, ( void * ) exceptionInfo->ContextRecord->Eip );
+        handler( (void *) exceptionInfo->ContextRecord->Ebp, (void *) exceptionInfo->ContextRecord->Esp, (void *) exceptionInfo->ContextRecord->Eip );
         handling_exception = false;
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
 
-void os::add_exception_handler( void new_handler( void * fp, void * sp, void * pc ) ) {
+void os::add_exception_handler( void new_handler( void *fp, void *sp, void *pc ) ) {
     handler = new_handler;
     AddVectoredExceptionHandler( 0, testVectoredHandler );
 }
@@ -762,7 +762,7 @@ void os_init() {
     if ( not DuplicateHandle( main_process, GetCurrentThread(), main_process, &threadHandle, THREAD_ALL_ACCESS, FALSE, 0 ) ) {
         st_fatal( "DuplicateHandle failed\n" );
     }
-    main_thread_id = ( int ) GetCurrentThreadId();
+    main_thread_id = (int) GetCurrentThreadId();
 
     main_thread = new Thread( threadHandle, main_thread_id, nullptr );
 
@@ -786,10 +786,10 @@ void os_exit() {
 }
 
 
-extern int vm_main( int argc, char * argv[] );
+extern int vm_main( int argc, char *argv[] );
 
 
-void os::set_args( int argc, char * argv[] ) {
+void os::set_args( int argc, char *argv[] ) {
 }
 
 
@@ -798,8 +798,9 @@ int os::argc() {
 }
 
 
-char ** os::argv() {
+char **os::argv() {
     return __argv;
 }
+
 
 #endif

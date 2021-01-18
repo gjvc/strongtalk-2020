@@ -25,93 +25,93 @@ class JumpTableEntry;
 
 class BlockClosureOopDescriptor : public MemOopDescriptor {
 
-    private:
-        Oop        _methodOrJumpAddr;       // block method (if interpreted), JumpTable stub address (if compiled)
-        ContextOop _lexical_scope;          // lexical context or nil (if no free variables)
+private:
+    Oop        _methodOrJumpAddr;       // block method (if interpreted), JumpTable stub address (if compiled)
+    ContextOop _lexical_scope;          // lexical context or nil (if no free variables)
 
-        BlockClosureOop addr() const {
-            return BlockClosureOop( MemOopDescriptor::addr() );
-        }
-
-
-    public:
-
-        static int method_or_entry_byte_offset() {
-            return ( 2 * oopSize ) - MEMOOP_TAG;
-        }
+    BlockClosureOop addr() const {
+        return BlockClosureOop( MemOopDescriptor::addr() );
+    }
 
 
-        static int context_byte_offset() {
-            return ( 3 * oopSize ) - MEMOOP_TAG;
-        }
+public:
+
+    static int method_or_entry_byte_offset() {
+        return ( 2 * oopSize ) - MEMOOP_TAG;
+    }
 
 
-        friend BlockClosureOop as_blockClosureOop( void * p );
-
-        static BlockClosureOop create_clean_block( int nofArgs, const char * entry_point );    // create a clean block
-
-        inline bool_t isCompiledBlock() const {
-            return not Oop( addr()->_methodOrJumpAddr )->is_mem();
-        }
+    static int context_byte_offset() {
+        return ( 3 * oopSize ) - MEMOOP_TAG;
+    }
 
 
-        void set_method( MethodOop m ) {
-            STORE_OOP( &addr()->_methodOrJumpAddr, m );
-        }
+    friend BlockClosureOop as_blockClosureOop( void *p );
+
+    static BlockClosureOop create_clean_block( int nofArgs, const char *entry_point );    // create a clean block
+
+    inline bool_t isCompiledBlock() const {
+        return not Oop( addr()->_methodOrJumpAddr )->is_mem();
+    }
 
 
-        void set_jumpAddr( const void * jmp_addr ) {
-            st_assert( not Oop( jmp_addr )->is_mem(), "not properly aligned" );
-            addr()->_methodOrJumpAddr = ( Oop ) jmp_addr;
-        }
+    void set_method( MethodOop m ) {
+        STORE_OOP( &addr()->_methodOrJumpAddr, m );
+    }
 
 
-        MethodOop method() const;
-
-        JumpTableEntry * jump_table_entry() const;
-
-        // returns the number of arguments for the method Oop belonging to this closure
-        int number_of_arguments();
+    void set_jumpAddr( const void *jmp_addr ) {
+        st_assert( not Oop( jmp_addr )->is_mem(), "not properly aligned" );
+        addr()->_methodOrJumpAddr = (Oop) jmp_addr;
+    }
 
 
-        // sizing
-        static int header_size() {
-            return sizeof( BlockClosureOopDescriptor ) / oopSize;
-        }
+    MethodOop method() const;
+
+    JumpTableEntry *jump_table_entry() const;
+
+    // returns the number of arguments for the method Oop belonging to this closure
+    int number_of_arguments();
 
 
-        static int object_size() {
-            return header_size();
-        }
+    // sizing
+    static int header_size() {
+        return sizeof( BlockClosureOopDescriptor ) / oopSize;
+    }
 
 
-        void set_lexical_scope( ContextOop l ) {
-            STORE_OOP( &addr()->_lexical_scope, l );
-        }
+    static int object_size() {
+        return header_size();
+    }
 
 
-        ContextOop lexical_scope() const {
-            return addr()->_lexical_scope;
-        }
+    void set_lexical_scope( ContextOop l ) {
+        STORE_OOP( &addr()->_lexical_scope, l );
+    }
 
 
-        bool_t is_pure() const;
-
-        // deoptimization
-        void deoptimize();
-
-
-        const char * name() const {
-            return "blockClosure";
-        }
+    ContextOop lexical_scope() const {
+        return addr()->_lexical_scope;
+    }
 
 
-        void verify();
+    bool_t is_pure() const;
 
-        friend class BlockClosureKlass;
+    // deoptimization
+    void deoptimize();
+
+
+    const char *name() const {
+        return "blockClosure";
+    }
+
+
+    void verify();
+
+    friend class BlockClosureKlass;
 };
 
 
-inline BlockClosureOop as_blockClosureOop( void * p ) {
+inline BlockClosureOop as_blockClosureOop( void *p ) {
     return BlockClosureOop( as_memOop( p ) );
 }

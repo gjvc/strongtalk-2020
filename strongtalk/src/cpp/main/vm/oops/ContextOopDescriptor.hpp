@@ -20,125 +20,125 @@
 class ContextOopDescriptor : public MemOopDescriptor {
 
 
-    private:
-        SMIOop _parent;
+private:
+    SMIOop _parent;
 
 
-        //
-        // %note: Robert please describe the parent states in excruciating details.
-        //        The description below is far from complete (Lars, 1/9/96).
-        //
-        // Contains either:
-        //  - the frame   	(if the activation creating the block is alive and a first-level block)
-        //  - smiOop_zero 	(when the activation creating the block is dead)
-        //  - outer context 	(if the corresponding method is a block method??)
-        // The transition from frame to smiOop_zero happens when the block is zapped
-        // by the epilog code of the method or a non local return.
-        // NOTE: the frame is needed in case of a non local return.
-        ContextOop addr() const {
-            return ContextOop( MemOopDescriptor::addr() );
-        }
+    //
+    // %note: Robert please describe the parent states in excruciating details.
+    //        The description below is far from complete (Lars, 1/9/96).
+    //
+    // Contains either:
+    //  - the frame   	(if the activation creating the block is alive and a first-level block)
+    //  - smiOop_zero 	(when the activation creating the block is dead)
+    //  - outer context 	(if the corresponding method is a block method??)
+    // The transition from frame to smiOop_zero happens when the block is zapped
+    // by the epilog code of the method or a non local return.
+    // NOTE: the frame is needed in case of a non local return.
+    ContextOop addr() const {
+        return ContextOop( MemOopDescriptor::addr() );
+    }
 
 
-    public:
-        friend ContextOop as_contextOop( void * p );
+public:
+    friend ContextOop as_contextOop( void *p );
 
 
-        void set_parent( Oop h ) {
-            STORE_OOP( &addr()->_parent, h );
-        }
+    void set_parent( Oop h ) {
+        STORE_OOP( &addr()->_parent, h );
+    }
 
 
-        Oop parent() const {
-            return addr()->_parent;
-        }
+    Oop parent() const {
+        return addr()->_parent;
+    }
 
 
-        // Test operations on home
-        bool_t is_dead() const;
+    // Test operations on home
+    bool_t is_dead() const;
 
-        bool_t has_parent_fp() const;
+    bool_t has_parent_fp() const;
 
-        bool_t has_outer_context() const;
-
-
-        int * parent_fp() const {
-            return has_parent_fp() ? ( int * ) parent() : nullptr;
-        }
+    bool_t has_outer_context() const;
 
 
-        void set_home_fp( int * fp ) { /* this should be void ** or similar to allow for 64-bit */
-            st_assert( Oop(fp)->is_smi(), "checking alignment" );
-            set_parent( Oop( fp ) );
-        }
+    int *parent_fp() const {
+        return has_parent_fp() ? (int *) parent() : nullptr;
+    }
 
 
-        // Returns the outer context if any
-        ContextOop outer_context() const;     // nullptr if is_dead or has_frame
-
-        // Sets the home to smiOop_zero
-        void kill() {
-            set_parent( smiOop_zero );
-        }
+    void set_home_fp( int *fp ) { /* this should be void ** or similar to allow for 64-bit */
+        st_assert( Oop(fp)->is_smi(), "checking alignment" );
+        set_parent( Oop( fp ) );
+    }
 
 
-        static int header_size() {
-            return sizeof( ContextOopDescriptor ) / oopSize;
-        }
+    // Returns the outer context if any
+    ContextOop outer_context() const;     // nullptr if is_dead or has_frame
+
+    // Sets the home to smiOop_zero
+    void kill() {
+        set_parent( smiOop_zero );
+    }
 
 
-        int object_size() {
-            return header_size() + length();
-        }
+    static int header_size() {
+        return sizeof( ContextOopDescriptor ) / oopSize;
+    }
 
 
-        Oop * obj_addr_at( int index ) {
-            return oops( header_size() + index );
-        }
+    int object_size() {
+        return header_size() + length();
+    }
 
 
-        Oop obj_at( int index ) {
-            return raw_at( header_size() + index );
-        }
+    Oop *obj_addr_at( int index ) {
+        return oops( header_size() + index );
+    }
 
 
-        void obj_at_put( int index, Oop value ) {
-            raw_at_put( header_size() + index, value );
-        }
+    Oop obj_at( int index ) {
+        return raw_at( header_size() + index );
+    }
 
 
-        int length() {
-            return mark()->hash() - 1;
-        }
+    void obj_at_put( int index, Oop value ) {
+        raw_at_put( header_size() + index, value );
+    }
 
 
-        // constants for code generation -- make this an enum
-        static int parent_word_offset();
-
-        static int temp0_word_offset();
-
-        static int parent_byte_offset();
-
-        static int temp0_byte_offset();
+    int length() {
+        return mark()->hash() - 1;
+    }
 
 
-        // Accessors for storing and reading the forward reference
-        // to the unoptimized context (Used during deoptimization).
-        void set_unoptimized_context( ContextOop con );
+    // constants for code generation -- make this an enum
+    static int parent_word_offset();
 
-        ContextOop unoptimized_context();
+    static int temp0_word_offset();
 
-        // Returns the length of the context chain.
-        int chain_length() const;
+    static int parent_byte_offset();
 
-        // Print the contents of home
-        void print_home_on( ConsoleOutputStream * stream );
+    static int temp0_byte_offset();
 
-        friend class ContextKlass;
+
+    // Accessors for storing and reading the forward reference
+    // to the unoptimized context (Used during deoptimization).
+    void set_unoptimized_context( ContextOop con );
+
+    ContextOop unoptimized_context();
+
+    // Returns the length of the context chain.
+    int chain_length() const;
+
+    // Print the contents of home
+    void print_home_on( ConsoleOutputStream *stream );
+
+    friend class ContextKlass;
 };
 
 
-inline ContextOop as_contextOop( void * p ) {
+inline ContextOop as_contextOop( void *p ) {
     return ContextOop( as_memOop( p ) );
 }
 

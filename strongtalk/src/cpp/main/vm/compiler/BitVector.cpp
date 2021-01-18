@@ -11,7 +11,7 @@
 #include "vm/compiler/BitVector.hpp"
 
 
-bool_t BitVector::unionWith( BitVector * other ) {
+bool_t BitVector::unionWith( BitVector *other ) {
     while ( length < other->length )
         _bits[ length++ ] = 0;
     st_assert( length <= _maxLength, "grew too much" );
@@ -25,7 +25,7 @@ bool_t BitVector::unionWith( BitVector * other ) {
 }
 
 
-bool_t BitVector::intersectWith( BitVector * other ) {
+bool_t BitVector::intersectWith( BitVector *other ) {
     bool_t    changed = false;
     for ( int i       = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         int old = _bits[ i ];
@@ -36,7 +36,7 @@ bool_t BitVector::intersectWith( BitVector * other ) {
 }
 
 
-bool_t BitVector::isDisjointFrom( BitVector * other ) {
+bool_t BitVector::isDisjointFrom( BitVector *other ) {
     for ( int i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         if ( ( _bits[ i ] & other->_bits[ i ] ) not_eq 0 )
             return false;

@@ -109,13 +109,13 @@ doFn original_table[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES )];
 
 #endif
 
-int * frame_breakpoint = ( int * ) -1;
+int *frame_breakpoint = (int *) -1;
 
 DispatchTable::Mode DispatchTable::mode;
 
 
-std::uint8_t ** DispatchTable::table() {
-    return ( std::uint8_t ** ) &dispatch_table[ 0 ];
+std::uint8_t **DispatchTable::table() {
+    return (std::uint8_t **) &dispatch_table[ 0 ];
 }
 
 
@@ -130,7 +130,7 @@ void DispatchTable::reset() {
 void DispatchTable::patch_with_sst_stub() {
     for ( int i = 0; i < static_cast<int>( ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::single_step( ByteCodes::Code( i ) ) ) {
-            dispatch_table[ i ] = ( doFn ) StubRoutines::single_step_stub();
+            dispatch_table[ i ] = (doFn) StubRoutines::single_step_stub();
         } else {
             dispatch_table[ i ] = original_table[ i ];
         }
@@ -138,7 +138,7 @@ void DispatchTable::patch_with_sst_stub() {
 }
 
 
-void DispatchTable::intercept_for_step( int * fr ) {
+void DispatchTable::intercept_for_step( int *fr ) {
     if ( not in_step_mode() ) {
         patch_with_sst_stub();
         mode = Mode::step_mode;
@@ -146,14 +146,14 @@ void DispatchTable::intercept_for_step( int * fr ) {
         //slr mod - the original value depends on the memory addresses of method bytecodes
         //    being < 0x80000000 as in 32 bit Windows
         //    frame_breakpoint = (int*) -1;
-        frame_breakpoint = ( int * ) 0x80000000;
+        frame_breakpoint = (int *) 0x80000000;
         //end slr mod
 
     }
 }
 
 
-void DispatchTable::intercept_for_next( int * fr ) {
+void DispatchTable::intercept_for_next( int *fr ) {
     frame_breakpoint = fr;
     if ( not in_next_mode() ) {
         patch_with_sst_stub();
@@ -165,29 +165,29 @@ void DispatchTable::intercept_for_next( int * fr ) {
 static int return_codes_size = 12;
 
 static ByteCodes::Code return_codes[] = {
-    ByteCodes::Code::return_tos_pop_0, //
-    ByteCodes::Code::return_tos_pop_1, //
-    ByteCodes::Code::return_tos_pop_2, //
-    ByteCodes::Code::return_tos_pop_n, //
-    ByteCodes::Code::return_self_pop_0, //
-    ByteCodes::Code::return_self_pop_1, //
-    ByteCodes::Code::return_self_pop_2, //
-    ByteCodes::Code::return_self_pop_n, //
-    ByteCodes::Code::return_tos_zap_pop_n, //
-    ByteCodes::Code::return_self_zap_pop_n, //
-    ByteCodes::Code::non_local_return_tos_pop_n, //
-    ByteCodes::Code::non_local_return_self_pop_n //
+        ByteCodes::Code::return_tos_pop_0, //
+        ByteCodes::Code::return_tos_pop_1, //
+        ByteCodes::Code::return_tos_pop_2, //
+        ByteCodes::Code::return_tos_pop_n, //
+        ByteCodes::Code::return_self_pop_0, //
+        ByteCodes::Code::return_self_pop_1, //
+        ByteCodes::Code::return_self_pop_2, //
+        ByteCodes::Code::return_self_pop_n, //
+        ByteCodes::Code::return_tos_zap_pop_n, //
+        ByteCodes::Code::return_self_zap_pop_n, //
+        ByteCodes::Code::non_local_return_tos_pop_n, //
+        ByteCodes::Code::non_local_return_self_pop_n //
 };
 
 
-void DispatchTable::intercept_for_return( int * fr ) {
+void DispatchTable::intercept_for_return( int *fr ) {
     frame_breakpoint = fr;
     if ( not in_return_mode() ) {
         reset();
         for ( int i = 0; i < return_codes_size; i++ ) {
             ByteCodes::Code code = return_codes[ i ];
             if ( ByteCodes::single_step( code ) ) {
-                dispatch_table[ static_cast<int>(code) ] = ( doFn ) StubRoutines::single_step_stub();
+                dispatch_table[ static_cast<int>(code) ] = (doFn) StubRoutines::single_step_stub();
             } else {
                 dispatch_table[ i ] = original_table[ i ];
             }
@@ -211,7 +211,7 @@ void intercept_for_single_step() {
 
 void print_dt() {
     for ( int i = 0; i < 255; i++ ) {
-        printf( "0x%02x: 0x%08x\n", i, ( ( int * ) DispatchTable::table() )[ i ] );
+        printf( "0x%02x: 0x%08x\n", i, ( (int *) DispatchTable::table() )[ i ] );
     }
     printf( "\n" );
 }

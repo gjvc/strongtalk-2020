@@ -26,15 +26,15 @@ void OopNativeCode::relocate() {
 }
 
 
-bool_t OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray <NativeMethod *> * nativeMethods_to_invalidate ) {
+bool_t OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
     bool_t needToInvalICache = false;
     Unimplemented();
     return needToInvalICache;
 }
 
 
-void NativeCodeBase::verify2( const char * name ) {
-    if ( ( int ) this & ( oopSize - 1 ) )
+void NativeCodeBase::verify2( const char *name ) {
+    if ( (int) this & ( oopSize - 1 ) )
         error( "alignment error in %s at %#lx", name, this );
     if ( instructionsLength() > 256 * 1024 )
         error( "instr length of %s at %#lx seems too big (%ld)", name, this, instructionsLength() );
@@ -42,15 +42,15 @@ void NativeCodeBase::verify2( const char * name ) {
 
 
 void OopNativeCode::verify() {
-    const char * name = isNativeMethod() ? "NativeMethod" : ( isPIC() ? " PolymorphicInlineCache" : "count stub" );
+    const char *name = isNativeMethod() ? "NativeMethod" : ( isPIC() ? " PolymorphicInlineCache" : "count stub" );
     NativeCodeBase::verify2( name );
     // %fix: Verify via RelocationInformationIterator
 }
 
 
-NativeCodeBase * findThing( void * addr ) {
+NativeCodeBase *findThing( void *addr ) {
     if ( Universe::code->contains( addr ) ) {
-        NativeMethod * n = ( NativeMethod * ) nativeMethod_from_insts( ( const char * ) addr );
+        NativeMethod *n = (NativeMethod *) nativeMethod_from_insts( (const char *) addr );
         return n;
     } else {
         return nullptr;

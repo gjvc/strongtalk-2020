@@ -39,8 +39,8 @@ void Mapping::initialize() {
 // C++ won't compile array with 0 elements
 //int      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
 
-std::array <Location, nofLocalRegisters> Mapping::_localRegisters;      //
-std::array <int, REGISTER_COUNT>         Mapping::_localRegisterIndex;  //
+std::array<Location, nofLocalRegisters> Mapping::_localRegisters;      //
+std::array<int, REGISTER_COUNT>         Mapping::_localRegisterIndex;  //
 
 
 Location Mapping::localRegister( int i ) {
@@ -49,7 +49,7 @@ Location Mapping::localRegister( int i ) {
 }
 
 
-int Mapping::localRegisterIndex( const Location & l ) {
+int Mapping::localRegisterIndex( const Location &l ) {
     st_assert( 0 <= l.number() and l.number() < REGISTER_COUNT, "illegal local register" );
     int res = _localRegisterIndex[ l.number() ];
     st_assert( res >= 0, "not a local register" );
@@ -80,7 +80,7 @@ Location Mapping::localTemporary( int i ) {
 }
 
 
-int Mapping::localTemporaryIndex( const Location & l ) {
+int Mapping::localTemporaryIndex( const Location &l ) {
     int floats = theCompiler->totalNofFloatTemporaries();
     int i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
     st_assert( localTemporary( i ) == l, "incorrect mapping" );
@@ -89,7 +89,7 @@ int Mapping::localTemporaryIndex( const Location & l ) {
 
 
 Location Mapping::floatTemporary( int scope_id, int i ) {
-    InlinedScope * scope = theCompiler->scopes->at( scope_id );
+    InlinedScope *scope = theCompiler->scopes->at( scope_id );
     st_assert( scope->firstFloatIndex() >= 0, "firstFloatIndex not computed yet" );
     // Floats must be 8byte aligned in order to a void massive time penalties.
     // They're accessed via a base register which holds the 8byte aligned value of ebp.
@@ -114,7 +114,7 @@ Location Mapping::contextTemporary( int contextNo, int i, int scope_offset ) {
 }
 
 
-Location * Mapping::new_contextTemporary( int contextNo, int i, int scope_id ) {
+Location *Mapping::new_contextTemporary( int contextNo, int i, int scope_id ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
     return new Location( Mode::contextLoc1, contextNo, i, scope_id );
 }
@@ -144,7 +144,7 @@ bool_t Mapping::isFloatTemporary( Location loc ) {
 
 
 // helper functions for code generation
-void Mapping::load( const Location & src, const Register & dst ) {
+void Mapping::load( const Location &src, const Register &dst ) {
 
     switch ( src.mode() ) {
         case Mode::specialLoc: {
@@ -169,7 +169,7 @@ void Mapping::load( const Location & src, const Register & dst ) {
             break;
         }
         case Mode::contextLoc1: {
-            PseudoRegister * base = theCompiler->contextList->at( src.contextNo() )->context();
+            PseudoRegister *base = theCompiler->contextList->at( src.contextNo() )->context();
             load( base->_location, dst );
             theMacroAssembler->Load( dst, contextOffset( src.tempNo() ), dst );
             break;
@@ -182,8 +182,8 @@ void Mapping::load( const Location & src, const Register & dst ) {
 }
 
 
-void Mapping::store( Register src, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck ) {
-    
+void Mapping::store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck ) {
+
     st_assert( src not_eq temp1 and src not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
         case Mode::specialLoc: {
@@ -206,7 +206,7 @@ void Mapping::store( Register src, const Location & dst, const Register & temp1,
             break;
         }
         case Mode::contextLoc1: {
-            PseudoRegister * base = theCompiler->contextList->at( dst.contextNo() )->context();
+            PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->Store( src, temp1, contextOffset( dst.tempNo() ) );
             if ( needsStoreCheck )
@@ -221,7 +221,7 @@ void Mapping::store( Register src, const Location & dst, const Register & temp1,
 }
 
 
-void Mapping::storeO( Oop obj, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck ) {
+void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck ) {
 
     st_assert( temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
@@ -243,7 +243,7 @@ void Mapping::storeO( Oop obj, const Location & dst, const Register & temp1, con
             break;
         }
         case Mode::contextLoc1: {
-            PseudoRegister * base = theCompiler->contextList->at( dst.contextNo() )->context();
+            PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->movl( Address( temp1, contextOffset( dst.tempNo() ) ), obj );
             if ( needsStoreCheck )
@@ -258,7 +258,7 @@ void Mapping::storeO( Oop obj, const Location & dst, const Register & temp1, con
 }
 
 
-void Mapping::fload( const Location & src, const Register & base ) {
+void Mapping::fload( const Location &src, const Register &base ) {
 
     if ( src == topOfFloatStack ) {
         if ( UseFPUStack ) {
@@ -274,7 +274,7 @@ void Mapping::fload( const Location & src, const Register & base ) {
 }
 
 
-void Mapping::fstore( const Location & dst, const Register & base ) {
+void Mapping::fstore( const Location &dst, const Register &base ) {
 
     if ( dst == topOfFloatStack ) {
         if ( UseFPUStack ) {

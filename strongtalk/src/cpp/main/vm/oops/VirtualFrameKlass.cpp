@@ -8,7 +8,7 @@
 #include "vm/memory/Closure.hpp"
 
 
-void setKlassVirtualTableFromVirtualFrameKlass( Klass * k ) {
+void setKlassVirtualTableFromVirtualFrameKlass( Klass *k ) {
     VirtualFrameKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -19,7 +19,7 @@ Oop VirtualFrameKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) 
     int      size = non_indexable_size();
 
     // allocate
-    Oop * result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
         return nullptr;
     VirtualFrameOop obj = as_vframeOop( result );
@@ -76,24 +76,24 @@ void VirtualFrameKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-void VirtualFrameKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void VirtualFrameKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
     VirtualFrameOop vf = VirtualFrameOop( obj );
-    blk->do_oop( "process", ( Oop * ) &vf->addr()->_process );
-    blk->do_oop( "index", ( Oop * ) &vf->addr()->_index );
-    blk->do_oop( "time stamp", ( Oop * ) &vf->addr()->_time_stamp );
+    blk->do_oop( "process", (Oop *) &vf->addr()->_process );
+    blk->do_oop( "index", (Oop *) &vf->addr()->_index );
+    blk->do_oop( "time stamp", (Oop *) &vf->addr()->_time_stamp );
     MemOop( obj )->layout_iterate_body( blk, VirtualFrameOopDescriptor::header_size(), non_indexable_size() );
 }
 
 
-void VirtualFrameKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void VirtualFrameKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
     VirtualFrameOop vf = VirtualFrameOop( obj );
-    blk->do_oop( ( Oop * ) &vf->addr()->_process );
-    blk->do_oop( ( Oop * ) &vf->addr()->_index );
-    blk->do_oop( ( Oop * ) &vf->addr()->_time_stamp );
+    blk->do_oop( (Oop *) &vf->addr()->_process );
+    blk->do_oop( (Oop *) &vf->addr()->_index );
+    blk->do_oop( (Oop *) &vf->addr()->_time_stamp );
     // instance variables
     MemOop( obj )->oop_iterate_body( blk, VirtualFrameOopDescriptor::header_size(), non_indexable_size() );
 }

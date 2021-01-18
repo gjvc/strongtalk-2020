@@ -52,7 +52,7 @@ RememberedSet::RememberedSet() {
 }
 
 
-void * RememberedSet::operator new( std::size_t size ) {
+void *RememberedSet::operator new( std::size_t size ) {
     st_assert( ( int( Universe::new_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "new must start at card boundary" );
     st_assert( ( int( Universe::old_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "old must start at card boundary" );
     st_assert( ( int( Universe::old_gen._highBoundary ) & ( card_size - 1 ) ) == 0, "old must end at card boundary" );
@@ -64,7 +64,7 @@ void * RememberedSet::operator new( std::size_t size ) {
 
 
 // copy the bits from an older, smaller bitmap, add area [start,end)
-RememberedSet::RememberedSet( RememberedSet * old, const char * start, const char * end ) {
+RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char *end ) {
     ShouldNotReachHere();
     /*
     low_boundary = Universe::new_gen.low_boundary;
@@ -79,30 +79,30 @@ RememberedSet::RememberedSet( RememberedSet * old, const char * start, const cha
 }
 
 
-char * RememberedSet::scavenge_contents( OldSpace * sp, char * begin, char * limit ) {
+char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit ) {
 
     // make sure we are staring with a dirty page
     st_assert( !*begin, "check for dirty page" );
 
     // Find object at page start
-    Oop * s = oop_for( begin );
+    Oop *s = oop_for( begin );
 
     // Return if we're at the end.
     if ( s >= sp->top() )
         return begin + 1;
 
     s = sp->object_start( s );
-    char * end = begin + 1;
+    char *end = begin + 1;
 
-    Oop * object_end = nullptr;
+    Oop *object_end = nullptr;
     while ( !*end and end < limit ) {
         while ( !*end and end < limit )
             end++;
 
         // We now have a string of dirty pages [begin..end[
-        Oop * e = min( oop_for( end ), ( Oop * ) sp->top() );
+        Oop *e = min( oop_for( end ), (Oop *) sp->top() );
 
-        if ( e < ( Oop * ) sp->top() ) {
+        if ( e < (Oop *) sp->top() ) {
             // Find the object crossing the last dirty page
             object_end = sp->object_start( e );
             if ( object_end not_eq e ) {
@@ -116,11 +116,11 @@ char * RememberedSet::scavenge_contents( OldSpace * sp, char * begin, char * lim
     }
 
     // Clear the cards
-    for ( char * i = begin; i < end; i++ )
+    for ( char *i = begin; i < end; i++ )
         *i = -1;
 
     // Find the end
-    Oop * e = min( oop_for( end ), ( Oop * ) sp->top() );
+    Oop *e = min( oop_for( end ), (Oop *) sp->top() );
 
     while ( s < e ) {
         MemOop m    = as_memOop( s );
@@ -133,9 +133,9 @@ char * RememberedSet::scavenge_contents( OldSpace * sp, char * begin, char * lim
 }
 
 
-void RememberedSet::scavenge_contents( OldSpace * sp ) {
-    char * current_byte = byte_for( sp->bottom() );
-    char * end_byte     = byte_for( sp->top() );
+void RememberedSet::scavenge_contents( OldSpace *sp ) {
+    char *current_byte = byte_for( sp->bottom() );
+    char *end_byte     = byte_for( sp->top() );
     // set sentinel for scan (dirty page)
     *( end_byte + 1 ) = 0;
 
@@ -154,9 +154,9 @@ void RememberedSet::scavenge_contents( OldSpace * sp ) {
 }
 
 
-void RememberedSet::print_set_for_space( OldSpace * sp ) {
-    char * current_byte = byte_for( sp->bottom() );
-    char * end_byte     = byte_for( sp->top() );
+void RememberedSet::print_set_for_space( OldSpace *sp ) {
+    char *current_byte = byte_for( sp->bottom() );
+    char *end_byte     = byte_for( sp->top() );
     lprintf( "%s: [%#lx, %#lx]\n", sp->name(), current_byte, end_byte );
     while ( current_byte <= end_byte ) {
         if ( *current_byte ) {
@@ -170,10 +170,10 @@ void RememberedSet::print_set_for_space( OldSpace * sp ) {
 }
 
 
-int RememberedSet::number_of_dirty_pages_in( OldSpace * sp ) {
+int RememberedSet::number_of_dirty_pages_in( OldSpace *sp ) {
     int count = 0;
-    char * current_byte = byte_for( sp->bottom() );
-    char * end_byte     = byte_for( sp->top() );
+    char *current_byte = byte_for( sp->bottom() );
+    char *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
         if ( !*current_byte )
             count++;
@@ -184,36 +184,36 @@ int RememberedSet::number_of_dirty_pages_in( OldSpace * sp ) {
 
 
 class CheckDirtyClosure : public OopClosure {
-    public:
-        bool_t is_dirty;
+public:
+    bool_t is_dirty;
 
 
-        void clear() {
-            is_dirty = false;
-        }
+    void clear() {
+        is_dirty = false;
+    }
 
 
-        void do_oop( Oop * o ) {
-            if ( ( *o )->is_new() ) {
-                is_dirty = true;
-                /*
-                { FlagSetting fs(PrintObjectID, false);
-                  _console->print("0x%lx ", o);
-                  (*o)->print_value();
-                  _console->cr();
-                }
-                */
+    void do_oop( Oop *o ) {
+        if ( ( *o )->is_new() ) {
+            is_dirty = true;
+            /*
+            { FlagSetting fs(PrintObjectID, false);
+              _console->print("0x%lx ", o);
+              (*o)->print_value();
+              _console->cr();
             }
+            */
         }
+    }
 };
 
 
-bool_t RememberedSet::has_page_dirty_objects( OldSpace * sp, char * page ) {
+bool_t RememberedSet::has_page_dirty_objects( OldSpace *sp, char *page ) {
     // Find object at page start
 
-    Oop * s = sp->object_start( oop_for( page ) );
+    Oop *s = sp->object_start( oop_for( page ) );
     // Find the end
-    Oop * e = min( oop_for( page + 1 ), ( Oop * ) sp->top() );
+    Oop *e = min( oop_for( page + 1 ), (Oop *) sp->top() );
 
     CheckDirtyClosure blk;
 
@@ -229,10 +229,10 @@ bool_t RememberedSet::has_page_dirty_objects( OldSpace * sp, char * page ) {
 }
 
 
-int RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace * sp ) {
+int RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace *sp ) {
     int count = 0;
-    char * current_byte = byte_for( sp->bottom() );
-    char * end_byte     = byte_for( sp->top() );
+    char *current_byte = byte_for( sp->bottom() );
+    char *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
         if ( has_page_dirty_objects( sp, current_byte ) )
             count++;
@@ -250,8 +250,8 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
         _console->print_cr( " object is in new Space!" );
     } else {
         _console->sp();
-        char * current_byte = byte_for( obj->addr() );
-        char * end_byte     = byte_for( obj->addr() + obj->size() );
+        char *current_byte = byte_for( obj->addr() );
+        char *end_byte     = byte_for( obj->addr() + obj->size() );
         while ( current_byte <= end_byte ) {
             if ( *current_byte ) {
                 _console->print( "_" );
@@ -267,8 +267,8 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
 
 bool_t RememberedSet::is_object_dirty( MemOop obj ) {
     st_assert( not obj->is_new(), "just checking" );
-    char * current_byte = byte_for( obj->addr() );
-    char * end_byte     = byte_for( obj->addr() + obj->size() );
+    char *current_byte = byte_for( obj->addr() );
+    char *end_byte     = byte_for( obj->addr() + obj->size() );
     while ( current_byte <= end_byte ) {
         if ( *current_byte == 0 )
             return true;
@@ -278,9 +278,9 @@ bool_t RememberedSet::is_object_dirty( MemOop obj ) {
 }
 
 
-void RememberedSet::clear( const char * start, const char * end ) {
-    int * from = ( int * ) start;
-    int count = ( int * ) end - from;
+void RememberedSet::clear( const char *start, const char *end ) {
+    int *from = (int *) start;
+    int count = (int *) end - from;
     set_words( from, count, AllBitsSet );
 }
 
@@ -305,41 +305,41 @@ constexpr int lim_3 = lim_2 + ( 1 << 16 );
 
 
 void RememberedSet::set_size( MemOop obj, int size ) {
-    std::uint8_t * p = ( std::uint8_t * ) byte_for( obj->addr() );
+    std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     st_assert( size >= lim_0, "size must be >= max_age" );
     if ( size < lim_1 ) {        // use 1 byte
-        *p = ( std::uint8_t ) ( size - lim_0 );
+        *p = (std::uint8_t) ( size - lim_0 );
     } else if ( size < lim_2 ) {    // use 1 + 1 bytes
         *p++ = lim_0 + 2;
-        *p   = ( std::uint8_t ) ( size - lim_1 );
+        *p   = (std::uint8_t) ( size - lim_1 );
     } else if ( size < lim_3 ) {    // use 1 + 2 bytes
-        *p++              = lim_0 + 3;
-        *( std::uint16_t * ) p = ( std::uint16_t ) ( size - lim_2 );
+        *p++                 = lim_0 + 3;
+        *(std::uint16_t *) p = (std::uint16_t) ( size - lim_2 );
     } else {            // use 1 + 4 bytes
-        *p++              = lim_0 + 4;
-        *( std::uint32_t * ) p = ( std::uint32_t ) ( size - lim_3 );
+        *p++                 = lim_0 + 4;
+        *(std::uint32_t *) p = (std::uint32_t) ( size - lim_3 );
     }
 }
 
 
 int RememberedSet::get_size( MemOop obj ) {
-    std::uint8_t * p = ( std::uint8_t * ) byte_for( obj->addr() );
+    std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     std::uint8_t h = *p++;
     if ( h <= lim_0 + 1 )
         return h + lim_0;
     if ( h == lim_0 + 2 )
-        return ( *( std::uint8_t * ) p ) + lim_1;
+        return ( *(std::uint8_t *) p ) + lim_1;
     if ( h == lim_0 + 3 )
-        return ( *( std::uint16_t * ) p ) + lim_2;
+        return ( *(std::uint16_t *) p ) + lim_2;
     if ( h == lim_0 + 4 )
-        return ( *( std::uint32_t * ) p ) + lim_3;
+        return ( *(std::uint32_t *) p ) + lim_3;
     ShouldNotReachHere();
     return 0;
 }
 
 
 // new old Space added; fix the cards
-void RememberedSet::fixup( const char * start, const char * end ) {
+void RememberedSet::fixup( const char *start, const char *end ) {
     if ( end > _highBoundary ) {
         Universe::remembered_set = new RememberedSet( this, start, end );
     } else {
@@ -348,7 +348,7 @@ void RememberedSet::fixup( const char * start, const char * end ) {
 }
 
 
-char * RememberedSet::byte_map_end() const {
+char *RememberedSet::byte_map_end() const {
     return byte_for( Universe::old_gen._highBoundary );
 }
 

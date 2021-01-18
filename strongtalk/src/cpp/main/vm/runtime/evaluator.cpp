@@ -35,10 +35,10 @@ extern "C" void single_step_handler() {
     evaluator::single_step( DeltaProcess::active()->last_Delta_fp() );
 }
 
-int * saved_frame;
+int *saved_frame;
 
 
-bool_t patch_last_delta_frame( int * fr, int * dist ) {
+bool_t patch_last_delta_frame( int *fr, int *dist ) {
 
     // change the current to next byteCodeIndex;
     Frame v( nullptr, fr, nullptr );
@@ -51,7 +51,7 @@ bool_t patch_last_delta_frame( int * fr, int * dist ) {
 
     // in case of single step we ignore the case with
     // an empty inline cache since the send is reexecuted.
-    InterpretedInlineCache * ic = method->ic_at( byteCodeIndex );
+    InterpretedInlineCache *ic = method->ic_at( byteCodeIndex );
     if ( ic and ic->is_empty() )
         return false;
 
@@ -61,7 +61,7 @@ bool_t patch_last_delta_frame( int * fr, int * dist ) {
 }
 
 
-void restore_hp( int * fr, int dist ) {
+void restore_hp( int *fr, int dist ) {
     Frame v( nullptr, fr, nullptr );
     v.set_hp( v.hp() - dist );
 }
@@ -70,12 +70,12 @@ void restore_hp( int * fr, int dist ) {
 static bool_t is_aborting = false;
 
 
-void evaluator::single_step( int * fr ) {
+void evaluator::single_step( int *fr ) {
     int dist;
     if ( not patch_last_delta_frame( fr, &dist ) )
         return;
 
-    DeltaVirtualFrame * df = DeltaProcess::active()->last_delta_vframe();
+    DeltaVirtualFrame *df = DeltaProcess::active()->last_delta_vframe();
     st_assert( df, "delta frame must be present" );
 
     { // Always show code at single step
@@ -94,7 +94,7 @@ void evaluator::single_step( int * fr ) {
 }
 
 
-bool_t evaluator::get_line( char * line ) {
+bool_t evaluator::get_line( char *line ) {
     int end = 0;
     int c;
 
@@ -111,150 +111,150 @@ bool_t evaluator::get_line( char * line ) {
 
 class TokenStream : public StackAllocatedObject {
 
-    private:
-        GrowableArray <char *> * tokens;
-        int                    pos;
+private:
+    GrowableArray<char *> *tokens;
+    int                   pos;
 
-        void tokenize( char * str );
-
-
-        bool_t match( const char * str ) {
-            return strcmp( current(), str ) == 0;
-        }
+    void tokenize( char *str );
 
 
-    public:
-        TokenStream( const char * line ) {
-            tokens = new GrowableArray <char *>( 10 );
-            tokenize( const_cast<char *>( line ) );
-            pos = 0;
-        }
+    bool_t match( const char *str ) {
+        return strcmp( current(), str ) == 0;
+    }
 
 
-        char * current() {
-            return tokens->at( pos );
-        }
+public:
+    TokenStream( const char *line ) {
+        tokens = new GrowableArray<char *>( 10 );
+        tokenize( const_cast<char *>( line ) );
+        pos = 0;
+    }
 
 
-        void advance() {
-            pos++;
-        }
+    char *current() {
+        return tokens->at( pos );
+    }
 
 
-        bool_t eos() {
-            return pos >= tokens->length();
-        }
+    void advance() {
+        pos++;
+    }
 
 
-        // testers
-        bool_t is_hat() {
-            return match( "^" );
-        }
+    bool_t eos() {
+        return pos >= tokens->length();
+    }
 
 
-        bool_t is_step() {
-            return match( "s" ) or match( "step" );
-        }
+    // testers
+    bool_t is_hat() {
+        return match( "^" );
+    }
 
 
-        bool_t is_next() {
-            return match( "n" ) or match( "next" );
-        }
+    bool_t is_step() {
+        return match( "s" ) or match( "step" );
+    }
 
 
-        bool_t is_end() {
-            return match( "e" ) or match( "end" );
-        }
+    bool_t is_next() {
+        return match( "n" ) or match( "next" );
+    }
 
 
-        bool_t is_cont() {
-            return match( "c" ) or match( "cont" );
-        }
+    bool_t is_end() {
+        return match( "e" ) or match( "end" );
+    }
 
 
-        bool_t is_stack() {
-            return match( "stack" );
-        }
+    bool_t is_cont() {
+        return match( "c" ) or match( "cont" );
+    }
 
 
-        bool_t is_abort() {
-            return match( "abort" );
-        }
+    bool_t is_stack() {
+        return match( "stack" );
+    }
 
 
-        bool_t is_genesis() {
-            return match( "genesis" );
-        }
+    bool_t is_abort() {
+        return match( "abort" );
+    }
 
 
-        bool_t is_top() {
-            return match( "top" );
-        }
+    bool_t is_genesis() {
+        return match( "genesis" );
+    }
 
 
-        bool_t is_show() {
-            return match( "show" );
-        }
+    bool_t is_top() {
+        return match( "top" );
+    }
 
 
-        bool_t is_break() {
-            return match( "break" );
-        }
+    bool_t is_show() {
+        return match( "show" );
+    }
 
 
-        bool_t is_events() {
-            return match( "events" );
-        }
+    bool_t is_break() {
+        return match( "break" );
+    }
 
 
-        bool_t is_status() {
-            return match( "status" );
-        }
+    bool_t is_events() {
+        return match( "events" );
+    }
 
 
-        bool_t is_help() {
-            return match( "?" ) or match( "help" );
-        }
+    bool_t is_status() {
+        return match( "status" );
+    }
 
 
-        bool_t is_quit() {
-            return match( "q" ) or match( "quit" );
-        }
+    bool_t is_help() {
+        return match( "?" ) or match( "help" );
+    }
 
 
-        bool_t is_plus() {
-            return match( "+" );
-        }
+    bool_t is_quit() {
+        return match( "q" ) or match( "quit" );
+    }
 
 
-        bool_t is_minus() {
-            return match( "-" );
-        }
+    bool_t is_plus() {
+        return match( "+" );
+    }
 
 
-        bool_t is_smi( Oop * addr );
+    bool_t is_minus() {
+        return match( "-" );
+    }
 
-        bool_t is_table_entry( Oop * addr );
 
-        bool_t is_object_search( Oop * addr );
+    bool_t is_smi( Oop *addr );
 
-        bool_t is_name( Oop * addr );
+    bool_t is_table_entry( Oop *addr );
 
-        bool_t is_symbol( Oop * addr );
+    bool_t is_object_search( Oop *addr );
 
-        bool_t is_unary();
+    bool_t is_name( Oop *addr );
 
-        bool_t is_binary();
+    bool_t is_symbol( Oop *addr );
 
-        bool_t is_keyword();
+    bool_t is_unary();
+
+    bool_t is_binary();
+
+    bool_t is_keyword();
 };
 
 
-static const char * seps = " \t\n";
+static const char *seps = " \t\n";
 
 
-void TokenStream::tokenize( char * str ) {
-    char * token = strtok( str, seps );
+void TokenStream::tokenize( char *str ) {
+    char *token = strtok( str, seps );
     while ( token not_eq nullptr ) {
         tokens->push( token );
         token = strtok( nullptr, seps );
@@ -262,8 +262,8 @@ void TokenStream::tokenize( char * str ) {
 }
 
 
-bool_t TokenStream::is_smi( Oop * addr ) {
-    int      value;
+bool_t TokenStream::is_smi( Oop *addr ) {
+    int           value;
     std::uint32_t length;
 
     if ( sscanf( current(), "%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
@@ -274,8 +274,8 @@ bool_t TokenStream::is_smi( Oop * addr ) {
 }
 
 
-bool_t TokenStream::is_table_entry( Oop * addr ) {
-    int      value;
+bool_t TokenStream::is_table_entry( Oop *addr ) {
+    int           value;
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not objectIDTable::is_index_ok( value ) ) {
@@ -289,13 +289,13 @@ bool_t TokenStream::is_table_entry( Oop * addr ) {
 }
 
 
-bool_t TokenStream::is_object_search( Oop * addr ) {
-    int      address;
-    Oop      obj;
+bool_t TokenStream::is_object_search( Oop *addr ) {
+    int           address;
+    Oop           obj;
     std::uint32_t length;
 
     if ( sscanf( current(), "0x%X%u", &address, &length ) == 1 and strlen( current() ) == length ) {
-        if ( obj = Oop( Universe::object_start( ( Oop * ) address ) ) ) {
+        if ( obj = Oop( Universe::object_start( (Oop *) address ) ) ) {
             *addr = obj;
             return true;
         }
@@ -304,9 +304,9 @@ bool_t TokenStream::is_object_search( Oop * addr ) {
 }
 
 
-bool_t TokenStream::is_name( Oop * addr ) {
-    char     name[200];
-    Oop      obj;
+bool_t TokenStream::is_name( Oop *addr ) {
+    char          name[200];
+    Oop           obj;
     std::uint32_t length;
     if ( sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length ) {
         if ( obj = Universe::find_global( name ) ) {
@@ -318,8 +318,8 @@ bool_t TokenStream::is_name( Oop * addr ) {
 }
 
 
-bool_t TokenStream::is_symbol( Oop * addr ) {
-    char     name[200];
+bool_t TokenStream::is_symbol( Oop *addr ) {
+    char          name[200];
     std::uint32_t length;
     if ( sscanf( current(), "#%[a-zA-Z0-9_]%u", name, &length ) == 1 and strlen( current() ) == length ) {
         *addr = oopFactory::new_symbol( name );
@@ -330,7 +330,7 @@ bool_t TokenStream::is_symbol( Oop * addr ) {
 
 
 bool_t TokenStream::is_unary() {
-    char     name[40];
+    char          name[40];
     std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length;
 }
@@ -342,13 +342,13 @@ bool_t TokenStream::is_binary() {
 
 
 bool_t TokenStream::is_keyword() {
-    char     name[40];
+    char          name[40];
     std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]:%u", name, &length ) == 1 and strlen( current() ) == length;
 }
 
 
-bool_t evaluator::get_oop( TokenStream * stream, Oop * addr ) {
+bool_t evaluator::get_oop( TokenStream *stream, Oop *addr ) {
 
     if ( stream->is_smi( addr ) ) {
         stream->advance();
@@ -387,7 +387,7 @@ bool_t validate_lookup( Oop receiver, SymbolOop selector ) {
 }
 
 
-void evaluator::eval_message( TokenStream * stream ) {
+void evaluator::eval_message( TokenStream *stream ) {
     Oop       receiver;
     Oop       result = nilObj;
     SymbolOop selector;
@@ -436,7 +436,7 @@ void evaluator::eval_message( TokenStream * stream ) {
 }
 
 
-void evaluator::top_command( TokenStream * stream ) {
+void evaluator::top_command( TokenStream *stream ) {
     int number_of_frames_to_show = 10;
     stream->advance();
     if ( not stream->eos() ) {
@@ -453,7 +453,7 @@ void evaluator::top_command( TokenStream * stream ) {
 }
 
 
-void evaluator::change_debug_flag( TokenStream * stream, bool_t value ) {
+void evaluator::change_debug_flag( TokenStream *stream, bool_t value ) {
     stream->advance();
     if ( not stream->eos() ) {
         stream->current();
@@ -471,7 +471,7 @@ void evaluator::change_debug_flag( TokenStream * stream, bool_t value ) {
 }
 
 
-void evaluator::show_command( TokenStream * stream ) {
+void evaluator::show_command( TokenStream *stream ) {
     int start_frame              = 1;
     int number_of_frames_to_show = 1;
 
@@ -496,7 +496,7 @@ void evaluator::show_command( TokenStream * stream ) {
 }
 
 
-bool_t evaluator::process_line( const char * line ) {
+bool_t evaluator::process_line( const char *line ) {
 
     TokenStream stream( line );
     if ( stream.eos() )
@@ -641,18 +641,18 @@ void evaluator::print_mini_help() {
 
 
 class ProcessStatusClosure : public ProcessClosure {
-    private:
-        int index;
-    public:
-        ProcessStatusClosure() {
-            index = 1;
-        }
+private:
+    int index;
+public:
+    ProcessStatusClosure() {
+        index = 1;
+    }
 
 
-        void do_process( DeltaProcess * p ) {
-            _console->print( " %d:%s ", index++, DeltaProcess::active() == p ? "*" : " " );
-            p->print();
-        }
+    void do_process( DeltaProcess *p ) {
+        _console->print( " %d:%s ", index++, DeltaProcess::active() == p ? "*" : " " );
+        p->print();
+    }
 };
 
 

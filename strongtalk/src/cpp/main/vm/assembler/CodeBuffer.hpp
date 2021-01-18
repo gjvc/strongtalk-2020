@@ -13,60 +13,60 @@
 
 class CodeBuffer : public PrintableResourceObject {
 
-    private:
-        const char * _codeStart;
-        char       * _codeEnd;
-        const char * _codeOverflow;
+private:
+    const char *_codeStart;
+    char       *_codeEnd;
+    const char *_codeOverflow;
 
-        RelocationInformation * _locsStart;
-        RelocationInformation * _locsEnd;
-        RelocationInformation * _locsOverflow;
-        int _last_reloc_offset;
+    RelocationInformation *_locsStart;
+    RelocationInformation *_locsEnd;
+    RelocationInformation *_locsOverflow;
+    int _last_reloc_offset;
 
-        const char * _decode_begin;
+    const char *_decode_begin;
 
-        const char * decode_begin();
+    const char *decode_begin();
 
-    public:
-        CodeBuffer( const char * code_start, int code_size );
+public:
+    CodeBuffer( const char *code_start, int code_size );
 
-        CodeBuffer( int instsSize, int locsSize );
-
-
-        const char * code_begin() const {
-            return _codeStart;
-        };
+    CodeBuffer( int instsSize, int locsSize );
 
 
-        const char * code_end() const {
-            return _codeEnd;
-        }
+    const char *code_begin() const {
+        return _codeStart;
+    };
 
 
-        const char * code_limit() const {
-            return _codeOverflow;
-        }
+    const char *code_end() const {
+        return _codeEnd;
+    }
 
 
-        int code_size() const {
-            return _codeEnd - _codeStart;
-        }
+    const char *code_limit() const {
+        return _codeOverflow;
+    }
 
 
-        int reloc_size() const {
-            return ( _locsEnd - _locsStart ) * sizeof( RelocationInformation );
-        }
+    int code_size() const {
+        return _codeEnd - _codeStart;
+    }
 
 
-        void set_code_end( const char * end );
+    int reloc_size() const {
+        return ( _locsEnd - _locsStart ) * sizeof( RelocationInformation );
+    }
 
-        void relocate( const char * at, RelocationInformation::RelocationType rtype );
 
-        void decode();
+    void set_code_end( const char *end );
 
-        void decode_all();
+    void relocate( const char *at, RelocationInformation::RelocationType rtype );
 
-        void copyTo( NativeMethod * nm );
+    void decode();
 
-        void print();
+    void decode_all();
+
+    void copyTo( NativeMethod *nm );
+
+    void print();
 };

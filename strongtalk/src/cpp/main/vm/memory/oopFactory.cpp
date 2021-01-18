@@ -26,12 +26,12 @@
 
 
 ByteArrayOop oopFactory::new_byteArray( int size ) {
-    ByteArrayKlass * bk = ( ByteArrayKlass * ) Universe::byteArrayKlassObj()->klass_part();
+    ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObj()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
 }
 
 
-ByteArrayOop oopFactory::new_byteArray( const char * name ) {
+ByteArrayOop oopFactory::new_byteArray( const char *name ) {
     int          len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
@@ -43,18 +43,18 @@ ByteArrayOop oopFactory::new_byteArray( const char * name ) {
 
 
 ObjectArrayOop oopFactory::new_objArray( int size ) {
-    ObjectArrayKlass * ok = ( ObjectArrayKlass * ) Universe::objArrayKlassObj()->klass_part();
+    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
     return result;
 }
 
 
-ObjectArrayOop oopFactory::new_objArray( GrowableArray <Oop> * array ) {
+ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
     int size = array->length();
-    ObjectArrayKlass * ok = ( ObjectArrayKlass * ) Universe::objArrayKlassObj()->klass_part();
+    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
@@ -83,12 +83,12 @@ DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
 }
 
 
-SymbolOop oopFactory::new_symbol( const char * name, int len ) {
+SymbolOop oopFactory::new_symbol( const char *name, int len ) {
     return Universe::symbol_table->lookup( name, len );
 }
 
 
-SymbolOop oopFactory::new_symbol( const char * name ) {
+SymbolOop oopFactory::new_symbol( const char *name ) {
     return new_symbol( name, strlen( name ) );
 }
 
@@ -110,7 +110,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_
 
 VirtualFrameOop oopFactory::new_vframe( ProcessOop process, int index ) {
     BlockScavenge bs;
-    VirtualFrameKlass * vk = ( VirtualFrameKlass * ) Universe::vframeKlassObj()->klass_part();
+    VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObj()->klass_part();
 
     VirtualFrameOop result = VirtualFrameOop( vk->allocateObject() );
 

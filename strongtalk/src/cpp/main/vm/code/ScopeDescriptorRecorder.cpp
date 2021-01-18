@@ -16,7 +16,7 @@
 #include "vm/compiler/Compiler.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
-extern Compiler * theCompiler;
+extern Compiler *theCompiler;
 
 //
 // Todo list
@@ -48,7 +48,7 @@ const std::uint8_t ScopeDescriptorHeaderByte::_exprStackBitNum    = _codeWidth +
 const std::uint8_t ScopeDescriptorHeaderByte::_contextBitNum      = _codeWidth + 5;                // 1 bit:  has context
 
 
-NameNode * newValueName( Oop value ) {
+NameNode *newValueName( Oop value ) {
     if ( value->is_block() ) {
         st_fatal( "should never be a block" );
         return nullptr;
@@ -58,13 +58,13 @@ NameNode * newValueName( Oop value ) {
 }
 
 
-bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder * rec, std::uint8_t code, bool_t is_last, int index ) {
+bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, int index ) {
     // Since id is most likely to be 0, the info part of the header byte indicates if is is non zero.
     // Experiments show id is zero in at least 90% of the generated nameDescs.
     // returns true if index could be inlined in headerByte.
     nameDescHeaderByte b;
     bool_t             can_inline  = index <= b._maxIndex;
-    std::uint8_t            coded_index = can_inline ? index : b._noIndex;
+    std::uint8_t       coded_index = can_inline ? index : b._noIndex;
     b.pack( code, is_last, coded_index );
     rec->_codes->appendByte( b.value() );
 
@@ -81,7 +81,7 @@ int ScopeDescriptorRecorder::getValueIndex( int v ) {
 
 
 int ScopeDescriptorRecorder::getOopIndex( Oop o ) {
-    return o == 0 ? 0 : _oops->insertIfAbsent( ( int ) o ) + 1;
+    return o == 0 ? 0 : _oops->insertIfAbsent( (int) o ) + 1;
 }
 
 
@@ -99,7 +99,7 @@ void ScopeDescriptorRecorder::emit_termination_node() {
 }
 
 
-void IllegalName::generate( ScopeDescriptorRecorder * rec, bool_t is_last ) {
+void IllegalName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     rec->emit_illegal_node( is_last );
 }
 
@@ -111,11 +111,11 @@ void ScopeDescriptorRecorder::generate() {
     generateDependencies();
 
     _programCounterDescriptorInfo->mark_scopes();
-    ( void ) _root->computeVisibility();
+    (void) _root->computeVisibility();
     _root->generate( this, 0, false );
     _root->generateBody( this, 0 );
 
-    for ( NonInlinedBlockScopeNode * p = _nonInlinedBlockScopeNode; p not_eq nullptr; p = p->_next ) {
+    for ( NonInlinedBlockScopeNode *p = _nonInlinedBlockScopeNode; p not_eq nullptr; p = p->_next ) {
         p->generate( this );
     }
 
@@ -129,7 +129,7 @@ void ScopeDescriptorRecorder::generateDependencies() {
 
     for ( int index = 0; index < _dependents->length(); index++ ) {
 
-        int i = _oops->insertIfAbsent( ( int ) _dependents->at( index ) );
+        int i = _oops->insertIfAbsent( (int) _dependents->at( index ) );
         if ( i > end_marker )
             end_marker = i;
     }
@@ -150,7 +150,7 @@ ScopeInfo ScopeDescriptorRecorder::addScope( ScopeInfo scope, ScopeInfo senderSc
 }
 
 
-NonInlinedBlockScopeNode * ScopeDescriptorRecorder::addNonInlinedBlockScope( NonInlinedBlockScopeNode * scope ) {
+NonInlinedBlockScopeNode *ScopeDescriptorRecorder::addNonInlinedBlockScope( NonInlinedBlockScopeNode *scope ) {
     scope->_next = nullptr;
     if ( _nonInlinedBlockScopeNode == nullptr ) {
         _nonInlinedBlockScopeNode = _nonInlinedBlockScopesTail = scope;
@@ -169,13 +169,13 @@ int ScopeDescriptorRecorder::offset( ScopeInfo scope ) {
 }
 
 
-int ScopeDescriptorRecorder::offset_for_noninlined_scope_node( NonInlinedBlockScopeNode * scope ) {
+int ScopeDescriptorRecorder::offset_for_noninlined_scope_node( NonInlinedBlockScopeNode *scope ) {
     st_assert( scope->_offset not_eq INVALID_OFFSET, "uninitialized offset" );
     return scope->_offset;
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey * key, MethodOop method, LogicalAddress * receiver_location, bool_t allocates_compiled_context, bool_t lite, int scopeID, ScopeInfo senderScope, int senderByteCodeIndex, bool_t visible ) {
+ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, int scopeID, ScopeInfo senderScope, int senderByteCodeIndex, bool_t visible ) {
     return addScope( new MethodScopeNode( key, method, receiver_location, allocates_compiled_context, lite, scopeID, senderByteCodeIndex, visible ), senderScope );
 }
 
@@ -185,47 +185,47 @@ ScopeInfo ScopeDescriptorRecorder::addBlockScope( MethodOop method, ScopeInfo pa
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addTopLevelBlockScope( MethodOop method, LogicalAddress * receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) {
+ScopeInfo ScopeDescriptorRecorder::addTopLevelBlockScope( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) {
     return addScope( new TopLevelBlockScopeNode( method, receiver_location, receiver_klass, allocates_compiled_context ), nullptr );
 }
 
 
-NonInlinedBlockScopeNode * ScopeDescriptorRecorder::addNonInlinedBlockScope( MethodOop method, ScopeInfo parent ) {
+NonInlinedBlockScopeNode *ScopeDescriptorRecorder::addNonInlinedBlockScope( MethodOop method, ScopeInfo parent ) {
 
     return addNonInlinedBlockScope( new NonInlinedBlockScopeNode( method, parent ) );
 }
 
 
-void ScopeDescriptorRecorder::addArgument( ScopeInfo scope, int index, LogicalAddress * location ) {
+void ScopeDescriptorRecorder::addArgument( ScopeInfo scope, int index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add slot to lite scopeDesc" );
     scope->_arg_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addTemporary( ScopeInfo scope, int index, LogicalAddress * location ) {
+void ScopeDescriptorRecorder::addTemporary( ScopeInfo scope, int index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add slot to lite scopeDesc" );
     scope->_temp_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addExprStack( ScopeInfo scope, int index, LogicalAddress * location ) {
+void ScopeDescriptorRecorder::addExprStack( ScopeInfo scope, int index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add expression to lite scopeDesc" );
     scope->_expr_stack_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addContextTemporary( ScopeInfo scope, int index, LogicalAddress * location ) {
+void ScopeDescriptorRecorder::addContextTemporary( ScopeInfo scope, int index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add expression to lite scopeDesc" );
     scope->_context_temp_list->at_put_grow( index, location );
 }
 
 
-LogicalAddress * ScopeDescriptorRecorder::createLogicalAddress( NameNode * initial_value ) {
+LogicalAddress *ScopeDescriptorRecorder::createLogicalAddress( NameNode *initial_value ) {
     return new LogicalAddress( initial_value );
 }
 
 
-void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress * location, NameNode * new_value, int pc_offset ) {
+void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress *location, NameNode *new_value, int pc_offset ) {
     location->append( new_value, pc_offset );
 }
 
@@ -316,7 +316,7 @@ ScopeDescriptorRecorder::ScopeDescriptorRecorder( int byte_size, int pcDesc_size
     _codes                        = new ByteArray( byte_size );
     _programCounterDescriptorInfo = new ProgramCounterDescriptorInfoClass( pcDesc_size );
 
-    _dependents = new GrowableArray <KlassOop>( INITIAL_DEPENDENTS_SIZE );
+    _dependents = new GrowableArray<KlassOop>( INITIAL_DEPENDENTS_SIZE );
 
     _hasCodeBeenGenerated = false;
 
@@ -325,33 +325,33 @@ ScopeDescriptorRecorder::ScopeDescriptorRecorder( int byte_size, int pcDesc_size
 }
 
 
-void ScopeDescriptorRecorder::copyTo( NativeMethod * nativeMethod ) {
+void ScopeDescriptorRecorder::copyTo( NativeMethod *nativeMethod ) {
 
     // destination
-    NativeMethodScopes * d = ( NativeMethodScopes * ) nativeMethod->scopes();
+    NativeMethodScopes *d = (NativeMethodScopes *) nativeMethod->scopes();
 
     // Copy the body part of the NativeMethodScopes
-    int * start = ( int * ) ( d + 1 );
-    int * p     = start;
+    int *start = (int *) ( d + 1 );
+    int *p     = start;
 
-    d->set_nativeMethodOffset( ( const char * ) d - ( const char * ) nativeMethod );
+    d->set_nativeMethodOffset( (const char *) d - (const char *) nativeMethod );
 
     _codes->copy_to( p );
 
-    d->set_oops_offset( ( const char * ) p - ( const char * ) start );
+    d->set_oops_offset( (const char *) p - (const char *) start );
     _oops->copy_to( p );
 
-    d->set_value_offset( ( const char * ) p - ( const char * ) start );
+    d->set_value_offset( (const char *) p - (const char *) start );
     _values->copy_to( p );
 
-    d->set_pcs_offset( ( const char * ) p - ( const char * ) start );
+    d->set_pcs_offset( (const char *) p - (const char *) start );
     _programCounterDescriptorInfo->copy_to( p );
 
-    d->set_length( ( const char * ) p - ( const char * ) start );
+    d->set_length( (const char *) p - (const char *) start );
 
     d->set_dependents_end( _dependentsEnd );
 
-    st_assert( ( const char * ) d + size() == ( const char * ) p, "wrong size of NativeMethodScopes" );
+    st_assert( (const char *) d + size() == (const char *) p, "wrong size of NativeMethodScopes" );
 }
 
 
@@ -362,25 +362,25 @@ void ScopeDescriptorRecorder::addProgramCounterDescriptor( int pcOffset, ScopeIn
 }
 
 
-void ScopeDescriptorRecorder::add_dependent( LookupKey * key ) {
+void ScopeDescriptorRecorder::add_dependent( LookupKey *key ) {
     // make this NativeMethod dependent on the receiver klass of the lookup key.
     _dependents->append( key->klass() );
 }
 
 
 // Please encapsulate iterator.
-ScopeDescriptor    * _sd;
-NativeMethodScopes * _scopes;
+ScopeDescriptor    *_sd;
+NativeMethodScopes *_scopes;
 
 
-ScopeDescriptor * _getNextScopeDescriptor() {
+ScopeDescriptor *_getNextScopeDescriptor() {
     _sd = _scopes->getNext( _sd );
     if ( _sd == nullptr ) st_fatal( "out of ScopeDescriptor instances" );
     return _sd;
 }
 
 
-void ScopeDescriptorRecorder::verify( NativeMethodScopes * scopes ) {
+void ScopeDescriptorRecorder::verify( NativeMethodScopes *scopes ) {
     // Initialize iterator
     _scopes = scopes;
     _sd     = nullptr;

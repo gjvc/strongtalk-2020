@@ -22,7 +22,7 @@ bool_t DoubleByteArrayOopDescriptor::verify() {
 }
 
 
-void DoubleByteArrayOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void DoubleByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
 
@@ -42,7 +42,7 @@ static int sub_sign( int a, int b ) {
 }
 
 
-int compare_as_doubleBytes( const std::uint16_t * a, const std::uint16_t * b ) {
+int compare_as_doubleBytes( const std::uint16_t *a, const std::uint16_t *b ) {
     // machine dependent code; little endian code
     if ( a[ 0 ] - b[ 0 ] )
         return sub_sign( a[ 0 ], b[ 0 ] );
@@ -53,17 +53,17 @@ int compare_as_doubleBytes( const std::uint16_t * a, const std::uint16_t * b ) {
 
 int DoubleByteArrayOopDescriptor::compare( DoubleByteArrayOop arg ) {
     // Get the addresses of the length fields
-    const std::uint32_t * a = ( const std::uint32_t * ) length_addr();
-    const std::uint32_t * b = ( const std::uint32_t * ) arg->length_addr();
+    const std::uint32_t *a = (const std::uint32_t *) length_addr();
+    const std::uint32_t *b = (const std::uint32_t *) arg->length_addr();
 
     // Get the word sizes of the arays
     int a_size = roundTo( SMIOop( *a++ )->value() * sizeof( std::uint16_t ), sizeof( int ) ) / sizeof( int );
     int b_size = roundTo( SMIOop( *b++ )->value() * sizeof( std::uint16_t ), sizeof( int ) ) / sizeof( int );
 
-    const std::uint32_t * a_end = a + min( a_size, b_size );
+    const std::uint32_t *a_end = a + min( a_size, b_size );
     while ( a < a_end ) {
         if ( *b++ not_eq *a++ )
-            return compare_as_doubleBytes( ( const std::uint16_t * ) ( a - 1 ), ( const std::uint16_t * ) ( b - 1 ) );
+            return compare_as_doubleBytes( (const std::uint16_t *) ( a - 1 ), (const std::uint16_t *) ( b - 1 ) );
     }
     return sub_sign( a_size, b_size );
 }
@@ -113,7 +113,7 @@ int DoubleByteArrayOopDescriptor::hash_value() {
 }
 
 
-bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char * buffer, int max_length ) {
+bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, int max_length ) {
 
     int    len          = length();
     bool_t is_truncated = false;
@@ -123,7 +123,7 @@ bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char * buffer, int ma
     }
 
     for ( int i = 0; i < len; i++ )
-        buffer[ i ] = ( char ) doubleByte_at( i + 1 );
+        buffer[ i ] = (char) doubleByte_at( i + 1 );
 
     buffer[ len ] = '\0';
 
@@ -131,12 +131,12 @@ bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char * buffer, int ma
 }
 
 
-char * DoubleByteArrayOopDescriptor::as_string() {
+char *DoubleByteArrayOopDescriptor::as_string() {
     int len = length();
-    char * str = new_resource_array <char>( len + 1 );
+    char *str = new_resource_array<char>( len + 1 );
     int index    = 0;
     for ( ; index < len; index++ ) {
-        str[ index ] = ( char ) doubleByte_at( index + 1 );
+        str[ index ] = (char) doubleByte_at( index + 1 );
     }
     str[ index ] = '\0';
     return str;

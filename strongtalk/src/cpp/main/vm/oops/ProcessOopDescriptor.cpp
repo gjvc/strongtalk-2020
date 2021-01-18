@@ -7,7 +7,7 @@
 #include "vm/memory/vmSymbols.hpp"
 
 
-void ProcessOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void ProcessOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
     set_process( nullptr );
     MemOopDescriptor::bootstrap_body( stream, header_size() );

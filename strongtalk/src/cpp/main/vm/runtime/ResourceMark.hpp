@@ -23,40 +23,40 @@ class AbstractResourceMark : StackAllocatedObject {
 
 class ResourceMark : StackAllocatedObject {
 
-    protected:
-        static bool_t _enabled;
-        ResourceArea      * _resourceArea;
-        ResourceAreaChunk * _resourceAreaChunk;
-        char              * _top;
+protected:
+    static bool_t _enabled;
+    ResourceArea      *_resourceArea;
+    ResourceAreaChunk *_resourceAreaChunk;
+    char              *_top;
 
-    public:
-        ResourceMark();
+public:
+    ResourceMark();
 
-        ~ResourceMark();
+    ~ResourceMark();
 };
 
 
 class HeapResourceMark : public CHeapAllocatedObject, public ResourceMark {
-    public:
-        HeapResourceMark() :
+public:
+    HeapResourceMark() :
             ResourceMark() {
-        };
+    };
 
 
-        void * operator new( std::size_t size ) {
-            return CHeapAllocatedObject::operator new( size );
-        }
+    void *operator new( std::size_t size ) {
+        return CHeapAllocatedObject::operator new( size );
+    }
 
 
-        void operator delete( void * p ) {
-            CHeapAllocatedObject::operator delete( p );
-        }
+    void operator delete( void *p ) {
+        CHeapAllocatedObject::operator delete( p );
+    }
 };
 
 
 class FinalResourceMark : public ResourceMark {
-    public:
-        FinalResourceMark();
+public:
+    FinalResourceMark();
 
-        ~FinalResourceMark();
+    ~FinalResourceMark();
 };

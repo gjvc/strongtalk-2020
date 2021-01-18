@@ -14,11 +14,11 @@
 
 extern "C" {
 
-void pp( void * p );
+void pp( void *p );
 void urs_ps();
 
-void pp_short( void * p );
+void pp_short( void *p );
 void pr( Oop p );
-void pm( Klass * p );
+void pm( Klass *p );
 
 }

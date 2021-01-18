@@ -61,288 +61,288 @@ class NativeMethod;
 
 class Frame : ValueObject {
 
-    private:
-        Oop        * _sp; // stack pointer
-        int        * _fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
-        const char * _pc; // program counter
+private:
+    Oop        *_sp; // stack pointer
+    int        *_fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
+    const char *_pc; // program counter
 
-    public:
-        Frame() {
-        }
+public:
+    Frame() {
+    }
 
 
-        Frame( Oop * sp, int * fp, const char * pc ) {
-            _sp = sp;
-            _fp = fp;
-            _pc = pc;
-        }
+    Frame( Oop *sp, int *fp, const char *pc ) {
+        _sp = sp;
+        _fp = fp;
+        _pc = pc;
+    }
 
 
-        Frame( Oop * sp, int * fp ) {
-            _sp = sp;
-            _fp = fp;
-            _pc = ( const char * ) sp[ -1 ];
-        }
+    Frame( Oop *sp, int *fp ) {
+        _sp = sp;
+        _fp = fp;
+        _pc = (const char *) sp[ -1 ];
+    }
 
 
-        Oop * sp() const {
-            return _sp;
-        }
+    Oop *sp() const {
+        return _sp;
+    }
 
 
-        int * fp() const {
-            return _fp;
-        } // should return void **
+    int *fp() const {
+        return _fp;
+    } // should return void **
 
-        const char * pc() const {
-            return _pc;
-        }
+    const char *pc() const {
+        return _pc;
+    }
 
 
-        // patching operations
-        void patch_pc( const char * pc ); // patch the return address of the frame below.
-        void patch_fp( int * fp ); // patch the link of the frame below.
+    // patching operations
+    void patch_pc( const char *pc ); // patch the return address of the frame below.
+    void patch_fp( int *fp ); // patch the link of the frame below.
 
-        int * addr_at( int index ) const {
-            return &fp()[ index ];
-        } // should return void **
+    int *addr_at( int index ) const {
+        return &fp()[ index ];
+    } // should return void **
 
-        int at( int index ) const {
-            return *addr_at( index );
-        } // should really return void *
+    int at( int index ) const {
+        return *addr_at( index );
+    } // should really return void *
 
-    private:
-        int ** link_addr() const {
-            return ( int ** ) addr_at( frame_link_offset );
-        }
+private:
+    int **link_addr() const {
+        return (int **) addr_at( frame_link_offset );
+    }
 
 
-        const char ** return_addr_addr() const {
-            return ( const char ** ) addr_at( frame_return_addr_offset );
-        }
+    const char **return_addr_addr() const {
+        return (const char **) addr_at( frame_return_addr_offset );
+    }
 
 
-        // support for interpreter frames
-        Oop * receiver_addr() const {
-            return ( Oop * ) addr_at( frame_receiver_offset );
-        }
+    // support for interpreter frames
+    Oop *receiver_addr() const {
+        return (Oop *) addr_at( frame_receiver_offset );
+    }
 
 
-        std::uint8_t ** hp_addr() const {
-            return ( std::uint8_t ** ) addr_at( frame_hp_offset );
-        }
+    std::uint8_t **hp_addr() const {
+        return (std::uint8_t **) addr_at( frame_hp_offset );
+    }
 
 
-        Oop * arg_addr( int off ) const {
-            return ( Oop * ) addr_at( frame_arg_offset + off );
-        }
+    Oop *arg_addr( int off ) const {
+        return (Oop *) addr_at( frame_arg_offset + off );
+    }
 
 
-    public:
-        // returns the stack pointer of the calling frame
-        Oop * sender_sp() const {
-            return ( Oop * ) addr_at( frame_sender_sp_offset );
-        }
+public:
+    // returns the stack pointer of the calling frame
+    Oop *sender_sp() const {
+        return (Oop *) addr_at( frame_sender_sp_offset );
+    }
 
 
-        // Link
-        int * link() const {
-            return *link_addr();
-        }
+    // Link
+    int *link() const {
+        return *link_addr();
+    }
 
 
-        void set_link( int * addr ) {
-            *link_addr() = addr;
-        }
+    void set_link( int *addr ) {
+        *link_addr() = addr;
+    }
 
 
-        // Return address
-        const char * return_addr() const {
-            return *return_addr_addr();
-        }
+    // Return address
+    const char *return_addr() const {
+        return *return_addr_addr();
+    }
 
 
-        void set_return_addr( const char * addr ) {
-            *return_addr_addr() = addr;
-        }
+    void set_return_addr( const char *addr ) {
+        *return_addr_addr() = addr;
+    }
 
 
-        // Receiver
-        Oop receiver() const {
-            return *receiver_addr();
-        }
+    // Receiver
+    Oop receiver() const {
+        return *receiver_addr();
+    }
 
 
-        void set_receiver( Oop recv ) {
-            *receiver_addr() = recv;
-        }
+    void set_receiver( Oop recv ) {
+        *receiver_addr() = recv;
+    }
 
 
-        // Temporaries
-        Oop temp( int offset ) const {
-            return *temp_addr( offset );
-        }
+    // Temporaries
+    Oop temp( int offset ) const {
+        return *temp_addr( offset );
+    }
 
 
-        void set_temp( int offset, Oop obj ) {
-            *temp_addr( offset ) = obj;
-        }
+    void set_temp( int offset, Oop obj ) {
+        *temp_addr( offset ) = obj;
+    }
 
 
-        Oop * temp_addr( int offset ) const {
-            return ( Oop * ) addr_at( frame_temp_offset - offset );
-        }
+    Oop *temp_addr( int offset ) const {
+        return (Oop *) addr_at( frame_temp_offset - offset );
+    }
 
 
-        // Arguments
-        Oop arg( int offset ) const {
-            return *arg_addr( offset );
-        }
+    // Arguments
+    Oop arg( int offset ) const {
+        return *arg_addr( offset );
+    }
 
 
-        void set_arg( int offset, Oop obj ) {
-            *arg_addr( offset ) = obj;
-        }
+    void set_arg( int offset, Oop obj ) {
+        *arg_addr( offset ) = obj;
+    }
 
 
-        // Expressions
-        Oop expr( int index ) const {
-            return ( ( Oop * ) sp() )[ index ];
-        }
+    // Expressions
+    Oop expr( int index ) const {
+        return ( (Oop *) sp() )[ index ];
+    }
 
 
-        // Hybrid Code Pointer (interpreted frames only); corresponds to "current PC", not return address
-        std::uint8_t * hp() const;
+    // Hybrid Code Pointer (interpreted frames only); corresponds to "current PC", not return address
+    std::uint8_t *hp() const;
 
-        void set_hp( std::uint8_t * hp );
+    void set_hp( std::uint8_t *hp );
 
-        // Returns the method for a valid hp() or nullptr if frame not set up yet (interpreted frames only)
-        // Used by the profiler which means we must check for
-        // valid frame before using the hp value.
-        MethodOop method() const;
+    // Returns the method for a valid hp() or nullptr if frame not set up yet (interpreted frames only)
+    // Used by the profiler which means we must check for
+    // valid frame before using the hp value.
+    MethodOop method() const;
 
-        // compiled code (compiled frames only)
-        NativeMethod * code() const;
+    // compiled code (compiled frames only)
+    NativeMethod *code() const;
 
-    private:
-        // Float support
-        inline bool_t has_interpreted_float_marker() const;
+private:
+    // Float support
+    inline bool_t has_interpreted_float_marker() const;
 
-        bool_t oop_iterate_interpreted_float_frame( OopClosure * blk );
+    bool_t oop_iterate_interpreted_float_frame( OopClosure *blk );
 
-        bool_t follow_roots_interpreted_float_frame();
+    bool_t follow_roots_interpreted_float_frame();
 
-        inline bool_t has_compiled_float_marker() const;
+    inline bool_t has_compiled_float_marker() const;
 
-        bool_t oop_iterate_compiled_float_frame( OopClosure * blk );
+    bool_t oop_iterate_compiled_float_frame( OopClosure *blk );
 
-        bool_t follow_roots_compiled_float_frame();
+    bool_t follow_roots_compiled_float_frame();
 
-    public:
+public:
 
-        // Accessors for (deoptimized frames only)
-        ObjectArrayOop * frame_array_addr() const;
+    // Accessors for (deoptimized frames only)
+    ObjectArrayOop *frame_array_addr() const;
 
-        Oop ** real_sender_sp_addr() const;
+    Oop **real_sender_sp_addr() const;
 
-        ObjectArrayOop frame_array() const;
+    ObjectArrayOop frame_array() const;
 
 
-        void set_frame_array( ObjectArrayOop a ) {
-            *frame_array_addr() = a;
-        }
+    void set_frame_array( ObjectArrayOop a ) {
+        *frame_array_addr() = a;
+    }
 
 
-        Oop * real_sender_sp() const {
-            return *real_sender_sp_addr();
-        }
+    Oop *real_sender_sp() const {
+        return *real_sender_sp_addr();
+    }
 
 
-        void set_real_sender_sp( Oop * addr ) {
-            *real_sender_sp_addr() = addr;
-        }
+    void set_real_sender_sp( Oop *addr ) {
+        *real_sender_sp_addr() = addr;
+    }
 
 
-        // returns the frame size in oops
-        int frame_size() const {
-            return sender_sp() - sp();
-        }
+    // returns the frame size in oops
+    int frame_size() const {
+        return sender_sp() - sp();
+    }
 
 
-        // returns the the sending frame
-        Frame sender() const;
+    // returns the the sending frame
+    Frame sender() const;
 
-        // returns the the sending Delta frame, skipping any intermediate C frames
-        // NB: receiver must not be first frame
-        Frame delta_sender() const;
+    // returns the the sending Delta frame, skipping any intermediate C frames
+    // NB: receiver must not be first frame
+    Frame delta_sender() const;
 
-        // tells whether there is another chunk of Delta stack above (entry frames only)
-        bool_t has_next_Delta_fp() const;
+    // tells whether there is another chunk of Delta stack above (entry frames only)
+    bool_t has_next_Delta_fp() const;
 
-        // returns the next C entry frame (entry frames only)
-        int * next_Delta_fp() const;
+    // returns the next C entry frame (entry frames only)
+    int *next_Delta_fp() const;
 
-        Oop * next_Delta_sp() const;
+    Oop *next_Delta_sp() const;
 
-        bool_t is_first_frame() const;            // oldest frame? (has no sender)
-        bool_t is_first_delta_frame() const;        // same for Delta frame
+    bool_t is_first_frame() const;            // oldest frame? (has no sender)
+    bool_t is_first_delta_frame() const;        // same for Delta frame
 
-        // testers
-        bool_t is_interpreted_frame() const;
+    // testers
+    bool_t is_interpreted_frame() const;
 
-        bool_t is_compiled_frame() const;
+    bool_t is_compiled_frame() const;
 
 
-        bool_t is_delta_frame() const {
-            return is_interpreted_frame() or is_compiled_frame();
-        }
+    bool_t is_delta_frame() const {
+        return is_interpreted_frame() or is_compiled_frame();
+    }
 
 
-        bool_t should_be_deoptimized() const;
+    bool_t should_be_deoptimized() const;
 
-        bool_t is_entry_frame() const;        // Delta frame called from C?
-        bool_t is_deoptimized_frame() const;
+    bool_t is_entry_frame() const;        // Delta frame called from C?
+    bool_t is_deoptimized_frame() const;
 
-        // inline caches
-        InlineCacheIterator * sender_ic_iterator() const;    // sending InlineCache (nullptr if entry frame or if a perform rather than a send)
-        InlineCacheIterator * current_ic_iterator() const;    // current InlineCache (will break if not at a send or perform)
-        InterpretedInlineCache * current_interpretedIC() const;    // current InlineCache in this frame; nullptr if not is_interpreted_frame
-        CompiledInlineCache * current_compiledIC() const;    // current InlineCache in this frame; nullptr if not is_compiled_frame
+    // inline caches
+    InlineCacheIterator *sender_ic_iterator() const;    // sending InlineCache (nullptr if entry frame or if a perform rather than a send)
+    InlineCacheIterator *current_ic_iterator() const;    // current InlineCache (will break if not at a send or perform)
+    InterpretedInlineCache *current_interpretedIC() const;    // current InlineCache in this frame; nullptr if not is_interpreted_frame
+    CompiledInlineCache *current_compiledIC() const;    // current InlineCache in this frame; nullptr if not is_compiled_frame
 
-        // Iterators
-        void oop_iterate( OopClosure * blk );
+    // Iterators
+    void oop_iterate( OopClosure *blk );
 
-        void layout_iterate( FrameLayoutClosure * blk );
+    void layout_iterate( FrameLayoutClosure *blk );
 
-        // For debugging
-    private:
-        const char * print_name() const;
+    // For debugging
+private:
+    const char *print_name() const;
 
-    public:
-        void verify() const;
+public:
+    void verify() const;
 
-        void print() const;
+    void print() const;
 
-        // Prints the frame in a format useful when debugging deoptimization.
-        void print_for_deoptimization( ConsoleOutputStream * stream );
+    // Prints the frame in a format useful when debugging deoptimization.
+    void print_for_deoptimization( ConsoleOutputStream *stream );
 
-        // Garbage collection operations
-        void follow_roots();
+    // Garbage collection operations
+    void follow_roots();
 
-        void convert_heap_code_pointer();
+    void convert_heap_code_pointer();
 
-        void restore_heap_code_pointer();
+    void restore_heap_code_pointer();
 
 
-        // Returns the size of a number of interpreter frames in words.
-        // This is used during deoptimization.
-        static int interpreter_stack_size( int number_of_frames, int number_of_temporaries_and_locals ) {
-            return number_of_frames * interpreter_frame_size( 0 ) + number_of_temporaries_and_locals;
-        }
+    // Returns the size of a number of interpreter frames in words.
+    // This is used during deoptimization.
+    static int interpreter_stack_size( int number_of_frames, int number_of_temporaries_and_locals ) {
+        return number_of_frames * interpreter_frame_size( 0 ) + number_of_temporaries_and_locals;
+    }
 
 
-        // Returns the word size of an interpreter frame
-        static int interpreter_frame_size( int locals ) {
-            return frame_return_addr_offset - frame_temp_offset + locals;
-        }
+    // Returns the word size of an interpreter frame
+    static int interpreter_frame_size( int locals ) {
+        return frame_return_addr_offset - frame_temp_offset + locals;
+    }
 };

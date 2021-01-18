@@ -36,28 +36,28 @@ int oopPrimitives::number_of_calls;
 //}
 
 class TwoWayBecomeClosure : public ObjectClosure, public OopClosure {
-    private:
-        Oop target;
-        Oop replacement;
-    public:
-        TwoWayBecomeClosure( Oop target, Oop replacement ) :
+private:
+    Oop target;
+    Oop replacement;
+public:
+    TwoWayBecomeClosure( Oop target, Oop replacement ) :
             target( target ), replacement( replacement ) {
+    }
+
+
+    void do_object( MemOop obj ) {
+        obj->oop_iterate( this );
+    }
+
+
+    void do_oop( Oop *p ) {
+        Oop object = *p;
+        if ( object == target ) {
+            Universe::store( p, replacement, Universe::is_heap( p ) );
+        } else if ( object == replacement ) {
+            Universe::store( p, target, Universe::is_heap( p ) );
         }
-
-
-        void do_object( MemOop obj ) {
-            obj->oop_iterate( this );
-        }
-
-
-        void do_oop( Oop * p ) {
-            Oop object = *p;
-            if ( object == target ) {
-                Universe::store( p, replacement, Universe::is_heap( p ) );
-            } else if ( object == replacement ) {
-                Universe::store( p, target, Universe::is_heap( p ) );
-            }
-        }
+    }
 };
 
 

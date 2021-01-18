@@ -15,13 +15,13 @@ void DebugInfo::interceptForStep() {
 }
 
 
-void DebugInfo::interceptForNext( int * fr ) {
+void DebugInfo::interceptForNext( int *fr ) {
     _interceptorEntryPoint = &DispatchTable::intercept_for_next;
     _frameBreakpoint       = fr;
 }
 
 
-void DebugInfo::interceptForReturn( int * fr ) {
+void DebugInfo::interceptForReturn( int *fr ) {
     _interceptorEntryPoint = &DispatchTable::intercept_for_return;
     _frameBreakpoint       = fr;
 }

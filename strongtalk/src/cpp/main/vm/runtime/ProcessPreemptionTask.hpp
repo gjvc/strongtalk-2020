@@ -7,10 +7,10 @@
 
 
 class ProcessPreemptionTask : public PeriodicTask {
-    public:
-        ProcessPreemptionTask() :
+public:
+    ProcessPreemptionTask() :
             PeriodicTask( 1 ) {
-        };
+    };
 
-        void task();
+    void task();
 };

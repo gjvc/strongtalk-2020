@@ -15,35 +15,35 @@
 
 class Generation : ValueObject {
 
-    private:
-        friend class RememberedSet;
+private:
+    friend class RememberedSet;
 
-        friend class Universe;
+    friend class Universe;
 
-        friend class MarkSweep;
+    friend class MarkSweep;
 
-        friend class MemOopDescriptor;
+    friend class MemOopDescriptor;
 
-        friend class ByteArrayOopDescriptor;
+    friend class ByteArrayOopDescriptor;
 
-        friend class OldGeneration;
+    friend class OldGeneration;
 
-    protected:
-        // Minimum and maximum addresses, used by card marking code.
-        // Must not overlap with address ranges of other generation(s).
-        const char * _lowBoundary;
-        const char * _highBoundary;
-        VirtualSpace _virtualSpace;
+protected:
+    // Minimum and maximum addresses, used by card marking code.
+    // Must not overlap with address ranges of other generation(s).
+    const char *_lowBoundary;
+    const char *_highBoundary;
+    VirtualSpace _virtualSpace;
 
-    public:
-        // Space enquiries
-        virtual int capacity() = 0;
+public:
+    // Space enquiries
+    virtual int capacity() = 0;
 
-        virtual int used() = 0;
+    virtual int used() = 0;
 
-        virtual int free() = 0;
+    virtual int free() = 0;
 
-        void print();
+    void print();
 };
 
 
@@ -58,22 +58,24 @@ class Generation : ValueObject {
 //    for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
 //}
 
-inline void SCAVENGE_TEMPLATE( const auto & p ) {
-    *((Oop*) p) = Oop(*p)->scavenge();
+inline void SCAVENGE_TEMPLATE( const auto &p ) {
+    *( (Oop *) p ) = Oop( *p )->scavenge();
 }
 
-inline void VERIFY_TEMPLATE( const auto & p ) {
-    if (not Oop(*p)->verify()) {
-        lprintf("\tof object at %#lx\n", p);
+
+inline void VERIFY_TEMPLATE( const auto &p ) {
+    if ( not Oop( *p )->verify() ) {
+        lprintf( "\tof object at %#lx\n", p );
     }
 }
 
-inline void RELOCATE_TEMPLATE( const auto & p ) {
-    *((Oop*) p) = Oop(*p)->relocate();
+
+inline void RELOCATE_TEMPLATE( const auto &p ) {
+    *( (Oop *) p ) = Oop( *p )->relocate();
 }
 
 
-inline void SPACE_VERIFY_TEMPLATE( const auto & s ) {
+inline void SPACE_VERIFY_TEMPLATE( const auto &s ) {
     s->verify();
 }
 

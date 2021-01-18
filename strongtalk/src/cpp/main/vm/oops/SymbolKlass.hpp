@@ -15,66 +15,66 @@
 // symbolOops are canonical symbols; all symbolOops are registered in the symbol table
 
 class SymbolKlass : public ByteArrayKlass {
-    public:
-        // testers
-        bool_t oop_is_symbol() const {
-            return true;
-        }
+public:
+    // testers
+    bool_t oop_is_symbol() const {
+        return true;
+    }
 
 
-        // allocation properties
-        bool_t can_inline_allocation() const {
-            return false;
-        }
+    // allocation properties
+    bool_t can_inline_allocation() const {
+        return false;
+    }
 
 
-        // creates invocation
-        KlassOop create_subclass( MixinOop mixin, Format format );
+    // creates invocation
+    KlassOop create_subclass( MixinOop mixin, Format format );
 
-        static KlassOop create_class( KlassOop super_class, MixinOop mixin );
-
-
-        // Format
-        Format format() {
-            return Format::symbol_klass;
-        }
+    static KlassOop create_class( KlassOop super_class, MixinOop mixin );
 
 
-        // reflective properties
-        bool_t can_have_instance_variables() const {
-            return false;
-        }
+    // Format
+    Format format() {
+        return Format::symbol_klass;
+    }
 
 
-        bool_t can_be_subclassed() const {
-            return false;
-        }
+    // reflective properties
+    bool_t can_have_instance_variables() const {
+        return false;
+    }
 
 
-        // allocation operation
-        SymbolOop allocateSymbol( const char * name, int len );
-
-        // copy operation
-        Oop oop_shallow_copy( Oop obj, bool_t tenured );
-
-        // memory operations
-        Oop scavenge( Oop obj );
-
-        bool_t verify( Oop obj );
-
-        // printing operations
-        void oop_print_value_on( Oop obj, ConsoleOutputStream * stream );
+    bool_t can_be_subclassed() const {
+        return false;
+    }
 
 
-        const char * name() const {
-            return "symbol";
-        }
+    // allocation operation
+    SymbolOop allocateSymbol( const char *name, int len );
+
+    // copy operation
+    Oop oop_shallow_copy( Oop obj, bool_t tenured );
+
+    // memory operations
+    Oop scavenge( Oop obj );
+
+    bool_t verify( Oop obj );
+
+    // printing operations
+    void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );
 
 
-        void print( Oop obj );
+    const char *name() const {
+        return "symbol";
+    }
 
-        // class creation
-        friend void setKlassVirtualTableFromSymbolKlass( Klass * k );
+
+    void print( Oop obj );
+
+    // class creation
+    friend void setKlassVirtualTableFromSymbolKlass( Klass *k );
 };
 
-void setKlassVirtualTableFromSymbolKlass( Klass * k );
+void setKlassVirtualTableFromSymbolKlass( Klass *k );

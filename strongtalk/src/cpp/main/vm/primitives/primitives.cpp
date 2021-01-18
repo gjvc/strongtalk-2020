@@ -36,28 +36,28 @@
 // the typedefs below are necessary to ensure that args are passed correctly when calling a primitive through a function pointer
 // NB: there's no general n-argument primitive because some calling conventions can't handle vararg functions
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype0)();
+typedef Oop (__CALLING_CONVENTION *prim_fntype0)();
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype1)( Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype1)( Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype2)( Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype2)( Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype3)( Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype3)( Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype4)( Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype4)( Oop, Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype5)( Oop, Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype5)( Oop, Oop, Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype6)( Oop, Oop, Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype6)( Oop, Oop, Oop, Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype7)( Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype7)( Oop, Oop, Oop, Oop, Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype8)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype8)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
 
-typedef Oop (__CALLING_CONVENTION * prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+typedef Oop (__CALLING_CONVENTION *prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
 
 
-Oop PrimitiveDescriptor::eval( Oop * a ) {
+Oop PrimitiveDescriptor::eval( Oop *a ) {
 
     const bool_t reverseArgs = true;    // change this when changing primitive calling convention
     Oop          res;
@@ -77,68 +77,68 @@ Oop PrimitiveDescriptor::eval( Oop * a ) {
     if ( reverseArgs ) {
         switch ( number_of_parameters() ) {
             case 0:
-                res = ( ( prim_fntype0 ) _fn )();
+                res = ( (prim_fntype0) _fn )();
                 break;
             case 1:
-                res = ( ( prim_fntype1 ) _fn )( a[ 0 ] );
+                res = ( (prim_fntype1) _fn )( a[ 0 ] );
                 break;
             case 2:
-                res = ( ( prim_fntype2 ) _fn )( a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype2) _fn )( a[ 1 ], a[ 0 ] );
                 break;
             case 3:
-                res = ( ( prim_fntype3 ) _fn )( a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype3) _fn )( a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 4:
-                res = ( ( prim_fntype4 ) _fn )( a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype4) _fn )( a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 5:
-                res = ( ( prim_fntype5 ) _fn )( a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype5) _fn )( a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 6:
-                res = ( ( prim_fntype6 ) _fn )( a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype6) _fn )( a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 7:
-                res = ( ( prim_fntype7 ) _fn )( a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype7) _fn )( a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 8:
-                res = ( ( prim_fntype8 ) _fn )( a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype8) _fn )( a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             case 9:
-                res = ( ( prim_fntype9 ) _fn )( a[ 8 ], a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
+                res = ( (prim_fntype9) _fn )( a[ 8 ], a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
             default: ShouldNotReachHere();
         }
     } else {
         switch ( number_of_parameters() ) {
             case 0:
-                res = ( ( prim_fntype0 ) _fn )();
+                res = ( (prim_fntype0) _fn )();
                 break;
             case 1:
-                res = ( ( prim_fntype1 ) _fn )( a[ 0 ] );
+                res = ( (prim_fntype1) _fn )( a[ 0 ] );
                 break;
             case 2:
-                res = ( ( prim_fntype2 ) _fn )( a[ 0 ], a[ 1 ] );
+                res = ( (prim_fntype2) _fn )( a[ 0 ], a[ 1 ] );
                 break;
             case 3:
-                res = ( ( prim_fntype3 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ] );
+                res = ( (prim_fntype3) _fn )( a[ 0 ], a[ 1 ], a[ 2 ] );
                 break;
             case 4:
-                res = ( ( prim_fntype4 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ] );
+                res = ( (prim_fntype4) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ] );
                 break;
             case 5:
-                res = ( ( prim_fntype5 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ] );
+                res = ( (prim_fntype5) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ] );
                 break;
             case 6:
-                res = ( ( prim_fntype6 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ] );
+                res = ( (prim_fntype6) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ] );
                 break;
             case 7:
-                res = ( ( prim_fntype7 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ] );
+                res = ( (prim_fntype7) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ] );
                 break;
             case 8:
-                res = ( ( prim_fntype8 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ] );
+                res = ( (prim_fntype8) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ] );
                 break;
             case 9:
-                res = ( ( prim_fntype9 ) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] );
+                res = ( (prim_fntype9) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] );
                 break;
             default: ShouldNotReachHere();
         }
@@ -171,7 +171,7 @@ void Primitives::print_table() {
 
     _console->print_cr( "Primitive table:" );
     for ( int i = 0; i < size_of_primitive_table; i++ ) {
-        PrimitiveDescriptor * e = primitive_table[ i ];
+        PrimitiveDescriptor *e = primitive_table[ i ];
         _console->print( "%3d ", i );
         e->print();
     }
@@ -229,18 +229,18 @@ void PrimitiveDescriptor::print() {
 }
 
 
-const char * PrimitiveDescriptor::parameter_type( int index ) const {
+const char *PrimitiveDescriptor::parameter_type( int index ) const {
     st_assert( ( 0 <= index ) and ( index < number_of_parameters() ), "illegal parameter index" );
     return _types[ 1 + index ];
 }
 
 
-const char * PrimitiveDescriptor::return_type() const {
+const char *PrimitiveDescriptor::return_type() const {
     return _types[ 0 ];
 }
 
 
-Expression * PrimitiveDescriptor::convertToKlass( const char * type, PseudoRegister * p, Node * n ) const {
+Expression *PrimitiveDescriptor::convertToKlass( const char *type, PseudoRegister *p, Node *n ) const {
     if ( 0 == strcmp( type, "SmallInteger" ) )
         return new KlassExpression( Universe::smiKlassObj(), p, n );
     if ( 0 == strcmp( type, "Double" ) )
@@ -251,8 +251,8 @@ Expression * PrimitiveDescriptor::convertToKlass( const char * type, PseudoRegis
         return new KlassExpression( Universe::symbolKlassObj(), p, n );
     if ( 0 == strcmp( type, "Boolean" ) ) {
         // NB: set expression node to nullptr, not n -- MergeExpression cannot be split
-        Expression * t = new ConstantExpression( Universe::trueObj(), p, nullptr );
-        Expression * f = new ConstantExpression( Universe::falseObj(), p, nullptr );
+        Expression *t = new ConstantExpression( Universe::trueObj(), p, nullptr );
+        Expression *f = new ConstantExpression( Universe::falseObj(), p, nullptr );
         return new MergeExpression( t, f, p, nullptr );
     }
 
@@ -264,17 +264,17 @@ Expression * PrimitiveDescriptor::convertToKlass( const char * type, PseudoRegis
 }
 
 
-Expression * PrimitiveDescriptor::parameter_klass( int index, PseudoRegister * p, Node * n ) const {
+Expression *PrimitiveDescriptor::parameter_klass( int index, PseudoRegister *p, Node *n ) const {
     return convertToKlass( parameter_type( index ), p, n );
 }
 
 
-Expression * PrimitiveDescriptor::return_klass( PseudoRegister * p, Node * n ) const {
+Expression *PrimitiveDescriptor::return_klass( PseudoRegister *p, Node *n ) const {
     return convertToKlass( return_type(), p, n );
 }
 
 
-void PrimitiveDescriptor::error( const char * msg ) {
+void PrimitiveDescriptor::error( const char *msg ) {
     print();
     ::error( msg );
 }
@@ -303,7 +303,7 @@ void PrimitiveDescriptor::verify() {
 }
 
 
-int PrimitiveDescriptor::compare( const char * str, int len ) {
+int PrimitiveDescriptor::compare( const char *str, int len ) {
     int src_len = strlen( name() );
     int sign    = strncmp( name(), str, min( src_len, len ) );
     // if (sign not_eq 0 or src_len == len) return sign;
@@ -315,11 +315,11 @@ int PrimitiveDescriptor::compare( const char * str, int len ) {
 }
 
 
-PrimitiveDescriptor * Primitives::lookup( const char * selector, int len ) {
+PrimitiveDescriptor *Primitives::lookup( const char *selector, int len ) {
     int first = 0;
     int last  = size_of_primitive_table;
 
-    PrimitiveDescriptor * element;
+    PrimitiveDescriptor *element;
     do {
         int middle = first + ( last - first ) / 2;
         element = primitive_table[ middle ];
@@ -343,14 +343,14 @@ PrimitiveDescriptor * Primitives::lookup( const char * selector, int len ) {
 }
 
 
-PrimitiveDescriptor * Primitives::lookup( const char * selector ) {
+PrimitiveDescriptor *Primitives::lookup( const char *selector ) {
     return lookup( selector, strlen( selector ) );
 }
 
 
-PrimitiveDescriptor * Primitives::lookup( primitiveFunctionType fn ) {
+PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
     for ( int i = 0; i < size_of_primitive_table; i++ ) {
-        PrimitiveDescriptor * e = primitive_table[ i ];
+        PrimitiveDescriptor *e = primitive_table[ i ];
         if ( e->fn() == fn )
             return e;
     }
@@ -361,15 +361,15 @@ PrimitiveDescriptor * Primitives::lookup( primitiveFunctionType fn ) {
 void Primitives::lookup_and_patch() {
 
     // get primitive call info
-    Frame        f               = DeltaProcess::active()->last_frame();
+    Frame        f = DeltaProcess::active()->last_frame();
     CodeIterator it( f.hp() );
-    Oop          * selector_addr = it.aligned_oop( 1 );
+    Oop *selector_addr = it.aligned_oop( 1 );
 
     SymbolOop sel = SymbolOop( *selector_addr );
     st_assert( sel->is_symbol(), "symbol expected" );
 
     // do lookup
-    PrimitiveDescriptor * pdesc = Primitives::lookup( sel );
+    PrimitiveDescriptor *pdesc = Primitives::lookup( sel );
     if ( pdesc not_eq nullptr and not pdesc->is_internal() ) {
         // primitive found => patch bytecode & cache
         *f.hp()        = std::uint8_t( ByteCodes::primitive_call_code_for( ByteCodes::Code( *f.hp() ) ) );
@@ -405,10 +405,10 @@ void primitives_init() {
     _console->print_cr( "%%system-init:  primitives_init" );
 
     Primitives::initialize();
-    PrimitiveDescriptor * prev = nullptr;
+    PrimitiveDescriptor *prev = nullptr;
 
     for ( int index = 0; index < size_of_primitive_table; index++ ) {
-        PrimitiveDescriptor * e = primitive_table[ index ];
+        PrimitiveDescriptor *e = primitive_table[ index ];
         e->verify();
         if ( prev ) {
             guarantee( strcmp( prev->name(), e->name() ) == -1, "primitive table not sorted" );
@@ -421,25 +421,25 @@ void primitives_init() {
 // For debugging/profiling
 void Primitives::clear_counters() {
 
-    behaviorPrimitives::_numberOfCalls          = 0;
-    byteArrayPrimitives::number_of_calls        = 0;
-    callBackPrimitives::number_of_calls         = 0;
-    doubleByteArrayPrimitives::number_of_calls  = 0;
-    debugPrimitives::number_of_calls            = 0;
-    doubleOopPrimitives::number_of_calls        = 0;
-    methodOopPrimitives::number_of_calls        = 0;
-    mixinOopPrimitives::number_of_calls         = 0;
-    objArrayPrimitives::number_of_calls         = 0;
-    oopPrimitives::number_of_calls              = 0;
-    processOopPrimitives::number_of_calls       = 0;
-    proxyOopPrimitives::number_of_calls         = 0;
-    smiOopPrimitives::number_of_calls           = 0;
-    SystemPrimitives::number_of_calls           = 0;
+    behaviorPrimitives::_numberOfCalls         = 0;
+    byteArrayPrimitives::number_of_calls       = 0;
+    callBackPrimitives::number_of_calls        = 0;
+    doubleByteArrayPrimitives::number_of_calls = 0;
+    debugPrimitives::number_of_calls           = 0;
+    doubleOopPrimitives::number_of_calls       = 0;
+    methodOopPrimitives::number_of_calls       = 0;
+    mixinOopPrimitives::number_of_calls        = 0;
+    objArrayPrimitives::number_of_calls        = 0;
+    oopPrimitives::number_of_calls             = 0;
+    processOopPrimitives::number_of_calls      = 0;
+    proxyOopPrimitives::number_of_calls        = 0;
+    smiOopPrimitives::number_of_calls          = 0;
+    SystemPrimitives::number_of_calls          = 0;
 
 }
 
 
-static void print_calls( const char * name, int inc, int * total ) {
+static void print_calls( const char *name, int inc, int *total ) {
     if ( inc > 0 ) {
         lprintf( " %s:\t%6d\n", name, inc );
         *total = *total + inc;
@@ -469,7 +469,7 @@ void Primitives::print_counters() {
 }
 
 
-PrimitiveDescriptor * InterpretedPrimitiveCache::pdesc() const {
+PrimitiveDescriptor *InterpretedPrimitiveCache::pdesc() const {
 
     CodeIterator c( hp() );
     switch ( c.code() ) {
@@ -477,7 +477,7 @@ PrimitiveDescriptor * InterpretedPrimitiveCache::pdesc() const {
         case ByteCodes::Code::primitive_call_failure:
         case ByteCodes::Code::primitive_call_self:
         case ByteCodes::Code::primitive_call_self_failure:
-            return Primitives::lookup( ( primitiveFunctionType ) c.word_at( 1 ) );
+            return Primitives::lookup( (primitiveFunctionType) c.word_at( 1 ) );
 
         case ByteCodes::Code::primitive_call_lookup:
         case ByteCodes::Code::primitive_call_failure_lookup:
@@ -519,7 +519,7 @@ SymbolOop InterpretedPrimitiveCache::name() const {
         case ByteCodes::Code::primitive_call_failure:
         case ByteCodes::Code::primitive_call_self:
         case ByteCodes::Code::primitive_call_self_failure:
-            return Primitives::lookup( ( primitiveFunctionType ) c.word_at( 1 ) )->selector();
+            return Primitives::lookup( (primitiveFunctionType) c.word_at( 1 ) )->selector();
 
         case ByteCodes::Code::primitive_call_lookup:
         case ByteCodes::Code::primitive_call_failure_lookup:
@@ -561,30 +561,30 @@ bool_t InterpretedPrimitiveCache::has_failure_code() const {
 }
 
 
-PrimitiveDescriptor * Primitives::_new0;
-PrimitiveDescriptor * Primitives::_new1;
-PrimitiveDescriptor * Primitives::_new2;
-PrimitiveDescriptor * Primitives::_new3;
-PrimitiveDescriptor * Primitives::_new4;
-PrimitiveDescriptor * Primitives::_new5;
-PrimitiveDescriptor * Primitives::_new6;
-PrimitiveDescriptor * Primitives::_new7;
-PrimitiveDescriptor * Primitives::_new8;
-PrimitiveDescriptor * Primitives::_new9;
-PrimitiveDescriptor * Primitives::_equal;
-PrimitiveDescriptor * Primitives::_not_equal;
-PrimitiveDescriptor * Primitives::_block_allocate;
-PrimitiveDescriptor * Primitives::_block_allocate0;
-PrimitiveDescriptor * Primitives::_block_allocate1;
-PrimitiveDescriptor * Primitives::_block_allocate2;
-PrimitiveDescriptor * Primitives::_context_allocate;
-PrimitiveDescriptor * Primitives::_context_allocate0;
-PrimitiveDescriptor * Primitives::_context_allocate1;
-PrimitiveDescriptor * Primitives::_context_allocate2;
+PrimitiveDescriptor *Primitives::_new0;
+PrimitiveDescriptor *Primitives::_new1;
+PrimitiveDescriptor *Primitives::_new2;
+PrimitiveDescriptor *Primitives::_new3;
+PrimitiveDescriptor *Primitives::_new4;
+PrimitiveDescriptor *Primitives::_new5;
+PrimitiveDescriptor *Primitives::_new6;
+PrimitiveDescriptor *Primitives::_new7;
+PrimitiveDescriptor *Primitives::_new8;
+PrimitiveDescriptor *Primitives::_new9;
+PrimitiveDescriptor *Primitives::_equal;
+PrimitiveDescriptor *Primitives::_not_equal;
+PrimitiveDescriptor *Primitives::_block_allocate;
+PrimitiveDescriptor *Primitives::_block_allocate0;
+PrimitiveDescriptor *Primitives::_block_allocate1;
+PrimitiveDescriptor *Primitives::_block_allocate2;
+PrimitiveDescriptor *Primitives::_context_allocate;
+PrimitiveDescriptor *Primitives::_context_allocate0;
+PrimitiveDescriptor *Primitives::_context_allocate1;
+PrimitiveDescriptor *Primitives::_context_allocate2;
 
 
-PrimitiveDescriptor * Primitives::verified_lookup( const char * selector ) {
-    PrimitiveDescriptor * result = lookup( selector );
+PrimitiveDescriptor *Primitives::verified_lookup( const char *selector ) {
+    PrimitiveDescriptor *result = lookup( selector );
     if ( result == nullptr ) {
         _console->print_cr( "Verified primitive lookup failed" );
         _console->print_cr( " selector = %s", selector );
@@ -623,9 +623,9 @@ void Primitives::initialize() {
 }
 
 
-void Primitives::patch( const char * name, const char * entry_point ) {
+void Primitives::patch( const char *name, const char *entry_point ) {
     _console->print_cr( "%%primitives-init:  name [%s], entry_point [0x%0x]", name, entry_point );
     st_assert( entry_point, "just checking" );
-    PrimitiveDescriptor * pdesc = verified_lookup( name );
-    pdesc->_fn = ( primitiveFunctionType ) entry_point;
+    PrimitiveDescriptor *pdesc = verified_lookup( name );
+    pdesc->_fn = (primitiveFunctionType) entry_point;
 }

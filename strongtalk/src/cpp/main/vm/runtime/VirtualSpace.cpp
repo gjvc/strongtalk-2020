@@ -80,8 +80,8 @@ int VirtualSpace::uncommitted_size() const {
 }
 
 
-bool_t VirtualSpace::contains( void * p ) const {
-    return low() <= ( const char * ) p and ( const char * ) p < high();
+bool_t VirtualSpace::contains( void *p ) const {
+    return low() <= (const char *) p and (const char *) p < high();
 }
 
 
@@ -125,22 +125,22 @@ void VirtualSpace::print() {
 }
 
 
-VirtualSpace * VirtualSpaces::head = nullptr;
+VirtualSpace *VirtualSpaces::head = nullptr;
 
 
-void VirtualSpaces::add( VirtualSpace * sp ) {
+void VirtualSpaces::add( VirtualSpace *sp ) {
     sp->next = head;
     head = sp;
 }
 
 
-void VirtualSpaces::remove( VirtualSpace * sp ) {
+void VirtualSpaces::remove( VirtualSpace *sp ) {
     if ( not head )
         return;
     if ( head == sp )
         head = sp->next;
     else {
-        for ( VirtualSpace * p = head; p->next; p = p->next )
+        for ( VirtualSpace *p = head; p->next; p = p->next )
             if ( p->next == sp )
                 p->next = sp->next;
     }
@@ -149,7 +149,7 @@ void VirtualSpaces::remove( VirtualSpace * sp ) {
 
 int VirtualSpaces::committed_size() {
     int total = 0;
-    for ( VirtualSpace * p = head; p; p = p->next )
+    for ( VirtualSpace *p = head; p; p = p->next )
         total += p->committed_size();
     return total;
 }
@@ -157,7 +157,7 @@ int VirtualSpaces::committed_size() {
 
 int VirtualSpaces::reserved_size() {
     int total = 0;
-    for ( VirtualSpace * p = head; p; p = p->next )
+    for ( VirtualSpace *p = head; p; p = p->next )
         total += p->reserved_size();
     return total;
 }
@@ -165,7 +165,7 @@ int VirtualSpaces::reserved_size() {
 
 int VirtualSpaces::uncommitted_size() {
     int total = 0;
-    for ( VirtualSpace * p = head; p; p = p->next )
+    for ( VirtualSpace *p = head; p; p = p->next )
         total += p->uncommitted_size();
     return total;
 }
@@ -173,7 +173,7 @@ int VirtualSpaces::uncommitted_size() {
 
 void VirtualSpaces::print() {
     _console->print_cr( "VirtualSpaces:" );
-    for ( VirtualSpace * p = head; p; p = p->next )
+    for ( VirtualSpace *p = head; p; p = p->next )
         p->print();
 }
 

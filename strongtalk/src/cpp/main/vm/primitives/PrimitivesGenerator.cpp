@@ -8,10 +8,9 @@
 #include "vm/system/sizes.hpp"
 
 
+const char *PrimitivesGenerator::allocateBlock( int n ) {
 
-const char * PrimitivesGenerator::allocateBlock( int n ) {
-
-    KlassOopDescriptor ** block_klass;
+    KlassOopDescriptor **block_klass;
 
     switch ( n ) {
         case 0:
@@ -46,10 +45,10 @@ const char * PrimitivesGenerator::allocateBlock( int n ) {
             break;
     }
 
-    Address block_klass_addr = Address( ( int ) block_klass, RelocationInformation::RelocationType::external_word_type );
+    Address block_klass_addr = Address( (int) block_klass, RelocationInformation::RelocationType::external_word_type );
     Label   need_scavenge, fill_object;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     test_for_scavenge( eax, 4 * oopSize, need_scavenge );
 
@@ -73,22 +72,22 @@ const char * PrimitivesGenerator::allocateBlock( int n ) {
 extern "C" void scavenge_and_allocate( int size );
 
 
-const char * PrimitivesGenerator::allocateContext_var() {
+const char *PrimitivesGenerator::allocateContext_var() {
 
     Label need_scavenge, fill_object;
     Label _loop, _loop_end;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     masm->movl( ecx, Address( esp, +oopSize ) );    // load length  (remember this is a SMIOop)
-    masm->movl( eax, Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (int) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( edx, ecx );
     masm->addl( edx, 3 * oopSize );
     masm->addl( edx, eax );
 // Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::times_1, 3*oopSize));
-    masm->cmpl( edx, Address( ( int ) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
+    masm->cmpl( edx, Address( (int) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( Assembler::Condition::greater, need_scavenge );
-    masm->movl( Address( ( int ) &eden_top, RelocationInformation::RelocationType::external_word_type ), edx );
+    masm->movl( Address( (int) &eden_top, RelocationInformation::RelocationType::external_word_type ), edx );
 
     masm->bind( fill_object );
     masm->movl( ebx, contextKlass_addr() );
@@ -118,7 +117,7 @@ const char * PrimitivesGenerator::allocateContext_var() {
     masm->shrl( ecx, TAG_SIZE );            // SMIOop->value()
     masm->addl( ecx, 3 );
     masm->pushl( ecx );
-    masm->call( ( const char * ) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
+    masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
     masm->reset_last_Delta_frame();
     masm->movl( ecx, Address( esp, +oopSize ) );    // reload length  (remember this is a SMIOop)
@@ -131,12 +130,12 @@ const char * PrimitivesGenerator::allocateContext_var() {
 }
 
 
-const char * PrimitivesGenerator::allocateContext( int n ) {
+const char *PrimitivesGenerator::allocateContext( int n ) {
 
     Label need_scavenge, fill_object;
     int   size = n + 3;
 
-    const char * entry_point = masm->pc();
+    const char *entry_point = masm->pc();
 
     test_for_scavenge( eax, size * oopSize, need_scavenge );
 

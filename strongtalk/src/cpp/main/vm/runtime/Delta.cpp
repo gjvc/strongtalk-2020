@@ -14,7 +14,7 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-DeltaCallCache * DeltaCallCache::_root = nullptr;    // anchor of all DeltaCallCaches
+DeltaCallCache *DeltaCallCache::_root = nullptr;    // anchor of all DeltaCallCaches
 
 
 DeltaCallCache::DeltaCallCache() {
@@ -31,7 +31,7 @@ void DeltaCallCache::clear() {
 
 
 void DeltaCallCache::clearAll() {
-    DeltaCallCache * p = _root;
+    DeltaCallCache *p = _root;
     while ( p not_eq nullptr ) {
         p->clear();
         p = p->_link;
@@ -41,14 +41,14 @@ void DeltaCallCache::clearAll() {
 
 // Implementation of Delta
 
-typedef Oop (call_delta_func)( void * method, Oop receiver, int nofArgs, Oop * args );
+typedef Oop (call_delta_func)( void *method, Oop receiver, int nofArgs, Oop *args );
 
 
-Oop Delta::call_generic( DeltaCallCache * ic, Oop receiver, Oop selector, int nofArgs, Oop * args ) {
-    call_delta_func * _call_delta = ( call_delta_func * ) StubRoutines::call_delta();
+Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, int nofArgs, Oop *args ) {
+    call_delta_func *_call_delta = (call_delta_func *) StubRoutines::call_delta();
 
     if ( ic->match( receiver->klass(), SymbolOop( selector ) ) ) { // use inline cache entry - but first make sure it's not a zombie NativeMethod
-        JumpTableEntry * entry = ic->result().entry();
+        JumpTableEntry *entry = ic->result().entry();
         if ( entry not_eq nullptr and entry->method()->isZombie() ) { // is a zombie NativeMethod => do a new lookup
             LookupResult result = ic->lookup( receiver->klass(), SymbolOop( selector ) );
             if ( result.is_empty() ) st_fatal( "lookup failure - not treated" );
@@ -71,7 +71,7 @@ Oop Delta::call_generic( DeltaCallCache * ic, Oop receiver, Oop selector, int no
 }
 
 
-Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, Oop * argArray ) {
+Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, Oop *argArray ) {
     MemOop    msg;
     SymbolOop sel;
     {

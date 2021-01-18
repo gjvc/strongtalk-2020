@@ -11,23 +11,23 @@
 // The ErrorHandler takes care of error recovery
 
 class ErrorHandler : AllStatic {
-    public:
-        // Aborts the current compilation and continues the process execution
-        static void abort_compilation();
+public:
+    // Aborts the current compilation and continues the process execution
+    static void abort_compilation();
 
-        // Aborts the current process and terminates it
-        static void abort_current_process();
+    // Aborts the current process and terminates it
+    static void abort_current_process();
 
-        // Continues the NonLocalReturn at the next Delta frame
-        static void continue_nlr_in_delta();
+    // Continues the NonLocalReturn at the next Delta frame
+    static void continue_nlr_in_delta();
 
-        // Aborts all processes and restarts the scheduler
-        static void genesis();
+    // Aborts all processes and restarts the scheduler
+    static void genesis();
 
 
-        // Returns the value used during an abort
-        static int aborting_nlr_home_id() {
-            return 0xcafebabe;
-        }
+    // Returns the value used during an abort
+    static int aborting_nlr_home_id() {
+        return 0xcafebabe;
+    }
 
 };

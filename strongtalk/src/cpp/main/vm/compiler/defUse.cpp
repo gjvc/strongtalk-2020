@@ -10,7 +10,7 @@
 #include "vm/compiler/BasicBlock.hpp"
 
 
-static Closure <Definition *> * theDefIterator;
+static Closure<Definition *> *theDefIterator;
 
 
 void Usage::print() {
@@ -55,8 +55,8 @@ void PseudoRegisterBasicBlockIndex::print() {
 static bool_t cpCreateFailed = false;
 
 
-CopyPropagationInfo * new_CPInfo( NonTrivialNode * n ) {
-    CopyPropagationInfo * cpi = new CopyPropagationInfo( n );
+CopyPropagationInfo *new_CPInfo( NonTrivialNode *n ) {
+    CopyPropagationInfo *cpi = new CopyPropagationInfo( n );
     if ( cpCreateFailed ) {
         cpCreateFailed = false;
         return nullptr;
@@ -65,17 +65,17 @@ CopyPropagationInfo * new_CPInfo( NonTrivialNode * n ) {
 }
 
 
-CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode * n ) {
+CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode *n ) {
     _definition = n;
     if ( not n->hasSrc() ) {
         cpCreateFailed = true;        // can't eliminate register
         return;
     }
-    _register = n->src();
+    _register   = n->src();
     if ( _register->isConstPseudoRegister() )
         return;   // can always eliminate if defined by constant  (was bug; fixed 7/26/96 -Urs)
     // (as std::int32_t as constants aren't register-allocated)
-    PseudoRegister * eliminatee = n->dest();
+    PseudoRegister *eliminatee = n->dest();
     if ( eliminatee->_debug ) {
         if ( _register->extendLiveRange( eliminatee->scope(), eliminatee->endByteCodeIndex() ) ) {
             // ok, the replacement PseudoRegister covers the eliminated PseudoRegister's debug-visible live range
@@ -94,7 +94,7 @@ bool_t CopyPropagationInfo::isConstant() const {
 
 Oop CopyPropagationInfo::constant() const {
     st_assert( isConstant(), "not constant" );
-    return ( ( ConstPseudoRegister * ) _register )->constant;
+    return ( (ConstPseudoRegister *) _register )->constant;
 }
 
 
@@ -103,26 +103,26 @@ void CopyPropagationInfo::print() {
 }
 
 
-static void printNodeFn( DefinitionUsage * du ) {
+static void printNodeFn( DefinitionUsage *du ) {
     lprintf( "N%d ", du->_node->id() );
 }
 
 
-struct PrintNodeClosureD : public Closure <Definition *> {
-    void do_it( Definition * d ) {
+struct PrintNodeClosureD : public Closure<Definition *> {
+    void do_it( Definition *d ) {
         printNodeFn( d );
     }
 };
 
 
-struct PrintNodeClosureU : public Closure <Usage *> {
-    void do_it( Usage * u ) {
+struct PrintNodeClosureU : public Closure<Usage *> {
+    void do_it( Usage *u ) {
         printNodeFn( u );
     }
 };
 
 
-void printDefsAndUses( const GrowableArray <PseudoRegisterBasicBlockIndex *> * l ) {
+void printDefsAndUses( const GrowableArray<PseudoRegisterBasicBlockIndex *> *l ) {
     lprintf( "definitions: " );
     PrintNodeClosureD printNodeD;
     forAllDefsDo( l, &printNodeD );
@@ -132,28 +132,28 @@ void printDefsAndUses( const GrowableArray <PseudoRegisterBasicBlockIndex *> * l
 }
 
 
-static void doDefsFn( PseudoRegisterBasicBlockIndex * p ) {
-    DefinitionUsageInfo * info = p->_basicBlock->duInfo.info->at( p->_index );
+static void doDefsFn( PseudoRegisterBasicBlockIndex *p ) {
+    DefinitionUsageInfo *info = p->_basicBlock->duInfo.info->at( p->_index );
     info->_definitions.apply( theDefIterator );
 }
 
 
-void forAllDefsDo( const GrowableArray <PseudoRegisterBasicBlockIndex *> * l, Closure <Definition *> * f ) {
+void forAllDefsDo( const GrowableArray<PseudoRegisterBasicBlockIndex *> *l, Closure<Definition *> *f ) {
     theDefIterator = f;
     l->apply( doDefsFn );
 }
 
 
-static Closure <Usage *> * theUseIterator;
+static Closure<Usage *> *theUseIterator;
 
 
-static void doUsesFn( PseudoRegisterBasicBlockIndex * p ) {
-    DefinitionUsageInfo * info = p->_basicBlock->duInfo.info->at( p->_index );
+static void doUsesFn( PseudoRegisterBasicBlockIndex *p ) {
+    DefinitionUsageInfo *info = p->_basicBlock->duInfo.info->at( p->_index );
     info->_usages.apply( theUseIterator );
 }
 
 
-void forAllUsesDo( const GrowableArray <PseudoRegisterBasicBlockIndex *> * l, Closure <Usage *> * f ) {
+void forAllUsesDo( const GrowableArray<PseudoRegisterBasicBlockIndex *> *l, Closure<Usage *> *f ) {
     theUseIterator = f;
     l->apply( doUsesFn );
 }

@@ -34,7 +34,7 @@ bool_t patch_uncommon_call( Frame *f ) {
 
     int *next_inst = (int *) f->pc();
     int *dest_addr = next_inst - 1;
-    int dest = *dest_addr + (int) next_inst;
+    int dest       = *dest_addr + (int) next_inst;
 
     // return true if the call has been executed before
     if ( dest == (int) StubRoutines::used_uncommon_trap_entry() )

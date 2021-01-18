@@ -72,7 +72,7 @@ PRIM_DECL_2( behaviorPrimitives::setSuperclass, Oop receiver, Oop newSuper ) {
     if ( not( newSuper->is_klass() or newSuper == nilObj ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    Klass    * receiverClass = KlassOop( receiver )->klass_part();
+    Klass *receiverClass = KlassOop( receiver )->klass_part();
     KlassOop newSuperclass;
     if ( receiverClass->superKlass() == newSuper )
         return receiver; // no change
@@ -81,7 +81,7 @@ PRIM_DECL_2( behaviorPrimitives::setSuperclass, Oop receiver, Oop newSuper ) {
         if ( newSuperclass->klass_part()->number_of_instance_variables() > 0 )
             return markSymbol( vmSymbols::argument_is_invalid() );
     } else {
-        Klass * oldSuperclass = receiverClass->superKlass()->klass_part();
+        Klass *oldSuperclass = receiverClass->superKlass()->klass_part();
         if ( newSuper == nilObj ) {
             newSuperclass = KlassOop( nilObj );
             if ( oldSuperclass->number_of_instance_variables() > 0 )
@@ -382,7 +382,7 @@ PRIM_DECL_1( behaviorPrimitives::format, Oop behavior ) {
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    const char * format_name = Klass::name_from_format( KlassOop( behavior )->klass_part()->format() );
+    const char *format_name = Klass::name_from_format( KlassOop( behavior )->klass_part()->format() );
     return oopFactory::new_symbol( format_name );
 }
 

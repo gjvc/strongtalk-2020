@@ -19,28 +19,28 @@
 
 class PeriodicTask : public CHeapAllocatedObject {
 
-    private:
-        int _counter;
-        int _interval;
+private:
+    int _counter;
+    int _interval;
 
-        friend void real_time_tick( int delay_time );
+    friend void real_time_tick( int delay_time );
 
-    public:
-        PeriodicTask( int interval_time ); // interval is in milliseconds of elapsed time
-        ~PeriodicTask();
+public:
+    PeriodicTask( int interval_time ); // interval is in milliseconds of elapsed time
+    ~PeriodicTask();
 
-        bool_t is_enrolled() const;
+    bool_t is_enrolled() const;
 
-        void enroll();
+    void enroll();
 
-        void deroll();
-
-
-        bool_t is_pending( int delay_time ) {
-            _counter += delay_time;
-            return _counter >= _interval;
-        }
+    void deroll();
 
 
-        virtual void task() = 0;
+    bool_t is_pending( int delay_time ) {
+        _counter += delay_time;
+        return _counter >= _interval;
+    }
+
+
+    virtual void task() = 0;
 };

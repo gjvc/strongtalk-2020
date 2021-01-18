@@ -7,8 +7,8 @@
 #include "vm/oops/OopDescriptor.hpp"
 
 
-char * byte_map_base;
-char * MaxSP;
+char *byte_map_base;
+char *MaxSP;
 
 // verifyMethod: called by interpreter to verify some value is a methodOop
 extern "C" void verifyMethod( Oop method ) {

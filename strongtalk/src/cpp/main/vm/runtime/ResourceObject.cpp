@@ -8,10 +8,10 @@
 #include "ResourceObject.hpp"
 
 
-void * ResourceObject::operator new( std::size_t size, bool_t on_C_heap ) {
-    return on_C_heap ? ( void * ) malloc( size ) : allocateResource( size );
+void *ResourceObject::operator new( std::size_t size, bool_t on_C_heap ) {
+    return on_C_heap ? (void *) malloc( size ) : allocateResource( size );
 }
 
 
-void ResourceObject::operator delete( void * p, int ) {
+void ResourceObject::operator delete( void *p, int ) {
 }

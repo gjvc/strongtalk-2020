@@ -13,19 +13,19 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 
 
-InlineCache::InlineCache( CompiledInlineCache * ic ) :
-    _iter( new CompiledInlineCacheIterator( ic ) ) {
+InlineCache::InlineCache( CompiledInlineCache *ic ) :
+        _iter( new CompiledInlineCacheIterator( ic ) ) {
 }
 
 
-InlineCache::InlineCache( InterpretedInlineCache * ic ) :
-    _iter( new InterpretedInlineCacheIterator( ic ) ) {
+InlineCache::InlineCache( InterpretedInlineCache *ic ) :
+        _iter( new InterpretedInlineCacheIterator( ic ) ) {
 }
 
 
-GrowableArray <KlassOop> * InlineCache::receiver_klasses() const {
-    GrowableArray <KlassOop> * result = new GrowableArray <KlassOop>();
-    InlineCacheIterator      * it     = iterator();
+GrowableArray<KlassOop> *InlineCache::receiver_klasses() const {
+    GrowableArray<KlassOop> *result = new GrowableArray<KlassOop>();
+    InlineCacheIterator     *it     = iterator();
     it->init_iteration();
     while ( not it->at_end() ) {
         result->append( it->klass() );
@@ -35,9 +35,9 @@ GrowableArray <KlassOop> * InlineCache::receiver_klasses() const {
 }
 
 
-void InlineCache::replace( NativeMethod * nm ) {
+void InlineCache::replace( NativeMethod *nm ) {
     Unimplemented();
-    InlineCacheIterator * it = iterator();
+    InlineCacheIterator *it = iterator();
     it->init_iteration();
     while ( not it->at_end() ) {
         // replace if found
@@ -47,7 +47,7 @@ void InlineCache::replace( NativeMethod * nm ) {
 
 
 void InlineCache::print() {
-    const char * s;
+    const char *s;
     switch ( shape() ) {
         case InlineCacheShape::anamorphic:
             s = "Anamorphic";
@@ -65,7 +65,7 @@ void InlineCache::print() {
     }
     _console->print_cr( "%s InlineCache: %d entries", s, number_of_targets() );
 
-    InlineCacheIterator * it = iterator();
+    InlineCacheIterator *it = iterator();
     it->init_iteration();
     while ( not it->at_end() ) {
         lprintf( "\t- klass: " );
@@ -93,7 +93,7 @@ MethodOop InlineCacheIterator::interpreted_method( int i ) {
 }
 
 
-NativeMethod * InlineCacheIterator::compiled_method( int i ) {
+NativeMethod *InlineCacheIterator::compiled_method( int i ) {
     goto_elem( i );
     return compiled_method();
 }
@@ -105,7 +105,7 @@ KlassOop InlineCacheIterator::klass( int i ) {
 }
 
 
-CompiledInlineCacheIterator::CompiledInlineCacheIterator( CompiledInlineCache * ic ) {
+CompiledInlineCacheIterator::CompiledInlineCacheIterator( CompiledInlineCache *ic ) {
     _ic = ic;
     init_iteration();
 }
@@ -120,11 +120,11 @@ void CompiledInlineCacheIterator::init_iteration() {
     } else if ( _ic->is_monomorphic() ) {
         _number_of_targets = 1;
         _shape             = InlineCacheShape::monomorphic;
-        PolymorphicInlineCache * pic = _ic->pic();
+        PolymorphicInlineCache *pic = _ic->pic();
         if ( pic )
             _picit = new PolymorphicInlineCacheIterator( pic );  // calls an interpreted method
     } else if ( _ic->is_polymorphic() ) {
-        PolymorphicInlineCache * pic = _ic->pic();
+        PolymorphicInlineCache *pic = _ic->pic();
         _number_of_targets = pic->number_of_targets();
         _shape             = InlineCacheShape::polymorphic;
         _picit             = new PolymorphicInlineCacheIterator( pic );
@@ -193,7 +193,7 @@ MethodOop CompiledInlineCacheIterator::interpreted_method() const {
 }
 
 
-NativeMethod * CompiledInlineCacheIterator::compiled_method() const {
+NativeMethod *CompiledInlineCacheIterator::compiled_method() const {
     st_assert( not at_end(), "iterated over the end" );
     if ( _picit not_eq nullptr ) {
         return _picit->compiled_method();

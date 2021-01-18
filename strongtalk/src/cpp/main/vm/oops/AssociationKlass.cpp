@@ -10,7 +10,7 @@
 #include "vm/runtime/flags.hpp"
 
 
-void setKlassVirtualTableFromAssociationKlass( Klass * k ) {
+void setKlassVirtualTableFromAssociationKlass( Klass *k ) {
     AssociationKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -21,7 +21,7 @@ Oop AssociationKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     int      size = non_indexable_size();
 
     // allocate
-    Oop * result = Universe::allocate_tenured( size, permit_scavenge );
+    Oop *result = Universe::allocate_tenured( size, permit_scavenge );
     if ( result == nullptr and not permit_scavenge )
         return nullptr;
 
@@ -58,7 +58,7 @@ bool_t AssociationKlass::oop_verify( Oop obj ) {
 }
 
 
-void AssociationKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void AssociationKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
     AssociationOop assoc = AssociationOop( obj );
     stream->print( "{" );
     assoc->key()->print_symbol_on( stream );
@@ -71,7 +71,7 @@ void AssociationKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream
 }
 
 
-void AssociationKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void AssociationKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     AssociationOop assoc = AssociationOop( obj );
     if ( PrintObjectID ) {
         MemOop( obj )->print_id_on( stream );
@@ -116,28 +116,28 @@ void AssociationKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-void AssociationKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void AssociationKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
     AssociationOop assoc = AssociationOop( obj );
-    blk->do_oop( "key", ( Oop * ) &assoc->addr()->_key );
-    blk->do_oop( "value", ( Oop * ) &assoc->addr()->_value );
-    blk->do_oop( "is_constant", ( Oop * ) &assoc->addr()->_is_constant );
+    blk->do_oop( "key", (Oop *) &assoc->addr()->_key );
+    blk->do_oop( "value", (Oop *) &assoc->addr()->_value );
+    blk->do_oop( "is_constant", (Oop *) &assoc->addr()->_is_constant );
     // instance variables
     MemOop( obj )->layout_iterate_body( blk, AssociationOopDescriptor::header_size(), non_indexable_size() );
 }
 
 
-void AssociationKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void AssociationKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 
     // header
     MemOop( obj )->oop_iterate_header( blk );
 
     //
     AssociationOop assoc = AssociationOop( obj );
-    blk->do_oop( ( Oop * ) &assoc->addr()->_key );
-    blk->do_oop( ( Oop * ) &assoc->addr()->_value );
-    blk->do_oop( ( Oop * ) &assoc->addr()->_is_constant );
+    blk->do_oop( (Oop *) &assoc->addr()->_key );
+    blk->do_oop( (Oop *) &assoc->addr()->_value );
+    blk->do_oop( (Oop *) &assoc->addr()->_is_constant );
 
     // instance variables
     MemOop( obj )->oop_iterate_body( blk, AssociationOopDescriptor::header_size(), non_indexable_size() );

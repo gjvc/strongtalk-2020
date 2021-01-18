@@ -8,45 +8,52 @@
 #include <iostream>
 
 
-template <
-typename FIRST
+template<
+        typename FIRST
 >
 void write_debug_output( std::ostream
-& out, FIRST const & f ) {
-out <<
-f;
+                         &out, FIRST const &f ) {
+    out <<
+        f;
 }
 
 
 struct tracer {
 
     std::ostream &
-    _out;
+                         _out;
+
+
     tracer( std::ostream
-    & out,
-    char const * file,
-    int line
+            &out,
+            char const *file,
+            int line
     ) :
-    _out( out ) { out << file << ":" << line << ": "; }
+            _out( out ) { out << file << ":" << line << ": "; }
+
+
     ~
 
 
     tracer() { _out << std::endl; }
 
 
-    template <
-    typename FIRST, typename
-    ... REST>
+    template<
+            typename FIRST, typename
+            ... REST>
     void write( FIRST const
-    & f, REST const & ... rest ) {
+                &f, REST const &... rest ) {
         write_debug_output( _out, f );
         _out << " ";
         write( rest... );
-    } template <
-    typename FIRST
+    }
+
+
+    template<
+            typename FIRST
     >
     void write( FIRST const
-    & f ) { write_debug_output( _out, f ); }
+                &f ) { write_debug_output( _out, f ); }
 
 
     void write() {

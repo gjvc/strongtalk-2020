@@ -25,9 +25,9 @@
 bool_t verifyOften = false;
 
 int compilationCount = 0;
-Compiler           * theCompiler  = nullptr;
-Compiler           * lastCompiler = nullptr;        // for debugging
-BasicBlockIterator * last_bbIterator;
+Compiler           *theCompiler  = nullptr;
+Compiler           *lastCompiler = nullptr;        // for debugging
+BasicBlockIterator *last_bbIterator;
 
 
 void compiler_init() {
@@ -37,17 +37,17 @@ void compiler_init() {
 }
 
 
-ScopeDescriptorRecorder * Compiler::scopeDescRecorder() {
+ScopeDescriptorRecorder *Compiler::scopeDescRecorder() {
     return rec;
 }
 
 
-CodeBuffer * Compiler::code() const {
+CodeBuffer *Compiler::code() const {
     return _code;
 }
 
 
-Compiler::Compiler( LookupKey * k, MethodOop m, CompiledInlineCache * i ) {
+Compiler::Compiler( LookupKey *k, MethodOop m, CompiledInlineCache *i ) {
     key                = k;
     method             = m;
     ic                 = i;
@@ -61,7 +61,7 @@ Compiler::Compiler( LookupKey * k, MethodOop m, CompiledInlineCache * i ) {
 }
 
 
-Compiler::Compiler( RecompilationScope * scope ) {
+Compiler::Compiler( RecompilationScope *scope ) {
     st_assert( scope not_eq nullptr, "scope must exist" );
 
     key                = scope->key();
@@ -77,14 +77,14 @@ Compiler::Compiler( RecompilationScope * scope ) {
 }
 
 
-Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor * scope ) :
-    _scopeStack( 10 ) {
+Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope ) :
+        _scopeStack( 10 ) {
     // Create a valid key for the compiled method.
     // {receiver class, block method} see key.hpp
     key = LookupKey::allocate( scope->parent()->selfKlass(), scope->method() );
 
     st_assert( blk->isCompiledBlock(), "must be compiled block" );
-    JumpTableEntry * e = blk->jump_table_entry();
+    JumpTableEntry *e = blk->jump_table_entry();
     int sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
@@ -98,9 +98,9 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor * scope 
     ic         = nullptr;
 
     // Check if the inlining database is active
-    RecompilationScope * rs = nullptr;
+    RecompilationScope *rs = nullptr;
     if ( UseInliningDatabase ) {
-        LookupKey * outer = &parentNativeMethod->outermost()->_lookupKey;
+        LookupKey *outer = &parentNativeMethod->outermost()->_lookupKey;
         rs = InliningDatabase::lookup_and_remove( outer, key );
         if ( rs and TraceInliningDatabase ) {
             _console->print( "ID block compile: " );
@@ -143,23 +143,23 @@ int Compiler::estimatedSize() const {
 }
 
 
-InlinedScope * Compiler::currentScope() const {
+InlinedScope *Compiler::currentScope() const {
     return _scopeStack.top();
 }
 
 
-void Compiler::enterScope( InlinedScope * s ) {
+void Compiler::enterScope( InlinedScope *s ) {
     _scopeStack.push( s );
 }
 
 
-void Compiler::exitScope( InlinedScope * s ) {
+void Compiler::exitScope( InlinedScope *s ) {
     st_assert( s == _scopeStack.top(), "bad nesting" );
     _scopeStack.pop();
 }
 
 
-void Compiler::initialize( RecompilationScope * remote_scope ) {
+void Compiler::initialize( RecompilationScope *remote_scope ) {
     st_assert( VMProcess::vm_operation() not_eq nullptr, "must be in vmProcess to compile" );
 
     if ( VMProcess::vm_operation() == nullptr )
@@ -203,10 +203,10 @@ void Compiler::initialize( RecompilationScope * remote_scope ) {
     // Save dependency information in the scopeDesc recorder.
     rec->add_dependent( key );
 
-    nlrTestPoints = new GrowableArray <NonLocalReturnTestNode *>( 50 );
+    nlrTestPoints = new GrowableArray<NonLocalReturnTestNode *>( 50 );
     contextList   = nullptr;
-    scopes        = new GrowableArray <InlinedScope *>( 50 );
-    blockClosures = new GrowableArray <BlockPseudoRegister *>( 50 );
+    scopes        = new GrowableArray<InlinedScope *>( 50 );
+    blockClosures = new GrowableArray<BlockPseudoRegister *>( 50 );
     firstNode     = nullptr;
     reporter      = new PerformanceDebugger( this );
     initTopScope();
@@ -256,7 +256,7 @@ void Compiler::initLimits() {
 }
 
 
-bool_t Compiler::registerUninlinable( Inliner * inliner ) {
+bool_t Compiler::registerUninlinable( Inliner *inliner ) {
     // All sends that aren't inlined for some reason are registered here
     // to determine the minimum optimization level needed for recompilation
     // (i.e. if the send wouldn't be inlined even at the highest optimization
@@ -266,7 +266,7 @@ bool_t Compiler::registerUninlinable( Inliner * inliner ) {
     // Return true if the send is considered non-inlinable.
     if ( not Inline )
         return true;            // no point recompiling
-    SendInfo * info = inliner->info();
+    SendInfo *info = inliner->info();
     if ( is_database_compile() ) {
         info->_counting   = false;
         info->uninlinable = true;            // for now, never inline if not inlined in DB
@@ -312,57 +312,57 @@ bool_t Compiler::is_uncommon_compile() const {
 // gri 10/2/96
 
 class NewBackendGuard : StackAllocatedObject {
-    private:
-        static bool_t _first_use;
+private:
+    static bool_t _first_use;
 
-        bool_t _UseNewBackend;
-        bool_t _LocalCopyPropagate;
-        bool_t _OptimizeLoops;
-        bool_t _OptimizeIntegerLoops;
+    bool_t _UseNewBackend;
+    bool_t _LocalCopyPropagate;
+    bool_t _OptimizeLoops;
+    bool_t _OptimizeIntegerLoops;
 
-    public:
-        NewBackendGuard() {
-            // save original settings in any case
-            _UseNewBackend        = UseNewBackend;
-            _LocalCopyPropagate   = LocalCopyPropagate;
-            _OptimizeLoops        = OptimizeLoops;
-            _OptimizeIntegerLoops = OptimizeIntegerLoops;
+public:
+    NewBackendGuard() {
+        // save original settings in any case
+        _UseNewBackend        = UseNewBackend;
+        _LocalCopyPropagate   = LocalCopyPropagate;
+        _OptimizeLoops        = OptimizeLoops;
+        _OptimizeIntegerLoops = OptimizeIntegerLoops;
 
-            if ( TryNewBackend ) {
-                // print out a warning if this class is used
-                if ( _first_use ) {
-                    warning( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
-                    _first_use = false;
-                }
-
-                // switch to right settings
-                UseNewBackend        = true;
-                LocalCopyPropagate   = false;
-                OptimizeLoops        = false;
-                OptimizeIntegerLoops = false;
+        if ( TryNewBackend ) {
+            // print out a warning if this class is used
+            if ( _first_use ) {
+                warning( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
+                _first_use = false;
             }
+
+            // switch to right settings
+            UseNewBackend        = true;
+            LocalCopyPropagate   = false;
+            OptimizeLoops        = false;
+            OptimizeIntegerLoops = false;
         }
+    }
 
 
-        ~NewBackendGuard() {
-            // restore original settings in any case
-            UseNewBackend        = _UseNewBackend;
-            LocalCopyPropagate   = _LocalCopyPropagate;
-            OptimizeLoops        = _OptimizeLoops;
-            OptimizeIntegerLoops = _OptimizeIntegerLoops;
-        }
+    ~NewBackendGuard() {
+        // restore original settings in any case
+        UseNewBackend        = _UseNewBackend;
+        LocalCopyPropagate   = _LocalCopyPropagate;
+        OptimizeLoops        = _OptimizeLoops;
+        OptimizeIntegerLoops = _OptimizeIntegerLoops;
+    }
 };
 
 bool_t NewBackendGuard::_first_use = true;
 
 
-NativeMethod * Compiler::compile() {
+NativeMethod *Compiler::compile() {
     NewBackendGuard guard;
 
     if ( ( PrintProgress > 0 ) and ( compilationCount % PrintProgress == 0 ) )
         _console->print( "." );
 
-    const char * compiling;
+    const char *compiling;
     if ( DeltaProcess::active()->isUncommon() ) {
         compiling = recompilee ? "Uncommon-Recompiling " : "Uncommon-Compiling ";
     } else {
@@ -486,14 +486,14 @@ NativeMethod * Compiler::compile() {
     // generate machine code
     theMacroAssembler = new MacroAssembler( _code );
     if ( UseNewBackend ) {
-        PseudoRegisterMapping * mapping = new PseudoRegisterMapping( theMacroAssembler, topScope->nofArguments(), 6, topScope->nofTemporaries() );
-        CodeGenerator         * cgen    = new CodeGenerator( theMacroAssembler, mapping );
+        PseudoRegisterMapping *mapping = new PseudoRegisterMapping( theMacroAssembler, topScope->nofArguments(), 6, topScope->nofTemporaries() );
+        CodeGenerator         *cgen    = new CodeGenerator( theMacroAssembler, mapping );
         cgen->initialize( topScope );
         bbIterator->apply( cgen );
         cgen->finalize( topScope );
     } else {
         // use a node visitor to generate code
-        OldCodeGenerator * cgen = new OldCodeGenerator();
+        OldCodeGenerator *cgen = new OldCodeGenerator();
         bbIterator->apply( cgen );
     }
     theMacroAssembler->finalize();
@@ -506,7 +506,7 @@ NativeMethod * Compiler::compile() {
     }
 
     rec->generate();            // write debugging info
-    NativeMethod * nm = new_nativeMethod( this );    // construct new NativeMethod
+    NativeMethod *nm = new_nativeMethod( this );    // construct new NativeMethod
     em.event.args[ 1 ] = nm;
 
     if ( PrintAssemblyCode )
@@ -544,7 +544,7 @@ void Compiler::fixupNonLocalReturnTestPoints() {
 
 void Compiler::computeBlockInfo() {
     FlagSetting( EliminateUnneededNodes, true );  // unused context nodes must be eliminated
-    GrowableArray <InlinedScope *> * allContexts = new GrowableArray <InlinedScope *>( 25 );
+    GrowableArray<InlinedScope *> *allContexts = new GrowableArray<InlinedScope *>( 25 );
     topScope->collectContextInfo( allContexts );
     // for now, just allocate all contexts as in interpreter
     // fix this later: collect all uplevel-accessed PseudoRegisters at same loop depth, form physical
@@ -560,20 +560,20 @@ void Compiler::computeBlockInfo() {
     while ( changed ) {
         changed     = false;
         for ( int i = allContexts->length() - 1; i >= 0; i-- ) {
-            InlinedScope * s = allContexts->at( i );
+            InlinedScope *s = allContexts->at( i );
             if ( s == nullptr )
                 continue;
-            PseudoRegister * contextPR = s->context();
+            PseudoRegister *contextPR = s->context();
             st_assert( contextPR->isSinglyAssigned(), "should have exactly one def" );
 
-            GrowableArray <Expression *> * temps = s->contextTemporaries();
+            GrowableArray<Expression *> *temps = s->contextTemporaries();
 
             bool_t noUplevelAccesses = true;
 
             // check if all context temps can be stack-allocated
             for ( int j = temps->length() - 1; j >= 0; j-- ) {
 
-                PseudoRegister * r = temps->at( j )->preg();
+                PseudoRegister *r = temps->at( j )->preg();
 
                 if ( r->uplevelR() or r->uplevelW() ) { // this temp is still uplevel-accessed, so can't eliminate context
                     noUplevelAccesses = false;
@@ -603,29 +603,29 @@ void Compiler::computeBlockInfo() {
 
     // now collect all remaining contexts
     int i = allContexts->length();
-    contextList = new GrowableArray <InlinedScope *>( i, i, nullptr );
+    contextList = new GrowableArray<InlinedScope *>( i, i, nullptr );
     while ( i-- > 0 ) {
         // should merge several contexts into one physical context if possible
         // fix this later
-        InlinedScope * s = allContexts->at( i );
+        InlinedScope *s = allContexts->at( i );
         if ( s == nullptr )
             continue;
-        PseudoRegister * contextPR = s->context();
+        PseudoRegister *contextPR = s->context();
         if ( CompilerDebug ) {
             cout( PrintEliminateContexts )->print( "%*s*could not eliminate context %s in scope %s\n", s->depth, "", contextPR->safeName(), s->key()->print_string() );
         }
         reporter->report_context( s );
         contextList->at_put( i, s );
-        ContextCreateNode * c = s->contextInitializer()->creator();
+        ContextCreateNode *c = s->contextInitializer()->creator();
         c->set_contextNo( i );
-        GrowableArray <Expression *> * temps = s->contextTemporaries();
+        GrowableArray<Expression *> *temps = s->contextTemporaries();
 
         // allocate the temps in this context (but only if they're used)
         int ntemps = temps->length();
         int size   = 0;
 
         for ( int j = 0; j < ntemps; j++ ) {
-            PseudoRegister * p = temps->at( j )->preg();
+            PseudoRegister *p = temps->at( j )->preg();
 
             // should be:
             //     if (p->isUsed() and (p->uplevelR() or p->uplevelW())) {
@@ -639,8 +639,8 @@ void Compiler::computeBlockInfo() {
                 if ( p->isBlockPseudoRegister() ) {
                     // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
                     // Thus we need to create a fake destination here if the context exists.
-                    SinglyAssignedPseudoRegister * dest = new SinglyAssignedPseudoRegister( s, loc, true, true, PrologueByteCodeIndex, EpilogueByteCodeIndex );
-                    Expression                   * e    = new UnknownExpression( dest, nullptr );
+                    SinglyAssignedPseudoRegister *dest = new SinglyAssignedPseudoRegister( s, loc, true, true, PrologueByteCodeIndex, EpilogueByteCodeIndex );
+                    Expression                   *e    = new UnknownExpression( dest, nullptr );
                     //contextPR->scope()->contextInitializer()->initialize(j, init);
                     temps->at_put( j, e );
                 } else {
@@ -674,7 +674,7 @@ void Compiler::computeBlockInfo() {
 
         for ( int i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
 
-            BlockPseudoRegister * blk = bbIterator->exposedBlks->at( i );
+            BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
             if ( blk->isUsed() ) {
                 st_assert( block_index <= nblocks, "nblocks too small" );
                 blk->closure()->set_id( id.sub( block_index++ ) );
@@ -688,7 +688,7 @@ void Compiler::computeBlockInfo() {
 void Compiler::initTopScope() {
     if ( recompileeRScope == nullptr ) {
         if ( TypeFeedback ) {
-            recompileeRScope = recompilee ? ( RecompilationScope * ) NonDummyRecompilationScope::constructRScopes( recompilee ) : ( RecompilationScope * ) new InterpretedRecompilationScope( nullptr, -1, key, method, 0, true );
+            recompileeRScope = recompilee ? (RecompilationScope *) NonDummyRecompilationScope::constructRScopes( recompilee ) : (RecompilationScope *) new InterpretedRecompilationScope( nullptr, -1, key, method, 0, true );
         } else {
             recompileeRScope = new NullRecompilationScope;
         }
@@ -697,9 +697,9 @@ void Compiler::initTopScope() {
         recompileeRScope->printTree( 0, 0 );
 
     countID = Universe::code->nextNativeMethodID();
-    Scope        * parentScope = nullptr;
-    SendInfo     * info        = new SendInfo( nullptr, key, nullptr );
-    InlinedScope * sender      = nullptr;    // no sender -- top scope in NativeMethod
+    Scope        *parentScope = nullptr;
+    SendInfo     *info        = new SendInfo( nullptr, key, nullptr );
+    InlinedScope *sender      = nullptr;    // no sender -- top scope in NativeMethod
 
     if ( is_block_compile() ) {
         // block method
@@ -731,7 +731,7 @@ void Compiler::print_short() {
 }
 
 
-void Compiler::print_key( ConsoleOutputStream * stream ) {
+void Compiler::print_key( ConsoleOutputStream *stream ) {
     key->print_on( stream );
     if ( topScope == nullptr )
         return; // print_key may be used during fatals where the compiler isn't set up yet
@@ -812,12 +812,12 @@ int Compiler::number_of_noninlined_blocks() const {
 }
 
 
-void Compiler::copy_noninlined_block_info( NativeMethod * nm ) {
+void Compiler::copy_noninlined_block_info( NativeMethod *nm ) {
     topScope->copy_noninlined_block_info( nm );
 }
 
 
-ConsoleOutputStream * cout( bool_t flag ) {
+ConsoleOutputStream *cout( bool_t flag ) {
     return ( flag or theCompiler == nullptr ) ? _console : theCompiler->messages;
 }
 

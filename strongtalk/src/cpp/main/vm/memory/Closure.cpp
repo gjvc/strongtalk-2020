@@ -9,11 +9,11 @@
 
 // -----------------------------------------------------------------------------
 
-void ObjectClosure::begin_space( Space * s ) {
+void ObjectClosure::begin_space( Space *s ) {
 }
 
 
-void ObjectClosure::end_space( Space * s ) {
+void ObjectClosure::end_space( Space *s ) {
 }
 
 
@@ -40,23 +40,23 @@ void FilteredObjectClosure::do_filtered_object( MemOop obj ) {
 
 // -----------------------------------------------------------------------------
 
-void ObjectLayoutClosure::do_oop( const char * title, Oop * o ) {
+void ObjectLayoutClosure::do_oop( const char *title, Oop *o ) {
 }
 
 
-void ObjectLayoutClosure::do_mark( MarkOop * m ) {
+void ObjectLayoutClosure::do_mark( MarkOop *m ) {
 }
 
 
-void ObjectLayoutClosure::do_byte( const char * title, std::uint8_t * b ) {
+void ObjectLayoutClosure::do_byte( const char *title, std::uint8_t *b ) {
 }
 
 
-void ObjectLayoutClosure::do_long( const char * title, void ** p ) {
+void ObjectLayoutClosure::do_long( const char *title, void **p ) {
 }
 
 
-void ObjectLayoutClosure::do_double( const char * title, double * d ) {
+void ObjectLayoutClosure::do_double( const char *title, double *d ) {
 }
 
 
@@ -68,65 +68,65 @@ void ObjectLayoutClosure::end_indexables() {
 }
 
 
-void ObjectLayoutClosure::do_indexable_oop( int index, Oop * o ) {
+void ObjectLayoutClosure::do_indexable_oop( int index, Oop *o ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_byte( int index, std::uint8_t * b ) {
+void ObjectLayoutClosure::do_indexable_byte( int index, std::uint8_t *b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_doubleByte( int index, std::uint16_t * b ) {
+void ObjectLayoutClosure::do_indexable_doubleByte( int index, std::uint16_t *b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_long( int index, std::int32_t * l ) {
-}
-
-
-// -----------------------------------------------------------------------------
-
-void FrameClosure::begin_process( Process * p ) {
-}
-
-
-void FrameClosure::end_process( Process * p ) {
-}
-
-
-void FrameClosure::do_frame( Frame * f ) {
+void ObjectLayoutClosure::do_indexable_long( int index, std::int32_t *l ) {
 }
 
 
 // -----------------------------------------------------------------------------
 
-void FrameLayoutClosure::do_stack( int index, Oop * o ) {
+void FrameClosure::begin_process( Process *p ) {
 }
 
 
-void FrameLayoutClosure::do_hp( std::uint8_t ** hp ) {
+void FrameClosure::end_process( Process *p ) {
 }
 
 
-void FrameLayoutClosure::do_receiver( Oop * o ) {
-}
-
-
-void FrameLayoutClosure::do_link( int ** fp ) {
-}
-
-
-void FrameLayoutClosure::do_return_addr( const char ** pc ) {
+void FrameClosure::do_frame( Frame *f ) {
 }
 
 
 // -----------------------------------------------------------------------------
 
-void ProcessClosure::do_process( DeltaProcess * p ) {
+void FrameLayoutClosure::do_stack( int index, Oop *o ) {
 }
 
 
-void OopClosure::do_oop( Oop * o ) {
+void FrameLayoutClosure::do_hp( std::uint8_t **hp ) {
+}
+
+
+void FrameLayoutClosure::do_receiver( Oop *o ) {
+}
+
+
+void FrameLayoutClosure::do_link( int **fp ) {
+}
+
+
+void FrameLayoutClosure::do_return_addr( const char **pc ) {
+}
+
+
+// -----------------------------------------------------------------------------
+
+void ProcessClosure::do_process( DeltaProcess *p ) {
+}
+
+
+void OopClosure::do_oop( Oop *o ) {
 }
 
 

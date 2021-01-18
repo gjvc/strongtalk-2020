@@ -24,10 +24,10 @@ constexpr int min_resource_free_size  = 32 * 1024;
 constexpr int min_resource_chunk_size = 256 * 1024;
 
 
-ResourceAreaChunk::ResourceAreaChunk( int min_capacity, ResourceAreaChunk * previous ) {
+ResourceAreaChunk::ResourceAreaChunk( int min_capacity, ResourceAreaChunk *previous ) {
 
     int size = max( min_capacity + min_resource_free_size, min_resource_chunk_size );
-    _bottom = ( char * ) AllocateHeap( size, "resourceAreaChunk" );
+    _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );
     _top    = _bottom + size;
 
 //    _console->print_cr( "%ResourceAreaChunk-allocated [0x%08x] ", resources.capacity() );
@@ -40,7 +40,7 @@ ResourceAreaChunk::ResourceAreaChunk( int min_capacity, ResourceAreaChunk * prev
 }
 
 
-void ResourceAreaChunk::initialize( ResourceAreaChunk * previous ) {
+void ResourceAreaChunk::initialize( ResourceAreaChunk *previous ) {
 
     _firstFree = _bottom;
     _prev      = previous;
@@ -68,7 +68,7 @@ void ResourceAreaChunk::print_short() {
 }
 
 
-void ResourceAreaChunk::print_alloc( const char * addr, int size ) {
+void ResourceAreaChunk::print_alloc( const char *addr, int size ) {
     _console->print_cr( "allocating %ld bytes at %#lx", size, addr );
 }
 
@@ -81,17 +81,17 @@ ResourceArea::ResourceArea() {
 
 ResourceArea::~ResourceArea() {
     // deallocate all chunks
-    ResourceAreaChunk       * prevc;
-    for ( ResourceAreaChunk * c = _resourceAreaChunk; c not_eq nullptr; c = prevc ) {
+    ResourceAreaChunk       *prevc;
+    for ( ResourceAreaChunk *c = _resourceAreaChunk; c not_eq nullptr; c = prevc ) {
         prevc = c->_prev;
         resources.addToFreeList( c );
     }
 }
 
 
-char * ResourceArea::allocate_more_bytes( int size ) {
+char *ResourceArea::allocate_more_bytes( int size ) {
     _resourceAreaChunk = resources.new_chunk( size, _resourceAreaChunk );
-    char * p = _resourceAreaChunk->allocate_bytes( size );
+    char *p = _resourceAreaChunk->allocate_bytes( size );
     st_assert( p, "Nothing returned" );
     return p;
 }
@@ -104,7 +104,7 @@ int ResourceArea::used() {
 }
 
 
-char * ResourceArea::allocate_bytes( int size ) {
+char *ResourceArea::allocate_bytes( int size ) {
 
     if ( size < 0 ) {
         st_fatal( "negative size in allocate_bytes" );
@@ -125,11 +125,11 @@ char * ResourceArea::allocate_bytes( int size ) {
         // want to return an invalid pointer for a zero-sized allocation,
         // but not nullptr, because routines may want to use nullptr for failure.
         // gjvc: but the above reason doesn't make much sense -- a zero-sized allocation is immediately useless.
-        return ( char * ) 1;
+        return (char *) 1;
     }
 
     size = roundTo( size, oopSize );
-    char * p;
+    char *p;
     if ( _resourceAreaChunk and ( p = _resourceAreaChunk->allocate_bytes( size ) ) )
         return p;
     return allocate_more_bytes( size );
@@ -149,10 +149,10 @@ int Resources::used() {
 
 
 static bool_t in_rsrc;
-static const char * p_rsrc;
+static const char *p_rsrc;
 
 
-bool_t Resources::contains( const char * p ) {
+bool_t Resources::contains( const char *p ) {
     in_rsrc = false;
     p_rsrc  = p;
     // FIX LATER  processes->processesDo(rsrcf2);
@@ -160,7 +160,7 @@ bool_t Resources::contains( const char * p ) {
 }
 
 
-void Resources::addToFreeList( ResourceAreaChunk * c ) {
+void Resources::addToFreeList( ResourceAreaChunk *c ) {
     if ( ZapResourceArea )
         c->clear();
     c->_prev = freeChunks;
@@ -168,21 +168,21 @@ void Resources::addToFreeList( ResourceAreaChunk * c ) {
 }
 
 
-ResourceAreaChunk * Resources::getFromFreeList( int min_capacity ) {
+ResourceAreaChunk *Resources::getFromFreeList( int min_capacity ) {
     if ( not freeChunks )
         return nullptr;
 
     // Handle the first element special
     if ( freeChunks->capacity() >= min_capacity ) {
-        ResourceAreaChunk * res = freeChunks;
+        ResourceAreaChunk *res = freeChunks;
         freeChunks = freeChunks->_prev;
         return res;
     }
 
-    ResourceAreaChunk * cursor = freeChunks;
+    ResourceAreaChunk *cursor = freeChunks;
     while ( cursor->_prev ) {
         if ( cursor->_prev->capacity() >= min_capacity ) {
-            ResourceAreaChunk * res = cursor->_prev;
+            ResourceAreaChunk *res = cursor->_prev;
             cursor->_prev = cursor->_prev->_prev;
             return res;
         }
@@ -194,10 +194,10 @@ ResourceAreaChunk * Resources::getFromFreeList( int min_capacity ) {
 }
 
 
-ResourceAreaChunk * Resources::new_chunk( int min_capacity, ResourceAreaChunk * previous ) {
+ResourceAreaChunk *Resources::new_chunk( int min_capacity, ResourceAreaChunk *previous ) {
 
     _in_consistent_state = false;
-    ResourceAreaChunk * res = getFromFreeList( min_capacity );
+    ResourceAreaChunk *res = getFromFreeList( min_capacity );
     if ( res ) {
         res->initialize( previous );
     } else {
@@ -218,9 +218,9 @@ ResourceAreaChunk * Resources::new_chunk( int min_capacity, ResourceAreaChunk * 
 
 // -----------------------------------------------------------------------------
 
-char * ResourceAreaChunk::allocate_bytes( int size ) {
+char *ResourceAreaChunk::allocate_bytes( int size ) {
 
-    char * p = _firstFree;
+    char *p = _firstFree;
     if ( _firstFree + size <= _top ) {
         if ( PrintResourceAllocation ) {
             print_alloc( p, size );
@@ -234,7 +234,7 @@ char * ResourceAreaChunk::allocate_bytes( int size ) {
 }
 
 
-void ResourceAreaChunk::freeTo( char * new_first_free ) {
+void ResourceAreaChunk::freeTo( char *new_first_free ) {
     st_assert( new_first_free <= _firstFree, "unfreeing in resource area" );
     if ( ZapResourceArea )
         clear( new_first_free, _firstFree );
@@ -262,9 +262,9 @@ NoGCVerifier::~NoGCVerifier() {
 }
 
 
-char * AllocatePageAligned( int size, const char * name ) {
+char *AllocatePageAligned( int size, const char *name ) {
     int page_size = Universe::page_size();
-    char * block = ( char * ) align( os::malloc( size + page_size ), page_size );
+    char *block = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
         lprintf( "Malloc (page-aligned) %s: 0x%08x = %#lx\n", name, size, block );
 
@@ -272,19 +272,19 @@ char * AllocatePageAligned( int size, const char * name ) {
 }
 
 
-char * AllocateHeap( int size, const char * name ) {
+char *AllocateHeap( int size, const char *name ) {
     if ( PrintHeapAllocation )
         lprintf( "Heap %7d %s\n", size, name );
-    return ( char * ) os::malloc( size );
+    return (char *) os::malloc( size );
 }
 
 
-void FreeHeap( void * p ) {
+void FreeHeap( void *p ) {
     os::free( p );
 }
 
 
-char * allocateResource( int size ) {
+char *allocateResource( int size ) {
     return resource_area.allocate_bytes( size );
 }
 

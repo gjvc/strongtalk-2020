@@ -20,25 +20,32 @@ class IntegerOpsTests : public testing::Test {
 
 // -----------------------------------------------------------------------------
 
-TEST( IntegerOpsTest, test_axpy ) {
+TEST( IntegerOpsTest, test_axpy
+) {
 
-    Digit a, x, y, carry;
+Digit a, x, y, carry;
 
-    for ( a = 12345; a <= 112345; a += 1234 ) {
-        for ( x = 10; x <= 20000; x += 1234 ) {
+for (
+a = 12345;
+a <= 112345; a += 1234 ) {
+for (
+x = 10;
+x <= 20000; x += 1234 ) {
 
-            y     = 10;
-            carry = 500;
+y     = 10;
+carry = 500;
 
-            Digit answer0 = ( ( a * x ) + y + carry ) % oneB;
-            Digit answer1 = ( ( a * x ) + y + carry ) / oneB;
+Digit answer0 = ( ( a * x ) + y + carry ) % oneB;
+Digit answer1 = ( ( a * x ) + y + carry ) / oneB;
 
-            Digit result = IntegerOps::axpy( a, x, y, carry );
-            EXPECT_EQ( result, answer0 );
-            EXPECT_EQ( carry, answer1 );
+Digit result = IntegerOps::axpy( a, x, y, carry );
+EXPECT_EQ( result, answer0
+);
+EXPECT_EQ( carry, answer1
+);
 
-        }
-    }
+}
+}
 
 }
 

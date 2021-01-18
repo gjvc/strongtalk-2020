@@ -49,404 +49,404 @@ constexpr int VTBL_OFFSET = 0;
 
 class Klass : ValueObject {
 
-    protected:
-        SMIOop         _non_indexable_size;
-        SMIOop         _has_untagged_contents;
-        ObjectArrayOop _classVars;
-        ObjectArrayOop _methods;
-        KlassOop       _superKlass;
-        MixinOop       _mixin;
+protected:
+    SMIOop         _non_indexable_size;
+    SMIOop         _has_untagged_contents;
+    ObjectArrayOop _classVars;
+    ObjectArrayOop _methods;
+    KlassOop       _superKlass;
+    MixinOop       _mixin;
 
-    public:
-        friend KlassOop as_klassOop( void * p );
+public:
+    friend KlassOop as_klassOop( void *p );
 
 
-        // Returns the enclosing klassOop
-        KlassOop as_klassOop() const {
-            // see klassOop.hpp for layout.
-            return ( KlassOop ) ( ( ( const char * ) this ) - sizeof( MemOopDescriptor ) + MEMOOP_TAG );
-        }
+    // Returns the enclosing klassOop
+    KlassOop as_klassOop() const {
+        // see klassOop.hpp for layout.
+        return (KlassOop) ( ( (const char *) this ) - sizeof( MemOopDescriptor ) + MEMOOP_TAG );
+    }
 
 
-        smi_t non_indexable_size() const {
-            return _non_indexable_size->value();
-        }
+    smi_t non_indexable_size() const {
+        return _non_indexable_size->value();
+    }
 
 
-        void set_non_indexable_size( smi_t size ) {
-            _non_indexable_size = smiOopFromValue( size );
-        }
+    void set_non_indexable_size( smi_t size ) {
+        _non_indexable_size = smiOopFromValue( size );
+    }
 
 
-        bool_t has_untagged_contents() const {
-            return _has_untagged_contents == smiOop_one;
-        }
+    bool_t has_untagged_contents() const {
+        return _has_untagged_contents == smiOop_one;
+    }
 
 
-        void set_untagged_contents( bool_t v ) {
-            _has_untagged_contents = v ? smiOop_one : smiOop_zero;
-        }
+    void set_untagged_contents( bool_t v ) {
+        _has_untagged_contents = v ? smiOop_one : smiOop_zero;
+    }
 
 
-        ObjectArrayOop classVars() const {
-            return _classVars;
-        }
+    ObjectArrayOop classVars() const {
+        return _classVars;
+    }
 
 
-        void set_classVars( ObjectArrayOop c ) {
-            STORE_OOP( &_classVars, c );
-        }
+    void set_classVars( ObjectArrayOop c ) {
+        STORE_OOP( &_classVars, c );
+    }
 
 
-        ObjectArrayOop methods() const {
-            return _methods;
-        }
+    ObjectArrayOop methods() const {
+        return _methods;
+    }
 
 
-        void set_methods( ObjectArrayOop m ) {
-            STORE_OOP( &_methods, m );
-        }
+    void set_methods( ObjectArrayOop m ) {
+        STORE_OOP( &_methods, m );
+    }
 
 
-        KlassOop superKlass() const {
-            return _superKlass;
-        }
+    KlassOop superKlass() const {
+        return _superKlass;
+    }
 
 
-        void set_superKlass( KlassOop super ) {
-            STORE_OOP( &_superKlass, super );
-        }
+    void set_superKlass( KlassOop super ) {
+        STORE_OOP( &_superKlass, super );
+    }
 
 
-        MixinOop mixin() const {
-            return _mixin;
-        }
+    MixinOop mixin() const {
+        return _mixin;
+    }
 
 
-        void set_mixin( MixinOop m ) {
-            STORE_OOP( &_mixin, m );
-        }
+    void set_mixin( MixinOop m ) {
+        STORE_OOP( &_mixin, m );
+    }
 
 
-        // Tells whether here is a super class
-        bool_t has_superKlass() const {
-            return Oop( superKlass() ) not_eq nilObj;
-        }
+    // Tells whether here is a super class
+    bool_t has_superKlass() const {
+        return Oop( superKlass() ) not_eq nilObj;
+    }
 
 
-    public:
-        int number_of_methods() const;                  // Returns the number of methods in this class.
-        MethodOop method_at( int index ) const;         // Returns the method at index.
-        void add_method( MethodOop method );            // Adds or overwrites with method.
-        MethodOop remove_method_at( int index );        // Removes method at index and returns the removed method.
+public:
+    int number_of_methods() const;                  // Returns the number of methods in this class.
+    MethodOop method_at( int index ) const;         // Returns the method at index.
+    void add_method( MethodOop method );            // Adds or overwrites with method.
+    MethodOop remove_method_at( int index );        // Removes method at index and returns the removed method.
 
-        int number_of_classVars() const;                // Returns the number of class variables.
-        AssociationOop classVar_at( int index ) const;  // Returns the class variable at index.
-        void add_classVar( AssociationOop assoc );      // Adds or overwrites class variable.
-        AssociationOop remove_classVar_at( int index ); // Removes class variable at index and returns the removed association.
-        bool_t includes_classVar( SymbolOop name );     // Tells whether the name is present
+    int number_of_classVars() const;                // Returns the number of class variables.
+    AssociationOop classVar_at( int index ) const;  // Returns the class variable at index.
+    void add_classVar( AssociationOop assoc );      // Adds or overwrites class variable.
+    AssociationOop remove_classVar_at( int index ); // Removes class variable at index and returns the removed association.
+    bool_t includes_classVar( SymbolOop name );     // Tells whether the name is present
 
-        // virtual pointer value
-        int vtbl_value() const {
-            return ( ( int * ) this )[ VTBL_OFFSET ];
-        }
+    // virtual pointer value
+    int vtbl_value() const {
+        return ( (int *) this )[ VTBL_OFFSET ];
+    }
 
 
-        void set_vtbl_value( int vtbl ) {
-            st_assert( vtbl % 4 == 0, "VTBL should be aligned" ); // XXX hard-coded alignment value
-            ( ( int * ) this )[ VTBL_OFFSET ] = vtbl;
-        }
+    void set_vtbl_value( int vtbl ) {
+        st_assert( vtbl % 4 == 0, "VTBL should be aligned" ); // XXX hard-coded alignment value
+        ( (int *) this )[ VTBL_OFFSET ] = vtbl;
+    }
 
 
-        void bootstrap_klass_part_one( Bootstrap * bs );
+    void bootstrap_klass_part_one( Bootstrap *bs );
 
-        void bootstrap_klass_part_two( Bootstrap * bs );
+    void bootstrap_klass_part_two( Bootstrap *bs );
 
-    public:
-        // After reading the snapshot the klass has to be fixed e.g. vtbl initialized!
-        void fixup_after_snapshot_read();  // must not be virtual; vtbl not fixed yet
+public:
+    // After reading the snapshot the klass has to be fixed e.g. vtbl initialized!
+    void fixup_after_snapshot_read();  // must not be virtual; vtbl not fixed yet
 
-        // allocation operations
-        virtual bool_t can_inline_allocation() const {
-            return false;
-        }
-        // If this returns true, the compiler may inline the allocation code.
-        // This means that the actual definition of allocate() is ignored!!
-        // Fix this compare member function pointers (9/9-1994)
+    // allocation operations
+    virtual bool_t can_inline_allocation() const {
+        return false;
+    }
+    // If this returns true, the compiler may inline the allocation code.
+    // This means that the actual definition of allocate() is ignored!!
+    // Fix this compare member function pointers (9/9-1994)
 
-        // Reflective properties
-        virtual bool_t can_have_instance_variables() const {
-            return false;
-        }
+    // Reflective properties
+    virtual bool_t can_have_instance_variables() const {
+        return false;
+    }
 
 
-        virtual bool_t can_be_subclassed() const {
-            return false;
-        }
+    virtual bool_t can_be_subclassed() const {
+        return false;
+    }
 
 
-        bool_t is_specialized_class() const;
+    bool_t is_specialized_class() const;
 
-        // Tells whether this is a named class
-        bool_t is_named_class() const;
+    // Tells whether this is a named class
+    bool_t is_named_class() const;
 
 
-        // allocation operations
-        int size() const {
-            return sizeof( Klass ) / sizeof( Oop );
-        }
+    // allocation operations
+    int size() const {
+        return sizeof( Klass ) / sizeof( Oop );
+    }
 
 
-        virtual Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-        virtual Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
 
-        // KlassFormat
-        enum class Format {
-                no_klass,               //
-                mem_klass,              //
-                association_klass,      //
-                blockClosure_klass,     //
-                byteArray_klass,        //
-                symbol_klass,           //
-                context_klass,          //
-                doubleByteArray_klass,  //
-                doubleValueArray_klass, //
-                double_klass,           //
-                klass_klass,            //
-                method_klass,           //
-                mixin_klass,            //
-                objArray_klass,         //
-                weakArray_klass,        //
-                process_klass,          //
-                vframe_klass,           //
-                proxy_klass,            //
-                smi_klass,              //
-                special_klass           //
-        };
+    // KlassFormat
+    enum class Format {
+        no_klass,               //
+        mem_klass,              //
+        association_klass,      //
+        blockClosure_klass,     //
+        byteArray_klass,        //
+        symbol_klass,           //
+        context_klass,          //
+        doubleByteArray_klass,  //
+        doubleValueArray_klass, //
+        double_klass,           //
+        klass_klass,            //
+        method_klass,           //
+        mixin_klass,            //
+        objArray_klass,         //
+        weakArray_klass,        //
+        process_klass,          //
+        vframe_klass,           //
+        proxy_klass,            //
+        smi_klass,              //
+        special_klass           //
+    };
 
 
-        // format
-        virtual Format format() {
-            return Format::no_klass;
-        }
+    // format
+    virtual Format format() {
+        return Format::no_klass;
+    }
 
 
-        static Format format_from_symbol( SymbolOop format );
+    static Format format_from_symbol( SymbolOop format );
 
-        static const char * name_from_format( Format format );
+    static const char *name_from_format( Format format );
 
-        // Tells whether the two klass have same layout (format and instance variables)
-        bool_t has_same_layout_as( KlassOop klass );
+    // Tells whether the two klass have same layout (format and instance variables)
+    bool_t has_same_layout_as( KlassOop klass );
 
-        bool_t has_same_inst_vars_as( KlassOop klass );
+    bool_t has_same_inst_vars_as( KlassOop klass );
 
-        // creates invocation
-        virtual KlassOop create_subclass( MixinOop mixin, Format format );
+    // creates invocation
+    virtual KlassOop create_subclass( MixinOop mixin, Format format );
 
-        // create invocation (receiver as metaclass superclass)
-        virtual KlassOop create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format );
+    // create invocation (receiver as metaclass superclass)
+    virtual KlassOop create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format );
 
-    protected:
-        static KlassOop create_generic_class( KlassOop super_class, MixinOop mixin, int vtbl );
+protected:
+    static KlassOop create_generic_class( KlassOop super_class, MixinOop mixin, int vtbl );
 
-        static KlassOop create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, int vtbl );
+    static KlassOop create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, int vtbl );
 
-    public:
+public:
 
-        virtual const char * name() const {
-            return "";
-        }
+    virtual const char *name() const {
+        return "";
+    }
 
 
-        void print_klass();
+    void print_klass();
 
-        char * delta_name(); // the Smalltalk name of the class or nullptr
-        void print_name_on( ConsoleOutputStream * stream );
+    char *delta_name(); // the Smalltalk name of the class or nullptr
+    void print_name_on( ConsoleOutputStream *stream );
 
-        // Methods
-        inline MethodOop local_lookup( SymbolOop selector );
+    // Methods
+    inline MethodOop local_lookup( SymbolOop selector );
 
-        MethodOop lookup( SymbolOop selector );
+    MethodOop lookup( SymbolOop selector );
 
-        bool_t is_method_holder_for( MethodOop method );
+    bool_t is_method_holder_for( MethodOop method );
 
-        KlassOop lookup_method_holder_for( MethodOop method );
+    KlassOop lookup_method_holder_for( MethodOop method );
 
-        // Reflective operation
-        void flush_methods();
+    // Reflective operation
+    void flush_methods();
 
-        // Class variables
-        AssociationOop local_lookup_class_var( SymbolOop name );
+    // Class variables
+    AssociationOop local_lookup_class_var( SymbolOop name );
 
-        AssociationOop lookup_class_var( SymbolOop name );
+    AssociationOop lookup_class_var( SymbolOop name );
 
-        // Instance variables
+    // Instance variables
 
-        // Returns the word offset for an instance variable.
-        // -1 is returned if the search failed.
-        int lookup_inst_var( SymbolOop name ) const;
+    // Returns the word offset for an instance variable.
+    // -1 is returned if the search failed.
+    int lookup_inst_var( SymbolOop name ) const;
 
-        // Returns the name of the instance variable at offset.
-        // nullptr is returned if the search failed.
-        SymbolOop inst_var_name_at( int offset ) const;
+    // Returns the name of the instance variable at offset.
+    // nullptr is returned if the search failed.
+    SymbolOop inst_var_name_at( int offset ) const;
 
-        // Compute the number of instance variables based on the mixin,
-        int number_of_instance_variables() const;
+    // Compute the number of instance variables based on the mixin,
+    int number_of_instance_variables() const;
 
-        // Schema change support
-        void mark_for_schema_change();
+    // Schema change support
+    void mark_for_schema_change();
 
-        bool_t is_marked_for_schema_change();
+    bool_t is_marked_for_schema_change();
 
-        void initialize();
+    void initialize();
 
-        // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
-        // These functions describe behavior for the Oop not the KLASS.
-    public:
-        // actual Oop size of obj in memory
-        virtual int oop_size( Oop obj ) const {
-            return non_indexable_size();
-        }
+    // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
+    // These functions describe behavior for the Oop not the KLASS.
+public:
+    // actual Oop size of obj in memory
+    virtual int oop_size( Oop obj ) const {
+        return non_indexable_size();
+    }
 
 
-        // Returns the header size for an instance of this klass
-        virtual int oop_header_size() const {
-            return 0;
-        }
+    // Returns the header size for an instance of this klass
+    virtual int oop_header_size() const {
+        return 0;
+    }
 
 
-        // memory operations
-        virtual bool_t oop_verify( Oop obj );
+    // memory operations
+    virtual bool_t oop_verify( Oop obj );
 
-        virtual int oop_scavenge_contents( Oop obj );
+    virtual int oop_scavenge_contents( Oop obj );
 
-        virtual int oop_scavenge_tenured_contents( Oop obj );
+    virtual int oop_scavenge_tenured_contents( Oop obj );
 
-        virtual void oop_follow_contents( Oop obj );
+    virtual void oop_follow_contents( Oop obj );
 
 
-        // type testing operations
-        virtual bool_t oop_is_smi() const {
-            return false;
-        }
+    // type testing operations
+    virtual bool_t oop_is_smi() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_double() const {
-            return false;
-        }
+    virtual bool_t oop_is_double() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_block() const {
-            return false;
-        }
+    virtual bool_t oop_is_block() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_byteArray() const {
-            return false;
-        }
+    virtual bool_t oop_is_byteArray() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_doubleByteArray() const {
-            return false;
-        }
+    virtual bool_t oop_is_doubleByteArray() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_doubleValueArray() const {
-            return false;
-        }
+    virtual bool_t oop_is_doubleValueArray() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_symbol() const {
-            return false;
-        }
+    virtual bool_t oop_is_symbol() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_objArray() const {
-            return false;
-        }
+    virtual bool_t oop_is_objArray() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_weakArray() const {
-            return false;
-        }
+    virtual bool_t oop_is_weakArray() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_klass() const {
-            return false;
-        }
+    virtual bool_t oop_is_klass() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_process() const {
-            return false;
-        }
+    virtual bool_t oop_is_process() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_vframe() const {
-            return false;
-        }
+    virtual bool_t oop_is_vframe() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_method() const {
-            return false;
-        }
+    virtual bool_t oop_is_method() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_proxy() const {
-            return false;
-        }
+    virtual bool_t oop_is_proxy() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_mixin() const {
-            return false;
-        }
+    virtual bool_t oop_is_mixin() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_association() const {
-            return false;
-        }
+    virtual bool_t oop_is_association() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_context() const {
-            return false;
-        }
+    virtual bool_t oop_is_context() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_message() const {
-            return false;
-        }
+    virtual bool_t oop_is_message() const {
+        return false;
+    }
 
 
-        virtual bool_t oop_is_indexable() const {
-            return false;
-        }
+    virtual bool_t oop_is_indexable() const {
+        return false;
+    }
 
 
-        // Dispatched primitives
-        virtual Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
+    // Dispatched primitives
+    virtual Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
 
-        virtual Oop oop_primitive_allocate_size( Oop obj, int size );
+    virtual Oop oop_primitive_allocate_size( Oop obj, int size );
 
-        virtual Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    virtual Oop oop_shallow_copy( Oop obj, bool_t tenured );
 
-        // printing operations
-        virtual void oop_print_on( Oop obj, ConsoleOutputStream * stream );
+    // printing operations
+    virtual void oop_print_on( Oop obj, ConsoleOutputStream *stream );
 
-        virtual void oop_short_print_on( Oop obj, ConsoleOutputStream * stream );
+    virtual void oop_short_print_on( Oop obj, ConsoleOutputStream *stream );
 
-        virtual void oop_print_value_on( Oop obj, ConsoleOutputStream * stream );
+    virtual void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );
 
-        // iterators
-        virtual void oop_oop_iterate( Oop obj, OopClosure * blk );
+    // iterators
+    virtual void oop_oop_iterate( Oop obj, OopClosure *blk );
 
-        virtual void oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk );
+    virtual void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
 
-        friend class KlassKlass;
+    friend class KlassKlass;
 
-        friend class KlassOopDescriptor;
+    friend class KlassOopDescriptor;
 };
 
 
-inline KlassOop as_klassOop( void * p ) {
+inline KlassOop as_klassOop( void *p ) {
     return KlassOop( as_memOop( p ) );
 }

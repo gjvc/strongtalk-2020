@@ -26,7 +26,7 @@ MethodOop BlockClosureOopDescriptor::method() const {
     Oop m = addr()->_methodOrJumpAddr;
 
     if ( isCompiledBlock() ) {
-        JumpTableEntry * e = ( JumpTableEntry * ) m;
+        JumpTableEntry *e = (JumpTableEntry *) m;
         st_assert( e->is_block_closure_stub(), "must be block stub" );
         return e->block_method();
     }
@@ -36,7 +36,7 @@ MethodOop BlockClosureOopDescriptor::method() const {
 
 
 int BlockClosureOopDescriptor::number_of_arguments() {
-    return ( ( BlockClosureKlass * ) klass() )->number_of_arguments();
+    return ( (BlockClosureKlass *) klass() )->number_of_arguments();
 }
 
 
@@ -49,7 +49,7 @@ void BlockClosureOopDescriptor::verify() {
     MemOopDescriptor::verify();
     Oop m = addr()->_methodOrJumpAddr;
     if ( isCompiledBlock() ) {
-        JumpTableEntry * e = ( JumpTableEntry * ) m;
+        JumpTableEntry *e = (JumpTableEntry *) m;
         e->verify();
         if ( not e->is_block_closure_stub() )
             error( "stub %#x of block %#x isn't a closure stub", e, this );
@@ -59,9 +59,9 @@ void BlockClosureOopDescriptor::verify() {
 }
 
 
-BlockClosureOop BlockClosureOopDescriptor::create_clean_block( int nofArgs, const char * entry_point ) {
+BlockClosureOop BlockClosureOopDescriptor::create_clean_block( int nofArgs, const char *entry_point ) {
     BlockClosureOop blk = allocateTenuredBlock( smiOopFromValue( nofArgs ) );
-    blk->set_lexical_scope( ( ContextOop ) nilObj );
+    blk->set_lexical_scope( (ContextOop) nilObj );
     blk->set_jumpAddr( entry_point );
     return blk;
 }
@@ -76,8 +76,8 @@ void BlockClosureOopDescriptor::deoptimize() {
         return;     // do nothing if lexical scope is nil
 
     int index;
-    NativeMethod                   * nm    = jump_table_entry()->parent_nativeMethod( index );
-    NonInlinedBlockScopeDescriptor * scope = nm->noninlined_block_scope_at( index );
+    NativeMethod                   *nm    = jump_table_entry()->parent_nativeMethod( index );
+    NonInlinedBlockScopeDescriptor *scope = nm->noninlined_block_scope_at( index );
 
     LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop [0x%lx]", nm );
     st_assert( nm, "NativeMethod must be present" );
@@ -94,7 +94,7 @@ void BlockClosureOopDescriptor::deoptimize() {
 }
 
 
-JumpTableEntry * BlockClosureOopDescriptor::jump_table_entry() const {
+JumpTableEntry *BlockClosureOopDescriptor::jump_table_entry() const {
     st_assert( isCompiledBlock(), "must be compiled" );
-    return ( JumpTableEntry * ) addr()->_methodOrJumpAddr;
+    return (JumpTableEntry *) addr()->_methodOrJumpAddr;
 }

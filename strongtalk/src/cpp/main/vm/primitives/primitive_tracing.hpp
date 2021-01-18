@@ -9,7 +9,7 @@
 
 // -----------------------------------------------------------------------------
 
-typedef class OopDescriptor * Oop;
+typedef class OopDescriptor *Oop;
 
 
 // -----------------------------------------------------------------------------
@@ -19,7 +19,7 @@ typedef class OopDescriptor * Oop;
 
 #ifdef ST_TRACE_PRIMITIVES
 
-    #define TRACE_FUNC( flag, label ) \
+#define TRACE_FUNC( flag, label ) \
       static void Trace(const char* name, \
                         const char* s1 = nullptr, Oop a1 = nullptr, \
                         const char* s2 = nullptr, Oop a2 = nullptr, \
@@ -46,65 +46,65 @@ typedef class OopDescriptor * Oop;
       lprintf("}\n"); \
     }
 
-    #define TRACE_0( name ) \
+#define TRACE_0( name ) \
       inc_calls(); \
       Trace(name);
 
-    #define TRACE_1( name, a1 ) \
+#define TRACE_1( name, a1 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1);
 
-    #define TRACE_2( name, a1, a2 ) \
+#define TRACE_2( name, a1, a2 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2);
 
-    #define TRACE_3( name, a1, a2, a3 ) \
+#define TRACE_3( name, a1, a2, a3 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3);
 
-    #define TRACE_4( name, a1, a2, a3, a4 ) \
+#define TRACE_4( name, a1, a2, a3, a4 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4);
 
-    #define TRACE_5( name, a1, a2, a3, a4, a5 ) \
+#define TRACE_5( name, a1, a2, a3, a4, a5 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5);
 
-    #define TRACE_6( name, a1, a2, a3, a4, a5, a6 ) \
+#define TRACE_6( name, a1, a2, a3, a4, a5, a6 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5, XSTR(a6), a6);
 
-    #define TRACE_7( name, a1, a2, a3, a4, a5, a6, a7 ) \
+#define TRACE_7( name, a1, a2, a3, a4, a5, a6, a7 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5, XSTR(a6), a6, XSTR(a7), a7);
 
-    #define TRACE_8( name, a1, a2, a3, a4, a5, a6, a7, a8 ) \
+#define TRACE_8( name, a1, a2, a3, a4, a5, a6, a7, a8 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5, XSTR(a6), a6, XSTR(a7), a7, XSTR(a8), a8);
 
-    #define TRACE_9( name, a1, a2, a3, a4, a5, a6, a7, a8, a9 ) \
+#define TRACE_9( name, a1, a2, a3, a4, a5, a6, a7, a8, a9 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5, XSTR(a6), a6, XSTR(a7), a7, XSTR(a8), a8, XSTR(a9), a9);
 
-    #define TRACE_10( name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 ) \
+#define TRACE_10( name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 ) \
       inc_calls(); \
       Trace(name, XSTR(a1), a1, XSTR(a2), a2, XSTR(a3), a3, XSTR(a4), a4, XSTR(a5), a5, XSTR(a6), a6, XSTR(a7), a7, XSTR(a8), a8, XSTR(a9), a9, XSTR(a10), a10);
 
 #else
 
-        #define TRACE_FUNC( flag, label )
+#define TRACE_FUNC( flag, label )
 
-        #define TRACE_0( name )
-        #define TRACE_1( name, a1 )
-        #define TRACE_2( name, a1, a2 )
-        #define TRACE_3( name, a1, a2, a3 )
-        #define TRACE_4( name, a1, a2, a3, a4 )
-        #define TRACE_5( name, a1, a2, a3, a4, a5 )
-        #define TRACE_6( name, a1, a2, a3, a4, a5, a6 )
-        #define TRACE_7( name, a1, a2, a3, a4, a5, a6, a7 )
-        #define TRACE_8( name, a1, a2, a3, a4, a5, a6, a7, a8 )
-        #define TRACE_9( name, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
-        #define TRACE_10( name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 )
+#define TRACE_0( name )
+#define TRACE_1( name, a1 )
+#define TRACE_2( name, a1, a2 )
+#define TRACE_3( name, a1, a2, a3 )
+#define TRACE_4( name, a1, a2, a3, a4 )
+#define TRACE_5( name, a1, a2, a3, a4, a5 )
+#define TRACE_6( name, a1, a2, a3, a4, a5, a6 )
+#define TRACE_7( name, a1, a2, a3, a4, a5, a6, a7 )
+#define TRACE_8( name, a1, a2, a3, a4, a5, a6, a7, a8 )
+#define TRACE_9( name, a1, a2, a3, a4, a5, a6, a7, a8, a9 )
+#define TRACE_10( name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 )
 
 #endif
 

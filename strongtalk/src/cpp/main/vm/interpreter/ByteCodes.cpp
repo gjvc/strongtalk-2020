@@ -17,8 +17,8 @@
 #include "vm/interpreter/Floats.hpp"
 
 
-const char * ByteCodes::_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-const char * ByteCodes::_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+const char *ByteCodes::_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+const char *ByteCodes::_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 ByteCodes::Format           ByteCodes::_format[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
 ByteCodes::CodeType         ByteCodes::_code_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
@@ -33,18 +33,18 @@ void ByteCodes::def( Code code ) {
 }
 
 
-void ByteCodes::def( Code code, const char * name, Format format, CodeType code_type, bool_t single_step, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, bool_t pop_tos ) {
     def( code, name, format, code_type, single_step, ByteCodes::ArgumentSpec::no_args, ByteCodes::SendType::no_send, pop_tos );
 }
 
 
-void ByteCodes::def( Code code, const char * name, Format format, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
     st_assert( send_type not_eq ByteCodes::SendType::no_send, "must be a send" );
     def( code, name, format, ByteCodes::CodeType::message_send, true, argument_spec, send_type, pop_tos );
 }
 
 
-void ByteCodes::def( Code code, const char * name, Format format, CodeType code_type, bool_t single_step, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
     st_assert( 0 <= static_cast<int>(code) and static_cast<int>(code) < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES), "out of bounds" );
     st_assert( _name[ static_cast<int>(code) ] == nullptr, "bytecode defined twice" );
 
@@ -99,11 +99,11 @@ void ByteCodes::def( Code code, const char * name, Format format, CodeType code_
 extern "C" doFn original_table[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
-void ByteCodes::set_entry_point( Code code, const char * entry_point ) {
+void ByteCodes::set_entry_point( Code code, const char *entry_point ) {
     st_assert( is_defined( code ), "undefined byte code" );
     st_assert( entry_point not_eq nullptr, "not a valid entry_point" );
     _entry_point[ static_cast<int>(code) ]   = entry_point;
-    original_table[ static_cast<int>(code) ] = ( doFn ) entry_point;
+    original_table[ static_cast<int>(code) ] = (doFn) entry_point;
 }
 
 
@@ -424,7 +424,7 @@ ByteCodes::LoopType ByteCodes::loop_type( Code code ) {
 }
 
 
-const char * ByteCodes::format_as_string( Format format ) {
+const char *ByteCodes::format_as_string( Format format ) {
     switch ( format ) {
         case ByteCodes::Format::B:
             return "B";
@@ -468,7 +468,7 @@ const char * ByteCodes::format_as_string( Format format ) {
 }
 
 
-const char * ByteCodes::send_type_as_string( SendType send_type ) {
+const char *ByteCodes::send_type_as_string( SendType send_type ) {
     switch ( send_type ) {
         case ByteCodes::SendType::interpreted_send:
             return "ByteCodes::SendType::interpreted_send";
@@ -492,7 +492,7 @@ const char * ByteCodes::send_type_as_string( SendType send_type ) {
 }
 
 
-const char * ByteCodes::code_type_as_string( CodeType code_type ) {
+const char *ByteCodes::code_type_as_string( CodeType code_type ) {
     switch ( code_type ) {
         case ByteCodes::CodeType::local_access:
             return "local_access";
@@ -528,7 +528,7 @@ const char * ByteCodes::code_type_as_string( CodeType code_type ) {
 }
 
 
-const char * ByteCodes::argument_spec_as_string( ArgumentSpec argument_spec ) {
+const char *ByteCodes::argument_spec_as_string( ArgumentSpec argument_spec ) {
     switch ( argument_spec ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
             return "recv_0_args";
@@ -548,7 +548,7 @@ const char * ByteCodes::argument_spec_as_string( ArgumentSpec argument_spec ) {
 }
 
 
-const char * ByteCodes::loop_type_as_string( LoopType loop_type ) {
+const char *ByteCodes::loop_type_as_string( LoopType loop_type ) {
     switch ( loop_type ) {
         case ByteCodes::LoopType::loop_start:
             return "loop_start";
@@ -1021,7 +1021,7 @@ static void generate_instr_method() {
 }
 
 
-static void print_table_entry_for( const char * selector, ByteCodes::Code code ) {
+static void print_table_entry_for( const char *selector, ByteCodes::Code code ) {
     _console->print_cr( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
 }
 
@@ -1051,7 +1051,7 @@ static void generate_codeForPrimitive_method() {
 }
 
 
-static void generate_signature( const char * sig, char separator ) {
+static void generate_signature( const char *sig, char separator ) {
     int i     = 1;
     int b_cnt = 1;
     int w_cnt = 1;
@@ -1096,7 +1096,7 @@ static bool_t has_inline_cache( ByteCodes::Code code ) {
 
 
 static void generate_gen_method( ByteCodes::Code code ) {
-    const char * sig = ByteCodes::format_as_string( ByteCodes::format( code ) );
+    const char *sig = ByteCodes::format_as_string( ByteCodes::format( code ) );
     _console->print( ByteCodes::name( code ) );
     generate_signature( sig, '_' );
     _console->cr();
@@ -1148,31 +1148,31 @@ static void generate_heap_code_methods() {
 
 class Markup : StackAllocatedObject {
 
-    private:
-        const char * _tag;
+private:
+    const char *_tag;
 
-    public:
+public:
 
-        Markup( const char * tag ) {
-            _tag = tag;
-            _console->print_cr( "<%s>", _tag );
-        }
+    Markup( const char *tag ) {
+        _tag = tag;
+        _console->print_cr( "<%s>", _tag );
+    }
 
 
-        ~Markup() {
-            _console->print_cr( "</%s>", _tag );
-        }
+    ~Markup() {
+        _console->print_cr( "</%s>", _tag );
+    }
 };
 
 
-static void markup( const char * tag, const char * text ) {
+static void markup( const char *tag, const char *text ) {
     _console->print_cr( "<%s>%s</%s>", tag, text, tag );
 }
 
 
 static void print_format( ByteCodes::Format format ) {
 
-    const char * f = ByteCodes::format_as_string( format );
+    const char *f = ByteCodes::format_as_string( format );
 
     while ( *f ) {
         switch ( *f ) {
@@ -1196,7 +1196,7 @@ static void print_format( ByteCodes::Format format ) {
 }
 
 
-static const char * arguments_as_string( ByteCodes::ArgumentSpec spec ) {
+static const char *arguments_as_string( ByteCodes::ArgumentSpec spec ) {
     switch ( spec ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
             return "receiver";

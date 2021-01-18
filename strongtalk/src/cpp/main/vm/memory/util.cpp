@@ -48,7 +48,7 @@ void printIndent() {
 #define DO_DOWN( from ) LOOP_UNROLL(count, *--to = from)
 
 
-void copy_oops_up( Oop * from, Oop * to, int count ) {
+void copy_oops_up( Oop *from, Oop *to, int count ) {
     st_assert( maskBits( int( from ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
@@ -79,7 +79,7 @@ void copy_oops_up( Oop * from, Oop * to, int count ) {
 }
 
 
-void copy_oops_down( Oop * from, Oop * to, int count ) {
+void copy_oops_down( Oop *from, Oop *to, int count ) {
     st_assert( maskBits( int( from ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
@@ -87,7 +87,7 @@ void copy_oops_down( Oop * from, Oop * to, int count ) {
 }
 
 
-void set_oops( Oop * to, int count, Oop value ) {
+void set_oops( Oop *to, int count, Oop value ) {
     st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
 
@@ -114,36 +114,36 @@ void set_oops( Oop * to, int count, Oop value ) {
 }
 
 
-char * copy_string( const char * s ) {
+char *copy_string( const char *s ) {
     int len = strlen( s ) + 1;
-    char * str = new_resource_array <char>( len );
+    char *str = new_resource_array<char>( len );
     strcpy( str, s );
     return str;
 }
 
 
-char * copy_c_heap_string( const char * s ) {
+char *copy_c_heap_string( const char *s ) {
     int len = strlen( s ) + 1;
-    char * str = new_c_heap_array <char>( len );
+    char *str = new_c_heap_array<char>( len );
     strcpy( str, s );
     return str;
 }
 
 
-char * copy_string( const char * s, smi_t len ) {
-    char * str = new_resource_array <char>( len + 1 );
+char *copy_string( const char *s, smi_t len ) {
+    char *str = new_resource_array<char>( len + 1 );
     memcpy( str, s, len + 1 );
     str[ len ] = '\0';
     return str;
 }
 
 
-void copy_oops( Oop * from, Oop * to, int count ) {
+void copy_oops( Oop *from, Oop *to, int count ) {
     copy_oops_up( from, to, count );
 }
 
 
-void copy_oops_overlapping( Oop * from, Oop * to, int count ) {
+void copy_oops_overlapping( Oop *from, Oop *to, int count ) {
     if ( from < to )
         copy_oops_down( from + count, to + count, count );
     else if ( from > to )
@@ -151,13 +151,13 @@ void copy_oops_overlapping( Oop * from, Oop * to, int count ) {
 }
 
 
-void copy_words( int * from, int * to, int count ) {
-    copy_oops( ( Oop * ) from, ( Oop * ) to, count );
+void copy_words( int *from, int *to, int count ) {
+    copy_oops( (Oop *) from, (Oop *) to, count );
 }
 
 
-void set_words( int * from, int count, int value ) {
-    set_oops( ( Oop * ) from, count, ( Oop ) value );
+void set_words( int *from, int count, int value ) {
+    set_oops( (Oop *) from, count, (Oop) value );
 }
 
 
@@ -181,15 +181,15 @@ int max( int a, int b, int c ) {
 }
 
 
-void * align( void * p, int alignment ) {
-    int number = ( int ) p;
+void *align( void *p, int alignment ) {
+    int number = (int) p;
     int adjust = alignment - ( number % alignment ) % alignment;
-    return ( void * ) ( number + adjust );
+    return (void *) ( number + adjust );
 }
 
 
-int byte_size( void * from, void * to ) {
-    return ( const char * ) to - ( const char * ) from;
+int byte_size( void *from, void *to ) {
+    return (const char *) to - (const char *) from;
 }
 
 

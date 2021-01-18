@@ -12,22 +12,22 @@
 
 class BlockScopeNode : public ScopeDescriptorNode {
 
-    public:
-        ScopeInfo _parent;
+public:
+    ScopeInfo _parent;
 
 
-        BlockScopeNode( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, int scopeID, int senderByteCodeIndex, bool_t visible ) :
+    BlockScopeNode( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, int scopeID, int senderByteCodeIndex, bool_t visible ) :
             ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ) {
-            _parent = parent;
-        }
+        _parent = parent;
+    }
 
 
-        std::uint8_t code() {
-            return BLOCK_CODE;
-        }
+    std::uint8_t code() {
+        return BLOCK_CODE;
+    }
 
 
-        void generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader );
+    void generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader );
 
-        void verify( ScopeDescriptor * sd );
+    void verify( ScopeDescriptor *sd );
 };

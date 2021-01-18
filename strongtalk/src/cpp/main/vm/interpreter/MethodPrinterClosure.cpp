@@ -19,7 +19,7 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 
 
-MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream * stream ) {
+MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream *stream ) {
     _outputStream = stream ? stream : _console;
 }
 
@@ -28,7 +28,7 @@ void MethodPrinterClosure::indent() {
     if ( WizardMode ) {
         _outputStream->indent();
         _outputStream->print( "      <" );
-        GrowableArray <int> * map = method()->expression_stack_mapping( byteCodeIndex() );
+        GrowableArray<int> *map = method()->expression_stack_mapping( byteCodeIndex() );
 
         for ( int i = 0; i < map->length(); i++ )
             _outputStream->print( " 0x%08x", map->at( i ) );
@@ -39,7 +39,7 @@ void MethodPrinterClosure::indent() {
 }
 
 
-void MethodPrinterClosure::show( const char * str ) {
+void MethodPrinterClosure::show( const char *str ) {
     _outputStream->indent();
     _outputStream->print_cr( "      %s", str );
 }
@@ -73,7 +73,7 @@ void MethodPrinterClosure::print_sendtype( ByteCodes::SendType type ) {
 }
 
 
-void MethodPrinterClosure::if_node( IfNode * node ) {
+void MethodPrinterClosure::if_node( IfNode *node ) {
     indent();
     node->selector()->print_symbol_on( _outputStream );
     _outputStream->print_cr( " {0x%08x} [", node->end_byteCodeIndex() );
@@ -86,7 +86,7 @@ void MethodPrinterClosure::if_node( IfNode * node ) {
 }
 
 
-void MethodPrinterClosure::cond_node( CondNode * node ) {
+void MethodPrinterClosure::cond_node( CondNode *node ) {
     indent();
     node->selector()->print_symbol_on( _outputStream );
     _outputStream->cr();
@@ -96,7 +96,7 @@ void MethodPrinterClosure::cond_node( CondNode * node ) {
 }
 
 
-void MethodPrinterClosure::while_node( WhileNode * node ) {
+void MethodPrinterClosure::while_node( WhileNode *node ) {
     indent();
     node->selector()->print_symbol_on( _outputStream );
     _outputStream->print_cr( " {0x%08x} [", node->end_byteCodeIndex() );
@@ -109,7 +109,7 @@ void MethodPrinterClosure::while_node( WhileNode * node ) {
 }
 
 
-void MethodPrinterClosure::primitive_call_node( PrimitiveCallNode * node ) {
+void MethodPrinterClosure::primitive_call_node( PrimitiveCallNode *node ) {
     indent();
     _outputStream->print_cr( "primitive call '%s'", node->pdesc()->name() );
     if ( node->failure_code() ) {
@@ -119,7 +119,7 @@ void MethodPrinterClosure::primitive_call_node( PrimitiveCallNode * node ) {
 }
 
 
-void MethodPrinterClosure::dll_call_node( DLLCallNode * node ) {
+void MethodPrinterClosure::dll_call_node( DLLCallNode *node ) {
     indent();
     _outputStream->print( "dll call <" );
     node->dll_name()->print_symbol_on( _outputStream );
@@ -272,13 +272,13 @@ void MethodPrinterClosure::pop() {
 }
 
 
-void MethodPrinterClosure::normal_send( InterpretedInlineCache * ic ) {
+void MethodPrinterClosure::normal_send( InterpretedInlineCache *ic ) {
     indent();
     _outputStream->print( "normal send " );
     print_sendtype( ic->send_type() );
     _outputStream->print( " " );
     Oop s = Oop( ic->selector() );
-    if ( not s->is_smi() and Universe::is_heap( ( Oop * ) s ) ) {
+    if ( not s->is_smi() and Universe::is_heap( (Oop *) s ) ) {
         st_assert_symbol( ic->selector(), "selector in ic must be a symbol" );
         ic->selector()->print_value_on( _outputStream );
     } else {
@@ -288,7 +288,7 @@ void MethodPrinterClosure::normal_send( InterpretedInlineCache * ic ) {
 }
 
 
-void MethodPrinterClosure::self_send( InterpretedInlineCache * ic ) {
+void MethodPrinterClosure::self_send( InterpretedInlineCache *ic ) {
     indent();
     _outputStream->print( "self send " );
     print_sendtype( ic->send_type() );
@@ -297,7 +297,7 @@ void MethodPrinterClosure::self_send( InterpretedInlineCache * ic ) {
 }
 
 
-void MethodPrinterClosure::super_send( InterpretedInlineCache * ic ) {
+void MethodPrinterClosure::super_send( InterpretedInlineCache *ic ) {
     indent();
     _outputStream->print( "super send " );
     print_sendtype( ic->send_type() );
@@ -384,7 +384,7 @@ void MethodPrinterClosure::zap_scope() {
 }
 
 
-void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor * pdesc, int failure_start ) {
+void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
     indent();
     _outputStream->print_cr( "predicted prim method" );
 }

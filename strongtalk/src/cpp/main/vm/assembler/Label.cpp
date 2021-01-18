@@ -50,7 +50,7 @@ bool_t Label::is_unused() const {
 
 
 Label::Label() :
-    _pos( 0 ) {
+        _pos( 0 ) {
 }
 
 

@@ -11,95 +11,95 @@
 
 class ObjectArrayKlass : public MemOopKlass {
 
-    public:
-        // allocation properties
-        bool_t can_inline_allocation() const {
-            return false;
-        }
+public:
+    // allocation properties
+    bool_t can_inline_allocation() const {
+        return false;
+    }
 
 
-        // creation operation
-        Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    // creation operation
+    Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
 
-        // creates invocation
-        KlassOop create_subclass( MixinOop mixin, Format format );
+    // creates invocation
+    KlassOop create_subclass( MixinOop mixin, Format format );
 
-        static KlassOop create_class( KlassOop super_class, MixinOop mixin );
-
-
-        // Format
-        Format format() {
-            return Format::objArray_klass;
-        }
+    static KlassOop create_class( KlassOop super_class, MixinOop mixin );
 
 
-        // allocated an object array for an interpreter PolymorphicInlineCache.
-        static ObjectArrayOop allocate_tenured_pic( int size );
+    // Format
+    Format format() {
+        return Format::objArray_klass;
+    }
 
 
-        // Return the Oop size for a objArrayOop
-        int object_size( int size ) const {
-            return non_indexable_size() + 1 + size;
-        }
+    // allocated an object array for an interpreter PolymorphicInlineCache.
+    static ObjectArrayOop allocate_tenured_pic( int size );
 
 
-        // Layout
-        int length_offset() const {
-            return non_indexable_size();
-        }
+    // Return the Oop size for a objArrayOop
+    int object_size( int size ) const {
+        return non_indexable_size() + 1 + size;
+    }
 
 
-        int array_offset() const {
-            return non_indexable_size() + 1;
-        }
+    // Layout
+    int length_offset() const {
+        return non_indexable_size();
+    }
 
 
-        friend void setKlassVirtualTableFromObjArrayKlass( Klass * k );
+    int array_offset() const {
+        return non_indexable_size() + 1;
+    }
 
 
-        const char * name() const {
-            return "objArray";
-        }
-
-        // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
-
-        // size operation
-        int oop_size( Oop obj ) const {
-            return object_size( ObjectArrayOop( obj )->length() );
-        }
+    friend void setKlassVirtualTableFromObjArrayKlass( Klass *k );
 
 
-        // Memory operations
-        int oop_scavenge_contents( Oop obj );
+    const char *name() const {
+        return "objArray";
+    }
 
-        int oop_scavenge_tenured_contents( Oop obj );
+    // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 
-        void oop_follow_contents( Oop obj );
-
-
-        // testers
-        bool_t oop_is_objArray() const {
-            return true;
-        }
+    // size operation
+    int oop_size( Oop obj ) const {
+        return object_size( ObjectArrayOop( obj )->length() );
+    }
 
 
-        bool_t oop_is_indexable() const {
-            return true;
-        }
+    // Memory operations
+    int oop_scavenge_contents( Oop obj );
+
+    int oop_scavenge_tenured_contents( Oop obj );
+
+    void oop_follow_contents( Oop obj );
 
 
-        void oop_short_print_on( Oop obj, ConsoleOutputStream * stream );
-
-        // iterators
-        void oop_oop_iterate( Oop obj, OopClosure * blk );
-
-        void oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk );
+    // testers
+    bool_t oop_is_objArray() const {
+        return true;
+    }
 
 
-        // Sizing
-        int oop_header_size() const {
-            return ObjectArrayOopDescriptor::header_size();
-        }
+    bool_t oop_is_indexable() const {
+        return true;
+    }
+
+
+    void oop_short_print_on( Oop obj, ConsoleOutputStream *stream );
+
+    // iterators
+    void oop_oop_iterate( Oop obj, OopClosure *blk );
+
+    void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
+
+
+    // Sizing
+    int oop_header_size() const {
+        return ObjectArrayOopDescriptor::header_size();
+    }
 };
 
-void setKlassVirtualTableFromObjArrayKlass( Klass * k );
+void setKlassVirtualTableFromObjArrayKlass( Klass *k );

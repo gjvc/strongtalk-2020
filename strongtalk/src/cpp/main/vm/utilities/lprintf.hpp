@@ -9,12 +9,12 @@
 // lprintf replaces printf -- never use printf in the VM!
 // output written by lprintf can easily be redirected, duplicated into a log file, etc.
 
-extern "C" void lprintf( const char * m, ... );
+extern "C" void lprintf( const char *m, ... );
 extern "C" void lputc( const char c );
-extern "C" void lputs( const char * str );
+extern "C" void lputs( const char *str );
 
 // like sprintf, but updates the buf pointer so that subsequent sprintf invocations append to the string
-extern "C" void my_sprintf( const char *& buf, const char * format, ... );
-extern "C" void my_sprintf_len( const char *& buf, const int len, const char * format, ... );    // make output len chars std::int32_t
+extern "C" void my_sprintf( const char *&buf, const char *format, ... );
+extern "C" void my_sprintf_len( const char *&buf, const int len, const char *format, ... );    // make output len chars std::int32_t
 
 void flush_logFile();

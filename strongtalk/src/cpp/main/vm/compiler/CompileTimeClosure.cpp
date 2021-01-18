@@ -18,15 +18,15 @@ bool_t CompileTimeClosure::verify() const {
 }
 
 
-const char * CompileTimeClosure::jump_table_entry() {
+const char *CompileTimeClosure::jump_table_entry() {
     st_assert( _id.is_valid(), "must have valid ID" );
-    JumpTableEntry * entry = Universe::code->jump_table()->at( _id );
+    JumpTableEntry *entry = Universe::code->jump_table()->at( _id );
     st_assert( entry->is_block_closure_stub(), "must be block" );
     return entry->entry_point();
 }
 
 
-NonInlinedBlockScopeNode * CompileTimeClosure::noninlined_block_scope() {
+NonInlinedBlockScopeNode *CompileTimeClosure::noninlined_block_scope() {
     st_assert( _noninlined_block_scope not_eq nullptr, "debug info not generated" );
     return _noninlined_block_scope;
 }

@@ -13,7 +13,7 @@ constexpr int indent_col = 3;
 constexpr int value_col  = 16;
 
 
-PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream * stream ) {
+PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) {
     this->_stream = stream ? stream : _console;
 }
 
@@ -28,7 +28,7 @@ void PrintObjectClosure::do_object( MemOop obj ) {
 }
 
 
-void PrintObjectClosure::do_mark( MarkOop * m ) {
+void PrintObjectClosure::do_mark( MarkOop *m ) {
     _stream->fill_to( indent_col );
     _stream->print( "mark" );
     _stream->sp();
@@ -38,8 +38,8 @@ void PrintObjectClosure::do_mark( MarkOop * m ) {
 }
 
 
-void PrintObjectClosure::do_oop( const char * title, Oop * o ) {
-    SymbolOop name = _memOop->blueprint()->inst_var_name_at( o - ( Oop * ) _memOop->addr() );
+void PrintObjectClosure::do_oop( const char *title, Oop *o ) {
+    SymbolOop name = _memOop->blueprint()->inst_var_name_at( o - (Oop *) _memOop->addr() );
     _stream->fill_to( indent_col );
     if ( name ) {
         name->print_symbol_on( _stream );
@@ -53,12 +53,12 @@ void PrintObjectClosure::do_oop( const char * title, Oop * o ) {
 }
 
 
-void PrintObjectClosure::do_byte( const char * title, std::uint8_t * b ) {
+void PrintObjectClosure::do_byte( const char *title, std::uint8_t *b ) {
     _stream->fill_to( indent_col );
     _stream->print( "%s", title );
     _stream->sp();
     _stream->fill_to( value_col );
-    char c = ( char ) *b;
+    char c = (char) *b;
     if ( isprint( c ) )
         _stream->print_cr( "%c", c );
     else
@@ -66,7 +66,7 @@ void PrintObjectClosure::do_byte( const char * title, std::uint8_t * b ) {
 }
 
 
-void PrintObjectClosure::do_long( const char * title, void ** p ) {
+void PrintObjectClosure::do_long( const char *title, void **p ) {
     _stream->fill_to( indent_col );
     _stream->print( "%s", title );
     _stream->sp();
@@ -75,7 +75,7 @@ void PrintObjectClosure::do_long( const char * title, void ** p ) {
 }
 
 
-void PrintObjectClosure::do_double( const char * title, double * d ) {
+void PrintObjectClosure::do_double( const char *title, double *d ) {
     _stream->fill_to( indent_col );
     _stream->print( "%s", title );
     _stream->sp();
@@ -92,7 +92,7 @@ void PrintObjectClosure::end_indexables() {
 }
 
 
-void PrintObjectClosure::do_indexable_oop( int index, Oop * o ) {
+void PrintObjectClosure::do_indexable_oop( int index, Oop *o ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
@@ -104,14 +104,14 @@ void PrintObjectClosure::do_indexable_oop( int index, Oop * o ) {
 }
 
 
-void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t * b ) {
+void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t *b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
     _stream->print( "%d", index );
     _stream->sp();
     _stream->fill_to( value_col );
-    int c = ( int ) *b;
+    int c = (int) *b;
     if ( isprint( c ) )
         _stream->print_cr( "%c", c );
     else
@@ -119,14 +119,14 @@ void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t * b ) {
 }
 
 
-void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t * b ) {
+void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t *b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
     _stream->print( "%d", index );
     _stream->sp();
     _stream->fill_to( value_col );
-    int c = ( int ) *b;
+    int c = (int) *b;
     if ( isprint( c ) )
         _stream->print_cr( "%c", c );
     else
@@ -134,7 +134,7 @@ void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t * b )
 }
 
 
-void PrintObjectClosure::do_indexable_long( int index, std::int32_t * l ) {
+void PrintObjectClosure::do_indexable_long( int index, std::int32_t *l ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );

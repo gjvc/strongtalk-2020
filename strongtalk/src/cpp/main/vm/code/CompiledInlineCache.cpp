@@ -33,17 +33,17 @@ extern "C" void UncommonTrap() {
 }
 
 
-const char * CompiledInlineCache::normalLookupRoutine() {
+const char *CompiledInlineCache::normalLookupRoutine() {
     return StubRoutines::ic_normal_lookup_entry();
 }
 
 
-const char * CompiledInlineCache::superLookupRoutine() {
+const char *CompiledInlineCache::superLookupRoutine() {
     return StubRoutines::ic_super_lookup_entry();
 }
 
 
-extern "C" const char * icNormalLookup( Oop recv, CompiledInlineCache * ic ) {
+extern "C" const char *icNormalLookup( Oop recv, CompiledInlineCache *ic ) {
     // As soon as the lookup routine handles 'message not understood' correctly, allocation may take place.
     // Then we have to fix the lookup stub as well. (receiver cannot be saved/restored within the C frame).
     VerifyNoScavenge vna;
@@ -52,7 +52,7 @@ extern "C" const char * icNormalLookup( Oop recv, CompiledInlineCache * ic ) {
 
 
 bool_t CompiledInlineCache::is_empty() const {
-    char * d = destination();
+    char *d = destination();
     return d == normalLookupRoutine() or d == superLookupRoutine();
 }
 
@@ -60,14 +60,14 @@ bool_t CompiledInlineCache::is_empty() const {
 int CompiledInlineCache::ntargets() const {
     if ( is_empty() )
         return 0;
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     return p not_eq nullptr ? p->number_of_targets() : 1;
 }
 
 
-void CompiledInlineCache::set_call_destination( const char * entry_point ) {
+void CompiledInlineCache::set_call_destination( const char *entry_point ) {
     // if the InlineCache has a PolymorphicInlineCache we deallocate the PolymorphicInlineCache before setting the entry_point
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     st_assert( p == nullptr or p->entry() not_eq entry_point, "replacing with same address -- shouldn't dealloc" );
     if ( p not_eq nullptr )
         delete p;
@@ -83,10 +83,10 @@ Oop nativeMethod_substitute() {
 }
 
 
-const char * CompiledInlineCache::normalLookup( Oop recv ) {
+const char *CompiledInlineCache::normalLookup( Oop recv ) {
 
     ResourceMark resourceMark;
-    const char * entry_point;
+    const char *entry_point;
 
     // The assertion below is turned into an if so we can see possible problems in the fast version as well - gri 6/21/96
     //
@@ -99,7 +99,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
         _console->print_cr( "NativeMethod called from interpreter reports ic miss:" );
         _console->print_cr( "interpreter call at [0x%x]", begin_addr() );
         _console->print_cr( "NativeMethod entry point [0x%x]", Interpreter::_last_native_called );
-        InterpretedInlineCache * ic = as_InterpretedIC( next_instruction_address() );
+        InterpretedInlineCache *ic = as_InterpretedIC( next_instruction_address() );
         st_fatal( "please notify VM people" );
     }
 
@@ -164,7 +164,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
             Unimplemented();
         }
         // return a substitute NativeMethod so that stub routine doesn't crash
-        return ( const char * ) nativeMethod_substitute;
+        return (const char *) nativeMethod_substitute;
 
         /* Old code - keep around till completely fixed
 
@@ -195,7 +195,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
     if ( empty )
         setDirty();
     if ( not empty or result.is_method() ) {
-        PolymorphicInlineCache * pic = PolymorphicInlineCache::allocate( this, klass, result );
+        PolymorphicInlineCache *pic = PolymorphicInlineCache::allocate( this, klass, result );
         if ( pic == nullptr ) {
             // PolymorphicInlineCache too large & MICs (megamorphic PICs) turned off
             // => start with empty InlineCache again
@@ -235,7 +235,7 @@ const char * CompiledInlineCache::normalLookup( Oop recv ) {
 }
 
 
-extern "C" const char * icSuperLookup( Oop recv, CompiledInlineCache * ic ) {
+extern "C" const char *icSuperLookup( Oop recv, CompiledInlineCache *ic ) {
     // As soon as the lookup routine handles 'message not understood' correctly, allocation may take place.
     // Then we have to fix the lookup stub as well. (receiver cannot be saved/restored within the C frame).
     VerifyNoScavenge vna;
@@ -243,7 +243,7 @@ extern "C" const char * icSuperLookup( Oop recv, CompiledInlineCache * ic ) {
 }
 
 
-extern "C" const char * zombie_nativeMethod( const char * return_addr ) {
+extern "C" const char *zombie_nativeMethod( const char *return_addr ) {
 
     // Called from zombie nativeMethods. Determines if called from interpreted
     // or compiled code, does cleanup of the corresponding inline caches
@@ -258,7 +258,7 @@ extern "C" const char * zombie_nativeMethod( const char * return_addr ) {
     if ( Interpreter::contains( return_addr ) ) {
         // NativeMethod called from interpreted code
         Frame f = DeltaProcess::active()->last_frame();
-        InterpretedInlineCache * ic = f.current_interpretedIC();
+        InterpretedInlineCache *ic = f.current_interpretedIC();
         LOG_EVENT1( "zombie NativeMethod called => interpreted InlineCache 0x%x cleared", ic );
         ic->cleanup();
         // reset instruction pointer => next instruction beeing executed is the same send
@@ -268,7 +268,7 @@ extern "C" const char * zombie_nativeMethod( const char * return_addr ) {
 
     } else {
         // NativeMethod called from compiled code
-        CompiledInlineCache * ic = CompiledIC_from_return_addr( return_addr );
+        CompiledInlineCache *ic = CompiledIC_from_return_addr( return_addr );
         LOG_EVENT1( "zombie NativeMethod called => compiled InlineCache 0x%x cleaned up", ic );
         ic->cleanup();
         // restart send entry point is call address
@@ -278,7 +278,7 @@ extern "C" const char * zombie_nativeMethod( const char * return_addr ) {
 
 
 KlassOop CompiledInlineCache::targetKlass() const {
-    NativeMethod * nm = target();
+    NativeMethod *nm = target();
     if ( nm ) {
         return nm->_lookupKey.klass();
     } else {
@@ -289,17 +289,17 @@ KlassOop CompiledInlineCache::targetKlass() const {
 
 
 KlassOop CompiledInlineCache::sending_method_holder() {
-    char                     * addr   = begin_addr();
-    NativeMethod             * nm     = findNativeMethod( addr );
-    ProgramCounterDescriptor * pcdesc = nm->containingProgramCounterDescriptor( addr );
-    ScopeDescriptor          * scope  = pcdesc->containingDesc( nm );
+    char                     *addr   = begin_addr();
+    NativeMethod             *nm     = findNativeMethod( addr );
+    ProgramCounterDescriptor *pcdesc = nm->containingProgramCounterDescriptor( addr );
+    ScopeDescriptor          *scope  = pcdesc->containingDesc( nm );
     return scope->selfKlass()->klass_part()->lookup_method_holder_for( scope->method() );
 }
 
 
-const char * CompiledInlineCache::superLookup( Oop recv ) {
+const char *CompiledInlineCache::superLookup( Oop recv ) {
     ResourceMark resourceMark;
-    const char * entry_point;
+    const char *entry_point;
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
 
     KlassOop  recv_klass = recv->klass();
@@ -348,24 +348,24 @@ const char * CompiledInlineCache::superLookup( Oop recv ) {
 bool_t CompiledInlineCache::is_monomorphic() const {
     if ( target() not_eq nullptr )
         return true;
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     return p not_eq nullptr and p->is_monomorphic();
 }
 
 
 bool_t CompiledInlineCache::is_polymorphic() const {
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     return p not_eq nullptr and p->is_polymorphic();
 }
 
 
 bool_t CompiledInlineCache::is_megamorphic() const {
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     return p not_eq nullptr and p->is_megamorphic();
 }
 
 
-void CompiledInlineCache::replace( NativeMethod * nm ) {
+void CompiledInlineCache::replace( NativeMethod *nm ) {
     st_assert( selector() == nm->_lookupKey.selector(), "mismatched selector" );
     LOG_EVENT3( "compiled InlineCache at 0x%x: new NativeMethod 0x%x for klass 0x%x replaces old entry", this, nm, nm->_lookupKey.klass() );
 
@@ -382,9 +382,9 @@ void CompiledInlineCache::replace( NativeMethod * nm ) {
         return;
     }
     // POLY or MEGA
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     if ( p not_eq nullptr ) {
-        PolymorphicInlineCache * new_pic = p->replace( nm );
+        PolymorphicInlineCache *new_pic = p->replace( nm );
         if ( new_pic not_eq p ) {
             set_call_destination( new_pic->entry() );
         }
@@ -448,7 +448,7 @@ void CompiledInlineCache::cleanup() {
             }
         } else {
             // compiled target
-            NativeMethod * old_nm = findNativeMethod( destination() );
+            NativeMethod *old_nm = findNativeMethod( destination() );
             LookupResult result = LookupCache::lookup( &old_nm->_lookupKey );
             // Nothing to do if lookup result is the same
             if ( result.matches( old_nm ) )
@@ -483,10 +483,10 @@ void CompiledInlineCache::cleanup() {
     }
 
     // POLYMORPHIC
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     if ( p ) {
-        NativeMethod           * nm;
-        PolymorphicInlineCache * result = p->cleanup( &nm );
+        NativeMethod           *nm;
+        PolymorphicInlineCache *result = p->cleanup( &nm );
         if ( result not_eq p ) {
             if ( p not_eq nullptr ) {
                 // still polymorphic
@@ -548,7 +548,7 @@ void CompiledInlineCache::print() {
     }
 
     lprintf( "\t- call address: " );
-    char * dest = destination();
+    char *dest = destination();
     if ( dest == normalLookupRoutine() ) {
         lprintf( "normalLookupRoutine\n" );
     } else if ( dest == superLookupRoutine() ) {
@@ -562,12 +562,12 @@ void CompiledInlineCache::print() {
 }
 
 
-InterpretedInlineCache * CompiledInlineCache::inlineCache() const {
+InterpretedInlineCache *CompiledInlineCache::inlineCache() const {
     // return interpreter inline cache in corresponding source method
-    char                     * addr   = begin_addr();
-    NativeMethod             * nm     = findNativeMethod( addr );
-    ProgramCounterDescriptor * pcdesc = nm->containingProgramCounterDescriptor( addr );
-    ScopeDescriptor          * scope  = pcdesc->containingDesc( nm );
+    char                     *addr   = begin_addr();
+    NativeMethod             *nm     = findNativeMethod( addr );
+    ProgramCounterDescriptor *pcdesc = nm->containingProgramCounterDescriptor( addr );
+    ScopeDescriptor          *scope  = pcdesc->containingDesc( nm );
     CodeIterator iter = CodeIterator( scope->method(), pcdesc->_byteCodeIndex );
     return iter.ic();
 }
@@ -578,11 +578,11 @@ SymbolOop CompiledInlineCache::selector() const {
 }
 
 
-NativeMethod * CompiledInlineCache::target() const {
-    char * dest = destination();
+NativeMethod *CompiledInlineCache::target() const {
+    char *dest = destination();
     if ( Universe::code->contains( dest ) ) {
         // linked to an NativeMethod
-        NativeMethod * m = nativeMethod_from_insts( dest );
+        NativeMethod *m = nativeMethod_from_insts( dest );
         st_assert( m == findNativeMethod( dest ), "wrong NativeMethod start" );
         return m;
     } else {
@@ -592,7 +592,7 @@ NativeMethod * CompiledInlineCache::target() const {
 
 
 KlassOop CompiledInlineCache::get_klass( int i ) const {
-    PolymorphicInlineCache * p = pic();
+    PolymorphicInlineCache *p = pic();
     if ( p ) {
         PolymorphicInlineCacheIterator it( p );
         for ( int                      j = 0; j < i; j++ )
@@ -605,17 +605,17 @@ KlassOop CompiledInlineCache::get_klass( int i ) const {
 }
 
 
-PolymorphicInlineCache * CompiledInlineCache::pic() const {
-    char * dest = destination();
+PolymorphicInlineCache *CompiledInlineCache::pic() const {
+    char *dest = destination();
     return PolymorphicInlineCache::find( dest );
 }
 
 
-LookupKey * CompiledInlineCache::key( int i, bool_t is_normal_send ) const {
+LookupKey *CompiledInlineCache::key( int i, bool_t is_normal_send ) const {
     if ( is_normal_send ) {
         return LookupKey::allocate( get_klass( i ), selector() );
     } else {
-        CompiledInlineCacheIterator it( ( CompiledInlineCache * ) this );
+        CompiledInlineCacheIterator it( (CompiledInlineCache *) this );
         it.goto_elem( i );
         return LookupKey::allocate( it.klass(), it.interpreted_method() );
     }
@@ -627,13 +627,13 @@ bool_t CompiledInlineCache::wasNeverExecuted() const {
 }
 
 
-PrimitiveDescriptor * PrimitiveInlineCache::primitive() {
-    return Primitives::lookup( ( primitiveFunctionType ) destination() );
+PrimitiveDescriptor *PrimitiveInlineCache::primitive() {
+    return Primitives::lookup( (primitiveFunctionType) destination() );
 }
 
 
-char * PrimitiveInlineCache::end_addr() {
-    PrimitiveDescriptor * pd = primitive();
+char *PrimitiveInlineCache::end_addr() {
+    PrimitiveDescriptor *pd = primitive();
     int offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
     return next_instruction_address() + offset;
 }
@@ -641,7 +641,7 @@ char * PrimitiveInlineCache::end_addr() {
 
 void PrimitiveInlineCache::print() {
     lprintf( "\tPrimitive inline cache\n" );
-    PrimitiveDescriptor * pd = primitive();
+    PrimitiveDescriptor *pd = primitive();
     lprintf( "\t- name        : %s\n", pd->name() );
     if ( pd->can_perform_NonLocalReturn() ) {
         lprintf( "\t- NonLocalReturn testcode: 0x%x\n", NonLocalReturn_testcode() );
@@ -649,21 +649,21 @@ void PrimitiveInlineCache::print() {
 }
 
 
-CompiledInlineCache * CompiledIC_from_return_addr( const char * return_addr ) {
-    return ( CompiledInlineCache * ) nativeCall_from_return_address( return_addr );
+CompiledInlineCache *CompiledIC_from_return_addr( const char *return_addr ) {
+    return (CompiledInlineCache *) nativeCall_from_return_address( return_addr );
 }
 
 
-CompiledInlineCache * CompiledIC_from_relocInfo( const char * displacement_address ) {
-    return ( CompiledInlineCache * ) nativeCall_from_relocInfo( displacement_address );
+CompiledInlineCache *CompiledIC_from_relocInfo( const char *displacement_address ) {
+    return (CompiledInlineCache *) nativeCall_from_relocInfo( displacement_address );
 }
 
 
-PrimitiveInlineCache * PrimitiveIC_from_return_addr( const char * return_addr ) {
-    return ( PrimitiveInlineCache * ) nativeCall_from_return_address( return_addr );
+PrimitiveInlineCache *PrimitiveIC_from_return_addr( const char *return_addr ) {
+    return (PrimitiveInlineCache *) nativeCall_from_return_address( return_addr );
 }
 
 
-PrimitiveInlineCache * PrimitiveIC_from_relocInfo( const char * displacement_address ) {
-    return ( PrimitiveInlineCache * ) nativeCall_from_relocInfo( displacement_address );
+PrimitiveInlineCache *PrimitiveIC_from_relocInfo( const char *displacement_address ) {
+    return (PrimitiveInlineCache *) nativeCall_from_relocInfo( displacement_address );
 }

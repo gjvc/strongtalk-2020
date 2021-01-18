@@ -17,66 +17,66 @@ constexpr int BUFLEN = 2048;
 
 class TestNotifier : public Notifier, public ResourceObject {
 
-    private:
-        GrowableArray <char *> * errors;
-        GrowableArray <char *> * warnings;
-        GrowableArray <char *> * compilerWarnings;
+private:
+    GrowableArray<char *> *errors;
+    GrowableArray<char *> *warnings;
+    GrowableArray<char *> *compilerWarnings;
 
-    public:
-        TestNotifier() {
-            errors           = new GrowableArray <char *>;
-            warnings         = new GrowableArray <char *>;
-            compilerWarnings = new GrowableArray <char *>;
-        }
-
-
-        int errorCount() {
-            return errors->length();
-        }
+public:
+    TestNotifier() {
+        errors           = new GrowableArray<char *>;
+        warnings         = new GrowableArray<char *>;
+        compilerWarnings = new GrowableArray<char *>;
+    }
 
 
-        int warningCount() {
-            return warnings->length();
-        }
+    int errorCount() {
+        return errors->length();
+    }
 
 
-        int compilerWarningCount() {
-            return compilerWarnings->length();
-        }
+    int warningCount() {
+        return warnings->length();
+    }
 
 
-        char * errorAt( int index ) {
-            return errors->at( index );
-        }
+    int compilerWarningCount() {
+        return compilerWarnings->length();
+    }
 
 
-        char * warningAt( int index ) {
-            return warnings->at( index );
-        }
+    char *errorAt( int index ) {
+        return errors->at( index );
+    }
 
 
-        char * compilerWarningAt( int index ) {
-            return compilerWarnings->at( index );
-        }
+    char *warningAt( int index ) {
+        return warnings->at( index );
+    }
 
 
-        void error( const char * m, va_list ap ) {
-            char * buffer = new_resource_array <char>( ::BUFLEN );
-            vsnprintf( buffer, ::BUFLEN - 1, m, ap );
-            errors->append( buffer );
-        }
+    char *compilerWarningAt( int index ) {
+        return compilerWarnings->at( index );
+    }
 
 
-        void warning( const char * m, va_list ap ) {
-            char * buffer = new_resource_array <char>( ::BUFLEN );
-            vsnprintf( buffer, ::BUFLEN - 1, m, ap );
-            warnings->append( buffer );
-        }
+    void error( const char *m, va_list ap ) {
+        char *buffer = new_resource_array<char>( ::BUFLEN );
+        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        errors->append( buffer );
+    }
 
 
-        void compiler_warning( const char * m, va_list ap ) {
-            char * buffer = new_resource_array <char>( ::BUFLEN );
-            vsnprintf( buffer, ::BUFLEN - 1, m, ap );
-            compilerWarnings->append( buffer );
-        }
+    void warning( const char *m, va_list ap ) {
+        char *buffer = new_resource_array<char>( ::BUFLEN );
+        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        warnings->append( buffer );
+    }
+
+
+    void compiler_warning( const char *m, va_list ap ) {
+        char *buffer = new_resource_array<char>( ::BUFLEN );
+        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        compilerWarnings->append( buffer );
+    }
 };

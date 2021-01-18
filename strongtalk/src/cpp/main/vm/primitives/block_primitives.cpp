@@ -22,7 +22,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceBlockPrims, "block" )
 
 
@@ -88,7 +87,7 @@ extern "C" BlockClosureOop allocateBlock2() {
 
 extern "C" ContextOop allocateContext( SMIOop nofVars ) {
     PROLOGUE_1( "allocateContext", nofVars );
-    ContextKlass * ok = ( ContextKlass * ) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( nofVars->value() ));
 }
@@ -110,13 +109,13 @@ extern "C" ContextOop allocateContext0() {
 
 extern "C" ContextOop allocateContext1() {
     PROLOGUE_0( "allocateContext1" );
-    ContextKlass * ok = ( ContextKlass * ) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( 1 ));
 }
 extern "C" ContextOop allocateContext2() {
     PROLOGUE_0( "allocateContext2" );
-    ContextKlass * ok = ( ContextKlass * ) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( 2 ));
 }
@@ -130,15 +129,15 @@ PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
     PROLOGUE_2( "unwindprotect", receiver, protectBlock );
     Oop block, res;
     {
-        PersistentHandle * pb = new PersistentHandle( protectBlock );
+        PersistentHandle *pb = new PersistentHandle( protectBlock );
         res   = Delta::call( receiver, vmSymbols::value() );
         block = pb->as_oop();
         delete pb;
     }
 
     if ( have_nlr_through_C ) {
-        UnwindInfo       enabler;
-        PersistentHandle * result = new PersistentHandle( res );
+        UnwindInfo enabler;
+        PersistentHandle *result = new PersistentHandle( res );
         Delta::call( block, vmSymbols::value(), nlr_result );
         // Now since we have to continue the first non-local-return the nlr_result must be correct.
         res = result->as_oop();

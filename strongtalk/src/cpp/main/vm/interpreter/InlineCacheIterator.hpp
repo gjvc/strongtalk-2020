@@ -39,59 +39,59 @@ enum class InlineCacheShape {
 
 class InlineCacheIterator : public PrintableResourceObject {
 
-    public:
-        // InlineCache information
-        virtual int number_of_targets() const = 0;
+public:
+    // InlineCache information
+    virtual int number_of_targets() const = 0;
 
-        virtual InlineCacheShape shape() const = 0;
+    virtual InlineCacheShape shape() const = 0;
 
-        virtual SymbolOop selector() const = 0;
-
-
-        virtual InterpretedInlineCache * interpreted_ic() const {
-            ShouldNotCallThis();
-            return nullptr;
-        }
+    virtual SymbolOop selector() const = 0;
 
 
-        virtual CompiledInlineCache * compiled_ic() const {
-            ShouldNotCallThis();
-            return nullptr;
-        }
+    virtual InterpretedInlineCache *interpreted_ic() const {
+        ShouldNotCallThis();
+        return nullptr;
+    }
 
 
-        virtual bool_t is_interpreted_ic() const {
-            return false;
-        }    // is sender interpreted?
-        virtual bool_t is_compiled_ic() const {
-            return false;
-        }    // is sender compiled?
-        virtual bool_t is_super_send() const = 0;            // is super send?
+    virtual CompiledInlineCache *compiled_ic() const {
+        ShouldNotCallThis();
+        return nullptr;
+    }
 
-        // Iterating through entries
-        virtual void init_iteration() = 0;
 
-        virtual void advance() = 0;
+    virtual bool_t is_interpreted_ic() const {
+        return false;
+    }    // is sender interpreted?
+    virtual bool_t is_compiled_ic() const {
+        return false;
+    }    // is sender compiled?
+    virtual bool_t is_super_send() const = 0;            // is super send?
 
-        virtual bool_t at_end() const = 0;
+    // Iterating through entries
+    virtual void init_iteration() = 0;
 
-        // Accessing entries
-        virtual KlassOop klass() const = 0;
+    virtual void advance() = 0;
 
-        virtual bool_t is_interpreted() const = 0;    // is current target interpreted?
-        virtual bool_t is_compiled() const = 0;    // is current target compiled?
+    virtual bool_t at_end() const = 0;
 
-        virtual MethodOop interpreted_method() const = 0;    // target methodOop (always non-nullptr)
-        virtual NativeMethod * compiled_method() const = 0;    // target NativeMethod; nullptr if interpreted
+    // Accessing entries
+    virtual KlassOop klass() const = 0;
 
-        // methods for direct access to ith element (will set iteration state to i)
-        void goto_elem( int i );
+    virtual bool_t is_interpreted() const = 0;    // is current target interpreted?
+    virtual bool_t is_compiled() const = 0;    // is current target compiled?
 
-        MethodOop interpreted_method( int i );
+    virtual MethodOop interpreted_method() const = 0;    // target methodOop (always non-nullptr)
+    virtual NativeMethod *compiled_method() const = 0;    // target NativeMethod; nullptr if interpreted
 
-        NativeMethod * compiled_method( int i );
+    // methods for direct access to ith element (will set iteration state to i)
+    void goto_elem( int i );
 
-        KlassOop klass( int i );
+    MethodOop interpreted_method( int i );
+
+    NativeMethod *compiled_method( int i );
+
+    KlassOop klass( int i );
 
 };
 
@@ -114,73 +114,73 @@ class InlineCacheIterator : public PrintableResourceObject {
 // iterator seems to simplify this.)
 
 class InlineCache : public PrintableResourceObject {
-    private:
-        const InlineCacheIterator * _iter;
+private:
+    const InlineCacheIterator *_iter;
 
-    public:
-        InlineCache( InlineCacheIterator * iter ) :
+public:
+    InlineCache( InlineCacheIterator *iter ) :
             _iter( iter ) {
-        }
+    }
 
 
-        InlineCache( CompiledInlineCache * ic );
+    InlineCache( CompiledInlineCache *ic );
 
-        InlineCache( InterpretedInlineCache * ic );
-
-
-        InlineCacheIterator * iterator() const {
-            return ( InlineCacheIterator * ) _iter;
-        }
+    InlineCache( InterpretedInlineCache *ic );
 
 
-        // InlineCache information
-        int number_of_targets() const {
-            return _iter->number_of_targets();
-        }
+    InlineCacheIterator *iterator() const {
+        return (InlineCacheIterator *) _iter;
+    }
 
 
-        InlineCacheShape shape() const {
-            return _iter->shape();
-        }
+    // InlineCache information
+    int number_of_targets() const {
+        return _iter->number_of_targets();
+    }
 
 
-        SymbolOop selector() const {
-            return _iter->selector();
-        }
+    InlineCacheShape shape() const {
+        return _iter->shape();
+    }
 
 
-        InterpretedInlineCache * interpreted_ic() const {
-            return _iter->interpreted_ic();
-        }
+    SymbolOop selector() const {
+        return _iter->selector();
+    }
 
 
-        CompiledInlineCache * compiled_ic() const {
-            return _iter->compiled_ic();
-        }
+    InterpretedInlineCache *interpreted_ic() const {
+        return _iter->interpreted_ic();
+    }
 
 
-        bool_t is_interpreted_ic() const {
-            return _iter->is_interpreted_ic();
-        }
+    CompiledInlineCache *compiled_ic() const {
+        return _iter->compiled_ic();
+    }
 
 
-        bool_t is_compiled_ic() const {
-            return _iter->is_compiled_ic();
-        }
+    bool_t is_interpreted_ic() const {
+        return _iter->is_interpreted_ic();
+    }
 
 
-        bool_t is_super_send() const {
-            return _iter->is_super_send();
-        }
+    bool_t is_compiled_ic() const {
+        return _iter->is_compiled_ic();
+    }
 
 
-        GrowableArray <KlassOop> * receiver_klasses() const;
+    bool_t is_super_send() const {
+        return _iter->is_super_send();
+    }
 
-        // InlineCache manipulation
-        void replace( NativeMethod * nm );        // replace entry matching nm's key with nm
 
-        // Debugging
-        void print();
+    GrowableArray<KlassOop> *receiver_klasses() const;
+
+    // InlineCache manipulation
+    void replace( NativeMethod *nm );        // replace entry matching nm's key with nm
+
+    // Debugging
+    void print();
 };
 
 
@@ -190,126 +190,126 @@ class InlineCache : public PrintableResourceObject {
 // In the case of a MegamorphicInlineCache, the PolymorphicInlineCacheIterator will be at_end after setup (no entries).
 
 class PolymorphicInlineCacheIterator : public PrintableResourceObject {
-    public:
-        enum State {
-            at_smi_nativeMethod, at_nativeMethod, at_methodOop, at_the_end
-        };
+public:
+    enum State {
+        at_smi_nativeMethod, at_nativeMethod, at_methodOop, at_the_end
+    };
 
-    private:
-        PolymorphicInlineCache * _pic;                  // the PolymorphicInlineCache over which is iterated
-        char                   * _pos;                  // the current iterator position
-        enum State _state;                  // current iterator state
-        int        _methodOop_counter;      // remaining no. of methodOop entries
+private:
+    PolymorphicInlineCache *_pic;                  // the PolymorphicInlineCache over which is iterated
+    char                   *_pos;                  // the current iterator position
+    enum State _state;                  // current iterator state
+    int        _methodOop_counter;      // remaining no. of methodOop entries
 
-        int * nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
-        void computeNextState();
+    int *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
+    void computeNextState();
 
-    public:
-        PolymorphicInlineCacheIterator( PolymorphicInlineCache * pic );
+public:
+    PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic );
 
-        // Iterating through PolymorphicInlineCache entries
-        void advance();
-
-
-        State state() const {
-            return _state;
-        }
+    // Iterating through PolymorphicInlineCache entries
+    void advance();
 
 
-        bool_t at_end() const {
-            return state() == at_the_end;
-        }
+    State state() const {
+        return _state;
+    }
 
 
-        // Accessing PolymorphicInlineCache entries
-        KlassOop get_klass() const;
+    bool_t at_end() const {
+        return state() == at_the_end;
+    }
 
-        char * get_call_addr() const;
 
-        bool_t is_interpreted() const;
+    // Accessing PolymorphicInlineCache entries
+    KlassOop get_klass() const;
 
-        bool_t is_compiled() const;
+    char *get_call_addr() const;
 
-        MethodOop interpreted_method() const;
+    bool_t is_interpreted() const;
 
-        NativeMethod * compiled_method() const;
+    bool_t is_compiled() const;
 
-        // Modifying PolymorphicInlineCache entries
-        void set_klass( KlassOop klass );
+    MethodOop interpreted_method() const;
 
-        void set_nativeMethod( NativeMethod * nm );
+    NativeMethod *compiled_method() const;
 
-        void set_methodOop( MethodOop method );
+    // Modifying PolymorphicInlineCache entries
+    void set_klass( KlassOop klass );
 
-        // Must be public for oops_do in CompiledPIC
-        MethodOop * methodOop_addr() const;         // valid if state() is at_PolymorphicInlineCache_methodOop
-        KlassOop * klass_addr() const;              // valid if state() in {at_nativeMethod, at_methodOop}
+    void set_nativeMethod( NativeMethod *nm );
 
-        // Debugging
-        void print();
+    void set_methodOop( MethodOop method );
+
+    // Must be public for oops_do in CompiledPIC
+    MethodOop *methodOop_addr() const;         // valid if state() is at_PolymorphicInlineCache_methodOop
+    KlassOop *klass_addr() const;              // valid if state() in {at_nativeMethod, at_methodOop}
+
+    // Debugging
+    void print();
 };
 
 
 class CompiledInlineCacheIterator : public InlineCacheIterator {
-    private:
-        CompiledInlineCache            * _ic;
-        PolymorphicInlineCacheIterator * _picit;
+private:
+    CompiledInlineCache            *_ic;
+    PolymorphicInlineCacheIterator *_picit;
 
-        int              _number_of_targets;    // the no. of InlineCache entries
-        InlineCacheShape _shape;                // shape of inline cache
-        int              _index;                // the next entry no.
+    int              _number_of_targets;    // the no. of InlineCache entries
+    InlineCacheShape _shape;                // shape of inline cache
+    int              _index;                // the next entry no.
 
-    public:
-        CompiledInlineCacheIterator( CompiledInlineCache * ic );
-
-
-        // InlineCache information
-        bool_t is_compiled_ic() const {
-            return true;
-        }
+public:
+    CompiledInlineCacheIterator( CompiledInlineCache *ic );
 
 
-        bool_t is_super_send() const;
+    // InlineCache information
+    bool_t is_compiled_ic() const {
+        return true;
+    }
 
 
-        int number_of_targets() const {
-            return _number_of_targets;
-        }
+    bool_t is_super_send() const;
 
 
-        InlineCacheShape shape() const {
-            return _shape;
-        }
+    int number_of_targets() const {
+        return _number_of_targets;
+    }
 
 
-        SymbolOop selector() const {
-            return _ic->selector();
-        }
+    InlineCacheShape shape() const {
+        return _shape;
+    }
 
 
-        CompiledInlineCache * compiled_ic() const {
-            return _ic;
-        }
+    SymbolOop selector() const {
+        return _ic->selector();
+    }
 
 
-        // Iterating through entries
-        void init_iteration();
-
-        void advance();            // advance iterator to next target
-        bool_t at_end() const {
-            return _index >= number_of_targets();
-        }
+    CompiledInlineCache *compiled_ic() const {
+        return _ic;
+    }
 
 
-        // Accessing entries
-        KlassOop klass() const;            // receiver klass of current target
+    // Iterating through entries
+    void init_iteration();
 
-        bool_t is_interpreted() const;          // is current target interpreted?
-        bool_t is_compiled() const;
+    void advance();            // advance iterator to next target
+    bool_t at_end() const {
+        return _index >= number_of_targets();
+    }
 
-        MethodOop interpreted_method() const;   // current target method (whether compiled or not)
-        NativeMethod * compiled_method() const; // current compiled target or nullptr if interpreted
 
-        // Debugging
-        void print();
+    // Accessing entries
+    KlassOop klass() const;            // receiver klass of current target
+
+    bool_t is_interpreted() const;          // is current target interpreted?
+    bool_t is_compiled() const;
+
+    MethodOop interpreted_method() const;   // current target method (whether compiled or not)
+    NativeMethod *compiled_method() const; // current compiled target or nullptr if interpreted
+
+    // Debugging
+    void print();
 };

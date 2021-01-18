@@ -17,28 +17,28 @@
 
 class oopFactory : AllStatic {
 
-    public:
-        static ByteArrayOop new_byteArray( int size );
+public:
+    static ByteArrayOop new_byteArray( int size );
 
-        static ByteArrayOop new_byteArray( const char * name );
+    static ByteArrayOop new_byteArray( const char *name );
 
-        static ObjectArrayOop new_objArray( int size );
+    static ObjectArrayOop new_objArray( int size );
 
-        static ObjectArrayOop new_objArray( GrowableArray <Oop> * array );
+    static ObjectArrayOop new_objArray( GrowableArray<Oop> *array );
 
-        static SMIOop new_smi( int value );
+    static SMIOop new_smi( int value );
 
-        static DoubleOop new_double( double value );
+    static DoubleOop new_double( double value );
 
-        static DoubleOop clone_double_to_oldspace( DoubleOop value );
+    static DoubleOop clone_double_to_oldspace( DoubleOop value );
 
-        static SymbolOop new_symbol( const char * name, int len );
+    static SymbolOop new_symbol( const char *name, int len );
 
-        static SymbolOop new_symbol( const char * name );
+    static SymbolOop new_symbol( const char *name );
 
-        static SymbolOop new_symbol( ByteArrayOop b );
+    static SymbolOop new_symbol( ByteArrayOop b );
 
-        static AssociationOop new_association( SymbolOop key, Oop value, bool_t is_constant );
+    static AssociationOop new_association( SymbolOop key, Oop value, bool_t is_constant );
 
-        static VirtualFrameOop new_vframe( ProcessOop process, int index );
+    static VirtualFrameOop new_vframe( ProcessOop process, int index );
 };

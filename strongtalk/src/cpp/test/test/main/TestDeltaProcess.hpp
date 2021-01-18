@@ -11,8 +11,8 @@
 #include "vm/runtime/Process.hpp"
 
 
-typedef int (* osfn)( void * );
-typedef int (* fn)( DeltaProcess * );
+typedef int (*osfn)( void * );
+typedef int (*fn)( DeltaProcess * );
 
 
 
@@ -21,31 +21,31 @@ typedef int (* fn)( DeltaProcess * );
 
 class TestDeltaProcess : public DeltaProcess {
 
-    private:
-        static int launch_tests( DeltaProcess * process );
+private:
+    static int launch_tests( DeltaProcess *process );
 
-    public:
-        TestDeltaProcess();
-        TestDeltaProcess( fn launchfn );
-        ~TestDeltaProcess();
-        void addToProcesses();
-        void removeFromProcesses();
-
-
-        void deoptimized_wrt_marked_nativeMethods() {
-        }
+public:
+    TestDeltaProcess();
+    TestDeltaProcess( fn launchfn );
+    ~TestDeltaProcess();
+    void addToProcesses();
+    void removeFromProcesses();
 
 
-        bool_t has_stack() const {
-            return false;
-        }
+    void deoptimized_wrt_marked_nativeMethods() {
+    }
 
 
-        static int launch_scheduler( DeltaProcess * process );
+    bool_t has_stack() const {
+        return false;
+    }
+
+
+    static int launch_scheduler( DeltaProcess *process );
 };
 
 
-extern Event            * done;
-extern TestDeltaProcess * testProcess;
-extern VMProcess        * vmProcess;
-extern Thread           * vmThread;
+extern Event            *done;
+extern TestDeltaProcess *testProcess;
+extern VMProcess        *vmProcess;
+extern Thread           *vmThread;

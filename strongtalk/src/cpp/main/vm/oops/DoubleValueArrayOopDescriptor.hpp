@@ -19,75 +19,75 @@
 //    [length      ]      offset
 
 class DoubleValueArrayOopDescriptor : public MemOopDescriptor {
-    public:
-        friend doubleValueArrayOop as_doubleValueArrayOop( void * p );
+public:
+    friend doubleValueArrayOop as_doubleValueArrayOop( void *p );
 
-        void bootstrap_object( Bootstrap * stream );
-
-
-        // accessors
-        DoubleValueArrayOopDescriptor * addr() const {
-            return ( DoubleValueArrayOopDescriptor * ) MemOopDescriptor::addr();
-        }
+    void bootstrap_object( Bootstrap *stream );
 
 
-        bool_t is_within_bounds( int index ) const {
-            return 1 <= index and index <= length();
-        }
+    // accessors
+    DoubleValueArrayOopDescriptor *addr() const {
+        return (DoubleValueArrayOopDescriptor *) MemOopDescriptor::addr();
+    }
 
 
-        Oop * addr_as_oops() const {
-            return ( Oop * ) addr();
-        }
+    bool_t is_within_bounds( int index ) const {
+        return 1 <= index and index <= length();
+    }
 
 
-        // returns the location of the length field
-        Oop * length_addr() const {
-            return &addr_as_oops()[ blueprint()->non_indexable_size() ];
-        }
+    Oop *addr_as_oops() const {
+        return (Oop *) addr();
+    }
 
 
-        smi_t length() const {
-            Oop len = *length_addr();
-            st_assert( len->is_smi(), "length of indexable should be smi_t" );
-            return SMIOop( len )->value();
-        }
+    // returns the location of the length field
+    Oop *length_addr() const {
+        return &addr_as_oops()[ blueprint()->non_indexable_size() ];
+    }
 
 
-        void set_length( smi_t len ) {
-            *length_addr() = ( Oop ) smiOopFromValue( len );
-        }
+    smi_t length() const {
+        Oop len = *length_addr();
+        st_assert( len->is_smi(), "length of indexable should be smi_t" );
+        return SMIOop( len )->value();
+    }
 
 
-        // returns the location where the double bytes start
-        double * double_start() const {
-            return ( double * ) &length_addr()[ 1 ];
-        }
+    void set_length( smi_t len ) {
+        *length_addr() = (Oop) smiOopFromValue( len );
+    }
 
 
-        double * double_at_addr( int which ) const {
-            st_assert( which > 0 and which <= length(), "index out of bounds" );
-            return &double_start()[ which - 1 ];
-        }
+    // returns the location where the double bytes start
+    double *double_start() const {
+        return (double *) &length_addr()[ 1 ];
+    }
 
 
-        double double_at( int which ) const {
-            return *double_at_addr( which );
-        }
+    double *double_at_addr( int which ) const {
+        st_assert( which > 0 and which <= length(), "index out of bounds" );
+        return &double_start()[ which - 1 ];
+    }
 
 
-        void double_at_put( int which, double value ) {
-            *double_at_addr( which ) = value;
-        }
+    double double_at( int which ) const {
+        return *double_at_addr( which );
+    }
 
 
-        // memory operations
-        bool_t verify();
+    void double_at_put( int which, double value ) {
+        *double_at_addr( which ) = value;
+    }
 
-        friend class doubleValueArrayKlass;
+
+    // memory operations
+    bool_t verify();
+
+    friend class doubleValueArrayKlass;
 };
 
 
-inline doubleValueArrayOop as_doubleValueArrayOop( void * p ) {
+inline doubleValueArrayOop as_doubleValueArrayOop( void *p ) {
     return doubleValueArrayOop( as_memOop( p ) );
 }

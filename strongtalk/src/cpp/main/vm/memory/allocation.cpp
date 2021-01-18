@@ -27,13 +27,13 @@ void PrintableStackAllocatedObject::print_short() {
 }
 
 
-void * CHeapAllocatedObject::operator new( std::size_t size ) {
-    return ( void * ) AllocateHeap( size, "operator-new" );
+void *CHeapAllocatedObject::operator new( std::size_t size ) {
+    return (void *) AllocateHeap( size, "operator-new" );
 }
 
 
-void CHeapAllocatedObject::operator delete( void * p ) {
-    st_assert( not resources.contains( ( const char * ) p ), "CHeapAllocatedObject should not be in resource area" );
+void CHeapAllocatedObject::operator delete( void *p ) {
+    st_assert( not resources.contains( (const char *) p ), "CHeapAllocatedObject should not be in resource area" );
     FreeHeap( p );
 }
 
@@ -41,25 +41,25 @@ void CHeapAllocatedObject::operator delete( void * p ) {
 
 // -----------------------------------------------------------------------------
 
-void * StackAllocatedObject::operator new( std::size_t size ) {
+void *StackAllocatedObject::operator new( std::size_t size ) {
     ShouldNotCallThis();
     return nullptr;
 }
 
 
-void StackAllocatedObject::operator delete( void * p ) {
+void StackAllocatedObject::operator delete( void *p ) {
     ShouldNotCallThis();
 }
 
 
 // -----------------------------------------------------------------------------
 
-void * ValueObject::operator new( std::size_t size ) throw() {
+void *ValueObject::operator new( std::size_t size ) throw() {
     ShouldNotCallThis();
     return nullptr;
 }
 
 
-void ValueObject::operator delete( void * p ) {
+void ValueObject::operator delete( void *p ) {
     ShouldNotCallThis();
 }

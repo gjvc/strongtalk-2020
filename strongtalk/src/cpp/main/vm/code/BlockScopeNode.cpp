@@ -6,12 +6,12 @@
 #include "vm/code/BlockScopeNode.hpp"
 
 
-void BlockScopeNode::generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader ) {
+void BlockScopeNode::generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader ) {
     ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
     rec->genValue( _offset - _parent->_offset );
 }
 
 
-void BlockScopeNode::verify( ScopeDescriptor * sd ) {
+void BlockScopeNode::verify( ScopeDescriptor *sd ) {
     ScopeDescriptorNode::verify( sd );
 }

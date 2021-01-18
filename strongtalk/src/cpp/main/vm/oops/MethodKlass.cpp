@@ -17,7 +17,7 @@
 #include "vm/system/sizes.hpp"
 
 
-void setKlassVirtualTableFromMethodKlass( Klass * k ) {
+void setKlassVirtualTableFromMethodKlass( Klass *k ) {
     MethodKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -28,14 +28,14 @@ KlassOop MethodKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-void MethodKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void MethodKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
     // header
     MemOop( obj )->layout_iterate_header( blk );
     MethodOop m = MethodOop( obj );
-    blk->do_oop( "debugInfo", ( Oop * ) &m->addr()->_debugInfo );
-    blk->do_oop( "selector", ( Oop * ) &m->addr()->_selector_or_method );
-    blk->do_oop( "sizeCodes", ( Oop * ) &m->addr()->_size_and_flags );
+    blk->do_oop( "debugInfo", (Oop *) &m->addr()->_debugInfo );
+    blk->do_oop( "selector", (Oop *) &m->addr()->_selector_or_method );
+    blk->do_oop( "sizeCodes", (Oop *) &m->addr()->_size_and_flags );
 
     // indexables
     lprintf( "MethodKlass::oop_layout_iterate not implemented yet\n" );
@@ -47,14 +47,14 @@ void MethodKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
 }
 
 
-void MethodKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void MethodKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 
     // header
     MemOop( obj )->oop_iterate_header( blk );
     MethodOop m = MethodOop( obj );
-    blk->do_oop( ( Oop * ) &m->addr()->_debugInfo );
-    blk->do_oop( ( Oop * ) &m->addr()->_selector_or_method );
-    blk->do_oop( ( Oop * ) &m->addr()->_size_and_flags );
+    blk->do_oop( (Oop *) &m->addr()->_debugInfo );
+    blk->do_oop( (Oop *) &m->addr()->_selector_or_method );
+    blk->do_oop( (Oop *) &m->addr()->_size_and_flags );
 
     // codes
     CodeIterator c( m );
@@ -89,7 +89,7 @@ void MethodKlass::oop_print_layout( Oop obj ) {
 }
 
 
-void MethodKlass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void MethodKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert( obj->is_method(), "must be method" );
     MethodOop method = MethodOop( obj );
 
@@ -196,7 +196,7 @@ void MethodKlass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
 }
 
 
-void MethodKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void MethodKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert( obj->is_method(), "must be method" );
     MethodOop method = MethodOop( obj );
     if ( PrintObjectID ) {
@@ -265,8 +265,8 @@ void MethodKlass::oop_follow_contents( Oop obj ) {
         }
     } while ( c.advance() );
 
-    MarkSweep::reverse_and_push( ( Oop * ) &m->addr()->_debugInfo );
-    MarkSweep::reverse_and_push( ( Oop * ) &m->addr()->_selector_or_method );
+    MarkSweep::reverse_and_push( (Oop *) &m->addr()->_debugInfo );
+    MarkSweep::reverse_and_push( (Oop *) &m->addr()->_selector_or_method );
     m->follow_header();
 }
 

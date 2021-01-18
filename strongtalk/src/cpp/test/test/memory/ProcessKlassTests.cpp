@@ -11,45 +11,55 @@
 
 #include <gtest/gtest.h>
 
-extern "C" Oop * eden_top;
-extern "C" Oop * eden_end;
+extern "C" Oop *eden_top;
+extern "C" Oop *eden_end;
 
 
 class ProcessKlassTests : public ::testing::Test {
 
-    protected:
-        void SetUp() override {
-            theClass   = KlassOop( Universe::find_global( "Process" ) );
-            oldEdenTop = eden_top;
-        }
+protected:
+    void SetUp() override {
+        theClass   = KlassOop( Universe::find_global( "Process" ) );
+        oldEdenTop = eden_top;
+    }
 
 
-        void TearDown() override {
-            eden_top = oldEdenTop;
-            MarkSweep::collect();
-        }
+    void TearDown() override {
+        eden_top = oldEdenTop;
+        MarkSweep::collect();
+    }
 
 
-        KlassOop theClass;
-        Oop      * oldEdenTop;
+    KlassOop theClass;
+    Oop *oldEdenTop;
 
 
 };
 
 
-TEST_F( ProcessKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
-    eden_top = eden_end;
-    ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObject( false ) ) );
+TEST_F( ProcessKlassTests, allocateShouldFailWhenAllowedAndNoSpace
+) {
+eden_top = eden_end;
+ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObject( false ) ) );
 }
 
 
-TEST_F( ProcessKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
-    ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObject( false, true ) ) );
+TEST_F( ProcessKlassTests, allocateShouldAllocateTenuredWhenRequired
+) {
+ASSERT_TRUE( Universe::old_gen
+.
+contains( theClass
+->klass_part()->allocateObject( false, true ) ) );
 }
 
 
-TEST_F( ProcessKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
-    eden_top = eden_end;
-    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
-    ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObject( true ) ) );
+TEST_F( ProcessKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
+) {
+eden_top = eden_end;
+ASSERT_TRUE( Universe::new_gen
+.eden()->free() < 4 * oopSize );
+ASSERT_TRUE( Universe::new_gen
+.
+contains( theClass
+->klass_part()->allocateObject( true ) ) );
 }

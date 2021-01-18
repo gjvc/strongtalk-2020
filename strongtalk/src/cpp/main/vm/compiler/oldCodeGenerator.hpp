@@ -13,89 +13,89 @@
 // It allows to call the old code generation routines via the new apply method.
 
 class OldCodeGenerator : public NodeVisitor {
-    public:
-        // Basic blocks
-        void beginOfBasicBlock( Node * node );
+public:
+    // Basic blocks
+    void beginOfBasicBlock( Node *node );
 
-        void endOfBasicBlock( Node * node );
+    void endOfBasicBlock( Node *node );
 
-    public:
-        // For all nodes
-        void beginOfNode( Node * node );
+public:
+    // For all nodes
+    void beginOfNode( Node *node );
 
-        void endOfNode( Node * node );
+    void endOfNode( Node *node );
 
-    public:
-        // Individual nodes
-        void aPrologueNode( PrologueNode * node );
+public:
+    // Individual nodes
+    void aPrologueNode( PrologueNode *node );
 
-        void aLoadIntNode( LoadIntNode * node );
+    void aLoadIntNode( LoadIntNode *node );
 
-        void aLoadOffsetNode( LoadOffsetNode * node );
+    void aLoadOffsetNode( LoadOffsetNode *node );
 
-        void aLoadUplevelNode( LoadUplevelNode * node );
+    void aLoadUplevelNode( LoadUplevelNode *node );
 
-        void anAssignNode( AssignNode * node );
+    void anAssignNode( AssignNode *node );
 
-        void aStoreOffsetNode( StoreOffsetNode * node );
+    void aStoreOffsetNode( StoreOffsetNode *node );
 
-        void aStoreUplevelNode( StoreUplevelNode * node );
+    void aStoreUplevelNode( StoreUplevelNode *node );
 
-        void anArithRRNode( ArithRRNode * node );
+    void anArithRRNode( ArithRRNode *node );
 
-        void aFloatArithRRNode( FloatArithRRNode * node );
+    void aFloatArithRRNode( FloatArithRRNode *node );
 
-        void aFloatUnaryArithNode( FloatUnaryArithNode * node );
+    void aFloatUnaryArithNode( FloatUnaryArithNode *node );
 
-        void anArithRCNode( ArithRCNode * node );
+    void anArithRCNode( ArithRCNode *node );
 
-        void aTArithRRNode( TArithRRNode * node );
+    void aTArithRRNode( TArithRRNode *node );
 
-        void aContextCreateNode( ContextCreateNode * node );
+    void aContextCreateNode( ContextCreateNode *node );
 
-        void aContextInitNode( ContextInitNode * node );
+    void aContextInitNode( ContextInitNode *node );
 
-        void aContextZapNode( ContextZapNode * node );
+    void aContextZapNode( ContextZapNode *node );
 
-        void aBlockCreateNode( BlockCreateNode * node );
+    void aBlockCreateNode( BlockCreateNode *node );
 
-        void aBlockMaterializeNode( BlockMaterializeNode * node );
+    void aBlockMaterializeNode( BlockMaterializeNode *node );
 
-        void aSendNode( SendNode * node );
+    void aSendNode( SendNode *node );
 
-        void aPrimitiveNode( PrimitiveNode * node );
+    void aPrimitiveNode( PrimitiveNode *node );
 
-        void aDLLNode( DLLNode * node );
+    void aDLLNode( DLLNode *node );
 
-        void aLoopHeaderNode( LoopHeaderNode * node );
+    void aLoopHeaderNode( LoopHeaderNode *node );
 
-        void aReturnNode( ReturnNode * node );
+    void aReturnNode( ReturnNode *node );
 
-        void aNonLocalReturnSetupNode( NonLocalReturnSetupNode * node );
+    void aNonLocalReturnSetupNode( NonLocalReturnSetupNode *node );
 
-        void anInlinedReturnNode( InlinedReturnNode * node );
+    void anInlinedReturnNode( InlinedReturnNode *node );
 
-        void aNonLocalReturnContinuationNode( NonLocalReturnContinuationNode * node );
+    void aNonLocalReturnContinuationNode( NonLocalReturnContinuationNode *node );
 
-        void aBranchNode( BranchNode * node );
+    void aBranchNode( BranchNode *node );
 
-        void aTypeTestNode( TypeTestNode * node );
+    void aTypeTestNode( TypeTestNode *node );
 
-        void aNonLocalReturnTestNode( NonLocalReturnTestNode * node );
+    void aNonLocalReturnTestNode( NonLocalReturnTestNode *node );
 
-        void aMergeNode( MergeNode * node );
+    void aMergeNode( MergeNode *node );
 
-        void anArrayAtNode( ArrayAtNode * node );
+    void anArrayAtNode( ArrayAtNode *node );
 
-        void anArrayAtPutNode( ArrayAtPutNode * node );
+    void anArrayAtPutNode( ArrayAtPutNode *node );
 
-        void anInlinedPrimitiveNode( InlinedPrimitiveNode * node );
+    void anInlinedPrimitiveNode( InlinedPrimitiveNode *node );
 
-        void anUncommonNode( UncommonNode * node );
+    void anUncommonNode( UncommonNode *node );
 
-        void aFixedCodeNode( FixedCodeNode * node );
+    void aFixedCodeNode( FixedCodeNode *node );
 
-        void aNopNode( NopNode * node );
+    void aNopNode( NopNode *node );
 
-        void aCommentNode( CommentNode * node );
+    void aCommentNode( CommentNode *node );
 };

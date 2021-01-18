@@ -18,124 +18,156 @@
 
 class HCodeBufferTests : public ::testing::Test {
 
-    protected:
+protected:
 
-        void SetUp() override {
-            rm   = new HeapResourceMark();
-            code = new HeapCodeBuffer();
-        }
-
-
-        void TearDown() override {
-            delete rm;
-            rm   = nullptr;
-            code = nullptr;
-        }
+    void SetUp() override {
+        rm   = new HeapResourceMark();
+        code = new HeapCodeBuffer();
+    }
 
 
-        HeapCodeBuffer   * code;
-        HeapResourceMark * rm;
-        char             msg[200];
+    void TearDown() override {
+        delete rm;
+        rm   = nullptr;
+        code = nullptr;
+    }
 
 
-        void checkByteLength( int expected, const char * message ) {
-            sprintf( msg, "Wrong byte length for %s, expected: %d, but was: %d", message, expected, code->byteLength() );
-            EXPECT_EQ( expected, code->byteLength() ) << msg;
-        }
+    HeapCodeBuffer   *code;
+    HeapResourceMark *rm;
+    char msg[200];
 
 
-        void checkOopLength( int expected, const char * message ) {
-            sprintf( msg, "Wrong Oop length for %s, expected: %d, but was: %d", message, expected, code->oopLength() );
-            EXPECT_EQ( expected, code->oopLength() ) << msg;
-        }
+    void checkByteLength( int expected, const char *message ) {
+        sprintf( msg, "Wrong byte length for %s, expected: %d, but was: %d", message, expected, code->byteLength() );
+        EXPECT_EQ( expected, code->byteLength() ) << msg;
+    }
 
 
-        void checkByte( int expected, int actual ) {
-            sprintf( msg, "Expected: %d, but was: %d", expected, actual );
-            EXPECT_EQ( expected, actual ) << msg;
-        }
+    void checkOopLength( int expected, const char *message ) {
+        sprintf( msg, "Wrong Oop length for %s, expected: %d, but was: %d", message, expected, code->oopLength() );
+        EXPECT_EQ( expected, code->oopLength() ) << msg;
+    }
 
 
-        void checkOop( int expected, int actual ) {
-            sprintf( msg, "Expected: %d, but was: %d", expected, actual );
-            EXPECT_EQ( int( expected ), int( actual ) ) << msg;
-        }
+    void checkByte( int expected, int actual ) {
+        sprintf( msg, "Expected: %d, but was: %d", expected, actual );
+        EXPECT_EQ( expected, actual ) << msg;
+    }
+
+
+    void checkOop( int expected, int actual ) {
+        sprintf( msg, "Expected: %d, but was: %d", expected, actual );
+        EXPECT_EQ( int( expected ), int( actual ) ) << msg;
+    }
 
 };
 
 
-TEST_F( HCodeBufferTests, pushingByteShouldAddByteToBytesArray ) {
-    BlockScavenge bs;
-    KlassOop      messageClass  = KlassOop( Universe::find_global( "Message" ) );
-    SymbolOop     errorSelector = SymbolOop( oopFactory::new_symbol( "value" ) );
-    SymbolOop     selector      = SymbolOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
-    SymbolOop      dnuSelector = SymbolOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
-    ObjectArrayOop args        = ObjectArrayOop( oopFactory::new_objArray( 0 ) );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_literal) );
-    code->pushOop( messageClass );
-    checkByteLength( 8, "Message" );
-    checkOopLength( 2, "Message" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_self) );
-    checkByteLength( 9, "self" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_literal) );
-    code->pushOop( errorSelector );
-    checkByteLength( 16, "selector" );
-    checkOopLength( 4, "selector" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_literal) );
-    code->pushOop( args );
-    checkByteLength( 24, "args" );
-    checkOopLength( 6, "args" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n) );
-    code->pushByte( 2 );
-    code->pushOop( selector );
-    code->pushOop( smiOopFromValue( 0 ) );
-    checkByteLength( 36, "constructor" );
-    checkOopLength( 9, "constructor" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self) );
-    code->pushOop( dnuSelector );
-    code->pushOop( smiOopFromValue( 0 ) );
-    checkByteLength( 48, "DNU" );
-    checkOopLength( 12, "DNU" );
-    code->pushByte( static_cast<std::uint8_t>(ByteCodes::Code::return_tos_pop_0) );
-    checkByteLength( 49, "return" );
+TEST_F( HCodeBufferTests, pushingByteShouldAddByteToBytesArray
+) {
+BlockScavenge  bs;
+KlassOop       messageClass  = KlassOop( Universe::find_global( "Message" ) );
+SymbolOop      errorSelector = SymbolOop( oopFactory::new_symbol( "value" ) );
+SymbolOop      selector      = SymbolOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
+SymbolOop      dnuSelector   = SymbolOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
+ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( 0 ) );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::push_literal)
+);
+code->
+pushOop( messageClass );
+checkByteLength( 8, "Message" );
+checkOopLength( 2, "Message" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::push_self)
+);
+checkByteLength( 9, "self" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::push_literal)
+);
+code->
+pushOop( errorSelector );
+checkByteLength( 16, "selector" );
+checkOopLength( 4, "selector" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::push_literal)
+);
+code->
+pushOop( args );
+checkByteLength( 24, "args" );
+checkOopLength( 6, "args" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::interpreted_send_n)
+);
+code->pushByte( 2 );
+code->
+pushOop( selector );
+code->
+pushOop( smiOopFromValue( 0 )
+);
+checkByteLength( 36, "constructor" );
+checkOopLength( 9, "constructor" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::interpreted_send_self)
+);
+code->
+pushOop( dnuSelector );
+code->
+pushOop( smiOopFromValue( 0 )
+);
+checkByteLength( 48, "DNU" );
+checkOopLength( 12, "DNU" );
+code->pushByte( static_cast
+<std::uint8_t>(ByteCodes::Code::return_tos_pop_0)
+);
+checkByteLength( 49, "return" );
 }
 
 
-TEST_F( HCodeBufferTests, pushingBytesShouldAddCorrectBytesToByteArray ) {
-    code->pushByte( 1 );
-    code->pushByte( 2 );
-    code->pushByte( 3 );
-    code->pushByte( 4 );
-    checkByte( 1, code->bytes()->byte_at( 1 ) );
-    checkByte( 2, code->bytes()->byte_at( 2 ) );
-    checkByte( 3, code->bytes()->byte_at( 3 ) );
-    checkByte( 4, code->bytes()->byte_at( 4 ) );
+TEST_F( HCodeBufferTests, pushingBytesShouldAddCorrectBytesToByteArray
+) {
+code->pushByte( 1 );
+code->pushByte( 2 );
+code->pushByte( 3 );
+code->pushByte( 4 );
+checkByte( 1, code->bytes()->byte_at( 1 ) );
+checkByte( 2, code->bytes()->byte_at( 2 ) );
+checkByte( 3, code->bytes()->byte_at( 3 ) );
+checkByte( 4, code->bytes()->byte_at( 4 ) );
 }
 
 
-TEST_F( HCodeBufferTests, pushingOopShouldPadByteArray ) {
-    code->pushByte( 1 );
-    code->pushOop( smiOopFromValue( 2 ) );
-    checkByte( 1, code->bytes()->byte_at( 1 ) );
-    checkByte( 0xFF, code->bytes()->byte_at( 2 ) );
-    checkByte( 0xFF, code->bytes()->byte_at( 3 ) );
-    checkByte( 0xFF, code->bytes()->byte_at( 4 ) );
-    checkByte( 0, code->bytes()->byte_at( 5 ) );
-    checkByte( 0, code->bytes()->byte_at( 6 ) );
-    checkByte( 0, code->bytes()->byte_at( 7 ) );
-    checkByte( 0, code->bytes()->byte_at( 8 ) );
+TEST_F( HCodeBufferTests, pushingOopShouldPadByteArray
+) {
+code->pushByte( 1 );
+code->
+pushOop( smiOopFromValue( 2 )
+);
+checkByte( 1, code->bytes()->byte_at( 1 ) );
+checkByte( 0xFF, code->bytes()->byte_at( 2 ) );
+checkByte( 0xFF, code->bytes()->byte_at( 3 ) );
+checkByte( 0xFF, code->bytes()->byte_at( 4 ) );
+checkByte( 0, code->bytes()->byte_at( 5 ) );
+checkByte( 0, code->bytes()->byte_at( 6 ) );
+checkByte( 0, code->bytes()->byte_at( 7 ) );
+checkByte( 0, code->bytes()->byte_at( 8 ) );
 }
 
 
-TEST_F( HCodeBufferTests, pushingOopShouldAddToOopArray ) {
-    BlockScavenge bs;
-    code->pushOop( smiOopFromValue( 2 ) );
+TEST_F( HCodeBufferTests, pushingOopShouldAddToOopArray
+) {
+BlockScavenge bs;
+code->
+pushOop( smiOopFromValue( 2 )
+);
 //    checkOop( smiOopFromValue( 2 ), code->oops()->obj_at( 1 ) ); // XXX
 }
 
 
-TEST_F( HCodeBufferTests, pushingByteShouldAddZeroToOopArray ) {
-    BlockScavenge bs;
-    code->pushByte( 1 );
+TEST_F( HCodeBufferTests, pushingByteShouldAddZeroToOopArray
+) {
+BlockScavenge bs;
+code->pushByte( 1 );
 //    checkOop( smiOopFromValue( 0 ), code->oops()->obj_at( 1 ) ); // XXX
 }

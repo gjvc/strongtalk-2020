@@ -12,64 +12,64 @@
 
 
 class ProcessKlass : public MemOopKlass {
-    public:
-        friend void setKlassVirtualTableFromProcessKlass( Klass * k );
+public:
+    friend void setKlassVirtualTableFromProcessKlass( Klass *k );
 
 
-        // testers
-        bool_t oop_is_process() const {
-            return true;
-        }
+    // testers
+    bool_t oop_is_process() const {
+        return true;
+    }
 
 
-        // allocation properties
-        bool_t can_inline_allocation() const {
-            return false;
-        }
+    // allocation properties
+    bool_t can_inline_allocation() const {
+        return false;
+    }
 
 
-        // allocation operations
-        Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    // allocation operations
+    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-        // creates invocation
-        KlassOop create_subclass( MixinOop mixin, Format format );
+    // creates invocation
+    KlassOop create_subclass( MixinOop mixin, Format format );
 
-        static KlassOop create_class( KlassOop super_class, MixinOop mixin );
-
-
-        // Format
-        Format format() {
-            return Format::process_klass;
-        }
+    static KlassOop create_class( KlassOop super_class, MixinOop mixin );
 
 
-        //  memory operations
-        int oop_scavenge_contents( Oop obj );
-
-        int oop_scavenge_tenured_contents( Oop obj );
-
-        void oop_follow_contents( Oop obj );
-
-        // iterators
-        void oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk );
-
-        void oop_oop_iterate( Oop obj, OopClosure * blk );
+    // Format
+    Format format() {
+        return Format::process_klass;
+    }
 
 
-        // Sizing
-        int oop_header_size() const {
-            return ProcessOopDescriptor::header_size();
-        }
+    //  memory operations
+    int oop_scavenge_contents( Oop obj );
+
+    int oop_scavenge_tenured_contents( Oop obj );
+
+    void oop_follow_contents( Oop obj );
+
+    // iterators
+    void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
+
+    void oop_oop_iterate( Oop obj, OopClosure *blk );
 
 
-        // printing support
-        const char * name() const {
-            return "process";
-        }
+    // Sizing
+    int oop_header_size() const {
+        return ProcessOopDescriptor::header_size();
+    }
 
 
-        // sizing
-        int object_size() const;
+    // printing support
+    const char *name() const {
+        return "process";
+    }
+
+
+    // sizing
+    int object_size() const;
 };
 
-void setKlassVirtualTableFromProcessKlass( Klass * k );
+void setKlassVirtualTableFromProcessKlass( Klass *k );

@@ -59,7 +59,7 @@ bool_t BlockClosureKlass::oop_verify( Oop obj ) {
 }
 
 
-void setKlassVirtualTableFromBlockClosureKlass( Klass * k ) {
+void setKlassVirtualTableFromBlockClosureKlass( Klass *k ) {
     BlockClosureKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -69,7 +69,7 @@ Oop BlockClosureKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) 
     KlassOop k = as_klassOop();
 
     // allocate
-    Oop * result = basicAllocate( BlockClosureOopDescriptor::object_size(), &k, permit_scavenge, tenured );
+    Oop *result = basicAllocate( BlockClosureOopDescriptor::object_size(), &k, permit_scavenge, tenured );
     if ( result == nullptr )
         return nullptr;
 
@@ -92,7 +92,7 @@ int BlockClosureKlass::oop_scavenge_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_header();
     // %note _method can be ignored since methods are tenured
-    scavenge_oop( ( Oop * ) &BlockClosureOop( obj )->addr()->_lexical_scope );
+    scavenge_oop( (Oop *) &BlockClosureOop( obj )->addr()->_lexical_scope );
     return BlockClosureOopDescriptor::object_size();
 }
 
@@ -101,7 +101,7 @@ int BlockClosureKlass::oop_scavenge_tenured_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_tenured_header();
     // %note _method can be ignored since methods are tenured
-    scavenge_tenured_oop( ( Oop * ) &BlockClosureOop( obj )->addr()->_lexical_scope );
+    scavenge_tenured_oop( (Oop *) &BlockClosureOop( obj )->addr()->_lexical_scope );
     return BlockClosureOopDescriptor::object_size();
 }
 
@@ -109,24 +109,24 @@ int BlockClosureKlass::oop_scavenge_tenured_contents( Oop obj ) {
 void BlockClosureKlass::oop_follow_contents( Oop obj ) {
     // header
     MemOop( obj )->follow_header();
-    MarkSweep::reverse_and_push( ( Oop * ) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
-    MarkSweep::reverse_and_push( ( Oop * ) &BlockClosureOop( obj )->addr()->_lexical_scope );
+    MarkSweep::reverse_and_push( (Oop *) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
+    MarkSweep::reverse_and_push( (Oop *) &BlockClosureOop( obj )->addr()->_lexical_scope );
 }
 
 
-void BlockClosureKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void BlockClosureKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
-    blk->do_oop( "method", ( Oop * ) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
-    blk->do_oop( "scope", ( Oop * ) &BlockClosureOop( obj )->addr()->_lexical_scope );
+    blk->do_oop( "method", (Oop *) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
+    blk->do_oop( "scope", (Oop *) &BlockClosureOop( obj )->addr()->_lexical_scope );
 }
 
 
-void BlockClosureKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void BlockClosureKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
-    blk->do_oop( ( Oop * ) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
-    blk->do_oop( ( Oop * ) &BlockClosureOop( obj )->addr()->_lexical_scope );
+    blk->do_oop( (Oop *) &BlockClosureOop( obj )->addr()->_methodOrJumpAddr );
+    blk->do_oop( (Oop *) &BlockClosureOop( obj )->addr()->_lexical_scope );
 }
 
 
@@ -157,7 +157,7 @@ int BlockClosureKlass::number_of_arguments() const {
 }
 
 
-void BlockClosureKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void BlockClosureKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     if ( PrintObjectID ) {
         MemOop( obj )->print_id_on( stream );
         stream->print( "-" );

@@ -21,7 +21,7 @@ void atexit_handler_2() {
 }
 
 
-int main( int argc, char * argv[] ) {
+int main( int argc, char *argv[] ) {
 
     const int result_1 = std::atexit( atexit_handler_1 );
     const int result_2 = std::atexit( atexit_handler_2 );

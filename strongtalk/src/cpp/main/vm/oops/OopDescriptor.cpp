@@ -16,7 +16,7 @@ OopDescriptor::OopDescriptor() {
 }
 
 
-void OopDescriptor::print_value_on( ConsoleOutputStream * stream ) {
+void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
     if ( is_mark() ) {
         MarkOop( this )->print_on( stream );
     } else if ( is_smi() ) {
@@ -35,7 +35,7 @@ void OopDescriptor::print_value_on( ConsoleOutputStream * stream ) {
 }
 
 
-void OopDescriptor::print_on( ConsoleOutputStream * stream ) {
+void OopDescriptor::print_on( ConsoleOutputStream *stream ) {
     if ( is_mark() ) {
         MarkOop( this )->print_on( stream );
     } else if ( is_smi() ) {
@@ -56,15 +56,15 @@ void OopDescriptor::print_value() {
 }
 
 
-char * OopDescriptor::print_string() {
-    StringOutputStream * stream = new StringOutputStream( 50 );
+char *OopDescriptor::print_string() {
+    StringOutputStream *stream = new StringOutputStream( 50 );
     print_on( stream );
     return stream->as_string();
 }
 
 
-char * OopDescriptor::print_value_string() {
-    StringOutputStream * stream = new StringOutputStream( 50 );
+char *OopDescriptor::print_value_string() {
+    StringOutputStream *stream = new StringOutputStream( 50 );
     print_value_on( stream );
     return stream->as_string();
 }
@@ -78,7 +78,7 @@ KlassOop OopDescriptor::klass() const {
 }
 
 
-Klass * OopDescriptor::blueprint() const {
+Klass *OopDescriptor::blueprint() const {
     return klass()->klass_part();
 }
 
@@ -113,7 +113,7 @@ bool_t OopDescriptor::is_new() const {
 }
 
 
-Generation * OopDescriptor::my_generation() {
+Generation *OopDescriptor::my_generation() {
     return Universe::generation_containing( this );
 }
 

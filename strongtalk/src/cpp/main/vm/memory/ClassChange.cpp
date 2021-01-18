@@ -17,11 +17,11 @@ void ClassChange::recustomize_methods() {
 }
 
 
-struct KlassOopDescriptor * ClassChange::new_class_from( KlassOopDescriptor * old_klass, KlassOopDescriptor * new_super_klass, struct MixinOopDescriptor * new_mixin, Klass::Format new_format, struct MixinOopDescriptor * old_mixin ) {
+struct KlassOopDescriptor *ClassChange::new_class_from( KlassOopDescriptor *old_klass, KlassOopDescriptor *new_super_klass, struct MixinOopDescriptor *new_mixin, Klass::Format new_format, struct MixinOopDescriptor *old_mixin ) {
 
     Klass::Format format = ( new_format not_eq Klass::Format::special_klass ) ? new_format : old_klass->klass_part()->format();
 
-    KlassOopDescriptor * result = new_super_klass->klass_part()->create_subclass( new_mixin, format );
+    KlassOopDescriptor *result = new_super_klass->klass_part()->create_subclass( new_mixin, format );
     if ( result == nullptr ) {
         st_fatal( "class creation failed - internal error" );
     }
@@ -43,8 +43,8 @@ struct KlassOopDescriptor * ClassChange::new_class_from( KlassOopDescriptor * ol
 
     // Copy the class variables
     for ( int i = old_klass->klass_part()->number_of_classVars(); i > 0; i-- ) {
-        struct AssociationOopDescriptor * old_assoc = old_klass->klass_part()->classVar_at( i );
-        struct AssociationOopDescriptor * new_assoc = result->klass_part()->local_lookup_class_var( old_assoc->key() );
+        struct AssociationOopDescriptor *old_assoc = old_klass->klass_part()->classVar_at( i );
+        struct AssociationOopDescriptor *new_assoc = result->klass_part()->local_lookup_class_var( old_assoc->key() );
         if ( new_assoc ) {
             new_assoc->set_value( old_assoc->value() );
         }
@@ -53,13 +53,13 @@ struct KlassOopDescriptor * ClassChange::new_class_from( KlassOopDescriptor * ol
 }
 
 
-void ClassChange::transfer_misc( struct MemOopDescriptor * src, struct MemOopDescriptor * dst ) {
-    memConverter * c = new memConverter( src->klass(), dst->klass() );
+void ClassChange::transfer_misc( struct MemOopDescriptor *src, struct MemOopDescriptor *dst ) {
+    memConverter *c = new memConverter( src->klass(), dst->klass() );
     c->transfer( src, dst );
 }
 
 
-memConverter * ClassChange::create_converter_for( KlassOopDescriptor * old_class, KlassOopDescriptor * new_class ) {
+memConverter *ClassChange::create_converter_for( KlassOopDescriptor *old_class, KlassOopDescriptor *new_class ) {
     switch ( new_class->klass_part()->format() ) {
         case Klass::Format::mem_klass:
             return new memConverter( old_class, new_class );
@@ -94,11 +94,11 @@ void ClassChange::update_class_vars() {
         _console->cr();
     }
 
-    Klass * k = old_klass()->klass_part();
+    Klass *k = old_klass()->klass_part();
 
     // Remove the dead entries
     for ( int i = k->number_of_classVars(); i > 0; i-- ) {
-        struct AssociationOopDescriptor * assoc = k->classVar_at( i );
+        struct AssociationOopDescriptor *assoc = k->classVar_at( i );
         if ( not new_mixin()->includes_classVar( assoc->key() ) ) {
             k->remove_classVar_at( i );
         }
@@ -106,7 +106,7 @@ void ClassChange::update_class_vars() {
 
     // Add the new ones
     for ( int i = new_mixin()->number_of_classVars(); i > 0; i-- ) {
-        struct SymbolOopDescriptor * name = new_mixin()->classVar_at( i );
+        struct SymbolOopDescriptor *name = new_mixin()->classVar_at( i );
         if ( not k->includes_classVar( name ) ) {
             k->add_classVar( oopFactory::new_association( name, nilObj, false ) );
         }
@@ -215,8 +215,8 @@ std::int32_t ClassChange::compute_needed_schema_change() {
     }
 
     // Check if we've changed the class instance variables
-    struct MixinOopDescriptor * new_class_mixin = new_mixin()->class_mixin();
-    struct MixinOopDescriptor * old_class_mixin = old_mixin()->class_mixin();
+    struct MixinOopDescriptor *new_class_mixin = new_mixin()->class_mixin();
+    struct MixinOopDescriptor *old_class_mixin = old_mixin()->class_mixin();
 
     if ( new_class_mixin->number_of_instVars() not_eq old_class_mixin->number_of_instVars() ) {
         set_reason_for_schema_change( "number of class instance variables have changed" );
@@ -234,7 +234,7 @@ std::int32_t ClassChange::compute_needed_schema_change() {
 }
 
 
-ClassChange::ClassChange( struct KlassOopDescriptor * old_klass, struct MixinOopDescriptor * new_mixin, Klass::Format new_format, struct KlassOopDescriptor * new_super ) {
+ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, struct MixinOopDescriptor *new_mixin, Klass::Format new_format, struct KlassOopDescriptor *new_super ) {
     _old_klass                 = old_klass;
     _new_mixin                 = new_mixin;
     _new_format                = new_format;
@@ -247,7 +247,7 @@ ClassChange::ClassChange( struct KlassOopDescriptor * old_klass, struct MixinOop
 }
 
 
-ClassChange::ClassChange( struct KlassOopDescriptor * old_klass, Klass::Format new_format ) {
+ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format new_format ) {
     _old_klass                 = old_klass;
     _new_mixin                 = old_klass->klass_part()->mixin();
     _new_format                = new_format;
@@ -260,12 +260,12 @@ ClassChange::ClassChange( struct KlassOopDescriptor * old_klass, Klass::Format n
 }
 
 
-struct KlassOopDescriptor * ClassChange::old_klass() const {
+struct KlassOopDescriptor *ClassChange::old_klass() const {
     return _old_klass;
 }
 
 
-struct MixinOopDescriptor * ClassChange::new_mixin() const {
+struct MixinOopDescriptor *ClassChange::new_mixin() const {
     return _new_mixin;
 }
 
@@ -275,42 +275,42 @@ Klass::Format ClassChange::new_format() const {
 }
 
 
-struct KlassOopDescriptor * ClassChange::new_klass() const {
+struct KlassOopDescriptor *ClassChange::new_klass() const {
     return _new_klass;
 }
 
 
-struct KlassOopDescriptor * ClassChange::new_super() const {
+struct KlassOopDescriptor *ClassChange::new_super() const {
     return _new_super;
 }
 
 
-memConverter * ClassChange::converter() const {
+memConverter *ClassChange::converter() const {
     return _converter;
 }
 
 
-ClassChange * ClassChange::super_change() const {
+ClassChange *ClassChange::super_change() const {
     return _super_change;
 }
 
 
-struct MixinOopDescriptor * ClassChange::old_mixin() const {
+struct MixinOopDescriptor *ClassChange::old_mixin() const {
     return _old_klass->klass_part()->mixin();
 }
 
 
-const char * ClassChange::reason_for_schema_change() {
+const char *ClassChange::reason_for_schema_change() {
     return _reason_for_schema_change;
 }
 
 
-void ClassChange::set_reason_for_schema_change( const char * msg ) {
+void ClassChange::set_reason_for_schema_change( const char *msg ) {
     _reason_for_schema_change = msg;
 }
 
 
-void ClassChange::set_super_change( ClassChange * change ) {
+void ClassChange::set_super_change( ClassChange *change ) {
     _super_change = change;
 }
 

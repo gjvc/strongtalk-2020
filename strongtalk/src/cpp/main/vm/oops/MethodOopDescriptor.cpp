@@ -112,7 +112,7 @@ int MethodOopDescriptor::number_of_arguments() const {
 
 
 int MethodOopDescriptor::number_of_stack_temporaries() const {
-    int     n  = 1;        // temporary 0 is always there
+    int          n  = 1;        // temporary 0 is always there
     std::uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
     switch ( b0 ) {
         case static_cast<int>(ByteCodes::Code::allocate_temp_1):
@@ -609,7 +609,7 @@ class ExpressionStackMapper : public MethodClosure {
 
 private:
     GrowableArray<int> *_mapping;
-    int _targetByteCodeIndex;
+    int                _targetByteCodeIndex;
 
 
     void map_push() {
@@ -929,7 +929,7 @@ void ExpressionStackMapper::dll_call_node( DLLCallNode *node ) {
 
 GrowableArray<int> *MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
 
-    GrowableArray<int> *mapping = new GrowableArray<int>( 10 );
+    GrowableArray<int>    *mapping = new GrowableArray<int>( 10 );
     ExpressionStackMapper blk( mapping, byteCodeIndex );
     MethodIterator        i( this, &blk );
 
@@ -1235,7 +1235,7 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
 
 MethodOop MethodOopDescriptor::copy_for_customization() const {
     // Copy this method
-    int len = size();
+    int len    = size();
     Oop *clone = Universe::allocate_tenured( len );
     Oop *to    = clone;
     Oop *from  = (Oop *) addr();

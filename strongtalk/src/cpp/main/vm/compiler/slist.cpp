@@ -9,8 +9,8 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 
-GenericSListElem * GenericSList::findL( void * p ) const {
-    for ( GenericSListElem * e = headL(); e; e = e->nextL() ) {
+GenericSListElem *GenericSList::findL( void *p ) const {
+    for ( GenericSListElem *e = headL(); e; e = e->nextL() ) {
         if ( e->dataL() == p )
             return e;
     }
@@ -18,8 +18,8 @@ GenericSListElem * GenericSList::findL( void * p ) const {
 }
 
 
-GenericSListElem * GenericSList::findL( void * token, slistFindFn f ) const {
-    for ( GenericSListElem * e = headL(); e; e = e->nextL() ) {
+GenericSListElem *GenericSList::findL( void *token, slistFindFn f ) const {
+    for ( GenericSListElem *e = headL(); e; e = e->nextL() ) {
         if ( f( token, e->dataL() ) )
             return e;
     }
@@ -27,32 +27,32 @@ GenericSListElem * GenericSList::findL( void * token, slistFindFn f ) const {
 }
 
 
-void * GenericSList::nthL( int n ) const {
+void *GenericSList::nthL( int n ) const {
     st_assert( n < length(), "non-existing element" );
-    GenericSListElem * e = headL();
+    GenericSListElem *e = headL();
     for ( int i = 0; i < n; i++, e = e->nextL() );
     return e->dataL();
 }
 
 
-void GenericSList::insertAfterL( GenericSListElem * e, void * d ) {
+void GenericSList::insertAfterL( GenericSListElem *e, void *d ) {
     if ( e == tailL() ) {
         appendL( d );
     } else if ( e == nullptr ) {
         prependL( d );
     } else {
-        GenericSListElem * newe = new GenericSListElem( d, e->nextL() );
+        GenericSListElem *newe = new GenericSListElem( d, e->nextL() );
         e->setNextL( newe );
         _len++;
     }
 }
 
 
-void GenericSList::removeAfterL( GenericSListElem * e ) {
+void GenericSList::removeAfterL( GenericSListElem *e ) {
     if ( e == nullptr ) {
         removeHeadL();
     } else {
-        GenericSListElem * deletee = e->nextL();
+        GenericSListElem *deletee = e->nextL();
         e->_next = deletee->nextL();
         if ( deletee == tailL() )
             _tail = e;
@@ -61,9 +61,9 @@ void GenericSList::removeAfterL( GenericSListElem * e ) {
 }
 
 
-void GenericSList::removeL( void * p ) {
-    GenericSListElem * prev = nullptr;
-    GenericSListElem * e    = headL();
+void GenericSList::removeL( void *p ) {
+    GenericSListElem *prev = nullptr;
+    GenericSListElem *e    = headL();
     for ( ; e and e->dataL() not_eq p; prev = e, e = e->nextL() );
     if ( e == nullptr ) st_fatal( "not in list" );
     removeAfterL( prev );
@@ -72,8 +72,8 @@ void GenericSList::removeL( void * p ) {
 
 
 void GenericSList::applyL( void f( void * ) ) {
-    GenericSListElem       * nexte;    // to permit removing during iteration
-    for ( GenericSListElem * e = headL(); e; e = nexte ) {
+    GenericSListElem       *nexte;    // to permit removing during iteration
+    for ( GenericSListElem *e = headL(); e; e = nexte ) {
         nexte = e->nextL();
         f( e->dataL() );
     }
@@ -85,8 +85,8 @@ void GenericSList::print_short() {
 }
 
 
-static void print_them( void * p ) {
-    ( ( PrintableResourceObject * ) p )->print_short();
+static void print_them( void *p ) {
+    ( (PrintableResourceObject *) p )->print_short();
     lprintf( " " );
 }
 
@@ -94,5 +94,5 @@ static void print_them( void * p ) {
 void GenericSList::print() {
     print_short();
     lprintf( ": " );
-    ( ( GenericSList * ) this )->applyL( print_them );
+    ( (GenericSList *) this )->applyL( print_them );
 }

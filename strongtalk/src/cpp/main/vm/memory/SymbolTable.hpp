@@ -29,19 +29,19 @@
 
 constexpr int symbol_table_size = 20011;
 
-int hash( const char * name, int len );
+int hash( const char *name, int len );
 
 struct SymbolTableLink {
     // instance variable
     SymbolOop symbol;
-    SymbolTableLink * next;
+    SymbolTableLink *next;
 
     // memory operations
     bool_t verify( int i );
 };
 
 struct SymbolTableEntry {
-    void * symbol_or_link;
+    void *symbol_or_link;
 
 
     bool_t is_empty() {
@@ -65,17 +65,17 @@ struct SymbolTableEntry {
 
 
     void set_symbol( SymbolOop s ) {
-        symbol_or_link = ( void * ) s;
+        symbol_or_link = (void *) s;
     }
 
 
-    SymbolTableLink * get_link() {
-        return ( SymbolTableLink * ) symbol_or_link;
+    SymbolTableLink *get_link() {
+        return (SymbolTableLink *) symbol_or_link;
     }
 
 
-    void set_link( SymbolTableLink * l ) {
-        symbol_or_link = ( void * ) l;
+    void set_link( SymbolTableLink *l ) {
+        symbol_or_link = (void *) l;
     }
 
 
@@ -89,57 +89,57 @@ struct SymbolTableEntry {
 
 class SymbolTable : public CHeapAllocatedObject {
 
-    private:
-        std::array <SymbolTableEntry, symbol_table_size> buckets;
-        SymbolTableLink * free_list;
-        SymbolTableLink * first_free_link;
-        SymbolTableLink * end_block;
+private:
+    std::array<SymbolTableEntry, symbol_table_size> buckets;
+    SymbolTableLink *free_list;
+    SymbolTableLink *first_free_link;
+    SymbolTableLink *end_block;
 
-    public:
-        SymbolTable();
+public:
+    SymbolTable();
 
-        // operations
-        SymbolOop lookup( const char * name, int len );
+    // operations
+    SymbolOop lookup( const char *name, int len );
 
-        // Used in Bootstrap for checking
-        bool_t is_present( SymbolOop sym );
+    // Used in Bootstrap for checking
+    bool_t is_present( SymbolOop sym );
 
-    protected:
-        void add_symbol( SymbolOop s ); // Only used by Bootstrap
+protected:
+    void add_symbol( SymbolOop s ); // Only used by Bootstrap
 
-        SymbolOop basic_add( const char * name, int len, int hashValue );
+    SymbolOop basic_add( const char *name, int len, int hashValue );
 
-        SymbolOop basic_add( SymbolOop s, int hashValue );
-
-
-        SymbolTableEntry * bucketFor( int hashValue );
+    SymbolOop basic_add( SymbolOop s, int hashValue );
 
 
-        SymbolTableEntry * firstBucket();
+    SymbolTableEntry *bucketFor( int hashValue );
 
 
-        SymbolTableEntry * lastBucket();
+    SymbolTableEntry *firstBucket();
 
 
-    public:
-        void add( SymbolOop s );
+    SymbolTableEntry *lastBucket();
 
-        // memory operations
-        void follow_used_symbols(); // Used during phase1 of garbage collection
 
-        void switch_pointers( Oop from, Oop to );
+public:
+    void add( SymbolOop s );
 
-        void relocate();
+    // memory operations
+    void follow_used_symbols(); // Used during phase1 of garbage collection
 
-        void verify();
+    void switch_pointers( Oop from, Oop to );
 
-        // memory management for symbolTableLinks
-        SymbolTableLink * new_link( SymbolOop s, SymbolTableLink * n = nullptr );
+    void relocate();
 
-        void delete_link( SymbolTableLink * l );
+    void verify();
 
-        // histogram
-        void print_histogram();
+    // memory management for symbolTableLinks
+    SymbolTableLink *new_link( SymbolOop s, SymbolTableLink *n = nullptr );
 
-        friend class Bootstrap;
+    void delete_link( SymbolTableLink *l );
+
+    // histogram
+    void print_histogram();
+
+    friend class Bootstrap;
 };

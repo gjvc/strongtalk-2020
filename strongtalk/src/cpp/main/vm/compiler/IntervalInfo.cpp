@@ -6,15 +6,15 @@
 #include "vm/compiler/IntervalInfo.hpp"
 
 
-IntervalInfo::IntervalInfo( MethodInterval * interval, InlinedScope * scope ) {
+IntervalInfo::IntervalInfo( MethodInterval *interval, InlinedScope *scope ) {
     _interval = interval;
     _scope    = scope;
 }
 
 
-bool_t IntervalInfo::isParentOf( IntervalInfo * other ) const {
+bool_t IntervalInfo::isParentOf( IntervalInfo *other ) const {
 
-    MethodInterval * parent = other->interval()->parent();
+    MethodInterval *parent = other->interval()->parent();
 
     while ( parent and parent not_eq _interval )
         parent = parent->parent();
@@ -23,7 +23,7 @@ bool_t IntervalInfo::isParentOf( IntervalInfo * other ) const {
 }
 
 
-bool_t IntervalInfo::dominates( int byteCodeIndex, IntervalInfo * other, int otherByteCodeIndex ) const {
+bool_t IntervalInfo::dominates( int byteCodeIndex, IntervalInfo *other, int otherByteCodeIndex ) const {
 
     // "x dominates y" --> "if y is executed, x was executed earlier"
     // Bytecode byteCodeIndex1 in interval i1 dominates bytecode byteCodeIndex2 in interval i2 if

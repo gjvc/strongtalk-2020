@@ -30,7 +30,7 @@ bool_t InliningPolicy::isCriticalSmiSelector( const SymbolOop sel ) {
 }
 
 
-const char * InliningPolicy::basic_shouldInline( MethodOop method ) {
+const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
 
     // should the interpreted method be inlined?
     if ( method->method_inlining_info() == MethodOopDescriptor::always_inline )
@@ -126,7 +126,7 @@ bool_t InliningPolicy::isBuiltinMethod() const {
 
 KlassOop CompilerInliningPolicy::nthArgKlass( int i ) const {
     int first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
-    Expression * e = _sender->exprStack()->at( first + i );
+    Expression *e = _sender->exprStack()->at( first + i );
     return e->hasKlass() ? e->klass() : nullptr;
 }
 
@@ -136,7 +136,7 @@ KlassOop CompilerInliningPolicy::receiverKlass() const {
 }
 
 
-const char * CompilerInliningPolicy::shouldInline( InlinedScope * s, InlinedScope * callee ) {
+const char *CompilerInliningPolicy::shouldInline( InlinedScope *s, InlinedScope *callee ) {
     if ( callee == nullptr ) {
         return "cannot handle super sends";
     }
@@ -181,7 +181,7 @@ KlassOop RecompilerInliningPolicy::receiverKlass() const {
 }
 
 
-const char * RecompilerInliningPolicy::shouldInline( RecompilerFrame * recompilerFrame ) {
+const char *RecompilerInliningPolicy::shouldInline( RecompilerFrame *recompilerFrame ) {
 
     // determine if recompilerFrame's method or NativeMethod should be inlined into its caller
     // use compiled-code size if available, even for interpreted methods
@@ -196,10 +196,10 @@ const char * RecompilerInliningPolicy::shouldInline( RecompilerFrame * recompile
 
     _deltaVirtualFrame = recompilerFrame->top_vframe();
     _methodOop         = recompilerFrame->top_method();
-    const NativeMethod * nm = nullptr;
+    const NativeMethod *nm = nullptr;
     if ( recompilerFrame->is_interpreted() ) {
         // check to see if we have a compiled version of the method
-        const LookupKey * key = recompilerFrame->key();
+        const LookupKey *key = recompilerFrame->key();
         if ( key ) {
             nm = Universe::code->lookup( key );
         } else {
@@ -208,7 +208,7 @@ const char * RecompilerInliningPolicy::shouldInline( RecompilerFrame * recompile
         }
     } else {
         st_assert( recompilerFrame->is_compiled(), "oops" );
-        nm = ( ( CompiledRecompilerFrame * ) recompilerFrame )->nm();
+        nm = ( (CompiledRecompilerFrame *) recompilerFrame )->nm();
     }
     if ( nm ) {
         return shouldInline( nm );
@@ -218,7 +218,7 @@ const char * RecompilerInliningPolicy::shouldInline( RecompilerFrame * recompile
 }
 
 
-const char * RecompilerInliningPolicy::shouldInline( const NativeMethod * nm ) {
+const char *RecompilerInliningPolicy::shouldInline( const NativeMethod *nm ) {
 
     if ( not CodeSizeImpactsInlining )
         return nullptr;

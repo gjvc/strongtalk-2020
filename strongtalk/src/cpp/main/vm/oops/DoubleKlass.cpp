@@ -11,7 +11,7 @@
 Oop DoubleKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
     // allocate
-    Oop * result = basicAllocate( DoubleOopDescriptor::object_size(), &doubleKlassObj, permit_scavenge, tenured );
+    Oop *result = basicAllocate( DoubleOopDescriptor::object_size(), &doubleKlassObj, permit_scavenge, tenured );
     if ( result == nullptr )
         return nullptr;
     DoubleOop obj = as_doubleOop( result );
@@ -27,20 +27,20 @@ KlassOop DoubleKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-void setKlassVirtualTableFromDoubleKlass( Klass * k ) {
+void setKlassVirtualTableFromDoubleKlass( Klass *k ) {
     DoubleKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
 
 
-void DoubleKlass::oop_short_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void DoubleKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_double( obj, "obj must be double" );
     stream->print( "%1.10gd ", DoubleOop( obj )->value() );
     oop_print_value_on( obj, stream );
 }
 
 
-void DoubleKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void DoubleKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_double( obj, "obj must be double" );
     stream->print( "%1.10gd", DoubleOop( obj )->value() );
 }
@@ -62,12 +62,12 @@ void DoubleKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-void DoubleKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void DoubleKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     MemOop( obj )->layout_iterate_header( blk );
     blk->do_double( "value", &DoubleOop( obj )->addr()->_value );
 }
 
 
-void DoubleKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void DoubleKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     MemOop( obj )->oop_iterate_header( blk );
 }

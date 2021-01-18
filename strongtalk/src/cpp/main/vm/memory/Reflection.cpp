@@ -15,8 +15,8 @@
 #include "vm/memory/WaterMark.hpp"
 
 
-GrowableArray <ClassChange *> * Reflection::_classChanges = nullptr;
-GrowableArray <MemOop> * Reflection::_converted = nullptr;
+GrowableArray<ClassChange *> *Reflection::_classChanges = nullptr;
+GrowableArray<MemOop> *Reflection::_converted = nullptr;
 
 
 bool_t Reflection::needs_schema_change() {
@@ -74,9 +74,9 @@ bool_t Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixi
 }
 
 
-ClassChange * Reflection::find_change_for( KlassOop klass ) {
+ClassChange *Reflection::find_change_for( KlassOop klass ) {
     for ( int i = 0; i < _classChanges->length(); i++ ) {
-        ClassChange * e = _classChanges->at( i );
+        ClassChange *e = _classChanges->at( i );
         if ( e->old_klass() == klass )
             return e;
     }
@@ -86,14 +86,14 @@ ClassChange * Reflection::find_change_for( KlassOop klass ) {
 
 void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invocations ) {
 
-    _classChanges = new GrowableArray <ClassChange *>( 100 );
+    _classChanges = new GrowableArray<ClassChange *>( 100 );
     int length = invocations->length();
 
     for ( int i = invocations_offset(); i <= length; i++ ) {
         ObjectArrayOop invocation = ObjectArrayOop( invocations->obj_at( i ) );
         st_assert( invocation->is_objArray(), "type check" );
 
-        ClassChange * change = new ClassChange( KlassOop( invocation->obj_at( 1 ) ), new_mixin, Klass::format_from_symbol( SymbolOop( invocation->obj_at( 2 ) ) ), KlassOop( invocation->obj_at( 3 ) ) );
+        ClassChange *change = new ClassChange( KlassOop( invocation->obj_at( 1 ) ), new_mixin, Klass::format_from_symbol( SymbolOop( invocation->obj_at( 2 ) ) ), KlassOop( invocation->obj_at( 3 ) ) );
         change->set_super_change( find_change_for( change->old_klass()->klass_part()->superKlass() ) );
         _classChanges->append( change );
 
@@ -170,7 +170,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
             _console->print_cr( " - schema change is needed" );
         }
 
-        _converted = new GrowableArray <MemOop>( 100 );
+        _converted = new GrowableArray<MemOop>( 100 );
 
         setup_schema_change();
 
@@ -281,7 +281,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
 }
 
 
-void Reflection::convert( Oop * p ) {
+void Reflection::convert( Oop *p ) {
     Oop obj = *p;
 
     if ( not obj->is_mem() )
@@ -302,7 +302,7 @@ void Reflection::convert( Oop * p ) {
 
 MemOop Reflection::convert_object( MemOop obj ) {
     st_assert( obj->klass()->klass_part()->is_marked_for_schema_change(), "just checking" );
-    ClassChange * change = find_change_for( obj->klass() );
+    ClassChange *change = find_change_for( obj->klass() );
     st_assert( change, "change must be present" );
     return change->converter()->convert( obj );
 }

@@ -17,13 +17,13 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-const RecompilerFrame * noCaller    = ( RecompilerFrame * ) 0x1;        // no caller (i.e., initial frame)
-const RecompilerFrame * noCallerYet = ( RecompilerFrame * ) 0x0;        // caller not yet computed
+const RecompilerFrame *noCaller    = (RecompilerFrame *) 0x1;        // no caller (i.e., initial frame)
+const RecompilerFrame *noCallerYet = (RecompilerFrame *) 0x0;        // caller not yet computed
 
-RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame * callee ) :
-    _frame( frame ) {
-    _caller      = ( RecompilerFrame * ) noCallerYet;
-    _callee      = ( RecompilerFrame * ) callee;
+RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame *callee ) :
+        _frame( frame ) {
+    _caller      = (RecompilerFrame *) noCallerYet;
+    _callee      = (RecompilerFrame *) callee;
     _invocations = _sends = _cumulSends = _loopDepth = 0;
     _num         = callee ? callee->num() + 1 : 0;
     _distance    = -1;
@@ -35,11 +35,11 @@ void RecompilerFrame::set_distance( int d ) {
 }
 
 
-InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const RecompilerFrame * callee ) :
-    RecompilerFrame( fr, callee ) {
-    VirtualFrame * vf1 = VirtualFrame::new_vframe( &_frame );
+InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
+        RecompilerFrame( fr, callee ) {
+    VirtualFrame *vf1 = VirtualFrame::new_vframe( &_frame );
     st_assert( vf1->is_interpreted_frame(), "must be interpreted" );
-    InterpretedVirtualFrame * vf = ( InterpretedVirtualFrame * ) vf1;
+    InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) vf1;
     _method = vf->method();
     st_assert( _method->codes() <= _frame.hp() and _frame.hp() < _method->codes_end(), "frame doesn't match method" );
     _byteCodeIndex     = vf->byteCodeIndex();
@@ -49,32 +49,32 @@ InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const Recompil
 
 
 InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, MethodOop m, KlassOop rcvrKlass ) :
-    RecompilerFrame( fr, nullptr ) {
+        RecompilerFrame( fr, nullptr ) {
     _method = m;
     st_assert( _method->codes() <= _frame.hp() and _frame.hp() < _method->codes_end(), "frame doesn't match method" );
     _byteCodeIndex = PrologueByteCodeIndex;
     _receiverKlass = rcvrKlass;
-    VirtualFrame * vf1 = VirtualFrame::new_vframe( &_frame );
+    VirtualFrame *vf1 = VirtualFrame::new_vframe( &_frame );
     st_assert( vf1->is_interpreted_frame(), "must be interpreted" );
-    InterpretedVirtualFrame * vf = ( InterpretedVirtualFrame * ) vf1;
+    InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) vf1;
     _deltaVirtualFrame = vf;
     init();
 }
 
 
-CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr, const RecompilerFrame * callee ) :
-    RecompilerFrame( fr, callee ) {
+CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
+        RecompilerFrame( fr, callee ) {
 }
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
-    RecompilerFrame( fr, nullptr ) {
+        RecompilerFrame( fr, nullptr ) {
     init();
 }
 
 
-RecompilerFrame * RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame * callee ) {
-    RecompilerFrame * rf;
+RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame *callee ) {
+    RecompilerFrame *rf;
     int dist = callee ? callee->distance() : -1;
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
@@ -95,13 +95,13 @@ bool_t RecompilerFrame::is_blockMethod() const {
 }
 
 
-RecompilerFrame * RecompilerFrame::caller() {
+RecompilerFrame *RecompilerFrame::caller() {
     if ( _caller not_eq noCallerYet )
         return ( _caller == noCaller ) ? nullptr : _caller;    // already computed caller
 
     // caller not yet computed; do it now
     if ( _frame.is_first_delta_frame() ) {
-        _caller = ( RecompilerFrame * ) noCaller;
+        _caller = (RecompilerFrame *) noCaller;
         return nullptr;
     } else {
         _caller = new_RFrame( _frame.delta_sender(), this );
@@ -118,13 +118,13 @@ MethodOop CompiledRecompilerFrame::top_method() const {
 bool_t RecompilerFrame::is_super() const {
     if ( is_blockMethod() )
         return false;
-    InlineCacheIterator * it = _frame.sender_ic_iterator();
+    InlineCacheIterator *it = _frame.sender_ic_iterator();
     return it ? it->is_super_send() : false;
 }
 
 
 bool_t RecompilerFrame::hasBlockArgs() const {
-    DeltaVirtualFrame * vf = top_vframe();
+    DeltaVirtualFrame *vf = top_vframe();
     if ( not vf )
         return false;
     int       nargs = vf->method()->number_of_arguments();
@@ -137,10 +137,10 @@ bool_t RecompilerFrame::hasBlockArgs() const {
 }
 
 
-GrowableArray <BlockClosureOop> * RecompilerFrame::blockArgs() const {
-    DeltaVirtualFrame * vf = top_vframe();
+GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
+    DeltaVirtualFrame *vf = top_vframe();
     int nargs = top_method()->number_of_arguments();
-    GrowableArray <BlockClosureOop> * blocks = new GrowableArray <BlockClosureOop>( nargs );
+    GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
     for ( int i = 0; i < nargs; i++ ) {
@@ -152,21 +152,21 @@ GrowableArray <BlockClosureOop> * RecompilerFrame::blockArgs() const {
 }
 
 
-LookupKey * CompiledRecompilerFrame::key() const {
+LookupKey *CompiledRecompilerFrame::key() const {
     return &_nativeMethod->_lookupKey;
 }
 
 
-LookupKey * InterpretedRecompilerFrame::key() const {
+LookupKey *InterpretedRecompilerFrame::key() const {
     if ( _lookupKey )
         return _lookupKey;            // cached result
     if ( _method->is_blockMethod() )
         return nullptr;    // has no lookup key
     SymbolOop sel = _method->selector();
-    ( ( InterpretedRecompilerFrame * ) this )->_lookupKey = LookupKey::allocate( _receiverKlass, sel );
+    ( (InterpretedRecompilerFrame *) this )->_lookupKey = LookupKey::allocate( _receiverKlass, sel );
     // Note: this code should really be factored out somewhere; it's duplicated (at least) in LookupCache
     if ( is_super() ) {
-        DeltaVirtualFrame * senderVF = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
+        DeltaVirtualFrame *senderVF = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
         MethodOop sendingMethod       = senderVF->method()->home();
         KlassOop  sendingMethodHolder = _receiverKlass->klass_part()->lookup_method_holder_for( sendingMethod );
         if ( sendingMethodHolder ) {
@@ -176,7 +176,7 @@ LookupKey * InterpretedRecompilerFrame::key() const {
         } else {
             if ( WizardMode )
                 warning( "sending method holder not found??" );
-            ( ( InterpretedRecompilerFrame * ) this )->_lookupKey = nullptr;
+            ( (InterpretedRecompilerFrame *) this )->_lookupKey = nullptr;
         }
     } else {
         MethodOop method = LookupCache::compile_time_normal_lookup( _receiverKlass, sel );
@@ -229,7 +229,7 @@ int RecompilerFrame::computeSends( MethodOop m ) {
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::predicted_send:
             case ByteCodes::SendType::accessor_send   : {
-                InterpretedInlineCache * ic = iter.ic();
+                InterpretedInlineCache *ic = iter.ic();
                 InterpretedInlineCacheIterator it( ic );
                 while ( not it.at_end() ) {
                     int count;
@@ -257,11 +257,11 @@ int RecompilerFrame::computeSends( MethodOop m ) {
 }
 
 
-static CompiledRecompilerFrame * this_rframe = nullptr;
+static CompiledRecompilerFrame *this_rframe = nullptr;
 static int sum_ics_result = 0;
 
 
-static void sum_ics( CompiledInlineCache * ic ) {
+static void sum_ics( CompiledInlineCache *ic ) {
     // estimate ic's # of sends and add to sum_ics_result
     // This code is here and not in CompiledInlineCacheIterator because it contains policy decisions,
     // e.g. how to attribute sends for nativeMethods w/multiple callers or w/o counters.
@@ -280,13 +280,13 @@ static void sum_ics( CompiledInlineCache * ic ) {
 
 
 void CompiledRecompilerFrame::init() {
-    VirtualFrame * vf = VirtualFrame::new_vframe( &_frame );
+    VirtualFrame *vf = VirtualFrame::new_vframe( &_frame );
     st_assert( vf->is_compiled_frame(), "must be compiled" );
-    _nativeMethod = ( ( CompiledVirtualFrame * ) vf )->code();
+    _nativeMethod = ( (CompiledVirtualFrame *) vf )->code();
     _nativeMethod->verify();
     vf = vf->top();
     st_assert( vf->is_compiled_frame(), "must be compiled" );
-    _deltaVirtualFrame = ( DeltaVirtualFrame * ) vf;
+    _deltaVirtualFrame = (DeltaVirtualFrame *) vf;
     _invocations       = _nativeMethod->invocation_count();
     _ncallers          = _nativeMethod->number_of_links();
     this_rframe        = this;
@@ -328,33 +328,33 @@ void InterpretedRecompilerFrame::init() {
 // a helper class for computing cumulCost
 class CumulCounter : public SpecializedMethodClosure {
 
-    public:
-        MethodOop method;            // the method currently being scanned for uplevel-accesses
-        int       cumulSends;
-        bool_t    top;
+public:
+    MethodOop method;            // the method currently being scanned for uplevel-accesses
+    int       cumulSends;
+    bool_t    top;
 
 
-        CumulCounter( MethodOop m ) {
-            cumulSends = 0;
-            method     = m;
-            top        = true;
-        }
+    CumulCounter( MethodOop m ) {
+        cumulSends = 0;
+        method     = m;
+        top        = true;
+    }
 
 
-        void count() {
-            if ( not top )
-                cumulSends += RecompilerFrame::computeSends( method );
-            top = false;
-            MethodIterator iter( method, this );
-        }
+    void count() {
+        if ( not top )
+            cumulSends += RecompilerFrame::computeSends( method );
+        top = false;
+        MethodIterator iter( method, this );
+    }
 
 
-        void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) { // recursively search nested blocks
-            MethodOop savedMethod = method;
-            method = meth;
-            count();
-            method = savedMethod;
-        }
+    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) { // recursively search nested blocks
+        MethodOop savedMethod = method;
+        method = meth;
+        count();
+        method = savedMethod;
+    }
 };
 
 
@@ -365,7 +365,7 @@ int RecompilerFrame::computeCumulSends( MethodOop m ) {
 }
 
 
-void RecompilerFrame::print( const char * kind ) {
+void RecompilerFrame::print( const char *kind ) {
     lprintf( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d\n", _num, is_interpreted() ? "I" : "C", top_method()->selector()->as_string(), _invocations, _ncallers, _sends, _cumulSends, _loopDepth, cost() );
 }
 

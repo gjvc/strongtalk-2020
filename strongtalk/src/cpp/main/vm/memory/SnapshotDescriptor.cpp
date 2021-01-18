@@ -34,7 +34,7 @@ void SnapshotDescriptor::write_sizes() {
 }
 
 
-static const char * revision_format = "Delta snapshot revision: %d.%d\n";
+static const char *revision_format = "Delta snapshot revision: %d.%d\n";
 
 
 void SnapshotDescriptor::read_revision() {
@@ -55,34 +55,34 @@ void SnapshotDescriptor::write_revision() {
 
 class ReadClosure : public OopClosure {
 
-    private:
-        void do_oop( Oop * o ) {
+private:
+    void do_oop( Oop *o ) {
 
-        }
+    }
 
 
-        SnapshotDescriptor * _snapshotDescriptor;
+    SnapshotDescriptor *_snapshotDescriptor;
 
-    public:
-        ReadClosure( SnapshotDescriptor * s ) {
-            this->_snapshotDescriptor = s;
-        }
+public:
+    ReadClosure( SnapshotDescriptor *s ) {
+        this->_snapshotDescriptor = s;
+    }
 };
 
 class WriteClosure : public OopClosure {
 
-    private:
-        void do_oop( Oop * o ) {
-            fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
-        }
+private:
+    void do_oop( Oop *o ) {
+        fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
+    }
 
 
-        SnapshotDescriptor * _snapshotDescriptor;
+    SnapshotDescriptor *_snapshotDescriptor;
 
-    public:
-        WriteClosure( SnapshotDescriptor * s ) {
-            this->_snapshotDescriptor = s;
-        }
+public:
+    WriteClosure( SnapshotDescriptor *s ) {
+        this->_snapshotDescriptor = s;
+    }
 };
 
 
@@ -118,7 +118,7 @@ void SnapshotDescriptor::write_zone() {
 }
 
 
-void SnapshotDescriptor::read_from( const char * name ) {
+void SnapshotDescriptor::read_from( const char *name ) {
     read_header();
     read_spaces();
     read_roots();
@@ -126,7 +126,7 @@ void SnapshotDescriptor::read_from( const char * name ) {
 }
 
 
-void SnapshotDescriptor::write_on( const char * name ) {
+void SnapshotDescriptor::write_on( const char *name ) {
     write_header();
     write_spaces();
     write_roots();
@@ -134,7 +134,7 @@ void SnapshotDescriptor::write_on( const char * name ) {
 }
 
 
-void SnapshotDescriptor::error( const char * msg ) {
+void SnapshotDescriptor::error( const char *msg ) {
     st_fatal( msg );
 }
 

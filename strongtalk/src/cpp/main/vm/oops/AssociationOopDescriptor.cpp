@@ -9,11 +9,11 @@
 #include "vm/memory/Universe.hpp"
 
 
-void AssociationOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void AssociationOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
-    stream->read_oop( ( Oop * ) &addr()->_key );
-    stream->read_oop( ( Oop * ) &addr()->_value );
-    stream->read_oop( ( Oop * ) &addr()->_is_constant );
+    stream->read_oop( (Oop *) &addr()->_key );
+    stream->read_oop( (Oop *) &addr()->_value );
+    stream->read_oop( (Oop *) &addr()->_is_constant );
 }
 
 

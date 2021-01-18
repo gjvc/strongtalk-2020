@@ -14,7 +14,7 @@
 #include "vm/interpreter/CodeIterator.hpp"
 
 
-extern Compiler * theCompiler;
+extern Compiler *theCompiler;
 
 // Interpreted_DLLCache implementation
 
@@ -38,7 +38,7 @@ void Interpreted_DLLCache::print() {
 // Compiled_DLLCache implementation
 
 bool_t Compiled_DLLCache::async() const {
-    char * d = destination();
+    char *d = destination();
     return d == StubRoutines::lookup_DLL_entry( true ) or d == StubRoutines::call_DLL_entry( true );
 }
 
@@ -53,7 +53,7 @@ void Compiled_DLLCache::verify() {
     if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
     if ( not function_name()->is_symbol() ) st_fatal( "function name is not a SymbolOop" );
     // check destination
-    char * d = destination();
+    char *d = destination();
     if ( d not_eq StubRoutines::lookup_DLL_entry( true ) and d not_eq StubRoutines::lookup_DLL_entry( false ) and d not_eq StubRoutines::call_DLL_entry( true ) and d not_eq StubRoutines::call_DLL_entry( false ) ) {
         st_fatal1( "Compiled_DLLCache destination 0x%x incorrect", d );
     }
@@ -71,21 +71,21 @@ void Compiled_DLLCache::print() {
 
 // DLLs implementation
 
-dll_func DLLs::lookup( SymbolOop name, DLL * library ) {
+dll_func DLLs::lookup( SymbolOop name, DLL *library ) {
     char buffer[200];
     st_assert( not name->copy_null_terminated( buffer, 200 ), "DLL function name longer than 200 chars - truncated" );
     return os::dll_lookup( buffer, library );
 }
 
 
-DLL * DLLs::load( SymbolOop name ) {
+DLL *DLLs::load( SymbolOop name ) {
     char buffer[200];
     st_assert( not name->copy_null_terminated( buffer, 200 ), "DLL library name longer than 200 chars - truncated" );
     return os::dll_load( buffer );
 }
 
 
-bool_t DLLs::unload( DLL * library ) {
+bool_t DLLs::unload( DLL *library ) {
     return os::dll_unload( library );
 }
 
@@ -99,7 +99,7 @@ dll_func DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
 
     Oop res = Delta::call( Universe::dll_lookup_receiver(), Universe::dll_lookup_selector(), function_name, dll_name );
 
-    return res->is_proxy() ? ( dll_func ) ProxyOop( res )->get_pointer() : nullptr;
+    return res->is_proxy() ? (dll_func) ProxyOop( res )->get_pointer() : nullptr;
 }
 
 
@@ -128,7 +128,7 @@ dll_func DLLs::lookup_and_patch_Interpreted_DLLCache() {
     MethodOop    m = f.method();
     CodeIterator it( m, m->byteCodeIndex_from( f.hp() ) );
 
-    Interpreted_DLLCache * cache = it.dll_cache();
+    Interpreted_DLLCache *cache = it.dll_cache();
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
 
     // do lookup, patch & return entry point
@@ -141,8 +141,8 @@ dll_func DLLs::lookup_and_patch_Interpreted_DLLCache() {
 
 dll_func DLLs::lookup_and_patch_Compiled_DLLCache() {
     // get DLL call info
-    Frame             f       = DeltaProcess::active()->last_frame();
-    Compiled_DLLCache * cache = compiled_DLLCache_from_return_address( f.pc() );
+    Frame f = DeltaProcess::active()->last_frame();
+    Compiled_DLLCache *cache = compiled_DLLCache_from_return_address( f.pc() );
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
     // do lookup, patch & return entry point
     dll_func function = lookup( cache->dll_name(), cache->function_name() );
@@ -152,43 +152,43 @@ dll_func DLLs::lookup_and_patch_Compiled_DLLCache() {
 }
 
 
-void DLLs::enter_async_call( DeltaProcess ** addr ) {
-    DeltaProcess * proc = DeltaProcess::active();
+void DLLs::enter_async_call( DeltaProcess **addr ) {
+    DeltaProcess *proc = DeltaProcess::active();
     *addr = proc; // proc will be retrieved in dll_enter_async_call
     proc->resetStepping();
     proc->transfer_and_continue();
 }
 
 
-void DLLs::exit_async_call( DeltaProcess ** addr ) {
-    DeltaProcess * proc = *addr;
+void DLLs::exit_async_call( DeltaProcess **addr ) {
+    DeltaProcess *proc = *addr;
     proc->wait_for_control();
     proc->applyStepping();
 }
 
 
-void DLLs::exit_sync_call( DeltaProcess ** addr ) {
+void DLLs::exit_sync_call( DeltaProcess **addr ) {
     // nothing to do here for now
 }
 
 
 extern "C" {
-void __CALLING_CONVENTION enter_async_call( DeltaProcess ** addr ) {
+void __CALLING_CONVENTION enter_async_call( DeltaProcess **addr ) {
     DLLs::enter_async_call( addr );
 }
-void __CALLING_CONVENTION exit_async_call( DeltaProcess ** addr ) {
+void __CALLING_CONVENTION exit_async_call( DeltaProcess **addr ) {
     DLLs::exit_async_call( addr );
 }
 }
 
 
-Compiled_DLLCache * compiled_DLLCache_from_return_address( const char * return_address ) {
-    Compiled_DLLCache * cache = ( Compiled_DLLCache * ) ( nativeCall_from_return_address( return_address ) );
+Compiled_DLLCache *compiled_DLLCache_from_return_address( const char *return_address ) {
+    Compiled_DLLCache *cache = (Compiled_DLLCache *) ( nativeCall_from_return_address( return_address ) );
     cache->verify();
     return cache;
 }
 
 
-Compiled_DLLCache * compiled_DLLCache_from_relocInfo( const char * displacement_address ) {
-    return ( Compiled_DLLCache * ) nativeCall_from_relocInfo( displacement_address );
+Compiled_DLLCache *compiled_DLLCache_from_relocInfo( const char *displacement_address ) {
+    return (Compiled_DLLCache *) nativeCall_from_relocInfo( displacement_address );
 }

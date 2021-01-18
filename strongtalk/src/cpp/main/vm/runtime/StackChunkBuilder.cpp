@@ -14,17 +14,17 @@
 #include "vm/oops/ContextOopDescriptor.hpp"
 
 
-GrowableArray <const CompiledVirtualFrame *> * frames;
-GrowableArray <ContextOop> * contexts;
+GrowableArray<const CompiledVirtualFrame *> *frames;
+GrowableArray<ContextOop> *contexts;
 
 bool_t StackChunkBuilder::_is_deoptimizing = false;
-int * StackChunkBuilder::_framePointer = nullptr;
+int *StackChunkBuilder::_framePointer = nullptr;
 
 
-StackChunkBuilder::StackChunkBuilder( int * fp, int size ) {
+StackChunkBuilder::StackChunkBuilder( int *fp, int size ) {
     _virtualFrameCount    = 0;
     _localExpressionCount = 0;
-    array                 = new GrowableArray <Oop>( size );
+    array                 = new GrowableArray<Oop>( size );
     _framePointer         = fp;
 }
 
@@ -33,10 +33,10 @@ StackChunkBuilder::~StackChunkBuilder() {
 }
 
 
-void StackChunkBuilder::append( DeltaVirtualFrame * f ) {
+void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
     MethodOop method;
     int       number_of_temps;
-    GrowableArray <Oop> * stack;
+    GrowableArray<Oop> *stack;
     {
         //FlagSetting fl(TraceCanonicalContext, false);
         _virtualFrameCount++;
@@ -69,7 +69,7 @@ void StackChunkBuilder::append( DeltaVirtualFrame * f ) {
         if ( not method->is_blockMethod() ) {
             con->set_home_fp( _framePointer );
             if ( f->is_compiled_frame() ) {
-                Processes::update_nlr_targets( ( CompiledVirtualFrame * ) f, con );
+                Processes::update_nlr_targets( (CompiledVirtualFrame *) f, con );
             }
         }
     }
@@ -98,7 +98,7 @@ ObjectArrayOop StackChunkBuilder::as_objArray() {
 }
 
 
-void StackChunkBuilder::context_at_put( const CompiledVirtualFrame * frame, ContextOop con ) {
+void StackChunkBuilder::context_at_put( const CompiledVirtualFrame *frame, ContextOop con ) {
     // Returns if no StackChunkBuilder is in use
     if ( not is_deoptimizing() ) {
         con->kill();
@@ -115,7 +115,7 @@ void StackChunkBuilder::context_at_put( const CompiledVirtualFrame * frame, Cont
 }
 
 
-ContextOop StackChunkBuilder::context_at( const CompiledVirtualFrame * frame ) {
+ContextOop StackChunkBuilder::context_at( const CompiledVirtualFrame *frame ) {
     // Returns if no StackChunkBuilder is in use
     if ( not is_deoptimizing() )
         return nullptr;
@@ -135,8 +135,8 @@ ContextOop StackChunkBuilder::context_at( const CompiledVirtualFrame * frame ) {
 void StackChunkBuilder::begin_deoptimization() {
     st_assert( not is_deoptimizing(), "just checking" );
     _is_deoptimizing = true;
-    frames           = new GrowableArray <const CompiledVirtualFrame *>( 100 );
-    contexts         = new GrowableArray <ContextOop>( 100 );
+    frames           = new GrowableArray<const CompiledVirtualFrame *>( 100 );
+    contexts         = new GrowableArray<ContextOop>( 100 );
 }
 
 

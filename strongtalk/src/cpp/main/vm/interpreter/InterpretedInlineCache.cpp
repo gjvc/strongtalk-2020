@@ -21,8 +21,8 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-InterpretedInlineCache * as_InterpretedIC( const char * address_of_next_instr ) {
-    return ( InterpretedInlineCache * ) ( address_of_next_instr - InterpretedInlineCache::size );
+InterpretedInlineCache *as_InterpretedIC( const char *address_of_next_instr ) {
+    return (InterpretedInlineCache *) ( address_of_next_instr - InterpretedInlineCache::size );
 }
 
 
@@ -34,64 +34,64 @@ InterpretedInlineCache * as_InterpretedIC( const char * address_of_next_instr ) 
 
 class Interpreter_PICs : AllStatic {
 
-    public:
-        static ObjectArrayOop free_list() {
-            return Universe::pic_free_list();
+public:
+    static ObjectArrayOop free_list() {
+        return Universe::pic_free_list();
+    }
+
+
+    static ObjectArrayOop allocate( int size ) {
+        Oop first = free_list()->obj_at( size - 1 );
+        if ( first == nilObj ) {
+            return ObjectArrayKlass::allocate_tenured_pic( size * 2 );
         }
+        free_list()->obj_at_put( size - 1, ObjectArrayOop( first )->obj_at( 1 ) );
+
+        ObjectArrayOop result = ObjectArrayOop( first );
+        st_assert( result->is_objArray(), "must be object array" );
+        st_assert( result->is_old(), "must be tenured" );
+        st_assert( result->length() == size * 2, "checking size" );
+        return result;
+    }
 
 
-        static ObjectArrayOop allocate( int size ) {
-            Oop first = free_list()->obj_at( size - 1 );
-            if ( first == nilObj ) {
-                return ObjectArrayKlass::allocate_tenured_pic( size * 2 );
-            }
-            free_list()->obj_at_put( size - 1, ObjectArrayOop( first )->obj_at( 1 ) );
-
-            ObjectArrayOop result = ObjectArrayOop( first );
-            st_assert( result->is_objArray(), "must be object array" );
-            st_assert( result->is_old(), "must be tenured" );
-            st_assert( result->length() == size * 2, "checking size" );
-            return result;
+    static ObjectArrayOop extend( ObjectArrayOop old_pic ) {
+        int old_size = old_pic->length() / 2;
+        if ( old_size >= size_of_largest_interpreterPIC )
+            return nullptr;
+        ObjectArrayOop result = allocate( old_size + 1 );
+        for ( int      index  = 1; index <= old_size * 2; index++ ) {
+            result->obj_at_put( index, old_pic->obj_at( index ) );
         }
+        return result;
+    }
 
 
-        static ObjectArrayOop extend( ObjectArrayOop old_pic ) {
-            int old_size = old_pic->length() / 2;
-            if ( old_size >= size_of_largest_interpreterPIC )
-                return nullptr;
-            ObjectArrayOop result = allocate( old_size + 1 );
-            for ( int      index  = 1; index <= old_size * 2; index++ ) {
-                result->obj_at_put( index, old_pic->obj_at( index ) );
-            }
-            return result;
-        }
+    static void deallocate( ObjectArrayOop pic ) {
+        int entry = ( pic->length() / 2 ) - 1;
+        Oop first = free_list()->obj_at( entry );
+        pic->obj_at_put( 1, first );
+        free_list()->obj_at_put( entry, pic );
+    }
 
 
-        static void deallocate( ObjectArrayOop pic ) {
-            int entry = ( pic->length() / 2 ) - 1;
-            Oop first = free_list()->obj_at( entry );
-            pic->obj_at_put( 1, first );
-            free_list()->obj_at_put( entry, pic );
-        }
+    static void set_first( ObjectArrayOop pic, Oop first, Oop second ) {
+        pic->obj_at_put( 1, first );
+        pic->obj_at_put( 2, second );
+    }
 
 
-        static void set_first( ObjectArrayOop pic, Oop first, Oop second ) {
-            pic->obj_at_put( 1, first );
-            pic->obj_at_put( 2, second );
-        }
+    static void set_second( ObjectArrayOop pic, Oop first, Oop second ) {
+        pic->obj_at_put( 3, first );
+        pic->obj_at_put( 4, second );
+    }
 
 
-        static void set_second( ObjectArrayOop pic, Oop first, Oop second ) {
-            pic->obj_at_put( 3, first );
-            pic->obj_at_put( 4, second );
-        }
-
-
-        static void set_last( ObjectArrayOop pic, Oop first, Oop second ) {
-            int size = pic->length();
-            pic->obj_at_put( size--, second );
-            pic->obj_at_put( size, first );
-        }
+    static void set_last( ObjectArrayOop pic, Oop first, Oop second ) {
+        int size = pic->length();
+        pic->obj_at_put( size--, second );
+        pic->obj_at_put( size, first );
+    }
 };
 
 
@@ -108,8 +108,8 @@ void InterpretedInlineCache::set( ByteCodes::Code send_code, Oop first_word, Oop
 }
 
 
-std::uint8_t * InterpretedInlineCache::findStartOfSend( std::uint8_t * sel_addr ) {
-    std::uint8_t * p = sel_addr;            // start of inline cache
+std::uint8_t *InterpretedInlineCache::findStartOfSend( std::uint8_t *sel_addr ) {
+    std::uint8_t *p = sel_addr;            // start of inline cache
     while ( *--p == static_cast<std::uint8_t>(ByteCodes::Code::halt) );    // skip alignment bytes if there - this works only if the nofArgs byte not_eq halt ! FIX THIS!
     if ( *p < 128 )
         --p;            // skip nofArgs byte if there - this works only for sends with less than 128 args
@@ -127,7 +127,7 @@ std::uint8_t * InterpretedInlineCache::findStartOfSend( std::uint8_t * sel_addr 
 
 
 int InterpretedInlineCache::findStartOfSend( MethodOop m, int byteCodeIndex ) {
-    std::uint8_t * p = findStartOfSend( m->codes( byteCodeIndex ) );
+    std::uint8_t *p = findStartOfSend( m->codes( byteCodeIndex ) );
     return ( p == nullptr ) ? IllegalByteCodeIndex : p - m->codes() + 1;
 }
 
@@ -139,23 +139,23 @@ SymbolOop InterpretedInlineCache::selector() const {
     } else if ( fw->is_method() ) {
         return MethodOop( fw )->selector();
     } else {
-        JumpTableEntry * e  = jump_table_entry();
-        NativeMethod   * nm = e->method();
+        JumpTableEntry *e  = jump_table_entry();
+        NativeMethod   *nm = e->method();
         st_assert( nm not_eq nullptr, "must have an NativeMethod" );
         return nm->_lookupKey.selector();
     }
 }
 
 
-JumpTableEntry * InterpretedInlineCache::jump_table_entry() const {
+JumpTableEntry *InterpretedInlineCache::jump_table_entry() const {
     st_assert( send_type() == ByteCodes::SendType::compiled_send or send_type() == ByteCodes::SendType::megamorphic_send, "must be a compiled call" );
     st_assert( first_word()->is_smi(), "must be smi_t" );
-    return ( JumpTableEntry * ) first_word();
+    return (JumpTableEntry *) first_word();
 }
 
 
 int InterpretedInlineCache::nof_arguments() const {
-    std::uint8_t * p = send_code_addr();
+    std::uint8_t *p = send_code_addr();
     switch ( ByteCodes::argument_spec( ByteCodes::Code( *p ) ) ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
             return 0;
@@ -273,8 +273,8 @@ void InterpretedInlineCache::cleanup() {
         case ByteCodes::SendType::compiled_send: { // check if the current compiled send is valid
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
-            JumpTableEntry * entry = ( JumpTableEntry * ) first_word();
-            NativeMethod   * nm    = entry->method();
+            JumpTableEntry *entry = (JumpTableEntry *) first_word();
+            NativeMethod   *nm    = entry->method();
             LookupResult result = LookupCache::lookup( &nm->_lookupKey );
             if ( not result.matches( nm ) ) {
                 replace( result, receiver_klass );
@@ -288,8 +288,8 @@ void InterpretedInlineCache::cleanup() {
         {
             KlassOop receiver_klass = KlassOop( second_word() );
             if ( first_word()->is_smi() ) {
-                JumpTableEntry * entry = ( JumpTableEntry * ) first_word();
-                NativeMethod   * nm    = entry->method();
+                JumpTableEntry *entry = (JumpTableEntry *) first_word();
+                NativeMethod   *nm    = entry->method();
                 LookupResult result = LookupCache::lookup( &nm->_lookupKey );
                 if ( not result.matches( nm ) ) {
                     replace( result, receiver_klass );
@@ -324,8 +324,8 @@ void InterpretedInlineCache::cleanup() {
                     st_assert( klass->is_klass(), "receiver klass must be klass" );
                     Oop first = pic->obj_at( index - 1 );
                     if ( first->is_smi() ) {
-                        JumpTableEntry * entry = ( JumpTableEntry * ) first;
-                        NativeMethod   * nm    = entry->method();
+                        JumpTableEntry *entry = (JumpTableEntry *) first;
+                        NativeMethod   *nm    = entry->method();
                         LookupResult result = LookupCache::lookup( &nm->_lookupKey );
                         if ( not result.matches( nm ) ) {
                             pic->obj_at_put( index - 1, result.value() );
@@ -353,7 +353,7 @@ void InterpretedInlineCache::clear_without_deallocation_pic() {
 }
 
 
-void InterpretedInlineCache::replace( NativeMethod * nm ) {
+void InterpretedInlineCache::replace( NativeMethod *nm ) {
     // replace entry with nm's klass by nm (if entry exists)
     SMIOop entry_point = SMIOop( nm->jump_table_entry()->entry_point() );
     st_assert( selector() == nm->_lookupKey.selector(), "mismatched selector" );
@@ -429,7 +429,7 @@ ObjectArrayOop InterpretedInlineCache::pic_array() {
 }
 
 
-void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache * ic, Frame * f, ByteCodes::Code send_code, KlassOop klass, LookupResult result ) {
+void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Frame *f, ByteCodes::Code send_code, KlassOop klass, LookupResult result ) {
     // update inline cache
     if ( ic->is_empty() and ic->send_type() not_eq ByteCodes::SendType::megamorphic_send ) {
         // fill ic for the first time
@@ -545,7 +545,7 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache * ic, F
 extern "C" bool_t have_nlr_through_C;
 
 
-Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInlineCache * ic, Frame * f ) {
+Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInlineCache *ic, Frame *f ) {
     MemOop    msg;
     SymbolOop sel;
     {
@@ -598,7 +598,7 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
 }
 
 
-void InterpretedInlineCache::trace_inline_cache_miss( InterpretedInlineCache * ic, KlassOop klass, LookupResult result ) {
+void InterpretedInlineCache::trace_inline_cache_miss( InterpretedInlineCache *ic, KlassOop klass, LookupResult result ) {
     _console->print( "InterpretedInlineCache lookup (" );
     klass->print_value();
     _console->print( ", " );
@@ -622,12 +622,12 @@ ObjectArrayOop cacheMissResult( Oop result, int argCount ) {
 // inline cache is updated and the send bytecode might be backpatched such
 // that it corresponds to the inline cache contents.
 
-Oop * InterpretedInlineCache::inline_cache_miss() {
+Oop *InterpretedInlineCache::inline_cache_miss() {
     NoGCVerifier noGC;
 
     // get ic info
     Frame f = DeltaProcess::active()->last_frame();
-    InterpretedInlineCache * ic = f.current_interpretedIC();
+    InterpretedInlineCache *ic = f.current_interpretedIC();
     ByteCodes::Code send_code = ic->send_code();
 
     Oop receiver = ic->argument_spec() == ByteCodes::ArgumentSpec::args_only // Are we at a self or super send?
@@ -654,7 +654,7 @@ Oop * InterpretedInlineCache::inline_cache_miss() {
 
 // Implementation of InterpretedInlineCacheIterator
 
-InterpretedInlineCacheIterator::InterpretedInlineCacheIterator( InterpretedInlineCache * ic ) {
+InterpretedInlineCacheIterator::InterpretedInlineCacheIterator( InterpretedInlineCache *ic ) {
     _ic = ic;
     init_iteration();
 }
@@ -669,10 +669,10 @@ void InterpretedInlineCacheIterator::set_klass( Oop k ) {
 void InterpretedInlineCacheIterator::set_method( Oop m ) {
     if ( m->is_mem() ) {
         st_assert( m->is_method(), "must be a method" );
-        _method       = ( MethodOop ) m;
+        _method       = (MethodOop) m;
         _nativeMethod = nullptr;
     } else {
-        JumpTableEntry * e = ( JumpTableEntry * ) m;
+        JumpTableEntry *e = (JumpTableEntry *) m;
         _nativeMethod = e->method();
         _method       = _nativeMethod->method();
     }
@@ -765,7 +765,7 @@ void InterpretedInlineCacheIterator::advance() {
 
 MethodOop InterpretedInlineCacheIterator::interpreted_method() const {
     if ( is_interpreted() ) {
-        MethodOop m = ( MethodOop ) _method;
+        MethodOop m = (MethodOop) _method;
         st_assert( m->is_old(), "methods must be old" );
         m->verify();
         return m;
@@ -775,7 +775,7 @@ MethodOop InterpretedInlineCacheIterator::interpreted_method() const {
 }
 
 
-NativeMethod * InterpretedInlineCacheIterator::compiled_method() const {
+NativeMethod *InterpretedInlineCacheIterator::compiled_method() const {
     if ( not is_compiled() )
         return nullptr;
     if ( not _nativeMethod->isNativeMethod() ) st_fatal( "not an NativeMethod" ); // cheap test

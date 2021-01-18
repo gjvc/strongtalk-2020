@@ -12,11 +12,11 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 
 
-PerformanceDebugger::PerformanceDebugger( Compiler * c ) {
+PerformanceDebugger::PerformanceDebugger( Compiler *c ) {
     _compiler                            = c;
     _compileAlreadyReported              = false;
-    _blockPseudoRegisters                = new GrowableArray <BlockPseudoRegister *>( 5 );
-    _reports                             = new GrowableArray <char *>( 5 );
+    _blockPseudoRegisters                = new GrowableArray<BlockPseudoRegister *>( 5 );
+    _reports                             = new GrowableArray<char *>( 5 );
     _stringStream                        = nullptr;
     _notInlinedBecauseNativeMethodTooBig = nullptr;
 }
@@ -29,7 +29,7 @@ void PerformanceDebugger::start_report() {
 
 
 void PerformanceDebugger::stop_report() {
-    char * report = _stringStream->as_string();
+    char *report = _stringStream->as_string();
 
     for ( int i = _reports->length() - 1; i >= 0; i-- ) {
         if ( strcmp( _reports->at( i ), report ) == 0 )
@@ -53,17 +53,17 @@ void PerformanceDebugger::report_compile() {
 // see PerformanceDebugger::report_context for an example
 
 class Reporter {
-        PerformanceDebugger * _performanceDebugger;
-    public:
-        Reporter( PerformanceDebugger * d ) {
-            _performanceDebugger = d;
-            d->start_report();
-        }
+    PerformanceDebugger *_performanceDebugger;
+public:
+    Reporter( PerformanceDebugger *d ) {
+        _performanceDebugger = d;
+        d->start_report();
+    }
 
 
-        ~Reporter() {
-            _performanceDebugger->stop_report();
-        }
+    ~Reporter() {
+        _performanceDebugger->stop_report();
+    }
 };
 
 
@@ -77,7 +77,7 @@ void PerformanceDebugger::finish_reporting() {
         for ( ; i < min( 9, len ); i++ ) {
             if ( i % 3 == 0 )
                 _stringStream->print_cr( "" );
-            InlinedScope * s = _notInlinedBecauseNativeMethodTooBig->at( i );
+            InlinedScope *s = _notInlinedBecauseNativeMethodTooBig->at( i );
             _stringStream->print( "%s  ", s->key()->print_string() );
         }
         if ( i < len )
@@ -87,15 +87,15 @@ void PerformanceDebugger::finish_reporting() {
 }
 
 
-void PerformanceDebugger::report_context( InlinedScope * s ) {
+void PerformanceDebugger::report_context( InlinedScope *s ) {
     if ( not DebugPerformance )
         return;
-    Reporter                     r( this );
-    GrowableArray <Expression *> * temps = s->contextTemporaries();
-    const int                    len     = temps->length();
-    int                          nused   = 0;
-    for ( int                    i       = 0; i < len; i++ ) {
-        PseudoRegister * r = temps->at( i )->preg();
+    Reporter                    r( this );
+    GrowableArray<Expression *> *temps = s->contextTemporaries();
+    const int                   len    = temps->length();
+    int                         nused  = 0;
+    for ( int                   i      = 0; i < len; i++ ) {
+        PseudoRegister *r = temps->at( i )->preg();
         if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPseudoRegister() and not r->isUnused() ) )
             nused++;
     }
@@ -104,7 +104,7 @@ void PerformanceDebugger::report_context( InlinedScope * s ) {
     } else {
         _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->print_string() );
         for ( int j = 0; j < len; j++ ) {
-            PseudoRegister * r = temps->at( j )->preg();
+            PseudoRegister *r = temps->at( j )->preg();
             if ( r->uplevelR() or r->uplevelW() ) {
                 _stringStream->print( "%d ", j );
             } else if ( r->isBlockPseudoRegister() and not r->isUnused() ) {
@@ -116,12 +116,12 @@ void PerformanceDebugger::report_context( InlinedScope * s ) {
 }
 
 
-void PerformanceDebugger::report_toobig( InlinedScope * s ) {
+void PerformanceDebugger::report_toobig( InlinedScope *s ) {
     if ( not DebugPerformance )
         return;
     report_compile();
     if ( not _notInlinedBecauseNativeMethodTooBig )
-        _notInlinedBecauseNativeMethodTooBig = new GrowableArray <InlinedScope *>( 20 );
+        _notInlinedBecauseNativeMethodTooBig = new GrowableArray<InlinedScope *>( 20 );
     _notInlinedBecauseNativeMethodTooBig->append( s );
 }
 
@@ -138,7 +138,7 @@ void PerformanceDebugger::report_uncommon( bool_t reoptimizing ) {
 }
 
 
-void PerformanceDebugger::report_primitive_failure( PrimitiveDescriptor * pd ) {
+void PerformanceDebugger::report_primitive_failure( PrimitiveDescriptor *pd ) {
     // suppress methods for uncommon compiles -- too many (and not interesting)
     if ( not DebugPerformance or theCompiler->is_uncommon_compile() )
         return;
@@ -147,7 +147,7 @@ void PerformanceDebugger::report_primitive_failure( PrimitiveDescriptor * pd ) {
 }
 
 
-void PerformanceDebugger::report_block( Node * n, BlockPseudoRegister * blk, const char * what ) {
+void PerformanceDebugger::report_block( Node *n, BlockPseudoRegister *blk, const char *what ) {
     if ( not DebugPerformance )
         return;
     if ( _blockPseudoRegisters->contains( blk ) )
@@ -158,7 +158,7 @@ void PerformanceDebugger::report_block( Node * n, BlockPseudoRegister * blk, con
     _stringStream->print( " could not eliminate block in " );
     blk->method()->home()->selector()->print_symbol_on( _stringStream );
     _stringStream->print( " because it is %s in scope %s at bytecode %d", what, n->scope()->key()->print_string(), n->byteCodeIndex() );
-    InterpretedInlineCache * ic = n->scope()->method()->ic_at( n->byteCodeIndex() );
+    InterpretedInlineCache *ic = n->scope()->method()->ic_at( n->byteCodeIndex() );
     if ( ic )
         _stringStream->print( " (send of %s)", ic->selector()->copy_null_terminated() );
     _stringStream->print_cr( "" );

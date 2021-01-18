@@ -16,8 +16,8 @@
 // UnpackClosure is used for iteration over a string of nameDescs with different pc values.
 
 class UnpackClosure : public StackAllocatedObject {
-    public:
-        virtual void nameDescAt( NameDescriptor * nameDesc, const char * pc ) = 0;
+public:
+    virtual void nameDescAt( NameDescriptor *nameDesc, const char *pc ) = 0;
 };
 
 
@@ -37,238 +37,238 @@ class UnpackClosure : public StackAllocatedObject {
 
 class NativeMethodScopes : public ValueObject {
 
-    private:
-        int      _nativeMethodOffset;   //
-        std::uint16_t _length;               //
-        std::uint16_t _oopsOffset;           // word offset to the oops array
-        std::uint16_t _valueOffset;          // word offset to the value array
-        std::uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
-        int      _dependentsEnd;        // size of dependents
+private:
+    int           _nativeMethodOffset;   //
+    std::uint16_t _length;               //
+    std::uint16_t _oopsOffset;           // word offset to the oops array
+    std::uint16_t _valueOffset;          // word offset to the value array
+    std::uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
+    int           _dependentsEnd;        // size of dependents
 
-    private:
-        static std::uint16_t pack_word_aligned( int value ) {
-            st_assert( value % BytesPerWord == 0, "value should be word aligned" );
-            st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( std::uint16_t ) ), "value exceeds limit" );
-            return value >> LogBytesPerWord;
-        }
+private:
+    static std::uint16_t pack_word_aligned( int value ) {
+        st_assert( value % BytesPerWord == 0, "value should be word aligned" );
+        st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( std::uint16_t ) ), "value exceeds limit" );
+        return value >> LogBytesPerWord;
+    }
 
 
-        static int unpack_word_aligned( std::uint16_t v ) {
-            return v << LogBytesPerWord;
-        }
+    static int unpack_word_aligned( std::uint16_t v ) {
+        return v << LogBytesPerWord;
+    }
 
 
-        int oops_offset() const {
-            return unpack_word_aligned( _oopsOffset );
-        }
+    int oops_offset() const {
+        return unpack_word_aligned( _oopsOffset );
+    }
 
 
-        int value_offset() const {
-            return unpack_word_aligned( _valueOffset );
-        }
+    int value_offset() const {
+        return unpack_word_aligned( _valueOffset );
+    }
 
 
-        int pcs_offset() const {
-            return unpack_word_aligned( _pcsOffset );
-        }
+    int pcs_offset() const {
+        return unpack_word_aligned( _pcsOffset );
+    }
 
 
-        // Return the address after the struct header
-        std::uint8_t * start() const {
-            return ( std::uint8_t * ) ( this + 1 );
-        }
+    // Return the address after the struct header
+    std::uint8_t *start() const {
+        return (std::uint8_t *) ( this + 1 );
+    }
 
 
-    public: // for debugging
-        Oop * oops() const {
-            return ( Oop * ) ( start() + oops_offset() );
-        }
+public: // for debugging
+    Oop *oops() const {
+        return (Oop *) ( start() + oops_offset() );
+    }
 
 
-        int oops_size() const {
-            return ( value_offset() - oops_offset() ) / sizeof( Oop );
-        }
+    int oops_size() const {
+        return ( value_offset() - oops_offset() ) / sizeof( Oop );
+    }
 
 
-        Oop oop_at( int index ) const {
-            st_assert( index < oops_size(), "oops index out of range" );
-            return oops()[ index ];
-        }
+    Oop oop_at( int index ) const {
+        st_assert( index < oops_size(), "oops index out of range" );
+        return oops()[ index ];
+    }
 
 
-    private:
-        int * values() const {
-            return ( int * ) ( start() + value_offset() );
-        }
+private:
+    int *values() const {
+        return (int *) ( start() + value_offset() );
+    }
 
 
-        int value_size() const {
-            return ( pcs_offset() - value_offset() ) / sizeof( int );
-        }
+    int value_size() const {
+        return ( pcs_offset() - value_offset() ) / sizeof( int );
+    }
 
 
-        int value_at( int index ) const {
-            st_assert( index < value_size(), "oops index out of range" );
-            return values()[ index ];
-        }
+    int value_at( int index ) const {
+        st_assert( index < value_size(), "oops index out of range" );
+        return values()[ index ];
+    }
 
 
-        inline std::uint8_t getIndexAt( int & offset ) const;
+    inline std::uint8_t getIndexAt( int &offset ) const;
 
-        inline Oop unpackOopFromIndex( std::uint8_t index, int & offset ) const;
+    inline Oop unpackOopFromIndex( std::uint8_t index, int &offset ) const;
 
-        inline int unpackValueFromIndex( std::uint8_t index, int & offset ) const;
+    inline int unpackValueFromIndex( std::uint8_t index, int &offset ) const;
 
-    private:
-        friend class ScopeDescriptorRecorder;
+private:
+    friend class ScopeDescriptorRecorder;
 
 
-        void set_nativeMethodOffset( int v ) {
-            _nativeMethodOffset = v;
-        }
+    void set_nativeMethodOffset( int v ) {
+        _nativeMethodOffset = v;
+    }
 
 
-        void set_length( int v ) {
-            _length = pack_word_aligned( v );
-        }
+    void set_length( int v ) {
+        _length = pack_word_aligned( v );
+    }
 
 
-        void set_oops_offset( int v ) {
-            _oopsOffset = pack_word_aligned( v );
-        }
+    void set_oops_offset( int v ) {
+        _oopsOffset = pack_word_aligned( v );
+    }
 
 
-        void set_value_offset( int v ) {
-            _valueOffset = pack_word_aligned( v );
-        }
+    void set_value_offset( int v ) {
+        _valueOffset = pack_word_aligned( v );
+    }
 
 
-        void set_pcs_offset( int v ) {
-            _pcsOffset = pack_word_aligned( v );
-        }
+    void set_pcs_offset( int v ) {
+        _pcsOffset = pack_word_aligned( v );
+    }
 
 
-        void set_dependents_end( int v ) {
-            _dependentsEnd = v;
-        }
+    void set_dependents_end( int v ) {
+        _dependentsEnd = v;
+    }
 
 
-    public:
-        KlassOop dependent_at( int index ) const {
-            st_assert( index >= 0 and index < dependent_length(), "must be within bounds" );
-            Oop result = oop_at( index );
-            st_assert( result->is_klass(), "must be klass" );
-            return KlassOop( result );
-        }
+public:
+    KlassOop dependent_at( int index ) const {
+        st_assert( index >= 0 and index < dependent_length(), "must be within bounds" );
+        Oop result = oop_at( index );
+        st_assert( result->is_klass(), "must be klass" );
+        return KlassOop( result );
+    }
 
 
-        int dependent_length() const {
-            return _dependentsEnd;
-        }
+    int dependent_length() const {
+        return _dependentsEnd;
+    }
 
 
-        void * pcs() const {
-            return ( void * ) ( start() + pcs_offset() );
-        }
+    void *pcs() const {
+        return (void *) ( start() + pcs_offset() );
+    }
 
 
-        void * pcsEnd() const {
-            return ( void * ) end();
-        }
+    void *pcsEnd() const {
+        return (void *) end();
+    }
 
 
-        int length() const {
-            return unpack_word_aligned( _length );
-        }
+    int length() const {
+        return unpack_word_aligned( _length );
+    }
 
 
-        NativeMethod * my_nativeMethod() const {
-            return ( NativeMethod * ) ( ( ( const char * ) this ) - _nativeMethodOffset );
-        };
+    NativeMethod *my_nativeMethod() const {
+        return (NativeMethod *) ( ( (const char *) this ) - _nativeMethodOffset );
+    };
 
 
-        // returns the address following this NativeMethodScopes.
-        ScopeDescriptor * end() const {
-            return ( ScopeDescriptor * ) ( start() + length() );
-        }
+    // returns the address following this NativeMethodScopes.
+    ScopeDescriptor *end() const {
+        return (ScopeDescriptor *) ( start() + length() );
+    }
 
 
-        bool_t includes( ScopeDescriptor * d ) const {
-            return this == d->_scopes;
-        }
+    bool_t includes( ScopeDescriptor *d ) const {
+        return this == d->_scopes;
+    }
 
 
-        // Returns the root scope without pc specific information.
-        // The returned scope cannot be used for retrieving name desc information.
-        ScopeDescriptor * root() const {
-            return at( 0, ScopeDescriptor::invalid_pc );
-        }
+    // Returns the root scope without pc specific information.
+    // The returned scope cannot be used for retrieving name desc information.
+    ScopeDescriptor *root() const {
+        return at( 0, ScopeDescriptor::invalid_pc );
+    }
 
 
-        int size() const {
-            return sizeof( NativeMethodScopes ) + length();
-        }
+    int size() const {
+        return sizeof( NativeMethodScopes ) + length();
+    }
 
 
-        // Returns a scope located at offset.
-        ScopeDescriptor * at( int offset, const char * pc ) const;
+    // Returns a scope located at offset.
+    ScopeDescriptor *at( int offset, const char *pc ) const;
 
-        NonInlinedBlockScopeDescriptor * noninlined_block_scope_at( int offset ) const;
+    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( int offset ) const;
 
 
-        // used in iterator macro FOR_EACH_SCOPE
-        ScopeDescriptor * getNext( ScopeDescriptor * s ) const {
-            if ( not s )
-                return root();
-            int offset = s->next_offset();
+    // used in iterator macro FOR_EACH_SCOPE
+    ScopeDescriptor *getNext( ScopeDescriptor *s ) const {
+        if ( not s )
+            return root();
+        int offset = s->next_offset();
 
-            if ( offset + ( sizeof( int ) - ( offset % sizeof( int ) ) ) % sizeof( int ) >= ( _oopsOffset ) * sizeof( Oop ) )
-                return nullptr;
+        if ( offset + ( sizeof( int ) - ( offset % sizeof( int ) ) ) % sizeof( int ) >= ( _oopsOffset ) * sizeof( Oop ) )
+            return nullptr;
 
-            return at( offset, ScopeDescriptor::invalid_pc );
-        }
+        return at( offset, ScopeDescriptor::invalid_pc );
+    }
 
 
-        std::uint8_t get_next_char( int & offset ) const {
-            return *( start() + offset++ );
-        }
+    std::uint8_t get_next_char( int &offset ) const {
+        return *( start() + offset++ );
+    }
 
 
-        int16_t get_next_half( int & offset ) const;
+    int16_t get_next_half( int &offset ) const;
 
 
-        std::uint8_t peek_next_char( int offset ) const {
-            return *( start() + offset );
-        }
+    std::uint8_t peek_next_char( int offset ) const {
+        return *( start() + offset );
+    }
 
 
-        Oop unpackOopAt( int & offset ) const;
+    Oop unpackOopAt( int &offset ) const;
 
-        int unpackValueAt( int & offset ) const;
+    int unpackValueAt( int &offset ) const;
 
-        void iterate( int & offset, UnpackClosure * closure ) const;    // iterates over a string of NameDescs (iterator is not called at termination)
-        NameDescriptor * unpackNameDescAt( int & offset, const char * pc ) const;    // Unpacks a string of name descs and returns one matching the pc
+    void iterate( int &offset, UnpackClosure *closure ) const;    // iterates over a string of NameDescs (iterator is not called at termination)
+    NameDescriptor *unpackNameDescAt( int &offset, const char *pc ) const;    // Unpacks a string of name descs and returns one matching the pc
 
-    private:
-        NameDescriptor * unpackNameDescAt( int & offset, bool_t & is_last, const char * pc ) const;    // Unpacks a single name desc at offset
+private:
+    NameDescriptor *unpackNameDescAt( int &offset, bool_t &is_last, const char *pc ) const;    // Unpacks a single name desc at offset
 
-    public:
+public:
 
-        // Support for garbage collection.
-        void oops_do( void f( Oop * ) );
+    // Support for garbage collection.
+    void oops_do( void f( Oop * ) );
 
-        void scavenge_contents();
+    void scavenge_contents();
 
-        void switch_pointers( Oop from, Oop to, GrowableArray <NativeMethod *> * nativeMethods_to_invalidate );
+    void switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
 
-        bool_t is_new() const;
+    bool_t is_new() const;
 
-        void relocate();
+    void relocate();
 
-        void verify();
+    void verify();
 
-        void print();
+    void print();
 
-        // Prints (dep d% oops %d bytes %d pcs %d)
-        void print_partition();
+    // Prints (dep d% oops %d bytes %d pcs %d)
+    void print_partition();
 };

@@ -18,44 +18,44 @@
 // a candidate for register allocation within a loop
 class LoopRegCandidate : public PrintableResourceObject {
 
-    private:
-        PseudoRegister * _pseudoRegister;
-        int _nuses, _ndefs;
+private:
+    PseudoRegister *_pseudoRegister;
+    int _nuses, _ndefs;
 
-    public:
-        LoopRegCandidate( PseudoRegister * r ) {
-            _pseudoRegister = r;
-            _nuses          = _ndefs = 0;
-        }
-
-
-        PseudoRegister * preg() const {
-            return _pseudoRegister;
-        }
+public:
+    LoopRegCandidate( PseudoRegister *r ) {
+        _pseudoRegister = r;
+        _nuses          = _ndefs = 0;
+    }
 
 
-        int nuses() const {
-            return _nuses;
-        }
+    PseudoRegister *preg() const {
+        return _pseudoRegister;
+    }
 
 
-        int ndefs() const {
-            return _ndefs;
-        }
+    int nuses() const {
+        return _nuses;
+    }
 
 
-        int weight() const {
-            return _ndefs + _nuses;
-        }
+    int ndefs() const {
+        return _ndefs;
+    }
 
 
-        void incDUs( int u, int d ) {
-            _nuses += u;
-            _ndefs += d;
-        }
+    int weight() const {
+        return _ndefs + _nuses;
+    }
 
 
-        void print();
+    void incDUs( int u, int d ) {
+        _nuses += u;
+        _ndefs += d;
+    }
+
+
+    void print();
 };
 
 
@@ -65,119 +65,119 @@ class HoistedTypeTest;
 
 class CompiledLoop : public PrintableResourceObject {
 
-    private:
-        InlinedScope   * _scope;                     //
-        Node           * _beforeLoop;                // last node before loop (init. of loop var)
-        LoopHeaderNode * _loopHeader;                //
-        Node           * _startOfLoop;               //
-        Node           * _endOfLoop;                 //
-        Node           * _startOfBody;               //
-        Node           * _endOfBody;                 //
-        Node           * _startOfCond;               //
-        Node           * _endOfCond;                 //
-        BranchNode     * _loopBranch;                // branch ending loop condition
-        int _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
+private:
+    InlinedScope   *_scope;                     //
+    Node           *_beforeLoop;                // last node before loop (init. of loop var)
+    LoopHeaderNode *_loopHeader;                //
+    Node           *_startOfLoop;               //
+    Node           *_endOfLoop;                 //
+    Node           *_startOfBody;               //
+    Node           *_endOfBody;                 //
+    Node           *_startOfCond;               //
+    Node           *_endOfCond;                 //
+    BranchNode     *_loopBranch;                // branch ending loop condition
+    int _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
 
-        // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
-        bool_t _isIntegerLoop;               // is this loop a recognized integer loop?
-        PseudoRegister * _loopVar;                   // suspected loop variable
-        PseudoRegister * _lowerBound;                // lower bound of for-like loop (see comment in findLowerBound)
-        PseudoRegister * _upperBound;                // upper bound
-        PseudoRegister * _increment;                 // increment of loopVar
-        bool_t _isCountingUp;                // true if loop is counting up, false if counting down
-        NonTrivialNode * _incNode;                   // node incrementing loop var
-        PseudoRegister * _loopArray;                 // array whose size is upper bound (or nullptr)
-        LoadOffsetNode * _loopSizeLoad;              // node loading loopArray's size
+    // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
+    bool_t _isIntegerLoop;               // is this loop a recognized integer loop?
+    PseudoRegister *_loopVar;                   // suspected loop variable
+    PseudoRegister *_lowerBound;                // lower bound of for-like loop (see comment in findLowerBound)
+    PseudoRegister *_upperBound;                // upper bound
+    PseudoRegister *_increment;                 // increment of loopVar
+    bool_t _isCountingUp;                // true if loop is counting up, false if counting down
+    NonTrivialNode *_incNode;                   // node incrementing loop var
+    PseudoRegister *_loopArray;                 // array whose size is upper bound (or nullptr)
+    LoadOffsetNode *_loopSizeLoad;              // node loading loopArray's size
 
-        // instance variables for general loop optimizations
-        GrowableArray <HoistedTypeTest *>   * _hoistableTests;    // tests that can be hoisted out of the loop
-        static GrowableArray <BasicBlock *> * _bbs;      // BBs in code generation order
+    // instance variables for general loop optimizations
+    GrowableArray<HoistedTypeTest *>   *_hoistableTests;    // tests that can be hoisted out of the loop
+    static GrowableArray<BasicBlock *> *_bbs;      // BBs in code generation order
 
-    public:
-        CompiledLoop();
+public:
+    CompiledLoop();
 
-        // the routines below should be called with the appropriate nodes
-        void set_startOfLoop( LoopHeaderNode * current );
+    // the routines below should be called with the appropriate nodes
+    void set_startOfLoop( LoopHeaderNode *current );
 
-        void set_startOfBody( Node * current );
+    void set_startOfBody( Node *current );
 
-        void set_endOfBody( Node * current );
+    void set_endOfBody( Node *current );
 
-        void set_startOfCond( Node * current );
+    void set_startOfCond( Node *current );
 
-        void set_endOfCond( Node * current );
+    void set_endOfCond( Node *current );
 
-        void set_endOfLoop( Node * end );
+    void set_endOfLoop( Node *end );
 
-        bool_t isInLoop( Node * n ) const;
+    bool_t isInLoop( Node *n ) const;
 
-        bool_t isInLoopCond( Node * n ) const;
+    bool_t isInLoopCond( Node *n ) const;
 
-        bool_t isInLoopBody( Node * n ) const;
-
-
-        LoopHeaderNode * loopHeader() const {
-            return _loopHeader;
-        }
+    bool_t isInLoopBody( Node *n ) const;
 
 
-        const char * recognize(); // does integer loop recognition; called after definitions/uses built (returns nullptr if successful, reason otherwise)
-
-        bool_t isIntegerLoop() const {
-            return _isIntegerLoop;
-        }
+    LoopHeaderNode *loopHeader() const {
+        return _loopHeader;
+    }
 
 
-        void optimize();                // perform general loop optimization
-        void optimizeIntegerLoop();     // perform integer loop optimization
+    const char *recognize(); // does integer loop recognition; called after definitions/uses built (returns nullptr if successful, reason otherwise)
 
-        void print();
+    bool_t isIntegerLoop() const {
+        return _isIntegerLoop;
+    }
 
-    protected:
-        void discoverLoopNesting();
 
-        int findStartOfSend( int byteCodeIndex );
+    void optimize();                // perform general loop optimization
+    void optimizeIntegerLoop();     // perform integer loop optimization
 
-        const char * findLowerBound();
+    void print();
 
-        const char * findUpperBound();
+protected:
+    void discoverLoopNesting();
 
-        const char * checkLoopVar();
+    int findStartOfSend( int byteCodeIndex );
 
-        const char * checkUpperBound();
+    const char *findLowerBound();
 
-        NonTrivialNode * findDefInLoop( PseudoRegister * r );      // find single definition of r in loop
-        bool_t isIncrement( PseudoRegister * r, ArithOpCode op );      // is r a suitable loop variable increment?
-        void removeTagChecks();
+    const char *findUpperBound();
 
-        void removeLoopVarOverflow();
+    const char *checkLoopVar();
 
-        void checkForArraysDefinedInLoop();
+    const char *checkUpperBound();
 
-        void hoistTypeTests();
+    NonTrivialNode *findDefInLoop( PseudoRegister *r );      // find single definition of r in loop
+    bool_t isIncrement( PseudoRegister *r, ArithOpCode op );      // is r a suitable loop variable increment?
+    void removeTagChecks();
 
-        void removeBoundsChecks( PseudoRegister * array, PseudoRegister * var );
+    void removeLoopVarOverflow();
 
-        void findRegCandidates();
+    void checkForArraysDefinedInLoop();
 
-        bool_t isEquivalentType( GrowableArray <KlassOop> * klasses1, GrowableArray <KlassOop> * klasses2 );
+    void hoistTypeTests();
 
-    public:  // for iterators
-        int defsInLoop( PseudoRegister * r, NonTrivialNode ** defNode = nullptr );   // return number of definitions of r in loop and sets defNode if non-nullptr
+    void removeBoundsChecks( PseudoRegister *array, PseudoRegister *var );
+
+    void findRegCandidates();
+
+    bool_t isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 );
+
+public:  // for iterators
+    int defsInLoop( PseudoRegister *r, NonTrivialNode **defNode = nullptr );   // return number of definitions of r in loop and sets defNode if non-nullptr
 };
 
 // holds the info associated with a single type test hoisted out of a loop
 class HoistedTypeTest : public PrintableResourceObject {
 
-    public:
-        NonTrivialNode           * _node;         // node (within loop) doing the test
-        PseudoRegister           * _testedPR;     // PseudoRegister whose type is tested
-        GrowableArray <KlassOop> * _klasses;      // klasses for which the PseudoRegister is tested
-        bool_t _invalid;
+public:
+    NonTrivialNode          *_node;         // node (within loop) doing the test
+    PseudoRegister          *_testedPR;     // PseudoRegister whose type is tested
+    GrowableArray<KlassOop> *_klasses;      // klasses for which the PseudoRegister is tested
+    bool_t _invalid;
 
-        HoistedTypeTest( NonTrivialNode * node, PseudoRegister * testedPR, GrowableArray <KlassOop> * klasses );
+    HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses );
 
-        void print();
+    void print();
 
-        void print_test_on( ConsoleOutputStream * s );
+    void print_test_on( ConsoleOutputStream *s );
 };

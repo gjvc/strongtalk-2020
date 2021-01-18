@@ -19,15 +19,15 @@
 
 class CacheElement { // : ValueObj {
 
-    public:
-        LookupKey    _lookupKey;
-        LookupResult _lookupResult;
-        int          _filler;
+public:
+    LookupKey    _lookupKey;
+    LookupResult _lookupResult;
+    int          _filler;
 
 
-        CacheElement();
-        void verify();
-        void clear();
-        void initialize( LookupKey * k, LookupResult r );
+    CacheElement();
+    void verify();
+    void clear();
+    void initialize( LookupKey *k, LookupResult r );
 
 };

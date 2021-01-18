@@ -16,18 +16,18 @@
 
 class SymbolOopDescriptor : public ByteArrayOopDescriptor {
 
-    public:
-        friend SymbolOop as_symbolOop( void * p );
+public:
+    friend SymbolOop as_symbolOop( void *p );
 
-        // memory operations
-        SymbolOop scavenge();
+    // memory operations
+    SymbolOop scavenge();
 
-        bool_t verify();
+    bool_t verify();
 
-        void print_symbol_on( ConsoleOutputStream * stream = nullptr );
+    void print_symbol_on( ConsoleOutputStream *stream = nullptr );
 };
 
 
-inline SymbolOop as_symbolOop( void * p ) {
+inline SymbolOop as_symbolOop( void *p ) {
     return SymbolOop( as_byteArrayOop( p ) );
 }

@@ -18,15 +18,15 @@
 // Delta process is in a well-defined state (see SweeperTask).
 // We might change the sweeper to sweep at preempt time like in the Self system.
 
-Sweeper * Sweeper::_head = nullptr;
+Sweeper *Sweeper::_head = nullptr;
 int          Sweeper::_sweepSeconds = 0;
 bool_t       Sweeper::_isRunning    = false;
 MethodOop    Sweeper::_activeMethod = nullptr;
-NativeMethod * Sweeper::_activeNativeMethod = nullptr;
+NativeMethod *Sweeper::_activeNativeMethod = nullptr;
 
 
 void Sweeper::print_all() {
-    for ( Sweeper * n = head(); n; n = n->next() )
+    for ( Sweeper *n = head(); n; n = n->next() )
         n->print();
 }
 
@@ -54,7 +54,7 @@ void Sweeper::clear_active_frame() {
 void Sweeper::step_all() {
     _isRunning = true;
     ResourceMark rm;
-    for ( Sweeper * n = head(); n; n = n->next() )
+    for ( Sweeper *n = head(); n; n = n->next() )
         n->step();
     _sweepSeconds++;
     _isRunning = false;
@@ -67,7 +67,7 @@ Sweeper::Sweeper() {
 }
 
 
-void Sweeper::add( Sweeper * sweeper ) {
+void Sweeper::add( Sweeper *sweeper ) {
     sweeper->_next = head();
     _head = sweeper;
 }
@@ -129,7 +129,7 @@ void CodeSweeper::updateInterval() {
 
 
 int CodeSweeper::interval() const {
-    ( ( CodeSweeper * ) this )->updateInterval();
+    ( (CodeSweeper *) this )->updateInterval();
     return _codeSweeperInterval;
 }
 
@@ -164,7 +164,7 @@ int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
 int MethodSweeper::klass_task( KlassOop klass ) {
     int result = 0;
-    Klass * k = klass->klass_part();
+    Klass *k = klass->klass_part();
 
     // Fix the customized methods
     result += method_dict_task( k->methods() );
@@ -231,7 +231,7 @@ void MethodSweeper::activate() {
 
 // ---------------- ZoneSweeper -----------------
 
-void ZoneSweeper::nativeMethod_task( NativeMethod * nm ) {
+void ZoneSweeper::nativeMethod_task( NativeMethod *nm ) {
     if ( nm not_eq Sweeper::active_nativeMethod() ) {
         nm->sweeper_step( _decayFactor );
     } else {
@@ -244,7 +244,7 @@ void ZoneSweeper::nativeMethod_task( NativeMethod * nm ) {
 void ZoneSweeper::task() {
     // Prologue: check is there is leftover from last sweep
     if ( excluded_nativeMethod() ) {
-        NativeMethod * nm = excluded_nativeMethod();
+        NativeMethod *nm = excluded_nativeMethod();
         set_excluded_nativeMethod( nullptr );
         nativeMethod_task( nm );
     }
@@ -267,7 +267,7 @@ void ZoneSweeper::task() {
     }
 
     if ( UseNativeMethodAging ) {
-        for ( NativeMethod * nm = Universe::code->first_nm(); nm; nm = Universe::code->next_nm( nm ) ) {
+        for ( NativeMethod *nm = Universe::code->first_nm(); nm; nm = Universe::code->next_nm( nm ) ) {
             nm->incrementAge();
         }
     }
@@ -287,35 +287,35 @@ void ZoneSweeper::activate() {
 
 // The sweeper task is activated every second (1000 milliseconds).
 class SweeperTask : public PeriodicTask {
-    private:
-        int counter;
-    public:
-        SweeperTask() :
+private:
+    int counter;
+public:
+    SweeperTask() :
             PeriodicTask( 100 ) {
-            counter = 0;
-        }
+        counter = 0;
+    }
 
 
-        void task() {
-            // If we're idle forget about the tick.
-            if ( DeltaProcess::is_idle() )
+    void task() {
+        // If we're idle forget about the tick.
+        if ( DeltaProcess::is_idle() )
+            return;
+        if ( ++counter > 10 ) {
+            if ( processSemaphore )
                 return;
-            if ( ++counter > 10 ) {
-                if ( processSemaphore )
-                    return;
-                if ( last_Delta_fp )
-                    return;
+            if ( last_Delta_fp )
+                return;
 
-                if ( Sweeper::register_active_frame( DeltaProcess::active()->profile_top_frame() ) ) {
-                    Sweeper::step_all();
-                    Sweeper::clear_active_frame();
-                    counter -= 10;
-                }
+            if ( Sweeper::register_active_frame( DeltaProcess::active()->profile_top_frame() ) ) {
+                Sweeper::step_all();
+                Sweeper::clear_active_frame();
+                counter -= 10;
             }
         }
+    }
 };
 
-MethodSweeper * methodSweeper;
+MethodSweeper *methodSweeper;
 
 
 void sweeper_init() {
@@ -326,7 +326,7 @@ void sweeper_init() {
     Sweeper::add( methodSweeper = new MethodSweeper() );
 
     if ( SweeperUseTimer ) {
-        SweeperTask * t = new SweeperTask;
+        SweeperTask *t = new SweeperTask;
         t->enroll();
     }
 }

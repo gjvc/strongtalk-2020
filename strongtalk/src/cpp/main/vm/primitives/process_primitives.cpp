@@ -41,7 +41,7 @@ PRIM_DECL_2( processOopPrimitives::create, Oop receiver, Oop block ) {
     ProcessOop process = ProcessOop( receiver->primitive_allocate() );
     st_assert( process->is_process(), "must be process" );
 
-    DeltaProcess * p = new DeltaProcess( block, oopFactory::new_symbol( "value" ) );
+    DeltaProcess *p = new DeltaProcess( block, oopFactory::new_symbol( "value" ) );
     process->set_process( p );
     p->set_processObj( process );
     return process;
@@ -58,18 +58,18 @@ PRIM_DECL_0( processOopPrimitives::yield ) {
 
 
 class PrintFrameClosure : public FrameClosure {
-        void do_frame( Frame * f ) {
-            f->print();
-            if ( f->is_compiled_frame() ) {
-                f->code()->print();
-            } else if ( f->is_interpreted_frame() ) {
-                f->method()->print();
-            }
+    void do_frame( Frame *f ) {
+        f->print();
+        if ( f->is_compiled_frame() ) {
+            f->code()->print();
+        } else if ( f->is_interpreted_frame() ) {
+            f->method()->print();
         }
+    }
 };
 
 
-void print_nativeMethod( NativeMethod * nm ) {
+void print_nativeMethod( NativeMethod *nm ) {
     nm->print();
 }
 
@@ -115,7 +115,7 @@ PRIM_DECL_1( processOopPrimitives::transferTo, Oop process ) {
     if ( not ProcessOop( process )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( process )->process();
+    DeltaProcess *proc = ProcessOop( process )->process();
 
     // Do the transfer (remember transfer_to is a no-op if process is in async DLL)
     ProcessState state = DeltaProcess::scheduler()->transfer_to( proc );
@@ -141,7 +141,7 @@ PRIM_DECL_3( processOopPrimitives::set_mode, Oop process, Oop mode, Oop value ) 
     if ( not ProcessOop( process )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( process )->process();
+    DeltaProcess *proc = ProcessOop( process )->process();
 
     // FIX THIS
     //  proc->set_single_step_mode();
@@ -176,13 +176,13 @@ PRIM_DECL_1( processOopPrimitives::start_evaluator, Oop process ) {
     if ( not ProcessOop( process )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( process )->process();
+    DeltaProcess *proc = ProcessOop( process )->process();
     {
         ResourceMark resourceMark;
         StubRoutines::setSingleStepHandler( &single_step_handler );
         DispatchTable::intercept_for_step( nullptr );
     }
-    ProcessState state  = DeltaProcess::scheduler()->transfer_to( proc );
+    ProcessState state = DeltaProcess::scheduler()->transfer_to( proc );
 
     return DeltaProcess::symbol_from_state( state );
 }
@@ -196,7 +196,7 @@ PRIM_DECL_1( processOopPrimitives::terminate, Oop receiver ) {
     if ( not ProcessOop( receiver )->is_live() )
         return markSymbol( vmSymbols::dead() );
 
-    DeltaProcess * proc = ProcessOop( receiver )->process();
+    DeltaProcess *proc = ProcessOop( receiver )->process();
     if ( proc == DeltaProcess::active() ) {
         // Start the abort now
         ErrorHandler::abort_current_process();
@@ -321,9 +321,9 @@ PRIM_DECL_2( processOopPrimitives::stack, Oop receiver, Oop limit ) {
 
     int        l       = SMIOop( limit )->value();
     ProcessOop process = ProcessOop( receiver );
-    GrowableArray <Oop> * stack = new GrowableArray <Oop>( 100 );
+    GrowableArray<Oop> *stack = new GrowableArray<Oop>( 100 );
 
-    VirtualFrame * vf = ProcessOop( receiver )->process()->last_delta_vframe();
+    VirtualFrame *vf = ProcessOop( receiver )->process()->last_delta_vframe();
 
     for ( int i = 1; i <= l and vf; i++ ) {
         stack->push( oopFactory::new_vframe( process, i ) );

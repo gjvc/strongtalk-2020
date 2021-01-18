@@ -15,12 +15,12 @@
 
 class OutputStream : public ResourceObject {
 
-    public:
-        OutputStream() : _output{ std::cout } {}
+public:
+    OutputStream() : _output{ std::cout } {}
 
 
-    protected:
-        const std::ostream & _output;
+protected:
+    const std::ostream &_output;
 };
 
 
@@ -28,87 +28,87 @@ class OutputStream : public ResourceObject {
 
 class ConsoleOutputStream : public OutputStream {
 
-    protected:
+protected:
 
-        int _indentation;   // current indentation
-        int _width;         // width of the page
-        int _position;      // position on the current line
-
-
-    public:
-        ConsoleOutputStream( int width = 80 );
-        void print( const char * format, ... );
-
-        void print_cr( const char * format, ... );
-
-        void vprint( const char * format, va_list argptr );
-
-        void basic_print( const char * str );
+    int _indentation;   // current indentation
+    int _width;         // width of the page
+    int _position;      // position on the current line
 
 
-        void print_raw( const char * str ) {
-            basic_print( str );
-        }
+public:
+    ConsoleOutputStream( int width = 80 );
+    void print( const char *format, ... );
+
+    void print_cr( const char *format, ... );
+
+    void vprint( const char *format, va_list argptr );
+
+    void basic_print( const char *str );
 
 
-        // indentation
-        void indent();
+    void print_raw( const char *str ) {
+        basic_print( str );
+    }
 
 
-        void dec_cr() {
-            dec();
-            cr();
-        }
+    // indentation
+    void indent();
 
 
-        void inc_cr() {
-            inc();
-            cr();
-        }
+    void dec_cr() {
+        dec();
+        cr();
+    }
 
 
-        void inc() {
-            _indentation++;
-        };
+    void inc_cr() {
+        inc();
+        cr();
+    }
 
 
-        void dec() {
-            _indentation--;
-        };
+    void inc() {
+        _indentation++;
+    };
 
 
-        int indentation() const {
-            return _indentation;
-        }
+    void dec() {
+        _indentation--;
+    };
 
 
-        void set_indentation( int i ) {
-            _indentation = i;
-        }
+    int indentation() const {
+        return _indentation;
+    }
 
 
-        void vprint_cr( const char * format, va_list argptr );
+    void set_indentation( int i ) {
+        _indentation = i;
+    }
 
 
-        void fill_to( int col );
+    void vprint_cr( const char *format, va_list argptr );
 
 
-        // sizing
-        int width() const {
-            return _width;
-        }
+    void fill_to( int col );
 
 
-        int position() const {
-            return _position;
-        }
+    // sizing
+    int width() const {
+        return _width;
+    }
 
 
-        virtual void put( char c );
+    int position() const {
+        return _position;
+    }
 
-        virtual void sp();
 
-        virtual void cr();
+    virtual void put( char c );
+
+    virtual void sp();
+
+    virtual void cr();
 
 
 //        std::ostream & operator << ( std::ostream & out, const std::string & s ) {
@@ -120,42 +120,42 @@ class ConsoleOutputStream : public OutputStream {
 
 class StringOutputStream : public ConsoleOutputStream {
 
-    protected:
-        std::string _string;
-        char * buffer;
-        int buffer_pos;
-        int buffer_length;
+protected:
+    std::string _string;
+    char *buffer;
+    int buffer_pos;
+    int buffer_length;
 
-    public:
-        StringOutputStream( const int initial_size = 1 * 1024 );
+public:
+    StringOutputStream( const int initial_size = 1 * 1024 );
 
-        void put( char c );
+    void put( char c );
 
-        char * as_string();
+    char *as_string();
 
-        // Conversion into Delta object
-        ByteArrayOop as_byteArray();
+    // Conversion into Delta object
+    ByteArrayOop as_byteArray();
 };
 
 
 class FileOutputStream : public ConsoleOutputStream {
 
-    protected:
-        std::ofstream _file;
+protected:
+    std::ofstream _file;
 
-    public:
-        FileOutputStream( const char * file_name );
-        ~FileOutputStream();
-
-
-        int is_open() const {
-            return _file.good();
-        }
+public:
+    FileOutputStream( const char *file_name );
+    ~FileOutputStream();
 
 
-        void put( char c );
+    int is_open() const {
+        return _file.good();
+    }
+
+
+    void put( char c );
 };
 
 
 // Standard output
-extern ConsoleOutputStream * _console;
+extern ConsoleOutputStream *_console;

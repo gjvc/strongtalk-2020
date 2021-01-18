@@ -7,6 +7,6 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-void SMIOopDescriptor::print_on( ConsoleOutputStream * stream ) {
-    stream->print( "%ld", ( std::int32_t ) value() );
+void SMIOopDescriptor::print_on( ConsoleOutputStream *stream ) {
+    stream->print( "%ld", (std::int32_t) value() );
 }

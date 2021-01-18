@@ -17,37 +17,46 @@
 
 class InterpretedICTest : public ::testing::Test {
 
-    protected:
+protected:
 
-        void SetUp() override {
-            KlassOop objectClass = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
-            fixture = objectClass->klass_part()->allocateObject();
+    void SetUp() override {
+        KlassOop objectClass = KlassOop( Universe::find_global( "DoesNotUnderstandFixture" ) );
+        fixture = objectClass->klass_part()->allocateObject();
 
-        }
-
-
-        void TearDown() override {
-            fixture = nullptr;
-            MarkSweep::collect();
-
-        }
+    }
 
 
-        Oop fixture;
+    void TearDown() override {
+        fixture = nullptr;
+        MarkSweep::collect();
+
+    }
+
+
+    Oop fixture;
 
 };
 
 
-TEST_F( InterpretedICTest, noArgSendWithUnknownSelectorShouldInvokeDoesNotUnderstand ) {
+TEST_F( InterpretedICTest, noArgSendWithUnknownSelectorShouldInvokeDoesNotUnderstand
+) {
 
-    BlockScavenge bs;
-    SymbolOop     selector         = oopFactory::new_symbol( "dnuTrigger1", 11 );
-    SymbolOop     returnedSelector = oopFactory::new_symbol( "quack", 5 );
-    Oop      result        = Delta::call( fixture, selector );
-    KlassOop expectedKlass = KlassOop( Universe::find_global( "Message" ) );
+BlockScavenge bs;
+SymbolOop     selector         = oopFactory::new_symbol( "dnuTrigger1", 11 );
+SymbolOop     returnedSelector = oopFactory::new_symbol( "quack", 5 );
+Oop           result           = Delta::call( fixture, selector );
+KlassOop      expectedKlass    = KlassOop( Universe::find_global( "Message" ) );
 
-    EXPECT_TRUE( result->is_mem() ) << "result should be object";
-    EXPECT_EQ( expectedKlass, result->klass() ) << "wrong class returned";
-    EXPECT_EQ( fixture, MemOop         ( result ) ->raw_at(2) ) << "message should contain receiver";
-    EXPECT_EQ( returnedSelector, MemOop( result ) ->raw_at(3) ) << "message should contain correct selector";
+EXPECT_TRUE( result
+->
+is_mem()
+) << "result should be object";
+EXPECT_EQ( expectedKlass, result
+->
+klass()
+) << "wrong class returned";
+EXPECT_EQ( fixture, MemOop( result )
+->raw_at(2) ) << "message should contain receiver";
+EXPECT_EQ( returnedSelector, MemOop( result )
+->raw_at(3) ) << "message should contain correct selector";
 }

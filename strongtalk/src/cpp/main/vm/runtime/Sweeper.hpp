@@ -19,86 +19,86 @@
 
 class Sweeper : public CHeapAllocatedObject {
 
-    private:
-        static Sweeper * _head;
+private:
+    static Sweeper *_head;
 
 
-        static Sweeper * head() {
-            return _head;
-        }
+    static Sweeper *head() {
+        return _head;
+    }
 
 
-        static int       _sweepSeconds;
-        static bool_t    _isRunning;
-        static MethodOop _activeMethod;
-        static NativeMethod * _activeNativeMethod;
+    static int       _sweepSeconds;
+    static bool_t    _isRunning;
+    static MethodOop _activeMethod;
+    static NativeMethod *_activeNativeMethod;
 
-    public:
-        static bool_t register_active_frame( Frame fr );
+public:
+    static bool_t register_active_frame( Frame fr );
 
-        static void clear_active_frame();
+    static void clear_active_frame();
 
-        static void print_all();
+    static void print_all();
 
-        static void step_all();
+    static void step_all();
 
-        static void add( Sweeper * sweeper );
-
-
-        static MethodOop active_method() {
-            return _activeMethod;
-        }
+    static void add( Sweeper *sweeper );
 
 
-        static NativeMethod * active_nativeMethod() {
-            return _activeNativeMethod;
-        }
+    static MethodOop active_method() {
+        return _activeMethod;
+    }
 
 
-        // Tells is the sweeper is running
-        static bool_t is_running() {
-            return _isRunning;
-        }
+    static NativeMethod *active_nativeMethod() {
+        return _activeNativeMethod;
+    }
 
 
-    protected:
-        Sweeper * _next;
+    // Tells is the sweeper is running
+    static bool_t is_running() {
+        return _isRunning;
+    }
 
 
-        Sweeper * next() const {
-            return _next;
-        }
+protected:
+    Sweeper *_next;
 
 
-        int    _sweep_start;     // time of last activation
-        bool_t _is_active;          // are we waiting to do something?
-
-        bool_t is_active() const {
-            return _is_active;
-        }
+    Sweeper *next() const {
+        return _next;
+    }
 
 
-        void set_active( bool_t value ) {
-            _is_active = value;
-        }
+    int    _sweep_start;     // time of last activation
+    bool_t _is_active;          // are we waiting to do something?
+
+    bool_t is_active() const {
+        return _is_active;
+    }
 
 
-        virtual void step();
+    void set_active( bool_t value ) {
+        _is_active = value;
+    }
 
-        virtual void activate();
 
-        virtual void deactivate();
+    virtual void step();
 
-        virtual int interval() const = 0;
+    virtual void activate();
 
-        virtual const char * name() const = 0;
+    virtual void deactivate();
 
-    public:
-        Sweeper();
+    virtual int interval() const = 0;
 
-        virtual void task() = 0;
+    virtual const char *name() const = 0;
 
-        void print() const;
+public:
+    Sweeper();
+
+    virtual void task() = 0;
+
+    void print() const;
 };
 
 
@@ -108,39 +108,39 @@ class Sweeper : public CHeapAllocatedObject {
 // Sweeps through the heap for cleaning blockOops
 class HeapSweeper : public Sweeper {
 
-    private:
-        OldWaterMark _oldWaterMark;
+private:
+    OldWaterMark _oldWaterMark;
 
-    private:
-        void task();
+private:
+    void task();
 
-        void activate();
-
-
-        int interval() const {
-            return HeapSweeperInterval;
-        }
+    void activate();
 
 
-        const char * name() const {
-            return "HeapSweeper";
-        }
+    int interval() const {
+        return HeapSweeperInterval;
+    }
+
+
+    const char *name() const {
+        return "HeapSweeper";
+    }
 };
 
 class CodeSweeper : public Sweeper {
-    protected:
-        int    _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
-        double _decayFactor;            // decay factor for invocation counts
-        int    _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
-        int    _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
+protected:
+    int    _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
+    double _decayFactor;            // decay factor for invocation counts
+    int    _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
+    int    _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
 
-        void updateInterval();          // check for change in half-life setting
+    void updateInterval();          // check for change in half-life setting
 
-    public:
-        CodeSweeper() : _oldHalfLifeTime( -1 ), _codeSweeperInterval( 1 ), _decayFactor( 1 ) {}
+public:
+    CodeSweeper() : _oldHalfLifeTime( -1 ), _codeSweeperInterval( 1 ), _decayFactor( 1 ) {}
 
 
-        int interval() const;
+    int interval() const;
 };
 
 
@@ -150,67 +150,67 @@ class CodeSweeper : public Sweeper {
 // Traverses all methodOops by traversing the system dictionary.
 class MethodSweeper : public CodeSweeper {
 
-    private:
-        int _index; // next index in systemDictionary to process
+private:
+    int _index; // next index in systemDictionary to process
 
-    private:
-        MethodOop excluded_method() {
-            return Universe::sweeper_method();
-        }
-
-
-        void set_excluded_method( MethodOop method ) {
-            Universe::set_sweeper_method( method );
-        }
+private:
+    MethodOop excluded_method() {
+        return Universe::sweeper_method();
+    }
 
 
-        void task();
-
-        void method_task( MethodOop method );
-
-        int method_dict_task( ObjectArrayOop methods );
-
-        int klass_task( KlassOop klass );
-
-        void activate();
+    void set_excluded_method( MethodOop method ) {
+        Universe::set_sweeper_method( method );
+    }
 
 
-        const char * name() const {
-            return "MethodSweeper";
-        }
+    void task();
+
+    void method_task( MethodOop method );
+
+    int method_dict_task( ObjectArrayOop methods );
+
+    int klass_task( KlassOop klass );
+
+    void activate();
 
 
-        friend class Recompilation;
+    const char *name() const {
+        return "MethodSweeper";
+    }
+
+
+    friend class Recompilation;
 };
 
 
 // -----------------------------------------------------------------------------
 
-extern MethodSweeper * methodSweeper;      // single instance
+extern MethodSweeper *methodSweeper;      // single instance
 
 class ZoneSweeper : public CodeSweeper {
-    private:
-        NativeMethod * _excluded_nativeMethod;
-        NativeMethod * next;
-    private:
-        NativeMethod * excluded_nativeMethod() {
-            return _excluded_nativeMethod;
-        }
+private:
+    NativeMethod *_excluded_nativeMethod;
+    NativeMethod *next;
+private:
+    NativeMethod *excluded_nativeMethod() {
+        return _excluded_nativeMethod;
+    }
 
 
-        void set_excluded_nativeMethod( NativeMethod * nm ) {
-            _excluded_nativeMethod = nm;
-        }
+    void set_excluded_nativeMethod( NativeMethod *nm ) {
+        _excluded_nativeMethod = nm;
+    }
 
 
-        void nativeMethod_task( NativeMethod * nm );
+    void nativeMethod_task( NativeMethod *nm );
 
-        void task();
+    void task();
 
-        void activate();
+    void activate();
 
 
-        const char * name() const {
-            return "ZoneSweeper";
-        }
+    const char *name() const {
+        return "ZoneSweeper";
+    }
 };

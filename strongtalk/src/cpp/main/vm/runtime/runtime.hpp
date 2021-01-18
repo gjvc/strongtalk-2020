@@ -34,20 +34,20 @@ C Calling Convention
 */
 
 
-extern "C" const char * byte_map_base;
-extern "C" const char * MaxSP;
+extern "C" const char *byte_map_base;
+extern "C" const char *MaxSP;
 
 
-inline void Set_Byte_Map_Base( const char * base ) {
+inline void Set_Byte_Map_Base( const char *base ) {
     byte_map_base = base;
 }
 
 
-inline void setSPMax( const char * m ) {
+inline void setSPMax( const char *m ) {
     MaxSP = m;
 }
 
 
-inline const char * currentSPMax() {
+inline const char *currentSPMax() {
     return MaxSP;
 }

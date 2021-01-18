@@ -12,26 +12,26 @@
 
 class NonInlinedBlockScopeNode : public ResourceObject {
 
-    public:
-        int _offset;
-        NonInlinedBlockScopeNode * _next;
-        MethodOop _method;
-        ScopeInfo _parent;
+public:
+    int _offset;
+    NonInlinedBlockScopeNode *_next;
+    MethodOop _method;
+    ScopeInfo _parent;
 
-    public:
-        NonInlinedBlockScopeNode( MethodOop method, ScopeInfo parent ) {
-            _method = method;
-            _parent = parent;
-            _offset = INVALID_OFFSET;
-            _next   = nullptr;
-        }
-
-
-        std::uint8_t code() {
-            return NON_INLINED_BLOCK_CODE;
-        }
+public:
+    NonInlinedBlockScopeNode( MethodOop method, ScopeInfo parent ) {
+        _method = method;
+        _parent = parent;
+        _offset = INVALID_OFFSET;
+        _next   = nullptr;
+    }
 
 
-        void generate( ScopeDescriptorRecorder * rec );
+    std::uint8_t code() {
+        return NON_INLINED_BLOCK_CODE;
+    }
+
+
+    void generate( ScopeDescriptorRecorder *rec );
 
 };

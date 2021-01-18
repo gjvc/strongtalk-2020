@@ -24,78 +24,78 @@ constexpr int first_float_offset = -4;          // offset of first float relativ
 
 class Mapping : AllStatic {
 
-    private:
+private:
 //        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
 //        static int      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
-        static std::array <Location, nofLocalRegisters> _localRegisters;
-        static std::array <int, REGISTER_COUNT>         _localRegisterIndex;
+    static std::array<Location, nofLocalRegisters> _localRegisters;
+    static std::array<int, REGISTER_COUNT>         _localRegisterIndex;
 
-    public:
-        // initialization
-        static void initialize();
+public:
+    // initialization
+    static void initialize();
 
-        // register allocation
-        static Location localRegister( int i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
-        static int localRegisterIndex( const Location & l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
+    // register allocation
+    static Location localRegister( int i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
+    static int localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
 
-        // parameter passing
-        static Location incomingArg( int i, int nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
-        static Location outgoingArg( int i, int nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
+    // parameter passing
+    static Location incomingArg( int i, int nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location outgoingArg( int i, int nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
 
-        // stack allocation
-        static Location localTemporary( int i );                // the i.th local temporary (i >= 0)
-        static int localTemporaryIndex( const Location & l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
-        static Location floatTemporary( int scope_id, int i );  // the i.th float temporary within a scope (i >= 0)
+    // stack allocation
+    static Location localTemporary( int i );                // the i.th local temporary (i >= 0)
+    static int localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
+    static Location floatTemporary( int scope_id, int i );  // the i.th float temporary within a scope (i >= 0)
 
-        // context temporaries
-        static int contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
-        static Location contextTemporary( int contextNo, int i, int scope_id );         // the i.th context temporary (i >= 0)
-        static Location * new_contextTemporary( int contextNo, int i, int scope_id );   // ditto, but allocated in resource area
+    // context temporaries
+    static int contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
+    static Location contextTemporary( int contextNo, int i, int scope_id );         // the i.th context temporary (i >= 0)
+    static Location *new_contextTemporary( int contextNo, int i, int scope_id );   // ditto, but allocated in resource area
 
-        // conversion functions
-        static Location asLocation( const Register & reg ) {
-            return Location::registerLocation( reg.number() );
-        }
-
-
-        static Register asRegister( const Location & loc ) {
-            return Register( loc.number(), ' ' );
-        }
+    // conversion functions
+    static Location asLocation( const Register &reg ) {
+        return Location::registerLocation( reg.number() );
+    }
 
 
-        // predicates
-        static bool_t isTemporaryRegister( const Location loc ) {
-            return false;
-        }    // fix this
-        static bool_t isLocalRegister( const Location loc ) {
-            return _localRegisterIndex[ loc.number() ] not_eq -1;
-        }
+    static Register asRegister( const Location &loc ) {
+        return Register( loc.number(), ' ' );
+    }
 
 
-        static bool_t isTrashedRegister( const Location loc ) {
-            return true;
-        }    // fix this
+    // predicates
+    static bool_t isTemporaryRegister( const Location loc ) {
+        return false;
+    }    // fix this
+    static bool_t isLocalRegister( const Location loc ) {
+        return _localRegisterIndex[ loc.number() ] not_eq -1;
+    }
 
-        static bool_t isNormalTemporary( Location loc );
 
-        static bool_t isFloatTemporary( Location loc );
+    static bool_t isTrashedRegister( const Location loc ) {
+        return true;
+    }    // fix this
 
-        //
-        // helper functions for code generation
-        //
-        // needsStoreCheck determines whether a store check is needed when storing into a context location
-        // (e.g., no storeCheck is needed when initializing individual context fields because there's one store check after context creation).
-        //
-        static void load( const Location & src, const Register & dst );
+    static bool_t isNormalTemporary( Location loc );
 
-        static void store( Register src, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck );
+    static bool_t isFloatTemporary( Location loc );
 
-        static void storeO( Oop obj, const Location & dst, const Register & temp1, const Register & temp2, bool_t needsStoreCheck );
+    //
+    // helper functions for code generation
+    //
+    // needsStoreCheck determines whether a store check is needed when storing into a context location
+    // (e.g., no storeCheck is needed when initializing individual context fields because there's one store check after context creation).
+    //
+    static void load( const Location &src, const Register &dst );
 
-        // helper functions for float code
-        static void fload( const Location & src, const Register & base );
+    static void store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck );
 
-        static void fstore( const Location & dst, const Register & base );
+    static void storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck );
+
+    // helper functions for float code
+    static void fload( const Location &src, const Register &base );
+
+    static void fstore( const Location &dst, const Register &base );
 };
 
 

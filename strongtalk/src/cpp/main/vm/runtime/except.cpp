@@ -14,16 +14,16 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-void trace( VirtualFrame * from_frame, int start_frame, int number_of_frames ) {
+void trace( VirtualFrame *from_frame, int start_frame, int number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
     _console->print_cr( "- Stack trace (%d, %d)", start_frame, number_of_frames );
     int vframe_no = 1;
 
-    for ( VirtualFrame * f = from_frame; f; f = f->sender() ) {
+    for ( VirtualFrame *f = from_frame; f; f = f->sender() ) {
         if ( vframe_no >= start_frame ) {
             if ( f->is_delta_frame() ) {
-                ( ( DeltaVirtualFrame * ) f )->print_activation( vframe_no );
+                ( (DeltaVirtualFrame *) f )->print_activation( vframe_no );
             } else
                 f->print();
             if ( vframe_no - start_frame + 1 >= number_of_frames )
@@ -34,13 +34,13 @@ void trace( VirtualFrame * from_frame, int start_frame, int number_of_frames ) {
 }
 
 
-void traceCompiledFrame( Frame & f ) {
+void traceCompiledFrame( Frame &f ) {
     ResourceMark mark;
 
     // Find the NativeMethod containing the pc
-    CompiledVirtualFrame * vf = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( &f );
+    CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &f );
     st_assert( vf->is_compiled_frame(), "must be compiled frame" );
-    NativeMethod * nm = vf->code();
+    NativeMethod *nm = vf->code();
     lprintf( "Found NativeMethod: 0x%x\n", nm );
     nm->print_value_on( _console );
 
@@ -50,15 +50,15 @@ void traceCompiledFrame( Frame & f ) {
 }
 
 
-void traceInterpretedFrame( Frame & f ) {
+void traceInterpretedFrame( Frame &f ) {
     ResourceMark mark;
-    VirtualFrame * vf = VirtualFrame::new_vframe( &f );
+    VirtualFrame *vf = VirtualFrame::new_vframe( &f );
 
     trace( vf, 0, 10 );
 }
 
 
-void traceDeltaFrame( Frame & f ) {
+void traceDeltaFrame( Frame &f ) {
     if ( f.is_compiled_frame() ) {
         traceCompiledFrame( f );
     } else if ( f.is_interpreted_frame() ) {
@@ -67,9 +67,9 @@ void traceDeltaFrame( Frame & f ) {
 }
 
 
-void handle_exception( void * fp, void * sp, void * pc ) {
+void handle_exception( void *fp, void *sp, void *pc ) {
 
-    Frame f( ( Oop * ) sp, ( int * ) fp, ( const char * ) pc );
+    Frame f( (Oop *) sp, (int *) fp, (const char *) pc );
     lprintf( "ebp: 0x%x, esp: 0x%x, pc: 0x%x\n", fp, sp, pc );
     if ( f.is_delta_frame() ) {
         traceDeltaFrame( f );
@@ -77,7 +77,7 @@ void handle_exception( void * fp, void * sp, void * pc ) {
     }
 
     if ( DeltaProcess::active() and last_Delta_fp ) {
-        Frame lastf( ( Oop * ) last_Delta_sp, ( int * ) last_Delta_fp );
+        Frame lastf( (Oop *) last_Delta_sp, (int *) last_Delta_fp );
         if ( lastf.is_delta_frame() ) {
             traceDeltaFrame( lastf );
             return;
@@ -90,7 +90,7 @@ void handle_exception( void * fp, void * sp, void * pc ) {
     }
 
     if ( DeltaProcess::active() and DeltaProcess::active()->last_Delta_fp() ) {
-        Frame activef( ( Oop * ) DeltaProcess::active()->last_Delta_sp(), ( int * ) DeltaProcess::active()->last_Delta_fp() );
+        Frame activef( (Oop *) DeltaProcess::active()->last_Delta_sp(), (int *) DeltaProcess::active()->last_Delta_fp() );
         if ( activef.is_delta_frame() ) {
             traceDeltaFrame( activef );
             return;

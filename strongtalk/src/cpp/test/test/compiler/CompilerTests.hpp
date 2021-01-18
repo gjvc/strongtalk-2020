@@ -14,26 +14,26 @@
 
 class CompilerTests : public ::testing::Test {
 
-    protected:
+protected:
 
-        HeapResourceMark * rm;
-        int              count;
-        NativeMethod     * seed;
+    HeapResourceMark *rm;
+    int count;
+    NativeMethod *seed;
 
-        void SetUp() override;
-        void TearDown() override;
+    void SetUp() override;
+    void TearDown() override;
 
-        NativeMethod * alloc_nativeMethod( LookupKey * key, int size );
-        void initializeSmalltalkEnvironment();
+    NativeMethod *alloc_nativeMethod( LookupKey *key, int size );
+    void initializeSmalltalkEnvironment();
 
-        void exhaustMethodHeap( LookupKey & key, int requiredSize );
-        NativeMethod * compile( const char * className, const char * selectorName );
-        NativeMethod * compile( Handle & klassHandle, Handle & selectorHandle );
+    void exhaustMethodHeap( LookupKey &key, int requiredSize );
+    NativeMethod *compile( const char *className, const char *selectorName );
+    NativeMethod *compile( Handle &klassHandle, Handle &selectorHandle );
 
-        void clearICs( const char * className, const char * selectorName );
-        void clearICs( Handle & klassHandle, Handle & selectorHandle );
-        NativeMethod * lookup( const char * className, const char * selectorName );
-        void call( const char * className, const char * selectorName );
-        static void resetInvocationCounter( MethodOop method );
+    void clearICs( const char *className, const char *selectorName );
+    void clearICs( Handle &klassHandle, Handle &selectorHandle );
+    NativeMethod *lookup( const char *className, const char *selectorName );
+    void call( const char *className, const char *selectorName );
+    static void resetInvocationCounter( MethodOop method );
 
 };

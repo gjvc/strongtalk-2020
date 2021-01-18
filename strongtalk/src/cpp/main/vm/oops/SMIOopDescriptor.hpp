@@ -13,7 +13,7 @@
 
 // -----------------------------------------------------------------------------
 
-typedef class SMIOopDescriptor * SMIOop;
+typedef class SMIOopDescriptor *SMIOop;
 
 // 0, 1 in SMIOop format
 //#define smiOop_zero  SMIOop( (0L << TAG_SIZE) + INTEGER_TAG )
@@ -45,40 +45,40 @@ inline SMIOop smiOopFromValue( smi_t value ) {
 
 class SMIOopDescriptor : public OopDescriptor {
 
-    public:
-        friend SMIOop smiOopFromValue( smi_t value );
+public:
+    friend SMIOop smiOopFromValue( smi_t value );
 
 
-        smi_t value() const {
-            return smi_t( this ) >> TAG_SIZE; // arithmetic shift to preserve sign
-        }
+    smi_t value() const {
+        return smi_t( this ) >> TAG_SIZE; // arithmetic shift to preserve sign
+    }
 
 
-        smi_t identity_hash() const {
-            return value();
-        }
+    smi_t identity_hash() const {
+        return value();
+    }
 
 
-        SMIOop increment() {
-            return SMIOop( smi_t( this ) + smi_t( smiOop_one ) );
-        }
+    SMIOop increment() {
+        return SMIOop( smi_t( this ) + smi_t( smiOop_one ) );
+    }
 
 
-        SMIOop decrement() {
-            return SMIOop( smi_t( this ) - smi_t( smiOop_one ) );
-        }
+    SMIOop decrement() {
+        return SMIOop( smi_t( this ) - smi_t( smiOop_one ) );
+    }
 
 
-        void print_on( ConsoleOutputStream * stream );
+    void print_on( ConsoleOutputStream *stream );
 
 
-        friend SMIOop as_byte_count_smiOop( smi_t value ) {
-            st_assert( lowerBits( value, TAG_SIZE ) == 0, "not a legal byte count" );
-            return SMIOop( value + INTEGER_TAG );
-        }
+    friend SMIOop as_byte_count_smiOop( smi_t value ) {
+        st_assert( lowerBits( value, TAG_SIZE ) == 0, "not a legal byte count" );
+        return SMIOop( value + INTEGER_TAG );
+    }
 
 
-        smi_t byte_count() const {
-            return smi_t( this ) - INTEGER_TAG;
-        }
+    smi_t byte_count() const {
+        return smi_t( this ) - INTEGER_TAG;
+    }
 };

@@ -12,10 +12,10 @@
 #include <gtest/gtest.h>
 
 
-Event            * done;
-TestDeltaProcess * testProcess;
-VMProcess        * vmProcess;
-Thread           * vmThread;
+Event            *done;
+TestDeltaProcess *testProcess;
+VMProcess        *vmProcess;
+Thread           *vmThread;
 
 
 Oop newProcess() {
@@ -23,7 +23,7 @@ Oop newProcess() {
 }
 
 
-int TestDeltaProcess::launch_tests( DeltaProcess * process ) {
+int TestDeltaProcess::launch_tests( DeltaProcess *process ) {
 
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
@@ -37,7 +37,7 @@ int TestDeltaProcess::launch_tests( DeltaProcess * process ) {
 
 
 // mock scheduler loop to allow test process->scheduler transfers and returns
-int TestDeltaProcess::launch_scheduler( DeltaProcess * process ) {
+int TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
     while ( true ) {
@@ -58,12 +58,12 @@ void TestDeltaProcess::addToProcesses() {
 
 
 TestDeltaProcess::TestDeltaProcess() :
-    DeltaProcess( nullptr, nullptr ) {
+        DeltaProcess( nullptr, nullptr ) {
     int ignore;
     Processes::remove( this );
     os::terminate_thread( _thread ); // don't want to launch delta!
-    _thread      = os::create_thread( ( int ( * )( void * ) ) &launch_tests, this, &ignore );
-    _stack_limit = ( char * ) os::stack_limit( _thread );
+    _thread      = os::create_thread( (int ( * )( void * )) &launch_tests, this, &ignore );
+    _stack_limit = (char *) os::stack_limit( _thread );
 
     Oop process = newProcess();
     st_assert( process->is_process(), "Should be process" );
@@ -73,13 +73,13 @@ TestDeltaProcess::TestDeltaProcess() :
 
 
 TestDeltaProcess::TestDeltaProcess( fn launchfn ) :
-    DeltaProcess( nullptr, nullptr ) {
+        DeltaProcess( nullptr, nullptr ) {
 
     int ignore;
     Processes::remove( this );
     os::terminate_thread( _thread ); // don't want to launch delta!
-    _thread      = os::create_thread( ( osfn ) launchfn, this, &ignore );
-    _stack_limit = ( char * ) os::stack_limit( _thread );
+    _thread      = os::create_thread( (osfn) launchfn, this, &ignore );
+    _stack_limit = (char *) os::stack_limit( _thread );
 
     Oop process = newProcess();
     st_assert( process->is_process(), "Should be process" );

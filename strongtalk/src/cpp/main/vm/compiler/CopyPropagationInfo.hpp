@@ -15,27 +15,27 @@
 
 class CopyPropagationInfo : public PrintableResourceObject {
 
-    public:
-        NonTrivialNode * _definition;   // eliminated definition
-        PseudoRegister * _register;     // equivalent PseudoRegister
+public:
+    NonTrivialNode *_definition;   // eliminated definition
+    PseudoRegister *_register;     // equivalent PseudoRegister
 
-        CopyPropagationInfo( NonTrivialNode * d, PseudoRegister * r1 ) {
-            _definition = d;
-            _register   = r1;
-        }
+    CopyPropagationInfo( NonTrivialNode *d, PseudoRegister *r1 ) {
+        _definition = d;
+        _register   = r1;
+    }
 
 
-        bool_t isConstant() const;
+    bool_t isConstant() const;
 
-        Oop constant() const;
+    Oop constant() const;
 
-        void print();
+    void print();
 
-    protected:
-        CopyPropagationInfo( NonTrivialNode * def );
+protected:
+    CopyPropagationInfo( NonTrivialNode *def );
 
-        friend CopyPropagationInfo * new_CPInfo( NonTrivialNode * def );
+    friend CopyPropagationInfo *new_CPInfo( NonTrivialNode *def );
 };
 
 
-CopyPropagationInfo * new_CPInfo( NonTrivialNode * def ); // may return nullptr if def isn't suitable
+CopyPropagationInfo *new_CPInfo( NonTrivialNode *def ); // may return nullptr if def isn't suitable

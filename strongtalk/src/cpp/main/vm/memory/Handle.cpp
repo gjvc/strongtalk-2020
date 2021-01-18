@@ -9,14 +9,14 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-PersistentHandle * PersistentHandle::_first = nullptr;
+PersistentHandle *PersistentHandle::_first = nullptr;
 int              Handles::_top  = 0;
 int              Handles::_size = 20;
 Oop              Handles::_array[20];
 
 
-BaseHandle::BaseHandle( Oop toSave, bool_t log, const char * label ) :
-    _saved( toSave ), _log( log ), _label( label ) {
+BaseHandle::BaseHandle( Oop toSave, bool_t log, const char *label ) :
+        _saved( toSave ), _log( log ), _label( label ) {
 }
 
 
@@ -27,7 +27,7 @@ void BaseHandle::push() {
         if ( _log ) {
             char msg[200];
             sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%x->0x%x", _label, _next->_label, this, _next );
-            st_assert( ( const char * ) this < ( const char * ) _next, msg );
+            st_assert( (const char *) this < (const char *) _next, msg );
         }
         _next->_prev = this;
     }
@@ -51,25 +51,25 @@ void BaseHandle::pop() {
 
 
 void BaseHandle::oops_do( void f( Oop * ) ) {
-    for ( BaseHandle * current = this; current; current = current->_next )
+    for ( BaseHandle *current = this; current; current = current->_next )
         f( &current->_saved );
 }
 
 
 class FunctionProcessClosure : public ProcessClosure {
-    private:
-        void (* function)( Oop * );
+private:
+    void (*function)( Oop * );
 
-    public:
-        FunctionProcessClosure( void f( Oop * ) ) {
-            function = f;
-        }
+public:
+    FunctionProcessClosure( void f( Oop * ) ) {
+        function = f;
+    }
 
 
-        void do_process( DeltaProcess * p ) {
-            if ( p->firstHandle() )
-                p->firstHandle()->oops_do( function );
-        }
+    void do_process( DeltaProcess *p ) {
+        if ( p->firstHandle() )
+            p->firstHandle()->oops_do( function );
+    }
 };
 
 
@@ -89,18 +89,18 @@ void StackHandle::all_oops_do( void f( Oop * ) ) {
 }
 
 
-BaseHandle * StackHandle::first() {
+BaseHandle *StackHandle::first() {
     return DeltaProcess::active()->firstHandle();
 }
 
 
-void StackHandle::setFirst( BaseHandle * handle ) {
+void StackHandle::setFirst( BaseHandle *handle ) {
     DeltaProcess::active()->setFirstHandle( handle );
 }
 
 
-StackHandle::StackHandle( Oop toSave, bool_t log, const char * label ) :
-    BaseHandle( toSave, log, label ) {
+StackHandle::StackHandle( Oop toSave, bool_t log, const char *label ) :
+        BaseHandle( toSave, log, label ) {
     push();
 }
 
@@ -111,7 +111,7 @@ StackHandle::~StackHandle() {
 
 
 PersistentHandle::PersistentHandle( Oop toSave ) :
-    _saved( toSave ) {
+        _saved( toSave ) {
     _next = _first;
     _prev = nullptr;
     if ( _first )
@@ -132,7 +132,7 @@ PersistentHandle::~PersistentHandle() {
 
 
 void PersistentHandle::oops_do( void f( Oop * ) ) {
-    for ( PersistentHandle * current = _first; current; current = current->_next )
+    for ( PersistentHandle *current = _first; current; current = current->_next )
         f( &current->_saved );
 }
 
@@ -147,13 +147,13 @@ KlassOop PersistentHandle::as_klassOop() {
 }
 
 
-Oop * PersistentHandle::asPointer() {
+Oop *PersistentHandle::asPointer() {
     return &_saved;
 }
 
 
 int PersistentHandle::savedOffset() {
-    return ( int ) &( ( PersistentHandle * ) nullptr )->_saved;
+    return (int) &( (PersistentHandle *) nullptr )->_saved;
 }
 
 

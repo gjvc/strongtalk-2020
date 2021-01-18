@@ -48,7 +48,7 @@ static constexpr int max_nof_temps  = 256;
 static constexpr int max_nof_floats = 256;
 
 
-bool_t     Interpreter::_is_initialized = false;
+bool_t     Interpreter::_is_initialized   = false;
 const char *Interpreter::_code_begin_addr = nullptr;
 const char *Interpreter::_code_end_addr   = nullptr;
 
@@ -173,18 +173,18 @@ void Interpreter::trace_bytecode() {
         if ( TraceInterpreterFramesAt < NumberOfBytecodesExecuted ) {
             Frame f = DeltaProcess::active()->last_frame();
             lprintf( "Frame: fp = %#lx, sp = %#lx]\n", f.fp(), f.sp() );
-            for ( Oop  *p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
+            for ( Oop    *p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
                 lprintf( "\t[%#lx]: ", p );
                 ( *p )->print_value();
                 lprintf( "\n" );
             }
-            std::uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
-            const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
+            std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
+            const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
             _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
-        std::uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
-        const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
+        std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
+        const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
         _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
     }
 }

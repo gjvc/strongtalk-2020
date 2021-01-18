@@ -28,7 +28,7 @@ Oop DoubleValueArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge,
     int      obj_size = ni_size + 1 + roundTo( size * sizeof( double ), oopSize ) / oopSize;
 
     // allocate
-    doubleValueArrayOop obj = as_doubleValueArrayOop( Universe::allocate( obj_size, ( MemOop * ) &k ) );
+    doubleValueArrayOop obj = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
 
     // header
     MemOop( obj )->initialize_header( true, k );
@@ -61,7 +61,7 @@ KlassOop DoubleValueArrayKlass::create_class( KlassOop super_class, MixinOop mix
 }
 
 
-void setKlassVirtualTableFromDoubleValueArrayKlass( Klass * k ) {
+void setKlassVirtualTableFromDoubleValueArrayKlass( Klass *k ) {
     DoubleValueArrayKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -73,7 +73,7 @@ bool_t DoubleValueArrayKlass::oop_verify( Oop obj ) {
 }
 
 
-void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     doubleValueArrayOop array = doubleValueArrayOop( obj );
     int                 len   = array->length();
@@ -82,9 +82,9 @@ void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * s
 }
 
 
-void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    double * p = doubleValueArrayOop( obj )->double_start();
-    Oop    * l = doubleValueArrayOop( obj )->length_addr();
+void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
+    double *p = doubleValueArrayOop( obj )->double_start();
+    Oop    *l = doubleValueArrayOop( obj )->length_addr();
     int len = doubleValueArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
@@ -94,8 +94,8 @@ void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * b
 }
 
 
-void DoubleValueArrayKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
-    Oop * l = doubleValueArrayOop( obj )->length_addr();
+void DoubleValueArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
+    Oop *l = doubleValueArrayOop( obj )->length_addr();
     MemOopKlass::oop_oop_iterate( obj, blk );
     blk->do_oop( l );
 }

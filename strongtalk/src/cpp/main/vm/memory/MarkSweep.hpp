@@ -14,42 +14,42 @@
 class OopRelocations;
 
 class MarkSweep : AllStatic {
-    public:
-        static Oop collect( Oop p = nullptr );
+public:
+    static Oop collect( Oop p = nullptr );
 
-        // Call backs
-        static void follow_root( Oop * p );
+    // Call backs
+    static void follow_root( Oop *p );
 
-        static void reverse_and_push( Oop * p );
+    static void reverse_and_push( Oop *p );
 
-        static void reverse_and_follow( Oop * p );
+    static void reverse_and_follow( Oop *p );
 
-        static void add_heap_code_offset( int offset );
+    static void add_heap_code_offset( int offset );
 
-        static int next_heap_code_offset();
+    static int next_heap_code_offset();
 
-    private:
-        // the traversal stack used during phase1.
-        static GrowableArray <MemOop> * _stack;
-        // the hcode pointer offsets saved before and
-        // and retrieved after the garbage collection.
-        static GrowableArray <int>    * hcode_offsets;
-        static int hcode_pos;
-        // resource area for non-aligned oops requiring relocation (eg. in nativeMethods)
-        static OopRelocations * _oopRelocations;
+private:
+    // the traversal stack used during phase1.
+    static GrowableArray<MemOop> *_stack;
+    // the hcode pointer offsets saved before and
+    // and retrieved after the garbage collection.
+    static GrowableArray<int>    *hcode_offsets;
+    static int hcode_pos;
+    // resource area for non-aligned oops requiring relocation (eg. in nativeMethods)
+    static OopRelocations *_oopRelocations;
 
-    private:
-        static void mark_sweep_phase1( Oop * p );
+private:
+    static void mark_sweep_phase1( Oop *p );
 
-        static void mark_sweep_phase2();
+    static void mark_sweep_phase2();
 
-        static void mark_sweep_phase3();
+    static void mark_sweep_phase3();
 
-        static inline MemOop reverse( Oop * p );
+    static inline MemOop reverse( Oop *p );
 
-        static void allocate();
+    static void allocate();
 
-        static void deallocate();
+    static void deallocate();
 
-        static void trace( const char * msg );
+    static void trace( const char *msg );
 };

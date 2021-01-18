@@ -22,14 +22,14 @@ int MixinOopDescriptor::inst_var_offset( SymbolOop name, int non_indexable_size 
 }
 
 
-void MixinOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void MixinOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
-    stream->read_oop( ( Oop * ) &addr()->_methods );
-    stream->read_oop( ( Oop * ) &addr()->_inst_vars );
-    stream->read_oop( ( Oop * ) &addr()->_class_vars );
-    stream->read_oop( ( Oop * ) &addr()->_primary_invocation );
-    stream->read_oop( ( Oop * ) &addr()->_class_mixin );
-    stream->read_oop( ( Oop * ) &addr()->_installed );
+    stream->read_oop( (Oop *) &addr()->_methods );
+    stream->read_oop( (Oop *) &addr()->_inst_vars );
+    stream->read_oop( (Oop *) &addr()->_class_vars );
+    stream->read_oop( (Oop *) &addr()->_primary_invocation );
+    stream->read_oop( (Oop *) &addr()->_class_mixin );
+    stream->read_oop( (Oop *) &addr()->_installed );
     MemOopDescriptor::bootstrap_body( stream, header_size() );
 }
 

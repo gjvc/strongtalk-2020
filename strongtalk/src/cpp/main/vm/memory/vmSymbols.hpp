@@ -167,28 +167,28 @@ enum {
     static SymbolOop name () { return vm_symbols[ VMSYMBOL_ENUM_NAME( name ) ]; }
 
 //extern "C" SymbolOop vm_symbols[];
-extern std::array <SymbolOop, terminating_enum> vm_symbols;
+extern std::array<SymbolOop, terminating_enum> vm_symbols;
 
 class vmSymbols : AllStatic {
 
-    private:
-        friend void vmSymbols_init();
+private:
+    friend void vmSymbols_init();
 
-    public:
-        static void initialize();
-
-
-        VMSYMBOLS( VMSYMBOL_DECL )
+public:
+    static void initialize();
 
 
-        // operations for memory management.
-        static void follow_contents();
+    VMSYMBOLS( VMSYMBOL_DECL )
 
-        static void switch_pointers( Oop from, Oop to );
 
-        static void relocate();
+    // operations for memory management.
+    static void follow_contents();
 
-        static void verify();
+    static void switch_pointers( Oop from, Oop to );
+
+    static void relocate();
+
+    static void verify();
 };
 
 #undef VMSYMBOL_DECL
@@ -198,13 +198,13 @@ class vmSymbols : AllStatic {
 // for primitive failures
 inline Oop markSymbol( SymbolOop sym ) {
     st_assert( sym->is_mem(), "must have MEMOOP_TAG tag" );
-    return Oop( ( const char * ) sym - MEMOOP_TAG + MARK_TAG );
+    return Oop( (const char *) sym - MEMOOP_TAG + MARK_TAG );
 }
 
 
 inline SymbolOop unmarkSymbol( Oop sym ) {
     st_assert( sym->is_mark(), "must have MARK_TAG tag" );
-    Oop res = Oop( ( const char * ) sym - MARK_TAG + MEMOOP_TAG );
+    Oop res = Oop( (const char *) sym - MARK_TAG + MEMOOP_TAG );
     st_assert( res->is_symbol(), "must be symbol" );
     return SymbolOop( res );
 }

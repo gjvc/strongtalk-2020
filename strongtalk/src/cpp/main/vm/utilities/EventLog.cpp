@@ -8,7 +8,7 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/lprintf.hpp"
 
-EventLog * eventLog;
+EventLog *eventLog;
 
 
 void eventlog_init() {
@@ -17,14 +17,14 @@ void eventlog_init() {
 }
 
 
-static const char * noEvent = "no event";
+static const char *noEvent = "no event";
 
 
 void EventLog::init() {
-    _eventBuffer = _next = new_c_heap_array <EventLogEvent>( EventLogLength );
+    _eventBuffer = _next = new_c_heap_array<EventLogEvent>( EventLogLength );
     _end         = _eventBuffer + EventLogLength;
 
-    for ( EventLogEvent * e = _eventBuffer; e < _end; e++ )
+    for ( EventLogEvent *e = _eventBuffer; e < _end; e++ )
         e->_name = noEvent;
 }
 
@@ -36,12 +36,12 @@ EventLog::EventLog() {
 
 
 void EventLog::resize() {
-    EventLogEvent * oldBuf  = _eventBuffer;
-    EventLogEvent * oldEnd  = _end;
-    EventLogEvent * oldNext = _next;
+    EventLogEvent *oldBuf  = _eventBuffer;
+    EventLogEvent *oldEnd  = _end;
+    EventLogEvent *oldNext = _next;
     init();
     // copy events
-    for ( EventLogEvent * e = nextEvent( oldNext, oldBuf, oldEnd ); e not_eq oldNext; e = nextEvent( e, oldBuf, oldEnd ), _next = nextEvent( _next, _eventBuffer, _end ) ) {
+    for ( EventLogEvent *e = nextEvent( oldNext, oldBuf, oldEnd ); e not_eq oldNext; e = nextEvent( e, oldBuf, oldEnd ), _next = nextEvent( _next, _eventBuffer, _end ) ) {
         *_next = *e;
     }
     FreeHeap( oldBuf );
@@ -49,7 +49,7 @@ void EventLog::resize() {
 
 
 void EventLog::printPartial( int n ) {
-    EventLogEvent * e = _next;
+    EventLogEvent *e = _next;
     // find starting point
     if ( n >= EventLogLength )
         n = EventLogLength - 1;
@@ -61,7 +61,7 @@ void EventLog::printPartial( int n ) {
 
     int indent = 0;
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
-        const char * s;
+        const char *s;
         switch ( e->_status ) {
             case EventLogEventStatus::starting:
                 s = "[ ";
@@ -85,11 +85,11 @@ void EventLog::printPartial( int n ) {
 }
 
 
-EventLogEvent * EventLog::nextEvent( EventLogEvent * e, EventLogEvent * start, EventLogEvent * end ) {
+EventLogEvent *EventLog::nextEvent( EventLogEvent *e, EventLogEvent *start, EventLogEvent *end ) {
     return e + 1 == end ? start : e + 1;
 }
 
 
-EventLogEvent * EventLog::prevEvent( EventLogEvent * e, EventLogEvent * start, EventLogEvent * end ) {
+EventLogEvent *EventLog::prevEvent( EventLogEvent *e, EventLogEvent *start, EventLogEvent *end ) {
     return ( e == start ? end : e ) - 1;
 }

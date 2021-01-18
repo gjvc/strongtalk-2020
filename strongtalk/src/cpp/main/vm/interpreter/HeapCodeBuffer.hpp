@@ -30,38 +30,38 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 
 class HeapCodeBuffer : public ResourceObject {
 
-    private:
-        GrowableArray <std::uint32_t> * _bytes;
-        GrowableArray <Oop>      * _oops;
+private:
+    GrowableArray<std::uint32_t> *_bytes;
+    GrowableArray<Oop>           *_oops;
 
-        void align();
+    void align();
 
-        bool_t isAligned();
+    bool_t isAligned();
 
-    public:
-        HeapCodeBuffer() {
-            _bytes = new GrowableArray <std::uint32_t>();
-            _oops  = new GrowableArray <Oop>();
-        }
-
-
-        void pushByte( std::uint8_t op );
-
-        void pushOop( Oop arg );
+public:
+    HeapCodeBuffer() {
+        _bytes = new GrowableArray<std::uint32_t>();
+        _oops  = new GrowableArray<Oop>();
+    }
 
 
-        int byteLength() {
-            return _bytes->length();
-        }
+    void pushByte( std::uint8_t op );
+
+    void pushOop( Oop arg );
 
 
-        int oopLength() {
-            return _oops->length();
-        }
+    int byteLength() {
+        return _bytes->length();
+    }
 
 
-        ByteArrayOop bytes();
+    int oopLength() {
+        return _oops->length();
+    }
 
-        ObjectArrayOop oops();
+
+    ByteArrayOop bytes();
+
+    ObjectArrayOop oops();
 
 };

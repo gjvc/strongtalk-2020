@@ -15,9 +15,9 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 enum class SendKind {
-        NormalSend, //
-        SelfSend,   //
-        SuperSend   //
+    NormalSend, //
+    SelfSend,   //
+    SuperSend   //
 };
 
 class Scope;
@@ -31,88 +31,88 @@ class UntakenRecompilationScope;
 
 class Inliner : public PrintableResourceObject {
 
-    private:
-        void reportInline( const char * prefix ); // Add a comment node delimiting an inlined send
+private:
+    void reportInline( const char *prefix ); // Add a comment node delimiting an inlined send
 
-    protected:
-        InlinedScope                 * _sender;         // scope containing the send
-        InlinedScope                 * _callee;         // scope being inlined (or nullptr)
-        SendInfo                     * _info;           // send being inlined
-        Expression                   * _result;         // result expression
-        SinglyAssignedPseudoRegister * _resultPR;       // result PseudoRegister
-        NodeBuilder                  * _generator;      // current generator (sender's or callee's)
-        MergeNode                    * _merge;          // where multiple versions merge (nullptr if only one)
-        const char                   * _msg;            // reason for not inlining the send
-        SendKind _sendKind;         //
-        bool_t   _lastLookupFailed; // last tryLookup failed because no method found
-
-
-    public:
-        int depth;            // nesting depth (for debug output)
-
-        Inliner( InlinedScope * s ) {
-            this->_sender = s;
-            initialize();
-        }
+protected:
+    InlinedScope                 *_sender;         // scope containing the send
+    InlinedScope                 *_callee;         // scope being inlined (or nullptr)
+    SendInfo                     *_info;           // send being inlined
+    Expression                   *_result;         // result expression
+    SinglyAssignedPseudoRegister *_resultPR;       // result PseudoRegister
+    NodeBuilder                  *_generator;      // current generator (sender's or callee's)
+    MergeNode                    *_merge;          // where multiple versions merge (nullptr if only one)
+    const char                   *_msg;            // reason for not inlining the send
+    SendKind _sendKind;         //
+    bool_t   _lastLookupFailed; // last tryLookup failed because no method found
 
 
-        // The inlineXXX generate a non-inlined send if necessary, with the exception
-        // of inlineBlockInvocation which returns nullptr (and does nothing) if the block
-        // shouldn't be inlined
-        Expression * inlineNormalSend( SendInfo * info );
+public:
+    int depth;            // nesting depth (for debug output)
 
-        Expression * inlineSuperSend( SendInfo * info );
-
-        Expression * inlineSelfSend( SendInfo * info );
-
-        Expression * inlineBlockInvocation( SendInfo * info );
+    Inliner( InlinedScope *s ) {
+        this->_sender = s;
+        initialize();
+    }
 
 
-        SendInfo * info() const {
-            return _info;
-        }
+    // The inlineXXX generate a non-inlined send if necessary, with the exception
+    // of inlineBlockInvocation which returns nullptr (and does nothing) if the block
+    // shouldn't be inlined
+    Expression *inlineNormalSend( SendInfo *info );
+
+    Expression *inlineSuperSend( SendInfo *info );
+
+    Expression *inlineSelfSend( SendInfo *info );
+
+    Expression *inlineBlockInvocation( SendInfo *info );
 
 
-        const char * msg() const {
-            return _msg;
-        }
+    SendInfo *info() const {
+        return _info;
+    }
 
 
-        void print();
+    const char *msg() const {
+        return _msg;
+    }
 
-    protected:
-        void initialize();
 
-        void initialize( SendInfo * info, SendKind kind );
+    void print();
 
-        Expression * inlineSend();
+protected:
+    void initialize();
 
-        void tryInlineSend();
+    void initialize( SendInfo *info, SendKind kind );
 
-        Expression * inlineMerge( SendInfo * info );
+    Expression *inlineSend();
 
-        Expression * picPredict();
+    void tryInlineSend();
 
-        Expression * picPredictUnlikely( SendInfo * info, UntakenRecompilationScope * uscope );
+    Expression *inlineMerge( SendInfo *info );
 
-        Expression * typePredict();
+    Expression *picPredict();
 
-        Expression * genRealSend();
+    Expression *picPredictUnlikely( SendInfo *info, UntakenRecompilationScope *uscope );
 
-        InlinedScope * tryLookup( Expression * receiver );      // try lookup and determine if should inline send
-        Expression * doInline( Node * start );
+    Expression *typePredict();
 
-        const char * checkSendInPrimFailure();
+    Expression *genRealSend();
 
-        InlinedScope * notify( const char * msg );
+    InlinedScope *tryLookup( Expression *receiver );      // try lookup and determine if should inline send
+    Expression *doInline( Node *start );
 
-        RecompilationScope * makeBlockRScope( const Expression * receiver, LookupKey * key, const MethodOop method );
+    const char *checkSendInPrimFailure();
 
-        InlinedScope * makeScope( const Expression * receiver, const KlassOop klass, const LookupKey * key, const MethodOop method );
+    InlinedScope *notify( const char *msg );
 
-        Expression * makeResult( Expression * res );
+    RecompilationScope *makeBlockRScope( const Expression *receiver, LookupKey *key, const MethodOop method );
 
-        bool_t checkSenderPath( Scope * here, ScopeDescriptor * there ) const;
+    InlinedScope *makeScope( const Expression *receiver, const KlassOop klass, const LookupKey *key, const MethodOop method );
 
-        friend class InliningPolicy;
+    Expression *makeResult( Expression *res );
+
+    bool_t checkSenderPath( Scope *here, ScopeDescriptor *there ) const;
+
+    friend class InliningPolicy;
 };

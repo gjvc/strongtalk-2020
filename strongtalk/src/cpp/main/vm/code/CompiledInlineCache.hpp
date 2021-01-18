@@ -50,16 +50,16 @@
 
 class AbstractCompiledInlineCache : public NativeCall {
 
-    public:
-        char * NonLocalReturn_testcode() const {
-            return ic_info_at( next_instruction_address() )->NonLocalReturn_target();
-        }
+public:
+    char *NonLocalReturn_testcode() const {
+        return ic_info_at( next_instruction_address() )->NonLocalReturn_target();
+    }
 
 
-        // returns the beginning of the inline cache.
-        char * begin_addr() const {
-            return instruction_address();
-        }
+    // returns the beginning of the inline cache.
+    char *begin_addr() const {
+        return instruction_address();
+    }
 };
 
 
@@ -84,146 +84,146 @@ class InterpretedInlineCache;
 
 class CompiledInlineCache : public AbstractCompiledInlineCache {
 
-    protected:
-        int compiler_info() const {
-            return ic_info_at( next_instruction_address() )->flags();
-        }
+protected:
+    int compiler_info() const {
+        return ic_info_at( next_instruction_address() )->flags();
+    }
 
 
-        void set_compiler_info( int info ) {
-            ic_info_at( next_instruction_address() )->set_flags( info );
-        }
+    void set_compiler_info( int info ) {
+        ic_info_at( next_instruction_address() )->set_flags( info );
+    }
 
 
-    public:
-        // lookup routines for empty inline cache
-        static const char * normalLookupRoutine();
+public:
+    // lookup routines for empty inline cache
+    static const char *normalLookupRoutine();
 
-        static const char * superLookupRoutine();
+    static const char *superLookupRoutine();
 
-        // conversion (machine PC to CompiledInlineCache*)
-        friend CompiledInlineCache * CompiledIC_from_return_addr( const char * return_addr );
+    // conversion (machine PC to CompiledInlineCache*)
+    friend CompiledInlineCache *CompiledIC_from_return_addr( const char *return_addr );
 
-        friend CompiledInlineCache * CompiledIC_from_relocInfo( const char * displacement_address );
+    friend CompiledInlineCache *CompiledIC_from_relocInfo( const char *displacement_address );
 
-        // Accessors
+    // Accessors
 
-        // isDirty() --> has had misses
-        bool_t isDirty() const {
-            return isBitSet( compiler_info(), dirty_send_bit_no );
-        }
-
-
-        void setDirty() {
-            set_compiler_info( addNthBit( compiler_info(), dirty_send_bit_no ) );
-        }
+    // isDirty() --> has had misses
+    bool_t isDirty() const {
+        return isBitSet( compiler_info(), dirty_send_bit_no );
+    }
 
 
-        // isOptimized() --> nativeMethods called from here should be optimized
-        bool_t isOptimized() const {
-            return isBitSet( compiler_info(), optimized_bit_no );
-        }
+    void setDirty() {
+        set_compiler_info( addNthBit( compiler_info(), dirty_send_bit_no ) );
+    }
 
 
-        void setOptimized() {
-            set_compiler_info( addNthBit( compiler_info(), optimized_bit_no ) );
-        }
+    // isOptimized() --> nativeMethods called from here should be optimized
+    bool_t isOptimized() const {
+        return isBitSet( compiler_info(), optimized_bit_no );
+    }
 
 
-        void resetOptimized() {
-            set_compiler_info( subNthBit( compiler_info(), optimized_bit_no ) );
-        }
+    void setOptimized() {
+        set_compiler_info( addNthBit( compiler_info(), optimized_bit_no ) );
+    }
 
 
-        // isUninlinable() --> compiler says don't try to inline this send
-        bool_t isUninlinable() const {
-            return isBitSet( compiler_info(), uninlinable_bit_no );
-        }
+    void resetOptimized() {
+        set_compiler_info( subNthBit( compiler_info(), optimized_bit_no ) );
+    }
 
 
-        // isSuperSend() --> send is a super send
-        bool_t isSuperSend() const {
-            return isBitSet( compiler_info(), super_send_bit_no );
-        }
+    // isUninlinable() --> compiler says don't try to inline this send
+    bool_t isUninlinable() const {
+        return isBitSet( compiler_info(), uninlinable_bit_no );
+    }
 
 
-        // isMegamorphic() --> send is megamorphic
-        bool_t isMegamorphic() const {
-            return isBitSet( compiler_info(), megamorphic_bit_no );
-        }
+    // isSuperSend() --> send is a super send
+    bool_t isSuperSend() const {
+        return isBitSet( compiler_info(), super_send_bit_no );
+    }
 
 
-        void setMegamorphic() {
-            set_compiler_info( addNthBit( compiler_info(), megamorphic_bit_no ) );
-        }
+    // isMegamorphic() --> send is megamorphic
+    bool_t isMegamorphic() const {
+        return isBitSet( compiler_info(), megamorphic_bit_no );
+    }
 
 
-        // isReceiverStatic() --> receiver klass is known statically (connect to verifiedEntryPoint)
-        bool_t isReceiverStatic() const {
-            return isBitSet( compiler_info(), receiver_static_bit_no );
-        }
+    void setMegamorphic() {
+        set_compiler_info( addNthBit( compiler_info(), megamorphic_bit_no ) );
+    }
 
 
-        void setReceiverStatic() {
-            set_compiler_info( addNthBit( compiler_info(), receiver_static_bit_no ) );
-        }
+    // isReceiverStatic() --> receiver klass is known statically (connect to verifiedEntryPoint)
+    bool_t isReceiverStatic() const {
+        return isBitSet( compiler_info(), receiver_static_bit_no );
+    }
 
 
-        bool_t wasNeverExecuted() const;
-
-        InterpretedInlineCache * inlineCache() const;    // corresponding source-level inline cache (nullptr if none, e.g. perform)
-        PolymorphicInlineCache * pic() const;            // nullptr if 0 or 1 targets
-
-        // returns the first address after this primitive ic
-        char * end_addr() {
-            return ic_info_at( next_instruction_address() )->next_instruction_address();
-        }
+    void setReceiverStatic() {
+        set_compiler_info( addNthBit( compiler_info(), receiver_static_bit_no ) );
+    }
 
 
-        // sets the destination of the call instruction
-        void set_call_destination( const char * entry_point );
+    bool_t wasNeverExecuted() const;
 
-        // Does a lookup in the receiver and patches the inline cache
-        const char * normalLookup( Oop receiver );
+    InterpretedInlineCache *inlineCache() const;    // corresponding source-level inline cache (nullptr if none, e.g. perform)
+    PolymorphicInlineCache *pic() const;            // nullptr if 0 or 1 targets
 
-        const char * superLookup( Oop receiver );
+    // returns the first address after this primitive ic
+    char *end_addr() {
+        return ic_info_at( next_instruction_address() )->next_instruction_address();
+    }
 
-        // Returns the class that holds the current method
-        KlassOop sending_method_holder();
 
-        // replace appropriate target (with key nm->key) by nm
-        void replace( NativeMethod * nm );
+    // sets the destination of the call instruction
+    void set_call_destination( const char *entry_point );
 
-    public:
-        SymbolOop selector() const;
+    // Does a lookup in the receiver and patches the inline cache
+    const char *normalLookup( Oop receiver );
 
-        bool_t is_empty() const;
+    const char *superLookup( Oop receiver );
 
-        bool_t is_monomorphic() const;
+    // Returns the class that holds the current method
+    KlassOop sending_method_holder();
 
-        bool_t is_polymorphic() const;
+    // replace appropriate target (with key nm->key) by nm
+    void replace( NativeMethod *nm );
 
-        bool_t is_megamorphic() const;
+public:
+    SymbolOop selector() const;
 
-        NativeMethod * target() const;    // directly called NativeMethod or nullptr if none/PolymorphicInlineCache
-        KlassOop targetKlass() const;    // klass of compiled or interpreted target;
-        // can only call if single target
-        int ntargets() const;    // number of targets in inline cache or PolymorphicInlineCache
-        KlassOop get_klass( int i ) const; // receiver klass of ith target (i=0..ntargets()-1)
+    bool_t is_empty() const;
 
-        // returns the lookup key for PolymorphicInlineCache index
-        LookupKey * key( int which, bool_t is_normal_send ) const;
+    bool_t is_monomorphic() const;
 
-        void reset_jump_addr();
+    bool_t is_polymorphic() const;
 
-        void link( PolymorphicInlineCache * s );
+    bool_t is_megamorphic() const;
 
-        void clear();        // clear inline cache
-        void cleanup();        // cleanup inline cache
+    NativeMethod *target() const;    // directly called NativeMethod or nullptr if none/PolymorphicInlineCache
+    KlassOop targetKlass() const;    // klass of compiled or interpreted target;
+    // can only call if single target
+    int ntargets() const;    // number of targets in inline cache or PolymorphicInlineCache
+    KlassOop get_klass( int i ) const; // receiver klass of ith target (i=0..ntargets()-1)
 
-        bool_t verify();
+    // returns the lookup key for PolymorphicInlineCache index
+    LookupKey *key( int which, bool_t is_normal_send ) const;
 
-        void print();
+    void reset_jump_addr();
+
+    void link( PolymorphicInlineCache *s );
+
+    void clear();        // clear inline cache
+    void cleanup();        // cleanup inline cache
+
+    bool_t verify();
+
+    void print();
 };
 
 
@@ -231,17 +231,17 @@ class PrimitiveDescriptor;
 
 
 class PrimitiveInlineCache : public AbstractCompiledInlineCache {
-    public:
-        // returns the primitive descriptor (based on the destination of the call).
-        PrimitiveDescriptor * primitive();
+public:
+    // returns the primitive descriptor (based on the destination of the call).
+    PrimitiveDescriptor *primitive();
 
-        // conversion (machine PC to PrimitiveInlineCache*)
-        friend PrimitiveInlineCache * PrimitiveIC_from_return_addr( const char * return_addr );
+    // conversion (machine PC to PrimitiveInlineCache*)
+    friend PrimitiveInlineCache *PrimitiveIC_from_return_addr( const char *return_addr );
 
-        friend PrimitiveInlineCache * PrimitiveIC_from_relocInfo( const char * displacement_address );
+    friend PrimitiveInlineCache *PrimitiveIC_from_relocInfo( const char *displacement_address );
 
-        // returns the first address after this primitive ic.
-        char * end_addr();
+    // returns the first address after this primitive ic.
+    char *end_addr();
 
-        void print();
+    void print();
 };

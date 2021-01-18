@@ -14,100 +14,100 @@
 
 class ResourceAreaChunk : public PrintableCHeapAllocatedObject {
 
-    private:
-        friend class ResourceMark;
+private:
+    friend class ResourceMark;
 
-        friend class ResourceArea;
+    friend class ResourceArea;
 
-        friend class Resources;
+    friend class Resources;
 
-        char              * _bottom;
-        char              * _top;
-        char              * _firstFree;
-        ResourceAreaChunk * _prev;
+    char              *_bottom;
+    char              *_top;
+    char              *_firstFree;
+    ResourceAreaChunk *_prev;
 
-        int _allocated;     // Allocated bytes in this and previous chunks.
-        int _previous_used; // Used bytes in previous chunks.
+    int _allocated;     // Allocated bytes in this and previous chunks.
+    int _previous_used; // Used bytes in previous chunks.
 
-        void clear( char * start, char * end ) {
-            memset( start, 33, end - start );
-        }
-
-
-        void clear() {
-            clear( _bottom, _firstFree );
-        }
+    void clear( char *start, char *end ) {
+        memset( start, 33, end - start );
+    }
 
 
-        void freeTo( char * new_first_free );
-
-    public:
-        char * allocate_bytes( int size );
-
-        ResourceAreaChunk( int min_capacity, ResourceAreaChunk * previous );
-
-        ~ResourceAreaChunk();
-
-        void initialize( ResourceAreaChunk * previous );
+    void clear() {
+        clear( _bottom, _firstFree );
+    }
 
 
-        int capacity() {
-            return _top - _bottom;
-        }
+    void freeTo( char *new_first_free );
+
+public:
+    char *allocate_bytes( int size );
+
+    ResourceAreaChunk( int min_capacity, ResourceAreaChunk *previous );
+
+    ~ResourceAreaChunk();
+
+    void initialize( ResourceAreaChunk *previous );
 
 
-        int used() {
-            return _firstFree - _bottom;
-        }
+    int capacity() {
+        return _top - _bottom;
+    }
 
 
-        bool_t contains( void * p ) {
-            if ( p >= ( void * ) _bottom and p < ( void * ) _top )
-                return true;
-            else if ( _prev )
-                return _prev->contains( p );
-            else
-                return false;
-        }
+    int used() {
+        return _firstFree - _bottom;
+    }
 
 
-        void print();
+    bool_t contains( void *p ) {
+        if ( p >= (void *) _bottom and p < (void *) _top )
+            return true;
+        else if ( _prev )
+            return _prev->contains( p );
+        else
+            return false;
+    }
 
-        void print_short();
 
-    protected:
-        void print_alloc( const char * addr, int size );
+    void print();
+
+    void print_short();
+
+protected:
+    void print_alloc( const char *addr, int size );
 };
 
 
 class ResourceArea {
 
-    public:
-        ResourceAreaChunk * _resourceAreaChunk;  // current chunk
-        int _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
+public:
+    ResourceAreaChunk *_resourceAreaChunk;  // current chunk
+    int _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
 
-    public:
+public:
 
-        ResourceArea();
+    ResourceArea();
 
-        ~ResourceArea();
+    ~ResourceArea();
 
-        char * allocate_more_bytes( int size );
+    char *allocate_more_bytes( int size );
 
-        char * allocate_bytes( int size );
-
-
-        int capacity() {
-            return _resourceAreaChunk ? _resourceAreaChunk->_allocated : 0;
-        }
+    char *allocate_bytes( int size );
 
 
-        int used();
+    int capacity() {
+        return _resourceAreaChunk ? _resourceAreaChunk->_allocated : 0;
+    }
 
 
-        bool_t contains( void * p ) {
-            return _resourceAreaChunk not_eq nullptr and _resourceAreaChunk->contains( p );
-        }
+    int used();
+
+
+    bool_t contains( void *p ) {
+        return _resourceAreaChunk not_eq nullptr and _resourceAreaChunk->contains( p );
+    }
 };
 
 
@@ -119,56 +119,56 @@ class ResourceArea {
 // Typically used as a local variable.
 
 class NoGCVerifier : StackAllocatedObject {
-    private:
-        int old_scavenge_count;
-    public:
-        NoGCVerifier();
+private:
+    int old_scavenge_count;
+public:
+    NoGCVerifier();
 
-        ~NoGCVerifier();
+    ~NoGCVerifier();
 };
 
 
 class Resources {
 
-    private:
-        ResourceAreaChunk * freeChunks;          // list of unused chunks
-        int    _allocated;           // total number of bytes allocated
-        bool_t _in_consistent_state; //
-        ResourceAreaChunk * getFromFreeList( int min_capacity );
+private:
+    ResourceAreaChunk *freeChunks;          // list of unused chunks
+    int    _allocated;           // total number of bytes allocated
+    bool_t _in_consistent_state; //
+    ResourceAreaChunk *getFromFreeList( int min_capacity );
 
-    public:
-        Resources();
+public:
+    Resources();
 
-        ResourceAreaChunk * new_chunk( int min_capacity, ResourceAreaChunk * area );
+    ResourceAreaChunk *new_chunk( int min_capacity, ResourceAreaChunk *area );
 
-        void addToFreeList( ResourceAreaChunk * c );
-
-
-        bool_t in_consistent_state() {
-            return _in_consistent_state;
-        }
+    void addToFreeList( ResourceAreaChunk *c );
 
 
-        bool_t contains( const char * p );
+    bool_t in_consistent_state() {
+        return _in_consistent_state;
+    }
 
-        int capacity();
 
-        int used();
+    bool_t contains( const char *p );
+
+    int capacity();
+
+    int used();
 };
 
 
 // -----------------------------------------------------------------------------
 
-char * AllocateHeap( int size, const char * name );
+char *AllocateHeap( int size, const char *name );
 
-void FreeHeap( void * p );
+void FreeHeap( void *p );
 
-char * AllocatePageAligned( int size, const char * name );
+char *AllocatePageAligned( int size, const char *name );
 
 extern Resources    resources;
 extern ResourceArea resource_area;
 
-char * allocateResource( int size );
+char *allocateResource( int size );
 
 // base class ResourceObject is at the end of the file because it uses ResourceArea Base class for objects allocated in the resource area per default.
 // Optionally, objects may be allocated on the C heap with new(true) Foo(...)
@@ -176,14 +176,14 @@ char * allocateResource( int size );
 
 // -----------------------------------------------------------------------------
 
-template <typename T>
-T * new_resource_array( std::size_t size ) {
+template<typename T>
+T *new_resource_array( std::size_t size ) {
     return reinterpret_cast<T *>( allocateResource( size * sizeof( T ) ));
 }
 
 
-template <typename T>
-T * new_c_heap_array( std::size_t size ) {
+template<typename T>
+T *new_c_heap_array( std::size_t size ) {
     return reinterpret_cast<T *>( malloc( ( size ) * sizeof( T ) ));
 }
 

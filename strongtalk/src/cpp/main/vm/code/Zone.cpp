@@ -57,8 +57,8 @@ int roundSize( int s, int blockSize ) {
 }
 
 
-LRUcount * LRUtable;    // for optimized methods
-int      * LRUflag;        // == LRUtable, just different type for convenience
+LRUcount *LRUtable;    // for optimized methods
+int      *LRUflag;        // == LRUtable, just different type for convenience
 
 static int LRUtime;        // virtual time; incremented after every full sweep
 
@@ -79,14 +79,14 @@ static void idOverflowError( int delta ) {
 }
 
 
-Zone::Zone( int & size ) {
+Zone::Zone( int &size ) {
     _methodHeap = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
     _picHeap    = new ZoneHeap( Universe::current_sizes._pic_heap_size, POLYMORPHIC_INLINE_CACHE_BLOCK );
 
     _methodTable = new CodeTable( codeTableSize );
 
     // LRUflag = idManager->data;
-    LRUtable = ( LRUcount * ) LRUflag;
+    LRUtable = (LRUcount *) LRUflag;
     clear();
 
     // start sweeper
@@ -114,19 +114,19 @@ int Zone::nextNativeMethodID() {
 }
 
 
-NativeMethod * Zone::allocate( int size ) {
+NativeMethod *Zone::allocate( int size ) {
     // CSect cs(profilerSemaphore); // for profiler
     // must get method ID here! (because reclaim might change firstFree)
     // (compiler may have used peekID to get ID of new NativeMethod for LRU stuff)
     if ( needsSweep() )
         doSweep();
 
-    NativeMethod * n = ( NativeMethod * ) _methodHeap->allocate( size );
+    NativeMethod *n = (NativeMethod *) _methodHeap->allocate( size );
 
     if ( n == nullptr ) {
         // allocation failed so flush zombies and retry
         flushZombies();
-        n = ( NativeMethod * ) _methodHeap->allocate( size );
+        n = (NativeMethod *) _methodHeap->allocate( size );
         if ( n == nullptr ) {
             print();
             st_fatal( "cannot allocate enough Space for NativeMethod" );
@@ -198,29 +198,29 @@ int Zone::flushNextMethod( int needed ) {
 }
 
 
-void moveInsts( const char * from, char * to, int size ) {
-    NativeMethod * n   = ( NativeMethod * ) from;
-    NativeMethod * nTo = ( NativeMethod * ) to;
+void moveInsts( const char *from, char *to, int size ) {
+    NativeMethod *n   = (NativeMethod *) from;
+    NativeMethod *nTo = (NativeMethod *) to;
 
-    char * n1 = n->instructionsStart();
-    char * n2 = n->instructionsEnd();
-    n->moveTo( to, ( const char * ) n->locsEnd() - ( const char * ) n );
+    char *n1 = n->instructionsStart();
+    char *n2 = n->instructionsEnd();
+    n->moveTo( to, (const char *) n->locsEnd() - (const char *) n );
     if ( Universe::code->LRUhand == n )
         Universe::code->LRUhand = nTo;
 }
 
 
 class ConvertBlockClosure : public ObjectClosure {
-    public:
-        void do_object( MemOop obj ) {
-            if ( obj->is_block() and BlockClosureOop( obj )->isCompiledBlock() ) {
-                BlockClosureOop( obj )->deoptimize();
-            }
+public:
+    void do_object( MemOop obj ) {
+        if ( obj->is_block() and BlockClosureOop( obj )->isCompiledBlock() ) {
+            BlockClosureOop( obj )->deoptimize();
         }
+    }
 };
 
-static NativeMethod * debug_nm = nullptr;
-extern NativeMethod * recompilee;
+static NativeMethod *debug_nm = nullptr;
+extern NativeMethod *recompilee;
 
 
 void Zone::flushZombies( bool_t deoptimize ) {
@@ -326,7 +326,7 @@ void Zone::compact( bool_t forced ) {
 
     // chainFrames();
     flushZombies();
-    const char * firstFree = nullptr;
+    const char *firstFree = nullptr;
     if ( not forced )
         adjustPolicy();
     if ( needsCompaction() ) {
@@ -343,7 +343,7 @@ void Zone::compact( bool_t forced ) {
 }
 
 
-void Zone::free( NativeMethod * nm ) {
+void Zone::free( NativeMethod *nm ) {
     verify_if_often();
     if ( LRUhand == nm )
         LRUhand = next_nm( nm );
@@ -352,7 +352,7 @@ void Zone::free( NativeMethod * nm ) {
 }
 
 
-void Zone::addToCodeTable( NativeMethod * nm ) {
+void Zone::addToCodeTable( NativeMethod *nm ) {
     _methodTable->add( nm );
 }
 
@@ -381,7 +381,7 @@ void Zone::cleanup_inline_caches() {
 }
 
 
-int retirementAge( NativeMethod * n ) {
+int retirementAge( NativeMethod *n ) {
     int delta = LRU_RETIREMENT_AGE;
     if ( n->instructionsLength() <= LRU_CUTOFF )
         delta = max( delta, LRU_RETIREMENT_AGE * LRU_SMALL_BOOST );
@@ -419,14 +419,14 @@ void Zone::oops_do( void f( Oop * ) ) {
 }
 
 
-void Zone::nativeMethods_do( void f( NativeMethod * nm ) ) {
+void Zone::nativeMethods_do( void f( NativeMethod *nm ) ) {
     FOR_ALL_NMETHODS( p ) {
         f( p );
     }
 }
 
 
-void Zone::PICs_do( void f( PolymorphicInlineCache * pic ) ) {
+void Zone::PICs_do( void f( PolymorphicInlineCache *pic ) ) {
     FOR_ALL_PICS( p ) {
         f( p );
     }
@@ -437,48 +437,48 @@ void Zone::PICs_do( void f( PolymorphicInlineCache * pic ) ) {
   _console->print(format, (n), 100.0 * (n) / (ntot), 100.0 * (n) / (ntot2))
 
 class nmsizes {
-        int n, insts, locs, scopes;
-    public:
-        nmsizes() {
-            n = insts = locs = scopes = 0;
+    int n, insts, locs, scopes;
+public:
+    nmsizes() {
+        n = insts = locs = scopes = 0;
+    }
+
+
+    int total() {
+        return n * sizeof( NativeMethod ) + insts + locs + scopes;
+    }
+
+
+    bool_t isEmpty() {
+        return n == 0;
+    }
+
+
+    void print( const char *name, nmsizes &tot ) {
+        int bigTotal = tot.total();
+        int myTotal  = total();
+        if ( not isEmpty() ) {
+            _console->print( "%-13s (%ld methods): ", name, n );
+            NMLINE( "headers = %ld (%2.0f%%/%2.0f%%); ", n * sizeof( NativeMethod ), myTotal, bigTotal );
+            NMLINE( "instructions = %ld (%2.0f%%/%2.0f%%);\n", insts, myTotal, bigTotal );
+            NMLINE( "\tlocs = %ld (%2.0f%%/%2.0f%%); ", locs, myTotal, bigTotal );
+            NMLINE( "scopes = %ld (%2.0f%%/%2.0f%%);\n", scopes, myTotal, bigTotal );
+            NMLINE( "\ttotal = %ld (%2.0f%%/%2.0f%%)\n", myTotal, myTotal, bigTotal );
         }
+    }
 
 
-        int total() {
-            return n * sizeof( NativeMethod ) + insts + locs + scopes;
-        }
+    void print( const char *title, int t ) {
+        _console->print_cr( "   n [%3d] title [%s] nativeMethods %2d%% = [%4dK], hdr [%2d%%], inst [%2d%%], locs [%2d%%], debug [%2d%%]", n, title, total() * 100 / t, total() / 1024, n * sizeof( NativeMethod ) * 100 / total(), insts * 100 / total(), locs * 100 / total(), scopes * 100 / total() );
+    }
 
 
-        bool_t isEmpty() {
-            return n == 0;
-        }
-
-
-        void print( const char * name, nmsizes & tot ) {
-            int bigTotal = tot.total();
-            int myTotal  = total();
-            if ( not isEmpty() ) {
-                _console->print( "%-13s (%ld methods): ", name, n );
-                NMLINE( "headers = %ld (%2.0f%%/%2.0f%%); ", n * sizeof( NativeMethod ), myTotal, bigTotal );
-                NMLINE( "instructions = %ld (%2.0f%%/%2.0f%%);\n", insts, myTotal, bigTotal );
-                NMLINE( "\tlocs = %ld (%2.0f%%/%2.0f%%); ", locs, myTotal, bigTotal );
-                NMLINE( "scopes = %ld (%2.0f%%/%2.0f%%);\n", scopes, myTotal, bigTotal );
-                NMLINE( "\ttotal = %ld (%2.0f%%/%2.0f%%)\n", myTotal, myTotal, bigTotal );
-            }
-        }
-
-
-        void print( const char * title, int t ) {
-            _console->print_cr( "   n [%3d] title [%s] nativeMethods %2d%% = [%4dK], hdr [%2d%%], inst [%2d%%], locs [%2d%%], debug [%2d%%]", n, title, total() * 100 / t, total() / 1024, n * sizeof( NativeMethod ) * 100 / total(), insts * 100 / total(), locs * 100 / total(), scopes * 100 / total() );
-        }
-
-
-        void add( NativeMethod * nm ) {
-            n++;
-            insts += nm->instructionsLength();
-            locs += nm->locsLen();
-            scopes += nm->scopes()->length();
-        }
+    void add( NativeMethod *nm ) {
+        n++;
+        insts += nm->instructionsLength();
+        locs += nm->locsLen();
+        scopes += nm->scopes()->length();
+    }
 };
 
 
@@ -526,7 +526,7 @@ void Zone::print() {
 
 
 struct nm_hist_elem {
-    NativeMethod * nm;
+    NativeMethod *nm;
     int count;
     int size;
     int sic_count;
@@ -534,17 +534,17 @@ struct nm_hist_elem {
 };
 
 
-static int compareOop( const void * m1, const void * m2 ) {
+static int compareOop( const void *m1, const void *m2 ) {
     ResourceMark rm;
-    const auto * nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
-    const auto * nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
+    const auto *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
+    const auto *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->nm->method() - nativeMethod1->nm->method();
 }
 
 
-static int compareCount( const void * m1, const void * m2 ) {
-    const auto * nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
-    const auto * nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
+static int compareCount( const void *m1, const void *m2 ) {
+    const auto *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
+    const auto *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->count - nativeMethod1->count;
 }
 
@@ -637,16 +637,16 @@ void Zone::print_NativeMethod_histogram( int size ) {
 }
 
 
-bool_t Zone::isDeltaPC( void * p ) const {
+bool_t Zone::isDeltaPC( void *p ) const {
     return _methodHeap->contains( p ) or _picHeap->contains( p );
 }
 
 
-NativeMethod * Zone::findNativeMethod( const void * start ) const {
-    NativeMethod * n;
+NativeMethod *Zone::findNativeMethod( const void *start ) const {
+    NativeMethod *n;
     if ( _methodHeap->contains( start ) ) {
-        n = ( NativeMethod * ) _methodHeap->findStartOfBlock( start );
-        st_assert( ( const char * ) start < ( const char * ) n->locsEnd(), "found wrong NativeMethod" );
+        n = (NativeMethod *) _methodHeap->findStartOfBlock( start );
+        st_assert( (const char *) start < (const char *) n->locsEnd(), "found wrong NativeMethod" );
     }
     st_assert( _methodHeap->contains( n ), "not in zone" );
     st_assert( n->isNativeMethod(), "findNativeMethod didn't find NativeMethod" );
@@ -655,15 +655,15 @@ NativeMethod * Zone::findNativeMethod( const void * start ) const {
 }
 
 
-NativeMethod * Zone::findNativeMethod_maybe( void * start ) const {
+NativeMethod *Zone::findNativeMethod_maybe( void *start ) const {
     // start *may* point into the instructions part of a NativeMethod; find it
     if ( not _methodHeap->contains( start ) )
         return nullptr;
     // relies on FOR_ALL_NMETHODS to enumerate in ascending order
     FOR_ALL_NMETHODS( p ) {
-        if ( p->instructionsStart() > ( const char * ) start )
+        if ( p->instructionsStart() > (const char *) start )
             return nullptr;
-        if ( p->instructionsEnd() > ( const char * ) start )
+        if ( p->instructionsEnd() > (const char *) start )
             return p;
     }
     return nullptr;
@@ -674,10 +674,10 @@ void Zone::mark_dependents_for_deoptimization() {
     ResourceMark resourceMark;
     FOR_ALL_NMETHODS( nm ) {
         if ( nm->depends_on_invalid_klass() ) {
-            GrowableArray <NativeMethod *> * nms = nm->invalidation_family();
-            
-            for ( int                      index = 0; index < nms->length(); index++ ) {
-                NativeMethod * elem = nms->at( index );
+            GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
+
+            for ( int index = 0; index < nms->length(); index++ ) {
+                NativeMethod *elem = nms->at( index );
                 if ( TraceApplyChange ) {
                     _console->print( "invalidating " );
                     elem->print_value_on( _console );
@@ -711,7 +711,7 @@ void Zone::make_marked_nativeMethods_zombies() {
 }
 
 
-const char * Zone::instsStart() {
+const char *Zone::instsStart() {
     return _methodHeap->startAddr();
 }
 
@@ -721,7 +721,7 @@ int Zone::instsSize() {
 }
 
 
-NativeMethod * Zone::next_circular_nm( NativeMethod * nm ) {
+NativeMethod *Zone::next_circular_nm( NativeMethod *nm ) {
     nm     = next_nm( nm );
     if ( nm == nullptr )
         nm = first_nm();
@@ -731,7 +731,7 @@ NativeMethod * Zone::next_circular_nm( NativeMethod * nm ) {
 
 // called every LRU_RESOLUTION seconds or by reclaimNativeMethods if needed
 // returns time at which oldest non-reclaimed NativeMethod will be reclaimed
-int Zone::sweeper( int maxVisit, int maxReclaim, int * nvisited, int * nbytesReclaimed ) {
+int Zone::sweeper( int maxVisit, int maxReclaim, int *nvisited, int *nbytesReclaimed ) {
 #ifdef NOT_IMPLEMENTED
     EventMarker  em( "LRU sweep" );
     ResourceMark resourceMark;
@@ -836,7 +836,7 @@ int Zone::LRU_time() {
 
 
 void printAllNativeMethods() {
-    for ( NativeMethod * m = Universe::code->first_nm(); m not_eq nullptr; m = Universe::code->next_nm( m ) ) {
+    for ( NativeMethod *m = Universe::code->first_nm(); m not_eq nullptr; m = Universe::code->next_nm( m ) ) {
         if ( not m->isZombie() ) {
             m->scopes()->print_partition();
         }
@@ -848,9 +848,9 @@ void printAllNativeMethods() {
 
 // On the x86, the I cache is consistent after the next branch or call, so don't need to do any flushing.
 
-void flushICacheWord( void * addr ) {
+void flushICacheWord( void *addr ) {
 }
 
 
-void flushICacheRange( void * start, void * end ) {
+void flushICacheRange( void *start, void *end ) {
 }

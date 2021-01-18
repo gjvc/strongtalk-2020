@@ -89,7 +89,7 @@ bool_t operator==( MappingEntry x, MappingEntry y ) {
 
 int MappingTask::number_of_targets() {
     int result = 0;
-    for ( MappingTask * current = this; current; current = current->next() ) {
+    for ( MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.has_reg() )
             result++;
         if ( current->dst.has_stack() )
@@ -99,8 +99,8 @@ int MappingTask::number_of_targets() {
 }
 
 
-bool_t MappingTask::in_parent_chain( MappingTask * task ) {
-    for ( MappingTask * current = this; current; current = current->parent() ) {
+bool_t MappingTask::in_parent_chain( MappingTask *task ) {
+    for ( MappingTask *current = this; current; current = current->parent() ) {
         if ( current == task )
             return true;
     }
@@ -109,7 +109,7 @@ bool_t MappingTask::in_parent_chain( MappingTask * task ) {
 
 
 bool_t MappingTask::target_includes( Variable var ) {
-    for ( MappingTask * current = this; current; current = current->next() ) {
+    for ( MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.reg() == var or current->dst.stack() == var )
             return true;
     }
@@ -117,7 +117,7 @@ bool_t MappingTask::target_includes( Variable var ) {
 }
 
 
-bool_t MappingTask::is_dependent( MapConformance * mc, MappingTask * task ) {
+bool_t MappingTask::is_dependent( MapConformance *mc, MappingTask *task ) {
     // Do we have to process task before this?
     // => do task->results overlap with src?
     if ( this == task )
@@ -172,14 +172,14 @@ bool_t MappingTask::is_dependent( MapConformance * mc, MappingTask * task ) {
 }
 
 
-void MappingTask::process_task( MapConformance * mc, MappingTask * p ) {
+void MappingTask::process_task( MapConformance *mc, MappingTask *p ) {
     if ( is_processed() )
         return;
 
     // Is anybody dependent on source?
     set_parent( p );
     for ( int i = 0; i < mc->_mappings->length(); i++ ) {
-        MappingTask * task = mc->_mappings->at( i );
+        MappingTask *task = mc->_mappings->at( i );
         if ( not task->is_processed() and is_dependent( mc, task ) ) {
             task->process_task( mc, this );
         }
@@ -193,12 +193,12 @@ void MappingTask::process_task( MapConformance * mc, MappingTask * p ) {
 }
 
 
-void MappingTask::generate_code( MapConformance * mc ) {
+void MappingTask::generate_code( MapConformance *mc ) {
     bool_t uses_temp = false;
 
     if ( uses_top_of_stack() ) {
         //Use source register for moves
-        for ( MappingTask * current = this; current; current = current->next() ) {
+        for ( MappingTask *current = this; current; current = current->next() ) {
             if ( current->dst.has_reg() ) {
                 mc->pop( current->dst.reg() );
             }
@@ -208,7 +208,7 @@ void MappingTask::generate_code( MapConformance * mc ) {
         }
     } else if ( src.has_reg() ) {
         //Use source register for moves
-        for ( MappingTask * current = this; current; current = current->next() ) {
+        for ( MappingTask *current = this; current; current = current->next() ) {
             if ( current->dst.has_reg() ) {
                 mc->move( src.reg(), current->dst.reg() );
             }
@@ -219,7 +219,7 @@ void MappingTask::generate_code( MapConformance * mc ) {
     } else {
         //Use register in target or free register
         Variable temp;
-        for ( MappingTask * current = this; current; current = current->next() ) {
+        for ( MappingTask *current = this; current; current = current->next() ) {
             if ( current->dst.has_reg() )
                 temp = current->dst.reg();
         }
@@ -230,7 +230,7 @@ void MappingTask::generate_code( MapConformance * mc ) {
         if ( temp.in_register() ) {
             //We found a temporary register
             mc->move( src.stack(), temp );
-            for ( MappingTask * current = this; current; current = current->next() ) {
+            for ( MappingTask *current = this; current; current = current->next() ) {
                 if ( current->dst.has_reg() and not( current->dst.reg() == temp ) ) {
                     mc->move( temp, current->dst.reg() );
                 }
@@ -242,7 +242,7 @@ void MappingTask::generate_code( MapConformance * mc ) {
                 mc->push_temporary( temp );
             }
         } else {
-            for ( MappingTask * current = this; current; current = current->next() ) {
+            for ( MappingTask *current = this; current; current = current->next() ) {
                 if ( current->dst.has_reg() ) {
                     mc->push( src.stack() );
                     mc->pop( current->dst.reg() );
@@ -272,7 +272,7 @@ void MappingTask::print( int index ) {
 
 
 MapConformance::MapConformance() {
-    _mappings      = new GrowableArray <MappingTask *>( 20 );
+    _mappings      = new GrowableArray<MappingTask *>( 20 );
     _usedVariables = nullptr;
     _free_register.set_unused();
 }
@@ -286,7 +286,7 @@ void MapConformance::append_mapping( Variable src_register, Variable src_stack, 
 void MapConformance::generate( Variable free_register1, Variable free_register2 ) {
     _free_register         = free_register1;
     // There is max. 2 used variables per mapping.
-    _usedVariables         = new_resource_array <Variable>( _mappings->length() * 2 );
+    _usedVariables         = new_resource_array<Variable>( _mappings->length() * 2 );
     _numberOfUsedVariables = 0;
 
     simplify();
@@ -328,7 +328,7 @@ void MapConformance::print() {
 }
 
 
-bool_t MapConformance::reduce_noop_task( MappingTask * task ) {
+bool_t MapConformance::reduce_noop_task( MappingTask *task ) {
     // A noop task if destination is a subset of source
     bool_t result = true;
 
@@ -349,10 +349,10 @@ bool_t MapConformance::reduce_noop_task( MappingTask * task ) {
 void MapConformance::simplify() {
     // Links tasks with identical source.
     for ( int x = 0; x < _mappings->length(); x++ ) {
-        MappingTask * x_task = _mappings->at( x );
+        MappingTask *x_task = _mappings->at( x );
         if ( not x_task->is_processed() and not reduce_noop_task( x_task ) ) {
             for ( int y = x + 1; y < _mappings->length(); y++ ) {
-                MappingTask * y_task = _mappings->at( y );
+                MappingTask *y_task = _mappings->at( y );
                 if ( x_task->src == y_task->src )
                     x_task->append( y_task );
             }

@@ -10,23 +10,23 @@
 
 #include <array>
 
-std::array <const char *, REGISTER_COUNT> registerNames = {
-    "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
+std::array<const char *, REGISTER_COUNT> registerNames = {
+        "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
 };
 
 
-const char * Register::name() const {
-    return ( const char * ) ( isValid() ? registerNames[ _number ] : "noreg" );
+const char *Register::name() const {
+    return (const char *) ( isValid() ? registerNames[ _number ] : "noreg" );
 }
 
 
 Register::Register( void ) :
-    _number( -1 ) {
+        _number( -1 ) {
 }
 
 
 Register::Register( int number, char f ) :
-    _number( number ) {
+        _number( number ) {
 }
 
 
@@ -46,11 +46,11 @@ bool_t Register::hasByteRegister() const {
 }
 
 
-bool_t Register::operator==( const Register & rhs ) const {
+bool_t Register::operator==( const Register &rhs ) const {
     return rhs._number == _number;
 }
 
 
-bool_t Register::operator!=( const Register & rhs ) const {
+bool_t Register::operator!=( const Register &rhs ) const {
     return rhs._number != _number;
 }

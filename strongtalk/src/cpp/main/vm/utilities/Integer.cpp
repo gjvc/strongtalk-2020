@@ -30,7 +30,7 @@ int Integer::length_in_bits() const {
 }
 
 
-int Integer::as_int( bool_t & ok ) const {
+int Integer::as_int( bool_t &ok ) const {
 
     ok = true;
     switch ( _signed_length ) {
@@ -50,13 +50,13 @@ int Integer::as_int( bool_t & ok ) const {
 }
 
 
-std::uint32_t Integer::as_unsigned_int( bool_t & ok ) const {
+std::uint32_t Integer::as_unsigned_int( bool_t &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case 0:
             return 0;
         case 1:
-            return ( std::uint32_t ) _first_digit;
+            return (std::uint32_t) _first_digit;
             break;
     }
     ok = false;
@@ -64,7 +64,7 @@ std::uint32_t Integer::as_unsigned_int( bool_t & ok ) const {
 }
 
 
-double Integer::as_double( bool_t & ok ) const {
+double Integer::as_double( bool_t &ok ) const {
 
     // filter out trivial result 0.0
     ok = true;
@@ -102,14 +102,14 @@ double Integer::as_double( bool_t & ok ) const {
     d[ n - 1 ] = d[ n - 1 ] | ( Digit( exponent ) << ( logB - right_shift_count ) );
 
     // cast d into double & set sign
-    double result = *( ( double * ) &d[ n - ( double_length / logB ) ] );
+    double result = *( (double *) &d[ n - ( double_length / logB ) ] );
     if ( is_negative() )
         result = -result;
     return result;
 }
 
 
-SMIOop Integer::as_smi( bool_t & ok ) const {
+SMIOop Integer::as_smi( bool_t &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case -1:
@@ -144,13 +144,13 @@ void Integer::set_length( int l ) {
 }
 
 
-Digit & Integer::operator[]( int i ) const {
+Digit &Integer::operator[]( int i ) const {
     return digits()[ i ];
 }
 
 
-Digit * Integer::digits() const {
-    return ( Digit * ) &_first_digit;
+Digit *Integer::digits() const {
+    return (Digit *) &_first_digit;
 }
 
 

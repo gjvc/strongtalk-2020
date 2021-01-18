@@ -12,34 +12,34 @@
 
 
 class PrintObjectClosure : public ObjectLayoutClosure {
-    private:
-        MemOop _memOop;
+private:
+    MemOop _memOop;
 
-        ConsoleOutputStream * _stream;
-    public:
-        PrintObjectClosure( ConsoleOutputStream * stream = nullptr );
+    ConsoleOutputStream *_stream;
+public:
+    PrintObjectClosure( ConsoleOutputStream *stream = nullptr );
 
-        void do_object( MemOop obj );
+    void do_object( MemOop obj );
 
-        void do_mark( MarkOop * m );
+    void do_mark( MarkOop *m );
 
-        void do_oop( const char * title, Oop * o );
+    void do_oop( const char *title, Oop *o );
 
-        void do_byte( const char * title, std::uint8_t * b );
+    void do_byte( const char *title, std::uint8_t *b );
 
-        void do_long( const char * title, void ** p );
+    void do_long( const char *title, void **p );
 
-        void do_double( const char * title, double * d );
+    void do_double( const char *title, double *d );
 
-        void begin_indexables();
+    void begin_indexables();
 
-        void end_indexables();
+    void end_indexables();
 
-        void do_indexable_oop( int index, Oop * o );
+    void do_indexable_oop( int index, Oop *o );
 
-        void do_indexable_byte( int index, std::uint8_t * b );
+    void do_indexable_byte( int index, std::uint8_t *b );
 
-        void do_indexable_doubleByte( int index, std::uint16_t * b );
+    void do_indexable_doubleByte( int index, std::uint16_t *b );
 
-        void do_indexable_long( int index, std::int32_t * l );
+    void do_indexable_long( int index, std::int32_t *l );
 };

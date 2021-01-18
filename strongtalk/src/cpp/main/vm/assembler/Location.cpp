@@ -11,13 +11,13 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-static std::array <const char *, nofSpecialLocations> specialLocNames{
-    "illegalLocation",          //
-    "unAllocated",              //
-    "noRegister",               //
-    "topOfStack",               //
-    "resultOfNonLocalReturn",   //
-    "topOfFloatStack"           //
+static std::array<const char *, nofSpecialLocations> specialLocNames{
+        "illegalLocation",          //
+        "unAllocated",              //
+        "noRegister",               //
+        "topOfStack",               //
+        "resultOfNonLocalReturn",   //
+        "topOfFloatStack"           //
 };
 
 
@@ -30,7 +30,7 @@ void Location::overflow( Mode mode, int f1, int f2, int f3 ) {
 
 
 Location::Location( Mode mode, int f ) {
-    _loc = ( int ) mode + ( f << _fPos );
+    _loc = (int) mode + ( f << _fPos );
 }
 
 
@@ -41,39 +41,39 @@ Location::Location( Mode mode, int f1, int f2, int f3 ) {
 }
 
 
-const char * Location::name() const {
+const char *Location::name() const {
 
-    char * s;
+    char *s;
     switch ( mode() ) {
         case Mode::specialLoc: {
-            const char * name = specialLocNames[ id() ];
-            s = new_resource_array <char>( strlen( name ) );
+            const char *name = specialLocNames[ id() ];
+            s = new_resource_array<char>( strlen( name ) );
             sprintf( s, name );
             break;
         }
         case Mode::registerLoc: {
-            const char * name = Mapping::asRegister( *this ).name();
-            s                 = new_resource_array <char>( 8 );
+            const char *name = Mapping::asRegister( *this ).name();
+            s                = new_resource_array<char>( 8 );
             sprintf( s, name );
             break;
         }
         case Mode::stackLoc: {
-            s = new_resource_array <char>( 8 );
+            s = new_resource_array<char>( 8 );
             sprintf( s, "S%d", offset() );
             break;
         }
         case Mode::contextLoc1: {
-            s = new_resource_array <char>( 24 );
+            s = new_resource_array<char>( 24 );
             sprintf( s, "C0x%08x,%d(%d)", contextNo(), tempNo(), scopeID() );
             break;
         }
         case Mode::contextLoc2: {
-            s = new_resource_array <char>( 24 );
+            s = new_resource_array<char>( 24 );
             sprintf( s, "C%d,%d[%d]", contextNo(), tempNo(), scopeOffs() );
             break;
         }
         case Mode::floatLoc: {
-            s = new_resource_array <char>( 16 );
+            s = new_resource_array<char>( 16 );
             sprintf( s, "F%d(%d)", floatNo(), scopeNo() );
             break;
         }
@@ -115,7 +115,7 @@ void IntFreeList::grow() {
 
 IntFreeList::IntFreeList( int size ) {
     _first = -1;
-    _list  = new GrowableArray <int>( 2 );
+    _list  = new GrowableArray<int>( 2 );
     st_assert( _list->length() == 0, "should be zero" );
 }
 

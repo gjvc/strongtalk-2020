@@ -17,7 +17,7 @@
 #include "vm/memory/vmSymbols.hpp"
 
 
-void setKlassVirtualTableFromMemOopKlass( Klass * k ) {
+void setKlassVirtualTableFromMemOopKlass( Klass *k ) {
     MemOopKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -56,7 +56,7 @@ bool_t MemOopKlass::oop_verify( Oop obj ) {
 }
 
 
-void MemOopKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
+void MemOopKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
     // instance variables
@@ -64,7 +64,7 @@ void MemOopKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
 }
 
 
-void MemOopKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
+void MemOopKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
     // instance variables
@@ -72,14 +72,14 @@ void MemOopKlass::oop_oop_iterate( Oop obj, OopClosure * blk ) {
 }
 
 
-void MemOopKlass::oop_print_on( Oop obj, ConsoleOutputStream * stream ) {
+void MemOopKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     PrintObjectClosure blk( stream );
     blk.do_object( MemOop( obj ) );
     MemOop( obj )->layout_iterate( &blk );
 }
 
 
-void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream ) {
+void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     if ( obj == nilObj )
         stream->print( "nil" );
     else if ( obj == trueObj )
@@ -102,7 +102,7 @@ Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
     int      size = non_indexable_size();
 
-    Oop * result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
         return nullptr;
     // allocate
@@ -173,10 +173,10 @@ Oop MemOopKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
 
     int len = MemOop( obj )->size();
     // Important to preserve obj (in case of scavenge).
-    Oop * clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, ( MemOop * ) &obj );
-    Oop * to    = clone;
-    Oop * from  = ( Oop * ) MemOop( obj )->addr();
-    Oop * end   = to + len;
+    Oop *clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, (MemOop *) &obj );
+    Oop *to    = clone;
+    Oop *from  = (Oop *) MemOop( obj )->addr();
+    Oop *end   = to + len;
     while ( to < end )
         *to++ = *from++;
 

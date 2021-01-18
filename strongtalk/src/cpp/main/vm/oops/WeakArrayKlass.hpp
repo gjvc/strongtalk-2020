@@ -12,55 +12,55 @@
 
 
 class WeakArrayKlass : public ObjectArrayKlass {
-    public:
-        friend void setKlassVirtualTableFromWeakArrayKlass( Klass * k );
+public:
+    friend void setKlassVirtualTableFromWeakArrayKlass( Klass *k );
 
 
-        const char * name() const {
-            return "weakArray";
-        }
+    const char *name() const {
+        return "weakArray";
+    }
 
 
-        // creates invocation
-        KlassOop create_subclass( MixinOop mixin, Format format );
+    // creates invocation
+    KlassOop create_subclass( MixinOop mixin, Format format );
 
-        static KlassOop create_class( KlassOop super_class, MixinOop mixin );
-
-
-        // Format
-        Format format() {
-            return Format::weakArray_klass;
-        }
-
-        // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
-
-        // memory operations
-        int oop_scavenge_contents( Oop obj );
-
-        int oop_scavenge_tenured_contents( Oop obj );
-
-        void oop_follow_contents( Oop obj );
+    static KlassOop create_class( KlassOop super_class, MixinOop mixin );
 
 
-        // testers
-        bool_t oop_is_weakArray() const {
-            return true;
-        }
+    // Format
+    Format format() {
+        return Format::weakArray_klass;
+    }
+
+    // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
+
+    // memory operations
+    int oop_scavenge_contents( Oop obj );
+
+    int oop_scavenge_tenured_contents( Oop obj );
+
+    void oop_follow_contents( Oop obj );
 
 
-        // iterators
-        void oop_oop_iterate( Oop obj, OopClosure * blk );
+    // testers
+    bool_t oop_is_weakArray() const {
+        return true;
+    }
 
-        void oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk );
+
+    // iterators
+    void oop_oop_iterate( Oop obj, OopClosure *blk );
+
+    void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
 
 
-        // Sizing
-        int oop_header_size() const {
-            return WeakArrayOopDescriptor::header_size();
-        }
+    // Sizing
+    int oop_header_size() const {
+        return WeakArrayOopDescriptor::header_size();
+    }
 };
 
-void setKlassVirtualTableFromWeakArrayKlass( Klass * k );
+void setKlassVirtualTableFromWeakArrayKlass( Klass *k );
 // The weak array register is used during memory management to
 // split the object scanning into two parts:
 //   1. Transively traverse all object except the indexable part
@@ -79,66 +79,66 @@ void setKlassVirtualTableFromWeakArrayKlass( Klass * k );
 
 // Interface for weak array support
 class WeakArrayRegister : AllStatic {
-    public:
-        // Scavenge interface
-        static void begin_scavenge();
+public:
+    // Scavenge interface
+    static void begin_scavenge();
 
-        static bool_t scavenge_register( WeakArrayOop obj );
+    static bool_t scavenge_register( WeakArrayOop obj );
 
-        static void check_and_scavenge_contents();
+    static void check_and_scavenge_contents();
 
-        // Mark sweep interface
-        static void begin_mark_sweep();
+    // Mark sweep interface
+    static void begin_mark_sweep();
 
-        static bool_t mark_sweep_register( WeakArrayOop obj, int non_indexable_size );
+    static bool_t mark_sweep_register( WeakArrayOop obj, int non_indexable_size );
 
-        static void check_and_follow_contents();
+    static void check_and_follow_contents();
 
-    private:
-        // Variables
-        static bool_t during_registration;
-        static GrowableArray <WeakArrayOop> * weakArrays;
-        static GrowableArray <int>          * nis;
+private:
+    // Variables
+    static bool_t during_registration;
+    static GrowableArray<WeakArrayOop> *weakArrays;
+    static GrowableArray<int>          *nis;
 
-        // Scavenge operations
-        static void scavenge_contents();
+    // Scavenge operations
+    static void scavenge_contents();
 
-        static inline bool_t scavenge_is_near_death( Oop obj );
+    static inline bool_t scavenge_is_near_death( Oop obj );
 
-        static void scavenge_check_for_dying_objects();
+    static void scavenge_check_for_dying_objects();
 
-        // Mark sweep operations
-        static void follow_contents();
+    // Mark sweep operations
+    static void follow_contents();
 
-        static inline bool_t mark_sweep_is_near_death( Oop obj );
+    static inline bool_t mark_sweep_is_near_death( Oop obj );
 
-        static void mark_sweep_check_for_dying_objects();
+    static void mark_sweep_check_for_dying_objects();
 };
 
 // The NotificationQueue holds references to weakArrays
 // containing object with a near death experience.
 class NotificationQueue : AllStatic {
-    public:
-        // Queue operations
-        static void mark_elements();   // Marks all elements as queued (by using the sentinel bit)
-        static void clear_elements();  // Reset the sentinel bit
+public:
+    // Queue operations
+    static void mark_elements();   // Marks all elements as queued (by using the sentinel bit)
+    static void clear_elements();  // Reset the sentinel bit
 
-        static bool_t is_empty();
+    static bool_t is_empty();
 
-        static Oop get();
+    static Oop get();
 
-        static void put( Oop obj );
+    static void put( Oop obj );
 
-        static void put_if_absent( Oop obj );
+    static void put_if_absent( Oop obj );
 
-        // Memory management
-        static void oops_do( void f( Oop * ) );
+    // Memory management
+    static void oops_do( void f( Oop * ) );
 
-    private:
-        static Oop * array;
-        static int size;
-        static int first;
-        static int last;
+private:
+    static Oop *array;
+    static int size;
+    static int first;
+    static int last;
 
-        static int succ( int index );
+    static int succ( int index );
 };

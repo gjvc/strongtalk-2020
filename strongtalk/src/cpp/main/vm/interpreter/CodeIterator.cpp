@@ -13,7 +13,7 @@
 
 
 bool_t Interpreted_DLLCache::async() const {
-    std::uint8_t * p = ( std::uint8_t * ) this;                // p point to first Oop in DLL call
+    std::uint8_t *p = (std::uint8_t *) this;                // p point to first Oop in DLL call
     while ( ByteCodes::Code( *--p ) == ByteCodes::Code::halt );    // search back for DLL call bytecode
     ByteCodes::Code code = ByteCodes::Code( *p );
     st_assert( code == ByteCodes::Code::dll_call_sync or code == ByteCodes::Code::dll_call_async, "not a dll call" );
@@ -26,8 +26,8 @@ void CodeIterator::align() {
 }
 
 
-std::uint8_t * CodeIterator::align( std::uint8_t * p ) const {
-    return ( std::uint8_t * ) ( ( ( int ) p + 3 ) & ( ~3 ) );
+std::uint8_t *CodeIterator::align( std::uint8_t *p ) const {
+    return (std::uint8_t *) ( ( (int) p + 3 ) & ( ~3 ) );
 }
 
 
@@ -39,7 +39,7 @@ CodeIterator::CodeIterator( MethodOop method, int startByteCodeIndex ) {
 }
 
 
-CodeIterator::CodeIterator( std::uint8_t * hp ) {
+CodeIterator::CodeIterator( std::uint8_t *hp ) {
     _methodOop = MethodOopDescriptor::methodOop_from_hcode( hp );
     _current   = hp;
     _end       = _methodOop->codes_end();
@@ -61,7 +61,7 @@ int CodeIterator::next_byteCodeIndex() const {
 }
 
 
-std::uint8_t * CodeIterator::next_hp() const {
+std::uint8_t *CodeIterator::next_hp() const {
 
     if ( _current >= _end )
         return nullptr;
@@ -101,7 +101,7 @@ std::uint8_t * CodeIterator::next_hp() const {
 }
 
 
-InterpretedInlineCache * CodeIterator::ic() {
+InterpretedInlineCache *CodeIterator::ic() {
 
     switch ( format() ) {
 
@@ -121,17 +121,17 @@ InterpretedInlineCache * CodeIterator::ic() {
 }
 
 
-Interpreted_DLLCache * CodeIterator::dll_cache() {
+Interpreted_DLLCache *CodeIterator::dll_cache() {
     return reinterpret_cast<Interpreted_DLLCache *>( align( _current + 1 ) );
 }
 
 
-InterpretedPrimitiveCache * CodeIterator::primitive_cache() {
+InterpretedPrimitiveCache *CodeIterator::primitive_cache() {
     return reinterpret_cast<InterpretedPrimitiveCache *>(_current);
 }
 
 
-const char * CodeIterator::interpreter_return_point( bool_t restore_value ) const {
+const char *CodeIterator::interpreter_return_point( bool_t restore_value ) const {
     // The return is only valid if we are in a send/primtive call/dll call.
 
     if ( is_message_send() ) {
@@ -172,7 +172,7 @@ const char * CodeIterator::interpreter_return_point( bool_t restore_value ) cons
 }
 
 
-Oop * CodeIterator::block_method_addr() {
+Oop *CodeIterator::block_method_addr() {
     switch ( code() ) {
         case ByteCodes::Code::push_new_closure_tos_0:      // fall through
         case ByteCodes::Code::push_new_closure_tos_1:      // fall through
@@ -209,7 +209,7 @@ MethodOop CodeIterator::block_method() {
 void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar_name or code() == ByteCodes::Code::store_classVar_pop_name or code() == ByteCodes::Code::store_classVar_name, "must be class variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     AssociationOop assoc = to_klass->klass_part()->lookup_class_var( name );
@@ -228,7 +228,7 @@ void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
 void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     if ( code() == ByteCodes::Code::push_classVar )
@@ -244,7 +244,7 @@ void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
 void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     AssociationOop new_assoc = to_klass->klass_part()->lookup_class_var( old_assoc->key() );
@@ -265,7 +265,7 @@ void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_
 void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar_name or code() == ByteCodes::Code::store_instVar_pop_name or code() == ByteCodes::Code::store_instVar_name or code() == ByteCodes::Code::return_instVar_name, "must be instance variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     int offset = to_klass->klass_part()->lookup_inst_var( name );
@@ -286,7 +286,7 @@ void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
 void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar or code() == ByteCodes::Code::store_instVar_pop or code() == ByteCodes::Code::store_instVar or code() == ByteCodes::Code::return_instVar, "must be instance variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
     int       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
@@ -308,7 +308,7 @@ void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
 void CodeIterator::recustomize_inst_var_code( KlassOop from_klass, KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar or code() == ByteCodes::Code::store_instVar_pop or code() == ByteCodes::Code::store_instVar or code() == ByteCodes::Code::return_instVar, "must be instance variable byte code" );
 
-    Oop * p = aligned_oop( 1 );
+    Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
     int       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );

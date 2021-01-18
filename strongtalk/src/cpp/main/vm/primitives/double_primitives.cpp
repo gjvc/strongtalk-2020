@@ -17,7 +17,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
 TRACE_FUNC( TraceDoublePrims, "double" )
 
 
@@ -244,10 +243,10 @@ PRIM_DECL_1( doubleOopPrimitives::smi_floor, Oop receiver ) {
     double result = ::floor( DoubleOop( receiver )->value() );
     if ( result < 0.0 ) {
         if ( result > smi_min )
-            return smiOopFromValue( ( int ) result );
+            return smiOopFromValue( (int) result );
     } else {
         if ( result < smi_max )
-            return smiOopFromValue( ( int ) result );
+            return smiOopFromValue( (int) result );
     }
     return markSymbol( vmSymbols::conversion_failed() );
 
@@ -266,7 +265,7 @@ PRIM_DECL_1( doubleOopPrimitives::exponent, Oop receiver ) {
     PROLOGUE_1( "exponent", receiver );
     ASSERT_RECEIVER;
     int result;
-    ( void ) frexp( DoubleOop( receiver )->value(), &result );
+    (void) frexp( DoubleOop( receiver )->value(), &result );
     return smiOopFromValue( result );
 }
 
@@ -302,11 +301,11 @@ PRIM_DECL_1( doubleOopPrimitives::roundedAsSmallInteger, Oop receiver ) {
     if ( DoubleOop( receiver )->value() < 0.0 ) {
         double result = ::ceil( DoubleOop( receiver )->value() - 0.5 );
         if ( result > smi_min )
-            return smiOopFromValue( ( int ) result );
+            return smiOopFromValue( (int) result );
     } else {
         double result = ::floor( DoubleOop( receiver )->value() + 0.5 );
         if ( result < smi_max )
-            return smiOopFromValue( ( int ) result );
+            return smiOopFromValue( (int) result );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );
 }
@@ -320,10 +319,10 @@ PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
         return markSymbol( vmSymbols::smi_conversion_failed() );
     if ( value < 0.0 ) {
         if ( value > smi_min )
-            return smiOopFromValue( ( int ) value );
+            return smiOopFromValue( (int) value );
     } else {
         if ( value < smi_max )
-            return smiOopFromValue( ( int ) value );
+            return smiOopFromValue( (int) value );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );
 }
@@ -351,8 +350,8 @@ PRIM_DECL_1( doubleOopPrimitives::printString, Oop receiver ) {
     PROLOGUE_1( "printString", receiver );
     ASSERT_RECEIVER;
     ResourceMark resourceMark;
-    char         * result = new_resource_array <char>( 4 * 1024 );
-    int          len      = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
+    char *result = new_resource_array<char>( 4 * 1024 );
+    int len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
     while ( len > 1 and result[ len - 1 ] == '0' and result[ len - 2 ] not_eq '.' )
         len--;
     result[ len ]    = '\0';
@@ -383,8 +382,8 @@ PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     ASSERT_RECEIVER;
     BlockScavenge bs;
 
-    double  value  = DoubleOop( receiver )->value();
-    std::uint8_t * addr = ( std::uint8_t * ) &value;
+    double value = DoubleOop( receiver )->value();
+    std::uint8_t *addr = (std::uint8_t *) &value;
 
     ByteArrayOop result = oopFactory::new_byteArray( 8 );
     for ( int    index  = 0; index < 8; index++ ) {

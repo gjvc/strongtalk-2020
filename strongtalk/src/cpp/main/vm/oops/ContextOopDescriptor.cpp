@@ -71,7 +71,7 @@ ContextOop ContextOopDescriptor::unoptimized_context() {
 int ContextOopDescriptor::chain_length() const {
 
     int size = 1;
-    GrowableArray <ContextOop> * path = new GrowableArray <ContextOop>( 10 );
+    GrowableArray<ContextOop> *path = new GrowableArray<ContextOop>( 10 );
 
     for ( ContextOop cc = ContextOop( this ); cc->has_outer_context(); cc = cc->outer_context() ) {
         st_assert( path->find( cc ) < 0, "cycle detected in context chain" )
@@ -85,7 +85,7 @@ int ContextOopDescriptor::chain_length() const {
 }
 
 
-void ContextOopDescriptor::print_home_on( ConsoleOutputStream * stream ) {
+void ContextOopDescriptor::print_home_on( ConsoleOutputStream *stream ) {
     if ( mark()->has_context_forward() ) {
         stream->print( "deoptimized to (" );
         unoptimized_context()->print_value();

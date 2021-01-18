@@ -20,14 +20,14 @@ static const char halt_instruction = '\xF4';
 static const char jump_instruction = '\xE9';
 
 
-const char * JumpTable::allocate_jump_entries( int size ) {
+const char *JumpTable::allocate_jump_entries( int size ) {
 //  return AllocateHeap(size * JumpTableEntry::size(), "jump table");
     return os::exec_memory( size * JumpTableEntry::size() ); //, "jump table");
 }
 
 
-JumpTableEntry * JumpTable::jump_entry_for_at( const char * entries, int index ) {
-    return ( JumpTableEntry * ) &entries[ index * JumpTableEntry::size() ];
+JumpTableEntry *JumpTable::jump_entry_for_at( const char *entries, int index ) {
+    return (JumpTableEntry *) &entries[ index * JumpTableEntry::size() ];
 }
 
 
@@ -41,14 +41,14 @@ JumpTable::JumpTable() {
 
 JumpTableID JumpTable::allocate( int number_of_entries ) {
     int id = newID();
-    JumpTableEntry * entry = major_at( id );
+    JumpTableEntry *entry = major_at( id );
 
     st_assert( entry->is_unused(), "cannot allocate used jump entry" );
     if ( number_of_entries == 1 ) {
         entry->initialize_NativeMethod_stub( nullptr );
         return JumpTableID( id );
     } else {
-        const char * new_block = allocate_jump_entries( number_of_entries );
+        const char *new_block = allocate_jump_entries( number_of_entries );
         // Initialize the first entry as a NativeMethod stub
         jump_entry_for_at( new_block, 0 )->initialize_NativeMethod_stub( nullptr );
         // initialize the rest as block closure stubs
@@ -66,12 +66,12 @@ JumpTable::~JumpTable() {
 }
 
 
-JumpTableEntry * JumpTable::major_at( std::uint16_t index ) {
+JumpTableEntry *JumpTable::major_at( std::uint16_t index ) {
     return jump_entry_for_at( _entries, index );
 }
 
 
-JumpTableEntry * JumpTable::at( JumpTableID id ) {
+JumpTableEntry *JumpTable::at( JumpTableID id ) {
     st_assert( id.is_valid(), "invalid ID" );
     if ( not id.has_minor() )
         return major_at( id.major() );
@@ -126,36 +126,36 @@ void JumpTable::print() {
 }
 
 
-const char * JumpTable::compile_new_block( BlockClosureOop blk ) {
+const char *JumpTable::compile_new_block( BlockClosureOop blk ) {
 
     // Called from the compile_block stub routine (see StubRoutines)
     BlockScavenge bs;
     ResourceMark  rm;
-    NativeMethod * nm = compile_block( blk );
+    NativeMethod *nm = compile_block( blk );
 
     // return the entry point for the new NativeMethod.
     return nm->entryPoint();
 }
 
 
-NativeMethod * JumpTable::compile_block( BlockClosureOop closure ) {
+NativeMethod *JumpTable::compile_block( BlockClosureOop closure ) {
     // compute the scope for noninlined block
     int index;
-    NativeMethod                   * parent = closure->jump_table_entry()->parent_nativeMethod( index );
-    NonInlinedBlockScopeDescriptor * scope  = parent->noninlined_block_scope_at( index );
+    NativeMethod                   *parent = closure->jump_table_entry()->parent_nativeMethod( index );
+    NonInlinedBlockScopeDescriptor *scope  = parent->noninlined_block_scope_at( index );
 
     // save it in case it gets flushed during allocation!
-    JumpTableEntry * jumpEntry = closure->jump_table_entry();
+    JumpTableEntry *jumpEntry = closure->jump_table_entry();
 
     // compile the top-level block NativeMethod
     VM_OptimizeBlockMethod op( closure, scope );
     VMProcess::execute( &op );
-    NativeMethod * nm = op.method();
+    NativeMethod *nm = op.method();
 
     // patch the jump entry with the entry point of the compiled NativeMethod
     jumpEntry->set_destination( nm->entryPoint() );
 
-    JumpTableEntry * b = nm->jump_table_entry();
+    JumpTableEntry *b = nm->jump_table_entry();
     st_assert( jumpEntry == b, "jump table discrepancy" );
     return nm;
 }
@@ -168,7 +168,7 @@ void JumpTable::verify() {
     ResourceMark resourceMark;
     int          prev = -1;
 
-    bool_t * check = new_resource_array <bool_t>( length );
+    bool_t *check = new_resource_array<bool_t>( length );
     for ( int i = 0; i < length; i++ )
         check[ i ] = false;
 
@@ -196,17 +196,17 @@ static const char link_entry          = 2;
 static const char unused_entry        = 3;
 
 
-JumpTableEntry * JumpTableEntry::previous_stub() const {
-    return ( JumpTableEntry * ) ( ( ( const char * ) this ) - size() );
+JumpTableEntry *JumpTableEntry::previous_stub() const {
+    return (JumpTableEntry *) ( ( (const char *) this ) - size() );
 }
 
 
-JumpTableEntry * JumpTableEntry::next_stub() const {
-    return ( JumpTableEntry * ) ( ( ( const char * ) this ) + size() );
+JumpTableEntry *JumpTableEntry::next_stub() const {
+    return (JumpTableEntry *) ( ( (const char *) this ) + size() );
 }
 
 
-void JumpTableEntry::fill_entry( const char instr, const char * dest, char state ) {
+void JumpTableEntry::fill_entry( const char instr, const char *dest, char state ) {
     *jump_inst_addr()   = instr;
     *destination_addr() = dest;
     *state_addr()       = state;
@@ -214,22 +214,22 @@ void JumpTableEntry::fill_entry( const char instr, const char * dest, char state
 
 
 void JumpTableEntry::initialize_as_unused( int index ) {
-    fill_entry( halt_instruction, ( char * ) index, unused_entry );
+    fill_entry( halt_instruction, (char *) index, unused_entry );
 }
 
 
-void JumpTableEntry::initialize_as_link( const char * link ) {
+void JumpTableEntry::initialize_as_link( const char *link ) {
     fill_entry( halt_instruction, link, link_entry );
 }
 
 
-void JumpTableEntry::initialize_NativeMethod_stub( char * dest ) {
-    fill_entry( jump_instruction, dest - ( int ) state_addr(), nativeMethod_entry );
+void JumpTableEntry::initialize_NativeMethod_stub( char *dest ) {
+    fill_entry( jump_instruction, dest - (int) state_addr(), nativeMethod_entry );
 }
 
 
 void JumpTableEntry::initialize_block_closure_stub() {
-    fill_entry( jump_instruction, const_cast<char *>( StubRoutines::compile_block_entry() - ( int ) state_addr() ), block_closure_entry );
+    fill_entry( jump_instruction, const_cast<char *>( StubRoutines::compile_block_entry() - (int) state_addr() ), block_closure_entry );
 }
 
 
@@ -253,33 +253,33 @@ bool_t JumpTableEntry::is_link() const {
 }
 
 
-const char * JumpTableEntry::link() const {
+const char *JumpTableEntry::link() const {
     return *destination_addr();
 }
 
 
-const char ** JumpTableEntry::destination_addr() const {
-    return ( const char ** ) ( ( ( const char * ) this ) + sizeof( char ) );
+const char **JumpTableEntry::destination_addr() const {
+    return (const char **) ( ( (const char *) this ) + sizeof( char ) );
 }
 
 
-const char * JumpTableEntry::destination() const {
-    return *destination_addr() + ( int ) state_addr();
+const char *JumpTableEntry::destination() const {
+    return *destination_addr() + (int) state_addr();
 }
 
 
-void JumpTableEntry::set_destination( const char * dest ) {
-    *destination_addr() = dest - ( int ) state_addr();
+void JumpTableEntry::set_destination( const char *dest ) {
+    *destination_addr() = dest - (int) state_addr();
 }
 
 
 int JumpTableEntry::next_free() const {
     st_assert( is_unused(), "must be a unused entry" );
-    return ( int ) *destination_addr();
+    return (int) *destination_addr();
 }
 
 
-NativeMethod * JumpTableEntry::method() const {
+NativeMethod *JumpTableEntry::method() const {
     st_assert( is_NativeMethod_stub(), "must be a nativeMethod_stub" );
     return Universe::code->findNativeMethod( destination() );
 }
@@ -291,7 +291,7 @@ bool_t JumpTableEntry::block_has_nativeMethod() const {
 }
 
 
-NativeMethod * JumpTableEntry::block_nativeMethod() const {
+NativeMethod *JumpTableEntry::block_nativeMethod() const {
     st_assert( is_block_closure_stub(), "must be a block_closure_stub" );
     if ( block_has_nativeMethod() ) {
         return Universe::code->findNativeMethod( destination() );
@@ -304,23 +304,23 @@ NativeMethod * JumpTableEntry::block_nativeMethod() const {
 MethodOop JumpTableEntry::block_method() const {
     st_assert( is_block_closure_stub(), "must be a block_closure_stub" );
     if ( block_has_nativeMethod() ) {
-        NativeMethod * nm = Universe::code->findNativeMethod( destination() );
+        NativeMethod *nm = Universe::code->findNativeMethod( destination() );
         st_assert( nm not_eq nullptr, "NativeMethod must exists" );
         return nm->method();
     } else {
         int index;
-        JumpTableEntry * pe = parent_entry( index );
+        JumpTableEntry *pe = parent_entry( index );
         // find methodOop inside the NativeMethod:
         return pe->method()->noninlined_block_method_at( index );
     }
 }
 
 
-JumpTableEntry * JumpTableEntry::parent_entry( int & index ) const {
+JumpTableEntry *JumpTableEntry::parent_entry( int &index ) const {
     st_assert( is_block_closure_stub(), "must be a block_closure_stub" );
     // search back in the jump table to find the NativeMethod stub
     // responsible for this block closure stub.
-    JumpTableEntry * result = ( JumpTableEntry * ) this;
+    JumpTableEntry *result = (JumpTableEntry *) this;
     index = 0;
     do {
         index++;
@@ -330,20 +330,20 @@ JumpTableEntry * JumpTableEntry::parent_entry( int & index ) const {
 }
 
 
-NativeMethod * JumpTableEntry::parent_nativeMethod( int & index ) const {
+NativeMethod *JumpTableEntry::parent_nativeMethod( int &index ) const {
     return parent_entry( index )->method();
 }
 
 
 void JumpTableEntry::print() {
     if ( is_unused() ) {
-        _console->print_cr( "Unused {next = %d}", ( int ) destination() );
+        _console->print_cr( "Unused {next = %d}", (int) destination() );
         return;
     }
     if ( is_NativeMethod_stub() ) {
         _console->print( "NativeMethod stub " );
         Disassembler::decode( jump_inst_addr(), state_addr() );
-        NativeMethod * nm = method();
+        NativeMethod *nm = method();
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
@@ -355,7 +355,7 @@ void JumpTableEntry::print() {
     if ( is_block_closure_stub() ) {
         _console->print( "Block closure stub" );
         Disassembler::decode( jump_inst_addr(), state_addr() );
-        NativeMethod * nm = block_nativeMethod();
+        NativeMethod *nm = block_nativeMethod();
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
@@ -374,7 +374,7 @@ void JumpTableEntry::print() {
 }
 
 
-void JumpTableEntry::report_verify_error( const char * message ) {
+void JumpTableEntry::report_verify_error( const char *message ) {
     error( "JumpTableEntry %#x: %s", this, message );
 }
 
@@ -387,7 +387,7 @@ void JumpTableEntry::verify() {
 
     if ( is_NativeMethod_stub() ) {
         // Check NativeMethod
-        const char * addr = destination();
+        const char *addr = destination();
         if ( not Universe::code->contains( addr ) )
             report_verify_error( "NativeMethod not in zone" );
         if ( method()->entryPoint() not_eq addr )
@@ -397,15 +397,15 @@ void JumpTableEntry::verify() {
 
     if ( is_link() ) {
         // Verify the elements in the list {NativeMethod} {block_closure}+
-        JumpTableEntry * head = JumpTable::jump_entry_for_at( link(), 0 );
+        JumpTableEntry *head = JumpTable::jump_entry_for_at( link(), 0 );
         if ( not head->is_NativeMethod_stub() )
             report_verify_error( "must be NativeMethod stub" );
         head->verify();
-        NativeMethod * nm = method();
+        NativeMethod *nm = method();
         if ( not nm->has_noninlined_blocks() )
             report_verify_error( "NativeMethod must have noninlined blocks" );
         for ( int i = 1; i <= nm->number_of_noninlined_blocks(); i++ ) {
-            JumpTableEntry * son = JumpTable::jump_entry_for_at( link(), i );
+            JumpTableEntry *son = JumpTable::jump_entry_for_at( link(), i );
             if ( not son->is_block_closure_stub() )
                 report_verify_error( "must be block closure stub" );
             son->verify();
@@ -414,12 +414,12 @@ void JumpTableEntry::verify() {
     }
 
     if ( is_block_closure_stub() ) {
-        const char * addr = destination();
+        const char *addr = destination();
         if ( not Universe::code->contains( addr ) ) {
             if ( addr not_eq StubRoutines::compile_block_entry() )
                 report_verify_error( "destination points neither into zone nor to compile stub" );
         } else {
-            NativeMethod * nm = block_nativeMethod();
+            NativeMethod *nm = block_nativeMethod();
             if ( nm->entryPoint() not_eq addr )
                 report_verify_error( "destination doesn't point to beginning of NativeMethod" );
         }
