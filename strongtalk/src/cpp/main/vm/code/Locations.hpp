@@ -13,8 +13,6 @@
 #include "vm/system/sizes.hpp"
 
 
-
-
 // Locations manages register and stack locations. All locations are numbered. A fixed range
 // of indices >= 0 is assigned to arguments & registers and a growable range of indices >= 0
 // is assigned to stack locations.

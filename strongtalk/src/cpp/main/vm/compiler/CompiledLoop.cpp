@@ -12,12 +12,17 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 
 
-GrowableArray <BasicBlock *> * CompiledLoop::_bbs;
+GrowableArray<BasicBlock *> *CompiledLoop::_bbs;
 
 
 CompiledLoop::CompiledLoop() {
     _bbs            = nullptr;
-    _startOfLoop    = _endOfLoop = _startOfBody = _endOfBody = _startOfCond = _endOfCond = nullptr;
+    _startOfLoop    = nullptr;
+    _endOfLoop      = nullptr;
+    _startOfBody    = nullptr;
+    _endOfBody      = nullptr;
+    _startOfCond    = nullptr;
+    _endOfCond      = nullptr;
     _loopVar        = nullptr;
     _lowerBound     = nullptr;
     _upperBound     = nullptr;
@@ -29,7 +34,7 @@ CompiledLoop::CompiledLoop() {
 }
 
 
-void CompiledLoop::set_startOfLoop( LoopHeaderNode * current ) {
+void CompiledLoop::set_startOfLoop( LoopHeaderNode *current ) {
     st_assert( _startOfLoop == nullptr, "already set" );
     st_assert( current->isLoopHeaderNode(), "expected loop header" );
     _startOfLoop = _loopHeader = current;
@@ -37,7 +42,7 @@ void CompiledLoop::set_startOfLoop( LoopHeaderNode * current ) {
 }
 
 
-void CompiledLoop::set_endOfLoop( Node * end ) {
+void CompiledLoop::set_endOfLoop( Node *end ) {
     st_assert( _endOfLoop == nullptr, "already set" );
     _endOfLoop   = end;
     _startOfLoop = _startOfLoop->next();      // because original start is node *before* loop
@@ -47,13 +52,13 @@ void CompiledLoop::set_endOfLoop( Node * end ) {
 }
 
 
-void CompiledLoop::set_startOfBody( Node * current ) {
+void CompiledLoop::set_startOfBody( Node *current ) {
     st_assert( _startOfBody == nullptr, "already set" );
     _startOfBody = current;
 }
 
 
-void CompiledLoop::set_endOfBody( Node * current ) {
+void CompiledLoop::set_endOfBody( Node *current ) {
     st_assert( _endOfBody == nullptr, "already set" );
     _endOfBody       = current;
     // correct startOfBody -- merge node is created before cond
@@ -63,34 +68,34 @@ void CompiledLoop::set_endOfBody( Node * current ) {
 }
 
 
-void CompiledLoop::set_startOfCond( Node * current ) {
+void CompiledLoop::set_startOfCond( Node *current ) {
     st_assert( _startOfCond == nullptr, "already set" );
     _startOfCond = current;
 }
 
 
-void CompiledLoop::set_endOfCond( Node * current ) {
+void CompiledLoop::set_endOfCond( Node *current ) {
     st_assert( _endOfCond == nullptr, "already set" );
     _endOfCond = current;
 }
 
 
-bool_t CompiledLoop::isInLoop( Node * n ) const {
+bool_t CompiledLoop::isInLoop( Node *n ) const {
     return _firstNodeID <= n->id() and n->id() <= _lastNodeID;
 }
 
 
-bool_t CompiledLoop::isInLoopCond( Node * n ) const {
+bool_t CompiledLoop::isInLoopCond( Node *n ) const {
     return _startOfCond->id() <= n->id() and n->id() <= _endOfCond->id();
 }
 
 
-bool_t CompiledLoop::isInLoopBody( Node * n ) const {
+bool_t CompiledLoop::isInLoopBody( Node *n ) const {
     return _startOfBody->id() <= n->id() and n->id() <= _endOfBody->id();
 }
 
 
-const char * CompiledLoop::recognize() {
+const char *CompiledLoop::recognize() {
     // Recognize integer loop.
     // We're looking for a loop where the loopVariable is initialized just before
     // the loop starts, is defined only once in the loop (increment/decrement),
@@ -98,7 +103,7 @@ const char * CompiledLoop::recognize() {
     discoverLoopNesting();
     if ( not OptimizeIntegerLoops )
         return "not OptimizeIntegerLoops";
-    const char * msg;
+    const char *msg;
     if ( ( msg     = findUpperBound() ) not_eq nullptr )
         return msg;
     if ( ( msg     = checkLoopVar() ) not_eq nullptr )
@@ -113,10 +118,10 @@ const char * CompiledLoop::recognize() {
 
 void CompiledLoop::discoverLoopNesting() {
     // discover enclosing loop (if any) and set up loop header links
-    for ( InlinedScope * s = _scope; s not_eq nullptr; s = s->sender() ) {
-        GrowableArray <CompiledLoop *> * loops = s->loops();
-        for ( int                      i       = loops->length() - 1; i >= 0; i-- ) {
-            CompiledLoop * l = loops->at( i );
+    for ( InlinedScope *s = _scope; s not_eq nullptr; s = s->sender() ) {
+        GrowableArray<CompiledLoop *> *loops = s->loops();
+        for ( int                     i      = loops->length() - 1; i >= 0; i-- ) {
+            CompiledLoop *l = loops->at( i );
             if ( l->isInLoop( _loopHeader ) ) {
                 // this is out enclosing loop
                 _loopHeader->set_enclosingLoop( l->loopHeader() );
@@ -128,18 +133,18 @@ void CompiledLoop::discoverLoopNesting() {
 }
 
 
-const char * CompiledLoop::findLowerBound() {
+const char *CompiledLoop::findLowerBound() {
 
     // find lower bound; is assigned to loop var (temp) before loop
     // NB: throughout this code, "lower" and "upper" bound are used to denote the
     // starting and ending values of the loop; in the case of a downward-counting loop,
     // lowerBound will actually be the highest value.
     // search for assignment to loopVar that reaches loop head
-    Node * defNode;
-    for ( defNode = _beforeLoop; defNode and defNode->nPredecessors() < 2 and ( not defNode->hasDest() or ( ( NonTrivialNode * ) defNode )->dest() not_eq _loopVar ); defNode = defNode->firstPrev() );
+    Node *defNode;
+    for ( defNode = _beforeLoop; defNode and defNode->nPredecessors() < 2 and ( not defNode->hasDest() or ( (NonTrivialNode *) defNode )->dest() not_eq _loopVar ); defNode = defNode->firstPrev() );
     if ( defNode and defNode->isAssignNode() ) {
         // ok, loopVar is assigned here
-        _lowerBound = ( ( NonTrivialNode * ) defNode )->src();
+        _lowerBound = ( (NonTrivialNode *) defNode )->src();
     }
     return "lower bound not found";
 }
@@ -147,38 +152,38 @@ const char * CompiledLoop::findLowerBound() {
 
 // Helper class to find the last send preceding a certain byteCodeIndex
 class SendFinder : public SpecializedMethodClosure {
-    public:
-        int theByteCodeIndex, lastSendByteCodeIndex;
+public:
+    int theByteCodeIndex, lastSendByteCodeIndex;
 
 
-        SendFinder( MethodOop m, int byteCodeIndex ) :
+    SendFinder( MethodOop m, int byteCodeIndex ) :
             SpecializedMethodClosure() {
-            theByteCodeIndex      = byteCodeIndex;
-            lastSendByteCodeIndex = IllegalByteCodeIndex;
-            MethodIterator iter( m, this );
-        }
+        theByteCodeIndex      = byteCodeIndex;
+        lastSendByteCodeIndex = IllegalByteCodeIndex;
+        MethodIterator iter( m, this );
+    }
 
 
-        void send() {
-            int b = byteCodeIndex();
-            if ( b <= theByteCodeIndex and b > lastSendByteCodeIndex )
-                lastSendByteCodeIndex = b;
-        }
+    void send() {
+        int b = byteCodeIndex();
+        if ( b <= theByteCodeIndex and b > lastSendByteCodeIndex )
+            lastSendByteCodeIndex = b;
+    }
 
 
-        virtual void normal_send( InterpretedInlineCache * ic ) {
-            send();
-        }
+    virtual void normal_send( InterpretedInlineCache *ic ) {
+        send();
+    }
 
 
-        virtual void self_send( InterpretedInlineCache * ic ) {
-            send();
-        }
+    virtual void self_send( InterpretedInlineCache *ic ) {
+        send();
+    }
 
 
-        virtual void super_send( InterpretedInlineCache * ic ) {
-            send();
-        }
+    virtual void super_send( InterpretedInlineCache *ic ) {
+        send();
+    }
 };
 
 
@@ -189,34 +194,34 @@ int CompiledLoop::findStartOfSend( int byteCodeIndex ) {
 }
 
 
-const char * CompiledLoop::findUpperBound() {
+const char *CompiledLoop::findUpperBound() {
     // find upper bound and loop variable
     int condByteCodeIndex = _endOfCond ? findStartOfSend( _endOfCond->byteCodeIndex() - InterpretedInlineCache::size ) : IllegalByteCodeIndex;
     if ( condByteCodeIndex == IllegalByteCodeIndex )
         return "loop condition: no send found";
     // first find comparison in loop condition
-    Expression * loopCond = _scope->exprStackElems()->at( condByteCodeIndex );
+    Expression *loopCond = _scope->exprStackElems()->at( condByteCodeIndex );
     if ( loopCond == nullptr )
         return "loop condition: no expr (possible compiler bug)";
     if ( loopCond->isMergeExpression() ) {
-        MergeExpression * cond = ( MergeExpression * ) loopCond;
+        MergeExpression *cond = (MergeExpression *) loopCond;
         if ( cond->isSplittable() ) {
-            Node * first = cond->exprs->first()->node();
+            Node *first = cond->exprs->first()->node();
             if ( first->nPredecessors() == 1 ) {
-                Node * prev = first->firstPrev();
+                Node *prev = first->firstPrev();
                 if ( prev->isBranchNode() )
-                    _loopBranch = ( BranchNode * ) prev;
+                    _loopBranch = (BranchNode *) prev;
             }
         }
     }
     if ( not _loopBranch )
         return "loop condition: conditional branch not found";
-    NonTrivialNode * n = ( NonTrivialNode * ) _loopBranch->firstPrev();
-    PseudoRegister * operand;
+    NonTrivialNode *n = (NonTrivialNode *) _loopBranch->firstPrev();
+    PseudoRegister *operand;
     if ( n->isTArithNode() ) {
-        operand = ( ( TArithRRNode * ) n )->operand();
+        operand = ( (TArithRRNode *) n )->operand();
     } else if ( n->isArithNode() ) {
-        operand = ( ( ArithRRNode * ) n )->operand();
+        operand = ( (ArithRRNode *) n )->operand();
     } else {
         return "loop condition: comparison not found";
     }
@@ -241,7 +246,7 @@ const char * CompiledLoop::findUpperBound() {
     // directions if it doesn't work.
     if ( checkLoopVar() ) {
         // the reverse guess may be wrong too, but it doesn't hurt to try
-        PseudoRegister * temp = _loopVar;
+        PseudoRegister *temp = _loopVar;
         _loopVar    = _upperBound;
         _upperBound = temp;
     }
@@ -250,41 +255,41 @@ const char * CompiledLoop::findUpperBound() {
 
 
 // closure for finding definitions in a loop
-class LoopClosure : public Closure <Definition *> {
-    public:
-        NonTrivialNode * defNode;
-        CompiledLoop   * theLoop;
+class LoopClosure : public Closure<Definition *> {
+public:
+    NonTrivialNode *defNode;
+    CompiledLoop   *theLoop;
 
 
-        LoopClosure( CompiledLoop * l ) {
-            defNode = nullptr;
-            theLoop = l;
-        }
+    LoopClosure( CompiledLoop *l ) {
+        defNode = nullptr;
+        theLoop = l;
+    }
 };
 
 
 // count all definitions in loop
 class LoopDefCounter : public LoopClosure {
-    public:
-        int defCount;
+public:
+    int defCount;
 
 
-        LoopDefCounter( CompiledLoop * l ) :
+    LoopDefCounter( CompiledLoop *l ) :
             LoopClosure( l ) {
-            defCount = 0;
-        }
+        defCount = 0;
+    }
 
 
-        void do_it( Definition * d ) {
-            if ( theLoop->isInLoop( d->_node ) ) {
-                defCount++;
-                defNode = ( NonTrivialNode * ) d->_node;
-            }
+    void do_it( Definition *d ) {
+        if ( theLoop->isInLoop( d->_node ) ) {
+            defCount++;
+            defNode = (NonTrivialNode *) d->_node;
         }
+    }
 };
 
 
-int CompiledLoop::defsInLoop( PseudoRegister * r, NonTrivialNode ** defNode ) {
+int CompiledLoop::defsInLoop( PseudoRegister *r, NonTrivialNode **defNode ) {
     // returns the number of definitions of r within the loop
     // also sets defNode to the last definition
     // BUG: won't work if loop has sends -- will ignore possible definitions to inst vars etc.
@@ -297,18 +302,18 @@ int CompiledLoop::defsInLoop( PseudoRegister * r, NonTrivialNode ** defNode ) {
 
 
 class LoopDefFinder : public LoopClosure {
-    public:
-        LoopDefFinder( CompiledLoop * l ) :
+public:
+    LoopDefFinder( CompiledLoop *l ) :
             LoopClosure( l ) {
-        }      // don't ask why this is necessary... (MS C++ 4.0)
-        void do_it( Definition * d ) {
-            if ( theLoop->isInLoop( d->_node ) )
-                defNode = d->_node;
-        }
+    }      // don't ask why this is necessary... (MS C++ 4.0)
+    void do_it( Definition *d ) {
+        if ( theLoop->isInLoop( d->_node ) )
+            defNode = d->_node;
+    }
 };
 
 
-NonTrivialNode * CompiledLoop::findDefInLoop( PseudoRegister * r ) {
+NonTrivialNode *CompiledLoop::findDefInLoop( PseudoRegister *r ) {
     st_assert( defsInLoop( r ) == 1, "must have single definition in loop" );
     LoopDefFinder ldf( this );
     r->forAllDefsDo( &ldf );
@@ -316,7 +321,7 @@ NonTrivialNode * CompiledLoop::findDefInLoop( PseudoRegister * r ) {
 }
 
 
-const char * CompiledLoop::checkLoopVar() {
+const char *CompiledLoop::checkLoopVar() {
 #ifdef unnecessary
     // first check if loop var is initialized to lower bound
     BasicBlock* beforeLoopBasicBlock = _beforeLoop->bb();
@@ -342,23 +347,23 @@ const char * CompiledLoop::checkLoopVar() {
     if ( defsInLoop( _loopVar ) not_eq 1 )
         return "loopVar has not_eq 1 definitions in loop";
 
-    NonTrivialNode * n1 = findDefInLoop( _loopVar );
+    NonTrivialNode *n1 = findDefInLoop( _loopVar );
     if ( defsInLoop( n1->src() ) not_eq 1 )
         return "loopVar has not_eq 1 definitions in loop (2)";
 
-    NonTrivialNode * n2 = findDefInLoop( n1->src() );
-    PseudoRegister * operand;
-    ArithOpCode op;
+    NonTrivialNode *n2 = findDefInLoop( n1->src() );
+    PseudoRegister *operand;
+    ArithOpCode    op;
     if ( n2->isTArithNode() ) {
-        operand = ( ( TArithRRNode * ) n2 )->operand();
-        op      = ( ( TArithRRNode * ) n2 )->op();
+        operand = ( (TArithRRNode *) n2 )->operand();
+        op      = ( (TArithRRNode *) n2 )->op();
     } else if ( n2->isArithNode() ) {
-        operand = ( ( ArithRRNode * ) n2 )->operand();
-        op      = ( ( ArithRRNode * ) n2 )->op();
+        operand = ( (ArithRRNode *) n2 )->operand();
+        op      = ( (ArithRRNode *) n2 )->op();
     } else {
         return "loopVar def not an arithmetic operation";
     }
-    _incNode            = n2;
+    _incNode           = n2;
     if ( op not_eq ArithOpCode::tAddArithOp and op not_eq ArithOpCode::tSubArithOp )
         return "loopVar def isn't an add/sub";
     if ( _incNode->src() == _loopVar ) {
@@ -373,9 +378,9 @@ const char * CompiledLoop::checkLoopVar() {
 
     // at this point, we finally know for sure whether the loop is counting up or down
     // check that loop is bounded at all
-    BranchOpCode branchOp          = _loopBranch->op();
-    bool_t       loopVarMustBeLeft = ( branchOp == BranchOpCode::GTBranchOp or branchOp == BranchOpCode::GEBranchOp ) ^not _isCountingUp;
-    NonTrivialNode * compare = ( NonTrivialNode * ) _loopBranch->firstPrev();
+    BranchOpCode   branchOp          = _loopBranch->op();
+    bool_t         loopVarMustBeLeft = ( branchOp == BranchOpCode::GTBranchOp or branchOp == BranchOpCode::GEBranchOp ) ^not _isCountingUp;
+    NonTrivialNode *compare          = (NonTrivialNode *) _loopBranch->firstPrev();
     if ( loopVarMustBeLeft not_eq ( compare->src() == _loopVar ) ) {
         return "loopVar is on wrong side of comparison (loop not bounded)";
     }
@@ -384,11 +389,11 @@ const char * CompiledLoop::checkLoopVar() {
 }
 
 
-bool_t CompiledLoop::isIncrement( PseudoRegister * p, ArithOpCode op ) {
+bool_t CompiledLoop::isIncrement( PseudoRegister *p, ArithOpCode op ) {
     // is p a suitable increment (i.e., a positive constant or loop-invariant variable)?
     _increment = p;
     if ( p->isConstPseudoRegister() ) {
-        Oop c         = ( ( ConstPseudoRegister * ) p )->constant;
+        Oop c         = ( (ConstPseudoRegister *) p )->constant;
         if ( not c->is_smi() )
             return false;
         _isCountingUp = ( SMIOop( c )->value() > 0 ) ^ ( op == ArithOpCode::tSubArithOp );
@@ -400,7 +405,7 @@ bool_t CompiledLoop::isIncrement( PseudoRegister * p, ArithOpCode op ) {
 }
 
 
-const char * CompiledLoop::checkUpperBound() {
+const char *CompiledLoop::checkUpperBound() {
     // upper bound must not be defined in loop (loop invariant)
     _loopArray    = nullptr;
     _loopSizeLoad = nullptr;
@@ -409,12 +414,12 @@ const char * CompiledLoop::checkUpperBound() {
         return "upper bound isn't loop-invariant";
     // ok, no assignments in loop; check if upper bound is size of an array
     // search for assignment that reaches loop head
-    Node * defNode;
-    for ( defNode = _beforeLoop; defNode and defNode->nPredecessors() < 2 and ( not defNode->hasDest() or ( ( NonTrivialNode * ) defNode )->dest() not_eq _upperBound ); defNode = defNode->firstPrev() );
+    Node *defNode;
+    for ( defNode = _beforeLoop; defNode and defNode->nPredecessors() < 2 and ( not defNode->hasDest() or ( (NonTrivialNode *) defNode )->dest() not_eq _upperBound ); defNode = defNode->firstPrev() );
     if ( defNode and defNode->isArraySizeLoad() ) {
         // ok, upper bound is an array; can optimize array accesses if it is loop-invariant
         if ( defsInLoop( _loopArray ) == 0 ) {
-            _loopSizeLoad = ( LoadOffsetNode * ) defNode;
+            _loopSizeLoad = (LoadOffsetNode *) defNode;
             _loopArray    = _loopSizeLoad->base();
         }
     }
@@ -429,7 +434,7 @@ void CompiledLoop::optimizeIntegerLoop() {
         return;
 
     // activate loop header (will check upper bound for smi_t-ness etc.)
-    PseudoRegister * u = _loopSizeLoad ? nullptr : _upperBound;
+    PseudoRegister *u = _loopSizeLoad ? nullptr : _upperBound;
     _loopHeader->activate( _loopVar, _lowerBound, u, _loopSizeLoad );
     _loopHeader->_integerLoop = true;
     removeTagChecks();
@@ -448,27 +453,27 @@ void CompiledLoop::optimizeIntegerLoop() {
 
 
 // closure for untagging definitions/uses of loop var
-class UntagClosure : public Closure <Usage *> {
+class UntagClosure : public Closure<Usage *> {
 
-    public:
-        CompiledLoop             * theLoop;
-        PseudoRegister           * theLoopPReg;
-        GrowableArray <KlassOop> * smi_type;
+public:
+    CompiledLoop            *theLoop;
+    PseudoRegister          *theLoopPReg;
+    GrowableArray<KlassOop> *smi_type;
 
 
-        UntagClosure( CompiledLoop * l, PseudoRegister * r ) {
-            theLoop     = l;
-            theLoopPReg = r;
-            smi_type    = new GrowableArray <KlassOop>( 1 );
-            smi_type->append( smiKlassObj );
+    UntagClosure( CompiledLoop *l, PseudoRegister *r ) {
+        theLoop     = l;
+        theLoopPReg = r;
+        smi_type    = new GrowableArray<KlassOop>( 1 );
+        smi_type->append( smiKlassObj );
+    }
+
+
+    void do_it( Usage *u ) {
+        if ( theLoop->isInLoop( u->_node ) ) {
+            u->_node->assert_preg_type( theLoopPReg, smi_type, theLoop->loopHeader() );
         }
-
-
-        void do_it( Usage * u ) {
-            if ( theLoop->isInLoop( u->_node ) ) {
-                u->_node->assert_preg_type( theLoopPReg, smi_type, theLoop->loopHeader() );
-            }
-        }
+    }
 };
 
 
@@ -489,21 +494,21 @@ void CompiledLoop::removeTagChecks() {
 void CompiledLoop::removeLoopVarOverflow() {
 
     // bug: should remove overflow only if increment is constant and not too large -- fix this
-    Node * n = _incNode->next();
+    Node *n = _incNode->next();
     st_assert( n->isBranchNode(), "must be branch" );
-    BranchNode * overflowCheck = ( BranchNode * ) n;
+    BranchNode *overflowCheck = (BranchNode *) n;
     st_assert( overflowCheck->op() == BranchOpCode::VSBranchOp, "should be overflow check" );
     if ( CompilerDebug or PrintLoopOpts ) {
         cout( PrintLoopOpts )->print( "*removing overflow check at node N%d\n", overflowCheck->id() );
     }
-    Node * taken = overflowCheck->next( 1 );      // overflow handling code
+    Node *taken = overflowCheck->next( 1 );      // overflow handling code
     taken->removeUpToMerge();
     overflowCheck->removeNext( taken );      // so overflowCheck can be eliminated
     overflowCheck->eliminate( overflowCheck->bb(), nullptr, true, false );
 
     // since increment cannot fail anymore, directly increment loop counter if possible
     // need to search for assignment of incremented value to loop var
-    Node * a = overflowCheck->next();
+    Node *a = overflowCheck->next();
     while ( 1 ) {
         if ( a->nPredecessors() > 1 )
             break;      // can't search beyond merge
@@ -511,7 +516,7 @@ void CompiledLoop::removeLoopVarOverflow() {
             break;      // can't search beyond branches
         if ( a->isAssignNode() ) {
             if ( not a->_deleted ) {
-                AssignNode * assign = ( AssignNode * ) a;
+                AssignNode *assign = (AssignNode *) a;
                 if ( assign->src() == _incNode->dest() and assign->dest() == _loopVar ) {
                     if ( CompilerDebug or PrintLoopOpts ) {
                         cout( PrintLoopOpts )->print( "*optimizing loopVar increment at N%d\n", _incNode->id() );
@@ -530,16 +535,16 @@ void CompiledLoop::removeLoopVarOverflow() {
 
 void CompiledLoop::checkForArraysDefinedInLoop() {
     // remove all arrays from loopHeader's list which are defined in the loop
-    GrowableArray <AbstractArrayAtNode *> arraysToRemove( 10 );
-    int                                   len = _loopHeader->_arrayAccesses->length();
+    GrowableArray<AbstractArrayAtNode *> arraysToRemove( 10 );
+    int                                  len = _loopHeader->_arrayAccesses->length();
 
     for ( int i = 0; i < len; i++ ) {
-        AbstractArrayAtNode * n = _loopHeader->_arrayAccesses->at( i );
+        AbstractArrayAtNode *n = _loopHeader->_arrayAccesses->at( i );
         if ( defsInLoop( n->src() ) )
             arraysToRemove.append( n );
     }
     while ( arraysToRemove.nonEmpty() ) {
-        AbstractArrayAtNode * n = arraysToRemove.pop();
+        AbstractArrayAtNode *n = arraysToRemove.pop();
         _loopHeader->_arrayAccesses->remove( n );
     }
 }
@@ -554,67 +559,67 @@ void CompiledLoop::optimize() {
 }
 
 
-class TTHoister : public Closure <InlinedScope *> {
+class TTHoister : public Closure<InlinedScope *> {
 
-    public:
-        GrowableArray <HoistedTypeTest *> * hoistableTests;
-        CompiledLoop * theLoop;
-
-
-        TTHoister( CompiledLoop * l, GrowableArray <HoistedTypeTest *> * h ) {
-            hoistableTests = h;
-            theLoop        = l;
-        }
+public:
+    GrowableArray<HoistedTypeTest *> *hoistableTests;
+    CompiledLoop                     *theLoop;
 
 
-        void do_it( InlinedScope * s ) {
-            GrowableArray <NonTrivialNode *> * tests = s->typeTests();
-            int                              len     = tests->length();
+    TTHoister( CompiledLoop *l, GrowableArray<HoistedTypeTest *> *h ) {
+        hoistableTests = h;
+        theLoop        = l;
+    }
 
-            for ( int i = 0; i < len; i++ ) {
 
-                NonTrivialNode * n = tests->at( i );
-                st_assert( n->doesTypeTests(), "shouldn't be in list" );
-                if ( n->_deleted )
-                    continue;
-                if ( n->hasUnknownCode() )
-                    continue;      // can't optimize - expects other klasses, so would get uncommon trap at run-time
-                if ( not theLoop->isInLoop( n ) )
-                    continue;      // not in this loop
+    void do_it( InlinedScope *s ) {
+        GrowableArray<NonTrivialNode *> *tests = s->typeTests();
+        int                             len    = tests->length();
 
-                GrowableArray <PseudoRegister *>           regs( 4 );
-                GrowableArray <GrowableArray <KlassOop> *> klasses( 4 );
-                n->collectTypeTests( regs, klasses );
-                for ( int j = 0; j < regs.length(); j++ ) {
-                    PseudoRegister * r = regs.at( j );
-                    if ( theLoop->defsInLoop( r ) == 0 ) {
-                        // this test can be hoisted
-                        if ( CompilerDebug or PrintLoopOpts )
-                            cout( PrintLoopOpts )->print( "*moving type test of %s at N%d out of loop\n", r->name(), n->id() );
-                        hoistableTests->append( new HoistedTypeTest( n, r, klasses.at( j ) ) );
-                    }
+        for ( int i = 0; i < len; i++ ) {
+
+            NonTrivialNode *n = tests->at( i );
+            st_assert( n->doesTypeTests(), "shouldn't be in list" );
+            if ( n->_deleted )
+                continue;
+            if ( n->hasUnknownCode() )
+                continue;      // can't optimize - expects other klasses, so would get uncommon trap at run-time
+            if ( not theLoop->isInLoop( n ) )
+                continue;      // not in this loop
+
+            GrowableArray<PseudoRegister *>          regs( 4 );
+            GrowableArray<GrowableArray<KlassOop> *> klasses( 4 );
+            n->collectTypeTests( regs, klasses );
+            for ( int j = 0; j < regs.length(); j++ ) {
+                PseudoRegister *r = regs.at( j );
+                if ( theLoop->defsInLoop( r ) == 0 ) {
+                    // this test can be hoisted
+                    if ( CompilerDebug or PrintLoopOpts )
+                        cout( PrintLoopOpts )->print( "*moving type test of %s at N%d out of loop\n", r->name(), n->id() );
+                    hoistableTests->append( new HoistedTypeTest( n, r, klasses.at( j ) ) );
                 }
             }
         }
+    }
 };
 
 
 void CompiledLoop::hoistTypeTests() {
 
     // collect all type tests that can be hoisted out of the loop
-    _loopHeader->_tests = _hoistableTests = new GrowableArray <HoistedTypeTest *>( 10 );
+    _loopHeader->_tests = _hoistableTests = new GrowableArray<HoistedTypeTest *>( 10 );
     TTHoister tth( this, _hoistableTests );
     _scope->subScopesDo( &tth );
 
     // add type tests to loop header for testing (avoid duplicates)
     // (currently quadratic algorithm but there should be very few)
 
-    GrowableArray <HoistedTypeTest *> * headerTests = new GrowableArray <HoistedTypeTest *>( _hoistableTests->length() );
+    GrowableArray<HoistedTypeTest *> *headerTests = new GrowableArray<HoistedTypeTest *>( _hoistableTests->length() );
 
     for ( int i = _hoistableTests->length() - 1; i >= 0; i-- ) {
 
-        HoistedTypeTest * t      = _hoistableTests->at( i );
-        PseudoRegister  * tested = t->_testedPR;
+        HoistedTypeTest *t      = _hoistableTests->at( i );
+        PseudoRegister  *tested = t->_testedPR;
 
         for ( int j = headerTests->length() - 1; j >= 0; j-- ) {
 
@@ -642,7 +647,7 @@ void CompiledLoop::hoistTypeTests() {
 
     // now delete all hoisted type tests from loop body
     for ( int i = _hoistableTests->length() - 1; i >= 0; i-- ) {
-        HoistedTypeTest * t = _hoistableTests->at( i );
+        HoistedTypeTest *t = _hoistableTests->at( i );
         if ( not t->_invalid ) {
             t->_node->assert_preg_type( t->_testedPR, t->_klasses, _loopHeader );
         }
@@ -652,7 +657,7 @@ void CompiledLoop::hoistTypeTests() {
 }
 
 
-bool_t CompiledLoop::isEquivalentType( GrowableArray <KlassOop> * klasses1, GrowableArray <KlassOop> * klasses2 ) {
+bool_t CompiledLoop::isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 ) {
     // are the two lists klasses1 and klasses2 equivalent (i.e., contain the same set of klasses)?
     if ( klasses1->length() not_eq klasses2->length() )
         return false;
@@ -666,33 +671,33 @@ bool_t CompiledLoop::isEquivalentType( GrowableArray <KlassOop> * klasses1, Grow
 }
 
 
-class BoundsCheckRemover : public Closure <Usage *> {
+class BoundsCheckRemover : public Closure<Usage *> {
 
-    public:
-        CompiledLoop   * theLoop;
-        PseudoRegister * theLoopPReg;
-        GrowableArray <AbstractArrayAtNode *> * theArrayList;
+public:
+    CompiledLoop                         *theLoop;
+    PseudoRegister                       *theLoopPReg;
+    GrowableArray<AbstractArrayAtNode *> *theArrayList;
 
 
-        BoundsCheckRemover( CompiledLoop * l, PseudoRegister * r, GrowableArray <AbstractArrayAtNode *> * arrays ) {
-            theLoop      = l;
-            theLoopPReg  = r;
-            theArrayList = arrays;
+    BoundsCheckRemover( CompiledLoop *l, PseudoRegister *r, GrowableArray<AbstractArrayAtNode *> *arrays ) {
+        theLoop      = l;
+        theLoopPReg  = r;
+        theArrayList = arrays;
+    }
+
+
+    void do_it( Usage *u ) {
+        if ( theLoop->isInLoop( u->_node ) and
+             // the cast to AbstractArrayAtNode* isn't correct (u->node may be something else),
+             // but it's safe since we're only searching in the array list using pointer identity
+             theArrayList->contains( (AbstractArrayAtNode *) u->_node ) ) {
+            u->_node->assert_in_bounds( theLoopPReg, theLoop->loopHeader() );
         }
-
-
-        void do_it( Usage * u ) {
-            if ( theLoop->isInLoop( u->_node ) and
-                 // the cast to AbstractArrayAtNode* isn't correct (u->node may be something else),
-                 // but it's safe since we're only searching in the array list using pointer identity
-                 theArrayList->contains( ( AbstractArrayAtNode * ) u->_node ) ) {
-                u->_node->assert_in_bounds( theLoopPReg, theLoop->loopHeader() );
-            }
-        }
+    }
 };
 
 
-void CompiledLoop::removeBoundsChecks( PseudoRegister * array, PseudoRegister * var ) {
+void CompiledLoop::removeBoundsChecks( PseudoRegister *array, PseudoRegister *var ) {
     // Remove all bounds checks for nodes where var indexes into array.
     // This means that the arrays must be type- and bounds-checked in the loop header.
     // Thus, only do it for arrays that aren't defined within the loop, i.e.,
@@ -716,40 +721,40 @@ void CompiledLoop::findRegCandidates() {
         _bbs = bbIterator->code_generation_order();
 
 
-    GrowableArray <LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
+    GrowableArray<LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
-    const int len = _bbs->length();
-    const BasicBlock * startBasicBlock = _startOfLoop->bb();
+    const int        len              = _bbs->length();
+    const BasicBlock *startBasicBlock = _startOfLoop->bb();
 
     int i;
     for ( i = 0; _bbs->at( i ) not_eq startBasicBlock; i++ );    // search for first BasicBlock
 
-    const BasicBlock * endBasicBlock = _endOfLoop->bb();
+    const BasicBlock *endBasicBlock = _endOfLoop->bb();
 
     int ncalls = 0;
 
     // iterate through all BBs in the loop
-    for ( BasicBlock * bb = _bbs->at( i ); bb not_eq endBasicBlock; i++, bb = _bbs->at( i ) ) {
+    for ( BasicBlock *bb = _bbs->at( i ); bb not_eq endBasicBlock; i++, bb = _bbs->at( i ) ) {
         const int n = bb->duInfo.info->length();
         if ( bb->_last->isCallNode() )
             ncalls++;
         for ( int j = 0; j < n; j++ ) {
-            DefinitionUsageInfo * info = bb->duInfo.info->at( j );
-            PseudoRegister      * r    = info->_pseudoRegister;
+            DefinitionUsageInfo *info = bb->duInfo.info->at( j );
+            PseudoRegister      *r    = info->_pseudoRegister;
             if ( candidates.at( r->id() ) == nullptr )
                 candidates.at_put( r->id(), new LoopRegCandidate( r ) );
-            LoopRegCandidate * c = candidates.at( r->id() );
+            LoopRegCandidate *c = candidates.at( r->id() );
             c->incDUs( info->_usages.length(), info->_definitions.length() );
         }
     }
     loopHeader()->set_nofCallsInLoop( ncalls );
 
     // find the top 2 candidates...
-    LoopRegCandidate * first  = new LoopRegCandidate( nullptr );
-    LoopRegCandidate * second = new LoopRegCandidate( nullptr );
+    LoopRegCandidate *first  = new LoopRegCandidate( nullptr );
+    LoopRegCandidate *second = new LoopRegCandidate( nullptr );
 
     for ( int j = candidates.length() - 1; j >= 0; j-- ) {
-        LoopRegCandidate * c = candidates.at( j );
+        LoopRegCandidate *c = candidates.at( j );
         if ( c == nullptr )
             continue;
         if ( c->weight() > first->weight() ) {
@@ -778,7 +783,7 @@ void CompiledLoop::print() {
 }
 
 
-HoistedTypeTest::HoistedTypeTest( NonTrivialNode * node, PseudoRegister * testedPR, GrowableArray <KlassOop> * klasses ) {
+HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses ) {
     this->_node     = node;
     this->_testedPR = testedPR;
     this->_klasses  = klasses;
@@ -786,7 +791,7 @@ HoistedTypeTest::HoistedTypeTest( NonTrivialNode * node, PseudoRegister * tested
 }
 
 
-void HoistedTypeTest::print_test_on( ConsoleOutputStream * s ) {
+void HoistedTypeTest::print_test_on( ConsoleOutputStream *s ) {
     s->print( "%s = {", _testedPR->name() );
 
     int len = _klasses->length();

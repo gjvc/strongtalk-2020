@@ -31,7 +31,7 @@ class PseudoRegisterClosure : public PrintableResourceObject {
 // and one stack location, but different PseudoRegisters may be mapped to the same location. Because
 // of register moving/spilling, PseudoRegister locations may change automatically.
 //
-// Note: The _NonLocalReturninProgress flag indicates that the current mapping also reserves the
+// Note: The _NonLocalReturnInProgress flag indicates that the current mapping also reserves the
 //       3 special registers used during NonLocalReturns. This is needed because these registers
 //       are not explicitly visible in the intermediate data structure (no PseudoRegisters) but
 //       have to be preserved anyway (e.g. code generation for conformance mappings).

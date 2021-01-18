@@ -5,11 +5,9 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/code/MapConformance.hpp"
-#include "MapConformance.hpp"
 
 
 void Variable::print() {

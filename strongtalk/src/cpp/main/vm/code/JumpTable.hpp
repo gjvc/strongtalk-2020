@@ -32,9 +32,8 @@ class JumpTableID : ValueObject {
 
         friend class JumpTable;
 
-        enum {
-            max_value = nthMask( 16 ) //
-        };
+        static constexpr int max_value = nthMask( 16 ); //
+
 
     public:
         JumpTableID() :

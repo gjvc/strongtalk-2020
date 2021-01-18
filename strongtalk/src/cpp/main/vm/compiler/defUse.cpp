@@ -66,18 +66,18 @@ CopyPropagationInfo * new_CPInfo( NonTrivialNode * n ) {
 
 
 CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode * n ) {
-    def = n;
+    _definition = n;
     if ( not n->hasSrc() ) {
         cpCreateFailed = true;        // can't eliminate register
         return;
     }
-    r   = n->src();
-    if ( r->isConstPseudoRegister() )
+    _register = n->src();
+    if ( _register->isConstPseudoRegister() )
         return;   // can always eliminate if defined by constant  (was bug; fixed 7/26/96 -Urs)
     // (as int32_t as constants aren't register-allocated)
     PseudoRegister * eliminatee = n->dest();
     if ( eliminatee->_debug ) {
-        if ( r->extendLiveRange( eliminatee->scope(), eliminatee->endByteCodeIndex() ) ) {
+        if ( _register->extendLiveRange( eliminatee->scope(), eliminatee->endByteCodeIndex() ) ) {
             // ok, the replacement PseudoRegister covers the eliminated PseudoRegister's debug-visible live range
             // (begByteCodeIndex must be covered if endByteCodeIndex is covered)
         } else {
@@ -88,18 +88,18 @@ CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode * n ) {
 
 
 bool_t CopyPropagationInfo::isConstant() const {
-    return r->isConstPseudoRegister();
+    return _register->isConstPseudoRegister();
 }
 
 
 Oop CopyPropagationInfo::constant() const {
     st_assert( isConstant(), "not constant" );
-    return ( ( ConstPseudoRegister * ) r )->constant;
+    return ( ( ConstPseudoRegister * ) _register )->constant;
 }
 
 
 void CopyPropagationInfo::print() {
-    lprintf( "*(CopyPropagationInfo*)%#x : def %#x, %s\n", this, def, r->name() );
+    lprintf( "*(CopyPropagationInfo*)%#x : def %#x, %s\n", this, _definition, _register->name() );
 }
 
 

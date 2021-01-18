@@ -694,17 +694,17 @@ void PseudoRegister::updateCPInfo( NonTrivialNode * n ) {
         if ( _debug ) {
             // canBeEliminated assures that all definitions are equivalent
             CopyPropagationInfo * cpi = new_CPInfo( n );
-            st_assert( cpi and cpi->r->cpReg() == cpReg(), "can't handle this" );
+            st_assert( cpi and cpi->_register->cpReg() == cpReg(), "can't handle this" );
         } else {
             // can't really handle copy-propagation w/multiple definitions; make sure we don't use
             // bad information
-            _copyPropagationInfo->r = dummyPR;
+            _copyPropagationInfo->_register = dummyPR;
         }
     } else {
         _copyPropagationInfo = new_CPInfo( n );
         st_assert( not _debug or _copyPropagationInfo or isBlockPseudoRegister(), "couldn't create info" );
         if ( _copyPropagationInfo ) {
-            PseudoRegister * r = _copyPropagationInfo->r;
+            PseudoRegister * r = _copyPropagationInfo->_register;
             // if we're eliminating a debug-visible PseudoRegister, the replacement
             // must be debug-visible, too (so that it isn't allocated to
             // a temp reg)
@@ -823,14 +823,14 @@ bool_t PseudoRegister::isCPEquivalent( PseudoRegister * r ) const {
         return true;
 
     // try receiver's copy-propagation info
-    for ( CopyPropagationInfo * i = _copyPropagationInfo; i and i->r; i = i->r->_copyPropagationInfo ) {
-        if ( i->r == r )
+    for ( CopyPropagationInfo * i = _copyPropagationInfo; i and i->_register; i = i->_register->_copyPropagationInfo ) {
+        if ( i->_register == r )
             return true;
     }
 
     // now try the other way
-    for ( CopyPropagationInfo * i = r->_copyPropagationInfo; i and i->r; i = i->r->_copyPropagationInfo ) {
-        if ( i->r == this )
+    for ( CopyPropagationInfo * i = r->_copyPropagationInfo; i and i->_register; i = i->_register->_copyPropagationInfo ) {
+        if ( i->_register == this )
             return true;
     }
     return false;
@@ -909,7 +909,7 @@ PseudoRegister * PseudoRegister::cpReg() const {
         return ( PseudoRegister * ) this;
     } else {
         PseudoRegister            * r;
-        for ( CopyPropagationInfo * i = _copyPropagationInfo; i; r = i->r, i = r->_copyPropagationInfo );
+        for ( CopyPropagationInfo * i = _copyPropagationInfo; i; r = i->_register, i = r->_copyPropagationInfo );
         return r == dummyPR ? ( PseudoRegister * ) this : r;
     }
 }

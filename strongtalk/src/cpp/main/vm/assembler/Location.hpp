@@ -249,9 +249,9 @@ const Location topOfFloatStack        = Location::specialLocation( 5 );    // on
 class IntFreeList : public PrintableResourceObject {
 
     protected:
-        int _first;     // the first available integer
+        int _first;                     // the first available integer
         GrowableArray <int> * _list;    // the list
-        std::vector <int> _vector;
+        std::vector <int> _vector;      //
 
         void grow();
 

@@ -16,12 +16,12 @@
 class CopyPropagationInfo : public PrintableResourceObject {
 
     public:
-        NonTrivialNode * def;   // eliminated definition
-        PseudoRegister * r;     // equivalent PseudoRegister
+        NonTrivialNode * _definition;   // eliminated definition
+        PseudoRegister * _register;     // equivalent PseudoRegister
 
         CopyPropagationInfo( NonTrivialNode * d, PseudoRegister * r1 ) {
-            def = d;
-            r   = r1;
+            _definition = d;
+            _register   = r1;
         }
 
 
