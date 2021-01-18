@@ -198,7 +198,7 @@ void vframeKlass::print( oop obj ) {
         if ( vfo->is_live() ) {
             VirtualFrame * vf  = vfo->as_vframe();
             char         * sel = vf->selector() ? symbolOop( vf->selector() )->copy_null_terminated() : "...";
-            lprintf( "(%s / %#lx %#lx) ", sel, vfo->fr(), vfo->locals() );
+            lprintf( "(%s / %#lx %#lx) ", sel, vfo->_frame(), vfo->locals() );
         } else {
             lprintf( "(DEAD)" );
         }
@@ -213,7 +213,7 @@ void vframeKlass::print_oop( oop obj ) {
     if ( WizardMode && live ) {
         ResourceMark resourceMark;
         VirtualFrame * vf = vframeOop( obj )->as_vframe();
-        lprintf( " <%#lx @ %#lx # %ld>", vf->fr, vf->code, long( vf->descOffset()->value() ) );
+        lprintf( " <%#lx @ %#lx # %ld>", vf->_frame, vf->code, long( vf->descOffset()->value() ) );
 
         methodKlass * mm = ( methodKlass * ) vf->method()->Klass();
         symbolOop   file = mm->file();

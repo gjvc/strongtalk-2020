@@ -7,7 +7,7 @@
 #include "vm/compiler/DefinitionUsageInfo.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/CopyPropagationInfo.hpp"
-#include "BasicBlock.hpp"
+#include "vm/compiler/BasicBlock.hpp"
 
 
 static Closure <Definition *> * theDefIterator;

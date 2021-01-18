@@ -802,21 +802,4 @@ char ** os::argv() {
     return __argv;
 }
 
-
-#ifdef _WINDOWS
-
-int CALLBACK WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow) {
-  // Save all parameters
-  _hInstance     = hInst;
-  _hPrevInstance = hPrevInst;
-  _nCmdShow      = cmdShow;
-  return vm_main(__argc, __argv);
-}
-#else
-//int main(int argc, char**argv) {
-//    return vm_main(argc, argv);
-//}
-#endif
-
-
 #endif

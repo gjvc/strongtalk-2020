@@ -8,7 +8,6 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/runtime.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/system/sizes.hpp"
 
 
 MacroAssembler::MacroAssembler( CodeBuffer * code ) :

@@ -24,7 +24,6 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/system/sizes.hpp"
 
 
 // Computes the byte offset from the beginning of an Oop

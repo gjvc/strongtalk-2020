@@ -27,25 +27,25 @@
 // %note:
 //    This function is highly INTEL specific.
 
-bool_t patch_uncommon_call( Frame * f ) {
+bool_t patch_uncommon_call( Frame *f ) {
     // patch the call site:
     //  from: call _unused_uncommon_trap
     //  to:   call _used_uncommon_trap
 
-    int * next_inst = ( int * ) f->pc();
-    int * dest_addr = next_inst - 1;
-    int dest = *dest_addr + ( int ) next_inst;
+    int *next_inst = (int *) f->pc();
+    int *dest_addr = next_inst - 1;
+    int dest = *dest_addr + (int) next_inst;
 
     // return true if the call has been executed before
-    if ( dest == ( int ) StubRoutines::used_uncommon_trap_entry() )
+    if ( dest == (int) StubRoutines::used_uncommon_trap_entry() )
         return true;
 
-    st_assert( dest == ( int ) StubRoutines::unused_uncommon_trap_entry(), "Make sure we are patching the right call" );
+    st_assert( dest == (int) StubRoutines::unused_uncommon_trap_entry(), "Make sure we are patching the right call" );
 
     // patch with used_uncommon_trap
-    *dest_addr = ( ( int ) StubRoutines::used_uncommon_trap_entry() ) - ( ( int ) next_inst );
+    *dest_addr = ( (int) StubRoutines::used_uncommon_trap_entry() ) - ( (int) next_inst );
 
-    st_assert( *dest_addr + ( int ) next_inst == ( int ) StubRoutines::used_uncommon_trap_entry(), "Check the patch" );
+    st_assert( *dest_addr + (int) next_inst == (int) StubRoutines::used_uncommon_trap_entry(), "Check the patch" );
 
     // return false since the call is patched
     return false;
@@ -54,13 +54,13 @@ bool_t patch_uncommon_call( Frame * f ) {
 
 // Tells whether the frame is a candidate for deoptimization by
 // checking if the frame uses contextOops with forward pointers.
-static bool_t has_invalid_context( Frame * f ) {
+static bool_t has_invalid_context( Frame *f ) {
     // Return false if we're not in compiled code
     if ( not f->is_compiled_frame() )
         return false;
 
     // Iterate over the vframes and check the compiled_context
-    CompiledVirtualFrame * vf = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( f );
+    CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( f );
     st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     while ( true ) {
         ContextOop con = vf->compiled_context();
@@ -73,7 +73,7 @@ static bool_t has_invalid_context( Frame * f ) {
             return true;
         if ( vf->is_top() )
             break;
-        vf = ( CompiledVirtualFrame * ) vf->sender();
+        vf = (CompiledVirtualFrame *) vf->sender();
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     }
     return false;
@@ -83,25 +83,25 @@ static bool_t has_invalid_context( Frame * f ) {
 // -----------------------------------------------------------------------------
 
 class FrameAndContextElement : public ResourceObject {
-    public:
-        Frame      fr;
-        ContextOop con;
+public:
+    Frame      _frame;
+    ContextOop _context;
 
 
-        FrameAndContextElement( Frame * f, ContextOop c ) {
-            fr  = *f;
-            con = c;
-        }
+    FrameAndContextElement( Frame *f, ContextOop c ) {
+        _frame   = *f;
+        _context = c;
+    }
 };
 
 
-void collect_compiled_contexts_for( Frame * f, GrowableArray <FrameAndContextElement *> * elements ) {
+void collect_compiled_contexts_for( Frame *f, GrowableArray<FrameAndContextElement *> *elements ) {
     // Return false if we're not in compiled code
     if ( not f->is_compiled_frame() )
         return;
 
     // Iterate over the vframes and check the compiled_context
-    CompiledVirtualFrame * vf = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( f );
+    CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( f );
     st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     while ( true ) {
         ContextOop con = vf->compiled_context();
@@ -110,7 +110,7 @@ void collect_compiled_contexts_for( Frame * f, GrowableArray <FrameAndContextEle
         }
         if ( vf->is_top() )
             break;
-        vf = ( CompiledVirtualFrame * ) vf->sender();
+        vf = (CompiledVirtualFrame *) vf->sender();
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     }
 }
@@ -119,15 +119,15 @@ void collect_compiled_contexts_for( Frame * f, GrowableArray <FrameAndContextEle
 // -----------------------------------------------------------------------------
 
 class EnableDeoptimization : StackAllocatedObject {
-    public:
-        EnableDeoptimization() {
-            StackChunkBuilder::begin_deoptimization();
-        }
+public:
+    EnableDeoptimization() {
+        StackChunkBuilder::begin_deoptimization();
+    }
 
 
-        ~EnableDeoptimization() {
-            StackChunkBuilder::end_deoptimization();
-        }
+    ~EnableDeoptimization() {
+        StackChunkBuilder::end_deoptimization();
+    }
 };
 
 
@@ -140,7 +140,7 @@ void uncommon_trap() {
 
     ResourceMark resourceMark;
     // Find the frame that caused the uncommon trap
-    DeltaProcess * process = DeltaProcess::active();
+    DeltaProcess *process = DeltaProcess::active();
 
     process->verify();
 
@@ -153,9 +153,9 @@ void uncommon_trap() {
     bool_t used = patch_uncommon_call( &f );
 
     // Find the NativeMethod containing the uncommon trap
-    CompiledVirtualFrame * vf = ( CompiledVirtualFrame * ) VirtualFrame::new_vframe( &f );
+    CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &f );
     st_assert( vf->is_compiled_frame(), "must be compiled frame" );
-    NativeMethod * nm = vf->code();
+    NativeMethod *nm = vf->code();
 
     nm->inc_uncommon_trap_counter();
 
@@ -210,7 +210,7 @@ void uncommon_trap() {
             // Recipe:
             //   walk the stack and collect a work list of {frame, compiled_context} pairs.
             //   iterate over the work list until no deoptimized contextOops are present.
-            GrowableArray <FrameAndContextElement *> * elements = new GrowableArray <FrameAndContextElement *>( 10 );
+            GrowableArray<FrameAndContextElement *> *elements = new GrowableArray<FrameAndContextElement *>( 10 );
 
             for ( Frame current_frame = f.sender(); not current_frame.is_first_frame(); current_frame = current_frame.sender() ) {
                 collect_compiled_contexts_for( &current_frame, elements );
@@ -221,12 +221,12 @@ void uncommon_trap() {
             while ( not done ) {
                 done = true;
                 for ( int i = 0; i < elements->length() and done; i++ ) {
-                    FrameAndContextElement * e = elements->at( i );
-                    if ( e and e->con->unoptimized_context() ) {
-                        process->deoptimize_stretch( &e->fr, &e->fr );
+                    FrameAndContextElement *e = elements->at( i );
+                    if ( e and e->_context->unoptimized_context() ) {
+                        process->deoptimize_stretch( &e->_frame, &e->_frame );
 
                         for ( int j = 0; j < elements->length(); j++ ) {
-                            if ( elements->at( j ) and elements->at( j )->fr.fp() == e->fr.fp() )
+                            if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() )
                                 elements->at_put( j, nullptr );
                         }
                         done = false;

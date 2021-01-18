@@ -69,23 +69,23 @@ bool vframeOopDesc::is_above( frame * fr ) {
 
 
 bool vframeOopDesc::is_below( VirtualFrame * vf ) {
-    if ( is_below( vf->fr ) )
+    if ( is_below( vf->_frame ) )
         return true;
-    if ( is_above( vf->fr ) )
+    if ( is_above( vf->_frame ) )
         return false;
     return descOffset() > vf->descOffset();
 }
 
 
 bool vframeOopDesc::is_equal( VirtualFrame * vf ) {
-    return is_equal( vf->fr ) && descOffset() == vf->descOffset();
+    return is_equal( vf->_frame ) && descOffset() == vf->descOffset();
 }
 
 
 bool vframeOopDesc::is_above( VirtualFrame * vf ) {
-    if ( is_above( vf->fr ) )
+    if ( is_above( vf->_frame ) )
         return true;
-    if ( is_below( vf->fr ) )
+    if ( is_below( vf->_frame ) )
         return false;
     return descOffset() < vf->descOffset();
 }
@@ -111,7 +111,7 @@ vframeOop new_senderVFrameOop( Process * p, vframeOop from, VirtualFrame * vf ) 
             fatal( "unexpected kind" );
     }
     vfo->set_process( p );
-    vfo->set_locals( vf->fr->stack_locals() );
+    vfo->set_locals( vf->_frame->stack_locals() );
     vfo->set_method( vf->method() );
     vfo->set_descOffset( vf->descOffset() );
 
@@ -148,7 +148,7 @@ vframeOop new_vframeOop( Process * p, VirtualFrame * vf ) {
             fatal( "unexpected kind" );
     }
     vfo->set_process( p );
-    vfo->set_locals( vf->fr->stack_locals() );
+    vfo->set_locals( vf->_frame->stack_locals() );
     vfo->set_method( vf->method() );
     vfo->set_descOffset( vf->descOffset() );
     vfo = p->insertVFrameOop( vfo );

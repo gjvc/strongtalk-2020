@@ -7,22 +7,22 @@
 #include "vm/system/os.hpp"
 #include "vm/runtime/vmOperations.hpp"
 
-
 #include <iostream>
 #include <cstdlib>
 
 
 void atexit_handler_1() {
-    std::cout << "at exit #1\n";
+    std::cout << "atexit_handler_1()\n";
 }
 
 
 void atexit_handler_2() {
-    std::cout << "at exit #2\n";
+    std::cout << "atexit_handler_2()\n";
 }
 
 
 int main( int argc, char * argv[] ) {
+
     const int result_1 = std::atexit( atexit_handler_1 );
     const int result_2 = std::atexit( atexit_handler_2 );
 
