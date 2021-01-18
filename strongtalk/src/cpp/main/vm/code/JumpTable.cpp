@@ -52,7 +52,7 @@ JumpTableID JumpTable::allocate( int number_of_entries ) {
         // Initialize the first entry as a NativeMethod stub
         jump_entry_for_at( new_block, 0 )->initialize_NativeMethod_stub( nullptr );
         // initialize the rest as block closure stubs
-        for ( int i = 1; i < number_of_entries; i++ ) {
+        for ( std::size_t i = 1; i < number_of_entries; i++ ) {
             jump_entry_for_at( new_block, i )->initialize_block_closure_stub();
         }
         entry->initialize_as_link( new_block );
@@ -83,7 +83,7 @@ void JumpTable::init() {
     // free list: firstFree keeps first free index, entries[firstFree] keeps index
     // of next free element, etc.
     _firstFree = usedIDs = 0;
-    for ( int i = 0; i < length; i++ )
+    for ( std::size_t i = 0; i < length; i++ )
         major_at( i )->initialize_as_unused( i + 1 );
 }
 
@@ -117,7 +117,7 @@ void JumpTable::freeID( int index ) {
 
 void JumpTable::print() {
     _console->print_cr( "JumpTable %#lx: capacity %ld (%ld used)", this, length, usedIDs );
-    for ( int i = 0; i < length; i++ ) {
+    for ( std::size_t i = 0; i < length; i++ ) {
         if ( not major_at( i )->is_unused() ) {
             _console->print( " %3d: ", i );
             major_at( i )->print();
@@ -169,7 +169,7 @@ void JumpTable::verify() {
     int          prev = -1;
 
     bool_t *check = new_resource_array<bool_t>( length );
-    for ( int i = 0; i < length; i++ )
+    for ( std::size_t i = 0; i < length; i++ )
         check[ i ] = false;
 
     int j = 0;
@@ -404,7 +404,7 @@ void JumpTableEntry::verify() {
         NativeMethod *nm = method();
         if ( not nm->has_noninlined_blocks() )
             report_verify_error( "NativeMethod must have noninlined blocks" );
-        for ( int i = 1; i <= nm->number_of_noninlined_blocks(); i++ ) {
+        for ( std::size_t i = 1; i <= nm->number_of_noninlined_blocks(); i++ ) {
             JumpTableEntry *son = JumpTable::jump_entry_for_at( link(), i );
             if ( not son->is_block_closure_stub() )
                 report_verify_error( "must be block closure stub" );

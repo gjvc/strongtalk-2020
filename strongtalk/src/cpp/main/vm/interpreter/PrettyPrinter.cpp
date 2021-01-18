@@ -146,7 +146,7 @@ static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOo
         return false;
     }
 
-    for ( int i = 1; i <= selector->length(); i++ ) {
+    for ( std::size_t i = 1; i <= selector->length(); i++ ) {
         int c = selector->byte_at( i );
         output->print_char( c );
         if ( c == ':' ) {
@@ -333,7 +333,7 @@ public:
             output->space();
         }
 
-        for ( int i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             output->space();
         }
@@ -349,7 +349,7 @@ public:
         if ( _beginSym )
             w += output->width_of_string( _beginSym ) + output->width_of_space();
 
-        for ( int i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output ) + output->width_of_space();
         }
 
@@ -538,7 +538,7 @@ public:
         if ( p._elements->length() == 0 )
             return nullptr;
         listNode *l = new listNode( "|", "|" );
-        for ( int i = 0; i < p._elements->length(); i++ )
+        for ( std::size_t i = 0; i < p._elements->length(); i++ )
             l->add( p._elements->at( i ) );
         return l;
     }
@@ -551,7 +551,7 @@ public:
             return nullptr;
 
         listNode *l = new listNode( nullptr, "|" );
-        for ( int i = 0; i < p._elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < p._elements->length(); i++ ) {
             l->add( p._elements->at( i ) );
         }
         return l;
@@ -627,7 +627,7 @@ public:
                 output->print( " [expression stack:" );
                 output->newline();
                 GrowableArray<Oop> *stack = fr()->expression_stack();
-                for ( int index = 0; index < stack->length(); index++ ) {
+                for ( std::size_t index = 0; index < stack->length(); index++ ) {
                     output->print( " - " );
                     stack->at( index )->print_value();
                     output->newline();
@@ -847,7 +847,7 @@ bool_t codeNode::print( prettyPrintStream *output ) {
 
     bool_t first = true;
 
-    for ( int i = 0; i < _statements->length(); i++ ) {
+    for ( std::size_t i = 0; i < _statements->length(); i++ ) {
         astNode *s = _statements->at( i );
         if ( not first ) {
             output->print( "." );
@@ -1122,7 +1122,7 @@ public:
         int arg = _selector->number_of_arguments();
         int w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
 
-        for ( int i = 0; i < _arguments->length(); i++ )
+        for ( std::size_t i = 0; i < _arguments->length(); i++ )
             w += _arguments->at( i )->width( output );
 
         return w;
@@ -1398,7 +1398,7 @@ public:
         this->_isOuter  = is_outer;
         this->_elements = new GrowableArray<astNode *>( 10 );
 
-        for ( int i = 1; i <= value->length(); i++ )
+        for ( std::size_t i = 1; i <= value->length(); i++ )
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
     }
 
@@ -1407,7 +1407,7 @@ public:
         HIGHLIGHT
         astNode::print( output );
         output->print( "#(" );
-        for ( int i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             if ( i < _elements->length() - 1 )
                 output->space();
@@ -1420,7 +1420,7 @@ public:
     int width( prettyPrintStream *output ) {
         int w = output->width_of_string( "#(" ) + output->width_of_string( ")" );
 
-        for ( int i = 0; i < _elements->length(); i++ ) {
+        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output );
             if ( i < _elements->length() - 1 )
                 w += output->width_of_space();
@@ -1468,7 +1468,7 @@ public:
         output->space();
         _funcName->print( output );
         output->print( ">" );
-        for ( int i = _arguments->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = _arguments->length() - 1; i >= 0; i-- ) {
             _arguments->at( i )->print( output );
             if ( i < _arguments->length() - 1 )
                 output->print( ", " );
@@ -1658,7 +1658,7 @@ public:
     bool_t print( prettyPrintStream *output ) {
         _receiver->print( output );
         output->inc_newline();
-        for ( int i = 0; i < _messages->length(); i++ ) {
+        for ( std::size_t i = 0; i < _messages->length(); i++ ) {
             if ( i == 0 )
                 output->print( "  " );
             else
@@ -1715,7 +1715,7 @@ void prettyPrintStream::print() {
 
 
 void defaultPrettyPrintStream::indent() {
-    for ( int i = 0; i < _indentation; i++ ) {
+    for ( std::size_t i = 0; i < _indentation; i++ ) {
         space();
         space();
     }
@@ -1723,7 +1723,7 @@ void defaultPrettyPrintStream::indent() {
 
 
 void defaultPrettyPrintStream::print( const char *str ) {
-    for ( int i = 0; str[ i ]; i++ )
+    for ( std::size_t i = 0; str[ i ]; i++ )
         print_char( str[ i ] );
 }
 
@@ -1736,7 +1736,7 @@ void defaultPrettyPrintStream::print_char( char c ) {
 
 int defaultPrettyPrintStream::width_of_string( const char *str ) {
     int       w = 0;
-    for ( int i = 0; str[ i ]; i++ )
+    for ( std::size_t i = 0; str[ i ]; i++ )
         w += width_of_char( str[ i ] );
     return w;
 }
@@ -2074,7 +2074,7 @@ void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
     for ( int                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( int i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( _pop() );
@@ -2091,7 +2091,7 @@ void MethodPrettyPrinter::special_send( astNode *receiver, SymbolOop selector, b
     for ( int                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( int i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( receiver );
@@ -2241,7 +2241,7 @@ void MethodPrettyPrinter::dll_call_node( DLLCallNode *node ) {
     for ( int                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( int i = 0; i < nargs; i++ )
+    for ( std::size_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_proxy( _pop() );

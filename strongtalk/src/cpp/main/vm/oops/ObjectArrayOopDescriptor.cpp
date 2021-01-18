@@ -23,7 +23,7 @@ bool_t ObjectArrayOopDescriptor::verify() {
 void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         stream->read_oop( objs( i ) );
 }
 
@@ -35,7 +35,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( int index, int number ) {
         new_array->obj_at_put( i, obj_at( i ) );
 
     // copy  [index+number..length]
-    for ( int i = index; i <= length() - number; i++ )
+    for ( std::size_t i = index; i <= length() - number; i++ )
         new_array->obj_at_put( i, obj_at( i + number ) );
 
     return new_array;
@@ -45,7 +45,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( int index, int number ) {
 ObjectArrayOop ObjectArrayOopDescriptor::copy() {
     ObjectArrayOop new_array = oopFactory::new_objArray( length() );
 
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         new_array->obj_at_put( i, obj_at( i ) );
 
     return new_array;
@@ -95,12 +95,12 @@ void ObjectArrayOopDescriptor::replace_from_to( int from, int to, ObjectArrayOop
     int other_index = start;
     if ( start < to ) {
         // copy up
-        for ( int i = from; i <= to; i++ ) {
+        for ( std::size_t i = from; i <= to; i++ ) {
             source->obj_at_put( other_index++, obj_at( i ) );
         }
     } else {
         // copy down
-        for ( int i = to; i >= from; i-- ) {
+        for ( std::size_t i = to; i >= from; i-- ) {
             source->obj_at_put( other_index--, obj_at( i ) );
         }
     }
@@ -109,19 +109,19 @@ void ObjectArrayOopDescriptor::replace_from_to( int from, int to, ObjectArrayOop
 
 void ObjectArrayOopDescriptor::replace_and_fill( int from, int start, ObjectArrayOop source ) {
     // Fill the first part
-    for ( int i = 1; i < from; i++ ) {
+    for ( std::size_t i = 1; i < from; i++ ) {
         obj_at_put( i, nilObj );
     }
 
     // Fill the middle part
     int to = min( source->length() - start + 1, length() );
 
-    for ( int i = from; i <= to; i++ ) {
+    for ( std::size_t i = from; i <= to; i++ ) {
         obj_at_put( i, source->obj_at( start + i - from ) );
     }
 
     // Fill the last part
-    for ( int i = to + 1; i <= length(); i++ ) {
+    for ( std::size_t i = to + 1; i <= length(); i++ ) {
         obj_at_put( i, nilObj );
     }
 }
@@ -131,7 +131,7 @@ void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
     Oop *p = objs( 1 );
     int len = length();
 
-    for ( int i = 1; i <= len; i++ )
+    for ( std::size_t i = 1; i <= len; i++ )
         scavenge_tenured_oop( p++ );
 }
 
@@ -140,6 +140,6 @@ void WeakArrayOopDescriptor::follow_contents_after_registration() {
     Oop *p = objs( 1 );
     int len = length();
 
-    for ( int i = 1; i <= len; i++ )
+    for ( std::size_t i = 1; i <= len; i++ )
         scavenge_tenured_oop( p++ );
 }

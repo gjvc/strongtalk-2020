@@ -223,7 +223,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     GrowableArray<KlassOop> *klasses2 = new GrowableArray<KlassOop>( nexprs );
     const bool_t containsUnknown = r->containsUnknown();
 
-    for ( int i = 0; i < nexprs; i++ ) {
+    for ( std::size_t i = 0; i < nexprs; i++ ) {
         Expression *nth = r->exprs->at( i )->shallowCopy( r->preg(), nullptr );
         st_assert( not nth->isConstantExpression() or nth->next == nullptr or nth->constant() == nth->next->constant(), "shouldn't happen: merged consts - convert to klass" );
         // NB: be sure to generalize constants to klasses before inlining, so that values from an unknown source are dispatched to the optimized code also, right now the TypeTestNode only tests for klasses, not constants
@@ -291,7 +291,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
         typeCase = NodeFactory::TypeTestNode( r->preg(), klasses, info->_needRealSend or containsUnknown );
         _generator->append( typeCase );
         fallThrough = typeCase->append( NodeFactory::NopNode() );    // non-predicted case
-        for ( int i = 0; i < scopes->length(); i++ ) {
+        for ( std::size_t i = 0; i < scopes->length(); i++ ) {
             // inline one case
             Inliner *inliner = new Inliner( _sender );
             inliner->initialize( new SendInfo( *info ), _sendKind );
@@ -488,7 +488,7 @@ Expression *Inliner::picPredict() {
     int nstatic = _info->_receiver->nklasses();
     if ( npic not_eq 0 and _info->_receiver->isMergeExpression() ) {
         Expression *newReceiver = _info->_receiver;
-        for ( int i = ( (MergeExpression *) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = ( (MergeExpression *) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
             Expression *e = ( (MergeExpression *) _info->_receiver )->exprs->at( i );
             if ( e->isUnknownExpression() )
                 continue;
@@ -507,7 +507,7 @@ Expression *Inliner::picPredict() {
         cout( PrintInlining )->print( "%*s*PolymorphicInlineCache-type-predicting %s (%ld klasses): ", depth, "", _info->_selector->as_string(), npic );
 
     // iterate through PolymorphicInlineCache _info and add it to the receiver type (_info->receiver)
-    for ( int i = 0; i < klasses.length(); i++ ) {
+    for ( std::size_t i = 0; i < klasses.length(); i++ ) {
         Expression *expr = klasses.at( i );
         // use the PolymorphicInlineCache information for this case
         if ( CompilerDebug ) {

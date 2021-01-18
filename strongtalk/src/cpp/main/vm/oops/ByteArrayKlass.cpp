@@ -66,7 +66,7 @@ KlassOop ByteArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 
 
 void ByteArrayKlass::initialize_object( ByteArrayOop obj, const char *value, int len ) {
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         obj->byte_at_put( i, value[ i - 1 ] );
     }
 }
@@ -90,7 +90,7 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) 
     int          len   = array->length();
     int          n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
-    for ( int i = 1; i <= n; i++ ) {
+    for ( std::size_t i = 1; i <= n; i++ ) {
         char c = array->byte_at( i );
         if ( isprint( c ) )
             stream->print( "%c", c );
@@ -112,7 +112,7 @@ void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // indexables
     blk->begin_indexables();
     blk->do_oop( "length", l );
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_indexable_byte( i, p++ );
     }
     blk->end_indexables();

@@ -485,7 +485,7 @@ bool_t NativeMethod::depends_on_invalid_klass() {
 
     // Check dependents
     NativeMethodScopes *ns = scopes();
-    for ( int i = ns->dependent_length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = ns->dependent_length() - 1; i >= 0; i-- ) {
         if ( ns->dependent_at( i )->is_invalid() )
             return true;
     }

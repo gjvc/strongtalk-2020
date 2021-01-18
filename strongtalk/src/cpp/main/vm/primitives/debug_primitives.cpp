@@ -299,7 +299,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     col->sort( &compare_method_counters );
 
     // Print out the result
-    for ( int i = 0; i < col->length(); i++ ) {
+    for ( std::size_t i = 0; i < col->length(); i++ ) {
         MethodOop m = col->at( i );
         _console->print( "[%d] ", m->invocation_count() );
         m->pretty_print();
@@ -352,7 +352,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     // Print out the result
     int end = ( col->length() > SMIOop( size )->value() ) ? SMIOop( size )->value() : col->length();
 
-    for ( int i = 0; i < end; i++ ) {
+    for ( std::size_t i = 0; i < end; i++ ) {
         NativeMethod *m = col->at( i );
         _console->print( "[%d] ", m->invocation_count() );
         m->scopes()->print_partition();
@@ -563,7 +563,7 @@ void ObjectHistogram::print() {
     Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
 
-    for ( int i = 0; i < counters->length(); i++ ) {
+    for ( std::size_t i = 0; i < counters->length(); i++ ) {
         Counter *c = counters->at( i );
         if ( c->number > 0 ) {
             c->print( " - " );

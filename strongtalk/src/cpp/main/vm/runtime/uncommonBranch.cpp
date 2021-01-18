@@ -220,7 +220,7 @@ void uncommon_trap() {
 
             while ( not done ) {
                 done = true;
-                for ( int i = 0; i < elements->length() and done; i++ ) {
+                for ( std::size_t i = 0; i < elements->length() and done; i++ ) {
                     FrameAndContextElement *e = elements->at( i );
                     if ( e and e->_context->unoptimized_context() ) {
                         process->deoptimize_stretch( &e->_frame, &e->_frame );

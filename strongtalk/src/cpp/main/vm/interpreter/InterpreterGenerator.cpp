@@ -620,7 +620,7 @@ const char *InterpreterGenerator::with_context_temp( bool_t store, int tempNo, i
         _macroAssembler->decb( ebx );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( int i = 0; i < contextNo; i++ )
+        for ( std::size_t i = 0; i < contextNo; i++ )
             _macroAssembler->movl( ecx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );
     }
 
@@ -693,7 +693,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool_t self, int par
         _macroAssembler->decb( eax );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( int i = 0; i < paramsCount; i++ ) {
+        for ( std::size_t i = 0; i < paramsCount; i++ ) {
             _macroAssembler->movb( ebx, Address( esi, 1 + i ) );    // get i.th parameter index
             _macroAssembler->movl( edx, arg_addr( ebx ) );                     // get parameter
             Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + oopSize * ( i + oneIfSelf ) );
@@ -1270,7 +1270,7 @@ const char *InterpreterGenerator::float_op( int nof_args, bool_t returns_float )
     _macroAssembler->leal( edx, float_addr( ebx ) );        // get float address
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get function number
     _macroAssembler->movl( ecx, Address( noreg, ebx, Address::ScaleFactor::times_4, int( Floats::_function_table[ 0 ] ), RelocationInformation::RelocationType::external_word_type ) );
-    for ( int i = 0; i < nof_args; i++ )
+    for ( std::size_t i = 0; i < nof_args; i++ )
         _macroAssembler->fld_d( Address( edx, -i * SIZEOF_FLOAT ) );
     _macroAssembler->call( ecx );                // invoke operation
     load_ebx();                    // get next byte code
@@ -3349,7 +3349,7 @@ void InterpreterGenerator::generate_all() {
     // generate individual instructions
     _console->cr();
 
-    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
 
         const char *start = _macroAssembler->pc();
         const char *entry = generate_instruction( (ByteCodes::Code) i );

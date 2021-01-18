@@ -145,7 +145,7 @@ void Bootstrap::extend_oop_table() {
     _console->print_cr( "Expanding boot table to [0x%08x]", new_size );
     Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
-    for ( int i = 0; i < _max_number_of_oops; i++ )
+    for ( std::size_t i = 0; i < _max_number_of_oops; i++ )
         new_oop_table[ i ] = _oop_table[ i ];
 
     _max_number_of_oops = new_size;
@@ -477,7 +477,7 @@ double Bootstrap::read_double() {
     double value;
     std::uint8_t *str = (std::uint8_t *) &value;
 
-    for ( int i = 0; i < 8; i++ ) {
+    for ( std::size_t i = 0; i < 8; i++ ) {
         char c{};
         _stream.get( c );
 

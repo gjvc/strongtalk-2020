@@ -117,7 +117,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
 
 bool_t TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo ) {
     st_assert( name->is_symbol(), "Must be symbol" );
-    for ( int i = 1; i <= _num_of_params; i++ ) {
+    for ( std::size_t i = 1; i <= _num_of_params; i++ ) {
         ByteArrayOop par = ByteArrayOop( tempInfo->obj_at( i ) );
         st_assert( par->is_symbol(), "Must be symbol" );
         if ( name == par )

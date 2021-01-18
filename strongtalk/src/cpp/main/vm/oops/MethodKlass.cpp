@@ -297,12 +297,12 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, int flags, int n
     // merge the bytes and the oops
 
     // first copy the byte array into the method
-    for ( int i = 1; i <= bytes->length(); i++ ) {
+    for ( std::size_t i = 1; i <= bytes->length(); i++ ) {
         method->byte_at_put( i, bytes->byte_at( i ) );
     }
 
     // then merge in the oops
-    for ( int i = 1; i <= oops->length(); i++ ) {
+    for ( std::size_t i = 1; i <= oops->length(); i++ ) {
         bool_t copyOop  = true;
         int    bc_index = i * oopSize - ( oopSize - 1 );
 

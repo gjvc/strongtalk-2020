@@ -167,7 +167,7 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
     int          len = DoubleByteArrayOop( receiver )->length();
     char *buffer = new_resource_array<char>( len );
 
-    for ( int i   = 0; i < len; i++ ) {
+    for ( std::size_t i   = 0; i < len; i++ ) {
         int c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );
         if ( c >= ( 1 << 8 ) ) {
             return markSymbol( vmSymbols::value_out_of_range() );

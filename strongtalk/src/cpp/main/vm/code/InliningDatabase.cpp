@@ -330,7 +330,7 @@ bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klas
     if ( met == nullptr )
         return false;
 
-    for ( int i = 0; i < byteCodeIndexs->length(); i++ ) {
+    for ( std::size_t i = 0; i < byteCodeIndexs->length(); i++ ) {
         int byteCodeIndex = byteCodeIndexs->at( i );
         met = met->block_method_at( byteCodeIndex );
         if ( met == nullptr )
@@ -483,7 +483,7 @@ bool_t scan_key( char *line, LookupKey *key ) {
         MethodOop met = rec->klass_part()->lookup( selector );
         if ( met == nullptr )
             return false;
-        for ( int i = 0; i < byteCodeIndexs->length(); i++ ) {
+        for ( std::size_t i = 0; i < byteCodeIndexs->length(); i++ ) {
             int byteCodeIndex = byteCodeIndexs->at( i );
             met = met->block_method_at( byteCodeIndex );
             if ( met == nullptr )

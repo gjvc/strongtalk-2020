@@ -18,7 +18,7 @@ int Indent = 0;
 
 
 void printIndent() {
-    for ( int i = 0; i < Indent; i++ )
+    for ( std::size_t i = 0; i < Indent; i++ )
         lprintf( "  " );
 }
 

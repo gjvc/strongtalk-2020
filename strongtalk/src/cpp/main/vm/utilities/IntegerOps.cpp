@@ -310,7 +310,7 @@ Digit IntegerOps::scale( Digit *array, Digit factor, int length ) {
 
 Digit *IntegerOps::copyDigits( Digit *source, int length, int toCopy ) {
     Digit *x = new_resource_array<Digit>( length );
-    for ( int i = toCopy - 1; i >= 0; i-- )
+    for ( std::size_t i = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
     return x;
 }
@@ -318,7 +318,7 @@ Digit *IntegerOps::copyDigits( Digit *source, int length, int toCopy ) {
 
 Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, int length, Digit divisor ) {
     Digit     c = 0;
-    for ( int i = length - 1; i >= 0; i-- )
+    for ( std::size_t i = length - 1; i >= 0; i-- )
         x[ i + 1 ] = xdy( x[ i ], divisor, c );
     x[ 0 ]         = c;
     return x;
@@ -394,7 +394,7 @@ Digit IntegerOps::qr_scaling_factor( Digit firstDivisorDigit ) {
 
 void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, int length ) {
     Digit     c = 0;
-    for ( int i = length - 1; i >= 0; i-- )
+    for ( std::size_t i = length - 1; i >= 0; i-- )
         qr[ i ] = xdy( qr[ i ], scalingFactor, c ); // undo scaling to get remainder
     st_assert( c == 0, "qr scaling broken" );
 }
@@ -488,7 +488,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
 
 
 bool_t IntegerOps::sd_all_zero( Digit *digits, int start, int stop ) {
-    for ( int i = start; i < stop; i++ )
+    for ( std::size_t i = start; i < stop; i++ )
         if ( digits[ i ] )
             return false;
     return true;
@@ -550,9 +550,9 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
         // unsigned x < unsigned y => z = (y - x)
         Digit     carry = 0;
         int       i;
-        for ( int i     = 0; i < xl; i++ )
+        for ( std::size_t i     = 0; i < xl; i++ )
             z[ i ]  = xmy( y[ i ], x[ i ], carry );
-        for ( int i = xl; i < yl; i++ )
+        for ( std::size_t i = xl; i < yl; i++ )
             z[ i ]  = xmy( y[ i ], 0, carry );
         st_assert( carry == 0, "Remainder too large" );
 
@@ -1315,7 +1315,7 @@ void IntegerOps::Integer_to_string( Integer &x, int base, char *s ) {
 
 int IntegerOps::hash( Integer &x ) {
     int       hash = 0;
-    for ( int i    = x.length() - 1; i >= 0; i-- )
+    for ( std::size_t i    = x.length() - 1; i >= 0; i-- )
         hash ^= x[ i ];
     hash ^= x.signum();
     return hash >> 2;

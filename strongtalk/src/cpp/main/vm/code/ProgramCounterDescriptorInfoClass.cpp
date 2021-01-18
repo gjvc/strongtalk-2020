@@ -19,7 +19,7 @@ void ProgramCounterDescriptorInfoClass::extend( int newSize ) {
 
     ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 
-    for ( int i = 0; i < _end; i++ )
+    for ( std::size_t i = 0; i < _end; i++ )
         newNodes[ i ] = _nodes[ i ];
 
     _nodes = newNodes;
@@ -57,7 +57,7 @@ void ProgramCounterDescriptorInfoClass::add( int pcOffset, ScopeInfo scope, int 
 
 
 void ProgramCounterDescriptorInfoClass::mark_scopes() {
-    for ( int i = 0; i < _end; i++ ) {
+    for ( std::size_t i = 0; i < _end; i++ ) {
         if ( _nodes[ i ]._scopeInfo )
             _nodes[ i ]._scopeInfo->_usedInPcs = true;
     }
@@ -65,7 +65,7 @@ void ProgramCounterDescriptorInfoClass::mark_scopes() {
 
 
 void ProgramCounterDescriptorInfoClass::copy_to( int *&addr ) {
-    for ( int i = 0; i < _end; i++ ) {
+    for ( std::size_t i = 0; i < _end; i++ ) {
         ProgramCounterDescriptor *pc = (ProgramCounterDescriptor *) addr;
         pc->_pc            = _nodes[ i ]._pcOffset;
         pc->_scope         = _nodes[ i ]._scopeInfo ? _nodes[ i ]._scopeInfo->_offset : IllegalByteCodeIndex;

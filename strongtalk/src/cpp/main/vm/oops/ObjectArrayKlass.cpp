@@ -100,7 +100,7 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // indexables
     blk->do_oop( "length", p++ );
     blk->begin_indexables();
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_indexable_oop( i, p++ );
     }
     blk->end_indexables();
@@ -116,7 +116,7 @@ void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream 
     int            n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
 
-    for ( int i = 1; i <= n and stream->position() < MaxPrintLen; i++ ) {
+    for ( std::size_t i = 1; i <= n and stream->position() < MaxPrintLen; i++ ) {
         array->obj_at( i )->print_value_on( stream );
         stream->print( ", " );
     }
@@ -137,7 +137,7 @@ void ObjectArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     MemOopKlass::oop_oop_iterate( obj, blk );
     // indexables
     blk->do_oop( p++ );
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_oop( p++ );
     }
 }

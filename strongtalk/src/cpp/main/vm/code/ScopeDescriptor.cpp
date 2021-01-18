@@ -329,7 +329,7 @@ bool_t ScopeDescriptor::verify() {
 // verify expression stack at a call or primitive call
 void ScopeDescriptor::verify_expression_stack( int byteCodeIndex ) {
     GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex );
-    for ( int index = 0; index < mapping->length(); index++ ) {
+    for ( std::size_t index = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
             warning( "expression not found in NativeMethod" );

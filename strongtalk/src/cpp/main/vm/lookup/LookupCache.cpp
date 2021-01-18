@@ -11,6 +11,10 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/code/InliningDatabase.hpp"
+#include "vm/compiler/Compiler.hpp"
+#include "vm/runtime/Sweeper.hpp"
+#include "vm/compiler/RecompilationScope.hpp"
 
 
 int LookupCache::number_of_primary_hits;
@@ -34,11 +38,11 @@ int LookupCache::secondary_cache_address() {
 void LookupCache::flush() {
 
     // Clear primary cache
-    for ( int i = 0; i < primary_cache_size; i++ )
+    for ( std::size_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].clear();
 
     // Clear secondary cache
-    for ( int i = 0; i < secondary_cache_size; i++ )
+    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].clear();
 
     // Clear counters
@@ -70,10 +74,10 @@ void LookupCache::flush( LookupKey *key ) {
 
 void LookupCache::verify() {
 
-    for ( int i = 0; i < primary_cache_size; i++ )
+    for ( std::size_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].verify();
 
-    for ( int i = 0; i < secondary_cache_size; i++ )
+    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].verify();
 
 }
@@ -105,6 +109,8 @@ LookupResult LookupCache::lookup_probe( LookupKey *key ) {
         secondary[ secondary_index ] = tmp;
         return primary[ primary_index ]._lookupResult;
     }
+
+    //
     LookupResult nothing;
     return nothing;
 }

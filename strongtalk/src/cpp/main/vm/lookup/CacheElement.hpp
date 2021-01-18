@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -9,15 +10,9 @@
 #include "vm/system/asserts.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/lookup/LookupResult.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/code/InliningDatabase.hpp"
-#include "vm/compiler/Compiler.hpp"
-#include "vm/compiler/RecompilationScope.hpp"
-#include "vm/runtime/Sweeper.hpp"
 
 
-class CacheElement { // : ValueObj {
+class CacheElement {
 
 public:
     LookupKey    _lookupKey;

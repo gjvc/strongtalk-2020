@@ -3,6 +3,12 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+#include "vm/utilities/OutputStream.hpp"
+#include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/code/InliningDatabase.hpp"
+#include "vm/compiler/Compiler.hpp"
+#include "vm/compiler/RecompilationScope.hpp"
+#include "vm/runtime/Sweeper.hpp"
 #include "vm/lookup/CacheElement.hpp"
 
 

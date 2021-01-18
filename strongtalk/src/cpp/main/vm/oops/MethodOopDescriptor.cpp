@@ -79,7 +79,7 @@ void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     set_counters( 0, 0 );
     stream->read_oop( (Oop *) &addr()->_size_and_flags );
 
-    for ( int i = 1; i <= size_of_codes() * 4; )
+    for ( std::size_t i = 1; i <= size_of_codes() * 4; )
         if ( stream->is_byte() ) {
             byte_at_put( i, stream->read_byte() );
             i++;
@@ -357,7 +357,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                 case ByteCodes::Format::BBS: {
                     int length = c.byte_at( 1 ) == 0 ? 256 : c.byte_at( 1 );
                     out.put_byte( length );
-                    for ( int i = 0; i < length; i++ ) {
+                    for ( std::size_t i = 0; i < length; i++ ) {
                         out.put_byte( c.byte_at( 2 + i ) );
                     }
                     break;
@@ -640,7 +640,7 @@ private:
     void map_send( bool_t has_receiver, int number_of_arguments ) {
         if ( has_receiver )
             map_pop();
-        for ( int i = 0; i < number_of_arguments; i++ )
+        for ( std::size_t i = 0; i < number_of_arguments; i++ )
             map_pop();
         map_push();
     }
@@ -909,7 +909,7 @@ void ExpressionStackMapper::while_node( WhileNode *node ) {
 
 void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
     int       nofArgsToPop = node->number_of_parameters();
-    for ( int i            = 0; i < nofArgsToPop; i++ )
+    for ( std::size_t i            = 0; i < nofArgsToPop; i++ )
         map_pop();
 
     map_push();
@@ -921,7 +921,7 @@ void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
 
 void ExpressionStackMapper::dll_call_node( DLLCallNode *node ) {
 
-    for ( int i = 0; i < node->nofArgs(); i++ )
+    for ( std::size_t i = 0; i < node->nofArgs(); i++ )
         map_pop();
 
 }
@@ -939,7 +939,7 @@ GrowableArray<int> *MethodOopDescriptor::expression_stack_mapping( int byteCodeI
 
     GrowableArray<int> *result = new GrowableArray<int>( mapping->length() );
 
-    for ( int i = mapping->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = mapping->length() - 1; i >= 0; i-- ) {
         result->push( mapping->at( i ) );
     }
 
@@ -994,7 +994,7 @@ MethodOop MethodOopDescriptor::methodOop_from_hcode( std::uint8_t *hp ) {
 int MethodOopDescriptor::end_byteCodeIndex() const {
     int last_entry = this->size_of_codes() * 4;
 
-    for ( int i = 0; i < 4; i++ )
+    for ( std::size_t i = 0; i < 4; i++ )
         if ( byte_at( last_entry - i ) not_eq static_cast<int>( ByteCodes::Code::halt ) )
             return last_entry + 1 - i;
 

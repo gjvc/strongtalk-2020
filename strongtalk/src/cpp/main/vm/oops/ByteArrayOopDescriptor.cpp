@@ -44,14 +44,14 @@ char *ByteArrayOopDescriptor::copy_null_terminated( int &Clength ) {
     // Simple case failed ...
     smi_t     t = length();               // Copy and 'escape' null chars.
     smi_t     i;
-    for ( int i = length() - 1; i >= 0; i-- )
+    for ( std::size_t i = length() - 1; i >= 0; i-- )
         if ( byte_at( i ) == '\0' )
             t++;
     // t is total length of result string.
     res = new_resource_array<char>( t + 1 );
     res[ t-- ] = '\0';
     Clength = t;
-    for ( int i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
             res[ t-- ] = byte_at( i );
         } else {
@@ -72,13 +72,13 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     st_assert_byteArray( this, "should be a byte array" );
     smi_t     t = length();               // Copy and 'escape' null chars.
     smi_t     i;
-    for ( int i = length() - 1; i >= 0; i-- )
+    for ( std::size_t i = length() - 1; i >= 0; i-- )
         if ( byte_at( i ) == '\0' )
             t++;
     // t is total length of result string.
     char *res = new_c_heap_array<char>( t + 1 );
     res[ t-- ] = '\0';
-    for ( int i = length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
             res[ t-- ] = byte_at( i );
         } else {
@@ -103,7 +103,7 @@ bool_t ByteArrayOopDescriptor::copy_null_terminated( char *buffer, int max_lengt
         is_truncated = true;
     }
 
-    for ( int i = 0; i < len; i++ )
+    for ( std::size_t i = 0; i < len; i++ )
         buffer[ i ] = byte_at( i + 1 );
 
     buffer[ len ] = '\0';
@@ -116,7 +116,7 @@ void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_object( stream );
 
     stream->read_oop( length_addr() );
-    for ( int i = 1; i <= length(); i++ ) {
+    for ( std::size_t i = 1; i <= length(); i++ ) {
         byte_at_put( i, stream->read_byte() );
     }
 }
@@ -167,7 +167,7 @@ int ByteArrayOopDescriptor::compare_doubleBytes( DoubleByteArrayOop arg ) {
     int s2 = arg->length();
     int n  = s1 < s2 ? s1 : s2;
 
-    for ( int i = 1; i <= n; i++ ) {
+    for ( std::size_t i = 1; i <= n; i++ ) {
         int result = sub_sign( byte_at( i ), arg->doubleByte_at( i ) );
         if ( result not_eq 0 )
             return result;
@@ -219,7 +219,7 @@ const std::string &ByteArrayOopDescriptor::as_std_string() {
 
     std::string s{};
 
-    for ( int index = 0; index < length(); index++ ) {
+    for ( std::size_t index = 0; index < length(); index++ ) {
         s += byte_at( index + 1 );
     }
     s += '\0';
@@ -237,7 +237,7 @@ int ByteArrayOopDescriptor::number_of_arguments() const {
         return 1;
 
     // Return number of colons
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             result++;
 
@@ -248,7 +248,7 @@ int ByteArrayOopDescriptor::number_of_arguments() const {
 bool_t ByteArrayOopDescriptor::is_unary() const {
     if ( is_binary() )
         return false;
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             return false;
     return true;
@@ -265,7 +265,7 @@ bool_t ByteArrayOopDescriptor::is_binary() const {
 bool_t ByteArrayOopDescriptor::is_keyword() const {
     if ( is_binary() )
         return false;
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             return true;
     return false;

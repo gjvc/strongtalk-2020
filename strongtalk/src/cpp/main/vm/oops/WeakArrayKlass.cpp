@@ -38,7 +38,7 @@ void WeakArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // indexables
     blk->do_oop( "length", p++ );
     blk->begin_indexables();
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_indexable_oop( i, p++ );
     }
     blk->end_indexables();
@@ -53,7 +53,7 @@ void WeakArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     MemOopKlass::oop_oop_iterate( obj, blk );
     // indexables
     blk->do_oop( p++ );
-    for ( int i = 1; i <= len; i++ ) {
+    for ( std::size_t i = 1; i <= len; i++ ) {
         blk->do_oop( p++ );
     }
 }
@@ -134,7 +134,7 @@ void WeakArrayRegister::check_and_scavenge_contents() {
 
 
 void WeakArrayRegister::scavenge_contents() {
-    for ( int i = 0; i < weakArrays->length(); i++ )
+    for ( std::size_t i = 0; i < weakArrays->length(); i++ )
         weakArrays->at( i )->scavenge_contents_after_registration();
 }
 
@@ -148,7 +148,7 @@ bool_t WeakArrayRegister::scavenge_is_near_death( Oop obj ) {
 void WeakArrayRegister::scavenge_check_for_dying_objects() {
 
     NotificationQueue::mark_elements();
-    for ( int i = 0; i < weakArrays->length(); i++ ) {
+    for ( std::size_t i = 0; i < weakArrays->length(); i++ ) {
         WeakArrayOop w                            = weakArrays->at( i );
         bool_t       encounted_near_death_objects = false;
 
@@ -195,7 +195,7 @@ void WeakArrayRegister::check_and_follow_contents() {
 
 void WeakArrayRegister::follow_contents() {
 
-    for ( int i = 0; i < weakArrays->length(); i++ ) {
+    for ( std::size_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                            = weakArrays->at( i );
         int          non_indexable_size           = nis->at( i );
@@ -217,7 +217,7 @@ bool_t WeakArrayRegister::mark_sweep_is_near_death( Oop obj ) {
 
 void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 
-    for ( int i = 0; i < weakArrays->length(); i++ ) {
+    for ( std::size_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                            = weakArrays->at( i );
         int          non_indexable_size           = nis->at( i );
@@ -272,7 +272,7 @@ void NotificationQueue::put( Oop obj ) {
         // allocate new_array
         Oop *new_array = new_c_heap_array<Oop>( new_size );
         // copy from array to new_array
-        for ( int i = first; i not_eq last; i = succ( i ) )
+        for ( std::size_t i = first; i not_eq last; i = succ( i ) )
             new_array[ new_last++ ] = array[ i ];
         free( array );
         // replace array
@@ -287,7 +287,7 @@ void NotificationQueue::put( Oop obj ) {
 
 
 void NotificationQueue::put_if_absent( Oop obj ) {
-    for ( int i = first; i not_eq last; i = succ( i ) ) {
+    for ( std::size_t i = first; i not_eq last; i = succ( i ) ) {
         if ( array[ i ] == obj )
             return;
     }
@@ -296,13 +296,13 @@ void NotificationQueue::put_if_absent( Oop obj ) {
 
 
 void NotificationQueue::oops_do( void f( Oop * ) ) {
-    for ( int i = first; i not_eq last; i = succ( i ) )
+    for ( std::size_t i = first; i not_eq last; i = succ( i ) )
         f( &array[ i ] );
 }
 
 
 void NotificationQueue::mark_elements() {
-    for ( int i = first; i not_eq last; i = succ( i ) ) {
+    for ( std::size_t i = first; i not_eq last; i = succ( i ) ) {
         Oop obj = array[ i ];
         if ( obj->is_mem() )
             MemOop( obj )->set_queued();
@@ -311,7 +311,7 @@ void NotificationQueue::mark_elements() {
 
 
 void NotificationQueue::clear_elements() {
-    for ( int i = first; i not_eq last; i = succ( i ) ) {
+    for ( std::size_t i = first; i not_eq last; i = succ( i ) ) {
         Oop obj = array[ i ];
         if ( obj->is_mem() )
             MemOop( obj )->clear_queued();

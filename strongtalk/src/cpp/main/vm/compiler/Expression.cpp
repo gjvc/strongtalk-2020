@@ -239,7 +239,7 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
     }
 
     int       len = exprs->length();
-    for ( int i   = 0; i < len; i++ ) {
+    for ( std::size_t i   = 0; i < len; i++ ) {
         Expression *e = exprs->at( i );
         for ( int j = i + 1; j < len; j++ ) {
             Expression *e2 = exprs->at( j );
@@ -262,7 +262,7 @@ void MergeExpression::add( Expression *e ) {
     }
     if ( not e->node() )
         setSplittable( false );
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e1 = exprs->at( i );
         if ( ( e->hasKlass() and e1->hasKlass() and ( e->klass() == e1->klass() ) ) or e->equals( e1 ) ) {
             // an equivalent expression is already in our list
@@ -324,7 +324,7 @@ void MergeExpression::add( Expression *e ) {
 
 int MergeExpression::nklasses() const {
     int       n = 0;
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         n += exprs->at( i )->nklasses();
     }
     return n;
@@ -424,7 +424,7 @@ KlassExpression *ConstantExpression::asKlassExpression() const {
 
 Expression *MergeExpression::convertToKlass( PseudoRegister *p, Node *n ) const {
     MergeExpression *e = new MergeExpression( p, n );
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *expr = exprs->at( i )->convertToKlass( p, n );
         e->add( expr );
     }
@@ -441,7 +441,7 @@ bool_t MergeExpression::containsUnknown() {
         return isContainingUnknown();
     }
     setUnknownSet( true );
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() ) {
             setContainingUnknown( true );
             return true;
@@ -453,7 +453,7 @@ bool_t MergeExpression::containsUnknown() {
 
 
 UnknownExpression *MergeExpression::findUnknown() const {
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() )
             return (UnknownExpression *) exprs->at( i );
     }
@@ -462,7 +462,7 @@ UnknownExpression *MergeExpression::findUnknown() const {
 
 
 Expression *MergeExpression::findKlass( KlassOop klass ) const {
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e = exprs->at( i );
         if ( e->hasKlass() and e->klass() == klass )
             return e;
@@ -483,7 +483,7 @@ Expression *MergeExpression::makeUnknownUnlikely( InlinedScope *s ) {
     st_assert( DeferUncommonBranches, "shouldn't make unlikely" );
     _unlikelyScope         = s;
     _unlikelyByteCodeIndex = s->byteCodeIndex();
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         Expression *e;
         if ( ( e = exprs->at( i ) )->isUnknownExpression() ) {
             if ( not( (UnknownExpression *) e )->isUnlikely() ) {
@@ -625,7 +625,7 @@ void BlockExpression::print() {
 
 void MergeExpression::print() {
     lprintf( "MergeExpression %s(\n", isSplittable() ? "splittable " : "" );
-    for ( int i = 0; i < exprs->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
         lprintf( "\t%#lx%s ", exprs->at( i ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
@@ -760,14 +760,14 @@ Expression *ExpressionStack::pop() {
 
 
 void ExpressionStack::pop( int nofExprsToPop ) {
-    for ( int i = 0; i < nofExprsToPop; i++ )
+    for ( std::size_t i = 0; i < nofExprsToPop; i++ )
         pop();
 }
 
 
 void ExpressionStack::print() {
     const int len = length();
-    for ( int i   = 0; i < len; i++ ) {
+    for ( std::size_t i   = 0; i < len; i++ ) {
         lprintf( "[TOS - %2d]:  ", len - i - 1 );
         at( i )->print();
     }

@@ -276,7 +276,7 @@ void Floats::init( MacroAssembler *masm ) {
     // pre-initialize whole table
     // (make sure there's an entry for each index so that illegal indices
     // can be caught during execution without additional index range check)
-    for ( int i = max_number_of_functions; i-- > 0; ) {
+    for ( std::size_t i = max_number_of_functions; i-- > 0; ) {
         _function_table[ i ] = masm->pc();
         _console->print_cr( "%%system-init:  Floats::init() _function_table index [%ld] pc [0x%08x]", i, masm->pc() );
     }
@@ -330,7 +330,7 @@ void Floats::init( MacroAssembler *masm ) {
 void Floats::print() {
     if ( _is_initialized ) {
         _console->print_cr( "Float functions:" );
-        for ( int i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
+        for ( std::size_t i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
             _console->print_cr( "%3d: 0x%x %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {

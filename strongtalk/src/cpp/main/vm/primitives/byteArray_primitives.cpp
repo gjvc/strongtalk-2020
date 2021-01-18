@@ -216,7 +216,7 @@ PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
 
     int length = ByteArrayOop( receiver )->length();
 
-    for ( int i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         ByteArrayOop( receiver )->byte_at_put( i, v );
     }
 
@@ -1164,7 +1164,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienCallResultWithArguments, Oop
     checkAlienCalloutResultArgs( argument1 );
 
     int       length = ObjectArrayOop( argument2 )->length();
-    for ( int index  = 1; index <= length; index++ ) {
+    for ( std::size_t index  = 1; index <= length; index++ ) {
         checkAlienCalloutArg( ObjectArrayOop(argument2)->obj_at(index), vmSymbols::argument_has_wrong_type() );
     }
     PersistentHandle *resultHandle = new PersistentHandle( argument1 );

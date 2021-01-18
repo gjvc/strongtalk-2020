@@ -19,7 +19,7 @@ ConsoleOutputStream *_console;
 
 void ConsoleOutputStream::basic_print( const char *str ) {
 
-    for ( int i = 0; i < strlen( str ); i++ )
+    for ( std::size_t i = 0; i < strlen( str ); i++ )
         put( str[ i ] );
 }
 

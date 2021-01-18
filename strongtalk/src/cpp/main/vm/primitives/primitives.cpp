@@ -170,7 +170,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 void Primitives::print_table() {
 
     _console->print_cr( "Primitive table:" );
-    for ( int i = 0; i < size_of_primitive_table; i++ ) {
+    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
         _console->print( "%3d ", i );
         e->print();
@@ -349,7 +349,7 @@ PrimitiveDescriptor *Primitives::lookup( const char *selector ) {
 
 
 PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
-    for ( int i = 0; i < size_of_primitive_table; i++ ) {
+    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
         if ( e->fn() == fn )
             return e;
@@ -407,7 +407,7 @@ void primitives_init() {
     Primitives::initialize();
     PrimitiveDescriptor *prev = nullptr;
 
-    for ( int index = 0; index < size_of_primitive_table; index++ ) {
+    for ( std::size_t index = 0; index < size_of_primitive_table; index++ ) {
         PrimitiveDescriptor *e = primitive_table[ index ];
         e->verify();
         if ( prev ) {

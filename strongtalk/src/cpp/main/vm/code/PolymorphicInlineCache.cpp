@@ -588,7 +588,7 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char *entry, Polymor
     }
 
     char *p1 = p;
-    for ( int i = 0; i < c->m; i++ ) {
+    for ( std::size_t i = 0; i < c->m; i++ ) {
         st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
         put_word( p, int( c->methodOop_klasses[ i ] ) );
         put_word( p, int( c->methodOops[ i ] ) );
@@ -628,7 +628,7 @@ int PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicI
         put_byte( p, MemOopDescriptor::klass_byte_offset() );
         st_assert( entry + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_NativeMethod_entry_offset ) == p, "constant value inconsistent with code pattern" );
         // handle nativeMethods
-        for ( int i = 0; i < c->n; i++ ) {
+        for ( std::size_t i = 0; i < c->n; i++ ) {
             // cmp edx, klass(i)
             st_assert( c->nativeMethod_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
             put_shrt( p, cmp_opcode );
@@ -839,7 +839,7 @@ void PolymorphicInlineCache::verify() {
     ResourceMark rm;
     GrowableArray<KlassOop> *k = klasses();
 
-    for ( int i = 0; i < k->length() - 1; i++ ) {
+    for ( std::size_t i = 0; i < k->length() - 1; i++ ) {
         for ( int j = i + 1; j < k->length(); j++ ) {
             if ( k->at( i ) == k->at( j ) ) {
                 _console->print( "The class " );

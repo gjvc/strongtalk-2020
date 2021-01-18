@@ -138,7 +138,7 @@ PRIM_DECL_2( objArrayPrimitives::at_all_put, Oop receiver, Oop obj ) {
     int length = ObjectArrayOop( receiver )->length();
     if ( obj->is_new() and receiver->is_old() ) {
         // Do store checks
-        for ( int i = 1; i <= length; i++ ) {
+        for ( std::size_t i = 1; i <= length; i++ ) {
             ObjectArrayOop( receiver )->obj_at_put( i, obj );
         }
     } else {
@@ -237,7 +237,7 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
     // header
     MemOop( obj )->initialize_header( k->klass_part()->has_untagged_contents(), k );
     // copy instance variables
-    for ( int i = MemOopDescriptor::header_size(); i < ni_size; i++ ) {
+    for ( std::size_t i = MemOopDescriptor::header_size(); i < ni_size; i++ ) {
         obj->raw_at_put( i, src->raw_at( i ) );
     }
     // length

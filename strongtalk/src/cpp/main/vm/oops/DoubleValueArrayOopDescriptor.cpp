@@ -30,7 +30,7 @@ void DoubleValueArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     raw_at_put( size() - 1, smiOop_zero );
 
     stream->read_oop( length_addr() );
-    for ( int i = 1; i <= length(); i++ )
+    for ( std::size_t i = 1; i <= length(); i++ )
         double_at_put( i, stream->read_double() );
 
 }

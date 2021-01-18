@@ -241,7 +241,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray<Oop> *stack = vf->expression_stack();
-            for ( int index = 0; index < stack->length(); index++ ) {
+            for ( std::size_t index = 0; index < stack->length(); index++ ) {
                 stream->print( "    %3d: ", index );
                 stack->at( index )->print_value_on( stream );
                 stream->cr();

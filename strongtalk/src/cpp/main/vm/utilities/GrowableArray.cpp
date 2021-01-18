@@ -33,7 +33,7 @@ GenericGrowableArray::GenericGrowableArray( int initial_size, int initial_len, v
     } else {
         _data = new_resource_array<void *>( _maxLength );
     }
-    for ( int i = 0; i < _length; i++ )
+    for ( std::size_t i = 0; i < _length; i++ )
         _data[ i ] = filler;
 }
 
@@ -51,14 +51,14 @@ void GenericGrowableArray::grow( int j ) {
     } else {
         newData = new_resource_array<void *>( _maxLength );
     }
-    for ( int i = 0; i < _length; i++ )
+    for ( std::size_t i = 0; i < _length; i++ )
         newData[ i ] = _data[ i ];
     _data = newData;
 }
 
 
 bool_t GenericGrowableArray::raw_contains( const void *elem ) const {
-    for ( int i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem )
             return true;
     }
@@ -68,7 +68,7 @@ bool_t GenericGrowableArray::raw_contains( const void *elem ) const {
 
 GenericGrowableArray *GenericGrowableArray::raw_copy() const {
     GenericGrowableArray *copy = new GenericGrowableArray( _maxLength, _length, nullptr );
-    for ( int i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         copy->_data[ i ] = _data[ i ];
     }
     return copy;
@@ -76,14 +76,14 @@ GenericGrowableArray *GenericGrowableArray::raw_copy() const {
 
 
 void GenericGrowableArray::raw_appendAll( GenericGrowableArray *l ) {
-    for ( int i = 0; i < l->_length; i++ ) {
+    for ( std::size_t i = 0; i < l->_length; i++ ) {
         raw_at_put_grow( _length, l->_data[ i ], nullptr );
     }
 }
 
 
 int GenericGrowableArray::raw_find( const void *elem ) const {
-    for ( int i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem )
             return i;
     }
@@ -92,7 +92,7 @@ int GenericGrowableArray::raw_find( const void *elem ) const {
 
 
 int GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
-    for ( int i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( f( token, _data[ i ] ) )
             return i;
     }
@@ -101,7 +101,7 @@ int GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
 
 
 void GenericGrowableArray::raw_remove( const void *elem ) {
-    for ( int i = 0; i < _length; i++ ) {
+    for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
             for ( int j = i + 1; j < _length; j++ )
                 _data[ j - 1 ] = _data[ j ];
@@ -114,7 +114,7 @@ void GenericGrowableArray::raw_remove( const void *elem ) {
 
 
 void GenericGrowableArray::raw_apply( voidDoFn f ) const {
-    for ( int i = 0; i < _length; i++ )
+    for ( std::size_t i = 0; i < _length; i++ )
         f( _data[ i ] );
 }
 
@@ -146,7 +146,7 @@ void GenericGrowableArray::raw_at_put_grow( int i, const void *p, const void *fi
 void GenericGrowableArray::print() {
     print_short();
     lprintf( ": length %ld (max %ld) { ", _length, _maxLength );
-    for ( int i = 0; i < _length; i++ )
+    for ( std::size_t i = 0; i < _length; i++ )
         lprintf( "%#lx ", (std::int32_t) _data[ i ] );
     lprintf( "}\n" );
 }

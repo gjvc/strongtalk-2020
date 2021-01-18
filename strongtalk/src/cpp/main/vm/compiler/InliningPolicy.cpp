@@ -47,7 +47,7 @@ const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
 
     // compute the cost limit based on the provided arguments
     int       cost_limit = method->is_blockMethod() ? MaxBlockInlineCost : MaxFnInlineCost;
-    for ( int i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
+    for ( std::size_t i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
         KlassOop k = nthArgKlass( i );
         if ( k and k->klass_part()->oop_is_block() )
             cost_limit += BlockArgAdditionalAllowedInlineCost;

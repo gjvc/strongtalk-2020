@@ -177,7 +177,7 @@ void Handles::set_top( int t ) {
 
 
 void Handles::oops_do( void f( Oop * ) ) {
-    for ( int i = 0; i < top(); i++ ) {
+    for ( std::size_t i = 0; i < top(); i++ ) {
         f( &_array[ i ] );
     }
     PersistentHandle::oops_do( f );

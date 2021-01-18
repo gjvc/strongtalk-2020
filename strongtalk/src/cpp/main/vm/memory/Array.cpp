@@ -23,7 +23,7 @@ Array::Array( int sz ) {
 
 
 int Array::insertIfAbsent( int value ) {
-    for ( int i = 0; i < _index; i++ )
+    for ( std::size_t i = 0; i < _index; i++ )
         if ( _values[ i ] == value )
             return i;
     if ( _index == _size )
@@ -36,7 +36,7 @@ int Array::insertIfAbsent( int value ) {
 void Array::extend( int newSize ) {
     int *newValues = new_resource_array<int>( newSize );
 
-    for ( int i = 0; i < _index; i++ )
+    for ( std::size_t i = 0; i < _index; i++ )
         newValues[ i ] = _values[ i ];
 
     _values = newValues;
@@ -45,7 +45,7 @@ void Array::extend( int newSize ) {
 
 
 void Array::copy_to( int *&addr ) {
-    for ( int i = 0; i < length(); i++ ) {
+    for ( std::size_t i = 0; i < length(); i++ ) {
         *addr++ = _values[ i ];
     }
 }
@@ -62,7 +62,7 @@ void ByteArray::extend() {
     int newMax = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
-    for ( int i = 0; i < _top; i++ )
+    for ( std::size_t i = 0; i < _top; i++ )
         newArray[ i ] = _array[ i ];
 
     _array = newArray;
@@ -101,7 +101,7 @@ void ByteArray::appendWord( int p ) {
 void ByteArray::alignToWord() {
     int fill_size = ( sizeof( int ) - ( size() % sizeof( int ) ) ) % sizeof( int );
 
-    for ( int i = 0; i < fill_size; i++ )
+    for ( std::size_t i = 0; i < fill_size; i++ )
         appendByte( 0 );
 }
 
@@ -110,7 +110,7 @@ void ByteArray::copy_to( int *&addr ) {
     int *fromAddr = (int *) start();
     int len = size() / sizeof( int );
 
-    for ( int i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         *addr++ = *fromAddr++;
     }
 }

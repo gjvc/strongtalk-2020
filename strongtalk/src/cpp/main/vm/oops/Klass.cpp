@@ -105,7 +105,7 @@ bool_t Klass::has_same_layout_as( KlassOop klass ) {
         return false;
 
     // Check instance variables
-    for ( int i = oop_header_size(); i < non_indexable_size(); i++ ) {
+    for ( std::size_t i = oop_header_size(); i < non_indexable_size(); i++ ) {
         if ( inst_var_name_at( i ) not_eq klass->klass_part()->inst_var_name_at( i ) )
             return false;
     }
@@ -162,7 +162,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     ObjectArrayOop class_vars = oopFactory::new_objArray( mixin->number_of_classVars() );
     int            length     = mixin->number_of_classVars();
 
-    for ( int index = 1; index <= length; index++ ) {
+    for ( std::size_t index = 1; index <= length; index++ ) {
         AssociationOop assoc = oopFactory::new_association( mixin->classVar_at( index ), nilObj, false );
         class_vars->obj_at_put( index, assoc );
     }
@@ -203,7 +203,7 @@ SymbolOop Klass::inst_var_name_at( int offset ) const {
     int current_offset = non_indexable_size();
     do {
         MixinOop  m = current_klass->mixin();
-        for ( int i = m->number_of_instVars(); i > 0; i-- ) {
+        for ( std::size_t i = m->number_of_instVars(); i > 0; i-- ) {
             current_offset--;
             if ( offset == current_offset )
                 return m->instVar_at( i );
@@ -243,7 +243,7 @@ void Klass::add_method( MethodOop method ) {
     SymbolOop      selector  = method->selector();
 
     // Find out if a method with the same selector exists.
-    for ( int index = 1; index <= old_array->length(); index++ ) {
+    for ( std::size_t index = 1; index <= old_array->length(); index++ ) {
         st_assert( old_array->obj_at( index )->is_method(), "must be method" );
         MethodOop m = MethodOop( old_array->obj_at( index ) );
         if ( m->selector() == selector ) {
@@ -278,7 +278,7 @@ void Klass::add_classVar( AssociationOop assoc ) {
     ObjectArrayOop array = classVars();
 
     // Find out if it already exists.
-    for ( int index = 1; index <= array->length(); index++ ) {
+    for ( std::size_t index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_association(), "must be symbol" );
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == assoc->key() )
@@ -416,7 +416,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
         st_assert( mixin()->is_mixin(), "must be mixin" );
         array = mixin()->methods();
 
-        for ( int i = 1; i <= array->length(); i++ ) {
+        for ( std::size_t i = 1; i <= array->length(); i++ ) {
             st_assert( array->obj_at( i )->is_method(), "must be method" );
             if ( MethodOop( array->obj_at( i ) ) == m )
                 return true;

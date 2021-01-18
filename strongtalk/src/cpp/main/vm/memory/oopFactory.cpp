@@ -35,7 +35,7 @@ ByteArrayOop oopFactory::new_byteArray( const char *name ) {
     int          len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
-    for ( int index = 0; index < len; index++ ) {
+    for ( std::size_t index = 0; index < len; index++ ) {
         result->byte_at_put( index + 1, name[ index ] );
     }
     return result;
@@ -58,7 +58,7 @@ ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
-    for ( int index = 1; index <= size; index++ ) {
+    for ( std::size_t index = 1; index <= size; index++ ) {
         result->obj_at_put( index, array->at( index - 1 ) );
     }
     return result;

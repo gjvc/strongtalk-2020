@@ -286,7 +286,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
     {
         ObjectArrayOop f = klass->klass_part()->methods();
 
-        for ( int index = 1; index <= f->length(); index++ )
+        for ( std::size_t index = 1; index <= f->length(); index++ )
             decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
@@ -294,7 +294,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
     {
         ObjectArrayOop f = klass->klass_part()->mixin()->methods();
 
-        for ( int index = 1; index <= f->length(); index++ )
+        for ( std::size_t index = 1; index <= f->length(); index++ )
             decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
@@ -304,7 +304,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
 void Universe::decode_methods() {
     int l = Universe::systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObj()->obj_at( i );
         if ( assoc->value()->is_klass() )
             decode_klass( assoc->key(), KlassOop( assoc->value() ) );
@@ -337,7 +337,7 @@ void Universe::print_klass_name( KlassOop k ) {
 
     int l = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
         if ( assoc->value() == k ) {
             assoc->key()->print_symbol_on();
@@ -358,7 +358,7 @@ const char *Universe::klass_name( KlassOop k ) {
 
     int l = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
@@ -388,7 +388,7 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
     m = m->home();    // so block methods can be found, too
     int l = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
         if ( assoc->value()->is_klass() ) {
             KlassOop k = KlassOop( assoc->value() );
@@ -413,7 +413,7 @@ SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
     *meta = false;
     int l = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObj()->obj_at( i ) );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
             if ( assoc->value() == value ) {
@@ -444,7 +444,7 @@ Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
     SymbolOop sym = oopFactory::new_symbol( name );
     int       l   = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObj()->obj_at( i ) );
         if ( assoc->key() == sym ) {
             if ( not must_be_constant or assoc->is_constant() ) {
@@ -461,7 +461,7 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
     int l = systemDictionaryObj()->length();
 
-    for ( int i = 1; i <= l; i++ ) {
+    for ( std::size_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
         if ( assoc->key() == symbolOop )
             return assoc;
@@ -473,7 +473,7 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
 void Universe::methods_in_array_do( ObjectArrayOop array, void f( MethodOop method ) ) {
     int       length = array->length();
-    for ( int i      = 1; i <= length; i++ ) {
+    for ( std::size_t i      = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( array->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
         f( method );
@@ -533,7 +533,7 @@ void Universe::classes_do( klassOopClosure *iterator ) {
     ObjectArrayOop array  = Universe::systemDictionaryObj();
     int            length = array->length();
 
-    for ( int i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         AssociationOop assoc = AssociationOop( array->obj_at( i ) );
         st_assert( assoc->is_association(), "just checking" );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {

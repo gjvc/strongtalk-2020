@@ -85,7 +85,7 @@ public:
         dst->set_identity_hash( src->identity_hash() );
 
         // Instance variables
-        for ( int i = 0; i < _mapping->length(); i += 2 ) {
+        for ( std::size_t i = 0; i < _mapping->length(); i += 2 ) {
             int from = _mapping->at( i );
             int to   = _mapping->at( i + 1 );
             dst->raw_at_put( to, src->raw_at( from ) );
@@ -152,7 +152,7 @@ public:
         if ( _sourceIsByteArray ) {
             int length = ByteArrayOop( src )->length();
 
-            for ( int i = 1; i <= length; i++ )
+            for ( std::size_t i = 1; i <= length; i++ )
                 ByteArrayOop( dst )->byte_at_put( i, ByteArrayOop( src )->byte_at( i ) );
         }
     }
@@ -182,7 +182,7 @@ public:
         if ( _sourceIsDoubleByteArray ) {
             int length = DoubleByteArrayOop( src )->length();
 
-            for ( int i = 1; i <= length; i++ )
+            for ( std::size_t i = 1; i <= length; i++ )
                 DoubleByteArrayOop( dst )->doubleByte_at_put( i, DoubleByteArrayOop( src )->doubleByte_at( i ) );
         }
     }
@@ -213,7 +213,7 @@ public:
 
             int length = ObjectArrayOop( src )->length();
 
-            for ( int i = 1; i <= length; i++ )
+            for ( std::size_t i = 1; i <= length; i++ )
                 ObjectArrayOop( dst )->obj_at_put( i, ObjectArrayOop( src )->obj_at( i ) );
         }
     }
@@ -241,7 +241,7 @@ public:
         if ( source_is_obj_array ) {
             int length = doubleValueArrayOop( src )->length();
 
-            for ( int i = 1; i <= length; i++ )
+            for ( std::size_t i = 1; i <= length; i++ )
                 doubleValueArrayOop( dst )->double_at_put( i, doubleValueArrayOop( src )->double_at( i ) );
         }
     }

@@ -47,11 +47,8 @@ int PrimitiveInliner::log2( int x ) const {
 
 
 Expression *PrimitiveInliner::tryConstantFold() {
-    // Returns the result if the primitive call has been constant folded
-    // successfully; returns nullptr otherwise.
-    // Note: The result may be a marked Oop - which has to be unmarked
-    // before using it - and which indicates that the primitive will fail
-    // always.
+    // Returns the result if the primitive call has been constant folded successfully; returns nullptr otherwise.
+    // Note: The result may be a marked Oop - which has to be unmarked before using it - and which indicates that the primitive will always fail.
     if ( not _primitiveDescriptor->can_be_constant_folded() ) {
         // check for Symbol>>at: before declaring failure
         if ( ( equal( _primitiveDescriptor->name(), "primitiveIndexedByteAt:ifFail:" ) or equal( _primitiveDescriptor->name(), "primitiveIndexedByteCharacterAt:ifFail:" ) ) and parameter( 0 )->hasKlass() and parameter( 0 )->klass() == Universe::symbolKlassObj() ) {
@@ -107,7 +104,7 @@ Expression *PrimitiveInliner::tryTypeCheck() {
 
     int num = number_of_parameters();
 
-    for ( int i = 0; i < num; i++ ) {
+    for ( std::size_t i = 0; i < num; i++ ) {
         Expression *a = parameter( i );
         if ( a->hasKlass() ) {
             Expression *primArgType = _primitiveDescriptor->parameter_klass( i, a->preg(), nullptr );

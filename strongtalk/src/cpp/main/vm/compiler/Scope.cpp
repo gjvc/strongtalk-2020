@@ -31,7 +31,7 @@ SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression 
 void SendInfo::computeNSends( RecompilationScope *rscope, int byteCodeIndex ) {
     GrowableArray<RecompilationScope *> *lst = rscope->subScopes( byteCodeIndex );
     _sendCount = 0;
-    for ( int i = lst->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = lst->length() - 1; i >= 0; i-- ) {
         _sendCount += lst->at( i )->_invocationCount;
     }
 }
@@ -262,7 +262,7 @@ void InlinedScope::initializeArguments() {
         _self = new KlassExpression( KlassOop( selfKlass() ), new SinglyAssignedPseudoRegister( this, unAllocated, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex ), nullptr );
         // preallocate incoming arguments, i.e., create their expressions
         // using SAPRegs that are already allocated
-        for ( int i = 0; i < nofArgs; i++ ) {
+        for ( std::size_t i = 0; i < nofArgs; i++ ) {
             SinglyAssignedPseudoRegister *arg = new SinglyAssignedPseudoRegister( this, Mapping::incomingArg( i, nofArgs ), false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex );
             _arguments->at_put( i, new UnknownExpression( arg ) );
         }
@@ -270,7 +270,7 @@ void InlinedScope::initializeArguments() {
         _self = nullptr;    // will be initialized by sender
         // get args from sender's expression stack; top of expr stack = last arg, etc.
         const int top = sender()->exprStack()->length();
-        for ( int i   = 0; i < nofArgs; i++ ) {
+        for ( std::size_t i   = 0; i < nofArgs; i++ ) {
             _arguments->at_put( i, sender()->exprStack()->at( top - nofArgs + i ) );
         }
     }
@@ -311,12 +311,12 @@ void InlinedScope::createTemporaries( int nofTemps ) {
         _temporaries = new GrowableArray<Expression *>( n, n, nullptr );
         firstNew     = oldTemps->length();
         nofTemps += oldTemps->length();
-        for ( int i = 0; i < firstNew; i++ )
+        for ( std::size_t i = 0; i < firstNew; i++ )
             _temporaries->at_put( i, oldTemps->at( i ) );
     }
     // initialize new temps
     ConstPseudoRegister *nil = new_ConstPReg( this, nilObj );
-    for ( int i = firstNew; i < nofTemps; i++ ) {
+    for ( std::size_t i = firstNew; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _temporaries->at_put( i, new UnknownExpression( r, nullptr ) );
         if ( isTop() ) {
@@ -332,7 +332,7 @@ void InlinedScope::createFloatTemporaries( int nofFloats ) {
     st_assert( not hasFloatTemporaries(), "cannot be called twice" );
     _floatTemporaries = new GrowableArray<Expression *>( nofFloats, nofFloats, nullptr );
     // initialize float temps
-    for ( int i = 0; i < nofFloats; i++ ) {
+    for ( std::size_t i = 0; i < nofFloats; i++ ) {
         PseudoRegister *preg = new PseudoRegister( this, Location::floatLocation( scopeID(), i ), false, false );
         _floatTemporaries->at_put( i, new UnknownExpression( preg, nullptr ) );
         if ( isTop() ) {
@@ -351,7 +351,7 @@ void InlinedScope::createContextTemporaries( int nofTemps ) {
     st_assert( _contextTemporaries == nullptr, "more than one context created" );
     st_assert( allocatesInterpretedContext(), "inconsistent context info" );
     _contextTemporaries = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );
-    for ( int i = 0; i < nofTemps; i++ ) {
+    for ( std::size_t i = 0; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _contextTemporaries->at_put( i, new UnknownExpression( r, nullptr ) );
     }
@@ -417,7 +417,7 @@ void InlinedScope::epilogue() {
     // now remove all subscopes that were created but not used (not inlined)
     while ( not _subScopes->isEmpty() and not _subScopes->last()->hasBeenGenerated() )
         _subScopes->pop();
-    for ( int i = 0; i < _subScopes->length(); i++ ) {
+    for ( std::size_t i = 0; i < _subScopes->length(); i++ ) {
         if ( not _subScopes->at( i )->hasBeenGenerated() ) st_fatal( "unused scopes should be at end" );
     }
 
@@ -489,7 +489,7 @@ void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *expr
         // if there's a context, mark all context variables as debug-visible too.
         GrowableArray<Expression *> *ct = contextTemporaries();
         if ( ct not_eq nullptr ) {
-            for ( int i = 0; i < ct->length(); i++ ) {
+            for ( std::size_t i = 0; i < ct->length(); i++ ) {
                 ct->at( i )->preg()->_debug = true;
             }
         }
@@ -497,7 +497,7 @@ void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *expr
     // also mark expression stack as debug-visible (excluding arguments to
     // current send) (the args are already excluded from the CallNode's
     // expression stack, so just use that one instead of this->exprStack)
-    for ( int i = 0; i < exprStack->length(); i++ ) {
+    for ( std::size_t i = 0; i < exprStack->length(); i++ ) {
         exprStack->at( i )->_debug = true;
     }
 }
@@ -579,7 +579,7 @@ void InlinedScope::collectContextInfo( GrowableArray<InlinedScope *> *contextLis
     // collect all scopes with contexts
     if ( allocatesInterpretedContext() )
         contextList->append( this );
-    for ( int i = _subScopes->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _subScopes->length() - 1; i >= 0; i-- ) {
         _subScopes->at( i )->collectContextInfo( contextList );
     }
 }
@@ -588,7 +588,7 @@ void InlinedScope::collectContextInfo( GrowableArray<InlinedScope *> *contextLis
 int InlinedScope::number_of_noninlined_blocks() {
     // return the number of non-inlined blocks in this scope or its callees
     int       nblocks = 0;
-    for ( int i       = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i       = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() and isSenderOrSame( blk->scope() ) )
             nblocks++;
@@ -598,7 +598,7 @@ int InlinedScope::number_of_noninlined_blocks() {
 
 
 void InlinedScope::generateDebugInfoForNonInlinedBlocks() {
-    for ( int i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() )
             blk->closure()->generateDebugInfo();
@@ -607,7 +607,7 @@ void InlinedScope::generateDebugInfoForNonInlinedBlocks() {
 
 
 void InlinedScope::copy_noninlined_block_info( NativeMethod *nm ) {
-    for ( int i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() ) {
             int offset = theCompiler->scopeDescRecorder()->offset_for_noninlined_scope_node( blk->closure()->noninlined_block_scope() );
@@ -633,7 +633,7 @@ CompiledLoop *InlinedScope::addLoop() {
 
 
 void InlinedScope::optimizeLoops() {
-    for ( int i = _loops->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _loops->length() - 1; i >= 0; i-- ) {
 
         CompiledLoop *loop = _loops->at( i );
         const char   *msg  = loop->recognize();
@@ -647,7 +647,7 @@ void InlinedScope::optimizeLoops() {
         if ( OptimizeLoops )
             loop->optimize();
     }
-    for ( int i = _subScopes->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _subScopes->length() - 1; i >= 0; i-- ) {
         _subScopes->at( i )->optimizeLoops();
     }
 }
@@ -722,7 +722,7 @@ int InlinedScope::allocateFloatTemporaries( int firstFloatIndex ) {
     int       totalNofFloatsInSubscopes = 0;
     // allocate float temporaries of subscopes
     int       len                       = _subScopes->length();
-    for ( int i                         = 0; i < len; i++ ) {
+    for ( std::size_t i                         = 0; i < len; i++ ) {
         InlinedScope *scope = _subScopes->at( i );
         totalNofFloatsInSubscopes = max( totalNofFloatsInSubscopes, scope->allocateFloatTemporaries( startFloatIndex ) );
     }
@@ -865,7 +865,7 @@ void InlinedScope::generateDebugInfo() {
         // temporaries
         if ( hasTemporaries() ) {
             len = _temporaries->length();
-            for ( int i = 0; i < len; i++ ) {
+            for ( std::size_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _temporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -875,7 +875,7 @@ void InlinedScope::generateDebugInfo() {
         // float temporaries
         if ( hasFloatTemporaries() ) {
             len = _floatTemporaries->length();
-            for ( int i = 0; i < len; i++ ) {
+            for ( std::size_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _floatTemporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -885,7 +885,7 @@ void InlinedScope::generateDebugInfo() {
         // context temporaries
         if ( allocatesInterpretedContext() ) {
             len = _contextTemporaries->length();
-            for ( int i = 0; i < len; i++ ) {
+            for ( std::size_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _contextTemporaries->at( i )->preg();
                 rec->addContextTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -894,7 +894,7 @@ void InlinedScope::generateDebugInfo() {
         }
         // expr stack
         len = _exprStackElems->length();
-        for ( int i = 0; i < len; i++ ) {
+        for ( std::size_t i = 0; i < len; i++ ) {
             Expression *elem = _exprStackElems->at( i );
             if ( elem not_eq nullptr ) {
                 PseudoRegister *r = elem->preg()->cpReg();
@@ -918,7 +918,7 @@ void InlinedScope::generateDebugInfo() {
 
     // subscopes
     len = _subScopes->length();
-    for ( int i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         InlinedScope *s = _subScopes->at( i );
         if ( PrintDebugInfoGeneration )
             _console->print_cr( "Subscope %d (id = %d):", i, s->scopeID() );
@@ -1002,7 +1002,7 @@ void SendInfo::print() {
 
 void InlinedScope::printTree() {
     print();
-    for ( int i = 0; i < _subScopes->length(); i++ ) {
+    for ( std::size_t i = 0; i < _subScopes->length(); i++ ) {
         _subScopes->at( i )->printTree();
     }
 }
@@ -1012,7 +1012,7 @@ void InlinedScope::print() {
     lprintf( " method: %#lx\n\tid: %ld", method(), scopeID() );
     lprintf( "\nself:   " );
     self()->print();
-    for ( int i = 0; i < nofArguments(); i++ ) {
+    for ( std::size_t i = 0; i < nofArguments(); i++ ) {
         lprintf( "arg %2d: ", i );
         argument( i )->print();
     }

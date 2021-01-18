@@ -30,7 +30,7 @@ void MethodPrinterClosure::indent() {
         _outputStream->print( "      <" );
         GrowableArray<int> *map = method()->expression_stack_mapping( byteCodeIndex() );
 
-        for ( int i = 0; i < map->length(); i++ )
+        for ( std::size_t i = 0; i < map->length(); i++ )
             _outputStream->print( " 0x%08x", map->at( i ) );
         _outputStream->print_cr( " >" );
     }

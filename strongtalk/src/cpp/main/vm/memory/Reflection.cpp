@@ -22,7 +22,7 @@ GrowableArray<MemOop> *Reflection::_converted = nullptr;
 bool_t Reflection::needs_schema_change() {
     bool_t result = false;
 
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         bool_t sub_result = _classChanges->at( i )->needs_schema_change();
         if ( TraceApplyChange and sub_result ) {
             _classChanges->at( i )->old_klass()->print_value();
@@ -53,7 +53,7 @@ bool_t Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin )
     if ( new_mixin->number_of_methods() not_eq old_mixin->number_of_methods() )
         return true;
 
-    for ( int i = 1; i <= new_mixin->number_of_methods(); i++ ) {
+    for ( std::size_t i = 1; i <= new_mixin->number_of_methods(); i++ ) {
         if ( not old_mixin->includes_method( new_mixin->method_at( i ) ) )
             return true;
     }
@@ -66,7 +66,7 @@ bool_t Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixi
     if ( new_mixin->number_of_classVars() not_eq old_mixin->number_of_classVars() )
         return true;
 
-    for ( int i = 1; i <= new_mixin->number_of_classVars(); i++ ) {
+    for ( std::size_t i = 1; i <= new_mixin->number_of_classVars(); i++ ) {
         if ( not old_mixin->includes_classVar( new_mixin->classVar_at( i ) ) )
             return true;
     }
@@ -75,7 +75,7 @@ bool_t Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixi
 
 
 ClassChange *Reflection::find_change_for( KlassOop klass ) {
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         ClassChange *e = _classChanges->at( i );
         if ( e->old_klass() == klass )
             return e;
@@ -89,7 +89,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
     _classChanges = new GrowableArray<ClassChange *>( 100 );
     int length = invocations->length();
 
-    for ( int i = invocations_offset(); i <= length; i++ ) {
+    for ( std::size_t i = invocations_offset(); i <= length; i++ ) {
         ObjectArrayOop invocation = ObjectArrayOop( invocations->obj_at( i ) );
         st_assert( invocation->is_objArray(), "type check" );
 
@@ -108,7 +108,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
 
 
 void Reflection::invalidate_classes( bool_t value ) {
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         KlassOop old_klass = _classChanges->at( i )->old_klass();
         old_klass->set_invalid( value );
         old_klass->klass()->set_invalid( value );
@@ -117,17 +117,17 @@ void Reflection::invalidate_classes( bool_t value ) {
 
 
 void Reflection::update_classes( bool_t class_vars_changed, bool_t instance_methods_changed, bool_t class_methods_changed ) {
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->update_class( class_vars_changed, instance_methods_changed, class_methods_changed );
     }
 }
 
 
 void Reflection::setup_schema_change() {
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->setup_schema_change();
     }
-    for ( int i = 0; i < _classChanges->length(); i++ ) {
+    for ( std::size_t i = 0; i < _classChanges->length(); i++ ) {
         // Mark old class for schema change
         _classChanges->at( i )->old_klass()->klass_part()->mark_for_schema_change();
         // Mark old metaclass for schema change
@@ -250,7 +250,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
     if ( not old_mixin->is_mixin() )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    for ( int i = 3; i <= length; i++ ) {
+    for ( std::size_t i = 3; i <= length; i++ ) {
         ObjectArrayOop array = ObjectArrayOop( change->obj_at( i ) );
 
         if ( not array->is_objArray() )

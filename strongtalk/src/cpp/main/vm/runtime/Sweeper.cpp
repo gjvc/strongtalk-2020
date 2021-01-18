@@ -153,7 +153,7 @@ int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
     int length = methods->length();
 
-    for ( int i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( methods->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
         method_task( method );
@@ -257,7 +257,7 @@ void ZoneSweeper::task() {
         _console->print( "*zone sweep: %d of %d entries...", todo, total );
     TraceTime t( "ZoneSweep ", PrintCodeSweep );
 
-    for ( int i = 0; i < todo; i++ ) {
+    for ( std::size_t i = 0; i < todo; i++ ) {
         if ( next == nullptr ) {
             deactivate();
             break;

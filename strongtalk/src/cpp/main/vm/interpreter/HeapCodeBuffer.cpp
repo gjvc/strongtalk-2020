@@ -48,7 +48,7 @@ ByteArrayOop HeapCodeBuffer::bytes() {
     Klass *klass = Universe::byteArrayKlassObj()->klass_part();
     ByteArrayOop result = ByteArrayOop( klass->allocateObjectSize( byteLength() ) );
 
-    for ( int i = 0; i < byteLength(); i++ )
+    for ( std::size_t i = 0; i < byteLength(); i++ )
         result->byte_at_put( i + 1, (std::uint8_t) _bytes->at( i ) );
 
     return result;
@@ -60,7 +60,7 @@ ObjectArrayOop HeapCodeBuffer::oops() {
     Klass *klass = Universe::objArrayKlassObj()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( klass->allocateObjectSize( oopLength() ) );
 
-    for ( int i = 0; i < oopLength(); i++ )
+    for ( std::size_t i = 0; i < oopLength(); i++ )
         result->obj_at_put( i + 1, _oops->at( i ) );
 
     return result;

@@ -676,7 +676,7 @@ void Zone::mark_dependents_for_deoptimization() {
         if ( nm->depends_on_invalid_klass() ) {
             GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
 
-            for ( int index = 0; index < nms->length(); index++ ) {
+            for ( std::size_t index = 0; index < nms->length(); index++ ) {
                 NativeMethod *elem = nms->at( index );
                 if ( TraceApplyChange ) {
                     _console->print( "invalidating " );

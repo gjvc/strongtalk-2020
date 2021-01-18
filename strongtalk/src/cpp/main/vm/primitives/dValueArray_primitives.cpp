@@ -42,7 +42,7 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     obj->set_length( length );
 
-    for ( int i = 1; i <= length; i++ ) {
+    for ( std::size_t i = 1; i <= length; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 

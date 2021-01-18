@@ -46,7 +46,7 @@ void MissingMethodBuilder::build() {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n) );
         _buffer.pushByte( 0xFF );
 
-        for ( int i = 0; i < argCount; i++ ) {
+        for ( std::size_t i = 0; i < argCount; i++ ) {
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n) );
             _buffer.pushByte( i );
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n) );

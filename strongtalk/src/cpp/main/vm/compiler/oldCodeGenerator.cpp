@@ -830,7 +830,7 @@ static void verify_context_chain( Register closure, int chain_length, Register t
     theMacroAssembler->movl( context, Address( closure, BlockClosureOopDescriptor::context_byte_offset() ) );
     theMacroAssembler->movl( sum, Address( context, MemOopDescriptor::mark_byte_offset() ) );
     // 'or' the mark fields of the remaining contexts in the chain to sum
-    for ( int i = chain_length - 1; i-- > 0; ) {
+    for ( std::size_t i = chain_length - 1; i-- > 0; ) {
         theMacroAssembler->movl( context, Address( context, ContextOopDescriptor::parent_byte_offset() ) );
         theMacroAssembler->orl( sum, Address( context, MemOopDescriptor::mark_byte_offset() ) );
     }
@@ -923,7 +923,7 @@ void PrologueNode::gen() {
         st_assert( first_temp_offset == -1, "check this code" );
         frame_size += nofTemps;
         theMacroAssembler->movl( temp2, nilObj );
-        for ( int i = 0; i < nofTemps; i++ )
+        for ( std::size_t i = 0; i < nofTemps; i++ )
             theMacroAssembler->pushl( temp2 );
     }
     // make sure frame is big enough for deoptimization
@@ -1567,7 +1567,7 @@ void ContextCreateNode::gen() {
 void ContextInitNode::gen() {
     BasicNode::gen();
     // initialize context fields
-    for ( int i = nofTemps() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = nofTemps() - 1; i >= 0; i-- ) {
         PseudoRegister *src = _initializers->at( i )->preg();
         PseudoRegister *dest;
         if ( src->isBlockPseudoRegister() and wasEliminated() ) {
@@ -1776,7 +1776,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
 
     bool_t    klassHasBeenLoaded = false;
     const int nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
-    for ( int i                  = 0; i < nof_cmps; i++ ) {
+    for ( std::size_t i                  = 0; i < nof_cmps; i++ ) {
         const KlassOop klass = klasses.at( i );
         if ( klass == Universe::trueObj()->klass() ) {
             // only one instance: compare with trueObj
@@ -1998,7 +1998,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies == nullptr )
         return;
-    for ( int i = copies->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = copies->length() - 1; i >= 0; i-- ) {
         Location       *l                = copies->at( i );
         InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
         PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
@@ -2150,7 +2150,7 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
     for ( last = len; last >= 0 and _tests->at( last )->_testedPR->_location == unAllocated; last-- );
     if ( last < 0 )
         return;                    // no tests at all
-    for ( int i = 0; i <= last; i++ ) {
+    for ( std::size_t i = 0; i <= last; i++ ) {
         HoistedTypeTest *t = _tests->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister
@@ -2169,7 +2169,7 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
                 const int              len = t->_klasses->length();
                 GrowableArray<Label *> labels( len + 1 );
                 labels.append( &failure );
-                for ( int i = 0; i < len; i++ )
+                for ( std::size_t i = 0; i < len; i++ )
                     labels.append( ok );
                 generalTypeTest( obj, klassReg, true, t->_klasses, &labels );
             }

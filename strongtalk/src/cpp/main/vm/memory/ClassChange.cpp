@@ -42,7 +42,7 @@ struct KlassOopDescriptor *ClassChange::new_class_from( KlassOopDescriptor *old_
     transfer_misc( old_klass->klass(), result->klass() );
 
     // Copy the class variables
-    for ( int i = old_klass->klass_part()->number_of_classVars(); i > 0; i-- ) {
+    for ( std::size_t i = old_klass->klass_part()->number_of_classVars(); i > 0; i-- ) {
         struct AssociationOopDescriptor *old_assoc = old_klass->klass_part()->classVar_at( i );
         struct AssociationOopDescriptor *new_assoc = result->klass_part()->local_lookup_class_var( old_assoc->key() );
         if ( new_assoc ) {
@@ -97,7 +97,7 @@ void ClassChange::update_class_vars() {
     Klass *k = old_klass()->klass_part();
 
     // Remove the dead entries
-    for ( int i = k->number_of_classVars(); i > 0; i-- ) {
+    for ( std::size_t i = k->number_of_classVars(); i > 0; i-- ) {
         struct AssociationOopDescriptor *assoc = k->classVar_at( i );
         if ( not new_mixin()->includes_classVar( assoc->key() ) ) {
             k->remove_classVar_at( i );
@@ -105,7 +105,7 @@ void ClassChange::update_class_vars() {
     }
 
     // Add the new ones
-    for ( int i = new_mixin()->number_of_classVars(); i > 0; i-- ) {
+    for ( std::size_t i = new_mixin()->number_of_classVars(); i > 0; i-- ) {
         struct SymbolOopDescriptor *name = new_mixin()->classVar_at( i );
         if ( not k->includes_classVar( name ) ) {
             k->add_classVar( oopFactory::new_association( name, nilObj, false ) );
@@ -207,7 +207,7 @@ std::int32_t ClassChange::compute_needed_schema_change() {
         return true;
     }
 
-    for ( int i = new_mixin()->number_of_instVars(); i > 0; i-- ) {
+    for ( std::size_t i = new_mixin()->number_of_instVars(); i > 0; i-- ) {
         if ( new_mixin()->instVar_at( i ) not_eq old_mixin()->instVar_at( i ) ) {
             set_reason_for_schema_change( "instance variables have changed" );
             return true;
@@ -223,7 +223,7 @@ std::int32_t ClassChange::compute_needed_schema_change() {
         return true;
     }
 
-    for ( int i = new_class_mixin->number_of_instVars(); i > 0; i-- ) {
+    for ( std::size_t i = new_class_mixin->number_of_instVars(); i > 0; i-- ) {
         if ( new_class_mixin->instVar_at( i ) not_eq old_class_mixin->instVar_at( i ) ) {
             set_reason_for_schema_change( "class instance variables have changed" );
             return true;

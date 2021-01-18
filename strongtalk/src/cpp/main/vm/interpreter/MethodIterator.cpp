@@ -728,7 +728,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::copy_n_into_context: {
                 int       len = map0to256( iter.byte_at( 1 ) );
-                for ( int i   = 0; i < len; i++ )
+                for ( std::size_t i   = 0; i < len; i++ )
                     blk->copy_argument_into_context( lastArgNo - iter.byte_at( i + 2 ), i );
                 break;
             }
@@ -747,7 +747,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::copy_self_n_into_context: {
                 blk->copy_self_into_context();
                 int       len = map0to256( iter.byte_at( 1 ) );
-                for ( int i   = 0; i < len; i++ )
+                for ( std::size_t i   = 0; i < len; i++ )
                     blk->copy_argument_into_context( lastArgNo - iter.byte_at( i + 2 ), i + 1 );
                 break;
             }

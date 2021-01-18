@@ -145,7 +145,7 @@ const char *PrimitivesGenerator::allocateContext( int n ) {
     masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 + ( ( n + 1 ) * 4 ) );// obj->init_mark()
     masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );             // obj->set_klass(klass)
     masm->movl( Address( eax, ( -size + 2 ) * oopSize ), 0 );               // obj->set_home(nullptr)
-    for ( int i = 0; i < n; i++ ) {
+    for ( std::size_t i = 0; i < n; i++ ) {
         masm->movl( Address( eax, ( -size + 3 + i ) * oopSize ), ecx );     // obj->obj_at_put(i,nilObj)
     }
     masm->subl( eax, size * oopSize - 1 );

@@ -57,7 +57,7 @@ int hash( const char *name, int len ) {
 
 
 SymbolTable::SymbolTable() {
-    for ( int i = 0; i < symbol_table_size; i++ )
+    for ( std::size_t i = 0; i < symbol_table_size; i++ )
         buckets[ i ].clear();
     free_list = first_free_link = end_block = nullptr;
 }
@@ -227,7 +227,7 @@ bool_t SymbolTableEntry::verify( int i ) {
 
 
 void SymbolTable::verify() {
-    for ( int i = 0; i < symbol_table_size; i++ )
+    for ( std::size_t i = 0; i < symbol_table_size; i++ )
         if ( not buckets[ i ].verify( i ) )
             lprintf( "\tof bucket %ld of symbol table\n", std::int32_t( i ) );
 }
@@ -318,7 +318,7 @@ void SymbolTable::print_histogram() {
     int max_symbols  = 0;
     int out_of_range = 0;
 
-    for ( int i = 0; i < symbol_table_size; i++ ) {
+    for ( std::size_t i = 0; i < symbol_table_size; i++ ) {
 
         SymbolTableEntry curr    = buckets[ i ];
         int              counter = curr.length();
@@ -341,7 +341,7 @@ void SymbolTable::print_histogram() {
     lprintf( " %s %29s\n", "Length", "Number chains that length" );
 
 
-    for ( int i = 0; i < results_length; i++ ) {
+    for ( std::size_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             lprintf( "%6d %10d\n", i, results[ i ] );
         }
@@ -350,7 +350,7 @@ void SymbolTable::print_histogram() {
 
     int line_length = 70;
     lprintf( "%s %30s\n", " Length", "Number chains that length" );
-    for ( int i = 0; i < results_length; i++ ) {
+    for ( std::size_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             lprintf( "%4d", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {

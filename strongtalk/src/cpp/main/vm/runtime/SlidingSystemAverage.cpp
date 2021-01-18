@@ -24,7 +24,7 @@ std::uint32_t                                                   SlidingSystemAve
 // -----------------------------------------------------------------------------
 
 void SlidingSystemAverage::reset() {
-    for ( int i = 0; i < buffer_size; i++ ) {
+    for ( std::size_t i = 0; i < buffer_size; i++ ) {
         _buffer[ i ] = nowhere;
     }
 }

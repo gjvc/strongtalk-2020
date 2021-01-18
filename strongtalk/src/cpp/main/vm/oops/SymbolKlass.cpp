@@ -58,7 +58,7 @@ void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     int       len   = array->length();
     int       n     = min( MaxElementPrintSize, len );
     stream->print( "#" );
-    for ( int i = 1; i <= n; i++ ) {
+    for ( std::size_t i = 1; i <= n; i++ ) {
         char c = array->byte_at( i );
         if ( isprint( c ) )
             stream->print( "%c", c );

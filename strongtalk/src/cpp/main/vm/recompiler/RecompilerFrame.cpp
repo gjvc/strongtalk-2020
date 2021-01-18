@@ -128,7 +128,7 @@ bool_t RecompilerFrame::hasBlockArgs() const {
     if ( not vf )
         return false;
     int       nargs = vf->method()->number_of_arguments();
-    for ( int i     = 0; i < nargs; i++ ) {
+    for ( std::size_t i     = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
             return true;
@@ -143,7 +143,7 @@ GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
     GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
-    for ( int i = 0; i < nargs; i++ ) {
+    for ( std::size_t i = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
             blocks->append( BlockClosureOop( b ) );

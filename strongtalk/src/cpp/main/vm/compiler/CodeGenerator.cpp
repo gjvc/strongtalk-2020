@@ -129,7 +129,7 @@ public:
         mapping->iterate( this );
         // determine changes & notify ScopeDescriptorRecorder if necessary
         ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-        for ( int i = _locations->length(); i-- > 0; ) {
+        for ( std::size_t i = _locations->length(); i-- > 0; ) {
             PseudoRegister *preg = _pregs->at( i );
             bool_t   present = _present->at( i );
             Location old_loc = location_at( i );
@@ -381,11 +381,11 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
 
     // setup arguments
     int       i;
-    for ( int i = 0; i < scope->nofArguments(); i++ ) {
+    for ( std::size_t i = 0; i < scope->nofArguments(); i++ ) {
         _currentMapping->mapToArgument( scope->argument( i )->preg(), i );
     }
     // setup temporaries (finalize() generates initialization code)
-    for ( int i = 0; i < scope->nofTemporaries(); i++ ) {
+    for ( std::size_t i = 0; i < scope->nofTemporaries(); i++ ) {
         _currentMapping->mapToTemporary( scope->temporary( i )->preg(), i );
     }
     // setup receiver
@@ -1409,7 +1409,7 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
 
 void CodeGenerator::aContextInitNode( ContextInitNode *node ) {
     // initialize context temporaries (parent has been initialized in the ContextCreateNode)
-    for ( int i = node->nofTemps(); i-- > 0; ) {
+    for ( std::size_t i = node->nofTemps(); i-- > 0; ) {
         PseudoRegister *src = node->initialValue( i )->preg();
         PseudoRegister *dst;
         if ( src->isBlockPseudoRegister() ) {
@@ -1467,7 +1467,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode *node ) {
     BlockPseudoRegister *blk = node->block();
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies not_eq nullptr ) {
-        for ( int i = copies->length(); i-- > 0; ) {
+        for ( std::size_t i = copies->length(); i-- > 0; ) {
 
             Location       *l                = copies->at( i );
             InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
@@ -1698,7 +1698,7 @@ void CodeGenerator::generateTypeTests( LoopHeaderNode *node, Label &failure ) {
     Unimplemented();
 
     int       last = 0;
-    for ( int i    = 0; i <= last; i++ ) {
+    for ( std::size_t i    = 0; i <= last; i++ ) {
         HoistedTypeTest *t = node->tests()->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister

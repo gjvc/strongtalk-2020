@@ -38,7 +38,7 @@ const char *PrimitivesGenerator::primitiveNew( int n ) {
 
     if ( n > 0 ) {
         masm->movl( ebx, nil_addr() );
-        for ( int i = 0; i < n; i++ ) {
+        for ( std::size_t i = 0; i < n; i++ ) {
             masm->movl( Address( eax, ( -size + 2 + i ) * oopSize ), ebx );    // obj->obj_at_put(i,nilObj)
         }
     }

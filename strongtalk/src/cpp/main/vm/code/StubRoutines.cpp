@@ -109,7 +109,7 @@ void StubRoutines::trace_DLL_call_1( dll_func function, Oop *last_argument, int 
     // print arguments
     Oop *arg_ptr = last_argument + ( nof_arguments - 1 );
 
-    for ( int i = 1; i <= nof_arguments; i++, arg_ptr-- ) {
+    for ( std::size_t i = 1; i <= nof_arguments; i++, arg_ptr-- ) {
         Oop arg = *arg_ptr;
         _console->print( "%6d. ", i );
         if ( arg->is_smi() ) {
@@ -1414,7 +1414,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     // edx: receiver klass
     // tos: return address of polymorphic send in compiled code
     masm->bind( loop );
-    for ( int i = 0; i < pic_size; i++ ) {
+    for ( std::size_t i = 0; i < pic_size; i++ ) {
         // compare receiver klass with klass in PolymorphicInlineCache table at index
         masm->cmpl( edx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_klass_offset ) ) );
         masm->movl( ecx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Consts::PolymorphicInlineCache_methodOop_offset ) ) );

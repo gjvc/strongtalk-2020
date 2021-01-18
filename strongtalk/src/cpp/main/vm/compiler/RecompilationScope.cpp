@@ -55,7 +55,7 @@ int NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a, NonDumm
 NonDummyRecompilationScope::NonDummyRecompilationScope( NonDummyRecompilationScope *s, int byteCodeIndex, MethodOop m, int level ) :
         RecompilationScope( s, byteCodeIndex ), _level( level ), uncommon( 1 ), ncodes( m == nullptr ? 1 : m->size_of_codes() * oopSize ) {
     _subScopes = new_resource_array<GrowableArray<RecompilationScope *> *>( ncodes + 1 );
-    for ( int i = 0; i <= ncodes; i++ )
+    for ( std::size_t i = 0; i <= ncodes; i++ )
         _subScopes[ i ] = nullptr;
 }
 
@@ -78,7 +78,7 @@ InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummy
     _method         = method;
     _key            = LookupKey::allocate( receiver_klass, method->is_blockMethod() ? Oop( method ) : Oop( _method->selector() ) );
     _uncommon       = new GrowableArray<bool_t>( ncodes );
-    for ( int i = 0; i <= ncodes; i++ )
+    for ( std::size_t i = 0; i <= ncodes; i++ )
         _uncommon->append( false );
 }
 
@@ -195,7 +195,7 @@ RecompilationScope *NonDummyRecompilationScope::subScope( int byteCodeIndex, Loo
     GrowableArray<RecompilationScope *> *list = _subScopes[ byteCodeIndex ];
     if ( list == nullptr )
         return new NullRecompilationScope;
-    for ( int i = 0; i < list->length(); i++ ) {
+    for ( std::size_t i = 0; i < list->length(); i++ ) {
         RecompilationScope *rs = list->at( i );
         if ( rs->equivalent( k ) )
             return rs;
@@ -255,7 +255,7 @@ bool_t NonDummyRecompilationScope::isNotUncommonAt( int byteCodeIndex ) const {
     st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
 
     // check if program got uncommon trap in the past
-    for ( int i = 0; i < uncommon.length(); i++ ) {
+    for ( std::size_t i = 0; i < uncommon.length(); i++ ) {
         if ( uncommon.at( i )->byteCodeIndex() == byteCodeIndex )
             return true;
     }
@@ -314,7 +314,7 @@ KlassOop InlinedRecompilationScope::receiverKlass() const {
 
 void NonDummyRecompilationScope::unify( NonDummyRecompilationScope *s ) {
     st_assert( ncodes == s->ncodes, "should be the same" );
-    for ( int i = 0; i < ncodes; i++ ) {
+    for ( std::size_t i = 0; i < ncodes; i++ ) {
         _subScopes[ i ] = s->_subScopes[ i ];
         if ( _subScopes[ i ] ) {
             for ( int j = _subScopes[ i ]->length() - 1; j >= 0; j-- ) {
@@ -574,7 +574,7 @@ void NonDummyRecompilationScope::printSubScopes() const {
     for ( ; i < ncodes and _subScopes[ i ] == nullptr; i++ );
     if ( i < ncodes ) {
         _console->print( "{ " );
-        for ( int i = 0; i < ncodes; i++ ) {
+        for ( std::size_t i = 0; i < ncodes; i++ ) {
             _console->print( "%#lx ", PrintHexAddresses ? _subScopes[ i ] : 0 );
         }
         _console->print( "}" );
@@ -717,7 +717,7 @@ bool_t InliningDatabaseRecompilationScope::isNotUncommonAt( int byteCodeIndex ) 
 int InlinedRecompilationScope::inlining_database_size() {
     int result = 1; // Count this node
 
-    for ( int i = 0; i < ncodes; i++ ) {
+    for ( std::size_t i = 0; i < ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
             for ( int j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 result += _subScopes[ i ]->at( j )->inlining_database_size();
@@ -763,7 +763,7 @@ void InlinedRecompilationScope::print_inlining_database_on( ConsoleOutputStream 
     ProgramCounterDescriptor *current_uncommon = next_uncommon( scope, u, uncommon );
 
     // File out subscopes
-    for ( int i = 0; i < ncodes; i++ ) {
+    for ( std::size_t i = 0; i < ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
             for ( int j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 _subScopes[ i ]->at( j )->print_inlining_database_on( stream, uncommon, i, level + 1 );

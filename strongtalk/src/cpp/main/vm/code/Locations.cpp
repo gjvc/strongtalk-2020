@@ -167,7 +167,7 @@ int Locations::nofUses( int i ) const {
 
 int Locations::nofTotalUses() const {
     int       totalUses = 0;
-    for ( int i         = locationsBeg(); i < locationsEnd(); i++ )
+    for ( std::size_t i         = locationsBeg(); i < locationsEnd(); i++ )
         totalUses += nofUses( i );
     return totalUses;
 }
@@ -186,7 +186,7 @@ int Locations::nofFreeRegisters() const {
 
 int Locations::freeRegisterMask() const {
     int       mask = 0;
-    for ( int i    = registersBeg(); i < registersEnd(); i++ ) {
+    for ( std::size_t i    = registersBeg(); i < registersEnd(); i++ ) {
         if ( nofUses( i ) == 0 )
             mask |= 1 << locationAsRegister( i ).number();
     }
@@ -196,7 +196,7 @@ int Locations::freeRegisterMask() const {
 
 int Locations::usedRegisterMask() const {
     int       mask = 0;
-    for ( int i    = registersBeg(); i < registersEnd(); i++ ) {
+    for ( std::size_t i    = registersBeg(); i < registersEnd(); i++ ) {
         if ( nofUses( i ) > 0 )
             mask |= 1 << locationAsRegister( i ).number();
     }
@@ -285,7 +285,7 @@ void Locations::print() {
     int i;
     // print used locations
     _console->print_cr( "Locations:" );
-    for ( int i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         if ( nofUses( i ) > 0 ) {
             _console->print_cr( "%d: %d uses", i, nofUses( i ) );
         }
@@ -297,7 +297,7 @@ void Locations::print() {
     _console->print_cr( "no. of registers    : %d", _nofRegisters );
     _console->print_cr( "first free register : %d", _firstFreeRegister );
     _console->print_cr( "first free stack loc: %d", _firstFreeStackTmp );
-    for ( int i = 0; i < len; i++ ) {
+    for ( std::size_t i = 0; i < len; i++ ) {
         _console->print_cr( "%d: %d", i, _freeList->at( i ) );
     }
     _console->cr();

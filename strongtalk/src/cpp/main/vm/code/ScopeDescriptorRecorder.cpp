@@ -127,7 +127,7 @@ void ScopeDescriptorRecorder::generate() {
 void ScopeDescriptorRecorder::generateDependencies() {
     int end_marker = 0;
 
-    for ( int index = 0; index < _dependents->length(); index++ ) {
+    for ( std::size_t index = 0; index < _dependents->length(); index++ ) {
 
         int i = _oops->insertIfAbsent( (int) _dependents->at( index ) );
         if ( i > end_marker )

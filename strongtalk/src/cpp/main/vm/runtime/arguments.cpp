@@ -128,7 +128,7 @@ void parse_arguments( int argc, char *argv[] ) {
         process_settings_file( rc_basename, true );
     }
 
-    for ( int i = parse_files ? 1 : 2; i < argc; i++ ) {
+    for ( std::size_t i = parse_files ? 1 : 2; i < argc; i++ ) {
         if ( strcmp( argv[ i ], "-?" ) == 0 ) {
             debugFlags::printFlags();
             exit( EXIT_SUCCESS );

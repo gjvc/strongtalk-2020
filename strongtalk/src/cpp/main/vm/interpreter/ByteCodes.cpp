@@ -51,7 +51,7 @@ void ByteCodes::def( Code code, const char *name, Format format, CodeType code_t
     // plausibility checks for arguments (compare with naming convention)
     if ( format == ByteCodes::Format::UNDEFINED ) {
         // bytecode name should be "undefined"
-        for ( int i = 0; i < 9; i++ ) {
+        for ( std::size_t i = 0; i < 9; i++ ) {
             st_assert( name[ i ] == "undefined"[ i ], "inconsistency with naming convention" );
         }
     }
@@ -79,7 +79,7 @@ void ByteCodes::def( Code code, const char *name, Format format, CodeType code_t
 
     if ( code_type == ByteCodes::CodeType::float_operation ) {
         // bytecode name should start with "float_"
-        for ( int i = 0; i < 6; i++ ) {
+        for ( std::size_t i = 0; i < 6; i++ ) {
             st_assert( name[ i ] == "float_"[ i ], "inconsistency with naming convention" );
         }
     }
@@ -109,7 +109,7 @@ void ByteCodes::set_entry_point( Code code, const char *entry_point ) {
 
 void ByteCodes::init() {
     // to allow check for complete initialization at end of init
-    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         _name[ static_cast<int>( Code( i ) ) ] = nullptr;
     }
 
@@ -399,7 +399,7 @@ void ByteCodes::init() {
     def( ByteCodes::Code::halt, "halt", ByteCodes::Format::B, ByteCodes::CodeType::control_structure, no_sst );
 
     // check if all bytecodes have been initialized
-    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         st_assert( _name[ static_cast<int>( Code( i ) ) ] not_eq nullptr, "bytecode table not fully initialized" );
     }
 }
@@ -971,7 +971,7 @@ ByteCodes::Code ByteCodes::primitive_call_code_for( Code code ) {
 
 
 void ByteCodes::print() {
-    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         Code code = Code( i );
         if ( is_defined( code ) ) {
             _console->print_cr( "%s", name( code ) );
@@ -1128,14 +1128,14 @@ static void generate_heap_code_methods() {
     generate_instr_method();
     generate_codeForPrimitive_method();
 
-    for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         ByteCodes::Code code = ByteCodes::Code( i );
         if ( actually_generated( code ) )
             generate_gen_method( code );
     }
 
     st_assert( Floats::is_initialized(), "Floats must be initialized" );
-    for ( int i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
         Floats::Function f = Floats::Function( i );
         generate_float_function_constant_method( f );
     }
@@ -1238,7 +1238,7 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
         if ( type == ByteCodes::CodeType::message_send )
             _console->print( "<th>Send type<th>Arguments" );
         _console->print_cr( "<tr>" );
-        for ( int i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+        for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
             if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type )
                 generate_HTML_for( code );
@@ -1261,7 +1261,7 @@ static void generate_HTML_docu() {
             Markup tag( "h2" );
             _console->print_cr( "Delta ByteCodes (Version %d)", ByteCodes::version() );
         }
-        for ( int i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ )
+        for ( std::size_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ )
             generate_HTML_for( ByteCodes::CodeType( i ) );
     }
 }

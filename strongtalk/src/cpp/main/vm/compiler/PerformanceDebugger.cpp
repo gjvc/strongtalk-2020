@@ -31,7 +31,7 @@ void PerformanceDebugger::start_report() {
 void PerformanceDebugger::stop_report() {
     char *report = _stringStream->as_string();
 
-    for ( int i = _reports->length() - 1; i >= 0; i-- ) {
+    for ( std::size_t i = _reports->length() - 1; i >= 0; i-- ) {
         if ( strcmp( _reports->at( i ), report ) == 0 )
             return;  // already printed identical msg
     }

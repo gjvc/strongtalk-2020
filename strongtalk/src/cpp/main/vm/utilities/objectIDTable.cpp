@@ -30,7 +30,7 @@ bool_t objectIDTable::is_index_ok( int index ) {
 int objectIDTable::find_index( Oop obj ) {
     int len = Universe::objectIDTable()->length();
 
-    for ( int i = 1; i <= len; i++ )
+    for ( std::size_t i = 1; i <= len; i++ )
         if ( at( i ) == obj )
             return i;
 

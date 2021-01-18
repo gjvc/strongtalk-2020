@@ -559,7 +559,7 @@ void Compiler::computeBlockInfo() {
     bool_t changed = EliminateContexts;
     while ( changed ) {
         changed     = false;
-        for ( int i = allContexts->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = allContexts->length() - 1; i >= 0; i-- ) {
             InlinedScope *s = allContexts->at( i );
             if ( s == nullptr )
                 continue;
@@ -672,7 +672,7 @@ void Compiler::computeBlockInfo() {
         // first is for NativeMethod itself
         int block_index = 1;
 
-        for ( int i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+        for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
 
             BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
             if ( blk->isUsed() ) {

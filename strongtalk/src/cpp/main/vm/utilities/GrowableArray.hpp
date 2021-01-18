@@ -150,7 +150,7 @@ public:
 
 
     void apply( Closure<T> *c ) const {
-        for ( int i = 0; i < _length; i++ )
+        for ( std::size_t i = 0; i < _length; i++ )
             c->do_it( (T) _data[ i ] );
     }
 

@@ -25,7 +25,7 @@ CodeTableLink *CodeTable::new_link( NativeMethod *nm, CodeTableLink *n ) {
 
 
 void CodeTable::clear() {
-    for ( int i = 0; i < tableSize; i++ )
+    for ( std::size_t i = 0; i < tableSize; i++ )
         at( i )->clear();
 }
 

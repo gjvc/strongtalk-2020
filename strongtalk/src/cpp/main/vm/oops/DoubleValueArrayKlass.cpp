@@ -39,7 +39,7 @@ Oop DoubleValueArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge,
     // indexables
     obj->set_length( size );
 
-    for ( int i = 1; i <= size; i++ ) {
+    for ( std::size_t i = 1; i <= size; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 
