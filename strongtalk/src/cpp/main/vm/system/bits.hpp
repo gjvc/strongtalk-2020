@@ -158,7 +158,7 @@ inline int set_unsigned_bitfield( int value, int start_bit_no, int field_length,
 
 // -----------------------------------------------------------------------------
 
-enum oop_tags {
+enum class oop_tags {
     oop_tag_int,    //
     oop_tag_mem,    //
     oop_tag_mark,   //
