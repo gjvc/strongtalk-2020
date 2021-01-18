@@ -539,7 +539,7 @@ enum class InterpreterErrorConstants {
     halted                         = 4 + start_of_runtime_system_errors,    //
     illegal_code                   = 5 + start_of_runtime_system_errors,    //
     not_implemented                = 6 + start_of_runtime_system_errors,    //
-    stack_missaligned              = 7 + start_of_runtime_system_errors,    //
+    stack_misaligned               = 7 + start_of_runtime_system_errors,    //
     ebx_wrong                      = 8 + start_of_runtime_system_errors,    //
     obj_wrong                      = 9 + start_of_runtime_system_errors,    //
     nlr_offset_wrong               = 10 + start_of_runtime_system_errors,   //

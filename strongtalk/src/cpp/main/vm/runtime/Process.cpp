@@ -1628,7 +1628,7 @@ extern "C" void suspend_on_error( InterpreterErrorConstants error_code ) {
             handle_interpreter_error( "illegal code" );
         case InterpreterErrorConstants::not_implemented:
             handle_interpreter_error( "not implemented" );
-        case InterpreterErrorConstants::stack_missaligned:
+        case InterpreterErrorConstants::stack_misaligned:
             handle_interpreter_error( "stack misaligned" );
         case InterpreterErrorConstants::ebx_wrong:
             handle_interpreter_error( "ebx wrong" );

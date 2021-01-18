@@ -96,7 +96,7 @@ void InterpreterGenerator::stack_check_pop() {
     // ;_print "pop:  esp = 0x%x", esp, 0
     // ;_print "      tos = 0x%x", eax, 0
     _macroAssembler->cmpl( eax, STACK_CHECKER_MAGIC_VALUE );
-    _macroAssembler->jcc( Assembler::Condition::notEqual, _stack_missaligned );
+    _macroAssembler->jcc( Assembler::Condition::notEqual, _stack_misaligned );
     _macroAssembler->bind( L );
     _macroAssembler->popl( eax );
 }
@@ -2193,8 +2193,8 @@ void InterpreterGenerator::generate_error_handler_code() {
     _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::halted ) );
     _macroAssembler->jmp( suspend );
 
-    _macroAssembler->bind( _stack_missaligned );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::stack_missaligned ) );
+    _macroAssembler->bind( _stack_misaligned );
+    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::stack_misaligned ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _ebx_wrong );

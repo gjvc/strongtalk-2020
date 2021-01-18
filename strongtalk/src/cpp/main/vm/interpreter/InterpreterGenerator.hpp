@@ -51,7 +51,7 @@ class InterpreterGenerator : StackAllocatedObject {
         Label _NonLocalReturn_to_dead_frame;    // NonLocalReturn error
         Label _halted;                          // halt executed
 
-        Label _stack_missaligned;       // assertion errors
+        Label _stack_misaligned;       // assertion errors
         Label _ebx_wrong;               //
         Label _obj_wrong;               //
         Label _last_Delta_fp_wrong;     //
