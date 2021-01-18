@@ -21,7 +21,7 @@ void printLookupType( LookupType l ) {
 }
 
 
-static void addFlag( bool_t & flag, char * name, const char * add ) {
+static void addFlag( bool_t &flag, char *name, const char *add ) {
     if ( not flag )
         strcat( name, " { " );
     flag = true;
@@ -29,17 +29,17 @@ static void addFlag( bool_t & flag, char * name, const char * add ) {
 }
 
 
-char * lookupTypeName( LookupType l ) {
+char *lookupTypeName( LookupType l ) {
 
-    char * name = new_resource_array <char>( 80 );
+    char *name = new_resource_array<char>( 80 );
     switch ( withoutExtraBits( l ) ) {
-        case NormalLookupType:
+        case LookupType::NormalLookupType:
             strcpy( name, "NormalLookup" );
             break;
-        case SelfLookupType:
+        case LookupType::SelfLookupType:
             strcpy( name, "SelfLookup" );
             break;
-        case SuperLookupType:
+        case LookupType::SuperLookupType:
             strcpy( name, "SuperLookup" );
             break;
         default: st_fatal( "Unknown lookupType" );
@@ -47,21 +47,21 @@ char * lookupTypeName( LookupType l ) {
 
     bool_t hasFlag = false;
     switch ( countType( l ) ) {
-        case NonCounting:
+        case CountType::NonCounting:
             break;
-        case Counting:
+        case CountType::Counting:
             addFlag( hasFlag, name, "counting " );
             break;
-        case Comparing:
+        case CountType::Comparing:
             addFlag( hasFlag, name, "comparing " );
             break;
         default: st_fatal1( "invalid count type %ld", countType( l ) );
     }
-    if ( isBitSet( l, DirtySendBit ) )
+    if ( isBitSet( static_cast<int>(l), DirtySendBit ) )
         addFlag( hasFlag, name, "dirty " );
-    if ( isBitSet( l, OptimizedSendBit ) )
+    if ( isBitSet( static_cast<int>(l), OptimizedSendBit ) )
         addFlag( hasFlag, name, "optimized " );
-    if ( isBitSet( l, UninlinableSendBit ) )
+    if ( isBitSet( static_cast<int>(l), UninlinableSendBit ) )
         addFlag( hasFlag, name, "uninlinable " );
     if ( hasFlag )
         strcat( name, "}" );

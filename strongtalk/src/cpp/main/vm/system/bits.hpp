@@ -20,78 +20,78 @@ constexpr int OneBitSet  = 1;
 
 // -----------------------------------------------------------------------------
 
-#define nthBit( n )         (OneBitSet << (n))
-//constexpr auto nthBit( const auto n ) { return OneBitSet << ( n ); }
+//#define nthBit( n )         (OneBitSet << (n))
+constexpr auto nthBit( const auto n ) { return OneBitSet << ( n ); }
 //
 //
-#define maskBits( x, m )    ((x) & (m))
-//constexpr auto maskBits( const auto x, const auto m ) { return x & m; }
+//#define maskBits( x, m )    ((x) & (m))
+constexpr auto maskBits( const auto x, const auto m ) { return x & m; }
 //
 //
-#define addBits( x, m )     ((x) | (m))
-//constexpr auto addBits( const auto x, const auto m ) { return x | m; }
+//#define addBits( x, m )     ((x) | (m))
+constexpr auto addBits( const auto x, const auto m ) { return x | m; }
 //
 //
-#define subBits( x, m )     ((x) & ~(m))
-//constexpr auto subBits( const auto x, const auto m ) { return x & ~m; }
+//#define subBits( x, m )     ((x) & ~(m))
+constexpr auto subBits( const auto x, const auto m ) { return x & ~m; }
 //
 //
-#define setBits( x, m )     ((x) |= (m))
-//constexpr auto setBits( auto & x, const auto m ) { return x |= m; }
+//#define setBits( x, m )     ((x) |= (m))
+constexpr auto setBits( auto & x, const auto m ) { return x |= m; }
 //
 //
-#define clearBits( x, m )   ((x) &= ~(m))
-//constexpr auto clearBits( auto & x, const auto m ) { return x &= ~m; }
+//#define clearBits( x, m )   ((x) &= ~(m))
+constexpr auto clearBits( auto & x, const auto m ) { return x &= ~m; }
 //
 //
-#define addNthBit( x, n )   addBits((x), nthBit(n))
-//constexpr auto addNthBit( const auto x, const auto n ) { return addBits( x, nthBit( n ) ); }
+//#define addNthBit( x, n )   addBits((x), nthBit(n))
+constexpr auto addNthBit( const auto x, const auto n ) { return addBits( x, nthBit( n ) ); }
 //
 //
-#define subNthBit( x, n )   subBits((x), nthBit(n))
-//constexpr auto subNthBit( const auto x, const auto n ) { return subBits( x, nthBit( n ) ); }
+//#define subNthBit( x, n )   subBits((x), nthBit(n))
+constexpr auto subNthBit( const auto x, const auto n ) { return subBits( x, nthBit( n ) ); }
 //
 //
-#define setNthBit( x, n )   setBits((x), nthBit(n))
-//constexpr auto setNthBit( auto x, const auto n ) { return setBits( x, nthBit( n ) ); }
+//#define setNthBit( x, n )   setBits((x), nthBit(n))
+constexpr auto setNthBit( auto x, const auto n ) { return setBits( x, nthBit( n ) ); }
 //
 //
-#define clearNthBit( x, n ) clearBits((x), nthBit(n))
-//constexpr auto clearNthBit( auto & x, const auto n ) { return clearBits( x, nthBit( n ) ); }
+//#define clearNthBit( x, n ) clearBits((x), nthBit(n))
+constexpr auto clearNthBit( auto & x, const auto n ) { return clearBits( x, nthBit( n ) ); }
 
 
 // -----------------------------------------------------------------------------
 
-#define anyBitSet( x, m )   (maskBits((x), (m)) not_eq NoBitsSet)
-//constexpr auto anyBitSet( auto x, const auto m ) { return maskBits( x, m ) not_eq NoBitsSet; }
+//#define anyBitSet( x, m )   (maskBits((x), (m)) not_eq NoBitsSet)
+constexpr auto anyBitSet( auto x, const auto m ) { return maskBits( x, m ) not_eq NoBitsSet; }
 //
 //
-#define isBitSet( x, n )    anyBitSet((x), nthBit(n))
-//constexpr auto isBitSet( auto x, const auto n ) { return anyBitSet( x, nthBit( n ) ); }
+//#define isBitSet( x, n )    anyBitSet((x), nthBit(n))
+constexpr auto isBitSet( auto x, const auto n ) { return anyBitSet( x, nthBit( n ) ); }
 //
 //
-#define nthMask( n )        (n == BitsPerWord ? AllBitsSet : (nthBit(n) - OneBitSet))
-//constexpr auto nthMask( const auto n ) { return ( n == BitsPerWord ? AllBitsSet : ( nthBit( n ) - OneBitSet ) ); }
+//#define nthMask( n )        (n == BitsPerWord ? AllBitsSet : (nthBit(n) - OneBitSet))
+constexpr auto nthMask( const auto n ) { return ( n == BitsPerWord ? AllBitsSet : ( nthBit( n ) - OneBitSet ) ); }
 
 
 
 // -----------------------------------------------------------------------------
 // below ok
 
-#define lowerBits( x, n )   maskBits((x), nthMask(n))
-//constexpr auto lowerBits( auto x, const auto n ) { return maskBits( x, nthMask( n ) ); }
+//#define lowerBits( x, n )   maskBits((x), nthMask(n))
+constexpr auto lowerBits( auto x, const auto n ) { return maskBits( x, nthMask( n ) ); }
 //
 //
-#define roundMask( x, m )   (((x) + (m)) & ~(m))
-//constexpr auto roundMask( auto x, const auto m ) { return x + m & ~m; }
+//#define roundMask( x, m )   (((x) + (m)) & ~(m))
+constexpr auto roundMask( auto x, const auto m ) { return x + m & ~m; }
 //
 //
-#define roundTo( x, v )     roundMask((x), (v) - OneBitSet)
-//constexpr auto roundTo( auto x, const auto v ) { return roundMask( x, v - OneBitSet ); }
+//#define roundTo( x, v )     roundMask((x), (v) - OneBitSet)
+constexpr auto roundTo( auto x, const auto v ) { return roundMask( x, v - OneBitSet ); }
 //
 //
-#define roundBits( x, n )   roundMask((x), nthMask(n))
-//constexpr auto roundBits( auto x, const auto n ) { return roundMask( x, nthMask( n ) ); }
+//#define roundBits( x, n )   roundMask((x), nthMask(n))
+constexpr auto roundBits( auto x, const auto n ) { return roundMask( x, nthMask( n ) ); }
 
 
 // -----------------------------------------------------------------------------

@@ -9,23 +9,25 @@
 
 // This code is unused
 
-enum BaseLookupType {
-    NormalLookupType, SelfLookupType, SuperLookupType
+enum class LookupType {
+    NormalLookupType,   //
+    SelfLookupType,     //
+    SuperLookupType     //
 };
 
-enum CountType {
+enum class CountType {
     NonCounting,    // no counting at all
     Counting,       // incrementing a counter
     Comparing       // increment & test for reaching limit (recompilation)
 };
 
 
-typedef int LookupType;
+//typedef int LookupType;
 
 const int LookupTypeSize = 2;
 const int LookupTypeMask = 3;
 
-const int CountTypeMask = NonCounting | Counting | Comparing;
+const int CountTypeMask = static_cast<int>(CountType::NonCounting) | static_cast<int>(CountType::Counting) | static_cast<int>(CountType::Comparing);
 const int CountTypeSize = 2;
 const int CountSendBit  = LookupTypeSize + 1;
 
@@ -47,12 +49,12 @@ const int UninlinableSendMask = 1 << UninlinableSendBit;
 
 
 inline LookupType withoutExtraBits( LookupType lookupType ) {
-    return lookupType & LookupTypeMask;
+    return static_cast<LookupType>(static_cast<int>(lookupType) & static_cast<int>(LookupTypeMask));
 }
 
 
 inline LookupType withCountBits( LookupType l, CountType t ) {
-    return LookupType( ( int( l ) & ~( CountTypeMask << CountSendBit ) ) | ( t << CountSendBit ) );
+    return LookupType( ( int( l ) & ~( CountTypeMask << CountSendBit ) ) | ( static_cast<int>(t) << CountSendBit ) );
 }
 
 
@@ -63,5 +65,5 @@ inline CountType countType( LookupType l ) {
 
 extern "C" {
 void printLookupType( LookupType lookupType );
-char * lookupTypeName( LookupType lookupType );
+char *lookupTypeName( LookupType lookupType );
 }
