@@ -6,7 +6,7 @@
 
 # etc/venv/requirement.txt ----------------------------------------------------
 
-colander==0.9.9
+colander==1.7.0
 Flask==0.10.1
 iso8601==0.1.8
 itsdangerous==1.1.0
