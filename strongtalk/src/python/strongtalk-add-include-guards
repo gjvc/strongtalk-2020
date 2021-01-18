@@ -1,0 +1,79 @@
+#! /usr/bin/env python3
+
+import re
+import os
+import sys
+import shutil
+import tempfile
+import optparse
+
+
+def processHppFile( options, ifilename ):
+    outf = tempfile.NamedTemporaryFile( delete=False )
+
+    with open( ifilename, 'rb+' ) as inf:
+
+        g = iter( [ line.rstrip( '\n' ) for line in inf ] )
+
+        path = re.sub( '[/\.-]', '_', ifilename.replace( os.path.dirname( options.root ), '' ) )
+        guard = '{project}_{path}'.format( project=options.project, path=path ).upper()
+
+        top = [ ]
+        try:
+            while True:
+                line = next( g )
+                if line.startswith( '*/' ):
+                    break
+                else:
+                    top.append( line )
+        except StopIteration:
+            inf.seek( 0 )
+            g = iter( [ line.rstrip( '\n' ) for line in inf ] )
+            print( '#ifndef ' + guard, file=outf )
+            print( '#define ' + guard + '\n', file=outf )
+            for line in g:
+                print( line, file=outf )
+        else:
+            for l in top:
+                print( l, file=outf )
+            print( line, file=outf )
+            print( '', file=outf )
+            print( '#ifndef ' + guard, file=outf )
+            print( '#define ' + guard + '\n', file=outf )
+            for line in g:
+                print( line, file=outf )
+
+        print( '', file=outf )
+        print( '', file=outf )
+        print( '#endif // ' + guard, file=outf )
+
+    outf.close()
+    if options.replace:
+        shutil.copy( outf.name, ifilename )
+        print( 'replace', outf.name, ifilename )
+    else:
+        print( 'would', outf.name, ifilename )
+
+
+def processTree( options ):
+    for root, dirs, files in os.walk( options.root, topdown=False ):
+        for name in files:
+            _, suffix = os.path.splitext( name )
+            if suffix == '.hpp':
+                processHppFile( options, os.path.join( root, name ) )
+
+
+def main():
+    parser = optparse.OptionParser()
+    parser.add_option( '--project', action='store', default='strongtalk' )
+    parser.add_option( '--root', action='store', default='gcc-linux' )
+    parser.add_option( '--replace', action='store_true', default=False )
+    parser.add_option( '--verbose', action='store_true', default=False )
+    parser.add_option( '--debug', action='store_true', default=False )
+    options, args = parser.parse_args()
+
+    processTree( options )
+
+
+if __name__ == '__main__':
+    sys.exit( main() )

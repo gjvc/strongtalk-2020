@@ -105,9 +105,7 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 
 # library ---------------------------------------------------------------------
 
-include_directories ( SYSTEM ${object-path}/debug/ext/nasm/include )
-include_directories ( SYSTEM ${object-path}/debug/ext/udis86/include )
-
+include_directories ( SYSTEM ${object-path}/src/ext/nasm/include )
 add_compile_options ( -fpermissive )
 
 

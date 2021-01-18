@@ -1,6 +1,6 @@
 
 ####
-####  (C) 1994 - 2020, The Strongtalk authors and contributors
+####  (C) 1994 - 2021, The Strongtalk authors and contributors
 ####  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 ####
 
@@ -146,14 +146,14 @@ cxx-optimisation-options    := 0
 endif
 cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 
-cxx-other-options           :=
+cxx-other-options           := pthread
 cxx-other-flags             := $(addprefix -,$(cxx-other-options))
 
 cxx-other-long-options      := diagnostics-color=always
-cxx-other-long-flags        := $(addprefix --,$(cxx-other-options))
+cxx-other-long-flags        := $(addprefix --,$(cxx-other-long-options))
 
 cxx-warning-options-all-all := $(shell $(cxx-compiler) -Q --help=warning | sed -e 's/^\s*\-W\(\S*\)\s*\[\w*\]/\1 /gp;d' | tr -d '\n' )
-cxx-warning-options         :=
+cxx-warning-options         := all extra
 cxx-warning-flags           := $(addprefix -W,$(cxx-warning-options))
 
 cxx-compile-flags = \
@@ -176,8 +176,11 @@ libgcc-link-flags := \
     -static-libgcc \
     -static-libstdc++
 
-ifeq ( $(runtime), posix )
-    libgcc-link-flags := $(libgcc-link-flags) -lwinpthread
+ifeq ($(runtime),posix)
+    libgcc-link-flags := $(libgcc-link-flags) \
+        -Wl,-Bstatic \
+        -lstdc++ -lwinpthread \
+        -Wl,-Bdynamic
 endif
 
 
@@ -237,7 +240,6 @@ st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
 # targets -----------------------------------------------------------------------
 
 .PHONY : default st20-main-exe st20-test-exe 
-.PHONY : googletest nasm
 .PHONY : init init-3rd-party init-wine 
 
 default : st20-main-exe st20-test-exe
@@ -280,8 +282,6 @@ help  :
 
 # environment -----------------------------------------------------------------
 
-ext-build : googletest nasm
-
 wine-init :
 	-$(wine-wineserver) --kill=9
 	-rm -rf ~/.wine/
@@ -292,13 +292,7 @@ wine-init :
 
 st20-main-exe : $(st20-main-exe)
 
-st20-main-exe-run : $(st20-exe)
-	$(wine) $(st20-main-exe)
-
 st20-test-exe : $(st20-test-exe)
-
-st20-test-exe-run : $(st20-test-exe)
-	$(st20-test-exe)
 
 st20-main-lib : st20-main-lib-a
 
@@ -371,7 +365,7 @@ $(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.c
 	@echo ok: $@ from $<
 
 $(st20-main-exe) : $(st20-main-exe-objects) $(st20-main-lib-a)
-	@$(cxx-compiler) \
+	$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
 		$(st20-main-exe-objects) \
@@ -536,4 +530,3 @@ nasm :
 #        -B $(zydis-object-dir)
 #	$(ninja-program) -C $(zydis-object-dir)
 #
-
