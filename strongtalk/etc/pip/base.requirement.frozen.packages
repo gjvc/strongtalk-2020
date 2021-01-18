@@ -1,0 +1,17 @@
+click
+colander
+Flask
+iso8601
+itsdangerous
+Jinja2
+lark
+MarkupSafe
+meson
+pip
+pkg-resources
+ply
+redis
+setuptools
+translationstring
+Werkzeug
+winappdbg

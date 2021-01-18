@@ -8,7 +8,8 @@ ${BASH_DEBUG:+trap '(read -p "[${BASH_SOURCE}:${LINENO}] [${BASH_COMMAND}] ")' D
 
 # location --------------------------------------------------------------------
 
-set -o errexit -o nounset
+readonly _PATH=$("${BASH_SOURCE[ 0 ]}")
+readonly _READLINK_F=$(readlink -f "${BASH_SOURCE[ 0 ]}")
 readonly _REALPATH=$(realpath "${BASH_SOURCE[ 0 ]}")
 readonly _BASENAME=$(basename "${_REALPATH}")
 readonly _DIRNAME=$(dirname "${_REALPATH}")
@@ -16,21 +17,15 @@ readonly _ROOT=$(dirname "${_DIRNAME}")
 readonly _PREFIX=$(dirname "${_ROOT}")
 
 
-# environment -----------------------------------------------------------------
+# execute ---------------------------------------------------------------------
 
-export PYTHONDONTWRITEBYTECODE=1
-export PYTHONPATH=${_ROOT}/src/python/main/${PYTHONPATH:+:${PYTHONPATH}}
-export PYTHONPATH=${_ROOT}/lib/python/main/${PYTHONPATH:+:${PYTHONPATH}}
+if [[ "${_PATH_BASENAME}" = "venv-python-module" ]]; then
+    echo "note: ${_PATH_BASENAME} is not meant to be invoked directly."
+    exit 111
+fi
 
 
 # execute ---------------------------------------------------------------------
 
-readonly venv_python=${_ROOT}/.venv/bin/python
-if [[ ! -L ${venv_python} ]]; then 
-    err "error:  the .venv/ directory is missing."
-    err " hint:  run bin/venv-create to create the .venv/ directory."
-    exit 1234
-fi
-
-exec ${venv_python} "${@}"
+exec ${_DIRNAME}/venv-python -m ${_BASENAME} "${@}"
 

@@ -1,0 +1,96 @@
+#! /usr/bin/env bash
+
+# bash ------------------------------------------------------------------------
+
+set -o errexit -o nounset
+${BASH_DEBUG:+trap '(read -p "[${BASH_SOURCE}:${LINENO}] [${BASH_COMMAND}] ")' DEBUG}
+
+
+# location --------------------------------------------------------------------
+
+readonly _REALPATH=$(realpath "${BASH_SOURCE[ 0 ]}")
+readonly _BASENAME=$(basename "${_REALPATH}")
+readonly _DIRNAME=$(dirname "${_REALPATH}")
+readonly _ROOT=$(dirname "${_DIRNAME}")
+readonly _PREFIX=$(dirname "${_ROOT}")
+
+
+# logging ----------------------------------------------------------------
+
+readonly stdout_stderr_log=/tmp/${_BASENAME}-$(date +%Y-%m-%d.%H%M.%S).log
+exec &>> >( ts '%Y-%m-%d.%H%M.%.S ' | tee ${stdout_stderr_log} )
+
+function banner {
+    echo ""
+    echo "-----------------------------------------------------------------------------"
+    echo ">>> ${@}"
+    echo "-----------------------------------------------------------------------------"
+    echo ""
+}
+
+
+# prepare ---------------------------------------------------------------------
+
+readonly sys_python=$(which ${1:-python3})
+[[ -z "${sys_python}" ]] && { echo "failed to find system python [${1}]";  exit 111; }
+
+readonly sys_python_realpath=$( realpath ${sys_python} )
+readonly sys_python_version=$( ${sys_python} -c 'import platform; print( platform.python_version() )' )
+readonly sys_python_implementation=$( ${sys_python} -c 'import platform; print( platform.python_implementation() )' )
+
+
+# (re)create venv -------------------------------------------------------------
+
+readonly venv_root=${_ROOT}/.venv
+banner "(re)creating venv [${venv_root}]"
+${sys_python} -m venv --clear ${venv_root}
+
+#readonly venv_python=${_ROOT}/tools/venv-python
+#readonly venv_python_version=$( ${venv_python} -c 'import platform; print( platform.python_version() )' )
+##readonly venv_python_implementation=$( ${venv_python} -c 'import platform; print( platform.python_implementation() )' )
+
+
+# explain ---------------------------------------------------------------------
+
+echo "                     _ROOT [${_ROOT}]"
+echo "                sys_python [${sys_python}] (${sys_python_realpath})"
+echo "        sys_python_version [${sys_python_version}]"
+echo " sys_python_implementation [${sys_python_implementation}]"
+#echo "       venv_python_version [${venv_python_version}]"
+#echo "venv_python_implementation [${venv_python_implementation}]"
+echo ""
+
+
+# execute ---------------------------------------------------------------------
+
+function pip_install {
+
+    _venv_root=$1
+    _requirement_txt=$2
+
+    relative_file=$( realpath --relative-to ${_ROOT} ${_requirement_txt} )
+    banner "installing packages from [${relative_file}]"
+    ${_venv_root}/bin/pip install --isolated --no-compile --upgrade --requirement ${_requirement_txt}
+    ${_venv_root}/bin/pip list --format freeze \
+        | tee \
+        >( awk -F '==' '{ print $1; }' > ${_requirement_txt}.frozen.packages ) \
+        >( awk -F '==' '{ print $0; }' > ${_requirement_txt}.frozen.versions ) \
+        >/dev/null
+
+    for file in packages versions; do 
+        relative_file=$( realpath --relative-to ${_ROOT} ${_requirement_txt}.frozen.${file} )
+        banner "frozen ${file} [${relative_file}]"
+        nl ${_requirement_txt}.frozen.${file}
+        echo ""
+    done
+
+}
+
+pip_install ${venv_root} ${_ROOT}/etc/pip/base.requirement
+pip_install ${venv_root} ${_ROOT}/etc/pip/app.requirement
+
+
+# success ---------------------------------------------------------------------
+
+exit 0
+

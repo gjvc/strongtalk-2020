@@ -365,7 +365,7 @@ $(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.c
 	@echo ok: $@ from $<
 
 $(st20-main-exe) : $(st20-main-exe-objects) $(st20-main-lib-a)
-	$(cxx-compiler) \
+	@$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
 		$(st20-main-exe-objects) \
