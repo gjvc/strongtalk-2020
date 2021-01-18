@@ -19,18 +19,18 @@ const int MaxSplitDepth = 7;
 class SplitSig {
         // "this" encodes 7 split 4-bit IDs plus nesting level in lowest bits
         // this == 0 means top level, not in any split
-        static const uint32_t LevelMask;
+        static const std::uint32_t LevelMask;
     public:
         SplitSig() { ShouldNotCallThis(); }
         friend SplitSig * new_SplitSig( SplitSig * current, int splitID );
 
-        int level() { return uint32_t( this ) & LevelMask; }
+        int level() { return std::uint32_t( this ) & LevelMask; }
         bool_t contains( SplitSig * other ) {
             // other sig is in same branch iff the receiver is a prefix of other
             // NB: this is not symmetric, i.e. it's like <=, not ==
             int shift = ( MaxSplitDepth - level() + 1 ) << 2;
             if ( shift == 32 ) return true;    // because x >> 32 is undefined
-            return ( ( uint32_t( this ) ^ uint32_t( other ) ) >> shift ) == 0;
+            return ( ( std::uint32_t( this ) ^ std::uint32_t( other ) ) >> shift ) == 0;
         }
         void print();
         const char * prefix( const char * buf );

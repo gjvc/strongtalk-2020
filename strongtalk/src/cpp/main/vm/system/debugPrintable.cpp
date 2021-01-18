@@ -55,7 +55,7 @@ void pp( void * p ) {
         MemOop obj = as_memOop( Universe::object_start( ( Oop * ) p ) );
         obj->print();
         if ( obj->is_method() ) {
-            int byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( ( uint8_t * ) p );
+            int byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( ( std::uint8_t * ) p );
             PrettyPrinter::print( MethodOop( obj ), nullptr, byteCodeIndex );
         }
         return;
@@ -229,7 +229,7 @@ NativeMethod * find( int addr ) {
 
 MethodOop findm( int hp ) {
     Command c( "findm" );
-    return MethodOopDescriptor::methodOop_from_hcode( ( uint8_t * ) hp );
+    return MethodOopDescriptor::methodOop_from_hcode( ( std::uint8_t * ) hp );
 }
 
 // int versions of all methods to avoid having to type casts in the debugger
@@ -261,7 +261,7 @@ void pm( int m ) {
 }
 
 
-void print_codes( const char * class_name, char * selector ) {
+void print_codes( const char * class_name, const char * selector ) {
     Command c( "print_codes" );
     _console->print_cr( "Finding %s in %s.", selector, class_name );
     Oop result = Universe::find_global( class_name );

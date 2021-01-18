@@ -294,7 +294,7 @@ char * allocateResource( int size ) {
 
 // Commented out to prevent conflict with dynamically loaded routines.
 
-//void * operator new( size_t size ) {
+//void * operator new( std::size_t size ) {
 //    fatal( "should not call global (default) operator new" );
 //    return ( void * ) AllocateHeap( size, "global operator new" );
 //}

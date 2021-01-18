@@ -1180,7 +1180,7 @@ static void print_format( ByteCodes::Format format ) {
                 _console->print( " byte" );
                 break;
             case 'L':
-                _console->print( " int32_t" );
+                _console->print( " std::int32_t" );
                 break;
             case 'O':
                 _console->print( " Oop" );

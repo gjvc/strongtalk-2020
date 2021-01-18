@@ -13,7 +13,7 @@
 
 void NativeCall::verify() {
     // make sure code pattern is actually a call imm32 instruction
-    if ( *( uint8_t * ) instruction_address() not_eq instruction_code ) st_fatal( "not a call imm32" );
+    if ( *( std::uint8_t * ) instruction_address() not_eq instruction_code ) st_fatal( "not a call imm32" );
 }
 
 
@@ -25,7 +25,7 @@ void NativeCall::print() {
 // Implementation of NativeMov
 void NativeMov::verify() {
     // make sure code pattern is actually a mov reg, imm32 instruction
-    if ( ( *( uint8_t * ) instruction_address() & ~register_mask ) not_eq instruction_code ) st_fatal( "not a mov reg, imm32" );
+    if ( ( *( std::uint8_t * ) instruction_address() & ~register_mask ) not_eq instruction_code ) st_fatal( "not a mov reg, imm32" );
 }
 
 
@@ -37,7 +37,7 @@ void NativeMov::print() {
 // Implementation of NativeTest
 void NativeTest::verify() {
     // make sure code pattern is actually a test eax, imm32 instruction
-    if ( *( uint8_t * ) instruction_address() not_eq instruction_code ) st_fatal( "not a test eax, imm32" );
+    if ( *( std::uint8_t * ) instruction_address() not_eq instruction_code ) st_fatal( "not a test eax, imm32" );
 }
 
 

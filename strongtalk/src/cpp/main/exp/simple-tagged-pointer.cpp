@@ -5,7 +5,7 @@
 #include <cassert>
 
 
-template <size_t V>
+template <std::size_t V>
 struct LOG2 {
     enum {
         value = LOG2 <V / 2>::value + 1
@@ -25,7 +25,7 @@ class tagged_ptr {
 
     public:
 
-        static constexpr std::size_t    alignment = alignof( T );
+        static constexpr std::std::size_t    alignment = alignof( T );
         static constexpr std::uintptr_t tag_bits  = LOG2 <alignment>::value;
         static constexpr std::uintptr_t tag_mask  = alignment - static_cast<std::uintptr_t>(1);
 
@@ -34,11 +34,11 @@ class tagged_ptr {
                 proxy() : p( 0UL ), i( 0 ) {}
 
 
-                proxy( const std::uintptr_t * p, const size_t i ) : p( const_cast<std::uintptr_t *>(p) ), i( i ) {}
+                proxy( const std::uintptr_t * p, const std::size_t i ) : p( const_cast<std::uintptr_t *>(p) ), i( i ) {}
 
 
                 std::uintptr_t * p;
-                std::size_t i;
+                std::std::size_t i;
 
 
             public:
@@ -125,66 +125,66 @@ class tagged_ptr {
         void reset() { tags( 0UL ); }
 
 
-        template <size_t I>
+        template <std::size_t I>
         const proxy tag() const {
             static_assert( I < tag_bits, "Index too big for tagged_ptr operation, it will overwrite part of pointer" );
             return proxy( &_bits, I );
         }
 
 
-        template <size_t I>
+        template <std::size_t I>
         proxy tag() {
             static_assert( I < tag_bits, "Index too big for tagged_ptr operation, it will overwrite part of pointer" );
             return proxy( &_bits, I );
         }
 
 
-        template <size_t I>
+        template <std::size_t I>
         void set() {
             static_assert( I < tag_bits, "Index too big for tagged_ptr operation, it will overwrite part of pointer" );
             _bits |= ( 1UL << I );
         }
 
 
-        template <size_t I>
+        template <std::size_t I>
         void flip() {
             static_assert( I < tag_bits, "Index too big for tagged_ptr operation, it will overwrite part of pointer" );
             _bits ^= ( 1UL << I );
         }
 
 
-        template <size_t I>
+        template <std::size_t I>
         void clear() {
             static_assert( I < tag_bits, "Index too big for tagged_ptr operation, it will overwrite part of pointer" );
             _bits &= ~( 1UL << I );
         }
 
 
-        const proxy tag( const size_t i ) const {
+        const proxy tag( const std::size_t i ) const {
             assert( i < tag_bits );
             return proxy( &_bits, i );
         }
 
 
-        proxy tag( const size_t i ) {
+        proxy tag( const std::size_t i ) {
             assert( i < tag_bits );
             return proxy( &_bits, i );
         }
 
 
-        void set( const size_t i ) {
+        void set( const std::size_t i ) {
             assert( i < tag_bits );
             _bits |= ( 1UL << i );
         }
 
 
-        void flip( const size_t i ) {
+        void flip( const std::size_t i ) {
             assert( i < tag_bits );
             _bits ^= ( 1UL << i );
         }
 
 
-        void clear( const size_t i ) {
+        void clear( const std::size_t i ) {
             assert( i < tag_bits );
             _bits &= ~( 1UL << i );
         }

@@ -37,48 +37,46 @@
 
 class Displacement : public ValueObject {
 
-    private:
-        int _data{};
+private:
+    int _data{};
 
-        enum Layout {
-            info_size = InlineCacheInfo::number_of_flags,   //
-            type_size = 2,                                  //
-            next_size = 32 - ( type_size + info_size ),     //
-            info_pos  = 0,                                  //
-            type_pos  = info_pos + info_size,               //
-            next_pos  = type_pos + type_size,               //
-            info_mask = ( 1 << info_size ) - 1,             //
-            type_mask = ( 1 << type_size ) - 1,             //
-            next_mask = ( 1 << next_size ) - 1,             //
-        };
+    static constexpr int info_size = InlineCacheInfo::number_of_flags;   //
+    static constexpr int type_size = 2;                                  //
+    static constexpr int next_size = 32 - ( type_size + info_size );     //
+    static constexpr int info_pos  = 0;                                  //
+    static constexpr int type_pos  = info_pos + info_size;               //
+    static constexpr int next_pos  = type_pos + type_size;               //
+    static constexpr int info_mask = ( 1 << info_size ) - 1;             //
+    static constexpr int type_mask = ( 1 << type_size ) - 1;             //
+    static constexpr int next_mask = ( 1 << next_size ) - 1;             //
 
-        enum class Type {             // info field usage
-            call,               // unused
-            absolute_jump,      // unused
-            conditional_jump,   // condition code
-            ic_info,            // flags
-        };
+    enum class Type {             // info field usage
+        call,               // unused
+        absolute_jump,      // unused
+        conditional_jump,   // condition code
+        ic_info,            // flags
+    };
 
 
-        void init( const Label & L, Type type, int info );
+    void init( const Label &L, Type type, int info );
 
-        int data() const;
+    int data() const;
 
-        int info() const;
+    int info() const;
 
-        Type type() const;
+    Type type() const;
 
-        void next( const Label & L ) const;
+    void next( const Label &L ) const;
 
-        void link_to( const Label & L );
+    void link_to( const Label &L );
 
-        Displacement( int data );
+    Displacement( int data );
 
-        Displacement( const Label & L, Type type, int info );
+    Displacement( const Label &L, Type type, int info );
 
-        void print();
+    void print();
 
-        friend class Assembler;
+    friend class Assembler;
 
-        friend class MacroAssembler;
+    friend class MacroAssembler;
 };

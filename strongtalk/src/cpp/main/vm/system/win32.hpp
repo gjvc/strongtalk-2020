@@ -153,7 +153,7 @@ extern void intercept_for_single_step();
 
 
 static inline double fileTimeAsDouble( FILETIME * time ) {
-    const double high   = ( double ) ( ( uint32_t ) ~0 );
+    const double high   = ( double ) ( ( std::uint32_t ) ~0 );
     const double split  = 10000000.0;
     double       result = ( time->dwLowDateTime / split ) + time->dwHighDateTime * ( high / split );
     return result;
@@ -346,7 +346,7 @@ const char * os::dll_extension() {
 }
 
 
-const char * exception_name( uint32_t code ) {
+const char * exception_name( std::uint32_t code ) {
     switch ( code ) {
         case EXCEPTION_ACCESS_VIOLATION:
             return "Access violation";
@@ -402,7 +402,7 @@ void suspend_process_at_stack_overflow( int * sp, int * fp, const char * pc );
 
 LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS * exceptionInfo ) {
 
-    uint32_t code = exceptionInfo->ExceptionRecord->ExceptionCode;
+    std::uint32_t code = exceptionInfo->ExceptionRecord->ExceptionCode;
 
     if ( code == EXCEPTION_BREAKPOINT ) {
         // This exception is called when an assertion fails (__asm { int 3} is executed).

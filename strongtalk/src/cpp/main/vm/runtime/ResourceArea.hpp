@@ -177,13 +177,13 @@ char * allocateResource( int size );
 // -----------------------------------------------------------------------------
 
 template <typename T>
-T * new_resource_array( size_t size ) {
+T * new_resource_array( std::size_t size ) {
     return reinterpret_cast<T *>( allocateResource( size * sizeof( T ) ));
 }
 
 
 template <typename T>
-T * new_c_heap_array( size_t size ) {
+T * new_c_heap_array( std::size_t size ) {
     return reinterpret_cast<T *>( malloc( ( size ) * sizeof( T ) ));
 }
 

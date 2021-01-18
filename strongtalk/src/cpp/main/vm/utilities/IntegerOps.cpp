@@ -781,7 +781,7 @@ int IntegerOps::copy_result_size_in_bytes( Integer & x ) {
 }
 
 
-int IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( uint32_t i ) {
+int IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i ) {
     return Integer::length_to_size_in_bytes( i not_eq 0 );
 }
 
@@ -1179,7 +1179,7 @@ void IntegerOps::copy( Integer & x, Integer & z ) {
 }
 
 
-void IntegerOps::unsigned_int_to_Integer( uint32_t i, Integer & z ) {
+void IntegerOps::unsigned_int_to_Integer( std::uint32_t i, Integer & z ) {
     if ( i == 0 ) {
         z.set_length( 0 );
     } else {

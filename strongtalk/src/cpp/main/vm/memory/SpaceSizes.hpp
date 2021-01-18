@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,7 +6,7 @@
 
 #pragma once
 
-#include "allocation.hpp"
+#include "vm/memory/allocation.hpp"
 
 
 // default sizes for heaps & zone
@@ -23,7 +24,7 @@ class SpaceSizes : ValueObject {
         int _code_size;              // size of NativeMethod zone
         int _reserved_pic_heap_size; // reserved Space for PolymorphicInlineCache zone
         int _pic_heap_size;          // size of pic_heap
-        int _jump_table_size;         // size of jump table
+        int _jump_table_size;        // size of jump table
 
         // Reads debug variables for initial settings.
         void initialize();

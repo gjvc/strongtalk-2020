@@ -8,8 +8,8 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/lookup/LookupResult.hpp"
 
-const uint32_t primary_cache_size   = 16 * 1024;
-const uint32_t secondary_cache_size = 2 * 1024;
+const std::uint32_t primary_cache_size   = 16 * 1024;
+const std::uint32_t secondary_cache_size = 2 * 1024;
 
 extern LookupResult interpreter_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
 
@@ -22,7 +22,7 @@ class LookupCache : AllStatic {
 
         static int secondary_cache_address();
 
-        static uint32_t hash_value( LookupKey * key );
+        static std::uint32_t hash_value( LookupKey * key );
 
         static int number_of_primary_hits;
         static int number_of_secondary_hits;

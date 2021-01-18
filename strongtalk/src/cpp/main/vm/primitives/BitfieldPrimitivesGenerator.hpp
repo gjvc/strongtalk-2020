@@ -20,12 +20,12 @@ public:
     BitsetPrimitiveDescriptor( const std::bitset<32> &bits );
 
 
-    int get_unsigned_bitfield( std::size_t start_bit, std::size_t field_length ) const {
+    int get_unsigned_bitfield( std::std::size_t start_bit, std::std::size_t field_length ) const {
 
-        uint32_t result{ 0 };
-        uint32_t mask = 1;
+        std::uint32_t result{ 0 };
+        std::uint32_t mask = 1;
 
-        for ( std::size_t i = 0; i < field_length; i++ ) {
+        for ( std::std::size_t i = 0; i < field_length; i++ ) {
             if ( _bits[ start_bit + i ] )
                 result |= mask;
             mask <<= 1;

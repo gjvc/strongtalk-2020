@@ -61,23 +61,23 @@ class DoubleByteArrayOopDescriptor : public MemOopDescriptor {
 
 
         // returns the location where the double bytes start
-        uint16_t * doubleBytes() const {
-            return ( uint16_t * ) &length_addr()[ 1 ];
+        std::uint16_t * doubleBytes() const {
+            return ( std::uint16_t * ) &length_addr()[ 1 ];
         }
 
 
-        uint16_t * doubleByte_at_addr( int which ) const {
+        std::uint16_t * doubleByte_at_addr( int which ) const {
             st_assert( which > 0 and which <= length(), "index out of bounds" );
             return &doubleBytes()[ which - 1 ];
         }
 
 
-        uint16_t doubleByte_at( int which ) const {
+        std::uint16_t doubleByte_at( int which ) const {
             return *doubleByte_at_addr( which );
         }
 
 
-        void doubleByte_at_put( int which, uint16_t contents ) {
+        void doubleByte_at_put( int which, std::uint16_t contents ) {
             *doubleByte_at_addr( which ) = contents;
         }
 

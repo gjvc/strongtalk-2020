@@ -51,7 +51,7 @@ TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldAllocateDByteArrayOfC
     ASSERT_EQ( 10, DoubleByteArrayOop(result) -> length() );
     ASSERT_EQ( ( const char * ) dByteArrayClassHandle.as_klass(), ( const char * ) result->klass() );
     for ( int                        index  = 10; index > 0; index-- )
-        ASSERT_EQ( uint16_t( 0 ), DoubleByteArrayOop( result ) -> doubleByte_at(index) );
+        ASSERT_EQ( std::uint16_t( 0 ), DoubleByteArrayOop( result ) -> doubleByte_at(index) );
 }
 
 

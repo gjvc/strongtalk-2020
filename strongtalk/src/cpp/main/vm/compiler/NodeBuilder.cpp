@@ -668,7 +668,7 @@ void NodeBuilder::materialize( PseudoRegister * r, GrowableArray <BlockPseudoReg
 GrowableArray <PseudoRegister *> * NodeBuilder::pass_arguments( PseudoRegister * receiver, int nofArgs ) {
     // Generate code for argument passing (move all args into the right locations).
     // If the arguments are passed on the stack (including the receiver) they should be assigned in the order of textual appearance.
-    // If the receiver is passed in a register that should happen at the end to allow this register to be used as int32_t as possible.
+    // If the receiver is passed in a register that should happen at the end to allow this register to be used as std::int32_t as possible.
     int                              nofFormals = ( receiver == nullptr ) ? nofArgs : nofArgs + 1;
     GrowableArray <PseudoRegister *> * formals  = new GrowableArray <PseudoRegister *>( nofFormals );
 

@@ -42,7 +42,7 @@ class IndirectAlienPrimsTests : public ::testing::Test {
             largeUnsignedInteger = ByteArrayOop( lu.as_oop() );
             largeSignedInteger   = ByteArrayOop( ls.as_oop() );
 
-            IntegerOps::unsigned_int_to_Integer( ( uint32_t ) 0xFFFFFFFF, ByteArrayOop( largeUnsignedInteger )->number() );
+            IntegerOps::unsigned_int_to_Integer( ( std::uint32_t ) 0xFFFFFFFF, ByteArrayOop( largeUnsignedInteger )->number() );
             IntegerOps::int_to_Integer( -1 << 31, ByteArrayOop( largeSignedInteger )->number() );
 
             alien = ByteArrayOop( ah.as_oop() );
@@ -67,7 +67,7 @@ class IndirectAlienPrimsTests : public ::testing::Test {
         ByteArrayOop alien, invalidAlien;
         ByteArrayOop largeUnsignedInteger;
         ByteArrayOop largeSignedInteger;
-        uint8_t   alien_byte_region[16];
+        std::uint8_t   alien_byte_region[16];
         DoubleOop doubleValue;
 
 
@@ -88,11 +88,11 @@ class IndirectAlienPrimsTests : public ::testing::Test {
         }
 
 
-        void checkLargeUnsigned( Oop result, uint32_t expected ) {
+        void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
             char     message[200];
             EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
             bool_t   ok;
-            uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
+            std::uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
             EXPECT_TRUE( ok ) << "should be integer";
             sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
             EXPECT_EQ( expected, actual ) << message;

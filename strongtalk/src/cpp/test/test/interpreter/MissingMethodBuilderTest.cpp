@@ -62,14 +62,14 @@ TEST_F( MissingMethodBuilderTests, buildWithNoArgSelectorShouldBuildCorrectBytes
     BlockScavenge        bs;
     char                 msg[200];
     SymbolOop            selector          = oopFactory::new_symbol( "value" );
-    uint8_t              expectedBytes[52] = { static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_self), static_cast<uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::return_tos_pop_0), 0xFF, 0xFF, 0xFF };
+    std::uint8_t              expectedBytes[52] = { static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_self), static_cast<std::uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::return_tos_pop_0), 0xFF, 0xFF, 0xFF };
     MissingMethodBuilder builder( selector );
     builder.build();
     ByteArrayOop bytes = builder.bytes();
     EXPECT_EQ( 52, bytes->length() ) << "wrong length";
     for ( int    index = 0; index < 52; index++ ) {
-        uint8_t expected = expectedBytes[ index ];
-        uint8_t actual   = bytes->byte_at( index + 1 );
+        std::uint8_t expected = expectedBytes[ index ];
+        std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
         EXPECT_EQ( expected, actual ) << msg;
     }
@@ -224,16 +224,16 @@ TEST_F( MissingMethodBuilderTests, buildWithOneArgSelectorShouldBuildCorrectByte
     BlockScavenge        bs;
     char                 msg[200];
     SymbolOop            selector          = oopFactory::new_symbol( "value:" );
-    uint8_t              expectedBytes[80] = { static_cast<uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_self), static_cast<uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_temp_0), static_cast<uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_self),
-                                               0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::return_tos_pop_1), 0xff, 0xff, 0xff };
+    std::uint8_t              expectedBytes[80] = { static_cast<std::uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_self), static_cast<std::uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0), static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self),
+                                               0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::return_tos_pop_1), 0xff, 0xff, 0xff };
     MissingMethodBuilder builder( selector );
     builder.build();
     ByteArrayOop bytes = builder.bytes();
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 65, bytes->length() );
     EXPECT_EQ( 80, bytes->length() ) << msg;
     for ( int index    = 0; index < 80; index++ ) {
-        uint8_t expected = expectedBytes[ index ];
-        uint8_t actual   = bytes->byte_at( index + 1 );
+        std::uint8_t expected = expectedBytes[ index ];
+        std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
         EXPECT_EQ( expected, actual ) << msg;
     }
@@ -258,17 +258,17 @@ TEST_F( MissingMethodBuilderTests, buildWithTwoArgSelectorShouldBuildCorrectByte
     BlockScavenge        bs;
     char                 msg[200];
     SymbolOop            selector          = oopFactory::new_symbol( "value:value:" );
-    uint8_t              expectedBytes[96] = { static_cast<uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_self), static_cast<uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 1, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_temp_0), static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
-                                               static_cast<uint8_t>(ByteCodes::Code::push_temp_0), static_cast<uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
-                                               static_cast<uint8_t>(ByteCodes::Code::return_tos_pop_2), 0xff, 0xff, 0xff };
+    std::uint8_t              expectedBytes[96] = { static_cast<std::uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_self), static_cast<std::uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 1, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0), static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
+                                               static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0), static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
+                                               static_cast<std::uint8_t>(ByteCodes::Code::return_tos_pop_2), 0xff, 0xff, 0xff };
     MissingMethodBuilder builder( selector );
     builder.build();
     ByteArrayOop bytes = builder.bytes();
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 93, bytes->length() );
     EXPECT_EQ( 96, bytes->length() ) << msg;
     for ( int index    = 0; index < 96; index++ ) {
-        uint8_t expected = expectedBytes[ index ];
-        uint8_t actual   = bytes->byte_at( index + 1 );
+        std::uint8_t expected = expectedBytes[ index ];
+        std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
         EXPECT_EQ( expected, actual ) << msg;
     }
@@ -279,17 +279,17 @@ TEST_F( MissingMethodBuilderTests, buildWithThreeArgSelectorShouldBuildCorrectBy
     BlockScavenge        bs;
     char                 msg[200];
     SymbolOop            selector           = oopFactory::new_symbol( "value:value:value:" );
-    uint8_t              expectedBytes[112] = { static_cast<uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_self), static_cast<uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 2, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 2, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_temp_0), static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 1, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_temp_0), static_cast<uint8_t>(ByteCodes::Code::push_succ_n), 2, static_cast<uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::push_temp_0),
-                                                static_cast<uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
-                                                static_cast<uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<uint8_t>(ByteCodes::Code::return_tos_pop_n), 3, 0xff, 0xff };
+    std::uint8_t              expectedBytes[112] = { static_cast<std::uint8_t>(ByteCodes::Code::allocate_temp_1), static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_self), static_cast<std::uint8_t>(ByteCodes::Code::push_literal), 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_global), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 2, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_1), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n), 0xFF, static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 2, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0), static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 1, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 1, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0), static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n), 2, static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n), 0, static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop), 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0),
+                                                static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n), 3, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0,
+                                                static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self), 0xFF, 0xFF, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, static_cast<std::uint8_t>(ByteCodes::Code::return_tos_pop_n), 3, 0xff, 0xff };
     MissingMethodBuilder builder( selector );
     builder.build();
     ByteArrayOop bytes = builder.bytes();
     sprintf( msg, "Wrong length. Expected: %d, but was: %d", 110, bytes->length() );
     EXPECT_EQ( 112, bytes->length() ) << msg;
     for ( int index    = 0; index < 112; index++ ) {
-        uint8_t expected = expectedBytes[ index ];
-        uint8_t actual   = bytes->byte_at( index + 1 );
+        std::uint8_t expected = expectedBytes[ index ];
+        std::uint8_t actual   = bytes->byte_at( index + 1 );
         sprintf( msg, "Incorrect byte at %d. Expected: %d, but was: %d", index, expected, actual );
         EXPECT_EQ( expected, actual ) << msg;
     }

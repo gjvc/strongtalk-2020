@@ -23,9 +23,9 @@
 const char * InliningDatabase::_directory = nullptr;
 
 InliningDatabaseKey * InliningDatabase::_table = nullptr;
-uint32_t            InliningDatabase::_table_size      = 0;
-uint32_t            InliningDatabase::_table_size_mask = 0;
-uint32_t            InliningDatabase::_table_no        = 0;
+std::uint32_t            InliningDatabase::_table_size      = 0;
+std::uint32_t            InliningDatabase::_table_size_mask = 0;
+std::uint32_t            InliningDatabase::_table_no        = 0;
 
 
 const char * InliningDatabase::default_directory() {
@@ -630,16 +630,16 @@ RecompilationScope * InliningDatabase::file_in( LookupKey * outer, LookupKey * i
 }
 
 
-uint32_t InliningDatabase::index_for( LookupKey * outer, LookupKey * inner ) {
-    uint32_t hash = ( uint32_t ) outer->klass()->identity_hash() ^( uint32_t ) outer->selector()->identity_hash();
+std::uint32_t InliningDatabase::index_for( LookupKey * outer, LookupKey * inner ) {
+    std::uint32_t hash = ( std::uint32_t ) outer->klass()->identity_hash() ^( std::uint32_t ) outer->selector()->identity_hash();
     if ( inner ) {
-        hash ^= ( uint32_t ) inner->klass()->identity_hash() ^ ( uint32_t ) inner->selector()->identity_hash();
+        hash ^= ( std::uint32_t ) inner->klass()->identity_hash() ^ ( std::uint32_t ) inner->selector()->identity_hash();
     }
     return hash & _table_size_mask;
 }
 
 
-uint32_t InliningDatabase::next_index( uint32_t index ) {
+std::uint32_t InliningDatabase::next_index( std::uint32_t index ) {
     return ( index + 1 ) & _table_size_mask;
 }
 
@@ -662,7 +662,7 @@ RecompilationScope * InliningDatabase::select_and_remove( bool_t * end_of_table 
     if ( _table_no == 0 )
         return nullptr;
 
-    for ( uint32_t index = 0; index < _table_size; index++ ) {
+    for ( std::uint32_t index = 0; index < _table_size; index++ ) {
         if ( _table[ index ].is_filled() and _table[ index ].is_outer() ) {
             RecompilationScope * result = file_in( &_table[ index ]._outer );
             _table[ index ].set_deleted();
@@ -678,7 +678,7 @@ RecompilationScope * InliningDatabase::select_and_remove( bool_t * end_of_table 
 }
 
 
-void InliningDatabase::allocate_table( uint32_t size ) {
+void InliningDatabase::allocate_table( std::uint32_t size ) {
 
     if ( TraceInliningDatabase ) {
         _console->print_cr( "InliningDatabase::allocate_table(%d)", size );
@@ -689,7 +689,7 @@ void InliningDatabase::allocate_table( uint32_t size ) {
     _table_no        = 0;
     _table           = new_c_heap_array <InliningDatabaseKey>( _table_size );
 
-    for ( uint32_t index = 0; index < _table_size; index++ ) {
+    for ( std::uint32_t index = 0; index < _table_size; index++ ) {
         _table[ index ].clear();
     }
 
@@ -703,9 +703,9 @@ void InliningDatabase::add_lookup_entry( LookupKey * outer, LookupKey * inner ) 
         } else {
             // Expand table
             InliningDatabaseKey * old_table = _table;
-            uint32_t old_table_size = _table_size;
+            std::uint32_t old_table_size = _table_size;
             allocate_table( _table_size * 2 );
-            for ( uint32_t index = 0; index < old_table_size; index++ ) {
+            for ( std::uint32_t index = 0; index < old_table_size; index++ ) {
                 if ( old_table[ index ].is_filled() )
                     add_lookup_entry( &old_table[ index ]._outer, &old_table[ index ]._inner );
             }
@@ -714,7 +714,7 @@ void InliningDatabase::add_lookup_entry( LookupKey * outer, LookupKey * inner ) 
     }
     st_assert( _table_no * 2 < _table_size, "just checking density" );
 
-    uint32_t index = index_for( outer, inner );
+    std::uint32_t index = index_for( outer, inner );
 
     while ( _table[ index ].is_filled() ) {
         if ( _table[ index ].equal( outer, inner ) )
@@ -744,7 +744,7 @@ bool_t InliningDatabase::lookup( LookupKey * outer, LookupKey * inner ) {
     if ( _table_no == 0 )
         return false;
 
-    uint32_t index = index_for( outer, inner );
+    std::uint32_t index = index_for( outer, inner );
     if ( not _table[ index ].is_filled() )
         return false;
     while ( not _table[ index ].equal( outer, inner ) ) {
@@ -760,7 +760,7 @@ RecompilationScope * InliningDatabase::lookup_and_remove( LookupKey * outer, Loo
     if ( _table_no == 0 )
         return nullptr;
 
-    uint32_t index = index_for( outer, inner );
+    std::uint32_t index = index_for( outer, inner );
     if ( not _table[ index ].is_filled() )
         return nullptr;
 
@@ -776,7 +776,7 @@ RecompilationScope * InliningDatabase::lookup_and_remove( LookupKey * outer, Loo
 
 
 void InliningDatabase::oops_do( void f( Oop * ) ) {
-    for ( uint32_t index = 0; index < _table_size; index++ ) {
+    for ( std::uint32_t index = 0; index < _table_size; index++ ) {
         _table[ index ].oops_do( f );
     }
 }
@@ -799,7 +799,7 @@ bool_t InliningDatabase::file_out_all() {
     FileOutputStream index( index_file_name() );
 
     // File out the index file.
-    for ( uint32_t i = 0; i < _table_size; i++ ) {
+    for ( std::uint32_t i = 0; i < _table_size; i++ ) {
         if ( _table[ i ].is_filled() ) {
             if ( _table[ i ].is_inner() ) {
                 _table[ i ]._inner.print_inlining_database_on( &index );

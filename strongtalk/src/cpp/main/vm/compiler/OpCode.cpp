@@ -10,7 +10,18 @@
 #include <array>
 
 std::array <const char *, 13> BranchOpName = {
-    "B=", "B#", "B<", "B<=", "Bu<", "Bu<=", "B>", "B>=", "Bu>", "Bu>=", "Bovfl", "Bnofvl",
+    "B=",  //
+"B#",  //
+"B<",  //
+"B<=",  //
+"Bu<",  //
+"Bu<=",  //
+"B>",  //
+"B>=",  //
+"Bu>",  //
+"Bu>=",  //
+"Bovfl",  //
+"Bnofvl",
 
     "last (INVALID)"
 };

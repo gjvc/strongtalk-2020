@@ -25,7 +25,7 @@ class PrintObjectClosure : public ObjectLayoutClosure {
 
         void do_oop( const char * title, Oop * o );
 
-        void do_byte( const char * title, uint8_t * b );
+        void do_byte( const char * title, std::uint8_t * b );
 
         void do_long( const char * title, void ** p );
 
@@ -37,9 +37,9 @@ class PrintObjectClosure : public ObjectLayoutClosure {
 
         void do_indexable_oop( int index, Oop * o );
 
-        void do_indexable_byte( int index, uint8_t * b );
+        void do_indexable_byte( int index, std::uint8_t * b );
 
-        void do_indexable_doubleByte( int index, uint16_t * b );
+        void do_indexable_doubleByte( int index, std::uint16_t * b );
 
-        void do_indexable_long( int index, int32_t * l );
+        void do_indexable_long( int index, std::int32_t * l );
 };

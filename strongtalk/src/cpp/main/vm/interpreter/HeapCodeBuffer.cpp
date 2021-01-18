@@ -24,7 +24,7 @@ bool_t HeapCodeBuffer::isAligned() {
 }
 
 
-void HeapCodeBuffer::pushByte( uint8_t op ) {
+void HeapCodeBuffer::pushByte( std::uint8_t op ) {
     if ( isAligned() )
         _oops->append( smiOopFromValue( 0 ) );
     _bytes->append( op );
@@ -49,7 +49,7 @@ ByteArrayOop HeapCodeBuffer::bytes() {
     ByteArrayOop result = ByteArrayOop( klass->allocateObjectSize( byteLength() ) );
 
     for ( int i = 0; i < byteLength(); i++ )
-        result->byte_at_put( i + 1, ( uint8_t ) _bytes->at( i ) );
+        result->byte_at_put( i + 1, ( std::uint8_t ) _bytes->at( i ) );
 
     return result;
 }

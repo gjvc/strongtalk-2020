@@ -21,8 +21,8 @@ class ClassChange : public ResourceObject {
         struct KlassOopDescriptor * _new_super;
         memConverter              * _converter;
         ClassChange               * _super_change;
-        int32_t _is_schema_change_computed;
-        int32_t _needs_schema_change;
+        std::int32_t _is_schema_change_computed;
+        std::int32_t _needs_schema_change;
         const char * _reason_for_schema_change;
 
     public:
@@ -69,10 +69,10 @@ class ClassChange : public ResourceObject {
 
         void recustomize_methods();
 
-        int32_t compute_needed_schema_change();
+        std::int32_t compute_needed_schema_change();
 
 
-        int32_t needs_schema_change();
+        std::int32_t needs_schema_change();
 
 
         struct KlassOopDescriptor * new_class_from( struct KlassOopDescriptor * old_klass, struct KlassOopDescriptor * new_super_klass, struct MixinOopDescriptor * new_mixin, Klass::Format new_format, struct MixinOopDescriptor * old_mixin );
@@ -82,9 +82,9 @@ class ClassChange : public ResourceObject {
         void transfer_misc( struct MemOopDescriptor * src, struct MemOopDescriptor * dst );
 
         // Updating if no schema change is needed
-        void update_class( int32_t class_vars_changed, int32_t instance_methods_changed, int32_t class_methods_changed );
+        void update_class( std::int32_t class_vars_changed, std::int32_t instance_methods_changed, std::int32_t class_methods_changed );
 
         void update_class_vars();
 
-        void update_methods( int32_t instance_side );
+        void update_methods( std::int32_t instance_side );
 };

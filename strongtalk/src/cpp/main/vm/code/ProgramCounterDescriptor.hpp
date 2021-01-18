@@ -16,13 +16,13 @@
 class ProgramCounterDescriptor : public ValueObject {
 
     public:
-        uint16_t _pc;               // offset from start of method (could be uint16_t)
-        uint16_t _scope;            // scope index
+        std::uint16_t _pc;               // offset from start of method (could be std::uint16_t)
+        std::uint16_t _scope;            // scope index
         int16_t  _byteCodeIndex;    // can be negative (PrologueByteCodeIndex et al)
 
     public:
         // Constructor (only used for static in NativeMethod.cpp)
-        ProgramCounterDescriptor( uint16_t pc, uint16_t scope, uint16_t byteCode );
+        ProgramCounterDescriptor( std::uint16_t pc, std::uint16_t scope, std::uint16_t byteCode );
 
         // Returns the scope matching this pc desc
         ScopeDescriptor * containingDesc( const NativeMethod * nm ) const;

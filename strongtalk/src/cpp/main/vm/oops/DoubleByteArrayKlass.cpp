@@ -97,7 +97,7 @@ void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * st
 
 
 void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    uint16_t * p = DoubleByteArrayOop( obj )->doubleBytes();
+    std::uint16_t * p = DoubleByteArrayOop( obj )->doubleBytes();
     Oop      * l = DoubleByteArrayOop( obj )->length_addr();
     int len = DoubleByteArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );

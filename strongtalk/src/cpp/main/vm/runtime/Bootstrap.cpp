@@ -174,7 +174,7 @@ char Bootstrap::readNextChar() {
 
 int Bootstrap::get_integer() {
 
-    uint8_t lo;
+    std::uint8_t lo;
     _stream.read( reinterpret_cast<char *>(&lo), 1 );
 
     if ( lo < 128 ) {
@@ -186,8 +186,8 @@ int Bootstrap::get_integer() {
 }
 
 
-uint16_t Bootstrap::read_doubleByte() {
-    return ( uint16_t ) get_integer();
+std::uint16_t Bootstrap::read_doubleByte() {
+    return ( std::uint16_t ) get_integer();
 }
 
 
@@ -475,7 +475,7 @@ void Bootstrap::read_mark( MarkOop * mark_addr ) {
 
 double Bootstrap::read_double() {
     double value;
-    uint8_t * str = ( uint8_t * ) &value;
+    std::uint8_t * str = ( std::uint8_t * ) &value;
 
     for ( int i = 0; i < 8; i++ ) {
         char c{};

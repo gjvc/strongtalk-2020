@@ -102,15 +102,15 @@ void InterpretedInlineCache::set( ByteCodes::Code send_code, Oop first_word, Oop
     // Remember pics are allocated in new Space and require a store check when saved in the InlineCache
     // Note: If the second_word is a PolymorphicInlineCache, it has to be deallocated before using set!
 
-    *send_code_addr() = static_cast<uint8_t>(send_code); /// XXXXX gjvc XXXX
+    *send_code_addr() = static_cast<std::uint8_t>(send_code); /// XXXXX gjvc XXXX
     Universe::store( first_word_addr(), first_word, first_word->is_new() );
     Universe::store( second_word_addr(), second_word, second_word->is_new() );
 }
 
 
-uint8_t * InterpretedInlineCache::findStartOfSend( uint8_t * sel_addr ) {
-    uint8_t * p = sel_addr;            // start of inline cache
-    while ( *--p == static_cast<uint8_t>(ByteCodes::Code::halt) );    // skip alignment bytes if there - this works only if the nofArgs byte not_eq halt ! FIX THIS!
+std::uint8_t * InterpretedInlineCache::findStartOfSend( std::uint8_t * sel_addr ) {
+    std::uint8_t * p = sel_addr;            // start of inline cache
+    while ( *--p == static_cast<std::uint8_t>(ByteCodes::Code::halt) );    // skip alignment bytes if there - this works only if the nofArgs byte not_eq halt ! FIX THIS!
     if ( *p < 128 )
         --p;            // skip nofArgs byte if there - this works only for sends with less than 128 args
     // and assumes that no send bytecodes is smaller than 128. FIX THIS!!!
@@ -127,7 +127,7 @@ uint8_t * InterpretedInlineCache::findStartOfSend( uint8_t * sel_addr ) {
 
 
 int InterpretedInlineCache::findStartOfSend( MethodOop m, int byteCodeIndex ) {
-    uint8_t * p = findStartOfSend( m->codes( byteCodeIndex ) );
+    std::uint8_t * p = findStartOfSend( m->codes( byteCodeIndex ) );
     return ( p == nullptr ) ? IllegalByteCodeIndex : p - m->codes() + 1;
 }
 
@@ -155,7 +155,7 @@ JumpTableEntry * InterpretedInlineCache::jump_table_entry() const {
 
 
 int InterpretedInlineCache::nof_arguments() const {
-    uint8_t * p = send_code_addr();
+    std::uint8_t * p = send_code_addr();
     switch ( ByteCodes::argument_spec( ByteCodes::Code( *p ) ) ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
             return 0;

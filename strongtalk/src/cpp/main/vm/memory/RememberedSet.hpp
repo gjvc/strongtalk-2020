@@ -33,7 +33,7 @@ class RememberedSet : public CHeapAllocatedObject {
 
         // friend void OldSpace::switch_pointers_by_card(Oop, Oop);
         char * byte_for( const void * p ) const {
-            return ( char * ) &_byteMap[ ( ( ( uint32_t ) p ) >> card_shift ) - ( ( ( uint32_t ) _lowBoundary ) >> card_shift ) ];
+            return ( char * ) &_byteMap[ ( ( ( std::uint32_t ) p ) >> card_shift ) - ( ( ( std::uint32_t ) _lowBoundary ) >> card_shift ) ];
         }
 
 
@@ -58,7 +58,7 @@ class RememberedSet : public CHeapAllocatedObject {
 
         RememberedSet();
 
-        void * operator new( size_t size );
+        void * operator new( std::size_t size );
 
         void clear();
 

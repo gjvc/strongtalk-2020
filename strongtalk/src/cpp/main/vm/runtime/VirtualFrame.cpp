@@ -236,12 +236,12 @@ GrowableArray <Oop> * InterpretedVirtualFrame::expression_stack() const {
 }
 
 
-uint8_t * InterpretedVirtualFrame::hp() const {
+std::uint8_t * InterpretedVirtualFrame::hp() const {
     return _frame.hp();
 }
 
 
-void InterpretedVirtualFrame::set_hp( uint8_t * p ) {
+void InterpretedVirtualFrame::set_hp( std::uint8_t * p ) {
     _frame.set_hp( p );
 }
 

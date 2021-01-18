@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,7 +6,6 @@
 
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/utilities/lprintf.hpp"
 
 EventLog * eventLog;
@@ -63,21 +63,21 @@ void EventLog::printPartial( int n ) {
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
         const char * s;
         switch ( e->_status ) {
-            case starting:
+            case EventLogEventStatus::starting:
                 s = "[ ";
                 break;
-            case ending:
+            case EventLogEventStatus::ending:
                 s = "] ";
                 indent--;
                 break;
-            case atomic:
+            case EventLogEventStatus::atomic:
                 s = "- ";
                 break;
         }
         lprintf( "%*.s%s", 2 * indent, " ", s );
         lprintf( e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
         lprintf( "\n" );
-        if ( e->_status == starting )
+        if ( e->_status == EventLogEventStatus::starting )
             indent++;
     }
     if ( indent not_eq _nestingDepth )

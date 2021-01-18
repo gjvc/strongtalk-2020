@@ -10,7 +10,7 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-constexpr size_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
+constexpr std::size_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
 
 ConsoleOutputStream * _console;
 

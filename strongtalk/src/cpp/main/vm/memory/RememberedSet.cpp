@@ -52,7 +52,7 @@ RememberedSet::RememberedSet() {
 }
 
 
-void * RememberedSet::operator new( size_t size ) {
+void * RememberedSet::operator new( std::size_t size ) {
     st_assert( ( int( Universe::new_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "new must start at card boundary" );
     st_assert( ( int( Universe::old_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "old must start at card boundary" );
     st_assert( ( int( Universe::old_gen._highBoundary ) & ( card_size - 1 ) ) == 0, "old must end at card boundary" );
@@ -305,34 +305,34 @@ constexpr int lim_3 = lim_2 + ( 1 << 16 );
 
 
 void RememberedSet::set_size( MemOop obj, int size ) {
-    uint8_t * p = ( uint8_t * ) byte_for( obj->addr() );
+    std::uint8_t * p = ( std::uint8_t * ) byte_for( obj->addr() );
     st_assert( size >= lim_0, "size must be >= max_age" );
     if ( size < lim_1 ) {        // use 1 byte
-        *p = ( uint8_t ) ( size - lim_0 );
+        *p = ( std::uint8_t ) ( size - lim_0 );
     } else if ( size < lim_2 ) {    // use 1 + 1 bytes
         *p++ = lim_0 + 2;
-        *p   = ( uint8_t ) ( size - lim_1 );
+        *p   = ( std::uint8_t ) ( size - lim_1 );
     } else if ( size < lim_3 ) {    // use 1 + 2 bytes
         *p++              = lim_0 + 3;
-        *( uint16_t * ) p = ( uint16_t ) ( size - lim_2 );
+        *( std::uint16_t * ) p = ( std::uint16_t ) ( size - lim_2 );
     } else {            // use 1 + 4 bytes
         *p++              = lim_0 + 4;
-        *( uint32_t * ) p = ( uint32_t ) ( size - lim_3 );
+        *( std::uint32_t * ) p = ( std::uint32_t ) ( size - lim_3 );
     }
 }
 
 
 int RememberedSet::get_size( MemOop obj ) {
-    uint8_t * p = ( uint8_t * ) byte_for( obj->addr() );
-    uint8_t h = *p++;
+    std::uint8_t * p = ( std::uint8_t * ) byte_for( obj->addr() );
+    std::uint8_t h = *p++;
     if ( h <= lim_0 + 1 )
         return h + lim_0;
     if ( h == lim_0 + 2 )
-        return ( *( uint8_t * ) p ) + lim_1;
+        return ( *( std::uint8_t * ) p ) + lim_1;
     if ( h == lim_0 + 3 )
-        return ( *( uint16_t * ) p ) + lim_2;
+        return ( *( std::uint16_t * ) p ) + lim_2;
     if ( h == lim_0 + 4 )
-        return ( *( uint32_t * ) p ) + lim_3;
+        return ( *( std::uint32_t * ) p ) + lim_3;
     ShouldNotReachHere();
     return 0;
 }

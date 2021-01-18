@@ -101,9 +101,9 @@ class InliningDatabase : AllStatic {
         static const char * _directory;
 
         static InliningDatabaseKey * _table;
-        static uint32_t _table_size;      // Size of table power of 2
-        static uint32_t _table_size_mask; // nthMask(table_size)
-        static uint32_t _table_no;        // Number of elements in the table
+        static std::uint32_t _table_size;      // Size of table power of 2
+        static std::uint32_t _table_size_mask; // nthMask(table_size)
+        static std::uint32_t _table_no;        // Number of elements in the table
 
     public:
         // Accessor for the root of the database
@@ -158,9 +158,9 @@ class InliningDatabase : AllStatic {
         static void oops_do( void f( Oop * ) );
 
     private:
-        static void allocate_table( uint32_t size );
+        static void allocate_table( std::uint32_t size );
 
-        static inline uint32_t index_for( LookupKey * outer, LookupKey * inner );
+        static inline std::uint32_t index_for( LookupKey * outer, LookupKey * inner );
 
-        static inline uint32_t next_index( uint32_t index );
+        static inline std::uint32_t next_index( std::uint32_t index );
 };

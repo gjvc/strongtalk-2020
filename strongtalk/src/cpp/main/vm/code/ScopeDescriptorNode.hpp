@@ -71,7 +71,7 @@ class ScopeDescriptorNode : public ResourceObject {
 
         void addNested( ScopeInfo scope );
 
-        virtual uint8_t code() = 0;
+        virtual std::uint8_t code() = 0;
 
         virtual void generate( ScopeDescriptorRecorder * rec, int senderScopeOffset, bool_t bigHeader );
 
@@ -101,7 +101,7 @@ class TopLevelBlockScopeNode : public ScopeDescriptorNode {
         KlassOop _receiverKlass;
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return TOP_LEVEL_BLOCK_CODE;
         }
 

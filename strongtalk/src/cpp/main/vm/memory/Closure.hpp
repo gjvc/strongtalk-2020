@@ -70,10 +70,10 @@ class ObjectLayoutClosure : StackAllocatedObject {
 
 
         // Called for each byte
-        virtual void do_byte( const char * title, uint8_t * b );
+        virtual void do_byte( const char * title, std::uint8_t * b );
 
 
-        // Called for each int32_t
+        // Called for each std::int32_t
         virtual void do_long( const char * title, void ** p );
 
 
@@ -97,15 +97,15 @@ class ObjectLayoutClosure : StackAllocatedObject {
 
 
         // Called for each indexable byte
-        virtual void do_indexable_byte( int index, uint8_t * b );
+        virtual void do_indexable_byte( int index, std::uint8_t * b );
 
 
         // Called for each indexable double byte
-        virtual void do_indexable_doubleByte( int index, uint16_t * b );
+        virtual void do_indexable_doubleByte( int index, std::uint16_t * b );
 
 
-        // Called for each indexable int32_t
-        virtual void do_indexable_long( int index, int32_t * l );
+        // Called for each indexable std::int32_t
+        virtual void do_indexable_long( int index, std::int32_t * l );
 };
 
 
@@ -138,7 +138,7 @@ class FrameLayoutClosure : StackAllocatedObject {
 
 
         // Called for the hcode pointer
-        virtual void do_hp( uint8_t ** hp );
+        virtual void do_hp( std::uint8_t ** hp );
 
 
         // Called for the receiver

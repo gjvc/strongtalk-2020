@@ -132,7 +132,7 @@ class IntegerOps : AllStatic {
 
         static int int_to_Integer_result_size_in_bytes( int i );
 
-        static int unsigned_int_to_Integer_result_size_in_bytes( uint32_t i );
+        static int unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i );
 
         static int double_to_Integer_result_size_in_bytes( double x );
 
@@ -165,7 +165,7 @@ class IntegerOps : AllStatic {
 
         static void int_to_Integer( int i, Integer & z );
 
-        static void unsigned_int_to_Integer( uint32_t i, Integer & z );
+        static void unsigned_int_to_Integer( std::uint32_t i, Integer & z );
 
         static void double_to_Integer( double x, Integer & z );
 

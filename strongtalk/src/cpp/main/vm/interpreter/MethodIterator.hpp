@@ -231,7 +231,7 @@ class IfNode : public InlineSendNode {
         MethodInterval * _then_code;
         MethodInterval * _else_code;
 
-        IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, uint8_t structure );
+        IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure );
 
         friend class MethodIntervalFactory;
 
@@ -814,7 +814,7 @@ class AbstractMethodIntervalFactory : StackAllocatedObject {
 
         virtual WhileNode * new_WhileNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) = 0;
 
-        virtual IfNode * new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, uint8_t structure ) = 0;
+        virtual IfNode * new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) = 0;
 
         virtual PrimitiveCallNode * new_PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc ) = 0;
 
@@ -837,7 +837,7 @@ class MethodIntervalFactory : public AbstractMethodIntervalFactory {
 
         WhileNode * new_WhileNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset );
 
-        IfNode * new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, uint8_t structure );
+        IfNode * new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure );
 
         PrimitiveCallNode * new_PrimitiveCallNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor * pdesc );
 
@@ -853,9 +853,9 @@ class MethodIterator : StackAllocatedObject {
     private:
         void dispatch( MethodClosure * blk );
 
-        void unknown_code( uint8_t code );
+        void unknown_code( std::uint8_t code );
 
-        void should_never_encounter( uint8_t code );
+        void should_never_encounter( std::uint8_t code );
 
         MethodInterval * _interval;
         static MethodIntervalFactory defaultFactory;      // default factory

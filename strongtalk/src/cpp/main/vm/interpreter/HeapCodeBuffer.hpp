@@ -31,7 +31,7 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 class HeapCodeBuffer : public ResourceObject {
 
     private:
-        GrowableArray <uint32_t> * _bytes;
+        GrowableArray <std::uint32_t> * _bytes;
         GrowableArray <Oop>      * _oops;
 
         void align();
@@ -40,12 +40,12 @@ class HeapCodeBuffer : public ResourceObject {
 
     public:
         HeapCodeBuffer() {
-            _bytes = new GrowableArray <uint32_t>();
+            _bytes = new GrowableArray <std::uint32_t>();
             _oops  = new GrowableArray <Oop>();
         }
 
 
-        void pushByte( uint8_t op );
+        void pushByte( std::uint8_t op );
 
         void pushOop( Oop arg );
 
@@ -65,4 +65,3 @@ class HeapCodeBuffer : public ResourceObject {
         ObjectArrayOop oops();
 
 };
-

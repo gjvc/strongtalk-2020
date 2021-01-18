@@ -39,15 +39,15 @@ int hash( const char * name, int len ) {
     // hashpjw from Dragon book (ASU p. 436), except increment differently
 
     st_assert( BitsPerByte * BytesPerWord == 32, "assumes 32-bit words" );
-    int32_t unsigned h = 0;
-    int32_t unsigned g;
+    std::int32_t unsigned h = 0;
+    std::int32_t unsigned g;
 
     const char * s   = name;
     const char * end = s + len;
 
     for ( ; s < end; s = s + increment ) {
 
-        h = ( h << 4 ) + ( int32_t unsigned ) *s;
+        h = ( h << 4 ) + ( std::int32_t unsigned ) *s;
 
         if ( g = h & 0xf0000000 )
             h ^= g | ( g >> 24 );
@@ -229,7 +229,7 @@ bool_t SymbolTableEntry::verify( int i ) {
 void SymbolTable::verify() {
     for ( int i = 0; i < symbol_table_size; i++ )
         if ( not buckets[ i ].verify( i ) )
-            lprintf( "\tof bucket %ld of symbol table\n", int32_t( i ) );
+            lprintf( "\tof bucket %ld of symbol table\n", std::int32_t( i ) );
 }
 
 

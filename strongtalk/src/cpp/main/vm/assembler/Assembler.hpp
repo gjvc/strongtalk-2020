@@ -31,12 +31,12 @@ class Assembler : public ResourceObject {
 
 
         int byte_at( int pos ) {
-            return *( uint8_t * ) addr_at( pos );
+            return *( std::uint8_t * ) addr_at( pos );
         }
 
 
         void byte_at_put( int pos, int x ) {
-            *( uint8_t * ) addr_at( pos ) = ( uint8_t ) x;
+            *( std::uint8_t * ) addr_at( pos ) = ( std::uint8_t ) x;
         }
 
 

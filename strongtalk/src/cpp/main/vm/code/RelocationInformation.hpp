@@ -32,7 +32,7 @@ constexpr int reloc_offset_width = 13;
 class RelocationInformation : ValueObject {
 
     protected:
-        uint16_t _value;
+        std::uint16_t _value;
 
     public:
 

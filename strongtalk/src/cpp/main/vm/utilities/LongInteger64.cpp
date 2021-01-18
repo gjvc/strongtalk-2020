@@ -11,7 +11,7 @@ LongInteger64::LongInteger64() {
 }
 
 
-LongInteger64::LongInteger64( uint32_t low, uint32_t high ) {
+LongInteger64::LongInteger64( std::uint32_t low, std::uint32_t high ) {
     _low  = low;
     _high = high;
 }

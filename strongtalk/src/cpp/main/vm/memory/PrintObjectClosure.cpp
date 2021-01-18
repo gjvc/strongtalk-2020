@@ -53,7 +53,7 @@ void PrintObjectClosure::do_oop( const char * title, Oop * o ) {
 }
 
 
-void PrintObjectClosure::do_byte( const char * title, uint8_t * b ) {
+void PrintObjectClosure::do_byte( const char * title, std::uint8_t * b ) {
     _stream->fill_to( indent_col );
     _stream->print( "%s", title );
     _stream->sp();
@@ -104,7 +104,7 @@ void PrintObjectClosure::do_indexable_oop( int index, Oop * o ) {
 }
 
 
-void PrintObjectClosure::do_indexable_byte( int index, uint8_t * b ) {
+void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t * b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
@@ -119,7 +119,7 @@ void PrintObjectClosure::do_indexable_byte( int index, uint8_t * b ) {
 }
 
 
-void PrintObjectClosure::do_indexable_doubleByte( int index, uint16_t * b ) {
+void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t * b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
@@ -134,7 +134,7 @@ void PrintObjectClosure::do_indexable_doubleByte( int index, uint16_t * b ) {
 }
 
 
-void PrintObjectClosure::do_indexable_long( int index, int32_t * l ) {
+void PrintObjectClosure::do_indexable_long( int index, std::int32_t * l ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );

@@ -42,7 +42,7 @@ static int sub_sign( int a, int b ) {
 }
 
 
-int compare_as_doubleBytes( const uint16_t * a, const uint16_t * b ) {
+int compare_as_doubleBytes( const std::uint16_t * a, const std::uint16_t * b ) {
     // machine dependent code; little endian code
     if ( a[ 0 ] - b[ 0 ] )
         return sub_sign( a[ 0 ], b[ 0 ] );
@@ -53,17 +53,17 @@ int compare_as_doubleBytes( const uint16_t * a, const uint16_t * b ) {
 
 int DoubleByteArrayOopDescriptor::compare( DoubleByteArrayOop arg ) {
     // Get the addresses of the length fields
-    const uint32_t * a = ( const uint32_t * ) length_addr();
-    const uint32_t * b = ( const uint32_t * ) arg->length_addr();
+    const std::uint32_t * a = ( const std::uint32_t * ) length_addr();
+    const std::uint32_t * b = ( const std::uint32_t * ) arg->length_addr();
 
     // Get the word sizes of the arays
-    int a_size = roundTo( SMIOop( *a++ )->value() * sizeof( uint16_t ), sizeof( int ) ) / sizeof( int );
-    int b_size = roundTo( SMIOop( *b++ )->value() * sizeof( uint16_t ), sizeof( int ) ) / sizeof( int );
+    int a_size = roundTo( SMIOop( *a++ )->value() * sizeof( std::uint16_t ), sizeof( int ) ) / sizeof( int );
+    int b_size = roundTo( SMIOop( *b++ )->value() * sizeof( std::uint16_t ), sizeof( int ) ) / sizeof( int );
 
-    const uint32_t * a_end = a + min( a_size, b_size );
+    const std::uint32_t * a_end = a + min( a_size, b_size );
     while ( a < a_end ) {
         if ( *b++ not_eq *a++ )
-            return compare_as_doubleBytes( ( const uint16_t * ) ( a - 1 ), ( const uint16_t * ) ( b - 1 ) );
+            return compare_as_doubleBytes( ( const std::uint16_t * ) ( a - 1 ), ( const std::uint16_t * ) ( b - 1 ) );
     }
     return sub_sign( a_size, b_size );
 }
@@ -73,12 +73,12 @@ int DoubleByteArrayOopDescriptor::compare( DoubleByteArrayOop arg ) {
 int doubleByteArrayOopDescriptor::compare(doubleByteArrayOop arg) {
   // Get the addresses of the length fields
   int         len_a = length();
-  uint16_t* a     = doubleBytes();
+  std::uint16_t* a     = doubleBytes();
 
   int         len_b = arg->length();
-  uint16_t* b     = arg->doubleBytes();
+  std::uint16_t* b     = arg->doubleBytes();
 
-  uint16_t* end = len_a <= len_b ? a + len_a : b + len_b;
+  std::uint16_t* end = len_a <= len_b ? a + len_a : b + len_b;
 
   while(a < end) {
     int result = *a++ - *b++;
@@ -100,7 +100,7 @@ int DoubleByteArrayOopDescriptor::hash_value() {
     } else if ( len == 1 ) {
         result = doubleByte_at( 1 );
     } else {
-        uint32_t val;
+        std::uint32_t val;
         val    = doubleByte_at( 1 );
         val    = ( val << 3 ) ^ ( doubleByte_at( 2 ) ^ val );
         val    = ( val << 3 ) ^ ( doubleByte_at( len ) ^ val );

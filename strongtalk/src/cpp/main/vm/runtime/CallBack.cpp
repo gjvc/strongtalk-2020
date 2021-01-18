@@ -24,9 +24,9 @@ static char * store_byte( char * chunk, char b ) {
 }
 
 
-static char * store_long( char * chunk, int32_t l ) {
-    *( ( int32_t * ) chunk ) = l;
-    return chunk + sizeof( int32_t );
+static char * store_long( char * chunk, std::int32_t l ) {
+    *( ( std::int32_t * ) chunk ) = l;
+    return chunk + sizeof( std::int32_t );
 }
 
 
@@ -46,7 +46,7 @@ void * CallBack::registerPascalCall( int index, int nofArgs ) {
 
     // JMP _handleCCallStub
     chunk = store_byte( chunk, '\xE9' );
-    chunk = store_long( chunk, ( ( int32_t ) StubRoutines::handle_pascal_callback_stub() ) - ( 4 + ( int32_t ) chunk ) );
+    chunk = store_long( chunk, ( ( std::int32_t ) StubRoutines::handle_pascal_callback_stub() ) - ( 4 + ( std::int32_t ) chunk ) );
 
     return result;
 }
@@ -63,7 +63,7 @@ void * CallBack::registerCCall( int index ) {
 
     // JMP _handleCCallStub
     chunk = store_byte( chunk, '\xE9' );
-    chunk = store_long( chunk, ( ( int32_t ) StubRoutines::handle_C_callback_stub() ) - ( 4 + ( int32_t ) chunk ) );
+    chunk = store_long( chunk, ( ( std::int32_t ) StubRoutines::handle_C_callback_stub() ) - ( 4 + ( std::int32_t ) chunk ) );
 
     return result;
 }

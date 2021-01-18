@@ -24,19 +24,18 @@ class CodeIterator : public StackAllocatedObject {
 
     private:
         MethodOop _methodOop;
-        uint8_t * _current;
-        uint8_t * _end;
+        std::uint8_t * _current;
+        std::uint8_t * _end;
 
         void align();
 
-
-        uint8_t * align( uint8_t * p ) const;
+        std::uint8_t * align( std::uint8_t * p ) const;
 
 
     public:
         CodeIterator( MethodOop method, int startByteCodeIndex = 1 );
 
-        CodeIterator( uint8_t * hp );
+        CodeIterator( std::uint8_t * hp );
 
 
         // Advance to next instruction
@@ -48,7 +47,7 @@ class CodeIterator : public StackAllocatedObject {
 
 
         // accessors
-        uint8_t byte_at( int offset_from_instruction ) {
+        std::uint8_t byte_at( int offset_from_instruction ) {
             return _current[ offset_from_instruction ];
         }
 
@@ -103,12 +102,12 @@ class CodeIterator : public StackAllocatedObject {
         int next_byteCodeIndex() const;
 
 
-        uint8_t * hp() const {
+        std::uint8_t * hp() const {
             return _current;
         }
 
 
-        uint8_t * next_hp() const;
+        std::uint8_t * next_hp() const;
 
         // FOR DEOPTIMIZATION
         // Returns the interpreter return point for the current byte code.
@@ -166,13 +165,13 @@ class CodeIterator : public StackAllocatedObject {
 
 
         // For byte code manipulation
-        void set_code( uint8_t code ) {
+        void set_code( std::uint8_t code ) {
             *_current = code;
         }
 
 
         void set_code( ByteCodes::Code code ) {
-            *_current = static_cast<uint8_t>( code );
+            *_current = static_cast<std::uint8_t>( code );
         }
 
 };

@@ -8,5 +8,5 @@
 
 
 void SMIOopDescriptor::print_on( ConsoleOutputStream * stream ) {
-    stream->print( "%ld", ( int32_t ) value() );
+    stream->print( "%ld", ( std::int32_t ) value() );
 }

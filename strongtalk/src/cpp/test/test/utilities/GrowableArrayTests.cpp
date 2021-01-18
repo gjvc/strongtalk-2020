@@ -42,7 +42,7 @@ class GrowableArrayTests : public ::testing::Test {
 
 
 TEST( GrowableArrayTests, push_pop ) {
-    GrowableArray <int32_t> ga;
+    GrowableArray <std::int32_t> ga;
     ga.push( 32 );
     auto result = ga.pop();
     EXPECT_EQ( result, 32 );
@@ -50,7 +50,7 @@ TEST( GrowableArrayTests, push_pop ) {
 
 
 TEST( GrowableArrayTests, append_pop ) {
-    GrowableArray <int32_t> ga;
+    GrowableArray <std::int32_t> ga;
     ga.append( 32 );
     auto result = ga.pop();
     EXPECT_EQ( result, 32 );

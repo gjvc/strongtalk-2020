@@ -36,8 +36,8 @@ void Assembler::finalize() {
 
 void Assembler::emit_byte( int x ) {
     st_assert( isByte( x ), "not a byte" );
-    *( uint8_t * ) _code_pos = ( uint8_t ) x;
-    _code_pos += sizeof( uint8_t );
+    *( std::uint8_t * ) _code_pos = ( std::uint8_t ) x;
+    _code_pos += sizeof( std::uint8_t );
     code()->set_code_end( _code_pos );
 }
 
@@ -875,7 +875,7 @@ void Assembler::call( const Label & L ) {
 
 void Assembler::call( const char * entry, RelocationInformation::RelocationType rtype ) {
     emit_byte( 0xE8 );
-    emit_data( ( int ) entry - ( ( int ) _code_pos + sizeof( int32_t ) ), rtype );
+    emit_data( ( int ) entry - ( ( int ) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
@@ -893,7 +893,7 @@ void Assembler::call( const Address & adr ) {
 
 void Assembler::jmp( const char * entry, RelocationInformation::RelocationType rtype ) {
     emit_byte( 0xE9 );
-    emit_data( ( int ) entry - ( ( int ) _code_pos + sizeof( int32_t ) ), rtype );
+    emit_data( ( int ) entry - ( ( int ) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
@@ -978,12 +978,12 @@ void Assembler::jcc( Condition cc, const char * dst, RelocationInformation::Relo
     // 0000 1111 1000 tttn #32-bit disp
     emit_byte( 0x0F );
     emit_byte( 0x80 | static_cast<int>(cc) );
-    emit_data( ( int ) dst - ( ( int ) _code_pos + sizeof( int32_t ) ), rtype );
+    emit_data( ( int ) dst - ( ( int ) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
 void Assembler::ic_info( const Label & L, int flags ) {
-    st_assert( ( uint32_t ) flags >> InlineCacheInfo::number_of_flags == 0, "too many flags set" );
+    st_assert( ( std::uint32_t ) flags >> InlineCacheInfo::number_of_flags == 0, "too many flags set" );
     if ( L.is_bound() ) {
         int offs = L.pos() - offset();
         st_assert( offs <= 0, "assembler error" );

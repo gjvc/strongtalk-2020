@@ -15,6 +15,6 @@ extern "C" void lputs( const char * str );
 
 // like sprintf, but updates the buf pointer so that subsequent sprintf invocations append to the string
 extern "C" void my_sprintf( const char *& buf, const char * format, ... );
-extern "C" void my_sprintf_len( const char *& buf, const int len, const char * format, ... );    // make output len chars int32_t
+extern "C" void my_sprintf_len( const char *& buf, const int len, const char * format, ... );    // make output len chars std::int32_t
 
 void flush_logFile();

@@ -2665,7 +2665,7 @@ static PrimitiveDescriptor primitive_438     = {
     "primitiveWriteSnapshot:", primitiveFunctionType( &SystemPrimitives::writeSnapshot ), 65537, signature_438, errors_438
 };
 
-static int32_t             size_of_primitive_table = 439;
+static std::int32_t             size_of_primitive_table = 439;
 static PrimitiveDescriptor * primitive_table[]     = {
     &primitive_0, \
         &primitive_1, \

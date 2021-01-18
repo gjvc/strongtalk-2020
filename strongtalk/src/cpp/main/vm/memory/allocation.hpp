@@ -43,7 +43,7 @@
 // Calling new or delete will result in fatal error.
 class ValueObject {
     public:
-        void * operator new( size_t size );
+        void * operator new( std::size_t size ) throw();
 
         void operator delete( void * p );
 };
@@ -51,7 +51,7 @@ class ValueObject {
 // Base class for classes that constitute name spaces.
 class AllStatic {
     public:
-        void * operator new( size_t size ) = delete;
+        void * operator new( std::size_t size ) = delete;
 
         void operator delete( void * p ) = delete;
 };
@@ -60,11 +60,11 @@ class AllStatic {
 // Base class for objects allocated by the C runtime.
 class CHeapAllocatedObject {
     public:
-        void * operator new( size_t size );
+        void * operator new( std::size_t size );
 
         void operator delete( void * p );
 
-        void * new_array( size_t size );
+        void * new_array( std::size_t size );
 };
 
 // Base class for objects with printing behavior allocated on the c-heap
@@ -79,7 +79,7 @@ class PrintableCHeapAllocatedObject : public CHeapAllocatedObject {
 // Calling new or delete will result in fatal error.
 class StackAllocatedObject {
     public:
-        void * operator new( size_t size );
+        void * operator new( std::size_t size );
 
         void operator delete( void * p );
 };

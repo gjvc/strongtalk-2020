@@ -39,7 +39,7 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
     wc.hCursor       = LoadCursor( NULL, IDC_ARROW );
     wc.hIcon         = LoadIcon( NULL, IDI_APPLICATION );
 
-//    RegisterClassW(&wc);
+    RegisterClassW(&wc);
 
     os::set_args( __argc, __argv );
     return vm_main( __argc, __argv );

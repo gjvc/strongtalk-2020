@@ -17,18 +17,18 @@
 
 struct NativeMethodFlags {
 
-    uint32_t version: 8;                 // version number (0 = first version)
-    uint32_t level: 4;                   // optimization level
-    uint32_t age: 4;                     // age (in # of sweep steps)
+    std::uint32_t version: 8;                 // version number (0 = first version)
+    std::uint32_t level: 4;                   // optimization level
+    std::uint32_t age: 4;                     // age (in # of sweep steps)
 
-    uint32_t state: 2;                   // {alive, zombie, dead)
+    std::uint32_t state: 2;                   // {alive, zombie, dead)
 
-    uint32_t isUncommonRecompiled: 1;    // recompiled because of uncommon trap?
-    uint32_t isYoung: 1;                 // "young"? (recently recompiled)
-    uint32_t isToBeRecompiled: 1;        // to be recompiled as soon as it matures
-    uint32_t isBlock: 1;                // tells whether is is a block NativeMethod;
+    std::uint32_t isUncommonRecompiled: 1;    // recompiled because of uncommon trap?
+    std::uint32_t isYoung: 1;                 // "young"? (recently recompiled)
+    std::uint32_t isToBeRecompiled: 1;        // to be recompiled as soon as it matures
+    std::uint32_t isBlock: 1;                // tells whether is is a block NativeMethod;
 
-    uint32_t markedForDeoptimization: 1; // Used for stack deoptimization
+    std::uint32_t markedForDeoptimization: 1; // Used for stack deoptimization
 
     void clear();
 };
@@ -54,15 +54,15 @@ class nativeMethod_patch;
 class NativeMethod : public OopNativeCode {
 
     protected:
-        uint16_t          _specialHandlerCallOffset;   // offset (in bytes) of call to special handler (*) (see comment below)
-        uint16_t          _entryPointOffset;           // offset (in bytes) of entry point with class check
-        uint16_t          _verifiedEntryPointOffset;   // offset (in bytes) of entry point without class check
-        uint16_t          _scopeLen;                   //
-        uint16_t          _numberOfNoninlinedBlocks;   //
-        uint16_t          _numberOfLinks;              // # of inline caches (including PICs) calling this NativeMethod
-        uint16_t          _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
-        uint16_t          _floatSectionSize;           // size of float section in words
-        uint16_t          _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
+        std::uint16_t          _specialHandlerCallOffset;   // offset (in bytes) of call to special handler (*) (see comment below)
+        std::uint16_t          _entryPointOffset;           // offset (in bytes) of entry point with class check
+        std::uint16_t          _verifiedEntryPointOffset;   // offset (in bytes) of entry point without class check
+        std::uint16_t          _scopeLen;                   //
+        std::uint16_t          _numberOfNoninlinedBlocks;   //
+        std::uint16_t          _numberOfLinks;              // # of inline caches (including PICs) calling this NativeMethod
+        std::uint16_t          _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
+        std::uint16_t          _floatSectionSize;           // size of float section in words
+        std::uint16_t          _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
         int               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
         int               _uncommonTrapCounter;        // # of times uncommon traps have been executed
         static int        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
@@ -129,8 +129,8 @@ class NativeMethod : public OopNativeCode {
         KlassOop receiver_klass() const;
 
 
-        uint16_t * noninlined_block_offsets() const {
-            return ( uint16_t * ) pcsEnd();
+        std::uint16_t * noninlined_block_offsets() const {
+            return ( std::uint16_t * ) pcsEnd();
         }
 
 
@@ -197,7 +197,7 @@ class NativeMethod : public OopNativeCode {
     protected:
         NativeMethod( Compiler * c );
 
-        void * operator new( size_t size );
+        void * operator new( std::size_t size );
 
     public:
         friend NativeMethod * new_nativeMethod( Compiler * c );

@@ -43,7 +43,7 @@ class HeapResourceMark : public CHeapAllocatedObject, public ResourceMark {
         };
 
 
-        void * operator new( size_t size ) {
+        void * operator new( std::size_t size ) {
             return CHeapAllocatedObject::operator new( size );
         }
 

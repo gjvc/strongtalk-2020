@@ -536,15 +536,15 @@ struct nm_hist_elem {
 
 static int compareOop( const void * m1, const void * m2 ) {
     ResourceMark rm;
-    struct nm_hist_elem * nativeMethod1 = ( struct nm_hist_elem * ) m1;
-    struct nm_hist_elem * nativeMethod2 = ( struct nm_hist_elem * ) m2;
+    const auto * nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
+    const auto * nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->nm->method() - nativeMethod1->nm->method();
 }
 
 
 static int compareCount( const void * m1, const void * m2 ) {
-    struct nm_hist_elem * nativeMethod1 = ( struct nm_hist_elem * ) m1;
-    struct nm_hist_elem * nativeMethod2 = ( struct nm_hist_elem * ) m2;
+    const auto * nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
+    const auto * nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->count - nativeMethod1->count;
 }
 
@@ -675,6 +675,7 @@ void Zone::mark_dependents_for_deoptimization() {
     FOR_ALL_NMETHODS( nm ) {
         if ( nm->depends_on_invalid_klass() ) {
             GrowableArray <NativeMethod *> * nms = nm->invalidation_family();
+            
             for ( int                      index = 0; index < nms->length(); index++ ) {
                 NativeMethod * elem = nms->at( index );
                 if ( TraceApplyChange ) {

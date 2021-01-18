@@ -134,7 +134,7 @@ class ScopeDescriptorRecorder : public ResourceObject {
 
         NonInlinedBlockScopeNode * addNonInlinedBlockScope( NonInlinedBlockScopeNode * scope );
 
-        void genScopeDescHeader( uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader );
+        void genScopeDescHeader( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader );
 
         // Generate the collected dependecies
         void generateDependencies();
@@ -197,36 +197,36 @@ enum {
 class nameDescHeaderByte : public ValueObject {
 
     private:
-        uint8_t              _byte;
-        static const uint8_t _codeWidth;
-        static const uint8_t _indexWidth;
-        static const uint8_t _isLastBitNum;
-        static const uint8_t _maxCode;
+        std::uint8_t              _byte;
+        static const std::uint8_t _codeWidth;
+        static const std::uint8_t _indexWidth;
+        static const std::uint8_t _isLastBitNum;
+        static const std::uint8_t _maxCode;
 
 
-        uint8_t raw_index() {
+        std::uint8_t raw_index() {
             return lowerBits( _byte >> _codeWidth, _indexWidth );
         }
 
 
     public:
-        static const uint8_t _maxIndex;
-        static const uint8_t _noIndex;
-        static const uint8_t _terminationIndex;
-        static const uint8_t _illegalIndex;
+        static const std::uint8_t _maxIndex;
+        static const std::uint8_t _noIndex;
+        static const std::uint8_t _terminationIndex;
+        static const std::uint8_t _illegalIndex;
 
 
-        uint8_t value() {
+        std::uint8_t value() {
             return _byte;
         }
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return lowerBits( _byte, _codeWidth );
         }
 
 
-        uint8_t index() {
+        std::uint8_t index() {
             st_assert( has_index(), "must have valid index" );
             return raw_index();
         }
@@ -252,7 +252,7 @@ class nameDescHeaderByte : public ValueObject {
         }
 
 
-        void pack( uint8_t code, bool_t is_last, uint8_t i ) {
+        void pack( std::uint8_t code, bool_t is_last, std::uint8_t i ) {
             st_assert( code <= _maxCode, "code too high" );
             st_assert( i <= _noIndex, "index too high" );
 
@@ -281,7 +281,7 @@ class nameDescHeaderByte : public ValueObject {
         }
 
 
-        void unpack( uint8_t value ) {
+        void unpack( std::uint8_t value ) {
             _byte = value;
         }
 };
@@ -289,23 +289,23 @@ class nameDescHeaderByte : public ValueObject {
 class ScopeDescriptorHeaderByte : public ValueObject {
 
     private:
-        uint8_t              _byte;
-        static const uint8_t _codeWidth;
-        static const uint8_t _maxCode;
-        static const uint8_t _liteBitNum;
-        static const uint8_t _argsBitNum;
-        static const uint8_t _tempsBitNum;
-        static const uint8_t _contextTempsBitNum;
-        static const uint8_t _exprStackBitNum;
-        static const uint8_t _contextBitNum;
+        std::uint8_t              _byte;
+        static const std::uint8_t _codeWidth;
+        static const std::uint8_t _maxCode;
+        static const std::uint8_t _liteBitNum;
+        static const std::uint8_t _argsBitNum;
+        static const std::uint8_t _tempsBitNum;
+        static const std::uint8_t _contextTempsBitNum;
+        static const std::uint8_t _exprStackBitNum;
+        static const std::uint8_t _contextBitNum;
 
     public:
-        uint8_t value() {
+        std::uint8_t value() {
             return _byte;
         }
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return lowerBits( _byte, _codeWidth );
         }
 
@@ -345,7 +345,7 @@ class ScopeDescriptorHeaderByte : public ValueObject {
         }
 
 
-        void pack( uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_compiled_context ) {
+        void pack( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_compiled_context ) {
 
             st_assert( code <= _maxCode, "code too high" );
 
@@ -372,7 +372,7 @@ class ScopeDescriptorHeaderByte : public ValueObject {
         }
 
 
-        void unpack( uint8_t value ) {
+        void unpack( std::uint8_t value ) {
             _byte = value;
         }
 

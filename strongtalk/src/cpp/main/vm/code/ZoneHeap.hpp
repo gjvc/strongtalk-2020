@@ -121,19 +121,19 @@ constexpr int maxOneByteLen = ( static_cast<int>( chunkState::usedOvfl ) - stati
 
 class ChunkKlass;
 
-ChunkKlass * asChunkKlass( uint8_t * c );
+ChunkKlass * asChunkKlass( std::uint8_t * c );
 
 
 class ChunkKlass {
 
     private:
-        uint8_t c( int which ) {
-            return ( ( uint8_t * ) this )[ which ];
+        std::uint8_t c( int which ) {
+            return ( ( std::uint8_t * ) this )[ which ];
         }
 
 
-        uint8_t n( int which ) {
-            return c( which ) - static_cast<uint8_t>( chunkState::unused );
+        std::uint8_t n( int which ) {
+            return c( which ) - static_cast<std::uint8_t>( chunkState::unused );
         }
 
 
@@ -143,8 +143,8 @@ class ChunkKlass {
         }
 
 
-        uint8_t * asByte() {
-            return ( uint8_t * ) this;
+        std::uint8_t * asByte() {
+            return ( std::uint8_t * ) this;
         }
 
 
@@ -171,7 +171,7 @@ class ChunkKlass {
 
 
         void invalidate() {
-            asByte()[ 0 ] = static_cast<uint8_t>( chunkState::invalid );
+            asByte()[ 0 ] = static_cast<std::uint8_t>( chunkState::invalid );
         }
 
 
@@ -199,9 +199,9 @@ class ChunkKlass {
         int size() {        // size of this block
             int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
             int len;
-            st_assert( c( 0 ) not_eq static_cast<uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
+            st_assert( c( 0 ) not_eq static_cast<std::uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<std::uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
             if ( c( 0 ) not_eq ovfl ) {
-                len = c( 0 ) + 1 - ( isUsed() ? static_cast<uint8_t>( chunkState::used ) : static_cast<uint8_t>( chunkState::unused ) );
+                len = c( 0 ) + 1 - ( isUsed() ? static_cast<std::uint8_t>( chunkState::used ) : static_cast<std::uint8_t>( chunkState::unused ) );
             } else {
                 len = ( ( ( n( 1 ) << MaxDistLog ) + n( 2 ) ) << MaxDistLog ) + n( 3 );
             }
@@ -210,7 +210,7 @@ class ChunkKlass {
         }
 
 
-        bool_t contains( uint8_t * p ) {
+        bool_t contains( std::uint8_t * p ) {
             return asByte() <= p and p < asByte() + size();
         }
 
@@ -337,8 +337,8 @@ class ZoneHeap : public CHeapAllocatedObject {
 
 
         const char * blockAddr( ChunkKlass * m ) const {
-            uint8_t * fm = ( uint8_t * ) _heapKlass;
-            uint8_t * bm = ( uint8_t * ) m;
+            std::uint8_t * fm = ( std::uint8_t * ) _heapKlass;
+            std::uint8_t * bm = ( std::uint8_t * ) m;
             st_assert( bm >= fm and bm < fm + mapSize(), "not a heapKlass entry" );
             return base + ( ( bm - fm ) << log2BS );
         }
@@ -348,13 +348,13 @@ class ZoneHeap : public CHeapAllocatedObject {
             const char * pp = ( const char * ) p;
             st_assert( pp >= base and pp < base + size, "not in this heap" );
             st_assert( int(pp) % blockSize == 0, "must be block-aligned" );
-            uint8_t * fm = ( uint8_t * ) _heapKlass;
+            std::uint8_t * fm = ( std::uint8_t * ) _heapKlass;
             return ( ChunkKlass * ) ( fm + ( ( pp - base ) >> log2BS ) );
         }
 
 
         ChunkKlass * heapEnd() const {
-            return ( ChunkKlass * ) ( ( uint8_t * ) _heapKlass + mapSize() );
+            return ( ChunkKlass * ) ( ( std::uint8_t * ) _heapKlass + mapSize() );
         }
 
 

@@ -79,8 +79,8 @@ void LookupCache::verify() {
 }
 
 
-uint32_t LookupCache::hash_value( LookupKey * key ) {
-    return ( ( uint32_t ) key->klass() ^ ( uint32_t ) key->selector_or_method() ) / sizeof( CacheElement );
+std::uint32_t LookupCache::hash_value( LookupKey * key ) {
+    return ( ( std::uint32_t ) key->klass() ^ ( std::uint32_t ) key->selector_or_method() ) / sizeof( CacheElement );
 }
 
 

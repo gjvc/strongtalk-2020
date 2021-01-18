@@ -247,7 +247,7 @@ TEST_F( AlienIntegerCallout1Tests, alienCallResult1WithScavengeShouldReturnCorre
     bool_t ok;
     Oop    result = ( Oop ) asInt( ok, byteArrayPrimitives::alienUnsignedLongAt( smi1, resultAlien->as_oop() ) );
 
-    EXPECT_TRUE( ok ) << "uint32_t at failed";
+    EXPECT_TRUE( ok ) << "std::uint32_t at failed";
     EXPECT_TRUE( vmSymbols::completed() == result ) << "wrong result";
 }
 

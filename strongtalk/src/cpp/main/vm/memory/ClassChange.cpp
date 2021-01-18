@@ -120,7 +120,7 @@ void ClassChange::update_class_vars() {
 }
 
 
-void ClassChange::update_methods( int32_t instance_side ) {
+void ClassChange::update_methods( std::int32_t instance_side ) {
 
     if ( TraceApplyChange ) {
         _console->print( " updating %s-side methods for: ", instance_side ? "instance" : "class" );
@@ -138,7 +138,7 @@ void ClassChange::update_methods( int32_t instance_side ) {
 }
 
 
-void ClassChange::update_class( int32_t class_vars_changed, int32_t instance_methods_changed, int32_t class_methods_changed ) {
+void ClassChange::update_class( std::int32_t class_vars_changed, std::int32_t instance_methods_changed, std::int32_t class_methods_changed ) {
     // The format has not changed which means we can patch the existing classes and mixins
     // We only have to change classes using the old_mixin
     if ( old_mixin() == new_mixin() )
@@ -187,7 +187,7 @@ void ClassChange::setup_schema_change() {
 }
 
 
-int32_t ClassChange::compute_needed_schema_change() {
+std::int32_t ClassChange::compute_needed_schema_change() {
 
     // Be dependent on the super change
     if ( new_super()->is_klass() and not( new_super()->klass_part()->has_same_layout_as( old_klass()->klass_part()->superKlass() ) and new_super()->klass()->klass_part()->has_same_layout_as( old_klass()->klass()->klass_part()->superKlass() ) ) ) {
@@ -315,7 +315,7 @@ void ClassChange::set_super_change( ClassChange * change ) {
 }
 
 
-int32_t ClassChange::needs_schema_change() {
+std::int32_t ClassChange::needs_schema_change() {
 
     if ( not _is_schema_change_computed )
         _needs_schema_change = compute_needed_schema_change();

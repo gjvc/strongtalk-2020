@@ -37,8 +37,8 @@
 class MarkOopDescriptor : public OopDescriptor {
 
     private:
-        uint32_t value() const {
-            return ( uint32_t ) this;
+        std::uint32_t value() const {
+            return ( std::uint32_t ) this;
         }
 
 

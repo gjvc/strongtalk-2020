@@ -20,14 +20,14 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-uint8_t * Frame::hp() const {
+std::uint8_t * Frame::hp() const {
     // Lars, please check -- assertion fails
     // st_assert(is_nullptrinterpreted_frame(), "must be interpreted");
     return *hp_addr();
 }
 
 
-void Frame::set_hp( uint8_t * hp ) {
+void Frame::set_hp( std::uint8_t * hp ) {
     // st_assert(is_interpreted_frame(), "must be interpreted");
     *hp_addr() = hp;
 }
@@ -73,7 +73,7 @@ MethodOop Frame::method() const {
     if ( frame_size() < minimum_size_for_deoptimized_frame )
         return nullptr;
 
-    uint8_t * h = hp();
+    std::uint8_t * h = hp();
     if ( not Universe::old_gen.contains( h ) )
         return nullptr;
     MemOop obj = as_memOop( Universe::object_start( ( Oop * ) h ) );
@@ -131,7 +131,7 @@ InterpretedInlineCache * Frame::current_interpretedIC() const {
     if ( is_interpreted_frame() ) {
         MethodOop m             = method();
         int       byteCodeIndex = m->byteCodeIndex_from( hp() );
-        uint8_t * codeptr = m->codes( byteCodeIndex );
+        std::uint8_t * codeptr = m->codes( byteCodeIndex );
         if ( ByteCodes::is_send_code( ByteCodes::Code( *codeptr ) ) ) {
             InterpretedInlineCache * ic = as_InterpretedIC( ( const char * ) hp() );
             st_assert( ic->send_code_addr() == codeptr, "found wrong ic" );
@@ -485,8 +485,8 @@ void Frame::convert_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Adjust hcode pointer to object start
-    uint8_t * h   = hp();
-    uint8_t * obj = ( uint8_t * ) as_memOop( Universe::object_start( ( Oop * ) h ) );
+    std::uint8_t * h   = hp();
+    std::uint8_t * obj = ( std::uint8_t * ) as_memOop( Universe::object_start( ( Oop * ) h ) );
     set_hp( obj );
     // Save the offset
     MarkSweep::add_heap_code_offset( h - obj );
@@ -499,7 +499,7 @@ void Frame::restore_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Readjust hcode pointer
-    uint8_t * obj = hp();
+    std::uint8_t * obj = hp();
     int offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
         lprintf( "[0x%lx+%d]\n", obj, offset );

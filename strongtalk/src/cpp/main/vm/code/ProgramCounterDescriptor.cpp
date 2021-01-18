@@ -10,7 +10,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-ProgramCounterDescriptor::ProgramCounterDescriptor( uint16_t pc, uint16_t scope, uint16_t byteCode ) {
+ProgramCounterDescriptor::ProgramCounterDescriptor( std::uint16_t pc, std::uint16_t scope, std::uint16_t byteCode ) {
     _pc       = pc;
     _scope         = scope;
     _byteCodeIndex = byteCode;
@@ -29,7 +29,7 @@ ScopeDescriptor * ProgramCounterDescriptor::containingDesc( const NativeMethod *
 
 void ProgramCounterDescriptor::print( NativeMethod * nm ) {
     printIndent();
-    lprintf( "ProgramCounterDescriptor %#lx: pc: %#lx; scope: %5ld; byte code: %ld\n", this, real_pc( nm ), _scope, ( int32_t ) _byteCodeIndex );
+    lprintf( "ProgramCounterDescriptor %#lx: pc: %#lx; scope: %5ld; byte code: %ld\n", this, real_pc( nm ), _scope, ( std::int32_t ) _byteCodeIndex );
 }
 
 

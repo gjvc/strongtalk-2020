@@ -577,7 +577,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
 
             ok = defSrc->scope()->isSenderOf( _scope );
             if ( not ok and defSrc->scope() == _scope and isSinglyAssignedPseudoRegister() ) {
-                // same scope, ok if defSrc lives int32_t enough
+                // same scope, ok if defSrc lives std::int32_t enough
                 ok = byteCodeIndexGE( ( ( SinglyAssignedPseudoRegister * ) defSrc )->endByteCodeIndex(), endByteCodeIndex() );
             }
             if ( not ok ) {

@@ -71,7 +71,7 @@ class Thread : CHeapAllocatedObject {
 
     public:
         static Thread * find( pthread_t threadId ) {
-            for ( int32_t index = 0; index < _threads->length(); index++ ) {
+            for ( std::int32_t index = 0; index < _threads->length(); index++ ) {
                 Thread * candidate = _threads->at( index );
                 if ( candidate == nullptr )
                     continue;
@@ -97,7 +97,7 @@ class Thread : CHeapAllocatedObject {
         static GrowableArray <Thread *> * _threads;
         pthread_t                       _threadId;
         clockid_t                       _clockId;
-        int32_t                         _thread_index;
+        std::int32_t                         _thread_index;
         void                            * _stackLimit;
 
 

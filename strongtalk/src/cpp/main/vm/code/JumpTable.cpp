@@ -66,7 +66,7 @@ JumpTable::~JumpTable() {
 }
 
 
-JumpTableEntry * JumpTable::major_at( uint16_t index ) {
+JumpTableEntry * JumpTable::major_at( std::uint16_t index ) {
     return jump_entry_for_at( _entries, index );
 }
 

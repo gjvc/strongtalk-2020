@@ -178,12 +178,12 @@ void Interpreter::trace_bytecode() {
                 ( *p )->print_value();
                 lprintf( "\n" );
             }
-            uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
+            std::uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
             const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
             _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
-        uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
+        std::uint8_t    *ip   = DeltaProcess::active()->last_frame().hp();
         const char *name = ByteCodes::name( (ByteCodes::Code) *ip );
         _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
     }
@@ -237,7 +237,7 @@ int *Interpreter::_invocation_counter_addr = nullptr;
 void Interpreter::set_invocation_counter_limit( int new_limit ) {
     st_assert( _invocation_counter_addr not_eq nullptr, "invocation counter address unknown" );
     st_assert( 0 <= new_limit and new_limit <= MethodOopDescriptor::_invocation_count_max, "illegal counter limit" );
-    st_assert( *( (uint8_t *) _invocation_counter_addr - 2 ) == 0x81, "not a cmp edx, imm32 instruction anymore?" )
+    st_assert( *( (std::uint8_t *) _invocation_counter_addr - 2 ) == 0x81, "not a cmp edx, imm32 instruction anymore?" )
     *_invocation_counter_addr = new_limit << MethodOopDescriptor::_invocation_count_offset;
 }
 

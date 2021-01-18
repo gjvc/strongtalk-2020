@@ -133,7 +133,7 @@ PRIM_DECL_3( doubleByteArrayPrimitives::atPut, Oop receiver, Oop index, Oop valu
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value as double byte
-    uint32_t v = ( uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
     if ( v >= ( 1 << 16 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -193,7 +193,7 @@ PRIM_DECL_2( doubleByteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // fetch double byte
-    uint16_t byte = DoubleByteArrayOop( receiver )->doubleByte_at( SMIOop( index )->value() );
+    std::uint16_t byte = DoubleByteArrayOop( receiver )->doubleByte_at( SMIOop( index )->value() );
 
     if ( byte < 256 ) {
         // return the byte+1'th element in asciiCharacter

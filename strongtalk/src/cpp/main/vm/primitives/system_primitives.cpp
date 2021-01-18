@@ -465,7 +465,7 @@ PRIM_DECL_1( SystemPrimitives::characterFor, Oop value ) {
     if ( not value->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( ( uint32_t ) SMIOop( value )->value() < 256 )
+    if ( ( std::uint32_t ) SMIOop( value )->value() < 256 )
         // return the n+1'th element in asciiCharacter
         return Universe::asciiCharacters()->obj_at( SMIOop( value )->value() + 1 );
     else
@@ -767,8 +767,8 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
     if ( not UseSlidingSystemAverage )
         return markSymbol( vmSymbols::not_active() );
 
-//    uint32_t * array = SlidingSystemAverage::update();
-    std::array<uint32_t,SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
+//    std::uint32_t * array = SlidingSystemAverage::update();
+    std::array<std::uint32_t,SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
 
     ObjectArrayOop result = oopFactory::new_objArray( SlidingSystemAverage::number_of_cases - 1 );
 

@@ -27,7 +27,7 @@ class NonInlinedBlockScopeNode : public ResourceObject {
         }
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return NON_INLINED_BLOCK_CODE;
         }
 

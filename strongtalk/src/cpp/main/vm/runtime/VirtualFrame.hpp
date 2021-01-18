@@ -218,9 +218,9 @@ class InterpretedVirtualFrame : public DeltaVirtualFrame {
         void set_receiver( Oop obj );
 
         // Accessors for HP
-        uint8_t * hp() const;
+        std::uint8_t * hp() const;
 
-        void set_hp( uint8_t * p );
+        void set_hp( std::uint8_t * p );
 
         // Sets temporaries
         void temp_at_put( int offset, Oop obj );

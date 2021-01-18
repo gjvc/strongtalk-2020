@@ -81,14 +81,14 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
         } else {
             if ( not first_free ) {
                 first_free = m;
-                lprintf( "First free %#lx\n", q );
+//                lprintf( "First free %#lx\n", q );
             }
             q += m->size();
         }
     }
     if ( first_free ) {
         first_free->set_mark( q );
-        lprintf( "[%#lx] = %#lx, %#lx\n", first_free, first_free->mark(), q );
+//        lprintf( "[%#lx] = %#lx, %#lx\n", first_free, first_free->mark(), q );
     }
     mark->_point = new_top;
 }
@@ -213,7 +213,7 @@ void OldSpace::initialize_threshold() {
 OldSpace::OldSpace( const char *name, int &size ) {
     _nextSpace = nullptr;
 
-    _offsetArray = new_c_heap_array<uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );
+    _offsetArray = new_c_heap_array<std::uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );
     set_name( name );
     set_bottom( (Oop *) Universe::old_gen._virtualSpace.low() );
     set_top( (Oop *) Universe::old_gen._virtualSpace.low() );

@@ -28,7 +28,7 @@ class DispatchTable : AllStatic {
 
     public:
         // the dispatch table
-        static uint8_t ** table();
+        static std::uint8_t ** table();
 
         // initializes the dispatch table to the original state.
         static void reset();

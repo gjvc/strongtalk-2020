@@ -13,7 +13,7 @@
 
 
 bool_t Interpreted_DLLCache::async() const {
-    uint8_t * p = ( uint8_t * ) this;                // p point to first Oop in DLL call
+    std::uint8_t * p = ( std::uint8_t * ) this;                // p point to first Oop in DLL call
     while ( ByteCodes::Code( *--p ) == ByteCodes::Code::halt );    // search back for DLL call bytecode
     ByteCodes::Code code = ByteCodes::Code( *p );
     st_assert( code == ByteCodes::Code::dll_call_sync or code == ByteCodes::Code::dll_call_async, "not a dll call" );
@@ -26,8 +26,8 @@ void CodeIterator::align() {
 }
 
 
-uint8_t * CodeIterator::align( uint8_t * p ) const {
-    return ( uint8_t * ) ( ( ( int ) p + 3 ) & ( ~3 ) );
+std::uint8_t * CodeIterator::align( std::uint8_t * p ) const {
+    return ( std::uint8_t * ) ( ( ( int ) p + 3 ) & ( ~3 ) );
 }
 
 
@@ -39,7 +39,7 @@ CodeIterator::CodeIterator( MethodOop method, int startByteCodeIndex ) {
 }
 
 
-CodeIterator::CodeIterator( uint8_t * hp ) {
+CodeIterator::CodeIterator( std::uint8_t * hp ) {
     _methodOop = MethodOopDescriptor::methodOop_from_hcode( hp );
     _current   = hp;
     _end       = _methodOop->codes_end();
@@ -61,7 +61,7 @@ int CodeIterator::next_byteCodeIndex() const {
 }
 
 
-uint8_t * CodeIterator::next_hp() const {
+std::uint8_t * CodeIterator::next_hp() const {
 
     if ( _current >= _end )
         return nullptr;

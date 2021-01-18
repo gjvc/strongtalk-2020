@@ -50,13 +50,13 @@ int Integer::as_int( bool_t & ok ) const {
 }
 
 
-uint32_t Integer::as_unsigned_int( bool_t & ok ) const {
+std::uint32_t Integer::as_unsigned_int( bool_t & ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case 0:
             return 0;
         case 1:
-            return ( uint32_t ) _first_digit;
+            return ( std::uint32_t ) _first_digit;
             break;
     }
     ok = false;

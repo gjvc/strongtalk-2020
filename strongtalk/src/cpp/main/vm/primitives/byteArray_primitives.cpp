@@ -147,7 +147,7 @@ PRIM_DECL_3( byteArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value range (must be byte)
-    uint32_t v = ( uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -211,7 +211,7 @@ PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check value range (must be byte)
-    uint32_t v = ( uint32_t ) SMIOop( value )->value();
+    std::uint32_t v = ( std::uint32_t ) SMIOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -630,14 +630,14 @@ Oop unsafeContents( Oop unsafeAlien ) {
   if (not argument->is_smi())\
     return markSymbol(vmSymbols::argument_has_wrong_type());\
   if (alienIndex(argument) < 1 or\
-      (alienSize(receiver) not_eq 0 and ((uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
+      (alienSize(receiver) not_eq 0 and ((std::uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
     return markSymbol(vmSymbols::index_not_valid())
 
 #define checkAlienAtPutIndex( receiver, argument, type )\
   if (not argument->is_smi())\
     return markSymbol(vmSymbols::first_argument_has_wrong_type());\
   if (alienIndex(argument) < 1 or\
-      (alienSize(receiver) not_eq 0 and ((uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
+      (alienSize(receiver) not_eq 0 and ((std::uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
     return markSymbol(vmSymbols::index_not_valid())
 
 #define checkAlienAtPutValue( receiver, argument, type, min, max )\
@@ -666,19 +666,19 @@ Oop unsafeContents( Oop unsafeAlien ) {
 PRIM_DECL_2( byteArrayPrimitives::alienUnsignedByteAt, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedByteAt", receiver, argument );
     checkAlienAtReceiver( receiver );
-    checkAlienAtIndex( receiver, argument, uint8_t );
+    checkAlienAtIndex( receiver, argument, std::uint8_t );
 
-    return smiOopFromValue( alienAt( receiver, argument, uint8_t ) );
+    return smiOopFromValue( alienAt( receiver, argument, std::uint8_t ) );
 }
 
 
 PRIM_DECL_3( byteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienUnsignedByteAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
-    checkAlienAtPutIndex( receiver, argument1, uint8_t );
-    checkAlienAtPutValue( receiver, argument2, uint8_t, 0, 255 );
+    checkAlienAtPutIndex( receiver, argument1, std::uint8_t );
+    checkAlienAtPutValue( receiver, argument2, std::uint8_t, 0, 255 );
 
-    alienAt( receiver, argument1, uint8_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::uint8_t ) = SMIOop( argument2 )->value();
 
     return argument2;
 }
@@ -710,19 +710,19 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedByteAtPut, Oop receiver, Oop argume
 PRIM_DECL_2( byteArrayPrimitives::alienUnsignedShortAt, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedShortAt", receiver, argument );
     checkAlienAtReceiver( receiver );
-    checkAlienAtIndex( receiver, argument, uint16_t );
+    checkAlienAtIndex( receiver, argument, std::uint16_t );
 
-    return smiOopFromValue( alienAt( receiver, argument, uint16_t ) );
+    return smiOopFromValue( alienAt( receiver, argument, std::uint16_t ) );
 }
 
 
 PRIM_DECL_3( byteArrayPrimitives::alienUnsignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienUnsignedShortAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
-    checkAlienAtPutIndex( receiver, argument1, uint16_t );
-    checkAlienAtPutValue( receiver, argument2, uint16_t, 0, 65535 );
+    checkAlienAtPutIndex( receiver, argument1, std::uint16_t );
+    checkAlienAtPutValue( receiver, argument2, std::uint16_t, 0, 65535 );
 
-    alienAt( receiver, argument1, uint16_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::uint16_t ) = SMIOop( argument2 )->value();
 
     return argument2;
 }
@@ -752,9 +752,9 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedShortAtPut, Oop receiver, Oop argum
 PRIM_DECL_2( byteArrayPrimitives::alienUnsignedLongAt, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienUnsignedLongAt", receiver, argument );
     checkAlienAtReceiver( receiver );
-    checkAlienAtIndex( receiver, argument, uint32_t );
+    checkAlienAtIndex( receiver, argument, std::uint32_t );
 
-    uint32_t value = alienAt( receiver, argument, uint32_t );
+    std::uint32_t value = alienAt( receiver, argument, std::uint32_t );
 
     int          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
     KlassOop     largeInteger = KlassOop( Universe::find_global( "LargeInteger" ) );
@@ -769,11 +769,11 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
 
     PROLOGUE_3( "alienUnsignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
-    checkAlienAtPutIndex( receiver, argument1, uint32_t );
+    checkAlienAtPutIndex( receiver, argument1, std::uint32_t );
     if ( not argument2->is_smi() and not argument2->is_byteArray() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    uint32_t value;
+    std::uint32_t value;
     if ( argument2->is_smi() )
         value = SMIOop( argument2 )->value();
     else {
@@ -783,7 +783,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
 
-    alienAt( receiver, argument1, uint32_t ) = value;
+    alienAt( receiver, argument1, std::uint32_t ) = value;
 
     return argument2;
 }
@@ -792,9 +792,9 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
 PRIM_DECL_2( byteArrayPrimitives::alienSignedLongAt, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSignedLongAt", receiver, argument );
     checkAlienAtReceiver( receiver );
-    checkAlienAtIndex( receiver, argument, int32_t );
+    checkAlienAtIndex( receiver, argument, std::int32_t );
 
-    int value = alienAt( receiver, argument, int32_t );
+    int value = alienAt( receiver, argument, std::int32_t );
 
     int          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
     KlassOop     largeInteger = KlassOop( Universe::find_global( "LargeInteger" ) );
@@ -808,7 +808,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSignedLongAt, Oop receiver, Oop argument 
 PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienSignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
-    checkAlienAtPutIndex( receiver, argument1, int32_t );
+    checkAlienAtPutIndex( receiver, argument1, std::int32_t );
     if ( not argument2->is_smi() and not argument2->is_byteArray() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
@@ -823,7 +823,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
 
-    alienAt( receiver, argument1, int32_t ) = value;
+    alienAt( receiver, argument1, std::int32_t ) = value;
 
     return argument2;
 }
@@ -905,7 +905,7 @@ PRIM_DECL_1( byteArrayPrimitives::alienGetAddress, Oop receiver ) {
 //  if (alienSize(receiver) > 0)
 //    return markSymbol(vmSymbols::illegal_state());
 
-    uint32_t address = ( uint32_t ) alienAddress( receiver );
+    std::uint32_t address = ( std::uint32_t ) alienAddress( receiver );
     int      size    = IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( address );
 
     Oop largeInteger = Universe::find_global( "LargeInteger" );
@@ -923,7 +923,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
     if ( not argument->is_smi() and not( argument->is_byteArray() and ByteArrayOop( argument )->number().signum() > 0 ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    uint32_t value;
+    std::uint32_t value;
     if ( argument->is_smi() )
         value = SMIOop( argument )->value();
     else {

@@ -384,7 +384,7 @@ PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     BlockScavenge bs;
 
     double  value  = DoubleOop( receiver )->value();
-    uint8_t * addr = ( uint8_t * ) &value;
+    std::uint8_t * addr = ( std::uint8_t * ) &value;
 
     ByteArrayOop result = oopFactory::new_byteArray( 8 );
     for ( int    index  = 0; index < 8; index++ ) {

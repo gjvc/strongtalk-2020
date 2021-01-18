@@ -160,13 +160,13 @@ vframeOop new_vframeOop( Process * p, VirtualFrame * vf ) {
 }
 
 
-static int32_t createdVFrameProtos = 0;
+static std::int32_t createdVFrameProtos = 0;
 
 
 vframeOop create_vframeOop( oop method ) {
     if ( ++createdVFrameProtos > 3 )
         fatal( "should create only three VirtualFrame prototypes" );
-    int32_t vtbl;
+    std::int32_t vtbl;
     switch ( method->kind() ) {
         case OuterMethodType: {
             ovframeKlass m;

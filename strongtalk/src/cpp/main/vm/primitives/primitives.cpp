@@ -372,7 +372,7 @@ void Primitives::lookup_and_patch() {
     PrimitiveDescriptor * pdesc = Primitives::lookup( sel );
     if ( pdesc not_eq nullptr and not pdesc->is_internal() ) {
         // primitive found => patch bytecode & cache
-        *f.hp()        = uint8_t( ByteCodes::primitive_call_code_for( ByteCodes::Code( *f.hp() ) ) );
+        *f.hp()        = std::uint8_t( ByteCodes::primitive_call_code_for( ByteCodes::Code( *f.hp() ) ) );
         *selector_addr = Oop( pdesc->fn() );
     } else {
         // advance hp so that it points to the next instruction

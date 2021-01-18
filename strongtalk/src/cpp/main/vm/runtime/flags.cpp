@@ -90,7 +90,7 @@ static IntegerFlag integerDebugFlags[] = {
 
 bool_t str_equal( const char * s, const char * q, int len ) {
     // s is null terminated, q is not!
-    if ( strlen( s ) not_eq ( uint32_t ) len )
+    if ( strlen( s ) not_eq ( std::uint32_t ) len )
         return false;
     return strncmp( s, q, len ) == 0;
 }

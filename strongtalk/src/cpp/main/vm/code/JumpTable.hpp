@@ -27,8 +27,8 @@ class NativeMethod;
 class JumpTableID : ValueObject {
 
     private:
-        uint16_t _major;
-        uint16_t _minor;
+        std::uint16_t _major;
+        std::uint16_t _minor;
 
         friend class JumpTable;
 
@@ -41,12 +41,12 @@ class JumpTableID : ValueObject {
         }
 
 
-        JumpTableID( uint16_t major ) :
+        JumpTableID( std::uint16_t major ) :
             _major( major ), _minor( max_value ) {
         }
 
 
-        JumpTableID( uint16_t major, uint16_t minor ) :
+        JumpTableID( std::uint16_t major, std::uint16_t minor ) :
             _major( major ), _minor( minor ) {
         }
 
@@ -66,17 +66,17 @@ class JumpTableID : ValueObject {
         }
 
 
-        uint16_t major() const {
+        std::uint16_t major() const {
             return _major;
         }
 
 
-        uint16_t minor() const {
+        std::uint16_t minor() const {
             return _minor;
         }
 
 
-        JumpTableID sub( uint16_t minor ) const {
+        JumpTableID sub( std::uint16_t minor ) const {
             return JumpTableID( _major, minor );
         }
 };
@@ -90,7 +90,7 @@ class JumpTable : public ValueObject {
 
         static JumpTableEntry * jump_entry_for_at( const char * entries, int index );
 
-        JumpTableEntry * major_at( uint16_t index );
+        JumpTableEntry * major_at( std::uint16_t index );
 
     public:
         const char * _entries;

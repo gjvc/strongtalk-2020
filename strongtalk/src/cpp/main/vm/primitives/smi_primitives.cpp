@@ -137,10 +137,10 @@ PRIM_DECL_2( smiOopPrimitives::rawBitShift, Oop receiver, Oop argument ) {
     int       n           = SMIOop( argument )->value();
     if ( n >= 0 ) {
         // logical shift right
-        return SMIOop( ( uint32_t ) receiver << ( n % bitsPerWord ) );
+        return SMIOop( ( std::uint32_t ) receiver << ( n % bitsPerWord ) );
     } else {
         // logical shift left
-        return SMIOop( ( ( uint32_t ) receiver >> ( ( -n ) % bitsPerWord ) ) & ( -1 << TAG_SIZE ) );
+        return SMIOop( ( ( std::uint32_t ) receiver >> ( ( -n ) % bitsPerWord ) ) & ( -1 << TAG_SIZE ) );
     }
 }
 

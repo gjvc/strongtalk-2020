@@ -38,7 +38,7 @@ class ByteArrayPrimsTests : public ::testing::Test {
 
         KlassOop     byteArrayClass;
         ByteArrayOop alien;
-        uint8_t      alien_byte_region[16];
+        std::uint8_t      alien_byte_region[16];
 
 
         void checkAlienContents( ByteArrayOop alien ) {
@@ -58,7 +58,7 @@ class ByteArrayPrimsTests : public ::testing::Test {
         }
 
 
-        void setUnsignedContents( uint8_t * contents ) {
+        void setUnsignedContents( std::uint8_t * contents ) {
             contents[ 0 ] = 255;
             contents[ 1 ] = 2;
             contents[ 2 ] = 3;
@@ -83,7 +83,7 @@ TEST_F( ByteArrayPrimsTests, allocateSize2ShouldAllocateByteArrayOfCorrectSize )
     ASSERT_EQ( 10, ByteArrayOop(result) -> length() );
     ASSERT_EQ( ( const char * ) byteArrayClassHandle.as_klass(), ( const char * ) result->klass() );
     for ( int                  index  = 10; index > 0; index-- )
-        ASSERT_EQ( uint8_t( 0 ), ByteArrayOop( result ) -> byte_at(index) );
+        ASSERT_EQ( std::uint8_t( 0 ), ByteArrayOop( result ) -> byte_at(index) );
 }
 
 
@@ -138,22 +138,22 @@ TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
 
 
 TEST_F( ByteArrayPrimsTests, alienSizeShouldReturnCorrectSize ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ] = 4;
     EXPECT_EQ( 4, SMIOop( byteArrayPrimitives::alienGetSize( alien ) )->value() ) << "wrong size";
 }
 
 
 TEST_F( ByteArrayPrimsTests, alienAddressShouldReturnCorrectAddress ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ]      = -16;
-    ( ( uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
+    ( ( std::uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
     EXPECT_EQ( ( int ) alien_byte_region, SMIOop( byteArrayPrimitives::alienGetAddress( alien ) )->value() ) << "wrong address";
 }
 
 
 TEST_F( ByteArrayPrimsTests, alienSetAddressShouldAssignCorrectAddress ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     int     address = ( int ) alien_byte_region;
     ( ( int * ) bytes )[ 0 ] = -16;
     EXPECT_TRUE( alien == byteArrayPrimitives::alienSetAddress( smiOopFromValue( address ), alien ) ) << "Should return alien";
@@ -186,7 +186,7 @@ TEST_F( ByteArrayPrimsTests, alienSetAddressShouldReturnMarkedSymbolWhenNotAlien
 
 
 TEST_F( ByteArrayPrimsTests, alienSetAddressShouldReturnMarkedSymbolWhenAlienIsDirect ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     byteArrayPrimitives::alienSetSize( SMIOop( 4 ), alien );
     Oop result = byteArrayPrimitives::alienSetAddress( SMIOop( 0 ), alien );
     checkMarkedSymbol( "iillegal state", result, vmSymbols::illegal_state() );
@@ -201,10 +201,10 @@ TEST_F( ByteArrayPrimsTests, alienSetAddressShouldReturnMarkedSymbolWhenArgument
 
 
 TEST_F( ByteArrayPrimsTests, alienAddressShouldReturnLargeIntegerAddress ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     int     address = -128 * 256 * 256 * 256;
     ( ( int * ) bytes )[ 0 ]      = 0;
-    ( ( uint8_t ** ) bytes )[ 1 ] = ( uint8_t * ) address;
+    ( ( std::uint8_t ** ) bytes )[ 1 ] = ( std::uint8_t * ) address;
     Oop     result        = byteArrayPrimitives::alienGetAddress( alien );
     EXPECT_TRUE( result->is_byteArray() ) << "should be large integer";
     Integer * number      = &ByteArrayOop( result )->number();
@@ -228,7 +228,7 @@ TEST_F( ByteArrayPrimsTests, alienSizeShouldReturnMarkedSymbolWhenNotByteArray )
 
 
 TEST_F( ByteArrayPrimsTests, alienAddressShouldReturnMarkedSymbolWhenDirect ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ] = 4;
     Oop result = byteArrayPrimitives::alienGetAddress( alien );
     checkMarkedSymbol( "illegal state", result, vmSymbols::illegal_state() );
@@ -248,14 +248,14 @@ TEST_F( ByteArrayPrimsTests, alienSetSizeShouldReturnMarkedResultWhenSizeNotSMI 
 
 
 TEST_F( ByteArrayPrimsTests, alienSetSizeShouldSetCorrectSize ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     EXPECT_TRUE( alien == byteArrayPrimitives::alienSetSize( smiOopFromValue( 4 ), alien ) ) << "should return receiver";
     EXPECT_EQ( 4, ( ( int * ) bytes )[ 0 ] ) << "wrong size";
 }
 
 
 TEST_F( ByteArrayPrimsTests, unsignedByteAtWithDirectAlienShouldReturnCorrectByte ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ] = 4;
     setUnsignedContents( &bytes[ 4 ] );
     checkAlienContents( alien );
@@ -263,19 +263,19 @@ TEST_F( ByteArrayPrimsTests, unsignedByteAtWithDirectAlienShouldReturnCorrectByt
 
 
 TEST_F( ByteArrayPrimsTests, unsignedByteAtWithIndirectAlienShouldReturnCorrectByteFromIndirectAlien ) {
-    uint8_t * bytes    = alien->bytes();
-    uint8_t * contents = bytes + 4;
+    std::uint8_t * bytes    = alien->bytes();
+    std::uint8_t * contents = bytes + 4;
     ( ( int * ) bytes )[ 0 ]      = -16;
-    ( ( uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
+    ( ( std::uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
     setUnsignedContents( alien_byte_region );
     checkAlienContents( alien );
 }
 
 
 TEST_F( ByteArrayPrimsTests, unsignedByteAtWithPointerAlienShouldReturnCorrectByteFromPointerAlien ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ]      = 0;
-    ( ( uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
+    ( ( std::uint8_t ** ) bytes )[ 1 ] = alien_byte_region;
     setUnsignedContents( alien_byte_region );
     checkAlienContents( alien );
 }
@@ -334,7 +334,7 @@ TEST_F( ByteArrayPrimsTests, alienUnsignedByteAtPutShouldReturnMarkedSymbolWhenI
 
 
 TEST_F( ByteArrayPrimsTests, alienUnsignedByteAtShouldReturnMarkedSymbolWhenIndexNotSMI ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ] = 4;
     setUnsignedContents( &bytes[ 4 ] );
     Oop result = byteArrayPrimitives::alienUnsignedByteAt( vmSymbols::abs(), alien );
@@ -343,7 +343,7 @@ TEST_F( ByteArrayPrimsTests, alienUnsignedByteAtShouldReturnMarkedSymbolWhenInde
 
 
 TEST_F( ByteArrayPrimsTests, alienUnsignedByteAtShouldReturnMarkedSymbolWhenIndexNotInRange ) {
-    uint8_t * bytes = alien->bytes();
+    std::uint8_t * bytes = alien->bytes();
     ( ( int * ) bytes )[ 0 ] = 4;
     setUnsignedContents( &bytes[ 4 ] );
     Oop result = byteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 5 ), alien );

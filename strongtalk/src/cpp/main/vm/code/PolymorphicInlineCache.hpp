@@ -71,7 +71,7 @@ class PolymorphicInlineCache {
         PolymorphicInlineCache( CompiledInlineCache * ic ); // creation of MegamorphicInlineCache
 
     public:
-        void * operator new( size_t size, int code_size );
+        void * operator new( std::size_t size, int code_size );
 
         // Deallocates this pic from the pic heap
         void operator delete( void * p );

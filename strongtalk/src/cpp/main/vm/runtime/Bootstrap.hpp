@@ -50,9 +50,9 @@ class Bootstrap : CHeapAllocatedObject {
 
         char read_byte();
 
-        uint16_t read_doubleByte();
+        std::uint16_t read_doubleByte();
 
-        int32_t read_integer();
+        std::int32_t read_integer();
 
         double read_double();
 

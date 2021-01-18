@@ -20,7 +20,7 @@ class InterpreterStatistics : AllStatic {
     private:
 
         static bool_t                                                                    _is_initialized;            // true if InterpreterStatistics has been initialized
-        static std::array <uint32_t, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)> _bytecode_counters;
+        static std::array <std::uint32_t, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)> _bytecode_counters;
         static std::array <int, static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)>      _bytecode_generation_order;
 
         static void reset_bytecode_counters();

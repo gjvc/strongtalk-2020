@@ -264,7 +264,7 @@ void TokenStream::tokenize( char * str ) {
 
 bool_t TokenStream::is_smi( Oop * addr ) {
     int      value;
-    uint32_t length;
+    std::uint32_t length;
 
     if ( sscanf( current(), "%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         *addr = smiOopFromValue( value );
@@ -276,7 +276,7 @@ bool_t TokenStream::is_smi( Oop * addr ) {
 
 bool_t TokenStream::is_table_entry( Oop * addr ) {
     int      value;
-    uint32_t length;
+    std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not objectIDTable::is_index_ok( value ) ) {
             _console->print_cr( "Could not find index %d in object table.", value );
@@ -292,7 +292,7 @@ bool_t TokenStream::is_table_entry( Oop * addr ) {
 bool_t TokenStream::is_object_search( Oop * addr ) {
     int      address;
     Oop      obj;
-    uint32_t length;
+    std::uint32_t length;
 
     if ( sscanf( current(), "0x%X%u", &address, &length ) == 1 and strlen( current() ) == length ) {
         if ( obj = Oop( Universe::object_start( ( Oop * ) address ) ) ) {
@@ -307,7 +307,7 @@ bool_t TokenStream::is_object_search( Oop * addr ) {
 bool_t TokenStream::is_name( Oop * addr ) {
     char     name[200];
     Oop      obj;
-    uint32_t length;
+    std::uint32_t length;
     if ( sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length ) {
         if ( obj = Universe::find_global( name ) ) {
             *addr = obj;
@@ -320,7 +320,7 @@ bool_t TokenStream::is_name( Oop * addr ) {
 
 bool_t TokenStream::is_symbol( Oop * addr ) {
     char     name[200];
-    uint32_t length;
+    std::uint32_t length;
     if ( sscanf( current(), "#%[a-zA-Z0-9_]%u", name, &length ) == 1 and strlen( current() ) == length ) {
         *addr = oopFactory::new_symbol( name );
         return true;
@@ -331,7 +331,7 @@ bool_t TokenStream::is_symbol( Oop * addr ) {
 
 bool_t TokenStream::is_unary() {
     char     name[40];
-    uint32_t length;
+    std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length;
 }
 
@@ -343,7 +343,7 @@ bool_t TokenStream::is_binary() {
 
 bool_t TokenStream::is_keyword() {
     char     name[40];
-    uint32_t length;
+    std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]:%u", name, &length ) == 1 and strlen( current() ) == length;
 }
 

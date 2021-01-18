@@ -400,7 +400,7 @@ void ScopeDescriptor::print( int indent, bool_t all_pcs ) {
     ScopeDescriptor * s = sender();
     if ( s not_eq nullptr ) {
         _console->fill_to( indent );
-        _console->print( "sender: (%d) @ %ld", s->offset(), int32_t( senderByteCodeIndex() ) );
+        _console->print( "sender: (%d) @ %ld", s->offset(), std::int32_t( senderByteCodeIndex() ) );
     }
     ScopeDescriptor * p = parent();
     if ( p not_eq nullptr ) {

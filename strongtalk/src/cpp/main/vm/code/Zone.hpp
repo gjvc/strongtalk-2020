@@ -87,7 +87,7 @@ class Zone : public CHeapAllocatedObject {
         Zone( int & size );
 
 
-        void * operator new( size_t size ) {
+        void * operator new( std::size_t size ) {
             return AllocateHeap( size, "NativeMethod zone header" );
         }
 
@@ -243,8 +243,8 @@ class Zone : public CHeapAllocatedObject {
 // holds usage information for nativeMethods (or index of next free NativeMethod ID if not assigned to any NativeMethod)
 class LRUcount : ValueObject {
     public:
-        uint16_t unused;    // NativeMethod prologue clears BOTH fields to 0
-        uint16_t lastUsed;    // time of last use
+        std::uint16_t unused;    // NativeMethod prologue clears BOTH fields to 0
+        std::uint16_t lastUsed;    // time of last use
 
         LRUcount() {
             ShouldNotCallThis();

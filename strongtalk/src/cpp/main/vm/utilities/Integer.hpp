@@ -12,8 +12,8 @@
 
 // -----------------------------------------------------------------------------
 
-typedef uint32_t Digit;
-typedef uint64_t DoubleDigit;
+typedef std::uint32_t Digit;
+typedef std::uint64_t DoubleDigit;
 
 
 // -----------------------------------------------------------------------------
@@ -32,53 +32,53 @@ typedef uint64_t DoubleDigit;
 
 class Integer : ValueObject {
 
-    public:
-        int   _signed_length;
-        Digit _first_digit;
+public:
+    int   _signed_length;
+    Digit _first_digit;
 
-        int length() const;
+    int length() const;
 
-        void set_length( int l );
+    void set_length( int l );
 
-        Digit * digits() const;
+    Digit *digits() const;
 
-        Digit & operator[]( int i ) const;
+    Digit &operator[]( int i ) const;
 
-        static int length_to_size_in_bytes( int l );
+    static int length_to_size_in_bytes( int l );
 
-        int length_in_bits() const;
+    int length_in_bits() const;
 
-        int signum() const;
-        // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
+    int signum() const;
+    // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
-        int size_in_bytes() const;
-
-
-        void print();
+    int size_in_bytes() const;
 
 
-        int as_int( bool_t & ok ) const;
-
-        uint32_t as_unsigned_int( bool_t & ok ) const;
-
-        double as_double( bool_t & ok ) const;
-
-        SMIOop as_smi( bool_t & ok ) const;
+    void print();
 
 
-        bool_t is_zero() const;
+    int as_int( bool_t &ok ) const;
 
-        bool_t is_not_zero() const;
+    std::uint32_t as_unsigned_int( bool_t &ok ) const;
 
-        bool_t is_positive() const;
+    double as_double( bool_t &ok ) const;
 
-        bool_t is_negative() const;
+    SMIOop as_smi( bool_t &ok ) const;
 
-        bool_t is_odd() const;
 
-        bool_t is_even() const;
+    bool_t is_zero() const;
 
-        bool_t is_valid() const;
+    bool_t is_not_zero() const;
 
-        friend class IntegerOps;
+    bool_t is_positive() const;
+
+    bool_t is_negative() const;
+
+    bool_t is_odd() const;
+
+    bool_t is_even() const;
+
+    bool_t is_valid() const;
+
+    friend class IntegerOps;
 };

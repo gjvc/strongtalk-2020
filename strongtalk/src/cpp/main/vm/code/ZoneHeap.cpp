@@ -30,24 +30,24 @@
 
 
 
-ChunkKlass * asChunkKlass( uint8_t * c ) {
+ChunkKlass * asChunkKlass( std::uint8_t * c ) {
     return ( ChunkKlass * ) c;
 }
 
 
 void ChunkKlass::markSize( int nChunks, chunkState s ) {
     // write header
-    uint8_t * p = asByte();
-    uint8_t * e = p + nChunks - 1;
+    std::uint8_t * p = asByte();
+    std::uint8_t * e = p + nChunks - 1;
     if ( nChunks < maxOneByteLen ) {
         p[ 0 ] = e[ 0 ] = static_cast<int>(s) + nChunks - 1;
     } else {
         st_assert( nChunks < ( 1 << ( 3 * MaxDistLog ) ), "chunk too large" );
         unsigned mask = nthMask( MaxDistLog );
-        p[ 0 ] = e[ 0 ]  = static_cast<uint8_t>( ( s == chunkState::used ) ? chunkState::usedOvfl : chunkState::unusedOvfl );
-        p[ 1 ] = e[ -3 ] = static_cast<uint8_t>( chunkState::unused ) + ( nChunks >> ( 2 * MaxDistLog ) );
-        p[ 2 ] = e[ -2 ] = static_cast<uint8_t>( chunkState::unused ) + ( ( nChunks >> MaxDistLog ) & mask );
-        p[ 3 ] = e[ -1 ] = static_cast<uint8_t>( chunkState::unused ) + ( nChunks & mask );
+        p[ 0 ] = e[ 0 ]  = static_cast<std::uint8_t>( ( s == chunkState::used ) ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        p[ 1 ] = e[ -3 ] = static_cast<std::uint8_t>( chunkState::unused ) + ( nChunks >> ( 2 * MaxDistLog ) );
+        p[ 2 ] = e[ -2 ] = static_cast<std::uint8_t>( chunkState::unused ) + ( ( nChunks >> MaxDistLog ) & mask );
+        p[ 3 ] = e[ -1 ] = static_cast<std::uint8_t>( chunkState::unused ) + ( nChunks & mask );
     }
     st_assert( size() == nChunks, "incorrect size encoding" );
     // mark distance for used blocks
@@ -79,26 +79,26 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
 
 ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd ) {
     // this points into the middle of a chunk; return start of chunk
-    uint8_t    * p     = asByte();
-    uint8_t    * start = mapStart->asByte();
-    uint8_t    * end   = mapEnd->asByte();
+    std::uint8_t    * p     = asByte();
+    std::uint8_t    * start = mapStart->asByte();
+    std::uint8_t    * end   = mapEnd->asByte();
     ChunkKlass * m;
-    if ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) ) {
+    if ( *p < static_cast<std::uint8_t>( chunkState::MaxDistance ) ) {
         // we're outside the header, so just walk down the trail
-        while ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) )
+        while ( *p < static_cast<std::uint8_t>( chunkState::MaxDistance ) )
             p -= *p;
         st_assert( p >= start, "not found" );
         m = asChunkKlass( p );
     } else {
-        // pointing to a header, but we don't know whether int32_t/int16_t etc
+        // pointing to a header, but we don't know whether std::int32_t/int16_t etc
         // first walk up to first non-header byte
         // (note that first distance byte of unused blocks is correct, but
         // the others aren't)
-        while ( *p >= static_cast<uint8_t>( chunkState::MaxDistance ) and p < end )
+        while ( *p >= static_cast<std::uint8_t>( chunkState::MaxDistance ) and p < end )
             p++;
         if ( p < end ) {
             // find start of this block
-            while ( *p < static_cast<uint8_t>( chunkState::MaxDistance ) )
+            while ( *p < static_cast<std::uint8_t>( chunkState::MaxDistance ) )
                 p -= *p;
             st_assert( p >= start, "not found" );
         }
@@ -113,12 +113,12 @@ ChunkKlass * ChunkKlass::findStart( ChunkKlass * mapStart, ChunkKlass * mapEnd )
 
 
 bool_t ChunkKlass::isValid() {
-    uint8_t * p = asByte();
+    std::uint8_t * p = asByte();
     bool_t ok;
-    if ( p[ 0 ] == static_cast<uint8_t>( chunkState::invalid ) or p[ 0 ] < static_cast<uint8_t>( chunkState::MaxDistance ) ) {
+    if ( p[ 0 ] == static_cast<std::uint8_t>( chunkState::invalid ) or p[ 0 ] < static_cast<std::uint8_t>( chunkState::MaxDistance ) ) {
         ok = false;
     } else {
-        uint8_t * e = next()->asByte() - 1;
+        std::uint8_t * e = next()->asByte() - 1;
         int ovfl = isUsed() ? static_cast<int>( chunkState::usedOvfl ) : static_cast<int>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
@@ -523,10 +523,10 @@ void ZoneHeap::verify() const {
     ChunkKlass * m   = _heapKlass;
     ChunkKlass * end = heapEnd();
     if ( end->isUnused() or end->size() not_eq 1 )
-        error( "wrong end-sentinel %d in heap %#lx", *( uint8_t * ) end, this );
+        error( "wrong end-sentinel %d in heap %#lx", *( std::uint8_t * ) end, this );
     ChunkKlass * begin = asChunkKlass( _heapKlass->asByte() - 1 );
     if ( begin->isUnused() or begin->size() not_eq 1 )
-        error( "wrong begin-sentinel %d in heap %#lx", *( uint8_t * ) begin, this );
+        error( "wrong begin-sentinel %d in heap %#lx", *( std::uint8_t * ) begin, this );
 
     // verify map structure
     while ( m < end ) {

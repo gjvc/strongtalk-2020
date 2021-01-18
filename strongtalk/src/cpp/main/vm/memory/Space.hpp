@@ -317,7 +317,7 @@ class OldSpace : public Space {
         int shrink( int size );
 
         // Keeps offset for retrieving object start given a card_page
-        uint8_t * _offsetArray;
+        std::uint8_t * _offsetArray;
         Oop     * _nextOffsetThreshold;
         int _nextOffsetIndex;
 

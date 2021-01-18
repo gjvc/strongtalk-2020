@@ -85,23 +85,23 @@
 static const char     test_opcode     = '\xa8';
 static const char     call_opcode     = '\xe8';
 static const char     jmp_opcode      = '\xe9';
-static const uint16_t jz_opcode       = 0x840f;
-static const uint16_t mov_opcode      = 0x508b;
-static const uint16_t cmp_opcode      = 0xfa81;
-static constexpr int  cmp_opcode_size = sizeof( uint16_t );
+static const std::uint16_t jz_opcode       = 0x840f;
+static const std::uint16_t mov_opcode      = 0x508b;
+static const std::uint16_t cmp_opcode      = 0xfa81;
+static constexpr int  cmp_opcode_size = sizeof( std::uint16_t );
 
 
 // -----------------------------------------------------------------------------
 
 // Helper routines for code pattern generation/parsing
-static inline void put_byte( char *& p, uint8_t b ) {
+static inline void put_byte( char *& p, std::uint8_t b ) {
     *p++ = b;
 }
 
 
-static inline void put_shrt( char *& p, uint16_t s ) {
-    *( uint16_t * ) p = s;
-    p += sizeof( uint16_t );
+static inline void put_shrt( char *& p, std::uint16_t s ) {
+    *( std::uint16_t * ) p = s;
+    p += sizeof( std::uint16_t );
 }
 
 
@@ -119,7 +119,7 @@ static inline void put_disp( char *& p, const char * d ) {
 // -----------------------------------------------------------------------------
 
 static inline int get_shrt( const char * p ) {
-    return *( uint16_t * ) p;
+    return *( std::uint16_t * ) p;
 }
 
 
@@ -677,7 +677,7 @@ void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache * pic, 
 }
 
 
-void * PolymorphicInlineCache::operator new( size_t size, int code_size ) {
+void * PolymorphicInlineCache::operator new( std::size_t size, int code_size ) {
     return Universe::code->_picHeap->allocate( size + code_size );
 }
 
@@ -745,7 +745,7 @@ PolymorphicInlineCache * PolymorphicInlineCache::allocate( CompiledInlineCache *
 
     PolymorphicInlineCache * new_pic = nullptr;
     if ( switch_to_MIC ) {
-        new_pic = new( static_cast<size_t>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ) ) PolymorphicInlineCache( ic );
+        new_pic = new( static_cast<std::size_t>( PolymorphicInlineCache::Consts::MegamorphicInlineCache_code_size ) ) PolymorphicInlineCache( ic );
     } else {
         int allocated_code_size = contents.code_size();
         new_pic = new( allocated_code_size ) PolymorphicInlineCache( ic, &contents, allocated_code_size );

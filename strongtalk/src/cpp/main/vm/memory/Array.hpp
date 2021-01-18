@@ -37,7 +37,7 @@ class Array : public ResourceObject {
 class ByteArray : public ResourceObject {
 
     private:
-        uint8_t * _array;
+        std::uint8_t * _array;
         int _top;
         int _max;
 
@@ -49,7 +49,7 @@ class ByteArray : public ResourceObject {
         }
 
 
-        uint8_t * start() {
+        std::uint8_t * start() {
             return _array;
         }
 
@@ -57,8 +57,8 @@ class ByteArray : public ResourceObject {
         ByteArray( int size );
 
 
-        void appendByte( uint8_t p ) {
-            if ( _top + ( int ) sizeof( uint8_t ) > _max )
+        void appendByte( std::uint8_t p ) {
+            if ( _top + ( int ) sizeof( std::uint8_t ) > _max )
                 extend();
             _array[ _top++ ] = p;
         }
@@ -69,7 +69,7 @@ class ByteArray : public ResourceObject {
         void appendWord( int p );
 
 
-        void putByteAt( uint8_t p, int offset ) {
+        void putByteAt( std::uint8_t p, int offset ) {
             st_assert( offset < _max, "index out of bound" );
             _array[ offset ] = p;
         }

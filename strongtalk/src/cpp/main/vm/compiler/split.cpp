@@ -9,7 +9,7 @@
 
 #include "vm/compiler/split.hpp"
 
-const uint32_t SplitSig::LevelMask = 0xf;
+const std::uint32_t SplitSig::LevelMask = 0xf;
 
 struct SplitSetting : StackObj {
     SplitSig *& sig;
@@ -24,9 +24,9 @@ struct SplitSetting : StackObj {
 SplitSig * new_SplitSig( SplitSig * current, int splitID ) {
     int level = current->level() + 1;
     assert( level <= MaxSplitDepth, "max. split level exceeded" );
-    uint32_t newID = splitID << ( ( MaxSplitDepth - level + 1 ) << 2 );
+    std::uint32_t newID = splitID << ( ( MaxSplitDepth - level + 1 ) << 2 );
     SplitSig * sig =
-                 ( SplitSig * )( ( uint32_t( current ) & ~SplitSig::LevelMask ) | newID | level );
+                 ( SplitSig * )( ( std::uint32_t( current ) & ~SplitSig::LevelMask ) | newID | level );
     assert( current->contains( sig ), "should be in same branch" );
     return sig;
 }
@@ -41,7 +41,7 @@ char * SplitSig::prefix( const char * buf ) {
     // e.g. a level-2 sig with first branch = 1 and 2nd branch = 3 --> "AB"
     int l = level();
     buf[ l-- ] = 0;
-    uint32_t sig = uint32_t( this ) >> 4;
+    std::uint32_t sig = std::uint32_t( this ) >> 4;
     while ( l >= 0 ) {
         buf[ l-- ] = 'A' + ( sig & 0xf );
         sig = sig >> 4;

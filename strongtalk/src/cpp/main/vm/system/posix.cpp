@@ -86,13 +86,13 @@ void os_dump_context() {
 }
 
 
-static int32_t main_thread_id;
+static std::int32_t main_thread_id;
 
-static int32_t _argc;
+static std::int32_t _argc;
 static char ** _argv;
 
 
-int32_t os::argc() {
+std::int32_t os::argc() {
     return _argc;
 }
 
@@ -102,7 +102,7 @@ char ** os::argv() {
 }
 
 
-void os::set_args( int32_t argc, char * argv[] ) {
+void os::set_args( std::int32_t argc, char * argv[] ) {
     _argc = argc;
     _argv = argv;
 }
@@ -114,7 +114,7 @@ static Thread * main_thread;
 extern void intercept_for_single_step();
 
 
-int32_t os::getenv( const char * name, char * buffer, int32_t len ) {
+std::int32_t os::getenv( const char * name, char * buffer, std::int32_t len ) {
     return 0;
 }
 
@@ -134,7 +134,7 @@ void os::breakpoint() {
 }
 
 
-Thread * os::starting_thread( int32_t * id_addr ) {
+Thread * os::starting_thread( std::int32_t * id_addr ) {
     *id_addr = main_thread->_thread_index;
     return main_thread;
 }
@@ -142,7 +142,7 @@ Thread * os::starting_thread( int32_t * id_addr ) {
 
 typedef struct {
 
-    int32_t (* main)( void * parameter );
+    std::int32_t (* main)( void * parameter );
 
     void * parameter;
     char * stackLimit;
@@ -157,7 +157,7 @@ char * calcStackLimit() {
     asm("movl %%esp, %0;" : "=a"(stackptr));
     stackptr = ( char * ) align( stackptr, os::vm_page_size() );
 
-    int32_t stackHeadroom = 2 * os::vm_page_size();
+    std::int32_t stackHeadroom = 2 * os::vm_page_size();
     return stackptr - STACK_SIZE + stackHeadroom;
 }
 
@@ -166,16 +166,16 @@ void * mainWrapper( void * args ) {
     thread_args_t * targs = ( thread_args_t * ) args;
     targs->stackLimit = calcStackLimit();
 
-    int32_t (* threadMain)( void * ) = targs->main;
+    std::int32_t (* threadMain)( void * ) = targs->main;
     void    * parameter = targs->parameter;
-    int32_t * result    = ( int32_t * ) malloc( sizeof( int32_t ) );
+    std::int32_t * result    = ( std::int32_t * ) malloc( sizeof( std::int32_t ) );
     threadCreated->signal();
     *result = threadMain( parameter );
     return ( void * ) result;
 }
 
 
-Thread * os::create_thread( int32_t threadStart( void * parameter ), void * parameter, int32_t * id_addr ) {
+Thread * os::create_thread( std::int32_t threadStart( void * parameter ), void * parameter, std::int32_t * id_addr ) {
 
     pthread_t     threadId;
     thread_args_t threadArgs;
@@ -189,7 +189,7 @@ Thread * os::create_thread( int32_t threadStart( void * parameter ), void * para
         threadArgs.main      = threadStart;
         threadArgs.parameter = parameter;
 
-        int32_t status = pthread_create( &threadId, &attr, &mainWrapper, &threadArgs );
+        std::int32_t status = pthread_create( &threadId, &attr, &mainWrapper, &threadArgs );
         if ( status != 0 ) {
             st_fatal1( "Unable to create thread. status = %d", status );
         }
@@ -223,7 +223,7 @@ Event * os::create_event( bool_t initial_state ) {
 tms processTimes;
 
 
-int32_t os::updateTimes() {
+std::int32_t os::updateTimes() {
     return times( &processTimes ) != ( clock_t ) -1;
 }
 
@@ -250,12 +250,12 @@ double os::system_time_for( Thread * thread ) {
 }
 
 
-static int32_t       has_performance_count = 0;
+static std::int32_t       has_performance_count = 0;
 static LongInteger64 initial_performance_count( 0, 0 );
 static LongInteger64 performance_frequency( 0, 0 );
 
 
-void os::fatalExit( int32_t num ) {
+void os::fatalExit( std::int32_t num ) {
     exit( num );
 }
 
@@ -285,7 +285,7 @@ const char * os::dll_extension() {
 }
 
 
-int32_t _nCmdShow = 0;
+std::int32_t _nCmdShow = 0;
 
 
 void * os::get_hInstance() {
@@ -298,12 +298,12 @@ void * os::get_prevInstance() {
 }
 
 
-int32_t os::get_nCmdShow() {
+std::int32_t os::get_nCmdShow() {
     return 0;
 }
 
 
-extern int32_t bootstrappingInProgress;
+extern std::int32_t bootstrappingInProgress;
 
 
 void os::timerStart() {
@@ -318,42 +318,42 @@ void os::timerPrintBuffer() {
 }
 
 
-char * os::reserve_memory( int32_t size ) {
+char * os::reserve_memory( std::int32_t size ) {
     return ( char * ) mmap( 0, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0 );
 }
 
 
-bool_t os::commit_memory( const char * addr, int32_t size ) {
+bool_t os::commit_memory( const char * addr, std::int32_t size ) {
     return !mprotect( const_cast<char *>( addr ), size, PROT_READ | PROT_WRITE );
 }
 
 
-bool_t os::uncommit_memory( const char * addr, int32_t size ) {
+bool_t os::uncommit_memory( const char * addr, std::int32_t size ) {
     return !mprotect( const_cast<char *>(addr), size, PROT_NONE );
 }
 
 
-bool_t os::release_memory( const char * addr, int32_t size ) {
+bool_t os::release_memory( const char * addr, std::int32_t size ) {
     return !munmap( ( char * ) addr, size );
 }
 
 
-bool_t os::guard_memory( const char * addr, int32_t size ) {
+bool_t os::guard_memory( const char * addr, std::int32_t size ) {
     return false;
 }
 
 
-void * os::malloc( int32_t size ) {
+void * os::malloc( std::int32_t size ) {
     return ::malloc( size );
 }
 
 
-const char * os::exec_memory( int32_t size ) {
+const char * os::exec_memory( std::int32_t size ) {
     return ( const char * ) mmap( 0, size, PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0 );
 }
 
 
-void * os::calloc( int32_t size, char filler ) {
+void * os::calloc( std::int32_t size, char filler ) {
     return ::calloc( size, filler );
 }
 
@@ -382,7 +382,7 @@ void os::suspend_thread( Thread * thread ) {
 }
 
 
-void suspendHandler( int32_t signum ) {
+void suspendHandler( std::int32_t signum ) {
     Thread * current = Thread::find( pthread_self() );
     st_assert( current, "Suspended thread not found!" );
     current->suspend();
@@ -394,15 +394,15 @@ void os::resume_thread( Thread * thread ) {
 }
 
 
-void os::sleep( int32_t ms ) {
+void os::sleep( std::int32_t ms ) {
 }
 
 
-void os::fetch_top_frame( Thread * thread, int32_t ** sp, int32_t ** fp, char ** pc ) {
+void os::fetch_top_frame( Thread * thread, std::int32_t ** sp, std::int32_t ** fp, char ** pc ) {
 }
 
 
-int32_t os::current_thread_id() {
+std::int32_t os::current_thread_id() {
     Thread * currentThread = Thread::find( pthread_self() );
     if ( currentThread == nullptr )
         return -1;
@@ -426,7 +426,7 @@ void os::signal_event( Event * event ) {
 }
 
 
-bool_t os::wait_for_event_or_timer( Event * event, int32_t timeout_in_ms ) {
+bool_t os::wait_for_event_or_timer( Event * event, std::int32_t timeout_in_ms ) {
     return false;
 }
 
@@ -435,10 +435,10 @@ extern "C" bool_t WizardMode;
 
 void process_settings_file( const char * file_name, bool_t quiet );
 
-static int32_t number_of_ctrl_c = 0;
+static std::int32_t number_of_ctrl_c = 0;
 
 
-int32_t os::_vm_page_size = getpagesize();
+std::int32_t os::_vm_page_size = getpagesize();
 
 
 LongInteger64 os::elapsed_counter() {
@@ -464,8 +464,8 @@ double os::elapsedTime() {
 
     struct timespec current_time;
     clock_gettime( CLOCK_REALTIME, &current_time );
-    int32_t seconds     = current_time.tv_sec - initial_time.tv_sec;
-    int32_t nanoseconds = current_time.tv_nsec - initial_time.tv_nsec;
+    std::int32_t seconds     = current_time.tv_sec - initial_time.tv_sec;
+    std::int32_t nanoseconds = current_time.tv_nsec - initial_time.tv_nsec;
 
     if ( nanoseconds < 0 ) {
         seconds--;
@@ -498,7 +498,7 @@ const char * os::platform_class_name() {
 }
 
 
-int32_t os::error_code() {
+std::int32_t os::error_code() {
     return errno;
 }
 
@@ -531,16 +531,16 @@ ThreadCritical::~ThreadCritical() {
 }
 
 
-void real_time_tick( int32_t delay_time );
+void real_time_tick( std::int32_t delay_time );
 
 
 void * watcherMain( void * ignored ) {
 
     const struct timespec delay          = { 0, 1 * 1000 * 1000 };
-    constexpr int32_t     delay_interval = 1; // Delay 1 ms
+    constexpr std::int32_t     delay_interval = 1; // Delay 1 ms
 
     while ( 1 ) {
-        int32_t status = nanosleep( &delay, nullptr );
+        std::int32_t status = nanosleep( &delay, nullptr );
         if ( !status )
             return 0;
         real_time_tick( delay_interval );
@@ -549,7 +549,7 @@ void * watcherMain( void * ignored ) {
 }
 
 
-void segv_repeated( int32_t signum, siginfo_t * info, void * context ) {
+void segv_repeated( std::int32_t signum, siginfo_t * info, void * context ) {
     printf( "SEGV during signal handling. Aborting." );
     exit( EXIT_FAILURE );
 }
@@ -567,18 +567,18 @@ void install_dummy_handler() {
 }
 
 
-void trace_stack( int32_t thread_id );
+void trace_stack( std::int32_t thread_id );
 
 void (* userHandler)( void * fp, void * sp, void * pc ) = nullptr;
 
 
-static void handler( int32_t signum, siginfo_t * info, void * context ) {
+static void handler( std::int32_t signum, siginfo_t * info, void * context ) {
 
     install_dummy_handler();
     trace_stack( os::current_thread_id() );
 
     if ( !userHandler ) {
-        printf( "\nsignal: %d\ninfo: %x\ncontext: %x", signum, ( int32_t ) info, ( int32_t ) context );
+        printf( "\nsignal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
         os_dump_context2( ( ucontext_t * ) context );
     } else {
         mcontext_t mcontext = ( ( ucontext_t * ) context )->uc_mcontext;
@@ -628,7 +628,7 @@ void os_init() {
 
     if ( EnableTasks ) {
         pthread_t watcherThread;
-        int32_t   status = pthread_create( &watcherThread, nullptr, &watcherMain, nullptr );
+        std::int32_t   status = pthread_create( &watcherThread, nullptr, &watcherMain, nullptr );
         if ( status != 0 ) {
             st_fatal( "Unable to create thread" );
         }

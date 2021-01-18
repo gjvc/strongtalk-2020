@@ -20,7 +20,7 @@ class NativeCodeBase : public PrintableCHeapAllocatedObject {
         int _instructionsLength;
 
     public:
-        void * operator new( size_t size ) {
+        void * operator new( std::size_t size ) throw() {
             SubclassResponsibility();
             return nullptr;
         }

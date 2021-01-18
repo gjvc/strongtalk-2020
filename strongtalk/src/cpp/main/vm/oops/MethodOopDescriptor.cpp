@@ -28,8 +28,8 @@
 
 
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
-    double new_count = ( double ) invocation_count() / decay_factor;
-    set_invocation_count( ( int ) new_count );
+    double new_count = (double) invocation_count() / decay_factor;
+    set_invocation_count( (int) new_count );
 
     // Take care of the block methods
     CodeIterator c( this );
@@ -72,34 +72,34 @@ void MethodOopDescriptor::dec_sharing_count() {
 }
 
 
-void MethodOopDescriptor::bootstrap_object( Bootstrap * stream ) {
+void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
-    stream->read_oop( ( Oop * ) &addr()->_debugInfo );
-    stream->read_oop( ( Oop * ) &addr()->_selector_or_method );
+    stream->read_oop( (Oop *) &addr()->_debugInfo );
+    stream->read_oop( (Oop *) &addr()->_selector_or_method );
     set_counters( 0, 0 );
-    stream->read_oop( ( Oop * ) &addr()->_size_and_flags );
+    stream->read_oop( (Oop *) &addr()->_size_and_flags );
 
     for ( int i = 1; i <= size_of_codes() * 4; )
         if ( stream->is_byte() ) {
             byte_at_put( i, stream->read_byte() );
             i++;
         } else {
-            stream->read_oop( ( Oop * ) codes( i ) );
+            stream->read_oop( (Oop *) codes( i ) );
             i += 4;
         }
 }
 
 
-int MethodOopDescriptor::next_byteCodeIndex_from( uint8_t * hp ) const {
+int MethodOopDescriptor::next_byteCodeIndex_from( std::uint8_t *hp ) const {
     // Computes the next byteCodeIndex
     // hp is the interpreter 'ip' kept in the activation pointing to the next code to execute.
 
     // Fist the next byteCodeIndex is computed. Note the first index is 1.
-    return ( hp - ( uint8_t * ) addr() ) - sizeof( MethodOopDescriptor ) + 1;
+    return ( hp - (std::uint8_t *) addr() ) - sizeof( MethodOopDescriptor ) + 1;
 }
 
 
-int MethodOopDescriptor::byteCodeIndex_from( uint8_t * hp ) const {
+int MethodOopDescriptor::byteCodeIndex_from( std::uint8_t *hp ) const {
     // We find the current byteCodeIndex by searching from the beginning
     return find_byteCodeIndex_from( next_byteCodeIndex_from( hp ) );
 }
@@ -113,7 +113,7 @@ int MethodOopDescriptor::number_of_arguments() const {
 
 int MethodOopDescriptor::number_of_stack_temporaries() const {
     int     n  = 1;        // temporary 0 is always there
-    uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
+    std::uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
     switch ( b0 ) {
         case static_cast<int>(ByteCodes::Code::allocate_temp_1):
             n += 1;
@@ -125,7 +125,7 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
             n += 3;
             break;
         case static_cast<int>(ByteCodes::Code::allocate_temp_n): {
-            uint8_t b1 = *codes( 2 );
+            std::uint8_t b1 = *codes( 2 );
             n += ( ( b1 == 0 ) ? 256 : b1 );
         }
             break;
@@ -133,7 +133,7 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
         case static_cast<int>(ByteCodes::Code::float_allocate): {
             // One additional temp (temp1) for Floats::magic + additional
             // temps allocated in pairs to match to match one float temp.
-            uint8_t b1 = *codes( 2 );
+            std::uint8_t b1 = *codes( 2 );
             n += 1 + b1 * 2;
         }
             break;
@@ -141,7 +141,7 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
 
 
     return
-        n;
+            n;
 }
 
 
@@ -160,8 +160,8 @@ SymbolOop MethodOopDescriptor::enclosing_method_selector() const {
 }
 
 
-void MethodOopDescriptor::print_value_for( KlassOop receiver_klass, ConsoleOutputStream * stream ) {
-    ConsoleOutputStream * s = stream ? stream : _console;
+void MethodOopDescriptor::print_value_for( KlassOop receiver_klass, ConsoleOutputStream *stream ) {
+    ConsoleOutputStream *s = stream ? stream : _console;
     if ( is_blockMethod() ) {
         s->print( "[] in " );
         enclosing_method_selector()->print_symbol_on( s );
@@ -224,43 +224,43 @@ ObjectArrayOop MethodOopDescriptor::tempInfo() {
 
 
 class methodStream {
-    public:
-        GrowableArray <Oop> * result;
+public:
+    GrowableArray<Oop> *result;
 
 
-        methodStream() {
-            result = new GrowableArray <Oop>( 1000 );
+    methodStream() {
+        result = new GrowableArray<Oop>( 1000 );
+    }
+
+
+    void put_byte( int byte ) {
+        result->append( trueObj );
+        result->append( smiOopFromValue( byte ) );
+    }
+
+
+    void put_word( int word ) {
+        const char *p = (const char *) &word;
+        put_byte( p[ 0 ] );
+        put_byte( p[ 1 ] );
+        put_byte( p[ 2 ] );
+        put_byte( p[ 3 ] );
+    }
+
+
+    void put_oop( Oop obj ) {
+        result->append( falseObj );
+        result->append( obj );
+    }
+
+
+    void align( std::uint8_t *hp ) {
+        std::uint8_t *end = (std::uint8_t *) ( ( (int) hp + 3 ) & ( ~3 ) );
+        while ( hp < end ) {
+            put_byte( 255 );
+            hp++;
         }
-
-
-        void put_byte( int byte ) {
-            result->append( trueObj );
-            result->append( smiOopFromValue( byte ) );
-        }
-
-
-        void put_word( int word ) {
-            const char * p = ( const char * ) &word;
-            put_byte( p[ 0 ] );
-            put_byte( p[ 1 ] );
-            put_byte( p[ 2 ] );
-            put_byte( p[ 3 ] );
-        }
-
-
-        void put_oop( Oop obj ) {
-            result->append( falseObj );
-            result->append( obj );
-        }
-
-
-        void align( uint8_t * hp ) {
-            uint8_t * end = ( uint8_t * ) ( ( ( int ) hp + 3 ) & ( ~3 ) );
-            while ( hp < end ) {
-                put_byte( 255 );
-                hp++;
-            }
-        }
+    }
 };
 
 
@@ -291,7 +291,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
             out.put_byte( static_cast<int>(original) );
             out.align( c.hp() + 1 );
             if ( c.code() == ByteCodes::Code::prim_call or c.code() == ByteCodes::Code::primitive_call_failure or c.code() == ByteCodes::Code::primitive_call_self or c.code() == ByteCodes::Code::primitive_call_self_failure ) {
-                PrimitiveDescriptor * pdesc = Primitives::lookup( ( primitiveFunctionType ) c.word_at( 1 ) );
+                PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) c.word_at( 1 ) );
                 out.put_oop( pdesc->selector() );
             } else {
                 out.put_oop( c.oop_at( 1 ) );
@@ -301,7 +301,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
             }
         } else if ( c.is_dll_call() ) {
             // DLL call
-            Interpreted_DLLCache * ic = c.dll_cache();
+            Interpreted_DLLCache *ic = c.dll_cache();
             out.put_byte( static_cast<int>( c.code() ) );
             out.align( c.hp() + 1 );
             out.put_oop( ic->dll_name() );
@@ -400,18 +400,18 @@ bool_t MethodOopDescriptor::in_context_allocation( int byteCodeIndex ) const {
 
 
 class BlockFinderClosure : public SpecializedMethodClosure {
-    public:
-        bool_t hasBlock;
+public:
+    bool_t hasBlock;
 
 
-        BlockFinderClosure() {
-            hasBlock = false;
-        }
+    BlockFinderClosure() {
+        hasBlock = false;
+    }
 
 
-        void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
-            hasBlock = true;
-        }
+    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+        hasBlock = true;
+    }
 };
 
 
@@ -477,7 +477,7 @@ void MethodOopDescriptor::clear_inline_caches() {
 
     CodeIterator c( this );
     do {
-        InterpretedInlineCache * ic = c.ic();
+        InterpretedInlineCache *ic = c.ic();
         if ( ic ) {
             ic->clear();
         } else {
@@ -514,7 +514,7 @@ void MethodOopDescriptor::cleanup_inline_caches() {
 
     CodeIterator c( this );
     do {
-        InterpretedInlineCache * ic = c.ic();
+        InterpretedInlineCache *ic = c.ic();
         if ( ic ) {
             ic->cleanup();
         } else {
@@ -537,7 +537,7 @@ bool_t MethodOopDescriptor::was_never_executed() {
         return false;
     CodeIterator c( this );
     do {
-        InterpretedInlineCache * ic = c.ic();
+        InterpretedInlineCache *ic = c.ic();
         if ( ic and not ic->is_empty() )
             return false;
     } while ( c.advance() );
@@ -607,264 +607,264 @@ int MethodOopDescriptor::next_byteCodeIndex( int byteCodeIndex ) const {
 
 class ExpressionStackMapper : public MethodClosure {
 
-    private:
-        GrowableArray <int> * _mapping;
-        int _targetByteCodeIndex;
+private:
+    GrowableArray<int> *_mapping;
+    int _targetByteCodeIndex;
 
 
-        void map_push() {
-            map_push( byteCodeIndex() );
+    void map_push() {
+        map_push( byteCodeIndex() );
+    }
+
+
+    void map_push( int b ) {
+        // lprintf("push(%d)", byteCodeIndex);
+        if ( b >= _targetByteCodeIndex ) {
+            abort();
+        } else {
+            _mapping->push( b );
         }
+    }
 
 
-        void map_push( int b ) {
-            // lprintf("push(%d)", byteCodeIndex);
-            if ( b >= _targetByteCodeIndex ) {
-                abort();
-            } else {
-                _mapping->push( b );
-            }
+    void map_pop() {
+        if ( byteCodeIndex() >= _targetByteCodeIndex ) {
+            abort();
+        } else {
+            // lprintf("pop(%d)", byteCodeIndex());
+            _mapping->pop();
         }
+    }
 
 
-        void map_pop() {
-            if ( byteCodeIndex() >= _targetByteCodeIndex ) {
-                abort();
-            } else {
-                // lprintf("pop(%d)", byteCodeIndex());
-                _mapping->pop();
-            }
-        }
-
-
-        void map_send( bool_t has_receiver, int number_of_arguments ) {
-            if ( has_receiver )
-                map_pop();
-            for ( int i = 0; i < number_of_arguments; i++ )
-                map_pop();
-            map_push();
-        }
-
-
-    public:
-        ExpressionStackMapper( GrowableArray <int> * mapping, int targetByteCodeIndex ) {
-            this->_mapping             = mapping;
-            this->_targetByteCodeIndex = targetByteCodeIndex;
-        }
-
-
-        void push_self() {
-            map_push();
-        }
-
-
-        void push_tos() {
-            map_push();
-        }
-
-
-        void push_literal( Oop obj ) {
-            map_push();
-        }
-
-
-        void push_argument( int no ) {
-            map_push();
-        }
-
-
-        void push_temporary( int no ) {
-            map_push();
-        }
-
-
-        void push_temporary( int no, int context ) {
-            map_push();
-        }
-
-
-        void push_instVar( int offset ) {
-            map_push();
-        }
-
-
-        void push_instVar_name( SymbolOop name ) {
-            map_push();
-        }
-
-
-        void push_classVar( AssociationOop assoc ) {
-            map_push();
-        }
-
-
-        void push_classVar_name( SymbolOop name ) {
-            map_push();
-        }
-
-
-        void push_global( AssociationOop obj ) {
-            map_push();
-        }
-
-
-        void pop() {
+    void map_send( bool_t has_receiver, int number_of_arguments ) {
+        if ( has_receiver )
             map_pop();
-        }
-
-
-        void normal_send( InterpretedInlineCache * ic ) {
-            map_send( true, ic->selector()->number_of_arguments() );
-        }
-
-
-        void self_send( InterpretedInlineCache * ic ) {
-            map_send( false, ic->selector()->number_of_arguments() );
-        }
-
-
-        void super_send( InterpretedInlineCache * ic ) {
-            map_send( false, ic->selector()->number_of_arguments() );
-        }
-
-
-        void double_equal() {
-            map_send( true, 1 );
-        }
-
-
-        void double_not_equal() {
-            map_send( true, 1 );
-        }
-
-
-        void method_return( int nofArgs ) {
+        for ( int i = 0; i < number_of_arguments; i++ )
             map_pop();
-        }
+        map_push();
+    }
 
 
-        void nonlocal_return( int nofArgs ) {
+public:
+    ExpressionStackMapper( GrowableArray<int> *mapping, int targetByteCodeIndex ) {
+        this->_mapping             = mapping;
+        this->_targetByteCodeIndex = targetByteCodeIndex;
+    }
+
+
+    void push_self() {
+        map_push();
+    }
+
+
+    void push_tos() {
+        map_push();
+    }
+
+
+    void push_literal( Oop obj ) {
+        map_push();
+    }
+
+
+    void push_argument( int no ) {
+        map_push();
+    }
+
+
+    void push_temporary( int no ) {
+        map_push();
+    }
+
+
+    void push_temporary( int no, int context ) {
+        map_push();
+    }
+
+
+    void push_instVar( int offset ) {
+        map_push();
+    }
+
+
+    void push_instVar_name( SymbolOop name ) {
+        map_push();
+    }
+
+
+    void push_classVar( AssociationOop assoc ) {
+        map_push();
+    }
+
+
+    void push_classVar_name( SymbolOop name ) {
+        map_push();
+    }
+
+
+    void push_global( AssociationOop obj ) {
+        map_push();
+    }
+
+
+    void pop() {
+        map_pop();
+    }
+
+
+    void normal_send( InterpretedInlineCache *ic ) {
+        map_send( true, ic->selector()->number_of_arguments() );
+    }
+
+
+    void self_send( InterpretedInlineCache *ic ) {
+        map_send( false, ic->selector()->number_of_arguments() );
+    }
+
+
+    void super_send( InterpretedInlineCache *ic ) {
+        map_send( false, ic->selector()->number_of_arguments() );
+    }
+
+
+    void double_equal() {
+        map_send( true, 1 );
+    }
+
+
+    void double_not_equal() {
+        map_send( true, 1 );
+    }
+
+
+    void method_return( int nofArgs ) {
+        map_pop();
+    }
+
+
+    void nonlocal_return( int nofArgs ) {
+        map_pop();
+    }
+
+
+    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+        if ( type == AllocationType::tos_as_scope )
             map_pop();
-        }
+        map_push();
+    }
 
 
-        void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
-            if ( type == AllocationType::tos_as_scope )
-                map_pop();
-            map_push();
-        }
+    // nodes
+    void if_node( IfNode *node );
+
+    void cond_node( CondNode *node );
+
+    void while_node( WhileNode *node );
+
+    void primitive_call_node( PrimitiveCallNode *node );
+
+    void dll_call_node( DLLCallNode *node );
 
 
-        // nodes
-        void if_node( IfNode * node );
-
-        void cond_node( CondNode * node );
-
-        void while_node( WhileNode * node );
-
-        void primitive_call_node( PrimitiveCallNode * node );
-
-        void dll_call_node( DLLCallNode * node );
+    // call backs to ignore
+    void allocate_temporaries( int nofTemps ) {
+    }
 
 
-        // call backs to ignore
-        void allocate_temporaries( int nofTemps ) {
-        }
+    void store_temporary( int no ) {
+    }
 
 
-        void store_temporary( int no ) {
-        }
+    void store_temporary( int no, int context ) {
+    }
 
 
-        void store_temporary( int no, int context ) {
-        }
+    void store_instVar( int offset ) {
+    }
 
 
-        void store_instVar( int offset ) {
-        }
+    void store_instVar_name( SymbolOop name ) {
+    }
 
 
-        void store_instVar_name( SymbolOop name ) {
-        }
+    void store_classVar( AssociationOop assoc ) {
+    }
 
 
-        void store_classVar( AssociationOop assoc ) {
-        }
+    void store_classVar_name( SymbolOop name ) {
+    }
 
 
-        void store_classVar_name( SymbolOop name ) {
-        }
+    void store_global( AssociationOop obj ) {
+    }
 
 
-        void store_global( AssociationOop obj ) {
-        }
+    void allocate_context( int nofTemps, bool_t forMethod = false ) {
+    }
 
 
-        void allocate_context( int nofTemps, bool_t forMethod = false ) {
-        }
+    void set_self_via_context() {
+    }
 
 
-        void set_self_via_context() {
-        }
+    void copy_self_into_context() {
+    }
 
 
-        void copy_self_into_context() {
-        }
+    void copy_argument_into_context( int argNo, int no ) {
+    }
 
 
-        void copy_argument_into_context( int argNo, int no ) {
-        }
+    void zap_scope() {
+    }
 
 
-        void zap_scope() {
-        }
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    }
 
 
-        void predict_primitive_call( PrimitiveDescriptor * pdesc, int failure_start ) {
-        }
+    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    }
 
 
-        void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
-        }
+    void float_floatify( Floats::Function f, int tof ) {
+        map_pop();
+    }
 
 
-        void float_floatify( Floats::Function f, int tof ) {
-            map_pop();
-        }
+    void float_move( int tof, int from ) {
+    }
 
 
-        void float_move( int tof, int from ) {
-        }
+    void float_set( int tof, DoubleOop value ) {
+    }
 
 
-        void float_set( int tof, DoubleOop value ) {
-        }
+    void float_nullary( Floats::Function f, int tof ) {
+    }
 
 
-        void float_nullary( Floats::Function f, int tof ) {
-        }
+    void float_unary( Floats::Function f, int tof ) {
+    }
 
 
-        void float_unary( Floats::Function f, int tof ) {
-        }
+    void float_binary( Floats::Function f, int tof ) {
+    }
 
 
-        void float_binary( Floats::Function f, int tof ) {
-        }
+    void float_unaryToOop( Floats::Function f, int tof ) {
+        map_push();
+    }
 
 
-        void float_unaryToOop( Floats::Function f, int tof ) {
-            map_push();
-        }
-
-
-        void float_binaryToOop( Floats::Function f, int tof ) {
-            map_push();
-        }
+    void float_binaryToOop( Floats::Function f, int tof ) {
+        map_push();
+    }
 };
 
 
-void ExpressionStackMapper::if_node( IfNode * node ) {
+void ExpressionStackMapper::if_node( IfNode *node ) {
     if ( node->includes( _targetByteCodeIndex ) ) {
         if ( node->then_code()->includes( _targetByteCodeIndex ) ) {
             map_pop();
@@ -882,7 +882,7 @@ void ExpressionStackMapper::if_node( IfNode * node ) {
 }
 
 
-void ExpressionStackMapper::cond_node( CondNode * node ) {
+void ExpressionStackMapper::cond_node( CondNode *node ) {
     if ( node->includes( _targetByteCodeIndex ) ) {
         if ( node->expr_code()->includes( _targetByteCodeIndex ) ) {
             map_pop();
@@ -896,7 +896,7 @@ void ExpressionStackMapper::cond_node( CondNode * node ) {
 }
 
 
-void ExpressionStackMapper::while_node( WhileNode * node ) {
+void ExpressionStackMapper::while_node( WhileNode *node ) {
     if ( node->includes( _targetByteCodeIndex ) ) {
         if ( node->expr_code()->includes( _targetByteCodeIndex ) )
             MethodIterator i( node->expr_code(), this );
@@ -907,7 +907,7 @@ void ExpressionStackMapper::while_node( WhileNode * node ) {
 }
 
 
-void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode * node ) {
+void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
     int       nofArgsToPop = node->number_of_parameters();
     for ( int i            = 0; i < nofArgsToPop; i++ )
         map_pop();
@@ -919,7 +919,7 @@ void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode * node ) {
 }
 
 
-void ExpressionStackMapper::dll_call_node( DLLCallNode * node ) {
+void ExpressionStackMapper::dll_call_node( DLLCallNode *node ) {
 
     for ( int i = 0; i < node->nofArgs(); i++ )
         map_pop();
@@ -927,9 +927,9 @@ void ExpressionStackMapper::dll_call_node( DLLCallNode * node ) {
 }
 
 
-GrowableArray <int> * MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
+GrowableArray<int> *MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
 
-    GrowableArray <int> * mapping = new GrowableArray <int>( 10 );
+    GrowableArray<int> *mapping = new GrowableArray<int>( 10 );
     ExpressionStackMapper blk( mapping, byteCodeIndex );
     MethodIterator        i( this, &blk );
 
@@ -937,7 +937,7 @@ GrowableArray <int> * MethodOopDescriptor::expression_stack_mapping( int byteCod
     // %todo:
     //    move reverse to GrowableArray
 
-    GrowableArray <int> * result = new GrowableArray <int>( mapping->length() );
+    GrowableArray<int> *result = new GrowableArray<int>( mapping->length() );
 
     for ( int i = mapping->length() - 1; i >= 0; i-- ) {
         result->push( mapping->at( i ) );
@@ -947,12 +947,12 @@ GrowableArray <int> * MethodOopDescriptor::expression_stack_mapping( int byteCod
 }
 
 
-static void lookup_primitive_and_patch( uint8_t * p, uint8_t byte ) {
-    st_assert( ( int ) p % 4 == 0, "first instruction supposed to be aligned" );
+static void lookup_primitive_and_patch( std::uint8_t *p, std::uint8_t byte ) {
+    st_assert( (int) p % 4 == 0, "first instruction supposed to be aligned" );
     *p = byte;    // patch byte
     p += 4;    // advance to primitive name
     //(*(SymbolOop*)p)->print_symbol_on();
-    *( int * ) p = ( int ) Primitives::lookup( *( SymbolOop * ) p )->fn();
+    *(int *) p = (int) Primitives::lookup( *(SymbolOop *) p )->fn();
 }
 
 
@@ -983,8 +983,8 @@ ByteCodes::Code MethodOopDescriptor::special_primitive_code() const {
 }
 
 
-MethodOop MethodOopDescriptor::methodOop_from_hcode( uint8_t * hp ) {
-    MethodOop method = MethodOop( as_memOop( Universe::object_start( ( Oop * ) hp ) ) );
+MethodOop MethodOopDescriptor::methodOop_from_hcode( std::uint8_t *hp ) {
+    MethodOop method = MethodOop( as_memOop( Universe::object_start( (Oop *) hp ) ) );
     st_assert( method->is_method(), "must be method" );
     st_assert( method->codes() <= hp and hp < method->codes() + method->size_of_codes() * sizeof( Oop ), "h-code pointer not contained in method" );
     return method;
@@ -1003,7 +1003,7 @@ int MethodOopDescriptor::end_byteCodeIndex() const {
 }
 
 
-InterpretedInlineCache * MethodOopDescriptor::ic_at( int byteCodeIndex ) const {
+InterpretedInlineCache *MethodOopDescriptor::ic_at( int byteCodeIndex ) const {
     CodeIterator iterator( MethodOop( this ), byteCodeIndex );
     return iterator.ic();
 }
@@ -1053,7 +1053,7 @@ int MethodOopDescriptor::byteCodeIndex_for_block_method( MethodOop inner ) {
 }
 
 
-void MethodOopDescriptor::print_inlining_database_on( ConsoleOutputStream * stream ) {
+void MethodOopDescriptor::print_inlining_database_on( ConsoleOutputStream *stream ) {
     if ( is_blockMethod() ) {
         MethodOop o = parent();
         o->print_inlining_database_on( stream );
@@ -1067,45 +1067,45 @@ void MethodOopDescriptor::print_inlining_database_on( ConsoleOutputStream * stre
 // ContextMethodIterator is used in number_of_context_temporaries to
 // get information about context allocation
 class ContextMethodIterator : public SpecializedMethodClosure {
-    private:
-        enum {
-            sentinel = -1 //
-        };
+private:
+    enum {
+        sentinel = -1 //
+    };
 
-        int    count;
-        bool_t _self_in_context;
+    int    count;
+    bool_t _self_in_context;
 
-    public:
-        ContextMethodIterator() {
-            count            = sentinel;
-            _self_in_context = false;
-        }
-
-
-        bool_t self_in_context() {
-            return _self_in_context;
-        }
+public:
+    ContextMethodIterator() {
+        count            = sentinel;
+        _self_in_context = false;
+    }
 
 
-        int number_of_context_temporaries() {
-            st_assert( count not_eq sentinel, "number_of_context_temporaries not set" );
-            return count;
-        }
+    bool_t self_in_context() {
+        return _self_in_context;
+    }
 
 
-        void allocate_context( int nofTemps, bool_t forMethod ) {
-            st_assert( count == sentinel, "make sure it is not called more than one" );
-            count = nofTemps;
-        }
+    int number_of_context_temporaries() {
+        st_assert( count not_eq sentinel, "number_of_context_temporaries not set" );
+        return count;
+    }
 
 
-        void copy_self_into_context() {
-            _self_in_context = true;
-        }
+    void allocate_context( int nofTemps, bool_t forMethod ) {
+        st_assert( count == sentinel, "make sure it is not called more than one" );
+        count = nofTemps;
+    }
+
+
+    void copy_self_into_context() {
+        _self_in_context = true;
+    }
 };
 
 
-int MethodOopDescriptor::number_of_context_temporaries( bool_t * self_in_context ) {
+int MethodOopDescriptor::number_of_context_temporaries( bool_t *self_in_context ) {
     // Use this for debugging only
     st_assert( allocatesInterpretedContext(), "can only be called if method allocates context" );
     ContextMethodIterator blk;
@@ -1121,7 +1121,7 @@ void MethodOopDescriptor::customize_for( KlassOop klass, MixinOop mixin ) {
 
     CodeIterator c( this );
     do {
-        InterpretedInlineCache * ic = c.ic();
+        InterpretedInlineCache *ic = c.ic();
         if ( ic )
             ic->clear_without_deallocation_pic();
         switch ( c.code() ) {
@@ -1184,12 +1184,12 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
     if ( not is_customized() )
         return;
 
-    KlassOop klass         = mixin->primary_invocation();
+    KlassOop klass = mixin->primary_invocation();
     st_assert( klass->is_klass(), "primary invocation muyst be present" );
 
     CodeIterator c( this );
     do {
-        InterpretedInlineCache * ic = c.ic();
+        InterpretedInlineCache *ic = c.ic();
         if ( ic )
             ic->clear_without_deallocation_pic();
         switch ( c.code() ) {
@@ -1226,8 +1226,9 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
                 break;
         }
     } while ( c.advance() );
+
     // set customized flag
-    int          new_flags = subNthBit( flags(), isCustomizedFlag );
+    int new_flags = subNthBit( flags(), isCustomizedFlag );
     set_size_and_flags( size_of_codes(), nofArgs(), new_flags );
 }
 
@@ -1235,10 +1236,10 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
 MethodOop MethodOopDescriptor::copy_for_customization() const {
     // Copy this method
     int len = size();
-    Oop * clone = Universe::allocate_tenured( len );
-    Oop * to    = clone;
-    Oop * from  = ( Oop * ) addr();
-    Oop * end   = to + len;
+    Oop *clone = Universe::allocate_tenured( len );
+    Oop *to    = clone;
+    Oop *from  = (Oop *) addr();
+    Oop *end   = to + len;
     while ( to < end )
         *to++ = *from++;
 
@@ -1293,192 +1294,192 @@ void MethodOopDescriptor::verify_context( ContextOop con ) {
 
 // Traverses over the method including the blocks inside
 class TransitiveMethodClosure : public MethodClosure {
-    public:
-        void if_node( IfNode * node );
+public:
+    void if_node( IfNode *node );
 
-        void cond_node( CondNode * node );
+    void cond_node( CondNode *node );
 
-        void while_node( WhileNode * node );
+    void while_node( WhileNode *node );
 
-        void primitive_call_node( PrimitiveCallNode * node );
+    void primitive_call_node( PrimitiveCallNode *node );
 
-        void dll_call_node( DLLCallNode * node );
+    void dll_call_node( DLLCallNode *node );
 
-    public:
-        virtual void inlined_send( SymbolOop selector ) {
-        }
+public:
+    virtual void inlined_send( SymbolOop selector ) {
+    }
 
 
-    public:
-        void allocate_temporaries( int nofTemps ) {
-        }
+public:
+    void allocate_temporaries( int nofTemps ) {
+    }
 
 
-        void push_self() {
-        }
+    void push_self() {
+    }
 
 
-        void push_tos() {
-        }
+    void push_tos() {
+    }
 
 
-        void push_literal( Oop obj ) {
-        }
+    void push_literal( Oop obj ) {
+    }
 
 
-        void push_argument( int no ) {
-        }
+    void push_argument( int no ) {
+    }
 
 
-        void push_temporary( int no ) {
-        }
+    void push_temporary( int no ) {
+    }
 
 
-        void push_temporary( int no, int context ) {
-        }
+    void push_temporary( int no, int context ) {
+    }
 
 
-        void push_instVar( int offset ) {
-        }
+    void push_instVar( int offset ) {
+    }
 
 
-        void push_instVar_name( SymbolOop name ) {
-        }
+    void push_instVar_name( SymbolOop name ) {
+    }
 
 
-        void push_classVar( AssociationOop assoc ) {
-        }
+    void push_classVar( AssociationOop assoc ) {
+    }
 
 
-        void push_classVar_name( SymbolOop name ) {
-        }
+    void push_classVar_name( SymbolOop name ) {
+    }
 
 
-        void push_global( AssociationOop obj ) {
-        }
+    void push_global( AssociationOop obj ) {
+    }
 
 
-        void store_temporary( int no ) {
-        }
+    void store_temporary( int no ) {
+    }
 
 
-        void store_temporary( int no, int context ) {
-        }
+    void store_temporary( int no, int context ) {
+    }
 
 
-        void store_instVar( int offset ) {
-        }
+    void store_instVar( int offset ) {
+    }
 
 
-        void store_instVar_name( SymbolOop name ) {
-        }
+    void store_instVar_name( SymbolOop name ) {
+    }
 
 
-        void store_classVar( AssociationOop assoc ) {
-        }
+    void store_classVar( AssociationOop assoc ) {
+    }
 
 
-        void store_classVar_name( SymbolOop name ) {
-        }
+    void store_classVar_name( SymbolOop name ) {
+    }
 
 
-        void store_global( AssociationOop obj ) {
-        }
+    void store_global( AssociationOop obj ) {
+    }
 
 
-        void pop() {
-        }
+    void pop() {
+    }
 
 
-        void normal_send( InterpretedInlineCache * ic ) {
-        }
+    void normal_send( InterpretedInlineCache *ic ) {
+    }
 
 
-        void self_send( InterpretedInlineCache * ic ) {
-        }
+    void self_send( InterpretedInlineCache *ic ) {
+    }
 
 
-        void super_send( InterpretedInlineCache * ic ) {
-        }
+    void super_send( InterpretedInlineCache *ic ) {
+    }
 
 
-        void double_equal() {
-        }
+    void double_equal() {
+    }
 
 
-        void double_not_equal() {
-        }
+    void double_not_equal() {
+    }
 
 
-        void method_return( int nofArgs ) {
-        }
+    void method_return( int nofArgs ) {
+    }
 
 
-        void nonlocal_return( int nofArgs ) {
-        }
+    void nonlocal_return( int nofArgs ) {
+    }
 
 
-        void allocate_closure( AllocationType type, int nofArgs, MethodOop meth );
+    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth );
 
 
-        void allocate_context( int nofTemps, bool_t forMethod ) {
-        }
+    void allocate_context( int nofTemps, bool_t forMethod ) {
+    }
 
 
-        void set_self_via_context() {
-        }
+    void set_self_via_context() {
+    }
 
 
-        void copy_self_into_context() {
-        }
+    void copy_self_into_context() {
+    }
 
 
-        void copy_argument_into_context( int argNo, int no ) {
-        }
+    void copy_argument_into_context( int argNo, int no ) {
+    }
 
 
-        void zap_scope() {
-        }
+    void zap_scope() {
+    }
 
 
-        void predict_primitive_call( PrimitiveDescriptor * pdesc, int failure_start ) {
-        }
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    }
 
 
-        void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
-        }
+    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    }
 
 
-        void float_floatify( Floats::Function f, int fno ) {
-        }
+    void float_floatify( Floats::Function f, int fno ) {
+    }
 
 
-        void float_move( int fno, int from ) {
-        }
+    void float_move( int fno, int from ) {
+    }
 
 
-        void float_set( int fno, DoubleOop value ) {
-        }
+    void float_set( int fno, DoubleOop value ) {
+    }
 
 
-        void float_nullary( Floats::Function f, int fno ) {
-        }
+    void float_nullary( Floats::Function f, int fno ) {
+    }
 
 
-        void float_unary( Floats::Function f, int fno ) {
-        }
+    void float_unary( Floats::Function f, int fno ) {
+    }
 
 
-        void float_binary( Floats::Function f, int fno ) {
-        }
+    void float_binary( Floats::Function f, int fno ) {
+    }
 
 
-        void float_unaryToOop( Floats::Function f, int fno ) {
-        }
+    void float_unaryToOop( Floats::Function f, int fno ) {
+    }
 
 
-        void float_binaryToOop( Floats::Function f, int fno ) {
-        }
+    void float_binaryToOop( Floats::Function f, int fno ) {
+    }
 };
 
 
@@ -1487,7 +1488,7 @@ void TransitiveMethodClosure::allocate_closure( AllocationType type, int nofArgs
 }
 
 
-void TransitiveMethodClosure::if_node( IfNode * node ) {
+void TransitiveMethodClosure::if_node( IfNode *node ) {
     inlined_send( node->selector() );
     MethodIterator iter( node->then_code(), this );
     if ( node->else_code() not_eq nullptr ) {
@@ -1496,13 +1497,13 @@ void TransitiveMethodClosure::if_node( IfNode * node ) {
 }
 
 
-void TransitiveMethodClosure::cond_node( CondNode * node ) {
+void TransitiveMethodClosure::cond_node( CondNode *node ) {
     inlined_send( node->selector() );
     MethodIterator iter( node->expr_code(), this );
 }
 
 
-void TransitiveMethodClosure::while_node( WhileNode * node ) {
+void TransitiveMethodClosure::while_node( WhileNode *node ) {
     inlined_send( node->selector() );
     MethodIterator iter( node->expr_code(), this );
     if ( node->body_code() not_eq nullptr ) {
@@ -1511,7 +1512,7 @@ void TransitiveMethodClosure::while_node( WhileNode * node ) {
 }
 
 
-void TransitiveMethodClosure::primitive_call_node( PrimitiveCallNode * node ) {
+void TransitiveMethodClosure::primitive_call_node( PrimitiveCallNode *node ) {
     inlined_send( node->name() );
     if ( node->failure_code() not_eq nullptr ) {
         MethodIterator iter( node->failure_code(), this );
@@ -1519,7 +1520,7 @@ void TransitiveMethodClosure::primitive_call_node( PrimitiveCallNode * node ) {
 }
 
 
-void TransitiveMethodClosure::dll_call_node( DLLCallNode * node ) {
+void TransitiveMethodClosure::dll_call_node( DLLCallNode *node ) {
     inlined_send( node->function_name() );
     if ( node->failure_code() not_eq nullptr ) {
         MethodIterator iter( node->failure_code(), this );
@@ -1529,51 +1530,51 @@ void TransitiveMethodClosure::dll_call_node( DLLCallNode * node ) {
 
 class ReferencedInstVarNamesClosure : public TransitiveMethodClosure {
 
-    private:
-        MixinOop _mixin;
+private:
+    MixinOop _mixin;
 
 
-        void collect( int offset ) {
-            SymbolOop name = _mixin->primary_invocation()->klass_part()->inst_var_name_at( offset );
-            if ( name )
-                _result->append( name );
-        }
-
-
-        void collect( SymbolOop name ) {
+    void collect( int offset ) {
+        SymbolOop name = _mixin->primary_invocation()->klass_part()->inst_var_name_at( offset );
+        if ( name )
             _result->append( name );
-        }
+    }
 
 
-    public:
-        void push_instVar( int offset ) {
-            collect( offset );
-        }
+    void collect( SymbolOop name ) {
+        _result->append( name );
+    }
 
 
-        void push_instVar_name( SymbolOop name ) {
-            collect( name );
-        }
+public:
+    void push_instVar( int offset ) {
+        collect( offset );
+    }
 
 
-        void store_instVar( int offset ) {
-            collect( offset );
-        }
+    void push_instVar_name( SymbolOop name ) {
+        collect( name );
+    }
 
 
-        void store_instVar_name( SymbolOop name ) {
-            collect( name );
-        }
+    void store_instVar( int offset ) {
+        collect( offset );
+    }
 
 
-    public:
-        ReferencedInstVarNamesClosure( int size, MixinOop mixin ) {
-            this->_result = new GrowableArray <Oop>( size );
-            this->_mixin  = mixin;
-        }
+    void store_instVar_name( SymbolOop name ) {
+        collect( name );
+    }
 
 
-        GrowableArray <Oop> * _result;
+public:
+    ReferencedInstVarNamesClosure( int size, MixinOop mixin ) {
+        this->_result = new GrowableArray<Oop>( size );
+        this->_mixin  = mixin;
+    }
+
+
+    GrowableArray<Oop> *_result;
 };
 
 
@@ -1587,40 +1588,40 @@ ObjectArrayOop MethodOopDescriptor::referenced_instance_variable_names( MixinOop
 
 class ReferencedClassVarNamesClosure : public TransitiveMethodClosure {
 
-    private:
-        void collect( SymbolOop name ) {
-            _result->append( name );
-        }
+private:
+    void collect( SymbolOop name ) {
+        _result->append( name );
+    }
 
 
-    public:
-        void push_classVar( AssociationOop assoc ) {
-            collect( assoc->key() );
-        }
+public:
+    void push_classVar( AssociationOop assoc ) {
+        collect( assoc->key() );
+    }
 
 
-        void push_classVar_name( SymbolOop name ) {
-            collect( name );
-        }
+    void push_classVar_name( SymbolOop name ) {
+        collect( name );
+    }
 
 
-        void store_classVar( AssociationOop assoc ) {
-            collect( assoc->key() );
-        }
+    void store_classVar( AssociationOop assoc ) {
+        collect( assoc->key() );
+    }
 
 
-        void store_classVar_name( SymbolOop name ) {
-            collect( name );
-        }
+    void store_classVar_name( SymbolOop name ) {
+        collect( name );
+    }
 
 
-    public:
-        ReferencedClassVarNamesClosure( int size ) {
-            _result = new GrowableArray <Oop>( size );
-        }
+public:
+    ReferencedClassVarNamesClosure( int size ) {
+        _result = new GrowableArray<Oop>( size );
+    }
 
 
-        GrowableArray <Oop> * _result;
+    GrowableArray<Oop> *_result;
 };
 
 
@@ -1633,30 +1634,30 @@ ObjectArrayOop MethodOopDescriptor::referenced_class_variable_names() const {
 
 
 class ReferencedGlobalsClosure : public TransitiveMethodClosure {
-    private:
-        void collect( SymbolOop selector ) {
-            result->append( selector );
-        }
+private:
+    void collect( SymbolOop selector ) {
+        result->append( selector );
+    }
 
 
-    public:
-        void push_global( AssociationOop obj ) {
-            collect( obj->key() );
-        }
+public:
+    void push_global( AssociationOop obj ) {
+        collect( obj->key() );
+    }
 
 
-        void store_global( AssociationOop obj ) {
-            collect( obj->key() );
-        }
+    void store_global( AssociationOop obj ) {
+        collect( obj->key() );
+    }
 
 
-    public:
-        ReferencedGlobalsClosure( int size ) {
-            result = new GrowableArray <Oop>( size );
-        }
+public:
+    ReferencedGlobalsClosure( int size ) {
+        result = new GrowableArray<Oop>( size );
+    }
 
 
-        GrowableArray <Oop> * result;
+    GrowableArray<Oop> *result;
 };
 
 
@@ -1669,87 +1670,87 @@ ObjectArrayOop MethodOopDescriptor::referenced_global_names() const {
 
 
 class SendersClosure : public TransitiveMethodClosure {
-    private:
-        void collect( SymbolOop selector ) {
-            result->append( selector );
+private:
+    void collect( SymbolOop selector ) {
+        result->append( selector );
+    }
+
+
+    void float_op( Floats::Function f ) {
+        if ( Floats::has_selector_for( f ) ) {
+            collect( Floats::selector_for( f ) );
         }
+    }
 
 
-        void float_op( Floats::Function f ) {
-            if ( Floats::has_selector_for( f ) ) {
-                collect( Floats::selector_for( f ) );
-            }
-        }
+public:
+    void inlined_send( SymbolOop selector ) {
+        collect( selector );
+    }
 
 
-    public:
-        void inlined_send( SymbolOop selector ) {
-            collect( selector );
-        }
+    void normal_send( InterpretedInlineCache *ic ) {
+        collect( ic->selector() );
+    }
 
 
-        void normal_send( InterpretedInlineCache * ic ) {
-            collect( ic->selector() );
-        }
+    void self_send( InterpretedInlineCache *ic ) {
+        collect( ic->selector() );
+    }
 
 
-        void self_send( InterpretedInlineCache * ic ) {
-            collect( ic->selector() );
-        }
+    void super_send( InterpretedInlineCache *ic ) {
+        collect( ic->selector() );
+    }
 
 
-        void super_send( InterpretedInlineCache * ic ) {
-            collect( ic->selector() );
-        }
+    void double_equal() {
+        collect( vmSymbols::double_equal() );
+    }
 
 
-        void double_equal() {
-            collect( vmSymbols::double_equal() );
-        }
+    void double_not_equal() {
+        collect( vmSymbols::double_tilde() );
+    }
 
 
-        void double_not_equal() {
-            collect( vmSymbols::double_tilde() );
-        }
+    void float_floatify( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_floatify( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+    void float_nullary( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_nullary( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+    void float_unary( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_unary( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+    void float_binary( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_binary( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+    void float_unaryToOop( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_unaryToOop( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+    void float_binaryToOop( Floats::Function f, int fno ) {
+        float_op( f );
+    }
 
 
-        void float_binaryToOop( Floats::Function f, int fno ) {
-            float_op( f );
-        }
+public:
+    SendersClosure( int size ) {
+        result = new GrowableArray<Oop>( size );
+    }
 
 
-    public:
-        SendersClosure( int size ) {
-            result = new GrowableArray <Oop>( size );
-        }
-
-
-        GrowableArray <Oop> * result;
+    GrowableArray<Oop> *result;
 };
 
 
@@ -1776,7 +1777,7 @@ SymbolOop selectorFrom( Oop method_or_selector ) {
 }
 
 
-void stopInSelector( const char * name, MethodOop method ) {
+void stopInSelector( const char *name, MethodOop method ) {
     int       len      = strlen( name );
     SymbolOop selector = selectorFrom( method );
     if ( selector == nullptr )
@@ -1807,7 +1808,7 @@ SymbolOop className( KlassOop klass ) {
 }
 
 
-bool_t selcmp( const char * name, SymbolOop selector ) {
+bool_t selcmp( const char *name, SymbolOop selector ) {
     int len = strlen( name );
     if ( selector == nullptr and name == nullptr )
         return true;
@@ -1818,13 +1819,13 @@ bool_t selcmp( const char * name, SymbolOop selector ) {
 }
 
 
-bool_t shouldStop( const char * name, Oop method_or_selector, const char * class_name, KlassOop klass ) {
+bool_t shouldStop( const char *name, Oop method_or_selector, const char *class_name, KlassOop klass ) {
     return selcmp( name, selectorFrom( method_or_selector ) ) and selcmp( class_name, className( klass ) );
 }
 
 
-StopInSelector::StopInSelector( const char * class_name, const char * name, KlassOop klass, Oop method_or_selector, bool_t & fl, bool_t stop ) :
-    enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
+StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool_t &fl, bool_t stop ) :
+        enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
     if ( enable and stop )
         breakpoint();
 }

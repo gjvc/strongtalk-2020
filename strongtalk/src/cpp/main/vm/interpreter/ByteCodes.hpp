@@ -69,17 +69,17 @@ public:
         BBB,        // {byte, byte, byte}
         BBBB,       // {byte, byte, byte, byte}
         BBO,        // {byte, byte, *, Oop}
-        BBL,        // {byte, byte, *, int32_t}
+        BBL,        // {byte, byte, *, std::int32_t}
         BO,         // {byte, *, Oop}
         BOO,        // {byte, *, Oop, Oop}
-        BLO,        // {byte, *, int32_t, Oop}
-        BOL,        // {byte, *, Oop, int32_t}
-        BLL,        // {byte, *, int32_t, int32_t}
-        BL,         // {byte, *, int32_t}
-        BLB,        // {byte, *, byte} slr - surely this should be {byte, *, int32_t, byte}?
+        BLO,        // {byte, *, std::int32_t, Oop}
+        BOL,        // {byte, *, Oop, std::int32_t}
+        BLL,        // {byte, *, std::int32_t, std::int32_t}
+        BL,         // {byte, *, std::int32_t}
+        BLB,        // {byte, *, byte} slr - surely this should be {byte, *, std::int32_t, byte}?
         BBOO,       // {byte, byte, *, Oop, Oop}
-        BBLO,       // {byte, byte, *, int32_t, Oop}
-        BOOLB,      // {byte, *, Oop, Oop, int32_t, byte}
+        BBLO,       // {byte, byte, *, std::int32_t, Oop}
+        BOOLB,      // {byte, *, Oop, Oop, std::int32_t, byte}
         BBS,        // {byte, byte = number of bytes to follow, {byte}*}
         UNDEFINED,  // for undefined codes
 

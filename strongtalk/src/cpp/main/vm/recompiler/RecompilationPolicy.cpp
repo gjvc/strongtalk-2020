@@ -348,7 +348,7 @@ bool_t RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod * 
     // too many "uncommon" cases.  Thus, the assumptions the compiler originally took
     // proved to be too aggressive.  In the uncommon-recompiled NativeMethod, there are
     // no uncommon branches, so it's slower.  But we don't want to reoptimize it too eagerly
-    // because it needs to run int32_t enough to accumulate type information that's truly
+    // because it needs to run std::int32_t enough to accumulate type information that's truly
     // representative of its usage.  This method determines how to make that tradeoff.
     // The main idea is to back off exponentially each time we go through the cycle
     // of optimize -- uncommon recompile -- reoptimize.

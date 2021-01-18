@@ -38,7 +38,7 @@ char * ByteArrayOopDescriptor::copy_null_terminated( int & Clength ) {
     st_assert_byteArray( this, "should be a byte array" );
     Clength = length();
     char * res = copy_string( ( const char * ) bytes(), Clength );
-    if ( strlen( res ) == ( uint32_t ) Clength )
+    if ( strlen( res ) == ( std::uint32_t ) Clength )
         return res;                   // Simple case, no '\0' in byte array.
 
     // Simple case failed ...
@@ -131,7 +131,7 @@ static int sub_sign( int a, int b ) {
 }
 
 
-int compare_as_bytes( const uint8_t * a, const uint8_t * b ) {
+int compare_as_bytes( const std::uint8_t * a, const std::uint8_t * b ) {
     // machine dependent code; little endian code
     if ( a[ 0 ] - b[ 0 ] )
         return sub_sign( a[ 0 ], b[ 0 ] );
@@ -145,17 +145,17 @@ int compare_as_bytes( const uint8_t * a, const uint8_t * b ) {
 
 int ByteArrayOopDescriptor::compare( ByteArrayOop arg ) {
     // Get the addresses of the length fields
-    const uint32_t * a = ( uint32_t * ) length_addr();
-    const uint32_t * b = ( uint32_t * ) arg->length_addr();
+    const std::uint32_t * a = ( std::uint32_t * ) length_addr();
+    const std::uint32_t * b = ( std::uint32_t * ) arg->length_addr();
 
     // Get the word sizes of the arays
     int a_size = roundTo( SMIOop( *a++ )->value() * sizeof( char ), sizeof( int ) ) / sizeof( int );
     int b_size = roundTo( SMIOop( *b++ )->value() * sizeof( char ), sizeof( int ) ) / sizeof( int );
 
-    const uint32_t * a_end = a + min( a_size, b_size );
+    const std::uint32_t * a_end = a + min( a_size, b_size );
     while ( a < a_end ) {
         if ( *b++ not_eq *a++ )
-            return compare_as_bytes( ( const uint8_t * ) ( a - 1 ), ( const uint8_t * ) ( b - 1 ) );
+            return compare_as_bytes( ( const std::uint8_t * ) ( a - 1 ), ( const std::uint8_t * ) ( b - 1 ) );
     }
     return sub_sign( a_size, b_size );
 }
@@ -185,7 +185,7 @@ int ByteArrayOopDescriptor::hash_value() {
     } else if ( len == 1 ) {
         result = byte_at( 1 );
     } else {
-        uint32_t val;
+        std::uint32_t val;
         val    = byte_at( 1 );
         val    = ( val << 3 ) ^ ( byte_at( 2 ) ^ val );
         val    = ( val << 3 ) ^ ( byte_at( len ) ^ val );
@@ -256,7 +256,7 @@ bool_t ByteArrayOopDescriptor::is_unary() const {
 
 
 bool_t ByteArrayOopDescriptor::is_binary() const {
-    uint8_t first = byte_at( 1 );
+    std::uint8_t first = byte_at( 1 );
     // special case _, as compiler treats as a letter
     return first not_eq '_' and ispunct( first ) ? true : false;
 }

@@ -128,8 +128,8 @@ class Frame : ValueObject {
         }
 
 
-        uint8_t ** hp_addr() const {
-            return ( uint8_t ** ) addr_at( frame_hp_offset );
+        std::uint8_t ** hp_addr() const {
+            return ( std::uint8_t ** ) addr_at( frame_hp_offset );
         }
 
 
@@ -212,9 +212,9 @@ class Frame : ValueObject {
 
 
         // Hybrid Code Pointer (interpreted frames only); corresponds to "current PC", not return address
-        uint8_t * hp() const;
+        std::uint8_t * hp() const;
 
-        void set_hp( uint8_t * hp );
+        void set_hp( std::uint8_t * hp );
 
         // Returns the method for a valid hp() or nullptr if frame not set up yet (interpreted frames only)
         // Used by the profiler which means we must check for

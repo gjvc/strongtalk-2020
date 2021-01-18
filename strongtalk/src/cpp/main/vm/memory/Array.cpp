@@ -52,7 +52,7 @@ void Array::copy_to( int *& addr ) {
 
 
 ByteArray::ByteArray( int size ) {
-    _array = new_resource_array <uint8_t>( size );
+    _array = new_resource_array <std::uint8_t>( size );
     _max   = size;
     _top   = 0;
 }
@@ -60,7 +60,7 @@ ByteArray::ByteArray( int size ) {
 
 void ByteArray::extend() {
     int newMax = _max * 2;
-    uint8_t * newArray = new_resource_array <uint8_t>( newMax );
+    std::uint8_t * newArray = new_resource_array <std::uint8_t>( newMax );
 
     for ( int i = 0; i < _top; i++ )
         newArray[ i ] = _array[ i ];
@@ -77,14 +77,14 @@ void ByteArray::appendHalf( int16_t p ) {
 
     // Saving the half as two bytes to avoid alignment problem.
     _array[ _top++ ] = p >> BYTE_WIDTH;
-    _array[ _top++ ] = ( uint8_t ) lowerBits( p, 8 );
+    _array[ _top++ ] = ( std::uint8_t ) lowerBits( p, 8 );
 }
 
 
 void ByteArray::putHalfAt( int16_t p, int offset ) {
     // Saving the half as two bytes to avoid alignment problem.
     _array[ offset ]     = p >> BYTE_WIDTH;
-    _array[ offset + 1 ] = ( uint8_t ) lowerBits( p, 8 );
+    _array[ offset + 1 ] = ( std::uint8_t ) lowerBits( p, 8 );
 }
 
 

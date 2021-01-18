@@ -104,7 +104,7 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream * stream )
 
 
 void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure * blk ) {
-    uint8_t * p = ByteArrayOop( obj )->bytes();
+    std::uint8_t * p = ByteArrayOop( obj )->bytes();
     Oop     * l = ByteArrayOop( obj )->length_addr();
     int len = ByteArrayOop( obj )->length();
     // header + instance variables

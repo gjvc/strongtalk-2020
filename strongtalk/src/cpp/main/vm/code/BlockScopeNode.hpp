@@ -22,7 +22,7 @@ class BlockScopeNode : public ScopeDescriptorNode {
         }
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return BLOCK_CODE;
         }
 

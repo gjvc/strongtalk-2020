@@ -114,8 +114,8 @@ int * frame_breakpoint = ( int * ) -1;
 DispatchTable::Mode DispatchTable::mode;
 
 
-uint8_t ** DispatchTable::table() {
-    return ( uint8_t ** ) &dispatch_table[ 0 ];
+std::uint8_t ** DispatchTable::table() {
+    return ( std::uint8_t ** ) &dispatch_table[ 0 ];
 }
 
 

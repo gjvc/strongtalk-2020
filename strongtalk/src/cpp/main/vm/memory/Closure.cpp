@@ -48,7 +48,7 @@ void ObjectLayoutClosure::do_mark( MarkOop * m ) {
 }
 
 
-void ObjectLayoutClosure::do_byte( const char * title, uint8_t * b ) {
+void ObjectLayoutClosure::do_byte( const char * title, std::uint8_t * b ) {
 }
 
 
@@ -72,15 +72,15 @@ void ObjectLayoutClosure::do_indexable_oop( int index, Oop * o ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_byte( int index, uint8_t * b ) {
+void ObjectLayoutClosure::do_indexable_byte( int index, std::uint8_t * b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_doubleByte( int index, uint16_t * b ) {
+void ObjectLayoutClosure::do_indexable_doubleByte( int index, std::uint16_t * b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_long( int index, int32_t * l ) {
+void ObjectLayoutClosure::do_indexable_long( int index, std::int32_t * l ) {
 }
 
 
@@ -104,7 +104,7 @@ void FrameLayoutClosure::do_stack( int index, Oop * o ) {
 }
 
 
-void FrameLayoutClosure::do_hp( uint8_t ** hp ) {
+void FrameLayoutClosure::do_hp( std::uint8_t ** hp ) {
 }
 
 

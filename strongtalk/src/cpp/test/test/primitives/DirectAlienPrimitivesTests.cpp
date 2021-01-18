@@ -49,7 +49,7 @@ class DirectAlienPrimitivesTests : public ::testing::Test {
             _doubleValue              = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
             _doubleValue->set_value( 1.625 );
 
-            IntegerOps::unsigned_int_to_Integer( ( uint32_t ) 0xFFFFFFFF, ByteArrayOop( _largeUnsignedInteger )->number() );
+            IntegerOps::unsigned_int_to_Integer( ( std::uint32_t ) 0xFFFFFFFF, ByteArrayOop( _largeUnsignedInteger )->number() );
             IntegerOps::int_to_Integer( 1 << 30, ByteArrayOop( _largeUnsignedInteger2 )->number() );
             IntegerOps::int_to_Integer( -1 << 31, ByteArrayOop( _largeSignedInteger )->number() );
 //            IntegerOps::mul( _largeUnsignedInteger->number(), _largeUnsignedInteger->number(), _veryLargeUnsignedInteger->number() );
@@ -83,11 +83,11 @@ class DirectAlienPrimitivesTests : public ::testing::Test {
         }
 
 
-        void checkLargeUnsigned( Oop result, uint32_t expected ) {
+        void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
             char     message[200];
             EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
             bool_t   ok;
-            uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
+            std::uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
             EXPECT_TRUE( ok ) << "should be integer";
             sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
             EXPECT_EQ( expected, actual ) << message;

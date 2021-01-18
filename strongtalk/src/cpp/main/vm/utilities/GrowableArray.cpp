@@ -147,7 +147,7 @@ void GenericGrowableArray::print() {
     print_short();
     lprintf( ": length %ld (max %ld) { ", _length, _maxLength );
     for ( int i = 0; i < _length; i++ )
-        lprintf( "%#lx ", ( int32_t ) _data[ i ] );
+        lprintf( "%#lx ", ( std::int32_t ) _data[ i ] );
     lprintf( "}\n" );
 }
 

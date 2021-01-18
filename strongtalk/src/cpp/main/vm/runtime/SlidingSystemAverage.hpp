@@ -42,10 +42,10 @@ class SlidingSystemAverage : AllStatic {
         static void add( char type );
 
         // Returns the update statistics array
-        static std::array <uint32_t, SlidingSystemAverage::number_of_cases> update();
+        static std::array <std::uint32_t, SlidingSystemAverage::number_of_cases> update();
 
     private:
         static std::array <char, buffer_size>         _buffer;
-        static std::array <uint32_t, number_of_cases> _stat;
-        static uint32_t                               _position;                    // Current pos in buffer
+        static std::array <std::uint32_t, number_of_cases> _stat;
+        static std::uint32_t                               _position;                    // Current pos in buffer
 };

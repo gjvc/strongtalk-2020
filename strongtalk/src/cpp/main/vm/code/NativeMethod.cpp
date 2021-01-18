@@ -52,9 +52,9 @@ NativeMethod * new_nativeMethod( Compiler * c ) {
 }
 
 
-void * NativeMethod::operator new( size_t size ) {
+void * NativeMethod::operator new( std::size_t size ) {
     st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
-    int nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( uint16_t ), oopSize );
+    int nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), oopSize );
     void * p = Universe::code->allocate( nativeMethod_size );
     if ( not p ) st_fatal( "out of Space in code cache" );
     return p;

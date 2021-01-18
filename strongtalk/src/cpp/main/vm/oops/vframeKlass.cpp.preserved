@@ -180,12 +180,12 @@ oop vframeKlass::clone( oop obj, bool mustAllocate, oop genObj ) {
 }
 
 
-oop vframeKlass::cloneSize( oop obj, int32_t length, bool mustAllocate, oop filler ) {
+oop vframeKlass::cloneSize( oop obj, std::int32_t length, bool mustAllocate, oop filler ) {
     return slotsKlass::cloneSize( obj, length, mustAllocate, filler );
 }
 
 
-int32_t vframeKlass::empty_object_size() {
+std::int32_t vframeKlass::empty_object_size() {
     return sizeof( vframeOopDesc ) / oopSize;
 }
 

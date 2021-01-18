@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -22,7 +23,7 @@ const int EVENT_PARAMS = 3;       // number of params per EventLogEvent
 #define LOG_EVENT3( name, p1, p2, p3 )  eventLog->log(name, (void *)(p1), (void *)(p2), (void *)(p3))
 
 
-enum EventLogEventStatus {
+enum class EventLogEventStatus {
     starting,   //
     ending,     //
     atomic      //
@@ -30,9 +31,9 @@ enum EventLogEventStatus {
 
 
 struct EventLogEvent /* no superclass - never allocated individually */ {
-    const char * _name;                     // in printf format
-    EventLogEventStatus _status;                    // for nested events
-    const void * args[EVENT_PARAMS];        //
+    const char * _name;                 // in printf format
+    EventLogEventStatus _status;        // for nested events
+    const void * args[EVENT_PARAMS];    //
 };
 
 
@@ -41,7 +42,7 @@ struct EventLog : public CHeapAllocatedObject {
     EventLogEvent * _eventBuffer;    // event buffer
     EventLogEvent * _end;            //
     EventLogEvent * _next;           // where the next entry will go
-    int _nestingDepth;    // current nesting depth
+    int _nestingDepth;               // current nesting depth
 
     EventLog();
 
@@ -65,14 +66,14 @@ struct EventLog : public CHeapAllocatedObject {
 
     void log( const char * name ) {
         _next->_name   = name;
-        _next->_status = atomic;
+        _next->_status = EventLogEventStatus::atomic;
         inc();
     }
 
 
     void log( const char * name, const void * p1 ) {
         _next->_name   = name;
-        _next->_status = atomic;
+        _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
         inc();
     }
@@ -80,7 +81,7 @@ struct EventLog : public CHeapAllocatedObject {
 
     void log( const char * name, const void * p1, const void * p2 ) {
         _next->_name   = name;
-        _next->_status = atomic;
+        _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
         _next->args[ 1 ] = p2;
         inc();
@@ -89,7 +90,7 @@ struct EventLog : public CHeapAllocatedObject {
 
     void log( const char * name, const void * p1, const void * p2, const void * p3 ) {
         _next->_name   = name;
-        _next->_status = atomic;
+        _next->_status = EventLogEventStatus::atomic;
         _next->args[ 0 ] = p1;
         _next->args[ 1 ] = p2;
         _next->args[ 2 ] = p3;
@@ -138,7 +139,7 @@ class EventMarker : StackAllocatedObject {    // for events which have a duratio
         void init( const char * n, const void * p1, const void * p2, const void * p3 ) {
             here = eventLog->_next;
             eventLog->log( n, p1, p2, p3 );
-            here->_status = starting;
+            here->_status = EventLogEventStatus::starting;
             event = *here;
             eventLog->_nestingDepth++;
         }
@@ -149,9 +150,9 @@ class EventMarker : StackAllocatedObject {    // for events which have a duratio
             // optimization to make log less verbose; this isn't totally failproof but that's ok
             if ( here == eventLog->_next - 1 ) {
                 *here = event;
-                here->_status = atomic;       // nothing happened inbetween
+                here->_status = EventLogEventStatus::atomic;       // nothing happened inbetween
             } else {
-                event._status = ending;
+                event._status = EventLogEventStatus::ending;
                 eventLog->log( &event );
             }
         }

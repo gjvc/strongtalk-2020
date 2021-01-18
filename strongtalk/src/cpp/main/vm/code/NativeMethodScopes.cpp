@@ -15,7 +15,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-ScopeDescriptor * NativeMethodScopes::at( int offset, const char * pc ) const {
+ScopeDescriptor *NativeMethodScopes::at( int offset, const char *pc ) const {
 
     // Read the first byte and decode the ScopeDescriptor type at the location.
     st_assert( offset >= 0, "illegal desc offset" );
@@ -23,11 +23,11 @@ ScopeDescriptor * NativeMethodScopes::at( int offset, const char * pc ) const {
     b.unpack( peek_next_char( offset ) );
     switch ( b.code() ) {
         case METHOD_CODE:
-            return new MethodScopeDescriptor( ( NativeMethodScopes * ) this, offset, pc );
+            return new MethodScopeDescriptor( (NativeMethodScopes *) this, offset, pc );
         case TOP_LEVEL_BLOCK_CODE:
-            return new TopLevelBlockScopeDescriptor( ( NativeMethodScopes * ) this, offset, pc );
+            return new TopLevelBlockScopeDescriptor( (NativeMethodScopes *) this, offset, pc );
         case BLOCK_CODE:
-            return new BlockScopeDescriptor( ( NativeMethodScopes * ) this, offset, pc );
+            return new BlockScopeDescriptor( (NativeMethodScopes *) this, offset, pc );
         case NON_INLINED_BLOCK_CODE:
             return nullptr;
     }
@@ -36,7 +36,7 @@ ScopeDescriptor * NativeMethodScopes::at( int offset, const char * pc ) const {
 }
 
 
-NonInlinedBlockScopeDescriptor * NativeMethodScopes::noninlined_block_scope_at( int offset ) const {
+NonInlinedBlockScopeDescriptor *NativeMethodScopes::noninlined_block_scope_at( int offset ) const {
     // Read the first byte and decode the ScopeDescriptor type at the location.
     st_assert( offset > 0, "illegal desc offset" );
     ScopeDescriptorHeaderByte b;
@@ -44,11 +44,11 @@ NonInlinedBlockScopeDescriptor * NativeMethodScopes::noninlined_block_scope_at( 
     if ( b.code() not_eq NON_INLINED_BLOCK_CODE ) {
         st_fatal( "Not an noninlined scope desc as expected" );
     }
-    return new NonInlinedBlockScopeDescriptor( ( NativeMethodScopes * ) this, offset );
+    return new NonInlinedBlockScopeDescriptor( (NativeMethodScopes *) this, offset );
 }
 
 
-int16_t NativeMethodScopes::get_next_half( int & offset ) const {
+int16_t NativeMethodScopes::get_next_half( int &offset ) const {
     int16_t v;
     v = get_next_char( offset ) << BYTE_WIDTH;
     v = addBits( v, get_next_char( offset ) );
@@ -56,12 +56,12 @@ int16_t NativeMethodScopes::get_next_half( int & offset ) const {
 }
 
 
-uint8_t NativeMethodScopes::getIndexAt( int & offset ) const {
+std::uint8_t NativeMethodScopes::getIndexAt( int &offset ) const {
     return get_next_char( offset );
 }
 
 
-Oop NativeMethodScopes::unpackOopFromIndex( uint8_t index, int & offset ) const {
+Oop NativeMethodScopes::unpackOopFromIndex( std::uint8_t index, int &offset ) const {
     if ( index == 0 )
         return nullptr;
     if ( index < EXTENDED_INDEX )
@@ -70,7 +70,7 @@ Oop NativeMethodScopes::unpackOopFromIndex( uint8_t index, int & offset ) const 
 }
 
 
-int NativeMethodScopes::unpackValueFromIndex( uint8_t index, int & offset ) const {
+int NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, int &offset ) const {
     if ( index <= MAX_INLINE_VALUE )
         return index;
     if ( index < EXTENDED_INDEX )
@@ -79,30 +79,30 @@ int NativeMethodScopes::unpackValueFromIndex( uint8_t index, int & offset ) cons
 }
 
 
-Oop NativeMethodScopes::unpackOopAt( int & offset ) const {
-    uint8_t index = getIndexAt( offset );
+Oop NativeMethodScopes::unpackOopAt( int &offset ) const {
+    std::uint8_t index = getIndexAt( offset );
     return unpackOopFromIndex( index, offset );
 }
 
 
-int NativeMethodScopes::unpackValueAt( int & offset ) const {
-    uint8_t index = getIndexAt( offset );
+int NativeMethodScopes::unpackValueAt( int &offset ) const {
+    std::uint8_t index = getIndexAt( offset );
     return unpackValueFromIndex( index, offset );
 }
 
 
-NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, bool_t & is_last, const char * pc ) const {
+NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, bool_t &is_last, const char *pc ) const {
     int                startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
     is_last = b.is_last();
-    NameDescriptor * nd;
+    NameDescriptor *nd;
     if ( b.is_illegal() ) {
         nd = new IllegalNameDescriptor;
     } else if ( b.is_termination() ) {
         return nullptr;
     } else {
-        uint8_t index;
+        std::uint8_t index;
         index = b.has_index() ? b.index() : getIndexAt( offset );
 
         switch ( b.code() ) {
@@ -120,8 +120,8 @@ NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, bool_t & is
                 Oop blkMethod = unpackOopFromIndex( index, offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
                 int parent_scope_offset = unpackValueAt( offset );
-                ScopeDescriptor * parent_scope = at( parent_scope_offset, pc );
-                nd                             = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
+                ScopeDescriptor *parent_scope = at( parent_scope_offset, pc );
+                nd                            = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
                 break;
             }
             case MEMOIZEDBLOCK_CODE: {
@@ -129,8 +129,8 @@ NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, bool_t & is
                 Oop      blkMethod = unpackOopAt( offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
                 int parent_scope_offset = unpackValueAt( offset );
-                ScopeDescriptor * parent_scope = at( parent_scope_offset, pc );
-                nd                             = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
+                ScopeDescriptor *parent_scope = at( parent_scope_offset, pc );
+                nd                            = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
                 break;
             }
             default: st_fatal1( "no such name desc (code 0x%08x)", b.code() );
@@ -141,10 +141,10 @@ NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, bool_t & is
 }
 
 
-void NativeMethodScopes::iterate( int & offset, UnpackClosure * closure ) const {
-    char * pc = my_nativeMethod()->instructionsStart();
+void NativeMethodScopes::iterate( int &offset, UnpackClosure *closure ) const {
+    char *pc = my_nativeMethod()->instructionsStart();
     bool_t is_last;
-    NameDescriptor * nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
+    NameDescriptor *nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
     if ( nd == nullptr )
         return;        // if at termination byte
     closure->nameDescAt( nd, pc );
@@ -156,15 +156,15 @@ void NativeMethodScopes::iterate( int & offset, UnpackClosure * closure ) const 
 }
 
 
-NameDescriptor * NativeMethodScopes::unpackNameDescAt( int & offset, const char * pc ) const {
+NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, const char *pc ) const {
     int    pc_offset         = pc - my_nativeMethod()->instructionsStart();
     int    current_pc_offset = 0;
     bool_t is_last;
-    NameDescriptor * result = unpackNameDescAt( offset, is_last, pc );
+    NameDescriptor *result = unpackNameDescAt( offset, is_last, pc );
     if ( result == nullptr )
         return nullptr;    // if at termination byte
     while ( not is_last ) {
-        NameDescriptor * current = unpackNameDescAt( offset, is_last, pc );
+        NameDescriptor *current = unpackNameDescAt( offset, is_last, pc );
         current_pc_offset += unpackValueAt( offset );
         if ( current_pc_offset <= pc_offset ) {
             result = current;
@@ -200,7 +200,7 @@ void NativeMethodScopes::scavenge_contents() {
 }
 
 
-void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray <NativeMethod *> * nativeMethods_to_invalidate ) {
+void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
 
 //  This is tricky!
 //  First, since some inlined methods are not included in scopes (those that generate no code such as asSmallInteger),
@@ -226,11 +226,11 @@ void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray <Nativ
 
 
 #ifdef NOT_IMPLEMENTED
-    if (my_nativeMethod()->isInvalid()) return;
+    if ( my_nativeMethod()->isInvalid() ) return;
 
-    FOR_EACH_OOPADDR(addr) {
-        if (*addr == from) {
-            nativeMethods_to_invalidate->append(my_nativeMethod());
+    FOR_EACH_OOPADDR( addr ) {
+        if ( *addr == from ) {
+            nativeMethods_to_invalidate->append( my_nativeMethod() );
             return;
         }
     }
@@ -239,8 +239,8 @@ void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray <Nativ
 
 
 void NativeMethodScopes::oops_do( void f( Oop * ) ) {
-    Oop       * end = oops() + oops_size();
-    for ( Oop * p   = oops(); p < end; p++ ) {
+    Oop       *end = oops() + oops_size();
+    for ( Oop *p   = oops(); p < end; p++ ) {
         f( p );
     }
 }
@@ -277,7 +277,7 @@ void NativeMethodScopes::print_partition() {
 
     int d_size = dependent_length() * sizeof( Oop );
     int o_size = oops_size() * sizeof( Oop ) - d_size;
-    int p_size = ( int ) pcsEnd() - ( int ) pcs();
+    int p_size = (int) pcsEnd() - (int) pcs();
     int v_size = value_size() * sizeof( int );
     int total  = v_size + p_size + o_size + d_size;
 

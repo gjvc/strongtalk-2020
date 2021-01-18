@@ -15,7 +15,7 @@ class MethodScopeNode : public ScopeDescriptorNode {
         LogicalAddress * _receiverLocation;
 
 
-        uint8_t code() {
+        std::uint8_t code() {
             return METHOD_CODE;
         }
 

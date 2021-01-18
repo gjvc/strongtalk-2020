@@ -29,23 +29,23 @@ constexpr int INITIAL_VALUES_SIZE              = 100;
 constexpr int INITIAL_DEPENDENTS_SIZE          = 20;
 constexpr int INITIAL_CONTEXT_SCOPE_ARRAY_SIZE = 10;
 
-const uint8_t nameDescHeaderByte::_codeWidth        = 2;
-const uint8_t nameDescHeaderByte::_indexWidth       = 5;
-const uint8_t nameDescHeaderByte::_isLastBitNum     = _codeWidth + _indexWidth;
-const uint8_t nameDescHeaderByte::_maxCode          = nthMask( _codeWidth );
-const uint8_t nameDescHeaderByte::_maxIndex         = nthMask( _indexWidth ) - 3;
-const uint8_t nameDescHeaderByte::_noIndex          = nthMask( _indexWidth ) - 2;
-const uint8_t nameDescHeaderByte::_terminationIndex = nthMask( _indexWidth ) - 1;
-const uint8_t nameDescHeaderByte::_illegalIndex     = nthMask( _indexWidth ) - 0;
+const std::uint8_t nameDescHeaderByte::_codeWidth        = 2;
+const std::uint8_t nameDescHeaderByte::_indexWidth       = 5;
+const std::uint8_t nameDescHeaderByte::_isLastBitNum     = _codeWidth + _indexWidth;
+const std::uint8_t nameDescHeaderByte::_maxCode          = nthMask( _codeWidth );
+const std::uint8_t nameDescHeaderByte::_maxIndex         = nthMask( _indexWidth ) - 3;
+const std::uint8_t nameDescHeaderByte::_noIndex          = nthMask( _indexWidth ) - 2;
+const std::uint8_t nameDescHeaderByte::_terminationIndex = nthMask( _indexWidth ) - 1;
+const std::uint8_t nameDescHeaderByte::_illegalIndex     = nthMask( _indexWidth ) - 0;
 
-const uint8_t ScopeDescriptorHeaderByte::_codeWidth          = 2;                             // 2 bits: scopeDesc type
-const uint8_t ScopeDescriptorHeaderByte::_maxCode            = nthMask( _codeWidth );
-const uint8_t ScopeDescriptorHeaderByte::_liteBitNum         = _codeWidth;                    // 1 bit:  is lite scope desc
-const uint8_t ScopeDescriptorHeaderByte::_argsBitNum         = _codeWidth + 1;                // 1 bit:  has arguments
-const uint8_t ScopeDescriptorHeaderByte::_tempsBitNum        = _codeWidth + 2;                // 1 bit:  has temporaries
-const uint8_t ScopeDescriptorHeaderByte::_contextTempsBitNum = _codeWidth + 3;                // 1 bit:  has expression stack
-const uint8_t ScopeDescriptorHeaderByte::_exprStackBitNum    = _codeWidth + 4;                // 1 bit:  has context temporaries
-const uint8_t ScopeDescriptorHeaderByte::_contextBitNum      = _codeWidth + 5;                // 1 bit:  has context
+const std::uint8_t ScopeDescriptorHeaderByte::_codeWidth          = 2;                             // 2 bits: scopeDesc type
+const std::uint8_t ScopeDescriptorHeaderByte::_maxCode            = nthMask( _codeWidth );
+const std::uint8_t ScopeDescriptorHeaderByte::_liteBitNum         = _codeWidth;                    // 1 bit:  is lite scope desc
+const std::uint8_t ScopeDescriptorHeaderByte::_argsBitNum         = _codeWidth + 1;                // 1 bit:  has arguments
+const std::uint8_t ScopeDescriptorHeaderByte::_tempsBitNum        = _codeWidth + 2;                // 1 bit:  has temporaries
+const std::uint8_t ScopeDescriptorHeaderByte::_contextTempsBitNum = _codeWidth + 3;                // 1 bit:  has expression stack
+const std::uint8_t ScopeDescriptorHeaderByte::_exprStackBitNum    = _codeWidth + 4;                // 1 bit:  has context temporaries
+const std::uint8_t ScopeDescriptorHeaderByte::_contextBitNum      = _codeWidth + 5;                // 1 bit:  has context
 
 
 NameNode * newValueName( Oop value ) {
@@ -58,13 +58,13 @@ NameNode * newValueName( Oop value ) {
 }
 
 
-bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder * rec, uint8_t code, bool_t is_last, int index ) {
+bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder * rec, std::uint8_t code, bool_t is_last, int index ) {
     // Since id is most likely to be 0, the info part of the header byte indicates if is is non zero.
     // Experiments show id is zero in at least 90% of the generated nameDescs.
     // returns true if index could be inlined in headerByte.
     nameDescHeaderByte b;
     bool_t             can_inline  = index <= b._maxIndex;
-    uint8_t            coded_index = can_inline ? index : b._noIndex;
+    std::uint8_t            coded_index = can_inline ? index : b._noIndex;
     b.pack( code, is_last, coded_index );
     rec->_codes->appendByte( b.value() );
 
@@ -230,7 +230,7 @@ void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress * location, N
 }
 
 
-void ScopeDescriptorRecorder::genScopeDescHeader( uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader ) {
+void ScopeDescriptorRecorder::genScopeDescHeader( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader ) {
     ScopeDescriptorHeaderByte b;
     b.pack( code, lite, args, temps, context_temps, expr_stack, has_context );
     _codes->appendByte( b.value() );

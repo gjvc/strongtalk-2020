@@ -65,8 +65,8 @@ class ByteArrayOopDescriptor : public MemOopDescriptor {
         }
 
 
-        uint8_t * bytes() const {
-            return ( uint8_t * ) &length_addr()[ 1 ];
+        std::uint8_t * bytes() const {
+            return ( std::uint8_t * ) &length_addr()[ 1 ];
         }
 
 
@@ -75,18 +75,18 @@ class ByteArrayOopDescriptor : public MemOopDescriptor {
         }
 
 
-        uint8_t * byte_at_addr( int which ) const {
+        std::uint8_t * byte_at_addr( int which ) const {
             st_assert( which > 0 and which <= length(), "index out of bounds" );
             return &bytes()[ which - 1 ];
         }
 
 
-        uint8_t byte_at( int which ) const {
+        std::uint8_t byte_at( int which ) const {
             return *byte_at_addr( which );
         }
 
 
-        void byte_at_put( int which, uint8_t contents ) {
+        void byte_at_put( int which, std::uint8_t contents ) {
             *byte_at_addr( which ) = contents;
         }
 

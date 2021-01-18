@@ -39,21 +39,21 @@ class NativeMethodScopes : public ValueObject {
 
     private:
         int      _nativeMethodOffset;   //
-        uint16_t _length;               //
-        uint16_t _oopsOffset;           // word offset to the oops array
-        uint16_t _valueOffset;          // word offset to the value array
-        uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
+        std::uint16_t _length;               //
+        std::uint16_t _oopsOffset;           // word offset to the oops array
+        std::uint16_t _valueOffset;          // word offset to the value array
+        std::uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
         int      _dependentsEnd;        // size of dependents
 
     private:
-        static uint16_t pack_word_aligned( int value ) {
+        static std::uint16_t pack_word_aligned( int value ) {
             st_assert( value % BytesPerWord == 0, "value should be word aligned" );
-            st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( uint16_t ) ), "value exceeds limit" );
+            st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( std::uint16_t ) ), "value exceeds limit" );
             return value >> LogBytesPerWord;
         }
 
 
-        static int unpack_word_aligned( uint16_t v ) {
+        static int unpack_word_aligned( std::uint16_t v ) {
             return v << LogBytesPerWord;
         }
 
@@ -74,8 +74,8 @@ class NativeMethodScopes : public ValueObject {
 
 
         // Return the address after the struct header
-        uint8_t * start() const {
-            return ( uint8_t * ) ( this + 1 );
+        std::uint8_t * start() const {
+            return ( std::uint8_t * ) ( this + 1 );
         }
 
 
@@ -113,11 +113,11 @@ class NativeMethodScopes : public ValueObject {
         }
 
 
-        inline uint8_t getIndexAt( int & offset ) const;
+        inline std::uint8_t getIndexAt( int & offset ) const;
 
-        inline Oop unpackOopFromIndex( uint8_t index, int & offset ) const;
+        inline Oop unpackOopFromIndex( std::uint8_t index, int & offset ) const;
 
-        inline int unpackValueFromIndex( uint8_t index, int & offset ) const;
+        inline int unpackValueFromIndex( std::uint8_t index, int & offset ) const;
 
     private:
         friend class ScopeDescriptorRecorder;
@@ -229,7 +229,7 @@ class NativeMethodScopes : public ValueObject {
         }
 
 
-        uint8_t get_next_char( int & offset ) const {
+        std::uint8_t get_next_char( int & offset ) const {
             return *( start() + offset++ );
         }
 
@@ -237,7 +237,7 @@ class NativeMethodScopes : public ValueObject {
         int16_t get_next_half( int & offset ) const;
 
 
-        uint8_t peek_next_char( int offset ) const {
+        std::uint8_t peek_next_char( int offset ) const {
             return *( start() + offset );
         }
 

@@ -21,7 +21,7 @@
 constexpr int MAX_HEXBUF_SIZE{ 256 };
 constexpr int MAX_OUTBUF_SIZE{ 256 };
 
-static char tohex( uint8_t c );
+static char tohex( std::uint8_t c );
 
 static const char * bintohex( const char * data, int bytes );
 
@@ -35,7 +35,7 @@ static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const ch
 // -----------------------------------------------------------------------------
 
 //static int     segsize{ 32 };    //
-//static int32_t offset{ 0 };      //
+//static std::int32_t offset{ 0 };      //
 //static int     autosync{ 0 };    //
 //static iflag_t prefer{ 0 };      //
 
@@ -45,22 +45,22 @@ static void printProgramCounterDescriptorInfo( const NativeMethod * nm, const ch
 static void st_disasm( const char * begin, const char * end, const NativeMethod * nm, ConsoleOutputStream * stream ) {
 
     static char output[MAX_OUTBUF_SIZE];
-    size_t      outbufsize{ sizeof( output ) };
-    int32_t     data_size{ 4 }; //
+    std::size_t      outbufsize{ sizeof( output ) };
+    std::int32_t     data_size{ 4 }; //
 
 //    ud_t ud_obj;
 //    ud_init( &ud_obj );
 //    ud_set_input_file( &ud_obj, stdin );
-//    ud_set_input_buffer( &ud_obj, begin, static_cast<size_t>( end - begin ) );
+//    ud_set_input_buffer( &ud_obj, begin, static_cast<std::size_t>( end - begin ) );
 //    ud_set_mode( &ud_obj, 64 );
 //    ud_set_syntax( &ud_obj, UD_SYN_INTEL );
 
 
     for ( const char * pc = begin; pc < end; pc += data_size ) {
 
-        // int32_t disasm(uint8_t *data, int32_t data_size, char *output, int outbufsize, int segsize,
+        // std::int32_t disasm(std::uint8_t *data, std::int32_t data_size, char *output, int outbufsize, int segsize,
         //               int64_t offset, int autosync, iflag_t *prefer)
-//        data_size = disasm( ( uint8_t * ) pc, data_size, output, outbufsize, segsize, offset, autosync, &prefer );
+//        data_size = disasm( ( std::uint8_t * ) pc, data_size, output, outbufsize, segsize, offset, autosync, &prefer );
 
         if ( data_size ) {
             stream->print( "%p %-20s    %-40s", pc, bintohex( pc, data_size ), output );
@@ -77,7 +77,7 @@ static void st_disasm( const char * begin, const char * end, const NativeMethod 
 }
 
 
-static char tohex( uint8_t c ) {
+static char tohex( std::uint8_t c ) {
     const char * digits = "0123456789ABCDEF";
     if ( c > 0xf )
         return '?';

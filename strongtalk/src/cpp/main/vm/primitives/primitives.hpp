@@ -54,8 +54,8 @@ class PrimitiveDescriptor;
 class InterpretedPrimitiveCache : public ValueObject {
 
     private:
-        uint8_t * hp() const {
-            return ( uint8_t * ) this;
+        std::uint8_t * hp() const {
+            return ( std::uint8_t * ) this;
         }
 
 

@@ -11,13 +11,13 @@
 class LongInteger64 {
 
     private:
-        uint32_t _low;
-        uint32_t _high;
+        std::uint32_t _low;
+        std::uint32_t _high;
 
         LongInteger64();
 
     public:
-        LongInteger64( uint32_t low, uint32_t high );
+        LongInteger64( std::uint32_t low, std::uint32_t high );
 
         LongInteger64( double value );
 

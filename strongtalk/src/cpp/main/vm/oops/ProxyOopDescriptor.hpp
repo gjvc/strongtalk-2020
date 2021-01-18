@@ -88,39 +88,39 @@ class ProxyOopDescriptor : public MemOopDescriptor {
         void bootstrap_object( Bootstrap * stream );
 
     private:
-        uint8_t * addr_at( int offset ) const {
-            return ( ( uint8_t * ) get_pointer() ) + offset;
+        std::uint8_t * addr_at( int offset ) const {
+            return ( ( std::uint8_t * ) get_pointer() ) + offset;
         }
 
 
     public:
-        uint8_t byte_at( int offset ) const {
+        std::uint8_t byte_at( int offset ) const {
             return *addr_at( offset );
         }
 
 
-        void byte_at_put( int offset, uint8_t c ) {
+        void byte_at_put( int offset, std::uint8_t c ) {
             *addr_at( offset ) = c;
         }
 
 
-        uint16_t doubleByte_at( int offset ) const {
-            return *( ( uint16_t * ) addr_at( offset ) );
+        std::uint16_t doubleByte_at( int offset ) const {
+            return *( ( std::uint16_t * ) addr_at( offset ) );
         }
 
 
-        void doubleByte_at_put( int offset, uint16_t db ) {
-            *( ( uint16_t * ) addr_at( offset ) ) = db;
+        void doubleByte_at_put( int offset, std::uint16_t db ) {
+            *( ( std::uint16_t * ) addr_at( offset ) ) = db;
         }
 
 
-        int32_t long_at( int offset ) const {
-            return *( ( int32_t * ) addr_at( offset ) );
+        std::int32_t long_at( int offset ) const {
+            return *( ( std::int32_t * ) addr_at( offset ) );
         }
 
 
-        void long_at_put( int offset, int32_t l ) {
-            *( ( int32_t * ) addr_at( offset ) ) = l;
+        void long_at_put( int offset, std::int32_t l ) {
+            *( ( std::int32_t * ) addr_at( offset ) ) = l;
         }
 
 

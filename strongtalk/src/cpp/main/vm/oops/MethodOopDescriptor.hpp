@@ -209,37 +209,37 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
 
         // Returns a pointer to the hybrid code at 'offset'
-        uint8_t * codes( int offset = 1 ) const {
-            return ( uint8_t * ) addr() + sizeof( MethodOopDescriptor ) + offset - 1;
+        std::uint8_t * codes( int offset = 1 ) const {
+            return ( std::uint8_t * ) addr() + sizeof( MethodOopDescriptor ) + offset - 1;
         }
 
 
-        uint8_t * codes_end() const {
+        std::uint8_t * codes_end() const {
             return codes() + size_of_codes() * oopSize;
         }
 
 
         // find methodOop given an hcode pointer
-        static MethodOop methodOop_from_hcode( uint8_t * hp );
+        static MethodOop methodOop_from_hcode( std::uint8_t * hp );
 
 
-        uint8_t byte_at( int offset ) const {
+        std::uint8_t byte_at( int offset ) const {
             return *codes( offset );
         }
 
 
-        void byte_at_put( int offset, uint8_t c ) {
+        void byte_at_put( int offset, std::uint8_t c ) {
             *codes( offset ) = c;
         }
 
 
-        int32_t word_at( int offset ) const {
-            return *( int32_t * ) codes( offset );
+        std::int32_t word_at( int offset ) const {
+            return *( std::int32_t * ) codes( offset );
         }
 
 
-        void word_at_put( int offset, uint32_t w ) {
-            *( int32_t * ) codes( offset ) = w;
+        void word_at_put( int offset, std::uint32_t w ) {
+            *( std::int32_t * ) codes( offset ) = w;
         }
 
 
@@ -254,10 +254,10 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
 
         // Returns the next byte code index based on hp.
-        int next_byteCodeIndex_from( uint8_t * hp ) const;
+        int next_byteCodeIndex_from( std::uint8_t * hp ) const;
 
         // Returns the current byte code index based on hp (points to the next byte code)
-        int byteCodeIndex_from( uint8_t * hp ) const;
+        int byteCodeIndex_from( std::uint8_t * hp ) const;
 
         int number_of_arguments() const;
 
@@ -268,7 +268,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
         // Method with hardwired floating-point operations
         bool_t has_float_temporaries() const {
-            return *codes( 1 ) == static_cast<uint8_t>(ByteCodes::Code::float_allocate);
+            return *codes( 1 ) == static_cast<std::uint8_t>(ByteCodes::Code::float_allocate);
         }
 
 
@@ -303,7 +303,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
         // Testers
         bool_t is_accessMethod() const {
-            return *codes() == static_cast<uint8_t>(ByteCodes::Code::return_instVar);
+            return *codes() == static_cast<std::uint8_t>(ByteCodes::Code::return_instVar);
         }
 
 
@@ -312,7 +312,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 
         // For predicted sends (smi_t +, -, *, etc.)
         bool_t is_special_primitiveMethod() const {
-            return *codes( 1 ) == static_cast<uint8_t>(ByteCodes::Code::special_primitive_send_1_hint);
+            return *codes( 1 ) == static_cast<std::uint8_t>(ByteCodes::Code::special_primitive_send_1_hint);
         }
 
 

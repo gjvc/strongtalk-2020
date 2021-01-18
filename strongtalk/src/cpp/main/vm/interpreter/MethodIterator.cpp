@@ -118,7 +118,7 @@ SymbolOop WhileNode::selector() const {
 
 // IfNode
 
-IfNode::IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, uint8_t structure ) :
+IfNode::IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) :
     InlineSendNode( method, parent, begin_byteCodeIndex ) {
     bool_t has_else_branch;
     int    else_jump_size;
@@ -311,19 +311,19 @@ void SpecializedMethodClosure::dll_call_node( DLLCallNode * node ) {
 
 // MethodIterator
 
-void MethodIterator::unknown_code( uint8_t code ) {
+void MethodIterator::unknown_code( std::uint8_t code ) {
     _console->print_cr( "Unknown code found 0x%x", code );
     st_fatal( "aborting" );
 }
 
 
-void MethodIterator::should_never_encounter( uint8_t code ) {
+void MethodIterator::should_never_encounter( std::uint8_t code ) {
     _console->print_cr( "Should never iterate through code 0x%x", code );
     st_fatal( "aborting" );
 }
 
 
-static inline uint8_t map0to256( uint8_t ch ) {
+static inline std::uint8_t map0to256( std::uint8_t ch ) {
     return ch ? ch : 256;
 }
 
@@ -365,7 +365,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->push_temporary( 5 );
                 break;
             case ByteCodes::Code::unimplemented_06:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_06) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_06) );
                 break;
             case ByteCodes::Code::push_temp_n:
                 blk->push_temporary( 255 - iter.byte_at( 1 ) );
@@ -450,28 +450,28 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->push_literal( falseObj );
                 break;
             case ByteCodes::Code::unimplemented_20:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_20) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_20) );
                 break;
             case ByteCodes::Code::unimplemented_21:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_21) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_21) );
                 break;
             case ByteCodes::Code::unimplemented_22:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_22) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_22) );
                 break;
             case ByteCodes::Code::unimplemented_23:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_23) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_23) );
                 break;
             case ByteCodes::Code::unimplemented_24:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_24) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_24) );
                 break;
             case ByteCodes::Code::unimplemented_25:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_25) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_25) );
                 break;
             case ByteCodes::Code::unimplemented_26:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_26) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_26) );
                 break;
             case ByteCodes::Code::unimplemented_27:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_27) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_27) );
                 break;
             case ByteCodes::Code::return_instVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
@@ -554,16 +554,16 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->float_binaryToOop( Floats::Function( iter.byte_at( 2 ) ), blk->float_at( iter.byte_at( 1 ) ) );
                 break;
             case ByteCodes::Code::unimplemented_39:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_39) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_39) );
                 break;
             case ByteCodes::Code::unimplemented_3a:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_3a) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_3a) );
                 break;
             case ByteCodes::Code::unimplemented_3b:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_3b) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_3b) );
                 break;
             case ByteCodes::Code::unimplemented_3c:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_3c) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_3c) );
                 break;
             case ByteCodes::Code::push_instVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
@@ -786,7 +786,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 // ignore since they are inside WhileNode expression body
                 break;
             case ByteCodes::Code::jump_else_byte:
-                should_never_encounter( static_cast<uint8_t>(ByteCodes::Code::jump_else_byte) );
+                should_never_encounter( static_cast<std::uint8_t>(ByteCodes::Code::jump_else_byte) );
                 break;
             case ByteCodes::Code::jump_loop_byte: {
                 WhileNode * node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 2 ), iter.byte_at( 1 ) );
@@ -830,7 +830,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 // Ignore since they are inside WhileNode expression body
                 break;
             case ByteCodes::Code::jump_else_word:
-                should_never_encounter( static_cast<uint8_t>(ByteCodes::Code::jump_else_word) );
+                should_never_encounter( static_cast<std::uint8_t>(ByteCodes::Code::jump_else_word) );
                 break;
             case ByteCodes::Code::jump_loop_word: {
                 WhileNode * node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + oopSize ), iter.word_at( 1 ) );
@@ -996,7 +996,7 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 blk->self_send( iter.ic() );
                 break;
             case ByteCodes::Code::unimplemented_bc:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_bc) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_bc) );
                 break;
             case ByteCodes::Code::primitive_call_lookup: // fall through
             case ByteCodes::Code::primitive_call_self_lookup: {
@@ -1032,25 +1032,25 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             }
             case ByteCodes::Code::unimplemented_c7:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_c7) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_c7) );
                 break;
             case ByteCodes::Code::access_send_0:
                 blk->normal_send( iter.ic() );
                 break;
             case ByteCodes::Code::unimplemented_cc:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_cc) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_cc) );
                 break;
             case ByteCodes::Code::unimplemented_dc:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_dc) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_dc) );
                 break;
             case ByteCodes::Code::special_primitive_send_1_hint:
                 // ignore - only meaningfull for the interpreter
                 break;
             case ByteCodes::Code::unimplemented_de:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_de) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_de) );
                 break;
             case ByteCodes::Code::unimplemented_df:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_df) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_df) );
                 break;
             case ByteCodes::Code::smi_add: // fall through
             case ByteCodes::Code::smi_sub: // fall through
@@ -1111,22 +1111,22 @@ void MethodIterator::dispatch( MethodClosure * blk ) {
                 break;
             }
             case ByteCodes::Code::unimplemented_fa:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_fa) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_fa) );
                 break;
             case ByteCodes::Code::unimplemented_fb:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_fb) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_fb) );
                 break;
             case ByteCodes::Code::unimplemented_fc:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_fc) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_fc) );
                 break;
             case ByteCodes::Code::unimplemented_fd:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_fd) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_fd) );
                 break;
             case ByteCodes::Code::unimplemented_fe:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::unimplemented_fe) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_fe) );
                 break;
             case ByteCodes::Code::halt:
-                unknown_code( static_cast<uint8_t>(ByteCodes::Code::halt) );
+                unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::halt) );
                 break;
             default: ShouldNotReachHere();
         }
@@ -1179,7 +1179,7 @@ WhileNode * MethodIntervalFactory::new_WhileNode( MethodOop method, MethodInterv
 }
 
 
-IfNode * MethodIntervalFactory::new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, uint8_t structure ) {
+IfNode * MethodIntervalFactory::new_IfNode( MethodOop method, MethodInterval * parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) {
     return new IfNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, cond, else_offset, structure );
 }
 

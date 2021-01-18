@@ -263,7 +263,7 @@ void BasicBlock::localCopyPropagate() {
                     continue;
                 }
                 if ( not src->isSinglyAssigned() ) {
-                    // careful: r is only equivalent to src as int32_t as src isn't reassigned within this basic block
+                    // careful: r is only equivalent to src as std::int32_t as src isn't reassigned within this basic block
                     int j = 0;
                     for ( ; j < len; j++ ) {
                         PseudoRegister * r = duInfo.info->at( j )->_pseudoRegister;
@@ -1217,7 +1217,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock * useBasicBlock, const PseudoR
         // fromNode: x := ...;
         // NB: should extend live range of toNode->dest() backwards to include fromNode
         // currently not done (extendLiveRange handles only forward extensions), but as
-        // int32_t as this optimization isn't performed globally this shouldn't hurt
+        // std::int32_t as this optimization isn't performed globally this shouldn't hurt
         if ( CompilerDebug ) {
             cout( PrintCopyPropagation )->print( "*%s copy-propagation: changing dest of N%ld (%#lx) to %s to match use at N%ld (%#lx)\n", global ? "global" : "local", fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->dest()->name(), toNode->id(), PrintHexAddresses ? toNode : 0 );
         }
