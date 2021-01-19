@@ -28,7 +28,7 @@ public:
 
     virtual char *instructionsStart() const = 0;       // beginning of instructions part
 
-    virtual int size() const = 0;                       // size in bytes
+    virtual std::size_t size() const = 0;                       // size in bytes
 
     int instructionsLength() const {
         return _instructionsLength;

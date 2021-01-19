@@ -592,7 +592,7 @@ NativeMethod *CompiledInlineCache::target() const {
 }
 
 
-KlassOop CompiledInlineCache::get_klass( int i ) const {
+KlassOop CompiledInlineCache::get_klass( std::size_t i ) const {
     PolymorphicInlineCache *p = pic();
     if ( p ) {
         PolymorphicInlineCacheIterator it( p );
@@ -612,7 +612,7 @@ PolymorphicInlineCache *CompiledInlineCache::pic() const {
 }
 
 
-LookupKey *CompiledInlineCache::key( int i, bool_t is_normal_send ) const {
+LookupKey *CompiledInlineCache::key( std::size_t i, bool_t is_normal_send ) const {
     if ( is_normal_send ) {
         return LookupKey::allocate( get_klass( i ), selector() );
     } else {

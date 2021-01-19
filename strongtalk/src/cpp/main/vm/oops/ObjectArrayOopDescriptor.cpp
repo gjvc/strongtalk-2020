@@ -55,7 +55,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy() {
 ObjectArrayOop ObjectArrayOopDescriptor::copy_add( Oop a ) {
     ObjectArrayOop new_array = oopFactory::new_objArray( length() + 1 );
 
-    int i = 1;
+    std::size_t i = 1;
     for ( ; i <= length(); i++ )
         new_array->obj_at_put( i, obj_at( i ) );
     new_array->obj_at_put( i, a );

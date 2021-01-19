@@ -137,7 +137,7 @@ void CodeTable::print_stats() {
     int nmin = 9999999, nmax = 0, total = 0, nonzero = 0;
     constexpr int N = 10;
     int histo[N];
-    for (int i = 0; i < N; i++) histo[i] = 0;
+    for (std::size_t i = 0; i < N; i++) histo[i] = 0;
     for (nmln* p = buckets;  p < &buckets[tableSize];  ++p) {
       int len = 0;
       for (nmln* q = p->next;  q not_eq p;  q = q->next) len++;
@@ -149,7 +149,7 @@ void CodeTable::print_stats() {
     }
     lprintf("\ncodeTable statistics: 0x%08x nativeMethods; min chain = 0x%08x, max = 0x%08x, avg = %4.1f\n", total, nmin, nmax, (float)total / nonzero);
     lprintf("histogram:\n");
-    for (int i = 0; i < N - 1; i++) lprintf("%4d:\t%d", i, histo[i]);
+    for (std::size_t i = 0; i < N - 1; i++) lprintf("%4d:\t%d", i, histo[i]);
     lprintf(">=0x%08x:\t0x%08x\n", N-1, histo[N-1]);
 #endif
 }

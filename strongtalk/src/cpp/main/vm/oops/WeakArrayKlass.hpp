@@ -135,7 +135,7 @@ public:
 
 private:
     static Oop *array;
-    static int size;
+    static std::size_t size;
     static int first;
     static int last;
 

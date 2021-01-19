@@ -48,7 +48,7 @@ NonInlinedBlockScopeDescriptor *NativeMethodScopes::noninlined_block_scope_at( i
 }
 
 
-std::int16_t NativeMethodScopes::get_next_half( int &offset ) const {
+std::int16_t NativeMethodScopes::get_next_half( std::size_t &offset ) const {
     std::int16_t v;
     v = get_next_char( offset ) << BYTE_WIDTH;
     v = addBits( v, get_next_char( offset ) );
@@ -56,12 +56,12 @@ std::int16_t NativeMethodScopes::get_next_half( int &offset ) const {
 }
 
 
-std::uint8_t NativeMethodScopes::getIndexAt( int &offset ) const {
+std::uint8_t NativeMethodScopes::getIndexAt( std::size_t &offset ) const {
     return get_next_char( offset );
 }
 
 
-Oop NativeMethodScopes::unpackOopFromIndex( std::uint8_t index, int &offset ) const {
+Oop NativeMethodScopes::unpackOopFromIndex( std::uint8_t index, std::size_t &offset ) const {
     if ( index == 0 )
         return nullptr;
     if ( index < EXTENDED_INDEX )
@@ -70,7 +70,7 @@ Oop NativeMethodScopes::unpackOopFromIndex( std::uint8_t index, int &offset ) co
 }
 
 
-int NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, int &offset ) const {
+int NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const {
     if ( index <= MAX_INLINE_VALUE )
         return index;
     if ( index < EXTENDED_INDEX )
@@ -79,19 +79,19 @@ int NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, int &offset ) 
 }
 
 
-Oop NativeMethodScopes::unpackOopAt( int &offset ) const {
+Oop NativeMethodScopes::unpackOopAt( std::size_t &offset ) const {
     std::uint8_t index = getIndexAt( offset );
     return unpackOopFromIndex( index, offset );
 }
 
 
-int NativeMethodScopes::unpackValueAt( int &offset ) const {
+int NativeMethodScopes::unpackValueAt( std::size_t &offset ) const {
     std::uint8_t index = getIndexAt( offset );
     return unpackValueFromIndex( index, offset );
 }
 
 
-NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, bool_t &is_last, const char *pc ) const {
+NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, bool_t &is_last, const char *pc ) const {
     int                startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
@@ -141,7 +141,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, bool_t &is_la
 }
 
 
-void NativeMethodScopes::iterate( int &offset, UnpackClosure *closure ) const {
+void NativeMethodScopes::iterate( std::size_t &offset, UnpackClosure *closure ) const {
     char           *pc = my_nativeMethod()->instructionsStart();
     bool_t         is_last;
     NameDescriptor *nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
@@ -156,7 +156,7 @@ void NativeMethodScopes::iterate( int &offset, UnpackClosure *closure ) const {
 }
 
 
-NameDescriptor *NativeMethodScopes::unpackNameDescAt( int &offset, const char *pc ) const {
+NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, const char *pc ) const {
     int            pc_offset         = pc - my_nativeMethod()->instructionsStart();
     int            current_pc_offset = 0;
     bool_t         is_last;

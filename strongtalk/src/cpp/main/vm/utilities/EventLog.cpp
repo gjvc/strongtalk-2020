@@ -53,7 +53,7 @@ void EventLog::printPartial( int n ) {
     // find starting point
     if ( n >= EventLogLength )
         n = EventLogLength - 1;
-    int i = 0;
+    std::size_t i = 0;
     for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) );
 
     // skip empty entries

@@ -221,7 +221,7 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
     if ( other->isMergeExpression() ) {
         MergeExpression *o = other->asMergeExpression();
         if ( o->isSplittable() and not isSplittable() ) {
-            int i = 0;
+            std::size_t i = 0;
         }
         for ( int       i  = 0; i < o->exprs->length(); i++ ) {
             // must be careful when adding splittable exprs (e->next not_eq nullptr)

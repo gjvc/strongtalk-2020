@@ -109,7 +109,7 @@ void InterpreterGenerator::should_not_reach_here() {
 
 // Arguments, temporaries & instance variables
 
-Address InterpreterGenerator::arg_addr( int i ) {
+Address InterpreterGenerator::arg_addr( std::size_t i ) {
     st_assert( 1 <= i, "argument number must be positive" );
     return Address( ebp, arg_n_offset + i * oopSize );
 }
@@ -120,7 +120,7 @@ Address InterpreterGenerator::arg_addr( Register arg_no ) {
 }
 
 
-Address InterpreterGenerator::temp_addr( int i ) {
+Address InterpreterGenerator::temp_addr( std::size_t i ) {
     st_assert( 0 <= i, "temporary number must be positive" );
     return Address( ebp, temp_0_offset - i * oopSize );
 }
@@ -136,7 +136,7 @@ Address InterpreterGenerator::float_addr( Register float_no ) {
 }
 
 
-Address InterpreterGenerator::field_addr( Register obj, int i ) {
+Address InterpreterGenerator::field_addr( Register obj, std::size_t i ) {
     st_assert( 2 <= i, "illegal field offset" );
     return Address( obj, byteOffset( i ) );
 }
@@ -317,7 +317,7 @@ void InterpreterGenerator::load_recv( ByteCodes::ArgumentSpec arg_spec ) {
 //-----------------------------------------------------------------------------------------
 // Instructions
 
-const char *InterpreterGenerator::push_temp( int i ) {
+const char *InterpreterGenerator::push_temp( std::size_t i ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->pushl( eax );
@@ -340,7 +340,7 @@ const char *InterpreterGenerator::push_temp_n() {
 }
 
 
-const char *InterpreterGenerator::push_arg( int i ) {
+const char *InterpreterGenerator::push_arg( std::size_t i ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->pushl( eax );
@@ -469,7 +469,7 @@ const char *InterpreterGenerator::only_pop() {
 }
 
 
-const char *InterpreterGenerator::store_temp( int i, bool_t pop ) {
+const char *InterpreterGenerator::store_temp( std::size_t i, bool_t pop ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->movl( temp_addr( i ), eax );
@@ -1610,7 +1610,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
 //  primitiveValue0..9 are the primitives called in block value messages.
 //  i is the number of arguments for the block.
 
-void InterpreterGenerator::generate_primitiveValue( int i ) {
+void InterpreterGenerator::generate_primitiveValue( std::size_t i ) {
     GeneratedPrimitives::set_primitiveValue( i, _macroAssembler->pc() );
     _macroAssembler->movl( eax, Address( esp, ( i + 1 ) * oopSize ) ); // load recv (= block)
     _macroAssembler->jmp( _block_entry );

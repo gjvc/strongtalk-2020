@@ -34,7 +34,7 @@ void PrimitiveInliner::assert_receiver() {
 
 
 int PrimitiveInliner::log2( int x ) const {
-    int i = -1;
+    std::size_t i = -1;
     int p = 1;
     while ( p not_eq 0 and p <= x ) {
         // p = 2^(i+1) and p <= x (i.e., 2^(i+1) <= x)
@@ -61,7 +61,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
         }
     }
     // get parameters
-    int i = number_of_parameters();
+    std::size_t i = number_of_parameters();
     Oop *args = new_resource_array<Oop>( i );
     while ( i > 0 ) {
         i--;
@@ -120,7 +120,7 @@ Expression *PrimitiveInliner::tryTypeCheck() {
 }
 
 
-SymbolOop PrimitiveInliner::failureSymbolForArg( int i ) {
+SymbolOop PrimitiveInliner::failureSymbolForArg( std::size_t i ) {
     st_assert( i >= 0 and i < number_of_parameters(), "bad index" );
     switch ( i ) {
         case 0:
@@ -1088,7 +1088,7 @@ PrimitiveInliner::PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc
     _usingUncommonTrap = false;
 
     // get parameters
-    int i     = number_of_parameters();
+    std::size_t i     = number_of_parameters();
     int first = _expressionStack->length() - i;
     while ( i-- > 0 ) {
         _params->at_put( i, _expressionStack->at( first + i ) );

@@ -60,7 +60,7 @@ void ByteCodes::def( Code code, const char *name, Format format, CodeType code_t
         // bytecode name unlikely to start with "push_"... and should end with ..."_pop"
         st_assert( name[ 0 ] not_eq 'p' or name[ 1 ] not_eq 'u' or name[ 2 ] not_eq 's' or name[ 3 ] not_eq 'h' or name[ 4 ] not_eq '_', "unlikely naming" );
 
-        int i = 0;
+        std::size_t i = 0;
         while ( name[ i ] not_eq '\00' )
             i++;
         // Fix this lars
@@ -1052,7 +1052,7 @@ static void generate_codeForPrimitive_method() {
 
 
 static void generate_signature( const char *sig, char separator ) {
-    int i     = 1;
+    std::size_t i     = 1;
     int b_cnt = 1;
     int w_cnt = 1;
     int o_cnt = 1;

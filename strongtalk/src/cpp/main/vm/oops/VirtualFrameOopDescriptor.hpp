@@ -52,7 +52,7 @@ public:
     }
 
 
-    void set_index( int i ) {
+    void set_index( std::size_t i ) {
         STORE_OOP( &addr()->_index, smiOopFromValue( i ) );
     }
 

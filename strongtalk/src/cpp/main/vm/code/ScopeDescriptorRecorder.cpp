@@ -129,7 +129,7 @@ void ScopeDescriptorRecorder::generateDependencies() {
 
     for ( std::size_t index = 0; index < _dependents->length(); index++ ) {
 
-        int i = _oops->insertIfAbsent( (int) _dependents->at( index ) );
+        std::size_t i = _oops->insertIfAbsent( (int) _dependents->at( index ) );
         if ( i > end_marker )
             end_marker = i;
     }
@@ -299,7 +299,7 @@ Location ScopeDescriptorRecorder::convert_location( Location loc ) {
 }
 
 
-int ScopeDescriptorRecorder::size() {
+std::size_t ScopeDescriptorRecorder::size() {
     return sizeof( NativeMethodScopes )
            + _codes->size()
            + ( _oops->length() * sizeof( Oop ) )

@@ -69,7 +69,7 @@ void LongRegisterMask::allocate( Location l ) {
         bv->add( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        int i = tempToIndex( l );
+        std::size_t i = tempToIndex( l );
         if ( i >= bv->length ) grow();
         bv->add( i );
     }
@@ -80,7 +80,7 @@ void LongRegisterMask::deallocate( Location l ) {
         bv->remove( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        int i = tempToIndex( l );
+        std::size_t i = tempToIndex( l );
         bv->remove( i );
     }
 }
@@ -90,7 +90,7 @@ bool_t LongRegisterMask::isAllocated( Location l ) {
         return bv->includes( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        int i = tempToIndex( l );
+        std::size_t i = tempToIndex( l );
         if ( l.number() < bv->length ) {
             return bv->includes( i );
         } else {
@@ -127,7 +127,7 @@ int findFirstUnused( LongRegisterMask ** masks, int len, int start ) {
 
 Location findFirstUnusedTemp( LongRegisterMask ** masks, int len ) {
     Unimplemented();
-    // int i = findFirstUnused(masks, len, tempToIndex(FirstStackLocation));
+    // std::size_t i = findFirstUnused(masks, len, tempToIndex(FirstStackLocation));
     // return indexToTemp(i);
     return Location();
 }

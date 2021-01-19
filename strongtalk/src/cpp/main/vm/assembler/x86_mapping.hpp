@@ -35,22 +35,22 @@ public:
     static void initialize();
 
     // register allocation
-    static Location localRegister( int i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
+    static Location localRegister( std::size_t i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
     static int localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
 
     // parameter passing
-    static Location incomingArg( int i, int nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
-    static Location outgoingArg( int i, int nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location incomingArg( std::size_t i, int nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location outgoingArg( std::size_t i, int nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
 
     // stack allocation
-    static Location localTemporary( int i );                // the i.th local temporary (i >= 0)
+    static Location localTemporary( std::size_t i );                // the i.th local temporary (i >= 0)
     static int localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
-    static Location floatTemporary( int scope_id, int i );  // the i.th float temporary within a scope (i >= 0)
+    static Location floatTemporary( int scope_id, std::size_t i );  // the i.th float temporary within a scope (i >= 0)
 
     // context temporaries
     static int contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
-    static Location contextTemporary( int contextNo, int i, int scope_id );         // the i.th context temporary (i >= 0)
-    static Location *new_contextTemporary( int contextNo, int i, int scope_id );   // ditto, but allocated in resource area
+    static Location contextTemporary( int contextNo, std::size_t i, int scope_id );         // the i.th context temporary (i >= 0)
+    static Location *new_contextTemporary( int contextNo, std::size_t i, int scope_id );   // ditto, but allocated in resource area
 
     // conversion functions
     static Location asLocation( const Register &reg ) {

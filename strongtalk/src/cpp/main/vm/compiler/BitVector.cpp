@@ -110,7 +110,7 @@ void BitVector::print() {
     print_short();
     lprintf( ": {" );
     int last = -1;
-    int i    = 0;
+    std::size_t i    = 0;
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {
             if ( last < 0 ) {

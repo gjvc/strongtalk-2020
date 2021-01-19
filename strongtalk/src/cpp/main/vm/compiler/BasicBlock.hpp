@@ -104,11 +104,11 @@ public:
 
     BasicBlock *next1() const;
 
-    BasicBlock *next( int i ) const;
+    BasicBlock *next( std::size_t i ) const;
 
     BasicBlock *firstPrev() const;
 
-    BasicBlock *prev( int i ) const;
+    BasicBlock *prev( std::size_t i ) const;
 
 
     int id() const {

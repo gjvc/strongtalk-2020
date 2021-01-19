@@ -468,7 +468,7 @@ Expression *Inliner::picPredict() {
     // extract klasses from PolymorphicInlineCache
     GrowableArray<Expression *> klasses( 5 );
     MergeExpression *allKlasses = new MergeExpression( _info->_receiver->preg(), nullptr );
-    int i = 0;
+    std::size_t i = 0;
     for ( ; i < predictedReceivers->length(); i++ ) {
         RecompilationScope *r    = predictedReceivers->at( i );
         Expression         *expr = r->receiverExpression( _info->_receiver->preg() );

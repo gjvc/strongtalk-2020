@@ -249,7 +249,7 @@ public:
     LRUcount() {
         ShouldNotCallThis();
     } // shouldn't create
-    void set( int i ) {
+    void set( std::size_t i ) {
         *(int *) this = i;
     }
 };

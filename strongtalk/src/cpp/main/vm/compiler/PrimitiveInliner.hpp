@@ -61,7 +61,7 @@ private:
     Expression *primitiveFailure( SymbolOop failureCode );    // handle primitive that always fail
     Expression *merge_failure_block( Node *ok_exit, Expression *ok_result, Node *failure_exit, Expression *failure_code, bool_t ok_result_is_read_only = true );
 
-    SymbolOop failureSymbolForArg( int i );            // error string for "n.th arg has wrong type"
+    SymbolOop failureSymbolForArg( std::size_t i );            // error string for "n.th arg has wrong type"
     bool_t shouldUseUncommonTrap();            // use uncommon trap for primitive failure?
     bool_t basic_shouldUseUncommonTrap() const;
 

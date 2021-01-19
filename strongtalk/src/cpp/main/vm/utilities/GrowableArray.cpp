@@ -119,7 +119,7 @@ void GenericGrowableArray::raw_apply( voidDoFn f ) const {
 }
 
 
-void *GenericGrowableArray::raw_at_grow( int i, const void *fill ) {
+void *GenericGrowableArray::raw_at_grow( std::size_t i, const void *fill ) {
     if ( i >= _length ) {
         if ( i >= _maxLength )
             grow( i );
@@ -131,7 +131,7 @@ void *GenericGrowableArray::raw_at_grow( int i, const void *fill ) {
 }
 
 
-void GenericGrowableArray::raw_at_put_grow( int i, const void *p, const void *fill ) {
+void GenericGrowableArray::raw_at_put_grow( std::size_t i, const void *p, const void *fill ) {
     if ( i >= _length ) {
         if ( i >= _maxLength )
             grow( i );

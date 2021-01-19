@@ -48,49 +48,49 @@ private:
     GrowableArray<int> *_temporaryLocations;          // a list of temporary locations used by instances of Temporary (these locations will be freed when the mapping is copied)
 
     // Helper routines
-    int size() const {
+    std::size_t size() const {
         return _pseudoRegisters->length();
     }
 
 
-    bool_t used( int i ) const {
+    bool_t used( std::size_t i ) const {
         return _pseudoRegisters->at( i ) not_eq nullptr;
     }
 
 
-    int regLoc( int i ) const {
+    int regLoc( std::size_t i ) const {
         return _registerLocations->at( i );
     }
 
 
-    int stkLoc( int i ) const {
+    int stkLoc( std::size_t i ) const {
         return _stackLocations->at( i );
     }
 
 
-    bool_t hasRegLoc( int i ) const {
+    bool_t hasRegLoc( std::size_t i ) const {
         return _locations->isLocation( regLoc( i ) );
     }
 
 
-    bool_t hasStkLoc( int i ) const {
+    bool_t hasStkLoc( std::size_t i ) const {
         return _locations->isLocation( stkLoc( i ) );
     }
 
 
-    int location( int i ) const {
+    int location( std::size_t i ) const {
         int rloc = regLoc( i );
         return rloc >= 0 ? rloc : stkLoc( i );
     }
 
 
-    void set_entry( int i, PseudoRegister *preg, int rloc, int sloc );
+    void set_entry( std::size_t i, PseudoRegister *preg, int rloc, int sloc );
 
     int index( PseudoRegister *preg );
 
     int freeSlot();
 
-    void print( int i );
+    void print( std::size_t i );
 
     void destroy();                // destroys mapping to make sure it is not accidentally used afterwards
 
@@ -136,13 +136,13 @@ public:
 
 
     bool_t inRegister( PseudoRegister *preg ) {
-        int i = index( preg );
+        std::size_t i = index( preg );
         return used( i ) and hasRegLoc( i );
     }
 
 
     bool_t onStack( PseudoRegister *preg ) {
-        int i = index( preg );
+        std::size_t i = index( preg );
         return used( i ) and hasStkLoc( i );
     }
 

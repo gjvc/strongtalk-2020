@@ -83,7 +83,7 @@ protected:
 
     void emit_operand( const Register &r, const Address &a );
 
-    void emit_farith( int b1, int b2, int i );
+    void emit_farith( int b1, int b2, std::size_t i );
 
     void print( const Label &L );
 
@@ -383,33 +383,33 @@ public:
 
     void fdiv_d( const Address &a );
 
-    void fadd( int i );
+    void fadd( std::size_t i );
 
-    void fsub( int i );
+    void fsub( std::size_t i );
 
-    void fmul( int i );
+    void fmul( std::size_t i );
 
-    void fdiv( int i );
+    void fdiv( std::size_t i );
 
-    void faddp( int i = 1 );
+    void faddp( std::size_t i = 1 );
 
-    void fsubp( int i = 1 );
+    void fsubp( std::size_t i = 1 );
 
-    void fsubrp( int i = 1 );
+    void fsubrp( std::size_t i = 1 );
 
-    void fmulp( int i = 1 );
+    void fmulp( std::size_t i = 1 );
 
-    void fdivp( int i = 1 );
+    void fdivp( std::size_t i = 1 );
 
     void fprem();
 
     void fprem1();
 
-    void fxch( int i = 1 );
+    void fxch( std::size_t i = 1 );
 
     void fincstp();
 
-    void ffree( int i = 0 );
+    void ffree( std::size_t i = 0 );
 
     void ftst();
 

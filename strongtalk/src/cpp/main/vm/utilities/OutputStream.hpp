@@ -83,7 +83,7 @@ public:
     }
 
 
-    void set_indentation( int i ) {
+    void set_indentation( std::size_t i ) {
         _indentation = i;
     }
 

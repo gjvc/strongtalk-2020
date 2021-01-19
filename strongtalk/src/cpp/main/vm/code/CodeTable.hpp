@@ -30,7 +30,7 @@ struct CodeTableLink : public CHeapAllocatedObject {
     CodeTableLink *_next;
 
     // memory operations
-    bool_t verify( int i );
+    bool_t verify( std::size_t i );
 };
 
 struct CodeTableEntry : ValueObject {
@@ -81,7 +81,7 @@ struct CodeTableEntry : ValueObject {
 
     int length();   // returns the number of NativeMethod in this bucket.
 
-    bool_t verify( int i );
+    bool_t verify( std::size_t i );
 };
 
 class CodeTable : public PrintableCHeapAllocatedObject {

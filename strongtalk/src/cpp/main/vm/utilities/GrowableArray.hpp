@@ -19,11 +19,11 @@ typedef bool_t (*growableArrayFindFn)( void *token, void *elem );
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    int _length;             // current length
-    int _maxLength;             // maximum length
-    void **_data;          // data array
-    bool_t              _allocatedOnSystemHeap;    // is data allocated on C heap?
-    std::vector<void *> _vector;                   //
+    int                 _length;                    // current length
+    int                 _maxLength;                 // maximum length
+    void                **_data;                    // data array
+    bool_t              _allocatedOnSystemHeap;     // is data allocated on C heap?
+    std::vector<void *> _vector;                    //
 
     void grow( int j );     // grow data array (double length until j is a valid index)
 
@@ -37,9 +37,9 @@ protected:
 
     void raw_apply( voidDoFn f ) const;
 
-    void *raw_at_grow( int i, const void *fill );
+    void *raw_at_grow( std::size_t i, const void *fill );
 
-    void raw_at_put_grow( int i, const void *p, const void *fill );
+    void raw_at_put_grow( std::size_t i, const void *p, const void *fill );
 
     void raw_appendAll( GenericGrowableArray *l );
 
@@ -97,7 +97,7 @@ public:
     }
 
 
-    T at( int i ) const {
+    T at( std::size_t i ) const {
         st_assert( 0 <= i, "i not greater than 0" );
         return reinterpret_cast<T> (_data[ i ]);
     }
@@ -131,19 +131,19 @@ public:
     }
 
 
-    void at_put( int i, const T elem ) {
+    void at_put( std::size_t i, const T elem ) {
         st_assert( 0 <= i and i < _length, "illegal index" );
         _data[ i ] = (void *) elem;
     }
 
 
-    T at_grow( int i ) {
+    T at_grow( std::size_t i ) {
         st_assert( 0 <= i, "negative index" );
         return reinterpret_cast<T> (raw_at_grow( i, nullptr ));
     }
 
 
-    void at_put_grow( int i, const T elem ) {
+    void at_put_grow( std::size_t i, const T elem ) {
         st_assert( 0 <= i, "negative index" );
         raw_at_put_grow( i, (void *) elem, nullptr );
     }

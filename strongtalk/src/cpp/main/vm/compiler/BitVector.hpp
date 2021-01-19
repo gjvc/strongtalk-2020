@@ -14,7 +14,7 @@ class LongRegisterMask;
 // General bit vectors; Space is allocated for maxLength bits, but only the portion up to length bits is used.
 // SimpleBitVector: simple version that fits into a word (for speed)
 
-typedef void (*intDoFn)( int i );
+typedef void (*intDoFn)( std::size_t i );
 
 // a pseudo-class -- int(this) actually holds the bits, so there's no allocation
 class SimpleBitVector : public ValueObject {
@@ -55,27 +55,27 @@ protected:
     int length;     // number of bits, not words
     int *_bits;     // array containing the bits
 
-    int indexFromNumber( int i ) {
+    int indexFromNumber( std::size_t i ) {
         return i >> LogBitsPerWord;
     }
 
 
-    int offsetFromNumber( int i ) {
+    int offsetFromNumber( std::size_t i ) {
         return lowerBits( i, LogBitsPerWord );
     }
 
 
-    bool_t getBitInWord( int i, int o ) {
+    bool_t getBitInWord( std::size_t i, int o ) {
         return isBitSet( _bits[ i ], o );
     }
 
 
-    void setBitInWord( int i, int o ) {
+    void setBitInWord( std::size_t i, int o ) {
         setNthBit( _bits[ i ], o );
     }
 
 
-    void clearBitInWord( int i, int o ) {
+    void clearBitInWord( std::size_t i, int o ) {
         clearNthBit( _bits[ i ], o );
     }
 
@@ -127,7 +127,7 @@ public:
     }
 
 
-    bool_t includes( int i ) {
+    bool_t includes( std::size_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
         st_assert( i >= 0 and i < length, "not in range" );
         bool_t b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
@@ -135,7 +135,7 @@ public:
     }
 
 
-    void add( int i ) {
+    void add( std::size_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
         st_assert( i >= 0 and i < length, "not in range" );
         setBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
@@ -144,7 +144,7 @@ public:
 
     void addFromTo( int first, int last );    // set bits [first..last]
 
-    void remove( int i ) {
+    void remove( std::size_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
         st_assert( i >= 0 and i < length, "not in range" );
         clearBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );

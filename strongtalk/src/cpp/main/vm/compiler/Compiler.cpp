@@ -536,7 +536,7 @@ void Compiler::buildBBs() {        // build the basic block graph
 void Compiler::fixupNonLocalReturnTestPoints() {
     // the NonLocalReturnTest nodes didn't get their correct successors during node generation because
     // their sender scopes' nlrTestPoints may not yet have been created; fix them up now
-    int i = nlrTestPoints->length();
+    std::size_t i = nlrTestPoints->length();
     while ( i-- > 0 )
         nlrTestPoints->at( i )->fixup();
 }
@@ -602,7 +602,7 @@ void Compiler::computeBlockInfo() {
     }
 
     // now collect all remaining contexts
-    int i = allContexts->length();
+    std::size_t i = allContexts->length();
     contextList = new GrowableArray<InlinedScope *>( i, i, nullptr );
     while ( i-- > 0 ) {
         // should merge several contexts into one physical context if possible

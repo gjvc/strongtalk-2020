@@ -263,7 +263,7 @@ public:
     void layout_iterate( ObjectLayoutClosure *blk );
 
     // Returns the Oop size of this object
-    int size() const;
+    std::size_t size() const;
 
     // printing operation
     void print_id_on( ConsoleOutputStream *stream );

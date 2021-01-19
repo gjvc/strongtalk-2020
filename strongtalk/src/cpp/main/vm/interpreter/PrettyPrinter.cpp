@@ -100,7 +100,7 @@ public:
     };
 
 
-    virtual astNode *argument_at( int i ) {
+    virtual astNode *argument_at( std::size_t i ) {
         return nullptr;
     }
 };

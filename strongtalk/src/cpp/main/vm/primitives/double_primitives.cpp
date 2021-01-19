@@ -409,7 +409,7 @@ PRIM_DECL_3( doubleOopPrimitives::mandelbrot, Oop re, Oop im, Oop n ) {
     double d_re = z_re * z_re;
     double d_im = z_im * z_im;
 
-    int i    = 0;
+    std::size_t i    = 0;
     int imax = SMIOop( n )->value() - 1;
 
     while ( i < imax and d_re + d_im <= 4.0 ) {

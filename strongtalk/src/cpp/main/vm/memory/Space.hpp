@@ -11,6 +11,7 @@
 #include "vm/memory/util.hpp"
 #include "vm/memory/WaterMark.hpp"
 
+
 class ObjectClosure;
 
 class Space : public CHeapAllocatedObject {
@@ -172,6 +173,7 @@ public:
         }
     }
 };
+
 
 class SurvivorSpace : public NewSpace {
 private:

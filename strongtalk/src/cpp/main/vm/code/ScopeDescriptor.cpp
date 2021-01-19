@@ -34,7 +34,7 @@ int compareByteCodeIndex( int byteCodeIndex1, int byteCodeIndex2 ) {
 }
 
 
-ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, int offset, const char *pc ) {
+ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc ) {
     _scopes = scopes;
     _offset = offset;
     _pc     = pc;
@@ -81,11 +81,12 @@ ScopeDescriptor *ScopeDescriptor::home( bool_t cross_NativeMethod_boundary ) con
 
 
 NameDescriptor *ScopeDescriptor::temporary( int index, bool_t canFail ) {
-    int pos = _name_desc_offset;
+    std::size_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
+
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        int i = 0;
+        std::size_t    i        = 0;
         while ( current not_eq nullptr ) {
             if ( i == index ) {
                 result = current;
@@ -95,23 +96,29 @@ NameDescriptor *ScopeDescriptor::temporary( int index, bool_t canFail ) {
             i++;
         }
     }
-    if ( not result and not canFail ) st_fatal1( "couldn't find temporary %d", index );
+
+    if ( not result and not canFail ) {
+        st_fatal1( "couldn't find temporary %d", index );
+    }
+    
     return result;
 }
 
 
 NameDescriptor *ScopeDescriptor::contextTemporary( int index, bool_t canFail ) {
-    int pos = _name_desc_offset;
+    std::size_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
+
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
             current = nameDescAt( pos );
         }
     }
+
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        int i = 0;
+        std::size_t    i        = 0;
         while ( current ) {
             if ( i == index ) {
                 result = current;
@@ -121,56 +128,67 @@ NameDescriptor *ScopeDescriptor::contextTemporary( int index, bool_t canFail ) {
             i++;
         }
     }
-    if ( not result and not canFail ) st_fatal1( "couldn't find context temporary %d", index );
+
+    if ( not result and not canFail ) {
+        st_fatal1( "couldn't find context temporary %d", index );
+    }
+
     return result;
 }
 
 
 NameDescriptor *ScopeDescriptor::exprStackElem( int byteCodeIndex ) {
-    int pos = _name_desc_offset;
+    std::size_t pos = _name_desc_offset;
+
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
             current = nameDescAt( pos );
         }
     }
+
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
             current = nameDescAt( pos );
         }
     }
+
     if ( _hasExpressionStack ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
             int the_byteCodeIndex = valueAt( pos );
             if ( byteCodeIndex == the_byteCodeIndex )
                 return current;
-            current               = nameDescAt( pos );
+            current = nameDescAt( pos );
         }
     }
+
     return nullptr;
 }
 
 
 void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
-    int pos = _name_desc_offset;
+    std::size_t pos = _name_desc_offset;
+
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        int number = 0;
+        int            number   = 0;
         while ( current ) {
             blk->temp( number++, current, pc() );
             current = nameDescAt( pos );
         }
     }
+
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        int number = 0;
+        int            number   = 0;
         while ( current ) {
             blk->context_temp( number++, current, pc() );
             current = nameDescAt( pos );
         }
     }
+
     if ( _hasExpressionStack ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
@@ -186,9 +204,9 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
 class IterationHelper : public UnpackClosure {
 protected:
-    int _no;
+    int                   _no;
     NameDescriptorClosure *_blk;
-    bool_t _is_used;
+    bool_t                _is_used;
 
 
     void use() {
@@ -239,7 +257,7 @@ class IH_stack_expr : public IterationHelper {
 
 
 void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
-    int pos = _name_desc_offset;
+    std::size_t pos = _name_desc_offset;
     if ( _hasTemporaries ) {
         int     no = 0;
         IH_temp helper;
@@ -248,6 +266,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
             _scopes->iterate( pos, &helper );
         } while ( helper.is_used() );
     }
+
     if ( _hasContextTemporaries ) {
         int             no = 0;
         IH_context_temp helper;
@@ -256,6 +275,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
             _scopes->iterate( pos, &helper );
         } while ( helper.is_used() );
     }
+
     if ( _hasExpressionStack ) {
         int           no = 0;
         IH_stack_expr helper;
@@ -297,12 +317,12 @@ ScopeDescriptor *ScopeDescriptor::sender() const {
 }
 
 
-NameDescriptor *ScopeDescriptor::nameDescAt( int &offset ) const {
+NameDescriptor *ScopeDescriptor::nameDescAt( std::size_t &offset ) const {
     return _scopes->unpackNameDescAt( offset, pc() );
 }
 
 
-int ScopeDescriptor::valueAt( int &offset ) const {
+int ScopeDescriptor::valueAt( std::size_t &offset ) const {
     return _scopes->unpackValueAt( offset );
 }
 
@@ -329,7 +349,7 @@ bool_t ScopeDescriptor::verify() {
 // verify expression stack at a call or primitive call
 void ScopeDescriptor::verify_expression_stack( int byteCodeIndex ) {
     GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex );
-    for ( std::size_t index = 0; index < mapping->length(); index++ ) {
+    for ( std::size_t  index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
             warning( "expression not found in NativeMethod" );
@@ -346,7 +366,7 @@ void ScopeDescriptor::verify_expression_stack( int byteCodeIndex ) {
 
 class PrintNameDescClosure : public NameDescriptorClosure {
 private:
-    int _indent;
+    int  _indent;
     char *_pc0;
 
 
@@ -530,7 +550,7 @@ LookupKey *TopLevelBlockScopeDescriptor::key() const {
 }
 
 
-NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, int offset ) {
+NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset ) {
     _offset = offset;
     _scopes = scopes;
 
@@ -555,7 +575,7 @@ ScopeDescriptor *NonInlinedBlockScopeDescriptor::parent() const {
 }
 
 
-TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, int offset, const char *pc ) :
+TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc ) :
         ScopeDescriptor( scopes, offset, pc ) {
     _self_name  = _scopes->unpackNameDescAt( _name_desc_offset, pc );
     _self_klass = KlassOop( scopes->unpackOopAt( _name_desc_offset ) );
@@ -575,8 +595,8 @@ void TopLevelBlockScopeDescriptor::printSelf() {
 ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool_t cross_NativeMethod_boundary ) const {
     if ( not cross_NativeMethod_boundary )
         return nullptr;
-    NativeMethod *nm = _scopes->my_nativeMethod();
-    int index;
+    NativeMethod                   *nm     = _scopes->my_nativeMethod();
+    int                            index;
     NativeMethod                   *parent = nm->jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope  = parent->noninlined_block_scope_at( index );
     return scope->parent();

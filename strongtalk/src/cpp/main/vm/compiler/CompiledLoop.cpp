@@ -196,7 +196,7 @@ int CompiledLoop::findStartOfSend( int byteCodeIndex ) {
 
 const char *CompiledLoop::findUpperBound() {
     // find upper bound and loop variable
-    int condByteCodeIndex = _endOfCond ? findStartOfSend( _endOfCond->byteCodeIndex() - InterpretedInlineCache::size ) : IllegalByteCodeIndex;
+    std::size_t condByteCodeIndex = _endOfCond ? findStartOfSend( _endOfCond->byteCodeIndex() - InterpretedInlineCache::size ) : IllegalByteCodeIndex;
     if ( condByteCodeIndex == IllegalByteCodeIndex )
         return "loop condition: no send found";
     // first find comparison in loop condition
@@ -726,7 +726,7 @@ void CompiledLoop::findRegCandidates() {
     const int        len              = _bbs->length();
     const BasicBlock *startBasicBlock = _startOfLoop->bb();
 
-    int i;
+    std::size_t i;
     for ( i = 0; _bbs->at( i ) not_eq startBasicBlock; i++ );    // search for first BasicBlock
 
     const BasicBlock *endBasicBlock = _endOfLoop->bb();

@@ -270,7 +270,7 @@ void MemOopDescriptor::raw_at_put( int which, Oop contents, bool_t cs ) {
 }
 
 
-int MemOopDescriptor::size() const {
+std::size_t MemOopDescriptor::size() const {
     return blueprint()->oop_size( MemOop( this ) );
 }
 

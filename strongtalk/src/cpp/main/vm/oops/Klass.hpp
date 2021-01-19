@@ -191,7 +191,7 @@ public:
 
 
     // allocation operations
-    int size() const {
+    std::size_t size() const {
         return sizeof( Klass ) / sizeof( Oop );
     }
 

@@ -60,7 +60,7 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
                 p[ i ] = i;
         } else {
             int max = min( static_cast<int>(nChunks - 4), static_cast<int>( chunkState::MaxDistance ) );
-            int i   = maxHeaderSize;
+            std::size_t i   = maxHeaderSize;
             for ( ; i < max; i++ )
                 p[ i ] = i;
             // fill rest with large distance values (don't use chunkState::MaxDistance - 1 because
@@ -158,7 +158,7 @@ HeapChunk *FreeList::get() {
 
 
 int FreeList::length() const {
-    int i = 0;
+    std::size_t i = 0;
     HeapChunk       *f = anchor();
     for ( HeapChunk *p = f->next(); p not_eq f; p = p->next() )
         i++;
@@ -510,7 +510,7 @@ const void *ZoneHeap::findStartOfBlock( const void *start ) const {
 }
 
 
-int ZoneHeap::sizeOfBlock( void *p ) const {
+std::size_t ZoneHeap::sizeOfBlock( void *p ) const {
     return mapAddr( p )->size() << log2BS;
 }
 
@@ -532,7 +532,7 @@ void ZoneHeap::verify() const {
     }
 
     // verify free lists
-    int i = 0;
+    std::size_t i = 0;
     for ( ; i < nfree; i++ ) {
         int j        = 0;
         int lastSize = 0;

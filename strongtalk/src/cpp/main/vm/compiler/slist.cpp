@@ -27,10 +27,10 @@ GenericSListElem *GenericSList::findL( void *token, slistFindFn f ) const {
 }
 
 
-void *GenericSList::nthL( int n ) const {
+void *GenericSList::nthL( std::size_t n ) const {
     st_assert( n < length(), "non-existing element" );
-    GenericSListElem *e = headL();
-    for ( std::size_t i = 0; i < n; i++, e = e->nextL() );
+    GenericSListElem  *e = headL();
+    for ( std::size_t i  = 0; i < n; i++, e = e->nextL() );
     return e->dataL();
 }
 
@@ -72,7 +72,9 @@ void GenericSList::removeL( void *p ) {
 
 
 void GenericSList::applyL( void f( void * ) ) {
-    GenericSListElem       *nexte;    // to permit removing during iteration
+
+    GenericSListElem *nexte;    // to permit removing during iteration
+
     for ( GenericSListElem *e = headL(); e; e = nexte ) {
         nexte = e->nextL();
         f( e->dataL() );

@@ -240,7 +240,7 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 // NotificationQueue
 
 Oop *NotificationQueue::array = nullptr;
-int  NotificationQueue::size  = 100;
+std::size_t  NotificationQueue::size  = 100;
 int  NotificationQueue::first = 0;
 int  NotificationQueue::last  = 0;
 

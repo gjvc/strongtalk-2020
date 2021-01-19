@@ -42,16 +42,16 @@ public:
 
     Digit *digits() const;
 
-    Digit &operator[]( int i ) const;
+    Digit &operator[]( std::size_t i ) const;
 
     static int length_to_size_in_bytes( int l );
 
-    int length_in_bits() const;
+    std::size_t length_in_bits() const;
 
     int signum() const;
     // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
-    int size_in_bytes() const;
+    std::size_t size_in_bytes() const;
 
 
     void print();

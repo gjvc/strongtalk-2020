@@ -41,13 +41,13 @@ BasicBlock *BasicBlock::firstPrev() const {
 }
 
 
-BasicBlock *BasicBlock::next( int i ) const {
+BasicBlock *BasicBlock::next( std::size_t i ) const {
     Node *n = _last->next( i );
     return n ? n->bb() : nullptr;
 }
 
 
-BasicBlock *BasicBlock::prev( int i ) const {
+BasicBlock *BasicBlock::prev( std::size_t i ) const {
     Node *n = _first->prev( i );
     return n ? n->bb() : nullptr;
 }
@@ -382,7 +382,7 @@ int BasicBlock::addUDHelper( PseudoRegister *r ) {
     PseudoRegisterBasicBlockIndex *p;
     if ( bbIterator->_usesBuilt ) {
         // find entry for the PseudoRegister
-        int i = r->_dus.find( this, findMyBasicBlock );
+        std::size_t i = r->_dus.find( this, findMyBasicBlock );
         if ( i >= 0 ) {
             p = r->_dus.at( i );
         } else {

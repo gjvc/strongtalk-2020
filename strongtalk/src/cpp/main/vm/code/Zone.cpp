@@ -570,9 +570,9 @@ void Zone::print_NativeMethod_histogram( int size ) {
 
     qsort(hist_array, n, sizeof(nm_hist_elem), compareOop);
 
-    for (int i = 0; i < n; i++) compiled_nativeMethods[i] = 0;
+    for (std::size_t i = 0; i < n; i++) compiled_nativeMethods[i] = 0;
 
-    int i = 0;
+    std::size_t i = 0;
     int out = 0;
     while (i < n) {
       int counter     = 1;
@@ -612,7 +612,7 @@ void Zone::print_NativeMethod_histogram( int size ) {
 
     printf("\n# nm \t # methods \t%% acc.\n");
     int nm_count = 0;
-    for (int i = 0; i < n; i++) {
+    for (std::size_t i = 0; i < n; i++) {
       if (compiled_nativeMethods[i] > 0) {
         nm_count += i * compiled_nativeMethods[i];
         printf("%5ld \t%5ld \t\t%3ld %%\n", i, compiled_nativeMethods[i],
@@ -623,7 +623,7 @@ void Zone::print_NativeMethod_histogram( int size ) {
 
     printf( "\nList of methods with more than %d nativeMethods compiled.\n", size);
     printf( " ALL(#,Kb)  Compiler(#,Kb) Method:\n");
-    for (int i = 0; i < out; i++) {
+    for (std::size_t i = 0; i < out; i++) {
       printf("%4d,%-4d   %4d,%-4d ",
          hist_array[i].count,     hist_array[i].size / 1024,
          hist_array[i].sic_count, hist_array[i].sic_size / 1024);

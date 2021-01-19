@@ -31,7 +31,7 @@ class IntegerOps : AllStatic {
 public:
     static Digit as_Digit( char c );
 
-    static char as_char( int i );
+    static char as_char( std::size_t i );
 
     static Digit xpy( Digit x, Digit y, Digit &carry );
 
@@ -129,7 +129,7 @@ public:
 
     static int copy_result_size_in_bytes( Integer &x );
 
-    static int int_to_Integer_result_size_in_bytes( int i );
+    static int int_to_Integer_result_size_in_bytes( std::size_t i );
 
     static int unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i );
 
@@ -162,7 +162,7 @@ public:
     // copy & conversion operations
     static void copy( Integer &x, Integer &z );
 
-    static void int_to_Integer( int i, Integer &z );
+    static void int_to_Integer( std::size_t i, Integer &z );
 
     static void unsigned_int_to_Integer( std::uint32_t i, Integer &z );
 
@@ -173,7 +173,7 @@ public:
     static void Integer_to_string( Integer &x, int base, char *s );
 };
 
-int length_in_bits( Digit x );
+std::size_t length_in_bits( Digit x );
 
 void shift_left( Digit d[], int length, int shift_count );
 

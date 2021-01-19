@@ -261,7 +261,7 @@ public:
 
     int allocate();         // returns a new integer, grows the list if necessary
     int allocated();        // returns the number of allocated integers
-    void release( int i );  // marks the integer i as 'available' again
+    void release( std::size_t i );  // marks the integer i as 'available' again
     int length();           // the maximum number of integers ever allocated
     void print();           //
 

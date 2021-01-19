@@ -204,7 +204,7 @@ public:
 
     void initForTesting( int size, LookupKey *key ); // to support testing
 
-    int size() const {
+    std::size_t size() const {
         return end() - ( (const char *) this );
     }    // total size of NativeMethod
 

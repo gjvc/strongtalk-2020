@@ -381,7 +381,7 @@ Oop CompiledVirtualFrame::temp_at( int offset ) const {
 class ContextTempFindClosure : public NameDescriptorClosure {
 public:
     NameDescriptor *result;
-    int i;
+    std::size_t i;
 
 
     ContextTempFindClosure( int index ) {

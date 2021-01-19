@@ -85,13 +85,13 @@ public:
     virtual NativeMethod *compiled_method() const = 0;    // target NativeMethod; nullptr if interpreted
 
     // methods for direct access to ith element (will set iteration state to i)
-    void goto_elem( int i );
+    void goto_elem( std::size_t i );
 
-    MethodOop interpreted_method( int i );
+    MethodOop interpreted_method( std::size_t i );
 
-    NativeMethod *compiled_method( int i );
+    NativeMethod *compiled_method( std::size_t i );
 
-    KlassOop klass( int i );
+    KlassOop klass( std::size_t i );
 
 };
 

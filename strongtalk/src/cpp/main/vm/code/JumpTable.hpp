@@ -220,7 +220,7 @@ public:
 
 
     // size of jump table entry
-    static int size() {
+    static std::size_t size() {
         return (int) align( (void *) ( sizeof( char ) + jump_inst_size() ), sizeof( Oop ) );
     }
 

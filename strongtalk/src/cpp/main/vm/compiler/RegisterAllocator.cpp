@@ -37,7 +37,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
 
     GrowableArray<PseudoRegister *> *regs = new GrowableArray<PseudoRegister *>( globals->length() );
 
-    int i = globals->length();
+    std::size_t i = globals->length();
 
     while ( i-- > 0 ) {
         PseudoRegister *r = globals->at( i );

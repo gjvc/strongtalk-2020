@@ -539,7 +539,7 @@ public:
     }
 
 
-    virtual Node *next( int i ) const {
+    virtual Node *next( std::size_t i ) const {
         if ( i == 0 )
             return _next;
         else {
@@ -585,7 +585,7 @@ public:
     }
 
 
-    virtual void setNext( int i, Node *n ) {
+    virtual void setNext( std::size_t i, Node *n ) {
         if ( i == 0 )
             setNext( n );
         else st_fatal( "subclass" );
@@ -622,7 +622,7 @@ public:
     }
 
 
-    Node *append( int i, Node *p ) {
+    Node *append( std::size_t i, Node *p ) {
         setNext( i, p );
         p->setPrev( this );
         return p;
@@ -2008,7 +2008,7 @@ public:
     }
 
 
-    Node *next( int i ) const {
+    Node *next( std::size_t i ) const {
         return i == 0 ? _next : _nxt->at( i - 1 );
     }
 
@@ -2029,7 +2029,7 @@ public:
     }
 
 
-    void setNext( int i, Node *n );
+    void setNext( std::size_t i, Node *n );
 
     void moveNext( Node *from, Node *to );
 
@@ -2836,12 +2836,12 @@ public:
     }
 
 
-    Expression *contextTemp( int i ) const {
+    Expression *contextTemp( std::size_t i ) const {
         return contents()->at( i );
     }
 
 
-    Expression *initialValue( int i ) const {
+    Expression *initialValue( std::size_t i ) const {
         return _initializers->at( i );
     }
 
@@ -2858,8 +2858,8 @@ public:
     }
 
 
-    void initialize( int no, Expression *expr );        // to copy something into the context right after creation
-    int positionOfContextTemp( int i ) const;    // position of ith context temp in compiled context
+    void initialize( std::size_t no, Expression *expr );        // to copy something into the context right after creation
+    std::size_t positionOfContextTemp( std::size_t i ) const;    // position of ith context temp in compiled context
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
     void makeUses( BasicBlock *bb );

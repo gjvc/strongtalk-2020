@@ -52,22 +52,22 @@ private:
     }
 
 
-    static int unpack_word_aligned( std::uint16_t v ) {
+    static std::size_t unpack_word_aligned( std::uint16_t v ) {
         return v << LogBytesPerWord;
     }
 
 
-    int oops_offset() const {
+    std::size_t oops_offset() const {
         return unpack_word_aligned( _oopsOffset );
     }
 
 
-    int value_offset() const {
+    std::size_t value_offset() const {
         return unpack_word_aligned( _valueOffset );
     }
 
 
-    int pcs_offset() const {
+    std::size_t pcs_offset() const {
         return unpack_word_aligned( _pcsOffset );
     }
 
@@ -84,7 +84,7 @@ public: // for debugging
     }
 
 
-    int oops_size() const {
+    std::size_t oops_size() const {
         return ( value_offset() - oops_offset() ) / sizeof( Oop );
     }
 
@@ -101,7 +101,7 @@ private:
     }
 
 
-    int value_size() const {
+    std::size_t value_size() const {
         return ( pcs_offset() - value_offset() ) / sizeof( int );
     }
 
@@ -112,11 +112,11 @@ private:
     }
 
 
-    inline std::uint8_t getIndexAt( int &offset ) const;
+    inline std::uint8_t getIndexAt( std::size_t &offset ) const;
 
-    inline Oop unpackOopFromIndex( std::uint8_t index, int &offset ) const;
+    inline Oop unpackOopFromIndex( std::uint8_t index, std::size_t &offset ) const;
 
-    inline int unpackValueFromIndex( std::uint8_t index, int &offset ) const;
+    inline int unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const;
 
 private:
     friend class ScopeDescriptorRecorder;
@@ -204,7 +204,7 @@ public:
     }
 
 
-    int size() const {
+    std::size_t size() const {
         return sizeof( NativeMethodScopes ) + length();
     }
 
@@ -228,12 +228,12 @@ public:
     }
 
 
-    std::uint8_t get_next_char( int &offset ) const {
+    std::uint8_t get_next_char( std::size_t &offset ) const {
         return *( start() + offset++ );
     }
 
 
-    std::int16_t get_next_half( int &offset ) const;
+    std::int16_t get_next_half( std::size_t &offset ) const;
 
 
     std::uint8_t peek_next_char( int offset ) const {
@@ -241,15 +241,15 @@ public:
     }
 
 
-    Oop unpackOopAt( int &offset ) const;
+    Oop unpackOopAt( std::size_t &offset ) const;
 
-    int unpackValueAt( int &offset ) const;
+    int unpackValueAt( std::size_t &offset ) const;
 
-    void iterate( int &offset, UnpackClosure *closure ) const;    // iterates over a string of NameDescs (iterator is not called at termination)
-    NameDescriptor *unpackNameDescAt( int &offset, const char *pc ) const;    // Unpacks a string of name descs and returns one matching the pc
+    void iterate( std::size_t &offset, UnpackClosure *closure ) const;    // iterates over a string of NameDescs (iterator is not called at termination)
+    NameDescriptor *unpackNameDescAt( std::size_t &offset, const char *pc ) const;    // Unpacks a string of name descs and returns one matching the pc
 
 private:
-    NameDescriptor *unpackNameDescAt( int &offset, bool_t &is_last, const char *pc ) const;    // Unpacks a single name desc at offset
+    NameDescriptor *unpackNameDescAt( std::size_t &offset, bool_t &is_last, const char *pc ) const;    // Unpacks a single name desc at offset
 
 public:
 

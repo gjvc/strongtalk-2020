@@ -93,12 +93,12 @@ private:
     GrowableArray<int>    *_locations;        // previous preg location or illegalLocation
     GrowableArray<bool_t> *_present;          // true if preg is currently present
 
-    Location location_at( int i ) {
+    Location location_at( std::size_t i ) {
         return Location( _locations->at( i ) );
     }
 
 
-    void location_at_put( int i, Location loc ) {
+    void location_at_put( std::size_t i, Location loc ) {
         _locations->at_put( i, loc._loc );
     }
 
@@ -116,7 +116,7 @@ public:
             // record only debug-visible PseudoRegisters & ignore context PseudoRegisters
             // Note: ContextPseudoRegisters appear in the mapping only because
             //       their values might also be cached in a register.
-            int i = preg->id();
+            std::size_t i = preg->id();
             _pregs->at_put( i, preg );        // make sure preg is available
             _present->at_put( i, true );        // mark it as present
         }
@@ -700,7 +700,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, int nofArgs ) {
     }
 
     verifyObj( recv );
-    int i = nofArgs;
+    std::size_t i = nofArgs;
     Oop *arg = ebp + ( nofArgs + 2 );
     while ( i-- > 0 ) {
         arg--;
@@ -950,7 +950,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
         _masm->movl( t.reg(), Universe::nilObj() );
         _nilReg = t.reg();
         const char *beg = _masm->pc();
-        int i = 10;
+        std::size_t i = 10;
         while ( i-- > 0 )
             _masm->nop();
         const char *end = _masm->pc();
@@ -1721,7 +1721,7 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
   int last;						// last case that generates a test
   for (last = len; last >= 0 and _tests->at(last)->testedPR->loc == unAllocated; last--) ;
   if (last < 0) return;					// no tests at all
-  for (int i = 0; i <= last; i++) {
+  for (std::size_t i = 0; i <= last; i++) {
     HoistedTypeTest* t = _tests->at(i);
     if (t->testedPR->loc == unAllocated) continue;	// optimized away, or ConstPseudoRegister
     if (t->testedPR->isConstPseudoRegister()) {
@@ -1741,7 +1741,7 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
 	const int len = t->klasses->length();
 	GrowableArray<Label*> labels(len + 1);
 	labels.append(&failure);
-	for (int i = 0; i < len; i++) labels.append(ok);
+	for (std::size_t i = 0; i < len; i++) labels.append(ok);
 	generalTypeTest(obj, klassReg, true, t->klasses, &labels);
       }
       if (i not_eq last) theMacroAssm->bind(*ok);
@@ -1836,7 +1836,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
     // use the loop variable without an index range check, we need to check it here.
     PseudoRegister      *loopArray = node->upperLoad()->src();
     AbstractArrayAtNode *atNode;
-    int i = node->arrayAccesses()->length();
+    std::size_t i = node->arrayAccesses()->length();
     while ( i-- > 0 ) {
         atNode = node->arrayAccesses()->at( i );
         if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
@@ -1875,7 +1875,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
     // without an index range check, we need to check it here.
     PseudoRegister* loopArray = _upperLoad->src();
     AbstractArrayAtNode* atNode;
-    for (int i = _arrayAccesses->length() - 1; i >= 0; i--) {
+    for (std::size_t i = _arrayAccesses->length() - 1; i >= 0; i--) {
       atNode = _arrayAccesses->at(i);
       if (atNode->src() == loopArray and not atNode->needsBoundsCheck()) break;
     }

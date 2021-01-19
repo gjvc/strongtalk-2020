@@ -227,7 +227,7 @@ static void factorial( int n ) {
 
 TEST( IntegerOpsTest, test_factorial ) {
 
-    int i = 0;
+    std::size_t i = 0;
     while ( i <= 10 ) {
         factorial( i );
         i++;
@@ -268,7 +268,7 @@ TEST( IntegerOpsTest, test_unfactorial ) {
 
     Integer x, y, z;
 
-    int i = 0;
+    std::size_t i = 0;
     while ( i <= 10 ) {
         unfactorial( i );
         i++;
@@ -285,7 +285,7 @@ TEST( IntegerOpsTest, test_unfactorial ) {
 
 TEST( IntegerOpsTest, int_to_Integer ) {
 
-    int i;
+    std::size_t i;
 
     i = -10;
     while ( i <= 10 ) {
@@ -307,7 +307,7 @@ TEST( IntegerOpsTest, int_to_Integer ) {
 
 TEST( IntegerOpsTest, double_to_Integer ) {
 
-    int i;
+    std::size_t i;
 
     i = -10;
     while ( i <= 10 ) {

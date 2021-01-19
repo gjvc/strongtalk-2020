@@ -29,7 +29,7 @@ void InterpreterStatistics::reset_bytecode_generation_order() {
 }
 
 
-ByteCodes::Code InterpreterStatistics::ith_bytecode_to_generate( int i ) {
+ByteCodes::Code InterpreterStatistics::ith_bytecode_to_generate( std::size_t i ) {
     st_assert( 0 <= i and i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES), "illegal index" );
     return ByteCodes::Code( _bytecode_generation_order[ i ] );
 }

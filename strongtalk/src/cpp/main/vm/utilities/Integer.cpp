@@ -16,13 +16,13 @@ int Integer::length() const {
 }
 
 
-int Integer::length_in_bits() const {
+std::size_t Integer::length_in_bits() const {
 
     if ( is_zero() ) {
         return 0;
     }
 
-    int i = length() - 1;
+    std::size_t i = length() - 1;
     return i * logB + ::length_in_bits( operator[]( i ) );
 
 }
@@ -129,7 +129,7 @@ SMIOop Integer::as_smi( bool_t &ok ) const {
 void Integer::print() {
     char s[100000]; // for the time being - FIX THIS
     IntegerOps::Integer_to_string( *this, 10, s );
-    int i = 0;
+    std::size_t i = 0;
     while ( s[ i ] not_eq '\x0' ) {
         _console->print( "%c", s[ i ] );
         i++;
@@ -142,7 +142,7 @@ void Integer::set_length( int l ) {
 }
 
 
-Digit &Integer::operator[]( int i ) const {
+Digit &Integer::operator[]( std::size_t i ) const {
     return digits()[ i ];
 }
 
@@ -197,6 +197,6 @@ bool_t Integer::is_valid() const {
 }
 
 
-int Integer::size_in_bytes() const {
+std::size_t Integer::size_in_bytes() const {
     return length_to_size_in_bytes( length() );
 }

@@ -123,7 +123,7 @@ IntFreeList::IntFreeList( int size ) {
 int IntFreeList::allocate() {
     if ( _first < 0 )
         grow();
-    int i = _first;
+    std::size_t i = _first;
     _first = _list->at( i );
     _list->at_put( i, -1 ); // for debugging only
     return i;
@@ -132,7 +132,7 @@ int IntFreeList::allocate() {
 
 int IntFreeList::allocated() {
     int n = length();
-    int i = _first;
+    std::size_t i = _first;
     while ( i >= 0 ) {
         i = _list->at( i );
         n--;
@@ -142,7 +142,7 @@ int IntFreeList::allocated() {
 }
 
 
-void IntFreeList::release( int i ) {
+void IntFreeList::release( std::size_t i ) {
     st_assert( _list->at( i ) == -1, "should have been allocated before" );
     _list->at_put( i, _first );
     _first = i;

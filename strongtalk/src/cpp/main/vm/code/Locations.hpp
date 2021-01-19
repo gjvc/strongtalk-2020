@@ -83,12 +83,12 @@ public:
     // Location management
     int allocateRegister();                 // allocates a new register (fatal if not freeRegisters())
     int allocateStackTmp();                 // allocates a new stack location
-    void allocate( int i );                 // allocates location i, i must have been unallocated
-    void use( int i );                      // uses location i once again, i must be allocated already
-    void release( int i );                  // releases a register or stack location
+    void allocate( std::size_t i );                 // allocates location i, i must have been unallocated
+    void use( std::size_t i );                      // uses location i once again, i must be allocated already
+    void release( std::size_t i );                  // releases a register or stack location
 
     // Testers
-    int nofUses( int i ) const;             // the number of times the location has been use'd (including allocation)
+    int nofUses( std::size_t i ) const;             // the number of times the location has been use'd (including allocation)
     int nofTotalUses() const;               // the number of total uses of all locations (for verification purposes)
     int nofArguments() const {
         return _nofArguments;
@@ -112,27 +112,27 @@ public:
     }
 
 
-    bool_t isLocation( int i ) const {
+    bool_t isLocation( std::size_t i ) const {
         return locationsBeg() <= i and i < locationsEnd();
     }
 
 
-    bool_t isArgument( int i ) const {
+    bool_t isArgument( std::size_t i ) const {
         return argumentsBeg() <= i and i < argumentsEnd();
     }
 
 
-    bool_t isRegister( int i ) const {
+    bool_t isRegister( std::size_t i ) const {
         return registersBeg() <= i and i < registersEnd();
     }
 
 
-    bool_t isStackTmp( int i ) const {
+    bool_t isStackTmp( std::size_t i ) const {
         return stackTmpsBeg() <= i and i < stackTmpsEnd();
     }
 
 
-    bool_t isStackLoc( int i ) const {
+    bool_t isStackLoc( std::size_t i ) const {
         return isArgument( i ) or isStackTmp( i );
     }
 

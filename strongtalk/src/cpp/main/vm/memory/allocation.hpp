@@ -36,9 +36,6 @@
 */
 
 
-
-
-
 // Base class for objects used as value objects.
 // Calling new or delete will result in fatal error.
 class ValueObject {
@@ -47,6 +44,7 @@ public:
 
     void operator delete( void *p );
 };
+
 
 // Base class for classes that constitute name spaces.
 class AllStatic {
@@ -67,6 +65,7 @@ public:
     void *new_array( std::size_t size );
 };
 
+
 // Base class for objects with printing behavior allocated on the c-heap
 class PrintableCHeapAllocatedObject : public CHeapAllocatedObject {
 public:
@@ -74,6 +73,7 @@ public:
 
     virtual void print_short();
 };
+
 
 // Base class for objects allocated only on the stack.
 // Calling new or delete will result in fatal error.

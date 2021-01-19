@@ -32,7 +32,7 @@ public:
     static bool_t is_initialized();
 
 
-    static ByteCodes::Code ith_bytecode_to_generate( int i );
+    static ByteCodes::Code ith_bytecode_to_generate( std::size_t i );
 
     static void initialize();
 };

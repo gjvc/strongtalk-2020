@@ -37,7 +37,7 @@ struct SymbolTableLink {
     SymbolTableLink *next;
 
     // memory operations
-    bool_t verify( int i );
+    bool_t verify( std::size_t i );
 };
 
 struct SymbolTableEntry {
@@ -80,7 +80,7 @@ struct SymbolTableEntry {
 
 
     // memory operations
-    bool_t verify( int i );
+    bool_t verify( std::size_t i );
 
     void deallocate();
 

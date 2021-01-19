@@ -167,7 +167,7 @@ PRIM_DECL_2( behaviorPrimitives::classVariableAt, Oop behavior, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    int i = SMIOop( index )->value();
+    std::size_t i = SMIOop( index )->value();
     if ( i > 0 and i <= KlassOop( behavior )->klass_part()->number_of_classVars() )
         return KlassOop( behavior )->klass_part()->classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );

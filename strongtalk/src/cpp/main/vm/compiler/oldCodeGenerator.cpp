@@ -529,7 +529,7 @@ extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
         lprintf( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObj( recv );
-    int i = nofArgs;
+    std::size_t i = nofArgs;
     Oop *arg = (Oop *) ( ebp + ( nofArgs + 2 ) * oopSize );
     while ( i-- > 0 ) {
         arg--;
@@ -1751,7 +1751,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
     GrowableArray<Label *>  labels( len );    // list of nodes   excluding smi_t case
 
     // compute klasses & nodes list without smi_t case
-    int i = 0;
+    std::size_t i = 0;
     for ( ; i < len; i++ ) {
         const KlassOop klass = classes->at( i );
         if ( klass == Universe::smiKlassObj() ) {
@@ -1917,7 +1917,7 @@ void TypeTestNode::gen() {
   GrowableArray<Node*>    nodes(len);	// list of nodes   excluding smi_t case
 
   // compute klasses & nodes list without smi_t case
-  for (int i = 0; i < len; i++) {
+  for (std::size_t i = 0; i < len; i++) {
     const klassOop klass = classes()->at(i);
     if (klass == Universe::smiKlassObj()) {
       smi_case = next(i+1);
@@ -1940,7 +1940,7 @@ void TypeTestNode::gen() {
 
   bool_t klassHasBeenLoaded = false;
   const int nof_cmps = hasUnknown() ? klasses.length() : klasses.length() - 1;
-  for (int i = 0; i < nof_cmps; i++) {
+  for (std::size_t i = 0; i < nof_cmps; i++) {
     const klassOop klass = klasses.at(i);
     if (klass == Universe::trueObj()->klass()) {
       // only one instance: compare with trueObj
@@ -2232,7 +2232,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
         // without an index range check, we need to check it here.
         PseudoRegister      *loopArray = _upperLoad->src();
         AbstractArrayAtNode *atNode;
-        int i = _arrayAccesses->length() - 1;
+        std::size_t i = _arrayAccesses->length() - 1;
         for ( ; i >= 0; i-- ) {
             atNode = _arrayAccesses->at( i );
             if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )

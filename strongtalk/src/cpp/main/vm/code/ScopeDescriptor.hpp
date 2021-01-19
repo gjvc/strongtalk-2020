@@ -88,22 +88,22 @@ class ScopeDescriptor : public PrintableResourceObject {        // abstract
 protected:
     // Creation information
     const NativeMethodScopes *_scopes;
-    int _offset;
-    const char *_pc;
+    std::size_t              _offset;
+    const char               *_pc;
 
 protected:
     // Cached information
-    bool_t    _hasTemporaries;
-    bool_t    _hasContextTemporaries;
-    bool_t    _hasExpressionStack;
-    MethodOop _method;
-    int       _scopeID;
-    bool_t    _lite;
-    int       _senderScopeOffset;
-    int       _senderByteCodeIndex;
-    bool_t    _allocatesCompiledContext;
-    int       _name_desc_offset;
-    int       _next;
+    bool_t      _hasTemporaries;
+    bool_t      _hasContextTemporaries;
+    bool_t      _hasExpressionStack;
+    MethodOop   _method;
+    int         _scopeID;
+    bool_t      _lite;
+    std::size_t _senderScopeOffset;
+    std::size_t _senderByteCodeIndex;
+    bool_t      _allocatesCompiledContext;
+    std::size_t _name_desc_offset;
+    int         _next;
 
     // If the pc of a ScopeDescriptor is equal to invalid_pc, the scopeDesc is pc independent.
     // A pc independent ScopeDescriptor prints out all the locations for its nameDescs.
@@ -114,11 +114,11 @@ public:
     void iterate( NameDescriptorClosure *blk );    // info for given pc()
     void iterate_all( NameDescriptorClosure *blk );    // info for all pc's
 
-    NameDescriptor *nameDescAt( int &offset ) const;
+    NameDescriptor *nameDescAt( std::size_t &offset ) const;
 
-    int valueAt( int &offset ) const;
+    int valueAt( std::size_t &offset ) const;
 
-    ScopeDescriptor( const NativeMethodScopes *scopes, int offset, const char *pc );
+    ScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc );
 
 
     int offset() const {
@@ -189,7 +189,7 @@ public:
 
     // Returns the byteCodeIndex of the calling method if this scopeDesc is inlined.
     // For a root scopeDesc IllegalByteCodeIndex is returned.
-    int senderByteCodeIndex() const {
+    std::size_t senderByteCodeIndex() const {
         st_assert( _senderByteCodeIndex not_eq IllegalByteCodeIndex, "need to ask calling byte code" );
         return _senderByteCodeIndex;
     }
@@ -288,7 +288,7 @@ public:
 class MethodScopeDescriptor : public ScopeDescriptor {
 protected:
     // Cached information
-    LookupKey _key;
+    LookupKey      _key;
     NameDescriptor *_self_name;
 
 public:
@@ -372,10 +372,10 @@ class TopLevelBlockScopeDescriptor : public ScopeDescriptor {
 protected:
     // Cached information
     NameDescriptor *_self_name;
-    KlassOop _self_klass;
+    KlassOop       _self_klass;
 
 public:
-    TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, int offset, const char *pc );
+    TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc );
 
 
     // type test operations
@@ -418,7 +418,7 @@ class NonInlinedBlockScopeDescriptor : public PrintableResourceObject {
 protected:
     // Creation information
     const NativeMethodScopes *_scopes;
-    int _offset;
+    int                      _offset;
 
 protected:
     // Cached information
@@ -426,7 +426,7 @@ protected:
     int       _parentScopeOffset;
 
 public:
-    NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, int offset );
+    NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset );
 
 
     MethodOop method() const {

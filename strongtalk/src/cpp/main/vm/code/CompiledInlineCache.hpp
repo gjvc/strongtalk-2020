@@ -209,10 +209,10 @@ public:
     KlassOop targetKlass() const;    // klass of compiled or interpreted target;
     // can only call if single target
     int ntargets() const;    // number of targets in inline cache or PolymorphicInlineCache
-    KlassOop get_klass( int i ) const; // receiver klass of ith target (i=0..ntargets()-1)
+    KlassOop get_klass( std::size_t i ) const; // receiver klass of ith target (i=0..ntargets()-1)
 
     // returns the lookup key for PolymorphicInlineCache index
-    LookupKey *key( int which, bool_t is_normal_send ) const;
+    LookupKey *key( std::size_t which, bool_t is_normal_send ) const;
 
     void reset_jump_addr();
 

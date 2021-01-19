@@ -293,7 +293,7 @@ void help() {
     _console->print_cr( "  pv(int p)     - ((PrintableResourceObj*) p)->print()" );
     _console->print_cr( "  ps()          - print current process stack" );
     _console->print_cr( "  pss()         - print all process stacks" );
-    _console->print_cr( "  oat(int i)    - print object with id = i" );
+    _console->print_cr( "  oat(std::size_t i)    - print object with id = i" );
 
     _console->print_cr( "methodOop" );
     _console->print_cr( "  pm(int m)     - pretty print methodOop(m)" );

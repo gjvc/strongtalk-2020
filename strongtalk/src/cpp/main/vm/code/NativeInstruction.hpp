@@ -44,7 +44,7 @@ protected:
     }
 
 
-    void set_long_at( int offset, int i ) {
+    void set_long_at( int offset, std::size_t i ) {
         *(int *) addr_at( offset ) = i;
     }
 

@@ -123,7 +123,7 @@ bool_t InliningPolicy::isBuiltinMethod() const {
 }
 
 
-KlassOop CompilerInliningPolicy::nthArgKlass( int i ) const {
+KlassOop CompilerInliningPolicy::nthArgKlass( std::size_t i ) const {
     int first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
     Expression *e = _sender->exprStack()->at( first + i );
     return e->hasKlass() ? e->klass() : nullptr;
@@ -170,7 +170,7 @@ const char *CompilerInliningPolicy::shouldInline( InlinedScope *s, InlinedScope 
 }
 
 
-KlassOop RecompilerInliningPolicy::nthArgKlass( int i ) const {
+KlassOop RecompilerInliningPolicy::nthArgKlass( std::size_t i ) const {
     return _deltaVirtualFrame ? _deltaVirtualFrame->argument_at( i )->klass() : nullptr;
 }
 
@@ -227,7 +227,7 @@ const char *RecompilerInliningPolicy::shouldInline( const NativeMethod *nm ) {
 
     // compute the allowable cost based on the method type and the provided arguments
     int cost_limit = _methodOop->is_blockMethod() ? MaxBlockInstrSize : MaxFnInstrSize;
-    int i          = _methodOop->number_of_arguments();
+    std::size_t i          = _methodOop->number_of_arguments();
     while ( i-- > 0 ) {
         KlassOop k = nthArgKlass( i );
         if ( k and k->klass_part()->oop_is_block() )

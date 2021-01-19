@@ -116,7 +116,7 @@ public:
     void add_dependent( LookupKey *key );
 
     // Returns the size of the generated scopeDescs.
-    int size();
+    std::size_t size();
 
     // Copy the generated scopeDescs to 'addr'
     void copyTo( NativeMethod *nativeMethod );

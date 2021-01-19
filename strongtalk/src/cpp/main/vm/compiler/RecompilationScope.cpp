@@ -84,13 +84,13 @@ InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummy
 
 UntakenRecompilationScope::UntakenRecompilationScope( NonDummyRecompilationScope *sender, ProgramCounterDescriptor *p, bool_t u ) :
         NonDummyRecompilationScope( sender, p->_byteCodeIndex, nullptr, 0 ), isUncommon( u ), pc( p ) {
-    int i = 0;    // to allow setting breakpoints
+    std::size_t i = 0;    // to allow setting breakpoints
 }
 
 
 UninlinableRecompilationScope::UninlinableRecompilationScope( NonDummyRecompilationScope *sender, int byteCodeIndex ) :
         NullRecompilationScope( sender, byteCodeIndex ) {
-    int i = 0;    // to allow setting breakpoints
+    std::size_t i = 0;    // to allow setting breakpoints
 }
 
 
@@ -575,7 +575,7 @@ void RecompilationScope::print() {
 
 
 void NonDummyRecompilationScope::printSubScopes() const {
-    int i = 0;
+    std::size_t i = 0;
     for ( ; i < ncodes and _subScopes[ i ] == nullptr; i++ );
     if ( i < ncodes ) {
         _console->print( "{ " );

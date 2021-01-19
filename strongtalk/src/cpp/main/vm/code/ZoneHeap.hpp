@@ -195,7 +195,7 @@ public:
     }
 
 
-    int size() {        // size of this block
+    std::size_t size() {        // size of this block
         int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         int len;
         st_assert( c( 0 ) not_eq static_cast<std::uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<std::uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
@@ -322,7 +322,7 @@ public:
     const void *firstUsed() const; // Address of first used object
     const void *nextUsed( const void *prev ) const;
     const void *findStartOfBlock( const void *start ) const;
-    int sizeOfBlock( void *nm ) const;
+    std::size_t sizeOfBlock( void *nm ) const;
 
     // Misc.
     void verify() const;

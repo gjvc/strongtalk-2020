@@ -334,7 +334,7 @@ void BasicBlockIterator::apply( BBDoFn f ) {
 
 void BasicBlockIterator::verify() {
     if ( _basicBlockTable ) {
-        int i = 0;
+        std::size_t i = 0;
         for ( ; i < _basicBlockCount; i++ ) {
             _basicBlockTable->at( i )->verify();
         }

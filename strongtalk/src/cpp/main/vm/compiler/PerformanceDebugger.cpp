@@ -73,7 +73,7 @@ void PerformanceDebugger::finish_reporting() {
         Reporter r( this );
         _stringStream->print( "  did not inline the following sends because the NativeMethod was getting too big:" );
         int len = _notInlinedBecauseNativeMethodTooBig->length();
-        int i   = 0;
+        std::size_t i   = 0;
         for ( ; i < min( 9, len ); i++ ) {
             if ( i % 3 == 0 )
                 _stringStream->print_cr( "" );

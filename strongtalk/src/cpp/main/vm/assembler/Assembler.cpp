@@ -190,7 +190,7 @@ void Assembler::emit_operand( const Register &r, const Address &a ) {
 }
 
 
-void Assembler::emit_farith( int b1, int b2, int i ) {
+void Assembler::emit_farith( int b1, int b2, std::size_t i ) {
     st_assert( isByte( b1 ) and isByte( b2 ), "wrong opcode" );
     st_assert( 0 <= i and i < 8, "illegal stack offset" );
     emit_byte( b1 );
@@ -1097,47 +1097,47 @@ void Assembler::fdiv_d( const Address &a ) {
 }
 
 
-void Assembler::fadd( int i ) {
+void Assembler::fadd( std::size_t i ) {
     emit_farith( 0xDC, 0xC0, i );
 }
 
 
-void Assembler::fsub( int i ) {
+void Assembler::fsub( std::size_t i ) {
     emit_farith( 0xDC, 0xE8, i );
 }
 
 
-void Assembler::fmul( int i ) {
+void Assembler::fmul( std::size_t i ) {
     emit_farith( 0xDC, 0xC8, i );
 }
 
 
-void Assembler::fdiv( int i ) {
+void Assembler::fdiv( std::size_t i ) {
     emit_farith( 0xDC, 0xF8, i );
 }
 
 
-void Assembler::faddp( int i ) {
+void Assembler::faddp( std::size_t i ) {
     emit_farith( 0xDE, 0xC0, i );
 }
 
 
-void Assembler::fsubp( int i ) {
+void Assembler::fsubp( std::size_t i ) {
     emit_farith( 0xDE, 0xE8, i );
 }
 
 
-void Assembler::fsubrp( int i ) {
+void Assembler::fsubrp( std::size_t i ) {
     emit_farith( 0xDE, 0xE0, i );
 }
 
 
-void Assembler::fmulp( int i ) {
+void Assembler::fmulp( std::size_t i ) {
     emit_farith( 0xDE, 0xC8, i );
 }
 
 
-void Assembler::fdivp( int i ) {
+void Assembler::fdivp( std::size_t i ) {
     emit_farith( 0xDE, 0xF8, i );
 }
 
@@ -1154,7 +1154,7 @@ void Assembler::fprem1() {
 }
 
 
-void Assembler::fxch( int i ) {
+void Assembler::fxch( std::size_t i ) {
     emit_farith( 0xD9, 0xC8, i );
 }
 
@@ -1165,7 +1165,7 @@ void Assembler::fincstp() {
 }
 
 
-void Assembler::ffree( int i ) {
+void Assembler::ffree( std::size_t i ) {
     emit_farith( 0xDD, 0xC0, i );
 }
 

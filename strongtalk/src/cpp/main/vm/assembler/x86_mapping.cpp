@@ -42,7 +42,7 @@ std::array<Location, nofLocalRegisters> Mapping::_localRegisters;      //
 std::array<int, REGISTER_COUNT>         Mapping::_localRegisterIndex;  //
 
 
-Location Mapping::localRegister( int i ) {
+Location Mapping::localRegister( std::size_t i ) {
     st_assert( 0 <= i and i < nofLocalRegisters, "illegal local register index" );
     return _localRegisters[ i ];
 }
@@ -58,20 +58,20 @@ int Mapping::localRegisterIndex( const Location &l ) {
 
 
 // parameter passing
-Location Mapping::incomingArg( int i, int nofArgs ) {
+Location Mapping::incomingArg( std::size_t i, int nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return Location::stackLocation( nofArgs - i + 1 );
 }
 
 
-Location Mapping::outgoingArg( int i, int nofArgs ) {
+Location Mapping::outgoingArg( std::size_t i, int nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return topOfStack;
 }
 
 
 // stack allocation (Note: offsets are always in oops!)
-Location Mapping::localTemporary( int i ) {
+Location Mapping::localTemporary( std::size_t i ) {
     st_assert( i >= 0, "illegal temporary number" );
     int floats = theCompiler->totalNofFloatTemporaries();
     int offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
@@ -81,13 +81,13 @@ Location Mapping::localTemporary( int i ) {
 
 int Mapping::localTemporaryIndex( const Location &l ) {
     int floats = theCompiler->totalNofFloatTemporaries();
-    int i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
+    std::size_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
     st_assert( localTemporary( i ) == l, "incorrect mapping" );
     return i;
 }
 
 
-Location Mapping::floatTemporary( int scope_id, int i ) {
+Location Mapping::floatTemporary( int scope_id, std::size_t i ) {
     InlinedScope *scope = theCompiler->scopes->at( scope_id );
     st_assert( scope->firstFloatIndex() >= 0, "firstFloatIndex not computed yet" );
     // Floats must be 8byte aligned in order to a void massive time penalties.
@@ -107,13 +107,13 @@ Location Mapping::floatTemporary( int scope_id, int i ) {
 
 
 // context temporaries
-Location Mapping::contextTemporary( int contextNo, int i, int scope_offset ) {
+Location Mapping::contextTemporary( int contextNo, std::size_t i, int scope_offset ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
     return Location::compiledContextLocation( contextNo, i, scope_offset );
 }
 
 
-Location *Mapping::new_contextTemporary( int contextNo, int i, int scope_id ) {
+Location *Mapping::new_contextTemporary( int contextNo, std::size_t i, int scope_id ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
     return new Location( Mode::contextLoc1, contextNo, i, scope_id );
 }

@@ -69,17 +69,17 @@ private:
     void stack_check_pop();
 
     // Arguments, temporaries & instance variables
-    Address arg_addr( int i );
+    Address arg_addr( std::size_t i );
 
     Address arg_addr( Register arg_no );
 
-    Address temp_addr( int i );
+    Address temp_addr( std::size_t i );
 
     Address temp_addr( Register temp_no );
 
     Address float_addr( Register float_no );
 
-    Address field_addr( Register obj, int i );
+    Address field_addr( Register obj, std::size_t i );
 
     Address field_addr( Register obj, Register smi_offset );
 
@@ -181,11 +181,11 @@ private:
     void generateStopInterpreterAt();
 
     // Instructions
-    const char *push_temp( int i );
+    const char *push_temp( std::size_t i );
 
     const char *push_temp_n();
 
-    const char *push_arg( int i );
+    const char *push_arg( std::size_t i );
 
     const char *push_arg_n();
 
@@ -207,7 +207,7 @@ private:
 
     const char *only_pop();
 
-    const char *store_temp( int i, bool_t pop = false );
+    const char *store_temp( std::size_t i, bool_t pop = false );
 
     const char *store_temp_n( bool_t pop = false );
 
@@ -271,7 +271,7 @@ private:
 
     void generate_deoptimized_return_code();
 
-    void generate_primitiveValue( int i );
+    void generate_primitiveValue( std::size_t i );
 
     void generate_forStubRoutines();
 

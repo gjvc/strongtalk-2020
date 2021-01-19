@@ -1005,7 +1005,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
     GrowableArray<Expression *> *okExprs   = new GrowableArray<Expression *>( 10 );  // those who are splittable
 
     // collect all paths that look splittable
-    int i = m->exprs->length() - 1;
+    std::size_t i = m->exprs->length() - 1;
     for ( ; i >= 0; i-- ) {
         for ( Expression *x = m->exprs->at( i ); x; x = x->next ) {
             Node *start = x->node();

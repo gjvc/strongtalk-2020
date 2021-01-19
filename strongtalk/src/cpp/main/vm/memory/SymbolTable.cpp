@@ -210,7 +210,7 @@ void SymbolTableEntry::deallocate() {
 }
 
 
-bool_t SymbolTableEntry::verify( int i ) {
+bool_t SymbolTableEntry::verify( std::size_t i ) {
     bool_t flag = true;
     if ( is_symbol() ) {
         if ( not get_symbol()->is_symbol() ) {
@@ -241,7 +241,7 @@ void SymbolTable::relocate() {
 }
 
 
-bool_t SymbolTableLink::verify( int i ) {
+bool_t SymbolTableLink::verify( std::size_t i ) {
     bool_t flag = true;
     for ( SymbolTableLink *l = this; l; l = l->next ) {
         if ( not l->symbol->is_symbol() ) {

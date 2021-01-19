@@ -44,7 +44,7 @@ private:
     void extend();
 
 public:
-    int size() {
+    std::size_t size() {
         return _top;
     }
 

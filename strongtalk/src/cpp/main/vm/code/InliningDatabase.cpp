@@ -48,7 +48,7 @@ const char *quote_string = "_\\/:; *?~|><,+=@%&!-";
 
 const char *InliningDatabase::mangle_name( const char *str ) {
     char *result = new_resource_array<char>( 100 );
-    int i         = 0;
+    std::size_t i         = 0;
     int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
         int c = str[ i ];
@@ -72,7 +72,7 @@ const char *InliningDatabase::mangle_name( const char *str ) {
 
 const char *InliningDatabase::unmangle_name( const char *str ) {
     char *result = new_resource_array<char>( 100 );
-    int i         = 0;
+    std::size_t i         = 0;
     int j         = 0;
     while ( str[ i ] not_eq '\0' ) {
         int c = str[ i ];

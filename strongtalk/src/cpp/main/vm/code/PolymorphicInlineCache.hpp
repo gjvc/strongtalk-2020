@@ -91,7 +91,7 @@ public:
 
 
     // Returns the code size of the PolymorphicInlineCache
-    int code_size() const {
+    std::size_t code_size() const {
         return _codeSize;
     }
 
