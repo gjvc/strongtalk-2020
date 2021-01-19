@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/runtime/ResourceObject.hpp"

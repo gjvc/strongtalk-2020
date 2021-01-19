@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/utilities/GrowableArray.hpp"

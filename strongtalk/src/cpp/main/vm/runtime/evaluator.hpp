@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 
 // The evaluator provides a read-eval-loop for simple vm debugging

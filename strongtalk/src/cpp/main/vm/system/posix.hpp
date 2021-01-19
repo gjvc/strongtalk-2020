@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 
 #include "vm/system/posix.hpp"

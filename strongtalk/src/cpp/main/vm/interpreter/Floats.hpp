@@ -9,7 +9,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 
 // Floats describes the floating point operations of the interpreter and implements stub routines used to execute this operations.

@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"

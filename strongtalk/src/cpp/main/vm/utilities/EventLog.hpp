@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/runtime/flags.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 
 
 // The EventLogEvent log is used for debugging; it is a circular buffer containing the last N events.

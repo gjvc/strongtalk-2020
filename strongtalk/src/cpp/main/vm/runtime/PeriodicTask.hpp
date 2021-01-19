@@ -6,7 +6,6 @@
 #pragma once
 
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 
 // A PeriodicTask has the sole purpose of executing its task

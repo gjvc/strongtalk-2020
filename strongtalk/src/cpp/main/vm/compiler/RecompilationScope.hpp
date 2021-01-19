@@ -6,7 +6,6 @@
 #pragma once
 
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"

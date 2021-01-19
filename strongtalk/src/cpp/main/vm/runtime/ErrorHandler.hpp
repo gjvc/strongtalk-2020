@@ -6,7 +6,6 @@
 #pragma once
 
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 // The ErrorHandler takes care of error recovery
 

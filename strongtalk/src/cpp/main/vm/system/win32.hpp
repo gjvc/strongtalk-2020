@@ -12,7 +12,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/utilities/DebugNotifier.hpp"
 #include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"

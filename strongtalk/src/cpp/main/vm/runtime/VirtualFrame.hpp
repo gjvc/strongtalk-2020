@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/runtime/Frame.hpp"

@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"

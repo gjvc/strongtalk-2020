@@ -8,7 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/code/NodeVisitor.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/code/PseudoRegisterMapping.hpp"

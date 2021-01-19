@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/lookup/LookupCache.hpp"

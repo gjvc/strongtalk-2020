@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/code/JumpTable.hpp"

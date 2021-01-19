@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/oops/OopDescriptor.hpp"

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 
 
 // default sizes for heaps & zone

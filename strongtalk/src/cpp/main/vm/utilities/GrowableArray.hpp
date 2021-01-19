@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 

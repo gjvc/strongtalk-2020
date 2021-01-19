@@ -6,7 +6,7 @@
 #pragma once
 
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/runtime/ResourceObject.hpp"

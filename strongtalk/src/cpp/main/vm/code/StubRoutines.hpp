@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/LongInteger64.hpp"
 #include "vm/system/os.hpp"

@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/code/NodeVisitor.hpp"
 #include "vm/compiler/defUse.hpp"

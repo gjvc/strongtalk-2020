@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 

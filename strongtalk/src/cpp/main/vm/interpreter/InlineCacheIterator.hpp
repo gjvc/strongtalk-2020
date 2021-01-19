@@ -8,7 +8,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/code/PolymorphicInlineCache.hpp"

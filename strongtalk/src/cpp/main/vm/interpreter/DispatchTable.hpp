@@ -5,9 +5,7 @@
 
 #pragma once
 
-
 #include "vm/memory/allocation.hpp"
-
 
 
 // DispatchTable controls the dispatch of byte codes

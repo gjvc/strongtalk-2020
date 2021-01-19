@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/compiler/Node.hpp"

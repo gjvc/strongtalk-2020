@@ -7,7 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/code/Locations.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/assembler/MacroAssembler.hpp"

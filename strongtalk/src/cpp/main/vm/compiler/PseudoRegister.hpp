@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/compiler/slist.hpp"
 #include "vm/compiler/CompileTimeClosure.hpp"

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/memory/allocation.hpp"
+#include "vm/system/platform.hpp"
 #include "vm/lookup/LookupResult.hpp"
 
 const std::uint32_t primary_cache_size   = 16 * 1024;

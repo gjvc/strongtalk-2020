@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "vm/memory/allocation.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 
