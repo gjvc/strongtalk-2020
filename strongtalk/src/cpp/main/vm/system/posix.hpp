@@ -3,9 +3,10 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+#pragma once
+
 #ifdef __linux__
 
-#pragma once
 
 #include "vm/memory/allocation.hpp"
 
@@ -28,6 +29,9 @@
 #include <pthread.h>
 #include <sys/times.h>
 #include <sys/mman.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
 
 
 class Lock {
@@ -187,6 +191,5 @@ class DLL : CHeapAllocatedObject {
 
         friend class os;
 };
-
 
 #endif

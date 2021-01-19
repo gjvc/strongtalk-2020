@@ -3,13 +3,8 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#ifndef __MINGW32__
 
-#include <readline/readline.h>
-#include <readline/history.h>
-
-#endif
-
+#include "vm/system/os.hpp"
 #include "vm/runtime/evaluator.hpp"
 #include "vm/utilities/objectIDTable.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
@@ -22,7 +17,6 @@
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/interpreter/DispatchTable.hpp"
-#include "vm/system/os.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/ResourceMark.hpp"

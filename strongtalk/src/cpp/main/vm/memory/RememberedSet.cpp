@@ -9,7 +9,6 @@
 #include "allocation.hpp"
 #include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/memory/RememberedSet.hpp"

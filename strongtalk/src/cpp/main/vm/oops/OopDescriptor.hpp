@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "vm/system/bits.hpp"
 #include "vm/system/platform.hpp"
 
 

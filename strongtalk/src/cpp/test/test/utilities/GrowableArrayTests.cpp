@@ -4,7 +4,6 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 
 #include <gtest/gtest.h>

@@ -6,11 +6,11 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/macros.hpp"
-#include "vm/oops/ByteArrayOopDescriptor.hpp"
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/runtime/TempDecoder.hpp"
+
 
 #define NEXT                        \
   pos++;                            \
@@ -211,6 +211,7 @@ public:
     }
 };
 
+
 class FindStackFloatTemp : public TempDecoder {
 private:
     int the_fno;
@@ -230,6 +231,7 @@ public:
             result = name;
     }
 };
+
 
 class FindHeapTemp : public TempDecoder {
 private:

@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "vm/system/bits.hpp"
 #include "vm/code/NativeInstruction.hpp"
 #include "vm/runtime/Frame.hpp"
 

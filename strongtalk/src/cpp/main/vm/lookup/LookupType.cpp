@@ -5,7 +5,6 @@
 
 
 #include "vm/system/platform.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/lookup/LookupType.hpp"
 #include "vm/utilities/lprintf.hpp"

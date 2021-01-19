@@ -8,7 +8,6 @@
 #include "vm/system/asserts.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"

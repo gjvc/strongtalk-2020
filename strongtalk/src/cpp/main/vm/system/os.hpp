@@ -8,7 +8,6 @@
 #include "vm/utilities/LongInteger64.hpp"
 
 
-// os defines the interface to operating system
 
 //typedef void ( __CALLING_CONVENTION *dll_func_ptr_t )( ... );
 typedef void (  *dll_func_ptr_t )( ... );
@@ -18,6 +17,11 @@ class Thread;
 class Event;
 
 class DLL;
+
+
+
+
+// os defines the interface to operating system
 
 class os {
 

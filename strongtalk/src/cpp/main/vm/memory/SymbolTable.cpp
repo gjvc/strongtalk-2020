@@ -4,7 +4,6 @@
 //
 
 #include "vm/memory/SymbolTable.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/oops/SymbolKlass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"

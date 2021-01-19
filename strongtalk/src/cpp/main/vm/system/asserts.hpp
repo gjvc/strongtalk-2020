@@ -8,15 +8,7 @@
 
 #include <iostream>
 #include <string_view>
-#include <experimental/source_location>
 
-
-inline void log( std::string_view message, const std::experimental::source_location &location = std::experimental::source_location::current() ) {
-    std::cout << "info:"
-              << location.file_name() << ':'
-              << location.line() << ' '
-              << message << '\n';
-}
 
 // -----------------------------------------------------------------------------
 

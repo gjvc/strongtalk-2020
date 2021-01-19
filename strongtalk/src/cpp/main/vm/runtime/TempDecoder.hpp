@@ -9,8 +9,8 @@
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
-// TempDecoder decodes the method annotation describing
-// the names of parameters and temporaries.
+
+// TempDecoder decodes the method annotation describing the names of parameters and temporaries.
 
 class TempDecoder {
 private:
@@ -46,6 +46,7 @@ public:
     virtual void no_debug_info() {
     }
 };
+
 
 class TempPrinter : public TempDecoder {
 private:

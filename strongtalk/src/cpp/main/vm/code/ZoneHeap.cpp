@@ -6,9 +6,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/os.hpp"
-#include "vm/system/bits.hpp"
-//#include "vm/memory/allocation.hpp"
-//#include "vm/memory/Universe.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"

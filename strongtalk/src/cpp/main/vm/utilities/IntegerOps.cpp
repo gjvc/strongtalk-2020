@@ -1,18 +1,15 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/system/asserts.hpp"
-#include "vm/memory/util.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/utilities/double.hpp"
-#include "vm/utilities/OutputStream.hpp"
 
 
 static int exponent( double x ) {

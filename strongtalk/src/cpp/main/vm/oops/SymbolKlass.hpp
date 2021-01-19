@@ -6,7 +6,6 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/ByteArrayKlass.hpp"

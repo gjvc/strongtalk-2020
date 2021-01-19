@@ -3,7 +3,6 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/bits.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/SpaceSizes.hpp"
 #include "vm/memory/Universe.hpp"

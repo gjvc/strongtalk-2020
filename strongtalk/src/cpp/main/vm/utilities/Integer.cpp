@@ -5,12 +5,10 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/double.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
-#include "vm/oops/SMIOopDescriptor.hpp"
+#include "vm/utilities/OutputStream.hpp"
 
 
 int Integer::length() const {

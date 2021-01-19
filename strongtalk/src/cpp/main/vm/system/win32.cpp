@@ -8,6 +8,7 @@
 
 #include "vm/system/win32.hpp"
 #include "vm/runtime/vmOperations.hpp"
+#include "vm/utilities/lprintf.hpp"
 
 
 int WINAPI startThread( void *params ) {

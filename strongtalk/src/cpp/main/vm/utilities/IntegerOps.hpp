@@ -20,7 +20,6 @@ constexpr int   digitBitLength = sizeof( Digit ) * 8;   //
 
 // -----------------------------------------------------------------------------
 
-
 // IntegerOps provides arithmetic & logic operations on Integers.
 // Integer arguments are usually denoted by x & y, the result Integer is z.
 //

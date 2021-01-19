@@ -6,8 +6,8 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/lprintf.hpp"
 
 
 GenericGrowableArray::GenericGrowableArray( int initial_size, bool_t c_heap ) {

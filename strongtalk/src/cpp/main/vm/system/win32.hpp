@@ -9,19 +9,10 @@
 #if defined( __MINGW32__ ) || defined( _MSC_VER )
 
 #include "vm/system/platform.hpp"
-#include "vm/system/asserts.hpp"
-#include "vm/system/macros.hpp"
-#include "vm/memory/util.hpp"
-#include "vm/system/platform.hpp"
-#include "vm/utilities/DebugNotifier.hpp"
+#include "vm/system/os.hpp"
 #include "vm/utilities/lprintf.hpp"
-#include "vm/utilities/OutputStream.hpp"
-#include "vm/system/bits.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/LongInteger64.hpp"
-#include "vm/system/os.hpp"
-#include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 
 #include <vector>
