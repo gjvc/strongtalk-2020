@@ -2315,10 +2315,10 @@ class DLLNode : public CallNode {
 protected:
     SymbolOop _dll_name;
     SymbolOop _function_name;
-    dll_func  _function;
+    dll_func_ptr_t  _function;
     bool_t    _async;
 
-    DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
+    DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
 public:
     bool_t canInvokeDelta() const;
@@ -2344,7 +2344,7 @@ public:
     }
 
 
-    dll_func function() const {
+    dll_func_ptr_t function() const {
         return _function;
     }
 
@@ -3815,100 +3815,4 @@ public:
     const char *print_string( const char *buf, bool_t printAddr = true ) const;
 
     friend class NodeFactory;
-};
-
-
-// NodeFactory is used to create new nodes.
-
-class NodeFactory : AllStatic {
-
-public:
-    static int _cumulativeCost; // cumulative cost of all nodes generated so far
-
-    static void registerNode( Node *n ) {
-        _cumulativeCost += n->cost();
-    }
-
-
-    static class PrologueNode *PrologueNode( LookupKey *key, int nofArgs, int nofTemps );
-
-    static class LoadOffsetNode *LoadOffsetNode( PseudoRegister *dst, PseudoRegister *base, int offs, bool_t isArray );
-
-    static class LoadUplevelNode *LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name );
-
-    static class LoadIntNode *LoadIntNode( PseudoRegister *dst, int value );
-
-    static class StoreOffsetNode *StoreOffsetNode( PseudoRegister *src, PseudoRegister *base, int offs, bool_t needStoreCheck );
-
-    static class StoreUplevelNode *StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck );
-
-    static class AssignNode *AssignNode( PseudoRegister *src, PseudoRegister *dst );
-
-    static class ReturnNode *ReturnNode( PseudoRegister *res, int byteCodeIndex );
-
-    static class InlinedReturnNode *InlinedReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dst );
-
-    static class NonLocalReturnSetupNode *NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex );
-
-    static class NonLocalReturnContinuationNode *NonLocalReturnContinuationNode( int byteCodeIndex );
-
-    static class NonLocalReturnTestNode *NonLocalReturnTestNode( int byteCodeIndex );
-
-    static class ArithRRNode *ArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 );
-
-    static class ArithRCNode *ArithRCNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, int o2 );
-
-    static class TArithRRNode *TArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2, bool_t a1, bool_t a2 );
-
-    static class FloatArithRRNode *FloatArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 );
-
-    static class FloatUnaryArithNode *FloatUnaryArithNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op );
-
-    static class MergeNode *MergeNode( Node *prev1, Node *prev2 );
-
-    static class MergeNode *MergeNode( int byteCodeIndex );
-
-    static class SendNode *SendNode( LookupKey *key, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool_t superSend, SendInfo *info );
-
-    static class PrimitiveNode *PrimitiveNode( PrimitiveDescriptor *pdesc, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class DLLNode *DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class InterruptCheckNode *InterruptCheckNode( GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class LoopHeaderNode *LoopHeaderNode();
-
-    static class BlockCreateNode *BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class BlockMaterializeNode *BlockMaterializeNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class ContextCreateNode *ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class ContextCreateNode *ContextCreateNode( PseudoRegister *b, const class ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack );
-
-    static class ContextInitNode *ContextInitNode( class ContextCreateNode *creator );
-
-    static class ContextInitNode *ContextInitNode( PseudoRegister *b, const class ContextInitNode *n );
-
-    static class ContextZapNode *ContextZapNode( PseudoRegister *context );
-
-    static class BranchNode *BranchNode( BranchOpCode op, bool_t taken_is_uncommon = false );
-
-    static class TypeTestNode *TypeTestNode( PseudoRegister *recv, GrowableArray<KlassOop> *classes, bool_t hasUnknown );
-
-    static class ArrayAtNode *ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset );
-
-    static class ArrayAtPutNode *ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset, bool_t needs_store_check );
-
-    static class InlinedPrimitiveNode *InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error = nullptr, PseudoRegister *recv = nullptr, PseudoRegister *arg1 = nullptr, bool_t arg1_is_smi = false, PseudoRegister *arg2 = nullptr, bool_t arg2_is_smi = false );
-
-    static class UncommonNode *UncommonNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex );
-
-    static class UncommonSendNode *UncommonSendNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex, int args );
-
-    static class FixedCodeNode *FixedCodeNode( FixedCodeNode::FixedCodeKind k );
-
-    static class NopNode *NopNode();
-
-    static class CommentNode *CommentNode( const char *comment );
 };

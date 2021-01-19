@@ -18,6 +18,8 @@
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
+#include "vm/compiler/NodeFactory.hpp"
+
 
 
 int                 BasicNode::currentID;
@@ -25,314 +27,6 @@ int                 BasicNode::currentCommentID;
 int                 BasicNode::lastByteCodeIndex;
 ScopeInfo           BasicNode::lastScopeInfo;
 PrimitiveDescriptor *InterruptCheckNode::_intrCheck;
-
-int NodeFactory::_cumulativeCost;
-
-
-PrologueNode *NodeFactory::PrologueNode( LookupKey *key, int nofArgs, int nofTemps ) {
-    class PrologueNode *res = new class PrologueNode( key, nofArgs, nofTemps );
-    registerNode( res );
-    return res;
-}
-
-
-LoadOffsetNode *NodeFactory::LoadOffsetNode( PseudoRegister *dst, PseudoRegister *base, int offs, bool_t isArray ) {
-    class LoadOffsetNode *res = new class LoadOffsetNode( dst, base, offs, isArray );
-    registerNode( res );
-    return res;
-}
-
-
-LoadUplevelNode *NodeFactory::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name ) {
-    class LoadUplevelNode *res = new class LoadUplevelNode( dst, context0, nofLevels, offset, name );
-    registerNode( res );
-    return res;
-}
-
-
-LoadIntNode *NodeFactory::LoadIntNode( PseudoRegister *dst, int value ) {
-    class LoadIntNode *res = new class LoadIntNode( dst, value );
-    registerNode( res );
-    return res;
-}
-
-
-StoreOffsetNode *NodeFactory::StoreOffsetNode( PseudoRegister *src, PseudoRegister *base, int offs, bool_t needStoreCheck ) {
-    class StoreOffsetNode *res = new class StoreOffsetNode( src, base, offs, needStoreCheck );
-    registerNode( res );
-    return res;
-}
-
-
-StoreUplevelNode *NodeFactory::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needStoreCheck ) {
-    class StoreUplevelNode *res = new class StoreUplevelNode( src, context0, nofLevels, offset, name, needStoreCheck );
-    registerNode( res );
-    return res;
-}
-
-
-AssignNode *NodeFactory::AssignNode( PseudoRegister *src, PseudoRegister *dst ) {
-    class AssignNode *res = new class AssignNode( src, dst );
-    registerNode( res );
-    return res;
-}
-
-
-ReturnNode *NodeFactory::ReturnNode( PseudoRegister *result, int byteCodeIndex ) {
-    class ReturnNode *res = new class ReturnNode( result, byteCodeIndex );
-    registerNode( res );
-    return res;
-}
-
-
-InlinedReturnNode *NodeFactory::InlinedReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dst ) {
-    class InlinedReturnNode *res = new class InlinedReturnNode( byteCodeIndex, src, dst );
-    registerNode( res );
-    return res;
-}
-
-
-NonLocalReturnSetupNode *NodeFactory::NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex ) {
-    class NonLocalReturnSetupNode *res = new class NonLocalReturnSetupNode( result, byteCodeIndex );
-    registerNode( res );
-    return res;
-}
-
-
-NonLocalReturnContinuationNode *NodeFactory::NonLocalReturnContinuationNode( int byteCodeIndex ) {
-    InlinedScope                         *scope = theCompiler->currentScope();
-    PseudoRegister                       *reg   = new PseudoRegister( scope, NonLocalReturnResultLoc, false, false );
-    class NonLocalReturnContinuationNode *res   = new class NonLocalReturnContinuationNode( byteCodeIndex, reg, reg );
-    registerNode( res );
-    return res;
-}
-
-
-NonLocalReturnTestNode *NodeFactory::NonLocalReturnTestNode( int byteCodeIndex ) {
-    class NonLocalReturnTestNode *res = new class NonLocalReturnTestNode( byteCodeIndex );
-    registerNode( res );
-    theCompiler->nlrTestPoints->append( res );
-    return res;
-}
-
-
-ArithRRNode *NodeFactory::ArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 ) {
-    class ArithRRNode *res = new class ArithRRNode( op, src, o2, dst );
-    registerNode( res );
-    return res;
-}
-
-
-ArithRCNode *NodeFactory::ArithRCNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, int o2 ) {
-    class ArithRCNode *res = new class ArithRCNode( op, src, o2, dst );
-    registerNode( res );
-    return res;
-}
-
-
-TArithRRNode *NodeFactory::TArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2, bool_t a1, bool_t a2 ) {
-    class TArithRRNode *res = new class TArithRRNode( op, src, o2, dst, a1, a2 );
-    registerNode( res );
-    return res;
-}
-
-
-FloatArithRRNode *NodeFactory::FloatArithRRNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op, PseudoRegister *o2 ) {
-    class FloatArithRRNode *res = new class FloatArithRRNode( op, src, o2, dst );
-    registerNode( res );
-    return res;
-}
-
-
-FloatUnaryArithNode *NodeFactory::FloatUnaryArithNode( PseudoRegister *dst, PseudoRegister *src, ArithOpCode op ) {
-    class FloatUnaryArithNode *res = new class FloatUnaryArithNode( op, src, dst );
-    registerNode( res );
-    return res;
-}
-
-
-MergeNode *NodeFactory::MergeNode( Node *prev1, Node *prev2 ) {
-    class MergeNode *res = new class MergeNode( prev1, prev2 );
-    registerNode( res );
-    return res;
-}
-
-
-MergeNode *NodeFactory::MergeNode( int byteCodeIndex ) {
-    class MergeNode *res = new class MergeNode( byteCodeIndex );
-    registerNode( res );
-    return res;
-}
-
-
-SendNode *NodeFactory::SendNode( LookupKey *key, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool_t superSend, SendInfo *info ) {
-    class SendNode *res = new class SendNode( key, nlrTestPoint, args, expr_stack, superSend, info );
-    st_assert( expr_stack, "must have expression stack" );
-    res->scope()->addSend( expr_stack, true );  // arguments to call are debug-visible
-    registerNode( res );
-    return res;
-}
-
-
-PrimitiveNode *NodeFactory::PrimitiveNode( PrimitiveDescriptor *pdesc, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class PrimitiveNode *res = new class PrimitiveNode( pdesc, nlrTestPoint, args, expr_stack );
-    if ( pdesc->can_walk_stack() ) {
-        st_assert( expr_stack, "must have expression stack" );
-        if ( expr_stack )
-            res->scope()->addSend( expr_stack, true );  // arguments to some prim calls are debug-visible
-    } else {
-        st_assert( expr_stack == nullptr, "should not have expression stack" );
-    }
-    registerNode( res );
-    return res;
-}
-
-
-DLLNode *NodeFactory::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class DLLNode *res = new class DLLNode( dll_name, function_name, function, async, nlrTestPoint, args, expr_stack );
-    res->scope()->addSend( expr_stack, true );  // arguments to DLL call are debug-visible
-    registerNode( res );
-    return res;
-}
-
-
-InterruptCheckNode *NodeFactory::InterruptCheckNode( GrowableArray<PseudoRegister *> *exprStack ) {
-    class InterruptCheckNode *res = new class InterruptCheckNode( exprStack );
-    registerNode( res );
-    return res;
-}
-
-
-LoopHeaderNode *NodeFactory::LoopHeaderNode() {
-    class LoopHeaderNode *res = new class LoopHeaderNode();
-    registerNode( res );
-    return res;
-}
-
-
-BlockCreateNode *NodeFactory::BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class BlockCreateNode *res = new class BlockCreateNode( b, expr_stack );
-    registerNode( res );
-    return res;
-}
-
-
-BlockMaterializeNode *NodeFactory::BlockMaterializeNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class BlockMaterializeNode *res = new class BlockMaterializeNode( b, expr_stack );
-    registerNode( res );
-    return res;
-}
-
-
-ContextCreateNode *NodeFactory::ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class ContextCreateNode *res = new class ContextCreateNode( parent, context, nofTemps, expr_stack );
-    registerNode( res );
-    return res;
-}
-
-
-ContextCreateNode *NodeFactory::ContextCreateNode( PseudoRegister *b, const class ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ) {
-    class ContextCreateNode *res = new class ContextCreateNode( b, n, expr_stack );
-    registerNode( res );
-    return res;
-}
-
-
-ContextInitNode *NodeFactory::ContextInitNode( class ContextCreateNode *creator ) {
-    class ContextInitNode *res = new class ContextInitNode( creator );
-    registerNode( res );
-    return res;
-}
-
-
-ContextInitNode *NodeFactory::ContextInitNode( PseudoRegister *b, const class ContextInitNode *n ) {
-    class ContextInitNode *res = new class ContextInitNode( b, n );
-    registerNode( res );
-    return res;
-}
-
-
-ContextZapNode *NodeFactory::ContextZapNode( PseudoRegister *context ) {
-    class ContextZapNode *res = new class ContextZapNode( context );
-    registerNode( res );
-    return res;
-}
-
-
-BranchNode *NodeFactory::BranchNode( BranchOpCode op, bool_t taken_is_uncommon ) {
-    class BranchNode *res = new class BranchNode( op, taken_is_uncommon );
-    registerNode( res );
-    return res;
-}
-
-
-TypeTestNode *NodeFactory::TypeTestNode( PseudoRegister *recv, GrowableArray<KlassOop> *classes, bool_t hasUnknown ) {
-    class TypeTestNode *res = new class TypeTestNode( recv, classes, hasUnknown );
-    registerNode( res );
-    res->scope()->addTypeTest( res );
-    return res;
-}
-
-
-ArrayAtNode *NodeFactory::ArrayAtNode( ArrayAtNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset ) {
-    class ArrayAtNode *res = new class ArrayAtNode( access_type, array, index, smiIndex, result, error, data_offset, length_offset );
-    registerNode( res );
-    return res;
-}
-
-
-ArrayAtPutNode *NodeFactory::ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset, bool_t needs_store_check ) {
-    class ArrayAtPutNode *res = new class ArrayAtPutNode( access_type, array, index, smi_index, element, smi_element, result, error, data_offset, length_offset, needs_store_check );
-    registerNode( res );
-    return res;
-}
-
-
-InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi ) {
-    class InlinedPrimitiveNode *res = new class InlinedPrimitiveNode( op, result, error, recv, arg1, arg1_is_smi, arg2, arg2_is_smi );
-    registerNode( res );
-    return res;
-}
-
-
-UncommonNode *NodeFactory::UncommonNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex ) {
-    class UncommonNode *res = new class UncommonNode( exprStack, byteCodeIndex );
-    registerNode( res );
-    st_assert( exprStack, "must have expr. stack" );
-    res->scope()->addSend( exprStack, false );  // current expr stack is debug-visible
-    return res;
-}
-
-
-UncommonSendNode *NodeFactory::UncommonSendNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex, int args ) {
-    class UncommonSendNode *res = new class UncommonSendNode( exprStack, byteCodeIndex, args );
-    registerNode( res );
-    st_assert( exprStack, "must have expr. stack" );
-    res->scope()->addSend( exprStack, false );  // current expr stack is debug-visible
-    return res;
-}
-
-
-FixedCodeNode *NodeFactory::FixedCodeNode( FixedCodeNode::FixedCodeKind k ) {
-    class FixedCodeNode *res = new class FixedCodeNode( k );
-    registerNode( res );
-    return res;
-}
-
-
-NopNode *NodeFactory::NopNode() {
-    class NopNode *res = new class NopNode();
-    registerNode( res );
-    return res;
-}
-
-
-CommentNode *NodeFactory::CommentNode( const char *comment ) {
-    class CommentNode *res = new class CommentNode( comment );
-    registerNode( res );
-    return res;
-}
-
 
 void initNodes() {
     Node::currentID              = Node::currentCommentID = 0;
@@ -1040,7 +734,7 @@ bool_t PrimitiveNode::canFail() const {
 }
 
 
-DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
+DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
         CallNode( nlrTestPoint, args, expr_stack ) {
     _dll_name      = dll_name;
     _function_name = function_name;
@@ -1066,7 +760,7 @@ void NonLocalReturnTestNode::fixup() {
         append( 0, NodeFactory::NonLocalReturnContinuationNode( byteCodeIndex() ) );
         // return point returns the NonLocalReturn result
         PseudoRegister *nlr_result = new TemporaryPseudoRegister( scope(), resultOfNonLocalReturn, true, true );
-        Node           *n          = NodeFactory::AssignNode( nlr_result, scope()->resultPR );
+        Node           *n          = NodeFactory::createAndRegisterNode<AssignNode>( nlr_result, scope()->resultPR );
         append( 1, n );
         n->append( scope()->returnPoint() );
         theCompiler->exitScope( scope() );
@@ -1085,7 +779,7 @@ void NonLocalReturnTestNode::fixup() {
             s = s->sender();
         theCompiler->enterScope( s ); // so that node gets right scope
         PseudoRegister *nlr_result = new TemporaryPseudoRegister( scope(), resultOfNonLocalReturn, true, true );
-        Node           *n          = NodeFactory::AssignNode( nlr_result, s->resultPR );
+        Node           *n          = NodeFactory::createAndRegisterNode<AssignNode>( nlr_result, s->resultPR );
         theCompiler->exitScope( s );
         append( 1, n );
         n->append( s->returnPoint() );
@@ -1175,47 +869,47 @@ Node *FixedCodeNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *LoadOffsetNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::LoadOffsetNode( TRANSLATE( _dest ), _src, _offset, _isArraySize );
+    return NodeFactory::createAndRegisterNode<LoadOffsetNode>( TRANSLATE( _dest ), _src, _offset, _isArraySize );
 }
 
 
 Node *LoadIntNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::LoadIntNode( TRANSLATE( _dest ), _value );
+    return NodeFactory::createAndRegisterNode<LoadIntNode>( TRANSLATE( _dest ), _value );
 }
 
 
 Node *LoadUplevelNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::LoadUplevelNode( TRANSLATE( _dest ), TRANSLATE( _context0 ), _nofLevels, _offset, _name );
+    return NodeFactory::createAndRegisterNode<LoadUplevelNode>( TRANSLATE( _dest ), TRANSLATE( _context0 ), _nofLevels, _offset, _name );
 }
 
 
 Node *StoreOffsetNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::StoreOffsetNode( TRANSLATE( _src ), _base, _offset, _needsStoreCheck );
+    return NodeFactory::createAndRegisterNode<StoreOffsetNode>( TRANSLATE( _src ), _base, _offset, _needsStoreCheck );
 }
 
 
 Node *StoreUplevelNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::StoreUplevelNode( TRANSLATE( _src ), TRANSLATE( _context0 ), _nofLevels, _offset, _name, _needsStoreCheck );
+    return NodeFactory::createAndRegisterNode<StoreUplevelNode>( TRANSLATE( _src ), TRANSLATE( _context0 ), _nofLevels, _offset, _name, _needsStoreCheck );
 }
 
 
 Node *AssignNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::AssignNode( TRANSLATE( _src ), TRANSLATE( _dest ) );
+    return NodeFactory::createAndRegisterNode<AssignNode>( TRANSLATE( _src ), TRANSLATE( _dest ) );
 }
 
 
 Node *ArithRRNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ArithRRNode( TRANSLATE( _dest ), TRANSLATE( _src ), _op, _oper );
+    return NodeFactory::createAndRegisterNode<ArithRRNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ) );
 }
 
 
 Node *TArithRRNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::TArithRRNode( TRANSLATE( _dest ), TRANSLATE( _src ), _op, _oper, _arg1IsInt, _arg2IsInt );
+    return NodeFactory::createAndRegisterNode<TArithRRNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ), _arg1IsInt, _arg2IsInt );
 }
 
 
 Node *ArithRCNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ArithRCNode( TRANSLATE( _dest ), TRANSLATE( _src ), _op, _oper );
+    return NodeFactory::createAndRegisterNode<ArithRCNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ) );
 }
 
 
@@ -1247,7 +941,7 @@ Node *DLLNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 Node *InterruptCheckNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
     // NB: use scope's current sig, not the receiver's sig!
-    InterruptCheckNode *n = NodeFactory::InterruptCheckNode( exprStack );
+    InterruptCheckNode *n = NodeFactory::createAndRegisterNode<InterruptCheckNode>( exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
     n->_dest = _dest;        // don't give it a new dest!
     return n;
@@ -1256,7 +950,7 @@ Node *InterruptCheckNode::clone( PseudoRegister *from, PseudoRegister *to ) cons
 
 Node *BlockCreateNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
     // NB: use scope's current sig, not the receiver's sig!
-    BlockCreateNode *n = NodeFactory::BlockCreateNode( (BlockPseudoRegister *) TRANSLATE( block() ), exprStack );
+    BlockCreateNode *n = NodeFactory::createAndRegisterNode<BlockCreateNode>( (BlockPseudoRegister *) TRANSLATE( block() ), exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
     n->_dest = _dest;        // don't give it a new dest!
     return n;
@@ -1265,7 +959,7 @@ Node *BlockCreateNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 Node *BlockMaterializeNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
     // NB: use scope's current sig, not the receiver's sig!
-    BlockMaterializeNode *n = NodeFactory::BlockMaterializeNode( (BlockPseudoRegister *) TRANSLATE( block() ), exprStack );
+    BlockMaterializeNode *n = NodeFactory::createAndRegisterNode<BlockMaterializeNode>( (BlockPseudoRegister *) TRANSLATE( block() ), exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
     n->_dest = _dest;        // don't give it a new dest!
     return n;
@@ -1273,17 +967,17 @@ Node *BlockMaterializeNode::clone( PseudoRegister *from, PseudoRegister *to ) co
 
 
 Node *ContextCreateNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ContextCreateNode( TRANSLATE( _dest ), this, exprStack );
+    return NodeFactory::createAndRegisterNode<ContextCreateNode>( TRANSLATE( _dest ), this, exprStack );
 }
 
 
 Node *ContextInitNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ContextInitNode( TRANSLATE( _src ), this );
+    return NodeFactory::createAndRegisterNode<ContextInitNode>( TRANSLATE( _src ), this );
 }
 
 
 Node *ContextZapNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ContextZapNode( TRANSLATE( _src ) );
+    return NodeFactory::createAndRegisterNode<ContextZapNode>( TRANSLATE( _src ) );
 }
 
 
@@ -1294,12 +988,12 @@ Node *NonLocalReturnTestNode::clone( PseudoRegister *from, PseudoRegister *to ) 
 
 
 Node *ArrayAtNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ArrayAtNode( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset );
+    return NodeFactory::createAndRegisterNode<ArrayAtNode>( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset );
 }
 
 
 Node *ArrayAtPutNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::ArrayAtPutNode( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( elem ), _smi_element, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset, _needs_store_check );
+    return NodeFactory::createAndRegisterNode<ArrayAtPutNode>( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( elem ), _smi_element, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset, _needs_store_check );
 }
 
 
@@ -1309,7 +1003,7 @@ Node *UncommonNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *InlinedReturnNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::InlinedReturnNode( byteCodeIndex(), TRANSLATE( src() ), TRANSLATE( dest() ) );
+    return NodeFactory::createAndRegisterNode<InlinedReturnNode>( byteCodeIndex(), TRANSLATE( src() ), TRANSLATE( dest() ) );
 }
 
 

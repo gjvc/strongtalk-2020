@@ -246,7 +246,7 @@ const char *GeneratedPrimitives::allocateContext( int n ) {
 
 bool_t     GeneratedPrimitives::_is_initialized = false;
 //char GeneratedPrimitives::_code[GeneratedPrimitives::_code_size];
-const char *GeneratedPrimitives::_code = nullptr;
+const char *GeneratedPrimitives::_code          = nullptr;
 
 
 const char *GeneratedPrimitives::patch( const char *name, const char *entry_point ) {
@@ -268,12 +268,11 @@ void GeneratedPrimitives::init() {
     if ( _is_initialized )
         return;
 
-    int          n;
     ResourceMark resourceMark;
     _code = os::exec_memory( _code_size );
 
-    CodeBuffer     *code = new CodeBuffer( _code, _code_size );
-    MacroAssembler *masm = new MacroAssembler( code );
+    CodeBuffer          *code = new CodeBuffer( _code, _code_size );
+    MacroAssembler      *masm = new MacroAssembler( code );
     PrimitivesGenerator gen( masm );
 
     // add generators here
@@ -301,17 +300,17 @@ void GeneratedPrimitives::init() {
 
     _double_from_smi = patch( "primitiveAsFloat", gen.double_from_smi() );
 
-    for ( n = 0; n <= 9; n++ ) {
+    for ( int n = 0; n <= 9; n++ ) {
         _primitiveNew[ n ] = patch( "primitiveNew%1d:ifFail:", gen.primitiveNew( n ), n );
     }
 
-    for ( n = 0; n <= 9; n++ ) {
+    for ( int n = 0; n <= 9; n++ ) {
         _allocateBlock[ n ] = patch( "primitiveCompiledBlockAllocate%1d", gen.allocateBlock( n ), n );
     }
 
     _allocateContext_var = patch( "primitiveCompiledContextAllocate:", gen.allocateContext_var() );
 
-    for ( n = 0; n <= 2; n++ ) {
+    for ( int n = 0; n <= 2; n++ ) {
         _allocateContext[ n ] = patch( "primitiveCompiledContextAllocate%1d", gen.allocateContext( n ), n );
     }
 

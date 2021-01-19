@@ -6,9 +6,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "allocation.hpp"
 #include "vm/memory/oopFactory.hpp"
-//#include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/VirtualFrameKlass.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/oops/AssociationKlass.hpp"
@@ -22,7 +20,6 @@
 #include "vm/oops/ProcessOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 ByteArrayOop oopFactory::new_byteArray( int size ) {

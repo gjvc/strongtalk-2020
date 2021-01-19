@@ -70,7 +70,7 @@ private:
     static const char *_alienCallWithArgsEntry;
 
     // add tracing routines here
-    static void trace_DLL_call_1( dll_func function, Oop *last_argument, int nof_arguments );
+    static void trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument, int nof_arguments );
 
     static void trace_DLL_call_2( int result );
 

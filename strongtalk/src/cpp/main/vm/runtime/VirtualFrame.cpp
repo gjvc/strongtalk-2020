@@ -16,7 +16,6 @@
 #include "vm/oops/BlockClosureKlass.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/oops/ContextKlass.hpp"
 #include "vm/utilities/lprintf.hpp"
 
@@ -548,8 +547,7 @@ Oop CompiledVirtualFrame::resolve_location( Location loc, const CompiledVirtualF
 
 
 Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtualFrame *vf, ContextOop con ) {
-    // takes a NameDescriptor & looks up the Oop it describes
-    // (on the stack, in contexts, etc.)
+    // takes a NameDescriptor & looks up the Oop it describes (on the stack, in contexts, etc.)
 
     if ( nd->isLocation() ) {
         // describes a location where we can find the Oop.

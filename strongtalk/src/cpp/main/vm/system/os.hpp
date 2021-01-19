@@ -10,8 +10,8 @@
 
 // os defines the interface to operating system
 
-//typedef void ( __CALLING_CONVENTION *dll_func )( ... );
-typedef void (  *dll_func )( ... );
+//typedef void ( __CALLING_CONVENTION *dll_func_ptr_t )( ... );
+typedef void (  *dll_func_ptr_t )( ... );
 
 class Thread;
 
@@ -146,7 +146,7 @@ public:
     static bool_t check_directory( const char *dir_name );
 
     // DLL support
-    static dll_func dll_lookup( const char *name, DLL *library );
+    static dll_func_ptr_t dll_lookup( const char *name, DLL *library );
 
     static DLL *dll_load( const char *name );
 

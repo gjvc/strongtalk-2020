@@ -4,7 +4,6 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/compiler/Inliner.hpp"
@@ -14,6 +13,7 @@
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/lookup/LookupCache.hpp"
+#include "vm/compiler/NodeFactory.hpp"
 
 
 // ----------- inlining policy ---------------
@@ -195,7 +195,7 @@ void Inliner::tryInlineSend() {
 
 Expression *Inliner::inlineMerge( SendInfo *info ) {
     // try to inline the send by type-casing
-    _merge = NodeFactory::MergeNode( _sender->byteCodeIndex() );        // where all cases merge again
+    _merge = NodeFactory::createAndRegisterNode<MergeNode>( _sender->byteCodeIndex() );        // where all cases merge again
     Expression *res = nullptr;                            // final (merged) result
     st_assert( info->_receiver->isMergeExpression(), "must be a merge" );
     MergeExpression *r = (MergeExpression *) info->_receiver;                // receiver type
@@ -290,14 +290,14 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
 
         typeCase = NodeFactory::TypeTestNode( r->preg(), klasses, info->_needRealSend or containsUnknown );
         _generator->append( typeCase );
-        fallThrough = typeCase->append( NodeFactory::NopNode() );    // non-predicted case
+        fallThrough = typeCase->append( NodeFactory::createAndRegisterNode<NopNode>() );    // non-predicted case
         for ( std::size_t i = 0; i < scopes->length(); i++ ) {
             // inline one case
             Inliner *inliner = new Inliner( _sender );
             inliner->initialize( new SendInfo( *info ), _sendKind );
             inliner->_callee    = scopes->at( i );            // scope to inline
             inliner->_generator = _callee->gen();            // node builder to use
-            inliner->_generator->setCurrent( typeCase->append( i + 1, NodeFactory::NopNode() ) );
+            inliner->_generator->setCurrent( typeCase->append( i + 1, NodeFactory::createAndRegisterNode<NopNode>() ) );
             Expression *receiver = exprs->at( i );
             inliner->info()->_receiver = receiver;
             st_assert( r->scope()->isSenderOf( inliner->_callee ), "r must be from caller scope" );
@@ -308,7 +308,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
                     res = e;    // must return non-nullptr result (otherwise sender thinks no inlining happened)
             } else {
                 st_assert( e->preg()->scope()->isSenderOf( inliner->_callee ), "result register must be from caller scope" );
-                _generator->append( NodeFactory::NopNode() );
+                _generator->append( NodeFactory::createAndRegisterNode<NopNode>() );
                 e   = e->shallowCopy( info->_resultRegister, _generator->current() );
                 res = res ? res->mergeWith( e, _merge ) : e;
             }
@@ -338,7 +338,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
         info->_needRealSend = false;
     } else if ( others->isEmpty() ) {
         // typecase cannot fail
-        _generator->append_exit( NodeFactory::FixedCodeNode( FixedCodeNode::FixedCodeKind::dead_end ) );
+        _generator->append_exit( NodeFactory::createAndRegisterNode<FixedCodeNode>( FixedCodeNode::FixedCodeKind::dead_end ) );
     }
 
     return res;
@@ -359,7 +359,7 @@ Expression *Inliner::makeResult( Expression *r ) {
             //fatal("Urs thinks this shouldn't happen");
             ShouldNotReachHere(); // added instead of the fatal (gri 11/27/01)
             // bind it to new NopNode to fix scope
-            Node *n = NodeFactory::NopNode();
+            Node *n = NodeFactory::createAndRegisterNode<NopNode>();
             st_assert( n->scope() == _sender, "wrong scope" );
             _generator->append( n );
             res = r->shallowCopy( r->preg(), n );
@@ -428,7 +428,7 @@ void Inliner::reportInline( const char *prefix ) {
     strncpy( buffer + klassLength + prefixLen + 2, selector->chars(), length );
     buffer[ length + klassLength + prefixLen + 2 ] = '\0';
 
-    _generator->append( NodeFactory::CommentNode( buffer ) );
+    _generator->append( NodeFactory::createAndRegisterNode<CommentNode>( buffer ) );
 }
 
 

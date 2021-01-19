@@ -86,7 +86,7 @@ void popStackHandles( const char *nextFrame );
 
 // tracing
 
-void StubRoutines::trace_DLL_call_1( dll_func function, Oop *last_argument, int nof_arguments ) {
+void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument, int nof_arguments ) {
     if ( not TraceDLLCalls )
         return; // in case it has been turned off during run-time
 

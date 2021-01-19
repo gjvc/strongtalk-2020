@@ -20,6 +20,7 @@
 #include "vm/compiler/RegisterAllocator.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/system/sizes.hpp"
+#include "vm/compiler/NodeFactory.hpp"
 
 
 bool_t verifyOften = false;

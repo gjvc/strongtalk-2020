@@ -331,7 +331,7 @@ protected:
     SymbolOop _dll_name;
     SymbolOop _function_name;
     int       _nofArgs;
-    dll_func  _function;
+    dll_func_ptr_t  _function;
     bool_t    _async;
 
     void initialize( Interpreted_DLLCache *cache );
@@ -358,7 +358,7 @@ public:
     }
 
 
-    dll_func function() const {
+    dll_func_ptr_t function() const {
         _console->print( "calling DLL [%s], function [%s]", _dll_name, _function_name );
         return _function;
     }
@@ -370,14 +370,12 @@ public:
 };
 
 
-// When creating a block closure, AllocationType specifies what is used
-// in the context field of that block closure. When value is send to the
-// block, the context field is copied into the activation frame of the block.
+// When creating a block closure, AllocationType specifies what is used in the context field of that block closure.
+// When value is sent to the block, the context field is copied into the activation frame of the block.
 
 enum class AllocationType {
     tos_as_scope,        // top of stack is used as context (usually nil or self)
-    context_as_scope    // context of current stack frame (i.e. content of temp0)
-    // is used a context
+    context_as_scope    // context of current stack frame (i.e. content of temp0) is used a context
 };
 
 class MethodIterator;
@@ -387,12 +385,12 @@ class MethodIterator;
 
 class MethodClosure : ValueObject {
 private:
-    MethodOop _method;
-    int       _byteCodeIndex;
-    int       _next_byteCodeIndex;
-    bool_t    _aborting;
-    bool_t    _in_primitive_failure;            // currently in primitive failure block?
-    int       _float0_index;
+    MethodOop _method;                  //
+    int       _byteCodeIndex;           //
+    int       _next_byteCodeIndex;      //
+    bool_t    _aborting;                //
+    bool_t    _in_primitive_failure;    // currently in primitive failure block?
+    int       _float0_index;            //
 
     void set_method( MethodOop method );
 

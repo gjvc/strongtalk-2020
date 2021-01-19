@@ -15,7 +15,7 @@ class Interpreted_DLLCache : public ValueObject {
 private:
     SymbolOop _dll_name;
     SymbolOop _funct_name;
-    dll_func  _entry_point;
+    dll_func_ptr_t  _entry_point;
     char      _number_of_arguments;
     // Do not add more instance variables! Layout must correspond to DLL call in ByteCodes!
 
@@ -30,7 +30,7 @@ public:
     }
 
 
-    dll_func entry_point() const {
+    dll_func_ptr_t entry_point() const {
         return _entry_point;
     }
 
@@ -43,7 +43,7 @@ public:
     bool_t async() const;
 
 
-    void set_entry_point( dll_func f ) {
+    void set_entry_point( dll_func_ptr_t f ) {
         _entry_point = f;
     }
 
@@ -93,15 +93,15 @@ public:
     }
 
 
-    dll_func entry_point() {
-        return (dll_func) mov_at( mov_edx_instruction_offset )->data();
+    dll_func_ptr_t entry_point() {
+        return (dll_func_ptr_t) mov_at( mov_edx_instruction_offset )->data();
     }
 
 
     bool_t async() const;
 
 
-    void set_entry_point( dll_func f ) {
+    void set_entry_point( dll_func_ptr_t f ) {
         mov_at( mov_edx_instruction_offset )->set_data( int( f ) );
     }
 
@@ -121,19 +121,19 @@ public:
 class DLLs : AllStatic {
 public:
     // Lookup
-    static dll_func lookup( SymbolOop name, DLL *library );
+    static dll_func_ptr_t lookup( SymbolOop name, DLL *library );
 
     static DLL *load( SymbolOop name );
 
     static bool_t unload( DLL *library );
 
-    static dll_func lookup_fail( SymbolOop dll_name, SymbolOop function_name );
+    static dll_func_ptr_t lookup_fail( SymbolOop dll_name, SymbolOop function_name );
 
-    static dll_func lookup( SymbolOop dll_name, SymbolOop function_name );
+    static dll_func_ptr_t lookup( SymbolOop dll_name, SymbolOop function_name );
 
-    static dll_func lookup_and_patch_Interpreted_DLLCache();
+    static dll_func_ptr_t lookup_and_patch_Interpreted_DLLCache();
 
-    static dll_func lookup_and_patch_Compiled_DLLCache();
+    static dll_func_ptr_t lookup_and_patch_Compiled_DLLCache();
 
     // Support for asynchronous DLL calls
     static void enter_async_call( DeltaProcess **addr );    // called before each asynchronous DLL call

@@ -427,7 +427,7 @@ PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     _console->print_cr( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
-    dll_func func = DLLs::lookup( oopFactory::new_symbol( "user" ), oopFactory::new_symbol( "DefWindowProcA" ) );
+    dll_func_ptr_t func = DLLs::lookup( oopFactory::new_symbol( "user" ), oopFactory::new_symbol( "DefWindowProcA" ) );
     ProxyOop( resultProxy )->set_pointer( (void *) func );
     return resultProxy;
 }
@@ -567,7 +567,7 @@ PRIM_DECL_3( SystemPrimitives::dll_lookup, Oop name, Oop library, Oop result ) {
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
-    dll_func res = DLLs::lookup( SymbolOop( name ), (DLL *) ProxyOop( library )->get_pointer() );
+    dll_func_ptr_t res = DLLs::lookup( SymbolOop( name ), (DLL *) ProxyOop( library )->get_pointer() );
     if ( res ) {
         ProxyOop( result )->set_pointer( (void *) res );
         return result;

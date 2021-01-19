@@ -260,7 +260,7 @@ void os::fatalExit( std::int32_t num ) {
 }
 
 
-dll_func os::dll_lookup( const char * name, DLL * library ) {
+dll_func_ptr_t os::dll_lookup( const char * name, DLL * library ) {
     return library->lookup( name );
 }
 

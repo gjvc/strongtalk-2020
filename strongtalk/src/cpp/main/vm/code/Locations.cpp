@@ -282,7 +282,7 @@ int Locations::locationAsWordOffset( int loc ) const {
 
 void Locations::print() {
     int len = _freeList->length();
-    int i;
+
     // print used locations
     _console->print_cr( "Locations:" );
     for ( std::size_t i = 0; i < len; i++ ) {

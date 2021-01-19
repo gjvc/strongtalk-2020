@@ -71,7 +71,7 @@ void Compiled_DLLCache::print() {
 
 // DLLs implementation
 
-dll_func DLLs::lookup( SymbolOop name, DLL *library ) {
+dll_func_ptr_t DLLs::lookup( SymbolOop name, DLL *library ) {
     char buffer[200];
     st_assert( not name->copy_null_terminated( buffer, 200 ), "DLL function name longer than 200 chars - truncated" );
     return os::dll_lookup( buffer, library );
@@ -90,7 +90,7 @@ bool_t DLLs::unload( DLL *library ) {
 }
 
 
-dll_func DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
+dll_func_ptr_t DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
     // Call backs to Delta
     if ( Universe::dll_lookup_receiver()->is_nil() ) {
         warning( "dll lookup receiver is not set" );
@@ -99,13 +99,13 @@ dll_func DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
 
     Oop res = Delta::call( Universe::dll_lookup_receiver(), Universe::dll_lookup_selector(), function_name, dll_name );
 
-    return res->is_proxy() ? (dll_func) ProxyOop( res )->get_pointer() : nullptr;
+    return res->is_proxy() ? (dll_func_ptr_t) ProxyOop( res )->get_pointer() : nullptr;
 }
 
 
-dll_func DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
+dll_func_ptr_t DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
 
-    dll_func result = lookup_fail( dll_name, function_name );
+    dll_func_ptr_t result = lookup_fail( dll_name, function_name );
     if ( result ) {
         if ( TraceDLLLookup ) {
             _console->print_cr( "address [0x%lx], DLL name [%s], function name [%s]", result, dll_name->print_value_string(), function_name->print_value_string() );
@@ -122,7 +122,7 @@ dll_func DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
 }
 
 
-dll_func DLLs::lookup_and_patch_Interpreted_DLLCache() {
+dll_func_ptr_t DLLs::lookup_and_patch_Interpreted_DLLCache() {
     // get DLL call info
     Frame        f = DeltaProcess::active()->last_frame();
     MethodOop    m = f.method();
@@ -132,20 +132,20 @@ dll_func DLLs::lookup_and_patch_Interpreted_DLLCache() {
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
 
     // do lookup, patch & return entry point
-    dll_func function = lookup( cache->dll_name(), cache->funct_name() );
+    dll_func_ptr_t function = lookup( cache->dll_name(), cache->funct_name() );
     cache->set_entry_point( function );
 
     return function;
 }
 
 
-dll_func DLLs::lookup_and_patch_Compiled_DLLCache() {
+dll_func_ptr_t DLLs::lookup_and_patch_Compiled_DLLCache() {
     // get DLL call info
     Frame f = DeltaProcess::active()->last_frame();
     Compiled_DLLCache *cache = compiled_DLLCache_from_return_address( f.pc() );
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
     // do lookup, patch & return entry point
-    dll_func function = lookup( cache->dll_name(), cache->function_name() );
+    dll_func_ptr_t function = lookup( cache->dll_name(), cache->function_name() );
     cache->set_entry_point( function );
     cache->set_destination( StubRoutines::call_DLL_entry( cache->async() ) );
     return function;

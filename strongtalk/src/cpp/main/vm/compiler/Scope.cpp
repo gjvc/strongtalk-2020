@@ -11,6 +11,7 @@
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/assembler/x86_mapping.hpp"
+#include "vm/compiler/NodeFactory.hpp"
 
 #include <cstring>
 
@@ -235,8 +236,8 @@ MergeNode *InlinedScope::nlrTestPoint() {
         // (in sender scopes (when inlining), there will be an assignment when fixing up the connections).
         //SinglyAssignedPseudoRegister* src = new SinglyAssignedPseudoRegister(this, NonLocalReturnResultLoc, false, true, end_byteCodeIndex, end_byteCodeIndex);
         //SinglyAssignedPseudoRegister* dst = new SinglyAssignedPseudoRegister(this, NonLocalReturnResultLoc, false, false, end_byteCodeIndex, end_byteCodeIndex);
-        _nlrTestPoint = NodeFactory::MergeNode( end_byteCodeIndex );
-        _nlrTestPoint->append( NodeFactory::NonLocalReturnTestNode( end_byteCodeIndex ) );
+        _nlrTestPoint = NodeFactory::createAndRegisterNode<MergeNode>( end_byteCodeIndex );
+        _nlrTestPoint->append( NodeFactory::createAndRegisterNode<NonLocalReturnTestNode>( end_byteCodeIndex ) );
     }
     return _nlrTestPoint;
 }
@@ -322,7 +323,7 @@ void InlinedScope::createTemporaries( int nofTemps ) {
         if ( isTop() ) {
             // temps are initialized by PrologueNode
         } else {
-            gen()->append( NodeFactory::AssignNode( nil, r ) );
+            gen()->append( NodeFactory::createAndRegisterNode<AssignNode>( nil, r ) );
         }
     }
 }
@@ -788,15 +789,16 @@ void InlinedScope::genCode() {
     _hasBeenGenerated = true;
     prologue();
     // always generate (shared) entry points for ordinary & non-local return
-    _returnPoint              = NodeFactory::MergeNode( EpilogueByteCodeIndex );
-    _NonLocalReturneturnPoint = NodeFactory::MergeNode( EpilogueByteCodeIndex );
+    _returnPoint              = NodeFactory::createAndRegisterNode<MergeNode>( EpilogueByteCodeIndex );
+    _NonLocalReturneturnPoint = NodeFactory::createAndRegisterNode<MergeNode>( EpilogueByteCodeIndex );
     _nlrTestPoint             = nullptr;
     _contextInitializer       = nullptr;
     int nofTemps = method()->number_of_stack_temporaries();
     if ( isTop() ) {
-        _returnPoint->append( NodeFactory::ReturnNode( resultPR, EpilogueByteCodeIndex ) );
-        _NonLocalReturneturnPoint->append( NodeFactory::NonLocalReturnSetupNode( resultPR, EpilogueByteCodeIndex ) );
-        Node *first = NodeFactory::PrologueNode( key(), nofArguments(), nofTemps );
+        _returnPoint->append( NodeFactory::createAndRegisterNode<ReturnNode>( resultPR, EpilogueByteCodeIndex ) );
+        _NonLocalReturneturnPoint->append( NodeFactory::createAndRegisterNode<NonLocalReturnSetupNode>( resultPR, EpilogueByteCodeIndex ) );
+        Node *first = NodeFactory::createAndRegisterNode<PrologueNode>( key(), nofArguments(), nofTemps );
+
         theCompiler->firstNode = first;
         gen()->setCurrent( first );
     }

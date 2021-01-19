@@ -177,9 +177,9 @@ class DLL : CHeapAllocatedObject {
 
 
     public:
-        dll_func lookup( const char * funcname ) {
+        dll_func_ptr_t lookup( const char * funcname ) {
             char     * errbuf = new char[1024];
-            dll_func function = dll_func( dlsym( _handle, funcname ) );
+            dll_func_ptr_t function = dll_func_ptr_t( dlsym( _handle, funcname ) );
 
             checkHandle( ( void * ) function, "could not find function: %s" );
             return function;

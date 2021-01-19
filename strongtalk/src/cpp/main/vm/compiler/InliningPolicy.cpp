@@ -6,13 +6,12 @@
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
-#include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/Scope.hpp"
-#include "vm/runtime/VirtualFrame.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/recompiler/RecompilerFrame.hpp"
+#include "vm/compiler/NodeFactory.hpp"
 
 
 bool_t InliningPolicy::shouldNotInline() const {

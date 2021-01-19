@@ -19,6 +19,7 @@
 #include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/compiler/NodeFactory.hpp"
 
 #include "test/utilities/TestNotifier.hpp"
 #include <gtest/gtest.h>
@@ -117,8 +118,8 @@ expressionStack()
 TEST_F( UncommonSendNodeTests, verifyShouldCallErrorWhenNotLastInBB
 ) {
 node = NodeFactory::UncommonSendNode( exprStack, 1, 0 );
-Node *nop     = NodeFactory::NopNode();
-Node *comment = NodeFactory::CommentNode( "test" );
+Node *nop     = NodeFactory::createAndRegisterNode<NopNode>();
+Node *comment = NodeFactory::createAndRegisterNode<CommentNode>( "test" );
 nop->
 append( node );
 node->
@@ -140,7 +141,7 @@ errorCount()
 TEST_F( UncommonSendNodeTests, verifyShouldCallErrorWhenMoreArgsThanExpressions
 ) {
 node = NodeFactory::UncommonSendNode( exprStack, 1, 1 );
-Node *nop = NodeFactory::NopNode();
+Node *nop = NodeFactory::createAndRegisterNode<NopNode>();
 nop->
 append( node );
 
@@ -200,7 +201,7 @@ PseudoRegister *expr = new PseudoRegister( topScope );
 exprStack->
 append( expr );
 
-Node *nop = NodeFactory::NopNode();
+Node *nop = NodeFactory::createAndRegisterNode<NopNode>();
 node = NodeFactory::UncommonSendNode( exprStack, 1, 1 );
 nop->
 append( node );
@@ -231,7 +232,7 @@ exprStack->
 append( arg1 );
 exprStack->
 append( arg2 );
-Node *nop = NodeFactory::NopNode();
+Node *nop = NodeFactory::createAndRegisterNode<NopNode>();
 node = NodeFactory::UncommonSendNode( exprStack, 1, 2 );
 nop->
 append( node );
