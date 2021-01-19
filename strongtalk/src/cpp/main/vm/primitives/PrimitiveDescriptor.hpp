@@ -11,17 +11,13 @@
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/primitives/PrimitiveGroup.hpp"
+#include "vm/compiler/PseudoRegister.hpp"
+#include "vm/compiler/Expression.hpp"
 
 
 // The PrimitiveDescriptor structure exposes all properties of a primitive.
 // Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
-
-class PseudoRegister;
-
-class Expression;
-
-class Node;
-
+//
 // _flags
 //  16    can_scavenge() can it trigger a scavenge/GC?
 //  17    can_perform_NonLocalReturn() can it do an NonLocalReturn or process abort

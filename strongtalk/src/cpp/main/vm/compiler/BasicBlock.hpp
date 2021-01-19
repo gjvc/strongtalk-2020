@@ -52,12 +52,12 @@ protected:
 public: // was "protected:" originally
     Node *_first;            //
     Node *_last;             //
-    int16_t _nodeCount;         // number of nodes in this BasicBlock
+    std::int16_t _nodeCount;         // number of nodes in this BasicBlock
 
 protected:
-    int16_t _id;                // unique BasicBlock id
-    int16_t _loopDepth;         // the loop nesting level
-    int16_t _genCount;          // code already generated?
+    std::int16_t _id;                // unique BasicBlock id
+    std::int16_t _loopDepth;         // the loop nesting level
+    std::int16_t _genCount;          // code already generated?
 
 public:
     BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters

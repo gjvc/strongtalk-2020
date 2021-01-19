@@ -385,9 +385,9 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
 
     // overwrite with "nop, jmp specialHandlerCall" (nop first so it can be replaced by int3 for debugging)
     const char nop    = '\x90';
-    const char jmp    = '\xeb'; // int16_t jump with 8bit signed offset
+    const char jmp    = '\xeb'; // std::int16_t jump with 8bit signed offset
     int        offset = specialHandlerCall() - &p[ 3 ];
-    guarantee( -128 <= offset and offset < 128, "offset too big for int16_t jump" );
+    guarantee( -128 <= offset and offset < 128, "offset too big for std::int16_t jump" );
     p[ 0 ] = nop;
     p[ 1 ] = jmp;
     p[ 2 ] = char( offset );

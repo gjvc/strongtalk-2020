@@ -59,7 +59,7 @@ void CodeBuffer::relocate( const char *at, RelocationInformation::RelocationType
         st_assert( rtype == RelocationInformation::RelocationType::none or rtype == RelocationInformation::RelocationType::runtime_call_type or rtype == RelocationInformation::RelocationType::external_word_type, "code needs relocation information" );
 
     } else {
-        st_assert( sizeof( RelocationInformation ) == sizeof( int16_t ), "change this code" );
+        st_assert( sizeof( RelocationInformation ) == sizeof( std::int16_t ), "change this code" );
         int len    = at - _codeStart;
         int offset = len - _last_reloc_offset;
         _last_reloc_offset = len;

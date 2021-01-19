@@ -86,7 +86,7 @@ ChunkKlass *ChunkKlass::findStart( ChunkKlass *mapStart, ChunkKlass *mapEnd ) {
         st_assert( p >= start, "not found" );
         m = asChunkKlass( p );
     } else {
-        // pointing to a header, but we don't know whether std::int32_t/int16_t etc
+        // pointing to a header, but we don't know whether std::int32_t/std::int16_t etc
         // first walk up to first non-header byte
         // (note that first distance byte of unused blocks is correct, but
         // the others aren't)

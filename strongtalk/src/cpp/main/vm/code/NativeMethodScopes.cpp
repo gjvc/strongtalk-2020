@@ -48,8 +48,8 @@ NonInlinedBlockScopeDescriptor *NativeMethodScopes::noninlined_block_scope_at( i
 }
 
 
-int16_t NativeMethodScopes::get_next_half( int &offset ) const {
-    int16_t v;
+std::int16_t NativeMethodScopes::get_next_half( int &offset ) const {
+    std::int16_t v;
     v = get_next_char( offset ) << BYTE_WIDTH;
     v = addBits( v, get_next_char( offset ) );
     return v;

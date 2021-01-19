@@ -729,19 +729,19 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedShortAtPut, Oop receiver, Oop arg
 PRIM_DECL_2( byteArrayPrimitives::alienSignedShortAt, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSignedShortAt", receiver, argument );
     checkAlienAtReceiver( receiver );
-    checkAlienAtIndex( receiver, argument, int16_t );
+    checkAlienAtIndex( receiver, argument, std::int16_t );
 
-    return smiOopFromValue( alienAt( receiver, argument, int16_t ) );
+    return smiOopFromValue( alienAt( receiver, argument, std::int16_t ) );
 }
 
 
 PRIM_DECL_3( byteArrayPrimitives::alienSignedShortAtPut, Oop receiver, Oop argument1, Oop argument2 ) {
     PROLOGUE_3( "alienSignedShortAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
-    checkAlienAtPutIndex( receiver, argument1, int16_t );
-    checkAlienAtPutValue( receiver, argument2, int16_t, -32768, 32767 );
+    checkAlienAtPutIndex( receiver, argument1, std::int16_t );
+    checkAlienAtPutValue( receiver, argument2, std::int16_t, -32768, 32767 );
 
-    alienAt( receiver, argument1, int16_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::int16_t ) = SMIOop( argument2 )->value();
 
     return argument2;
 }

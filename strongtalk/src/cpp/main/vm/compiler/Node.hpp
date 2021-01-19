@@ -84,9 +84,9 @@ class PseudoRegisterMapping;
 class BasicNode : public PrintableResourceObject {
 
 protected:
-    int16_t _id;                      // unique node id for debugging
-    int16_t _num;                     // node number within basic block
-    int16_t _byteCodeIndex;           // byteCodeIndex within the sc
+    std::int16_t _id;                      // unique node id for debugging
+    std::int16_t _num;                     // node number within basic block
+    std::int16_t _byteCodeIndex;           // byteCodeIndex within the sc
     BasicBlock            *_basicBlock;            // basic block to which this instance belongs
     InlinedScope          *_scope;                 // scope to which this instance belongs
     PseudoRegisterMapping *_pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)

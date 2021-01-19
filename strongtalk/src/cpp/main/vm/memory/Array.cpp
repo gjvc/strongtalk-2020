@@ -70,9 +70,9 @@ void ByteArray::extend() {
 }
 
 
-void ByteArray::appendHalf( int16_t p ) {
+void ByteArray::appendHalf( std::int16_t p ) {
 
-    if ( _top + (int) sizeof( int16_t ) > _max )
+    if ( _top + (int) sizeof( std::int16_t ) > _max )
         extend();
 
     // Saving the half as two bytes to avoid alignment problem.
@@ -81,7 +81,7 @@ void ByteArray::appendHalf( int16_t p ) {
 }
 
 
-void ByteArray::putHalfAt( int16_t p, int offset ) {
+void ByteArray::putHalfAt( std::int16_t p, int offset ) {
     // Saving the half as two bytes to avoid alignment problem.
     _array[ offset ]     = p >> BYTE_WIDTH;
     _array[ offset + 1 ] = (std::uint8_t) lowerBits( p, 8 );

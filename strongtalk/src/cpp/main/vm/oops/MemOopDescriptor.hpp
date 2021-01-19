@@ -55,11 +55,9 @@ public:
     friend MemOop as_memOop( void *p );
 
 
-    // conversion from MemOop to miemOopDescriptor*
+    // conversion from MemOop to MemOopDescriptor*
     MemOopDescriptor *addr() const {
-        MemOopDescriptor *address = reinterpret_cast<MemOopDescriptor *>( reinterpret_cast<uintptr_t>( this ) - MEMOOP_TAG );
-//            _console->print_cr( "this [%#lx], address [%#lx]", this, address );
-        return address;
+        return reinterpret_cast<MemOopDescriptor *>( reinterpret_cast<uintptr_t>( this ) - MEMOOP_TAG );
     }
 
 

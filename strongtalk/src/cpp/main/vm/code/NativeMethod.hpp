@@ -71,7 +71,7 @@ protected:
     // (*) At this address there's 5 bytes of extra Space reserved to accommodate for a call to the zombie handler if the NativeMethod is a zombie.
     // If the NativeMethod is not a zombie, there's a call to StubRoutines::recompile_stub_entry() instead (even if the NativeMethod doesn't count invocations).
     // If the method turns zombie, this call is overwritten by the beforementioned call, thereby making sure that the relocation information for the modified NativeMethod stays valid.
-    // In both cases this address is jumped to via a int16_t jump from one of the entry points.
+    // In both cases this address is jumped to via a std::int16_t jump from one of the entry points.
 
     // Note: If it becomes important to save some space per NativeMethod, note that both _zombie_handler_jump_offset
     //       and _verified_entry_point_offset are less than 128 bytes away from _entry_point_offset, thus these

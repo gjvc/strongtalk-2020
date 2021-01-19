@@ -12,9 +12,9 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 
-constexpr int16_t IllegalByteCodeIndex  = -1;       //
-constexpr int16_t PrologueByteCodeIndex = 0;        //
-constexpr int16_t EpilogueByteCodeIndex = 32766;    //
+constexpr std::int16_t IllegalByteCodeIndex  = -1;       //
+constexpr std::int16_t PrologueByteCodeIndex = 0;        //
+constexpr std::int16_t EpilogueByteCodeIndex = 32766;    //
 
 class NameDescriptorClosure {
 

@@ -233,7 +233,7 @@ public:
     }
 
 
-    int16_t get_next_half( int &offset ) const;
+    std::int16_t get_next_half( int &offset ) const;
 
 
     std::uint8_t peek_next_char( int offset ) const {

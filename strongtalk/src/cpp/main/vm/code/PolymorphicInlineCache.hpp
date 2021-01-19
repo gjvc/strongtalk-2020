@@ -25,7 +25,7 @@ class PolymorphicInlineCacheContents;
 class PolymorphicInlineCache {
 
 public:
-    enum class Consts {
+    enum class Constant {
         max_nof_entries = 4,            // the maximal number of PolymorphicInlineCache entries
 
         // PolymorphicInlineCache layout constants
@@ -47,8 +47,8 @@ public:
 
 private:
     CompiledInlineCache *_ic;      // the ic linked to this PolymorphicInlineCache
-    int16_t _codeSize;              // size of code in bytes
-    int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
+    std::int16_t _codeSize;              // size of code in bytes
+    std::int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
 
     static int nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
 

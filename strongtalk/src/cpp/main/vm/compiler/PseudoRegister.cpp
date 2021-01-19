@@ -17,7 +17,7 @@ int BlockPseudoRegister::_numBlocks = 0;
 static GrowableArray<ConstPseudoRegister *> *constants = 0;
 static PseudoRegister *dummyPR;
 const int PseudoRegister::AvgBBIndexLen = 10;
-const int PseudoRegister::VeryNegative  = -9999;        // fix this -- should be int16_t, really
+const int PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really
 
 #define BAD_SCOPE  ((InlinedScope*)1)
 

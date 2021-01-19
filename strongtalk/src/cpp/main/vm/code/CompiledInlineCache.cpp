@@ -157,8 +157,9 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
             }
             ShouldNotReachHere();
         }
+
         // return marked result of doesNotUnderstand: message
-        Oop       result = Delta::call( recv, sel, msg );
+        Oop result = Delta::call( recv, sel, msg );
 
         if ( not have_nlr_through_C ) {
             Unimplemented();

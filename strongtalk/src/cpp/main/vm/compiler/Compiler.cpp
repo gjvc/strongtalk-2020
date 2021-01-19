@@ -88,7 +88,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope )
     int sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
-    int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();
+    std::int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();
 
     main_jumpTable_id     = JumpTableID( main_index, sub_index );
     promoted_jumpTable_id = JumpTableID();

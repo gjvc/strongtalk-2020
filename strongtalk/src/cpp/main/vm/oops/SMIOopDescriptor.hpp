@@ -15,21 +15,12 @@
 typedef class SMIOopDescriptor *SMIOop;
 
 // 0, 1 in SMIOop format
-//#define smiOop_zero  SMIOop( (0L << TAG_SIZE) + INTEGER_TAG )
-//#define smiOop_one   SMIOop( (1L << TAG_SIZE) + INTEGER_TAG )
-
 inline auto smiOop_zero = reinterpret_cast<SMIOop>( ( 0L << TAG_SIZE ) + INTEGER_TAG );
 inline auto smiOop_one  = reinterpret_cast<SMIOop>( ( 1L << TAG_SIZE ) + INTEGER_TAG );
 
 // minimum and maximum smiOops
-//#define smi_min  (-(1 << (BitsPerWord - 3)))      // -2^29
-//#define smi_max  ( (1 << (BitsPerWord - 3)) - 1)  // +2^29 - 1
-
 constexpr auto smi_min = ( -( 1 << ( BitsPerWord - 3 ) ) );      // -2^2
-constexpr auto smi_max = ( ( 1 << ( BitsPerWord - 3 ) ) - 1 );  // +2^29 - 1
-
-//#define smiOop_min   SMIOop((smi_min << TAG_SIZE) + INTEGER_TAG)
-//#define smiOop_max   SMIOop((smi_max << TAG_SIZE) + INTEGER_TAG)
+constexpr auto smi_max = ( +( 1 << ( BitsPerWord - 3 ) ) - 1 );  // +2^29 - 1
 
 inline auto smiOop_min = SMIOop( ( smi_min << TAG_SIZE ) + INTEGER_TAG );
 inline auto smiOop_max = SMIOop( ( smi_max << TAG_SIZE ) + INTEGER_TAG );

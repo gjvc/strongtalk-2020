@@ -25,7 +25,7 @@ class tagged_ptr {
 
 public:
 
-    static constexpr std::std::size_t alignment = alignof( T );
+    static constexpr std::size_t alignment = alignof( T );
     static constexpr std::uintptr_t   tag_bits  = LOG2<alignment>::value;
     static constexpr std::uintptr_t   tag_mask  = alignment - static_cast<std::uintptr_t>(1);
 
@@ -38,7 +38,7 @@ public:
 
 
         std::uintptr_t *p;
-        std::std::size_t i;
+        std::size_t i;
 
 
     public:

@@ -37,10 +37,10 @@ class BlockPseudoRegister;
 class PseudoRegister : public PrintableResourceObject {
 
 protected:
-    int16_t _id;               // unique id
-    int16_t _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-    int16_t _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-    int16_t _softUsageCount;   // number of "soft" uses
+    std::int16_t _id;               // unique id
+    std::int16_t _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+    std::int16_t _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+    std::int16_t _softUsageCount;   // number of "soft" uses
     LogicalAddress *_logicalAddress; // for new backend only: logical address if created or nullptr
     static const int AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
@@ -361,7 +361,7 @@ public:
 
 
 // A temp preg is exactly like a PseudoRegister except that it is live for only
-// a very int16_t (hard-wired) code sequence such as loading a frame ptr etc.
+// a very std::int16_t (hard-wired) code sequence such as loading a frame ptr etc.
 class TemporaryPseudoRegister : public PseudoRegister {
 public:
     TemporaryPseudoRegister( InlinedScope *s ) :

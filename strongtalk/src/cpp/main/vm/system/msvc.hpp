@@ -21,7 +21,7 @@
 #include <cstdint>
 #else
     typedef __int8              std::int8_t;
-    typedef __int16             std::int16_t;
+    typedef __int16             std::std::int16_t;
     typedef __int32             std::int32_t;
     typedef __int64             std::int64_t;
     typedef unsigned __int8     std::uint8_t;

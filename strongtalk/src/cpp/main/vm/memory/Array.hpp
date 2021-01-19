@@ -64,7 +64,7 @@ public:
     }
 
 
-    void appendHalf( int16_t p );
+    void appendHalf( std::int16_t p );
 
     void appendWord( int p );
 
@@ -75,7 +75,7 @@ public:
     }
 
 
-    void putHalfAt( int16_t p, int offset );
+    void putHalfAt( std::int16_t p, int offset );
 
 
     // Cut off some of the generated code.
