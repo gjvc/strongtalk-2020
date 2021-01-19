@@ -114,22 +114,22 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
     int          n  = 1;        // temporary 0 is always there
     std::uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
     switch ( b0 ) {
-        case static_cast<int>(ByteCodes::Code::allocate_temp_1):
+        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_1):
             n += 1;
             break;
-        case static_cast<int>(ByteCodes::Code::allocate_temp_2):
+        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_2):
             n += 2;
             break;
-        case static_cast<int>(ByteCodes::Code::allocate_temp_3):
+        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_3):
             n += 3;
             break;
-        case static_cast<int>(ByteCodes::Code::allocate_temp_n): {
+        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_n): {
             std::uint8_t b1 = *codes( 2 );
             n += ( ( b1 == 0 ) ? 256 : b1 );
         }
             break;
 
-        case static_cast<int>(ByteCodes::Code::float_allocate): {
+        case static_cast<std::size_t>(ByteCodes::Code::float_allocate): {
             // One additional temp (temp1) for Floats::magic + additional
             // temps allocated in pairs to match to match one float temp.
             std::uint8_t b1 = *codes( 2 );
@@ -275,7 +275,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         if ( ByteCodes::send_type( c.code() ) not_eq ByteCodes::SendType::no_send ) {
             // Send
             ByteCodes::Code original = ByteCodes::original_send_code_for( c.code() );
-            out.put_byte( static_cast<int>(original) );
+            out.put_byte( static_cast<std::size_t>(original) );
             if ( ByteCodes::format( original ) == ByteCodes::Format::BBOO ) {
                 out.put_byte( c.byte_at( 1 ) );
                 out.align( c.hp() + 2 );
@@ -287,7 +287,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         } else if ( c.is_primitive_call() ) {
             // Primitive call
             ByteCodes::Code original = ByteCodes::original_primitive_call_code_for( c.code() );
-            out.put_byte( static_cast<int>(original) );
+            out.put_byte( static_cast<std::size_t>(original) );
             out.align( c.hp() + 1 );
             if ( c.code() == ByteCodes::Code::prim_call or c.code() == ByteCodes::Code::primitive_call_failure or c.code() == ByteCodes::Code::primitive_call_self or c.code() == ByteCodes::Code::primitive_call_self_failure ) {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) c.word_at( 1 ) );
@@ -301,7 +301,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         } else if ( c.is_dll_call() ) {
             // DLL call
             Interpreted_DLLCache *ic = c.dll_cache();
-            out.put_byte( static_cast<int>( c.code() ) );
+            out.put_byte( static_cast<std::size_t>( c.code() ) );
             out.align( c.hp() + 1 );
             out.put_oop( ic->dll_name() );
             out.put_oop( ic->funct_name() );
@@ -309,7 +309,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
             out.put_byte( ic->number_of_arguments() );
         } else {
             // Otherwise
-            out.put_byte( static_cast<int>( c.code() ) );
+            out.put_byte( static_cast<std::size_t>( c.code() ) );
             switch ( c.format() ) {
                 case ByteCodes::Format::B:
                     break;
@@ -963,10 +963,10 @@ bool_t MethodOopDescriptor::is_primitiveMethod() const {
         case ByteCodes::Code::predict_primitive_call_failure:
             return true;
         case ByteCodes::Code::predict_primitive_call_lookup:
-            lookup_primitive_and_patch( codes(), static_cast<int>( ByteCodes::Code::predict_primitive_call ) );
+            lookup_primitive_and_patch( codes(), static_cast<std::size_t>( ByteCodes::Code::predict_primitive_call ) );
             return true;
         case ByteCodes::Code::predict_primitive_call_failure_lookup:
-            lookup_primitive_and_patch( codes(), static_cast<int>( ByteCodes::Code::predict_primitive_call_failure ) );
+            lookup_primitive_and_patch( codes(), static_cast<std::size_t>( ByteCodes::Code::predict_primitive_call_failure ) );
             return true;
         default:
             return false;
@@ -994,7 +994,7 @@ int MethodOopDescriptor::end_byteCodeIndex() const {
     int last_entry = this->size_of_codes() * 4;
 
     for ( std::size_t i = 0; i < 4; i++ )
-        if ( byte_at( last_entry - i ) not_eq static_cast<int>( ByteCodes::Code::halt ) )
+        if ( byte_at( last_entry - i ) not_eq static_cast<std::size_t>( ByteCodes::Code::halt ) )
             return last_entry + 1 - i;
 
     st_fatal( "should never reach the point" );

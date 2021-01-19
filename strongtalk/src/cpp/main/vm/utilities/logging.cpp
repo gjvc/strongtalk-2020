@@ -20,7 +20,7 @@ std::string format_time_point( std::chrono::system_clock::time_point &point ) {
     char        *buf  = &result[ 0 ];
     std::time_t now_c = std::chrono::system_clock::to_time_t( point );
     std::strftime( buf, 21, "%Y-%m-%dT%H:%M:%S.", std::localtime( &now_c ) );
-    sprintf( buf + 20, "%09ld", point.time_since_epoch().count() % static_cast<int>(1E9) );
+    sprintf( buf + 20, "%09ld", point.time_since_epoch().count() % static_cast<std::size_t>(1E9) );
 
     return result;
 }

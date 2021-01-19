@@ -144,7 +144,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
         warning( "TypeTestNode with only one klass & no uncommon case => performance bug" );
     }
     for ( std::size_t i = 0; i < len; i++ ) {
-        for ( int j = i + 1; j < len; j++ ) {
+        for ( std::size_t j = i + 1; j < len; j++ ) {
             st_assert( classes->at( i ) not_eq classes->at( j ), "duplicate class" );
         }
     }
@@ -154,7 +154,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
 ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst ) :
         ArithNode( op, arg1, dst ) {
     _oper = arg2;
-    if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( _op ) ] ) { // is this _op or op ? XXX ???
+    if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = _src;
         _src               = _oper;
@@ -164,7 +164,7 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *
 
 
 TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool_t arg1IsInt, bool_t arg2IsInt ) {
-    if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
+    if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = arg1;
         arg1 = arg2;
@@ -597,7 +597,7 @@ void ContextInitNode::notifyNoContext() {
             st_assert( blk->isBlockPseudoRegister(), "must be a block" );
 
             // remove use of block
-            for ( int j = _initializers->length() - 1; j >= 0; j-- ) {
+            for ( std::size_t j = _initializers->length() - 1; j >= 0; j-- ) {
                 if ( _initializers->at( j )->preg() == blk ) {
                     blk->removeUse( _basicBlock, _initializerUses->at( j ) );
                     break;
@@ -692,7 +692,7 @@ Node *UncommonSendNode::clone( PseudoRegister *from, PseudoRegister *to ) const 
 
 void UncommonSendNode::makeUses( BasicBlock *bb ) {
     int       expressionCount = expressionStack()->length();
-    for ( int pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
+    for ( std::size_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
         bb->addUse( this, expressionStack()->at( pos ) );
 }
 
@@ -3062,7 +3062,7 @@ const char *NonLocalReturnTestNode::print_string( const char *buf, bool_t printA
 
 
 const char *ArithNode::opName() const {
-    return ArithOpName[ static_cast<int>( _op ) ];
+    return ArithOpName[ static_cast<std::size_t>( _op ) ];
 }
 
 
@@ -3095,7 +3095,7 @@ const char *FloatUnaryArithNode::print_string( const char *buf, bool_t printAddr
 
 const char *TArithRRNode::print_string( const char *buf, bool_t printAddr ) const {
     const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<int>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::size_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((TArithRRNode*)%#lx)", this );
     return b;
@@ -3113,7 +3113,7 @@ const char *ArithRCNode::print_string( const char *buf, bool_t printAddr ) const
 
 const char *BranchNode::print_string( const char *buf, bool_t printAddr ) const {
     const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<int>( _op ) ], id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::size_t>( _op ) ], id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((BranchNode*)%#lx)", this );
     return b;

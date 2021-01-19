@@ -14,7 +14,7 @@ Location pick( RegisterMask & alloc, RegisterMask mask ) {
     Unimplemented();
     unsigned r = mask & ~alloc;
     if ( r == 0 ) return unAllocated;
-    for ( int reg = 0; not isBitSet( r, 0 ); reg++, r >>= 1 );
+    for ( std::size_t reg = 0; not isBitSet( r, 0 ); reg++, r >>= 1 );
     setNthBit( alloc, reg );
     // return Location(ireg, reg); /// fix this
     return Location();
@@ -25,7 +25,7 @@ void printAllocated( RegisterMask rs ) {
     printf( "{" );
     bool_t    first = true;
     unsigned  r     = rs;        // safer for >>
-    for ( int d     = 0; r; d++, r >>= 1 ) {
+    for ( std::size_t d     = 0; r; d++, r >>= 1 ) {
         if ( isBitSet( r, 0 ) ) {
             if ( first ) {
                 first = false;

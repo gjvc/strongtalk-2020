@@ -712,7 +712,7 @@ int InlinedScope::allocateFloatTemporaries( int firstFloatIndex ) {
     _firstFloatIndex = firstFloatIndex;                // start index for first float of this scope
     int       nofFloatTemps             = hasFloatTemporaries() ? nofFloatTemporaries() : 0;
     // convert floatLocs into stackLocs
-    for ( int k                         = 0; k < nofFloatTemps; k++ ) {
+    for ( std::size_t k                         = 0; k < nofFloatTemps; k++ ) {
         PseudoRegister *preg = floatTemporary( k )->preg();
         Location loc = preg->_location;
         st_assert( loc.scopeNo() == scopeID() and loc.floatNo() == k, "inconsistency" );

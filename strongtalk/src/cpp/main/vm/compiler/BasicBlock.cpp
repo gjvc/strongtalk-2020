@@ -617,7 +617,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             continue;
         }
         BitVector *liveRange = lives->at( i );
-        for ( int tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
+        for ( std::size_t tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
             if ( liveRange->isDisjointFrom( hardwired->at( tempNo ) ) ) {
                 Location temp = Mapping::localRegister( tempNo );
                 doAlloc( r, temp );

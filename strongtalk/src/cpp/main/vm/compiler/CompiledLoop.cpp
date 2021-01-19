@@ -590,7 +590,7 @@ public:
             GrowableArray<PseudoRegister *>          regs( 4 );
             GrowableArray<GrowableArray<KlassOop> *> klasses( 4 );
             n->collectTypeTests( regs, klasses );
-            for ( int j = 0; j < regs.length(); j++ ) {
+            for ( std::size_t j = 0; j < regs.length(); j++ ) {
                 PseudoRegister *r = regs.at( j );
                 if ( theLoop->defsInLoop( r ) == 0 ) {
                     // this test can be hoisted
@@ -621,7 +621,7 @@ void CompiledLoop::hoistTypeTests() {
         HoistedTypeTest *t      = _hoistableTests->at( i );
         PseudoRegister  *tested = t->_testedPR;
 
-        for ( int j = headerTests->length() - 1; j >= 0; j-- ) {
+        for ( std::size_t j = headerTests->length() - 1; j >= 0; j-- ) {
 
             if ( headerTests->at( j )->_testedPR == tested ) {
                 // already testing this PseudoRegister
@@ -738,7 +738,7 @@ void CompiledLoop::findRegCandidates() {
         const int n = bb->duInfo.info->length();
         if ( bb->_last->isCallNode() )
             ncalls++;
-        for ( int j = 0; j < n; j++ ) {
+        for ( std::size_t j = 0; j < n; j++ ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
             if ( candidates.at( r->id() ) == nullptr )
@@ -753,7 +753,7 @@ void CompiledLoop::findRegCandidates() {
     LoopRegCandidate *first  = new LoopRegCandidate( nullptr );
     LoopRegCandidate *second = new LoopRegCandidate( nullptr );
 
-    for ( int j = candidates.length() - 1; j >= 0; j-- ) {
+    for ( std::size_t j = candidates.length() - 1; j >= 0; j-- ) {
         LoopRegCandidate *c = candidates.at( j );
         if ( c == nullptr )
             continue;
@@ -796,7 +796,7 @@ void HoistedTypeTest::print_test_on( ConsoleOutputStream *s ) {
 
     int len = _klasses->length();
 
-    for ( int j = 0; j < len; j++ ) {
+    for ( std::size_t j = 0; j < len; j++ ) {
         KlassOop m = _klasses->at( j );
         m->print_value_on( s );
         if ( j < len - 1 )

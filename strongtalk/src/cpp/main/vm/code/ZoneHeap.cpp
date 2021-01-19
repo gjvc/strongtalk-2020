@@ -36,7 +36,7 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
     std::uint8_t *p = asByte();
     std::uint8_t *e = p + nChunks - 1;
     if ( nChunks < maxOneByteLen ) {
-        p[ 0 ] = e[ 0 ] = static_cast<int>(s) + nChunks - 1;
+        p[ 0 ] = e[ 0 ] = static_cast<std::size_t>(s) + nChunks - 1;
     } else {
         st_assert( nChunks < ( 1 << ( 3 * MaxDistLog ) ), "chunk too large" );
         unsigned mask = nthMask( MaxDistLog );
@@ -55,11 +55,11 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
             p[ headerSize() ] = headerSize();
     } else {
         if ( nChunks < maxOneByteLen ) {
-            st_assert( maxOneByteLen <= static_cast<int>(chunkState::MaxDistance), "oops!" );
+            st_assert( maxOneByteLen <= static_cast<std::size_t>(chunkState::MaxDistance), "oops!" );
             for ( std::size_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
                 p[ i ] = i;
         } else {
-            int max = min( static_cast<int>(nChunks - 4), static_cast<int>( chunkState::MaxDistance ) );
+            int max = min( static_cast<std::size_t>(nChunks - 4), static_cast<std::size_t>( chunkState::MaxDistance ) );
             std::size_t i   = maxHeaderSize;
             for ( ; i < max; i++ )
                 p[ i ] = i;
@@ -67,7 +67,7 @@ void ChunkKlass::markSize( int nChunks, chunkState s ) {
             // the elems chunkState::MaxDistance..MaxDistance+maxHeaderSize-1 would point *into*
             // the header)
             for ( ; i < nChunks - maxHeaderSize; i++ )
-                p[ i ] = static_cast<int>( chunkState::MaxDistance ) - maxHeaderSize;
+                p[ i ] = static_cast<std::size_t>( chunkState::MaxDistance ) - maxHeaderSize;
         }
     }
 }
@@ -115,7 +115,7 @@ bool_t ChunkKlass::isValid() {
         ok = false;
     } else {
         std::uint8_t *e = next()->asByte() - 1;
-        int ovfl = isUsed() ? static_cast<int>( chunkState::usedOvfl ) : static_cast<int>( chunkState::unusedOvfl );
+        int ovfl = isUsed() ? static_cast<std::size_t>( chunkState::usedOvfl ) : static_cast<std::size_t>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
     return ok;

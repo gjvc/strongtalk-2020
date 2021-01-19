@@ -1071,7 +1071,7 @@ void CodeGenerator::aStoreUplevelNode( StoreUplevelNode *node ) {
 
 
 void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool_t &x_attr, bool_t &y_attr ) {
-    if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<int>( op ) ] ) {
+    if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( op ) ] ) {
         PseudoRegister *t1 = x;
         x = y;
         y = t1;

@@ -254,7 +254,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
                          depth, "", selector_string( info->sel ) );
             }
         }
-        for ( int j = 0; j < splitReceiverKlasss->length(); j++ ) {
+        for ( std::size_t j = 0; j < splitReceiverKlasss->length(); j++ ) {
             Node * n = new AssignNode( pr, splitReceivers->at( j ) );
             typeCase->append( j + 1, n );
             n->append( splitHeads->at( j ) );

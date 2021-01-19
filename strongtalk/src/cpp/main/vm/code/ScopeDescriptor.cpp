@@ -100,7 +100,7 @@ NameDescriptor *ScopeDescriptor::temporary( int index, bool_t canFail ) {
     if ( not result and not canFail ) {
         st_fatal1( "couldn't find temporary %d", index );
     }
-    
+
     return result;
 }
 
@@ -199,8 +199,7 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 }
 
 
-// Wrapper class for NameDescClosure, allows iteration over
-// string of NameDescs with different pc information.
+// Wrapper class for NameDescriptorClosure, allows iteration over string of NameDescriptor instance with different pc information.
 
 class IterationHelper : public UnpackClosure {
 protected:

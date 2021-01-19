@@ -152,7 +152,7 @@ void WeakArrayRegister::scavenge_check_for_dying_objects() {
         WeakArrayOop w                            = weakArrays->at( i );
         bool_t       encounted_near_death_objects = false;
 
-        for ( int j = 1; j <= w->length(); j++ ) {
+        for ( std::size_t j = 1; j <= w->length(); j++ ) {
             Oop obj = w->obj_at( j );
             if ( scavenge_is_near_death( obj ) ) {
                 encounted_near_death_objects = true;
@@ -202,7 +202,7 @@ void WeakArrayRegister::follow_contents() {
         bool_t       encounted_near_death_objects = false;
         int          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
-        for ( int j = 1; j <= length; j++ ) {
+        for ( std::size_t j = 1; j <= length; j++ ) {
             MarkSweep::reverse_and_follow( w->oops( non_indexable_size + j ) );
         }
     }
@@ -224,7 +224,7 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
         bool_t       encounted_near_death_objects = false;
         int          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
-        for ( int j = 1; j <= length; j++ ) {
+        for ( std::size_t j = 1; j <= length; j++ ) {
             Oop obj = w->raw_at( non_indexable_size + j );
             if ( mark_sweep_is_near_death( obj ) ) {
                 encounted_near_death_objects = true;

@@ -110,20 +110,20 @@ void Assembler::emit_operand( const Register &reg, const Register &base, const R
                 // [00 reg 100][ss index base]
                 st_assert( index not_eq esp and base not_eq ebp, "illegal addressing mode" );
                 emit_byte( 0x04 | reg.number() << 3 );
-                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
             } else if ( is8bit( disp ) and rtype == RelocationInformation::RelocationType::none ) {
                 // [base + index*scale + imm8]
                 // [01 reg 100][ss index base] imm8
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x44 | reg.number() << 3 );
-                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_byte( disp & 0xFF );
             } else {
                 // [base + index*scale + imm32]
                 // [10 reg 100][ss index base] imm32
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x84 | reg.number() << 3 );
-                emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_data( disp, rtype );
             }
         } else if ( base == esp ) {
@@ -173,7 +173,7 @@ void Assembler::emit_operand( const Register &reg, const Register &base, const R
             // [00 reg 100][ss index 101] imm32
             st_assert( index not_eq esp, "illegal addressing mode" );
             emit_byte( 0x04 | reg.number() << 3 );
-            emit_byte( static_cast<int>(scale) << 6 | index.number() << 3 | 0x05 );
+            emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | 0x05 );
             emit_data( disp, rtype );
         } else {
             // [disp]
@@ -944,7 +944,7 @@ void Assembler::jmp( const Label &L ) {
 
 
 void Assembler::jcc( Condition cc, Label &L ) {
-    st_assert( ( 0 <= static_cast<int>(cc) ) and ( static_cast<int>(cc) < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<std::size_t>(cc) ) and ( static_cast<std::size_t>(cc) < 16 ), "illegal cc" );
     if ( L.is_bound() ) {
         constexpr int short_size = 2;
         constexpr int long_size  = 6;
@@ -952,12 +952,12 @@ void Assembler::jcc( Condition cc, Label &L ) {
         st_assert( offs <= 0, "assembler error" );
         if ( isByte( offs - short_size ) ) {
             // 0111 tttn #8-bit disp
-            emit_byte( 0x70 | static_cast<int>(cc) );
+            emit_byte( 0x70 | static_cast<std::size_t>(cc) );
             emit_byte( ( offs - short_size ) & 0xFF );
         } else {
             // 0000 1111 1000 tttn #32-bit disp
             emit_byte( 0x0F );
-            emit_byte( 0x80 | static_cast<int>(cc) );
+            emit_byte( 0x80 | static_cast<std::size_t>(cc) );
             emit_long( offs - long_size );
         }
     } else {
@@ -965,8 +965,8 @@ void Assembler::jcc( Condition cc, Label &L ) {
         // Note: could eliminate cond. jumps to this jump if condition
         //       is the same however, seems to be rather unlikely case.
         emit_byte( 0x0F );
-        emit_byte( 0x80 | static_cast<int>(cc) );
-        Displacement disp( L, Displacement::Type::conditional_jump, static_cast<int>(cc) );
+        emit_byte( 0x80 | static_cast<std::size_t>(cc) );
+        Displacement disp( L, Displacement::Type::conditional_jump, static_cast<std::size_t>(cc) );
         L.link_to( offset() );
         emit_long( int( disp.data() ) );
     }
@@ -974,10 +974,10 @@ void Assembler::jcc( Condition cc, Label &L ) {
 
 
 void Assembler::jcc( Condition cc, const char *dst, RelocationInformation::RelocationType rtype ) {
-    st_assert( ( 0 <= static_cast<int>(cc) ) and ( static_cast<int>(cc) < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<std::size_t>(cc) ) and ( static_cast<std::size_t>(cc) < 16 ), "illegal cc" );
     // 0000 1111 1000 tttn #32-bit disp
     emit_byte( 0x0F );
-    emit_byte( 0x80 | static_cast<int>(cc) );
+    emit_byte( 0x80 | static_cast<std::size_t>(cc) );
     emit_data( (int) dst - ( (int) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 

@@ -348,10 +348,10 @@ bool_t MapConformance::reduce_noop_task( MappingTask *task ) {
 
 void MapConformance::simplify() {
     // Links tasks with identical source.
-    for ( int x = 0; x < _mappings->length(); x++ ) {
+    for ( std::size_t x = 0; x < _mappings->length(); x++ ) {
         MappingTask *x_task = _mappings->at( x );
         if ( not x_task->is_processed() and not reduce_noop_task( x_task ) ) {
-            for ( int y = x + 1; y < _mappings->length(); y++ ) {
+            for ( std::size_t y = x + 1; y < _mappings->length(); y++ ) {
                 MappingTask *y_task = _mappings->at( y );
                 if ( x_task->src == y_task->src )
                     x_task->append( y_task );

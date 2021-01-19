@@ -15,7 +15,7 @@
 int PseudoRegister::currentNo       = 0;
 int BlockPseudoRegister::_numBlocks = 0;
 static GrowableArray<ConstPseudoRegister *> *constants = 0;
-static PseudoRegister *dummyPR;
+static PseudoRegister                       *dummyPR;
 const int PseudoRegister::AvgBBIndexLen = 10;
 const int PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really
 
@@ -302,9 +302,12 @@ void PseudoRegister::removeDef( BasicBlock *bb, Definition *def ) {
 
 
 void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, DefinitionUsage *el ) {
-    int                                myNum = n->num();
-    SListElem<DefinitionUsage *>       *prev = nullptr;
-    for ( SListElem<DefinitionUsage *> *e    = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() );
+    int                          myNum = n->num();
+    SListElem<DefinitionUsage *> *prev = nullptr;
+
+    for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
+        void;
+    }
     l->insertAfter( prev, el );
 }
 
@@ -490,12 +493,12 @@ bool_t PseudoRegister::checkEquivalentDefs() const {
     // check if all definitions are equivalent, i.e. assign the same preg
     if ( ndefs() == 1 )
         return true;
-    PseudoRegister *rhs = nullptr;
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    PseudoRegister    *rhs = nullptr;
+    for ( std::size_t i    = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
-        for ( SListElem<Definition *> *e = info->_definitions.head(); e; e = e->next() ) {
+        for ( SListElem<Definition *> *e     = info->_definitions.head(); e; e = e->next() ) {
             NonTrivialNode *n = e->data()->_node;
             if ( not n->isAssignmentLike() )
                 return false;
@@ -554,7 +557,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
         }
         PseudoRegisterBasicBlockIndex *index = _dus.first();
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
-        SListElem<Definition *> *e = info->_definitions.head();
+        SListElem<Definition *>       *e     = info->_definitions.head();
         if ( not e ) {
             // info not in first elem - would have to search
             if ( CompilerDebug )
@@ -563,7 +566,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
         }
         NonTrivialNode *defNode = e->data()->_node;
         PseudoRegister *defSrc;
-        bool_t ok;
+        bool_t         ok;
         if ( defNode->hasConstantSrc() ) {
             // constant assignment - easy to handle
             ok = true;
@@ -633,8 +636,8 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
     // eliminate all use nodes in info
     SListElem<Usage *> *usageElement = info->_usages.head();
     while ( usageElement ) {
-        int oldLength = info->_usages.length();      // for debugging
-        Node *n = usageElement->data()->_node;
+        int  oldLength = info->_usages.length();      // for debugging
+        Node *n        = usageElement->data()->_node;
         if ( CompilerDebug ) {
             char buf[1024];
             cout( PrintEliminateUnnededNodes )->print( "*%seliminating node N%ld: %s\n", n->canBeEliminated() ? "" : "not ", n->id(), n->print_string( buf ) );
@@ -652,8 +655,8 @@ void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, b
     // eliminate all defining nodes in info
     SListElem<Definition *> *e = info->_definitions.head();
     while ( e ) {
-        int oldlen = info->_definitions.length();      // for debugging
-        NonTrivialNode *n = e->data()->_node;
+        int            oldlen = info->_definitions.length();      // for debugging
+        NonTrivialNode *n     = e->data()->_node;
         if ( n->canBeEliminated() ) {
             updateCPInfo( n );
             n->eliminate( bb, this );
@@ -770,8 +773,8 @@ bool_t SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
     // return true even if the receiver is provably dead)
     // check if receiver is live in source-level terms; if that says
     // dead it really means dead
-    InlinedScope *s = n->scope();
-    bool_t live = basic_isLiveAt( s, n->byteCodeIndex() );
+    InlinedScope *s   = n->scope();
+    bool_t       live = basic_isLiveAt( s, n->byteCodeIndex() );
     if ( not live or not _location.isTemporaryRegister() )
         return live;
     st_fatal( "cannot handle temp registers" );
@@ -788,8 +791,8 @@ bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, int byteCo
 
     // find closest common ancestor of s and creationScope, and the
     // respective byteCodeIndexs in that scope
-    int bs = byteCodeIndex;
-    int bc = creationStartByteCodeIndex;
+    int          bs  = byteCodeIndex;
+    int          bc  = creationStartByteCodeIndex;
     InlinedScope *ss = findAncestor( s, bs, creationScope(), bc );
     if ( not _scope->isSenderOrSame( ss ) ) st_fatal( "bad scope arg in basic_isLiveAt" );
 
@@ -951,8 +954,8 @@ void BlockPseudoRegister::markEscaped( Node *n ) {
 class UplevelComputer : public SpecializedMethodClosure {
 
 public:
-    BlockPseudoRegister *_r;                // the block whose accesses we're computing
-    InlinedScope        *_scope;            // r's scope (i.e., scope creating the block)
+    BlockPseudoRegister             *_r;                // the block whose accesses we're computing
+    InlinedScope                    *_scope;            // r's scope (i.e., scope creating the block)
     GrowableArray<PseudoRegister *> *_read;             // list of rscope's temps read by r
     GrowableArray<PseudoRegister *> *_written;          // same for written temps
     int                             _nestingLevel;      // nesting level (0 = block itself, 1 = block within block, etc)
@@ -969,7 +972,7 @@ public:
         _methodOop       = _r->closure()->method();
         _enclosingDepth  = 0;
         _enclosingScopes = new GrowableArray<Scope *>( 5 );
-        for ( Scope *s = _scope; s not_eq nullptr; s = s->parent(), _enclosingDepth++ )
+        for ( Scope *s   = _scope; s not_eq nullptr; s = s->parent(), _enclosingDepth++ )
             _enclosingScopes->push( s );
     }
 
@@ -1118,7 +1121,7 @@ bool_t PseudoRegister::verify() const {
         ok = false;
         error( "PseudoRegister %#lx %s: invalid ID %ld", this, name(), _id );
     }
-    int       uses = 0, definitions = 0;
+    int               uses = 0, definitions = 0;
     for ( std::size_t i    = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );

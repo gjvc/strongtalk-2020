@@ -241,7 +241,7 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
     int       len = exprs->length();
     for ( std::size_t i   = 0; i < len; i++ ) {
         Expression *e = exprs->at( i );
-        for ( int j = i + 1; j < len; j++ ) {
+        for ( std::size_t j = i + 1; j < len; j++ ) {
             Expression *e2 = exprs->at( j );
             st_assert( not e->equals( e2 ), "duplicate expr" );
             st_assert( not( e->hasKlass() and e2->hasKlass() and e->klass() == e2->klass() ), "duplicate klasses" );

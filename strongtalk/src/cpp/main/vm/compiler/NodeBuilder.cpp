@@ -1038,7 +1038,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
                 m->print();
                 okExprs->at( i )->print();
                 printNodes( okExprs->at( i )->node() );
-                for ( int j = 0; j < exprNodes->length(); j++ ) {
+                for ( std::size_t j = 0; j < exprNodes->length(); j++ ) {
                     exprNodes->at( j )->print();
                     lprintf( "\n" );
                 }

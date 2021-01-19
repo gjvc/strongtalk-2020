@@ -116,7 +116,7 @@ constexpr int maxHeaderSize = 4;
 
 
 constexpr int MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
-constexpr int maxOneByteLen = ( static_cast<int>( chunkState::usedOvfl ) - static_cast<int>(chunkState::used ) );
+constexpr int maxOneByteLen = ( static_cast<std::size_t>( chunkState::usedOvfl ) - static_cast<std::size_t>(chunkState::used ) );
 
 class ChunkKlass;
 
@@ -190,13 +190,13 @@ public:
 
 
     int headerSize() {        // size of header in bytes
-        int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        int ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         return c( 0 ) == ovfl ? maxHeaderSize : minHeaderSize;
     }
 
 
     std::size_t size() {        // size of this block
-        int ovfl = static_cast<int>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        int ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         int len;
         st_assert( c( 0 ) not_eq static_cast<std::uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<std::uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
         if ( c( 0 ) not_eq ovfl ) {
@@ -221,7 +221,7 @@ public:
 
     ChunkKlass *prev() {
         ChunkKlass *p = asChunkKlass( asByte() - 1 );
-        int ovfl = static_cast<int>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        int ovfl = static_cast<std::size_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         int len;
         if ( c( -1 ) not_eq ovfl ) {
             len = p->size();

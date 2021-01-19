@@ -502,7 +502,7 @@ void NativeMethod::add_family( GrowableArray<NativeMethod *> *result ) {
     int major = is_method() ? _mainId.major() : _promotedId.major();
 
     // Add all filled JumpTable entries to the family
-    for ( int minor = 1; minor <= number_of_noninlined_blocks(); minor++ ) {
+    for ( std::size_t minor = 1; minor <= number_of_noninlined_blocks(); minor++ ) {
         JumpTableEntry *entry = Universe::code->jump_table()->at( JumpTableID( major, minor ) );
         NativeMethod   *bm    = entry->block_nativeMethod();
         if ( bm )

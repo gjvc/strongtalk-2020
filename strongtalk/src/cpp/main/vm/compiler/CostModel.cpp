@@ -9,7 +9,7 @@
 #include "vm/compiler/CostModel.hpp"
 
 
-int CostModel::_cost[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+int CostModel::_cost[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
 void CostModel::set_default_costs() {
@@ -31,7 +31,7 @@ void CostModel::set_default_costs() {
 
 
 void CostModel::set_cost_for_all( int cost ) {
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         _cost[ i ] = cost;
     }
 }
@@ -39,12 +39,12 @@ void CostModel::set_cost_for_all( int cost ) {
 
 void CostModel::set_cost_for_code( ByteCodes::Code code, int cost ) {
     st_assert( ByteCodes::is_defined( code ), "undefined bytecode" );
-    _cost[ static_cast<int>(code) ] = cost;
+    _cost[ static_cast<std::size_t>(code) ] = cost;
 }
 
 
 void CostModel::set_cost_for_type( ByteCodes::CodeType type, int cost ) {
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::code_type( ByteCodes::Code( i ) ) == type ) {
             _cost[ i ] = cost;
         }
@@ -53,7 +53,7 @@ void CostModel::set_cost_for_type( ByteCodes::CodeType type, int cost ) {
 
 
 void CostModel::set_cost_for_send( ByteCodes::SendType type, int cost ) {
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         if ( ByteCodes::send_type( ByteCodes::Code( i ) ) == type ) {
             _cost[ i ] = cost;
         }
@@ -64,7 +64,7 @@ void CostModel::set_cost_for_send( ByteCodes::SendType type, int cost ) {
 void CostModel::print() {
 
     _console->print_cr( "%40s: %s", "Bytecode", "Cost" );
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         ByteCodes::Code code = ByteCodes::Code( i );
         if ( ByteCodes::is_defined( code ) ) {
             _console->print_cr( "%40s: %d", ByteCodes::name( code ), cost_for( code ) );

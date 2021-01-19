@@ -28,10 +28,10 @@
 
 RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, int off ) {
 
-    st_assert( 0 <= static_cast<int>(t) and static_cast<int>(t) < ( 1 << reloc_type_width ), "wrong type" );
+    st_assert( 0 <= static_cast<std::size_t>(t) and static_cast<std::size_t>(t) < ( 1 << reloc_type_width ), "wrong type" );
     st_assert( off <= nthMask( reloc_offset_width ), "offset out of bounds" );
 
-    _value = ( static_cast<int>(t) << reloc_offset_width ) | off;
+    _value = ( static_cast<std::size_t>(t) << reloc_offset_width ) | off;
 }
 
 

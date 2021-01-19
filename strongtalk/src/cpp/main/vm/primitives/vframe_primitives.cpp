@@ -168,7 +168,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     MethodOop method    = df->method();
     int       tempCount = method->number_of_stack_temporaries();
 
-    for ( int offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
+    for ( std::size_t offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
         ByteArrayOop name = find_stack_temp( method, df->byteCodeIndex(), offset );
         if ( name )
             temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->temp_at( offset ), false ) );
@@ -178,7 +178,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
         if ( method->allocatesInterpretedContext() ) {
             int contextTempCount = method->number_of_context_temporaries();
 
-            for ( int offset = 0; offset < contextTempCount; offset++ ) {
+            for ( std::size_t offset = 0; offset < contextTempCount; offset++ ) {
                 ByteArrayOop name = find_heap_temp( method, df->byteCodeIndex(), offset );
                 if ( name )
                     temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->context_temp_at( offset ), false ) );

@@ -305,7 +305,7 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, int flags, int n
         bool_t copyOop  = true;
         int    bc_index = i * oopSize - ( oopSize - 1 );
 
-        for ( int j = 0; j < oopSize; j++ ) {
+        for ( std::size_t j = 0; j < oopSize; j++ ) {
             // copy Oop if bytearray holds 4 consecutive aligned zeroes
             if ( bytes->byte_at( bc_index + j ) not_eq 0 ) {
                 copyOop = false;

@@ -130,7 +130,7 @@ bool_t Klass::has_same_inst_vars_as( KlassOop klass ) {
         return false;
 
     // Check instance variables
-    for ( int offset = 1; offset <= number_of_instance_variables(); offset++ ) {
+    for ( std::size_t offset = 1; offset <= number_of_instance_variables(); offset++ ) {
         if ( inst_var_name_at( non_indexable_size() - offset ) not_eq classPart->inst_var_name_at( classPart->non_indexable_size() - offset ) )
             return false;
     }

@@ -438,14 +438,14 @@ public:
 
 
 private:
-    static const char   *_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static const char   *_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static Format       _format[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static CodeType     _code_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static ArgumentSpec _argument_spec[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static SendType     _send_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool_t       _single_step[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool_t       _pop_tos[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static const char   *_entry_point[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static const char   *_name[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static Format       _format[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static CodeType     _code_type[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static ArgumentSpec _argument_spec[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static SendType     _send_type[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool_t       _single_step[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool_t       _pop_tos[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
     static void def( Code code );
 
@@ -462,9 +462,9 @@ public:
 
     // Testers
     static bool_t is_defined( Code code ) {
-        return 0 <= static_cast<int>(code)
-               and static_cast<int>(code) < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)
-               and _format[ static_cast<int>(code) ] not_eq ByteCodes::Format::UNDEFINED;
+        return 0 <= static_cast<std::size_t>(code)
+               and static_cast<std::size_t>(code) < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)
+               and _format[ static_cast<std::size_t>(code) ] not_eq ByteCodes::Format::UNDEFINED;
     }
 
 
@@ -484,42 +484,42 @@ public:
 
     // Bytecode specification
     static const char *entry_point( const Code code ) {
-        return _entry_point[ static_cast<int>(code) ];
+        return _entry_point[ static_cast<std::size_t>(code) ];
     }
 
 
     static const char *name( const Code code ) {
-        return _name[ static_cast<int>(code) ];
+        return _name[ static_cast<std::size_t>(code) ];
     }
 
 
     static Format format( const Code code ) {
-        return _format[ static_cast<int>(code) ];
+        return _format[ static_cast<std::size_t>(code) ];
     }
 
 
     static CodeType code_type( const Code code ) {
-        return _code_type[ static_cast<int>(code) ];
+        return _code_type[ static_cast<std::size_t>(code) ];
     }
 
 
     static ArgumentSpec argument_spec( const Code code ) {
-        return _argument_spec[ static_cast<int>(code) ];
+        return _argument_spec[ static_cast<std::size_t>(code) ];
     }
 
 
     static SendType send_type( const Code code ) {
-        return _send_type[ static_cast<int>(code) ];
+        return _send_type[ static_cast<std::size_t>(code) ];
     }
 
 
     static bool_t single_step( const Code code ) {
-        return _single_step[ static_cast<int>(code) ];
+        return _single_step[ static_cast<std::size_t>(code) ];
     }
 
 
     static bool_t pop_tos( const Code code ) {
-        return _pop_tos[ static_cast<int>(code) ];
+        return _pop_tos[ static_cast<std::size_t>(code) ];
     }
 
 

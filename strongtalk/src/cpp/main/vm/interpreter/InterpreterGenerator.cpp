@@ -2177,43 +2177,43 @@ void InterpreterGenerator::generate_error_handler_code() {
     should_not_reach_here();
 
     _macroAssembler->bind( _boolean_expected );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::boolean_expected ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::boolean_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _float_expected );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::float_expected ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::float_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _NonLocalReturn_to_dead_frame );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::nonlocal_return_error ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::nonlocal_return_error ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _halted );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::halted ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::halted ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _stack_misaligned );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::stack_misaligned ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::stack_misaligned ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _ebx_wrong );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::ebx_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::ebx_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _obj_wrong );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::obj_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::obj_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _last_Delta_fp_wrong );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _primitive_result_wrong );
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::primitive_result_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::primitive_result_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _illegal = _macroAssembler->pc();
-    _macroAssembler->movl( ecx, static_cast<int>( InterpreterErrorConstants::illegal_code ) );
+    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::illegal_code ) );
     _macroAssembler->jmp( suspend );
 
     Interpreter::_illegal = _illegal;
@@ -3316,7 +3316,7 @@ void InterpreterGenerator::generate_all() {
 
     // generate code for Floats
     Floats::init( _macroAssembler );
-    Floats::_function_table[ static_cast<int>(Floats::Function::oopify) ] = float_oopify();    // patch - no code generated in Floats for oopify
+    Floats::_function_table[ static_cast<std::size_t>(Floats::Function::oopify) ] = float_oopify();    // patch - no code generated in Floats for oopify
     info( "Floats::oopify patch" );
 
     // generate helper routines/code fragments
@@ -3341,7 +3341,7 @@ void InterpreterGenerator::generate_all() {
     generate_deoptimized_return_code();
     info( "deoptimized return code" );
 
-    for ( int n = 0; n < 10; n++ )
+    for ( std::size_t n = 0; n < 10; n++ )
         generate_primitiveValue( n );
     info( "primitiveValues" );
 
@@ -3349,7 +3349,7 @@ void InterpreterGenerator::generate_all() {
     // generate individual instructions
     _console->cr();
 
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
 
         const char *start = _macroAssembler->pc();
         const char *entry = generate_instruction( (ByteCodes::Code) i );

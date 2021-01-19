@@ -97,7 +97,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
         change->set_super_change( find_change_for( change->old_klass()->klass_part()->superKlass() ) );
         _classChanges->append( change );
 
-        for ( int j = 4; j <= invocation->length() - 1; j += 2 ) {
+        for ( std::size_t j = 4; j <= invocation->length() - 1; j += 2 ) {
             KlassOop old_klass = KlassOop( invocation->obj_at( j ) );
             change = new ClassChange( old_klass, Klass::format_from_symbol( SymbolOop( invocation->obj_at( j + 1 ) ) ) );
             change->set_super_change( find_change_for( old_klass->klass_part()->superKlass() ) );
@@ -195,7 +195,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
         // NotificationQueue::oops_do(&follow_root);
 
         // Reset the marks for the converted objects
-        for ( int j = 0; j < _converted->length(); j++ ) {
+        for ( std::size_t j = 0; j < _converted->length(); j++ ) {
             MemOop obj = _converted->at( j );
             if ( TraceApplyChange ) {
                 _console->print_cr( "Old: 0x%lx, 0x%lx", obj, obj->mark() );
@@ -268,7 +268,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
         if ( not array->obj_at( 3 )->is_klass() and array->obj_at( 3 ) not_eq nilObj )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
-        for ( int j = 4; j <= array->length() - 1; j += 2 ) {
+        for ( std::size_t j = 4; j <= array->length() - 1; j += 2 ) {
             if ( not array->obj_at( j )->is_klass() )
                 return markSymbol( vmSymbols::argument_is_invalid() );
             if ( not array->obj_at( j + 1 )->is_symbol() )

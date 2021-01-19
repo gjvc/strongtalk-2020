@@ -103,7 +103,7 @@ int GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
 void GenericGrowableArray::raw_remove( const void *elem ) {
     for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
-            for ( int j = i + 1; j < _length; j++ )
+            for ( std::size_t j = i + 1; j < _length; j++ )
                 _data[ j - 1 ] = _data[ j ];
             _length--;
             return;
@@ -123,7 +123,7 @@ void *GenericGrowableArray::raw_at_grow( std::size_t i, const void *fill ) {
     if ( i >= _length ) {
         if ( i >= _maxLength )
             grow( i );
-        for ( int j = _length; j <= i; j++ )
+        for ( std::size_t j = _length; j <= i; j++ )
             _data[ j ] = (void *) fill;
         _length = i + 1;
     }
@@ -135,7 +135,7 @@ void GenericGrowableArray::raw_at_put_grow( std::size_t i, const void *p, const 
     if ( i >= _length ) {
         if ( i >= _maxLength )
             grow( i );
-        for ( int j = _length; j < i; j++ )
+        for ( std::size_t j = _length; j < i; j++ )
             _data[ j ] = (void *) fill;
         _length = i + 1;
     }

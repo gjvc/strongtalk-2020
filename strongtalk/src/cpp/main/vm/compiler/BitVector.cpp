@@ -94,7 +94,7 @@ void BitVector::print_short() {
 void BitVector::doForAllOnes( intDoFn f ) {
     for ( std::size_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
         int       b = _bits[ i ];
-        for ( int j = 0; j < BitsPerWord; j++ ) {
+        for ( std::size_t j = 0; j < BitsPerWord; j++ ) {
             if ( isBitSet( b, j ) ) {
                 f( i * BitsPerWord + j );
                 clearNthBit( b, j );

@@ -58,7 +58,7 @@ const char *StubRoutines::_handleCCallbackStub          = nullptr;
 const char *StubRoutines::_oopifyFloat                  = nullptr;
 const char *StubRoutines::_alienCallWithArgsEntry       = nullptr;
 
-const char *StubRoutines::_PolymorphicInlineCache_stub_entries[static_cast<int>( PolymorphicInlineCache::Constant::max_nof_entries ) + 1]; // entry 0 ignored
+const char *StubRoutines::_PolymorphicInlineCache_stub_entries[static_cast<std::size_t>( PolymorphicInlineCache::Constant::max_nof_entries ) + 1]; // entry 0 ignored
 const char *StubRoutines::_allocate_entries[max_fast_allocate_size + 1];
 const char *StubRoutines::_alien_call_entries[max_fast_alien_call_size + 1];
 
@@ -1028,7 +1028,7 @@ const char *StubRoutines::generate_nlr_return_from_Delta( MacroAssembler *masm )
 // single_step_stub
 
 extern "C" int *frame_breakpoint;   // dispatch table
-extern "C" doFn   original_table[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+extern "C" doFn   original_table[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 extern "C" void single_step_handler();
 
 void (*StubRoutines::single_step_fn)() = nullptr;
@@ -1415,8 +1415,8 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     masm->bind( loop );
     for ( std::size_t i = 0; i < pic_size; i++ ) {
         // compare receiver klass with klass in PolymorphicInlineCache table at index
-        masm->cmpl( edx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_klass_offset ) ) );
-        masm->movl( ecx, Address( ebx, i * static_cast<int>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<int>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_offset ) ) );
+        masm->cmpl( edx, Address( ebx, i * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_klass_offset ) ) );
+        masm->movl( ecx, Address( ebx, i * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_offset ) ) );
         masm->jcc( Assembler::Condition::equal, found );
     }
     st_assert( ic_normal_lookup_entry() not_eq nullptr, "ic_normal_lookup_entry must be generated before" );
@@ -1696,7 +1696,7 @@ const char *StubRoutines::generate_alien_call( MacroAssembler *masm, int args ) 
     masm->subl( esp, 4 );                           // make Space for process pointer
 
     masm->movl( edx, esp );
-    for ( int arg = 0; arg < args; arg++ ) {
+    for ( std::size_t arg = 0; arg < args; arg++ ) {
         Address argAddress( ebp, 16 + ( args - arg - 1 ) * 4 );
         Label   nextArg;
         masm->leal( eax, argAddress );
@@ -1718,7 +1718,7 @@ const char *StubRoutines::generate_alien_call( MacroAssembler *masm, int args ) 
     masm->bind( pushArgs );
     //if (args > 0) masm->int3();
 
-    for ( int arg1 = 0; arg1 < args; arg1++ ) {
+    for ( std::size_t arg1 = 0; arg1 < args; arg1++ ) {
         Address argAddress( ebp, 16 + ( args - arg1 - 1 ) * 4 );
         Label   moveLoopEnd;
         masm->movl( eax, argAddress );
@@ -1790,7 +1790,7 @@ const char *StubRoutines::generate_alien_call( MacroAssembler *masm, int args ) 
 
 const char *StubRoutines::PolymorphicInlineCache_stub_entry( int pic_size ) {
     st_assert( _is_initialized, "StubRoutines not initialized yet" );
-    st_assert( 1 <= pic_size and pic_size <= static_cast<int>( PolymorphicInlineCache::Constant::max_nof_entries ), "pic size out of range" )
+    st_assert( 1 <= pic_size and pic_size <= static_cast<std::size_t>( PolymorphicInlineCache::Constant::max_nof_entries ), "pic size out of range" )
     return _PolymorphicInlineCache_stub_entries[ pic_size ];
 }
 
@@ -1886,15 +1886,15 @@ void StubRoutines::init() {
     _oopifyFloat                  = generateStubRoutine( masm, "oopify_float", generate_oopify_float );
     _alienCallWithArgsEntry       = generateStubRoutine( masm, "alien_call_with_args", generate_alien_call_with_args );
 
-    for ( int pic_size = 1; pic_size <= static_cast<int>( PolymorphicInlineCache::Constant::max_nof_entries ); pic_size++ ) {
+    for ( std::size_t pic_size = 1; pic_size <= static_cast<std::size_t>( PolymorphicInlineCache::Constant::max_nof_entries ); pic_size++ ) {
         _PolymorphicInlineCache_stub_entries[ pic_size ] = generateStubRoutine( masm, "PolymorphicInlineCache stub", generate_PolymorphicInlineCache_stub, pic_size );
     }
 
-    for ( int size = 0; size <= max_fast_allocate_size; size++ ) {
+    for ( std::size_t size = 0; size <= max_fast_allocate_size; size++ ) {
         _allocate_entries[ size ] = generateStubRoutine( masm, "allocate", generate_allocate, size );
     }
 
-    for ( int args = 0; args <= max_fast_alien_call_size; args++ ) {
+    for ( std::size_t args = 0; args <= max_fast_alien_call_size; args++ ) {
         _alien_call_entries[ args ] = generateStubRoutine( masm, "alien_call", generate_alien_call, args );
     }
 

@@ -43,8 +43,8 @@ std::array<const char *, Floats::max_number_of_functions>Floats::_function_names
 
 
 const char *Floats::function_name_for( Function f ) {
-    st_assert( 0 <= static_cast<int>(f) and f < Floats::Function::number_of_functions, "illegal function" );
-    return _function_names[ static_cast<int>(f) ];
+    st_assert( 0 <= static_cast<std::size_t>(f) and f < Floats::Function::number_of_functions, "illegal function" );
+    return _function_names[ static_cast<std::size_t>(f) ];
 }
 
 
@@ -244,7 +244,7 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
         default: ShouldNotReachHere();
     }
     masm->ret( 0 );
-    _function_table[ static_cast<int>(f) ] = entry_point;
+    _function_table[ static_cast<std::size_t>(f) ] = entry_point;
 
     int        length = masm->pc() - entry_point;
     const char *name  = function_name_for( f );
@@ -268,8 +268,8 @@ void Floats::init( MacroAssembler *masm ) {
     _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size() );
     _console->print_cr( "%%system-init: number_of_functions %ld", Floats::Function::number_of_functions );
 
-    st_assert( _function_names.size() == static_cast<int>( Floats::Function::number_of_functions ), "Floats: number of _functions_names not equal number_of_functions" );
-    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq static_cast<int>( Floats::Function::number_of_functions ) ) {
+    st_assert( _function_names.size() == static_cast<std::size_t>( Floats::Function::number_of_functions ), "Floats: number of _functions_names not equal number_of_functions" );
+    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq static_cast<std::size_t>( Floats::Function::number_of_functions ) ) {
         st_fatal( "Floats: number of _functions_names not equal number_of_functions" );
     }
 
@@ -330,7 +330,7 @@ void Floats::init( MacroAssembler *masm ) {
 void Floats::print() {
     if ( _is_initialized ) {
         _console->print_cr( "Float functions:" );
-        for ( std::size_t i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
+        for ( std::size_t i = 0; i < static_cast<std::size_t>( Floats::Function::number_of_functions ); i++ ) {
             _console->print_cr( "%3d: 0x%x %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {

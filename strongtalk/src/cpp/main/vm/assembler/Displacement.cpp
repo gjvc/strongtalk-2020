@@ -81,7 +81,7 @@ void Displacement::init( const Label &L, Displacement::Type type, int info ) {
         st_assert( next > 0, "Displacements must be at positions > 0" );
     }
     st_assert( ( next & ~next_mask ) == 0, "next field too small" );
-    st_assert( ( static_cast<int>(type) & ~type_mask ) == 0, "type field too small" );
+    st_assert( ( static_cast<std::size_t>(type) & ~type_mask ) == 0, "type field too small" );
     st_assert( ( info & ~info_mask ) == 0, "info field too small" );
-    _data = ( next << next_pos ) | ( static_cast<int>(type) << static_cast<int>(type_pos) ) | ( info << info_pos );
+    _data = ( next << next_pos ) | ( static_cast<std::size_t>(type) << static_cast<std::size_t>(type_pos) ) | ( info << info_pos );
 }

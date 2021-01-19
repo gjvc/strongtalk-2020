@@ -300,17 +300,17 @@ void GeneratedPrimitives::init() {
 
     _double_from_smi = patch( "primitiveAsFloat", gen.double_from_smi() );
 
-    for ( int n = 0; n <= 9; n++ ) {
+    for ( std::size_t n = 0; n <= 9; n++ ) {
         _primitiveNew[ n ] = patch( "primitiveNew%1d:ifFail:", gen.primitiveNew( n ), n );
     }
 
-    for ( int n = 0; n <= 9; n++ ) {
+    for ( std::size_t n = 0; n <= 9; n++ ) {
         _allocateBlock[ n ] = patch( "primitiveCompiledBlockAllocate%1d", gen.allocateBlock( n ), n );
     }
 
     _allocateContext_var = patch( "primitiveCompiledContextAllocate:", gen.allocateContext_var() );
 
-    for ( int n = 0; n <= 2; n++ ) {
+    for ( std::size_t n = 0; n <= 2; n++ ) {
         _allocateContext[ n ] = patch( "primitiveCompiledContextAllocate%1d", gen.allocateContext( n ), n );
     }
 

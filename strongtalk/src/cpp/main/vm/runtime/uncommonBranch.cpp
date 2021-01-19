@@ -178,7 +178,7 @@ void uncommon_trap() {
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<int>( Assembler::Constants::sizeOfCall ) );
+            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<std::size_t>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )
@@ -225,7 +225,7 @@ void uncommon_trap() {
                     if ( e and e->_context->unoptimized_context() ) {
                         process->deoptimize_stretch( &e->_frame, &e->_frame );
 
-                        for ( int j = 0; j < elements->length(); j++ ) {
+                        for ( std::size_t j = 0; j < elements->length(); j++ ) {
                             if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() )
                                 elements->at_put( j, nullptr );
                         }

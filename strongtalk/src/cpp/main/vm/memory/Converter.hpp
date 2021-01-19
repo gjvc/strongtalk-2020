@@ -43,7 +43,7 @@ protected:
         int new_header_size = _newKlass->klass_part()->oop_header_size();
         int n               = _oldKlass->klass_part()->number_of_instance_variables();
 
-        for ( int old_index = 0; old_index < n; old_index++ ) {
+        for ( std::size_t old_index = 0; old_index < n; old_index++ ) {
             SymbolOop name = _oldKlass->klass_part()->inst_var_name_at( old_index + old_header_size );
             st_assert( name->is_symbol(), "instance variable name must be symbol" );
             int new_index = _newKlass->klass_part()->lookup_inst_var( name );

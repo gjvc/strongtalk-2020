@@ -14,7 +14,7 @@
 
 class CostModel : AllStatic {
 private:
-    static int _cost[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static int _cost[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 public:
     static int cost_for( ByteCodes::Code code ) {

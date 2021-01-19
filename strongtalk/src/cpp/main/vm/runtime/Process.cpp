@@ -1554,7 +1554,7 @@ void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
         NativeMethod *nm = list->at( i );
         GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
 
-        for ( int j = 0; j < nms->length(); j++ )
+        for ( std::size_t j = 0; j < nms->length(); j++ )
             nms->at( j )->mark_for_deoptimization();
     }
 
@@ -1566,7 +1566,7 @@ void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
         NativeMethod *nativeMethod = list->at( i );
         GrowableArray<NativeMethod *> *nms = nativeMethod->invalidation_family();
 
-        for ( int j = 0; j < nms->length(); j++ )
+        for ( std::size_t j = 0; j < nms->length(); j++ )
             nms->at( j )->unmark_for_deoptimization();
     }
 }

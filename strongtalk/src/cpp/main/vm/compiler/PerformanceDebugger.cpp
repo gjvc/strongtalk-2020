@@ -103,7 +103,7 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
         _stringStream->print( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->print_string() );
     } else {
         _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->print_string() );
-        for ( int j = 0; j < len; j++ ) {
+        for ( std::size_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->preg();
             if ( r->uplevelR() or r->uplevelW() ) {
                 _stringStream->print( "%d ", j );

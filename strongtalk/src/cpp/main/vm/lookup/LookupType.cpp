@@ -56,11 +56,11 @@ char *lookupTypeName( LookupType l ) {
             break;
         default: st_fatal1( "invalid count type %ld", countType( l ) );
     }
-    if ( isBitSet( static_cast<int>(l), DirtySendBit ) )
+    if ( isBitSet( static_cast<std::size_t>(l), DirtySendBit ) )
         addFlag( hasFlag, name, "dirty " );
-    if ( isBitSet( static_cast<int>(l), OptimizedSendBit ) )
+    if ( isBitSet( static_cast<std::size_t>(l), OptimizedSendBit ) )
         addFlag( hasFlag, name, "optimized " );
-    if ( isBitSet( static_cast<int>(l), UninlinableSendBit ) )
+    if ( isBitSet( static_cast<std::size_t>(l), UninlinableSendBit ) )
         addFlag( hasFlag, name, "uninlinable " );
     if ( hasFlag )
         strcat( name, "}" );

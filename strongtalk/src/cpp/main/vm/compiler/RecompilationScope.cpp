@@ -316,7 +316,7 @@ void NonDummyRecompilationScope::unify( NonDummyRecompilationScope *s ) {
     for ( std::size_t i = 0; i < ncodes; i++ ) {
         _subScopes[ i ] = s->_subScopes[ i ];
         if ( _subScopes[ i ] ) {
-            for ( int j = _subScopes[ i ]->length() - 1; j >= 0; j-- ) {
+            for ( std::size_t j = _subScopes[ i ]->length() - 1; j >= 0; j-- ) {
                 _subScopes[ i ]->at( j )->_sender = this;
             }
         }
@@ -670,9 +670,9 @@ void NonDummyRecompilationScope::printTree( int senderByteCodeIndex, int level )
 
     int u = 0;          // current position in uncommon
 
-    for ( int byteCodeIndex = 0; byteCodeIndex < ncodes; byteCodeIndex++ ) {
+    for ( std::size_t byteCodeIndex = 0; byteCodeIndex < ncodes; byteCodeIndex++ ) {
         if ( _subScopes[ byteCodeIndex ] ) {
-            for ( int j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
                 _subScopes[ byteCodeIndex ]->at( j )->printTree( byteCodeIndex, level + 1 );
             }
         }
@@ -724,7 +724,7 @@ int InlinedRecompilationScope::inlining_database_size() {
 
     for ( std::size_t i = 0; i < ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
-            for ( int j = 0; j < _subScopes[ i ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 result += _subScopes[ i ]->at( j )->inlining_database_size();
             }
         }
@@ -770,7 +770,7 @@ void InlinedRecompilationScope::print_inlining_database_on( ConsoleOutputStream 
     // File out subscopes
     for ( std::size_t i = 0; i < ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
-            for ( int j = 0; j < _subScopes[ i ]->length(); j++ ) {
+            for ( std::size_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 _subScopes[ i ]->at( j )->print_inlining_database_on( stream, uncommon, i, level + 1 );
             }
         }

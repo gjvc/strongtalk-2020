@@ -27,7 +27,7 @@ enum class CountType {
 const int LookupTypeSize = 2;
 const int LookupTypeMask = 3;
 
-const int CountTypeMask = static_cast<int>(CountType::NonCounting) | static_cast<int>(CountType::Counting) | static_cast<int>(CountType::Comparing);
+const int CountTypeMask = static_cast<std::size_t>(CountType::NonCounting) | static_cast<std::size_t>(CountType::Counting) | static_cast<std::size_t>(CountType::Comparing);
 const int CountTypeSize = 2;
 const int CountSendBit  = LookupTypeSize + 1;
 
@@ -49,12 +49,12 @@ const int UninlinableSendMask = 1 << UninlinableSendBit;
 
 
 inline LookupType withoutExtraBits( LookupType lookupType ) {
-    return static_cast<LookupType>(static_cast<int>(lookupType) & static_cast<int>(LookupTypeMask));
+    return static_cast<LookupType>(static_cast<std::size_t>(lookupType) & static_cast<std::size_t>(LookupTypeMask));
 }
 
 
 inline LookupType withCountBits( LookupType l, CountType t ) {
-    return LookupType( ( int( l ) & ~( CountTypeMask << CountSendBit ) ) | ( static_cast<int>(t) << CountSendBit ) );
+    return LookupType( ( int( l ) & ~( CountTypeMask << CountSendBit ) ) | ( static_cast<std::size_t>(t) << CountSendBit ) );
 }
 
 

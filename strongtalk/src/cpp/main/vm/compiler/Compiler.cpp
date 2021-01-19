@@ -571,7 +571,7 @@ void Compiler::computeBlockInfo() {
             bool_t noUplevelAccesses = true;
 
             // check if all context temps can be stack-allocated
-            for ( int j = temps->length() - 1; j >= 0; j-- ) {
+            for ( std::size_t j = temps->length() - 1; j >= 0; j-- ) {
 
                 PseudoRegister *r = temps->at( j )->preg();
 
@@ -624,7 +624,7 @@ void Compiler::computeBlockInfo() {
         int ntemps = temps->length();
         int size   = 0;
 
-        for ( int j = 0; j < ntemps; j++ ) {
+        for ( std::size_t j = 0; j < ntemps; j++ ) {
             PseudoRegister *p = temps->at( j )->preg();
 
             // should be:

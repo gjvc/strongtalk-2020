@@ -17,15 +17,15 @@
 #include "vm/interpreter/Floats.hpp"
 
 
-const char *ByteCodes::_entry_point[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-const char *ByteCodes::_name[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+const char *ByteCodes::_entry_point[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+const char *ByteCodes::_name[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
-ByteCodes::Format           ByteCodes::_format[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-ByteCodes::CodeType         ByteCodes::_code_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-ByteCodes::ArgumentSpec     ByteCodes::_argument_spec[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-ByteCodes::SendType         ByteCodes::_send_type[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-bool_t                      ByteCodes::_single_step[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
-bool_t                      ByteCodes::_pop_tos[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+ByteCodes::Format           ByteCodes::_format[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+ByteCodes::CodeType         ByteCodes::_code_type[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+ByteCodes::ArgumentSpec     ByteCodes::_argument_spec[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+ByteCodes::SendType         ByteCodes::_send_type[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+bool_t                      ByteCodes::_single_step[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+bool_t                      ByteCodes::_pop_tos[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
 void ByteCodes::def( Code code ) {
@@ -45,8 +45,8 @@ void ByteCodes::def( Code code, const char *name, Format format, ArgumentSpec ar
 
 
 void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
-    st_assert( 0 <= static_cast<int>(code) and static_cast<int>(code) < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES), "out of bounds" );
-    st_assert( _name[ static_cast<int>(code) ] == nullptr, "bytecode defined twice" );
+    st_assert( 0 <= static_cast<std::size_t>(code) and static_cast<std::size_t>(code) < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES), "out of bounds" );
+    st_assert( _name[ static_cast<std::size_t>(code) ] == nullptr, "bytecode defined twice" );
 
     // plausibility checks for arguments (compare with naming convention)
     if ( format == ByteCodes::Format::UNDEFINED ) {
@@ -85,32 +85,32 @@ void ByteCodes::def( Code code, const char *name, Format format, CodeType code_t
     }
 
     // set table entries
-    _entry_point[ static_cast<int>(code) ]   = nullptr;
-    _name[ static_cast<int>(code) ]          = name;
-    _format[ static_cast<int>(code) ]        = format;
-    _code_type[ static_cast<int>(code) ]     = code_type;
-    _argument_spec[ static_cast<int>(code) ] = argument_spec;
-    _send_type[ static_cast<int>(code) ]     = send_type;
-    _single_step[ static_cast<int>(code) ]   = single_step;
-    _pop_tos[ static_cast<int>(code) ]       = pop_tos;
+    _entry_point[ static_cast<std::size_t>(code) ]   = nullptr;
+    _name[ static_cast<std::size_t>(code) ]          = name;
+    _format[ static_cast<std::size_t>(code) ]        = format;
+    _code_type[ static_cast<std::size_t>(code) ]     = code_type;
+    _argument_spec[ static_cast<std::size_t>(code) ] = argument_spec;
+    _send_type[ static_cast<std::size_t>(code) ]     = send_type;
+    _single_step[ static_cast<std::size_t>(code) ]   = single_step;
+    _pop_tos[ static_cast<std::size_t>(code) ]       = pop_tos;
 }
 
 
-extern "C" doFn original_table[static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES)];
+extern "C" doFn original_table[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
 void ByteCodes::set_entry_point( Code code, const char *entry_point ) {
     st_assert( is_defined( code ), "undefined byte code" );
     st_assert( entry_point not_eq nullptr, "not a valid entry_point" );
-    _entry_point[ static_cast<int>(code) ]   = entry_point;
-    original_table[ static_cast<int>(code) ] = (doFn) entry_point;
+    _entry_point[ static_cast<std::size_t>(code) ]   = entry_point;
+    original_table[ static_cast<std::size_t>(code) ] = (doFn) entry_point;
 }
 
 
 void ByteCodes::init() {
     // to allow check for complete initialization at end of init
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
-        _name[ static_cast<int>( Code( i ) ) ] = nullptr;
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+        _name[ static_cast<std::size_t>( Code( i ) ) ] = nullptr;
     }
 
     // for better readability
@@ -399,8 +399,8 @@ void ByteCodes::init() {
     def( ByteCodes::Code::halt, "halt", ByteCodes::Format::B, ByteCodes::CodeType::control_structure, no_sst );
 
     // check if all bytecodes have been initialized
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
-        st_assert( _name[ static_cast<int>( Code( i ) ) ] not_eq nullptr, "bytecode table not fully initialized" );
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+        st_assert( _name[ static_cast<std::size_t>( Code( i ) ) ] not_eq nullptr, "bytecode table not fully initialized" );
     }
 }
 
@@ -971,7 +971,7 @@ ByteCodes::Code ByteCodes::primitive_call_code_for( Code code ) {
 
 
 void ByteCodes::print() {
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         Code code = Code( i );
         if ( is_defined( code ) ) {
             _console->print_cr( "%s", name( code ) );
@@ -1005,9 +1005,9 @@ static void generate_instr_method() {
     _console->print_cr( "\t| h l |" );
     _console->print_cr( "\th := i // 16r10." );
     _console->print_cr( "\tl := i \\\\ 16r10.\n" );
-    for ( int h = 0; h < 0x10; h++ ) {
+    for ( std::size_t h = 0; h < 0x10; h++ ) {
         _console->print_cr( "\th = 16r%X ifTrue: [", h );
-        for ( int l = 0; l < 0x10; l++ ) {
+        for ( std::size_t l = 0; l < 0x10; l++ ) {
             ByteCodes::Code code = ByteCodes::Code( h * 0x10 + l );
             if ( actually_generated( code ) ) {
                 _console->print_cr( "\t\tl = 16r%X\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
@@ -1128,14 +1128,14 @@ static void generate_heap_code_methods() {
     generate_instr_method();
     generate_codeForPrimitive_method();
 
-    for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         ByteCodes::Code code = ByteCodes::Code( i );
         if ( actually_generated( code ) )
             generate_gen_method( code );
     }
 
     st_assert( Floats::is_initialized(), "Floats must be initialized" );
-    for ( std::size_t i = 0; i < static_cast<int>( Floats::Function::number_of_functions ); i++ ) {
+    for ( std::size_t i = 0; i < static_cast<std::size_t>( Floats::Function::number_of_functions ); i++ ) {
         Floats::Function f = Floats::Function( i );
         generate_float_function_constant_method( f );
     }
@@ -1238,7 +1238,7 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
         if ( type == ByteCodes::CodeType::message_send )
             _console->print( "<th>Send type<th>Arguments" );
         _console->print_cr( "<tr>" );
-        for ( std::size_t i = 0; i < static_cast<int>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+        for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
             if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type )
                 generate_HTML_for( code );

@@ -518,7 +518,7 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
         // i < yl or qr[i] not_eq 0
         Digit     carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
         int       digits = i - yl + 1;
-        for ( int j      = 0; j < digits; j++ )
+        for ( std::size_t j      = 0; j < digits; j++ )
             z[ j ] = xpy( qr[ yl + j ], 0, carry );
 
         if ( carry ) {
@@ -561,7 +561,7 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
 
         if ( not sd_all_zero( qr, 0, yl ) ) {
             Digit     carry = 0;
-            for ( int j     = 0; j < yl; j++ )
+            for ( std::size_t j     = 0; j < yl; j++ )
                 qr[ j ] = xmy( y[ j ], qr[ j ], carry );
             st_assert( carry == 0, "Remainder too large" );
         }
