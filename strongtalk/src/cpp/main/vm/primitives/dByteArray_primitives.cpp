@@ -20,7 +20,6 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/primitives/dByteArray_primitives.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )

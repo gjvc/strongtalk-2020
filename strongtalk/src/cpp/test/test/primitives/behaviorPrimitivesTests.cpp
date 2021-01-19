@@ -10,7 +10,6 @@
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "test/memory/edenMark.hpp"
-#include "vm/system/sizes.hpp"
 
 
 #include <gtest/gtest.h>

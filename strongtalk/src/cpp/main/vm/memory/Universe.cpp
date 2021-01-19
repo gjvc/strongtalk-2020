@@ -32,7 +32,6 @@
 #include "vm/memory/Scavenge.hpp"
 #include "vm/utilities/lprintf.hpp"
 #include "vm/memory/WaterMark.hpp"
-#include "vm/system/sizes.hpp"
 
 
 bool_t garbageCollectionInProgress = false;

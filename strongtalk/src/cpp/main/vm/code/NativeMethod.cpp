@@ -20,7 +20,6 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/system/sizes.hpp"
 
 
 void NativeMethodFlags::clear() {

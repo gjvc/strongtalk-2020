@@ -9,7 +9,6 @@
 #include "vm/compiler/Compiler.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

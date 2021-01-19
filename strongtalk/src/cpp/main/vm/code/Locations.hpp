@@ -5,12 +5,12 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/assembler/Address.hpp"
 #include "vm/assembler/Register.hpp"
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/system/sizes.hpp"
 
 
 // Locations manages register and stack locations. All locations are numbered. A fixed range

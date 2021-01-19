@@ -11,7 +11,6 @@
 #include "vm/system/dll.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

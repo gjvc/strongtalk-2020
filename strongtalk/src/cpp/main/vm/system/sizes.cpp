@@ -5,4 +5,4 @@
 //
 
 
-#include "vm/system/sizes.hpp"
+#include "vm/system/platform.hpp"

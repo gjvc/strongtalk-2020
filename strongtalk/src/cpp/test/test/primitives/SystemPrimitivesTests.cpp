@@ -12,7 +12,6 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 
 #include "test/utilities/testUtils.hpp"
-#include "vm/system/sizes.hpp"
 
 #include <gtest/gtest.h>
 

@@ -15,7 +15,6 @@
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/system/sizes.hpp"
 
 
 #include <gtest/gtest.h>

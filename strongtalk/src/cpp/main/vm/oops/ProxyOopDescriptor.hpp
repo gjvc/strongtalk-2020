@@ -8,9 +8,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"
-#include "vm/system/sizes.hpp"
-
-
 
 
 // proxy objects are handles to external data.

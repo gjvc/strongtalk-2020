@@ -23,7 +23,6 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 constexpr int max_fast_allocate_size   = 9;

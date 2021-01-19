@@ -9,7 +9,6 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )

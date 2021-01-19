@@ -13,7 +13,6 @@
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/system/sizes.hpp"
 
 
 constexpr int float_0_offset  = oopSize * ( frame_temp_offset - 3 );

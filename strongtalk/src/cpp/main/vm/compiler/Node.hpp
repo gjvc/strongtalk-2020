@@ -6,12 +6,12 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/BitVector.hpp"
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/compiler/OpCode.hpp"
 #include "vm/runtime/ResourceObject.hpp"
-#include "vm/system/sizes.hpp"
 
 
 class NodeVisitor;  //

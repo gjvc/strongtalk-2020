@@ -24,7 +24,6 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {

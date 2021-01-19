@@ -13,70 +13,70 @@
 // opcodes used by the Compiler
 
 enum class BranchOpCode {
-    EQBranchOp, //
-    NEBranchOp, //
-    LTBranchOp, //
-    LEBranchOp, //
-    LTUBranchOp, //
-    LEUBranchOp, //
-    GTBranchOp, //
-    GEBranchOp, //
-    GTUBranchOp, //
-    GEUBranchOp, //
-    VSBranchOp, //
-    VCBranchOp, //
-    // Overflow set/cleared
+    EQBranchOp,     // equal
+    NEBranchOp,     // not equal
+    LTBranchOp,     // less than
+    LEBranchOp,     // less than or equal
+    LTUBranchOp,    // less than unsigned
+    LEUBranchOp,    // less than or equal unsigned
+    GTBranchOp,     // greater than
+    GEBranchOp,     // greater than or equal
+    GTUBranchOp,    // greater than unsigned
+    GEUBranchOp,    // greater than or equal unsigned
+    VSBranchOp,     //
+    VCBranchOp,     //
+                    // Overflow set/cleared
 
-    LastBranchOp
+    LastBranchOp    //
 };
 
 
 enum class ArithOpCode {
-    NilArithOp, //
-    TestArithOp,
+    NilArithOp,     //
+    TestArithOp,    //
 
     // untagged operations
-    AddArithOp, //
-    SubArithOp, //
-    MulArithOp, //
-    DivArithOp, //
-    ModArithOp, //
-    AndArithOp, //
-    OrArithOp, //
-    XOrArithOp, //
-    ShiftArithOp, //
-    CmpArithOp, //
+    AddArithOp,     // add
+    SubArithOp,     // subtract
+    MulArithOp,     // multiply
+    DivArithOp,     // divide
+    ModArithOp,     // modulo
+    AndArithOp,     // and
+    OrArithOp,      // or
+    XOrArithOp,     // xor
+    ShiftArithOp,   // shift
+    CmpArithOp,     // compare
 
     // tagged operations
-    tAddArithOp, //
-    tSubArithOp, //
-    tMulArithOp, //
-    tDivArithOp, //
-    tModArithOp, //
-    tAndArithOp, //
-    tOrArithOp, //
-    tXOrArithOp, //
-    tShiftArithOp, //
-    tCmpArithOp,
+    tAddArithOp,    //
+    tSubArithOp,    //
+    tMulArithOp,    //
+    tDivArithOp,    //
+    tModArithOp,    //
+    tAndArithOp,    //
+    tOrArithOp,     //
+    tXOrArithOp,    //
+    tShiftArithOp,  //
+    tCmpArithOp,    //
 
     // binary untagged float operations
-    fAddArithOp, //
-    fSubArithOp, //
-    fMulArithOp, //
-    fDivArithOp, //
-    fModArithOp, //
-    fCmpArithOp, //
+    fAddArithOp,    //
+    fSubArithOp,    //
+    fMulArithOp,    //
+    fDivArithOp,    //
+    fModArithOp,    //
+    fCmpArithOp,    //
 
     // unary untagged float operations
-    fNegArithOp, //
-    fAbsArithOp, //
-    fSqrArithOp, //
-    f2OopArithOp, //
+    fNegArithOp,    //
+    fAbsArithOp,    //
+    fSqrArithOp,    //
+    f2OopArithOp,   //
 
     // unary tagged float operation
-    f2FloatArithOp,
+    f2FloatArithOp, //
 
-    LastArithOp
+    LastArithOp     //
 };
 
 extern std::array<const char *, 13> BranchOpName; // indexed by BranchOpCode

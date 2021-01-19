@@ -9,7 +9,6 @@
 
 #include "vm/primitives/behavior_primitives.hpp"
 #include "vm/primitives/PrimitivesGenerator.hpp"
-#include "vm/system/sizes.hpp"
 
 
 static bool_t stop = false;

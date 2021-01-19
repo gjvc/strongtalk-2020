@@ -4,7 +4,6 @@
 //
 
 #include "vm/memory/Universe.hpp"
-#include "vm/system/sizes.hpp"
 
 
 #include <gtest/gtest.h>

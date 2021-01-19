@@ -15,7 +15,6 @@
 #include "vm/memory/oopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/utilities/lprintf.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

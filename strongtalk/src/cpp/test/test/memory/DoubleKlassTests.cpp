@@ -7,7 +7,6 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/oops/DoubleKlass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 #include <gtest/gtest.h>

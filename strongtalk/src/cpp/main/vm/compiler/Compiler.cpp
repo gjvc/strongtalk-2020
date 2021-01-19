@@ -19,7 +19,6 @@
 #include "vm/compiler/Inliner.hpp"
 #include "vm/compiler/RegisterAllocator.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/system/sizes.hpp"
 #include "vm/compiler/NodeFactory.hpp"
 
 

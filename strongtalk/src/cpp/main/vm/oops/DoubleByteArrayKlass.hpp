@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 class DoubleByteArrayKlass : public MemOopKlass {

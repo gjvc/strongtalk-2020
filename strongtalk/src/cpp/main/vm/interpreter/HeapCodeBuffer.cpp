@@ -10,7 +10,6 @@
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 void HeapCodeBuffer::align() {

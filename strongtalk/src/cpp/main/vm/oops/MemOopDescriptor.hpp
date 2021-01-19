@@ -6,11 +6,10 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/system/sizes.hpp"
-
 
 
 // memOops are all OOPs that actually take up Space in the heap (not immediate like SMIs)

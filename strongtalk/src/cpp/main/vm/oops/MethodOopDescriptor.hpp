@@ -5,13 +5,13 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/interpreter/MissingMethodBuilder.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/runtime/Frame.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

@@ -20,7 +20,6 @@
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
-#include "vm/system/sizes.hpp"
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, int byteCodeIndex ) :
@@ -437,18 +436,21 @@ NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const 
         while ( taken_uncommon->nonEmpty() and taken_uncommon->top()->_scope == s->offset() ) {
             current->uncommon.push( new RUncommonBranch( current, taken_uncommon->pop() ) );
         }
+
         // enter info from PICs
         while ( sends->nonEmpty() and sends->top()->scopeID() == s->offset() ) {
             NonDummyRecompilationScope *s = sends->pop();
             s->_sender = current;
             current->addScope( s->senderByteCodeIndex(), s );
         }
+
         // enter untaken uncommon branches
         ProgramCounterDescriptor *u;
         while ( untaken_uncommon->nonEmpty() and ( u = untaken_uncommon->top() )->_scope == s->offset() ) {
             new UntakenRecompilationScope( current, u, true );    // will add it as subscope of current
             untaken_uncommon->pop();
         }
+
         // enter uninlinable sends
         while ( uninlinable->nonEmpty() and ( u      = uninlinable->top() )->_scope == s->offset() ) {
             // only add uninlinable markers for sends that have no inlined cases
@@ -459,6 +461,7 @@ NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const 
             uninlinable->pop();
         }
     }
+
     st_assert( sends->isEmpty(), "sends should have been connected to rscopes" );
     st_assert( taken_uncommon->isEmpty(), "taken uncommon branches should have been connected to rscopes" );
     st_assert( untaken_uncommon->isEmpty(), "untaken uncommon branches should have been connected to rscopes" );
@@ -525,8 +528,10 @@ bool_t PICRecompilationScope::trustPICs( const NativeMethod *nm ) {
     int invoc = nm->invocation_count();
     if ( invoc < MinInvocationsBeforeTrust )
         return false;
+
     int       ncallers = nm->ncallers();
     SymbolOop sel      = nm->_lookupKey.selector();
+
     if ( sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() ) {
         // code Space optimization: try to avoid unnecessary mixed-type arithmetic
         return ncallers <= 1;

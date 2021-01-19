@@ -12,7 +12,6 @@
 #include "vm/interpreter/HeapCodeBuffer.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/oops/DoubleValueArrayKlass.hpp"
-#include "vm/system/sizes.hpp"
 
 #include <gtest/gtest.h>
 

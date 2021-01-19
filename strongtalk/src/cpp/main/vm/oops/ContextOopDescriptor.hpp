@@ -6,15 +6,11 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
-
-
-
-//#include "ContextKlass.hpp"
 
 
 class ContextOopDescriptor : public MemOopDescriptor {
@@ -22,7 +18,6 @@ class ContextOopDescriptor : public MemOopDescriptor {
 
 private:
     SMIOop _parent;
-
 
     //
     // %note: Robert please describe the parent states in excruciating details.
@@ -141,23 +136,6 @@ public:
 inline ContextOop as_contextOop( void *p ) {
     return ContextOop( as_memOop( p ) );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Contexts contain the heap-allocated local variables of a method, i.e., the locals

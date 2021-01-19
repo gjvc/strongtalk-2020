@@ -355,7 +355,7 @@ int os::get_nCmdShow() {
 }
 
 
-extern int     bootstrappingInProgress;
+extern bool_t  bootstrappingInProgress;
 static CONTEXT context;
 
 

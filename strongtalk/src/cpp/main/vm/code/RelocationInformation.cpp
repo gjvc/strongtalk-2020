@@ -24,7 +24,6 @@
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/primitives/primitives.hpp"
-#include "vm/system/sizes.hpp"
 
 
 RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, int off ) {

@@ -11,7 +11,6 @@
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/system/sizes.hpp"
 
 
 extern "C" {

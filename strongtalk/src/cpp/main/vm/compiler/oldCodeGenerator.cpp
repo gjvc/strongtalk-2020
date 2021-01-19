@@ -21,7 +21,6 @@
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

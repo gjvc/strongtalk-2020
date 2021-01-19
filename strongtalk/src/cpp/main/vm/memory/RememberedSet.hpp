@@ -8,7 +8,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "allocation.hpp"
-#include "vm/system/sizes.hpp"
 
 
 // remembered set for GC, implemented as a card-marking byte array with one byte per card

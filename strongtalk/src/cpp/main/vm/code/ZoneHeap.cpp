@@ -14,7 +14,6 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/utilities/lprintf.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

@@ -10,7 +10,6 @@
 #include "vm/system/os.hpp"
 #include "vm/memory/util.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/system/sizes.hpp"
 
 
 

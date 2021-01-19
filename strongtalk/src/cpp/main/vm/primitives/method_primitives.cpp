@@ -26,7 +26,6 @@
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/oops/ContextKlass.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceMethodPrims, "method" )

@@ -13,7 +13,6 @@
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/utilities/disassembler.hpp"
-#include "vm/system/sizes.hpp"
 
 
 MacroAssembler *theMacroAssembler = nullptr;

@@ -7,15 +7,23 @@
 #pragma once
 
 
-// -----------------------------------------------------------------------------
+#if defined( __MINGW32__ ) && defined( __GNUC__ )
 
-#include "vm/system/gnu.hpp"
-#include "vm/system/msvc.hpp"
+#define __CALLING_CONVENTION __attribute__((__stdcall__))
 
+#include <cstddef>
 
-// -----------------------------------------------------------------------------
-
-#include "vm/system/sizes.hpp"
+extern "C" {
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cctype>
+#include <cstdarg>
+#include <cstdarg>
+#include <cfloat>
+#include <cmath>
+}
+#endif
 
 
 // -----------------------------------------------------------------------------

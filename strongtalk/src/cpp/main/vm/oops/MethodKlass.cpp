@@ -14,7 +14,6 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/system/sizes.hpp"
 
 
 void setKlassVirtualTableFromMethodKlass( Klass *k ) {

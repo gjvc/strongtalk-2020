@@ -13,7 +13,6 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/code/NativeCode.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/system/sizes.hpp"
 
 
 void OopNativeCode::remember() {

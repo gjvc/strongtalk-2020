@@ -5,12 +5,10 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
-
-
 
 
 //

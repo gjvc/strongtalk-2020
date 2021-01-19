@@ -11,7 +11,6 @@
 #include "vm/oops/Klass.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Closure.hpp"
-#include "vm/system/sizes.hpp"
 
 
 Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {

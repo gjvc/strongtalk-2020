@@ -8,9 +8,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
-
-
 
 
 //

@@ -14,7 +14,6 @@
 #include "vm/memory/oopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceDoublePrims, "double" )

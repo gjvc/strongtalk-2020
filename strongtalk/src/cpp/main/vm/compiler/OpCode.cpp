@@ -58,17 +58,19 @@ void opcode_init() {
     _console->print_cr( "%%system-init:  opcode_init" );
 
     // check sizes
-//
-//    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq BranchOpCode::LastBranchOp + 1 ) {
-//        fatal( "forgot to change BranchOpName after changing BranchOpCode" );
-//    }
-//
-//    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq ArithOpCode::LastArithOp + 1 ) {
-//        fatal( "forgot to change ArithOpName after changing ArithOpCode" );
-//    }
-//
-//    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq ArithOpCode::LastArithOp + 1 ) {
-//        fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
-//    }
+
+    //    std::numeric_limits<typename std::underlying_type<BranchOpCode>::type>::max()
+
+    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq static_cast<int>(BranchOpCode::LastBranchOp) + 1 ) {
+        st_fatal( "forgot to change BranchOpName after changing BranchOpCode" );
+    }
+
+    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq static_cast<int>(ArithOpCode::LastArithOp) + 1 ) {
+        st_fatal( "forgot to change ArithOpName after changing ArithOpCode" );
+    }
+
+    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq static_cast<int>(ArithOpCode::LastArithOp) + 1 ) {
+        st_fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
+    }
 
 }

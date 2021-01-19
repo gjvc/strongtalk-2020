@@ -28,7 +28,6 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceSystemPrims, "system" )

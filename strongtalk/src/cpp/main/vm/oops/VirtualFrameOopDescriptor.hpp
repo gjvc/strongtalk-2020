@@ -11,8 +11,6 @@
 #include "vm/oops/SMIKlass.hpp"
 #include "vm/oops/VirtualFrameOopDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/system/sizes.hpp"
-
 
 
 // VirtualFrame objects are handles to process activations.

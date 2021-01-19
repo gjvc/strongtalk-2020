@@ -8,7 +8,6 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/primitives/smi_primitives.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/system/sizes.hpp"
 
 
 TRACE_FUNC( TraceSmiPrims, "smi_t" )

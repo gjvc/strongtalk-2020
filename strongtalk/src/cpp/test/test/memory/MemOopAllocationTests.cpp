@@ -10,7 +10,6 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/system/sizes.hpp"
 
 
 #include <gtest/gtest.h>

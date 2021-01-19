@@ -25,7 +25,6 @@
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
 
 
 // Computes the byte offset from the beginning of an Oop

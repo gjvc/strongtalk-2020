@@ -5,10 +5,9 @@
 
 #pragma once
 
+#include "vm/system/platform.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/system/sizes.hpp"
-
 
 
 // mixin objects holds the description of a class
