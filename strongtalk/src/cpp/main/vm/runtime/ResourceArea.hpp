@@ -26,8 +26,8 @@ private:
     char              *_firstFree;
     ResourceAreaChunk *_prev;
 
-    int _allocated;     // Allocated bytes in this and previous chunks.
-    int _previous_used; // Used bytes in previous chunks.
+    std::size_t _allocated;     // Allocated bytes in this and previous chunks.
+    std::size_t _previous_used; // Used bytes in previous chunks.
 
     void clear( char *start, char *end ) {
         memset( start, 33, end - start );
@@ -42,16 +42,16 @@ private:
     void freeTo( char *new_first_free );
 
 public:
-    char *allocate_bytes( int size );
+    char *allocate_bytes( std::size_t size );
 
-    ResourceAreaChunk( int min_capacity, ResourceAreaChunk *previous );
+    ResourceAreaChunk( std::size_t min_capacity, ResourceAreaChunk *previous );
 
     ~ResourceAreaChunk();
 
     void initialize( ResourceAreaChunk *previous );
 
 
-    int capacity() {
+    std::size_t capacity() {
         return _top - _bottom;
     }
 
@@ -76,7 +76,7 @@ public:
     void print_short();
 
 protected:
-    void print_alloc( const char *addr, int size );
+    void print_alloc( const char *addr, std::size_t size );
 };
 
 
@@ -84,7 +84,7 @@ class ResourceArea {
 
 public:
     ResourceAreaChunk *_resourceAreaChunk;  // current chunk
-    int _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
+    int               _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
 
 public:
 
@@ -92,9 +92,9 @@ public:
 
     ~ResourceArea();
 
-    char *allocate_more_bytes( int size );
+    char *allocate_more_bytes( std::size_t size );
 
-    char *allocate_bytes( int size );
+    char *allocate_bytes( std::size_t size );
 
 
     int capacity() {
@@ -132,14 +132,14 @@ class Resources {
 
 private:
     ResourceAreaChunk *freeChunks;          // list of unused chunks
-    int    _allocated;           // total number of bytes allocated
-    bool_t _in_consistent_state; //
-    ResourceAreaChunk *getFromFreeList( int min_capacity );
+    std::size_t               _allocated;           // total number of bytes allocated
+    bool_t            _in_consistent_state; //
+    ResourceAreaChunk *getFromFreeList( std::size_t min_capacity );
 
 public:
     Resources();
 
-    ResourceAreaChunk *new_chunk( int min_capacity, ResourceAreaChunk *area );
+    ResourceAreaChunk *new_chunk( std::size_t min_capacity, ResourceAreaChunk *area );
 
     void addToFreeList( ResourceAreaChunk *c );
 
@@ -151,24 +151,24 @@ public:
 
     bool_t contains( const char *p );
 
-    int capacity();
+    std::size_t capacity();
 
-    int used();
+    std::size_t used();
 };
 
 
 // -----------------------------------------------------------------------------
 
-char *AllocateHeap( int size, const char *name );
+char *AllocateHeap( std::size_t size, const char *name );
 
 void FreeHeap( void *p );
 
-char *AllocatePageAligned( int size, const char *name );
+char *AllocatePageAligned( std::size_t size, const char *name );
 
 extern Resources    resources;
 extern ResourceArea resource_area;
 
-char *allocateResource( int size );
+char *allocateResource( std::size_t size );
 
 // base class ResourceObject is at the end of the file because it uses ResourceArea Base class for objects allocated in the resource area per default.
 // Optionally, objects may be allocated on the C heap with new(true) Foo(...)

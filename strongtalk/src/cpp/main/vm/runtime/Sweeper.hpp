@@ -150,7 +150,7 @@ public:
 class MethodSweeper : public CodeSweeper {
 
 private:
-    int _index; // next index in systemDictionary to process
+    std::size_t _index; // next index in systemDictionary to process
 
 private:
     MethodOop excluded_method() {

@@ -28,7 +28,7 @@ public:
     // creation operations
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );

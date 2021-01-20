@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -15,10 +16,10 @@
 #include "vm/memory/Array.hpp"
 
 
-Array::Array( int sz ) {
+Array::Array( std::size_t sz ) {
     _size   = sz;
     _index  = 0;
-    _values = new_resource_array<int>( sz );
+    _values = new_resource_array<std::size_t>( sz );
 }
 
 
@@ -51,7 +52,7 @@ void Array::copy_to( int *&addr ) {
 }
 
 
-ByteArray::ByteArray( int size ) {
+ByteArray::ByteArray( std::size_t size ) {
     _array = new_resource_array<std::uint8_t>( size );
     _max   = size;
     _top   = 0;

@@ -24,8 +24,8 @@ class BaseHandle {
 
 private:
     const char *_label;
-    bool_t _log;
-    Oop    _saved;
+    bool_t     _log;
+    Oop        _saved;
     BaseHandle *_next;
     BaseHandle *_prev;
 
@@ -81,7 +81,7 @@ public:
 class PersistentHandle : public CHeapAllocatedObject {
 
 private:
-    Oop _saved;
+    Oop                     _saved;
     PersistentHandle        *_next;
     PersistentHandle        *_prev;
     static PersistentHandle *_first;
@@ -119,7 +119,7 @@ public:
 class Handle : StackAllocatedObject {
 
 private:
-    int _index;
+    std::size_t _index;
 
 public:
     Handle( Oop value );
@@ -139,15 +139,15 @@ public:
 class Handles : AllStatic {
 
 private:
-    static int _top;
-    static int _size;
-    static Oop _array[];
+    static std::size_t _top;
+    static std::size_t _size;
+    static Oop         _array[];
 
     static Oop oop_at( int index );
 
     static int push_oop( Oop value );
 
-    static int top();
+    static std::size_t top();
 
     static void set_top( int t );
 

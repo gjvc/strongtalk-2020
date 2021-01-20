@@ -56,7 +56,7 @@ public:
     void verify();
 
 
-    bool_t would_fit( int size ) {
+    bool_t would_fit( std::size_t size ) {
         return _toSpace->would_fit( size );
     }
 
@@ -72,12 +72,12 @@ public:
     Oop *object_start( Oop *p );
 
 
-    Oop *allocate( int size ) {
+    Oop *allocate( std::size_t size ) {
         return eden()->allocate( size );
     }
 
 
-    Oop *allocate_in_survivor_space( int size ) {
+    Oop *allocate_in_survivor_space( std::size_t size ) {
         return _toSpace->allocate( size );
     }
 

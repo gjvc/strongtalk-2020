@@ -21,7 +21,7 @@ public:
     }
 
 
-    int object_size( int size_of_codes ) const {
+    int object_size( std::size_t size_of_codes ) const {
         return non_indexable_size() + size_of_codes + 1;
     }
 

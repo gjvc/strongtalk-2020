@@ -246,7 +246,7 @@ public:
 
 
     // allocators
-    static Oop *allocate( int size, MemOop *p = nullptr, bool_t permit_scavenge = true ) {
+    static Oop *allocate( std::size_t size, MemOop *p = nullptr, bool_t permit_scavenge = true ) {
 
         if ( _scavenge_blocked and can_scavenge() and permit_scavenge )
             return scavenge_and_allocate( size, (Oop *) p );
@@ -259,13 +259,13 @@ public:
     }
 
 
-    static Oop *allocate_without_scavenge( int size ) {
+    static Oop *allocate_without_scavenge( std::size_t size ) {
         Oop *obj = new_gen.allocate( size );
         return obj ? obj : allocate_tenured( size );
     }
 
 
-    static Oop *allocate_tenured( int size, bool_t permit_expansion = true ) {
+    static Oop *allocate_tenured( std::size_t size, bool_t permit_expansion = true ) {
         return old_gen.allocate( size, permit_expansion );
     }
 
@@ -277,7 +277,7 @@ public:
     static bool_t can_scavenge();
 
     // scavenging operations.
-    static Oop *scavenge_and_allocate( int size, Oop *p );
+    static Oop *scavenge_and_allocate( std::size_t size, Oop *p );
 
     static void scavenge( Oop *p = nullptr );
 
@@ -304,7 +304,7 @@ public:
     }
 
 
-    static Oop *allocate_in_survivor_space( MemOop p, int size, bool_t &is_new );
+    static Oop *allocate_in_survivor_space( MemOop p, std::size_t size, bool_t &is_new );
 
 
     static int free() {

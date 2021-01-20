@@ -1263,7 +1263,7 @@ void NodeBuilder::float_allocate( int nofFloatTemps, int nofFloatExprs ) {
     // float_move         3, 2		; push c
     // float_unaryOpToOop 3, oopify	; push c converted to Oop
     // return_tos				; return tos
-    int size = nofFloatTemps + nofFloatExprs;
+    std::size_t size = nofFloatTemps + nofFloatExprs;
     st_assert( size == method()->total_number_of_floats(), "inconsistency" );
     // floatTemporaries are allocated in InlinedScope::genCode()
 }

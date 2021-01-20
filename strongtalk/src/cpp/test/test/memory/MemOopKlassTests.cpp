@@ -36,11 +36,11 @@ protected:
         PersistentHandle classMixinClass( Universe::find_global( "ClassMixin" ) );
         PersistentHandle metaClassMixinClass( Universe::find_global( "MetaClassMixin" ) );
 
-        PersistentHandle methods( oopFactory::new_objArray( 0 ) );
-        PersistentHandle ivars( oopFactory::new_objArray( 0 ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( 0 ) );
-        PersistentHandle classIvars( oopFactory::new_objArray( 0 ) );
-        PersistentHandle classVars( oopFactory::new_objArray( 0 ) );
+        PersistentHandle methods( oopFactory::new_objArray( std::size_t{0} ) );
+        PersistentHandle ivars( oopFactory::new_objArray( std::size_t{0} ) );
+        PersistentHandle classMethods( oopFactory::new_objArray( std::size_t{0} ) );
+        PersistentHandle classIvars( oopFactory::new_objArray( std::size_t{0} ) );
+        PersistentHandle classVars( oopFactory::new_objArray( std::size_t{0} ) );
 
         PersistentHandle classMixin( classMixinClass.as_klassOop()->klass_part()->allocateObject() );
         PersistentHandle metaClassMixin( metaClassMixinClass.as_klassOop()->klass_part()->allocateObject() );

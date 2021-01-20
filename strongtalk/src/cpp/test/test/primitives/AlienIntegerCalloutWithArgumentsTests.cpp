@@ -236,7 +236,7 @@ std::array<Oop, argCount> arg;
 arg[ 1 ] =
 smi0;
 for (
-int size = -4;
+std::size_t size = -4;
 size > -20; size -= 4 ) {
 arg[ 0 ] = addressAlien->
 as_oop();

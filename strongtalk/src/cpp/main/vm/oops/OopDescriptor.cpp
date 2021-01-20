@@ -215,7 +215,7 @@ Oop OopDescriptor::primitive_allocate( bool_t allow_scavenge, bool_t tenured ) {
 }
 
 
-Oop OopDescriptor::primitive_allocate_size( int size ) {
+Oop OopDescriptor::primitive_allocate_size( std::size_t size ) {
     return blueprint()->oop_primitive_allocate_size( this, size );
 }
 

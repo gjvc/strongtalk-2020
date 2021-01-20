@@ -22,7 +22,7 @@ private:
     NameNode *_physicalAddress;
     int _pcOffset;
     LogicalAddress *_next;
-    int _offset;
+    std::size_t _offset;
 
 public:
     LogicalAddress( NameNode *physical_address, int pc_offset = 0 );

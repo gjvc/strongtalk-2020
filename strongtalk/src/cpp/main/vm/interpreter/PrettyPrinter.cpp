@@ -1487,7 +1487,7 @@ public:
 class stackTempNode : public leafNode {
 
 private:
-    int _offset;
+    std::size_t _offset;
     const char *_str;
 
 public:
@@ -1507,7 +1507,7 @@ public:
 class heapTempNode : public leafNode {
 
 private:
-    int _offset;
+    std::size_t _offset;
     int _contextLevel;
     const char *_str;
 
@@ -1813,7 +1813,7 @@ public:
     }
 
 
-    int _size() const {
+    std::size_t _size() const {
         return _stack->length();
     }
 
@@ -2161,9 +2161,9 @@ class StackChecker {
 
 public:
     MethodPrettyPrinter *_methodPrettyPrinter;
-    int _size;
+    std::size_t _size;
     const char *_name;
-    int _offset;
+    std::size_t _offset;
 
 
     StackChecker( const char *name, MethodPrettyPrinter *pp, int offset = 0 ) {

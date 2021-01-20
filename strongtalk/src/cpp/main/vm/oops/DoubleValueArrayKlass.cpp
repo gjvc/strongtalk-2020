@@ -19,7 +19,7 @@ Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenure
 }
 
 
-Oop DoubleValueArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop DoubleValueArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
 
     //
     KlassOop k        = as_klassOop();

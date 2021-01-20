@@ -632,7 +632,7 @@ private:
     InlinedScope *_scope;                // scope that generates the pushes and pops
 
 public:
-    ExpressionStack( InlinedScope *scope, int size );
+    ExpressionStack( InlinedScope *scope, std::size_t size );
 
     void push( Expression *expr, InlinedScope *currentScope, int byteCodeIndex );
 

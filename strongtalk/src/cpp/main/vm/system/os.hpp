@@ -84,22 +84,22 @@ public:
     }
 
 
-    static char *reserve_memory( int size );
+    static char *reserve_memory( std::size_t size );
 
-    static bool_t commit_memory( const char *addr, int size );
+    static bool_t commit_memory( const char *addr, std::size_t size );
 
-    static bool_t uncommit_memory( const char *addr, int size );
+    static bool_t uncommit_memory( const char *addr, std::size_t size );
 
-    static bool_t release_memory( const char *addr, int size );
+    static bool_t release_memory( const char *addr, std::size_t size );
 
-    static bool_t guard_memory( const char *addr, int size );
+    static bool_t guard_memory( const char *addr, std::size_t size );
 
-    static const char *exec_memory( int size );
+    static const char *exec_memory( std::size_t size );
 
     // OS interface to C memory routines - used for small allocations
-    static void *malloc( int size );
+    static void *malloc( std::size_t size );
 
-    static void *calloc( int size, char filler );
+    static void *calloc( std::size_t size, char filler );
 
     static void free( void *p );
 

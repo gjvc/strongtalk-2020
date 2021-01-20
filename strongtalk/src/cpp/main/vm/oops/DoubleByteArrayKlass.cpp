@@ -15,7 +15,7 @@ Oop DoubleByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured
 }
 
 
-Oop DoubleByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t tenured ) {
+Oop DoubleByteArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k        = as_klassOop();
     int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + roundTo( size * 2, oopSize ) / oopSize;

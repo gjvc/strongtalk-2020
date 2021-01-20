@@ -44,7 +44,7 @@ KlassOop ProxyKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 
 
 int ProxyKlass::oop_scavenge_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_header();
     // instance variables
@@ -54,7 +54,7 @@ int ProxyKlass::oop_scavenge_contents( Oop obj ) {
 
 
 int ProxyKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
     // instance variables

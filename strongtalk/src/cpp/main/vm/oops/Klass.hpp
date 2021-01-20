@@ -198,7 +198,7 @@ public:
 
     virtual Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    virtual Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // KlassFormat
     enum class Format {
@@ -424,7 +424,7 @@ public:
     // Dispatched primitives
     virtual Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
 
-    virtual Oop oop_primitive_allocate_size( Oop obj, int size );
+    virtual Oop oop_primitive_allocate_size( Oop obj, std::size_t size );
 
     virtual Oop oop_shallow_copy( Oop obj, bool_t tenured );
 

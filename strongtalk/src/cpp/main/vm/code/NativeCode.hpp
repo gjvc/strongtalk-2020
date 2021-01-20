@@ -65,7 +65,7 @@ public:
     }
 
 
-    virtual void moveTo( void *to, int size ) = 0; // (possibly overlapping) copy
+    virtual void moveTo( void *to, std::size_t size ) = 0; // (possibly overlapping) copy
     virtual void relocate() {
     }
 

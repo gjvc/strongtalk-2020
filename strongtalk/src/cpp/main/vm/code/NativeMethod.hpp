@@ -202,7 +202,7 @@ protected:
 public:
     friend NativeMethod *new_nativeMethod( Compiler *c );
 
-    void initForTesting( int size, LookupKey *key ); // to support testing
+    void initForTesting( std::size_t size, LookupKey *key ); // to support testing
 
     std::size_t size() const {
         return end() - ( (const char *) this );
@@ -216,7 +216,7 @@ public:
     // Call this whenever the code is moved.
     void fix_relocation_at_move( int delta );
 
-    void moveTo( void *to, int size );
+    void moveTo( void *to, std::size_t size );
 
 public:
     bool_t isNativeMethod() const {

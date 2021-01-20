@@ -39,14 +39,14 @@ std::array<const char *, 10>GeneratedPrimitives::_allocateBlock;
 std::array<const char *, 3> GeneratedPrimitives::_allocateContext;
 const char *GeneratedPrimitives::_primitiveInlineAllocations = nullptr;
 
-extern "C" void scavenge_and_allocate( int size );
+extern "C" void scavenge_and_allocate( std::size_t size );
 
 
 // -----------------------------------------------------------------------------
 
 // macros
 
-void PrimitivesGenerator::scavenge( int size ) {
+void PrimitivesGenerator::scavenge( std::size_t size ) {
     masm->set_last_Delta_frame_after_call();
     masm->pushl( size );
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
@@ -56,7 +56,7 @@ void PrimitivesGenerator::scavenge( int size ) {
 }
 
 
-void PrimitivesGenerator::test_for_scavenge( Register dst, int size, Label &need_scavenge ) {
+void PrimitivesGenerator::test_for_scavenge( Register dst, std::size_t size, Label &need_scavenge ) {
     masm->movl( dst, Address( (int) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->addl( dst, size );
     masm->cmpl( dst, Address( (int) &eden_end, RelocationInformation::RelocationType::external_word_type ) );

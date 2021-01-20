@@ -40,7 +40,7 @@
 class InterpretedInlineCache : ValueObject {
 
 public:
-    static constexpr int size               = 8;    // inline cache size in words
+    static constexpr std::size_t size               = 8;    // inline cache size in words
     static constexpr int first_word_offset  = 0;    // layout info: first word
     static constexpr int second_word_offset = 4;    // layout info: second word
 
@@ -141,8 +141,8 @@ InterpretedInlineCache *as_InterpretedIC( const char *address_of_next_instr );
 
 // Interpreter_PICs handles the allocation and deallocation of interpreter PICs.
 
-static constexpr int size_of_smallest_interpreterPIC                   = 2;
-static constexpr int size_of_largest_interpreterPIC                    = 5;
+static constexpr std::size_t size_of_smallest_interpreterPIC                   = 2;
+static constexpr std::size_t size_of_largest_interpreterPIC                    = 5;
 static constexpr int number_of_interpreterPolymorphicInlineCache_sizes = size_of_largest_interpreterPIC - size_of_smallest_interpreterPIC + 1;
 
 
@@ -160,7 +160,7 @@ private:
     // state machine
     int              _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _info;                 // send site information
-    int              _index;                // the current entry no.
+    std::size_t _index;                // the current entry no.
     KlassOop         _klass;                // the current klass
     MethodOop        _method;               // the current method
     NativeMethod     *_nativeMethod;        // current NativeMethod (nullptr if none)

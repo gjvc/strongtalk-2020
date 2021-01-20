@@ -139,7 +139,7 @@ public:
     }
 
 
-    void set_float_section_size( int size );
+    void set_float_section_size( std::size_t size );
 
     void set_float_section_start_offset( int offset );
 

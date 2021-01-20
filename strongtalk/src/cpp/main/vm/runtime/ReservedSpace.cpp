@@ -10,7 +10,7 @@
 #include "vm/system/os.hpp"
 
 
-ReservedSpace::ReservedSpace( int size ) {
+ReservedSpace::ReservedSpace( std::size_t size ) {
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     _base = os::reserve_memory( size );
     _size = size;
@@ -31,12 +31,12 @@ ReservedSpace ReservedSpace::last_part( int partition_size ) {
 }
 
 
-int ReservedSpace::page_align_size( int size ) {
+int ReservedSpace::page_align_size( std::size_t size ) {
     return align_size( size, os::vm_page_size() );
 }
 
 
-int ReservedSpace::align_size( int size, int page_size ) {
+int ReservedSpace::align_size( std::size_t size, int page_size ) {
     int adjust = size == 0 ? page_size : ( page_size - ( size % page_size ) ) % page_size;
     return size + adjust;
 }

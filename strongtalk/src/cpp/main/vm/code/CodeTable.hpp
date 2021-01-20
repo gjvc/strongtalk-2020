@@ -103,7 +103,7 @@ protected:
     CodeTableLink *new_link( NativeMethod *nm, CodeTableLink *n = nullptr );
 
 public:
-    CodeTable( int size );
+    CodeTable( std::size_t size );
 
     void clear();
 

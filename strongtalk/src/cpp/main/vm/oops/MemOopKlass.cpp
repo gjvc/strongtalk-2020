@@ -24,7 +24,7 @@ void setKlassVirtualTableFromMemOopKlass( Klass *k ) {
 
 
 int MemOopKlass::oop_scavenge_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_header();
     // instance variables
@@ -34,7 +34,7 @@ int MemOopKlass::oop_scavenge_contents( Oop obj ) {
 
 
 int MemOopKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
     // instance variables
@@ -115,7 +115,7 @@ Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop MemOopKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop MemOopKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     return markSymbol( vmSymbols::not_indexable() );
 }
 

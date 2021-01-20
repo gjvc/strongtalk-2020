@@ -71,7 +71,7 @@ KlassOop       messageClass  = KlassOop( Universe::find_global( "Message" ) );
 SymbolOop      errorSelector = SymbolOop( oopFactory::new_symbol( "value" ) );
 SymbolOop      selector      = SymbolOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
 SymbolOop      dnuSelector   = SymbolOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
-ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( 0 ) );
+ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) );
 code->pushByte( static_cast
 <std::uint8_t>(ByteCodes::Code::push_literal)
 );

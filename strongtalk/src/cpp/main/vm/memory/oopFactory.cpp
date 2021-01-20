@@ -22,7 +22,7 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-ByteArrayOop oopFactory::new_byteArray( int size ) {
+ByteArrayOop oopFactory::new_byteArray( std::size_t size ) {
     ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObj()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
 }
@@ -39,7 +39,7 @@ ByteArrayOop oopFactory::new_byteArray( const char *name ) {
 }
 
 
-ObjectArrayOop oopFactory::new_objArray( int size ) {
+ObjectArrayOop oopFactory::new_objArray( std::size_t size ) {
     ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
@@ -50,7 +50,7 @@ ObjectArrayOop oopFactory::new_objArray( int size ) {
 ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
-    int size = array->length();
+    std::size_t size = array->length();
     ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );

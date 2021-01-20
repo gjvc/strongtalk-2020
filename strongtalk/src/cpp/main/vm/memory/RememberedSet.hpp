@@ -97,7 +97,7 @@ public:
     int number_of_pages_with_dirty_objects_in( OldSpace *sp );
 
     // Operations used during garbage collection
-    void set_size( MemOop obj, int size );
+    void set_size( MemOop obj, std::size_t size );
 
     int get_size( MemOop obj );
 

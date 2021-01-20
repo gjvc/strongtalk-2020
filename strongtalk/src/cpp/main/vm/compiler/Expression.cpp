@@ -689,7 +689,7 @@ void ContextExpression::verify() const {
 }
 
 
-ExpressionStack::ExpressionStack( InlinedScope *scope, int size ) :
+ExpressionStack::ExpressionStack( InlinedScope *scope, std::size_t size ) :
         GrowableArray<Expression *>( size ) {
     _scope = scope;
 }

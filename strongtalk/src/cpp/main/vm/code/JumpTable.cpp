@@ -20,7 +20,7 @@ static const char halt_instruction = '\xF4';
 static const char jump_instruction = '\xE9';
 
 
-const char *JumpTable::allocate_jump_entries( int size ) {
+const char *JumpTable::allocate_jump_entries( std::size_t size ) {
 //  return AllocateHeap(size * JumpTableEntry::size(), "jump table");
     return os::exec_memory( size * JumpTableEntry::size() ); //, "jump table");
 }

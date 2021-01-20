@@ -18,11 +18,11 @@
 class oopFactory : AllStatic {
 
 public:
-    static ByteArrayOop new_byteArray( int size );
+    static ByteArrayOop new_byteArray( std::size_t size );
 
     static ByteArrayOop new_byteArray( const char *name );
 
-    static ObjectArrayOop new_objArray( int size );
+    static ObjectArrayOop new_objArray( std::size_t size );
 
     static ObjectArrayOop new_objArray( GrowableArray<Oop> *array );
 

@@ -164,7 +164,7 @@ markSymbol( vmSymbols::second_argument_has_wrong_type() ),
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
-int size   = Universe::new_gen.eden()->free() / oopSize;
+std::size_t size   = Universe::new_gen.eden()->free() / oopSize;
 Oop result = objArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), arrayClass );
 ASSERT_TRUE( result
 ->
@@ -180,7 +180,7 @@ as_string();
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
-int size   = Universe::old_gen.free() / oopSize;
+std::size_t size   = Universe::old_gen.free() / oopSize;
 Oop result = objArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), arrayClass );
 ASSERT_TRUE( result
 ->

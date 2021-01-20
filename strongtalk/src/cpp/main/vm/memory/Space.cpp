@@ -73,7 +73,7 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
             }
             m->set_mark( MarkOop( root_or_mark ) );
 
-            int size = m->gc_retrieve_size(); // The mark has to be restored before
+            std::size_t size = m->gc_retrieve_size(); // The mark has to be restored before
             // the size is retrieved
             new_top += size;
             q += size;
@@ -108,7 +108,7 @@ void Space::compact( OldWaterMark *mark ) {
 //            lprintf( "Space::compact()  expand [%#lx] -> [%#lx]\n", q, *q );
             q = (Oop *) *q;
         } else {
-            int size = m->gc_retrieve_size();
+            std::size_t size = m->gc_retrieve_size();
             // make sure we don't run out of old Space!
             if ( size > mark->_space->end() - new_top )
                 mark->_space->expand( size * oopSize );
@@ -240,7 +240,7 @@ int expansion_count = 0;
 }
 
 
-int OldSpace::expand( int size ) {
+int OldSpace::expand( std::size_t size ) {
     int min_size    = ReservedSpace::page_align_size( size );
     int expand_size = ReservedSpace::align_size( min_size, ObjectHeapExpandSize * 1024 );
     Universe::old_gen._virtualSpace.expand( expand_size );
@@ -250,7 +250,7 @@ int OldSpace::expand( int size ) {
 }
 
 
-int OldSpace::shrink( int size ) {
+int OldSpace::shrink( std::size_t size ) {
     int shrink_size = ReservedSpace::align_size( size, ObjectHeapExpandSize * 1024 );
     if ( shrink_size > free() )
         return 0;
@@ -260,7 +260,7 @@ int OldSpace::shrink( int size ) {
 }
 
 
-Oop *OldSpace::expand_and_allocate( int size ) {
+Oop *OldSpace::expand_and_allocate( std::size_t size ) {
     expand( size * oopSize );
     return allocate( size );
 }
@@ -387,7 +387,7 @@ void OldSpace::verify() {
         st_assert( Oop(*p)->is_mark(), "First word must be mark" );
         m = as_memOop( p );
 
-        int size = m->size();
+        std::size_t size = m->size();
         st_assert( m == as_memOop( Universe::object_start( p + ( size / 2 ) ) ), "check offset computation" );
 
         m->verify();

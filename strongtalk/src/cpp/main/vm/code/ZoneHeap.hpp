@@ -36,7 +36,7 @@ protected:
 
 
 public:
-    int size;    // size in blocks (only for heterogenuous list)
+    std::size_t size;    // size in blocks (only for heterogenuous list)
 
     HeapChunk() {
         initialize();
@@ -240,7 +240,7 @@ public:
 class ZoneHeap : public CHeapAllocatedObject {
 
 protected:
-    int size;                   // total size in bytes
+    std::size_t size;                   // total size in bytes
 
 public:
     int blockSize;              // allocation unit in bytes (must be power of 2)

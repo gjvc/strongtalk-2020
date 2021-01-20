@@ -9,7 +9,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-CodeTable::CodeTable( int size ) {
+CodeTable::CodeTable( std::size_t size ) {
     tableSize = size;
     buckets   = new_c_heap_array<CodeTableEntry>( size );
     clear();

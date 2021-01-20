@@ -50,7 +50,7 @@ public:
 
     Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
 
-    Oop oop_primitive_allocate_size( Oop obj, int size );
+    Oop oop_primitive_allocate_size( Oop obj, std::size_t size );
 
     Oop oop_shallow_copy( Oop obj, bool_t tenured );
 

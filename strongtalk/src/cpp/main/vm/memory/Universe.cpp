@@ -693,7 +693,7 @@ void Universe::store( Oop *p, Oop contents, bool_t cs ) {
 }
 
 
-Oop *Universe::allocate_in_survivor_space( MemOop p, int size, bool_t &is_new ) {
+Oop *Universe::allocate_in_survivor_space( MemOop p, std::size_t size, bool_t &is_new ) {
     if ( p->mark()->age() < tenuring_threshold and new_gen.would_fit( size ) ) {
         is_new = true;
         return new_gen.allocate_in_survivor_space( size );
@@ -730,12 +730,12 @@ bool_t Universe::can_scavenge() {
 }
 
 
-extern "C" void scavenge_and_allocate( int size ) {
+extern "C" void scavenge_and_allocate( std::size_t size ) {
     Universe::scavenge_and_allocate( size, nullptr );
 }
 
 
-Oop *Universe::scavenge_and_allocate( int size, Oop *p ) {
+Oop *Universe::scavenge_and_allocate( std::size_t size, Oop *p ) {
     // Fix this:
     //  If it is a huge object we are allocating we should allocate it in old_space and return without doing a scavenge
     if ( not can_scavenge() ) {

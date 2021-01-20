@@ -115,7 +115,7 @@ public:
     }
 
 
-    NativeMethod *allocate( int size );
+    NativeMethod *allocate( std::size_t size );
 
     void free( NativeMethod *m );
 
@@ -181,7 +181,7 @@ public:
 
     void print();
 
-    void print_NativeMethod_histogram( int size );
+    void print_NativeMethod_histogram( std::size_t size );
 
 
     NativeMethod *first_nm() const {
@@ -232,7 +232,7 @@ protected:
 
     inline NativeMethod *next_circular_nm( NativeMethod *nm );
 
-    friend void moveInsts( const char *from, char *to, int size );
+    friend void moveInsts( const char *from, char *to, std::size_t size );
 
     friend void printAllNativeMethods();
 

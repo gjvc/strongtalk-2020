@@ -19,8 +19,8 @@
 
 void Klass::initialize() {
     set_untagged_contents( false );
-    set_classVars( ObjectArrayOop( oopFactory::new_objArray( 0 ) ) );
-    set_methods( ObjectArrayOop( oopFactory::new_objArray( 0 ) ) );
+    set_classVars( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
+    set_methods( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
     set_superKlass( KlassOop( nilObj ) );
     set_mixin( MixinOop( nilObj ) );
 }
@@ -31,7 +31,7 @@ Oop Klass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop Klass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop Klass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     return markSymbol( vmSymbols::not_oops() );
 }
 
@@ -172,7 +172,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     Klass *mk = meta_klass->klass_part();
     mk->set_untagged_contents( false );
     mk->set_classVars( class_vars );
-    mk->set_methods( oopFactory::new_objArray( 0 ) );
+    mk->set_methods( oopFactory::new_objArray( std::size_t{0} ) );
     mk->set_superKlass( superMetaClass );
     mk->set_mixin( mixin->class_mixin() );
     mk->set_non_indexable_size( KlassOopDescriptor::header_size() + mk->number_of_instance_variables() );
@@ -183,7 +183,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 
     k->set_untagged_contents( false );
     k->set_classVars( class_vars );
-    k->set_methods( oopFactory::new_objArray( 0 ) );
+    k->set_methods( oopFactory::new_objArray( std::size_t{0} ) );
     k->set_superKlass( superClass );
     k->set_mixin( mixin );
     k->set_vtbl_value( vtbl );
@@ -435,7 +435,7 @@ KlassOop Klass::lookup_method_holder_for( MethodOop method ) {
 
 
 void Klass::flush_methods() {
-    set_methods( oopFactory::new_objArray( 0 ) );
+    set_methods( oopFactory::new_objArray( std::size_t{0} ) );
 }
 
 
@@ -585,7 +585,7 @@ Oop Klass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t tenure
 }
 
 
-Oop Klass::oop_primitive_allocate_size( Oop obj, int size ) {
+Oop Klass::oop_primitive_allocate_size( Oop obj, std::size_t size ) {
     return markSymbol( vmSymbols::not_klass() );
 }
 

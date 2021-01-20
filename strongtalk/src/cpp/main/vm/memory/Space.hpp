@@ -162,7 +162,7 @@ public:
 
 
     // allocation
-    Oop *allocate( int size ) {
+    Oop *allocate( std::size_t size ) {
         Oop *oops     = eden_top;
         Oop *oops_end = oops + size;
         if ( oops_end <= eden_end ) {
@@ -223,7 +223,7 @@ public:
 
 
     // allocation
-    Oop *allocate( int size ) {
+    Oop *allocate( std::size_t size ) {
         Oop *oops     = _top;
         Oop *oops_end = oops + size;
         if ( oops_end <= _end ) {
@@ -236,7 +236,7 @@ public:
 
 
     // allocation test
-    bool_t would_fit( int size ) {
+    bool_t would_fit( std::size_t size ) {
         return _top + size < _end;
     }
 
@@ -312,11 +312,11 @@ public:
 
     void update_offset_array( Oop *p, Oop *p_end );
 
-    int expand( int size );
+    int expand( std::size_t size );
 
-    Oop *expand_and_allocate( int size );
+    Oop *expand_and_allocate( std::size_t size );
 
-    int shrink( int size );
+    int shrink( std::size_t size );
 
     // Keeps offset for retrieving object start given a card_page
     std::uint8_t *_offsetArray;
@@ -324,7 +324,7 @@ public:
     int _nextOffsetIndex;
 
 
-    Oop *allocate( int size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::size_t size, bool_t allow_expansion = true ) {
         Oop *p  = _top;
         Oop *p1 = p + size;
         if ( p1 < _end ) {

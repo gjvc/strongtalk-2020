@@ -2318,7 +2318,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
-        const int size_offset = byteOffset( node->size_word_offset() );
+        const std::size_t size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
         jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }
@@ -2419,7 +2419,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
-        const int size_offset = byteOffset( node->size_word_offset() );
+        const std::size_t size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
         jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }

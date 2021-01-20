@@ -87,7 +87,7 @@ class JumpTable : public ValueObject {
 
 protected:
     int _firstFree;    // index of first free elem
-    static const char *allocate_jump_entries( int size );
+    static const char *allocate_jump_entries( std::size_t size );
 
     static JumpTableEntry *jump_entry_for_at( const char *entries, int index );
 

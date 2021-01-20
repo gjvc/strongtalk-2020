@@ -173,7 +173,7 @@ public:
     // Primitives
     Oop primitive_allocate( bool_t allow_scavenge = true, bool_t tenured = false );
 
-    Oop primitive_allocate_size( int size );
+    Oop primitive_allocate_size( std::size_t size );
 
     Oop shallow_copy( bool_t tenured );
 

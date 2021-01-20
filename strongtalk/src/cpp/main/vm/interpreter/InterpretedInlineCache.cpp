@@ -40,7 +40,7 @@ public:
     }
 
 
-    static ObjectArrayOop allocate( int size ) {
+    static ObjectArrayOop allocate( std::size_t size ) {
         Oop first = free_list()->obj_at( size - 1 );
         if ( first == nilObj ) {
             return ObjectArrayKlass::allocate_tenured_pic( size * 2 );
@@ -88,7 +88,7 @@ public:
 
 
     static void set_last( ObjectArrayOop pic, Oop first, Oop second ) {
-        int size = pic->length();
+        std::size_t size = pic->length();
         pic->obj_at_put( size--, second );
         pic->obj_at_put( size, first );
     }

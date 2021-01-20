@@ -170,7 +170,7 @@ PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
     PROLOGUE_1( "expandMemory", sizeOop );
     if ( not sizeOop->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
-    int size = SMIOop( sizeOop )->value();
+    std::size_t size = SMIOop( sizeOop )->value();
     if ( size < 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
     Universe::old_gen.expand( size );

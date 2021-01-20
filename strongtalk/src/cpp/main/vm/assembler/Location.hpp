@@ -257,7 +257,7 @@ protected:
     void grow();
 
 public:
-    IntFreeList( int size );
+    IntFreeList( std::size_t size );
 
     int allocate();         // returns a new integer, grows the list if necessary
     int allocated();        // returns the number of allocated integers

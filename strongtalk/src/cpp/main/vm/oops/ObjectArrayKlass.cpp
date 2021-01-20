@@ -11,7 +11,7 @@
 #include "vm/memory/MarkSweep.hpp"
 
 
-Oop ObjectArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t tenured ) {
+Oop ObjectArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k        = as_klassOop();
     int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + size;
@@ -58,7 +58,7 @@ KlassOop ObjectArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 }
 
 
-ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( int size ) {
+ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::size_t size ) {
     KlassOop k        = Universe::objArrayKlassObj();
     int      ni_size  = k->klass_part()->non_indexable_size();
     int      obj_size = ni_size + 1 + size;

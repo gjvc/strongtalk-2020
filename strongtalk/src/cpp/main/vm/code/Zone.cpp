@@ -114,7 +114,7 @@ int Zone::nextNativeMethodID() {
 }
 
 
-NativeMethod *Zone::allocate( int size ) {
+NativeMethod *Zone::allocate( std::size_t size ) {
     // CSect cs(profilerSemaphore); // for profiler
     // must get method ID here! (because reclaim might change firstFree)
     // (compiler may have used peekID to get ID of new NativeMethod for LRU stuff)
@@ -198,7 +198,7 @@ int Zone::flushNextMethod( int needed ) {
 }
 
 
-void moveInsts( const char *from, char *to, int size ) {
+void moveInsts( const char *from, char *to, std::size_t size ) {
     NativeMethod *n   = (NativeMethod *) from;
     NativeMethod *nTo = (NativeMethod *) to;
 
@@ -528,7 +528,7 @@ void Zone::print() {
 struct nm_hist_elem {
     NativeMethod *nm;
     int count;
-    int size;
+    std::size_t size;
     int sic_count;
     int sic_size;
 };
@@ -549,7 +549,7 @@ static int compareCount( const void *m1, const void *m2 ) {
 }
 
 
-void Zone::print_NativeMethod_histogram( int size ) {
+void Zone::print_NativeMethod_histogram( std::size_t size ) {
 #ifdef NOT_IMPLEMENTED
     ResourceMark resourceMark;
     nm_hist_elem* hist_array = NEW_RESOURCE_ARRAY(nm_hist_elem, numberOfNativeMethods());

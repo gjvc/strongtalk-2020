@@ -34,7 +34,7 @@ static_assert( sizeof( smi_t ) == sizeof( address_t ) );
 
 // -----------------------------------------------------------------------------
 
-constexpr int SIZEOF_FLOAT = sizeof( double );
+constexpr std::size_t SIZEOF_FLOAT = sizeof( double );
 
 constexpr std::size_t st_log2( std::size_t n ) {
     return ( ( n < 2 ) ? 1 : 1 + st_log2( n / 2 ) );

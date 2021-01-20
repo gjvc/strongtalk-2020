@@ -21,7 +21,7 @@ bool_t StackChunkBuilder::_is_deoptimizing = false;
 int *StackChunkBuilder::_framePointer = nullptr;
 
 
-StackChunkBuilder::StackChunkBuilder( int *fp, int size ) {
+StackChunkBuilder::StackChunkBuilder( int *fp, std::size_t size ) {
     _virtualFrameCount    = 0;
     _localExpressionCount = 0;
     array                 = new GrowableArray<Oop>( size );

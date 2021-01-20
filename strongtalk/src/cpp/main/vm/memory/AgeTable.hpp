@@ -39,5 +39,5 @@ public:
 
     int tenure_size( int age );
 
-    int tenuring_threshold( int oop_size );
+    int tenuring_threshold( std::size_t oop_size );
 };

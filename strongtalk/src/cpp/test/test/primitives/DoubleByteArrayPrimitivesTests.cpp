@@ -170,7 +170,7 @@ markSymbol( vmSymbols::second_argument_has_wrong_type() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
-int size   = Universe::new_gen.eden()->free();
+std::size_t size   = Universe::new_gen.eden()->free();
 Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
@@ -186,7 +186,7 @@ as_string();
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
-int size   = Universe::old_gen.free();
+std::size_t size   = Universe::old_gen.free();
 Oop result = doubleByteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->

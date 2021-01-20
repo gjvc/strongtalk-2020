@@ -1567,7 +1567,7 @@ public:
 
 
 public:
-    ReferencedInstVarNamesClosure( int size, MixinOop mixin ) {
+    ReferencedInstVarNamesClosure( std::size_t size, MixinOop mixin ) {
         this->_result = new GrowableArray<Oop>( size );
         this->_mixin  = mixin;
     }
@@ -1615,7 +1615,7 @@ public:
 
 
 public:
-    ReferencedClassVarNamesClosure( int size ) {
+    ReferencedClassVarNamesClosure( std::size_t size ) {
         _result = new GrowableArray<Oop>( size );
     }
 
@@ -1651,7 +1651,7 @@ public:
 
 
 public:
-    ReferencedGlobalsClosure( int size ) {
+    ReferencedGlobalsClosure( std::size_t size ) {
         result = new GrowableArray<Oop>( size );
     }
 
@@ -1744,7 +1744,7 @@ public:
 
 
 public:
-    SendersClosure( int size ) {
+    SendersClosure( std::size_t size ) {
         result = new GrowableArray<Oop>( size );
     }
 

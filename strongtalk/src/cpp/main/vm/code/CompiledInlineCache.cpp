@@ -131,7 +131,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         MemOop         msg  = MemOop( obj );
-        ObjectArrayOop args = oopFactory::new_objArray( 0 );
+        ObjectArrayOop args = oopFactory::new_objArray( std::size_t{0} );
         // for now: assume instance variables are there...
         // later: should check this or use a VM interface:
         // msg->set_receiver(recv);

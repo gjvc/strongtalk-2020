@@ -134,7 +134,7 @@ private:
     static const char *generate_handle_C_callback_stub( MacroAssembler *masm );
     static const char *generate_oopify_float( MacroAssembler *masm );
     static const char *generate_PolymorphicInlineCache_stub( MacroAssembler *masm, int pic_size );
-    static const char *generate_allocate( MacroAssembler *masm, int size );
+    static const char *generate_allocate( MacroAssembler *masm, std::size_t size );
     static const char *generate_alien_call( MacroAssembler *masm, int args );
     static const char *generate_alien_call_with_args( MacroAssembler *masm );
 
@@ -278,7 +278,7 @@ public:
 
 
     static const char *PolymorphicInlineCache_stub_entry( int pic_size );     // PolymorphicInlineCache interpreter stubs: pic_size is number of entries
-    static const char *allocate_entry( int size );                            // allocation of memOops: size is words in addition to header
+    static const char *allocate_entry( std::size_t size );                            // allocation of memOops: size is words in addition to header
     static const char *alien_call_entry( int args );                          // alien call out: args is the number of arguments passed to the function called
 
     // Support for profiling

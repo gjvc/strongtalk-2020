@@ -2735,7 +2735,7 @@ public:
     }
 
 
-    int sizeOfContext() const {
+    std::size_t sizeOfContext() const {
         return _contextSize;
     }
 
@@ -3201,7 +3201,7 @@ protected:
     int    _dataOffset;             // where start of array is (Oop offset)
     int    _sizeOffset;             // where size of array is (Oop offset)
 
-    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, int dataOffset, int sizeOffset ) {
+    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, int dataOffset, std::size_t sizeOffset ) {
         _src             = r;
         _arg             = idx;
         _intArg          = ia;
@@ -3236,7 +3236,7 @@ public:
     }
 
 
-    int sizeOffset() const {
+    std::size_t sizeOffset() const {
         return _sizeOffset;
     }
 
@@ -3342,7 +3342,7 @@ public:
     }
 
 
-    int size_word_offset() const {
+    std::size_t size_word_offset() const {
         return _sizeOffset;
     }
 
@@ -3491,7 +3491,7 @@ public:
     }
 
 
-    int size_word_offset() const {
+    std::size_t size_word_offset() const {
         return _sizeOffset;
     }
 

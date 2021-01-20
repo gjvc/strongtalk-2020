@@ -24,7 +24,7 @@ public:
 
     static bool_t is_index_ok( int index );
 
-    static void allocateSize( int size );
+    static void allocateSize( std::size_t size );
 
     static void cleanup_after_bootstrap();
 

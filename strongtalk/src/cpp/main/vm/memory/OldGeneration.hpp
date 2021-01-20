@@ -22,7 +22,7 @@ class OldGeneration : public Generation {
 
     friend class symbolKlass;
 
-    Oop *allocate_in_next_space( int size );
+    Oop *allocate_in_next_space( std::size_t size );
 
 private:
     // OldGeneration consists of a linked lists of spaces.
@@ -35,12 +35,12 @@ private:
     OldSpace *_oldSpace;
 
 public:
-    int expand( int size );
+    int expand( std::size_t size );
 
-    int shrink( int size );
+    int shrink( std::size_t size );
 
 
-    Oop *allocate( int size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::size_t size, bool_t allow_expansion = true ) {
         return _currentSpace->allocate( size, allow_expansion );
     }
 

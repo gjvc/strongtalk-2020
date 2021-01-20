@@ -27,7 +27,7 @@ Oop MixinKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     // header + instance variables
     MemOop( obj )->initialize_header( true, k );
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), size );
-    ObjectArrayOop filler = oopFactory::new_objArray( 0 );
+    ObjectArrayOop filler = oopFactory::new_objArray( std::size_t{0} );
     obj->set_methods( filler );
     obj->set_instVars( filler );
     obj->set_classVars( filler );
@@ -58,7 +58,7 @@ Oop MixinKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
 
 
 int MixinKlass::oop_scavenge_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_header();
     MemOop( obj )->scavenge_body( MemOopDescriptor::header_size(), size );
@@ -67,7 +67,7 @@ int MixinKlass::oop_scavenge_contents( Oop obj ) {
 
 
 int MixinKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_tenured_header();
     MemOop( obj )->scavenge_tenured_body( MemOopDescriptor::header_size(), size );

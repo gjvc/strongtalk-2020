@@ -168,7 +168,7 @@ vmSymbols::second_argument_has_wrong_type()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
-int size   = Universe::new_gen.eden()->free();
+std::size_t size   = Universe::new_gen.eden()->free();
 Oop result = byteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), byteArrayClass );
 checkMarkedSymbol( "failed allocation", result,
 vmSymbols::failed_allocation()
@@ -178,7 +178,7 @@ vmSymbols::failed_allocation()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
-int size   = Universe::old_gen.free();
+std::size_t size   = Universe::old_gen.free();
 Oop result = byteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), byteArrayClass );
 checkMarkedSymbol( "failed allocation", result,
 vmSymbols::failed_allocation()

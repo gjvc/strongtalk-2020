@@ -51,7 +51,7 @@ ContextOop ContextKlass::allocate_context( int num_of_temps ) {
 
 
 int ContextKlass::oop_scavenge_contents( Oop obj ) {
-    int size = ContextOop( obj )->object_size();
+    std::size_t size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_header();
     scavenge_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
@@ -62,7 +62,7 @@ int ContextKlass::oop_scavenge_contents( Oop obj ) {
 
 
 int ContextKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    int size = ContextOop( obj )->object_size();
+    std::size_t size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
     scavenge_tenured_oop( (Oop *) &ContextOop( obj )->addr()->_parent );

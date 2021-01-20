@@ -622,7 +622,7 @@ void Compiler::computeBlockInfo() {
 
         // allocate the temps in this context (but only if they're used)
         int ntemps = temps->length();
-        int size   = 0;
+        std::size_t size   = 0;
 
         for ( std::size_t j = 0; j < ntemps; j++ ) {
             PseudoRegister *p = temps->at( j )->preg();
@@ -796,7 +796,7 @@ void Compiler::set_verified_entry_point_offset( int offset ) {
 }
 
 
-void Compiler::set_float_section_size( int size ) {
+void Compiler::set_float_section_size( std::size_t size ) {
     st_assert( size >= 0, "size cannot be negative" );
     _float_section_size = size;
 }

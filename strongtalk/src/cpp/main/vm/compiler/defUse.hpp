@@ -84,8 +84,8 @@ class BasicBlock;
 class PseudoRegisterBasicBlockIndex : public PrintableResourceObject {
 
 public:
-    BasicBlock *_basicBlock;             // BasicBlock containing some of PseudoRegister's definitions/uses
-    int _index;           // index into BasicBlock's BasicBlockDefinitionAndUsageTable
+    BasicBlock  *_basicBlock;    // BasicBlock containing some of PseudoRegister's definitions/uses
+    std::size_t _index;          // index into BasicBlock's BasicBlockDefinitionAndUsageTable
 
     PseudoRegisterBasicBlockIndex( BasicBlock *b, std::size_t i, PseudoRegister *pr ) {
         _basicBlock = b;

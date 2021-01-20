@@ -201,12 +201,12 @@ void OldGeneration::switch_pointers( Oop from, Oop to ) {
 }
 
 
-int OldGeneration::expand( int size ) {
+int OldGeneration::expand( std::size_t size ) {
     return _currentSpace->expand( size );
 }
 
 
-int OldGeneration::shrink( int size ) {
+int OldGeneration::shrink( std::size_t size ) {
     return _currentSpace->shrink( size );
 }
 
@@ -230,7 +230,7 @@ void OldGeneration::append_space( OldSpace *last ) {
 }
 
 
-Oop *OldGeneration::allocate_in_next_space( int size ) {
+Oop *OldGeneration::allocate_in_next_space( std::size_t size ) {
     // Scavenge breaks the there is more than one old Space chunks
     // Fix this with VirtualSpace
     // 4/5/96 Lars

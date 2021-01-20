@@ -68,7 +68,7 @@ const char *PrimitivesGenerator::allocateBlock( int n ) {
 }
 
 
-extern "C" void scavenge_and_allocate( int size );
+extern "C" void scavenge_and_allocate( std::size_t size );
 
 
 const char *PrimitivesGenerator::allocateContext_var() {

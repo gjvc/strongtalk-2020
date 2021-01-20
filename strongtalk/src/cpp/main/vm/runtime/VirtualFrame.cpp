@@ -207,7 +207,7 @@ Oop *InterpretedVirtualFrame::expression_addr( int offset ) const {
 GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
 
     int last_temp_number = method()->number_of_stack_temporaries() - 1;
-    int size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
+    std::size_t size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
     st_assert( size >= 0, "expr stack size must be non-negative" );
     GrowableArray<Oop> *result = new GrowableArray<Oop>( size );
 

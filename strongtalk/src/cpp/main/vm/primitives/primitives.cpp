@@ -28,7 +28,7 @@
 
 // The primitive_table is generated from prims.src.
 // The output has the following format:
-//   static int size_of_primitive_table
+//   static std::size_t size_of_primitive_table
 //   static PrimitiveDescriptor* primitive_table;
 #include "vm/primitives/primitives_table.cpp"
 

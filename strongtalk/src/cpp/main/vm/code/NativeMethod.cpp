@@ -60,7 +60,7 @@ void *NativeMethod::operator new( std::size_t size ) {
 }
 
 
-void NativeMethod::initForTesting( int size, LookupKey *key ) {
+void NativeMethod::initForTesting( std::size_t size, LookupKey *key ) {
     this->_lookupKey.initialize( key->klass(), key->selector_or_method() );
 
     _instructionsLength       = size - ( sizeof( NativeMethod ) );
@@ -253,7 +253,7 @@ KlassOop NativeMethod::receiver_klass() const {
 }
 
 
-void NativeMethod::moveTo( void *p, int size ) {
+void NativeMethod::moveTo( void *p, std::size_t size ) {
 #ifdef NOT_IMPLEMENTED
     NativeMethod* to = (NativeMethod*)p;
     if (this == to) return;

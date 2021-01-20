@@ -13,13 +13,13 @@
 class Array : public ResourceObject {
 
 private:
-    int _index;
-    int _size;
-    int _offset;
-    int *_values;
+    std::size_t  _index;     //
+    std::size_t  _size;      //
+    std::size_t  _offset;    //
+    std::int32_t *_values;   //
 
 public:
-    Array( int size );
+    Array( std::size_t size );
 
 
     int length() {
@@ -38,8 +38,8 @@ class ByteArray : public ResourceObject {
 
 private:
     std::uint8_t *_array;
-    int _top;
-    int _max;
+    int          _top;
+    int          _max;
 
     void extend();
 
@@ -54,7 +54,7 @@ public:
     }
 
 
-    ByteArray( int size );
+    ByteArray( std::size_t size );
 
 
     void appendByte( std::uint8_t p ) {

@@ -106,7 +106,7 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
             object_end = sp->object_start( e );
             if ( object_end not_eq e ) {
                 // object starts on page boundary
-                int size = as_memOop( object_end )->size();
+                std::size_t size = as_memOop( object_end )->size();
                 object_end += size;
             }
 
@@ -303,7 +303,7 @@ constexpr int lim_2 = lim_1 + ( 1 << 8 );
 constexpr int lim_3 = lim_2 + ( 1 << 16 );
 
 
-void RememberedSet::set_size( MemOop obj, int size ) {
+void RememberedSet::set_size( MemOop obj, std::size_t size ) {
     std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     st_assert( size >= lim_0, "size must be >= max_age" );
     if ( size < lim_1 ) {        // use 1 byte

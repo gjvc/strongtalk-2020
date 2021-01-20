@@ -70,7 +70,7 @@ public:
     }
 
 
-    void set_size_and_flags( int size, int nofArgs, int flags ) {
+    void set_size_and_flags( std::size_t size, int nofArgs, int flags ) {
         addr()->_size_and_flags = (SMIOop) ( ( flags << method_flags_mask_bitno ) + ( nofArgs << method_args_mask_bitno ) + ( size << method_size_mask_bitno ) );
     }
 
@@ -198,12 +198,12 @@ public:
 
     bool_t was_never_executed();        // was method never executed? (count = 0, empty inline caches)
 
-    int size_of_codes() const {        // size of byte codes in words
+    std::size_t size_of_codes() const {        // size of byte codes in words
         return get_unsigned_bitfield( (int) size_and_flags(), method_size_mask_bitno, method_size_mask_size );
     }
 
 
-    void set_size_of_code( int size ) {
+    void set_size_of_code( std::size_t size ) {
         set_size_and_flags( size, nofArgs(), flags() );
     }
 

@@ -23,7 +23,7 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    NativeMethod *alloc_nativeMethod( LookupKey *key, int size );
+    NativeMethod *alloc_nativeMethod( LookupKey *key, std::size_t size );
     void initializeSmalltalkEnvironment();
 
     void exhaustMethodHeap( LookupKey &key, int requiredSize );

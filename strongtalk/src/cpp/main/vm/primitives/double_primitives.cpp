@@ -330,7 +330,7 @@ PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
 PRIM_DECL_2( doubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     PROLOGUE_2( "printFormat", receiver, argument );
     ASSERT_RECEIVER;
-    const int size = 100;
+    const std::size_t size = 100;
     char      format[size];
 
     if ( argument->is_byteArray() ) {

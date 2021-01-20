@@ -12,7 +12,7 @@
 class MemOopKlass : public Klass {
 
 protected:
-    Oop *basicAllocate( int size, KlassOop *klass, bool_t permit_scavenge, bool_t tenured ) {
+    Oop *basicAllocate( std::size_t size, KlassOop *klass, bool_t permit_scavenge, bool_t tenured ) {
         return tenured ? Universe::allocate_tenured( size, permit_scavenge ) : Universe::allocate( size, (MemOop *) klass, permit_scavenge );
     }
 
@@ -38,7 +38,7 @@ public:
     // allocation operations
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // invocation creation
     KlassOop create_subclass( MixinOop mixin, Format format );

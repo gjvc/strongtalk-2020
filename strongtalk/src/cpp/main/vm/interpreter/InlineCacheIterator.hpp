@@ -257,7 +257,7 @@ private:
 
     int              _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _shape;                // shape of inline cache
-    int              _index;                // the next entry no.
+    std::size_t _index;                // the next entry no.
 
 public:
     CompiledInlineCacheIterator( CompiledInlineCache *ic );

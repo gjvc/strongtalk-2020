@@ -1426,7 +1426,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
 }
 
 
-const char *StubRoutines::generate_allocate( MacroAssembler *masm, int size ) {
+const char *StubRoutines::generate_allocate( MacroAssembler *masm, std::size_t size ) {
     const char *entry_point = masm->pc();
     masm->hlt();
     return entry_point;
@@ -1795,7 +1795,7 @@ const char *StubRoutines::PolymorphicInlineCache_stub_entry( int pic_size ) {
 }
 
 
-const char *StubRoutines::allocate_entry( int size ) {
+const char *StubRoutines::allocate_entry( std::size_t size ) {
     st_assert( _is_initialized, "StubRoutines not initialized yet" );
     st_assert( 0 <= size and size <= max_fast_allocate_size, "size out of range" )
     return _allocate_entries[ size ];

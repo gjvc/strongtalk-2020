@@ -46,7 +46,7 @@ public:
     GrowableArray<LogicalAddress *> *_context_temp_list;
     GrowableArray<LogicalAddress *> *_expr_stack_list;
 
-    int _offset; // byte offset to the encoded scopeDesc Initial value is  INVALID_OFFSET
+    std::size_t _offset; // byte offset to the encoded scopeDesc Initial value is  INVALID_OFFSET
 
     bool_t _usedInPcs;
 

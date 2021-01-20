@@ -90,7 +90,7 @@ bool_t VirtualSpace::low_to_high() const {
 }
 
 
-void VirtualSpace::expand( int size ) {
+void VirtualSpace::expand( std::size_t size ) {
     st_assert( uncommitted_size() >= size, "not Space enough" );
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
@@ -103,7 +103,7 @@ void VirtualSpace::expand( int size ) {
 }
 
 
-void VirtualSpace::shrink( int size ) {
+void VirtualSpace::shrink( std::size_t size ) {
     st_assert( committed_size() >= size, "not Space enough" );
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {

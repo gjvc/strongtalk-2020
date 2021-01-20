@@ -8,14 +8,14 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
 
-ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( int sz ) {
+ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::size_t sz ) {
     _nodes = new_resource_array<ProgramCounterDescriptorNode>( sz );
     _end   = 0;
     _size  = sz;
 }
 
 
-void ProgramCounterDescriptorInfoClass::extend( int newSize ) {
+void ProgramCounterDescriptorInfoClass::extend( std::size_t newSize ) {
 
     ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 

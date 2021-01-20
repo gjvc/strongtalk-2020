@@ -37,7 +37,7 @@ void CompilerTests::TearDown() {
 }
 
 
-NativeMethod *CompilerTests::alloc_nativeMethod( LookupKey *key, int size ) {
+NativeMethod *CompilerTests::alloc_nativeMethod( LookupKey *key, std::size_t size ) {
     ZoneHeap     *heap = Universe::code->_methodHeap;
     NativeMethod *nm   = nullptr;
     nm = (NativeMethod *) heap->allocate( size );
@@ -72,7 +72,7 @@ void CompilerTests::exhaustMethodHeap( LookupKey &key, int requiredSize ) {
     GrowableArray<NativeMethod *> *nativeMethods = new GrowableArray<NativeMethod *>;
 
     int blockSize = Universe::code->_methodHeap->blockSize;
-    int size      = Universe::code->_methodHeap->freeBytes();
+    std::size_t size      = Universe::code->_methodHeap->freeBytes();
 
     bool_t hasFailed = false;
     while ( !hasFailed ) {

@@ -21,7 +21,7 @@ Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop ByteArrayKlass::allocateObjectSize( int size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop ByteArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     KlassOop k        = as_klassOop();
     int      ni_size  = non_indexable_size();
     int      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;

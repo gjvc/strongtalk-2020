@@ -373,12 +373,12 @@ void os::timerPrintBuffer() {
 
 // Virtual Memory
 
-char *os::reserve_memory( int size ) {
+char *os::reserve_memory( std::size_t size ) {
     return (char *) VirtualAlloc( nullptr, size, MEM_RESERVE, PAGE_READWRITE );
 }
 
 
-bool_t os::commit_memory( const char *addr, int size ) {
+bool_t os::commit_memory( const char *addr, std::size_t size ) {
     bool_t result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         int error = GetLastError();
@@ -388,28 +388,28 @@ bool_t os::commit_memory( const char *addr, int size ) {
 }
 
 
-bool_t os::uncommit_memory( const char *addr, int size ) {
+bool_t os::uncommit_memory( const char *addr, std::size_t size ) {
     return VirtualFree( const_cast<char *>( addr ), size, MEM_DECOMMIT ) ? true : false;
 }
 
 
-bool_t os::release_memory( const char *addr, int size ) {
+bool_t os::release_memory( const char *addr, std::size_t size ) {
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
 
-bool_t os::guard_memory( const char *addr, int size ) {
+bool_t os::guard_memory( const char *addr, std::size_t size ) {
     DWORD old_status;
     return VirtualProtect( const_cast<char *>( addr ), size, PAGE_READWRITE | PAGE_GUARD, &old_status ) ? true : false;
 }
 
 
-const char *os::exec_memory( int size ) {
+const char *os::exec_memory( std::size_t size ) {
     return reinterpret_cast<char *>( VirtualAlloc( nullptr, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE ) );
 }
 
 
-void *os::malloc( int size ) {
+void *os::malloc( std::size_t size ) {
     if ( not ThreadCritical::initialized() ) {
         return ::malloc( size );
     } else {
@@ -419,7 +419,7 @@ void *os::malloc( int size ) {
 }
 
 
-void *os::calloc( int size, char filler ) {
+void *os::calloc( std::size_t size, char filler ) {
     if ( not ThreadCritical::initialized() ) {
         return ::calloc( size, filler );
     } else {

@@ -19,7 +19,7 @@ public:
 
 
     // creation operation
-    Oop allocateObjectSize( int size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -34,11 +34,11 @@ public:
 
 
     // allocated an object array for an interpreter PolymorphicInlineCache.
-    static ObjectArrayOop allocate_tenured_pic( int size );
+    static ObjectArrayOop allocate_tenured_pic( std::size_t size );
 
 
     // Return the Oop size for a objArrayOop
-    int object_size( int size ) const {
+    int object_size( std::size_t size ) const {
         return non_indexable_size() + 1 + size;
     }
 

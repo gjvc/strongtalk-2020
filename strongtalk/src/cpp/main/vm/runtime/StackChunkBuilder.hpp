@@ -40,7 +40,7 @@ private:
     GrowableArray<Oop> *array;
 
 public:
-    StackChunkBuilder( int *fp, int size = 100 );
+    StackChunkBuilder( int *fp, std::size_t size = 100 );
 
     ~StackChunkBuilder();
 

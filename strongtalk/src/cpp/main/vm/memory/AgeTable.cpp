@@ -20,7 +20,7 @@ int AgeTable::tenure_size( int age ) {
 }
 
 
-int AgeTable::tenuring_threshold( int size ) {
+int AgeTable::tenuring_threshold( std::size_t size ) {
     int total = 0;
     int age   = 1;
     for ( ; age < table_size; age++ ) {

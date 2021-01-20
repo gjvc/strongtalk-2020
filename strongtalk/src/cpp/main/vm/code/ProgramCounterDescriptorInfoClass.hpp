@@ -20,18 +20,16 @@ class ProgramCounterDescriptorInfoClass : public ResourceObject {
 protected:
     ProgramCounterDescriptorNode *_nodes;
     int _end;
-    int _size;
+    std::size_t _size;
 
 public:
-    ProgramCounterDescriptorInfoClass( int size );
-
+    ProgramCounterDescriptorInfoClass( std::size_t size );
 
     int length() {
         return _end;
     }
 
-
-    void extend( int newSize );
+    void extend( std::size_t newSize );
 
     void add( int pcOffset, ScopeInfo scope, int byteCodeIndex );
 

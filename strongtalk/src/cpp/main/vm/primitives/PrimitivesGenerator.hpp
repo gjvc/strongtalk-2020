@@ -63,9 +63,9 @@ private:
     Label error_overflow;
     Label allocation_failure;
 
-    void scavenge( int size );
+    void scavenge( std::size_t size );
 
-    void test_for_scavenge( Register dst, int size, Label &need_scavenge );
+    void test_for_scavenge( Register dst, std::size_t size, Label &need_scavenge );
 
 protected:
     PrimitivesGenerator( MacroAssembler *_masm ) {

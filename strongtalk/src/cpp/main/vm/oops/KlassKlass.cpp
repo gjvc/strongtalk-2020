@@ -33,7 +33,7 @@ KlassOop KlassKlass::create_subclass( MixinOop mixin, Format format ) {
 
 
 int KlassKlass::oop_scavenge_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
 
     // header
     MemOop( obj )->scavenge_header();
@@ -52,7 +52,7 @@ int KlassKlass::oop_scavenge_contents( Oop obj ) {
 
 
 int KlassKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    int size = non_indexable_size();
+    std::size_t size = non_indexable_size();
 
     // header
     MemOop( obj )->scavenge_tenured_header();
@@ -159,7 +159,7 @@ Oop KlassKlass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t t
 }
 
 
-Oop KlassKlass::oop_primitive_allocate_size( Oop obj, int size ) {
+Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::size_t size ) {
     return KlassOop( obj )->klass_part()->allocateObjectSize( size );
 }
 

@@ -156,7 +156,7 @@ protected:
 
 
     Oop asOop( int value ) {
-        int size = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+        std::size_t size = IntegerOps::int_to_Integer_result_size_in_bytes( value );
 
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );

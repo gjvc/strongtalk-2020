@@ -10,8 +10,8 @@
 
 
 PersistentHandle *PersistentHandle::_first = nullptr;
-int              Handles::_top  = 0;
-int              Handles::_size = 20;
+std::size_t      Handles::_top  = 0;
+std::size_t      Handles::_size = 20;
 Oop              Handles::_array[20];
 
 
@@ -185,7 +185,7 @@ void Handles::oops_do( void f( Oop * ) ) {
 }
 
 
-int Handles::top() {
+std::size_t Handles::top() {
     return _top;
 }
 

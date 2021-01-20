@@ -74,9 +74,9 @@ public:
     bool_t low_to_high() const;
 
     // operations
-    void expand( int size );
+    void expand( std::size_t size );
 
-    void shrink( int size );
+    void shrink( std::size_t size );
 
     void release();
 
