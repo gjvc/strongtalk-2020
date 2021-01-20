@@ -23,7 +23,7 @@
 TRACE_FUNC( TraceProxyPrims, "proxy" )
 
 
-int proxyOopPrimitives::number_of_calls;
+std::size_t proxyOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_proxy(), "receiver must be proxy")
 

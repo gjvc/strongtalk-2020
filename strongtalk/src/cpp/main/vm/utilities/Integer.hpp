@@ -44,7 +44,7 @@ public:
 
     Digit &operator[]( std::size_t i ) const;
 
-    static int length_to_size_in_bytes( int l );
+    static std::size_t length_to_size_in_bytes( int l );
 
     std::size_t length_in_bits() const;
 

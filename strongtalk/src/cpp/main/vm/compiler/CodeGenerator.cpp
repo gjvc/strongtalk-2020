@@ -644,10 +644,10 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t nee
 
 // Debugging
 
-static int _callDepth               = 0;
-static int _numberOfCalls           = 0;
-static int _numberOfReturns         = 0;
-static int _numberOfNonLocalReturns = 0;
+static std::size_t _callDepth               = 0;
+static std::size_t _numberOfCalls           = 0;
+static std::size_t _numberOfReturns         = 0;
+static std::size_t _numberOfNonLocalReturns = 0;
 
 
 void CodeGenerator::indent() {

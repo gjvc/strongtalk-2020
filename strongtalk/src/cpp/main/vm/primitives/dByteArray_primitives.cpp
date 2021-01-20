@@ -25,7 +25,7 @@
 TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )
 
 
-int doubleByteArrayPrimitives::number_of_calls;
+std::size_t doubleByteArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_doubleByteArray(), "receiver must be double byte array")
 

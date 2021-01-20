@@ -152,7 +152,7 @@ Oop *PersistentHandle::asPointer() {
 }
 
 
-int PersistentHandle::savedOffset() {
+std::size_t PersistentHandle::savedOffset() {
     return (int) &( (PersistentHandle *) nullptr )->_saved;
 }
 
@@ -163,7 +163,7 @@ Oop Handles::oop_at( int index ) {
 }
 
 
-int Handles::push_oop( Oop value ) {
+std::size_t Handles::push_oop( Oop value ) {
     st_assert( _top < _size, "bounds check" );
     _array[ _top ] = value;
     return _top++;

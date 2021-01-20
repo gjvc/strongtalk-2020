@@ -34,20 +34,20 @@ class FlatProfiler : AllStatic {
 
 private:
     static ProfiledNode **_table;
-    static int _tableSize;
+    static std::size_t _tableSize;
 
     static DeltaProcess     *_deltaProcess;
     static FlatProfilerTask *_flatProfilerTask;
     static Timer _timer;
 
-    static int _gc_ticks;           // total ticks in GC/scavenge
-    static int _semaphore_ticks;    //
-    static int _stub_ticks;         //
-    static int _compiler_ticks;     // total ticks in compilation
-    static int _unknown_ticks;      //
+    static std::size_t _gc_ticks;           // total ticks in GC/scavenge
+    static std::size_t _semaphore_ticks;    //
+    static std::size_t _stub_ticks;         //
+    static std::size_t _compiler_ticks;     // total ticks in compilation
+    static std::size_t _unknown_ticks;      //
 
 
-    static int total_ticks() {
+    static std::size_t total_ticks() {
         return _gc_ticks + _semaphore_ticks + _stub_ticks + _unknown_ticks;
     }
 
@@ -58,7 +58,7 @@ private:
 
     static void compiled_update( NativeMethod *nm, TickPosition where );
 
-    static int entry( int value );
+    static std::size_t entry( int value );
 
     static void record_tick_for_running_frame( Frame fr );
 

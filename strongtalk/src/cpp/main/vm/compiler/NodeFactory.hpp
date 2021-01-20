@@ -21,7 +21,7 @@
 class NodeFactory : AllStatic {
 
 public:
-    static int _cumulativeCost; // cumulative cost of all nodes generated so far
+    static std::size_t _cumulativeCost; // cumulative cost of all nodes generated so far
 
     static void registerNode( Node *n ) {
         _cumulativeCost += n->cost();

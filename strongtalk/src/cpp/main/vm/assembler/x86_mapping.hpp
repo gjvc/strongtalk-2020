@@ -26,9 +26,9 @@ class Mapping : AllStatic {
 
 private:
 //        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
-//        static int      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
+//        static std::size_t      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
     static std::array<Location, nofLocalRegisters> _localRegisters;
-    static std::array<int, REGISTER_COUNT>         _localRegisterIndex;
+    static std::array<std::size_t, REGISTER_COUNT> _localRegisterIndex;
 
 public:
     // initialization
@@ -36,19 +36,19 @@ public:
 
     // register allocation
     static Location localRegister( std::size_t i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
-    static int localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
+    static std::size_t localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
 
     // parameter passing
-    static Location incomingArg( std::size_t i, int nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
-    static Location outgoingArg( std::size_t i, int nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location incomingArg( std::size_t i, std::size_t nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location outgoingArg( std::size_t i, std::size_t nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
 
     // stack allocation
     static Location localTemporary( std::size_t i );                // the i.th local temporary (i >= 0)
-    static int localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
+    static std::size_t localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
     static Location floatTemporary( int scope_id, std::size_t i );  // the i.th float temporary within a scope (i >= 0)
 
     // context temporaries
-    static int contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
+    static std::size_t contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
     static Location contextTemporary( int contextNo, std::size_t i, int scope_id );         // the i.th context temporary (i >= 0)
     static Location *new_contextTemporary( int contextNo, std::size_t i, int scope_id );   // ditto, but allocated in resource area
 

@@ -23,7 +23,7 @@ Oop newProcess() {
 }
 
 
-int TestDeltaProcess::launch_tests( DeltaProcess *process ) {
+std::size_t TestDeltaProcess::launch_tests( DeltaProcess *process ) {
 
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
@@ -37,7 +37,7 @@ int TestDeltaProcess::launch_tests( DeltaProcess *process ) {
 
 
 // mock scheduler loop to allow test process->scheduler transfers and returns
-int TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
+std::size_t TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
     while ( true ) {

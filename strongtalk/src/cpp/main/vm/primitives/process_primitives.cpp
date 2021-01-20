@@ -28,7 +28,7 @@
 TRACE_FUNC( TraceProcessPrims, "process" )
 
 
-int processOopPrimitives::number_of_calls;
+std::size_t processOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_process(), "receiver must be process")
 

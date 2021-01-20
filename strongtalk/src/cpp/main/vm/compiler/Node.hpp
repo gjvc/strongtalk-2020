@@ -133,10 +133,10 @@ public:
 
     void setScope( InlinedScope *s );
 
-    static int       currentID;              // current node ID
-    static int       currentCommentID;       // current ID for comment nodes
+    static std::size_t       currentID;              // current node ID
+    static std::size_t       currentCommentID;       // current ID for comment nodes
     static ScopeInfo lastScopeInfo;          // for programCounterDescriptor generation
-    static int       lastByteCodeIndex;      //
+    static std::size_t       lastByteCodeIndex;      //
 
     BasicNode();
 

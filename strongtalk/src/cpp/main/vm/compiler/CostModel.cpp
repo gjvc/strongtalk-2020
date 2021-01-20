@@ -9,7 +9,7 @@
 #include "vm/compiler/CostModel.hpp"
 
 
-int CostModel::_cost[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+std::size_t CostModel::_cost[static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
 void CostModel::set_default_costs() {

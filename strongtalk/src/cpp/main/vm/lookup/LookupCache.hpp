@@ -18,15 +18,15 @@ extern LookupResult interpreter_super_lookup( SymbolOop selector );
 class LookupCache : AllStatic {
 
 private:
-    static int primary_cache_address();
+    static address_t primary_cache_address();
 
-    static int secondary_cache_address();
+    static address_t secondary_cache_address();
 
     static std::uint32_t hash_value( LookupKey *key );
 
-    static int number_of_primary_hits;
-    static int number_of_secondary_hits;
-    static int number_of_misses;
+    static std::size_t number_of_primary_hits;
+    static std::size_t number_of_secondary_hits;
+    static std::size_t number_of_misses;
 
     static LookupResult ic_lookup( KlassOop receiver_klass, Oop selector_or_method );
 

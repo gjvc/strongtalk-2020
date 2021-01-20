@@ -19,7 +19,7 @@
 TRACE_FUNC( TraceBehaviorPrims, "behavior" )
 
 
-int behaviorPrimitives::_numberOfCalls;
+std::size_t behaviorPrimitives::_numberOfCalls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_klass(), "receiver must be klass object")
 
@@ -196,7 +196,9 @@ PRIM_DECL_2( behaviorPrimitives::printMethod, Oop receiver, Oop name ) {
     return receiver;
 }
 
+
 /*
+
 
 PRIM_DECL_1(behaviorPrimitives::new0, Oop receiver){
   PROLOGUE_1("new0", receiver);
@@ -207,6 +209,7 @@ PRIM_DECL_1(behaviorPrimitives::new0, Oop receiver){
   obj->initialize_header(false, klassOop(klass));
   return obj;
 }
+
 
 PRIM_DECL_1(behaviorPrimitives::new1, Oop receiver){
   PROLOGUE_1("new1", receiver);

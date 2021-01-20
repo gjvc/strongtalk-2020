@@ -87,7 +87,7 @@ private:
     static PersistentHandle *_first;
 
 public:
-    static int savedOffset();
+    static std::size_t savedOffset();
 
     PersistentHandle( Oop toSave );
 
@@ -145,7 +145,7 @@ private:
 
     static Oop oop_at( int index );
 
-    static int push_oop( Oop value );
+    static std::size_t push_oop( Oop value );
 
     static std::size_t top();
 

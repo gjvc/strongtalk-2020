@@ -19,10 +19,11 @@
 // We might change the sweeper to sweep at preempt time like in the Self system.
 
 Sweeper *Sweeper::_head = nullptr;
-int          Sweeper::_sweepSeconds = 0;
-bool_t       Sweeper::_isRunning    = false;
-MethodOop    Sweeper::_activeMethod = nullptr;
-NativeMethod *Sweeper::_activeNativeMethod = nullptr;
+
+std::size_t     Sweeper::_sweepSeconds = 0;
+bool_t          Sweeper::_isRunning           = false;
+MethodOop       Sweeper::_activeMethod        = nullptr;
+NativeMethod    *Sweeper::_activeNativeMethod = nullptr;
 
 
 void Sweeper::print_all() {
@@ -52,8 +53,8 @@ void Sweeper::clear_active_frame() {
 
 
 void Sweeper::step_all() {
-    _isRunning = true;
-    ResourceMark rm;
+    _isRunning       = true;
+    ResourceMark  rm;
     for ( Sweeper *n = head(); n; n = n->next() )
         n->step();
     _sweepSeconds++;
@@ -163,8 +164,8 @@ int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
 
 int MethodSweeper::klass_task( KlassOop klass ) {
-    int result = 0;
-    Klass *k = klass->klass_part();
+    int   result = 0;
+    Klass *k     = klass->klass_part();
 
     // Fix the customized methods
     result += method_dict_task( k->methods() );

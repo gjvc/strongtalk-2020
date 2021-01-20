@@ -74,7 +74,7 @@ void initializeSmalltalkEnvironment() {
 }
 
 
-static int vmLoopLauncher( DeltaProcess *testProcess ) {
+static std::size_t vmLoopLauncher( DeltaProcess *testProcess ) {
     vmProcess->transfer_to( testProcess );
     vmProcess->loop();
     return 0;

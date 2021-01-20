@@ -152,7 +152,7 @@ Digit *Integer::digits() const {
 }
 
 
-int Integer::length_to_size_in_bytes( int l ) {
+std::size_t Integer::length_to_size_in_bytes( int l ) {
     return sizeof( int ) + l * sizeof( Digit );
 }
 

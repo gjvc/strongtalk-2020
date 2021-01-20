@@ -8,7 +8,7 @@
 #include "vm/memory/Universe.hpp"
 
 
-static int scale_and_adjust( int value ) {
+static std::size_t scale_and_adjust( int value ) {
     int result = roundTo( value * 1024, Universe::page_size() );
     return result;
 }
@@ -27,7 +27,7 @@ void SpaceSizes::initialize() {
 }
 
 
-static int GetNumericEnvironmentVariable( const char *name, int factor, int def ) {
+static std::size_t GetNumericEnvironmentVariable( const char *name, int factor, int def ) {
     char *n = getenv( name );
     if ( n ) {
         int l = def;
@@ -41,14 +41,14 @@ static int GetNumericEnvironmentVariable( const char *name, int factor, int def 
 }
 
 
-static int getSize( const char *name, int def ) {
+static std::size_t getSize( const char *name, int def ) {
     const int blockSize = 4 * 1024;
     int       size      = GetNumericEnvironmentVariable( name, 1024, def );
     return roundTo( size, blockSize );
 }
 
 
-static int getSize( int def ) {
+static std::size_t getSize( int def ) {
     const int blockSize = 4 * 1024;
     return roundTo( def, blockSize );
 }

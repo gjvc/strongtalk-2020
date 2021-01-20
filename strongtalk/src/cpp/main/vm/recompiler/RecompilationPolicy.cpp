@@ -23,7 +23,7 @@ Recompilee *RecompilationPolicy::findRecompilee() {
         for ( std::size_t i = 0; i < 10 and rf; i++, rf = senderOf( rf ) );   // create 10 frames
         printStack();
     }
-    RecompilerFrame *r = findTopInlinableFrame();
+    RecompilerFrame *r  = findTopInlinableFrame();
     if ( r ) {
         if ( PrintRecompilation )
             r->print();
@@ -35,7 +35,7 @@ Recompilee *RecompilationPolicy::findRecompilee() {
 
 
 void RecompilationPolicy::cleanupStaleInlineCaches() {
-    int       len = min( 20, _stack->length() );
+    int               len = min( 20, _stack->length() );
     for ( std::size_t i   = 0; i < len; i++ )
         _stack->at( i )->cleanupStaleInlineCaches();
 }
@@ -44,9 +44,9 @@ void RecompilationPolicy::cleanupStaleInlineCaches() {
 RecompilerFrame *RecompilationPolicy::findTopInlinableFrame() {
     // go up the stack until finding a frame that (probably) won't be inlined into its caller
     RecompilerInliningPolicy p;
-    RecompilerFrame *current    = _stack->at( 0 );    // current choice for stopping
-    RecompilerFrame *prev       = nullptr;            // prev. value of current
-    RecompilerFrame *prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
+    RecompilerFrame          *current    = _stack->at( 0 );    // current choice for stopping
+    RecompilerFrame          *prev       = nullptr;            // prev. value of current
+    RecompilerFrame          *prevMethod = nullptr;        // same as prev, except always holds method frames (not blocks)
     _msg = nullptr;
 
     while ( 1 ) {
@@ -210,10 +210,10 @@ void RecompilationPolicy::fixBlockParent( RecompilerFrame *rf ) {
     // find the parent method and increase its counter so it will be recompiled next time
     MethodOop blk = rf->top_method();
     st_assert( blk->is_blockMethod(), "must be a block" );
-    MethodOop home  = blk->home();
-    int       count = home->invocation_count();
+    MethodOop   home  = blk->home();
+    std::size_t count = home->invocation_count();
     count += Interpreter::get_invocation_counter_limit();
-    count           = min( count, MethodOopDescriptor::_invocation_count_max - 1 );
+    count             = min( count, MethodOopDescriptor::_invocation_count_max - 1 );
     home->set_invocation_count( count );
     st_assert( home->invocation_count() >= Interpreter::get_invocation_counter_limit(), "counter increment didn't work" );
 }
@@ -249,8 +249,8 @@ RecompilerFrame *RecompilationPolicy::senderOrParentOf( RecompilerFrame *rf ) {
         // bug: should check how often block is created / invoked
         GrowableArray<BlockClosureOop> *blockArgs = rf->blockArgs();
         RecompilerFrame                *max       = nullptr;
-        for ( std::size_t i = 0; i < blockArgs->length(); i++ ) {
-            BlockClosureOop blk = blockArgs->at( i );
+        for ( std::size_t              i          = 0; i < blockArgs->length(); i++ ) {
+            BlockClosureOop blk   = blockArgs->at( i );
             //JumpTableEntry* e = blk->jump_table_entry();
             RecompilerFrame *home = parentOfBlock( blk );
             if ( home == nullptr )
@@ -302,8 +302,8 @@ RecompilerFrame *RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
         return nullptr;    // non-LIFO block
     }
     // try to find context's RecompilerFrame
-    RecompilerFrame *parent = _stack->first();
-    for ( std::size_t i = 0; i < MaxRecompilationSearchLength; i++ ) {
+    RecompilerFrame   *parent = _stack->first();
+    for ( std::size_t i       = 0; i < MaxRecompilationSearchLength; i++ ) {
         parent = senderOf( parent );
         if ( not parent )
             break;
@@ -358,16 +358,18 @@ bool_t RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod *n
 }
 
 
-int RecompilationPolicy::uncommonNativeMethodInvocationLimit( int version ) {
-    int       n = UncommonInvocationLimit;
+std::size_t RecompilationPolicy::uncommonNativeMethodInvocationLimit( int version ) {
+    int n = UncommonInvocationLimit;
+
     for ( std::size_t i = 0; i < version; i++ )
         n *= UncommonAgeBackoffFactor;
     return n;
 }
 
 
-int RecompilationPolicy::uncommonNativeMethodAgeLimit( int version ) {
-    int       n = NativeMethodAgeLimit;
+std::size_t RecompilationPolicy::uncommonNativeMethodAgeLimit( int version ) {
+    int n = NativeMethodAgeLimit;
+
     for ( std::size_t i = 0; i < version; i++ )
         n *= UncommonAgeBackoffFactor;
     return n;

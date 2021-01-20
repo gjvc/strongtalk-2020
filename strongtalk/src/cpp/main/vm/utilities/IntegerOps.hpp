@@ -44,15 +44,15 @@ public:
     static Digit power( Digit x, int n );       // returns x^n
     static Digit max_power( Digit x );          // returns the largest y with x^y <= B
 
-    static int unsigned_add_result_length( Integer &x, Integer &y );
+    static std::size_t unsigned_add_result_length( Integer &x, Integer &y );
 
-    static int unsigned_sub_result_length( Integer &x, Integer &y );
+    static std::size_t unsigned_sub_result_length( Integer &x, Integer &y );
 
-    static int unsigned_mul_result_length( Integer &x, Integer &y );
+    static std::size_t unsigned_mul_result_length( Integer &x, Integer &y );
 
-    static int unsigned_quo_result_length( Integer &x, Integer &y );
+    static std::size_t unsigned_quo_result_length( Integer &x, Integer &y );
 
-    static int unsigned_rem_result_length( Integer &x, Integer &y );
+    static std::size_t unsigned_rem_result_length( Integer &x, Integer &y );
 
     static void unsigned_add( Integer &x, Integer &y, Integer &z );
 
@@ -70,7 +70,7 @@ public:
 
     static void signed_mod( Integer &x, Integer &y, Integer &z );
 
-    static int last_non_zero_index( Digit *z, int lastIndex );
+    static std::size_t last_non_zero_index( Digit *z, int lastIndex );
 
     static Digit scale( Digit *array, Digit factor, int length );
 
@@ -99,27 +99,27 @@ public:
 
     // the following functions return the maximum result size
     // in bytes for the operation specified in the function name
-    static int add_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t add_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int sub_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t sub_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int mul_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t mul_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int quo_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t quo_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int rem_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t rem_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int div_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t div_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int mod_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t mod_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int and_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t and_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int or_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t or_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int xor_result_size_in_bytes( Integer &x, Integer &y );
+    static std::size_t xor_result_size_in_bytes( Integer &x, Integer &y );
 
-    static int ash_result_size_in_bytes( Integer &x, int n );
+    static std::size_t ash_result_size_in_bytes( Integer &x, int n );
 
     static void and_both_negative( Integer &x, Integer &y, Integer &z );
 
@@ -127,17 +127,17 @@ public:
 
     static void xor_one_positive( Integer &positive, Integer &negative, Integer &z );
 
-    static int copy_result_size_in_bytes( Integer &x );
+    static std::size_t copy_result_size_in_bytes( Integer &x );
 
-    static int int_to_Integer_result_size_in_bytes( std::size_t i );
+    static std::size_t int_to_Integer_result_size_in_bytes( std::size_t i );
 
-    static int unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i );
+    static std::size_t unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i );
 
-    static int double_to_Integer_result_size_in_bytes( double x );
+    static std::size_t double_to_Integer_result_size_in_bytes( double x );
 
-    static int string_to_Integer_result_size_in_bytes( const char *s, int base );
+    static std::size_t string_to_Integer_result_size_in_bytes( const char *s, int base );
 
-    static int Integer_to_string_result_size_in_bytes( Integer &x, int base );
+    static std::size_t Integer_to_string_result_size_in_bytes( Integer &x, int base );
 
     // arithmetic/binary operations & tests
     static void add( Integer &x, Integer &y, Integer &z );    // z := x + y
@@ -157,7 +157,7 @@ public:
 
     static void abs( Integer &x );                // x := |x|
     static void neg( Integer &x );                // x := -x
-    static int hash( Integer &x );
+    static std::size_t hash( Integer &x );
 
     // copy & conversion operations
     static void copy( Integer &x, Integer &z );

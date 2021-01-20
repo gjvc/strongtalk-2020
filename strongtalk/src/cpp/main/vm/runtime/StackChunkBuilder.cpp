@@ -15,13 +15,13 @@
 
 
 GrowableArray<const CompiledVirtualFrame *> *frames;
-GrowableArray<ContextOop> *contexts;
+GrowableArray<ContextOop>                   *contexts;
 
 bool_t StackChunkBuilder::_is_deoptimizing = false;
-int *StackChunkBuilder::_framePointer = nullptr;
+std::size_t *StackChunkBuilder::_framePointer = nullptr;
 
 
-StackChunkBuilder::StackChunkBuilder( int *fp, std::size_t size ) {
+StackChunkBuilder::StackChunkBuilder( std::size_t *fp, std::size_t size ) {
     _virtualFrameCount    = 0;
     _localExpressionCount = 0;
     array                 = new GrowableArray<Oop>( size );
@@ -34,8 +34,8 @@ StackChunkBuilder::~StackChunkBuilder() {
 
 
 void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
-    MethodOop method;
-    int       number_of_temps;
+    MethodOop          method;
+    int                number_of_temps;
     GrowableArray<Oop> *stack;
     {
         //FlagSetting fl(TraceCanonicalContext, false);

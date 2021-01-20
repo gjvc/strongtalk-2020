@@ -26,7 +26,7 @@
 TRACE_FUNC( TraceDebugPrims, "debug" )
 
 
-int debugPrimitives::number_of_calls;
+std::size_t debugPrimitives::number_of_calls;
 
 
 PRIM_DECL_1( debugPrimitives::boolAt, Oop name ) {
@@ -275,7 +275,7 @@ public:
 };
 
 
-static int compare_method_counters( MethodOop *a, MethodOop *b ) {
+static std::size_t compare_method_counters( MethodOop *a, MethodOop *b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -329,7 +329,7 @@ PRIM_DECL_0( debugPrimitives::clearNativeMethodCounters ) {
 }
 
 
-static int compare_NativeMethod_counters( NativeMethod **a, NativeMethod **b ) {
+static std::size_t compare_NativeMethod_counters( NativeMethod **a, NativeMethod **b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -464,7 +464,7 @@ public:
     }
 
 
-    static int compare( Counter **a, Counter **b ) {
+    static std::size_t compare( Counter **a, Counter **b ) {
         return ( *b )->total_size - ( *a )->total_size;
     }
 };

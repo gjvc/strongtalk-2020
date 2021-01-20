@@ -84,7 +84,7 @@ private:
     static RecompilationScope *file_in_from( std::ifstream &stream );
 
     // Helper functions when iterating over zone.
-    static int local_number_of_nativeMethods_written;
+    static std::size_t local_number_of_nativeMethods_written;
 
     static void local_file_out_all( NativeMethod *nm );
 

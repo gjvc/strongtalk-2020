@@ -28,9 +28,9 @@ private:
     // These numbers enable calculation of the corresponding deoptimized interpreter stack.
     int _virtualFrameCount;      // Number of VirtualFrame collected
     int _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
-    static int *_framePointer;          // Frame pointer of the resulting frame
+    static std::size_t *_framePointer;          // Frame pointer of the resulting frame
 
-    static int header_size() {
+    static std::size_t header_size() {
         return 2;
     }
 
@@ -40,7 +40,7 @@ private:
     GrowableArray<Oop> *array;
 
 public:
-    StackChunkBuilder( int *fp, std::size_t size = 100 );
+    StackChunkBuilder( std::size_t *fp, std::size_t size = 100 );
 
     ~StackChunkBuilder();
 

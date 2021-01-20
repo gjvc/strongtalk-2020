@@ -31,7 +31,7 @@ void setKlassVirtualTableFromWeakArrayKlass( Klass *k ) {
 
 void WeakArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
-    Oop *p = ObjectArrayOop( obj )->objs( 0 );
+    Oop *p  = ObjectArrayOop( obj )->objs( 0 );
     int len = ObjectArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
@@ -47,7 +47,7 @@ void WeakArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
 void WeakArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
-    Oop *p = WeakArrayOop( obj )->objs( 0 );
+    Oop *p  = WeakArrayOop( obj )->objs( 0 );
     int len = WeakArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_oop_iterate( obj, blk );
@@ -106,9 +106,9 @@ void WeakArrayKlass::oop_follow_contents( Oop obj ) {
 
 // WeakArrayRegister
 // - static variables
-bool_t                       WeakArrayRegister::during_registration = false;
-GrowableArray<WeakArrayOop> *WeakArrayRegister::weakArrays = nullptr;
-GrowableArray<int>          *WeakArrayRegister::nis        = nullptr;
+bool_t                      WeakArrayRegister::during_registration = false;
+GrowableArray<WeakArrayOop> *WeakArrayRegister::weakArrays         = nullptr;
+GrowableArray<std::size_t> *WeakArrayRegister::nis = nullptr;
 
 
 // - Scavenge operations
@@ -171,7 +171,7 @@ void WeakArrayRegister::scavenge_check_for_dying_objects() {
 void WeakArrayRegister::begin_mark_sweep() {
     during_registration = true;
     weakArrays          = new GrowableArray<WeakArrayOop>( 100 );
-    nis                 = new GrowableArray<int>( 100 );
+    nis                 = new GrowableArray<std::size_t>( 100 );
 }
 
 
@@ -241,8 +241,8 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 
 Oop *NotificationQueue::array = nullptr;
 std::size_t  NotificationQueue::size  = 100;
-int  NotificationQueue::first = 0;
-int  NotificationQueue::last  = 0;
+std::size_t  NotificationQueue::first = 0;
+std::size_t  NotificationQueue::last  = 0;
 
 
 bool_t NotificationQueue::is_empty() {
@@ -250,7 +250,7 @@ bool_t NotificationQueue::is_empty() {
 }
 
 
-int NotificationQueue::succ( int index ) {
+std::size_t NotificationQueue::succ( int index ) {
     return ( index + 1 ) % size;
 }
 
@@ -264,16 +264,21 @@ Oop NotificationQueue::get() {
 
 
 void NotificationQueue::put( Oop obj ) {
-    if ( array == nullptr )
+    if ( array == nullptr ) {
         array = new_c_heap_array<Oop>( size );
+    }
+
     if ( succ( last ) == first ) {
-        int new_size = size * 2;
-        int new_last = 0;
+        int new_size   = size * 2;
+        int new_last   = 0;
         // allocate new_array
         Oop *new_array = new_c_heap_array<Oop>( new_size );
+
         // copy from array to new_array
-        for ( std::size_t i = first; i not_eq last; i = succ( i ) )
+        for ( std::size_t i = first; i not_eq last; i = succ( i ) ) {
             new_array[ new_last++ ] = array[ i ];
+        }
+
         free( array );
         // replace array
         array = new_array;

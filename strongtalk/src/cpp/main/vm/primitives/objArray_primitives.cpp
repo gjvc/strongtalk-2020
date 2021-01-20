@@ -18,7 +18,7 @@
 TRACE_FUNC( TraceObjArrayPrims, "objArray" )
 
 
-int objArrayPrimitives::number_of_calls;
+std::size_t objArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_objArray(), "receiver must be object array")
 

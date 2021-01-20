@@ -21,9 +21,9 @@
 #include "vm/compiler/NodeFactory.hpp"
 
 
-int                 BasicNode::currentID;
-int                 BasicNode::currentCommentID;
-int                 BasicNode::lastByteCodeIndex;
+std::size_t         BasicNode::currentID;
+std::size_t         BasicNode::currentCommentID;
+std::size_t         BasicNode::lastByteCodeIndex;
 ScopeInfo           BasicNode::lastScopeInfo;
 PrimitiveDescriptor *InterruptCheckNode::_intrCheck;
 
@@ -691,7 +691,7 @@ Node *UncommonSendNode::clone( PseudoRegister *from, PseudoRegister *to ) const 
 
 
 void UncommonSendNode::makeUses( BasicBlock *bb ) {
-    int       expressionCount = expressionStack()->length();
+    int               expressionCount = expressionStack()->length();
     for ( std::size_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
         bb->addUse( this, expressionStack()->at( pos ) );
 }
@@ -2894,7 +2894,7 @@ void BasicNode::print_short() {
 }
 
 
-static int id_of( Node *node ) {
+static std::size_t id_of( Node *node ) {
     return node == nullptr ? -1 : node->id();
 }
 
@@ -3162,8 +3162,8 @@ const char *FixedCodeNode::print_string( const char *buf, bool_t printAddr ) con
 }
 
 
-static int        prevsLen;
-static const char *mergePrintBuf;
+static std::size_t prevsLen;
+static const char  *mergePrintBuf;
 
 
 static void printPrevNodes( Node *n ) {

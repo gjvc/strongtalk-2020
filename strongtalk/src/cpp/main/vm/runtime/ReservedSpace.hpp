@@ -46,7 +46,7 @@ public:
     ReservedSpace last_part( int partition_size );
 
     // Alignment
-    static int page_align_size( std::size_t size );
+    static std::size_t page_align_size( std::size_t size );
 
-    static int align_size( std::size_t size, int page_size );
+    static std::size_t align_size( std::size_t size, int page_size );
 };

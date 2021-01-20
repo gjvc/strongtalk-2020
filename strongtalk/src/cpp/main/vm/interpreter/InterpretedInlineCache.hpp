@@ -53,7 +53,7 @@ public:
     // find send bytecode, given address of selector; return nullptr/IllegalByteCodeIndex if not in a send
     static std::uint8_t *findStartOfSend( std::uint8_t *selector_addr );
 
-    static int findStartOfSend( MethodOop m, int byteCodeIndex );
+    static std::size_t findStartOfSend( MethodOop m, int byteCodeIndex );
 
 private:
     // field access

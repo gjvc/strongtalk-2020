@@ -50,8 +50,8 @@ protected:
     bool_t _visited;
 
 public: // was "protected:" originally
-    Node *_first;            //
-    Node *_last;             //
+    Node         *_first;            //
+    Node         *_last;             //
     std::int16_t _nodeCount;         // number of nodes in this BasicBlock
 
 protected:
@@ -61,7 +61,7 @@ protected:
 
 public:
     BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters
-    static int                        genCounter;    // to enumerate BBs in code-generation order
+    static std::size_t                genCounter;    // to enumerate BBs in code-generation order
 
 public:
     BasicBlock( Node *f, Node *l, int n ) {

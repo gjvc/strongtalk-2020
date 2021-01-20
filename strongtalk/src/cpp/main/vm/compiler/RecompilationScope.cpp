@@ -39,14 +39,14 @@ GrowableArray<RecompilationScope *> *NullRecompilationScope::subScopes( int byte
 }
 
 
-static int compare_pcDescs( ProgramCounterDescriptor **a, ProgramCounterDescriptor **b ) {
+static std::size_t compare_pcDescs( ProgramCounterDescriptor **a, ProgramCounterDescriptor **b ) {
     // to sort by descending scope and ascending byteCodeIndex
     int diff = ( *b )->_scope - ( *a )->_scope;
     return diff ? diff : ( *a )->_byteCodeIndex - ( *b )->_byteCodeIndex;
 }
 
 
-int NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ) {
+std::size_t NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ) {
     return ( *b )->scopeID() - ( *a )->scopeID();
 }
 

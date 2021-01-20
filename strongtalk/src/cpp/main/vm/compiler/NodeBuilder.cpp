@@ -928,7 +928,7 @@ MergeNode *NodeBuilder::insertMergeBefore( Node *n ) {
 }
 
 
-static int split_count = 0; // for conditional breakpoints (debugging)
+static std::size_t split_count = 0; // for conditional breakpoints (debugging)
 
 void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
     // Split MergeExpressions (currently works only for booleans).

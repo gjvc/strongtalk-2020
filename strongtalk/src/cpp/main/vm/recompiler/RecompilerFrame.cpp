@@ -75,7 +75,7 @@ CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
 
 RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame *callee ) {
     RecompilerFrame *rf;
-    int dist = callee ? callee->distance() : -1;
+    int             dist = callee ? callee->distance() : -1;
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
         dist++;
@@ -127,7 +127,7 @@ bool_t RecompilerFrame::hasBlockArgs() const {
     DeltaVirtualFrame *vf = top_vframe();
     if ( not vf )
         return false;
-    int       nargs = vf->method()->number_of_arguments();
+    int               nargs = vf->method()->number_of_arguments();
     for ( std::size_t i     = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
@@ -138,8 +138,8 @@ bool_t RecompilerFrame::hasBlockArgs() const {
 
 
 GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
-    DeltaVirtualFrame *vf = top_vframe();
-    int nargs = top_method()->number_of_arguments();
+    DeltaVirtualFrame              *vf     = top_vframe();
+    int                            nargs   = top_method()->number_of_arguments();
     GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
@@ -166,9 +166,9 @@ LookupKey *InterpretedRecompilerFrame::key() const {
     ( (InterpretedRecompilerFrame *) this )->_lookupKey = LookupKey::allocate( _receiverKlass, sel );
     // Note: this code should really be factored out somewhere; it's duplicated (at least) in LookupCache
     if ( is_super() ) {
-        DeltaVirtualFrame *senderVF = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
-        MethodOop sendingMethod       = senderVF->method()->home();
-        KlassOop  sendingMethodHolder = _receiverKlass->klass_part()->lookup_method_holder_for( sendingMethod );
+        DeltaVirtualFrame *senderVF           = _deltaVirtualFrame ? _deltaVirtualFrame->sender_delta_frame() : DeltaProcess::active()->last_delta_vframe();
+        MethodOop         sendingMethod       = senderVF->method()->home();
+        KlassOop          sendingMethodHolder = _receiverKlass->klass_part()->lookup_method_holder_for( sendingMethod );
         if ( sendingMethodHolder ) {
             KlassOop superKlass = sendingMethodHolder->klass_part()->superKlass();
             st_assert( _method == LookupCache::method_lookup( superKlass, sel ), "inconsistent lookup result" );
@@ -217,19 +217,21 @@ void InterpretedRecompilerFrame::cleanupStaleInlineCaches() {
 }
 
 
-int RecompilerFrame::computeSends( MethodOop m ) {
+std::size_t RecompilerFrame::computeSends( MethodOop m ) {
+
     // how many sends did m cause?  (rough approximation)
     // add up invocation counts of all methods called by m
-    int          sends = 0;
+    std::size_t  sends = 0;
     CodeIterator iter( m );
+
     do {
         switch ( iter.send() ) {
             case ByteCodes::SendType::interpreted_send:
             case ByteCodes::SendType::compiled_send:
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::predicted_send:
-            case ByteCodes::SendType::accessor_send   : {
-                InterpretedInlineCache *ic = iter.ic();
+            case ByteCodes::SendType::accessor_send: {
+                InterpretedInlineCache         *ic = iter.ic();
                 InterpretedInlineCacheIterator it( ic );
                 while ( not it.at_end() ) {
                     int count;
@@ -243,6 +245,7 @@ int RecompilerFrame::computeSends( MethodOop m ) {
                 }
             }
                 break;
+
             case ByteCodes::SendType::megamorphic_send:
                 // don't know how to count megamorphic sends; for now, just ignore them
                 // because compiler can't eliminate them anyway
@@ -253,12 +256,13 @@ int RecompilerFrame::computeSends( MethodOop m ) {
             default: st_fatal1( "unexpected send type 0x%08x", iter.send() );
         }
     } while ( iter.advance() );
+
     return sends;
 }
 
 
-static CompiledRecompilerFrame *this_rframe = nullptr;
-static int sum_ics_result = 0;
+static CompiledRecompilerFrame *this_rframe   = nullptr;
+static std::size_t             sum_ics_result = 0;
 
 
 static void sum_ics( CompiledInlineCache *ic ) {
@@ -358,7 +362,7 @@ public:
 };
 
 
-int RecompilerFrame::computeCumulSends( MethodOop m ) {
+std::size_t RecompilerFrame::computeCumulSends( MethodOop m ) {
     CumulCounter c( m );
     c.count();
     return c.cumulSends;

@@ -46,7 +46,7 @@ public:
     static bool_t shouldRecompileAfterUncommonTrap( NativeMethod *nm );     // NativeMethod encountered an uncommon case; should it be recompiled?
     static bool_t shouldRecompileUncommonNativeMethod( NativeMethod *nm );  // NativeMethod is in uncommon mode; ok to recompile and reoptimize it?
     static const char *shouldNotRecompileNativeMethod( NativeMethod *nm );        // is NativeMethod fit to be recompiled?  return nullptr if yes, reason otherwise
-    static int uncommonNativeMethodInvocationLimit( int version );          // return invocation counter limit for an uncommon NativeMethod
-    static int uncommonNativeMethodAgeLimit( int version );                 // return NativeMethod age limit for an uncommon NativeMethod
+    static std::size_t uncommonNativeMethodInvocationLimit( int version );          // return invocation counter limit for an uncommon NativeMethod
+    static std::size_t uncommonNativeMethodAgeLimit( int version );                 // return NativeMethod age limit for an uncommon NativeMethod
 
 };

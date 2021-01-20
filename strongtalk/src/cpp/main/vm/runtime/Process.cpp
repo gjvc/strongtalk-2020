@@ -466,7 +466,7 @@ void DeltaProcess::runMainProcess() {
 
 
 // Code entry point for at Delta process
-int DeltaProcess::launch_delta( DeltaProcess *process ) {
+std::size_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
     _console->print_cr( "%%delta-process-launch-delta-process:  thread_id [%d]", process->thread_id() );
 
@@ -551,7 +551,7 @@ Frame DeltaProcess::profile_top_frame() {
 }
 
 
-static int interruptions = 0;
+static std::size_t interruptions = 0;
 
 
 void DeltaProcess::check_stack_overflow() {
@@ -782,8 +782,8 @@ void DeltaProcess::exit_uncommon() {
 
 static Oop *old_sp;
 static Oop *new_sp;
-static int *old_fp;
-static int *cur_fp;
+static std::size_t *old_fp;
+static std::size_t *cur_fp;
 static ObjectArrayOop frame_array;
 
 extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, int *old_fp, ObjectArrayOop frame_array, int *current_frame ) {

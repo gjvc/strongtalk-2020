@@ -308,8 +308,8 @@ static void call_C( const char *dest, RelocationInformation::RelocationType relo
 // and trap in case of an error. The verifyXXXCode routines are used to
 // generate the transparent call stubs for the verifyXXX's.
 
-static int callDepth     = 0;    // to indent tracing messages
-static int numberOfCalls = 0;    // # of traced calls since start
+static std::size_t callDepth     = 0;    // to indent tracing messages
+static std::size_t numberOfCalls = 0;    // # of traced calls since start
 
 static void indent() {
     const int maxIndent = 30;
@@ -421,7 +421,7 @@ static void verifyBlockCode( Register reg ) {
 }
 
 
-static int NumberOfReturns = 0;      // for debugging (conditional breakpoints)
+static std::size_t NumberOfReturns = 0;      // for debugging (conditional breakpoints)
 
 extern "C" void verifyReturn( Oop obj ) {
     NumberOfReturns++;
@@ -563,7 +563,7 @@ static void verifyArgumentsCode( Register recv, int nofArgs ) {
 }
 
 
-static int result_counter = 0;
+static std::size_t result_counter = 0;
 
 
 static void trace_result( int compilation, MethodOop method, Oop result ) {

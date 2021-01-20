@@ -558,7 +558,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
 }
 
 
-int PolymorphicInlineCache::nof_entries( const char *pic_stub ) {
+std::size_t PolymorphicInlineCache::nof_entries( const char *pic_stub ) {
     std::size_t i = 1;
     while ( true ) {
         if ( pic_stub == StubRoutines::PolymorphicInlineCache_stub_entry( i ) )

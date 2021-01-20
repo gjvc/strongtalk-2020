@@ -159,12 +159,12 @@ public:
     // Version numbers
     //   increment snapshot_version whenever old snapshots will break; reset
     //   it to zero when changing the minor or major version
-    static int major_version() {
+    static std::size_t major_version() {
         return 1;
     }
 
 
-    static int minor_version() {
+    static std::size_t minor_version() {
         return 1;
     }
 
@@ -174,7 +174,7 @@ public:
     }
 
 
-    static int snapshot_version() {
+    static std::size_t snapshot_version() {
         return 3;
     }
 
@@ -214,8 +214,8 @@ public:
     static Zone          *code;
 
     // additional variables
-    static int tenuring_threshold;
-    static int scavengeCount;
+    static std::size_t tenuring_threshold;
+    static std::size_t scavengeCount;
 
 
     // Space operations
@@ -307,7 +307,7 @@ public:
     static Oop *allocate_in_survivor_space( MemOop p, std::size_t size, bool_t &is_new );
 
 
-    static int free() {
+    static std::size_t free() {
         return old_gen.free();
     }
 
@@ -396,7 +396,7 @@ public:
 
     static bool_t on_page_boundary( void *addr );
 
-    static int page_size();
+    static std::size_t page_size();
 };
 
 #define STORE_OOP( ADDR, VALUE ) Universe::store((Oop*) ADDR, (Oop) VALUE)

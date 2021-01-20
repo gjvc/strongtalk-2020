@@ -34,14 +34,11 @@
 #include "vm/memory/WaterMark.hpp"
 
 
-bool_t garbageCollectionInProgress = false;
-
-bool_t scavengeRequired        = false;
-bool_t bootstrappingInProgress = true;
-
-int    BlockScavenge::counter      = 0;
-bool_t Universe::_scavenge_blocked = false;
-
+bool_t      garbageCollectionInProgress = false;
+bool_t      scavengeRequired            = false;
+bool_t      bootstrappingInProgress     = true;
+std::size_t BlockScavenge::counter      = 0;
+bool_t        Universe::_scavenge_blocked = false;
 NewGeneration Universe::new_gen;
 OldGeneration Universe::old_gen;
 SymbolTable   *Universe::symbol_table;
@@ -49,8 +46,8 @@ RememberedSet *Universe::remembered_set;
 AgeTable      *Universe::age_table;
 Zone          *Universe::code;
 SpaceSizes    Universe::current_sizes;
-int           Universe::tenuring_threshold;
-int           Universe::scavengeCount;
+std::size_t   Universe::tenuring_threshold;
+std::size_t   Universe::scavengeCount;
 
 // Classes
 KlassOop smiKlassObj     = KlassOop( badOop );
@@ -362,8 +359,8 @@ const char *Universe::klass_name( KlassOop k ) {
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
         } else if ( assoc->value()->klass() == k ) {
-            SymbolOop name = assoc->key();
-            char *result = new_resource_array<char>( name->length() + 7 );
+            SymbolOop name    = assoc->key();
+            char      *result = new_resource_array<char>( name->length() + 7 );
             sprintf( result, "%s class", name->as_string() );
             return result;
         }
@@ -471,7 +468,7 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
 
 void Universe::methods_in_array_do( ObjectArrayOop array, void f( MethodOop method ) ) {
-    int       length = array->length();
+    int               length = array->length();
     for ( std::size_t i      = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( array->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
@@ -679,7 +676,7 @@ bool_t Universe::on_page_boundary( void *addr ) {
 }
 
 
-int Universe::page_size() {
+std::size_t Universe::page_size() {
     return os::vm_page_size();
 }
 

@@ -33,7 +33,7 @@ protected:
 
 public:
     // field offsets for code generation
-    static int pointer_byte_offset() {
+    static std::size_t pointer_byte_offset() {
         return ( 2 * oopSize ) - MEMOOP_TAG;
     }
 
@@ -42,7 +42,7 @@ public:
 
 
     // sizing
-    static int header_size() {
+    static std::size_t header_size() {
         return sizeof( ProxyOopDescriptor ) / oopSize;
     }
 

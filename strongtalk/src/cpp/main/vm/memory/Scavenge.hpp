@@ -12,9 +12,9 @@
 
 class BlockScavenge {
 private:
-    static int counter;
+    static std::size_t counter;
 public:
-    static int *counter_addr() {
+    static std::size_t *counter_addr() {
         return &counter;
     }
 

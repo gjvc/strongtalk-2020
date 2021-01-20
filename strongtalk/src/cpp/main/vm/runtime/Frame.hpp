@@ -335,13 +335,13 @@ public:
 
     // Returns the size of a number of interpreter frames in words.
     // This is used during deoptimization.
-    static int interpreter_stack_size( int number_of_frames, int number_of_temporaries_and_locals ) {
+    static std::size_t interpreter_stack_size( int number_of_frames, int number_of_temporaries_and_locals ) {
         return number_of_frames * interpreter_frame_size( 0 ) + number_of_temporaries_and_locals;
     }
 
 
     // Returns the word size of an interpreter frame
-    static int interpreter_frame_size( int locals ) {
+    static std::size_t interpreter_frame_size( int locals ) {
         return frame_return_addr_offset - frame_temp_offset + locals;
     }
 };

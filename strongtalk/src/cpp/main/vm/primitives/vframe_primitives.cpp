@@ -29,7 +29,7 @@
 TRACE_FUNC( TraceVirtualFramePrims, "VirtualFrame" )
 
 
-int VirtualFrameOopPrimitives::number_of_calls;
+std::size_t VirtualFrameOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_vframe(), "receiver must be VirtualFrame")
 

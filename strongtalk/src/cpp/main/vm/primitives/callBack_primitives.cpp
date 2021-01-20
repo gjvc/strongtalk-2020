@@ -24,7 +24,7 @@
 TRACE_FUNC( TraceCallBackPrims, "callBack" )
 
 
-int callBackPrimitives::number_of_calls;
+std::size_t callBackPrimitives::number_of_calls;
 
 
 PRIM_DECL_2( callBackPrimitives::initialize, Oop receiver, Oop selector ) {

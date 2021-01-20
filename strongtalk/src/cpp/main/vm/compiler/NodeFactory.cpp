@@ -13,7 +13,7 @@
 #include "vm/assembler/x86_mapping.hpp"
 
 
-int NodeFactory::_cumulativeCost;
+std::size_t NodeFactory::_cumulativeCost;
 
 
 NonLocalReturnContinuationNode *NodeFactory::NonLocalReturnContinuationNode( int byteCodeIndex ) {

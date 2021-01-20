@@ -95,9 +95,9 @@ public:
 
 private:
     // Variables
-    static bool_t during_registration;
+    static bool_t                      during_registration;
     static GrowableArray<WeakArrayOop> *weakArrays;
-    static GrowableArray<int>          *nis;
+    static GrowableArray<std::size_t>  *nis;
 
     // Scavenge operations
     static void scavenge_contents();
@@ -134,10 +134,10 @@ public:
     static void oops_do( void f( Oop * ) );
 
 private:
-    static Oop *array;
+    static Oop         *array;
     static std::size_t size;
-    static int first;
-    static int last;
+    static std::size_t first;
+    static std::size_t last;
 
-    static int succ( int index );
+    static std::size_t succ( int index );
 };

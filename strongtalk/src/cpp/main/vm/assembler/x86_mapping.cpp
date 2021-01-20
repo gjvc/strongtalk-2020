@@ -38,8 +38,8 @@ void Mapping::initialize() {
 // C++ won't compile array with 0 elements
 //int      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
 
-std::array<Location, nofLocalRegisters> Mapping::_localRegisters;      //
-std::array<int, REGISTER_COUNT>         Mapping::_localRegisterIndex;  //
+std::array<Location, nofLocalRegisters>     Mapping::_localRegisters;      //
+std::array<std::size_t, REGISTER_COUNT>     Mapping::_localRegisterIndex;  //
 
 
 Location Mapping::localRegister( std::size_t i ) {
@@ -48,9 +48,9 @@ Location Mapping::localRegister( std::size_t i ) {
 }
 
 
-int Mapping::localRegisterIndex( const Location &l ) {
+std::size_t Mapping::localRegisterIndex( const Location &l ) {
     st_assert( 0 <= l.number() and l.number() < REGISTER_COUNT, "illegal local register" );
-    int res = _localRegisterIndex[ l.number() ];
+    std::size_t res = _localRegisterIndex[ l.number() ];
     st_assert( res >= 0, "not a local register" );
     st_assert( localRegister( res ) == l, "incorrect mapping" );
     return res;
@@ -58,13 +58,13 @@ int Mapping::localRegisterIndex( const Location &l ) {
 
 
 // parameter passing
-Location Mapping::incomingArg( std::size_t i, int nofArgs ) {
+Location Mapping::incomingArg( std::size_t i, std::size_t nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return Location::stackLocation( nofArgs - i + 1 );
 }
 
 
-Location Mapping::outgoingArg( std::size_t i, int nofArgs ) {
+Location Mapping::outgoingArg( std::size_t i, std::size_t nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return topOfStack;
 }
@@ -73,14 +73,14 @@ Location Mapping::outgoingArg( std::size_t i, int nofArgs ) {
 // stack allocation (Note: offsets are always in oops!)
 Location Mapping::localTemporary( std::size_t i ) {
     st_assert( i >= 0, "illegal temporary number" );
-    int floats = theCompiler->totalNofFloatTemporaries();
-    int offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
+    std::size_t floats = theCompiler->totalNofFloatTemporaries();
+    std::size_t offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
     return Location::stackLocation( offset );
 }
 
 
-int Mapping::localTemporaryIndex( const Location &l ) {
-    int floats = theCompiler->totalNofFloatTemporaries();
+std::size_t Mapping::localTemporaryIndex( const Location &l ) {
+    std::size_t floats = theCompiler->totalNofFloatTemporaries();
     std::size_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
     st_assert( localTemporary( i ) == l, "incorrect mapping" );
     return i;
@@ -90,6 +90,7 @@ int Mapping::localTemporaryIndex( const Location &l ) {
 Location Mapping::floatTemporary( int scope_id, std::size_t i ) {
     InlinedScope *scope = theCompiler->scopes->at( scope_id );
     st_assert( scope->firstFloatIndex() >= 0, "firstFloatIndex not computed yet" );
+    //
     // Floats must be 8byte aligned in order to a void massive time penalties.
     // They're accessed via a base register which holds the 8byte aligned value of ebp.
     // The byte-offset of the first float must be a multiple of FLOAT_SIZE
@@ -99,6 +100,7 @@ Location Mapping::floatTemporary( int scope_id, std::size_t i ) {
     // base - 2: filler word - undefined
     // base - 3: (global) float 0 hi word
     // base - 4: (global) float 0 lo word
+    //
     st_assert( SIZEOF_FLOAT == 2 * oopSize, "check this code" );
     Location loc = Location::stackLocation( first_float_offset - ( scope->firstFloatIndex() + i ) * ( SIZEOF_FLOAT / oopSize ) );
     st_assert( ( loc.offset() * oopSize ) % SIZEOF_FLOAT == 0, "offset is not correctly aligned" );
@@ -119,7 +121,7 @@ Location *Mapping::new_contextTemporary( int contextNo, std::size_t i, int scope
 }
 
 
-int Mapping::contextOffset( int tempNo ) {
+std::size_t Mapping::contextOffset( int tempNo ) {
     // computes the byte offset within the context object
     return tempNo * oopSize + ContextOopDescriptor::temp0_byte_offset();
 }

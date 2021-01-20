@@ -19,7 +19,7 @@
 TRACE_FUNC( TraceDoublePrims, "double" )
 
 
-int doubleOopPrimitives::number_of_calls;
+std::size_t doubleOopPrimitives::number_of_calls;
 
 
 static Oop new_double( double value ) {

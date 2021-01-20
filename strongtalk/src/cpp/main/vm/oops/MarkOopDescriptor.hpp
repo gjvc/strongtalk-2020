@@ -147,7 +147,7 @@ public:
 
 
     // tells if context has forward reference to an unoptimized context(via sentinel bit)
-    static int context_forward_bit_mask() {
+    static std::size_t context_forward_bit_mask() {
         return near_death_mask_in_place;
     }
 
@@ -242,7 +242,7 @@ public:
     void print_on( ConsoleOutputStream *stream );
 
 
-    static int masked_hash( int v ) {
+    static std::size_t masked_hash( int v ) {
         return v & hash_mask;
     }
 };

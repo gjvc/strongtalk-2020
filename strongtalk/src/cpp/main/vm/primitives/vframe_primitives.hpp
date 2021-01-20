@@ -19,7 +19,7 @@ private:
 
 
 public:
-    static int number_of_calls;
+    static std::size_t number_of_calls;
 
     //%prim
     // <Activation> primitiveActivationProcess ^<SmallInteger> =

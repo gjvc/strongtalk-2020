@@ -18,17 +18,17 @@
 
 
 ProfiledNode **FlatProfiler::_table = nullptr;
-int          FlatProfiler::_tableSize = 1024;
+std::size_t  FlatProfiler::_tableSize = 1024;
 
-DeltaProcess     *FlatProfiler::_deltaProcess     = nullptr;
-FlatProfilerTask *FlatProfiler::_flatProfilerTask = nullptr;
+DeltaProcess      *FlatProfiler::_deltaProcess     = nullptr;
+FlatProfilerTask  *FlatProfiler::_flatProfilerTask = nullptr;
 Timer             FlatProfiler::_timer;
 
-int FlatProfiler::_gc_ticks        = 0;
-int FlatProfiler::_semaphore_ticks = 0;
-int FlatProfiler::_stub_ticks      = 0;
-int FlatProfiler::_unknown_ticks   = 0;
-int FlatProfiler::_compiler_ticks  = 0;
+std::size_t FlatProfiler::_gc_ticks        = 0;
+std::size_t FlatProfiler::_semaphore_ticks = 0;
+std::size_t FlatProfiler::_stub_ticks      = 0;
+std::size_t FlatProfiler::_unknown_ticks   = 0;
+std::size_t FlatProfiler::_compiler_ticks  = 0;
 
 static constexpr int col2 = 11;    // position of output column 2
 static constexpr int col3 = 30;    // position of output column 3
@@ -227,7 +227,7 @@ public:
 
 
     // for sorting
-    static int compare( ProfiledNode **a, ProfiledNode **b ) {
+    static std::size_t compare( ProfiledNode **a, ProfiledNode **b ) {
         return ( *b )->total_ticks() - ( *a )->total_ticks();
     }
 };
@@ -332,7 +332,7 @@ public:
 };
 
 
-int FlatProfiler::entry( int value ) {
+std::size_t FlatProfiler::entry( int value ) {
     return value % _tableSize;
 }
 
@@ -438,7 +438,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
         FlatProfiler::interpreted_update( method, fr.receiver()->klass(), where );
 
     } else if ( fr.is_compiled_frame() ) {
-        NativeMethod *nm = findNativeMethod( fr.pc() );
+        NativeMethod                  *nm = findNativeMethod( fr.pc() );
         RelocationInformationIterator iter( nm );
         while ( iter.next() ) {
             if ( iter.is_call() and iter.call_end() == fr.pc() ) {
@@ -546,7 +546,7 @@ bool_t FlatProfiler::is_active() {
 }
 
 
-static int compare_nodes( const void *p1, const void *p2 ) {
+static std::size_t compare_nodes( const void *p1, const void *p2 ) {
     ProfiledNode **pn1 = (ProfiledNode **) p1;
     ProfiledNode **pn2 = (ProfiledNode **) p2;
     return ( *pn2 )->total_ticks() - ( *pn1 )->total_ticks();

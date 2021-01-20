@@ -13,7 +13,7 @@
 TRACE_FUNC( TraceSmiPrims, "smi_t" )
 
 
-int smiOopPrimitives::number_of_calls;
+std::size_t smiOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_smi(), "receiver must be smi_t")
 

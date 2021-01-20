@@ -33,7 +33,7 @@
 TRACE_FUNC( TraceSystemPrims, "system" )
 
 
-int SystemPrimitives::number_of_calls;
+std::size_t SystemPrimitives::number_of_calls;
 
 
 PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop primary, Oop superclass, Oop format ) {
@@ -239,7 +239,7 @@ PRIM_DECL_0( SystemPrimitives::halt ) {
 
 
 static Oop fake_time() {
-    static int time = 0;
+    static std::size_t time = 0;
     return oopFactory::new_double( (double) time++ );
 }
 

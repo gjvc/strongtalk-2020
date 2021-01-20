@@ -12,7 +12,7 @@
 // of SavedRegisters::save_registers() (compiler doesn't accept
 // static class variables).
 
-static int *stored_frame_pointer = nullptr;
+static std::size_t *stored_frame_pointer = nullptr;
 static Oop saved_eax;
 static Oop saved_ecx;
 static Oop saved_edx;

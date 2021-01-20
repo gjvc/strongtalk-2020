@@ -16,7 +16,7 @@
 
 
 // Computes the byte offset from the beginning of an Oop
-static inline int byteOffset( int offset ) {
+static inline std::size_t byteOffset( std::size_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }
@@ -68,7 +68,7 @@ ContextOop ContextOopDescriptor::unoptimized_context() {
 }
 
 
-int ContextOopDescriptor::chain_length() const {
+std::size_t ContextOopDescriptor::chain_length() const {
 
     std::size_t size = 1;
     GrowableArray<ContextOop> *path = new GrowableArray<ContextOop>( 10 );
@@ -81,6 +81,7 @@ int ContextOopDescriptor::chain_length() const {
     for ( ContextOop con = ContextOop( this ); con->has_outer_context(); con = con->outer_context() ) {
         size++;
     }
+
     return size;
 }
 
@@ -102,21 +103,21 @@ void ContextOopDescriptor::print_home_on( ConsoleOutputStream *stream ) {
 }
 
 
-int ContextOopDescriptor::parent_word_offset() {
+std::size_t ContextOopDescriptor::parent_word_offset() {
     return 2; // word offset of parent context
 }
 
 
-int ContextOopDescriptor::temp0_word_offset() {
+std::size_t ContextOopDescriptor::temp0_word_offset() {
     return 3; // word offset of first context temp
 }
 
 
-int ContextOopDescriptor::parent_byte_offset() {
+std::size_t ContextOopDescriptor::parent_byte_offset() {
     return byteOffset( parent_word_offset() );
 }
 
 
-int ContextOopDescriptor::temp0_byte_offset() {
+std::size_t ContextOopDescriptor::temp0_byte_offset() {
     return byteOffset( temp0_word_offset() );
 }

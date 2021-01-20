@@ -58,7 +58,7 @@ public:
 
 
     // sizing
-    static int header_size() {
+    static std::size_t header_size() {
         return sizeof( ProcessOopDescriptor ) / oopSize;
     }
 

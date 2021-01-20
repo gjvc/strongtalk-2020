@@ -22,7 +22,7 @@ private:
 
 
 public:
-    static int _numberOfCalls;
+    static std::size_t _numberOfCalls;
 
     //%prim
     // <NoReceiver> primitiveNew: class <Behavior>

@@ -32,9 +32,9 @@ static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const cha
 
 // -----------------------------------------------------------------------------
 
-//static int     segsize{ 32 };    //
+//static std::size_t     segsize{ 32 };    //
 //static std::int32_t offset{ 0 };      //
-//static int     autosync{ 0 };    //
+//static std::size_t     autosync{ 0 };    //
 //static iflag_t prefer{ 0 };      //
 
 

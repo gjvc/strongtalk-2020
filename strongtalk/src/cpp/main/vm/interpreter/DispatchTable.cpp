@@ -162,7 +162,7 @@ void DispatchTable::intercept_for_next( int *fr ) {
 }
 
 
-static int return_codes_size = 12;
+static std::size_t return_codes_size = 12;
 
 static ByteCodes::Code return_codes[] = {
         ByteCodes::Code::return_tos_pop_0, //

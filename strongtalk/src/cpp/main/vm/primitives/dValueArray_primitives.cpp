@@ -14,7 +14,7 @@
 TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )
 
 
-int doubleValueArrayPrimitives::number_of_calls;
+std::size_t doubleValueArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_doubleValueArray(), "receiver must be double value array")
 

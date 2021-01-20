@@ -45,7 +45,7 @@ protected:
     static const int AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
 public:
-    static int                                     currentNo;              // id of next PseudoRegister created
+    static std::size_t                                     currentNo;              // id of next PseudoRegister created
     GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
     InlinedScope *_scope;               // scope to which this belongs
     Location _location;              // real location assigned to this preg
@@ -476,7 +476,7 @@ protected:
     GrowableArray<PseudoRegister *> *_uplevelRead;            // list of PseudoRegisters uplevel-read by block method (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelWritten;        // list of PseudoRegisters uplevel-written by block method (or nullptr)
     GrowableArray<Location *>       *_contextCopies;        // list of context location containing a copy of the receiver (or nullptr)
-    static int                      _numBlocks;
+    static std::size_t                      _numBlocks;
 
 public:
     BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, int beg, int end );
@@ -508,7 +508,7 @@ public:
     }
 
 
-    static int numBlocks() {
+    static std::size_t numBlocks() {
         return _numBlocks;
     }
 

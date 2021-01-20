@@ -319,7 +319,7 @@ void OldGeneration::verify() {
 }
 
 
-static int addr_cmp( OldSpace **s1, OldSpace **s2 ) {
+static std::size_t addr_cmp( OldSpace **s1, OldSpace **s2 ) {
     const char *s1start = (const char *) ( *s1 )->bottom();
     const char *s2start = (const char *) ( *s2 )->bottom();
     if ( s1start < s2start )

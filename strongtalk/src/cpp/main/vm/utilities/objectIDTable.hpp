@@ -16,11 +16,11 @@ private:
     static ObjectArrayOop array();
 
 public:
-    static int insert( Oop obj );
+    static std::size_t insert( Oop obj );
 
     static Oop at( int index );
 
-    static int find_index( Oop obj );
+    static std::size_t find_index( Oop obj );
 
     static bool_t is_index_ok( int index );
 

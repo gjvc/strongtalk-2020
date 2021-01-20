@@ -329,7 +329,7 @@ void Recompilation::recompile_method( Recompilee *r ) {
         if ( recompilee and not recompilee->isZombie() )
             recompilee->makeZombie( true );
 //#ifdef HEAVY_CLEANUP
-        static int count;
+        static std::size_t count;
         if ( count++ > 10 ) {
             count = 0;
             TraceTime           t( "*cleaning inline caches...", PrintRecompilation2 );

@@ -769,7 +769,7 @@ void Compiler::print_code( bool_t suppressTrivial ) {
 }
 
 
-int Compiler::get_invocation_counter_limit() const {
+std::size_t Compiler::get_invocation_counter_limit() const {
     if ( is_uncommon_compile() ) {
         return RecompilationPolicy::uncommonNativeMethodInvocationLimit( version() );
     } else {

@@ -12,12 +12,12 @@
 RegisterAllocator *theAllocator;
 
 
-static int compare_pregBegs( PseudoRegister **a, PseudoRegister **b ) {
+static std::size_t compare_pregBegs( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->begByteCodeIndex() - ( *b )->begByteCodeIndex();
 }
 
 
-static int compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
+static std::size_t compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->endByteCodeIndex() - ( *b )->endByteCodeIndex();
 }
 

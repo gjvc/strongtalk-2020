@@ -23,7 +23,7 @@
 TRACE_FUNC( TraceMixinPrims, "mixin" )
 
 
-int mixinOopPrimitives::number_of_calls;
+std::size_t mixinOopPrimitives::number_of_calls;
 
 
 PRIM_DECL_1( mixinOopPrimitives::number_of_methods, Oop mixin ) {

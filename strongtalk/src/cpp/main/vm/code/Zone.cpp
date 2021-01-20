@@ -60,7 +60,7 @@ int roundSize( int s, int blockSize ) {
 LRUcount *LRUtable;    // for optimized methods
 int      *LRUflag;        // == LRUtable, just different type for convenience
 
-static int LRUtime;        // virtual time; incremented after every full sweep
+static std::size_t LRUtime;        // virtual time; incremented after every full sweep
 
 // We could directly run the sweeper from the interrupt handler, but
 // this is tricky since the stack is in a strange state.
@@ -534,7 +534,7 @@ struct nm_hist_elem {
 };
 
 
-static int compareOop( const void *m1, const void *m2 ) {
+static std::size_t compareOop( const void *m1, const void *m2 ) {
     ResourceMark rm;
     const auto *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
     const auto *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
@@ -542,7 +542,7 @@ static int compareOop( const void *m1, const void *m2 ) {
 }
 
 
-static int compareCount( const void *m1, const void *m2 ) {
+static std::size_t compareCount( const void *m1, const void *m2 ) {
     const auto *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
     const auto *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->count - nativeMethod1->count;

@@ -308,7 +308,7 @@ public:
 
     virtual void unify( NonDummyRecompilationScope *s );
 
-    static int compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ); // for sorting
+    static std::size_t compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ); // for sorting
 
 protected:
     virtual void constructSubScopes( bool_t trusted );

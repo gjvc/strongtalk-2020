@@ -27,7 +27,7 @@ private:
     }
 
 
-    static int       _sweepSeconds;
+    static std::size_t       _sweepSeconds;
     static bool_t    _isRunning;
     static MethodOop _activeMethod;
     static NativeMethod *_activeNativeMethod;

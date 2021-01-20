@@ -12,9 +12,9 @@
 #include "vm/compiler/BasicBlock.hpp"
 
 
-int PseudoRegister::currentNo       = 0;
-int BlockPseudoRegister::_numBlocks = 0;
-static GrowableArray<ConstPseudoRegister *> *constants = 0;
+std::size_t                                 PseudoRegister::currentNo       = 0;
+std::size_t                                 BlockPseudoRegister::_numBlocks = 0;
+static GrowableArray<ConstPseudoRegister *> *constants                      = 0;
 static PseudoRegister                       *dummyPR;
 const int PseudoRegister::AvgBBIndexLen = 10;
 const int PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really

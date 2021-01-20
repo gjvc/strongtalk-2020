@@ -100,11 +100,11 @@ private:
     friend class VirtualSpace;
 
 public:
-    static int committed_size();
+    static std::size_t committed_size();
 
-    static int reserved_size();
+    static std::size_t reserved_size();
 
-    static int uncommitted_size();
+    static std::size_t uncommitted_size();
 
     static void print();
 

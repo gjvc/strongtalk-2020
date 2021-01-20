@@ -145,7 +145,7 @@ private:
     }
 
 
-    static int jump_inst_size() {
+    static std::size_t jump_inst_size() {
         return 1 + sizeof( const char * );
     } // x86 specific
 

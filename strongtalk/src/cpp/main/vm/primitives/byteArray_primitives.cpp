@@ -27,7 +27,7 @@
 TRACE_FUNC( TraceByteArrayPrims, "byteArray" )
 
 
-int byteArrayPrimitives::number_of_calls;
+std::size_t byteArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert( receiver->is_byteArray(), "receiver must be byte array" )
 

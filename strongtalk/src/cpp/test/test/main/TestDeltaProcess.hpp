@@ -22,7 +22,7 @@ typedef int (*fn)( DeltaProcess * );
 class TestDeltaProcess : public DeltaProcess {
 
 private:
-    static int launch_tests( DeltaProcess *process );
+    static std::size_t launch_tests( DeltaProcess *process );
 
 public:
     TestDeltaProcess();
@@ -41,7 +41,7 @@ public:
     }
 
 
-    static int launch_scheduler( DeltaProcess *process );
+    static std::size_t launch_scheduler( DeltaProcess *process );
 };
 
 

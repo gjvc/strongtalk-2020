@@ -43,24 +43,24 @@ private:
 
 
     // returns the header size of a methodOop
-    static int header_size() {
+    static std::size_t header_size() {
         return sizeof( MethodOopDescriptor ) / oopSize;
     }
 
 
 public:
     // offsets for code generation
-    static int selector_or_method_byte_offset() {
+    static std::size_t selector_or_method_byte_offset() {
         return int( &( ( (MethodOopDescriptor *) nullptr )->_selector_or_method ) ) - MEMOOP_TAG;
     }
 
 
-    static int counters_byte_offset() {
+    static std::size_t counters_byte_offset() {
         return int( &( ( (MethodOopDescriptor *) nullptr )->_counters ) ) - MEMOOP_TAG;
     }
 
 
-    static int codes_byte_offset() {
+    static std::size_t codes_byte_offset() {
         return sizeof( MethodOopDescriptor ) - MEMOOP_TAG;
     }
 

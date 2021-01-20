@@ -31,7 +31,7 @@ void DoubleByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 }
 
 
-static int sub_sign( int a, int b ) {
+static std::size_t sub_sign( int a, int b ) {
     if ( a < b )
         return -1;
 

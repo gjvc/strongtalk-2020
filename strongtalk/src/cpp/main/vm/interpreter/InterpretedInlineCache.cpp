@@ -126,7 +126,7 @@ std::uint8_t *InterpretedInlineCache::findStartOfSend( std::uint8_t *sel_addr ) 
 }
 
 
-int InterpretedInlineCache::findStartOfSend( MethodOop m, int byteCodeIndex ) {
+std::size_t InterpretedInlineCache::findStartOfSend( MethodOop m, int byteCodeIndex ) {
     std::uint8_t *p = findStartOfSend( m->codes( byteCodeIndex ) );
     return ( p == nullptr ) ? IllegalByteCodeIndex : p - m->codes() + 1;
 }

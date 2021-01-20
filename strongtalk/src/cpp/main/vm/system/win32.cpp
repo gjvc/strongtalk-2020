@@ -31,7 +31,7 @@ GrowableArray<Thread *> *Thread::threads = nullptr;
 static HANDLE main_process;
 static HANDLE watcher_thread;
 static Thread *main_thread;
-static int    main_thread_id;
+static std::size_t    main_thread_id;
 
 static FILETIME process_creation_time;
 static FILETIME process_exit_time;
@@ -169,7 +169,7 @@ double os::system_time_for( Thread *thread ) {
 }
 
 
-static int           has_performance_count = 0;
+static std::size_t           has_performance_count = 0;
 static LongInteger64 initial_performance_count( 0, 0 );
 static LongInteger64 performance_frequency( 0, 0 );
 
@@ -511,7 +511,7 @@ extern "C" bool_t WizardMode;
 
 void process_settings_file( const char *file_name, bool_t quiet );
 
-static int number_of_ctrl_c = 0;
+static std::size_t number_of_ctrl_c = 0;
 
 
 bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {

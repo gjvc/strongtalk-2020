@@ -147,7 +147,7 @@ void VirtualSpaces::remove( VirtualSpace *sp ) {
 }
 
 
-int VirtualSpaces::committed_size() {
+std::size_t VirtualSpaces::committed_size() {
     int total = 0;
     for ( VirtualSpace *p = head; p; p = p->next )
         total += p->committed_size();
@@ -155,7 +155,7 @@ int VirtualSpaces::committed_size() {
 }
 
 
-int VirtualSpaces::reserved_size() {
+std::size_t VirtualSpaces::reserved_size() {
     int total = 0;
     for ( VirtualSpace *p = head; p; p = p->next )
         total += p->reserved_size();
@@ -163,7 +163,7 @@ int VirtualSpaces::reserved_size() {
 }
 
 
-int VirtualSpaces::uncommitted_size() {
+std::size_t VirtualSpaces::uncommitted_size() {
     int total = 0;
     for ( VirtualSpace *p = head; p; p = p->next )
         total += p->uncommitted_size();
@@ -173,8 +173,9 @@ int VirtualSpaces::uncommitted_size() {
 
 void VirtualSpaces::print() {
     _console->print_cr( "VirtualSpaces:" );
-    for ( VirtualSpace *p = head; p; p = p->next )
+    for ( VirtualSpace *p = head; p; p = p->next ) {
         p->print();
+    }
 }
 
 

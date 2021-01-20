@@ -382,7 +382,7 @@ private:
     static volatile bool_t _interrupt;              //
 
     // The launch function for a new thread
-    static int launch_delta( DeltaProcess *process );
+    static std::size_t launch_delta( DeltaProcess *process );
 
 public:
     // sets the active process (note: public only to support testing)

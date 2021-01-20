@@ -24,7 +24,7 @@
 TRACE_FUNC( TraceOopPrims, "Oop" )
 
 
-int oopPrimitives::number_of_calls;
+std::size_t oopPrimitives::number_of_calls;
 
 //void swapPointers(Oop* p) {
 //  Oop object = *p;

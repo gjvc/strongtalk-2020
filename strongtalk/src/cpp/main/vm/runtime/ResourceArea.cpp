@@ -117,7 +117,7 @@ char *ResourceArea::allocate_bytes( std::size_t size ) {
     // However, in all other situations, calling allocate_bytes with nesting == 0
     // is a definitive memory leak.  -Urs 10/95
 
-//            static int warned = 0;    // to suppress multiple warnings (e.g. when allocating from the debugger)
+//            static std::size_t warned = 0;    // to suppress multiple warnings (e.g. when allocating from the debugger)
 //            if (nesting < 1 and not warned++) error("memory leak: allocating w/o ResourceMark!");
 
     if ( size == 0 ) {

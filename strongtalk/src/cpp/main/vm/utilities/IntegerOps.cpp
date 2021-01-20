@@ -12,7 +12,7 @@
 #include "vm/utilities/double.hpp"
 
 
-static int exponent( double x ) {
+static std::size_t exponent( double x ) {
     // Extracts the un-biased (binary) exponent of x.
     const int n = double_length / logB;
     Digit     d[n];
@@ -42,7 +42,7 @@ void shift_left( Digit d[], int length, int shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit-shifting needed
         std::size_t i = length - 1;
-        int k = shift_count / logB;
+        int         k = shift_count / logB;
         while ( i > k ) {
             d[ i ] = d[ i - k ];
             i--;
@@ -53,15 +53,15 @@ void shift_left( Digit d[], int length, int shift_count ) {
         }
     } else {
         // bit-shifting needed
-        std::size_t i  = length - 1;
-        int k  = shift_count / logB;
-        int h  = shift_count % logB;
-        int l  = logB - h;
+        std::size_t i = length - 1;
+        int         k = shift_count / logB;
+        int         h = shift_count % logB;
+        int         l = logB - h;
         while ( i > k ) {
             d[ i ] = ( d[ i - k ] << h ) | ( d[ i - k - 1 ] >> l );
             i--;
         }
-        d[ i ] = d[ i - k ] << h;
+        d[ i ]        = d[ i - k ] << h;
         i--;
         while ( i > 0 ) {
             d[ i ] = 0;
@@ -81,7 +81,7 @@ void shift_right( Digit d[], int length, int shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit shifting needed
         std::size_t i = 0;
-        int k = shift_count / logB;
+        int         k = shift_count / logB;
         while ( i < length - k ) {
             d[ i ] = d[ i + k ];
             i++;
@@ -93,15 +93,15 @@ void shift_right( Digit d[], int length, int shift_count ) {
 
     } else {
         // bit-shifting needed
-        std::size_t i  = 0;
-        int k  = shift_count / logB;
-        int l  = shift_count % logB;
-        int h  = logB - l;
+        std::size_t i = 0;
+        int         k = shift_count / logB;
+        int         l = shift_count % logB;
+        int         h = logB - l;
         while ( i < length - k - 1 ) {
             d[ i ] = ( d[ i + k + 1 ] << h ) | ( d[ i + k ] >> l );
             i++;
         }
-        d[ i ] = d[ i + k ] >> l;
+        d[ i ]        = d[ i + k ] >> l;
         i++;
         while ( i < length ) {
             d[ i ] = 0;
@@ -258,8 +258,8 @@ void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
-    int xl = x.length();
-    int yl = y.length();
+    int         xl = x.length();
+    int         yl = y.length();
     // initialize z
     std::size_t i  = xl + yl;
     while ( i > 0 ) {
@@ -306,15 +306,15 @@ Digit IntegerOps::scale( Digit *array, Digit factor, int length ) {
 
 
 Digit *IntegerOps::copyDigits( Digit *source, int length, int toCopy ) {
-    Digit *x = new_resource_array<Digit>( length );
-    for ( std::size_t i = toCopy - 1; i >= 0; i-- )
+    Digit             *x = new_resource_array<Digit>( length );
+    for ( std::size_t i  = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
     return x;
 }
 
 
 Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, int length, Digit divisor ) {
-    Digit     c = 0;
+    Digit             c = 0;
     for ( std::size_t i = length - 1; i >= 0; i-- )
         x[ i + 1 ] = xdy( x[ i ], divisor, c );
     x[ 0 ]         = c;
@@ -390,7 +390,7 @@ Digit IntegerOps::qr_scaling_factor( Digit firstDivisorDigit ) {
 
 
 void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, int length ) {
-    Digit     c = 0;
+    Digit             c = 0;
     for ( std::size_t i = length - 1; i >= 0; i-- )
         qr[ i ] = xdy( qr[ i ], scalingFactor, c ); // undo scaling to get remainder
     st_assert( c == 0, "qr scaling broken" );
@@ -470,8 +470,8 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit *qr = qr_decomposition( x, y );
-        std::size_t i = xl;
+        Digit        *qr = qr_decomposition( x, y );
+        std::size_t  i   = xl;
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
@@ -510,14 +510,14 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit *qr = qr_decomposition( x, y );
+        Digit        *qr = qr_decomposition( x, y );
 
         std::size_t i = xl;
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
-        Digit     carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
-        int       digits = i - yl + 1;
+        Digit             carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
+        int               digits = i - yl + 1;
         for ( std::size_t j      = 0; j < digits; j++ )
             z[ j ] = xpy( qr[ yl + j ], 0, carry );
 
@@ -532,7 +532,7 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-int IntegerOps::last_non_zero_index( Digit *z, int lastIndex ) {
+std::size_t IntegerOps::last_non_zero_index( Digit *z, int lastIndex ) {
     std::size_t i = lastIndex;
     while ( i >= 0 and z[ i ] == 0 )
         i--;
@@ -545,22 +545,22 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
     int yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = (y - x)
-        Digit     carry = 0;
-        int       i;
+        Digit             carry = 0;
+        int               i;
         for ( std::size_t i     = 0; i < xl; i++ )
-            z[ i ]  = xmy( y[ i ], x[ i ], carry );
+            z[ i ]          = xmy( y[ i ], x[ i ], carry );
         for ( std::size_t i = xl; i < yl; i++ )
-            z[ i ]  = xmy( y[ i ], 0, carry );
+            z[ i ]          = xmy( y[ i ], 0, carry );
         st_assert( carry == 0, "Remainder too large" );
 
         z.set_length( last_non_zero_index( z.digits(), yl - 1 ) + 1 );
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit *qr = qr_decomposition( x, y );
+        Digit        *qr = qr_decomposition( x, y );
 
         if ( not sd_all_zero( qr, 0, yl ) ) {
-            Digit     carry = 0;
+            Digit             carry = 0;
             for ( std::size_t j     = 0; j < yl; j++ )
                 qr[ j ] = xmy( y[ j ], qr[ j ], carry );
             st_assert( carry == 0, "Remainder too large" );
@@ -585,8 +585,8 @@ void IntegerOps::unsigned_rem( Integer &x, Integer &y, Integer &z ) {
     } else {
         // xl >= yl
         ResourceMark resourceMark;
-        Digit *qr = qr_decomposition( x, y );
-        std::size_t i = yl - 1;
+        Digit        *qr = qr_decomposition( x, y );
+        std::size_t  i   = yl - 1;
         while ( i >= 0 and qr[ i ] == 0 )
             i--;
         // i < 0 or qr[i] not_eq 0
@@ -631,7 +631,7 @@ Digit IntegerOps::last_digit( Integer &x, Digit b ) {
 
 void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
 
-    int xl = x.length();
+    int         xl = x.length();
     std::size_t i  = 0;
     while ( i < xl ) {
         x[ i ] = axpy( base, x[ i ], 0, carry );
@@ -649,7 +649,7 @@ void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
 
 // Implementation of IntegerOps
 
-int IntegerOps::add_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::add_result_size_in_bytes( Integer &x, Integer &y ) {
     int l;
     if ( x.is_negative() == y.is_negative() ) {
         l = unsigned_add_result_length( x, y );
@@ -662,7 +662,7 @@ int IntegerOps::add_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::sub_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::sub_result_size_in_bytes( Integer &x, Integer &y ) {
     int l;
     if ( x.is_negative() not_eq y.is_negative() ) {
         l = unsigned_add_result_length( x, y );
@@ -675,22 +675,22 @@ int IntegerOps::sub_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::mul_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::mul_result_size_in_bytes( Integer &x, Integer &y ) {
     return Integer::length_to_size_in_bytes( unsigned_mul_result_length( x, y ) );
 }
 
 
-int IntegerOps::quo_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::quo_result_size_in_bytes( Integer &x, Integer &y ) {
     return Integer::length_to_size_in_bytes( unsigned_quo_result_length( x, y ) );
 }
 
 
-int IntegerOps::rem_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::rem_result_size_in_bytes( Integer &x, Integer &y ) {
     return Integer::length_to_size_in_bytes( unsigned_rem_result_length( x, y ) );
 }
 
 
-int IntegerOps::div_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::div_result_size_in_bytes( Integer &x, Integer &y ) {
 
     int l;
     if ( x.is_negative() == y.is_negative() ) {
@@ -703,13 +703,13 @@ int IntegerOps::div_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::mod_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::mod_result_size_in_bytes( Integer &x, Integer &y ) {
     int digitLength = unsigned_rem_result_length( x, y );
     return Integer::length_to_size_in_bytes( digitLength );
 }
 
 
-int IntegerOps::and_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::and_result_size_in_bytes( Integer &x, Integer &y ) {
 
     int digitLength;
     if ( x.is_zero() or y.is_zero() ) {
@@ -727,7 +727,7 @@ int IntegerOps::and_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::or_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::or_result_size_in_bytes( Integer &x, Integer &y ) {
 
     int digitLength;
     if ( not x.is_negative() and not y.is_negative() )
@@ -743,7 +743,7 @@ int IntegerOps::or_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::xor_result_size_in_bytes( Integer &x, Integer &y ) {
+std::size_t IntegerOps::xor_result_size_in_bytes( Integer &x, Integer &y ) {
     int digitLength;
     if ( x.is_negative() not_eq y.is_negative() )
         digitLength = max( x.length(), y.length() ) + 1;
@@ -753,7 +753,7 @@ int IntegerOps::xor_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-int IntegerOps::ash_result_size_in_bytes( Integer &x, int n ) {
+std::size_t IntegerOps::ash_result_size_in_bytes( Integer &x, int n ) {
 
     int digitLength;
     if ( x.is_zero() or n == 0 ) {
@@ -773,29 +773,29 @@ int IntegerOps::ash_result_size_in_bytes( Integer &x, int n ) {
 }
 
 
-int IntegerOps::copy_result_size_in_bytes( Integer &x ) {
+std::size_t IntegerOps::copy_result_size_in_bytes( Integer &x ) {
     return x.size_in_bytes();
 }
 
 
-int IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i ) {
+std::size_t IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( std::uint32_t i ) {
     return Integer::length_to_size_in_bytes( i not_eq 0 );
 }
 
 
-int IntegerOps::int_to_Integer_result_size_in_bytes( std::size_t i ) {
+std::size_t IntegerOps::int_to_Integer_result_size_in_bytes( std::size_t i ) {
     return Integer::length_to_size_in_bytes( i not_eq 0 );
 }
 
 
-int IntegerOps::double_to_Integer_result_size_in_bytes( double x ) {
+std::size_t IntegerOps::double_to_Integer_result_size_in_bytes( double x ) {
     if ( x < 0.0 )
         x = -x;
     return Integer::length_to_size_in_bytes( x < 1.0 ? 0 : ( exponent( x ) + logB ) / logB );
 }
 
 
-int IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, int base ) {
+std::size_t IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, int base ) {
     // for now: implement for base 10 only, use simple heuristics
     if ( base == 10 ) {
         std::size_t i = 0;
@@ -808,7 +808,7 @@ int IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, int base 
 }
 
 
-int IntegerOps::Integer_to_string_result_size_in_bytes( Integer &x, int base ) {
+std::size_t IntegerOps::Integer_to_string_result_size_in_bytes( Integer &x, int base ) {
     // for now: implement for base 10 only, use simple heuristics
     if ( base == 10 ) {
         return ( x.length() + 1 ) * 10; // add one for sign & zero
@@ -906,7 +906,7 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
     if ( x.is_zero() or y.is_zero() ) {
         z.set_length( 0 );
     } else if ( x.is_positive() and y.is_positive() ) {
-        int l = min( x.length(), y.length() );
+        int         l = min( x.length(), y.length() );
         std::size_t i = 0;
         while ( i < l ) {
             z[ i ] = x[ i ] & y[ i ];
@@ -1019,9 +1019,9 @@ void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
-    int xl = x.length();
-    int yl = y.length();
-    int l  = min( xl, yl );
+    int         xl = x.length();
+    int         yl = y.length();
+    int         l  = min( xl, yl );
     std::size_t i  = 0;
     if ( not x.is_negative() and not y.is_negative() ) {
         while ( i < l ) {
@@ -1103,8 +1103,8 @@ void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer
 void IntegerOps::ash( Integer &x, int n, Integer &z ) {
     if ( n > 0 ) {
         std::size_t i          = 0;
-        int bitShift   = n % logB;
-        int digitShift = n / logB;
+        int         bitShift   = n % logB;
+        int         digitShift = n / logB;
         while ( i < digitShift ) {
             z[ i ] = 0;
             i++;
@@ -1310,35 +1310,38 @@ void IntegerOps::Integer_to_string( Integer &x, int base, char *s ) {
 }
 
 
-int IntegerOps::hash( Integer &x ) {
-    int       hash = 0;
-    for ( std::size_t i    = x.length() - 1; i >= 0; i-- )
+std::size_t IntegerOps::hash( Integer &x ) {
+    std::size_t hash = 0;
+
+    for ( std::size_t i = x.length() - 1; i >= 0; i-- ) {
         hash ^= x[ i ];
+    }
+
     hash ^= x.signum();
     return hash >> 2;
 }
 
 
-int IntegerOps::unsigned_add_result_length( Integer &x, Integer &y ) {
+std::size_t IntegerOps::unsigned_add_result_length( Integer &x, Integer &y ) {
     return max( x.length(), y.length() ) + 1;
 }
 
 
-int IntegerOps::unsigned_sub_result_length( Integer &x, Integer &y ) {
+std::size_t IntegerOps::unsigned_sub_result_length( Integer &x, Integer &y ) {
     return x.length();
 }
 
 
-int IntegerOps::unsigned_mul_result_length( Integer &x, Integer &y ) {
+std::size_t IntegerOps::unsigned_mul_result_length( Integer &x, Integer &y ) {
     return x.is_zero() or y.is_zero() ? 0 : x.length() + y.length();
 }
 
 
-int IntegerOps::unsigned_quo_result_length( Integer &x, Integer &y ) {
+std::size_t IntegerOps::unsigned_quo_result_length( Integer &x, Integer &y ) {
     return max( x.length() - y.length() + 1, 0 );
 }
 
 
-int IntegerOps::unsigned_rem_result_length( Integer &x, Integer &y ) {
+std::size_t IntegerOps::unsigned_rem_result_length( Integer &x, Integer &y ) {
     return y.length();
 }

@@ -18,7 +18,7 @@ public:
     static bool_t _is_initialized;              // true if Interpreter has been initialized
     static const char *_code_begin_addr;            // the first byte of the interpreter's code
     static const char *_code_end_addr;              // the first byte after the interpreter's code
-    static int        *_invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
+    static std::size_t        *_invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
 
     // entry points
     static const char *_redo_send_entry;    // entry point to redo an interpreted send that called a zombie NativeMethod
@@ -88,18 +88,18 @@ public:
 
     // Loops
     static void loop_counter_overflow();            // this routine gets called when the loop counter overflows
-    static int loop_counter();                      // the number of loop iterations since the last reset
+    static std::size_t loop_counter();                      // the number of loop iterations since the last reset
     static void reset_loop_counter();               // resets the loop counter to 0
-    static int loop_counter_limit();                // the loop counter limit
+    static std::size_t loop_counter_limit();                // the loop counter limit
     static void set_loop_counter_limit( int limit );
 
-    static int *loop_counter_addr();
+    static std::size_t *loop_counter_addr();
 
-    static int *loop_counter_limit_addr();
+    static std::size_t *loop_counter_limit_addr();
 
     // Invocation counters
     static void set_invocation_counter_limit( int new_limit );  // set invocation limit
-    static int get_invocation_counter_limit();            // return invocation limit
+    static std::size_t get_invocation_counter_limit();            // return invocation limit
 
     // entry points accessors
     static const char *access( const char *entry_point );
@@ -145,8 +145,8 @@ public:
     static const char *deoptimized_return_from_dll_call_restore();
 
 
-    static int _interpreter_loop_counter;
-    static int _interpreter_loop_counter_limit;
+    static std::size_t _interpreter_loop_counter;
+    static std::size_t _interpreter_loop_counter_limit;
 
 
     // Initialization

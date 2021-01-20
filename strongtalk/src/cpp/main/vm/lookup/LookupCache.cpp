@@ -17,21 +17,21 @@
 #include "vm/compiler/RecompilationScope.hpp"
 
 
-int LookupCache::number_of_primary_hits;
-int LookupCache::number_of_secondary_hits;
-int LookupCache::number_of_misses;
+std::size_t LookupCache::number_of_primary_hits;
+std::size_t LookupCache::number_of_secondary_hits;
+std::size_t LookupCache::number_of_misses;
 
 static std::array<CacheElement, primary_cache_size>   primary;
 static std::array<CacheElement, secondary_cache_size> secondary;
 
 
-int LookupCache::primary_cache_address() {
-    return int( &primary[ 0 ] );
+address_t LookupCache::primary_cache_address() {
+    return address_t( &primary[ 0 ] );
 }
 
 
-int LookupCache::secondary_cache_address() {
-    return int( &secondary[ 0 ] );
+address_t LookupCache::secondary_cache_address() {
+    return address_t( &secondary[ 0 ] );
 }
 
 

@@ -51,8 +51,8 @@ bool_t     Interpreter::_is_initialized   = false;
 const char *Interpreter::_code_begin_addr = nullptr;
 const char *Interpreter::_code_end_addr   = nullptr;
 
-int Interpreter::_interpreter_loop_counter       = 0;
-int Interpreter::_interpreter_loop_counter_limit = 0;
+std::size_t Interpreter::_interpreter_loop_counter       = 0;
+std::size_t Interpreter::_interpreter_loop_counter_limit = 0;
 
 
 bool_t Interpreter::contains( const char *pc ) {
@@ -125,7 +125,7 @@ void Interpreter::loop_counter_overflow() {
 }
 
 
-int Interpreter::loop_counter() {
+std::size_t Interpreter::loop_counter() {
     return Interpreter::_interpreter_loop_counter;
 }
 
@@ -135,7 +135,7 @@ void Interpreter::reset_loop_counter() {
 }
 
 
-int Interpreter::loop_counter_limit() {
+std::size_t Interpreter::loop_counter_limit() {
     return Interpreter::_interpreter_loop_counter_limit;
 }
 
@@ -230,7 +230,7 @@ DoubleOop Interpreter::oopify_FloatValue() {
 }
 
 
-int *Interpreter::_invocation_counter_addr = nullptr;
+std::size_t *Interpreter::_invocation_counter_addr = nullptr;
 
 
 void Interpreter::set_invocation_counter_limit( int new_limit ) {
@@ -241,18 +241,18 @@ void Interpreter::set_invocation_counter_limit( int new_limit ) {
 }
 
 
-int Interpreter::get_invocation_counter_limit() {
+std::size_t Interpreter::get_invocation_counter_limit() {
     st_assert( _invocation_counter_addr not_eq nullptr, "invocation counter address unknown" );
     return get_unsigned_bitfield( *_invocation_counter_addr, MethodOopDescriptor::_invocation_count_offset, MethodOopDescriptor::_invocation_count_width );
 }
 
 
-static int *loop_counter_addr() {
+static std::size_t *loop_counter_addr() {
     return nullptr;
 }
 
 
-static int *loop_counter_limit_addr();
+static std::size_t *loop_counter_limit_addr();
 
 // entry points accessors
 

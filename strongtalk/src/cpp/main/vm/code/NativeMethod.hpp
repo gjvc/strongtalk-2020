@@ -65,7 +65,7 @@ protected:
     std::uint16_t     _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
     int               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
     int               _uncommonTrapCounter;        // # of times uncommon traps have been executed
-    static int        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
+    static std::size_t        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
     NativeMethodFlags _nativeMethodFlags;          // various flags to keep track of NativeMethod state
 
     // (*) At this address there's 5 bytes of extra Space reserved to accommodate for a call to the zombie handler if the NativeMethod is a zombie.
@@ -484,7 +484,7 @@ private:
     inline void decay_invocation_count( double decay_factor );
 
 public:
-    static int invocationCountOffset() {
+    static std::size_t invocationCountOffset() {
         return (int) &( (NativeMethod *) 0 )->_invocationCount;
     }
 

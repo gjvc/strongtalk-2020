@@ -398,7 +398,7 @@ void InlinedScope::prologue() {
 }
 
 
-static int compare_scopeByteCodeIndexs( InlinedScope **a, InlinedScope **b ) {
+static std::size_t compare_scopeByteCodeIndexs( InlinedScope **a, InlinedScope **b ) {
     // put unused scopes at the end so they can be deleted
     if ( ( *a )->hasBeenGenerated() == ( *b )->hasBeenGenerated() ) {
         return ( *a )->senderByteCodeIndex() - ( *b )->senderByteCodeIndex();

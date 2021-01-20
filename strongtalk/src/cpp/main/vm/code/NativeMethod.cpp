@@ -28,10 +28,10 @@ void NativeMethodFlags::clear() {
 }
 
 
-static int instruction_length;
-static int location_length;
-static int scope_length;
-static int nof_noninlined_blocks;
+static std::size_t instruction_length;
+static std::size_t location_length;
+static std::size_t scope_length;
+static std::size_t nof_noninlined_blocks;
 
 
 NativeMethod *new_nativeMethod( Compiler *c ) {
@@ -238,7 +238,7 @@ void NativeMethod::fix_relocation_at_move( int delta ) {
 }
 
 
-int NativeMethod::_allUncommonTrapCounter = 0;
+std::size_t NativeMethod::_allUncommonTrapCounter = 0;
 
 
 MethodOop NativeMethod::method() const {
@@ -599,7 +599,7 @@ int NativeMethod::estimatedInvocationCount() const {
 }
 
 
-static int cmp_addrs( const void *p1, const void *p2 ) {
+static std::size_t cmp_addrs( const void *p1, const void *p2 ) {
     char **r1 = (char **) p1;
     char **r2 = (char **) p2;
     return *r1 - *r2;
@@ -978,7 +978,7 @@ void NativeMethod::print_inlining_database_on( ConsoleOutputStream *stream ) {
 }
 
 
-static int compare_pcDescs( ProgramCounterDescriptor **a, ProgramCounterDescriptor **b ) {
+static std::size_t compare_pcDescs( ProgramCounterDescriptor **a, ProgramCounterDescriptor **b ) {
     // to sort by ascending scope and ascending byteCodeIndex
     int diff = ( *a )->_scope - ( *b )->_scope;
     return diff ? diff : ( *a )->_byteCodeIndex - ( *b )->_byteCodeIndex;

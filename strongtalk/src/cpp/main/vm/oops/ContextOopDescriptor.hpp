@@ -77,7 +77,7 @@ public:
     }
 
 
-    static int header_size() {
+    static std::size_t header_size() {
         return sizeof( ContextOopDescriptor ) / oopSize;
     }
 
@@ -108,13 +108,13 @@ public:
 
 
     // constants for code generation -- make this an enum
-    static int parent_word_offset();
+    static std::size_t parent_word_offset();
 
-    static int temp0_word_offset();
+    static std::size_t temp0_word_offset();
 
-    static int parent_byte_offset();
+    static std::size_t parent_byte_offset();
 
-    static int temp0_byte_offset();
+    static std::size_t temp0_byte_offset();
 
 
     // Accessors for storing and reading the forward reference
@@ -124,7 +124,7 @@ public:
     ContextOop unoptimized_context();
 
     // Returns the length of the context chain.
-    int chain_length() const;
+    std::size_t chain_length() const;
 
     // Print the contents of home
     void print_home_on( ConsoleOutputStream *stream );

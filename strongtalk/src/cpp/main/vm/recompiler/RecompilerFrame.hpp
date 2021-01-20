@@ -129,13 +129,13 @@ public:
     RecompilerFrame *parent() const;        // rframe containing lexical scope (if any)
     void print() = 0;
 
-    static int computeSends( MethodOop m );
+    static std::size_t computeSends( MethodOop m );
 
-    static int computeSends( NativeMethod *nm );
+    static std::size_t computeSends( NativeMethod *nm );
 
-    static int computeCumulSends( MethodOop m );
+    static std::size_t computeCumulSends( MethodOop m );
 
-    static int computeCumulSends( NativeMethod *nm );
+    static std::size_t computeCumulSends( NativeMethod *nm );
 };
 
 

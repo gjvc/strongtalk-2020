@@ -50,7 +50,7 @@ private:
     std::int16_t _codeSize;              // size of code in bytes
     std::int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
 
-    static int nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
+    static std::size_t nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
 
     int code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c );
 

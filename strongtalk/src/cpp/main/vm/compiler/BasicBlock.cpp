@@ -15,7 +15,7 @@
 #include "vm/compiler/BasicBlock.hpp"
 
 
-int BasicBlock::genCounter = 0;
+std::size_t BasicBlock::genCounter = 0;
 
 
 void BasicBlock::init( Node *first, Node *last, int n ) {
