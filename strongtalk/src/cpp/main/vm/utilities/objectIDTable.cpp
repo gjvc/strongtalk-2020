@@ -17,12 +17,12 @@ ObjectArrayOop objectIDTable::array() {
 }
 
 
-Oop objectIDTable::at( int index ) {
+Oop objectIDTable::at( std::size_t index ) {
     return array()->obj_at( index );
 }
 
 
-bool_t objectIDTable::is_index_ok( int index ) {
+bool_t objectIDTable::is_index_ok( std::size_t index ) {
     return 1 <= index and index <= Universe::objectIDTable()->length();
 }
 

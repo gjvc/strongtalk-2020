@@ -18,11 +18,11 @@ private:
 public:
     static std::size_t insert( Oop obj );
 
-    static Oop at( int index );
+    static Oop at( std::size_t index );
 
     static std::size_t find_index( Oop obj );
 
-    static bool_t is_index_ok( int index );
+    static bool_t is_index_ok( std::size_t index );
 
     static void allocateSize( std::size_t size );
 

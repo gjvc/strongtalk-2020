@@ -33,22 +33,22 @@ typedef std::uint64_t DoubleDigit;
 class Integer : ValueObject {
 
 public:
-    int   _signed_length;
-    Digit _first_digit;
+    ssize_t _signed_length;
+    Digit   _first_digit;
 
-    int length() const;
+    std::size_t length() const;
 
-    void set_length( int l );
+    void set_length( std::size_t l );
 
     Digit *digits() const;
 
     Digit &operator[]( std::size_t i ) const;
 
-    static std::size_t length_to_size_in_bytes( int l );
+    static std::size_t length_to_size_in_bytes( std::size_t l );
 
     std::size_t length_in_bits() const;
 
-    int signum() const;
+    std::size_t signum() const;
     // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
     std::size_t size_in_bytes() const;
@@ -57,7 +57,7 @@ public:
     void print();
 
 
-    int as_int( bool_t &ok ) const;
+    std::size_t as_int( bool_t &ok ) const;
 
     std::uint32_t as_unsigned_int( bool_t &ok ) const;
 

@@ -13,7 +13,7 @@
 // The EventLogEvent log is used for debugging; it is a circular buffer containing the last N events.
 // An EventLogEvent is represented by an identifying string and up to EVENT_PARAMS parameters.
 
-const int EVENT_PARAMS = 3;       // number of params per EventLogEvent
+const std::size_t EVENT_PARAMS = 3;       // number of params per EventLogEvent
 
 // helper macros
 
@@ -42,7 +42,7 @@ struct EventLog : public CHeapAllocatedObject {
     EventLogEvent *_eventBuffer;    // event buffer
     EventLogEvent *_end;            //
     EventLogEvent *_next;           // where the next entry will go
-    int _nestingDepth;               // current nesting depth
+    std::size_t _nestingDepth;               // current nesting depth
 
     EventLog();
 
@@ -105,7 +105,7 @@ struct EventLog : public CHeapAllocatedObject {
     }
 
 
-    void printPartial( int n );
+    void printPartial( std::size_t n );
 };
 
 extern EventLog *eventLog;

@@ -14,10 +14,10 @@
 
 static std::size_t exponent( double x ) {
     // Extracts the un-biased (binary) exponent of x.
-    const int n = double_length / logB;
+    const std::size_t n = double_length / logB;
     Digit     d[n];
     *( (double *) d ) = x;
-    return int( ( d[ n - 1 ] << sign_length ) >> ( logB - exponent_length ) ) - exponent_bias;
+    return std::size_t( ( d[ n - 1 ] << sign_length ) >> ( logB - exponent_length ) ) - exponent_bias;
 }
 
 
@@ -32,7 +32,7 @@ std::size_t length_in_bits( Digit x ) {
 }
 
 
-void shift_left( Digit d[], int length, int shift_count ) {
+void shift_left( Digit d[], std::size_t length, std::size_t shift_count ) {
 
     // Implements d[length] << shift_count (logical bit-wise left shift).
     if ( shift_count <= 0 )
@@ -42,7 +42,7 @@ void shift_left( Digit d[], int length, int shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit-shifting needed
         std::size_t i = length - 1;
-        int         k = shift_count / logB;
+        std::size_t         k = shift_count / logB;
         while ( i > k ) {
             d[ i ] = d[ i - k ];
             i--;
@@ -54,9 +54,9 @@ void shift_left( Digit d[], int length, int shift_count ) {
     } else {
         // bit-shifting needed
         std::size_t i = length - 1;
-        int         k = shift_count / logB;
-        int         h = shift_count % logB;
-        int         l = logB - h;
+        std::size_t         k = shift_count / logB;
+        std::size_t         h = shift_count % logB;
+        std::size_t         l = logB - h;
         while ( i > k ) {
             d[ i ] = ( d[ i - k ] << h ) | ( d[ i - k - 1 ] >> l );
             i--;
@@ -71,7 +71,7 @@ void shift_left( Digit d[], int length, int shift_count ) {
 }
 
 
-void shift_right( Digit d[], int length, int shift_count ) {
+void shift_right( Digit d[], std::size_t length, std::size_t shift_count ) {
 
     // Implements d[length] >> shift_count (logical bit-wise right shift).
     if ( shift_count <= 0 )
@@ -81,7 +81,7 @@ void shift_right( Digit d[], int length, int shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit shifting needed
         std::size_t i = 0;
-        int         k = shift_count / logB;
+        std::size_t         k = shift_count / logB;
         while ( i < length - k ) {
             d[ i ] = d[ i + k ];
             i++;
@@ -94,9 +94,9 @@ void shift_right( Digit d[], int length, int shift_count ) {
     } else {
         // bit-shifting needed
         std::size_t i = 0;
-        int         k = shift_count / logB;
-        int         l = shift_count % logB;
-        int         h = logB - l;
+        std::size_t         k = shift_count / logB;
+        std::size_t         l = shift_count % logB;
+        std::size_t         h = logB - l;
         while ( i < length - k - 1 ) {
             d[ i ] = ( d[ i + k + 1 ] << h ) | ( d[ i + k ] >> l );
             i++;
@@ -179,10 +179,10 @@ Digit IntegerOps::xdy( Digit x, Digit y, Digit &carry ) {
 }
 
 
-Digit IntegerOps::power( Digit x, int n ) {
+Digit IntegerOps::power( Digit x, std::size_t n ) {
     Digit f = x;
     Digit p = 1;
-    int   i = n;
+    std::size_t   i = n;
     while ( i > 0 ) {
         // p * f^i = x^n
         if ( ( i & 1 ) == 1 ) {
@@ -212,10 +212,10 @@ Digit IntegerOps::max_power( Digit x ) {
 // Unsigned operations
 
 void IntegerOps::unsigned_add( Integer &x, Integer &y, Integer &z ) {
-    int   xl = x.length();
-    int   yl = y.length();
-    int   l  = min( xl, yl );
-    int   i  = 0;
+    std::size_t   xl = x.length();
+    std::size_t   yl = y.length();
+    std::size_t   l  = min( xl, yl );
+    std::size_t   i  = 0;
     Digit c  = 0;
     while ( i < l ) {
         z[ i ] = xpy( x[ i ], y[ i ], c );
@@ -238,9 +238,9 @@ void IntegerOps::unsigned_add( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
-    int   xl = x.length();
-    int   yl = y.length();
-    int   i  = 0;
+    std::size_t   xl = x.length();
+    std::size_t   yl = y.length();
+    std::size_t   i  = 0;
     Digit c  = 0;
     while ( i < yl ) {
         z[ i ] = xmy( x[ i ], y[ i ], c );
@@ -258,8 +258,8 @@ void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
-    int         xl = x.length();
-    int         yl = y.length();
+    std::size_t         xl = x.length();
+    std::size_t         yl = y.length();
     // initialize z
     std::size_t i  = xl + yl;
     while ( i > 0 ) {
@@ -268,11 +268,11 @@ void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
     }
     st_assert( i == 0, "i != 0" );
 
-    int k = 0;
+    std::size_t k = 0;
     while ( i < xl ) {
         Digit d = x[ i ];
         if ( d not_eq 0 ) {
-            int j = 0;
+            std::size_t j = 0;
             k = i;
             Digit c = 0;
             while ( j < yl ) {
@@ -291,11 +291,11 @@ void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-Digit IntegerOps::scale( Digit *array, Digit factor, int length ) {
+Digit IntegerOps::scale( Digit *array, Digit factor, std::size_t length ) {
 // scale multiplies an integer representation stored
 // in array by factor and returns the last carry.
 
-    int   i = 0;
+    std::size_t   i = 0;
     Digit c = 0;
     while ( i < length ) {
         array[ i ] = axpy( factor, array[ i ], 0, c );
@@ -305,7 +305,7 @@ Digit IntegerOps::scale( Digit *array, Digit factor, int length ) {
 }
 
 
-Digit *IntegerOps::copyDigits( Digit *source, int length, int toCopy ) {
+Digit *IntegerOps::copyDigits( Digit *source, std::size_t length, std::size_t toCopy ) {
     Digit             *x = new_resource_array<Digit>( length );
     for ( std::size_t i  = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
@@ -313,7 +313,7 @@ Digit *IntegerOps::copyDigits( Digit *source, int length, int toCopy ) {
 }
 
 
-Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, int length, Digit divisor ) {
+Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, std::size_t length, Digit divisor ) {
     Digit             c = 0;
     for ( std::size_t i = length - 1; i >= 0; i-- )
         x[ i + 1 ] = xdy( x[ i ], divisor, c );
@@ -329,10 +329,10 @@ Digit IntegerOps::qr_estimate_digit_quotient( Digit &xhi, Digit xlo, Digit y ) {
 }
 
 
-Digit IntegerOps::qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, int qrStart, int stop ) {
+Digit IntegerOps::qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, std::size_t qrStart, std::size_t stop ) {
     Digit c = 0;
-    int   j = qrStart;
-    int   k = 0;
+    std::size_t   j = qrStart;
+    std::size_t   k = 0;
     Digit b = 0;
     while ( k < stop ) {
         qr[ j ]   = xmy( qr[ j ], 0, b );
@@ -349,9 +349,9 @@ Digit IntegerOps::qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, in
 }
 
 
-Digit IntegerOps::qr_adjust_for_underflow( Digit *qr, Digit *divisor, Digit q, int qrStart, int stop ) {
-    int   j = qrStart;
-    int   k = 0;
+Digit IntegerOps::qr_adjust_for_underflow( Digit *qr, Digit *divisor, Digit q, std::size_t qrStart, std::size_t stop ) {
+    std::size_t   j = qrStart;
+    std::size_t   k = 0;
     Digit c = 0;
     while ( k < stop ) {
         qr[ j ] = xpy( qr[ j ], divisor[ k ], c );
@@ -389,7 +389,7 @@ Digit IntegerOps::qr_scaling_factor( Digit firstDivisorDigit ) {
 }
 
 
-void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, int length ) {
+void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::size_t length ) {
     Digit             c = 0;
     for ( std::size_t i = length - 1; i >= 0; i-- )
         qr[ i ] = xdy( qr[ i ], scalingFactor, c ); // undo scaling to get remainder
@@ -411,8 +411,8 @@ Digit *IntegerOps::qr_decomposition( Integer &dividend, Integer &y0 ) {
     // length of quotient : ql = xl - yl + 1 (xl >= yl => ql >= 1)
     // length of remainder: rl = yl          (yl >   0 => rl >= 1)
 
-    int dividendLength = dividend.length();
-    int divisorLength  = y0.length();
+    std::size_t dividendLength = dividend.length();
+    std::size_t divisorLength  = y0.length();
     if ( dividendLength < divisorLength ) st_fatal( "division not needed" );
     if ( divisorLength == 0 ) st_fatal( "division by zero" );
 
@@ -438,7 +438,7 @@ Digit *IntegerOps::qr_decomposition( Integer &dividend, Integer &y0 ) {
 
     Digit y1 = y[ divisorLength - 1 ];
     Digit y2 = y[ divisorLength - 2 ];
-    int   i  = dividendLength;
+    std::size_t   i  = dividendLength;
     while ( i >= divisorLength ) {
         Digit xi = x[ i ]; //x[i] gets overwritten by remainder so save it for later
         Digit q  = qr_estimate_digit_quotient( x[ i ], x[ i - 1 ], y1 ); // estimate q = rem/y
@@ -462,8 +462,8 @@ Digit *IntegerOps::qr_decomposition( Integer &dividend, Integer &y0 ) {
 
 
 void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
-    int xl = x.length();
-    int yl = y.length();
+    std::size_t xl = x.length();
+    std::size_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = 0
         z.set_length( 0 );
@@ -484,7 +484,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-bool_t IntegerOps::sd_all_zero( Digit *digits, int start, int stop ) {
+bool_t IntegerOps::sd_all_zero( Digit *digits, std::size_t start, std::size_t stop ) {
     for ( std::size_t i = start; i < stop; i++ )
         if ( digits[ i ] )
             return false;
@@ -493,9 +493,9 @@ bool_t IntegerOps::sd_all_zero( Digit *digits, int start, int stop ) {
 
 
 void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
-    int    xl   = x.length();
+    std::size_t    xl   = x.length();
     bool_t xneg = x.is_negative();
-    int    yl   = y.length();
+    std::size_t    yl   = y.length();
     bool_t yneg = y.is_negative();
 
     if ( xl < yl ) {
@@ -517,7 +517,7 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
             i--;
         // i < yl or qr[i] not_eq 0
         Digit             carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
-        int               digits = i - yl + 1;
+        std::size_t               digits = i - yl + 1;
         for ( std::size_t j      = 0; j < digits; j++ )
             z[ j ] = xpy( qr[ yl + j ], 0, carry );
 
@@ -532,7 +532,7 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-std::size_t IntegerOps::last_non_zero_index( Digit *z, int lastIndex ) {
+std::size_t IntegerOps::last_non_zero_index( Digit *z, std::size_t lastIndex ) {
     std::size_t i = lastIndex;
     while ( i >= 0 and z[ i ] == 0 )
         i--;
@@ -541,12 +541,12 @@ std::size_t IntegerOps::last_non_zero_index( Digit *z, int lastIndex ) {
 
 
 void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
-    int xl = x.length();
-    int yl = y.length();
+    std::size_t xl = x.length();
+    std::size_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = (y - x)
         Digit             carry = 0;
-        int               i;
+        std::size_t               i;
         for ( std::size_t i     = 0; i < xl; i++ )
             z[ i ]          = xmy( y[ i ], x[ i ], carry );
         for ( std::size_t i = xl; i < yl; i++ )
@@ -577,8 +577,8 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_rem( Integer &x, Integer &y, Integer &z ) {
-    int xl = x.length();
-    int yl = y.length();
+    std::size_t xl = x.length();
+    std::size_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = x
         copy( x, z );
@@ -599,9 +599,9 @@ void IntegerOps::unsigned_rem( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-int IntegerOps::unsigned_cmp( Integer &x, Integer &y ) {
-    int xl = x.length();
-    int yl = y.length();
+std::size_t IntegerOps::unsigned_cmp( Integer &x, Integer &y ) {
+    std::size_t xl = x.length();
+    std::size_t yl = y.length();
     if ( xl == yl and xl > 0 ) {
         std::size_t i = xl - 1;
         while ( i > 0 and x[ i ] == y[ i ] )
@@ -616,8 +616,8 @@ int IntegerOps::unsigned_cmp( Integer &x, Integer &y ) {
 
 
 Digit IntegerOps::last_digit( Integer &x, Digit b ) {
-    int   xl = x.length();
-    int   i  = xl;
+    std::size_t   xl = x.length();
+    std::size_t   i  = xl;
     Digit c  = 0;
     while ( i > 0 ) {
         i--;
@@ -631,7 +631,7 @@ Digit IntegerOps::last_digit( Integer &x, Digit b ) {
 
 void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
 
-    int         xl = x.length();
+    std::size_t         xl = x.length();
     std::size_t i  = 0;
     while ( i < xl ) {
         x[ i ] = axpy( base, x[ i ], 0, carry );
@@ -650,7 +650,7 @@ void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
 // Implementation of IntegerOps
 
 std::size_t IntegerOps::add_result_size_in_bytes( Integer &x, Integer &y ) {
-    int l;
+    std::size_t l;
     if ( x.is_negative() == y.is_negative() ) {
         l = unsigned_add_result_length( x, y );
     } else if ( unsigned_cmp( x, y ) < 0 ) {
@@ -663,7 +663,7 @@ std::size_t IntegerOps::add_result_size_in_bytes( Integer &x, Integer &y ) {
 
 
 std::size_t IntegerOps::sub_result_size_in_bytes( Integer &x, Integer &y ) {
-    int l;
+    std::size_t l;
     if ( x.is_negative() not_eq y.is_negative() ) {
         l = unsigned_add_result_length( x, y );
     } else if ( unsigned_cmp( x, y ) < 0 ) {
@@ -692,7 +692,7 @@ std::size_t IntegerOps::rem_result_size_in_bytes( Integer &x, Integer &y ) {
 
 std::size_t IntegerOps::div_result_size_in_bytes( Integer &x, Integer &y ) {
 
-    int l;
+    std::size_t l;
     if ( x.is_negative() == y.is_negative() ) {
         l = unsigned_quo_result_length( x, y );
     } else {
@@ -704,14 +704,14 @@ std::size_t IntegerOps::div_result_size_in_bytes( Integer &x, Integer &y ) {
 
 
 std::size_t IntegerOps::mod_result_size_in_bytes( Integer &x, Integer &y ) {
-    int digitLength = unsigned_rem_result_length( x, y );
+    std::size_t digitLength = unsigned_rem_result_length( x, y );
     return Integer::length_to_size_in_bytes( digitLength );
 }
 
 
 std::size_t IntegerOps::and_result_size_in_bytes( Integer &x, Integer &y ) {
 
-    int digitLength;
+    std::size_t digitLength;
     if ( x.is_zero() or y.is_zero() ) {
         digitLength = 0;
     } else if ( x.is_positive() and y.is_positive() ) {
@@ -729,7 +729,7 @@ std::size_t IntegerOps::and_result_size_in_bytes( Integer &x, Integer &y ) {
 
 std::size_t IntegerOps::or_result_size_in_bytes( Integer &x, Integer &y ) {
 
-    int digitLength;
+    std::size_t digitLength;
     if ( not x.is_negative() and not y.is_negative() )
         digitLength = max( x.length(), y.length() );
     else if ( y.is_positive() )
@@ -744,7 +744,7 @@ std::size_t IntegerOps::or_result_size_in_bytes( Integer &x, Integer &y ) {
 
 
 std::size_t IntegerOps::xor_result_size_in_bytes( Integer &x, Integer &y ) {
-    int digitLength;
+    std::size_t digitLength;
     if ( x.is_negative() not_eq y.is_negative() )
         digitLength = max( x.length(), y.length() ) + 1;
     else
@@ -753,18 +753,18 @@ std::size_t IntegerOps::xor_result_size_in_bytes( Integer &x, Integer &y ) {
 }
 
 
-std::size_t IntegerOps::ash_result_size_in_bytes( Integer &x, int n ) {
+std::size_t IntegerOps::ash_result_size_in_bytes( Integer &x, std::size_t n ) {
 
-    int digitLength;
+    std::size_t digitLength;
     if ( x.is_zero() or n == 0 ) {
         digitLength = x.length();
     } else if ( n > 0 ) {
-        int    rem      = n % logB;
+        std::size_t    rem      = n % logB;
         Digit  mask     = nthMask( logB - rem ) ^oneB;
         bool_t overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
         digitLength = x.length() + ( n / logB ) + overflow;
     } else {
-        int   rem  = ( -n ) % logB;
+        std::size_t   rem  = ( -n ) % logB;
         Digit mask = nthMask( rem ) ^oneB;
         digitLength = max( x.length() + ( n / logB ), 1 );
     }
@@ -795,7 +795,7 @@ std::size_t IntegerOps::double_to_Integer_result_size_in_bytes( double x ) {
 }
 
 
-std::size_t IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, int base ) {
+std::size_t IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, std::size_t base ) {
     // for now: implement for base 10 only, use simple heuristics
     if ( base == 10 ) {
         std::size_t i = 0;
@@ -808,7 +808,7 @@ std::size_t IntegerOps::string_to_Integer_result_size_in_bytes( const char *s, i
 }
 
 
-std::size_t IntegerOps::Integer_to_string_result_size_in_bytes( Integer &x, int base ) {
+std::size_t IntegerOps::Integer_to_string_result_size_in_bytes( Integer &x, std::size_t base ) {
     // for now: implement for base 10 only, use simple heuristics
     if ( base == 10 ) {
         return ( x.length() + 1 ) * 10; // add one for sign & zero
@@ -906,7 +906,7 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
     if ( x.is_zero() or y.is_zero() ) {
         z.set_length( 0 );
     } else if ( x.is_positive() and y.is_positive() ) {
-        int         l = min( x.length(), y.length() );
+        std::size_t         l = min( x.length(), y.length() );
         std::size_t i = 0;
         while ( i < l ) {
             z[ i ] = x[ i ] & y[ i ];
@@ -924,12 +924,12 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::and_both_negative( Integer &x, Integer &y, Integer &z ) {
-    int digitLength = max( x.length(), y.length() );
+    std::size_t digitLength = max( x.length(), y.length() );
 
     Digit xcarry = 1;
     Digit ycarry = 1;
     Digit zcarry = 1;
-    int   i      = 0;
+    std::size_t   i      = 0;
 
     while ( i < min( x.length(), y.length() ) ) {
         z[ i ] = xpy( ( xpy( x[ i ] ^ 0xffffffff, 0, xcarry ) & xpy( y[ i ] ^ 0xffffffff, 0, ycarry ) ) ^ 0xffffffff, 0, zcarry );
@@ -948,10 +948,10 @@ void IntegerOps::and_both_negative( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::and_one_positive( Integer &positive, Integer &negative, Integer &z ) {
-    int digitLength = positive.length();
+    std::size_t digitLength = positive.length();
 
     Digit carry = 1;
-    int   i     = 0;
+    std::size_t   i     = 0;
     while ( i < min( positive.length(), negative.length() ) ) { // digits in both
         z[ i ] = positive[ i ] & xpy( ( negative[ i ] ^ oneB ), 0, carry );
         i++;
@@ -965,13 +965,13 @@ void IntegerOps::and_one_positive( Integer &positive, Integer &negative, Integer
 
 
 void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
-    int   xl     = x.length();
-    int   yl     = y.length();
-    int   l      = min( xl, yl );
+    std::size_t   xl     = x.length();
+    std::size_t   yl     = y.length();
+    std::size_t   l      = min( xl, yl );
     Digit xcarry = 1;
     Digit ycarry = 1;
     Digit zcarry = 1;
-    int   i      = 0;
+    std::size_t   i      = 0;
     if ( not x.is_negative() and not y.is_negative() ) {
         while ( i < l ) {
             z[ i ] = x[ i ] | y[ i ];
@@ -1019,9 +1019,9 @@ void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
-    int         xl = x.length();
-    int         yl = y.length();
-    int         l  = min( xl, yl );
+    std::size_t         xl = x.length();
+    std::size_t         yl = y.length();
+    std::size_t         l  = min( xl, yl );
     std::size_t i  = 0;
     if ( not x.is_negative() and not y.is_negative() ) {
         while ( i < l ) {
@@ -1070,10 +1070,10 @@ void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer &z ) {
-    int   pl     = positive.length();
-    int   nl     = negative.length();
-    int   l      = min( pl, nl );
-    int   i      = 0;
+    std::size_t   pl     = positive.length();
+    std::size_t   nl     = negative.length();
+    std::size_t   l      = min( pl, nl );
+    std::size_t   i      = 0;
     Digit ncarry = 1;
     Digit zcarry = 1;
 
@@ -1100,11 +1100,11 @@ void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer
 }
 
 
-void IntegerOps::ash( Integer &x, int n, Integer &z ) {
+void IntegerOps::ash( Integer &x, std::size_t n, Integer &z ) {
     if ( n > 0 ) {
         std::size_t i          = 0;
-        int         bitShift   = n % logB;
-        int         digitShift = n / logB;
+        std::size_t         bitShift   = n % logB;
+        std::size_t         digitShift = n / logB;
         while ( i < digitShift ) {
             z[ i ] = 0;
             i++;
@@ -1123,9 +1123,9 @@ void IntegerOps::ash( Integer &x, int n, Integer &z ) {
         if ( x.is_negative() )
             neg( z );
     } else {
-        int   digitShift = -n / logB;
-        int   bitShift   = -n % logB;
-        int   i          = x.length() - digitShift;
+        std::size_t   digitShift = -n / logB;
+        std::size_t   bitShift   = -n % logB;
+        std::size_t   i          = x.length() - digitShift;
         Digit carry      = 0;
         while ( i > 0 ) {
             i--;
@@ -1146,7 +1146,7 @@ void IntegerOps::ash( Integer &x, int n, Integer &z ) {
 }
 
 
-int IntegerOps::cmp( Integer &x, Integer &y ) {
+std::size_t IntegerOps::cmp( Integer &x, Integer &y ) {
     if ( x.is_negative() == y.is_negative() ) {
         return x.is_negative() ? unsigned_cmp( y, x ) : unsigned_cmp( x, y );
     } else {
@@ -1221,9 +1221,9 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     // get an n-Digit integer d[n] built from x. n needs to be big enough
     // so that we don't loose bits after shifting (note that the mantissa
     // consists of one (implicit) extra bit which is always 1).
-    const int n = ( mantissa_length + 1 ) / logB + 2;
+    const std::size_t n = ( mantissa_length + 1 ) / logB + 2;
     Digit     d[n];
-    int       i = 0;
+    std::size_t       i = 0;
     while ( i < n ) {
         d[ i ] = 0;
         i++;
@@ -1231,11 +1231,11 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     *( (double *) &d[ n - ( double_length / logB ) ] ) = x;
 
     // compute length l of integer
-    int length_in_bits = exponent( x ) + 1;
-    int l              = ( length_in_bits + logB - 1 ) / logB;
+    std::size_t length_in_bits = exponent( x ) + 1;
+    std::size_t l              = ( length_in_bits + logB - 1 ) / logB;
 
     // shift sign & exponent out but keep Space for implicit 1 bit
-    const int left_shift_count = sign_length + exponent_length - 1;
+    const std::size_t left_shift_count = sign_length + exponent_length - 1;
     shift_left( d, n, left_shift_count );
 
     // add implicit 1 bit
@@ -1243,7 +1243,7 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     d[ n - 1 ] |= mask;
 
     // shift right to the right
-    const int right_shift_count = logB - length_in_bits % logB;
+    const std::size_t right_shift_count = logB - length_in_bits % logB;
     shift_right( d, n, right_shift_count );
 
     // copy most significant digits into z & fill with zeros
@@ -1264,7 +1264,7 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
 }
 
 
-void IntegerOps::string_to_Integer( const char *s, int base, Integer &z ) {
+void IntegerOps::string_to_Integer( const char *s, std::size_t base, Integer &z ) {
     int_to_Integer( 0, z );
     std::size_t i = s[ 0 ] == '-';
     while ( s[ i ] != '\x00' ) {
@@ -1276,7 +1276,7 @@ void IntegerOps::string_to_Integer( const char *s, int base, Integer &z ) {
 }
 
 
-void IntegerOps::Integer_to_string( Integer &x, int base, char *s ) {
+void IntegerOps::Integer_to_string( Integer &x, std::size_t base, char *s ) {
 
     st_assert( 2 <= base and base <= maxD, "illegal base" );
     Integer t;
@@ -1297,7 +1297,7 @@ void IntegerOps::Integer_to_string( Integer &x, int base, char *s ) {
 
     s[ i ] = '\0';
     // reverse string
-    int j = i - 1;
+    std::size_t j = i - 1;
     i = 0;
     while ( i < j ) {
         char c = s[ i ];

@@ -11,11 +11,11 @@
 
 // -----------------------------------------------------------------------------
 
-constexpr int   maxD           = 36;                    //
-constexpr int   logB           = sizeof( Digit ) * 8;   //
+constexpr std::size_t   maxD           = 36;                    //
+constexpr std::size_t   logB           = sizeof( Digit ) * 8;   //
 constexpr Digit hlfB           = 0x80000000;            //
 constexpr Digit oneB           = 0xFFFFFFFF;            //
-constexpr int   digitBitLength = sizeof( Digit ) * 8;   //
+constexpr std::size_t   digitBitLength = sizeof( Digit ) * 8;   //
 
 
 // -----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public:
 
     static Digit xdy( Digit x, Digit y, Digit &carry );
 
-    static Digit power( Digit x, int n );       // returns x^n
+    static Digit power( Digit x, std::size_t n );       // returns x^n
     static Digit max_power( Digit x );          // returns the largest y with x^y <= B
 
     static std::size_t unsigned_add_result_length( Integer &x, Integer &y );
@@ -64,35 +64,35 @@ public:
 
     static void unsigned_rem( Integer &x, Integer &y, Integer &z );
 
-    static int unsigned_cmp( Integer &x, Integer &y );
+    static std::size_t unsigned_cmp( Integer &x, Integer &y );
 
     static void signed_div( Integer &x, Integer &y, Integer &z );
 
     static void signed_mod( Integer &x, Integer &y, Integer &z );
 
-    static std::size_t last_non_zero_index( Digit *z, int lastIndex );
+    static std::size_t last_non_zero_index( Digit *z, std::size_t lastIndex );
 
-    static Digit scale( Digit *array, Digit factor, int length );
+    static Digit scale( Digit *array, Digit factor, std::size_t length );
 
-    static bool_t sd_all_zero( Digit *digits, int start, int stop );
+    static bool_t sd_all_zero( Digit *digits, std::size_t start, std::size_t stop );
 
-    static Digit *copyDigits( Digit *source, int length, int toCopy );
+    static Digit *copyDigits( Digit *source, std::size_t length, std::size_t toCopy );
 
     static Digit *qr_decomposition( Integer &x, Integer &y );
 
     static Digit qr_estimate_digit_quotient( Digit &xhi, Digit xlo, Digit y );
 
-    static Digit *qr_decomposition_single_digit( Digit *qr, int length, Digit divisor );
+    static Digit *qr_decomposition_single_digit( Digit *qr, std::size_t length, Digit divisor );
 
-    static Digit qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, int qrStart, int stop );
+    static Digit qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, std::size_t qrStart, std::size_t stop );
 
-    static Digit qr_adjust_for_underflow( Digit *qr, Digit *divisor, Digit q, int qrStart, int stop );
+    static Digit qr_adjust_for_underflow( Digit *qr, Digit *divisor, Digit q, std::size_t qrStart, std::size_t stop );
 
     static Digit qr_adjust_for_over_estimate( Digit y1, Digit y2, Digit q, Digit xi, Digit xi2 );
 
     static Digit qr_scaling_factor( Digit firstDivisorDigit );
 
-    static void qr_unscale_remainder( Digit *qr, Digit scalingFactor, int length );
+    static void qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::size_t length );
 
     static Digit last_digit( Integer &x, Digit b );            // divides x by b and returns x mod b
     static void first_digit( Integer &x, Digit base, Digit carry );        // multiplies x by b and adds c
@@ -119,7 +119,7 @@ public:
 
     static std::size_t xor_result_size_in_bytes( Integer &x, Integer &y );
 
-    static std::size_t ash_result_size_in_bytes( Integer &x, int n );
+    static std::size_t ash_result_size_in_bytes( Integer &x, std::size_t n );
 
     static void and_both_negative( Integer &x, Integer &y, Integer &z );
 
@@ -135,9 +135,9 @@ public:
 
     static std::size_t double_to_Integer_result_size_in_bytes( double x );
 
-    static std::size_t string_to_Integer_result_size_in_bytes( const char *s, int base );
+    static std::size_t string_to_Integer_result_size_in_bytes( const char *s, std::size_t base );
 
-    static std::size_t Integer_to_string_result_size_in_bytes( Integer &x, int base );
+    static std::size_t Integer_to_string_result_size_in_bytes( Integer &x, std::size_t base );
 
     // arithmetic/binary operations & tests
     static void add( Integer &x, Integer &y, Integer &z );    // z := x + y
@@ -151,9 +151,9 @@ public:
     static void And( Integer &x, Integer &y, Integer &z );   // z := x and y, bitwise, assuming 2's complement representation
     static void Or( Integer &x, Integer &y, Integer &z );    // z := x or  y, bitwise, assuming 2's complement representation
     static void Xor( Integer &x, Integer &y, Integer &z );   // z := x xor y, bitwise, assuming 2's complement representation
-    static void ash( Integer &x, int n, Integer &z );         // z := x * 2^n
+    static void ash( Integer &x, std::size_t n, Integer &z );         // z := x * 2^n
 
-    static int cmp( Integer &x, Integer &y );    // returns < 0 for x < y; 0 for x = y; > 0 for x > y
+    static std::size_t cmp( Integer &x, Integer &y );    // returns < 0 for x < y; 0 for x = y; > 0 for x > y
 
     static void abs( Integer &x );                // x := |x|
     static void neg( Integer &x );                // x := -x
@@ -168,13 +168,13 @@ public:
 
     static void double_to_Integer( double x, Integer &z );
 
-    static void string_to_Integer( const char *s, int base, Integer &z );
+    static void string_to_Integer( const char *s, std::size_t base, Integer &z );
 
-    static void Integer_to_string( Integer &x, int base, char *s );
+    static void Integer_to_string( Integer &x, std::size_t base, char *s );
 };
 
 std::size_t length_in_bits( Digit x );
 
-void shift_left( Digit d[], int length, int shift_count );
+void shift_left( Digit d[], std::size_t length, std::size_t shift_count );
 
-void shift_right( Digit d[], int length, int shift_count );
+void shift_right( Digit d[], std::size_t length, std::size_t shift_count );

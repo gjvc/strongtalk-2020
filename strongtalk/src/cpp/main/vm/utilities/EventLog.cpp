@@ -48,7 +48,7 @@ void EventLog::resize() {
 }
 
 
-void EventLog::printPartial( int n ) {
+void EventLog::printPartial( std::size_t n ) {
     EventLogEvent *e = _next;
     // find starting point
     if ( n >= EventLogLength )
@@ -59,7 +59,7 @@ void EventLog::printPartial( int n ) {
     // skip empty entries
     for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) );
 
-    int indent = 0;
+    std::size_t indent = 0;
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
         const char *s;
         switch ( e->_status ) {

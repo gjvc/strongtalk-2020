@@ -11,7 +11,7 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-int Integer::length() const {
+std::size_t Integer::length() const {
     return abs( _signed_length );
 }
 
@@ -28,19 +28,19 @@ std::size_t Integer::length_in_bits() const {
 }
 
 
-int Integer::as_int( bool_t &ok ) const {
+std::size_t Integer::as_int( bool_t &ok ) const {
 
     ok = true;
     switch ( _signed_length ) {
         case -1:
-            if ( -int( _first_digit ) < 0 )
-                return -int( _first_digit );
+            if ( -std::size_t( _first_digit ) < 0 )
+                return -std::size_t( _first_digit );
             break;
         case 0:
             return 0;
         case 1:
-            if ( int( _first_digit ) > 0 )
-                return int( _first_digit );
+            if ( std::size_t( _first_digit ) > 0 )
+                return std::size_t( _first_digit );
             break;
     }
     ok = false;
@@ -72,25 +72,25 @@ double Integer::as_double( bool_t &ok ) const {
     // get an n-Digit integer d[n] built from the n most significant digits of self
     // n needs to be big enough so that we have enough bits for the mantissa (note
     // that the mantissa consists of one (implicit) extra bit which is always 1).
-    const int n = ( mantissa_length + 1 ) / logB + 2;
+    const std::size_t n = ( mantissa_length + 1 ) / logB + 2;
     Digit     d[n];
-    int       l = length();
-    int       i = 1;
+    std::size_t       l = length();
+    std::size_t       i = 1;
     while ( i <= n ) {
         d[ n - i ] = l - i >= 0 ? operator[]( l - i ) : 0;
         i++;
     }
 
     // shift d[n] to the left so that the most significant bit of d is shifted out
-    int left_shift_count = logB - ::length_in_bits( d[ n - 1 ] ) + 1;
+    std::size_t left_shift_count = logB - ::length_in_bits( d[ n - 1 ] ) + 1;
     shift_left( d, n, left_shift_count );
 
     // shift d[n] to the right so it builds the mantissa of a double
-    const int right_shift_count = sign_length + exponent_length;
+    const std::size_t right_shift_count = sign_length + exponent_length;
     shift_right( d, n, right_shift_count );
 
     // add exponent to d
-    int exponent = exponent_bias + length_in_bits() - 1;
+    std::size_t exponent = exponent_bias + length_in_bits() - 1;
     if ( exponent > max_exponent ) {
         // integer too large => doesn't fit into double representation
         ok = false;
@@ -112,13 +112,13 @@ SMIOop Integer::as_smi( bool_t &ok ) const {
     switch ( _signed_length ) {
         case -1:
             if ( _first_digit <= -smi_min )
-                return smiOopFromValue( -int( _first_digit ) );
+                return smiOopFromValue( -std::size_t( _first_digit ) );
             break;
         case 0:
             return smiOopFromValue( 0 );
         case 1:
             if ( _first_digit <= smi_max )
-                return smiOopFromValue( int( _first_digit ) );
+                return smiOopFromValue( std::size_t( _first_digit ) );
             break;
     }
     ok = false;
@@ -137,7 +137,7 @@ void Integer::print() {
 }
 
 
-void Integer::set_length( int l ) {
+void Integer::set_length( std::size_t l ) {
     _signed_length = l;
 }
 
@@ -152,12 +152,12 @@ Digit *Integer::digits() const {
 }
 
 
-std::size_t Integer::length_to_size_in_bytes( int l ) {
-    return sizeof( int ) + l * sizeof( Digit );
+std::size_t Integer::length_to_size_in_bytes( std::size_t l ) {
+    return sizeof( std::size_t ) + l * sizeof( Digit );
 }
 
 
-int Integer::signum() const {
+std::size_t Integer::signum() const {
     return _signed_length;
 }
 

@@ -19,19 +19,19 @@ typedef bool_t (*growableArrayFindFn)( void *token, void *elem );
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    int                 _length;                    // current length
-    int                 _maxLength;                 // maximum length
+    std::size_t                 _length;                    // current length
+    std::size_t                 _maxLength;                 // maximum length
     void                **_data;                    // data array
     bool_t              _allocatedOnSystemHeap;     // is data allocated on C heap?
     std::vector<void *> _vector;                    //
 
-    void grow( int j );     // grow data array (double length until j is a valid index)
+    void grow( std::size_t j );     // grow data array (double length until j is a valid index)
 
     bool_t raw_contains( const void *p ) const;
 
-    int raw_find( const void *p ) const;
+    std::size_t raw_find( const void *p ) const;
 
-    int raw_find( void *token, growableArrayFindFn f ) const;
+    std::size_t raw_find( void *token, growableArrayFindFn f ) const;
 
     void raw_remove( const void *p );
 
@@ -45,18 +45,18 @@ protected:
 
     GenericGrowableArray *raw_copy() const;
 
-    void raw_sort( int f( const void *, const void * ) );
+    void raw_sort( std::size_t f( const void *, const void * ) );
 
-    GenericGrowableArray( int initial_size, bool_t on_C_heap = false );
+    GenericGrowableArray( std::size_t initial_size, bool_t on_C_heap = false );
 
-    GenericGrowableArray( int initial_size, int initial_len, void *filler, bool_t on_C_heap = false );
+    GenericGrowableArray( std::size_t initial_size, std::size_t initial_len, void *filler, bool_t on_C_heap = false );
 
 public:
     void clear();
 
-    int length() const;
+    std::size_t length() const;
 
-    int capacity() const;
+    std::size_t capacity() const;
 
     bool_t isEmpty() const;
 
@@ -75,12 +75,12 @@ template<typename T>
 class GrowableArray : public GenericGrowableArray {
 
 public:
-    GrowableArray( int initial_size, bool_t on_C_heap = false ) :
+    GrowableArray( std::size_t initial_size, bool_t on_C_heap = false ) :
             GenericGrowableArray( initial_size, on_C_heap ) {
     }
 
 
-    GrowableArray( int initial_size, int initial_len, T filler, bool_t on_C_heap = false ) :
+    GrowableArray( std::size_t initial_size, std::size_t initial_len, T filler, bool_t on_C_heap = false ) :
             GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
     }
 
@@ -160,12 +160,12 @@ public:
     }
 
 
-    int find( const T elem ) const {
+    std::size_t find( const T elem ) const {
         return raw_find( (const void *) elem );
     }
 
 
-    int find( void *token, bool_t f( void *, T ) ) const {
+    std::size_t find( void *token, bool_t f( void *, T ) ) const {
         return raw_find( token, (growableArrayFindFn) f );
     }
 
@@ -190,7 +190,7 @@ public:
     }
 
 
-    void sort( int f( T *, T * ) ) {
-        raw_sort( (int ( * )( const void *, const void * )) f );
+    void sort( std::size_t f( T *, T * ) ) {
+        raw_sort( (std::size_t ( * )( const void *, const void * )) f );
     }
 };

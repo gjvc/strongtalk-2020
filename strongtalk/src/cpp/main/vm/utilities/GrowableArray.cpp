@@ -10,7 +10,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-GenericGrowableArray::GenericGrowableArray( int initial_size, bool_t c_heap ) {
+GenericGrowableArray::GenericGrowableArray( std::size_t initial_size, bool_t c_heap ) {
     _length    = 0;
     _maxLength = initial_size * 4;
     st_assert( _length <= _maxLength, "initial_size too small" );
@@ -23,7 +23,7 @@ GenericGrowableArray::GenericGrowableArray( int initial_size, bool_t c_heap ) {
 }
 
 
-GenericGrowableArray::GenericGrowableArray( int initial_size, int initial_len, void *filler, bool_t c_heap ) {
+GenericGrowableArray::GenericGrowableArray( std::size_t initial_size, std::size_t initial_len, void *filler, bool_t c_heap ) {
     _length    = initial_len;
     _maxLength = initial_size;
     st_assert( _length <= _maxLength, "initial_len too big" );
@@ -38,9 +38,9 @@ GenericGrowableArray::GenericGrowableArray( int initial_size, int initial_len, v
 }
 
 
-void GenericGrowableArray::grow( int j ) {
+void GenericGrowableArray::grow( std::size_t j ) {
     void **newData;
-    int oldMax = _maxLength;
+    std::size_t oldMax = _maxLength;
     if ( _maxLength == 0 ) st_fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
     while ( j >= _maxLength )
         _maxLength = _maxLength * 2;
@@ -82,7 +82,7 @@ void GenericGrowableArray::raw_appendAll( GenericGrowableArray *l ) {
 }
 
 
-int GenericGrowableArray::raw_find( const void *elem ) const {
+std::size_t GenericGrowableArray::raw_find( const void *elem ) const {
     for ( std::size_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem )
             return i;
@@ -91,7 +91,7 @@ int GenericGrowableArray::raw_find( const void *elem ) const {
 }
 
 
-int GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
+std::size_t GenericGrowableArray::raw_find( void *token, growableArrayFindFn f ) const {
     for ( std::size_t i = 0; i < _length; i++ ) {
         if ( f( token, _data[ i ] ) )
             return i;
@@ -152,7 +152,7 @@ void GenericGrowableArray::print() {
 }
 
 
-void GenericGrowableArray::raw_sort( int f( const void *, const void * ) ) {
+void GenericGrowableArray::raw_sort( std::size_t f( const void *, const void * ) ) {
     qsort( _data, length(), sizeof( void * ), f );
 }
 
@@ -167,12 +167,12 @@ void GenericGrowableArray::clear() {
 }
 
 
-int GenericGrowableArray::length() const {
+std::size_t GenericGrowableArray::length() const {
     return _length;
 }
 
 
-int GenericGrowableArray::capacity() const {
+std::size_t GenericGrowableArray::capacity() const {
     return _maxLength;
 }
 

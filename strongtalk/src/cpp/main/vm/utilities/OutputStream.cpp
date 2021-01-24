@@ -64,7 +64,7 @@ void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
 
 // -----------------------------------------------------------------------------
 
-ConsoleOutputStream::ConsoleOutputStream( int width ) {
+ConsoleOutputStream::ConsoleOutputStream( std::size_t width ) {
     _width       = width;
     _position    = 0;
     _indentation = 0;
@@ -83,7 +83,7 @@ void ConsoleOutputStream::vprint_cr( const char *format, va_list argptr ) {
 }
 
 
-void ConsoleOutputStream::fill_to( int col ) {
+void ConsoleOutputStream::fill_to( std::size_t col ) {
     while ( position() < col )
         sp();
 }
@@ -110,7 +110,7 @@ void ConsoleOutputStream::cr() {
 // -----------------------------------------------------------------------------
 
 
-StringOutputStream::StringOutputStream( const int initial_size ) :
+StringOutputStream::StringOutputStream( const std::size_t initial_size ) :
         ConsoleOutputStream() {
     buffer_length = initial_size;
     buffer        = new_resource_array<char>( buffer_length );
@@ -144,7 +144,7 @@ char *StringOutputStream::as_string() {
 
 ByteArrayOop StringOutputStream::as_byteArray() {
     ByteArrayOop a = oopFactory::new_byteArray( buffer_pos );
-    for ( int    i = 0; i < buffer_pos; i++ ) {
+    for ( std::size_t    i = 0; i < buffer_pos; i++ ) {
         a->byte_at_put( i + 1, buffer[ i ] );
     }
     return a;
