@@ -31,32 +31,32 @@ extern bool_t bootstrappingInProgress;      // true only at the very beginning
 
 
 // classes used by the interpreter
-extern "C" KlassOop smiKlassObj;
-extern "C" KlassOop contextKlassObj;
-extern "C" KlassOop doubleKlassObj;
-extern "C" KlassOop symbolKlassObj;
+extern "C" KlassOop smiKlassObject;
+extern "C" KlassOop contextKlassObject;
+extern "C" KlassOop doubleKlassObject;
+extern "C" KlassOop symbolKlassObject;
 
 
 // objects used by the interpreter
-extern "C" Oop nilObj;
-extern "C" Oop trueObj;
-extern "C" Oop falseObj;
+extern "C" Oop nilObject;
+extern "C" Oop trueObject;
+extern "C" Oop falseObject;
 
 
 // objects used by the block primitives
-extern "C" KlassOop zeroArgumentBlockKlassObj;
-extern "C" KlassOop oneArgumentBlockKlassObj;
-extern "C" KlassOop twoArgumentBlockKlassObj;
-extern "C" KlassOop threeArgumentBlockKlassObj;
-extern "C" KlassOop fourArgumentBlockKlassObj;
-extern "C" KlassOop fiveArgumentBlockKlassObj;
-extern "C" KlassOop sixArgumentBlockKlassObj;
-extern "C" KlassOop sevenArgumentBlockKlassObj;
-extern "C" KlassOop eightArgumentBlockKlassObj;
-extern "C" KlassOop nineArgumentBlockKlassObj;
+extern "C" KlassOop zeroArgumentBlockKlassObject;
+extern "C" KlassOop oneArgumentBlockKlassObject;
+extern "C" KlassOop twoArgumentBlockKlassObject;
+extern "C" KlassOop threeArgumentBlockKlassObject;
+extern "C" KlassOop fourArgumentBlockKlassObject;
+extern "C" KlassOop fiveArgumentBlockKlassObject;
+extern "C" KlassOop sixArgumentBlockKlassObject;
+extern "C" KlassOop sevenArgumentBlockKlassObject;
+extern "C" KlassOop eightArgumentBlockKlassObject;
+extern "C" KlassOop nineArgumentBlockKlassObject;
 
 //
-extern "C" KlassOop doubleValueArrayKlassObj;
+extern "C" KlassOop doubleValueArrayKlassObject;
 
 class SymbolTable;
 
@@ -74,18 +74,18 @@ private:
     // special
 
     // Known classes in the VM
-    static KlassOop _memOopKlassObj;
-    static KlassOop _objArrayKlassObj;
-    static KlassOop _byteArrayKlassObj;
-    static KlassOop _associationKlassObj;
-    static KlassOop _doubleKlassObj;
-    static KlassOop _methodKlassObj;
-    static KlassOop _characterKlassObj;
-    static KlassOop _vframeKlassObj;
+    static KlassOop _memOopKlassObject;
+    static KlassOop _objArrayKlassObject;
+    static KlassOop _byteArrayKlassObject;
+    static KlassOop _associationKlassObject;
+    static KlassOop _doubleKlassObject;
+    static KlassOop _methodKlassObject;
+    static KlassOop _characterKlassObject;
+    static KlassOop _vframeKlassObject;
 
     // Known objects in tbe VM
     static ObjectArrayOop _asciiCharacters;
-    static ObjectArrayOop _systemDictionaryObj;
+    static ObjectArrayOop _systemDictionaryObject;
     static ObjectArrayOop _objectIDTable;
     static ObjectArrayOop _pic_free_list;
 
@@ -102,35 +102,35 @@ private:
 
 public:
     // Known classes in tbe VM
-    static KlassOop smiKlassObj();
-    static KlassOop contextKlassObj();
-    static KlassOop doubleKlassObj();
-    static KlassOop memOopKlassObj();
-    static KlassOop objArrayKlassObj();
-    static KlassOop byteArrayKlassObj();
-    static KlassOop symbolKlassObj();
-    static KlassOop associationKlassObj();
-    static KlassOop zeroArgumentBlockKlassObj();
-    static KlassOop oneArgumentBlockKlassObj();
-    static KlassOop twoArgumentBlockKlassObj();
-    static KlassOop threeArgumentBlockKlassObj();
-    static KlassOop fourArgumentBlockKlassObj();
-    static KlassOop fiveArgumentBlockKlassObj();
-    static KlassOop sixArgumentBlockKlassObj();
-    static KlassOop sevenArgumentBlockKlassObj();
-    static KlassOop eightArgumentBlockKlassObj();
-    static KlassOop nineArgumentBlockKlassObj();
-    static KlassOop methodKlassObj();
-    static KlassOop characterKlassObj();
-    static KlassOop doubleValueArrayKlassObj();
-    static KlassOop vframeKlassObj();
+    static KlassOop smiKlassObject();
+    static KlassOop contextKlassObject();
+    static KlassOop doubleKlassObject();
+    static KlassOop memOopKlassObject();
+    static KlassOop objArrayKlassObject();
+    static KlassOop byteArrayKlassObject();
+    static KlassOop symbolKlassObject();
+    static KlassOop associationKlassObject();
+    static KlassOop zeroArgumentBlockKlassObject();
+    static KlassOop oneArgumentBlockKlassObject();
+    static KlassOop twoArgumentBlockKlassObject();
+    static KlassOop threeArgumentBlockKlassObject();
+    static KlassOop fourArgumentBlockKlassObject();
+    static KlassOop fiveArgumentBlockKlassObject();
+    static KlassOop sixArgumentBlockKlassObject();
+    static KlassOop sevenArgumentBlockKlassObject();
+    static KlassOop eightArgumentBlockKlassObject();
+    static KlassOop nineArgumentBlockKlassObject();
+    static KlassOop methodKlassObject();
+    static KlassOop characterKlassObject();
+    static KlassOop doubleValueArrayKlassObject();
+    static KlassOop vframeKlassObject();
 
     // Known objects in tbe VM
-    static Oop nilObj();
-    static Oop trueObj();
-    static Oop falseObj();
+    static Oop nilObject();
+    static Oop trueObject();
+    static Oop falseObject();
     static ObjectArrayOop asciiCharacters();
-    static ObjectArrayOop systemDictionaryObj();
+    static ObjectArrayOop systemDictionaryObject();
     static ObjectArrayOop pic_free_list();
     static Oop callBack_receiver();
     static SymbolOop callBack_selector();

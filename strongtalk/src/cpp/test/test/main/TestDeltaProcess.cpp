@@ -51,7 +51,7 @@ std::size_t TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
 void TestDeltaProcess::addToProcesses() {
     Oop process = newProcess();
     st_assert( process->is_process(), "Should be process" );
-    set_processObj( ProcessOop( process ) );
+    set_processObject( ProcessOop( process ) );
     ProcessOop( process )->set_process( this );
     Processes::add( this );
 }
@@ -67,7 +67,7 @@ TestDeltaProcess::TestDeltaProcess() :
 
     Oop process = newProcess();
     st_assert( process->is_process(), "Should be process" );
-    set_processObj( ProcessOop( process ) );
+    set_processObject( ProcessOop( process ) );
     ProcessOop( process )->set_process( this );
 }
 
@@ -83,11 +83,11 @@ TestDeltaProcess::TestDeltaProcess( fn launchfn ) :
 
     Oop process = newProcess();
     st_assert( process->is_process(), "Should be process" );
-    set_processObj( ProcessOop( process ) );
+    set_processObject( ProcessOop( process ) );
     ProcessOop( process )->set_process( this );
 }
 
 
 TestDeltaProcess::~TestDeltaProcess() {
-    set_processObj( ProcessOop( newProcess() ) );
+    set_processObject( ProcessOop( newProcess() ) );
 }

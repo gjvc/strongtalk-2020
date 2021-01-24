@@ -21,15 +21,15 @@ class PointerAlienPrimsTests : public ::testing::Test {
 protected:
     void SetUp() override {
         rm = new HeapResourceMark();
-        PersistentHandle ah( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( 8 ) );
-        PersistentHandle iah( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( 8 ) );
-        PersistentHandle lu( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( 8 ) );
-        PersistentHandle ls( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( 8 ) );
+        PersistentHandle ah( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
+        PersistentHandle iah( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
+        PersistentHandle lu( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
+        PersistentHandle ls( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
 
         largeUnsignedInteger = ByteArrayOop( lu.as_oop() );
         largeSignedInteger   = ByteArrayOop( ls.as_oop() );
 
-        doubleValue = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
+        doubleValue = DoubleOop( Universe::doubleKlassObject()->klass_part()->allocateObject() );
         doubleValue->set_value( 1.625 );
 
         IntegerOps::unsigned_int_to_Integer( (std::uint32_t) 0xFFFFFFFF, ByteArrayOop( largeUnsignedInteger )->number() );

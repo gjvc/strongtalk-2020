@@ -83,8 +83,8 @@ void pp_short( void *p ) {
         // guess that it's a MemOop
         Oop( p )->print();
     } else {
-        // guess that it's a VMObj*
-        // FIX LATER ((VMObj*) p)->print_short_zero();
+        // guess that it's a VMObject*
+        // FIX LATER ((VMObject*) p)->print_short_zero();
     }
 }
 
@@ -290,7 +290,7 @@ void help() {
 
     _console->print_cr( "basic" );
     _console->print_cr( "  pp(void* p)   - try to make sense of p" );
-    _console->print_cr( "  pv(int p)     - ((PrintableResourceObj*) p)->print()" );
+    _console->print_cr( "  pv(int p)     - ((PrintableResourceObject*) p)->print()" );
     _console->print_cr( "  ps()          - print current process stack" );
     _console->print_cr( "  pss()         - print all process stacks" );
     _console->print_cr( "  oat(std::size_t i)    - print object with id = i" );

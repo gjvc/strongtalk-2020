@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,20 +7,18 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "allocation.hpp"
 #include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/memory/RememberedSet.hpp"
 #include "vm/memory/Space.hpp"
-#include "vm/memory/SpaceSizes.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/runtime/runtime.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include <cstring>
+
 
 // values of bytes in byte map: during normal operation (incl. scavenge),
 // bytes are either -1 (clean) or 0 (dirty); i.e., the interpreter / compiled code
@@ -32,6 +31,7 @@
 // entire array.
 //
 // During GC, the bytes are used to remember object sizes, see comment further below
+//
 
 // To do list for the remembered set
 //
@@ -306,6 +306,7 @@ constexpr int lim_3 = lim_2 + ( 1 << 16 );
 void RememberedSet::set_size( MemOop obj, std::size_t size ) {
     std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     st_assert( size >= lim_0, "size must be >= max_age" );
+
     if ( size < lim_1 ) {        // use 1 byte
         *p = (std::uint8_t) ( size - lim_0 );
     } else if ( size < lim_2 ) {    // use 1 + 1 bytes

@@ -24,7 +24,7 @@ static inline std::size_t byteOffset( std::size_t offset ) {
 
 bool_t ContextOopDescriptor::is_dead() const {
     st_assert( not mark()->has_context_forward(), "checking if context is deoptimized" );
-    return parent() == Oop( smiOop_zero ) or parent() == nilObj;
+    return parent() == Oop( smiOop_zero ) or parent() == nilObject;
 }
 
 

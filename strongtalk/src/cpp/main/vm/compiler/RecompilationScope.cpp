@@ -274,11 +274,11 @@ Expression *RecompilationScope::receiverExpression( PseudoRegister *p ) const {
     // guess that true/false map really means true/false object
     // (gives more efficient testing code)
     KlassOop k = receiverKlass();
-    if ( k == trueObj->klass() ) {
-        return new ConstantExpression( trueObj, p, nullptr );
+    if ( k == trueObject->klass() ) {
+        return new ConstantExpression( trueObject, p, nullptr );
 
-    } else if ( k == falseObj->klass() ) {
-        return new ConstantExpression( falseObj, p, nullptr );
+    } else if ( k == falseObject->klass() ) {
+        return new ConstantExpression( falseObject, p, nullptr );
 
     } else {
         return new KlassExpression( k, p, nullptr );

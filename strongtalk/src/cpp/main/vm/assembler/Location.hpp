@@ -27,7 +27,7 @@ enum class Mode {
 };
 
 
-class Location : public ResourceObject /* but usually used as ValueObj */ {
+class Location : public ResourceObject /* but usually used as ValueObject */ {
 private:
     int _loc;    // location encoding
 

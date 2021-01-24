@@ -3,13 +3,49 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
-#include "vm/runtime/Process.hpp"
 
 #include "vm/memory/SnapshotDescriptor.hpp"
+
+
+
+
+class ReadClosure : public OopClosure {
+
+private:
+    void do_oop( Oop *o ) {
+
+    }
+
+
+    SnapshotDescriptor *_snapshotDescriptor;
+
+public:
+    ReadClosure( SnapshotDescriptor *s ) {
+        this->_snapshotDescriptor = s;
+    }
+};
+
+
+class WriteClosure : public OopClosure {
+
+private:
+    void do_oop( Oop *o ) {
+        fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
+    }
+
+
+    SnapshotDescriptor *_snapshotDescriptor;
+
+public:
+    WriteClosure( SnapshotDescriptor *s ) {
+        this->_snapshotDescriptor = s;
+    }
+};
+
+
 
 
 void SnapshotDescriptor::read_header() {
@@ -53,39 +89,6 @@ void SnapshotDescriptor::write_revision() {
 }
 
 
-class ReadClosure : public OopClosure {
-
-private:
-    void do_oop( Oop *o ) {
-
-    }
-
-
-    SnapshotDescriptor *_snapshotDescriptor;
-
-public:
-    ReadClosure( SnapshotDescriptor *s ) {
-        this->_snapshotDescriptor = s;
-    }
-};
-
-class WriteClosure : public OopClosure {
-
-private:
-    void do_oop( Oop *o ) {
-        fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
-    }
-
-
-    SnapshotDescriptor *_snapshotDescriptor;
-
-public:
-    WriteClosure( SnapshotDescriptor *s ) {
-        this->_snapshotDescriptor = s;
-    }
-};
-
-
 void SnapshotDescriptor::read_roots() {
     ReadClosure blk( this );
     Universe::root_iterate( &blk );
@@ -109,12 +112,12 @@ void SnapshotDescriptor::write_spaces() {
 
 
 void SnapshotDescriptor::read_zone() {
-    // Not implemented yet
+
 }
 
 
 void SnapshotDescriptor::write_zone() {
-    // Not implemented yet
+
 }
 
 

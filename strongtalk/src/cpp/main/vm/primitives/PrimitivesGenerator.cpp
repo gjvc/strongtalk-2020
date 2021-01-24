@@ -4,6 +4,11 @@
 //
 
 
+#include "PrimitivesGenerator.hpp"
+#include "vm/primitives/behavior_primitives.hpp"
+#include "vm/assembler/MacroAssembler.hpp"
+#include "vm/assembler/Label.hpp"
+#include "vm/assembler/Address.hpp"
 #include "vm/primitives/PrimitivesGenerator.hpp"
 
 
@@ -13,34 +18,34 @@ const char *PrimitivesGenerator::allocateBlock( int n ) {
 
     switch ( n ) {
         case 0:
-            block_klass = &::zeroArgumentBlockKlassObj;
+            block_klass = &::zeroArgumentBlockKlassObject;
             break;
         case 1:
-            block_klass = &::oneArgumentBlockKlassObj;
+            block_klass = &::oneArgumentBlockKlassObject;
             break;
         case 2:
-            block_klass = &::twoArgumentBlockKlassObj;
+            block_klass = &::twoArgumentBlockKlassObject;
             break;
         case 3:
-            block_klass = &::threeArgumentBlockKlassObj;
+            block_klass = &::threeArgumentBlockKlassObject;
             break;
         case 4:
-            block_klass = &::fourArgumentBlockKlassObj;
+            block_klass = &::fourArgumentBlockKlassObject;
             break;
         case 5:
-            block_klass = &::fiveArgumentBlockKlassObj;
+            block_klass = &::fiveArgumentBlockKlassObject;
             break;
         case 6:
-            block_klass = &::sixArgumentBlockKlassObj;
+            block_klass = &::sixArgumentBlockKlassObject;
             break;
         case 7:
-            block_klass = &::sevenArgumentBlockKlassObj;
+            block_klass = &::sevenArgumentBlockKlassObject;
             break;
         case 8:
-            block_klass = &::eightArgumentBlockKlassObj;
+            block_klass = &::eightArgumentBlockKlassObject;
             break;
         case 9:
-            block_klass = &::nineArgumentBlockKlassObj;
+            block_klass = &::nineArgumentBlockKlassObject;
             break;
     }
 
@@ -145,7 +150,7 @@ const char *PrimitivesGenerator::allocateContext( int n ) {
     masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );             // obj->set_klass(klass)
     masm->movl( Address( eax, ( -size + 2 ) * oopSize ), 0 );               // obj->set_home(nullptr)
     for ( std::size_t i = 0; i < n; i++ ) {
-        masm->movl( Address( eax, ( -size + 3 + i ) * oopSize ), ecx );     // obj->obj_at_put(i,nilObj)
+        masm->movl( Address( eax, ( -size + 3 + i ) * oopSize ), ecx );     // obj->obj_at_put(i,nilObject)
     }
     masm->subl( eax, size * oopSize - 1 );
     masm->ret( 0 );
@@ -153,6 +158,63 @@ const char *PrimitivesGenerator::allocateContext( int n ) {
     masm->bind( need_scavenge );
     scavenge( size );
     masm->jmp( fill_object );
+
+    return entry_point;
+}
+
+
+const char *PrimitivesGenerator::inline_allocation() {
+    Address klass_addr = Address( esp, +2 * oopSize );
+    Address count_addr = Address( esp, +1 * oopSize );
+
+    Label need_scavenge1, fill_object1, need_scavenge2, fill_object2, loop, loop_test, exit;
+    int   size         = 2;
+
+    const char *entry_point = masm->pc();
+
+    masm->movl( ebx, klass_addr );
+    masm->movl( edx, count_addr );
+    masm->testl( edx, 1 );
+    masm->jcc( Assembler::Condition::notEqual, exit );
+    masm->sarl( edx, 3 );
+    masm->bind( loop );
+
+    test_for_scavenge( eax, size * oopSize, need_scavenge1 );
+    masm->bind( fill_object1 );
+    masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
+    masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );        // obj->init_mark()
+
+    masm->subl( eax, ( size * oopSize ) - 1 );
+
+    test_for_scavenge( ecx, size * oopSize, need_scavenge2 );
+    masm->bind( fill_object2 );
+    masm->movl( Address( ecx, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
+    masm->movl( Address( ecx, ( -size + 1 ) * oopSize ), ebx );        // obj->init_mark()
+
+    masm->subl( ecx, ( size * oopSize ) - 1 );
+    //masm->jmp(loop);
+    masm->bind( loop_test );
+    masm->decl( edx );
+    masm->jcc( Assembler::Condition::notEqual, loop );
+    masm->bind( exit );
+    masm->ret( 2 * oopSize );
+
+    masm->bind( need_scavenge1 );
+    masm->pushl( ebx );
+    masm->pushl( edx );
+    scavenge( size );
+    masm->popl( edx );
+    masm->popl( ebx );
+    masm->jmp( fill_object1 );
+
+    masm->bind( need_scavenge2 );
+    masm->pushl( ebx );
+    masm->pushl( edx );
+    scavenge( size );
+    masm->movl( ecx, eax );
+    masm->popl( edx );
+    masm->popl( ebx );
+    masm->jmp( fill_object2 );
 
     return entry_point;
 }

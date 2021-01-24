@@ -45,7 +45,7 @@ protected:
         st_assert( Universe::old_gen.contains( tenuredTargetContainer ), "target container should be tenured" );
         st_assert( Universe::old_gen.contains( tenuredReplacementContainer ), "replacement container should be tenured" );
 
-        saveNil = Universe::nilObj();
+        saveNil = Universe::nilObject();
     }
 
 
@@ -53,8 +53,8 @@ protected:
         targetContainer        = replacementContainer        = nullptr;
         tenuredTargetContainer = tenuredReplacementContainer = nullptr;
         target                 = replacement                 = nullptr;
-        if ( Universe::nilObj() != saveNil )
-            oopPrimitives::become( saveNil, Universe::nilObj() );
+        if ( Universe::nilObject() != saveNil )
+            oopPrimitives::become( saveNil, Universe::nilObject() );
         MarkSweep::collect();
     }
 
@@ -122,10 +122,10 @@ value()
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldUpdateRoots
 ) {
-oopPrimitives::become( Universe::nilObj(), target
+oopPrimitives::become( Universe::nilObject(), target
 );
-EXPECT_EQ( target, Universe::nilObj()
-) << "nilObj should now be target";
+EXPECT_EQ( target, Universe::nilObject()
+) << "nilObject should now be target";
 }
 
 

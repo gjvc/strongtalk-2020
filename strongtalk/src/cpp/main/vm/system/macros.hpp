@@ -55,14 +55,14 @@
     smi val = SMIOop(ref)->value();
 
 
-// Check that ref is either trueObj or falseObj. Set up boolean var corresp.
+// Check that ref is either trueObject or falseObject. Set up boolean var corresp.
 // Warning: does not wrap in '{' and '}'!
 
 #define CHECKOOPBOOL( ref, val )        \
     bool_t val;                         \
-    if (ref == falseObj)                \
+    if (ref == falseObject)                \
       val = false;                      \
-    else if (ref == trueObj)            \
+    else if (ref == trueObject)            \
       val = true;                       \
     else                                \
       return primitive_error(BADTYPEERROR);

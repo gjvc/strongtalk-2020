@@ -80,11 +80,11 @@ void MemOopKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
-    if ( obj == nilObj )
+    if ( obj == nilObject )
         stream->print( "nil" );
-    else if ( obj == trueObj )
+    else if ( obj == trueObject )
         stream->print( "true" );
-    else if ( obj == falseObj )
+    else if ( obj == falseObject )
         stream->print( "false" );
     else {
         if ( PrintObjectID ) {
@@ -164,11 +164,11 @@ KlassOop MemOopKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 
 Oop MemOopKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
     // Do not copy oddballs (nil, true, false)
-    if ( obj == nilObj )
+    if ( obj == nilObject )
         return obj;
-    if ( obj == trueObj )
+    if ( obj == trueObject )
         return obj;
-    if ( obj == falseObj )
+    if ( obj == falseObject )
         return obj;
 
     int len = MemOop( obj )->size();

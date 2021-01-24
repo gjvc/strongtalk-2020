@@ -17,7 +17,7 @@ class NativeMethod;
 class NativeCodeBase : public PrintableCHeapAllocatedObject {
 
 protected:
-    int _instructionsLength;
+    std::size_t _instructionsLength;
 
 public:
     void *operator new( std::size_t size ) throw() {
@@ -30,7 +30,7 @@ public:
 
     virtual std::size_t size() const = 0;                       // size in bytes
 
-    int instructionsLength() const {
+    std::size_t instructionsLength() const {
         return _instructionsLength;
     }
 
@@ -93,7 +93,7 @@ protected:
     }
 
 
-    int _locsLen;                // relocation info length (bytes)
+    std::size_t _locsLen;                // relocation info length (bytes)
 
 public:
 
@@ -102,7 +102,7 @@ public:
     }
 
 
-    int locsLen() const {
+    std::size_t locsLen() const {
         return _locsLen;
     }
 

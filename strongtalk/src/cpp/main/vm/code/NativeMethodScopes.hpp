@@ -37,15 +37,15 @@ public:
 class NativeMethodScopes : public ValueObject {
 
 private:
-    int           _nativeMethodOffset;   //
+    std::size_t           _nativeMethodOffset;   //
     std::uint16_t _length;               //
     std::uint16_t _oopsOffset;           // word offset to the oops array
     std::uint16_t _valueOffset;          // word offset to the value array
     std::uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
-    int           _dependentsEnd;        // size of dependents
+    std::size_t           _dependentsEnd;        // size of dependents
 
 private:
-    static std::uint16_t pack_word_aligned( int value ) {
+    static std::uint16_t pack_word_aligned( std::size_t value ) {
         st_assert( value % BytesPerWord == 0, "value should be word aligned" );
         st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( std::uint16_t ) ), "value exceeds limit" );
         return value >> LogBytesPerWord;
@@ -89,24 +89,24 @@ public: // for debugging
     }
 
 
-    Oop oop_at( int index ) const {
+    Oop oop_at( std::size_t index ) const {
         st_assert( index < oops_size(), "oops index out of range" );
         return oops()[ index ];
     }
 
 
 private:
-    int *values() const {
-        return (int *) ( start() + value_offset() );
+    std::size_t *values() const {
+        return (std::size_t *) ( start() + value_offset() );
     }
 
 
     std::size_t value_size() const {
-        return ( pcs_offset() - value_offset() ) / sizeof( int );
+        return ( pcs_offset() - value_offset() ) / sizeof( std::size_t );
     }
 
 
-    int value_at( int index ) const {
+    std::size_t value_at( std::size_t index ) const {
         st_assert( index < value_size(), "oops index out of range" );
         return values()[ index ];
     }
@@ -116,44 +116,44 @@ private:
 
     inline Oop unpackOopFromIndex( std::uint8_t index, std::size_t &offset ) const;
 
-    inline int unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const;
+    inline std::size_t unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const;
 
 private:
     friend class ScopeDescriptorRecorder;
 
 
-    void set_nativeMethodOffset( int v ) {
+    void set_nativeMethodOffset( std::size_t v ) {
         _nativeMethodOffset = v;
     }
 
 
-    void set_length( int v ) {
+    void set_length( std::size_t v ) {
         _length = pack_word_aligned( v );
     }
 
 
-    void set_oops_offset( int v ) {
+    void set_oops_offset( std::size_t v ) {
         _oopsOffset = pack_word_aligned( v );
     }
 
 
-    void set_value_offset( int v ) {
+    void set_value_offset( std::size_t v ) {
         _valueOffset = pack_word_aligned( v );
     }
 
 
-    void set_pcs_offset( int v ) {
+    void set_pcs_offset( std::size_t v ) {
         _pcsOffset = pack_word_aligned( v );
     }
 
 
-    void set_dependents_end( int v ) {
+    void set_dependents_end( std::size_t v ) {
         _dependentsEnd = v;
     }
 
 
 public:
-    KlassOop dependent_at( int index ) const {
+    KlassOop dependent_at( std::size_t index ) const {
         st_assert( index >= 0 and index < dependent_length(), "must be within bounds" );
         Oop result = oop_at( index );
         st_assert( result->is_klass(), "must be klass" );
@@ -161,7 +161,7 @@ public:
     }
 
 
-    int dependent_length() const {
+    std::size_t dependent_length() const {
         return _dependentsEnd;
     }
 
@@ -176,7 +176,7 @@ public:
     }
 
 
-    int length() const {
+    std::size_t length() const {
         return unpack_word_aligned( _length );
     }
 
@@ -210,18 +210,18 @@ public:
 
 
     // Returns a scope located at offset.
-    ScopeDescriptor *at( int offset, const char *pc ) const;
+    ScopeDescriptor *at( std::size_t offset, const char *pc ) const;
 
-    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( int offset ) const;
+    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( std::size_t offset ) const;
 
 
     // used in iterator macro FOR_EACH_SCOPE
     ScopeDescriptor *getNext( ScopeDescriptor *s ) const {
         if ( not s )
             return root();
-        int offset = s->next_offset();
+        std::size_t offset = s->next_offset();
 
-        if ( offset + ( sizeof( int ) - ( offset % sizeof( int ) ) ) % sizeof( int ) >= ( _oopsOffset ) * sizeof( Oop ) )
+        if ( offset + ( sizeof( std::size_t ) - ( offset % sizeof( std::size_t ) ) ) % sizeof( std::size_t ) >= ( _oopsOffset ) * sizeof( Oop ) )
             return nullptr;
 
         return at( offset, ScopeDescriptor::invalid_pc );
@@ -236,14 +236,14 @@ public:
     std::int16_t get_next_half( std::size_t &offset ) const;
 
 
-    std::uint8_t peek_next_char( int offset ) const {
+    std::uint8_t peek_next_char( std::size_t offset ) const {
         return *( start() + offset );
     }
 
 
     Oop unpackOopAt( std::size_t &offset ) const;
 
-    int unpackValueAt( std::size_t &offset ) const;
+    std::size_t unpackValueAt( std::size_t &offset ) const;
 
     void iterate( std::size_t &offset, UnpackClosure *closure ) const;    // iterates over a string of NameDescs (iterator is not called at termination)
     NameDescriptor *unpackNameDescAt( std::size_t &offset, const char *pc ) const;    // Unpacks a string of name descs and returns one matching the pc

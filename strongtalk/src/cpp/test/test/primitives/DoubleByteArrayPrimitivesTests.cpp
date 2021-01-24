@@ -45,7 +45,7 @@ TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldAllocateDByteArrayOfC
 ) {
 HandleMark handles;
 Handle     dByteArrayClassHandle( dByteArrayClass );
-Oop        result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), dByteArrayClass );
+Oop        result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_doubleByteArray()
@@ -81,7 +81,7 @@ TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredWhenRe
 ) {
 HandleMark handles;
 Handle     classHandle( dByteArrayClass );
-Oop        result = doubleByteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( 10 ), dByteArrayClass );
+Oop        result = doubleByteArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( 10 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_doubleByteArray()
@@ -105,7 +105,7 @@ klass()
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWithNonDoubleByteArray
 ) {
-Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
+Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -118,7 +118,7 @@ markSymbol( vmSymbols::invalid_klass() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWithNonKlass
 ) {
-Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), Universe::trueObj() );
+Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::trueObject() );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -131,7 +131,7 @@ markSymbol( vmSymbols::invalid_klass() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWithNonInteger
 ) {
-Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, dByteArrayClass, dByteArrayClass );
+Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, dByteArrayClass, dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -144,7 +144,7 @@ markSymbol( vmSymbols::first_argument_has_wrong_type() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWithNegativeSize
 ) {
-Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( -1 ), dByteArrayClass );
+Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( -1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -157,7 +157,7 @@ markSymbol( vmSymbols::negative_size() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean
 ) {
-Oop result = doubleByteArrayPrimitives::allocateSize2( Universe::nilObj(), smiOopFromValue( 10 ), dByteArrayClass );
+Oop result = doubleByteArrayPrimitives::allocateSize2( Universe::nilObject(), smiOopFromValue( 10 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -171,7 +171,7 @@ markSymbol( vmSymbols::second_argument_has_wrong_type() ),
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
 std::size_t size   = Universe::new_gen.eden()->free();
-Oop result = doubleByteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), dByteArrayClass );
+Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_mark()
@@ -187,7 +187,7 @@ as_string();
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
 std::size_t size   = Universe::old_gen.free();
-Oop result = doubleByteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), dByteArrayClass );
+Oop result = doubleByteArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
 is_mark()

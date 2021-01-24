@@ -30,7 +30,7 @@ public:
     void extend( int newSize );
 
     int insertIfAbsent( int value );  // returns index for value
-    void copy_to( int *&addr );
+    void copy_to( std::size_t *&addr );
 };
 
 
@@ -87,5 +87,5 @@ public:
 
     void alignToWord();
 
-    void copy_to( int *&addr );
+    void copy_to( std::size_t *&addr );
 };

@@ -883,7 +883,7 @@ NameNode *PseudoRegister::nameNode( bool_t mustBeLegal ) const {
         // also, when entire scopes are removed (e.g. when deleting branches of
         // a type test) the scope should be marked so its debugging info isn't written
         // currently, the contents of such scopes would break several assertions
-        return newValueName( nilObj );
+        return newValueName( nilObject );
 #ifdef how_it_should_be
         assert(not debug, "couldn't recover debug info");
         return new IllegalName;

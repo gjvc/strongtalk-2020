@@ -13,7 +13,7 @@ SymbolOop SymbolKlass::allocateSymbol( const char *value, int len ) {
     _console->print_cr( "symbol [%s]", value );
     SymbolOop sym = as_symbolOop( Universe::allocate_tenured( object_size( len ) ) );
     sym->init_untagged_contents_mark();
-    sym->set_klass_field( Universe::symbolKlassObj() );
+    sym->set_klass_field( Universe::symbolKlassObject() );
     sym->set_length( len );
     initialize_object( sym, value, len );
     return sym;

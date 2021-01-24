@@ -16,7 +16,7 @@ public:
     ScopeInfo _parent;
 
 
-    BlockScopeNode( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, int scopeID, int senderByteCodeIndex, bool_t visible ) :
+    BlockScopeNode( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, std::size_t scopeID, std::size_t senderByteCodeIndex, bool_t visible ) :
             ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ) {
         _parent = parent;
     }
@@ -27,7 +27,7 @@ public:
     }
 
 
-    void generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader );
+    void generate( ScopeDescriptorRecorder *rec, std::size_t senderScopeOffset, bool_t bigHeader );
 
     void verify( ScopeDescriptor *sd );
 };

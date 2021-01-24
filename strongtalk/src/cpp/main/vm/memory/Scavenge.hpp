@@ -53,6 +53,7 @@ public:
     }
 };
 
+
 class VerifyNoAllocation : public VerifyNoScavenge {
 private:
     Oop *_top_of_eden;

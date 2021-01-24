@@ -201,7 +201,7 @@ private:
     enum State _state;                  // current iterator state
     int        _methodOop_counter;      // remaining no. of methodOop entries
 
-    int *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
+    std::size_t *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
     void computeNextState();
 
 public:

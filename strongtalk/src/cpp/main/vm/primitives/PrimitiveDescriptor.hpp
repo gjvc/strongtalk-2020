@@ -15,6 +15,33 @@
 #include "vm/compiler/Expression.hpp"
 
 
+
+
+// the typedefs below are necessary to ensure that args are passed correctly when calling a primitive through a function pointer
+// NB: there's no general n-argument primitive because some calling conventions can't handle vararg functions
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype0)();
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype1)( Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype2)( Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype3)( Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype4)( Oop, Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype5)( Oop, Oop, Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype6)( Oop, Oop, Oop, Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype7)( Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype8)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+
+typedef Oop (__CALLING_CONVENTION *prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
+
+
+
 // The PrimitiveDescriptor structure exposes all properties of a primitive.
 // Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
 //

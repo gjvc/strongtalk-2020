@@ -18,7 +18,7 @@
 //class HandleMark;               //
 //class FunctionProcessClosure;   //
 
-extern "C" volatile void *handleCallBack( int index, int params );
+extern "C" volatile void *handleCallBack( std::size_t index, std::size_t params );
 
 class BaseHandle {
 
@@ -57,7 +57,7 @@ public:
 
     friend class FunctionProcessClosure;
 
-    friend volatile void *handleCallBack( int index, int params );
+    friend volatile void *handleCallBack( std::size_t index, std::size_t params );
 };
 
 

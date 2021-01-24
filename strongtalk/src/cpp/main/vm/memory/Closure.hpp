@@ -7,7 +7,6 @@
 
 #include "allocation.hpp"
 #include "vm/memory/Space.hpp"
-#include "vm/oops/MemOopDescriptor.hpp"
 
 
 // The following classes are C++ "closures" for iterating over Objects, Roots, and Frames.

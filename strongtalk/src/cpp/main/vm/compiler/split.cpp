@@ -11,7 +11,7 @@
 
 const std::uint32_t SplitSig::LevelMask = 0xf;
 
-struct SplitSetting : StackObj {
+struct SplitSetting : StackObject {
     SplitSig *& sig;
     SplitSig * saved;
     SplitSetting( SplitSig *& oldsig, SplitSig * newsig ) : sig( oldsig ) {
@@ -167,7 +167,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
             } else {
                 splitReceiverKlasss->append( nth->klass() );
                 Klass * m = nth->klass()->addr();
-                needKlassLoad |= m not_eq smiKlassObj and m not_eq doubleKlassObj;
+                needKlassLoad |= m not_eq smiKlassObject and m not_eq doubleKlassObject;
             }
 
             // split off paths of all Exprs with this map up to merge point

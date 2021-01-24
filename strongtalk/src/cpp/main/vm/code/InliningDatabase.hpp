@@ -123,7 +123,7 @@ public:
 
     // Writes the inlining structure for all compiled methods with a
     // specific receiver klass, returns the number of written structures.
-    static int file_out( KlassOop klass );
+    static std::size_t file_out( KlassOop klass );
 
     // Reads the inlining structure from file_name.
     // Returns nullptr if the attempt failed.

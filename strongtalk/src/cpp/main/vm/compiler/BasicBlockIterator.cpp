@@ -31,7 +31,7 @@ void BasicBlockIterator::clear() {
 
 
 void BasicBlockIterator::makeUses() {
-    // a few PseudoRegisters may be created during makeUses (e.g. for deadBlockObj,
+    // a few PseudoRegisters may be created during makeUses (e.g. for deadBlockObject,
     // true/false etc), so leave a bit of room
     constexpr int ExtraPRegs = 10;
     int           n          = PseudoRegister::currentNo + ExtraPRegs;

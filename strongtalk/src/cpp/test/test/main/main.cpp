@@ -41,9 +41,9 @@ void TestDeltaProcess::removeFromProcesses() {
 Oop newProcess();
 
 
-void setProcessRefs( DeltaProcess *process, ProcessOop processObj ) {
-    processObj->set_process( process );
-    process->set_processObj( processObj );
+void setProcessRefs( DeltaProcess *process, ProcessOop processObject ) {
+    processObject->set_process( process );
+    process->set_processObject( processObject );
 }
 
 

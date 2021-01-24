@@ -64,7 +64,7 @@ typedef class ScopeDescriptorNode *ScopeInfo;
 
 // NB: the above is true only for memOops
 
-extern "C" Oop nilObj;
+extern "C" Oop nilObject;
 
 class Generation;
 
@@ -166,7 +166,7 @@ public:
 
     // Returns is the Oop is the nil object
     bool_t is_nil() const {
-        return this == nilObj;
+        return this == nilObject;
     }
 
 

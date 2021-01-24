@@ -43,9 +43,9 @@ private:
     bool_t _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
     Locations *_locations;                   // the locations freelist
     GrowableArray<PseudoRegister *> *_pseudoRegisters;             // the PseudoRegisters; a nullptr entry means the slot is not used
-    GrowableArray<int> *_registerLocations;           // the register to which a PseudoRegister is mapped or -1
-    GrowableArray<int> *_stackLocations;              // the stack location to which a PseudoRegister is mapped or -1
-    GrowableArray<int> *_temporaryLocations;          // a list of temporary locations used by instances of Temporary (these locations will be freed when the mapping is copied)
+    GrowableArray<std::size_t> *_registerLocations;           // the register to which a PseudoRegister is mapped or -1
+    GrowableArray<std::size_t> *_stackLocations;              // the stack location to which a PseudoRegister is mapped or -1
+    GrowableArray<std::size_t> *_temporaryLocations;          // a list of temporary locations used by instances of Temporary (these locations will be freed when the mapping is copied)
 
     // Helper routines
     std::size_t size() const {
@@ -58,12 +58,12 @@ private:
     }
 
 
-    int regLoc( std::size_t i ) const {
+    std::size_t regLoc( std::size_t i ) const {
         return _registerLocations->at( i );
     }
 
 
-    int stkLoc( std::size_t i ) const {
+    std::size_t stkLoc( std::size_t i ) const {
         return _stackLocations->at( i );
     }
 
@@ -78,32 +78,32 @@ private:
     }
 
 
-    int location( std::size_t i ) const {
-        int rloc = regLoc( i );
+    std::size_t location( std::size_t i ) const {
+        std::size_t rloc = regLoc( i );
         return rloc >= 0 ? rloc : stkLoc( i );
     }
 
 
-    void set_entry( std::size_t i, PseudoRegister *preg, int rloc, int sloc );
+    void set_entry( std::size_t i, PseudoRegister *preg, std::size_t rloc, std::size_t sloc );
 
-    int index( PseudoRegister *preg );
+    std::size_t index( PseudoRegister *preg );
 
-    int freeSlot();
+    std::size_t freeSlot();
 
     void print( std::size_t i );
 
     void destroy();                // destroys mapping to make sure it is not accidentally used afterwards
 
     // Register allocation/spilling
-    int spillablePRegIndex();            // returns the _pregs/_mappings index of a PseudoRegister mapped to a non-locked register
+    std::size_t spillablePRegIndex();            // returns the _pregs/_mappings index of a PseudoRegister mapped to a non-locked register
     void ensureOneFreeRegister();            // ensures at least one free register in locations - spill a register if necessary
-    void spillRegister( int loc );            // spills register loc to a free stack location
-    void saveRegister( int loc );
+    void spillRegister( std::size_t loc );            // spills register loc to a free stack location
+    void saveRegister( std::size_t loc );
 
     // Helpers for class Temporary
-    int allocateTemporary( Register hint = noreg );
+    std::size_t allocateTemporary( Register hint = noreg );
 
-    void releaseTemporary( int regLoc );
+    void releaseTemporary( std::size_t regLoc );
 
     void releaseAllTemporaries();
 
@@ -114,7 +114,7 @@ private:
 
 public:
     // Creation
-    PseudoRegisterMapping( MacroAssembler *assm, int nofArgs, int nofRegs, int nofTemps );
+    PseudoRegisterMapping( MacroAssembler *assm, std::size_t nofArgs, std::size_t nofRegs, std::size_t nofTemps );
 
     PseudoRegisterMapping( PseudoRegisterMapping *m );
 
@@ -148,11 +148,11 @@ public:
 
 
     // Definition
-    void mapToArgument( PseudoRegister *preg, int argNo );
+    void mapToArgument( PseudoRegister *preg, std::size_t argNo );
 
     void mapToRegister( PseudoRegister *preg, Register reg );
 
-    void mapToTemporary( PseudoRegister *preg, int tempNo );
+    void mapToTemporary( PseudoRegister *preg, std::size_t tempNo );
 
     void kill( PseudoRegister *preg );
 
@@ -199,9 +199,9 @@ public:
     Location locationFor( PseudoRegister *preg );
 
     // Space usage
-    int nofPRegs();
+    std::size_t nofPRegs();
 
-    int maxNofStackTmps();
+    std::size_t maxNofStackTmps();
 
     // Debugging
     void my_print();
@@ -265,7 +265,7 @@ public:
 class Temporary : StackAllocatedObject {
 private:
     PseudoRegisterMapping *_mapping;
-    int _regLoc;
+    std::size_t _regLoc;
 
 public:
     Temporary( PseudoRegisterMapping *mapping, Register hint = noreg );

@@ -446,7 +446,7 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     if ( scope->isMethodScope() ) {
         // check class
         KlassOop klass = scope->selfKlass();
-        if ( klass == smiKlassObj ) {
+        if ( klass == smiKlassObject ) {
             // receiver must be a smi_t, check smi_t tag only
             _masm->testl( self_reg, MEMOOP_TAG );            // testl instead of test => no alignment nop's needed later
             _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
@@ -480,9 +480,9 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
         n += minimum_size_for_deoptimized_frame - frame_size;
     }
     if ( n == 1 ) {
-        _masm->pushl( nilObj );
+        _masm->pushl( nilObject );
     } else if ( n > 1 ) {
-        _masm->movl( temp1, nilObj );
+        _masm->movl( temp1, nilObject );
         while ( n-- > 0 ) _masm->pushl( temp1 );
     }
 
@@ -666,7 +666,7 @@ const char *CodeGenerator::nativeMethodName() {
 }
 
 
-void CodeGenerator::verifyObj( Oop obj ) {
+void CodeGenerator::verifyObject( Oop obj ) {
     if ( not obj->is_smi() and not obj->is_mem() ) st_fatal( "should be an ordinary Oop" );
     KlassOop klass = obj->klass();
     if ( klass == nullptr or not klass->is_mem() ) st_fatal( "should be an ordinary MemOop" );
@@ -699,12 +699,12 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, int nofArgs ) {
         _console->print( "( %s %s ", recv->print_value_string(), nativeMethodName() );
     }
 
-    verifyObj( recv );
+    verifyObject( recv );
     std::size_t i = nofArgs;
     Oop *arg = ebp + ( nofArgs + 2 );
     while ( i-- > 0 ) {
         arg--;
-        verifyObj( *arg );
+        verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
             if ( print_args_long or ( *arg )->is_smi() ) {
@@ -759,13 +759,13 @@ void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, 
 }
 
 
-void CodeGenerator::callVerifyObj( Register obj ) {
+void CodeGenerator::callVerifyObject( Register obj ) {
     // generates transparent check code which verifies that obj is
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyObj should not be called" );
+        warning( ": verifyObject should not be called" );
     _masm->pushad();
-    _masm->call_C( (const char *) CodeGenerator::verifyObj, obj );
+    _masm->call_C( (const char *) CodeGenerator::verifyObject, obj );
     _masm->popad();
 }
 
@@ -915,7 +915,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     if ( scope->isMethodScope() ) {
         // check class
         KlassOop klass = scope->selfKlass();
-        if ( klass == smiKlassObj ) {
+        if ( klass == smiKlassObject ) {
             // receiver must be a smi_t, check smi_t tag only
             _masm->test( use( recv ), MEMOOP_TAG );
             _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
@@ -947,7 +947,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     _masm->enter();
     {
         Temporary t( _currentMapping );
-        _masm->movl( t.reg(), Universe::nilObj() );
+        _masm->movl( t.reg(), Universe::nilObject() );
         _nilReg = t.reg();
         const char *beg = _masm->pc();
         std::size_t i = 10;
@@ -1042,7 +1042,7 @@ void CodeGenerator::aLoadUplevelNode( LoadUplevelNode *node ) {
     Register dst = def( node->dst() );
     _masm->movl( dst, Address( base.reg(), byteOffset( node->offset() ) ) );
     if ( VerifyCode )
-        callVerifyObj( dst );
+        callVerifyObject( dst );
 }
 
 
@@ -1642,18 +1642,18 @@ void CodeGenerator::aDLLNode( DLLNode *node ) {
 
 /*
 static void testForSingleKlass(Register obj, klassOop klass, Register klassReg, Label& success, Label& failure) {
-  if (klass == Universe::smiKlassObj()) {
+  if (klass == Universe::smiKlassObject()) {
     // check tag
     theMacroAssm->test(obj, MEMOOP_TAG);
-  } else if (klass == Universe::trueObj()->klass()) {
-    // only one instance: compare with trueObj
-    theMacroAssm->cmpl(obj, Universe::trueObj());
-  } else if (klass == Universe::falseObj()->klass()) {
-    // only one instance: compare with falseObj
-    theMacroAssm->cmpl(obj, Universe::falseObj());
-  } else if (klass == Universe::nilObj()->klass()) {
-    // only one instance: compare with nilObj
-    theMacroAssm->cmpl(obj, Universe::nilObj());
+  } else if (klass == Universe::trueObject()->klass()) {
+    // only one instance: compare with trueObject
+    theMacroAssm->cmpl(obj, Universe::trueObject());
+  } else if (klass == Universe::falseObject()->klass()) {
+    // only one instance: compare with falseObject
+    theMacroAssm->cmpl(obj, Universe::falseObject());
+  } else if (klass == Universe::nilObject()->klass()) {
+    // only one instance: compare with nilObject
+    theMacroAssm->cmpl(obj, Universe::nilObject());
   } else {
     // compare against obj's klass - must check if smi_t first
     theMacroAssm->test(obj, MEMOOP_TAG);
@@ -1669,18 +1669,18 @@ static void testForSingleKlass(Register obj, klassOop klass, Register klassReg, 
 
 void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register klassReg, Label &success, Label &failure ) {
 
-    if ( klass == Universe::smiKlassObj() ) {
+    if ( klass == Universe::smiKlassObject() ) {
         // check tag
         _masm->test( obj, MEMOOP_TAG );
-    } else if ( klass == Universe::trueObj()->klass() ) {
-        // only one instance: compare with trueObj
-        _masm->cmpl( obj, Universe::trueObj() );
-    } else if ( klass == Universe::falseObj()->klass() ) {
-        // only one instance: compare with falseObj
-        _masm->cmpl( obj, Universe::falseObj() );
-    } else if ( klass == Universe::nilObj()->klass() ) {
-        // only one instance: compare with nilObj
-        _masm->cmpl( obj, Universe::nilObj() );
+    } else if ( klass == Universe::trueObject()->klass() ) {
+        // only one instance: compare with trueObject
+        _masm->cmpl( obj, Universe::trueObject() );
+    } else if ( klass == Universe::falseObject()->klass() ) {
+        // only one instance: compare with falseObject
+        _masm->cmpl( obj, Universe::falseObject() );
+    } else if ( klass == Universe::nilObject()->klass() ) {
+        // only one instance: compare with nilObject
+        _masm->cmpl( obj, Universe::nilObject() );
     } else {
         // compare against obj's klass - must check if smi_t first
         _masm->test( obj, MEMOOP_TAG );
@@ -1779,7 +1779,7 @@ void CodeGenerator::generateIntegerLoopTest( PseudoRegister *preg, LoopHeaderNod
       if (prev.is_unbound()) theMacroAssm->bind(prev);
       Label ok;
       const Register obj = movePRegToReg(p, temp1);
-      testForSingleKlass(obj, Universe::smiKlassObj(), klassReg, ok, failure);
+      testForSingleKlass(obj, Universe::smiKlassObject(), klassReg, ok, failure);
       theMacroAssm->bind(ok);
       */
         }
@@ -1802,7 +1802,7 @@ void LoopHeaderNode::generateIntegerLoopTest(PseudoRegister* p, Label& prev, Lab
       if (prev.is_unbound()) theMacroAssm->bind(prev);
       Label ok;
       const Register obj = movePRegToReg(p, temp1);
-      testForSingleKlass(obj, Universe::smiKlassObj(), klassReg, ok, failure);
+      testForSingleKlass(obj, Universe::smiKlassObject(), klassReg, ok, failure);
       theMacroAssm->bind(ok);
     }
   }
@@ -2116,18 +2116,18 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
             st_assert( node->hasUnknown(), "should be eliminated if there's no unknown case" );
             st_assert( node->likelySuccessor() == node->next( 1 ), "code pattern is not optimal" );
             KlassOop klass = node->classes()->at( 0 );
-            if ( klass == Universe::smiKlassObj() ) {
+            if ( klass == Universe::smiKlassObject() ) {
                 // check tag
                 _masm->test( obj, MEMOOP_TAG );
-            } else if ( klass == Universe::trueObj()->klass() ) {
-                // only one instance: compare with trueObj
-                _masm->cmpl( obj, Universe::trueObj() );
-            } else if ( klass == Universe::falseObj()->klass() ) {
-                // only one instance: compare with falseObj
-                _masm->cmpl( obj, Universe::falseObj() );
-            } else if ( klass == Universe::nilObj()->klass() ) {
-                // only one instance: compare with nilObj
-                _masm->cmpl( obj, Universe::nilObj() );
+            } else if ( klass == Universe::trueObject()->klass() ) {
+                // only one instance: compare with trueObject
+                _masm->cmpl( obj, Universe::trueObject() );
+            } else if ( klass == Universe::falseObject()->klass() ) {
+                // only one instance: compare with falseObject
+                _masm->cmpl( obj, Universe::falseObject() );
+            } else if ( klass == Universe::nilObject()->klass() ) {
+                // only one instance: compare with nilObject
+                _masm->cmpl( obj, Universe::nilObject() );
             } else {
                 // compare against obj's klass - must check if smi_t first
                 Temporary objKlass( _currentMapping );
@@ -2146,8 +2146,8 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
             // handle pure boolean cases (ifTrue:/ifFalse:)
             KlassOop klass1 = node->classes()->at( 0 );
             KlassOop klass2 = node->classes()->at( 1 );
-            Oop      bool1  = Universe::trueObj();
-            Oop      bool2  = Universe::falseObj();
+            Oop      bool1  = Universe::trueObject();
+            Oop      bool2  = Universe::falseObject();
 
             if ( klass1 == bool2->klass() and klass2 == bool1->klass() ) {
                 Oop t = bool1;
@@ -2196,19 +2196,19 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     Register             obj                = use( node->src() );
     for ( int            i                  = 0; i < len; i++ ) {
         KlassOop klass = node->classes()->at( i );
-        if ( klass == trueObj->klass() ) {
-            // only one instance: compare with trueObj
-            _masm->cmpl( obj, trueObj );
+        if ( klass == trueObject->klass() ) {
+            // only one instance: compare with trueObject
+            _masm->cmpl( obj, trueObject );
             jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
-        } else if ( klass == falseObj->klass() ) {
-            // only one instance: compare with falseObj
-            _masm->cmpl( obj, falseObj );
+        } else if ( klass == falseObject->klass() ) {
+            // only one instance: compare with falseObject
+            _masm->cmpl( obj, falseObject );
             jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
-        } else if ( klass == nilObj->klass() ) {
-            // only one instance: compare with nilObj
-            _masm->cmpl( obj, nilObj );
+        } else if ( klass == nilObject->klass() ) {
+            // only one instance: compare with nilObject
+            _masm->cmpl( obj, nilObject );
             jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
-        } else if ( klass == smiKlassObj ) {
+        } else if ( klass == smiKlassObject ) {
             // check smi_t tag only if not checked already, otherwise ignore
             if ( not smiHasBeenChecked ) {
                 _masm->test( obj, MEMOOP_TAG );
@@ -2543,7 +2543,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             PseudoRegisterLocker lock( node->src() );
             Register             obj_reg   = use( node->src() );
             Register             klass_reg = def( node->dst() );
-            _masm->movl( klass_reg, Universe::smiKlassObj() );
+            _masm->movl( klass_reg, Universe::smiKlassObject() );
             _masm->test( obj_reg, MEMOOP_TAG );
             _masm->jcc( Assembler::Condition::zero, is_smi );
             _masm->movl( klass_reg, Address( obj_reg, MemOopDescriptor::klass_byte_offset() ) );

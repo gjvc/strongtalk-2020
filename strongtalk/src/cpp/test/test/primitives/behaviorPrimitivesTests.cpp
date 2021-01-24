@@ -39,14 +39,14 @@ TEST_F( BehaviorPrimitives, allocateForMemOopShouldReportFailureWhenNoSpace
 ) {
 EXPECT_TRUE( Universe::new_gen
 .eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
-EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), behaviorPrimitives::allocate3( Universe::falseObj(), objectClass )
+EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), behaviorPrimitives::allocate3( Universe::falseObject(), objectClass )
 ) << "Allocation should fail";
 }
 
 
 TEST_F( BehaviorPrimitives, allocateForMemOopShouldAllocateTenureWhenRequired
 ) {
-ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObj(), objectClass )
+ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObject(), objectClass )
 ->
 is_old()
 );
@@ -57,7 +57,7 @@ TEST_F( BehaviorPrimitives, allocateForMemOopShouldCheckTenuredIsBoolean
 ) {
 ASSERT_TRUE( markSymbol( vmSymbols::second_argument_has_wrong_type() )
 ==
-behaviorPrimitives::allocate3( Universe::nilObj(), objectClass
+behaviorPrimitives::allocate3( Universe::nilObject(), objectClass
 ) );
 }
 

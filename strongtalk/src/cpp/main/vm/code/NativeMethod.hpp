@@ -63,8 +63,8 @@ protected:
     std::uint16_t     _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
     std::uint16_t     _floatSectionSize;           // size of float section in words
     std::uint16_t     _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
-    int               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
-    int               _uncommonTrapCounter;        // # of times uncommon traps have been executed
+    std::size_t               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
+    std::size_t               _uncommonTrapCounter;        // # of times uncommon traps have been executed
     static std::size_t        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
     NativeMethodFlags _nativeMethodFlags;          // various flags to keep track of NativeMethod state
 
@@ -145,23 +145,23 @@ public:
     JumpTableID _promotedId;    //
 
 
-    int number_of_float_temporaries() const {
+    std::size_t number_of_float_temporaries() const {
         return _numberOfFloatTemporaries;
     }
 
 
-    int float_section_size() const {
+    std::size_t float_section_size() const {
         return _floatSectionSize;
     }
 
 
-    int float_section_start_offset() const {
+    std::size_t float_section_start_offset() const {
         return _floatSectionStartOffset;
     }
 
 
     // Interface for number_of_callers
-    int number_of_links() const {
+    std::size_t number_of_links() const {
         return _numberOfLinks;
     }
 
@@ -177,7 +177,7 @@ public:
 
 
     // Interface for uncommon_trap_invocation
-    int uncommon_trap_counter() const {
+    std::size_t uncommon_trap_counter() const {
         return _uncommonTrapCounter;
     }
 
@@ -208,13 +208,13 @@ public:
         return end() - ( (const char *) this );
     }    // total size of NativeMethod
 
-    int codeSize() const {
+    std::size_t codeSize() const {
         return instructionsEnd() - instructionsStart();
     }    // size of code in bytes
 
     // Shift the pc relative information by delta.
     // Call this whenever the code is moved.
-    void fix_relocation_at_move( int delta );
+    void fix_relocation_at_move( std::size_t delta );
 
     void moveTo( void *to, std::size_t size );
 
@@ -271,13 +271,13 @@ public:
     void makeOld();
 
 
-    int age() const {
+    std::size_t age() const {
         return _nativeMethodFlags.age;
     }
 
 
     void incrementAge() {
-        const int MaxAge = 15;
+        const std::size_t MaxAge = 15;
         _nativeMethodFlags.age = min( _nativeMethodFlags.age + 1, MaxAge );
     }
 
@@ -317,30 +317,30 @@ public:
     }
 
 
-    int level() const;
+    std::size_t level() const;
 
 
-    void setLevel( int newLevel ) {
+    void setLevel( std::size_t newLevel ) {
         _nativeMethodFlags.level = newLevel;
     }
 
 
-    int version() const {
+    std::size_t version() const {
         return _nativeMethodFlags.version;
     }
 
 
-    void setVersion( int v );
+    void setVersion( std::size_t v );
 
 public:
-    int estimatedInvocationCount() const;   // approximation (not all calls have counters)
-    int ncallers() const;                   // # of callers (# nativeMethods, *not* # of inline caches)
+    std::size_t estimatedInvocationCount() const;   // approximation (not all calls have counters)
+    std::size_t ncallers() const;                   // # of callers (# nativeMethods, *not* # of inline caches)
 
     bool_t encompasses( const void *p ) const;
 
 
     // for zone LRU management
-    int lastUsed() const {
+    std::size_t lastUsed() const {
         return LRUtable[ 0 ].lastUsed;
     }
 
@@ -401,7 +401,7 @@ public:
 
     ScopeDescriptor *containingScopeDesc( const char *pc ) const;
 
-    ProgramCounterDescriptor *correspondingPC( ScopeDescriptor *sd, int byteCodeIndex ) const;
+    ProgramCounterDescriptor *correspondingPC( ScopeDescriptor *sd, std::size_t byteCodeIndex ) const;
 
     // For debugging
     CompiledInlineCache *IC_at( const char *p ) const;
@@ -415,19 +415,19 @@ public:
     // noninlined block mapping
     bool_t has_noninlined_blocks() const;
 
-    int number_of_noninlined_blocks() const;
+    std::size_t number_of_noninlined_blocks() const;
 
 protected:
-    void validate_noninlined_block_scope_index( int index ) const;
+    void validate_noninlined_block_scope_index( std::size_t index ) const;
 
 public:
-    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( int noninlined_block_index ) const;
+    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( std::size_t noninlined_block_index ) const;
 
-    MethodOop noninlined_block_method_at( int noninlined_block_index ) const;
+    MethodOop noninlined_block_method_at( std::size_t noninlined_block_index ) const;
 
-    void noninlined_block_at_put( int noninlined_block_index, int offset ) const;
+    void noninlined_block_at_put( std::size_t noninlined_block_index, std::size_t offset ) const;
 
-    JumpTableEntry *noninlined_block_jumpEntry_at( int noninlined_block_index ) const;
+    JumpTableEntry *noninlined_block_jumpEntry_at( std::size_t noninlined_block_index ) const;
 
 
     // Returns true if activation frame has been established.
@@ -467,12 +467,12 @@ public:
 
 public:
     // Counting & Timing
-    int invocation_count() const {
+    std::size_t invocation_count() const {
         return _invocationCount;
     }
 
 
-    void set_invocation_count( int c ) {
+    void set_invocation_count( std::size_t c ) {
         _invocationCount = c;
     }
 
@@ -485,7 +485,7 @@ private:
 
 public:
     static std::size_t invocationCountOffset() {
-        return (int) &( (NativeMethod *) 0 )->_invocationCount;
+        return (std::size_t) &( (NativeMethod *) 0 )->_invocationCount;
     }
 
     // Support for preemption:

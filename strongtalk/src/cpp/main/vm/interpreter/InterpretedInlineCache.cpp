@@ -42,7 +42,7 @@ public:
 
     static ObjectArrayOop allocate( std::size_t size ) {
         Oop first = free_list()->obj_at( size - 1 );
-        if ( first == nilObj ) {
+        if ( first == nilObject ) {
             return ObjectArrayKlass::allocate_tenured_pic( size * 2 );
         }
         free_list()->obj_at_put( size - 1, ObjectArrayOop( first )->obj_at( 1 ) );
@@ -727,15 +727,15 @@ void InterpretedInlineCacheIterator::init_iteration() {
             set_method( _pic->obj_at( 1 ) );
             break;
         case ByteCodes::SendType::predicted_send:
-            if ( _ic->is_empty() or _ic->second_word() == smiKlassObj ) {
+            if ( _ic->is_empty() or _ic->second_word() == smiKlassObject ) {
                 _number_of_targets = 1;
                 _info              = InlineCacheShape::monomorphic;
             } else {
                 _number_of_targets = 2;
                 _info              = InlineCacheShape::polymorphic;
             }
-            set_klass( smiKlassObj );
-            set_method( interpreter_normal_lookup( smiKlassObj, selector() ).value() );
+            set_klass( smiKlassObject );
+            set_method( interpreter_normal_lookup( smiKlassObject, selector() ).value() );
             st_assert( _method not_eq nullptr and _method->is_mem(), "this method must be there" );
             break;
         default: ShouldNotReachHere();

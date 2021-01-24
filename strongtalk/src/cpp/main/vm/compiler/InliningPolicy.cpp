@@ -108,15 +108,15 @@ bool_t InliningPolicy::isBuiltinMethod() const {
         return true;
     const SymbolOop sel   = _methodOop->selector();
     const KlassOop  klass = receiverKlass();
-    const bool_t    isNum = klass == Universe::smiKlassObj() or klass == Universe::doubleKlassObj();
+    const bool_t    isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
     if ( isNum and isCriticalSmiSelector( sel ) )
         return true;
 
-    const bool_t isArr = klass == Universe::objArrayKlassObj() or klass == Universe::byteArrayKlassObj() or klass == Universe::symbolKlassObj() or false;    // probably should add doubleByteArray et al
+    const bool_t isArr = klass == Universe::objArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
     if ( isArr and isCriticalArraySelector( sel ) )
         return true;
 
-    const bool_t isBool = klass == Universe::trueObj()->klass() or klass == Universe::falseObj()->klass();
+    const bool_t isBool = klass == Universe::trueObject()->klass() or klass == Universe::falseObject()->klass();
     if ( isBool and isCriticalBoolSelector( sel ) )
         return true;
     return false;

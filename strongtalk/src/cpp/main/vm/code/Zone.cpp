@@ -17,16 +17,16 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-constexpr int LRU_RESOLUTION     = 16;    /* resolution (in secs) of LRU timer */
-constexpr int LRU_RETIREMENT_AGE = 10;   /* min. age (# sweeps) for retirement */
+constexpr std::size_t LRU_RESOLUTION     = 16;    /* resolution (in secs) of LRU timer */
+constexpr std::size_t LRU_RETIREMENT_AGE = 10;   /* min. age (# sweeps) for retirement */
 #define LRU_MAX_VISITED    min(numberOfNativeMethods(), LRUMaxVisited)
 
 /* max. # nativeMethods visited per sweep */
-constexpr int LRU_MAX_RECLAIMED = 250000; /* stop after having found this amount of */
+constexpr std::size_t LRU_MAX_RECLAIMED = 250000; /* stop after having found this amount of */
 
 /* Space occupied by replacement candidates */
-constexpr int LRU_CUTOFF      = 32;  /* max. length (bytes) of "small" methods */
-constexpr int LRU_SMALL_BOOST = 3;  /* small methods live this many times longer */
+constexpr std::size_t LRU_CUTOFF      = 32;  /* max. length (bytes) of "small" methods */
+constexpr std::size_t LRU_SMALL_BOOST = 3;  /* small methods live this many times longer */
 // (because access methods don't clear their unused bit)
 
 constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compaction */
@@ -37,12 +37,12 @@ constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compa
 //   overhead for the heap maps and increased effectiveness of the free lists
 // - longer free lists cover a wider range of allocations but can slow down
 //   allocation (when most lists are empty but still have to be scanned).
-constexpr int CODE_BLOCK_SIZE                = 64;  /* block size for nativeMethods */
-constexpr int POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    /* block size for PICs */
+constexpr std::size_t CODE_BLOCK_SIZE                = 64;  /* block size for nativeMethods */
+constexpr std::size_t POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    /* block size for PICs */
 
-constexpr int   FREE       = 20;        /* # of free lists */
-constexpr int   StubBlock  = 16;        /* block size for PolymorphicInlineCache zone */
-constexpr int   StubFree   = 20;        /* # of free lists for PolymorphicInlineCache zone */
+constexpr std::size_t   FREE       = 20;        /* # of free lists */
+constexpr std::size_t   StubBlock  = 16;        /* block size for PolymorphicInlineCache zone */
+constexpr std::size_t   StubFree   = 20;        /* # of free lists for PolymorphicInlineCache zone */
 constexpr float MaxExtFrag = 0.05;    /* max. tolerated ext. fragmentation */
 
 #define FOR_ALL_NMETHODS( var )                              \
@@ -52,13 +52,13 @@ constexpr float MaxExtFrag = 0.05;    /* max. tolerated ext. fragmentation */
     for (PolymorphicInlineCache *var = first_pic(); var; var = next_pic(var))
 
 
-int roundSize( int s, int blockSize ) {
+std::size_t roundSize( std::size_t s, std::size_t blockSize ) {
     return ( s + blockSize - 1 ) / blockSize * blockSize;
 }
 
 
 LRUcount *LRUtable;    // for optimized methods
-int      *LRUflag;        // == LRUtable, just different type for convenience
+std::size_t      *LRUflag;        // == LRUtable, just different type for convenience
 
 static std::size_t LRUtime;        // virtual time; incremented after every full sweep
 
@@ -73,13 +73,13 @@ void sweepTrigger() {
 }
 
 
-static void idOverflowError( int delta ) {
+static void idOverflowError( std::size_t delta ) {
     // fix this - maybe eliminate NativeMethod IDs altogether?
     st_fatal( "zone: NativeMethod ID table overflowed" );
 }
 
 
-Zone::Zone( int &size ) {
+Zone::Zone( std::size_t &size ) {
     _methodHeap = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
     _picHeap    = new ZoneHeap( Universe::current_sizes._pic_heap_size, POLYMORPHIC_INLINE_CACHE_BLOCK );
 
@@ -109,7 +109,7 @@ void Zone::clear() {
 }
 
 
-int Zone::nextNativeMethodID() {
+std::size_t Zone::nextNativeMethodID() {
     return jump_table()->peekID();
 }
 
@@ -138,7 +138,7 @@ NativeMethod *Zone::allocate( std::size_t size ) {
 }
 
 
-int Zone::used() {
+std::size_t Zone::used() {
     return _methodHeap->usedBytes();
 }
 
@@ -167,15 +167,15 @@ void Zone::flush() {
 }
 
 
-int Zone::findReplCandidates( int needed ) {
+std::size_t Zone::findReplCandidates( std::size_t needed ) {
     // find replacement candidates; stop if > needed bytes found or if
     // there seem to be no more candidates
 # ifdef NOT_IMPLEMENTED
-    int reclaimed = 0, iter = 0;
+    std::size_t reclaimed = 0, iter = 0;
     while (iter++ < LRU_RETIREMENT_AGE and reclaimed < needed) {
-      int vis, recl;
-      int limit = numberOfNativeMethods();		// because usedIDs may change
-      int newTime = sweeper(limit, needed, &vis, &recl);
+      std::size_t vis, recl;
+      std::size_t limit = numberOfNativeMethods();		// because usedIDs may change
+      std::size_t newTime = sweeper(limit, needed, &vis, &recl);
       reclaimed += recl;
       if (recl < needed and newTime > LRUtime + 1) {
         // next sweep wouldn't reclaim anything
@@ -191,8 +191,8 @@ int Zone::findReplCandidates( int needed ) {
 
 
 // flush next replacement candidate; return # bytes freed
-int Zone::flushNextMethod( int needed ) {
-    int freed = 0;
+std::size_t Zone::flushNextMethod( std::size_t needed ) {
+    std::size_t freed = 0;
     Unimplemented();
     return freed;
 }
@@ -289,9 +289,9 @@ void Zone::adjustPolicy() {
            overhead *100, minFreeFrac * 100);
       }
     }
-    int minFree = int(iZone->capacity() * minFreeFrac);
+    std::size_t minFree = std::size_t(iZone->capacity() * minFreeFrac);
     while (1) {
-      int toFlush = minFree - (iZone->capacity() - iZone->usedBytes());
+      std::size_t toFlush = minFree - (iZone->capacity() - iZone->usedBytes());
       if (toFlush <= 0) break;
       flushNextMethod(LRU_MAX_RECLAIMED);
     }
@@ -381,8 +381,8 @@ void Zone::cleanup_inline_caches() {
 }
 
 
-int retirementAge( NativeMethod *n ) {
-    int delta = LRU_RETIREMENT_AGE;
+std::size_t retirementAge( NativeMethod *n ) {
+    std::size_t delta = LRU_RETIREMENT_AGE;
     if ( n->instructionsLength() <= LRU_CUTOFF )
         delta = max( delta, LRU_RETIREMENT_AGE * LRU_SMALL_BOOST );
     return n->lastUsed() + delta;
@@ -391,7 +391,7 @@ int retirementAge( NativeMethod *n ) {
 
 void Zone::verify() {
     _methodTable->verify();
-    int n = 0;
+    std::size_t n = 0;
     FOR_ALL_NMETHODS( p ) {
         n++;
         p->verify();
@@ -437,14 +437,14 @@ void Zone::PICs_do( void f( PolymorphicInlineCache *pic ) ) {
   _console->print(format, (n), 100.0 * (n) / (ntot), 100.0 * (n) / (ntot2))
 
 class nmsizes {
-    int n, insts, locs, scopes;
+    std::size_t n, insts, locs, scopes;
 public:
     nmsizes() {
         n = insts = locs = scopes = 0;
     }
 
 
-    int total() {
+    std::size_t total() {
         return n * sizeof( NativeMethod ) + insts + locs + scopes;
     }
 
@@ -455,8 +455,8 @@ public:
 
 
     void print( const char *name, nmsizes &tot ) {
-        int bigTotal = tot.total();
-        int myTotal  = total();
+        std::size_t bigTotal = tot.total();
+        std::size_t myTotal  = total();
         if ( not isEmpty() ) {
             _console->print( "%-13s (%ld methods): ", name, n );
             NMLINE( "headers = %ld (%2.0f%%/%2.0f%%); ", n * sizeof( NativeMethod ), myTotal, bigTotal );
@@ -468,7 +468,7 @@ public:
     }
 
 
-    void print( const char *title, int t ) {
+    void print( const char *title, std::size_t t ) {
         _console->print_cr( "   n [%3d] title [%s] nativeMethods %2d%% = [%4dK], hdr [%2d%%], inst [%2d%%], locs [%2d%%], debug [%2d%%]", n, title, total() * 100 / t, total() / 1024, n * sizeof( NativeMethod ) * 100 / total(), insts * 100 / total(), locs * 100 / total(), scopes * 100 / total() );
     }
 
@@ -485,7 +485,7 @@ public:
 void Zone::print() {
     nmsizes nms;
     nmsizes zombies;
-    int     uncommon = 0;
+    std::size_t     uncommon = 0;
 
     FOR_ALL_NMETHODS( p ) {
         if ( p->isZombie() ) {
@@ -511,13 +511,13 @@ void Zone::print() {
         _console->print_cr( "  PICs (%dK, %d%% used)", _picHeap->capacity() / 1024, ( _picHeap->usedBytes() * 100 ) / _picHeap->capacity() );
     }
 
-    int n     = 0;
-    int insts = 0;
+    std::size_t n     = 0;
+    std::size_t insts = 0;
     FOR_ALL_PICS( pic ) {
         n++;
         insts += pic->code_size();
     }
-    int total = insts + n * sizeof( PolymorphicInlineCache );
+    std::size_t total = insts + n * sizeof( PolymorphicInlineCache );
 
     if ( n > 0 ) {
         _console->print_cr( "   %3d entries = %dK (hdr %2d%%, inst %2d%%)", n, total / 1024, n * sizeof( PolymorphicInlineCache ) * 100 / total, insts * 100 / total );
@@ -527,10 +527,10 @@ void Zone::print() {
 
 struct nm_hist_elem {
     NativeMethod *nm;
-    int count;
+    std::size_t count;
     std::size_t size;
-    int sic_count;
-    int sic_size;
+    std::size_t sic_count;
+    std::size_t sic_size;
 };
 
 
@@ -554,9 +554,9 @@ void Zone::print_NativeMethod_histogram( std::size_t size ) {
     ResourceMark resourceMark;
     nm_hist_elem* hist_array = NEW_RESOURCE_ARRAY(nm_hist_elem, numberOfNativeMethods());
 
-    int*  compiled_nativeMethods = NEW_RESOURCE_ARRAY(int, numberOfNativeMethods());
+    std::size_t*  compiled_nativeMethods = NEW_RESOURCE_ARRAY(std::size_t, numberOfNativeMethods());
 
-    int n = 0;
+    std::size_t n = 0;
     FOR_ALL_NMETHODS(p) {
       if (not p->isAccess() and not p->isZombie()) {
         hist_array[n].nm     = p;
@@ -573,12 +573,12 @@ void Zone::print_NativeMethod_histogram( std::size_t size ) {
     for (std::size_t i = 0; i < n; i++) compiled_nativeMethods[i] = 0;
 
     std::size_t i = 0;
-    int out = 0;
+    std::size_t out = 0;
     while (i < n) {
-      int counter     = 1;
-      int all_size    = 0;
-      int sic_counter = 0;
-      int sic_size    = 0;
+      std::size_t counter     = 1;
+      std::size_t all_size    = 0;
+      std::size_t sic_counter = 0;
+      std::size_t sic_size    = 0;
 
       Oop method = hist_array[i].nm->method();
       if (hist_array[i].nm->flags.compiler == nm_new) {
@@ -611,7 +611,7 @@ void Zone::print_NativeMethod_histogram( std::size_t size ) {
     qsort(hist_array, out, sizeof(nm_hist_elem), compareCount);
 
     printf("\n# nm \t # methods \t%% acc.\n");
-    int nm_count = 0;
+    std::size_t nm_count = 0;
     for (std::size_t i = 0; i < n; i++) {
       if (compiled_nativeMethods[i] > 0) {
         nm_count += i * compiled_nativeMethods[i];
@@ -716,7 +716,7 @@ const char *Zone::instsStart() {
 }
 
 
-int Zone::instsSize() {
+std::size_t Zone::instsSize() {
     return _methodHeap->capacity();
 }
 
@@ -731,16 +731,16 @@ NativeMethod *Zone::next_circular_nm( NativeMethod *nm ) {
 
 // called every LRU_RESOLUTION seconds or by reclaimNativeMethods if needed
 // returns time at which oldest non-reclaimed NativeMethod will be reclaimed
-int Zone::sweeper( int maxVisit, int maxReclaim, int *nvisited, int *nbytesReclaimed ) {
+std::size_t Zone::sweeper( std::size_t maxVisit, std::size_t maxReclaim, std::size_t *nvisited, std::size_t *nbytesReclaimed ) {
 #ifdef NOT_IMPLEMENTED
     EventMarker  em( "LRU sweep" );
     ResourceMark resourceMark;
 
     timer tmr;
-    int   visited  = 0;
-    int   nused    = 0;
-    int   nbytes   = 0;
-    int   nextTime = LRUtime + LRU_RETIREMENT_AGE;
+    std::size_t   visited  = 0;
+    std::size_t   nused    = 0;
+    std::size_t   nbytes   = 0;
+    std::size_t   nextTime = LRUtime + LRU_RETIREMENT_AGE;
     NativeMethod * first = first_nm();
     if ( not first ) return -1;
 
@@ -770,11 +770,11 @@ int Zone::sweeper( int maxVisit, int maxReclaim, int *nvisited, int *nbytesRecla
             nused++;
             if ( PrintLRUSweep2 ) {
                 printf( "used" );
-                int diff = useCount[ p->id ] - p->oldCount;
+                std::size_t diff = useCount[ p->id ] - p->oldCount;
                 if ( diff ) printf( " %ld times", diff );
             }
             if ( LRUDecayFactor > 1 ) {
-                useCount[ p->id ] = int( useCount[ p->id ] / LRUDecayFactor );
+                useCount[ p->id ] = std::size_t( useCount[ p->id ] / LRUDecayFactor );
             }
             p->oldCount                = useCount[ p->id ];
             LRUtable[ p->id ].unused   = true;
@@ -789,7 +789,7 @@ int Zone::sweeper( int maxVisit, int maxReclaim, int *nvisited, int *nbytesRecla
             replCandidates.add( &p->zoneLink );
             nbytes += iZone->sizeOfBlock( p );
         } else {
-            int age = retirementAge( p );
+            std::size_t age = retirementAge( p );
             if ( age < nextTime ) {
                 nextTime = age;
             }
@@ -830,7 +830,7 @@ int Zone::sweeper( int maxVisit, int maxReclaim, int *nvisited, int *nbytesRecla
 }
 
 
-int Zone::LRU_time() {
+std::size_t Zone::LRU_time() {
     return LRUtime;
 }
 

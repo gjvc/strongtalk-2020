@@ -110,7 +110,7 @@ void ObjectArrayOopDescriptor::replace_from_to( int from, int to, ObjectArrayOop
 void ObjectArrayOopDescriptor::replace_and_fill( int from, int start, ObjectArrayOop source ) {
     // Fill the first part
     for ( std::size_t i = 1; i < from; i++ ) {
-        obj_at_put( i, nilObj );
+        obj_at_put( i, nilObject );
     }
 
     // Fill the middle part
@@ -122,7 +122,7 @@ void ObjectArrayOopDescriptor::replace_and_fill( int from, int start, ObjectArra
 
     // Fill the last part
     for ( std::size_t i = to + 1; i <= length(); i++ ) {
-        obj_at_put( i, nilObj );
+        obj_at_put( i, nilObject );
     }
 }
 

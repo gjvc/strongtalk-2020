@@ -78,13 +78,13 @@ protected:
     bool_t _needsLRUSweep;    //
     bool_t _needsSweep;       //
 
-    int    compactTime;                // time of last compaction
-    int    compactDuration;            // duration of last compaction
+    std::size_t    compactTime;                // time of last compaction
+    std::size_t    compactDuration;            // duration of last compaction
     double minFreeFrac;             // fraction of free Space needed at compaction time
 
 
 public:
-    Zone( int &size );
+    Zone( std::size_t &size );
 
 
     void *operator new( std::size_t size ) {
@@ -95,7 +95,7 @@ public:
     void clear();
 
 
-    int capacity() const {
+    std::size_t capacity() const {
         return _methodHeap->capacity();
     }
 
@@ -107,10 +107,10 @@ public:
 
     void verify_if_often();
 
-    int used();
+    std::size_t used();
 
 
-    int numberOfNativeMethods() const {
+    std::size_t numberOfNativeMethods() const {
         return jump_table()->usedIDs;
     }
 
@@ -154,7 +154,7 @@ public:
 
     void cleanup_inline_caches();
 
-    int findReplCandidates( int needed );
+    std::size_t findReplCandidates( std::size_t needed );
 
     bool_t isDeltaPC( void *p ) const;
 
@@ -206,13 +206,13 @@ public:
 
     const char *instsStart();
 
-    int instsSize();
+    std::size_t instsSize();
 
-    int LRU_time();
+    std::size_t LRU_time();
 
-    int sweeper( int maxVisit, int maxReclaim, int *nvisited = nullptr, int *nbytesReclaimed = nullptr );
+    std::size_t sweeper( std::size_t maxVisit, std::size_t maxReclaim, std::size_t *nvisited = nullptr, std::size_t *nbytesReclaimed = nullptr );
 
-    int nextNativeMethodID();
+    std::size_t nextNativeMethodID();
 
 public:
     void mark_dependents_for_deoptimization();
@@ -228,7 +228,7 @@ protected:
 
     void adjustPolicy();
 
-    int flushNextMethod( int needed );
+    std::size_t flushNextMethod( std::size_t needed );
 
     inline NativeMethod *next_circular_nm( NativeMethod *nm );
 
@@ -250,9 +250,9 @@ public:
         ShouldNotCallThis();
     } // shouldn't create
     void set( std::size_t i ) {
-        *(int *) this = i;
+        *(std::size_t *) this = i;
     }
 };
 
 extern LRUcount *LRUtable;      // for optimized methods
-extern int      *LRUflag;       // == LRUtable, just different type for convenience
+extern std::size_t      *LRUflag;       // == LRUtable, just different type for convenience

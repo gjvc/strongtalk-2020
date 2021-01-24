@@ -35,8 +35,8 @@ struct KlassOopDescriptor *ClassChange::new_class_from( KlassOopDescriptor *old_
         new_mixin->class_mixin()->set_primary_invocation( result->klass() );
     }
 
-    new_mixin->set_installed( trueObj );
-    new_mixin->class_mixin()->set_installed( trueObj );
+    new_mixin->set_installed( trueObject );
+    new_mixin->class_mixin()->set_installed( trueObject );
 
     transfer_misc( old_klass, result );
     transfer_misc( old_klass->klass(), result->klass() );
@@ -108,7 +108,7 @@ void ClassChange::update_class_vars() {
     for ( std::size_t i = new_mixin()->number_of_classVars(); i > 0; i-- ) {
         struct SymbolOopDescriptor *name = new_mixin()->classVar_at( i );
         if ( not k->includes_classVar( name ) ) {
-            k->add_classVar( oopFactory::new_association( name, nilObj, false ) );
+            k->add_classVar( oopFactory::new_association( name, nilObject, false ) );
         }
     }
 

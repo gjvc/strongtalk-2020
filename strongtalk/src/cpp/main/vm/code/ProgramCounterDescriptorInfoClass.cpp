@@ -27,7 +27,7 @@ void ProgramCounterDescriptorInfoClass::extend( std::size_t newSize ) {
 }
 
 
-void ProgramCounterDescriptorInfoClass::add( int pcOffset, ScopeInfo scope, int byteCodeIndex ) {
+void ProgramCounterDescriptorInfoClass::add( std::size_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex ) {
     if ( scope->_lite and not GenerateLiteScopeDescs )
         return;
     if ( _end == _size )
@@ -64,27 +64,27 @@ void ProgramCounterDescriptorInfoClass::mark_scopes() {
 }
 
 
-void ProgramCounterDescriptorInfoClass::copy_to( int *&addr ) {
+void ProgramCounterDescriptorInfoClass::copy_to( std::size_t *&addr ) {
     for ( std::size_t i = 0; i < _end; i++ ) {
         ProgramCounterDescriptor *pc = (ProgramCounterDescriptor *) addr;
         pc->_pc            = _nodes[ i ]._pcOffset;
         pc->_scope         = _nodes[ i ]._scopeInfo ? _nodes[ i ]._scopeInfo->_offset : IllegalByteCodeIndex;
         pc->_byteCodeIndex = _nodes[ i ]._byteCodeIndex;
-        addr += sizeof( ProgramCounterDescriptor ) / sizeof( int );
+        addr += sizeof( ProgramCounterDescriptor ) / sizeof( std::size_t );
     }
 }
 
 
 void LocationName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
-    int      index              = rec->getValueIndex( converted_location._loc );
+    std::size_t      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, LOCATION_CODE, is_last, index ) )
         rec->genIndex( index );
 }
 
 
 void ValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
-    int index = rec->getOopIndex( _value );
+    std::size_t index = rec->getOopIndex( _value );
     if ( not genHeaderByte( rec, VALUE_CODE, is_last, index ) )
         rec->genIndex( index );
 }
@@ -92,7 +92,7 @@ void ValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
 
 void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
-    int      index              = rec->getValueIndex( converted_location._loc );
+    std::size_t      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, MEMOIZEDBLOCK_CODE, is_last, index ) )
         rec->genIndex( index );
     rec->genOop( Oop( _blockMethod ) );
@@ -101,7 +101,7 @@ void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
 
 
 void BlockValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
-    int index = rec->getOopIndex( Oop( _blockMethod ) );
+    std::size_t index = rec->getOopIndex( Oop( _blockMethod ) );
     if ( not genHeaderByte( rec, BLOCKVALUE_CODE, is_last, index ) )
         rec->genIndex( index );
     rec->genValue( _parentScope == nullptr ? 0 : _parentScope->_offset ); // Lars, please check this (gri 2/2/96)

@@ -11,12 +11,12 @@
 Oop DoubleKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
     // allocate
-    Oop *result = basicAllocate( DoubleOopDescriptor::object_size(), &doubleKlassObj, permit_scavenge, tenured );
+    Oop *result = basicAllocate( DoubleOopDescriptor::object_size(), &doubleKlassObject, permit_scavenge, tenured );
     if ( result == nullptr )
         return nullptr;
     DoubleOop obj = as_doubleOop( result );
     // header
-    MemOop( obj )->initialize_header( false, doubleKlassObj );
+    MemOop( obj )->initialize_header( false, doubleKlassObject );
     obj->set_value( 0.0 );
     return obj;
 }

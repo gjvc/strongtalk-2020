@@ -8,7 +8,6 @@
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/runtime/Bootstrap.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/MethodPrinterClosure.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
@@ -19,11 +18,10 @@
 #include "vm/system/dll.hpp"
 #include "vm/compiler/CostModel.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/oops/ExpressionStackMapper.hpp"
 
 
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
@@ -233,7 +231,7 @@ public:
 
 
     void put_byte( int byte ) {
-        result->append( trueObj );
+        result->append( trueObject );
         result->append( smiOopFromValue( byte ) );
     }
 
@@ -248,7 +246,7 @@ public:
 
 
     void put_oop( Oop obj ) {
-        result->append( falseObj );
+        result->append( falseObject );
         result->append( obj );
     }
 
@@ -604,339 +602,17 @@ int MethodOopDescriptor::next_byteCodeIndex( int byteCodeIndex ) const {
 }
 
 
-class ExpressionStackMapper : public MethodClosure {
-
-private:
-    GrowableArray<int> *_mapping;
-    int                _targetByteCodeIndex;
-
-
-    void map_push() {
-        map_push( byteCodeIndex() );
-    }
-
-
-    void map_push( int b ) {
-        // lprintf("push(%d)", byteCodeIndex);
-        if ( b >= _targetByteCodeIndex ) {
-            abort();
-        } else {
-            _mapping->push( b );
-        }
-    }
-
-
-    void map_pop() {
-        if ( byteCodeIndex() >= _targetByteCodeIndex ) {
-            abort();
-        } else {
-            // lprintf("pop(%d)", byteCodeIndex());
-            _mapping->pop();
-        }
-    }
-
-
-    void map_send( bool_t has_receiver, int number_of_arguments ) {
-        if ( has_receiver )
-            map_pop();
-        for ( std::size_t i = 0; i < number_of_arguments; i++ )
-            map_pop();
-        map_push();
-    }
-
-
-public:
-    ExpressionStackMapper( GrowableArray<int> *mapping, int targetByteCodeIndex ) {
-        this->_mapping             = mapping;
-        this->_targetByteCodeIndex = targetByteCodeIndex;
-    }
-
-
-    void push_self() {
-        map_push();
-    }
-
-
-    void push_tos() {
-        map_push();
-    }
-
-
-    void push_literal( Oop obj ) {
-        map_push();
-    }
-
-
-    void push_argument( int no ) {
-        map_push();
-    }
-
-
-    void push_temporary( int no ) {
-        map_push();
-    }
-
-
-    void push_temporary( int no, int context ) {
-        map_push();
-    }
-
-
-    void push_instVar( int offset ) {
-        map_push();
-    }
-
-
-    void push_instVar_name( SymbolOop name ) {
-        map_push();
-    }
-
-
-    void push_classVar( AssociationOop assoc ) {
-        map_push();
-    }
-
-
-    void push_classVar_name( SymbolOop name ) {
-        map_push();
-    }
-
-
-    void push_global( AssociationOop obj ) {
-        map_push();
-    }
-
-
-    void pop() {
-        map_pop();
-    }
-
-
-    void normal_send( InterpretedInlineCache *ic ) {
-        map_send( true, ic->selector()->number_of_arguments() );
-    }
-
-
-    void self_send( InterpretedInlineCache *ic ) {
-        map_send( false, ic->selector()->number_of_arguments() );
-    }
-
-
-    void super_send( InterpretedInlineCache *ic ) {
-        map_send( false, ic->selector()->number_of_arguments() );
-    }
-
-
-    void double_equal() {
-        map_send( true, 1 );
-    }
-
-
-    void double_not_equal() {
-        map_send( true, 1 );
-    }
-
-
-    void method_return( int nofArgs ) {
-        map_pop();
-    }
-
-
-    void nonlocal_return( int nofArgs ) {
-        map_pop();
-    }
-
-
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
-        if ( type == AllocationType::tos_as_scope )
-            map_pop();
-        map_push();
-    }
-
-
-    // nodes
-    void if_node( IfNode *node );
-
-    void cond_node( CondNode *node );
-
-    void while_node( WhileNode *node );
-
-    void primitive_call_node( PrimitiveCallNode *node );
-
-    void dll_call_node( DLLCallNode *node );
-
-
-    // call backs to ignore
-    void allocate_temporaries( int nofTemps ) {
-    }
-
-
-    void store_temporary( int no ) {
-    }
-
-
-    void store_temporary( int no, int context ) {
-    }
-
-
-    void store_instVar( int offset ) {
-    }
-
-
-    void store_instVar_name( SymbolOop name ) {
-    }
-
-
-    void store_classVar( AssociationOop assoc ) {
-    }
-
-
-    void store_classVar_name( SymbolOop name ) {
-    }
-
-
-    void store_global( AssociationOop obj ) {
-    }
-
-
-    void allocate_context( int nofTemps, bool_t forMethod = false ) {
-    }
-
-
-    void set_self_via_context() {
-    }
-
-
-    void copy_self_into_context() {
-    }
-
-
-    void copy_argument_into_context( int argNo, int no ) {
-    }
-
-
-    void zap_scope() {
-    }
-
-
-    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
-    }
-
-
-    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
-    }
-
-
-    void float_floatify( Floats::Function f, int tof ) {
-        map_pop();
-    }
-
-
-    void float_move( int tof, int from ) {
-    }
-
-
-    void float_set( int tof, DoubleOop value ) {
-    }
-
-
-    void float_nullary( Floats::Function f, int tof ) {
-    }
-
-
-    void float_unary( Floats::Function f, int tof ) {
-    }
-
-
-    void float_binary( Floats::Function f, int tof ) {
-    }
-
-
-    void float_unaryToOop( Floats::Function f, int tof ) {
-        map_push();
-    }
-
-
-    void float_binaryToOop( Floats::Function f, int tof ) {
-        map_push();
-    }
-};
-
-
-void ExpressionStackMapper::if_node( IfNode *node ) {
-    if ( node->includes( _targetByteCodeIndex ) ) {
-        if ( node->then_code()->includes( _targetByteCodeIndex ) ) {
-            map_pop();
-            MethodIterator i( node->then_code(), this );
-        } else if ( node->else_code() and node->else_code()->includes( _targetByteCodeIndex ) ) {
-            map_pop();
-            MethodIterator i( node->else_code(), this );
-        }
-        abort();
-    } else {
-        map_pop();
-        if ( node->produces_result() )
-            map_push( node->begin_byteCodeIndex() );
-    }
-}
-
-
-void ExpressionStackMapper::cond_node( CondNode *node ) {
-    if ( node->includes( _targetByteCodeIndex ) ) {
-        if ( node->expr_code()->includes( _targetByteCodeIndex ) ) {
-            map_pop();
-            MethodIterator i( node->expr_code(), this );
-        }
-        abort();
-    } else {
-        map_pop();
-        map_push( node->begin_byteCodeIndex() );
-    }
-}
-
-
-void ExpressionStackMapper::while_node( WhileNode *node ) {
-    if ( node->includes( _targetByteCodeIndex ) ) {
-        if ( node->expr_code()->includes( _targetByteCodeIndex ) )
-            MethodIterator i( node->expr_code(), this );
-        else if ( node->body_code() and node->body_code()->includes( _targetByteCodeIndex ) )
-            MethodIterator i( node->body_code(), this );
-        abort();
-    }
-}
-
-
-void ExpressionStackMapper::primitive_call_node( PrimitiveCallNode *node ) {
-    int       nofArgsToPop = node->number_of_parameters();
-    for ( std::size_t i            = 0; i < nofArgsToPop; i++ )
-        map_pop();
-
-    map_push();
-    if ( node->failure_code() and node->failure_code()->includes( _targetByteCodeIndex ) ) {
-        MethodIterator i( node->failure_code(), this );
-    }
-}
-
-
-void ExpressionStackMapper::dll_call_node( DLLCallNode *node ) {
-
-    for ( std::size_t i = 0; i < node->nofArgs(); i++ )
-        map_pop();
-
-}
-
-
-GrowableArray<int> *MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
-
-    GrowableArray<int>    *mapping = new GrowableArray<int>( 10 );
-    ExpressionStackMapper blk( mapping, byteCodeIndex );
-    MethodIterator        i( this, &blk );
+GrowableArray<std::size_t> *MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
+
+    GrowableArray<std::size_t> *mapping = new GrowableArray<std::size_t>( 10 );
+    ExpressionStackMapper      blk( mapping, byteCodeIndex );
+    MethodIterator             i( this, &blk );
 
     // reverse the mapping so the top of the expression stack is first
     // %todo:
     //    move reverse to GrowableArray
 
-    GrowableArray<int> *result = new GrowableArray<int>( mapping->length() );
+    GrowableArray<std::size_t> *result = new GrowableArray<std::size_t>( mapping->length() );
 
     for ( std::size_t i = mapping->length() - 1; i >= 0; i-- ) {
         result->push( mapping->at( i ) );
@@ -1762,16 +1438,20 @@ ObjectArrayOop MethodOopDescriptor::senders() const {
 
 
 SymbolOop selectorFrom( Oop method_or_selector ) {
+
     if ( method_or_selector == nullptr )
         return nullptr;
+
     if ( method_or_selector->is_symbol() )
         return SymbolOop( method_or_selector );
+
     if ( not method_or_selector->is_method() )
         return nullptr;
 
     MethodOop method = MethodOop( method_or_selector );
     if ( method->is_blockMethod() )
         return selectorFrom( MethodOop( method->selector_or_method() ) );
+
     return method->selector();
 }
 

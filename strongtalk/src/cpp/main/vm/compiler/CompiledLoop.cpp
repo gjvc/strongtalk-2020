@@ -465,7 +465,7 @@ public:
         theLoop     = l;
         theLoopPReg = r;
         smi_type    = new GrowableArray<KlassOop>( 1 );
-        smi_type->append( smiKlassObj );
+        smi_type->append( smiKlassObject );
     }
 
 

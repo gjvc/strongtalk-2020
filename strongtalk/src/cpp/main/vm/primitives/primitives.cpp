@@ -23,164 +23,77 @@
 #include "vm/primitives/proxy_primitives.hpp"
 #include "vm/primitives/smi_primitives.hpp"
 #include "vm/primitives/system_primitives.hpp"
+#include "vm/primitives/primitives_table.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/primitives/PrimitiveDescriptor.hpp"
 
 
-// The primitive_table is generated from prims.src.
-// The output has the following format:
-//   static std::size_t size_of_primitive_table
-//   static PrimitiveDescriptor* primitive_table;
-#include "vm/primitives/primitives_table.cpp"
+const char *name_from_group( const PrimitiveGroup &group ) {
 
-
-// the typedefs below are necessary to ensure that args are passed correctly when calling a primitive through a function pointer
-// NB: there's no general n-argument primitive because some calling conventions can't handle vararg functions
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype0)();
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype1)( Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype2)( Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype3)( Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype4)( Oop, Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype5)( Oop, Oop, Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype6)( Oop, Oop, Oop, Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype7)( Oop, Oop, Oop, Oop, Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype8)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
-
-typedef Oop (__CALLING_CONVENTION *prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
-
-
-Oop PrimitiveDescriptor::eval( Oop *a ) {
-
-    const bool_t reverseArgs = true;    // change this when changing primitive calling convention
-    Oop          res;
-    int          ebx_on_stack;
-
-
-// %hack: see below
-#ifndef __GNUC__
-    __asm mov ebx_on_stack, ebx
-#else
-    __asm__("pushl %%eax;"
-            "movl %%ebx, %%eax;"
-            "movl %%eax, %0;"
-            "popl %%eax;"
-    : "=a"(ebx_on_stack));
-#endif
-    if ( reverseArgs ) {
-        switch ( number_of_parameters() ) {
-            case 0:
-                res = ( (prim_fntype0) _fn )();
-                break;
-            case 1:
-                res = ( (prim_fntype1) _fn )( a[ 0 ] );
-                break;
-            case 2:
-                res = ( (prim_fntype2) _fn )( a[ 1 ], a[ 0 ] );
-                break;
-            case 3:
-                res = ( (prim_fntype3) _fn )( a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 4:
-                res = ( (prim_fntype4) _fn )( a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 5:
-                res = ( (prim_fntype5) _fn )( a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 6:
-                res = ( (prim_fntype6) _fn )( a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 7:
-                res = ( (prim_fntype7) _fn )( a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 8:
-                res = ( (prim_fntype8) _fn )( a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            case 9:
-                res = ( (prim_fntype9) _fn )( a[ 8 ], a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
-                break;
-            default: ShouldNotReachHere();
-        }
-    } else {
-        switch ( number_of_parameters() ) {
-            case 0:
-                res = ( (prim_fntype0) _fn )();
-                break;
-            case 1:
-                res = ( (prim_fntype1) _fn )( a[ 0 ] );
-                break;
-            case 2:
-                res = ( (prim_fntype2) _fn )( a[ 0 ], a[ 1 ] );
-                break;
-            case 3:
-                res = ( (prim_fntype3) _fn )( a[ 0 ], a[ 1 ], a[ 2 ] );
-                break;
-            case 4:
-                res = ( (prim_fntype4) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ] );
-                break;
-            case 5:
-                res = ( (prim_fntype5) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ] );
-                break;
-            case 6:
-                res = ( (prim_fntype6) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ] );
-                break;
-            case 7:
-                res = ( (prim_fntype7) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ] );
-                break;
-            case 8:
-                res = ( (prim_fntype8) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ] );
-                break;
-            case 9:
-                res = ( (prim_fntype9) _fn )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] );
-                break;
-            default: ShouldNotReachHere();
-        }
+    switch ( group ) {
+        case PrimitiveGroup::IntComparisonPrimitive:
+            return "IntComparisonPrimitive / smi_t";
+        case PrimitiveGroup::IntArithmeticPrimitive:
+            return "IntArithmeticPrimitive / smi_t";
+        case PrimitiveGroup::FloatComparisonPrimitive:
+            return "FloatComparisonPrimitive";
+        case PrimitiveGroup::FloatArithmeticPrimitive:
+            return "FloatArithmeticPrimitive";
+        case PrimitiveGroup::ByteArrayPrimitive:
+            return "ByteArrayPrimitive";
+        case PrimitiveGroup::DoubleByteArrayPrimitive:
+            return "DoubleByteArrayPrimitive";
+        case PrimitiveGroup::ObjArrayPrimitive:
+            return "ObjArrayPrimitive";
+        case PrimitiveGroup::BlockPrimitive:
+            return "BlockPrimitive";
+        case PrimitiveGroup::NormalPrimitive:
+            return "NormalPrimitive";
+        default: st_fatal( "Unknown primitive group" );
     }
 
-    // %hack: some primitives alter EBX and crash the compiler's constant propagation
-    int ebx_now;
-#ifndef __GNUC__
-    __asm mov ebx_now, ebx
-    __asm mov ebx, ebx_on_stack
-#else
-    __asm__("pushl %%eax;"
-            "movl %%ebx, %%eax;"
-            "movl %%eax, %0;"
-            "movl %1, %%eax;"
-            "movl %%eax, %%ebx;"
-            "popl %%eax;" : "=a"(ebx_now) : "a"(ebx_on_stack));
-#endif
-
-    if ( ebx_now not_eq ebx_on_stack ) {
-        _console->print_cr( "ebx changed (%X -> %X) in :", ebx_on_stack, ebx_now );
-        print();
-    }
-
-    return res;
 }
 
 
 void Primitives::print_table() {
 
-    _console->print_cr( "Primitive table:" );
+    //
+    _console->print_cr( "%%primitive-table:" );
+    _console->print_cr( "%%primitive-table:                                                                P = needs Delta FP code ------------------------------." );
+    _console->print_cr( "%%primitive-table:                                                                I = internal ----------------------------------------.|" );
+    _console->print_cr( "%%primitive-table:                                                                D = can invoke Delta code --------------------------.||" );
+    _console->print_cr( "%%primitive-table:                                                                C = can be constant folded ------------------------.|||" );
+    _console->print_cr( "%%primitive-table:                                                                N = can perform non-local return -----------------.||||" );
+    _console->print_cr( "%%primitive-table:                                                                W = can walk stack (computed) -------------------.|||||" );
+    _console->print_cr( "%%primitive-table:                                                                S = can scavenge -------------------------------.||||||" );
+    _console->print_cr( "%%primitive-table:                                                                F = has failure block -------------------------.|||||||" );
+    _console->print_cr( "%%primitive-table:                                                                R = has receiver -----------------------------.||||||||" );
+    _console->print_cr( "%%primitive-table:                                                                                                              |||||||||" );
+    _console->print_cr( "%%primitive-table:  INDEX  NAME                                                                           ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
+
+    //
     for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
-        _console->print( "%3d ", i );
-        e->print();
+        _console->print_cr( "%%primitive-table:  %.5d  %-96s  %d  %s%s%s%s%s%s%s%s%s  %s",
+                            i,
+                            e->name(),
+                            e->number_of_parameters(),
+                            e->has_receiver() ? "R" : "_",
+                            e->can_fail() ? "F" : "_",
+                            e->can_scavenge() ? "S" : "_",
+                            e->can_walk_stack() ? "W" : "_",
+                            e->can_perform_NonLocalReturn() ? "N" : "_",
+                            e->can_be_constant_folded() ? "C" : "_",
+                            e->can_invoke_delta() ? "D" : "_",
+                            e->is_internal() ? "I" : "_",
+                            e->needs_delta_fp_code() ? "P" : "_",
+                            name_from_group( e->group() )
+        );
     }
-    _console->print_cr( " - format: <index> <name> <number_of_parameters> <flags> [category]" );
-    _console->print_cr( "    flags:  R = has receiver            F = has failure block" );
-    _console->print_cr( "            S = can scavenge            N = can perform NonLocalReturn" );
-    _console->print_cr( "            C = can be constant folded  D = can invoke Delta code" );
-    _console->print_cr( "            I = internal                P = needs Delta fp code" );
-    _console->print_cr( "            W = can walk stack (computed)" );
+
+    //
+    _console->print_cr( "" );
+
 }
 
 
@@ -191,41 +104,6 @@ bool_t PrimitiveDescriptor::can_walk_stack() const {
 
 SymbolOop PrimitiveDescriptor::selector() const {
     return oopFactory::new_symbol( name() );
-}
-
-
-void PrimitiveDescriptor::print() {
-    _console->print( "%48s %d %s%s%s%s%s%s%s%s%s", name(), number_of_parameters(), has_receiver() ? "R" : "_", can_fail() ? "F" : "_", can_scavenge() ? "S" : "_", can_walk_stack() ? "W" : "_", can_perform_NonLocalReturn() ? "N" : "_", can_be_constant_folded() ? "C" : "_", can_invoke_delta() ? "D" : "_", is_internal() ? "I" : "_", needs_delta_fp_code() ? "P" : "_" );
-    switch ( group() ) {
-        case PrimitiveGroup::IntComparisonPrimitive:
-            _console->print( ", smi_t compare" );
-            break;
-        case PrimitiveGroup::IntArithmeticPrimitive:
-            _console->print( ", smi_t arith" );
-            break;
-        case PrimitiveGroup::FloatComparisonPrimitive:
-            _console->print( ", double compare" );
-            break;
-        case PrimitiveGroup::FloatArithmeticPrimitive:
-            _console->print( ", double arith" );
-            break;
-        case PrimitiveGroup::ByteArrayPrimitive:
-            _console->print( ", byte array op." );
-            break;
-        case PrimitiveGroup::DoubleByteArrayPrimitive:
-            _console->print( ", double-byte array op." );
-            break;
-        case PrimitiveGroup::ObjArrayPrimitive:
-            _console->print( ", array op." );
-            break;
-        case PrimitiveGroup::BlockPrimitive:
-            _console->print( ", block/context" );
-            break;
-        case PrimitiveGroup::NormalPrimitive:
-            break;
-        default: st_fatal( "Unknown primitive group" );
-    }
-    _console->cr();
 }
 
 
@@ -241,18 +119,19 @@ const char *PrimitiveDescriptor::return_type() const {
 
 
 Expression *PrimitiveDescriptor::convertToKlass( const char *type, PseudoRegister *p, Node *n ) const {
+    
     if ( 0 == strcmp( type, "SmallInteger" ) )
-        return new KlassExpression( Universe::smiKlassObj(), p, n );
+        return new KlassExpression( Universe::smiKlassObject(), p, n );
     if ( 0 == strcmp( type, "Double" ) )
-        return new KlassExpression( Universe::doubleKlassObj(), p, n );
+        return new KlassExpression( Universe::doubleKlassObject(), p, n );
     if ( 0 == strcmp( type, "Float" ) )
-        return new KlassExpression( Universe::doubleKlassObj(), p, n );
+        return new KlassExpression( Universe::doubleKlassObject(), p, n );
     if ( 0 == strcmp( type, "Symbol" ) )
-        return new KlassExpression( Universe::symbolKlassObj(), p, n );
+        return new KlassExpression( Universe::symbolKlassObject(), p, n );
     if ( 0 == strcmp( type, "Boolean" ) ) {
         // NB: set expression node to nullptr, not n -- MergeExpression cannot be split
-        Expression *t = new ConstantExpression( Universe::trueObj(), p, nullptr );
-        Expression *f = new ConstantExpression( Universe::falseObj(), p, nullptr );
+        Expression *t = new ConstantExpression( Universe::trueObject(), p, nullptr );
+        Expression *f = new ConstantExpression( Universe::falseObject(), p, nullptr );
         return new MergeExpression( t, f, p, nullptr );
     }
 
@@ -361,9 +240,9 @@ PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
 void Primitives::lookup_and_patch() {
 
     // get primitive call info
-    Frame        f = DeltaProcess::active()->last_frame();
+    Frame        f              = DeltaProcess::active()->last_frame();
     CodeIterator it( f.hp() );
-    Oop *selector_addr = it.aligned_oop( 1 );
+    Oop          *selector_addr = it.aligned_oop( 1 );
 
     SymbolOop sel = SymbolOop( *selector_addr );
     st_assert( sel->is_symbol(), "symbol expected" );
@@ -415,6 +294,7 @@ void primitives_init() {
         }
     }
     Primitives::clear_counters();
+    Primitives::print_table();
 }
 
 

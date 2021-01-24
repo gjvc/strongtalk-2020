@@ -34,7 +34,7 @@
 class Variable : ValueObject {
 
 private:
-    int _value;
+    std::size_t _value;
 
     enum {
         special_type = 0, //
@@ -43,22 +43,22 @@ private:
     };
 
 
-    int type() const {
+    std::size_t type() const {
         return _value & 0x3;
     }
 
 
-    int offset() const {
+    std::size_t offset() const {
         return _value >> 2;
     }
 
 
-    int value() const {
+    std::size_t value() const {
         return _value;
     }
 
 
-    static Variable new_variable( int type, int offset ) {
+    static Variable new_variable( std::size_t type, std::size_t offset ) {
         Variable result;
         result._value = ( offset << 2 ) | type;
         return result;
@@ -72,10 +72,10 @@ public:
 
 
     // Generators
-    static Variable new_register( int offset );
+    static Variable new_register( std::size_t offset );
 
 
-    static Variable new_stack( int offset );
+    static Variable new_stack( std::size_t offset );
 
 
     static Variable unused();
@@ -104,12 +104,12 @@ public:
 
 
     // Accessors
-    int register_number() const {
+    std::size_t register_number() const {
         return offset();
     }
 
 
-    int stack_offset() const {
+    std::size_t stack_offset() const {
         return offset();
     }
 
@@ -278,9 +278,9 @@ public:
 
     bool_t in_parent_chain( MappingTask *task );
 
-    int number_of_targets();
+    std::size_t number_of_targets();
 
-    void print( int index );
+    void print( std::size_t index );
 };
 
 class MapConformance : public ResourceObject {
@@ -288,7 +288,7 @@ private:
     Variable                     _free_register;
     GrowableArray<MappingTask *> *_mappings;
     Variable *_usedVariables;
-    int _numberOfUsedVariables;
+    std::size_t _numberOfUsedVariables;
 
     bool_t reduce_noop_task( MappingTask *task );
 
@@ -300,7 +300,7 @@ private:
 
     void push_temporary( Variable var );
 
-    void push( Variable src, int n );
+    void push( Variable src, std::size_t n );
 
     friend class MappingTask;
 

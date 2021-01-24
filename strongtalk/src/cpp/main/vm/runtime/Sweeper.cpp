@@ -197,7 +197,7 @@ void MethodSweeper::task() {
         method_task( m );
     }
 
-    ObjectArrayOop array             = Universe::systemDictionaryObj();
+    ObjectArrayOop array             = Universe::systemDictionaryObject();
     int            length            = array->length();
     int            number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep )

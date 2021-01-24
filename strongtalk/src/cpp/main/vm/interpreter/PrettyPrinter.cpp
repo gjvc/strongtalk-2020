@@ -1687,11 +1687,11 @@ void messageNode::set_receiver( astNode *p ) {
 
 
 static astNode *get_literal_node( Oop obj, int byteCodeIndex, scopeNode *scope ) {
-    if ( obj == trueObj )
+    if ( obj == trueObject )
         return new literalNode( byteCodeIndex, scope, "true" );
-    if ( obj == falseObj )
+    if ( obj == falseObject )
         return new literalNode( byteCodeIndex, scope, "false" );
-    if ( obj == nilObj )
+    if ( obj == nilObject )
         return new literalNode( byteCodeIndex, scope, "nil" );
     if ( obj->is_doubleByteArray() )
         return new doubleByteArrayNode( byteCodeIndex, scope, DoubleByteArrayOop( obj ) );

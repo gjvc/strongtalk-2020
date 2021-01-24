@@ -59,7 +59,7 @@ KlassOop ObjectArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 
 
 ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::size_t size ) {
-    KlassOop k        = Universe::objArrayKlassObj();
+    KlassOop k        = Universe::objArrayKlassObject();
     int      ni_size  = k->klass_part()->non_indexable_size();
     int      obj_size = ni_size + 1 + size;
 

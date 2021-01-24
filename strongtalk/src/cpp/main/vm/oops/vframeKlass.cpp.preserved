@@ -100,7 +100,7 @@ oop vframeKlass::mirror_contents_at( oop obj, symbolOop name ) {
     if ( sd == nullptr )
         return prim_error( SLOTNAMEERROR );
     if ( sd->is_assignment_slot() )
-        return Memory->assignmentMirrorObj;
+        return Memory->assignmentMirrorObject;
     VirtualFrame * vf     = vfo->as_vframe();
     oop          contents = vf->get_slot( sd );
     return contents->as_mirror();
@@ -157,7 +157,7 @@ oop vframeKlass::mirror_expr_stack( oop obj ) {
     smi len;
     oop * vec;
     vfo->as_vframe()->get_expr_stack( vec, len );
-    objArrayOop objVec = Memory->objArrayObj->cloneSize( len );
+    objArrayOop objVec = Memory->objArrayObject->cloneSize( len );
     for ( smi   i      = 0; i < len; i++ )
         objVec->obj_at_put( i, vec[ i ] );
     return objVec;
@@ -170,7 +170,7 @@ oop vframeKlass::mirror_selector( oop obj ) {
 }
 
 
-oop vframeKlass::clone( oop obj, bool mustAllocate, oop genObj ) {
+oop vframeKlass::clone( oop obj, bool mustAllocate, oop genObject ) {
     vframeOop theClone = vframeOop( obj )->basic_clone( mustAllocate );
     if ( oop( theClone ) != failedAllocationOop && theClone->is_live() ) {
         // link clone into list after the original

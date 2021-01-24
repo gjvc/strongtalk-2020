@@ -76,8 +76,8 @@ protected:
     void basic_transfer( Process *target );
 
     // OS data associated with the process
-    Thread *_thread;            // Native thread
-    int _thread_id;          // Native thread id (set by OS when created)
+    Thread         *_thread;            // Native thread
+    int            _thread_id;          // Native thread id (set by OS when created)
     Event          *_event;             // Thread lock
     char           *_stack_limit;       // lower limit of stack
     static Process *_current_process;   //  active Delta process or vm process
@@ -162,10 +162,10 @@ extern "C" void check_stack_overflow();
 class DeltaProcess : public Process {
 
 private:
-    Oop       _receiver;      // receiver of the initial message.
-    SymbolOop _selector;      // selector of the initial message.
+    Oop          _receiver;      // receiver of the initial message.
+    SymbolOop    _selector;      // selector of the initial message.
     DeltaProcess *_next;          // the next process in the list (see Processes).
-    ProcessOop   _processObj;    // the Delta level process object.
+    ProcessOop   _processObject;    // the Delta level process object.
     ProcessState _state;         // process state.
 
     int        *_last_Delta_fp;
@@ -219,9 +219,9 @@ public:
     void set_next( DeltaProcess *p );
 
     // process Oop
-    ProcessOop processObj() const;
+    ProcessOop processObject() const;
 
-    void set_processObj( ProcessOop p );
+    void set_processObject( ProcessOop p );
 
     bool_t is_terminating();
 
@@ -374,11 +374,11 @@ public:
 
     // Static operations
 private:
-    static DeltaProcess *_active_delta_process;
-    static DeltaProcess *_main_process;
-    static DeltaProcess *_scheduler_process;
-    static bool_t _is_idle;
-    static volatile char *_active_stack_limit;    //
+    static DeltaProcess    *_active_delta_process;
+    static DeltaProcess    *_main_process;
+    static DeltaProcess    *_scheduler_process;
+    static bool_t          _is_idle;
+    static volatile char   *_active_stack_limit;    //
     static volatile bool_t _interrupt;              //
 
     // The launch function for a new thread
@@ -520,8 +520,8 @@ public:
 // "semaphore" to protect some vm critical sections (process transfer etc.)
 extern "C" bool_t processSemaphore;
 
-extern "C" int *last_Delta_fp;
-extern "C" Oop *last_Delta_sp;
+extern "C" std::size_t *last_Delta_fp;
+extern "C" Oop         *last_Delta_sp;
 
 extern int CurrentHash;
 

@@ -20,7 +20,7 @@ TEST( SystemPrimitivesTests, expansionShouldExpandOldGenerationCapacity
 ) {
 char msg[100];
 int  oldSize = Universe::old_gen.capacity();
-EXPECT_EQ( trueObj, SystemPrimitives::expandMemory( smiOopFromValue( 1000 * 1024 ) )
+EXPECT_EQ( trueObject, SystemPrimitives::expandMemory( smiOopFromValue( 1000 * 1024 ) )
 ) << "wrong size";
 int expectedSize = oldSize + ReservedSpace::align_size( 1000 * 1024, ObjectHeapExpandSize * 1024 );
 int actualSize   = Universe::old_gen.capacity();
@@ -330,5 +330,5 @@ EXPECT_TRUE( !result->
 is_mark()
 ) << "should not be marked";
 EXPECT_TRUE( result
-== trueObj ) << "result should be true";
+== trueObject ) << "result should be true";
 }

@@ -134,12 +134,12 @@ void CodeTable::print() {
 
 void CodeTable::print_stats() {
 #ifdef NOT_IMPLEMENTED
-    int nmin = 9999999, nmax = 0, total = 0, nonzero = 0;
-    constexpr int N = 10;
-    int histo[N];
+    std::size_t nmin = 9999999, nmax = 0, total = 0, nonzero = 0;
+    constexpr std::size_t N = 10;
+    std::size_t histo[N];
     for (std::size_t i = 0; i < N; i++) histo[i] = 0;
     for (nmln* p = buckets;  p < &buckets[tableSize];  ++p) {
-      int len = 0;
+      std::size_t len = 0;
       for (nmln* q = p->next;  q not_eq p;  q = q->next) len++;
       if (len < nmin) nmin = len;
       if (len > nmax) nmax = len;

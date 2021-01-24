@@ -167,8 +167,8 @@ void NodeBuilder::constant_if_node( IfNode *node, ConstantExpression *condition 
     // if statement with constant condition
     Oop c                   = condition->constant();
     int resultByteCodeIndex = node->begin_byteCodeIndex();
-    if ( c == trueObj or c == falseObj ) {
-        if ( node->is_ifTrue() == ( c == trueObj ) ) {
+    if ( c == trueObject or c == falseObject ) {
+        if ( node->is_ifTrue() == ( c == trueObject ) ) {
             // then branch is always taken
             generate_subinterval( node->then_code(), node->produces_result() );
         } else if ( node->else_code() not_eq nullptr ) {
@@ -199,11 +199,11 @@ void NodeBuilder::constant_if_node( IfNode *node, ConstantExpression *condition 
 TypeTestNode *NodeBuilder::makeTestNode( bool_t cond, PseudoRegister *r ) {
     GrowableArray<KlassOop> *list = new GrowableArray<KlassOop>( 2 );
     if ( cond ) {
-        list->append( trueObj->klass() );
-        list->append( falseObj->klass() );
+        list->append( trueObject->klass() );
+        list->append( falseObject->klass() );
     } else {
-        list->append( falseObj->klass() );
-        list->append( trueObj->klass() );
+        list->append( falseObject->klass() );
+        list->append( trueObject->klass() );
     }
     TypeTestNode *test = NodeFactory::TypeTestNode( r, list, true );
     test->append( 0, NodeFactory::UncommonNode( copyCurrentExprStack(), byteCodeIndex() ) );
@@ -311,8 +311,8 @@ void NodeBuilder::cond_node( CondNode *node ) {
     if ( cond->isConstantExpression() ) {
         // constant condition
         Oop c = cond->asConstantExpression()->constant();
-        if ( c == trueObj or c == falseObj ) {
-            if ( node->is_and() and c == trueObj or node->is_or() and c == falseObj ) {
+        if ( c == trueObject or c == falseObject ) {
+            if ( node->is_and() and c == trueObject or node->is_or() and c == falseObject ) {
                 generate_subinterval( node->expr_code(), true );
                 // result of and:/or: is result of 2nd expression
                 Expression *res = exprStack()->top();
@@ -355,7 +355,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
             // end
             // The result of the conditional is *one* branch of the first expression (cond) plus
             // the result of the second expression.  (Was splitting bug -- Urs 4/96)
-            Expression *exclude = cond->findKlass( node->is_or() ? falseObj->klass() : trueObj->klass() );
+            Expression *exclude = cond->findKlass( node->is_or() ? falseObject->klass() : trueObject->klass() );
             Expression *first;
             if ( exclude ) {
                 first = cond->copyWithout( exclude );
@@ -401,8 +401,8 @@ void NodeBuilder::while_node( WhileNode *node ) {
         // ^^^ TURNED OFF - doesn't work for endless loops yet - FIX THIS
         // constant condition
         Oop c = cond->asConstantExpression()->constant();
-        if ( c == trueObj or c == falseObj ) {
-            if ( node->is_whileTrue() == ( c == trueObj ) ) {
+        if ( c == trueObject or c == falseObject ) {
+            if ( node->is_whileTrue() == ( c == trueObject ) ) {
                 append( loop );
                 setCurrent( exit );
             }
@@ -581,18 +581,18 @@ void NodeBuilder::push_instVar( int offset ) {
 }
 
 
-void NodeBuilder::push_global( AssociationOop associationObj ) {
+void NodeBuilder::push_global( AssociationOop associationObject ) {
     SinglyAssignedPseudoRegister *dst = new SinglyAssignedPseudoRegister( _scope );
-    if ( associationObj->is_constant() ) {
+    if ( associationObject->is_constant() ) {
         // constant association -- can inline the constant
-        Oop c = associationObj->value();
+        Oop c = associationObject->value();
         ConstPseudoRegister *r = new_ConstPReg( _scope, c );
         exprStack()->push( new ConstantExpression( c, r, nullptr ), _scope, scope()->byteCodeIndex() );
     } else {
         // Removed by Lars Bak, 4-22-96
-        // if (associationObj->value()->is_klass())
+        // if (associationObject->value()->is_klass())
         //    compiler_warning("potential performance bug: non-constant association containing klassOop");
-        ConstPseudoRegister *base = new_ConstPReg( _scope, associationObj );
+        ConstPseudoRegister *base = new_ConstPReg( _scope, associationObject );
 //        append( NodeFactory::LoadOffsetNode( dst, base, AssociationOopDescriptor::value_offset(), false ) );
         append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( dst, base, AssociationOopDescriptor::value_offset(), false ) );
         exprStack()->push( new UnknownExpression( dst, _current ), _scope, scope()->byteCodeIndex() );
@@ -628,11 +628,11 @@ void NodeBuilder::store_instVar( int offset ) {
 }
 
 
-void NodeBuilder::store_global( AssociationOop associationObj ) {
+void NodeBuilder::store_global( AssociationOop associationObject ) {
     Expression     *srcExpression = exprStack()->top();
     PseudoRegister *src           = srcExpression->preg();
     materialize( src, nullptr );
-    ConstPseudoRegister *base = new_ConstPReg( _scope, associationObj );
+    ConstPseudoRegister *base = new_ConstPReg( _scope, associationObject );
     append( NodeFactory::createAndRegisterNode<StoreOffsetNode>( src, base, AssociationOopDescriptor::value_offset(), srcExpression->needsStoreCheck() ) );
 }
 
@@ -1110,7 +1110,7 @@ void NodeBuilder::allocate_context( int nofTemps, bool_t forMethod ) {
     // append context initializer and initialize with nil
     scope()->set_contextInitializer( NodeFactory::createAndRegisterNode<ContextInitNode>( creator ) );
     append( scope()->contextInitializer() );
-    ConstantExpression *nil = new ConstantExpression( nilObj, new_ConstPReg( _scope, nilObj ), nullptr );
+    ConstantExpression *nil = new ConstantExpression( nilObject, new_ConstPReg( _scope, nilObject ), nullptr );
     for ( std::size_t i = 0; i < nofTemps; i++ )
         scope()->contextInitializer()->initialize( i, nil );
 }
@@ -1272,7 +1272,7 @@ void NodeBuilder::float_allocate( int nofFloatTemps, int nofFloatExprs ) {
 void NodeBuilder::float_floatify( Floats::Function f, int fno ) {
     // top of stack must be a boxed float, it is unboxed and stored at float(fno).
     Expression *t = _expressionStack->pop();
-    if ( t->hasKlass() and t->klass() == doubleKlassObj ) {
+    if ( t->hasKlass() and t->klass() == doubleKlassObject ) {
         // no type test needed
     } else {
         // put in a type test - fix this!
@@ -1380,7 +1380,7 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
             break;
         case Floats::Function::oopify: {
             append( NodeFactory::createAndRegisterNode<FloatUnaryArithNode>( ArithOpCode::f2OopArithOp, src, res ) );
-            Expression *result = new KlassExpression( doubleKlassObj, res, current() );
+            Expression *result = new KlassExpression( doubleKlassObject, res, current() );
             _expressionStack->push( result, scope(), scope()->byteCodeIndex() );
         }
             break;

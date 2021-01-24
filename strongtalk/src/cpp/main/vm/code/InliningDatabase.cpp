@@ -49,9 +49,9 @@ const char *quote_string = "_\\/:; *?~|><,+=@%&!-";
 const char *InliningDatabase::mangle_name( const char *str ) {
     char        *result = new_resource_array<char>( 100 );
     std::size_t i       = 0;
-    int         j       = 0;
+    std::size_t         j       = 0;
     while ( str[ i ] not_eq '\0' ) {
-        int c = str[ i ];
+        std::size_t c = str[ i ];
         if ( strchr( quote_string, c ) ) {
             result[ j++ ] = quote;
             result[ j++ ] = get_unsigned_bitfield( c, 6, 3 ) + '0';
@@ -73,15 +73,15 @@ const char *InliningDatabase::mangle_name( const char *str ) {
 const char *InliningDatabase::unmangle_name( const char *str ) {
     char        *result = new_resource_array<char>( 100 );
     std::size_t i       = 0;
-    int         j       = 0;
+    std::size_t         j       = 0;
     while ( str[ i ] not_eq '\0' ) {
-        int c = str[ i ];
+        std::size_t c = str[ i ];
         if ( c == quote ) {
             i++;
             st_assert( str[ i ] not_eq '\0', "we cannot end with a quote" );
             c = str[ i ];
             if ( isdigit( c ) ) {
-                int value = ( c - '0' ) << 6;
+                std::size_t value = ( c - '0' ) << 6;
                 i++;
                 st_assert( str[ i ] not_eq '\0', "we cannot end with a quote" );
                 c         = str[ i ];
@@ -291,15 +291,15 @@ bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klas
         rec = rec->klass();
     *receiver_klass = rec;
 
-    GrowableArray<int> *byteCodeIndexs = new GrowableArray<int>( 10 );
+    GrowableArray<std::size_t> *byteCodeIndexs = new GrowableArray<std::size_t>( 10 );
 
     char      *byteCodeIndexs_string = strstr( method_id, " " );
 
     if ( byteCodeIndexs_string ) {
         *byteCodeIndexs_string++ = '\0';
         while ( *byteCodeIndexs_string not_eq '\0' ) {
-            int index;
-            int byteCodeIndex;
+            std::size_t index;
+            std::size_t byteCodeIndex;
             if ( sscanf( byteCodeIndexs_string, "%d%n", &byteCodeIndex, &index ) not_eq 1 )
                 return 0;
             byteCodeIndexs->push( byteCodeIndex );
@@ -330,7 +330,7 @@ bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klas
         return false;
 
     for ( std::size_t i = 0; i < byteCodeIndexs->length(); i++ ) {
-        int byteCodeIndex = byteCodeIndexs->at( i );
+        std::size_t byteCodeIndex = byteCodeIndexs->at( i );
         met = met->block_method_at( byteCodeIndex );
         if ( met == nullptr )
             return false;
@@ -343,10 +343,10 @@ bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klas
 
 // Returns the index where the scan terminated.
 // index is 0 is the scan failed
-int scan_prefix( const char *line, int *byteCodeIndex, int *level ) {
-    int index;
+std::size_t scan_prefix( const char *line, std::size_t *byteCodeIndex, std::size_t *level ) {
+    std::size_t index;
 
-    int l = 0;
+    std::size_t l = 0;
     while ( *line == ' ' ) {
         line++;
         l++;
@@ -367,12 +367,12 @@ bool_t scan_uncommon( const char *line ) {
 static bool_t create_rscope( char *line, GrowableArray<InliningDatabaseRecompilationScope *> *stack ) {
 
     // remove the cr
-    int len = strlen( line );
+    std::size_t len = strlen( line );
     if ( len > 1 and line[ len - 1 ] == '\n' )
         line[ len - 1 ] = '\0';
 
-    int       byteCodeIndex  = 0;
-    int       level          = 0;
+    std::size_t       byteCodeIndex  = 0;
+    std::size_t       level          = 0;
     MethodOop method         = nullptr;
     KlassOop  receiver_klass = nullptr;
 
@@ -385,7 +385,7 @@ static bool_t create_rscope( char *line, GrowableArray<InliningDatabaseRecompila
         stack->push( new InliningDatabaseRecompilationScope( nullptr, -1, receiver_klass, method, 0 ) );
     } else {
         // sub scope
-        int index = scan_prefix( line, &byteCodeIndex, &level );
+        std::size_t index = scan_prefix( line, &byteCodeIndex, &level );
         if ( index <= 0 )
             return false;
 
@@ -429,7 +429,7 @@ const char *InliningDatabase::index_file_name() {
 
 bool_t scan_key( char *line, LookupKey *key ) {
 
-    int len = strlen( line );
+    std::size_t len = strlen( line );
     if ( len > 1 and line[ len - 1 ] == '\n' )
         line[ len - 1 ] = '\0';
 
@@ -459,15 +459,15 @@ bool_t scan_key( char *line, LookupKey *key ) {
         rec = rec->klass();
 
 
-    GrowableArray<int> *byteCodeIndexs = new GrowableArray<int>( 10 );
+    GrowableArray<std::size_t> *byteCodeIndexs = new GrowableArray<std::size_t>( 10 );
 
     char      *byteCodeIndexs_string = strstr( method_id, " " );
 
     if ( byteCodeIndexs_string ) {
         *byteCodeIndexs_string++ = '\0';
         while ( *byteCodeIndexs_string not_eq '\0' ) {
-            int index;
-            int byteCodeIndex;
+            std::size_t index;
+            std::size_t byteCodeIndex;
             if ( sscanf( byteCodeIndexs_string, "%d%n", &byteCodeIndex, &index ) not_eq 1 )
                 return 0;
             byteCodeIndexs->push( byteCodeIndex );
@@ -483,7 +483,7 @@ bool_t scan_key( char *line, LookupKey *key ) {
         if ( met == nullptr )
             return false;
         for ( std::size_t i = 0; i < byteCodeIndexs->length(); i++ ) {
-            int byteCodeIndex = byteCodeIndexs->at( i );
+            std::size_t byteCodeIndex = byteCodeIndexs->at( i );
             met = met->block_method_at( byteCodeIndex );
             if ( met == nullptr )
                 return false;
@@ -553,7 +553,7 @@ void InliningDatabase::local_file_out_klass( NativeMethod *nm ) {
 }
 
 
-int InliningDatabase::file_out( KlassOop klass ) {
+std::size_t InliningDatabase::file_out( KlassOop klass ) {
     local_number_of_nativeMethods_written = 0;
     local_klass                           = klass;
     Universe::code->nativeMethods_do( local_file_out_klass );

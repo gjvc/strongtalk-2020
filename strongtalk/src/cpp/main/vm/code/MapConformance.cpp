@@ -25,12 +25,12 @@ void Variable::print() {
 }
 
 
-Variable Variable::new_register( int offset ) {
+Variable Variable::new_register( std::size_t offset ) {
     return new_variable( reg_type, offset );
 }
 
 
-Variable Variable::new_stack( int offset ) {
+Variable Variable::new_stack( std::size_t offset ) {
     return new_variable( stack_type, offset );
 }
 
@@ -67,7 +67,7 @@ void MapConformance::push_temporary( Variable var ) {
 }
 
 
-void MapConformance::push( Variable src, int n ) {
+void MapConformance::push( Variable src, std::size_t n ) {
     for ( std::size_t i = 0; i < n; i++ ) {
         push( src );
     }
@@ -87,8 +87,8 @@ bool_t operator==( MappingEntry x, MappingEntry y ) {
 }
 
 
-int MappingTask::number_of_targets() {
-    int result = 0;
+std::size_t MappingTask::number_of_targets() {
+    std::size_t result = 0;
     for ( MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.has_reg() )
             result++;
@@ -257,7 +257,7 @@ void MappingTask::generate_code( MapConformance *mc ) {
 }
 
 
-void MappingTask::print( int index ) {
+void MappingTask::print( std::size_t index ) {
     _console->print( "  %2d: ", index );
     src.print();
     _console->print( " -> " );

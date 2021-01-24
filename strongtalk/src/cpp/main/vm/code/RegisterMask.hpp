@@ -66,9 +66,9 @@ class LongRegisterMask : ResourceObject {
 
     private:
         void grow();
-        friend int findFirstUnused( LongRegisterMask ** masks, int len, int start );
+        friend std::size_t findFirstUnused( LongRegisterMask ** masks, std::size_t len, std::size_t start );
 };
 
-Location findFirstUnusedTemp( LongRegisterMask ** masks, int len );
+Location findFirstUnusedTemp( LongRegisterMask ** masks, std::size_t len );
 
 #endif

@@ -15,7 +15,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-ScopeDescriptor *NativeMethodScopes::at( int offset, const char *pc ) const {
+ScopeDescriptor *NativeMethodScopes::at( std::size_t offset, const char *pc ) const {
 
     // Read the first byte and decode the ScopeDescriptor type at the location.
     st_assert( offset >= 0, "illegal desc offset" );
@@ -36,7 +36,7 @@ ScopeDescriptor *NativeMethodScopes::at( int offset, const char *pc ) const {
 }
 
 
-NonInlinedBlockScopeDescriptor *NativeMethodScopes::noninlined_block_scope_at( int offset ) const {
+NonInlinedBlockScopeDescriptor *NativeMethodScopes::noninlined_block_scope_at( std::size_t offset ) const {
     // Read the first byte and decode the ScopeDescriptor type at the location.
     st_assert( offset > 0, "illegal desc offset" );
     ScopeDescriptorHeaderByte b;
@@ -70,7 +70,7 @@ Oop NativeMethodScopes::unpackOopFromIndex( std::uint8_t index, std::size_t &off
 }
 
 
-int NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const {
+std::size_t NativeMethodScopes::unpackValueFromIndex( std::uint8_t index, std::size_t &offset ) const {
     if ( index <= MAX_INLINE_VALUE )
         return index;
     if ( index < EXTENDED_INDEX )
@@ -85,14 +85,14 @@ Oop NativeMethodScopes::unpackOopAt( std::size_t &offset ) const {
 }
 
 
-int NativeMethodScopes::unpackValueAt( std::size_t &offset ) const {
+std::size_t NativeMethodScopes::unpackValueAt( std::size_t &offset ) const {
     std::uint8_t index = getIndexAt( offset );
     return unpackValueFromIndex( index, offset );
 }
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, bool_t &is_last, const char *pc ) const {
-    int                startOffset = offset;
+    std::size_t                startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
     is_last = b.is_last();
@@ -119,7 +119,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, bool_
             case BLOCKVALUE_CODE: {
                 Oop blkMethod = unpackOopFromIndex( index, offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                int             parent_scope_offset = unpackValueAt( offset );
+                std::size_t             parent_scope_offset = unpackValueAt( offset );
                 ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
                 nd                                  = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
                 break;
@@ -128,7 +128,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, bool_
                 Location l         = Location( unpackValueFromIndex( index, offset ) );
                 Oop      blkMethod = unpackOopAt( offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                int             parent_scope_offset = unpackValueAt( offset );
+                std::size_t             parent_scope_offset = unpackValueAt( offset );
                 ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
                 nd                                  = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
                 break;
@@ -157,8 +157,8 @@ void NativeMethodScopes::iterate( std::size_t &offset, UnpackClosure *closure ) 
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::size_t &offset, const char *pc ) const {
-    int            pc_offset         = pc - my_nativeMethod()->instructionsStart();
-    int            current_pc_offset = 0;
+    std::size_t            pc_offset         = pc - my_nativeMethod()->instructionsStart();
+    std::size_t            current_pc_offset = 0;
     bool_t         is_last;
     NameDescriptor *result           = unpackNameDescAt( offset, is_last, pc );
     if ( result == nullptr )
@@ -275,11 +275,11 @@ void NativeMethodScopes::print() {
 
 void NativeMethodScopes::print_partition() {
 
-    int d_size = dependent_length() * sizeof( Oop );
-    int o_size = oops_size() * sizeof( Oop ) - d_size;
-    int p_size = (int) pcsEnd() - (int) pcs();
-    int v_size = value_size() * sizeof( int );
-    int total  = v_size + p_size + o_size + d_size;
+    std::size_t d_size = dependent_length() * sizeof( Oop );
+    std::size_t o_size = oops_size() * sizeof( Oop ) - d_size;
+    std::size_t p_size = (std::size_t) pcsEnd() - (std::size_t) pcs();
+    std::size_t v_size = value_size() * sizeof( std::size_t );
+    std::size_t total  = v_size + p_size + o_size + d_size;
 
     _console->print_cr( "{deps %d%%, oops %d%%, bytes %d%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
 }

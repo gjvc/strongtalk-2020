@@ -186,7 +186,7 @@ public:
 
 
     bool_t is_smi() const {
-        return hasKlass() and klass() == smiKlassObj;
+        return hasKlass() and klass() == smiKlassObject;
     }
 
 

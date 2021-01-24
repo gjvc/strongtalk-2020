@@ -52,11 +52,11 @@ private:
 
     static std::size_t nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
 
-    int code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c );
+    std::size_t code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c );
 
-    int code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c );
+    std::size_t code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c );
 
-    int code_for_megamorphic_case( char *entry );
+    std::size_t code_for_megamorphic_case( char *entry );
 
     void shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method );
 
@@ -67,17 +67,17 @@ private:
 
 
     // Creation / access of PolymorphicInlineCache instances
-    PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, int allocated_code_size ); // creation of PolymorphicInlineCache
+    PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::size_t allocated_code_size ); // creation of PolymorphicInlineCache
     PolymorphicInlineCache( CompiledInlineCache *ic ); // creation of MegamorphicInlineCache
 
 public:
-    void *operator new( std::size_t size, int code_size );
+    void *operator new( std::size_t size, std::size_t code_size );
 
     // Deallocates this pic from the pic heap
     void operator delete( void *p );
 
 
-    void operator delete( void *p, int ) {
+    void operator delete( void *p, std::size_t ) {
     };
 
     // Allocates and returns a new ready to execute pic.
@@ -102,7 +102,7 @@ public:
     }
 
 
-    int number_of_targets() const {
+    std::size_t number_of_targets() const {
         return _numberOfTargets;
     }
 

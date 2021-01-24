@@ -11,7 +11,7 @@
 #include "vm/code/MethodScopeNode.hpp"
 
 
-void MethodScopeNode::generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader ) {
+void MethodScopeNode::generate( ScopeDescriptorRecorder *rec, std::size_t senderScopeOffset, bool_t bigHeader ) {
     ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
     rec->genOop( _lookupKey->klass() );
     rec->genOop( _lookupKey->selector_or_method() );

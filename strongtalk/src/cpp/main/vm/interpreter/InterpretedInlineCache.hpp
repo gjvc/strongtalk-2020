@@ -23,7 +23,7 @@
 //
 // 1) empty					{selector,         0}
 // 2) filled with a call to interpreted code	{method,           klass}
-// 3) filled with an interpreter PolymorphicInlineCache		{selector,         objArrayObj}
+// 3) filled with an interpreter PolymorphicInlineCache		{selector,         objArrayObject}
 // 4) filled with a call to compiled code	{jump table entry, klass}
 //
 //

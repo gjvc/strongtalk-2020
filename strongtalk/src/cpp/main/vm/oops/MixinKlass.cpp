@@ -31,7 +31,7 @@ Oop MixinKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     obj->set_methods( filler );
     obj->set_instVars( filler );
     obj->set_classVars( filler );
-    obj->set_installed( falseObj );
+    obj->set_installed( falseObject );
     return obj;
 }
 
@@ -52,7 +52,7 @@ KlassOop MixinKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 
 Oop MixinKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
     MixinOop copy = MixinOop( MemOopKlass::oop_shallow_copy( obj, tenured ) );
-    copy->set_installed( falseObj );
+    copy->set_installed( falseObject );
     return copy;
 }
 

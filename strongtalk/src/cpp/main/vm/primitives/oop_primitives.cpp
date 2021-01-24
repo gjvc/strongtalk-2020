@@ -155,13 +155,13 @@ PRIM_DECL_1( oopPrimitives::copy_tenured, Oop receiver ) {
 
 PRIM_DECL_2( oopPrimitives::equal, Oop receiver, Oop argument ) {
     PROLOGUE_2( "equal", receiver, argument )
-    return receiver == argument ? trueObj : falseObj;
+    return receiver == argument ? trueObject : falseObject;
 }
 
 
 PRIM_DECL_2( oopPrimitives::not_equal, Oop receiver, Oop argument ) {
     PROLOGUE_2( "not_equal", receiver, argument )
-    return receiver not_eq argument ? trueObj : falseObj;
+    return receiver not_eq argument ? trueObject : falseObject;
 }
 
 

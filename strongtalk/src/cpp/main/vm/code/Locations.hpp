@@ -22,48 +22,48 @@
 class Locations : public PrintableResourceObject {
 
 private:
-    int _nofArguments;          // the number of arguments
-    int _nofRegisters;          // the maximum number of available registers
-    GrowableArray<int> *_freeList;             // the list of free locations
-    int _firstFreeRegister;     // the index of the first free register in _freeList
-    int _firstFreeStackTmp;     // the index of the first free stack temporary in _freeList
+    std::size_t _nofArguments;          // the number of arguments
+    std::size_t _nofRegisters;          // the maximum number of available registers
+    GrowableArray<std::size_t> *_freeList;             // the list of free locations
+    std::size_t _firstFreeRegister;     // the index of the first free register in _freeList
+    std::size_t _firstFreeStackTmp;     // the index of the first free stack temporary in _freeList
 
-    int argumentsBeg() const {
+    std::size_t argumentsBeg() const {
         return 0;
     }
 
 
-    int argumentsEnd() const {
+    std::size_t argumentsEnd() const {
         return _nofArguments;
     }
 
 
-    int registersBeg() const {
+    std::size_t registersBeg() const {
         return _nofArguments;
     }
 
 
-    int registersEnd() const {
+    std::size_t registersEnd() const {
         return _nofArguments + _nofRegisters;
     }
 
 
-    int stackTmpsBeg() const {
+    std::size_t stackTmpsBeg() const {
         return _nofArguments + _nofRegisters;
     }
 
 
-    int stackTmpsEnd() const {
+    std::size_t stackTmpsEnd() const {
         return _freeList->length();
     }
 
 
-    int locationsBeg() const {
+    std::size_t locationsBeg() const {
         return 0;
     }
 
 
-    int locationsEnd() const {
+    std::size_t locationsEnd() const {
         return _freeList->length();
     }
 
@@ -75,37 +75,37 @@ public:
         sentinel              = 999999999   // simply much bigger than _freeList can ever get
     };
 
-    Locations( int nofArgs, int nofRegs, int nofInitialStackTmps );    // nofRegisters <= maxNofUsableRegisters
+    Locations( std::size_t nofArgs, std::size_t nofRegs, std::size_t nofInitialStackTmps );    // nofRegisters <= maxNofUsableRegisters
     Locations( Locations *l );                                          // to copy locations
 
-    void extendTo( int newValue );
+    void extendTo( std::size_t newValue );
 
     // Location management
-    int allocateRegister();                 // allocates a new register (fatal if not freeRegisters())
-    int allocateStackTmp();                 // allocates a new stack location
+    std::size_t allocateRegister();                 // allocates a new register (fatal if not freeRegisters())
+    std::size_t allocateStackTmp();                 // allocates a new stack location
     void allocate( std::size_t i );                 // allocates location i, i must have been unallocated
     void use( std::size_t i );                      // uses location i once again, i must be allocated already
     void release( std::size_t i );                  // releases a register or stack location
 
     // Testers
-    int nofUses( std::size_t i ) const;             // the number of times the location has been use'd (including allocation)
-    int nofTotalUses() const;               // the number of total uses of all locations (for verification purposes)
-    int nofArguments() const {
+    std::size_t nofUses( std::size_t i ) const;             // the number of times the location has been use'd (including allocation)
+    std::size_t nofTotalUses() const;               // the number of total uses of all locations (for verification purposes)
+    std::size_t nofArguments() const {
         return _nofArguments;
     }
 
 
-    int nofRegisters() const {
+    std::size_t nofRegisters() const {
         return _nofRegisters;
     }
 
 
-    int nofStackTmps() const {
+    std::size_t nofStackTmps() const {
         return stackTmpsEnd() - stackTmpsBeg();
     }
 
 
-    int nofFreeRegisters() const;        // the number of available registers
+    std::size_t nofFreeRegisters() const;        // the number of available registers
 
     bool_t freeRegisters() const {
         return _firstFreeRegister not_eq sentinel;
@@ -138,26 +138,26 @@ public:
 
 
     // Machine-dependent mapping of Registers/locations
-    int freeRegisterMask() const;        // bit i corresponds to register i; bit set <==> register is free
-    int usedRegisterMask() const;        // bit i corresponds to register i; bit set <==> register is used
+    std::size_t freeRegisterMask() const;        // bit i corresponds to register i; bit set <==> register is free
+    std::size_t usedRegisterMask() const;        // bit i corresponds to register i; bit set <==> register is used
 
-    int argumentAsLocation( int argNo ) const;    // the location encoding for argument argNo
-    int registerAsLocation( Register reg ) const;    // the location encoding for register reg
-    int temporaryAsLocation( int tempNo ) const;    // the location encoding for temporary tempNo
+    std::size_t argumentAsLocation( std::size_t argNo ) const;    // the location encoding for argument argNo
+    std::size_t registerAsLocation( Register reg ) const;    // the location encoding for register reg
+    std::size_t temporaryAsLocation( std::size_t tempNo ) const;    // the location encoding for temporary tempNo
 
-    Register locationAsRegister( int loc ) const;    // the register corresponding to loc
-    int locationAsRegisterNo( int loc ) const {
+    Register locationAsRegister( std::size_t loc ) const;    // the register corresponding to loc
+    std::size_t locationAsRegisterNo( std::size_t loc ) const {
         return locationAsRegister( loc ).number();
     }
 
 
-    int locationAsWordOffset( int loc ) const;    // the (ebp) word offset corresponding to loc
-    int locationAsByteOffset( int loc ) const {
+    std::size_t locationAsWordOffset( std::size_t loc ) const;    // the (ebp) word offset corresponding to loc
+    std::size_t locationAsByteOffset( std::size_t loc ) const {
         return locationAsWordOffset( loc ) * oopSize;
     }
 
 
-    Address locationAsAddress( int loc ) const {
+    Address locationAsAddress( std::size_t loc ) const {
         return Address( ebp, locationAsByteOffset( loc ) );
     }
 

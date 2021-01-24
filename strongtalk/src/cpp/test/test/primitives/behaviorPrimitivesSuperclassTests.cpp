@@ -131,7 +131,7 @@ protected:
         mixin->set_methods( ObjectArrayOop( methods.as_oop() ) );
         mixin->set_instVars( ObjectArrayOop( ivars.as_oop() ) );
         mixin->set_classVars( ObjectArrayOop( classVars.as_oop() ) );
-        mixin->set_installed( falseObj );
+        mixin->set_installed( falseObject );
 
         return mixin;
     }
@@ -148,7 +148,7 @@ protected:
         PersistentHandle classNameHandle( className );
         SymbolOop        format = oopFactory::new_symbol( "Oops" );
         MixinOop         mixin  = createEmptyMixin();
-        return KlassOop( SystemPrimitives::createNamedInvocation( format, superclassHandle.as_oop(), trueObj, className, mixin ) );
+        return KlassOop( SystemPrimitives::createNamedInvocation( format, superclassHandle.as_oop(), trueObject, className, mixin ) );
     }
 
 
@@ -267,12 +267,12 @@ EXPECT_TRUE( superclassOf( subclass() )
 objectClass()
 ) << "Original superclassHandle";
 
-Oop result = behaviorPrimitives::setSuperclass( nilObj, subclass() );
+Oop result = behaviorPrimitives::setSuperclass( nilObject, subclass() );
 
 EXPECT_TRUE ( subclass()
 == result ) << "Should return receiver";
 EXPECT_TRUE( superclassOf( subclass() )
-== nilObj ) << "Superclass should have changed";
+== nilObject ) << "Superclass should have changed";
 EXPECT_TRUE( superclassOf( subclass()->klass() )
 == objectClass()->klass() ) << "Metasuperclass should be unchanged";
 }
@@ -285,10 +285,10 @@ EXPECT_TRUE( superclassOf( subclass() )
 objectClass()
 ) << "Original superclassHandle";
 
-Oop result = behaviorPrimitives::setSuperclass( nilObj, subclass() );
+Oop result = behaviorPrimitives::setSuperclass( nilObject, subclass() );
 
 EXPECT_TRUE( superclassOf( subclass() )
-== nilObj ) << "Superclass should have changed";
+== nilObject ) << "Superclass should have changed";
 
 result = behaviorPrimitives::setSuperclass( objectClass(), subclass() );
 
@@ -317,7 +317,7 @@ classClass()
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldNotChangeSuperclassToNilWhenSuperclasHasIvars
 ) {
-Oop result = behaviorPrimitives::setSuperclass( nilObj, delaySubclass() );
+Oop result = behaviorPrimitives::setSuperclass( nilObject, delaySubclass() );
 
 checkMarkedSymbol( "Should report error", result,
 vmSymbols::argument_is_invalid()

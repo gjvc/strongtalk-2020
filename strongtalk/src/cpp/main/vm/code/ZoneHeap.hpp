@@ -91,7 +91,7 @@ public:
 
     HeapChunk *get();
 
-    int length() const;
+    std::size_t length() const;
 };
 
 
@@ -111,12 +111,12 @@ enum class chunkState {
 // The other bytes hold the distance to the chunk header (or an approximation
 // thereof); headers are found by following the distance pointers downwards
 
-constexpr int minHeaderSize = 1;
-constexpr int maxHeaderSize = 4;
+constexpr std::size_t minHeaderSize = 1;
+constexpr std::size_t maxHeaderSize = 4;
 
 
-constexpr int MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
-constexpr int maxOneByteLen = ( static_cast<std::size_t>( chunkState::usedOvfl ) - static_cast<std::size_t>(chunkState::used ) );
+constexpr std::size_t MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
+constexpr std::size_t maxOneByteLen = ( static_cast<std::size_t>( chunkState::usedOvfl ) - static_cast<std::size_t>(chunkState::used ) );
 
 class ChunkKlass;
 
@@ -126,12 +126,12 @@ ChunkKlass *asChunkKlass( std::uint8_t *c );
 class ChunkKlass {
 
 private:
-    std::uint8_t c( int which ) {
+    std::uint8_t c( std::size_t which ) {
         return ( (std::uint8_t *) this )[ which ];
     }
 
 
-    std::uint8_t n( int which ) {
+    std::uint8_t n( std::size_t which ) {
         return c( which ) - static_cast<std::uint8_t>( chunkState::unused );
     }
 
@@ -147,15 +147,15 @@ public:
     }
 
 
-    void markSize( int nChunks, chunkState s );
+    void markSize( std::size_t nChunks, chunkState s );
 
 
-    void markUsed( int nChunks ) {
+    void markUsed( std::size_t nChunks ) {
         markSize( nChunks, chunkState::used );
     }
 
 
-    void markUnused( int nChunks ) {
+    void markUnused( std::size_t nChunks ) {
         markSize( nChunks, chunkState::unused );
     }
 
@@ -189,15 +189,15 @@ public:
     }
 
 
-    int headerSize() {        // size of header in bytes
-        int ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+    std::size_t headerSize() {        // size of header in bytes
+        std::size_t ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         return c( 0 ) == ovfl ? maxHeaderSize : minHeaderSize;
     }
 
 
     std::size_t size() {        // size of this block
-        int ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
-        int len;
+        std::size_t ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        std::size_t len;
         st_assert( c( 0 ) not_eq static_cast<std::uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<std::uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
         if ( c( 0 ) not_eq ovfl ) {
             len = c( 0 ) + 1 - ( isUsed() ? static_cast<std::uint8_t>( chunkState::used ) : static_cast<std::uint8_t>( chunkState::unused ) );
@@ -221,8 +221,8 @@ public:
 
     ChunkKlass *prev() {
         ChunkKlass *p = asChunkKlass( asByte() - 1 );
-        int ovfl = static_cast<std::size_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
-        int len;
+        std::size_t ovfl = static_cast<std::size_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        std::size_t len;
         if ( c( -1 ) not_eq ovfl ) {
             len = p->size();
         } else {
@@ -243,14 +243,14 @@ protected:
     std::size_t size;                   // total size in bytes
 
 public:
-    int blockSize;              // allocation unit in bytes (must be power of 2)
-    int nfree;                  // number of free lists
+    std::size_t blockSize;              // allocation unit in bytes (must be power of 2)
+    std::size_t nfree;                  // number of free lists
 
 protected:
-    int log2BS;         // log2(blockSize)
-    int _bytesUsed;     // used bytes (rounded to block size)
-    int _total;         // total bytes allocated so far
-    int _ifrag;         // bytes wasted by internal fragmentation
+    std::size_t log2BS;         // log2(blockSize)
+    std::size_t _bytesUsed;     // used bytes (rounded to block size)
+    std::size_t _total;         // total bytes allocated so far
+    std::size_t _ifrag;         // bytes wasted by internal fragmentation
     const char *_base;         // for deallocation
     const char *base;          // base addr of heap (aligned to block size)
 
@@ -264,7 +264,7 @@ public:
     bool_t _combineOnDeallocation;    // do eager block combination on deallocs?
 
 public:
-    ZoneHeap( int s, int bs );
+    ZoneHeap( std::size_t s, std::size_t bs );
 
     ~ZoneHeap();
 
@@ -272,24 +272,24 @@ public:
     void clear();
 
     // Allocation
-    void *allocate( int wantedBytes );    // returns nullptr if allocation failed
-    void deallocate( void *p, int bytes );
+    void *allocate( std::size_t wantedBytes );    // returns nullptr if allocation failed
+    void deallocate( void *p, std::size_t bytes );
 
     // Compaction
-    const char *compact( void move( const char *from, char *to, int nbytes ) );    // returns first free byte
+    const char *compact( void move( const char *from, char *to, std::size_t nbytes ) );    // returns first free byte
 
     // Sizes
-    int capacity() const {
+    std::size_t capacity() const {
         return size;
     }
 
 
-    int usedBytes() const {
+    std::size_t usedBytes() const {
         return _bytesUsed;
     }
 
 
-    int freeBytes() const {
+    std::size_t freeBytes() const {
         return size - _bytesUsed;
     }
 
@@ -330,7 +330,7 @@ public:
     void print() const;
 
 protected:
-    int mapSize() const {
+    std::size_t mapSize() const {
         return size >> log2BS;
     }
 
@@ -346,7 +346,7 @@ protected:
     ChunkKlass *mapAddr( const void *p ) const {
         const char *pp = (const char *) p;
         st_assert( pp >= base and pp < base + size, "not in this heap" );
-        st_assert( int(pp) % blockSize == 0, "must be block-aligned" );
+        st_assert( std::size_t(pp) % blockSize == 0, "must be block-aligned" );
         std::uint8_t *fm = (std::uint8_t *) _heapKlass;
         return (ChunkKlass *) ( fm + ( ( pp - base ) >> log2BS ) );
     }
@@ -358,13 +358,13 @@ protected:
 
 
     // Free list management
-    void *allocFromLists( int wantedBytes );
+    void *allocFromLists( std::size_t wantedBytes );
 
     bool_t addToFreeList( ChunkKlass *m );
 
     void removeFromFreeList( ChunkKlass *m );
 
-    int combineAll();
+    std::size_t combineAll();
 
-    int combine( HeapChunk *&m );
+    std::size_t combine( HeapChunk *&m );
 };

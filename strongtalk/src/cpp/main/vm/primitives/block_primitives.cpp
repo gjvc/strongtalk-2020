@@ -61,7 +61,7 @@ extern "C" BlockClosureOop allocateBlock0() {
     PROLOGUE_0( "allocateBlock0" );
     BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
     blk->init_mark();
-    blk->set_klass_field( Universe::zeroArgumentBlockKlassObj() );
+    blk->set_klass_field( Universe::zeroArgumentBlockKlassObject() );
     inc_block_counter();
     return static_cast<BlockClosureOop>(Oop( blk ));
 }
@@ -70,7 +70,7 @@ extern "C" BlockClosureOop allocateBlock1() {
     PROLOGUE_0( "allocateBlock1" );
     BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
     blk->init_mark();
-    blk->set_klass_field( Universe::oneArgumentBlockKlassObj() );
+    blk->set_klass_field( Universe::oneArgumentBlockKlassObject() );
     inc_block_counter();
     return static_cast<BlockClosureOop>(Oop( blk ));
 }
@@ -79,14 +79,14 @@ extern "C" BlockClosureOop allocateBlock2() {
     PROLOGUE_0( "allocateBlock2" );
     BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
     blk->init_mark();
-    blk->set_klass_field( Universe::twoArgumentBlockKlassObj() );
+    blk->set_klass_field( Universe::twoArgumentBlockKlassObject() );
     inc_block_counter();
     return static_cast<BlockClosureOop>(Oop( blk ));
 }
 
 extern "C" ContextOop allocateContext( SMIOop nofVars ) {
     PROLOGUE_1( "allocateContext", nofVars );
-    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( nofVars->value() ));
 }
@@ -96,7 +96,7 @@ extern "C" ContextOop allocateContext0() {
     // allocate
     ContextOop obj = as_contextOop( Universe::allocate( ContextOopDescriptor::header_size() ) );
     // header
-    obj->set_klass_field( contextKlassObj );
+    obj->set_klass_field( contextKlassObject );
     //%clean this up later
     //  hash value must by convention be different from 0 (check markOop.hpp)
     obj->set_mark( MarkOopDescriptor::tagged_prototype()->set_hash( 0 + 1 ) );
@@ -108,13 +108,13 @@ extern "C" ContextOop allocateContext0() {
 
 extern "C" ContextOop allocateContext1() {
     PROLOGUE_0( "allocateContext1" );
-    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( 1 ));
 }
 extern "C" ContextOop allocateContext2() {
     PROLOGUE_0( "allocateContext2" );
-    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
     inc_context_counter();
     return static_cast<ContextOop>(ok->allocateObjectSize( 2 ));
 }
@@ -164,7 +164,7 @@ PRIM_DECL_1( block_method, Oop receiver ) {
 
 PRIM_DECL_1( block_is_optimized, Oop receiver ) {
     PROLOGUE_1( "blockRepeat", receiver );
-    return BlockClosureOop( receiver )->isCompiledBlock() ? trueObj : falseObj;
+    return BlockClosureOop( receiver )->isCompiledBlock() ? trueObject : falseObject;
 }
 
 

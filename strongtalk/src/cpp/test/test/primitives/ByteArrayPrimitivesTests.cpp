@@ -24,8 +24,8 @@ class ByteArrayPrimsTests : public ::testing::Test {
 
 protected:
     void SetUp() override {
-        byteArrayClass = Universe::byteArrayKlassObj();
-        alien          = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( 8 ) );
+        byteArrayClass = Universe::byteArrayKlassObject();
+        alien          = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( 8 ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( 4 ), alien );
         memset( alien_byte_region, 0, 16 );
     }
@@ -79,7 +79,7 @@ TEST_F( ByteArrayPrimsTests, allocateSize2ShouldAllocateByteArrayOfCorrectSize
 ) {
 HandleMark handles;
 Handle     byteArrayClassHandle( byteArrayClass );
-Oop        result = byteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), byteArrayClass );
+Oop        result = byteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), byteArrayClass );
 ASSERT_TRUE( result
 ->
 is_byteArray()
@@ -109,7 +109,7 @@ TEST_F( ByteArrayPrimsTests, allocateSize2ShouldAllocateTenuredWhenRequested
 HandleMark handles;
 Handle     byteArrayClassHandle( byteArrayClass );
 int        size   = Universe::new_gen.eden()->free() + 1;
-Oop        result = byteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size ), byteArrayClass );
+Oop        result = byteArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size ), byteArrayClass );
 ASSERT_TRUE( result
 ->
 is_byteArray()
@@ -132,7 +132,7 @@ klass()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWithNonByteArray
 ) {
-Oop result = byteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
+Oop result = byteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
 checkMarkedSymbol( "wrong class", result,
 vmSymbols::invalid_klass()
 );
@@ -141,7 +141,7 @@ vmSymbols::invalid_klass()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWithNonInteger
 ) {
-Oop result = byteArrayPrimitives::allocateSize2( falseObj, byteArrayClass, byteArrayClass );
+Oop result = byteArrayPrimitives::allocateSize2( falseObject, byteArrayClass, byteArrayClass );
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::first_argument_has_wrong_type()
 );
@@ -150,7 +150,7 @@ vmSymbols::first_argument_has_wrong_type()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWithNegativeSize
 ) {
-Oop result = byteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( -1 ), byteArrayClass );
+Oop result = byteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( -1 ), byteArrayClass );
 checkMarkedSymbol( "negative size", result,
 vmSymbols::negative_size()
 );
@@ -159,7 +159,7 @@ vmSymbols::negative_size()
 
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenTenuredNotBoolean
 ) {
-Oop result = byteArrayPrimitives::allocateSize2( Universe::nilObj(), smiOopFromValue( 10 ), byteArrayClass );
+Oop result = byteArrayPrimitives::allocateSize2( Universe::nilObject(), smiOopFromValue( 10 ), byteArrayClass );
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::second_argument_has_wrong_type()
 );
@@ -169,7 +169,7 @@ vmSymbols::second_argument_has_wrong_type()
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
 std::size_t size   = Universe::new_gen.eden()->free();
-Oop result = byteArrayPrimitives::allocateSize2( falseObj, smiOopFromValue( size + 1 ), byteArrayClass );
+Oop result = byteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), byteArrayClass );
 checkMarkedSymbol( "failed allocation", result,
 vmSymbols::failed_allocation()
 );
@@ -179,7 +179,7 @@ vmSymbols::failed_allocation()
 TEST_F( ByteArrayPrimsTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
 std::size_t size   = Universe::old_gen.free();
-Oop result = byteArrayPrimitives::allocateSize2( trueObj, smiOopFromValue( size + 1 ), byteArrayClass );
+Oop result = byteArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), byteArrayClass );
 checkMarkedSymbol( "failed allocation", result,
 vmSymbols::failed_allocation()
 );
@@ -286,7 +286,7 @@ TEST_F( ByteArrayPrimsTests, alienSetAddressShouldReturnMarkedSymbolWhenArgument
 ) {
 byteArrayPrimitives::alienSetSize( SMIOop( -16 ), alien
 );
-Oop result = byteArrayPrimitives::alienSetAddress( trueObj, alien );
+Oop result = byteArrayPrimitives::alienSetAddress( trueObject, alien );
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::first_argument_has_wrong_type()
 );

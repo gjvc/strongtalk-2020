@@ -48,7 +48,7 @@ extern "C" {
 bool_t nlr_through_unpacking                 = false;
 Oop    result_through_unpacking              = nullptr;
 int    number_of_arguments_through_unpacking = 0;
-char *C_frame_return_addr = nullptr;
+char   *C_frame_return_addr                  = nullptr;
 
 extern ContextOop nlr_home_context;
 extern bool_t     have_nlr_through_C;
@@ -60,8 +60,8 @@ extern Oop        nlr_result;
 bool_t processSemaphore = false;
 
 // For current Delta process, the last FP/Sp is stored in these global vars, not the instance vars of the process
-int *last_Delta_fp = nullptr;
-Oop *last_Delta_sp = nullptr;
+std::size_t *last_Delta_fp = nullptr;
+Oop         *last_Delta_sp = nullptr;
 
 
 // last_Delta_fp
@@ -196,7 +196,7 @@ void VMProcess::activate_system() {
 
     // Bind the scheduler to Processor
     proc->set_process( DeltaProcess::scheduler() );
-    DeltaProcess::scheduler()->set_processObj( proc );
+    DeltaProcess::scheduler()->set_processObject( proc );
 
     // Transfer control to the scheduler
     transfer_to( DeltaProcess::scheduler() );
@@ -265,13 +265,13 @@ extern "C" const char *active_stack_limit() {
     return (const char *) &DeltaProcess::_active_stack_limit;
 }
 
-Process       *Process::_current_process           = nullptr;
-DeltaProcess  *DeltaProcess::_active_delta_process = nullptr;
-DeltaProcess  *DeltaProcess::_main_process         = nullptr;
-volatile char *DeltaProcess::_active_stack_limit   = nullptr;
-DeltaProcess  *DeltaProcess::_scheduler_process    = nullptr;
-bool_t          DeltaProcess::_is_idle   = false;
-volatile bool_t DeltaProcess::_interrupt = false;
+Process         *Process::_current_process           = nullptr;
+DeltaProcess    *DeltaProcess::_active_delta_process = nullptr;
+DeltaProcess    *DeltaProcess::_main_process         = nullptr;
+volatile char   *DeltaProcess::_active_stack_limit   = nullptr;
+DeltaProcess    *DeltaProcess::_scheduler_process    = nullptr;
+bool_t          DeltaProcess::_is_idle               = false;
+volatile bool_t DeltaProcess::_interrupt             = false;
 
 volatile bool_t DeltaProcess::_process_has_terminated      = false;
 ProcessState    DeltaProcess::_state_of_terminated_process = ProcessState::initialized;
@@ -450,8 +450,8 @@ extern "C" bool_t have_nlr_through_C;
 
 
 void DeltaProcess::createMainProcess() {
-    Oop       mainProcess = Universe::find_global( "MainProcess" );
-    SymbolOop start       = oopFactory::new_symbol( "start" );
+    Oop          mainProcess  = Universe::find_global( "MainProcess" );
+    SymbolOop    start        = oopFactory::new_symbol( "start" );
     DeltaProcess *thisProcess = new DeltaProcess( mainProcess, start, false );
     DeltaProcess::set_main( thisProcess );
     DeltaProcess::initialize_async_dll_event();
@@ -477,8 +477,8 @@ std::size_t DeltaProcess::launch_delta( DeltaProcess *process ) {
     st_assert( process == DeltaProcess::active(), "process consistency check" );
     st_assert( process->is_deltaProcess(), "this should be a deltaProcess" );
 
-    DeltaProcess *p = (DeltaProcess *) process;
-    Oop result = Delta::call( p->receiver(), p->selector() );
+    DeltaProcess *p     = (DeltaProcess *) process;
+    Oop          result = Delta::call( p->receiver(), p->selector() );
 
     if ( have_nlr_through_C ) {
         if ( nlr_home_id == ErrorHandler::aborting_nlr_home_id() ) {
@@ -586,7 +586,7 @@ extern "C" void check_stack_overflow() {
 
 
 DeltaProcess::~DeltaProcess() {
-    processObj()->set_process( nullptr );
+    processObject()->set_process( nullptr );
     if ( Processes::includes( this ) ) {
         Processes::remove( this );
     }
@@ -601,7 +601,7 @@ void DeltaProcess::preempt_active() {
 
 
 void DeltaProcess::print() {
-    processObj()->print_value();
+    processObject()->print_value();
     _console->print( " " );
     switch ( state() ) {
         case ProcessState::initialized:
@@ -665,7 +665,7 @@ void DeltaProcess::frame_iterate( FrameClosure *blk ) {
 void DeltaProcess::oop_iterate( OopClosure *blk ) {
     blk->do_oop( (Oop *) &_receiver );
     blk->do_oop( (Oop *) &_selector );
-    blk->do_oop( (Oop *) &_processObj );
+    blk->do_oop( (Oop *) &_processObject );
 
     for ( UnwindInfo *p = _unwind_head; p; p = p->next() )
         blk->do_oop( (Oop *) &p->_nlr_result );
@@ -732,7 +732,7 @@ void DeltaProcess::follow_roots() {
 
     MarkSweep::follow_root( (Oop *) &_receiver );
     MarkSweep::follow_root( (Oop *) &_selector );
-    MarkSweep::follow_root( (Oop *) &_processObj );
+    MarkSweep::follow_root( (Oop *) &_processObject );
 
     if ( has_stack() ) {
         Frame v = last_frame();
@@ -780,10 +780,10 @@ void DeltaProcess::exit_uncommon() {
 //  ...
 //  [              ] <--   old_fp
 
-static Oop *old_sp;
-static Oop *new_sp;
-static std::size_t *old_fp;
-static std::size_t *cur_fp;
+static Oop            *old_sp;
+static Oop            *new_sp;
+static std::size_t    *old_fp;
+static std::size_t    *cur_fp;
 static ObjectArrayOop frame_array;
 
 extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, int *old_fp, ObjectArrayOop frame_array, int *current_frame ) {
@@ -900,10 +900,10 @@ extern "C" void unpack_frame_array() {
     // link for the current frame
     int *link_addr = (int *) new_sp - 2;
 
-    Oop *current_sp = new_sp;
-    int    pos    = 3;
-    int    length = frame_array->length();
-    bool_t first  = true;
+    Oop    *current_sp = new_sp;
+    int    pos         = 3;
+    int    length      = frame_array->length();
+    bool_t first       = true;
     Frame  current;
     // unpack one frame at at time from most recent to least recent
     do {
@@ -1053,7 +1053,7 @@ DeltaVirtualFrame *DeltaProcess::last_delta_vframe() {
     if ( not has_stack() )
         return nullptr;
 
-    Frame f = last_frame();
+    Frame              f   = last_frame();
     for ( VirtualFrame *vf = VirtualFrame::new_vframe( &f ); vf; vf = vf->sender() ) {
         if ( vf->is_delta_frame() )
             return (DeltaVirtualFrame *) vf;
@@ -1083,8 +1083,8 @@ void DeltaProcess::trace_stack() {
 
 void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
     _console->print_cr( "- Stack trace" );
-    int vframe_no = 1;
-    for ( VirtualFrame *f = start_frame; f; f = f->sender() ) {
+    int                vframe_no = 1;
+    for ( VirtualFrame *f        = start_frame; f; f = f->sender() ) {
         if ( f->is_delta_frame() ) {
             ( (DeltaVirtualFrame *) f )->print_activation( vframe_no++ );
         } else {
@@ -1217,13 +1217,13 @@ void DeltaProcess::set_next( DeltaProcess *p ) {
 }
 
 
-ProcessOop DeltaProcess::processObj() const {
-    return _processObj;
+ProcessOop DeltaProcess::processObject() const {
+    return _processObject;
 }
 
 
-void DeltaProcess::set_processObj( ProcessOop p ) {
-    _processObj = p;
+void DeltaProcess::set_processObject( ProcessOop p ) {
+    _processObject = p;
 }
 
 
@@ -1448,8 +1448,7 @@ void Processes::remove( DeltaProcess *p ) {
 
 
 bool_t Processes::includes( DeltaProcess *p ) {
-    ALL_PROCESSES( q )
-        if ( q == p )
+    ALL_PROCESSES( q )if ( q == p )
             return true;
     return false;
 }
@@ -1551,7 +1550,7 @@ void Processes::deoptimize_wrt( NativeMethod *nm ) {
 void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
     // mark for deoptimization
     for ( std::size_t i = 0; i < list->length(); i++ ) {
-        NativeMethod *nm = list->at( i );
+        NativeMethod                  *nm  = list->at( i );
         GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
 
         for ( std::size_t j = 0; j < nms->length(); j++ )
@@ -1563,8 +1562,8 @@ void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
 
     // unmark for deoptimization
     for ( std::size_t i = 0; i < list->length(); i++ ) {
-        NativeMethod *nativeMethod = list->at( i );
-        GrowableArray<NativeMethod *> *nms = nativeMethod->invalidation_family();
+        NativeMethod                  *nativeMethod = list->at( i );
+        GrowableArray<NativeMethod *> *nms          = nativeMethod->invalidation_family();
 
         for ( std::size_t j = 0; j < nms->length(); j++ )
             nms->at( j )->unmark_for_deoptimization();
@@ -1687,7 +1686,7 @@ void suspend_process_at_stack_overflow( int *sp, int *fp, const char *pc ) {
 
 void trace_stack( int thread_id ) {
     ResourceMark resourceMark;
-    Process *process = Processes::find_from_thread_id( thread_id );
+    Process      *process = Processes::find_from_thread_id( thread_id );
     if ( process->is_deltaProcess() )
         ( (DeltaProcess *) process )->trace_stack();
 }

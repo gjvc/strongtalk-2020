@@ -7,7 +7,9 @@
 
 #include "vm/system/platform.hpp"
 #include "allocation.hpp"
-// SnapshotDesc is the class handling reading and writing of snapshots
+
+
+// SnapshotDescriptor is the class handling reading and writing of snapshots
 
 class SnapshotDescriptor : StackAllocatedObject {
 private:

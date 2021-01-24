@@ -102,10 +102,10 @@ vframeOop new_senderVFrameOop( Process * p, vframeOop from, VirtualFrame * vf ) 
     MethodKind k = vf->method()->kind();
     switch ( k ) {
         case OuterMethodType:
-            vfo = Memory->outerActivationObj->basic_clone();
+            vfo = Memory->outerActivationObject->basic_clone();
             break;
         case BlockMethodType:
-            vfo = Memory->blockActivationObj->basic_clone();
+            vfo = Memory->blockActivationObject->basic_clone();
             break;
         default:
             fatal( "unexpected kind" );
@@ -139,10 +139,10 @@ vframeOop new_vframeOop( Process * p, VirtualFrame * vf ) {
     MethodKind k = vf->method()->kind();
     switch ( k ) {
         case OuterMethodType:
-            vfo = Memory->outerActivationObj->basic_clone();
+            vfo = Memory->outerActivationObject->basic_clone();
             break;
         case BlockMethodType:
-            vfo = Memory->blockActivationObj->basic_clone();
+            vfo = Memory->blockActivationObject->basic_clone();
             break;
         default:
             fatal( "unexpected kind" );

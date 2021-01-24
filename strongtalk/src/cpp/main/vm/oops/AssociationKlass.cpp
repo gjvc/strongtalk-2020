@@ -28,8 +28,8 @@ Oop AssociationKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     AssociationOop obj = as_associationOop( result );
     // header
     MemOop( obj )->initialize_header( has_untagged_contents(), k );
-    obj->set_key( SymbolOop( nilObj ) );
-    obj->set_value( nilObj );
+    obj->set_key( SymbolOop( nilObject ) );
+    obj->set_value( nilObject );
     obj->set_is_constant( false );
 
     // instance variables

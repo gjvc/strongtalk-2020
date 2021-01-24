@@ -19,37 +19,37 @@ class NativeInstruction : ValueObject {
     // Provides the primitive operations to manipulate code relative to this.
 
 protected:
-    char *addr_at( int offset ) const {
+    char *addr_at( std::size_t offset ) const {
         return (char *) this + offset;
     }
 
 
-    char char_at( int offset ) const {
+    char char_at( std::size_t offset ) const {
         return *addr_at( offset );
     }
 
 
-    int long_at( int offset ) const {
-        return *(int *) addr_at( offset );
+    std::size_t long_at( std::size_t offset ) const {
+        return *(std::size_t *) addr_at( offset );
     }
 
 
-    Oop oop_at( int offset ) const {
+    Oop oop_at( std::size_t offset ) const {
         return *(Oop *) addr_at( offset );
     }
 
 
-    void set_char_at( int offset, char c ) {
+    void set_char_at( std::size_t offset, char c ) {
         *addr_at( offset ) = c;
     }
 
 
-    void set_long_at( int offset, std::size_t i ) {
-        *(int *) addr_at( offset ) = i;
+    void set_long_at( std::size_t offset, std::size_t i ) {
+        *(std::size_t *) addr_at( offset ) = i;
     }
 
 
-    void set_oop_at( int offset, Oop o ) {
+    void set_oop_at( std::size_t offset, Oop o ) {
         *(Oop *) addr_at( offset ) = o;
     }
 
@@ -81,7 +81,7 @@ public:
     }
 
 
-    int displacement() const {
+    std::size_t displacement() const {
         return long_at( displacement_offset );
     }
 
@@ -161,12 +161,12 @@ public:
     }
 
 
-    int data() const {
+    std::size_t data() const {
         return long_at( data_offset );
     }
 
 
-    void set_data( int x ) {
+    void set_data( std::size_t x ) {
         set_long_at( data_offset, x );
     }
 
@@ -213,12 +213,12 @@ public:
     }
 
 
-    int data() const {
+    std::size_t data() const {
         return long_at( data_offset );
     }
 
 
-    void set_data( int x ) {
+    void set_data( std::size_t x ) {
         set_long_at( data_offset, x );
     }
 
@@ -257,12 +257,12 @@ public:
     }
 
 
-    int flags() const {
+    std::size_t flags() const {
         return data() & flags_mask;
     }
 
 
-    void set_flags( int flags ) {
+    void set_flags( std::size_t flags ) {
         set_data( ( data() & ~flags_mask ) | ( flags & flags_mask ) );
     }
 

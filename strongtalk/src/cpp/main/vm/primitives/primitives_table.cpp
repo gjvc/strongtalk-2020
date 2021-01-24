@@ -1,13 +1,11 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-//#pragma once
-
 #include "vm/primitives/primitives.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/compiler/Expression.hpp"
 #include "vm/runtime/Process.hpp"
 
 #include "vm/primitives/behavior_primitives.hpp"
@@ -27,6 +25,7 @@
 #include "vm/primitives/smi_primitives.hpp"
 #include "vm/primitives/system_primitives.hpp"
 #include "vm/primitives/vframe_primitives.hpp"
+#include "vm/primitives/primitives_table.hpp"
 
 
 // -----------------------------------------------------------------------------
@@ -2665,8 +2664,7 @@ static PrimitiveDescriptor primitive_438 = {
         "primitiveWriteSnapshot:", primitiveFunctionType( &SystemPrimitives::writeSnapshot ), 65537, signature_438, errors_438
 };
 
-static std::int32_t size_of_primitive_table = 439;
-static PrimitiveDescriptor *primitive_table[] = {
+PrimitiveDescriptor *primitive_table[] = {
         &primitive_0, \
         &primitive_1, \
         &primitive_2, \

@@ -50,13 +50,13 @@ protected:
         klassMixin->set_instVars( ObjectArrayOop( ivars.as_oop() ) );
         klassMixin->set_classVars( ObjectArrayOop( classVars.as_oop() ) );
         klassMixin->set_class_mixin( MixinOop( metaClassMixin.as_oop() ) );
-        klassMixin->set_installed( falseObj );
+        klassMixin->set_installed( falseObject );
 
         MixinOop metaKlassMixin = MixinOop( classMixin.as_oop() );
         metaKlassMixin->set_methods( ObjectArrayOop( classMethods.as_oop() ) );
         metaKlassMixin->set_instVars( ObjectArrayOop( classIvars.as_oop() ) );
         metaKlassMixin->set_classVars( ObjectArrayOop( classVars.as_oop() ) );
-        metaKlassMixin->set_installed( falseObj );
+        metaKlassMixin->set_installed( falseObject );
 
         return klassMixin;
     }

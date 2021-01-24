@@ -48,13 +48,13 @@ void printAllocated( RegisterMask rs ) {
 }
 
 
-int tempToIndex( Location temp ) {
+std::size_t tempToIndex( Location temp ) {
     Unimplemented();
     return 0;
     // return temp - FirstStackLocation + 32;
 }
 
-Location indexToTemp( int temp ) {
+Location indexToTemp( std::size_t temp ) {
     Unimplemented();
     return Location();
     // return Location(temp + FirstStackLocation - 32);
@@ -112,20 +112,20 @@ void LongRegisterMask::print() {
 
 
 // find the first bit >= start that is unused in all strings[0..len-1]
-int findFirstUnused( LongRegisterMask ** masks, int len, int start ) {
+std::size_t findFirstUnused( LongRegisterMask ** masks, std::size_t len, std::size_t start ) {
     // currently quite unoptimized
     BitVector * b = masks[ 0 ]->bv->copy( masks[ 0 ]->bv->maxLength );
     for ( std::size_t i = 1; i < len; i++ ) {
         b->unionWith( masks[ i ]->bv );
     }
-    int       i = start;
+    std::size_t       i = start;
     for ( ; i < b->length; i++ ) {
         if ( not b->includes( i ) ) break;
     }
     return i;
 }
 
-Location findFirstUnusedTemp( LongRegisterMask ** masks, int len ) {
+Location findFirstUnusedTemp( LongRegisterMask ** masks, std::size_t len ) {
     Unimplemented();
     // std::size_t i = findFirstUnused(masks, len, tempToIndex(FirstStackLocation));
     // return indexToTemp(i);

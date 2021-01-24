@@ -17,34 +17,34 @@
 KlassOop BlockClosureKlass::blockKlassFor( int numberOfArguments ) {
     switch ( numberOfArguments ) {
         case 0:
-            return Universe::zeroArgumentBlockKlassObj();
+            return Universe::zeroArgumentBlockKlassObject();
             break;
         case 1:
-            return Universe::oneArgumentBlockKlassObj();
+            return Universe::oneArgumentBlockKlassObject();
             break;
         case 2:
-            return Universe::twoArgumentBlockKlassObj();
+            return Universe::twoArgumentBlockKlassObject();
             break;
         case 3:
-            return Universe::threeArgumentBlockKlassObj();
+            return Universe::threeArgumentBlockKlassObject();
             break;
         case 4:
-            return Universe::fourArgumentBlockKlassObj();
+            return Universe::fourArgumentBlockKlassObject();
             break;
         case 5:
-            return Universe::fiveArgumentBlockKlassObj();
+            return Universe::fiveArgumentBlockKlassObject();
             break;
         case 6:
-            return Universe::sixArgumentBlockKlassObj();
+            return Universe::sixArgumentBlockKlassObject();
             break;
         case 7:
-            return Universe::sevenArgumentBlockKlassObj();
+            return Universe::sevenArgumentBlockKlassObject();
             break;
         case 8:
-            return Universe::eightArgumentBlockKlassObj();
+            return Universe::eightArgumentBlockKlassObject();
             break;
         case 9:
-            return Universe::nineArgumentBlockKlassObj();
+            return Universe::nineArgumentBlockKlassObject();
             break;
     }
     st_fatal( "cannot handle block with more than 9 arguments" );
@@ -132,25 +132,25 @@ void BlockClosureKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 
 int BlockClosureKlass::number_of_arguments() const {
     KlassOop k = KlassOop( this );        // C++ bogosity alert
-    if ( k == Universe::zeroArgumentBlockKlassObj() )
+    if ( k == Universe::zeroArgumentBlockKlassObject() )
         return 0;
-    if ( k == Universe::oneArgumentBlockKlassObj() )
+    if ( k == Universe::oneArgumentBlockKlassObject() )
         return 1;
-    if ( k == Universe::twoArgumentBlockKlassObj() )
+    if ( k == Universe::twoArgumentBlockKlassObject() )
         return 2;
-    if ( k == Universe::threeArgumentBlockKlassObj() )
+    if ( k == Universe::threeArgumentBlockKlassObject() )
         return 3;
-    if ( k == Universe::fourArgumentBlockKlassObj() )
+    if ( k == Universe::fourArgumentBlockKlassObject() )
         return 4;
-    if ( k == Universe::fiveArgumentBlockKlassObj() )
+    if ( k == Universe::fiveArgumentBlockKlassObject() )
         return 5;
-    if ( k == Universe::sixArgumentBlockKlassObj() )
+    if ( k == Universe::sixArgumentBlockKlassObject() )
         return 6;
-    if ( k == Universe::sevenArgumentBlockKlassObj() )
+    if ( k == Universe::sevenArgumentBlockKlassObject() )
         return 7;
-    if ( k == Universe::eightArgumentBlockKlassObj() )
+    if ( k == Universe::eightArgumentBlockKlassObject() )
         return 8;
-    if ( k == Universe::nineArgumentBlockKlassObj() )
+    if ( k == Universe::nineArgumentBlockKlassObject() )
         return 9;
     st_fatal( "unknown block closure class" );
     return 0;

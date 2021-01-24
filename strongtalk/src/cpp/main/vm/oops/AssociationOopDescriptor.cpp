@@ -19,7 +19,7 @@ void AssociationOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 
 void AssociationOopDescriptor::set_is_constant( bool_t v ) {
     bool_t was_constant = is_constant();
-    STORE_OOP( &addr()->_is_constant, v ? trueObj : falseObj );
+    STORE_OOP( &addr()->_is_constant, v ? trueObject : falseObject );
     if ( was_constant and not v ) {
         warning( "We need invalidation of code when changing a constant association to variable" );
         // Invalidate(value());

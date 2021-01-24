@@ -19,50 +19,50 @@ constexpr std::int16_t EpilogueByteCodeIndex = 32766;    //
 class NameDescriptorClosure {
 
 public:
-    virtual void arg( int no, NameDescriptor *a, const char *pc ) {
+    virtual void arg( std::size_t no, NameDescriptor *a, const char *pc ) {
     }
 
 
-    virtual void temp( int no, NameDescriptor *t, const char *pc ) {
+    virtual void temp( std::size_t no, NameDescriptor *t, const char *pc ) {
     }
 
 
-    virtual void context_temp( int no, NameDescriptor *c, const char *pc ) {
+    virtual void context_temp( std::size_t no, NameDescriptor *c, const char *pc ) {
     }
 
 
-    virtual void stack_expr( int no, NameDescriptor *e, const char *pc ) {
+    virtual void stack_expr( std::size_t no, NameDescriptor *e, const char *pc ) {
     }
 };
 
 
 // use the following functions to compare byteCodeIndexs; they handle PrologueByteCodeIndex et al.
 // negative if byteCodeIndex1 is before byteCodeIndex2, 0 if same, positive if after
-int compareByteCodeIndex( int byteCodeIndex1, int byteCodeIndex2 );
+std::size_t compareByteCodeIndex( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 );
 
 
-inline bool_t byteCodeIndexLT( int byteCodeIndex1, int byteCodeIndex2 ) {
+inline bool_t byteCodeIndexLT( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) < 0;
 }
 
 
-inline bool_t byteCodeIndexLE( int byteCodeIndex1, int byteCodeIndex2 ) {
+inline bool_t byteCodeIndexLE( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) <= 0;
 }
 
 
-inline bool_t byteCodeIndexGT( int byteCodeIndex1, int byteCodeIndex2 ) {
+inline bool_t byteCodeIndexGT( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) > 0;
 }
 
 
-inline bool_t byteCodeIndexGE( int byteCodeIndex1, int byteCodeIndex2 ) {
+inline bool_t byteCodeIndexGE( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) >= 0;
 }
 
 
 // Blocks belonging to scopes that aren't described (because they can't possibly be visible to the user) get IllegalDescOffset as their desc offset
-constexpr int IllegalDescOffset = -2;
+constexpr std::size_t IllegalDescOffset = -2;
 
 //
 //
@@ -97,13 +97,13 @@ protected:
     bool_t      _hasContextTemporaries;
     bool_t      _hasExpressionStack;
     MethodOop   _method;
-    int         _scopeID;
+    std::size_t         _scopeID;
     bool_t      _lite;
     std::size_t _senderScopeOffset;
     std::size_t _senderByteCodeIndex;
     bool_t      _allocatesCompiledContext;
     std::size_t _name_desc_offset;
-    int         _next;
+    std::size_t         _next;
 
     // If the pc of a ScopeDescriptor is equal to invalid_pc, the scopeDesc is pc independent.
     // A pc independent ScopeDescriptor prints out all the locations for its nameDescs.
@@ -116,13 +116,13 @@ public:
 
     NameDescriptor *nameDescAt( std::size_t &offset ) const;
 
-    int valueAt( std::size_t &offset ) const;
+    std::size_t valueAt( std::size_t &offset ) const;
 
     ScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc );
 
 
-    int offset() const {
-        return int( _offset );
+    std::size_t offset() const {
+        return std::size_t( _offset );
     }
 
 
@@ -160,7 +160,7 @@ public:
     NameDescriptor *compiled_context();
 
 
-    int scopeID() const {
+    std::size_t scopeID() const {
         return _scopeID;
     }
 
@@ -233,29 +233,29 @@ public:
 
     virtual NameDescriptor *self() const = 0;
 
-    NameDescriptor *temporary( int index, bool_t canFail = false );
+    NameDescriptor *temporary( std::size_t index, bool_t canFail = false );
 
-    NameDescriptor *contextTemporary( int index, bool_t canFail = false );
+    NameDescriptor *contextTemporary( std::size_t index, bool_t canFail = false );
 
-    NameDescriptor *exprStackElem( int byteCodeIndex );
+    NameDescriptor *exprStackElem( std::size_t byteCodeIndex );
 
 public:
-    int next_offset() const {
+    std::size_t next_offset() const {
         return _next;
     }
 
 
-    int sender_scope_offset() const {
+    std::size_t sender_scope_offset() const {
         return _offset - _senderScopeOffset;
     }
 
 
     bool_t verify();
 
-    void verify_expression_stack( int byteCodeIndex );
+    void verify_expression_stack( std::size_t byteCodeIndex );
 
     // printing support
-    void print( int indent, bool_t all_pcs );        // print info for current/all pc's
+    void print( std::size_t indent, bool_t all_pcs );        // print info for current/all pc's
     void print() {
         print( 0, false );
     }
@@ -292,7 +292,7 @@ protected:
     NameDescriptor *_self_name;
 
 public:
-    MethodScopeDescriptor( NativeMethodScopes *scopes, int offset, const char *pc );
+    MethodScopeDescriptor( NativeMethodScopes *scopes, std::size_t offset, const char *pc );
 
     bool_t s_equivalent( ScopeDescriptor *s ) const;
 
@@ -336,10 +336,10 @@ public:
 class BlockScopeDescriptor : public ScopeDescriptor {
 protected:
     // Cached information
-    int _parentScopeOffset;
+    std::size_t _parentScopeOffset;
 
 public:
-    BlockScopeDescriptor( const NativeMethodScopes *scopes, int offset, const char *pc );
+    BlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc );
 
     // NB: the next three operations may return nullptr (no context)
     KlassOop selfKlass() const;
@@ -418,12 +418,12 @@ class NonInlinedBlockScopeDescriptor : public PrintableResourceObject {
 protected:
     // Creation information
     const NativeMethodScopes *_scopes;
-    int                      _offset;
+    std::size_t                      _offset;
 
 protected:
     // Cached information
     MethodOop _method;
-    int       _parentScopeOffset;
+    std::size_t       _parentScopeOffset;
 
 public:
     NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset );

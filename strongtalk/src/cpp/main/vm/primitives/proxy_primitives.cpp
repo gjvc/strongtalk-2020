@@ -94,14 +94,14 @@ PRIM_DECL_1( proxyOopPrimitives::getLow, Oop receiver ) {
 PRIM_DECL_1( proxyOopPrimitives::isNull, Oop receiver ) {
     PROLOGUE_1( "isNull", receiver );
     ASSERT_RECEIVER;
-    return ProxyOop( receiver )->is_null() ? trueObj : falseObj;
+    return ProxyOop( receiver )->is_null() ? trueObject : falseObject;
 }
 
 
 PRIM_DECL_1( proxyOopPrimitives::isAllOnes, Oop receiver ) {
     PROLOGUE_1( "isAllOnes", receiver );
     ASSERT_RECEIVER;
-    return ProxyOop( receiver )->is_allOnes() ? trueObj : falseObj;
+    return ProxyOop( receiver )->is_allOnes() ? trueObject : falseObject;
 }
 
 

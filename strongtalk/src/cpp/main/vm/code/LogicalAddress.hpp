@@ -20,12 +20,12 @@ class LogicalAddress : public ResourceObject {
 
 private:
     NameNode *_physicalAddress;
-    int _pcOffset;
+    std::size_t _pcOffset;
     LogicalAddress *_next;
     std::size_t _offset;
 
 public:
-    LogicalAddress( NameNode *physical_address, int pc_offset = 0 );
+    LogicalAddress( NameNode *physical_address, std::size_t pc_offset = 0 );
 
 
     NameNode *physical_address() const {
@@ -33,7 +33,7 @@ public:
     }
 
 
-    int pc_offset() const {
+    std::size_t pc_offset() const {
         return _pcOffset;
     }
 
@@ -43,11 +43,11 @@ public:
     }
 
 
-    void append( NameNode *physical_address, int pc_offset );
+    void append( NameNode *physical_address, std::size_t pc_offset );
 
-    NameNode *physical_address_at( int pc_offset );
+    NameNode *physical_address_at( std::size_t pc_offset );
 
     void generate( ScopeDescriptorRecorder *rec );
 
-    int length();
+    std::size_t length();
 };

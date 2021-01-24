@@ -510,7 +510,7 @@ Expression *ConstantExpression::findKlass( KlassOop m ) const {
 
 // needsStoreCheck: when storing the expr into the heap, do we need a GC store check?
 bool_t KlassExpression::needsStoreCheck() const {
-    return _klass not_eq smiKlassObj;
+    return _klass not_eq smiKlassObject;
 }
 
 

@@ -38,7 +38,7 @@ extern Compiler *theCompiler;
 //
 //
 
-int PseudoRegisterMapping::index( PseudoRegister *preg ) {
+std::size_t PseudoRegisterMapping::index( PseudoRegister *preg ) {
     st_assert( preg not_eq nullptr, "no preg specified" );
     // try cashed index first
     std::size_t i = preg->_map_index_cache;
@@ -56,7 +56,7 @@ int PseudoRegisterMapping::index( PseudoRegister *preg ) {
 }
 
 
-void PseudoRegisterMapping::set_entry( std::size_t i, PseudoRegister *preg, int rloc, int sloc ) {
+void PseudoRegisterMapping::set_entry( std::size_t i, PseudoRegister *preg, std::size_t rloc, std::size_t sloc ) {
     st_assert( preg not_eq nullptr, "no preg specified" );
     st_assert( not _locations->isLocation( rloc ) or _locations->isRegister( rloc ), "should be a register location if at all" );
     st_assert( not _locations->isLocation( sloc ) or _locations->isArgument( sloc ) or _locations->isStackTmp( sloc ), "should be a stack location if at all" );
@@ -69,7 +69,7 @@ void PseudoRegisterMapping::set_entry( std::size_t i, PseudoRegister *preg, int 
 }
 
 
-int PseudoRegisterMapping::freeSlot() {
+std::size_t PseudoRegisterMapping::freeSlot() {
     // search for an unused slot
     std::size_t i = size();
     while ( i-- > 0 and used( i ) );
@@ -86,15 +86,15 @@ int PseudoRegisterMapping::freeSlot() {
 }
 
 
-int PseudoRegisterMapping::spillablePRegIndex() {
+std::size_t PseudoRegisterMapping::spillablePRegIndex() {
     // Finds a PseudoRegister that is mapped to a register location and that is not locked.
     // Returns a value < 0 if there's no such PseudoRegister.
-    int uses = 999999999;
-    int i0   = -1;
+    std::size_t uses = 999999999;
+    std::size_t i0   = -1;
     std::size_t i    = size();
     while ( i-- > 0 ) {
         PseudoRegister *preg = _pseudoRegisters->at( i );
-        int rloc = regLoc( i );
+        std::size_t rloc = regLoc( i );
         if ( preg not_eq nullptr and _locations->isRegister( rloc ) and not PseudoRegisterLocker::locks( preg ) and _locations->nofUses( rloc ) < uses ) {
             uses = _locations->nofUses( rloc );
             i0   = i;
@@ -117,9 +117,9 @@ void PseudoRegisterMapping::ensureOneFreeRegister() {
 }
 
 
-void PseudoRegisterMapping::spillRegister( int loc ) {
+void PseudoRegisterMapping::spillRegister( std::size_t loc ) {
     st_assert( _locations->isRegister( loc ), "must be a register" );
-    int spillLoc = _locations->allocateStackTmp();
+    std::size_t spillLoc = _locations->allocateStackTmp();
     // remap pregs
     std::size_t i        = size();
     while ( i-- > 0 ) {
@@ -141,12 +141,12 @@ void PseudoRegisterMapping::spillRegister( int loc ) {
 }
 
 
-int PseudoRegisterMapping::allocateTemporary( Register hint ) {
+std::size_t PseudoRegisterMapping::allocateTemporary( Register hint ) {
     ensureOneFreeRegister();
-    int regLoc = _locations->noLocation;
+    std::size_t regLoc = _locations->noLocation;
     if ( hint not_eq noreg ) {
         // try to use hint register
-        int hintLoc = _locations->registerAsLocation( hint );
+        std::size_t hintLoc = _locations->registerAsLocation( hint );
         if ( _locations->nofUses( hintLoc ) == 0 ) {
             // hintLoc is available
             _locations->allocate( hintLoc );
@@ -161,7 +161,7 @@ int PseudoRegisterMapping::allocateTemporary( Register hint ) {
 }
 
 
-void PseudoRegisterMapping::releaseTemporary( int regLoc ) {
+void PseudoRegisterMapping::releaseTemporary( std::size_t regLoc ) {
     if ( _temporaryLocations->pop() == regLoc ) {
         _locations->release( regLoc );
     } else {
@@ -183,15 +183,15 @@ void PseudoRegisterMapping::destroy() {
 }
 
 
-PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, int nofArgs, int nofRegs, int nofTemps ) {
-    constexpr int initialSize = 8;
+PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::size_t nofArgs, std::size_t nofRegs, std::size_t nofTemps ) {
+    constexpr std::size_t initialSize = 8;
     _macroAssembler           = assm;
     _nonLocalReturnInProgress = false;
     _locations                = new Locations( nofArgs, nofRegs, nofTemps );
     _pseudoRegisters          = new GrowableArray<PseudoRegister *>( initialSize );
-    _registerLocations        = new GrowableArray<int>( initialSize );
-    _stackLocations           = new GrowableArray<int>( initialSize );
-    _temporaryLocations       = new GrowableArray<int>( 2 );
+    _registerLocations        = new GrowableArray<std::size_t>( initialSize );
+    _stackLocations           = new GrowableArray<std::size_t>( initialSize );
+    _temporaryLocations       = new GrowableArray<std::size_t>( 2 );
     verify();
 }
 
@@ -227,7 +227,7 @@ bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
     // checks conformity on the intersection of this and with
     if ( NonLocalReturninProgress() not_eq with->NonLocalReturninProgress() )
         return false;
-    int j = with->size();
+    std::size_t j = with->size();
     while ( j-- > 0 ) {
         if ( with->used( j ) ) {
             std::size_t i = index( with->_pseudoRegisters->at( j ) );
@@ -241,18 +241,18 @@ bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
 }
 
 
-void PseudoRegisterMapping::mapToArgument( PseudoRegister *preg, int argNo ) {
+void PseudoRegisterMapping::mapToArgument( PseudoRegister *preg, std::size_t argNo ) {
     st_assert( index( preg ) < 0, "preg for argument defined twice" );
-    int loc = _locations->argumentAsLocation( argNo );
+    std::size_t loc = _locations->argumentAsLocation( argNo );
     _locations->use( loc );
     set_entry( freeSlot(), preg, _locations->noLocation, loc );
     verify();
 }
 
 
-void PseudoRegisterMapping::mapToTemporary( PseudoRegister *preg, int tempNo ) {
+void PseudoRegisterMapping::mapToTemporary( PseudoRegister *preg, std::size_t tempNo ) {
     st_assert( index( preg ) < 0, "preg for argument defined twice" );
-    int loc = _locations->temporaryAsLocation( tempNo );
+    std::size_t loc = _locations->temporaryAsLocation( tempNo );
     _locations->allocate( loc );
     set_entry( freeSlot(), preg, _locations->noLocation, loc );
     verify();
@@ -261,7 +261,7 @@ void PseudoRegisterMapping::mapToTemporary( PseudoRegister *preg, int tempNo ) {
 
 void PseudoRegisterMapping::mapToRegister( PseudoRegister *preg, Register reg ) {
     st_assert( index( preg ) < 0, "preg for register defined twice" );
-    int loc = _locations->registerAsLocation( reg );
+    std::size_t loc = _locations->registerAsLocation( reg );
     _locations->allocate( loc );
     set_entry( freeSlot(), preg, loc, _locations->noLocation );
     verify();
@@ -275,8 +275,8 @@ void PseudoRegisterMapping::kill( PseudoRegister *preg ) {
             _console->print( "kill " );
             print( i );
         }
-        int rloc = regLoc( i );
-        int sloc = stkLoc( i );
+        std::size_t rloc = regLoc( i );
+        std::size_t sloc = stkLoc( i );
         if ( _locations->isLocation( rloc ) )
             _locations->release( rloc );
         if ( _locations->isLocation( sloc ) )
@@ -296,8 +296,8 @@ void PseudoRegisterMapping::killAll( PseudoRegister *exception ) {
                 _console->print( "kill " );
                 print( i );
             }
-            int rloc = regLoc( i );
-            int sloc = stkLoc( i );
+            std::size_t rloc = regLoc( i );
+            std::size_t sloc = stkLoc( i );
             if ( _locations->isLocation( rloc ) )
                 _locations->release( rloc );
             if ( _locations->isLocation( sloc ) )
@@ -353,7 +353,7 @@ Register PseudoRegisterMapping::def( PseudoRegister *preg, Register hint ) {
     std::size_t i = index( preg );
     st_assert( i < 0 or not hasStkLoc( i ) or not _locations->isArgument( stkLoc( i ) ), "cannot assign to parameters" );
     kill( preg );
-    int loc;
+    std::size_t loc;
     if ( hint == noreg ) {
         ensureOneFreeRegister();
         loc  = _locations->allocateRegister();
@@ -377,7 +377,7 @@ Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
         PseudoRegisterLocker lock( context );
         Address              addr = Address( use( context ), Mapping::contextOffset( preg->_location.tempNo() ) );
         // determine a target register
-        int                  loc;
+        std::size_t                  loc;
         if ( hint == noreg ) {
             ensureOneFreeRegister();
             loc  = _locations->allocateRegister();
@@ -396,7 +396,7 @@ Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
         if ( hint == noreg or hint == old ) {
             hint = old;
         } else {
-            int loc = _locations->registerAsLocation( hint );
+            std::size_t loc = _locations->registerAsLocation( hint );
             _locations->release( regLoc( i ) );
             _locations->allocate( loc );
             _registerLocations->at_put( i, loc );
@@ -405,7 +405,7 @@ Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
     } else {
         // copy into register
         st_assert( hasStkLoc( i ), "must have at least one location" );
-        int loc;
+        std::size_t loc;
         if ( hint == noreg ) {
             ensureOneFreeRegister();
             loc  = _locations->allocateRegister();
@@ -439,8 +439,8 @@ void PseudoRegisterMapping::move( PseudoRegister *dst, PseudoRegister *src ) {
     kill( dst ); // remove any previous definition
     std::size_t i = index( src );
     st_assert( i >= 0, "src must be defined" );
-    int rloc = regLoc( i );
-    int sloc = stkLoc( i );
+    std::size_t rloc = regLoc( i );
+    std::size_t sloc = stkLoc( i );
     if ( _locations->isLocation( rloc ) )
         _locations->use( rloc );
     if ( _locations->isLocation( sloc ) )
@@ -450,9 +450,9 @@ void PseudoRegisterMapping::move( PseudoRegister *dst, PseudoRegister *src ) {
 }
 
 
-void PseudoRegisterMapping::saveRegister( int loc ) {
+void PseudoRegisterMapping::saveRegister( std::size_t loc ) {
     st_assert( _locations->isRegister( loc ), "must be a register" );
-    int spillLoc = _locations->allocateStackTmp();
+    std::size_t spillLoc = _locations->allocateStackTmp();
     // remap pregs
     std::size_t i        = size();
     while ( i-- > 0 ) {
@@ -537,14 +537,14 @@ void PseudoRegisterMapping::makeInjective() {
     std::size_t i = size();
     while ( i-- > 0 ) {
         if ( used( i ) ) {
-            int rloc = regLoc( i );
-            int sloc = stkLoc( i );
+            std::size_t rloc = regLoc( i );
+            std::size_t sloc = stkLoc( i );
             st_assert( _locations->isLocation( rloc ) or _locations->isLocation( sloc ), "must have at least one location" );
             if ( _locations->isLocation( rloc ) and _locations->isLocation( sloc ) ) {
                 if ( _locations->nofUses( rloc ) > 1 and _locations->nofUses( sloc ) > 1 ) {
                     // preg is mapped to both register and stack location that are shared with other pregs
                     // => map to a new stack location
-                    int newLoc = _locations->allocateStackTmp();
+                    std::size_t newLoc = _locations->allocateStackTmp();
                     _macroAssembler->movl( _locations->locationAsAddress( newLoc ), _locations->locationAsRegister( rloc ) );
                     _locations->release( rloc );
                     _locations->release( sloc );
@@ -562,7 +562,7 @@ void PseudoRegisterMapping::makeInjective() {
             } else if ( _locations->isLocation( rloc ) ) {
                 if ( _locations->nofUses( rloc ) > 1 ) {
                     // preg is mapped to a register that shared with other pregs => map to a new stack location
-                    int newLoc = _locations->allocateStackTmp();
+                    std::size_t newLoc = _locations->allocateStackTmp();
                     _macroAssembler->movl( _locations->locationAsAddress( newLoc ), _locations->locationAsRegister( rloc ) );
                     _locations->release( rloc );
                     _registerLocations->at_put( i, _locations->noLocation );
@@ -572,8 +572,8 @@ void PseudoRegisterMapping::makeInjective() {
                 if ( _locations->nofUses( sloc ) > 1 ) {
                     // preg is mapped to a stack location that is shared with other pregs => map to a new stack location
                     ensureOneFreeRegister();
-                    int      tmpLoc = _locations->allocateRegister();
-                    int      newLoc = _locations->allocateStackTmp();
+                    std::size_t      tmpLoc = _locations->allocateRegister();
+                    std::size_t      newLoc = _locations->allocateStackTmp();
                     Register t      = _locations->locationAsRegister( tmpLoc );
                     _macroAssembler->movl( t, _locations->locationAsAddress( sloc ) );
                     _macroAssembler->movl( _locations->locationAsAddress( newLoc ), t );
@@ -594,14 +594,14 @@ void PseudoRegisterMapping::makeInjective() {
 
 void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
 
-    int j = with->size();
+    std::size_t j = with->size();
 
     // determine which entries have to be adjusted (save values on the stack)
 
     const char *begin_of_code = _macroAssembler->pc();
 
-    GrowableArray<int> src( 4 );
-    GrowableArray<int> dst( 4 );
+    GrowableArray<std::size_t> src( 4 );
+    GrowableArray<std::size_t> dst( 4 );
 
 
     while ( j-- > 0 ) {
@@ -649,7 +649,7 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
     // pop values from stack and adjust entries
     while ( src.nonEmpty() ) {
         std::size_t i = src.pop();
-        int j = dst.pop();
+        std::size_t j = dst.pop();
         if ( hasRegLoc( i ) and regLoc( i ) == with->regLoc( j ) ) {
             // register locations conform => must have non-conformant stack location
             st_assert( stkLoc( i ) not_eq with->stkLoc( j ), "error in program logic" );
@@ -779,7 +779,7 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
     bool_t            makeConformant = false;
     Variable          unused         = Variable::unused();
     ConformanceHelper chelper;
-    int               j              = with->size();
+    std::size_t               j              = with->size();
     while ( j-- > 0 ) {
         if ( with->used( j ) ) {
             std::size_t i = index( with->_pseudoRegisters->at( j ) );
@@ -800,9 +800,9 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
     if ( makeConformant ) {
         // mappings differ -> generate code to make them conformant
         // first: find free registers that can be used for "make conformance" code
-        int      this_mask = _locations->freeRegisterMask();
-        int      with_mask = with->_locations->freeRegisterMask();
-        int      both_mask = this_mask & with_mask;
+        std::size_t      this_mask = _locations->freeRegisterMask();
+        std::size_t      with_mask = with->_locations->freeRegisterMask();
+        std::size_t      both_mask = this_mask & with_mask;
         Variable temp1     = unused;
         Variable temp2     = unused;
         if ( both_mask not_eq 0 ) {
@@ -813,8 +813,8 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
             // make sure register can actually be used in both mappings
             {
                 Register reg       = Register( i, ' ' );
-                int      this_rloc = _locations->registerAsLocation( reg );
-                int      with_rloc = with->_locations->registerAsLocation( reg );
+                std::size_t      this_rloc = _locations->registerAsLocation( reg );
+                std::size_t      with_rloc = with->_locations->registerAsLocation( reg );
                 // allocate & deallocate them - will fail if registers are already in use
                 _locations->allocate( this_rloc );
                 _locations->release( this_rloc );
@@ -833,8 +833,8 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
             // make sure register can actually be used in both mappings
             {
                 Register reg       = Register( i, ' ' );
-                int      this_rloc = _locations->registerAsLocation( reg );
-                int      with_rloc = with->_locations->registerAsLocation( reg );
+                std::size_t      this_rloc = _locations->registerAsLocation( reg );
+                std::size_t      with_rloc = with->_locations->registerAsLocation( reg );
                 // allocate & deallocate them - will fail if registers are already in use
                 _locations->allocate( this_rloc );
                 _locations->release( this_rloc );
@@ -886,7 +886,7 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     std::size_t i = size();
     while ( i-- > 0 ) {
         if ( used( i ) ) {
-            int j = with->index( _pseudoRegisters->at( i ) );
+            std::size_t j = with->index( _pseudoRegisters->at( i ) );
             if ( j < 0 ) {
                 // entry not found in 'with' mapping -> remove it from this mapping
                 kill( _pseudoRegisters->at( i ) );
@@ -928,9 +928,9 @@ Location PseudoRegisterMapping::locationFor( PseudoRegister *preg ) {
 }
 
 
-int PseudoRegisterMapping::nofPRegs() {
+std::size_t PseudoRegisterMapping::nofPRegs() {
     std::size_t i = size();
-    int n = 0;
+    std::size_t n = 0;
     while ( i-- > 0 ) {
         if ( used( i ) )
             n++;
@@ -939,7 +939,7 @@ int PseudoRegisterMapping::nofPRegs() {
 }
 
 
-int PseudoRegisterMapping::maxNofStackTmps() {
+std::size_t PseudoRegisterMapping::maxNofStackTmps() {
     return _locations->nofStackTmps();
 }
 
@@ -953,8 +953,8 @@ void PseudoRegisterMapping::my_print() {
 
 void PseudoRegisterMapping::print( std::size_t i ) {
     st_assert( used( i ), "unused slot" );
-    int rloc = regLoc( i );
-    int sloc = stkLoc( i );
+    std::size_t rloc = regLoc( i );
+    std::size_t sloc = stkLoc( i );
     _console->print( "%s -> ", _pseudoRegisters->at( i )->name() );
     if ( rloc >= 0 ) {
         _console->print( _locations->locationAsRegister( rloc ).name() );
@@ -962,7 +962,7 @@ void PseudoRegisterMapping::print( std::size_t i ) {
     if ( sloc >= 0 ) {
         if ( rloc >= 0 )
             _console->print( ", " );
-        int offs = _locations->locationAsByteOffset( sloc );
+        std::size_t offs = _locations->locationAsByteOffset( sloc );
         _console->print( "[ebp%s%d]", ( offs < 0 ? "" : "+" ), offs );
     }
     _console->cr();
@@ -985,7 +985,7 @@ void PseudoRegisterMapping::print() {
     if ( _temporaryLocations->length() > 0 ) {
         _console->print_cr( "Temporaries in use:" );
         for ( std::size_t i = 0; i < _temporaryLocations->length(); i++ ) {
-            int loc = _temporaryLocations->at( i );
+            std::size_t loc = _temporaryLocations->at( i );
             st_assert( _locations->isRegister( loc ), "temporaries must be in registers" );
             _console->print_cr( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
         }
@@ -1002,17 +1002,17 @@ void PseudoRegisterMapping::verify() {
     if ( not CompilerDebug )
         return;
     _locations->verify();
-    int totalUses = 0;
+    std::size_t totalUses = 0;
     std::size_t i         = size();
     while ( i-- > 0 ) {
         if ( used( i ) ) {
             // verify mapping for entry i
-            int rloc = regLoc( i );
-            int sloc = stkLoc( i );
+            std::size_t rloc = regLoc( i );
+            std::size_t sloc = stkLoc( i );
             if ( rloc < 0 and sloc < 0 ) st_fatal( "no location associated with preg" );
-            int rlocUses = 0;
-            int slocUses = 0;
-            int j        = size();
+            std::size_t rlocUses = 0;
+            std::size_t slocUses = 0;
+            std::size_t j        = size();
             while ( j-- > 0 ) {
                 if ( used( j ) ) {
                     if ( i not_eq j and _pseudoRegisters->at( i ) == _pseudoRegisters->at( j ) ) st_fatal( "preg found twice in mapping" );
@@ -1035,7 +1035,7 @@ void PseudoRegisterMapping::verify() {
     // check allocated temporaries
     i = _temporaryLocations->length();
     while ( i-- > 0 ) {
-        int rloc = _temporaryLocations->at( i );
+        std::size_t rloc = _temporaryLocations->at( i );
         if ( _locations->nofUses( rloc ) not_eq 1 ) st_fatal( "inconsistent nofUses (temporaries)" );
         totalUses++;
     }

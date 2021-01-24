@@ -29,13 +29,21 @@ TRACE_FUNC( TraceDebugPrims, "debug" )
 std::size_t debugPrimitives::number_of_calls;
 
 
+template<typename T>
+void boring_template_fn(T t){
+    auto identity = [](decltype(t) t){
+        return t;
+    };
+    std::cout << identity(t) << std::endl;
+}
+
 PRIM_DECL_1( debugPrimitives::boolAt, Oop name ) {
     PROLOGUE_1( "boolAt", name )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     bool_t result;
     if ( debugFlags::boolAt( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &result ) )
-        return result ? trueObj : falseObj;
+        return result ? trueObject : falseObject;
     return markSymbol( vmSymbols::not_found() );
 }
 
@@ -45,15 +53,15 @@ PRIM_DECL_2( debugPrimitives::boolAtPut, Oop name, Oop value ) {
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     bool_t b;
-    if ( value == trueObj )
+    if ( value == trueObject )
         b = true;
-    else if ( value == falseObj )
+    else if ( value == falseObject )
         b = false;
     else
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     if ( debugFlags::boolAtPut( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &b ) )
-        return b ? trueObj : falseObj;
+        return b ? trueObject : falseObject;
     return markSymbol( vmSymbols::not_found() );
 }
 
@@ -85,35 +93,35 @@ PRIM_DECL_2( debugPrimitives::smiAtPut, Oop name, Oop value ) {
 PRIM_DECL_0( debugPrimitives::clearLookupCache ) {
     PROLOGUE_0( "clearLookupCache" )
     LookupCache::flush();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::clearLookupCacheStatistics ) {
     PROLOGUE_0( "clearLookupCacheStatistics" )
     LookupCache::clear_statistics();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::printLookupCacheStatistics ) {
     PROLOGUE_0( "printLookupCacheStatistics" )
     LookupCache::print_statistics();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::printMemoryLayout ) {
     PROLOGUE_0( "printMemoryLayout" )
     Universe::print_layout();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::decodeAllMethods ) {
     PROLOGUE_0( "decodeAllMethods" )
     Universe::decode_methods();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -194,21 +202,21 @@ PRIM_DECL_2( debugPrimitives::decodeMethod, Oop receiver, Oop sel ) {
 PRIM_DECL_0( debugPrimitives::timerStart ) {
     PROLOGUE_0( "timerStart" );
     os::timerStart();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::timerStop ) {
     PROLOGUE_0( "timerStop" );
     os::timerStop();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::timerPrintBuffer ) {
     PROLOGUE_0( "timerPrintBuffer" );
     os::timerPrintBuffer();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -249,7 +257,7 @@ PRIM_DECL_0( debugPrimitives::clearInvocationCounters ) {
     PROLOGUE_0( "clearInvocationCounters" );
     ClearInvocationCounterClosure blk;
     Universe::object_iterate( &blk );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -303,7 +311,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
         _console->print( "[%d] ", m->invocation_count() );
         m->pretty_print();
     }
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -314,7 +322,7 @@ PRIM_DECL_0( debugPrimitives::clearInlineCaches ) {
     Universe::code->clear_inline_caches();
     Universe::code->print();
 
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -325,7 +333,7 @@ PRIM_DECL_0( debugPrimitives::clearInlineCaches ) {
 PRIM_DECL_0( debugPrimitives::clearNativeMethodCounters ) {
     PROLOGUE_0( "clearNativeMethodCounters" );
     FOR_ALL_NMETHOD( nm )nm->set_invocation_count( 0 );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -358,7 +366,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
         m->method()->pretty_print();
     }
 
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -420,14 +428,14 @@ PRIM_DECL_0( debugPrimitives::numberOfLookupCacheMisses ) {
 PRIM_DECL_0( debugPrimitives::clearPrimitiveCounters ) {
     PROLOGUE_0( "clearPrimitiveCounters" );
     Primitives::clear_counters();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::printPrimitiveCounters ) {
     PROLOGUE_0( "printPrimitiveCounters" );
     Primitives::print_counters();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -468,6 +476,7 @@ public:
         return ( *b )->total_size - ( *a )->total_size;
     }
 };
+
 
 class ObjectHistogram : public ObjectClosure {
 private:
@@ -580,7 +589,7 @@ PRIM_DECL_0( debugPrimitives::printObjectHistogram ) {
     ObjectHistogram blk;
     Universe::object_iterate( &blk );
     blk.print();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -589,12 +598,12 @@ PRIM_DECL_0( debugPrimitives::deoptimizeStacks ) {
     VM_DeoptimizeStacks op;
     // The operation takes place in the vmProcess
     VMProcess::execute( &op );
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( debugPrimitives::verify ) {
     PROLOGUE_0( "verify" );
     Universe::verify();
-    return trueObj;
+    return trueObject;
 }

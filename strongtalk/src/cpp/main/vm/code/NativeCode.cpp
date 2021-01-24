@@ -33,7 +33,7 @@ bool_t OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMet
 
 
 void NativeCodeBase::verify2( const char *name ) {
-    if ( (int) this & ( oopSize - 1 ) )
+    if ( (std::size_t) this & ( oopSize - 1 ) )
         error( "alignment error in %s at %#lx", name, this );
     if ( instructionsLength() > 256 * 1024 )
         error( "instr length of %s at %#lx seems too big (%ld)", name, this, instructionsLength() );

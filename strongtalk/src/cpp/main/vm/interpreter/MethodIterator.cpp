@@ -440,13 +440,13 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 blk->push_self();
                 break;
             case ByteCodes::Code::push_nil:
-                blk->push_literal( nilObj );
+                blk->push_literal( nilObject );
                 break;
             case ByteCodes::Code::push_true:
-                blk->push_literal( trueObj );
+                blk->push_literal( trueObject );
                 break;
             case ByteCodes::Code::push_false:
-                blk->push_literal( falseObj );
+                blk->push_literal( falseObject );
                 break;
             case ByteCodes::Code::unimplemented_20:
                 unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_20) );

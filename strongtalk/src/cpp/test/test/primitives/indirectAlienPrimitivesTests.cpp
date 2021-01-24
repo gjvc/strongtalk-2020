@@ -30,13 +30,13 @@ class IndirectAlienPrimsTests : public ::testing::Test {
 protected:
     void SetUp() override {
         rm                              = new HeapResourceMark();
-        KlassOop         byteArrayClass = Universe::byteArrayKlassObj();
+        KlassOop         byteArrayClass = Universe::byteArrayKlassObject();
         PersistentHandle ah( byteArrayClass->klass_part()->allocateObjectSize( 8 ) );
         PersistentHandle iah( byteArrayClass->klass_part()->allocateObjectSize( 8 ) );
         PersistentHandle lu( byteArrayClass->klass_part()->allocateObjectSize( 8 ) );
         PersistentHandle ls( byteArrayClass->klass_part()->allocateObjectSize( 8 ) );
 
-        doubleValue = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
+        doubleValue = DoubleOop( Universe::doubleKlassObject()->klass_part()->allocateObject() );
         doubleValue->set_value( 1.625 );
 
         largeUnsignedInteger = ByteArrayOop( lu.as_oop() );

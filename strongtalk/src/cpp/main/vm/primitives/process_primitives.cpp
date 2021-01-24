@@ -36,14 +36,14 @@ std::size_t processOopPrimitives::number_of_calls;
 PRIM_DECL_2( processOopPrimitives::create, Oop receiver, Oop block ) {
     PROLOGUE_2( "create", receiver, block )
     st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_process(), "must be process class" );
-    if ( block->klass() not_eq Universe::zeroArgumentBlockKlassObj() )
+    if ( block->klass() not_eq Universe::zeroArgumentBlockKlassObject() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     ProcessOop process = ProcessOop( receiver->primitive_allocate() );
     st_assert( process->is_process(), "must be process" );
 
     DeltaProcess *p = new DeltaProcess( block, oopFactory::new_symbol( "value" ) );
     process->set_process( p );
-    p->set_processObj( process );
+    p->set_processObject( process );
     return process;
 }
 
@@ -53,7 +53,7 @@ PRIM_DECL_0( processOopPrimitives::yield ) {
     if ( not DeltaProcess::active()->is_scheduler() ) {
         DeltaProcess::active()->suspend( ProcessState::yielded );
     }
-    return DeltaProcess::active()->processObj();
+    return DeltaProcess::active()->processObject();
 }
 
 
@@ -82,7 +82,7 @@ PRIM_DECL_0( processOopPrimitives::stop ) {
     if ( not DeltaProcess::active()->is_scheduler() ) {
         DeltaProcess::active()->suspend( ProcessState::stopped );
     }
-    return DeltaProcess::active()->processObj();
+    return DeltaProcess::active()->processObject();
 }
 
 
@@ -93,7 +93,7 @@ PRIM_DECL_1( processOopPrimitives::setMainProcess, Oop receiver ) {
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
 
     ProcessOop process = ProcessOop( receiver );
-    DeltaProcess::main()->set_processObj( process );
+    DeltaProcess::main()->set_processObject( process );
     process->set_process( DeltaProcess::main() );
 
     return receiver;
@@ -210,7 +210,7 @@ PRIM_DECL_1( processOopPrimitives::terminate, Oop receiver ) {
 PRIM_DECL_0( processOopPrimitives::activeProcess ) {
     PROLOGUE_0( "activeProcess" );
 
-    ProcessOop p = DeltaProcess::active()->processObj();
+    ProcessOop p = DeltaProcess::active()->processObject();
     st_assert( p->is_process(), "must be process" );
 
     return p;
@@ -235,7 +235,7 @@ PRIM_DECL_1( processOopPrimitives::scheduler_wait, Oop milliseconds ) {
     if ( not milliseconds->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return DeltaProcess::wait_for_async_dll( SMIOop( milliseconds )->value() ) ? trueObj : falseObj;
+    return DeltaProcess::wait_for_async_dll( SMIOop( milliseconds )->value() ) ? trueObject : falseObject;
 }
 
 
@@ -264,14 +264,14 @@ PRIM_DECL_2( processOopPrimitives::trace_stack, Oop receiver, Oop size ) {
 PRIM_DECL_0( processOopPrimitives::enter_critical ) {
     PROLOGUE_0( "enter_critical" );
     // %fix this when implementing preemption
-    return DeltaProcess::active()->processObj();
+    return DeltaProcess::active()->processObject();
 }
 
 
 PRIM_DECL_0( processOopPrimitives::leave_critical ) {
     PROLOGUE_0( "leave_critical" );
     // %fix this when implementing preemption
-    return DeltaProcess::active()->processObj();
+    return DeltaProcess::active()->processObject();
 }
 
 
@@ -281,7 +281,7 @@ PRIM_DECL_0( processOopPrimitives::yield_in_critical ) {
     if ( not DeltaProcess::active()->is_scheduler() ) {
         DeltaProcess::active()->suspend( ProcessState::yielded );
     }
-    return DeltaProcess::active()->processObj();
+    return DeltaProcess::active()->processObject();
 }
 
 

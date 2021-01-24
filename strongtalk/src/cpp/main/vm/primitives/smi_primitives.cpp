@@ -22,7 +22,7 @@ std::size_t smiOopPrimitives::number_of_calls;
     return markSymbol(vmSymbols::first_argument_has_wrong_type());  \
   int a = (int) receiver;                                           \
   int b = (int) argument;                                           \
-  return a op b ? trueObj : falseObj
+  return a op b ? trueObject : falseObject
 
 
 PRIM_DECL_2( smiOopPrimitives::lessThan, Oop receiver, Oop argument ) {

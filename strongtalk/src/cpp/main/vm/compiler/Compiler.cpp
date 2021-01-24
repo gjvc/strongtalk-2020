@@ -85,7 +85,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope )
 
     st_assert( blk->isCompiledBlock(), "must be compiled block" );
     JumpTableEntry *e = blk->jump_table_entry();
-    int sub_index;
+    std::size_t sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
     std::int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();

@@ -85,7 +85,8 @@ extern "C" {
 extern bool_t have_nlr_through_C;
 }
 
-extern "C" volatile void *handleCallBack( int index, int params ) {
+extern "C" volatile void *handleCallBack( std::size_t index, std::size_t params ) {
+    
     DeltaProcess *proc = nullptr;
 
     if ( Universe::callBack_receiver()->is_nil() ) {

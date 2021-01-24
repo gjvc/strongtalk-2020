@@ -84,7 +84,7 @@ protected:
 
 
     void allocateAlien( PersistentHandle *&alienHandle, int arraySize, int alienSize, void *ptr = nullptr ) {
-        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( arraySize ) );
+        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         if ( ptr )
             byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) ptr ), alien );
@@ -125,7 +125,7 @@ protected:
 
     Oop asOop( int value ) {
         int          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
-        ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( size ) );
+        ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool_t ok;
         Oop    result         = valueOop->number().as_smi( ok );
@@ -144,7 +144,7 @@ protected:
         unsafeAlien = new PersistentHandle( unsafeKlass->primitive_allocate() );
         int offset = unsafeKlass->klass_part()->lookup_inst_var( oopFactory::new_symbol( "nonPointerObject" ) );
 
-        contents = new PersistentHandle( Universe::byteArrayKlassObj()->primitive_allocate_size( 12 ) );
+        contents = new PersistentHandle( Universe::byteArrayKlassObject()->primitive_allocate_size( 12 ) );
         MemOop( unsafeAlien->as_oop() )->instVarAtPut( offset, contents->as_oop() );
     }
 
@@ -196,7 +196,7 @@ bytes(), resultAlien
 
 TEST_F( AlienIntegerCallout1Tests, alienCallResult1ShouldCallFunctionAndIgnoreResultWhenResultAlienNil
 ) {
-Oop result = byteArrayPrimitives::alienCallResult1( smiOopFromValue( -1 ), nilObj, functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult1( smiOopFromValue( -1 ), nilObject, functionAlien->as_oop() );
 EXPECT_TRUE( !result->
 is_mark()
 ) << "shoult not be marked";
@@ -424,7 +424,7 @@ vmSymbols::first_argument_has_wrong_type()
 
 TEST_F( AlienIntegerCallout1Tests, alienCallResult1ShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI
 ) {
-Oop result = byteArrayPrimitives::alienCallResult1( Universe::byteArrayKlassObj(), resultAlien->as_oop(), functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult1( Universe::byteArrayKlassObject(), resultAlien->as_oop(), functionAlien->as_oop() );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::second_argument_has_wrong_type()

@@ -27,7 +27,7 @@ Oop VirtualFrameKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) 
     // header
     MemOop( obj )->initialize_header( true, k );
 
-    obj->set_process( ProcessOop( nilObj ) );
+    obj->set_process( ProcessOop( nilObject ) );
     obj->set_index( 0 );
     obj->set_time_stamp( 1 );
 

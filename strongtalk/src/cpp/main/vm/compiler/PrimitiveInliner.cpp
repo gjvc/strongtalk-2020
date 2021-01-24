@@ -52,7 +52,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
     // Note: The result may be a marked Oop - which has to be unmarked before using it - and which indicates that the primitive will always fail.
     if ( not _primitiveDescriptor->can_be_constant_folded() ) {
         // check for Symbol>>at: before declaring failure
-        if ( ( equal( _primitiveDescriptor->name(), "primitiveIndexedByteAt:ifFail:" ) or equal( _primitiveDescriptor->name(), "primitiveIndexedByteCharacterAt:ifFail:" ) ) and parameter( 0 )->hasKlass() and parameter( 0 )->klass() == Universe::symbolKlassObj() ) {
+        if ( ( equal( _primitiveDescriptor->name(), "primitiveIndexedByteAt:ifFail:" ) or equal( _primitiveDescriptor->name(), "primitiveIndexedByteCharacterAt:ifFail:" ) ) and parameter( 0 )->hasKlass() and parameter( 0 )->klass() == Universe::symbolKlassObject() ) {
             // the at: primitive can be constant-folded for symbols
             // what if the receiver is a constant string? unfortunately, Smalltalk has
             // "assignable constants" like Fortran...
@@ -205,7 +205,7 @@ Expression *PrimitiveInliner::primitiveFailure( SymbolOop failureCode ) {
 
 
 Expression *PrimitiveInliner::merge_failure_block( Node *ok_exit, Expression *ok_result, Node *failure_exit, Expression *failure_code, bool_t ok_result_is_read_only ) {
-    st_assert( failure_code->hasKlass() and failure_code->klass() == Universe::symbolKlassObj(), "failure code must be a symbol" );
+    st_assert( failure_code->hasKlass() and failure_code->klass() == Universe::symbolKlassObject(), "failure code must be a symbol" );
     _cannotFail = false;
     // push failure code
     _gen->setCurrent( failure_exit );
@@ -356,7 +356,7 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
         }
     }
     _gen->append( n1 );
-    Expression *result = new KlassExpression( smiKlassObj, resPReg, n1 );
+    Expression *result = new KlassExpression( smiKlassObject, resPReg, n1 );
 
     // n2: overflow check & treatment of overflow
     const bool_t       taken_is_uncommon = true;
@@ -422,7 +422,7 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
     _gen->append( n1 );
 
     // continuation
-    Expression *result = new KlassExpression( smiKlassObj, resPReg, n1 );
+    Expression *result = new KlassExpression( smiKlassObject, resPReg, n1 );
     if ( not intBoth ) {
         // failure can occur
         if ( shouldUseUncommonTrap() ) {
@@ -520,15 +520,15 @@ Expression *PrimitiveInliner::generate_cond( BranchOpCode cond, NodeBuilder *gen
     gen->append( n2 );
 
     // tAsgn: true branch
-    ConstPseudoRegister *tPReg       = new_ConstPReg( gen->scope(), trueObj );
+    ConstPseudoRegister *tPReg       = new_ConstPReg( gen->scope(), trueObject );
     AssignNode          *tAsgn       = NodeFactory::createAndRegisterNode<AssignNode>( tPReg, resPReg );
-    ConstantExpression  *tExpression = new ConstantExpression( trueObj, resPReg, tAsgn );
+    ConstantExpression  *tExpression = new ConstantExpression( trueObject, resPReg, tAsgn );
     n2->append( 0, tAsgn );
 
     // fAsgn: false branch
-    ConstPseudoRegister *fPReg       = new_ConstPReg( gen->scope(), falseObj );
+    ConstPseudoRegister *fPReg       = new_ConstPReg( gen->scope(), falseObject );
     AssignNode          *fAsgn       = NodeFactory::createAndRegisterNode<AssignNode>( fPReg, resPReg );
-    ConstantExpression  *fExpression = new ConstantExpression( falseObj, resPReg, fAsgn );
+    ConstantExpression  *fExpression = new ConstantExpression( falseObject, resPReg, fAsgn );
     n2->append( 1, fAsgn );
 
     // ftm: false & true branch merger
@@ -597,7 +597,7 @@ Expression *PrimitiveInliner::array_size() {
     // get size
     SinglyAssignedPseudoRegister *res = new SinglyAssignedPseudoRegister( _scope );
     _gen->append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( res, array->preg(), lenOffs, true ) );
-    return new KlassExpression( smiKlassObj, res, _gen->_current );
+    return new KlassExpression( smiKlassObject, res, _gen->_current );
 }
 
 
@@ -623,10 +623,10 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     switch ( access_type ) {
         case ArrayAtNode::byte_at        : // fall through
         case ArrayAtNode::double_byte_at:
-            resExpression = new KlassExpression( Universe::smiKlassObj(), resPReg, at );
+            resExpression = new KlassExpression( Universe::smiKlassObject(), resPReg, at );
             break;
         case ArrayAtNode::character_at:
-            resExpression = new KlassExpression( Universe::characterKlassObj(), resPReg, at );
+            resExpression = new KlassExpression( Universe::characterKlassObject(), resPReg, at );
             break;
         case ArrayAtNode::object_at:
             resExpression = new UnknownExpression( resPReg, at );
@@ -641,7 +641,7 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             at->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObj(), errPReg, at );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, at );
             resExpression             = merge_failure_block( at, resExpression, err, errExpression, false );
         }
     }
@@ -683,7 +683,7 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             atPut->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObj(), errPReg, atPut );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, atPut );
             resExpression = merge_failure_block( atPut, resExpression, err, errExpression, true );
         }
     }
@@ -803,7 +803,7 @@ Expression *PrimitiveInliner::obj_hash( bool_t has_receiver ) {
         SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );
         InlinedPrimitiveNode         *n       = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_hash, resPReg, nullptr, obj->preg() );
         _gen->append( n );
-        return new KlassExpression( Universe::smiKlassObj(), resPReg, n );
+        return new KlassExpression( Universe::smiKlassObject(), resPReg, n );
     }
 }
 
@@ -823,7 +823,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
     _gen->append( at );
 
     // continuation
-    Expression *resExpression = new KlassExpression( Universe::smiKlassObj(), resPReg, at );
+    Expression *resExpression = new KlassExpression( Universe::smiKlassObject(), resPReg, at );
     if ( at->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
@@ -832,7 +832,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             at->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObj(), errPReg, at );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, at );
             resExpression = merge_failure_block( at, resExpression, err, errExpression, false );
         }
     }
@@ -864,7 +864,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             atPut->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObj(), errPReg, atPut );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, atPut );
             resExpression = merge_failure_block( atPut, resExpression, err, errExpression, true );
         }
     }
@@ -1161,7 +1161,7 @@ Expression *PrimitiveInliner::genCall( bool_t canFail ) {
         SinglyAssignedPseudoRegister *errPReg      = new SinglyAssignedPseudoRegister( _scope );
         ArithRCNode                  *failure_exit = NodeFactory::createAndRegisterNode<ArithRCNode>( ArithOpCode::AndArithOp, pcall->dst(), ~MARK_TAG_BIT, errPReg );
         branch->append( 1, failure_exit );
-        resExpression = merge_failure_block( ok_exit, resExpression, failure_exit, new KlassExpression( Universe::symbolKlassObj(), errPReg, failure_exit ), false );
+        resExpression = merge_failure_block( ok_exit, resExpression, failure_exit, new KlassExpression( Universe::symbolKlassObject(), errPReg, failure_exit ), false );
     }
 
     return resExpression;

@@ -27,7 +27,7 @@ public:
 
     // accessors
     ObjectArrayOopDescriptor *addr() const {
-        return (ObjectArrayOopDescriptor *) MemOopDescriptor::addr();
+        return static_cast <ObjectArrayOopDescriptor *>( MemOopDescriptor::addr() );
     }
 
 

@@ -277,11 +277,11 @@ void MacroAssembler::print_reg( const char *name, Oop obj ) {
 
     } else if ( obj->is_mem() and Universe::is_heap( (Oop *) obj ) ) {
         // use explicit checks to avoid crashes even in a broken system
-        if ( obj == Universe::nilObj() ) {
+        if ( obj == Universe::nilObject() ) {
             _console->print_cr( "nil (0x%08x)", obj );
-        } else if ( obj == Universe::trueObj() ) {
+        } else if ( obj == Universe::trueObject() ) {
             _console->print_cr( "true (0x%08x)", obj );
-        } else if ( obj == Universe::falseObj() ) {
+        } else if ( obj == Universe::falseObject() ) {
             _console->print_cr( "false (0x%08x)", obj );
         } else {
             _console->print_cr( "MemOop (0x%08x)", obj );

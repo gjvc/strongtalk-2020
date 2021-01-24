@@ -61,7 +61,7 @@ protected:
 
 
     ByteArrayOop allocateAlien( int arraySize, int alienSize ) {
-        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( arraySize ) );
+        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         return alien;
     }
@@ -196,7 +196,7 @@ value()
 
 TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldIgnoreResultWhenResultArgZero
 ) {
-Oop result = byteArrayPrimitives::alienCallResult0( nilObj, fnAlien );
+Oop result = byteArrayPrimitives::alienCallResult0( nilObject, fnAlien );
 EXPECT_TRUE( !result->
 is_mark()
 ) << "Should not be marked";

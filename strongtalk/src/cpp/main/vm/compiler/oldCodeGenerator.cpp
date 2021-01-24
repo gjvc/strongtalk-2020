@@ -385,7 +385,7 @@ static void verifyContextCode( Register reg ) {
 
 
 extern "C" void verifyNilOrContext( Oop obj ) {
-    if ( obj not_eq nilObj )
+    if ( obj not_eq nilObject )
         verifyContext( obj );
 }
 
@@ -498,7 +498,7 @@ static void verifySmiCode( Register reg ) {
 }
 
 
-extern "C" void verifyObj( Oop obj ) {
+extern "C" void verifyObject( Oop obj ) {
     if ( not obj->is_smi() and not obj->is_mem() ) st_fatal( "should be an ordinary Oop" );
     KlassOop klass = obj->klass();
     if ( klass == nullptr or not klass->is_mem() ) st_fatal( "should be an ordinary MemOop" );
@@ -511,10 +511,10 @@ static void verifyObjCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyObj should not be called" );
+        warning( ": verifyObject should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
-    call_C( (const char *) verifyObj, RelocationInformation::RelocationType::runtime_call_type, true );
+    call_C( (const char *) verifyObject, RelocationInformation::RelocationType::runtime_call_type, true );
     theMacroAssembler->addl( esp, oopSize );   // get rid of argument
     theMacroAssembler->popad();
 }
@@ -528,12 +528,12 @@ extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
         indent();
         lprintf( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
-    verifyObj( recv );
+    verifyObject( recv );
     std::size_t i = nofArgs;
     Oop *arg = (Oop *) ( ebp + ( nofArgs + 2 ) * oopSize );
     while ( i-- > 0 ) {
         arg--;
-        verifyObj( *arg );
+        verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
             lprintf( "%s, ", ( *arg )->print_value_string() );
@@ -868,7 +868,7 @@ void PrologueNode::gen() {
     if ( scope()->isMethodScope() ) {
         // check class
         KlassOop klass = _scope->selfKlass();
-        if ( klass == smiKlassObj ) {
+        if ( klass == smiKlassObject ) {
             // receiver must be a smi_t, check smi_t tag only
             theMacroAssembler->test( recv, MEMOOP_TAG );
             theMacroAssembler->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
@@ -921,14 +921,14 @@ void PrologueNode::gen() {
     if ( nofTemps > 0 ) {
         st_assert( first_temp_offset == -1, "check this code" );
         frame_size += nofTemps;
-        theMacroAssembler->movl( temp2, nilObj );
+        theMacroAssembler->movl( temp2, nilObject );
         for ( std::size_t i = 0; i < nofTemps; i++ )
             theMacroAssembler->pushl( temp2 );
     }
     // make sure frame is big enough for deoptimization
     if ( frame_size < minimum_size_for_deoptimized_frame ) {
         if ( nofTemps == 0 )
-            theMacroAssembler->movl( temp2, nilObj );    // make sure temp2 holds nil
+            theMacroAssembler->movl( temp2, nilObject );    // make sure temp2 holds nil
         while ( frame_size < minimum_size_for_deoptimized_frame ) {
             frame_size++;
             theMacroAssembler->pushl( temp2 );
@@ -1416,7 +1416,7 @@ void FloatArithRRNode::gen() {
 
 
 static Address doubleKlass_addr() {
-    return Address( (int) &doubleKlassObj, RelocationInformation::RelocationType::external_word_type );
+    return Address( (int) &doubleKlassObject, RelocationInformation::RelocationType::external_word_type );
 }
 
 
@@ -1693,18 +1693,18 @@ void InterruptCheckNode::gen() {
 
 
 static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg, Label &success, Label &failure ) {
-    if ( klass == Universe::smiKlassObj() ) {
+    if ( klass == Universe::smiKlassObject() ) {
         // check tag
         theMacroAssembler->test( obj, MEMOOP_TAG );
-    } else if ( klass == Universe::trueObj()->klass() ) {
-        // only one instance: compare with trueObj
-        theMacroAssembler->cmpl( obj, Universe::trueObj() );
-    } else if ( klass == Universe::falseObj()->klass() ) {
-        // only one instance: compare with falseObj
-        theMacroAssembler->cmpl( obj, Universe::falseObj() );
-    } else if ( klass == Universe::nilObj()->klass() ) {
-        // only one instance: compare with nilObj
-        theMacroAssembler->cmpl( obj, Universe::nilObj() );
+    } else if ( klass == Universe::trueObject()->klass() ) {
+        // only one instance: compare with trueObject
+        theMacroAssembler->cmpl( obj, Universe::trueObject() );
+    } else if ( klass == Universe::falseObject()->klass() ) {
+        // only one instance: compare with falseObject
+        theMacroAssembler->cmpl( obj, Universe::falseObject() );
+    } else if ( klass == Universe::nilObject()->klass() ) {
+        // only one instance: compare with nilObject
+        theMacroAssembler->cmpl( obj, Universe::nilObject() );
     } else {
         // compare against obj's klass - must check if smi_t first
         theMacroAssembler->test( obj, MEMOOP_TAG );
@@ -1718,8 +1718,8 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
 
 
 static bool_t testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, Register klassReg, bool_t hasUnknown, Label &success1, Label &success2, Label &failure ) {
-    Oop bool1 = Universe::trueObj();
-    Oop bool2 = Universe::falseObj();
+    Oop bool1 = Universe::trueObject();
+    Oop bool2 = Universe::falseObject();
     if ( klass1 == bool2->klass() and klass2 == bool1->klass() ) {
         Oop t = bool1;
         bool1 = bool2;
@@ -1754,7 +1754,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
     std::size_t i = 0;
     for ( ; i < len; i++ ) {
         const KlassOop klass = classes->at( i );
-        if ( klass == Universe::smiKlassObj() ) {
+        if ( klass == Universe::smiKlassObject() ) {
             smi_case = i + 1;
         } else {
             klasses.append( klass );
@@ -1777,18 +1777,18 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
     const int nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
     for ( std::size_t i                  = 0; i < nof_cmps; i++ ) {
         const KlassOop klass = klasses.at( i );
-        if ( klass == Universe::trueObj()->klass() ) {
-            // only one instance: compare with trueObj
-            theMacroAssembler->cmpl( obj, Universe::trueObj() );
-        } else if ( klass == Universe::falseObj()->klass() ) {
-            // only one instance: compare with falseObj
-            theMacroAssembler->cmpl( obj, Universe::falseObj() );
-        } else if ( klass == Universe::nilObj()->klass() ) {
-            // only one instance: compare with nilObj
-            theMacroAssembler->cmpl( obj, Universe::nilObj() );
+        if ( klass == Universe::trueObject()->klass() ) {
+            // only one instance: compare with trueObject
+            theMacroAssembler->cmpl( obj, Universe::trueObject() );
+        } else if ( klass == Universe::falseObject()->klass() ) {
+            // only one instance: compare with falseObject
+            theMacroAssembler->cmpl( obj, Universe::falseObject() );
+        } else if ( klass == Universe::nilObject()->klass() ) {
+            // only one instance: compare with nilObject
+            theMacroAssembler->cmpl( obj, Universe::nilObject() );
         } else {
             // compare with class
-            st_assert( klass not_eq Universe::smiKlassObj(), "should have been excluded" );
+            st_assert( klass not_eq Universe::smiKlassObject(), "should have been excluded" );
             if ( not klassHasBeenLoaded ) {
                 theMacroAssembler->movl( klassReg, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
                 klassHasBeenLoaded = true;
@@ -1858,18 +1858,18 @@ void TypeTestNode::gen() {
       assert(hasUnknown(), "should be eliminated if there's no unknown case");
       assert(likelySuccessor() == next(1), "code pattern is not optimal");
       klassOop klass = classes()->at(0);
-      if (klass == Universe::smiKlassObj()) {
+      if (klass == Universe::smiKlassObject()) {
         // check tag
         theMacroAssm->test(obj, MEMOOP_TAG);
-      } else if (klass == Universe::trueObj()->klass()) {
-        // only one instance: compare with trueObj
-        theMacroAssm->cmpl(obj, Universe::trueObj());
-      } else if (klass == Universe::falseObj()->klass()) {
-        // only one instance: compare with falseObj
-        theMacroAssm->cmpl(obj, Universe::falseObj());
-      } else if (klass == Universe::nilObj()->klass()) {
-        // only one instance: compare with nilObj
-        theMacroAssm->cmpl(obj, Universe::nilObj());
+      } else if (klass == Universe::trueObject()->klass()) {
+        // only one instance: compare with trueObject
+        theMacroAssm->cmpl(obj, Universe::trueObject());
+      } else if (klass == Universe::falseObject()->klass()) {
+        // only one instance: compare with falseObject
+        theMacroAssm->cmpl(obj, Universe::falseObject());
+      } else if (klass == Universe::nilObject()->klass()) {
+        // only one instance: compare with nilObject
+        theMacroAssm->cmpl(obj, Universe::nilObject());
       } else {
         // compare against obj's klass - must check if smi_t first
 	theMacroAssm->test(obj, MEMOOP_TAG);
@@ -1887,8 +1887,8 @@ void TypeTestNode::gen() {
       // handle pure boolean cases (ifTrue:/ifFalse:)
       klassOop klass1 = classes()->at(0);
       klassOop klass2 = classes()->at(1);
-      Oop      bool1  = Universe::trueObj();
-      Oop      bool2  = Universe::falseObj();
+      Oop      bool1  = Universe::trueObject();
+      Oop      bool2  = Universe::falseObject();
       if (klass1 == bool2->klass() and klass2 == bool1->klass()) {
         Oop t = bool1; bool1 = bool2; bool2 = t;
       }
@@ -1919,7 +1919,7 @@ void TypeTestNode::gen() {
   // compute klasses & nodes list without smi_t case
   for (std::size_t i = 0; i < len; i++) {
     const klassOop klass = classes()->at(i);
-    if (klass == Universe::smiKlassObj()) {
+    if (klass == Universe::smiKlassObject()) {
       smi_case = next(i+1);
     } else {
       klasses.append(klass);
@@ -1942,18 +1942,18 @@ void TypeTestNode::gen() {
   const int nof_cmps = hasUnknown() ? klasses.length() : klasses.length() - 1;
   for (std::size_t i = 0; i < nof_cmps; i++) {
     const klassOop klass = klasses.at(i);
-    if (klass == Universe::trueObj()->klass()) {
-      // only one instance: compare with trueObj
-      theMacroAssm->cmpl(obj, Universe::trueObj());
-    } else if (klass == Universe::falseObj()->klass()) {
-      // only one instance: compare with falseObj
-      theMacroAssm->cmpl(obj, Universe::falseObj());
-    } else if (klass == Universe::nilObj()->klass()) {
-      // only one instance: compare with nilObj
-      theMacroAssm->cmpl(obj, Universe::nilObj());
+    if (klass == Universe::trueObject()->klass()) {
+      // only one instance: compare with trueObject
+      theMacroAssm->cmpl(obj, Universe::trueObject());
+    } else if (klass == Universe::falseObject()->klass()) {
+      // only one instance: compare with falseObject
+      theMacroAssm->cmpl(obj, Universe::falseObject());
+    } else if (klass == Universe::nilObject()->klass()) {
+      // only one instance: compare with nilObject
+      theMacroAssm->cmpl(obj, Universe::nilObject());
     } else {
       // compare with class
-      assert(klass not_eq Universe::smiKlassObj(), "should have been excluded");
+      assert(klass not_eq Universe::smiKlassObject(), "should have been excluded");
       if (not klassHasBeenLoaded) {
         theMacroAssm->movl(klassReg, Address(obj, memOopDescriptor::klass_byte_offset()));
 	klassHasBeenLoaded = true;
@@ -2194,7 +2194,7 @@ void LoopHeaderNode::generateIntegerLoopTest( PseudoRegister *p, Label &prev, La
                 theMacroAssembler->bind( prev );
             Label          ok;
             const Register obj = movePRegToReg( p, temp1 );
-            testForSingleKlass( obj, Universe::smiKlassObj(), klassReg, ok, failure );
+            testForSingleKlass( obj, Universe::smiKlassObject(), klassReg, ok, failure );
             theMacroAssembler->bind( ok );
         }
     }
@@ -2490,7 +2490,7 @@ void InlinedPrimitiveNode::gen() {
             Register obj   = movePRegToReg( _src, temp1 );            // obj is read_only
             Register klass = temp2;
             Label    is_smi;
-            theMacroAssembler->movl( klass, Universe::smiKlassObj() );
+            theMacroAssembler->movl( klass, Universe::smiKlassObject() );
             theMacroAssembler->test( obj, MEMOOP_TAG );
             theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
             theMacroAssembler->movl( klass, Address( obj, MemOopDescriptor::klass_byte_offset() ) );

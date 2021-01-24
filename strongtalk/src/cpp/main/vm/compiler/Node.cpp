@@ -562,7 +562,7 @@ std::size_t ContextInitNode::positionOfContextTemp( std::size_t n ) const {
 
 
 void ContextInitNode::initialize( std::size_t no, Expression *expr ) {
-    st_assert( ( _initializers->at( no ) == nullptr ) or ( _initializers->at( no )->constant() == nilObj ), "already initialized this context element" );
+    st_assert( ( _initializers->at( no ) == nullptr ) or ( _initializers->at( no )->constant() == nilObject ), "already initialized this context element" );
     _initializers->at_put( no, expr );
 }
 
@@ -2634,7 +2634,7 @@ bool_t TypeTestNode::needsKlassLoad() const {
     const int         len = _hasUnknown ? _classes->length() : _classes->length() - 1;
     for ( std::size_t i   = 0; i < len; i++ ) {
         KlassOop klass = _classes->at( i );
-        if ( klass not_eq trueObj->klass() and klass not_eq falseObj->klass() and klass not_eq nilObj->klass() and klass not_eq smiKlassObj ) {
+        if ( klass not_eq trueObject->klass() and klass not_eq falseObject->klass() and klass not_eq nilObject->klass() and klass not_eq smiKlassObject ) {
             return true;
         }
     }
@@ -2669,7 +2669,7 @@ bool_t AbstractArrayAtNode::hasUnknownCode() const {
 Node *TypeTestNode::smiCase() const {
     std::size_t i = _classes->length();
     while ( i-- > 0 ) {
-        if ( _classes->at( i ) == smiKlassObj )
+        if ( _classes->at( i ) == smiKlassObject )
             return next( i + 1 );
     }
     return nullptr;
@@ -2737,13 +2737,13 @@ void LoopHeaderNode::addRegisterCandidate( LoopRegCandidate *c ) {
 
 
 bool_t is_smi_type( GrowableArray<KlassOop> *klasses ) {
-    return klasses->length() == 1 and klasses->at( 0 ) == smiKlassObj;
+    return klasses->length() == 1 and klasses->at( 0 ) == smiKlassObject;
 }
 
 
 GrowableArray<KlassOop> *make_smi_type() {
     GrowableArray<KlassOop> *t = new GrowableArray<KlassOop>( 1 );
-    t->append( smiKlassObj );
+    t->append( smiKlassObject );
     return t;
 }
 
@@ -2801,7 +2801,7 @@ void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, Gr
         regs.
                 append( elem );
         st_assert          ( klasses
-                                     .first()->first() == smiKlassObj, "must be smi_t type for index" );
+                                     .first()->first() == smiKlassObject, "must be smi_t type for index" );
         klasses.
                 append( klasses
                                 .

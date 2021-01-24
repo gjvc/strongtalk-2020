@@ -10,30 +10,30 @@
 
 class ProgramCounterDescriptorNode : public ResourceObject {
 public:
-    int       _pcOffset;
+    std::size_t       _pcOffset;
     ScopeInfo _scopeInfo;
-    int       _byteCodeIndex;
+    std::size_t       _byteCodeIndex;
 };
 
 class ProgramCounterDescriptorInfoClass : public ResourceObject {
 
 protected:
     ProgramCounterDescriptorNode *_nodes;
-    int _end;
+    std::size_t _end;
     std::size_t _size;
 
 public:
     ProgramCounterDescriptorInfoClass( std::size_t size );
 
-    int length() {
+    std::size_t length() {
         return _end;
     }
 
     void extend( std::size_t newSize );
 
-    void add( int pcOffset, ScopeInfo scope, int byteCodeIndex );
+    void add( std::size_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex );
 
     void mark_scopes();
 
-    void copy_to( int *&addr );
+    void copy_to( std::size_t *&addr );
 };

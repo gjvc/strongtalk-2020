@@ -25,7 +25,7 @@ std::size_t doubleOopPrimitives::number_of_calls;
 static Oop new_double( double value ) {
     DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / oopSize ) );
     d->init_untagged_contents_mark();
-    d->set_klass_field( doubleKlassObj );
+    d->set_klass_field( doubleKlassObject );
     d->set_value( value );
     return d;
 }
@@ -38,7 +38,7 @@ static Oop new_double( double value ) {
   if (not argument->is_double())                                        \
     return markSymbol(vmSymbols::first_argument_has_wrong_type());      \
   return DoubleOop(receiver)->value() op DoubleOop(argument)->value()   \
-         ? trueObj : falseObj
+         ? trueObject : falseObject
 
 #define DOUBLE_ARITH_OP( op )                                           \
   ASSERT_RECEIVER;                                                      \
@@ -217,14 +217,14 @@ PRIM_DECL_1( doubleOopPrimitives::log10, Oop receiver ) {
 PRIM_DECL_1( doubleOopPrimitives::isNan, Oop receiver ) {
     PROLOGUE_1( "isNan", receiver );
     ASSERT_RECEIVER;
-    return std::isnan( DoubleOop( receiver )->value() ) ? trueObj : falseObj;
+    return std::isnan( DoubleOop( receiver )->value() ) ? trueObject : falseObject;
 }
 
 
 PRIM_DECL_1( doubleOopPrimitives::isFinite, Oop receiver ) {
     PROLOGUE_1( "isFinite", receiver );
     ASSERT_RECEIVER;
-    return std::isfinite( DoubleOop( receiver )->value() ) ? trueObj : falseObj;
+    return std::isfinite( DoubleOop( receiver )->value() ) ? trueObject : falseObject;
 }
 
 

@@ -33,7 +33,7 @@ protected:
 
     void SetUp() override {
         _heapResourceMark = new HeapResourceMark();
-        PersistentHandle bac( Universe::byteArrayKlassObj() );
+        PersistentHandle bac( Universe::byteArrayKlassObject() );
 
         PersistentHandle ah( KlassOop( bac.as_oop() )->klass_part()->allocateObjectSize( 12 ) );
         PersistentHandle lu( KlassOop( bac.as_oop() )->klass_part()->allocateObjectSize( 8 ) );
@@ -46,7 +46,7 @@ protected:
         _largeUnsignedInteger2    = ByteArrayOop( lu2.as_oop() );
         _veryLargeUnsignedInteger = ByteArrayOop( vlu.as_oop() );
         _largeSignedInteger       = ByteArrayOop( ls.as_oop() );
-        _doubleValue              = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
+        _doubleValue              = DoubleOop( Universe::doubleKlassObject()->klass_part()->allocateObject() );
         _doubleValue->set_value( 1.625 );
 
         IntegerOps::unsigned_int_to_Integer( (std::uint32_t) 0xFFFFFFFF, ByteArrayOop( _largeUnsignedInteger )->number() );
@@ -789,7 +789,7 @@ vmSymbols::first_argument_has_wrong_type()
 
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtPutShouldReturnMarkedSymbolWhenValueNotInteger
 ) {
-Oop result = byteArrayPrimitives::alienUnsignedLongAtPut( Universe::byteArrayKlassObj(), smiOopFromValue( 1 ), _alien );
+Oop result = byteArrayPrimitives::alienUnsignedLongAtPut( Universe::byteArrayKlassObject(), smiOopFromValue( 1 ), _alien );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::second_argument_has_wrong_type()
@@ -934,7 +934,7 @@ vmSymbols::first_argument_has_wrong_type()
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedLongAtPutShouldReturnMarkedSymbolWhenValueNotInteger
 ) {
-Oop result = byteArrayPrimitives::alienSignedLongAtPut( Universe::byteArrayKlassObj(), smiOopFromValue( 1 ), _alien );
+Oop result = byteArrayPrimitives::alienSignedLongAtPut( Universe::byteArrayKlassObject(), smiOopFromValue( 1 ), _alien );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::second_argument_has_wrong_type()

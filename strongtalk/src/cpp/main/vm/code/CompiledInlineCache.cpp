@@ -57,7 +57,7 @@ bool_t CompiledInlineCache::is_empty() const {
 }
 
 
-int CompiledInlineCache::ntargets() const {
+std::size_t CompiledInlineCache::ntargets() const {
     if ( is_empty() )
         return 0;
     PolymorphicInlineCache *p = pic();
@@ -79,7 +79,7 @@ extern "C" bool_t have_nlr_through_C;
 
 
 Oop nativeMethod_substitute() {
-    return Universe::nilObj();
+    return Universe::nilObject();
 }
 
 
@@ -596,7 +596,7 @@ KlassOop CompiledInlineCache::get_klass( std::size_t i ) const {
     PolymorphicInlineCache *p = pic();
     if ( p ) {
         PolymorphicInlineCacheIterator it( p );
-        for ( int                      j = 0; j < i; j++ )
+        for ( std::size_t                      j = 0; j < i; j++ )
             it.advance();
         return it.get_klass();
     } else {
@@ -635,7 +635,7 @@ PrimitiveDescriptor *PrimitiveInlineCache::primitive() {
 
 char *PrimitiveInlineCache::end_addr() {
     PrimitiveDescriptor *pd = primitive();
-    int offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
+    std::size_t offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
     return next_instruction_address() + offset;
 }
 

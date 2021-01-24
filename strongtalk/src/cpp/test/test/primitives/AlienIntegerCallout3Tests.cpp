@@ -97,7 +97,7 @@ protected:
 
 
     void allocateAlien( PersistentHandle *&alienHandle, int arraySize, int alienSize, void *ptr = nullptr ) {
-        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( arraySize ) );
+        ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         if ( ptr )
             byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) ptr ), alien );
@@ -138,7 +138,7 @@ protected:
 
     Oop asOop( int value ) {
         int          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
-        ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObj()->klass_part()->allocateObjectSize( size ) );
+        ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool_t ok;
         Oop    result         = valueOop->number().as_smi( ok );
@@ -208,7 +208,7 @@ checkArgnPtrPassed( arg,
 
 TEST_F( AlienIntegerCallout3Tests, alienCallResult3ShouldCallFunctionAndIgnoreResultWhenResultAlienNil
 ) {
-Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, smim1, nilObj, functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, smim1, nilObject, functionAlien->as_oop() );
 EXPECT_TRUE( !result->
 is_mark()
 ) << "should not be marked";
@@ -264,7 +264,7 @@ vmSymbols::illegal_state()
 
 TEST_F( AlienIntegerCallout3Tests, alienCallResult3ShouldReturnMarkedResultWhenResultNotAlienOrNil
 ) {
-Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, smi0, trueObj, functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, smi0, trueObject, functionAlien->as_oop() );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::first_argument_has_wrong_type()
@@ -274,7 +274,7 @@ vmSymbols::first_argument_has_wrong_type()
 
 TEST_F( AlienIntegerCallout3Tests, alienCallResult3ShouldReturnMarkedResultWhenFunctionParameter1NotAlienOrSMI
 ) {
-Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, trueObj, resultAlien->as_oop(), functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult3( smi0, smi0, trueObject, resultAlien->as_oop(), functionAlien->as_oop() );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::second_argument_has_wrong_type()
@@ -284,7 +284,7 @@ vmSymbols::second_argument_has_wrong_type()
 
 TEST_F( AlienIntegerCallout3Tests, alienCallResult3ShouldReturnMarkedResultWhenFunctionParameter2NotAlienOrSMI
 ) {
-Oop result = byteArrayPrimitives::alienCallResult3( smi0, trueObj, smi0, resultAlien->as_oop(), functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult3( smi0, trueObject, smi0, resultAlien->as_oop(), functionAlien->as_oop() );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::third_argument_has_wrong_type()
@@ -294,7 +294,7 @@ vmSymbols::third_argument_has_wrong_type()
 
 TEST_F( AlienIntegerCallout3Tests, alienCallResult3ShouldReturnMarkedResultWhenFunctionParameter3NotAlienOrSMI
 ) {
-Oop result = byteArrayPrimitives::alienCallResult3( trueObj, smi0, smi0, resultAlien->as_oop(), functionAlien->as_oop() );
+Oop result = byteArrayPrimitives::alienCallResult3( trueObject, smi0, smi0, resultAlien->as_oop(), functionAlien->as_oop() );
 
 checkMarkedSymbol( "wrong type", result,
 vmSymbols::fourth_argument_has_wrong_type()

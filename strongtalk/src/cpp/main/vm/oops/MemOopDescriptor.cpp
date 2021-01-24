@@ -126,11 +126,11 @@ void MemOopDescriptor::set_identity_hash( smi_t h ) {
 
 void MemOopDescriptor::bootstrap_header( Bootstrap *stream ) {
     if ( stream->new_format() ) {
-        stream->read_oop( (Oop *) &addr()->_klass_field );
+        stream->read_oop( reinterpret_cast<Oop *>( &addr()->_klass_field ) );
         set_mark( blueprint()->has_untagged_contents() ? MarkOopDescriptor::untagged_prototype() : MarkOopDescriptor::tagged_prototype() );
     } else {
         stream->read_mark( &addr()->_mark );
-        stream->read_oop( (Oop *) &addr()->_klass_field );
+        stream->read_oop( reinterpret_cast<Oop *>( &addr()->_klass_field ) );
     }
 }
 
@@ -256,7 +256,7 @@ void MemOopDescriptor::initialize_header( bool_t has_untagged_contents, KlassOop
 
 
 void MemOopDescriptor::initialize_body( int begin, int end ) {
-    Oop value = nilObj;
+    Oop value = nilObject;
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;

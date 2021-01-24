@@ -74,7 +74,7 @@ KlassOop OopDescriptor::klass() const {
     if ( is_mem() )
         return MemOop( this )->klass_field();
     st_assert( is_smi(), "tag must be smi_t" );
-    return smiKlassObj;
+    return smiKlassObject;
 }
 
 
@@ -120,7 +120,7 @@ Generation *OopDescriptor::my_generation() {
 
 // type test operations
 bool_t OopDescriptor::is_double() const {
-    return is_mem() and MemOop( this )->klass_field() == doubleKlassObj;
+    return is_mem() and MemOop( this )->klass_field() == doubleKlassObject;
 }
 
 

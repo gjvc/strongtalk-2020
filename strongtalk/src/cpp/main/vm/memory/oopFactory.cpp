@@ -23,7 +23,7 @@
 
 
 ByteArrayOop oopFactory::new_byteArray( std::size_t size ) {
-    ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObj()->klass_part();
+    ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObject()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
 }
 
@@ -40,7 +40,7 @@ ByteArrayOop oopFactory::new_byteArray( const char *name ) {
 
 
 ObjectArrayOop oopFactory::new_objArray( std::size_t size ) {
-    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
+    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
     return result;
@@ -51,7 +51,7 @@ ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
     std::size_t size = array->length();
-    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObj()->klass_part();
+    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
@@ -65,7 +65,7 @@ ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
 DoubleOop oopFactory::new_double( double value ) {
     DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / oopSize ) );
     d->init_untagged_contents_mark();
-    d->set_klass_field( doubleKlassObj );
+    d->set_klass_field( doubleKlassObject );
     d->set_value( value );
     return d;
 }
@@ -74,7 +74,7 @@ DoubleOop oopFactory::new_double( double value ) {
 DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
     DoubleOop d = as_doubleOop( Universe::allocate_tenured( sizeof( DoubleOopDescriptor ) / oopSize ) );
     d->init_untagged_contents_mark();
-    d->set_klass_field( doubleKlassObj );
+    d->set_klass_field( doubleKlassObject );
     d->set_value( value->value() );
     return d;
 }
@@ -96,7 +96,7 @@ SymbolOop oopFactory::new_symbol( ByteArrayOop b ) {
 
 
 AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_constant ) {
-    AssociationOop as = AssociationOop( Universe::associationKlassObj()->klass_part()->allocateObject() );
+    AssociationOop as = AssociationOop( Universe::associationKlassObject()->klass_part()->allocateObject() );
     st_assert( as->is_association(), "type check" );
     as->set_key( key );
     as->set_value( value );
@@ -107,7 +107,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_
 
 VirtualFrameOop oopFactory::new_vframe( ProcessOop process, int index ) {
     BlockScavenge bs;
-    VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObj()->klass_part();
+    VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObject()->klass_part();
 
     VirtualFrameOop result = VirtualFrameOop( vk->allocateObject() );
 

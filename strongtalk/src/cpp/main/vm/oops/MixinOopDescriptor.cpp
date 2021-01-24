@@ -164,9 +164,9 @@ bool_t MixinOopDescriptor::includes_classVar( SymbolOop name ) {
 
 
 bool_t MixinOopDescriptor::is_installed() const {
-    if ( installed() == trueObj )
+    if ( installed() == trueObject )
         return true;
-    st_assert( installed() == falseObj, "verify installed" );
+    st_assert( installed() == falseObject, "verify installed" );
     return false;
 }
 

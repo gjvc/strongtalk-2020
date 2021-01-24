@@ -235,7 +235,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
         if ( nth->hasKlass() and ( s = tryLookup( nth ) ) not_eq nullptr ) {
             // can inline this case
             KlassOop klass = nth->klass();
-            if ( klass == smiKlassObj ) {
+            if ( klass == smiKlassObject ) {
                 scopes->append( s );        // smis go first
                 exprs->append( nth );
                 klasses->append( klass );
@@ -532,11 +532,11 @@ Expression *Inliner::picPredict() {
                 // aggressive (as observed experimentally)
                 Oop c = expr->constant();
                 PseudoRegister *p = _info->_receiver->preg();
-                if ( c == trueObj and not _info->_receiver->findKlass( falseObj->klass() ) ) {
-                    Expression *f    = new ConstantExpression( falseObj, p, nullptr );
+                if ( c == trueObject and not _info->_receiver->findKlass( falseObject->klass() ) ) {
+                    Expression *f    = new ConstantExpression( falseObject, p, nullptr );
                     _info->_receiver = _info->_receiver->mergeWith( f, nullptr );
-                } else if ( c == falseObj and not _info->_receiver->findKlass( trueObj->klass() ) ) {
-                    Expression *t = new ConstantExpression( trueObj, p, nullptr );
+                } else if ( c == falseObject and not _info->_receiver->findKlass( trueObject->klass() ) ) {
+                    Expression *t = new ConstantExpression( trueObject, p, nullptr );
                     _info->_receiver = _info->_receiver->mergeWith( t, nullptr );
                 }
             }
@@ -593,17 +593,17 @@ Expression *Inliner::typePredict() {
 
     // perform static type prediction
     if ( InliningPolicy::isPredictedSmiSelector( _info->_selector ) ) {
-        r = r->mergeWith( new KlassExpression( smiKlassObj, r->preg(), nullptr ), nullptr );
+        r = r->mergeWith( new KlassExpression( smiKlassObject, r->preg(), nullptr ), nullptr );
     } else if ( InliningPolicy::isPredictedArraySelector( _info->_selector ) ) {
         // don't know what to predict -- objArray? byteArray?
         if ( TypePredictArrays ) {
-            r = r->mergeWith( new KlassExpression( Universe::objArrayKlassObj(), r->preg(), nullptr ), nullptr );
+            r = r->mergeWith( new KlassExpression( Universe::objArrayKlassObject(), r->preg(), nullptr ), nullptr );
         } else {
             return r;
         }
     } else if ( InliningPolicy::isPredictedBoolSelector( _info->_selector ) ) {
-        r = r->mergeWith( new ConstantExpression( trueObj, r->preg(), nullptr ), nullptr );
-        r = r->mergeWith( new ConstantExpression( falseObj, r->preg(), nullptr ), nullptr );
+        r = r->mergeWith( new ConstantExpression( trueObject, r->preg(), nullptr ), nullptr );
+        r = r->mergeWith( new ConstantExpression( falseObject, r->preg(), nullptr ), nullptr );
     } else {
         return r;
     }

@@ -475,7 +475,7 @@ public:
     InterpretedInlineCache *ic_at( int byteCodeIndex ) const;
 
     // Returns an array of byte code indecies contributing to the expression stack
-    GrowableArray<int> *expression_stack_mapping( int byteCodeIndex );
+    GrowableArray<std::size_t> *expression_stack_mapping( int byteCodeIndex );
 
     // For debugging only
     void print_codes();
@@ -525,6 +525,7 @@ private:
     bool_t        enable;
     bool_t        stop;
     FlagSetting   oldFlag;
+
 public:
     StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool_t &fl = StopInSelector::ignored, bool_t stop = true );
 };

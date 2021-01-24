@@ -33,7 +33,7 @@ private:
 
     friend class JumpTable;
 
-    static constexpr int max_value = nthMask( 16 ); //
+    static constexpr std::size_t max_value = nthMask( 16 ); //
 
 
 public:
@@ -86,17 +86,17 @@ public:
 class JumpTable : public ValueObject {
 
 protected:
-    int _firstFree;    // index of first free elem
+    std::size_t _firstFree;    // index of first free elem
     static const char *allocate_jump_entries( std::size_t size );
 
-    static JumpTableEntry *jump_entry_for_at( const char *entries, int index );
+    static JumpTableEntry *jump_entry_for_at( const char *entries, std::size_t index );
 
     JumpTableEntry *major_at( std::uint16_t index );
 
 public:
     const char *_entries;
-    int length;        // max. number of IDs
-    int usedIDs;        // # of used ID
+    std::size_t length;        // max. number of IDs
+    std::size_t usedIDs;        // # of used ID
 
 public:
     JumpTable();
@@ -106,15 +106,15 @@ public:
     void init();
 
     // Allocates a block of adjacent jump table entries.
-    JumpTableID allocate( int number_of_entries );
+    JumpTableID allocate( std::size_t number_of_entries );
 
     // returns the jumptable entry for id
     JumpTableEntry *at( JumpTableID id );
 
-    int newID();               // return a new ID
-    int peekID();           // return value which would be returned by newID,
+    std::size_t newID();               // return a new ID
+    std::size_t peekID();           // return value which would be returned by newID,
     // but don't actually allocate the ID
-    void freeID( int index ); // index is unused again
+    void freeID( std::size_t index ); // index is unused again
 
     void verify();
 
@@ -156,7 +156,7 @@ private:
 
     void fill_entry( const char instr, const char *dest, char state );
 
-    void initialize_as_unused( int index );
+    void initialize_as_unused( std::size_t index );
 
     void initialize_as_link( const char *link );
 
@@ -168,7 +168,7 @@ private:
 
     inline JumpTableEntry *next_stub() const;
 
-    JumpTableEntry *parent_entry( int &index ) const;
+    JumpTableEntry *parent_entry( std::size_t &index ) const;
 
     void report_verify_error( const char *message );
 
@@ -198,7 +198,7 @@ public:
     const char *link() const;
 
     // operations for unused
-    int next_free() const;
+    std::size_t next_free() const;
 
     // operations for NativeMethod stubs (is_NativeMethod_stub() == true)
     NativeMethod *method() const;        // nullptr if not pointing to a method
@@ -211,7 +211,7 @@ public:
 
     // NativeMethod creating the blockClosureOops pointing to this entry
     // index is set to the distance |parent_entry - this|
-    NativeMethod *parent_nativeMethod( int &index ) const;
+    NativeMethod *parent_nativeMethod( std::size_t &index ) const;
 
     // printing
     void print();
@@ -221,7 +221,7 @@ public:
 
     // size of jump table entry
     static std::size_t size() {
-        return (int) align( (void *) ( sizeof( char ) + jump_inst_size() ), sizeof( Oop ) );
+        return (std::size_t) align( (void *) ( sizeof( char ) + jump_inst_size() ), sizeof( Oop ) );
     }
 
 

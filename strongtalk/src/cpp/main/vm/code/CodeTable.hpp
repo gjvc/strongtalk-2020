@@ -18,8 +18,8 @@ class NativeMethod;
 //%note
 // Should implement free list like SymbolTable (Lars 2/10-95)
 
-constexpr int codeTableSize  = 2048;
-constexpr int debugTableSize = 256;
+constexpr std::size_t codeTableSize  = 2048;
+constexpr std::size_t debugTableSize = 256;
 
 //struct CodeTableEntry;
 
@@ -45,7 +45,7 @@ struct CodeTableEntry : ValueObject {
 
 
     bool_t is_nativeMethod() {
-        return (int) _nativeMethodOrLink & 1;
+        return (std::size_t) _nativeMethodOrLink & 1;
     }
 
 
@@ -55,13 +55,13 @@ struct CodeTableEntry : ValueObject {
 
 
     NativeMethod *get_nativeMethod() {
-        return (NativeMethod *) ( (int) _nativeMethodOrLink - 1 );
+        return (NativeMethod *) ( (std::size_t) _nativeMethodOrLink - 1 );
     }
 
 
     void set_nativeMethod( const NativeMethod *nm ) {
         st_assert_oop_aligned( nm );
-        _nativeMethodOrLink = (void *) ( (int) nm + 1 );
+        _nativeMethodOrLink = (void *) ( (std::size_t) nm + 1 );
     }
 
 
@@ -79,23 +79,23 @@ struct CodeTableEntry : ValueObject {
     // memory operations
     void deallocate();
 
-    int length();   // returns the number of NativeMethod in this bucket.
+    std::size_t length();   // returns the number of NativeMethod in this bucket.
 
     bool_t verify( std::size_t i );
 };
 
 class CodeTable : public PrintableCHeapAllocatedObject {
 protected:
-    int tableSize;
+    std::size_t tableSize;
     CodeTableEntry *buckets;
 
 
-    CodeTableEntry *at( int index ) {
+    CodeTableEntry *at( std::size_t index ) {
         return &buckets[ index ];
     }
 
 
-    CodeTableEntry *bucketFor( int hash ) {
+    CodeTableEntry *bucketFor( std::size_t hash ) {
         return at( hash & ( tableSize - 1 ) );
     }
 

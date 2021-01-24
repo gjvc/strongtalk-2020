@@ -70,7 +70,7 @@ public:
 
 
     bool_t is_constant() const {
-        return addr()->_is_constant == trueObj;
+        return addr()->_is_constant == trueObject;
     }
 
 

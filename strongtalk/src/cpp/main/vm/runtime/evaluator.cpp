@@ -383,7 +383,7 @@ bool_t validate_lookup( Oop receiver, SymbolOop selector ) {
 
 void evaluator::eval_message( TokenStream *stream ) {
     Oop       receiver;
-    Oop       result = nilObj;
+    Oop       result = nilObject;
     SymbolOop selector;
 
     if ( stream->eos() )

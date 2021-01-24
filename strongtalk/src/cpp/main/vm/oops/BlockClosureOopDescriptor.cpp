@@ -61,7 +61,7 @@ void BlockClosureOopDescriptor::verify() {
 
 BlockClosureOop BlockClosureOopDescriptor::create_clean_block( int nofArgs, const char *entry_point ) {
     BlockClosureOop blk = allocateTenuredBlock( smiOopFromValue( nofArgs ) );
-    blk->set_lexical_scope( (ContextOop) nilObj );
+    blk->set_lexical_scope( (ContextOop) nilObject );
     blk->set_jumpAddr( entry_point );
     return blk;
 }
@@ -72,10 +72,10 @@ void BlockClosureOopDescriptor::deoptimize() {
         return; // do nothing if unoptimized
 
     ContextOop con = lexical_scope();
-    if ( con == nilObj )
+    if ( con == nilObject )
         return;     // do nothing if lexical scope is nil
 
-    int index;
+    std::size_t index;
     NativeMethod                   *nm    = jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope = nm->noninlined_block_scope_at( index );
 

@@ -27,7 +27,7 @@ class StubRoutines : AllStatic {
 
 
 private:
-    static constexpr int _code_size = 1024 * 64;
+    static constexpr std::size_t _code_size = 1024 * 64;
     static bool_t        _is_initialized;           // true if StubRoutines has been initialized
     static const char *_code;                      // the code buffer for the stub routines
     static void (*single_step_fn)();               // pointer to the current single step function (used by evaluator and ST debugger)
@@ -69,9 +69,9 @@ private:
     static const char *_alienCallWithArgsEntry;
 
     // add tracing routines here
-    static void trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument, int nof_arguments );
+    static void trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument, std::size_t nof_arguments );
 
-    static void trace_DLL_call_2( int result );
+    static void trace_DLL_call_2( std::size_t result );
 
     static void wrong_DLL_call();
 
@@ -133,14 +133,14 @@ private:
     static const char *generate_handle_pascal_callback_stub( MacroAssembler *masm );
     static const char *generate_handle_C_callback_stub( MacroAssembler *masm );
     static const char *generate_oopify_float( MacroAssembler *masm );
-    static const char *generate_PolymorphicInlineCache_stub( MacroAssembler *masm, int pic_size );
+    static const char *generate_PolymorphicInlineCache_stub( MacroAssembler *masm, std::size_t pic_size );
     static const char *generate_allocate( MacroAssembler *masm, std::size_t size );
-    static const char *generate_alien_call( MacroAssembler *masm, int args );
+    static const char *generate_alien_call( MacroAssembler *masm, std::size_t args );
     static const char *generate_alien_call_with_args( MacroAssembler *masm );
 
     // helpers for generation
     static const char *generateStubRoutine( MacroAssembler *masm, const char *title, const char *gen( MacroAssembler * ) );
-    static const char *generateStubRoutine( MacroAssembler *masm, const char *title, const char *gen( MacroAssembler *, int ), int argument );
+    static const char *generateStubRoutine( MacroAssembler *masm, const char *title, const char *gen( MacroAssembler *, std::size_t ), std::size_t argument );
     static void alien_arg_size( MacroAssembler *masm, Label &nextArg );
     static void push_alien_arg( MacroAssembler *masm, Label &nextArg );
     static void push_alignment_spacers( MacroAssembler *masm );
@@ -277,9 +277,9 @@ public:
     }
 
 
-    static const char *PolymorphicInlineCache_stub_entry( int pic_size );     // PolymorphicInlineCache interpreter stubs: pic_size is number of entries
+    static const char *PolymorphicInlineCache_stub_entry( std::size_t pic_size );     // PolymorphicInlineCache interpreter stubs: pic_size is number of entries
     static const char *allocate_entry( std::size_t size );                            // allocation of memOops: size is words in addition to header
-    static const char *alien_call_entry( int args );                          // alien call out: args is the number of arguments passed to the function called
+    static const char *alien_call_entry( std::size_t args );                          // alien call out: args is the number of arguments passed to the function called
 
     // Support for profiling
     static bool_t contains( const char *pc ) {

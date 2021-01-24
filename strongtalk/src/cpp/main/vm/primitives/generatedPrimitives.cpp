@@ -11,6 +11,7 @@
 #include "vm/system/os.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "PrimitivesGenerator.hpp"
 
 
 

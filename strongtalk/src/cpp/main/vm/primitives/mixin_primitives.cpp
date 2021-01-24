@@ -304,7 +304,7 @@ PRIM_DECL_1( mixinOopPrimitives::is_installed, Oop mixin ) {
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return MixinOop( mixin )->is_installed() ? trueObj : falseObj;
+    return MixinOop( mixin )->is_installed() ? trueObject : falseObject;
 }
 
 
@@ -317,9 +317,9 @@ PRIM_DECL_1( mixinOopPrimitives::set_installed, Oop mixin ) {
     MixinOop instance_mixin = MixinOop( mixin );
     MixinOop class_mixin    = instance_mixin->class_mixin();
 
-    instance_mixin->set_installed( trueObj );
+    instance_mixin->set_installed( trueObject );
     if ( class_mixin->is_mixin() ) {
-        class_mixin->set_installed( trueObj );
+        class_mixin->set_installed( trueObject );
     }
     return mixin;
 }
@@ -331,6 +331,6 @@ PRIM_DECL_1( mixinOopPrimitives::set_uninstalled, Oop mixin ) {
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    MixinOop( mixin )->set_installed( falseObj );
+    MixinOop( mixin )->set_installed( falseObject );
     return mixin;
 }

@@ -28,7 +28,7 @@ void MethodPrinterClosure::indent() {
     if ( WizardMode ) {
         _outputStream->indent();
         _outputStream->print( "      <" );
-        GrowableArray<int> *map = method()->expression_stack_mapping( byteCodeIndex() );
+        GrowableArray<std::size_t> *map = method()->expression_stack_mapping( byteCodeIndex() );
 
         for ( std::size_t i = 0; i < map->length(); i++ )
             _outputStream->print( " 0x%08x", map->at( i ) );

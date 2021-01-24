@@ -11,13 +11,13 @@
 #include "vm/memory/Array.hpp"
 
 
-constexpr int INITIAL_ARG_SIZE          = 5;
-constexpr int INITIAL_TEMP_SIZE         = 5;
-constexpr int INITIAL_CONTEXT_TEMP_SIZE = 5;
-constexpr int INITIAL_EXPR_STACK_SIZE   = 10;
+constexpr std::size_t INITIAL_ARG_SIZE          = 5;
+constexpr std::size_t INITIAL_TEMP_SIZE         = 5;
+constexpr std::size_t INITIAL_CONTEXT_TEMP_SIZE = 5;
+constexpr std::size_t INITIAL_EXPR_STACK_SIZE   = 10;
 
 
-ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, int scopeID, bool_t lite, int senderByteCodeIndex, bool_t visible ) {
+ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, std::size_t scopeID, bool_t lite, std::size_t senderByteCodeIndex, bool_t visible ) {
 
     _scopeID                    = scopeID;
     _method                     = method;
@@ -49,7 +49,7 @@ void ScopeDescriptorNode::addNested( ScopeInfo scope ) {
 }
 
 
-void ScopeDescriptorNode::generate( ScopeDescriptorRecorder *rec, int senderScopeOffset, bool_t bigHeader ) {
+void ScopeDescriptorNode::generate( ScopeDescriptorRecorder *rec, std::size_t senderScopeOffset, bool_t bigHeader ) {
     _offset = rec->_codes->size();
 
     rec->genScopeDescHeader( code(), _lite, has_args(), has_temps(), has_context_temps(), has_expr_stack(), has_context(), bigHeader );
@@ -76,7 +76,7 @@ void ScopeDescriptorNode::generateNameDescs( ScopeDescriptorRecorder *rec ) {
 }
 
 
-void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder *rec, int senderScopeOffset ) {
+void ScopeDescriptorNode::generateBody( ScopeDescriptorRecorder *rec, std::size_t senderScopeOffset ) {
     if ( has_nameDescs() ) {
         generateNameDescs( rec );
         if ( not rec->updateScopeDescHeader( _offset, rec->_codes->size() ) ) {
@@ -129,7 +129,7 @@ bool_t ScopeDescriptorNode::computeVisibility() {
 }
 
 
-ScopeInfo ScopeDescriptorNode::find_scope( int scope_id ) {
+ScopeInfo ScopeDescriptorNode::find_scope( std::size_t scope_id ) {
     if ( _scopeID == scope_id )
         return this;
     for ( ScopeInfo p = _scopesHead; p not_eq nullptr; p = p->_next ) {

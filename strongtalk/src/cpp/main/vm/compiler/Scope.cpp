@@ -316,7 +316,7 @@ void InlinedScope::createTemporaries( int nofTemps ) {
             _temporaries->at_put( i, oldTemps->at( i ) );
     }
     // initialize new temps
-    ConstPseudoRegister *nil = new_ConstPReg( this, nilObj );
+    ConstPseudoRegister *nil = new_ConstPReg( this, nilObject );
     for ( std::size_t i = firstNew; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _temporaries->at_put( i, new UnknownExpression( r, nullptr ) );

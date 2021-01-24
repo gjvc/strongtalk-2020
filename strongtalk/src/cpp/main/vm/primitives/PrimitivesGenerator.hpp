@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -28,32 +29,32 @@ private:
 
 
     Address nil_addr() {
-        return Address( int( &nilObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &nilObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address true_addr() {
-        return Address( int( &trueObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &trueObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address false_addr() {
-        return Address( int( &falseObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &falseObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address smiKlass_addr() {
-        return Address( int( &smiKlassObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &smiKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address doubleKlass_addr() {
-        return Address( int( &doubleKlassObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &doubleKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address contextKlass_addr() {
-        return Address( int( &contextKlassObj ), RelocationInformation::RelocationType::external_word_type );
+        return Address( int( &contextKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 

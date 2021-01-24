@@ -45,7 +45,7 @@ void Array::extend( int newSize ) {
 }
 
 
-void Array::copy_to( int *&addr ) {
+void Array::copy_to( std::size_t *&addr ) {
     for ( std::size_t i = 0; i < length(); i++ ) {
         *addr++ = _values[ i ];
     }
@@ -107,7 +107,7 @@ void ByteArray::alignToWord() {
 }
 
 
-void ByteArray::copy_to( int *&addr ) {
+void ByteArray::copy_to( std::size_t *&addr ) {
     int *fromAddr = (int *) start();
     int len = size() / sizeof( int );
 

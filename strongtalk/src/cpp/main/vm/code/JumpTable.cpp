@@ -26,7 +26,7 @@ const char *JumpTable::allocate_jump_entries( std::size_t size ) {
 }
 
 
-JumpTableEntry *JumpTable::jump_entry_for_at( const char *entries, int index ) {
+JumpTableEntry *JumpTable::jump_entry_for_at( const char *entries, std::size_t index ) {
     return (JumpTableEntry *) &entries[ index * JumpTableEntry::size() ];
 }
 
@@ -39,8 +39,8 @@ JumpTable::JumpTable() {
 }
 
 
-JumpTableID JumpTable::allocate( int number_of_entries ) {
-    int id = newID();
+JumpTableID JumpTable::allocate( std::size_t number_of_entries ) {
+    std::size_t id = newID();
     JumpTableEntry *entry = major_at( id );
 
     st_assert( entry->is_unused(), "cannot allocate used jump entry" );
@@ -88,8 +88,8 @@ void JumpTable::init() {
 }
 
 
-int JumpTable::newID() {
-    int id = _firstFree;
+std::size_t JumpTable::newID() {
+    std::size_t id = _firstFree;
     if ( id >= length - 2 ) st_fatal( "grow not implemented" );
     _firstFree = major_at( _firstFree )->next_free();
     usedIDs++;
@@ -97,12 +97,12 @@ int JumpTable::newID() {
 }
 
 
-int JumpTable::peekID() {
+std::size_t JumpTable::peekID() {
     return _firstFree;
 }
 
 
-void JumpTable::freeID( int index ) {
+void JumpTable::freeID( std::size_t index ) {
     st_assert( index >= 0 and index < length and index not_eq _firstFree, "invalid ID" );
     if ( major_at( index )->is_link() ) {
         // free the chunk
@@ -140,7 +140,7 @@ const char *JumpTable::compile_new_block( BlockClosureOop blk ) {
 
 NativeMethod *JumpTable::compile_block( BlockClosureOop closure ) {
     // compute the scope for noninlined block
-    int index;
+    std::size_t index;
     NativeMethod                   *parent = closure->jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope  = parent->noninlined_block_scope_at( index );
 
@@ -164,15 +164,15 @@ NativeMethod *JumpTable::compile_block( BlockClosureOop closure ) {
 // XXX this verify function needs verification itself
 void JumpTable::verify() {
 
-    int          id   = 0;
+    std::size_t          id   = 0;
     ResourceMark resourceMark;
-    int          prev = -1;
+    std::size_t          prev = -1;
 
     bool_t *check = new_resource_array<bool_t>( length );
     for ( std::size_t i = 0; i < length; i++ )
         check[ i ] = false;
 
-    int j = 0;
+    std::size_t j = 0;
     for ( id = _firstFree, j = 0; j < length - usedIDs; id = _entries[ id ], j++ ) {
         if ( id < 0 or id >= length ) {
             error( "JumpTable: invalid ID %ld in free list (#%ld)\n", id, j );
@@ -213,7 +213,7 @@ void JumpTableEntry::fill_entry( const char instr, const char *dest, char state 
 }
 
 
-void JumpTableEntry::initialize_as_unused( int index ) {
+void JumpTableEntry::initialize_as_unused( std::size_t index ) {
     fill_entry( halt_instruction, (char *) index, unused_entry );
 }
 
@@ -224,12 +224,12 @@ void JumpTableEntry::initialize_as_link( const char *link ) {
 
 
 void JumpTableEntry::initialize_NativeMethod_stub( char *dest ) {
-    fill_entry( jump_instruction, dest - (int) state_addr(), nativeMethod_entry );
+    fill_entry( jump_instruction, dest - (std::size_t) state_addr(), nativeMethod_entry );
 }
 
 
 void JumpTableEntry::initialize_block_closure_stub() {
-    fill_entry( jump_instruction, const_cast<char *>( StubRoutines::compile_block_entry() - (int) state_addr() ), block_closure_entry );
+    fill_entry( jump_instruction, const_cast<char *>( StubRoutines::compile_block_entry() - (std::size_t) state_addr() ), block_closure_entry );
 }
 
 
@@ -264,18 +264,18 @@ const char **JumpTableEntry::destination_addr() const {
 
 
 const char *JumpTableEntry::destination() const {
-    return *destination_addr() + (int) state_addr();
+    return *destination_addr() + (std::size_t) state_addr();
 }
 
 
 void JumpTableEntry::set_destination( const char *dest ) {
-    *destination_addr() = dest - (int) state_addr();
+    *destination_addr() = dest - (std::size_t) state_addr();
 }
 
 
-int JumpTableEntry::next_free() const {
+std::size_t JumpTableEntry::next_free() const {
     st_assert( is_unused(), "must be a unused entry" );
-    return (int) *destination_addr();
+    return (std::size_t) *destination_addr();
 }
 
 
@@ -308,7 +308,7 @@ MethodOop JumpTableEntry::block_method() const {
         st_assert( nm not_eq nullptr, "NativeMethod must exists" );
         return nm->method();
     } else {
-        int index;
+        std::size_t index;
         JumpTableEntry *pe = parent_entry( index );
         // find methodOop inside the NativeMethod:
         return pe->method()->noninlined_block_method_at( index );
@@ -316,7 +316,7 @@ MethodOop JumpTableEntry::block_method() const {
 }
 
 
-JumpTableEntry *JumpTableEntry::parent_entry( int &index ) const {
+JumpTableEntry *JumpTableEntry::parent_entry( std::size_t &index ) const {
     st_assert( is_block_closure_stub(), "must be a block_closure_stub" );
     // search back in the jump table to find the NativeMethod stub
     // responsible for this block closure stub.
@@ -330,14 +330,14 @@ JumpTableEntry *JumpTableEntry::parent_entry( int &index ) const {
 }
 
 
-NativeMethod *JumpTableEntry::parent_nativeMethod( int &index ) const {
+NativeMethod *JumpTableEntry::parent_nativeMethod( std::size_t &index ) const {
     return parent_entry( index )->method();
 }
 
 
 void JumpTableEntry::print() {
     if ( is_unused() ) {
-        _console->print_cr( "Unused {next = %d}", (int) destination() );
+        _console->print_cr( "Unused {next = %d}", (std::size_t) destination() );
         return;
     }
     if ( is_NativeMethod_stub() ) {

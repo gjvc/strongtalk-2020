@@ -133,7 +133,7 @@ void Recompilation::init() {
         if ( _receiver->is_context() ) {
             ContextOop ctx = (ContextOop) _receiver;
         } else {
-            st_assert( _receiver == nilObj, "expected nil" );
+            st_assert( _receiver == nilObject, "expected nil" );
         }
     }
 }

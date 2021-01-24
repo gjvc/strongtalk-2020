@@ -88,7 +88,7 @@ static const char          jmp_opcode      = '\xe9';
 static const std::uint16_t jz_opcode       = 0x840f;
 static const std::uint16_t mov_opcode      = 0x508b;
 static const std::uint16_t cmp_opcode      = 0xfa81;
-static constexpr int       cmp_opcode_size = sizeof( std::uint16_t );
+static constexpr std::size_t       cmp_opcode_size = sizeof( std::uint16_t );
 
 
 // -----------------------------------------------------------------------------
@@ -105,26 +105,26 @@ static inline void put_shrt( char *&p, std::uint16_t s ) {
 }
 
 
-static inline void put_word( char *&p, int w ) {
-    *(int *) p = w;
-    p += sizeof( int );
+static inline void put_word( char *&p, std::size_t w ) {
+    *(std::size_t *) p = w;
+    p += sizeof( std::size_t );
 }
 
 
 static inline void put_disp( char *&p, const char *d ) {
-    put_word( p, (int) ( d - p - sizeof( int ) ) );
+    put_word( p, (std::size_t) ( d - p - sizeof( std::size_t ) ) );
 }
 
 
 // -----------------------------------------------------------------------------
 
-static inline int get_shrt( const char *p ) {
+static inline std::size_t get_shrt( const char *p ) {
     return *(std::uint16_t *) p;
 }
 
 
 static inline const char *get_disp( const char *p ) {
-    return *(int *) p + p + sizeof( int );
+    return *(std::size_t *) p + p + sizeof( std::size_t );
 }
 
 
@@ -153,17 +153,17 @@ public:
     void append_method( KlassOop klass, MethodOop method );
 
 
-    int number_of_compiled_targets() const {
+    std::size_t number_of_compiled_targets() const {
         return ( smi_nativeMethod ? 1 : 0 ) + n;
     }
 
 
-    int number_of_interpreted_targets() const {
+    std::size_t number_of_interpreted_targets() const {
         return ( smi_methodOop ? 1 : 0 ) + m;
     }
 
 
-    int number_of_targets() const {
+    std::size_t number_of_targets() const {
         return number_of_compiled_targets() + number_of_interpreted_targets();
     }
 
@@ -178,8 +178,8 @@ public:
     }
 
 
-    int code_size() const {
-        int methodOop_size = number_of_interpreted_targets() * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size );
+    std::size_t code_size() const {
+        std::size_t methodOop_size = number_of_interpreted_targets() * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size );
         if ( has_nativeMethods() ) {
             return static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_offset ) + n * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_size ) + methodOop_size;
         } else {
@@ -199,7 +199,7 @@ public:
 
 void PolymorphicInlineCacheContents::append_NativeMethod_entry( KlassOop klass, char *entry ) {
     // add new entry
-    if ( klass == smiKlassObj ) {
+    if ( klass == smiKlassObject ) {
         st_assert( not has_smi_case(), "cannot overwrite smi_t case" );
         smi_nativeMethod = entry;
     } else {
@@ -213,7 +213,7 @@ void PolymorphicInlineCacheContents::append_NativeMethod_entry( KlassOop klass, 
 void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop method ) {
     // add new entry
     st_assert( method->is_method(), "must be methodOop" );
-    if ( klass == smiKlassObj ) {
+    if ( klass == smiKlassObject ) {
         st_assert( not has_smi_case(), "cannot overwrite smi_t case" );
         smi_methodOop = method;
     } else {
@@ -294,7 +294,7 @@ void PolymorphicInlineCacheIterator::advance() {
 
 
 KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
-    int offs;
+    std::size_t offs;
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no klass stored -> no klass address available
         case at_nativeMethod:
@@ -310,8 +310,8 @@ KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
 }
 
 
-int *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
-    int offs;
+std::size_t *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
+    std::size_t offs;
     switch ( state() ) {
         case at_smi_nativeMethod:
             offs = static_cast<std::size_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset);
@@ -323,12 +323,12 @@ int *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
         case at_the_end: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
         default: ShouldNotReachHere();
     }
-    return (int *) ( _pos + offs );
+    return (std::size_t *) ( _pos + offs );
 }
 
 
 MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
-    int offs;
+    std::size_t offs;
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
         case at_nativeMethod    : ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
@@ -365,13 +365,13 @@ PolymorphicInlineCache *PolymorphicInlineCache::find( const char *addr ) {
 
 // Accessing PolymorphicInlineCache entries
 KlassOop PolymorphicInlineCacheIterator::get_klass() const {
-    return state() == at_smi_nativeMethod ? smiKlassObj : *klass_addr();
+    return state() == at_smi_nativeMethod ? smiKlassObject : *klass_addr();
 }
 
 
 char *PolymorphicInlineCacheIterator::get_call_addr() const {
-    int *a = nativeMethod_disp_addr();
-    return (char *) a + sizeof( int ) + *a;
+    std::size_t *a = nativeMethod_disp_addr();
+    return (char *) a + sizeof( std::size_t ) + *a;
 }
 
 
@@ -420,8 +420,8 @@ void PolymorphicInlineCacheIterator::set_klass( KlassOop klass ) {
 
 void PolymorphicInlineCacheIterator::set_nativeMethod( NativeMethod *nm ) {
     st_assert( get_klass() == nm->_lookupKey.klass(), "mismatched receiver klass" );
-    int *a = nativeMethod_disp_addr();
-    *a = nm->verifiedEntryPoint() - (const char *) a - sizeof( int );
+    std::size_t *a = nativeMethod_disp_addr();
+    *a = nm->verifiedEntryPoint() - (const char *) a - sizeof( std::size_t );
 }
 
 
@@ -470,7 +470,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
             }
             it.advance();
         }
-        int                            allocated_code_size = contents.code_size();
+        std::size_t                            allocated_code_size = contents.code_size();
         return new( allocated_code_size ) PolymorphicInlineCache( _ic, &contents, allocated_code_size );
     }
 }
@@ -549,7 +549,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
             return nullptr;
         }
 
-        int allocated_code_size = contents.code_size();
+        std::size_t allocated_code_size = contents.code_size();
         return new( allocated_code_size ) PolymorphicInlineCache( _ic, &contents, allocated_code_size );
     }
 
@@ -570,7 +570,7 @@ std::size_t PolymorphicInlineCache::nof_entries( const char *pic_stub ) {
 }
 
 
-int PolymorphicInlineCache::code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c ) {
+std::size_t PolymorphicInlineCache::code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c ) {
     char *p = const_cast<char *>(entry);
     put_byte( p, call_opcode );
     if ( c->smi_methodOop == nullptr ) {
@@ -581,17 +581,17 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char *entry, Polymor
     } else {
         // handle smi_t methodOop first
         put_disp( p, StubRoutines::PolymorphicInlineCache_stub_entry( 1 + c->m ) );
-        put_word( p, int( smiKlassObj ) );
-        put_word( p, int( c->smi_methodOop ) );
+        put_word( p, std::size_t( smiKlassObject ) );
+        put_word( p, std::size_t( c->smi_methodOop ) );
         st_assert( entry + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_only_offset ) + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) == p, "constant value inconsistent with code pattern" );
 
     }
 
     char              *p1 = p;
     for ( std::size_t i   = 0; i < c->m; i++ ) {
-        st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
-        put_word( p, int( c->methodOop_klasses[ i ] ) );
-        put_word( p, int( c->methodOops[ i ] ) );
+        st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObject, "should not be smiKlassObject" );
+        put_word( p, std::size_t( c->methodOop_klasses[ i ] ) );
+        put_word( p, std::size_t( c->methodOops[ i ] ) );
     }
 
     st_assert( p1 + c->m * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size ) == p, "constant value inconsistent with code pattern" );
@@ -599,7 +599,7 @@ int PolymorphicInlineCache::code_for_methodOops_only( const char *entry, Polymor
 }
 
 
-int PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c ) {
+std::size_t PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c ) {
 
     if ( c->has_nativeMethods() ) {
         // nativeMethods & methodOops
@@ -630,10 +630,10 @@ int PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicI
         // handle nativeMethods
         for ( std::size_t i = 0; i < c->n; i++ ) {
             // cmp edx, klass(i)
-            st_assert( c->nativeMethod_klasses[ i ] not_eq smiKlassObj, "should not be smiKlassObj" );
+            st_assert( c->nativeMethod_klasses[ i ] not_eq smiKlassObject, "should not be smiKlassObject" );
             put_shrt( p, cmp_opcode );
             st_assert( entry + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset ) + i * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_size ) + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_klass_offset ) == p, "constant value inconsistent with code pattern" );
-            put_word( p, int( c->nativeMethod_klasses[ i ] ) );
+            put_word( p, std::size_t( c->nativeMethod_klasses[ i ] ) );
             // je NativeMethod(j)
             put_shrt( p, jz_opcode );
             st_assert( entry + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset ) + i * static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_size ) + static_cast<std::size_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_nativeMethodOffset ) == p, "constant value inconsistent with code pattern" );
@@ -658,14 +658,14 @@ int PolymorphicInlineCache::code_for_polymorphic_case( char *entry, PolymorphicI
 }
 
 
-int PolymorphicInlineCache::code_for_megamorphic_case( char *entry ) {
+std::size_t PolymorphicInlineCache::code_for_megamorphic_case( char *entry ) {
 
     char *p = entry;
 
     put_byte( p, call_opcode );
     put_disp( p, StubRoutines::megamorphic_ic_entry() );
     st_assert( entry + static_cast<std::size_t>( PolymorphicInlineCache::Constant::MegamorphicInlineCache_selector_offset ) == p, "layout constant inconsistent with code pattern" );
-    put_word( p, int( selector() ) );    // used for fast lookup
+    put_word( p, std::size_t( selector() ) );    // used for fast lookup
     st_assert( entry + static_cast<std::size_t>( PolymorphicInlineCache::Constant::MegamorphicInlineCache_code_size ) == p, "layout constant inconsistent with code pattern" );
 
     return p - entry;
@@ -677,7 +677,7 @@ void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache *pic, K
 }
 
 
-void *PolymorphicInlineCache::operator new( std::size_t size, int code_size ) {
+void *PolymorphicInlineCache::operator new( std::size_t size, std::size_t code_size ) {
     return Universe::code->_picHeap->allocate( size + code_size );
 }
 
@@ -747,7 +747,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *i
     if ( switch_to_MIC ) {
         new_pic = new( static_cast<std::size_t>( PolymorphicInlineCache::Constant::MegamorphicInlineCache_code_size ) ) PolymorphicInlineCache( ic );
     } else {
-        int allocated_code_size = contents.code_size();
+        std::size_t allocated_code_size = contents.code_size();
         new_pic = new( allocated_code_size ) PolymorphicInlineCache( ic, &contents, allocated_code_size );
     }
 
@@ -757,7 +757,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *i
 }
 
 
-PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, int allocated_code_size ) {
+PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::size_t allocated_code_size ) {
     st_assert( contents->number_of_targets() >= 1, "at least one entry needed for non-megamorphic case" );
     _ic              = ic;
     _numberOfTargets = contents->number_of_targets();
@@ -812,7 +812,7 @@ void PolymorphicInlineCache::print() {
 
     // Disassembler::decode(entry(), entry() + code_size());
 
-    int                            i = 1;
+    std::size_t                            i = 1;
     PolymorphicInlineCacheIterator it( this );
     while ( not it.at_end() ) {
         lprintf( "\t- %d. klass    : ", i );
@@ -821,7 +821,7 @@ void PolymorphicInlineCache::print() {
         switch ( it.state() ) {
             case PolymorphicInlineCacheIterator::at_smi_nativeMethod: // fall through
             case PolymorphicInlineCacheIterator::at_nativeMethod:
-                printf( "\t-    NativeMethod  : %#x (entry %#x)\n", (int) it.compiled_method(), (int) it.get_call_addr() );
+                printf( "\t-    NativeMethod  : %#x (entry %#x)\n", (std::size_t) it.compiled_method(), (std::size_t) it.get_call_addr() );
                 break;
             case PolymorphicInlineCacheIterator::at_methodOop:
                 printf( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );

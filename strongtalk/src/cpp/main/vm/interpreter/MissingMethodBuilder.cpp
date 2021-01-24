@@ -80,7 +80,7 @@ void MissingMethodBuilder::build() {
             _buffer.pushByte( argCount );
             break;
     }
-    MethodKlass *k = (MethodKlass *) Universe::methodKlassObj()->klass_part();
+    MethodKlass *k = (MethodKlass *) Universe::methodKlassObject()->klass_part();
     _method = k->constructMethod( _selector, 0,         // flags
                                   argCount,  // number of arguments
                                   oopFactory::new_objArray( std::size_t{0} ), // debug info

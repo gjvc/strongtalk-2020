@@ -32,7 +32,7 @@ private:
     DebugInfoWriter *_debugInfoWriter;    // keeps track of PseudoRegister location changes and updates debug info
     int _maxNofStackTmps;     // the maximum number of stack allocated variables so far
     Node *_previousNode;       // the previous node in the same basic block or nullptr info used to patch temporary initialization
-    Register _nilReg;              // the register holding nilObj used to initialize the stack frame
+    Register _nilReg;              // the register holding nilObject used to initialize the stack frame
     CodeBuffer *_pushCode;           // the code area that can be patched with push instructions
     int _nofCompilations;
 
@@ -116,7 +116,7 @@ private:
 
     static const char *nativeMethodName();
 
-    static void verifyObj( Oop obj );
+    static void verifyObject( Oop obj );
 
     static void verifyContext( Oop obj );
 
@@ -126,7 +126,7 @@ private:
 
     static void verifyNonLocalReturn( const char *fp, const char *nlrFrame, int nlrScopeID, Oop result );
 
-    void callVerifyObj( Register obj );
+    void callVerifyObject( Register obj );
 
     void callVerifyContext( Register context );
 

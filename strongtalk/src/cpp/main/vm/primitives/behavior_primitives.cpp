@@ -27,9 +27,9 @@ std::size_t behaviorPrimitives::_numberOfCalls;
 PRIM_DECL_2( behaviorPrimitives::allocate3, Oop receiver, Oop tenured ) {
     PROLOGUE_2( "allocate3", receiver, tenured )
     ASSERT_RECEIVER;
-    if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
+    if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    Oop result = receiver->primitive_allocate( false, tenured == Universe::trueObj() );
+    Oop result = receiver->primitive_allocate( false, tenured == Universe::trueObject() );
     if ( nullptr == result )
         return markSymbol( vmSymbols::failed_allocation() );
     return result;
@@ -69,21 +69,21 @@ PRIM_DECL_2( behaviorPrimitives::setSuperclass, Oop receiver, Oop newSuper ) {
     PROLOGUE_2( "setSuperclass", receiver, newSuper );
     if ( not receiver->is_klass() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
-    if ( not( newSuper->is_klass() or newSuper == nilObj ) )
+    if ( not( newSuper->is_klass() or newSuper == nilObject ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     Klass *receiverClass = KlassOop( receiver )->klass_part();
     KlassOop newSuperclass;
     if ( receiverClass->superKlass() == newSuper )
         return receiver; // no change
-    if ( receiverClass->superKlass() == nilObj ) {
+    if ( receiverClass->superKlass() == nilObject ) {
         newSuperclass = KlassOop( newSuper );
         if ( newSuperclass->klass_part()->number_of_instance_variables() > 0 )
             return markSymbol( vmSymbols::argument_is_invalid() );
     } else {
         Klass *oldSuperclass = receiverClass->superKlass()->klass_part();
-        if ( newSuper == nilObj ) {
-            newSuperclass = KlassOop( nilObj );
+        if ( newSuper == nilObject ) {
+            newSuperclass = KlassOop( nilObject );
             if ( oldSuperclass->number_of_instance_variables() > 0 )
                 return markSymbol( vmSymbols::argument_is_invalid() );
         } else {
@@ -137,7 +137,7 @@ PRIM_DECL_1( behaviorPrimitives::is_specialized_class, Oop behavior ) {
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return KlassOop( behavior )->klass_part()->is_specialized_class() ? trueObj : falseObj;
+    return KlassOop( behavior )->klass_part()->is_specialized_class() ? trueObject : falseObject;
 }
 
 
@@ -146,7 +146,7 @@ PRIM_DECL_1( behaviorPrimitives::can_be_subclassed, Oop behavior ) {
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return KlassOop( behavior )->klass_part()->can_be_subclassed() ? trueObj : falseObj;
+    return KlassOop( behavior )->klass_part()->can_be_subclassed() ? trueObject : falseObject;
 }
 
 
@@ -155,7 +155,7 @@ PRIM_DECL_1( behaviorPrimitives::can_have_instance_variables, Oop behavior ) {
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return KlassOop( behavior )->klass_part()->can_have_instance_variables() ? trueObj : falseObj;
+    return KlassOop( behavior )->klass_part()->can_have_instance_variables() ? trueObject : falseObject;
 }
 
 // OPERATIONS FOR CLASS VARIABLES
@@ -219,7 +219,7 @@ PRIM_DECL_1(behaviorPrimitives::new1, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 1 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   return obj;
 }
@@ -232,7 +232,7 @@ PRIM_DECL_1(behaviorPrimitives::new2, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 2 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   return obj;
@@ -246,7 +246,7 @@ PRIM_DECL_1(behaviorPrimitives::new3, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 3 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -261,7 +261,7 @@ PRIM_DECL_1(behaviorPrimitives::new4, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 4 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -277,7 +277,7 @@ PRIM_DECL_1(behaviorPrimitives::new5, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 5 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -294,7 +294,7 @@ PRIM_DECL_1(behaviorPrimitives::new6, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 6 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -312,7 +312,7 @@ PRIM_DECL_1(behaviorPrimitives::new7, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 7 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -331,7 +331,7 @@ PRIM_DECL_1(behaviorPrimitives::new8, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 8 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -351,7 +351,7 @@ PRIM_DECL_1(behaviorPrimitives::new9, Oop receiver){
   // header
   obj->initialize_header(false, klassOop(klass));
   // initialize 9 instance variable
-  Oop value = nilObj;
+  Oop value = nilObject;
   Universe::store(obj->oops(memOopDescriptor::header_size() + 0), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 1), value, false);
   Universe::store(obj->oops(memOopDescriptor::header_size() + 2), value, false);
@@ -443,7 +443,7 @@ PRIM_DECL_1( behaviorPrimitives::vm_type, Oop behavior ) {
 PRIM_DECL_2( behaviorPrimitives::is_class_of, Oop receiver, Oop obj ) {
     PROLOGUE_2( "is_class_of", receiver, obj );
     ASSERT_RECEIVER;
-    return obj->klass() == receiver ? trueObj : falseObj;
+    return obj->klass() == receiver ? trueObject : falseObject;
 }
 
 

@@ -265,7 +265,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
         if ( not array->obj_at( 2 )->is_symbol() )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
-        if ( not array->obj_at( 3 )->is_klass() and array->obj_at( 3 ) not_eq nilObj )
+        if ( not array->obj_at( 3 )->is_klass() and array->obj_at( 3 ) not_eq nilObject )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
         for ( std::size_t j = 4; j <= array->length() - 1; j += 2 ) {
@@ -277,7 +277,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
     }
 
     apply_change( new_mixin, old_mixin, change );
-    return trueObj;
+    return trueObject;
 }
 
 

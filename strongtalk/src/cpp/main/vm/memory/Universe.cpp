@@ -50,35 +50,35 @@ std::size_t   Universe::tenuring_threshold;
 std::size_t   Universe::scavengeCount;
 
 // Classes
-KlassOop smiKlassObj     = KlassOop( badOop );
-KlassOop contextKlassObj = KlassOop( badOop );
-KlassOop doubleKlassObj  = KlassOop( badOop );
-KlassOop Universe::_memOopKlassObj    = KlassOop( badOop );
-KlassOop Universe::_objArrayKlassObj  = KlassOop( badOop );
-KlassOop Universe::_byteArrayKlassObj = KlassOop( badOop );
-KlassOop symbolKlassObj = KlassOop( badOop );
-KlassOop Universe::_associationKlassObj = KlassOop( badOop );
-KlassOop zeroArgumentBlockKlassObj  = KlassOop( badOop );
-KlassOop oneArgumentBlockKlassObj   = KlassOop( badOop );
-KlassOop twoArgumentBlockKlassObj   = KlassOop( badOop );
-KlassOop threeArgumentBlockKlassObj = KlassOop( badOop );
-KlassOop fourArgumentBlockKlassObj  = KlassOop( badOop );
-KlassOop fiveArgumentBlockKlassObj  = KlassOop( badOop );
-KlassOop sixArgumentBlockKlassObj   = KlassOop( badOop );
-KlassOop sevenArgumentBlockKlassObj = KlassOop( badOop );
-KlassOop eightArgumentBlockKlassObj = KlassOop( badOop );
-KlassOop nineArgumentBlockKlassObj  = KlassOop( badOop );
-KlassOop Universe::_methodKlassObj    = KlassOop( badOop );
-KlassOop Universe::_characterKlassObj = KlassOop( badOop );
-KlassOop doubleValueArrayKlassObj = KlassOop( badOop );
-KlassOop Universe::_vframeKlassObj = KlassOop( badOop );
+KlassOop smiKlassObject     = KlassOop( badOop );
+KlassOop contextKlassObject = KlassOop( badOop );
+KlassOop doubleKlassObject  = KlassOop( badOop );
+KlassOop Universe::_memOopKlassObject    = KlassOop( badOop );
+KlassOop Universe::_objArrayKlassObject  = KlassOop( badOop );
+KlassOop Universe::_byteArrayKlassObject = KlassOop( badOop );
+KlassOop symbolKlassObject = KlassOop( badOop );
+KlassOop Universe::_associationKlassObject = KlassOop( badOop );
+KlassOop zeroArgumentBlockKlassObject  = KlassOop( badOop );
+KlassOop oneArgumentBlockKlassObject   = KlassOop( badOop );
+KlassOop twoArgumentBlockKlassObject   = KlassOop( badOop );
+KlassOop threeArgumentBlockKlassObject = KlassOop( badOop );
+KlassOop fourArgumentBlockKlassObject  = KlassOop( badOop );
+KlassOop fiveArgumentBlockKlassObject  = KlassOop( badOop );
+KlassOop sixArgumentBlockKlassObject   = KlassOop( badOop );
+KlassOop sevenArgumentBlockKlassObject = KlassOop( badOop );
+KlassOop eightArgumentBlockKlassObject = KlassOop( badOop );
+KlassOop nineArgumentBlockKlassObject  = KlassOop( badOop );
+KlassOop Universe::_methodKlassObject    = KlassOop( badOop );
+KlassOop Universe::_characterKlassObject = KlassOop( badOop );
+KlassOop doubleValueArrayKlassObject = KlassOop( badOop );
+KlassOop Universe::_vframeKlassObject = KlassOop( badOop );
 
 // Objects
-Oop nilObj   = Oop( badOop );
-Oop trueObj  = Oop( badOop );
-Oop falseObj = Oop( badOop );
+Oop nilObject   = Oop( badOop );
+Oop trueObject  = Oop( badOop );
+Oop falseObject = Oop( badOop );
 ObjectArrayOop Universe::_asciiCharacters     = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_systemDictionaryObj = ObjectArrayOop( badOop );
+ObjectArrayOop Universe::_systemDictionaryObject = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_objectIDTable       = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_pic_free_list       = ObjectArrayOop( badOop );
 Oop            Universe::_callBack_receiver   = Oop( badOop );
@@ -142,15 +142,15 @@ void Universe::genesis() {
 void Universe::cleanup_after_bootstrap() {
     objectIDTable::cleanup_after_bootstrap();
 
-    Universe::_callBack_receiver = nilObj();
-    Universe::_callBack_selector = SymbolOop( nilObj() );
+    Universe::_callBack_receiver = nilObject();
+    Universe::_callBack_selector = SymbolOop( nilObject() );
 
-    Universe::_dll_lookup_receiver = nilObj();
-    Universe::_dll_lookup_selector = SymbolOop( nilObj() );
+    Universe::_dll_lookup_receiver = nilObject();
+    Universe::_dll_lookup_selector = SymbolOop( nilObject() );
 
     Universe::_pic_free_list = ObjectArrayKlass::allocate_tenured_pic( number_of_interpreterPolymorphicInlineCache_sizes );
 
-    Universe::_characterKlassObj = KlassOop( find_global( "Character" ) );
+    Universe::_characterKlassObject = KlassOop( find_global( "Character" ) );
     // Check if all roots are valid.
     Universe::roots_do( Universe::check_root );
 }
@@ -298,10 +298,10 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
 
 
 void Universe::decode_methods() {
-    int l = Universe::systemDictionaryObj()->length();
+    int l = Universe::systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObj()->obj_at( i );
+        AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() )
             decode_klass( assoc->key(), KlassOop( assoc->value() ) );
     }
@@ -331,10 +331,10 @@ void Universe::root_iterate( OopClosure *blk ) {
 // Traverses the system dictionary to find the association referring the class or meta class and then prints the key.
 void Universe::print_klass_name( KlassOop k ) {
 
-    int l = systemDictionaryObj()->length();
+    int l = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
+        AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             assoc->key()->print_symbol_on();
             return;
@@ -352,10 +352,10 @@ const char *Universe::klass_name( KlassOop k ) {
     if ( k == nullptr )
         return "(nullptr)";
 
-    int l = systemDictionaryObj()->length();
+    int l = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
+        AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
         } else if ( assoc->value()->klass() == k ) {
@@ -368,7 +368,7 @@ const char *Universe::klass_name( KlassOop k ) {
 
     // it's an unknown class (mixin invocation)
     KlassOop super = k->klass_part()->superKlass();
-    if ( super not_eq ::nilObj ) {
+    if ( super not_eq ::nilObject ) {
         const char *superName = klass_name( super );
         const char *txt       = "unnamed class inheriting from ";
         char       *result    = new_resource_array<char>( strlen( txt ) + strlen( superName ) + 2 );
@@ -382,10 +382,10 @@ const char *Universe::klass_name( KlassOop k ) {
 
 KlassOop Universe::method_holder_of( MethodOop m ) {
     m = m->home();    // so block methods can be found, too
-    int l = systemDictionaryObj()->length();
+    int l = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
+        AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() ) {
             KlassOop k = KlassOop( assoc->value() );
             KlassOop res;
@@ -407,10 +407,10 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
 
 SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
     *meta = false;
-    int l = systemDictionaryObj()->length();
+    int l = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = AssociationOop( systemDictionaryObj()->obj_at( i ) );
+        AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
             if ( assoc->value() == value ) {
                 return assoc->key();
@@ -430,18 +430,18 @@ SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
 Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
     if ( not must_be_constant ) {
         if ( strcmp( name, "true" ) == 0 )
-            return trueObj();
+            return trueObject();
         if ( strcmp( name, "false" ) == 0 )
-            return falseObj();
+            return falseObject();
         if ( strcmp( name, "nil" ) == 0 )
-            return nilObj();
+            return nilObject();
     }
 
     SymbolOop sym = oopFactory::new_symbol( name );
-    int       l   = systemDictionaryObj()->length();
+    int       l   = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = AssociationOop( systemDictionaryObj()->obj_at( i ) );
+        AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->key() == sym ) {
             if ( not must_be_constant or assoc->is_constant() ) {
                 return assoc->value();
@@ -455,10 +455,10 @@ Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
 AssociationOop Universe::find_global_association( const char *name ) {
     SymbolOop symbolOop = oopFactory::new_symbol( name );
 
-    int l = systemDictionaryObj()->length();
+    int l = systemDictionaryObject()->length();
 
     for ( std::size_t i = 1; i <= l; i++ ) {
-        AssociationOop assoc = (AssociationOop) systemDictionaryObj()->obj_at( i );
+        AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->key() == symbolOop )
             return assoc;
     }
@@ -526,7 +526,7 @@ void Universe::classes_for_do( KlassOop klass, klassOopClosure *iterator ) {
 
 void Universe::classes_do( klassOopClosure *iterator ) {
 
-    ObjectArrayOop array  = Universe::systemDictionaryObj();
+    ObjectArrayOop array  = Universe::systemDictionaryObject();
     int            length = array->length();
 
     for ( std::size_t i = 1; i <= length; i++ ) {
@@ -604,38 +604,38 @@ void universe_init() {
 
 void Universe::roots_do( void f( Oop * ) ) {
     // External Objects
-    f( (Oop *) &::nilObj );
-    f( (Oop *) &::trueObj );
-    f( (Oop *) &::falseObj );
+    f( (Oop *) &::nilObject );
+    f( (Oop *) &::trueObject );
+    f( (Oop *) &::falseObject );
 
     // External Classes
-    f( (Oop *) &::smiKlassObj );
-    f( (Oop *) &::contextKlassObj );
-    f( (Oop *) &::doubleKlassObj );
+    f( (Oop *) &::smiKlassObject );
+    f( (Oop *) &::contextKlassObject );
+    f( (Oop *) &::doubleKlassObject );
 
     // Classes
-    f( (Oop *) &_memOopKlassObj );
-    f( (Oop *) &_objArrayKlassObj );
-    f( (Oop *) &_byteArrayKlassObj );
-    f( (Oop *) &::symbolKlassObj );
-    f( (Oop *) &_associationKlassObj );
-    f( (Oop *) &::zeroArgumentBlockKlassObj );
-    f( (Oop *) &::oneArgumentBlockKlassObj );
-    f( (Oop *) &::twoArgumentBlockKlassObj );
-    f( (Oop *) &::threeArgumentBlockKlassObj );
-    f( (Oop *) &::fourArgumentBlockKlassObj );
-    f( (Oop *) &::fiveArgumentBlockKlassObj );
-    f( (Oop *) &::sixArgumentBlockKlassObj );
-    f( (Oop *) &::sevenArgumentBlockKlassObj );
-    f( (Oop *) &::eightArgumentBlockKlassObj );
-    f( (Oop *) &::nineArgumentBlockKlassObj );
-    f( (Oop *) &_methodKlassObj );
-    f( (Oop *) &_characterKlassObj );
-    // fix f((Oop*)&::doubleValueArrayKlassObj);
+    f( (Oop *) &_memOopKlassObject );
+    f( (Oop *) &_objArrayKlassObject );
+    f( (Oop *) &_byteArrayKlassObject );
+    f( (Oop *) &::symbolKlassObject );
+    f( (Oop *) &_associationKlassObject );
+    f( (Oop *) &::zeroArgumentBlockKlassObject );
+    f( (Oop *) &::oneArgumentBlockKlassObject );
+    f( (Oop *) &::twoArgumentBlockKlassObject );
+    f( (Oop *) &::threeArgumentBlockKlassObject );
+    f( (Oop *) &::fourArgumentBlockKlassObject );
+    f( (Oop *) &::fiveArgumentBlockKlassObject );
+    f( (Oop *) &::sixArgumentBlockKlassObject );
+    f( (Oop *) &::sevenArgumentBlockKlassObject );
+    f( (Oop *) &::eightArgumentBlockKlassObject );
+    f( (Oop *) &::nineArgumentBlockKlassObject );
+    f( (Oop *) &_methodKlassObject );
+    f( (Oop *) &_characterKlassObject );
+    // fix f((Oop*)&::doubleValueArrayKlassObject);
 
     // Objects
     f( (Oop *) &_asciiCharacters );
-    f( (Oop *) &_systemDictionaryObj );
+    f( (Oop *) &_systemDictionaryObject );
     f( (Oop *) &_objectIDTable );
     f( (Oop *) &_callBack_receiver );
     f( (Oop *) &_callBack_selector );
@@ -645,7 +645,7 @@ void Universe::roots_do( void f( Oop * ) ) {
 
     f( (Oop *) &_sweeper_method );
 
-    f( (Oop *) &_vframeKlassObj );
+    f( (Oop *) &_vframeKlassObject );
 }
 
 
@@ -662,12 +662,12 @@ void Universe::oops_do( void f( Oop * ) ) {
 
 
 void Universe::add_global( Oop value ) {
-    _systemDictionaryObj = _systemDictionaryObj->copy_add( value );
+    _systemDictionaryObject = _systemDictionaryObject->copy_add( value );
 }
 
 
 void Universe::remove_global_at( int index ) {
-    _systemDictionaryObj = _systemDictionaryObj->copy_remove( index );
+    _systemDictionaryObject = _systemDictionaryObject->copy_remove( index );
 }
 
 
@@ -852,128 +852,128 @@ Space *Universe::spaceFor( void *p ) {
 }
 
 
-KlassOop Universe::smiKlassObj() {
-    return ::smiKlassObj;
+KlassOop Universe::smiKlassObject() {
+    return ::smiKlassObject;
 }
 
 
-KlassOop Universe::contextKlassObj() {
-    return ::contextKlassObj;
+KlassOop Universe::contextKlassObject() {
+    return ::contextKlassObject;
 }
 
 
-KlassOop Universe::doubleKlassObj() {
-    return ::doubleKlassObj;
+KlassOop Universe::doubleKlassObject() {
+    return ::doubleKlassObject;
 }
 
 
-KlassOop Universe::memOopKlassObj() {
-    return _memOopKlassObj;
+KlassOop Universe::memOopKlassObject() {
+    return _memOopKlassObject;
 }
 
 
-KlassOop Universe::objArrayKlassObj() {
-    return _objArrayKlassObj;
+KlassOop Universe::objArrayKlassObject() {
+    return _objArrayKlassObject;
 }
 
 
-KlassOop Universe::byteArrayKlassObj() {
-    return _byteArrayKlassObj;
+KlassOop Universe::byteArrayKlassObject() {
+    return _byteArrayKlassObject;
 }
 
 
-KlassOop Universe::symbolKlassObj() {
-    return ::symbolKlassObj;
+KlassOop Universe::symbolKlassObject() {
+    return ::symbolKlassObject;
 }
 
 
-KlassOop Universe::associationKlassObj() {
-    return _associationKlassObj;
+KlassOop Universe::associationKlassObject() {
+    return _associationKlassObject;
 }
 
 
-KlassOop Universe::zeroArgumentBlockKlassObj() {
-    return ::zeroArgumentBlockKlassObj;
+KlassOop Universe::zeroArgumentBlockKlassObject() {
+    return ::zeroArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::oneArgumentBlockKlassObj() {
-    return ::oneArgumentBlockKlassObj;
+KlassOop Universe::oneArgumentBlockKlassObject() {
+    return ::oneArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::twoArgumentBlockKlassObj() {
-    return ::twoArgumentBlockKlassObj;
+KlassOop Universe::twoArgumentBlockKlassObject() {
+    return ::twoArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::threeArgumentBlockKlassObj() {
-    return ::threeArgumentBlockKlassObj;
+KlassOop Universe::threeArgumentBlockKlassObject() {
+    return ::threeArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::fourArgumentBlockKlassObj() {
-    return ::fourArgumentBlockKlassObj;
+KlassOop Universe::fourArgumentBlockKlassObject() {
+    return ::fourArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::fiveArgumentBlockKlassObj() {
-    return ::fiveArgumentBlockKlassObj;
+KlassOop Universe::fiveArgumentBlockKlassObject() {
+    return ::fiveArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::sixArgumentBlockKlassObj() {
-    return ::sixArgumentBlockKlassObj;
+KlassOop Universe::sixArgumentBlockKlassObject() {
+    return ::sixArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::sevenArgumentBlockKlassObj() {
-    return ::sevenArgumentBlockKlassObj;
+KlassOop Universe::sevenArgumentBlockKlassObject() {
+    return ::sevenArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::eightArgumentBlockKlassObj() {
-    return ::eightArgumentBlockKlassObj;
+KlassOop Universe::eightArgumentBlockKlassObject() {
+    return ::eightArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::nineArgumentBlockKlassObj() {
-    return ::nineArgumentBlockKlassObj;
+KlassOop Universe::nineArgumentBlockKlassObject() {
+    return ::nineArgumentBlockKlassObject;
 }
 
 
-KlassOop Universe::methodKlassObj() {
-    return _methodKlassObj;
+KlassOop Universe::methodKlassObject() {
+    return _methodKlassObject;
 }
 
 
-KlassOop Universe::characterKlassObj() {
-    return _characterKlassObj;
+KlassOop Universe::characterKlassObject() {
+    return _characterKlassObject;
 }
 
 
-KlassOop Universe::doubleValueArrayKlassObj() {
-    return ::doubleValueArrayKlassObj;
+KlassOop Universe::doubleValueArrayKlassObject() {
+    return ::doubleValueArrayKlassObject;
 }
 
 
-KlassOop Universe::vframeKlassObj() {
-    return _vframeKlassObj;
+KlassOop Universe::vframeKlassObject() {
+    return _vframeKlassObject;
 }
 
 
-Oop Universe::nilObj() {
-    return ::nilObj;
+Oop Universe::nilObject() {
+    return ::nilObject;
 }
 
 
-Oop Universe::trueObj() {
-    return ::trueObj;
+Oop Universe::trueObject() {
+    return ::trueObject;
 }
 
 
-Oop Universe::falseObj() {
-    return ::falseObj;
+Oop Universe::falseObject() {
+    return ::falseObject;
 }
 
 
@@ -982,8 +982,8 @@ ObjectArrayOop Universe::asciiCharacters() {
 }
 
 
-ObjectArrayOop Universe::systemDictionaryObj() {
-    return _systemDictionaryObj;
+ObjectArrayOop Universe::systemDictionaryObject() {
+    return _systemDictionaryObject;
 }
 
 

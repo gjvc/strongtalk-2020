@@ -46,7 +46,7 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
     if ( not name->is_symbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    if ( not( primary == trueObj or primary == falseObj ) )
+    if ( not( primary == trueObject or primary == falseObject ) )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
     if ( not superclass->is_klass() )
@@ -71,11 +71,11 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
     }
 
     // Set the primary invocation if needed.
-    if ( primary == trueObj ) {
+    if ( primary == trueObject ) {
         MixinOop( mixin )->set_primary_invocation( new_klass );
         MixinOop( mixin )->class_mixin()->set_primary_invocation( new_klass->klass() );
-        MixinOop( mixin )->set_installed( trueObj );
-        MixinOop( mixin )->class_mixin()->set_installed( trueObj );
+        MixinOop( mixin )->set_installed( trueObject );
+        MixinOop( mixin )->class_mixin()->set_installed( trueObject );
     }
 
     // Make sure mixin->classMixin is present
@@ -113,8 +113,8 @@ PRIM_DECL_3( SystemPrimitives::createInvocation, Oop mixin, Oop superclass, Oop 
         return markSymbol( vmSymbols::argument_is_invalid() );
     }
 
-    MixinOop( mixin )->set_installed( trueObj );
-    MixinOop( mixin )->class_mixin()->set_installed( trueObj );
+    MixinOop( mixin )->set_installed( trueObject );
+    MixinOop( mixin )->class_mixin()->set_installed( trueObject );
 
     return new_klass;
 }
@@ -136,7 +136,7 @@ PRIM_DECL_1( SystemPrimitives::applyChange, Oop change ) {
 PRIM_DECL_0( SystemPrimitives::canScavenge ) {
     PROLOGUE_0( "canScavenge" )
 
-    return Universe::can_scavenge() ? trueObj : falseObj;
+    return Universe::can_scavenge() ? trueObject : falseObject;
 }
 
 
@@ -174,7 +174,7 @@ PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
     if ( size < 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
     Universe::old_gen.expand( size );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -185,7 +185,7 @@ PRIM_DECL_1( SystemPrimitives::shrinkMemory, Oop sizeOop ) {
     if ( SMIOop( sizeOop )->value() < 0 or SMIOop( sizeOop )->value() > Universe::old_gen.free() )
         return markSymbol( vmSymbols::value_out_of_range() );
     Universe::old_gen.shrink( SMIOop( sizeOop )->value() );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -206,14 +206,14 @@ PRIM_DECL_0( SystemPrimitives::breakpoint ) {
         StubRoutines::setSingleStepHandler( &single_step_handler );
         DispatchTable::intercept_for_step( nullptr );
     }
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::vmbreakpoint ) {
     PROLOGUE_0( "vmbreakpoint" )
     os::breakpoint();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -234,7 +234,7 @@ PRIM_DECL_0( SystemPrimitives::halt ) {
     return markSymbol( vmSymbols::not_yet_implemented() );
 
     //  __asm hlt
-    //  return trueObj;
+    //  return trueObject;
 }
 
 
@@ -322,18 +322,18 @@ PRIM_DECL_2( SystemPrimitives::globalAssociationSetValue, Oop receiver, Oop valu
 PRIM_DECL_1( SystemPrimitives::globalAssociationIsConstant, Oop receiver ) {
     PROLOGUE_1( "globalAssociationIsConstant", receiver );
     st_assert( receiver->is_association(), "receiver must be association" );
-    return AssociationOop( receiver )->is_constant() ? trueObj : falseObj;
+    return AssociationOop( receiver )->is_constant() ? trueObject : falseObject;
 }
 
 
 PRIM_DECL_2( SystemPrimitives::globalAssociationSetConstant, Oop receiver, Oop value ) {
     PROLOGUE_2( "globalAssociationSetConstant", receiver, value );
     st_assert( receiver->is_association(), "receiver must be association" );
-    Oop old_value = AssociationOop( receiver )->is_constant() ? trueObj : falseObj;
+    Oop old_value = AssociationOop( receiver )->is_constant() ? trueObject : falseObject;
 
-    if ( value == trueObj )
+    if ( value == trueObject )
         AssociationOop( receiver )->set_is_constant( true );
-    else if ( value == falseObj )
+    else if ( value == falseObject )
         AssociationOop( receiver )->set_is_constant( false );
     else
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -347,10 +347,10 @@ PRIM_DECL_1( SystemPrimitives::smalltalk_at, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not Universe::systemDictionaryObj()->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not Universe::systemDictionaryObject()->is_within_bounds( SMIOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
-    return Universe::systemDictionaryObj()->obj_at( SMIOop( index )->value() );
+    return Universe::systemDictionaryObject()->obj_at( SMIOop( index )->value() );
 }
 
 
@@ -370,12 +370,12 @@ PRIM_DECL_1( SystemPrimitives::smalltalk_remove_at, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not Universe::systemDictionaryObj()->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not Universe::systemDictionaryObject()->is_within_bounds( SMIOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     BlockScavenge bs;
 
-    AssociationOop assoc = AssociationOop( Universe::systemDictionaryObj()->obj_at( SMIOop( index )->value() ) );
+    AssociationOop assoc = AssociationOop( Universe::systemDictionaryObject()->obj_at( SMIOop( index )->value() ) );
     Universe::remove_global_at( SMIOop( index )->value() );
     return assoc;
 }
@@ -383,13 +383,13 @@ PRIM_DECL_1( SystemPrimitives::smalltalk_remove_at, Oop index ) {
 
 PRIM_DECL_0( SystemPrimitives::smalltalk_size ) {
     PROLOGUE_0( "smalltalk_size" );
-    return smiOopFromValue( Universe::systemDictionaryObj()->length() );
+    return smiOopFromValue( Universe::systemDictionaryObject()->length() );
 }
 
 
 PRIM_DECL_0( SystemPrimitives::smalltalk_array ) {
     PROLOGUE_0( "smalltalk_array" );
-    return Universe::systemDictionaryObj();
+    return Universe::systemDictionaryObject();
 }
 
 
@@ -403,21 +403,21 @@ PRIM_DECL_0( SystemPrimitives::quit ) {
 PRIM_DECL_0( SystemPrimitives::printPrimitiveTable ) {
     PROLOGUE_0( "printPrimitiveTable" );
     Primitives::print_table();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::print_memory ) {
     PROLOGUE_0( "print_memory" );
     Universe::print();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::print_zone ) {
     PROLOGUE_0( "print_zone" );
     Universe::code->print();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -474,7 +474,7 @@ PRIM_DECL_1( SystemPrimitives::characterFor, Oop value ) {
 PRIM_DECL_0( SystemPrimitives::traceStack ) {
     PROLOGUE_0( "traceStack" );
     DeltaProcess::active()->trace_stack();
-    return trueObj;
+    return trueObject;
 }
 
 // Flat Profiler Primitives
@@ -482,14 +482,14 @@ PRIM_DECL_0( SystemPrimitives::traceStack ) {
 PRIM_DECL_0( SystemPrimitives::flat_profiler_reset ) {
     PROLOGUE_0( "flat_profiler_reset" );
     FlatProfiler::reset();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::flat_profiler_process ) {
     PROLOGUE_0( "flat_profiler_process" );
     DeltaProcess *proc = FlatProfiler::process();
-    return proc == nullptr ? nilObj : proc->processObj();
+    return proc == nullptr ? nilObject : proc->processObject();
 }
 
 
@@ -508,14 +508,14 @@ PRIM_DECL_1( SystemPrimitives::flat_profiler_engage, Oop process ) {
 PRIM_DECL_0( SystemPrimitives::flat_profiler_disengage ) {
     PROLOGUE_0( "flat_profiler_disengage" );
     DeltaProcess *proc = FlatProfiler::disengage();
-    return proc == nullptr ? nilObj : proc->processObj();
+    return proc == nullptr ? nilObject : proc->processObject();
 }
 
 
 PRIM_DECL_0( SystemPrimitives::flat_profiler_print ) {
     PROLOGUE_0( "flat_profiler_print" );
     FlatProfiler::print( 0 );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -536,7 +536,7 @@ PRIM_DECL_1( SystemPrimitives::notificationQueuePut, Oop value ) {
 
 PRIM_DECL_1( SystemPrimitives::hadNearDeathExperience, Oop value ) {
     PROLOGUE_1( "hadNearDeathExperience", value );
-    return ( value->is_mem() and MemOop( value )->mark()->is_near_death() ) ? trueObj : falseObj;
+    return ( value->is_mem() and MemOop( value )->mark()->is_near_death() ) ? trueObject : falseObject;
 }
 
 
@@ -626,7 +626,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     // Potential memory leak, but this is temporary
     InliningDatabase::set_directory( str );
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -686,14 +686,14 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
             _console->print_cr( "compiling {%s} failed", str );
         }
     }
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
     PROLOGUE_0( "inlining_database_compile_next" );
     if ( not UseInliningDatabase ) {
-        return falseObj;
+        return falseObject;
     }
 
     bool_t end_of_table;
@@ -707,7 +707,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
             _console->print_cr( " in background = 0x%lx", op.result() );
         }
     }
-    return end_of_table ? falseObj : trueObj;
+    return end_of_table ? falseObject : trueObject;
 }
 
 
@@ -1040,14 +1040,14 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
 PRIM_DECL_0( SystemPrimitives::flush_code_cache ) {
     PROLOGUE_0( "flush_code_cache" );
     Universe::code->flush();
-    return trueObj;
+    return trueObject;
 }
 
 
 PRIM_DECL_0( SystemPrimitives::flush_dead_code ) {
     PROLOGUE_0( "flush_dead_code" );
     Universe::code->flushZombies();
-    return trueObj;
+    return trueObject;
 }
 
 
@@ -1140,5 +1140,5 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
         free( (void *) intAddress );
     }
 
-    return trueObj;
+    return trueObject;
 }

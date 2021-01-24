@@ -227,31 +227,31 @@ void Bootstrap::check_version() {
 
 void Bootstrap::parse_objects() {
 
-    Universe::_systemDictionaryObj = ObjectArrayOop( readNextObject() );
-    nilObj                         = MemOop( readNextObject() );
-    trueObj                        = MemOop( readNextObject() );
-    falseObj                       = MemOop( readNextObject() );
-    smiKlassObj                    = KlassOop( readNextObject() );
-    Universe::_memOopKlassObj      = KlassOop( readNextObject() );
-    Universe::_objArrayKlassObj    = KlassOop( readNextObject() );
-    Universe::_byteArrayKlassObj   = KlassOop( readNextObject() );
-    symbolKlassObj                 = KlassOop( readNextObject() );
-    doubleKlassObj                 = KlassOop( readNextObject() );
-    Universe::_methodKlassObj      = KlassOop( readNextObject() );
-    Universe::_associationKlassObj = KlassOop( readNextObject() );
-    zeroArgumentBlockKlassObj      = KlassOop( readNextObject() );
-    oneArgumentBlockKlassObj       = KlassOop( readNextObject() );
-    twoArgumentBlockKlassObj       = KlassOop( readNextObject() );
-    threeArgumentBlockKlassObj     = KlassOop( readNextObject() );
-    fourArgumentBlockKlassObj      = KlassOop( readNextObject() );
-    fiveArgumentBlockKlassObj      = KlassOop( readNextObject() );
-    sixArgumentBlockKlassObj       = KlassOop( readNextObject() );
-    sevenArgumentBlockKlassObj     = KlassOop( readNextObject() );
-    eightArgumentBlockKlassObj     = KlassOop( readNextObject() );
-    nineArgumentBlockKlassObj      = KlassOop( readNextObject() );
-    contextKlassObj                = KlassOop( readNextObject() );
+    Universe::_systemDictionaryObject = ObjectArrayOop( readNextObject() );
+    nilObject                         = MemOop( readNextObject() );
+    trueObject                        = MemOop( readNextObject() );
+    falseObject                       = MemOop( readNextObject() );
+    smiKlassObject                    = KlassOop( readNextObject() );
+    Universe::_memOopKlassObject      = KlassOop( readNextObject() );
+    Universe::_objArrayKlassObject    = KlassOop( readNextObject() );
+    Universe::_byteArrayKlassObject   = KlassOop( readNextObject() );
+    symbolKlassObject                 = KlassOop( readNextObject() );
+    doubleKlassObject                 = KlassOop( readNextObject() );
+    Universe::_methodKlassObject      = KlassOop( readNextObject() );
+    Universe::_associationKlassObject = KlassOop( readNextObject() );
+    zeroArgumentBlockKlassObject      = KlassOop( readNextObject() );
+    oneArgumentBlockKlassObject       = KlassOop( readNextObject() );
+    twoArgumentBlockKlassObject       = KlassOop( readNextObject() );
+    threeArgumentBlockKlassObject     = KlassOop( readNextObject() );
+    fourArgumentBlockKlassObject      = KlassOop( readNextObject() );
+    fiveArgumentBlockKlassObject      = KlassOop( readNextObject() );
+    sixArgumentBlockKlassObject       = KlassOop( readNextObject() );
+    sevenArgumentBlockKlassObject     = KlassOop( readNextObject() );
+    eightArgumentBlockKlassObject     = KlassOop( readNextObject() );
+    nineArgumentBlockKlassObject      = KlassOop( readNextObject() );
+    contextKlassObject                = KlassOop( readNextObject() );
     Universe::_asciiCharacters     = ObjectArrayOop( readNextObject() );
-    Universe::_vframeKlassObj      = KlassOop( readNextObject() );
+    Universe::_vframeKlassObject      = KlassOop( readNextObject() );
 
     KlassOop       platform_klass       = KlassOop( Universe::find_global( os::platform_class_name() ) );
     AssociationOop platform_association = Universe::find_global_association( "Platform" );

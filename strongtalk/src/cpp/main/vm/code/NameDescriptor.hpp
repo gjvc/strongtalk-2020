@@ -15,7 +15,7 @@
 // (e.g. an argument, local, or expression stack entry).
 // NameDescriptor objects are usually stored in the Zone as part of the debugging information.
 
-class NameDescriptor : public PrintableResourceObject { // ResourceObj because some are created on-the-fly
+class NameDescriptor : public PrintableResourceObject { // ResourceObject because some are created on-the-fly
 
 public:
     virtual bool_t isLocation() const {
@@ -73,7 +73,7 @@ public:
     }
 
 
-    int offset;
+    std::size_t offset;
 };
 
 // something stored at a location

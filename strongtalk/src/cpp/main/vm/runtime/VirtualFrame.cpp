@@ -98,10 +98,10 @@ void VirtualFrame::print_value() const {
 // ------------- DeltaVirtualFrame --------------
 
 GrowableArray<Oop> *DeltaVirtualFrame::arguments() const {
-    int nargs = method()->number_of_arguments();
+    int                nargs   = method()->number_of_arguments();
     GrowableArray<Oop> *result = new GrowableArray<Oop>( nargs );
     VirtualFrame       *s      = sender();
-    for ( std::size_t index = 0; index < nargs; index++ ) {
+    for ( std::size_t  index   = 0; index < nargs; index++ ) {
         result->push( argument_at( index ) );
     }
     return result;
@@ -206,7 +206,7 @@ Oop *InterpretedVirtualFrame::expression_addr( int offset ) const {
 
 GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
 
-    int last_temp_number = method()->number_of_stack_temporaries() - 1;
+    int         last_temp_number = method()->number_of_stack_temporaries() - 1;
     std::size_t size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
     st_assert( size >= 0, "expr stack size must be non-negative" );
     GrowableArray<Oop> *result = new GrowableArray<Oop>( size );
@@ -248,10 +248,10 @@ void InterpretedVirtualFrame::set_hp( std::uint8_t *p ) {
 Oop InterpretedVirtualFrame::receiver() const {
     // In case of a block invocation the receiver might be a contextOop
     // due to an interpreter optimization (ask Robert for details).
-    // To provide clean semantics in this case nilObj is returned.
+    // To provide clean semantics in this case nilObject is returned.
     Oop r = _frame.receiver();
     st_assert( not r->is_context() or method()->is_blockMethod(), "check: context implies block method" );
-    return r->is_context() ? nilObj : r;
+    return r->is_context() ? nilObject : r;
 }
 
 
@@ -381,7 +381,7 @@ Oop CompiledVirtualFrame::temp_at( int offset ) const {
 class ContextTempFindClosure : public NameDescriptorClosure {
 public:
     NameDescriptor *result;
-    std::size_t i;
+    std::size_t    i;
 
 
     ContextTempFindClosure( int index ) {
@@ -443,7 +443,7 @@ ContextOop CompiledVirtualFrame::compiled_context() const {
     // contextOop.
     // A better solution would be adding has_compiled_context to scopeDesc.
     Oop con = resolve_name( scope()->temporary( 0 ), this );
-    if ( con == nilObj )
+    if ( con == nilObject )
         return nullptr;
 
     st_assert( con->is_context(), "context type check" );
@@ -452,9 +452,10 @@ ContextOop CompiledVirtualFrame::compiled_context() const {
 
 
 GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_stack() const {
-    GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
-    GrowableArray<DeferredExpression *> *result = new GrowableArray<DeferredExpression *>( mapping->length() );
-    for ( int                           index   = 0; index < mapping->length(); index++ ) {
+    GrowableArray<std::size_t>          *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<DeferredExpression *> *result  = new GrowableArray<DeferredExpression *>( mapping->length() );
+
+    for ( int index = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
         result->push( new DeferredExpression( this, nd ) );
     }
@@ -463,12 +464,12 @@ GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_s
 
 
 GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
-    GrowableArray<int> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
-    GrowableArray<Oop> *result  = new GrowableArray<Oop>( mapping->length() );
+    GrowableArray<std::size_t> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<Oop>         *result  = new GrowableArray<Oop>( mapping->length() );
 
     for ( std::size_t i = 0; i < mapping->length(); i++ ) {
-        NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( i ) );
-        Oop value = resolve_name( nd, this );
+        NameDescriptor *nd   = _scopeDescriptor->exprStackElem( mapping->at( i ) );
+        Oop            value = resolve_name( nd, this );
         result->push( value );
     }
 
@@ -582,7 +583,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
         if ( UseNewBackend ) {
             // This is a hack - we should introduce a special
             // nameDesc instead - gri 8-5-96
-            return nilObj;
+            return nilObject;
         }
         warning( "Compiler Bug: Illegal name desc found in NativeMethod 0x%lx @ %d", vf->fr().code(), vf->scope()->offset() );
         return oopFactory::new_symbol( "illegal nameDesc" );
@@ -594,7 +595,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
 
 
 Oop CompiledVirtualFrame::filler_oop() {
-    return nilObj;
+    return nilObject;
     // This is useful for debugging
     // return oopFactory::new_symbol("CompiledVirtualFrame::filler_oop");
 }
@@ -602,7 +603,7 @@ Oop CompiledVirtualFrame::filler_oop() {
 
 int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor *d ) const {
     ScopeDescriptor *s = _scopeDescriptor;
-    int b = byteCodeIndex();
+    int             b  = byteCodeIndex();
     while ( not s->is_equal( d ) ) {
         b = s->senderByteCodeIndex();
         st_assert( s->sender(), "make sure we have a sender" );
@@ -851,8 +852,8 @@ Oop CompiledBlockVirtualFrame::receiver() const {
 
 
 DeltaVirtualFrame *CompiledBlockVirtualFrame::parent() const {
-    ScopeDescriptor *ps = parent_scope();
-    int parent_byteCodeIndex = byteCodeIndex_for( ps );
+    ScopeDescriptor *ps                  = parent_scope();
+    int             parent_byteCodeIndex = byteCodeIndex_for( ps );
     return CompiledVirtualFrame::new_vframe( &_frame, ps, parent_byteCodeIndex );
 }
 
@@ -1048,7 +1049,7 @@ GrowableArray<Oop> *DeoptimizedVirtualFrame::expression_stack() const {
     int exp_size = locals - temps;
 
     GrowableArray<Oop> *array = new GrowableArray<Oop>( exp_size );
-    for ( std::size_t index = 0; index < exp_size; index++ ) {
+    for ( std::size_t  index  = 0; index < exp_size; index++ ) {
         array->push( expression_at( index ) );
     }
 

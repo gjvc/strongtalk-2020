@@ -21,8 +21,8 @@ void Klass::initialize() {
     set_untagged_contents( false );
     set_classVars( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
     set_methods( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
-    set_superKlass( KlassOop( nilObj ) );
-    set_mixin( MixinOop( nilObj ) );
+    set_superKlass( KlassOop( nilObject ) );
+    set_mixin( MixinOop( nilObject ) );
 }
 
 
@@ -163,7 +163,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     int            length     = mixin->number_of_classVars();
 
     for ( std::size_t index = 1; index <= length; index++ ) {
-        AssociationOop assoc = oopFactory::new_association( mixin->classVar_at( index ), nilObj, false );
+        AssociationOop assoc = oopFactory::new_association( mixin->classVar_at( index ), nilObject, false );
         class_vars->obj_at_put( index, assoc );
     }
 
@@ -208,7 +208,7 @@ SymbolOop Klass::inst_var_name_at( int offset ) const {
             if ( offset == current_offset )
                 return m->instVar_at( i );
         }
-    } while ( current_klass = ( current_klass->superKlass() == nilObj ? nullptr : current_klass->superKlass()->klass_part() ) );
+    } while ( current_klass = ( current_klass->superKlass() == nilObject ? nullptr : current_klass->superKlass()->klass_part() ) );
 
     return nullptr;
 }
@@ -324,7 +324,7 @@ AssociationOop Klass::lookup_class_var( SymbolOop name ) {
     AssociationOop result = local_lookup_class_var( name );
     if ( result )
         return result;
-    result = ( superKlass() == nilObj ) ? nullptr : superKlass()->klass_part()->lookup_class_var( name );
+    result = ( superKlass() == nilObject ) ? nullptr : superKlass()->klass_part()->lookup_class_var( name );
     return result;
 }
 
@@ -384,7 +384,7 @@ MethodOop Klass::lookup( SymbolOop selector ) {
         MethodOop result = current->local_lookup( selector );
         if ( result )
             return result;
-        if ( current->superKlass() == nilObj ) {
+        if ( current->superKlass() == nilObject ) {
             ResourceMark         rm;
             MissingMethodBuilder builder( selector );
             builder.build();
@@ -412,7 +412,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
     }
 
     // Try the mixin
-    if ( Oop( mixin() ) not_eq nilObj ) {
+    if ( Oop( mixin() ) not_eq nilObject ) {
         st_assert( mixin()->is_mixin(), "must be mixin" );
         array = mixin()->methods();
 
@@ -430,7 +430,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
 KlassOop Klass::lookup_method_holder_for( MethodOop method ) {
     if ( is_method_holder_for( method ) )
         return as_klassOop();
-    return ( superKlass() == nilObj ) ? nullptr : superKlass()->klass_part()->lookup_method_holder_for( method );
+    return ( superKlass() == nilObject ) ? nullptr : superKlass()->klass_part()->lookup_method_holder_for( method );
 }
 
 
@@ -548,11 +548,11 @@ void Klass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 void Klass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
-    if ( obj == trueObj ) {
+    if ( obj == trueObject ) {
         stream->print( "true" );
-    } else if ( obj == falseObj ) {
+    } else if ( obj == falseObject ) {
         stream->print( "false" );
-    } else if ( obj == nilObj ) {
+    } else if ( obj == nilObject ) {
         stream->print( "nil" );
     } else {
         oop_print_value_on( obj, stream );

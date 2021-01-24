@@ -24,10 +24,10 @@ extern Compiler *theCompiler;
 //   If there is only on physical address they should be stored a today.
 //
 
-constexpr int INITIAL_OOPS_SIZE                = 100;
-constexpr int INITIAL_VALUES_SIZE              = 100;
-constexpr int INITIAL_DEPENDENTS_SIZE          = 20;
-constexpr int INITIAL_CONTEXT_SCOPE_ARRAY_SIZE = 10;
+constexpr std::size_t INITIAL_OOPS_SIZE                = 100;
+constexpr std::size_t INITIAL_VALUES_SIZE              = 100;
+constexpr std::size_t INITIAL_DEPENDENTS_SIZE          = 20;
+constexpr std::size_t INITIAL_CONTEXT_SCOPE_ARRAY_SIZE = 10;
 
 const std::uint8_t nameDescHeaderByte::_codeWidth        = 2;
 const std::uint8_t nameDescHeaderByte::_indexWidth       = 5;
@@ -58,7 +58,7 @@ NameNode *newValueName( Oop value ) {
 }
 
 
-bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, int index ) {
+bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, std::size_t index ) {
     // Since id is most likely to be 0, the info part of the header byte indicates if is is non zero.
     // Experiments show id is zero in at least 90% of the generated nameDescs.
     // returns true if index could be inlined in headerByte.
@@ -72,7 +72,7 @@ bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code,
 }
 
 
-int ScopeDescriptorRecorder::getValueIndex( int v ) {
+std::size_t ScopeDescriptorRecorder::getValueIndex( std::size_t v ) {
     // if v fits into 7 bits inline the value instead of creating index
     if ( 0 <= v and v <= MAX_INLINE_VALUE )
         return v;
@@ -80,8 +80,8 @@ int ScopeDescriptorRecorder::getValueIndex( int v ) {
 }
 
 
-int ScopeDescriptorRecorder::getOopIndex( Oop o ) {
-    return o == 0 ? 0 : _oops->insertIfAbsent( (int) o ) + 1;
+std::size_t ScopeDescriptorRecorder::getOopIndex( Oop o ) {
+    return o == 0 ? 0 : _oops->insertIfAbsent( (std::size_t) o ) + 1;
 }
 
 
@@ -125,11 +125,11 @@ void ScopeDescriptorRecorder::generate() {
 
 
 void ScopeDescriptorRecorder::generateDependencies() {
-    int end_marker = 0;
+    std::size_t end_marker = 0;
 
     for ( std::size_t index = 0; index < _dependents->length(); index++ ) {
 
-        std::size_t i = _oops->insertIfAbsent( (int) _dependents->at( index ) );
+        std::size_t i = _oops->insertIfAbsent( (std::size_t) _dependents->at( index ) );
         if ( i > end_marker )
             end_marker = i;
     }
@@ -163,24 +163,24 @@ NonInlinedBlockScopeNode *ScopeDescriptorRecorder::addNonInlinedBlockScope( NonI
 }
 
 
-int ScopeDescriptorRecorder::offset( ScopeInfo scope ) {
+std::size_t ScopeDescriptorRecorder::offset( ScopeInfo scope ) {
     st_assert( scope->_offset not_eq INVALID_OFFSET, "uninitialized offset" );
     return scope->_offset;
 }
 
 
-int ScopeDescriptorRecorder::offset_for_noninlined_scope_node( NonInlinedBlockScopeNode *scope ) {
+std::size_t ScopeDescriptorRecorder::offset_for_noninlined_scope_node( NonInlinedBlockScopeNode *scope ) {
     st_assert( scope->_offset not_eq INVALID_OFFSET, "uninitialized offset" );
     return scope->_offset;
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, int scopeID, ScopeInfo senderScope, int senderByteCodeIndex, bool_t visible ) {
+ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, std::size_t scopeID, ScopeInfo senderScope, std::size_t senderByteCodeIndex, bool_t visible ) {
     return addScope( new MethodScopeNode( key, method, receiver_location, allocates_compiled_context, lite, scopeID, senderByteCodeIndex, visible ), senderScope );
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addBlockScope( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, int scopeID, ScopeInfo senderScope, int senderByteCodeIndex, bool_t visible ) {
+ScopeInfo ScopeDescriptorRecorder::addBlockScope( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, std::size_t scopeID, ScopeInfo senderScope, std::size_t senderByteCodeIndex, bool_t visible ) {
     return addScope( new BlockScopeNode( method, parent, allocates_compiled_context, lite, scopeID, senderByteCodeIndex, visible ), senderScope );
 }
 
@@ -196,25 +196,25 @@ NonInlinedBlockScopeNode *ScopeDescriptorRecorder::addNonInlinedBlockScope( Meth
 }
 
 
-void ScopeDescriptorRecorder::addArgument( ScopeInfo scope, int index, LogicalAddress *location ) {
+void ScopeDescriptorRecorder::addArgument( ScopeInfo scope, std::size_t index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add slot to lite scopeDesc" );
     scope->_arg_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addTemporary( ScopeInfo scope, int index, LogicalAddress *location ) {
+void ScopeDescriptorRecorder::addTemporary( ScopeInfo scope, std::size_t index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add slot to lite scopeDesc" );
     scope->_temp_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addExprStack( ScopeInfo scope, int index, LogicalAddress *location ) {
+void ScopeDescriptorRecorder::addExprStack( ScopeInfo scope, std::size_t index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add expression to lite scopeDesc" );
     scope->_expr_stack_list->at_put_grow( index, location );
 }
 
 
-void ScopeDescriptorRecorder::addContextTemporary( ScopeInfo scope, int index, LogicalAddress *location ) {
+void ScopeDescriptorRecorder::addContextTemporary( ScopeInfo scope, std::size_t index, LogicalAddress *location ) {
     st_assert( not scope->_lite, "cannot add expression to lite scopeDesc" );
     scope->_context_temp_list->at_put_grow( index, location );
 }
@@ -225,7 +225,7 @@ LogicalAddress *ScopeDescriptorRecorder::createLogicalAddress( NameNode *initial
 }
 
 
-void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress *location, NameNode *new_value, int pc_offset ) {
+void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress *location, NameNode *new_value, std::size_t pc_offset ) {
     location->append( new_value, pc_offset );
 }
 
@@ -243,8 +243,8 @@ void ScopeDescriptorRecorder::genScopeDescHeader( std::uint8_t code, bool_t lite
 }
 
 
-int ScopeDescriptorRecorder::updateScopeDescHeader( int offset, int next ) {
-    int nextIndex = getValueIndex( next - offset );
+std::size_t ScopeDescriptorRecorder::updateScopeDescHeader( std::size_t offset, std::size_t next ) {
+    std::size_t nextIndex = getValueIndex( next - offset );
     if ( nextIndex < EXTENDED_INDEX ) {
         _codes->putByteAt( nextIndex, offset + 1 );
         return true;
@@ -254,14 +254,14 @@ int ScopeDescriptorRecorder::updateScopeDescHeader( int offset, int next ) {
 }
 
 
-void ScopeDescriptorRecorder::updateExtScopeDescHeader( int offset, int next ) {
-    int nextIndex = getValueIndex( next - offset );
+void ScopeDescriptorRecorder::updateExtScopeDescHeader( std::size_t offset, std::size_t next ) {
+    std::size_t nextIndex = getValueIndex( next - offset );
     _codes->putByteAt( EXTENDED_INDEX, offset + 1 );
     _codes->putHalfAt( nextIndex, offset + 2 );
 }
 
 
-void ScopeDescriptorRecorder::genIndex( int index ) {
+void ScopeDescriptorRecorder::genIndex( std::size_t index ) {
     if ( index < EXTENDED_INDEX ) {
         // generate 1 byte indexing the Oop.
         _codes->appendByte( index );
@@ -272,7 +272,7 @@ void ScopeDescriptorRecorder::genIndex( int index ) {
 }
 
 
-void ScopeDescriptorRecorder::genValue( int v ) {
+void ScopeDescriptorRecorder::genValue( std::size_t v ) {
     genIndex( getValueIndex( v ) );
 }
 
@@ -285,7 +285,7 @@ void ScopeDescriptorRecorder::genOop( Oop o ) {
 Location ScopeDescriptorRecorder::convert_location( Location loc ) {
     if ( not loc.isContextLocation() )
         return loc;
-    int scope_id = loc.scopeID();
+    std::size_t scope_id = loc.scopeID();
 
     // Find the getScopeInfo with the right scope_id
     ScopeInfo scope = theCompiler->scopes->at( scope_id )->getScopeInfo();
@@ -303,12 +303,12 @@ std::size_t ScopeDescriptorRecorder::size() {
     return sizeof( NativeMethodScopes )
            + _codes->size()
            + ( _oops->length() * sizeof( Oop ) )
-           + ( _values->length() * sizeof( int ) )
+           + ( _values->length() * sizeof( std::size_t ) )
            + ( _programCounterDescriptorInfo->length() * sizeof( ProgramCounterDescriptor ) );
 }
 
 
-ScopeDescriptorRecorder::ScopeDescriptorRecorder( int byte_size, int pcDesc_size ) {
+ScopeDescriptorRecorder::ScopeDescriptorRecorder( std::size_t byte_size, std::size_t pcDesc_size ) {
     // size is the initial size of the byte array.
     _root                         = nullptr;
     _oops                         = new Array( INITIAL_OOPS_SIZE );
@@ -331,8 +331,8 @@ void ScopeDescriptorRecorder::copyTo( NativeMethod *nativeMethod ) {
     NativeMethodScopes *d = (NativeMethodScopes *) nativeMethod->scopes();
 
     // Copy the body part of the NativeMethodScopes
-    int *start = (int *) ( d + 1 );
-    int *p     = start;
+    std::size_t *start = (std::size_t *) ( d + 1 );
+    std::size_t *p     = start;
 
     d->set_nativeMethodOffset( (const char *) d - (const char *) nativeMethod );
 
@@ -355,7 +355,7 @@ void ScopeDescriptorRecorder::copyTo( NativeMethod *nativeMethod ) {
 }
 
 
-void ScopeDescriptorRecorder::addProgramCounterDescriptor( int pcOffset, ScopeInfo scope, int byteCodeIndex ) {
+void ScopeDescriptorRecorder::addProgramCounterDescriptor( std::size_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex ) {
     st_assert( scope, "scope must be specified in addProgramCounterDescriptor" );
     st_assert( _root, "root must be present" );
     _programCounterDescriptorInfo->add( pcOffset, scope, byteCodeIndex );

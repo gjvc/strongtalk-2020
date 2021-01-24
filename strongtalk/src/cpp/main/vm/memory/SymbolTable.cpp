@@ -63,7 +63,7 @@ SymbolTable::SymbolTable() {
 
 
 SymbolOop SymbolTable::basic_add( const char *name, int len, int hashValue ) {
-    SymbolKlass *sk = (SymbolKlass *) Universe::symbolKlassObj()->klass_part();
+    SymbolKlass *sk = (SymbolKlass *) Universe::symbolKlassObject()->klass_part();
     SymbolOop str = sk->allocateSymbol( name, len );
     basic_add( str, hashValue );
     return str;

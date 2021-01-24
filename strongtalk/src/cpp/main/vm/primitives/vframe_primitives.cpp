@@ -66,7 +66,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::is_smalltalk_activation, Oop receiver ) 
     if ( vf == nullptr )
         return markSymbol( vmSymbols::activation_is_invalid() );
 
-    return vf->is_delta_frame() ? trueObj : falseObj;
+    return vf->is_delta_frame() ? trueObject : falseObject;
 }
 
 

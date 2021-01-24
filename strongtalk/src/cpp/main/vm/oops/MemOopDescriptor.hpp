@@ -7,20 +7,19 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
+#include "vm/memory/Closure.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
+#include "vm/runtime/Bootstrap.hpp"
 
 
-// memOops are all OOPs that actually take up Space in the heap (not immediate like SMIs)
-// memOops are tagged (Smalltalk OOPs) but MemOopDescriptor* s are untagged C pointers.
+//
+// memOops are all OOPs that actually take up space in the heap (not immediate like SMIs)
+// a memOops ia a tagged (Smalltalk OOPs) pointer
+// a MemOopDescriptor* is an untagged C pointer
 // (see OopDescriptor.hpp)
-
-class ObjectLayoutClosure;
-
-class OopClosure;
-
-class Bootstrap;
+//
 
 
 MemOop as_memOop( void *p );
@@ -30,8 +29,8 @@ class MemOopDescriptor : public OopDescriptor {
 
 protected:
     // instance variable
-    // markOop _mark;			// see comment in Oop.hpp
-    KlassOop _klass_field;        // the receiver's class
+    // markOop _mark;			    // see comment in OopDescriptor.hpp
+    KlassOop _klass_field;          // the receiver's class
 
 public:
     // returns the header size of a MemOop

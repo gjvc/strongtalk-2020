@@ -129,7 +129,7 @@ public:
 
     // Tells whether here is a super class
     bool_t has_superKlass() const {
-        return Oop( superKlass() ) not_eq nilObj;
+        return Oop( superKlass() ) not_eq nilObject;
     }
 
 

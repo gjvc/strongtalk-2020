@@ -130,9 +130,9 @@ void Floats::generate_tst( MacroAssembler *masm, Assembler::Condition cc ) {
     masm->fnstsw_ax();
     masm->fpop();        // explicitly pop argument
     masm->testl( eax, mask );
-    masm->movl( eax, Address( (int) &trueObj, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (int) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( cond, L );
-    masm->movl( eax, Address( (int) &falseObj, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (int) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->bind( L );
 }
 
@@ -146,9 +146,9 @@ void Floats::generate_cmp( MacroAssembler *masm, Assembler::Condition cc ) {
     masm->fwait();
     masm->fnstsw_ax();
     masm->testl( eax, mask );
-    masm->movl( eax, Address( (int) &trueObj, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (int) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( cond, L );
-    masm->movl( eax, Address( (int) &falseObj, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (int) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->bind( L );
 }
 

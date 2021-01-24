@@ -83,11 +83,11 @@ PRIM_DECL_3( byteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
+    if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     MemOopKlass *theKlass = (MemOopKlass *) KlassOop( receiver )->klass_part();
-    Oop result = theKlass->allocateObjectSize( SMIOop( argument )->value(), false, tenured == trueObj );
+    Oop result = theKlass->allocateObjectSize( SMIOop( argument )->value(), false, tenured == trueObject );
     if ( result == nullptr )
         return markSymbol( vmSymbols::failed_allocation() );
 
@@ -577,8 +577,8 @@ Oop unsafeContents( Oop unsafeAlien ) {
 
 #define alienAddress( receiver )  ((void**)alienArray(receiver))[1]
 
-#define alienResult( handle )     (handle.as_oop() == nilObj ? nullptr : (void*)handle.asPointer())
-#define alienResult2( handle )     (handle->as_oop() == nilObj ? nullptr : (void*)handle->asPointer())
+#define alienResult( handle )     (handle.as_oop() == nilObject ? nullptr : (void*)handle.asPointer())
+#define alienResult2( handle )     (handle->as_oop() == nilObject ? nullptr : (void*)handle->asPointer())
 
 #define checkAlienCalloutReceiver( receiver ) \
   checkAlienReceiver(receiver);\
@@ -586,11 +586,11 @@ Oop unsafeContents( Oop unsafeAlien ) {
     return markSymbol(vmSymbols::illegal_state())
 
 #define checkAlienCalloutResult( argument ) \
-  if (not (argument->is_byteArray() or argument == nilObj))\
+  if (not (argument->is_byteArray() or argument == nilObject))\
     return markSymbol(vmSymbols::argument_has_wrong_type())
 
 #define checkAlienCalloutResultArgs( argument ) \
-  if (not (argument->is_byteArray() or argument == nilObj))\
+  if (not (argument->is_byteArray() or argument == nilObject))\
     return markSymbol(vmSymbols::first_argument_has_wrong_type())
 
 #define checkAlienCalloutArg( argument, symbol )\
@@ -832,7 +832,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienDoubleAt, Oop receiver, Oop argument ) {
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, double );
 
-    DoubleOop result = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
+    DoubleOop result = DoubleOop( Universe::doubleKlassObject()->klass_part()->allocateObject() );
     result->set_value( alienAt( receiver, argument, double ) );
 
     return result;
@@ -857,7 +857,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienFloatAt, Oop receiver, Oop argument ) {
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, float );
 
-    DoubleOop result = DoubleOop( Universe::doubleKlassObj()->klass_part()->allocateObject() );
+    DoubleOop result = DoubleOop( Universe::doubleKlassObject()->klass_part()->allocateObject() );
     result->set_value( alienAt( receiver, argument, float ) );
 
     return result;

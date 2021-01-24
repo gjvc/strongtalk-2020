@@ -20,12 +20,12 @@
 // _freeList->at(i) >= 0: unused, entry is index to next unused entry or sentinel
 // _freeList->at(i) <  0: used, entry is negative reference count
 
-Locations::Locations( int nofArgs, int nofRegs, int nofInitialStackTmps ) {
+Locations::Locations( std::size_t nofArgs, std::size_t nofRegs, std::size_t nofInitialStackTmps ) {
     st_assert( 0 <= nofArgs, "illegal number of arguments" );
     st_assert( 0 <= nofRegs and nofRegs <= maxNofUsableRegisters, "too many registers required" );
     _nofArguments = nofArgs;
     _nofRegisters = nofRegs;
-    _freeList     = new GrowableArray<int>( nofArgs + nofRegs + nofInitialStackTmps );
+    _freeList     = new GrowableArray<std::size_t>( nofArgs + nofRegs + nofInitialStackTmps );
     std::size_t i = 0;
     // initialize argument reference counts
     while ( i < nofArgs ) {
@@ -61,7 +61,7 @@ Locations::Locations( Locations *l ) {
 }
 
 
-void Locations::extendTo( int newValue ) {
+void Locations::extendTo( std::size_t newValue ) {
     while ( this->nofStackTmps() < newValue ) {
         // grow _freeList
         _freeList->append( _firstFreeStackTmp );
@@ -71,7 +71,7 @@ void Locations::extendTo( int newValue ) {
 }
 
 
-int Locations::allocateRegister() {
+std::size_t Locations::allocateRegister() {
     std::size_t i = _firstFreeRegister;
     if ( not isRegister( i ) ) st_fatal( "out of registers" );
     _firstFreeRegister = _freeList->at( i );
@@ -81,7 +81,7 @@ int Locations::allocateRegister() {
 }
 
 
-int Locations::allocateStackTmp() {
+std::size_t Locations::allocateStackTmp() {
     std::size_t i              = _firstFreeStackTmp;
     if ( not isStackTmp( i ) ) {
         // grow _freeList
@@ -100,7 +100,7 @@ void Locations::allocate( std::size_t i ) {
     st_assert( isLocation( i ), "illegal location" );
     st_assert( nofUses( i ) == 0, "already allocated" );
     if ( isRegister( i ) ) {
-        int j = _firstFreeRegister;
+        std::size_t j = _firstFreeRegister;
         if ( j == i ) {
             // remove first entry from free list
             _firstFreeRegister = _freeList->at( i );
@@ -112,7 +112,7 @@ void Locations::allocate( std::size_t i ) {
         }
         _freeList->at_put( i, -1 ); // initialize reference count
     } else if ( isStackTmp( i ) ) {
-        int j = _firstFreeStackTmp;
+        std::size_t j = _firstFreeStackTmp;
         if ( j == i ) {
             // remove first entry from free list
             _firstFreeStackTmp = _freeList->at( i );
@@ -158,24 +158,24 @@ void Locations::release( std::size_t i ) {
 }
 
 
-int Locations::nofUses( std::size_t i ) const {
+std::size_t Locations::nofUses( std::size_t i ) const {
     st_assert( isLocation( i ), "illegal location" );
-    int n = _freeList->at( i );
+    std::size_t n = _freeList->at( i );
     return n < 0 ? -n : 0;
 }
 
 
-int Locations::nofTotalUses() const {
-    int       totalUses = 0;
+std::size_t Locations::nofTotalUses() const {
+    std::size_t       totalUses = 0;
     for ( std::size_t i         = locationsBeg(); i < locationsEnd(); i++ )
         totalUses += nofUses( i );
     return totalUses;
 }
 
 
-int Locations::nofFreeRegisters() const {
+std::size_t Locations::nofFreeRegisters() const {
     std::size_t i = _firstFreeRegister;
-    int n = 0;
+    std::size_t n = 0;
     while ( isRegister( i ) ) {
         i = _freeList->at( i );
         n++;
@@ -184,8 +184,8 @@ int Locations::nofFreeRegisters() const {
 }
 
 
-int Locations::freeRegisterMask() const {
-    int       mask = 0;
+std::size_t Locations::freeRegisterMask() const {
+    std::size_t       mask = 0;
     for ( std::size_t i    = registersBeg(); i < registersEnd(); i++ ) {
         if ( nofUses( i ) == 0 )
             mask |= 1 << locationAsRegister( i ).number();
@@ -194,8 +194,8 @@ int Locations::freeRegisterMask() const {
 }
 
 
-int Locations::usedRegisterMask() const {
-    int       mask = 0;
+std::size_t Locations::usedRegisterMask() const {
+    std::size_t       mask = 0;
     for ( std::size_t i    = registersBeg(); i < registersEnd(); i++ ) {
         if ( nofUses( i ) > 0 )
             mask |= 1 << locationAsRegister( i ).number();
@@ -204,13 +204,13 @@ int Locations::usedRegisterMask() const {
 }
 
 
-int Locations::argumentAsLocation( int argNo ) const {
+std::size_t Locations::argumentAsLocation( std::size_t argNo ) const {
     st_assert( 0 <= argNo and argNo < nofArguments(), "illegal argument no." );
     return argumentsBeg() + argNo;
 }
 
 
-int Locations::registerAsLocation( Register reg ) const {
+std::size_t Locations::registerAsLocation( Register reg ) const {
     st_assert( maxNofUsableRegisters == 6, "inconsistency - adjust this code" );
     if ( reg == eax )
         return registersBeg() + 0;
@@ -229,13 +229,13 @@ int Locations::registerAsLocation( Register reg ) const {
 }
 
 
-int Locations::temporaryAsLocation( int tempNo ) const {
+std::size_t Locations::temporaryAsLocation( std::size_t tempNo ) const {
     st_assert( 0 <= tempNo, "illegal temporary no." );
     return stackTmpsBeg() + tempNo;
 }
 
 
-Register Locations::locationAsRegister( int loc ) const {
+Register Locations::locationAsRegister( std::size_t loc ) const {
     st_assert( isRegister( loc ), "location is not a register" );
     switch ( loc - registersBeg() ) {
         case 0:
@@ -266,13 +266,13 @@ Register Locations::locationAsRegister( int loc ) const {
 // |last arg| <-- ebp + 2*oopSize (lastParameterOffset)
 // |        |
 
-int Locations::locationAsWordOffset( int loc ) const {
+std::size_t Locations::locationAsWordOffset( std::size_t loc ) const {
     st_assert( isLocation( loc ), "illegal location" );
     if ( isArgument( loc ) ) {
-        int lastParameterOffset = 2;
+        std::size_t lastParameterOffset = 2;
         return lastParameterOffset + ( nofArguments() - 1 - ( loc - argumentsBeg() ) );
     } else if ( isStackTmp( loc ) ) {
-        constexpr int firstTemporaryOffset = -1;
+        constexpr std::size_t firstTemporaryOffset = -1;
         return firstTemporaryOffset - ( loc - stackTmpsBeg() );
     }
     ShouldNotReachHere();
@@ -281,7 +281,7 @@ int Locations::locationAsWordOffset( int loc ) const {
 
 
 void Locations::print() {
-    int len = _freeList->length();
+    std::size_t len = _freeList->length();
 
     // print used locations
     _console->print_cr( "Locations:" );
@@ -307,9 +307,9 @@ void Locations::print() {
 void Locations::verify() {
     if ( not CompilerDebug )
         return;
-    int nofFreeRegisters = 0;
-    int nofFreeStackTmps = 0;
-    int nofUsedLocations = 0;
+    std::size_t nofFreeRegisters = 0;
+    std::size_t nofFreeStackTmps = 0;
+    std::size_t nofUsedLocations = 0;
     std::size_t i;
     // verify arguments reference counts
     i = 0;

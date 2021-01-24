@@ -45,7 +45,7 @@ KlassOop ContextKlass::create_subclass( MixinOop mixin, Format format ) {
 
 
 ContextOop ContextKlass::allocate_context( int num_of_temps ) {
-    ContextKlass *ck = (ContextKlass *) contextKlassObj->klass_part();
+    ContextKlass *ck = (ContextKlass *) contextKlassObject->klass_part();
     return ContextOop( ck->allocateObjectSize( num_of_temps ) );
 }
 

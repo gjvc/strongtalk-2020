@@ -78,10 +78,10 @@ PRIM_DECL_3( doubleByteArrayPrimitives::allocateSize2, Oop receiver, Oop argumen
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    if ( tenured not_eq Universe::trueObj() and tenured not_eq Universe::falseObj() )
+    if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    Oop result = KlassOop( receiver )->klass_part()->allocateObjectSize( SMIOop( argument )->value(), false, Universe::trueObj() == tenured );
+    Oop result = KlassOop( receiver )->klass_part()->allocateObjectSize( SMIOop( argument )->value(), false, Universe::trueObject() == tenured );
     if ( result == nullptr )
         return markSymbol( vmSymbols::failed_allocation() );
 

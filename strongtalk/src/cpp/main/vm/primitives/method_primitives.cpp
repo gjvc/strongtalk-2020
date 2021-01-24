@@ -130,7 +130,7 @@ PRIM_DECL_1( methodOopPrimitives::senders, Oop receiver ) {
 PRIM_DECL_2( methodOopPrimitives::prettyPrint, Oop receiver, Oop klass ) {
     PROLOGUE_2( "prettyPrint", receiver, klass );
     ASSERT_RECEIVER;
-    if ( klass == nilObj ) {
+    if ( klass == nilObject ) {
         PrettyPrinter::print( MethodOop( receiver ) );
     } else {
         if ( not klass->is_klass() )
@@ -145,7 +145,7 @@ PRIM_DECL_2( methodOopPrimitives::prettyPrintSource, Oop receiver, Oop klass ) {
     PROLOGUE_2( "prettyPrintSource", receiver, klass );
     ASSERT_RECEIVER;
     ByteArrayOop a;
-    if ( klass == nilObj ) {
+    if ( klass == nilObject ) {
         a = PrettyPrinter::print_in_byteArray( MethodOop( receiver ) );
     } else {
         if ( not klass->is_klass() )
@@ -169,7 +169,7 @@ PRIM_DECL_1( methodOopPrimitives::printCodes, Oop receiver ) {
 
 PRIM_DECL_6( methodOopPrimitives::constructMethod, Oop selector_or_method, Oop flags, Oop nofArgs, Oop debugInfo, Oop bytes, Oop oops ) {
     PROLOGUE_6( "constructMethod", selector_or_method, flags, nofArgs, debugInfo, bytes, oops );
-    if ( not selector_or_method->is_symbol() and ( selector_or_method not_eq nilObj ) )
+    if ( not selector_or_method->is_symbol() and ( selector_or_method not_eq nilObject ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not flags->is_smi() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
@@ -186,7 +186,7 @@ PRIM_DECL_6( methodOopPrimitives::constructMethod, Oop selector_or_method, Oop f
         return markSymbol( vmSymbols::method_construction_failed() );
     }
 
-    MethodKlass *k = (MethodKlass *) Universe::methodKlassObj()->klass_part();
+    MethodKlass *k = (MethodKlass *) Universe::methodKlassObject()->klass_part();
     MethodOop result = k->constructMethod( selector_or_method, SMIOop( flags )->value(), SMIOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
     if ( result )
         return result;
@@ -205,7 +205,7 @@ static Oop allocate_block_for( MethodOop method, Oop self ) {
     }
 
     // allocate the context for the block (make room for the self)
-    ContextKlass *ok = (ContextKlass *) contextKlassObj->klass_part();
+    ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
     ContextOop con = ContextOop( ok->allocateObjectSize( 1 ) );
     con->kill();
     con->obj_at_put( 0, self );
@@ -226,7 +226,7 @@ PRIM_DECL_1( methodOopPrimitives::allocate_block, Oop receiver ) {
     if ( not MethodOop( receiver )->is_blockMethod() )
         return markSymbol( vmSymbols::conversion_failed() );
 
-    return allocate_block_for( MethodOop( receiver ), nilObj );
+    return allocate_block_for( MethodOop( receiver ), nilObject );
 }
 
 

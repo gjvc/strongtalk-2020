@@ -23,7 +23,7 @@ void KlassOopDescriptor::print_superclasses() {
 
     ConsoleOutputStream stream;
 
-    for ( KlassOop k = this; k not_eq nilObj; k = k->klass_part()->superKlass() ) {
+    for ( KlassOop k = this; k not_eq nilObject; k = k->klass_part()->superKlass() ) {
         k->print_value_on( &stream );
         stream.print_cr( "" );
     }
