@@ -26,7 +26,7 @@
 TRACE_FUNC( TraceDebugPrims, "debug" )
 
 
-std::size_t debugPrimitives::number_of_calls;
+std::int32_t debugPrimitives::number_of_calls;
 
 
 template<typename T>
@@ -70,7 +70,7 @@ PRIM_DECL_1( debugPrimitives::smiAt, Oop name ) {
     PROLOGUE_1( "smiAt", name )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    int result;
+    std::int32_t result;
     if ( debugFlags::intAt( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &result ) )
         return smiOopFromValue( result );
     return markSymbol( vmSymbols::not_found() );
@@ -83,7 +83,7 @@ PRIM_DECL_2( debugPrimitives::smiAtPut, Oop name, Oop value ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not value->is_smi() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    int v = SMIOop( value )->value();
+    std::int32_t v = SMIOop( value )->value();
     if ( debugFlags::intAtPut( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &v ) )
         return smiOopFromValue( v );
     return markSymbol( vmSymbols::not_found() );
@@ -222,7 +222,7 @@ PRIM_DECL_0( debugPrimitives::timerPrintBuffer ) {
 
 PRIM_DECL_0( debugPrimitives::interpreterInvocationCounterLimit ) {
     PROLOGUE_0( "interpreterInvocationCounterLimit" );
-    int limit = Interpreter::get_invocation_counter_limit();
+    std::int32_t limit = Interpreter::get_invocation_counter_limit();
     if ( limit < smi_min )
         limit = smi_min;
     else if ( limit > smi_max )
@@ -235,7 +235,7 @@ PRIM_DECL_1( debugPrimitives::setInterpreterInvocationCounterLimit, Oop limit ) 
     PROLOGUE_1( "setInterpreterInvocationCounterLimit", limit );
     if ( not limit->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    int value = SMIOop( limit )->value();
+    std::int32_t value = SMIOop( limit )->value();
     if ( value < 0 or value > MethodOopDescriptor::_invocation_count_max )
         return markSymbol( vmSymbols::out_of_bounds() );
     Interpreter::set_invocation_counter_limit( value );
@@ -266,10 +266,10 @@ class CollectMethodClosure : public ObjectClosure {
 
 private:
     GrowableArray<MethodOop> *_col;
-    int _cutoff;
+    std::int32_t _cutoff;
 
 public:
-    CollectMethodClosure( GrowableArray<MethodOop> *col, int cutoff ) {
+    CollectMethodClosure( GrowableArray<MethodOop> *col, std::int32_t cutoff ) {
         this->_col    = col;
         this->_cutoff = cutoff;
     }
@@ -283,7 +283,7 @@ public:
 };
 
 
-static std::size_t compare_method_counters( MethodOop *a, MethodOop *b ) {
+static std::int32_t compare_method_counters( MethodOop *a, MethodOop *b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -306,7 +306,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     col->sort( &compare_method_counters );
 
     // Print out the result
-    for ( std::size_t i = 0; i < col->length(); i++ ) {
+    for ( std::int32_t i = 0; i < col->length(); i++ ) {
         MethodOop m = col->at( i );
         _console->print( "[%d] ", m->invocation_count() );
         m->pretty_print();
@@ -337,7 +337,7 @@ PRIM_DECL_0( debugPrimitives::clearNativeMethodCounters ) {
 }
 
 
-static std::size_t compare_NativeMethod_counters( NativeMethod **a, NativeMethod **b ) {
+static std::int32_t compare_NativeMethod_counters( NativeMethod **a, NativeMethod **b ) {
     return ( *b )->invocation_count() - ( *a )->invocation_count();
 }
 
@@ -357,9 +357,9 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     col->sort( &compare_NativeMethod_counters );
 
     // Print out the result
-    int end = ( col->length() > SMIOop( size )->value() ) ? SMIOop( size )->value() : col->length();
+    std::int32_t end = ( col->length() > SMIOop( size )->value() ) ? SMIOop( size )->value() : col->length();
 
-    for ( std::size_t i = 0; i < end; i++ ) {
+    for ( std::int32_t i = 0; i < end; i++ ) {
         NativeMethod *m = col->at( i );
         _console->print( "[%d] ", m->invocation_count() );
         m->scopes()->print_partition();
@@ -372,7 +372,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
 
 class SumMethodInvocationClosure : public ObjectClosure {
 private:
-    int sum;
+    std::int32_t sum;
 public:
     SumMethodInvocationClosure() {
         sum = 0;
@@ -385,7 +385,7 @@ public:
     }
 
 
-    int result() {
+    std::int32_t result() {
         return sum;
     }
 };
@@ -401,7 +401,7 @@ PRIM_DECL_0( debugPrimitives::numberOfMethodInvocations ) {
 
 PRIM_DECL_0( debugPrimitives::numberOfNativeMethodInvocations ) {
     PROLOGUE_0( "numberOfNativeMethodInvocations" );
-    int sum = 0;
+    std::int32_t sum = 0;
     FOR_ALL_NMETHOD( nm )sum += nm->invocation_count();
     return smiOopFromValue( sum );
 }
@@ -442,8 +442,8 @@ PRIM_DECL_0( debugPrimitives::printPrimitiveCounters ) {
 class Counter : public ResourceObject {
 public:
     const char *title;
-    int total_size;
-    int number;
+    std::int32_t total_size;
+    std::int32_t number;
 
 
     Counter( const char *t ) {
@@ -472,7 +472,7 @@ public:
     }
 
 
-    static std::size_t compare( Counter **a, Counter **b ) {
+    static std::int32_t compare( Counter **a, Counter **b ) {
         return ( *b )->total_size - ( *a )->total_size;
     }
 };
@@ -571,7 +571,7 @@ void ObjectHistogram::print() {
     Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
 
-    for ( std::size_t i = 0; i < counters->length(); i++ ) {
+    for ( std::int32_t i = 0; i < counters->length(); i++ ) {
         Counter *c = counters->at( i );
         if ( c->number > 0 ) {
             c->print( " - " );

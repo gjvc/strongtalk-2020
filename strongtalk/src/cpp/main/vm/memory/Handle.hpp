@@ -18,7 +18,7 @@
 //class HandleMark;               //
 //class FunctionProcessClosure;   //
 
-extern "C" volatile void *handleCallBack( std::size_t index, std::size_t params );
+extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t params );
 
 class BaseHandle {
 
@@ -57,7 +57,7 @@ public:
 
     friend class FunctionProcessClosure;
 
-    friend volatile void *handleCallBack( std::size_t index, std::size_t params );
+    friend volatile void *handleCallBack( std::int32_t index, std::int32_t params );
 };
 
 
@@ -87,7 +87,7 @@ private:
     static PersistentHandle *_first;
 
 public:
-    static std::size_t savedOffset();
+    static std::int32_t savedOffset();
 
     PersistentHandle( Oop toSave );
 
@@ -108,7 +108,7 @@ public:
 class HandleMark {
 
 private:
-    int _top;
+    std::int32_t _top;
 
 public:
     HandleMark();
@@ -119,7 +119,7 @@ public:
 class Handle : StackAllocatedObject {
 
 private:
-    std::size_t _index;
+    std::int32_t _index;
 
 public:
     Handle( Oop value );
@@ -139,17 +139,17 @@ public:
 class Handles : AllStatic {
 
 private:
-    static std::size_t _top;
-    static std::size_t _size;
+    static std::int32_t _top;
+    static std::int32_t _size;
     static Oop         _array[];
 
-    static Oop oop_at( int index );
+    static Oop oop_at( std::int32_t index );
 
-    static std::size_t push_oop( Oop value );
+    static std::int32_t push_oop( Oop value );
 
-    static std::size_t top();
+    static std::int32_t top();
 
-    static void set_top( int t );
+    static void set_top( std::int32_t t );
 
     friend class HandleMark;
 

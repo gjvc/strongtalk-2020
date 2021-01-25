@@ -26,29 +26,29 @@
 #include "vm/primitives/primitives.hpp"
 
 
-RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, std::size_t off ) {
+RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, std::int32_t off ) {
 
-    st_assert( 0 <= static_cast<std::size_t>(t) and static_cast<std::size_t>(t) < ( 1 << reloc_type_width ), "wrong type" );
+    st_assert( 0 <= static_cast<std::int32_t>(t) and static_cast<std::int32_t>(t) < ( 1 << reloc_type_width ), "wrong type" );
     st_assert( off <= nthMask( reloc_offset_width ), "offset out of bounds" );
 
-    _value = ( static_cast<std::size_t>(t) << reloc_offset_width ) | off;
+    _value = ( static_cast<std::int32_t>(t) << reloc_offset_width ) | off;
 }
 
 
-std::size_t RelocationInformation::print( NativeMethod *m, std::size_t last_offset ) {
+std::int32_t RelocationInformation::print( NativeMethod *m, std::int32_t last_offset ) {
 
     if ( not isValid() )
         return 0;
 
-    std::size_t current_offset = offset() + last_offset;
-    std::size_t *addr = (std::size_t *) ( m->instructionsStart() + current_offset );
+    std::int32_t current_offset = offset() + last_offset;
+    std::int32_t *addr = (std::int32_t *) ( m->instructionsStart() + current_offset );
     printIndent();
     if ( isOop() ) {
         _console->print( "embedded Oop   @0x%lx = ", addr );
         Oop( *addr )->print_value();
     } else {
         st_assert( isCall(), "must be a call" );
-        const char *target = (const char *) ( *addr + (std::size_t) addr + oopSize );
+        const char *target = (const char *) ( *addr + (std::int32_t) addr + oopSize );
         if ( isInlineCache() ) {
             _console->print( "inline cache   @0x%lx", addr );
         } else if ( isPrimitive() ) {

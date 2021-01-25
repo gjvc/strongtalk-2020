@@ -37,7 +37,7 @@ class VirtualFrame : public PrintableResourceObject {
 private:
     // Interface for the accessing the callees argument.
     // Must be provided for all vframes calling deltaVFrames.
-    virtual Oop callee_argument_at( int index ) const;
+    virtual Oop callee_argument_at( std::int32_t index ) const;
 
 protected:
     Frame _frame;
@@ -131,7 +131,7 @@ public:
 
 class DeltaVirtualFrame : public VirtualFrame {
 private:
-    Oop callee_argument_at( int index ) const; // see VirtualFrame
+    Oop callee_argument_at( std::int32_t index ) const; // see VirtualFrame
 
 public:
     DeltaVirtualFrame( const Frame *fr ) :
@@ -151,13 +151,13 @@ public:
     virtual MethodOop method() const = 0;
 
     // returns the current byte code index
-    virtual int byteCodeIndex() const = 0;
+    virtual std::int32_t byteCodeIndex() const = 0;
 
-    virtual Oop temp_at( int offset ) const = 0;
+    virtual Oop temp_at( std::int32_t offset ) const = 0;
 
-    virtual Oop expression_at( int index ) const = 0;
+    virtual Oop expression_at( std::int32_t index ) const = 0;
 
-    virtual Oop context_temp_at( int offset ) const = 0;
+    virtual Oop context_temp_at( std::int32_t offset ) const = 0;
 
     // Returns the interpreter contextOop for this VirtualFrame.
     // If the frame is optimized a converted context will be returned.
@@ -183,12 +183,12 @@ public:
     GrowableArray<Oop> *arguments() const;
 
     // arguments are numbered from 1 to n
-    Oop argument_at( int index ) const;
+    Oop argument_at( std::int32_t index ) const;
 
     // printing operations
     void print();
 
-    void print_activation( int index ) const;
+    void print_activation( std::int32_t index ) const;
 
     // verify operations
     void verify() const;
@@ -222,22 +222,22 @@ public:
     void set_hp( std::uint8_t *p );
 
     // Sets temporaries
-    void temp_at_put( int offset, Oop obj );
+    void temp_at_put( std::int32_t offset, Oop obj );
 
     // Sets element on expression stack
-    void expression_at_put( int index, Oop obj );
+    void expression_at_put( std::int32_t index, Oop obj );
 
     // Returns the contextOop for this interpreter frame
     // nullptr is returned is no context exists.
     ContextOop interpreter_context() const;
 
 private:
-    static const int temp_offset;
-    static const int hp_offset;
-    static const int receiver_offset;
-    static const int argument_offset;
+    static const std::int32_t temp_offset;
+    static const std::int32_t hp_offset;
+    static const std::int32_t receiver_offset;
+    static const std::int32_t argument_offset;
 
-    Oop *expression_addr( int offset ) const;
+    Oop *expression_addr( std::int32_t offset ) const;
 
     bool_t has_interpreter_context() const;
 
@@ -256,13 +256,13 @@ public:
 
     MethodOop method() const;
 
-    int byteCodeIndex() const;
+    std::int32_t byteCodeIndex() const;
 
-    Oop temp_at( int offset ) const;
+    Oop temp_at( std::int32_t offset ) const;
 
-    Oop expression_at( int index ) const;
+    Oop expression_at( std::int32_t index ) const;
 
-    Oop context_temp_at( int offset ) const;
+    Oop context_temp_at( std::int32_t offset ) const;
 
     ContextOop canonical_context() const;
 
@@ -282,9 +282,9 @@ class NameDescriptor;
 class CompiledVirtualFrame : public DeltaVirtualFrame {
 public:
     // Constructors
-    static CompiledVirtualFrame *new_vframe( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex );
+    static CompiledVirtualFrame *new_vframe( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
-    CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex );
+    CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
     // Returns the active NativeMethod
     NativeMethod *code() const;
@@ -308,7 +308,7 @@ public:
 
 protected:
     ScopeDescriptor *_scopeDescriptor;
-    int _byteCodeIndex;
+    std::int32_t _byteCodeIndex;
 
     static ContextOop compute_canonical_context( ScopeDescriptor *sd, const CompiledVirtualFrame *vf, ContextOop con = nullptr );
 
@@ -326,7 +326,7 @@ protected:
 
     // Returns the byteCodeIndex for a scope desc.
     // d must belong to the same NativeMethod and be in the sender chain.
-    int byteCodeIndex_for( ScopeDescriptor *d ) const;
+    std::int32_t byteCodeIndex_for( ScopeDescriptor *d ) const;
 
     friend struct MemoizedBlockNameDescriptor;
 
@@ -347,13 +347,13 @@ public:
     // Virtuals defined in DeltaVirtualFrame
     MethodOop method() const;
 
-    int byteCodeIndex() const;
+    std::int32_t byteCodeIndex() const;
 
-    Oop temp_at( int offset ) const;
+    Oop temp_at( std::int32_t offset ) const;
 
-    Oop expression_at( int index ) const;
+    Oop expression_at( std::int32_t index ) const;
 
-    Oop context_temp_at( int offset ) const;
+    Oop context_temp_at( std::int32_t offset ) const;
 
     GrowableArray<Oop> *expression_stack() const;
 
@@ -383,7 +383,7 @@ public:
 
 class CompiledMethodVirtualFrame : public CompiledVirtualFrame {
 public:
-    CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex );
+    CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
 public:
     // Virtuals defined in VirtualFrame
@@ -410,7 +410,7 @@ public:
 
 class CompiledBlockVirtualFrame : public CompiledVirtualFrame {
 public:
-    CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex );
+    CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
 public:
     // Virtuals defined in VirtualFrame
@@ -431,7 +431,7 @@ public:
 
 class CompiledTopLevelBlockVirtualFrame : public CompiledVirtualFrame {
 public:
-    CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex );
+    CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
 public:
     // Virtuals defined in VirtualFrame
@@ -459,22 +459,22 @@ class DeoptimizedVirtualFrame : public DeltaVirtualFrame {
 public:
     DeoptimizedVirtualFrame( const Frame *fr );
 
-    DeoptimizedVirtualFrame( const Frame *fr, int offset );
+    DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset );
 
     // Returns the contextOop for this unoptimized frame. nullptr is returned is no context exists.
     ContextOop deoptimized_context() const;
 
 private:
-    int            _offset;
+    std::int32_t            _offset;
     ObjectArrayOop _frameArray;
 
     // Retrieves the frame array from the frame
     ObjectArrayOop retrieve_frame_array() const;
 
     // Returns the Oop at offset+index
-    Oop obj_at( int index ) const;
+    Oop obj_at( std::int32_t index ) const;
 
-    int end_of_expressions() const;
+    std::int32_t end_of_expressions() const;
 
     enum {
         receiver_offset      = 0, //
@@ -506,7 +506,7 @@ public:
 
     MethodOop method() const;
 
-    int byteCodeIndex() const;
+    std::int32_t byteCodeIndex() const;
 
 
     DeltaVirtualFrame *parent() const {
@@ -514,11 +514,11 @@ public:
     }
 
 
-    Oop temp_at( int offset ) const;
+    Oop temp_at( std::int32_t offset ) const;
 
-    Oop expression_at( int index ) const;
+    Oop expression_at( std::int32_t index ) const;
 
-    Oop context_temp_at( int offset ) const;
+    Oop context_temp_at( std::int32_t offset ) const;
 
     GrowableArray<Oop> *expression_stack() const;
 
@@ -567,5 +567,5 @@ public:
 
 private:
     // Virtual defined in VirtualFrame
-    Oop callee_argument_at( int index ) const;
+    Oop callee_argument_at( std::int32_t index ) const;
 };

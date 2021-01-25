@@ -27,7 +27,7 @@ private:
     }
 
 
-    static std::size_t       _sweepSeconds;
+    static std::int32_t       _sweepSeconds;
     static bool_t    _isRunning;
     static MethodOop _activeMethod;
     static NativeMethod *_activeNativeMethod;
@@ -69,7 +69,7 @@ protected:
     }
 
 
-    int    _sweep_start;     // time of last activation
+    std::int32_t    _sweep_start;     // time of last activation
     bool_t _is_active;          // are we waiting to do something?
 
     bool_t is_active() const {
@@ -88,7 +88,7 @@ protected:
 
     virtual void deactivate();
 
-    virtual int interval() const = 0;
+    virtual std::int32_t interval() const = 0;
 
     virtual const char *name() const = 0;
 
@@ -116,7 +116,7 @@ private:
     void activate();
 
 
-    int interval() const {
+    std::int32_t interval() const {
         return HeapSweeperInterval;
     }
 
@@ -128,10 +128,10 @@ private:
 
 class CodeSweeper : public Sweeper {
 protected:
-    int    _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
+    std::int32_t    _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
     double _decayFactor;            // decay factor for invocation counts
-    int    _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
-    int    _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
+    std::int32_t    _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
+    std::int32_t    _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
 
     void updateInterval();          // check for change in half-life setting
 
@@ -139,7 +139,7 @@ public:
     CodeSweeper() : _oldHalfLifeTime( -1 ), _codeSweeperInterval( 1 ), _decayFactor( 1 ) {}
 
 
-    int interval() const;
+    std::int32_t interval() const;
 };
 
 
@@ -150,7 +150,7 @@ public:
 class MethodSweeper : public CodeSweeper {
 
 private:
-    std::size_t _index; // next index in systemDictionary to process
+    std::int32_t _index; // next index in systemDictionary to process
 
 private:
     MethodOop excluded_method() {
@@ -167,9 +167,9 @@ private:
 
     void method_task( MethodOop method );
 
-    int method_dict_task( ObjectArrayOop methods );
+    std::int32_t method_dict_task( ObjectArrayOop methods );
 
-    int klass_task( KlassOop klass );
+    std::int32_t klass_task( KlassOop klass );
 
     void activate();
 

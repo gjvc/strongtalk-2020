@@ -15,7 +15,7 @@
 
 #define BASIC_FLAG_DEF( name, prot ) \
  protected:                                      \
-    static const int CONC(name,Bit);                          \
+    static const std::int32_t CONC(name,Bit);                          \
  prot                                              \
  bool_t CONC(is,name)() const { return flags & CONC(name,Bit) ? true : false; }              \
   void CONC(set,name)(bool_t b) {                              \
@@ -40,11 +40,11 @@ protected:
     PseudoRegister *_pseudoRegister;        // PseudoRegister holding it
     Node           *_node;                  // defining node or nullptr if unknown
     InlinedScope   *_unlikelyScope;         // scope/byteCodeIndex making unknown unlikely
-    int _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
+    std::int32_t _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
 
 public:
     Expression *next;                    // used for splittable MergeExprs
-    int flags;
+    std::int32_t flags;
 
     Expression( PseudoRegister *p, Node *n );
 
@@ -89,7 +89,7 @@ public:
     }
 
 
-    virtual int nklasses() const = 0;    // number of klasses contained in expr
+    virtual std::int32_t nklasses() const = 0;    // number of klasses contained in expr
     virtual bool_t really_hasKlass( InlinedScope *s ) const {
         return hasKlass();
     }
@@ -231,7 +231,7 @@ FLAG_DEF( Unlikely );            // true e.g. if this is the "unknown" branch of
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         return 0;
     }
 
@@ -271,7 +271,7 @@ public:
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         return 0;
     }
 
@@ -330,7 +330,7 @@ public:
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         return 1;
     }
 
@@ -389,7 +389,7 @@ public:
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         return 1;
     }
 
@@ -441,7 +441,7 @@ public:
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         return 1;
     }
 
@@ -524,7 +524,7 @@ public:
 
     bool_t hasKlass() const;
 
-    int nklasses() const;
+    std::int32_t nklasses() const;
 
     KlassExpression *asKlassExpression() const;
 
@@ -584,7 +584,7 @@ public:
     }
 
 
-    int nklasses() const {
+    std::int32_t nklasses() const {
         ShouldNotCallThis();
         return 1;
     }
@@ -632,16 +632,16 @@ private:
     InlinedScope *_scope;                // scope that generates the pushes and pops
 
 public:
-    ExpressionStack( InlinedScope *scope, std::size_t size );
+    ExpressionStack( InlinedScope *scope, std::int32_t size );
 
-    void push( Expression *expr, InlinedScope *currentScope, int byteCodeIndex );
+    void push( Expression *expr, InlinedScope *currentScope, std::int32_t byteCodeIndex );
 
-    void push2nd( Expression *expr, InlinedScope *currentScope, int byteCodeIndex ); // allows a 2nd expr to be pushed for the same byteCodeIndex
+    void push2nd( Expression *expr, InlinedScope *currentScope, std::int32_t byteCodeIndex ); // allows a 2nd expr to be pushed for the same byteCodeIndex
     void assign_top( Expression *expr );
 
     Expression *pop();
 
-    void pop( int nofExprsToPop );
+    void pop( std::int32_t nofExprsToPop );
 
     void print();
 };

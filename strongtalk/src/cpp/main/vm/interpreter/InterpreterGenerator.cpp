@@ -27,7 +27,7 @@
 
 
 // Computes the byte offset from the beginning of an Oop
-static inline int byteOffset( int offset ) {
+static inline std::int32_t byteOffset( std::int32_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }
@@ -78,7 +78,7 @@ void InterpreterGenerator::check_oop( Register reg ) {
 // structured construct (e.g., such as loops).
 // Check code is only generated if stack_checks are enabled.
 
-static constexpr int STACK_CHECKER_MAGIC_VALUE = 0x0FCFCFCFC; // must be a smi_t
+static constexpr std::int32_t STACK_CHECKER_MAGIC_VALUE = 0x0FCFCFCFC; // must be a smi_t
 
 void InterpreterGenerator::stack_check_push() {
     if ( not _stack_check )
@@ -109,7 +109,7 @@ void InterpreterGenerator::should_not_reach_here() {
 
 // Arguments, temporaries & instance variables
 
-Address InterpreterGenerator::arg_addr( std::size_t i ) {
+Address InterpreterGenerator::arg_addr( std::int32_t i ) {
     st_assert( 1 <= i, "argument number must be positive" );
     return Address( ebp, arg_n_offset + i * oopSize );
 }
@@ -120,7 +120,7 @@ Address InterpreterGenerator::arg_addr( Register arg_no ) {
 }
 
 
-Address InterpreterGenerator::temp_addr( std::size_t i ) {
+Address InterpreterGenerator::temp_addr( std::int32_t i ) {
     st_assert( 0 <= i, "temporary number must be positive" );
     return Address( ebp, temp_0_offset - i * oopSize );
 }
@@ -136,7 +136,7 @@ Address InterpreterGenerator::float_addr( Register float_no ) {
 }
 
 
-Address InterpreterGenerator::field_addr( Register obj, std::size_t i ) {
+Address InterpreterGenerator::field_addr( Register obj, std::int32_t i ) {
     st_assert( 2 <= i, "illegal field offset" );
     return Address( obj, byteOffset( i ) );
 }
@@ -149,13 +149,13 @@ Address InterpreterGenerator::field_addr( Register obj, Register smi_offset ) {
 
 // Instruction sequencing
 
-void InterpreterGenerator::skip_words( int n ) {
+void InterpreterGenerator::skip_words( std::int32_t n ) {
     _macroAssembler->addl( esi, ( n + 1 ) * oopSize ); // advance
     _macroAssembler->andl( esi, -oopSize ); // align
 }
 
 
-void InterpreterGenerator::advance_aligned( int n ) {
+void InterpreterGenerator::advance_aligned( std::int32_t n ) {
     _macroAssembler->addl( esi, n + oopSize - 1 ); // advance
     _macroAssembler->andl( esi, -oopSize ); // align
 }
@@ -179,8 +179,8 @@ void InterpreterGenerator::generateStopInterpreterAt() {
         return;
     Label cont;
     _macroAssembler->pushl( edx );
-    _macroAssembler->movl( edx, Address( int( &StopInterpreterAt ), RelocationInformation::RelocationType::external_word_type ) );
-    _macroAssembler->cmpl( edx, Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( edx, Address( std::int32_t( &StopInterpreterAt ), RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->cmpl( edx, Address( std::int32_t( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->popl( edx );
     _macroAssembler->jcc( Assembler::Condition::above, cont );
     _macroAssembler->int3();
@@ -188,7 +188,7 @@ void InterpreterGenerator::generateStopInterpreterAt() {
 
     if ( StopInterpreterAt > 0 ) {
         Label cont2;
-        _macroAssembler->cmpl( Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ), StopInterpreterAt );
+        _macroAssembler->cmpl( Address( std::int32_t( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ), StopInterpreterAt );
         _macroAssembler->jcc( Assembler::Condition::less, cont2 );
         _macroAssembler->int3();
         _macroAssembler->bind( cont2 );
@@ -199,7 +199,7 @@ void InterpreterGenerator::generateStopInterpreterAt() {
 void InterpreterGenerator::jump_ebx() {
 
     if ( TraceBytecodes or CountBytecodes or StopInterpreterAt > 0 ) {
-        _macroAssembler->incl( Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
+        _macroAssembler->incl( Address( std::int32_t( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
         generateStopInterpreterAt();
     }
 
@@ -210,19 +210,19 @@ void InterpreterGenerator::jump_ebx() {
         load_ebx();
     }
     check_oop( eax );
-    _macroAssembler->jmp( Address( noreg, ebx, Address::ScaleFactor::times_4, (int) DispatchTable::table() ) );
+    _macroAssembler->jmp( Address( noreg, ebx, Address::ScaleFactor::times_4, (std::int32_t) DispatchTable::table() ) );
 }
 
 
 void InterpreterGenerator::load_edi() {
-    _macroAssembler->movl( edi, Address( noreg, ebx, Address::ScaleFactor::times_4, (int) DispatchTable::table() ) );
+    _macroAssembler->movl( edi, Address( noreg, ebx, Address::ScaleFactor::times_4, (std::int32_t) DispatchTable::table() ) );
 }
 
 
 void InterpreterGenerator::jump_edi() {
 
     if ( TraceBytecodes or CountBytecodes or StopInterpreterAt > 0 ) {
-        _macroAssembler->incl( Address( int( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
+        _macroAssembler->incl( Address( std::int32_t( &NumberOfBytecodesExecuted ), RelocationInformation::RelocationType::external_word_type ) );
         generateStopInterpreterAt();
     }
 
@@ -317,7 +317,7 @@ void InterpreterGenerator::load_recv( ByteCodes::ArgumentSpec arg_spec ) {
 //-----------------------------------------------------------------------------------------
 // Instructions
 
-const char *InterpreterGenerator::push_temp( std::size_t i ) {
+const char *InterpreterGenerator::push_temp( std::int32_t i ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->pushl( eax );
@@ -340,7 +340,7 @@ const char *InterpreterGenerator::push_temp_n() {
 }
 
 
-const char *InterpreterGenerator::push_arg( std::size_t i ) {
+const char *InterpreterGenerator::push_arg( std::int32_t i ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->pushl( eax );
@@ -469,7 +469,7 @@ const char *InterpreterGenerator::only_pop() {
 }
 
 
-const char *InterpreterGenerator::store_temp( std::size_t i, bool_t pop ) {
+const char *InterpreterGenerator::store_temp( std::int32_t i, bool_t pop ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->movl( temp_addr( i ), eax );
@@ -540,7 +540,7 @@ const char *InterpreterGenerator::store_global( bool_t pop ) {
 }
 
 
-const char *InterpreterGenerator::allocate_temps( int n ) {
+const char *InterpreterGenerator::allocate_temps( std::int32_t n ) {
     const char *ep = entry_point();
     st_assert( n > 0, "just checkin'" );
     next_ebx();
@@ -598,12 +598,12 @@ const char *InterpreterGenerator::set_self_via_context() {
 }
 
 
-const char *InterpreterGenerator::with_context_temp( bool_t store, int tempNo, int contextNo ) {
+const char *InterpreterGenerator::with_context_temp( bool_t store, std::int32_t tempNo, std::int32_t contextNo ) {
     st_assert( contextNo >= -1, "illegal context no." );
     st_assert( tempNo >= -1, "illegal temporary no." );
 
     Label _loop;
-    int   codeSize = 1 + ( contextNo == -1 ? 1 : 0 ) + ( tempNo == -1 ? 1 : 0 );
+    std::int32_t   codeSize = 1 + ( contextNo == -1 ? 1 : 0 ) + ( tempNo == -1 ? 1 : 0 );
 
     const char *ep = entry_point();
 
@@ -620,7 +620,7 @@ const char *InterpreterGenerator::with_context_temp( bool_t store, int tempNo, i
         _macroAssembler->decb( ebx );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( std::size_t i = 0; i < contextNo; i++ )
+        for ( std::int32_t i = 0; i < contextNo; i++ )
             _macroAssembler->movl( ecx, Address( ecx, ContextOopDescriptor::parent_byte_offset() ) );
     }
 
@@ -661,11 +661,11 @@ const char *InterpreterGenerator::with_context_temp( bool_t store, int tempNo, i
 // Copy parameters into context
 //
 
-const char *InterpreterGenerator::copy_params_into_context( bool_t self, int paramsCount ) {
+const char *InterpreterGenerator::copy_params_into_context( bool_t self, std::int32_t paramsCount ) {
     st_assert( paramsCount >= -1, "illegal params count." );
 
     Label _loop;
-    int   oneIfSelf = self ? 1 : 0;
+    std::int32_t   oneIfSelf = self ? 1 : 0;
 
     const char *ep = entry_point();
 
@@ -693,7 +693,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool_t self, int par
         _macroAssembler->decb( eax );
         _macroAssembler->jcc( Assembler::Condition::notZero, _loop );
     } else {
-        for ( std::size_t i = 0; i < paramsCount; i++ ) {
+        for ( std::int32_t i = 0; i < paramsCount; i++ ) {
             _macroAssembler->movb( ebx, Address( esi, 1 + i ) );    // get i.th parameter index
             _macroAssembler->movl( edx, arg_addr( ebx ) );                     // get parameter
             Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + oopSize * ( i + oneIfSelf ) );
@@ -730,7 +730,7 @@ extern "C" Oop allocateBlock1();
 extern "C" Oop allocateBlock2();
 */
 
-const char *InterpreterGenerator::push_closure( int nofArgs, bool_t use_context ) {
+const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool_t use_context ) {
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                            // save tos
     if ( nofArgs == -1 ) {
@@ -801,7 +801,7 @@ extern "C" Oop allocateContext1();
 extern "C" Oop allocateContext2();
 */
 
-const char *InterpreterGenerator::install_context( int nofArgs, bool_t for_method ) {
+const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool_t for_method ) {
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                // save tos
     if ( nofArgs == -1 ) {
@@ -900,7 +900,7 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
     Label   _else;
     Address cond     = isTrue ? true_addr() : false_addr();
     Address not_cond = not isTrue ? true_addr() : false_addr();
-    int     codeSize = ( isCond ? 1 : 2 ) + ( isByte ? 1 : 4 );
+    std::int32_t     codeSize = ( isCond ? 1 : 2 ) + ( isByte ? 1 : 4 );
 
     const char *ep = entry_point();
 
@@ -965,7 +965,7 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
     Address cond     = isTrue ? true_addr() : false_addr();
     Address not_cond = not isTrue ? true_addr() : false_addr();
-    int     codeSize = 1 + ( isByte ? 1 : oopSize );
+    std::int32_t     codeSize = 1 + ( isByte ? 1 : oopSize );
 
     const char *ep = entry_point();
 
@@ -981,12 +981,12 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
         _macroAssembler->subl( esi, Address( edx, -oopSize ) );
     }
 
-    _macroAssembler->movl( edx, Address( (int) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( edx, Address( (std::int32_t) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ) );
     load_ebx();
     _macroAssembler->popl( eax ); // discard loop condition
     _macroAssembler->incl( edx );
-    _macroAssembler->movl( Address( (int) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ), edx );
-    _macroAssembler->cmpl( edx, Address( (int) &Interpreter::_interpreter_loop_counter_limit, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( Address( (std::int32_t) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ), edx );
+    _macroAssembler->cmpl( edx, Address( (std::int32_t) &Interpreter::_interpreter_loop_counter_limit, RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->jcc( Assembler::Condition::greater, _overflow );
     jump_ebx();
 
@@ -1046,7 +1046,7 @@ const char *InterpreterGenerator::control_jump( ByteCodes::Code code ) {
         default: ShouldNotReachHere();
     }
 
-    int codeSize = 1 + ( isByte ? 1 : oopSize ) * ( isLoop ? 2 : 1 );
+    std::int32_t codeSize = 1 + ( isByte ? 1 : oopSize ) * ( isLoop ? 2 : 1 );
 
     const char *ep = entry_point();
 
@@ -1201,7 +1201,7 @@ const char *InterpreterGenerator::float_floatify() {
     _macroAssembler->bind( is_smi );
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get float number
     _macroAssembler->leal( ecx, float_addr( ebx ) );
-    _macroAssembler->sarl( eax, TAG_SIZE );            // convert smi_t argument into int
+    _macroAssembler->sarl( eax, TAG_SIZE );            // convert smi_t argument into std::int32_t
     _macroAssembler->movl( Address( ecx ), eax );        // store it in memory (use float target location)
     _macroAssembler->fild_s( Address( ecx ) );            // convert it into float
     _macroAssembler->fstp_d( Address( ecx ) );            // store float
@@ -1261,7 +1261,7 @@ const char *InterpreterGenerator::float_set() {
 }
 
 
-const char *InterpreterGenerator::float_op( int nof_args, bool_t returns_float ) {
+const char *InterpreterGenerator::float_op( std::int32_t nof_args, bool_t returns_float ) {
     st_assert( 0 <= nof_args and nof_args <= 8, "illegal nof_args specification" );
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                // make sure all floats are completely in memory
@@ -1269,8 +1269,8 @@ const char *InterpreterGenerator::float_op( int nof_args, bool_t returns_float )
     _macroAssembler->movb( ebx, Address( esi, -2 ) );        // get float number
     _macroAssembler->leal( edx, float_addr( ebx ) );        // get float address
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get function number
-    _macroAssembler->movl( ecx, Address( noreg, ebx, Address::ScaleFactor::times_4, int( Floats::_function_table[ 0 ] ), RelocationInformation::RelocationType::external_word_type ) );
-    for ( std::size_t i = 0; i < nof_args; i++ )
+    _macroAssembler->movl( ecx, Address( noreg, ebx, Address::ScaleFactor::times_4, std::int32_t( Floats::_function_table[ 0 ] ), RelocationInformation::RelocationType::external_word_type ) );
+    for ( std::int32_t i = 0; i < nof_args; i++ )
         _macroAssembler->fld_d( Address( edx, -i * SIZEOF_FLOAT ) );
     _macroAssembler->call( ecx );                // invoke operation
     load_ebx();                    // get next byte code
@@ -1462,15 +1462,15 @@ const char *Interpreter::_dr_from_primitive_call_with_failure_block_restore    =
 const char *Interpreter::_dr_from_dll_call                                     = nullptr;
 const char *Interpreter::_dr_from_dll_call_restore                             = nullptr;
 
-extern "C" int number_of_arguments_through_unpacking;
+extern "C" std::int32_t number_of_arguments_through_unpacking;
 extern "C" Oop result_through_unpacking;
 
 
 void InterpreterGenerator::generate_deoptimized_return_restore() {
-    _macroAssembler->movl( eax, Address( (int) &number_of_arguments_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( eax, Address( (std::int32_t) &number_of_arguments_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->shll( eax, 2 );
     _macroAssembler->addl( esp, eax );
-    _macroAssembler->movl( eax, Address( (int) &result_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( eax, Address( (std::int32_t) &result_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
 }
 
 
@@ -1585,7 +1585,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     // into a temp in the failure block
 
     Interpreter::_dr_from_dll_call_restore = _macroAssembler->pc();
-    _macroAssembler->movl( eax, Address( (int) &result_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( eax, Address( (std::int32_t) &result_through_unpacking, RelocationInformation::RelocationType::external_word_type ) );
     // fall through
 
     Interpreter::_dr_from_dll_call = _macroAssembler->pc();
@@ -1610,14 +1610,14 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
 //  primitiveValue0..9 are the primitives called in block value messages.
 //  i is the number of arguments for the block.
 
-void InterpreterGenerator::generate_primitiveValue( std::size_t i ) {
+void InterpreterGenerator::generate_primitiveValue( std::int32_t i ) {
     GeneratedPrimitives::set_primitiveValue( i, _macroAssembler->pc() );
     _macroAssembler->movl( eax, Address( esp, ( i + 1 ) * oopSize ) ); // load recv (= block)
     _macroAssembler->jmp( _block_entry );
 }
 
 
-extern "C" int redo_send_offset;                  // offset when redoing send
+extern "C" std::int32_t redo_send_offset;                  // offset when redoing send
 extern "C" void verify_at_end_of_deoptimization();
 
 const char *Interpreter::_restart_primitiveValue             = nullptr;
@@ -1627,7 +1627,7 @@ Label      Interpreter::_nlr_single_step_continuation        = Label();
 
 
 void InterpreterGenerator::generate_forStubRoutines() {
-    constexpr int invocation_counter_inc = 0x10000;
+    constexpr std::int32_t invocation_counter_inc = 0x10000;
 
     Interpreter::_restart_primitiveValue = _macroAssembler->pc();
     _macroAssembler->enter();
@@ -1650,7 +1650,7 @@ void InterpreterGenerator::generate_forStubRoutines() {
     // Redo the send
     restore_esi();
     restore_ebx();
-    _macroAssembler->movl( eax, Address( (int) &redo_send_offset, RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->movl( eax, Address( (std::int32_t) &redo_send_offset, RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->subl( esi, eax );
     load_ebx();
     _macroAssembler->popl( eax );          // get top of stack
@@ -1707,7 +1707,7 @@ void InterpreterGenerator::call_native( Register entry ) {
     }
 
     save_esi();
-    _macroAssembler->movl( Address( int( &Interpreter::_last_native_called ), RelocationInformation::RelocationType::external_word_type ), entry );
+    _macroAssembler->movl( Address( std::int32_t( &Interpreter::_last_native_called ), RelocationInformation::RelocationType::external_word_type ), entry );
     _macroAssembler->call( entry );
     _macroAssembler->ic_info( _nlr_testpoint, 0 );            // ordinary inline cache info
     restore_esi();
@@ -1731,8 +1731,8 @@ void InterpreterGenerator::generate_method_entry_code() {
     // It is usually called via the call_method() macro, which saves the old
     // instruction counter (esi) and provides the ic_info word for NonLocalReturns.
 
-    const int counter_offset = MethodOopDescriptor::counters_byte_offset();
-    const int code_offset    = MethodOopDescriptor::codes_byte_offset();
+    const std::int32_t counter_offset = MethodOopDescriptor::counters_byte_offset();
+    const std::int32_t code_offset    = MethodOopDescriptor::codes_byte_offset();
 
     st_assert( not _method_entry.is_bound(), "code has been generated before" );
     Label start_setup, counter_overflow, start_execution, handle_counter_overflow, is_interpreted, handle_stack_overflow, continue_from_stack_overflow;
@@ -1760,11 +1760,11 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->movl( Address( ecx, counter_offset ), edx );                           // store method invocation counter
     load_ebx();                                                                             // get first byte code of method
     _macroAssembler->cmpl( edx, 0xFFFF << MethodOopDescriptor::_invocation_count_offset );  // make sure cmpl uses imm32 field
-    Interpreter::_invocation_counter_addr = (int *) ( _macroAssembler->pc() - oopSize );  // compute invocation counter address
+    Interpreter::_invocation_counter_addr = (std::int32_t *) ( _macroAssembler->pc() - oopSize );  // compute invocation counter address
     _macroAssembler->jcc( Assembler::Condition::aboveEqual, counter_overflow );             // treat invocation counter overflow
     _macroAssembler->bind( start_execution );                                               // continuation point after overflow
     _macroAssembler->movl( eax, edi );                                                      // initialize temp0
-    _macroAssembler->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
+    _macroAssembler->cmpl( esp, Address( std::int32_t( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
     _macroAssembler->jcc( Assembler::Condition::lessEqual, handle_stack_overflow );         //
     _macroAssembler->bind( continue_from_stack_overflow );                                  //
     jump_ebx();                                                                             // start execution
@@ -2020,7 +2020,7 @@ const char *InterpreterGenerator::smi_shift() {
     check_smi_tags();
     advance_aligned( 1 + 2 * oopSize );
     load_ebx();
-    _macroAssembler->sarl( eax, TAG_SIZE );                // convert argument (shift count) into int (sets zero flag)
+    _macroAssembler->sarl( eax, TAG_SIZE );                // convert argument (shift count) into std::int32_t (sets zero flag)
     _macroAssembler->movl( ecx, eax );                // move shift count into CL
     _macroAssembler->jcc( Assembler::Condition::negative, shift_right );        // shift right or shift left?
 
@@ -2115,7 +2115,7 @@ void InterpreterGenerator::zap_context() {
 // Local returns
 //
 
-const char *InterpreterGenerator::local_return( bool_t push_self, int nofArgs, bool_t zap ) {
+const char *InterpreterGenerator::local_return( bool_t push_self, std::int32_t nofArgs, bool_t zap ) {
     const char *ep = entry_point();
     if ( zap ) {
         zap_context();
@@ -2177,43 +2177,43 @@ void InterpreterGenerator::generate_error_handler_code() {
     should_not_reach_here();
 
     _macroAssembler->bind( _boolean_expected );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::boolean_expected ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::boolean_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _float_expected );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::float_expected ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::float_expected ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _NonLocalReturn_to_dead_frame );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::nonlocal_return_error ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::nonlocal_return_error ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _halted );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::halted ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::halted ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _stack_misaligned );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::stack_misaligned ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::stack_misaligned ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _ebx_wrong );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::ebx_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::ebx_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _obj_wrong );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::obj_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::obj_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _last_Delta_fp_wrong );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _primitive_result_wrong );
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::primitive_result_wrong ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::primitive_result_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _illegal = _macroAssembler->pc();
-    _macroAssembler->movl( ecx, static_cast<std::size_t>( InterpreterErrorConstants::illegal_code ) );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::illegal_code ) );
     _macroAssembler->jmp( suspend );
 
     Interpreter::_illegal = _illegal;
@@ -2293,7 +2293,7 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
     _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // until is_smi(edi)
     _macroAssembler->testl( edi, edi );            // if edi = 0 then
     _macroAssembler->jcc( Assembler::Condition::zero, zapped_context );    //   context has been zapped
-    _macroAssembler->movl( Address( int( &nlr_home_context ), RelocationInformation::RelocationType::external_word_type ), eax );
+    _macroAssembler->movl( Address( std::int32_t( &nlr_home_context ), RelocationInformation::RelocationType::external_word_type ), eax );
     // else save the context containing the home (edi points to home stack frame)
     _macroAssembler->movb( ebx, Address( esi, 1 ) );        // get no. of arguments to pop
     _macroAssembler->popl( eax );                // get NonLocalReturn result back
@@ -2469,7 +2469,7 @@ const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool_t allo
     bool_t                  pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    int     length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    std::int32_t     length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
     Address method_addr = Address( esi, -2 * oopSize );
     Address klass_addr  = Address( esi, -1 * oopSize );
 
@@ -2569,7 +2569,7 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
 
     // inline cache layout
-    int     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    std::int32_t     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
     bool_t  pop_tos       = ByteCodes::pop_tos( code );
     Address selector_addr = Address( esi, -2 * oopSize );
     Address klass_addr    = Address( esi, -1 * oopSize );
@@ -2668,20 +2668,20 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     bool_t                  pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    int     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    std::int32_t     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
     Address selector_addr = Address( esi, -2 * oopSize );
     Address pic_addr      = Address( esi, -1 * oopSize );
 
     // pic layout
-    int length_offset = 2 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
-    int data_offset   = 3 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
+    std::int32_t length_offset = 2 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
+    std::int32_t data_offset   = 3 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
 
     const char *ep = entry_point();
     load_recv( arg_spec );
     advance_aligned( length );
     _macroAssembler->movl( ebx, pic_addr );            // get pic
     _macroAssembler->movl( ecx, Address( ebx, length_offset ) );// get pic length (smi_t)
-    _macroAssembler->sarl( ecx, TAG_SIZE + 1 );        // get pic length (int)
+    _macroAssembler->sarl( ecx, TAG_SIZE + 1 );        // get pic length (std::int32_t)
     // verifyPIC here
 
     _macroAssembler->movl( edx, smiKlass_addr() );        // preload smi_t klass
@@ -2790,7 +2790,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
     const bool_t  returns_float = true;
     const bool_t  push          = false;
     const bool_t  store_pop     = true;
-    constexpr int n             = -1;
+    constexpr std::int32_t n             = -1;
 
     switch ( code ) {
 
@@ -3316,7 +3316,7 @@ void InterpreterGenerator::generate_all() {
 
     // generate code for Floats
     Floats::init( _macroAssembler );
-    Floats::_function_table[ static_cast<std::size_t>(Floats::Function::oopify) ] = float_oopify();    // patch - no code generated in Floats for oopify
+    Floats::_function_table[ static_cast<std::int32_t>(Floats::Function::oopify) ] = float_oopify();    // patch - no code generated in Floats for oopify
     info( "Floats::oopify patch" );
 
     // generate helper routines/code fragments
@@ -3341,7 +3341,7 @@ void InterpreterGenerator::generate_all() {
     generate_deoptimized_return_code();
     info( "deoptimized return code" );
 
-    for ( std::size_t n = 0; n < 10; n++ )
+    for ( std::int32_t n = 0; n < 10; n++ )
         generate_primitiveValue( n );
     info( "primitiveValues" );
 
@@ -3349,7 +3349,7 @@ void InterpreterGenerator::generate_all() {
     // generate individual instructions
     _console->cr();
 
-    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
+    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
 
         const char *start = _macroAssembler->pc();
         const char *entry = generate_instruction( (ByteCodes::Code) i );
@@ -3360,7 +3360,7 @@ void InterpreterGenerator::generate_all() {
 
         ByteCodes::set_entry_point( ByteCodes::Code( i ), entry );
         if ( PrintInterpreter ) {
-            int        length = _macroAssembler->pc() - start;
+            std::int32_t        length = _macroAssembler->pc() - start;
             const char *name  = ByteCodes::name( (ByteCodes::Code) i );
             _console->print_cr( "bytecode # [0x%02x], address [0x%0x], size [0x%04x], name [%s]", i, entry, length, name );
             _macroAssembler->code()->decode();
@@ -3381,7 +3381,7 @@ InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool_t debug ) {
 }
 
 
-static constexpr int interpreter_size = 40000;
+static constexpr std::int32_t interpreter_size = 40000;
 static const char    *interpreter_code;
 
 

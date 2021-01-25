@@ -97,13 +97,13 @@ protected:
     char message[100];
 
 
-    char *reportHex( const char *prefix, int expected, int actual ) {
+    char *reportHex( const char *prefix, std::int32_t expected, std::int32_t actual ) {
         sprintf( message, "%s. Expected: 0x%x, but was: 0x%x", prefix, expected, actual );
         return message;
     }
 
 
-    char *report( const char *prefix, int expected, int actual ) {
+    char *report( const char *prefix, std::int32_t expected, std::int32_t actual ) {
         sprintf( message, "%s. Expected: %d, but was: %d", prefix, expected, actual );
         return message;
     }
@@ -126,7 +126,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool_t ok;
-int    result = z->as_int( ok );
+std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( 0, result ) << "wrong result";
@@ -141,7 +141,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool_t ok;
-int    result = z->as_int( ok );
+std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";
@@ -156,7 +156,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool_t ok;
-int    result = z->as_int( ok );
+std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";
@@ -171,7 +171,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool_t ok;
-int    result = z->as_int( ok );
+std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( 0, result ) << "wrong result";
@@ -186,7 +186,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool_t ok;
-int    result = z->as_int( ok );
+std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";
@@ -688,9 +688,9 @@ TEST_F( IntegerOpsTests, divResultSizeInBytesWithTwoPositiveIntegers
 IntegerOps::string_to_Integer( "123456781234567812345678", 16, *x );
 IntegerOps::string_to_Integer( "12345678", 16, *y );
 
-int result = IntegerOps::div_result_size_in_bytes( *x, *y );
+std::int32_t result = IntegerOps::div_result_size_in_bytes( *x, *y );
 
-ASSERT_EQ_M2( sizeof( int ) + ( 3 * sizeof( Digit ) ), result, "Wrong size" );
+ASSERT_EQ_M2( sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ), result, "Wrong size" );
 }
 
 
@@ -699,9 +699,9 @@ TEST_F( IntegerOpsTests, divResultSizeInBytesWithTwoNegativeIntegers
 IntegerOps::string_to_Integer( "-123456781234567812345678", 16, *x );
 IntegerOps::string_to_Integer( "-12345678", 16, *y );
 
-int result = IntegerOps::div_result_size_in_bytes( *x, *y );
+std::int32_t result = IntegerOps::div_result_size_in_bytes( *x, *y );
 
-ASSERT_EQ_M2( sizeof( int ) + ( 3 * sizeof( Digit ) ), result, "Wrong size" );
+ASSERT_EQ_M2( sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ), result, "Wrong size" );
 }
 
 
@@ -710,9 +710,9 @@ TEST_F( IntegerOpsTests, divResultSizeInBytesWithPosDividendAndNegDivisor
 IntegerOps::string_to_Integer( "123456781234567812345678", 16, *x );
 IntegerOps::string_to_Integer( "-12345678", 16, *y );
 
-int result = IntegerOps::div_result_size_in_bytes( *x, *y );
+std::int32_t result = IntegerOps::div_result_size_in_bytes( *x, *y );
 
-ASSERT_EQ_M2( sizeof( int ) + ( 4 * sizeof( Digit ) ), result, "Wrong size" );
+ASSERT_EQ_M2( sizeof( std::int32_t ) + ( 4 * sizeof( Digit ) ), result, "Wrong size" );
 }
 
 
@@ -721,9 +721,9 @@ TEST_F( IntegerOpsTests, modResultSizeInBytesWithTwoPositiveIntegers
 IntegerOps::string_to_Integer( "123456781234567812345678", 16, *x );
 IntegerOps::string_to_Integer( "12345678", 16, *y );
 
-int result = IntegerOps::mod_result_size_in_bytes( *x, *y );
+std::int32_t result = IntegerOps::mod_result_size_in_bytes( *x, *y );
 
-ASSERT_EQ_M2( sizeof( int ) + ( 1 * sizeof( Digit ) ), result, "Wrong size" );
+ASSERT_EQ_M2( sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ), result, "Wrong size" );
 }
 
 
@@ -732,9 +732,9 @@ TEST_F( IntegerOpsTests, modResultSizeInBytesWithTwoNegativeIntegers
 IntegerOps::string_to_Integer( "-123456781234567812345678", 16, *x );
 IntegerOps::string_to_Integer( "-1234567812345678", 16, *y );
 
-int result = IntegerOps::mod_result_size_in_bytes( *x, *y );
+std::int32_t result = IntegerOps::mod_result_size_in_bytes( *x, *y );
 
-ASSERT_EQ_M2( sizeof( int ) + ( 2 * sizeof( Digit ) ), result, "Wrong size" );
+ASSERT_EQ_M2( sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ), result, "Wrong size" );
 }
 
 
@@ -1046,127 +1046,127 @@ CHECK_AND( "-1", "0", "0" );
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithTwoPositive
 ) {
-CHECK_AND_SIZE( "123456781234567812345678", "1234567812345678", sizeof( int ) + ( 2 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "123456781234567812345678", "1234567812345678", sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithSecondNegativeAndShorter
 ) {
-CHECK_AND_SIZE( "123456781234567812345678", "-1234567812345678", sizeof( int ) + ( 3 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "123456781234567812345678", "-1234567812345678", sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithFirstLongerAndNegative
 ) {
-CHECK_AND_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( int ) + ( 2 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithFirstShorterAndPositive
 ) {
-CHECK_AND_SIZE( "1234567812345678", "-123456781234567812345678", sizeof( int ) + ( 2 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "1234567812345678", "-123456781234567812345678", sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithFirstZero
 ) {
-CHECK_AND_SIZE( "0", "-123456781234567812345678", sizeof( int ) + ( 0 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "0", "-123456781234567812345678", sizeof( std::int32_t ) + ( 0 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, andResultSizeInBytesWithSecondZero
 ) {
-CHECK_AND_SIZE( "-123456781234567812345678", "0", sizeof( int ) + ( 0 * sizeof( Digit ) ) );
+CHECK_AND_SIZE( "-123456781234567812345678", "0", sizeof( std::int32_t ) + ( 0 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithFirstLongerAndNegative
 ) {
-CHECK_OR_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( int ) + ( 3 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithFirstShorterAndNegative
 ) {
-CHECK_OR_SIZE( "-12345678", "1234567812345678", sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "-12345678", "1234567812345678", sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithFirstShorterAndBothNegative
 ) {
-CHECK_OR_SIZE( "-12345678", "-1234567812345678", sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "-12345678", "-1234567812345678", sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithSecondShorterAndBothNegative
 ) {
-CHECK_OR_SIZE( "-1234567812345678", "-12345678", sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "-1234567812345678", "-12345678", sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithSecondShorterAndNegative
 ) {
-CHECK_OR_SIZE( "1234567812345678", "-12345678", sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "1234567812345678", "-12345678", sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, xorResultSizeInBytesWithFirstLongerAndNegative
 ) {
-CHECK_XOR_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( int ) + ( 4 * sizeof( Digit ) ) );
+CHECK_XOR_SIZE( "-123456781234567812345678", "1234567812345678", sizeof( std::int32_t ) + ( 4 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, xorResultSizeInBytesWithBothPositive
 ) {
-CHECK_XOR_SIZE( "123456781234567812345678", "1234567812345678", sizeof( int ) + ( 3 * sizeof( Digit ) ) );
+CHECK_XOR_SIZE( "123456781234567812345678", "1234567812345678", sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithSecondZero
 ) {
-CHECK_OR_SIZE( "1234567812345678", "0", sizeof( int ) + ( 2 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "1234567812345678", "0", sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, orResultSizeInBytesWithFirstZero
 ) {
-CHECK_OR_SIZE( "0", "1234567812345678", sizeof( int ) + ( 2 * sizeof( Digit ) ) );
+CHECK_OR_SIZE( "0", "1234567812345678", sizeof( std::int32_t ) + ( 2 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenNoShift
 ) {
-CHECK_ASH_SIZE( "2", 0, sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "2", 0, sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenPositive
 ) {
-CHECK_ASH_SIZE( "2", 1, sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "2", 1, sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenPositiveWithUnderflow
 ) {
-CHECK_ASH_SIZE( "1", -1, sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "1", -1, sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenNegativeWithUnderflow
 ) {
-CHECK_ASH_SIZE( "-1", -1, sizeof( int ) + ( 1 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "-1", -1, sizeof( std::int32_t ) + ( 1 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenPositiveWithOverflow
 ) {
-CHECK_ASH_SIZE( "2", 63, sizeof( int ) + ( 3 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "2", 63, sizeof( std::int32_t ) + ( 3 * sizeof( Digit ) ) );
 }
 
 
 TEST_F( IntegerOpsTests, ashResultSizeInBytesWhenZero
 ) {
-CHECK_ASH_SIZE( "0", 32, sizeof( int ) + ( 0 * sizeof( Digit ) ) );
+CHECK_ASH_SIZE( "0", 32, sizeof( std::int32_t ) + ( 0 * sizeof( Digit ) ) );
 }
 
 
@@ -1258,7 +1258,7 @@ TEST_F( IntegerOpsTests, hashShouldXorDigits
 ) {
 IntegerOps::string_to_Integer( "-12345678ffffffff", 16, *x );
 
-int result = IntegerOps::hash( *x );
+std::int32_t result = IntegerOps::hash( *x );
 
 ASSERT_EQ_M2( ( 0x12345678 ^ 0xffffffff ^ -2 ) >> 2, result, "Wrong hash" );
 }

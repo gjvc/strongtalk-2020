@@ -32,11 +32,11 @@ public:
     static void reset();
 
     // intercepts all relevant entries to enable single step.
-    static void intercept_for_step( int *fr );
+    static void intercept_for_step( std::int32_t *fr );
 
-    static void intercept_for_next( int *fr );
+    static void intercept_for_next( std::int32_t *fr );
 
-    static void intercept_for_return( int *fr );
+    static void intercept_for_return( std::int32_t *fr );
 
 
     // answers whether the dispatch table is in single step mode.

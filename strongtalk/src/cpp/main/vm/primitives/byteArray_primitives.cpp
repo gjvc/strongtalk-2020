@@ -27,7 +27,7 @@
 TRACE_FUNC( TraceByteArrayPrims, "byteArray" )
 
 
-std::size_t byteArrayPrimitives::number_of_calls;
+std::int32_t byteArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert( receiver->is_byteArray(), "receiver must be byte array" )
 
@@ -42,8 +42,8 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop k        = KlassOop( receiver );
-    int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value(), oopSize ) / oopSize;
+    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value(), oopSize ) / oopSize;
 
     // allocate
     ByteArrayOop obj = as_byteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -59,7 +59,7 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = argument;
-    // %optimized 'for (int index = 1; index <= size; index++)
+    // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'
     base = &base[ ni_size + 1 ];
     while ( base < end )
@@ -193,7 +193,7 @@ PRIM_DECL_2( byteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // fetch byte
-    int byte = ByteArrayOop( receiver )->byte_at( SMIOop( index )->value() );
+    std::int32_t byte = ByteArrayOop( receiver )->byte_at( SMIOop( index )->value() );
 
     // return the n+1'th element in asciiCharacter
     return Universe::asciiCharacters()->obj_at( byte + 1 );
@@ -213,9 +213,9 @@ PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
-    int length = ByteArrayOop( receiver )->length();
+    std::int32_t length = ByteArrayOop( receiver )->length();
 
-    for ( std::size_t i = 1; i <= length; i++ ) {
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         ByteArrayOop( receiver )->byte_at_put( i, v );
     }
 
@@ -241,7 +241,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oo
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
-    int           i = SMIOop( number )->value();
+    std::int32_t           i = SMIOop( number )->value();
     ByteArrayOop  z;
 
     z = ByteArrayOop( KlassOop( receiver )->klass_part()->allocateObjectSize( IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) );
@@ -437,7 +437,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerShift, Oop receiver, Oop argument 
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ByteArrayOop x     = ByteArrayOop( receiver );
-    int          shift = SMIOop( argument )->value();
+    std::int32_t          shift = SMIOop( argument )->value();
 
     if ( not ByteArrayOop( receiver )->number().is_valid() )
         return markSymbol( vmSymbols::argument_is_invalid() );
@@ -466,7 +466,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerCompare, Oop receiver, Oop argumen
     if ( not x->number().is_valid() or not y->number().is_valid() )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    int res = IntegerOps::cmp( x->number(), y->number() );
+    std::int32_t res = IntegerOps::cmp( x->number(), y->number() );
     if ( res < 0 )
         return smiOopFromValue( -1 );
     if ( res > 0 )
@@ -501,7 +501,7 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerToString, Oop receiver, Oop base )
     BlockScavenge bs;
 
     ByteArrayOop x      = ByteArrayOop( receiver );
-    int          length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SMIOop( base )->value() );
+    std::int32_t          length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SMIOop( base )->value() );
 
     ByteArrayOop result = oopFactory::new_byteArray( length );
 
@@ -555,7 +555,7 @@ KlassOop unsafeAlienClass() {
 
 Oop unsafeContents( Oop unsafeAlien ) {
     SymbolOop ivarName = oopFactory::new_symbol( "nonPointerObject" );
-    int       offset   = unsafeAlienClass()->klass_part()->lookup_inst_var( ivarName );
+    std::int32_t       offset   = unsafeAlienClass()->klass_part()->lookup_inst_var( ivarName );
     return MemOop( unsafeAlien )->instVarAt( offset );
 }
 
@@ -571,7 +571,7 @@ Oop unsafeContents( Oop unsafeAlien ) {
 
 #define alienArg( argument )      (void*)argument
 
-#define alienArray( receiver )    ((int*)ByteArrayOop(receiver)->bytes())
+#define alienArray( receiver )    ((std::int32_t*)ByteArrayOop(receiver)->bytes())
 
 #define alienSize( receiver )     (alienArray(receiver)[0])
 
@@ -642,7 +642,7 @@ Oop unsafeContents( Oop unsafeAlien ) {
   if (not argument->is_smi())\
     return markSymbol(vmSymbols::second_argument_has_wrong_type());\
   {\
-    int value = SMIOop(argument)->value();\
+    std::int32_t value = SMIOop(argument)->value();\
     if (value < min or value > max)\
       return markSymbol(vmSymbols::argument_is_invalid());\
   }
@@ -754,7 +754,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienUnsignedLongAt, Oop receiver, Oop argumen
 
     std::uint32_t value = alienAt( receiver, argument, std::uint32_t );
 
-    int          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+    std::int32_t          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
     KlassOop     largeInteger = KlassOop( Universe::find_global( "LargeInteger" ) );
     ByteArrayOop result       = ByteArrayOop( largeInteger->klass_part()->allocateObjectSize( resultSize ) );
     IntegerOps::unsigned_int_to_Integer( value, result->number() );
@@ -792,9 +792,9 @@ PRIM_DECL_2( byteArrayPrimitives::alienSignedLongAt, Oop receiver, Oop argument 
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, std::int32_t );
 
-    int value = alienAt( receiver, argument, std::int32_t );
+    std::int32_t value = alienAt( receiver, argument, std::int32_t );
 
-    int          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+    std::int32_t          resultSize   = IntegerOps::int_to_Integer_result_size_in_bytes( value );
     KlassOop     largeInteger = KlassOop( Universe::find_global( "LargeInteger" ) );
     ByteArrayOop result       = ByteArrayOop( largeInteger->klass_part()->allocateObjectSize( resultSize ) );
     IntegerOps::int_to_Integer( value, result->number() );
@@ -810,7 +810,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
     if ( not argument2->is_smi() and not argument2->is_byteArray() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    int value;
+    std::int32_t value;
 
     if ( argument2->is_smi() )
         value = SMIOop( argument2 )->value();
@@ -904,7 +904,7 @@ PRIM_DECL_1( byteArrayPrimitives::alienGetAddress, Oop receiver ) {
 //    return markSymbol(vmSymbols::illegal_state());
 
     std::uint32_t address = (std::uint32_t) alienAddress( receiver );
-    int           size    = IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( address );
+    std::int32_t           size    = IntegerOps::unsigned_int_to_Integer_result_size_in_bytes( address );
 
     Oop largeInteger = Universe::find_global( "LargeInteger" );
     Oop z            = KlassOop( largeInteger )->klass_part()->allocateObjectSize( size );
@@ -961,9 +961,9 @@ void break_on_error( void *address, Oop result ) {
     if ( not result->is_byteArray() )
         return;
 
-    int value = alienAt( ByteArrayOop(result), smiOopFromValue( 1 ), int );
+    std::int32_t value = alienAt( ByteArrayOop(result), smiOopFromValue( 1 ), std::int32_t );
 
-    int err = os::error_code();
+    std::int32_t err = os::error_code();
     if ( value == 0 and err ) {
         ResourceMark resourceMark;
         _console->print_cr( "Last error: 0x%x %d", address, err );
@@ -1162,8 +1162,8 @@ PRIM_DECL_3( byteArrayPrimitives::alienCallResultWithArguments, Oop
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
 
-    int       length = ObjectArrayOop( argument2 )->length();
-    for ( std::size_t index  = 1; index <= length; index++ ) {
+    std::int32_t       length = ObjectArrayOop( argument2 )->length();
+    for ( std::int32_t index  = 1; index <= length; index++ ) {
         checkAlienCalloutArg( ObjectArrayOop(argument2)->obj_at(index), vmSymbols::argument_has_wrong_type() );
     }
     PersistentHandle *resultHandle = new PersistentHandle( argument1 );

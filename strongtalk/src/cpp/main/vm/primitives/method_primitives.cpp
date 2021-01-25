@@ -31,7 +31,7 @@
 TRACE_FUNC( TraceMethodPrims, "method" )
 
 
-std::size_t methodOopPrimitives::number_of_calls;
+std::int32_t methodOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_method(), "receiver must be method")
 

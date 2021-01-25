@@ -31,7 +31,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( int index ) const {
+    bool_t is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -65,18 +65,18 @@ public:
     }
 
 
-    double *double_at_addr( int which ) const {
+    double *double_at_addr( std::int32_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return &double_start()[ which - 1 ];
     }
 
 
-    double double_at( int which ) const {
+    double double_at( std::int32_t which ) const {
         return *double_at_addr( which );
     }
 
 
-    void double_at_put( int which, double value ) {
+    void double_at_put( std::int32_t which, double value ) {
         *double_at_addr( which ) = value;
     }
 

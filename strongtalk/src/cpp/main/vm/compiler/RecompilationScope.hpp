@@ -27,12 +27,12 @@ class RecompilationScope : public PrintableResourceObject {
 
 protected:
     NonDummyRecompilationScope *_sender;
-    const int _senderByteCodeIndex;
+    const std::int32_t _senderByteCodeIndex;
 
 public:
-    int _invocationCount;        // estimated # of invocations (-1 == unknown)
+    std::int32_t _invocationCount;        // estimated # of invocations (-1 == unknown)
 
-    RecompilationScope( NonDummyRecompilationScope *s, int byteCodeIndex );
+    RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex );
 
 
     // Type tests
@@ -81,7 +81,7 @@ public:
     }
 
 
-    int senderByteCodeIndex() const {
+    std::int32_t senderByteCodeIndex() const {
         return _senderByteCodeIndex;
     }
 
@@ -91,32 +91,32 @@ public:
     virtual bool_t equivalent( LookupKey *l ) const = 0;
 
 
-    virtual RecompilationScope *subScope( int byteCodeIndex, LookupKey *l ) const {
+    virtual RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const {
         ShouldNotCallThis();
         return nullptr;
     }
 
 
-    virtual GrowableArray<RecompilationScope *> *subScopes( int byteCodeIndex ) const {
+    virtual GrowableArray<RecompilationScope *> *subScopes( std::int32_t byteCodeIndex ) const {
         ShouldNotCallThis();
         return nullptr;
     }
 
 
-    virtual bool_t hasSubScopes( int byteCodeIndex ) const {
+    virtual bool_t hasSubScopes( std::int32_t byteCodeIndex ) const {
         ShouldNotCallThis();
         return false;
     }
 
 
-    virtual bool_t isUncommonAt( int byteCodeIndex ) const {
+    virtual bool_t isUncommonAt( std::int32_t byteCodeIndex ) const {
         ShouldNotCallThis();
         return false;
     }
 
 
     // was send at this byteCodeIndex uncommon (never taken) in recompilee?  (false means "don't know")
-    virtual bool_t isNotUncommonAt( int byteCodeIndex ) const {
+    virtual bool_t isNotUncommonAt( std::int32_t byteCodeIndex ) const {
         ShouldNotCallThis();
         return false;
     }
@@ -146,18 +146,18 @@ public:
 
     virtual void print_short() = 0;
 
-    virtual void printTree( int byteCodeIndex, int level ) const;
+    virtual void printTree( std::int32_t byteCodeIndex, std::int32_t level ) const;
 
 
     // Support for inlining database:
     // - returns the size of the inlining database tree.
-    virtual int inlining_database_size() {
+    virtual std::int32_t inlining_database_size() {
         return 0;
     }
 
 
     // - prints the inlining database tree on a stream.
-    virtual void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, int byteCodeIndex = -1, int level = 0 ) {
+    virtual void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex = -1, std::int32_t level = 0 ) {
     }
 
 
@@ -177,7 +177,7 @@ public:
     }
 
 
-    NullRecompilationScope( NonDummyRecompilationScope *sender, int byteCodeIndex ) :
+    NullRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex ) :
             RecompilationScope( sender, byteCodeIndex ) {
     }
 
@@ -197,25 +197,25 @@ public:
     }
 
 
-    RecompilationScope *subScope( int byteCodeIndex, LookupKey *l ) const {
+    RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const {
         return (RecompilationScope *) this;
     }
 
 
-    GrowableArray<RecompilationScope *> *subScopes( int byteCodeIndex ) const;
+    GrowableArray<RecompilationScope *> *subScopes( std::int32_t byteCodeIndex ) const;
 
 
-    bool_t hasSubScopes( int byteCodeIndex ) const {
+    bool_t hasSubScopes( std::int32_t byteCodeIndex ) const {
         return false;
     }
 
 
-    bool_t isUncommonAt( int byteCodeIndex ) const {
+    bool_t isUncommonAt( std::int32_t byteCodeIndex ) const {
         return false;
     }
 
 
-    bool_t isNotUncommonAt( int byteCodeIndex ) const {
+    bool_t isNotUncommonAt( std::int32_t byteCodeIndex ) const {
         return false;
     }
 
@@ -243,7 +243,7 @@ public:
     }
 
 
-    void printTree( int byteCodeIndex, int level ) const;
+    void printTree( std::int32_t byteCodeIndex, std::int32_t level ) const;
 
     void print_short();
 };
@@ -252,7 +252,7 @@ public:
 class UninlinableRecompilationScope : public NullRecompilationScope {
     // scope marking "callee" of an uninlinable or megamorphic send
 public:
-    UninlinableRecompilationScope( NonDummyRecompilationScope *sender, int byteCodeIndex );        // for interpreted senders
+    UninlinableRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex );        // for interpreted senders
 
     bool_t isUninlinableScope() const {
         return true;
@@ -264,7 +264,7 @@ public:
     }
 
 
-    void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, int byteCodeIndex, int level );
+    void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex, std::int32_t level );
 
     void print_short();
 };
@@ -275,46 +275,46 @@ class RUncommonBranch;
 class NonDummyRecompilationScope : public RecompilationScope {
     // abstract -- a non-dummy scope with subscopes
 protected:
-    const int                           _level;                // distance from root
-    const int                           ncodes;                        // # byte codes in method
+    const std::int32_t                           _level;                // distance from root
+    const std::int32_t                           ncodes;                        // # byte codes in method
     GrowableArray<RecompilationScope *> **_subScopes;        // indexed by byteCodeIndex
 public:
     GrowableArray<RUncommonBranch *> uncommon;    // list of uncommon branches
 
-    NonDummyRecompilationScope( NonDummyRecompilationScope *s, int byteCodeIndex, MethodOop m, int level );
+    NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level );
 
-    RecompilationScope *subScope( int byteCodeIndex, LookupKey *l ) const;
+    RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const;
 
     // return the subscope matching the lookup
     // return NullScope if no scope
-    GrowableArray<RecompilationScope *> *subScopes( int byteCodeIndex ) const;
+    GrowableArray<RecompilationScope *> *subScopes( std::int32_t byteCodeIndex ) const;
 
     // return all subscopes at byteCodeIndex
-    bool_t hasSubScopes( int byteCodeIndex ) const;
+    bool_t hasSubScopes( std::int32_t byteCodeIndex ) const;
 
 
-    int level() const {
+    std::int32_t level() const {
         return _level;
     }
 
 
-    bool_t isUncommonAt( int byteCodeIndex ) const;
+    bool_t isUncommonAt( std::int32_t byteCodeIndex ) const;
 
-    bool_t isNotUncommonAt( int byteCodeIndex ) const;
+    bool_t isNotUncommonAt( std::int32_t byteCodeIndex ) const;
 
-    void addScope( int byteCodeIndex, RecompilationScope *s );
+    void addScope( std::int32_t byteCodeIndex, RecompilationScope *s );
 
-    void printTree( int byteCodeIndex, int level ) const;
+    void printTree( std::int32_t byteCodeIndex, std::int32_t level ) const;
 
     virtual void unify( NonDummyRecompilationScope *s );
 
-    static std::size_t compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ); // for sorting
+    static std::int32_t compare( NonDummyRecompilationScope **a, NonDummyRecompilationScope **b ); // for sorting
 
 protected:
     virtual void constructSubScopes( bool_t trusted );
 
 
-    virtual int scopeID() const {
+    virtual std::int32_t scopeID() const {
         ShouldNotCallThis();
         return 0;
     }
@@ -324,7 +324,7 @@ protected:
 
     void printSubScopes() const;
 
-    static NonDummyRecompilationScope *constructRScopes( const NativeMethod *nm, bool_t trusted = true, int level = 0 );
+    static NonDummyRecompilationScope *constructRScopes( const NativeMethod *nm, bool_t trusted = true, std::int32_t level = 0 );
 
     friend class Compiler;
 
@@ -340,7 +340,7 @@ class InterpretedRecompilationScope : public NonDummyRecompilationScope {
     bool_t    _is_trusted;            // is PolymorphicInlineCache info trusted?
     bool_t    extended;        // subScopes computed?
 public:
-    InterpretedRecompilationScope( NonDummyRecompilationScope *sender, int byteCodeIndex, LookupKey *key, MethodOop m, int level, bool_t trusted );
+    InterpretedRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, LookupKey *key, MethodOop m, std::int32_t level, bool_t trusted );
 
 
     bool_t isInterpretedScope() const {
@@ -364,10 +364,10 @@ public:
 
     bool_t equivalent( LookupKey *l ) const;
 
-    bool_t isUncommonAt( int byteCodeIndex ) const;
+    bool_t isUncommonAt( std::int32_t byteCodeIndex ) const;
 
 
-    bool_t isNotUncommonAt( int byteCodeIndex ) const {
+    bool_t isNotUncommonAt( std::int32_t byteCodeIndex ) const {
         return false;
     }
 
@@ -389,7 +389,7 @@ public:
     const NativeMethod    *nm;        // containing NativeMethod
     const ScopeDescriptor *desc;    // scope
 
-    InlinedRecompilationScope( NonDummyRecompilationScope *s, int byteCodeIndex, const NativeMethod *nm, ScopeDescriptor *d, int level );
+    InlinedRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, const NativeMethod *nm, ScopeDescriptor *d, std::int32_t level );
 
 
     bool_t isInlinedScope() const {
@@ -424,9 +424,9 @@ public:
 
     void print_short();
 
-    int inlining_database_size();
+    std::int32_t inlining_database_size();
 
-    void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, int byteCodeIndex, int level );
+    void print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex, std::int32_t level );
 
 protected:
     void constructSubScopes() {
@@ -434,7 +434,7 @@ protected:
     }
 
 
-    int scopeID() const {
+    std::int32_t scopeID() const {
         return desc->offset();
     }
 };
@@ -458,7 +458,7 @@ protected:
     const ScopeDescriptor *_desc;    // scope (or nullptr if interpreted)
 
 public:
-    PICRecompilationScope( const NativeMethod *caller, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *d, NativeMethod *n, MethodOop m, int nsends, int level, bool_t trusted );
+    PICRecompilationScope( const NativeMethod *caller, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *d, NativeMethod *n, MethodOop m, std::int32_t nsends, std::int32_t level, bool_t trusted );
 
 
     bool_t isPICScope() const {
@@ -508,14 +508,14 @@ public:
     void print_short();
 
 protected:
-    int scopeID() const {
+    std::int32_t scopeID() const {
         return programCounterDescriptor->_scope;
     }
 
 
     static bool_t trustPICs( const NativeMethod *nm );
 
-    friend NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const NativeMethod *nm, bool_t trusted, int level );
+    friend NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const NativeMethod *nm, bool_t trusted, std::int32_t level );
 };
 
 class InliningDatabaseRecompilationScope : public NonDummyRecompilationScope {
@@ -526,7 +526,7 @@ private:
     LookupKey             *_key;
     GrowableArray<bool_t> *_uncommon;  // list of uncommon branch
 public:
-    InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, int byteCodeIndex, KlassOop receiver_klass, MethodOop method, int level );
+    InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, KlassOop receiver_klass, MethodOop method, std::int32_t level );
 
 
     bool_t isDatabaseScope() const {
@@ -549,13 +549,13 @@ public:
     }
 
 
-    bool_t isUncommonAt( int byteCodeIndex ) const;
+    bool_t isUncommonAt( std::int32_t byteCodeIndex ) const;
 
-    bool_t isNotUncommonAt( int byteCodeIndex ) const;
+    bool_t isNotUncommonAt( std::int32_t byteCodeIndex ) const;
 
 
     // Mark a byteCodeIndex as uncommon (used when constructing database scopes)
-    void mark_as_uncommon( int byteCodeIndex ) {
+    void mark_as_uncommon( std::int32_t byteCodeIndex ) {
         _uncommon->at_put( byteCodeIndex, true );
     }
 
@@ -627,7 +627,7 @@ public:
     void print_short();
 
 protected:
-    int scopeID() const {
+    std::int32_t scopeID() const {
         return pc->_scope;
     }
 };
@@ -645,7 +645,7 @@ public:
     }
 
 
-    int byteCodeIndex() const {
+    std::int32_t byteCodeIndex() const {
         return programCounterDescriptor->_byteCodeIndex;
     }
 

@@ -43,8 +43,8 @@ std::array<const char *, Floats::max_number_of_functions>Floats::_function_names
 
 
 const char *Floats::function_name_for( Function f ) {
-    st_assert( 0 <= static_cast<std::size_t>(f) and f < Floats::Function::number_of_functions, "illegal function" );
-    return _function_names[ static_cast<std::size_t>(f) ];
+    st_assert( 0 <= static_cast<std::int32_t>(f) and f < Floats::Function::number_of_functions, "illegal function" );
+    return _function_names[ static_cast<std::int32_t>(f) ];
 }
 
 
@@ -119,7 +119,7 @@ SymbolOop Floats::selector_for( Function f ) {
 
 void Floats::generate_tst( MacroAssembler *masm, Assembler::Condition cc ) {
 
-    int                  mask;
+    std::int32_t                  mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc, mask, cond );
     Label L;
@@ -130,15 +130,15 @@ void Floats::generate_tst( MacroAssembler *masm, Assembler::Condition cc ) {
     masm->fnstsw_ax();
     masm->fpop();        // explicitly pop argument
     masm->testl( eax, mask );
-    masm->movl( eax, Address( (int) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (std::int32_t) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( cond, L );
-    masm->movl( eax, Address( (int) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (std::int32_t) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->bind( L );
 }
 
 
 void Floats::generate_cmp( MacroAssembler *masm, Assembler::Condition cc ) {
-    int                  mask;
+    std::int32_t                  mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc, mask, cond );
     Label L;
@@ -146,9 +146,9 @@ void Floats::generate_cmp( MacroAssembler *masm, Assembler::Condition cc ) {
     masm->fwait();
     masm->fnstsw_ax();
     masm->testl( eax, mask );
-    masm->movl( eax, Address( (int) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (std::int32_t) &trueObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( cond, L );
-    masm->movl( eax, Address( (int) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (std::int32_t) &falseObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->bind( L );
 }
 
@@ -244,9 +244,9 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
         default: ShouldNotReachHere();
     }
     masm->ret( 0 );
-    _function_table[ static_cast<std::size_t>(f) ] = entry_point;
+    _function_table[ static_cast<std::int32_t>(f) ] = entry_point;
 
-    int        length = masm->pc() - entry_point;
+    std::int32_t        length = masm->pc() - entry_point;
     const char *name  = function_name_for( f );
     _console->print_cr( "%%float-generate: Float function index [%d]: name [%s], length [%d] bytes, entry point [0x%x]", f, name, length, entry_point );
     if ( PrintInterpreter ) {
@@ -265,25 +265,25 @@ void Floats::init( MacroAssembler *masm ) {
         return;
 
     _console->print_cr( "%%system-init:  Floats::init" );
-    _console->print_cr( "%%system-init: _function_names.size() %ld", _function_names.size() );
-    _console->print_cr( "%%system-init: number_of_functions %ld", Floats::Function::number_of_functions );
+    _console->print_cr( "%%system-init:  _function_names.size() %ld", _function_names.size() );
+    _console->print_cr( "%%system-init:  number_of_functions %ld", Floats::Function::number_of_functions );
 
-    st_assert( _function_names.size() == static_cast<std::size_t>( Floats::Function::number_of_functions ), "Floats: number of _functions_names not equal number_of_functions" );
-    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq static_cast<std::size_t>( Floats::Function::number_of_functions ) ) {
+    st_assert( _function_names.size() == static_cast<std::int32_t>( Floats::Function::number_of_functions ), "Floats: number of _functions_names not equal number_of_functions" );
+    if ( sizeof( _function_names ) / sizeof( const char * ) not_eq static_cast<std::int32_t>( Floats::Function::number_of_functions ) ) {
         st_fatal( "Floats: number of _functions_names not equal number_of_functions" );
     }
 
     // pre-initialize whole table
     // (make sure there's an entry for each index so that illegal indices
     // can be caught during execution without additional index range check)
-    for ( std::size_t i = max_number_of_functions; i-- > 0; ) {
+    for ( std::int32_t i = max_number_of_functions; i-- > 0; ) {
         _function_table[ i ] = masm->pc();
         _console->print_cr( "%%system-init:  Floats::init() _function_table index [%ld] pc [0x%08x]", i, masm->pc() );
     }
     masm->hlt();
 
-    _console->print_cr( "Undefined float functions entry point" );
     if ( PrintInterpreter ) {
+        _console->print_cr( "%%system-init:  PrintInterpreter" );
         masm->code()->decode();
         _console->cr();
     }
@@ -330,7 +330,7 @@ void Floats::init( MacroAssembler *masm ) {
 void Floats::print() {
     if ( _is_initialized ) {
         _console->print_cr( "Float functions:" );
-        for ( std::size_t i = 0; i < static_cast<std::size_t>( Floats::Function::number_of_functions ); i++ ) {
+        for ( std::int32_t i = 0; i < static_cast<std::int32_t>( Floats::Function::number_of_functions ); i++ ) {
             _console->print_cr( "%3d: 0x%x %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {

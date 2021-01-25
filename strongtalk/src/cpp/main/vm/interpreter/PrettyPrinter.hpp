@@ -25,8 +25,8 @@
 
 class prettyPrintStream : public PrintableResourceObject {
 protected:
-    int    _indentation;
-    int    pos;
+    std::int32_t    _indentation;
+    std::int32_t    pos;
     bool_t in_hl;
 
 
@@ -62,7 +62,7 @@ public:
     }
 
 
-    int position() {
+    std::int32_t position() {
         return pos;
     }
 
@@ -94,17 +94,17 @@ public:
     virtual void end_highlight() = 0;
 
     // Layout
-    virtual int width() = 0;
+    virtual std::int32_t width() = 0;
 
-    virtual int remaining() = 0;
+    virtual std::int32_t remaining() = 0;
 
-    virtual int width_of_string( const char *str ) = 0;
+    virtual std::int32_t width_of_string( const char *str ) = 0;
 
-    virtual int width_of_char( char c ) = 0;
+    virtual std::int32_t width_of_char( char c ) = 0;
 
-    virtual int width_of_space() = 0;
+    virtual std::int32_t width_of_space() = 0;
 
-    virtual int infinity() = 0;
+    virtual std::int32_t infinity() = 0;
 
     // VM printing
     void print();
@@ -124,7 +124,7 @@ public:
 
     void print_char( char c );
 
-    int width_of_string( const char *str );
+    std::int32_t width_of_string( const char *str );
 
     void space();
 
@@ -135,34 +135,34 @@ public:
     void end_highlight();
 
 
-    int width() {
+    std::int32_t width() {
         return 100;
     }
 
 
-    int remaining() {
+    std::int32_t remaining() {
         return width() - pos;
     }
 
 
-    int width_of_char( char c ) {
+    std::int32_t width_of_char( char c ) {
         return 1;
     }
 
 
-    int width_of_space() {
+    std::int32_t width_of_space() {
         return 1;
     }
 
 
-    int infinity() {
+    std::int32_t infinity() {
         return width();
     }
 };
 
 class byteArrayPrettyPrintStream : public defaultPrettyPrintStream {
 private:
-    GrowableArray<int> *_buffer;
+    GrowableArray<std::int32_t> *_buffer;
 
 public:
     byteArrayPrettyPrintStream();
@@ -185,12 +185,12 @@ class PrettyPrinter : AllStatic {
 public:
     // Pretty prints the method with the byteCodeIndex highlighted.
     // If output is nullptr a default stream is used.
-    static void print( int index, DeltaVirtualFrame *fr, prettyPrintStream *output = nullptr );
+    static void print( std::int32_t index, DeltaVirtualFrame *fr, prettyPrintStream *output = nullptr );
 
     static void print_body( DeltaVirtualFrame *fr, prettyPrintStream *output = nullptr );
 
-    static void print( MethodOop method, KlassOop klass = nullptr, int byteCodeIndex = -1, prettyPrintStream *output = nullptr );
+    static void print( MethodOop method, KlassOop klass = nullptr, std::int32_t byteCodeIndex = -1, prettyPrintStream *output = nullptr );
 
     // Pretty prints the method with the byteCodeIndex highlighted into a byteArray.
-    static ByteArrayOop print_in_byteArray( MethodOop method, KlassOop klass = nullptr, int byteCodeIndex = -1 );
+    static ByteArrayOop print_in_byteArray( MethodOop method, KlassOop klass = nullptr, std::int32_t byteCodeIndex = -1 );
 };

@@ -51,12 +51,12 @@ RememberedSet::RememberedSet() {
 }
 
 
-void *RememberedSet::operator new( std::size_t size ) {
-    st_assert( ( int( Universe::new_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "new must start at card boundary" );
-    st_assert( ( int( Universe::old_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "old must start at card boundary" );
-    st_assert( ( int( Universe::old_gen._highBoundary ) & ( card_size - 1 ) ) == 0, "old must end at card boundary" );
+void *RememberedSet::operator new( std::int32_t size ) {
+    st_assert( ( std::int32_t( Universe::new_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "new must start at card boundary" );
+    st_assert( ( std::int32_t( Universe::old_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "old must start at card boundary" );
+    st_assert( ( std::int32_t( Universe::old_gen._highBoundary ) & ( card_size - 1 ) ) == 0, "old must end at card boundary" );
     st_assert( card_size >= 512, "card_size must be at least 512" );
-    int bmsize = ( Universe::old_gen._highBoundary - Universe::new_gen._lowBoundary ) / card_size;
+    std::int32_t bmsize = ( Universe::old_gen._highBoundary - Universe::new_gen._lowBoundary ) / card_size;
 
     return AllocateHeap( size + bmsize, "RememberedSet" );
 }
@@ -106,7 +106,7 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
             object_end = sp->object_start( e );
             if ( object_end not_eq e ) {
                 // object starts on page boundary
-                std::size_t size = as_memOop( object_end )->size();
+                std::int32_t size = as_memOop( object_end )->size();
                 object_end += size;
             }
 
@@ -123,7 +123,7 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
 
     while ( s < e ) {
         MemOop m    = as_memOop( s );
-        int    size = m->scavenge_tenured_contents();
+        std::int32_t    size = m->scavenge_tenured_contents();
         st_assert( size = m->size(), "just checking" );
         s += size;
     }
@@ -169,8 +169,8 @@ void RememberedSet::print_set_for_space( OldSpace *sp ) {
 }
 
 
-int RememberedSet::number_of_dirty_pages_in( OldSpace *sp ) {
-    int count = 0;
+std::int32_t RememberedSet::number_of_dirty_pages_in( OldSpace *sp ) {
+    std::int32_t count = 0;
     char *current_byte = byte_for( sp->bottom() );
     char *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
@@ -228,8 +228,8 @@ bool_t RememberedSet::has_page_dirty_objects( OldSpace *sp, char *page ) {
 }
 
 
-int RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace *sp ) {
-    int count = 0;
+std::int32_t RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace *sp ) {
+    std::int32_t count = 0;
     char *current_byte = byte_for( sp->bottom() );
     char *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
@@ -278,8 +278,8 @@ bool_t RememberedSet::is_object_dirty( MemOop obj ) {
 
 
 void RememberedSet::clear( const char *start, const char *end ) {
-    int *from = (int *) start;
-    int count = (int *) end - from;
+    std::int32_t *from = (std::int32_t *) start;
+    std::int32_t count = (std::int32_t *) end - from;
     set_words( from, count, AllBitsSet );
 }
 
@@ -297,13 +297,13 @@ bool_t RememberedSet::verify( bool_t postScavenge ) {
 // 129      -> 2 extra bytes  [512      .. 512   + 2^16[
 // 130      -> 4 extra bytes  [66048    ..         2^32[
 
-constexpr int lim_0 = MarkOopDescriptor::max_age;
-constexpr int lim_1 = ( 1 << 8 );
-constexpr int lim_2 = lim_1 + ( 1 << 8 );
-constexpr int lim_3 = lim_2 + ( 1 << 16 );
+constexpr std::int32_t lim_0 = MarkOopDescriptor::max_age;
+constexpr std::int32_t lim_1 = ( 1 << 8 );
+constexpr std::int32_t lim_2 = lim_1 + ( 1 << 8 );
+constexpr std::int32_t lim_3 = lim_2 + ( 1 << 16 );
 
 
-void RememberedSet::set_size( MemOop obj, std::size_t size ) {
+void RememberedSet::set_size( MemOop obj, std::int32_t size ) {
     std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     st_assert( size >= lim_0, "size must be >= max_age" );
 
@@ -322,7 +322,7 @@ void RememberedSet::set_size( MemOop obj, std::size_t size ) {
 }
 
 
-int RememberedSet::get_size( MemOop obj ) {
+std::int32_t RememberedSet::get_size( MemOop obj ) {
     std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
     std::uint8_t h = *p++;
     if ( h <= lim_0 + 1 )

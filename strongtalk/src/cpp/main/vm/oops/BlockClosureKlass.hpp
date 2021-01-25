@@ -36,12 +36,12 @@ public:
 
 
     // arity
-    int number_of_arguments() const;
+    std::int32_t number_of_arguments() const;
 
     // allocation
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    static KlassOop blockKlassFor( int numberOfArguments );
+    static KlassOop blockKlassFor( std::int32_t numberOfArguments );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -54,9 +54,9 @@ public:
 
 
     // scavenge
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -67,7 +67,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return BlockClosureOopDescriptor::header_size();
     }
 

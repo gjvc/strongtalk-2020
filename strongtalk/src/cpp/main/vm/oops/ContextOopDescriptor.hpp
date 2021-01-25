@@ -57,12 +57,12 @@ public:
     bool_t has_outer_context() const;
 
 
-    int *parent_fp() const {
-        return has_parent_fp() ? (int *) parent() : nullptr;
+    std::int32_t *parent_fp() const {
+        return has_parent_fp() ? (std::int32_t *) parent() : nullptr;
     }
 
 
-    void set_home_fp( int *fp ) { /* this should be void ** or similar to allow for 64-bit */
+    void set_home_fp( std::int32_t *fp ) { /* this should be void ** or similar to allow for 64-bit */
         st_assert( Oop(fp)->is_smi(), "checking alignment" );
         set_parent( Oop( fp ) );
     }
@@ -77,44 +77,44 @@ public:
     }
 
 
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( ContextOopDescriptor ) / oopSize;
     }
 
 
-    int object_size() {
+    std::int32_t object_size() {
         return header_size() + length();
     }
 
 
-    Oop *obj_addr_at( int index ) {
+    Oop *obj_addr_at( std::int32_t index ) {
         return oops( header_size() + index );
     }
 
 
-    Oop obj_at( int index ) {
+    Oop obj_at( std::int32_t index ) {
         return raw_at( header_size() + index );
     }
 
 
-    void obj_at_put( int index, Oop value ) {
+    void obj_at_put( std::int32_t index, Oop value ) {
         raw_at_put( header_size() + index, value );
     }
 
 
-    int length() {
+    std::int32_t length() {
         return mark()->hash() - 1;
     }
 
 
     // constants for code generation -- make this an enum
-    static std::size_t parent_word_offset();
+    static std::int32_t parent_word_offset();
 
-    static std::size_t temp0_word_offset();
+    static std::int32_t temp0_word_offset();
 
-    static std::size_t parent_byte_offset();
+    static std::int32_t parent_byte_offset();
 
-    static std::size_t temp0_byte_offset();
+    static std::int32_t temp0_byte_offset();
 
 
     // Accessors for storing and reading the forward reference
@@ -124,7 +124,7 @@ public:
     ContextOop unoptimized_context();
 
     // Returns the length of the context chain.
-    std::size_t chain_length() const;
+    std::int32_t chain_length() const;
 
     // Print the contents of home
     void print_home_on( ConsoleOutputStream *stream );

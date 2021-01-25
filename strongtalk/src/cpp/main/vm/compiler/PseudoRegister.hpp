@@ -42,22 +42,22 @@ protected:
     std::int16_t _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
     std::int16_t _softUsageCount;   // number of "soft" uses
     LogicalAddress *_logicalAddress; // for new backend only: logical address if created or nullptr
-    static const int AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
+    static const std::int32_t AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
 public:
-    static std::size_t                                     currentNo;              // id of next PseudoRegister created
+    static std::int32_t                                     currentNo;              // id of next PseudoRegister created
     GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
     InlinedScope *_scope;               // scope to which this belongs
     Location _location;              // real location assigned to this preg
     CopyPropagationInfo *_copyPropagationInfo; // to follow effects of copy propagation
     GrowableArray<PseudoRegister *> *cpRegs;               // registers copy-propagated away by this
-    int                             regClass;               // register equivalence class number
+    std::int32_t                             regClass;               // register equivalence class number
     PseudoRegister *regClassLink;         // next element in class
-    int                                  _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
+    std::int32_t                                  _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
     GrowableArray<BlockPseudoRegister *> *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
     GrowableArray<BlockPseudoRegister *> *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
     bool_t                               _debug;                 // value/loc needed for debugging info?
-    int                                  _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
+    std::int32_t                                  _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
 
 protected:
     void initialize() {
@@ -78,7 +78,7 @@ protected:
     }
 
 
-    static const int VeryNegative;
+    static const std::int32_t VeryNegative;
 
 public:
     PseudoRegister( InlinedScope *s ) :
@@ -104,7 +104,7 @@ public:
     }
 
 
-    int id() const {
+    std::int32_t id() const {
         return _id;
     }
 
@@ -171,12 +171,12 @@ public:
     void removeAllUplevelAccessors();
 
 
-    virtual int begByteCodeIndex() const {
+    virtual std::int32_t begByteCodeIndex() const {
         return PrologueByteCodeIndex;
     }
 
 
-    virtual int endByteCodeIndex() const {
+    virtual std::int32_t endByteCodeIndex() const {
         return EpilogueByteCodeIndex;
     }
 
@@ -205,17 +205,17 @@ protected:
     // don't use nuses() et al, use isUsed() instead
     // they are protected to avoid bugs; it's only safe to call them if uses are correct
     // (otherwise, nuses() et al can return negative values)
-    int nuses() const {
+    std::int32_t nuses() const {
         return _usageCount;
     }
 
 
-    int hardUses() const {
+    std::int32_t hardUses() const {
         return _usageCount - _softUsageCount;
     }
 
 
-    int ndefs() const {
+    std::int32_t ndefs() const {
         return _definitionCount;
     }
 
@@ -223,7 +223,7 @@ protected:
     friend class RegisterAllocator;
 
 public:
-    int nsoftUses() const {
+    std::int32_t nsoftUses() const {
         return _softUsageCount;
     }
 
@@ -287,7 +287,7 @@ public:
 
     virtual bool_t extendLiveRange( Node *n );
 
-    virtual bool_t extendLiveRange( InlinedScope *s, int byteCodeIndex );
+    virtual bool_t extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
 
     void forAllDefsDo( Closure<Definition *> *c );
 
@@ -351,7 +351,7 @@ public:
 
     PseudoRegister *cpReg() const;                // return "copy-propagation-equivalent" PseudoRegister
 
-    friend InlinedScope *findAncestor( InlinedScope *s1, int &byteCodeIndex1, InlinedScope *s2, int &byteCodeIndex2 );
+    friend InlinedScope *findAncestor( InlinedScope *s1, std::int32_t &byteCodeIndex1, InlinedScope *s2, std::int32_t &byteCodeIndex2 );
     // find closest common ancestor of s1 and s2, and the
     // respective sender byteCodeIndexs in that scope
 
@@ -400,15 +400,15 @@ public:
 class SinglyAssignedPseudoRegister : public PseudoRegister {
 protected:
     InlinedScope *_creationScope;        // source scope to which receiver belongs
-    int          creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
-    int          _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
+    std::int32_t          creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
+    std::int32_t          _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
     // (for reg. alloc. purposes)
     const bool_t _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
 public:
-    SinglyAssignedPseudoRegister( InlinedScope *s, int stream = IllegalByteCodeIndex, int en = IllegalByteCodeIndex, bool_t inContext = false );
+    SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream = IllegalByteCodeIndex, std::int32_t en = IllegalByteCodeIndex, bool_t inContext = false );
 
 
-    SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool_t incU, bool_t incD, int stream, int en ) :
+    SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool_t incU, bool_t incD, std::int32_t stream, std::int32_t en ) :
             PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ) {
         _begByteCodeIndex = creationStartByteCodeIndex = stream;
         _endByteCodeIndex = en;
@@ -416,12 +416,12 @@ public:
     }
 
 
-    int begByteCodeIndex() const {
+    std::int32_t begByteCodeIndex() const {
         return _begByteCodeIndex;
     }
 
 
-    int endByteCodeIndex() const {
+    std::int32_t endByteCodeIndex() const {
         return _endByteCodeIndex;
     }
 
@@ -443,7 +443,7 @@ public:
 
     bool_t extendLiveRange( Node *n );
 
-    bool_t extendLiveRange( InlinedScope *s, int byteCodeIndex );
+    bool_t extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
 
     bool_t isLiveAt( Node *n ) const;
 
@@ -461,7 +461,7 @@ public:
     bool_t verify() const;
 
 protected:
-    bool_t basic_isLiveAt( InlinedScope *s, int byteCodeIndex ) const;
+    bool_t basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const;
 
     friend class ExpressionStack;
 };
@@ -476,10 +476,10 @@ protected:
     GrowableArray<PseudoRegister *> *_uplevelRead;            // list of PseudoRegisters uplevel-read by block method (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelWritten;        // list of PseudoRegisters uplevel-written by block method (or nullptr)
     GrowableArray<Location *>       *_contextCopies;        // list of context location containing a copy of the receiver (or nullptr)
-    static std::size_t                      _numBlocks;
+    static std::int32_t                      _numBlocks;
 
 public:
-    BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, int beg, int end );
+    BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end );
 
 
     bool_t isBlockPseudoRegister() const {
@@ -508,7 +508,7 @@ public:
     }
 
 
-    static std::size_t numBlocks() {
+    static std::int32_t numBlocks() {
         return _numBlocks;
     }
 
@@ -661,7 +661,7 @@ class SplitPReg : public SinglyAssignedPseudoRegister {
  public:
   SplitSig* sig;
 
-  SplitPReg(InlinedScope* s, int stream, int en, SplitSig* signature) : SinglyAssignedPseudoRegister(s, stream, en) {
+  SplitPReg(InlinedScope* s, std::int32_t stream, std::int32_t en, SplitSig* signature) : SinglyAssignedPseudoRegister(s, stream, en) {
     sig = signature;
   }
 

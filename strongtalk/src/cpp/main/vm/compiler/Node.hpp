@@ -63,7 +63,7 @@ class AbstractArrayAtPutNode;   //
 class ArrayAtPutNode;           // _At:Put: primitive
 class InlinedPrimitiveNode;     // specialized inlined primitives
 class BranchNode;               // machine-level conditional branches
-class TypeTestNode;             // type tests (compare klasses, incl int/float)
+class TypeTestNode;             // type tests (compare klasses, incl std::int32_t/float)
 class NonLocalReturnTestNode;   // tests whether NonLocalReturn has found home method
 class ContextInitNode;          // initialize context fields
 class ContextZapNode;           // zap context (new backend only)
@@ -84,9 +84,9 @@ class PseudoRegisterMapping;
 class BasicNode : public PrintableResourceObject {
 
 protected:
-    std::int16_t _id;                      // unique node id for debugging
-    std::int16_t _num;                     // node number within basic block
-    std::int16_t _byteCodeIndex;           // byteCodeIndex within the sc
+    std::int16_t          _id;                      // unique node id for debugging
+    std::int16_t          _num;                     // node number within basic block
+    std::int16_t          _byteCodeIndex;           // byteCodeIndex within the sc
     BasicBlock            *_basicBlock;            // basic block to which this instance belongs
     InlinedScope          *_scope;                 // scope to which this instance belongs
     PseudoRegisterMapping *_pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
@@ -96,7 +96,7 @@ public:
     bool_t _dontEliminate; // for special cases: must not eliminate this node
     bool_t _deleted;       // node has been deleted
 
-    int id() const {
+    std::int32_t id() const {
         return this == nullptr ? -1 : _id;
     }
 
@@ -106,7 +106,7 @@ public:
     }
 
 
-    int num() const {
+    std::int32_t num() const {
         return _num;
     }
 
@@ -116,7 +116,7 @@ public:
     }
 
 
-    int byteCodeIndex() const {
+    std::int32_t byteCodeIndex() const {
         return _byteCodeIndex;
     }
 
@@ -126,17 +126,17 @@ public:
     }
 
 
-    void setNum( int n ) {
+    void setNum( std::int32_t n ) {
         _num = n;
     }
 
 
     void setScope( InlinedScope *s );
 
-    static std::size_t       currentID;              // current node ID
-    static std::size_t       currentCommentID;       // current ID for comment nodes
-    static ScopeInfo lastScopeInfo;          // for programCounterDescriptor generation
-    static std::size_t       lastByteCodeIndex;      //
+    static std::int32_t currentID;              // current node ID
+    static std::int32_t currentCommentID;       // current ID for comment nodes
+    static ScopeInfo   lastScopeInfo;          // for programCounterDescriptor generation
+    static std::int32_t lastByteCodeIndex;      //
 
     BasicNode();
 
@@ -299,7 +299,7 @@ protected:
 
 public:
     // for splitting: rough estimate of Space cost of node (in bytes)
-    virtual int cost() const {
+    virtual std::int32_t cost() const {
         return oopSize;
     }
 
@@ -368,7 +368,7 @@ public:
     }
 
 
-    int loopDepth() const {
+    std::int32_t loopDepth() const {
         return _basicBlock->loopDepth();
     }
 
@@ -396,7 +396,7 @@ public:
     }
 
 
-    virtual void markAllocated( int *use_count, int *def_count ) = 0;
+    virtual void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) = 0;
 
     virtual SimpleBitVector trashedMask();
 
@@ -509,12 +509,12 @@ public:
     }
 
 
-    virtual int nPredecessors() const {
+    virtual std::int32_t nPredecessors() const {
         return _prev ? 1 : 0;
     }
 
 
-    virtual int nSuccessors() const {
+    virtual std::int32_t nSuccessors() const {
         return _next ? 1 : 0;
     }
 
@@ -539,7 +539,7 @@ public:
     }
 
 
-    virtual Node *next( std::size_t i ) const {
+    virtual Node *next( std::int32_t i ) const {
         if ( i == 0 )
             return _next;
         else {
@@ -554,7 +554,7 @@ public:
     }
 
 
-    virtual Node *prev( int n ) const {
+    virtual Node *prev( std::int32_t n ) const {
         if ( n == 0 )
             return _prev;
         else st_fatal( "single prev" );
@@ -585,7 +585,7 @@ public:
     }
 
 
-    virtual void setNext( std::size_t i, Node *n ) {
+    virtual void setNext( std::int32_t i, Node *n ) {
         if ( i == 0 )
             setNext( n );
         else st_fatal( "subclass" );
@@ -622,7 +622,7 @@ public:
     }
 
 
-    Node *append( std::size_t i, Node *p ) {
+    Node *append( std::int32_t i, Node *p ) {
         setNext( i, p );
         p->setPrev( this );
         return p;
@@ -663,7 +663,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 0;
     }
 
@@ -673,7 +673,7 @@ public:
     }
 
 
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     }
 
 
@@ -727,11 +727,11 @@ class PrologueNode : public NonTrivialNode {
 protected:
 
     LookupKey *_key;
-    const int _nofArgs;
-    const int _nofTemps;
+    const std::int32_t _nofArgs;
+    const std::int32_t _nofTemps;
 
 
-    PrologueNode( LookupKey *key, int nofArgs, int nofTemps ) :
+    PrologueNode( LookupKey *key, std::int32_t nofArgs, std::int32_t nofTemps ) :
             _nofArgs( nofArgs ), _nofTemps( nofTemps ) {
         _key = key;
     }
@@ -770,7 +770,7 @@ public:
     }
 
 
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     }
 
 
@@ -809,7 +809,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -820,9 +820,9 @@ public:
 class LoadIntNode : public LoadNode {
 
 protected:
-    int _value;        // constant (vm-level, not an Oop) to be loaded
+    std::int32_t _value;        // constant (vm-level, not an Oop) to be loaded
 
-    LoadIntNode( PseudoRegister *dst, int value ) :
+    LoadIntNode( PseudoRegister *dst, std::int32_t value ) :
             LoadNode( dst ) {
         _value = value;
     }
@@ -832,7 +832,7 @@ public:
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-    int value() {
+    std::int32_t value() {
         return _value;
     }
 
@@ -855,11 +855,11 @@ class LoadOffsetNode : public LoadNode {
 
 public:
     // _src is base address (e.g. object containing a slot)
-    int    _offset;          // offset in words
+    std::int32_t    _offset;          // offset in words
     bool_t _isArraySize;     // is this load implementing an array size primitive?
 
 protected:
-    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, int offs, bool_t arr ) :
+    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, std::int32_t offs, bool_t arr ) :
             LoadNode( dst ) {
         _src         = b;
         _offset      = offs;
@@ -890,7 +890,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -917,12 +917,12 @@ class LoadUplevelNode : public LoadNode {
 private:
     Usage          *_context0Use;   //
     PseudoRegister *_context0;      // starting context
-    int       _nofLevels;      // no. of indirections to follow via context home field
-    int       _offset;         // offset of temporary in final context
-    SymbolOop _name;           // temporary name (for printing)
+    std::int32_t            _nofLevels;      // no. of indirections to follow via context home field
+    std::int32_t            _offset;         // offset of temporary in final context
+    SymbolOop      _name;           // temporary name (for printing)
 
 protected:
-    LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name );
+    LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name );
 
 public:
     PseudoRegister *context0() const {
@@ -930,12 +930,12 @@ public:
     }
 
 
-    int nofLevels() const {
+    std::int32_t nofLevels() const {
         return _nofLevels;
     }
 
 
-    int offset() const {
+    std::int32_t offset() const {
         return _offset;
     }
 
@@ -946,7 +946,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
@@ -1014,7 +1014,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -1030,11 +1030,11 @@ class StoreOffsetNode : public StoreNode {
 private:
     PseudoRegister *_base;              // base address (object containing the slot)
     Usage          *_baseUse;           //
-    int    _offset;             // offset in words
-    bool_t _needsStoreCheck;    // does store need a GC store check?
+    std::int32_t            _offset;             // offset in words
+    bool_t         _needsStoreCheck;    // does store need a GC store check?
 
 protected:
-    StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, int o, bool_t nsc ) :
+    StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool_t nsc ) :
             StoreNode( s ) {
         _base = b;
         st_assert( b, "base is nullptr" );
@@ -1049,7 +1049,7 @@ public:
     }
 
 
-    int offset() const {
+    std::int32_t offset() const {
         return _offset;
     }
 
@@ -1080,7 +1080,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
@@ -1114,13 +1114,13 @@ class StoreUplevelNode : public StoreNode {
 private:
     Usage          *_context0Use;       //
     PseudoRegister *_context0;          // starting context
-    int       _nofLevels;          // no. of indirections to follow via context home field
-    int       _offset;             // offset of temporary in final context
-    bool_t    _needsStoreCheck;    // generate a store check if true
-    SymbolOop _name;               // temporary name (for printing)
+    std::int32_t            _nofLevels;          // no. of indirections to follow via context home field
+    std::int32_t            _offset;             // offset of temporary in final context
+    bool_t         _needsStoreCheck;    // generate a store check if true
+    SymbolOop      _name;               // temporary name (for printing)
 
 protected:
-    StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needsStoreCheck );
+    StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool_t needsStoreCheck );
 
 public:
     PseudoRegister *context0() const {
@@ -1128,12 +1128,12 @@ public:
     }
 
 
-    int nofLevels() const {
+    std::int32_t nofLevels() const {
         return _nofLevels;
     }
 
 
-    int offset() const {
+    std::int32_t offset() const {
         return _offset;
     }
 
@@ -1159,7 +1159,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
@@ -1187,7 +1187,7 @@ protected:
     AssignNode( PseudoRegister *s, PseudoRegister *d );
 
 public:
-    int cost() const {
+    std::int32_t cost() const {
         return oopSize / 2;
     }  // assume 50% eliminated
     bool_t isAccessingFloats() const;
@@ -1239,7 +1239,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -1263,7 +1263,7 @@ protected:
 class AbstractReturnNode : public NonTrivialNode {
 
 protected:
-    AbstractReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) {
+    AbstractReturnNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) {
         _byteCodeIndex = byteCodeIndex;
         _src           = src;
         _dest          = dest;
@@ -1318,7 +1318,7 @@ public:
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
 
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     }
 
 
@@ -1330,7 +1330,7 @@ class InlinedReturnNode : public AbstractReturnNode {
 
     // should replace with AssignNode + ContextZap (if needed)
 protected:
-    InlinedReturnNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
+    InlinedReturnNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
             AbstractReturnNode( byteCodeIndex, src, dest ) {
     }
 
@@ -1361,7 +1361,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 0;
     }
 
@@ -1395,7 +1395,7 @@ class NonLocalReturnSetupNode : public AbstractReturnNode {
     Usage *_resultUse;
     Usage *_contextUse;            // needs context to load home FP
 protected:
-    NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex );
+    NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex );
 
 public:
     bool_t isExitNode() const {
@@ -1459,7 +1459,7 @@ public:
 
 class NonLocalReturnContinuationNode : public AbstractReturnNode {
 protected:
-    NonLocalReturnContinuationNode( int byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
+    NonLocalReturnContinuationNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
             AbstractReturnNode( byteCodeIndex, src, dest ) {
     }
 
@@ -1532,7 +1532,7 @@ private:
     Usage *_resultUse;
 
 protected:
-    ReturnNode( PseudoRegister *res, int byteCodeIndex );
+    ReturnNode( PseudoRegister *res, std::int32_t byteCodeIndex );
 
 public:
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -1562,7 +1562,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -1614,7 +1614,7 @@ public:
     }
 
 
-    int nPredecessors() const {
+    std::int32_t nPredecessors() const {
         return _prevs->length();
     }
 
@@ -1631,7 +1631,7 @@ public:
     }
 
 
-    Node *prev( int n ) const {
+    Node *prev( std::int32_t n ) const {
         return _prevs->at( n );
     }
 
@@ -1656,7 +1656,7 @@ public:
 class MergeNode : public AbstractMergeNode {
 
 protected:
-    MergeNode( int byteCodeIndex );
+    MergeNode( std::int32_t byteCodeIndex );
 
     MergeNode( Node *prev1, Node *prev2 );
 
@@ -1665,7 +1665,7 @@ public:
     bool_t _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
     bool_t _didStartBasicBlock; // used for debugging / assertion checks
 
-    int cost() const {
+    std::int32_t cost() const {
         return 0;
     }
 
@@ -1706,9 +1706,9 @@ public:
 
 
 class ArithNode : public NonTrivialNode {    // abstract
-    // NB: ArithNodes are not used for tagged int arithmetic -- see TArithNode
+    // NB: ArithNodes are not used for tagged std::int32_t arithmetic -- see TArithNode
 protected:
-    ArithOpCode _op;
+    ArithOpCode         _op;
     ConstPseudoRegister *_constResult;    // non-nullptr if constant-folded
 
     ArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) {
@@ -1759,7 +1759,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -1773,7 +1773,7 @@ public:
 
     virtual bool_t operIsConst() const = 0;
 
-    virtual int operConst() const = 0;
+    virtual std::int32_t operConst() const = 0;
 
     virtual bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t repl );
 
@@ -1801,7 +1801,7 @@ public:
 
     bool_t operIsConst() const;
 
-    int operConst() const;
+    std::int32_t operConst() const;
 
     bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace );
 
@@ -1809,7 +1809,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -1887,7 +1887,7 @@ public:
     }
 
 
-    int operConst() const {
+    std::int32_t operConst() const {
         ShouldNotCallThis();
         return 0;
     }
@@ -1913,17 +1913,17 @@ class ArithRCNode : public ArithNode {  // reg op const => reg
     // used to compare against non-Oop constants (e.g. for markOop test)
     // DO NOT USE to add a reg and an Oop constant -- use ArithRR + ConstPseudoRegisters for that
 protected:
-    int _oper;
+    std::int32_t _oper;
 
 
-    ArithRCNode( ArithOpCode o, PseudoRegister *s, int o2, PseudoRegister *d ) :
+    ArithRCNode( ArithOpCode o, PseudoRegister *s, std::int32_t o2, PseudoRegister *d ) :
             ArithNode( o, s, d ) {
         _oper = o2;
     }
 
 
 public:
-    int operand() const {
+    std::int32_t operand() const {
         return _oper;
     }
 
@@ -1943,7 +1943,7 @@ public:
     }
 
 
-    int operConst() const {
+    std::int32_t operConst() const {
         return _oper;
     }
 
@@ -1998,7 +1998,7 @@ public:
     }
 
 
-    int nSuccessors() const {
+    std::int32_t nSuccessors() const {
         return _nxt->length() + ( _next ? 1 : 0 );
     }
 
@@ -2008,7 +2008,7 @@ public:
     }
 
 
-    Node *next( std::size_t i ) const {
+    Node *next( std::int32_t i ) const {
         return i == 0 ? _next : _nxt->at( i - 1 );
     }
 
@@ -2029,7 +2029,7 @@ public:
     }
 
 
-    void setNext( std::size_t i, Node *n );
+    void setNext( std::int32_t i, Node *n );
 
     void moveNext( Node *from, Node *to );
 
@@ -2040,11 +2040,11 @@ class TArithRRNode : public AbstractBranchNode {
     // tagged arithmetic operation; next() is success case, next1()
     // is failure (leaving ORed operands in Temp1 for tag test)
 protected:
-    ArithOpCode _op;
-    PseudoRegister *_oper;
-    Usage          *_operUse;
-    bool_t _arg1IsInt;            // is _src a smi_t?
-    bool_t _arg2IsInt;            // is _oper a smi_t?
+    ArithOpCode         _op;
+    PseudoRegister      *_oper;
+    Usage               *_operUse;
+    bool_t              _arg1IsInt;            // is _src a smi_t?
+    bool_t              _arg2IsInt;            // is _oper a smi_t?
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
     TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool_t a1, bool_t a2 );
@@ -2120,7 +2120,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
@@ -2163,7 +2163,7 @@ public:
     GrowableArray<Usage *>          *uplevelUses; // uses for uplevel-read names
     GrowableArray<Definition *>     *uplevelDefs; // definitions for uplevel-written names
     GrowableArray<PseudoRegister *> *args;        // args including receiver (at index 0, followed by first arg), or nullptr
-    int                             nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
+    std::int32_t                             nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
 
     bool_t hasDest() const {
         return true;
@@ -2200,7 +2200,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     SimpleBitVector trashedMask();
 
@@ -2215,8 +2215,8 @@ class SendNode : public CallNode {
 
 protected:
     LookupKey *_key;      // lookup key (for selector)
-    bool_t _superSend;  // is it a super send?
-    SendInfo *_info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
+    bool_t    _superSend;  // is it a super send?
+    SendInfo  *_info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
 
     SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool_t superSend, SendInfo *info );
 
@@ -2248,7 +2248,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return oopSize * 5;
     }      // include InlineCache + some param pushing
     PseudoRegister *recv() const;
@@ -2313,10 +2313,10 @@ public:
 
 class DLLNode : public CallNode {
 protected:
-    SymbolOop _dll_name;
-    SymbolOop _function_name;
-    dll_func_ptr_t  _function;
-    bool_t    _async;
+    SymbolOop      _dll_name;
+    SymbolOop      _function_name;
+    dll_func_ptr_t _function;
+    bool_t         _async;
 
     DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
@@ -2329,7 +2329,7 @@ public:
     }
 
 
-    int nofArguments() const {
+    std::int32_t nofArguments() const {
         return args == nullptr ? 0 : args->length();
     }
 
@@ -2413,20 +2413,20 @@ class LoopHeaderNode : public TrivialNode {
 
 protected:
     // info for integer loops
-    bool_t _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
-    PseudoRegister *_loopVar;              // loop variable
-    PseudoRegister *_lowerBound;           // lower bound
-    PseudoRegister *_upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
-    LoadOffsetNode *_upperLoad;            // loads array size that is the upper bound
+    bool_t                               _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
+    PseudoRegister                       *_loopVar;              // loop variable
+    PseudoRegister                       *_lowerBound;           // lower bound
+    PseudoRegister                       *_upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
+    LoadOffsetNode                       *_upperLoad;            // loads array size that is the upper bound
     GrowableArray<AbstractArrayAtNode *> *_arrayAccesses;     // arrays indexed by loopVar
 
-    LoopHeaderNode *_enclosingLoop;      // enclosing loop or nullptr
+    LoopHeaderNode                    *_enclosingLoop;      // enclosing loop or nullptr
     // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
     GrowableArray<HoistedTypeTest *>  *_tests;              // type tests hoisted out of loop
     GrowableArray<LoopHeaderNode *>   *_nestedLoops;        // nested loops (nullptr if none)
     GrowableArray<LoopRegCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
     bool_t                            _activated;            // gen() does nothing until activated
-    int                               _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
+    std::int32_t                               _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
 
@@ -2487,12 +2487,12 @@ public:
     }
 
 
-    int nofCallsInLoop() const {
+    std::int32_t nofCallsInLoop() const {
         return _nofCalls;
     }
 
 
-    void set_nofCallsInLoop( int n ) {
+    void set_nofCallsInLoop( std::int32_t n ) {
         _nofCalls = n;
     }
 
@@ -2601,7 +2601,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 2 * oopSize;
     }    // hope it's memoized
 
@@ -2617,7 +2617,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void gen();
 
@@ -2658,7 +2658,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 5 * oopSize;
     } // assume blk is memoized
 
@@ -2668,7 +2668,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -2689,13 +2689,13 @@ public:
 class ContextCreateNode : public PrimitiveNode {
     // src is parent context, dest is register holding created context
 protected:
-    int                             _nofTemps;             // no. of temps in context
-    int                             _contextSize;          // size of compiled context
-    int                             _contextNo;            // context number (index into compiler's contextList)
+    std::int32_t                             _nofTemps;             // no. of temps in context
+    std::int32_t                             _contextSize;          // size of compiled context
+    std::int32_t                             _contextNo;            // context number (index into compiler's contextList)
     GrowableArray<PseudoRegister *> *_parentContexts;     // context chain above parent context (if any)
     GrowableArray<Usage *>          *_parentContextUses;  // for _parentContexts
 
-    ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack );
+    ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, std::int32_t nofTemps, GrowableArray<PseudoRegister *> *expr_stack );
 
     ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ); // for cloning
 
@@ -2730,27 +2730,27 @@ public:
     }
 
 
-    int nofTemps() const {
+    std::int32_t nofTemps() const {
         return _nofTemps;
     }
 
 
-    std::size_t sizeOfContext() const {
+    std::int32_t sizeOfContext() const {
         return _contextSize;
     }
 
 
-    void set_sizeOfContext( int s ) {
+    void set_sizeOfContext( std::int32_t s ) {
         _contextSize = s;
     }
 
 
-    int contextNo() const {
+    std::int32_t contextNo() const {
         return _contextNo;
     }
 
 
-    void set_contextNo( int s ) {
+    void set_contextNo( std::int32_t s ) {
         _contextNo = s;
     }
 
@@ -2763,7 +2763,7 @@ public:
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void gen();
 
@@ -2831,17 +2831,17 @@ public:
     }
 
 
-    int nofTemps() const {
+    std::int32_t nofTemps() const {
         return _initializers->length();
     }
 
 
-    Expression *contextTemp( std::size_t i ) const {
+    Expression *contextTemp( std::int32_t i ) const {
         return contents()->at( i );
     }
 
 
-    Expression *initialValue( std::size_t i ) const {
+    Expression *initialValue( std::int32_t i ) const {
         return _initializers->at( i );
     }
 
@@ -2858,8 +2858,8 @@ public:
     }
 
 
-    void initialize( std::size_t no, Expression *expr );        // to copy something into the context right after creation
-    std::size_t positionOfContextTemp( std::size_t i ) const;    // position of ith context temp in compiled context
+    void initialize( std::int32_t no, Expression *expr );        // to copy something into the context right after creation
+    std::int32_t positionOfContextTemp( std::int32_t i ) const;    // position of ith context temp in compiled context
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
     void makeUses( BasicBlock *bb );
@@ -2870,7 +2870,7 @@ public:
 
     bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
@@ -2934,7 +2934,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void gen();
 
@@ -2957,7 +2957,7 @@ class NonLocalReturnTestNode : public AbstractBranchNode {
     // returns from method (if home scope found) or continues the NonLocalReturn
     // next() is the "continue NonLocalReturn" branch, next1() the "found home" branch
 protected:
-    NonLocalReturnTestNode( int byteCodeIndex );
+    NonLocalReturnTestNode( std::int32_t byteCodeIndex );
 
 public:
     bool_t isNonLocalReturnTestNode() const {
@@ -2990,7 +2990,7 @@ public:
 
 
     // void eliminate(BasicBlock* bb, PseudoRegister* r, bool_t removing = false, bool_t cp = false);
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     };
 
     Node *likelySuccessor() const;
@@ -3043,12 +3043,12 @@ public:
     }
 
 
-    void eliminateBranch( int op1, int op2, int res );
+    void eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
 
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     }
 
 
@@ -3083,7 +3083,7 @@ class TypeTestNode : public AbstractBranchNode {
     // _src is the register containing the receiver
 protected:
     GrowableArray<KlassOop> *_classes;    // classes to test for
-    bool_t _hasUnknown;                // can recv be anything? (if false, recv class
+    bool_t                  _hasUnknown;                // can recv be anything? (if false, recv class
     // guaranteed to be in classes list)
 
     bool_t needsKlassLoad() const;        // does test need object's klass?
@@ -3135,7 +3135,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 2 * oopSize * ( _classes->length() + needsKlassLoad() ? 1 : 0 );
     }
 
@@ -3160,7 +3160,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -3196,12 +3196,12 @@ protected:
     Usage          *_argUse;       //
     PseudoRegister *_error;        // where to move the error string
     Definition     *_errorDef;     //
-    bool_t _needBoundsCheck;        // need array bounds check?
-    bool_t _intArg;                 // need not test for int if true
-    int    _dataOffset;             // where start of array is (Oop offset)
-    int    _sizeOffset;             // where size of array is (Oop offset)
+    bool_t         _needBoundsCheck;        // need array bounds check?
+    bool_t         _intArg;                 // need not test for std::int32_t if true
+    std::int32_t            _dataOffset;             // where start of array is (Oop offset)
+    std::int32_t            _sizeOffset;             // where size of array is (Oop offset)
 
-    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, int dataOffset, std::size_t sizeOffset ) {
+    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, std::int32_t dataOffset, std::int32_t sizeOffset ) {
         _src             = r;
         _arg             = idx;
         _intArg          = ia;
@@ -3228,7 +3228,7 @@ public:
     bool_t canFail() const = 0;
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 20 + ( _intArg ? 0 : 12 );
     } // fix this
     bool_t canCopyPropagate() const {
@@ -3236,7 +3236,7 @@ public:
     }
 
 
-    std::size_t sizeOffset() const {
+    std::int32_t sizeOffset() const {
         return _sizeOffset;
     }
 
@@ -3266,7 +3266,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
 
@@ -3297,8 +3297,8 @@ protected:
                  bool_t smiIndex,           // true if index is known to be a smi_t, false otherwise
                  PseudoRegister *result,   // where the result is stored
                  PseudoRegister *error,    // where the error symbol is stored if the operation fails
-                 int data_offset,           // data offset in oops relative to array
-                 int length_offset          // array length offset in oops relative to array
+                 std::int32_t data_offset,           // data offset in oops relative to array
+                 std::int32_t length_offset          // array length offset in oops relative to array
     );
 
 public:
@@ -3337,12 +3337,12 @@ public:
     }
 
 
-    int data_word_offset() const {
+    std::int32_t data_word_offset() const {
         return _dataOffset;
     }
 
 
-    std::size_t size_word_offset() const {
+    std::int32_t size_word_offset() const {
         return _sizeOffset;
     }
 
@@ -3371,7 +3371,7 @@ protected:
     Usage          *elemUse;
 
 
-    AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool_t ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, int doff, int soff ) :
+    AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool_t ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, std::int32_t doff, std::int32_t soff ) :
             AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
         elem = el;
     }
@@ -3390,7 +3390,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     friend class NodeFactory;
 };
@@ -3425,8 +3425,8 @@ protected:
                     bool_t smi_element,         // true if element is known to be a smi_t, false otherwise
                     PseudoRegister *result,    // where the result is stored
                     PseudoRegister *error,     // where the error symbol is stored if the operation fails
-                    int data_offset,            // data offset in oops relative to array
-                    int length_offset,          // array length offset in oops relative to array
+                    std::int32_t data_offset,            // data offset in oops relative to array
+                    std::int32_t length_offset,          // array length offset in oops relative to array
                     bool_t needs_store_check    // indicates whether a store check is necessary or not
     );
 
@@ -3486,12 +3486,12 @@ public:
     }
 
 
-    int data_word_offset() const {
+    std::int32_t data_word_offset() const {
         return _dataOffset;
     }
 
 
-    std::size_t size_word_offset() const {
+    std::int32_t size_word_offset() const {
         return _sizeOffset;
     }
 
@@ -3535,9 +3535,9 @@ private:
     Usage          *_arg1_use;     //
     Usage          *_arg2_use;     //
     Definition     *_error_def;    //
-    bool_t    _arg1_is_smi;    // true if 1st argument is known to be a smi_t
-    bool_t    _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
-    Operation _operation;      //
+    bool_t         _arg1_is_smi;    // true if 1st argument is known to be a smi_t
+    bool_t         _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+    Operation      _operation;      //
     // _src is	_recv;			    // receiver or nullptr
 
     InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi );
@@ -3589,7 +3589,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void markAllocated( int *use_count, int *def_count );
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
     bool_t canBeEliminated() const;
 
@@ -3632,7 +3632,7 @@ class UncommonNode : public NonTrivialNode {
     GrowableArray<PseudoRegister *> *exprStack;
 
 protected:
-    UncommonNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex );
+    UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex );
 
 public:
     bool_t isUncommonNode() const {
@@ -3640,7 +3640,7 @@ public:
     }
 
 
-    int cost() const {
+    std::int32_t cost() const {
         return 4;
     } // fix this
 
@@ -3657,7 +3657,7 @@ public:
     virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-    void markAllocated( int *use_count, int *def_count ) {
+    void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     }
 
 
@@ -3686,13 +3686,13 @@ public:
 class UncommonSendNode : public UncommonNode {
 
 private:
-    int _argCount;
+    std::int32_t _argCount;
 
 protected:
-    UncommonSendNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex, int argCount = 0 );
+    UncommonSendNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex, std::int32_t argCount = 0 );
 
 public:
-    int args() const {
+    std::int32_t args() const {
         return _argCount;
     }
 

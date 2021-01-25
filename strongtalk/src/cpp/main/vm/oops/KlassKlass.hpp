@@ -42,15 +42,15 @@ public:
 
 
     // memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
     Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
 
-    Oop oop_primitive_allocate_size( Oop obj, std::size_t size );
+    Oop oop_primitive_allocate_size( Oop obj, std::int32_t size );
 
     Oop oop_shallow_copy( Oop obj, bool_t tenured );
 
@@ -74,7 +74,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return KlassOopDescriptor::header_size();
     }
 };

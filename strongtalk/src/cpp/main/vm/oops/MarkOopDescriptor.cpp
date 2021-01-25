@@ -15,7 +15,7 @@ void MarkOopDescriptor::print_on( ConsoleOutputStream *stream ) {
 }
 
 
-int assign_hash( MarkOop &m ) {
+std::int32_t assign_hash( MarkOop &m ) {
     m = m->set_hash( CurrentHash++ );
     return m->hash();
 }

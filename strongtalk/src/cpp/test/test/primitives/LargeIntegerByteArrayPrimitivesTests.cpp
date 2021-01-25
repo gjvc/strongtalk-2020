@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 typedef Oop(__CALLING_CONVENTION divfn)( Oop, Oop );
 
@@ -108,13 +108,13 @@ protected:
     char message[100];
 
 
-    char *reportHex( const char *prefix, int expected, int actual ) {
+    char *reportHex( const char *prefix, std::int32_t expected, std::int32_t actual ) {
         sprintf( message, "%s. Expected: 0x%x, but was: 0x%x", prefix, expected, actual );
         return message;
     }
 
 
-    char *report( const char *prefix, int expected, int actual ) {
+    char *report( const char *prefix, std::int32_t expected, std::int32_t actual ) {
         sprintf( message, "%s. Expected: %d, but was: %d", prefix, expected, actual );
         return message;
     }
@@ -505,7 +505,7 @@ as_Integer( x )
 IntegerOps::string_to_Integer( "ffffffff", 16,
 as_Integer( y )
 );
-int result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
+std::int32_t result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
 EXPECT_TRUE( result<
 0 ) << "Wrong cmp";;
 }
@@ -519,7 +519,7 @@ as_Integer( x )
 IntegerOps::string_to_Integer( "00000001", 16,
 as_Integer( y )
 );
-int result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
+std::int32_t result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
 EXPECT_TRUE( result
 > 0 ) << "Wrong cmp";;
 }
@@ -533,7 +533,7 @@ as_Integer( x )
 IntegerOps::string_to_Integer( "ffffffff", 16,
 as_Integer( y )
 );
-int result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
+std::int32_t result = IntegerOps::unsigned_cmp( as_Integer( x ), as_Integer( y ) );
 EXPECT_TRUE( result
 == 0 ) << "Wrong cmp";;
 }

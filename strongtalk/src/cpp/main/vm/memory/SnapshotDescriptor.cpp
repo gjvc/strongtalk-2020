@@ -79,7 +79,7 @@ void SnapshotDescriptor::read_revision() {
 
 
 void SnapshotDescriptor::write_revision() {
-    int major, snap;
+    std::int32_t major, snap;
     if ( fscanf( _file, revision_format, &major, &snap ) not_eq 2 )
         error( "reading revision" );
     if ( Universe::major_version() not_eq major )

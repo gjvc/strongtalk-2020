@@ -24,7 +24,7 @@ private:
     static GrowableArray<ClassChange *> *_classChanges; // Class changes
     static GrowableArray<MemOop> *_converted;     // Converted objects
 
-    static std::size_t invocations_offset() {
+    static std::int32_t invocations_offset() {
         return 3;
     }
 

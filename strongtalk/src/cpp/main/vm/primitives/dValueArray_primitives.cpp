@@ -14,7 +14,7 @@
 TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )
 
 
-std::size_t doubleValueArrayPrimitives::number_of_calls;
+std::int32_t doubleValueArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_doubleValueArray(), "receiver must be double value array")
 
@@ -28,11 +28,11 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    int length = SMIOop( argument )->value();
+    std::int32_t length = SMIOop( argument )->value();
 
     KlassOop            k        = KlassOop( receiver );
-    int                 ni_size  = k->klass_part()->non_indexable_size();
-    int                 obj_size = ni_size + 1 + roundTo( length * sizeof( double ), oopSize ) / oopSize;
+    std::int32_t                 ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t                 obj_size = ni_size + 1 + roundTo( length * sizeof( double ), oopSize ) / oopSize;
     // allocate
     doubleValueArrayOop obj      = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
@@ -41,7 +41,7 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     obj->set_length( length );
 
-    for ( std::size_t i = 1; i <= length; i++ ) {
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 

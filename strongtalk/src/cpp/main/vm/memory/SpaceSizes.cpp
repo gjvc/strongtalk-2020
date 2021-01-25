@@ -8,8 +8,8 @@
 #include "vm/memory/Universe.hpp"
 
 
-static std::size_t scale_and_adjust( int value ) {
-    int result = roundTo( value * 1024, Universe::page_size() );
+static std::int32_t scale_and_adjust( std::int32_t value ) {
+    std::int32_t result = roundTo( value * 1024, Universe::page_size() );
     return result;
 }
 
@@ -27,10 +27,10 @@ void SpaceSizes::initialize() {
 }
 
 
-static std::size_t GetNumericEnvironmentVariable( const char *name, int factor, int def ) {
+static std::int32_t GetNumericEnvironmentVariable( const char *name, std::int32_t factor, std::int32_t def ) {
     char *n = getenv( name );
     if ( n ) {
-        int l = def;
+        std::int32_t l = def;
         if ( sscanf( n, "%ld", &l ) == 1 ) {
             def = l * factor;
         } else {
@@ -41,14 +41,14 @@ static std::size_t GetNumericEnvironmentVariable( const char *name, int factor, 
 }
 
 
-static std::size_t getSize( const char *name, int def ) {
-    const int blockSize = 4 * 1024;
-    int       size      = GetNumericEnvironmentVariable( name, 1024, def );
+static std::int32_t getSize( const char *name, std::int32_t def ) {
+    const std::int32_t blockSize = 4 * 1024;
+    std::int32_t       size      = GetNumericEnvironmentVariable( name, 1024, def );
     return roundTo( size, blockSize );
 }
 
 
-static std::size_t getSize( int def ) {
-    const int blockSize = 4 * 1024;
+static std::int32_t getSize( std::int32_t def ) {
+    const std::int32_t blockSize = 4 * 1024;
     return roundTo( def, blockSize );
 }

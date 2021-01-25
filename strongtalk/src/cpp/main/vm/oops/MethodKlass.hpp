@@ -21,12 +21,12 @@ public:
     }
 
 
-    int object_size( std::size_t size_of_codes ) const {
+    std::int32_t object_size( std::int32_t size_of_codes ) const {
         return non_indexable_size() + size_of_codes + 1;
     }
 
 
-    int oop_size( Oop obj ) const {
+    std::int32_t oop_size( Oop obj ) const {
         return object_size( MethodOop( obj )->size_of_codes() );
     }
 
@@ -53,9 +53,9 @@ public:
 
 
     // memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -68,7 +68,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return MethodOopDescriptor::header_size();
     }
 
@@ -87,7 +87,7 @@ public:
 
 
     // Construction (called from primitive)
-    MethodOop constructMethod( Oop name, int flags, int nofArgs, ObjectArrayOop debugInfo, ByteArrayOop bytes, ObjectArrayOop oops );
+    MethodOop constructMethod( Oop name, std::int32_t flags, std::int32_t nofArgs, ObjectArrayOop debugInfo, ByteArrayOop bytes, ObjectArrayOop oops );
 };
 
 void setKlassVirtualTableFromMethodKlass( Klass *k );

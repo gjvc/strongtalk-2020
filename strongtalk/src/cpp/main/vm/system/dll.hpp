@@ -35,7 +35,7 @@ public:
     }
 
 
-    int number_of_arguments() const {
+    std::int32_t number_of_arguments() const {
         return _number_of_arguments;
     }
 
@@ -72,12 +72,12 @@ private:
     };
 
 
-    NativeMov *mov_at( int offset ) {
+    NativeMov *mov_at( std::int32_t offset ) {
         return nativeMov_at( addr_at( offset ) );
     }
 
 
-    NativeTest *test_at( int offset ) {
+    NativeTest *test_at( std::int32_t offset ) {
         return nativeTest_at( addr_at( offset ) );
     }
 
@@ -102,7 +102,7 @@ public:
 
 
     void set_entry_point( dll_func_ptr_t f ) {
-        mov_at( mov_edx_instruction_offset )->set_data( int( f ) );
+        mov_at( mov_edx_instruction_offset )->set_data( std::int32_t( f ) );
     }
 
 

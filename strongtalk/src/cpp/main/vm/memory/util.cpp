@@ -14,11 +14,11 @@
 
 #include <cstring>
 
-int Indent = 0;
+std::int32_t Indent = 0;
 
 
 void printIndent() {
-    for ( std::size_t i = 0; i < Indent; i++ )
+    for ( std::int32_t i = 0; i < Indent; i++ )
         lprintf( "  " );
 }
 
@@ -26,8 +26,8 @@ void printIndent() {
 #define LOOP_UNROLL( count, body )                                            \
     {                                                                         \
     st_assert(count >= 0, "cannot have negative count in loop unroll");       \
-    int __c1__ = count;                                                       \
-    for (int __c__ = __c1__ >> 3; __c__; __c__ --) {                          \
+    std::int32_t __c1__ = count;                                                       \
+    for (std::int32_t __c__ = __c1__ >> 3; __c__; __c__ --) {                          \
     body;       body;                                                         \
     body;       body;                                                         \
     body;       body;                                                         \
@@ -48,14 +48,14 @@ void printIndent() {
 #define DO_DOWN( from ) LOOP_UNROLL(count, *--to = from)
 
 
-void copy_oops_up( Oop *from, Oop *to, int count ) {
-    st_assert( maskBits( int( from ), TAG_SIZE ) == 0, "not word aligned" );
-    st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
+void copy_oops_up( Oop *from, Oop *to, std::int32_t count ) {
+    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word aligned" );
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
 
     // block_step was determined by profiling the scavenger.
     //  11/14-95 (Robert and Lars)
-    constexpr int block_step = 4;
+    constexpr std::int32_t block_step = 4;
 
     while ( count >= block_step ) {
         *( to + 0 ) = *( from + 0 );
@@ -79,19 +79,19 @@ void copy_oops_up( Oop *from, Oop *to, int count ) {
 }
 
 
-void copy_oops_down( Oop *from, Oop *to, int count ) {
-    st_assert( maskBits( int( from ), TAG_SIZE ) == 0, "not word aligned" );
-    st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
+void copy_oops_down( Oop *from, Oop *to, std::int32_t count ) {
+    st_assert( maskBits( std::int32_t( from ), TAG_SIZE ) == 0, "not word aligned" );
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
     DO_DOWN( *--from )
 }
 
 
-void set_oops( Oop *to, int count, Oop value ) {
-    st_assert( maskBits( int( to ), TAG_SIZE ) == 0, "not word aligned" );
+void set_oops( Oop *to, std::int32_t count, Oop value ) {
+    st_assert( maskBits( std::int32_t( to ), TAG_SIZE ) == 0, "not word aligned" );
     st_assert( count >= 0, "negative count" );
 
-    constexpr int block_step = 4;
+    constexpr std::int32_t block_step = 4;
 
     while ( count >= block_step ) {
         *( to + 0 ) = value;
@@ -115,7 +115,7 @@ void set_oops( Oop *to, int count, Oop value ) {
 
 
 char *copy_string( const char *s ) {
-    int len = strlen( s ) + 1;
+    std::int32_t len = strlen( s ) + 1;
     char *str = new_resource_array<char>( len );
     strcpy( str, s );
     return str;
@@ -123,7 +123,7 @@ char *copy_string( const char *s ) {
 
 
 char *copy_c_heap_string( const char *s ) {
-    int len = strlen( s ) + 1;
+    std::int32_t len = strlen( s ) + 1;
     char *str = new_c_heap_array<char>( len );
     strcpy( str, s );
     return str;
@@ -138,12 +138,12 @@ char *copy_string( const char *s, smi_t len ) {
 }
 
 
-void copy_oops( Oop *from, Oop *to, int count ) {
+void copy_oops( Oop *from, Oop *to, std::int32_t count ) {
     copy_oops_up( from, to, count );
 }
 
 
-void copy_oops_overlapping( Oop *from, Oop *to, int count ) {
+void copy_oops_overlapping( Oop *from, Oop *to, std::int32_t count ) {
     if ( from < to )
         copy_oops_down( from + count, to + count, count );
     else if ( from > to )
@@ -151,44 +151,44 @@ void copy_oops_overlapping( Oop *from, Oop *to, int count ) {
 }
 
 
-void copy_words( int *from, int *to, int count ) {
+void copy_words( std::int32_t *from, std::int32_t *to, std::int32_t count ) {
     copy_oops( (Oop *) from, (Oop *) to, count );
 }
 
 
-void set_words( int *from, int count, int value ) {
+void set_words( std::int32_t *from, std::int32_t count, std::int32_t value ) {
     set_oops( (Oop *) from, count, (Oop) value );
 }
 
 
-int min( int a, int b ) {
+std::int32_t min( std::int32_t a, std::int32_t b ) {
     return a < b ? a : b;
 }
 
 
-int max( int a, int b ) {
+std::int32_t max( std::int32_t a, std::int32_t b ) {
     return a > b ? a : b;
 }
 
 
-int min( int a, int b, int c ) {
+std::int32_t min( std::int32_t a, std::int32_t b, std::int32_t c ) {
     return a < b ? min( a, c ) : min( b, c );
 }
 
 
-int max( int a, int b, int c ) {
+std::int32_t max( std::int32_t a, std::int32_t b, std::int32_t c ) {
     return a > b ? max( a, c ) : max( b, c );
 }
 
 
-void *align( void *p, int alignment ) {
-    int number = (int) p;
-    int adjust = alignment - ( number % alignment ) % alignment;
+void *align( void *p, std::int32_t alignment ) {
+    std::int32_t number = (std::int32_t) p;
+    std::int32_t adjust = alignment - ( number % alignment ) % alignment;
     return (void *) ( number + adjust );
 }
 
 
-int byte_size( void *from, void *to ) {
+std::int32_t byte_size( void *from, void *to ) {
     return (const char *) to - (const char *) from;
 }
 

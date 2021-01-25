@@ -73,7 +73,7 @@ public:
     }
 
 
-    std::size_t offset;
+    std::int32_t offset;
 };
 
 // something stored at a location

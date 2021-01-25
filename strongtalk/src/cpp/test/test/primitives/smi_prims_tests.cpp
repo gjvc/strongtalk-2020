@@ -14,7 +14,7 @@
 
 typedef Oop (__CALLING_CONVENTION *smifntype)( SMIOop, SMIOop );
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 
 class SmiPrimitivessTests : public ::testing::Test {
@@ -52,7 +52,7 @@ value()
 TEST_F( SmiPrimitivessTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI
 ) {
 Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
-ASSERT_EQ( ( int )
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::receiver_has_wrong_type() ),
-( int ) result );
+( std::int32_t ) result );
 }

@@ -20,7 +20,7 @@
 
 Sweeper *Sweeper::_head = nullptr;
 
-std::size_t     Sweeper::_sweepSeconds = 0;
+std::int32_t     Sweeper::_sweepSeconds = 0;
 bool_t          Sweeper::_isRunning           = false;
 MethodOop       Sweeper::_activeMethod        = nullptr;
 NativeMethod    *Sweeper::_activeNativeMethod = nullptr;
@@ -129,7 +129,7 @@ void CodeSweeper::updateInterval() {
 }
 
 
-int CodeSweeper::interval() const {
+std::int32_t CodeSweeper::interval() const {
     ( (CodeSweeper *) this )->updateInterval();
     return _codeSweeperInterval;
 }
@@ -150,11 +150,11 @@ void MethodSweeper::method_task( MethodOop method ) {
 }
 
 
-int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
+std::int32_t MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
-    int length = methods->length();
+    std::int32_t length = methods->length();
 
-    for ( std::size_t i = 1; i <= length; i++ ) {
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( methods->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
         method_task( method );
@@ -163,8 +163,8 @@ int MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 }
 
 
-int MethodSweeper::klass_task( KlassOop klass ) {
-    int   result = 0;
+std::int32_t MethodSweeper::klass_task( KlassOop klass ) {
+    std::int32_t   result = 0;
     Klass *k     = klass->klass_part();
 
     // Fix the customized methods
@@ -198,24 +198,24 @@ void MethodSweeper::task() {
     }
 
     ObjectArrayOop array             = Universe::systemDictionaryObject();
-    int            length            = array->length();
-    int            number_of_entries = length / _fractionPerTask;
+    std::int32_t            length            = array->length();
+    std::int32_t            number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep )
         _console->print( "*method sweep: %d entries...", number_of_entries );
     TraceTime t( "MethodSweep ", PrintCodeSweep );
 
-    int end = ( _index + number_of_entries );
+    std::int32_t end = ( _index + number_of_entries );
     if ( end > length )
         end = length;
 
-    int begin  = _index;
-    int result = 0;
+    std::int32_t begin  = _index;
+    std::int32_t result = 0;
 
     for ( ; _index <= end; _index++ ) {
         AssociationOop assoc = AssociationOop( array->obj_at( _index ) );
         st_assert( assoc->is_association(), "just checking" );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
-            int result = klass_task( KlassOop( assoc->value() ) );
+            std::int32_t result = klass_task( KlassOop( assoc->value() ) );
         }
     }
     LOG_EVENT3( "MethodSweeper task [%d, %d] #%d", begin, end, result );
@@ -252,13 +252,13 @@ void ZoneSweeper::task() {
 
     // %fix this:
     //    we need to validate next
-    int total = Universe::code->numberOfNativeMethods();
-    int todo  = total / _fractionPerTask;
+    std::int32_t total = Universe::code->numberOfNativeMethods();
+    std::int32_t todo  = total / _fractionPerTask;
     if ( PrintCodeSweep )
         _console->print( "*zone sweep: %d of %d entries...", todo, total );
     TraceTime t( "ZoneSweep ", PrintCodeSweep );
 
-    for ( std::size_t i = 0; i < todo; i++ ) {
+    for ( std::int32_t i = 0; i < todo; i++ ) {
         if ( next == nullptr ) {
             deactivate();
             break;
@@ -289,7 +289,7 @@ void ZoneSweeper::activate() {
 // The sweeper task is activated every second (1000 milliseconds).
 class SweeperTask : public PeriodicTask {
 private:
-    int counter;
+    std::int32_t counter;
 public:
     SweeperTask() :
             PeriodicTask( 100 ) {

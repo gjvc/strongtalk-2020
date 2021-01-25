@@ -29,7 +29,7 @@ public:
     bool_t allocateConst( ConstPseudoRegister *r, Location preferred = unAllocated );
 
 
-    int nofStackTemps() {
+    std::int32_t nofStackTemps() {
         return _stackLocs->length();
     }
 };
@@ -44,10 +44,10 @@ class RegCandidate : public ResourceObject {
 public:
     PseudoRegister *_pseudoRegister;    // PseudoRegister to be allocated
     Location _location;           // possible location for it
-    int      _ndefs;              // required # definitions of loc
+    std::int32_t      _ndefs;              // required # definitions of loc
 
 public:
-    RegCandidate( PseudoRegister *reg, Location l, int n ) {
+    RegCandidate( PseudoRegister *reg, Location l, std::int32_t n ) {
         _pseudoRegister = reg;
         _location       = l;
         _ndefs          = n;

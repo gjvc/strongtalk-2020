@@ -37,7 +37,7 @@ protected:
 
         alien = ByteArrayOop( ah.as_oop() );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( 0 ), alien );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) alien_byte_region ), alien );
+        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) alien_byte_region ), alien );
         memset( alien_byte_region, 0, 16 );
 
         invalidAlien = ByteArrayOop( iah.as_oop() );
@@ -60,17 +60,17 @@ protected:
     DoubleOop    doubleValue;
 
 
-    int asInteger( Oop largeInteger, bool_t &ok ) {
+    std::int32_t asInteger( Oop largeInteger, bool_t &ok ) {
         Integer *number = &ByteArrayOop( largeInteger )->number();
         return number->as_int( ok );
     }
 
 
-    void checkLargeInteger( Oop result, int expected ) {
+    void checkLargeInteger( Oop result, std::int32_t expected ) {
         char message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
         bool_t ok;
-        int    actual = asInteger( result, ok );
+        std::int32_t    actual = asInteger( result, ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: 0x%08x, was: 0x%08x", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
@@ -88,10 +88,10 @@ protected:
     }
 
 
-    void checkSmallInteger( Oop result, int expected ) {
+    void checkSmallInteger( Oop result, std::int32_t expected ) {
         char message[200];
         EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-        int actual = SMIOop( result )->value();
+        std::int32_t actual = SMIOop( result )->value();
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
     }

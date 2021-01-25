@@ -16,25 +16,25 @@
 
 // -----------------------------------------------------------------------------
 
-constexpr std::size_t MAX_HEXBUF_SIZE{ 256 };
-constexpr std::size_t MAX_OUTBUF_SIZE{ 256 };
+constexpr std::int32_t MAX_HEXBUF_SIZE{ 256 };
+constexpr std::int32_t MAX_OUTBUF_SIZE{ 256 };
 
 static char tohex( std::uint8_t c );
 
-static const char *bintohex( const char *data, std::size_t bytes );
+static const char *bintohex( const char *data, std::int32_t bytes );
 
 static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputStream *stream );
 
-static void printRelocInfo( const NativeMethod *nm, const char *pc, std::size_t lendis, ConsoleOutputStream *stream );
+static void printRelocInfo( const NativeMethod *nm, const char *pc, std::int32_t lendis, ConsoleOutputStream *stream );
 
 static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const char *pc, ConsoleOutputStream *stream );
 
 
 // -----------------------------------------------------------------------------
 
-//static std::size_t     segsize{ 32 };    //
+//static std::int32_t     segsize{ 32 };    //
 //static std::int32_t offset{ 0 };      //
-//static std::size_t     autosync{ 0 };    //
+//static std::int32_t     autosync{ 0 };    //
 //static iflag_t prefer{ 0 };      //
 
 
@@ -43,21 +43,21 @@ static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const cha
 static void st_disasm( const char *begin, const char *end, const NativeMethod *nm, ConsoleOutputStream *stream ) {
 
     static char  output[MAX_OUTBUF_SIZE];
-    std::size_t  outbufsize{ sizeof( output ) };
+    std::int32_t  outbufsize{ sizeof( output ) };
     std::int32_t data_size{ 4 }; //
 
 //    ud_t ud_obj;
 //    ud_init( &ud_obj );
 //    ud_set_input_file( &ud_obj, stdin );
-//    ud_set_input_buffer( &ud_obj, begin, static_cast<std::size_t>( end - begin ) );
+//    ud_set_input_buffer( &ud_obj, begin, static_cast<std::int32_t>( end - begin ) );
 //    ud_set_mode( &ud_obj, 64 );
 //    ud_set_syntax( &ud_obj, UD_SYN_INTEL );
 
 
     for ( const char *pc = begin; pc < end; pc += data_size ) {
 
-        // std::int32_t disasm(std::uint8_t *data, std::int32_t data_size, char *output, std::size_t outbufsize, std::size_t segsize,
-        //               int64_t offset, std::size_t autosync, iflag_t *prefer)
+        // std::int32_t disasm(std::uint8_t *data, std::int32_t data_size, char *output, std::int32_t outbufsize, std::int32_t segsize,
+        //               int64_t offset, std::int32_t autosync, iflag_t *prefer)
 //        data_size = disasm( ( std::uint8_t * ) pc, data_size, output, outbufsize, segsize, offset, autosync, &prefer );
 
         if ( data_size ) {
@@ -83,7 +83,7 @@ static char tohex( std::uint8_t c ) {
 }
 
 
-static const char *bintohex( const char *data, std::size_t bytes ) {
+static const char *bintohex( const char *data, std::int32_t bytes ) {
     static char buf[MAX_HEXBUF_SIZE];
 
     char *p = buf;
@@ -102,7 +102,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 
     PrimitiveDescriptor *pd;
     const char          *target;
-    std::size_t                 *addr;
+    std::int32_t                 *addr;
 
     stream->print( "[reloc @ " );
     addr = iter->word_addr();
@@ -122,7 +122,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 
         case RelocationInformation::RelocationType::primitive_type:
             stream->print( "%p, primitive call, ", addr );
-            target = (const char *) ( *addr + (std::size_t) addr + oopSize );
+            target = (const char *) ( *addr + (std::int32_t) addr + oopSize );
 
             pd = Primitives::lookup( (primitiveFunctionType) target );
             if ( pd not_eq nullptr ) {
@@ -164,7 +164,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 }
 
 
-static void printRelocInfo( const NativeMethod *nm, const char *pc, std::size_t lendis, ConsoleOutputStream *stream ) {
+static void printRelocInfo( const NativeMethod *nm, const char *pc, std::int32_t lendis, ConsoleOutputStream *stream ) {
 
     RelocationInformationIterator iter( nm );
     char *addr;

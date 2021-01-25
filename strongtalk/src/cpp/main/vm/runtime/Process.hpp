@@ -13,6 +13,11 @@
 #include "vm/runtime/VirtualFrame.hpp"
 
 
+void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *pc );
+void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, const char *pc );
+
+
+
 // Class hierarchy
 // - Process
 //   - VMProcess
@@ -49,7 +54,7 @@ public:
     void abort();
 
 
-    int thread_id() const {
+    std::int32_t thread_id() const {
         return _thread_id;
     }
 
@@ -77,7 +82,7 @@ protected:
 
     // OS data associated with the process
     Thread         *_thread;            // Native thread
-    int            _thread_id;          // Native thread id (set by OS when created)
+    std::int32_t            _thread_id;          // Native thread id (set by OS when created)
     Event          *_event;             // Thread lock
     char           *_stack_limit;       // lower limit of stack
     static Process *_current_process;   //  active Delta process or vm process
@@ -168,13 +173,13 @@ private:
     ProcessOop   _processObject;    // the Delta level process object.
     ProcessState _state;         // process state.
 
-    int        *_last_Delta_fp;
+    std::int32_t        *_last_Delta_fp;
     Oop        *_last_Delta_sp;
     const char *_last_Delta_pc;      // For now only used for stack overflow
 
     volatile bool_t _is_terminating;
 
-    int       _time_stamp;
+    std::int32_t       _time_stamp;
     DebugInfo _debugInfo;               // debug info used while stepping
     bool_t    _isCallback;
 
@@ -195,9 +200,9 @@ public:
 
     void setupSingleStep();
 
-    void setupStepNext( int *fr );
+    void setupStepNext( std::int32_t *fr );
 
-    void setupStepReturn( int *fr );
+    void setupStepReturn( std::int32_t *fr );
 
     void resetStep();
 
@@ -227,14 +232,14 @@ public:
 
     void set_terminating();
 
-    int time_stamp() const;
+    std::int32_t time_stamp() const;
 
     void inc_time_stamp();
 
     // last_Delta_fp
-    int *last_Delta_fp() const;
+    std::int32_t *last_Delta_fp() const;
 
-    void set_last_Delta_fp( int *fp );
+    void set_last_Delta_fp( std::int32_t *fp );
 
     // last_Delta_sp
     Oop *last_Delta_sp() const;
@@ -320,7 +325,7 @@ public:
     // Print the stack trace
     void trace_stack();
 
-    void trace_top( int start_frame, int number_of_frames );
+    void trace_top( std::int32_t start_frame, std::int32_t number_of_frames );
 
     void trace_stack_for_deoptimization( Frame *f = nullptr );
 
@@ -332,9 +337,9 @@ public:
 
     double system_time();
 
-    int depth();
+    std::int32_t depth();
 
-    int vdepth( Frame *f = nullptr );
+    std::int32_t vdepth( Frame *f = nullptr );
 
     // Debugging state
     bool_t stopping;    // just returned from "finish" operation; stop ASAP
@@ -382,7 +387,7 @@ private:
     static volatile bool_t _interrupt;              //
 
     // The launch function for a new thread
-    static std::size_t launch_delta( DeltaProcess *process );
+    static std::int32_t launch_delta( DeltaProcess *process );
 
 public:
     // sets the active process (note: public only to support testing)
@@ -425,7 +430,7 @@ public:
 
     // Waits for a completed async call or timeout.
     // Returns whether the timer expired.
-    static bool_t wait_for_async_dll( int timeout_in_ms );
+    static bool_t wait_for_async_dll( std::int32_t timeout_in_ms );
 
     static void preempt_active();
 
@@ -464,7 +469,7 @@ public:
 
     static DeltaProcess *last();
 
-    static DeltaProcess *find_from_thread_id( int id );
+    static DeltaProcess *find_from_thread_id( std::int32_t id );
 
     // Start the vm process
     static void start( VMProcess *p );
@@ -520,10 +525,10 @@ public:
 // "semaphore" to protect some vm critical sections (process transfer etc.)
 extern "C" bool_t processSemaphore;
 
-extern "C" std::size_t *last_Delta_fp;
+extern "C" std::int32_t *last_Delta_fp;
 extern "C" Oop         *last_Delta_sp;
 
-extern int CurrentHash;
+extern std::int32_t CurrentHash;
 
 extern "C" void set_stack_overflow_for( DeltaProcess *currentProcess );
 
@@ -549,4 +554,4 @@ enum class InterpreterErrorConstants {
     float_expected                 = 13 + start_of_runtime_system_errors,   //
 };
 
-void trace_stack( int thread_id );
+void trace_stack( std::int32_t thread_id );

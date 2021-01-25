@@ -25,12 +25,12 @@ void Variable::print() {
 }
 
 
-Variable Variable::new_register( std::size_t offset ) {
+Variable Variable::new_register( std::int32_t offset ) {
     return new_variable( reg_type, offset );
 }
 
 
-Variable Variable::new_stack( std::size_t offset ) {
+Variable Variable::new_stack( std::int32_t offset ) {
     return new_variable( stack_type, offset );
 }
 
@@ -67,8 +67,8 @@ void MapConformance::push_temporary( Variable var ) {
 }
 
 
-void MapConformance::push( Variable src, std::size_t n ) {
-    for ( std::size_t i = 0; i < n; i++ ) {
+void MapConformance::push( Variable src, std::int32_t n ) {
+    for ( std::int32_t i = 0; i < n; i++ ) {
         push( src );
     }
 }
@@ -87,20 +87,23 @@ bool_t operator==( MappingEntry x, MappingEntry y ) {
 }
 
 
-std::size_t MappingTask::number_of_targets() {
-    std::size_t result = 0;
-    for ( MappingTask *current = this; current; current = current->next() ) {
+std::int32_t MappingTask::number_of_targets() const {
+
+    std::int32_t result = 0;
+
+    for ( const MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.has_reg() )
             result++;
         if ( current->dst.has_stack() )
             result++;
     }
+
     return result;
 }
 
 
-bool_t MappingTask::in_parent_chain( MappingTask *task ) {
-    for ( MappingTask *current = this; current; current = current->parent() ) {
+bool_t MappingTask::in_parent_chain( MappingTask *task ) const {
+    for ( const MappingTask *current = this; current; current = current->parent() ) {
         if ( current == task )
             return true;
     }
@@ -108,8 +111,8 @@ bool_t MappingTask::in_parent_chain( MappingTask *task ) {
 }
 
 
-bool_t MappingTask::target_includes( Variable var ) {
-    for ( MappingTask *current = this; current; current = current->next() ) {
+bool_t MappingTask::target_includes( Variable var ) const {
+    for ( const MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.reg() == var or current->dst.stack() == var )
             return true;
     }
@@ -117,7 +120,7 @@ bool_t MappingTask::target_includes( Variable var ) {
 }
 
 
-bool_t MappingTask::is_dependent( MapConformance *mc, MappingTask *task ) {
+bool_t MappingTask::is_dependent( MapConformance *mc, MappingTask *task ) const {
     // Do we have to process task before this?
     // => do task->results overlap with src?
     if ( this == task )
@@ -178,7 +181,7 @@ void MappingTask::process_task( MapConformance *mc, MappingTask *p ) {
 
     // Is anybody dependent on source?
     set_parent( p );
-    for ( std::size_t i = 0; i < mc->_mappings->length(); i++ ) {
+    for ( std::int32_t i = 0; i < mc->_mappings->length(); i++ ) {
         MappingTask *task = mc->_mappings->at( i );
         if ( not task->is_processed() and is_dependent( mc, task ) ) {
             task->process_task( mc, this );
@@ -257,7 +260,7 @@ void MappingTask::generate_code( MapConformance *mc ) {
 }
 
 
-void MappingTask::print( std::size_t index ) {
+void MappingTask::print( std::int32_t index ) {
     _console->print( "  %2d: ", index );
     src.print();
     _console->print( " -> " );
@@ -322,7 +325,7 @@ void MapConformance::pop( Variable dst ) {
 
 void MapConformance::print() {
     _console->print_cr( "MapConformance" );
-    for ( std::size_t i = 0; i < _mappings->length(); i++ ) {
+    for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->print( i );
     }
 }
@@ -348,10 +351,10 @@ bool_t MapConformance::reduce_noop_task( MappingTask *task ) {
 
 void MapConformance::simplify() {
     // Links tasks with identical source.
-    for ( std::size_t x = 0; x < _mappings->length(); x++ ) {
+    for ( std::int32_t x = 0; x < _mappings->length(); x++ ) {
         MappingTask *x_task = _mappings->at( x );
         if ( not x_task->is_processed() and not reduce_noop_task( x_task ) ) {
-            for ( std::size_t y = x + 1; y < _mappings->length(); y++ ) {
+            for ( std::int32_t y = x + 1; y < _mappings->length(); y++ ) {
                 MappingTask *y_task = _mappings->at( y );
                 if ( x_task->src == y_task->src )
                     x_task->append( y_task );
@@ -362,7 +365,7 @@ void MapConformance::simplify() {
 
 
 void MapConformance::process_tasks() {
-    for ( std::size_t i = 0; i < _mappings->length(); i++ ) {
+    for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->process_task( this, nullptr );
     }
 }

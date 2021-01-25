@@ -66,7 +66,7 @@ void PrimitiveDescriptor::print() {
 
 Oop PrimitiveDescriptor::eval( Oop *a ) {
 
-    int ebx_on_stack;
+    std::int32_t ebx_on_stack;
 
 // %hack: see below
 #ifdef __GNUC__
@@ -158,7 +158,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
     }
 
     // %hack: some primitives alter EBX and crash the compiler's constant propagation
-    int ebx_now;
+    std::int32_t ebx_now;
 #ifdef __GNUC__
     __asm__("pushl %%eax;"
             "movl %%ebx, %%eax;"

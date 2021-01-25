@@ -20,14 +20,14 @@ public:
     }
 
 
-    MethodScopeNode( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, std::size_t scopeID, std::size_t senderByteCodeIndex, bool_t visible ) :
+    MethodScopeNode( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, std::int32_t scopeID, std::int32_t senderByteCodeIndex, bool_t visible ) :
             ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ) {
         _lookupKey        = key;
         _receiverLocation = receiver_location;
     }
 
 
-    void generate( ScopeDescriptorRecorder *rec, std::size_t senderScopeOffset, bool_t bigHeader );
+    void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool_t bigHeader );
 
     void verify( ScopeDescriptor *sd );
 };

@@ -16,15 +16,15 @@
 #include "vm/memory/Array.hpp"
 
 
-Array::Array( std::size_t sz ) {
+Array::Array( std::int32_t sz ) {
     _size   = sz;
     _index  = 0;
-    _values = new_resource_array<std::size_t>( sz );
+    _values = new_resource_array<std::int32_t>( sz );
 }
 
 
-int Array::insertIfAbsent( int value ) {
-    for ( std::size_t i = 0; i < _index; i++ )
+std::int32_t Array::insertIfAbsent( std::int32_t value ) {
+    for ( std::int32_t i = 0; i < _index; i++ )
         if ( _values[ i ] == value )
             return i;
     if ( _index == _size )
@@ -34,10 +34,10 @@ int Array::insertIfAbsent( int value ) {
 }
 
 
-void Array::extend( int newSize ) {
-    int *newValues = new_resource_array<int>( newSize );
+void Array::extend( std::int32_t newSize ) {
+    std::int32_t *newValues = new_resource_array<std::int32_t>( newSize );
 
-    for ( std::size_t i = 0; i < _index; i++ )
+    for ( std::int32_t i = 0; i < _index; i++ )
         newValues[ i ] = _values[ i ];
 
     _values = newValues;
@@ -45,14 +45,14 @@ void Array::extend( int newSize ) {
 }
 
 
-void Array::copy_to( std::size_t *&addr ) {
-    for ( std::size_t i = 0; i < length(); i++ ) {
+void Array::copy_to( std::int32_t *&addr ) {
+    for ( std::int32_t i = 0; i < length(); i++ ) {
         *addr++ = _values[ i ];
     }
 }
 
 
-ByteArray::ByteArray( std::size_t size ) {
+ByteArray::ByteArray( std::int32_t size ) {
     _array = new_resource_array<std::uint8_t>( size );
     _max   = size;
     _top   = 0;
@@ -60,10 +60,10 @@ ByteArray::ByteArray( std::size_t size ) {
 
 
 void ByteArray::extend() {
-    int newMax = _max * 2;
+    std::int32_t newMax = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
-    for ( std::size_t i = 0; i < _top; i++ )
+    for ( std::int32_t i = 0; i < _top; i++ )
         newArray[ i ] = _array[ i ];
 
     _array = newArray;
@@ -73,7 +73,7 @@ void ByteArray::extend() {
 
 void ByteArray::appendHalf( std::int16_t p ) {
 
-    if ( _top + (int) sizeof( std::int16_t ) > _max )
+    if ( _top + (std::int32_t) sizeof( std::int16_t ) > _max )
         extend();
 
     // Saving the half as two bytes to avoid alignment problem.
@@ -82,36 +82,36 @@ void ByteArray::appendHalf( std::int16_t p ) {
 }
 
 
-void ByteArray::putHalfAt( std::int16_t p, int offset ) {
+void ByteArray::putHalfAt( std::int16_t p, std::int32_t offset ) {
     // Saving the half as two bytes to avoid alignment problem.
     _array[ offset ]     = p >> BYTE_WIDTH;
     _array[ offset + 1 ] = (std::uint8_t) lowerBits( p, 8 );
 }
 
 
-void ByteArray::appendWord( int p ) {
-    if ( _top + sizeof( int ) > _max )
+void ByteArray::appendWord( std::int32_t p ) {
+    if ( _top + sizeof( std::int32_t ) > _max )
         extend();
-    st_assert( size() % sizeof( int ) == 0, "Not word aligned" );
-    int *s = (int *) &_array[ _top ];
+    st_assert( size() % sizeof( std::int32_t ) == 0, "Not word aligned" );
+    std::int32_t *s = (std::int32_t *) &_array[ _top ];
     *s = p;
-    _top += sizeof( int );
+    _top += sizeof( std::int32_t );
 }
 
 
 void ByteArray::alignToWord() {
-    int fill_size = ( sizeof( int ) - ( size() % sizeof( int ) ) ) % sizeof( int );
+    std::int32_t fill_size = ( sizeof( std::int32_t ) - ( size() % sizeof( std::int32_t ) ) ) % sizeof( std::int32_t );
 
-    for ( std::size_t i = 0; i < fill_size; i++ )
+    for ( std::int32_t i = 0; i < fill_size; i++ )
         appendByte( 0 );
 }
 
 
-void ByteArray::copy_to( std::size_t *&addr ) {
-    int *fromAddr = (int *) start();
-    int len = size() / sizeof( int );
+void ByteArray::copy_to( std::int32_t *&addr ) {
+    std::int32_t *fromAddr = (std::int32_t *) start();
+    std::int32_t len = size() / sizeof( std::int32_t );
 
-    for ( std::size_t i = 0; i < len; i++ ) {
+    for ( std::int32_t i = 0; i < len; i++ ) {
         *addr++ = *fromAddr++;
     }
 }

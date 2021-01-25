@@ -26,25 +26,25 @@ class DLL;
 class os {
 
 private:
-    static int _vm_page_size;
+    static std::int32_t _vm_page_size;
 
     static void initialize_system_info();
 
     friend void os_init();
 
 public:
-    static int argc();
+    static std::int32_t argc();
 
     static char **argv();
 
-    static void set_args( int argc, char *argv[] );
+    static void set_args( std::int32_t argc, char *argv[] );
 
-    static int getenv( const char *name, char *buffer, int len );
+    static std::int32_t getenv( const char *name, char *buffer, std::int32_t len );
 
     static void add_exception_handler( void handler( void *fp, void *sp, void *pc ) );
 
     // We must call updateTimes before calling userTime or currentTime.
-    static int updateTimes();
+    static std::int32_t updateTimes();
 
     static double userTime();
 
@@ -75,44 +75,44 @@ public:
 
     static void *get_prevInstance();
 
-    static int get_nCmdShow();
+    static std::int32_t get_nCmdShow();
 
 
     // OS interface to Virtual Memory - used for object memory allocations
-    static int vm_page_size() {
+    static std::int32_t vm_page_size() {
         return _vm_page_size;
     }
 
 
-    static char *reserve_memory( std::size_t size );
+    static char *reserve_memory( std::int32_t size );
 
-    static bool_t commit_memory( const char *addr, std::size_t size );
+    static bool_t commit_memory( const char *addr, std::int32_t size );
 
-    static bool_t uncommit_memory( const char *addr, std::size_t size );
+    static bool_t uncommit_memory( const char *addr, std::int32_t size );
 
-    static bool_t release_memory( const char *addr, std::size_t size );
+    static bool_t release_memory( const char *addr, std::int32_t size );
 
-    static bool_t guard_memory( const char *addr, std::size_t size );
+    static bool_t guard_memory( const char *addr, std::int32_t size );
 
-    static const char *exec_memory( std::size_t size );
+    static const char *exec_memory( std::int32_t size );
 
     // OS interface to C memory routines - used for small allocations
-    static void *malloc( std::size_t size );
+    static void *malloc( std::int32_t size );
 
-    static void *calloc( std::size_t size, char filler );
+    static void *calloc( std::int32_t size, char filler );
 
     static void free( void *p );
 
     // threads
-    static Thread *starting_thread( int *id_addr );
+    static Thread *starting_thread( std::int32_t *id_addr );
 
-    static Thread *create_thread( int main( void *parameter ), void *parameter, int *id_addr );
+    static Thread *create_thread( std::int32_t main( void *parameter ), void *parameter, std::int32_t *id_addr );
 
     static Event *create_event( bool_t initial_state );
 
     static void *stack_limit( Thread *thread );
 
-    static int current_thread_id();
+    static std::int32_t current_thread_id();
 
     static void wait_for_event( Event *event );
 
@@ -128,22 +128,22 @@ public:
 
     static void signal_event( Event *event );
 
-    static bool_t wait_for_event_or_timer( Event *event, int timeout_in_ms );
+    static bool_t wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms );
 
-    static void sleep( int ms );
+    static void sleep( std::int32_t ms );
 
     // thread support for profiling
     static void suspend_thread( Thread *thread );
 
     static void resume_thread( Thread *thread );
 
-    static void fetch_top_frame( Thread *thread, int **sp, int **fp, char **pc );
+    static void fetch_top_frame( Thread *thread, std::int32_t **sp, std::int32_t **fp, char **pc );
 
     static void breakpoint();
 
-    static int message_box( const char *title, const char *message );
+    static std::int32_t message_box( const char *title, const char *message );
 
-    static void fatalExit( int num );
+    static void fatalExit( std::int32_t num );
 
     static bool_t move_file( const char *from, const char *to );
 
@@ -161,7 +161,7 @@ public:
     // Platform
     static const char *platform_class_name();
 
-    static int error_code();
+    static std::int32_t error_code();
 };
 
 

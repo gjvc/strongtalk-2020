@@ -140,12 +140,12 @@ void Bootstrap::summary() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::extend_oop_table() {
-    int new_size = _max_number_of_oops * 2;
+    std::int32_t new_size = _max_number_of_oops * 2;
 
     _console->print_cr( "Expanding boot table to [0x%08x]", new_size );
     Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
-    for ( std::size_t i = 0; i < _max_number_of_oops; i++ )
+    for ( std::int32_t i = 0; i < _max_number_of_oops; i++ )
         new_oop_table[ i ] = _oop_table[ i ];
 
     _max_number_of_oops = new_size;
@@ -172,7 +172,7 @@ char Bootstrap::readNextChar() {
 }
 
 
-int Bootstrap::get_integer() {
+std::int32_t Bootstrap::get_integer() {
 
     std::uint8_t lo;
     _stream.read( reinterpret_cast<char *>(&lo), 1 );
@@ -181,7 +181,7 @@ int Bootstrap::get_integer() {
         return lo;
     }
 
-    int hi = get_integer();
+    std::int32_t hi = get_integer();
     return ( hi * 128 ) + ( lo % 128 );
 }
 
@@ -207,7 +207,7 @@ void Bootstrap::read_oop( Oop *oop_addr ) {
 
 void Bootstrap::check_version() {
 
-    int version_number = get_integer();
+    std::int32_t version_number = get_integer();
     if ( version_number > 100 ) {
         _new_format = true;
         version_number -= 100;
@@ -215,8 +215,8 @@ void Bootstrap::check_version() {
         _new_format = false;
     }
 
-    int expected = ByteCodes::version();
-    int observed = version_number;
+    std::int32_t expected = ByteCodes::version();
+    std::int32_t observed = version_number;
     if ( expected != observed ) {
         lprintf( "fatal: filename [%s] has unexpected bytecode version: expected: [0x%08x], observed: [0x%08x]\n", _filename.c_str(), expected, observed );
         exit( EXIT_FAILURE );
@@ -294,7 +294,7 @@ void Bootstrap::object_case_func( MemOop m ) {
 }
 
 
-Oop Bootstrap::oopFromTable( const int index ) {
+Oop Bootstrap::oopFromTable( const std::int32_t index ) {
     if ( index < 0 or index > _number_of_oops )
         error( "Bootstrap Oop table overflow" );
     return _oop_table[ index ];
@@ -314,25 +314,25 @@ Oop Bootstrap::readNextObject() {
     switch ( typeByte ) {
         case '0': //
         {
-            int v{ get_integer() };
+            std::int32_t v{ get_integer() };
             return smiOopFromValue( v );
         }
 
         case '-': //
         {
-            int v{ get_integer() };
+            std::int32_t v{ get_integer() };
             return smiOopFromValue( -v );
         }
 
         case '3': //
         {
-            int v{ get_integer() };
+            std::int32_t v{ get_integer() };
             return oopFromTable( v );
         }
     };
 
     // not one of the above; get size...
-    int    size = get_integer();
+    std::int32_t    size = get_integer();
     MemOop m    = as_memOop( Universe::allocate_tenured( size ) );
     m->raw_at_put( size - 1, smiOop_zero ); // Clear eventual padding area for byteArray, symbol, doubleByteArray.
     add( m );
@@ -477,7 +477,7 @@ double Bootstrap::read_double() {
     double value;
     std::uint8_t *str = (std::uint8_t *) &value;
 
-    for ( std::size_t i = 0; i < 8; i++ ) {
+    for ( std::int32_t i = 0; i < 8; i++ ) {
         char c{};
         _stream.get( c );
 

@@ -31,7 +31,7 @@ static char *store_long( char *chunk, std::int32_t l ) {
 
 
 // stdcall
-void *CallBack::registerPascalCall( int index, int nofArgs ) {
+void *CallBack::registerPascalCall( std::int32_t index, std::int32_t nofArgs ) {
 
     void *result = malloc( 15 );
     char *chunk  = (char *) result;
@@ -42,7 +42,7 @@ void *CallBack::registerPascalCall( int index, int nofArgs ) {
 
     // MOV EDX, number of bytes for parameters
     chunk = store_byte( chunk, '\xBA' );
-    chunk = store_long( chunk, nofArgs * sizeof( int ) );
+    chunk = store_long( chunk, nofArgs * sizeof( std::int32_t ) );
 
     // JMP _handleCCallStub
     chunk = store_byte( chunk, '\xE9' );
@@ -53,7 +53,7 @@ void *CallBack::registerPascalCall( int index, int nofArgs ) {
 
 
 // cdecl
-void *CallBack::registerCCall( int index ) {
+void *CallBack::registerCCall( std::int32_t index ) {
     void *result = malloc( 10 );
     char *chunk  = (char *) result;
 
@@ -79,13 +79,13 @@ void CallBack::unregister( void *block ) {
 // - handlePascalCallBackStub
 // - handleCCallBackStub
 
-typedef void *(__CALLING_CONVENTION *call_out_func_4)( int a, int b, int c, int d );
+typedef void *(__CALLING_CONVENTION *call_out_func_4)( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d );
 
 extern "C" {
 extern bool_t have_nlr_through_C;
 }
 
-extern "C" volatile void *handleCallBack( std::size_t index, std::size_t params ) {
+extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t params ) {
     
     DeltaProcess *proc = nullptr;
 
@@ -93,8 +93,8 @@ extern "C" volatile void *handleCallBack( std::size_t index, std::size_t params 
         warning( "callBack receiver is not set" );
     }
 
-    int low  = get_unsigned_bitfield( params, 0, 16 );
-    int high = get_unsigned_bitfield( params, 16, 16 );
+    std::int32_t low  = get_unsigned_bitfield( params, 0, 16 );
+    std::int32_t high = get_unsigned_bitfield( params, 16, 16 );
 
     if ( DeltaProcess::active()->thread_id() not_eq os::current_thread_id() ) {
         // We'are now back in a asynchronous DLL call so give up the control

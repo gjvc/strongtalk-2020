@@ -22,17 +22,17 @@ protected:
     }
 
 
-    void checkAlignment( std::size_t size, int expected_alignment ) {
+    void checkAlignment( std::int32_t size, std::int32_t expected_alignment ) {
         char message[100];
-        int  adjustment = ReservedSpace::page_align_size( size );
+        std::int32_t  adjustment = ReservedSpace::page_align_size( size );
         sprintf( message, "adjustment for %d: %d", size, adjustment );
         EXPECT_EQ( expected_alignment, adjustment ) << message;
     }
 
 
-    void checkArbitraryAlignment( std::size_t size, int expected_alignment, int page_size ) {
+    void checkArbitraryAlignment( std::int32_t size, std::int32_t expected_alignment, std::int32_t page_size ) {
         char message[100];
-        int  adjustment = ReservedSpace::align_size( size, page_size );
+        std::int32_t  adjustment = ReservedSpace::align_size( size, page_size );
         sprintf( message, "adjustment for %d: %d", size, adjustment );
         EXPECT_EQ( expected_alignment, adjustment ) << message;
     }

@@ -19,13 +19,13 @@
 class PeriodicTask : public CHeapAllocatedObject {
 
 private:
-    int _counter;
-    int _interval;
+    std::int32_t _counter;
+    std::int32_t _interval;
 
-    friend void real_time_tick( int delay_time );
+    friend void real_time_tick( std::int32_t delay_time );
 
 public:
-    PeriodicTask( int interval_time ); // interval is in milliseconds of elapsed time
+    PeriodicTask( std::int32_t interval_time ); // interval is in milliseconds of elapsed time
     ~PeriodicTask();
 
     bool_t is_enrolled() const;
@@ -35,7 +35,7 @@ public:
     void deroll();
 
 
-    bool_t is_pending( int delay_time ) {
+    bool_t is_pending( std::int32_t delay_time ) {
         _counter += delay_time;
         return _counter >= _interval;
     }

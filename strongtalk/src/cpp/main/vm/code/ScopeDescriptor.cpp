@@ -28,13 +28,13 @@
 char *ScopeDescriptor::invalid_pc = (char *) -1;
 
 
-std::size_t compareByteCodeIndex( std::size_t byteCodeIndex1, std::size_t byteCodeIndex2 ) {
+std::int32_t compareByteCodeIndex( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
     st_assert( byteCodeIndex1 not_eq IllegalByteCodeIndex and byteCodeIndex2 not_eq IllegalByteCodeIndex, "can't compare" );
     return byteCodeIndex1 - byteCodeIndex2;
 }
 
 
-ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc ) {
+ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) {
     _scopes = scopes;
     _offset = offset;
     _pc     = pc;
@@ -80,13 +80,13 @@ ScopeDescriptor *ScopeDescriptor::home( bool_t cross_NativeMethod_boundary ) con
 }
 
 
-NameDescriptor *ScopeDescriptor::temporary( std::size_t index, bool_t canFail ) {
-    std::size_t    pos     = _name_desc_offset;
+NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool_t canFail ) {
+    std::int32_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::size_t    i        = 0;
+        std::int32_t    i        = 0;
         while ( current not_eq nullptr ) {
             if ( i == index ) {
                 result = current;
@@ -105,8 +105,8 @@ NameDescriptor *ScopeDescriptor::temporary( std::size_t index, bool_t canFail ) 
 }
 
 
-NameDescriptor *ScopeDescriptor::contextTemporary( std::size_t index, bool_t canFail ) {
-    std::size_t    pos     = _name_desc_offset;
+NameDescriptor *ScopeDescriptor::contextTemporary( std::int32_t index, bool_t canFail ) {
+    std::int32_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
     if ( _hasTemporaries ) {
@@ -118,7 +118,7 @@ NameDescriptor *ScopeDescriptor::contextTemporary( std::size_t index, bool_t can
 
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::size_t    i        = 0;
+        std::int32_t    i        = 0;
         while ( current ) {
             if ( i == index ) {
                 result = current;
@@ -137,8 +137,8 @@ NameDescriptor *ScopeDescriptor::contextTemporary( std::size_t index, bool_t can
 }
 
 
-NameDescriptor *ScopeDescriptor::exprStackElem( std::size_t byteCodeIndex ) {
-    std::size_t pos = _name_desc_offset;
+NameDescriptor *ScopeDescriptor::exprStackElem( std::int32_t byteCodeIndex ) {
+    std::int32_t pos = _name_desc_offset;
 
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
@@ -157,7 +157,7 @@ NameDescriptor *ScopeDescriptor::exprStackElem( std::size_t byteCodeIndex ) {
     if ( _hasExpressionStack ) {
         NameDescriptor *current = nameDescAt( pos );
         while ( current ) {
-            std::size_t the_byteCodeIndex = valueAt( pos );
+            std::int32_t the_byteCodeIndex = valueAt( pos );
             if ( byteCodeIndex == the_byteCodeIndex )
                 return current;
             current = nameDescAt( pos );
@@ -169,11 +169,11 @@ NameDescriptor *ScopeDescriptor::exprStackElem( std::size_t byteCodeIndex ) {
 
 
 void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
-    std::size_t pos = _name_desc_offset;
+    std::int32_t pos = _name_desc_offset;
 
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::size_t            number   = 0;
+        std::int32_t            number   = 0;
         while ( current ) {
             blk->temp( number++, current, pc() );
             current = nameDescAt( pos );
@@ -182,7 +182,7 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::size_t            number   = 0;
+        std::int32_t            number   = 0;
         while ( current ) {
             blk->context_temp( number++, current, pc() );
             current = nameDescAt( pos );
@@ -203,7 +203,7 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
 class IterationHelper : public UnpackClosure {
 protected:
-    std::size_t                   _no;
+    std::int32_t                   _no;
     NameDescriptorClosure *_blk;
     bool_t                _is_used;
 
@@ -214,7 +214,7 @@ protected:
 
 
 public:
-    void init( std::size_t no, NameDescriptorClosure *blk ) {
+    void init( std::int32_t no, NameDescriptorClosure *blk ) {
         _no      = no;
         _blk     = blk;
         _is_used = false;
@@ -256,9 +256,9 @@ class IH_stack_expr : public IterationHelper {
 
 
 void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
-    std::size_t pos = _name_desc_offset;
+    std::int32_t pos = _name_desc_offset;
     if ( _hasTemporaries ) {
-        std::size_t     no = 0;
+        std::int32_t     no = 0;
         IH_temp helper;
         do {
             helper.init( no++, blk );
@@ -267,7 +267,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
     }
 
     if ( _hasContextTemporaries ) {
-        std::size_t             no = 0;
+        std::int32_t             no = 0;
         IH_context_temp helper;
         do {
             helper.init( no++, blk );
@@ -276,7 +276,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
     }
 
     if ( _hasExpressionStack ) {
-        std::size_t           no = 0;
+        std::int32_t           no = 0;
         IH_stack_expr helper;
         do {
             helper.init( no++, blk );
@@ -295,7 +295,7 @@ bool_t ScopeDescriptor::allocates_interpreted_context() const {
 
 NameDescriptor *ScopeDescriptor::compiled_context() {
     st_assert( allocates_compiled_context(), "must allocate a context" );
-    constexpr std::size_t temporary_index_for_context = 0;
+    constexpr std::int32_t temporary_index_for_context = 0;
     return temporary( temporary_index_for_context );
 }
 
@@ -316,12 +316,12 @@ ScopeDescriptor *ScopeDescriptor::sender() const {
 }
 
 
-NameDescriptor *ScopeDescriptor::nameDescAt( std::size_t &offset ) const {
+NameDescriptor *ScopeDescriptor::nameDescAt( std::int32_t &offset ) const {
     return _scopes->unpackNameDescAt( offset, pc() );
 }
 
 
-std::size_t ScopeDescriptor::valueAt( std::size_t &offset ) const {
+std::int32_t ScopeDescriptor::valueAt( std::int32_t &offset ) const {
     return _scopes->unpackValueAt( offset );
 }
 
@@ -346,9 +346,9 @@ bool_t ScopeDescriptor::verify() {
 
 
 // verify expression stack at a call or primitive call
-void ScopeDescriptor::verify_expression_stack( std::size_t byteCodeIndex ) {
-    GrowableArray<std::size_t> *mapping = method()->expression_stack_mapping( byteCodeIndex );
-    for ( std::size_t  index    = 0; index < mapping->length(); index++ ) {
+void ScopeDescriptor::verify_expression_stack( std::int32_t byteCodeIndex ) {
+    GrowableArray<std::int32_t> *mapping = method()->expression_stack_mapping( byteCodeIndex );
+    for ( std::int32_t  index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
             warning( "expression not found in NativeMethod" );
@@ -365,11 +365,11 @@ void ScopeDescriptor::verify_expression_stack( std::size_t byteCodeIndex ) {
 
 class PrintNameDescClosure : public NameDescriptorClosure {
 private:
-    std::size_t  _indent;
+    std::int32_t  _indent;
     char *_pc0;
 
 
-    void print( const char *title, std::size_t no, NameDescriptor *nd, char *pc ) {
+    void print( const char *title, std::int32_t no, NameDescriptor *nd, char *pc ) {
         _console->fill_to( _indent );
         if ( UseNewBackend ) {
             _console->print( "%5d: ", pc - _pc0 );
@@ -381,34 +381,34 @@ private:
 
 
 public:
-    PrintNameDescClosure( std::size_t indent, char *pc0 ) {
+    PrintNameDescClosure( std::int32_t indent, char *pc0 ) {
         _indent = indent;
         _pc0    = pc0;
     }
 
 
-    void arg( std::size_t no, NameDescriptor *a, char *pc ) {
+    void arg( std::int32_t no, NameDescriptor *a, char *pc ) {
         print( "arg   ", no, a, pc );
     }
 
 
-    void temp( std::size_t no, NameDescriptor *t, char *pc ) {
+    void temp( std::int32_t no, NameDescriptor *t, char *pc ) {
         print( "temp  ", no, t, pc );
     }
 
 
-    void context_temp( std::size_t no, NameDescriptor *c, char *pc ) {
+    void context_temp( std::int32_t no, NameDescriptor *c, char *pc ) {
         print( "c_temp", no, c, pc );
     }
 
 
-    void stack_expr( std::size_t no, NameDescriptor *e, char *pc ) {
+    void stack_expr( std::int32_t no, NameDescriptor *e, char *pc ) {
         print( "expr  ", no, e, pc );
     }
 };
 
 
-void ScopeDescriptor::print( std::size_t indent, bool_t all_pcs ) {
+void ScopeDescriptor::print( std::int32_t indent, bool_t all_pcs ) {
     _console->fill_to( indent );
     printName();
     _console->print( "ScopeDescriptor @%d%s: ", offset(), is_lite() ? ", lite" : "" );
@@ -461,7 +461,7 @@ bool_t MethodScopeDescriptor::l_equivalent( LookupKey *l ) const {
 }
 
 
-MethodScopeDescriptor::MethodScopeDescriptor( NativeMethodScopes *scopes, std::size_t offset, const char *pc ) :
+MethodScopeDescriptor::MethodScopeDescriptor( NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
         ScopeDescriptor( scopes, offset, pc ), _key() {
     Oop k = _scopes->unpackOopAt( _name_desc_offset );
     Oop s = _scopes->unpackOopAt( _name_desc_offset );
@@ -497,7 +497,7 @@ void BlockScopeDescriptor::printSelf() {
 }
 
 
-BlockScopeDescriptor::BlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc ) :
+BlockScopeDescriptor::BlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
         ScopeDescriptor( scopes, offset, pc ) {
     _parentScopeOffset = _scopes->unpackValueAt( _name_desc_offset );
 
@@ -549,7 +549,7 @@ LookupKey *TopLevelBlockScopeDescriptor::key() const {
 }
 
 
-NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset ) {
+NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset ) {
     _offset = offset;
     _scopes = scopes;
 
@@ -574,7 +574,7 @@ ScopeDescriptor *NonInlinedBlockScopeDescriptor::parent() const {
 }
 
 
-TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::size_t offset, const char *pc ) :
+TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
         ScopeDescriptor( scopes, offset, pc ) {
     _self_name  = _scopes->unpackNameDescAt( _name_desc_offset, pc );
     _self_klass = KlassOop( scopes->unpackOopAt( _name_desc_offset ) );
@@ -595,7 +595,7 @@ ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool_t cross_NativeMethod
     if ( not cross_NativeMethod_boundary )
         return nullptr;
     NativeMethod                   *nm     = _scopes->my_nativeMethod();
-    std::size_t                            index;
+    std::int32_t                            index;
     NativeMethod                   *parent = nm->jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope  = parent->noninlined_block_scope_at( index );
     return scope->parent();

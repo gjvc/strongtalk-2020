@@ -42,9 +42,9 @@ public:
 
 
     // memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -55,7 +55,7 @@ public:
 
 
     // sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return VirtualFrameOopDescriptor::header_size();
     }
 

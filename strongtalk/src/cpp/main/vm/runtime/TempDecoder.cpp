@@ -18,7 +18,7 @@
   current = tempInfo->obj_at(pos)
 
 
-void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
+void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     // Format:
     //   name*                     parameters
     //   offset name*              stack-allocated temporaries
@@ -31,11 +31,11 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
         no_debug_info();
         return;
     }
-    int len = tempInfo->length();
+    std::int32_t len = tempInfo->length();
     if ( len == 0 )
         return;
 
-    int pos     = 1;
+    std::int32_t pos     = 1;
     Oop current = tempInfo->obj_at( pos );
 
     { // scan parameters
@@ -48,7 +48,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
 
     { // scan global stack temps
         st_assert_smi( current, "expecting smi_t" );
-        int offset = SMIOop( current )->value();
+        std::int32_t offset = SMIOop( current )->value();
         NEXT;
         while ( current->is_byteArray() ) {
             stack_temp( ByteArrayOop( current ), offset++ );
@@ -59,7 +59,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     { // scan global stack float temps
         st_assert_smi( current, "expecting smi_t" );
         st_assert( SMIOop(current)->value() == 0, "should be zero" )
-        int fno = SMIOop( current )->value();
+        std::int32_t fno = SMIOop( current )->value();
         NEXT;
         while ( current->is_byteArray() ) {
             stack_float_temp( ByteArrayOop( current ), fno++ );
@@ -69,7 +69,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
 
     { // scan global heap temps
         st_assert_smi( current, "expecting smi_t" );
-        int offset = SMIOop( current )->value();
+        std::int32_t offset = SMIOop( current )->value();
         NEXT;
         while ( current->is_byteArray() ) {
             if ( is_heap_parameter( ByteArrayOop( current ), tempInfo ) ) {
@@ -83,14 +83,14 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
     { // scan inlined temps
         while ( 1 ) {
             st_assert_smi( current, "expecting smi_t" );
-            int begin = SMIOop( current )->value();
+            std::int32_t begin = SMIOop( current )->value();
             NEXT;
             st_assert_smi( current, "expecting smi_t" );
-            int end = SMIOop( current )->value();
+            std::int32_t end = SMIOop( current )->value();
             NEXT;
             // Oop temps
             st_assert_smi( current, "expecting smi_t" );
-            int offset = SMIOop( current )->value();
+            std::int32_t offset = SMIOop( current )->value();
             NEXT;
             while ( current->is_byteArray() ) {
                 if ( ( begin <= byteCodeIndex ) and ( byteCodeIndex <= end ) ) {
@@ -117,7 +117,7 @@ void TempDecoder::decode( MethodOop method, int byteCodeIndex ) {
 
 bool_t TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo ) {
     st_assert( name->is_symbol(), "Must be symbol" );
-    for ( std::size_t i = 1; i <= _num_of_params; i++ ) {
+    for ( std::int32_t i = 1; i <= _num_of_params; i++ ) {
         ByteArrayOop par = ByteArrayOop( tempInfo->obj_at( i ) );
         st_assert( par->is_symbol(), "Must be symbol" );
         if ( name == par )
@@ -127,33 +127,33 @@ bool_t TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInf
 }
 
 
-void TempPrinter::decode( MethodOop method, int byteCodeIndex ) {
+void TempPrinter::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     _console->print_cr( "TempDecoding:" );
     TempDecoder::decode( method, byteCodeIndex );
 }
 
 
-void TempPrinter::parameter( ByteArrayOop name, int index ) {
+void TempPrinter::parameter( ByteArrayOop name, std::int32_t index ) {
     _console->print_cr( "  param:      %s@%d", name->as_string(), index );
 }
 
 
-void TempPrinter::stack_temp( ByteArrayOop name, int no ) {
+void TempPrinter::stack_temp( ByteArrayOop name, std::int32_t no ) {
     _console->print_cr( "  stack temp: %s@%d", name->as_string(), no );
 }
 
 
-void TempPrinter::stack_float_temp( ByteArrayOop name, int fno ) {
+void TempPrinter::stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
     _console->print_cr( "  stack float temp: %s@%d", name->as_string(), fno );
 }
 
 
-void TempPrinter::heap_temp( ByteArrayOop name, int no ) {
+void TempPrinter::heap_temp( ByteArrayOop name, std::int32_t no ) {
     _console->print_cr( "  heap temp:  %s@%d", name->as_string(), no );
 }
 
 
-void TempPrinter::heap_parameter( ByteArrayOop name, int no ) {
+void TempPrinter::heap_parameter( ByteArrayOop name, std::int32_t no ) {
     _console->print_cr( "  heap param:  %s@%d", name->as_string(), no );
 }
 
@@ -165,26 +165,26 @@ void TempPrinter::no_debug_info() {
 
 class FindParam : public TempDecoder {
 private:
-    int the_no;
+    std::int32_t the_no;
 public:
     ByteArrayOop result;
 
 
-    void find( MethodOop method, int no ) {
+    void find( MethodOop method, std::int32_t no ) {
         result = nullptr;
         the_no = no;
         decode( method, 0 );
     }
 
 
-    void parameter( ByteArrayOop name, int no ) {
+    void parameter( ByteArrayOop name, std::int32_t no ) {
         if ( the_no == no )
             result = name;
     }
 };
 
 
-ByteArrayOop find_parameter_name( MethodOop method, int no ) {
+ByteArrayOop find_parameter_name( MethodOop method, std::int32_t no ) {
     FindParam p;
     p.find( method, no );
     return p.result;
@@ -193,19 +193,19 @@ ByteArrayOop find_parameter_name( MethodOop method, int no ) {
 
 class FindStackTemp : public TempDecoder {
 private:
-    int the_no;
+    std::int32_t the_no;
 public:
     ByteArrayOop result;
 
 
-    void find( MethodOop method, int byteCodeIndex, int no ) {
+    void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {
         result = nullptr;
         the_no = no;
         TempDecoder::decode( method, byteCodeIndex );
     }
 
 
-    void stack_temp( ByteArrayOop name, int no ) {
+    void stack_temp( ByteArrayOop name, std::int32_t no ) {
         if ( the_no == no )
             result = name;
     }
@@ -214,19 +214,19 @@ public:
 
 class FindStackFloatTemp : public TempDecoder {
 private:
-    int the_fno;
+    std::int32_t the_fno;
 public:
     ByteArrayOop result;
 
 
-    void find( MethodOop method, int byteCodeIndex, int fno ) {
+    void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t fno ) {
         result  = nullptr;
         the_fno = fno;
         TempDecoder::decode( method, byteCodeIndex );
     }
 
 
-    void stack_float_temp( ByteArrayOop name, int fno ) {
+    void stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
         if ( the_fno == fno )
             result = name;
     }
@@ -235,25 +235,25 @@ public:
 
 class FindHeapTemp : public TempDecoder {
 private:
-    int the_no;
+    std::int32_t the_no;
 public:
     ByteArrayOop result;
 
 
-    void find( MethodOop method, int byteCodeIndex, int no ) {
+    void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {
         result = nullptr;
         the_no = no;
         TempDecoder::decode( method, byteCodeIndex );
     }
 
 
-    void heap_temp( ByteArrayOop name, int no ) {
+    void heap_temp( ByteArrayOop name, std::int32_t no ) {
         if ( the_no == no )
             result = name;
     }
 
 
-    void heap_parameter( ByteArrayOop name, int no ) {
+    void heap_parameter( ByteArrayOop name, std::int32_t no ) {
         if ( the_no == no )
             result = name;
     }
@@ -261,21 +261,21 @@ public:
 };
 
 
-ByteArrayOop find_stack_temp( MethodOop method, int byteCodeIndex, int no ) {
+ByteArrayOop find_stack_temp( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {
     FindStackTemp p;
     p.find( method, byteCodeIndex, no );
     return p.result;
 }
 
 
-ByteArrayOop find_heap_temp( MethodOop method, int byteCodeIndex, int no ) {
+ByteArrayOop find_heap_temp( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {
     FindHeapTemp p;
     p.find( method, byteCodeIndex, no );
     return p.result;
 }
 
 
-ByteArrayOop find_stack_float_temp( MethodOop method, int byteCodeIndex, int fno ) {
+ByteArrayOop find_stack_float_temp( MethodOop method, std::int32_t byteCodeIndex, std::int32_t fno ) {
     FindStackFloatTemp p;
     p.find( method, byteCodeIndex, fno );
     return p.result;

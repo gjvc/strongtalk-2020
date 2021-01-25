@@ -29,7 +29,7 @@
 TRACE_FUNC( TraceVirtualFramePrims, "VirtualFrame" )
 
 
-std::size_t VirtualFrameOopPrimitives::number_of_calls;
+std::int32_t VirtualFrameOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_vframe(), "receiver must be VirtualFrame")
 
@@ -166,9 +166,9 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     DeltaVirtualFrame  *df    = (DeltaVirtualFrame *) vf;
     GrowableArray<Oop> *temps = new GrowableArray<Oop>( 10 );
     MethodOop method    = df->method();
-    int       tempCount = method->number_of_stack_temporaries();
+    std::int32_t       tempCount = method->number_of_stack_temporaries();
 
-    for ( std::size_t offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
+    for ( std::int32_t offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
         ByteArrayOop name = find_stack_temp( method, df->byteCodeIndex(), offset );
         if ( name )
             temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->temp_at( offset ), false ) );
@@ -176,9 +176,9 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
 
     while ( df ) {
         if ( method->allocatesInterpretedContext() ) {
-            int contextTempCount = method->number_of_context_temporaries();
+            std::int32_t contextTempCount = method->number_of_context_temporaries();
 
-            for ( std::size_t offset = 0; offset < contextTempCount; offset++ ) {
+            for ( std::int32_t offset = 0; offset < contextTempCount; offset++ ) {
                 ByteArrayOop name = find_heap_temp( method, df->byteCodeIndex(), offset );
                 if ( name )
                     temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->context_temp_at( offset ), false ) );
@@ -357,7 +357,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::step_return, Oop activation ) {
         deoptimize( proc );
 
         VirtualFrame *vf           = VirtualFrameOop( activationHandle.as_oop() )->get_vframe();
-        int          *framePointer = vf->fr().fp();
+        std::int32_t          *framePointer = vf->fr().fp();
 
         proc->setupStepReturn( framePointer );
 

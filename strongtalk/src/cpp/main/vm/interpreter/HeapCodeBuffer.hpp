@@ -50,12 +50,12 @@ public:
     void pushOop( Oop arg );
 
 
-    int byteLength() {
+    std::int32_t byteLength() {
         return _bytes->length();
     }
 
 
-    int oopLength() {
+    std::int32_t oopLength() {
         return _oops->length();
     }
 

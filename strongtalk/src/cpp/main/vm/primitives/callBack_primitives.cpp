@@ -24,7 +24,7 @@
 TRACE_FUNC( TraceCallBackPrims, "callBack" )
 
 
-std::size_t callBackPrimitives::number_of_calls;
+std::int32_t callBackPrimitives::number_of_calls;
 
 
 PRIM_DECL_2( callBackPrimitives::initialize, Oop receiver, Oop selector ) {
@@ -70,7 +70,7 @@ PRIM_DECL_1( callBackPrimitives::unregister, Oop proxy ) {
 }
 
 
-typedef int     (__CALLING_CONVENTION *mytype)( int a, int b );
+typedef std::int32_t     (__CALLING_CONVENTION *mytype)( std::int32_t a, std::int32_t b );
 
 
 PRIM_DECL_1( callBackPrimitives::invokePascal, Oop proxy ) {
@@ -87,5 +87,5 @@ PRIM_DECL_1( callBackPrimitives::invokeC, Oop proxy ) {
     if ( not proxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     primitiveFunctionType f = (primitiveFunctionType) ProxyOop( proxy )->get_pointer();
-    return smiOopFromValue( (int) ( *f )( 10, 5 ) );
+    return smiOopFromValue( (std::int32_t) ( *f )( 10, 5 ) );
 }

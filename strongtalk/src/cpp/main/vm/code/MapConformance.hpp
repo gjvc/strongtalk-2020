@@ -34,7 +34,7 @@
 class Variable : ValueObject {
 
 private:
-    std::size_t _value;
+    std::int32_t _value;
 
     enum {
         special_type = 0, //
@@ -43,22 +43,22 @@ private:
     };
 
 
-    std::size_t type() const {
+    std::int32_t type() const {
         return _value & 0x3;
     }
 
 
-    std::size_t offset() const {
+    std::int32_t offset() const {
         return _value >> 2;
     }
 
 
-    std::size_t value() const {
+    std::int32_t value() const {
         return _value;
     }
 
 
-    static Variable new_variable( std::size_t type, std::size_t offset ) {
+    static Variable new_variable( std::int32_t type, std::int32_t offset ) {
         Variable result;
         result._value = ( offset << 2 ) | type;
         return result;
@@ -72,10 +72,10 @@ public:
 
 
     // Generators
-    static Variable new_register( std::size_t offset );
+    static Variable new_register( std::int32_t offset );
 
 
-    static Variable new_stack( std::size_t offset );
+    static Variable new_stack( std::int32_t offset );
 
 
     static Variable unused();
@@ -104,12 +104,12 @@ public:
 
 
     // Accessors
-    std::size_t register_number() const {
+    std::int32_t register_number() const {
         return offset();
     }
 
 
-    std::size_t stack_offset() const {
+    std::int32_t stack_offset() const {
         return offset();
     }
 
@@ -147,22 +147,22 @@ public:
     }
 
 
-    Variable reg() {
+    Variable reg() const {
         return _reg;
     }
 
 
-    Variable stack() {
+    Variable stack() const {
         return _stack;
     }
 
 
-    bool_t has_reg() {
+    bool_t has_reg() const {
         return not reg().is_unused();
     }
 
 
-    bool_t has_stack() {
+    bool_t has_stack() const {
         return not stack().is_unused();
     }
 
@@ -272,15 +272,15 @@ public:
 
     void generate_code( MapConformance *mc );
 
-    bool_t target_includes( Variable var );
+    bool_t target_includes( Variable var )const;
 
-    bool_t is_dependent( MapConformance *mc, MappingTask *task );
+    bool_t is_dependent( MapConformance *mc, MappingTask *task )const;
 
-    bool_t in_parent_chain( MappingTask *task );
+    bool_t in_parent_chain( MappingTask *task )const;
 
-    std::size_t number_of_targets();
+    std::int32_t number_of_targets() const;
 
-    void print( std::size_t index );
+    void print( std::int32_t index );
 };
 
 class MapConformance : public ResourceObject {
@@ -288,7 +288,7 @@ private:
     Variable                     _free_register;
     GrowableArray<MappingTask *> *_mappings;
     Variable *_usedVariables;
-    std::size_t _numberOfUsedVariables;
+    std::int32_t _numberOfUsedVariables;
 
     bool_t reduce_noop_task( MappingTask *task );
 
@@ -300,7 +300,7 @@ private:
 
     void push_temporary( Variable var );
 
-    void push( Variable src, std::size_t n );
+    void push( Variable src, std::int32_t n );
 
     friend class MappingTask;
 

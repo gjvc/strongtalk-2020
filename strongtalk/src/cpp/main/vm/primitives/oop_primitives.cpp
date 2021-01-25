@@ -24,7 +24,7 @@
 TRACE_FUNC( TraceOopPrims, "Oop" )
 
 
-std::size_t oopPrimitives::number_of_calls;
+std::int32_t oopPrimitives::number_of_calls;
 
 //void swapPointers(Oop* p) {
 //  Oop object = *p;
@@ -88,7 +88,7 @@ PRIM_DECL_2( oopPrimitives::instVarAt, Oop receiver, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    int raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SMIOop( index )->value() - 1;
 
     if ( not MemOop( receiver )->is_within_instVar_bounds( raw_index ) )
         return markSymbol( vmSymbols::out_of_bounds() );
@@ -104,7 +104,7 @@ PRIM_DECL_2( oopPrimitives::instance_variable_name_at, Oop obj, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    int raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SMIOop( index )->value() - 1;
 
     if ( not MemOop( obj )->is_within_instVar_bounds( raw_index ) )
         markSymbol( vmSymbols::out_of_bounds() );
@@ -120,7 +120,7 @@ PRIM_DECL_3( oopPrimitives::instVarAtPut, Oop receiver, Oop index, Oop value ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    int raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SMIOop( index )->value() - 1;
 
     if ( not MemOop( receiver )->is_within_instVar_bounds( raw_index ) )
         return markSymbol( vmSymbols::out_of_bounds() );

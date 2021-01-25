@@ -22,14 +22,14 @@ class Bootstrap : CHeapAllocatedObject {
 private:
 
     Oop *_oop_table;
-    int           _number_of_oops;
-    int           _max_number_of_oops;
+    std::int32_t           _number_of_oops;
+    std::int32_t           _max_number_of_oops;
     bool_t        _new_format;
-    int           _objectCount;
+    std::int32_t           _objectCount;
     std::string   _filename;
     std::ifstream _stream;
 
-    std::map<char, int>         _countByType{};
+    std::map<char, std::int32_t>         _countByType{};
     std::map<char, std::string> _nameByTypeByte{};
 
 public:
@@ -39,7 +39,7 @@ public:
 
     char readNextChar();
 
-    int get_integer();
+    std::int32_t get_integer();
 
     bool_t has_error();
 
@@ -78,7 +78,7 @@ public:
 
     void add( Oop obj );
 
-//        Oop at( int index );
+//        Oop at( std::int32_t index );
 
 
     void open_file();
@@ -92,5 +92,5 @@ public:
 
 
     void summary();
-    Oop oopFromTable( const int index );
+    Oop oopFromTable( const std::int32_t index );
 };

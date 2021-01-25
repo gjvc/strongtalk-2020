@@ -13,7 +13,7 @@
 class NonInlinedBlockScopeNode : public ResourceObject {
 
 public:
-    std::size_t _offset;
+    std::int32_t _offset;
     NonInlinedBlockScopeNode *_next;
     MethodOop _method;
     ScopeInfo _parent;

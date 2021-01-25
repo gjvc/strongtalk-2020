@@ -26,8 +26,8 @@ private:
     char              *_firstFree;
     ResourceAreaChunk *_prev;
 
-    std::size_t _allocated;     // Allocated bytes in this and previous chunks.
-    std::size_t _previous_used; // Used bytes in previous chunks.
+    std::int32_t _allocated;     // Allocated bytes in this and previous chunks.
+    std::int32_t _previous_used; // Used bytes in previous chunks.
 
     void clear( char *start, char *end ) {
         memset( start, 33, end - start );
@@ -42,21 +42,21 @@ private:
     void freeTo( char *new_first_free );
 
 public:
-    char *allocate_bytes( std::size_t size );
+    char *allocate_bytes( std::int32_t size );
 
-    ResourceAreaChunk( std::size_t min_capacity, ResourceAreaChunk *previous );
+    ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChunk *previous );
 
     ~ResourceAreaChunk();
 
     void initialize( ResourceAreaChunk *previous );
 
 
-    std::size_t capacity() {
+    std::int32_t capacity() {
         return _top - _bottom;
     }
 
 
-    int used() {
+    std::int32_t used() {
         return _firstFree - _bottom;
     }
 
@@ -76,7 +76,7 @@ public:
     void print_short();
 
 protected:
-    void print_alloc( const char *addr, std::size_t size );
+    void print_alloc( const char *addr, std::int32_t size );
 };
 
 
@@ -84,7 +84,7 @@ class ResourceArea {
 
 public:
     ResourceAreaChunk *_resourceAreaChunk;  // current chunk
-    int               _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
+    std::int32_t               _nestingLevel;        // current # of nested ResourceMarks (will warn if alloc with nesting == 0)
 
 public:
 
@@ -92,17 +92,17 @@ public:
 
     ~ResourceArea();
 
-    char *allocate_more_bytes( std::size_t size );
+    char *allocate_more_bytes( std::int32_t size );
 
-    char *allocate_bytes( std::size_t size );
+    char *allocate_bytes( std::int32_t size );
 
 
-    int capacity() {
+    std::int32_t capacity() {
         return _resourceAreaChunk ? _resourceAreaChunk->_allocated : 0;
     }
 
 
-    int used();
+    std::int32_t used();
 
 
     bool_t contains( void *p ) {
@@ -120,7 +120,7 @@ public:
 
 class NoGCVerifier : StackAllocatedObject {
 private:
-    int old_scavenge_count;
+    std::int32_t old_scavenge_count;
 public:
     NoGCVerifier();
 
@@ -132,14 +132,14 @@ class Resources {
 
 private:
     ResourceAreaChunk *freeChunks;          // list of unused chunks
-    std::size_t               _allocated;           // total number of bytes allocated
+    std::int32_t               _allocated;           // total number of bytes allocated
     bool_t            _in_consistent_state; //
-    ResourceAreaChunk *getFromFreeList( std::size_t min_capacity );
+    ResourceAreaChunk *getFromFreeList( std::int32_t min_capacity );
 
 public:
     Resources();
 
-    ResourceAreaChunk *new_chunk( std::size_t min_capacity, ResourceAreaChunk *area );
+    ResourceAreaChunk *new_chunk( std::int32_t min_capacity, ResourceAreaChunk *area );
 
     void addToFreeList( ResourceAreaChunk *c );
 
@@ -151,24 +151,24 @@ public:
 
     bool_t contains( const char *p );
 
-    std::size_t capacity();
+    std::int32_t capacity();
 
-    std::size_t used();
+    std::int32_t used();
 };
 
 
 // -----------------------------------------------------------------------------
 
-char *AllocateHeap( std::size_t size, const char *name );
+char *AllocateHeap( std::int32_t size, const char *name );
 
 void FreeHeap( void *p );
 
-char *AllocatePageAligned( std::size_t size, const char *name );
+char *AllocatePageAligned( std::int32_t size, const char *name );
 
 extern Resources    resources;
 extern ResourceArea resource_area;
 
-char *allocateResource( std::size_t size );
+char *allocateResource( std::int32_t size );
 
 // base class ResourceObject is at the end of the file because it uses ResourceArea Base class for objects allocated in the resource area per default.
 // Optionally, objects may be allocated on the C heap with new(true) Foo(...)
@@ -177,13 +177,13 @@ char *allocateResource( std::size_t size );
 // -----------------------------------------------------------------------------
 
 template<typename T>
-T *new_resource_array( std::size_t size ) {
+T *new_resource_array( std::int32_t size ) {
     return reinterpret_cast<T *>( allocateResource( size * sizeof( T ) ));
 }
 
 
 template<typename T>
-T *new_c_heap_array( std::size_t size ) {
+T *new_c_heap_array( std::int32_t size ) {
     return reinterpret_cast<T *>( malloc( ( size ) * sizeof( T ) ));
 }
 

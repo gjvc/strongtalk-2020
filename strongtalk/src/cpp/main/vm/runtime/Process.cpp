@@ -47,30 +47,30 @@
 extern "C" {
 bool_t nlr_through_unpacking                 = false;
 Oop    result_through_unpacking              = nullptr;
-int    number_of_arguments_through_unpacking = 0;
+std::int32_t    number_of_arguments_through_unpacking = 0;
 char   *C_frame_return_addr                  = nullptr;
 
 extern ContextOop nlr_home_context;
 extern bool_t     have_nlr_through_C;
-extern int        nlr_home;
-extern int        nlr_home_id;
+extern std::int32_t        nlr_home;
+extern std::int32_t        nlr_home_id;
 extern Oop        nlr_result;
 }
 
 bool_t processSemaphore = false;
 
 // For current Delta process, the last FP/Sp is stored in these global vars, not the instance vars of the process
-std::size_t *last_Delta_fp = nullptr;
+std::int32_t *last_Delta_fp = nullptr;
 Oop         *last_Delta_sp = nullptr;
 
 
 // last_Delta_fp
-int *DeltaProcess::last_Delta_fp() const {
+std::int32_t *DeltaProcess::last_Delta_fp() const {
     return this == _active_delta_process ? ::last_Delta_fp : _last_Delta_fp;
 }
 
 
-void DeltaProcess::set_last_Delta_fp( int *fp ) {
+void DeltaProcess::set_last_Delta_fp( std::int32_t *fp ) {
     if ( this == _active_delta_process ) {
         ::last_Delta_fp = fp;
     } else {
@@ -105,7 +105,7 @@ void DeltaProcess::set_last_Delta_pc( const char *pc ) {
 }
 
 
-int CurrentHash = 23;
+std::int32_t CurrentHash = 23;
 
 
 bool_t Process::external_suspend_current() {
@@ -394,7 +394,7 @@ void DeltaProcess::transfer_and_continue() {
 }
 
 
-bool_t DeltaProcess::wait_for_async_dll( int timeout_in_ms ) {
+bool_t DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
 
     if ( not os::wait_for_event_or_timer( _async_dll_completion_event, 0 ) ) {
         os::reset_event( _async_dll_completion_event );
@@ -466,7 +466,7 @@ void DeltaProcess::runMainProcess() {
 
 
 // Code entry point for at Delta process
-std::size_t DeltaProcess::launch_delta( DeltaProcess *process ) {
+std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
     _console->print_cr( "%%delta-process-launch-delta-process:  thread_id [%d]", process->thread_id() );
 
@@ -477,7 +477,7 @@ std::size_t DeltaProcess::launch_delta( DeltaProcess *process ) {
     st_assert( process == DeltaProcess::active(), "process consistency check" );
     st_assert( process->is_deltaProcess(), "this should be a deltaProcess" );
 
-    DeltaProcess *p     = (DeltaProcess *) process;
+    DeltaProcess *p     = static_cast<DeltaProcess *>(process);
     Oop          result = Delta::call( p->receiver(), p->selector() );
 
     if ( have_nlr_through_C ) {
@@ -509,7 +509,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThrea
 
     _event = os::create_event( false );
 
-    _thread      = createThread ? os::create_thread( (int ( * )( void * )) &launch_delta, (void *) this, &_thread_id ) : os::starting_thread( &_thread_id );
+    _thread      = createThread ? os::create_thread( (std::int32_t ( * )( void * )) &launch_delta, (void *) this, &_thread_id ) : os::starting_thread( &_thread_id );
     _stack_limit = (char *) os::stack_limit( _thread );
 
     _unwind_head = nullptr;
@@ -542,8 +542,8 @@ extern "C" void popStackHandles( const char *nextFrame ) {
 
 
 Frame DeltaProcess::profile_top_frame() {
-    int  *sp;
-    int  *fp;
+    std::int32_t  *sp;
+    std::int32_t  *fp;
     char *pc;
     os::fetch_top_frame( _thread, &sp, &fp, &pc );
     Frame result( (Oop *) sp, fp, pc );
@@ -551,7 +551,7 @@ Frame DeltaProcess::profile_top_frame() {
 }
 
 
-static std::size_t interruptions = 0;
+static std::int32_t interruptions = 0;
 
 
 void DeltaProcess::check_stack_overflow() {
@@ -782,11 +782,11 @@ void DeltaProcess::exit_uncommon() {
 
 static Oop            *old_sp;
 static Oop            *new_sp;
-static std::size_t    *old_fp;
-static std::size_t    *cur_fp;
+static std::int32_t    *old_fp;
+static std::int32_t    *cur_fp;
 static ObjectArrayOop frame_array;
 
-extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, int *old_fp, ObjectArrayOop frame_array, int *current_frame ) {
+extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, std::int32_t *old_fp, ObjectArrayOop frame_array, std::int32_t *current_frame ) {
     ResourceMark resourceMark;
 
     // Save all parameters for later use (check unpack_frame_array)
@@ -810,7 +810,7 @@ extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, int *old_fp
 static bool_t redo_the_send;
 
 extern "C" {
-int redo_send_offset = 0;
+std::int32_t redo_send_offset = 0;
 }
 
 
@@ -824,7 +824,7 @@ void trace_deoptimization_start() {
     if ( TraceDeoptimization ) {
         _console->print( "[Unpacking]" );
         if ( nlr_through_unpacking ) {
-            _console->print( " NonLocalReturn %s", ( nlr_home == (int) cur_fp ) ? "inside" : "outside" );
+            _console->print( " NonLocalReturn %s", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
         }
         _console->cr();
         _console->print( " - array " );
@@ -889,20 +889,20 @@ extern "C" void unpack_frame_array() {
     BlockScavenge bs;
     ResourceMark  rm;
 
-    int *pc_addr = (int *) new_sp - 1;
+    std::int32_t *pc_addr = (std::int32_t *) new_sp - 1;
     st_assert( *pc_addr = -1, "just checking" );
 
     trace_deoptimization_start();
 
-    bool_t must_find_nlr_target = nlr_through_unpacking and nlr_home == (int) cur_fp;
+    bool_t must_find_nlr_target = nlr_through_unpacking and nlr_home == (std::int32_t) cur_fp;
     bool_t nlr_target_found     = false; // For verification
 
     // link for the current frame
-    int *link_addr = (int *) new_sp - 2;
+    std::int32_t *link_addr = (std::int32_t *) new_sp - 2;
 
     Oop    *current_sp = new_sp;
-    int    pos         = 3;
-    int    length      = frame_array->length();
+    std::int32_t    pos         = 3;
+    std::int32_t    length      = frame_array->length();
     bool_t first       = true;
     Frame  current;
     // unpack one frame at at time from most recent to least recent
@@ -913,16 +913,16 @@ extern "C" void unpack_frame_array() {
 
         SMIOop byteCodeIndex_obj = SMIOop( frame_array->obj_at( pos++ ) );
         st_assert( byteCodeIndex_obj->is_smi(), "expecting smi_t" );
-        int byteCodeIndex = byteCodeIndex_obj->value();
+        std::int32_t byteCodeIndex = byteCodeIndex_obj->value();
 
         SMIOop locals_obj = SMIOop( frame_array->obj_at( pos++ ) );
         st_assert( locals_obj->is_smi(), "expecting smi_t" );
-        int locals = locals_obj->value();
+        std::int32_t locals = locals_obj->value();
 
-        current = Frame( current_sp, (int *) current_sp + locals + 2 );
+        current = Frame( current_sp, (std::int32_t *) current_sp + locals + 2 );
 
         // fill in the locals
-        for ( std::size_t i = 0; i < locals; i++ ) {
+        for ( std::int32_t i = 0; i < locals; i++ ) {
             current.set_temp( i, frame_array->obj_at( pos++ ) );
         }
 
@@ -948,11 +948,11 @@ extern "C" void unpack_frame_array() {
             Oop frame_oop = Oop( current.fp() );
             con->set_parent( frame_oop );
 
-            if ( nlr_through_unpacking and nlr_home == (int) cur_fp ) {
+            if ( nlr_through_unpacking and nlr_home == (std::int32_t) cur_fp ) {
                 if ( nlr_home_context == con ) {
                     // This frame is the target of the NonLocalReturn
                     // set nlr_home to frame pointer of current frame
-                    nlr_home         = (int) current.fp();
+                    nlr_home         = (std::int32_t) current.fp();
                     // compute number of arguments to pop
                     nlr_home_id      = ~method->number_of_arguments();
                     nlr_target_found = true;
@@ -1062,15 +1062,15 @@ DeltaVirtualFrame *DeltaProcess::last_delta_vframe() {
 }
 
 
-int DeltaProcess::depth() {
-    int         d = 0;
+std::int32_t DeltaProcess::depth() {
+    std::int32_t         d = 0;
     for ( Frame v = last_frame(); v.link(); v = v.sender() )
         d++;
     return d;
 }
 
 
-int DeltaProcess::vdepth( Frame *f ) {
+std::int32_t DeltaProcess::vdepth( Frame *f ) {
     Unimplemented();
     return 0;
 }
@@ -1083,7 +1083,7 @@ void DeltaProcess::trace_stack() {
 
 void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
     _console->print_cr( "- Stack trace" );
-    int                vframe_no = 1;
+    std::int32_t                vframe_no = 1;
     for ( VirtualFrame *f        = start_frame; f; f = f->sender() ) {
         if ( f->is_delta_frame() ) {
             ( (DeltaVirtualFrame *) f )->print_activation( vframe_no++ );
@@ -1100,7 +1100,7 @@ void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
 
 void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
     if ( has_stack() ) {
-        int   vframe_no = 1;
+        std::int32_t   vframe_no = 1;
         Frame v         = f ? *f : last_frame();
         do {
             v.print_for_deoptimization( _console );
@@ -1115,11 +1115,11 @@ void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
 }
 
 
-void DeltaProcess::trace_top( int start_frame, int number_of_frames ) {
+void DeltaProcess::trace_top( std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
     _console->print_cr( "- Stack trace (%d, %d)", start_frame, number_of_frames );
-    int vframe_no = 1;
+    std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = last_delta_vframe(); f; f = f->sender() ) {
         if ( vframe_no >= start_frame ) {
@@ -1172,12 +1172,12 @@ void DeltaProcess::setupSingleStep() {
 }
 
 
-void DeltaProcess::setupStepNext( int *fr ) {
+void DeltaProcess::setupStepNext( std::int32_t *fr ) {
     _debugInfo.interceptForNext( fr );
 }
 
 
-void DeltaProcess::setupStepReturn( int *fr ) {
+void DeltaProcess::setupStepReturn( std::int32_t *fr ) {
     _debugInfo.interceptForReturn( fr );
 }
 
@@ -1237,7 +1237,7 @@ void DeltaProcess::set_terminating() {
 }
 
 
-int DeltaProcess::time_stamp() const {
+std::int32_t DeltaProcess::time_stamp() const {
     return _time_stamp;
 }
 
@@ -1382,7 +1382,7 @@ void Processes::add( DeltaProcess *p ) {
 #define ALL_PROCESSES( X ) for (DeltaProcess* X = _processList; X; X = X->next())
 
 
-DeltaProcess *Processes::find_from_thread_id( int id ) {
+DeltaProcess *Processes::find_from_thread_id( std::int32_t id ) {
     for ( DeltaProcess *p = _processList; p; p = p->next() )
         if ( p->thread_id() == id )
             return p;
@@ -1535,25 +1535,25 @@ void Processes::deoptimize_wrt( NativeMethod *nm ) {
     GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
     // mark family for deoptimization
 
-    for ( std::size_t i = 0; i < nms->length(); i++ )
+    for ( std::int32_t i = 0; i < nms->length(); i++ )
         nms->at( i )->mark_for_deoptimization();
 
     // deoptimize
     deoptimized_wrt_marked_nativeMethods();
 
     // unmark for deoptimization
-    for ( std::size_t i = 0; i < nms->length(); i++ )
+    for ( std::int32_t i = 0; i < nms->length(); i++ )
         nms->at( i )->unmark_for_deoptimization();
 }
 
 
 void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
     // mark for deoptimization
-    for ( std::size_t i = 0; i < list->length(); i++ ) {
+    for ( std::int32_t i = 0; i < list->length(); i++ ) {
         NativeMethod                  *nm  = list->at( i );
         GrowableArray<NativeMethod *> *nms = nm->invalidation_family();
 
-        for ( std::size_t j = 0; j < nms->length(); j++ )
+        for ( std::int32_t j = 0; j < nms->length(); j++ )
             nms->at( j )->mark_for_deoptimization();
     }
 
@@ -1561,11 +1561,11 @@ void Processes::deoptimize_wrt( GrowableArray<NativeMethod *> *list ) {
     deoptimized_wrt_marked_nativeMethods();
 
     // unmark for deoptimization
-    for ( std::size_t i = 0; i < list->length(); i++ ) {
+    for ( std::int32_t i = 0; i < list->length(); i++ ) {
         NativeMethod                  *nativeMethod = list->at( i );
         GrowableArray<NativeMethod *> *nms          = nativeMethod->invalidation_family();
 
-        for ( std::size_t j = 0; j < nms->length(); j++ )
+        for ( std::int32_t j = 0; j < nms->length(); j++ )
             nms->at( j )->unmark_for_deoptimization();
     }
 }
@@ -1650,7 +1650,7 @@ extern "C" void suspend_on_NonLocalReturn_error() {
 }
 
 
-void trace_stack_at_exception( int *sp, int *fp, const char *pc ) {
+void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *pc ) {
     ResourceMark resourceMark;
 
     _console->print_cr( "Trace at exception" );
@@ -1668,7 +1668,7 @@ void trace_stack_at_exception( int *sp, int *fp, const char *pc ) {
 }
 
 
-void suspend_process_at_stack_overflow( int *sp, int *fp, const char *pc ) {
+void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, const char *pc ) {
     DeltaProcess *proc = DeltaProcess::active();
 
     proc->set_last_Delta_pc( pc );
@@ -1684,7 +1684,7 @@ void suspend_process_at_stack_overflow( int *sp, int *fp, const char *pc ) {
 }
 
 
-void trace_stack( int thread_id ) {
+void trace_stack( std::int32_t thread_id ) {
     ResourceMark resourceMark;
     Process      *process = Processes::find_from_thread_id( thread_id );
     if ( process->is_deltaProcess() )

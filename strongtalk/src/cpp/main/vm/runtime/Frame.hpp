@@ -31,22 +31,22 @@
 //    [old frame                 ]   <- fp	// old frame may skip real frames deoptimized away.
 //    [return pc                 ]
 
-const int frame_temp_offset          = -3; // For interpreter frames only
-const int frame_hp_offset            = -2; // For interpreter frames only
-const int frame_receiver_offset      = -1; // For interpreter frames only
-const int frame_next_Delta_fp_offset = -1; // For entry frames only; see call_delta in interpreter_asm.asm
-const int frame_next_Delta_sp_offset = -2; // For entry frames only; see call_delta in interpreter_asm.asm
-const int frame_link_offset          = 0;
-const int frame_return_addr_offset   = 1;
-const int frame_arg_offset           = 2;
-const int frame_sender_sp_offset     = 2;
+const std::int32_t frame_temp_offset          = -3; // For interpreter frames only
+const std::int32_t frame_hp_offset            = -2; // For interpreter frames only
+const std::int32_t frame_receiver_offset      = -1; // For interpreter frames only
+const std::int32_t frame_next_Delta_fp_offset = -1; // For entry frames only; see call_delta in interpreter_asm.asm
+const std::int32_t frame_next_Delta_sp_offset = -2; // For entry frames only; see call_delta in interpreter_asm.asm
+const std::int32_t frame_link_offset          = 0;
+const std::int32_t frame_return_addr_offset   = 1;
+const std::int32_t frame_arg_offset           = 2;
+const std::int32_t frame_sender_sp_offset     = 2;
 
-const int frame_real_sender_sp_offset = -2; // For deoptimized frames only
-const int frame_frame_array_offset    = -1; // For deoptimized frames only
+const std::int32_t frame_real_sender_sp_offset = -2; // For deoptimized frames only
+const std::int32_t frame_frame_array_offset    = -1; // For deoptimized frames only
 
-const int interpreted_frame_float_magic_offset = frame_temp_offset - 1;
-const int compiled_frame_magic_oop_offset      = -1;
-const int minimum_size_for_deoptimized_frame   = 4;
+const std::int32_t interpreted_frame_float_magic_offset = frame_temp_offset - 1;
+const std::int32_t compiled_frame_magic_oop_offset      = -1;
+const std::int32_t minimum_size_for_deoptimized_frame   = 4;
 
 class InlineCacheIterator;
 
@@ -62,7 +62,7 @@ class Frame : ValueObject {
 
 private:
     Oop        *_sp; // stack pointer
-    int        *_fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
+    std::int32_t        *_fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
     const char *_pc; // program counter
 
 public:
@@ -70,14 +70,14 @@ public:
     }
 
 
-    Frame( Oop *sp, int *fp, const char *pc ) {
+    Frame( Oop *sp, std::int32_t *fp, const char *pc ) {
         _sp = sp;
         _fp = fp;
         _pc = pc;
     }
 
 
-    Frame( Oop *sp, int *fp ) {
+    Frame( Oop *sp, std::int32_t *fp ) {
         _sp = sp;
         _fp = fp;
         _pc = (const char *) sp[ -1 ];
@@ -89,7 +89,7 @@ public:
     }
 
 
-    int *fp() const {
+    std::int32_t *fp() const {
         return _fp;
     } // should return void **
 
@@ -100,19 +100,19 @@ public:
 
     // patching operations
     void patch_pc( const char *pc ); // patch the return address of the frame below.
-    void patch_fp( int *fp ); // patch the link of the frame below.
+    void patch_fp( std::int32_t *fp ); // patch the link of the frame below.
 
-    int *addr_at( int index ) const {
+    std::int32_t *addr_at( std::int32_t index ) const {
         return &fp()[ index ];
     } // should return void **
 
-    int at( int index ) const {
+    std::int32_t at( std::int32_t index ) const {
         return *addr_at( index );
     } // should really return void *
 
 private:
-    int **link_addr() const {
-        return (int **) addr_at( frame_link_offset );
+    std::int32_t **link_addr() const {
+        return (std::int32_t **) addr_at( frame_link_offset );
     }
 
 
@@ -132,7 +132,7 @@ private:
     }
 
 
-    Oop *arg_addr( int off ) const {
+    Oop *arg_addr( std::int32_t off ) const {
         return (Oop *) addr_at( frame_arg_offset + off );
     }
 
@@ -145,12 +145,12 @@ public:
 
 
     // Link
-    int *link() const {
+    std::int32_t *link() const {
         return *link_addr();
     }
 
 
-    void set_link( int *addr ) {
+    void set_link( std::int32_t *addr ) {
         *link_addr() = addr;
     }
 
@@ -178,34 +178,34 @@ public:
 
 
     // Temporaries
-    Oop temp( int offset ) const {
+    Oop temp( std::int32_t offset ) const {
         return *temp_addr( offset );
     }
 
 
-    void set_temp( int offset, Oop obj ) {
+    void set_temp( std::int32_t offset, Oop obj ) {
         *temp_addr( offset ) = obj;
     }
 
 
-    Oop *temp_addr( int offset ) const {
+    Oop *temp_addr( std::int32_t offset ) const {
         return (Oop *) addr_at( frame_temp_offset - offset );
     }
 
 
     // Arguments
-    Oop arg( int offset ) const {
+    Oop arg( std::int32_t offset ) const {
         return *arg_addr( offset );
     }
 
 
-    void set_arg( int offset, Oop obj ) {
+    void set_arg( std::int32_t offset, Oop obj ) {
         *arg_addr( offset ) = obj;
     }
 
 
     // Expressions
-    Oop expr( int index ) const {
+    Oop expr( std::int32_t index ) const {
         return ( (Oop *) sp() )[ index ];
     }
 
@@ -263,7 +263,7 @@ public:
 
 
     // returns the frame size in oops
-    int frame_size() const {
+    std::int32_t frame_size() const {
         return sender_sp() - sp();
     }
 
@@ -279,7 +279,7 @@ public:
     bool_t has_next_Delta_fp() const;
 
     // returns the next C entry frame (entry frames only)
-    int *next_Delta_fp() const;
+    std::int32_t *next_Delta_fp() const;
 
     Oop *next_Delta_sp() const;
 
@@ -335,13 +335,13 @@ public:
 
     // Returns the size of a number of interpreter frames in words.
     // This is used during deoptimization.
-    static std::size_t interpreter_stack_size( int number_of_frames, int number_of_temporaries_and_locals ) {
+    static std::int32_t interpreter_stack_size( std::int32_t number_of_frames, std::int32_t number_of_temporaries_and_locals ) {
         return number_of_frames * interpreter_frame_size( 0 ) + number_of_temporaries_and_locals;
     }
 
 
     // Returns the word size of an interpreter frame
-    static std::size_t interpreter_frame_size( int locals ) {
+    static std::int32_t interpreter_frame_size( std::int32_t locals ) {
         return frame_return_addr_offset - frame_temp_offset + locals;
     }
 };

@@ -62,7 +62,7 @@ class Delta : public AllStatic {
 
 public:
     // The following functions return a marked Oop if the selector is not a SymbolOop
-    static Oop call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, int nofArgs, Oop *args );
+    static Oop call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, std::int32_t nofArgs, Oop *args );
 
     static Oop call( Oop receiver, Oop selector );
 
@@ -74,5 +74,5 @@ public:
 
     static Oop call( Oop receiver, Oop selector, ObjectArrayOop args );
 
-    static Oop does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, Oop *argArray );
+    static Oop does_not_understand( Oop receiver, SymbolOop selector, std::int32_t nofArgs, Oop *argArray );
 };

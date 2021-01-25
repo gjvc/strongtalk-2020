@@ -14,7 +14,7 @@ Location pick( RegisterMask & alloc, RegisterMask mask ) {
     Unimplemented();
     unsigned r = mask & ~alloc;
     if ( r == 0 ) return unAllocated;
-    for ( std::size_t reg = 0; not isBitSet( r, 0 ); reg++, r >>= 1 );
+    for ( std::int32_t reg = 0; not isBitSet( r, 0 ); reg++, r >>= 1 );
     setNthBit( alloc, reg );
     // return Location(ireg, reg); /// fix this
     return Location();
@@ -25,7 +25,7 @@ void printAllocated( RegisterMask rs ) {
     printf( "{" );
     bool_t    first = true;
     unsigned  r     = rs;        // safer for >>
-    for ( std::size_t d     = 0; r; d++, r >>= 1 ) {
+    for ( std::int32_t d     = 0; r; d++, r >>= 1 ) {
         if ( isBitSet( r, 0 ) ) {
             if ( first ) {
                 first = false;
@@ -48,13 +48,13 @@ void printAllocated( RegisterMask rs ) {
 }
 
 
-std::size_t tempToIndex( Location temp ) {
+std::int32_t tempToIndex( Location temp ) {
     Unimplemented();
     return 0;
     // return temp - FirstStackLocation + 32;
 }
 
-Location indexToTemp( std::size_t temp ) {
+Location indexToTemp( std::int32_t temp ) {
     Unimplemented();
     return Location();
     // return Location(temp + FirstStackLocation - 32);
@@ -69,7 +69,7 @@ void LongRegisterMask::allocate( Location l ) {
         bv->add( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        std::size_t i = tempToIndex( l );
+        std::int32_t i = tempToIndex( l );
         if ( i >= bv->length ) grow();
         bv->add( i );
     }
@@ -80,7 +80,7 @@ void LongRegisterMask::deallocate( Location l ) {
         bv->remove( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        std::size_t i = tempToIndex( l );
+        std::int32_t i = tempToIndex( l );
         bv->remove( i );
     }
 }
@@ -90,7 +90,7 @@ bool_t LongRegisterMask::isAllocated( Location l ) {
         return bv->includes( l.number() );
     } else {
         assert( l.isStackLocation(), "should be stack reg" );
-        std::size_t i = tempToIndex( l );
+        std::int32_t i = tempToIndex( l );
         if ( l.number() < bv->length ) {
             return bv->includes( i );
         } else {
@@ -112,22 +112,22 @@ void LongRegisterMask::print() {
 
 
 // find the first bit >= start that is unused in all strings[0..len-1]
-std::size_t findFirstUnused( LongRegisterMask ** masks, std::size_t len, std::size_t start ) {
+std::int32_t findFirstUnused( LongRegisterMask ** masks, std::int32_t len, std::int32_t start ) {
     // currently quite unoptimized
     BitVector * b = masks[ 0 ]->bv->copy( masks[ 0 ]->bv->maxLength );
-    for ( std::size_t i = 1; i < len; i++ ) {
+    for ( std::int32_t i = 1; i < len; i++ ) {
         b->unionWith( masks[ i ]->bv );
     }
-    std::size_t       i = start;
+    std::int32_t       i = start;
     for ( ; i < b->length; i++ ) {
         if ( not b->includes( i ) ) break;
     }
     return i;
 }
 
-Location findFirstUnusedTemp( LongRegisterMask ** masks, std::size_t len ) {
+Location findFirstUnusedTemp( LongRegisterMask ** masks, std::int32_t len ) {
     Unimplemented();
-    // std::size_t i = findFirstUnused(masks, len, tempToIndex(FirstStackLocation));
+    // std::int32_t i = findFirstUnused(masks, len, tempToIndex(FirstStackLocation));
     // return indexToTemp(i);
     return Location();
 }

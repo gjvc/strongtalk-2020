@@ -19,7 +19,7 @@ private:
 
 public:                                                         // was protected: originally
     GrowableArray<BasicBlock *>          *_basicBlockTable;     // BBs sorted in topological order
-    int                                  _basicBlockCount;      // number of BBs
+    std::int32_t                          _basicBlockCount;      // number of BBs
     GrowableArray<PseudoRegister *>      *pregTable;            // holds all PseudoRegisters; indexed by their id
     GrowableArray<PseudoRegister *>      *globals;              // holds globally allocated PseudoRegisters; indexed by their num()
     bool_t                               _usesBuilt;            // true after uses have been built
@@ -48,7 +48,7 @@ protected:
     void add_BBs_to_list( GrowableArray<BasicBlock *> &list, GrowableArray<BasicBlock *> &work );
 
 public:
-    bool_t isSequential( int curr, int next ) const;        // are the two BasicBlock indices sequential in bbTable order?
+    bool_t isSequential( std::int32_t curr, std::int32_t next ) const;        // are the two BasicBlock indices sequential in bbTable order?
     bool_t isSequentialCode( BasicBlock *curr, BasicBlock *next ) const;    // are the two BBs sequential in codeGen order?
     GrowableArray<BasicBlock *> *code_generation_order();        // list of BBs in code generation order
 

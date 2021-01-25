@@ -18,8 +18,8 @@ class NativeMethod;
 //%note
 // Should implement free list like SymbolTable (Lars 2/10-95)
 
-constexpr std::size_t codeTableSize  = 2048;
-constexpr std::size_t debugTableSize = 256;
+constexpr std::int32_t codeTableSize  = 2048;
+constexpr std::int32_t debugTableSize = 256;
 
 //struct CodeTableEntry;
 
@@ -30,7 +30,7 @@ struct CodeTableLink : public CHeapAllocatedObject {
     CodeTableLink *_next;
 
     // memory operations
-    bool_t verify( std::size_t i );
+    bool_t verify( std::int32_t i );
 };
 
 struct CodeTableEntry : ValueObject {
@@ -45,7 +45,7 @@ struct CodeTableEntry : ValueObject {
 
 
     bool_t is_nativeMethod() {
-        return (std::size_t) _nativeMethodOrLink & 1;
+        return (std::int32_t) _nativeMethodOrLink & 1;
     }
 
 
@@ -55,13 +55,13 @@ struct CodeTableEntry : ValueObject {
 
 
     NativeMethod *get_nativeMethod() {
-        return (NativeMethod *) ( (std::size_t) _nativeMethodOrLink - 1 );
+        return (NativeMethod *) ( (std::int32_t) _nativeMethodOrLink - 1 );
     }
 
 
     void set_nativeMethod( const NativeMethod *nm ) {
         st_assert_oop_aligned( nm );
-        _nativeMethodOrLink = (void *) ( (std::size_t) nm + 1 );
+        _nativeMethodOrLink = (void *) ( (std::int32_t) nm + 1 );
     }
 
 
@@ -79,23 +79,23 @@ struct CodeTableEntry : ValueObject {
     // memory operations
     void deallocate();
 
-    std::size_t length();   // returns the number of NativeMethod in this bucket.
+    std::int32_t length();   // returns the number of NativeMethod in this bucket.
 
-    bool_t verify( std::size_t i );
+    bool_t verify( std::int32_t i );
 };
 
 class CodeTable : public PrintableCHeapAllocatedObject {
 protected:
-    std::size_t tableSize;
+    std::int32_t tableSize;
     CodeTableEntry *buckets;
 
 
-    CodeTableEntry *at( std::size_t index ) {
+    CodeTableEntry *at( std::int32_t index ) {
         return &buckets[ index ];
     }
 
 
-    CodeTableEntry *bucketFor( std::size_t hash ) {
+    CodeTableEntry *bucketFor( std::int32_t hash ) {
         return at( hash & ( tableSize - 1 ) );
     }
 
@@ -103,7 +103,7 @@ protected:
     CodeTableLink *new_link( NativeMethod *nm, CodeTableLink *n = nullptr );
 
 public:
-    CodeTable( std::size_t size );
+    CodeTable( std::int32_t size );
 
     void clear();
 

@@ -20,7 +20,7 @@
 class SavedRegisters : AllStatic {
 
 public:
-    static Oop fetch( int register_number, int *frame_pointer );
+    static Oop fetch( std::int32_t register_number, std::int32_t *frame_pointer );
 
     static void clear();
 

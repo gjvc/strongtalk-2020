@@ -16,7 +16,7 @@ protected:
     MethodOop _methodOop;        // target method
 
 public:
-    int calleeCost;        // cost of inlining candidate
+    std::int32_t calleeCost;        // cost of inlining candidate
 
     InliningPolicy() {
         _methodOop = nullptr;
@@ -49,7 +49,7 @@ public:
 
 protected:
     virtual KlassOop receiverKlass() const = 0;        // return receiver klass (nullptr if unknown)
-    virtual KlassOop nthArgKlass( std::size_t nth ) const = 0;    // return nth argument of method (nullptr if unknown)
+    virtual KlassOop nthArgKlass( std::int32_t nth ) const = 0;    // return nth argument of method (nullptr if unknown)
     bool_t shouldNotInline() const;
 
     bool_t isBuiltinMethod() const;
@@ -68,7 +68,7 @@ protected:
 
     KlassOop receiverKlass() const;
 
-    KlassOop nthArgKlass( std::size_t n ) const;
+    KlassOop nthArgKlass( std::int32_t n ) const;
 
 public:
     const char *shouldInline( InlinedScope *sender, InlinedScope *callee );
@@ -87,7 +87,7 @@ protected:
     DeltaVirtualFrame *_deltaVirtualFrame;        // top VirtualFrame of this method/NativeMethod; may be nullptr
     KlassOop receiverKlass() const;
 
-    KlassOop nthArgKlass( std::size_t n ) const;
+    KlassOop nthArgKlass( std::int32_t n ) const;
 
     const char *shouldInline( const NativeMethod *nm );    // should nm be inlined?
 

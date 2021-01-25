@@ -18,7 +18,7 @@
 MacroAssembler *theMacroAssembler = nullptr;
 
 
-CodeBuffer::CodeBuffer( int instsSize, int locsSize ) {
+CodeBuffer::CodeBuffer( std::int32_t instsSize, std::int32_t locsSize ) {
     _codeStart         = _codeEnd = new_resource_array<char>( instsSize );
     _codeOverflow      = _codeStart + instsSize;
     _locsStart         = _locsEnd = (RelocationInformation *) new_resource_array<char>( locsSize );
@@ -28,7 +28,7 @@ CodeBuffer::CodeBuffer( int instsSize, int locsSize ) {
 }
 
 
-CodeBuffer::CodeBuffer( const char *code_start, int code_size ) {
+CodeBuffer::CodeBuffer( const char *code_start, std::int32_t code_size ) {
     _codeStart         = (const char *) code_start;
     _codeEnd           = (char *) code_start;
     _codeOverflow      = _codeStart + code_size;
@@ -60,8 +60,8 @@ void CodeBuffer::relocate( const char *at, RelocationInformation::RelocationType
 
     } else {
         st_assert( sizeof( RelocationInformation ) == sizeof( std::int16_t ), "change this code" );
-        int len    = at - _codeStart;
-        int offset = len - _last_reloc_offset;
+        std::int32_t len    = at - _codeStart;
+        std::int32_t offset = len - _last_reloc_offset;
         _last_reloc_offset = len;
         *_locsEnd++ = RelocationInformation( rtype, offset );
         if ( _locsEnd >= _locsOverflow ) st_fatal( "routine is too long to compile" );
@@ -94,7 +94,7 @@ void CodeBuffer::copyTo( NativeMethod *nm ) {
     copy_oops( (Oop *) _locsStart, (Oop *) nm->locs(), reloc_size() / oopSize );
 
     // Fix the pc relative information after the move
-    int delta = (const char *) _codeStart - (const char *) nm->instructionsStart();
+    std::int32_t delta = (const char *) _codeStart - (const char *) nm->instructionsStart();
     nm->fix_relocation_at_move( delta );
 }
 

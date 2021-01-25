@@ -38,17 +38,17 @@
 class Displacement : public ValueObject {
 
 private:
-    int _data{};
+    std::int32_t _data{};
 
-    static constexpr int info_size = InlineCacheInfo::number_of_flags;   //
-    static constexpr int type_size = 2;                                  //
-    static constexpr int next_size = 32 - ( type_size + info_size );     //
-    static constexpr int info_pos  = 0;                                  //
-    static constexpr int type_pos  = info_pos + info_size;               //
-    static constexpr int next_pos  = type_pos + type_size;               //
-    static constexpr int info_mask = ( 1 << info_size ) - 1;             //
-    static constexpr int type_mask = ( 1 << type_size ) - 1;             //
-    static constexpr int next_mask = ( 1 << next_size ) - 1;             //
+    static constexpr std::int32_t info_size = InlineCacheInfo::number_of_flags;   //
+    static constexpr std::int32_t type_size = 2;                                  //
+    static constexpr std::int32_t next_size = 32 - ( type_size + info_size );     //
+    static constexpr std::int32_t info_pos  = 0;                                  //
+    static constexpr std::int32_t type_pos  = info_pos + info_size;               //
+    static constexpr std::int32_t next_pos  = type_pos + type_size;               //
+    static constexpr std::int32_t info_mask = ( 1 << info_size ) - 1;             //
+    static constexpr std::int32_t type_mask = ( 1 << type_size ) - 1;             //
+    static constexpr std::int32_t next_mask = ( 1 << next_size ) - 1;             //
 
     enum class Type {             // info field usage
         call,               // unused
@@ -58,11 +58,11 @@ private:
     };
 
 
-    void init( const Label &L, Type type, int info );
+    void init( const Label &L, Type type, std::int32_t info );
 
-    int data() const;
+    std::int32_t data() const;
 
-    int info() const;
+    std::int32_t info() const;
 
     Type type() const;
 
@@ -70,9 +70,9 @@ private:
 
     void link_to( const Label &L );
 
-    Displacement( int data );
+    Displacement( std::int32_t data );
 
-    Displacement( const Label &L, Type type, int info );
+    Displacement( const Label &L, Type type, std::int32_t info );
 
     void print();
 

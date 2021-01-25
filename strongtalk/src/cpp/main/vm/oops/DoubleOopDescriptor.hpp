@@ -33,17 +33,17 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( DoubleOopDescriptor ) / oopSize;
     }
 
 
-    static std::size_t object_size() {
+    static std::int32_t object_size() {
         return header_size();
     }
 
 
-    static std::size_t value_offset() {
+    static std::int32_t value_offset() {
         return sizeof( MemOopDescriptor ) / oopSize;
     }
 

@@ -36,7 +36,7 @@ protected:
 
 
 public:
-    std::size_t size;    // size in blocks (only for heterogenuous list)
+    std::int32_t size;    // size in blocks (only for heterogenuous list)
 
     HeapChunk() {
         initialize();
@@ -91,7 +91,7 @@ public:
 
     HeapChunk *get();
 
-    std::size_t length() const;
+    std::int32_t length() const;
 };
 
 
@@ -111,12 +111,12 @@ enum class chunkState {
 // The other bytes hold the distance to the chunk header (or an approximation
 // thereof); headers are found by following the distance pointers downwards
 
-constexpr std::size_t minHeaderSize = 1;
-constexpr std::size_t maxHeaderSize = 4;
+constexpr std::int32_t minHeaderSize = 1;
+constexpr std::int32_t maxHeaderSize = 4;
 
 
-constexpr std::size_t MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
-constexpr std::size_t maxOneByteLen = ( static_cast<std::size_t>( chunkState::usedOvfl ) - static_cast<std::size_t>(chunkState::used ) );
+constexpr std::int32_t MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
+constexpr std::int32_t maxOneByteLen = ( static_cast<std::int32_t>( chunkState::usedOvfl ) - static_cast<std::int32_t>(chunkState::used ) );
 
 class ChunkKlass;
 
@@ -126,12 +126,12 @@ ChunkKlass *asChunkKlass( std::uint8_t *c );
 class ChunkKlass {
 
 private:
-    std::uint8_t c( std::size_t which ) {
+    std::uint8_t c( std::int32_t which ) {
         return ( (std::uint8_t *) this )[ which ];
     }
 
 
-    std::uint8_t n( std::size_t which ) {
+    std::uint8_t n( std::int32_t which ) {
         return c( which ) - static_cast<std::uint8_t>( chunkState::unused );
     }
 
@@ -147,15 +147,15 @@ public:
     }
 
 
-    void markSize( std::size_t nChunks, chunkState s );
+    void markSize( std::int32_t nChunks, chunkState s );
 
 
-    void markUsed( std::size_t nChunks ) {
+    void markUsed( std::int32_t nChunks ) {
         markSize( nChunks, chunkState::used );
     }
 
 
-    void markUnused( std::size_t nChunks ) {
+    void markUnused( std::int32_t nChunks ) {
         markSize( nChunks, chunkState::unused );
     }
 
@@ -189,15 +189,15 @@ public:
     }
 
 
-    std::size_t headerSize() {        // size of header in bytes
-        std::size_t ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+    std::int32_t headerSize() {        // size of header in bytes
+        std::int32_t ovfl = static_cast<std::int32_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         return c( 0 ) == ovfl ? maxHeaderSize : minHeaderSize;
     }
 
 
-    std::size_t size() {        // size of this block
-        std::size_t ovfl = static_cast<std::size_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
-        std::size_t len;
+    std::int32_t size() {        // size of this block
+        std::int32_t ovfl = static_cast<std::int32_t>( isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        std::int32_t len;
         st_assert( c( 0 ) not_eq static_cast<std::uint8_t>( chunkState::invalid ) and c( 0 ) >= static_cast<std::uint8_t>( chunkState::MaxDistance ), "invalid chunk" );
         if ( c( 0 ) not_eq ovfl ) {
             len = c( 0 ) + 1 - ( isUsed() ? static_cast<std::uint8_t>( chunkState::used ) : static_cast<std::uint8_t>( chunkState::unused ) );
@@ -221,8 +221,8 @@ public:
 
     ChunkKlass *prev() {
         ChunkKlass *p = asChunkKlass( asByte() - 1 );
-        std::size_t ovfl = static_cast<std::size_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
-        std::size_t len;
+        std::int32_t ovfl = static_cast<std::int32_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
+        std::int32_t len;
         if ( c( -1 ) not_eq ovfl ) {
             len = p->size();
         } else {
@@ -240,17 +240,17 @@ public:
 class ZoneHeap : public CHeapAllocatedObject {
 
 protected:
-    std::size_t size;                   // total size in bytes
+    std::int32_t size;                   // total size in bytes
 
 public:
-    std::size_t blockSize;              // allocation unit in bytes (must be power of 2)
-    std::size_t nfree;                  // number of free lists
+    std::int32_t blockSize;              // allocation unit in bytes (must be power of 2)
+    std::int32_t nfree;                  // number of free lists
 
 protected:
-    std::size_t log2BS;         // log2(blockSize)
-    std::size_t _bytesUsed;     // used bytes (rounded to block size)
-    std::size_t _total;         // total bytes allocated so far
-    std::size_t _ifrag;         // bytes wasted by internal fragmentation
+    std::int32_t log2BS;         // log2(blockSize)
+    std::int32_t _bytesUsed;     // used bytes (rounded to block size)
+    std::int32_t _total;         // total bytes allocated so far
+    std::int32_t _ifrag;         // bytes wasted by internal fragmentation
     const char *_base;         // for deallocation
     const char *base;          // base addr of heap (aligned to block size)
 
@@ -264,7 +264,7 @@ public:
     bool_t _combineOnDeallocation;    // do eager block combination on deallocs?
 
 public:
-    ZoneHeap( std::size_t s, std::size_t bs );
+    ZoneHeap( std::int32_t s, std::int32_t bs );
 
     ~ZoneHeap();
 
@@ -272,24 +272,24 @@ public:
     void clear();
 
     // Allocation
-    void *allocate( std::size_t wantedBytes );    // returns nullptr if allocation failed
-    void deallocate( void *p, std::size_t bytes );
+    void *allocate( std::int32_t wantedBytes );    // returns nullptr if allocation failed
+    void deallocate( void *p, std::int32_t bytes );
 
     // Compaction
-    const char *compact( void move( const char *from, char *to, std::size_t nbytes ) );    // returns first free byte
+    const char *compact( void move( const char *from, char *to, std::int32_t nbytes ) );    // returns first free byte
 
     // Sizes
-    std::size_t capacity() const {
+    std::int32_t capacity() const {
         return size;
     }
 
 
-    std::size_t usedBytes() const {
+    std::int32_t usedBytes() const {
         return _bytesUsed;
     }
 
 
-    std::size_t freeBytes() const {
+    std::int32_t freeBytes() const {
         return size - _bytesUsed;
     }
 
@@ -322,7 +322,7 @@ public:
     const void *firstUsed() const; // Address of first used object
     const void *nextUsed( const void *prev ) const;
     const void *findStartOfBlock( const void *start ) const;
-    std::size_t sizeOfBlock( void *nm ) const;
+    std::int32_t sizeOfBlock( void *nm ) const;
 
     // Misc.
     void verify() const;
@@ -330,7 +330,7 @@ public:
     void print() const;
 
 protected:
-    std::size_t mapSize() const {
+    std::int32_t mapSize() const {
         return size >> log2BS;
     }
 
@@ -346,7 +346,7 @@ protected:
     ChunkKlass *mapAddr( const void *p ) const {
         const char *pp = (const char *) p;
         st_assert( pp >= base and pp < base + size, "not in this heap" );
-        st_assert( std::size_t(pp) % blockSize == 0, "must be block-aligned" );
+        st_assert( std::int32_t(pp) % blockSize == 0, "must be block-aligned" );
         std::uint8_t *fm = (std::uint8_t *) _heapKlass;
         return (ChunkKlass *) ( fm + ( ( pp - base ) >> log2BS ) );
     }
@@ -358,13 +358,13 @@ protected:
 
 
     // Free list management
-    void *allocFromLists( std::size_t wantedBytes );
+    void *allocFromLists( std::int32_t wantedBytes );
 
     bool_t addToFreeList( ChunkKlass *m );
 
     void removeFromFreeList( ChunkKlass *m );
 
-    std::size_t combineAll();
+    std::int32_t combineAll();
 
-    std::size_t combine( HeapChunk *&m );
+    std::int32_t combine( HeapChunk *&m );
 };

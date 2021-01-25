@@ -54,7 +54,7 @@ ASSERT_TRUE( theClass
 TEST_F( DoubleValueArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace
 ) {
 eden_top = eden_end;
-ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
+ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
 }
 
 

@@ -30,11 +30,11 @@ private:
     PseudoRegisterMapping *_currentMapping;     // currently used mapping of PseudoRegisters
     GrowableArray<Stub *> _mergeStubs;          // a stack of yet to generate merge stubs
     DebugInfoWriter *_debugInfoWriter;    // keeps track of PseudoRegister location changes and updates debug info
-    int _maxNofStackTmps;     // the maximum number of stack allocated variables so far
+    std::int32_t _maxNofStackTmps;     // the maximum number of stack allocated variables so far
     Node *_previousNode;       // the previous node in the same basic block or nullptr info used to patch temporary initialization
     Register _nilReg;              // the register holding nilObject used to initialize the stack frame
     CodeBuffer *_pushCode;           // the code area that can be patched with push instructions
-    int _nofCompilations;
+    std::int32_t _nofCompilations;
 
 private:
     // Helper routines for mapping
@@ -48,7 +48,7 @@ private:
 
     void setMapping( PseudoRegisterMapping *mapping );
 
-    int maxNofStackTmps();
+    std::int32_t maxNofStackTmps();
 
     bool_t isLiveRangeBoundary( Node *a, Node *b ) const;
 
@@ -58,7 +58,7 @@ private:
 
     void bindLabel( Node *node );
 
-    void inlineCache( Node *call, MergeNode *nlrTestPoint, int flags = 0 );
+    void inlineCache( Node *call, MergeNode *nlrTestPoint, std::int32_t flags = 0 );
 
     void updateDebuggingInfo( Node *node );
 
@@ -67,7 +67,7 @@ private:
 
     void incrementInvocationCounter();
 
-    int byteOffset( int offset );
+    std::int32_t byteOffset( std::int32_t offset );
 
     void zapContext( PseudoRegister *context );
 
@@ -75,13 +75,13 @@ private:
 
     void assign( PseudoRegister *dst, PseudoRegister *src, bool_t needsStoreCheck = true );
 
-    void uplevelBase( PseudoRegister *startContext, int nofLevels, Register base );
+    void uplevelBase( PseudoRegister *startContext, std::int32_t nofLevels, Register base );
 
     void moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool_t &x_attr, bool_t &y_attr );
 
     void arithRROp( ArithOpCode op, Register x, Register y );
 
-    void arithRCOp( ArithOpCode op, Register x, int y );
+    void arithRCOp( ArithOpCode op, Register x, std::int32_t y );
 
     void arithROOp( ArithOpCode op, Register x, Oop y );
 
@@ -120,17 +120,17 @@ private:
 
     static void verifyContext( Oop obj );
 
-    static void verifyArguments( Oop recv, Oop *ebp, int nofArgs );
+    static void verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs );
 
     static void verifyReturn( Oop result );
 
-    static void verifyNonLocalReturn( const char *fp, const char *nlrFrame, int nlrScopeID, Oop result );
+    static void verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result );
 
     void callVerifyObject( Register obj );
 
     void callVerifyContext( Register context );
 
-    void callVerifyArguments( Register recv, int nofArgs );
+    void callVerifyArguments( Register recv, std::int32_t nofArgs );
 
     void callVerifyReturn();
 

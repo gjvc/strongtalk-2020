@@ -14,7 +14,7 @@
 // 0 means the node/preg isn't involved in any split,
 // 1 means it is in the first split path, etc.
 
-const int MaxSplitDepth = 7;
+const std::int32_t MaxSplitDepth = 7;
 
 class SplitSig {
         // "this" encodes 7 split 4-bit IDs plus nesting level in lowest bits
@@ -22,13 +22,13 @@ class SplitSig {
         static const std::uint32_t LevelMask;
     public:
         SplitSig() { ShouldNotCallThis(); }
-        friend SplitSig * new_SplitSig( SplitSig * current, int splitID );
+        friend SplitSig * new_SplitSig( SplitSig * current, std::int32_t splitID );
 
-        int level() { return std::uint32_t( this ) & LevelMask; }
+        std::int32_t level() { return std::uint32_t( this ) & LevelMask; }
         bool_t contains( SplitSig * other ) {
             // other sig is in same branch iff the receiver is a prefix of other
             // NB: this is not symmetric, i.e. it's like <=, not ==
-            int shift = ( MaxSplitDepth - level() + 1 ) << 2;
+            std::int32_t shift = ( MaxSplitDepth - level() + 1 ) << 2;
             if ( shift == 32 ) return true;    // because x >> 32 is undefined
             return ( ( std::uint32_t( this ) ^ std::uint32_t( other ) ) >> shift ) == 0;
         }

@@ -12,7 +12,7 @@
 class MemOopKlass : public Klass {
 
 protected:
-    Oop *basicAllocate( std::size_t size, KlassOop *klass, bool_t permit_scavenge, bool_t tenured ) {
+    Oop *basicAllocate( std::int32_t size, KlassOop *klass, bool_t permit_scavenge, bool_t tenured ) {
         return tenured ? Universe::allocate_tenured( size, permit_scavenge ) : Universe::allocate( size, (MemOop *) klass, permit_scavenge );
     }
 
@@ -38,7 +38,7 @@ public:
     // allocation operations
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // invocation creation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -70,9 +70,9 @@ public:
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 public:
     // memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -91,7 +91,7 @@ public:
 
 
     // sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return MemOopDescriptor::header_size();
     }
 };

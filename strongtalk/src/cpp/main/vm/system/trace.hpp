@@ -27,15 +27,12 @@ struct tracer {
     tracer( std::ostream
             &out,
             char const *file,
-            int line
+            std::int32_t line
     ) :
             _out( out ) { out << file << ":" << line << ": "; }
 
 
-    ~
-
-
-    tracer() { _out << std::endl; }
+    ~tracer() { _out << std::endl; }
 
 
     template<
@@ -70,7 +67,7 @@ void write_debug_output(std::ostream &out, my_object const &f) {
 }
 
 
-int main() {
+std::int32_t main() {
     my_object a;
     ST_TRACE_PRIMITIVES(1, a, "okay");
     ST_TRACE_PRIMITIVES(5.6, my_object());

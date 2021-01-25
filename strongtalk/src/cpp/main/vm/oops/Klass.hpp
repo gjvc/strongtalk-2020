@@ -35,7 +35,7 @@
 class Bootstrap;
 
 // Microsoft C++ 2.0 always forces the vtbl at offset 0.
-constexpr int VTBL_OFFSET = 0;
+constexpr std::int32_t VTBL_OFFSET = 0;
 
 //  Klass layout:
 //    [_vtbl                 ]
@@ -134,26 +134,26 @@ public:
 
 
 public:
-    int number_of_methods() const;                  // Returns the number of methods in this class.
-    MethodOop method_at( int index ) const;         // Returns the method at index.
+    std::int32_t number_of_methods() const;                  // Returns the number of methods in this class.
+    MethodOop method_at( std::int32_t index ) const;         // Returns the method at index.
     void add_method( MethodOop method );            // Adds or overwrites with method.
-    MethodOop remove_method_at( int index );        // Removes method at index and returns the removed method.
+    MethodOop remove_method_at( std::int32_t index );        // Removes method at index and returns the removed method.
 
-    int number_of_classVars() const;                // Returns the number of class variables.
-    AssociationOop classVar_at( int index ) const;  // Returns the class variable at index.
+    std::int32_t number_of_classVars() const;                // Returns the number of class variables.
+    AssociationOop classVar_at( std::int32_t index ) const;  // Returns the class variable at index.
     void add_classVar( AssociationOop assoc );      // Adds or overwrites class variable.
-    AssociationOop remove_classVar_at( int index ); // Removes class variable at index and returns the removed association.
+    AssociationOop remove_classVar_at( std::int32_t index ); // Removes class variable at index and returns the removed association.
     bool_t includes_classVar( SymbolOop name );     // Tells whether the name is present
 
     // virtual pointer value
-    int vtbl_value() const {
-        return ( (int *) this )[ VTBL_OFFSET ];
+    std::int32_t vtbl_value() const {
+        return ( (std::int32_t *) this )[ VTBL_OFFSET ];
     }
 
 
-    void set_vtbl_value( int vtbl ) {
+    void set_vtbl_value( std::int32_t vtbl ) {
         st_assert( vtbl % 4 == 0, "VTBL should be aligned" ); // XXX hard-coded alignment value
-        ( (int *) this )[ VTBL_OFFSET ] = vtbl;
+        ( (std::int32_t *) this )[ VTBL_OFFSET ] = vtbl;
     }
 
 
@@ -191,14 +191,14 @@ public:
 
 
     // allocation operations
-    std::size_t size() const {
+    std::int32_t size() const {
         return sizeof( Klass ) / sizeof( Oop );
     }
 
 
     virtual Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    virtual Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // KlassFormat
     enum class Format {
@@ -247,9 +247,9 @@ public:
     virtual KlassOop create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format );
 
 protected:
-    static KlassOop create_generic_class( KlassOop super_class, MixinOop mixin, int vtbl );
+    static KlassOop create_generic_class( KlassOop super_class, MixinOop mixin, std::int32_t vtbl );
 
-    static KlassOop create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, int vtbl );
+    static KlassOop create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, std::int32_t vtbl );
 
 public:
 
@@ -284,14 +284,14 @@ public:
 
     // Returns the word offset for an instance variable.
     // -1 is returned if the search failed.
-    int lookup_inst_var( SymbolOop name ) const;
+    std::int32_t lookup_inst_var( SymbolOop name ) const;
 
     // Returns the name of the instance variable at offset.
     // nullptr is returned if the search failed.
-    SymbolOop inst_var_name_at( int offset ) const;
+    SymbolOop inst_var_name_at( std::int32_t offset ) const;
 
     // Compute the number of instance variables based on the mixin,
-    int number_of_instance_variables() const;
+    std::int32_t number_of_instance_variables() const;
 
     // Schema change support
     void mark_for_schema_change();
@@ -304,13 +304,13 @@ public:
     // These functions describe behavior for the Oop not the KLASS.
 public:
     // actual Oop size of obj in memory
-    virtual int oop_size( Oop obj ) const {
+    virtual std::int32_t oop_size( Oop obj ) const {
         return non_indexable_size();
     }
 
 
     // Returns the header size for an instance of this klass
-    virtual int oop_header_size() const {
+    virtual std::int32_t oop_header_size() const {
         return 0;
     }
 
@@ -318,9 +318,9 @@ public:
     // memory operations
     virtual bool_t oop_verify( Oop obj );
 
-    virtual int oop_scavenge_contents( Oop obj );
+    virtual std::int32_t oop_scavenge_contents( Oop obj );
 
-    virtual int oop_scavenge_tenured_contents( Oop obj );
+    virtual std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     virtual void oop_follow_contents( Oop obj );
 
@@ -424,7 +424,7 @@ public:
     // Dispatched primitives
     virtual Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
 
-    virtual Oop oop_primitive_allocate_size( Oop obj, std::size_t size );
+    virtual Oop oop_primitive_allocate_size( Oop obj, std::int32_t size );
 
     virtual Oop oop_shallow_copy( Oop obj, bool_t tenured );
 

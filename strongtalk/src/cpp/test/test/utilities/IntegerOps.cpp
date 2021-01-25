@@ -57,23 +57,23 @@ TEST( IntegerOpsTest, string_to_Integer ) {
     bool_t  ok = true;
     Integer z6;
     IntegerOps::string_to_Integer( "0", 10, z6 );
-    EXPECT_TRUE( 0 == z6.as_int( ok ) ) << "failed to convert int 0 to Integer ";
+    EXPECT_TRUE( 0 == z6.as_int( ok ) ) << "failed to convert std::int32_t 0 to Integer ";
 
     Integer z7;
     IntegerOps::string_to_Integer( "1", 10, z7 );
-    EXPECT_TRUE( 1 == z7.as_int( ok ) ) << "failed to convert int 1 to Integer ";
+    EXPECT_TRUE( 1 == z7.as_int( ok ) ) << "failed to convert std::int32_t 1 to Integer ";
 
     Integer z8;
     IntegerOps::string_to_Integer( "1234", 10, z8 );
-    EXPECT_TRUE( 1234 == z8.as_int( ok ) ) << "failed to convert int 1234 to Integer ";
+    EXPECT_TRUE( 1234 == z8.as_int( ok ) ) << "failed to convert std::int32_t 1234 to Integer ";
 
     Integer z9;
     IntegerOps::string_to_Integer( "-1", 10, z9 );
-    EXPECT_TRUE( -1 == z9.as_int( ok ) ) << "failed to convert int -1 to Integer ";
+    EXPECT_TRUE( -1 == z9.as_int( ok ) ) << "failed to convert std::int32_t -1 to Integer ";
 
     Integer z10;
     IntegerOps::string_to_Integer( "-1234", 10, z10 );
-    EXPECT_TRUE( -1234 == z10.as_int( ok ) ) << "failed to convert int -1234 to Integer ";
+    EXPECT_TRUE( -1234 == z10.as_int( ok ) ) << "failed to convert std::int32_t -1234 to Integer ";
 
     Integer z11;
     IntegerOps::string_to_Integer( "1234567890123456789", 10, z11 );
@@ -88,12 +88,12 @@ TEST( IntegerOpsTest, string_to_Integer ) {
 TEST( IntegerOpsTest, test_integer_conversion ) {
 
     bool_t    ok = true;
-    const int n  = 10000;
-    const int l  = n * sizeof( int );
+    const std::int32_t n  = 10000;
+    const std::int32_t l  = n * sizeof( std::int32_t );
     Integer   x, y, z;
 
-    for ( std::size_t i = -10; i <= 10; i++ ) {
-        EXPECT_EQ( int( ( i == 0 ? 1 : 2 ) * sizeof( int ) ), IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) << "int_to_Integer_result_size failed";
+    for ( std::int32_t i = -10; i <= 10; i++ ) {
+        EXPECT_EQ( std::int32_t( ( i == 0 ? 1 : 2 ) * sizeof( std::int32_t ) ), IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) << "int_to_Integer_result_size failed";
         IntegerOps::int_to_Integer( i, z );
         EXPECT_TRUE( i == z.as_int( ok ) ) << "int_to_Integer/Integer_to_int failed";
     }
@@ -107,7 +107,7 @@ TEST( IntegerOpsTest, test_string_conversion ) {
     Integer z1;
     char    * s1_in = "123456";
     IntegerOps::string_to_Integer( s1_in, 10, z1 );
-    int s1_out = z1.as_int( ok );
+    std::int32_t s1_out = z1.as_int( ok );
     EXPECT_EQ( z1.as_int( ok ), 123456 );
 
     lprintf( "ok: [%s] converted to [%d]", s1_in, s1_out );
@@ -125,7 +125,7 @@ TEST( IntegerOpsTest, test_string_conversion_negative_input ) {
     Integer z2;
     char    * s2_in = "-123456";
     IntegerOps::string_to_Integer( s2_in, 10, z2 );
-    int s2_out = z2.as_int( ok );
+    std::int32_t s2_out = z2.as_int( ok );
     EXPECT_EQ( z2.as_int( ok ), -123456 );
 
     _console->print_cr( "ok: [%s] converted to [%d]", s2_in, s2_out );
@@ -139,8 +139,8 @@ TEST( IntegerOpsTest, test_addition ) {
     bool_t  ok = true;
     Integer x, y, z;
 
-    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
-        for ( int j = -12345; j <= 12345; j += 1234 ) {
+    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+        for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             IntegerOps::int_to_Integer( i, x );
             IntegerOps::int_to_Integer( j, y );
             IntegerOps::add( x, y, z );
@@ -155,8 +155,8 @@ TEST( IntegerOpsTest, test_subtraction ) {
     bool_t  ok = true;
     Integer x, y, z;
 
-    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
-        for ( int j = -12345; j <= 12345; j += 1234 ) {
+    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+        for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             x._signed_length = 0;
             x._first_digit   = 0;
             y._signed_length = 0;
@@ -177,8 +177,8 @@ TEST( IntegerOpsTest, test_multiplication ) {
     bool_t  ok = true;
     Integer x, y, z;
 
-    for ( std::size_t i = -12345; i <= 12345; i += 1234 ) {
-        for ( int j = -12345; j <= 12345; j += 1234 ) {
+    for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
+        for ( std::int32_t j = -12345; j <= 12345; j += 1234 ) {
             IntegerOps::int_to_Integer( i, x );
             IntegerOps::int_to_Integer( j, y );
             IntegerOps::mul( x, y, z );
@@ -195,10 +195,10 @@ static void check( bool_t p, char * s ) {
 }
 
 
-static void factorial( int n ) {
+static void factorial( std::int32_t n ) {
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
-    for ( std::size_t i = 2; i <= n; i++ ) {
+    for ( std::int32_t i = 2; i <= n; i++ ) {
         IntegerOps::int_to_Integer( i, x );
         IntegerOps::copy( z, y );
         IntegerOps::mul( x, y, z );
@@ -210,10 +210,10 @@ static void factorial( int n ) {
 }
 
 
-static void factorial( int n ) {
+static void factorial( std::int32_t n ) {
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
-    for ( std::size_t i = 2; i <= n; i++ ) {
+    for ( std::int32_t i = 2; i <= n; i++ ) {
         IntegerOps::int_to_Integer( i, x );
         IntegerOps::copy( z, y );
         IntegerOps::mul( x, y, z );
@@ -227,7 +227,7 @@ static void factorial( int n ) {
 
 TEST( IntegerOpsTest, test_factorial ) {
 
-    std::size_t i = 0;
+    std::int32_t i = 0;
     while ( i <= 10 ) {
         factorial( i );
         i++;
@@ -241,17 +241,17 @@ TEST( IntegerOpsTest, test_factorial ) {
 }
 
 
-static void unfactorial( int n ) {
+static void unfactorial( std::int32_t n ) {
     Integer x, y, z;
     IntegerOps::int_to_Integer( 1, z );
-    for ( std::size_t i = 2; i <= n; i++ ) {
+    for ( std::int32_t i = 2; i <= n; i++ ) {
         IntegerOps::int_to_Integer( i, x );
         IntegerOps::copy( z, y );
         IntegerOps::mul( x, y, z );
         st_assert( z.size_in_bytes() <= sizeof( z ), "result too big" );
     };
 
-    for ( int j = 2; j <= n; j++ ) {
+    for ( std::int32_t j = 2; j <= n; j++ ) {
         IntegerOps::int_to_Integer( j, y );
         IntegerOps::copy( z, x );
         IntegerOps::Div( x, y, z );
@@ -268,7 +268,7 @@ TEST( IntegerOpsTest, test_unfactorial ) {
 
     Integer x, y, z;
 
-    std::size_t i = 0;
+    std::int32_t i = 0;
     while ( i <= 10 ) {
         unfactorial( i );
         i++;
@@ -285,7 +285,7 @@ TEST( IntegerOpsTest, test_unfactorial ) {
 
 TEST( IntegerOpsTest, int_to_Integer ) {
 
-    std::size_t i;
+    std::int32_t i;
 
     i = -10;
     while ( i <= 10 ) {
@@ -307,7 +307,7 @@ TEST( IntegerOpsTest, int_to_Integer ) {
 
 TEST( IntegerOpsTest, double_to_Integer ) {
 
-    std::size_t i;
+    std::int32_t i;
 
     i = -10;
     while ( i <= 10 ) {

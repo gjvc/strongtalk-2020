@@ -12,7 +12,7 @@
 
 #include <cstdarg>
 
-constexpr int BUFLEN = 2048;
+constexpr std::int32_t BUFLEN = 2048;
 
 
 class TestNotifier : public Notifier, public ResourceObject {
@@ -30,32 +30,32 @@ public:
     }
 
 
-    int errorCount() {
+    std::int32_t errorCount() {
         return errors->length();
     }
 
 
-    int warningCount() {
+    std::int32_t warningCount() {
         return warnings->length();
     }
 
 
-    int compilerWarningCount() {
+    std::int32_t compilerWarningCount() {
         return compilerWarnings->length();
     }
 
 
-    char *errorAt( int index ) {
+    char *errorAt( std::int32_t index ) {
         return errors->at( index );
     }
 
 
-    char *warningAt( int index ) {
+    char *warningAt( std::int32_t index ) {
         return warnings->at( index );
     }
 
 
-    char *compilerWarningAt( int index ) {
+    char *compilerWarningAt( std::int32_t index ) {
         return compilerWarnings->at( index );
     }
 

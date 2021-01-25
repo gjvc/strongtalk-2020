@@ -37,11 +37,11 @@ protected:
 
 public:
     // Space enquiries
-    virtual int capacity() = 0;
+    virtual std::int32_t capacity() = 0;
 
-    virtual int used() = 0;
+    virtual std::int32_t used() = 0;
 
-    virtual int free() = 0;
+    virtual std::int32_t free() = 0;
 
     void print();
 };

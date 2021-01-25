@@ -61,15 +61,15 @@ void opcode_init() {
 
     //    std::numeric_limits<typename std::underlying_type<BranchOpCode>::type>::max()
 
-    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq static_cast<std::size_t>(BranchOpCode::LastBranchOp) + 1 ) {
+    if ( sizeof( BranchOpName ) / sizeof( const char * ) not_eq static_cast<std::int32_t>(BranchOpCode::LastBranchOp) + 1 ) {
         st_fatal( "forgot to change BranchOpName after changing BranchOpCode" );
     }
 
-    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq static_cast<std::size_t>(ArithOpCode::LastArithOp) + 1 ) {
+    if ( sizeof( ArithOpName ) / sizeof( const char * ) not_eq static_cast<std::int32_t>(ArithOpCode::LastArithOp) + 1 ) {
         st_fatal( "forgot to change ArithOpName after changing ArithOpCode" );
     }
 
-    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq static_cast<std::size_t>(ArithOpCode::LastArithOp) + 1 ) {
+    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq static_cast<std::int32_t>(ArithOpCode::LastArithOp) + 1 ) {
         st_fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
     }
 

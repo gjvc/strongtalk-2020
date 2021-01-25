@@ -23,8 +23,8 @@ static void set_bool_flag( const char *name, bool_t value ) {
 }
 
 
-static void set_int_flag( const char *name, int value ) {
-    int v = value;
+static void set_int_flag( const char *name, std::int32_t value ) {
+    std::int32_t v = value;
     if ( not debugFlags::intAtPut( name, &v ) )
         fprintf( stderr, "Integer flag [%s] unknown.\n", name );
 }
@@ -37,7 +37,7 @@ static void process_token( const char *token ) {
         set_bool_flag( &token[ 1 ], true );
     else {
         char name[100];
-        int  value;
+        std::int32_t  value;
         if ( sscanf( token, "%[a-zA-Z]=%d", name, &value ) == 2 ) {
             set_int_flag( name, value );
         }
@@ -57,12 +57,12 @@ void process_settings_file( const char *file_name, bool_t quiet ) {
     }
 
     char token[1024];
-    int  pos = 0;
+    std::int32_t  pos = 0;
 
     bool_t in_white_space = true;
     bool_t in_comment     = false;
 
-    int c = stream.get();
+    std::int32_t c = stream.get();
     while ( c not_eq EOF ) {
         if ( in_white_space ) {
             if ( in_comment ) {
@@ -106,15 +106,15 @@ void print_credits() {
 \x13\x22\x73\x0e\x1a\x49\x1f\x1e\x2d\x5b\x05\x37\x0b\x6e\x49\x4b\x01\x45\x02\x7b\
 \x4c\x3f\x5c\x21\x7e\x3c\
 ";
-    int        mask      = 0xa729b65d;
-    for ( int  i         = 0; i < sizeof( credits ) - 1; i++ ) {
+    std::int32_t        mask      = 0xa729b65d;
+    for ( std::int32_t  i         = 0; i < sizeof( credits ) - 1; i++ ) {
         fputc( ( credits[ i ] ^ mask ) & 0x7f, stdout );
         mask = ( mask << 1 ) | ( mask >> 31 ) & 1; // rotate mask
     }
 }
 
 
-void parse_arguments( int argc, char *argv[] ) {
+void parse_arguments( std::int32_t argc, char *argv[] ) {
     bool_t parse_files = true;
 
     if ( argc > 1 and strcmp( argv[ 1 ], "-t" ) == 0 ) {
@@ -128,7 +128,7 @@ void parse_arguments( int argc, char *argv[] ) {
         process_settings_file( rc_basename, true );
     }
 
-    for ( std::size_t i = parse_files ? 1 : 2; i < argc; i++ ) {
+    for ( std::int32_t i = parse_files ? 1 : 2; i < argc; i++ ) {
         if ( strcmp( argv[ i ], "-?" ) == 0 ) {
             debugFlags::printFlags();
             exit( EXIT_SUCCESS );

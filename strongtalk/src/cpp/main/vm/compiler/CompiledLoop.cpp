@@ -120,7 +120,7 @@ void CompiledLoop::discoverLoopNesting() {
     // discover enclosing loop (if any) and set up loop header links
     for ( InlinedScope *s = _scope; s not_eq nullptr; s = s->sender() ) {
         GrowableArray<CompiledLoop *> *loops = s->loops();
-        for ( int                     i      = loops->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t                     i      = loops->length() - 1; i >= 0; i-- ) {
             CompiledLoop *l = loops->at( i );
             if ( l->isInLoop( _loopHeader ) ) {
                 // this is out enclosing loop
@@ -153,10 +153,10 @@ const char *CompiledLoop::findLowerBound() {
 // Helper class to find the last send preceding a certain byteCodeIndex
 class SendFinder : public SpecializedMethodClosure {
 public:
-    int theByteCodeIndex, lastSendByteCodeIndex;
+    std::int32_t theByteCodeIndex, lastSendByteCodeIndex;
 
 
-    SendFinder( MethodOop m, int byteCodeIndex ) :
+    SendFinder( MethodOop m, std::int32_t byteCodeIndex ) :
             SpecializedMethodClosure() {
         theByteCodeIndex      = byteCodeIndex;
         lastSendByteCodeIndex = IllegalByteCodeIndex;
@@ -165,7 +165,7 @@ public:
 
 
     void send() {
-        int b = byteCodeIndex();
+        std::int32_t b = byteCodeIndex();
         if ( b <= theByteCodeIndex and b > lastSendByteCodeIndex )
             lastSendByteCodeIndex = b;
     }
@@ -187,7 +187,7 @@ public:
 };
 
 
-int CompiledLoop::findStartOfSend( int byteCodeIndex ) {
+std::int32_t CompiledLoop::findStartOfSend( std::int32_t byteCodeIndex ) {
     // find send preceding byteCodeIndex; slow but safe
     SendFinder f( _scope->method(), byteCodeIndex );
     return f.lastSendByteCodeIndex;
@@ -196,7 +196,7 @@ int CompiledLoop::findStartOfSend( int byteCodeIndex ) {
 
 const char *CompiledLoop::findUpperBound() {
     // find upper bound and loop variable
-    std::size_t condByteCodeIndex = _endOfCond ? findStartOfSend( _endOfCond->byteCodeIndex() - InterpretedInlineCache::size ) : IllegalByteCodeIndex;
+    std::int32_t condByteCodeIndex = _endOfCond ? findStartOfSend( _endOfCond->byteCodeIndex() - InterpretedInlineCache::size ) : IllegalByteCodeIndex;
     if ( condByteCodeIndex == IllegalByteCodeIndex )
         return "loop condition: no send found";
     // first find comparison in loop condition
@@ -271,7 +271,7 @@ public:
 // count all definitions in loop
 class LoopDefCounter : public LoopClosure {
 public:
-    int defCount;
+    std::int32_t defCount;
 
 
     LoopDefCounter( CompiledLoop *l ) :
@@ -289,7 +289,7 @@ public:
 };
 
 
-int CompiledLoop::defsInLoop( PseudoRegister *r, NonTrivialNode **defNode ) {
+std::int32_t CompiledLoop::defsInLoop( PseudoRegister *r, NonTrivialNode **defNode ) {
     // returns the number of definitions of r within the loop
     // also sets defNode to the last definition
     // BUG: won't work if loop has sends -- will ignore possible definitions to inst vars etc.
@@ -409,7 +409,7 @@ const char *CompiledLoop::checkUpperBound() {
     // upper bound must not be defined in loop (loop invariant)
     _loopArray    = nullptr;
     _loopSizeLoad = nullptr;
-    int ndefs = defsInLoop( _upperBound, nullptr );
+    std::int32_t ndefs = defsInLoop( _upperBound, nullptr );
     if ( ndefs > 0 )
         return "upper bound isn't loop-invariant";
     // ok, no assignments in loop; check if upper bound is size of an array
@@ -536,9 +536,9 @@ void CompiledLoop::removeLoopVarOverflow() {
 void CompiledLoop::checkForArraysDefinedInLoop() {
     // remove all arrays from loopHeader's list which are defined in the loop
     GrowableArray<AbstractArrayAtNode *> arraysToRemove( 10 );
-    int                                  len = _loopHeader->_arrayAccesses->length();
+    std::int32_t                                  len = _loopHeader->_arrayAccesses->length();
 
-    for ( std::size_t i = 0; i < len; i++ ) {
+    for ( std::int32_t i = 0; i < len; i++ ) {
         AbstractArrayAtNode *n = _loopHeader->_arrayAccesses->at( i );
         if ( defsInLoop( n->src() ) )
             arraysToRemove.append( n );
@@ -574,9 +574,9 @@ public:
 
     void do_it( InlinedScope *s ) {
         GrowableArray<NonTrivialNode *> *tests = s->typeTests();
-        int                             len    = tests->length();
+        std::int32_t                             len    = tests->length();
 
-        for ( std::size_t i = 0; i < len; i++ ) {
+        for ( std::int32_t i = 0; i < len; i++ ) {
 
             NonTrivialNode *n = tests->at( i );
             st_assert( n->doesTypeTests(), "shouldn't be in list" );
@@ -590,7 +590,7 @@ public:
             GrowableArray<PseudoRegister *>          regs( 4 );
             GrowableArray<GrowableArray<KlassOop> *> klasses( 4 );
             n->collectTypeTests( regs, klasses );
-            for ( std::size_t j = 0; j < regs.length(); j++ ) {
+            for ( std::int32_t j = 0; j < regs.length(); j++ ) {
                 PseudoRegister *r = regs.at( j );
                 if ( theLoop->defsInLoop( r ) == 0 ) {
                     // this test can be hoisted
@@ -616,12 +616,12 @@ void CompiledLoop::hoistTypeTests() {
 
     GrowableArray<HoistedTypeTest *> *headerTests = new GrowableArray<HoistedTypeTest *>( _hoistableTests->length() );
 
-    for ( std::size_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
 
         HoistedTypeTest *t      = _hoistableTests->at( i );
         PseudoRegister  *tested = t->_testedPR;
 
-        for ( std::size_t j = headerTests->length() - 1; j >= 0; j-- ) {
+        for ( std::int32_t j = headerTests->length() - 1; j >= 0; j-- ) {
 
             if ( headerTests->at( j )->_testedPR == tested ) {
                 // already testing this PseudoRegister
@@ -646,7 +646,7 @@ void CompiledLoop::hoistTypeTests() {
     }
 
     // now delete all hoisted type tests from loop body
-    for ( std::size_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
         HoistedTypeTest *t = _hoistableTests->at( i );
         if ( not t->_invalid ) {
             t->_node->assert_preg_type( t->_testedPR, t->_klasses, _loopHeader );
@@ -661,7 +661,7 @@ bool_t CompiledLoop::isEquivalentType( GrowableArray<KlassOop> *klasses1, Growab
     // are the two lists klasses1 and klasses2 equivalent (i.e., contain the same set of klasses)?
     if ( klasses1->length() not_eq klasses2->length() )
         return false;
-    for ( std::size_t i = klasses2->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = klasses2->length() - 1; i >= 0; i-- ) {
         if ( klasses1->at( i ) not_eq klasses2->at( i )    // quick check
              and ( not klasses1->contains( klasses2->at( i ) ) or not klasses2->contains( klasses1->at( i ) ) ) ) { // slow check
             return false;
@@ -723,22 +723,22 @@ void CompiledLoop::findRegCandidates() {
 
     GrowableArray<LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
-    const int        len              = _bbs->length();
+    const std::int32_t        len              = _bbs->length();
     const BasicBlock *startBasicBlock = _startOfLoop->bb();
 
-    std::size_t i;
+    std::int32_t i;
     for ( i = 0; _bbs->at( i ) not_eq startBasicBlock; i++ );    // search for first BasicBlock
 
     const BasicBlock *endBasicBlock = _endOfLoop->bb();
 
-    int ncalls = 0;
+    std::int32_t ncalls = 0;
 
     // iterate through all BBs in the loop
     for ( BasicBlock *bb = _bbs->at( i ); bb not_eq endBasicBlock; i++, bb = _bbs->at( i ) ) {
-        const int n = bb->duInfo.info->length();
+        const std::int32_t n = bb->duInfo.info->length();
         if ( bb->_last->isCallNode() )
             ncalls++;
-        for ( std::size_t j = 0; j < n; j++ ) {
+        for ( std::int32_t j = 0; j < n; j++ ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
             if ( candidates.at( r->id() ) == nullptr )
@@ -753,7 +753,7 @@ void CompiledLoop::findRegCandidates() {
     LoopRegCandidate *first  = new LoopRegCandidate( nullptr );
     LoopRegCandidate *second = new LoopRegCandidate( nullptr );
 
-    for ( std::size_t j = candidates.length() - 1; j >= 0; j-- ) {
+    for ( std::int32_t j = candidates.length() - 1; j >= 0; j-- ) {
         LoopRegCandidate *c = candidates.at( j );
         if ( c == nullptr )
             continue;
@@ -794,9 +794,9 @@ HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR
 void HoistedTypeTest::print_test_on( ConsoleOutputStream *s ) {
     s->print( "%s = {", _testedPR->name() );
 
-    int len = _klasses->length();
+    std::int32_t len = _klasses->length();
 
-    for ( std::size_t j = 0; j < len; j++ ) {
+    for ( std::int32_t j = 0; j < len; j++ ) {
         KlassOop m = _klasses->at( j );
         m->print_value_on( s );
         if ( j < len - 1 )

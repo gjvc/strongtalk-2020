@@ -10,14 +10,14 @@
 #include "vm/system/os.hpp"
 
 
-ReservedSpace::ReservedSpace( std::size_t size ) {
+ReservedSpace::ReservedSpace( std::int32_t size ) {
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     _base = os::reserve_memory( size );
     _size = size;
 }
 
 
-ReservedSpace ReservedSpace::first_part( int partition_size ) {
+ReservedSpace ReservedSpace::first_part( std::int32_t partition_size ) {
     if ( partition_size > size() ) {
         st_fatal( "partition failed" );
     }
@@ -26,7 +26,7 @@ ReservedSpace ReservedSpace::first_part( int partition_size ) {
 }
 
 
-ReservedSpace ReservedSpace::last_part( int partition_size ) {
+ReservedSpace ReservedSpace::last_part( std::int32_t partition_size ) {
     if ( partition_size > size() ) {
         st_fatal( "partition failed" );
     }
@@ -35,12 +35,12 @@ ReservedSpace ReservedSpace::last_part( int partition_size ) {
 }
 
 
-std::size_t ReservedSpace::page_align_size( std::size_t size ) {
+std::int32_t ReservedSpace::page_align_size( std::int32_t size ) {
     return align_size( size, os::vm_page_size() );
 }
 
 
-std::size_t ReservedSpace::align_size( std::size_t size, int page_size ) {
-    std::size_t adjust = size == 0 ? page_size : ( page_size - ( size % page_size ) ) % page_size;
+std::int32_t ReservedSpace::align_size( std::int32_t size, std::int32_t page_size ) {
+    std::int32_t adjust = size == 0 ? page_size : ( page_size - ( size % page_size ) ) % page_size;
     return size + adjust;
 }

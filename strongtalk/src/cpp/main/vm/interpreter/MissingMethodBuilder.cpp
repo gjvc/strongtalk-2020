@@ -21,7 +21,7 @@
 void MissingMethodBuilder::build() {
     BlockScavenge bs;
 
-    int argCount = _selector->number_of_arguments();
+    std::int32_t argCount = _selector->number_of_arguments();
     if ( argCount > 0 )
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::allocate_temp_1) );
 
@@ -33,7 +33,7 @@ void MissingMethodBuilder::build() {
 
     if ( argCount == 0 ) {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_literal) );
-        _buffer.pushOop( oopFactory::new_objArray( std::size_t{0} ) );
+        _buffer.pushOop( oopFactory::new_objArray( std::int32_t{0} ) );
 
     } else {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_global) );
@@ -46,7 +46,7 @@ void MissingMethodBuilder::build() {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n) );
         _buffer.pushByte( 0xFF );
 
-        for ( std::size_t i = 0; i < argCount; i++ ) {
+        for ( std::int32_t i = 0; i < argCount; i++ ) {
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n) );
             _buffer.pushByte( i );
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n) );
@@ -83,7 +83,7 @@ void MissingMethodBuilder::build() {
     MethodKlass *k = (MethodKlass *) Universe::methodKlassObject()->klass_part();
     _method = k->constructMethod( _selector, 0,         // flags
                                   argCount,  // number of arguments
-                                  oopFactory::new_objArray( std::size_t{0} ), // debug info
+                                  oopFactory::new_objArray( std::int32_t{0} ), // debug info
                                   bytes(), oops() );
 }
 

@@ -15,17 +15,17 @@
 static bool_t stop = false;
 
 
-const char *PrimitivesGenerator::primitiveNew( int n ) {
-    Address klass_addr = Address( esp, +2 * oopSize );
-    Label   need_scavenge, fill_object;
-    int     size       = n + 2;
+const char *PrimitivesGenerator::primitiveNew( std::int32_t n ) {
+    Address     klass_addr = Address( esp, +2 * oopSize );
+    Label       need_scavenge, fill_object;
+    std::int32_t size       = n + 2;
 
     // %note: it looks like the compiler assumes we spill only eax/ebx here -Marc 04/07
 
     const char *entry_point = masm->pc();
 
     test_for_scavenge( eax, size * oopSize, allocation_failure );
-    Address _stop = Address( (int) &stop, RelocationInformation::RelocationType::external_word_type );
+    Address _stop = Address( (std::int32_t) &stop, RelocationInformation::RelocationType::external_word_type );
     Label   _break, no_break;
     masm->bind( fill_object );
     masm->movl( ebx, _stop );
@@ -38,7 +38,7 @@ const char *PrimitivesGenerator::primitiveNew( int n ) {
 
     if ( n > 0 ) {
         masm->movl( ebx, nil_addr() );
-        for ( std::size_t i = 0; i < n; i++ ) {
+        for ( std::int32_t i = 0; i < n; i++ ) {
             masm->movl( Address( eax, ( -size + 2 + i ) * oopSize ), ebx );    // obj->obj_at_put(i,nilObject)
         }
     }

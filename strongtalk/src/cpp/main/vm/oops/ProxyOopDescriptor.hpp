@@ -17,8 +17,8 @@
 //    [klass_field ]
 //    [pointer     ]
 
-const int pointer_no     = sizeof( MemOopDescriptor ) / oopSize;
-const int pointer_offset = sizeof( MemOopDescriptor ) - MEMOOP_TAG;
+const std::int32_t pointer_no     = sizeof( MemOopDescriptor ) / oopSize;
+const std::int32_t pointer_offset = sizeof( MemOopDescriptor ) - MEMOOP_TAG;
 
 class ProxyOopDescriptor : public MemOopDescriptor {
 
@@ -33,7 +33,7 @@ protected:
 
 public:
     // field offsets for code generation
-    static std::size_t pointer_byte_offset() {
+    static std::int32_t pointer_byte_offset() {
         return ( 2 * oopSize ) - MEMOOP_TAG;
     }
 
@@ -42,7 +42,7 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( ProxyOopDescriptor ) / oopSize;
     }
 
@@ -85,58 +85,58 @@ public:
     void bootstrap_object( Bootstrap *stream );
 
 private:
-    std::uint8_t *addr_at( int offset ) const {
+    std::uint8_t *addr_at( std::int32_t offset ) const {
         return ( (std::uint8_t *) get_pointer() ) + offset;
     }
 
 
 public:
-    std::uint8_t byte_at( int offset ) const {
+    std::uint8_t byte_at( std::int32_t offset ) const {
         return *addr_at( offset );
     }
 
 
-    void byte_at_put( int offset, std::uint8_t c ) {
+    void byte_at_put( std::int32_t offset, std::uint8_t c ) {
         *addr_at( offset ) = c;
     }
 
 
-    std::uint16_t doubleByte_at( int offset ) const {
+    std::uint16_t doubleByte_at( std::int32_t offset ) const {
         return *( (std::uint16_t *) addr_at( offset ) );
     }
 
 
-    void doubleByte_at_put( int offset, std::uint16_t db ) {
+    void doubleByte_at_put( std::int32_t offset, std::uint16_t db ) {
         *( (std::uint16_t *) addr_at( offset ) ) = db;
     }
 
 
-    std::int32_t long_at( int offset ) const {
+    std::int32_t long_at( std::int32_t offset ) const {
         return *( (std::int32_t *) addr_at( offset ) );
     }
 
 
-    void long_at_put( int offset, std::int32_t l ) {
+    void long_at_put( std::int32_t offset, std::int32_t l ) {
         *( (std::int32_t *) addr_at( offset ) ) = l;
     }
 
 
-    float float_at( int offset ) const {
+    float float_at( std::int32_t offset ) const {
         return *( (float *) addr_at( offset ) );
     }
 
 
-    void float_at_put( int offset, float f ) {
+    void float_at_put( std::int32_t offset, float f ) {
         *( (float *) addr_at( offset ) ) = f;
     }
 
 
-    double double_at( int offset ) const {
+    double double_at( std::int32_t offset ) const {
         return *( (double *) addr_at( offset ) );
     }
 
 
-    void double_at_put( int offset, double d ) {
+    void double_at_put( std::int32_t offset, double d ) {
         *( (double *) addr_at( offset ) ) = d;
     }
 

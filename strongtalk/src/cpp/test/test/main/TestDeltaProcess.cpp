@@ -23,13 +23,13 @@ Oop newProcess() {
 }
 
 
-std::size_t TestDeltaProcess::launch_tests( DeltaProcess *process ) {
+std::int32_t TestDeltaProcess::launch_tests( DeltaProcess *process ) {
 
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
     initializeSmalltalkEnvironment();
 
-    int status = RUN_ALL_TESTS();
+    std::int32_t status = RUN_ALL_TESTS();
 
     os::signal_event( done );
     return status;
@@ -37,7 +37,7 @@ std::size_t TestDeltaProcess::launch_tests( DeltaProcess *process ) {
 
 
 // mock scheduler loop to allow test process->scheduler transfers and returns
-std::size_t TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
+std::int32_t TestDeltaProcess::launch_scheduler( DeltaProcess *process ) {
     process->suspend_at_creation();
     DeltaProcess::set_active( process );
     while ( true ) {
@@ -59,10 +59,10 @@ void TestDeltaProcess::addToProcesses() {
 
 TestDeltaProcess::TestDeltaProcess() :
         DeltaProcess( nullptr, nullptr ) {
-    int ignore;
+    std::int32_t ignore;
     Processes::remove( this );
     os::terminate_thread( _thread ); // don't want to launch delta!
-    _thread      = os::create_thread( (int ( * )( void * )) &launch_tests, this, &ignore );
+    _thread      = os::create_thread( (std::int32_t ( * )( void * )) &launch_tests, this, &ignore );
     _stack_limit = (char *) os::stack_limit( _thread );
 
     Oop process = newProcess();
@@ -75,7 +75,7 @@ TestDeltaProcess::TestDeltaProcess() :
 TestDeltaProcess::TestDeltaProcess( fn launchfn ) :
         DeltaProcess( nullptr, nullptr ) {
 
-    int ignore;
+    std::int32_t ignore;
     Processes::remove( this );
     os::terminate_thread( _thread ); // don't want to launch delta!
     _thread      = os::create_thread( (osfn) launchfn, this, &ignore );

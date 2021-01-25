@@ -92,8 +92,8 @@ void MethodKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert( obj->is_method(), "must be method" );
     MethodOop method = MethodOop( obj );
 
-    int indent_col = 3;
-    int value_col  = 16;
+    std::int32_t indent_col = 3;
+    std::int32_t value_col  = 16;
 
     // header
     MemOopKlass::oop_print_value_on( obj, stream );
@@ -221,14 +221,14 @@ void MethodKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 }
 
 
-int MethodKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t MethodKlass::oop_scavenge_contents( Oop obj ) {
     // Methods must reside in old Space
     ShouldNotCallThis();
     return -1;
 }
 
 
-int MethodKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t MethodKlass::oop_scavenge_tenured_contents( Oop obj ) {
     // There should be no new objects referred insinde a methodOop
     return object_size( MethodOop( obj )->size_of_codes() );
 }
@@ -275,9 +275,9 @@ static Oop tenured( Oop obj ) {
 }
 
 
-MethodOop MethodKlass::constructMethod( Oop selector_or_method, int flags, int nofArgs, ObjectArrayOop debugInfo, ByteArrayOop bytes, ObjectArrayOop oops ) {
+MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t flags, std::int32_t nofArgs, ObjectArrayOop debugInfo, ByteArrayOop bytes, ObjectArrayOop oops ) {
     KlassOop k        = as_klassOop();
-    int      obj_size = MethodOopDescriptor::header_size() + oops->length();
+    std::int32_t      obj_size = MethodOopDescriptor::header_size() + oops->length();
 
     st_assert( oops->length() * oopSize == bytes->length(), "Invalid array sizes" );
 
@@ -296,16 +296,16 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, int flags, int n
     // merge the bytes and the oops
 
     // first copy the byte array into the method
-    for ( std::size_t i = 1; i <= bytes->length(); i++ ) {
+    for ( std::int32_t i = 1; i <= bytes->length(); i++ ) {
         method->byte_at_put( i, bytes->byte_at( i ) );
     }
 
     // then merge in the oops
-    for ( std::size_t i = 1; i <= oops->length(); i++ ) {
+    for ( std::int32_t i = 1; i <= oops->length(); i++ ) {
         bool_t copyOop  = true;
-        int    bc_index = i * oopSize - ( oopSize - 1 );
+        std::int32_t    bc_index = i * oopSize - ( oopSize - 1 );
 
-        for ( std::size_t j = 0; j < oopSize; j++ ) {
+        for ( std::int32_t j = 0; j < oopSize; j++ ) {
             // copy Oop if bytearray holds 4 consecutive aligned zeroes
             if ( bytes->byte_at( bc_index + j ) not_eq 0 ) {
                 copyOop = false;

@@ -115,15 +115,15 @@ void load_image() {
 }
 
 
-int vmProcessMain( void *ignored ) {
+std::int32_t vmProcessMain( void *ignored ) {
     Processes::start( new VMProcess );
     return 0;
 }
 
 
-int createVMProcess() {
+std::int32_t createVMProcess() {
 
-    int ignored;
+    std::int32_t ignored;
     _console->print_cr( "createVMProcess() calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
     os::create_thread( &vmProcessMain, nullptr, &ignored );
 
@@ -131,7 +131,7 @@ int createVMProcess() {
 }
 
 
-int vm_main( int argc, char *argv[] ) {
+std::int32_t vm_main( std::int32_t argc, char *argv[] ) {
 
     parse_arguments( argc, argv );
     init_globals();

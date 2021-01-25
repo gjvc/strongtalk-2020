@@ -11,8 +11,8 @@
 #include "vm/runtime/Process.hpp"
 
 
-typedef int (*osfn)( void * );
-typedef int (*fn)( DeltaProcess * );
+typedef std::int32_t (*osfn)( void * );
+typedef std::int32_t (*fn)( DeltaProcess * );
 
 
 
@@ -22,7 +22,7 @@ typedef int (*fn)( DeltaProcess * );
 class TestDeltaProcess : public DeltaProcess {
 
 private:
-    static std::size_t launch_tests( DeltaProcess *process );
+    static std::int32_t launch_tests( DeltaProcess *process );
 
 public:
     TestDeltaProcess();
@@ -41,7 +41,7 @@ public:
     }
 
 
-    static std::size_t launch_scheduler( DeltaProcess *process );
+    static std::int32_t launch_scheduler( DeltaProcess *process );
 };
 
 

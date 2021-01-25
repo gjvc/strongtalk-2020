@@ -12,12 +12,12 @@
 #include "vm/compiler/BasicBlock.hpp"
 
 
-std::size_t                                 PseudoRegister::currentNo       = 0;
-std::size_t                                 BlockPseudoRegister::_numBlocks = 0;
+std::int32_t                                 PseudoRegister::currentNo       = 0;
+std::int32_t                                 BlockPseudoRegister::_numBlocks = 0;
 static GrowableArray<ConstPseudoRegister *> *constants                      = 0;
 static PseudoRegister                       *dummyPR;
-const int PseudoRegister::AvgBBIndexLen = 10;
-const int PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really
+const std::int32_t PseudoRegister::AvgBBIndexLen = 10;
+const std::int32_t PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really
 
 #define BAD_SCOPE  ((InlinedScope*)1)
 
@@ -41,8 +41,8 @@ LogicalAddress *PseudoRegister::createLogicalAddress() {
 //
 
 // usage / definition weights indexed by loop depth
-static const int udWeight[]  = { 1, 8, 8 * 8, 8 * 8 * 8, 8 * 8 * 8 * 8 };
-const int        udWeightLen = sizeof( udWeight ) / sizeof( int ) - 1;
+static const std::int32_t udWeight[]  = { 1, 8, 8 * 8, 8 * 8 * 8, 8 * 8 * 8 * 8 };
+const std::int32_t        udWeightLen = sizeof( udWeight ) / sizeof( std::int32_t ) - 1;
 
 
 void PseudoRegister::initPRegs() {
@@ -53,7 +53,7 @@ void PseudoRegister::initPRegs() {
 }
 
 
-SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, int stream, int en, bool_t inContext ) :
+SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool_t inContext ) :
         PseudoRegister( s ), _isInContext( inContext ) {
     creationStartByteCodeIndex = _begByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
     _endByteCodeIndex          = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
@@ -61,7 +61,7 @@ SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, int
 }
 
 
-BlockPseudoRegister::BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, int beg, int end ) :
+BlockPseudoRegister::BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end ) :
         SinglyAssignedPseudoRegister( scope, beg, end ) {
     _closure = closure;
     st_assert( closure, "need a closure" );
@@ -160,7 +160,7 @@ void PseudoRegister::removeAllUplevelAccessors() {
 
 ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c ) {
 
-    for ( std::size_t i = 0; i < constants->length(); i++ ) {
+    for ( std::int32_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
         if ( r->constant == c ) {
             // needed to ensure high enough scope (otherwise will break assertions) but in reality it's not needed since ConstPseudoRegisters aren't register-allocated right now
@@ -180,7 +180,7 @@ ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c ) {
 ConstPseudoRegister *findConstPReg( Node *n, Oop c ) {
 
     // return const preg for Oop or nullptr if none exists
-    for ( std::size_t i = 0; i < constants->length(); i++ ) {
+    for ( std::int32_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
         if ( r->constant == c ) {
             return r->covers( n ) ? r : nullptr;
@@ -194,7 +194,7 @@ ConstPseudoRegister *findConstPReg( Node *n, Oop c ) {
 bool_t ConstPseudoRegister::needsRegister() const {
     // register only pays off if we're used more than once and aren't a
     // small immediate constant
-//   return CompilerCSEConstants and weight > 1 and (int(constant) > maxImmediate or int(constant) < -maxImmediate);
+//   return CompilerCSEConstants and weight > 1 and (std::int32_t(constant) > maxImmediate or std::int32_t(constant) < -maxImmediate);
     return false;
 }
 
@@ -208,8 +208,8 @@ void ConstPseudoRegister::allocateTo( Location reg ) {
 }
 
 
-int computeWeight( InlinedScope *s ) {
-    constexpr int scale = 16;    // normal use counts scale, uncommon use is 1
+std::int32_t computeWeight( InlinedScope *s ) {
+    constexpr std::int32_t scale = 16;    // normal use counts scale, uncommon use is 1
     if ( s and s->isInlinedScope() and ( (InlinedScope *) s )->primFailure() ) {
         return 1 * udWeight[ min( udWeightLen, s->loopDepth ) ];
     } else {
@@ -264,7 +264,7 @@ void PseudoRegister::removeUse( DefinitionUsageInfo *info, Usage *use ) {
 void PseudoRegister::removeUse( BasicBlock *bb, Usage *use ) {
     if ( use == nullptr )
         return;
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -289,7 +289,7 @@ void PseudoRegister::removeDef( DefinitionUsageInfo *info, Definition *def ) {
 void PseudoRegister::removeDef( BasicBlock *bb, Definition *def ) {
     if ( def == nullptr )
         return;
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -302,7 +302,7 @@ void PseudoRegister::removeDef( BasicBlock *bb, Definition *def ) {
 
 
 void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, DefinitionUsage *el ) {
-    int                          myNum = n->num();
+    std::int32_t                          myNum = n->num();
     SListElem<DefinitionUsage *> *prev = nullptr;
 
     for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
@@ -322,7 +322,7 @@ Usage *PseudoRegister::addUse( DefinitionUsageInfo *info, NonTrivialNode *n ) {
 
 
 Usage *PseudoRegister::addUse( BasicBlock *bb, NonTrivialNode *n ) {
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -343,7 +343,7 @@ Definition *PseudoRegister::addDef( DefinitionUsageInfo *info, NonTrivialNode *n
 
 
 Definition *PseudoRegister::addDef( BasicBlock *bb, NonTrivialNode *n ) {
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -380,7 +380,7 @@ bool_t PseudoRegister::extendLiveRange( Node *n ) {
 }
 
 
-bool_t PseudoRegister::extendLiveRange( InlinedScope *s, int byteCodeIndex ) {
+bool_t PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
     // the receiver is being copy-propagated to n
     // PseudoRegisters currently can't be propagated outside their scope
     // should fix copy-propagation: treat all PseudoRegisters like SinglyAssignedPseudoRegister so can propagate anywhere?
@@ -400,7 +400,7 @@ bool_t SinglyAssignedPseudoRegister::extendLiveRange( Node *n ) {
 }
 
 
-bool_t SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, int byteCodeIndex ) {
+bool_t SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
     // the receiver is being copy-propagated to scope s at byteCodeIndex; try to extend its live range
     st_assert( _begByteCodeIndex not_eq IllegalByteCodeIndex and creationStartByteCodeIndex not_eq IllegalByteCodeIndex and _endByteCodeIndex not_eq IllegalByteCodeIndex, "live range not set" );
     if ( isInContext() ) {
@@ -434,7 +434,7 @@ bool_t SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, int byteC
         // scope is callee; check if already covered
         InlinedScope *ss = s;
         for ( ; ss->sender() not_eq _scope; ss = ss->sender() );
-        int byteCodeIndex = ss->senderByteCodeIndex();
+        std::int32_t byteCodeIndex = ss->senderByteCodeIndex();
         if ( byteCodeIndexLT( byteCodeIndex, _begByteCodeIndex ) ) {
             // seems like we're propagating backwards!  happens because of the non-source
             // order of the byte codes in while loops (condition comes after body), so
@@ -494,7 +494,7 @@ bool_t PseudoRegister::checkEquivalentDefs() const {
     if ( ndefs() == 1 )
         return true;
     PseudoRegister    *rhs = nullptr;
-    for ( std::size_t i    = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i    = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
@@ -620,7 +620,7 @@ bool_t BlockPseudoRegister::canBeEliminated( bool_t withUses ) const {
 void PseudoRegister::eliminate( bool_t withUses ) {
     if ( not canBeEliminated( withUses ) )
         return;
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
@@ -636,7 +636,7 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
     // eliminate all use nodes in info
     SListElem<Usage *> *usageElement = info->_usages.head();
     while ( usageElement ) {
-        int  oldLength = info->_usages.length();      // for debugging
+        std::int32_t  oldLength = info->_usages.length();      // for debugging
         Node *n        = usageElement->data()->_node;
         if ( CompilerDebug ) {
             char buf[1024];
@@ -655,7 +655,7 @@ void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, b
     // eliminate all defining nodes in info
     SListElem<Definition *> *e = info->_definitions.head();
     while ( e ) {
-        int            oldlen = info->_definitions.length();      // for debugging
+        std::int32_t            oldlen = info->_definitions.length();      // for debugging
         NonTrivialNode *n     = e->data()->_node;
         if ( n->canBeEliminated() ) {
             updateCPInfo( n );
@@ -680,11 +680,11 @@ void BlockPseudoRegister::eliminate( bool_t withUses ) {
         // the block has been eliminated; remove the uplevel accesses
         // (needed to enable eliminating the accessed contexts)
         if ( _uplevelRead ) {
-            for ( std::size_t i = _uplevelRead->length() - 1; i >= 0; i-- )
+            for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- )
                 _uplevelRead->at( i )->removeUplevelAccessor( this );
         }
         if ( _uplevelWritten ) {
-            for ( std::size_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
+            for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
                 _uplevelWritten->at( i )->removeUplevelAccessor( this );
         }
     }
@@ -742,7 +742,7 @@ bool_t PseudoRegister::isLiveAt( Node *n ) const {
 }
 
 
-InlinedScope *findAncestor( InlinedScope *s1, int &byteCodeIndex1, InlinedScope *s2, int &byteCodeIndex2 ) {
+InlinedScope *findAncestor( InlinedScope *s1, std::int32_t &byteCodeIndex1, InlinedScope *s2, std::int32_t &byteCodeIndex2 ) {
     // find closest common ancestor of s1 and s2, and the
     // respective sender byteCodeIndexs in that scope
     if ( s1->depth > s2->depth ) {
@@ -782,8 +782,8 @@ bool_t SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
 }
 
 
-bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, int byteCodeIndex ) const {
-    int id = this->id();
+bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const {
+    std::int32_t id = this->id();
     if ( not _scope->isSenderOrSame( s ) )
         return false; // cannot be live anymore if s is outside subscopes of _scope
     st_assert( byteCodeIndexLE( byteCodeIndex, s->nofBytes() ) or byteCodeIndex == EpilogueByteCodeIndex, "byteCodeIndex too high" );
@@ -791,8 +791,8 @@ bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, int byteCo
 
     // find closest common ancestor of s and creationScope, and the
     // respective byteCodeIndexs in that scope
-    int          bs  = byteCodeIndex;
-    int          bc  = creationStartByteCodeIndex;
+    std::int32_t          bs  = byteCodeIndex;
+    std::int32_t          bc  = creationStartByteCodeIndex;
     InlinedScope *ss = findAncestor( s, bs, creationScope(), bc );
     if ( not _scope->isSenderOrSame( ss ) ) st_fatal( "bad scope arg in basic_isLiveAt" );
 
@@ -958,8 +958,8 @@ public:
     InlinedScope                    *_scope;            // r's scope (i.e., scope creating the block)
     GrowableArray<PseudoRegister *> *_read;             // list of rscope's temps read by r
     GrowableArray<PseudoRegister *> *_written;          // same for written temps
-    int                             _nestingLevel;      // nesting level (0 = block itself, 1 = block within block, etc)
-    int                             _enclosingDepth;    // depth to which we're nested within outer method
+    std::int32_t                             _nestingLevel;      // nesting level (0 = block itself, 1 = block within block, etc)
+    std::int32_t                             _enclosingDepth;    // depth to which we're nested within outer method
     GrowableArray<Scope *>          *_enclosingScopes;  // 0 = scope immediately enclosing block (= this->scope), etc.
     MethodOop                       _methodOop;         // the method currently being scanned for uplevel-accesses; either r's block method or a nested block method
 
@@ -977,11 +977,11 @@ public:
     }
 
 
-    void record_temporary( bool_t reading, int no, int ctx ) {
+    void record_temporary( bool_t reading, std::int32_t no, std::int32_t ctx ) {
         // distance is the lexical nesting distance in source-level terms (i.e., regardless of what the interpreter
         // does or whether the intermediate scopes have contexts or not) between r's scope and the scope
         // resolving the access; e.g., 1 --> the scope creating r
-        int distance = _methodOop->lexicalDistance( ctx ) - _nestingLevel;
+        std::int32_t distance = _methodOop->lexicalDistance( ctx ) - _nestingLevel;
         if ( distance < 1 )
             return;                // access is resolved in some nested block
         Scope *s = _enclosingScopes->at( distance - 1 );    // -1 because 0th element is enclosing scope, i.e., at distance 1
@@ -1001,17 +1001,17 @@ public:
     }
 
 
-    void push_temporary( int no, int context ) {
+    void push_temporary( std::int32_t no, std::int32_t context ) {
         record_temporary( true, no, context );
     }
 
 
-    void store_temporary( int no, int context ) {
+    void store_temporary( std::int32_t no, std::int32_t context ) {
         record_temporary( false, no, context );
     }
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
         // recursively search nested blocks
         _nestingLevel++;
         MethodOop savedMethod = _methodOop;
@@ -1034,9 +1034,9 @@ void BlockPseudoRegister::computeUplevelAccesses() {
     st_assert( not _uplevelWritten, "shouldn't be there" );
     _uplevelRead    = c._read;
     _uplevelWritten = c._written;
-    for ( std::size_t i = _uplevelRead->length() - 1; i >= 0; i-- )
+    for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- )
         _uplevelRead->at( i )->addUplevelAccessor( this, true, false );
-    for ( std::size_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
+    for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
         _uplevelWritten->at( i )->addUplevelAccessor( this, false, true );
 }
 
@@ -1083,7 +1083,7 @@ void BlockPseudoRegister::print() {
     }
     if ( _escapeNodes ) {
         lprintf( "; escapes at: " );
-        for ( std::size_t i = 0; i < _escapeNodes->length(); i++ )
+        for ( std::int32_t i = 0; i < _escapeNodes->length(); i++ )
             lprintf( "N%d ", _escapeNodes->at( i )->id() );
     }
     lprintf( "\n" );
@@ -1121,8 +1121,8 @@ bool_t PseudoRegister::verify() const {
         ok = false;
         error( "PseudoRegister %#lx %s: invalid ID %ld", this, name(), _id );
     }
-    int               uses = 0, definitions = 0;
-    for ( std::size_t i    = 0; i < _dus.length(); i++ ) {
+    std::int32_t               uses = 0, definitions = 0;
+    for ( std::int32_t i    = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
         definitions += info->_definitions.length();
@@ -1160,7 +1160,7 @@ bool_t SinglyAssignedPseudoRegister::verify() const {
                 error( "SinglyAssignedPseudoRegister %#lx %s: live range only partially set", this, name() );
             }
         } else if ( _scope->isInlinedScope() ) {
-            int ncodes = scope()->nofBytes();
+            std::int32_t ncodes = scope()->nofBytes();
             if ( creationStartByteCodeIndex < PrologueByteCodeIndex or creationStartByteCodeIndex > creationScope()->nofBytes() ) {
                 ok = false;
                 error( "SinglyAssignedPseudoRegister %#lx %s: invalid creationStartByteCodeIndex %ld", this, name(), creationStartByteCodeIndex );
@@ -1183,7 +1183,7 @@ bool_t BlockPseudoRegister::verify() const {
     bool_t ok = SinglyAssignedPseudoRegister::verify() and _closure->verify();
     // check uplevel-accessed vars: if they are blocks, they must be exposed
     if ( _uplevelRead ) {
-        for ( std::size_t i = 0; i < _uplevelRead->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _uplevelRead->length(); i++ ) {
             if ( _uplevelRead->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
                 if ( not blk->escapes() ) {
@@ -1192,7 +1192,7 @@ bool_t BlockPseudoRegister::verify() const {
                 }
             }
         }
-        for ( std::size_t i = 0; i < _uplevelWritten->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _uplevelWritten->length(); i++ ) {
             if ( _uplevelWritten->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
                 error( "BlockPseudoRegister %#lx is uplevel-written by escaping BlockPseudoRegister %#lx, but BlockPseudoRegisters should never be assigned", blk, this );
@@ -1217,7 +1217,7 @@ bool_t NoResultPseudoRegister::verify() const {
 bool_t ConstPseudoRegister::verify() const {
     bool_t ok = ( PseudoRegister::verify() and constant->is_klass() ) or constant->verify();
     /*
-    if (int(constant) < maxImmediate and int(constant) > -maxImmediate
+    if (std::int32_t(constant) < maxImmediate and std::int32_t(constant) > -maxImmediate
       and loc not_eq UnAllocated) {
       error("ConstPseudoRegister %#lx: could use load immediate to load Oop %#lx",
          this, constant);

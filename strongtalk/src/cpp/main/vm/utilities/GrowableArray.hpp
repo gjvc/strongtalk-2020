@@ -19,44 +19,44 @@ typedef bool_t (*growableArrayFindFn)( void *token, void *elem );
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    std::size_t                 _length;                    // current length
-    std::size_t                 _maxLength;                 // maximum length
+    std::int32_t         _length;                    // current length
+    std::int32_t         _maxLength;                 // maximum length
     void                **_data;                    // data array
     bool_t              _allocatedOnSystemHeap;     // is data allocated on C heap?
     std::vector<void *> _vector;                    //
 
-    void grow( std::size_t j );     // grow data array (double length until j is a valid index)
+    void grow( std::int32_t j );     // grow data array (double length until j is a valid index)
 
     bool_t raw_contains( const void *p ) const;
 
-    std::size_t raw_find( const void *p ) const;
+    std::int32_t raw_find( const void *p ) const;
 
-    std::size_t raw_find( void *token, growableArrayFindFn f ) const;
+    std::int32_t raw_find( void *token, growableArrayFindFn f ) const;
 
     void raw_remove( const void *p );
 
     void raw_apply( voidDoFn f ) const;
 
-    void *raw_at_grow( std::size_t i, const void *fill );
+    void *raw_at_grow( std::int32_t i, const void *fill );
 
-    void raw_at_put_grow( std::size_t i, const void *p, const void *fill );
+    void raw_at_put_grow( std::int32_t i, const void *p, const void *fill );
 
     void raw_appendAll( GenericGrowableArray *l );
 
     GenericGrowableArray *raw_copy() const;
 
-    void raw_sort( std::size_t f( const void *, const void * ) );
+    void raw_sort( std::int32_t f( const void *, const void * ) );
 
-    GenericGrowableArray( std::size_t initial_size, bool_t on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, bool_t on_C_heap = false );
 
-    GenericGrowableArray( std::size_t initial_size, std::size_t initial_len, void *filler, bool_t on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool_t on_C_heap = false );
 
 public:
     void clear();
 
-    std::size_t length() const;
+    std::int32_t length() const;
 
-    std::size_t capacity() const;
+    std::int32_t capacity() const;
 
     bool_t isEmpty() const;
 
@@ -75,12 +75,12 @@ template<typename T>
 class GrowableArray : public GenericGrowableArray {
 
 public:
-    GrowableArray( std::size_t initial_size, bool_t on_C_heap = false ) :
+    GrowableArray( std::int32_t initial_size, bool_t on_C_heap = false ) :
             GenericGrowableArray( initial_size, on_C_heap ) {
     }
 
 
-    GrowableArray( std::size_t initial_size, std::size_t initial_len, T filler, bool_t on_C_heap = false ) :
+    GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool_t on_C_heap = false ) :
             GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
     }
 
@@ -97,7 +97,7 @@ public:
     }
 
 
-    T at( std::size_t i ) const {
+    T at( std::int32_t i ) const {
         st_assert( 0 <= i, "i not greater than 0" );
         return reinterpret_cast<T> (_data[ i ]);
     }
@@ -131,26 +131,26 @@ public:
     }
 
 
-    void at_put( std::size_t i, const T elem ) {
-        st_assert( 0 <= i and i < _length, "illegal index" );
+    void at_put( std::int32_t i, const T elem ) {
+        st_assert( 0 <= i and i < _length, "illegal index (at_put)" );
         _data[ i ] = (void *) elem;
     }
 
 
-    T at_grow( std::size_t i ) {
+    T at_grow( std::int32_t i ) {
         st_assert( 0 <= i, "negative index" );
         return reinterpret_cast<T> (raw_at_grow( i, nullptr ));
     }
 
 
-    void at_put_grow( std::size_t i, const T elem ) {
+    void at_put_grow( std::int32_t i, const T elem ) {
         st_assert( 0 <= i, "negative index" );
         raw_at_put_grow( i, (void *) elem, nullptr );
     }
 
 
     void apply( Closure<T> *c ) const {
-        for ( std::size_t i = 0; i < _length; i++ )
+        for ( std::int32_t i = 0; i < _length; i++ )
             c->do_it( (T) _data[ i ] );
     }
 
@@ -160,12 +160,12 @@ public:
     }
 
 
-    std::size_t find( const T elem ) const {
+    std::int32_t find( const T elem ) const {
         return raw_find( (const void *) elem );
     }
 
 
-    std::size_t find( void *token, bool_t f( void *, T ) ) const {
+    std::int32_t find( void *token, bool_t f( void *, T ) ) const {
         return raw_find( token, (growableArrayFindFn) f );
     }
 
@@ -190,7 +190,7 @@ public:
     }
 
 
-    void sort( std::size_t f( T *, T * ) ) {
-        raw_sort( (std::size_t ( * )( const void *, const void * )) f );
+    void sort( std::int32_t f( T *, T * ) ) {
+        raw_sort( (std::int32_t ( * )( const void *, const void * )) f );
     }
 };

@@ -38,27 +38,27 @@ protected:
     char msg[200];
 
 
-    void checkByteLength( int expected, const char *message ) {
+    void checkByteLength( std::int32_t expected, const char *message ) {
         sprintf( msg, "Wrong byte length for %s, expected: %d, but was: %d", message, expected, code->byteLength() );
         EXPECT_EQ( expected, code->byteLength() ) << msg;
     }
 
 
-    void checkOopLength( int expected, const char *message ) {
+    void checkOopLength( std::int32_t expected, const char *message ) {
         sprintf( msg, "Wrong Oop length for %s, expected: %d, but was: %d", message, expected, code->oopLength() );
         EXPECT_EQ( expected, code->oopLength() ) << msg;
     }
 
 
-    void checkByte( int expected, int actual ) {
+    void checkByte( std::int32_t expected, std::int32_t actual ) {
         sprintf( msg, "Expected: %d, but was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << msg;
     }
 
 
-    void checkOop( int expected, int actual ) {
+    void checkOop( std::int32_t expected, std::int32_t actual ) {
         sprintf( msg, "Expected: %d, but was: %d", expected, actual );
-        EXPECT_EQ( int( expected ), int( actual ) ) << msg;
+        EXPECT_EQ( std::int32_t( expected ), std::int32_t( actual ) ) << msg;
     }
 
 };
@@ -71,7 +71,7 @@ KlassOop       messageClass  = KlassOop( Universe::find_global( "Message" ) );
 SymbolOop      errorSelector = SymbolOop( oopFactory::new_symbol( "value" ) );
 SymbolOop      selector      = SymbolOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
 SymbolOop      dnuSelector   = SymbolOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
-ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) );
+ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( std::int32_t{0} ) );
 code->pushByte( static_cast
 <std::uint8_t>(ByteCodes::Code::push_literal)
 );

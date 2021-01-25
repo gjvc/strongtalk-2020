@@ -36,13 +36,13 @@ protected:
         byteArrayPrimitives::alienSetAddress( smi0, invalidFunctionAlien );
 
         fnAlien = ByteArrayOop( ca.as_oop() );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) &clock ), fnAlien );
+        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) &clock ), fnAlien );
 
         addressAlien = ByteArrayOop( aa.as_oop() );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) &address ), addressAlien );
+        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) &address ), addressAlien );
 
         pointerAlien = ByteArrayOop( pa.as_oop() );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) &address ), pointerAlien );
+        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) &address ), pointerAlien );
     }
 
 
@@ -60,7 +60,7 @@ protected:
     char         address[8];
 
 
-    ByteArrayOop allocateAlien( int arraySize, int alienSize ) {
+    ByteArrayOop allocateAlien( std::int32_t arraySize, std::int32_t alienSize ) {
         ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         return alien;
@@ -75,14 +75,14 @@ protected:
     }
 
 
-    void checkIntResult( const char *message, int expected, int actual ) {
+    void checkIntResult( const char *message, std::int32_t expected, std::int32_t actual ) {
         char text[200];
         sprintf( text, "Should be: %d, was: %d", expected, actual );
         EXPECT_TRUE( actual == expected ) << text;
     }
 
 
-    int asInt( bool_t &ok, Oop intOop ) {
+    std::int32_t asInt( bool_t &ok, Oop intOop ) {
         if ( intOop->is_smi() )
             return SMIOop( intOop )->value();
         if ( !intOop->is_byteArray() ) {

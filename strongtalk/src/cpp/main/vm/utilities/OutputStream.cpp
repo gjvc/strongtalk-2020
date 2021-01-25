@@ -10,7 +10,7 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-constexpr std::size_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
+constexpr std::int32_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
 
 ConsoleOutputStream *_console;
 
@@ -19,7 +19,7 @@ ConsoleOutputStream *_console;
 
 void ConsoleOutputStream::basic_print( const char *str ) {
 
-    for ( std::size_t i = 0; i < strlen( str ); i++ )
+    for ( std::int32_t i = 0; i < strlen( str ); i++ )
         put( str[ i ] );
 }
 
@@ -64,7 +64,7 @@ void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
 
 // -----------------------------------------------------------------------------
 
-ConsoleOutputStream::ConsoleOutputStream( std::size_t width ) {
+ConsoleOutputStream::ConsoleOutputStream( std::int32_t width ) {
     _width       = width;
     _position    = 0;
     _indentation = 0;
@@ -83,7 +83,7 @@ void ConsoleOutputStream::vprint_cr( const char *format, va_list argptr ) {
 }
 
 
-void ConsoleOutputStream::fill_to( std::size_t col ) {
+void ConsoleOutputStream::fill_to( std::int32_t col ) {
     while ( position() < col )
         sp();
 }
@@ -110,7 +110,7 @@ void ConsoleOutputStream::cr() {
 // -----------------------------------------------------------------------------
 
 
-StringOutputStream::StringOutputStream( const std::size_t initial_size ) :
+StringOutputStream::StringOutputStream( const std::int32_t initial_size ) :
         ConsoleOutputStream() {
     buffer_length = initial_size;
     buffer        = new_resource_array<char>( buffer_length );
@@ -144,7 +144,7 @@ char *StringOutputStream::as_string() {
 
 ByteArrayOop StringOutputStream::as_byteArray() {
     ByteArrayOop a = oopFactory::new_byteArray( buffer_pos );
-    for ( std::size_t    i = 0; i < buffer_pos; i++ ) {
+    for ( std::int32_t    i = 0; i < buffer_pos; i++ ) {
         a->byte_at_put( i + 1, buffer[ i ] );
     }
     return a;

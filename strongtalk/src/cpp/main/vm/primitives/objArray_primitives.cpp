@@ -18,7 +18,7 @@
 TRACE_FUNC( TraceObjArrayPrims, "objArray" )
 
 
-std::size_t objArrayPrimitives::number_of_calls;
+std::int32_t objArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_objArray(), "receiver must be object array")
 
@@ -41,8 +41,8 @@ PRIM_DECL_3( objArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop 
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     KlassOop k        = KlassOop( receiver );
-    int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + SMIOop( argument )->value();
+    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + SMIOop( argument )->value();
 
     // allocate
     Oop *result = ( tenured == Universe::trueObject() ) ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, false );
@@ -72,8 +72,8 @@ PRIM_DECL_2( objArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop       k        = KlassOop( receiver );
-    int            ni_size  = k->klass_part()->non_indexable_size();
-    int            obj_size = ni_size + 1 + SMIOop( argument )->value();
+    std::int32_t            ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t            obj_size = ni_size + 1 + SMIOop( argument )->value();
     // allocate
     ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
@@ -135,10 +135,10 @@ PRIM_DECL_2( objArrayPrimitives::at_all_put, Oop receiver, Oop obj ) {
     PROLOGUE_2( "at_all_put", receiver, obj );
     ASSERT_RECEIVER;
 
-    int length = ObjectArrayOop( receiver )->length();
+    std::int32_t length = ObjectArrayOop( receiver )->length();
     if ( obj->is_new() and receiver->is_old() ) {
         // Do store checks
-        for ( std::size_t i = 1; i <= length; i++ ) {
+        for ( std::int32_t i = 1; i <= length; i++ ) {
             ObjectArrayOop( receiver )->obj_at_put( i, obj );
         }
     } else {
@@ -170,7 +170,7 @@ PRIM_DECL_5( objArrayPrimitives::replace_from_to, Oop receiver, Oop from, Oop to
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
     // check from > 0
-    if ( reinterpret_cast<int>(SMIOop( from )) <= int{ 0 } )
+    if ( reinterpret_cast<std::int32_t>(SMIOop( from )) <= std::int32_t{ 0 } )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check to < self size
@@ -210,12 +210,12 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
 
     // check from > 0
     //if (SMIOop(from) <= 0)
-    if ( reinterpret_cast<int>(SMIOop( from )) <= int{ 0 } )
+    if ( reinterpret_cast<std::int32_t>(SMIOop( from )) <= std::int32_t{ 0 } )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check start > 0
     //if (SMIOop(start) <= 0)
-    if ( reinterpret_cast<int>(SMIOop( start )) <= int{ 0 } )
+    if ( reinterpret_cast<std::int32_t>(SMIOop( start )) <= std::int32_t{ 0 } )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // Check size is positive
@@ -227,8 +227,8 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
 
     // allocation of object array
     KlassOop       k        = receiver->klass();
-    int            ni_size  = k->klass_part()->non_indexable_size();
-    int            obj_size = ni_size + 1 + SMIOop( size )->value();
+    std::int32_t            ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t            obj_size = ni_size + 1 + SMIOop( size )->value();
     // allocate
     ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
 
@@ -237,7 +237,7 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
     // header
     MemOop( obj )->initialize_header( k->klass_part()->has_untagged_contents(), k );
     // copy instance variables
-    for ( std::size_t i = MemOopDescriptor::header_size(); i < ni_size; i++ ) {
+    for ( std::int32_t i = MemOopDescriptor::header_size(); i < ni_size; i++ ) {
         obj->raw_at_put( i, src->raw_at( i ) );
     }
     // length

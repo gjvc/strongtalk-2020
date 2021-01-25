@@ -9,14 +9,17 @@
 #include "vm/oops/MemOopDescriptor.hpp"
 
 
-// objArrays are arrays containing oops
+// ObjectArrays are arrays containing oops
 
+//
+//
 // memory layout:
 //    [header      ]
 //    [klass_field ]
 //    [instVars    ]*
 //    [length      ]
 //    [elements    ]* = objs(1) .. objs(length)
+//
 
 class ObjectArrayOopDescriptor : public MemOopDescriptor {
 public:
@@ -27,21 +30,21 @@ public:
 
     // accessors
     ObjectArrayOopDescriptor *addr() const {
-        return static_cast <ObjectArrayOopDescriptor *>( MemOopDescriptor::addr() );
+        return static_cast<ObjectArrayOopDescriptor *>( MemOopDescriptor::addr() );
     }
 
 
-    bool_t is_within_bounds( int index ) const {
+    bool_t is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
 
     Oop *addr_as_oops() const {
-        return (Oop *) addr();
+        return reinterpret_cast<Oop *>( addr() );
     }
 
 
-    Oop *objs( int which ) const {
+    Oop *objs( std::int32_t which ) const {
         return &length_addr()[ which ];
     }
 
@@ -63,13 +66,13 @@ public:
     }
 
 
-    Oop obj_at( int which ) const {
+    Oop obj_at( std::int32_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return *objs( which );
     }
 
 
-    void obj_at_put( int which, Oop contents, bool_t cs = true ) {
+    void obj_at_put( std::int32_t which, Oop contents, bool_t cs = true ) {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         st_assert( not is_symbol(), "shouldn't be modifying a canonical string" );
         st_assert( contents->verify(), "check contents" );
@@ -81,12 +84,12 @@ public:
     }
 
 
-    ObjectArrayOop growBy( int increment );
+    ObjectArrayOop growBy( std::int32_t increment );
 
     // memory operations
     bool_t verify();
 
-    ObjectArrayOop copy_remove( int from, int number = 1 );
+    ObjectArrayOop copy_remove( std::int32_t from, std::int32_t number = 1 );
 
     ObjectArrayOop copy();
 
@@ -95,9 +98,9 @@ public:
     ObjectArrayOop copy_add_two( Oop a, Oop b );
 
     // primtiive operations
-    void replace_from_to( int from, int to, ObjectArrayOop source, int start );
+    void replace_from_to( std::int32_t from, std::int32_t to, ObjectArrayOop source, std::int32_t start );
 
-    void replace_and_fill( int from, int start, ObjectArrayOop source );
+    void replace_and_fill( std::int32_t from, std::int32_t start, ObjectArrayOop source );
 
     friend class objArrayKlass;
 

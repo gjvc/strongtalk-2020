@@ -241,7 +241,7 @@ public:
 
 // -----------------------------------------------------------------------------
 
-int vm_main( int argc, char *argv[] );
-int createVMProcess();
-int vmProcessMain( void *ignored );
+std::int32_t vm_main( std::int32_t argc, char *argv[] );
+std::int32_t createVMProcess();
+std::int32_t vmProcessMain( void *ignored );
 void load_image();

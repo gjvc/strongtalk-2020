@@ -18,11 +18,11 @@
 
 // ----------- inlining policy ---------------
 
-static const int DefaultCompilerMaxSplitCost        = 50;
-static const int DefaultCompilerMaxBlockInstrSize   = 400;
-static const int DefaultCompilerMaxFnInstrSize      = 250;
-static const int DefaultCompilerMaxBlockFnInstrSize = 600;
-static const int DefaultCompilerMaxNmethodInstrSize = 5000;
+static const std::int32_t DefaultCompilerMaxSplitCost        = 50;
+static const std::int32_t DefaultCompilerMaxBlockInstrSize   = 400;
+static const std::int32_t DefaultCompilerMaxFnInstrSize      = 250;
+static const std::int32_t DefaultCompilerMaxBlockFnInstrSize = 600;
+static const std::int32_t DefaultCompilerMaxNmethodInstrSize = 5000;
 
 static CompilerInliningPolicy inliningPolicy;
 
@@ -107,7 +107,7 @@ Expression *Inliner::inlineSend() {
 
 
 Expression *Inliner::genRealSend() {
-    const int nofArgs     = _info->_selector->number_of_arguments();
+    const std::int32_t nofArgs     = _info->_selector->number_of_arguments();
     bool_t    uninlinable = theCompiler->registerUninlinable( this );
     if ( CompilerDebug ) {
         cout( PrintInlining )->print( "%*s*sending %s %s%s\n", depth, "", _info->_selector->as_string(), uninlinable ? "(unlinlinable) " : "", _info->_counting ? "(counting) " : "" );
@@ -201,8 +201,8 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     MergeExpression *r = (MergeExpression *) info->_receiver;                // receiver type
     SymbolOop sel = info->_selector;
 
-    int nexprs = r->exprs->length();
-    int ncases = nexprs - ( r->containsUnknown() ? 1 : 0 );
+    std::int32_t nexprs = r->exprs->length();
+    std::int32_t ncases = nexprs - ( r->containsUnknown() ? 1 : 0 );
     if ( ncases > MaxTypeCaseSize ) {
         info->_needRealSend = true;
         info->uninlinable   = true;
@@ -223,7 +223,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     GrowableArray<KlassOop> *klasses2 = new GrowableArray<KlassOop>( nexprs );
     const bool_t containsUnknown = r->containsUnknown();
 
-    for ( std::size_t i = 0; i < nexprs; i++ ) {
+    for ( std::int32_t i = 0; i < nexprs; i++ ) {
         Expression *nth = r->exprs->at( i )->shallowCopy( r->preg(), nullptr );
         st_assert( not nth->isConstantExpression() or nth->next == nullptr or nth->constant() == nth->next->constant(), "shouldn't happen: merged consts - convert to klass" );
         // NB: be sure to generalize constants to klasses before inlining, so that values from an unknown source are dispatched to the optimized code also, right now the TypeTestNode only tests for klasses, not constants
@@ -291,7 +291,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
         typeCase = NodeFactory::TypeTestNode( r->preg(), klasses, info->_needRealSend or containsUnknown );
         _generator->append( typeCase );
         fallThrough = typeCase->append( NodeFactory::createAndRegisterNode<NopNode>() );    // non-predicted case
-        for ( std::size_t i = 0; i < scopes->length(); i++ ) {
+        for ( std::int32_t i = 0; i < scopes->length(); i++ ) {
             // inline one case
             Inliner *inliner = new Inliner( _sender );
             inliner->initialize( new SendInfo( *info ), _sendKind );
@@ -417,10 +417,10 @@ void Inliner::reportInline( const char *prefix ) {
     if ( not klassName )
         return;
 
-    int       prefixLen   = strlen( prefix );
+    std::int32_t       prefixLen   = strlen( prefix );
     SymbolOop selector    = info()->_selector;
-    int       length      = selector->length();
-    int       klassLength = strlen( klassName );
+    std::int32_t       length      = selector->length();
+    std::int32_t       klassLength = strlen( klassName );
     char *buffer = new_resource_array<char>( klassLength + length + prefixLen + 3 );
     strcpy( buffer, prefix );
     strcpy( buffer + prefixLen, klassName );
@@ -434,7 +434,7 @@ void Inliner::reportInline( const char *prefix ) {
 
 Expression *Inliner::picPredict() {
     // check PICs for information
-    const int byteCodeIndex = _sender->byteCodeIndex();
+    const std::int32_t byteCodeIndex = _sender->byteCodeIndex();
     RecompilationScope *rscope = _sender->rscope;
 
     if ( not rscope->hasSubScopes( byteCodeIndex ) ) {
@@ -468,7 +468,7 @@ Expression *Inliner::picPredict() {
     // extract klasses from PolymorphicInlineCache
     GrowableArray<Expression *> klasses( 5 );
     MergeExpression *allKlasses = new MergeExpression( _info->_receiver->preg(), nullptr );
-    std::size_t i = 0;
+    std::int32_t i = 0;
     for ( ; i < predictedReceivers->length(); i++ ) {
         RecompilationScope *r    = predictedReceivers->at( i );
         Expression         *expr = r->receiverExpression( _info->_receiver->preg() );
@@ -484,11 +484,11 @@ Expression *Inliner::picPredict() {
 
     // check if PolymorphicInlineCache info is better than static type info; discard all static info
     // that's not in the PolymorphicInlineCache
-    int npic    = klasses.length();
-    int nstatic = _info->_receiver->nklasses();
+    std::int32_t npic    = klasses.length();
+    std::int32_t nstatic = _info->_receiver->nklasses();
     if ( npic not_eq 0 and _info->_receiver->isMergeExpression() ) {
         Expression *newReceiver = _info->_receiver;
-        for ( std::size_t i = ( (MergeExpression *) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = ( (MergeExpression *) _info->_receiver )->exprs->length() - 1; i >= 0; i-- ) {
             Expression *e = ( (MergeExpression *) _info->_receiver )->exprs->at( i );
             if ( e->isUnknownExpression() )
                 continue;
@@ -507,7 +507,7 @@ Expression *Inliner::picPredict() {
         cout( PrintInlining )->print( "%*s*PolymorphicInlineCache-type-predicting %s (%ld klasses): ", depth, "", _info->_selector->as_string(), npic );
 
     // iterate through PolymorphicInlineCache _info and add it to the receiver type (_info->receiver)
-    for ( std::size_t i = 0; i < klasses.length(); i++ ) {
+    for ( std::int32_t i = 0; i < klasses.length(); i++ ) {
         Expression *expr = klasses.at( i );
         // use the PolymorphicInlineCache information for this case
         if ( CompilerDebug ) {
@@ -719,7 +719,7 @@ RecompilationScope *Inliner::makeBlockRScope( const Expression *receiver, Lookup
     }
 
     // first check if block was inlined in previous NativeMethod (or comes from inlining database)
-    const int                           senderByteCodeIndex = _sender->byteCodeIndex();
+    const std::int32_t                           senderByteCodeIndex = _sender->byteCodeIndex();
     GrowableArray<RecompilationScope *> *subScopes          = _sender->rscope->subScopes( senderByteCodeIndex );
     if ( subScopes->length() == 1 and subScopes->first()->method() == method ) {
         RecompilationScope *rs = subScopes->first();
@@ -730,12 +730,12 @@ RecompilationScope *Inliner::makeBlockRScope( const Expression *receiver, Lookup
     // must compute rscope differently -- primitiveValue has no inline cache, so must get callee NativeMethod or method manually
     InlinedScope       *parent  = receiver->preg()->scope();
     RecompilationScope *rparent = parent->rscope;
-    const int level = rparent->isNullScope() ? 1 : ( (NonDummyRecompilationScope *) rparent )->level();
+    const std::int32_t level = rparent->isNullScope() ? 1 : ( (NonDummyRecompilationScope *) rparent )->level();
     if ( rparent->isCompiled() ) {
         // get type feedback info from compiled block NativeMethod
         NativeMethod *parentNM = rparent->get_nativeMethod();
         // search for corresponding noninlined block NativeMethod
-        int blockIndex = 0;
+        std::int32_t blockIndex = 0;
         for ( blockIndex = parentNM->number_of_noninlined_blocks(); blockIndex >= 1; blockIndex-- ) {
             if ( parentNM->noninlined_block_method_at( blockIndex ) == method and checkSenderPath( parent, parentNM->noninlined_block_scope_at( blockIndex )->parent() ) ) {
                 break;      // found it

@@ -12,12 +12,12 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 
 
-const int UnknownExpression::UnlikelyBit        = 1;
-const int MergeExpression::SplittableBit        = 2;
-const int MergeExpression::UnknownSetBit        = 4;
-const int MergeExpression::ContainingUnknownBit = 8;
+const std::int32_t UnknownExpression::UnlikelyBit        = 1;
+const std::int32_t MergeExpression::SplittableBit        = 2;
+const std::int32_t MergeExpression::UnknownSetBit        = 4;
+const std::int32_t MergeExpression::ContainingUnknownBit = 8;
 
-const int MaxMergeExprSize = 5;    // max. # exprs in a merge expression
+const std::int32_t MaxMergeExprSize = 5;    // max. # exprs in a merge expression
 
 Expression::Expression( PseudoRegister *p, Node *n ) {
     st_assert( p, "must have PseudoRegister" );
@@ -221,9 +221,9 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
     if ( other->isMergeExpression() ) {
         MergeExpression *o = other->asMergeExpression();
         if ( o->isSplittable() and not isSplittable() ) {
-            std::size_t i = 0;
+            std::int32_t i = 0;
         }
-        for ( int       i  = 0; i < o->exprs->length(); i++ ) {
+        for ( std::int32_t       i  = 0; i < o->exprs->length(); i++ ) {
             // must be careful when adding splittable exprs (e->next not_eq nullptr)
             // to avoid creating loops in the ->next chain
             Expression *e = o->exprs->at( i );
@@ -238,10 +238,10 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
         add( other );
     }
 
-    int       len = exprs->length();
-    for ( std::size_t i   = 0; i < len; i++ ) {
+    std::int32_t       len = exprs->length();
+    for ( std::int32_t i   = 0; i < len; i++ ) {
         Expression *e = exprs->at( i );
-        for ( std::size_t j = i + 1; j < len; j++ ) {
+        for ( std::int32_t j = i + 1; j < len; j++ ) {
             Expression *e2 = exprs->at( j );
             st_assert( not e->equals( e2 ), "duplicate expr" );
             st_assert( not( e->hasKlass() and e2->hasKlass() and e->klass() == e2->klass() ), "duplicate klasses" );
@@ -262,7 +262,7 @@ void MergeExpression::add( Expression *e ) {
     }
     if ( not e->node() )
         setSplittable( false );
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         Expression *e1 = exprs->at( i );
         if ( ( e->hasKlass() and e1->hasKlass() and ( e->klass() == e1->klass() ) ) or e->equals( e1 ) ) {
             // an equivalent expression is already in our list
@@ -322,9 +322,9 @@ void MergeExpression::add( Expression *e ) {
 }
 
 
-int MergeExpression::nklasses() const {
-    int       n = 0;
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+std::int32_t MergeExpression::nklasses() const {
+    std::int32_t       n = 0;
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         n += exprs->at( i )->nklasses();
     }
     return n;
@@ -424,7 +424,7 @@ KlassExpression *ConstantExpression::asKlassExpression() const {
 
 Expression *MergeExpression::convertToKlass( PseudoRegister *p, Node *n ) const {
     MergeExpression *e = new MergeExpression( p, n );
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         Expression *expr = exprs->at( i )->convertToKlass( p, n );
         e->add( expr );
     }
@@ -441,7 +441,7 @@ bool_t MergeExpression::containsUnknown() {
         return isContainingUnknown();
     }
     setUnknownSet( true );
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() ) {
             setContainingUnknown( true );
             return true;
@@ -453,7 +453,7 @@ bool_t MergeExpression::containsUnknown() {
 
 
 UnknownExpression *MergeExpression::findUnknown() const {
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         if ( exprs->at( i )->isUnknownExpression() )
             return (UnknownExpression *) exprs->at( i );
     }
@@ -462,7 +462,7 @@ UnknownExpression *MergeExpression::findUnknown() const {
 
 
 Expression *MergeExpression::findKlass( KlassOop klass ) const {
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         Expression *e = exprs->at( i );
         if ( e->hasKlass() and e->klass() == klass )
             return e;
@@ -483,7 +483,7 @@ Expression *MergeExpression::makeUnknownUnlikely( InlinedScope *s ) {
     st_assert( DeferUncommonBranches, "shouldn't make unlikely" );
     _unlikelyScope         = s;
     _unlikelyByteCodeIndex = s->byteCodeIndex();
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         Expression *e;
         if ( ( e = exprs->at( i ) )->isUnknownExpression() ) {
             if ( not( (UnknownExpression *) e )->isUnlikely() ) {
@@ -625,7 +625,7 @@ void BlockExpression::print() {
 
 void MergeExpression::print() {
     lprintf( "MergeExpression %s(\n", isSplittable() ? "splittable " : "" );
-    for ( std::size_t i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
         lprintf( "\t%#lx%s ", exprs->at( i ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
@@ -668,7 +668,7 @@ void ConstantExpression::verify() const {
 
 void MergeExpression::verify() const {
     GrowableArray<Node *> nodes( 10 );
-    for ( int             i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t             i = 0; i < exprs->length(); i++ ) {
         Expression *e = exprs->at( i );
         e->verify();
         if ( e->isMergeExpression() )
@@ -689,13 +689,13 @@ void ContextExpression::verify() const {
 }
 
 
-ExpressionStack::ExpressionStack( InlinedScope *scope, std::size_t size ) :
+ExpressionStack::ExpressionStack( InlinedScope *scope, std::int32_t size ) :
         GrowableArray<Expression *>( size ) {
     _scope = scope;
 }
 
 
-void ExpressionStack::push( Expression *expr, InlinedScope *currentScope, int byteCodeIndex ) {
+void ExpressionStack::push( Expression *expr, InlinedScope *currentScope, std::int32_t byteCodeIndex ) {
     st_assert( not expr->isContextExpression(), "shouldn't push contexts" );
     // Register expression e for byteCodeIndex
     currentScope->setExprForByteCodeIndex( byteCodeIndex, expr );
@@ -715,7 +715,7 @@ void ExpressionStack::push( Expression *expr, InlinedScope *currentScope, int by
 }
 
 
-void ExpressionStack::push2nd( Expression *expr, InlinedScope *currentScope, int byteCodeIndex ) {
+void ExpressionStack::push2nd( Expression *expr, InlinedScope *currentScope, std::int32_t byteCodeIndex ) {
     st_assert( not expr->isContextExpression(), "shouldn't push contexts" );
     // Register expression e for current ByteCodeIndex.
     currentScope->set2ndExprForByteCodeIndex( byteCodeIndex, expr );
@@ -748,7 +748,7 @@ Expression *ExpressionStack::pop() {
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
             // endByteCodeIndex may be assigned several times
-            int newByteCodeIndex = _scope->byteCodeIndex() == EpilogueByteCodeIndex ? _scope->nofBytes() - 1 : _scope->byteCodeIndex();
+            std::int32_t newByteCodeIndex = _scope->byteCodeIndex() == EpilogueByteCodeIndex ? _scope->nofBytes() - 1 : _scope->byteCodeIndex();
             if ( byteCodeIndexLT( sr->endByteCodeIndex(), newByteCodeIndex ) )
                 sr->_endByteCodeIndex = newByteCodeIndex;
         } else {
@@ -759,15 +759,15 @@ Expression *ExpressionStack::pop() {
 }
 
 
-void ExpressionStack::pop( int nofExprsToPop ) {
-    for ( std::size_t i = 0; i < nofExprsToPop; i++ )
+void ExpressionStack::pop( std::int32_t nofExprsToPop ) {
+    for ( std::int32_t i = 0; i < nofExprsToPop; i++ )
         pop();
 }
 
 
 void ExpressionStack::print() {
-    const int len = length();
-    for ( std::size_t i   = 0; i < len; i++ ) {
+    const std::int32_t len = length();
+    for ( std::int32_t i   = 0; i < len; i++ ) {
         lprintf( "[TOS - %2d]:  ", len - i - 1 );
         at( i )->print();
     }

@@ -36,28 +36,28 @@ public:
     ssize_t _signed_length;
     Digit   _first_digit;
 
-    std::size_t length() const;
+    std::int32_t length() const;
 
-    void set_length( std::size_t l );
+    void set_length( std::int32_t l );
 
     Digit *digits() const;
 
-    Digit &operator[]( std::size_t i ) const;
+    Digit &operator[]( std::int32_t i ) const;
 
-    static std::size_t length_to_size_in_bytes( std::size_t l );
+    static std::int32_t length_to_size_in_bytes( std::int32_t l );
 
-    std::size_t length_in_bits() const;
+    std::int32_t length_in_bits() const;
 
-    std::size_t signum() const;
+    std::int32_t signum() const;
     // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
-    std::size_t size_in_bytes() const;
+    std::int32_t size_in_bytes() const;
 
 
     void print();
 
 
-    std::size_t as_int( bool_t &ok ) const;
+    std::int32_t as_int( bool_t &ok ) const;
 
     std::uint32_t as_unsigned_int( bool_t &ok ) const;
 

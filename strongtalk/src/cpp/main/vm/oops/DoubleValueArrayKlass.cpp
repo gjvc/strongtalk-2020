@@ -19,12 +19,12 @@ Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenure
 }
 
 
-Oop DoubleValueArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
 
     //
     KlassOop k        = as_klassOop();
-    int      ni_size  = non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( size * sizeof( double ), oopSize ) / oopSize;
+    std::int32_t      ni_size  = non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + roundTo( size * sizeof( double ), oopSize ) / oopSize;
 
     // allocate
     doubleValueArrayOop obj = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -38,7 +38,7 @@ Oop DoubleValueArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_s
     // indexables
     obj->set_length( size );
 
-    for ( std::size_t i = 1; i <= size; i++ ) {
+    for ( std::int32_t i = 1; i <= size; i++ ) {
         obj->double_at_put( i, 0.0 );
     }
 
@@ -75,8 +75,8 @@ bool_t DoubleValueArrayKlass::oop_verify( Oop obj ) {
 void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     doubleValueArrayOop array = doubleValueArrayOop( obj );
-    int                 len   = array->length();
-    int                 n     = min( MaxElementPrintSize, len );
+    std::int32_t                 len   = array->length();
+    std::int32_t                 n     = min( MaxElementPrintSize, len );
     Unimplemented();
 }
 
@@ -84,7 +84,7 @@ void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *st
 void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     double *p = doubleValueArrayOop( obj )->double_start();
     Oop    *l = doubleValueArrayOop( obj )->length_addr();
-    int len = doubleValueArrayOop( obj )->length();
+    std::int32_t len = doubleValueArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
     blk->begin_indexables();
@@ -100,13 +100,13 @@ void DoubleValueArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 }
 
 
-int DoubleValueArrayKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t DoubleValueArrayKlass::oop_scavenge_contents( Oop obj ) {
     MemOopKlass::oop_scavenge_contents( obj );
     return object_size( doubleValueArrayOop( obj )->length() );
 }
 
 
-int DoubleValueArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t DoubleValueArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
     MemOopKlass::oop_scavenge_tenured_contents( obj );
     return object_size( doubleValueArrayOop( obj )->length() );
 }

@@ -36,7 +36,7 @@ public:
 class debugFlags {
 
 public:
-    static bool_t boolAt( const char *name, int len, bool_t *value );
+    static bool_t boolAt( const char *name, std::int32_t len, bool_t *value );
 
 
     static bool_t boolAt( const char *name, bool_t *value ) {
@@ -44,7 +44,7 @@ public:
     }
 
 
-    static bool_t boolAtPut( const char *name, int len, bool_t *value );
+    static bool_t boolAtPut( const char *name, std::int32_t len, bool_t *value );
 
 
     static bool_t boolAtPut( const char *name, bool_t *value ) {
@@ -52,18 +52,18 @@ public:
     }
 
 
-    static bool_t intAt( const char *name, int len, int *value );
+    static bool_t intAt( const char *name, std::int32_t len, std::int32_t *value );
 
 
-    static bool_t intAt( const char *name, int *value ) {
+    static bool_t intAt( const char *name, std::int32_t *value ) {
         return intAt( name, strlen( name ), value );
     }
 
 
-    static bool_t intAtPut( const char *name, int len, int *value );
+    static bool_t intAtPut( const char *name, std::int32_t len, std::int32_t *value );
 
 
-    static bool_t intAtPut( const char *name, int *value ) {
+    static bool_t intAtPut( const char *name, std::int32_t *value ) {
         return intAtPut( name, strlen( name ), value );
     }
 
@@ -324,7 +324,7 @@ APPLY_TO_BOOLEAN_FLAGS( DECLARE_BOOLEAN_FLAG )
 
 // declaration of integer flags
 #define DECLARE_INTEGER_FLAG( name, value, doc ) \
-  extern "C" int name;
+  extern "C" std::int32_t name;
 
 APPLY_TO_INTEGER_FLAGS( DECLARE_INTEGER_FLAG )
 

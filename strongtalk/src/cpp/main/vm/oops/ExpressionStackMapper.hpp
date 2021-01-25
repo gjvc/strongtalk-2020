@@ -19,8 +19,8 @@
 class ExpressionStackMapper : public MethodClosure {
 
 private:
-    GrowableArray<std::size_t> *_mapping;
-    std::size_t                _targetByteCodeIndex;
+    GrowableArray<std::int32_t> *_mapping;
+    std::int32_t                _targetByteCodeIndex;
 
 
     void map_push() {
@@ -28,7 +28,7 @@ private:
     }
 
 
-    void map_push( int b ) {
+    void map_push( std::int32_t b ) {
         // lprintf("push(%d)", byteCodeIndex);
         if ( b >= _targetByteCodeIndex ) {
             abort();
@@ -48,17 +48,17 @@ private:
     }
 
 
-    void map_send( bool_t has_receiver, int number_of_arguments ) {
+    void map_send( bool_t has_receiver, std::int32_t number_of_arguments ) {
         if ( has_receiver )
             map_pop();
-        for ( std::size_t i = 0; i < number_of_arguments; i++ )
+        for ( std::int32_t i = 0; i < number_of_arguments; i++ )
             map_pop();
         map_push();
     }
 
 
 public:
-    ExpressionStackMapper( GrowableArray<std::size_t> *mapping, std::size_t targetByteCodeIndex ) {
+    ExpressionStackMapper( GrowableArray<std::int32_t> *mapping, std::int32_t targetByteCodeIndex ) {
         this->_mapping             = mapping;
         this->_targetByteCodeIndex = targetByteCodeIndex;
     }
@@ -79,22 +79,22 @@ public:
     }
 
 
-    void push_argument( int no ) {
+    void push_argument( std::int32_t no ) {
         map_push();
     }
 
 
-    void push_temporary( int no ) {
+    void push_temporary( std::int32_t no ) {
         map_push();
     }
 
 
-    void push_temporary( int no, int context ) {
+    void push_temporary( std::int32_t no, std::int32_t context ) {
         map_push();
     }
 
 
-    void push_instVar( int offset ) {
+    void push_instVar( std::int32_t offset ) {
         map_push();
     }
 
@@ -149,17 +149,17 @@ public:
     }
 
 
-    void method_return( int nofArgs ) {
+    void method_return( std::int32_t nofArgs ) {
         map_pop();
     }
 
 
-    void nonlocal_return( int nofArgs ) {
+    void nonlocal_return( std::int32_t nofArgs ) {
         map_pop();
     }
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
         if ( type == AllocationType::tos_as_scope )
             map_pop();
         map_push();
@@ -179,19 +179,19 @@ public:
 
 
     // call backs to ignore
-    void allocate_temporaries( int nofTemps ) {
+    void allocate_temporaries( std::int32_t nofTemps ) {
     }
 
 
-    void store_temporary( int no ) {
+    void store_temporary( std::int32_t no ) {
     }
 
 
-    void store_temporary( int no, int context ) {
+    void store_temporary( std::int32_t no, std::int32_t context ) {
     }
 
 
-    void store_instVar( int offset ) {
+    void store_instVar( std::int32_t offset ) {
     }
 
 
@@ -211,7 +211,7 @@ public:
     }
 
 
-    void allocate_context( int nofTemps, bool_t forMethod = false ) {
+    void allocate_context( std::int32_t nofTemps, bool_t forMethod = false ) {
     }
 
 
@@ -223,7 +223,7 @@ public:
     }
 
 
-    void copy_argument_into_context( int argNo, int no ) {
+    void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
     }
 
 
@@ -231,45 +231,45 @@ public:
     }
 
 
-    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
     }
 
 
-    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
     }
 
 
-    void float_floatify( Floats::Function f, int tof ) {
+    void float_floatify( Floats::Function f, std::int32_t tof ) {
         map_pop();
     }
 
 
-    void float_move( int tof, int from ) {
+    void float_move( std::int32_t tof, std::int32_t from ) {
     }
 
 
-    void float_set( int tof, DoubleOop value ) {
+    void float_set( std::int32_t tof, DoubleOop value ) {
     }
 
 
-    void float_nullary( Floats::Function f, int tof ) {
+    void float_nullary( Floats::Function f, std::int32_t tof ) {
     }
 
 
-    void float_unary( Floats::Function f, int tof ) {
+    void float_unary( Floats::Function f, std::int32_t tof ) {
     }
 
 
-    void float_binary( Floats::Function f, int tof ) {
+    void float_binary( Floats::Function f, std::int32_t tof ) {
     }
 
 
-    void float_unaryToOop( Floats::Function f, int tof ) {
+    void float_unaryToOop( Floats::Function f, std::int32_t tof ) {
         map_push();
     }
 
 
-    void float_binaryToOop( Floats::Function f, int tof ) {
+    void float_binaryToOop( Floats::Function f, std::int32_t tof ) {
         map_push();
     }
 };

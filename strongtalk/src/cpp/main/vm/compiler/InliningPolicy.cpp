@@ -38,15 +38,15 @@ const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
 
     if ( method->is_blockMethod() ) {
         // even large blocks should be inlined if they make up most of their home's code
-        int parentCost = method->parent()->estimated_inline_cost( receiverKlass() );
+        std::int32_t parentCost = method->parent()->estimated_inline_cost( receiverKlass() );
         st_assert( parentCost > calleeCost, "must be higher" );
         if ( float( parentCost - calleeCost ) / parentCost * 100.0 < MinBlockCostFraction )
             return nullptr;
     }
 
     // compute the cost limit based on the provided arguments
-    int       cost_limit = method->is_blockMethod() ? MaxBlockInlineCost : MaxFnInlineCost;
-    for ( std::size_t i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
+    std::int32_t       cost_limit = method->is_blockMethod() ? MaxBlockInlineCost : MaxFnInlineCost;
+    for ( std::int32_t i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
         KlassOop k = nthArgKlass( i );
         if ( k and k->klass_part()->oop_is_block() )
             cost_limit += BlockArgAdditionalAllowedInlineCost;
@@ -123,8 +123,8 @@ bool_t InliningPolicy::isBuiltinMethod() const {
 }
 
 
-KlassOop CompilerInliningPolicy::nthArgKlass( std::size_t i ) const {
-    int first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
+KlassOop CompilerInliningPolicy::nthArgKlass( std::int32_t i ) const {
+    std::int32_t first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
     Expression *e = _sender->exprStack()->at( first + i );
     return e->hasKlass() ? e->klass() : nullptr;
 }
@@ -170,7 +170,7 @@ const char *CompilerInliningPolicy::shouldInline( InlinedScope *s, InlinedScope 
 }
 
 
-KlassOop RecompilerInliningPolicy::nthArgKlass( std::size_t i ) const {
+KlassOop RecompilerInliningPolicy::nthArgKlass( std::int32_t i ) const {
     return _deltaVirtualFrame ? _deltaVirtualFrame->argument_at( i )->klass() : nullptr;
 }
 
@@ -226,8 +226,8 @@ const char *RecompilerInliningPolicy::shouldInline( const NativeMethod *nm ) {
         return nullptr;
 
     // compute the allowable cost based on the method type and the provided arguments
-    int cost_limit = _methodOop->is_blockMethod() ? MaxBlockInstrSize : MaxFnInstrSize;
-    std::size_t i          = _methodOop->number_of_arguments();
+    std::int32_t cost_limit = _methodOop->is_blockMethod() ? MaxBlockInstrSize : MaxFnInstrSize;
+    std::int32_t i          = _methodOop->number_of_arguments();
     while ( i-- > 0 ) {
         KlassOop k = nthArgKlass( i );
         if ( k and k->klass_part()->oop_is_block() )

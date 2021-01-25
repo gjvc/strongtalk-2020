@@ -10,8 +10,8 @@
 
 
 PersistentHandle *PersistentHandle::_first = nullptr;
-std::size_t      Handles::_top  = 0;
-std::size_t      Handles::_size = 20;
+std::int32_t      Handles::_top  = 0;
+std::int32_t      Handles::_size = 20;
 Oop              Handles::_array[20];
 
 
@@ -152,32 +152,32 @@ Oop *PersistentHandle::asPointer() {
 }
 
 
-std::size_t PersistentHandle::savedOffset() {
-    return (int) &( (PersistentHandle *) nullptr )->_saved;
+std::int32_t PersistentHandle::savedOffset() {
+    return (std::int32_t) &( (PersistentHandle *) nullptr )->_saved;
 }
 
 
-Oop Handles::oop_at( int index ) {
+Oop Handles::oop_at( std::int32_t index ) {
     st_assert( index >= 0 and index < top(), "index check" );
     return _array[ index ];
 }
 
 
-std::size_t Handles::push_oop( Oop value ) {
+std::int32_t Handles::push_oop( Oop value ) {
     st_assert( _top < _size, "bounds check" );
     _array[ _top ] = value;
     return _top++;
 }
 
 
-void Handles::set_top( int t ) {
+void Handles::set_top( std::int32_t t ) {
     st_assert( t >= 0 and t < top(), "index check" );
     _top = t;
 }
 
 
 void Handles::oops_do( void f( Oop * ) ) {
-    for ( std::size_t i = 0; i < top(); i++ ) {
+    for ( std::int32_t i = 0; i < top(); i++ ) {
         f( &_array[ i ] );
     }
     PersistentHandle::oops_do( f );
@@ -185,7 +185,7 @@ void Handles::oops_do( void f( Oop * ) ) {
 }
 
 
-std::size_t Handles::top() {
+std::int32_t Handles::top() {
     return _top;
 }
 

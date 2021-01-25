@@ -22,24 +22,24 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-ByteArrayOop oopFactory::new_byteArray( std::size_t size ) {
+ByteArrayOop oopFactory::new_byteArray( std::int32_t size ) {
     ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObject()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
 }
 
 
 ByteArrayOop oopFactory::new_byteArray( const char *name ) {
-    int          len    = strlen( name );
+    std::int32_t          len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
-    for ( std::size_t index = 0; index < len; index++ ) {
+    for ( std::int32_t index = 0; index < len; index++ ) {
         result->byte_at_put( index + 1, name[ index ] );
     }
     return result;
 }
 
 
-ObjectArrayOop oopFactory::new_objArray( std::size_t size ) {
+ObjectArrayOop oopFactory::new_objArray( std::int32_t size ) {
     ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
@@ -50,12 +50,12 @@ ObjectArrayOop oopFactory::new_objArray( std::size_t size ) {
 ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
-    std::size_t size = array->length();
+    std::int32_t size = array->length();
     ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
-    for ( std::size_t index = 1; index <= size; index++ ) {
+    for ( std::int32_t index = 1; index <= size; index++ ) {
         result->obj_at_put( index, array->at( index - 1 ) );
     }
     return result;
@@ -80,7 +80,7 @@ DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
 }
 
 
-SymbolOop oopFactory::new_symbol( const char *name, int len ) {
+SymbolOop oopFactory::new_symbol( const char *name, std::int32_t len ) {
     return Universe::symbol_table->lookup( name, len );
 }
 
@@ -105,7 +105,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_
 }
 
 
-VirtualFrameOop oopFactory::new_vframe( ProcessOop process, int index ) {
+VirtualFrameOop oopFactory::new_vframe( ProcessOop process, std::int32_t index ) {
     BlockScavenge bs;
     VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObject()->klass_part();
 
@@ -119,6 +119,6 @@ VirtualFrameOop oopFactory::new_vframe( ProcessOop process, int index ) {
 }
 
 
-SMIOop oopFactory::new_smi( int value ) {
+SMIOop oopFactory::new_smi( std::int32_t value ) {
     return smiOopFromValue( value );
 }

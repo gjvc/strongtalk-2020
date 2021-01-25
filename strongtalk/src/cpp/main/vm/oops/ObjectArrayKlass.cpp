@@ -11,10 +11,10 @@
 #include "vm/memory/MarkSweep.hpp"
 
 
-Oop ObjectArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t tenured ) {
+Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k        = as_klassOop();
-    int      ni_size  = non_indexable_size();
-    int      obj_size = ni_size + 1 + size;
+    std::int32_t      ni_size  = non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + size;
 
     // allocate
     Oop *result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
@@ -58,10 +58,10 @@ KlassOop ObjectArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 }
 
 
-ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::size_t size ) {
+ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::int32_t size ) {
     KlassOop k        = Universe::objArrayKlassObject();
-    int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + size;
+    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + size;
 
     // allocate
     ObjectArrayOop obj = as_objArrayOop( Universe::allocate_tenured( obj_size ) );
@@ -93,14 +93,14 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
     // Retrieve length information in case the iterator mutates the object
     Oop *p = ObjectArrayOop( obj )->objs( 0 );
-    int len = ObjectArrayOop( obj )->length();
+    std::int32_t len = ObjectArrayOop( obj )->length();
 
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
     // indexables
     blk->do_oop( "length", p++ );
     blk->begin_indexables();
-    for ( std::size_t i = 1; i <= len; i++ ) {
+    for ( std::int32_t i = 1; i <= len; i++ ) {
         blk->do_indexable_oop( i, p++ );
     }
     blk->end_indexables();
@@ -109,14 +109,14 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
 void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
 
-    const int MaxPrintLen = 255;    // to prevent excessive output -Urs
+    const std::int32_t MaxPrintLen = 255;    // to prevent excessive output -Urs
     st_assert_objArray( obj, "Argument must be objArray" );
     ObjectArrayOop array = ObjectArrayOop( obj );
-    int            len   = array->length();
-    int            n     = min( MaxElementPrintSize, len );
+    std::int32_t            len   = array->length();
+    std::int32_t            n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
 
-    for ( std::size_t i = 1; i <= n and stream->position() < MaxPrintLen; i++ ) {
+    for ( std::int32_t i = 1; i <= n and stream->position() < MaxPrintLen; i++ ) {
         array->obj_at( i )->print_value_on( stream );
         stream->print( ", " );
     }
@@ -131,19 +131,19 @@ void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream 
 void ObjectArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
     Oop *p = ObjectArrayOop( obj )->objs( 0 );
-    int len = ObjectArrayOop( obj )->length();
+    std::int32_t len = ObjectArrayOop( obj )->length();
 
     // header + instance variables
     MemOopKlass::oop_oop_iterate( obj, blk );
     // indexables
     blk->do_oop( p++ );
-    for ( std::size_t i = 1; i <= len; i++ ) {
+    for ( std::int32_t i = 1; i <= len; i++ ) {
         blk->do_oop( p++ );
     }
 }
 
 
-int ObjectArrayKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t ObjectArrayKlass::oop_scavenge_contents( Oop obj ) {
 
     // header + instance variables
     MemOopKlass::oop_scavenge_contents( obj );
@@ -160,7 +160,7 @@ int ObjectArrayKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int ObjectArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t ObjectArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
 
     // header + instance variables
     MemOopKlass::oop_scavenge_tenured_contents( obj );

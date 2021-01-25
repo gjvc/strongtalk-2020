@@ -17,9 +17,9 @@
 #include "vm/compiler/RecompilationScope.hpp"
 
 
-std::size_t LookupCache::number_of_primary_hits;
-std::size_t LookupCache::number_of_secondary_hits;
-std::size_t LookupCache::number_of_misses;
+std::int32_t LookupCache::number_of_primary_hits;
+std::int32_t LookupCache::number_of_secondary_hits;
+std::int32_t LookupCache::number_of_misses;
 
 static std::array<CacheElement, primary_cache_size>   primary;
 static std::array<CacheElement, secondary_cache_size> secondary;
@@ -38,11 +38,11 @@ address_t LookupCache::secondary_cache_address() {
 void LookupCache::flush() {
 
     // Clear primary cache
-    for ( std::size_t i = 0; i < primary_cache_size; i++ )
+    for ( std::int32_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].clear();
 
     // Clear secondary cache
-    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
+    for ( std::int32_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].clear();
 
     // Clear counters
@@ -54,8 +54,8 @@ void LookupCache::flush() {
 
 void LookupCache::flush( LookupKey *key ) {
     // Flush the entry associated the the lookup key k
-    int primary_index   = hash_value( key ) % primary_cache_size;
-    int secondary_index = primary_index % secondary_cache_size;
+    std::int32_t primary_index   = hash_value( key ) % primary_cache_size;
+    std::int32_t secondary_index = primary_index % secondary_cache_size;
 
     if ( primary[ primary_index ]._lookupKey.equal( key ) ) {
         // If we have a hit in the primary cache
@@ -74,10 +74,10 @@ void LookupCache::flush( LookupKey *key ) {
 
 void LookupCache::verify() {
 
-    for ( std::size_t i = 0; i < primary_cache_size; i++ )
+    for ( std::int32_t i = 0; i < primary_cache_size; i++ )
         primary[ i ].verify();
 
-    for ( std::size_t i = 0; i < secondary_cache_size; i++ )
+    for ( std::int32_t i = 0; i < secondary_cache_size; i++ )
         secondary[ i ].verify();
 
 }
@@ -91,13 +91,13 @@ std::uint32_t LookupCache::hash_value( LookupKey *key ) {
 LookupResult LookupCache::lookup_probe( LookupKey *key ) {
     st_assert( key->verify(), "Lookupkey: verify failed" );
 
-    int primary_index = hash_value( key ) % primary_cache_size;
+    std::int32_t primary_index = hash_value( key ) % primary_cache_size;
 
     if ( primary[ primary_index ]._lookupKey.equal( key ) ) {
         return primary[ primary_index ]._lookupResult;
     }
 
-    int secondary_index = primary_index % secondary_cache_size;
+    std::int32_t secondary_index = primary_index % secondary_cache_size;
 
     if ( secondary[ secondary_index ]._lookupKey.equal( key ) ) {
         CacheElement tmp;
@@ -127,7 +127,7 @@ LookupResult LookupCache::lookup( LookupKey *key, bool_t compile ) {
     st_assert( key->verify(), "Lookupkey: verify failed" );
 
     // 1. primary entry
-    int primary_index = hash_value( key ) % primary_cache_size;
+    std::int32_t primary_index = hash_value( key ) % primary_cache_size;
 
     if ( primary[ primary_index ]._lookupKey.equal( key ) ) {
         // this is a good place to put conditional breakpoints using number_of_primary_hits
@@ -136,7 +136,7 @@ LookupResult LookupCache::lookup( LookupKey *key, bool_t compile ) {
     }
 
     // 2. secondary entry
-    int secondary_index = primary_index % secondary_cache_size;
+    std::int32_t secondary_index = primary_index % secondary_cache_size;
     if ( secondary[ secondary_index ]._lookupKey.equal( key ) ) {
         number_of_secondary_hits++;
         CacheElement tmp;
@@ -343,7 +343,7 @@ Oop LookupCache::normal_lookup( KlassOop receiver_klass, SymbolOop selector ) {
 }
 
 
-static void print_counter( const char *title, int counter, int total ) {
+static void print_counter( const char *title, std::int32_t counter, std::int32_t total ) {
     lprintf( "%20s: %3.1f%% (%d)\n", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
 }
 
@@ -356,7 +356,7 @@ void LookupCache::clear_statistics() {
 
 
 void LookupCache::print_statistics() {
-    int total = number_of_primary_hits + number_of_secondary_hits + number_of_misses;
+    std::int32_t total = number_of_primary_hits + number_of_secondary_hits + number_of_misses;
     lprintf( "Lookup Cache: size(%d, %d)\n", primary_cache_size, secondary_cache_size );
     print_counter( "Primary Hit Ratio", number_of_primary_hits, total );
     print_counter( "Secondary Hit Ratio", number_of_secondary_hits, total );

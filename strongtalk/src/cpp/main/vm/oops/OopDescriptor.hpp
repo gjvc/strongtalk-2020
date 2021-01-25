@@ -12,7 +12,7 @@
 // -----------------------------------------------------------------------------
 
 typedef class OopDescriptor *Oop;
-constexpr int oopSize = sizeof( Oop );
+constexpr std::int32_t oopSize = sizeof( Oop );
 
 
 // -----------------------------------------------------------------------------
@@ -89,8 +89,8 @@ public:
 
 
     // tag checks
-    int tag() const {
-        return maskBits( int( this ), TAG_MASK );
+    std::int32_t tag() const {
+        return maskBits( std::int32_t( this ), TAG_MASK );
     }
 
 
@@ -173,7 +173,7 @@ public:
     // Primitives
     Oop primitive_allocate( bool_t allow_scavenge = true, bool_t tenured = false );
 
-    Oop primitive_allocate_size( std::size_t size );
+    Oop primitive_allocate_size( std::int32_t size );
 
     Oop shallow_copy( bool_t tenured );
 

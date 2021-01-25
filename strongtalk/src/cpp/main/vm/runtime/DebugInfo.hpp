@@ -16,8 +16,8 @@
 class DebugInfo : public ValueObject {
 
 private:
-    void (*_interceptorEntryPoint)( int * );     // entry point of the dispatch table entry point
-    int *_frameBreakpoint;                       // pointer to the target frame for stepping, if any
+    void (*_interceptorEntryPoint)( std::int32_t * );     // entry point of the dispatch table entry point
+    std::int32_t *_frameBreakpoint;                       // pointer to the target frame for stepping, if any
 
 public:
     DebugInfo() :
@@ -27,9 +27,9 @@ public:
 
     void interceptForStep();
 
-    void interceptForNext( int *fr );
+    void interceptForNext( std::int32_t *fr );
 
-    void interceptForReturn( int *fr );
+    void interceptForReturn( std::int32_t *fr );
 
     void apply();
 

@@ -55,7 +55,7 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( KlassOopDescriptor ) / oopSize;
     }
 
@@ -66,7 +66,7 @@ public:
     void bootstrap_object( Bootstrap *stream );
 
 
-    static std::size_t nonIndexableSizeOffset() {
-        return (int) ( &KlassOop( nullptr )->klass_part()->_non_indexable_size );
+    static std::int32_t nonIndexableSizeOffset() {
+        return (std::int32_t) ( &KlassOop( nullptr )->klass_part()->_non_indexable_size );
     }
 };

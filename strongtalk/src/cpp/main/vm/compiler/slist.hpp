@@ -60,7 +60,7 @@ class GenericSList : public PrintableResourceObject {
 protected:
     GenericSListElem *_head;
     GenericSListElem *_tail;
-    int _len;
+    std::int32_t _len;
 public:
     GenericSList() {
         _head = _tail = nullptr;
@@ -111,7 +111,7 @@ public:
     }
 
 
-    int length() const {
+    std::int32_t length() const {
         return _len;
     }
 
@@ -125,7 +125,7 @@ public:
 
     GenericSListElem *findL( void *p, slistFindFn f ) const;
 
-    void *nthL( std::size_t i ) const;
+    void *nthL( std::int32_t i ) const;
 
 
     void *firstL() const {
@@ -256,7 +256,7 @@ public:
     }
 
 
-    T at( std::size_t i ) const {
+    T at( std::int32_t i ) const {
         return (T) GenericSList::nthL( i );
     }
 

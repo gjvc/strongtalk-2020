@@ -15,17 +15,17 @@
 #include "vm/memory/Universe.hpp"
 
 
-constexpr int float_0_offset  = oopSize * ( frame_temp_offset - 3 );
-constexpr int temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
-constexpr int temp_0_offset   = oopSize * frame_temp_offset;
-constexpr int esi_offset      = oopSize * frame_hp_offset;
-constexpr int self_offset     = oopSize * frame_receiver_offset;
-constexpr int link_offset     = oopSize * frame_link_offset;
-constexpr int ret_addr_offset = oopSize * frame_return_addr_offset;
-constexpr int arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
+constexpr std::int32_t float_0_offset  = oopSize * ( frame_temp_offset - 3 );
+constexpr std::int32_t temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
+constexpr std::int32_t temp_0_offset   = oopSize * frame_temp_offset;
+constexpr std::int32_t esi_offset      = oopSize * frame_hp_offset;
+constexpr std::int32_t self_offset     = oopSize * frame_receiver_offset;
+constexpr std::int32_t link_offset     = oopSize * frame_link_offset;
+constexpr std::int32_t ret_addr_offset = oopSize * frame_return_addr_offset;
+constexpr std::int32_t arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
 
-constexpr int max_nof_temps  = 256;
-constexpr int max_nof_floats = 256;
+constexpr std::int32_t max_nof_temps  = 256;
+constexpr std::int32_t max_nof_floats = 256;
 
 
 // The InterpreterGenerator contains the functionality to generate the interpreter during the system initialization phase.
@@ -69,24 +69,24 @@ private:
     void stack_check_pop();
 
     // Arguments, temporaries & instance variables
-    Address arg_addr( std::size_t i );
+    Address arg_addr( std::int32_t i );
 
     Address arg_addr( Register arg_no );
 
-    Address temp_addr( std::size_t i );
+    Address temp_addr( std::int32_t i );
 
     Address temp_addr( Register temp_no );
 
     Address float_addr( Register float_no );
 
-    Address field_addr( Register obj, std::size_t i );
+    Address field_addr( Register obj, std::int32_t i );
 
     Address field_addr( Register obj, Register smi_offset );
 
     // Instruction sequencing
-    void skip_words( int n );
+    void skip_words( std::int32_t n );
 
-    void advance_aligned( int n );
+    void advance_aligned( std::int32_t n );
 
     void load_ebx();
 
@@ -134,32 +134,32 @@ private:
 
     // Constant addresses
     Address nil_addr() {
-        return Address( int( &nilObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &nilObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address true_addr() {
-        return Address( int( &trueObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &trueObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address false_addr() {
-        return Address( int( &falseObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &falseObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address smiKlass_addr() {
-        return Address( int( &smiKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &smiKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address doubleKlass_addr() {
-        return Address( int( &doubleKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &doubleKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address contextKlass_addr() {
-        return Address( int( &contextKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &contextKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
@@ -181,11 +181,11 @@ private:
     void generateStopInterpreterAt();
 
     // Instructions
-    const char *push_temp( std::size_t i );
+    const char *push_temp( std::int32_t i );
 
     const char *push_temp_n();
 
-    const char *push_arg( std::size_t i );
+    const char *push_arg( std::int32_t i );
 
     const char *push_arg_n();
 
@@ -207,7 +207,7 @@ private:
 
     const char *only_pop();
 
-    const char *store_temp( std::size_t i, bool_t pop = false );
+    const char *store_temp( std::int32_t i, bool_t pop = false );
 
     const char *store_temp_n( bool_t pop = false );
 
@@ -215,15 +215,15 @@ private:
 
     const char *store_instVar( bool_t pop = false );
 
-    const char *allocate_temps( int n );
+    const char *allocate_temps( std::int32_t n );
 
     const char *allocate_temps_n();
 
     const char *set_self_via_context();
 
-    const char *with_context_temp( bool_t store, int tempNo, int contextNo );
+    const char *with_context_temp( bool_t store, std::int32_t tempNo, std::int32_t contextNo );
 
-    const char *copy_params_into_context( bool_t self, int paramsCount );
+    const char *copy_params_into_context( bool_t self, std::int32_t paramsCount );
 
     const char *float_allocate();
 
@@ -235,11 +235,11 @@ private:
 
     const char *float_set();
 
-    const char *float_op( int nof_args, bool_t returns_float = false );
+    const char *float_op( std::int32_t nof_args, bool_t returns_float = false );
 
-    const char *push_closure( int nofArgs, bool_t use_context );
+    const char *push_closure( std::int32_t nofArgs, bool_t use_context );
 
-    const char *install_context( int nofArgs, bool_t for_method );
+    const char *install_context( std::int32_t nofArgs, bool_t for_method );
 
     const char *predict_prim( bool_t canFail );
 
@@ -271,7 +271,7 @@ private:
 
     void generate_deoptimized_return_code();
 
-    void generate_primitiveValue( std::size_t i );
+    void generate_primitiveValue( std::int32_t i );
 
     void generate_forStubRoutines();
 
@@ -327,7 +327,7 @@ private:
     }
 
 
-    const char *local_return( bool_t push_self, int nofArgs, bool_t zap = false );
+    const char *local_return( bool_t push_self, std::int32_t nofArgs, bool_t zap = false );
 
     // Non-local returns
     const char *nonlocal_return_tos();

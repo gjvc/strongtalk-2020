@@ -11,13 +11,13 @@
 #include "vm/system/os.hpp"
 
 
-VirtualSpace::VirtualSpace( int reserved_size, int committed_size, bool_t low_to_high ) {
+VirtualSpace::VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool_t low_to_high ) {
     ReservedSpace rs( reserved_size );
     initialize( rs, committed_size, low_to_high );
 }
 
 
-VirtualSpace::VirtualSpace( ReservedSpace reserved, int committed_size, bool_t low_to_high ) {
+VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high ) {
     initialize( reserved, committed_size, low_to_high );
 }
 
@@ -31,7 +31,7 @@ VirtualSpace::VirtualSpace() {
 }
 
 
-void VirtualSpace::initialize( ReservedSpace reserved, int committed_size, bool_t low_to_high ) {
+void VirtualSpace::initialize( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high ) {
     _low_boundary  = reserved.base();
     _high_boundary = low_boundary() + reserved.size();
 
@@ -65,17 +65,17 @@ void VirtualSpace::release() {
 }
 
 
-int VirtualSpace::committed_size() const {
+std::int32_t VirtualSpace::committed_size() const {
     return high() - low();
 }
 
 
-int VirtualSpace::reserved_size() const {
+std::int32_t VirtualSpace::reserved_size() const {
     return high_boundary() - low_boundary();
 }
 
 
-int VirtualSpace::uncommitted_size() const {
+std::int32_t VirtualSpace::uncommitted_size() const {
     return reserved_size() - committed_size();
 }
 
@@ -90,7 +90,8 @@ bool_t VirtualSpace::low_to_high() const {
 }
 
 
-void VirtualSpace::expand( std::size_t size ) {
+void VirtualSpace::expand( std::int32_t size ) {
+    print();
     st_assert( uncommitted_size() >= size, "not Space enough" );
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
@@ -103,7 +104,7 @@ void VirtualSpace::expand( std::size_t size ) {
 }
 
 
-void VirtualSpace::shrink( std::size_t size ) {
+void VirtualSpace::shrink( std::int32_t size ) {
     st_assert( committed_size() >= size, "not Space enough" );
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
@@ -118,8 +119,9 @@ void VirtualSpace::shrink( std::size_t size ) {
 
 void VirtualSpace::print() {
     _console->print_cr( "Virtual Space:" );
-    _console->print_cr( " - committed: %d", committed_size() );
-    _console->print_cr( " - reserved: %d", reserved_size() );
+    _console->print_cr( " - uncommitted_size() [%d]", uncommitted_size() );
+    _console->print_cr( " - committed_size() [%d]", committed_size() );
+    _console->print_cr( " - reserved_size() [%d]", reserved_size() );
     _console->print_cr( " - [low, high]: [0x%lx, 0x%lx]", low(), high() );
     _console->print_cr( " - [low_b, high_b]: [0x%lx, 0x%lx]", low_boundary(), high_boundary() );
 }
@@ -135,6 +137,8 @@ void VirtualSpaces::add( VirtualSpace *sp ) {
 
 
 void VirtualSpaces::remove( VirtualSpace *sp ) {
+    print();
+
     if ( not head )
         return;
     if ( head == sp )
@@ -147,25 +151,25 @@ void VirtualSpaces::remove( VirtualSpace *sp ) {
 }
 
 
-std::size_t VirtualSpaces::committed_size() {
-    int total = 0;
-    for ( VirtualSpace *p = head; p; p = p->next )
+std::int32_t VirtualSpaces::committed_size() {
+    std::int32_t        total = 0;
+    for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->committed_size();
     return total;
 }
 
 
-std::size_t VirtualSpaces::reserved_size() {
-    int total = 0;
-    for ( VirtualSpace *p = head; p; p = p->next )
+std::int32_t VirtualSpaces::reserved_size() {
+    std::int32_t        total = 0;
+    for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->reserved_size();
     return total;
 }
 
 
-std::size_t VirtualSpaces::uncommitted_size() {
-    int total = 0;
-    for ( VirtualSpace *p = head; p; p = p->next )
+std::int32_t VirtualSpaces::uncommitted_size() {
+    std::int32_t        total = 0;
+    for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->uncommitted_size();
     return total;
 }

@@ -22,44 +22,44 @@ enum class CountType {
 };
 
 
-//typedef int LookupType;
+//typedef std::int32_t LookupType;
 
-const int LookupTypeSize = 2;
-const int LookupTypeMask = 3;
+const std::int32_t LookupTypeSize = 2;
+const std::int32_t LookupTypeMask = 3;
 
-const int CountTypeMask = static_cast<std::size_t>(CountType::NonCounting) | static_cast<std::size_t>(CountType::Counting) | static_cast<std::size_t>(CountType::Comparing);
-const int CountTypeSize = 2;
-const int CountSendBit  = LookupTypeSize + 1;
+const std::int32_t CountTypeMask = static_cast<std::int32_t>(CountType::NonCounting) | static_cast<std::int32_t>(CountType::Counting) | static_cast<std::int32_t>(CountType::Comparing);
+const std::int32_t CountTypeSize = 2;
+const std::int32_t CountSendBit  = LookupTypeSize + 1;
 
 // the dirty bit records whether the inline cache has ever made a transition
 // from non-empty to empty (e.g. through flushing)
-const int DirtySendBit  = CountSendBit + CountTypeSize;
-const int DirtySendMask = 1 << DirtySendBit;
+const std::int32_t DirtySendBit  = CountSendBit + CountTypeSize;
+const std::int32_t DirtySendMask = 1 << DirtySendBit;
 
 // the optimized bit says that if no callee NativeMethod exists, an optimized
 // method should be created immediately rather than going through an
 // unoptimized version first
-const int OptimizedSendBit  = DirtySendBit + 1;
-const int OptimizedSendMask = 1 << OptimizedSendBit;
+const std::int32_t OptimizedSendBit  = DirtySendBit + 1;
+const std::int32_t OptimizedSendMask = 1 << OptimizedSendBit;
 
 // the uninlinable bit says that the SIC has decided it's not worth
 // inlining this send no matter how often it is executed.
-const int UninlinableSendBit  = OptimizedSendBit + 1;
-const int UninlinableSendMask = 1 << UninlinableSendBit;
+const std::int32_t UninlinableSendBit  = OptimizedSendBit + 1;
+const std::int32_t UninlinableSendMask = 1 << UninlinableSendBit;
 
 
 inline LookupType withoutExtraBits( LookupType lookupType ) {
-    return static_cast<LookupType>(static_cast<std::size_t>(lookupType) & static_cast<std::size_t>(LookupTypeMask));
+    return static_cast<LookupType>(static_cast<std::int32_t>(lookupType) & static_cast<std::int32_t>(LookupTypeMask));
 }
 
 
 inline LookupType withCountBits( LookupType l, CountType t ) {
-    return LookupType( ( int( l ) & ~( CountTypeMask << CountSendBit ) ) | ( static_cast<std::size_t>(t) << CountSendBit ) );
+    return LookupType( ( std::int32_t( l ) & ~( CountTypeMask << CountSendBit ) ) | ( static_cast<std::int32_t>(t) << CountSendBit ) );
 }
 
 
 inline CountType countType( LookupType l ) {
-    return CountType( ( int( l ) >> CountSendBit ) & CountTypeMask );
+    return CountType( ( std::int32_t( l ) >> CountSendBit ) & CountTypeMask );
 }
 
 

@@ -57,8 +57,8 @@ static BooleanFlag booleanDebugFlags[] = {
 class IntegerFlag {
 public:
     const char *_name;
-    int        *_value;
-    int _default;
+    std::int32_t        *_value;
+    std::int32_t _default;
     const char *_description;
 
 
@@ -74,7 +74,7 @@ public:
 };
 
 #define MATERIALIZE_INTEGER_FLAG( name, value, doc ) \
-  int name = value;
+  std::int32_t name = value;
 
 APPLY_TO_INTEGER_FLAGS( MATERIALIZE_INTEGER_FLAG )
 
@@ -88,7 +88,7 @@ static IntegerFlag integerDebugFlags[] = {
 
 // -----------------------------------------------------------------------------
 
-bool_t str_equal( const char *s, const char *q, int len ) {
+bool_t str_equal( const char *s, const char *q, std::int32_t len ) {
     // s is null terminated, q is not!
     if ( strlen( s ) not_eq (std::uint32_t) len )
         return false;
@@ -96,7 +96,7 @@ bool_t str_equal( const char *s, const char *q, int len ) {
 }
 
 
-bool_t debugFlags::boolAt( const char *name, int len, bool_t *value ) {
+bool_t debugFlags::boolAt( const char *name, std::int32_t len, bool_t *value ) {
     for ( BooleanFlag *current = &booleanDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
             *value = *current->_value;
@@ -107,7 +107,7 @@ bool_t debugFlags::boolAt( const char *name, int len, bool_t *value ) {
 }
 
 
-bool_t debugFlags::boolAtPut( const char *name, int len, bool_t *value ) {
+bool_t debugFlags::boolAtPut( const char *name, std::int32_t len, bool_t *value ) {
 
     if ( str_equal( "m", name, len ) ) {
         TraceOopPrims             = *value;
@@ -144,7 +144,7 @@ bool_t debugFlags::boolAtPut( const char *name, int len, bool_t *value ) {
 }
 
 
-bool_t debugFlags::intAt( const char *name, int len, int *value ) {
+bool_t debugFlags::intAt( const char *name, std::int32_t len, std::int32_t *value ) {
     for ( IntegerFlag *current = &integerDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
             *value = *current->_value;
@@ -155,10 +155,10 @@ bool_t debugFlags::intAt( const char *name, int len, int *value ) {
 }
 
 
-bool_t debugFlags::intAtPut( const char *name, int len, int *value ) {
+bool_t debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *value ) {
     for ( IntegerFlag *current = &integerDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
-            int old_value = *current->_value;
+            std::int32_t old_value = *current->_value;
             *current->_value = *value;
             *value           = old_value;
             return true;

@@ -12,9 +12,9 @@
 
 class BlockScavenge {
 private:
-    static std::size_t counter;
+    static std::int32_t counter;
 public:
-    static std::size_t *counter_addr() {
+    static std::int32_t *counter_addr() {
         return &counter;
     }
 
@@ -38,7 +38,7 @@ public:
 // Lars, please complete this at some point
 class VerifyNoScavenge : public StackAllocatedObject {
 private:
-    int _scavengeCount;
+    std::int32_t _scavengeCount;
 
 public:
     VerifyNoScavenge() {

@@ -68,19 +68,19 @@ void ObjectLayoutClosure::end_indexables() {
 }
 
 
-void ObjectLayoutClosure::do_indexable_oop( int index, Oop *o ) {
+void ObjectLayoutClosure::do_indexable_oop( std::int32_t index, Oop *o ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_byte( int index, std::uint8_t *b ) {
+void ObjectLayoutClosure::do_indexable_byte( std::int32_t index, std::uint8_t *b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_doubleByte( int index, std::uint16_t *b ) {
+void ObjectLayoutClosure::do_indexable_doubleByte( std::int32_t index, std::uint16_t *b ) {
 }
 
 
-void ObjectLayoutClosure::do_indexable_long( int index, std::int32_t *l ) {
+void ObjectLayoutClosure::do_indexable_long( std::int32_t index, std::int32_t *l ) {
 }
 
 
@@ -100,7 +100,7 @@ void FrameClosure::do_frame( Frame *f ) {
 
 // -----------------------------------------------------------------------------
 
-void FrameLayoutClosure::do_stack( int index, Oop *o ) {
+void FrameLayoutClosure::do_stack( std::int32_t index, Oop *o ) {
 }
 
 
@@ -112,7 +112,7 @@ void FrameLayoutClosure::do_receiver( Oop *o ) {
 }
 
 
-void FrameLayoutClosure::do_link( int **fp ) {
+void FrameLayoutClosure::do_link( std::int32_t **fp ) {
 }
 
 

@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 
 class DoubleByteArrayPrimitivesTests : public ::testing::Test {
@@ -68,7 +68,7 @@ as_klass(),
 klass()
 );
 for (
-int index         = 10;
+std::int32_t index         = 10;
 index > 0; index-- )
 ASSERT_EQ( std::uint16_t( 0 ), DoubleByteArrayOop( result )
 ->
@@ -110,9 +110,9 @@ ASSERT_TRUE( result
 ->
 is_mark()
 );
-ASSERT_EQ( ( int )
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::invalid_klass() ),
-( int ) result );
+( std::int32_t ) result );
 }
 
 
@@ -123,9 +123,9 @@ ASSERT_TRUE( result
 ->
 is_mark()
 );
-ASSERT_EQ( ( int )
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::invalid_klass() ),
-( int ) result );
+( std::int32_t ) result );
 }
 
 
@@ -170,7 +170,7 @@ markSymbol( vmSymbols::second_argument_has_wrong_type() ),
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
-std::size_t size   = Universe::new_gen.eden()->free();
+std::int32_t size   = Universe::new_gen.eden()->free();
 Oop result = doubleByteArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->
@@ -186,7 +186,7 @@ as_string();
 
 TEST_F( DoubleByteArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
-std::size_t size   = Universe::old_gen.free();
+std::int32_t size   = Universe::old_gen.free();
 Oop result = doubleByteArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), dByteArrayClass );
 ASSERT_TRUE( result
 ->

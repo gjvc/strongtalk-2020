@@ -20,7 +20,7 @@ public:
 
 
     // Return the Oop size for a doubleValueArrayOop
-    int object_size( int number_of_doubleValues ) const {
+    std::int32_t object_size( std::int32_t number_of_doubleValues ) const {
         return non_indexable_size() + 1 + roundTo( number_of_doubleValues * sizeof( double ), oopSize ) / oopSize;
     }
 
@@ -28,7 +28,7 @@ public:
     // creation operations
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -52,9 +52,9 @@ public:
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 public:
     // accessors
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     bool_t oop_verify( Oop obj );
 
@@ -67,12 +67,12 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return DoubleValueArrayOopDescriptor::header_size();
     }
 
 
-    int oop_size( Oop obj ) const {
+    std::int32_t oop_size( Oop obj ) const {
         return object_size( doubleValueArrayOop( obj )->length() );
     }
 

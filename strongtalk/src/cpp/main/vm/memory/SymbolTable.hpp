@@ -27,9 +27,9 @@
 //  - symbolTableLinks are allocated in blocks to reduce the malloc overhead.
 //
 
-constexpr int symbol_table_size = 20011;
+constexpr std::int32_t symbol_table_size = 20011;
 
-int hash( const char *name, int len );
+std::int32_t hash( const char *name, std::int32_t len );
 
 struct SymbolTableLink {
     // instance variable
@@ -37,7 +37,7 @@ struct SymbolTableLink {
     SymbolTableLink *next;
 
     // memory operations
-    bool_t verify( std::size_t i );
+    bool_t verify( std::int32_t i );
 };
 
 struct SymbolTableEntry {
@@ -80,11 +80,11 @@ struct SymbolTableEntry {
 
 
     // memory operations
-    bool_t verify( std::size_t i );
+    bool_t verify( std::int32_t i );
 
     void deallocate();
 
-    int length();
+    std::int32_t length();
 };
 
 class SymbolTable : public CHeapAllocatedObject {
@@ -99,7 +99,7 @@ public:
     SymbolTable();
 
     // operations
-    SymbolOop lookup( const char *name, int len );
+    SymbolOop lookup( const char *name, std::int32_t len );
 
     // Used in Bootstrap for checking
     bool_t is_present( SymbolOop sym );
@@ -107,12 +107,12 @@ public:
 protected:
     void add_symbol( SymbolOop s ); // Only used by Bootstrap
 
-    SymbolOop basic_add( const char *name, int len, int hashValue );
+    SymbolOop basic_add( const char *name, std::int32_t len, std::int32_t hashValue );
 
-    SymbolOop basic_add( SymbolOop s, int hashValue );
+    SymbolOop basic_add( SymbolOop s, std::int32_t hashValue );
 
 
-    SymbolTableEntry *bucketFor( int hashValue );
+    SymbolTableEntry *bucketFor( std::int32_t hashValue );
 
 
     SymbolTableEntry *firstBucket();

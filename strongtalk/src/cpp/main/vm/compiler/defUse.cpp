@@ -32,7 +32,7 @@ void BasicBlockDefinitionAndUsageTable::print() {
     if ( not info )
         return;        // not built yet
     print_short();
-    for ( std::size_t i = 0; i < info->length(); i++ ) {
+    for ( std::int32_t i = 0; i < info->length(); i++ ) {
         lprintf( "%3ld: ", i );
         info->at( i )->print();
     }

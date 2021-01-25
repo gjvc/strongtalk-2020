@@ -41,7 +41,7 @@ class InlineCacheIterator : public PrintableResourceObject {
 
 public:
     // InlineCache information
-    virtual int number_of_targets() const = 0;
+    virtual std::int32_t number_of_targets() const = 0;
 
     virtual InlineCacheShape shape() const = 0;
 
@@ -63,9 +63,11 @@ public:
     virtual bool_t is_interpreted_ic() const {
         return false;
     }    // is sender interpreted?
+
     virtual bool_t is_compiled_ic() const {
         return false;
     }    // is sender compiled?
+
     virtual bool_t is_super_send() const = 0;            // is super send?
 
     // Iterating through entries
@@ -85,13 +87,13 @@ public:
     virtual NativeMethod *compiled_method() const = 0;    // target NativeMethod; nullptr if interpreted
 
     // methods for direct access to ith element (will set iteration state to i)
-    void goto_elem( std::size_t i );
+    void goto_elem( std::int32_t i );
 
-    MethodOop interpreted_method( std::size_t i );
+    MethodOop interpreted_method( std::int32_t i );
 
-    NativeMethod *compiled_method( std::size_t i );
+    NativeMethod *compiled_method( std::int32_t i );
 
-    KlassOop klass( std::size_t i );
+    KlassOop klass( std::int32_t i );
 
 };
 
@@ -134,7 +136,7 @@ public:
 
 
     // InlineCache information
-    int number_of_targets() const {
+    std::int32_t number_of_targets() const {
         return _iter->number_of_targets();
     }
 
@@ -198,10 +200,10 @@ public:
 private:
     PolymorphicInlineCache *_pic;                  // the PolymorphicInlineCache over which is iterated
     char                   *_pos;                  // the current iterator position
-    enum State _state;                  // current iterator state
-    int        _methodOop_counter;      // remaining no. of methodOop entries
+    enum State             _state;                  // current iterator state
+    std::int32_t                    _methodOop_counter;      // remaining no. of methodOop entries
 
-    std::size_t *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
+    std::int32_t *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
     void computeNextState();
 
 public:
@@ -255,9 +257,9 @@ private:
     CompiledInlineCache            *_ic;
     PolymorphicInlineCacheIterator *_picit;
 
-    int              _number_of_targets;    // the no. of InlineCache entries
+    std::int32_t      _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _shape;                // shape of inline cache
-    std::size_t _index;                // the next entry no.
+    std::int32_t      _index;                // the next entry no.
 
 public:
     CompiledInlineCacheIterator( CompiledInlineCache *ic );
@@ -272,7 +274,7 @@ public:
     bool_t is_super_send() const;
 
 
-    int number_of_targets() const {
+    std::int32_t number_of_targets() const {
         return _number_of_targets;
     }
 

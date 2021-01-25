@@ -44,7 +44,7 @@ contains   ( chunk )
 
 TEST_F( UniverseTests, allocateShouldFailWhenNoSpaceAndScavengeDisallowed
 ) {
-int freeSpace = Universe::new_gen.eden()->free();
+std::int32_t freeSpace = Universe::new_gen.eden()->free();
 Oop *chunk = Universe::allocate( freeSpace / oopSize + 1, nullptr, false );
 ASSERT_EQ( nullptr, ( const char * ) chunk );
 }
@@ -52,7 +52,7 @@ ASSERT_EQ( nullptr, ( const char * ) chunk );
 
 TEST_F( UniverseTests, allocateTenuredShouldFailWhenNoSpaceAndExpansionDisallowed
 ) {
-int freeSpace = Universe::old_gen.free();
+std::int32_t freeSpace = Universe::old_gen.free();
 Oop *chunk = Universe::allocate_tenured( freeSpace / oopSize + 1, false );
 ASSERT_EQ( nullptr, ( const char * ) chunk );
 }

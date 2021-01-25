@@ -35,11 +35,11 @@ public:
 
     void end_indexables();
 
-    void do_indexable_oop( int index, Oop *o );
+    void do_indexable_oop( std::int32_t index, Oop *o );
 
-    void do_indexable_byte( int index, std::uint8_t *b );
+    void do_indexable_byte( std::int32_t index, std::uint8_t *b );
 
-    void do_indexable_doubleByte( int index, std::uint16_t *b );
+    void do_indexable_doubleByte( std::int32_t index, std::uint16_t *b );
 
-    void do_indexable_long( int index, std::int32_t *l );
+    void do_indexable_long( std::int32_t index, std::int32_t *l );
 };

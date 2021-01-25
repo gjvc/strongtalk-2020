@@ -49,7 +49,7 @@ TEST_F( DoubleKlassTests, allocateShouldFailWhenAllowedAndNoSpace
 eden_top = eden_end;
 ASSERT_TRUE( Universe::new_gen
 .eden()->free() < 4 * oopSize );
-ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObject( false ) ) );
+ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObject( false ) ) );
 }
 
 

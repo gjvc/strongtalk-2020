@@ -97,10 +97,10 @@ void NodeBuilder::comment( const char *s ) {
 
 GrowableArray<PseudoRegister *> *NodeBuilder::copyCurrentExprStack() {
 
-    int l = exprStack()->length();
+    std::int32_t l = exprStack()->length();
     auto *es = new GrowableArray<PseudoRegister *>( l );
 
-    for ( std::size_t i = 0; i < l; i++ ) {
+    for ( std::int32_t i = 0; i < l; i++ ) {
         es->push( exprStack()->at( i )->preg() );
     }
 
@@ -133,14 +133,14 @@ bool_t NodeBuilder::abortIfDead( Expression *e ) {
 // the subinterval may have ended dead, leaving current at EndOfCode).
 void NodeBuilder::generate_subinterval( MethodInterval *m, bool_t produces_result ) {
     st_assert( not aborting(), "shouldn't generate when already aborting" );
-    int            savedLen = exprStack()->length();
+    std::int32_t            savedLen = exprStack()->length();
     MethodIterator mi( m, this );
     if ( aborting() ) {
         // the subinterval ended with dead code
         Expression *res = exprStack()->isEmpty() ? nullptr : exprStack()->top();
         st_assert( res == nullptr or res->isNoResultExpression(), "expected no result" );
         un_abort();      // abort will be done by caller (if needed)
-        int diff = exprStack()->length() - savedLen;
+        std::int32_t diff = exprStack()->length() - savedLen;
         if ( produces_result )
             diff--;
         if ( diff > 0 ) {
@@ -166,7 +166,7 @@ void NodeBuilder::generate_subinterval( MethodInterval *m, bool_t produces_resul
 void NodeBuilder::constant_if_node( IfNode *node, ConstantExpression *condition ) {
     // if statement with constant condition
     Oop c                   = condition->constant();
-    int resultByteCodeIndex = node->begin_byteCodeIndex();
+    std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( c == trueObject or c == falseObject ) {
         if ( node->is_ifTrue() == ( c == trueObject ) ) {
             // then branch is always taken
@@ -214,7 +214,7 @@ TypeTestNode *NodeBuilder::makeTestNode( bool_t cond, PseudoRegister *r ) {
 void NodeBuilder::if_node( IfNode *node ) {
 
     Expression *cond = exprStack()->pop();
-    int resultByteCodeIndex = node->begin_byteCodeIndex();
+    std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( abortIfDead( cond ) ) {
         if ( node->produces_result() )
             exprStack()->push( cond, scope(), resultByteCodeIndex );
@@ -303,7 +303,7 @@ void NodeBuilder::if_node( IfNode *node ) {
 
 void NodeBuilder::cond_node( CondNode *node ) {
     Expression *cond = exprStack()->pop();
-    int resultByteCodeIndex = node->begin_byteCodeIndex();
+    std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( abortIfDead( cond ) ) {
         exprStack()->push( cond, scope(), resultByteCodeIndex );
         return;        // condition ends dead, so rest of code does, too
@@ -370,7 +370,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
 
 
 void NodeBuilder::while_node( WhileNode *node ) {
-    int loop_byteCodeIndex = node->body_code() not_eq nullptr ? node->body_code()->begin_byteCodeIndex() : node->expr_code()->begin_byteCodeIndex();
+    std::int32_t loop_byteCodeIndex = node->body_code() not_eq nullptr ? node->body_code()->begin_byteCodeIndex() : node->expr_code()->begin_byteCodeIndex();
     CompiledLoop   *wloop  = _scope->addLoop();
     LoopHeaderNode *header = NodeFactory::createAndRegisterNode<LoopHeaderNode>();
     append( header );
@@ -468,7 +468,7 @@ void NodeBuilder::dll_call_node( DLLCallNode *node ) {
 }
 
 
-void NodeBuilder::allocate_temporaries( int nofTemps ) {
+void NodeBuilder::allocate_temporaries( std::int32_t nofTemps ) {
     MethodOop m = _scope->method();
     st_assert( 1 + nofTemps == m->number_of_stack_temporaries(), "no. of stack variables inconsistent" );
     // temporaries are allocated in the beginning (InlinedScope::createTemporaries)
@@ -490,14 +490,14 @@ void NodeBuilder::push_literal( Oop obj ) {
 }
 
 
-void NodeBuilder::push_argument( int no ) {
+void NodeBuilder::push_argument( std::int32_t no ) {
     // arguments are non-assignable, so no assignment to SinglyAssignedPseudoRegister necessary
     st_assert( ( 0 <= no ) and ( no < _scope->nofArguments() ), "illegal argument no" );
     exprStack()->push( scope()->argument( no ), scope(), scope()->byteCodeIndex() );
 }
 
 
-void NodeBuilder::push_temporary( int no ) {
+void NodeBuilder::push_temporary( std::int32_t no ) {
     // must assign non-parameters to temporary because exprStack entries must be singly-assigned
     // and because source (i.e., temporary location) could be assigned between now and the send
     // that actually consumes the value
@@ -510,12 +510,12 @@ void NodeBuilder::push_temporary( int no ) {
 }
 
 
-void NodeBuilder::access_temporary( int no, int context, bool_t push ) {
+void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool_t push ) {
     // generates code to access temporary no in (logical, i.e., interpreter) context
     // context numbering starts a 0
     st_assert( _scope->allocatesInterpretedContext() == ( _scope->contextInitializer() not_eq nullptr ), "context must exist already if used (find_scope)" );
     st_assert( context >= 0, "context must be >= 0" );
-    int nofIndirections;
+    std::int32_t nofIndirections;
     OutlinedScope *out = nullptr;
     InlinedScope  *s   = _scope->find_scope( context, nofIndirections, out );
     if ( nofIndirections < 0 ) {
@@ -547,7 +547,7 @@ void NodeBuilder::access_temporary( int no, int context, bool_t push ) {
         NameDescriptor *nd = out->scope()->contextTemporary( no );
         Location loc = nd->location();    // location of temp in compiled context
         st_assert( loc.isContextLocation(), "must be in context" );
-        int tempNo = loc.tempNo();        // compiled offset
+        std::int32_t tempNo = loc.tempNo();        // compiled offset
         if ( tempNo not_eq no ) {
             compiler_warning( "first time this happens: compiled context offset not_eq interpreted context offset" );
         }
@@ -566,12 +566,12 @@ void NodeBuilder::access_temporary( int no, int context, bool_t push ) {
 }
 
 
-void NodeBuilder::push_temporary( int no, int context ) {
+void NodeBuilder::push_temporary( std::int32_t no, std::int32_t context ) {
     access_temporary( no, context, true );
 }
 
 
-void NodeBuilder::push_instVar( int offset ) {
+void NodeBuilder::push_instVar( std::int32_t offset ) {
     st_assert( offset >= 0, "offset must be positive" );
     SinglyAssignedPseudoRegister *dst  = new SinglyAssignedPseudoRegister( _scope );
     PseudoRegister               *base = _scope->self()->preg();
@@ -600,7 +600,7 @@ void NodeBuilder::push_global( AssociationOop associationObject ) {
 }
 
 
-void NodeBuilder::store_temporary( int no ) {
+void NodeBuilder::store_temporary( std::int32_t no ) {
     PseudoRegister *src = exprStack()->top()->preg();
     // should check here whether src is memoized block pushed in preceding byte code;
     // if so, un-memoize it  -- fix this
@@ -613,12 +613,12 @@ void NodeBuilder::store_temporary( int no ) {
 }
 
 
-void NodeBuilder::store_temporary( int no, int context ) {
+void NodeBuilder::store_temporary( std::int32_t no, std::int32_t context ) {
     access_temporary( no, context, false );
 }
 
 
-void NodeBuilder::store_instVar( int offset ) {
+void NodeBuilder::store_instVar( std::int32_t offset ) {
     st_assert( offset >= 0, "offset must be positive" );
     Expression     *srcExpression = exprStack()->top();
     PseudoRegister *src           = srcExpression->preg();
@@ -663,18 +663,18 @@ void NodeBuilder::materialize( PseudoRegister *r, GrowableArray<BlockPseudoRegis
         materialized->append( blk );
         GrowableArray<PseudoRegister *> *reads = blk->uplevelRead();
         if ( reads ) {
-            for ( std::size_t i = reads->length() - 1; i >= 0; i-- )
+            for ( std::int32_t i = reads->length() - 1; i >= 0; i-- )
                 materialize( reads->at( i ), materialized );
         }
     }
 }
 
 
-GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *receiver, int nofArgs ) {
+GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *receiver, std::int32_t nofArgs ) {
     // Generate code for argument passing (move all args into the right locations).
     // If the arguments are passed on the stack (including the receiver) they should be assigned in the order of textual appearance.
     // If the receiver is passed in a register that should happen at the end to allow this register to be used as std::int32_t as possible.
-    int                             nofFormals = ( receiver == nullptr ) ? nofArgs : nofArgs + 1;
+    std::int32_t                             nofFormals = ( receiver == nullptr ) ? nofArgs : nofArgs + 1;
     GrowableArray<PseudoRegister *> *formals   = new GrowableArray<PseudoRegister *>( nofFormals );
 
     // setup formal receiver and pass if passed on the stack
@@ -692,9 +692,9 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
     }
 
     // argument range
-    const int first_arg = exprStack()->length() - nofArgs;
-    const int limit_arg = exprStack()->length();
-    int       sp;
+    const std::int32_t first_arg = exprStack()->length() - nofArgs;
+    const std::int32_t limit_arg = exprStack()->length();
+    std::int32_t       sp;
 
     // materialize blocks
     for ( sp = first_arg; sp < limit_arg; sp++ ) {
@@ -724,7 +724,7 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
 }
 
 
-void NodeBuilder::gen_normal_send( SendInfo *info, int nofArgs, SinglyAssignedPseudoRegister *result ) {
+void NodeBuilder::gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( exprStack()->at( exprStack()->length() - nofArgs - 1 )->preg(), nofArgs );
     SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
@@ -733,7 +733,7 @@ void NodeBuilder::gen_normal_send( SendInfo *info, int nofArgs, SinglyAssignedPs
 }
 
 
-void NodeBuilder::gen_self_send( SendInfo *info, int nofArgs, SinglyAssignedPseudoRegister *result ) {
+void NodeBuilder::gen_self_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
     SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
@@ -742,7 +742,7 @@ void NodeBuilder::gen_self_send( SendInfo *info, int nofArgs, SinglyAssignedPseu
 }
 
 
-void NodeBuilder::gen_super_send( SendInfo *info, int nofArgs, SinglyAssignedPseudoRegister *result ) {
+void NodeBuilder::gen_super_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
     SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), true, info );
     append( send );
@@ -752,7 +752,7 @@ void NodeBuilder::gen_super_send( SendInfo *info, int nofArgs, SinglyAssignedPse
 
 
 void NodeBuilder::normal_send( InterpretedInlineCache *ic ) {
-    int nofArgs = ic->selector()->number_of_arguments();
+    std::int32_t nofArgs = ic->selector()->number_of_arguments();
     LookupKey  *key      = LookupKey::allocate( nullptr, ic->selector() );
     Expression *receiver = exprStack()->at( exprStack()->length() - nofArgs - 1 );
     SendInfo   *info     = new SendInfo( _scope, key, receiver );
@@ -764,7 +764,7 @@ void NodeBuilder::normal_send( InterpretedInlineCache *ic ) {
 
 
 void NodeBuilder::self_send( InterpretedInlineCache *ic ) {
-    int nofArgs = ic->selector()->number_of_arguments();
+    std::int32_t nofArgs = ic->selector()->number_of_arguments();
     LookupKey  *key    = LookupKey::allocate( _scope->selfKlass(), ic->selector() );
     SendInfo   *info   = new SendInfo( _scope, key, _scope->self() );
     Expression *result = _inliner->inlineSelfSend( info );
@@ -775,7 +775,7 @@ void NodeBuilder::self_send( InterpretedInlineCache *ic ) {
 
 
 void NodeBuilder::super_send( InterpretedInlineCache *ic ) {
-    int      nofArgs = ic->selector()->number_of_arguments();
+    std::int32_t      nofArgs = ic->selector()->number_of_arguments();
     //LookupKey* key = ic->lookupKey(0);
     KlassOop klass   = _scope->selfKlass()->klass_part()->superKlass();
     LookupKey  *key    = LookupKey::allocate( klass, LookupCache::method_lookup( klass, ic->selector() ) );
@@ -799,7 +799,7 @@ void NodeBuilder::double_not_equal() {
 }
 
 
-void NodeBuilder::method_return( int nofArgs ) {
+void NodeBuilder::method_return( std::int32_t nofArgs ) {
     // assign result & return
     Expression *result = exprStack()->pop();
     if ( _current == EndOfCode ) {
@@ -853,7 +853,7 @@ void NodeBuilder::method_return( int nofArgs ) {
 }
 
 
-void NodeBuilder::nonlocal_return( int nofArgs ) {
+void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
     // assign result & return
     Expression     *resultExpression = exprStack()->pop();
     PseudoRegister *src              = resultExpression->preg();
@@ -879,7 +879,7 @@ void NodeBuilder::nonlocal_return( int nofArgs ) {
 
             // now assign to result register and jump to NonLocalReturn setup code to set up remaining NonLocalReturn regs
             // NB: each scope needs its own setup node because the home fp/id is different
-            int    endByteCodeIndex = scope()->nlrPoint()->byteCodeIndex();
+            std::int32_t    endByteCodeIndex = scope()->nlrPoint()->byteCodeIndex();
             bool_t haveSetupNode    = scope()->nlrPoint()->next() not_eq nullptr;
             st_assert( not haveSetupNode or scope()->nlrPoint()->next()->isNonLocalReturnSetupNode(), "expected setup node" );
             PseudoRegister *res = haveSetupNode ? ( (NonTrivialNode *) scope()->nlrPoint()->next() )->src() : new SinglyAssignedPseudoRegister( scope(), NonLocalReturnResultLoc, true, true, byteCodeIndex(), endByteCodeIndex );
@@ -928,7 +928,7 @@ MergeNode *NodeBuilder::insertMergeBefore( Node *n ) {
 }
 
 
-static std::size_t split_count = 0; // for conditional breakpoints (debugging)
+static std::int32_t split_count = 0; // for conditional breakpoints (debugging)
 
 void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
     // Split MergeExpressions (currently works only for booleans).
@@ -940,7 +940,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
     if ( not exprsToSplit )
         return;
 
-    for ( std::size_t i = exprsToSplit->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = exprsToSplit->length() - 1; i >= 0; i-- ) {
         Expression *e     = exprsToSplit->at( i );
         Node       *start = e->node();
         GrowableArray<NonTrivialNode *> *nodesToCopy = nodesBetween( start, test );
@@ -948,7 +948,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
 
         // find corresponding 'to' node in type test
         KlassOop c = e->asConstantExpression()->klass();
-        int      j = test->classes()->length();
+        std::int32_t      j = test->classes()->length();
         while ( j-- > 0 and test->classes()->at( j ) not_eq c );
         st_assert( j >= 0, "didn't find klass in type test" );
         Node *to = test->next( j + 1 );    // +1 because next(i) is branch for class i-1
@@ -964,7 +964,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
         Node *current = start;
         bool_t found = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
 
-        for ( std::size_t i = 0; i < nodesToCopy->length(); i++ ) {
+        for ( std::int32_t i = 0; i < nodesToCopy->length(); i++ ) {
             NonTrivialNode *orig = nodesToCopy->at( i );
             Node           *copy = orig->copy( nullptr, nullptr );
             if ( CompilerDebug )
@@ -1005,7 +1005,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
     GrowableArray<Expression *> *okExprs   = new GrowableArray<Expression *>( 10 );  // those who are splittable
 
     // collect all paths that look splittable
-    std::size_t i = m->exprs->length() - 1;
+    std::int32_t i = m->exprs->length() - 1;
     for ( ; i >= 0; i-- ) {
         for ( Expression *x = m->exprs->at( i ); x; x = x->next ) {
             Node *start = x->node();
@@ -1030,7 +1030,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
 
     // check that no exprNode is along the path from any other exprNode to the test node
     // this should be #ifdef ASSERT but for now always check to make sure there are no lurking bugs  -Urs 4/27/96
-    for ( std::size_t i = okExprs->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = okExprs->length() - 1; i >= 0; i-- ) {
         Node       *start = okExprs->at( i )->node()->next();
         for ( Node *n     = start; n not_eq (Node *) test; n = n->next() ) {
             if ( exprNodes->contains( n ) ) {
@@ -1038,7 +1038,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
                 m->print();
                 okExprs->at( i )->print();
                 printNodes( okExprs->at( i )->node() );
-                for ( std::size_t j = 0; j < exprNodes->length(); j++ ) {
+                for ( std::int32_t j = 0; j < exprNodes->length(); j++ ) {
                     exprNodes->at( j )->print();
                     lprintf( "\n" );
                 }
@@ -1051,7 +1051,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
 }
 
 
-void NodeBuilder::allocate_closure( AllocationType type, int nofArgs, MethodOop method ) {
+void NodeBuilder::allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop method ) {
     PseudoRegister *context;
     if ( type == AllocationType::tos_as_scope ) {
         context = exprStack()->pop()->preg();
@@ -1077,7 +1077,7 @@ static MethodOopDescriptor::Block_Info incoming_info( MethodOop m ) {
 }
 
 
-void NodeBuilder::allocate_context( int nofTemps, bool_t forMethod ) {
+void NodeBuilder::allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
     _scope->createContextTemporaries( nofTemps );
     st_assert( not scope()->contextInitializer(), "should not already have a contextInitializer" );
     PseudoRegister *parent;    // previous context in the context chain
@@ -1111,7 +1111,7 @@ void NodeBuilder::allocate_context( int nofTemps, bool_t forMethod ) {
     scope()->set_contextInitializer( NodeFactory::createAndRegisterNode<ContextInitNode>( creator ) );
     append( scope()->contextInitializer() );
     ConstantExpression *nil = new ConstantExpression( nilObject, new_ConstPReg( _scope, nilObject ), nullptr );
-    for ( std::size_t i = 0; i < nofTemps; i++ )
+    for ( std::int32_t i = 0; i < nofTemps; i++ )
         scope()->contextInitializer()->initialize( i, nil );
 }
 
@@ -1140,7 +1140,7 @@ void NodeBuilder::set_self_via_context() {
     _scope->set_self_initialized();
 
     // must load self at runtime; first compute home context no
-    int contextNo = _scope->homeContext();
+    std::int32_t contextNo = _scope->homeContext();
     if ( _scope->allocatesInterpretedContext() ) {
         // correct contextNo: the set_self_via_context works on the incoming context
         // -> subtract 1 (homeContext() already counts the context allocated in this
@@ -1154,13 +1154,13 @@ void NodeBuilder::set_self_via_context() {
     // access_temporary relies on the fact that a possible local context is already
     // allocated. Thus, for the time being, explicitly generate
     // the uplevel access node. Note: the incoming context is in the recv location!
-    const int self_no = 0; // self is always the first entry in the top context, if there
+    const std::int32_t self_no = 0; // self is always the first entry in the top context, if there
     PseudoRegister *reg = _scope->self()->preg();
     append( NodeFactory::createAndRegisterNode<LoadUplevelNode>( reg, reg, contextNo, ContextOopDescriptor::temp0_word_offset() + self_no, nullptr ) );
 }
 
 
-Expression *NodeBuilder::copy_into_context( Expression *e, int no ) {
+Expression *NodeBuilder::copy_into_context( Expression *e, std::int32_t no ) {
     if ( e->isBlockExpression() ) {
         // A block must be stored into a context (e.g. it's passed in as an arg and the arg
         // is uplevel-accessed).
@@ -1186,7 +1186,7 @@ Expression *NodeBuilder::copy_into_context( Expression *e, int no ) {
 
 
 void NodeBuilder::copy_self_into_context() {
-    const int self_no = 0; // self is always the first temporary in a context, if there
+    const std::int32_t self_no = 0; // self is always the first temporary in a context, if there
     // caution: must create new expr/preg for self in context because the two locations must be different
     Expression *self_expr_in_context = copy_into_context( scope()->self(), self_no );
     scope()->contextTemporariesAtPut( self_no, self_expr_in_context );
@@ -1194,7 +1194,7 @@ void NodeBuilder::copy_self_into_context() {
 }
 
 
-void NodeBuilder::copy_argument_into_context( int argNo, int no ) {
+void NodeBuilder::copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
     // caution: must create new expr/preg for arg in context because the two locations must be different
     // i.e., arg is on stack, arg in context may be on heap
     Expression *arg_expr_in_context = copy_into_context( scope()->argument( argNo ), no );
@@ -1210,12 +1210,12 @@ void NodeBuilder::zap_scope() {
 }
 
 
-void NodeBuilder::predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+void NodeBuilder::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
     // ignored
 }
 
 
-PseudoRegister *NodeBuilder::float_at( int fno ) {
+PseudoRegister *NodeBuilder::float_at( std::int32_t fno ) {
     if ( UseFPUStack ) {
         if ( fno < scope()->nofFloatTemporaries() ) {
             // fno refers to a float temporary
@@ -1233,7 +1233,7 @@ PseudoRegister *NodeBuilder::float_at( int fno ) {
 }
 
 
-void NodeBuilder::float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+void NodeBuilder::float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
     // nofFloats 64bit floats are allocated and initialized to NaN
     // in the following set of operations float(fno) (fno = float no.)
     // refers to one of these floats within the range [0..nofFloats[.
@@ -1263,13 +1263,13 @@ void NodeBuilder::float_allocate( int nofFloatTemps, int nofFloatExprs ) {
     // float_move         3, 2		; push c
     // float_unaryOpToOop 3, oopify	; push c converted to Oop
     // return_tos				; return tos
-    std::size_t size = nofFloatTemps + nofFloatExprs;
+    std::int32_t size = nofFloatTemps + nofFloatExprs;
     st_assert( size == method()->total_number_of_floats(), "inconsistency" );
     // floatTemporaries are allocated in InlinedScope::genCode()
 }
 
 
-void NodeBuilder::float_floatify( Floats::Function f, int fno ) {
+void NodeBuilder::float_floatify( Floats::Function f, std::int32_t fno ) {
     // top of stack must be a boxed float, it is unboxed and stored at float(fno).
     Expression *t = _expressionStack->pop();
     if ( t->hasKlass() and t->klass() == doubleKlassObject ) {
@@ -1281,20 +1281,20 @@ void NodeBuilder::float_floatify( Floats::Function f, int fno ) {
 }
 
 
-void NodeBuilder::float_move( int to, int from ) {
+void NodeBuilder::float_move( std::int32_t to, std::int32_t from ) {
     // float(to) := float(from)
     append( NodeFactory::createAndRegisterNode<AssignNode>( float_at( from ), float_at( to ) ) );
 }
 
 
-void NodeBuilder::float_set( int to, DoubleOop value ) {
+void NodeBuilder::float_set( std::int32_t to, DoubleOop value ) {
     // float(to) := value
     ConstPseudoRegister *val = new_ConstPReg( _scope, value );
     append( NodeFactory::createAndRegisterNode<AssignNode>( val, float_at( to ) ) );
 }
 
 
-void NodeBuilder::float_nullary( Floats::Function f, int to ) {
+void NodeBuilder::float_nullary( Floats::Function f, std::int32_t to ) {
     // float(to) := f()
     // f refers to one of the functions in Floats
     switch ( f ) {
@@ -1309,7 +1309,7 @@ void NodeBuilder::float_nullary( Floats::Function f, int to ) {
 }
 
 
-void NodeBuilder::float_unary( Floats::Function f, int fno ) {
+void NodeBuilder::float_unary( Floats::Function f, std::int32_t fno ) {
     // float(fno) := f(float(fno))
     // f refers to one of the functions in Floats
     ArithOpCode op;
@@ -1336,7 +1336,7 @@ void NodeBuilder::float_unary( Floats::Function f, int fno ) {
 }
 
 
-void NodeBuilder::float_binary( Floats::Function f, int fno ) {
+void NodeBuilder::float_binary( Floats::Function f, std::int32_t fno ) {
     // float(fno) := f(float(fno), float(fno+1))
     // f refers to one of the functions in Floats
     ArithOpCode op;
@@ -1364,7 +1364,7 @@ void NodeBuilder::float_binary( Floats::Function f, int fno ) {
 }
 
 
-void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
+void NodeBuilder::float_unaryToOop( Floats::Function f, std::int32_t fno ) {
     // push f(float(fno)) on top of (Oop) expression stack, result is an Oop
     // f refers to one of the functions in Floats
     PseudoRegister               *src = float_at( fno );
@@ -1389,7 +1389,7 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, int fno ) {
 }
 
 
-void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
+void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
     // push f(float(fno), float(fno+1)) on top of (Oop) expression stack, result is an Oop
     // f refers to one of the functions in Floats
     Assembler::Condition cc1;
@@ -1414,7 +1414,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, int fno ) {
             break;
         default: st_fatal1( "bad float comparison code %d", f );
     }
-    int                  mask;
+    std::int32_t                  mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc1, mask, cond );
     PseudoRegister               *op1        = float_at( fno );

@@ -19,37 +19,37 @@ class NativeInstruction : ValueObject {
     // Provides the primitive operations to manipulate code relative to this.
 
 protected:
-    char *addr_at( std::size_t offset ) const {
+    char *addr_at( std::int32_t offset ) const {
         return (char *) this + offset;
     }
 
 
-    char char_at( std::size_t offset ) const {
+    char char_at( std::int32_t offset ) const {
         return *addr_at( offset );
     }
 
 
-    std::size_t long_at( std::size_t offset ) const {
-        return *(std::size_t *) addr_at( offset );
+    std::int32_t long_at( std::int32_t offset ) const {
+        return *(std::int32_t *) addr_at( offset );
     }
 
 
-    Oop oop_at( std::size_t offset ) const {
+    Oop oop_at( std::int32_t offset ) const {
         return *(Oop *) addr_at( offset );
     }
 
 
-    void set_char_at( std::size_t offset, char c ) {
+    void set_char_at( std::int32_t offset, char c ) {
         *addr_at( offset ) = c;
     }
 
 
-    void set_long_at( std::size_t offset, std::size_t i ) {
-        *(std::size_t *) addr_at( offset ) = i;
+    void set_long_at( std::int32_t offset, std::int32_t i ) {
+        *(std::int32_t *) addr_at( offset ) = i;
     }
 
 
-    void set_oop_at( std::size_t offset, Oop o ) {
+    void set_oop_at( std::int32_t offset, Oop o ) {
         *(Oop *) addr_at( offset ) = o;
     }
 
@@ -81,7 +81,7 @@ public:
     }
 
 
-    std::size_t displacement() const {
+    std::int32_t displacement() const {
         return long_at( displacement_offset );
     }
 
@@ -161,12 +161,12 @@ public:
     }
 
 
-    std::size_t data() const {
+    std::int32_t data() const {
         return long_at( data_offset );
     }
 
 
-    void set_data( std::size_t x ) {
+    void set_data( std::int32_t x ) {
         set_long_at( data_offset, x );
     }
 
@@ -213,12 +213,12 @@ public:
     }
 
 
-    std::size_t data() const {
+    std::int32_t data() const {
         return long_at( data_offset );
     }
 
 
-    void set_data( std::size_t x ) {
+    void set_data( std::int32_t x ) {
         set_long_at( data_offset, x );
     }
 
@@ -257,12 +257,12 @@ public:
     }
 
 
-    std::size_t flags() const {
+    std::int32_t flags() const {
         return data() & flags_mask;
     }
 
 
-    void set_flags( std::size_t flags ) {
+    void set_flags( std::int32_t flags ) {
         set_data( ( data() & ~flags_mask ) | ( flags & flags_mask ) );
     }
 

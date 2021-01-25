@@ -31,12 +31,12 @@ ChunkKlass *asChunkKlass( std::uint8_t *c ) {
 }
 
 
-void ChunkKlass::markSize( std::size_t nChunks, chunkState s ) {
+void ChunkKlass::markSize( std::int32_t nChunks, chunkState s ) {
     // write header
     std::uint8_t *p = asByte();
     std::uint8_t *e = p + nChunks - 1;
     if ( nChunks < maxOneByteLen ) {
-        p[ 0 ] = e[ 0 ] = static_cast<std::size_t>(s) + nChunks - 1;
+        p[ 0 ] = e[ 0 ] = static_cast<std::int32_t>(s) + nChunks - 1;
     } else {
         st_assert( nChunks < ( 1 << ( 3 * MaxDistLog ) ), "chunk too large" );
         unsigned mask = nthMask( MaxDistLog );
@@ -55,19 +55,19 @@ void ChunkKlass::markSize( std::size_t nChunks, chunkState s ) {
             p[ headerSize() ] = headerSize();
     } else {
         if ( nChunks < maxOneByteLen ) {
-            st_assert( maxOneByteLen <= static_cast<std::size_t>(chunkState::MaxDistance), "oops!" );
-            for ( std::size_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
+            st_assert( maxOneByteLen <= static_cast<std::int32_t>(chunkState::MaxDistance), "oops!" );
+            for ( std::int32_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
                 p[ i ] = i;
         } else {
-            std::size_t max = min( static_cast<std::size_t>(nChunks - 4), static_cast<std::size_t>( chunkState::MaxDistance ) );
-            std::size_t i   = maxHeaderSize;
+            std::int32_t max = min( static_cast<std::int32_t>(nChunks - 4), static_cast<std::int32_t>( chunkState::MaxDistance ) );
+            std::int32_t i   = maxHeaderSize;
             for ( ; i < max; i++ )
                 p[ i ] = i;
             // fill rest with large distance values (don't use chunkState::MaxDistance - 1 because
             // the elems chunkState::MaxDistance..MaxDistance+maxHeaderSize-1 would point *into*
             // the header)
             for ( ; i < nChunks - maxHeaderSize; i++ )
-                p[ i ] = static_cast<std::size_t>( chunkState::MaxDistance ) - maxHeaderSize;
+                p[ i ] = static_cast<std::int32_t>( chunkState::MaxDistance ) - maxHeaderSize;
         }
     }
 }
@@ -115,7 +115,7 @@ bool_t ChunkKlass::isValid() {
         ok = false;
     } else {
         std::uint8_t *e = next()->asByte() - 1;
-        std::size_t ovfl = isUsed() ? static_cast<std::size_t>( chunkState::usedOvfl ) : static_cast<std::size_t>( chunkState::unusedOvfl );
+        std::int32_t ovfl = isUsed() ? static_cast<std::int32_t>( chunkState::usedOvfl ) : static_cast<std::int32_t>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
     return ok;
@@ -157,8 +157,8 @@ HeapChunk *FreeList::get() {
 }
 
 
-std::size_t FreeList::length() const {
-    std::size_t i = 0;
+std::int32_t FreeList::length() const {
+    std::int32_t i = 0;
     HeapChunk       *f = anchor();
     for ( HeapChunk *p = f->next(); p not_eq f; p = p->next() )
         i++;
@@ -166,7 +166,7 @@ std::size_t FreeList::length() const {
 }
 
 
-ZoneHeap::ZoneHeap( std::size_t s, std::size_t bs ) {
+ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) {
 
     st_assert( s % bs == 0, "size not a multiple of blockSize" );
     size = s;
@@ -183,8 +183,8 @@ ZoneHeap::ZoneHeap( std::size_t s, std::size_t bs ) {
     nfree = 30;
 //    _base = AllocateHeap( size + blockSize, "zone" );
     _base = os::exec_memory( size + blockSize ); //, "zone");
-    base  = (const char *) ( ( std::size_t( _base ) + blockSize - 1 ) / blockSize * blockSize );
-    st_assert( std::size_t( base ) % blockSize == 0, "base not aligned to blockSize" );
+    base  = (const char *) ( ( std::int32_t( _base ) + blockSize - 1 ) / blockSize * blockSize );
+    st_assert( std::int32_t( base ) % blockSize == 0, "base not aligned to blockSize" );
     _heapKlass = (ChunkKlass *) ( AllocateHeap( mapSize() + 2, "zone free map" ) + 1 );
     // + 2 for sentinels
     _freeList  = new_c_heap_array<FreeList>( nfree );
@@ -201,7 +201,7 @@ void ZoneHeap::clear() {
     _ifrag     = 0;
 
     // initialize the free lists
-    for ( std::size_t i = 0; i < nfree; i++ ) {
+    for ( std::int32_t i = 0; i < nfree; i++ ) {
         _freeList[ i ].clear();
     }
     _bigList->clear();
@@ -247,7 +247,7 @@ void ZoneHeap::removeFromFreeList( ChunkKlass *m ) {
 bool_t ZoneHeap::addToFreeList( ChunkKlass *m ) {
     m->verify();
     HeapChunk *p = (HeapChunk *) blockAddr( m );
-    std::size_t sz = m->size();
+    std::int32_t sz = m->size();
     if ( sz <= nfree ) {
         _freeList[ sz - 1 ].append( p );
         return false;
@@ -259,11 +259,11 @@ bool_t ZoneHeap::addToFreeList( ChunkKlass *m ) {
 }
 
 
-void *ZoneHeap::allocFromLists( std::size_t wantedBytes ) {
+void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
     st_assert( wantedBytes % blockSize == 0, "not a multiple of blockSize" );
-    std::size_t wantedBlocks = wantedBytes >> log2BS;
+    std::int32_t wantedBlocks = wantedBytes >> log2BS;
     st_assert( wantedBlocks > 0, "negative alloc size" );
-    std::size_t blocks = wantedBlocks - 1;
+    std::int32_t blocks = wantedBlocks - 1;
     void *p = nullptr;
     while ( not p and ++blocks <= nfree ) {
         p = _freeList[ blocks - 1 ].get();
@@ -289,7 +289,7 @@ void *ZoneHeap::allocFromLists( std::size_t wantedBytes ) {
 //#ifdef LOG_LOTSA_STUFF
             if ( not bootstrappingInProgress ) LOG_EVENT( "zoneHeap: splitting allocated block" );
 //#endif
-            std::size_t freeChunkSize = blocks - wantedBlocks;
+            std::int32_t freeChunkSize = blocks - wantedBlocks;
             ChunkKlass *freeChunk = m->next();
             freeChunk->markUnused( freeChunkSize );
             addToFreeList( freeChunk );
@@ -299,9 +299,9 @@ void *ZoneHeap::allocFromLists( std::size_t wantedBytes ) {
 }
 
 
-void *ZoneHeap::allocate( std::size_t wantedBytes ) {
+void *ZoneHeap::allocate( std::int32_t wantedBytes ) {
     st_assert( wantedBytes > 0, "Heap::allocate: size <= 0" );
-    std::size_t rounded = ( ( wantedBytes + blockSize - 1 ) >> log2BS ) << log2BS;
+    std::int32_t rounded = ( ( wantedBytes + blockSize - 1 ) >> log2BS ) << log2BS;
 
     void *p = allocFromLists( rounded );
     if ( p ) {
@@ -316,10 +316,10 @@ void *ZoneHeap::allocate( std::size_t wantedBytes ) {
 }
 
 
-void ZoneHeap::deallocate( void *p, std::size_t bytes ) {
+void ZoneHeap::deallocate( void *p, std::int32_t bytes ) {
     ChunkKlass *m = mapAddr( p );
-    std::size_t myChunkSize  = m->size();
-    std::size_t blockedBytes = myChunkSize << log2BS;
+    std::int32_t myChunkSize  = m->size();
+    std::int32_t blockedBytes = myChunkSize << log2BS;
     _bytesUsed -= blockedBytes;
     _ifrag -= blockedBytes - bytes;
     m->markUnused( myChunkSize );
@@ -337,7 +337,7 @@ void ZoneHeap::deallocate( void *p, std::size_t bytes ) {
 #define INC( p, n )   p = asChunkKlass(p->asByte() + n)
 
 
-const char *ZoneHeap::compact( void move( const char *from, char *to, std::size_t nbytes ) ) {
+const char *ZoneHeap::compact( void move( const char *from, char *to, std::int32_t nbytes ) ) {
 
     if ( usedBytes() == capacity() )
         return nullptr;
@@ -356,7 +356,7 @@ const char *ZoneHeap::compact( void move( const char *from, char *to, std::size_
             usedChunk = usedChunk->next();
         if ( usedChunk == end )
             break;
-        std::size_t uSize = usedChunk->size();
+        std::int32_t uSize = usedChunk->size();
         st_assert( freeChunk < usedChunk, "compaction bug" );
         move( blockAddr( usedChunk ), const_cast<char *>( blockAddr( freeChunk ) ), uSize << log2BS );
         freeChunk->markUsed( uSize );      // must come *after* move
@@ -364,11 +364,11 @@ const char *ZoneHeap::compact( void move( const char *from, char *to, std::size_
         INC( usedChunk, uSize );
     }
 
-    for ( std::size_t i = 0; i < nfree; i++ )
+    for ( std::int32_t i = 0; i < nfree; i++ )
         _freeList[ i ].clear();
 
     _bigList->clear();
-    std::size_t freeBlocks = end->asByte() - freeChunk->asByte();
+    std::int32_t freeBlocks = end->asByte() - freeChunk->asByte();
     freeChunk->markUnused( freeBlocks );
     addToFreeList( freeChunk );
     st_assert( freeBlocks * blockSize == capacity() - usedBytes(), "usage info inconsistent" );
@@ -378,7 +378,7 @@ const char *ZoneHeap::compact( void move( const char *from, char *to, std::size_
 }
 
 
-std::size_t ZoneHeap::combine( HeapChunk *&c ) {
+std::int32_t ZoneHeap::combine( HeapChunk *&c ) {
     // Try to combine c with its neighbors; on return, c will point to
     // the next element in the freeList, and the return value will indicate
     // the size of the combined block.
@@ -423,13 +423,13 @@ std::size_t ZoneHeap::combine( HeapChunk *&c ) {
 
 
 // Try to combine adjacent free chunks; return size of biggest chunk (in blks).
-std::size_t ZoneHeap::combineAll() {
-    std::size_t       biggest      = 0;
-    for ( std::size_t i            = 0; i < nfree; i++ ) {
+std::int32_t ZoneHeap::combineAll() {
+    std::int32_t       biggest      = 0;
+    for ( std::int32_t i            = 0; i < nfree; i++ ) {
         HeapChunk       *f = _freeList[ i ].anchor();
         for ( HeapChunk *c = f->next(); c not_eq f; ) {
             HeapChunk *c1 = c;
-            std::size_t sz = combine( c );
+            std::int32_t sz = combine( c );
             if ( c1 == c ) st_fatal( "infinite loop detected while combining blocks" );
             if ( sz > biggest )
                 biggest = sz;
@@ -491,7 +491,7 @@ const void *ZoneHeap::nextUsed( const void *p ) const {
     } else {
         const void *next = blockAddr( m );
         st_assert( next > p, "must be monotonic" );
-        st_assert( not( std::size_t( next ) & 1 ), "must be even" );
+        st_assert( not( std::int32_t( next ) & 1 ), "must be even" );
         return next;
     }
 }
@@ -502,15 +502,15 @@ const void *ZoneHeap::findStartOfBlock( const void *start ) const {
     if ( _newHeap and _newHeap->contains( start ) )
         return _newHeap->findStartOfBlock( start );
 
-    const std::size_t blockSz = blockSize;
-    start = (void *) ( std::size_t( start ) & ~( blockSz - 1 ) );
+    const std::int32_t blockSz = blockSize;
+    start = (void *) ( std::int32_t( start ) & ~( blockSz - 1 ) );
     st_assert( contains( start ), "start not in this zone" );
     ChunkKlass *m = mapAddr( start )->findStart( _heapKlass, heapEnd() );
     return blockAddr( m );
 }
 
 
-std::size_t ZoneHeap::sizeOfBlock( void *p ) const {
+std::int32_t ZoneHeap::sizeOfBlock( void *p ) const {
     return mapAddr( p )->size() << log2BS;
 }
 
@@ -532,10 +532,10 @@ void ZoneHeap::verify() const {
     }
 
     // verify free lists
-    std::size_t i = 0;
+    std::int32_t i = 0;
     for ( ; i < nfree; i++ ) {
-        std::size_t j        = 0;
-        std::size_t lastSize = 0;
+        std::int32_t j        = 0;
+        std::int32_t lastSize = 0;
         HeapChunk       *f = _freeList[ i ].anchor();
         for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
             ChunkKlass *p = mapAddr( h );
@@ -554,7 +554,7 @@ void ZoneHeap::verify() const {
             }
         }
     }
-    std::size_t j = 0;
+    std::int32_t j = 0;
     HeapChunk       *f = _bigList->anchor();
     for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
         ChunkKlass *p = mapAddr( h );
@@ -578,7 +578,7 @@ void ZoneHeap::print() const {
     lprintf( "  grand total allocs = %ld bytes\n", _total );
     printIndent();
     lprintf( "  free lists: " );
-    for ( std::size_t i = 0; i < nfree; i++ )
+    for ( std::int32_t i = 0; i < nfree; i++ )
         lprintf( "%ld ", _freeList[ i ].length() );
     lprintf( "; %ld\n", _bigList->length() );
 }

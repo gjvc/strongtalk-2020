@@ -31,7 +31,7 @@ void PerformanceDebugger::start_report() {
 void PerformanceDebugger::stop_report() {
     char *report = _stringStream->as_string();
 
-    for ( std::size_t i = _reports->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _reports->length() - 1; i >= 0; i-- ) {
         if ( strcmp( _reports->at( i ), report ) == 0 )
             return;  // already printed identical msg
     }
@@ -72,8 +72,8 @@ void PerformanceDebugger::finish_reporting() {
     if ( DebugPerformance and _notInlinedBecauseNativeMethodTooBig ) {
         Reporter r( this );
         _stringStream->print( "  did not inline the following sends because the NativeMethod was getting too big:" );
-        int len = _notInlinedBecauseNativeMethodTooBig->length();
-        std::size_t i   = 0;
+        std::int32_t len = _notInlinedBecauseNativeMethodTooBig->length();
+        std::int32_t i   = 0;
         for ( ; i < min( 9, len ); i++ ) {
             if ( i % 3 == 0 )
                 _stringStream->print_cr( "" );
@@ -92,9 +92,9 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
         return;
     Reporter                    r( this );
     GrowableArray<Expression *> *temps = s->contextTemporaries();
-    const int                   len    = temps->length();
-    int                         nused  = 0;
-    for ( int                   i      = 0; i < len; i++ ) {
+    const std::int32_t                   len    = temps->length();
+    std::int32_t                         nused  = 0;
+    for ( std::int32_t                   i      = 0; i < len; i++ ) {
         PseudoRegister *r = temps->at( i )->preg();
         if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPseudoRegister() and not r->isUnused() ) )
             nused++;
@@ -103,7 +103,7 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
         _stringStream->print( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->print_string() );
     } else {
         _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->print_string() );
-        for ( std::size_t j = 0; j < len; j++ ) {
+        for ( std::int32_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->preg();
             if ( r->uplevelR() or r->uplevelW() ) {
                 _stringStream->print( "%d ", j );

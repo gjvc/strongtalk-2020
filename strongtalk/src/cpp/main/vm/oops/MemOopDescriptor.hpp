@@ -34,18 +34,18 @@ protected:
 
 public:
     // returns the header size of a MemOop
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( MemOopDescriptor ) / oopSize;
     }
 
 
     // field offsets for code generation
-    static std::size_t mark_byte_offset() {
+    static std::int32_t mark_byte_offset() {
         return ( 0 * oopSize ) - MEMOOP_TAG;
     }
 
 
-    static std::size_t klass_byte_offset() {
+    static std::int32_t klass_byte_offset() {
         return ( 1 * oopSize ) - MEMOOP_TAG;
     }
 
@@ -165,21 +165,21 @@ public:
     void scavenge_header();
 
     // scavenge the body [begin..[end
-    void scavenge_body( int begin, int end );
+    void scavenge_body( std::int32_t begin, std::int32_t end );
 
 
     void scavenge_tenured_header() {
     }
 
 
-    void scavenge_tenured_body( int begin, int end );
+    void scavenge_tenured_body( std::int32_t begin, std::int32_t end );
 
     // Scavenge all pointers in this object and return the Oop size
-    int scavenge_contents();
+    std::int32_t scavenge_contents();
 
     // Scavenge all pointers in this object and return the Oop size
     // has_new_pointers reports if the object has pointers to new Space.
-    int scavenge_tenured_contents();
+    std::int32_t scavenge_tenured_contents();
 
     // Copy this object to survivor Space and return the new address
     // (called by scavenge)
@@ -188,22 +188,22 @@ public:
     // MarkSweep support
     void follow_header();
 
-    void follow_body( int begin, int end );
+    void follow_body( std::int32_t begin, std::int32_t end );
 
     // support for iterating through all oops of an object (see oop_oop_iterate).
     void oop_iterate_header( OopClosure *blk );
 
-    void oop_iterate_body( OopClosure *blk, int begin, int end );
+    void oop_iterate_body( OopClosure *blk, std::int32_t begin, std::int32_t end );
 
     // support for iterate the layout of an object (see oop_layout_iterate).
     void layout_iterate_header( ObjectLayoutClosure *blk );
 
-    void layout_iterate_body( ObjectLayoutClosure *blk, int begin, int end );
+    void layout_iterate_body( ObjectLayoutClosure *blk, std::int32_t begin, std::int32_t end );
 
     // support for initializing objects (see allocateObject[Size]).
     void initialize_header( bool_t has_untagged, KlassOop klass );
 
-    void initialize_body( int begin, int end );
+    void initialize_body( std::int32_t begin, std::int32_t end );
 
     bool_t verify();
 
@@ -234,27 +234,27 @@ public:
 
     // GC operations (see discussion in Universe.cpp for rationale)
     void gc_store_size();            // Store object size in age field and remembered set
-    int gc_retrieve_size();          // Retrieve object size from age field and remembered set
+    std::int32_t gc_retrieve_size();          // Retrieve object size from age field and remembered set
 
     // accessors
-    Oop *oops( int which = 0 ) {
+    Oop *oops( std::int32_t which = 0 ) {
         return &( (Oop *) addr() )[ which ];
     }
 
 
-    Oop raw_at( int which ) {
+    Oop raw_at( std::int32_t which ) {
         return *oops( which );
     }
 
 
-    void raw_at_put( int which, Oop contents, bool_t cs = true );
+    void raw_at_put( std::int32_t which, Oop contents, bool_t cs = true );
 
     // accessing instance variables
-    bool_t is_within_instVar_bounds( int index );
+    bool_t is_within_instVar_bounds( std::int32_t index );
 
-    Oop instVarAt( int index );
+    Oop instVarAt( std::int32_t index );
 
-    Oop instVarAtPut( int index, Oop value );
+    Oop instVarAtPut( std::int32_t index, Oop value );
 
     // iterators
     void oop_iterate( OopClosure *blk );
@@ -262,7 +262,7 @@ public:
     void layout_iterate( ObjectLayoutClosure *blk );
 
     // Returns the Oop size of this object
-    std::size_t size() const;
+    std::int32_t size() const;
 
     // printing operation
     void print_id_on( ConsoleOutputStream *stream );
@@ -274,7 +274,7 @@ public:
 
     void bootstrap_header( Bootstrap *stream );
 
-    void bootstrap_body( Bootstrap *stream, int h_size );
+    void bootstrap_body( Bootstrap *stream, std::int32_t h_size );
 
     friend class MemOopKlass;
 };

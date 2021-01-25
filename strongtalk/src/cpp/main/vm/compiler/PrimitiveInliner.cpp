@@ -33,9 +33,9 @@ void PrimitiveInliner::assert_receiver() {
 }
 
 
-int PrimitiveInliner::log2( int x ) const {
-    std::size_t i = -1;
-    int         p = 1;
+std::int32_t PrimitiveInliner::log2( std::int32_t x ) const {
+    std::int32_t i = -1;
+    std::int32_t         p = 1;
     while ( p not_eq 0 and p <= x ) {
         // p = 2^(i+1) and p <= x (i.e., 2^(i+1) <= x)
         i++;
@@ -61,7 +61,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
         }
     }
     // get parameters
-    std::size_t i     = number_of_parameters();
+    std::int32_t i     = number_of_parameters();
     Oop         *args = new_resource_array<Oop>( i );
     while ( i > 0 ) {
         i--;
@@ -103,9 +103,9 @@ Expression *PrimitiveInliner::tryTypeCheck() {
     //
     // Should extend code to do general type compatibility test (including MergeExprs, e.g. for booleans) -- fix this later.  -Urs 11/95
 
-    int num = number_of_parameters();
+    std::int32_t num = number_of_parameters();
 
-    for ( std::size_t i = 0; i < num; i++ ) {
+    for ( std::int32_t i = 0; i < num; i++ ) {
         Expression *a = parameter( i );
         if ( a->hasKlass() ) {
             Expression *primArgType = _primitiveDescriptor->parameter_klass( i, a->preg(), nullptr );
@@ -120,7 +120,7 @@ Expression *PrimitiveInliner::tryTypeCheck() {
 }
 
 
-SymbolOop PrimitiveInliner::failureSymbolForArg( std::size_t i ) {
+SymbolOop PrimitiveInliner::failureSymbolForArg( std::int32_t i ) {
     st_assert( i >= 0 and i < number_of_parameters(), "bad index" );
     switch ( i ) {
         case 0:
@@ -155,7 +155,7 @@ SymbolOop PrimitiveInliner::failureSymbolForArg( std::size_t i ) {
 // block and the remaining method interval (without the assignment).
 class AssignmentFinder : public SpecializedMethodClosure {
 public:
-    int            tempNo;    // the temporary to which the assignment took place
+    std::int32_t            tempNo;    // the temporary to which the assignment took place
     MethodInterval *block;    // the block over which to iterate
     MethodInterval *interval;    // the rest of the block without the assignment
 
@@ -172,7 +172,7 @@ public:
     }
 
 
-    void store_temporary( int no ) {
+    void store_temporary( std::int32_t no ) {
         tempNo   = no;
         interval = MethodIterator::factory->new_MethodInterval( method(), nullptr, next_byteCodeIndex(), block->end_byteCodeIndex() );
     }
@@ -440,7 +440,7 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
 Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
     if ( y->preg()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
-        int d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
+        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with shift
             ConstPseudoRegister *preg = new_ConstPReg( _scope, smiOopFromValue( -log2( d ) ) );
@@ -455,7 +455,7 @@ Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
 Expression *PrimitiveInliner::smi_Mod( Expression *x, Expression *y ) {
     if ( y->preg()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
-        int d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
+        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with mask
             ConstPseudoRegister *preg = new_ConstPReg( _scope, smiOopFromValue( d - 1 ) );
@@ -592,7 +592,7 @@ Expression *PrimitiveInliner::array_size() {
     // parameters & result registers
     Expression *array  = parameter( 0 );
     Klass      *klass  = array->klass()->klass_part();
-    int        lenOffs = klass->non_indexable_size();
+    std::int32_t        lenOffs = klass->non_indexable_size();
 
     // get size
     SinglyAssignedPseudoRegister *res = new SinglyAssignedPseudoRegister( _scope );
@@ -611,8 +611,8 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
     SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
     Klass                        *klass   = array->klass()->klass_part();
-    int                          lenOffs  = klass->non_indexable_size();
-    int                          arrOffs  = lenOffs + 1;
+    std::int32_t                          lenOffs  = klass->non_indexable_size();
+    std::int32_t                          arrOffs  = lenOffs + 1;
 
     // at node
     ArrayAtNode *at = NodeFactory::createAndRegisterNode<ArrayAtNode>( access_type, array->preg(), index->preg(), index->is_smi(), resPReg, errPReg, arrOffs, lenOffs );
@@ -660,8 +660,8 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
     SinglyAssignedPseudoRegister *resPReg   = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
     SinglyAssignedPseudoRegister *errPReg   = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
     Klass                        *klass     = array->klass()->klass_part();
-    int                          lenOffs    = klass->non_indexable_size();
-    int                          arrOffs    = lenOffs + 1;
+    std::int32_t                          lenOffs    = klass->non_indexable_size();
+    std::int32_t                          arrOffs    = lenOffs + 1;
     bool_t                       storeCheck = ( access_type == ArrayAtPutNode::object_at_put ) and element->needsStoreCheck();
 
     if ( access_type == ArrayAtPutNode::object_at_put ) {
@@ -699,11 +699,11 @@ Expression *PrimitiveInliner::obj_new() {
     Klass *klass = KlassOop( receiver->constant() )->klass_part();    // class being instantiated
     if ( klass->oop_is_indexable() )
         return nullptr;            // would fail (extremely unlikely)
-    int        size = klass->non_indexable_size();            // size in words
+    std::int32_t        size = klass->non_indexable_size();            // size in words
 
     if ( klass->can_inline_allocation() ) {
         // These special compiler primitives only work for MemOop klasses
-        int number_of_instance_variables = size - MemOopDescriptor::header_size();
+        std::int32_t number_of_instance_variables = size - MemOopDescriptor::header_size();
         switch ( number_of_instance_variables ) {
             case 0:
                 _primitiveDescriptor = Primitives::new0();
@@ -1089,8 +1089,8 @@ PrimitiveInliner::PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc
     _usingUncommonTrap = false;
 
     // get parameters
-    std::size_t i     = number_of_parameters();
-    int         first = _expressionStack->length() - i;
+    std::int32_t i     = number_of_parameters();
+    std::int32_t         first = _expressionStack->length() - i;
     while ( i-- > 0 ) {
         _params->at_put( i, _expressionStack->at( first + i ) );
     }

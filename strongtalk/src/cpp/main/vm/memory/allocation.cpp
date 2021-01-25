@@ -27,7 +27,7 @@ void PrintableStackAllocatedObject::print_short() {
 }
 
 
-void *CHeapAllocatedObject::operator new( std::size_t size ) {
+void *CHeapAllocatedObject::operator new( std::int32_t size ) {
     return (void *) AllocateHeap( size, "operator-new" );
 }
 
@@ -41,7 +41,7 @@ void CHeapAllocatedObject::operator delete( void *p ) {
 
 // -----------------------------------------------------------------------------
 
-void *StackAllocatedObject::operator new( std::size_t size ) {
+void *StackAllocatedObject::operator new( std::int32_t size ) {
     ShouldNotCallThis();
     return nullptr;
 }
@@ -54,7 +54,7 @@ void StackAllocatedObject::operator delete( void *p ) {
 
 // -----------------------------------------------------------------------------
 
-void *ValueObject::operator new( std::size_t size ) throw() {
+void *ValueObject::operator new( std::int32_t size ) throw() {
     ShouldNotCallThis();
     return nullptr;
 }

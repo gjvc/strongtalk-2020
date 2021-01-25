@@ -32,20 +32,20 @@ bool_t patch_uncommon_call( Frame *f ) {
     //  from: call _unused_uncommon_trap
     //  to:   call _used_uncommon_trap
 
-    int *next_inst = (int *) f->pc();
-    int *dest_addr = next_inst - 1;
-    int dest       = *dest_addr + (int) next_inst;
+    std::int32_t *next_inst = (std::int32_t *) f->pc();
+    std::int32_t *dest_addr = next_inst - 1;
+    std::int32_t dest       = *dest_addr + (std::int32_t) next_inst;
 
     // return true if the call has been executed before
-    if ( dest == (int) StubRoutines::used_uncommon_trap_entry() )
+    if ( dest == (std::int32_t) StubRoutines::used_uncommon_trap_entry() )
         return true;
 
-    st_assert( dest == (int) StubRoutines::unused_uncommon_trap_entry(), "Make sure we are patching the right call" );
+    st_assert( dest == (std::int32_t) StubRoutines::unused_uncommon_trap_entry(), "Make sure we are patching the right call" );
 
     // patch with used_uncommon_trap
-    *dest_addr = ( (int) StubRoutines::used_uncommon_trap_entry() ) - ( (int) next_inst );
+    *dest_addr = ( (std::int32_t) StubRoutines::used_uncommon_trap_entry() ) - ( (std::int32_t) next_inst );
 
-    st_assert( *dest_addr + (int) next_inst == (int) StubRoutines::used_uncommon_trap_entry(), "Check the patch" );
+    st_assert( *dest_addr + (std::int32_t) next_inst == (std::int32_t) StubRoutines::used_uncommon_trap_entry(), "Check the patch" );
 
     // return false since the call is patched
     return false;
@@ -178,7 +178,7 @@ void uncommon_trap() {
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<std::size_t>( Assembler::Constants::sizeOfCall ) );
+            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )
@@ -220,12 +220,12 @@ void uncommon_trap() {
 
             while ( not done ) {
                 done = true;
-                for ( std::size_t i = 0; i < elements->length() and done; i++ ) {
+                for ( std::int32_t i = 0; i < elements->length() and done; i++ ) {
                     FrameAndContextElement *e = elements->at( i );
                     if ( e and e->_context->unoptimized_context() ) {
                         process->deoptimize_stretch( &e->_frame, &e->_frame );
 
-                        for ( std::size_t j = 0; j < elements->length(); j++ ) {
+                        for ( std::int32_t j = 0; j < elements->length(); j++ ) {
                             if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() )
                                 elements->at_put( j, nullptr );
                         }

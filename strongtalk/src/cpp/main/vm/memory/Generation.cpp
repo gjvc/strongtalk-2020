@@ -37,8 +37,8 @@ void NewGeneration::swap_spaces() {
 }
 
 
-void NewGeneration::initialize( ReservedSpace rs, int eden_size, int surv_size ) {
-    int new_size = eden_size + surv_size + surv_size;
+void NewGeneration::initialize( ReservedSpace rs, std::int32_t eden_size, std::int32_t surv_size ) {
+    std::int32_t new_size = eden_size + surv_size + surv_size;
 
     _virtualSpace.initialize( rs, rs.size() );
 
@@ -86,17 +86,17 @@ Oop *NewGeneration::object_start( Oop *p ) {
 }
 
 
-int NewGeneration::capacity() {
+std::int32_t NewGeneration::capacity() {
     return eden()->capacity() + from()->capacity() + to()->capacity();
 }
 
 
-int NewGeneration::used() {
+std::int32_t NewGeneration::used() {
     return eden()->used() + from()->used() + to()->used();
 }
 
 
-int NewGeneration::free() {
+std::int32_t NewGeneration::free() {
     return eden()->free() + from()->free() + to()->free();
 }
 
@@ -145,7 +145,7 @@ void NewGeneration::verify() {
   for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace )
 
 
-void OldGeneration::initialize( ReservedSpace rs, int initial_size ) {
+void OldGeneration::initialize( ReservedSpace rs, std::int32_t initial_size ) {
 
     _virtualSpace.initialize( rs, initial_size );
 
@@ -166,22 +166,22 @@ bool_t OldGeneration::contains( void *p ) {
 }
 
 
-int OldGeneration::capacity() {
-    int sum = 0;
+std::int32_t OldGeneration::capacity() {
+    std::int32_t sum = 0;
     FOR_EACH_OLD_SPACE( s )sum += s->capacity();
     return sum;
 }
 
 
-int OldGeneration::used() {
-    int sum = 0;
+std::int32_t OldGeneration::used() {
+    std::int32_t sum = 0;
     FOR_EACH_OLD_SPACE( s )sum += s->used();
     return sum;
 }
 
 
-int OldGeneration::free() {
-    int sum = 0;
+std::int32_t OldGeneration::free() {
+    std::int32_t sum = 0;
     FOR_EACH_OLD_SPACE( s )sum += s->free();
     return sum;
 }
@@ -201,12 +201,12 @@ void OldGeneration::switch_pointers( Oop from, Oop to ) {
 }
 
 
-int OldGeneration::expand( std::size_t size ) {
+std::int32_t OldGeneration::expand( std::int32_t size ) {
     return _currentSpace->expand( size );
 }
 
 
-int OldGeneration::shrink( std::size_t size ) {
+std::int32_t OldGeneration::shrink( std::int32_t size ) {
     return _currentSpace->shrink( size );
 }
 
@@ -230,13 +230,13 @@ void OldGeneration::append_space( OldSpace *last ) {
 }
 
 
-Oop *OldGeneration::allocate_in_next_space( std::size_t size ) {
+Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     // Scavenge breaks the there is more than one old Space chunks
     // Fix this with VirtualSpace
     // 4/5/96 Lars
     warning( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
-        int space_size = _currentSpace->capacity();
+        std::int32_t space_size = _currentSpace->capacity();
         OldSpace *s = new OldSpace( "old", space_size );
 
         if ( (const char *) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
@@ -274,8 +274,8 @@ void OldGeneration::print_remembered_set() {
 }
 
 
-int OldGeneration::number_of_dirty_pages() {
-    int count = 0;
+std::int32_t OldGeneration::number_of_dirty_pages() {
+    std::int32_t count = 0;
     FOR_EACH_OLD_SPACE( s ) {
         count += Universe::remembered_set->number_of_dirty_pages_in( s );
     }
@@ -283,8 +283,8 @@ int OldGeneration::number_of_dirty_pages() {
 }
 
 
-int OldGeneration::number_of_pages_with_dirty_objects() {
-    int count = 0;
+std::int32_t OldGeneration::number_of_pages_with_dirty_objects() {
+    std::int32_t count = 0;
     FOR_EACH_OLD_SPACE( s ) {
         count += Universe::remembered_set->number_of_pages_with_dirty_objects_in( s );
     }
@@ -307,7 +307,7 @@ void OldGeneration::object_iterate_from( OldWaterMark *mark, ObjectClosure *blk 
 
 
 void OldGeneration::verify() {
-    int n = 0;
+    std::int32_t n = 0;
     OldSpace *p;
     FOR_EACH_OLD_SPACE( s ) {
         n++;
@@ -319,7 +319,7 @@ void OldGeneration::verify() {
 }
 
 
-static std::size_t addr_cmp( OldSpace **s1, OldSpace **s2 ) {
+static std::int32_t addr_cmp( OldSpace **s1, OldSpace **s2 ) {
     const char *s1start = (const char *) ( *s1 )->bottom();
     const char *s2start = (const char *) ( *s2 )->bottom();
     if ( s1start < s2start )

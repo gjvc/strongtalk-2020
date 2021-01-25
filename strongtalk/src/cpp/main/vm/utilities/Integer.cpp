@@ -11,36 +11,36 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-std::size_t Integer::length() const {
+std::int32_t Integer::length() const {
     return abs( _signed_length );
 }
 
 
-std::size_t Integer::length_in_bits() const {
+std::int32_t Integer::length_in_bits() const {
 
     if ( is_zero() ) {
         return 0;
     }
 
-    std::size_t i = length() - 1;
+    std::int32_t i = length() - 1;
     return i * logB + ::length_in_bits( operator[]( i ) );
 
 }
 
 
-std::size_t Integer::as_int( bool_t &ok ) const {
+std::int32_t Integer::as_int( bool_t &ok ) const {
 
     ok = true;
     switch ( _signed_length ) {
         case -1:
-            if ( -std::size_t( _first_digit ) < 0 )
-                return -std::size_t( _first_digit );
+            if ( -std::int32_t( _first_digit ) < 0 )
+                return -std::int32_t( _first_digit );
             break;
         case 0:
             return 0;
         case 1:
-            if ( std::size_t( _first_digit ) > 0 )
-                return std::size_t( _first_digit );
+            if ( std::int32_t( _first_digit ) > 0 )
+                return std::int32_t( _first_digit );
             break;
     }
     ok = false;
@@ -72,25 +72,25 @@ double Integer::as_double( bool_t &ok ) const {
     // get an n-Digit integer d[n] built from the n most significant digits of self
     // n needs to be big enough so that we have enough bits for the mantissa (note
     // that the mantissa consists of one (implicit) extra bit which is always 1).
-    const std::size_t n = ( mantissa_length + 1 ) / logB + 2;
+    const std::int32_t n = ( mantissa_length + 1 ) / logB + 2;
     Digit     d[n];
-    std::size_t       l = length();
-    std::size_t       i = 1;
+    std::int32_t       l = length();
+    std::int32_t       i = 1;
     while ( i <= n ) {
         d[ n - i ] = l - i >= 0 ? operator[]( l - i ) : 0;
         i++;
     }
 
     // shift d[n] to the left so that the most significant bit of d is shifted out
-    std::size_t left_shift_count = logB - ::length_in_bits( d[ n - 1 ] ) + 1;
+    std::int32_t left_shift_count = logB - ::length_in_bits( d[ n - 1 ] ) + 1;
     shift_left( d, n, left_shift_count );
 
     // shift d[n] to the right so it builds the mantissa of a double
-    const std::size_t right_shift_count = sign_length + exponent_length;
+    const std::int32_t right_shift_count = sign_length + exponent_length;
     shift_right( d, n, right_shift_count );
 
     // add exponent to d
-    std::size_t exponent = exponent_bias + length_in_bits() - 1;
+    std::int32_t exponent = exponent_bias + length_in_bits() - 1;
     if ( exponent > max_exponent ) {
         // integer too large => doesn't fit into double representation
         ok = false;
@@ -112,13 +112,13 @@ SMIOop Integer::as_smi( bool_t &ok ) const {
     switch ( _signed_length ) {
         case -1:
             if ( _first_digit <= -smi_min )
-                return smiOopFromValue( -std::size_t( _first_digit ) );
+                return smiOopFromValue( -std::int32_t( _first_digit ) );
             break;
         case 0:
             return smiOopFromValue( 0 );
         case 1:
             if ( _first_digit <= smi_max )
-                return smiOopFromValue( std::size_t( _first_digit ) );
+                return smiOopFromValue( std::int32_t( _first_digit ) );
             break;
     }
     ok = false;
@@ -129,7 +129,7 @@ SMIOop Integer::as_smi( bool_t &ok ) const {
 void Integer::print() {
     char s[100000]; // for the time being - FIX THIS
     IntegerOps::Integer_to_string( *this, 10, s );
-    std::size_t i = 0;
+    std::int32_t i = 0;
     while ( s[ i ] not_eq '\x0' ) {
         _console->print( "%c", s[ i ] );
         i++;
@@ -137,12 +137,12 @@ void Integer::print() {
 }
 
 
-void Integer::set_length( std::size_t l ) {
+void Integer::set_length( std::int32_t l ) {
     _signed_length = l;
 }
 
 
-Digit &Integer::operator[]( std::size_t i ) const {
+Digit &Integer::operator[]( std::int32_t i ) const {
     return digits()[ i ];
 }
 
@@ -152,12 +152,12 @@ Digit *Integer::digits() const {
 }
 
 
-std::size_t Integer::length_to_size_in_bytes( std::size_t l ) {
-    return sizeof( std::size_t ) + l * sizeof( Digit );
+std::int32_t Integer::length_to_size_in_bytes( std::int32_t l ) {
+    return sizeof( std::int32_t ) + l * sizeof( Digit );
 }
 
 
-std::size_t Integer::signum() const {
+std::int32_t Integer::signum() const {
     return _signed_length;
 }
 
@@ -197,6 +197,6 @@ bool_t Integer::is_valid() const {
 }
 
 
-std::size_t Integer::size_in_bytes() const {
+std::int32_t Integer::size_in_bytes() const {
     return length_to_size_in_bytes( length() );
 }

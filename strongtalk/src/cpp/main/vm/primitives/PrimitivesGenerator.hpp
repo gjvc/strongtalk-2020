@@ -29,32 +29,32 @@ private:
 
 
     Address nil_addr() {
-        return Address( int( &nilObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &nilObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address true_addr() {
-        return Address( int( &trueObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &trueObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address false_addr() {
-        return Address( int( &falseObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &falseObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address smiKlass_addr() {
-        return Address( int( &smiKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &smiKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address doubleKlass_addr() {
-        return Address( int( &doubleKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &doubleKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
     Address contextKlass_addr() {
-        return Address( int( &contextKlassObject ), RelocationInformation::RelocationType::external_word_type );
+        return Address( std::int32_t( &contextKlassObject ), RelocationInformation::RelocationType::external_word_type );
     }
 
 
@@ -64,9 +64,9 @@ private:
     Label error_overflow;
     Label allocation_failure;
 
-    void scavenge( std::size_t size );
+    void scavenge( std::int32_t size );
 
-    void test_for_scavenge( Register dst, std::size_t size, Label &need_scavenge );
+    void test_for_scavenge( Register dst, std::int32_t size, Label &need_scavenge );
 
 protected:
     PrimitivesGenerator( MacroAssembler *_masm ) {
@@ -99,13 +99,13 @@ protected:
 
     const char *double_from_smi();
 
-    const char *primitiveNew( int n );
+    const char *primitiveNew( std::int32_t n );
 
-    const char *allocateBlock( int n );
+    const char *allocateBlock( std::int32_t n );
 
     const char *allocateContext_var();
 
-    const char *allocateContext( int n );
+    const char *allocateContext( std::int32_t n );
 
 // slr perf testing
     const char *inline_allocation();
@@ -118,7 +118,7 @@ protected:
 class GeneratedPrimitives : AllStatic {
 
 private:
-    static constexpr int _code_size = 1024 * 1024; // simply increase if too small (assembler will crash if too small)
+    static constexpr std::int32_t _code_size = 1024 * 1024; // simply increase if too small (assembler will crash if too small)
 
     static bool_t _is_initialized;            // true if GeneratedPrimitives has been initialized
     //  static char _code[_code_size];		// the code buffer for the primitives
@@ -151,7 +151,7 @@ private:
     // helpers for generation and patch
     static const char *patch( const char *name, const char *entry_point );
 
-    static const char *patch( const char *name, const char *entry_point, int argument );
+    static const char *patch( const char *name, const char *entry_point, std::int32_t argument );
 
     static Oop invoke( const char *op, Oop receiver, Oop argument );
 
@@ -159,16 +159,16 @@ private:
 
 public:
 
-    static void set_primitiveValue( int n, const char *entry_point );
+    static void set_primitiveValue( std::int32_t n, const char *entry_point );
 
     // add entry point accessors here
-    static const char *primitiveValue( int n );
+    static const char *primitiveValue( std::int32_t n );
 
-    static const char *primitiveNew( int n );
+    static const char *primitiveNew( std::int32_t n );
 
-    static const char *allocateBlock( int n );
+    static const char *allocateBlock( std::int32_t n );
 
-    static const char *allocateContext( int n );    // -1 for variable size
+    static const char *allocateContext( std::int32_t n );    // -1 for variable size
 
     // Support for profiling
     static bool_t contains( const char *pc ) {

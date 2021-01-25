@@ -40,14 +40,14 @@ std::array<const char *, 10>GeneratedPrimitives::_allocateBlock;
 std::array<const char *, 3> GeneratedPrimitives::_allocateContext;
 const char *GeneratedPrimitives::_primitiveInlineAllocations = nullptr;
 
-extern "C" void scavenge_and_allocate( std::size_t size );
+extern "C" void scavenge_and_allocate( std::int32_t size );
 
 
 // -----------------------------------------------------------------------------
 
 // macros
 
-void PrimitivesGenerator::scavenge( std::size_t size ) {
+void PrimitivesGenerator::scavenge( std::int32_t size ) {
     masm->set_last_Delta_frame_after_call();
     masm->pushl( size );
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
@@ -57,12 +57,12 @@ void PrimitivesGenerator::scavenge( std::size_t size ) {
 }
 
 
-void PrimitivesGenerator::test_for_scavenge( Register dst, std::size_t size, Label &need_scavenge ) {
-    masm->movl( dst, Address( (int) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
+void PrimitivesGenerator::test_for_scavenge( Register dst, std::int32_t size, Label &need_scavenge ) {
+    masm->movl( dst, Address( (std::int32_t) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->addl( dst, size );
-    masm->cmpl( dst, Address( (int) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
+    masm->cmpl( dst, Address( (std::int32_t) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( Assembler::Condition::greater, need_scavenge );
-    masm->movl( Address( (int) &eden_top, RelocationInformation::RelocationType::external_word_type ), dst );
+    masm->movl( Address( (std::int32_t) &eden_top, RelocationInformation::RelocationType::external_word_type ), dst );
 }
 
 
@@ -71,12 +71,12 @@ void PrimitivesGenerator::error_jumps() {
 #define VMSYMBOL_SUFFIX  _enum
 #define VMSYMBOL_ENUM_NAME( name ) name##VMSYMBOL_SUFFIX
 
-    Address _smi_overflow                  = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( smi_overflow ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _division_by_zero              = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_by_zero ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _receiver_has_wrong_type       = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( receiver_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _division_not_exact            = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_not_exact ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _first_argument_has_wrong_type = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( first_argument_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _allocation_failure            = Address( (int) &vm_symbols[ VMSYMBOL_ENUM_NAME( failed_allocation ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _smi_overflow                  = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( smi_overflow ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _division_by_zero              = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_by_zero ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _receiver_has_wrong_type       = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( receiver_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _division_not_exact            = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_not_exact ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _first_argument_has_wrong_type = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( first_argument_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
+    Address _allocation_failure            = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( failed_allocation ) ], RelocationInformation::RelocationType::external_word_type );
 
 #undef  VMSYMBOL_SUFFIX
 #undef  VMSYMBOL_ENUM_NAME
@@ -106,7 +106,7 @@ void PrimitivesGenerator::error_jumps() {
 
 // generators are in xxx_prims_gen.cpp files
 
-void GeneratedPrimitives::set_primitiveValue( int n, const char *entry_point ) {
+void GeneratedPrimitives::set_primitiveValue( std::int32_t n, const char *entry_point ) {
     st_assert( 0 <= n and n <= 9, "index out of range" )
     _primitiveValue[ n ] = entry_point;
 }
@@ -114,7 +114,7 @@ void GeneratedPrimitives::set_primitiveValue( int n, const char *entry_point ) {
 
 // Parametrized accessors
 
-const char *GeneratedPrimitives::primitiveValue( int n ) {
+const char *GeneratedPrimitives::primitiveValue( std::int32_t n ) {
     st_assert( 0 <= n and n <= 9, "index out of range" )
     st_assert( _primitiveValue[ n ], "primitiveValues not initialized yet" );
     return _primitiveValue[ n ];
@@ -133,37 +133,11 @@ extern "C" Oop primitiveNew8( Oop );
 extern "C" Oop primitiveNew9( Oop );
 
 
-const char *GeneratedPrimitives::primitiveNew( int n ) {
+const char *GeneratedPrimitives::primitiveNew( std::int32_t n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     st_assert( 0 <= n and n <= 9, "index out of range" )
+    _console->print_cr( "GeneratedPrimitives::primitiveNew [%d]", n );
     return _primitiveNew[ n ];
-
-    /*
-    switch ( n ) {
-        case 0:
-            return ( const char * ) ::primitiveNew0;
-        case 1:
-            return ( const char * ) ::primitiveNew1;
-        case 2:
-            return ( const char * ) ::primitiveNew2;
-        case 3:
-            return ( const char * ) ::primitiveNew3;
-        case 4:
-            return ( const char * ) ::primitiveNew4;
-        case 5:
-            return ( const char * ) ::primitiveNew5;
-        case 6:
-            return ( const char * ) ::primitiveNew6;
-        case 7:
-            return ( const char * ) ::primitiveNew7;
-        case 8:
-            return ( const char * ) ::primitiveNew8;
-        case 9:
-            return ( const char * ) ::primitiveNew9;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
-     */
 }
 
 
@@ -180,39 +154,14 @@ extern "C" BlockClosureOop allocateBlock8();
 extern "C" BlockClosureOop allocateBlock9();
 
 
-const char *GeneratedPrimitives::allocateBlock( int n ) {
+const char *GeneratedPrimitives::allocateBlock( std::int32_t n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     if ( n == -1 )
         return (const char *) ::allocateBlock;        // convenience
     st_assert( 0 <= n and n <= 9, "index out of range" )
-    return _allocateBlock[ n ];
+    _console->print_cr( "%%primitive-generate:  GeneratedPrimitives::allocateBlock [%d]", n );
 
-    /*
-    switch ( n ) {
-        case 0:
-            return ( const char * ) ::allocateBlock0;
-        case 1:
-            return ( const char * ) ::allocateBlock1;
-        case 2:
-            return ( const char * ) ::allocateBlock2;
-        case 3:
-            return ( const char * ) ::allocateBlock3;
-        case 4:
-            return ( const char * ) ::allocateBlock4;
-        case 5:
-            return ( const char * ) ::allocateBlock5;
-        case 6:
-            return ( const char * ) ::allocateBlock6;
-        case 7:
-            return ( const char * ) ::allocateBlock7;
-        case 8:
-            return ( const char * ) ::allocateBlock8;
-        case 9:
-            return ( const char * ) ::allocateBlock9;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
-     */
+    return _allocateBlock[ n ];
 }
 
 
@@ -222,7 +171,7 @@ extern "C" ContextOop allocateContext1();
 extern "C" ContextOop allocateContext2();
 
 
-const char *GeneratedPrimitives::allocateContext( int n ) {
+const char *GeneratedPrimitives::allocateContext( std::int32_t n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     if ( n == -1 )
         return _allocateContext_var;        // convenience
@@ -230,17 +179,6 @@ const char *GeneratedPrimitives::allocateContext( int n ) {
         return (const char *) ::allocateContext;        // convenience
     st_assert( 0 <= n and n <= 2, "index out of range" )
     return _allocateContext[ n ];
-
-    switch ( n ) {
-        case 0:
-            return (const char *) ::allocateContext0;
-        case 1:
-            return (const char *) ::allocateContext1;
-        case 2:
-            return (const char *) ::allocateContext2;
-        default: ShouldNotReachHere();
-    }
-    ShouldNotReachHere();
 }
 
 // Initialization
@@ -256,7 +194,7 @@ const char *GeneratedPrimitives::patch( const char *name, const char *entry_poin
 }
 
 
-const char *GeneratedPrimitives::patch( const char *name, const char *entry_point, int argument ) {
+const char *GeneratedPrimitives::patch( const char *name, const char *entry_point, std::int32_t argument ) {
     char formatted_name[100];
     st_assert( strlen( name ) < 100, "primitive name longer than 100 characters - buffer overrun" );
     sprintf( formatted_name, name, argument );
@@ -301,17 +239,17 @@ void GeneratedPrimitives::init() {
 
     _double_from_smi = patch( "primitiveAsFloat", gen.double_from_smi() );
 
-    for ( std::size_t n = 0; n <= 9; n++ ) {
+    for ( std::int32_t n = 0; n <= 9; n++ ) {
         _primitiveNew[ n ] = patch( "primitiveNew%1d:ifFail:", gen.primitiveNew( n ), n );
     }
 
-    for ( std::size_t n = 0; n <= 9; n++ ) {
+    for ( std::int32_t n = 0; n <= 9; n++ ) {
         _allocateBlock[ n ] = patch( "primitiveCompiledBlockAllocate%1d", gen.allocateBlock( n ), n );
     }
 
     _allocateContext_var = patch( "primitiveCompiledContextAllocate:", gen.allocateContext_var() );
 
-    for ( std::size_t n = 0; n <= 2; n++ ) {
+    for ( std::int32_t n = 0; n <= 2; n++ ) {
         _allocateContext[ n ] = patch( "primitiveCompiledContextAllocate%1d", gen.allocateContext( n ), n );
     }
 

@@ -33,7 +33,7 @@
 TRACE_FUNC( TraceSystemPrims, "system" )
 
 
-std::size_t SystemPrimitives::number_of_calls;
+std::int32_t SystemPrimitives::number_of_calls;
 
 
 PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop primary, Oop superclass, Oop format ) {
@@ -170,7 +170,7 @@ PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
     PROLOGUE_1( "expandMemory", sizeOop );
     if ( not sizeOop->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
-    std::size_t size = SMIOop( sizeOop )->value();
+    std::int32_t size = SMIOop( sizeOop )->value();
     if ( size < 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
     Universe::old_gen.expand( size );
@@ -189,7 +189,7 @@ PRIM_DECL_1( SystemPrimitives::shrinkMemory, Oop sizeOop ) {
 }
 
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 extern "C" void single_step_handler();
 
 
@@ -239,7 +239,7 @@ PRIM_DECL_0( SystemPrimitives::halt ) {
 
 
 static Oop fake_time() {
-    static std::size_t time = 0;
+    static std::int32_t time = 0;
     return oopFactory::new_double( (double) time++ );
 }
 
@@ -621,7 +621,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char *str = new_c_heap_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     // Potential memory leak, but this is temporary
@@ -659,7 +659,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
 
     ResourceMark resourceMark;
 
-    int len = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
+    std::int32_t len = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
     char *str = new_resource_array<char>( len + 1 );
     file_name->is_byteArray() ? ByteArrayOop( file_name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( file_name )->copy_null_terminated( str, len + 1 );
 
@@ -720,7 +720,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char *str = new_resource_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::mangle_name( str ) );
@@ -735,7 +735,7 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    int len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char *str = new_resource_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::unmangle_name( str ) );
@@ -770,7 +770,7 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
 
     ObjectArrayOop result = oopFactory::new_objArray( SlidingSystemAverage::number_of_cases - 1 );
 
-    for ( std::size_t i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
+    for ( std::int32_t i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
         result->obj_at_put( i, smiOopFromValue( _array[ i ] ) );
     }
 
@@ -783,14 +783,14 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
 class InstancesOfClosure : public ObjectClosure {
 
 public:
-    InstancesOfClosure( KlassOop target, int limit ) {
+    InstancesOfClosure( KlassOop target, std::int32_t limit ) {
         this->_result = new GrowableArray<Oop>( 100 );
         this->_target = target;
         this->_limit  = limit;
     }
 
 
-    int      _limit;
+    std::int32_t      _limit;
     KlassOop _target;
     GrowableArray<Oop> *_result;
 
@@ -821,10 +821,10 @@ PRIM_DECL_2( SystemPrimitives::instances_of, Oop klass, Oop limit ) {
     InstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    int            length = blk._result->length();
+    std::int32_t            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
 
-    for ( std::size_t i = 1; i <= length; i++ ) {
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         result->obj_at_put( i, blk._result->at( i - 1 ) );
     }
 
@@ -864,14 +864,14 @@ public:
 class ReferencesToClosure : public ObjectClosure {
 
 public:
-    ReferencesToClosure( Oop target, int limit ) {
+    ReferencesToClosure( Oop target, std::int32_t limit ) {
         _result = new GrowableArray<Oop>( 100 );
         _target = target;
         _limit  = limit;
     }
 
 
-    int _limit;
+    std::int32_t _limit;
     Oop _target;
     GrowableArray<Oop> *_result;
 
@@ -906,9 +906,9 @@ PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
     ReferencesToClosure blk( obj, SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    int            length = blk._result->length();
+    std::int32_t            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( int      index  = 1; index <= length; index++ ) {
+    for ( std::int32_t      index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -939,14 +939,14 @@ public:
 class ReferencesToInstancesOfClosure : public ObjectClosure {
 
 public:
-    ReferencesToInstancesOfClosure( KlassOop target, int limit ) {
+    ReferencesToInstancesOfClosure( KlassOop target, std::int32_t limit ) {
         this->_result = new GrowableArray<Oop>( 100 );
         this->_target = target;
         this->_limit  = limit;
     }
 
 
-    int      _limit;
+    std::int32_t      _limit;
     KlassOop _target;
     GrowableArray<Oop> *_result;
 
@@ -984,10 +984,10 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
     ReferencesToInstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    int            length = blk._result->length();
+    std::int32_t            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
 
-    for ( std::size_t index = 1; index <= length; index++ ) {
+    for ( std::int32_t index = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
 
@@ -997,13 +997,13 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
 
 class AllObjectsClosure : public ObjectClosure {
 public:
-    AllObjectsClosure( int limit ) {
+    AllObjectsClosure( std::int32_t limit ) {
         this->_result = new GrowableArray<Oop>( 20000 );
         this->_limit  = limit;
     }
 
 
-    int _limit;
+    std::int32_t _limit;
     GrowableArray<Oop> *_result;
 
 
@@ -1028,9 +1028,9 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
     AllObjectsClosure blk( SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    int            length = blk._result->length();
+    std::int32_t            length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( int      index  = 1; index <= length; index++ ) {
+    for ( std::int32_t      index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -1054,12 +1054,12 @@ PRIM_DECL_0( SystemPrimitives::flush_dead_code ) {
 PRIM_DECL_0( SystemPrimitives::command_line_args ) {
     PROLOGUE_0( "command_line_args" );
 
-    int argc = os::argc();
+    std::int32_t argc = os::argc();
     char **argv = os::argv();
 
     ObjectArrayOop result = oopFactory::new_objArray( argc );
     result->set_length( argc );
-    for ( std::size_t i = 0; i < argc; i++ ) {
+    for ( std::int32_t i = 0; i < argc; i++ ) {
         ByteArrayOop arg = oopFactory::new_byteArray( argv[ i ] );
         result->obj_at_put( i + 1, arg );
     }
@@ -1097,11 +1097,11 @@ PRIM_DECL_1( SystemPrimitives::alienMalloc, Oop size ) {
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    int theSize = SMIOop( size )->value();
+    std::int32_t theSize = SMIOop( size )->value();
     if ( theSize <= 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    return smiOopFromValue( (int) malloc( theSize ) );
+    return smiOopFromValue( (std::int32_t) malloc( theSize ) );
 }
 
 
@@ -1110,11 +1110,11 @@ PRIM_DECL_1( SystemPrimitives::alienCalloc, Oop size ) {
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    int theSize = SMIOop( size )->value();
+    std::int32_t theSize = SMIOop( size )->value();
     if ( theSize <= 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    return smiOopFromValue( (int) calloc( SMIOop( size )->value(), 1 ) );
+    return smiOopFromValue( (std::int32_t) calloc( SMIOop( size )->value(), 1 ) );
 }
 
 
@@ -1134,7 +1134,7 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
         BlockScavenge bs;
         Integer *largeAddress = &ByteArrayOop( address )->number();
         bool_t ok;
-        int    intAddress     = largeAddress->as_int( ok );
+        std::int32_t    intAddress     = largeAddress->as_int( ok );
         if ( intAddress == 0 or not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
         free( (void *) intAddress );

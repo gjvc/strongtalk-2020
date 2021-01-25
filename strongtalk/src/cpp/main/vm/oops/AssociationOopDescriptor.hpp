@@ -41,7 +41,7 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( AssociationOopDescriptor ) / oopSize;
     }
 
@@ -77,15 +77,15 @@ public:
     void set_is_constant( bool_t v );
 
 
-    static std::size_t key_offset() {
+    static std::int32_t key_offset() {
         return 2;
     } // offset of the key field in words
 
-    static std::size_t value_offset() {
+    static std::int32_t value_offset() {
         return 3;
     } // offset of the value field in words
 
-    static std::size_t is_constant_offset() {
+    static std::int32_t is_constant_offset() {
         return 4;
     } // offset of the is_constant field in words
 

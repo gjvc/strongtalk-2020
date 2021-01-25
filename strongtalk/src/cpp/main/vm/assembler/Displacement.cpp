@@ -14,7 +14,7 @@
 #include "vm/assembler/Label.hpp"
 
 
-Displacement::Displacement( int data ) {
+Displacement::Displacement( std::int32_t data ) {
     _data = data;
 }
 
@@ -24,18 +24,18 @@ Displacement::Type Displacement::type() const {
 }
 
 
-int Displacement::info() const {
+std::int32_t Displacement::info() const {
     return ( ( _data >> info_pos ) & info_mask );
 }
 
 
-int Displacement::data() const {
+std::int32_t Displacement::data() const {
     return _data;
 }
 
 
 void Displacement::next( const Label &L ) const {
-    int n = ( ( _data >> next_pos ) & next_mask );
+    std::int32_t n = ( ( _data >> next_pos ) & next_mask );
     n > 0 ? L.link_to( n ) : L.unuse();
 }
 
@@ -45,7 +45,7 @@ void Displacement::link_to( const Label &L ) {
 }
 
 
-Displacement::Displacement( const Label &L, Displacement::Type type, int info ) {
+Displacement::Displacement( const Label &L, Displacement::Type type, std::int32_t info ) {
     init( L, type, info );
 }
 
@@ -73,15 +73,15 @@ void Displacement::print() {
 }
 
 
-void Displacement::init( const Label &L, Displacement::Type type, int info ) {
+void Displacement::init( const Label &L, Displacement::Type type, std::int32_t info ) {
     st_assert( not L.is_bound(), "label is bound" );
-    int next = 0;
+    std::int32_t next = 0;
     if ( L.is_unbound() ) {
         next = L.pos();
         st_assert( next > 0, "Displacements must be at positions > 0" );
     }
     st_assert( ( next & ~next_mask ) == 0, "next field too small" );
-    st_assert( ( static_cast<std::size_t>(type) & ~type_mask ) == 0, "type field too small" );
+    st_assert( ( static_cast<std::int32_t>(type) & ~type_mask ) == 0, "type field too small" );
     st_assert( ( info & ~info_mask ) == 0, "info field too small" );
-    _data = ( next << next_pos ) | ( static_cast<std::size_t>(type) << static_cast<std::size_t>(type_pos) ) | ( info << info_pos );
+    _data = ( next << next_pos ) | ( static_cast<std::int32_t>(type) << static_cast<std::int32_t>(type_pos) ) | ( info << info_pos );
 }

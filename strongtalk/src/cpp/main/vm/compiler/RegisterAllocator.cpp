@@ -12,12 +12,12 @@
 RegisterAllocator *theAllocator;
 
 
-static std::size_t compare_pregBegs( PseudoRegister **a, PseudoRegister **b ) {
+static std::int32_t compare_pregBegs( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->begByteCodeIndex() - ( *b )->begByteCodeIndex();
 }
 
 
-static std::size_t compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
+static std::int32_t compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->endByteCodeIndex() - ( *b )->endByteCodeIndex();
 }
 
@@ -37,7 +37,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
 
     GrowableArray<PseudoRegister *> *regs = new GrowableArray<PseudoRegister *>( globals->length() );
 
-    std::size_t i = globals->length();
+    std::int32_t i = globals->length();
 
     while ( i-- > 0 ) {
         PseudoRegister *r = globals->at( i );
@@ -52,13 +52,13 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         }
     }
 
-    int len = regs->length();
+    std::int32_t len = regs->length();
     if ( len > 0 ) {
 
         // sort begByteCodeIndexs & distribute to scopes
         regs->sort( &compare_pregBegs );
         st_assert( regs->isEmpty() or regs->first()->begByteCodeIndex() <= regs->last()->begByteCodeIndex(), "wrong sort order" );
-        for ( std::size_t i = 0; i < len; i++ ) {
+        for ( std::int32_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
             st_assert( r->begByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal begByteCodeIndex" );
             st_assert( r->endByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal endByteCodeIndex" );
@@ -68,7 +68,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         // sort endByteCodeIndexs & distribute to scopes
         regs->sort( &compare_pregEnds );
         st_assert( regs->isEmpty() or regs->first()->endByteCodeIndex() <= regs->last()->endByteCodeIndex(), "wrong sort order" );
-        for ( std::size_t i = 0; i < len; i++ ) {
+        for ( std::int32_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
             r->scope()->addToPRegsEndSorted( r );
         }

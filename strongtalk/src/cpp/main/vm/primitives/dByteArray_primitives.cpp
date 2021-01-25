@@ -25,7 +25,7 @@
 TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )
 
 
-std::size_t doubleByteArrayPrimitives::number_of_calls;
+std::int32_t doubleByteArrayPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_doubleByteArray(), "receiver must be double byte array")
 
@@ -40,8 +40,8 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop k        = KlassOop( receiver );
-    int      ni_size  = k->klass_part()->non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, oopSize ) / oopSize;
+    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, oopSize ) / oopSize;
 
     // allocate
     DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -57,7 +57,7 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
     Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = argument;
-    // %optimized 'for (int index = 1; index <= size; index++)
+    // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->doubleByte_at_put(index, 0)'
     base = &base[ ni_size + 1 ];
     while ( base < end )
@@ -163,11 +163,11 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
     ASSERT_RECEIVER;
 
     ResourceMark resourceMark;
-    int          len = DoubleByteArrayOop( receiver )->length();
+    std::int32_t          len = DoubleByteArrayOop( receiver )->length();
     char *buffer = new_resource_array<char>( len );
 
-    for ( std::size_t i   = 0; i < len; i++ ) {
-        int c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );
+    for ( std::int32_t i   = 0; i < len; i++ ) {
+        std::int32_t c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );
         if ( c >= ( 1 << 8 ) ) {
             return markSymbol( vmSymbols::value_out_of_range() );
         }

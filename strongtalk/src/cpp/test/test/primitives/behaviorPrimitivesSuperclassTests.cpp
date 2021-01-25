@@ -122,10 +122,10 @@ protected:
 
     MixinOop createMixinSide( const char *mixinClassName ) {
         PersistentHandle classHandle( Universe::find_global( mixinClassName ) );
-        PersistentHandle methods( oopFactory::new_objArray( std::size_t{0} ) );
-        PersistentHandle ivars( oopFactory::new_objArray( std::size_t{0} ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( std::size_t{0} ) );
-        PersistentHandle classVars( oopFactory::new_objArray( std::size_t{0} ) );
+        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{0} ) );
+        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{0} ) );
+        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{0} ) );
+        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{0} ) );
 
         MixinOop mixin = MixinOop( classHandle.as_klassOop()->klass_part()->allocateObject() );
         mixin->set_methods( ObjectArrayOop( methods.as_oop() ) );
@@ -327,7 +327,7 @@ vmSymbols::argument_is_invalid()
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenReceiverNotAClass
 ) {
-Oop result = behaviorPrimitives::setSuperclass( superclass(), oopFactory::new_objArray( std::size_t{0} ) );
+Oop result = behaviorPrimitives::setSuperclass( superclass(), oopFactory::new_objArray( std::int32_t{0} ) );
 
 checkMarkedSymbol( "Should report error", result,
 vmSymbols::receiver_has_wrong_type()
@@ -337,7 +337,7 @@ vmSymbols::receiver_has_wrong_type()
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenNewSuperclassNotAClass
 ) {
-Oop result = behaviorPrimitives::setSuperclass( oopFactory::new_objArray( std::size_t{0} ), subclass() );
+Oop result = behaviorPrimitives::setSuperclass( oopFactory::new_objArray( std::int32_t{0} ), subclass() );
 
 checkMarkedSymbol( "Should report error", result,
 vmSymbols::first_argument_has_wrong_type()

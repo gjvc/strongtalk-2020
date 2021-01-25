@@ -27,11 +27,11 @@ void CodeIterator::align() {
 
 
 std::uint8_t *CodeIterator::align( std::uint8_t *p ) const {
-    return (std::uint8_t *) ( ( (int) p + 3 ) & ( ~3 ) );
+    return (std::uint8_t *) ( ( (std::int32_t) p + 3 ) & ( ~3 ) );
 }
 
 
-CodeIterator::CodeIterator( MethodOop method, int startByteCodeIndex ) {
+CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) {
     st_assert( PrologueByteCodeIndex <= startByteCodeIndex and startByteCodeIndex <= method->size_of_codes() * oopSize, "startByteCodeIndex out of range" );
     _methodOop = method;
     set_byteCodeIndex( startByteCodeIndex );
@@ -46,17 +46,17 @@ CodeIterator::CodeIterator( std::uint8_t *hp ) {
 }
 
 
-void CodeIterator::set_byteCodeIndex( int byteCodeIndex ) {
+void CodeIterator::set_byteCodeIndex( std::int32_t byteCodeIndex ) {
     _current = _methodOop->codes( byteCodeIndex );
 }
 
 
-int CodeIterator::byteCodeIndex() const {
+std::int32_t CodeIterator::byteCodeIndex() const {
     return ( _current - _methodOop->codes() ) + 1;
 }
 
 
-int CodeIterator::next_byteCodeIndex() const {
+std::int32_t CodeIterator::next_byteCodeIndex() const {
     return ( next_hp() - _methodOop->codes() ) + 1;
 }
 
@@ -268,7 +268,7 @@ void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
     Oop *p = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
-    int offset = to_klass->klass_part()->lookup_inst_var( name );
+    std::int32_t offset = to_klass->klass_part()->lookup_inst_var( name );
     if ( offset < 0 ) return;
 
     if ( code() == ByteCodes::Code::push_instVar_name )
@@ -288,7 +288,7 @@ void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
 
     Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
-    int       old_offset = SMIOop( *p )->value();
+    std::int32_t       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
@@ -310,12 +310,12 @@ void CodeIterator::recustomize_inst_var_code( KlassOop from_klass, KlassOop to_k
 
     Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
-    int       old_offset = SMIOop( *p )->value();
+    std::int32_t       old_offset = SMIOop( *p )->value();
     SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
     }
-    int new_offset = to_klass->klass_part()->lookup_inst_var( name );
+    std::int32_t new_offset = to_klass->klass_part()->lookup_inst_var( name );
     if ( new_offset >= 0 ) {
         Universe::store( p, smiOopFromValue( new_offset ) );
     } else {

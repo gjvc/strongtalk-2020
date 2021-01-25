@@ -9,7 +9,7 @@
 
 // Memory->objectIDTable[1.. numberOfIDs] contains the valid entries
 
-static std::size_t nextID;
+static std::int32_t nextID;
 
 
 ObjectArrayOop objectIDTable::array() {
@@ -17,20 +17,20 @@ ObjectArrayOop objectIDTable::array() {
 }
 
 
-Oop objectIDTable::at( std::size_t index ) {
+Oop objectIDTable::at( std::int32_t index ) {
     return array()->obj_at( index );
 }
 
 
-bool_t objectIDTable::is_index_ok( std::size_t index ) {
+bool_t objectIDTable::is_index_ok( std::int32_t index ) {
     return 1 <= index and index <= Universe::objectIDTable()->length();
 }
 
 
-std::size_t objectIDTable::find_index( Oop obj ) {
-    std::size_t len = Universe::objectIDTable()->length();
+std::int32_t objectIDTable::find_index( Oop obj ) {
+    std::int32_t len = Universe::objectIDTable()->length();
 
-    for ( std::size_t i = 1; i <= len; i++ ) {
+    for ( std::int32_t i = 1; i <= len; i++ ) {
         if ( at( i ) == obj ) {
             return i;
         }
@@ -40,8 +40,8 @@ std::size_t objectIDTable::find_index( Oop obj ) {
 }
 
 
-std::size_t objectIDTable::insert( Oop obj ) {
-    std::size_t id = find_index( obj );
+std::int32_t objectIDTable::insert( Oop obj ) {
+    std::int32_t id = find_index( obj );
     if ( not id ) {
         if ( nextID < array()->length() ) {
             id = nextID++;

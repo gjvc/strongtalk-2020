@@ -34,19 +34,19 @@ class memConverter : public ResourceObject {
 protected:
     KlassOop _oldKlass;
     KlassOop _newKlass;
-    GrowableArray<int> *_mapping;
+    GrowableArray<std::int32_t> *_mapping;
 
 
     void compute_mapping() {
-        _mapping            = new GrowableArray<int>( 20 );
-        int old_header_size = _oldKlass->klass_part()->oop_header_size();
-        int new_header_size = _newKlass->klass_part()->oop_header_size();
-        int n               = _oldKlass->klass_part()->number_of_instance_variables();
+        _mapping            = new GrowableArray<std::int32_t>( 20 );
+        std::int32_t old_header_size = _oldKlass->klass_part()->oop_header_size();
+        std::int32_t new_header_size = _newKlass->klass_part()->oop_header_size();
+        std::int32_t n               = _oldKlass->klass_part()->number_of_instance_variables();
 
-        for ( std::size_t old_index = 0; old_index < n; old_index++ ) {
+        for ( std::int32_t old_index = 0; old_index < n; old_index++ ) {
             SymbolOop name = _oldKlass->klass_part()->inst_var_name_at( old_index + old_header_size );
             st_assert( name->is_symbol(), "instance variable name must be symbol" );
-            int new_index = _newKlass->klass_part()->lookup_inst_var( name );
+            std::int32_t new_index = _newKlass->klass_part()->lookup_inst_var( name );
             if ( new_index > 0 ) {
                 if ( TraceApplyChange ) {
                     _console->print( "map " );
@@ -85,9 +85,9 @@ public:
         dst->set_identity_hash( src->identity_hash() );
 
         // Instance variables
-        for ( std::size_t i = 0; i < _mapping->length(); i += 2 ) {
-            int from = _mapping->at( i );
-            int to   = _mapping->at( i + 1 );
+        for ( std::int32_t i = 0; i < _mapping->length(); i += 2 ) {
+            std::int32_t from = _mapping->at( i );
+            std::int32_t to   = _mapping->at( i + 1 );
             dst->raw_at_put( to, src->raw_at( from ) );
         }
     }
@@ -150,16 +150,16 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( _sourceIsByteArray ) {
-            int length = ByteArrayOop( src )->length();
+            std::int32_t length = ByteArrayOop( src )->length();
 
-            for ( std::size_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ )
                 ByteArrayOop( dst )->byte_at_put( i, ByteArrayOop( src )->byte_at( i ) );
         }
     }
 
 
     MemOop allocate( MemOop src ) {
-        int len = _sourceIsByteArray ? ByteArrayOop( src )->length() : 0;
+        std::int32_t len = _sourceIsByteArray ? ByteArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
@@ -180,16 +180,16 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( _sourceIsDoubleByteArray ) {
-            int length = DoubleByteArrayOop( src )->length();
+            std::int32_t length = DoubleByteArrayOop( src )->length();
 
-            for ( std::size_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ )
                 DoubleByteArrayOop( dst )->doubleByte_at_put( i, DoubleByteArrayOop( src )->doubleByte_at( i ) );
         }
     }
 
 
     MemOop allocate( MemOop src ) {
-        int len = _sourceIsDoubleByteArray ? DoubleByteArrayOop( src )->length() : 0;
+        std::int32_t len = _sourceIsDoubleByteArray ? DoubleByteArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
@@ -211,16 +211,16 @@ public:
         memConverter::transfer( src, dst );
         if ( _sourceIsObjArray ) {
 
-            int length = ObjectArrayOop( src )->length();
+            std::int32_t length = ObjectArrayOop( src )->length();
 
-            for ( std::size_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ )
                 ObjectArrayOop( dst )->obj_at_put( i, ObjectArrayOop( src )->obj_at( i ) );
         }
     }
 
 
     MemOop allocate( MemOop src ) {
-        int len = _sourceIsObjArray ? ObjectArrayOop( src )->length() : 0;
+        std::int32_t len = _sourceIsObjArray ? ObjectArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
@@ -239,16 +239,16 @@ public:
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( source_is_obj_array ) {
-            int length = doubleValueArrayOop( src )->length();
+            std::int32_t length = doubleValueArrayOop( src )->length();
 
-            for ( std::size_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ )
                 doubleValueArrayOop( dst )->double_at_put( i, doubleValueArrayOop( src )->double_at( i ) );
         }
     }
 
 
     MemOop allocate( MemOop src ) {
-        int len = source_is_obj_array ? doubleValueArrayOop( src )->length() : 0;
+        std::int32_t len = source_is_obj_array ? doubleValueArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };

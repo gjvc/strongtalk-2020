@@ -19,7 +19,7 @@ public:
 
 
     // creation operation
-    Oop allocateObjectSize( std::size_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -34,22 +34,22 @@ public:
 
 
     // allocated an object array for an interpreter PolymorphicInlineCache.
-    static ObjectArrayOop allocate_tenured_pic( std::size_t size );
+    static ObjectArrayOop allocate_tenured_pic( std::int32_t size );
 
 
     // Return the Oop size for a objArrayOop
-    int object_size( std::size_t size ) const {
+    std::int32_t object_size( std::int32_t size ) const {
         return non_indexable_size() + 1 + size;
     }
 
 
     // Layout
-    int length_offset() const {
+    std::int32_t length_offset() const {
         return non_indexable_size();
     }
 
 
-    int array_offset() const {
+    std::int32_t array_offset() const {
         return non_indexable_size() + 1;
     }
 
@@ -64,15 +64,15 @@ public:
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 
     // size operation
-    int oop_size( Oop obj ) const {
+    std::int32_t oop_size( Oop obj ) const {
         return object_size( ObjectArrayOop( obj )->length() );
     }
 
 
     // Memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -97,7 +97,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return ObjectArrayOopDescriptor::header_size();
     }
 };

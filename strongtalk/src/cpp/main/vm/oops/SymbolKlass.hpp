@@ -51,7 +51,7 @@ public:
 
 
     // allocation operation
-    SymbolOop allocateSymbol( const char *name, int len );
+    SymbolOop allocateSymbol( const char *name, std::int32_t len );
 
     // copy operation
     Oop oop_shallow_copy( Oop obj, bool_t tenured );

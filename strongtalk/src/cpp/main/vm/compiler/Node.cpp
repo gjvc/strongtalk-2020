@@ -21,9 +21,9 @@
 #include "vm/compiler/NodeFactory.hpp"
 
 
-std::size_t         BasicNode::currentID;
-std::size_t         BasicNode::currentCommentID;
-std::size_t         BasicNode::lastByteCodeIndex;
+std::int32_t         BasicNode::currentID;
+std::int32_t         BasicNode::currentCommentID;
+std::int32_t         BasicNode::lastByteCodeIndex;
 ScopeInfo           BasicNode::lastScopeInfo;
 PrimitiveDescriptor *InterruptCheckNode::_intrCheck;
 
@@ -71,7 +71,7 @@ NonTrivialNode::NonTrivialNode() {
 }
 
 
-LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name ) :
+LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name ) :
         LoadNode( dst ) {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
@@ -84,7 +84,7 @@ LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0,
 }
 
 
-StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, int nofLevels, int offset, SymbolOop name, bool_t needsStoreCheck ) :
+StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool_t needsStoreCheck ) :
         StoreNode( src ) {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
@@ -115,13 +115,13 @@ CommentNode::CommentNode( const char *s ) {
 }
 
 
-ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset ) :
+ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset ) :
         AbstractArrayAtNode( array, index, smiIndex, result, error, data_offset, length_offset ) {
     _access_type = access_type;
 }
 
 
-ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, int data_offset, int length_offset, bool_t needs_store_check ) :
+ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset, bool_t needs_store_check ) :
         AbstractArrayAtPutNode( array, index, smi_index, element, result, error, data_offset, length_offset ) {
     _access_type               = access_type;
     _needs_store_check         = needs_store_check;
@@ -134,7 +134,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
     _src        = rr;
     _classes    = classes;
     _hasUnknown = hasUnknown;
-    int len = classes->length();
+    std::int32_t len = classes->length();
     st_assert( len > 0, "should have at least one class to test" );
     // The assertion below has been replaced by a warning since
     // sometimes Inliner::inlineMerge(...) creates such a TypeTestNode.
@@ -143,8 +143,8 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
     if ( ( len == 1 ) and not hasUnknown ) {
         warning( "TypeTestNode with only one klass & no uncommon case => performance bug" );
     }
-    for ( std::size_t i = 0; i < len; i++ ) {
-        for ( std::size_t j = i + 1; j < len; j++ ) {
+    for ( std::int32_t i = 0; i < len; i++ ) {
+        for ( std::int32_t j = i + 1; j < len; j++ ) {
             st_assert( classes->at( i ) not_eq classes->at( j ), "duplicate class" );
         }
     }
@@ -154,7 +154,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
 ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst ) :
         ArithNode( op, arg1, dst ) {
     _oper = arg2;
-    if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( _op ) ] ) { // is this _op or op ? XXX ???
+    if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = _src;
         _src               = _oper;
@@ -164,7 +164,7 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *
 
 
 TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool_t arg1IsInt, bool_t arg2IsInt ) {
-    if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( op ) ] ) {
+    if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = arg1;
         arg1 = arg2;
@@ -284,7 +284,7 @@ void AbstractMergeNode::removeMe() {
 
 
 void AbstractMergeNode::movePrev( Node *from, Node *to ) {
-    for ( std::size_t i = _prevs->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _prevs->length() - 1; i >= 0; i-- ) {
         if ( _prevs->at( i ) == from ) {
             _prevs->at_put( i, to );
             return;
@@ -295,7 +295,7 @@ void AbstractMergeNode::movePrev( Node *from, Node *to ) {
 
 
 bool_t AbstractMergeNode::isPredecessor( const Node *n ) const {
-    for ( std::size_t i = _prevs->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _prevs->length() - 1; i >= 0; i-- ) {
         if ( _prevs->at( i ) == n )
             return true;
     }
@@ -322,7 +322,7 @@ void AbstractBranchNode::removeNext( Node *n ) {
         n->removePrev( this );
         _next = nullptr;
     } else {
-        std::size_t i = 0;
+        std::int32_t i = 0;
         for ( ; i < _nxt->length() and _nxt->at( i ) not_eq n; i++ );
         st_assert( i < _nxt->length(), "not found" );
         n->removePrev( this );
@@ -333,7 +333,7 @@ void AbstractBranchNode::removeNext( Node *n ) {
 }
 
 
-void AbstractBranchNode::setNext( std::size_t i, Node *n ) {
+void AbstractBranchNode::setNext( std::int32_t i, Node *n ) {
     if ( i == 0 ) {
         setNext( n );
     } else {
@@ -347,7 +347,7 @@ void AbstractBranchNode::moveNext( Node *from, Node *to ) {
     if ( _next == from ) {
         _next = to;
     } else {
-        std::size_t i = 0;
+        std::int32_t i = 0;
         for ( ; i < _nxt->length() and _nxt->at( i ) not_eq from; i++ );
         st_assert( i < _nxt->length(), "not found" );
         _nxt->at_put( i, to );
@@ -359,7 +359,7 @@ bool_t AbstractBranchNode::isSuccessor( const Node *n ) const {
     if ( _next == n ) {
         return true;
     } else {
-        std::size_t i = 0;
+        std::int32_t i = 0;
         for ( ; i < _nxt->length() and _nxt->at( i ) not_eq n; i++ );
         return i < _nxt->length();
     }
@@ -370,7 +370,7 @@ BasicBlock *BasicNode::newBasicBlock() {
     if ( _basicBlock )
         return _basicBlock;
 
-    int len = 0;
+    std::int32_t len = 0;
     _basicBlock = new BasicBlock( (Node *)
                                           this, (Node *)
                                           this, 1 );
@@ -398,7 +398,7 @@ MergeNode::MergeNode( Node *prev1, Node *prev2 ) :
 }
 
 
-MergeNode::MergeNode( int byteCodeIndex ) {
+MergeNode::MergeNode( std::int32_t byteCodeIndex ) {
     _byteCodeIndex = byteCodeIndex;
     _isLoopStart   = _isLoopEnd = _didStartBasicBlock = false;
 }
@@ -416,13 +416,13 @@ BasicBlock *MergeNode::newBasicBlock() {
 }
 
 
-ReturnNode::ReturnNode( PseudoRegister *res, int byteCodeIndex ) :
+ReturnNode::ReturnNode( PseudoRegister *res, std::int32_t byteCodeIndex ) :
         AbstractReturnNode( byteCodeIndex, res, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ) {
     st_assert( res->_location == resultLoc, "must be in special location" );
 }
 
 
-NonLocalReturnSetupNode::NonLocalReturnSetupNode( PseudoRegister *result, int byteCodeIndex ) :
+NonLocalReturnSetupNode::NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex ) :
         AbstractReturnNode( byteCodeIndex, result, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ) {
     _contextUse = _resultUse = nullptr;
     st_assert( result->_location == NonLocalReturnResultLoc, "must be in special location" );
@@ -465,7 +465,7 @@ SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<Pseud
 }
 
 
-ContextCreateNode::ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, int nofTemps, GrowableArray<PseudoRegister *> *expr_stack ) :
+ContextCreateNode::ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, std::int32_t nofTemps, GrowableArray<PseudoRegister *> *expr_stack ) :
         PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ) {
     _src               = parent;
     _dest              = context;
@@ -504,7 +504,7 @@ ContextCreateNode::ContextCreateNode( PseudoRegister *b, const ContextCreateNode
 
 
 ContextInitNode::ContextInitNode( ContextCreateNode *creator ) {
-    int nofTemps = creator->nofTemps();
+    std::int32_t nofTemps = creator->nofTemps();
     _src = creator->context();
     st_assert( _src, "must have context" );
     _initializers       = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );    // holds initializer for each element (or nullptr)
@@ -548,11 +548,11 @@ BlockCreateNode::BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRe
 }
 
 
-std::size_t ContextInitNode::positionOfContextTemp( std::size_t n ) const {
+std::int32_t ContextInitNode::positionOfContextTemp( std::int32_t n ) const {
     // return position of ith context temp in compiled (physical) context
-    std::size_t pos = 0;
+    std::int32_t pos = 0;
 
-    for ( std::size_t i = 0; i < n; i++ ) {
+    for ( std::int32_t i = 0; i < n; i++ ) {
         PseudoRegister *p = contents()->at( i )->preg();
         if ( p->_location.isContextLocation() )
             pos++;
@@ -561,7 +561,7 @@ std::size_t ContextInitNode::positionOfContextTemp( std::size_t n ) const {
 }
 
 
-void ContextInitNode::initialize( std::size_t no, Expression *expr ) {
+void ContextInitNode::initialize( std::int32_t no, Expression *expr ) {
     st_assert( ( _initializers->at( no ) == nullptr ) or ( _initializers->at( no )->constant() == nilObject ), "already initialized this context element" );
     _initializers->at_put( no, expr );
 }
@@ -589,7 +589,7 @@ void ContextInitNode::notifyNoContext() {
     _src->removeUse( bb(), _srcUse );
     _src = nullptr;
     if ( _materializedBlocks ) {
-        for ( std::size_t i = _materializedBlocks->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = _materializedBlocks->length() - 1; i >= 0; i-- ) {
             // remove the block materialization node
             BlockMaterializeNode *n = _materializedBlocks->at( i );
             n->eliminate( n->bb(), nullptr, true, false );
@@ -597,7 +597,7 @@ void ContextInitNode::notifyNoContext() {
             st_assert( blk->isBlockPseudoRegister(), "must be a block" );
 
             // remove use of block
-            for ( std::size_t j = _initializers->length() - 1; j >= 0; j-- ) {
+            for ( std::int32_t j = _initializers->length() - 1; j >= 0; j-- ) {
                 if ( _initializers->at( j )->preg() == blk ) {
                     blk->removeUse( _basicBlock, _initializerUses->at( j ) );
                     break;
@@ -673,13 +673,13 @@ bool_t InlinedPrimitiveNode::canBeEliminated() const {
 }
 
 
-UncommonNode::UncommonNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex ) {
+UncommonNode::UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex ) {
     exprStack      = e;
     _byteCodeIndex = byteCodeIndex;
 }
 
 
-UncommonSendNode::UncommonSendNode( GrowableArray<PseudoRegister *> *e, int byteCodeIndex, int argCount ) :
+UncommonSendNode::UncommonSendNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex, std::int32_t argCount ) :
         UncommonNode( e, byteCodeIndex ) {
     this->_argCount = argCount;
 }
@@ -691,8 +691,8 @@ Node *UncommonSendNode::clone( PseudoRegister *from, PseudoRegister *to ) const 
 
 
 void UncommonSendNode::makeUses( BasicBlock *bb ) {
-    int               expressionCount = expressionStack()->length();
-    for ( std::size_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
+    std::int32_t               expressionCount = expressionStack()->length();
+    for ( std::int32_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
         bb->addUse( this, expressionStack()->at( pos ) );
 }
 
@@ -749,7 +749,7 @@ bool_t DLLNode::canInvokeDelta() const {
 }
 
 
-NonLocalReturnTestNode::NonLocalReturnTestNode( int byteCodeIndex ) {
+NonLocalReturnTestNode::NonLocalReturnTestNode( std::int32_t byteCodeIndex ) {
 }
 
 
@@ -804,7 +804,7 @@ bool_t SendNode::staticReceiver() const {
 
 
 PseudoRegister *SendNode::recv() const {
-    std::size_t i = args->length() - 1;
+    std::int32_t i = args->length() - 1;
     while ( i >= 0 and args->at( i )->_location not_eq receiverLoc ) {
         i--;
     }
@@ -1041,14 +1041,14 @@ void PrologueNode::makeUses( BasicBlock *bb ) {
     }
     // build initial definitions for incoming args
 
-    for ( std::size_t i = 0; i < _nofArgs; i++ ) {
+    for ( std::int32_t i = 0; i < _nofArgs; i++ ) {
         Expression *a = s->argument( i );
         if ( a )
             bb->addDef( this, a->preg() );
     }
 
     // build initial definitions for locals (initalization to nil)
-    for ( std::size_t i = 0; i < _nofTemps; i++ ) {
+    for ( std::int32_t i = 0; i < _nofTemps; i++ ) {
         Expression *t = s->temporary( i );
         if ( t )
             bb->addDef( this, t->preg() );
@@ -1165,9 +1165,9 @@ void CallNode::makeUses( BasicBlock *bb ) {
     //
     _destDef = bb->addDef( this, _dest );
     if ( args ) {
-        int len = args->length();
+        std::int32_t len = args->length();
         argUses = new GrowableArray<Usage *>( len );
-        for ( std::size_t i = 0; i < len; i++ ) {
+        for ( std::int32_t i = 0; i < len; i++ ) {
             argUses->append( bb->addUse( this, args->at( i ) ) );
         }
     }
@@ -1177,13 +1177,13 @@ void CallNode::makeUses( BasicBlock *bb ) {
     if ( not canInvokeDelta() ) return;
 
     // add definitions/uses for all PseudoRegisters uplevel-accessed by live blocks
-    const int InitialSize = 5;
+    const std::int32_t InitialSize = 5;
     uplevelUses = new GrowableArray<Usage *>( InitialSize );
     uplevelDefs = new GrowableArray<Definition *>( InitialSize );
     uplevelUsed = new GrowableArray<PseudoRegister *>( InitialSize );
     uplevelDefd = new GrowableArray<PseudoRegister *>( InitialSize );
     GrowableArray<BlockPseudoRegister *> *blks = theCompiler->blockClosures;
-    for ( int                            i1    = 0; i1 < nblocks; i1++ ) {
+    for ( std::int32_t                            i1    = 0; i1 < nblocks; i1++ ) {
         BlockPseudoRegister *blk = blks->at( i1 );
         if ( !blk->escapes() ) continue;
 
@@ -1194,7 +1194,7 @@ void CallNode::makeUses( BasicBlock *bb ) {
 
         // ok, this block is live
         GrowableArray<PseudoRegister *> *uplevelRead    = blk->uplevelRead();
-        int                             j               = uplevelRead->length() - 1;
+        std::int32_t                             j               = uplevelRead->length() - 1;
         for ( ; j >= 0; j-- ) {
             PseudoRegister *r = uplevelRead->at( j );
             uplevelUses->append( bb->addUse( this, r ) );
@@ -1235,9 +1235,9 @@ void ContextCreateNode::makeUses( BasicBlock *bb ) {
         _srcUse = bb->addUse( this, _src ); // no src if there's no incoming context
     _destDef    = bb->addDef( this, _dest );
     if ( _parentContexts ) {
-        int len            = _parentContexts->length();
+        std::int32_t len            = _parentContexts->length();
         _parentContextUses = new GrowableArray<Usage *>( len, len, nullptr );
-        for ( std::size_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
             Usage *u = bb->addUse( this, _parentContexts->at( i ) );
             _parentContextUses->at_put( i, u );
         }
@@ -1248,7 +1248,7 @@ void ContextCreateNode::makeUses( BasicBlock *bb ) {
 
 void ContextInitNode::makeUses( BasicBlock *bb ) {
     _srcUse = bb->addUse( this, _src );
-    std::size_t i = nofTemps();
+    std::int32_t i = nofTemps();
     _contentDefs     = new GrowableArray<Definition *>( i, i, nullptr );
     _initializerUses = new GrowableArray<Usage *>( i, i, nullptr );
     while ( i-- > 0 ) {
@@ -1405,16 +1405,16 @@ void TArithRRNode::removeUses( BasicBlock *bb ) {
 void CallNode::removeUses( BasicBlock *bb ) {
     _dest->removeDef( bb, _destDef );
     if ( argUses ) {
-        int               len = args->length();
-        for ( std::size_t i   = 0; i < len; i++ ) {
+        std::int32_t               len = args->length();
+        for ( std::int32_t i   = 0; i < len; i++ ) {
             args->at( i )->removeUse( bb, argUses->at( i ) );
         }
     }
     if ( uplevelUses ) {
-        std::size_t i = uplevelUses->length() - 1;
+        std::int32_t i = uplevelUses->length() - 1;
         for ( ; i >= 0; i-- )
             uplevelUsed->at( i )->removeUse( bb, uplevelUses->at( i ) );
-        for ( std::size_t i = uplevelDefs->length() - 1; i >= 0; i-- )
+        for ( std::int32_t i = uplevelDefs->length() - 1; i >= 0; i-- )
             uplevelDefd->at( i )->removeDef( bb, uplevelDefs->at( i ) );
     }
     NonTrivialNode::removeUses( bb );
@@ -1447,7 +1447,7 @@ void ContextCreateNode::removeUses( BasicBlock *bb ) {
 
 
 void ContextInitNode::removeUses( BasicBlock *bb ) {
-    std::size_t i = nofTemps();
+    std::int32_t i = nofTemps();
     while ( i-- > 0 ) {
         contents()->at( i )->preg()->removeDef( bb, _contentDefs->at( i ) );
         _initializers->at( i )->preg()->removeUse( bb, _initializerUses->at( i ) );
@@ -1637,7 +1637,7 @@ void BasicNode::removeUpToMerge() {
             this;
     for ( ; n and n->hasSinglePredecessor(); ) {
         while ( n->nSuccessors() > 1 ) {
-            std::size_t i     = n->nSuccessors() - 1;
+            std::int32_t i     = n->nSuccessors() - 1;
             Node        *succ = n->next( i );
             succ->removeUpToMerge();
             /* Must removeNext after removeUpToMerge to avoid false removal of MergeNode with 2 predecessors. SLR 08/08 */
@@ -1686,8 +1686,8 @@ void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bo
     CHECK( _dest, r );
     if ( args ) {
         // check if any arg became unused
-        int               len = args->length();
-        for ( std::size_t i   = 0; i < len; i++ ) {
+        std::int32_t               len = args->length();
+        for ( std::int32_t i   = 0; i < len; i++ ) {
             PseudoRegister *arg = args->at( i );
             if ( arg->_location.isTopOfStack() ) {
                 // must delete this push, but node won't be eliminated with topOfStack because of side effect
@@ -1726,7 +1726,7 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
     }
     Node              *un = _next;        // save unknown branch
     // remove all successor nodes
-    for ( std::size_t i   = 0; i < successors->length(); i++ ) {
+    for ( std::int32_t i   = 0; i < successors->length(); i++ ) {
         Node     *succ = successors->at( i );
         KlassOop m     = _classes->at( i );
         if ( constant == m or theKlass == m ) {
@@ -1817,7 +1817,7 @@ void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t remov
 }
 
 
-void BranchNode::eliminateBranch( int op1, int op2, int res ) {
+void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res ) {
     // the receiver can be eliminated because the result it is testing
     // is a constant (res)
     bool_t ok;
@@ -1858,7 +1858,7 @@ void BranchNode::eliminateBranch( int op1, int op2, int res ) {
             return;        // can't handle yet
         default: st_fatal( "unexpected branch type" );
     }
-    int nodeToRemove;
+    std::int32_t nodeToRemove;
     if ( ok ) {
         nodeToRemove = 0; // branch is taken
     } else {
@@ -2079,7 +2079,7 @@ bool_t ArithRRNode::operIsConst() const {
 }
 
 
-int ArithRRNode::operConst() const {
+std::int32_t ArithRRNode::operConst() const {
     st_assert( operIsConst(), "not a constant" );
     return _oper->isConstPseudoRegister();
 }
@@ -2090,9 +2090,9 @@ bool_t ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bo
     if ( _src->isConstPseudoRegister() and operIsConst() ) {
         st_assert( success, "CP must have worked" );
         // can constant-fold this operation
-        int c1 = (int) ( (ConstPseudoRegister *) _src )->constant;
-        int c2 = (int) operConst();
-        int res;
+        std::int32_t c1 = (std::int32_t) ( (ConstPseudoRegister *) _src )->constant;
+        std::int32_t c2 = (std::int32_t) operConst();
+        std::int32_t res;
         switch ( _op ) {
             case ArithOpCode::AddArithOp:
                 res = c1 + c2;
@@ -2329,7 +2329,7 @@ bool_t InlinedPrimitiveNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegi
 
 
 bool_t ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    for ( std::size_t i = nofTemps() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = nofTemps() - 1; i >= 0; i-- ) {
         if ( _initializerUses->at( i ) == u ) {
             Expression     *initExpression = _initializers->at( i );
             PseudoRegister *initPR         = initExpression->preg();
@@ -2356,83 +2356,83 @@ bool_t ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister 
 #define D_CHECK( r ) if (r->_location.isRegisterLocation()) def_count[r->_location.number()]++
 
 
-void LoadNode::markAllocated( int *use_count, int *def_count ) {
+void LoadNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     D_CHECK( _dest );
 }
 
 
-void LoadOffsetNode::markAllocated( int *use_count, int *def_count ) {
+void LoadOffsetNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     LoadNode::markAllocated( use_count, def_count );
 }
 
 
-void LoadUplevelNode::markAllocated( int *use_count, int *def_count ) {
+void LoadUplevelNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _context0 );
     LoadNode::markAllocated( use_count, def_count );
 }
 
 
-void StoreNode::markAllocated( int *use_count, int *def_count ) {
+void StoreNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
 }
 
 
-void StoreOffsetNode::markAllocated( int *use_count, int *def_count ) {
+void StoreOffsetNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _base );
     StoreNode::markAllocated( use_count, def_count );
 }
 
 
-void StoreUplevelNode::markAllocated( int *use_count, int *def_count ) {
+void StoreUplevelNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _context0 );
     StoreNode::markAllocated( use_count, def_count );
 }
 
 
-void AssignNode::markAllocated( int *use_count, int *def_count ) {
+void AssignNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     D_CHECK( _dest );
 }
 
 
-void ReturnNode::markAllocated( int *use_count, int *def_count ) {
+void ReturnNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     D_CHECK( _dest );
     AbstractReturnNode::markAllocated( use_count, def_count );
 }
 
 
-void ArithNode::markAllocated( int *use_count, int *def_count ) {
+void ArithNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     D_CHECK( _dest );
 }
 
 
-void ArithRRNode::markAllocated( int *use_count, int *def_count ) {
+void ArithRRNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _oper );
     ArithNode::markAllocated( use_count, def_count );
 }
 
 
-void TArithRRNode::markAllocated( int *use_count, int *def_count ) {
+void TArithRRNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     D_CHECK( _dest );
     U_CHECK( _oper );
 }
 
 
-void CallNode::markAllocated( int *use_count, int *def_count ) {
+void CallNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     D_CHECK( _dest );
     // CallNode trashes all regs
-    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ ) {
+    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ ) {
         use_count[ i ]++;
         def_count[ i ]++;
     }
 }
 
 
-void BlockCreateNode::markAllocated( int *use_count, int *def_count ) {
+void BlockCreateNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( _src )
         U_CHECK( _src );
     if ( _context )
@@ -2441,17 +2441,17 @@ void BlockCreateNode::markAllocated( int *use_count, int *def_count ) {
 }
 
 
-void BlockMaterializeNode::markAllocated( int *use_count, int *def_count ) {
+void BlockMaterializeNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( isMemoized() )
         BlockCreateNode::markAllocated( use_count, def_count );
 }
 
 
-void ContextCreateNode::markAllocated( int *use_count, int *def_count ) {
+void ContextCreateNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( _src )
         U_CHECK( _src ); // no src if there's no incoming context
     if ( _parentContexts ) {
-        for ( std::size_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
             U_CHECK( _parentContexts->at( i ) );
         }
     }
@@ -2459,27 +2459,27 @@ void ContextCreateNode::markAllocated( int *use_count, int *def_count ) {
 }
 
 
-void ContextInitNode::markAllocated( int *use_count, int *def_count ) {
+void ContextInitNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( _src )
         U_CHECK( _src );
-    std::size_t i = nofTemps();
+    std::int32_t i = nofTemps();
     while ( i-- > 0 ) {
         D_CHECK( contents()->at( i )->preg() );
     }
 }
 
 
-void ContextZapNode::markAllocated( int *use_count, int *def_count ) {
+void ContextZapNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
 }
 
 
-void TypeTestNode::markAllocated( int *use_count, int *def_count ) {
+void TypeTestNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
 }
 
 
-void AbstractArrayAtNode::markAllocated( int *use_count, int *def_count ) {
+void AbstractArrayAtNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     if ( _dest )
         D_CHECK( _dest );
@@ -2489,14 +2489,14 @@ void AbstractArrayAtNode::markAllocated( int *use_count, int *def_count ) {
 }
 
 
-void AbstractArrayAtPutNode::markAllocated( int *use_count, int *def_count ) {
+void AbstractArrayAtPutNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( elem )
         U_CHECK( elem );
     AbstractArrayAtNode::markAllocated( use_count, def_count );
 }
 
 
-void InlinedPrimitiveNode::markAllocated( int *use_count, int *def_count ) {
+void InlinedPrimitiveNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     if ( _src )
         U_CHECK( _src );
     if ( _arg1 )
@@ -2562,8 +2562,8 @@ void SendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll )
         // if the receiver is not pushed on the exprStack (self/super sends),
         // the exprStack is by 1 shorter than the args array
         // (exprStack may be longer than that, so just look at top elems)
-        int         len = exprStack->length();
-        std::size_t i   = min( args->length(), len );
+        std::int32_t         len = exprStack->length();
+        std::int32_t i   = min( args->length(), len );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a send" );
         }
@@ -2574,8 +2574,8 @@ void SendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll )
 void UncommonSendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // all arguments to an uncommon send escape
     if ( expressionStack() and ( _argCount > 0 ) ) {
-        int         len = expressionStack()->length();
-        std::size_t i   = _argCount;
+        std::int32_t         len = expressionStack()->length();
+        std::int32_t i   = _argCount;
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, expressionStack()->at( --len ), ll, "exposed by an uncommon send" );
         }
@@ -2586,8 +2586,8 @@ void UncommonSendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister 
 void PrimitiveNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // assume that all block arguments to a primitive call escape
     if ( exprStack ) {
-        int         len = exprStack->length();
-        std::size_t i   = min( len, _pdesc->number_of_parameters() );
+        std::int32_t         len = exprStack->length();
+        std::int32_t i   = min( len, _pdesc->number_of_parameters() );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a primitive call" );
         }
@@ -2598,8 +2598,8 @@ void PrimitiveNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> 
 void DLLNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // assume that all block arguments to a DLL call escape
     if ( exprStack ) {
-        int         len = exprStack->length();
-        std::size_t i   = min( len, nofArguments() );
+        std::int32_t         len = exprStack->length();
+        std::int32_t i   = min( len, nofArguments() );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a DLL call" );
         }
@@ -2610,7 +2610,7 @@ void DLLNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) 
 void ContextInitNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // all blocks stored into a context escape
     // (later phase will recognize if context isn't created --> block doesn't really escape)
-    std::size_t i = nofTemps();
+    std::int32_t i = nofTemps();
     while ( i-- > 0 ) {
         Expression *e = _initializers->at( i );
         if ( e )
@@ -2631,8 +2631,8 @@ void ArrayAtPutNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *>
 
 bool_t TypeTestNode::needsKlassLoad() const {
     // a test needs a klass load if it tests for any non-smi_t/bool_t/nil klass
-    const int         len = _hasUnknown ? _classes->length() : _classes->length() - 1;
-    for ( std::size_t i   = 0; i < len; i++ ) {
+    const std::int32_t         len = _hasUnknown ? _classes->length() : _classes->length() - 1;
+    for ( std::int32_t i   = 0; i < len; i++ ) {
         KlassOop klass = _classes->at( i );
         if ( klass not_eq trueObject->klass() and klass not_eq falseObject->klass() and klass not_eq nilObject->klass() and klass not_eq smiKlassObject ) {
             return true;
@@ -2667,7 +2667,7 @@ bool_t AbstractArrayAtNode::hasUnknownCode() const {
 
 
 Node *TypeTestNode::smiCase() const {
-    std::size_t i = _classes->length();
+    std::int32_t i = _classes->length();
     while ( i-- > 0 ) {
         if ( _classes->at( i ) == smiKlassObject )
             return next( i + 1 );
@@ -2886,7 +2886,7 @@ void TypeTestNode::assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> 
 // printing code (for debugging)
 // ==================================================================================
 
-const int PrintStringLen = 40;    // width of output before printing address
+const std::int32_t PrintStringLen = 40;    // width of output before printing address
 
 void BasicNode::print_short() {
     char buf[1024];
@@ -2894,7 +2894,7 @@ void BasicNode::print_short() {
 }
 
 
-static std::size_t id_of( Node *node ) {
+static std::int32_t id_of( Node *node ) {
     return node == nullptr ? -1 : node->id();
 }
 
@@ -3062,7 +3062,7 @@ const char *NonLocalReturnTestNode::print_string( const char *buf, bool_t printA
 
 
 const char *ArithNode::opName() const {
-    return ArithOpName[ static_cast<std::size_t>( _op ) ];
+    return ArithOpName[ static_cast<std::int32_t>( _op ) ];
 }
 
 
@@ -3095,7 +3095,7 @@ const char *FloatUnaryArithNode::print_string( const char *buf, bool_t printAddr
 
 const char *TArithRRNode::print_string( const char *buf, bool_t printAddr ) const {
     const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::size_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::int32_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((TArithRRNode*)%#lx)", this );
     return b;
@@ -3113,7 +3113,7 @@ const char *ArithRCNode::print_string( const char *buf, bool_t printAddr ) const
 
 const char *BranchNode::print_string( const char *buf, bool_t printAddr ) const {
     const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::size_t>( _op ) ], id_of( next1() ), id_of( next() ) );
+    my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::int32_t>( _op ) ], id_of( next1() ), id_of( next() ) );
     if ( printAddr )
         my_sprintf( buf, "((BranchNode*)%#lx)", this );
     return b;
@@ -3123,7 +3123,7 @@ const char *BranchNode::print_string( const char *buf, bool_t printAddr ) const 
 const char *TypeTestNode::print_string( const char *buf, bool_t printAddr ) const {
     const char *b = buf;
     my_sprintf( buf, "TypeTest %s, ", _src->safeName() );
-    for ( std::size_t i = 1; i <= _classes->length(); i++ ) {
+    for ( std::int32_t i = 1; i <= _classes->length(); i++ ) {
         KlassOop m = _classes->at( i - 1 );
         my_sprintf( buf, m->print_value_string() );
         my_sprintf( buf, ": N%ld; ", ( i < nSuccessors() and next( i ) not_eq nullptr ) ? next( i )->id() : -1 );
@@ -3162,7 +3162,7 @@ const char *FixedCodeNode::print_string( const char *buf, bool_t printAddr ) con
 }
 
 
-static std::size_t prevsLen;
+static std::int32_t prevsLen;
 static const char  *mergePrintBuf;
 
 
@@ -3190,16 +3190,16 @@ const char *LoopHeaderNode::print_string( const char *buf, bool_t printAddr ) co
     my_sprintf( buf, "LoopHeader " );
     if ( _activated ) {
         if ( _integerLoop ) {
-            my_sprintf( buf, "int " );
+            my_sprintf( buf, "std::int32_t " );
             my_sprintf( buf, "%s=[%s..%s] ", _loopVar->safeName(), _lowerBound->safeName(), _upperBound ? _upperBound->safeName() : _upperLoad->base()->safeName() );
         }
         if ( _registerCandidates not_eq nullptr ) {
             my_sprintf( buf, "reg vars = " );
-            for ( std::size_t i = 0; i < _registerCandidates->length(); i++ )
+            for ( std::int32_t i = 0; i < _registerCandidates->length(); i++ )
                 my_sprintf( buf, "%s ", _registerCandidates->at( i )->preg()->name() );
         }
         if ( _tests not_eq nullptr ) {
-            for ( std::size_t i = 0; i < _tests->length(); i++ ) {
+            for ( std::int32_t i = 0; i < _tests->length(); i++ ) {
                 HoistedTypeTest *t = _tests->at( i );
                 if ( t->_testedPR->_location not_eq unAllocated ) {
                     StringOutputStream s( 50 );
@@ -3234,7 +3234,7 @@ const char *ContextInitNode::print_string( const char *buf, bool_t printAddr ) c
         my_sprintf( buf, "(optimized away) " );
     } else {
         my_sprintf( buf, "%s { ", _src->safeName() );
-        for ( std::size_t i = 0; i < contents()->length(); i++ ) {
+        for ( std::int32_t i = 0; i < contents()->length(); i++ ) {
             my_sprintf( buf, " %s := ", contents()->at( i )->preg()->safeName() );
             Expression *e = _initializers->at( i );
             my_sprintf( buf, " %s; ", e->preg()->safeName() );
@@ -3495,11 +3495,11 @@ void ContextCreateNode::verify() const {
 void ContextInitNode::verify() const {
     if ( _deleted )
         return;
-    int n = nofTemps();
+    std::int32_t n = nofTemps();
     if ( ( n not_eq contents()->length() ) or ( n not_eq _initializers->length() ) or ( ( _contentDefs not_eq nullptr ) and ( n not_eq _contentDefs->length() ) ) or ( ( _initializerUses not_eq nullptr ) and ( n not_eq _initializerUses->length() ) ) ) {
         error( "ContextInitNode %#lx: bad nofTemps %d", this, n );
     }
-    std::size_t i = nofTemps();
+    std::int32_t i = nofTemps();
     while ( i-- > 0 ) {
         Expression *e = _initializers->at( i );
         if ( e not_eq nullptr )

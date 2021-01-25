@@ -29,10 +29,10 @@ extern "C" void single_step_handler() {
     evaluator::single_step( DeltaProcess::active()->last_Delta_fp() );
 }
 
-int *saved_frame;
+std::int32_t *saved_frame;
 
 
-bool_t patch_last_delta_frame( int *fr, int *dist ) {
+bool_t patch_last_delta_frame( std::int32_t *fr, std::int32_t *dist ) {
 
     // change the current to next byteCodeIndex;
     Frame v( nullptr, fr, nullptr );
@@ -41,7 +41,7 @@ bool_t patch_last_delta_frame( int *fr, int *dist ) {
 
     // The interpreter is in the middle of executing a byte code
     // and the hp pointer points to the current byteCodeIndex and NOT the next byteCodeIndex.
-    int byteCodeIndex = method->next_byteCodeIndex_from( v.hp() );
+    std::int32_t byteCodeIndex = method->next_byteCodeIndex_from( v.hp() );
 
     // in case of single step we ignore the case with
     // an empty inline cache since the send is reexecuted.
@@ -55,7 +55,7 @@ bool_t patch_last_delta_frame( int *fr, int *dist ) {
 }
 
 
-void restore_hp( int *fr, int dist ) {
+void restore_hp( std::int32_t *fr, std::int32_t dist ) {
     Frame v( nullptr, fr, nullptr );
     v.set_hp( v.hp() - dist );
 }
@@ -64,8 +64,8 @@ void restore_hp( int *fr, int dist ) {
 static bool_t is_aborting = false;
 
 
-void evaluator::single_step( int *fr ) {
-    int dist;
+void evaluator::single_step( std::int32_t *fr ) {
+    std::int32_t dist;
     if ( not patch_last_delta_frame( fr, &dist ) )
         return;
 
@@ -89,8 +89,8 @@ void evaluator::single_step( int *fr ) {
 
 
 bool_t evaluator::get_line( char *line ) {
-    int end = 0;
-    int c;
+    std::int32_t end = 0;
+    std::int32_t c;
 
     while ( ( ( c = getchar() ) not_eq EOF ) and ( c not_eq '\n' ) )
         line[ end++ ] = c;
@@ -107,7 +107,7 @@ class TokenStream : public StackAllocatedObject {
 
 private:
     GrowableArray<char *> *tokens;
-    int                   pos;
+    std::int32_t                   pos;
 
     void tokenize( char *str );
 
@@ -257,7 +257,7 @@ void TokenStream::tokenize( char *str ) {
 
 
 bool_t TokenStream::is_smi( Oop *addr ) {
-    int           value;
+    std::int32_t           value;
     std::uint32_t length;
 
     if ( sscanf( current(), "%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
@@ -269,7 +269,7 @@ bool_t TokenStream::is_smi( Oop *addr ) {
 
 
 bool_t TokenStream::is_table_entry( Oop *addr ) {
-    int           value;
+    std::int32_t           value;
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not objectIDTable::is_index_ok( value ) ) {
@@ -284,7 +284,7 @@ bool_t TokenStream::is_table_entry( Oop *addr ) {
 
 
 bool_t TokenStream::is_object_search( Oop *addr ) {
-    int           address;
+    std::int32_t           address;
     Oop           obj;
     std::uint32_t length;
 
@@ -409,7 +409,7 @@ void evaluator::eval_message( TokenStream *stream ) {
     } else if ( stream->is_keyword() ) {
         char name[100];
         Oop  arguments[10];
-        int  nofArgs = 0;
+        std::int32_t  nofArgs = 0;
         name[ 0 ] = '\0';
         while ( not stream->eos() ) {
             strcat( name, stream->current() );
@@ -431,7 +431,7 @@ void evaluator::eval_message( TokenStream *stream ) {
 
 
 void evaluator::top_command( TokenStream *stream ) {
-    int number_of_frames_to_show = 10;
+    std::int32_t number_of_frames_to_show = 10;
     stream->advance();
     if ( not stream->eos() ) {
         Oop value;
@@ -466,8 +466,8 @@ void evaluator::change_debug_flag( TokenStream *stream, bool_t value ) {
 
 
 void evaluator::show_command( TokenStream *stream ) {
-    int start_frame              = 1;
-    int number_of_frames_to_show = 1;
+    std::int32_t start_frame              = 1;
+    std::int32_t number_of_frames_to_show = 1;
 
     stream->advance();
     if ( not stream->eos() ) {
@@ -636,7 +636,7 @@ void evaluator::print_mini_help() {
 
 class ProcessStatusClosure : public ProcessClosure {
 private:
-    int index;
+    std::int32_t index;
 public:
     ProcessStatusClosure() {
         index = 1;

@@ -43,17 +43,17 @@ protected:
     char msg[200];
 
 
-    int instVarIndex( KlassOop targetClass, const char *instVarName ) {
+    std::int32_t instVarIndex( KlassOop targetClass, const char *instVarName ) {
         SymbolOop varNameSymbol = oopFactory::new_symbol( instVarName );
         return targetClass->klass_part()->lookup_inst_var( varNameSymbol );
     }
 
 
-    void CHECK_OOPS( Oop expectedOops[], ObjectArrayOop oops, int index ) {
+    void CHECK_OOPS( Oop expectedOops[], ObjectArrayOop oops, std::int32_t index ) {
         Oop expected = expectedOops[ index ];
         Oop actual   = oops->obj_at( index + 1 );
         sprintf( msg, "Incorrect Oop at %d. Expected: 0x%x, but was: 0x%x", index, expected, actual );
-        EXPECT_EQ( int( expected ), int( actual ) ) << msg;
+        EXPECT_EQ( std::int32_t( expected ), std::int32_t( actual ) ) << msg;
     }
 };
 
@@ -72,7 +72,7 @@ EXPECT_EQ( 52, bytes->
 length()
 ) << "wrong length";
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 52; index++ ) {
 std::uint8_t expected         = expectedBytes[ index ];
 std::uint8_t actual           = bytes->byte_at( index + 1 );
@@ -98,7 +98,7 @@ ObjectArrayOop       oops     = builder.oops();
 Oop expectedOops[13] = { smiOopFromValue( 0 ), Universe::find_global_association( "Message" ), smiOopFromValue( 0 ), selector, smiOopFromValue( 0 ), smiOopFromValue( 0 ), smiOopFromValue( 0 ), oopFactory::new_symbol( "receiver:selector:arguments:" ), smiOopFromValue( 0 ), smiOopFromValue( 0 ), oopFactory::new_symbol( "doesNotUnderstand:" ), smiOopFromValue( 0 ), smiOopFromValue( 0 ) };
 
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 5; index++ ) {
 CHECK_OOPS( expectedOops, oops, index
 );
@@ -115,7 +115,7 @@ EXPECT_EQ( 0, array->
 length()
 ) << "Wrong length";
 for (
-int index = 6;
+std::int32_t index = 6;
 index < 13; index++ ) {
 CHECK_OOPS( expectedOops, oops, index
 );
@@ -123,7 +123,7 @@ CHECK_OOPS( expectedOops, oops, index
 }
 
 
-typedef Oop (call_delta_func)( void *method, Oop receiver, int nofArgs, Oop *args );
+typedef Oop (call_delta_func)( void *method, Oop receiver, std::int32_t nofArgs, Oop *args );
 
 TEST_F( MissingMethodBuilderTests, buildWithNoArgSelectorShouldBuildCorrectMethod
 ) {
@@ -146,9 +146,9 @@ EXPECT_TRUE( result
 ->
 klass()
 == messageClass ) << "Wrong class";
-int receiverIndex  = instVarIndex( messageClass, "receiver" );
-int selectorIndex  = instVarIndex( messageClass, "selector" );
-int argumentsIndex = instVarIndex( messageClass, "arguments" );
+std::int32_t receiverIndex  = instVarIndex( messageClass, "receiver" );
+std::int32_t selectorIndex  = instVarIndex( messageClass, "selector" );
+std::int32_t argumentsIndex = instVarIndex( messageClass, "arguments" );
 EXPECT_TRUE( fixture
 == result->
 instVarAt( receiverIndex )
@@ -190,9 +190,9 @@ EXPECT_TRUE( result
 ->
 klass()
 == messageClass ) << "Wrong class";
-int receiverIndex  = instVarIndex( messageClass, "receiver" );
-int selectorIndex  = instVarIndex( messageClass, "selector" );
-int argumentsIndex = instVarIndex( messageClass, "arguments" );
+std::int32_t receiverIndex  = instVarIndex( messageClass, "receiver" );
+std::int32_t selectorIndex  = instVarIndex( messageClass, "selector" );
+std::int32_t argumentsIndex = instVarIndex( messageClass, "arguments" );
 EXPECT_TRUE( fixture
 == result->
 instVarAt( receiverIndex )
@@ -242,9 +242,9 @@ EXPECT_TRUE( result
 ->
 klass()
 == messageClass ) << "Wrong class";
-int receiverIndex  = instVarIndex( messageClass, "receiver" );
-int selectorIndex  = instVarIndex( messageClass, "selector" );
-int argumentsIndex = instVarIndex( messageClass, "arguments" );
+std::int32_t receiverIndex  = instVarIndex( messageClass, "receiver" );
+std::int32_t selectorIndex  = instVarIndex( messageClass, "selector" );
+std::int32_t argumentsIndex = instVarIndex( messageClass, "arguments" );
 EXPECT_TRUE( fixture
 == result->
 instVarAt( receiverIndex )
@@ -302,9 +302,9 @@ EXPECT_TRUE( result
 ->
 klass()
 == messageClass ) << "Wrong class";
-int receiverIndex  = instVarIndex( messageClass, "receiver" );
-int selectorIndex  = instVarIndex( messageClass, "selector" );
-int argumentsIndex = instVarIndex( messageClass, "arguments" );
+std::int32_t receiverIndex  = instVarIndex( messageClass, "receiver" );
+std::int32_t selectorIndex  = instVarIndex( messageClass, "selector" );
+std::int32_t argumentsIndex = instVarIndex( messageClass, "arguments" );
 EXPECT_TRUE( fixture
 == result->
 instVarAt( receiverIndex )
@@ -369,7 +369,7 @@ length()
 ) <<
 msg;
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 80; index++ ) {
 std::uint8_t expected                 = expectedBytes[ index ];
 std::uint8_t actual                   = bytes->byte_at( index + 1 );
@@ -393,7 +393,7 @@ builder.
 build();
 ObjectArrayOop       oops             = builder.oops();
 for (
-int index                              = 0;
+std::int32_t index                              = 0;
 index < 20; index++ ) {
 CHECK_OOPS( expectedOops, oops, index
 );
@@ -423,7 +423,7 @@ length()
 ) <<
 msg;
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 96; index++ ) {
 std::uint8_t expected                   = expectedBytes[ index ];
 std::uint8_t actual                     = bytes->byte_at( index + 1 );
@@ -458,7 +458,7 @@ length()
 ) <<
 msg;
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 112; index++ ) {
 std::uint8_t expected = expectedBytes[ index ];
 std::uint8_t actual   = bytes->byte_at( index + 1 );

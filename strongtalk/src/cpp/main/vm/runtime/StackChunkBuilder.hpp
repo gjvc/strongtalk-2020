@@ -26,11 +26,11 @@ class StackChunkBuilder : public ResourceObject {
 
 private:
     // These numbers enable calculation of the corresponding deoptimized interpreter stack.
-    int _virtualFrameCount;      // Number of VirtualFrame collected
-    int _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
-    static std::size_t *_framePointer;          // Frame pointer of the resulting frame
+    std::int32_t _virtualFrameCount;      // Number of VirtualFrame collected
+    std::int32_t _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
+    static std::int32_t *_framePointer;          // Frame pointer of the resulting frame
 
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return 2;
     }
 
@@ -40,7 +40,7 @@ private:
     GrowableArray<Oop> *array;
 
 public:
-    StackChunkBuilder( std::size_t *fp, std::size_t size = 100 );
+    StackChunkBuilder( std::int32_t *fp, std::int32_t size = 100 );
 
     ~StackChunkBuilder();
 

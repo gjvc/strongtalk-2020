@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -13,19 +14,42 @@
 
 
 
+//
+// The global "operator new" should never be called since it will usually initiate a memory leak.
+//
+// Use "CHeapAllocatedObject" as the base class of such objects to make it explicit that they're allocated on the C heap.
+//
+
+// Commented out to prevent conflict with dynamically loaded routines.
+//
+//void *operator new( std::int32_t size ) {
+//    st_fatal( "should not call global (default) operator new" );
+//    return (void *) AllocateHeap( size, "global operator new" );
+//}
+
+
 // -----------------------------------------------------------------------------
 
+Resources    resources;
+ResourceArea resource_area;
+
+
+
+// -----------------------------------------------------------------------------
+
+//
 // The resource area holds temporary data structures of the VM.
 // Things in the resource area can be deallocated very efficiently using ResourceMarks.
-// (The destructor of a ResourceMark will deallocate everything that was created since the ResourceMark was created.)
+// The destructor of a ResourceMark will deallocate everything that was created since the ResourceMark was created
+//
 
-constexpr int min_resource_free_size  = 32 * 1024;
-constexpr int min_resource_chunk_size = 256 * 1024;
+constexpr std::int32_t min_resource_free_size  = 32 * 1024;
+constexpr std::int32_t min_resource_chunk_size = 256 * 1024;
 
 
-ResourceAreaChunk::ResourceAreaChunk( std::size_t min_capacity, ResourceAreaChunk *previous ) {
+ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChunk *previous ) {
 
-    std::size_t size = max( min_capacity + min_resource_free_size, min_resource_chunk_size );
+    std::int32_t size = max( min_capacity + min_resource_free_size, min_resource_chunk_size );
     _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );
     _top    = _bottom + size;
 
@@ -33,7 +57,7 @@ ResourceAreaChunk::ResourceAreaChunk( std::size_t min_capacity, ResourceAreaChun
 //    _console->print_cr( "%ResourceAreaChunk-used [0x%08x] ", resources.used() );
 //    _console->print_cr( "%ResourceAreaChunk-size [0x%08x] ", size );
 
-    _console->print_cr( "%%ResourceAreaChunk-create size [%d], [%d] used out of [%d] ", size, resources.used(), resources.capacity() );
+    _console->print_cr( "%%ResourceAreaChunk: create size [%d], [%d] used out of [%d] ", size, resources.used(), resources.capacity() );
 
     initialize( previous );
 }
@@ -67,7 +91,7 @@ void ResourceAreaChunk::print_short() {
 }
 
 
-void ResourceAreaChunk::print_alloc( const char *addr, std::size_t size ) {
+void ResourceAreaChunk::print_alloc( const char *addr, std::int32_t size ) {
     _console->print_cr( "allocating %ld bytes at %#lx", size, addr );
 }
 
@@ -88,7 +112,7 @@ ResourceArea::~ResourceArea() {
 }
 
 
-char *ResourceArea::allocate_more_bytes( std::size_t size ) {
+char *ResourceArea::allocate_more_bytes( std::int32_t size ) {
     _resourceAreaChunk = resources.new_chunk( size, _resourceAreaChunk );
     char *p = _resourceAreaChunk->allocate_bytes( size );
     st_assert( p, "Nothing returned" );
@@ -96,14 +120,14 @@ char *ResourceArea::allocate_more_bytes( std::size_t size ) {
 }
 
 
-int ResourceArea::used() {
+std::int32_t ResourceArea::used() {
     if ( _resourceAreaChunk == nullptr )
         return 0;
     return _resourceAreaChunk->used() + ( _resourceAreaChunk->_prev ? _resourceAreaChunk->_prev->_previous_used : 0 );
 }
 
 
-char *ResourceArea::allocate_bytes( std::size_t size ) {
+char *ResourceArea::allocate_bytes( std::int32_t size ) {
 
     if ( size < 0 ) {
         st_fatal( "negative size in allocate_bytes" );
@@ -117,7 +141,7 @@ char *ResourceArea::allocate_bytes( std::size_t size ) {
     // However, in all other situations, calling allocate_bytes with nesting == 0
     // is a definitive memory leak.  -Urs 10/95
 
-//            static std::size_t warned = 0;    // to suppress multiple warnings (e.g. when allocating from the debugger)
+//            static std::int32_t warned = 0;    // to suppress multiple warnings (e.g. when allocating from the debugger)
 //            if (nesting < 1 and not warned++) error("memory leak: allocating w/o ResourceMark!");
 
     if ( size == 0 ) {
@@ -137,12 +161,12 @@ char *ResourceArea::allocate_bytes( std::size_t size ) {
 
 // -----------------------------------------------------------------------------
 
-std::size_t Resources::capacity() {
+std::int32_t Resources::capacity() {
     return _allocated;
 }
 
 
-std::size_t Resources::used() {
+std::int32_t Resources::used() {
     return resource_area.used();
 }
 
@@ -162,12 +186,13 @@ bool_t Resources::contains( const char *p ) {
 void Resources::addToFreeList( ResourceAreaChunk *c ) {
     if ( ZapResourceArea )
         c->clear();
+
     c->_prev = freeChunks;
     freeChunks = c;
 }
 
 
-ResourceAreaChunk *Resources::getFromFreeList( std::size_t min_capacity ) {
+ResourceAreaChunk *Resources::getFromFreeList( std::int32_t min_capacity ) {
     if ( not freeChunks )
         return nullptr;
 
@@ -193,7 +218,7 @@ ResourceAreaChunk *Resources::getFromFreeList( std::size_t min_capacity ) {
 }
 
 
-ResourceAreaChunk *Resources::new_chunk( std::size_t min_capacity, ResourceAreaChunk *previous ) {
+ResourceAreaChunk *Resources::new_chunk( std::int32_t min_capacity, ResourceAreaChunk *previous ) {
 
     _in_consistent_state = false;
     ResourceAreaChunk *res = getFromFreeList( min_capacity );
@@ -217,7 +242,7 @@ ResourceAreaChunk *Resources::new_chunk( std::size_t min_capacity, ResourceAreaC
 
 // -----------------------------------------------------------------------------
 
-char *ResourceAreaChunk::allocate_bytes( std::size_t size ) {
+char *ResourceAreaChunk::allocate_bytes( std::int32_t size ) {
 
     char *p = _firstFree;
     if ( _firstFree + size <= _top ) {
@@ -261,8 +286,8 @@ NoGCVerifier::~NoGCVerifier() {
 }
 
 
-char *AllocatePageAligned( std::size_t size, const char *name ) {
-    int  page_size = Universe::page_size();
+char *AllocatePageAligned( std::int32_t size, const char *name ) {
+    std::int32_t  page_size = Universe::page_size();
     char *block    = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
         lprintf( "Malloc (page-aligned) %s: 0x%08x = %#lx\n", name, size, block );
@@ -271,7 +296,7 @@ char *AllocatePageAligned( std::size_t size, const char *name ) {
 }
 
 
-char *AllocateHeap( std::size_t size, const char *name ) {
+char *AllocateHeap( std::int32_t size, const char *name ) {
     if ( PrintHeapAllocation )
         lprintf( "Heap %7d %s\n", size, name );
     return (char *) os::malloc( size );
@@ -283,23 +308,6 @@ void FreeHeap( void *p ) {
 }
 
 
-char *allocateResource( std::size_t size ) {
+char *allocateResource( std::int32_t size ) {
     return resource_area.allocate_bytes( size );
 }
-
-
-// The global "operator new" should never be called since it will usually initiate a memory leak.
-// Use "CHeapAllocatedObject" as the base class of such objects to make it explicit that they're allocated on the C heap.
-
-// Commented out to prevent conflict with dynamically loaded routines.
-
-//void * operator new( std::size_t size ) {
-//    fatal( "should not call global (default) operator new" );
-//    return ( void * ) AllocateHeap( size, "global operator new" );
-//}
-
-
-// -----------------------------------------------------------------------------
-
-Resources    resources;
-ResourceArea resource_area;

@@ -12,12 +12,12 @@
 #include <array>
 
 // Register usage
-constexpr int nofArgRegisters   = 0;            // max. number of arguments (excl. receiver) passed in registers
-constexpr int nofLocalRegisters = 3;            // max. number of temporaries allocated in registers
+constexpr std::int32_t nofArgRegisters   = 0;            // max. number of arguments (excl. receiver) passed in registers
+constexpr std::int32_t nofLocalRegisters = 3;            // max. number of temporaries allocated in registers
 
 // Temporaries on the stack
-constexpr int first_temp_offset  = -1;          // offset of first temporary relative to ebp if there are no floats
-constexpr int first_float_offset = -4;          // offset of first float relative to 8byte aligned ebp value (= base)
+constexpr std::int32_t first_temp_offset  = -1;          // offset of first temporary relative to ebp if there are no floats
+constexpr std::int32_t first_float_offset = -4;          // offset of first float relative to 8byte aligned ebp value (= base)
 
 
 // Mapping specifies the x86 architecture specific constants and code sequences that are valid machine-independently.
@@ -26,31 +26,31 @@ class Mapping : AllStatic {
 
 private:
 //        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
-//        static std::size_t      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
+//        static std::int32_t      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
     static std::array<Location, nofLocalRegisters> _localRegisters;
-    static std::array<std::size_t, REGISTER_COUNT> _localRegisterIndex;
+    static std::array<std::int32_t, REGISTER_COUNT> _localRegisterIndex;
 
 public:
     // initialization
     static void initialize();
 
     // register allocation
-    static Location localRegister( std::size_t i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
-    static std::size_t localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
+    static Location localRegister( std::int32_t i );                 // the i.th local register (i = 0 .. nofLocalRegisters-1)
+    static std::int32_t localRegisterIndex( const Location &l );    // the index of local register l (localRegisterIndex(localRegister(i)) = i)
 
     // parameter passing
-    static Location incomingArg( std::size_t i, std::size_t nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
-    static Location outgoingArg( std::size_t i, std::size_t nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location incomingArg( std::int32_t i, std::int32_t nofArgs );      // incoming argument (excluding receiver; i >= 0, 0 = first arg)
+    static Location outgoingArg( std::int32_t i, std::int32_t nofArgs );      // outgoing argument (excluding receiver; i >= 0, 0 = first arg)
 
     // stack allocation
-    static Location localTemporary( std::size_t i );                // the i.th local temporary (i >= 0)
-    static std::size_t localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
-    static Location floatTemporary( int scope_id, std::size_t i );  // the i.th float temporary within a scope (i >= 0)
+    static Location localTemporary( std::int32_t i );                // the i.th local temporary (i >= 0)
+    static std::int32_t localTemporaryIndex( const Location &l );   // the index of the local temporary l (localTemporaryIndex(localTemporary(i)) = i)
+    static Location floatTemporary( std::int32_t scope_id, std::int32_t i );  // the i.th float temporary within a scope (i >= 0)
 
     // context temporaries
-    static std::size_t contextOffset( int tempNo );                 // the byte offset of temp from the contextOop
-    static Location contextTemporary( int contextNo, std::size_t i, int scope_id );         // the i.th context temporary (i >= 0)
-    static Location *new_contextTemporary( int contextNo, std::size_t i, int scope_id );   // ditto, but allocated in resource area
+    static std::int32_t contextOffset( std::int32_t tempNo );                 // the byte offset of temp from the contextOop
+    static Location contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_id );         // the i.th context temporary (i >= 0)
+    static Location *new_contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_id );   // ditto, but allocated in resource area
 
     // conversion functions
     static Location asLocation( const Register &reg ) {

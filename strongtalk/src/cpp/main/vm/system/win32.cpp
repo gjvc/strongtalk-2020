@@ -8,16 +8,22 @@
 
 #include "vm/system/win32.hpp"
 #include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/Process.hpp"
 #include "vm/utilities/lprintf.hpp"
 
 
-int WINAPI startThread( void *params ) {
+
+extern bool_t  bootstrappingInProgress;
+//static CONTEXT context;
+
+
+std::int32_t WINAPI startThread( void *params ) {
     char *spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
-    int stackHeadroom = 2 * os::vm_page_size();
+    std::int32_t stackHeadroom = 2 * os::vm_page_size();
     ( (thread_start_t *) params )->stackLimit = spptr - STACK_SIZE + stackHeadroom;
 
-    int (*main)( void * ) = ( (thread_start_t *) params )->main;
+    std::int32_t (*main)( void * ) = ( (thread_start_t *) params )->main;
     void *parameter = ( (thread_start_t *) params )->parameter;
 
     os::signal_event( Thread::thread_created );
@@ -28,10 +34,10 @@ int WINAPI startThread( void *params ) {
 Event *Thread::thread_created = nullptr;
 GrowableArray<Thread *> *Thread::threads = nullptr;
 
-static HANDLE main_process;
-static HANDLE watcher_thread;
-static Thread *main_thread;
-static std::size_t    main_thread_id;
+static HANDLE      main_process;
+static HANDLE      watcher_thread;
+static Thread      *main_thread;
+static std::int32_t main_thread_id;
 
 static FILETIME process_creation_time;
 static FILETIME process_exit_time;
@@ -64,8 +70,8 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam ) {
 }
 
 
-int os::getenv( const char *name, char *buffer, int len ) {
-    int result = GetEnvironmentVariable( name, buffer, len );
+std::int32_t os::getenv( const char *name, char *buffer, std::int32_t len ) {
+    std::int32_t result = GetEnvironmentVariable( name, buffer, len );
     return result not_eq 0;
 }
 
@@ -78,7 +84,7 @@ bool_t os::move_file( const char *from, const char *to ) {
 bool_t os::check_directory( const char *dir_name ) {
     bool_t result = CreateDirectory( dir_name, nullptr ) ? true : false;
     if ( not result ) {
-        int error = GetLastError();
+        std::int32_t error = GetLastError();
         if ( error == ERROR_ALREADY_EXISTS )
             return true;
         return false;
@@ -92,13 +98,13 @@ void os::breakpoint() {
 }
 
 
-Thread *os::starting_thread( int *id_addr ) {
+Thread *os::starting_thread( std::int32_t *id_addr ) {
     *id_addr = main_thread_id;
     return main_thread;
 }
 
 
-Thread *os::create_thread( int main( void *parameter ), void *parameter, int *id_addr ) {
+Thread *os::create_thread( std::int32_t main( void *parameter ), void *parameter, std::int32_t *id_addr ) {
     return Thread::createThread( main, parameter, id_addr );
 }
 
@@ -130,7 +136,7 @@ Event *os::create_event( bool_t initial_state ) {
 }
 
 
-int os::updateTimes() {
+std::int32_t os::updateTimes() {
     return GetProcessTimes( main_process, &process_creation_time, &process_exit_time, &process_kernel_time, &process_user_time );
 }
 
@@ -169,7 +175,7 @@ double os::system_time_for( Thread *thread ) {
 }
 
 
-static std::size_t           has_performance_count = 0;
+static std::int32_t   has_performance_count = 0;
 static LongInteger64 initial_performance_count( 0, 0 );
 static LongInteger64 performance_frequency( 0, 0 );
 
@@ -226,7 +232,7 @@ double os::currentTime() {
 }
 
 
-void os::fatalExit( int num ) {
+void os::fatalExit( std::int32_t num ) {
     FatalExit( num );
 }
 
@@ -303,16 +309,12 @@ const char *exception_name( std::uint32_t code ) {
 }
 
 
-void trace_stack_at_exception( int *sp, int *fp, const char *pc );
-void suspend_process_at_stack_overflow( int *sp, int *fp, const char *pc );
-
-
 LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
     std::uint32_t code = exceptionInfo->ExceptionRecord->ExceptionCode;
 
     if ( code == EXCEPTION_BREAKPOINT ) {
-        // This exception is called when an assertion fails (__asm { int 3} is executed).
+        // This exception is called when an assertion fails (__asm { std::int32_t 3} is executed).
         // It is therefore imperative we continue the search hereby enabling spawning of a Just-in-time debugger.
         return EXCEPTION_CONTINUE_SEARCH;
     }
@@ -322,7 +324,7 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
         lprintf( "  Oops, we encountered a stack overflow.\n" );
         lprintf( "  You should check your program for infinite recursion!\n" );
-        suspend_process_at_stack_overflow( (int *) exceptionInfo->ContextRecord->Esp, (int *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
+        suspend_process_at_stack_overflow( (std::int32_t *) exceptionInfo->ContextRecord->Esp, (std::int32_t *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
         lprintf( "  Continue execution ?\n" );
     } else {
         // Do not report vm state when getting stack overflow
@@ -330,15 +332,15 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
     }
 
     if ( os::message_box( "Exception caught", "Do you want a stack trace?" ) ) {
-        trace_stack_at_exception( (int *) exceptionInfo->ContextRecord->Esp, (int *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
+        trace_stack_at_exception( (std::int32_t *) exceptionInfo->ContextRecord->Esp, (std::int32_t *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
     }
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
 
-HINSTANCE _hInstance     = nullptr;
-HINSTANCE _hPrevInstance = nullptr;
-int       _nCmdShow      = 0;
+HINSTANCE   _hInstance     = nullptr;
+HINSTANCE   _hPrevInstance = nullptr;
+std::int32_t _nCmdShow      = 0;
 
 
 void *os::get_hInstance() {
@@ -351,13 +353,10 @@ void *os::get_prevInstance() {
 }
 
 
-int os::get_nCmdShow() {
+std::int32_t os::get_nCmdShow() {
     return _nCmdShow;
 }
 
-
-extern bool_t  bootstrappingInProgress;
-static CONTEXT context;
 
 
 void os::timerStart() {
@@ -373,43 +372,43 @@ void os::timerPrintBuffer() {
 
 // Virtual Memory
 
-char *os::reserve_memory( std::size_t size ) {
+char *os::reserve_memory( std::int32_t size ) {
     return (char *) VirtualAlloc( nullptr, size, MEM_RESERVE, PAGE_READWRITE );
 }
 
 
-bool_t os::commit_memory( const char *addr, std::size_t size ) {
+bool_t os::commit_memory( const char *addr, std::int32_t size ) {
     bool_t result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
-        int error = GetLastError();
+        std::int32_t error = GetLastError();
         lprintf( "commit_memory error %d 0x%lx\n", error, error );
     }
     return result;
 }
 
 
-bool_t os::uncommit_memory( const char *addr, std::size_t size ) {
+bool_t os::uncommit_memory( const char *addr, std::int32_t size ) {
     return VirtualFree( const_cast<char *>( addr ), size, MEM_DECOMMIT ) ? true : false;
 }
 
 
-bool_t os::release_memory( const char *addr, std::size_t size ) {
+bool_t os::release_memory( const char *addr, std::int32_t size ) {
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
 
-bool_t os::guard_memory( const char *addr, std::size_t size ) {
+bool_t os::guard_memory( const char *addr, std::int32_t size ) {
     DWORD old_status;
     return VirtualProtect( const_cast<char *>( addr ), size, PAGE_READWRITE | PAGE_GUARD, &old_status ) ? true : false;
 }
 
 
-const char *os::exec_memory( std::size_t size ) {
+const char *os::exec_memory( std::int32_t size ) {
     return reinterpret_cast<char *>( VirtualAlloc( nullptr, size, MEM_COMMIT, PAGE_EXECUTE_READWRITE ) );
 }
 
 
-void *os::malloc( std::size_t size ) {
+void *os::malloc( std::int32_t size ) {
     if ( not ThreadCritical::initialized() ) {
         return ::malloc( size );
     } else {
@@ -419,7 +418,7 @@ void *os::malloc( std::size_t size ) {
 }
 
 
-void *os::calloc( std::size_t size, char filler ) {
+void *os::calloc( std::int32_t size, char filler ) {
     if ( not ThreadCritical::initialized() ) {
         return ::calloc( size, filler );
     } else {
@@ -462,17 +461,17 @@ void os::resume_thread( Thread *thread ) {
 }
 
 
-void os::sleep( int ms ) {
+void os::sleep( std::int32_t ms ) {
     Sleep( ms );
 }
 
 
-void os::fetch_top_frame( Thread *thread, int **sp, int **fp, char **pc ) {
+void os::fetch_top_frame( Thread *thread, std::int32_t **sp, std::int32_t **fp, char **pc ) {
     CONTEXT context;
     context.ContextFlags = CONTEXT_CONTROL;
     if ( GetThreadContext( thread->thread_handle, &context ) ) {
-        *sp = (int *) context.Esp;
-        *fp = (int *) context.Ebp;
+        *sp = (std::int32_t *) context.Esp;
+        *fp = (std::int32_t *) context.Ebp;
         *pc = reinterpret_cast<char *>( context.Eip );
     } else {
         *sp = nullptr;
@@ -482,7 +481,7 @@ void os::fetch_top_frame( Thread *thread, int **sp, int **fp, char **pc ) {
 }
 
 
-int os::current_thread_id() {
+std::int32_t os::current_thread_id() {
     return GetCurrentThreadId();
 }
 
@@ -502,7 +501,7 @@ void os::signal_event( Event *event ) {
 }
 
 
-bool_t os::wait_for_event_or_timer( Event *event, int timeout_in_ms ) {
+bool_t os::wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms ) {
     return WAIT_TIMEOUT == WaitForSingleObject( (HANDLE) event, timeout_in_ms );
 }
 
@@ -511,7 +510,7 @@ extern "C" bool_t WizardMode;
 
 void process_settings_file( const char *file_name, bool_t quiet );
 
-static std::size_t number_of_ctrl_c = 0;
+static std::int32_t number_of_ctrl_c = 0;
 
 
 bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
@@ -527,7 +526,7 @@ bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
 #ifdef __GNUC__
             __asm__("int3;");
 #else
-            __asm int 3
+            __asm std::int32_t 3
 #endif
 
             breakpoint();
@@ -538,12 +537,12 @@ bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
 }
 
 
-void real_time_tick( int delay_time );
+void real_time_tick( std::int32_t delay_time );
 
 // The sole purpose of the watcher thread is simulating timer interrupts.
 
 DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
-    const int delay_interval = 1; // Delay 1 ms
+    const std::int32_t delay_interval = 1; // Delay 1 ms
     while ( 1 ) {
         Sleep( delay_interval );
         real_time_tick( delay_interval );
@@ -552,7 +551,7 @@ DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
 }
 
 
-int os::_vm_page_size = 0;
+std::int32_t os::_vm_page_size = 0;
 
 
 void os::initialize_system_info() {
@@ -563,9 +562,9 @@ void os::initialize_system_info() {
 }
 
 
-int os::message_box( const char *title, const char *message ) {
-    int result = MessageBox( nullptr, message, title, MB_YESNO | MB_ICONERROR | MB_SYSTEMMODAL | MB_DEFAULT_DESKTOP_ONLY );
-//    int result = IDYES; // ugly hack to reduce DLL depends
+std::int32_t os::message_box( const char *title, const char *message ) {
+    std::int32_t result = MessageBox( nullptr, message, title, MB_YESNO | MB_ICONERROR | MB_SYSTEMMODAL | MB_DEFAULT_DESKTOP_ONLY );
+//    std::int32_t result = IDYES; // ugly hack to reduce DLL depends
     return result == IDYES;
 }
 
@@ -627,7 +626,7 @@ void os::add_exception_handler( void new_handler( void *fp, void *sp, void *pc )
 }
 
 
-int os::error_code() {
+std::int32_t os::error_code() {
     return GetLastError();
 }
 
@@ -669,7 +668,7 @@ void os_init() {
     if ( not DuplicateHandle( main_process, GetCurrentThread(), main_process, &threadHandle, THREAD_ALL_ACCESS, FALSE, 0 ) ) {
         st_fatal( "DuplicateHandle failed\n" );
     }
-    main_thread_id = (int) GetCurrentThreadId();
+    main_thread_id = (std::int32_t) GetCurrentThreadId();
 
     main_thread = new Thread( threadHandle, main_thread_id, nullptr );
 
@@ -717,11 +716,11 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
 }
 
 
-void os::set_args( int argc, char *argv[] ) {
+void os::set_args( std::int32_t argc, char *argv[] ) {
 }
 
 
-int os::argc() {
+std::int32_t os::argc() {
     return __argc;
 }
 

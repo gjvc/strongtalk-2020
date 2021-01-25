@@ -28,7 +28,7 @@
 
 
 // Computes the byte offset from the beginning of an Oop
-static inline int byteOffset( int offset ) {
+static inline std::int32_t byteOffset( std::int32_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }
@@ -71,7 +71,7 @@ public:
     }
 
 
-    static Stub *new_NonLocalReturn_stub( PseudoRegisterMapping *mapping, Node *dst, int flags ) {
+    static Stub *new_NonLocalReturn_stub( PseudoRegisterMapping *mapping, Node *dst, std::int32_t flags ) {
         Stub *s = new Stub( mapping, dst );
         // generate inline cache with NonLocalReturn jumping to stub code
         mapping->assembler()->ic_info( s->_stub_code, flags );
@@ -90,23 +90,23 @@ public:
 class DebugInfoWriter : public PseudoRegisterClosure {
 private:
     GrowableArray<PseudoRegister *> *_pregs;            // maps index -> preg
-    GrowableArray<int>    *_locations;        // previous preg location or illegalLocation
+    GrowableArray<std::int32_t>    *_locations;        // previous preg location or illegalLocation
     GrowableArray<bool_t> *_present;          // true if preg is currently present
 
-    Location location_at( std::size_t i ) {
+    Location location_at( std::int32_t i ) {
         return Location( _locations->at( i ) );
     }
 
 
-    void location_at_put( std::size_t i, Location loc ) {
+    void location_at_put( std::int32_t i, Location loc ) {
         _locations->at_put( i, loc._loc );
     }
 
 
 public:
-    DebugInfoWriter( int number_of_pregs ) {
+    DebugInfoWriter( std::int32_t number_of_pregs ) {
         _pregs     = new GrowableArray<PseudoRegister *>( number_of_pregs, number_of_pregs, nullptr );
-        _locations = new GrowableArray<int>( number_of_pregs, number_of_pregs, illegalLocation._loc );
+        _locations = new GrowableArray<std::int32_t>( number_of_pregs, number_of_pregs, illegalLocation._loc );
         _present   = new GrowableArray<bool_t>( number_of_pregs, number_of_pregs, false );
     }
 
@@ -116,19 +116,19 @@ public:
             // record only debug-visible PseudoRegisters & ignore context PseudoRegisters
             // Note: ContextPseudoRegisters appear in the mapping only because
             //       their values might also be cached in a register.
-            std::size_t i = preg->id();
+            std::int32_t i = preg->id();
             _pregs->at_put( i, preg );        // make sure preg is available
             _present->at_put( i, true );        // mark it as present
         }
     }
 
 
-    void write_debug_info( PseudoRegisterMapping *mapping, int pc_offset ) {
+    void write_debug_info( PseudoRegisterMapping *mapping, std::int32_t pc_offset ) {
         // record current pregs in mapping
         mapping->iterate( this );
         // determine changes & notify ScopeDescriptorRecorder if necessary
         ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-        for ( std::size_t i = _locations->length(); i-- > 0; ) {
+        for ( std::int32_t i = _locations->length(); i-- > 0; ) {
             PseudoRegister *preg = _pregs->at( i );
             bool_t   present = _present->at( i );
             Location old_loc = location_at( i );
@@ -184,7 +184,7 @@ void CodeGenerator::setMapping( PseudoRegisterMapping *mapping ) {
 }
 
 
-int CodeGenerator::maxNofStackTmps() {
+std::int32_t CodeGenerator::maxNofStackTmps() {
     if ( _currentMapping not_eq nullptr ) {
         _maxNofStackTmps = max( _maxNofStackTmps, _currentMapping->maxNofStackTmps() );
     }
@@ -297,7 +297,7 @@ void CodeGenerator::bindLabel( Node *node ) {
 }
 
 
-void CodeGenerator::inlineCache( Node *call, MergeNode *nlrTestPoint, int flags ) {
+void CodeGenerator::inlineCache( Node *call, MergeNode *nlrTestPoint, std::int32_t flags ) {
     st_assert( _currentMapping not_eq nullptr, "mapping must exist" );
     st_assert( call->scope() == nlrTestPoint->scope(), "should be in the same scope" );
     // make mappings conformant if necessary
@@ -365,7 +365,7 @@ const char *CodeGenerator::nativeMethodAddress() const {
 void CodeGenerator::incrementInvocationCounter() {
     // Generates code to increment the NativeMethod execution counter
     const char *addr = nativeMethodAddress() + NativeMethod::invocationCountOffset();
-    _masm->incl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+    _masm->incl( Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ) );
 }
 
 
@@ -379,12 +379,12 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
     // the PrologueNode.
 
     // setup arguments
-    int       i;
-    for ( std::size_t i = 0; i < scope->nofArguments(); i++ ) {
+    std::int32_t       i;
+    for ( std::int32_t i = 0; i < scope->nofArguments(); i++ ) {
         _currentMapping->mapToArgument( scope->argument( i )->preg(), i );
     }
     // setup temporaries (finalize() generates initialization code)
-    for ( std::size_t i = 0; i < scope->nofTemporaries(); i++ ) {
+    for ( std::int32_t i = 0; i < scope->nofTemporaries(); i++ ) {
         _currentMapping->mapToTemporary( scope->temporary( i )->preg(), i );
     }
     // setup receiver
@@ -398,8 +398,8 @@ void CodeGenerator::finalize( InlinedScope *scope ) {
     generateMergeStubs();
 
     // patch 'initialize locals' code
-    int n          = maxNofStackTmps();
-    int frame_size = 2 + n;    // return address, old ebp + stack temps
+    std::int32_t n          = maxNofStackTmps();
+    std::int32_t frame_size = 2 + n;    // return address, old ebp + stack temps
     // make sure frame is big enough for deoptimization
     if ( frame_size < minimum_size_for_deoptimized_frame ) {
         // add the difference to
@@ -472,8 +472,8 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
 
     // build stack frame & initialize locals
     _masm->enter();
-    int n          = maxNofStackTmps();
-    int frame_size = 2 + n;    // return address, old ebp + stack temps
+    std::int32_t n          = maxNofStackTmps();
+    std::int32_t frame_size = 2 + n;    // return address, old ebp + stack temps
     // make sure frame is big enough for deoptimization
     if ( frame_size < minimum_size_for_deoptimized_frame ) {
         // add the difference to
@@ -490,10 +490,10 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     Label recompile_stub_call;
     if ( RecompilationPolicy::needRecompileCounter( theCompiler ) ) {
         char *addr = nativeMethodAddress() + NativeMethod::invocationCountOffset();
-        _masm->movl( temp1, Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+        _masm->movl( temp1, Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ) );
         _masm->incl( temp1 );
         _masm->cmpl( temp1, theCompiler->get_invocation_counter_limit() );
-        _masm->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
+        _masm->movl( Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
         _masm->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
         //
         // need to fix this:
@@ -537,9 +537,9 @@ void CodeGenerator::storeCheck( Register obj ) {
     Temporary base( _currentMapping );
     Temporary indx( _currentMapping );
     Label     no_store;
-    _masm->cmpl( obj, (int) Universe::new_gen.boundary() );                  // assumes boundary between new_gen and old_gen is unchanging
+    _masm->cmpl( obj, (std::int32_t) Universe::new_gen.boundary() );                  // assumes boundary between new_gen and old_gen is unchanging
     _masm->jcc( Assembler::Condition::less, no_store );                                // avoid marking dirty if target is a new object
-    _masm->movl( base.reg(), Address( int( &byte_map_base ), RelocationInformation::RelocationType::external_word_type ) );
+    _masm->movl( base.reg(), Address( std::int32_t( &byte_map_base ), RelocationInformation::RelocationType::external_word_type ) );
     _masm->movl( indx.reg(), obj );                        // do not destroy obj (a preg may be mapped to it)
     _masm->shrl( indx.reg(), card_shift );                    // divide obj by card_size
     _masm->movb( Address( base.reg(), indx.reg(), Address::ScaleFactor::times_1 ), 0 );    // clear entry
@@ -644,14 +644,14 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t nee
 
 // Debugging
 
-static std::size_t _callDepth               = 0;
-static std::size_t _numberOfCalls           = 0;
-static std::size_t _numberOfReturns         = 0;
-static std::size_t _numberOfNonLocalReturns = 0;
+static std::int32_t _callDepth               = 0;
+static std::int32_t _numberOfCalls           = 0;
+static std::int32_t _numberOfReturns         = 0;
+static std::int32_t _numberOfNonLocalReturns = 0;
 
 
 void CodeGenerator::indent() {
-    const int maxIndent = 40;
+    const std::int32_t maxIndent = 40;
     if ( _callDepth <= maxIndent ) {
         _console->print( "%*s", _callDepth, "" );
     } else {
@@ -688,7 +688,7 @@ void CodeGenerator::verifyContext( Oop obj ) {
 }
 
 
-void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, int nofArgs ) {
+void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) {
     bool_t       print_args_long = true;
     ResourceMark resourceMark;
     _numberOfCalls++;
@@ -700,7 +700,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, int nofArgs ) {
     }
 
     verifyObject( recv );
-    std::size_t i = nofArgs;
+    std::int32_t i = nofArgs;
     Oop *arg = ebp + ( nofArgs + 2 );
     while ( i-- > 0 ) {
         arg--;
@@ -740,7 +740,7 @@ void CodeGenerator::verifyReturn( Oop result ) {
 }
 
 
-void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, int nlrScopeID, Oop result ) {
+void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result ) {
     _numberOfNonLocalReturns++;
     LOG_EVENT3( "verifyNonLocalReturn(%#x, %#x, %d, %#x)", fp, nlrFrame, result );
     if ( nlrFrame <= fp )
@@ -781,7 +781,7 @@ void CodeGenerator::callVerifyContext( Register context ) {
 }
 
 
-void CodeGenerator::callVerifyArguments( Register recv, int nofArgs ) {
+void CodeGenerator::callVerifyArguments( Register recv, std::int32_t nofArgs ) {
     // generates transparent check code which verifies that all arguments
     // are legal oops and halts if not - for debugging purposes only
     if ( not VerifyCode and not TraceCalls and not TraceResults )
@@ -859,7 +859,7 @@ void CodeGenerator::endOfBasicBlock( Node *node ) {
 
 void CodeGenerator::updateDebuggingInfo( Node *node ) {
     ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    int pc_offset = assembler()->offset();
+    std::int32_t pc_offset = assembler()->offset();
     rec->addProgramCounterDescriptor( pc_offset, node->scope()->getScopeInfo(), node->byteCodeIndex() );
     _debugInfoWriter->write_debug_info( _currentMapping, pc_offset );
 }
@@ -950,7 +950,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
         _masm->movl( t.reg(), Universe::nilObject() );
         _nilReg = t.reg();
         const char *beg = _masm->pc();
-        std::size_t i = 10;
+        std::int32_t i = 10;
         while ( i-- > 0 )
             _masm->nop();
         const char *end = _masm->pc();
@@ -974,10 +974,10 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     Label recompile_stub_call;
     if ( RecompilationPolicy::needRecompileCounter( theCompiler ) ) {
         const char *addr = nativeMethodAddress() + NativeMethod::invocationCountOffset();
-        _masm->movl( temp1, Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+        _masm->movl( temp1, Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ) );
         _masm->incl( temp1 );
         _masm->cmpl( temp1, theCompiler->get_invocation_counter_limit() );
-        _masm->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
+        _masm->movl( Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ), temp1 );
         _masm->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
 
         // need to fix this:
@@ -1001,7 +1001,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     _masm->call( StubRoutines::recompile_stub_entry(), RelocationInformation::RelocationType::runtime_call_type );
 
     _masm->bind( start );
-    _masm->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
+    _masm->cmpl( esp, Address( std::int32_t( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
     _masm->jcc( Assembler::Condition::less, handle_stack_overflow );
     _masm->bind( continue_after_stack_overflow );
 }
@@ -1018,14 +1018,14 @@ void CodeGenerator::aLoadOffsetNode( LoadOffsetNode *node ) {
 }
 
 
-int CodeGenerator::byteOffset( int offset ) {
+std::int32_t CodeGenerator::byteOffset( std::int32_t offset ) {
     // Computes the byte offset from the beginning of an Oop
     st_assert( offset >= 0, "wrong offset" );
     return offset * oopSize - MEMOOP_TAG;
 }
 
 
-void CodeGenerator::uplevelBase( PseudoRegister *startContext, int nofLevels, Register base ) {
+void CodeGenerator::uplevelBase( PseudoRegister *startContext, std::int32_t nofLevels, Register base ) {
     // Compute uplevel base into register base; nofLevels is number of indirections (0 = in this context).
     _masm->movl( base, use( startContext ) );
     if ( VerifyCode )
@@ -1071,7 +1071,7 @@ void CodeGenerator::aStoreUplevelNode( StoreUplevelNode *node ) {
 
 
 void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool_t &x_attr, bool_t &y_attr ) {
-    if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::size_t>( op ) ] ) {
+    if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         PseudoRegister *t1 = x;
         x = y;
         y = t1;
@@ -1130,7 +1130,8 @@ void CodeGenerator::arithRROp( ArithOpCode op, Register x, Register y ) { // x :
 }
 
 
-void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x op y
+void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { // x := x op y
+
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
         case ArithOpCode::TestArithOp:
@@ -1211,12 +1212,12 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, int y ) { // x := x o
         case ArithOpCode::tShiftArithOp:
             if ( y < 0 ) {
                 // shift right
-                int shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
+                std::int32_t shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
                 _masm->sarl( x, shift_count );
                 _masm->andl( x, -1 << TAG_SIZE );            // clear Tag bits
             } else if ( y > 0 ) {
                 // shift left
-                int shift_count = ( ( +y ) >> TAG_SIZE ) % 32;
+                std::int32_t shift_count = ( ( +y ) >> TAG_SIZE ) % 32;
                 _masm->shll( x, shift_count );
             }
             break;
@@ -1245,7 +1246,7 @@ void CodeGenerator::arithROOp( ArithOpCode op, Register x, Oop y ) { // x := x o
 
 void CodeGenerator::arithRXOp( ArithOpCode op, Register x, Oop y ) { // x := x op y
     if ( y->is_smi() ) {
-        arithRCOp( op, x, int( y ) );                // y is SMIOop -> needs no relocation info
+        arithRCOp( op, x, std::int32_t( y ) );                // y is SMIOop -> needs no relocation info
     } else {
         arithROOp( op, x, y );
     }
@@ -1307,7 +1308,7 @@ void CodeGenerator::anArithRCNode( ArithRCNode *node ) {
     ArithOpCode op = node->op();
     PseudoRegister *z = node->dst();
     PseudoRegister *x = node->src();
-    int                  y   = node->operand();
+    std::int32_t                  y   = node->operand();
     PseudoRegisterLocker lock( z, x );
     Register             reg = targetRegister( op, z, x );
     arithRCOp( op, reg, y );
@@ -1379,7 +1380,7 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
         case 1 : // fall through for now - fix this
         case 2 : // fall through for now - fix this
         default:
-            _masm->pushl( int( smiOopFromValue( node->nofTemps() ) ) );
+            _masm->pushl( std::int32_t( smiOopFromValue( node->nofTemps() ) ) );
             aPrimitiveNode( node );
             _masm->addl( esp, oopSize );    // pop argument, this is not a Pascal call - change this as some point?
             break;
@@ -1408,7 +1409,7 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
 
 void CodeGenerator::aContextInitNode( ContextInitNode *node ) {
     // initialize context temporaries (parent has been initialized in the ContextCreateNode)
-    for ( std::size_t i = node->nofTemps(); i-- > 0; ) {
+    for ( std::int32_t i = node->nofTemps(); i-- > 0; ) {
         PseudoRegister *src = node->initialValue( i )->preg();
         PseudoRegister *dst;
         if ( src->isBlockPseudoRegister() ) {
@@ -1466,7 +1467,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode *node ) {
     BlockPseudoRegister *blk = node->block();
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies not_eq nullptr ) {
-        for ( std::size_t i = copies->length(); i-- > 0; ) {
+        for ( std::int32_t i = copies->length(); i-- > 0; ) {
 
             Location       *l                = copies->at( i );
             InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
@@ -1492,14 +1493,14 @@ void CodeGenerator::materializeBlock( BlockCreateNode *node ) {
     // allocate closure
     _currentMapping->kill( node->dst() );    // kill it so that aPrimNode(node) can map the result to it
 
-    int nofArgs                      = closure->nofArgs();
+    std::int32_t nofArgs                      = closure->nofArgs();
 
     switch ( nofArgs ) {
         case 0 : // fall through for now - fix this
         case 1 : // fall through for now - fix this
         case 2 : // fall through for now - fix this
         default:
-            _masm->pushl( int( smiOopFromValue( nofArgs ) ) );
+            _masm->pushl( std::int32_t( smiOopFromValue( nofArgs ) ) );
             aPrimitiveNode( node );            // Note: primitive calls are called via call_C - also necessary for primitiveValue calls?
             _masm->addl( esp, oopSize );    // pop argument, this is not a Pascal call - change this at some point?
             break;
@@ -1516,7 +1517,7 @@ void CodeGenerator::materializeBlock( BlockCreateNode *node ) {
     // assert(theCompiler->JumpTableID == closure->parent_id(), "NativeMethod id must be the same");
     // fix this: RELOCATION INFORMATION IS NEEDED WHEN MOVING THE JUMPTABLE (Snapshot reading etc.)
     _masm->movl( Address( closure_reg, BlockClosureOopDescriptor::context_byte_offset() ), use( closure->context() ) );
-    _masm->movl( Address( closure_reg, BlockClosureOopDescriptor::method_or_entry_byte_offset() ), (int) closure->jump_table_entry() );
+    _masm->movl( Address( closure_reg, BlockClosureOopDescriptor::method_or_entry_byte_offset() ), (std::int32_t) closure->jump_table_entry() );
     storeCheck( closure_reg );
 }
 
@@ -1577,7 +1578,7 @@ void CodeGenerator::aSendNode( SendNode *node ) {
     _currentMapping->killRegisters();
 
     // compute flag settings
-    int flags = 0;
+    std::int32_t flags = 0;
     if ( node->isSuperSend() )
         setNthBit( flags, super_send_bit_no );
     if ( node->isUninlinable() )
@@ -1626,7 +1627,7 @@ void CodeGenerator::aDLLNode( DLLNode *node ) {
     // Compiled_DLLCache
     // This code pattern must correspond to the Compiled_DLLCache layout
     // (make sure assembler is not optimizing mov reg, 0 into xor reg, reg!)
-    _masm->movl( edx, int( node->function() ) );        // part of Compiled_DLLCache
+    _masm->movl( edx, std::int32_t( node->function() ) );        // part of Compiled_DLLCache
     _masm->inline_oop( node->dll_name() );            // part of Compiled_DLLCache
     _masm->inline_oop( node->function_name() );        // part of Compiled_DLLCache
     _masm->call( entry, RelocationInformation::RelocationType::runtime_call_type );    // call lookup/parameter conversion routine
@@ -1696,8 +1697,8 @@ void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register k
 void CodeGenerator::generateTypeTests( LoopHeaderNode *node, Label &failure ) {
     Unimplemented();
 
-    int       last = 0;
-    for ( std::size_t i    = 0; i <= last; i++ ) {
+    std::int32_t       last = 0;
+    for ( std::int32_t i    = 0; i <= last; i++ ) {
         HoistedTypeTest *t = node->tests()->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister
@@ -1717,11 +1718,11 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
   // test all values against expected classes
   Label* ok;
   const Register klassReg = temp2;
-  const int len = _tests->length() - 1;
-  int last;						// last case that generates a test
+  const std::int32_t len = _tests->length() - 1;
+  std::int32_t last;						// last case that generates a test
   for (last = len; last >= 0 and _tests->at(last)->testedPR->loc == unAllocated; last--) ;
   if (last < 0) return;					// no tests at all
-  for (std::size_t i = 0; i <= last; i++) {
+  for (std::int32_t i = 0; i <= last; i++) {
     HoistedTypeTest* t = _tests->at(i);
     if (t->testedPR->loc == unAllocated) continue;	// optimized away, or ConstPseudoRegister
     if (t->testedPR->isConstPseudoRegister()) {
@@ -1738,10 +1739,10 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
 		 *ok, *ok, failure)) {
 	// ok, was a bool_t test
       } else {
-	const int len = t->klasses->length();
+	const std::int32_t len = t->klasses->length();
 	GrowableArray<Label*> labels(len + 1);
 	labels.append(&failure);
-	for (std::size_t i = 0; i < len; i++) labels.append(ok);
+	for (std::int32_t i = 0; i < len; i++) labels.append(ok);
 	generalTypeTest(obj, klassReg, true, t->klasses, &labels);
       }
       if (i not_eq last) theMacroAssm->bind(*ok);
@@ -1836,7 +1837,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
     // use the loop variable without an index range check, we need to check it here.
     PseudoRegister      *loopArray = node->upperLoad()->src();
     AbstractArrayAtNode *atNode;
-    std::size_t i = node->arrayAccesses()->length();
+    std::int32_t i = node->arrayAccesses()->length();
     while ( i-- > 0 ) {
         atNode = node->arrayAccesses()->at( i );
         if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
@@ -1875,7 +1876,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
     // without an index range check, we need to check it here.
     PseudoRegister* loopArray = _upperLoad->src();
     AbstractArrayAtNode* atNode;
-    for (std::size_t i = _arrayAccesses->length() - 1; i >= 0; i--) {
+    for (std::int32_t i = _arrayAccesses->length() - 1; i >= 0; i--) {
       atNode = _arrayAccesses->at(i);
       if (atNode->src() == loopArray and not atNode->needsBoundsCheck()) break;
     }
@@ -1980,7 +1981,7 @@ void CodeGenerator::aReturnNode( ReturnNode *node ) {
     // remove stack frame & return
     if ( VerifyCode or TraceCalls or TraceResults )
         callVerifyReturn();
-    int no_of_args_to_pop = scope->nofArguments();
+    std::int32_t no_of_args_to_pop = scope->nofArguments();
     if ( scope->method()->is_blockMethod() ) {
         // blocks are called via primitiveValue => need to pop first argument
         // of primitiveValue (= block closure) as well since return happens
@@ -2105,7 +2106,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     //         However, for debugging purposes right now all cases are always explicitly checked.
     //
 
-    const int len                           = node->classes()->length();
+    const std::int32_t len                           = node->classes()->length();
 
     if ( ReorderBBs ) {
         PseudoRegisterLocker lock( node->src() );
@@ -2194,7 +2195,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     bool_t               smiHasBeenChecked  = false;
     PseudoRegisterLocker lock( node->src() );
     Register             obj                = use( node->src() );
-    for ( int            i                  = 0; i < len; i++ ) {
+    for ( std::int32_t            i                  = 0; i < len; i++ ) {
         KlassOop klass = node->classes()->at( i );
         if ( klass == trueObject->klass() ) {
             // only one instance: compare with trueObject
@@ -2267,7 +2268,7 @@ void CodeGenerator::aNonLocalReturnTestNode( NonLocalReturnTestNode *node ) {
     _masm->cmpl( NonLocalReturn_home_reg, frame_reg );
     _masm->jcc( Assembler::Condition::notEqual, L );
     // check if arrived at the right scope within the frame
-    int id = scope->scopeID();
+    std::int32_t id = scope->scopeID();
     if ( id == 0 ) {
         // use test instruction to compare against 0 (smaller code than with cmp)
         _masm->testl( NonLocalReturn_homeId_reg, NonLocalReturn_homeId_reg );
@@ -2308,7 +2309,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
     // use temporary register for index - will be modified
     Temporary            offset( _currentMapping, index );
     // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
-    theMacroAssembler->subl( offset.reg(), int( smiOop_one ) );
+    theMacroAssembler->subl( offset.reg(), std::int32_t( smiOop_one ) );
     // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
     Label indexNotSmi;
     if ( not node->index_is_smi() ) {
@@ -2318,13 +2319,13 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
-        const std::size_t size_offset = byteOffset( node->size_word_offset() );
+        const std::int32_t size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
         jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }
     // load element
     st_assert( TAG_SIZE == 2, "check this code" );
-    const int data_offset = byteOffset( node->data_word_offset() );
+    const std::int32_t data_offset = byteOffset( node->data_word_offset() );
     switch ( node->access_type() ) {
         case ArrayAtNode::byte_at: {
             Register result_reg = def( result );
@@ -2408,7 +2409,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
     // use temporary register for index - will be modified
     Temporary            offset( _currentMapping, index );
     // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
-    theMacroAssembler->subl( offset.reg(), int( smiOop_one ) );
+    theMacroAssembler->subl( offset.reg(), std::int32_t( smiOop_one ) );
     // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
     Label indexNotSmi;
     if ( not node->index_is_smi() ) {
@@ -2419,14 +2420,14 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
     // do bounds check if necessary
     Label indexOutOfBounds;
     if ( node->index_needs_bounds_check() ) {
-        const std::size_t size_offset = byteOffset( node->size_word_offset() );
+        const std::int32_t size_offset = byteOffset( node->size_word_offset() );
         _masm->cmpl( offset.reg(), Address( array_reg, size_offset ) );
         jcc_error( Assembler::Condition::aboveEqual, node, indexOutOfBounds );
     }
 
     // store element
     st_assert( TAG_SIZE == 2, "check this code" );
-    const int data_offset = byteOffset( node->data_word_offset() );
+    const std::int32_t data_offset = byteOffset( node->data_word_offset() );
     Label     elementNotSmi, elementOutOfRange;
     switch ( node->access_type() ) {
         case ArrayAtPutNode::byte_at_put: { // use temporary register for element - will be modified
@@ -2437,7 +2438,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
-            _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (int) byte
+            _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (std::int32_t) byte
             // do element range check if necessary
             if ( node->element_needs_range_check() ) {
                 _masm->cmpl( elt.reg(), 0x100 );
@@ -2467,7 +2468,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
-            _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (int) double byte
+            _masm->sarl( elt.reg(), TAG_SIZE );    // convert element into (std::int32_t) double byte
             // do element range check if necessary
             if ( node->element_needs_range_check() ) {
                 _masm->cmpl( elt.reg(), 0x10000 );
@@ -2655,7 +2656,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
                 st_assert( constant->is_smi(), "should be a smi_t" );
                 _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), constant->value() & 0xFF );
             } else {
-                _masm->sarl( val.reg(), TAG_SIZE );                // convert (smi_t)value into int
+                _masm->sarl( val.reg(), TAG_SIZE );                // convert (smi_t)value into std::int32_t
                 if ( val.reg().hasByteRegister() ) {
                     // val.reg() has byte register -> can use byte store instruction
                     _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), val.reg() );

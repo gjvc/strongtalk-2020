@@ -9,21 +9,21 @@
 #include "vm/memory/allocation.hpp"
 
 
-constexpr int REGISTER_COUNT = 8;    // total number of registers
+constexpr std::int32_t REGISTER_COUNT = 8;    // total number of registers
 
 
 class Register : public ValueObject {
 
 private:
-    int _number;
+    std::int32_t _number;
 
 public:
     Register( void );
 
-    explicit Register( int number, char f );    // f is only to make sure that an int is not accidentally converted into a Register...
+    explicit Register( std::int32_t number, char f );    // f is only to make sure that an std::int32_t is not accidentally converted into a Register...
 
     // attributes
-    int number() const;
+    std::int32_t number() const;
 
 
     bool_t isValid() const;

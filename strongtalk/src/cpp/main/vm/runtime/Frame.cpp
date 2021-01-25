@@ -59,8 +59,8 @@ Oop **Frame::real_sender_sp_addr() const {
 }
 
 
-void Frame::patch_fp( int *fp ) {
-    Frame previous( nullptr, ( (int *) sp() ) - frame_sender_sp_offset, nullptr );
+void Frame::patch_fp( std::int32_t *fp ) {
+    Frame previous( nullptr, ( (std::int32_t *) sp() ) - frame_sender_sp_offset, nullptr );
     previous.set_link( fp );
 }
 
@@ -130,7 +130,7 @@ InterpretedInlineCache *Frame::current_interpretedIC() const {
 
     if ( is_interpreted_frame() ) {
         MethodOop m             = method();
-        int       byteCodeIndex = m->byteCodeIndex_from( hp() );
+        std::int32_t       byteCodeIndex = m->byteCodeIndex_from( hp() );
         std::uint8_t *codeptr = m->codes( byteCodeIndex );
         if ( ByteCodes::is_send_code( ByteCodes::Code( *codeptr ) ) ) {
             InterpretedInlineCache *ic = as_InterpretedIC( (const char *) hp() );
@@ -161,8 +161,8 @@ bool_t Frame::has_next_Delta_fp() const {
 }
 
 
-int *Frame::next_Delta_fp() const {
-    return (int *) at( frame_next_Delta_fp_offset );
+std::int32_t *Frame::next_Delta_fp() const {
+    return (std::int32_t *) at( frame_next_Delta_fp_offset );
 }
 
 
@@ -241,7 +241,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray<Oop> *stack = vf->expression_stack();
-            for ( std::size_t index = 0; index < stack->length(); index++ ) {
+            for ( std::int32_t index = 0; index < stack->length(); index++ ) {
                 stream->print( "    %3d: ", index );
                 stack->at( index )->print_value_on( stream );
                 stream->cr();
@@ -500,7 +500,7 @@ void Frame::restore_heap_code_pointer() {
         return;
     // Readjust hcode pointer
     std::uint8_t *obj = hp();
-    int offset = MarkSweep::next_heap_code_offset();
+    std::int32_t offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
         lprintf( "[0x%lx+%d]\n", obj, offset );
     set_hp( obj + offset );

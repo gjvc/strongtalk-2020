@@ -30,7 +30,7 @@ RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame *callee ) :
 }
 
 
-void RecompilerFrame::set_distance( int d ) {
+void RecompilerFrame::set_distance( std::int32_t d ) {
     _distance = d;
 }
 
@@ -75,7 +75,7 @@ CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
 
 RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame *callee ) {
     RecompilerFrame *rf;
-    int             dist = callee ? callee->distance() : -1;
+    std::int32_t             dist = callee ? callee->distance() : -1;
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
         dist++;
@@ -127,8 +127,8 @@ bool_t RecompilerFrame::hasBlockArgs() const {
     DeltaVirtualFrame *vf = top_vframe();
     if ( not vf )
         return false;
-    int               nargs = vf->method()->number_of_arguments();
-    for ( std::size_t i     = 0; i < nargs; i++ ) {
+    std::int32_t               nargs = vf->method()->number_of_arguments();
+    for ( std::int32_t i     = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
             return true;
@@ -139,11 +139,11 @@ bool_t RecompilerFrame::hasBlockArgs() const {
 
 GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
     DeltaVirtualFrame              *vf     = top_vframe();
-    int                            nargs   = top_method()->number_of_arguments();
+    std::int32_t                            nargs   = top_method()->number_of_arguments();
     GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
-    for ( std::size_t i = 0; i < nargs; i++ ) {
+    for ( std::int32_t i = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
             blocks->append( BlockClosureOop( b ) );
@@ -197,12 +197,12 @@ LookupKey *InterpretedRecompilerFrame::key() const {
 }
 
 
-int InterpretedRecompilerFrame::cost() const {
+std::int32_t InterpretedRecompilerFrame::cost() const {
     return _method->estimated_inline_cost( _receiverKlass );
 }
 
 
-int CompiledRecompilerFrame::cost() const {
+std::int32_t CompiledRecompilerFrame::cost() const {
     return _nativeMethod->instructionsLength();
 }
 
@@ -217,11 +217,11 @@ void InterpretedRecompilerFrame::cleanupStaleInlineCaches() {
 }
 
 
-std::size_t RecompilerFrame::computeSends( MethodOop m ) {
+std::int32_t RecompilerFrame::computeSends( MethodOop m ) {
 
     // how many sends did m cause?  (rough approximation)
     // add up invocation counts of all methods called by m
-    std::size_t  sends = 0;
+    std::int32_t  sends = 0;
     CodeIterator iter( m );
 
     do {
@@ -234,7 +234,7 @@ std::size_t RecompilerFrame::computeSends( MethodOop m ) {
                 InterpretedInlineCache         *ic = iter.ic();
                 InterpretedInlineCacheIterator it( ic );
                 while ( not it.at_end() ) {
-                    int count;
+                    std::int32_t count;
                     if ( it.is_compiled() ) {
                         sends += ( count = it.compiled_method()->invocation_count() );
                     } else {
@@ -262,7 +262,7 @@ std::size_t RecompilerFrame::computeSends( MethodOop m ) {
 
 
 static CompiledRecompilerFrame *this_rframe   = nullptr;
-static std::size_t             sum_ics_result = 0;
+static std::int32_t             sum_ics_result = 0;
 
 
 static void sum_ics( CompiledInlineCache *ic ) {
@@ -334,7 +334,7 @@ class CumulCounter : public SpecializedMethodClosure {
 
 public:
     MethodOop method;            // the method currently being scanned for uplevel-accesses
-    int       cumulSends;
+    std::int32_t       cumulSends;
     bool_t    top;
 
 
@@ -353,7 +353,7 @@ public:
     }
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) { // recursively search nested blocks
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) { // recursively search nested blocks
         MethodOop savedMethod = method;
         method = meth;
         count();
@@ -362,7 +362,7 @@ public:
 };
 
 
-std::size_t RecompilerFrame::computeCumulSends( MethodOop m ) {
+std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
     CumulCounter c( m );
     c.count();
     return c.cumulSends;
@@ -380,5 +380,5 @@ void CompiledRecompilerFrame::print() {
 
 
 void InterpretedRecompilerFrame::print() {
-    RecompilerFrame::print( "int." );
+    RecompilerFrame::print( "std::int32_t." );
 }

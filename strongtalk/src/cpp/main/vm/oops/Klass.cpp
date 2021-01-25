@@ -19,8 +19,8 @@
 
 void Klass::initialize() {
     set_untagged_contents( false );
-    set_classVars( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
-    set_methods( ObjectArrayOop( oopFactory::new_objArray( std::size_t{0} ) ) );
+    set_classVars( ObjectArrayOop( oopFactory::new_objArray( std::int32_t{0} ) ) );
+    set_methods( ObjectArrayOop( oopFactory::new_objArray( std::int32_t{0} ) ) );
     set_superKlass( KlassOop( nilObject ) );
     set_mixin( MixinOop( nilObject ) );
 }
@@ -31,7 +31,7 @@ Oop Klass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop Klass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop Klass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     return markSymbol( vmSymbols::not_oops() );
 }
 
@@ -105,7 +105,7 @@ bool_t Klass::has_same_layout_as( KlassOop klass ) {
         return false;
 
     // Check instance variables
-    for ( std::size_t i = oop_header_size(); i < non_indexable_size(); i++ ) {
+    for ( std::int32_t i = oop_header_size(); i < non_indexable_size(); i++ ) {
         if ( inst_var_name_at( i ) not_eq klass->klass_part()->inst_var_name_at( i ) )
             return false;
     }
@@ -124,13 +124,13 @@ bool_t Klass::has_same_inst_vars_as( KlassOop klass ) {
 
     Klass *classPart = klass->klass_part();
     // Check instance size
-    int ivars      = number_of_instance_variables();
-    int classIvars = classPart->number_of_instance_variables();
+    std::int32_t ivars      = number_of_instance_variables();
+    std::int32_t classIvars = classPart->number_of_instance_variables();
     if ( ivars not_eq classIvars )
         return false;
 
     // Check instance variables
-    for ( std::size_t offset = 1; offset <= number_of_instance_variables(); offset++ ) {
+    for ( std::int32_t offset = 1; offset <= number_of_instance_variables(); offset++ ) {
         if ( inst_var_name_at( non_indexable_size() - offset ) not_eq classPart->inst_var_name_at( classPart->non_indexable_size() - offset ) )
             return false;
     }
@@ -151,7 +151,7 @@ KlassOop Klass::create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop me
 }
 
 
-KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, int vtbl ) {
+KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superClass, KlassOop metaMetaClass, MixinOop mixin, std::int32_t vtbl ) {
 
     BlockScavenge bs;
 
@@ -160,9 +160,9 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     st_assert( mixin->class_mixin()->classVars()->length() == 0, "checking class side class var names" );
 
     ObjectArrayOop class_vars = oopFactory::new_objArray( mixin->number_of_classVars() );
-    int            length     = mixin->number_of_classVars();
+    std::int32_t            length     = mixin->number_of_classVars();
 
-    for ( std::size_t index = 1; index <= length; index++ ) {
+    for ( std::int32_t index = 1; index <= length; index++ ) {
         AssociationOop assoc = oopFactory::new_association( mixin->classVar_at( index ), nilObject, false );
         class_vars->obj_at_put( index, assoc );
     }
@@ -172,7 +172,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     Klass *mk = meta_klass->klass_part();
     mk->set_untagged_contents( false );
     mk->set_classVars( class_vars );
-    mk->set_methods( oopFactory::new_objArray( std::size_t{0} ) );
+    mk->set_methods( oopFactory::new_objArray( std::int32_t{0} ) );
     mk->set_superKlass( superMetaClass );
     mk->set_mixin( mixin->class_mixin() );
     mk->set_non_indexable_size( KlassOopDescriptor::header_size() + mk->number_of_instance_variables() );
@@ -183,7 +183,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 
     k->set_untagged_contents( false );
     k->set_classVars( class_vars );
-    k->set_methods( oopFactory::new_objArray( std::size_t{0} ) );
+    k->set_methods( oopFactory::new_objArray( std::int32_t{0} ) );
     k->set_superKlass( superClass );
     k->set_mixin( mixin );
     k->set_vtbl_value( vtbl );
@@ -193,17 +193,17 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 }
 
 
-KlassOop Klass::create_generic_class( KlassOop super_class, MixinOop mixin, int vtbl ) {
+KlassOop Klass::create_generic_class( KlassOop super_class, MixinOop mixin, std::int32_t vtbl ) {
     return create_generic_class( super_class->klass(), super_class, super_class->klass()->klass(), mixin, vtbl );
 }
 
 
-SymbolOop Klass::inst_var_name_at( int offset ) const {
+SymbolOop Klass::inst_var_name_at( std::int32_t offset ) const {
     Klass *current_klass = (Klass *) this;
-    int current_offset = non_indexable_size();
+    std::int32_t current_offset = non_indexable_size();
     do {
         MixinOop  m = current_klass->mixin();
-        for ( std::size_t i = m->number_of_instVars(); i > 0; i-- ) {
+        for ( std::int32_t i = m->number_of_instVars(); i > 0; i-- ) {
             current_offset--;
             if ( offset == current_offset )
                 return m->instVar_at( i );
@@ -214,26 +214,26 @@ SymbolOop Klass::inst_var_name_at( int offset ) const {
 }
 
 
-int Klass::lookup_inst_var( SymbolOop name ) const {
-    int offset = mixin()->inst_var_offset( name, non_indexable_size() );
+std::int32_t Klass::lookup_inst_var( SymbolOop name ) const {
+    std::int32_t offset = mixin()->inst_var_offset( name, non_indexable_size() );
     if ( offset >= 0 )
         return offset;
     return has_superKlass() ? superKlass()->klass_part()->lookup_inst_var( name ) : -1;
 }
 
 
-int Klass::number_of_instance_variables() const {
+std::int32_t Klass::number_of_instance_variables() const {
     return mixin()->number_of_instVars() + ( has_superKlass() ? superKlass()->klass_part()->number_of_instance_variables() : 0 );
 }
 
 // OPERATION FOR METHODS
 
-int Klass::number_of_methods() const {
+std::int32_t Klass::number_of_methods() const {
     return methods()->length();
 }
 
 
-MethodOop Klass::method_at( int index ) const {
+MethodOop Klass::method_at( std::int32_t index ) const {
     return MethodOop( methods()->obj_at( index ) );
 }
 
@@ -243,7 +243,7 @@ void Klass::add_method( MethodOop method ) {
     SymbolOop      selector  = method->selector();
 
     // Find out if a method with the same selector exists.
-    for ( std::size_t index = 1; index <= old_array->length(); index++ ) {
+    for ( std::int32_t index = 1; index <= old_array->length(); index++ ) {
         st_assert( old_array->obj_at( index )->is_method(), "must be method" );
         MethodOop m = MethodOop( old_array->obj_at( index ) );
         if ( m->selector() == selector ) {
@@ -257,19 +257,19 @@ void Klass::add_method( MethodOop method ) {
 }
 
 
-MethodOop Klass::remove_method_at( int index ) {
+MethodOop Klass::remove_method_at( std::int32_t index ) {
     MethodOop method = method_at( index );
     set_methods( methods()->copy_remove( index ) );
     return method;
 }
 
 
-int Klass::number_of_classVars() const {
+std::int32_t Klass::number_of_classVars() const {
     return classVars()->length();
 }
 
 
-AssociationOop Klass::classVar_at( int index ) const {
+AssociationOop Klass::classVar_at( std::int32_t index ) const {
     return AssociationOop( classVars()->obj_at( index ) );
 }
 
@@ -278,7 +278,7 @@ void Klass::add_classVar( AssociationOop assoc ) {
     ObjectArrayOop array = classVars();
 
     // Find out if it already exists.
-    for ( std::size_t index = 1; index <= array->length(); index++ ) {
+    for ( std::int32_t index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_association(), "must be symbol" );
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == assoc->key() )
@@ -290,7 +290,7 @@ void Klass::add_classVar( AssociationOop assoc ) {
 }
 
 
-AssociationOop Klass::remove_classVar_at( int index ) {
+AssociationOop Klass::remove_classVar_at( std::int32_t index ) {
     AssociationOop assoc = classVar_at( index );
     set_classVars( classVars()->copy_remove( index ) );
     return assoc;
@@ -299,7 +299,7 @@ AssociationOop Klass::remove_classVar_at( int index ) {
 
 bool_t Klass::includes_classVar( SymbolOop name ) {
     ObjectArrayOop array = classVars();
-    for ( int      index = 1; index <= array->length(); index++ ) {
+    for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == name )
             return true;
@@ -310,7 +310,7 @@ bool_t Klass::includes_classVar( SymbolOop name ) {
 
 AssociationOop Klass::local_lookup_class_var( SymbolOop name ) {
     ObjectArrayOop array = classVars();
-    for ( int      index = 1; index <= array->length(); index++ ) {
+    for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_association(), "must be symbol" );
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
         if ( elem->key() == name )
@@ -331,7 +331,7 @@ AssociationOop Klass::lookup_class_var( SymbolOop name ) {
 
 MethodOop Klass::local_lookup( SymbolOop selector ) {
     ObjectArrayOop array;
-    int            length;
+    std::int32_t            length;
     Oop *current;
 
     // Find out if there is a customized method matching the selector.
@@ -405,7 +405,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
 
     ObjectArrayOop array = methods();
     // Find out if a method with the same selector exists.
-    for ( int      index = 1; index <= array->length(); index++ ) {
+    for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         st_assert( array->obj_at( index )->is_method(), "must be method" );
         if ( MethodOop( array->obj_at( index ) ) == m )
             return true;
@@ -416,7 +416,7 @@ bool_t Klass::is_method_holder_for( MethodOop method ) {
         st_assert( mixin()->is_mixin(), "must be mixin" );
         array = mixin()->methods();
 
-        for ( std::size_t i = 1; i <= array->length(); i++ ) {
+        for ( std::int32_t i = 1; i <= array->length(); i++ ) {
             st_assert( array->obj_at( i )->is_method(), "must be method" );
             if ( MethodOop( array->obj_at( i ) ) == m )
                 return true;
@@ -435,7 +435,7 @@ KlassOop Klass::lookup_method_holder_for( MethodOop method ) {
 
 
 void Klass::flush_methods() {
-    set_methods( oopFactory::new_objArray( std::size_t{0} ) );
+    set_methods( oopFactory::new_objArray( std::int32_t{0} ) );
 }
 
 
@@ -457,7 +457,7 @@ void Klass::print_klass() {
 
 char *Klass::delta_name() {
     bool_t    meta   = false;
-    int       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
+    std::int32_t       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
     SymbolOop name   = nullptr;
 
     if ( offset >= 0 ) {
@@ -472,7 +472,7 @@ char *Klass::delta_name() {
             return nullptr;
     }
 
-    int length = name->length() + ( meta ? 7 : 1 );
+    std::int32_t length = name->length() + ( meta ? 7 : 1 );
     char *toReturn = new_resource_array<char>( length );
     strncpy( toReturn, name->chars(), name->length() );
 
@@ -485,7 +485,7 @@ char *Klass::delta_name() {
 
 
 void Klass::print_name_on( ConsoleOutputStream *stream ) {
-    int       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
+    std::int32_t       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
     SymbolOop name   = nullptr;
 
     if ( offset >= 0 ) {
@@ -510,13 +510,13 @@ void Klass::print_name_on( ConsoleOutputStream *stream ) {
 }
 
 
-int Klass::oop_scavenge_contents( Oop obj ) {
+std::int32_t Klass::oop_scavenge_contents( Oop obj ) {
     st_fatal( "should not call Klass::oop_scavenge_contents" );
     return 0;
 }
 
 
-int Klass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t Klass::oop_scavenge_tenured_contents( Oop obj ) {
     st_fatal( "should not call Klass::oop_scavenge_promotion" );
     return 0;
 }
@@ -585,7 +585,7 @@ Oop Klass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t tenure
 }
 
 
-Oop Klass::oop_primitive_allocate_size( Oop obj, std::size_t size ) {
+Oop Klass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
     return markSymbol( vmSymbols::not_klass() );
 }
 

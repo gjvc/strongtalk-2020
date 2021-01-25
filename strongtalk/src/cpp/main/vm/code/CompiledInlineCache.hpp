@@ -41,7 +41,7 @@
 // [NonLocalReturn offset|flags]		32bit immediate of the dummy test instruction
 //  31.......8|7...0
 //
-// The NonLocalReturn offset is a signed std::size_t, the NonLocalReturn target destination is computed
+// The NonLocalReturn offset is a signed std::int32_t, the NonLocalReturn target destination is computed
 // from the (call's) return address + NonLocalReturn offset.
 //
 // Calling nativeMethods through a jump table will cost 10% of the total execution speed
@@ -65,12 +65,12 @@ public:
 
 // Flags
 
-constexpr std::size_t dirty_send_bit_no      = 0;
-constexpr std::size_t optimized_bit_no       = 1;
-constexpr std::size_t uninlinable_bit_no     = 2;
-constexpr std::size_t super_send_bit_no      = 3;
-constexpr std::size_t megamorphic_bit_no     = 4;
-constexpr std::size_t receiver_static_bit_no = 5;
+constexpr std::int32_t dirty_send_bit_no      = 0;
+constexpr std::int32_t optimized_bit_no       = 1;
+constexpr std::int32_t uninlinable_bit_no     = 2;
+constexpr std::int32_t super_send_bit_no      = 3;
+constexpr std::int32_t megamorphic_bit_no     = 4;
+constexpr std::int32_t receiver_static_bit_no = 5;
 
 
 // CompiledInlineCache isn't a real object; the 'this' pointer points into the compiled code
@@ -85,12 +85,12 @@ class InterpretedInlineCache;
 class CompiledInlineCache : public AbstractCompiledInlineCache {
 
 protected:
-    std::size_t compiler_info() const {
+    std::int32_t compiler_info() const {
         return ic_info_at( next_instruction_address() )->flags();
     }
 
 
-    void set_compiler_info( std::size_t info ) {
+    void set_compiler_info( std::int32_t info ) {
         ic_info_at( next_instruction_address() )->set_flags( info );
     }
 
@@ -208,11 +208,11 @@ public:
     NativeMethod *target() const;    // directly called NativeMethod or nullptr if none/PolymorphicInlineCache
     KlassOop targetKlass() const;    // klass of compiled or interpreted target;
     // can only call if single target
-    std::size_t ntargets() const;    // number of targets in inline cache or PolymorphicInlineCache
-    KlassOop get_klass( std::size_t i ) const; // receiver klass of ith target (i=0..ntargets()-1)
+    std::int32_t ntargets() const;    // number of targets in inline cache or PolymorphicInlineCache
+    KlassOop get_klass( std::int32_t i ) const; // receiver klass of ith target (i=0..ntargets()-1)
 
     // returns the lookup key for PolymorphicInlineCache index
-    LookupKey *key( std::size_t which, bool_t is_normal_send ) const;
+    LookupKey *key( std::int32_t which, bool_t is_normal_send ) const;
 
     void reset_jump_addr();
 

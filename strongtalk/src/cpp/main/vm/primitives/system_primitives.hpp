@@ -19,7 +19,7 @@ private:
 
 
 public:
-    static std::size_t number_of_calls;
+    static std::int32_t number_of_calls;
 
     // REFLECTIVE OPERATIONS
 

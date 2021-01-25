@@ -13,15 +13,15 @@
 // The following variables are used to do NonLocalReturns through C code
 //extern "C" bool_t     have_nlr_through_C;
 //extern "C" Oop        nlr_result;
-//extern "C" int        nlr_home;
-//extern "C" int        nlr_home_id;
+//extern "C" std::int32_t        nlr_home;
+//extern "C" std::int32_t        nlr_home_id;
 //extern "C" ContextOop nlr_home_context;
 
 extern "C" {
 bool_t     have_nlr_through_C = false;
 Oop        nlr_result;
-int        nlr_home;
-int        nlr_home_id;
+std::int32_t        nlr_home;
+std::int32_t        nlr_home_id;
 ContextOop nlr_home_context;
 }
 
@@ -31,7 +31,7 @@ void ErrorHandler::abort_compilation() {
 }
 
 
-typedef Oop (xxx_nlr_at_func)( int *frame_pointer, Oop *stack_pointer );
+typedef Oop (xxx_nlr_at_func)( std::int32_t *frame_pointer, Oop *stack_pointer );
 
 
 void ErrorHandler::abort_current_process() {
@@ -43,7 +43,7 @@ void ErrorHandler::abort_current_process() {
     ShouldNotReachHere();
 }
 
-//extern "C" void continue_nlr_in_delta(int* frame_pointer, Oop* stack_pointer);
+//extern "C" void continue_nlr_in_delta(std::int32_t* frame_pointer, Oop* stack_pointer);
 
 void ErrorHandler::continue_nlr_in_delta() {
     xxx_nlr_at_func *_continue_nlr_in_delta = (xxx_nlr_at_func *) StubRoutines::continue_nlr_in_delta();

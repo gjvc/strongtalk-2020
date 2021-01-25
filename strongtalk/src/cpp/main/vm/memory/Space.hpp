@@ -58,17 +58,17 @@ public:
     }
 
 
-    int capacity() {
+    std::int32_t capacity() {
         return byte_size( bottom(), end() );
     }
 
 
-    int used() {
+    std::int32_t used() {
         return byte_size( bottom(), top() );
     }
 
 
-    int free() {
+    std::int32_t free() {
         return byte_size( top(), end() );
     }
 
@@ -162,7 +162,7 @@ public:
 
 
     // allocation
-    Oop *allocate( std::size_t size ) {
+    Oop *allocate( std::int32_t size ) {
         Oop *oops     = eden_top;
         Oop *oops_end = oops + size;
         if ( oops_end <= eden_end ) {
@@ -223,7 +223,7 @@ public:
 
 
     // allocation
-    Oop *allocate( std::size_t size ) {
+    Oop *allocate( std::int32_t size ) {
         Oop *oops     = _top;
         Oop *oops_end = oops + size;
         if ( oops_end <= _end ) {
@@ -236,7 +236,7 @@ public:
 
 
     // allocation test
-    bool_t would_fit( std::size_t size ) {
+    bool_t would_fit( std::int32_t size ) {
         return _top + size < _end;
     }
 
@@ -312,19 +312,19 @@ public:
 
     void update_offset_array( Oop *p, Oop *p_end );
 
-    int expand( std::size_t size );
+    std::int32_t expand( std::int32_t size );
 
-    Oop *expand_and_allocate( std::size_t size );
+    Oop *expand_and_allocate( std::int32_t size );
 
-    int shrink( std::size_t size );
+    std::int32_t shrink( std::int32_t size );
 
     // Keeps offset for retrieving object start given a card_page
     std::uint8_t *_offsetArray;
     Oop          *_nextOffsetThreshold;
-    int _nextOffsetIndex;
+    std::int32_t _nextOffsetIndex;
 
 
-    Oop *allocate( std::size_t size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::int32_t size, bool_t allow_expansion = true ) {
         Oop *p  = _top;
         Oop *p1 = p + size;
         if ( p1 < _end ) {
@@ -341,7 +341,7 @@ public:
 
     // constructors
     // allocates object Space too; sets size to amount allocated, 0 if none
-    OldSpace( const char *nm, int &size );
+    OldSpace( const char *nm, std::int32_t &size );
 
     void scavenge_contents_from( OldWaterMark *mark );
 

@@ -19,7 +19,7 @@
 TRACE_FUNC( TraceBehaviorPrims, "behavior" )
 
 
-std::size_t behaviorPrimitives::_numberOfCalls;
+std::int32_t behaviorPrimitives::_numberOfCalls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_klass(), "receiver must be klass object")
 
@@ -167,7 +167,7 @@ PRIM_DECL_2( behaviorPrimitives::classVariableAt, Oop behavior, Oop index ) {
     if ( not index->is_smi() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    std::size_t i = SMIOop( index )->value();
+    std::int32_t i = SMIOop( index )->value();
     if ( i > 0 and i <= KlassOop( behavior )->klass_part()->number_of_classVars() )
         return KlassOop( behavior )->klass_part()->classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );

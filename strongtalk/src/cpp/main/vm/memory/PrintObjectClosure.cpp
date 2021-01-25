@@ -9,8 +9,8 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 
 
-constexpr int indent_col = 3;
-constexpr int value_col  = 16;
+constexpr std::int32_t indent_col = 3;
+constexpr std::int32_t value_col  = 16;
 
 
 PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) {
@@ -92,7 +92,7 @@ void PrintObjectClosure::end_indexables() {
 }
 
 
-void PrintObjectClosure::do_indexable_oop( int index, Oop *o ) {
+void PrintObjectClosure::do_indexable_oop( std::int32_t index, Oop *o ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
@@ -104,14 +104,14 @@ void PrintObjectClosure::do_indexable_oop( int index, Oop *o ) {
 }
 
 
-void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t *b ) {
+void PrintObjectClosure::do_indexable_byte( std::int32_t index, std::uint8_t *b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
     _stream->print( "%d", index );
     _stream->sp();
     _stream->fill_to( value_col );
-    int c = (int) *b;
+    std::int32_t c = (std::int32_t) *b;
     if ( isprint( c ) )
         _stream->print_cr( "%c", c );
     else
@@ -119,14 +119,14 @@ void PrintObjectClosure::do_indexable_byte( int index, std::uint8_t *b ) {
 }
 
 
-void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t *b ) {
+void PrintObjectClosure::do_indexable_doubleByte( std::int32_t index, std::uint16_t *b ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );
     _stream->print( "%d", index );
     _stream->sp();
     _stream->fill_to( value_col );
-    int c = (int) *b;
+    std::int32_t c = (std::int32_t) *b;
     if ( isprint( c ) )
         _stream->print_cr( "%c", c );
     else
@@ -134,7 +134,7 @@ void PrintObjectClosure::do_indexable_doubleByte( int index, std::uint16_t *b ) 
 }
 
 
-void PrintObjectClosure::do_indexable_long( int index, std::int32_t *l ) {
+void PrintObjectClosure::do_indexable_long( std::int32_t index, std::int32_t *l ) {
     if ( index > MaxElementPrintSize )
         return;
     _stream->fill_to( indent_col );

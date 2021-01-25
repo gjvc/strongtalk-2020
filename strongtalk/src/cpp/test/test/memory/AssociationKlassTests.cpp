@@ -46,14 +46,14 @@ HandleMark mark;
 Handle     objectClass( Universe::find_global( "GlobalAssociation" ) );
 {
 OldSpaceMark oldMark( Universe::old_gen.top_mark()._space );
-int          freeSpace = Universe::old_gen.free();
+std::int32_t          freeSpace = Universe::old_gen.free();
 Universe::allocate_tenured( freeSpace
 / oopSize - 1 );
 ASSERT_TRUE( Universe::old_gen
 .
 free()
 < 5 * oopSize );
-ASSERT_EQ( ( int ) nullptr, ( int ) ( ( AssociationKlass * ) objectClass.as_klass()->klass_part() )->allocateObject( false ) );
+ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( ( AssociationKlass * ) objectClass.as_klass()->klass_part() )->allocateObject( false ) );
 }
 }
 
@@ -64,7 +64,7 @@ HandleMark mark;
 Handle     objectClass( Universe::find_global( "GlobalAssociation" ) );
 {
 OldSpaceMark oldMark( Universe::old_gen.top_mark()._space );
-int          freeSpace = Universe::old_gen.free();
+std::int32_t          freeSpace = Universe::old_gen.free();
 Universe::allocate_tenured( freeSpace
 / oopSize - 1 );
 ASSERT_TRUE( Universe::old_gen

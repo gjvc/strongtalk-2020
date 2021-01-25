@@ -116,7 +116,7 @@ extern "C" void my_sprintf( char *&buf, const char *format, ... ) {
     buf += strlen( buf );
 }
 
-extern "C" void my_sprintf_len( char *&buf, const std::size_t len, const char *format, ... ) {
+extern "C" void my_sprintf_len( char *&buf, const std::int32_t len, const char *format, ... ) {
     const char *oldbuf = buf;
 
     va_list ap;

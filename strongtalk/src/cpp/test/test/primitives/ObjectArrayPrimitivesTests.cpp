@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 
 class ObjectArrayPrimitivesTests : public ::testing::Test {
@@ -62,7 +62,7 @@ as_klass(),
 klass()
 );
 for (
-int index = 10;
+std::int32_t index = 10;
 index > 0; index-- )
 ASSERT_TRUE ( Universe::nilObject()
 == (
@@ -99,7 +99,7 @@ as_klass(),
 klass()
 );
 for (
-int index = 10;
+std::int32_t index = 10;
 index > 0; index-- )
 ASSERT_TRUE ( Universe::nilObject()
 == (
@@ -164,7 +164,7 @@ markSymbol( vmSymbols::second_argument_has_wrong_type() ),
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 ) {
-std::size_t size   = Universe::new_gen.eden()->free() / oopSize;
+std::int32_t size   = Universe::new_gen.eden()->free() / oopSize;
 Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), arrayClass );
 ASSERT_TRUE( result
 ->
@@ -180,7 +180,7 @@ as_string();
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
 ) {
-std::size_t size   = Universe::old_gen.free() / oopSize;
+std::int32_t size   = Universe::old_gen.free() / oopSize;
 Oop result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), arrayClass );
 ASSERT_TRUE( result
 ->

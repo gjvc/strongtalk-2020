@@ -42,7 +42,7 @@ private:
     }
 
 
-    friend int assign_hash( MarkOop &m );
+    friend std::int32_t assign_hash( MarkOop &m );
 
     enum {
         no_hash    = 0,    //
@@ -147,7 +147,7 @@ public:
 
 
     // tells if context has forward reference to an unoptimized context(via sentinel bit)
-    static std::size_t context_forward_bit_mask() {
+    static std::int32_t context_forward_bit_mask() {
         return near_death_mask_in_place;
     }
 
@@ -179,12 +179,12 @@ public:
 
 
     // age operations
-    int age() const {
+    std::int32_t age() const {
         return maskBits( value(), age_mask_in_place ) >> age_shift;
     }
 
 
-    MarkOop set_age( int v ) const {
+    MarkOop set_age( std::int32_t v ) const {
         st_assert( ( v & ~age_mask ) == 0, "shouldn't overflow field" );
         return MarkOop( ( value() & ~age_mask_in_place ) | ( ( v & age_mask ) << age_shift ) );
     }
@@ -196,12 +196,12 @@ public:
 
 
     // hash operations
-    int hash() const {
+    std::int32_t hash() const {
         return maskBits( value(), hash_mask_in_place ) >> hash_shift;
     }
 
 
-    MarkOop set_hash( int v ) const {
+    MarkOop set_hash( std::int32_t v ) const {
         if ( ( v & hash_mask ) == 0 )
             v       = first_hash; // avoid no_hash
         MarkOop val = MarkOop( ( value() & ~hash_mask_in_place ) | ( ( v & hash_mask ) << hash_shift ) );
@@ -232,8 +232,8 @@ public:
     }
 
 
-    friend int hash_markOop( MarkOop &m ) {
-        int v = m->hash();
+    friend std::int32_t hash_markOop( MarkOop &m ) {
+        std::int32_t v = m->hash();
         return v == no_hash ? assign_hash( m ) : v;
     }
 
@@ -242,7 +242,7 @@ public:
     void print_on( ConsoleOutputStream *stream );
 
 
-    static std::size_t masked_hash( int v ) {
+    static std::int32_t masked_hash( std::int32_t v ) {
         return v & hash_mask;
     }
 };

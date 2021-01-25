@@ -34,9 +34,9 @@ public:
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 
     // memory operations
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -54,7 +54,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return WeakArrayOopDescriptor::header_size();
     }
 };
@@ -89,7 +89,7 @@ public:
     // Mark sweep interface
     static void begin_mark_sweep();
 
-    static bool_t mark_sweep_register( WeakArrayOop obj, int non_indexable_size );
+    static bool_t mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size );
 
     static void check_and_follow_contents();
 
@@ -97,7 +97,7 @@ private:
     // Variables
     static bool_t                      during_registration;
     static GrowableArray<WeakArrayOop> *weakArrays;
-    static GrowableArray<std::size_t>  *nis;
+    static GrowableArray<std::int32_t>  *nis;
 
     // Scavenge operations
     static void scavenge_contents();
@@ -135,9 +135,9 @@ public:
 
 private:
     static Oop         *array;
-    static std::size_t size;
-    static std::size_t first;
-    static std::size_t last;
+    static std::int32_t size;
+    static std::int32_t first;
+    static std::int32_t last;
 
-    static std::size_t succ( int index );
+    static std::int32_t succ( std::int32_t index );
 };

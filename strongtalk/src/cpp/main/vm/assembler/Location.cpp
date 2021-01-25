@@ -23,21 +23,21 @@ static std::array<const char *, nofSpecialLocations> specialLocNames{
 
 // Constructors
 
-void Location::overflow( Mode mode, int f1, int f2, int f3 ) {
+void Location::overflow( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
     // should handle field overflow somehow - for now: fatal error
     st_fatal( "Location field overflow - please notify the compiler folks" );
 }
 
 
-Location::Location( Mode mode, int f ) {
-    _loc = (int) mode + ( f << _fPos );
+Location::Location( Mode mode, std::int32_t f ) {
+    _loc = (std::int32_t) mode + ( f << _fPos );
 }
 
 
-Location::Location( Mode mode, int f1, int f2, int f3 ) {
+Location::Location( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
     if ( ( f1 & _f1Mask ) not_eq f1 or ( f2 & _f2Mask ) not_eq f2 or ( f3 & _f3Mask ) not_eq f3 )
         overflow( mode, f1, f2, f3 );
-    _loc = int( mode ) + ( f1 << _f1Pos ) + ( f2 << _f2Pos ) + ( f3 << _f3Pos );
+    _loc = std::int32_t( mode ) + ( f1 << _f1Pos ) + ( f2 << _f2Pos ) + ( f3 << _f3Pos );
 }
 
 
@@ -113,26 +113,26 @@ void IntFreeList::grow() {
 }
 
 
-IntFreeList::IntFreeList( std::size_t size ) {
+IntFreeList::IntFreeList( std::int32_t size ) {
     _first = -1;
-    _list  = new GrowableArray<int>( 2 );
+    _list  = new GrowableArray<std::int32_t>( 2 );
     st_assert( _list->length() == 0, "should be zero" );
 }
 
 
-int IntFreeList::allocate() {
+std::int32_t IntFreeList::allocate() {
     if ( _first < 0 )
         grow();
-    std::size_t i = _first;
+    std::int32_t i = _first;
     _first = _list->at( i );
     _list->at_put( i, -1 ); // for debugging only
     return i;
 }
 
 
-int IntFreeList::allocated() {
-    int n = length();
-    std::size_t i = _first;
+std::int32_t IntFreeList::allocated() {
+    std::int32_t n = length();
+    std::int32_t i = _first;
     while ( i >= 0 ) {
         i = _list->at( i );
         n--;
@@ -142,14 +142,14 @@ int IntFreeList::allocated() {
 }
 
 
-void IntFreeList::release( std::size_t i ) {
+void IntFreeList::release( std::int32_t i ) {
     st_assert( _list->at( i ) == -1, "should have been allocated before" );
     _list->at_put( i, _first );
     _first = i;
 }
 
 
-int IntFreeList::length() {
+std::int32_t IntFreeList::length() {
     return _list->length();
 }
 

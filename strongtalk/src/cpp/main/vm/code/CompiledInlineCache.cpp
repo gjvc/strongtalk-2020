@@ -57,7 +57,7 @@ bool_t CompiledInlineCache::is_empty() const {
 }
 
 
-std::size_t CompiledInlineCache::ntargets() const {
+std::int32_t CompiledInlineCache::ntargets() const {
     if ( is_empty() )
         return 0;
     PolymorphicInlineCache *p = pic();
@@ -131,7 +131,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         MemOop         msg  = MemOop( obj );
-        ObjectArrayOop args = oopFactory::new_objArray( std::size_t{0} );
+        ObjectArrayOop args = oopFactory::new_objArray( std::int32_t{0} );
         // for now: assume instance variables are there...
         // later: should check this or use a VM interface:
         // msg->set_receiver(recv);
@@ -592,11 +592,11 @@ NativeMethod *CompiledInlineCache::target() const {
 }
 
 
-KlassOop CompiledInlineCache::get_klass( std::size_t i ) const {
+KlassOop CompiledInlineCache::get_klass( std::int32_t i ) const {
     PolymorphicInlineCache *p = pic();
     if ( p ) {
         PolymorphicInlineCacheIterator it( p );
-        for ( std::size_t                      j = 0; j < i; j++ )
+        for ( std::int32_t                      j = 0; j < i; j++ )
             it.advance();
         return it.get_klass();
     } else {
@@ -612,7 +612,7 @@ PolymorphicInlineCache *CompiledInlineCache::pic() const {
 }
 
 
-LookupKey *CompiledInlineCache::key( std::size_t i, bool_t is_normal_send ) const {
+LookupKey *CompiledInlineCache::key( std::int32_t i, bool_t is_normal_send ) const {
     if ( is_normal_send ) {
         return LookupKey::allocate( get_klass( i ), selector() );
     } else {
@@ -635,7 +635,7 @@ PrimitiveDescriptor *PrimitiveInlineCache::primitive() {
 
 char *PrimitiveInlineCache::end_addr() {
     PrimitiveDescriptor *pd = primitive();
-    std::size_t offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
+    std::int32_t offset = pd->can_perform_NonLocalReturn() ? InlineCacheInfo::instruction_size : 0;
     return next_instruction_address() + offset;
 }
 

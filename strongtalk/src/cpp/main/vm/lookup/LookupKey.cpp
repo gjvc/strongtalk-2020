@@ -9,7 +9,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-int LookupKey::hash() const {
+std::int32_t LookupKey::hash() const {
     return klass()->identity_hash() ^ selector_or_method()->identity_hash();
 }
 

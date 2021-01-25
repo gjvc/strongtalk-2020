@@ -30,7 +30,7 @@ bool_t VirtualFrame::equal( const VirtualFrame *virtualFrame ) const {
 }
 
 
-Oop VirtualFrame::callee_argument_at( int index ) const {
+Oop VirtualFrame::callee_argument_at( std::int32_t index ) const {
     _console->print_cr( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
     st_fatal( "aborting" );
     return nullptr;
@@ -98,22 +98,22 @@ void VirtualFrame::print_value() const {
 // ------------- DeltaVirtualFrame --------------
 
 GrowableArray<Oop> *DeltaVirtualFrame::arguments() const {
-    int                nargs   = method()->number_of_arguments();
+    std::int32_t                nargs   = method()->number_of_arguments();
     GrowableArray<Oop> *result = new GrowableArray<Oop>( nargs );
     VirtualFrame       *s      = sender();
-    for ( std::size_t  index   = 0; index < nargs; index++ ) {
+    for ( std::int32_t  index   = 0; index < nargs; index++ ) {
         result->push( argument_at( index ) );
     }
     return result;
 }
 
 
-Oop DeltaVirtualFrame::argument_at( int index ) const {
+Oop DeltaVirtualFrame::argument_at( std::int32_t index ) const {
     return sender()->callee_argument_at( method()->number_of_arguments() - ( index + 1 ) );
 }
 
 
-Oop DeltaVirtualFrame::callee_argument_at( int index ) const {
+Oop DeltaVirtualFrame::callee_argument_at( std::int32_t index ) const {
     return expression_at( index );
 }
 
@@ -124,7 +124,7 @@ void DeltaVirtualFrame::print() {
 }
 
 
-void DeltaVirtualFrame::print_activation( int index ) const {
+void DeltaVirtualFrame::print_activation( std::int32_t index ) const {
     ( (VirtualFrame *) this )->VirtualFrame::print();
     PrettyPrinter::print( index, (DeltaVirtualFrame *) this );
 }
@@ -147,9 +147,9 @@ void DeltaVirtualFrame::verify() const {
     fr().verify();
 
     // Make sure we do not have any context objects in the argument list
-    int number_of_arguments = method()->number_of_arguments();
+    std::int32_t number_of_arguments = method()->number_of_arguments();
 
-    for ( std::size_t i = 0; i < number_of_arguments; i++ ) {
+    for ( std::int32_t i = 0; i < number_of_arguments; i++ ) {
         Oop argument = argument_at( i );
         if ( argument->is_context() ) {
             _console->print_cr( "Argument is a context" );
@@ -167,14 +167,14 @@ bool_t InterpretedVirtualFrame::has_interpreter_context() const {
 }
 
 
-Oop InterpretedVirtualFrame::temp_at( int offset ) const {
+Oop InterpretedVirtualFrame::temp_at( std::int32_t offset ) const {
     st_assert( offset > 0 or not has_interpreter_context(), "you cannot use temp(0) when a context is present" );
     st_assert( offset < method()->number_of_stack_temporaries(), "checking bounds" );
     return _frame.temp( offset );
 }
 
 
-Oop InterpretedVirtualFrame::context_temp_at( int offset ) const {
+Oop InterpretedVirtualFrame::context_temp_at( std::int32_t offset ) const {
     st_assert( has_interpreter_context(), "must have context when using context_temp_at" );
     return interpreter_context()->obj_at( offset );
 }
@@ -194,34 +194,34 @@ ContextOop InterpretedVirtualFrame::canonical_context() const {
 }
 
 
-Oop InterpretedVirtualFrame::expression_at( int index ) const {
+Oop InterpretedVirtualFrame::expression_at( std::int32_t index ) const {
     return *expression_addr( index );
 }
 
 
-Oop *InterpretedVirtualFrame::expression_addr( int offset ) const {
+Oop *InterpretedVirtualFrame::expression_addr( std::int32_t offset ) const {
     return (Oop *) &( (Oop *) _frame.sp() )[ offset ];
 }
 
 
 GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
 
-    int         last_temp_number = method()->number_of_stack_temporaries() - 1;
-    std::size_t size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
+    std::int32_t         last_temp_number = method()->number_of_stack_temporaries() - 1;
+    std::int32_t size             = _frame.temp_addr( last_temp_number ) - expression_addr( 0 );
     st_assert( size >= 0, "expr stack size must be non-negative" );
     GrowableArray<Oop> *result = new GrowableArray<Oop>( size );
 
-    for ( std::size_t i = 0; i < size; i++ ) {
+    for ( std::int32_t i = 0; i < size; i++ ) {
         Oop value = expression_at( i );
         st_assert( not value->is_context(), "checking for contextOop on expression stack" );
         result->push( expression_at( i ) );
     }
 
-    int computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
+    std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
     if ( size not_eq computed_size ) {
         warning( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), size, computed_size );
         _console->print_cr( "[expression stack:" );
-        for ( std::size_t i = 0; i < result->length(); i++ ) {
+        for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
@@ -260,12 +260,12 @@ void InterpretedVirtualFrame::set_receiver( Oop obj ) {
 }
 
 
-void InterpretedVirtualFrame::temp_at_put( int offset, Oop obj ) {
+void InterpretedVirtualFrame::temp_at_put( std::int32_t offset, Oop obj ) {
     _frame.set_temp( offset, obj );
 }
 
 
-void InterpretedVirtualFrame::expression_at_put( int offset, Oop obj ) {
+void InterpretedVirtualFrame::expression_at_put( std::int32_t offset, Oop obj ) {
     // FIX LATER p.set_expr(offset) = obj;
     Unimplemented();
 }
@@ -278,7 +278,7 @@ bool_t InterpretedVirtualFrame::equal( const VirtualFrame *f ) const {
 }
 
 
-int InterpretedVirtualFrame::byteCodeIndex() const {
+std::int32_t InterpretedVirtualFrame::byteCodeIndex() const {
     return method()->byteCodeIndex_from( hp() );
 }
 
@@ -337,7 +337,7 @@ void InterpretedVirtualFrame::verify() const {
 
 // ------------- CompiledVirtualFrame --------------
 
-CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) {
+CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) {
     if ( sd->isMethodScope() )
         return new CompiledMethodVirtualFrame( fr, sd, byteCodeIndex );
     if ( sd->isTopLevelBlockScope() )
@@ -350,14 +350,14 @@ CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDe
 
 
 void CompiledVirtualFrame::rewind_byteCodeIndex() {
-    int new_byteCodeIndex = method()->find_byteCodeIndex_from( _byteCodeIndex );
+    std::int32_t new_byteCodeIndex = method()->find_byteCodeIndex_from( _byteCodeIndex );
     st_assert( new_byteCodeIndex >= 0, "must be real byteCodeIndex" );
     _console->print_cr( "%d -> %d", _byteCodeIndex, new_byteCodeIndex );
     _byteCodeIndex = new_byteCodeIndex;
 }
 
 
-CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         DeltaVirtualFrame( fr ) {
     this->_scopeDescriptor = sd;
     _byteCodeIndex = byteCodeIndex;
@@ -371,7 +371,7 @@ VirtualFrame *CompiledVirtualFrame::sender() const {
 }
 
 
-Oop CompiledVirtualFrame::temp_at( int offset ) const {
+Oop CompiledVirtualFrame::temp_at( std::int32_t offset ) const {
     st_assert( offset > 0 or not method()->activation_has_context(), "you cannot use temp(0) when a context is present" );
     st_assert( offset < method()->number_of_stack_temporaries(), "checking bounds" );
     return resolve_name( scope()->temporary( offset ), this );
@@ -381,23 +381,23 @@ Oop CompiledVirtualFrame::temp_at( int offset ) const {
 class ContextTempFindClosure : public NameDescriptorClosure {
 public:
     NameDescriptor *result;
-    std::size_t    i;
+    std::int32_t    i;
 
 
-    ContextTempFindClosure( int index ) {
+    ContextTempFindClosure( std::int32_t index ) {
         i      = index;
         result = nullptr;
     }
 
 
-    void context_temp( int no, NameDescriptor *a, char *pc ) {
+    void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         if ( no == i )
             result = a;
     }
 };
 
 
-Oop CompiledVirtualFrame::context_temp_at( int offset ) const {
+Oop CompiledVirtualFrame::context_temp_at( std::int32_t offset ) const {
     st_assert( method()->activation_has_context(), "you cannot use context_temp_at() when methodOop does not allocate context" );
     ContextTempFindClosure blk( offset );
     _scopeDescriptor->iterate( &blk );
@@ -406,7 +406,7 @@ Oop CompiledVirtualFrame::context_temp_at( int offset ) const {
 }
 
 
-Oop CompiledVirtualFrame::expression_at( int index ) const {
+Oop CompiledVirtualFrame::expression_at( std::int32_t index ) const {
     GrowableArray<DeferredExpression *> *stack = deferred_expression_stack();
     if ( stack->length() <= index ) {
         // Hack for Robert 1/15/96, probably wrong expression stack
@@ -426,7 +426,7 @@ public:
     }
 
 
-    void context_temp( int no, NameDescriptor *a, char *pc ) {
+    void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         result->append( a );
     }
 };
@@ -452,10 +452,10 @@ ContextOop CompiledVirtualFrame::compiled_context() const {
 
 
 GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_stack() const {
-    GrowableArray<std::size_t>          *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<std::int32_t>          *mapping = method()->expression_stack_mapping( byteCodeIndex() );
     GrowableArray<DeferredExpression *> *result  = new GrowableArray<DeferredExpression *>( mapping->length() );
 
-    for ( int index = 0; index < mapping->length(); index++ ) {
+    for ( std::int32_t index = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = _scopeDescriptor->exprStackElem( mapping->at( index ) );
         result->push( new DeferredExpression( this, nd ) );
     }
@@ -464,21 +464,21 @@ GrowableArray<DeferredExpression *> *CompiledVirtualFrame::deferred_expression_s
 
 
 GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
-    GrowableArray<std::size_t> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
+    GrowableArray<std::int32_t> *mapping = method()->expression_stack_mapping( byteCodeIndex() );
     GrowableArray<Oop>         *result  = new GrowableArray<Oop>( mapping->length() );
 
-    for ( std::size_t i = 0; i < mapping->length(); i++ ) {
+    for ( std::int32_t i = 0; i < mapping->length(); i++ ) {
         NameDescriptor *nd   = _scopeDescriptor->exprStackElem( mapping->at( i ) );
         Oop            value = resolve_name( nd, this );
         result->push( value );
     }
 
-    int computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
+    std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
 
     if ( result->length() not_eq computed_size ) {
         warning( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), result->length(), computed_size );
         _console->print_cr( "[expression stack:" );
-        for ( std::size_t i = 0; i < result->length(); i++ ) {
+        for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
@@ -498,7 +498,7 @@ bool_t CompiledVirtualFrame::equal( const VirtualFrame *f ) const {
 }
 
 
-int CompiledVirtualFrame::byteCodeIndex() const {
+std::int32_t CompiledVirtualFrame::byteCodeIndex() const {
     return _byteCodeIndex;
 }
 
@@ -601,9 +601,9 @@ Oop CompiledVirtualFrame::filler_oop() {
 }
 
 
-int CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor *d ) const {
+std::int32_t CompiledVirtualFrame::byteCodeIndex_for( ScopeDescriptor *d ) const {
     ScopeDescriptor *s = _scopeDescriptor;
-    int             b  = byteCodeIndex();
+    std::int32_t             b  = byteCodeIndex();
     while ( not s->is_equal( d ) ) {
         b = s->senderByteCodeIndex();
         st_assert( s->sender(), "make sure we have a sender" );
@@ -625,17 +625,17 @@ public:
     }
 
 
-    void arg( int no, NameDescriptor *a, char *pc ) {
+    void arg( std::int32_t no, NameDescriptor *a, char *pc ) {
         CHECK( a );
     }
 
 
-    void temp( int no, NameDescriptor *a, char *pc ) {
+    void temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         CHECK( a );
     }
 
 
-    void context_temp( int no, NameDescriptor *a, char *pc ) {
+    void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         CHECK( a );
     }
 };
@@ -754,7 +754,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *sco
     result = ContextKlass::allocate_context( blk.result->length() );
 
     // fill in the meat
-    for ( std::size_t i = 0; i < blk.result->length(); i++ ) {
+    for ( std::int32_t i = 0; i < blk.result->length(); i++ ) {
         NameDescriptor *nd = blk.result->at( i );
         result->obj_at_put( i, resolve_name( nd, vf, comp_context ) );
     }
@@ -803,7 +803,7 @@ void CompiledVirtualFrame::verify() const {
 }
 // ------------- compiledMethodVFrame --------------
 
-CompiledMethodVirtualFrame::CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+CompiledMethodVirtualFrame::CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
@@ -830,7 +830,7 @@ ContextOop CompiledMethodVirtualFrame::canonical_context() const {
 
 // ------------- CompiledBlockVirtualFrame --------------
 
-CompiledBlockVirtualFrame::CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+CompiledBlockVirtualFrame::CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
@@ -853,7 +853,7 @@ Oop CompiledBlockVirtualFrame::receiver() const {
 
 DeltaVirtualFrame *CompiledBlockVirtualFrame::parent() const {
     ScopeDescriptor *ps                  = parent_scope();
-    int             parent_byteCodeIndex = byteCodeIndex_for( ps );
+    std::int32_t             parent_byteCodeIndex = byteCodeIndex_for( ps );
     return CompiledVirtualFrame::new_vframe( &_frame, ps, parent_byteCodeIndex );
 }
 
@@ -877,7 +877,7 @@ ScopeDescriptor *CompiledBlockVirtualFrame::parent_scope() const {
 
 // ------------- CompiledTopLevelBlockVirtualFrame --------------
 
-CompiledTopLevelBlockVirtualFrame::CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, int byteCodeIndex ) :
+CompiledTopLevelBlockVirtualFrame::CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
@@ -950,7 +950,7 @@ ObjectArrayOop DeoptimizedVirtualFrame::retrieve_frame_array() const {
 }
 
 
-Oop DeoptimizedVirtualFrame::obj_at( int index ) const {
+Oop DeoptimizedVirtualFrame::obj_at( std::int32_t index ) const {
     return _frameArray->obj_at( _offset + index );
 }
 
@@ -960,7 +960,7 @@ bool_t DeoptimizedVirtualFrame::is_top() const {
 }
 
 
-int DeoptimizedVirtualFrame::end_of_expressions() const {
+std::int32_t DeoptimizedVirtualFrame::end_of_expressions() const {
     SMIOop n = SMIOop( obj_at( locals_size_offset ) );
     st_assert( n->is_smi(), "expecting smi_t" );
     return first_temp_offset + n->value();
@@ -975,7 +975,7 @@ DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
 }
 
 
-DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, int offset ) :
+DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset ) :
         DeltaVirtualFrame( fr ) {
     this->_offset     = offset;
     this->_frameArray = retrieve_frame_array();
@@ -994,7 +994,7 @@ MethodOop DeoptimizedVirtualFrame::method() const {
 }
 
 
-int DeoptimizedVirtualFrame::byteCodeIndex() const {
+std::int32_t DeoptimizedVirtualFrame::byteCodeIndex() const {
     SMIOop b = SMIOop( obj_at( byteCodeIndex_offset ) );
     st_assert( b->is_smi(), "expecting smi_t" );
     return b->value();
@@ -1013,17 +1013,17 @@ bool_t DeoptimizedVirtualFrame::equal( const VirtualFrame *f ) const {
 }
 
 
-Oop DeoptimizedVirtualFrame::temp_at( int offset ) const {
+Oop DeoptimizedVirtualFrame::temp_at( std::int32_t offset ) const {
     return obj_at( first_temp_offset + offset );
 }
 
 
-Oop DeoptimizedVirtualFrame::expression_at( int index ) const {
+Oop DeoptimizedVirtualFrame::expression_at( std::int32_t index ) const {
     return obj_at( end_of_expressions() - 1 - index );
 }
 
 
-Oop DeoptimizedVirtualFrame::context_temp_at( int offset ) const {
+Oop DeoptimizedVirtualFrame::context_temp_at( std::int32_t offset ) const {
     st_assert( deoptimized_context(), "must have context when using context_temp_at" );
     return deoptimized_context()->obj_at( offset );
 }
@@ -1044,16 +1044,16 @@ ContextOop DeoptimizedVirtualFrame::canonical_context() const {
 
 
 GrowableArray<Oop> *DeoptimizedVirtualFrame::expression_stack() const {
-    int locals   = end_of_expressions() - first_temp_offset;
-    int temps    = method()->number_of_stack_temporaries();
-    int exp_size = locals - temps;
+    std::int32_t locals   = end_of_expressions() - first_temp_offset;
+    std::int32_t temps    = method()->number_of_stack_temporaries();
+    std::int32_t exp_size = locals - temps;
 
     GrowableArray<Oop> *array = new GrowableArray<Oop>( exp_size );
-    for ( std::size_t  index  = 0; index < exp_size; index++ ) {
+    for ( std::int32_t  index  = 0; index < exp_size; index++ ) {
         array->push( expression_at( index ) );
     }
 
-    int computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
+    std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
     if ( exp_size not_eq computed_size )
         warning( "Expression stack size is %d but computed to %d", exp_size, computed_size );
 
@@ -1092,6 +1092,6 @@ void cChunk::print() {
 }
 
 
-Oop cChunk::callee_argument_at( int index ) const {
+Oop cChunk::callee_argument_at( std::int32_t index ) const {
     return Oop( _frame.sp()[ index ] );
 }

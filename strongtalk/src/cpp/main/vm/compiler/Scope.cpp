@@ -29,10 +29,10 @@ SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression 
 }
 
 
-void SendInfo::computeNSends( RecompilationScope *rscope, int byteCodeIndex ) {
+void SendInfo::computeNSends( RecompilationScope *rscope, std::int32_t byteCodeIndex ) {
     GrowableArray<RecompilationScope *> *lst = rscope->subScopes( byteCodeIndex );
     _sendCount = 0;
-    for ( std::size_t i = lst->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = lst->length() - 1; i >= 0; i-- ) {
         _sendCount += lst->at( i )->_invocationCount;
     }
 }
@@ -231,7 +231,7 @@ MergeNode *InlinedScope::nlrTestPoint() {
        does to the machine code generation phase.
     */
     if ( not _nlrTestPoint ) {
-        int end_byteCodeIndex = nofBytes();
+        std::int32_t end_byteCodeIndex = nofBytes();
         // Note: src has incorrect def because it is implicitly assigned to via a call
         // (in sender scopes (when inlining), there will be an assignment when fixing up the connections).
         //SinglyAssignedPseudoRegister* src = new SinglyAssignedPseudoRegister(this, NonLocalReturnResultLoc, false, true, end_byteCodeIndex, end_byteCodeIndex);
@@ -255,7 +255,7 @@ void InlinedScope::addResult( Expression *e ) {
 
 
 void InlinedScope::initializeArguments() {
-    const int nofArgs = _method->number_of_arguments();
+    const std::int32_t nofArgs = _method->number_of_arguments();
     _arguments = new GrowableArray<Expression *>( nofArgs, nofArgs, nullptr );
     if ( isTop() ) {
         // create expr for self but do not allocate a location yet
@@ -263,15 +263,15 @@ void InlinedScope::initializeArguments() {
         _self = new KlassExpression( KlassOop( selfKlass() ), new SinglyAssignedPseudoRegister( this, unAllocated, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex ), nullptr );
         // preallocate incoming arguments, i.e., create their expressions
         // using SAPRegs that are already allocated
-        for ( std::size_t i = 0; i < nofArgs; i++ ) {
+        for ( std::int32_t i = 0; i < nofArgs; i++ ) {
             SinglyAssignedPseudoRegister *arg = new SinglyAssignedPseudoRegister( this, Mapping::incomingArg( i, nofArgs ), false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex );
             _arguments->at_put( i, new UnknownExpression( arg ) );
         }
     } else {
         _self = nullptr;    // will be initialized by sender
         // get args from sender's expression stack; top of expr stack = last arg, etc.
-        const int top = sender()->exprStack()->length();
-        for ( std::size_t i   = 0; i < nofArgs; i++ ) {
+        const std::int32_t top = sender()->exprStack()->length();
+        for ( std::int32_t i   = 0; i < nofArgs; i++ ) {
             _arguments->at_put( i, sender()->exprStack()->at( top - nofArgs + i ) );
         }
     }
@@ -290,9 +290,9 @@ void BlockScope::initializeSelf() {
 }
 
 
-void InlinedScope::createTemporaries( int nofTemps ) {
+void InlinedScope::createTemporaries( std::int32_t nofTemps ) {
     // add nofTemps temporaries (may be called multiple times)
-    int firstNew;
+    std::int32_t firstNew;
     if ( not hasTemporaries() ) {
         // first time we're called
         _temporaries = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );
@@ -308,16 +308,16 @@ void InlinedScope::createTemporaries( int nofTemps ) {
     } else {
         // grow existing temp array
         const GrowableArray<Expression *> *oldTemps = _temporaries;
-        const int                         n         = nofTemps + oldTemps->length();
+        const std::int32_t                         n         = nofTemps + oldTemps->length();
         _temporaries = new GrowableArray<Expression *>( n, n, nullptr );
         firstNew     = oldTemps->length();
         nofTemps += oldTemps->length();
-        for ( std::size_t i = 0; i < firstNew; i++ )
+        for ( std::int32_t i = 0; i < firstNew; i++ )
             _temporaries->at_put( i, oldTemps->at( i ) );
     }
     // initialize new temps
     ConstPseudoRegister *nil = new_ConstPReg( this, nilObject );
-    for ( std::size_t i = firstNew; i < nofTemps; i++ ) {
+    for ( std::int32_t i = firstNew; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _temporaries->at_put( i, new UnknownExpression( r, nullptr ) );
         if ( isTop() ) {
@@ -329,11 +329,11 @@ void InlinedScope::createTemporaries( int nofTemps ) {
 }
 
 
-void InlinedScope::createFloatTemporaries( int nofFloats ) {
+void InlinedScope::createFloatTemporaries( std::int32_t nofFloats ) {
     st_assert( not hasFloatTemporaries(), "cannot be called twice" );
     _floatTemporaries = new GrowableArray<Expression *>( nofFloats, nofFloats, nullptr );
     // initialize float temps
-    for ( std::size_t i = 0; i < nofFloats; i++ ) {
+    for ( std::int32_t i = 0; i < nofFloats; i++ ) {
         PseudoRegister *preg = new PseudoRegister( this, Location::floatLocation( scopeID(), i ), false, false );
         _floatTemporaries->at_put( i, new UnknownExpression( preg, nullptr ) );
         if ( isTop() ) {
@@ -345,14 +345,14 @@ void InlinedScope::createFloatTemporaries( int nofFloats ) {
 }
 
 
-void InlinedScope::createContextTemporaries( int nofTemps ) {
+void InlinedScope::createContextTemporaries( std::int32_t nofTemps ) {
     // create _contextTemporaries and initialize all elements immediately;
     // after creation, some of the elements may be overwritten
     // (e.g., copying self or a method argument to the context)
     st_assert( _contextTemporaries == nullptr, "more than one context created" );
     st_assert( allocatesInterpretedContext(), "inconsistent context info" );
     _contextTemporaries = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );
-    for ( std::size_t i = 0; i < nofTemps; i++ ) {
+    for ( std::int32_t i = 0; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _contextTemporaries->at_put( i, new UnknownExpression( r, nullptr ) );
     }
@@ -373,7 +373,7 @@ void InlinedScope::createContextTemporaries( int nofTemps ) {
 }
 
 
-void InlinedScope::contextTemporariesAtPut( int no, Expression *e ) {
+void InlinedScope::contextTemporariesAtPut( std::int32_t no, Expression *e ) {
     st_assert( not e->preg()->isSinglyAssignedPseudoRegister() or e->preg()->isBlockPseudoRegister() or ( (SinglyAssignedPseudoRegister *) e->preg() )->isInContext(), "not in context" );
     _contextTemporaries->at_put( no, e );
 }
@@ -398,7 +398,7 @@ void InlinedScope::prologue() {
 }
 
 
-static std::size_t compare_scopeByteCodeIndexs( InlinedScope **a, InlinedScope **b ) {
+static std::int32_t compare_scopeByteCodeIndexs( InlinedScope **a, InlinedScope **b ) {
     // put unused scopes at the end so they can be deleted
     if ( ( *a )->hasBeenGenerated() == ( *b )->hasBeenGenerated() ) {
         return ( *a )->senderByteCodeIndex() - ( *b )->senderByteCodeIndex();
@@ -418,7 +418,7 @@ void InlinedScope::epilogue() {
     // now remove all subscopes that were created but not used (not inlined)
     while ( not _subScopes->isEmpty() and not _subScopes->last()->hasBeenGenerated() )
         _subScopes->pop();
-    for ( std::size_t i = 0; i < _subScopes->length(); i++ ) {
+    for ( std::int32_t i = 0; i < _subScopes->length(); i++ ) {
         if ( not _subScopes->at( i )->hasBeenGenerated() ) st_fatal( "unused scopes should be at end" );
     }
 
@@ -453,7 +453,7 @@ bool_t InlinedScope::isSenderOf( InlinedScope *callee ) const {
     st_assert( callee, "should have a scope" );
     if ( depth > callee->depth )
         return false;
-    int d = callee->depth - 1;
+    std::int32_t d = callee->depth - 1;
     for ( InlinedScope *s = callee->sender(); s and d >= depth; s = s->sender(), d-- ) {
         if ( this == s )
             return true;
@@ -477,20 +477,20 @@ void InlinedScope::addSend( GrowableArray<PseudoRegister *> *expStk, bool_t isSe
 
 void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *exprStack ) {
     // this scope has at least one send - mark params & locals as debug-visible
-    int       i;
+    std::int32_t       i;
     if ( _nofSends <= 1 ) {
         // first time we're called
         self()->preg()->_debug          = true;
-        for ( int                   i   = nofArguments() - 1; i >= 0; i-- ) {
+        for ( std::int32_t                   i   = nofArguments() - 1; i >= 0; i-- ) {
             argument( i )->preg()->_debug = true;
         }
-        for ( int                   i   = nofTemporaries() - 1; i >= 0; i-- ) {
+        for ( std::int32_t                   i   = nofTemporaries() - 1; i >= 0; i-- ) {
             temporary( i )->preg()->_debug = true;
         }
         // if there's a context, mark all context variables as debug-visible too.
         GrowableArray<Expression *> *ct = contextTemporaries();
         if ( ct not_eq nullptr ) {
-            for ( std::size_t i = 0; i < ct->length(); i++ ) {
+            for ( std::int32_t i = 0; i < ct->length(); i++ ) {
                 ct->at( i )->preg()->_debug = true;
             }
         }
@@ -498,19 +498,19 @@ void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *expr
     // also mark expression stack as debug-visible (excluding arguments to
     // current send) (the args are already excluded from the CallNode's
     // expression stack, so just use that one instead of this->exprStack)
-    for ( std::size_t i = 0; i < exprStack->length(); i++ ) {
+    for ( std::int32_t i = 0; i < exprStack->length(); i++ ) {
         exprStack->at( i )->_debug = true;
     }
 }
 
 
-void InlinedScope::setExprForByteCodeIndex( int byteCodeIndex, Expression *expr ) {
+void InlinedScope::setExprForByteCodeIndex( std::int32_t byteCodeIndex, Expression *expr ) {
     st_assert( _exprStackElems->at_grow( byteCodeIndex ) == nullptr, "only one expr per ByteCodeIndex allowed" );
     _exprStackElems->at_put_grow( byteCodeIndex, expr );
 }
 
 
-void InlinedScope::set2ndExprForByteCodeIndex( int byteCodeIndex, Expression *expr ) {
+void InlinedScope::set2ndExprForByteCodeIndex( std::int32_t byteCodeIndex, Expression *expr ) {
     _exprStackElems->at_put_grow( byteCodeIndex, expr );
 }
 
@@ -522,10 +522,10 @@ void InlinedScope::set_self( Expression *e ) {
 }
 
 
-int InlinedScope::homeContext() const {
+std::int32_t InlinedScope::homeContext() const {
     // count the number of logical (i.e. interpreter) contexts from here up to the home method
     // contexts are numbered starting with zero and there is at least one context
-    int       context = -1;
+    std::int32_t       context = -1;
     MethodOop method  = _method;
     while ( method not_eq nullptr ) {
         if ( method->allocatesInterpretedContext() ) {
@@ -538,7 +538,7 @@ int InlinedScope::homeContext() const {
 }
 
 
-InlinedScope *InlinedScope::find_scope( int c, int &nofIndirections, OutlinedScope *&out ) {
+InlinedScope *InlinedScope::find_scope( std::int32_t c, std::int32_t &nofIndirections, OutlinedScope *&out ) {
     // return the InlinedScope that contains context c
     // IN : context no. c for this scope (in interpreter terms)
     // OUT: number of indirections required at run time (-1 = in same stack frame,
@@ -547,12 +547,12 @@ InlinedScope *InlinedScope::find_scope( int c, int &nofIndirections, OutlinedSco
     // if the inlined scope is not found (nofIndirections >= 0), the highest possible scope
     // is returned and out is set to the outlined scope containing the context
     st_assert( c >= 0, "context must be >= 0" );
-    int distance = _method->lexicalDistance( c );
+    std::int32_t distance = _method->lexicalDistance( c );
     nofIndirections = -1;
     Scope *s = this;
     out = nullptr;
     // first, go up as far as possible
-    int d = distance;
+    std::int32_t d = distance;
     for ( ; d > 0 and s->parent()->isInlinedScope(); d--, s = s->parent() );
     if ( d == 0 ) {
         // found scope in our NativeMethod
@@ -580,16 +580,16 @@ void InlinedScope::collectContextInfo( GrowableArray<InlinedScope *> *contextLis
     // collect all scopes with contexts
     if ( allocatesInterpretedContext() )
         contextList->append( this );
-    for ( std::size_t i = _subScopes->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _subScopes->length() - 1; i >= 0; i-- ) {
         _subScopes->at( i )->collectContextInfo( contextList );
     }
 }
 
 
-int InlinedScope::number_of_noninlined_blocks() {
+std::int32_t InlinedScope::number_of_noninlined_blocks() {
     // return the number of non-inlined blocks in this scope or its callees
-    int       nblocks = 0;
-    for ( std::size_t i       = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    std::int32_t       nblocks = 0;
+    for ( std::int32_t i       = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() and isSenderOrSame( blk->scope() ) )
             nblocks++;
@@ -599,7 +599,7 @@ int InlinedScope::number_of_noninlined_blocks() {
 
 
 void InlinedScope::generateDebugInfoForNonInlinedBlocks() {
-    for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() )
             blk->closure()->generateDebugInfo();
@@ -608,10 +608,10 @@ void InlinedScope::generateDebugInfoForNonInlinedBlocks() {
 
 
 void InlinedScope::copy_noninlined_block_info( NativeMethod *nm ) {
-    for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
         BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
         if ( blk->isUsed() ) {
-            int offset = theCompiler->scopeDescRecorder()->offset_for_noninlined_scope_node( blk->closure()->noninlined_block_scope() );
+            std::int32_t offset = theCompiler->scopeDescRecorder()->offset_for_noninlined_scope_node( blk->closure()->noninlined_block_scope() );
             nm->noninlined_block_at_put( blk->closure()->id().minor(), offset );
         }
     }
@@ -634,7 +634,7 @@ CompiledLoop *InlinedScope::addLoop() {
 
 
 void InlinedScope::optimizeLoops() {
-    for ( std::size_t i = _loops->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _loops->length() - 1; i >= 0; i-- ) {
 
         CompiledLoop *loop = _loops->at( i );
         const char   *msg  = loop->recognize();
@@ -648,7 +648,7 @@ void InlinedScope::optimizeLoops() {
         if ( OptimizeLoops )
             loop->optimize();
     }
-    for ( std::size_t i = _subScopes->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = _subScopes->length() - 1; i >= 0; i-- ) {
         _subScopes->at( i )->optimizeLoops();
     }
 }
@@ -672,14 +672,14 @@ void InlinedScope::addToPRegsEndSorted( PseudoRegister *r ) {
 
 
 void InlinedScope::allocatePRegs( IntFreeList *f ) {
-    int byteCodeIndex = PrologueByteCodeIndex;
-    int bi            = 0;
-    int si            = 0;
-    int ei            = 0;
-    int blen          = _pregsBegSorted->length();
-    int slen          = _subScopes->length();
-    int elen          = _pregsEndSorted->length();
-    int n             = f->allocated();
+    std::int32_t byteCodeIndex = PrologueByteCodeIndex;
+    std::int32_t bi            = 0;
+    std::int32_t si            = 0;
+    std::int32_t ei            = 0;
+    std::int32_t blen          = _pregsBegSorted->length();
+    std::int32_t slen          = _subScopes->length();
+    std::int32_t elen          = _pregsEndSorted->length();
+    std::int32_t n             = f->allocated();
     st_assert( blen == elen, "should be the same" );
     while ( byteCodeIndex <= EpilogueByteCodeIndex ) {
         // allocate registers that begin at byteCodeIndex
@@ -707,23 +707,23 @@ void InlinedScope::allocatePRegs( IntFreeList *f ) {
 }
 
 
-int InlinedScope::allocateFloatTemporaries( int firstFloatIndex ) {
+std::int32_t InlinedScope::allocateFloatTemporaries( std::int32_t firstFloatIndex ) {
     st_assert( firstFloatIndex >= 0, "illegal firstFloatIndex" );
     _firstFloatIndex = firstFloatIndex;                // start index for first float of this scope
-    int       nofFloatTemps             = hasFloatTemporaries() ? nofFloatTemporaries() : 0;
+    std::int32_t       nofFloatTemps             = hasFloatTemporaries() ? nofFloatTemporaries() : 0;
     // convert floatLocs into stackLocs
-    for ( std::size_t k                         = 0; k < nofFloatTemps; k++ ) {
+    for ( std::int32_t k                         = 0; k < nofFloatTemps; k++ ) {
         PseudoRegister *preg = floatTemporary( k )->preg();
         Location loc = preg->_location;
         st_assert( loc.scopeNo() == scopeID() and loc.floatNo() == k, "inconsistency" );
         preg->_location = Mapping::floatTemporary( scopeID(), k );
         st_assert( preg->_location.isStackLocation(), "must be a stack location" );
     }
-    int       startFloatIndex           = firstFloatIndex + nofFloatTemps;    // start index for first float in subscopes
-    int       totalNofFloatsInSubscopes = 0;
+    std::int32_t       startFloatIndex           = firstFloatIndex + nofFloatTemps;    // start index for first float in subscopes
+    std::int32_t       totalNofFloatsInSubscopes = 0;
     // allocate float temporaries of subscopes
-    int       len                       = _subScopes->length();
-    for ( std::size_t i                         = 0; i < len; i++ ) {
+    std::int32_t       len                       = _subScopes->length();
+    for ( std::int32_t i                         = 0; i < len; i++ ) {
         InlinedScope *scope = _subScopes->at( i );
         totalNofFloatsInSubscopes = max( totalNofFloatsInSubscopes, scope->allocateFloatTemporaries( startFloatIndex ) );
     }
@@ -731,7 +731,7 @@ int InlinedScope::allocateFloatTemporaries( int firstFloatIndex ) {
 }
 
 
-bool_t MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int depth ) {
+bool_t MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
     // test is method/rcvrKlass would be a recursive invocation of this scope
     if ( method == _method and rcvrKlass == selfKlass() ) {
         if ( depth <= 1 ) {
@@ -750,7 +750,7 @@ bool_t MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int d
 }
 
 
-bool_t BlockScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int depth ) {
+bool_t BlockScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
     if ( method == _method ) {
         if ( depth <= 1 ) {
             return true;    // terminate recursion here
@@ -793,7 +793,7 @@ void InlinedScope::genCode() {
     _NonLocalReturneturnPoint = NodeFactory::createAndRegisterNode<MergeNode>( EpilogueByteCodeIndex );
     _nlrTestPoint             = nullptr;
     _contextInitializer       = nullptr;
-    int nofTemps = method()->number_of_stack_temporaries();
+    std::int32_t nofTemps = method()->number_of_stack_temporaries();
     if ( isTop() ) {
         _returnPoint->append( NodeFactory::createAndRegisterNode<ReturnNode>( resultPR, EpilogueByteCodeIndex ) );
         _NonLocalReturneturnPoint->append( NodeFactory::createAndRegisterNode<NonLocalReturnSetupNode>( resultPR, EpilogueByteCodeIndex ) );
@@ -806,9 +806,9 @@ void InlinedScope::genCode() {
     st_assert( not hasTemporaries(), "should have no temporaries yet\n" );
     createTemporaries( nofTemps );
     // allocate Space for float temporaries
-    int nofFloats = method()->total_number_of_floats();
+    std::int32_t nofFloats = method()->total_number_of_floats();
     if ( UseFPUStack ) {
-        const int FPUStackSize = 8;
+        const std::int32_t FPUStackSize = 8;
         if ( method()->float_expression_stack_size() <= FPUStackSize ) {
             // float expression stack fits in FPU stack, use it instead and allocate only Space for the real float temporaries
             nofFloats = method()->number_of_float_temporaries();
@@ -832,7 +832,7 @@ void InlinedScope::genCode() {
 // debugging info
 void print_selector_cr( SymbolOop selector ) {
     char buffer[100];
-    int  length = selector->length();
+    std::int32_t  length = selector->length();
     st_assert( length < 100, "selector longer than 99 characters - buffer overrun" );
     strncpy( buffer, selector->chars(), length );
     buffer[ length ] = '\0';
@@ -861,13 +861,13 @@ void InlinedScope::generateDebugInfo() {
     }
 
     ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    int len, i;
+    std::int32_t len, i;
 
     if ( not isLite() ) {
         // temporaries
         if ( hasTemporaries() ) {
             len = _temporaries->length();
-            for ( std::size_t i = 0; i < len; i++ ) {
+            for ( std::int32_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _temporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -877,7 +877,7 @@ void InlinedScope::generateDebugInfo() {
         // float temporaries
         if ( hasFloatTemporaries() ) {
             len = _floatTemporaries->length();
-            for ( std::size_t i = 0; i < len; i++ ) {
+            for ( std::int32_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _floatTemporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -887,7 +887,7 @@ void InlinedScope::generateDebugInfo() {
         // context temporaries
         if ( allocatesInterpretedContext() ) {
             len = _contextTemporaries->length();
-            for ( std::size_t i = 0; i < len; i++ ) {
+            for ( std::int32_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _contextTemporaries->at( i )->preg();
                 rec->addContextTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
@@ -896,7 +896,7 @@ void InlinedScope::generateDebugInfo() {
         }
         // expr stack
         len = _exprStackElems->length();
-        for ( std::size_t i = 0; i < len; i++ ) {
+        for ( std::int32_t i = 0; i < len; i++ ) {
             Expression *elem = _exprStackElems->at( i );
             if ( elem not_eq nullptr ) {
                 PseudoRegister *r = elem->preg()->cpReg();
@@ -920,7 +920,7 @@ void InlinedScope::generateDebugInfo() {
 
     // subscopes
     len = _subScopes->length();
-    for ( std::size_t i = 0; i < len; i++ ) {
+    for ( std::int32_t i = 0; i < len; i++ ) {
         InlinedScope *s = _subScopes->at( i );
         if ( PrintDebugInfoGeneration )
             _console->print_cr( "Subscope %d (id = %d):", i, s->scopeID() );
@@ -1004,7 +1004,7 @@ void SendInfo::print() {
 
 void InlinedScope::printTree() {
     print();
-    for ( std::size_t i = 0; i < _subScopes->length(); i++ ) {
+    for ( std::int32_t i = 0; i < _subScopes->length(); i++ ) {
         _subScopes->at( i )->printTree();
     }
 }
@@ -1014,7 +1014,7 @@ void InlinedScope::print() {
     lprintf( " method: %#lx\n\tid: %ld", method(), scopeID() );
     lprintf( "\nself:   " );
     self()->print();
-    for ( std::size_t i = 0; i < nofArguments(); i++ ) {
+    for ( std::int32_t i = 0; i < nofArguments(); i++ ) {
         lprintf( "arg %2d: ", i );
         argument( i )->print();
     }

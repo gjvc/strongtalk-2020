@@ -23,7 +23,7 @@
 TRACE_FUNC( TraceProxyPrims, "proxy" )
 
 
-std::size_t proxyOopPrimitives::number_of_calls;
+std::int32_t proxyOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_proxy(), "receiver must be proxy")
 
@@ -41,7 +41,7 @@ PRIM_DECL_1( proxyOopPrimitives::getSmi, Oop receiver ) {
     std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
-    return smiOopFromValue( (int) value );
+    return smiOopFromValue( (std::int32_t) value );
 }
 
 
@@ -76,7 +76,7 @@ PRIM_DECL_3( proxyOopPrimitives::setHighLow, Oop receiver, Oop high, Oop low ) {
 PRIM_DECL_1( proxyOopPrimitives::getHigh, Oop receiver ) {
     PROLOGUE_1( "getHigh", receiver );
     ASSERT_RECEIVER;
-    std::uint32_t value = (int) ProxyOop( receiver )->get_pointer();
+    std::uint32_t value = (std::int32_t) ProxyOop( receiver )->get_pointer();
     value = value >> 16;
     return smiOopFromValue( value );
 }
@@ -85,7 +85,7 @@ PRIM_DECL_1( proxyOopPrimitives::getHigh, Oop receiver ) {
 PRIM_DECL_1( proxyOopPrimitives::getLow, Oop receiver ) {
     PROLOGUE_1( "getLow", receiver );
     ASSERT_RECEIVER;
-    std::uint32_t value = (int) ProxyOop( receiver )->get_pointer();
+    std::uint32_t value = (std::int32_t) ProxyOop( receiver )->get_pointer();
     value &= 0x0000ffff;
     return smiOopFromValue( value );
 }
@@ -200,7 +200,7 @@ PRIM_DECL_2( proxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
     std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
-    return smiOopFromValue( (int) value );
+    return smiOopFromValue( (std::int32_t) value );
 }
 
 
@@ -318,13 +318,13 @@ PRIM_DECL_3( proxyOopPrimitives::doublePrecisionFloatAtPut, Oop receiver, Oop of
 }
 
 
-static bool_t convert_to_arg( Oop arg, int *addr ) {
+static bool_t convert_to_arg( Oop arg, std::int32_t *addr ) {
     if ( arg->is_smi() ) {
         *addr = SMIOop( arg )->value();
         return true;
     }
     if ( arg->is_proxy() ) {
-        *addr = (int) ProxyOop( arg )->get_pointer();
+        *addr = (std::int32_t) ProxyOop( arg )->get_pointer();
         return true;
     }
     return false;
@@ -351,14 +351,14 @@ PRIM_DECL_2( proxyOopPrimitives::callOut0, Oop receiver, Oop result ) {
 }
 
 
-typedef void *(__CALLING_CONVENTION *call_out_func_1)( int a );
+typedef void *(__CALLING_CONVENTION *call_out_func_1)( std::int32_t a );
 
 
 PRIM_DECL_3( proxyOopPrimitives::callOut1, Oop receiver, Oop arg1, Oop result ) {
     PROLOGUE_3( "callOut1", receiver, arg1, result );
     ASSERT_RECEIVER_ACCESS;
 
-    int a1;
+    std::int32_t a1;
     if ( not receiver->is_proxy() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
@@ -374,14 +374,14 @@ PRIM_DECL_3( proxyOopPrimitives::callOut1, Oop receiver, Oop arg1, Oop result ) 
 }
 
 
-typedef void *(__CALLING_CONVENTION *call_out_func_2)( int a, int b );
+typedef void *(__CALLING_CONVENTION *call_out_func_2)( std::int32_t a, std::int32_t b );
 
 
 PRIM_DECL_4( proxyOopPrimitives::callOut2, Oop receiver, Oop arg1, Oop arg2, Oop result ) {
     PROLOGUE_4( "callOut2", receiver, arg1, arg2, result );
     ASSERT_RECEIVER_ACCESS;
 
-    int a1, a2;
+    std::int32_t a1, a2;
     if ( not receiver->is_proxy() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
@@ -399,14 +399,14 @@ PRIM_DECL_4( proxyOopPrimitives::callOut2, Oop receiver, Oop arg1, Oop arg2, Oop
 }
 
 
-typedef void *(__CALLING_CONVENTION *call_out_func_3)( int a, int b, int c );
+typedef void *(__CALLING_CONVENTION *call_out_func_3)( std::int32_t a, std::int32_t b, std::int32_t c );
 
 
 PRIM_DECL_5( proxyOopPrimitives::callOut3, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop result ) {
     PROLOGUE_5( "callOut3", receiver, arg1, arg2, arg3, result );
     ASSERT_RECEIVER_ACCESS;
 
-    int a1, a2, a3;
+    std::int32_t a1, a2, a3;
     if ( not receiver->is_proxy() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
@@ -426,14 +426,14 @@ PRIM_DECL_5( proxyOopPrimitives::callOut3, Oop receiver, Oop arg1, Oop arg2, Oop
 }
 
 
-typedef void *(__CALLING_CONVENTION *call_out_func_4)( int a, int b, int c, int d );
+typedef void *(__CALLING_CONVENTION *call_out_func_4)( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d );
 
 
 PRIM_DECL_6( proxyOopPrimitives::callOut4, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop result ) {
     PROLOGUE_6( "callOut4", receiver, arg1, arg2, arg3, arg4, result );
     ASSERT_RECEIVER_ACCESS;
 
-    int a1, a2, a3, a4;
+    std::int32_t a1, a2, a3, a4;
     if ( not receiver->is_proxy() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
@@ -455,14 +455,14 @@ PRIM_DECL_6( proxyOopPrimitives::callOut4, Oop receiver, Oop arg1, Oop arg2, Oop
 }
 
 
-typedef void *(__CALLING_CONVENTION *call_out_func_5)( int a, int b, int c, int d, int e );
+typedef void *(__CALLING_CONVENTION *call_out_func_5)( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d, std::int32_t e );
 
 
 PRIM_DECL_7( proxyOopPrimitives::callOut5, Oop receiver, Oop arg1, Oop arg2, Oop arg3, Oop arg4, Oop arg5, Oop result ) {
     PROLOGUE_7( "callOut5", receiver, arg1, arg2, arg3, arg4, arg5, result );
     ASSERT_RECEIVER_ACCESS;
 
-    int a1, a2, a3, a4, a5;
+    std::int32_t a1, a2, a3, a4, a5;
     if ( not receiver->is_proxy() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )

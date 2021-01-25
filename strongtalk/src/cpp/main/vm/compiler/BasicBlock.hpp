@@ -61,10 +61,10 @@ protected:
 
 public:
     BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters
-    static std::size_t                genCounter;    // to enumerate BBs in code-generation order
+    static std::int32_t                genCounter;    // to enumerate BBs in code-generation order
 
 public:
-    BasicBlock( Node *f, Node *l, int n ) {
+    BasicBlock( Node *f, Node *l, std::int32_t n ) {
         init( f, l, n );
         _visited = false;
     }
@@ -92,9 +92,9 @@ public:
 
     bool_t hasSinglePredecessor() const;
 
-    int nPredecessors() const;
+    std::int32_t nPredecessors() const;
 
-    int nSuccessors() const;
+    std::int32_t nSuccessors() const;
 
     bool_t isPredecessor( const BasicBlock *n ) const;
 
@@ -104,19 +104,19 @@ public:
 
     BasicBlock *next1() const;
 
-    BasicBlock *next( std::size_t i ) const;
+    BasicBlock *next( std::int32_t i ) const;
 
     BasicBlock *firstPrev() const;
 
-    BasicBlock *prev( std::size_t i ) const;
+    BasicBlock *prev( std::int32_t i ) const;
 
 
-    int id() const {
+    std::int32_t id() const {
         return this == nullptr ? -1 : _id;
     }
 
 
-    int loopDepth() const {
+    std::int16_t loopDepth() const {
         return _loopDepth;
     }
 
@@ -126,7 +126,7 @@ public:
     }
 
 
-    int genCount() const {
+    std::int16_t genCount() const {
         return _genCount;
     }
 
@@ -146,7 +146,7 @@ public:
     void localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArray<PseudoRegister *> *localRegs, GrowableArray<BitVector *> *lives );
 
 protected:
-    void init( Node *first, Node *last, int n );
+    void init( Node *first, Node *last, std::int32_t n );
 
     void slowLocalAlloc( GrowableArray<BitVector *> *hardwired, GrowableArray<PseudoRegister *> *localRegs, GrowableArray<BitVector *> *lives );
 
@@ -163,7 +163,7 @@ public:
 
     void verify();
 
-    void dfs( GrowableArray<BasicBlock *> *list, int depth );
+    void dfs( GrowableArray<BasicBlock *> *list, std::int32_t depth );
 
     void print_short();
 
@@ -172,7 +172,7 @@ public:
     void print();
 
 protected:
-    int addUDHelper( PseudoRegister *r );
+    std::int32_t addUDHelper( PseudoRegister *r );
 
     void renumber();
 

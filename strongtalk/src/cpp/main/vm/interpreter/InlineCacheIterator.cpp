@@ -80,26 +80,26 @@ void InlineCache::print() {
 }
 
 
-void InlineCacheIterator::goto_elem( std::size_t n ) {
+void InlineCacheIterator::goto_elem( std::int32_t n ) {
     init_iteration();
-    for ( std::size_t i = 0; i < n; i++ )
+    for ( std::int32_t i = 0; i < n; i++ )
         advance();
 }
 
 
-MethodOop InlineCacheIterator::interpreted_method( std::size_t i ) {
+MethodOop InlineCacheIterator::interpreted_method( std::int32_t i ) {
     goto_elem( i );
     return interpreted_method();
 }
 
 
-NativeMethod *InlineCacheIterator::compiled_method( std::size_t i ) {
+NativeMethod *InlineCacheIterator::compiled_method( std::int32_t i ) {
     goto_elem( i );
     return compiled_method();
 }
 
 
-KlassOop InlineCacheIterator::klass( std::size_t i ) {
+KlassOop InlineCacheIterator::klass( std::int32_t i ) {
     goto_elem( i );
     return klass();
 }

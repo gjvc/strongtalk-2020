@@ -32,8 +32,8 @@ KlassOop KlassKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-int KlassKlass::oop_scavenge_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t KlassKlass::oop_scavenge_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
 
     // header
     MemOop( obj )->scavenge_header();
@@ -51,8 +51,8 @@ int KlassKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int KlassKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t KlassKlass::oop_scavenge_tenured_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
 
     // header
     MemOop( obj )->scavenge_tenured_header();
@@ -92,9 +92,9 @@ bool_t KlassKlass::oop_verify( Oop obj ) {
     Klass *k = KlassOop( obj )->klass_part();
 
 //    if ( not k->oop_is_smi() ) {
-//        int a = k->non_indexable_size();
-//        int b = k->oop_header_size();
-//        int c = k->number_of_instance_variables();
+//        std::int32_t a = k->non_indexable_size();
+//        std::int32_t b = k->oop_header_size();
+//        std::int32_t c = k->number_of_instance_variables();
 //        if ( a not_eq b + c ) {
 //            warning( "inconsistent non indexable size" );
 //        }
@@ -159,7 +159,7 @@ Oop KlassKlass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t t
 }
 
 
-Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::size_t size ) {
+Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
     return KlassOop( obj )->klass_part()->allocateObjectSize( size );
 }
 

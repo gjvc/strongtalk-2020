@@ -11,8 +11,8 @@ AgeTable::AgeTable() {
 }
 
 
-int AgeTable::tenure_size( int age ) {
-    int total = 0;
+std::int32_t AgeTable::tenure_size( std::int32_t age ) {
+    std::int32_t total = 0;
     for ( ; age < table_size; age++ ) {
         total += _sizes[ age ];
     }
@@ -20,9 +20,9 @@ int AgeTable::tenure_size( int age ) {
 }
 
 
-int AgeTable::tenuring_threshold( std::size_t size ) {
-    int total = 0;
-    int age   = 1;
+std::int32_t AgeTable::tenuring_threshold( std::int32_t size ) {
+    std::int32_t total = 0;
+    std::int32_t age   = 1;
     for ( ; age < table_size; age++ ) {
         total += _sizes[ age ];
         if ( total > size )

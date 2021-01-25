@@ -24,13 +24,13 @@ const auto STACK_SIZE = ThreadStackSize * 1024;
 
 typedef struct {
 
-    int (*main)( void * );
+    std::int32_t (*main)( void * );
     void *parameter;
     void *stackLimit;
 
 } thread_start_t;
 
-int WINAPI startThread( void *params );
+std::int32_t WINAPI startThread( void *params );
 
 class Thread : public CHeapAllocatedObject {
 
@@ -39,7 +39,7 @@ private:
     static GrowableArray<Thread *> *threads;
     static Event                   *thread_created;
     HANDLE                         thread_handle;
-    int                            thread_id;
+    std::int32_t                    thread_id;
     void                           *stack_limit;
 
 
@@ -58,23 +58,25 @@ private:
     }
 
 
-    Thread( HANDLE handle, int id, void *stackLimit ) :
+    Thread( HANDLE handle, std::int32_t id, void *stackLimit ) :
             thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
-        int index = threads->find( nullptr, equals );
-        if ( index < 0 )
+
+        std::int32_t index = threads->find( nullptr, equals );
+        if ( index < 0 ) {
             threads->append( this );
-        else
+        } else {
             threads->at_put( index, this );
+        }
     }
 
 
     virtual ~Thread() {
-        int index = threads->find( this );
+        std::int32_t index = threads->find( this );
         threads->at_put( index, nullptr );
     }
 
 
-    static Thread *createThread( int main( void *parameter ), void *parameter, int *id_addr ) {
+    static Thread *createThread( std::int32_t main( void *parameter ), void *parameter, std::int32_t *id_addr ) {
         ThreadCritical tc;
         thread_start_t params;
         params.main      = main;
@@ -82,8 +84,9 @@ private:
 
         os::reset_event( thread_created );
         HANDLE result = CreateThread( nullptr, STACK_SIZE, (LPTHREAD_START_ROUTINE) startThread, &params, 0, reinterpret_cast<LPDWORD>( id_addr ) );
-        if ( result == nullptr )
+        if ( result == nullptr ) {
             return nullptr;
+        }
 
         os::wait_for_event( thread_created );
 
@@ -91,8 +94,8 @@ private:
     }
 
 
-    static Thread *findThread( int thread_id ) {
-        for ( std::size_t i = 0; i < threads->length(); i++ ) {
+    static Thread *findThread( std::int32_t thread_id ) {
+        for ( std::int32_t i = 0; i < threads->length(); i++ ) {
             Thread *thread = threads->at( i );
             if ( thread == nullptr )
                 continue;
@@ -105,7 +108,7 @@ private:
 
     friend class os;
 
-    friend int WINAPI startThread( void * );
+    friend std::int32_t WINAPI startThread( void * );
     friend void os_init();
     friend void os_exit();
 };

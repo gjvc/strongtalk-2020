@@ -40,7 +40,7 @@ public:
     }
 
 
-    static ObjectArrayOop allocate( std::size_t size ) {
+    static ObjectArrayOop allocate( std::int32_t size ) {
         Oop first = free_list()->obj_at( size - 1 );
         if ( first == nilObject ) {
             return ObjectArrayKlass::allocate_tenured_pic( size * 2 );
@@ -56,11 +56,11 @@ public:
 
 
     static ObjectArrayOop extend( ObjectArrayOop old_pic ) {
-        int old_size = old_pic->length() / 2;
+        std::int32_t old_size = old_pic->length() / 2;
         if ( old_size >= size_of_largest_interpreterPIC )
             return nullptr;
         ObjectArrayOop result = allocate( old_size + 1 );
-        for ( int      index  = 1; index <= old_size * 2; index++ ) {
+        for ( std::int32_t      index  = 1; index <= old_size * 2; index++ ) {
             result->obj_at_put( index, old_pic->obj_at( index ) );
         }
         return result;
@@ -68,7 +68,7 @@ public:
 
 
     static void deallocate( ObjectArrayOop pic ) {
-        int entry = ( pic->length() / 2 ) - 1;
+        std::int32_t entry = ( pic->length() / 2 ) - 1;
         Oop first = free_list()->obj_at( entry );
         pic->obj_at_put( 1, first );
         free_list()->obj_at_put( entry, pic );
@@ -88,7 +88,7 @@ public:
 
 
     static void set_last( ObjectArrayOop pic, Oop first, Oop second ) {
-        std::size_t size = pic->length();
+        std::int32_t size = pic->length();
         pic->obj_at_put( size--, second );
         pic->obj_at_put( size, first );
     }
@@ -126,7 +126,7 @@ std::uint8_t *InterpretedInlineCache::findStartOfSend( std::uint8_t *sel_addr ) 
 }
 
 
-std::size_t InterpretedInlineCache::findStartOfSend( MethodOop m, int byteCodeIndex ) {
+std::int32_t InterpretedInlineCache::findStartOfSend( MethodOop m, std::int32_t byteCodeIndex ) {
     std::uint8_t *p = findStartOfSend( m->codes( byteCodeIndex ) );
     return ( p == nullptr ) ? IllegalByteCodeIndex : p - m->codes() + 1;
 }
@@ -154,7 +154,7 @@ JumpTableEntry *InterpretedInlineCache::jump_table_entry() const {
 }
 
 
-int InterpretedInlineCache::nof_arguments() const {
+std::int32_t InterpretedInlineCache::nof_arguments() const {
     std::uint8_t *p = send_code_addr();
     switch ( ByteCodes::argument_spec( ByteCodes::Code( *p ) ) ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
@@ -164,8 +164,8 @@ int InterpretedInlineCache::nof_arguments() const {
         case ByteCodes::ArgumentSpec::recv_2_args:
             return 2;
         case ByteCodes::ArgumentSpec::recv_n_args: {
-            int n = selector()->number_of_arguments();
-            st_assert( n = int( *( p + 1 ) ), "just checkin'..." ); // send_code_addr()+1 must hold the number of arguments
+            std::int32_t n = selector()->number_of_arguments();
+            st_assert( n = std::int32_t( *( p + 1 ) ), "just checkin'..." ); // send_code_addr()+1 must hold the number of arguments
             return n;
         }
         case ByteCodes::ArgumentSpec::args_only:
@@ -206,7 +206,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
     ByteCodes::Code code_before  = send_code();
     Oop             word1_before = first_word();
     Oop             word2_before = second_word();
-    int             transition   = 0;
+    std::int32_t             transition   = 0;
 
     // modify InlineCache
     guarantee( word2_before == receiver_klass, "klass should be the same" );
@@ -319,7 +319,7 @@ void InterpretedInlineCache::cleanup() {
             //   no nativeMethods are compiled for super sends.
             if ( not ByteCodes::is_super_send( send_code() ) ) {
                 ObjectArrayOop pic   = pic_array();
-                for ( int      index = pic->length(); index > 0; index -= 2 ) {
+                for ( std::int32_t      index = pic->length(); index > 0; index -= 2 ) {
                     KlassOop klass = KlassOop( pic->obj_at( index ) );
                     st_assert( klass->is_klass(), "receiver klass must be klass" );
                     Oop first = pic->obj_at( index - 1 );
@@ -379,7 +379,7 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             break;
         case ByteCodes::SendType::polymorphic_send: {
             ObjectArrayOop pic   = pic_array();
-            for ( int      index = pic->length(); index > 0; index -= 2 ) {
+            for ( std::int32_t      index = pic->length(); index > 0; index -= 2 ) {
                 KlassOop receiver_klass = KlassOop( pic->obj_at( index ) );
                 st_assert( receiver_klass->is_klass(), "receiver klass must be klass" );
                 if ( receiver_klass == nm->_lookupKey.klass() ) {
@@ -555,9 +555,9 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         msg = MemOop( obj );
-        int            nofArgs = ic->selector()->number_of_arguments();
+        std::int32_t            nofArgs = ic->selector()->number_of_arguments();
         ObjectArrayOop args    = oopFactory::new_objArray( nofArgs );
-        for ( int      i       = 1; i <= nofArgs; i++ ) {
+        for ( std::int32_t      i       = 1; i <= nofArgs; i++ ) {
             args->obj_at_put( i, f->expr( nofArgs - i ) );
         }
         // for now: assume instance variables are there...
@@ -609,7 +609,7 @@ void InterpretedInlineCache::trace_inline_cache_miss( InterpretedInlineCache *ic
 }
 
 
-ObjectArrayOop cacheMissResult( Oop result, int argCount ) {
+ObjectArrayOop cacheMissResult( Oop result, std::int32_t argCount ) {
     BlockScavenge  bs;
     ObjectArrayOop resultHolder = oopFactory::new_objArray( 2 );
     resultHolder->obj_at_put( 1, smiOopFromValue( argCount ) );
@@ -750,7 +750,7 @@ void InterpretedInlineCacheIterator::advance() {
     if ( not at_end() ) {
         if ( _pic not_eq nullptr ) {
             // polymorphic inline cache
-            int index = _index + 1;    // array is 1-origin
+            std::int32_t index = _index + 1;    // array is 1-origin
             set_klass( _pic->obj_at( 2 * index ) );
             set_method( _pic->obj_at( 2 * index - 1 ) );
         } else {

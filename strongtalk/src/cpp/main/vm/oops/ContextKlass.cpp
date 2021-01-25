@@ -23,9 +23,9 @@ void setKlassVirtualTableFromContextKlass( Klass *k ) {
 }
 
 
-Oop ContextKlass::allocateObjectSize( int num_of_temps, bool_t permit_scavenge, bool_t tenured ) {
+Oop ContextKlass::allocateObjectSize( std::int32_t num_of_temps, bool_t permit_scavenge, bool_t tenured ) {
     KlassOop   k        = as_klassOop();
-    int        obj_size = ContextOopDescriptor::header_size() + num_of_temps;
+    std::int32_t        obj_size = ContextOopDescriptor::header_size() + num_of_temps;
     // allocate
     ContextOop obj      = as_contextOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
@@ -44,14 +44,14 @@ KlassOop ContextKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-ContextOop ContextKlass::allocate_context( int num_of_temps ) {
+ContextOop ContextKlass::allocate_context( std::int32_t num_of_temps ) {
     ContextKlass *ck = (ContextKlass *) contextKlassObject->klass_part();
     return ContextOop( ck->allocateObjectSize( num_of_temps ) );
 }
 
 
-int ContextKlass::oop_scavenge_contents( Oop obj ) {
-    std::size_t size = ContextOop( obj )->object_size();
+std::int32_t ContextKlass::oop_scavenge_contents( Oop obj ) {
+    std::int32_t size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_header();
     scavenge_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
@@ -61,8 +61,8 @@ int ContextKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int ContextKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    std::size_t size = ContextOop( obj )->object_size();
+std::int32_t ContextKlass::oop_scavenge_tenured_contents( Oop obj ) {
+    std::int32_t size = ContextOop( obj )->object_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
     scavenge_tenured_oop( (Oop *) &ContextOop( obj )->addr()->_parent );
@@ -85,7 +85,7 @@ void ContextKlass::oop_follow_contents( Oop obj ) {
     while ( not Oop( root_or_mark )->is_mark() ) {
         root_or_mark = (Oop *) *root_or_mark;
     }
-    int len = MarkOop( root_or_mark )->hash() - 1;
+    std::int32_t len = MarkOop( root_or_mark )->hash() - 1;
     MemOop( obj )->follow_body( ContextOopDescriptor::header_size(), ContextOopDescriptor::header_size() + len );
 }
 
@@ -108,7 +108,7 @@ void ContextKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 }
 
 
-int ContextKlass::oop_size( Oop obj ) const {
+std::int32_t ContextKlass::oop_size( Oop obj ) const {
     return ContextOop( obj )->object_size();
 }
 
@@ -131,7 +131,7 @@ void ContextKlass::oop_print_on( Oop obj, ConsoleOutputStream *stream ) {
     stream->print( " home: " );
     con->print_home_on( stream );
     stream->cr();
-    for ( std::size_t i = 0; i < con->length(); i++ ) {
+    for ( std::int32_t i = 0; i < con->length(); i++ ) {
         stream->print( " - %d: ", i );
         con->obj_at( i )->print_value_on( stream );
         stream->cr();

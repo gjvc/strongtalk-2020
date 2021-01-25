@@ -13,7 +13,7 @@
 #include "vm/compiler/CodeGenerator.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
-extern int      compilationCount;
+extern std::int32_t      compilationCount;
 extern Compiler *theCompiler;
 
 class CodeGenerator;
@@ -27,15 +27,15 @@ class Compiler : public PrintableResourceObject {
 
 private:
     GrowableArray<InlinedScope *> _scopeStack;                         // to keep track of current scope
-    int                           _totalNofBytes;                      // total no. of bytes compiled (for statistics)
-    int                           _special_handler_call_offset;        // call to recompilation stub or zombie handler (offset in bytes)
-    int                           _entry_point_offset;                 // NativeMethod entry point if receiver is unknown (offset in bytes)
-    int                           _verified_entry_point_offset;        // NativeMethod entry point if receiver is known (offset in bytes)
-    int                           _totalNofFloatTemporaries;           // the number of floatTemporaries for this NativeMethod
-    int                           _float_section_size;                 // the size of the float section on the stack in oops
-    int                           _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
+    std::int32_t                           _totalNofBytes;                      // total no. of bytes compiled (for statistics)
+    std::int32_t                           _special_handler_call_offset;        // call to recompilation stub or zombie handler (offset in bytes)
+    std::int32_t                           _entry_point_offset;                 // NativeMethod entry point if receiver is unknown (offset in bytes)
+    std::int32_t                           _verified_entry_point_offset;        // NativeMethod entry point if receiver is known (offset in bytes)
+    std::int32_t                           _totalNofFloatTemporaries;           // the number of floatTemporaries for this NativeMethod
+    std::int32_t                           _float_section_size;                 // the size of the float section on the stack in oops
+    std::int32_t                           _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
     CodeBuffer                    *_code;                              // the buffer used for code generation
-    int                           _nextLevel;                          // optimization level for NativeMethod being created
+    std::int32_t                           _nextLevel;                          // optimization level for NativeMethod being created
     bool_t                        _hasInlinableSendsRemaining;         // no inlinable sends remaining?
     bool_t                        _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
 
@@ -46,7 +46,7 @@ public:
     MethodOop                               method;                    // top-level method being compiled
     NonInlinedBlockScopeDescriptor          *blockScope;               // or nullptr if not compiling a block method
     RecompilationScope                      *recompileeRScope;         // recompilee's rscope (or nullptr)
-    int                                     countID;                   // recompile counter ID
+    std::int32_t                                     countID;                   // recompile counter ID
     JumpTableID                             main_jumpTable_id;         // jump table id
     JumpTableID                             promoted_jumpTable_id;     // promoted jump table entry for block method only
     bool_t                                  useUncommonTraps;          // ok to use uncommon traps?
@@ -61,7 +61,7 @@ public:
     PerformanceDebugger                     *reporter;                 // for reporting performance info
     StringOutputStream                      *messages;                 // debug messages
 
-    std::array<int, static_cast<std::size_t>(InlineLimitType::LastLimit)> inlineLimit; // limits for current compilation
+    std::array<std::int32_t, static_cast<std::int32_t>(InlineLimitType::LastLimit)> inlineLimit; // limits for current compilation
 
 private:
     void initialize( RecompilationScope *remote_scope = nullptr );
@@ -93,33 +93,33 @@ public:
 
     void finalize();
 
-    int level() const;      // optimization level of new NativeMethod
-    int version() const;    // version ("nth recompilation") of new NativeMethod
-    int special_handler_call_offset() const {
+    std::int32_t level() const;      // optimization level of new NativeMethod
+    std::int32_t version() const;    // version ("nth recompilation") of new NativeMethod
+    std::int32_t special_handler_call_offset() const {
         return _special_handler_call_offset;
     }
 
 
-    int entry_point_offset() const {
+    std::int32_t entry_point_offset() const {
         return _entry_point_offset;
     }
 
 
-    int verified_entry_point_offset() const {
+    std::int32_t verified_entry_point_offset() const {
         return _verified_entry_point_offset;
     }
 
 
-    std::size_t get_invocation_counter_limit() const;        // invocation limit for NativeMethod being created
+    std::int32_t get_invocation_counter_limit() const;        // invocation limit for NativeMethod being created
 
-    void set_special_handler_call_offset( int offset );
+    void set_special_handler_call_offset( std::int32_t offset );
 
-    void set_entry_point_offset( int offset );
+    void set_entry_point_offset( std::int32_t offset );
 
-    void set_verified_entry_point_offset( int offset );
+    void set_verified_entry_point_offset( std::int32_t offset );
 
 
-    int totalNofFloatTemporaries() const {
+    std::int32_t totalNofFloatTemporaries() const {
         st_assert( _totalNofFloatTemporaries >= 0, "not yet determined" );
         return _totalNofFloatTemporaries;
     }
@@ -130,19 +130,19 @@ public:
     }
 
 
-    int float_section_size() const {
+    std::int32_t float_section_size() const {
         return has_float_temporaries() ? _float_section_size : 0;
     }
 
 
-    int float_section_start_offset() const {
+    std::int32_t float_section_start_offset() const {
         return has_float_temporaries() ? _float_section_start_offset : 0;
     }
 
 
-    void set_float_section_size( std::size_t size );
+    void set_float_section_size( std::int32_t size );
 
-    void set_float_section_start_offset( int offset );
+    void set_float_section_start_offset( std::int32_t offset );
 
 
     bool_t is_block_compile() const {
@@ -161,26 +161,26 @@ public:
     }
 
 
-    int number_of_noninlined_blocks() const;                // no. of noninlined blocks in NativeMethod (used for jump entry alloc.)
+    std::int32_t number_of_noninlined_blocks() const;                // no. of noninlined blocks in NativeMethod (used for jump entry alloc.)
     void copy_noninlined_block_info( NativeMethod *nm );    // copy the noninlined block info to the NativeMethod.
-    void nofBytesCompiled( int n ) {
+    void nofBytesCompiled( std::int32_t n ) {
         _totalNofBytes += n;
     }
 
 
-    int totalNofBytes() const {
+    std::int32_t totalNofBytes() const {
         return _totalNofBytes;
     }
 
 
-    int estimatedSize() const;
+    std::int32_t estimatedSize() const;
 
     InlinedScope *currentScope() const;            // scope currently being compiled
     void enterScope( InlinedScope *s );
 
     void exitScope( InlinedScope *s );
 
-    void allocateArgs( int nargs, bool_t isPrimCall );
+    void allocateArgs( std::int32_t nargs, bool_t isPrimCall );
 
     bool_t registerUninlinable( Inliner *inliner );
 

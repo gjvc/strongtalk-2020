@@ -21,10 +21,10 @@ Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop ByteArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     KlassOop k        = as_klassOop();
-    int      ni_size  = non_indexable_size();
-    int      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
+    std::int32_t      ni_size  = non_indexable_size();
+    std::int32_t      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
     // allocate
     Oop *result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
 
@@ -41,7 +41,7 @@ Oop ByteArrayKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge
     Oop *end  = base + obj_size;
     // %optimized 'obj->set_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
-    // %optimized 'for (int index = 1; index <= size; index++)
+    // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'
     base = &base[ ni_size + 1 ];
     while ( base < end )
@@ -64,8 +64,8 @@ KlassOop ByteArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 }
 
 
-void ByteArrayKlass::initialize_object( ByteArrayOop obj, const char *value, int len ) {
-    for ( std::size_t i = 1; i <= len; i++ ) {
+void ByteArrayKlass::initialize_object( ByteArrayOop obj, const char *value, std::int32_t len ) {
+    for ( std::int32_t i = 1; i <= len; i++ ) {
         obj->byte_at_put( i, value[ i - 1 ] );
     }
 }
@@ -86,10 +86,10 @@ bool_t ByteArrayKlass::oop_verify( Oop obj ) {
 void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_byteArray( obj, "Argument must be byteArray" );
     ByteArrayOop array = ByteArrayOop( obj );
-    int          len   = array->length();
-    int          n     = min( MaxElementPrintSize, len );
+    std::int32_t          len   = array->length();
+    std::int32_t          n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
-    for ( std::size_t i = 1; i <= n; i++ ) {
+    for ( std::int32_t i = 1; i <= n; i++ ) {
         char c = array->byte_at( i );
         if ( isprint( c ) )
             stream->print( "%c", c );
@@ -105,13 +105,13 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) 
 void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     std::uint8_t *p = ByteArrayOop( obj )->bytes();
     Oop          *l = ByteArrayOop( obj )->length_addr();
-    int len = ByteArrayOop( obj )->length();
+    std::int32_t len = ByteArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
     // indexables
     blk->begin_indexables();
     blk->do_oop( "length", l );
-    for ( std::size_t i = 1; i <= len; i++ ) {
+    for ( std::int32_t i = 1; i <= len; i++ ) {
         blk->do_indexable_byte( i, p++ );
     }
     blk->end_indexables();
@@ -126,14 +126,14 @@ void ByteArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 }
 
 
-int ByteArrayKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t ByteArrayKlass::oop_scavenge_contents( Oop obj ) {
     // header + instance variables
     MemOopKlass::oop_scavenge_contents( obj );
     return object_size( ByteArrayOop( obj )->length() );
 }
 
 
-int ByteArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t ByteArrayKlass::oop_scavenge_tenured_contents( Oop obj ) {
     // header + instance variables
     MemOopKlass::oop_scavenge_tenured_contents( obj );
     return object_size( ByteArrayOop( obj )->length() );

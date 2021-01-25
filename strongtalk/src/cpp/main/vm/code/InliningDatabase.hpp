@@ -84,7 +84,7 @@ private:
     static RecompilationScope *file_in_from( std::ifstream &stream );
 
     // Helper functions when iterating over zone.
-    static std::size_t local_number_of_nativeMethods_written;
+    static std::int32_t local_number_of_nativeMethods_written;
 
     static void local_file_out_all( NativeMethod *nm );
 
@@ -123,7 +123,7 @@ public:
 
     // Writes the inlining structure for all compiled methods with a
     // specific receiver klass, returns the number of written structures.
-    static std::size_t file_out( KlassOop klass );
+    static std::int32_t file_out( KlassOop klass );
 
     // Reads the inlining structure from file_name.
     // Returns nullptr if the attempt failed.

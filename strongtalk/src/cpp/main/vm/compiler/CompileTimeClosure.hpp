@@ -37,12 +37,12 @@ protected:
     InlinedScope *_parent_scope;           // scope to which the closure belongs
     MethodOop _method;                   // block method
     PseudoRegister *_context;                // parent context
-    int         _nofArgs;                  // number of arguments for the block
+    std::int32_t         _nofArgs;                  // number of arguments for the block
     JumpTableID _id;                       // unique identification of this closure within the parent NativeMethod.
     NonInlinedBlockScopeNode *_noninlined_block_scope; // an NonInlinedScopeDesc
 
 public:
-    CompileTimeClosure( InlinedScope *s, MethodOop method, PseudoRegister *context, int nofArgs ) {
+    CompileTimeClosure( InlinedScope *s, MethodOop method, PseudoRegister *context, std::int32_t nofArgs ) {
         _parent_scope           = s;
         _method                 = method;
         _context                = context;
@@ -66,7 +66,7 @@ public:
     }
 
 
-    int nofArgs() const {
+    std::int32_t nofArgs() const {
         return _nofArgs;
     }
 

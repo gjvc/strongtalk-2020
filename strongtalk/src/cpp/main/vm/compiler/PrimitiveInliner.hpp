@@ -27,7 +27,7 @@ class PrimitiveInliner : public PrintableResourceObject {
 
 private:
     NodeBuilder *_gen;                // the active node generator
-    int _byteCodeIndex;                // byteCodeIndex of primitive call
+    std::int32_t _byteCodeIndex;                // byteCodeIndex of primitive call
     PrimitiveDescriptor *_primitiveDescriptor;                // the primitive
     MethodInterval      *_failure_block;            // code in primitive failure block
 
@@ -37,18 +37,18 @@ private:
     bool_t                      _usingUncommonTrap;                // using uncommon trap for prim. failure?
     bool_t                      _cannotFail;                        // true if primitive can't fail
 
-    int number_of_parameters() const {
+    std::int32_t number_of_parameters() const {
         return _primitiveDescriptor->number_of_parameters();
     }
 
 
-    Expression *parameter( int index ) const {
+    Expression *parameter( std::int32_t index ) const {
         return _params->at( index );
     }        // parameter of primitive call
-    bool_t is_power_of_2( int x ) const {
+    bool_t is_power_of_2( std::int32_t x ) const {
         return x > 0 and ( x & ( x - 1 ) ) == 0;
     }    // true if there's an n with 2^n = x
-    int log2( int x ) const;                // if is_power_of_2(x) then 2^(log2(x)) = x
+    std::int32_t log2( std::int32_t x ) const;                // if is_power_of_2(x) then 2^(log2(x)) = x
 
     void assert_failure_block();            // debugging: asserts that there's a failure block
     void assert_no_failure_block();        // debugging: asserts that there's no failure block
@@ -61,7 +61,7 @@ private:
     Expression *primitiveFailure( SymbolOop failureCode );    // handle primitive that always fail
     Expression *merge_failure_block( Node *ok_exit, Expression *ok_result, Node *failure_exit, Expression *failure_code, bool_t ok_result_is_read_only = true );
 
-    SymbolOop failureSymbolForArg( std::size_t i );            // error string for "n.th arg has wrong type"
+    SymbolOop failureSymbolForArg( std::int32_t i );            // error string for "n.th arg has wrong type"
     bool_t shouldUseUncommonTrap();            // use uncommon trap for primitive failure?
     bool_t basic_shouldUseUncommonTrap() const;
 

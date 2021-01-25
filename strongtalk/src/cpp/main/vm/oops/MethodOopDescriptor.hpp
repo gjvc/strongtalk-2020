@@ -17,14 +17,14 @@
 
 // A methodOop is a method with byte codes.
 
-const int method_size_mask_bitno = 2;
-const int method_size_mask_size  = 18;
+const std::int32_t method_size_mask_bitno = 2;
+const std::int32_t method_size_mask_size  = 18;
 
-const int method_args_mask_bitno = method_size_mask_bitno + method_size_mask_size;
-const int method_args_mask_size  = 4;
+const std::int32_t method_args_mask_bitno = method_size_mask_bitno + method_size_mask_size;
+const std::int32_t method_args_mask_size  = 4;
 
-const int method_flags_mask_bitno = method_args_mask_bitno + method_args_mask_size;
-const int method_flags_mask_size  = 8;
+const std::int32_t method_flags_mask_bitno = method_args_mask_bitno + method_args_mask_size;
+const std::int32_t method_flags_mask_size  = 8;
 
 class InterpretedInlineCache;
 
@@ -32,7 +32,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 private:
     ObjectArrayOop _debugInfo;             //
     Oop            _selector_or_method;    // selector for normal methods, enclosing method for blocks
-    int            _counters;              // invocation counter and sharing counter
+    std::int32_t            _counters;              // invocation counter and sharing counter
     SMIOop         _size_and_flags;        //
 
 
@@ -43,24 +43,24 @@ private:
 
 
     // returns the header size of a methodOop
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( MethodOopDescriptor ) / oopSize;
     }
 
 
 public:
     // offsets for code generation
-    static std::size_t selector_or_method_byte_offset() {
-        return int( &( ( (MethodOopDescriptor *) nullptr )->_selector_or_method ) ) - MEMOOP_TAG;
+    static std::int32_t selector_or_method_byte_offset() {
+        return std::int32_t( &( ( (MethodOopDescriptor *) nullptr )->_selector_or_method ) ) - MEMOOP_TAG;
     }
 
 
-    static std::size_t counters_byte_offset() {
-        return int( &( ( (MethodOopDescriptor *) nullptr )->_counters ) ) - MEMOOP_TAG;
+    static std::int32_t counters_byte_offset() {
+        return std::int32_t( &( ( (MethodOopDescriptor *) nullptr )->_counters ) ) - MEMOOP_TAG;
     }
 
 
-    static std::size_t codes_byte_offset() {
+    static std::int32_t codes_byte_offset() {
         return sizeof( MethodOopDescriptor ) - MEMOOP_TAG;
     }
 
@@ -70,23 +70,23 @@ public:
     }
 
 
-    void set_size_and_flags( std::size_t size, int nofArgs, int flags ) {
+    void set_size_and_flags( std::int32_t size, std::int32_t nofArgs, std::int32_t flags ) {
         addr()->_size_and_flags = (SMIOop) ( ( flags << method_flags_mask_bitno ) + ( nofArgs << method_args_mask_bitno ) + ( size << method_size_mask_bitno ) );
     }
 
 
-    int flags() const {
-        return get_unsigned_bitfield( (int) size_and_flags(), method_flags_mask_bitno, method_flags_mask_size );
+    std::int32_t flags() const {
+        return get_unsigned_bitfield( (std::int32_t) size_and_flags(), method_flags_mask_bitno, method_flags_mask_size );
     }
 
 
-    void set_flags( int flags ) {
+    void set_flags( std::int32_t flags ) {
         set_size_and_flags( size_of_codes(), nofArgs(), flags );
     }
 
 
-    int nofArgs() const {             // number of arguments (excluding receiver)
-        return get_unsigned_bitfield( (int) size_and_flags(), method_args_mask_bitno, method_args_mask_size );
+    std::int32_t nofArgs() const {             // number of arguments (excluding receiver)
+        return get_unsigned_bitfield( (std::int32_t) size_and_flags(), method_args_mask_bitno, method_args_mask_size );
     }
 
 
@@ -157,23 +157,23 @@ public:
     };
 
 
-    int counters() const {
+    std::int32_t counters() const {
         return addr()->_counters;
     }
 
 
-    void set_counters( int inv, int share ) {
+    void set_counters( std::int32_t inv, std::int32_t share ) {
         addr()->_counters = ( inv << _invocation_count_offset ) | share;
     }
 
 
     // Invocation counter
-    int invocation_count() const {
+    std::int32_t invocation_count() const {
         return get_unsigned_bitfield( counters(), _invocation_count_offset, _invocation_count_width );
     }
 
 
-    void set_invocation_count( int value ) {
+    void set_invocation_count( std::int32_t value ) {
         set_counters( value, sharing_count() );
     }
 
@@ -182,12 +182,12 @@ public:
 
 
     // Sharing counter (number of callers)
-    int sharing_count() const {
+    std::int32_t sharing_count() const {
         return get_unsigned_bitfield( counters(), _sharing_count_offset, _sharing_count_width );
     }
 
 
-    void set_sharing_count( int value ) {
+    void set_sharing_count( std::int32_t value ) {
         set_counters( invocation_count(), value );
     }
 
@@ -198,18 +198,18 @@ public:
 
     bool_t was_never_executed();        // was method never executed? (count = 0, empty inline caches)
 
-    std::size_t size_of_codes() const {        // size of byte codes in words
-        return get_unsigned_bitfield( (int) size_and_flags(), method_size_mask_bitno, method_size_mask_size );
+    std::int32_t size_of_codes() const {        // size of byte codes in words
+        return get_unsigned_bitfield( (std::int32_t) size_and_flags(), method_size_mask_bitno, method_size_mask_size );
     }
 
 
-    void set_size_of_code( std::size_t size ) {
+    void set_size_of_code( std::int32_t size ) {
         set_size_and_flags( size, nofArgs(), flags() );
     }
 
 
     // Returns a pointer to the hybrid code at 'offset'
-    std::uint8_t *codes( int offset = 1 ) const {
+    std::uint8_t *codes( std::int32_t offset = 1 ) const {
         return (std::uint8_t *) addr() + sizeof( MethodOopDescriptor ) + offset - 1;
     }
 
@@ -223,47 +223,47 @@ public:
     static MethodOop methodOop_from_hcode( std::uint8_t *hp );
 
 
-    std::uint8_t byte_at( int offset ) const {
+    std::uint8_t byte_at( std::int32_t offset ) const {
         return *codes( offset );
     }
 
 
-    void byte_at_put( int offset, std::uint8_t c ) {
+    void byte_at_put( std::int32_t offset, std::uint8_t c ) {
         *codes( offset ) = c;
     }
 
 
-    std::int32_t word_at( int offset ) const {
+    std::int32_t word_at( std::int32_t offset ) const {
         return *(std::int32_t *) codes( offset );
     }
 
 
-    void word_at_put( int offset, std::uint32_t w ) {
+    void word_at_put( std::int32_t offset, std::uint32_t w ) {
         *(std::int32_t *) codes( offset ) = w;
     }
 
 
-    Oop oop_at( int offset ) const {
+    Oop oop_at( std::int32_t offset ) const {
         return *(Oop *) codes( offset );
     }
 
 
-    void oop_at_put( int offset, Oop obj ) {
+    void oop_at_put( std::int32_t offset, Oop obj ) {
         *(Oop *) codes( offset ) = obj;
     }
 
 
     // Returns the next byte code index based on hp.
-    int next_byteCodeIndex_from( std::uint8_t *hp ) const;
+    std::int32_t next_byteCodeIndex_from( std::uint8_t *hp ) const;
 
     // Returns the current byte code index based on hp (points to the next byte code)
-    int byteCodeIndex_from( std::uint8_t *hp ) const;
+    std::int32_t byteCodeIndex_from( std::uint8_t *hp ) const;
 
-    int number_of_arguments() const;
+    std::int32_t number_of_arguments() const;
 
     // Returns the number of temporaries allocated by the interpreter
     // (excluding receiver & float temporaries, which may come afterwards).
-    int number_of_stack_temporaries() const;
+    std::int32_t number_of_stack_temporaries() const;
 
 
     // Method with hardwired floating-point operations
@@ -272,31 +272,31 @@ public:
     }
 
 
-    int number_of_float_temporaries() const {
+    std::int32_t number_of_float_temporaries() const {
         return has_float_temporaries() ? *codes( 3 ) : 0;
     }
 
 
-    int float_expression_stack_size() const {
+    std::int32_t float_expression_stack_size() const {
         return has_float_temporaries() ? *codes( 4 ) : 0;
     }
 
 
-    int total_number_of_floats() const {
+    std::int32_t total_number_of_floats() const {
         return number_of_float_temporaries() + float_expression_stack_size();
     }
 
 
     // Stack frame layout if there's a float section (offset & size in oops relative to ebp)
-    int float_offset( int float_no ) const;
+    std::int32_t float_offset( std::int32_t float_no ) const;
 
 
-    int float_section_start_offset() const {
+    std::int32_t float_section_start_offset() const {
         return frame_temp_offset - number_of_stack_temporaries();
     }
 
 
-    int float_section_size() const {
+    std::int32_t float_section_size() const {
         return total_number_of_floats() * SIZEOF_FLOAT / oopSize;
     }
 
@@ -375,7 +375,7 @@ public:
 
 
     // Tells if byteCodeIndex is a context allocation
-    bool_t in_context_allocation( int byteCodeIndex ) const;
+    bool_t in_context_allocation( std::int32_t byteCodeIndex ) const;
 
 
     bool_t containsNonLocalReturn() const {
@@ -445,11 +445,11 @@ public:
     void uncustomize_for( MixinOop mixin );
 
     // Uplevel accesses via contexts
-    int lexicalDistance( int contextNo );    // for uplevel accesses; see comment in .c file
-    int contextNo( int lexicalDistance );    // inverse of lexicalDistance()
+    std::int32_t lexicalDistance( std::int32_t contextNo );    // for uplevel accesses; see comment in .c file
+    std::int32_t contextNo( std::int32_t lexicalDistance );    // inverse of lexicalDistance()
 
     // Computes the number of interpreter contexts from here up to the home method
-    int context_chain_length() const;
+    std::int32_t context_chain_length() const;
 
     // Clears all the inline caches in the method.
     void clear_inline_caches();
@@ -459,23 +459,23 @@ public:
 
     // Computes the estimated cost of a method by summing
     // cost of all byte codes (see code_cost in methodOop.cpp).
-    int estimated_inline_cost( KlassOop receiverKlass );
+    std::int32_t estimated_inline_cost( KlassOop receiverKlass );
 
     // Finds the byteCodeIndex based on the next byteCodeIndex
     // Returns -1 if the search failed.
-    int find_byteCodeIndex_from( int nbyteCodeIndex ) const;
+    std::int32_t find_byteCodeIndex_from( std::int32_t nbyteCodeIndex ) const;
 
     // Returns the next byteCodeIndex
-    int next_byteCodeIndex( int byteCodeIndex ) const;
+    std::int32_t next_byteCodeIndex( std::int32_t byteCodeIndex ) const;
 
     // Returns the end byteCodeIndex (excluding the padding)
-    int end_byteCodeIndex() const;
+    std::int32_t end_byteCodeIndex() const;
 
     // Returns the inline cache associated with the send at byteCodeIndex.
-    InterpretedInlineCache *ic_at( int byteCodeIndex ) const;
+    InterpretedInlineCache *ic_at( std::int32_t byteCodeIndex ) const;
 
     // Returns an array of byte code indecies contributing to the expression stack
-    GrowableArray<std::size_t> *expression_stack_mapping( int byteCodeIndex );
+    GrowableArray<std::int32_t> *expression_stack_mapping( std::int32_t byteCodeIndex );
 
     // For debugging only
     void print_codes();
@@ -488,15 +488,15 @@ public:
     // Inlining database support
     void print_inlining_database_on( ConsoleOutputStream *stream );
 
-    int byteCodeIndex_for_block_method( MethodOop inner );
+    std::int32_t byteCodeIndex_for_block_method( MethodOop inner );
 
-    MethodOop block_method_at( int byteCodeIndex );
+    MethodOop block_method_at( std::int32_t byteCodeIndex );
 
     // Returns the numbers of temporaries allocated in a context.
     // self_in_context tells if self is copied into context.
     // Note: This function is extremely slow, so please use it for
     //       verify and debug code only.
-    int number_of_context_temporaries( bool_t *self_in_context = nullptr );
+    std::int32_t number_of_context_temporaries( bool_t *self_in_context = nullptr );
 
     // Checks if the context matches this method
     void verify_context( ContextOop con );

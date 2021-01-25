@@ -34,20 +34,20 @@ class FlatProfiler : AllStatic {
 
 private:
     static ProfiledNode **_table;
-    static std::size_t _tableSize;
+    static std::int32_t _tableSize;
 
     static DeltaProcess     *_deltaProcess;
     static FlatProfilerTask *_flatProfilerTask;
     static Timer _timer;
 
-    static std::size_t _gc_ticks;           // total ticks in GC/scavenge
-    static std::size_t _semaphore_ticks;    //
-    static std::size_t _stub_ticks;         //
-    static std::size_t _compiler_ticks;     // total ticks in compilation
-    static std::size_t _unknown_ticks;      //
+    static std::int32_t _gc_ticks;           // total ticks in GC/scavenge
+    static std::int32_t _semaphore_ticks;    //
+    static std::int32_t _stub_ticks;         //
+    static std::int32_t _compiler_ticks;     // total ticks in compilation
+    static std::int32_t _unknown_ticks;      //
 
 
-    static std::size_t total_ticks() {
+    static std::int32_t total_ticks() {
         return _gc_ticks + _semaphore_ticks + _stub_ticks + _unknown_ticks;
     }
 
@@ -58,7 +58,7 @@ private:
 
     static void compiled_update( NativeMethod *nm, TickPosition where );
 
-    static std::size_t entry( int value );
+    static std::int32_t entry( std::int32_t value );
 
     static void record_tick_for_running_frame( Frame fr );
 
@@ -75,7 +75,7 @@ public:
 
     static bool_t is_active();
 
-    static void print( int cutoff );
+    static void print( std::int32_t cutoff );
 
     static void record_tick();
 

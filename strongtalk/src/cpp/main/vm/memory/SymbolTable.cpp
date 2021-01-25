@@ -24,10 +24,10 @@
     }
 
 
-int hash( const char *name, int len ) {
+std::int32_t hash( const char *name, std::int32_t len ) {
 
     // hash on at most 32 characters, evenly spaced
-    int increment;
+    std::int32_t increment;
 
     if ( len < 32 ) {
         increment = 1;
@@ -56,13 +56,13 @@ int hash( const char *name, int len ) {
 
 
 SymbolTable::SymbolTable() {
-    for ( std::size_t i = 0; i < symbol_table_size; i++ )
+    for ( std::int32_t i = 0; i < symbol_table_size; i++ )
         buckets[ i ].clear();
     free_list = first_free_link = end_block = nullptr;
 }
 
 
-SymbolOop SymbolTable::basic_add( const char *name, int len, int hashValue ) {
+SymbolOop SymbolTable::basic_add( const char *name, std::int32_t len, std::int32_t hashValue ) {
     SymbolKlass *sk = (SymbolKlass *) Universe::symbolKlassObject()->klass_part();
     SymbolOop str = sk->allocateSymbol( name, len );
     basic_add( str, hashValue );
@@ -73,8 +73,8 @@ SymbolOop SymbolTable::basic_add( const char *name, int len, int hashValue ) {
 bool_t SymbolTable::is_present( SymbolOop sym ) {
 
     const char *name = (const char *) sym->bytes();
-    int len       = sym->length();
-    int hashValue = hash( name, len );
+    std::int32_t len       = sym->length();
+    std::int32_t hashValue = hash( name, len );
     SymbolTableEntry *bucket = bucketFor( hashValue );
 
     if ( bucket->is_empty() )
@@ -90,9 +90,9 @@ bool_t SymbolTable::is_present( SymbolOop sym ) {
 }
 
 
-SymbolOop SymbolTable::lookup( const char *name, int len ) {
+SymbolOop SymbolTable::lookup( const char *name, std::int32_t len ) {
 
-    int hashValue = hash( name, len );
+    std::int32_t hashValue = hash( name, len );
 
     SymbolTableEntry *bucket = bucketFor( hashValue );
 
@@ -114,7 +114,7 @@ SymbolOop SymbolTable::lookup( const char *name, int len ) {
 void SymbolTable::add( SymbolOop s ) {
     st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
-    int hashValue = hash( (const char *) s->bytes(), s->length() );
+    std::int32_t hashValue = hash( (const char *) s->bytes(), s->length() );
     basic_add( s, hashValue );
 }
 
@@ -124,7 +124,7 @@ void SymbolTable::add_symbol( SymbolOop s ) {
 }
 
 
-SymbolOop SymbolTable::basic_add( SymbolOop s, int hashValue ) {
+SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
     st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
 
@@ -210,7 +210,7 @@ void SymbolTableEntry::deallocate() {
 }
 
 
-bool_t SymbolTableEntry::verify( std::size_t i ) {
+bool_t SymbolTableEntry::verify( std::int32_t i ) {
     bool_t flag = true;
     if ( is_symbol() ) {
         if ( not get_symbol()->is_symbol() ) {
@@ -226,7 +226,7 @@ bool_t SymbolTableEntry::verify( std::size_t i ) {
 
 
 void SymbolTable::verify() {
-    for ( std::size_t i = 0; i < symbol_table_size; i++ )
+    for ( std::int32_t i = 0; i < symbol_table_size; i++ )
         if ( not buckets[ i ].verify( i ) )
             lprintf( "\tof bucket %ld of symbol table\n", std::int32_t( i ) );
 }
@@ -241,7 +241,7 @@ void SymbolTable::relocate() {
 }
 
 
-bool_t SymbolTableLink::verify( std::size_t i ) {
+bool_t SymbolTableLink::verify( std::int32_t i ) {
     bool_t flag = true;
     for ( SymbolTableLink *l = this; l; l = l->next ) {
         if ( not l->symbol->is_symbol() ) {
@@ -259,12 +259,12 @@ bool_t SymbolTableLink::verify( std::size_t i ) {
 }
 
 
-int SymbolTableEntry::length() {
+std::int32_t SymbolTableEntry::length() {
     if ( is_symbol() )
         return 1;
     if ( not get_link() )
         return 0;
-    int count = 0;
+    std::int32_t count = 0;
     for ( SymbolTableLink *l = get_link(); l; l = l->next )
         count++;
     return count;
@@ -277,7 +277,7 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
         res       = free_list;
         free_list = free_list->next;
     } else {
-        const int block_size = 500;
+        const std::int32_t block_size = 500;
         if ( first_free_link == end_block ) {
             first_free_link = new_c_heap_array<SymbolTableLink>( block_size );
             end_block       = first_free_link + block_size;
@@ -303,24 +303,24 @@ void SymbolTable::delete_link( SymbolTableLink *l ) {
 // much of this comes from the print_histogram routine in mapTable.c,
 // so if bug fixes are made here, also make them in mapTable.cpp.
 void SymbolTable::print_histogram() {
-    const int results_length = 100;
-    int       results[results_length];
+    const std::int32_t results_length = 100;
+    std::int32_t       results[results_length];
 
     // initialize results to zero
-    int j = 0;
+    std::int32_t j = 0;
     for ( ; j < results_length; j++ ) {
         results[ j ] = 0;
     }
 
-    int total        = 0;
-    int min_symbols  = 0;
-    int max_symbols  = 0;
-    int out_of_range = 0;
+    std::int32_t total        = 0;
+    std::int32_t min_symbols  = 0;
+    std::int32_t max_symbols  = 0;
+    std::int32_t out_of_range = 0;
 
-    for ( std::size_t i = 0; i < symbol_table_size; i++ ) {
+    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
 
         SymbolTableEntry curr    = buckets[ i ];
-        int              counter = curr.length();
+        std::int32_t              counter = curr.length();
 
         total += counter;
         if ( counter < results_length ) {
@@ -340,16 +340,16 @@ void SymbolTable::print_histogram() {
     lprintf( " %s %29s\n", "Length", "Number chains that length" );
 
 
-    for ( std::size_t i = 0; i < results_length; i++ ) {
+    for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             lprintf( "%6d %10d\n", i, results[ i ] );
         }
     }
 
 
-    int line_length = 70;
+    std::int32_t line_length = 70;
     lprintf( "%s %30s\n", " Length", "Number chains that length" );
-    for ( std::size_t i = 0; i < results_length; i++ ) {
+    for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
             lprintf( "%4d", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {
@@ -365,7 +365,7 @@ void SymbolTable::print_histogram() {
 }
 
 
-SymbolTableEntry *SymbolTable::bucketFor( int hashValue ) {
+SymbolTableEntry *SymbolTable::bucketFor( std::int32_t hashValue ) {
     st_assert( hashValue % symbol_table_size >= 0, "must be positive" );
     return &buckets[ hashValue % symbol_table_size ];
 }

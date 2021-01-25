@@ -26,7 +26,7 @@
 
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
     double new_count = (double) invocation_count() / decay_factor;
-    set_invocation_count( (int) new_count );
+    set_invocation_count( (std::int32_t) new_count );
 
     // Take care of the block methods
     CodeIterator c( this );
@@ -76,7 +76,7 @@ void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     set_counters( 0, 0 );
     stream->read_oop( (Oop *) &addr()->_size_and_flags );
 
-    for ( std::size_t i = 1; i <= size_of_codes() * 4; )
+    for ( std::int32_t i = 1; i <= size_of_codes() * 4; )
         if ( stream->is_byte() ) {
             byte_at_put( i, stream->read_byte() );
             i++;
@@ -87,7 +87,7 @@ void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 }
 
 
-int MethodOopDescriptor::next_byteCodeIndex_from( std::uint8_t *hp ) const {
+std::int32_t MethodOopDescriptor::next_byteCodeIndex_from( std::uint8_t *hp ) const {
     // Computes the next byteCodeIndex
     // hp is the interpreter 'ip' kept in the activation pointing to the next code to execute.
 
@@ -96,38 +96,38 @@ int MethodOopDescriptor::next_byteCodeIndex_from( std::uint8_t *hp ) const {
 }
 
 
-int MethodOopDescriptor::byteCodeIndex_from( std::uint8_t *hp ) const {
+std::int32_t MethodOopDescriptor::byteCodeIndex_from( std::uint8_t *hp ) const {
     // We find the current byteCodeIndex by searching from the beginning
     return find_byteCodeIndex_from( next_byteCodeIndex_from( hp ) );
 }
 
 
-int MethodOopDescriptor::number_of_arguments() const {
+std::int32_t MethodOopDescriptor::number_of_arguments() const {
     st_assert( is_blockMethod() or selector()->number_of_arguments() == nofArgs(), "just checking" );
     return nofArgs();
 }
 
 
-int MethodOopDescriptor::number_of_stack_temporaries() const {
-    int          n  = 1;        // temporary 0 is always there
+std::int32_t MethodOopDescriptor::number_of_stack_temporaries() const {
+    std::int32_t          n  = 1;        // temporary 0 is always there
     std::uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
     switch ( b0 ) {
-        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_1):
+        case static_cast<std::int32_t>(ByteCodes::Code::allocate_temp_1):
             n += 1;
             break;
-        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_2):
+        case static_cast<std::int32_t>(ByteCodes::Code::allocate_temp_2):
             n += 2;
             break;
-        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_3):
+        case static_cast<std::int32_t>(ByteCodes::Code::allocate_temp_3):
             n += 3;
             break;
-        case static_cast<std::size_t>(ByteCodes::Code::allocate_temp_n): {
+        case static_cast<std::int32_t>(ByteCodes::Code::allocate_temp_n): {
             std::uint8_t b1 = *codes( 2 );
             n += ( ( b1 == 0 ) ? 256 : b1 );
         }
             break;
 
-        case static_cast<std::size_t>(ByteCodes::Code::float_allocate): {
+        case static_cast<std::int32_t>(ByteCodes::Code::float_allocate): {
             // One additional temp (temp1) for Floats::magic + additional
             // temps allocated in pairs to match to match one float temp.
             std::uint8_t b1 = *codes( 2 );
@@ -142,7 +142,7 @@ int MethodOopDescriptor::number_of_stack_temporaries() const {
 }
 
 
-int MethodOopDescriptor::float_offset( int float_no ) const {
+std::int32_t MethodOopDescriptor::float_offset( std::int32_t float_no ) const {
     st_assert( 0 <= float_no and float_no < number_of_float_temporaries(), "float_no out of range" );
     return float_section_start_offset() - float_no * SIZEOF_FLOAT / oopSize - 1;
 }
@@ -230,13 +230,13 @@ public:
     }
 
 
-    void put_byte( int byte ) {
+    void put_byte( std::int32_t byte ) {
         result->append( trueObject );
         result->append( smiOopFromValue( byte ) );
     }
 
 
-    void put_word( int word ) {
+    void put_word( std::int32_t word ) {
         const char *p = (const char *) &word;
         put_byte( p[ 0 ] );
         put_byte( p[ 1 ] );
@@ -252,7 +252,7 @@ public:
 
 
     void align( std::uint8_t *hp ) {
-        std::uint8_t *end = (std::uint8_t *) ( ( (int) hp + 3 ) & ( ~3 ) );
+        std::uint8_t *end = (std::uint8_t *) ( ( (std::int32_t) hp + 3 ) & ( ~3 ) );
         while ( hp < end ) {
             put_byte( 255 );
             hp++;
@@ -273,7 +273,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         if ( ByteCodes::send_type( c.code() ) not_eq ByteCodes::SendType::no_send ) {
             // Send
             ByteCodes::Code original = ByteCodes::original_send_code_for( c.code() );
-            out.put_byte( static_cast<std::size_t>(original) );
+            out.put_byte( static_cast<std::int32_t>(original) );
             if ( ByteCodes::format( original ) == ByteCodes::Format::BBOO ) {
                 out.put_byte( c.byte_at( 1 ) );
                 out.align( c.hp() + 2 );
@@ -285,7 +285,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         } else if ( c.is_primitive_call() ) {
             // Primitive call
             ByteCodes::Code original = ByteCodes::original_primitive_call_code_for( c.code() );
-            out.put_byte( static_cast<std::size_t>(original) );
+            out.put_byte( static_cast<std::int32_t>(original) );
             out.align( c.hp() + 1 );
             if ( c.code() == ByteCodes::Code::prim_call or c.code() == ByteCodes::Code::primitive_call_failure or c.code() == ByteCodes::Code::primitive_call_self or c.code() == ByteCodes::Code::primitive_call_self_failure ) {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) c.word_at( 1 ) );
@@ -299,7 +299,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
         } else if ( c.is_dll_call() ) {
             // DLL call
             Interpreted_DLLCache *ic = c.dll_cache();
-            out.put_byte( static_cast<std::size_t>( c.code() ) );
+            out.put_byte( static_cast<std::int32_t>( c.code() ) );
             out.align( c.hp() + 1 );
             out.put_oop( ic->dll_name() );
             out.put_oop( ic->funct_name() );
@@ -307,7 +307,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
             out.put_byte( ic->number_of_arguments() );
         } else {
             // Otherwise
-            out.put_byte( static_cast<std::size_t>( c.code() ) );
+            out.put_byte( static_cast<std::int32_t>( c.code() ) );
             switch ( c.format() ) {
                 case ByteCodes::Format::B:
                     break;
@@ -352,9 +352,9 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                     out.put_word( c.word_at( 1 ) );
                     break;
                 case ByteCodes::Format::BBS: {
-                    int length = c.byte_at( 1 ) == 0 ? 256 : c.byte_at( 1 );
+                    std::int32_t length = c.byte_at( 1 ) == 0 ? 256 : c.byte_at( 1 );
                     out.put_byte( length );
-                    for ( std::size_t i = 0; i < length; i++ ) {
+                    for ( std::int32_t i = 0; i < length; i++ ) {
                         out.put_byte( c.byte_at( 2 + i ) );
                     }
                     break;
@@ -390,7 +390,7 @@ MethodOopDescriptor::Block_Info MethodOopDescriptor::block_info() const {
 }
 
 
-bool_t MethodOopDescriptor::in_context_allocation( int byteCodeIndex ) const {
+bool_t MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) const {
     CodeIterator c( MethodOop( this ), byteCodeIndex );
     return c.code_type() == ByteCodes::CodeType::new_context;
 }
@@ -406,7 +406,7 @@ public:
     }
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
         hasBlock = true;
     }
 };
@@ -429,10 +429,10 @@ bool_t MethodOopDescriptor::hasNestedBlocks() const {
 //			     e.g., distance between a scope and its immediately
 //			     enclosing scope is 1
 
-int MethodOopDescriptor::lexicalDistance( int contextNo ) {
+std::int32_t MethodOopDescriptor::lexicalDistance( std::int32_t contextNo ) {
     MethodOop m = this;
-    int       c = -1;
-    int       d = -1;
+    std::int32_t       c = -1;
+    std::int32_t       d = -1;
     while ( c < contextNo ) {
         if ( m->allocatesInterpretedContext() )
             c++;
@@ -443,10 +443,10 @@ int MethodOopDescriptor::lexicalDistance( int contextNo ) {
 }
 
 
-int MethodOopDescriptor::contextNo( int lexicalDistance ) {
+std::int32_t MethodOopDescriptor::contextNo( std::int32_t lexicalDistance ) {
     MethodOop m = this;
-    int       c = -1;
-    int       d = -1;
+    std::int32_t       c = -1;
+    std::int32_t       d = -1;
     while ( d < lexicalDistance ) {
         if ( m->allocatesInterpretedContext() )
             c++;
@@ -457,8 +457,8 @@ int MethodOopDescriptor::contextNo( int lexicalDistance ) {
 }
 
 
-int MethodOopDescriptor::context_chain_length() const {
-    int             length = 0;
+std::int32_t MethodOopDescriptor::context_chain_length() const {
+    std::int32_t             length = 0;
     for ( MethodOop method = MethodOop( this ); method; method = method->parent() ) {
         if ( method->allocatesInterpretedContext() )
             length++;
@@ -542,10 +542,10 @@ bool_t MethodOopDescriptor::was_never_executed() {
 }
 
 
-int MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass ) {
+std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass ) {
     // the result of this calculation should be cached in the method; 8 bits are enough
     CodeIterator c( this );
-    int          cost = 0;
+    std::int32_t          cost = 0;
     do {
         cost += CostModel::cost_for( c.code() );
         switch ( c.code() ) {
@@ -583,9 +583,9 @@ int MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass ) {
 }
 
 
-int MethodOopDescriptor::find_byteCodeIndex_from( int nbyteCodeIndex ) const {
+std::int32_t MethodOopDescriptor::find_byteCodeIndex_from( std::int32_t nbyteCodeIndex ) const {
     CodeIterator c( MethodOop( this ) );
-    int          prev_byteCodeIndex = 1;
+    std::int32_t          prev_byteCodeIndex = 1;
     do {
         if ( c.byteCodeIndex() == nbyteCodeIndex )
             return prev_byteCodeIndex;
@@ -595,16 +595,16 @@ int MethodOopDescriptor::find_byteCodeIndex_from( int nbyteCodeIndex ) const {
 }
 
 
-int MethodOopDescriptor::next_byteCodeIndex( int byteCodeIndex ) const {
+std::int32_t MethodOopDescriptor::next_byteCodeIndex( std::int32_t byteCodeIndex ) const {
     CodeIterator c( MethodOop( this ), byteCodeIndex );
     c.advance();
     return c.byteCodeIndex();
 }
 
 
-GrowableArray<std::size_t> *MethodOopDescriptor::expression_stack_mapping( int byteCodeIndex ) {
+GrowableArray<std::int32_t> *MethodOopDescriptor::expression_stack_mapping( std::int32_t byteCodeIndex ) {
 
-    GrowableArray<std::size_t> *mapping = new GrowableArray<std::size_t>( 10 );
+    GrowableArray<std::int32_t> *mapping = new GrowableArray<std::int32_t>( 10 );
     ExpressionStackMapper      blk( mapping, byteCodeIndex );
     MethodIterator             i( this, &blk );
 
@@ -612,9 +612,9 @@ GrowableArray<std::size_t> *MethodOopDescriptor::expression_stack_mapping( int b
     // %todo:
     //    move reverse to GrowableArray
 
-    GrowableArray<std::size_t> *result = new GrowableArray<std::size_t>( mapping->length() );
+    GrowableArray<std::int32_t> *result = new GrowableArray<std::int32_t>( mapping->length() );
 
-    for ( std::size_t i = mapping->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = mapping->length() - 1; i >= 0; i-- ) {
         result->push( mapping->at( i ) );
     }
 
@@ -623,11 +623,11 @@ GrowableArray<std::size_t> *MethodOopDescriptor::expression_stack_mapping( int b
 
 
 static void lookup_primitive_and_patch( std::uint8_t *p, std::uint8_t byte ) {
-    st_assert( (int) p % 4 == 0, "first instruction supposed to be aligned" );
+    st_assert( (std::int32_t) p % 4 == 0, "first instruction supposed to be aligned" );
     *p = byte;    // patch byte
     p += 4;    // advance to primitive name
     //(*(SymbolOop*)p)->print_symbol_on();
-    *(int *) p = (int) Primitives::lookup( *(SymbolOop *) p )->fn();
+    *(std::int32_t *) p = (std::int32_t) Primitives::lookup( *(SymbolOop *) p )->fn();
 }
 
 
@@ -639,10 +639,10 @@ bool_t MethodOopDescriptor::is_primitiveMethod() const {
         case ByteCodes::Code::predict_primitive_call_failure:
             return true;
         case ByteCodes::Code::predict_primitive_call_lookup:
-            lookup_primitive_and_patch( codes(), static_cast<std::size_t>( ByteCodes::Code::predict_primitive_call ) );
+            lookup_primitive_and_patch( codes(), static_cast<std::int32_t>( ByteCodes::Code::predict_primitive_call ) );
             return true;
         case ByteCodes::Code::predict_primitive_call_failure_lookup:
-            lookup_primitive_and_patch( codes(), static_cast<std::size_t>( ByteCodes::Code::predict_primitive_call_failure ) );
+            lookup_primitive_and_patch( codes(), static_cast<std::int32_t>( ByteCodes::Code::predict_primitive_call_failure ) );
             return true;
         default:
             return false;
@@ -666,11 +666,11 @@ MethodOop MethodOopDescriptor::methodOop_from_hcode( std::uint8_t *hp ) {
 }
 
 
-int MethodOopDescriptor::end_byteCodeIndex() const {
-    int last_entry = this->size_of_codes() * 4;
+std::int32_t MethodOopDescriptor::end_byteCodeIndex() const {
+    std::int32_t last_entry = this->size_of_codes() * 4;
 
-    for ( std::size_t i = 0; i < 4; i++ )
-        if ( byte_at( last_entry - i ) not_eq static_cast<std::size_t>( ByteCodes::Code::halt ) )
+    for ( std::int32_t i = 0; i < 4; i++ )
+        if ( byte_at( last_entry - i ) not_eq static_cast<std::int32_t>( ByteCodes::Code::halt ) )
             return last_entry + 1 - i;
 
     st_fatal( "should never reach the point" );
@@ -678,13 +678,13 @@ int MethodOopDescriptor::end_byteCodeIndex() const {
 }
 
 
-InterpretedInlineCache *MethodOopDescriptor::ic_at( int byteCodeIndex ) const {
+InterpretedInlineCache *MethodOopDescriptor::ic_at( std::int32_t byteCodeIndex ) const {
     CodeIterator iterator( MethodOop( this ), byteCodeIndex );
     return iterator.ic();
 }
 
 
-MethodOop MethodOopDescriptor::block_method_at( int byteCodeIndex ) {
+MethodOop MethodOopDescriptor::block_method_at( std::int32_t byteCodeIndex ) {
 
     CodeIterator c( MethodOop( this ), byteCodeIndex );
     switch ( c.code() ) {
@@ -715,7 +715,7 @@ MethodOop MethodOopDescriptor::block_method_at( int byteCodeIndex ) {
 }
 
 
-int MethodOopDescriptor::byteCodeIndex_for_block_method( MethodOop inner ) {
+std::int32_t MethodOopDescriptor::byteCodeIndex_for_block_method( MethodOop inner ) {
 
     CodeIterator c( this );
     do {
@@ -747,7 +747,7 @@ private:
         sentinel = -1 //
     };
 
-    int    count;
+    std::int32_t    count;
     bool_t _self_in_context;
 
 public:
@@ -762,13 +762,13 @@ public:
     }
 
 
-    int number_of_context_temporaries() {
+    std::int32_t number_of_context_temporaries() {
         st_assert( count not_eq sentinel, "number_of_context_temporaries not set" );
         return count;
     }
 
 
-    void allocate_context( int nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
         st_assert( count == sentinel, "make sure it is not called more than one" );
         count = nofTemps;
     }
@@ -780,7 +780,7 @@ public:
 };
 
 
-int MethodOopDescriptor::number_of_context_temporaries( bool_t *self_in_context ) {
+std::int32_t MethodOopDescriptor::number_of_context_temporaries( bool_t *self_in_context ) {
     // Use this for debugging only
     st_assert( allocatesInterpretedContext(), "can only be called if method allocates context" );
     ContextMethodIterator blk;
@@ -849,7 +849,7 @@ void MethodOopDescriptor::customize_for( KlassOop klass, MixinOop mixin ) {
     } while ( c.advance() );
     // set customized flag
 
-    int new_flags = addNthBit( flags(), isCustomizedFlag );
+    std::int32_t new_flags = addNthBit( flags(), isCustomizedFlag );
     set_size_and_flags( size_of_codes(), nofArgs(), new_flags );
 }
 
@@ -903,14 +903,14 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
     } while ( c.advance() );
 
     // set customized flag
-    int new_flags = subNthBit( flags(), isCustomizedFlag );
+    std::int32_t new_flags = subNthBit( flags(), isCustomizedFlag );
     set_size_and_flags( size_of_codes(), nofArgs(), new_flags );
 }
 
 
 MethodOop MethodOopDescriptor::copy_for_customization() const {
     // Copy this method
-    int len    = size();
+    std::int32_t len    = size();
     Oop *clone = Universe::allocate_tenured( len );
     Oop *to    = clone;
     Oop *from  = (Oop *) addr();
@@ -986,7 +986,7 @@ public:
 
 
 public:
-    void allocate_temporaries( int nofTemps ) {
+    void allocate_temporaries( std::int32_t nofTemps ) {
     }
 
 
@@ -1002,19 +1002,19 @@ public:
     }
 
 
-    void push_argument( int no ) {
+    void push_argument( std::int32_t no ) {
     }
 
 
-    void push_temporary( int no ) {
+    void push_temporary( std::int32_t no ) {
     }
 
 
-    void push_temporary( int no, int context ) {
+    void push_temporary( std::int32_t no, std::int32_t context ) {
     }
 
 
-    void push_instVar( int offset ) {
+    void push_instVar( std::int32_t offset ) {
     }
 
 
@@ -1034,15 +1034,15 @@ public:
     }
 
 
-    void store_temporary( int no ) {
+    void store_temporary( std::int32_t no ) {
     }
 
 
-    void store_temporary( int no, int context ) {
+    void store_temporary( std::int32_t no, std::int32_t context ) {
     }
 
 
-    void store_instVar( int offset ) {
+    void store_instVar( std::int32_t offset ) {
     }
 
 
@@ -1086,18 +1086,18 @@ public:
     }
 
 
-    void method_return( int nofArgs ) {
+    void method_return( std::int32_t nofArgs ) {
     }
 
 
-    void nonlocal_return( int nofArgs ) {
+    void nonlocal_return( std::int32_t nofArgs ) {
     }
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth );
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth );
 
 
-    void allocate_context( int nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
     }
 
 
@@ -1109,7 +1109,7 @@ public:
     }
 
 
-    void copy_argument_into_context( int argNo, int no ) {
+    void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
     }
 
 
@@ -1117,48 +1117,48 @@ public:
     }
 
 
-    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
     }
 
 
-    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
     }
 
 
-    void float_floatify( Floats::Function f, int fno ) {
+    void float_floatify( Floats::Function f, std::int32_t fno ) {
     }
 
 
-    void float_move( int fno, int from ) {
+    void float_move( std::int32_t fno, std::int32_t from ) {
     }
 
 
-    void float_set( int fno, DoubleOop value ) {
+    void float_set( std::int32_t fno, DoubleOop value ) {
     }
 
 
-    void float_nullary( Floats::Function f, int fno ) {
+    void float_nullary( Floats::Function f, std::int32_t fno ) {
     }
 
 
-    void float_unary( Floats::Function f, int fno ) {
+    void float_unary( Floats::Function f, std::int32_t fno ) {
     }
 
 
-    void float_binary( Floats::Function f, int fno ) {
+    void float_binary( Floats::Function f, std::int32_t fno ) {
     }
 
 
-    void float_unaryToOop( Floats::Function f, int fno ) {
+    void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
     }
 
 
-    void float_binaryToOop( Floats::Function f, int fno ) {
+    void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
     }
 };
 
 
-void TransitiveMethodClosure::allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+void TransitiveMethodClosure::allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
     MethodIterator iter( meth, this );
 }
 
@@ -1209,7 +1209,7 @@ private:
     MixinOop _mixin;
 
 
-    void collect( int offset ) {
+    void collect( std::int32_t offset ) {
         SymbolOop name = _mixin->primary_invocation()->klass_part()->inst_var_name_at( offset );
         if ( name )
             _result->append( name );
@@ -1222,7 +1222,7 @@ private:
 
 
 public:
-    void push_instVar( int offset ) {
+    void push_instVar( std::int32_t offset ) {
         collect( offset );
     }
 
@@ -1232,7 +1232,7 @@ public:
     }
 
 
-    void store_instVar( int offset ) {
+    void store_instVar( std::int32_t offset ) {
         collect( offset );
     }
 
@@ -1243,7 +1243,7 @@ public:
 
 
 public:
-    ReferencedInstVarNamesClosure( std::size_t size, MixinOop mixin ) {
+    ReferencedInstVarNamesClosure( std::int32_t size, MixinOop mixin ) {
         this->_result = new GrowableArray<Oop>( size );
         this->_mixin  = mixin;
     }
@@ -1291,7 +1291,7 @@ public:
 
 
 public:
-    ReferencedClassVarNamesClosure( std::size_t size ) {
+    ReferencedClassVarNamesClosure( std::int32_t size ) {
         _result = new GrowableArray<Oop>( size );
     }
 
@@ -1327,7 +1327,7 @@ public:
 
 
 public:
-    ReferencedGlobalsClosure( std::size_t size ) {
+    ReferencedGlobalsClosure( std::int32_t size ) {
         result = new GrowableArray<Oop>( size );
     }
 
@@ -1389,38 +1389,38 @@ public:
     }
 
 
-    void float_floatify( Floats::Function f, int fno ) {
+    void float_floatify( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
-    void float_nullary( Floats::Function f, int fno ) {
+    void float_nullary( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
-    void float_unary( Floats::Function f, int fno ) {
+    void float_unary( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
-    void float_binary( Floats::Function f, int fno ) {
+    void float_binary( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
-    void float_unaryToOop( Floats::Function f, int fno ) {
+    void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
-    void float_binaryToOop( Floats::Function f, int fno ) {
+    void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
         float_op( f );
     }
 
 
 public:
-    SendersClosure( std::size_t size ) {
+    SendersClosure( std::int32_t size ) {
         result = new GrowableArray<Oop>( size );
     }
 
@@ -1457,7 +1457,7 @@ SymbolOop selectorFrom( Oop method_or_selector ) {
 
 
 void stopInSelector( const char *name, MethodOop method ) {
-    int       len      = strlen( name );
+    std::int32_t       len      = strlen( name );
     SymbolOop selector = selectorFrom( method );
     if ( selector == nullptr )
         warning( "Selector was nullptr!" );
@@ -1474,7 +1474,7 @@ bool_t StopInSelector::ignored = false;
 
 
 SymbolOop className( KlassOop klass ) {
-    const int class_name_index = 9;
+    const std::int32_t class_name_index = 9;
 
     if ( not klass->is_klass() )
         return nullptr;
@@ -1488,7 +1488,7 @@ SymbolOop className( KlassOop klass ) {
 
 
 bool_t selcmp( const char *name, SymbolOop selector ) {
-    int len = strlen( name );
+    std::int32_t len = strlen( name );
     if ( selector == nullptr and name == nullptr )
         return true;
     if ( selector == nullptr or not selector->is_symbol() )

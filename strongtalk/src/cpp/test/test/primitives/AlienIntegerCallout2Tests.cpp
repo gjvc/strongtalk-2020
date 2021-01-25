@@ -17,32 +17,32 @@
 #include <gtest/gtest.h>
 
 
-extern "C" int __CALLING_CONVENTION returnFirst( int a, int b ) {
+extern "C" std::int32_t __CALLING_CONVENTION returnFirst( std::int32_t a, std::int32_t b ) {
     return a;
 }
 
-extern "C" int __CALLING_CONVENTION returnFirstPointer( int *a, int b ) {
+extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer( std::int32_t *a, std::int32_t b ) {
     return *a;
 }
 
-extern "C" int __CALLING_CONVENTION returnSecond( int a, int b ) {
+extern "C" std::int32_t __CALLING_CONVENTION returnSecond( std::int32_t a, std::int32_t b ) {
     return b;
 }
 
-extern "C" int __CALLING_CONVENTION returnSecondPointer( int a, int *b ) {
+extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer( std::int32_t a, std::int32_t *b ) {
     return *b;
 }
 
-extern "C" int __CALLING_CONVENTION forceScavenge2( int ignore1, int ignore2 ) {
+extern "C" std::int32_t __CALLING_CONVENTION forceScavenge2( std::int32_t ignore1, std::int32_t ignore2 ) {
     Universe::scavenge();
     return -1;
 }
 
-//extern "C" int __CALLING_CONVENTION size5(int ignore, char byte) {
+//extern "C" std::int32_t __CALLING_CONVENTION size5(std::int32_t ignore, char byte) {
 //  return byte == -1 ? 0 : -1;
 //}
 //
-//extern "C" Oop __CALLING_CONVENTION forceScavenge(int ignore) {
+//extern "C" Oop __CALLING_CONVENTION forceScavenge(std::int32_t ignore) {
 //  Universe::scavenge();
 //  return vmSymbols::completed();
 //}
@@ -89,17 +89,17 @@ protected:
     PersistentHandle *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
     PersistentHandle *directAlien, *invalidFunctionAlien;
     SMIOop                         smi0, smi1, smim1;
-    static constexpr int           argCount = 2;
+    static constexpr std::int32_t           argCount = 2;
     std::array<void *, argCount>   intCalloutFunctions;
     std::array<void *, argCount>   intPointerCalloutFunctions;
     char                           address[8];
 
 
-    void allocateAlien( PersistentHandle *&alienHandle, int arraySize, int alienSize, void *ptr = nullptr ) {
+    void allocateAlien( PersistentHandle *&alienHandle, std::int32_t arraySize, std::int32_t alienSize, void *ptr = nullptr ) {
         ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         if ( ptr )
-            byteArrayPrimitives::alienSetAddress( smiOopFromValue( (int) ptr ), alien );
+            byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) ptr ), alien );
         alienHandle = new PersistentHandle( alien );
         handles->append( &alienHandle );
     }
@@ -113,17 +113,17 @@ protected:
     }
 
 
-    void checkIntResult( const char *message, int expected, PersistentHandle *alien ) {
+    void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
         char   text[200];
         bool_t ok;
-        int    actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
+        std::int32_t    actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
         EXPECT_TRUE( actual == expected ) << text;
     }
 
 
-    int asInt( bool_t &ok, Oop intOop ) {
+    std::int32_t asInt( bool_t &ok, Oop intOop ) {
         ok = true;
         if ( intOop->is_smi() )
             return SMIOop( intOop )->value();
@@ -135,8 +135,8 @@ protected:
     }
 
 
-    Oop asOop( int value ) {
-        int          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+    Oop asOop( std::int32_t value ) {
+        std::int32_t          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool_t ok;
@@ -152,11 +152,11 @@ protected:
 
 
     void setAddress( PersistentHandle *handle, void *argument ) {
-        byteArrayPrimitives::alienSetAddress( asOop( (int) argument ), handle->as_oop() );
+        byteArrayPrimitives::alienSetAddress( asOop( (std::int32_t) argument ), handle->as_oop() );
     }
 
 
-    void checkArgnPassed( int argIndex, int argValue, std::array<void *, argCount> functionArray ) {
+    void checkArgnPassed( std::int32_t argIndex, std::int32_t argValue, std::array<void *, argCount> functionArray ) {
         setAddress( functionAlien, functionArray[ argIndex ] );
         Oop arg0   = argIndex == 0 ? asOop( argValue ) : smi0;
         Oop arg1   = argIndex == 1 ? asOop( argValue ) : smi0;
@@ -167,7 +167,7 @@ protected:
     }
 
 
-    void checkArgnPtrPassed( int argIndex, int argValue, std::array<void *, argCount> functionArray ) {
+    void checkArgnPtrPassed( std::int32_t argIndex, std::int32_t argValue, std::array<void *, argCount> functionArray ) {
         setAddress( functionAlien, functionArray[ argIndex ] );
         byteArrayPrimitives::alienSignedLongAtPut( asOop( argValue ), smi1, pointerAlien->as_oop() );
         Oop arg0   = argIndex == 0 ? pointerAlien->as_oop() : smi0;
@@ -184,7 +184,7 @@ protected:
 TEST_F   ( AlienIntegerCallout2Tests, alienCallResult2ShouldCallIntArgFunction
 ) {
 for (
-int arg = 0;
+std::int32_t arg = 0;
     arg<argCount;
 arg++ )
 checkArgnPassed( arg,
@@ -195,7 +195,7 @@ checkArgnPassed( arg,
 TEST_F( AlienIntegerCallout2Tests, alienCallResult2ShouldCallIntPointerArgFunctionWithArg2
 ) {
 for (
-int arg = 0;
+std::int32_t arg = 0;
     arg<argCount;
 arg++ )
 checkArgnPtrPassed( arg,

@@ -42,7 +42,7 @@ void error_breakpoint();                         // called at every error or fat
 #define st_assert_doubleValueArray( obj, msg ) st_assert_is_type( obj, doubleValueArray, msg )
 #define st_assert_symbol( obj, msg )           st_assert_is_type( obj, symbol, msg )
 #define st_assert_double( obj, msg )           st_assert_is_type( obj, double, msg )
-#define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<int>(p) % 4 == 0, "not word aligned" )
+#define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<std::int32_t>(p) % 4 == 0, "not word aligned" )
 
 
 // -----------------------------------------------------------------------------
@@ -70,17 +70,17 @@ void error_breakpoint();                         // called at every error or fat
 
 // -----------------------------------------------------------------------------
 
-void report_assertion_failure( const char *code_str, const char *file_name, int line_no, const char *message );
+void report_assertion_failure( const char *code_str, const char *file_name, std::int32_t line_no, const char *message );
 
-void report_fatal( const char *file_name, int line_no, const char *format, ... );
+void report_fatal( const char *file_name, std::int32_t line_no, const char *format, ... );
 
-void report_should_not_call( const char *file_name, int line_no );
+void report_should_not_call( const char *file_name, std::int32_t line_no );
 
-void report_should_not_reach_here( const char *file_name, int line_no );
+void report_should_not_reach_here( const char *file_name, std::int32_t line_no );
 
-void report_subclass_responsibility( const char *file_name, int line_no );
+void report_subclass_responsibility( const char *file_name, std::int32_t line_no );
 
-void report_unimplemented( const char *file_name, int line_no );
+void report_unimplemented( const char *file_name, std::int32_t line_no );
 
 void report_vm_state();
 

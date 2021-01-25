@@ -16,7 +16,7 @@ void setKlassVirtualTableFromVirtualFrameKlass( Klass *k ) {
 
 Oop VirtualFrameKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
-    int      size = non_indexable_size();
+    std::int32_t      size = non_indexable_size();
 
     // allocate
     Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
@@ -51,8 +51,8 @@ KlassOop VirtualFrameKlass::create_class( KlassOop super_class, MixinOop mixin )
 }
 
 
-int VirtualFrameKlass::oop_scavenge_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t VirtualFrameKlass::oop_scavenge_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_header();
     MemOop( obj )->scavenge_body( MemOopDescriptor::header_size(), size );
@@ -60,8 +60,8 @@ int VirtualFrameKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int VirtualFrameKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t VirtualFrameKlass::oop_scavenge_tenured_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_tenured_header();
     MemOop( obj )->scavenge_tenured_body( MemOopDescriptor::header_size(), size );

@@ -34,19 +34,19 @@ private:
 
 public:
 
-    static std::size_t method_or_entry_byte_offset() {
+    static std::int32_t method_or_entry_byte_offset() {
         return ( 2 * oopSize ) - MEMOOP_TAG;
     }
 
 
-    static std::size_t context_byte_offset() {
+    static std::int32_t context_byte_offset() {
         return ( 3 * oopSize ) - MEMOOP_TAG;
     }
 
 
     friend BlockClosureOop as_blockClosureOop( void *p );
 
-    static BlockClosureOop create_clean_block( int nofArgs, const char *entry_point );    // create a clean block
+    static BlockClosureOop create_clean_block( std::int32_t nofArgs, const char *entry_point );    // create a clean block
 
     inline bool_t isCompiledBlock() const {
         return not Oop( addr()->_methodOrJumpAddr )->is_mem();
@@ -69,16 +69,16 @@ public:
     JumpTableEntry *jump_table_entry() const;
 
     // returns the number of arguments for the method Oop belonging to this closure
-    int number_of_arguments();
+    std::int32_t number_of_arguments();
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( BlockClosureOopDescriptor ) / oopSize;
     }
 
 
-    static std::size_t object_size() {
+    static std::int32_t object_size() {
         return header_size();
     }
 

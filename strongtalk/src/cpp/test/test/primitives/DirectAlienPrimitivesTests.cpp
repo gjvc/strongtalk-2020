@@ -15,7 +15,7 @@
 
 #include <gtest/gtest.h>
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 
 class DirectAlienPrimitivesTests : public ::testing::Test {
@@ -72,11 +72,11 @@ protected:
     }
 
 
-    void checkLargeInteger( Oop result, int expected ) {
+    void checkLargeInteger( Oop result, std::int32_t expected ) {
         char message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
         bool_t ok;
-        int    actual = ByteArrayOop( result )->number().as_int( ok );
+        std::int32_t    actual = ByteArrayOop( result )->number().as_int( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
@@ -94,10 +94,10 @@ protected:
     }
 
 
-    void checkSmallInteger( Oop result, int expected ) {
+    void checkSmallInteger( Oop result, std::int32_t expected ) {
         char message[200];
         EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-        int actual = SMIOop( result )->value();
+        std::int32_t actual = SMIOop( result )->value();
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
     }

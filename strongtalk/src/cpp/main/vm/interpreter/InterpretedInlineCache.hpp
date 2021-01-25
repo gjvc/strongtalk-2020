@@ -40,9 +40,9 @@
 class InterpretedInlineCache : ValueObject {
 
 public:
-    static constexpr std::size_t size               = 8;    // inline cache size in words
-    static constexpr int first_word_offset  = 0;    // layout info: first word
-    static constexpr int second_word_offset = 4;    // layout info: second word
+    static constexpr std::int32_t size               = 8;    // inline cache size in words
+    static constexpr std::int32_t         first_word_offset  = 0;    // layout info: first word
+    static constexpr std::int32_t         second_word_offset = 4;    // layout info: second word
 
 
 public:
@@ -53,11 +53,11 @@ public:
     // find send bytecode, given address of selector; return nullptr/IllegalByteCodeIndex if not in a send
     static std::uint8_t *findStartOfSend( std::uint8_t *selector_addr );
 
-    static std::size_t findStartOfSend( MethodOop m, int byteCodeIndex );
+    static std::int32_t findStartOfSend( MethodOop m, std::int32_t byteCodeIndex );
 
 private:
     // field access
-    const char *addr_at( int offset ) const {
+    const char *addr_at( std::int32_t offset ) const {
         return (const char *) this + offset;
     }
 
@@ -109,7 +109,7 @@ public:
     SymbolOop selector() const;        // the selector
     JumpTableEntry *jump_table_entry() const;    // only legal to call if compiled send
 
-    int nof_arguments() const;        // the number of arguments
+    std::int32_t nof_arguments() const;        // the number of arguments
     ByteCodes::SendType send_type() const;    // the send type
     ByteCodes::ArgumentSpec argument_spec() const;// the argument spec
 
@@ -141,9 +141,9 @@ InterpretedInlineCache *as_InterpretedIC( const char *address_of_next_instr );
 
 // Interpreter_PICs handles the allocation and deallocation of interpreter PICs.
 
-static constexpr std::size_t size_of_smallest_interpreterPIC                   = 2;
-static constexpr std::size_t size_of_largest_interpreterPIC                    = 5;
-static constexpr int number_of_interpreterPolymorphicInlineCache_sizes = size_of_largest_interpreterPIC - size_of_smallest_interpreterPIC + 1;
+static constexpr std::int32_t size_of_smallest_interpreterPIC                   = 2;
+static constexpr std::int32_t size_of_largest_interpreterPIC                    = 5;
+static constexpr std::int32_t         number_of_interpreterPolymorphicInlineCache_sizes = size_of_largest_interpreterPIC - size_of_smallest_interpreterPIC + 1;
 
 
 // An InterpretedInlineCacheIterator is used to iterate through the entries of an inline cache in a methodOop.
@@ -158,9 +158,9 @@ private:
     ObjectArrayOop         _pic;            // the PolymorphicInlineCache if there is one
 
     // state machine
-    int              _number_of_targets;    // the no. of InlineCache entries
+    std::int32_t      _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _info;                 // send site information
-    std::size_t _index;                // the current entry no.
+    std::int32_t      _index;                // the current entry no.
     KlassOop         _klass;                // the current klass
     MethodOop        _method;               // the current method
     NativeMethod     *_nativeMethod;        // current NativeMethod (nullptr if none)
@@ -173,7 +173,7 @@ public:
 
 
     // InlineCache information
-    int number_of_targets() const {
+    std::int32_t number_of_targets() const {
         return _number_of_targets;
     }
 

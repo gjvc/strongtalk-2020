@@ -32,7 +32,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( int index ) const {
+    bool_t is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -66,30 +66,30 @@ public:
     }
 
 
-    std::uint16_t *doubleByte_at_addr( int which ) const {
+    std::uint16_t *doubleByte_at_addr( std::int32_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return &doubleBytes()[ which - 1 ];
     }
 
 
-    std::uint16_t doubleByte_at( int which ) const {
+    std::uint16_t doubleByte_at( std::int32_t which ) const {
         return *doubleByte_at_addr( which );
     }
 
 
-    void doubleByte_at_put( int which, std::uint16_t contents ) {
+    void doubleByte_at_put( std::int32_t which, std::uint16_t contents ) {
         *doubleByte_at_addr( which ) = contents;
     }
 
 
     // three way compare
-    int compare( DoubleByteArrayOop arg );
+    std::int32_t compare( DoubleByteArrayOop arg );
 
     // Returns the hash value for the string
-    int hash_value();
+    std::int32_t hash_value();
 
     // copy string to buffer as null terminated ascii string.
-    bool_t copy_null_terminated( char *buffer, int max_length );
+    bool_t copy_null_terminated( char *buffer, std::int32_t max_length );
 
     char *as_string();
 

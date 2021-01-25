@@ -28,7 +28,7 @@
 TRACE_FUNC( TraceProcessPrims, "process" )
 
 
-std::size_t processOopPrimitives::number_of_calls;
+std::int32_t processOopPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_process(), "receiver must be process")
 
@@ -319,13 +319,13 @@ PRIM_DECL_2( processOopPrimitives::stack, Oop receiver, Oop limit ) {
     ResourceMark  rm;
     BlockScavenge bs;
 
-    int        l       = SMIOop( limit )->value();
+    std::int32_t        l       = SMIOop( limit )->value();
     ProcessOop process = ProcessOop( receiver );
     GrowableArray<Oop> *stack = new GrowableArray<Oop>( 100 );
 
     VirtualFrame *vf = ProcessOop( receiver )->process()->last_delta_vframe();
 
-    for ( std::size_t i = 1; i <= l and vf; i++ ) {
+    for ( std::int32_t i = 1; i <= l and vf; i++ ) {
         stack->push( oopFactory::new_vframe( process, i ) );
         vf = vf->sender();
     }

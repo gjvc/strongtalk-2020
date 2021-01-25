@@ -55,7 +55,7 @@ void pp( void *p ) {
         MemOop obj = as_memOop( Universe::object_start( (Oop *) p ) );
         obj->print();
         if ( obj->is_method() ) {
-            int byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( (std::uint8_t *) p );
+            std::int32_t byteCodeIndex = MethodOop( obj )->byteCodeIndex_from( (std::uint8_t *) p );
             PrettyPrinter::print( MethodOop( obj ), nullptr, byteCodeIndex );
         }
         return;
@@ -69,7 +69,7 @@ void pp( void *p ) {
 
 
 // pv: print vm-printable object
-void pv( int p ) {
+void pv( std::int32_t p ) {
     ( (PrintableResourceObject *) p )->print();
 }
 
@@ -155,7 +155,7 @@ void pd() { // print stack
 }
 
 
-void oat( int index ) {
+void oat( std::int32_t index ) {
     Command c( "oat" );
     if ( objectIDTable::is_index_ok( index ) ) {
         Oop obj = objectIDTable::at( index );
@@ -221,41 +221,41 @@ void events() {
 }
 
 
-NativeMethod *find( int addr ) {
+NativeMethod *find( std::int32_t addr ) {
     Command c( "find" );
     return findNativeMethod( (void *) addr );
 }
 
 
-MethodOop findm( int hp ) {
+MethodOop findm( std::int32_t hp ) {
     Command c( "findm" );
     return MethodOopDescriptor::methodOop_from_hcode( (std::uint8_t *) hp );
 }
 
-// int versions of all methods to avoid having to type casts in the debugger
+// std::int32_t versions of all methods to avoid having to type casts in the debugger
 
-void pp( int p ) {
+void pp( std::int32_t p ) {
     pp( (void *) p );
 }
 
 
-void pp_short( int p ) {
+void pp_short( std::int32_t p ) {
     pp_short( (void *) p );
 }
 
 
-void pk( int p ) {
+void pk( std::int32_t p ) {
     pk( (Klass *) p );
 }
 
 
-void ph( int hp ) {
+void ph( std::int32_t hp ) {
     Command c( "ph" );
     findm( hp )->pretty_print();
 }
 
 
-void pm( int m ) {
+void pm( std::int32_t m ) {
     Command c( "pm" );
     MethodOop( m )->pretty_print();
 }
@@ -290,15 +290,15 @@ void help() {
 
     _console->print_cr( "basic" );
     _console->print_cr( "  pp(void* p)   - try to make sense of p" );
-    _console->print_cr( "  pv(int p)     - ((PrintableResourceObject*) p)->print()" );
+    _console->print_cr( "  pv(std::int32_t p)     - ((PrintableResourceObject*) p)->print()" );
     _console->print_cr( "  ps()          - print current process stack" );
     _console->print_cr( "  pss()         - print all process stacks" );
-    _console->print_cr( "  oat(std::size_t i)    - print object with id = i" );
+    _console->print_cr( "  oat(std::int32_t i)    - print object with id = i" );
 
     _console->print_cr( "methodOop" );
-    _console->print_cr( "  pm(int m)     - pretty print methodOop(m)" );
-    _console->print_cr( "  ph(int hp)    - pretty print method containing hp" );
-    _console->print_cr( "  findm(int hp) - returns methodOop containing hp" );
+    _console->print_cr( "  pm(std::int32_t m)     - pretty print methodOop(m)" );
+    _console->print_cr( "  ph(std::int32_t hp)    - pretty print method containing hp" );
+    _console->print_cr( "  findm(std::int32_t hp) - returns methodOop containing hp" );
 
     _console->print_cr( "misc." );
     _console->print_cr( "  flush()       - flushes the log file" );

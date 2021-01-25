@@ -18,13 +18,13 @@ MacroAssembler::MacroAssembler( CodeBuffer *code ) :
 
 // Implementation of MacroAssembler
 
-void MacroAssembler::align( int modulus ) {
+void MacroAssembler::align( std::int32_t modulus ) {
     while ( offset() % modulus not_eq 0 )
         nop();
 }
 
 
-void MacroAssembler::test( Register dst, int imm8 ) {
+void MacroAssembler::test( Register dst, std::int32_t imm8 ) {
     if ( not CodeForP6 and dst.hasByteRegister() ) {
         testb( dst, imm8 );
     } else {
@@ -49,7 +49,7 @@ void MacroAssembler::leave() {
 
 void MacroAssembler::inline_oop( Oop o ) {
     emit_byte( 0xA9 );
-    emit_data( (int) o, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) o, RelocationInformation::RelocationType::oop_type );
 }
 
 
@@ -60,8 +60,8 @@ void MacroAssembler::inline_oop( Oop o ) {
 // allow proper stack traversal.
 
 void MacroAssembler::set_last_Delta_frame_before_call() {
-    movl( Address( (int) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), ebp );
-    movl( Address( (int) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ), esp );
+    movl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), ebp );
+    movl( Address( (std::int32_t) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ), esp );
 }
 
 
@@ -73,7 +73,7 @@ void MacroAssembler::set_last_Delta_frame_after_call() {
 
 
 void MacroAssembler::reset_last_Delta_frame() {
-    movl( Address( (int) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), 0 );
+    movl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), 0 );
 }
 
 
@@ -219,16 +219,16 @@ void MacroAssembler::store_check( const Register &obj, const Register &tmp ) {
     // Advantage: only one instead of two instructions.
     st_assert( obj not_eq tmp, "registers must be different" );
     Label no_store;
-    cmpl( obj, (int) Universe::new_gen.boundary() );        // assumes boundary between new_gen and old_gen is fixed
+    cmpl( obj, (std::int32_t) Universe::new_gen.boundary() );        // assumes boundary between new_gen and old_gen is fixed
     jcc( Assembler::Condition::less, no_store );                      // avoid marking dirty if target is a new object
-    movl( tmp, Address( (int) &byte_map_base, RelocationInformation::RelocationType::external_word_type ) );
+    movl( tmp, Address( (std::int32_t) &byte_map_base, RelocationInformation::RelocationType::external_word_type ) );
     shrl( obj, card_shift );
     movb( Address( tmp, obj, Address::ScaleFactor::times_1 ), 0 );
     bind( no_store );
 }
 
 
-void MacroAssembler::fpu_mask_and_cond_for( const Condition &cc, int &mask, Condition &cond ) {
+void MacroAssembler::fpu_mask_and_cond_for( const Condition &cc, std::int32_t &mask, Condition &cond ) {
     switch ( cc ) {
         case Condition::equal:
             mask = 0x4000;
@@ -314,7 +314,7 @@ void MacroAssembler::inspect( const char *title ) {
     const char *entry = StubRoutines::call_inspector_entry();
     if ( entry not_eq nullptr ) {
         call( entry, RelocationInformation::RelocationType::runtime_call_type );            // call stub invoking the inspector
-        testl( eax, int( title ) );                    // additional info for inspector
+        testl( eax, std::int32_t( title ) );                    // additional info for inspector
     } else {
         const char *s = ( title == nullptr ) ? "" : title;
         _console->print_cr( "cannot call inspector for \"%s\" - no entry point yet", s );

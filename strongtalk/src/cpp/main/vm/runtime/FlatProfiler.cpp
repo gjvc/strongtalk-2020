@@ -18,29 +18,29 @@
 
 
 ProfiledNode **FlatProfiler::_table = nullptr;
-std::size_t  FlatProfiler::_tableSize = 1024;
+std::int32_t  FlatProfiler::_tableSize = 1024;
 
 DeltaProcess      *FlatProfiler::_deltaProcess     = nullptr;
 FlatProfilerTask  *FlatProfiler::_flatProfilerTask = nullptr;
 Timer             FlatProfiler::_timer;
 
-std::size_t FlatProfiler::_gc_ticks        = 0;
-std::size_t FlatProfiler::_semaphore_ticks = 0;
-std::size_t FlatProfiler::_stub_ticks      = 0;
-std::size_t FlatProfiler::_unknown_ticks   = 0;
-std::size_t FlatProfiler::_compiler_ticks  = 0;
+std::int32_t FlatProfiler::_gc_ticks        = 0;
+std::int32_t FlatProfiler::_semaphore_ticks = 0;
+std::int32_t FlatProfiler::_stub_ticks      = 0;
+std::int32_t FlatProfiler::_unknown_ticks   = 0;
+std::int32_t FlatProfiler::_compiler_ticks  = 0;
 
-static constexpr int col2 = 11;    // position of output column 2
-static constexpr int col3 = 30;    // position of output column 3
-static constexpr int col4 = 55;    // position of output column 4
+static constexpr std::int32_t col2 = 11;    // position of output column 2
+static constexpr std::int32_t col3 = 30;    // position of output column 3
+static constexpr std::int32_t col4 = 55;    // position of output column 4
 
 class TickCounter {
 public:
-    int ticks_in_code;
-    int ticks_in_primitives;
-    int ticks_in_compiler;
-    int ticks_in_pics;
-    int ticks_in_other;
+    std::int32_t ticks_in_code;
+    std::int32_t ticks_in_primitives;
+    std::int32_t ticks_in_compiler;
+    std::int32_t ticks_in_pics;
+    std::int32_t ticks_in_other;
 
 
     TickCounter() {
@@ -52,7 +52,7 @@ public:
     }
 
 
-    int total() const {
+    std::int32_t total() const {
         return ticks_in_code + ticks_in_primitives + ticks_in_compiler + ticks_in_pics + ticks_in_other;
     }
 
@@ -87,7 +87,7 @@ public:
     }
 
 
-    void print_code( ConsoleOutputStream *stream, int total_ticks ) {
+    void print_code( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
         stream->print( "%5.1f%% %3d ", total() * 100.0 / total_ticks, ticks_in_code );
     }
 
@@ -139,7 +139,7 @@ public:
     }
 
 
-    int total_ticks() {
+    std::int32_t total_ticks() {
         return ticks.total();
     }
 
@@ -174,7 +174,7 @@ public:
     }
 
 
-    static void print_total( ConsoleOutputStream *stream, TickCounter *t, int total, const char *msg ) {
+    static void print_total( ConsoleOutputStream *stream, TickCounter *t, std::int32_t total, const char *msg ) {
         t->print_code( stream, total );
         stream->print( msg );
         stream->fill_to( col4 );
@@ -212,7 +212,7 @@ public:
     }
 
 
-    virtual void print( ConsoleOutputStream *stream, int total_ticks ) {
+    virtual void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
         ticks.print_code( stream, total_ticks );
         stream->fill_to( col2 );
         print_receiver_klass_on( stream );
@@ -227,7 +227,7 @@ public:
 
 
     // for sorting
-    static std::size_t compare( ProfiledNode **a, ProfiledNode **b ) {
+    static std::int32_t compare( ProfiledNode **a, ProfiledNode **b ) {
         return ( *b )->total_ticks() - ( *a )->total_ticks();
     }
 };
@@ -266,12 +266,12 @@ public:
 
 
     static void print_title( ConsoleOutputStream *stream ) {
-        stream->print( "       Int" );
+        stream->print( "       std::int32_t" );
         ProfiledNode::print_title( stream );
     }
 
 
-    void print( ConsoleOutputStream *stream, int total_ticks ) {
+    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
         ProfiledNode::print( stream, total_ticks );
     }
 };
@@ -315,7 +315,7 @@ public:
     }
 
 
-    void print( ConsoleOutputStream *stream, int total_ticks ) {
+    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
         ProfiledNode::print( stream, total_ticks );
     }
 
@@ -332,14 +332,14 @@ public:
 };
 
 
-std::size_t FlatProfiler::entry( int value ) {
+std::int32_t FlatProfiler::entry( std::int32_t value ) {
     return value % _tableSize;
 }
 
 
 void FlatProfiler::interpreted_update( MethodOop method, KlassOop klass, TickPosition where ) {
 
-    int index = entry( method->selector_or_method()->identity_hash() );
+    std::int32_t index = entry( method->selector_or_method()->identity_hash() );
     if ( not _table[ index ] ) {
         _table[ index ] = new InterpretedNode( method, klass, where );
     } else {
@@ -356,7 +356,7 @@ void FlatProfiler::interpreted_update( MethodOop method, KlassOop klass, TickPos
 
 
 void FlatProfiler::compiled_update( NativeMethod *nm, TickPosition where ) {
-    int index = entry( nm->_mainId.major() );
+    std::int32_t index = entry( nm->_mainId.major() );
     if ( not _table[ index ] ) {
         _table[ index ] = new CompiledNode( nm, where );
     } else {
@@ -374,7 +374,7 @@ void FlatProfiler::compiled_update( NativeMethod *nm, TickPosition where ) {
 
 class FlatProfilerTask : public PeriodicTask {
 public:
-    FlatProfilerTask( int interval_time ) :
+    FlatProfilerTask( std::int32_t interval_time ) :
             PeriodicTask( interval_time ) {
     }
 
@@ -431,7 +431,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
         if ( method == nullptr )
             return;
         st_assert( method->is_method(), "must be method" );
-        int byteCodeIndex = method->byteCodeIndex_from( fr.hp() );
+        std::int32_t byteCodeIndex = method->byteCodeIndex_from( fr.hp() );
         if ( ByteCodes::code_type( (ByteCodes::Code) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::primitive_call ) {
             where = TickPosition::in_primitive;
         }
@@ -493,7 +493,7 @@ void FlatProfiler::record_tick() {
 
 void FlatProfiler::allocate_table() {
     _table = new_c_heap_array<ProfiledNode *>( _tableSize );
-    for ( std::size_t i = 0; i < _tableSize; i++ )
+    for ( std::int32_t i = 0; i < _tableSize; i++ )
         _table[ i ] = nullptr;
 }
 
@@ -502,7 +502,7 @@ void FlatProfiler::reset() {
     _deltaProcess     = nullptr;
     _flatProfilerTask = nullptr;
 
-    for ( std::size_t i = 0; i < _tableSize; i++ ) {
+    for ( std::int32_t i = 0; i < _tableSize; i++ ) {
         ProfiledNode *n = _table[ i ];
         if ( n ) {
             delete n;
@@ -546,27 +546,27 @@ bool_t FlatProfiler::is_active() {
 }
 
 
-static std::size_t compare_nodes( const void *p1, const void *p2 ) {
+static std::int32_t compare_nodes( const void *p1, const void *p2 ) {
     ProfiledNode **pn1 = (ProfiledNode **) p1;
     ProfiledNode **pn2 = (ProfiledNode **) p2;
     return ( *pn2 )->total_ticks() - ( *pn1 )->total_ticks();
 }
 
 
-void print_ticks( const char *title, int ticks, int total ) {
+void print_ticks( const char *title, std::int32_t ticks, std::int32_t total ) {
     if ( ticks > 0 )
         _console->print_cr( "total [%5.1f%%]  ticks [%3d]  title [%s]", ticks * 100.0 / total, ticks, title );
 }
 
 
-void FlatProfiler::print( int cutoff ) {
+void FlatProfiler::print( std::int32_t cutoff ) {
     FlagSetting  f( PrintObjectID, false );
     ResourceMark resourceMark;
     double       secs = _timer.seconds();
 
     GrowableArray<ProfiledNode *> *array = new GrowableArray<ProfiledNode *>( 200 );
 
-    for ( std::size_t i = 0; i < _tableSize; i++ ) {
+    for ( std::int32_t i = 0; i < _tableSize; i++ ) {
         for ( ProfiledNode *node = _table[ i ]; node; node = node->next() )
             array->append( node );
     }
@@ -574,9 +574,9 @@ void FlatProfiler::print( int cutoff ) {
     array->sort( &ProfiledNode::compare );
 
     // compute total
-    int total = total_ticks();
+    std::int32_t total = total_ticks();
 
-    for ( std::size_t index = 0; index < array->length(); index++ ) {
+    for ( std::int32_t index = 0; index < array->length(); index++ ) {
         total += array->at( index )->ticks.total();
     }
 
@@ -586,8 +586,8 @@ void FlatProfiler::print( int cutoff ) {
     TickCounter interpreted_ticks;
 
     bool_t has_interpreted_ticks = false;
-    int    print_count           = 0;
-    int    index                 = 0;
+    std::int32_t    print_count           = 0;
+    std::int32_t    index                 = 0;
 
     for ( ; index < array->length(); index++ ) {
         ProfiledNode *n = array->at( index );
@@ -621,7 +621,7 @@ void FlatProfiler::print( int cutoff ) {
     bool_t      has_compiled_ticks = false;
     TickCounter compiled_ticks;
 
-    for ( std::size_t i = 0; i < array->length(); i++ ) {
+    for ( std::int32_t i = 0; i < array->length(); i++ ) {
         ProfiledNode *n = array->at( i );
         if ( n->is_compiled() ) {
             compiled_ticks.add( &n->ticks );

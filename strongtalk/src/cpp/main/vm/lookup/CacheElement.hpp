@@ -17,7 +17,7 @@ class CacheElement {
 public:
     LookupKey    _lookupKey;
     LookupResult _lookupResult;
-    int          _filler;
+    std::int32_t          _filler;
 
 
     CacheElement();

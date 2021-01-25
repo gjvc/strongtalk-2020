@@ -44,7 +44,7 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( MixinOopDescriptor ) / oopSize;
     }
 
@@ -111,27 +111,27 @@ public:
 
 
     // primitive operations
-    int number_of_methods() const;       // Return the number of methods.
-    MethodOop method_at( int index ) const;       // Return the method at index.
+    std::int32_t number_of_methods() const;       // Return the number of methods.
+    MethodOop method_at( std::int32_t index ) const;       // Return the method at index.
     void add_method( MethodOop method );      // Add/overwrite method.
-    MethodOop remove_method_at( int index );       // Remove and return the method at index.
+    MethodOop remove_method_at( std::int32_t index );       // Remove and return the method at index.
     bool_t includes_method( MethodOop method ); // Remove and return the class variable at index.
 
-    int number_of_instVars() const;       // Return the number of instance variables.
-    SymbolOop instVar_at( int index ) const;       // Return the instance variable at index.
+    std::int32_t number_of_instVars() const;       // Return the number of instance variables.
+    SymbolOop instVar_at( std::int32_t index ) const;       // Return the instance variable at index.
     void add_instVar( SymbolOop name );       // Add instance variable.
-    SymbolOop remove_instVar_at( int index );      // Remove and return the instance variable at index.
+    SymbolOop remove_instVar_at( std::int32_t index );      // Remove and return the instance variable at index.
     bool_t includes_instVar( SymbolOop name );  // Tells whether the name is present as an instance variable name.
 
-    int number_of_classVars() const;      // Return the number of class variables.
-    SymbolOop classVar_at( int index ) const;      // Return the class variable at index.
+    std::int32_t number_of_classVars() const;      // Return the number of class variables.
+    SymbolOop classVar_at( std::int32_t index ) const;      // Return the class variable at index.
     void add_classVar( SymbolOop name );      // Add class variable.
-    SymbolOop remove_classVar_at( int index );     // Remove and return the class variable at index.
+    SymbolOop remove_classVar_at( std::int32_t index );     // Remove and return the class variable at index.
     bool_t includes_classVar( SymbolOop name ); // Tells whether the name is present
 
     // Returns the offset of an instance variable.
     // -1 is returned if inst var is not present in mixin.
-    int inst_var_offset( SymbolOop name, int non_indexable_size ) const;
+    std::int32_t inst_var_offset( SymbolOop name, std::int32_t non_indexable_size ) const;
 
     // Reflective operation
     void apply_mixin( MixinOop m );

@@ -37,7 +37,7 @@
 bool_t      garbageCollectionInProgress = false;
 bool_t      scavengeRequired            = false;
 bool_t      bootstrappingInProgress     = true;
-std::size_t BlockScavenge::counter      = 0;
+std::int32_t BlockScavenge::counter      = 0;
 bool_t        Universe::_scavenge_blocked = false;
 NewGeneration Universe::new_gen;
 OldGeneration Universe::old_gen;
@@ -46,8 +46,8 @@ RememberedSet *Universe::remembered_set;
 AgeTable      *Universe::age_table;
 Zone          *Universe::code;
 SpaceSizes    Universe::current_sizes;
-std::size_t   Universe::tenuring_threshold;
-std::size_t   Universe::scavengeCount;
+std::int32_t   Universe::tenuring_threshold;
+std::int32_t   Universe::scavengeCount;
 
 // Classes
 KlassOop smiKlassObject     = KlassOop( badOop );
@@ -77,15 +77,15 @@ KlassOop Universe::_vframeKlassObject = KlassOop( badOop );
 Oop nilObject   = Oop( badOop );
 Oop trueObject  = Oop( badOop );
 Oop falseObject = Oop( badOop );
-ObjectArrayOop Universe::_asciiCharacters     = ObjectArrayOop( badOop );
+ObjectArrayOop Universe::_asciiCharacters        = ObjectArrayOop( badOop );
 ObjectArrayOop Universe::_systemDictionaryObject = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_objectIDTable       = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_pic_free_list       = ObjectArrayOop( badOop );
-Oop            Universe::_callBack_receiver   = Oop( badOop );
-SymbolOop      Universe::_callBack_selector   = SymbolOop( badOop );
-Oop            Universe::_dll_lookup_receiver = Oop( badOop );
-SymbolOop      Universe::_dll_lookup_selector = SymbolOop( badOop );
-MethodOop      Universe::_sweeper_method      = nullptr;
+ObjectArrayOop Universe::_objectIDTable          = ObjectArrayOop( badOop );
+ObjectArrayOop Universe::_pic_free_list          = ObjectArrayOop( badOop );
+Oop            Universe::_callBack_receiver      = Oop( badOop );
+SymbolOop      Universe::_callBack_selector      = SymbolOop( badOop );
+Oop            Universe::_dll_lookup_receiver    = Oop( badOop );
+SymbolOop      Universe::_dll_lookup_selector    = SymbolOop( badOop );
+MethodOop      Universe::_sweeper_method         = nullptr;
 
 
 void Universe::genesis() {
@@ -119,7 +119,7 @@ void Universe::genesis() {
         st_fatal( "could not reserve enough space for object heap" );
     }
 
-    int new_size = ReservedSpace::page_align_size( current_sizes._eden_size + 2 * current_sizes._surv_size );
+    std::int32_t new_size = ReservedSpace::page_align_size( current_sizes._eden_size + 2 * current_sizes._surv_size );
 
     ReservedSpace new_rs = rs.first_part( new_size );
     ReservedSpace old_rs = rs.last_part( new_size );
@@ -282,7 +282,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
     {
         ObjectArrayOop f = klass->klass_part()->methods();
 
-        for ( std::size_t index = 1; index <= f->length(); index++ )
+        for ( std::int32_t index = 1; index <= f->length(); index++ )
             decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
@@ -290,7 +290,7 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
     {
         ObjectArrayOop f = klass->klass_part()->mixin()->methods();
 
-        for ( std::size_t index = 1; index <= f->length(); index++ )
+        for ( std::int32_t index = 1; index <= f->length(); index++ )
             decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
@@ -298,9 +298,9 @@ static void decode_klass( SymbolOop name, KlassOop klass ) {
 
 
 void Universe::decode_methods() {
-    int l = Universe::systemDictionaryObject()->length();
+    std::int32_t l = Universe::systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() )
             decode_klass( assoc->key(), KlassOop( assoc->value() ) );
@@ -331,9 +331,9 @@ void Universe::root_iterate( OopClosure *blk ) {
 // Traverses the system dictionary to find the association referring the class or meta class and then prints the key.
 void Universe::print_klass_name( KlassOop k ) {
 
-    int l = systemDictionaryObject()->length();
+    std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             assoc->key()->print_symbol_on();
@@ -352,9 +352,9 @@ const char *Universe::klass_name( KlassOop k ) {
     if ( k == nullptr )
         return "(nullptr)";
 
-    int l = systemDictionaryObject()->length();
+    std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value() == k ) {
             return assoc->key()->as_string();
@@ -382,9 +382,9 @@ const char *Universe::klass_name( KlassOop k ) {
 
 KlassOop Universe::method_holder_of( MethodOop m ) {
     m = m->home();    // so block methods can be found, too
-    int l = systemDictionaryObject()->length();
+    std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() ) {
             KlassOop k = KlassOop( assoc->value() );
@@ -407,9 +407,9 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
 
 SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
     *meta = false;
-    int l = systemDictionaryObject()->length();
+    std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
             if ( assoc->value() == value ) {
@@ -428,6 +428,7 @@ SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
 
 
 Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
+
     if ( not must_be_constant ) {
         if ( strcmp( name, "true" ) == 0 )
             return trueObject();
@@ -437,10 +438,10 @@ Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
             return nilObject();
     }
 
-    SymbolOop sym = oopFactory::new_symbol( name );
-    int       l   = systemDictionaryObject()->length();
+    SymbolOop   sym = oopFactory::new_symbol( name );
+    std::int32_t l   = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = AssociationOop( systemDictionaryObject()->obj_at( i ) );
         if ( assoc->key() == sym ) {
             if ( not must_be_constant or assoc->is_constant() ) {
@@ -455,9 +456,9 @@ Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
 AssociationOop Universe::find_global_association( const char *name ) {
     SymbolOop symbolOop = oopFactory::new_symbol( name );
 
-    int l = systemDictionaryObject()->length();
+    std::int32_t l = systemDictionaryObject()->length();
 
-    for ( std::size_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= l; i++ ) {
         AssociationOop assoc = (AssociationOop) systemDictionaryObject()->obj_at( i );
         if ( assoc->key() == symbolOop )
             return assoc;
@@ -468,8 +469,9 @@ AssociationOop Universe::find_global_association( const char *name ) {
 
 
 void Universe::methods_in_array_do( ObjectArrayOop array, void f( MethodOop method ) ) {
-    int               length = array->length();
-    for ( std::size_t i      = 1; i <= length; i++ ) {
+    std::int32_t length = array->length();
+
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         MethodOop method = MethodOop( array->obj_at( i ) );
         st_assert( method->is_method(), "just checking" );
         f( method );
@@ -527,9 +529,9 @@ void Universe::classes_for_do( KlassOop klass, klassOopClosure *iterator ) {
 void Universe::classes_do( klassOopClosure *iterator ) {
 
     ObjectArrayOop array  = Universe::systemDictionaryObject();
-    int            length = array->length();
+    std::int32_t    length = array->length();
 
-    for ( std::size_t i = 1; i <= length; i++ ) {
+    for ( std::int32_t i = 1; i <= length; i++ ) {
         AssociationOop assoc = AssociationOop( array->obj_at( i ) );
         st_assert( assoc->is_association(), "just checking" );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
@@ -666,17 +668,17 @@ void Universe::add_global( Oop value ) {
 }
 
 
-void Universe::remove_global_at( int index ) {
+void Universe::remove_global_at( std::int32_t index ) {
     _systemDictionaryObject = _systemDictionaryObject->copy_remove( index );
 }
 
 
 bool_t Universe::on_page_boundary( void *addr ) {
-    return ( (int) addr ) % page_size() == 0;
+    return ( (std::int32_t) addr ) % page_size() == 0;
 }
 
 
-std::size_t Universe::page_size() {
+std::int32_t Universe::page_size() {
     return os::vm_page_size();
 }
 
@@ -690,7 +692,7 @@ void Universe::store( Oop *p, Oop contents, bool_t cs ) {
 }
 
 
-Oop *Universe::allocate_in_survivor_space( MemOop p, std::size_t size, bool_t &is_new ) {
+Oop *Universe::allocate_in_survivor_space( MemOop p, std::int32_t size, bool_t &is_new ) {
     if ( p->mark()->age() < tenuring_threshold and new_gen.would_fit( size ) ) {
         is_new = true;
         return new_gen.allocate_in_survivor_space( size );
@@ -727,12 +729,12 @@ bool_t Universe::can_scavenge() {
 }
 
 
-extern "C" void scavenge_and_allocate( std::size_t size ) {
+extern "C" void scavenge_and_allocate( std::int32_t size ) {
     Universe::scavenge_and_allocate( size, nullptr );
 }
 
 
-Oop *Universe::scavenge_and_allocate( std::size_t size, Oop *p ) {
+Oop *Universe::scavenge_and_allocate( std::int32_t size, Oop *p ) {
     // Fix this:
     //  If it is a huge object we are allocating we should allocate it in old_space and return without doing a scavenge
     if ( not can_scavenge() ) {
@@ -822,7 +824,7 @@ void Universe::scavenge( Oop *p ) {
         new_gen.swap_spaces();
 
         // Set the desired survivor size to half the real survivor Space
-        int desired_survivor_size = new_gen.to()->capacity() / 2;
+        std::int32_t desired_survivor_size = new_gen.to()->capacity() / 2;
         tenuring_threshold = age_table->tenuring_threshold( desired_survivor_size / oopSize );
 
         if ( VerifyAfterScavenge )
@@ -843,7 +845,8 @@ Space *Universe::spaceFor( void *p ) {
         return new_gen.eden();
 
     {
-        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )
+            if ( s->contains( p ) )
                 return s;
     }
 

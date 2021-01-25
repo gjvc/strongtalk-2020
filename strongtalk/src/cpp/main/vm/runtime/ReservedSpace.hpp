@@ -13,12 +13,12 @@
 class ReservedSpace : public ValueObject {
 private:
     const char *_base;
-    std::size_t _size;
+    std::int32_t _size;
 public:
-    ReservedSpace( std::size_t size );
+    ReservedSpace( std::int32_t size );
 
 
-    ReservedSpace( const char *base, std::size_t size ) {
+    ReservedSpace( const char *base, std::int32_t size ) {
         _base = base;
         _size = size;
     }
@@ -30,7 +30,7 @@ public:
     }
 
 
-    std::size_t size() {
+    std::int32_t size() {
         return _size;
     }
 
@@ -41,12 +41,12 @@ public:
 
 
     // Splitting
-    ReservedSpace first_part( int partition_size );
+    ReservedSpace first_part( std::int32_t partition_size );
 
-    ReservedSpace last_part( int partition_size );
+    ReservedSpace last_part( std::int32_t partition_size );
 
     // Alignment
-    static std::size_t page_align_size( std::size_t size );
+    static std::int32_t page_align_size( std::int32_t size );
 
-    static std::size_t align_size( std::size_t size, int page_size );
+    static std::int32_t align_size( std::int32_t size, std::int32_t page_size );
 };

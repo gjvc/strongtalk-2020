@@ -25,12 +25,12 @@ Register::Register( void ) :
 }
 
 
-Register::Register( int number, char f ) :
+Register::Register( std::int32_t number, char f ) :
         _number( number ) {
 }
 
 
-int Register::number() const {
+std::int32_t Register::number() const {
     st_assert( isValid(), "not a register" );
     return _number;
 }

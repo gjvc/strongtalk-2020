@@ -47,22 +47,22 @@ public:
     }
 
 
-    int index() const {
+    std::int32_t index() const {
         return addr()->_index->value();
     }
 
 
-    void set_index( std::size_t i ) {
+    void set_index( std::int32_t i ) {
         STORE_OOP( &addr()->_index, smiOopFromValue( i ) );
     }
 
 
-    int time_stamp() const {
+    std::int32_t time_stamp() const {
         return addr()->_time_stamp->value();
     }
 
 
-    void set_time_stamp( int t ) {
+    void set_time_stamp( std::int32_t t ) {
         STORE_OOP( &addr()->_time_stamp, smiOopFromValue( t ) );
     }
 
@@ -71,7 +71,7 @@ public:
 
 
     // sizing
-    static std::size_t header_size() {
+    static std::int32_t header_size() {
         return sizeof( VirtualFrameOopDescriptor ) / oopSize;
     }
 

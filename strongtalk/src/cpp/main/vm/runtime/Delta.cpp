@@ -41,10 +41,10 @@ void DeltaCallCache::clearAll() {
 
 // Implementation of Delta
 
-typedef Oop (call_delta_func)( void *method, Oop receiver, int nofArgs, Oop *args );
+typedef Oop (call_delta_func)( void *method, Oop receiver, std::int32_t nofArgs, Oop *args );
 
 
-Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, int nofArgs, Oop *args ) {
+Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, std::int32_t nofArgs, Oop *args ) {
     call_delta_func *_call_delta = (call_delta_func *) StubRoutines::call_delta();
 
     if ( ic->match( receiver->klass(), SymbolOop( selector ) ) ) { // use inline cache entry - but first make sure it's not a zombie NativeMethod
@@ -71,7 +71,7 @@ Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, int nof
 }
 
 
-Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, Oop *argArray ) {
+Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, std::int32_t nofArgs, Oop *argArray ) {
     MemOop    msg;
     SymbolOop sel;
     {
@@ -80,7 +80,7 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, int nofArgs, O
         KlassOop       msgKlass = KlassOop( Universe::find_global( "Message" ) );
         Oop            obj      = msgKlass->klass_part()->allocateObject();
         ObjectArrayOop args     = oopFactory::new_objArray( nofArgs );
-        for ( int      index    = 0; index < nofArgs; index++ )
+        for ( std::int32_t      index    = 0; index < nofArgs; index++ )
             args->obj_at_put( index + 1, argArray[ index ] );
 
         st_assert( obj->is_mem(), "just checkin'..." );

@@ -159,12 +159,12 @@ public:
     // Version numbers
     //   increment snapshot_version whenever old snapshots will break; reset
     //   it to zero when changing the minor or major version
-    static std::size_t major_version() {
+    static std::int32_t major_version() {
         return 1;
     }
 
 
-    static std::size_t minor_version() {
+    static std::int32_t minor_version() {
         return 1;
     }
 
@@ -174,7 +174,7 @@ public:
     }
 
 
-    static std::size_t snapshot_version() {
+    static std::int32_t snapshot_version() {
         return 3;
     }
 
@@ -214,8 +214,8 @@ public:
     static Zone          *code;
 
     // additional variables
-    static std::size_t tenuring_threshold;
-    static std::size_t scavengeCount;
+    static std::int32_t tenuring_threshold;
+    static std::int32_t scavengeCount;
 
 
     // Space operations
@@ -246,7 +246,7 @@ public:
 
 
     // allocators
-    static Oop *allocate( std::size_t size, MemOop *p = nullptr, bool_t permit_scavenge = true ) {
+    static Oop *allocate( std::int32_t size, MemOop *p = nullptr, bool_t permit_scavenge = true ) {
 
         if ( _scavenge_blocked and can_scavenge() and permit_scavenge )
             return scavenge_and_allocate( size, (Oop *) p );
@@ -259,13 +259,13 @@ public:
     }
 
 
-    static Oop *allocate_without_scavenge( std::size_t size ) {
+    static Oop *allocate_without_scavenge( std::int32_t size ) {
         Oop *obj = new_gen.allocate( size );
         return obj ? obj : allocate_tenured( size );
     }
 
 
-    static Oop *allocate_tenured( std::size_t size, bool_t permit_expansion = true ) {
+    static Oop *allocate_tenured( std::int32_t size, bool_t permit_expansion = true ) {
         return old_gen.allocate( size, permit_expansion );
     }
 
@@ -277,7 +277,7 @@ public:
     static bool_t can_scavenge();
 
     // scavenging operations.
-    static Oop *scavenge_and_allocate( std::size_t size, Oop *p );
+    static Oop *scavenge_and_allocate( std::int32_t size, Oop *p );
 
     static void scavenge( Oop *p = nullptr );
 
@@ -304,10 +304,10 @@ public:
     }
 
 
-    static Oop *allocate_in_survivor_space( MemOop p, std::size_t size, bool_t &is_new );
+    static Oop *allocate_in_survivor_space( MemOop p, std::int32_t size, bool_t &is_new );
 
 
-    static std::size_t free() {
+    static std::int32_t free() {
         return old_gen.free();
     }
 
@@ -349,7 +349,7 @@ public:
 
     static void decode_methods();
 
-    static void objectSizeHistogram( int maxSize );
+    static void objectSizeHistogram( std::int32_t maxSize );
 
     // Iterator
     static void object_iterate( ObjectClosure *blk );
@@ -359,12 +359,12 @@ public:
     // System dictionary manipulation
     static void add_global( Oop value );
 
-    static void remove_global_at( int index );
+    static void remove_global_at( std::int32_t index );
 
 public:
     static char *printAddr; // used for debug printing
 
-    static void printRegion( const char *&caddr, int count = 16 );
+    static void printRegion( const char *&caddr, std::int32_t count = 16 );
 
     // for debugging
     static void print_klass_name( KlassOop k );
@@ -396,7 +396,7 @@ public:
 
     static bool_t on_page_boundary( void *addr );
 
-    static std::size_t page_size();
+    static std::int32_t page_size();
 };
 
 #define STORE_OOP( ADDR, VALUE ) Universe::store((Oop*) ADDR, (Oop) VALUE)

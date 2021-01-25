@@ -49,14 +49,14 @@ public:
     Expression     *_receiver;         //
     LookupKey      *_lookupKey;        //
     PseudoRegister *_resultRegister;   // register where result should end up
-    SymbolOop _selector;                //
-    bool_t    _needRealSend;            // need a real (non-inlined) send
-    bool_t    _counting;                // count # sends? (for non-inlined send)
-    int       _sendCount;               // estimated # of invocations (< 0 == unknown)
-    bool_t    _predicted;               // was receiver type-predicted?
-    bool_t    uninlinable;              // was send considered uninlinable?
-    bool_t    _receiverStatic;          // receiver type is statically known
-    bool_t    _inPrimitiveFailure;      // sent from within prim. failure block
+    SymbolOop      _selector;                //
+    bool_t         _needRealSend;            // need a real (non-inlined) send
+    bool_t         _counting;                // count # sends? (for non-inlined send)
+    std::int32_t    _sendCount;               // estimated # of invocations (< 0 == unknown)
+    bool_t         _predicted;               // was receiver type-predicted?
+    bool_t         uninlinable;              // was send considered uninlinable?
+    bool_t         _receiverStatic;          // receiver type is statically known
+    bool_t         _inPrimitiveFailure;      // sent from within prim. failure block
 
 protected:
     void init();
@@ -73,7 +73,7 @@ public:
 
     SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *r );
 
-    void computeNSends( RecompilationScope *rscope, int byteCodeIndex );
+    void computeNSends( RecompilationScope *rscope, std::int32_t byteCodeIndex );
 
     void print();
 };
@@ -168,7 +168,7 @@ public:
     }
 
 
-    virtual bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) = 0;
+    virtual bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) = 0;
 
 
     virtual void genCode() {
@@ -180,21 +180,21 @@ public:
 class InlinedScope : public Scope {
 
 protected:
-    int _scopeID;                   //
+    std::int32_t  _scopeID;                   //
     InlinedScope *_sender;                    // nullptr for top scope
-    int       _senderByteCodeIndex;       // call position in sender (if inlined)
-    ScopeInfo _scopeInfo;                 // for debugging information (see scopeDescRecoder.hpp)
-    LookupKey *_key;                       //
-    KlassOop  _methodHolder;              // not_eq receiver klass only for methods invoked by super sends
-    MethodOop _method;
-    int       _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
-    int       _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
-    bool_t    _primFailure;               // true if in a primitive call failure branch
-    bool_t    _endsDead;                  // true if method ends with dead code
-    Expression *_self;                      // the receiver
-    NodeBuilder _gen;                       // the generator of the intermediate representation
+    std::int32_t  _senderByteCodeIndex;       // call position in sender (if inlined)
+    ScopeInfo    _scopeInfo;                 // for debugging information (see scopeDescRecoder.hpp)
+    LookupKey    *_key;                       //
+    KlassOop     _methodHolder;              // not_eq receiver klass only for methods invoked by super sends
+    MethodOop    _method;
+    std::int32_t  _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
+    std::int32_t  _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
+    bool_t       _primFailure;               // true if in a primitive call failure branch
+    bool_t       _endsDead;                  // true if method ends with dead code
+    Expression   *_self;                      // the receiver
+    NodeBuilder  _gen;                       // the generator of the intermediate representation
 
-    PseudoRegister *_context;            // context (either passed in or created here), if any
+    PseudoRegister                  *_context;            // context (either passed in or created here), if any
     GrowableArray<Expression *>     *_arguments;          // the arguments
     GrowableArray<Expression *>     *_temporaries;        // the (originally) stack-allocated temporaries
     GrowableArray<Expression *>     *_floatTemporaries;   // the (originally) stack-allocated float temporaries
@@ -207,14 +207,14 @@ protected:
     GrowableArray<PseudoRegister *> *_pregsEndSorted;     // the scope's PseudoRegisters sorted with endByteCodeIndex (used for regAlloc)
 
     // float temporaries
-    int _firstFloatIndex;    // the (stack) float temporary index for the first float
+    std::int32_t _firstFloatIndex;    // the (stack) float temporary index for the first float
 
     // for node builders
     MergeNode       *_returnPoint;           // starting point for shared return code
     MergeNode       *_NonLocalReturneturnPoint;         // starting point for shared non-local return code
     MergeNode       *_nlrTestPoint;          // where NonLocalReturns coming from callees will jump to (or nullptr)
     ContextInitNode *_contextInitializer;    // node initializing context (if any)
-    bool_t _hasBeenGenerated;      // true iff genCode() was called
+    bool_t          _hasBeenGenerated;      // true iff genCode() was called
 
 public:
     // for node builders
@@ -246,12 +246,12 @@ public:
 
 public:
     RecompilationScope *rscope;         // equiv. scope in recompilee (if any) - used for type feedback
-    bool_t predicted;      // was receiver type-predicted?
-    int    depth;          // call nesting level (top = 0)
-    int    loopDepth;      // loop nesting level (top = 0)
-    Expression     *result;         // result of normal return (nullptr if none)
-    Expression     *nlrResult;      // NonLocalReturn result (non-nullptr only for blocks)
-    PseudoRegister *resultPR;       // pseudo register containing result
+    bool_t             predicted;      // was receiver type-predicted?
+    std::int32_t        depth;          // call nesting level (top = 0)
+    std::int32_t        loopDepth;      // loop nesting level (top = 0)
+    Expression         *result;         // result of normal return (nullptr if none)
+    Expression         *nlrResult;      // NonLocalReturn result (non-nullptr only for blocks)
+    PseudoRegister     *resultPR;       // pseudo register containing result
 
 protected:
     InlinedScope();
@@ -269,7 +269,7 @@ public:
     }
 
 
-    int senderByteCodeIndex() const {
+    std::int32_t senderByteCodeIndex() const {
         return _senderByteCodeIndex;
     }
 
@@ -279,7 +279,7 @@ public:
     }
 
 
-    virtual int byteCodeIndex() const {
+    virtual std::int32_t byteCodeIndex() const {
         return gen()->byteCodeIndex();
     }
 
@@ -289,7 +289,7 @@ public:
     }
 
 
-    int nofArguments() const {
+    std::int32_t nofArguments() const {
         return _arguments->length();
     }
 
@@ -299,7 +299,7 @@ public:
     }
 
 
-    int nofTemporaries() const {
+    std::int32_t nofTemporaries() const {
         return _temporaries->length();
     }
 
@@ -309,12 +309,12 @@ public:
     }
 
 
-    int nofFloatTemporaries() const {
+    std::int32_t nofFloatTemporaries() const {
         return _floatTemporaries->length();
     }
 
 
-    int firstFloatIndex() const {
+    std::int32_t firstFloatIndex() const {
         st_assert( _firstFloatIndex >= 0, "not yet computed" );
         return _firstFloatIndex;
     }
@@ -341,12 +341,12 @@ public:
     }
 
 
-    int nofBytes() const {
+    std::int32_t nofBytes() const {
         return _method->end_byteCodeIndex() - 1;
     }
 
 
-    int nofSends() const {
+    std::int32_t nofSends() const {
         return _nofSends;
     }
 
@@ -410,27 +410,27 @@ public:
     bool_t isLite() const;
 
 
-    Expression *argument( int no ) const {
+    Expression *argument( std::int32_t no ) const {
         return _arguments->at( no );
     }
 
 
-    Expression *temporary( int no ) const {
+    Expression *temporary( std::int32_t no ) const {
         return _temporaries->at( no );
     }
 
 
-    Expression *floatTemporary( int no ) const {
+    Expression *floatTemporary( std::int32_t no ) const {
         return _floatTemporaries->at( no );
     }
 
 
-    void set_temporary( int no, Expression *t ) {
+    void set_temporary( std::int32_t no, Expression *t ) {
         _temporaries->at_put( no, t );
     }
 
 
-    Expression *contextTemporary( int no ) const {
+    Expression *contextTemporary( std::int32_t no ) const {
         return _contextTemporaries->at( no );
     }
 
@@ -470,16 +470,16 @@ public:
     }
 
 
-    void createTemporaries( int nofTemps );
+    void createTemporaries( std::int32_t nofTemps );
 
-    void createFloatTemporaries( int nofFloats );
+    void createFloatTemporaries( std::int32_t nofFloats );
 
-    void createContextTemporaries( int nofTemps );
+    void createContextTemporaries( std::int32_t nofTemps );
 
-    void contextTemporariesAtPut( int no, Expression *e );
+    void contextTemporariesAtPut( std::int32_t no, Expression *e );
 
-    int homeContext() const;            // the home context level
-    InlinedScope *find_scope( int context, int &nofIndirections, OutlinedScope *&out );    // find enclosing scope
+    std::int32_t homeContext() const;            // the home context level
+    InlinedScope *find_scope( std::int32_t context, std::int32_t &nofIndirections, OutlinedScope *&out );    // find enclosing scope
     void addResult( Expression *e );
 
     void genCode();
@@ -501,9 +501,9 @@ public:
 
     CompiledLoop *addLoop();
 
-    void setExprForByteCodeIndex( int byteCodeIndex, Expression *expr );
+    void setExprForByteCodeIndex( std::int32_t byteCodeIndex, Expression *expr );
 
-    void set2ndExprForByteCodeIndex( int byteCodeIndex, Expression *expr );
+    void set2ndExprForByteCodeIndex( std::int32_t byteCodeIndex, Expression *expr );
 
     virtual void collectContextInfo( GrowableArray<InlinedScope *> *scopeList );
 
@@ -528,10 +528,10 @@ protected:
     virtual void epilogue();
 
 public:
-    int descOffset();
+    std::int32_t descOffset();
 
 protected:
-    // int calleeSize(RecompilationScope* rs);
+    // std::int32_t calleeSize(RecompilationScope* rs);
     void markLocalsDebugVisible( GrowableArray<PseudoRegister *> *exprStack );
 
 public:
@@ -542,7 +542,7 @@ public:
 
     void allocatePRegs( IntFreeList *f );
 
-    int allocateFloatTemporaries( int firstFloatIndex );    // returns the number of float temps allocated for
+    std::int32_t allocateFloatTemporaries( std::int32_t firstFloatIndex );    // returns the number of float temps allocated for
     // this and all subscopes; sets _firstFloatIndex
 
 public:
@@ -551,7 +551,7 @@ public:
     void printTree();
 
     // see Compiler::number_of_noninlined_blocks
-    int number_of_noninlined_blocks();
+    std::int32_t number_of_noninlined_blocks();
 
     // see Compiler::copy_noninlined_block_info
     void copy_noninlined_block_info( NativeMethod *nm );
@@ -585,7 +585,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
 
     void generateDebugInfo();
 
@@ -598,7 +598,7 @@ public:
 
 class BlockScope : public InlinedScope {        // block methods
 protected:
-    Scope *_parent;                // lexically enclosing scope
+    Scope  *_parent;                // lexically enclosing scope
     bool_t _self_is_initialized;            // true if self has been loaded
     void initialize( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
@@ -640,7 +640,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n );
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
 
     void generateDebugInfo();
 
@@ -728,7 +728,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
         ShouldNotCallThis();
         return false;
     }
@@ -776,7 +776,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, int n ) {
+    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
         ShouldNotCallThis();
         return false;
     }

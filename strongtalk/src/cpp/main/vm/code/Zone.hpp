@@ -78,16 +78,16 @@ protected:
     bool_t _needsLRUSweep;    //
     bool_t _needsSweep;       //
 
-    std::size_t    compactTime;                // time of last compaction
-    std::size_t    compactDuration;            // duration of last compaction
+    std::int32_t    compactTime;                // time of last compaction
+    std::int32_t    compactDuration;            // duration of last compaction
     double minFreeFrac;             // fraction of free Space needed at compaction time
 
 
 public:
-    Zone( std::size_t &size );
+    Zone( std::int32_t &size );
 
 
-    void *operator new( std::size_t size ) {
+    void *operator new( std::int32_t size ) {
         return AllocateHeap( size, "NativeMethod zone header" );
     }
 
@@ -95,7 +95,7 @@ public:
     void clear();
 
 
-    std::size_t capacity() const {
+    std::int32_t capacity() const {
         return _methodHeap->capacity();
     }
 
@@ -107,15 +107,15 @@ public:
 
     void verify_if_often();
 
-    std::size_t used();
+    std::int32_t used();
 
 
-    std::size_t numberOfNativeMethods() const {
+    std::int32_t numberOfNativeMethods() const {
         return jump_table()->usedIDs;
     }
 
 
-    NativeMethod *allocate( std::size_t size );
+    NativeMethod *allocate( std::int32_t size );
 
     void free( NativeMethod *m );
 
@@ -154,7 +154,7 @@ public:
 
     void cleanup_inline_caches();
 
-    std::size_t findReplCandidates( std::size_t needed );
+    std::int32_t findReplCandidates( std::int32_t needed );
 
     bool_t isDeltaPC( void *p ) const;
 
@@ -181,7 +181,7 @@ public:
 
     void print();
 
-    void print_NativeMethod_histogram( std::size_t size );
+    void print_NativeMethod_histogram( std::int32_t size );
 
 
     NativeMethod *first_nm() const {
@@ -206,13 +206,13 @@ public:
 
     const char *instsStart();
 
-    std::size_t instsSize();
+    std::int32_t instsSize();
 
-    std::size_t LRU_time();
+    std::int32_t LRU_time();
 
-    std::size_t sweeper( std::size_t maxVisit, std::size_t maxReclaim, std::size_t *nvisited = nullptr, std::size_t *nbytesReclaimed = nullptr );
+    std::int32_t sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std::int32_t *nvisited = nullptr, std::int32_t *nbytesReclaimed = nullptr );
 
-    std::size_t nextNativeMethodID();
+    std::int32_t nextNativeMethodID();
 
 public:
     void mark_dependents_for_deoptimization();
@@ -228,11 +228,11 @@ protected:
 
     void adjustPolicy();
 
-    std::size_t flushNextMethod( std::size_t needed );
+    std::int32_t flushNextMethod( std::int32_t needed );
 
     inline NativeMethod *next_circular_nm( NativeMethod *nm );
 
-    friend void moveInsts( const char *from, char *to, std::size_t size );
+    friend void moveInsts( const char *from, char *to, std::int32_t size );
 
     friend void printAllNativeMethods();
 
@@ -249,10 +249,10 @@ public:
     LRUcount() {
         ShouldNotCallThis();
     } // shouldn't create
-    void set( std::size_t i ) {
-        *(std::size_t *) this = i;
+    void set( std::int32_t i ) {
+        *(std::int32_t *) this = i;
     }
 };
 
 extern LRUcount *LRUtable;      // for optimized methods
-extern std::size_t      *LRUflag;       // == LRUtable, just different type for convenience
+extern std::int32_t      *LRUflag;       // == LRUtable, just different type for convenience

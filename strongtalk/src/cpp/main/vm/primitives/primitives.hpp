@@ -37,7 +37,7 @@ private:
 public:
     SymbolOop name() const;
 
-    int number_of_parameters() const;
+    std::int32_t number_of_parameters() const;
 
     PrimitiveDescriptor *pdesc() const;
 
@@ -83,7 +83,7 @@ public:
     static void patch( const char *name, const char *entry_point );
 
 private:
-    static PrimitiveDescriptor *lookup( const char *selector, int len );
+    static PrimitiveDescriptor *lookup( const char *selector, std::int32_t selector_length );
     static PrimitiveDescriptor *lookup( const char *selector );
 
 

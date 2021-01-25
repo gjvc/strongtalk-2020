@@ -22,7 +22,7 @@ VirtualFrame *VirtualFrameOopDescriptor::get_vframe() {
 
     VirtualFrame *vf = proc->last_delta_vframe();
 
-    for ( std::size_t i = 1; i < index() and vf; i++ ) {
+    for ( std::int32_t i = 1; i < index() and vf; i++ ) {
         vf = vf->sender();
     }
 

@@ -488,7 +488,7 @@ void os::initialize_system_info() {
 }
 
 
-int os::message_box( const char * title, const char * message ) {
+std::int32_t os::message_box( const char * title, const char * message ) {
     return 0;
 }
 

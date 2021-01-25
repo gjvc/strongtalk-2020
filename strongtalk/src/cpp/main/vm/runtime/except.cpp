@@ -14,11 +14,11 @@
 #include "vm/runtime/ResourceMark.hpp"
 
 
-void trace( VirtualFrame *from_frame, int start_frame, int number_of_frames ) {
+void trace( VirtualFrame *from_frame, std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
     _console->print_cr( "- Stack trace (%d, %d)", start_frame, number_of_frames );
-    int vframe_no = 1;
+    std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = from_frame; f; f = f->sender() ) {
         if ( vframe_no >= start_frame ) {
@@ -44,7 +44,7 @@ void traceCompiledFrame( Frame &f ) {
     lprintf( "Found NativeMethod: 0x%x\n", nm );
     nm->print_value_on( _console );
 
-    _console->print_cr( "\n @%d called from [%#x]", vf->scope()->offset(), f.pc() - static_cast<std::size_t>( Assembler::Constants::sizeOfCall ) );
+    _console->print_cr( "\n @%d called from [%#x]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
 
     trace( vf, 0, 10 );
 }
@@ -69,7 +69,7 @@ void traceDeltaFrame( Frame &f ) {
 
 void handle_exception( void *fp, void *sp, void *pc ) {
 
-    Frame f( (Oop *) sp, (int *) fp, (const char *) pc );
+    Frame f( (Oop *) sp, (std::int32_t *) fp, (const char *) pc );
     lprintf( "ebp: 0x%x, esp: 0x%x, pc: 0x%x\n", fp, sp, pc );
     if ( f.is_delta_frame() ) {
         traceDeltaFrame( f );
@@ -77,7 +77,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
     }
 
     if ( DeltaProcess::active() and last_Delta_fp ) {
-        Frame lastf( (Oop *) last_Delta_sp, (int *) last_Delta_fp );
+        Frame lastf( (Oop *) last_Delta_sp, (std::int32_t *) last_Delta_fp );
         if ( lastf.is_delta_frame() ) {
             traceDeltaFrame( lastf );
             return;
@@ -90,7 +90,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
     }
 
     if ( DeltaProcess::active() and DeltaProcess::active()->last_Delta_fp() ) {
-        Frame activef( (Oop *) DeltaProcess::active()->last_Delta_sp(), (int *) DeltaProcess::active()->last_Delta_fp() );
+        Frame activef( (Oop *) DeltaProcess::active()->last_Delta_sp(), (std::int32_t *) DeltaProcess::active()->last_Delta_fp() );
         if ( activef.is_delta_frame() ) {
             traceDeltaFrame( activef );
             return;

@@ -17,16 +17,16 @@ class CompilerTests : public ::testing::Test {
 protected:
 
     HeapResourceMark *rm;
-    int count;
+    std::int32_t count;
     NativeMethod *seed;
 
     void SetUp() override;
     void TearDown() override;
 
-    NativeMethod *alloc_nativeMethod( LookupKey *key, std::size_t size );
+    NativeMethod *alloc_nativeMethod( LookupKey *key, std::int32_t size );
     void initializeSmalltalkEnvironment();
 
-    void exhaustMethodHeap( LookupKey &key, int requiredSize );
+    void exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize );
     NativeMethod *compile( const char *className, const char *selectorName );
     NativeMethod *compile( Handle &klassHandle, Handle &selectorHandle );
 

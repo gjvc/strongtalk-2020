@@ -42,7 +42,7 @@ public:
     };
 
 
-    void *operator new( std::size_t size ) {
+    void *operator new( std::int32_t size ) {
         return CHeapAllocatedObject::operator new( size );
     }
 

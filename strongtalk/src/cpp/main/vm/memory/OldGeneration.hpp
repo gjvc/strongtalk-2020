@@ -22,7 +22,7 @@ class OldGeneration : public Generation {
 
     friend class symbolKlass;
 
-    Oop *allocate_in_next_space( std::size_t size );
+    Oop *allocate_in_next_space( std::int32_t size );
 
 private:
     // OldGeneration consists of a linked lists of spaces.
@@ -35,26 +35,26 @@ private:
     OldSpace *_oldSpace;
 
 public:
-    int expand( std::size_t size );
+    std::int32_t expand( std::int32_t size );
 
-    int shrink( std::size_t size );
+    std::int32_t shrink( std::int32_t size );
 
 
-    Oop *allocate( std::size_t size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::int32_t size, bool_t allow_expansion = true ) {
         return _currentSpace->allocate( size, allow_expansion );
     }
 
 
     // called by Universe
-    void initialize( ReservedSpace rs, int initial_size );
+    void initialize( ReservedSpace rs, std::int32_t initial_size );
 
 public:
     // Space enquiries
-    int capacity();
+    std::int32_t capacity();
 
-    int used();
+    std::int32_t used();
 
-    int free();
+    std::int32_t free();
 
     void print();
 
@@ -62,11 +62,11 @@ public:
 
     // Returns the number of dirty pages in old Space.
     // ie. # of pages marked as dirty
-    int number_of_dirty_pages();
+    std::int32_t number_of_dirty_pages();
 
     // Returns the number of pages with dirty objects
     // ie. # of pages with object pointing to new objects.
-    int number_of_pages_with_dirty_objects();
+    std::int32_t number_of_pages_with_dirty_objects();
 
     void object_iterate( ObjectClosure *blk );
 
@@ -101,7 +101,7 @@ private:
 
     void switch_pointers_by_card( Oop from, Oop to );
 
-    void sorted_space_list( OldSpace *sp[], int (*cmp)( OldSpace **, OldSpace ** ) );
+    void sorted_space_list( OldSpace *sp[], std::int32_t (*cmp)( OldSpace **, OldSpace ** ) );
 
     // phase2 of mark sweep
     void prepare_for_compaction( OldWaterMark *mark );

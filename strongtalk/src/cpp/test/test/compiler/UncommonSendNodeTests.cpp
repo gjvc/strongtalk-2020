@@ -66,7 +66,7 @@ protected:
     BasicBlock   *bb;
 
 
-    void checkSingleUse( int index, Node *expected ) {
+    void checkSingleUse( std::int32_t index, Node *expected ) {
         DefinitionUsageInfo *info = bb->duInfo.info->at( index );
         ASSERT_EQ( 1, info->_usages.length() );
         Usage *use = info->_usages.at( 0 );

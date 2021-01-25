@@ -20,18 +20,18 @@ public:
 
 
     // Return the Oop size for a ByteArrayOop
-    int object_size( int number_of_bytes ) const {
+    std::int32_t object_size( std::int32_t number_of_bytes ) const {
         return non_indexable_size() + 1 + roundTo( number_of_bytes, oopSize ) / oopSize;
     }
 
 
     // Layout
-    int length_offset() const {
+    std::int32_t length_offset() const {
         return non_indexable_size();
     }
 
 
-    int array_offset() const {
+    std::int32_t array_offset() const {
         return non_indexable_size() + 1;
     }
 
@@ -39,7 +39,7 @@ public:
     // creation operations
     Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
 
-    Oop allocateObjectSize( std::size_t bytes, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t bytes, bool_t permit_scavenge = true, bool_t tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -54,7 +54,7 @@ public:
 
 
     // Initialize the object
-    void initialize_object( ByteArrayOop obj, const char *value, int len );
+    void initialize_object( ByteArrayOop obj, const char *value, std::int32_t len );
 
     friend void setKlassVirtualTableFromByteArrayKlass( Klass *k );
 
@@ -66,14 +66,14 @@ public:
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
 public:
     // accessors
-    int oop_size( Oop obj ) const {
+    std::int32_t oop_size( Oop obj ) const {
         return object_size( ByteArrayOop( obj )->length() );
     }
 
 
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     bool_t oop_verify( Oop obj );
 
@@ -86,7 +86,7 @@ public:
 
 
     // Sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return ByteArrayOopDescriptor::header_size();
     }
 

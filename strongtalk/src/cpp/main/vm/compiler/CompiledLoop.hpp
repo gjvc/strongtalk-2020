@@ -20,7 +20,7 @@ class LoopRegCandidate : public PrintableResourceObject {
 
 private:
     PseudoRegister *_pseudoRegister;
-    int _nuses, _ndefs;
+    std::int32_t _nuses, _ndefs;
 
 public:
     LoopRegCandidate( PseudoRegister *r ) {
@@ -34,22 +34,22 @@ public:
     }
 
 
-    int nuses() const {
+    std::int32_t nuses() const {
         return _nuses;
     }
 
 
-    int ndefs() const {
+    std::int32_t ndefs() const {
         return _ndefs;
     }
 
 
-    int weight() const {
+    std::int32_t weight() const {
         return _ndefs + _nuses;
     }
 
 
-    void incDUs( int u, int d ) {
+    void incDUs( std::int32_t u, std::int32_t d ) {
         _nuses += u;
         _ndefs += d;
     }
@@ -76,7 +76,7 @@ private:
     Node           *_startOfCond;               //
     Node           *_endOfCond;                 //
     BranchNode     *_loopBranch;                // branch ending loop condition
-    int _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
+    std::int32_t _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
 
     // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
     bool_t _isIntegerLoop;               // is this loop a recognized integer loop?
@@ -136,7 +136,7 @@ public:
 protected:
     void discoverLoopNesting();
 
-    int findStartOfSend( int byteCodeIndex );
+    std::int32_t findStartOfSend( std::int32_t byteCodeIndex );
 
     const char *findLowerBound();
 
@@ -163,7 +163,7 @@ protected:
     bool_t isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 );
 
 public:  // for iterators
-    int defsInLoop( PseudoRegister *r, NonTrivialNode **defNode = nullptr );   // return number of definitions of r in loop and sets defNode if non-nullptr
+    std::int32_t defsInLoop( PseudoRegister *r, NonTrivialNode **defNode = nullptr );   // return number of definitions of r in loop and sets defNode if non-nullptr
 };
 
 // holds the info associated with a single type test hoisted out of a loop

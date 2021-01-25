@@ -31,13 +31,13 @@ class ConsoleOutputStream : public OutputStream {
 
 protected:
 
-    std::size_t _indentation;   // current indentation
-    std::size_t _width;         // width of the page
-    std::size_t _position;      // position on the current line
+    std::int32_t _indentation;   // current indentation
+    std::int32_t _width;         // width of the page
+    std::int32_t _position;      // position on the current line
 
 
 public:
-    ConsoleOutputStream( std::size_t width = 80 );
+    ConsoleOutputStream( std::int32_t width = 80 );
     void print( const char *format, ... );
 
     void print_cr( const char *format, ... );
@@ -78,12 +78,12 @@ public:
     };
 
 
-    std::size_t indentation() const {
+    std::int32_t indentation() const {
         return _indentation;
     }
 
 
-    void set_indentation( std::size_t i ) {
+    void set_indentation( std::int32_t i ) {
         _indentation = i;
     }
 
@@ -91,16 +91,16 @@ public:
     void vprint_cr( const char *format, va_list argptr );
 
 
-    void fill_to( std::size_t col );
+    void fill_to( std::int32_t col );
 
 
     // sizing
-    std::size_t width() const {
+    std::int32_t width() const {
         return _width;
     }
 
 
-    std::size_t position() const {
+    std::int32_t position() const {
         return _position;
     }
 
@@ -124,11 +124,11 @@ class StringOutputStream : public ConsoleOutputStream {
 protected:
     std::string _string;
     char *buffer;
-    std::size_t buffer_pos;
-    std::size_t buffer_length;
+    std::int32_t buffer_pos;
+    std::int32_t buffer_length;
 
 public:
-    StringOutputStream( const std::size_t initial_size = 1 * 1024 );
+    StringOutputStream( const std::int32_t initial_size = 1 * 1024 );
 
     void put( char c );
 
@@ -149,7 +149,7 @@ public:
     ~FileOutputStream();
 
 
-    std::size_t is_open() const {
+    std::int32_t is_open() const {
         return _file.good();
     }
 

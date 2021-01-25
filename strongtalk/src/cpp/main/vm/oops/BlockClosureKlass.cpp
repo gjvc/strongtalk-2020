@@ -14,7 +14,7 @@
 #include "vm/oops/ContextOopDescriptor.hpp"
 
 
-KlassOop BlockClosureKlass::blockKlassFor( int numberOfArguments ) {
+KlassOop BlockClosureKlass::blockKlassFor( std::int32_t numberOfArguments ) {
     switch ( numberOfArguments ) {
         case 0:
             return Universe::zeroArgumentBlockKlassObject();
@@ -88,7 +88,7 @@ KlassOop BlockClosureKlass::create_subclass( MixinOop mixin, Format format ) {
 }
 
 
-int BlockClosureKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t BlockClosureKlass::oop_scavenge_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_header();
     // %note _method can be ignored since methods are tenured
@@ -97,7 +97,7 @@ int BlockClosureKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int BlockClosureKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t BlockClosureKlass::oop_scavenge_tenured_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_tenured_header();
     // %note _method can be ignored since methods are tenured
@@ -130,7 +130,7 @@ void BlockClosureKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 }
 
 
-int BlockClosureKlass::number_of_arguments() const {
+std::int32_t BlockClosureKlass::number_of_arguments() const {
     KlassOop k = KlassOop( this );        // C++ bogosity alert
     if ( k == Universe::zeroArgumentBlockKlassObject() )
         return 0;

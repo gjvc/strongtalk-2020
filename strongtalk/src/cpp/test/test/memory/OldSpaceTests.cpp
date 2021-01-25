@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 
 class OldSpaceTests : public ::testing::Test {
@@ -30,7 +30,7 @@ protected:
 
 TEST_F( OldSpaceTests, expandShouldIncreaseExpansionCount
 ) {
-int expansions = expansion_count;
+std::int32_t expansions = expansion_count;
 OldSpace *theSpace = Universe::old_gen.top_mark()._space;
 theSpace->
 expand( ObjectHeapExpandSize
@@ -43,7 +43,7 @@ ASSERT_EQ( expansions
 TEST_F( OldSpaceTests, oldSpaceMarkShouldRestoreTop
 ) {
 OldSpace *theSpace = Universe::old_gen.top_mark()._space;
-int freeSpace = theSpace->free();
+std::int32_t freeSpace = theSpace->free();
 Oop *oldTop = theSpace->top();
 {
 OldSpaceMark mark( theSpace );
@@ -70,7 +70,7 @@ HandleMark mark;
 Handle     byteArrayClass( Universe::find_global( "ByteArray" ) );
 
 OldSpace *theSpace = Universe::old_gen.top_mark()._space;
-int freeSpace = theSpace->free();
+std::int32_t freeSpace = theSpace->free();
 {
 OldSpaceMark mark( theSpace );
 Oop *result = theSpace->expand_and_allocate( ObjectHeapExpandSize * 1024 );

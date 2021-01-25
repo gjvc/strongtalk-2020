@@ -18,9 +18,9 @@
 
 // -----------------------------------------------------------------------------
 
-constexpr int AllBitsSet = ~0;
-constexpr int NoBitsSet  = 0;
-constexpr int OneBitSet  = 1;
+constexpr std::int32_t AllBitsSet = ~0;
+constexpr std::int32_t NoBitsSet  = 0;
+constexpr std::int32_t OneBitSet  = 1;
 
 
 // -----------------------------------------------------------------------------
@@ -82,54 +82,55 @@ constexpr auto roundBits( auto x, const auto n ) { return roundMask( x, nthMask(
 
 // -----------------------------------------------------------------------------
 
-constexpr std::size_t INTEGER_TAG  = 0;
-constexpr std::size_t MEMOOP_TAG   = 1;
-constexpr std::size_t MARK_TAG     = 3;
-constexpr std::size_t MARK_TAG_BIT = 2;    // if ( (Oop & MARK_TAG_BIT) not_eq 0 )  then Oop is a markOop
-constexpr std::size_t TAG_SIZE     = 2;
-constexpr std::size_t TAG_MASK     = nthMask( TAG_SIZE );
-constexpr std::size_t Num_Tags     = nthBit( TAG_SIZE );
+
+constexpr std::int32_t INTEGER_TAG  = 0;
+constexpr std::int32_t MEMOOP_TAG   = 1;
+constexpr std::int32_t MARK_TAG     = 3;
+constexpr std::int32_t MARK_TAG_BIT = 2;    // if ( (Oop & MARK_TAG_BIT) not_eq 0 )  then Oop is a markOop
+constexpr std::int32_t TAG_SIZE     = 2;
+constexpr std::int32_t TAG_MASK     = nthMask( TAG_SIZE );
+constexpr std::int32_t Num_Tags     = nthBit( TAG_SIZE );
 
 
 // -----------------------------------------------------------------------------
 
-//#define clearTag( Oop )  (int(Oop) & ~Tag_Mask)
-constexpr auto clearTag( auto Oop ) { return reinterpret_cast<int>( Oop ) & ~TAG_MASK; }
+//#define clearTag( Oop )  (std::int32_t(Oop) & ~Tag_Mask)
+constexpr auto clearTag( auto Oop ) { return reinterpret_cast<std::int32_t>( Oop ) & ~TAG_MASK; }
 
 
 // -----------------------------------------------------------------------------
 
-constexpr int BYTE_WIDTH       = 8;
-constexpr int EXTENDED_INDEX   = nthMask( BYTE_WIDTH );
-constexpr int MAX_INLINE_VALUE = nthMask( BYTE_WIDTH - 1 );
+constexpr std::int32_t BYTE_WIDTH       = 8;
+constexpr std::int32_t EXTENDED_INDEX   = nthMask( BYTE_WIDTH );
+constexpr std::int32_t MAX_INLINE_VALUE = nthMask( BYTE_WIDTH - 1 );
 
 
 // -----------------------------------------------------------------------------
 
-inline int arithmetic_shift_right( int value, int shift ) {
+inline std::int32_t arithmetic_shift_right( std::int32_t value, std::int32_t shift ) {
     return value >> shift;
 }
 
 
-inline int logic_shift_right( int value, int shift ) {
+inline std::int32_t logic_shift_right( std::int32_t value, std::int32_t shift ) {
     return value << shift;
 }
 
 
-inline int get_unsigned_bitfield( int value, int start_bit_no, int field_length ) {
-    return (int) lowerBits( value >> start_bit_no, field_length );
+inline std::int32_t get_unsigned_bitfield( std::int32_t value, std::int32_t start_bit_no, std::int32_t field_length ) {
+    return (std::int32_t) lowerBits( value >> start_bit_no, field_length );
 }
 
 
-inline int get_signed_bitfield( int value, int start_bit_no, int field_length ) {
-    int result = get_unsigned_bitfield( value, start_bit_no, field_length );
+inline std::int32_t get_signed_bitfield( std::int32_t value, std::int32_t start_bit_no, std::int32_t field_length ) {
+    std::int32_t result = get_unsigned_bitfield( value, start_bit_no, field_length );
     return isBitSet( result, start_bit_no + field_length - 1 ) ? addBits( result, ~nthMask( field_length ) ) : result;
 }
 
 
-inline int set_unsigned_bitfield( int value, int start_bit_no, int field_length, std::uint32_t new_field_value ) {
+inline std::int32_t set_unsigned_bitfield( std::int32_t value, std::int32_t start_bit_no, std::int32_t field_length, std::uint32_t new_field_value ) {
     st_assert( addBits( new_field_value, ~nthMask( field_length ) ) == 0, "range check" );
-    int mask = nthMask( field_length ) << start_bit_no;
+    std::int32_t mask = nthMask( field_length ) << start_bit_no;
     return addBits( subBits( value, mask ), maskBits( new_field_value << start_bit_no, mask ) );
 }
 

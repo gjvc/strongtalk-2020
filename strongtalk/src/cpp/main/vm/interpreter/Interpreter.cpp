@@ -34,25 +34,25 @@
 // (a non-Oop), if there were no temp_0 always).
 //
 
-static constexpr int float_0_offset  = oopSize * ( frame_temp_offset - 3 );
-static constexpr int temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
-static constexpr int temp_0_offset   = oopSize * frame_temp_offset;
-static constexpr int esi_offset      = oopSize * frame_hp_offset;
-static constexpr int self_offset     = oopSize * frame_receiver_offset;
-static constexpr int link_offset     = oopSize * frame_link_offset;
-static constexpr int ret_addr_offset = oopSize * frame_return_addr_offset;
-static constexpr int arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
+static constexpr std::int32_t float_0_offset  = oopSize * ( frame_temp_offset - 3 );
+static constexpr std::int32_t temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
+static constexpr std::int32_t temp_0_offset   = oopSize * frame_temp_offset;
+static constexpr std::int32_t esi_offset      = oopSize * frame_hp_offset;
+static constexpr std::int32_t self_offset     = oopSize * frame_receiver_offset;
+static constexpr std::int32_t link_offset     = oopSize * frame_link_offset;
+static constexpr std::int32_t ret_addr_offset = oopSize * frame_return_addr_offset;
+static constexpr std::int32_t arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
 
-static constexpr int max_nof_temps  = 256;
-static constexpr int max_nof_floats = 256;
+static constexpr std::int32_t max_nof_temps  = 256;
+static constexpr std::int32_t max_nof_floats = 256;
 
 
 bool_t     Interpreter::_is_initialized   = false;
 const char *Interpreter::_code_begin_addr = nullptr;
 const char *Interpreter::_code_end_addr   = nullptr;
 
-std::size_t Interpreter::_interpreter_loop_counter       = 0;
-std::size_t Interpreter::_interpreter_loop_counter_limit = 0;
+std::int32_t Interpreter::_interpreter_loop_counter       = 0;
+std::int32_t Interpreter::_interpreter_loop_counter_limit = 0;
 
 
 bool_t Interpreter::contains( const char *pc ) {
@@ -125,7 +125,7 @@ void Interpreter::loop_counter_overflow() {
 }
 
 
-std::size_t Interpreter::loop_counter() {
+std::int32_t Interpreter::loop_counter() {
     return Interpreter::_interpreter_loop_counter;
 }
 
@@ -135,12 +135,12 @@ void Interpreter::reset_loop_counter() {
 }
 
 
-std::size_t Interpreter::loop_counter_limit() {
+std::int32_t Interpreter::loop_counter_limit() {
     return Interpreter::_interpreter_loop_counter_limit;
 }
 
 
-void Interpreter::set_loop_counter_limit( int limit ) {
+void Interpreter::set_loop_counter_limit( std::int32_t limit ) {
     st_assert( 0 <= limit, "loop counter limit must be positive" );
     Interpreter::_interpreter_loop_counter_limit = limit;
 }
@@ -159,7 +159,7 @@ extern "C" void inline_cache_miss() {
 extern "C" void verifyPIC( Oop pic ) {
     if ( not Universe::is_heap( (Oop *) pic ) ) st_fatal( "pic should be in heap" );
     if ( not pic->is_objArray() ) st_fatal( "pic should be an objArray" );
-    int length = ObjectArrayOop( pic )->length();
+    std::int32_t length = ObjectArrayOop( pic )->length();
     if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) st_fatal( "pic has wrong length field" );
 }
 
@@ -189,7 +189,7 @@ void Interpreter::trace_bytecode() {
 }
 
 
-void Interpreter::warning_illegal( int ebx, int esi ) {
+void Interpreter::warning_illegal( std::int32_t ebx, std::int32_t esi ) {
     warning( "illegal instruction (ebx = 0x%x, esi = 0x%x)", ebx, esi );
 }
 
@@ -222,18 +222,18 @@ void Interpreter::wrong_primitive_result() {
 DoubleOop Interpreter::oopify_FloatValue() {
     // Called from float_oopify. Get the float argument by inspecting the stack and the argument of the Floats::oopify operation.
     Frame f = DeltaProcess::active()->last_frame();
-    st_assert( *( f.hp() - 3 ) == static_cast<std::size_t>(ByteCodes::Code::float_unary_op_to_oop) and *( f.hp() - 1 ) == static_cast<std::size_t>( Floats::Function::oopify ), "not called by Floats::oopify" );
-    int float_index = *( f.hp() - 2 );
+    st_assert( *( f.hp() - 3 ) == static_cast<std::int32_t>(ByteCodes::Code::float_unary_op_to_oop) and *( f.hp() - 1 ) == static_cast<std::int32_t>( Floats::Function::oopify ), "not called by Floats::oopify" );
+    std::int32_t float_index = *( f.hp() - 2 );
     st_assert( 0 <= float_index and float_index < max_nof_floats, "illegal float index" );
     double *float_address = (double *) ( (const char *) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT ) + float_index * SIZEOF_FLOAT );
     return oopFactory::new_double( *float_address );
 }
 
 
-std::size_t *Interpreter::_invocation_counter_addr = nullptr;
+std::int32_t *Interpreter::_invocation_counter_addr = nullptr;
 
 
-void Interpreter::set_invocation_counter_limit( int new_limit ) {
+void Interpreter::set_invocation_counter_limit( std::int32_t new_limit ) {
     st_assert( _invocation_counter_addr not_eq nullptr, "invocation counter address unknown" );
     st_assert( 0 <= new_limit and new_limit <= MethodOopDescriptor::_invocation_count_max, "illegal counter limit" );
     st_assert( *( (std::uint8_t *) _invocation_counter_addr - 2 ) == 0x81, "not a cmp edx, imm32 instruction anymore?" )
@@ -241,18 +241,18 @@ void Interpreter::set_invocation_counter_limit( int new_limit ) {
 }
 
 
-std::size_t Interpreter::get_invocation_counter_limit() {
+std::int32_t Interpreter::get_invocation_counter_limit() {
     st_assert( _invocation_counter_addr not_eq nullptr, "invocation counter address unknown" );
     return get_unsigned_bitfield( *_invocation_counter_addr, MethodOopDescriptor::_invocation_count_offset, MethodOopDescriptor::_invocation_count_width );
 }
 
 
-static std::size_t *loop_counter_addr() {
+static std::int32_t *loop_counter_addr() {
     return nullptr;
 }
 
 
-static std::size_t *loop_counter_limit_addr();
+static std::int32_t *loop_counter_limit_addr();
 
 // entry points accessors
 

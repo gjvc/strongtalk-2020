@@ -98,8 +98,8 @@ public:
 };
 
 GrowableArray<MemOop> *MarkSweep::_stack;
-GrowableArray<std::size_t> *MarkSweep::hcode_offsets;
-std::size_t                    MarkSweep::hcode_pos;
+GrowableArray<std::int32_t> *MarkSweep::hcode_offsets;
+std::int32_t                    MarkSweep::hcode_pos;
 OopRelocations *MarkSweep::_oopRelocations;
 
 
@@ -114,7 +114,7 @@ Oop MarkSweep::collect( Oop p ) {
     ResourceMark resourceMark;
     TraceTime    t( "Garbage collection", PrintGC );
 
-    int old_used = Universe::old_gen.used();
+    std::int32_t old_used = Universe::old_gen.used();
 
     if ( VerifyBeforeScavenge or VerifyBeforeGC )
         Universe::verify();
@@ -153,7 +153,7 @@ Oop MarkSweep::collect( Oop p ) {
 
 void MarkSweep::allocate() {
     _stack          = new GrowableArray<MemOop>( 200 );
-    hcode_offsets   = new GrowableArray<std::size_t>( 100 );
+    hcode_offsets   = new GrowableArray<std::int32_t>( 100 );
     hcode_pos       = 0;
     _oopRelocations = new OopRelocations();
 }
@@ -227,12 +227,12 @@ void MarkSweep::follow_root( Oop *p ) {
 }
 
 
-void MarkSweep::add_heap_code_offset( int offset ) {
+void MarkSweep::add_heap_code_offset( std::int32_t offset ) {
     hcode_offsets->push( offset );
 }
 
 
-std::size_t MarkSweep::next_heap_code_offset() {
+std::int32_t MarkSweep::next_heap_code_offset() {
     return hcode_offsets->at( hcode_pos++ );
 }
 

@@ -21,8 +21,8 @@ struct SplitSetting : StackObject {
     ~SplitSetting() { sig = saved; }
 };
 
-SplitSig * new_SplitSig( SplitSig * current, int splitID ) {
-    int level = current->level() + 1;
+SplitSig * new_SplitSig( SplitSig * current, std::int32_t splitID ) {
+    std::int32_t level = current->level() + 1;
     assert( level <= MaxSplitDepth, "max. split level exceeded" );
     std::uint32_t newID = splitID << ( ( MaxSplitDepth - level + 1 ) << 2 );
     SplitSig * sig =
@@ -39,7 +39,7 @@ void SplitSig::print() {
 char * SplitSig::prefix( const char * buf ) {
     // fill buf with an ASCII representation of the receiver and return buf
     // e.g. a level-2 sig with first branch = 1 and 2nd branch = 3 --> "AB"
-    int l = level();
+    std::int32_t l = level();
     buf[ l-- ] = 0;
     std::uint32_t sig = std::uint32_t( this ) >> 4;
     while ( l >= 0 ) {
@@ -60,16 +60,16 @@ bool_t CodeScope::shouldSplit( SendInfo * info ) {
     Node * current = theNodeGen->current;
     if ( not current->isSplittable() ) return false;
 
-    int cost = theCompiler->inlineLimit[ InlineLimitIType::SplitCostLimit ];
+    std::int32_t cost = theCompiler->inlineLimit[ InlineLimitIType::SplitCostLimit ];
     Node * n    = nullptr;
     // compute the cost of all nodes that would be copied (i.e. all exprs
     // with a map type)
-    int       i;
-    for ( std::size_t i = 0; i < r->exprs->length(); i++ ) {
+    std::int32_t       i;
+    for ( std::int32_t i = 0; i < r->exprs->length(); i++ ) {
         Expression * expr = r->exprs->at( i );
         if ( not expr->hasKlass() ) continue;    // won't copy these
         InlinedScope * theScope = expr->node()->scope();
-        int theByteCodeIndex = expr->node()->byteCodeIndex();
+        std::int32_t theByteCodeIndex = expr->node()->byteCodeIndex();
         for ( Expression * e = expr; e; e = e->next ) {
             if ( e->node()->scope() not_eq theScope or e->node()->byteCodeIndex() not_eq theByteCodeIndex ) {
                 // make sure all subexpressions have the same scope
@@ -127,7 +127,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
     r->setSplittable( false );
 
     Expression * res = nullptr;
-    int ncases = r->exprs->length();
+    std::int32_t ncases = r->exprs->length();
     memoizeBlocks( info->sel );
     if ( PrintInlining ) {
         lprintf( "%*s*splitting %s\n", depth, "", selector_string( info->sel ) );
@@ -139,7 +139,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
     GrowableArray <Node *>           * splitHeads = new GrowableArray <Node *>( 10 );    // first node of each branch
     bool_t needKlassLoad                          = false;
 
-    for ( std::size_t i = 0; i < ncases; i++ ) {
+    for ( std::int32_t i = 0; i < ncases; i++ ) {
         Expression * nth = r->exprs->at( i );
         assert( not nth->isConstantExpression() or nth->next == nullptr or
                 nth->constant() == nth->next->constant(),
@@ -215,7 +215,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
         // through the type test; they should be redirected until after the
         // test.  The problem is that oldMerge may not be the actual merge
         // point but slightly later (i.e. a few InlinedReturns later).
-        int diff;
+        std::int32_t diff;
         if ( WizardMode and PrintInlining and
              ( diff = r->exprs->length() - splitReceiverKlasss->length() ) > 1 ) {
             lprintf( "*unnecessary %d-way type test for %d cases\n",
@@ -254,7 +254,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
                          depth, "", selector_string( info->sel ) );
             }
         }
-        for ( std::size_t j = 0; j < splitReceiverKlasss->length(); j++ ) {
+        for ( std::int32_t j = 0; j < splitReceiverKlasss->length(); j++ ) {
             Node * n = new AssignNode( pr, splitReceivers->at( j ) );
             typeCase->append( j + 1, n );
             n->append( splitHeads->at( j ) );
@@ -300,13 +300,13 @@ SplitPReg * CodeScope::coveringRegFor( Expression * expr, SplitSig * sg ) {
     // producer and the receiver scope/byteCodeIndex
     // see also SinglyAssignedPseudoRegister::isLiveAt
     InlinedScope * s = expr->node()->scope();
-    int byteCodeIndex = expr->node()->byteCodeIndex();
+    std::int32_t byteCodeIndex = expr->node()->byteCodeIndex();
     assert( s->isCodeScope(), "oops" );
     SplitPReg * r = regCovering( this, _byteCodeIndex, ( CodeScope * ) s, byteCodeIndex, sg );
 
     for ( Expression * e = expr; e; e = e->next ) {
         InlinedScope * s2 = e->node()->scope();
-        int byteCodeIndex2 = e->node()->byteCodeIndex();
+        std::int32_t byteCodeIndex2 = e->node()->byteCodeIndex();
         assert( s2 == s, "oops" );
         assert( byteCodeIndex2 == byteCodeIndex, "oops" );
     }

@@ -48,7 +48,7 @@ public:
     bool_t equal( const LookupKey *p ) const;
     void initialize( KlassOop klass, Oop selector_or_method );
     void clear();
-    int hash() const;
+    std::int32_t hash() const;
     void switch_pointers( Oop from, Oop to );
 
     void relocate();

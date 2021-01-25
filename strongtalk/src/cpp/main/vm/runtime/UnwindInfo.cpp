@@ -12,8 +12,8 @@
 
 extern "C" bool_t have_nlr_through_C;
 extern "C" char *C_frame_return_addr;
-extern "C" int nlr_home;
-extern "C" int nlr_home_id;
+extern "C" std::int32_t nlr_home;
+extern "C" std::int32_t nlr_home_id;
 extern "C" Oop nlr_result;
 
 
@@ -60,7 +60,7 @@ void UnwindInfo::update_nlr_targets( CompiledVirtualFrame *f, ContextOop con ) {
     // Convert the nlr information if:
     //    nlr_home     is the frame pointer of f
     // and nlr_home_id  is the offset of f's scope
-    if ( f->fr().fp() == (int *) nlr_home() and f->scope()->offset() == nlr_home_id() ) {
+    if ( f->fr().fp() == (std::int32_t *) nlr_home() and f->scope()->offset() == nlr_home_id() ) {
         _nlr_home_context = con;
     }
 }
@@ -76,12 +76,12 @@ void UnwindInfo::set_next( UnwindInfo *next ) {
 }
 
 
-int UnwindInfo::nlr_home() const {
+std::int32_t UnwindInfo::nlr_home() const {
     return _nlr_home;
 }
 
 
-int UnwindInfo::nlr_home_id() const {
+std::int32_t UnwindInfo::nlr_home_id() const {
     return _nlr_home_id;
 }
 

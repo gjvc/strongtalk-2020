@@ -19,7 +19,7 @@
 TRACE_FUNC( TraceDoublePrims, "double" )
 
 
-std::size_t doubleOopPrimitives::number_of_calls;
+std::int32_t doubleOopPrimitives::number_of_calls;
 
 
 static Oop new_double( double value ) {
@@ -242,10 +242,10 @@ PRIM_DECL_1( doubleOopPrimitives::smi_floor, Oop receiver ) {
     double result = ::floor( DoubleOop( receiver )->value() );
     if ( result < 0.0 ) {
         if ( result > smi_min )
-            return smiOopFromValue( (int) result );
+            return smiOopFromValue( (std::int32_t) result );
     } else {
         if ( result < smi_max )
-            return smiOopFromValue( (int) result );
+            return smiOopFromValue( (std::int32_t) result );
     }
     return markSymbol( vmSymbols::conversion_failed() );
 
@@ -263,7 +263,7 @@ PRIM_DECL_1( doubleOopPrimitives::ceiling, Oop receiver ) {
 PRIM_DECL_1( doubleOopPrimitives::exponent, Oop receiver ) {
     PROLOGUE_1( "exponent", receiver );
     ASSERT_RECEIVER;
-    int result;
+    std::int32_t result;
     (void) frexp( DoubleOop( receiver )->value(), &result );
     return smiOopFromValue( result );
 }
@@ -272,7 +272,7 @@ PRIM_DECL_1( doubleOopPrimitives::exponent, Oop receiver ) {
 PRIM_DECL_1( doubleOopPrimitives::mantissa, Oop receiver ) {
     PROLOGUE_1( "mantissa", receiver );
     ASSERT_RECEIVER;
-    int exp;
+    std::int32_t exp;
     return new_double( frexp( DoubleOop( receiver )->value(), &exp ) );
 }
 
@@ -300,11 +300,11 @@ PRIM_DECL_1( doubleOopPrimitives::roundedAsSmallInteger, Oop receiver ) {
     if ( DoubleOop( receiver )->value() < 0.0 ) {
         double result = ::ceil( DoubleOop( receiver )->value() - 0.5 );
         if ( result > smi_min )
-            return smiOopFromValue( (int) result );
+            return smiOopFromValue( (std::int32_t) result );
     } else {
         double result = ::floor( DoubleOop( receiver )->value() + 0.5 );
         if ( result < smi_max )
-            return smiOopFromValue( (int) result );
+            return smiOopFromValue( (std::int32_t) result );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );
 }
@@ -318,10 +318,10 @@ PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
         return markSymbol( vmSymbols::smi_conversion_failed() );
     if ( value < 0.0 ) {
         if ( value > smi_min )
-            return smiOopFromValue( (int) value );
+            return smiOopFromValue( (std::int32_t) value );
     } else {
         if ( value < smi_max )
-            return smiOopFromValue( (int) value );
+            return smiOopFromValue( (std::int32_t) value );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );
 }
@@ -330,7 +330,7 @@ PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
 PRIM_DECL_2( doubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     PROLOGUE_2( "printFormat", receiver, argument );
     ASSERT_RECEIVER;
-    const std::size_t size = 100;
+    const std::int32_t size = 100;
     char      format[size];
 
     if ( argument->is_byteArray() ) {
@@ -350,14 +350,14 @@ PRIM_DECL_1( doubleOopPrimitives::printString, Oop receiver ) {
     ASSERT_RECEIVER;
     ResourceMark resourceMark;
     char *result = new_resource_array<char>( 4 * 1024 );
-    int len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
+    std::int32_t len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
     while ( len > 1 and result[ len - 1 ] == '0' and result[ len - 2 ] not_eq '.' )
         len--;
     result[ len ]    = '\0';
 
     BlockScavenge bs;
     ByteArrayOop  ba = oopFactory::new_byteArray( len );
-    for ( int     i  = 0; i < len; i++ ) {
+    for ( std::int32_t     i  = 0; i < len; i++ ) {
         ba->byte_at_put( i + 1, result[ i ] );
     }
     return ba;
@@ -385,7 +385,7 @@ PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     std::uint8_t *addr = (std::uint8_t *) &value;
 
     ByteArrayOop result = oopFactory::new_byteArray( 8 );
-    for ( int    index  = 0; index < 8; index++ ) {
+    for ( std::int32_t    index  = 0; index < 8; index++ ) {
         result->byte_at_put( index + 1, addr[ index ] );
     }
     return result;
@@ -409,8 +409,8 @@ PRIM_DECL_3( doubleOopPrimitives::mandelbrot, Oop re, Oop im, Oop n ) {
     double d_re = z_re * z_re;
     double d_im = z_im * z_im;
 
-    std::size_t i    = 0;
-    int imax = SMIOop( n )->value() - 1;
+    std::int32_t i    = 0;
+    std::int32_t imax = SMIOop( n )->value() - 1;
 
     while ( i < imax and d_re + d_im <= 4.0 ) {
         z_im = 2.0 * z_re * z_im + c_im;

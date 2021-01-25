@@ -9,7 +9,7 @@
 #include "vm/utilities/lprintf.hpp"
 
 
-CodeTable::CodeTable( std::size_t size ) {
+CodeTable::CodeTable( std::int32_t size ) {
     tableSize = size;
     buckets   = new_c_heap_array<CodeTableEntry>( size );
     clear();
@@ -25,7 +25,7 @@ CodeTableLink *CodeTable::new_link( NativeMethod *nm, CodeTableLink *n ) {
 
 
 void CodeTable::clear() {
-    for ( std::size_t i = 0; i < tableSize; i++ )
+    for ( std::int32_t i = 0; i < tableSize; i++ )
         at( i )->clear();
 }
 
@@ -134,12 +134,12 @@ void CodeTable::print() {
 
 void CodeTable::print_stats() {
 #ifdef NOT_IMPLEMENTED
-    std::size_t nmin = 9999999, nmax = 0, total = 0, nonzero = 0;
-    constexpr std::size_t N = 10;
-    std::size_t histo[N];
-    for (std::size_t i = 0; i < N; i++) histo[i] = 0;
+    std::int32_t nmin = 9999999, nmax = 0, total = 0, nonzero = 0;
+    constexpr std::int32_t N = 10;
+    std::int32_t histo[N];
+    for (std::int32_t i = 0; i < N; i++) histo[i] = 0;
     for (nmln* p = buckets;  p < &buckets[tableSize];  ++p) {
-      std::size_t len = 0;
+      std::int32_t len = 0;
       for (nmln* q = p->next;  q not_eq p;  q = q->next) len++;
       if (len < nmin) nmin = len;
       if (len > nmax) nmax = len;
@@ -149,7 +149,7 @@ void CodeTable::print_stats() {
     }
     lprintf("\ncodeTable statistics: 0x%08x nativeMethods; min chain = 0x%08x, max = 0x%08x, avg = %4.1f\n", total, nmin, nmax, (float)total / nonzero);
     lprintf("histogram:\n");
-    for (std::size_t i = 0; i < N - 1; i++) lprintf("%4d:\t%d", i, histo[i]);
+    for (std::int32_t i = 0; i < N - 1; i++) lprintf("%4d:\t%d", i, histo[i]);
     lprintf(">=0x%08x:\t0x%08x\n", N-1, histo[N-1]);
 #endif
 }

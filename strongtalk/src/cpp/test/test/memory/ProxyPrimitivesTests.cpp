@@ -16,7 +16,7 @@
 
 
 extern "C" {
-extern int expansion_count;
+extern std::int32_t expansion_count;
 }
 
 
@@ -28,7 +28,7 @@ protected:
     ProxyOop  proxy, subProxy, validProxy;
     DoubleOop doubleValue;
     SMIOop    smi0, smi1;
-    int       address;
+    std::int32_t       address;
 
 
     void SetUp() override {
@@ -163,7 +163,7 @@ is_null()
 
 TEST_F( ProxyPrimitivesTests, proxyAtPutShouldFailWhenValuePointerIsNULL
 ) {
-int addr;
+std::int32_t addr;
 proxy->
 set_pointer( &addr );
     addr   = 1;

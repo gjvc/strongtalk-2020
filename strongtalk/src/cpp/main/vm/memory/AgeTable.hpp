@@ -18,9 +18,9 @@ class AgeTable : public CHeapAllocatedObject {
 
 public:
 
-    static constexpr std::size_t table_size = MarkOopDescriptor::max_age + 1;
+    static constexpr std::int32_t table_size = MarkOopDescriptor::max_age + 1;
 
-    std::array<int, table_size> _sizes;
+    std::array<std::int32_t, table_size> _sizes;
     AgeTable();
 
 
@@ -30,14 +30,14 @@ public:
     }
 
 
-    void add( MemOop p, int oop_size ) {
-        int age = p->mark()->age();
+    void add( MemOop p, std::int32_t oop_size ) {
+        std::int32_t age = p->mark()->age();
         st_assert( age >= 0 and age < table_size, "invalid age of object" );
         _sizes[ age ] += oop_size;
     }
 
 
-    int tenure_size( int age );
+    std::int32_t tenure_size( std::int32_t age );
 
-    int tenuring_threshold( std::size_t oop_size );
+    std::int32_t tenuring_threshold( std::int32_t oop_size );
 };

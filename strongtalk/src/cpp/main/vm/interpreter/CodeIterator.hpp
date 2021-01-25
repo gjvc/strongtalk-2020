@@ -33,7 +33,7 @@ private:
 
 
 public:
-    CodeIterator( MethodOop method, int startByteCodeIndex = 1 );
+    CodeIterator( MethodOop method, std::int32_t startByteCodeIndex = 1 );
 
     CodeIterator( std::uint8_t *hp );
 
@@ -47,18 +47,18 @@ public:
 
 
     // accessors
-    std::uint8_t byte_at( int offset_from_instruction ) {
+    std::uint8_t byte_at( std::int32_t offset_from_instruction ) {
         return _current[ offset_from_instruction ];
     }
 
 
-    Oop oop_at( int offset_from_instruction ) {
+    Oop oop_at( std::int32_t offset_from_instruction ) {
         return *aligned_oop( offset_from_instruction );
     }
 
 
-    int word_at( int offset_from_instruction ) {
-        return (int) *aligned_oop( offset_from_instruction );
+    std::int32_t word_at( std::int32_t offset_from_instruction ) {
+        return (std::int32_t) *aligned_oop( offset_from_instruction );
     }
 
 
@@ -97,9 +97,9 @@ public:
     }
 
 
-    int byteCodeIndex() const;
+    std::int32_t byteCodeIndex() const;
 
-    int next_byteCodeIndex() const;
+    std::int32_t next_byteCodeIndex() const;
 
 
     std::uint8_t *hp() const {
@@ -113,11 +113,11 @@ public:
     // Returns the interpreter return point for the current byte code.
     const char *interpreter_return_point( bool_t restore_value = false ) const;
 
-    void set_byteCodeIndex( int byteCodeIndex );
+    void set_byteCodeIndex( std::int32_t byteCodeIndex );
 
 
     // returns the location of an aligned Oop
-    Oop *aligned_oop( int offset_from_instruction ) {
+    Oop *aligned_oop( std::int32_t offset_from_instruction ) {
         return (Oop *) align( _current + offset_from_instruction );
     }
 

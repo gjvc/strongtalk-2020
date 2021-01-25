@@ -15,7 +15,7 @@
     { \
         Displacement disp( (L), (type), (info) ); \
         L.link_to( offset() );  \
-        emit_long( int(disp.data()) ); \
+        emit_long( std::int32_t(disp.data()) ); \
     }
 
 
@@ -34,7 +34,7 @@ void Assembler::finalize() {
 }
 
 
-void Assembler::emit_byte( int x ) {
+void Assembler::emit_byte( std::int32_t x ) {
     st_assert( isByte( x ), "not a byte" );
     *(std::uint8_t *) _code_pos = (std::uint8_t) x;
     _code_pos += sizeof( std::uint8_t );
@@ -42,21 +42,21 @@ void Assembler::emit_byte( int x ) {
 }
 
 
-void Assembler::emit_long( int x ) {
-    *(int *) _code_pos = x;
-    _code_pos += sizeof( int );
+void Assembler::emit_long( std::int32_t x ) {
+    *(std::int32_t *) _code_pos = x;
+    _code_pos += sizeof( std::int32_t );
     code()->set_code_end( _code_pos );
 }
 
 
-void Assembler::emit_data( int data, RelocationInformation::RelocationType rtype ) {
+void Assembler::emit_data( std::int32_t data, RelocationInformation::RelocationType rtype ) {
     if ( rtype not_eq RelocationInformation::RelocationType::none )
         code()->relocate( _code_pos, rtype );
     emit_long( data );
 }
 
 
-void Assembler::emit_arith_b( int op1, int op2, const Register &dst, int imm8 ) {
+void Assembler::emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 ) {
     guarantee( dst.hasByteRegister(), "must have byte register" );
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( isByte( imm8 ), "not a byte" );
@@ -67,7 +67,7 @@ void Assembler::emit_arith_b( int op1, int op2, const Register &dst, int imm8 ) 
 }
 
 
-void Assembler::emit_arith( int op1, int op2, const Register &dst, int imm32 ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 ) {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( ( op1 & 0x01 ) == 1, "should be 32bit operation" );
     st_assert( ( op1 & 0x02 ) == 0, "sign-extension bit should not be set" );
@@ -83,24 +83,24 @@ void Assembler::emit_arith( int op1, int op2, const Register &dst, int imm32 ) {
 }
 
 
-void Assembler::emit_arith( int op1, int op2, const Register &dst, Oop obj ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj ) {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     st_assert( ( op1 & 0x01 ) == 1, "should be 32bit operation" );
     st_assert( ( op1 & 0x02 ) == 0, "sign-extension bit should not be set" );
     emit_byte( op1 );
     emit_byte( op2 | dst.number() );
-    emit_data( (int) obj, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) obj, RelocationInformation::RelocationType::oop_type );
 }
 
 
-void Assembler::emit_arith( int op1, int op2, const Register &dst, const Register &src ) {
+void Assembler::emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src ) {
     st_assert( isByte( op1 ) and isByte( op2 ), "wrong opcode" );
     emit_byte( op1 );
     emit_byte( op2 | dst.number() << 3 | src.number() );
 }
 
 
-void Assembler::emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, int disp, RelocationInformation::RelocationType rtype ) {
+void Assembler::emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype ) {
     if ( base.isValid() ) {
         if ( index.isValid() ) {
             st_assert( scale not_eq Address::ScaleFactor::no_scale, "inconsistent address" );
@@ -110,20 +110,20 @@ void Assembler::emit_operand( const Register &reg, const Register &base, const R
                 // [00 reg 100][ss index base]
                 st_assert( index not_eq esp and base not_eq ebp, "illegal addressing mode" );
                 emit_byte( 0x04 | reg.number() << 3 );
-                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::int32_t>(scale) << 6 | index.number() << 3 | base.number() );
             } else if ( is8bit( disp ) and rtype == RelocationInformation::RelocationType::none ) {
                 // [base + index*scale + imm8]
                 // [01 reg 100][ss index base] imm8
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x44 | reg.number() << 3 );
-                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::int32_t>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_byte( disp & 0xFF );
             } else {
                 // [base + index*scale + imm32]
                 // [10 reg 100][ss index base] imm32
                 st_assert( index not_eq esp, "illegal addressing mode" );
                 emit_byte( 0x84 | reg.number() << 3 );
-                emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | base.number() );
+                emit_byte( static_cast<std::int32_t>(scale) << 6 | index.number() << 3 | base.number() );
                 emit_data( disp, rtype );
             }
         } else if ( base == esp ) {
@@ -173,7 +173,7 @@ void Assembler::emit_operand( const Register &reg, const Register &base, const R
             // [00 reg 100][ss index 101] imm32
             st_assert( index not_eq esp, "illegal addressing mode" );
             emit_byte( 0x04 | reg.number() << 3 );
-            emit_byte( static_cast<std::size_t>(scale) << 6 | index.number() << 3 | 0x05 );
+            emit_byte( static_cast<std::int32_t>(scale) << 6 | index.number() << 3 | 0x05 );
             emit_data( disp, rtype );
         } else {
             // [disp]
@@ -190,7 +190,7 @@ void Assembler::emit_operand( const Register &r, const Address &a ) {
 }
 
 
-void Assembler::emit_farith( int b1, int b2, std::size_t i ) {
+void Assembler::emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i ) {
     st_assert( isByte( b1 ) and isByte( b2 ), "wrong opcode" );
     st_assert( 0 <= i and i < 8, "illegal stack offset" );
     emit_byte( b1 );
@@ -208,7 +208,7 @@ void Assembler::popad() {
 }
 
 
-void Assembler::pushl( int imm32 ) {
+void Assembler::pushl( std::int32_t imm32 ) {
     emit_byte( 0x68 );
     emit_long( imm32 );
 }
@@ -216,7 +216,7 @@ void Assembler::pushl( int imm32 ) {
 
 void Assembler::pushl( Oop obj ) {
     emit_byte( 0x68 );
-    emit_data( (int) obj, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) obj, RelocationInformation::RelocationType::oop_type );
 }
 
 
@@ -249,7 +249,7 @@ void Assembler::movb( const Register &dst, const Address &src ) {
 }
 
 
-void Assembler::movb( const Address &dst, int imm8 ) {
+void Assembler::movb( const Address &dst, std::int32_t imm8 ) {
     emit_byte( 0xC6 );
     emit_operand( eax, dst );
     emit_byte( imm8 );
@@ -277,7 +277,7 @@ void Assembler::movw( const Address &dst, const Register &src ) {
 }
 
 
-void Assembler::movl( const Register &dst, int imm32 ) {
+void Assembler::movl( const Register &dst, std::int32_t imm32 ) {
     emit_byte( 0xB8 | dst.number() );
     emit_long( imm32 );
 }
@@ -285,7 +285,7 @@ void Assembler::movl( const Register &dst, int imm32 ) {
 
 void Assembler::movl( const Register &dst, Oop obj ) {
     emit_byte( 0xB8 | dst.number() );
-    emit_data( (int) obj, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) obj, RelocationInformation::RelocationType::oop_type );
 }
 
 
@@ -301,7 +301,7 @@ void Assembler::movl( const Register &dst, const Address &src ) {
 }
 
 
-void Assembler::movl( const Address &dst, int imm32 ) {
+void Assembler::movl( const Address &dst, std::int32_t imm32 ) {
     emit_byte( 0xC7 );
     emit_operand( eax, dst );
     emit_long( imm32 );
@@ -311,7 +311,7 @@ void Assembler::movl( const Address &dst, int imm32 ) {
 void Assembler::movl( const Address &dst, Oop obj ) {
     emit_byte( 0xC7 );
     emit_operand( eax, dst );
-    emit_data( (int) obj, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) obj, RelocationInformation::RelocationType::oop_type );
 }
 
 
@@ -350,7 +350,7 @@ void Assembler::movsxw( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::cmovccl( Condition cc, const Register &dst, int imm32 ) {
+void Assembler::cmovccl( Condition cc, const Register &dst, std::int32_t imm32 ) {
     Unimplemented();
 }
 
@@ -370,7 +370,7 @@ void Assembler::cmovccl( Condition cc, const Register &dst, const Address &src )
 }
 
 
-void Assembler::adcl( const Register &dst, int imm32 ) {
+void Assembler::adcl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xD0, dst, imm32 );
 }
 
@@ -380,14 +380,14 @@ void Assembler::adcl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::addl( const Address &dst, int imm32 ) {
+void Assembler::addl( const Address &dst, std::int32_t imm32 ) {
     emit_byte( 0x81 );
     emit_operand( eax, dst );
     emit_long( imm32 );
 }
 
 
-void Assembler::addl( const Register &dst, int imm32 ) {
+void Assembler::addl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xC0, dst, imm32 );
 }
 
@@ -403,7 +403,7 @@ void Assembler::addl( const Register &dst, const Address &src ) {
 }
 
 
-void Assembler::andl( const Register &dst, int imm32 ) {
+void Assembler::andl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xE0, dst, imm32 );
 }
 
@@ -413,7 +413,7 @@ void Assembler::andl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::cmpl( const Address &dst, int imm32 ) {
+void Assembler::cmpl( const Address &dst, std::int32_t imm32 ) {
     emit_byte( 0x81 );
     emit_operand( edi, dst );
     emit_long( imm32 );
@@ -423,11 +423,11 @@ void Assembler::cmpl( const Address &dst, int imm32 ) {
 void Assembler::cmpl( const Address &dst, Oop obj ) {
     emit_byte( 0x81 );
     emit_operand( edi, dst );
-    emit_data( (int) obj, RelocationInformation::RelocationType::oop_type );
+    emit_data( (std::int32_t) obj, RelocationInformation::RelocationType::oop_type );
 }
 
 
-void Assembler::cmpl( const Register &dst, int imm32 ) {
+void Assembler::cmpl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xF8, dst, imm32 );
 }
 
@@ -485,7 +485,7 @@ void Assembler::imull( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::imull( const Register &dst, const Register &src, int value ) {
+void Assembler::imull( const Register &dst, const Register &src, std::int32_t value ) {
     if ( is8bit( value ) ) {
         emit_byte( 0x6B );
         emit_byte( 0xC0 | dst.number() << 3 | src.number() );
@@ -533,7 +533,7 @@ void Assembler::notl( const Register &dst ) {
 }
 
 
-void Assembler::orl( const Register &dst, int imm32 ) {
+void Assembler::orl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xC8, dst, imm32 );
 }
 
@@ -549,7 +549,7 @@ void Assembler::orl( const Register &dst, const Address &src ) {
 }
 
 
-void Assembler::rcll( const Register &dst, int imm8 ) {
+void Assembler::rcll( const Register &dst, std::int32_t imm8 ) {
     st_assert( isShiftCount( imm8 ), "illegal shift count" );
     if ( imm8 == 1 ) {
         emit_byte( 0xD1 );
@@ -562,7 +562,7 @@ void Assembler::rcll( const Register &dst, int imm8 ) {
 }
 
 
-void Assembler::sarl( const Register &dst, int imm8 ) {
+void Assembler::sarl( const Register &dst, std::int32_t imm8 ) {
     st_assert( isShiftCount( imm8 ), "illegal shift count" );
     if ( imm8 == 1 ) {
         emit_byte( 0xD1 );
@@ -581,7 +581,7 @@ void Assembler::sarl( const Register &dst ) {
 }
 
 
-void Assembler::sbbl( const Register &dst, int imm32 ) {
+void Assembler::sbbl( const Register &dst, std::int32_t imm32 ) {
     Unimplemented();
 }
 
@@ -598,7 +598,7 @@ void Assembler::shldl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::shll( const Register &dst, int imm8 ) {
+void Assembler::shll( const Register &dst, std::int32_t imm8 ) {
     st_assert( isShiftCount( imm8 ), "illegal shift count" );
     if ( imm8 == 1 ) {
         emit_byte( 0xD1 );
@@ -624,7 +624,7 @@ void Assembler::shrdl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::shrl( const Register &dst, int imm8 ) {
+void Assembler::shrl( const Register &dst, std::int32_t imm8 ) {
     st_assert( isShiftCount( imm8 ), "illegal shift count" );
     emit_byte( 0xC1 );
     emit_byte( 0xE8 | dst.number() );
@@ -638,7 +638,7 @@ void Assembler::shrl( const Register &dst ) {
 }
 
 
-void Assembler::subl( const Register &dst, int imm32 ) {
+void Assembler::subl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xE8, dst, imm32 );
 }
 
@@ -654,13 +654,13 @@ void Assembler::subl( const Register &dst, const Address &src ) {
 }
 
 
-void Assembler::testb( const Register &dst, int imm8 ) {
+void Assembler::testb( const Register &dst, std::int32_t imm8 ) {
     guarantee( dst.hasByteRegister(), "must have byte register" );
     emit_arith_b( 0xF6, 0xC0, dst, imm8 );
 }
 
 
-void Assembler::testl( const Register &dst, int imm32 ) {
+void Assembler::testl( const Register &dst, std::int32_t imm32 ) {
     // not using emit_arith because test
     // doesn't support sign-extension of
     // 8bit operands
@@ -679,7 +679,7 @@ void Assembler::testl( const Register &dst, const Register &src ) {
 }
 
 
-void Assembler::xorl( const Register &dst, int imm32 ) {
+void Assembler::xorl( const Register &dst, std::int32_t imm32 ) {
     emit_arith( 0x81, 0xF0, dst, imm32 );
 }
 
@@ -710,7 +710,7 @@ void Assembler::nop() {
 }
 
 
-void Assembler::ret( int imm16 ) {
+void Assembler::ret( std::int32_t imm16 ) {
     if ( imm16 == 0 ) {
         emit_byte( 0xC3 );
     } else {
@@ -742,23 +742,23 @@ void Assembler::print( const Label &L ) {
 }
 
 
-void Assembler::bind_to( const Label &L, int pos ) {
+void Assembler::bind_to( const Label &L, std::int32_t pos ) {
     bool_t tellRobert = false;
 
     st_assert( 0 <= pos and pos <= offset(), "must have a valid binding position" );
     while ( L.is_unbound() ) {
         Displacement disp      = Displacement( long_at( L.pos() ) );
-        int          fixup_pos = L.pos();
-        int          imm32     = 0;
+        std::int32_t          fixup_pos = L.pos();
+        std::int32_t          imm32     = 0;
         switch ( disp.type() ) {
             case Displacement::Type::call: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE8, "call expected" );
-                imm32 = pos - ( fixup_pos + sizeof( int ) );
+                imm32 = pos - ( fixup_pos + sizeof( std::int32_t ) );
             }
                 break;
             case Displacement::Type::absolute_jump: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE9, "jmp expected" );
-                imm32          = pos - ( fixup_pos + sizeof( int ) );
+                imm32          = pos - ( fixup_pos + sizeof( std::int32_t ) );
                 if ( imm32 == 0 and EliminateJumpsToJumps )
                     tellRobert = true;
             }
@@ -766,12 +766,12 @@ void Assembler::bind_to( const Label &L, int pos ) {
             case Displacement::Type::conditional_jump: {
                 st_assert( byte_at( fixup_pos - 2 ) == 0x0F, "jcc expected" );
                 st_assert( byte_at( fixup_pos - 1 ) == ( 0x80 | disp.info() ), "jcc expected" );
-                imm32 = pos - ( fixup_pos + sizeof( int ) );
+                imm32 = pos - ( fixup_pos + sizeof( std::int32_t ) );
             }
                 break;
             case Displacement::Type::ic_info: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xA9, "test eax expected" );
-                int offs = pos - ( fixup_pos - InlineCacheInfo::info_offset );
+                std::int32_t offs = pos - ( fixup_pos - InlineCacheInfo::info_offset );
                 st_assert( ( ( offs << InlineCacheInfo::number_of_flags ) >> InlineCacheInfo::number_of_flags ) == offs, "NonLocalReturn offset out of bounds" );
                 imm32 = ( offs << InlineCacheInfo::number_of_flags ) | disp.info();
             }
@@ -827,11 +827,12 @@ void Assembler::bind( const Label &L ) {
                 bind_to( _unbound_label, _binding_pos );
             }
         }
+
         st_assert( not _unbound_label.is_unbound(), "assembler error" );
         // try to eliminate jumps to next instruction
-        while ( L.is_unbound() and ( L.pos() + int( sizeof( int ) ) == offset() ) and ( Displacement( long_at( L.pos() ) ).type() == Displacement::Type::absolute_jump ) ) {
+        while ( L.is_unbound() and ( L.pos() + std::int32_t( sizeof( std::int32_t ) ) == offset() ) and ( Displacement( long_at( L.pos() ) ).type() == Displacement::Type::absolute_jump ) ) {
             // previous instruction is jump jumping immediately after it => eliminate it
-            constexpr int long_size = 5;
+            constexpr std::int32_t long_size = 5;
             st_assert( byte_at( offset() - long_size ) == 0xE9, "jmp expected" );
             if ( PrintEliminatedJumps )
                 _console->print_cr( "@ %d jump to next eliminated", L.pos() );
@@ -857,8 +858,8 @@ void Assembler::merge( const Label &L, const Label &with ) {
 
 void Assembler::call( const Label &L ) {
     if ( L.is_bound() ) {
-        constexpr int long_size = 5;
-        int           offs      = L.pos() - offset();
+        constexpr std::int32_t long_size = 5;
+        std::int32_t           offs      = L.pos() - offset();
         st_assert( offs <= 0, "assembler error" );
         // 1110 1000 #32-bit disp
         emit_byte( 0xE8 );
@@ -868,14 +869,14 @@ void Assembler::call( const Label &L ) {
         emit_byte( 0xE8 );
         Displacement disp( L, Displacement::Type::call, 0 );
         L.link_to( offset() );
-        emit_long( int( disp.data() ) );
+        emit_long( std::int32_t( disp.data() ) );
     }
 }
 
 
 void Assembler::call( const char *entry, RelocationInformation::RelocationType rtype ) {
     emit_byte( 0xE8 );
-    emit_data( (int) entry - ( (int) _code_pos + sizeof( std::int32_t ) ), rtype );
+    emit_data( (std::int32_t) entry - ( (std::int32_t) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
@@ -893,7 +894,7 @@ void Assembler::call( const Address &adr ) {
 
 void Assembler::jmp( const char *entry, RelocationInformation::RelocationType rtype ) {
     emit_byte( 0xE9 );
-    emit_data( (int) entry - ( (int) _code_pos + sizeof( std::int32_t ) ), rtype );
+    emit_data( (std::int32_t) entry - ( (std::int32_t) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
@@ -911,9 +912,9 @@ void Assembler::jmp( const Address &adr ) {
 
 void Assembler::jmp( const Label &L ) {
     if ( L.is_bound() ) {
-        constexpr int short_size = 2;
-        constexpr int long_size  = 5;
-        int           offs       = L.pos() - offset();
+        constexpr std::int32_t short_size = 2;
+        constexpr std::int32_t long_size  = 5;
+        std::int32_t           offs       = L.pos() - offset();
         st_assert( offs <= 0, "assembler error" );
         if ( isByte( offs - short_size ) ) {
             // 1110 1011 #8-bit disp
@@ -938,26 +939,26 @@ void Assembler::jmp( const Label &L ) {
         emit_byte( 0xE9 );
         Displacement disp( L, Displacement::Type::absolute_jump, 0 );
         L.link_to( offset() );
-        emit_long( int( disp.data() ) );
+        emit_long( std::int32_t( disp.data() ) );
     }
 }
 
 
 void Assembler::jcc( Condition cc, Label &L ) {
-    st_assert( ( 0 <= static_cast<std::size_t>(cc) ) and ( static_cast<std::size_t>(cc) < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<std::int32_t>(cc) ) and ( static_cast<std::int32_t>(cc) < 16 ), "illegal cc" );
     if ( L.is_bound() ) {
-        constexpr int short_size = 2;
-        constexpr int long_size  = 6;
-        int           offs       = L.pos() - offset();
+        constexpr std::int32_t short_size = 2;
+        constexpr std::int32_t long_size  = 6;
+        std::int32_t           offs       = L.pos() - offset();
         st_assert( offs <= 0, "assembler error" );
         if ( isByte( offs - short_size ) ) {
             // 0111 tttn #8-bit disp
-            emit_byte( 0x70 | static_cast<std::size_t>(cc) );
+            emit_byte( 0x70 | static_cast<std::int32_t>(cc) );
             emit_byte( ( offs - short_size ) & 0xFF );
         } else {
             // 0000 1111 1000 tttn #32-bit disp
             emit_byte( 0x0F );
-            emit_byte( 0x80 | static_cast<std::size_t>(cc) );
+            emit_byte( 0x80 | static_cast<std::int32_t>(cc) );
             emit_long( offs - long_size );
         }
     } else {
@@ -965,27 +966,27 @@ void Assembler::jcc( Condition cc, Label &L ) {
         // Note: could eliminate cond. jumps to this jump if condition
         //       is the same however, seems to be rather unlikely case.
         emit_byte( 0x0F );
-        emit_byte( 0x80 | static_cast<std::size_t>(cc) );
-        Displacement disp( L, Displacement::Type::conditional_jump, static_cast<std::size_t>(cc) );
+        emit_byte( 0x80 | static_cast<std::int32_t>(cc) );
+        Displacement disp( L, Displacement::Type::conditional_jump, static_cast<std::int32_t>(cc) );
         L.link_to( offset() );
-        emit_long( int( disp.data() ) );
+        emit_long( std::int32_t( disp.data() ) );
     }
 }
 
 
 void Assembler::jcc( Condition cc, const char *dst, RelocationInformation::RelocationType rtype ) {
-    st_assert( ( 0 <= static_cast<std::size_t>(cc) ) and ( static_cast<std::size_t>(cc) < 16 ), "illegal cc" );
+    st_assert( ( 0 <= static_cast<std::int32_t>(cc) ) and ( static_cast<std::int32_t>(cc) < 16 ), "illegal cc" );
     // 0000 1111 1000 tttn #32-bit disp
     emit_byte( 0x0F );
-    emit_byte( 0x80 | static_cast<std::size_t>(cc) );
-    emit_data( (int) dst - ( (int) _code_pos + sizeof( std::int32_t ) ), rtype );
+    emit_byte( 0x80 | static_cast<std::int32_t>(cc) );
+    emit_data( (std::int32_t) dst - ( (std::int32_t) _code_pos + sizeof( std::int32_t ) ), rtype );
 }
 
 
-void Assembler::ic_info( const Label &L, int flags ) {
+void Assembler::ic_info( const Label &L, std::int32_t flags ) {
     st_assert( (std::uint32_t) flags >> InlineCacheInfo::number_of_flags == 0, "too many flags set" );
     if ( L.is_bound() ) {
-        int offs = L.pos() - offset();
+        std::int32_t offs = L.pos() - offset();
         st_assert( offs <= 0, "assembler error" );
         st_assert( ( ( offs << InlineCacheInfo::number_of_flags ) >> InlineCacheInfo::number_of_flags ) == offs, "NonLocalReturn offset out of bounds" );
         emit_byte( 0xA9 );
@@ -994,7 +995,7 @@ void Assembler::ic_info( const Label &L, int flags ) {
         emit_byte( 0xA9 );
         Displacement disp( L, Displacement::Type::ic_info, flags );
         L.link_to( offset() );
-        emit_long( int( disp.data() ) );
+        emit_long( std::int32_t( disp.data() ) );
     }
 }
 
@@ -1097,47 +1098,47 @@ void Assembler::fdiv_d( const Address &a ) {
 }
 
 
-void Assembler::fadd( std::size_t i ) {
+void Assembler::fadd( std::int32_t i ) {
     emit_farith( 0xDC, 0xC0, i );
 }
 
 
-void Assembler::fsub( std::size_t i ) {
+void Assembler::fsub( std::int32_t i ) {
     emit_farith( 0xDC, 0xE8, i );
 }
 
 
-void Assembler::fmul( std::size_t i ) {
+void Assembler::fmul( std::int32_t i ) {
     emit_farith( 0xDC, 0xC8, i );
 }
 
 
-void Assembler::fdiv( std::size_t i ) {
+void Assembler::fdiv( std::int32_t i ) {
     emit_farith( 0xDC, 0xF8, i );
 }
 
 
-void Assembler::faddp( std::size_t i ) {
+void Assembler::faddp( std::int32_t i ) {
     emit_farith( 0xDE, 0xC0, i );
 }
 
 
-void Assembler::fsubp( std::size_t i ) {
+void Assembler::fsubp( std::int32_t i ) {
     emit_farith( 0xDE, 0xE8, i );
 }
 
 
-void Assembler::fsubrp( std::size_t i ) {
+void Assembler::fsubrp( std::int32_t i ) {
     emit_farith( 0xDE, 0xE0, i );
 }
 
 
-void Assembler::fmulp( std::size_t i ) {
+void Assembler::fmulp( std::int32_t i ) {
     emit_farith( 0xDE, 0xC8, i );
 }
 
 
-void Assembler::fdivp( std::size_t i ) {
+void Assembler::fdivp( std::int32_t i ) {
     emit_farith( 0xDE, 0xF8, i );
 }
 
@@ -1154,7 +1155,7 @@ void Assembler::fprem1() {
 }
 
 
-void Assembler::fxch( std::size_t i ) {
+void Assembler::fxch( std::int32_t i ) {
     emit_farith( 0xD9, 0xC8, i );
 }
 
@@ -1165,7 +1166,7 @@ void Assembler::fincstp() {
 }
 
 
-void Assembler::ffree( std::size_t i ) {
+void Assembler::ffree( std::int32_t i ) {
     emit_farith( 0xDD, 0xC0, i );
 }
 

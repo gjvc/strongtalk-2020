@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -14,90 +15,96 @@ class LongRegisterMask;
 // General bit vectors; Space is allocated for maxLength bits, but only the portion up to length bits is used.
 // SimpleBitVector: simple version that fits into a word (for speed)
 
-typedef void (*intDoFn)( std::size_t i );
+typedef void (*intDoFn)( std::int32_t i );
 
-// a pseudo-class -- int(this) actually holds the bits, so there's no allocation
+// a pseudo-class -- std::int32_t(this) actually holds the bits, so there's no allocation
 class SimpleBitVector : public ValueObject {
-    int bits;
+
+    std::int32_t _bits;
+
 public:
-    SimpleBitVector( int b = 0 ) {
-        bits = b;
+    SimpleBitVector( std::int32_t b = 0 ) {
+        _bits = b;
     }
 
 
-    SimpleBitVector allocate( int l ) {
-        st_assert( l >= 0 and l < BitsPerWord, "need longer bit vector" );
-        return SimpleBitVector( addNthBit( bits, l ) );
+    SimpleBitVector allocate( std::int32_t l ) {
+        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        return SimpleBitVector( addNthBit( _bits, l ) );
     }
 
 
-    SimpleBitVector deallocate( int l ) {
-        st_assert( l >= 0 and l < BitsPerWord, "need longer bit vector" );
-        return SimpleBitVector( subNthBit( bits, l ) );
+    SimpleBitVector deallocate( std::int32_t l ) {
+        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        return SimpleBitVector( subNthBit( _bits, l ) );
     }
 
 
-    bool_t isAllocated( int l ) {
-        st_assert( l >= 0 and l < BitsPerWord, "need longer bit vector" );
-        return isBitSet( bits, l );
+    bool_t isAllocated( std::int32_t l ) {
+        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        return isBitSet( _bits, l );
     }
 
 
     bool_t isEmpty() {
-        return bits == 0;
+        return _bits == 0;
     }
+
 };
 
 
 class BitVector : public PrintableResourceObject {
-protected:
-    int _maxLength;  // max # bits
-    int length;     // number of bits, not words
-    int *_bits;     // array containing the bits
 
-    int indexFromNumber( std::size_t i ) {
+protected:
+    std::int32_t _maxLength; // max # bits
+    std::int32_t length;     // number of bits, not words
+    std::int32_t         *_bits;     // array containing the bits
+
+    std::int32_t indexFromNumber( std::int32_t i ) {
         return i >> LogBitsPerWord;
     }
 
 
-    int offsetFromNumber( std::size_t i ) {
+    std::int32_t offsetFromNumber( std::int32_t i ) {
         return lowerBits( i, LogBitsPerWord );
     }
 
 
-    bool_t getBitInWord( std::size_t i, int o ) {
+    bool_t getBitInWord( std::int32_t i, std::int32_t o ) {
         return isBitSet( _bits[ i ], o );
     }
 
 
-    void setBitInWord( std::size_t i, int o ) {
+    void setBitInWord( std::int32_t i, std::int32_t o ) {
         setNthBit( _bits[ i ], o );
     }
 
 
-    void clearBitInWord( std::size_t i, int o ) {
+    void clearBitInWord( std::int32_t i, std::int32_t o ) {
         clearNthBit( _bits[ i ], o );
     }
 
 
-    int bitsLength( int l ) {
+    std::int32_t bitsLength( std::int32_t l ) {
         return indexFromNumber( l - 1 ) + 1;
     }
 
 
-    int *createBitString( int l ) {
-        int blen = bitsLength( l );
-        int *bs = new_resource_array<int>( blen );
+    std::int32_t *createBitString( std::int32_t l ) {
+        std::int32_t blen = bitsLength( l );
+        std::int32_t *bs  = new_resource_array<std::int32_t>( blen );
         set_words( bs, blen, 0 );
         return bs;
     }
 
 
-    int *copyBitString( int len ) {
+    std::int32_t *copyBitString( std::int32_t len ) {
+
         st_assert( len >= _maxLength, "can't shorten" );
-        int blen = bitsLength( len );
-        int *bs = new_resource_array<int>( blen );
-        int blength = bitsLength( _maxLength );
+
+        std::int32_t blen    = bitsLength( len );
+        std::int32_t *bs     = new_resource_array<std::int32_t>( blen );
+        std::int32_t blength = bitsLength( _maxLength );
         copy_words( _bits, bs, blength );
         if ( blength < blen )
             set_words( bs + blength, blen - blength, 0 );
@@ -106,7 +113,7 @@ protected:
 
 
 public:
-    BitVector( int l ) {
+    BitVector( std::int32_t l ) {
         st_assert( l > 0, "should have some length" );
         length = _maxLength = l;
         _bits  = createBitString( l );
@@ -114,7 +121,7 @@ public:
 
 
 protected:
-    BitVector( int l, int ml, int *bs ) {
+    BitVector( std::int32_t l, std::int32_t ml, std::int32_t *bs ) {
         _maxLength = ml;
         length     = l;
         _bits      = bs;
@@ -122,36 +129,36 @@ protected:
 
 
 public:
-    BitVector *copy( int len ) {
+    BitVector *copy( std::int32_t len ) {
         return new BitVector( length, len, copyBitString( len ) );
     }
 
 
-    bool_t includes( std::size_t i ) {
+    bool_t includes( std::int32_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
-        st_assert( i >= 0 and i < length, "not in range" );
+        st_assert( i < length, "not in range" );
         bool_t b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
         return b;
     }
 
 
-    void add( std::size_t i ) {
+    void add( std::int32_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
-        st_assert( i >= 0 and i < length, "not in range" );
+        st_assert( i < length, "not in range" );
         setBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
     }
 
 
-    void addFromTo( int first, int last );    // set bits [first..last]
+    void addFromTo( std::int32_t first, std::int32_t last );    // set bits [first..last]
 
-    void remove( std::size_t i ) {
+    void remove( std::int32_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
-        st_assert( i >= 0 and i < length, "not in range" );
+        st_assert( i < length, "not in range" );
         clearBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
     }
 
 
-    void removeFromTo( int first, int last );    // clear bits [first..last]
+    void removeFromTo( std::int32_t first, std::int32_t last );    // clear bits [first..last]
 
     // union/intersect return true if receiver has changed
     bool_t unionWith( BitVector *other );          // this |= other
@@ -160,7 +167,7 @@ public:
 
     void doForAllOnes( intDoFn f );  // call f for all 1 bits
 
-    void setLength( int l ) {
+    void setLength( std::int32_t l ) {
         st_assert( l < _maxLength, "too big" );
         length = l;
     }
@@ -177,5 +184,5 @@ public:
 
     friend class LongRegisterMask;
 
-    friend int findFirstUnused( LongRegisterMask **strings, int len, int start );
+    friend std::int32_t findFirstUnused( LongRegisterMask **strings, std::int32_t len, std::int32_t start );
 };

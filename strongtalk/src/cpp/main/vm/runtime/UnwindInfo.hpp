@@ -18,8 +18,8 @@ class UnwindInfo : public StackAllocatedObject {
 
 private:
     // NonLocalReturn state
-    int        _nlr_home;
-    int        _nlr_home_id;
+    std::int32_t        _nlr_home;
+    std::int32_t        _nlr_home_id;
     ContextOop _nlr_home_context;
 
 public:
@@ -46,9 +46,9 @@ public:
 
     void set_next( UnwindInfo *next );
 
-    int nlr_home() const;
+    std::int32_t nlr_home() const;
 
-    int nlr_home_id() const;
+    std::int32_t nlr_home_id() const;
 
     ContextOop nlr_home_context() const;
 

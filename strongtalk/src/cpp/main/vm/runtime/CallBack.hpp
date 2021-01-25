@@ -14,9 +14,9 @@ class CallBack : AllStatic {
 public:
     static void initialize( Oop receiver, SymbolOop selector );
 
-    static void *registerPascalCall( int index, int nofArgs );
+    static void *registerPascalCall( std::int32_t index, std::int32_t nofArgs );
 
-    static void *registerCCall( int index );
+    static void *registerCCall( std::int32_t index );
 
     static void unregister( void *block );
 };

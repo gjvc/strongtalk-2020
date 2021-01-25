@@ -18,10 +18,10 @@ public:
     MacroAssembler( CodeBuffer *code );
 
     // Alignment
-    void align( int modulus );
+    void align( std::int32_t modulus );
 
     // Test-Instructions optimized for length
-    void test( Register dst, int imm8 );        // use testb if possible, testl otherwise
+    void test( Register dst, std::int32_t imm8 );        // use testb if possible, testl otherwise
 
     // Stack frame operations
     void enter();
@@ -62,7 +62,7 @@ public:
 
     // Floating-point comparisons
     // To jump conditionally on cc, test FPU status word with mask and jump conditionally using cond.
-    static void fpu_mask_and_cond_for( const Condition &cc, int &mask, Condition &cond );
+    static void fpu_mask_and_cond_for( const Condition &cc, std::int32_t &mask, Condition &cond );
 
     // Pop ST (ffree & fincstp combined)
     void fpop();

@@ -23,71 +23,71 @@ protected:
     const char *_code_pos;       // current code generation position
 
     Label _unbound_label;   // the last label to be bound to _binding_pos, if unbound
-    int   _binding_pos;     // the position to which _unbound_label has to be bound, if there
+    std::int32_t   _binding_pos;     // the position to which _unbound_label has to be bound, if there
 
-    const char *addr_at( int pos ) {
+    const char *addr_at( std::int32_t pos ) {
         return _code_begin + pos;
     }
 
 
-    int byte_at( int pos ) {
+    std::int32_t byte_at( std::int32_t pos ) {
         return *(std::uint8_t *) addr_at( pos );
     }
 
 
-    void byte_at_put( int pos, int x ) {
+    void byte_at_put( std::int32_t pos, std::int32_t x ) {
         *(std::uint8_t *) addr_at( pos ) = (std::uint8_t) x;
     }
 
 
-    int long_at( int pos ) {
-        return *(int *) addr_at( pos );
+    std::int32_t long_at( std::int32_t pos ) {
+        return *(std::int32_t *) addr_at( pos );
     }
 
 
-    void long_at_put( int pos, int x ) {
-        *(int *) addr_at( pos ) = x;
+    void long_at_put( std::int32_t pos, std::int32_t x ) {
+        *(std::int32_t *) addr_at( pos ) = x;
     }
 
 
-    bool_t is8bit( int x ) {
+    bool_t is8bit( std::int32_t x ) {
         return -0x80 <= x and x < 0x80;
     }
 
 
-    bool_t isByte( int x ) {
+    bool_t isByte( std::int32_t x ) {
         return 0 <= x and x < 0x100;
     }
 
 
-    bool_t isShiftCount( int x ) {
+    bool_t isShiftCount( std::int32_t x ) {
         return 0 <= x and x < 32;
     }
 
 
-    void emit_byte( int x );
+    void emit_byte( std::int32_t x );
 
-    void emit_long( int x );
+    void emit_long( std::int32_t x );
 
-    void emit_data( int data, RelocationInformation::RelocationType rtype );
+    void emit_data( std::int32_t data, RelocationInformation::RelocationType rtype );
 
-    void emit_arith_b( int op1, int op2, const Register &dst, int imm8 );
+    void emit_arith_b( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm8 );
 
-    void emit_arith( int op1, int op2, const Register &dst, int imm32 );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, std::int32_t imm32 );
 
-    void emit_arith( int op1, int op2, const Register &dst, Oop obj );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, Oop obj );
 
-    void emit_arith( int op1, int op2, const Register &dst, const Register &src );
+    void emit_arith( std::int32_t op1, std::int32_t op2, const Register &dst, const Register &src );
 
-    void emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, int disp, RelocationInformation::RelocationType rtype );
+    void emit_operand( const Register &reg, const Register &base, const Register &index, Address::ScaleFactor scale, std::int32_t disp, RelocationInformation::RelocationType rtype );
 
     void emit_operand( const Register &r, const Address &a );
 
-    void emit_farith( int b1, int b2, std::size_t i );
+    void emit_farith( std::int32_t b1, std::int32_t b2, std::int32_t i );
 
     void print( const Label &L );
 
-    void bind_to( const Label &L, int pos );
+    void bind_to( const Label &L, std::int32_t pos );
 
     void link_to( const Label &L, const Label &appendix );
 
@@ -130,7 +130,7 @@ public:
     }
 
 
-    int offset() const {
+    std::int32_t offset() const {
         return _code_pos - _code_begin;
     }
 
@@ -140,7 +140,7 @@ public:
 
     void popad();
 
-    void pushl( int imm32 );
+    void pushl( std::int32_t imm32 );
 
     void pushl( Oop obj );
 
@@ -155,7 +155,7 @@ public:
     // Moves
     void movb( const Register &dst, const Address &src );
 
-    void movb( const Address &dst, int imm8 );
+    void movb( const Address &dst, std::int32_t imm8 );
 
     void movb( const Address &dst, const Register &src );
 
@@ -163,7 +163,7 @@ public:
 
     void movw( const Address &dst, const Register &src );
 
-    void movl( const Register &dst, int imm32 );
+    void movl( const Register &dst, std::int32_t imm32 );
 
     void movl( const Register &dst, Oop obj );
 
@@ -171,7 +171,7 @@ public:
 
     void movl( const Register &dst, const Address &src );
 
-    void movl( const Address &dst, int imm32 );
+    void movl( const Address &dst, std::int32_t imm32 );
 
     void movl( const Address &dst, Oop obj );
 
@@ -186,7 +186,7 @@ public:
     void movsxw( const Register &dst, const Register &src );
 
     // Conditional moves (P6 only)
-    void cmovccl( Condition cc, const Register &dst, int imm32 );
+    void cmovccl( Condition cc, const Register &dst, std::int32_t imm32 );
 
     void cmovccl( Condition cc, const Register &dst, Oop obj );
 
@@ -195,27 +195,27 @@ public:
     void cmovccl( Condition cc, const Register &dst, const Address &src );
 
     // Arithmetics
-    void adcl( const Register &dst, int imm32 );
+    void adcl( const Register &dst, std::int32_t imm32 );
 
     void adcl( const Register &dst, const Register &src );
 
-    void addl( const Address &dst, int imm32 );
+    void addl( const Address &dst, std::int32_t imm32 );
 
-    void addl( const Register &dst, int imm32 );
+    void addl( const Register &dst, std::int32_t imm32 );
 
     void addl( const Register &dst, const Register &src );
 
     void addl( const Register &dst, const Address &src );
 
-    void andl( const Register &dst, int imm32 );
+    void andl( const Register &dst, std::int32_t imm32 );
 
     void andl( const Register &dst, const Register &src );
 
-    void cmpl( const Address &dst, int imm32 );
+    void cmpl( const Address &dst, std::int32_t imm32 );
 
     void cmpl( const Address &dst, Oop obj );
 
-    void cmpl( const Register &dst, int imm32 );
+    void cmpl( const Register &dst, std::int32_t imm32 );
 
     void cmpl( const Register &dst, Oop obj );
 
@@ -235,7 +235,7 @@ public:
 
     void imull( const Register &dst, const Register &src );
 
-    void imull( const Register &dst, const Register &src, int value );
+    void imull( const Register &dst, const Register &src, std::int32_t value );
 
     void incl( const Register &dst );
 
@@ -249,47 +249,47 @@ public:
 
     void notl( const Register &dst );
 
-    void orl( const Register &dst, int imm32 );
+    void orl( const Register &dst, std::int32_t imm32 );
 
     void orl( const Register &dst, const Register &src );
 
     void orl( const Register &dst, const Address &src );
 
-    void rcll( const Register &dst, int imm8 );
+    void rcll( const Register &dst, std::int32_t imm8 );
 
-    void sarl( const Register &dst, int imm8 );
+    void sarl( const Register &dst, std::int32_t imm8 );
 
     void sarl( const Register &dst );
 
-    void sbbl( const Register &dst, int imm32 );
+    void sbbl( const Register &dst, std::int32_t imm32 );
 
     void sbbl( const Register &dst, const Register &src );
 
     void shldl( const Register &dst, const Register &src );
 
-    void shll( const Register &dst, int imm8 );
+    void shll( const Register &dst, std::int32_t imm8 );
 
     void shll( const Register &dst );
 
     void shrdl( const Register &dst, const Register &src );
 
-    void shrl( const Register &dst, int imm8 );
+    void shrl( const Register &dst, std::int32_t imm8 );
 
     void shrl( const Register &dst );
 
-    void subl( const Register &dst, int imm32 );
+    void subl( const Register &dst, std::int32_t imm32 );
 
     void subl( const Register &dst, const Register &src );
 
     void subl( const Register &dst, const Address &src );
 
-    void testb( const Register &dst, int imm8 );
+    void testb( const Register &dst, std::int32_t imm8 );
 
-    void testl( const Register &dst, int imm32 );
+    void testl( const Register &dst, std::int32_t imm32 );
 
     void testl( const Register &dst, const Register &src );
 
-    void xorl( const Register &dst, int imm32 );
+    void xorl( const Register &dst, std::int32_t imm32 );
 
     void xorl( const Register &dst, const Register &src );
 
@@ -302,7 +302,7 @@ public:
 
     void nop();
 
-    void ret( int imm16 = 0 );
+    void ret( std::int32_t imm16 = 0 );
 
     // Labels
 
@@ -347,7 +347,7 @@ public:
     void jcc( Condition cc, Label &L );
 
     // Support for inline cache information (see also InlineCacheInfo)
-    void ic_info( const Label &L, int flags );
+    void ic_info( const Label &L, std::int32_t flags );
 
     // Floating-point operations
     void fld1();
@@ -383,33 +383,33 @@ public:
 
     void fdiv_d( const Address &a );
 
-    void fadd( std::size_t i );
+    void fadd( std::int32_t i );
 
-    void fsub( std::size_t i );
+    void fsub( std::int32_t i );
 
-    void fmul( std::size_t i );
+    void fmul( std::int32_t i );
 
-    void fdiv( std::size_t i );
+    void fdiv( std::int32_t i );
 
-    void faddp( std::size_t i = 1 );
+    void faddp( std::int32_t i = 1 );
 
-    void fsubp( std::size_t i = 1 );
+    void fsubp( std::int32_t i = 1 );
 
-    void fsubrp( std::size_t i = 1 );
+    void fsubrp( std::int32_t i = 1 );
 
-    void fmulp( std::size_t i = 1 );
+    void fmulp( std::int32_t i = 1 );
 
-    void fdivp( std::size_t i = 1 );
+    void fdivp( std::int32_t i = 1 );
 
     void fprem();
 
     void fprem1();
 
-    void fxch( std::size_t i = 1 );
+    void fxch( std::int32_t i = 1 );
 
     void fincstp();
 
-    void ffree( std::size_t i = 0 );
+    void ffree( std::int32_t i = 0 );
 
     void ftst();
 
@@ -421,12 +421,12 @@ public:
 
 
     // For compatibility with old assembler only - should be removed at some point
-    void Load( const Register &base, int disp, const Register &dst ) {
+    void Load( const Register &base, std::int32_t disp, const Register &dst ) {
         movl( dst, Address( base, disp ) );
     }
 
 
-    void Store( const Register &src, const Register &base, int disp ) {
+    void Store( const Register &src, const Register &base, std::int32_t disp ) {
         movl( Address( base, disp ), src );
     }
 

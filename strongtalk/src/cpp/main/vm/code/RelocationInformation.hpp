@@ -25,8 +25,8 @@
 //   3 bits indicating the relocation type
 //  13 bits indicating the byte offset from the previous RelocationInformation address
 
-constexpr std::size_t reloc_type_width   = 3;
-constexpr std::size_t reloc_offset_width = 13;
+constexpr std::int32_t reloc_type_width   = 3;
+constexpr std::int32_t reloc_offset_width = 13;
 
 
 class RelocationInformation : ValueObject {
@@ -49,16 +49,16 @@ public:
 
     };
 
-    RelocationInformation( RelocationInformation::RelocationType type, std::size_t offset );
+    RelocationInformation( RelocationInformation::RelocationType type, std::int32_t offset );
 
 
-    std::size_t offset() const {
-        return get_unsigned_bitfield( (std::size_t) _value, 0, reloc_offset_width );
+    std::int32_t offset() const {
+        return get_unsigned_bitfield( (std::int32_t) _value, 0, reloc_offset_width );
     }
 
 
     RelocationInformation::RelocationType type() const {
-        return static_cast<RelocationInformation::RelocationType>( get_unsigned_bitfield( (std::size_t) _value, reloc_offset_width, reloc_type_width ) );
+        return static_cast<RelocationInformation::RelocationType>( get_unsigned_bitfield( (std::int32_t) _value, reloc_offset_width, reloc_type_width ) );
     }
 
 
@@ -115,7 +115,7 @@ public:
 
 
     // prints the relocation with retrieved information from the NativeMethod.
-    std::size_t print( NativeMethod *c, std::size_t last_offset );
+    std::int32_t print( NativeMethod *c, std::int32_t last_offset );
 };
 
 
@@ -175,8 +175,8 @@ public:
     }
 
 
-    std::size_t *word_addr() const {
-        return (std::size_t *) _address;
+    std::int32_t *word_addr() const {
+        return (std::int32_t *) _address;
     }
 
 
@@ -212,7 +212,7 @@ public:
 
     char *callDestination() const {
         st_assert( type() not_eq RelocationInformation::RelocationType::oop_type, "must be call" );
-        return *(char **) _address + std::size_t( _address ) + 4;    // INTEL-SPECIFIC
+        return *(char **) _address + std::int32_t( _address ) + 4;    // INTEL-SPECIFIC
     }
 
 

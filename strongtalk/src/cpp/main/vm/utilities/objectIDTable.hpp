@@ -16,15 +16,15 @@ private:
     static ObjectArrayOop array();
 
 public:
-    static std::size_t insert( Oop obj );
+    static std::int32_t insert( Oop obj );
 
-    static Oop at( std::size_t index );
+    static Oop at( std::int32_t index );
 
-    static std::size_t find_index( Oop obj );
+    static std::int32_t find_index( Oop obj );
 
-    static bool_t is_index_ok( std::size_t index );
+    static bool_t is_index_ok( std::int32_t index );
 
-    static void allocateSize( std::size_t size );
+    static void allocateSize( std::int32_t size );
 
     static void cleanup_after_bootstrap();
 

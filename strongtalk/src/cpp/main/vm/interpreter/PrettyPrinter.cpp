@@ -35,17 +35,17 @@ class scopeNode;
 class astNode : public ResourceObject {
 
 protected:
-    int _byteCodeIndex;
+    std::int32_t _byteCodeIndex;
     scopeNode *_scopeNode;
 
 public:
-    astNode( int byteCodeIndex, scopeNode *scope ) {
+    astNode( std::int32_t byteCodeIndex, scopeNode *scope ) {
         this->_byteCodeIndex = byteCodeIndex;
         this->_scopeNode     = scope;
     }
 
 
-    int this_byteCodeIndex() {
+    std::int32_t this_byteCodeIndex() {
         return _byteCodeIndex;
     }
 
@@ -85,7 +85,7 @@ public:
     virtual bool_t print( prettyPrintStream *output );
 
 
-    virtual int width( prettyPrintStream *output ) {
+    virtual std::int32_t width( prettyPrintStream *output ) {
         return output->infinity();
     }
 
@@ -100,7 +100,7 @@ public:
     };
 
 
-    virtual astNode *argument_at( std::size_t i ) {
+    virtual astNode *argument_at( std::int32_t i ) {
         return nullptr;
     }
 };
@@ -120,7 +120,7 @@ public:
 
 #define HIGHLIGHT PrintWrapper pw(this, output);
 
-bool_t should_wrap( int type, astNode *arg );
+bool_t should_wrap( std::int32_t type, astNode *arg );
 
 
 static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOop selector, GrowableArray<astNode *> *arguments, bool_t split ) {
@@ -139,15 +139,15 @@ static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOo
         return result;
     }
 
-    int arg = arguments->length();
+    std::int32_t arg = arguments->length();
 
     if ( arg == 0 ) {
         output->print( selector->as_string() );
         return false;
     }
 
-    for ( std::size_t i = 1; i <= selector->length(); i++ ) {
-        int c = selector->byte_at( i );
+    for ( std::int32_t i = 1; i <= selector->length(); i++ ) {
+        std::int32_t c = selector->byte_at( i );
         output->print_char( c );
         if ( c == ':' ) {
             output->space();
@@ -171,7 +171,7 @@ static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOo
 }
 
 
-static astNode *get_literal_node( Oop obj, int byteCodeIndex, scopeNode *scope );
+static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode *scope );
 
 class PrintTemps : public TempDecoder {
 
@@ -187,9 +187,9 @@ public:
     }
 
 
-    void stack_temp( ByteArrayOop name, int offset );
+    void stack_temp( ByteArrayOop name, std::int32_t offset );
 
-    void heap_temp( ByteArrayOop name, int offset );
+    void heap_temp( ByteArrayOop name, std::int32_t offset );
 };
 
 
@@ -209,14 +209,14 @@ public:
     }
 
 
-    void parameter( ByteArrayOop name, int index );
+    void parameter( ByteArrayOop name, std::int32_t index );
 };
 
 
 class leafNode : public astNode {
 
 public:
-    leafNode( int byteCodeIndex, scopeNode *scope ) :
+    leafNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             astNode( byteCodeIndex, scope ) {
     }
 
@@ -229,7 +229,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return output->width_of_string( string() );
     }
 
@@ -241,11 +241,11 @@ public:
 class paramNode : public leafNode {
 
 private:
-    int _no;
+    std::int32_t _no;
     const char *_str;
 
 public:
-    paramNode( int byteCodeIndex, scopeNode *scope, int no );
+    paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no );
 
 
     const char *string() {
@@ -282,7 +282,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return output->width_of_string( _name ) + 3 + output->width_of_string( _value );
     }
 };
@@ -333,7 +333,7 @@ public:
             output->space();
         }
 
-        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             output->space();
         }
@@ -344,12 +344,12 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
-        int w = 0;
+    std::int32_t width( prettyPrintStream *output ) {
+        std::int32_t w = 0;
         if ( _beginSym )
             w += output->width_of_string( _beginSym ) + output->width_of_space();
 
-        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output ) + output->width_of_space();
         }
 
@@ -367,16 +367,16 @@ class scopeNode : public astNode {
 protected:
     MethodOop _methodOop;
     KlassOop  _klassOop;
-    int       _in;
-    int       _hotByteCodeIndex;
-    int       _frameIndex;
+    std::int32_t       _in;
+    std::int32_t       _hotByteCodeIndex;
+    std::int32_t       _frameIndex;
     DeltaVirtualFrame *_deltaVirtualFrame;
     ScopeDescriptor   *_scopeDescriptor;
     scopeNode         *_parentScope;
     scopeNode         *_innerScope;
 
 public:
-    scopeNode( DeltaVirtualFrame *fr, int index, scopeNode *scope = nullptr ) :
+    scopeNode( DeltaVirtualFrame *fr, std::int32_t index, scopeNode *scope = nullptr ) :
             astNode( 0, nullptr ) {
 
         _frameIndex        = index;
@@ -392,7 +392,7 @@ public:
     }
 
 
-    scopeNode( MethodOop method, KlassOop klass, int hot_byteCodeIndex, scopeNode *scope = nullptr ) :
+    scopeNode( MethodOop method, KlassOop klass, std::int32_t hot_byteCodeIndex, scopeNode *scope = nullptr ) :
             astNode( 0, nullptr ) {
 
         _methodOop         = method;
@@ -427,7 +427,7 @@ public:
     }
 
 
-    int hot_byteCodeIndex() {
+    std::int32_t hot_byteCodeIndex() {
         return _hotByteCodeIndex;
     }
 
@@ -467,7 +467,7 @@ public:
     }
 
 
-    const char *param_string( int index, bool_t in_block = false ) {
+    const char *param_string( std::int32_t index, bool_t in_block = false ) {
         ByteArrayOop res = find_parameter_name( method(), index );
         if ( in_block ) {
             if ( not res )
@@ -482,28 +482,28 @@ public:
     }
 
 
-    const char *stack_temp_string( int byteCodeIndex, int no ) {
+    const char *stack_temp_string( std::int32_t byteCodeIndex, std::int32_t no ) {
         ByteArrayOop res = find_stack_temp( method(), byteCodeIndex, no );
         return res ? res->as_string() : create_name( "t", no );
     }
 
 
-    const char *stack_float_temp_string( int byteCodeIndex, int fno ) {
+    const char *stack_float_temp_string( std::int32_t byteCodeIndex, std::int32_t fno ) {
         ByteArrayOop res = find_stack_float_temp( method(), byteCodeIndex, fno );
         return res ? res->as_string() : create_name( "f", fno );
     }
 
 
-    const char *create_name( const char *prefix, int no ) {
+    const char *create_name( const char *prefix, std::int32_t no ) {
         char *str = new_resource_array<char>( 7 );
         sprintf( str, "%s_%d", prefix, no );
         return str;
     }
 
 
-    const char *heap_temp_string( int byteCodeIndex, int no, int context_level ) {
+    const char *heap_temp_string( std::int32_t byteCodeIndex, std::int32_t no, std::int32_t context_level ) {
         if ( is_block_method() ) {
-            int level = context_level;
+            std::int32_t level = context_level;
             if ( is_context_allocated() ) {
                 level--;
                 if ( context_level == 0 ) {
@@ -520,7 +520,7 @@ public:
     }
 
 
-    const char *inst_var_string( int offset ) {
+    const char *inst_var_string( std::int32_t offset ) {
         if ( _klassOop ) {
             SymbolOop name = _klassOop->klass_part()->inst_var_name_at( offset );
             if ( name )
@@ -538,7 +538,7 @@ public:
         if ( p._elements->length() == 0 )
             return nullptr;
         listNode *l = new listNode( "|", "|" );
-        for ( std::size_t i = 0; i < p._elements->length(); i++ )
+        for ( std::int32_t i = 0; i < p._elements->length(); i++ )
             l->add( p._elements->at( i ) );
         return l;
     }
@@ -551,14 +551,14 @@ public:
             return nullptr;
 
         listNode *l = new listNode( nullptr, "|" );
-        for ( std::size_t i = 0; i < p._elements->length(); i++ ) {
+        for ( std::int32_t i = 0; i < p._elements->length(); i++ ) {
             l->add( p._elements->at( i ) );
         }
         return l;
     }
 
 
-    astNode *heap_temp_at( int no ) {
+    astNode *heap_temp_at( std::int32_t no ) {
         const char *name = heap_temp_string( 0, no, 0 );
         if ( not fr() )
             return new nameNode( name );
@@ -567,7 +567,7 @@ public:
     }
 
 
-    astNode *stack_temp_at( int no ) {
+    astNode *stack_temp_at( std::int32_t no ) {
         ByteArrayOop res = find_stack_temp( method(), 0, no );
         const char *name = res ? res->as_string() : create_name( "t", no );
         if ( not fr() )
@@ -577,7 +577,7 @@ public:
     }
 
 
-    astNode *parameter_at( int index, bool_t in_block = false ) {
+    astNode *parameter_at( std::int32_t index, bool_t in_block = false ) {
         const char *name = param_string( index, in_block );
         if ( not fr() )
             return new nameNode( name );
@@ -627,7 +627,7 @@ public:
                 output->print( " [expression stack:" );
                 output->newline();
                 GrowableArray<Oop> *stack = fr()->expression_stack();
-                for ( std::size_t index = 0; index < stack->length(); index++ ) {
+                for ( std::int32_t index = 0; index < stack->length(); index++ ) {
                     output->print( " - " );
                     stack->at( index )->print_value();
                     output->newline();
@@ -664,7 +664,7 @@ public:
 
     void print_method_header( prettyPrintStream *output ) {
         GrowableArray<astNode *> *arguments = new GrowableArray<astNode *>( 10 );
-        for ( int                i          = method()->number_of_arguments() - 1; i >= 0; i-- ) {
+        for ( std::int32_t                i          = method()->number_of_arguments() - 1; i >= 0; i-- ) {
             arguments->push( parameter_at( i ) );
         }
         print_selector_with_arguments( output, method()->selector(), arguments, false );
@@ -672,7 +672,7 @@ public:
 };
 
 
-paramNode::paramNode( int byteCodeIndex, scopeNode *scope, int no ) :
+paramNode::paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no ) :
         leafNode( byteCodeIndex, scope ) {
     this->_no  = no;
     this->_str = scope->param_string( no );
@@ -722,7 +722,7 @@ protected:
     GrowableArray<astNode *> *_statements;
 
 public:
-    codeNode( int byteCodeIndex, scopeNode *scope ) :
+    codeNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             astNode( byteCodeIndex, scope ) {
         _statements = new GrowableArray<astNode *>( 10 );
     }
@@ -750,8 +750,8 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
-        int len = _statements->length();
+    std::int32_t width( prettyPrintStream *output ) {
+        std::int32_t len = _statements->length();
         if ( len == 0 )
             return 0;
         if ( len == 1 )
@@ -764,7 +764,7 @@ public:
 class inlinedBlockNode : public codeNode {
 
 public:
-    inlinedBlockNode( int byteCodeIndex, scopeNode *scope ) :
+    inlinedBlockNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             codeNode( byteCodeIndex, scope ) {
     }
 
@@ -787,7 +787,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return output->width_of_string( "[" ) + codeNode::width( output ) + output->width_of_string( "]" );
     }
 };
@@ -812,7 +812,7 @@ public:
     }
 
 
-    statement( int byteCodeIndex, scopeNode *scope, astNode *stat, bool_t has_return ) :
+    statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool_t has_return ) :
             astNode( byteCodeIndex, scope ) {
         this->_stat      = stat;
         this->_hasReturn = has_return;
@@ -837,7 +837,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return ( _hasReturn ? output->width_of_string( hat() ) : 0 ) + _stat->width( output );
     }
 };
@@ -847,7 +847,7 @@ bool_t codeNode::print( prettyPrintStream *output ) {
 
     bool_t first = true;
 
-    for ( std::size_t i = 0; i < _statements->length(); i++ ) {
+    for ( std::int32_t i = 0; i < _statements->length(); i++ ) {
         astNode *s = _statements->at( i );
         if ( not first ) {
             output->print( "." );
@@ -865,7 +865,7 @@ bool_t codeNode::print( prettyPrintStream *output ) {
 class methodNode : public codeNode {
 
 public:
-    methodNode( int byteCodeIndex, scopeNode *scope ) :
+    methodNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             codeNode( byteCodeIndex, scope ) {
     }
 
@@ -889,10 +889,10 @@ public:
 class blockNode : public codeNode {
 
 private:
-    int _numOfArgs;
+    std::int32_t _numOfArgs;
 
 public:
-    blockNode( int byteCodeIndex, scopeNode *scope, int numOfArgs ) :
+    blockNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t numOfArgs ) :
             codeNode( byteCodeIndex, scope ) {
         this->_numOfArgs = numOfArgs;
     }
@@ -953,8 +953,8 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
-        int w = output->width_of_string( "[" ) + output->width_of_string( "]" );
+    std::int32_t width( prettyPrintStream *output ) {
+        std::int32_t w = output->width_of_string( "[" ) + output->width_of_string( "]" );
         astNode *p = _scopeNode->params();
         if ( p )
             w += p->width( output ) + 2 * output->width_of_space();
@@ -981,7 +981,7 @@ private:
 
 
 public:
-    assignment( int byteCodeIndex, scopeNode *scope, astNode *variable, astNode *e ) :
+    assignment( std::int32_t byteCodeIndex, scopeNode *scope, astNode *variable, astNode *e ) :
             astNode( byteCodeIndex, scope ) {
         this->_variable = variable;
         this->_e        = e;
@@ -1006,7 +1006,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return _variable->width( output ) + 2 * output->width_of_space() + output->width_of_string( sym() );
     }
 };
@@ -1021,7 +1021,7 @@ private:
     bool_t                   _is_prim;
 
 public:
-    messageNode( int byteCodeIndex, scopeNode *scope, SymbolOop selector, bool_t is_prim = false ) :
+    messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool_t is_prim = false ) :
             astNode( byteCodeIndex, scope ) {
         this->_selector = selector;
         _arguments = new GrowableArray<astNode *>( 10 );
@@ -1109,8 +1109,8 @@ public:
     }
 
 
-    int width_receiver( prettyPrintStream *output ) {
-        int w = receiver() ? receiver()->width( output ) + output->width_of_space() : 0;
+    std::int32_t width_receiver( prettyPrintStream *output ) {
+        std::int32_t w = receiver() ? receiver()->width( output ) + output->width_of_space() : 0;
         if ( should_wrap_receiver() ) {
             w += output->width_of_string( "(" ) + output->width_of_string( ")" );
         }
@@ -1118,23 +1118,23 @@ public:
     }
 
 
-    int width_send( prettyPrintStream *output ) {
-        int arg = _selector->number_of_arguments();
-        int w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
+    std::int32_t width_send( prettyPrintStream *output ) {
+        std::int32_t arg = _selector->number_of_arguments();
+        std::int32_t w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
 
-        for ( std::size_t i = 0; i < _arguments->length(); i++ )
+        for ( std::int32_t i = 0; i < _arguments->length(); i++ )
             w += _arguments->at( i )->width( output );
 
         return w;
     }
 
 
-    int real_width( prettyPrintStream *output ) {
+    std::int32_t real_width( prettyPrintStream *output ) {
         return ( receiver() ? width_receiver( output ) + output->width_of_space() : 0 ) + width_send( output );
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         if ( receiver() and receiver()->is_cascade() )
             return receiver()->width( output );
         return real_width( output );
@@ -1168,7 +1168,7 @@ public:
 class selfNode : public leafNode {
 
 public:
-    selfNode( int byteCodeIndex, scopeNode *scope ) :
+    selfNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
     }
 
@@ -1182,7 +1182,7 @@ public:
 class ignoreReceiver : public leafNode {
 
 public:
-    ignoreReceiver( int byteCodeIndex, scopeNode *scope ) :
+    ignoreReceiver( std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
     }
 
@@ -1196,7 +1196,7 @@ public:
 class superNode : public leafNode {
 
 public:
-    superNode( int byteCodeIndex, scopeNode *scope ) :
+    superNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
     }
 
@@ -1213,7 +1213,7 @@ private:
     const char *_str;
 
 public:
-    literalNode( int byteCodeIndex, scopeNode *scope, const char *str ) :
+    literalNode( std::int32_t byteCodeIndex, scopeNode *scope, const char *str ) :
             leafNode( byteCodeIndex, scope ) {
         this->_str = str;
     }
@@ -1233,7 +1233,7 @@ private:
     const char *_str;
 
 public:
-    symbolNode( int byteCodeIndex, scopeNode *scope, SymbolOop value, bool_t is_outer = true ) :
+    symbolNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop value, bool_t is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
         this->_value   = value;
         this->_isOuter = is_outer;
@@ -1250,7 +1250,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return ( _isOuter ? output->width_of_string( "#" ) : 0 ) + output->width_of_string( _str );
     }
 };
@@ -1263,7 +1263,7 @@ private:
     char *_str;
 
 public:
-    doubleByteArrayNode( int byteCodeIndex, scopeNode *scope, DoubleByteArrayOop value ) :
+    doubleByteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, DoubleByteArrayOop value ) :
             astNode( byteCodeIndex, scope ) {
         this->_value = value;
         this->_str   = value->as_string();
@@ -1279,7 +1279,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return 2 * output->width_of_string( "'" ) + output->width_of_string( _str );
     }
 };
@@ -1292,7 +1292,7 @@ private:
     const char *_str;
 
 public:
-    byteArrayNode( int byteCodeIndex, scopeNode *scope, ByteArrayOop value ) :
+    byteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ByteArrayOop value ) :
             astNode( byteCodeIndex, scope ) {
         this->_value = value;
         this->_str   = value->as_string();
@@ -1309,7 +1309,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return 2 * output->width_of_string( "'" ) + output->width_of_string( _str );
     }
 };
@@ -1318,11 +1318,11 @@ public:
 class smiNode : public leafNode {
 
 private:
-    int _value;
+    std::int32_t _value;
     char *_str;
 
 public:
-    smiNode( int byteCodeIndex, scopeNode *scope, int value ) :
+    smiNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t value ) :
             leafNode( byteCodeIndex, scope ) {
         this->_value = value;
         this->_str   = new_resource_array<char>( 10 );
@@ -1342,7 +1342,7 @@ private:
     char *_str;
 
 public:
-    doubleNode( int byteCodeIndex, scopeNode *scope, double value ) :
+    doubleNode( std::int32_t byteCodeIndex, scopeNode *scope, double value ) :
             leafNode( byteCodeIndex, scope ) {
         this->_value = value;
         this->_str   = new_resource_array<char>( 30 );
@@ -1363,7 +1363,7 @@ private:
     char *_str;
 
 public:
-    characterNode( int byteCodeIndex, scopeNode *scope, Oop value ) :
+    characterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
             leafNode( byteCodeIndex, scope ) {
         this->_value = value;
         this->_str   = new_resource_array<char>( 3 );
@@ -1392,13 +1392,13 @@ private:
     GrowableArray<astNode *> *_elements;
 
 public:
-    objArrayNode( int byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool_t is_outer = true ) :
+    objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool_t is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
         this->_value    = value;
         this->_isOuter  = is_outer;
         this->_elements = new GrowableArray<astNode *>( 10 );
 
-        for ( std::size_t i = 1; i <= value->length(); i++ )
+        for ( std::int32_t i = 1; i <= value->length(); i++ )
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
     }
 
@@ -1407,7 +1407,7 @@ public:
         HIGHLIGHT
         astNode::print( output );
         output->print( "#(" );
-        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
             _elements->at( i )->print( output );
             if ( i < _elements->length() - 1 )
                 output->space();
@@ -1417,10 +1417,10 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
-        int w = output->width_of_string( "#(" ) + output->width_of_string( ")" );
+    std::int32_t width( prettyPrintStream *output ) {
+        std::int32_t w = output->width_of_string( "#(" ) + output->width_of_string( ")" );
 
-        for ( std::size_t i = 0; i < _elements->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
             w += _elements->at( i )->width( output );
             if ( i < _elements->length() - 1 )
                 w += output->width_of_space();
@@ -1439,7 +1439,7 @@ private:
     astNode *_proxy;
 
 public:
-    dllNode( int byteCodeIndex, scopeNode *scope, SymbolOop dll_name, SymbolOop func_name ) :
+    dllNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop dll_name, SymbolOop func_name ) :
             astNode( byteCodeIndex, scope ) {
         this->_dllName  = new symbolNode( byteCodeIndex, scope, dll_name, false );
         this->_funcName = new symbolNode( byteCodeIndex, scope, func_name, false );
@@ -1468,7 +1468,7 @@ public:
         output->space();
         _funcName->print( output );
         output->print( ">" );
-        for ( std::size_t i = _arguments->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = _arguments->length() - 1; i >= 0; i-- ) {
             _arguments->at( i )->print( output );
             if ( i < _arguments->length() - 1 )
                 output->print( ", " );
@@ -1478,7 +1478,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return output->width_of_string( "<" ) + output->width_of_string( "Printing dll call" ) + output->width_of_string( ">" );
     }
 };
@@ -1487,11 +1487,11 @@ public:
 class stackTempNode : public leafNode {
 
 private:
-    std::size_t _offset;
+    std::int32_t _offset;
     const char *_str;
 
 public:
-    stackTempNode( int byteCodeIndex, scopeNode *scope, int offset ) :
+    stackTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset ) :
             leafNode( byteCodeIndex, scope ) {
         this->_offset = offset;
         this->_str    = scope->stack_temp_string( this_byteCodeIndex(), offset );
@@ -1507,12 +1507,12 @@ public:
 class heapTempNode : public leafNode {
 
 private:
-    std::size_t _offset;
-    int _contextLevel;
+    std::int32_t _offset;
+    std::int32_t _contextLevel;
     const char *_str;
 
 public:
-    heapTempNode( int byteCodeIndex, scopeNode *scope, int offset, int context_level ) :
+    heapTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset, std::int32_t context_level ) :
             leafNode( byteCodeIndex, scope ) {
         this->_offset       = offset;
         this->_contextLevel = context_level;
@@ -1531,7 +1531,7 @@ private:
     const char *_str;
 
 public:
-    floatNode( int no, int byteCodeIndex, scopeNode *scope ) :
+    floatNode( std::int32_t no, std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
         this->_str = scope->stack_temp_string( this_byteCodeIndex(), no );
     }
@@ -1550,7 +1550,7 @@ private:
     const char *_str;
 
 public:
-    instVarNode( int byteCodeIndex, scopeNode *scope, Oop obj ) :
+    instVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
             leafNode( byteCodeIndex, scope ) {
         this->_obj = obj;
         if ( obj->is_smi() ) {
@@ -1574,7 +1574,7 @@ private:
     const char *_str;
 
 public:
-    classVarNode( int byteCodeIndex, scopeNode *scope, Oop obj ) :
+    classVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
             leafNode( byteCodeIndex, scope ) {
         this->_obj = obj;
         if ( obj->is_association() ) {
@@ -1599,7 +1599,7 @@ public:
     }
 
 
-    primitiveResultNode( int byteCodeIndex, scopeNode *scope ) :
+    primitiveResultNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
     }
 
@@ -1617,7 +1617,7 @@ private:
     const char *_str;
 
 public:
-    assocNode( int byteCodeIndex, scopeNode *scope, AssociationOop assoc ) :
+    assocNode( std::int32_t byteCodeIndex, scopeNode *scope, AssociationOop assoc ) :
             leafNode( byteCodeIndex, scope ) {
         this->_assoc = assoc;
         this->_str   = assoc->key()->as_string();
@@ -1637,7 +1637,7 @@ private:
     astNode *_receiver;
 
 public:
-    cascadeSendNode( int byteCodeIndex, scopeNode *scope, messageNode *first ) :
+    cascadeSendNode( std::int32_t byteCodeIndex, scopeNode *scope, messageNode *first ) :
             astNode( byteCodeIndex, scope ) {
         _messages = new GrowableArray<messageNode *>( 10 );
         _receiver = first->receiver();
@@ -1658,7 +1658,7 @@ public:
     bool_t print( prettyPrintStream *output ) {
         _receiver->print( output );
         output->inc_newline();
-        for ( std::size_t i = 0; i < _messages->length(); i++ ) {
+        for ( std::int32_t i = 0; i < _messages->length(); i++ ) {
             if ( i == 0 )
                 output->print( "  " );
             else
@@ -1672,7 +1672,7 @@ public:
     }
 
 
-    int width( prettyPrintStream *output ) {
+    std::int32_t width( prettyPrintStream *output ) {
         return 0;
     }
 };
@@ -1686,7 +1686,7 @@ void messageNode::set_receiver( astNode *p ) {
 }
 
 
-static astNode *get_literal_node( Oop obj, int byteCodeIndex, scopeNode *scope ) {
+static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode *scope ) {
     if ( obj == trueObject )
         return new literalNode( byteCodeIndex, scope, "true" );
     if ( obj == falseObject )
@@ -1715,7 +1715,7 @@ void prettyPrintStream::print() {
 
 
 void defaultPrettyPrintStream::indent() {
-    for ( std::size_t i = 0; i < _indentation; i++ ) {
+    for ( std::int32_t i = 0; i < _indentation; i++ ) {
         space();
         space();
     }
@@ -1723,7 +1723,7 @@ void defaultPrettyPrintStream::indent() {
 
 
 void defaultPrettyPrintStream::print( const char *str ) {
-    for ( std::size_t i = 0; str[ i ]; i++ )
+    for ( std::int32_t i = 0; str[ i ]; i++ )
         print_char( str[ i ] );
 }
 
@@ -1734,9 +1734,9 @@ void defaultPrettyPrintStream::print_char( char c ) {
 }
 
 
-int defaultPrettyPrintStream::width_of_string( const char *str ) {
-    int       w = 0;
-    for ( std::size_t i = 0; str[ i ]; i++ )
+std::int32_t defaultPrettyPrintStream::width_of_string( const char *str ) {
+    std::int32_t       w = 0;
+    for ( std::int32_t i = 0; str[ i ]; i++ )
         w += width_of_char( str[ i ] );
     return w;
 }
@@ -1774,7 +1774,7 @@ void byteArrayPrettyPrintStream::newline() {
 
 
 // Forward declaration
-astNode *generateForBlock( MethodOop method, KlassOop klass, int byteCodeIndex, int numOfArgs );
+astNode *generateForBlock( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, std::int32_t numOfArgs );
 
 astNode *generate( scopeNode *scope );
 
@@ -1813,7 +1813,7 @@ public:
     }
 
 
-    std::size_t _size() const {
+    std::int32_t _size() const {
         return _stack->length();
     }
 
@@ -1839,12 +1839,12 @@ public:
     // complicated call backs
     void pop();
 
-    void method_return( int nofArgs );
+    void method_return( std::int32_t nofArgs );
 
-    void nonlocal_return( int nofArgs );
+    void nonlocal_return( std::int32_t nofArgs );
 
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
         if ( type == AllocationType::tos_as_scope )
             _pop();
         scopeNode *methodScope = _scope->scopeFor( meth );
@@ -1855,7 +1855,7 @@ public:
     }
 
 
-    void allocate_context( int nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
         scope()->context_allocated();
     }
 
@@ -1902,22 +1902,22 @@ public:
     }
 
 
-    void push_argument( int no ) {
+    void push_argument( std::int32_t no ) {
         _push( new paramNode( byteCodeIndex(), scope(), no ) );
     }
 
 
-    void push_temporary( int no ) {
+    void push_temporary( std::int32_t no ) {
         _push( new stackTempNode( byteCodeIndex(), scope(), no ) );
     }
 
 
-    void push_temporary( int no, int context ) {
+    void push_temporary( std::int32_t no, std::int32_t context ) {
         _push( new heapTempNode( byteCodeIndex(), scope(), no, context ) );
     }
 
 
-    void push_instVar( int offset ) {
+    void push_instVar( std::int32_t offset ) {
         _push( new instVarNode( byteCodeIndex(), scope(), smiOopFromValue( offset ) ) );
     }
 
@@ -1942,17 +1942,17 @@ public:
     }
 
 
-    void store_temporary( int no ) {
+    void store_temporary( std::int32_t no ) {
         store( new stackTempNode( byteCodeIndex(), scope(), no ) );
     }
 
 
-    void store_temporary( int no, int context ) {
+    void store_temporary( std::int32_t no, std::int32_t context ) {
         store( new heapTempNode( byteCodeIndex(), scope(), no, context ) );
     }
 
 
-    void store_instVar( int offset ) {
+    void store_instVar( std::int32_t offset ) {
         store( new instVarNode( byteCodeIndex(), scope(), smiOopFromValue( offset ) ) );
     }
 
@@ -1978,7 +1978,7 @@ public:
 
 
     // call backs to ignore
-    void allocate_temporaries( int nofTemps ) {
+    void allocate_temporaries( std::int32_t nofTemps ) {
     }
 
 
@@ -1990,7 +1990,7 @@ public:
     }
 
 
-    void copy_argument_into_context( int argNo, int no ) {
+    void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
     }
 
 
@@ -1998,43 +1998,43 @@ public:
     }
 
 
-    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
     }
 
 
-    void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
     }
 
 
-    void float_floatify( Floats::Function f, int tof ) {
+    void float_floatify( Floats::Function f, std::int32_t tof ) {
         normal_send( Floats::selector_for( f ) );
         pop();
     }
 
 
-    void float_move( int tof, int from ) {
+    void float_move( std::int32_t tof, std::int32_t from ) {
         _push( new floatNode( from, byteCodeIndex(), scope() ) );
         store( new floatNode( tof, byteCodeIndex(), scope() ) );
         pop();
     }
 
 
-    void float_set( int tof, DoubleOop value ) {
+    void float_set( std::int32_t tof, DoubleOop value ) {
     }
 
 
-    void float_nullary( Floats::Function f, int tof ) {
+    void float_nullary( Floats::Function f, std::int32_t tof ) {
     }
 
 
-    void float_unary( Floats::Function f, int tof ) {
+    void float_unary( Floats::Function f, std::int32_t tof ) {
         _push( new floatNode( tof, byteCodeIndex(), scope() ) );
         normal_send( Floats::selector_for( f ) );
         pop();
     }
 
 
-    void float_binary( Floats::Function f, int tof ) {
+    void float_binary( Floats::Function f, std::int32_t tof ) {
         _push( new floatNode( tof - 1, byteCodeIndex(), scope() ) );
         _push( new floatNode( tof, byteCodeIndex(), scope() ) );
         normal_send( Floats::selector_for( f ) );
@@ -2042,13 +2042,13 @@ public:
     }
 
 
-    void float_unaryToOop( Floats::Function f, int tof ) {
+    void float_unaryToOop( Floats::Function f, std::int32_t tof ) {
         _push( new floatNode( tof, byteCodeIndex(), scope() ) );
         normal_send( Floats::selector_for( f ) );
     }
 
 
-    void float_binaryToOop( Floats::Function f, int tof ) {
+    void float_binaryToOop( Floats::Function f, std::int32_t tof ) {
         _push( new floatNode( tof, byteCodeIndex(), scope() ) );
         _push( new floatNode( tof - 1, byteCodeIndex(), scope() ) );
         normal_send( Floats::selector_for( f ) );
@@ -2067,14 +2067,14 @@ MethodPrettyPrinter::MethodPrettyPrinter( scopeNode *scope ) {
 
 
 void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
-    int nargs = selector->number_of_arguments();
+    std::int32_t nargs = selector->number_of_arguments();
     messageNode *msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
     GrowableArray<astNode *> *arguments = new GrowableArray<astNode *>( 10 );
-    for ( int                i          = 0; i < nargs; i++ )
+    for ( std::int32_t                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::size_t i = 0; i < nargs; i++ )
+    for ( std::int32_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( _pop() );
@@ -2084,14 +2084,14 @@ void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
 
 
 void MethodPrettyPrinter::special_send( astNode *receiver, SymbolOop selector, bool_t is_prim ) {
-    int nargs = selector->number_of_arguments();
+    std::int32_t nargs = selector->number_of_arguments();
     messageNode *msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
     GrowableArray<astNode *> *arguments = new GrowableArray<astNode *>( 10 );
-    for ( int                i          = 0; i < nargs; i++ )
+    for ( std::int32_t                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::size_t i = 0; i < nargs; i++ )
+    for ( std::int32_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_receiver( receiver );
@@ -2127,7 +2127,7 @@ void MethodPrettyPrinter::pop() {
 }
 
 
-void MethodPrettyPrinter::method_return( int nofArgs ) {
+void MethodPrettyPrinter::method_return( std::int32_t nofArgs ) {
     // This has to be on a statement boundary.
     if ( _size() == 1 ) {
         // Make the last statement in the method a nlr.
@@ -2145,7 +2145,7 @@ void MethodPrettyPrinter::method_return( int nofArgs ) {
 }
 
 
-void MethodPrettyPrinter::nonlocal_return( int nofArgs ) {
+void MethodPrettyPrinter::nonlocal_return( std::int32_t nofArgs ) {
     // This has to be on a statement boundary.
     astNode *expr = _pop();
     astNode *code = _top();
@@ -2161,12 +2161,12 @@ class StackChecker {
 
 public:
     MethodPrettyPrinter *_methodPrettyPrinter;
-    std::size_t _size;
+    std::int32_t _size;
     const char *_name;
-    std::size_t _offset;
+    std::int32_t _offset;
 
 
-    StackChecker( const char *name, MethodPrettyPrinter *pp, int offset = 0 ) {
+    StackChecker( const char *name, MethodPrettyPrinter *pp, std::int32_t offset = 0 ) {
         this->_methodPrettyPrinter = pp;
         this->_size                = pp->_size();
         this->_name                = name;
@@ -2235,13 +2235,13 @@ void MethodPrettyPrinter::primitive_call_node( PrimitiveCallNode *node ) {
 void MethodPrettyPrinter::dll_call_node( DLLCallNode *node ) {
     dllNode *msg = new dllNode( byteCodeIndex(), scope(), node->dll_name(), node->function_name() );
 
-    int nargs = node->nofArgs();
+    std::int32_t nargs = node->nofArgs();
 
     GrowableArray<astNode *> *arguments = new GrowableArray<astNode *>( 10 );
-    for ( int                i          = 0; i < nargs; i++ )
+    for ( std::int32_t                i          = 0; i < nargs; i++ )
         arguments->push( _pop() );
 
-    for ( std::size_t i = 0; i < nargs; i++ )
+    for ( std::int32_t i = 0; i < nargs; i++ )
         msg->add_param( arguments->at( i ) );
 
     msg->set_proxy( _pop() );
@@ -2258,24 +2258,24 @@ astNode *generate( scopeNode *scope ) {
 }
 
 
-astNode *generateForActivation( DeltaVirtualFrame *fr, int index ) {
+astNode *generateForActivation( DeltaVirtualFrame *fr, std::int32_t index ) {
     scopeNode *scope      = new scopeNode( fr, index );
     scopeNode *toGenerate = scope->homeScope();
     return generate( toGenerate );
 }
 
 
-astNode *generateForMethod( MethodOop method, KlassOop klass, int byteCodeIndex ) {
+astNode *generateForMethod( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex ) {
     return generate( new scopeNode( method, klass, byteCodeIndex ) );
 }
 
 
-astNode *generateForBlock( MethodOop method, KlassOop klass, int byteCodeIndex, int numOfArgs ) {
+astNode *generateForBlock( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, std::int32_t numOfArgs ) {
     return generate( new scopeNode( method, klass, byteCodeIndex ) );
 }
 
 
-void PrettyPrinter::print( MethodOop method, KlassOop klass, int byteCodeIndex, prettyPrintStream *output ) {
+void PrettyPrinter::print( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, prettyPrintStream *output ) {
     ResourceMark resourceMark;
     if ( not output )
         output = new defaultPrettyPrintStream;
@@ -2285,7 +2285,7 @@ void PrettyPrinter::print( MethodOop method, KlassOop klass, int byteCodeIndex, 
 }
 
 
-void PrettyPrinter::print( int index, DeltaVirtualFrame *fr, prettyPrintStream *output ) {
+void PrettyPrinter::print( std::int32_t index, DeltaVirtualFrame *fr, prettyPrintStream *output ) {
     ResourceMark resourceMark;
     if ( not output )
         output = new defaultPrettyPrintStream;
@@ -2313,27 +2313,27 @@ void PrettyPrinter::print_body( DeltaVirtualFrame *fr, prettyPrintStream *output
 
 byteArrayPrettyPrintStream::byteArrayPrettyPrintStream() :
         defaultPrettyPrintStream() {
-    _buffer = new GrowableArray<int>( 200 );
+    _buffer = new GrowableArray<std::int32_t>( 200 );
 }
 
 
 void byteArrayPrettyPrintStream::print_char( char c ) {
-    _buffer->append( (int) c );
+    _buffer->append( (std::int32_t) c );
     pos += width_of_char( c );
 }
 
 
 ByteArrayOop byteArrayPrettyPrintStream::asByteArray() {
-    int          l = _buffer->length();
+    std::int32_t          l = _buffer->length();
     ByteArrayOop a = oopFactory::new_byteArray( l );
-    for ( int    i = 0; i < l; i++ ) {
+    for ( std::int32_t    i = 0; i < l; i++ ) {
         a->byte_at_put( i + 1, (char) _buffer->at( i ) );
     }
     return a;
 }
 
 
-ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass, int byteCodeIndex ) {
+ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex ) {
     ResourceMark rm;
     byteArrayPrettyPrintStream *stream = new byteArrayPrettyPrintStream();
     PrettyPrinter::print( method, klass, byteCodeIndex, stream );
@@ -2341,7 +2341,7 @@ ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass
 }
 
 
-bool_t should_wrap( int type, astNode *arg ) {
+bool_t should_wrap( std::int32_t type, astNode *arg ) {
     if ( not arg->is_message() )
         return false;
     messageNode *msg = (messageNode *) arg;
@@ -2357,16 +2357,16 @@ bool_t should_wrap( int type, astNode *arg ) {
 }
 
 
-void PrintParams::parameter( ByteArrayOop name, int index ) {
+void PrintParams::parameter( ByteArrayOop name, std::int32_t index ) {
     _elements->push( _scope->parameter_at( index, true ) );
 }
 
 
-void PrintTemps::stack_temp( ByteArrayOop name, int offset ) {
+void PrintTemps::stack_temp( ByteArrayOop name, std::int32_t offset ) {
     _elements->push( _scope->stack_temp_at( offset ) );
 }
 
 
-void PrintTemps::heap_temp( ByteArrayOop name, int offset ) {
+void PrintTemps::heap_temp( ByteArrayOop name, std::int32_t offset ) {
     _elements->push( _scope->heap_temp_at( offset ) );
 }

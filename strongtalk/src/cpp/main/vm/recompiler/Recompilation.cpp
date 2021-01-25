@@ -329,7 +329,7 @@ void Recompilation::recompile_method( Recompilee *r ) {
         if ( recompilee and not recompilee->isZombie() )
             recompilee->makeZombie( true );
 //#ifdef HEAVY_CLEANUP
-        static std::size_t count;
+        static std::int32_t count;
         if ( count++ > 10 ) {
             count = 0;
             TraceTime           t( "*cleaning inline caches...", PrintRecompilation2 );
@@ -365,7 +365,7 @@ void Recompilation::recompile_block( Recompilee *r ) {
             return;              // pathological case (not sure it can happen)
         GrowableArray<Oop> *exprs = sender->expression_stack();
         // primitiveValue takes block as first argument
-        int nargs = recompilee->method()->nofArgs();
+        std::int32_t nargs = recompilee->method()->nofArgs();
         block = exprs->at( nargs );
     } else {
         block = receiverOf( vf );

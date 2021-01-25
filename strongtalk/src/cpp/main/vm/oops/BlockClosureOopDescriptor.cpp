@@ -16,7 +16,7 @@
 
 
 // Computes the byte offset from the beginning of an Oop
-static inline int byteOffset( int offset ) {
+static inline std::int32_t byteOffset( std::int32_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }
@@ -35,7 +35,7 @@ MethodOop BlockClosureOopDescriptor::method() const {
 }
 
 
-int BlockClosureOopDescriptor::number_of_arguments() {
+std::int32_t BlockClosureOopDescriptor::number_of_arguments() {
     return ( (BlockClosureKlass *) klass() )->number_of_arguments();
 }
 
@@ -59,7 +59,7 @@ void BlockClosureOopDescriptor::verify() {
 }
 
 
-BlockClosureOop BlockClosureOopDescriptor::create_clean_block( int nofArgs, const char *entry_point ) {
+BlockClosureOop BlockClosureOopDescriptor::create_clean_block( std::int32_t nofArgs, const char *entry_point ) {
     BlockClosureOop blk = allocateTenuredBlock( smiOopFromValue( nofArgs ) );
     blk->set_lexical_scope( (ContextOop) nilObject );
     blk->set_jumpAddr( entry_point );
@@ -75,7 +75,7 @@ void BlockClosureOopDescriptor::deoptimize() {
     if ( con == nilObject )
         return;     // do nothing if lexical scope is nil
 
-    std::size_t index;
+    std::int32_t index;
     NativeMethod                   *nm    = jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope = nm->noninlined_block_scope_at( index );
 

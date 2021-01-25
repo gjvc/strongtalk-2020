@@ -25,13 +25,13 @@ protected:
     Frame _frame;                                      // my frame
     RecompilerFrame *_caller;           //
     RecompilerFrame *_callee;            // caller / callee RecompilerFrame (or nullptr)
-    int _num;                // stack frame number (0 = most recent)
-    int _distance;           // recompilation search "distance" (measured in # of interpreted frames)
-    int _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
-    int _ncallers;           // number of callers
-    int _sends;              // sends caused by this frame
-    int _cumulSends;         // sends including sends from nested blocks
-    int _loopDepth;          // loop depth of callee
+    std::int32_t _num;                // stack frame number (0 = most recent)
+    std::int32_t _distance;           // recompilation search "distance" (measured in # of interpreted frames)
+    std::int32_t _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
+    std::int32_t _ncallers;           // number of callers
+    std::int32_t _sends;              // sends caused by this frame
+    std::int32_t _cumulSends;         // sends including sends from nested blocks
+    std::int32_t _loopDepth;          // loop depth of callee
 
     RecompilerFrame( Frame frame, const RecompilerFrame *callee );
 
@@ -54,40 +54,40 @@ public:
 
 
     bool_t is_super() const;        // invoked by super send?
-    int invocations() const {
+    std::int32_t invocations() const {
         return _invocations;
     }
 
 
-    int sends() const {
+    std::int32_t sends() const {
         return _sends;
     }
 
 
-    int cumulSends() const {
+    std::int32_t cumulSends() const {
         return _cumulSends;
     }
 
 
-    int loopDepth() const {
+    std::int32_t loopDepth() const {
         return _loopDepth;
     }
 
 
-    int num() const {
+    std::int32_t num() const {
         return _num;
     }
 
 
-    int distance() const {
+    std::int32_t distance() const {
         return _distance;
     }
 
 
-    void set_distance( int d );
+    void set_distance( std::int32_t d );
 
 
-    int nCallers() const {
+    std::int32_t nCallers() const {
         return _ncallers;
     }
 
@@ -101,7 +101,7 @@ public:
 
 
     virtual LookupKey *key() const = 0;    // lookup key or nullptr (for block invoc.)
-    virtual int cost() const = 0;    // estimated inlining cost (size)
+    virtual std::int32_t cost() const = 0;    // estimated inlining cost (size)
     virtual MethodOop top_method() const = 0;
 
     virtual DeltaVirtualFrame *top_vframe() const = 0;
@@ -129,13 +129,13 @@ public:
     RecompilerFrame *parent() const;        // rframe containing lexical scope (if any)
     void print() = 0;
 
-    static std::size_t computeSends( MethodOop m );
+    static std::int32_t computeSends( MethodOop m );
 
-    static std::size_t computeSends( NativeMethod *nm );
+    static std::int32_t computeSends( NativeMethod *nm );
 
-    static std::size_t computeCumulSends( MethodOop m );
+    static std::int32_t computeCumulSends( MethodOop m );
 
-    static std::size_t computeCumulSends( NativeMethod *nm );
+    static std::int32_t computeCumulSends( NativeMethod *nm );
 };
 
 
@@ -174,7 +174,7 @@ public:
 
     LookupKey *key() const;
 
-    int cost() const;
+    std::int32_t cost() const;
 
     void cleanupStaleInlineCaches();
 
@@ -185,7 +185,7 @@ class InterpretedRecompilerFrame : public RecompilerFrame {    // interpreter fr
 
 protected:
     MethodOop _method;              //
-    int       _byteCodeIndex;       // current byteCodeIndex
+    std::int32_t       _byteCodeIndex;       // current byteCodeIndex
     KlassOop  _receiverKlass;       //
     DeltaVirtualFrame *_deltaVirtualFrame;  // may be nullptr (for most recent frame)
     LookupKey         *_lookupKey;          // cached value of key()
@@ -215,7 +215,7 @@ public:
 
     LookupKey *key() const;
 
-    int cost() const;
+    std::int32_t cost() const;
 
     void cleanupStaleInlineCaches();
 

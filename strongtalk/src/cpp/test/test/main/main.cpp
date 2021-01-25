@@ -74,7 +74,7 @@ void initializeSmalltalkEnvironment() {
 }
 
 
-static std::size_t vmLoopLauncher( DeltaProcess *testProcess ) {
+static std::int32_t vmLoopLauncher( DeltaProcess *testProcess ) {
     vmProcess->transfer_to( testProcess );
     vmProcess->loop();
     return 0;
@@ -83,12 +83,12 @@ static std::size_t vmLoopLauncher( DeltaProcess *testProcess ) {
 
 void start_vm_process( TestDeltaProcess *testProcess ) {
 
-    int threadId;
+    std::int32_t threadId;
     vmProcess = new VMProcess();
     DeltaProcess::initialize_async_dll_event();
 
     ::testProcess = testProcess; // set it before the next line starts the system
-    vmThread      = os::create_thread( (int ( * )( void * )) &vmLoopLauncher, testProcess, &threadId );
+    vmThread      = os::create_thread( (std::int32_t ( * )( void * )) &vmLoopLauncher, testProcess, &threadId );
 }
 
 

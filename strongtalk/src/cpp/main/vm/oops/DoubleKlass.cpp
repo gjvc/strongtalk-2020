@@ -47,12 +47,12 @@ void DoubleKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 // since klass is tenured scavenge operations are empty.
-int DoubleKlass::oop_scavenge_contents( Oop obj ) {
+std::int32_t DoubleKlass::oop_scavenge_contents( Oop obj ) {
     return DoubleOopDescriptor::object_size();
 }
 
 
-int DoubleKlass::oop_scavenge_tenured_contents( Oop obj ) {
+std::int32_t DoubleKlass::oop_scavenge_tenured_contents( Oop obj ) {
     return DoubleOopDescriptor::object_size();
 }
 

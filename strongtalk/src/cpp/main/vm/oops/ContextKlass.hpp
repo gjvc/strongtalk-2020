@@ -40,9 +40,9 @@ public:
 
 
     // allocation
-    Oop allocateObjectSize( int num_of_temps, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t num_of_temps, bool_t permit_scavenge = true, bool_t tenured = false );
 
-    static ContextOop allocate_context( int num_of_temps );
+    static ContextOop allocate_context( std::int32_t num_of_temps );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -55,9 +55,9 @@ public:
 
 
     // scavenge
-    int oop_scavenge_contents( Oop obj );
+    std::int32_t oop_scavenge_contents( Oop obj );
 
-    int oop_scavenge_tenured_contents( Oop obj );
+    std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
     void oop_follow_contents( Oop obj );
 
@@ -68,12 +68,12 @@ public:
 
 
     // sizing
-    int oop_header_size() const {
+    std::int32_t oop_header_size() const {
         return ContextOopDescriptor::header_size();
     }
 
 
-    int oop_size( Oop obj ) const;
+    std::int32_t oop_size( Oop obj ) const;
 
     // printing support
     void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );

@@ -37,7 +37,7 @@ void CompilerTests::TearDown() {
 }
 
 
-NativeMethod *CompilerTests::alloc_nativeMethod( LookupKey *key, std::size_t size ) {
+NativeMethod *CompilerTests::alloc_nativeMethod( LookupKey *key, std::int32_t size ) {
     ZoneHeap     *heap = Universe::code->_methodHeap;
     NativeMethod *nm   = nullptr;
     nm = (NativeMethod *) heap->allocate( size );
@@ -67,12 +67,12 @@ void CompilerTests::initializeSmalltalkEnvironment() {
 }
 
 
-void CompilerTests::exhaustMethodHeap( LookupKey &key, int requiredSize ) {
+void CompilerTests::exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize ) {
 
     GrowableArray<NativeMethod *> *nativeMethods = new GrowableArray<NativeMethod *>;
 
-    int blockSize = Universe::code->_methodHeap->blockSize;
-    std::size_t size      = Universe::code->_methodHeap->freeBytes();
+    std::int32_t blockSize = Universe::code->_methodHeap->blockSize;
+    std::int32_t size      = Universe::code->_methodHeap->freeBytes();
 
     bool_t hasFailed = false;
     while ( !hasFailed ) {
@@ -193,7 +193,7 @@ VM_OptimizeMethod op( &key, result.method() );
 VMProcess::execute( &op );
 DeltaCallCache::clearAll();
 LookupCache::flush();
-int trapCount = op.result()->uncommon_trap_counter();
+std::int32_t trapCount = op.result()->uncommon_trap_counter();
 Delta::call( newTest
 .
 as_oop(), triggerTrap

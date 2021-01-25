@@ -18,21 +18,21 @@
 class oopFactory : AllStatic {
 
 public:
-    static ByteArrayOop new_byteArray( std::size_t size );
+    static ByteArrayOop new_byteArray( std::int32_t size );
 
     static ByteArrayOop new_byteArray( const char *name );
 
-    static ObjectArrayOop new_objArray( std::size_t size );
+    static ObjectArrayOop new_objArray( std::int32_t size );
 
     static ObjectArrayOop new_objArray( GrowableArray<Oop> *array );
 
-    static SMIOop new_smi( int value );
+    static SMIOop new_smi( std::int32_t value );
 
     static DoubleOop new_double( double value );
 
     static DoubleOop clone_double_to_oldspace( DoubleOop value );
 
-    static SymbolOop new_symbol( const char *name, int len );
+    static SymbolOop new_symbol( const char *name, std::int32_t len );
 
     static SymbolOop new_symbol( const char *name );
 
@@ -40,5 +40,5 @@ public:
 
     static AssociationOop new_association( SymbolOop key, Oop value, bool_t is_constant );
 
-    static VirtualFrameOop new_vframe( ProcessOop process, int index );
+    static VirtualFrameOop new_vframe( ProcessOop process, std::int32_t index );
 };

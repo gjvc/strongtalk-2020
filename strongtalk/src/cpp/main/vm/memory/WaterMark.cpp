@@ -15,7 +15,7 @@
 #include "vm/memory/WaterMark.hpp"
 
 
-Oop *OldWaterMark::pseudo_allocate( std::size_t size ) {
+Oop *OldWaterMark::pseudo_allocate( std::int32_t size ) {
     Oop *p = _point;
     if ( p + size < _space->end() ) {
         _point = p + size;

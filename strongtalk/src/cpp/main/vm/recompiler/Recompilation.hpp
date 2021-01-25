@@ -204,9 +204,9 @@ public:
 };
 
 
-extern int nstages;                     // # of recompilation stages
+extern std::int32_t nstages;                     // # of recompilation stages
 extern smi_t *compileCounts;           // # of compilations indexed by stage
-extern int   *recompileLimits;         // recompilation limits indexed by stage
+extern std::int32_t   *recompileLimits;         // recompilation limits indexed by stage
 
-constexpr int MaxRecompilationLevels = 4;           // max. # recompilation levels
-constexpr int MaxVersions            = 4 - 1;       // desired max. # NativeMethod recompilations
+constexpr std::int32_t MaxRecompilationLevels = 4;           // max. # recompilation levels
+constexpr std::int32_t MaxVersions            = 4 - 1;       // desired max. # NativeMethod recompilations

@@ -23,8 +23,8 @@ void setKlassVirtualTableFromMemOopKlass( Klass *k ) {
 }
 
 
-int MemOopKlass::oop_scavenge_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t MemOopKlass::oop_scavenge_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_header();
     // instance variables
@@ -33,8 +33,8 @@ int MemOopKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int MemOopKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t MemOopKlass::oop_scavenge_tenured_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header
     MemOop( obj )->scavenge_tenured_header();
     // instance variables
@@ -100,7 +100,7 @@ void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
-    int      size = non_indexable_size();
+    std::int32_t      size = non_indexable_size();
 
     Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
@@ -115,7 +115,7 @@ Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop MemOopKlass::allocateObjectSize( std::size_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop MemOopKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
     return markSymbol( vmSymbols::not_indexable() );
 }
 
@@ -171,7 +171,7 @@ Oop MemOopKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
     if ( obj == falseObject )
         return obj;
 
-    int len = MemOop( obj )->size();
+    std::int32_t len = MemOop( obj )->size();
     // Important to preserve obj (in case of scavenge).
     Oop *clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, (MemOop *) &obj );
     Oop *to    = clone;

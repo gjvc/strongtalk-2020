@@ -28,7 +28,7 @@
 // -----------------------------------------------------------------------------
 
 // Computes the byte offset from the beginning of an Oop
-inline int byteOffset( int offset ) {
+inline std::int32_t byteOffset( std::int32_t offset ) {
     st_assert( offset >= 0, "bad offset" );
     return offset * sizeof( Oop ) - MEMOOP_TAG;
 }
@@ -308,11 +308,11 @@ static void call_C( const char *dest, RelocationInformation::RelocationType relo
 // and trap in case of an error. The verifyXXXCode routines are used to
 // generate the transparent call stubs for the verifyXXX's.
 
-static std::size_t callDepth     = 0;    // to indent tracing messages
-static std::size_t numberOfCalls = 0;    // # of traced calls since start
+static std::int32_t callDepth     = 0;    // to indent tracing messages
+static std::int32_t numberOfCalls = 0;    // # of traced calls since start
 
 static void indent() {
-    const int maxIndent = 30;
+    const std::int32_t maxIndent = 30;
     if ( callDepth < maxIndent ) {
         lprintf( "%*s", callDepth, " " );
     } else {
@@ -421,7 +421,7 @@ static void verifyBlockCode( Register reg ) {
 }
 
 
-static std::size_t NumberOfReturns = 0;      // for debugging (conditional breakpoints)
+static std::int32_t NumberOfReturns = 0;      // for debugging (conditional breakpoints)
 
 extern "C" void verifyReturn( Oop obj ) {
     NumberOfReturns++;
@@ -448,7 +448,7 @@ static void verifyReturnCode( Register reg ) {
 }
 
 
-extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, int nlrScopeID, Oop nlrResult ) {
+extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
     LOG_EVENT3( "verifyNonLocalReturn(%#x, %#x, %d, %#x)", fp, nlrFrame, nlrResult );
     if ( nlrFrame <= fp )
         error( "NonLocalReturn went too far: %#x <= %#x", nlrFrame, fp );
@@ -520,7 +520,7 @@ static void verifyObjCode( Register reg ) {
 }
 
 
-extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
+extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArgs ) {
     ResourceMark resourceMark;
     numberOfCalls++;
     if ( TraceCalls ) {
@@ -529,7 +529,7 @@ extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
         lprintf( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObject( recv );
-    std::size_t i = nofArgs;
+    std::int32_t i = nofArgs;
     Oop *arg = (Oop *) ( ebp + ( nofArgs + 2 ) * oopSize );
     while ( i-- > 0 ) {
         arg--;
@@ -549,7 +549,7 @@ extern "C" void verifyArguments( Oop recv, int ebp, int nofArgs ) {
 }
 
 
-static void verifyArgumentsCode( Register recv, int nofArgs ) {
+static void verifyArgumentsCode( Register recv, std::int32_t nofArgs ) {
     // generates transparent check code which verifies that all arguments
     // are legal oops and halts if not - for debugging purposes only
     st_assert( VerifyCode or GenTraceCalls or VerifyDebugInfo, "performance bug: verifyArguments should not be called" );
@@ -563,12 +563,12 @@ static void verifyArgumentsCode( Register recv, int nofArgs ) {
 }
 
 
-static std::size_t result_counter = 0;
+static std::int32_t result_counter = 0;
 
 
-static void trace_result( int compilation, MethodOop method, Oop result ) {
+static void trace_result( std::int32_t compilation, MethodOop method, Oop result ) {
     ResourceMark resourceMark;
-    _console->print( "%6d: 0x%08x (compilation %4d, ", result_counter++, int( result ), compilation );
+    _console->print( "%6d: 0x%08x (compilation %4d, ", result_counter++, std::int32_t( result ), compilation );
     method->selector()->print_value();
     _console->print_cr( ")", compilation );
 }
@@ -708,7 +708,7 @@ static void assign( Node *node, PseudoRegister *src, PseudoRegister *dst, Regist
 }
 
 
-static Register uplevelBase( PseudoRegister *startContext, int nofLevels, Register temp ) {
+static Register uplevelBase( PseudoRegister *startContext, std::int32_t nofLevels, Register temp ) {
     // Compute uplevel base; nofLevels is number of indirections (0 = in this context)
     Register b = nofLevels > 0 ? temp : answerPRegReg( startContext, temp );
     load( startContext, b );
@@ -733,7 +733,7 @@ static const char *nativeMethodAddr() {
 static void incCounter() {
     // Generates code to increment the NativeMethod execution counter
     const char *addr = nativeMethodAddr() + NativeMethod::invocationCountOffset();
-    theMacroAssembler->incl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+    theMacroAssembler->incl( Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ) );
 }
 
 
@@ -806,16 +806,16 @@ static void checkRecompilation( Label &recompile_stub_call, Register t ) {
     if ( RecompilationPolicy::needRecompileCounter( theCompiler ) ) {
         // increment the NativeMethod execution counter and check limit
         const char *addr = nativeMethodAddr() + NativeMethod::invocationCountOffset();
-        theMacroAssembler->movl( t, Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ) );
+        theMacroAssembler->movl( t, Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ) );
         theMacroAssembler->incl( t );
         theMacroAssembler->cmpl( t, theCompiler->get_invocation_counter_limit() );
-        theMacroAssembler->movl( Address( int( addr ), RelocationInformation::RelocationType::internal_word_type ), t );
+        theMacroAssembler->movl( Address( std::int32_t( addr ), RelocationInformation::RelocationType::internal_word_type ), t );
         theMacroAssembler->jcc( Assembler::Condition::greaterEqual, recompile_stub_call );
     }
 }
 
 
-static void verify_context_chain( Register closure, int chain_length, Register temp1, Register temp2 ) {
+static void verify_context_chain( Register closure, std::int32_t chain_length, Register temp1, Register temp2 ) {
     // Generates code to verify the context chain of a block closure. If the chain
     // contains deoptimized contextOops, the block has to be deoptimized as well.
     // Method: A bit in the mark field of each context indicates whether it has
@@ -829,7 +829,7 @@ static void verify_context_chain( Register closure, int chain_length, Register t
     theMacroAssembler->movl( context, Address( closure, BlockClosureOopDescriptor::context_byte_offset() ) );
     theMacroAssembler->movl( sum, Address( context, MemOopDescriptor::mark_byte_offset() ) );
     // 'or' the mark fields of the remaining contexts in the chain to sum
-    for ( std::size_t i = chain_length - 1; i-- > 0; ) {
+    for ( std::int32_t i = chain_length - 1; i-- > 0; ) {
         theMacroAssembler->movl( context, Address( context, ContextOopDescriptor::parent_byte_offset() ) );
         theMacroAssembler->orl( sum, Address( context, MemOopDescriptor::mark_byte_offset() ) );
     }
@@ -888,7 +888,7 @@ void PrologueNode::gen() {
                 // What happens if the context chain is not anchored in a method?
                 // Probably doesn't work correctly - think about this - gri 6/26/96
                 // Turned off for now - because of problems. Should fix this.
-                int length = _scope->homeContext() + 1;            // includes context created within this scope
+                std::int32_t length = _scope->homeContext() + 1;            // includes context created within this scope
                 if ( scope()->allocatesCompiledContext() )
                     length--;    // context has not been created yet -> adjust length
                 verify_context_chain( recv, length, temp2, temp3 );
@@ -902,14 +902,14 @@ void PrologueNode::gen() {
     theMacroAssembler->align( oopSize );
     theCompiler->set_verified_entry_point_offset( theMacroAssembler->offset() );
     // build stack frame
-    int frame_size = 2;    // return address & old ebp
+    std::int32_t frame_size = 2;    // return address & old ebp
     theMacroAssembler->enter();
     // allocate float temporaries
-    int nofFloats = theCompiler->totalNofFloatTemporaries();
+    std::int32_t nofFloats = theCompiler->totalNofFloatTemporaries();
     if ( nofFloats > 0 ) {
         st_assert( SIZEOF_FLOAT == oopSize * 2, "check this code" );
         st_assert( first_float_offset == -4, "check this code" );
-        int float_section_size = nofFloats * ( SIZEOF_FLOAT / oopSize ) + 2;    // 2 additional words for filler & float alignment
+        std::int32_t float_section_size = nofFloats * ( SIZEOF_FLOAT / oopSize ) + 2;    // 2 additional words for filler & float alignment
         frame_size += 1 + float_section_size;            // magic word & floats
         theMacroAssembler->pushl( Floats::magic );                // magic word
         theMacroAssembler->subl( esp, float_section_size * oopSize );    // add one word for float alignment
@@ -917,12 +917,12 @@ void PrologueNode::gen() {
         theCompiler->set_float_section_start_offset( -2 );        // float_section after ebp & magic word
     }
     // allocate normal temporaries
-    int nofTemps  = theAllocator->nofStackTemps();
+    std::int32_t nofTemps  = theAllocator->nofStackTemps();
     if ( nofTemps > 0 ) {
         st_assert( first_temp_offset == -1, "check this code" );
         frame_size += nofTemps;
         theMacroAssembler->movl( temp2, nilObject );
-        for ( std::size_t i = 0; i < nofTemps; i++ )
+        for ( std::int32_t i = 0; i < nofTemps; i++ )
             theMacroAssembler->pushl( temp2 );
     }
     // make sure frame is big enough for deoptimization
@@ -968,7 +968,7 @@ void PrologueNode::gen() {
     // check for recompilation (do this last so stack frame is initialized properly)
     checkRecompilation( recompile_stub_call, temp2 );
 
-    theMacroAssembler->cmpl( esp, Address( int( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
+    theMacroAssembler->cmpl( esp, Address( std::int32_t( active_stack_limit() ), RelocationInformation::RelocationType::external_word_type ) );
     theMacroAssembler->jcc( Assembler::Condition::less, handle_stack_overflow );
     theMacroAssembler->bind( continue_after_stack_overflow );
 }
@@ -1072,7 +1072,7 @@ void DLLNode::gen() {
     // Compiled_DLLCache
     // This code pattern must correspond to the Compiled_DLLCache layout
     // (make sure assembler is not optimizing mov reg, 0 into xor reg, reg!)
-    theMacroAssembler->movl( edx, int( function() ) );    // part of Compiled_DLLCache
+    theMacroAssembler->movl( edx, std::int32_t( function() ) );    // part of Compiled_DLLCache
     theMacroAssembler->inline_oop( dll_name() );        // part of Compiled_DLLCache
     theMacroAssembler->inline_oop( function_name() );    // part of Compiled_DLLCache
     theMacroAssembler->call( entry, RelocationInformation::RelocationType::runtime_call_type );
@@ -1191,7 +1191,7 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
 }
 
 
-static void arithRCOp( ArithOpCode op, Register x, int y ) {
+static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
     st_assert( INTEGER_TAG == 0, "check this code" );
     switch ( op ) {
         case ArithOpCode::TestArithOp:
@@ -1231,12 +1231,12 @@ static void arithRCOp( ArithOpCode op, Register x, int y ) {
         case ArithOpCode::tShiftArithOp:
             if ( y < 0 ) {
                 // shift right
-                int shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
+                std::int32_t shift_count = ( ( -y ) >> TAG_SIZE ) % 32;
                 theMacroAssembler->sarl( x, shift_count );
                 theMacroAssembler->andl( x, -1 << TAG_SIZE );  // clear Tag bits
             } else if ( y > 0 ) {
                 // shift left
-                int shift_count = ( ( +y ) >> TAG_SIZE ) % 32;
+                std::int32_t shift_count = ( ( +y ) >> TAG_SIZE ) % 32;
                 theMacroAssembler->shll( x, shift_count );
             }
             break;
@@ -1277,7 +1277,7 @@ void TArithRRNode::gen() {
                 theMacroAssembler->test( x, MEMOOP_TAG );
                 theMacroAssembler->jcc( Assembler::Condition::notZero, next( 1 )->_label );
             }
-            arithRCOp( _op, x, int( y ) );            // y is SMIOop -> needs no relocation info
+            arithRCOp( _op, x, std::int32_t( y ) );            // y is SMIOop -> needs no relocation info
             if ( result )
                 store( x, _dest, temp2, temp3 );
         } else {
@@ -1331,7 +1331,7 @@ void ArithRRNode::gen() {
         Register x;
         bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
         if ( y->is_smi() ) {
-            arithRCOp( _op, x, int( y ) );        // y is SMIOop -> needs no relocation info
+            arithRCOp( _op, x, std::int32_t( y ) );        // y is SMIOop -> needs no relocation info
         } else {
             arithROOp( _op, x, y );
         }
@@ -1352,7 +1352,7 @@ void ArithRRNode::gen() {
 void ArithRCNode::gen() {
     BasicNode::gen();
     PseudoRegister *arg1 = _src;
-    int      y      = _oper;
+    std::int32_t      y      = _oper;
     Register x;
     bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );
@@ -1416,7 +1416,7 @@ void FloatArithRRNode::gen() {
 
 
 static Address doubleKlass_addr() {
-    return Address( (int) &doubleKlassObject, RelocationInformation::RelocationType::external_word_type );
+    return Address( (std::int32_t) &doubleKlassObject, RelocationInformation::RelocationType::external_word_type );
 }
 
 
@@ -1462,7 +1462,7 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
 
             // convert smi_t
             theMacroAssembler->bind( is_smi );
-            theMacroAssembler->sarl( reg, TAG_SIZE );            // convert smi_t into int
+            theMacroAssembler->sarl( reg, TAG_SIZE );            // convert smi_t into std::int32_t
             theMacroAssembler->movl( Address( esp, -oopSize ), reg );    // store it at end of stack
             theMacroAssembler->fild_s( Address( esp, -oopSize ) );        // load & convert into FloatValue
             theMacroAssembler->jmp( done );
@@ -1541,7 +1541,7 @@ void ContextCreateNode::gen() {
             break;
         default:
             st_assert( _pdesc == Primitives::context_allocate(), "bad context create prim" );
-            theMacroAssembler->pushl( (int) smiOopFromValue( _contextSize ) );
+            theMacroAssembler->pushl( (std::int32_t) smiOopFromValue( _contextSize ) );
             primitiveCall( scope(), _pdesc );
             theMacroAssembler->addl( esp, oopSize );    // pop argument, this is not a Pascal call - should fix this
     }
@@ -1566,7 +1566,7 @@ void ContextCreateNode::gen() {
 void ContextInitNode::gen() {
     BasicNode::gen();
     // initialize context fields
-    for ( std::size_t i = nofTemps() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = nofTemps() - 1; i >= 0; i-- ) {
         PseudoRegister *src = _initializers->at( i )->preg();
         PseudoRegister *dest;
         if ( src->isBlockPseudoRegister() and wasEliminated() ) {
@@ -1621,7 +1621,7 @@ void ReturnNode::gen() {
         verifyReturnCode( Mapping::asRegister( resultLoc ) );
     if ( TraceResults )
         call_trace_result( result_reg );
-    int no_of_args_to_pop = scope()->nofArguments();
+    std::int32_t no_of_args_to_pop = scope()->nofArguments();
     if ( scope()->method()->is_blockMethod() ) {
         // blocks are called via primitiveValue => need to pop first argument
         // of primitiveValue (= block closure) as well since return happens
@@ -1673,7 +1673,7 @@ void NonLocalReturnTestNode::gen() {
     theMacroAssembler->cmpl( Mapping::asRegister( NonLocalReturnHomeLoc ), ebp );
     theMacroAssembler->jcc( Assembler::Condition::notEqual, L );
     // arrived at the right scope within a frame?
-    int id = scope()->scopeID();
+    std::int32_t id = scope()->scopeID();
     if ( id == 0 ) {
         // use x86 test to compare with 0 (smaller code than with cmp)
         theMacroAssembler->testl( Mapping::asRegister( NonLocalReturnHomeIdLoc ), Mapping::asRegister( NonLocalReturnHomeIdLoc ) );
@@ -1745,13 +1745,13 @@ static bool_t testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2
 
 static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown, GrowableArray<KlassOop> *classes, GrowableArray<Label *> *next ) {
     // handle general case: N klasses, N+1 labels (first label = unknown case)
-    int                     smi_case = -1;            // index of smi_t case in next array (if there)
-    const int               len      = classes->length();
+    std::int32_t                     smi_case = -1;            // index of smi_t case in next array (if there)
+    const std::int32_t               len      = classes->length();
     GrowableArray<KlassOop> klasses( len );    // list of classes excluding smi_t case
     GrowableArray<Label *>  labels( len );    // list of nodes   excluding smi_t case
 
     // compute klasses & nodes list without smi_t case
-    std::size_t i = 0;
+    std::int32_t i = 0;
     for ( ; i < len; i++ ) {
         const KlassOop klass = classes->at( i );
         if ( klass == Universe::smiKlassObject() ) {
@@ -1774,8 +1774,8 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
     }
 
     bool_t    klassHasBeenLoaded = false;
-    const int nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
-    for ( std::size_t i                  = 0; i < nof_cmps; i++ ) {
+    const std::int32_t nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
+    for ( std::int32_t i                  = 0; i < nof_cmps; i++ ) {
         const KlassOop klass = klasses.at( i );
         if ( klass == Universe::trueObject()->klass() ) {
             // only one instance: compare with trueObject
@@ -1808,7 +1808,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
 
 void TypeTestNode::gen() {
     BasicNode::gen();
-    const int      len      = classes()->length();
+    const std::int32_t      len      = classes()->length();
     const Register obj      = movePRegToReg( _src, temp1 );
     const Register klassReg = temp2;
     bb_needs_jump            = false;  // we generate all jumps explicitly
@@ -1837,7 +1837,7 @@ void TypeTestNode::gen() {
 
     // handle general case
     GrowableArray<Label *> labels( len + 1 );
-    for ( int              i = 0; i <= len; i++ )
+    for ( std::int32_t              i = 0; i <= len; i++ )
         labels.append( &next( i )->_label );
     generalTypeTest( obj, klassReg, hasUnknown(), classes(), &labels );
 }
@@ -1846,7 +1846,7 @@ void TypeTestNode::gen() {
 /* old code
 void TypeTestNode::gen() {
   BasicNode::gen();
-  const int len = classes()->length();
+  const std::int32_t len = classes()->length();
   const Register obj = movePRegToReg(_src, temp1);
   const Register klassReg = temp2;
 
@@ -1917,7 +1917,7 @@ void TypeTestNode::gen() {
   GrowableArray<Node*>    nodes(len);	// list of nodes   excluding smi_t case
 
   // compute klasses & nodes list without smi_t case
-  for (std::size_t i = 0; i < len; i++) {
+  for (std::int32_t i = 0; i < len; i++) {
     const klassOop klass = classes()->at(i);
     if (klass == Universe::smiKlassObject()) {
       smi_case = next(i+1);
@@ -1939,8 +1939,8 @@ void TypeTestNode::gen() {
   }
 
   bool_t klassHasBeenLoaded = false;
-  const int nof_cmps = hasUnknown() ? klasses.length() : klasses.length() - 1;
-  for (std::size_t i = 0; i < nof_cmps; i++) {
+  const std::int32_t nof_cmps = hasUnknown() ? klasses.length() : klasses.length() - 1;
+  for (std::int32_t i = 0; i < nof_cmps; i++) {
     const klassOop klass = klasses.at(i);
     if (klass == Universe::trueObject()->klass()) {
       // only one instance: compare with trueObject
@@ -1997,7 +1997,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies == nullptr )
         return;
-    for ( std::size_t i = copies->length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = copies->length() - 1; i >= 0; i-- ) {
         Location       *l                = copies->at( i );
         InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
         PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
@@ -2021,7 +2021,7 @@ void BlockCreateNode::materialize() {
         // fix - take this out after register allocation has been fixed
         theMacroAssembler->pushl( Mapping::asRegister( closure->context()->_location ) );
     }
-    int nofArgs = closure->nofArgs();
+    std::int32_t nofArgs = closure->nofArgs();
     switch ( nofArgs ) {
         case 0:
             primitiveCall( scope(), Primitives::block_allocate0() );
@@ -2034,7 +2034,7 @@ void BlockCreateNode::materialize() {
             break;
         default:
             st_assert( _pdesc == Primitives::block_allocate(), "bad block clone prim" );
-            theMacroAssembler->pushl( (int) smiOopFromValue( nofArgs ) );
+            theMacroAssembler->pushl( (std::int32_t) smiOopFromValue( nofArgs ) );
             primitiveCall( scope(), _pdesc );
             theMacroAssembler->addl( esp, oopSize ); // pop argument, this is not a Pascal call - should fix this
     }
@@ -2073,7 +2073,7 @@ void BlockCreateNode::materialize() {
     theMacroAssembler->Store( contextReg, closureReg, BlockClosureOopDescriptor::context_byte_offset() );
     // assert(theCompiler->JumpTableID == closure->parent_id(), "NativeMethod id must be the same");
     // fix this: RELOCATION INFORMATION IS NEEDED WHEN MOVING THE JUMPTABLE (Snapshot reading etc.)
-    theMacroAssembler->movl( Address( closureReg, BlockClosureOopDescriptor::method_or_entry_byte_offset() ), int( closure->jump_table_entry() ) );
+    theMacroAssembler->movl( Address( closureReg, BlockClosureOopDescriptor::method_or_entry_byte_offset() ), std::int32_t( closure->jump_table_entry() ) );
     if ( VerifyCode )
         verifyBlockCode( closureReg );
     theMacroAssembler->store_check( closureReg, temp1 );
@@ -2144,12 +2144,12 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
     // test all values against expected classes
     Label *ok;
     const Register klassReg = temp2;
-    const int      len      = _tests->length() - 1;
-    int            last;                        // last case that generates a test
+    const std::int32_t      len      = _tests->length() - 1;
+    std::int32_t            last;                        // last case that generates a test
     for ( last = len; last >= 0 and _tests->at( last )->_testedPR->_location == unAllocated; last-- );
     if ( last < 0 )
         return;                    // no tests at all
-    for ( std::size_t i = 0; i <= last; i++ ) {
+    for ( std::int32_t i = 0; i <= last; i++ ) {
         HoistedTypeTest *t = _tests->at( i );
         if ( t->_testedPR->_location == unAllocated )
             continue;    // optimized away, or ConstPseudoRegister
@@ -2165,10 +2165,10 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
             } else if ( t->_klasses->length() == 2 and testForBoolKlasses( obj, t->_klasses->at( 0 ), t->_klasses->at( 1 ), klassReg, true, *ok, *ok, failure ) ) {
                 // ok, was a bool_t test
             } else {
-                const int              len = t->_klasses->length();
+                const std::int32_t              len = t->_klasses->length();
                 GrowableArray<Label *> labels( len + 1 );
                 labels.append( &failure );
-                for ( std::size_t i = 0; i < len; i++ )
+                for ( std::int32_t i = 0; i < len; i++ )
                     labels.append( ok );
                 generalTypeTest( obj, klassReg, true, t->_klasses, &labels );
             }
@@ -2232,7 +2232,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
         // without an index range check, we need to check it here.
         PseudoRegister      *loopArray = _upperLoad->src();
         AbstractArrayAtNode *atNode;
-        std::size_t i = _arrayAccesses->length() - 1;
+        std::int32_t i = _arrayAccesses->length() - 1;
         for ( ; i >= 0; i-- ) {
             atNode = _arrayAccesses->at( i );
             if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
@@ -2290,7 +2290,7 @@ void ArrayAtNode::gen() {
     load( _arg, index );    // index is modified -> load always into register
     Register array = movePRegToReg( _src, temp1 );    // array is read_only
     // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
-    theMacroAssembler->subl( index, int( smiOop_one ) );
+    theMacroAssembler->subl( index, std::int32_t( smiOop_one ) );
     // preload size for bounds check if necessary
     if ( _needBoundsCheck ) {
         theMacroAssembler->movl( size, Address( array, byteOffset( _sizeOffset ) ) );
@@ -2377,7 +2377,7 @@ void ArrayAtPutNode::gen() {
     Register array   = temp1;
     load( _src, array );    // array may be modified -> load always into register
     // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
-    theMacroAssembler->subl( index, int( smiOop_one ) );
+    theMacroAssembler->subl( index, std::int32_t( smiOop_one ) );
     // preload size for bounds check if necessary
     if ( _needBoundsCheck ) {
         theMacroAssembler->movl( size, Address( array, byteOffset( _sizeOffset ) ) );
@@ -2405,7 +2405,7 @@ void ArrayAtPutNode::gen() {
                 theMacroAssembler->test( element, MEMOOP_TAG );
                 jcc_error( this, Assembler::Condition::notZero, elementNotSmi );
             }
-            theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (int) byte
+            theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (std::int32_t) byte
             if ( _needs_element_range_check ) {
                 theMacroAssembler->cmpl( element, 0x100 );
                 jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );
@@ -2419,7 +2419,7 @@ void ArrayAtPutNode::gen() {
                 theMacroAssembler->test( element, MEMOOP_TAG );
                 jcc_error( this, Assembler::Condition::notZero, elementNotSmi );
             }
-            theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (int) double byte
+            theMacroAssembler->sarl( element, TAG_SIZE );    // convert element into (std::int32_t) double byte
             if ( _needs_element_range_check ) {
                 theMacroAssembler->cmpl( element, 0x10000 );
                 jcc_error( this, Assembler::Condition::aboveEqual, elementOutOfRange );

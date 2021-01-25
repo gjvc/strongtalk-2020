@@ -18,7 +18,7 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k ) {
 
 Oop AssociationKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
     KlassOop k    = as_klassOop();
-    int      size = non_indexable_size();
+    std::int32_t      size = non_indexable_size();
 
     // allocate
     Oop *result = Universe::allocate_tenured( size, permit_scavenge );
@@ -91,8 +91,8 @@ void AssociationKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream 
 }
 
 
-int AssociationKlass::oop_scavenge_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t AssociationKlass::oop_scavenge_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_header();
     MemOop( obj )->scavenge_body( MemOopDescriptor::header_size(), size );
@@ -100,8 +100,8 @@ int AssociationKlass::oop_scavenge_contents( Oop obj ) {
 }
 
 
-int AssociationKlass::oop_scavenge_tenured_contents( Oop obj ) {
-    std::size_t size = non_indexable_size();
+std::int32_t AssociationKlass::oop_scavenge_tenured_contents( Oop obj ) {
+    std::int32_t size = non_indexable_size();
     // header + instance variables
     MemOop( obj )->scavenge_tenured_header();
     MemOop( obj )->scavenge_tenured_body( MemOopDescriptor::header_size(), size );

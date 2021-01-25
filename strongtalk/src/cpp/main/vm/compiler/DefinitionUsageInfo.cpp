@@ -93,7 +93,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRe
 }
 
 
-void DefinitionUsageInfo::getLiveRange( int &firstNodeNum, int &lastNodeNum ) {
+void DefinitionUsageInfo::getLiveRange( std::int32_t &firstNodeNum, std::int32_t &lastNodeNum ) {
     // compute live range of a local register
     // IN:  first & last node ID of BasicBlock
     // OUT: first & last node ID where this PseudoRegister is live
@@ -106,8 +106,8 @@ void DefinitionUsageInfo::getLiveRange( int &firstNodeNum, int &lastNodeNum ) {
 
     // set firstNodeNum
     if ( u and d ) {
-        int unode = u->data()->_node->num();
-        int dnode = d->data()->_node->num();
+        std::int32_t unode = u->data()->_node->num();
+        std::int32_t dnode = d->data()->_node->num();
         if ( unode > dnode ) {
             firstNodeNum = dnode;    // live range starts at definition
         } else {
@@ -137,8 +137,8 @@ void DefinitionUsageInfo::getLiveRange( int &firstNodeNum, int &lastNodeNum ) {
         u = u->next();
     while ( d and d->next() )
         d = d->next();
-    int unode = u->data()->_node->num();
-    int dnode = d->data()->_node->num();
+    std::int32_t unode = u->data()->_node->num();
+    std::int32_t dnode = d->data()->_node->num();
     if ( unode > dnode ) {
         lastNodeNum = unode;    // live range ends at last use
     } else {

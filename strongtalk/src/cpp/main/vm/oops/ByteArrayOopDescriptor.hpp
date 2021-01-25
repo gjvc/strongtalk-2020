@@ -38,7 +38,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( int index ) const {
+    bool_t is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -75,18 +75,18 @@ public:
     }
 
 
-    std::uint8_t *byte_at_addr( int which ) const {
+    std::uint8_t *byte_at_addr( std::int32_t which ) const {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         return &bytes()[ which - 1 ];
     }
 
 
-    std::uint8_t byte_at( int which ) const {
+    std::uint8_t byte_at( std::int32_t which ) const {
         return *byte_at_addr( which );
     }
 
 
-    void byte_at_put( int which, std::uint8_t contents ) {
+    void byte_at_put( std::int32_t which, std::uint8_t contents ) {
         *byte_at_addr( which ) = contents;
     }
 
@@ -104,18 +104,18 @@ public:
 
     // C-string operations
 
-    char *copy_null_terminated( int &Clength );
+    char *copy_null_terminated( std::int32_t &Clength );
 
     // Copy the bytes() part. Always add trailing '\0'.
     // If byte array contains '\0', these will be escaped in the copy, i.e. "....\0...".
     // Clength is set to length of the copy (may be longer due to escaping).
     // Presence of null chars can be detected by comparing Clength to length().
 
-    bool_t copy_null_terminated( char *buffer, int max_length );
+    bool_t copy_null_terminated( char *buffer, std::int32_t max_length );
 
 
     char *copy_null_terminated() {
-        int ignore;
+        std::int32_t ignore;
         return copy_null_terminated( ignore );
     }
 
@@ -128,7 +128,7 @@ public:
     }
 
 
-    bool_t equals( const char *name, int len ) {
+    bool_t equals( const char *name, std::int32_t len ) {
         return len == length() and strncmp( chars(), name, len ) == 0;
     }
 
@@ -139,19 +139,19 @@ public:
 
 
     // three way compare
-    int compare( ByteArrayOop arg );
+    std::int32_t compare( ByteArrayOop arg );
 
-    int compare_doubleBytes( DoubleByteArrayOop arg );
+    std::int32_t compare_doubleBytes( DoubleByteArrayOop arg );
 
     // Returns the hash value for the string.
-    int hash_value();
+    std::int32_t hash_value();
 
     // resource allocated print string
     const char *as_string();
     const std::string &as_std_string();
 
     // Selector specific operations.
-    int number_of_arguments() const;
+    std::int32_t number_of_arguments() const;
 
     bool_t is_unary() const;
 

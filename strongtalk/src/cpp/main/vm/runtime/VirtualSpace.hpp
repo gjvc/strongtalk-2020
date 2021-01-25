@@ -52,31 +52,31 @@ public:
 
 
 public:
-    VirtualSpace( int reserved_size, int committed_size, bool_t low_to_high = true );
+    VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool_t low_to_high = true );
 
-    VirtualSpace( ReservedSpace reserved, int committed_size, bool_t low_to_high = true );
+    VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high = true );
 
     VirtualSpace();
 
-    void initialize( ReservedSpace reserved, int committed_size, bool_t low_to_high = true );
+    void initialize( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high = true );
 
     ~VirtualSpace();
 
     // testers
-    int committed_size() const;
+    std::int32_t committed_size() const;
 
-    int reserved_size() const;
+    std::int32_t reserved_size() const;
 
-    int uncommitted_size() const;
+    std::int32_t uncommitted_size() const;
 
     bool_t contains( void *p ) const;
 
     bool_t low_to_high() const;
 
     // operations
-    void expand( std::size_t size );
+    void expand( std::int32_t size );
 
-    void shrink( std::size_t size );
+    void shrink( std::int32_t size );
 
     void release();
 
@@ -100,11 +100,11 @@ private:
     friend class VirtualSpace;
 
 public:
-    static std::size_t committed_size();
+    static std::int32_t committed_size();
 
-    static std::size_t reserved_size();
+    static std::int32_t reserved_size();
 
-    static std::size_t uncommitted_size();
+    static std::int32_t uncommitted_size();
 
     static void print();
 

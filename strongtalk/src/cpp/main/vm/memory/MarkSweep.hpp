@@ -24,17 +24,17 @@ public:
 
     static void reverse_and_follow( Oop *p );
 
-    static void add_heap_code_offset( int offset );
+    static void add_heap_code_offset( std::int32_t offset );
 
-    static std::size_t next_heap_code_offset();
+    static std::int32_t next_heap_code_offset();
 
 private:
     // the traversal stack used during phase1.
     static GrowableArray<MemOop> *_stack;
 
     // the hcode pointer offsets saved before and and retrieved after the garbage collection.
-    static GrowableArray<std::size_t> *hcode_offsets;
-    static std::size_t                hcode_pos;
+    static GrowableArray<std::int32_t> *hcode_offsets;
+    static std::int32_t                hcode_pos;
 
     // resource area for non-aligned oops requiring relocation (eg. in nativeMethods)
     static OopRelocations *_oopRelocations;

@@ -50,13 +50,13 @@ private:
     std::int16_t _codeSize;              // size of code in bytes
     std::int16_t _numberOfTargets;       // the total number of PolymorphicInlineCache entries, 0 indicates a MonomorphicInlineCache
 
-    static std::size_t nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
+    static std::int32_t nof_entries( const char *pic_stub );    // the no. of methodOop entries for a given stub routine
 
-    std::size_t code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c );
+    std::int32_t code_for_methodOops_only( const char *entry, PolymorphicInlineCacheContents *c );
 
-    std::size_t code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c );
+    std::int32_t code_for_polymorphic_case( char *entry, PolymorphicInlineCacheContents *c );
 
-    std::size_t code_for_megamorphic_case( char *entry );
+    std::int32_t code_for_megamorphic_case( char *entry );
 
     void shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method );
 
@@ -67,17 +67,17 @@ private:
 
 
     // Creation / access of PolymorphicInlineCache instances
-    PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::size_t allocated_code_size ); // creation of PolymorphicInlineCache
+    PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::int32_t allocated_code_size ); // creation of PolymorphicInlineCache
     PolymorphicInlineCache( CompiledInlineCache *ic ); // creation of MegamorphicInlineCache
 
 public:
-    void *operator new( std::size_t size, std::size_t code_size );
+    void *operator new( std::int32_t size, std::int32_t code_size );
 
     // Deallocates this pic from the pic heap
     void operator delete( void *p );
 
 
-    void operator delete( void *p, std::size_t ) {
+    void operator delete( void *p, std::int32_t ) {
     };
 
     // Allocates and returns a new ready to execute pic.
@@ -91,7 +91,7 @@ public:
 
 
     // Returns the code size of the PolymorphicInlineCache
-    std::size_t code_size() const {
+    std::int32_t code_size() const {
         return _codeSize;
     }
 
@@ -102,7 +102,7 @@ public:
     }
 
 
-    std::size_t number_of_targets() const {
+    std::int32_t number_of_targets() const {
         return _numberOfTargets;
     }
 

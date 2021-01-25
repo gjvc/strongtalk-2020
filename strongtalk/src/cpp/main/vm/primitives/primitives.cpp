@@ -28,6 +28,28 @@
 #include "vm/primitives/PrimitiveDescriptor.hpp"
 
 
+PrimitiveDescriptor *Primitives::_new0;
+PrimitiveDescriptor *Primitives::_new1;
+PrimitiveDescriptor *Primitives::_new2;
+PrimitiveDescriptor *Primitives::_new3;
+PrimitiveDescriptor *Primitives::_new4;
+PrimitiveDescriptor *Primitives::_new5;
+PrimitiveDescriptor *Primitives::_new6;
+PrimitiveDescriptor *Primitives::_new7;
+PrimitiveDescriptor *Primitives::_new8;
+PrimitiveDescriptor *Primitives::_new9;
+PrimitiveDescriptor *Primitives::_equal;
+PrimitiveDescriptor *Primitives::_not_equal;
+PrimitiveDescriptor *Primitives::_block_allocate;
+PrimitiveDescriptor *Primitives::_block_allocate0;
+PrimitiveDescriptor *Primitives::_block_allocate1;
+PrimitiveDescriptor *Primitives::_block_allocate2;
+PrimitiveDescriptor *Primitives::_context_allocate;
+PrimitiveDescriptor *Primitives::_context_allocate0;
+PrimitiveDescriptor *Primitives::_context_allocate1;
+PrimitiveDescriptor *Primitives::_context_allocate2;
+
+
 const char *name_from_group( const PrimitiveGroup &group ) {
 
     switch ( group ) {
@@ -59,22 +81,22 @@ void Primitives::print_table() {
 
     //
     _console->print_cr( "%%primitive-table:" );
-    _console->print_cr( "%%primitive-table:                                                                P = needs Delta FP code ------------------------------." );
-    _console->print_cr( "%%primitive-table:                                                                I = internal ----------------------------------------.|" );
-    _console->print_cr( "%%primitive-table:                                                                D = can invoke Delta code --------------------------.||" );
-    _console->print_cr( "%%primitive-table:                                                                C = can be constant folded ------------------------.|||" );
-    _console->print_cr( "%%primitive-table:                                                                N = can perform non-local return -----------------.||||" );
-    _console->print_cr( "%%primitive-table:                                                                W = can walk stack (computed) -------------------.|||||" );
-    _console->print_cr( "%%primitive-table:                                                                S = can scavenge -------------------------------.||||||" );
-    _console->print_cr( "%%primitive-table:                                                                F = has failure block -------------------------.|||||||" );
-    _console->print_cr( "%%primitive-table:                                                                R = has receiver -----------------------------.||||||||" );
-    _console->print_cr( "%%primitive-table:                                                                                                              |||||||||" );
-    _console->print_cr( "%%primitive-table:  INDEX  NAME                                                                           ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
+    _console->print_cr( "%%primitive-table:                                                     P = needs Delta FP code ------------------------------." );
+    _console->print_cr( "%%primitive-table:                                                     I = internal ----------------------------------------.|" );
+    _console->print_cr( "%%primitive-table:                                                     D = can invoke Delta code --------------------------.||" );
+    _console->print_cr( "%%primitive-table:                                                     C = can be constant folded ------------------------.|||" );
+    _console->print_cr( "%%primitive-table:                                                     N = can perform non-local return -----------------.||||" );
+    _console->print_cr( "%%primitive-table:                                                     W = can walk stack (computed) -------------------.|||||" );
+    _console->print_cr( "%%primitive-table:                                                     S = can scavenge -------------------------------.||||||" );
+    _console->print_cr( "%%primitive-table:                                                     F = has failure block -------------------------.|||||||" );
+    _console->print_cr( "%%primitive-table:                                                     R = has receiver -----------------------------.||||||||" );
+    _console->print_cr( "%%primitive-table:                                                                                                   |||||||||" );
+    _console->print_cr( "%%primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
 
     //
-    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
+    for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
-        _console->print_cr( "%%primitive-table:  %.5d  %-96s  %d  %s%s%s%s%s%s%s%s%s  %s",
+        _console->print_cr( "%%primitive-table:  %.5d  %-84s  %2d  %s%s%s%s%s%s%s%s%s  %s",
                             i,
                             e->name(),
                             e->number_of_parameters(),
@@ -91,9 +113,6 @@ void Primitives::print_table() {
         );
     }
 
-    //
-    _console->print_cr( "" );
-
 }
 
 
@@ -107,7 +126,7 @@ SymbolOop PrimitiveDescriptor::selector() const {
 }
 
 
-const char *PrimitiveDescriptor::parameter_type( int index ) const {
+const char *PrimitiveDescriptor::parameter_type( std::int32_t index ) const {
     st_assert( ( 0 <= index ) and ( index < number_of_parameters() ), "illegal parameter index" );
     return _types[ 1 + index ];
 }
@@ -119,7 +138,7 @@ const char *PrimitiveDescriptor::return_type() const {
 
 
 Expression *PrimitiveDescriptor::convertToKlass( const char *type, PseudoRegister *p, Node *n ) const {
-    
+
     if ( 0 == strcmp( type, "SmallInteger" ) )
         return new KlassExpression( Universe::smiKlassObject(), p, n );
     if ( 0 == strcmp( type, "Double" ) )
@@ -143,7 +162,7 @@ Expression *PrimitiveDescriptor::convertToKlass( const char *type, PseudoRegiste
 }
 
 
-Expression *PrimitiveDescriptor::parameter_klass( int index, PseudoRegister *p, Node *n ) const {
+Expression *PrimitiveDescriptor::parameter_klass( std::int32_t index, PseudoRegister *p, Node *n ) const {
     return convertToKlass( parameter_type( index ), p, n );
 }
 
@@ -160,7 +179,7 @@ void PrimitiveDescriptor::error( const char *msg ) {
 
 
 void PrimitiveDescriptor::verify() {
-    bool_t ok = true;
+
     if ( can_invoke_delta() ) {
         if ( not can_scavenge() )
             error( "canInvokeDelta implies canScavenge" );
@@ -182,58 +201,17 @@ void PrimitiveDescriptor::verify() {
 }
 
 
-int PrimitiveDescriptor::compare( const char *str, int len ) {
-    int src_len = strlen( name() );
-    int sign    = strncmp( name(), str, min( src_len, len ) );
-    // if (sign not_eq 0 or src_len == len) return sign;
+std::int32_t PrimitiveDescriptor::compare( const char *str, std::int32_t len ) const {
+
+    std::int32_t  src_len = strlen( name() );
+    std::int32_t sign    = strncmp( name(), str, min( src_len, len ) );
+
+//    if ( sign not_eq 0 or src_len == len ) return sign;
     if ( sign not_eq 0 )
         return sign < 0 ? -1 : 1;
     if ( src_len == len )
         return 0;
     return src_len < len ? -1 : 1;
-}
-
-
-PrimitiveDescriptor *Primitives::lookup( const char *selector, int len ) {
-    int first = 0;
-    int last  = size_of_primitive_table;
-
-    PrimitiveDescriptor *element;
-    do {
-        int middle = first + ( last - first ) / 2;
-        element = primitive_table[ middle ];
-        int sign = element->compare( selector, len );
-        if ( sign == -1 )
-            first = middle + 1;
-        else if ( sign == 1 )
-            last = middle - 1;
-        else
-            return element;
-    } while ( first < last );
-
-    // This should not be an assertion as it is possible to compile Aa reference to a non-existent primitive.
-    // For an example, see ProcessPrimitiveLookupError>>provoke()
-    // In such a case the lookup should fail and signal a PrimitiveLookupError - slr 24/09/2008
-    // st_assert(first == last, "check for one element");
-
-    element = primitive_table[ first ];
-
-    return element->compare( selector, len ) == 0 ? element : nullptr;
-}
-
-
-PrimitiveDescriptor *Primitives::lookup( const char *selector ) {
-    return lookup( selector, strlen( selector ) );
-}
-
-
-PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
-    for ( std::size_t i = 0; i < size_of_primitive_table; i++ ) {
-        PrimitiveDescriptor *e = primitive_table[ i ];
-        if ( e->fn() == fn )
-            return e;
-    }
-    return nullptr;
 }
 
 
@@ -286,7 +264,7 @@ void primitives_init() {
     Primitives::initialize();
     PrimitiveDescriptor *prev = nullptr;
 
-    for ( std::size_t index = 0; index < size_of_primitive_table; index++ ) {
+    for ( std::int32_t index = 0; index < size_of_primitive_table; index++ ) {
         PrimitiveDescriptor *e = primitive_table[ index ];
         e->verify();
         if ( prev ) {
@@ -319,7 +297,7 @@ void Primitives::clear_counters() {
 }
 
 
-static void print_calls( const char *name, int inc, int *total ) {
+static void print_calls( const char *name, std::int32_t inc, std::int32_t *total ) {
     if ( inc > 0 ) {
         lprintf( " %s:\t%6d\n", name, inc );
         *total = *total + inc;
@@ -328,7 +306,7 @@ static void print_calls( const char *name, int inc, int *total ) {
 
 
 void Primitives::print_counters() {
-    int total = 0;
+    std::int32_t total = 0;
     lprintf( "Primitive call counters:\n" );
     print_calls( "Behavior", behaviorPrimitives::_numberOfCalls, &total );
     print_calls( "byteArray", byteArrayPrimitives::number_of_calls, &total );
@@ -413,8 +391,8 @@ SymbolOop InterpretedPrimitiveCache::name() const {
 }
 
 
-int InterpretedPrimitiveCache::number_of_parameters() const {
-    int result = name()->number_of_arguments() + ( has_receiver() ? 1 : 0 ) - ( has_failure_code() ? 1 : 0 );
+std::int32_t InterpretedPrimitiveCache::number_of_parameters() const {
+    std::int32_t result = name()->number_of_arguments() + ( has_receiver() ? 1 : 0 ) - ( has_failure_code() ? 1 : 0 );
     st_assert( pdesc() == nullptr or pdesc()->number_of_parameters() == result, "checking result" );
     return result;
 }
@@ -441,33 +419,53 @@ bool_t InterpretedPrimitiveCache::has_failure_code() const {
 }
 
 
-PrimitiveDescriptor *Primitives::_new0;
-PrimitiveDescriptor *Primitives::_new1;
-PrimitiveDescriptor *Primitives::_new2;
-PrimitiveDescriptor *Primitives::_new3;
-PrimitiveDescriptor *Primitives::_new4;
-PrimitiveDescriptor *Primitives::_new5;
-PrimitiveDescriptor *Primitives::_new6;
-PrimitiveDescriptor *Primitives::_new7;
-PrimitiveDescriptor *Primitives::_new8;
-PrimitiveDescriptor *Primitives::_new9;
-PrimitiveDescriptor *Primitives::_equal;
-PrimitiveDescriptor *Primitives::_not_equal;
-PrimitiveDescriptor *Primitives::_block_allocate;
-PrimitiveDescriptor *Primitives::_block_allocate0;
-PrimitiveDescriptor *Primitives::_block_allocate1;
-PrimitiveDescriptor *Primitives::_block_allocate2;
-PrimitiveDescriptor *Primitives::_context_allocate;
-PrimitiveDescriptor *Primitives::_context_allocate0;
-PrimitiveDescriptor *Primitives::_context_allocate1;
-PrimitiveDescriptor *Primitives::_context_allocate2;
+PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
+    for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
+        PrimitiveDescriptor *e = primitive_table[ i ];
+        if ( e->fn() == fn )
+            return e;
+    }
+    return nullptr;
+}
+
+
+PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t selector_length ) {
+    std::int32_t first = 0;
+    std::int32_t last  = size_of_primitive_table;
+    _console->print_cr( "%%primitives-lookup: [%s] [%d]", selector, selector_length  );
+
+    PrimitiveDescriptor *element;
+    do {
+        std::int32_t middle = first + ( last - first ) / 2;
+        element = primitive_table[ middle ];
+
+        std::int32_t sign = element->compare( selector, selector_length );
+        if ( sign == -1 ) {
+            first = middle + 1;
+        } else if ( sign == 1 ) {
+            last = middle - 1;
+        } else {
+            return element;
+        }
+    } while ( first < last );
+
+    // This should not be an assertion as it is possible to compile Aa reference to a non-existent primitive.
+    // For an example, see ProcessPrimitiveLookupError>>provoke()
+    // In such a case the lookup should fail and signal a PrimitiveLookupError - slr 24/09/2008
+    // st_assert(first == last, "check for one element");
+
+    element = primitive_table[ first ];
+
+    return element->compare( selector, selector_length ) == 0 ? element : nullptr;
+}
 
 
 PrimitiveDescriptor *Primitives::verified_lookup( const char *selector ) {
-    PrimitiveDescriptor *result = lookup( selector );
+
+    std::int32_t         selector_length = strlen( selector );
+    PrimitiveDescriptor *result         = lookup( selector, selector_length );
     if ( result == nullptr ) {
-        _console->print_cr( "Verified primitive lookup failed" );
-        _console->print_cr( " selector = %s", selector );
+        _console->print_cr( "%%primitives-lookup: Verified primitive lookup failed: selector = [%s]", selector );
         st_fatal( "aborted" );
     }
     return result;
@@ -478,6 +476,7 @@ void Primitives::initialize() {
 
     _new0 = verified_lookup( "primitiveNew0:ifFail:" );
     _new1 = verified_lookup( "primitiveNew1:ifFail:" );
+
     _new2 = verified_lookup( "primitiveNew2:ifFail:" );
     _new3 = verified_lookup( "primitiveNew3:ifFail:" );
     _new4 = verified_lookup( "primitiveNew4:ifFail:" );
@@ -504,7 +503,7 @@ void Primitives::initialize() {
 
 
 void Primitives::patch( const char *name, const char *entry_point ) {
-    _console->print_cr( "%%primitives-init:  name [%s], entry_point [0x%0x]", name, entry_point );
+    _console->print_cr( "%%primitives-patch:  name [%s], entry_point [0x%0x]", name, entry_point );
     st_assert( entry_point, "just checking" );
     PrimitiveDescriptor *pdesc = verified_lookup( name );
     pdesc->_fn = (primitiveFunctionType) entry_point;

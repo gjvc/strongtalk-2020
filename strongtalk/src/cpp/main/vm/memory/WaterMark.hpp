@@ -24,7 +24,7 @@ public:
     OldSpace *_space;
     Oop      *_point;
 
-    Oop *pseudo_allocate( std::size_t size );
+    Oop *pseudo_allocate( std::int32_t size );
 };
 
 

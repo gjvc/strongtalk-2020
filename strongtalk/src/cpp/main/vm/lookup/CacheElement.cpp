@@ -19,8 +19,8 @@ CacheElement::CacheElement() :
 
 void CacheElement::verify() {
     st_assert( sizeof( CacheElement ) == 16, "checking structure layout" );
-    st_assert( (int) &_lookupKey - (int) this == 0, "checking structure layout" );
-    st_assert( (int) &_lookupResult - (int) this == 8, "checking structure layout" );
+    st_assert( (std::int32_t) &_lookupKey - (std::int32_t) this == 0, "checking structure layout" );
+    st_assert( (std::int32_t) &_lookupResult - (std::int32_t) this == 8, "checking structure layout" );
 
     if ( _lookupKey.klass() or _lookupKey.selector_or_method() ) {
         if ( _lookupResult.is_empty() ) {

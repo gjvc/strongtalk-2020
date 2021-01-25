@@ -42,7 +42,7 @@ public:
 
     void dll_call_node( DLLCallNode *node );
 
-    void allocate_temporaries( int nofTemps );
+    void allocate_temporaries( std::int32_t nofTemps );
 
     void push_self();
 
@@ -50,13 +50,13 @@ public:
 
     void push_literal( Oop obj );
 
-    void push_argument( int no );
+    void push_argument( std::int32_t no );
 
-    void push_temporary( int no );
+    void push_temporary( std::int32_t no );
 
-    void push_temporary( int no, int context );
+    void push_temporary( std::int32_t no, std::int32_t context );
 
-    void push_instVar( int offset );
+    void push_instVar( std::int32_t offset );
 
     void push_instVar_name( SymbolOop name );
 
@@ -66,11 +66,11 @@ public:
 
     void push_global( AssociationOop obj );
 
-    void store_temporary( int no );
+    void store_temporary( std::int32_t no );
 
-    void store_temporary( int no, int context );
+    void store_temporary( std::int32_t no, std::int32_t context );
 
-    void store_instVar( int offset );
+    void store_instVar( std::int32_t offset );
 
     void store_instVar_name( SymbolOop name );
 
@@ -92,39 +92,39 @@ public:
 
     void double_not_equal();
 
-    void method_return( int nofArgs );
+    void method_return( std::int32_t nofArgs );
 
-    void nonlocal_return( int nofArgs );
+    void nonlocal_return( std::int32_t nofArgs );
 
-    void allocate_closure( AllocationType type, int nofArgs, MethodOop meth );
+    void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth );
 
-    void allocate_context( int nofTemps, bool_t forMethod );
+    void allocate_context( std::int32_t nofTemps, bool_t forMethod );
 
     void set_self_via_context();
 
     void copy_self_into_context();
 
-    void copy_argument_into_context( int argNo, int no );
+    void copy_argument_into_context( std::int32_t argNo, std::int32_t no );
 
     void zap_scope();
 
-    void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start );
+    void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start );
 
-    void float_allocate( int nofFloatTemps, int nofFloatExprs );
+    void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs );
 
-    void float_floatify( Floats::Function f, int tof );
+    void float_floatify( Floats::Function f, std::int32_t tof );
 
-    void float_move( int tof, int from );
+    void float_move( std::int32_t tof, std::int32_t from );
 
-    void float_set( int tof, DoubleOop value );
+    void float_set( std::int32_t tof, DoubleOop value );
 
-    void float_nullary( Floats::Function f, int tof );
+    void float_nullary( Floats::Function f, std::int32_t tof );
 
-    void float_unary( Floats::Function f, int tof );
+    void float_unary( Floats::Function f, std::int32_t tof );
 
-    void float_binary( Floats::Function f, int tof );
+    void float_binary( Floats::Function f, std::int32_t tof );
 
-    void float_unaryToOop( Floats::Function f, int tof );
+    void float_unaryToOop( Floats::Function f, std::int32_t tof );
 
-    void float_binaryToOop( Floats::Function f, int tof );
+    void float_binaryToOop( Floats::Function f, std::int32_t tof );
 };

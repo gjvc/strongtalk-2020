@@ -28,15 +28,15 @@ class MethodInterval : public ResourceObject {
 protected:
     MethodInterval *_parent;            // enclosing interval (or nullptr if top-level)
     MethodOop _method;
-    int       _begin_byteCodeIndex;
-    int       _end_byteCodeIndex;
+    std::int32_t       _begin_byteCodeIndex;
+    std::int32_t       _end_byteCodeIndex;
     bool_t    _in_primitive_failure;            // currently in primitive failure block?
     IntervalInfo *_info;
 
-    void initialize( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex, bool_t failBlock );
+    void initialize( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool_t failBlock );
 
 
-    void set_end_byteCodeIndex( int byteCodeIndex ) {
+    void set_end_byteCodeIndex( std::int32_t byteCodeIndex ) {
         _end_byteCodeIndex = byteCodeIndex;
     }
 
@@ -44,13 +44,13 @@ protected:
     // Constructors
     MethodInterval( MethodOop method, MethodInterval *parent );
 
-    MethodInterval( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex = -1, bool_t failureBlock = false );
+    MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false );
 
     friend class MethodIntervalFactory;
 
 public:
     // Test operations
-    bool_t includes( int byteCodeIndex ) const {
+    bool_t includes( std::int32_t byteCodeIndex ) const {
         return begin_byteCodeIndex() <= byteCodeIndex and byteCodeIndex < end_byteCodeIndex();
     }
 
@@ -61,12 +61,12 @@ public:
     }
 
 
-    int begin_byteCodeIndex() const {
+    std::int32_t begin_byteCodeIndex() const {
         return _begin_byteCodeIndex;
     }
 
 
-    int end_byteCodeIndex() const {
+    std::int32_t end_byteCodeIndex() const {
         return _end_byteCodeIndex;
     }
 
@@ -114,7 +114,7 @@ public:
 
 class InlineSendNode : public MethodInterval {
 protected:
-    InlineSendNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex = -1 );
+    InlineSendNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1 );
 
 public:
     // Accessor operation
@@ -126,7 +126,7 @@ class CondNode : public InlineSendNode {
 protected:
     MethodInterval *_expr_code;
 
-    CondNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset );
+    CondNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
 public:
     // Inlined block
@@ -143,7 +143,7 @@ public:
 
 
 class AndNode : public CondNode {
-    AndNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset );
+    AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
     friend class MethodIntervalFactory;
 
@@ -165,7 +165,7 @@ public:
 
 class OrNode : public CondNode {
 protected:
-    OrNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset );
+    OrNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
     friend class MethodIntervalFactory;
 
@@ -191,7 +191,7 @@ protected:
     MethodInterval *_expr_code;
     MethodInterval *_body_code;
 
-    WhileNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset );
+    WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset );
 
     friend class MethodIntervalFactory;
 
@@ -231,7 +231,7 @@ protected:
     MethodInterval *_then_code;
     MethodInterval *_else_code;
 
-    IfNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure );
+    IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure );
 
     friend class MethodIntervalFactory;
 
@@ -278,9 +278,9 @@ protected:
     MethodInterval *_failure_code;
 
     // Constructors
-    ExternalCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex );
+    ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex );
 
-    ExternalCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int end_offset );
+    ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t end_offset );
 
 public:
     // Optional inlined block
@@ -297,9 +297,9 @@ protected:
     SymbolOop _name;
 
     // Constructors
-    PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
+    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
 
-    PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, int end_offset );
+    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
 
     friend class MethodIntervalFactory;
 
@@ -320,7 +320,7 @@ public:
     }
 
 
-    int number_of_parameters() const;
+    std::int32_t number_of_parameters() const;
 };
 
 
@@ -330,14 +330,14 @@ class DLLCallNode : public ExternalCallNode {
 protected:
     SymbolOop _dll_name;
     SymbolOop _function_name;
-    int       _nofArgs;
+    std::int32_t       _nofArgs;
     dll_func_ptr_t  _function;
     bool_t    _async;
 
     void initialize( Interpreted_DLLCache *cache );
 
     // Constructors
-    DLLCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache *cache );
+    DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache );
 
     friend class MethodIntervalFactory;
 
@@ -353,7 +353,7 @@ public:
     }
 
 
-    int nofArgs() const {
+    std::int32_t nofArgs() const {
         return _nofArgs;
     }
 
@@ -386,26 +386,26 @@ class MethodIterator;
 class MethodClosure : ValueObject {
 private:
     MethodOop _method;                  //
-    int       _byteCodeIndex;           //
-    int       _next_byteCodeIndex;      //
+    std::int32_t       _byteCodeIndex;           //
+    std::int32_t       _next_byteCodeIndex;      //
     bool_t    _aborting;                //
     bool_t    _in_primitive_failure;    // currently in primitive failure block?
-    int       _float0_index;            //
+    std::int32_t       _float0_index;            //
 
     void set_method( MethodOop method );
 
 
-    void set_byteCodeIndex( int byteCodeIndex ) {
+    void set_byteCodeIndex( std::int32_t byteCodeIndex ) {
         _byteCodeIndex = byteCodeIndex;
     }
 
 
-    void set_next_byteCodeIndex( int next_byteCodeIndex ) {
+    void set_next_byteCodeIndex( std::int32_t next_byteCodeIndex ) {
         _next_byteCodeIndex = next_byteCodeIndex;
     }
 
 
-    int float_at( int index );            // converts the float byte code index into a float number
+    std::int32_t float_at( std::int32_t index );            // converts the float byte code index into a float number
 
 protected:
     MethodClosure();
@@ -425,12 +425,12 @@ protected:
     friend class MethodIterator;
 
 public:
-    int byteCodeIndex() const {
+    std::int32_t byteCodeIndex() const {
         return _byteCodeIndex;
     }
 
 
-    int next_byteCodeIndex() const {
+    std::int32_t next_byteCodeIndex() const {
         return _next_byteCodeIndex;
     }
 
@@ -467,7 +467,7 @@ public:
 public:
     // Specifies the number of additional temporaries that are allocated on the stack
     // and initialized. Note: One temporary is always there and initialized (temp0).
-    virtual void allocate_temporaries( int nofTemps ) = 0;
+    virtual void allocate_temporaries( std::int32_t nofTemps ) = 0;
 
     // Push a value on the stack.
     virtual void push_self() = 0;
@@ -482,13 +482,13 @@ public:
     // current frame (i.e., in temp0). Context i+1 is the context reached by
     // dereferencing the home field of context i. Globals are held in the value
     // field of an association (obj).
-    virtual void push_argument( int no ) = 0;
+    virtual void push_argument( std::int32_t no ) = 0;
 
-    virtual void push_temporary( int no ) = 0;
+    virtual void push_temporary( std::int32_t no ) = 0;
 
-    virtual void push_temporary( int no, int context ) = 0;
+    virtual void push_temporary( std::int32_t no, std::int32_t context ) = 0;
 
-    virtual void push_instVar( int offset ) = 0;
+    virtual void push_instVar( std::int32_t offset ) = 0;
 
     virtual void push_instVar_name( SymbolOop name ) = 0;
 
@@ -498,11 +498,11 @@ public:
 
     virtual void push_global( AssociationOop obj ) = 0;
 
-    virtual void store_temporary( int no ) = 0;
+    virtual void store_temporary( std::int32_t no ) = 0;
 
-    virtual void store_temporary( int no, int context ) = 0;
+    virtual void store_temporary( std::int32_t no, std::int32_t context ) = 0;
 
-    virtual void store_instVar( int offset ) = 0;
+    virtual void store_instVar( std::int32_t offset ) = 0;
 
     virtual void store_instVar_name( SymbolOop name ) = 0;
 
@@ -528,45 +528,45 @@ public:
     virtual void double_not_equal() = 0;
 
     // nofArgs is the number of arguments to be popped before returning (callee popped arguments).
-    virtual void method_return( int nofArgs ) = 0;
+    virtual void method_return( std::int32_t nofArgs ) = 0;
 
-    virtual void nonlocal_return( int nofArgs ) = 0;
+    virtual void nonlocal_return( std::int32_t nofArgs ) = 0;
 
-    virtual void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) = 0;
+    virtual void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) = 0;
 
-    virtual void allocate_context( int nofTemps, bool_t forMethod ) = 0;
+    virtual void allocate_context( std::int32_t nofTemps, bool_t forMethod ) = 0;
 
     // fp->recv = fp->context->bottom()->recv
     virtual void set_self_via_context() = 0;
 
     virtual void copy_self_into_context() = 0;
 
-    virtual void copy_argument_into_context( int argNo, int no ) = 0;
+    virtual void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) = 0;
 
     // fp->context->home
     virtual void zap_scope() = 0;
 
     // indicates the method is a pure primitive call
-    virtual void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) = 0;
+    virtual void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) = 0;
 
     // floating-point operations
-    virtual void float_allocate( int nofFloatTemps, int nofFloatExprs ) = 0;
+    virtual void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) = 0;
 
-    virtual void float_floatify( Floats::Function f, int fno ) = 0;
+    virtual void float_floatify( Floats::Function f, std::int32_t fno ) = 0;
 
-    virtual void float_move( int fno, int from ) = 0;
+    virtual void float_move( std::int32_t fno, std::int32_t from ) = 0;
 
-    virtual void float_set( int fno, DoubleOop value ) = 0;
+    virtual void float_set( std::int32_t fno, DoubleOop value ) = 0;
 
-    virtual void float_nullary( Floats::Function f, int fno ) = 0;
+    virtual void float_nullary( Floats::Function f, std::int32_t fno ) = 0;
 
-    virtual void float_unary( Floats::Function f, int fno ) = 0;
+    virtual void float_unary( Floats::Function f, std::int32_t fno ) = 0;
 
-    virtual void float_binary( Floats::Function f, int fno ) = 0;
+    virtual void float_binary( Floats::Function f, std::int32_t fno ) = 0;
 
-    virtual void float_unaryToOop( Floats::Function f, int fno ) = 0;
+    virtual void float_unaryToOop( Floats::Function f, std::int32_t fno ) = 0;
 
-    virtual void float_binaryToOop( Floats::Function f, int fno ) = 0;
+    virtual void float_binaryToOop( Floats::Function f, std::int32_t fno ) = 0;
 };
 
 class CustomizedMethodClosure : public MethodClosure {
@@ -613,7 +613,7 @@ public:
 
 
 public:
-    virtual void allocate_temporaries( int nofTemps ) {
+    virtual void allocate_temporaries( std::int32_t nofTemps ) {
         instruction();
     }
 
@@ -633,22 +633,22 @@ public:
     }
 
 
-    virtual void push_argument( int no ) {
+    virtual void push_argument( std::int32_t no ) {
         instruction();
     }
 
 
-    virtual void push_temporary( int no ) {
+    virtual void push_temporary( std::int32_t no ) {
         instruction();
     }
 
 
-    virtual void push_temporary( int no, int context ) {
+    virtual void push_temporary( std::int32_t no, std::int32_t context ) {
         instruction();
     }
 
 
-    virtual void push_instVar( int offset ) {
+    virtual void push_instVar( std::int32_t offset ) {
         instruction();
     }
 
@@ -658,17 +658,17 @@ public:
     }
 
 
-    virtual void store_temporary( int no ) {
+    virtual void store_temporary( std::int32_t no ) {
         instruction();
     }
 
 
-    virtual void store_temporary( int no, int context ) {
+    virtual void store_temporary( std::int32_t no, std::int32_t context ) {
         instruction();
     }
 
 
-    virtual void store_instVar( int offset ) {
+    virtual void store_instVar( std::int32_t offset ) {
         instruction();
     }
 
@@ -708,22 +708,22 @@ public:
     }
 
 
-    virtual void method_return( int nofArgs ) {
+    virtual void method_return( std::int32_t nofArgs ) {
         instruction();
     }
 
 
-    virtual void nonlocal_return( int nofArgs ) {
+    virtual void nonlocal_return( std::int32_t nofArgs ) {
         instruction();
     }
 
 
-    virtual void allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+    virtual void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
         instruction();
     }
 
 
-    virtual void allocate_context( int nofTemps, bool_t forMethod ) {
+    virtual void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
         instruction();
     }
 
@@ -738,7 +738,7 @@ public:
     }
 
 
-    virtual void copy_argument_into_context( int argNo, int no ) {
+    virtual void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
         instruction();
     }
 
@@ -748,52 +748,52 @@ public:
     }
 
 
-    virtual void predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+    virtual void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
         instruction();
     }
 
 
-    virtual void float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+    virtual void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
         instruction();
     }
 
 
-    virtual void float_floatify( Floats::Function f, int fno ) {
+    virtual void float_floatify( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 
 
-    virtual void float_move( int fno, int from ) {
+    virtual void float_move( std::int32_t fno, std::int32_t from ) {
         instruction();
     }
 
 
-    virtual void float_set( int fno, DoubleOop value ) {
+    virtual void float_set( std::int32_t fno, DoubleOop value ) {
         instruction();
     }
 
 
-    virtual void float_nullary( Floats::Function f, int fno ) {
+    virtual void float_nullary( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 
 
-    virtual void float_unary( Floats::Function f, int fno ) {
+    virtual void float_unary( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 
 
-    virtual void float_binary( Floats::Function f, int fno ) {
+    virtual void float_binary( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 
 
-    virtual void float_unaryToOop( Floats::Function f, int fno ) {
+    virtual void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 
 
-    virtual void float_binaryToOop( Floats::Function f, int fno ) {
+    virtual void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
         instruction();
     }
 };
@@ -804,21 +804,21 @@ class AbstractMethodIntervalFactory : StackAllocatedObject {
 public:
     virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent ) = 0;
 
-    virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex = -1, bool_t failureBlock = false ) = 0;
+    virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false ) = 0;
 
-    virtual AndNode *new_AndNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) = 0;
+    virtual AndNode *new_AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) = 0;
 
-    virtual OrNode *new_OrNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset ) = 0;
+    virtual OrNode *new_OrNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) = 0;
 
-    virtual WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset ) = 0;
+    virtual WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset ) = 0;
 
-    virtual IfNode *new_IfNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure ) = 0;
+    virtual IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure ) = 0;
 
-    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) = 0;
+    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) = 0;
 
-    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, int end_offset ) = 0;
+    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) = 0;
 
-    virtual DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache *cache ) = 0;
+    virtual DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache ) = 0;
 };
 
 
@@ -827,21 +827,21 @@ class MethodIntervalFactory : public AbstractMethodIntervalFactory {
 public:
     MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent );
 
-    MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int end_byteCodeIndex = -1, bool_t failureBlock = false );
+    MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false );
 
-    AndNode *new_AndNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset );
+    AndNode *new_AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
-    OrNode *new_OrNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int dest_offset );
+    OrNode *new_OrNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
-    WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, int cond_offset, int end_offset );
+    WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset );
 
-    IfNode *new_IfNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t cond, int else_offset, std::uint8_t structure );
+    IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure );
 
-    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
+    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
 
-    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, int end_offset );
+    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
 
-    DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, int begin_byteCodeIndex, int next_byteCodeIndex, Interpreted_DLLCache *cache );
+    DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache );
 };
 
 

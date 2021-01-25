@@ -39,13 +39,13 @@ enum class InlineFnType {
 
 // parameters of cost function that computes Space cost of inlining a particular method
 struct CostParam {
-    int localCost;          // local variable access / assign
-    int cheapSendCost;      // "cheap" send (see isCheapMessage)
-    int sendCost;           // arbitrary send
-    int blockArgPenalty;    // penalty if non-cheap send has block arg(s)
-    int primCallCost;       // primitive call
+    std::int32_t localCost;          // local variable access / assign
+    std::int32_t cheapSendCost;      // "cheap" send (see isCheapMessage)
+    std::int32_t sendCost;           // arbitrary send
+    std::int32_t blockArgPenalty;    // penalty if non-cheap send has block arg(s)
+    std::int32_t primCallCost;       // primitive call
 
-    CostParam( int l, int c, int s, int b, int p ) {
+    CostParam( std::int32_t l, std::int32_t c, std::int32_t s, std::int32_t b, std::int32_t p ) {
         localCost       = l;
         cheapSendCost   = c;
         sendCost        = s;

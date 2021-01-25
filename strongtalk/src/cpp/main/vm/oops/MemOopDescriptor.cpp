@@ -14,22 +14,22 @@
 
 
 MemOop as_memOop( void *p ) {
-    st_assert( ( int( p ) & TAG_MASK ) == 0, "not an aligned C pointer" );
-    return MemOop( int( p ) + MEMOOP_TAG );
+    st_assert( ( std::int32_t( p ) & TAG_MASK ) == 0, "not an aligned C pointer" );
+    return MemOop( std::int32_t( p ) + MEMOOP_TAG );
 }
 
 
-int MemOopDescriptor::scavenge_contents() {
+std::int32_t MemOopDescriptor::scavenge_contents() {
     return blueprint()->oop_scavenge_contents( this );
 }
 
 
-void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure *blk, int begin, int end ) {
+void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure *blk, std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
     while ( p < q ) {
-        int       offset = p - (Oop *) addr();
+        std::int32_t       offset = p - (Oop *) addr();
         // Compute the instance variable name at the current offset
         SymbolOop name   = blueprint()->inst_var_name_at( offset );
         const char *n = "instVar?";
@@ -64,7 +64,7 @@ void MemOopDescriptor::follow_contents() {
 
 
 Oop MemOopDescriptor::copy_to_survivor_space() {
-    int s = size();
+    std::int32_t s = size();
     st_assert( Universe::should_scavenge( this ) and not is_forwarded(), "shouldn't be scavenging" );
     bool_t is_new;
     Oop *x = Universe::allocate_in_survivor_space( this, s, is_new );
@@ -141,9 +141,9 @@ void MemOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 }
 
 
-void MemOopDescriptor::bootstrap_body( Bootstrap *stream, int h_size ) {
-    int offset = h_size;
-    int s      = blueprint()->non_indexable_size();
+void MemOopDescriptor::bootstrap_body( Bootstrap *stream, std::int32_t h_size ) {
+    std::int32_t offset = h_size;
+    std::int32_t s      = blueprint()->non_indexable_size();
     while ( offset < s ) {
         stream->read_oop( (Oop *) addr() + offset );
         offset++;
@@ -151,17 +151,17 @@ void MemOopDescriptor::bootstrap_body( Bootstrap *stream, int h_size ) {
 }
 
 
-bool_t MemOopDescriptor::is_within_instVar_bounds( int index ) {
+bool_t MemOopDescriptor::is_within_instVar_bounds( std::int32_t index ) {
     return index >= blueprint()->oop_header_size() and index < blueprint()->non_indexable_size();
 }
 
 
-Oop MemOopDescriptor::instVarAt( int index ) {
+Oop MemOopDescriptor::instVarAt( std::int32_t index ) {
     return raw_at( index );
 }
 
 
-Oop MemOopDescriptor::instVarAtPut( int index, Oop value ) {
+Oop MemOopDescriptor::instVarAtPut( std::int32_t index, Oop value ) {
     raw_at_put( index, value );
     return this;
 }
@@ -173,7 +173,7 @@ void MemOopDescriptor::print_on( ConsoleOutputStream *stream ) {
 
 
 void MemOopDescriptor::print_id_on( ConsoleOutputStream *stream ) {
-    int id;
+    std::int32_t id;
     if ( garbageCollectionInProgress or not( id = objectIDTable::insert( MemOop( this ) ) ) )
         stream->print( "(%#-6lx)", addr() );
     else
@@ -194,7 +194,7 @@ void MemOopDescriptor::scavenge_header() {
 }
 
 
-void MemOopDescriptor::scavenge_body( int begin, int end ) {
+void MemOopDescriptor::scavenge_body( std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
@@ -203,7 +203,7 @@ void MemOopDescriptor::scavenge_body( int begin, int end ) {
 }
 
 
-void MemOopDescriptor::scavenge_tenured_body( int begin, int end ) {
+void MemOopDescriptor::scavenge_tenured_body( std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
@@ -217,7 +217,7 @@ void MemOopDescriptor::follow_header() {
 }
 
 
-void MemOopDescriptor::follow_body( int begin, int end ) {
+void MemOopDescriptor::follow_body( std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
@@ -237,7 +237,7 @@ void MemOopDescriptor::oop_iterate_header( OopClosure *blk ) {
 }
 
 
-void MemOopDescriptor::oop_iterate_body( OopClosure *blk, int begin, int end ) {
+void MemOopDescriptor::oop_iterate_body( OopClosure *blk, std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
@@ -255,7 +255,7 @@ void MemOopDescriptor::initialize_header( bool_t has_untagged_contents, KlassOop
 }
 
 
-void MemOopDescriptor::initialize_body( int begin, int end ) {
+void MemOopDescriptor::initialize_body( std::int32_t begin, std::int32_t end ) {
     Oop value = nilObject;
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
@@ -265,24 +265,24 @@ void MemOopDescriptor::initialize_body( int begin, int end ) {
 }
 
 
-void MemOopDescriptor::raw_at_put( int which, Oop contents, bool_t cs ) {
+void MemOopDescriptor::raw_at_put( std::int32_t which, Oop contents, bool_t cs ) {
     Universe::store( oops( which ), contents, cs );
 }
 
 
-std::size_t MemOopDescriptor::size() const {
+std::int32_t MemOopDescriptor::size() const {
     return blueprint()->oop_size( MemOop( this ) );
 }
 
 
-int MemOopDescriptor::scavenge_tenured_contents() {
+std::int32_t MemOopDescriptor::scavenge_tenured_contents() {
     return blueprint()->oop_scavenge_tenured_contents( this );
 }
 
 
 // Store object size in age field and remembered set
 void MemOopDescriptor::gc_store_size() {
-    int s = size();
+    std::int32_t s = size();
     if ( s < MarkOopDescriptor::max_age ) {
         // store size in age field
         set_mark( mark()->set_age( s ) );
@@ -300,7 +300,7 @@ void MemOopDescriptor::gc_store_size() {
 
 
 // Retrieve object size from age field and remembered set
-int MemOopDescriptor::gc_retrieve_size() {
+std::int32_t MemOopDescriptor::gc_retrieve_size() {
     if ( mark()->age() == 0 )
         return Universe::remembered_set->get_size( this );
     return mark()->age();

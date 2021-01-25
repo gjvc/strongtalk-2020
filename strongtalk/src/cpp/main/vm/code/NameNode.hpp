@@ -26,7 +26,7 @@ class ScopeDescriptorRecorder;
 class NameNode : public ResourceObject {        // abstract superclass of all NameNodes
 
 public:
-    bool_t genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, std::size_t index );
+    bool_t genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, std::int32_t index );
 
 
     virtual bool_t hasLocation() {

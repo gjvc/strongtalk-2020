@@ -15,10 +15,10 @@
 #include "vm/compiler/Expression.hpp"
 
 
-
-
+//
 // the typedefs below are necessary to ensure that args are passed correctly when calling a primitive through a function pointer
 // NB: there's no general n-argument primitive because some calling conventions can't handle vararg functions
+//
 
 typedef Oop (__CALLING_CONVENTION *prim_fntype0)();
 
@@ -41,7 +41,7 @@ typedef Oop (__CALLING_CONVENTION *prim_fntype8)( Oop, Oop, Oop, Oop, Oop, Oop, 
 typedef Oop (__CALLING_CONVENTION *prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop, Oop );
 
 
-
+//
 // The PrimitiveDescriptor structure exposes all properties of a primitive.
 // Primitives are like procedures (no dispatching is necessary) and invoked by providing a number of parameters.
 //
@@ -53,13 +53,14 @@ typedef Oop (__CALLING_CONVENTION *prim_fntype9)( Oop, Oop, Oop, Oop, Oop, Oop, 
 //  20    has_receiver()  does it require a receiver? ({{self prim...}})
 //  21    is_internal()  true for VM-internal primitives
 //  22    needs_delta_fp_code()  must caller set up lastDeltaFP?
+//
 
 class PrimitiveDescriptor {
 
 public:
     const char            *_name;       // name of the primitive
     primitiveFunctionType _fn;          // primitive entry point
-    int                   _flags;       // see unpacking below
+    std::int32_t                   _flags;       // see unpacking below
     const char            **_types;     // the return type and parameter types [0] contains the return type, [1..number_of_parameters] contains types for the parameters
     const char            **_errors;    // a null terminated list of errors for the primitive excluding {FirstArgumenthasWrongType, SecondArgumenthasWrongType ...}
 
@@ -76,7 +77,7 @@ public:
 
 
     // flags
-    int number_of_parameters() const {
+    std::int32_t number_of_parameters() const {
         return get_unsigned_bitfield( _flags, 0, 8 );
     }
 
@@ -138,14 +139,14 @@ public:
 
 protected:        // NB: can't use protected:, or else Microsoft Compiler (2.1) refuses to initialize prim array
     // Type information of the primitive
-    const char *parameter_type( int index ) const; // 0 <= index < number_of_parameters()
+    const char *parameter_type( std::int32_t index ) const; // 0 <= index < number_of_parameters()
     const char *return_type() const;
 
     // Type information for compiler
     // - returns nullptr if type is unknown or too complicated
 
 public:
-    Expression *parameter_klass( int index, PseudoRegister *p, Node *n ) const; // 0 <= index < number_of_parameters()
+    Expression *parameter_klass( std::int32_t index, PseudoRegister *p, Node *n ) const; // 0 <= index < number_of_parameters()
     Expression *return_klass( PseudoRegister *p, Node *n ) const;
 
 protected:
@@ -153,13 +154,12 @@ protected:
 
 public:
     // Error information
-    const char *error( int index ) const {
+    const char *error( std::int32_t index ) const {
         return _errors[ index ];
     }
 
-
-    // Comparison operation
-    int compare( const char *str, int len );
+    // Comparison operation (must have signed result)
+    std::int32_t compare( const char *str, std::int32_t len ) const;
 
     // Miscellaneous operations
     void print();

@@ -13,7 +13,7 @@
 bool_t DoubleValueArrayOopDescriptor::verify() {
     bool_t flag = MemOopDescriptor::verify();
     if ( flag ) {
-        int l = length();
+        std::int32_t l = length();
         if ( l < 0 ) {
             error( "doubleValueArrayOop %#lx has negative length", this );
             flag = false;
@@ -30,7 +30,7 @@ void DoubleValueArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     raw_at_put( size() - 1, smiOop_zero );
 
     stream->read_oop( length_addr() );
-    for ( std::size_t i = 1; i <= length(); i++ )
+    for ( std::int32_t i = 1; i <= length(); i++ )
         double_at_put( i, stream->read_double() );
 
 }

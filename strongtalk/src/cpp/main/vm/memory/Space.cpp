@@ -73,7 +73,7 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
             }
             m->set_mark( MarkOop( root_or_mark ) );
 
-            std::size_t size = m->gc_retrieve_size(); // The mark has to be restored before
+            std::int32_t size = m->gc_retrieve_size(); // The mark has to be restored before
             // the size is retrieved
             new_top += size;
             q += size;
@@ -108,7 +108,7 @@ void Space::compact( OldWaterMark *mark ) {
 //            lprintf( "Space::compact()  expand [%#lx] -> [%#lx]\n", q, *q );
             q = (Oop *) *q;
         } else {
-            std::size_t size = m->gc_retrieve_size();
+            std::int32_t size = m->gc_retrieve_size();
             // make sure we don't run out of old Space!
             if ( size > mark->_space->end() - new_top )
                 mark->_space->expand( size * oopSize );
@@ -209,7 +209,7 @@ void OldSpace::initialize_threshold() {
 }
 
 
-OldSpace::OldSpace( const char *name, int &size ) {
+OldSpace::OldSpace( const char *name, std::int32_t &size ) {
     _nextSpace = nullptr;
 
     _offsetArray = new_c_heap_array<std::uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );
@@ -236,13 +236,13 @@ void OldSpace::update_offset_array( Oop *p, Oop *p_end ) {
 
 
 extern "C" {
-int expansion_count = 0;
+std::int32_t expansion_count = 0;
 }
 
 
-int OldSpace::expand( std::size_t size ) {
-    int min_size    = ReservedSpace::page_align_size( size );
-    int expand_size = ReservedSpace::align_size( min_size, ObjectHeapExpandSize * 1024 );
+std::int32_t OldSpace::expand( std::int32_t size ) {
+    std::int32_t min_size    = ReservedSpace::page_align_size( size );
+    std::int32_t expand_size = ReservedSpace::align_size( min_size, ObjectHeapExpandSize * 1024 );
     Universe::old_gen._virtualSpace.expand( expand_size );
     set_end( (Oop *) Universe::old_gen._virtualSpace.high() );
     expansion_count++;
@@ -250,8 +250,8 @@ int OldSpace::expand( std::size_t size ) {
 }
 
 
-int OldSpace::shrink( std::size_t size ) {
-    int shrink_size = ReservedSpace::align_size( size, ObjectHeapExpandSize * 1024 );
+std::int32_t OldSpace::shrink( std::int32_t size ) {
+    std::int32_t shrink_size = ReservedSpace::align_size( size, ObjectHeapExpandSize * 1024 );
     if ( shrink_size > free() )
         return 0;
     Universe::old_gen._virtualSpace.shrink( shrink_size );
@@ -260,7 +260,7 @@ int OldSpace::shrink( std::size_t size ) {
 }
 
 
-Oop *OldSpace::expand_and_allocate( std::size_t size ) {
+Oop *OldSpace::expand_and_allocate( std::int32_t size ) {
     expand( size * oopSize );
     return allocate( size );
 }
@@ -387,7 +387,7 @@ void OldSpace::verify() {
         st_assert( Oop(*p)->is_mark(), "First word must be mark" );
         m = as_memOop( p );
 
-        std::size_t size = m->size();
+        std::int32_t size = m->size();
         st_assert( m == as_memOop( Universe::object_start( p + ( size / 2 ) ) ), "check offset computation" );
 
         m->verify();
@@ -402,13 +402,13 @@ void OldSpace::verify() {
 Oop *OldSpace::object_start( Oop *p ) {
     // Find the page start
     Oop *q = p;
-    int b  = (int) q;
+    std::int32_t b  = (std::int32_t) q;
     clearBits( b, nthMask( card_shift ) );
     q = (Oop *) b;
     st_assert( contains( q ), "q must be in this Space" );
-    int index = ( q - bottom() ) / card_size_in_oops;
+    std::int32_t index = ( q - bottom() ) / card_size_in_oops;
 
-    int offset = _offsetArray[ index-- ];
+    std::int32_t offset = _offsetArray[ index-- ];
     while ( offset == card_size_in_oops ) {
         q -= card_size_in_oops;
         offset = _offsetArray[ index-- ];

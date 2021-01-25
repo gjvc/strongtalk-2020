@@ -92,19 +92,19 @@ public:
 
 
     // Called for each indexable Oop
-    virtual void do_indexable_oop( int index, Oop *o );
+    virtual void do_indexable_oop( std::int32_t index, Oop *o );
 
 
     // Called for each indexable byte
-    virtual void do_indexable_byte( int index, std::uint8_t *b );
+    virtual void do_indexable_byte( std::int32_t index, std::uint8_t *b );
 
 
     // Called for each indexable double byte
-    virtual void do_indexable_doubleByte( int index, std::uint16_t *b );
+    virtual void do_indexable_doubleByte( std::int32_t index, std::uint16_t *b );
 
 
     // Called for each indexable std::int32_t
-    virtual void do_indexable_long( int index, std::int32_t *l );
+    virtual void do_indexable_long( std::int32_t index, std::int32_t *l );
 };
 
 
@@ -133,7 +133,7 @@ public:
 class FrameLayoutClosure : StackAllocatedObject {
 public:
     // Called for each Oop
-    virtual void do_stack( int index, Oop *o );
+    virtual void do_stack( std::int32_t index, Oop *o );
 
 
     // Called for the hcode pointer
@@ -145,7 +145,7 @@ public:
 
 
     // Called for the link
-    virtual void do_link( int **fp );
+    virtual void do_link( std::int32_t **fp );
 
 
     // Called for the return address

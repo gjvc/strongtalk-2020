@@ -15,10 +15,10 @@
 #include "vm/compiler/BasicBlock.hpp"
 
 
-std::size_t BasicBlock::genCounter = 0;
+std::int32_t BasicBlock::genCounter = 0;
 
 
-void BasicBlock::init( Node *first, Node *last, int n ) {
+void BasicBlock::init( Node *first, Node *last, std::int32_t n ) {
     _first                 = first;
     _last                  = last;
     _nodeCount             = n;
@@ -41,24 +41,24 @@ BasicBlock *BasicBlock::firstPrev() const {
 }
 
 
-BasicBlock *BasicBlock::next( std::size_t i ) const {
+BasicBlock *BasicBlock::next( std::int32_t i ) const {
     Node *n = _last->next( i );
     return n ? n->bb() : nullptr;
 }
 
 
-BasicBlock *BasicBlock::prev( std::size_t i ) const {
+BasicBlock *BasicBlock::prev( std::int32_t i ) const {
     Node *n = _first->prev( i );
     return n ? n->bb() : nullptr;
 }
 
 
-int BasicBlock::nSuccessors() const {
+std::int32_t BasicBlock::nSuccessors() const {
     return _last->nSuccessors();
 }
 
 
-int BasicBlock::nPredecessors() const {
+std::int32_t BasicBlock::nPredecessors() const {
     return _first->nPredecessors();
 }
 
@@ -74,12 +74,14 @@ bool_t BasicBlock::isPredecessor( const BasicBlock *bb ) const {
 
 
 // note: the functions below are defined here rather than in PseudoRegister to localize this temporary hack
-constexpr int MaxSearch = 50;    // max. # of nodes to search backwards
+constexpr std::int32_t MaxSearch = 50;    // max. # of nodes to search backwards
 
-NonTrivialNode *findDefinitionOf( Node *endNode, const PseudoRegister *r, int max = MaxSearch ) {
+NonTrivialNode *findDefinitionOf( Node *endNode, const PseudoRegister *r, std::int32_t max = MaxSearch ) {
     // search backwards for a definition of r
-    Node      *current = endNode;
-    for ( std::size_t i        = 0; i < max and current not_eq nullptr; i++ ) {
+    Node *current = endNode;
+
+    for ( std::int32_t i = 0; i < max and current not_eq nullptr; i++ ) {
+
         if ( current->_deleted )
             continue;
         if ( current->hasSinglePredecessor() ) {
@@ -91,13 +93,15 @@ NonTrivialNode *findDefinitionOf( Node *endNode, const PseudoRegister *r, int ma
             st_assert( current->isMergeNode(), "must be a merge" );
             MergeNode      *merge     = (MergeNode *) current;
             NonTrivialNode *candidate = nullptr;    // possible def of r
-            for ( int      j          = merge->nPredecessors() - 1; j >= 0; j-- ) {
+
+            for ( std::int32_t j = merge->nPredecessors() - 1; j >= 0; j-- ) {
                 Node           *prev = merge->prev( j );
                 NonTrivialNode *cand = findDefinitionOf( prev, r, max - i );
                 if ( cand == nullptr or ( candidate and cand not_eq candidate ) )
                     return nullptr;
                 candidate = cand;
             }
+
             return candidate;    // all paths lead to the same candidate
         }
         current = current->firstPrev();
@@ -154,8 +158,8 @@ bool_t regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node 
         BasicBlock *bb = n->bb();
         if ( bb == bbWithoutDefs )
             continue; // no definitions here
-        bool_t    hasDefs = false;
-        for ( std::size_t i       = 0; i < bb->duInfo.info->length(); i++ ) {// forall def/use info lists
+        bool_t            hasDefs = false;
+        for ( std::int32_t i       = 0; i < bb->duInfo.info->length(); i++ ) {// forall def/use info lists
             DefinitionUsageInfo *dui = bb->duInfo.info->at( i );
             if ( dui->_pseudoRegister == r and not dui->_definitions.isEmpty() ) {
                 // yes, it has a def
@@ -178,9 +182,9 @@ bool_t regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node 
 
 
 void BasicBlock::bruteForceCopyPropagate() {
-    const int len = duInfo.info->length();
+    const std::int32_t len = duInfo.info->length();
 
-    for ( std::size_t i = 0; i < len; i++ ) {        // forall def/use info lists
+    for ( std::int32_t i = 0; i < len; i++ ) {        // forall def/use info lists
         DefinitionUsageInfo  *dui = duInfo.info->at( i );
         const PseudoRegister *r   = dui->_pseudoRegister;
         if ( not r->isSinglyAssignedPseudoRegister() or not r->_location.equals( unAllocated ) ) {
@@ -226,11 +230,11 @@ void BasicBlock::localCopyPropagate() {
     // perform local copy propagation using the local def/use information
     // should be rewritten to make just one pass over the nodes, keeping track of
     // aliases created by assignments -- fix this
-    const int       len       = duInfo.info->length();
+    const std::int32_t       len       = duInfo.info->length();
     SimpleBitVector used      = 0;        // hardwired registers used
     SimpleBitVector usedTwice = 0;
 
-    for ( std::size_t i = 0; i < len; i++ ) {
+    for ( std::int32_t i = 0; i < len; i++ ) {
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
         if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() ) {
             if ( used.isAllocated( r->_location.number() ) ) {
@@ -242,8 +246,8 @@ void BasicBlock::localCopyPropagate() {
         }
     }
 
-    for ( std::size_t i = 0; i < len; i++ ) {
-        constexpr int       BIG  = 9999999;
+    for ( std::int32_t i = 0; i < len; i++ ) {
+        constexpr std::int32_t       BIG  = 9999999;
         DefinitionUsageInfo *dui = duInfo.info->at( i );
         PseudoRegister      *r   = dui->_pseudoRegister;
         if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() and usedTwice.isAllocated( r->_location.number() ) ) {
@@ -266,7 +270,7 @@ void BasicBlock::localCopyPropagate() {
                 }
                 if ( not src->isSinglyAssigned() ) {
                     // careful: r is only equivalent to src as std::int32_t as src isn't reassigned within this basic block
-                    int j = 0;
+                    std::int32_t j = 0;
                     for ( ; j < len; j++ ) {
                         PseudoRegister *r = duInfo.info->at( j )->_pseudoRegister;
                         if ( r == src )
@@ -280,8 +284,8 @@ void BasicBlock::localCopyPropagate() {
                 }
             }
 
-            const int d_id = def->_node->num();
-            int       u_id;
+            const std::int32_t d_id = def->_node->num();
+            std::int32_t       u_id;
             // find a use in a node following the current def
             for ( ; u and ( u_id = u->data()->_node->num() ) <= d_id; u = u->next() );
             if ( not u )
@@ -289,7 +293,7 @@ void BasicBlock::localCopyPropagate() {
 
             // visit all uses with a node ID between here and the next def of either the
             // current PseudoRegister or the source PseudoRegister that defines it
-            int stop_id = nextd ? nextd->data()->_node->num() : BIG;
+            std::int32_t stop_id = nextd ? nextd->data()->_node->num() : BIG;
             if ( srcDefs ) {
                 for ( d = srcDefs->head(); d and d->data()->_node->num() < u_id; d = d->next() );
                 if ( d )
@@ -321,7 +325,7 @@ void BasicBlock::makeUses() {
 
 
 void BasicBlock::renumber() {
-    int        count = 0;
+    std::int32_t        count = 0;
     for ( Node *n    = _first; n not_eq _last->next(); n = n->next() )
         n->setNum( count++ );
     _nodeCount = count;
@@ -374,7 +378,7 @@ static bool_t findMyBasicBlock( void *bb, PseudoRegisterBasicBlockIndex *p ) {
 }
 
 
-int BasicBlock::addUDHelper( PseudoRegister *r ) {
+std::int32_t BasicBlock::addUDHelper( PseudoRegister *r ) {
     // we're computing the uses block by block, and the current BasicBlock's
     // PseudoRegisterBasicBlockIndex is always the last entry in the preg's list.
     st_assert( _nodeCount, "shouldn't add anything to this BasicBlock" );
@@ -382,7 +386,7 @@ int BasicBlock::addUDHelper( PseudoRegister *r ) {
     PseudoRegisterBasicBlockIndex *p;
     if ( bbIterator->_usesBuilt ) {
         // find entry for the PseudoRegister
-        std::size_t i = r->_dus.find( this, findMyBasicBlock );
+        std::int32_t i = r->_dus.find( this, findMyBasicBlock );
         if ( i >= 0 ) {
             p = r->_dus.at( i );
         } else {
@@ -415,7 +419,7 @@ Usage *BasicBlock::addUse( NonTrivialNode *n, PseudoRegister *r, bool_t soft ) {
         return nullptr;
     Usage *u = soft ? new PSoftUsage( n ) : new Usage( n );
     r->incUses( u );
-    int index = addUDHelper( r );
+    std::int32_t index = addUDHelper( r );
     duInfo.info->at( index )->_usages.append( u );
     return u;
 }
@@ -427,7 +431,7 @@ Definition *BasicBlock::addDef( NonTrivialNode *n, PseudoRegister *r ) {
         return nullptr;
     Definition *d = new Definition( n );
     r->incDefs( d );
-    int index = addUDHelper( r );
+    std::int32_t index = addUDHelper( r );
     duInfo.info->at( index )->_definitions.append( d );
     return d;
 }
@@ -452,10 +456,10 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
     GrowableArray<RegisterEqClass *> regClasses( _nodeCount + 1 );
     regClasses.append( nullptr );        // first reg class has index 1
 
-    int use_count[REGISTER_COUNT], def_count[REGISTER_COUNT];
-//    std::array <int, REGISTER_COUNT> use_count, def_count;
+    std::int32_t use_count[REGISTER_COUNT], def_count[REGISTER_COUNT];
+//    std::array <std::int32_t, REGISTER_COUNT> use_count, def_count;
 
-    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ ) {
+    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ ) {
         use_count[ i ] = def_count[ i ] = 0;
     }
 
@@ -508,8 +512,8 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
     }
 
     // allocate other local regs (using the untouched temp regs of this BasicBlock)
-    int       temp = 0;
-    for ( std::size_t i    = 0; i < duInfo.info->length(); i++ ) {
+    std::int32_t               temp = 0;
+    for ( std::int32_t i    = 0; i < duInfo.info->length(); i++ ) {
         // collect local regs
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
         if ( r->_location.equals( unAllocated ) and not r->isUnused() and r->isLocalTo( this ) ) {
@@ -536,9 +540,10 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
 }
 
 
-constexpr auto nextTemp( auto const & n ) {
-    return (n == nofLocalRegisters - 1) ? 0 : n + 1;
+constexpr auto nextTemp( auto const &n ) {
+    return ( n == nofLocalRegisters - 1 ) ? 0 : n + 1;
 }
+
 
 // slower but more capable version of local allocation; keeps track of live
 // ranges via a bit map
@@ -548,7 +553,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     // clear temporary data structures
     localRegs->clear();
     lives->clear();
-    for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
+    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
         hardwired->at( i )->setLength( _nodeCount );
         hardwired->at( i )->clear();
     }
@@ -556,7 +561,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     // localRegs: collects all PseudoRegisters that could be allocated locally
     // lives: for each reg in localRegs, holds live range (bit vector with one bit per node)
 
-    for ( std::size_t i = 0; i < duInfo.info->length(); i++ ) {
+    for ( std::int32_t i = 0; i < duInfo.info->length(); i++ ) {
         // collect local regs
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
         if ( r->isLocalTo( this ) ) {
@@ -568,14 +573,14 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
                 localRegs->append( r );
                 BitVector *bv = new BitVector( _nodeCount );
                 lives->append( bv );
-                int firstUse = 0, lastUse = _nodeCount - 1;
+                std::int32_t firstUse = 0, lastUse = _nodeCount - 1;
                 duInfo.info->at( i )->getLiveRange( firstUse, lastUse );
                 bv->addFromTo( firstUse, lastUse );
             }
         } else if ( r->_location.isLocalRegister() ) {
             // already allocated (i.e., hardwired register)
             st_assert( not r->_location.equals( unAllocated ), "unAllocated should not count as isRegister()" );
-            int firstUse = 0, lastUse = _nodeCount - 1;
+            std::int32_t firstUse = 0, lastUse = _nodeCount - 1;
             if ( not r->incorrectDU() ) {
                 duInfo.info->at( i )->getLiveRange( firstUse, lastUse );
             } else {
@@ -597,7 +602,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
         SimpleBitVector v = n->trashedMask();
         if ( v.isEmpty() )
             continue;    // nothing trashed (normal case)
-        for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
+        for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
             if ( v.isAllocated( i ) )
                 hardwired->at( i )->add( n->num() );
         }
@@ -606,18 +611,18 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
 
     // cycle through the temp registers to (hopefully) allow more optimizations
     // later (e.g. scheduling)
-    int lastTemp = 0;
+    std::int32_t lastTemp = 0;
 
 
-    for ( std::size_t i = 0; i < localRegs->length(); i++ ) {
+    for ( std::int32_t i = 0; i < localRegs->length(); i++ ) {
         // try to allocate localRegs[i] to a local (temp) register
         PseudoRegister *r = localRegs->at( i );
         if ( not r->_location.equals( unAllocated ) ) {
             st_assert( r->regClass == 0, "should have been cleared" );
             continue;
         }
-        BitVector *liveRange = lives->at( i );
-        for ( std::size_t tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
+        BitVector         *liveRange = lives->at( i );
+        for ( std::int32_t tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
             if ( liveRange->isDisjointFrom( hardwired->at( tempNo ) ) ) {
                 Location temp = Mapping::localRegister( tempNo );
                 doAlloc( r, temp );
@@ -696,14 +701,19 @@ static void printPrevBBs( BasicBlock *b, const char *str ) {
 
 
 void BasicBlock::print_short() {
+
     lprintf( "BasicBlock%-3ld[%d] %#lx (%ld, %ld); prevs ", id(), _loopDepth, this, _first->id(), _last->id() );
-    for ( std::size_t i = 0; i < nPredecessors(); i++ )
+
+    for ( std::int32_t i = 0; i < nPredecessors(); i++ )
         printPrevBBs( prev( i ), ( i == nPredecessors() - 1 ) ? " : " : ", " );
+
     lprintf( "; " );
     if ( next() )
         lprintf( "next BasicBlock%ld", next()->id() );
-    for ( std::size_t i = 1; i < nSuccessors(); i++ )
+
+    for ( std::int32_t i = 1; i < nSuccessors(); i++ )
         printPrevBBs( next( i ), ( i == nSuccessors() - 1 ) ? " : " : ", " );
+
 }
 
 
@@ -741,7 +751,7 @@ bool_t BasicBlock::contains( const Node *which ) const {
 
 
 void BasicBlock::verify() {
-    int        count = 0;
+    std::int32_t        count = 0;
     for ( Node *n    = _first; n not_eq _last->next(); n = n->next() ) {
         count++;
         if ( n->_deleted )
@@ -766,8 +776,7 @@ void BasicBlock::verify() {
 }
 
 
-
-void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, int loopDepth ) {
+void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth ) {
     // build BasicBlock graph with depth-first traversal
     if ( _id == 1 )
         return;
@@ -790,12 +799,12 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, int loopDepth ) {
     //       has n successors they're all assumed to be non-nullptr. Code with
     //       missing successors (e.g. TypeTestNode with no next(0) = nullptr)
     //       cause the BasicBlock graph to screw up after this node. (gri 7/22/96)
-    int       n = _last->nSuccessors();
-    for ( std::size_t i = 0; i < n; i++ ) {
+    std::int32_t               n = _last->nSuccessors();
+    for ( std::int32_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
     }
-    for ( std::size_t i = nSuccessors() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i = nSuccessors() - 1; i >= 0; i-- ) {
         BasicBlock *nextBB = next( i );
         // only follow the link if next->bb hasn't been visited yet
         if ( nextBB->id() == 0 )

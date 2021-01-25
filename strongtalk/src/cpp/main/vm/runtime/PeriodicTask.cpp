@@ -10,23 +10,23 @@
 #include "vm/system/os.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
 
-constexpr int max_tasks = 10;
-int           num_tasks = 0;
+constexpr std::int32_t max_tasks = 10;
+std::int32_t           num_tasks = 0;
 
 std::array<PeriodicTask *, max_tasks> tasks;
 
 
-bool_t pending_tasks( int delay_time ) {
+bool_t pending_tasks( std::int32_t delay_time ) {
     bool_t result = false;
 
-    for ( std::size_t i = 0; i < num_tasks; i++ ) {
+    for ( std::int32_t i = 0; i < num_tasks; i++ ) {
         result = tasks[ i ]->is_pending( delay_time ) or result;
     }
     return result;
 }
 
 
-void real_time_tick( int delay_time ) {
+void real_time_tick( std::int32_t delay_time ) {
 
     // Do not perform any tasks while bootstrappingInProgress
     if ( bootstrappingInProgress )
@@ -37,7 +37,7 @@ void real_time_tick( int delay_time ) {
         if ( not Process::external_suspend_current() )
             return;
 
-        for ( std::size_t i = 0; i < num_tasks; i++ ) {
+        for ( std::int32_t i = 0; i < num_tasks; i++ ) {
             PeriodicTask *task = tasks[ i ];
             if ( task->_counter >= task->_interval ) {
                 task->task();
@@ -50,7 +50,7 @@ void real_time_tick( int delay_time ) {
 }
 
 
-PeriodicTask::PeriodicTask( int interval_time ) {
+PeriodicTask::PeriodicTask( std::int32_t interval_time ) {
     _counter  = 0;
     _interval = interval_time;
 }
@@ -63,7 +63,7 @@ PeriodicTask::~PeriodicTask() {
 
 
 bool_t PeriodicTask::is_enrolled() const {
-    for ( std::size_t i = 0; i < num_tasks; i++ )
+    for ( std::int32_t i = 0; i < num_tasks; i++ )
         if ( tasks[ i ] == this )
             return true;
     return false;
@@ -77,7 +77,7 @@ void PeriodicTask::enroll() {
 
 
 void PeriodicTask::deroll() {
-    int index = 0;
+    std::int32_t index = 0;
     for ( ; index < num_tasks and tasks[ index ] not_eq this; index++ );
     if ( index == max_tasks )
         return;

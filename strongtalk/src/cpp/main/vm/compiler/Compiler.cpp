@@ -24,9 +24,9 @@
 
 bool_t verifyOften = false;
 
-int compilationCount = 0;
-Compiler           *theCompiler  = nullptr;
-Compiler           *lastCompiler = nullptr;        // for debugging
+std::int32_t        compilationCount = 0;
+Compiler           *theCompiler     = nullptr;
+Compiler           *lastCompiler    = nullptr;        // for debugging
 BasicBlockIterator *last_bbIterator;
 
 
@@ -85,7 +85,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope )
 
     st_assert( blk->isCompiledBlock(), "must be compiled block" );
     JumpTableEntry *e = blk->jump_table_entry();
-    std::size_t sub_index;
+    std::int32_t    sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
     std::int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();
@@ -121,12 +121,12 @@ void Compiler::finalize() {
 }
 
 
-int Compiler::level() const {
+std::int32_t Compiler::level() const {
     return _hasInlinableSendsRemaining ? MaxRecompilationLevels - 1 : _nextLevel;
 }
 
 
-int Compiler::version() const {
+std::int32_t Compiler::version() const {
     if ( recompilee ) {
         // don't increment version number when uncommon-recompiling
         // (otherwise limit is reached too quickly)
@@ -137,7 +137,7 @@ int Compiler::version() const {
 }
 
 
-int Compiler::estimatedSize() const {
+std::int32_t Compiler::estimatedSize() const {
     // estimated target NativeMethod size (bytes)
     return NodeFactory::_cumulativeCost;
 }
@@ -246,10 +246,10 @@ void Compiler::initLimits() {
 
     if (CompilerAdjustLimits) {
       // adjust InlineLimitIType::NmInstrLimit if top-level method is large
-      int cost = sicCost((MethodKlass*)method->klass(), topScope, costP);
+      std::int32_t cost = sicCost((MethodKlass*)method->klass(), topScope, costP);
       if (cost > NormalMethodLen) {
         float l = (float)cost / NormalMethodLen * inlineLimit[InlineLimitIType::NmInstrLimit];
-        inlineLimit[InlineLimitIType::NmInstrLimit] = min(int(l), CompilerInstructionsSize / 3);
+        inlineLimit[InlineLimitIType::NmInstrLimit] = min(std::int32_t(l), CompilerInstructionsSize / 3);
       }
     }
 #endif
@@ -390,8 +390,9 @@ NativeMethod *Compiler::compile() {
 
     if ( should_trace or PrintCode ) {
         print_key( _console );
-        if ( PrintCode or PrintInlining )
+        if ( PrintCode or PrintInlining ) {
             _console->print_cr( "" );
+        }
     }
 
     topScope->genCode();
@@ -536,7 +537,7 @@ void Compiler::buildBBs() {        // build the basic block graph
 void Compiler::fixupNonLocalReturnTestPoints() {
     // the NonLocalReturnTest nodes didn't get their correct successors during node generation because
     // their sender scopes' nlrTestPoints may not yet have been created; fix them up now
-    std::size_t i = nlrTestPoints->length();
+    std::int32_t i = nlrTestPoints->length();
     while ( i-- > 0 )
         nlrTestPoints->at( i )->fixup();
 }
@@ -558,8 +559,8 @@ void Compiler::computeBlockInfo() {
     // (could avoid iteration with topo sort, but there are few contexts anyway)
     bool_t changed = EliminateContexts;
     while ( changed ) {
-        changed     = false;
-        for ( std::size_t i = allContexts->length() - 1; i >= 0; i-- ) {
+        changed             = false;
+        for ( std::int32_t i = allContexts->length() - 1; i >= 0; i-- ) {
             InlinedScope *s = allContexts->at( i );
             if ( s == nullptr )
                 continue;
@@ -571,7 +572,7 @@ void Compiler::computeBlockInfo() {
             bool_t noUplevelAccesses = true;
 
             // check if all context temps can be stack-allocated
-            for ( std::size_t j = temps->length() - 1; j >= 0; j-- ) {
+            for ( std::int32_t j = temps->length() - 1; j >= 0; j-- ) {
 
                 PseudoRegister *r = temps->at( j )->preg();
 
@@ -602,7 +603,7 @@ void Compiler::computeBlockInfo() {
     }
 
     // now collect all remaining contexts
-    std::size_t i = allContexts->length();
+    std::int32_t i = allContexts->length();
     contextList = new GrowableArray<InlinedScope *>( i, i, nullptr );
     while ( i-- > 0 ) {
         // should merge several contexts into one physical context if possible
@@ -621,10 +622,10 @@ void Compiler::computeBlockInfo() {
         GrowableArray<Expression *> *temps = s->contextTemporaries();
 
         // allocate the temps in this context (but only if they're used)
-        int ntemps = temps->length();
-        std::size_t size   = 0;
+        std::int32_t ntemps = temps->length();
+        std::int32_t size   = 0;
 
-        for ( std::size_t j = 0; j < ntemps; j++ ) {
+        for ( std::int32_t j = 0; j < ntemps; j++ ) {
             PseudoRegister *p = temps->at( j )->preg();
 
             // should be:
@@ -657,7 +658,7 @@ void Compiler::computeBlockInfo() {
     }
 
     // Compute the number of noninlined blocks for the NativeMethod and allocate
-    const int nblocks = topScope->number_of_noninlined_blocks();
+    const std::int32_t nblocks = topScope->number_of_noninlined_blocks();
 
     if ( is_method_compile() or nblocks > 0 ) {
         // allocate nblocks+1 JumpTable entries
@@ -670,9 +671,9 @@ void Compiler::computeBlockInfo() {
         }
 
         // first is for NativeMethod itself
-        int block_index = 1;
+        std::int32_t block_index = 1;
 
-        for ( std::size_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t i = bbIterator->exposedBlks->length() - 1; i >= 0; i-- ) {
 
             BlockPseudoRegister *blk = bbIterator->exposedBlks->at( i );
             if ( blk->isUsed() ) {
@@ -769,7 +770,7 @@ void Compiler::print_code( bool_t suppressTrivial ) {
 }
 
 
-std::size_t Compiler::get_invocation_counter_limit() const {
+std::int32_t Compiler::get_invocation_counter_limit() const {
     if ( is_uncommon_compile() ) {
         return RecompilationPolicy::uncommonNativeMethodInvocationLimit( version() );
     } else {
@@ -778,36 +779,36 @@ std::size_t Compiler::get_invocation_counter_limit() const {
 }
 
 
-void Compiler::set_special_handler_call_offset( int offset ) {
+void Compiler::set_special_handler_call_offset( std::int32_t offset ) {
     // doesn't need to be aligned since called rarely and from within the NativeMethod only
     _special_handler_call_offset = offset;
 }
 
 
-void Compiler::set_entry_point_offset( int offset ) {
+void Compiler::set_entry_point_offset( std::int32_t offset ) {
     st_assert( offset % oopSize == 0, "entry point must be aligned" );
     _entry_point_offset = offset;
 }
 
 
-void Compiler::set_verified_entry_point_offset( int offset ) {
+void Compiler::set_verified_entry_point_offset( std::int32_t offset ) {
     st_assert( offset % oopSize == 0, "verified entry point must be aligned" );
     _verified_entry_point_offset = offset;
 }
 
 
-void Compiler::set_float_section_size( std::size_t size ) {
+void Compiler::set_float_section_size( std::int32_t size ) {
     st_assert( size >= 0, "size cannot be negative" );
     _float_section_size = size;
 }
 
 
-void Compiler::set_float_section_start_offset( int offset ) {
+void Compiler::set_float_section_start_offset( std::int32_t offset ) {
     _float_section_start_offset = offset;
 }
 
 
-int Compiler::number_of_noninlined_blocks() const {
+std::int32_t Compiler::number_of_noninlined_blocks() const {
     return topScope->number_of_noninlined_blocks();
 }
 

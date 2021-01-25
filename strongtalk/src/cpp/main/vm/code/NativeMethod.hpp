@@ -63,9 +63,9 @@ protected:
     std::uint16_t     _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
     std::uint16_t     _floatSectionSize;           // size of float section in words
     std::uint16_t     _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
-    std::size_t               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
-    std::size_t               _uncommonTrapCounter;        // # of times uncommon traps have been executed
-    static std::size_t        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
+    std::int32_t               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
+    std::int32_t               _uncommonTrapCounter;        // # of times uncommon traps have been executed
+    static std::int32_t        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
     NativeMethodFlags _nativeMethodFlags;          // various flags to keep track of NativeMethod state
 
     // (*) At this address there's 5 bytes of extra Space reserved to accommodate for a call to the zombie handler if the NativeMethod is a zombie.
@@ -145,23 +145,23 @@ public:
     JumpTableID _promotedId;    //
 
 
-    std::size_t number_of_float_temporaries() const {
+    std::int32_t number_of_float_temporaries() const {
         return _numberOfFloatTemporaries;
     }
 
 
-    std::size_t float_section_size() const {
+    std::int32_t float_section_size() const {
         return _floatSectionSize;
     }
 
 
-    std::size_t float_section_start_offset() const {
+    std::int32_t float_section_start_offset() const {
         return _floatSectionStartOffset;
     }
 
 
     // Interface for number_of_callers
-    std::size_t number_of_links() const {
+    std::int32_t number_of_links() const {
         return _numberOfLinks;
     }
 
@@ -177,7 +177,7 @@ public:
 
 
     // Interface for uncommon_trap_invocation
-    std::size_t uncommon_trap_counter() const {
+    std::int32_t uncommon_trap_counter() const {
         return _uncommonTrapCounter;
     }
 
@@ -197,26 +197,26 @@ public:
 protected:
     NativeMethod( Compiler *c );
 
-    void *operator new( std::size_t size );
+    void *operator new( std::int32_t size );
 
 public:
     friend NativeMethod *new_nativeMethod( Compiler *c );
 
-    void initForTesting( std::size_t size, LookupKey *key ); // to support testing
+    void initForTesting( std::int32_t size, LookupKey *key ); // to support testing
 
-    std::size_t size() const {
+    std::int32_t size() const {
         return end() - ( (const char *) this );
     }    // total size of NativeMethod
 
-    std::size_t codeSize() const {
+    std::int32_t codeSize() const {
         return instructionsEnd() - instructionsStart();
     }    // size of code in bytes
 
     // Shift the pc relative information by delta.
     // Call this whenever the code is moved.
-    void fix_relocation_at_move( std::size_t delta );
+    void fix_relocation_at_move( std::int32_t delta );
 
-    void moveTo( void *to, std::size_t size );
+    void moveTo( void *to, std::int32_t size );
 
 public:
     bool_t isNativeMethod() const {
@@ -271,13 +271,13 @@ public:
     void makeOld();
 
 
-    std::size_t age() const {
+    std::int32_t age() const {
         return _nativeMethodFlags.age;
     }
 
 
     void incrementAge() {
-        const std::size_t MaxAge = 15;
+        const std::int32_t MaxAge = 15;
         _nativeMethodFlags.age = min( _nativeMethodFlags.age + 1, MaxAge );
     }
 
@@ -317,30 +317,30 @@ public:
     }
 
 
-    std::size_t level() const;
+    std::int32_t level() const;
 
 
-    void setLevel( std::size_t newLevel ) {
+    void setLevel( std::int32_t newLevel ) {
         _nativeMethodFlags.level = newLevel;
     }
 
 
-    std::size_t version() const {
+    std::int32_t version() const {
         return _nativeMethodFlags.version;
     }
 
 
-    void setVersion( std::size_t v );
+    void setVersion( std::int32_t v );
 
 public:
-    std::size_t estimatedInvocationCount() const;   // approximation (not all calls have counters)
-    std::size_t ncallers() const;                   // # of callers (# nativeMethods, *not* # of inline caches)
+    std::int32_t estimatedInvocationCount() const;   // approximation (not all calls have counters)
+    std::int32_t ncallers() const;                   // # of callers (# nativeMethods, *not* # of inline caches)
 
     bool_t encompasses( const void *p ) const;
 
 
     // for zone LRU management
-    std::size_t lastUsed() const {
+    std::int32_t lastUsed() const {
         return LRUtable[ 0 ].lastUsed;
     }
 
@@ -401,7 +401,7 @@ public:
 
     ScopeDescriptor *containingScopeDesc( const char *pc ) const;
 
-    ProgramCounterDescriptor *correspondingPC( ScopeDescriptor *sd, std::size_t byteCodeIndex ) const;
+    ProgramCounterDescriptor *correspondingPC( ScopeDescriptor *sd, std::int32_t byteCodeIndex ) const;
 
     // For debugging
     CompiledInlineCache *IC_at( const char *p ) const;
@@ -415,19 +415,19 @@ public:
     // noninlined block mapping
     bool_t has_noninlined_blocks() const;
 
-    std::size_t number_of_noninlined_blocks() const;
+    std::int32_t number_of_noninlined_blocks() const;
 
 protected:
-    void validate_noninlined_block_scope_index( std::size_t index ) const;
+    void validate_noninlined_block_scope_index( std::int32_t index ) const;
 
 public:
-    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( std::size_t noninlined_block_index ) const;
+    NonInlinedBlockScopeDescriptor *noninlined_block_scope_at( std::int32_t noninlined_block_index ) const;
 
-    MethodOop noninlined_block_method_at( std::size_t noninlined_block_index ) const;
+    MethodOop noninlined_block_method_at( std::int32_t noninlined_block_index ) const;
 
-    void noninlined_block_at_put( std::size_t noninlined_block_index, std::size_t offset ) const;
+    void noninlined_block_at_put( std::int32_t noninlined_block_index, std::int32_t offset ) const;
 
-    JumpTableEntry *noninlined_block_jumpEntry_at( std::size_t noninlined_block_index ) const;
+    JumpTableEntry *noninlined_block_jumpEntry_at( std::int32_t noninlined_block_index ) const;
 
 
     // Returns true if activation frame has been established.
@@ -467,12 +467,12 @@ public:
 
 public:
     // Counting & Timing
-    std::size_t invocation_count() const {
+    std::int32_t invocation_count() const {
         return _invocationCount;
     }
 
 
-    void set_invocation_count( std::size_t c ) {
+    void set_invocation_count( std::int32_t c ) {
         _invocationCount = c;
     }
 
@@ -484,8 +484,8 @@ private:
     inline void decay_invocation_count( double decay_factor );
 
 public:
-    static std::size_t invocationCountOffset() {
-        return (std::size_t) &( (NativeMethod *) 0 )->_invocationCount;
+    static std::int32_t invocationCountOffset() {
+        return (std::int32_t) &( (NativeMethod *) 0 )->_invocationCount;
     }
 
     // Support for preemption:

@@ -7,7 +7,7 @@
 #include "vm/code/LogicalAddress.hpp"
 
 
-LogicalAddress::LogicalAddress( NameNode *physical_address, std::size_t pc_offset ) {
+LogicalAddress::LogicalAddress( NameNode *physical_address, std::int32_t pc_offset ) {
     _physicalAddress = physical_address;
     _pcOffset        = pc_offset;
     _next            = nullptr;
@@ -15,7 +15,7 @@ LogicalAddress::LogicalAddress( NameNode *physical_address, std::size_t pc_offse
 }
 
 
-void LogicalAddress::append( NameNode *physical_address, std::size_t pc_offset ) {
+void LogicalAddress::append( NameNode *physical_address, std::int32_t pc_offset ) {
     if ( next() ) {
         // hopefully these lists are not getting too long...
         next()->append( physical_address, pc_offset );
@@ -26,7 +26,7 @@ void LogicalAddress::append( NameNode *physical_address, std::size_t pc_offset )
 }
 
 
-NameNode *LogicalAddress::physical_address_at( std::size_t pc_offset ) {
+NameNode *LogicalAddress::physical_address_at( std::int32_t pc_offset ) {
     LogicalAddress *current = this;
     while ( current->next() and current->next()->pc_offset() > pc_offset ) {
         current = current->next();
@@ -35,9 +35,9 @@ NameNode *LogicalAddress::physical_address_at( std::size_t pc_offset ) {
 }
 
 
-std::size_t LogicalAddress::length() {
+std::int32_t LogicalAddress::length() {
     LogicalAddress *current = this;
-    std::size_t result = 1;
+    std::int32_t result = 1;
     while ( current->next() ) {
         current = current->next();
         result++;
@@ -55,7 +55,7 @@ void LogicalAddress::generate( ScopeDescriptorRecorder *rec ) {
     LogicalAddress *n = next();
     physical_address()->generate( rec, n == nullptr );
 
-    std::size_t last_pc_offset = 0;
+    std::int32_t last_pc_offset = 0;
     while ( n not_eq nullptr ) {
         LogicalAddress *current = n;
         n = n->next();

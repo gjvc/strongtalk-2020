@@ -10,8 +10,8 @@
 
 #include <array>
 
-std::array<std::uint32_t, static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)>InterpreterStatistics::_bytecode_counters;
-std::array<int, static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES)>          InterpreterStatistics::_bytecode_generation_order;
+std::array<std::uint32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>InterpreterStatistics::_bytecode_counters;
+std::array<std::int32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>          InterpreterStatistics::_bytecode_generation_order;
 
 bool_t       InterpreterStatistics::_is_initialized = false;
 
@@ -24,13 +24,13 @@ void InterpreterStatistics::reset_bytecode_counters() {
 
 
 void InterpreterStatistics::reset_bytecode_generation_order() {
-    for ( std::size_t i = 0; i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ )
+    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ )
         _bytecode_generation_order[ i ] = i;
 }
 
 
-ByteCodes::Code InterpreterStatistics::ith_bytecode_to_generate( std::size_t i ) {
-    st_assert( 0 <= i and i < static_cast<std::size_t>(ByteCodes::Code::NUMBER_OF_CODES), "illegal index" );
+ByteCodes::Code InterpreterStatistics::ith_bytecode_to_generate( std::int32_t i ) {
+    st_assert( 0 <= i and i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES), "illegal index" );
     return ByteCodes::Code( _bytecode_generation_order[ i ] );
 }
 

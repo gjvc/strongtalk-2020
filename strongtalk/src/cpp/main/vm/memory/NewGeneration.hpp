@@ -43,11 +43,11 @@ public:
 
 
     // Space enquiries
-    int capacity();
+    std::int32_t capacity();
 
-    int used();
+    std::int32_t used();
 
-    int free();
+    std::int32_t free();
 
     void print();
 
@@ -56,7 +56,7 @@ public:
     void verify();
 
 
-    bool_t would_fit( std::size_t size ) {
+    bool_t would_fit( std::int32_t size ) {
         return _toSpace->would_fit( size );
     }
 
@@ -72,12 +72,12 @@ public:
     Oop *object_start( Oop *p );
 
 
-    Oop *allocate( std::size_t size ) {
+    Oop *allocate( std::int32_t size ) {
         return eden()->allocate( size );
     }
 
 
-    Oop *allocate_in_survivor_space( std::size_t size ) {
+    Oop *allocate_in_survivor_space( std::int32_t size ) {
         return _toSpace->allocate( size );
     }
 
@@ -103,7 +103,7 @@ protected:
 
 private:
     // called by Universe
-    void initialize( ReservedSpace rs, int eden_size, int surv_size );
+    void initialize( ReservedSpace rs, std::int32_t eden_size, std::int32_t surv_size );
 
     // phase2 of mark sweep
     void prepare_for_compaction( OldWaterMark *mark );

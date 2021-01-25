@@ -19,13 +19,13 @@ void Mapping::initialize() {
     _localRegisters[ 1 ] = asLocation( edi );
     _localRegisters[ 2 ] = asLocation( esi );
 
-    for ( std::size_t i = 0; i < REGISTER_COUNT; i++ )
+    for ( std::int32_t i = 0; i < REGISTER_COUNT; i++ )
         _localRegisterIndex[ i ] = -1;
 
-    for ( std::size_t i = 0; i < nofLocalRegisters; i++ )
+    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ )
         _localRegisterIndex[ _localRegisters[ i ].number() ] = i;
 
-    for ( std::size_t i = 0; i < nofLocalRegisters; i++ ) {
+    for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
         Register r = asRegister( _localRegisters[ i ] );
         st_assert( ( r not_eq temp1 ) and ( r not_eq temp2 ) and ( r not_eq temp3 ), "local registers must be disjoint from temporary registers" );
     }
@@ -36,21 +36,21 @@ void Mapping::initialize() {
 //Location Mapping::_localRegisters[nofLocalRegisters + 1]; // allow for 0 local registers
 
 // C++ won't compile array with 0 elements
-//int      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
+//std::int32_t      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
 
 std::array<Location, nofLocalRegisters>     Mapping::_localRegisters;      //
-std::array<std::size_t, REGISTER_COUNT>     Mapping::_localRegisterIndex;  //
+std::array<std::int32_t, REGISTER_COUNT>     Mapping::_localRegisterIndex;  //
 
 
-Location Mapping::localRegister( std::size_t i ) {
+Location Mapping::localRegister( std::int32_t i ) {
     st_assert( 0 <= i and i < nofLocalRegisters, "illegal local register index" );
     return _localRegisters[ i ];
 }
 
 
-std::size_t Mapping::localRegisterIndex( const Location &l ) {
+std::int32_t Mapping::localRegisterIndex( const Location &l ) {
     st_assert( 0 <= l.number() and l.number() < REGISTER_COUNT, "illegal local register" );
-    std::size_t res = _localRegisterIndex[ l.number() ];
+    std::int32_t res = _localRegisterIndex[ l.number() ];
     st_assert( res >= 0, "not a local register" );
     st_assert( localRegister( res ) == l, "incorrect mapping" );
     return res;
@@ -58,36 +58,36 @@ std::size_t Mapping::localRegisterIndex( const Location &l ) {
 
 
 // parameter passing
-Location Mapping::incomingArg( std::size_t i, std::size_t nofArgs ) {
+Location Mapping::incomingArg( std::int32_t i, std::int32_t nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return Location::stackLocation( nofArgs - i + 1 );
 }
 
 
-Location Mapping::outgoingArg( std::size_t i, std::size_t nofArgs ) {
+Location Mapping::outgoingArg( std::int32_t i, std::int32_t nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
     return topOfStack;
 }
 
 
 // stack allocation (Note: offsets are always in oops!)
-Location Mapping::localTemporary( std::size_t i ) {
+Location Mapping::localTemporary( std::int32_t i ) {
     st_assert( i >= 0, "illegal temporary number" );
-    std::size_t floats = theCompiler->totalNofFloatTemporaries();
-    std::size_t offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
+    std::int32_t floats = theCompiler->totalNofFloatTemporaries();
+    std::int32_t offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
     return Location::stackLocation( offset );
 }
 
 
-std::size_t Mapping::localTemporaryIndex( const Location &l ) {
-    std::size_t floats = theCompiler->totalNofFloatTemporaries();
-    std::size_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
+std::int32_t Mapping::localTemporaryIndex( const Location &l ) {
+    std::int32_t floats = theCompiler->totalNofFloatTemporaries();
+    std::int32_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
     st_assert( localTemporary( i ) == l, "incorrect mapping" );
     return i;
 }
 
 
-Location Mapping::floatTemporary( int scope_id, std::size_t i ) {
+Location Mapping::floatTemporary( std::int32_t scope_id, std::int32_t i ) {
     InlinedScope *scope = theCompiler->scopes->at( scope_id );
     st_assert( scope->firstFloatIndex() >= 0, "firstFloatIndex not computed yet" );
     //
@@ -109,19 +109,19 @@ Location Mapping::floatTemporary( int scope_id, std::size_t i ) {
 
 
 // context temporaries
-Location Mapping::contextTemporary( int contextNo, std::size_t i, int scope_offset ) {
+Location Mapping::contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_offset ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
     return Location::compiledContextLocation( contextNo, i, scope_offset );
 }
 
 
-Location *Mapping::new_contextTemporary( int contextNo, std::size_t i, int scope_id ) {
+Location *Mapping::new_contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_id ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
     return new Location( Mode::contextLoc1, contextNo, i, scope_id );
 }
 
 
-std::size_t Mapping::contextOffset( int tempNo ) {
+std::int32_t Mapping::contextOffset( std::int32_t tempNo ) {
     // computes the byte offset within the context object
     return tempNo * oopSize + ContextOopDescriptor::temp0_byte_offset();
 }
@@ -138,8 +138,8 @@ bool_t Mapping::isFloatTemporary( Location loc ) {
     st_assert( not loc.isFloatLocation(), "must have been converted into stackLoc by register allocation" );
     if ( not loc.isStackLocation() )
         return false;
-    int floats = theCompiler->totalNofFloatTemporaries();
-    int offset = loc.offset();
+    std::int32_t floats = theCompiler->totalNofFloatTemporaries();
+    std::int32_t offset = loc.offset();
     return floats > 0 and first_float_offset + 2 >= offset and offset > first_float_offset - floats * ( SIZEOF_FLOAT / oopSize );
 }
 

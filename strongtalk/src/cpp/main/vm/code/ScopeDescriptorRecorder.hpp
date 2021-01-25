@@ -43,7 +43,7 @@ private:
     ProgramCounterDescriptorInfoClass *_programCounterDescriptorInfo;
 
     GrowableArray<KlassOop> *_dependents;
-    std::size_t _dependentsEnd;
+    std::int32_t _dependentsEnd;
 
     NonInlinedBlockScopeNode *_nonInlinedBlockScopeNode;
     NonInlinedBlockScopeNode *_nonInlinedBlockScopesTail;
@@ -52,12 +52,12 @@ public:
     ScopeInfo _root;
 
     // Returns the offset for a scopeDesc after generation of the scopeDesc info.
-    std::size_t offset( ScopeInfo scope );
+    std::int32_t offset( ScopeInfo scope );
 
-    std::size_t offset_for_noninlined_scope_node( NonInlinedBlockScopeNode *scope );
+    std::int32_t offset_for_noninlined_scope_node( NonInlinedBlockScopeNode *scope );
 
-    ScopeDescriptorRecorder( std::size_t scopeSize, // estimated size of scopes (in bytes)
-                             std::size_t npcDesc );  // estimated number of ProgramCounterDescriptors
+    ScopeDescriptorRecorder( std::int32_t scopeSize, // estimated size of scopes (in bytes)
+                             std::int32_t npcDesc );  // estimated number of ProgramCounterDescriptors
 
     // Adds a method scope
     ScopeInfo addMethodScope( LookupKey *key,                      // lookup key
@@ -65,9 +65,9 @@ public:
                               LogicalAddress *receiver_location,   // location of receiver
                               bool_t allocates_compiled_context,    // tells whether the code allocates a context
                               bool_t lite = false,                  //
-                              std::size_t scopeID = 0,                      //
+                              std::int32_t scopeID = 0,                      //
                               ScopeInfo senderScope = nullptr,      //
-                              std::size_t senderByteCodeIndex = IllegalByteCodeIndex,
+                              std::int32_t senderByteCodeIndex = IllegalByteCodeIndex,
                               bool_t visible = false );
 
 
@@ -75,9 +75,9 @@ public:
     ScopeInfo addBlockScope( MethodOop method,                      // block method
                              ScopeInfo parent,                      // parent scope
                              bool_t allocates_compiled_context,     // tells whether the code allocates a context
-                             bool_t lite = false, std::size_t scopeID = 0,  //
+                             bool_t lite = false, std::int32_t scopeID = 0,  //
                              ScopeInfo senderScope = nullptr,       //
-                             std::size_t senderByteCodeIndex = IllegalByteCodeIndex,
+                             std::int32_t senderByteCodeIndex = IllegalByteCodeIndex,
                              bool_t visible = false );
 
     // Adds a top level block scope
@@ -91,13 +91,13 @@ public:
     NonInlinedBlockScopeNode *addNonInlinedBlockScope( MethodOop block_method, ScopeInfo parent );
 
     // Interface for adding name nodes.
-    void addTemporary( ScopeInfo scope, std::size_t index, LogicalAddress *location );         // all entries [0..max(index)] must be filled.
-    void addContextTemporary( ScopeInfo scope, std::size_t index, LogicalAddress *location );  // all entries [0..max(index)] must be filled.
-    void addExprStack( ScopeInfo scope, std::size_t byteCodeIndex, LogicalAddress *location ); // sparse array = some entries may be left empty.
+    void addTemporary( ScopeInfo scope, std::int32_t index, LogicalAddress *location );         // all entries [0..max(index)] must be filled.
+    void addContextTemporary( ScopeInfo scope, std::int32_t index, LogicalAddress *location );  // all entries [0..max(index)] must be filled.
+    void addExprStack( ScopeInfo scope, std::int32_t byteCodeIndex, LogicalAddress *location ); // sparse array = some entries may be left empty.
 
     LogicalAddress *createLogicalAddress( NameNode *initial_value );
 
-    void changeLogicalAddress( LogicalAddress *location, NameNode *new_value, std::size_t pc_offset );
+    void changeLogicalAddress( LogicalAddress *location, NameNode *new_value, std::int32_t pc_offset );
 
     // Providing the locations of the arguments is superfluous but is convenient for verification.
     //  - for top level scopes the argument locations are fixed (on the stack provided by the caller).
@@ -105,18 +105,18 @@ public:
     //
     // %implementation-note:
     // For now the argument locations are saved since the function to compute expression stack has not been implemented.
-    void addArgument( ScopeInfo scope, std::size_t index, LogicalAddress *location );
+    void addArgument( ScopeInfo scope, std::int32_t index, LogicalAddress *location );
 
     // Interface for creating the pc-offset <-> (ScopeDescriptor, byteCodeIndex) mapping.
-    void addProgramCounterDescriptor( std::size_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex );
+    void addProgramCounterDescriptor( std::int32_t pcOffset, ScopeInfo scope, std::int32_t byteCodeIndex );
 
-    void addIllegalProgramCounterDescriptor( std::size_t pcOffset );
+    void addIllegalProgramCounterDescriptor( std::int32_t pcOffset );
 
     // Dependencies
     void add_dependent( LookupKey *key );
 
     // Returns the size of the generated scopeDescs.
-    std::size_t size();
+    std::int32_t size();
 
     // Copy the generated scopeDescs to 'addr'
     void copyTo( NativeMethod *nativeMethod );
@@ -144,17 +144,17 @@ private:
     void emit_illegal_node( bool_t is_last );
 
     // Returns true if was possible to save exprOffset and nextOffset in the two pre-allocated bytes.
-    std::size_t updateScopeDescHeader( std::size_t offset, std::size_t next );
+    std::int32_t updateScopeDescHeader( std::int32_t offset, std::int32_t next );
 
-    void updateExtScopeDescHeader( std::size_t offset, std::size_t next );
+    void updateExtScopeDescHeader( std::int32_t offset, std::int32_t next );
 
-    std::size_t getValueIndex( std::size_t v );
+    std::int32_t getValueIndex( std::int32_t v );
 
-    std::size_t getOopIndex( Oop o );
+    std::int32_t getOopIndex( Oop o );
 
-    void genIndex( std::size_t index );
+    void genIndex( std::int32_t index );
 
-    void genValue( std::size_t v );
+    void genValue( std::int32_t v );
 
     void genOop( Oop o );
 

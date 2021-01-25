@@ -46,7 +46,7 @@ ASSERT_TRUE( theClass
 TEST_F( ObjArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace
 ) {
 eden_top = eden_end;
-ASSERT_EQ( ( int ) nullptr, ( int ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
+ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
 }
 
 
@@ -75,7 +75,7 @@ TEST_F( ObjArrayKlassTests, allocateShouldExpandOldSpaceDuringTenuredAllocWhenAl
 ) {
 OldSpaceMark mark = Universe::old_gen.memo();
 OldSpace *space = mark.theSpace;
-int free = Universe::old_gen.free() / oopSize;
+std::int32_t free = Universe::old_gen.free() / oopSize;
 Oop *temp = Universe::allocate_tenured( free - 1, false );
 ASSERT_TRUE( temp
 != nullptr );
@@ -90,7 +90,7 @@ TEST_F( ObjArrayKlassTests, allocateShouldFailDuringTenuredAllocWhenOldSpaceExpa
 ) {
 OldSpaceMark mark = Universe::old_gen.memo();
 OldSpace *space = mark.theSpace;
-int free = Universe::old_gen.free() / oopSize;
+std::int32_t free = Universe::old_gen.free() / oopSize;
 Oop *temp = Universe::allocate_tenured( free - 1, false );
 ASSERT_TRUE( temp
 != nullptr );

@@ -33,15 +33,13 @@ private:
     // _pos <  0	bound label, pos() returns the target (jump) position
     // _pos == 0	unused label
     // _pos >  0	unbound label, pos() returns the last displacement (see .cpp file) in the chain
-    int _pos;
+    std::int32_t _pos;
+    std::int32_t pos() const;
 
 
-    int pos() const;
+    void bind_to( std::int32_t pos );
 
-
-    void bind_to( int pos );
-
-    void link_to( int pos );
+    void link_to( std::int32_t pos );
 
     void unuse();
 

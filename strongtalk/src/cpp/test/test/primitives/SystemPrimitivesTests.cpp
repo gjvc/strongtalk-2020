@@ -19,11 +19,11 @@
 TEST( SystemPrimitivesTests, expansionShouldExpandOldGenerationCapacity
 ) {
 char msg[100];
-int  oldSize = Universe::old_gen.capacity();
+std::int32_t  oldSize = Universe::old_gen.capacity();
 EXPECT_EQ( trueObject, SystemPrimitives::expandMemory( smiOopFromValue( 1000 * 1024 ) )
 ) << "wrong size";
-int expectedSize = oldSize + ReservedSpace::align_size( 1000 * 1024, ObjectHeapExpandSize * 1024 );
-int actualSize   = Universe::old_gen.capacity();
+std::int32_t expectedSize = oldSize + ReservedSpace::align_size( 1000 * 1024, ObjectHeapExpandSize * 1024 );
+std::int32_t actualSize   = Universe::old_gen.capacity();
 sprintf( msg,
 "Generation has wrong capacity. Expected: %d, but was: %d", expectedSize, actualSize );
 EXPECT_EQ( expectedSize, actualSize
@@ -63,11 +63,11 @@ EXPECT_EQ( smiOopFromValue( oopSize ), SystemPrimitives::oopSize()
 }
 
 
-extern "C" int expansion_count;
+extern "C" std::int32_t expansion_count;
 
 TEST( SystemPrimitivesTests, expansionsShouldReturnExpansionCountAsSMI
 ) {
-int expansions = expansion_count;
+std::int32_t expansions = expansion_count;
 SystemPrimitives::expandMemory( smiOopFromValue( ObjectHeapExpandSize * 1024 )
 );
 EXPECT_EQ( smiOopFromValue( expansions + 1 ), SystemPrimitives::expansions()
@@ -88,7 +88,7 @@ value()
 
 TEST( SystemPrimitivesTests, shrinkMemoryShouldReduceOldSpaceCapacity
 ) {
-int freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
+std::int32_t freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
 SystemPrimitives::expandMemory( smiOopFromValue( ObjectHeapExpandSize * 1024 )
 );
 SystemPrimitives::shrinkMemory( smiOopFromValue( ObjectHeapExpandSize * 1024 )
@@ -102,10 +102,10 @@ value()
 
 TEST( SystemPrimitivesTests, shrinkMemoryShouldReturnValueOutOfRangeWhenInsufficientFreeSpace
 ) {
-int freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
-ASSERT_EQ( ( int )
+std::int32_t freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::value_out_of_range() ),
-( int )
+( std::int32_t )
 SystemPrimitives::shrinkMemory( smiOopFromValue( freeSpace + 1 )
 ) );
 ASSERT_EQ( freeSpace, SMIOop( SystemPrimitives::freeSpace() )
@@ -117,10 +117,10 @@ value()
 
 TEST( SystemPrimitivesTests, shrinkMemoryShouldReturnValueOutOfRangeWhenNegative
 ) {
-int freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
-ASSERT_EQ( ( int )
+std::int32_t freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::value_out_of_range() ),
-( int )
+( std::int32_t )
 SystemPrimitives::shrinkMemory( smiOopFromValue( -1 )
 ) );
 ASSERT_EQ( freeSpace, SMIOop( SystemPrimitives::freeSpace() )
@@ -132,10 +132,10 @@ value()
 
 TEST( SystemPrimitivesTests, shrinkMemoryShouldReturnArgumentIsOfWrongType
 ) {
-int freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
-ASSERT_EQ( ( int )
+std::int32_t freeSpace = SMIOop( SystemPrimitives::freeSpace() )->value();
+ASSERT_EQ( ( std::int32_t )
 markSymbol( vmSymbols::first_argument_has_wrong_type() ),
-( int )
+( std::int32_t )
 SystemPrimitives::shrinkMemory ( vmSymbols::and1() )
 );
 ASSERT_EQ( freeSpace, SMIOop( SystemPrimitives::freeSpace() )
@@ -152,7 +152,7 @@ EXPECT_TRUE( pointer
 ->
 is_smi()
 ) << "result should be SmallInteger";
-int address = SMIOop( pointer )->value();
+std::int32_t address = SMIOop( pointer )->value();
 EXPECT_TRUE( address
 % 4 == 0 ) << "not aligned";
 EXPECT_TRUE( address
@@ -204,7 +204,7 @@ EXPECT_TRUE( pointer
 ->
 is_smi()
 ) << "result should be SmallInteger";
-int address  = SMIOop( pointer )->value();
+std::int32_t address  = SMIOop( pointer )->value();
 EXPECT_TRUE( address
 % 4 == 0 ) << "not aligned";
 EXPECT_TRUE( address
@@ -220,11 +220,11 @@ Oop  pointer = SystemPrimitives::alienCalloc( smiOopFromValue( 4 ) );
 const char *address = (const char *) SMIOop( pointer )->value();
 
 for (
-int index = 0;
+std::int32_t index = 0;
 index < 4; index++ ) {
 sprintf( message,
 "char %d should be zero", index );
-EXPECT_EQ( ( int ) address[ index ], 0 ) <<
+EXPECT_EQ( ( std::int32_t ) address[ index ], 0 ) <<
 message;
 }
 free( ( void * ) address );
@@ -323,7 +323,7 @@ EXPECT_EQ( markSymbol( vmSymbols::argument_is_invalid() ), result
 
 TEST( SystemPrimitivesTests, alienFreeShouldFreeLargeIntegerAddress
 ) {
-int address = (int) malloc( 4 );
+std::int32_t address = (std::int32_t) malloc( 4 );
 Oop result  = SystemPrimitives::alienFree( as_large_integer( address ) );
 
 EXPECT_TRUE( !result->

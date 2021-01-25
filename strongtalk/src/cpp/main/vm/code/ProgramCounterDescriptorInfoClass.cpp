@@ -8,18 +8,18 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
 
-ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::size_t sz ) {
+ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::int32_t sz ) {
     _nodes = new_resource_array<ProgramCounterDescriptorNode>( sz );
     _end   = 0;
     _size  = sz;
 }
 
 
-void ProgramCounterDescriptorInfoClass::extend( std::size_t newSize ) {
+void ProgramCounterDescriptorInfoClass::extend( std::int32_t newSize ) {
 
     ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 
-    for ( std::size_t i = 0; i < _end; i++ )
+    for ( std::int32_t i = 0; i < _end; i++ )
         newNodes[ i ] = _nodes[ i ];
 
     _nodes = newNodes;
@@ -27,7 +27,7 @@ void ProgramCounterDescriptorInfoClass::extend( std::size_t newSize ) {
 }
 
 
-void ProgramCounterDescriptorInfoClass::add( std::size_t pcOffset, ScopeInfo scope, std::size_t byteCodeIndex ) {
+void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo scope, std::int32_t byteCodeIndex ) {
     if ( scope->_lite and not GenerateLiteScopeDescs )
         return;
     if ( _end == _size )
@@ -57,34 +57,34 @@ void ProgramCounterDescriptorInfoClass::add( std::size_t pcOffset, ScopeInfo sco
 
 
 void ProgramCounterDescriptorInfoClass::mark_scopes() {
-    for ( std::size_t i = 0; i < _end; i++ ) {
+    for ( std::int32_t i = 0; i < _end; i++ ) {
         if ( _nodes[ i ]._scopeInfo )
             _nodes[ i ]._scopeInfo->_usedInPcs = true;
     }
 }
 
 
-void ProgramCounterDescriptorInfoClass::copy_to( std::size_t *&addr ) {
-    for ( std::size_t i = 0; i < _end; i++ ) {
+void ProgramCounterDescriptorInfoClass::copy_to( std::int32_t *&addr ) {
+    for ( std::int32_t i = 0; i < _end; i++ ) {
         ProgramCounterDescriptor *pc = (ProgramCounterDescriptor *) addr;
         pc->_pc            = _nodes[ i ]._pcOffset;
         pc->_scope         = _nodes[ i ]._scopeInfo ? _nodes[ i ]._scopeInfo->_offset : IllegalByteCodeIndex;
         pc->_byteCodeIndex = _nodes[ i ]._byteCodeIndex;
-        addr += sizeof( ProgramCounterDescriptor ) / sizeof( std::size_t );
+        addr += sizeof( ProgramCounterDescriptor ) / sizeof( std::int32_t );
     }
 }
 
 
 void LocationName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
-    std::size_t      index              = rec->getValueIndex( converted_location._loc );
+    std::int32_t      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, LOCATION_CODE, is_last, index ) )
         rec->genIndex( index );
 }
 
 
 void ValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
-    std::size_t index = rec->getOopIndex( _value );
+    std::int32_t index = rec->getOopIndex( _value );
     if ( not genHeaderByte( rec, VALUE_CODE, is_last, index ) )
         rec->genIndex( index );
 }
@@ -92,7 +92,7 @@ void ValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
 
 void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
     Location converted_location = rec->convert_location( _location );
-    std::size_t      index              = rec->getValueIndex( converted_location._loc );
+    std::int32_t      index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, MEMOIZEDBLOCK_CODE, is_last, index ) )
         rec->genIndex( index );
     rec->genOop( Oop( _blockMethod ) );
@@ -101,7 +101,7 @@ void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
 
 
 void BlockValueName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
-    std::size_t index = rec->getOopIndex( Oop( _blockMethod ) );
+    std::int32_t index = rec->getOopIndex( Oop( _blockMethod ) );
     if ( not genHeaderByte( rec, BLOCKVALUE_CODE, is_last, index ) )
         rec->genIndex( index );
     rec->genValue( _parentScope == nullptr ? 0 : _parentScope->_offset ); // Lars, please check this (gri 2/2/96)

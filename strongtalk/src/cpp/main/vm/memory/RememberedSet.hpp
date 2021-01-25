@@ -14,9 +14,9 @@
 // Card size is 512 bytes
 // NB: Card size must be >= 512 because of the offset_array in oldspace
 
-const int card_shift        = 9;            // wired in to scavenge_contents
-const int card_size         = 1 << card_shift;
-const int card_size_in_oops = card_size / oopSize;
+const std::int32_t card_shift        = 9;            // wired in to scavenge_contents
+const std::int32_t card_size         = 1 << card_shift;
+const std::int32_t card_size_in_oops = card_size / oopSize;
 
 class RememberedSet : public CHeapAllocatedObject {
     friend class OldSpace;
@@ -36,28 +36,28 @@ private:
     }
 
 
-    //  char* byte_for(void *p) const { return (char*)&byte_map[int((char*)p - low_boundary) >> card_shift]; }
+    //  char* byte_for(void *p) const { return (char*)&byte_map[std::int32_t((char*)p - low_boundary) >> card_shift]; }
     Oop *oop_for( const char *p ) const {
         return (Oop *) ( _lowBoundary + ( ( p - _byteMap ) << card_shift ) );
     }
 
 
     friend Oop *card_for( Oop *p ) {
-        return (Oop *) ( int( p ) & ~( card_size - 1 ) );
+        return (Oop *) ( std::int32_t( p ) & ~( card_size - 1 ) );
     }
 
 
     char *byte_map_end() const;
 
 public:
-    int byte_map_size() const {
+    std::int32_t byte_map_size() const {
         return ( _highBoundary - _lowBoundary ) / card_size;
     }
 
 
     RememberedSet();
 
-    void *operator new( std::size_t size );
+    void *operator new( std::int32_t size );
 
     void clear();
 
@@ -91,15 +91,15 @@ public:
     void print_set_for_object( MemOop obj );
 
     // Returns the number of dirty pages in an old segment
-    int number_of_dirty_pages_in( OldSpace *sp );
+    std::int32_t number_of_dirty_pages_in( OldSpace *sp );
 
     // Return the number of pages with dirty objects.
-    int number_of_pages_with_dirty_objects_in( OldSpace *sp );
+    std::int32_t number_of_pages_with_dirty_objects_in( OldSpace *sp );
 
     // Operations used during garbage collection
-    void set_size( MemOop obj, std::size_t size );
+    void set_size( MemOop obj, std::int32_t size );
 
-    int get_size( MemOop obj );
+    std::int32_t get_size( MemOop obj );
 
 private:
     void fixup( const char *start, const char *end );

@@ -24,7 +24,7 @@ public:
     }
 
 
-    void getLiveRange( int &firstNodeID, int &lastNodeId );
+    void getLiveRange( std::int32_t &firstNodeID, std::int32_t &lastNodeId );
 
     void propagateTo( BasicBlock *bb, const PseudoRegister *r, const Definition *def, Usage *use, const bool_t global );
 

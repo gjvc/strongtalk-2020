@@ -13,10 +13,10 @@
 #include "vm/assembler/x86_mapping.hpp"
 
 
-std::size_t NodeFactory::_cumulativeCost;
+std::int32_t NodeFactory::_cumulativeCost;
 
 
-NonLocalReturnContinuationNode *NodeFactory::NonLocalReturnContinuationNode( int byteCodeIndex ) {
+NonLocalReturnContinuationNode *NodeFactory::NonLocalReturnContinuationNode( std::int32_t byteCodeIndex ) {
     InlinedScope                         *scope = theCompiler->currentScope();
     PseudoRegister                       *reg   = new PseudoRegister( scope, NonLocalReturnResultLoc, false, false );
     class NonLocalReturnContinuationNode *res   = new class NonLocalReturnContinuationNode( byteCodeIndex, reg, reg );
@@ -25,7 +25,7 @@ NonLocalReturnContinuationNode *NodeFactory::NonLocalReturnContinuationNode( int
 }
 
 
-NonLocalReturnTestNode *NodeFactory::NonLocalReturnTestNode( int byteCodeIndex ) {
+NonLocalReturnTestNode *NodeFactory::NonLocalReturnTestNode( std::int32_t byteCodeIndex ) {
     class NonLocalReturnTestNode *res = new class NonLocalReturnTestNode( byteCodeIndex );
     registerNode( res );
     theCompiler->nlrTestPoints->append( res );
@@ -79,7 +79,7 @@ InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::O
 }
 
 
-UncommonNode *NodeFactory::UncommonNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex ) {
+UncommonNode *NodeFactory::UncommonNode( GrowableArray<PseudoRegister *> *exprStack, std::int32_t byteCodeIndex ) {
     class UncommonNode *res = new class UncommonNode( exprStack, byteCodeIndex );
     registerNode( res );
     st_assert( exprStack, "must have expr. stack" );
@@ -88,7 +88,7 @@ UncommonNode *NodeFactory::UncommonNode( GrowableArray<PseudoRegister *> *exprSt
 }
 
 
-UncommonSendNode *NodeFactory::UncommonSendNode( GrowableArray<PseudoRegister *> *exprStack, int byteCodeIndex, int args ) {
+UncommonSendNode *NodeFactory::UncommonSendNode( GrowableArray<PseudoRegister *> *exprStack, std::int32_t byteCodeIndex, std::int32_t args ) {
     class UncommonSendNode *res = new class UncommonSendNode( exprStack, byteCodeIndex, args );
     registerNode( res );
     st_assert( exprStack, "must have expr. stack" );

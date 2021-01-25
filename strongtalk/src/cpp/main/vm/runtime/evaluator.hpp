@@ -43,5 +43,5 @@ protected:
 public:
     static void read_eval_loop();
 
-    static void single_step( int *fr );
+    static void single_step( std::int32_t *fr );
 };

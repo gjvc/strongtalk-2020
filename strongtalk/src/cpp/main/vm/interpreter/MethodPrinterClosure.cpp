@@ -28,9 +28,9 @@ void MethodPrinterClosure::indent() {
     if ( WizardMode ) {
         _outputStream->indent();
         _outputStream->print( "      <" );
-        GrowableArray<std::size_t> *map = method()->expression_stack_mapping( byteCodeIndex() );
+        GrowableArray<std::int32_t> *map = method()->expression_stack_mapping( byteCodeIndex() );
 
-        for ( std::size_t i = 0; i < map->length(); i++ )
+        for ( std::int32_t i = 0; i < map->length(); i++ )
             _outputStream->print( " 0x%08x", map->at( i ) );
         _outputStream->print_cr( " >" );
     }
@@ -134,7 +134,7 @@ void MethodPrinterClosure::dll_call_node( DLLCallNode *node ) {
 }
 
 
-void MethodPrinterClosure::allocate_temporaries( int nofTemps ) {
+void MethodPrinterClosure::allocate_temporaries( std::int32_t nofTemps ) {
     indent();
     _outputStream->print_cr( "allocate 0x%08x temporaries", nofTemps );
 }
@@ -160,25 +160,25 @@ void MethodPrinterClosure::push_literal( Oop obj ) {
 }
 
 
-void MethodPrinterClosure::push_argument( int no ) {
+void MethodPrinterClosure::push_argument( std::int32_t no ) {
     indent();
     _outputStream->print_cr( "push arg 0x%08x", no );
 }
 
 
-void MethodPrinterClosure::push_temporary( int no ) {
+void MethodPrinterClosure::push_temporary( std::int32_t no ) {
     indent();
     _outputStream->print_cr( "push temp 0x%08x", no );
 }
 
 
-void MethodPrinterClosure::push_temporary( int no, int context ) {
+void MethodPrinterClosure::push_temporary( std::int32_t no, std::int32_t context ) {
     indent();
     _outputStream->print_cr( "push temp 0x%08x [0x%08x]", no, context );
 }
 
 
-void MethodPrinterClosure::push_instVar( int offset ) {
+void MethodPrinterClosure::push_instVar( std::int32_t offset ) {
     indent();
     _outputStream->print_cr( "push instVar 0x%08x", offset );
 }
@@ -216,19 +216,19 @@ void MethodPrinterClosure::push_global( AssociationOop obj ) {
 }
 
 
-void MethodPrinterClosure::store_temporary( int no ) {
+void MethodPrinterClosure::store_temporary( std::int32_t no ) {
     indent();
     _outputStream->print_cr( "store temp 0x%08x", no );
 }
 
 
-void MethodPrinterClosure::store_temporary( int no, int context ) {
+void MethodPrinterClosure::store_temporary( std::int32_t no, std::int32_t context ) {
     indent();
     _outputStream->print_cr( "store temp 0x%08x [0x%08x]", no, context );
 }
 
 
-void MethodPrinterClosure::store_instVar( int offset ) {
+void MethodPrinterClosure::store_instVar( std::int32_t offset ) {
     indent();
     _outputStream->print_cr( "store instVar 0x%08x", offset );
 }
@@ -318,19 +318,19 @@ void MethodPrinterClosure::double_not_equal() {
 }
 
 
-void MethodPrinterClosure::method_return( int nofArgs ) {
+void MethodPrinterClosure::method_return( std::int32_t nofArgs ) {
     indent();
     _outputStream->print_cr( "return (pop 0x%08x args)", nofArgs );
 }
 
 
-void MethodPrinterClosure::nonlocal_return( int nofArgs ) {
+void MethodPrinterClosure::nonlocal_return( std::int32_t nofArgs ) {
     indent();
     _outputStream->print_cr( "non-local return (pop 0x%08x args)", nofArgs );
 }
 
 
-void MethodPrinterClosure::allocate_closure( AllocationType type, int nofArgs, MethodOop meth ) {
+void MethodPrinterClosure::allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
     indent();
     _outputStream->print( "allocate closure" );
     switch ( type ) {
@@ -354,7 +354,7 @@ void MethodPrinterClosure::allocate_closure( AllocationType type, int nofArgs, M
 }
 
 
-void MethodPrinterClosure::allocate_context( int nofTemps, bool_t forMethod ) {
+void MethodPrinterClosure::allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
     indent();
     _outputStream->print_cr( "allocate %s context with 0x%08x temporaries", forMethod ? "method" : "block", nofTemps );
 }
@@ -372,7 +372,7 @@ void MethodPrinterClosure::copy_self_into_context() {
 }
 
 
-void MethodPrinterClosure::copy_argument_into_context( int argNo, int no ) {
+void MethodPrinterClosure::copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
     indent();
     _outputStream->print_cr( "copy argument 0x%08x into context at 0x%08x", argNo, no );
 }
@@ -384,19 +384,19 @@ void MethodPrinterClosure::zap_scope() {
 }
 
 
-void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor *pdesc, int failure_start ) {
+void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
     indent();
     _outputStream->print_cr( "predicted prim method" );
 }
 
 
-void MethodPrinterClosure::float_allocate( int nofFloatTemps, int nofFloatExprs ) {
+void MethodPrinterClosure::float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
     indent();
     _outputStream->print_cr( "float allocate temps=0x%08x, expr=0x%08x", nofFloatTemps, nofFloatExprs );
 }
 
 
-void MethodPrinterClosure::float_floatify( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_floatify( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float floatify " );
     Floats::selector_for( f )->print_value_on( _outputStream );
@@ -404,19 +404,19 @@ void MethodPrinterClosure::float_floatify( Floats::Function f, int tof ) {
 }
 
 
-void MethodPrinterClosure::float_move( int tof, int from ) {
+void MethodPrinterClosure::float_move( std::int32_t tof, std::int32_t from ) {
     indent();
     _outputStream->print_cr( "float move tof=0x%08x, from=0x%08x", tof, from );
 }
 
 
-void MethodPrinterClosure::float_set( int tof, DoubleOop value ) {
+void MethodPrinterClosure::float_set( std::int32_t tof, DoubleOop value ) {
     indent();
     _outputStream->print_cr( "float set tof=0x%08x, value=%1.6g", tof, value->value() );
 }
 
 
-void MethodPrinterClosure::float_nullary( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_nullary( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float nullary " );
     Floats::selector_for( f )->print_value_on( _outputStream );
@@ -424,7 +424,7 @@ void MethodPrinterClosure::float_nullary( Floats::Function f, int tof ) {
 }
 
 
-void MethodPrinterClosure::float_unary( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_unary( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float unary " );
     Floats::selector_for( f )->print_value_on( _outputStream );
@@ -432,7 +432,7 @@ void MethodPrinterClosure::float_unary( Floats::Function f, int tof ) {
 }
 
 
-void MethodPrinterClosure::float_binary( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_binary( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float binary " );
     Floats::selector_for( f )->print_value_on( _outputStream );
@@ -440,7 +440,7 @@ void MethodPrinterClosure::float_binary( Floats::Function f, int tof ) {
 }
 
 
-void MethodPrinterClosure::float_unaryToOop( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_unaryToOop( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float unaryToOop " );
     Floats::selector_for( f )->print_value_on( _outputStream );
@@ -448,7 +448,7 @@ void MethodPrinterClosure::float_unaryToOop( Floats::Function f, int tof ) {
 }
 
 
-void MethodPrinterClosure::float_binaryToOop( Floats::Function f, int tof ) {
+void MethodPrinterClosure::float_binaryToOop( Floats::Function f, std::int32_t tof ) {
     indent();
     _outputStream->print( "float binaryToOop " );
     Floats::selector_for( f )->print_value_on( _outputStream );

@@ -25,7 +25,7 @@ public:
 
 
     // Returns the value used during an abort
-    static std::size_t aborting_nlr_home_id() {
+    static std::int32_t aborting_nlr_home_id() {
         return 0xcafebabe;
     }
 

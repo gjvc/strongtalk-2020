@@ -20,15 +20,15 @@ protected:
     }
 
 
-    void expandAndCheckCapacity( int expansionSize ) {
+    void expandAndCheckCapacity( std::int32_t expansionSize ) {
         char msg[100];
-        int  oldSize = Universe::old_gen.capacity();
+        std::int32_t  oldSize = Universe::old_gen.capacity();
 
         Universe::old_gen.expand( expansionSize );
 
-        int expectedIncrement = ReservedSpace::align_size( expansionSize, ObjectHeapExpandSize * 1024 );
-        int actual            = Universe::old_gen.capacity();
-        int expectedSize      = oldSize + expectedIncrement;
+        std::int32_t expectedIncrement = ReservedSpace::align_size( expansionSize, ObjectHeapExpandSize * 1024 );
+        std::int32_t actual            = Universe::old_gen.capacity();
+        std::int32_t expectedSize      = oldSize + expectedIncrement;
         sprintf( msg, "Generation has wrong capacity. Expected: %d, but was: %d", expectedSize, actual );
         EXPECT_EQ( expectedSize, actual ) << msg;
     }
@@ -57,7 +57,7 @@ expandAndCheckCapacity( ObjectHeapExpandSize
 
 TEST_F( OldGenerationTest, allocateWithoutExpansionWhenEmptyShouldFail
 ) {
-int free = Universe::old_gen.free();
+std::int32_t free = Universe::old_gen.free();
 Oop *result = Universe::old_gen.allocate( free + 1, false );
 EXPECT_EQ( nullptr, result ) << "Result should be nullptr";
 }
@@ -65,7 +65,7 @@ EXPECT_EQ( nullptr, result ) << "Result should be nullptr";
 
 TEST_F( OldGenerationTest, shrinkShouldReduceOldSpaceCapacity
 ) {
-int freeSpace = Universe::old_gen.free();
+std::int32_t freeSpace = Universe::old_gen.free();
 Universe::old_gen.
 expand( ObjectHeapExpandSize
 * 1024 );
@@ -81,7 +81,7 @@ free()
 
 TEST_F( OldGenerationTest, shrinkShouldReturnZeroWhenInsufficientFreeSpace
 ) {
-int freeSpace = Universe::old_gen.free();
+std::int32_t freeSpace = Universe::old_gen.free();
 ASSERT_EQ( 0, Universe::old_gen.
 shrink( freeSpace
 + 1 ) );

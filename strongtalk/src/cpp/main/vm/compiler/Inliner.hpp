@@ -48,7 +48,7 @@ protected:
 
 
 public:
-    int depth;            // nesting depth (for debug output)
+    std::int32_t depth;            // nesting depth (for debug output)
 
     Inliner( InlinedScope *s ) {
         this->_sender = s;

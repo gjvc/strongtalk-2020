@@ -21,16 +21,16 @@ private:
     RelocationInformation *_locsStart;
     RelocationInformation *_locsEnd;
     RelocationInformation *_locsOverflow;
-    int _last_reloc_offset;
+    std::int32_t _last_reloc_offset;
 
     const char *_decode_begin;
 
     const char *decode_begin();
 
 public:
-    CodeBuffer( const char *code_start, int code_size );
+    CodeBuffer( const char *code_start, std::int32_t code_size );
 
-    CodeBuffer( int instsSize, int locsSize );
+    CodeBuffer( std::int32_t instsSize, std::int32_t locsSize );
 
 
     const char *code_begin() const {
@@ -48,12 +48,12 @@ public:
     }
 
 
-    int code_size() const {
+    std::int32_t code_size() const {
         return _codeEnd - _codeStart;
     }
 
 
-    int reloc_size() const {
+    std::int32_t reloc_size() const {
         return ( _locsEnd - _locsStart ) * sizeof( RelocationInformation );
     }
 
