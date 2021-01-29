@@ -40,7 +40,7 @@ public:
     std::int32_t shrink( std::int32_t size );
 
 
-    Oop *allocate( std::int32_t size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::int32_t size, bool allow_expansion = true ) {
         return _currentSpace->allocate( size, allow_expansion );
     }
 
@@ -74,7 +74,7 @@ public:
 
     void verify();
 
-    bool_t contains( void *p );
+    bool contains( void *p );
 
     Oop *object_start( Oop *p );
 

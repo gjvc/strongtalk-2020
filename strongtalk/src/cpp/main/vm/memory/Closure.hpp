@@ -47,7 +47,7 @@ private:
 
 public:
     // Called for each object and returns whether do_filtered_objects should be called.
-    virtual bool_t include_object( MemOop obj );
+    virtual bool include_object( MemOop obj );
 
 
     // Called for each object where include_object returns true.

@@ -115,19 +115,19 @@ public:
     MethodOop method_at( std::int32_t index ) const;       // Return the method at index.
     void add_method( MethodOop method );      // Add/overwrite method.
     MethodOop remove_method_at( std::int32_t index );       // Remove and return the method at index.
-    bool_t includes_method( MethodOop method ); // Remove and return the class variable at index.
+    bool includes_method( MethodOop method ); // Remove and return the class variable at index.
 
     std::int32_t number_of_instVars() const;       // Return the number of instance variables.
     SymbolOop instVar_at( std::int32_t index ) const;       // Return the instance variable at index.
     void add_instVar( SymbolOop name );       // Add instance variable.
     SymbolOop remove_instVar_at( std::int32_t index );      // Remove and return the instance variable at index.
-    bool_t includes_instVar( SymbolOop name );  // Tells whether the name is present as an instance variable name.
+    bool includes_instVar( SymbolOop name );  // Tells whether the name is present as an instance variable name.
 
     std::int32_t number_of_classVars() const;      // Return the number of class variables.
     SymbolOop classVar_at( std::int32_t index ) const;      // Return the class variable at index.
     void add_classVar( SymbolOop name );      // Add class variable.
     SymbolOop remove_classVar_at( std::int32_t index );     // Remove and return the class variable at index.
-    bool_t includes_classVar( SymbolOop name ); // Tells whether the name is present
+    bool includes_classVar( SymbolOop name ); // Tells whether the name is present
 
     // Returns the offset of an instance variable.
     // -1 is returned if inst var is not present in mixin.
@@ -141,10 +141,10 @@ public:
     void uncustomize_methods();
 
     // Tells whether the mixin has been installed
-    bool_t is_installed() const;
+    bool is_installed() const;
 
     // Tells whether the mixin has been installed
-    bool_t has_primary_invocation() const;
+    bool has_primary_invocation() const;
 
     // bootstrappingInProgress
     void bootstrap_object( Bootstrap *stream );

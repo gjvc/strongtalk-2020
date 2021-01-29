@@ -27,7 +27,7 @@ public:
 
 private:
 
-    bool_t _is_compiled;
+    bool _is_compiled;
 
     // Link to next unwindinfo
     UnwindInfo *_next;

@@ -51,7 +51,7 @@ protected:
                 if ( TraceApplyChange ) {
                     _console->print( "map " );
                     name->print_symbol_on( _console );
-                    _console->print_cr( " %d -> %d", old_index + old_header_size, new_index );
+                    spdlog::info( " {} -> {}", old_index + old_header_size, new_index );
                 }
                 // We found a match between a old and new class
                 _mapping->push( old_index + old_header_size );
@@ -100,7 +100,7 @@ public:
 
 class proxyConverter : public memConverter {
 private:
-    bool_t _sourceIsProxy;
+    bool _sourceIsProxy;
 public:
     proxyConverter( KlassOop old_klass, KlassOop new_klass ) :
             memConverter( old_klass, new_klass ) {
@@ -118,7 +118,7 @@ public:
 
 class processConverter : public memConverter {
 private:
-    bool_t _sourceIsProcess;
+    bool _sourceIsProcess;
 public:
     processConverter( KlassOop old_klass, KlassOop new_klass ) :
             memConverter( old_klass, new_klass ) {
@@ -137,7 +137,7 @@ public:
 class byteArrayConverter : public memConverter {
 
 private:
-    bool_t _sourceIsByteArray;
+    bool _sourceIsByteArray;
 
 public:
     byteArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
@@ -167,7 +167,7 @@ public:
 class doubleByteArrayConverter : public memConverter {
 
 private:
-    bool_t _sourceIsDoubleByteArray;
+    bool _sourceIsDoubleByteArray;
 
 public:
     doubleByteArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
@@ -197,7 +197,7 @@ public:
 class objArrayConverter : public memConverter {
 
 private:
-    bool_t _sourceIsObjArray;
+    bool _sourceIsObjArray;
 
 public:
     objArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
@@ -227,7 +227,7 @@ public:
 
 class doubleValueArrayConverter : public memConverter {
 private:
-    bool_t source_is_obj_array;
+    bool source_is_obj_array;
 public:
     doubleValueArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
             memConverter( old_klass, new_klass ) {

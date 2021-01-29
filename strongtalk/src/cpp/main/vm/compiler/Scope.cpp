@@ -120,7 +120,7 @@ void InlinedScope::initialize( MethodOop method, KlassOop methodHolder, InlinedS
 }
 
 
-bool_t InlinedScope::isLite() const {
+bool InlinedScope::isLite() const {
     // A scope is light (doesn't need its locals/expression stack described) if it has no interrupt
     // points, i.e., if the program can never stop while the PC is in this scope.
     // The top scope of an NativeMethod can't be light (at least the receiver is needed).
@@ -292,7 +292,7 @@ void BlockScope::initializeSelf() {
 
 void InlinedScope::createTemporaries( std::int32_t nofTemps ) {
     // add nofTemps temporaries (may be called multiple times)
-    std::int32_t firstNew;
+    std::int32_t        firstNew;
     if ( not hasTemporaries() ) {
         // first time we're called
         _temporaries = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );
@@ -308,7 +308,7 @@ void InlinedScope::createTemporaries( std::int32_t nofTemps ) {
     } else {
         // grow existing temp array
         const GrowableArray<Expression *> *oldTemps = _temporaries;
-        const std::int32_t                         n         = nofTemps + oldTemps->length();
+        const std::int32_t                n         = nofTemps + oldTemps->length();
         _temporaries = new GrowableArray<Expression *>( n, n, nullptr );
         firstNew     = oldTemps->length();
         nofTemps += oldTemps->length();
@@ -317,7 +317,7 @@ void InlinedScope::createTemporaries( std::int32_t nofTemps ) {
     }
     // initialize new temps
     ConstPseudoRegister *nil = new_ConstPReg( this, nilObject );
-    for ( std::int32_t i = firstNew; i < nofTemps; i++ ) {
+    for ( std::int32_t  i    = firstNew; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _temporaries->at_put( i, new UnknownExpression( r, nullptr ) );
         if ( isTop() ) {
@@ -339,7 +339,7 @@ void InlinedScope::createFloatTemporaries( std::int32_t nofFloats ) {
         if ( isTop() ) {
             // floats are initialized by PrologueNode
         } else {
-            warning( "float initialization of floats in inlined scopes not implemented yet" );
+            spdlog::warn( "float initialization of floats in inlined scopes not implemented yet" );
         }
     }
 }
@@ -363,7 +363,7 @@ void InlinedScope::createContextTemporaries( std::int32_t nofTemps ) {
         // fast version, put in a warning so that we can look at this if it happens
         // again (couldn't re-create the situation yet) - gri 5/10/96
         st_assert( isMethodScope() or isBlockScope() and method()->block_info() == MethodOopDescriptor::expects_nil, "check this" );
-        //if (isBlockScope()) warning("possibly a bug in InlinedScope::createContextTemporaries - tell Robert");
+        //if (isBlockScope()) spdlog::warn("possibly a bug in InlinedScope::createContextTemporaries - tell Robert");
         _context = new SinglyAssignedPseudoRegister( this, PrologueByteCodeIndex, EpilogueByteCodeIndex );
     }
     // The canonical model has the context in the first temporary.
@@ -379,7 +379,7 @@ void InlinedScope::contextTemporariesAtPut( std::int32_t no, Expression *e ) {
 }
 
 
-bool_t InlinedScope::allocatesCompiledContext() const {
+bool InlinedScope::allocatesCompiledContext() const {
     if ( not allocatesInterpretedContext() )
         return false;
     ContextCreateNode *c = _contextInitializer->creator();
@@ -449,11 +449,11 @@ void InlinedScope::epilogue() {
 }
 
 
-bool_t InlinedScope::isSenderOf( InlinedScope *callee ) const {
+bool InlinedScope::isSenderOf( InlinedScope *callee ) const {
     st_assert( callee, "should have a scope" );
     if ( depth > callee->depth )
         return false;
-    std::int32_t d = callee->depth - 1;
+    std::int32_t       d  = callee->depth - 1;
     for ( InlinedScope *s = callee->sender(); s and d >= depth; s = s->sender(), d-- ) {
         if ( this == s )
             return true;
@@ -462,7 +462,7 @@ bool_t InlinedScope::isSenderOf( InlinedScope *callee ) const {
 }
 
 
-void InlinedScope::addSend( GrowableArray<PseudoRegister *> *expStk, bool_t isSend ) {
+void InlinedScope::addSend( GrowableArray<PseudoRegister *> *expStk, bool isSend ) {
     // add send or prim. call / uncommon branch to this scope and mark locals as debug-visible
     if ( not expStk )
         return;            // not an exposing send
@@ -481,10 +481,10 @@ void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *expr
     if ( _nofSends <= 1 ) {
         // first time we're called
         self()->preg()->_debug          = true;
-        for ( std::int32_t                   i   = nofArguments() - 1; i >= 0; i-- ) {
+        for ( std::int32_t          i   = nofArguments() - 1; i >= 0; i-- ) {
             argument( i )->preg()->_debug = true;
         }
-        for ( std::int32_t                   i   = nofTemporaries() - 1; i >= 0; i-- ) {
+        for ( std::int32_t          i   = nofTemporaries() - 1; i >= 0; i-- ) {
             temporary( i )->preg()->_debug = true;
         }
         // if there's a context, mark all context variables as debug-visible too.
@@ -525,8 +525,8 @@ void InlinedScope::set_self( Expression *e ) {
 std::int32_t InlinedScope::homeContext() const {
     // count the number of logical (i.e. interpreter) contexts from here up to the home method
     // contexts are numbered starting with zero and there is at least one context
-    std::int32_t       context = -1;
-    MethodOop method  = _method;
+    std::int32_t context = -1;
+    MethodOop    method  = _method;
     while ( method not_eq nullptr ) {
         if ( method->allocatesInterpretedContext() ) {
             context++;
@@ -709,12 +709,12 @@ void InlinedScope::allocatePRegs( IntFreeList *f ) {
 
 std::int32_t InlinedScope::allocateFloatTemporaries( std::int32_t firstFloatIndex ) {
     st_assert( firstFloatIndex >= 0, "illegal firstFloatIndex" );
-    _firstFloatIndex = firstFloatIndex;                // start index for first float of this scope
+    _firstFloatIndex                             = firstFloatIndex;                // start index for first float of this scope
     std::int32_t       nofFloatTemps             = hasFloatTemporaries() ? nofFloatTemporaries() : 0;
     // convert floatLocs into stackLocs
     for ( std::int32_t k                         = 0; k < nofFloatTemps; k++ ) {
         PseudoRegister *preg = floatTemporary( k )->preg();
-        Location loc = preg->_location;
+        Location       loc   = preg->_location;
         st_assert( loc.scopeNo() == scopeID() and loc.floatNo() == k, "inconsistency" );
         preg->_location = Mapping::floatTemporary( scopeID(), k );
         st_assert( preg->_location.isStackLocation(), "must be a stack location" );
@@ -731,7 +731,7 @@ std::int32_t InlinedScope::allocateFloatTemporaries( std::int32_t firstFloatInde
 }
 
 
-bool_t MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
+bool MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
     // test is method/rcvrKlass would be a recursive invocation of this scope
     if ( method == _method and rcvrKlass == selfKlass() ) {
         if ( depth <= 1 ) {
@@ -750,7 +750,7 @@ bool_t MethodScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::
 }
 
 
-bool_t BlockScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
+bool BlockScope::isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t depth ) {
     if ( method == _method ) {
         if ( depth <= 1 ) {
             return true;    // terminate recursion here
@@ -813,7 +813,7 @@ void InlinedScope::genCode() {
             // float expression stack fits in FPU stack, use it instead and allocate only Space for the real float temporaries
             nofFloats = method()->number_of_float_temporaries();
         } else {
-            warning( "possible performance bug: cannot use FPU stack for float expressions" );
+            spdlog::warn( "possible performance bug: cannot use FPU stack for float expressions" );
         }
     }
     createFloatTemporaries( nofFloats );
@@ -831,12 +831,12 @@ void InlinedScope::genCode() {
 
 // debugging info
 void print_selector_cr( SymbolOop selector ) {
-    char buffer[100];
-    std::int32_t  length = selector->length();
+    char         buffer[100];
+    std::int32_t length = selector->length();
     st_assert( length < 100, "selector longer than 99 characters - buffer overrun" );
     strncpy( buffer, selector->chars(), length );
     buffer[ length ] = '\0';
-    _console->print_cr( "%s", buffer );
+    spdlog::info( "%s", buffer );
 }
 
 
@@ -847,7 +847,7 @@ void InlinedScope::generateDebugInfo() {
         if ( isMethodScope() ) {
             _console->print( "Method: " );
             print_selector_cr( method()->selector() );
-            _console->print_cr( "self: %s", _self->preg()->name() );
+            spdlog::info( "self: %s", _self->preg()->name() );
         } else {
             MethodOop m;
             _console->print( "Method: " );
@@ -856,12 +856,12 @@ void InlinedScope::generateDebugInfo() {
             }
             print_selector_cr( m->selector() );
             method()->print_codes();
-            _console->print_cr( "no receiver (block method)" );
+            spdlog::info( "no receiver (block method)" );
         }
     }
 
     ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    std::int32_t len, i;
+    std::int32_t            len, i;
 
     if ( not isLite() ) {
         // temporaries
@@ -871,27 +871,27 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *preg = _temporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    _console->print_cr( "temp[%2d]: %s", i, preg->name() );
+                    spdlog::info( "temp[%2d]: %s", i, preg->name() );
             }
         }
         // float temporaries
         if ( hasFloatTemporaries() ) {
-            len = _floatTemporaries->length();
+            len                  = _floatTemporaries->length();
             for ( std::int32_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _floatTemporaries->at( i )->preg();
                 rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    _console->print_cr( "float[%2d]: %s", i, preg->name() );
+                    spdlog::info( "float[%2d]: %s", i, preg->name() );
             }
         }
         // context temporaries
         if ( allocatesInterpretedContext() ) {
-            len = _contextTemporaries->length();
+            len                  = _contextTemporaries->length();
             for ( std::int32_t i = 0; i < len; i++ ) {
                 PseudoRegister *preg = _contextTemporaries->at( i )->preg();
                 rec->addContextTemporary( _scopeInfo, i, preg->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    _console->print_cr( "c_temp[%2d]: %s", i, preg->name() );
+                    spdlog::info( "c_temp[%2d]: %s", i, preg->name() );
             }
         }
         // expr stack
@@ -907,7 +907,7 @@ void InlinedScope::generateDebugInfo() {
                     //       this with Lars.
                     rec->addExprStack( _scopeInfo, i, r->createLogicalAddress() );
                     if ( PrintDebugInfoGeneration )
-                        _console->print_cr( "expr[%2d]: %s", i, r->name() );
+                        spdlog::info( "expr[%2d]: %s", i, r->name() );
                 } else {
                     // r's scope is too low (i.e. it's not actually live anymore)
                     // this can only happen if the expression is discarded; thus it's safe not to describe this entry
@@ -923,15 +923,15 @@ void InlinedScope::generateDebugInfo() {
     for ( std::int32_t i = 0; i < len; i++ ) {
         InlinedScope *s = _subScopes->at( i );
         if ( PrintDebugInfoGeneration )
-            _console->print_cr( "Subscope %d (id = %d):", i, s->scopeID() );
+            spdlog::info( "Subscope {} (id = {}):", i, s->scopeID() );
         s->generateDebugInfo();
     }
 }
 
 
 void MethodScope::generateDebugInfo() {
-    ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    const bool_t visible = true;
+    ScopeDescriptorRecorder *rec    = theCompiler->scopeDescRecorder();
+    const bool              visible = true;
     _scopeInfo = rec->addMethodScope( _key, _method, _self->preg()->createLogicalAddress(), allocatesCompiledContext(), isLite(), _scopeID, _sender ? _sender->getScopeInfo() : nullptr, _senderByteCodeIndex, visible );
     InlinedScope::generateDebugInfo();
 }
@@ -943,7 +943,7 @@ void BlockScope::generateDebugInfo() {
         _scopeInfo = rec->addTopLevelBlockScope( _method, _self->preg()->createLogicalAddress(), _self->klass(), allocatesCompiledContext() );
     } else {
         st_assert( _parent->isInlinedScope(), "oops" );
-        const bool_t visible = true;
+        const bool visible = true;
         _scopeInfo = rec->addBlockScope( _method, ( (InlinedScope *) _parent )->getScopeInfo(), allocatesCompiledContext(), isLite(), _scopeID, _sender->getScopeInfo(), _senderByteCodeIndex, visible );
     }
     InlinedScope::generateDebugInfo();
@@ -996,9 +996,9 @@ KlassOop OutlinedMethodScope::methodHolder() const {
 // printing code
 
 void SendInfo::print() {
-    lprintf( "SendInfo %#lx \"", this );
+    spdlog::info( "SendInfo 0x{0:x} ", static_cast<void *>( this ) );
     _selector->print_symbol_on();
-    lprintf( "\" (receiver = %#lx, nsends = %ld)\n", _receiver, _sendCount );
+    spdlog::info( "(receiver = 0x{0:x}, nsends = %ld)", static_cast<void *>( _receiver ), reinterpret_cast<void *>( _sendCount ) );
 }
 
 
@@ -1011,21 +1011,21 @@ void InlinedScope::printTree() {
 
 
 void InlinedScope::print() {
-    lprintf( " method: %#lx\n\tid: %ld", method(), scopeID() );
-    lprintf( "\nself:   " );
+    spdlog::info( " method: 0x{0:x}\n\tid: {:d}", static_cast<void *>( method() ), scopeID() );
+    spdlog::info( "\nself:   " );
     self()->print();
     for ( std::int32_t i = 0; i < nofArguments(); i++ ) {
-        lprintf( "arg %2d: ", i );
+        spdlog::info( "arg {:2d} : ", i );
         argument( i )->print();
     }
-    lprintf( "\n" );
+    spdlog::info( "" );
 }
 
 
 void MethodScope::print_short() {
-    lprintf( "(MethodScope*)%#lx (", this );
+    spdlog::info( "(MethodScope*)0x{0:x} (", static_cast<void *>( this ) );
     selector()->print_symbol_on();
-    lprintf( ")" );
+    spdlog::info( ")" );
 }
 
 
@@ -1033,10 +1033,10 @@ void MethodScope::print() {
     print_short();
     InlinedScope::print();
     if ( sender() ) {
-        lprintf( "  sender: " );
+        spdlog::info( "  sender: " );
         sender()->print_short();
     }
-    lprintf( " @ %ld\n", senderByteCodeIndex() );
+    spdlog::info( " @ {0:d}", senderByteCodeIndex() );
     method()->pretty_print();
 }
 
@@ -1045,35 +1045,35 @@ void BlockScope::print() {
     print_short();
     InlinedScope::print();
     if ( parent() ) {
-        printf( "\tparent: " );
+        spdlog::info( "\tparent: " );
         parent()->print_short();
     }
     if ( sender() ) {
-        lprintf( "  sender: " );
+        spdlog::info( "  sender: " );
         sender()->print_short();
     }
-    lprintf( " @ %ld\n", senderByteCodeIndex() );
+    spdlog::info( " @ {0:d}", senderByteCodeIndex() );
     method()->pretty_print();
 }
 
 
 void BlockScope::print_short() {
-    lprintf( "(BlockScope*)%#lx (", this );
+    spdlog::info( "(BlockScope*)0x{0:x} (", static_cast<void *>( this ) );
     selector()->print_symbol_on();
-    lprintf( " %#lx)", method() );
+    spdlog::info( " 0x{0:x})", static_cast<void *>( method() ) );
 }
 
 
 void OutlinedScope::print_short( const char *name ) {
-    lprintf( "(%s*)%#lx (", name, this );
+    spdlog::info( "(%s*)0x{0:x} (", name, static_cast<void *>( this ) );
     _scope->selector()->print_symbol_on();
-    lprintf( ")" );
+    spdlog::info( ")" );
 }
 
 
 void OutlinedScope::print( const char *name ) {
     print_short( name );
-    lprintf( "  _nm = %#lx, _scope = %#lx", _nm, _scope );
+    spdlog::info( "  _nm = 0x{0:x}, _scope = 0x{0:x}", static_cast<void *>( _nm ), static_cast<void *>( _scope ) );
 }
 
 
@@ -1090,10 +1090,10 @@ void OutlinedMethodScope::print() {
 void OutlinedBlockScope::print() {
     OutlinedScope::print( "OutlinedMethodScope" );
     if ( parent() ) {
-        lprintf( "\n    parent: " );
+        spdlog::info( "\n    parent: " );
         parent()->print_short();
     }
-    lprintf( "\n" );
+    spdlog::info( "" );
 }
 
 

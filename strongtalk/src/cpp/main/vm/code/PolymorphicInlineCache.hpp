@@ -61,7 +61,7 @@ private:
     void shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method );
 
 
-    bool_t contains( const char *addr ) {
+    bool contains( const char *addr ) {
         return entry() <= addr and addr < entry() + code_size();
     }
 
@@ -71,7 +71,7 @@ private:
     PolymorphicInlineCache( CompiledInlineCache *ic ); // creation of MegamorphicInlineCache
 
 public:
-    void *operator new( std::int32_t size, std::int32_t code_size );
+    void *operator new( std::size_t size, std::int32_t code_size );
 
     // Deallocates this pic from the pic heap
     void operator delete( void *p );
@@ -84,7 +84,7 @@ public:
     static PolymorphicInlineCache *allocate( CompiledInlineCache *ic, KlassOop klass, LookupResult result );
 
     // Tells whether addr inside the PolymorphicInlineCache area
-    static bool_t in_heap( const char *addr );
+    static bool in_heap( const char *addr );
 
     // Returns the PolymorphicInlineCache containing addr, nullptr otherwise
     static PolymorphicInlineCache *find( const char *addr );
@@ -117,17 +117,17 @@ public:
     }
 
 
-    bool_t is_monomorphic() const {
+    bool is_monomorphic() const {
         return number_of_targets() == 1;
     }
 
 
-    bool_t is_polymorphic() const {
+    bool is_polymorphic() const {
         return number_of_targets() > 1;
     }
 
 
-    bool_t is_megamorphic() const {
+    bool is_megamorphic() const {
         return number_of_targets() == 0;
     }
 

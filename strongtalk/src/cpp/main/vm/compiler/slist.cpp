@@ -5,7 +5,6 @@
 
 #include "vm/system/asserts.hpp"
 #include "vm/compiler/slist.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 
@@ -83,18 +82,18 @@ void GenericSList::applyL( void f( void * ) ) {
 
 
 void GenericSList::print_short() {
-    lprintf( "GenericSList %#lx", this );
+    spdlog::info( "GenericSList 0x{0:x}", static_cast<void*>( this ) );
 }
 
 
 static void print_them( void *p ) {
     ( (PrintableResourceObject *) p )->print_short();
-    lprintf( " " );
+    spdlog::info( " " );
 }
 
 
 void GenericSList::print() {
     print_short();
-    lprintf( ": " );
+    spdlog::info( ": " );
     ( (GenericSList *) this )->applyL( print_them );
 }

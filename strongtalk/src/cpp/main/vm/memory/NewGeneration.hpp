@@ -56,7 +56,7 @@ public:
     void verify();
 
 
-    bool_t would_fit( std::int32_t size ) {
+    bool would_fit( std::int32_t size ) {
         return _toSpace->would_fit( size );
     }
 
@@ -64,7 +64,7 @@ public:
     void swap_spaces();
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         return (const char *) p >= _lowBoundary and (const char *) p < _highBoundary;
     }
 
@@ -88,15 +88,15 @@ public:
 
 
 protected:
-//        inline bool_t is_new( MemOop p, char *boundary ); // inlined in generation.dcl.h
-//        inline bool_t is_new( Oop p, char *boundary ); // ditto
+//        inline bool is_new( MemOop p, char *boundary ); // inlined in generation.dcl.h
+//        inline bool is_new( Oop p, char *boundary ); // ditto
 
-    inline bool_t is_new( MemOop p, char *boundary ) {
+    inline bool is_new( MemOop p, char *boundary ) {
         return (const char *) p < boundary;
     }
 
 
-    inline bool_t is_new( Oop p, char *boundary ) {
+    inline bool is_new( Oop p, char *boundary ) {
         return p->is_mem() and is_new( MemOop( p ), boundary );
     }
 

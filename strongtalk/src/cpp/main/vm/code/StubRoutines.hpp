@@ -28,7 +28,7 @@ class StubRoutines : AllStatic {
 
 private:
     static constexpr std::int32_t _code_size = 1024 * 64;
-    static bool_t        _is_initialized;           // true if StubRoutines has been initialized
+    static bool        _is_initialized;           // true if StubRoutines has been initialized
     static const char *_code;                      // the code buffer for the stub routines
     static void (*single_step_fn)();               // pointer to the current single step function (used by evaluator and ST debugger)
     //  static char _code[_code_size];		        // the code buffer for the stub routines
@@ -78,9 +78,9 @@ private:
     // add generators here
     static const char *generate_ic_lookup( MacroAssembler *masm, const char *lookup_routine_entry );
 
-    static const char *generate_call_DLL( MacroAssembler *masm, bool_t async );
+    static const char *generate_call_DLL( MacroAssembler *masm, bool async );
 
-    static const char *generate_lookup_DLL( MacroAssembler *masm, bool_t async );
+    static const char *generate_lookup_DLL( MacroAssembler *masm, bool async );
 
     static const char *generate_ic_normal_lookup( MacroAssembler *masm );
 
@@ -182,12 +182,12 @@ public:
     }
 
 
-    static const char *call_DLL_entry( bool_t async ) {
+    static const char *call_DLL_entry( bool async ) {
         return async ? _callAsyncDllEntry : _callSyncDllEntry;
     }
 
 
-    static const char *lookup_DLL_entry( bool_t async ) {
+    static const char *lookup_DLL_entry( bool async ) {
         return async ? _lookupAsyncDllEntry : _lookupSyncDllEntry;
     }
 
@@ -282,7 +282,7 @@ public:
     static const char *alien_call_entry( std::int32_t args );                          // alien call out: args is the number of arguments passed to the function called
 
     // Support for profiling
-    static bool_t contains( const char *pc ) {
+    static bool contains( const char *pc ) {
         return ( _code <= pc ) and ( pc < &_code[ _code_size ] );
     }
 

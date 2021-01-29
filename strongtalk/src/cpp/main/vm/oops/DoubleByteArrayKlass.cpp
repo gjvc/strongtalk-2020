@@ -9,13 +9,13 @@
 #include "vm/memory/Closure.hpp"
 
 
-Oop DoubleByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop DoubleByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     st_fatal( "should never call allocateObject in doubleByteArrayKlass" );
     return badOop;
 }
 
 
-Oop DoubleByteArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t tenured ) {
+Oop DoubleByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool tenured ) {
     KlassOop k        = as_klassOop();
     std::int32_t      ni_size  = non_indexable_size();
     std::int32_t      obj_size = ni_size + 1 + roundTo( size * 2, oopSize ) / oopSize;
@@ -68,7 +68,7 @@ void setKlassVirtualTableFromDoubleByteArrayKlass( Klass *k ) {
 }
 
 
-bool_t DoubleByteArrayKlass::oop_verify( Oop obj ) {
+bool DoubleByteArrayKlass::oop_verify( Oop obj ) {
     st_assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
     return DoubleByteArrayOop( obj )->verify();
 }

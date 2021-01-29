@@ -71,7 +71,7 @@ void PrintObjectClosure::do_long( const char *title, void **p ) {
     _stream->print( "%s", title );
     _stream->sp();
     _stream->fill_to( value_col );
-    _stream->print_cr( "%#lx", *p );
+    _stream->print_cr( "0x{0:x}", *p );
 }
 
 

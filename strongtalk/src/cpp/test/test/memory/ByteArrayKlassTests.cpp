@@ -36,42 +36,29 @@ protected:
 
 
     KlassOop theClass;
-    Oop *oldEdenTop;
+    Oop      *oldEdenTop;
 
 };
 
-
-TEST_F( ByteArrayKlassTests, shouldBeDoubleByteArray
-) {
-eden_top = eden_end;
-ASSERT_TRUE( theClass
-->klass_part()->oop_is_byteArray() );
+TEST_F( ByteArrayKlassTests, shouldBeDoubleByteArray ) {
+    eden_top = eden_end;
+    ASSERT_TRUE( theClass->klass_part()->oop_is_byteArray() );
 }
 
 
-TEST_F( ByteArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
+TEST_F( ByteArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
 }
 
 
-TEST_F( ByteArrayKlassTests, allocateShouldAllocateTenuredWhenRequired
-) {
-ASSERT_TRUE( Universe::old_gen
-.
-contains( theClass
-->klass_part()->allocateObjectSize( 100, false, true ) ) );
+TEST_F( ByteArrayKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
+    ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObjectSize( 100, false, true ) ) );
 }
 
 
-TEST_F( ByteArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_TRUE( Universe::new_gen
-.eden()->free() < 4 * oopSize );
-ASSERT_TRUE( Universe::new_gen
-.
-contains( theClass
-->klass_part()->allocateObjectSize( 100, true ) ) );
+TEST_F( ByteArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
+    ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObjectSize( 100, true ) ) );
 }

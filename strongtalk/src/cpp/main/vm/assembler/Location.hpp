@@ -166,35 +166,35 @@ public:
 
 
     // predicates
-    bool_t isSpecialLocation() const {
+    bool isSpecialLocation() const {
         return mode() == Mode::specialLoc;
     }
 
 
-    bool_t isRegisterLocation() const {
+    bool isRegisterLocation() const {
         return mode() == Mode::registerLoc;
     }
 
 
-    bool_t isStackLocation() const {
+    bool isStackLocation() const {
         return mode() == Mode::stackLoc;
     }
 
 
-    bool_t isContextLocation() const {
+    bool isContextLocation() const {
         return mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2;
     }
 
 
-    bool_t isFloatLocation() const {
+    bool isFloatLocation() const {
         return mode() == Mode::floatLoc;
     }
 
 
-    bool_t isTopOfStack() const;
+    bool isTopOfStack() const;
 
 
-    bool_t equals( Location y ) const {
+    bool equals( Location y ) const {
         return _loc == y._loc;
     }
 
@@ -219,11 +219,11 @@ public:
     }
 
 
-    bool_t isTemporaryRegister() const;
+    bool isTemporaryRegister() const;
 
-    bool_t isTrashedRegister() const;
+    bool isTrashedRegister() const;
 
-    bool_t isLocalRegister() const;
+    bool isLocalRegister() const;
 
     // For packing and unpacking scope information
     friend class LocationName;

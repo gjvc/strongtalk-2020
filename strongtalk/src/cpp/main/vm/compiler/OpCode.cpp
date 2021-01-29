@@ -39,7 +39,7 @@ std::array<const char *, 34> ArithOpName = {
 };
 
 
-std::array<bool_t, 34> ArithOpIsCommutative = {
+std::array<bool, 34> ArithOpIsCommutative = {
         false, true,
 
         true, false, true, false, false, true, true, true, false, false, // untagged operations
@@ -55,7 +55,7 @@ std::array<bool_t, 34> ArithOpIsCommutative = {
 
 
 void opcode_init() {
-    _console->print_cr( "%%system-init:  opcode_init" );
+    spdlog::info( "%system-init:  opcode_init" );
 
     // check sizes
 
@@ -69,7 +69,7 @@ void opcode_init() {
         st_fatal( "forgot to change ArithOpName after changing ArithOpCode" );
     }
 
-    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool_t ) not_eq static_cast<std::int32_t>(ArithOpCode::LastArithOp) + 1 ) {
+    if ( sizeof( ArithOpIsCommutative ) / sizeof( bool ) not_eq static_cast<std::int32_t>(ArithOpCode::LastArithOp) + 1 ) {
         st_fatal( "forgot to change ArithOpIsCommutative after changing ArithOpCode" );
     }
 

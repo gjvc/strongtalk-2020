@@ -98,7 +98,7 @@ public:
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth );
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod );
+    void allocate_context( std::int32_t nofTemps, bool forMethod );
 
     void set_self_via_context();
 

@@ -50,11 +50,11 @@ public:
 
 
     // Test operations on home
-    bool_t is_dead() const;
+    bool is_dead() const;
 
-    bool_t has_parent_fp() const;
+    bool has_parent_fp() const;
 
-    bool_t has_outer_context() const;
+    bool has_outer_context() const;
 
 
     std::int32_t *parent_fp() const {

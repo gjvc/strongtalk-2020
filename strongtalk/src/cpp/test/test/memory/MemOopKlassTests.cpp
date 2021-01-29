@@ -68,87 +68,35 @@ protected:
 
 };
 
-
-TEST_F( MemOopKlassTests, createSubclassShouldCreateClassWithCorrectSuperForClassAndMeta
-) {
-PersistentHandle kl( Universe::find_global( "Class" ) );
-PersistentHandle mk( Universe::find_global( "Metaclass" ) );
-PersistentHandle instSuper( Universe::find_global( "Test" ) );
-ASSERT_TRUE( kl
-.
-as_oop()
-);
-
-PersistentHandle classMixin( createMixin() );
-
-KlassOop newKlass = kl.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), instSuper.as_klassOop(), mk.as_klassOop(), Klass::Format::mem_klass );
-
-ASSERT_TRUE( newKlass );
-ASSERT_TRUE( newKlass
-->klass_part()->superKlass() == instSuper.
-as_klassOop()
-);
-ASSERT_TRUE( newKlass
-->klass()->klass_part()->
-superKlass()
-== kl.
-as_klassOop()
-);
-ASSERT_TRUE( newKlass
-->klass()->klass() == mk.
-as_klassOop()
-);
-ASSERT_TRUE( newKlass
-->klass_part()->mixin() == classMixin.
-as_oop()
-);
-ASSERT_TRUE( newKlass
-->klass()->klass_part()->
-mixin()
-==
-MixinOop( classMixin
-.
-as_oop()
-)->
-class_mixin()
-);
+TEST_F( MemOopKlassTests, createSubclassShouldCreateClassWithCorrectSuperForClassAndMeta ) {
+    PersistentHandle kl( Universe::find_global( "Class" ) );
+    PersistentHandle mk( Universe::find_global( "Metaclass" ) );
+    PersistentHandle instSuper( Universe::find_global( "Test" ) );
+    ASSERT_TRUE( kl.as_oop() );
+    PersistentHandle classMixin( createMixin() );
+    KlassOop         newKlass = kl.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), instSuper.as_klassOop(), mk.as_klassOop(), Klass::Format::mem_klass );
+    ASSERT_TRUE( newKlass );
+    ASSERT_TRUE( newKlass->klass_part()->superKlass() == instSuper.as_klassOop() );
+    ASSERT_TRUE( newKlass->klass()->klass_part()->superKlass() == kl.as_klassOop() );
+    ASSERT_TRUE( newKlass->klass()->klass() == mk.as_klassOop() );
+    ASSERT_TRUE( newKlass->klass_part()->mixin() == classMixin.as_oop() );
+    ASSERT_TRUE( newKlass->klass()->klass_part()->mixin() == MixinOop( classMixin.as_oop() )->class_mixin() );
 }
 
 
-TEST_F( MemOopKlassTests, oldCreateSubclassShouldCreateClassWithCorrectSuperForClassAndMeta
-) {
-PersistentHandle kl( Universe::find_global( "Class" ) );
-PersistentHandle mk( Universe::find_global( "Metaclass" ) );
-PersistentHandle instSuper( Universe::find_global( "Test" ) );
-ASSERT_TRUE( kl
-.
-as_oop()
-);
-
-PersistentHandle classMixin( createMixin() );
-
-KlassOop newKlass = instSuper.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), Klass::Format::mem_klass );
-
-KlassOop superClass = instSuper.as_klassOop();
-MixinOop mixin      = MixinOop( classMixin.as_oop() );
-
-ASSERT_TRUE( newKlass );
-ASSERT_TRUE( newKlass
-->klass_part()->superKlass() == superClass );
-ASSERT_TRUE( newKlass
-->klass()->klass_part()->
-superKlass()
-== superClass->
-klass()
-);
-ASSERT_TRUE( newKlass
-->klass()->klass() == superClass->klass()->klass() );
-ASSERT_TRUE( newKlass
-->klass_part()->mixin() == mixin );
-ASSERT_TRUE( newKlass
-->klass()->klass_part()->
-mixin()
-== mixin->
-class_mixin()
-);
+TEST_F( MemOopKlassTests, oldCreateSubclassShouldCreateClassWithCorrectSuperForClassAndMeta ) {
+    PersistentHandle kl( Universe::find_global( "Class" ) );
+    PersistentHandle mk( Universe::find_global( "Metaclass" ) );
+    PersistentHandle instSuper( Universe::find_global( "Test" ) );
+    ASSERT_TRUE( kl.as_oop() );
+    PersistentHandle classMixin( createMixin() );
+    KlassOop         newKlass = instSuper.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), Klass::Format::mem_klass );
+    KlassOop         superClass = instSuper.as_klassOop();
+    MixinOop         mixin = MixinOop( classMixin.as_oop() );
+    ASSERT_TRUE( newKlass );
+    ASSERT_TRUE( newKlass->klass_part()->superKlass() == superClass );
+    ASSERT_TRUE( newKlass->klass()->klass_part()->superKlass() == superClass->klass() );
+    ASSERT_TRUE( newKlass->klass()->klass() == superClass->klass()->klass() );
+    ASSERT_TRUE( newKlass->klass_part()->mixin() == mixin );
+    ASSERT_TRUE( newKlass->klass()->klass_part()->mixin() == mixin->class_mixin() );
 }

@@ -155,16 +155,16 @@ Digit IntegerOps::xmy( Digit x, Digit y, Digit &carry ) {
 
 Digit IntegerOps::axpy( Digit a, Digit x, Digit y, Digit &carry ) {
 
-//    _console->print_cr( "axpy: a=[%u], x=[%u], y=[%u], carry=[%u]", a, x, y, carry );
+//    spdlog::info( "axpy: a=[%u], x=[%u], y=[%u], carry=[%u]", a, x, y, carry );
     // returns (a*x + y + c) mod B; sets carry = (a*x + y + c) div B
     DoubleDigit lx = x;
-//    _console->print_cr( "axpy: lx=[%llu], x=[%u]", lx, x );
+//    spdlog::info( "axpy: lx=[%llu], x=[%u]", lx, x );
 
     DoubleDigit r = ( lx * a ) + y + carry;
-//    _console->print_cr( "axpy: r=[%llu]", r );
+//    spdlog::info( "axpy: r=[%llu]", r );
 
     carry = r >> digitBitLength;
-//    _console->print_cr( "axpy: carry=[%lu]", carry);
+//    spdlog::info( "axpy: carry=[%lu]", carry);
 
     return Digit( r & oneB );
 }
@@ -484,7 +484,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-bool_t IntegerOps::sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop ) {
+bool IntegerOps::sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop ) {
     for ( std::int32_t i = start; i < stop; i++ )
         if ( digits[ i ] )
             return false;
@@ -494,9 +494,9 @@ bool_t IntegerOps::sd_all_zero( Digit *digits, std::int32_t start, std::int32_t 
 
 void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
     std::int32_t    xl   = x.length();
-    bool_t xneg = x.is_negative();
+    bool xneg = x.is_negative();
     std::int32_t    yl   = y.length();
-    bool_t yneg = y.is_negative();
+    bool yneg = y.is_negative();
 
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = 0
@@ -761,7 +761,7 @@ std::int32_t IntegerOps::ash_result_size_in_bytes( Integer &x, std::int32_t n ) 
     } else if ( n > 0 ) {
         std::int32_t    rem      = n % logB;
         Digit  mask     = nthMask( logB - rem ) ^oneB;
-        bool_t overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
+        bool overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
         digitLength = x.length() + ( n / logB ) + overflow;
     } else {
         std::int32_t   rem  = ( -n ) % logB;
@@ -1206,7 +1206,7 @@ void IntegerOps::int_to_Integer( std::int32_t i, Integer &z ) {
 
 void IntegerOps::double_to_Integer( double x, Integer &z ) {
     // filter out sign
-    bool_t negative = false;
+    bool negative = false;
     if ( x < 0.0 ) {
         negative = true;
         x        = -x;

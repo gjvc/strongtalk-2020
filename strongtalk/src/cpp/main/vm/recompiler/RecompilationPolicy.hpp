@@ -42,9 +42,9 @@ public:
     Recompilee *findRecompilee();    // determine what to recompile
     void cleanupStaleInlineCaches();    // clean up inline caches of top methods
 
-    static bool_t needRecompileCounter( Compiler *c );                      // does this compilation (NativeMethod) need an invocation counter?
-    static bool_t shouldRecompileAfterUncommonTrap( NativeMethod *nm );     // NativeMethod encountered an uncommon case; should it be recompiled?
-    static bool_t shouldRecompileUncommonNativeMethod( NativeMethod *nm );  // NativeMethod is in uncommon mode; ok to recompile and reoptimize it?
+    static bool needRecompileCounter( Compiler *c );                      // does this compilation (NativeMethod) need an invocation counter?
+    static bool shouldRecompileAfterUncommonTrap( NativeMethod *nm );     // NativeMethod encountered an uncommon case; should it be recompiled?
+    static bool shouldRecompileUncommonNativeMethod( NativeMethod *nm );  // NativeMethod is in uncommon mode; ok to recompile and reoptimize it?
     static const char *shouldNotRecompileNativeMethod( NativeMethod *nm );        // is NativeMethod fit to be recompiled?  return nullptr if yes, reason otherwise
     static std::int32_t uncommonNativeMethodInvocationLimit( std::int32_t version );          // return invocation counter limit for an uncommon NativeMethod
     static std::int32_t uncommonNativeMethodAgeLimit( std::int32_t version );                 // return NativeMethod age limit for an uncommon NativeMethod

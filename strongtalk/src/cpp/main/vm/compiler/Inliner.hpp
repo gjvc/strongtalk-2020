@@ -44,7 +44,7 @@ protected:
     MergeNode                    *_merge;          // where multiple versions merge (nullptr if only one)
     const char                   *_msg;            // reason for not inlining the send
     SendKind _sendKind;         //
-    bool_t   _lastLookupFailed; // last tryLookup failed because no method found
+    bool   _lastLookupFailed; // last tryLookup failed because no method found
 
 
 public:
@@ -112,7 +112,7 @@ protected:
 
     Expression *makeResult( Expression *res );
 
-    bool_t checkSenderPath( Scope *here, ScopeDescriptor *there ) const;
+    bool checkSenderPath( Scope *here, ScopeDescriptor *there ) const;
 
     friend class InliningPolicy;
 };

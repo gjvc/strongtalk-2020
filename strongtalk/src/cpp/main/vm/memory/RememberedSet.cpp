@@ -7,7 +7,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utilities/GrowableArray.hpp"
@@ -51,7 +50,7 @@ RememberedSet::RememberedSet() {
 }
 
 
-void *RememberedSet::operator new( std::int32_t size ) {
+void *RememberedSet::operator new( std::size_t size ) {
     st_assert( ( std::int32_t( Universe::new_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "new must start at card boundary" );
     st_assert( ( std::int32_t( Universe::old_gen._lowBoundary ) & ( card_size - 1 ) ) == 0, "old must start at card boundary" );
     st_assert( ( std::int32_t( Universe::old_gen._highBoundary ) & ( card_size - 1 ) ) == 0, "old must end at card boundary" );
@@ -156,16 +155,16 @@ void RememberedSet::scavenge_contents( OldSpace *sp ) {
 void RememberedSet::print_set_for_space( OldSpace *sp ) {
     char *current_byte = byte_for( sp->bottom() );
     char *end_byte     = byte_for( sp->top() );
-    lprintf( "%s: [%#lx, %#lx]\n", sp->name(), current_byte, end_byte );
+    spdlog::info( "%s: [0x{0:x}, 0x{0:x}]", sp->name(), current_byte, end_byte );
     while ( current_byte <= end_byte ) {
         if ( *current_byte ) {
-            lprintf( "_" );
+            spdlog::info( "_" );
         } else {
-            lprintf( "*" );
+            spdlog::info( "*" );
         }
         current_byte++;
     }
-    lprintf( "\n" );
+    spdlog::info( "" );
 }
 
 
@@ -184,7 +183,7 @@ std::int32_t RememberedSet::number_of_dirty_pages_in( OldSpace *sp ) {
 
 class CheckDirtyClosure : public OopClosure {
 public:
-    bool_t is_dirty;
+    bool is_dirty;
 
 
     void clear() {
@@ -207,7 +206,7 @@ public:
 };
 
 
-bool_t RememberedSet::has_page_dirty_objects( OldSpace *sp, char *page ) {
+bool RememberedSet::has_page_dirty_objects( OldSpace *sp, char *page ) {
     // Find object at page start
 
     Oop *s = sp->object_start( oop_for( page ) );
@@ -246,7 +245,7 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
     obj->print_value();
     _console->cr();
     if ( obj->is_new() ) {
-        _console->print_cr( " object is in new Space!" );
+        spdlog::info( " object is in new Space!" );
     } else {
         _console->sp();
         char *current_byte = byte_for( obj->addr() );
@@ -264,7 +263,7 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
 }
 
 
-bool_t RememberedSet::is_object_dirty( MemOop obj ) {
+bool RememberedSet::is_object_dirty( MemOop obj ) {
     st_assert( not obj->is_new(), "just checking" );
     char *current_byte = byte_for( obj->addr() );
     char *end_byte     = byte_for( obj->addr() + obj->size() );
@@ -284,7 +283,7 @@ void RememberedSet::clear( const char *start, const char *end ) {
 }
 
 
-bool_t RememberedSet::verify( bool_t postScavenge ) {
+bool RememberedSet::verify( bool postScavenge ) {
     return true;
 }
 

@@ -120,7 +120,7 @@ extern "C" ContextOop allocateContext2() {
 }
 
 
-extern "C" bool_t have_nlr_through_C;
+extern "C" bool have_nlr_through_C;
 extern "C" Oop    nlr_result;
 
 

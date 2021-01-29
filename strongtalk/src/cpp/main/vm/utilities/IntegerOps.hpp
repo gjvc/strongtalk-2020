@@ -74,7 +74,7 @@ public:
 
     static Digit scale( Digit *array, Digit factor, std::int32_t length );
 
-    static bool_t sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop );
+    static bool sd_all_zero( Digit *digits, std::int32_t start, std::int32_t stop );
 
     static Digit *copyDigits( Digit *source, std::int32_t length, std::int32_t toCopy );
 

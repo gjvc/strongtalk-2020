@@ -21,7 +21,7 @@
 Sweeper *Sweeper::_head = nullptr;
 
 std::int32_t     Sweeper::_sweepSeconds = 0;
-bool_t          Sweeper::_isRunning           = false;
+bool          Sweeper::_isRunning           = false;
 MethodOop       Sweeper::_activeMethod        = nullptr;
 NativeMethod    *Sweeper::_activeNativeMethod = nullptr;
 
@@ -32,7 +32,7 @@ void Sweeper::print_all() {
 }
 
 
-bool_t Sweeper::register_active_frame( Frame fr ) {
+bool Sweeper::register_active_frame( Frame fr ) {
     if ( fr.is_interpreted_frame() ) {
         _activeMethod = fr.method();
         if ( _activeMethod == nullptr )
@@ -88,7 +88,7 @@ void Sweeper::step() {
 
 
 void Sweeper::print() const {
-    _console->print_cr( "%s", name() );
+    spdlog::info( "%s", name() );
 }
 
 
@@ -124,7 +124,7 @@ void CodeSweeper::updateInterval() {
         const double log2 = 0.69314718055995;   // log(2)
         _decayFactor = exp( log2 * _codeSweeperInterval * _fractionPerTask / CounterHalfLifeTime );
         if ( PrintCodeSweep )
-            _console->print_cr( "*method sweep: decay factor %f", _decayFactor );
+            spdlog::info( "*method sweep: decay factor %f", _decayFactor );
     }
 }
 
@@ -201,7 +201,7 @@ void MethodSweeper::task() {
     std::int32_t            length            = array->length();
     std::int32_t            number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep )
-        _console->print( "*method sweep: %d entries...", number_of_entries );
+        spdlog::info( "*method sweep: {} entries...", number_of_entries );
     TraceTime t( "MethodSweep ", PrintCodeSweep );
 
     std::int32_t end = ( _index + number_of_entries );
@@ -255,7 +255,7 @@ void ZoneSweeper::task() {
     std::int32_t total = Universe::code->numberOfNativeMethods();
     std::int32_t todo  = total / _fractionPerTask;
     if ( PrintCodeSweep )
-        _console->print( "*zone sweep: %d of %d entries...", todo, total );
+        spdlog::info( "*zone sweep: {} of {} entries...", todo, total );
     TraceTime t( "ZoneSweep ", PrintCodeSweep );
 
     for ( std::int32_t i = 0; i < todo; i++ ) {
@@ -320,7 +320,7 @@ MethodSweeper *methodSweeper;
 
 
 void sweeper_init() {
-    _console->print_cr( "%%system-init:  sweeper_init" );
+    spdlog::info( "%system-init:  sweeper_init" );
 
     Sweeper::add( new HeapSweeper() );
     Sweeper::add( new ZoneSweeper() );

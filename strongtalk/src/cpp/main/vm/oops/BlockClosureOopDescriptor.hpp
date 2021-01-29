@@ -48,7 +48,7 @@ public:
 
     static BlockClosureOop create_clean_block( std::int32_t nofArgs, const char *entry_point );    // create a clean block
 
-    inline bool_t isCompiledBlock() const {
+    inline bool isCompiledBlock() const {
         return not Oop( addr()->_methodOrJumpAddr )->is_mem();
     }
 
@@ -93,7 +93,7 @@ public:
     }
 
 
-    bool_t is_pure() const;
+    bool is_pure() const;
 
     // deoptimization
     void deoptimize();

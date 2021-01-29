@@ -84,7 +84,7 @@ LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0,
 }
 
 
-StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool_t needsStoreCheck ) :
+StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool needsStoreCheck ) :
         StoreNode( src ) {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
@@ -106,7 +106,7 @@ AssignNode::AssignNode( PseudoRegister *s, PseudoRegister *d ) :
 }
 
 
-CommentNode::CommentNode( const char *s ) {
+CommentNode::CommentNode( char *s ) {
     comment = s;
     // give all comments negative ids (don't disturb node numbers by turning
     // CompilerDebug off and on)
@@ -115,13 +115,13 @@ CommentNode::CommentNode( const char *s ) {
 }
 
 
-ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smiIndex, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset ) :
+ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool smiIndex, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset ) :
         AbstractArrayAtNode( array, index, smiIndex, result, error, data_offset, length_offset ) {
     _access_type = access_type;
 }
 
 
-ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool_t smi_index, PseudoRegister *element, bool_t smi_element, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset, bool_t needs_store_check ) :
+ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool smi_index, PseudoRegister *element, bool smi_element, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset, bool needs_store_check ) :
         AbstractArrayAtPutNode( array, index, smi_index, element, result, error, data_offset, length_offset ) {
     _access_type               = access_type;
     _needs_store_check         = needs_store_check;
@@ -130,7 +130,7 @@ ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, P
 }
 
 
-TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes, bool_t hasUnknown ) {
+TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes, bool hasUnknown ) {
     _src        = rr;
     _classes    = classes;
     _hasUnknown = hasUnknown;
@@ -141,7 +141,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
     // FIX THIS
     // st_assert( (len > 1) or hasUnknown, "TypeTestNode is not necessary" );
     if ( ( len == 1 ) and not hasUnknown ) {
-        warning( "TypeTestNode with only one klass & no uncommon case => performance bug" );
+        spdlog::warn( "TypeTestNode with only one klass & no uncommon case => performance bug" );
     }
     for ( std::int32_t i = 0; i < len; i++ ) {
         for ( std::int32_t j = i + 1; j < len; j++ ) {
@@ -163,13 +163,13 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *
 }
 
 
-TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool_t arg1IsInt, bool_t arg2IsInt ) {
+TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool arg1IsInt, bool arg2IsInt ) {
     if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = arg1;
         arg1 = arg2;
         arg2 = t1;
-        bool_t t2 = arg1IsInt;
+        bool t2 = arg1IsInt;
         arg1IsInt = arg2IsInt;
         arg2IsInt = t2;
     }
@@ -209,7 +209,7 @@ PseudoRegister *NonTrivialNode::src() const {
 }
 
 
-bool_t AssignNode::isAccessingFloats() const {
+bool AssignNode::isAccessingFloats() const {
     // After building the node data structure, float pregs have a float location but
     // later during compilation, this location is transformed into a stack location,
     // therefore the two tests. This should change at some point; it would be cleaner
@@ -224,12 +224,12 @@ Oop AssignNode::constantSrc() const {
 }
 
 
-bool_t AssignNode::canBeEliminated() const {
+bool AssignNode::canBeEliminated() const {
     return not( _src->_location.isTopOfStack() or _dest->_location.isTopOfStack() );
 }
 
 
-bool_t Node::endsBasicBlock() const {
+bool Node::endsBasicBlock() const {
     return next() == nullptr or next()->newBasicBlock();
 }
 
@@ -262,13 +262,15 @@ void Node::removeNext( Node *n ) {
 
 
 Node *Node::endOfList() const {
+
     if ( _next == nullptr )
-        return (Node *)
-                this;
+        return const_cast<Node *> (this);
+
     Node *n = _next;
     for ( ; n->_next; n = n->_next ) {
         st_assert( n->hasSingleSuccessor(), ">1 successors" );
     }
+
     return n;
 }
 
@@ -294,7 +296,7 @@ void AbstractMergeNode::movePrev( Node *from, Node *to ) {
 }
 
 
-bool_t AbstractMergeNode::isPredecessor( const Node *n ) const {
+bool AbstractMergeNode::isPredecessor( const Node *n ) const {
     for ( std::int32_t i = _prevs->length() - 1; i >= 0; i-- ) {
         if ( _prevs->at( i ) == n )
             return true;
@@ -355,7 +357,7 @@ void AbstractBranchNode::moveNext( Node *from, Node *to ) {
 }
 
 
-bool_t AbstractBranchNode::isSuccessor( const Node *n ) const {
+bool AbstractBranchNode::isSuccessor( const Node *n ) const {
     if ( _next == n ) {
         return true;
     } else {
@@ -452,7 +454,7 @@ CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableAr
 }
 
 
-SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool_t superSend, SendInfo *info ) :
+SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool superSend, SendInfo *info ) :
         CallNode( nlrTestPoint, args, expr_stack ) {
     _key       = key;
     _superSend = superSend;
@@ -461,7 +463,7 @@ SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<Pseud
     // Fix this when compiler is more flexible
     // not a fatal because it could happen for super sends that fail (no super method found)
     if ( _superSend and not UseNewBackend )
-        warning( "We cannot yet have super sends in nativeMethods" );
+        spdlog::warn( "We cannot yet have super sends in nativeMethods" );
 }
 
 
@@ -491,7 +493,7 @@ ContextCreateNode::ContextCreateNode( PseudoRegister *parent, PseudoRegister *co
 
 ContextCreateNode::ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ) :
         PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ) {
-    warning( "check this implementation" );
+    spdlog::warn( "check this implementation" );
     Unimplemented();
     // Urs, don't we need a source here?
     // I've added hasSrc() (= true) to ContextCreateNode) - should double check this
@@ -629,7 +631,7 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoin
 }
 
 
-InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi ) {
+InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) {
     _operation   = op;
     _dest        = result;
     _error       = error;
@@ -641,7 +643,7 @@ InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result
 }
 
 
-bool_t InlinedPrimitiveNode::canFail() const {
+bool InlinedPrimitiveNode::canFail() const {
     switch ( op() ) {
         case Operation::obj_klass:
             return false;
@@ -657,7 +659,7 @@ bool_t InlinedPrimitiveNode::canFail() const {
 }
 
 
-bool_t InlinedPrimitiveNode::canBeEliminated() const {
+bool InlinedPrimitiveNode::canBeEliminated() const {
     switch ( op() ) {
         case Operation::obj_klass:
             return true;
@@ -691,7 +693,7 @@ Node *UncommonSendNode::clone( PseudoRegister *from, PseudoRegister *to ) const 
 
 
 void UncommonSendNode::makeUses( BasicBlock *bb ) {
-    std::int32_t               expressionCount = expressionStack()->length();
+    std::int32_t       expressionCount = expressionStack()->length();
     for ( std::int32_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
         bb->addUse( this, expressionStack()->at( pos ) );
 }
@@ -699,12 +701,12 @@ void UncommonSendNode::makeUses( BasicBlock *bb ) {
 
 void UncommonSendNode::verify() const {
     if ( _argCount > expressionStack()->length() )
-        error( "Too few expressions on stack for 0x%x: required %d, but got %d", this, _argCount, expressionStack()->length() );
+        error( "Too few expressions on stack for 0x{0:x}: required %d, but got %d", this, _argCount, expressionStack()->length() );
     UncommonNode::verify();
 }
 
 
-bool_t PrimitiveNode::canBeEliminated() const {
+bool PrimitiveNode::canBeEliminated() const {
     if ( not Node::canBeEliminated() )
         return false;
     if ( _pdesc->can_be_constant_folded() and not canFail() )
@@ -725,17 +727,17 @@ bool_t PrimitiveNode::canBeEliminated() const {
 }
 
 
-bool_t PrimitiveNode::canInvokeDelta() const {
+bool PrimitiveNode::canInvokeDelta() const {
     return _pdesc->can_invoke_delta();
 }
 
 
-bool_t PrimitiveNode::canFail() const {
+bool PrimitiveNode::canFail() const {
     return _pdesc->can_fail();
 }
 
 
-DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
+DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
         CallNode( nlrTestPoint, args, expr_stack ) {
     _dll_name      = dll_name;
     _function_name = function_name;
@@ -744,7 +746,7 @@ DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t fu
 }
 
 
-bool_t DLLNode::canInvokeDelta() const {
+bool DLLNode::canInvokeDelta() const {
     return true;        // user-defined DLL code can do anything
 }
 
@@ -788,17 +790,17 @@ void NonLocalReturnTestNode::fixup() {
 }
 
 
-bool_t SendNode::isCounting() const {
+bool SendNode::isCounting() const {
     return _info->_counting;
 }
 
 
-bool_t SendNode::isUninlinable() const {
+bool SendNode::isUninlinable() const {
     return _info->uninlinable;
 }
 
 
-bool_t SendNode::staticReceiver() const {
+bool SendNode::staticReceiver() const {
     return _info->_receiverStatic;
 }
 
@@ -1166,7 +1168,7 @@ void CallNode::makeUses( BasicBlock *bb ) {
     _destDef = bb->addDef( this, _dest );
     if ( args ) {
         std::int32_t len = args->length();
-        argUses = new GrowableArray<Usage *>( len );
+        argUses          = new GrowableArray<Usage *>( len );
         for ( std::int32_t i = 0; i < len; i++ ) {
             argUses->append( bb->addUse( this, args->at( i ) ) );
         }
@@ -1183,7 +1185,7 @@ void CallNode::makeUses( BasicBlock *bb ) {
     uplevelUsed = new GrowableArray<PseudoRegister *>( InitialSize );
     uplevelDefd = new GrowableArray<PseudoRegister *>( InitialSize );
     GrowableArray<BlockPseudoRegister *> *blks = theCompiler->blockClosures;
-    for ( std::int32_t                            i1    = 0; i1 < nblocks; i1++ ) {
+    for ( std::int32_t                   i1    = 0; i1 < nblocks; i1++ ) {
         BlockPseudoRegister *blk = blks->at( i1 );
         if ( !blk->escapes() ) continue;
 
@@ -1194,7 +1196,7 @@ void CallNode::makeUses( BasicBlock *bb ) {
 
         // ok, this block is live
         GrowableArray<PseudoRegister *> *uplevelRead    = blk->uplevelRead();
-        std::int32_t                             j               = uplevelRead->length() - 1;
+        std::int32_t                    j               = uplevelRead->length() - 1;
         for ( ; j >= 0; j-- ) {
             PseudoRegister *r = uplevelRead->at( j );
             uplevelUses->append( bb->addUse( this, r ) );
@@ -1235,7 +1237,7 @@ void ContextCreateNode::makeUses( BasicBlock *bb ) {
         _srcUse = bb->addUse( this, _src ); // no src if there's no incoming context
     _destDef    = bb->addDef( this, _dest );
     if ( _parentContexts ) {
-        std::int32_t len            = _parentContexts->length();
+        std::int32_t len   = _parentContexts->length();
         _parentContextUses = new GrowableArray<Usage *>( len, len, nullptr );
         for ( std::int32_t i = _parentContexts->length() - 1; i >= 0; i-- ) {
             Usage *u = bb->addUse( this, _parentContexts->at( i ) );
@@ -1405,7 +1407,7 @@ void TArithRRNode::removeUses( BasicBlock *bb ) {
 void CallNode::removeUses( BasicBlock *bb ) {
     _dest->removeDef( bb, _destDef );
     if ( argUses ) {
-        std::int32_t               len = args->length();
+        std::int32_t       len = args->length();
         for ( std::int32_t i   = 0; i < len; i++ ) {
             args->at( i )->removeUse( bb, argUses->at( i ) );
         }
@@ -1512,7 +1514,7 @@ void InlinedPrimitiveNode::removeUses( BasicBlock *bb ) {
 // case that will never be executed)
 // ==================================================================================
 
-void Node::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, bool_t cp ) {
+void Node::eliminate( BasicBlock *bb, PseudoRegister *r, bool removing, bool cp ) {
     st_assert( not _deleted, "already deleted this node" );
     if ( CompilerDebug ) {
         char buf[1024];
@@ -1527,7 +1529,7 @@ void Node::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, bool_t
   if (preg not_eq r and preg->isOnlySoftUsed()) preg->eliminate(false);
 
 
-void LoadNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void LoadNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     st_assert( canBeEliminated() or rem, "cannot be eliminated" );
@@ -1536,7 +1538,7 @@ void LoadNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t 
 }
 
 
-void LoadOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void LoadOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     LoadNode::eliminate( bb, r, rem, cp );
@@ -1544,7 +1546,7 @@ void LoadOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, b
 }
 
 
-void LoadUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void LoadUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     LoadNode::eliminate( bb, r, rem, cp );
@@ -1552,7 +1554,7 @@ void LoadUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, 
 }
 
 
-void StoreNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void StoreNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     NonTrivialNode::eliminate( bb, r, rem, cp );
@@ -1560,7 +1562,7 @@ void StoreNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t
 }
 
 
-void StoreOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void StoreOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     StoreNode::eliminate( bb, r, rem, cp );
@@ -1568,7 +1570,7 @@ void StoreOffsetNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, 
 }
 
 
-void StoreUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void StoreUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     StoreNode::eliminate( bb, r, rem, cp );
@@ -1576,7 +1578,7 @@ void StoreUplevelNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem,
 }
 
 
-void AssignNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void AssignNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     StoreNode::eliminate( bb, r, rem, cp );
@@ -1584,7 +1586,7 @@ void AssignNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_
 }
 
 
-void ReturnNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void ReturnNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     st_assert( rem, "should not delete except during dead-code elimination" );
@@ -1595,7 +1597,7 @@ void ReturnNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_
 }
 
 
-void ArithNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void ArithNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     NonTrivialNode::eliminate( bb, r, rem, cp );
@@ -1604,7 +1606,7 @@ void ArithNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t
 }
 
 
-void ArithRRNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void ArithRRNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     ArithNode::eliminate( bb, r, rem, cp );
@@ -1612,7 +1614,7 @@ void ArithRRNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool
 }
 
 
-void BranchNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, bool_t cp ) {
+void BranchNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool removing, bool cp ) {
     if ( _deleted )
         return;
     if ( removing and nSuccessors() <= 1 ) {
@@ -1624,7 +1626,7 @@ void BranchNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, 
 }
 
 
-void BlockMaterializeNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void BlockMaterializeNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     BlockCreateNode::eliminate( bb, r, rem, cp );
@@ -1638,7 +1640,7 @@ void BasicNode::removeUpToMerge() {
     for ( ; n and n->hasSinglePredecessor(); ) {
         while ( n->nSuccessors() > 1 ) {
             std::int32_t i     = n->nSuccessors() - 1;
-            Node        *succ = n->next( i );
+            Node         *succ = n->next( i );
             succ->removeUpToMerge();
             /* Must removeNext after removeUpToMerge to avoid false removal of MergeNode with 2 predecessors. SLR 08/08 */
             n->removeNext( succ );
@@ -1667,7 +1669,7 @@ void BasicNode::removeUpToMerge() {
 }
 
 
-void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     st_assert( rem or canBeEliminated(), "shouldn't call" );
@@ -1686,7 +1688,7 @@ void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bo
     CHECK( _dest, r );
     if ( args ) {
         // check if any arg became unused
-        std::int32_t               len = args->length();
+        std::int32_t       len = args->length();
         for ( std::int32_t i   = 0; i < len; i++ ) {
             PseudoRegister *arg = args->at( i );
             if ( arg->_location.isTopOfStack() ) {
@@ -1703,7 +1705,7 @@ void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bo
 }
 
 
-void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *rr, bool_t rem, bool_t cp ) {
+void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *rr, bool rem, bool cp ) {
     // completely eliminate receiver and all successors
     if ( _deleted )
         return;
@@ -1722,9 +1724,9 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
     Oop  constant = c ? c->constant : 0;
     Node *keep    = nullptr;
     if ( CompilerDebug ) {
-        cout( PrintEliminateUnnededNodes )->print( "*eliminating tt node %#lx const %#lx klass %#lx\n", PrintHexAddresses ? this : 0, constant, theKlass );
+        cout( PrintEliminateUnnededNodes )->print( "*eliminating tt node 0x{0:x} const 0x{0:x} klass 0x{0:x}\n", PrintHexAddresses ? this : 0, constant, theKlass );
     }
-    Node              *un = _next;        // save unknown branch
+    Node               *un = _next;        // save unknown branch
     // remove all successor nodes
     for ( std::int32_t i   = 0; i < successors->length(); i++ ) {
         Node     *succ = successors->at( i );
@@ -1750,8 +1752,8 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
         // (performance bug: should inline correct case since it's known now;
         // also, unknown branch may be uncommon)
         if ( WizardMode ) {
-            warning( "Compiler: typetest didn't predict klass %#lx", theKlass );
-            lprintf( "predicted klasses: " );
+            spdlog::warn( "Compiler: typetest didn't predict klass 0x{0:x}", static_cast<const void *>(theKlass) );
+            spdlog::info( "predicted klasses: " );
             _classes->print();
         }
         _next = un;        // keep unknown branch
@@ -1773,7 +1775,7 @@ void TypeTestNode::eliminateUnnecessary( KlassOop m ) {
 }
 
 
-void AbstractArrayAtNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void AbstractArrayAtNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     st_assert( rem, "shouldn't eliminate because of side effects (errors)" );
     if ( _deleted )
         return;
@@ -1787,7 +1789,7 @@ void AbstractArrayAtNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t r
 }
 
 
-void InlinedPrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t rem, bool_t cp ) {
+void InlinedPrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     AbstractBranchNode::eliminate( bb, r, rem, cp );
@@ -1802,14 +1804,14 @@ void InlinedPrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t 
 }
 
 
-void ContextCreateNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, bool_t cp ) {
+void ContextCreateNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool removing, bool cp ) {
     if ( _deleted )
         return;
     PrimitiveNode::eliminate( bb, r, removing, cp );
 }
 
 
-void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing, bool_t cp ) {
+void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool removing, bool cp ) {
     st_assert( removing, "should only remove when removing unreachable code" );
     if ( _deleted )
         return;
@@ -1820,7 +1822,7 @@ void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool_t remov
 void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res ) {
     // the receiver can be eliminated because the result it is testing
     // is a constant (res)
-    bool_t ok;
+    bool ok;
     switch ( _op ) {
         case BranchOpCode::EQBranchOp:
             ok = op1 == op2;
@@ -2005,7 +2007,7 @@ void AbstractBranchNode::removeFailureIfPossible() {
 }
 
 
-bool_t BasicNode::canCopyPropagate( Node *fromNode ) const {
+bool BasicNode::canCopyPropagate( Node *fromNode ) const {
     // current restriction: cannot copy-propagate into a loop
     // reason: copy-propagated PseudoRegister needs its live range extended to cover the entire loop,
     // not just the stretch between fromNode and this node
@@ -2013,7 +2015,7 @@ bool_t BasicNode::canCopyPropagate( Node *fromNode ) const {
 }
 
 
-bool_t NonTrivialNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool NonTrivialNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     st_assert( canCopyPropagate(), "can't copy-propagate" );
     st_assert( hasSrc(), "has no src" );
     if ( _srcUse == u ) {
@@ -2025,7 +2027,7 @@ bool_t NonTrivialNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
 }
 
 
-bool_t LoadOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool LoadOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _srcUse ) {
         // minor performance bug: prev. node should probably be deleted
         // (loads base reg) - eliminateUnneeded doesn't catch it - fix this
@@ -2038,7 +2040,7 @@ bool_t LoadOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
 }
 
 
-bool_t LoadUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool LoadUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _context0Use ) {
         CP_HELPER( _context0, _context0Use, return );
     } else {
@@ -2048,7 +2050,7 @@ bool_t LoadUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister 
 }
 
 
-bool_t StoreOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool StoreOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _baseUse ) {
         CP_HELPER( _base, _baseUse, return );
     } else {
@@ -2058,7 +2060,7 @@ bool_t StoreOffsetNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister 
 }
 
 
-bool_t StoreUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool StoreUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _context0Use ) {
         CP_HELPER( _context0, _context0Use, return );
     } else {
@@ -2068,13 +2070,13 @@ bool_t StoreUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister
 }
 
 
-bool_t CallNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    //warning("fix this -- propagate args somewhere");
+bool CallNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    //spdlog::warn("fix this -- propagate args somewhere");
     return false;
 }
 
 
-bool_t ArithRRNode::operIsConst() const {
+bool ArithRRNode::operIsConst() const {
     return _oper->isConstPseudoRegister();
 }
 
@@ -2085,8 +2087,8 @@ std::int32_t ArithRRNode::operConst() const {
 }
 
 
-bool_t ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    bool_t success = doCopyPropagate( bb, u, d, replace );
+bool ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    bool success = doCopyPropagate( bb, u, d, replace );
     if ( _src->isConstPseudoRegister() and operIsConst() ) {
         st_assert( success, "CP must have worked" );
         // can constant-fold this operation
@@ -2135,12 +2137,12 @@ bool_t ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bo
 }
 
 
-bool_t ArithNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool ArithNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     return NonTrivialNode::copyPropagate( bb, u, d, replace );
 }
 
 
-bool_t ArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool ArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _operUse ) {
         CP_HELPER( _oper, _operUse, return );
     } else {
@@ -2150,8 +2152,8 @@ bool_t ArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d
 }
 
 
-bool_t TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    bool_t res = doCopyPropagate( bb, u, d, replace );
+bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    bool res = doCopyPropagate( bb, u, d, replace );
     if ( _src->isConstPseudoRegister() and _oper->isConstPseudoRegister() ) {
         st_assert( res, "CP must have worked" );
         // can constant-fold this operation
@@ -2184,18 +2186,18 @@ bool_t TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d,
                 result = smiOopPrimitives::bitXor( c1, c2 );
                 break;
             case ArithOpCode::tShiftArithOp:
-                warning( "possible performance bug: constant folding of ArithOpCode::tShiftArithOp not implemented" );
+                spdlog::warn( "possible performance bug: constant folding of ArithOpCode::tShiftArithOp not implemented" );
                 return false;
             case ArithOpCode::tCmpArithOp:
-                warning( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
+                spdlog::warn( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
                 return false;
             default           : st_fatal1( "unknown tagged opcode %ld", _op );
         }
-        bool_t ok = not result->is_mark();
+        bool ok = not result->is_mark();
         if ( ok ) {
             // constant-fold this operation
             if ( CompilerDebug )
-                cout( PrintCopyPropagation )->print( "*constant-folding N%d --> %#x\n", _id, result );
+                cout( PrintCopyPropagation )->print( "*constant-folding N%d --> 0x{0:x}\n", _id, result );
             _constResult  = new_ConstPReg( scope(), result );
             // first, discard the error branch (if there)
             Node *discard = next1();
@@ -2231,8 +2233,8 @@ bool_t TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d,
 }
 
 
-bool_t TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    bool_t res;
+bool TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    bool res;
     if ( u == _srcUse ) {
         if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->is_smi() )
             _arg1IsInt = true;
@@ -2249,29 +2251,29 @@ bool_t TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
 }
 
 
-bool_t FloatArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool FloatArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->is_double() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
-    bool_t res = ArithRRNode::copyPropagate( bb, u, d, replace );
+    bool res = ArithRRNode::copyPropagate( bb, u, d, replace );
     // should check for constant folding opportunity here -- fix this
     return res;
 }
 
 
-bool_t FloatUnaryArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool FloatUnaryArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->is_double() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
-    bool_t res = ArithNode::copyPropagate( bb, u, d, replace );
+    bool res = ArithNode::copyPropagate( bb, u, d, replace );
     // should check for constant folding opportunity here -- fix this
     return res;
 }
 
 
-bool_t TypeTestNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool TypeTestNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _srcUse ) {
         if ( d->isConstPseudoRegister() ) {
             // we know the receiver - the type test is unnecessary!
@@ -2295,9 +2297,9 @@ bool_t TypeTestNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d,
 }
 
 
-bool_t AbstractArrayAtNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool AbstractArrayAtNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _argUse ) {
-        bool_t res;
+        bool res;
         CP_HELPER( _arg, _argUse, res = );
         removeFailureIfPossible();
         return res;
@@ -2308,8 +2310,8 @@ bool_t AbstractArrayAtNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegis
 }
 
 
-bool_t AbstractArrayAtPutNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
-    bool_t res;
+bool AbstractArrayAtPutNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    bool res;
     if ( u == _argUse ) {
         CP_HELPER( _arg, _argUse, res = );
     } else if ( u == elemUse ) {
@@ -2322,19 +2324,19 @@ bool_t AbstractArrayAtPutNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRe
 }
 
 
-bool_t InlinedPrimitiveNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool InlinedPrimitiveNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     // copyPropagate should be fairly easy to put in, right now it is doing nothing.
     return false;
 }
 
 
-bool_t ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace ) {
+bool ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     for ( std::int32_t i = nofTemps() - 1; i >= 0; i-- ) {
         if ( _initializerUses->at( i ) == u ) {
             Expression     *initExpression = _initializers->at( i );
             PseudoRegister *initPR         = initExpression->preg();
             Usage          *newUse         = u;
-            bool_t         ok;
+            bool           ok;
             CP_HELPER( initPR, newUse, ok = );
             if ( ok ) {
                 st_assert( newUse not_eq u, "must have new use" );
@@ -2524,7 +2526,7 @@ SimpleBitVector CallNode::trashedMask() {
 // computeEscapingBlocks: find escaping blocks
 // ==================================================================================
 
-void computeEscapingBlocks( Node *n, PseudoRegister *src, GrowableArray<BlockPseudoRegister *> *l, const char *msg ) {
+void computeEscapingBlocks( Node *n, PseudoRegister *src, GrowableArray<BlockPseudoRegister *> *l, char *msg ) {
     // helper function for computing exposed blocks
     if ( src->isBlockPseudoRegister() ) {
         BlockPseudoRegister *r = (BlockPseudoRegister *) src;
@@ -2562,7 +2564,7 @@ void SendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll )
         // if the receiver is not pushed on the exprStack (self/super sends),
         // the exprStack is by 1 shorter than the args array
         // (exprStack may be longer than that, so just look at top elems)
-        std::int32_t         len = exprStack->length();
+        std::int32_t len = exprStack->length();
         std::int32_t i   = min( args->length(), len );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a send" );
@@ -2574,7 +2576,7 @@ void SendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll )
 void UncommonSendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // all arguments to an uncommon send escape
     if ( expressionStack() and ( _argCount > 0 ) ) {
-        std::int32_t         len = expressionStack()->length();
+        std::int32_t len = expressionStack()->length();
         std::int32_t i   = _argCount;
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, expressionStack()->at( --len ), ll, "exposed by an uncommon send" );
@@ -2586,7 +2588,7 @@ void UncommonSendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister 
 void PrimitiveNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // assume that all block arguments to a primitive call escape
     if ( exprStack ) {
-        std::int32_t         len = exprStack->length();
+        std::int32_t len = exprStack->length();
         std::int32_t i   = min( len, _pdesc->number_of_parameters() );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a primitive call" );
@@ -2598,7 +2600,7 @@ void PrimitiveNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> 
 void DLLNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // assume that all block arguments to a DLL call escape
     if ( exprStack ) {
-        std::int32_t         len = exprStack->length();
+        std::int32_t len = exprStack->length();
         std::int32_t i   = min( len, nofArguments() );
         while ( i-- > 0 ) {
             ::computeEscapingBlocks( this, exprStack->at( --len ), ll, "exposed by a DLL call" );
@@ -2629,9 +2631,9 @@ void ArrayAtPutNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *>
 // machine-independent routines for code generation
 // ==================================================================================
 
-bool_t TypeTestNode::needsKlassLoad() const {
-    // a test needs a klass load if it tests for any non-smi_t/bool_t/nil klass
-    const std::int32_t         len = _hasUnknown ? _classes->length() : _classes->length() - 1;
+bool TypeTestNode::needsKlassLoad() const {
+    // a test needs a klass load if it tests for any non-smi_t/bool/nil klass
+    const std::int32_t len = _hasUnknown ? _classes->length() : _classes->length() - 1;
     for ( std::int32_t i   = 0; i < len; i++ ) {
         KlassOop klass = _classes->at( i );
         if ( klass not_eq trueObject->klass() and klass not_eq falseObject->klass() and klass not_eq nilObject->klass() and klass not_eq smiKlassObject ) {
@@ -2642,26 +2644,26 @@ bool_t TypeTestNode::needsKlassLoad() const {
 }
 
 
-static bool_t hasUnknownCode( Node *n ) {
+static bool hasUnknownCode( Node *n ) {
     while ( n->isTrivial() )
         n = n->next();
     return not n->isUncommonNode();
 }
 
 
-bool_t TypeTestNode::hasUnknownCode() const {
+bool TypeTestNode::hasUnknownCode() const {
     if ( not _hasUnknown )
         return false;     // no unknown type
     return ::hasUnknownCode( next() );
 }
 
 
-bool_t TArithRRNode::hasUnknownCode() const {
+bool TArithRRNode::hasUnknownCode() const {
     return ::hasUnknownCode( next1() );
 }
 
 
-bool_t AbstractArrayAtNode::hasUnknownCode() const {
+bool AbstractArrayAtNode::hasUnknownCode() const {
     return ::hasUnknownCode( next1() );
 }
 
@@ -2736,7 +2738,7 @@ void LoopHeaderNode::addRegisterCandidate( LoopRegCandidate *c ) {
 }
 
 
-bool_t is_smi_type( GrowableArray<KlassOop> *klasses ) {
+bool is_smi_type( GrowableArray<KlassOop> *klasses ) {
     return klasses->length() == 1 and klasses->at( 0 ) == smiKlassObject;
 }
 
@@ -2890,7 +2892,7 @@ const std::int32_t PrintStringLen = 40;    // width of output before printing ad
 
 void BasicNode::print_short() {
     char buf[1024];
-    lprintf( print_string( buf, PrintHexAddresses ) );
+    spdlog::info( print_string( buf, PrintHexAddresses ) );
 }
 
 
@@ -2899,229 +2901,229 @@ static std::int32_t id_of( Node *node ) {
 }
 
 
-const char *PrologueNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *PrologueNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Prologue" );
     if ( printAddr )
-        my_sprintf( buf, "((PrologueNode*)%#lx", this );
+        my_sprintf( buf, "((PrologueNode*)0x{0:x}", this );
     return b;
 }
 
 
-const char *InterruptCheckNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *InterruptCheckNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InterruptCheckNode" );
     if ( printAddr )
-        my_sprintf( buf, "((InterruptCheckNode*)%#lx)", this );
+        my_sprintf( buf, "((InterruptCheckNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadOffsetNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "LoadOffset %s := %s[%#lx]", _dest->safeName(), _src->safeName(), _offset );
+char *LoadOffsetNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
+    my_sprintf_len( buf, PrintStringLen, "LoadOffset %s := %s[0x{0:x}]", _dest->safeName(), _src->safeName(), _offset );
     if ( printAddr )
-        my_sprintf( buf, "((LoadOffsetNode*)%#lx)", this );
+        my_sprintf( buf, "((LoadOffsetNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadIntNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "LoadInt %s := %#lx", _dest->safeName(), _value );
+char *LoadIntNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
+    my_sprintf_len( buf, PrintStringLen, "LoadInt %s := 0x{0:x}", _dest->safeName(), _value );
     if ( printAddr )
-        my_sprintf( buf, "((LoadIntNode*)%#lx)", this );
+        my_sprintf( buf, "((LoadIntNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadUplevelNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *LoadUplevelNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadUpLevel %s := %s^%d[%d]", _dest->safeName(), _context0->safeName(), _nofLevels, _offset );
     if ( printAddr )
-        my_sprintf( buf, "((LoadUplevelNode*)%#lx)", this );
+        my_sprintf( buf, "((LoadUplevelNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *StoreOffsetNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "StoreOffset %s[%#lx] := %s", _base->safeName(), _offset, _src->safeName() );
+char *StoreOffsetNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
+    my_sprintf_len( buf, PrintStringLen, "StoreOffset %s[0x{0:x}] := %s", _base->safeName(), _offset, _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((StoreOffsetNode*)%#lx)", this );
+        my_sprintf( buf, "((StoreOffsetNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *StoreUplevelNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *StoreUplevelNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "StoreUpLevel %s^%d[%d] := %s", _context0->safeName(), _nofLevels, _offset, _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((StoreUplevelNode*)%#lx)", this );
+        my_sprintf( buf, "((StoreUplevelNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *AssignNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *AssignNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((AssignNode*)%#lx)", this );
+        my_sprintf( buf, "((AssignNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *SendNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *SendNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Send %s NonLocalReturn %ld ", _key->print_string(), id_of( nlrTestPoint() ) );
     if ( printAddr )
-        my_sprintf( buf, "((SendNode*)%#lx)", this );
+        my_sprintf( buf, "((SendNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *PrimitiveNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *PrimitiveNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "PrimCall _%s NonLocalReturn %ld", _pdesc->name(), id_of( nlrTestPoint() ) );
     if ( printAddr )
-        my_sprintf( buf, "((PrimitiveNode*)%#lx)", this );
+        my_sprintf( buf, "((PrimitiveNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *DLLNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *DLLNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DLLCall <%s, %s> NonLocalReturn %ld", _dll_name->as_string(), _function_name->as_string(), id_of( nlrTestPoint() ) );
     if ( printAddr )
-        my_sprintf( buf, "((DLLNode*)%#lx)", this );
+        my_sprintf( buf, "((DLLNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BlockCreateNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *BlockCreateNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockCreate %s", _dest->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((BlockCreateNode*)%#lx)", this );
+        my_sprintf( buf, "((BlockCreateNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BlockMaterializeNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *BlockMaterializeNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockMaterialize %s", _dest->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((BlockMaterializeNode*)%#lx)", this );
+        my_sprintf( buf, "((BlockMaterializeNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *InlinedReturnNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *InlinedReturnNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InlinedReturn %s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((InlinedReturnNode*)%#lx)", this );
+        my_sprintf( buf, "((InlinedReturnNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnSetupNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *NonLocalReturnSetupNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturneturn %s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((NonLocalReturnSetupNode*)%#lx)", this );
+        my_sprintf( buf, "((NonLocalReturnSetupNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnContinuationNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *NonLocalReturnContinuationNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturn Continuation" );
     if ( printAddr )
-        my_sprintf( buf, "((NonLocalReturnContinuationNode*)%#lx)", this );
+        my_sprintf( buf, "((NonLocalReturnContinuationNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ReturnNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ReturnNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "MethodReturn  %s", _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((ReturnNode*)%#lx)", this );
+        my_sprintf( buf, "((ReturnNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnTestNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *NonLocalReturnTestNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturnTest  N%ld N%ld", id_of( next1() ), id_of( next() ) );
     if ( printAddr )
-        my_sprintf( buf, "((NonLocalReturnTestNode*)%#lx)", this );
+        my_sprintf( buf, "((NonLocalReturnTestNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArithNode::opName() const {
+char *ArithNode::opName() const {
     return ArithOpName[ static_cast<std::int32_t>( _op ) ];
 }
 
 
-const char *ArithRRNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ArithRRNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((ArithRRNode*)%#lx)", this );
+        my_sprintf( buf, "((ArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FloatArithRRNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *FloatArithRRNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((FloatArithRRNode*)%#lx)", this );
+        my_sprintf( buf, "((FloatArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FloatUnaryArithNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *FloatUnaryArithNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s", _dest->safeName(), opName(), _src->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((FloatUnaryArithNode*)%#lx)", this );
+        my_sprintf( buf, "((FloatUnaryArithNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *TArithRRNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *TArithRRNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::int32_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
     if ( printAddr )
-        my_sprintf( buf, "((TArithRRNode*)%#lx)", this );
+        my_sprintf( buf, "((TArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArithRCNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s := %s %s %#lx", _dest->safeName(), _src->safeName(), opName(), _oper );
+char *ArithRCNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
+    my_sprintf_len( buf, PrintStringLen, "%s := %s %s 0x{0:x}", _dest->safeName(), _src->safeName(), opName(), _oper );
     if ( printAddr )
-        my_sprintf( buf, "((ArithRCNode*)%#lx)", this );
+        my_sprintf( buf, "((ArithRCNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BranchNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *BranchNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::int32_t>( _op ) ], id_of( next1() ), id_of( next() ) );
     if ( printAddr )
-        my_sprintf( buf, "((BranchNode*)%#lx)", this );
+        my_sprintf( buf, "((BranchNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *TypeTestNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *TypeTestNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf( buf, "TypeTest %s, ", _src->safeName() );
     for ( std::int32_t i = 1; i <= _classes->length(); i++ ) {
         KlassOop m = _classes->at( i - 1 );
@@ -3130,40 +3132,40 @@ const char *TypeTestNode::print_string( const char *buf, bool_t printAddr ) cons
     }
     my_sprintf_len( buf, b + PrintStringLen - buf, "N%ld%s", id_of( next() ), _hasUnknown ? "" : "*" );
     if ( printAddr )
-        my_sprintf( buf, "((TypeTestNode*)%#lx)", this );
+        my_sprintf( buf, "((TypeTestNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArrayAtNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ArrayAtNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAt %s := %s[%s]", _dest->safeName(), _src->safeName(), _arg->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((ArrayAtNode*)%#lx)", this );
+        my_sprintf( buf, "((ArrayAtNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArrayAtPutNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ArrayAtPutNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAtPut %s[%s] := %s", _src->safeName(), _arg->safeName(), elem->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((ArrayAtPutNode*)%#lx)", this );
+        my_sprintf( buf, "((ArrayAtPutNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FixedCodeNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *FixedCodeNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DeadEnd" );
     if ( printAddr )
-        my_sprintf( buf, "((FixedCodeNode*)%#lx)", this );
+        my_sprintf( buf, "((FixedCodeNode*)0x{0:x})", this );
     return b;
 }
 
 
 static std::int32_t prevsLen;
-static const char  *mergePrintBuf;
+static char         *mergePrintBuf;
 
 
 static void printPrevNodes( Node *n ) {
@@ -3171,8 +3173,8 @@ static void printPrevNodes( Node *n ) {
 }
 
 
-const char *MergeNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *MergeNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf( buf, "Merge " );
     prevsLen      = _prevs->length();
     mergePrintBuf = buf;
@@ -3180,13 +3182,13 @@ const char *MergeNode::print_string( const char *buf, bool_t printAddr ) const {
     buf = mergePrintBuf;
     my_sprintf_len( buf, b + PrintStringLen - buf, " " );
     if ( printAddr )
-        my_sprintf( buf, "((MergeNode*)%#lx)", this );
+        my_sprintf( buf, "((MergeNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoopHeaderNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *LoopHeaderNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf( buf, "LoopHeader " );
     if ( _activated ) {
         if ( _integerLoop ) {
@@ -3213,22 +3215,22 @@ const char *LoopHeaderNode::print_string( const char *buf, bool_t printAddr ) co
         my_sprintf_len( buf, PrintStringLen - 11, "(inactive)" );
     }
     if ( printAddr )
-        my_sprintf( buf, "((LoopHeaderNode*)%#lx)", this );
+        my_sprintf( buf, "((LoopHeaderNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextCreateNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ContextCreateNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Create Context %s", _dest->safeName() );
     if ( printAddr )
-        my_sprintf( buf, "((ContextCreateNode*)%#lx)", this );
+        my_sprintf( buf, "((ContextCreateNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextInitNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ContextInitNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf( buf, "Initialize context " );
     if ( _src == nullptr ) {
         my_sprintf( buf, "(optimized away) " );
@@ -3242,24 +3244,24 @@ const char *ContextInitNode::print_string( const char *buf, bool_t printAddr ) c
     }
     my_sprintf_len( buf, b + PrintStringLen - buf, "}" );
     if ( printAddr )
-        my_sprintf( buf, "((ContextInitNode*)%#lx)", this );
+        my_sprintf( buf, "((ContextInitNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextZapNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *ContextZapNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Zap Context %s", isActive() ? context()->safeName() : "- inactive" );
     if ( printAddr )
-        my_sprintf( buf, "((ContextZapNode*)%#lx)", this );
+        my_sprintf( buf, "((ContextZapNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *InlinedPrimitiveNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *InlinedPrimitiveNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf( buf, "%s := ", _dest->safeName() );
-    const char *op_name;
+    char *op_name;
     switch ( _operation ) {
         case InlinedPrimitiveNode::Operation::obj_klass:
             op_name = "obj_klass";
@@ -3283,49 +3285,49 @@ const char *InlinedPrimitiveNode::print_string( const char *buf, bool_t printAdd
     my_sprintf( buf, " %s", _arg2->safeName() );
     my_sprintf_len( buf, b + PrintStringLen - buf, ")" );
     if ( printAddr )
-        my_sprintf( buf, "((InlinedPrimitiveNode*)%#lx)", this );
+        my_sprintf( buf, "((InlinedPrimitiveNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *UncommonNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *UncommonNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonBranch" );
     if ( printAddr )
-        my_sprintf( buf, "((UncommonNode*)%#lx)", this );
+        my_sprintf( buf, "((UncommonNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *UncommonSendNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *UncommonSendNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonSend(%d arg%s)", _argCount, _argCount not_eq 1 ? "s" : "" );
     if ( printAddr )
-        my_sprintf( buf, "((UncommonSendNode*)%#lx)", this );
+        my_sprintf( buf, "((UncommonSendNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NopNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *NopNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Nop" );
     if ( printAddr )
-        my_sprintf( buf, "((NopNode*)%#lx)", this );
+        my_sprintf( buf, "((NopNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *CommentNode::print_string( const char *buf, bool_t printAddr ) const {
-    const char *b = buf;
+char *CommentNode::print_string( char *buf, bool printAddr ) const {
+    char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "'%s' ", comment );
     if ( printAddr )
-        my_sprintf( buf, "((CommentNode*)%#lx)", this );
+        my_sprintf( buf, "((CommentNode*)0x{0:x})", this );
     return b;
 }
 
 
 void BasicNode::printID() const {
-    lprintf( "%4ld:%1s %-4s", id(), _deleted ? "D" : " ", " " );
+    spdlog::info( "%4ld:%1s %-4s", id(), _deleted ? "D" : " ", " " );
     //c hasSplitSig() ? splitSig()->prefix(buf) : " ");
 }
 
@@ -3334,22 +3336,22 @@ void Node::verify() const {
     if ( _deleted )
         return;
     if ( not firstPrev() and not isPrologueNode() )
-        error( "Node %#lx: no predecessor", this );
+        error( "Node 0x{0:x}: no predecessor", this );
     if ( firstPrev() and not firstPrev()->isSuccessor( this ) )
-        error( "prev->next not_eq this for Node %#lx", this );
+        error( "prev->next not_eq this for Node 0x{0:x}", this );
     if ( _basicBlock and not _basicBlock->contains( this ) )
-        error( "BasicBlock doesn't contain Node %#lx", this );
+        error( "BasicBlock doesn't contain Node 0x{0:x}", this );
     if ( next() and not next()->isPredecessor( this ) )
-        error( "next->prev not_eq this for Node %#lx", this );
+        error( "next->prev not_eq this for Node 0x{0:x}", this );
     if ( bbIterator->_blocksBuilt and _basicBlock == nullptr )
-        error( "Node %#lx: doesn't belong to any BasicBlock", this );
+        error( "Node 0x{0:x}: doesn't belong to any BasicBlock", this );
     if ( next() == nullptr and not isExitNode() and not isCommentNode() )   // for the "rest of method omitted (dead)" comment
-        error( "Node %#lx has no successor", this );
+        error( "Node 0x{0:x} has no successor", this );
     if ( next() not_eq nullptr and isExitNode() ) {
         Node *n = next();
         for ( ; n and ( n->isCommentNode() or n->isDeadEndNode() ); n = n->next() );
         if ( n )
-            error( "exit node %#lx has a successor (%#lx)", this, next() );
+            error( "exit node 0x{0:x} has a successor (0x{0:x})", this, next() );
     }
 }
 
@@ -3362,11 +3364,11 @@ void NonTrivialNode::verify() const {
     if ( hasDest() ) {
         dest()->verify();
         if ( dest()->isConstPseudoRegister() ) {
-            error( "Node %#lx: dest %#lx is ConstPR", this, dest() );
+            error( "Node 0x{0:x}: dest 0x{0:x} is ConstPR", this, dest() );
         }
     }
     if ( isAssignmentLike() and ( not hasSrc() or not hasDest() ) )
-        error( "Node %#lx: isAssignmentLike() implies hasSrc/Dest", this );
+        error( "Node 0x{0:x}: isAssignmentLike() implies hasSrc/Dest", this );
     Node::verify();
 }
 
@@ -3377,7 +3379,7 @@ void LoadOffsetNode::verify() const {
     NonTrivialNode::verify();
     base()->verify();
     if ( _offset < 0 )
-        error( "Node %#lx: offset must be >= 0", this );
+        error( "Node 0x{0:x}: offset must be >= 0", this );
 }
 
 
@@ -3385,11 +3387,11 @@ void LoadUplevelNode::verify() const {
     if ( _deleted )
         return;
     if ( _context0 == nullptr )
-        error( "Node %#lx: context0 is nullptr", this );
+        error( "Node 0x{0:x}: context0 is nullptr", this );
     if ( _nofLevels < 0 )
-        error( "Node %#lx: nofLevels must be >= 0", this );
+        error( "Node 0x{0:x}: nofLevels must be >= 0", this );
     if ( _offset < 0 )
-        error( "Node %#lx: offset must be >= 0", this );
+        error( "Node 0x{0:x}: offset must be >= 0", this );
     NonTrivialNode::verify();
     _context0->verify();
 }
@@ -3401,7 +3403,7 @@ void StoreOffsetNode::verify() const {
     NonTrivialNode::verify();
     base()->verify();
     if ( _offset < 0 )
-        error( "Node %#lx: offset must be >= 0", this );
+        error( "Node 0x{0:x}: offset must be >= 0", this );
 }
 
 
@@ -3409,11 +3411,11 @@ void StoreUplevelNode::verify() const {
     if ( _deleted )
         return;
     if ( _context0 == nullptr )
-        error( "Node %#lx: context0 is nullptr", this );
+        error( "Node 0x{0:x}: context0 is nullptr", this );
     if ( _nofLevels < 0 )
-        error( "Node %#lx: nofLevels must be > 0", this );
+        error( "Node 0x{0:x}: nofLevels must be > 0", this );
     if ( _offset < 0 )
-        error( "Node %#lx: offset must be >= 0", this );
+        error( "Node 0x{0:x}: offset must be >= 0", this );
     NonTrivialNode::verify();
     _context0->verify();
 }
@@ -3423,7 +3425,7 @@ void MergeNode::verify() const {
     if ( _deleted )
         return;
     if ( _isLoopStart and _isLoopEnd )
-        error( "MergeNode %#x: cannot be both start and end of loop" );
+        error( "MergeNode 0x{0:x}: cannot be both start and end of loop" );
     TrivialNode::verify();
 }
 
@@ -3440,7 +3442,7 @@ void ReturnNode::verify() const {
         return;
     AbstractReturnNode::verify();
     if ( next() )
-        error( "ReturnNode %#lx has a successor", this );
+        error( "ReturnNode 0x{0:x} has a successor", this );
 }
 
 
@@ -3449,7 +3451,7 @@ void NonLocalReturnSetupNode::verify() const {
         return;
     AbstractReturnNode::verify();
     if ( next() )
-        error( "NonLocalReturnSetupNode %#lx has a successor", this );
+        error( "NonLocalReturnSetupNode 0x{0:x} has a successor", this );
 }
 
 
@@ -3458,7 +3460,7 @@ void NonLocalReturnContinuationNode::verify() const {
         return;
     AbstractReturnNode::verify();
     if ( next() )
-        error( "NonLocalReturnContinuationNode %#lx has a successor", this );
+        error( "NonLocalReturnContinuationNode 0x{0:x} has a successor", this );
 }
 
 
@@ -3467,9 +3469,9 @@ void NonLocalReturnTestNode::verify() const {
         return;
     AbstractBranchNode::verify( false );
     if ( next() == nullptr )
-        error( "NonLocalReturnTestNode %#lx has no continue-NonLocalReturn node", this );
+        error( "NonLocalReturnTestNode 0x{0:x} has no continue-NonLocalReturn node", this );
     if ( next1() == nullptr )
-        error( "NonLocalReturnTestNode %#lx has no end-of-NonLocalReturn node", this );
+        error( "NonLocalReturnTestNode 0x{0:x} has no end-of-NonLocalReturn node", this );
 }
 
 
@@ -3478,11 +3480,11 @@ void InlinedReturnNode::verify() const {
         return;
     AbstractReturnNode::verify();
     if ( not next() ) {
-        error( "InlinedReturnNode %#lx has no successor", this );
+        error( "InlinedReturnNode 0x{0:x} has no successor", this );
     } else {
         Node *nextAfterMerge = next()->next();
         if ( nextAfterMerge->scope() == scope() )
-            error( "InlinedReturnNode %#lx: successor is in same scope", this );
+            error( "InlinedReturnNode 0x{0:x}: successor is in same scope", this );
     }
 }
 
@@ -3497,7 +3499,7 @@ void ContextInitNode::verify() const {
         return;
     std::int32_t n = nofTemps();
     if ( ( n not_eq contents()->length() ) or ( n not_eq _initializers->length() ) or ( ( _contentDefs not_eq nullptr ) and ( n not_eq _contentDefs->length() ) ) or ( ( _initializerUses not_eq nullptr ) and ( n not_eq _initializerUses->length() ) ) ) {
-        error( "ContextInitNode %#lx: bad nofTemps %d", this, n );
+        error( "ContextInitNode 0x{0:x}: bad nofTemps %d", this, n );
     }
     std::int32_t i = nofTemps();
     while ( i-- > 0 ) {
@@ -3510,7 +3512,7 @@ void ContextInitNode::verify() const {
             ( (ContextInitNode *)
                     this )->print();
             scope()->print();
-            error( "ContextInitNode %#lx: context eliminated but temp %d is context location", this, i );
+            error( "ContextInitNode 0x{0:x}: context eliminated but temp %d is context location", this, i );
         }
         // isInContext is accessing _isInContext which is never set (and thus always 0 initially)
         // Should check if we're missing something here or if we can remove the code completely.
@@ -3522,7 +3524,7 @@ void ContextInitNode::verify() const {
     // If the assertion does make sense, please also put it in ContextInitNode::initialize().
     // (But please turn the condition above into a method, don't duplicate it.)
     // Urs 9/8/96
-    // error("ContextInitNode %#lx: temp %d is non-context SinglyAssignedPseudoRegister %s", this, i, r->safeName());
+    // error("ContextInitNode 0x{0:x}: temp %d is non-context SinglyAssignedPseudoRegister %s", this, i, r->safeName());
     }
     */
     }
@@ -3533,7 +3535,7 @@ void ContextZapNode::verify() const {
     if ( _deleted )
         return;
     if ( _src not_eq scope()->context() ) {
-        error( "ContextZapNode %#lx: wrong context %#lx", this, _src );
+        error( "ContextZapNode 0x{0:x}: wrong context 0x{0:x}", this, _src );
     }
     NonTrivialNode::verify();
 }
@@ -3544,7 +3546,7 @@ void CallNode::verify() const {
         return;
     if ( ( exprStack not_eq nullptr ) and ( args not_eq nullptr ) ) {
         if ( exprStack->length() + 1 < args->length() ) {
-            error( "CallNode %#lx: exprStack is too short", this );
+            error( "CallNode 0x{0:x}: exprStack is too short", this );
         }
     }
 }
@@ -3563,7 +3565,7 @@ void TArithRRNode::verify() const {
         return;
     AbstractBranchNode::verify( true );
     if ( ( _op < ArithOpCode::tAddArithOp ) or ( ArithOpCode::tCmpArithOp < _op ) ) {
-        error( "TArithRRNode %#lx: wrong opcode %ld", this, _op );
+        error( "TArithRRNode 0x{0:x}: wrong opcode %ld", this, _op );
     }
 }
 
@@ -3584,12 +3586,12 @@ void FloatUnaryArithNode::verify() const {
 }
 
 
-void AbstractBranchNode::verify( bool_t verifySuccessors ) const {
+void AbstractBranchNode::verify( bool verifySuccessors ) const {
     if ( _deleted )
         return;
     NonTrivialNode::verify();
     if ( verifySuccessors and not canFail() and failureBranch() not_eq nullptr ) {
-        error( "Node %#x: cannot fail, but failure branch is still there", this );
+        error( "Node 0x{0:x}: cannot fail, but failure branch is still there", this );
     }
 }
 
@@ -3606,7 +3608,7 @@ void UncommonNode::verify() const {
     if ( _deleted )
         return;
     if ( (Node *) this not_eq bb()->_last )
-        error( "UncommonNode %#lx: not last node in BasicBlock", this );
+        error( "UncommonNode 0x{0:x}: not last node in BasicBlock", this );
     NonTrivialNode::verify();
 }
 
@@ -3615,7 +3617,7 @@ void TypeTestNode::verify() const {
     if ( _deleted )
         return;
     if ( (Node *) this not_eq bb()->_last )
-        error( "TypeTestNode %#lx: not last node in BasicBlock", this );
+        error( "TypeTestNode 0x{0:x}: not last node in BasicBlock", this );
     NonTrivialNode::verify();
 }
 
@@ -3625,6 +3627,6 @@ void printNodes( Node *n ) {
     for ( ; n; n = n->next() ) {
         n->printID();
         n->print_short();
-        lprintf( "\n" );
+        spdlog::info( "" );
     }
 }

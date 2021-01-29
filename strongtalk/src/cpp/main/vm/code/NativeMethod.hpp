@@ -103,7 +103,7 @@ public:
         return instructionsStart() + _verifiedEntryPointOffset;
     } // entry point if klass is correct
 
-    bool_t isFree() {
+    bool isFree() {
         return Universe::code->contains( (void *) _instructionsLength );
     } // has this NativeMethod been freed
 
@@ -197,7 +197,7 @@ public:
 protected:
     NativeMethod( Compiler *c );
 
-    void *operator new( std::int32_t size );
+    void *operator new( std::size_t size );
 
 public:
     friend NativeMethod *new_nativeMethod( Compiler *c );
@@ -219,33 +219,33 @@ public:
     void moveTo( void *to, std::int32_t size );
 
 public:
-    bool_t isNativeMethod() const {
+    bool isNativeMethod() const {
         return true;
     }
 
 
     // Flag accessing and manipulation.
-    bool_t isAlive() const {
+    bool isAlive() const {
         return _nativeMethodFlags.state == alive;
     }
 
 
-    bool_t isZombie() const {
+    bool isZombie() const {
         return _nativeMethodFlags.state == zombie;
     }
 
 
-    bool_t isDead() const {
+    bool isDead() const {
         return _nativeMethodFlags.state == dead;
     }
 
 
-    bool_t isResurrected() {
+    bool isResurrected() {
         return _nativeMethodFlags.state == resurrected;
     }
 
 
-    void makeZombie( bool_t clearInlineCaches );
+    void makeZombie( bool clearInlineCaches );
 
 
     // allow resurrection of zombies - for use during recompilation
@@ -255,12 +255,12 @@ public:
     }
 
 
-    bool_t isUncommonRecompiled() const {
+    bool isUncommonRecompiled() const {
         return _nativeMethodFlags.isUncommonRecompiled;
     }
 
 
-    bool_t isYoung();
+    bool isYoung();
 
 
     void makeYoung() {
@@ -282,7 +282,7 @@ public:
     }
 
 
-    bool_t is_marked_for_deoptimization() const {
+    bool is_marked_for_deoptimization() const {
         return _nativeMethodFlags.markedForDeoptimization;
     }
 
@@ -297,7 +297,7 @@ public:
     }
 
 
-    bool_t isToBeRecompiled() const {
+    bool isToBeRecompiled() const {
         return _nativeMethodFlags.isToBeRecompiled;
     }
 
@@ -307,12 +307,12 @@ public:
     }
 
 
-    bool_t is_block() const {
+    bool is_block() const {
         return _nativeMethodFlags.isBlock == 1;
     }
 
 
-    bool_t is_method() const {
+    bool is_method() const {
         return _nativeMethodFlags.isBlock == 0;
     }
 
@@ -336,7 +336,7 @@ public:
     std::int32_t estimatedInvocationCount() const;   // approximation (not all calls have counters)
     std::int32_t ncallers() const;                   // # of callers (# nativeMethods, *not* # of inline caches)
 
-    bool_t encompasses( const void *p ) const;
+    bool encompasses( const void *p ) const;
 
 
     // for zone LRU management
@@ -361,7 +361,7 @@ public:
     GrowableArray<NativeMethod *> *invalidation_family();
 
     // Tells whether this NativeMethod dependes on invalid classes (classes flagged invalid)
-    bool_t depends_on_invalid_klass();
+    bool depends_on_invalid_klass();
 
 private:
     // Recursive helper function for invalidation_family()
@@ -374,7 +374,7 @@ public:
     // Iterate over all oops in the NativeMethod
     void oops_do( void f( Oop * ) );
 
-    bool_t switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
+    bool switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
 
     void relocate();
 
@@ -413,7 +413,7 @@ public:
     JumpTableEntry *jump_table_entry() const;
 
     // noninlined block mapping
-    bool_t has_noninlined_blocks() const;
+    bool has_noninlined_blocks() const;
 
     std::int32_t number_of_noninlined_blocks() const;
 
@@ -431,10 +431,10 @@ public:
 
 
     // Returns true if activation frame has been established.
-    bool_t has_frame_at( const char *pc ) const;
+    bool has_frame_at( const char *pc ) const;
 
     // Returns true if pc is not in prologue or epilogue code.
-    bool_t in_delta_code_at( const char *pc ) const;
+    bool in_delta_code_at( const char *pc ) const;
 
     // Printing support
     void print();
@@ -455,7 +455,7 @@ public:
     GrowableArray<ProgramCounterDescriptor *> *uncommonBranchList();
 
     // prints the inlining structure (one line per scope with indentation if there's no debug info)
-    void print_inlining( ConsoleOutputStream *stream = nullptr, bool_t with_debug_info = false );
+    void print_inlining( ConsoleOutputStream *stream = nullptr, bool with_debug_info = false );
 
     friend NativeMethod *nativeMethodContaining( const char *pc, char *likelyEntryPoint );
 

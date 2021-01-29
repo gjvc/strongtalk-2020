@@ -36,21 +36,21 @@ std::int32_t Register::number() const {
 }
 
 
-bool_t Register::isValid() const {
+bool Register::isValid() const {
     return ( 0 <= _number ) and ( _number < REGISTER_COUNT );
 }
 
 
-bool_t Register::hasByteRegister() const {
+bool Register::hasByteRegister() const {
     return 0 <= _number and _number <= 3;
 }
 
 
-bool_t Register::operator==( const Register &rhs ) const {
+bool Register::operator==( const Register &rhs ) const {
     return rhs._number == _number;
 }
 
 
-bool_t Register::operator!=( const Register &rhs ) const {
+bool Register::operator!=( const Register &rhs ) const {
     return rhs._number != _number;
 }

@@ -6,7 +6,6 @@
 #include "vm/runtime/except.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/assembler/Assembler.hpp"
 #include "vm/runtime/Process.hpp"
@@ -17,7 +16,7 @@
 void trace( VirtualFrame *from_frame, std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
-    _console->print_cr( "- Stack trace (%d, %d)", start_frame, number_of_frames );
+    spdlog::info( "- Stack trace ({}, {})", start_frame, number_of_frames );
     std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = from_frame; f; f = f->sender() ) {
@@ -41,10 +40,10 @@ void traceCompiledFrame( Frame &f ) {
     CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &f );
     st_assert( vf->is_compiled_frame(), "must be compiled frame" );
     NativeMethod *nm = vf->code();
-    lprintf( "Found NativeMethod: 0x%x\n", nm );
+    spdlog::info( "Found NativeMethod: 0x{0:x}", static_cast<const void *>(nm) );
     nm->print_value_on( _console );
 
-    _console->print_cr( "\n @%d called from [%#x]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+    spdlog::info( "\n @{} called from [0x{0:x}]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
 
     trace( vf, 0, 10 );
 }
@@ -70,7 +69,7 @@ void traceDeltaFrame( Frame &f ) {
 void handle_exception( void *fp, void *sp, void *pc ) {
 
     Frame f( (Oop *) sp, (std::int32_t *) fp, (const char *) pc );
-    lprintf( "ebp: 0x%x, esp: 0x%x, pc: 0x%x\n", fp, sp, pc );
+    spdlog::info( "ebp: 0x{0:x}, esp: 0x{0:x}, pc: 0x{0:x}", fp, sp, pc );
     if ( f.is_delta_frame() ) {
         traceDeltaFrame( f );
         return;
@@ -97,7 +96,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
         }
     }
 
-    lprintf( "Could not trace delta." );
+    spdlog::info( "Could not trace delta." );
 }
 
 
@@ -107,7 +106,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
   in debugging of the exception.
  */
 void except_init() {
-    _console->print_cr( "%%system-init:  except_init" );
+    spdlog::info( "%system-init:  except_init" );
 
     os::add_exception_handler( handle_exception );
 }

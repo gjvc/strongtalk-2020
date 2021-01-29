@@ -241,9 +241,9 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
     Oop             word2_after = second_word();
 
     // log modification
-    LOG_EVENT3( "InterpretedInlineCache::replace: InlineCache at 0x%x: entry for klass 0x%x replaced (transition %d)", this, receiver_klass, transition );
-    LOG_EVENT3( "  from (%s, 0x%x, 0x%x)", ByteCodes::name( code_before ), word1_before, word2_before );
-    LOG_EVENT3( "  to   (%s, 0x%x, 0x%x)", ByteCodes::name( code_after ), word1_after, word2_after );
+    LOG_EVENT3( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition %d)", this, receiver_klass, transition );
+    LOG_EVENT3( "  from (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), word1_before, word2_before );
+    LOG_EVENT3( "  to   (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), word1_after, word2_after );
 }
 
 
@@ -392,7 +392,7 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             break;
         default: st_fatal( "unknown send type" );
     }
-    LOG_EVENT3( "interpreted InlineCache at 0x%x: new NativeMethod 0x%x for klass 0x%x replaces old entry", this, nm, nm->_lookupKey.klass() );
+    LOG_EVENT3( "interpreted InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry", this, nm, nm->_lookupKey.klass() );
 }
 
 
@@ -411,9 +411,9 @@ void InterpretedInlineCache::print() {
         _console->print( "\t- klass: " );
         it.klass()->print_value();
         if ( it.is_interpreted() ) {
-            _console->print_cr( ";\tmethod  %#x", it.interpreted_method() );
+            spdlog::info( ";\tmethod  0x{0:x}", static_cast<const void *>(it.interpreted_method()) );
         } else {
-            _console->print_cr( ";\tNativeMethod %#x", it.compiled_method() );
+            spdlog::info( ";\tNativeMethod 0x{0:x}", static_cast<const void *>(it.compiled_method()) );
         }
         it.advance();
     }
@@ -542,7 +542,7 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
 }
 
 
-extern "C" bool_t have_nlr_through_C;
+extern "C" bool have_nlr_through_C;
 
 
 Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInlineCache *ic, Frame *f ) {
@@ -573,9 +573,9 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
             // doesNotUnderstand: not found ==> process error
             {
                 ResourceMark resourceMark;
-                _console->print_cr( "LOOKUP ERROR" );
+                spdlog::info( "LOOKUP ERROR" );
                 sel->print_value();
-                _console->print_cr( " not found" );
+                spdlog::info( " not found" );
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
@@ -784,11 +784,11 @@ NativeMethod *InterpretedInlineCacheIterator::compiled_method() const {
 }
 
 
-bool_t InterpretedInlineCacheIterator::is_super_send() const {
+bool InterpretedInlineCacheIterator::is_super_send() const {
     return ByteCodes::is_super_send( _ic->send_code() );
 }
 
 
 void InterpretedInlineCacheIterator::print() {
-    _console->print_cr( "InterpretedInlineCacheIterator %#x for ic %#x (%s)", this, _ic, selector()->as_string() );
+    spdlog::info( "InterpretedInlineCacheIterator 0x{0:x} for ic 0x{0:x} (%s)", static_cast<const void *>(this), static_cast<const void *>(_ic), selector()->as_string() );
 }

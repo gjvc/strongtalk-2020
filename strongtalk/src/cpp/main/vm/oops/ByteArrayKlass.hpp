@@ -14,7 +14,7 @@ class ByteArrayKlass : public MemOopKlass {
 
 public:
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
@@ -37,9 +37,9 @@ public:
 
 
     // creation operations
-    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
-    Oop allocateObjectSize( std::int32_t bytes, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t bytes, bool permit_scavenge = true, bool tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -75,7 +75,7 @@ public:
 
     std::int32_t oop_scavenge_tenured_contents( Oop obj );
 
-    bool_t oop_verify( Oop obj );
+    bool oop_verify( Oop obj );
 
     void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );
 
@@ -92,12 +92,12 @@ public:
 
 
     // testers
-    bool_t oop_is_byteArray() const {
+    bool oop_is_byteArray() const {
         return true;
     }
 
 
-    bool_t oop_is_indexable() const {
+    bool oop_is_indexable() const {
         return true;
     }
 

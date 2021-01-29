@@ -53,7 +53,7 @@ public:
     void clear();
 
 public:
-    bool_t is_empty() {
+    bool is_empty() {
         return used() == 0;
     }
 
@@ -136,7 +136,7 @@ public:
     }
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         return (Oop *) p >= eden_bottom and (Oop *) p < eden_top;
     }
 
@@ -197,7 +197,7 @@ public:
     }
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         return (Oop *) p >= _bottom and (Oop *) p < _top;
     }
 
@@ -236,7 +236,7 @@ public:
 
 
     // allocation test
-    bool_t would_fit( std::int32_t size ) {
+    bool would_fit( std::int32_t size ) {
         return _top + size < _end;
     }
 
@@ -274,7 +274,7 @@ public:
     }
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         return (Oop *) p >= _bottom and (Oop *) p < _top;
     }
 
@@ -324,7 +324,7 @@ public:
     std::int32_t _nextOffsetIndex;
 
 
-    Oop *allocate( std::int32_t size, bool_t allow_expansion = true ) {
+    Oop *allocate( std::int32_t size, bool allow_expansion = true ) {
         Oop *p  = _top;
         Oop *p1 = p + size;
         if ( p1 < _end ) {

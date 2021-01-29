@@ -27,32 +27,32 @@ public:
     // should send be inlined?  returns nullptr (--> yes) or rejection msg
     // doesn't rely on compiler-internal information
 
-    static bool_t isCriticalSmiSelector( const SymbolOop sel );
+    static bool isCriticalSmiSelector( const SymbolOop sel );
 
-    static bool_t isCriticalArraySelector( const SymbolOop sel );
+    static bool isCriticalArraySelector( const SymbolOop sel );
 
-    static bool_t isCriticalBoolSelector( const SymbolOop sel );
+    static bool isCriticalBoolSelector( const SymbolOop sel );
 
     // predicted by compiler?
-    static bool_t isPredictedSmiSelector( const SymbolOop sel );
+    static bool isPredictedSmiSelector( const SymbolOop sel );
 
-    static bool_t isPredictedArraySelector( const SymbolOop sel );
+    static bool isPredictedArraySelector( const SymbolOop sel );
 
-    static bool_t isPredictedBoolSelector( const SymbolOop sel );
+    static bool isPredictedBoolSelector( const SymbolOop sel );
 
     // predicted by interpreter?
-    static bool_t isInterpreterPredictedSmiSelector( const SymbolOop sel );
+    static bool isInterpreterPredictedSmiSelector( const SymbolOop sel );
 
-    static bool_t isInterpreterPredictedArraySelector( const SymbolOop sel );
+    static bool isInterpreterPredictedArraySelector( const SymbolOop sel );
 
-    static bool_t isInterpreterPredictedBoolSelector( const SymbolOop sel );
+    static bool isInterpreterPredictedBoolSelector( const SymbolOop sel );
 
 protected:
     virtual KlassOop receiverKlass() const = 0;        // return receiver klass (nullptr if unknown)
     virtual KlassOop nthArgKlass( std::int32_t nth ) const = 0;    // return nth argument of method (nullptr if unknown)
-    bool_t shouldNotInline() const;
+    bool shouldNotInline() const;
 
-    bool_t isBuiltinMethod() const;
+    bool isBuiltinMethod() const;
 };
 
 

@@ -17,7 +17,7 @@ constexpr std::int32_t INITIAL_CONTEXT_TEMP_SIZE = 5;
 constexpr std::int32_t INITIAL_EXPR_STACK_SIZE   = 10;
 
 
-ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, std::int32_t scopeID, bool_t lite, std::int32_t senderByteCodeIndex, bool_t visible ) {
+ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible ) {
 
     _scopeID                    = scopeID;
     _method                     = method;
@@ -49,7 +49,7 @@ void ScopeDescriptorNode::addNested( ScopeInfo scope ) {
 }
 
 
-void ScopeDescriptorNode::generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool_t bigHeader ) {
+void ScopeDescriptorNode::generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
     _offset = rec->_codes->size();
 
     rec->genScopeDescHeader( code(), _lite, has_args(), has_temps(), has_context_temps(), has_expr_stack(), has_context(), bigHeader );
@@ -118,7 +118,7 @@ void ScopeDescriptorNode::verifyBody() {
 }
 
 
-bool_t ScopeDescriptorNode::computeVisibility() {
+bool ScopeDescriptorNode::computeVisibility() {
     _visible = false;
     for ( ScopeInfo p = _scopesHead; p not_eq nullptr; p = p->_next ) {
         _visible = p->computeVisibility() or _visible;
@@ -165,31 +165,31 @@ void ScopeDescriptorNode::generate_sparse( GrowableArray<LogicalAddress *> *list
 }
 
 
-bool_t ScopeDescriptorNode::has_args() const {
+bool ScopeDescriptorNode::has_args() const {
     return not _lite and not _arg_list->isEmpty();
 }
 
 
-bool_t ScopeDescriptorNode::has_temps() const {
+bool ScopeDescriptorNode::has_temps() const {
     return not _lite and not _temp_list->isEmpty();
 }
 
 
-bool_t ScopeDescriptorNode::has_context_temps() const {
+bool ScopeDescriptorNode::has_context_temps() const {
     return not _lite and not _context_temp_list->isEmpty();
 }
 
 
-bool_t ScopeDescriptorNode::has_expr_stack() const {
+bool ScopeDescriptorNode::has_expr_stack() const {
     return not _lite and not _expr_stack_list->isEmpty();
 }
 
 
-bool_t ScopeDescriptorNode::has_context() const {
+bool ScopeDescriptorNode::has_context() const {
     return _allocates_compiled_context;
 }
 
 
-bool_t ScopeDescriptorNode::has_nameDescs() const {
+bool ScopeDescriptorNode::has_nameDescs() const {
     return has_args() or has_temps() or has_context_temps() or has_expr_stack();
 }

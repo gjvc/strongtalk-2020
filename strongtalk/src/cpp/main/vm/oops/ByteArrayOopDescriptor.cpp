@@ -16,12 +16,12 @@
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
 
 
-bool_t ByteArrayOopDescriptor::verify() {
-    bool_t flag = MemOopDescriptor::verify();
+bool ByteArrayOopDescriptor::verify() {
+    bool flag = MemOopDescriptor::verify();
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "ByteArrayOop %#lx has negative length", this );
+            error( "ByteArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }
@@ -91,12 +91,12 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
 }
 
 
-bool_t ByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t max_length ) {
+bool ByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t max_length ) {
     // %not optimized
 
     std::int32_t len = length();
 
-    bool_t is_truncated = false;
+    bool is_truncated = false;
     if ( len >= max_length ) {
 
         len          = max_length - 1;
@@ -245,7 +245,7 @@ std::int32_t ByteArrayOopDescriptor::number_of_arguments() const {
 }
 
 
-bool_t ByteArrayOopDescriptor::is_unary() const {
+bool ByteArrayOopDescriptor::is_unary() const {
     if ( is_binary() )
         return false;
     for ( std::int32_t i = 1; i <= length(); i++ )
@@ -255,14 +255,14 @@ bool_t ByteArrayOopDescriptor::is_unary() const {
 }
 
 
-bool_t ByteArrayOopDescriptor::is_binary() const {
+bool ByteArrayOopDescriptor::is_binary() const {
     std::uint8_t first = byte_at( 1 );
     // special case _, as compiler treats as a letter
     return first not_eq '_' and ispunct( first ) ? true : false;
 }
 
 
-bool_t ByteArrayOopDescriptor::is_keyword() const {
+bool ByteArrayOopDescriptor::is_keyword() const {
     if ( is_binary() )
         return false;
     for ( std::int32_t i = 1; i <= length(); i++ )

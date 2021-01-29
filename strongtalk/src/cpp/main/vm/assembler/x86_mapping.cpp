@@ -128,13 +128,13 @@ std::int32_t Mapping::contextOffset( std::int32_t tempNo ) {
 
 
 // predicates
-bool_t Mapping::isNormalTemporary( Location loc ) {
+bool Mapping::isNormalTemporary( Location loc ) {
     st_assert( not loc.isFloatLocation(), "must have been converted into stackLoc by register allocation" );
     return loc.isStackLocation() and not isFloatTemporary( loc );
 }
 
 
-bool_t Mapping::isFloatTemporary( Location loc ) {
+bool Mapping::isFloatTemporary( Location loc ) {
     st_assert( not loc.isFloatLocation(), "must have been converted into stackLoc by register allocation" );
     if ( not loc.isStackLocation() )
         return false;
@@ -183,7 +183,7 @@ void Mapping::load( const Location &src, const Register &dst ) {
 }
 
 
-void Mapping::store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck ) {
+void Mapping::store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool needsStoreCheck ) {
 
     st_assert( src not_eq temp1 and src not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
@@ -222,7 +222,7 @@ void Mapping::store( Register src, const Location &dst, const Register &temp1, c
 }
 
 
-void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck ) {
+void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool needsStoreCheck ) {
 
     st_assert( temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
@@ -292,7 +292,7 @@ void Mapping::fstore( const Location &dst, const Register &base ) {
 
 
 void mapping_init() {
-    _console->print_cr( "%%system-init:  mapping_init" );
+    spdlog::info( "%system-init:  mapping_init" );
 
     Mapping::initialize();
 }

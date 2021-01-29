@@ -62,12 +62,12 @@ public:
 
     // Space operations, is_old/new work w/o conversion to memOopDescriptor*
     // since Oop > pointer (MEMOOP_TAG >= 0)!
-    bool_t is_old() const {
+    bool is_old() const {
         return (const char *) this >= Universe::old_gen._lowBoundary;
     }
 
 
-    bool_t is_new() const {
+    bool is_new() const {
         return (const char *) this < Universe::new_gen._highBoundary;
     }
 
@@ -99,7 +99,7 @@ public:
     }
 
 
-    void set_klass_field( KlassOop k, bool_t cs = true ) {
+    void set_klass_field( KlassOop k, bool cs = true ) {
         // %optimization
         //   since klasses are tenured the store check can be avoided
         addr()->_klass_field = k;
@@ -136,7 +136,7 @@ public:
 
 
     // Notification queue support
-    bool_t is_queued() const {
+    bool is_queued() const {
         return mark()->is_queued();
     }
 
@@ -201,15 +201,15 @@ public:
     void layout_iterate_body( ObjectLayoutClosure *blk, std::int32_t begin, std::int32_t end );
 
     // support for initializing objects (see allocateObject[Size]).
-    void initialize_header( bool_t has_untagged, KlassOop klass );
+    void initialize_header( bool has_untagged, KlassOop klass );
 
     void initialize_body( std::int32_t begin, std::int32_t end );
 
-    bool_t verify();
+    bool verify();
 
 
     // forwarding operations
-    bool_t is_forwarded() {
+    bool is_forwarded() {
         return mark()->is_mem();
     }
 
@@ -226,11 +226,11 @@ public:
 
 
     // marking operations
-    bool_t is_gc_marked() {
+    bool is_gc_marked() {
         return not( mark()->is_mark() and mark()->has_sentinel() );
     } // Changed from mark()->is_smi(), Lars
 
-//        bool_t is_gc_marked() { return not mark()->has_sentinel(); } // Changed from mark()->is_smi(), Lars
+//        bool is_gc_marked() { return not mark()->has_sentinel(); } // Changed from mark()->is_smi(), Lars
 
     // GC operations (see discussion in Universe.cpp for rationale)
     void gc_store_size();            // Store object size in age field and remembered set
@@ -247,10 +247,10 @@ public:
     }
 
 
-    void raw_at_put( std::int32_t which, Oop contents, bool_t cs = true );
+    void raw_at_put( std::int32_t which, Oop contents, bool cs = true );
 
     // accessing instance variables
-    bool_t is_within_instVar_bounds( std::int32_t index );
+    bool is_within_instVar_bounds( std::int32_t index );
 
     Oop instVarAt( std::int32_t index );
 

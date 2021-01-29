@@ -33,9 +33,9 @@ constexpr std::int32_t max_nof_floats = 256;
 class InterpreterGenerator : StackAllocatedObject {
 private:
     MacroAssembler *_macroAssembler;    // used to generate code
-    bool_t _debug;              // indicates debug mode
+    bool _debug;              // indicates debug mode
 
-    bool_t _stack_check;            //
+    bool _stack_check;            //
 
     Label _method_entry;            // entry point to activate method execution
     Label _block_entry;             // entry point to activate block execution (primitiveValue)
@@ -189,7 +189,7 @@ private:
 
     const char *push_arg_n();
 
-    const char *push_smi( bool_t negative );
+    const char *push_smi( bool negative );
 
     const char *push_literal();
 
@@ -207,13 +207,13 @@ private:
 
     const char *only_pop();
 
-    const char *store_temp( std::int32_t i, bool_t pop = false );
+    const char *store_temp( std::int32_t i, bool pop = false );
 
-    const char *store_temp_n( bool_t pop = false );
+    const char *store_temp_n( bool pop = false );
 
-    const char *store_global( bool_t pop = false );
+    const char *store_global( bool pop = false );
 
-    const char *store_instVar( bool_t pop = false );
+    const char *store_instVar( bool pop = false );
 
     const char *allocate_temps( std::int32_t n );
 
@@ -221,9 +221,9 @@ private:
 
     const char *set_self_via_context();
 
-    const char *with_context_temp( bool_t store, std::int32_t tempNo, std::int32_t contextNo );
+    const char *with_context_temp( bool store, std::int32_t tempNo, std::int32_t contextNo );
 
-    const char *copy_params_into_context( bool_t self, std::int32_t paramsCount );
+    const char *copy_params_into_context( bool self, std::int32_t paramsCount );
 
     const char *float_allocate();
 
@@ -235,13 +235,13 @@ private:
 
     const char *float_set();
 
-    const char *float_op( std::int32_t nof_args, bool_t returns_float = false );
+    const char *float_op( std::int32_t nof_args, bool returns_float = false );
 
-    const char *push_closure( std::int32_t nofArgs, bool_t use_context );
+    const char *push_closure( std::int32_t nofArgs, bool use_context );
 
-    const char *install_context( std::int32_t nofArgs, bool_t for_method );
+    const char *install_context( std::int32_t nofArgs, bool for_method );
 
-    const char *predict_prim( bool_t canFail );
+    const char *predict_prim( bool canFail );
 
     const char *lookup_primitive();
 
@@ -249,7 +249,7 @@ private:
 
     const char *call_primitive_can_fail();
 
-    const char *call_DLL( bool_t async );
+    const char *call_DLL( bool async );
 
     void call_method();
 
@@ -275,7 +275,7 @@ private:
 
     void generate_forStubRoutines();
 
-    const char *normal_send( ByteCodes::Code code, bool_t allow_methodOop, bool_t allow_nativeMethod, bool_t primitive_send = false );
+    const char *normal_send( ByteCodes::Code code, bool allow_methodOop, bool allow_nativeMethod, bool primitive_send = false );
 
     const char *control_cond( ByteCodes::Code code );
 
@@ -283,7 +283,7 @@ private:
 
     const char *control_jump( ByteCodes::Code code );
 
-    const char *access_send( bool_t self );
+    const char *access_send( bool self );
 
     const char *primitive_send( ByteCodes::Code code );
 
@@ -315,7 +315,7 @@ private:
 
     const char *objArray_at_put();
 
-    const char *compare( bool_t equal );
+    const char *compare( bool equal );
 
     const char *special_primitive_send_hint();
 
@@ -327,7 +327,7 @@ private:
     }
 
 
-    const char *local_return( bool_t push_self, std::int32_t nofArgs, bool_t zap = false );
+    const char *local_return( bool push_self, std::int32_t nofArgs, bool zap = false );
 
     // Non-local returns
     const char *nonlocal_return_tos();
@@ -336,7 +336,7 @@ private:
 
 
 public:
-    InterpreterGenerator( CodeBuffer *code, bool_t debug );
+    InterpreterGenerator( CodeBuffer *code, bool debug );
 
     // Instruction generation
     const char *generate_instruction( ByteCodes::Code code );

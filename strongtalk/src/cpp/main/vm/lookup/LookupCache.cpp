@@ -116,7 +116,7 @@ LookupResult LookupCache::lookup_probe( LookupKey *key ) {
 }
 
 
-LookupResult LookupCache::lookup( LookupKey *key, bool_t compile ) {
+LookupResult LookupCache::lookup( LookupKey *key, bool compile ) {
 
     // The cache is implemented as a 2-way associative cache.
     // Recipe for finding a lookup result.
@@ -166,7 +166,7 @@ LookupResult LookupCache::lookup( LookupKey *key, bool_t compile ) {
 }
 
 
-LookupResult LookupCache::cache_miss_lookup( LookupKey *key, bool_t compile ) {
+LookupResult LookupCache::cache_miss_lookup( LookupKey *key, bool compile ) {
 
     // Tracing
     if ( TraceLookupAtMiss ) {
@@ -344,7 +344,7 @@ Oop LookupCache::normal_lookup( KlassOop receiver_klass, SymbolOop selector ) {
 
 
 static void print_counter( const char *title, std::int32_t counter, std::int32_t total ) {
-    lprintf( "%20s: %3.1f%% (%d)\n", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
+    spdlog::info( "%20s: %3.1f%% (%d)", title, total == 0 ? 0.0 : 100.0 * (double) counter / (double) total, counter );
 }
 
 
@@ -357,7 +357,7 @@ void LookupCache::clear_statistics() {
 
 void LookupCache::print_statistics() {
     std::int32_t total = number_of_primary_hits + number_of_secondary_hits + number_of_misses;
-    lprintf( "Lookup Cache: size(%d, %d)\n", primary_cache_size, secondary_cache_size );
+    spdlog::info( "Lookup Cache: size(%d, %d)", primary_cache_size, secondary_cache_size );
     print_counter( "Primary Hit Ratio", number_of_primary_hits, total );
     print_counter( "Secondary Hit Ratio", number_of_secondary_hits, total );
     print_counter( "Miss Ratio", number_of_misses, total );

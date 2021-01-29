@@ -318,7 +318,7 @@ PRIM_DECL_3( proxyOopPrimitives::doublePrecisionFloatAtPut, Oop receiver, Oop of
 }
 
 
-static bool_t convert_to_arg( Oop arg, std::int32_t *addr ) {
+static bool convert_to_arg( Oop arg, std::int32_t *addr ) {
     if ( arg->is_smi() ) {
         *addr = SMIOop( arg )->value();
         return true;

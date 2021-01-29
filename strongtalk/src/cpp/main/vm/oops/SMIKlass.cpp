@@ -18,7 +18,7 @@ void setKlassVirtualTableFromSmiKlass( Klass *k ) {
 }
 
 
-Oop SMIKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop SMIKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     return obj;
 }
 

@@ -22,19 +22,19 @@ static inline std::int32_t byteOffset( std::int32_t offset ) {
 }
 
 
-bool_t ContextOopDescriptor::is_dead() const {
+bool ContextOopDescriptor::is_dead() const {
     st_assert( not mark()->has_context_forward(), "checking if context is deoptimized" );
     return parent() == Oop( smiOop_zero ) or parent() == nilObject;
 }
 
 
-bool_t ContextOopDescriptor::has_parent_fp() const {
+bool ContextOopDescriptor::has_parent_fp() const {
     st_assert( not mark()->has_context_forward(), "checking if context is deoptimized" );
     return parent()->is_smi() and not is_dead();
 }
 
 
-bool_t ContextOopDescriptor::has_outer_context() const {
+bool ContextOopDescriptor::has_outer_context() const {
     st_assert( not mark()->has_context_forward(), "checking if context is deoptimized" );
     return parent()->is_context();
 }

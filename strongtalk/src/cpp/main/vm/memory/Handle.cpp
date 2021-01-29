@@ -15,7 +15,7 @@ std::int32_t      Handles::_size = 20;
 Oop              Handles::_array[20];
 
 
-BaseHandle::BaseHandle( Oop toSave, bool_t log, const char *label ) :
+BaseHandle::BaseHandle( Oop toSave, bool log, const char *label ) :
         _saved( toSave ), _log( log ), _label( label ) {
 }
 
@@ -26,20 +26,20 @@ void BaseHandle::push() {
     if ( _next ) {
         if ( _log ) {
             char msg[200];
-            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%x->0x%x", _label, _next->_label, this, _next );
+            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x{0:x}->0x{0:x}", _label, _next->_label, this, _next );
             st_assert( (const char *) this < (const char *) _next, msg );
         }
         _next->_prev = this;
     }
     if ( _log )
-        _console->print_cr( "Pushing handle '%s': 0x%x", _label, this );
+        spdlog::info( "Pushing handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
     setFirst( this );
 }
 
 
 void BaseHandle::pop() {
     if ( _log )
-        _console->print_cr( "Popping handle '%s': 0x%x", _label, this );
+        spdlog::info( "Popping handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
     if ( _prev ) {
         _prev->_next = _next;
     } else {
@@ -99,7 +99,7 @@ void StackHandle::setFirst( BaseHandle *handle ) {
 }
 
 
-StackHandle::StackHandle( Oop toSave, bool_t log, const char *label ) :
+StackHandle::StackHandle( Oop toSave, bool log, const char *label ) :
         BaseHandle( toSave, log, label ) {
     push();
 }
@@ -228,7 +228,7 @@ MemOop Handle::as_memOop() {
 
 
 KlassOop Handle::as_klass() {
-    _console->print_cr( "klassOop as_klass() [%s]", Handles::oop_at( _index )->print_string() );
+    spdlog::info( "klassOop as_klass()[{}]", Handles::oop_at( _index )->print_string() );
     st_assert( Handles::oop_at( _index )->is_klass(), "as_klass() type check" );
     return KlassOop( Handles::oop_at( _index ) );
 }

@@ -24,7 +24,7 @@ class BaseHandle {
 
 private:
     const char *_label;
-    bool_t     _log;
+    bool     _log;
     Oop        _saved;
     BaseHandle *_next;
     BaseHandle *_prev;
@@ -36,7 +36,7 @@ protected:
 
     virtual void setFirst( BaseHandle * ) = 0;
 
-    BaseHandle( Oop toSave, bool_t log, const char *label );
+    BaseHandle( Oop toSave, bool log, const char *label );
 
     void oops_do( void f( Oop * ) );
 
@@ -68,7 +68,7 @@ protected:
     void setFirst( BaseHandle *handle );
 
 public:
-    StackHandle( Oop toSave, bool_t log = false, const char *label = "" );
+    StackHandle( Oop toSave, bool log = false, const char *label = "" );
 
     ~StackHandle();
 

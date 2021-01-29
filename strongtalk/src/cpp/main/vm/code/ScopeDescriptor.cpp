@@ -73,14 +73,14 @@ ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t
 }
 
 
-ScopeDescriptor *ScopeDescriptor::home( bool_t cross_NativeMethod_boundary ) const {
+ScopeDescriptor *ScopeDescriptor::home( bool cross_NativeMethod_boundary ) const {
     ScopeDescriptor *p = (ScopeDescriptor *) this;
     for ( ; p and not p->isMethodScope(); p = p->parent( cross_NativeMethod_boundary ) );
     return p;
 }
 
 
-NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool_t canFail ) {
+NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool canFail ) {
     std::int32_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
@@ -105,7 +105,7 @@ NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool_t canFail )
 }
 
 
-NameDescriptor *ScopeDescriptor::contextTemporary( std::int32_t index, bool_t canFail ) {
+NameDescriptor *ScopeDescriptor::contextTemporary( std::int32_t index, bool canFail ) {
     std::int32_t    pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
@@ -205,7 +205,7 @@ class IterationHelper : public UnpackClosure {
 protected:
     std::int32_t                   _no;
     NameDescriptorClosure *_blk;
-    bool_t                _is_used;
+    bool                _is_used;
 
 
     void use() {
@@ -221,7 +221,7 @@ public:
     }
 
 
-    bool_t is_used() const {
+    bool is_used() const {
         return _is_used;
     }
 };
@@ -288,7 +288,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
 }
 
 
-bool_t ScopeDescriptor::allocates_interpreted_context() const {
+bool ScopeDescriptor::allocates_interpreted_context() const {
     return method()->allocatesInterpretedContext();
 }
 
@@ -300,13 +300,13 @@ NameDescriptor *ScopeDescriptor::compiled_context() {
 }
 
 
-bool_t ScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
+bool ScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
     return method() == s->method() and ( _senderByteCodeIndex == s->_senderByteCodeIndex or _senderByteCodeIndex < 0 or s->_senderByteCodeIndex < 0 );
     // don't check senderByteCodeIndex for pseudo ByteCodeIndexs
 }
 
 
-bool_t ScopeDescriptor::l_equivalent( LookupKey *l ) const {
+bool ScopeDescriptor::l_equivalent( LookupKey *l ) const {
     return selector() == l->selector();
 }
 
@@ -326,19 +326,19 @@ std::int32_t ScopeDescriptor::valueAt( std::int32_t &offset ) const {
 }
 
 
-bool_t ScopeDescriptor::verify() {
+bool ScopeDescriptor::verify() {
     // verifies mostly structure, not contents
-    bool_t ok = true;
+    bool ok = true;
 
     // don't do a full verify of parent/sender -- too many redundant verifies
     ScopeDescriptor *s = sender();
     if ( s and not s->shallow_verify() ) {
-        _console->print( "invalid sender %#lx of ScopeDescriptor %#lx", s, this );
+        _console->print( "invalid sender 0x{0:x} of ScopeDescriptor 0x{0:x}", s, this );
         ok = false;
     }
     ScopeDescriptor *p = parent();
     if ( p and not p->shallow_verify() ) {
-        _console->print( "invalid parent %#lx of ScopeDescriptor %#lx", p, this );
+        _console->print( "invalid parent 0x{0:x} of ScopeDescriptor 0x{0:x}", p, this );
         ok = false;
     }
     return ok;
@@ -351,7 +351,7 @@ void ScopeDescriptor::verify_expression_stack( std::int32_t byteCodeIndex ) {
     for ( std::int32_t  index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
-            warning( "expression not found in NativeMethod" );
+            spdlog::warn( "expression not found in NativeMethod" );
             continue;
         }
         // Fix this Lars (add parameter for checking registers
@@ -408,13 +408,13 @@ public:
 };
 
 
-void ScopeDescriptor::print( std::int32_t indent, bool_t all_pcs ) {
+void ScopeDescriptor::print( std::int32_t indent, bool all_pcs ) {
     _console->fill_to( indent );
     printName();
     _console->print( "ScopeDescriptor @%d%s: ", offset(), is_lite() ? ", lite" : "" );
     _console->print( " (ID %ld) ", scopeID() );
     method()->selector()->print_symbol_on();
-    _console->print( " %#x", method() );
+    _console->print( " 0x{0:x}", method() );
     _console->cr();
     ScopeDescriptor *s = sender();
     if ( s not_eq nullptr ) {
@@ -451,12 +451,12 @@ void ScopeDescriptor::print_value_on( ConsoleOutputStream *stream ) const {
 }
 
 
-bool_t MethodScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
+bool MethodScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
     return s->isMethodScope() and ScopeDescriptor::s_equivalent( s ) and key()->equal( ( (MethodScopeDescriptor *) s )->key() );
 }
 
 
-bool_t MethodScopeDescriptor::l_equivalent( LookupKey *l ) const {
+bool MethodScopeDescriptor::l_equivalent( LookupKey *l ) const {
     return ScopeDescriptor::l_equivalent( l ) and selfKlass() == l->klass();
 }
 
@@ -506,7 +506,7 @@ BlockScopeDescriptor::BlockScopeDescriptor( const NativeMethodScopes *scopes, st
 }
 
 
-bool_t BlockScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
+bool BlockScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
     return s->isBlockScope() and ScopeDescriptor::s_equivalent( s );
 }
 
@@ -528,7 +528,7 @@ NameDescriptor *BlockScopeDescriptor::self() const {
 }
 
 
-ScopeDescriptor *BlockScopeDescriptor::parent( bool_t cross_NativeMethod_boundary ) const {
+ScopeDescriptor *BlockScopeDescriptor::parent( bool cross_NativeMethod_boundary ) const {
     return _parentScopeOffset ? _scopes->at( _offset - _parentScopeOffset, pc() ) : nullptr;
 }
 
@@ -561,11 +561,11 @@ NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMeth
 
 
 void NonInlinedBlockScopeDescriptor::print() {
-    _console->print_cr( "NonInlinedBlockScopeDescriptor" );
+    spdlog::info( "NonInlinedBlockScopeDescriptor" );
     _console->print( " - method: " );
     method()->print_value();
     _console->cr();
-    _console->print_cr( " - parent offset: %d", _parentScopeOffset );
+    spdlog::info( " - parent offset: {}", _parentScopeOffset );
 }
 
 
@@ -591,7 +591,7 @@ void TopLevelBlockScopeDescriptor::printSelf() {
 }
 
 
-ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool_t cross_NativeMethod_boundary ) const {
+ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool cross_NativeMethod_boundary ) const {
     if ( not cross_NativeMethod_boundary )
         return nullptr;
     NativeMethod                   *nm     = _scopes->my_nativeMethod();
@@ -602,7 +602,7 @@ ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool_t cross_NativeMethod
 }
 
 
-bool_t TopLevelBlockScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
+bool TopLevelBlockScopeDescriptor::s_equivalent( ScopeDescriptor *s ) const {
     // programming can tranform a nested block to a top-level block
     return s->isBlockScope() and ScopeDescriptor::s_equivalent( s );
 }

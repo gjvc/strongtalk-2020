@@ -4,11 +4,9 @@
 //  Refer to the "COPYRIGHTS" file at the root of thisr source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
 #include "vm/system/macros.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
 #include <gtest/gtest.h>
@@ -20,33 +18,19 @@ class IntegerOpsTests : public testing::Test {
 
 // -----------------------------------------------------------------------------
 
-TEST( IntegerOpsTest, test_axpy
-) {
-
-Digit a, x, y, carry;
-
-for (
-a = 12345;
-a <= 112345; a += 1234 ) {
-for (
-x = 10;
-x <= 20000; x += 1234 ) {
-
-y     = 10;
-carry = 500;
-
-Digit answer0 = ( ( a * x ) + y + carry ) % oneB;
-Digit answer1 = ( ( a * x ) + y + carry ) / oneB;
-
-Digit result = IntegerOps::axpy( a, x, y, carry );
-EXPECT_EQ( result, answer0
-);
-EXPECT_EQ( carry, answer1
-);
-
-}
-}
-
+TEST( IntegerOpsTest, test_axpy ) {
+    Digit a, x, y, carry;
+    for ( a = 12345; a <= 112345; a += 1234 ) {
+        for ( x = 10; x <= 20000; x += 1234 ) {
+            y             = 10;
+            carry         = 500;
+            Digit answer0 = ( ( a * x ) + y + carry ) % oneB;
+            Digit answer1 = ( ( a * x ) + y + carry ) / oneB;
+            Digit result  = IntegerOps::axpy( a, x, y, carry );
+            EXPECT_EQ( result, answer0 );
+            EXPECT_EQ( carry, answer1 );
+        }
+    }
 }
 
 
@@ -54,7 +38,7 @@ EXPECT_EQ( carry, answer1
 
 TEST( IntegerOpsTest, string_to_Integer ) {
 
-    bool_t  ok = true;
+    bool  ok = true;
     Integer z6;
     IntegerOps::string_to_Integer( "0", 10, z6 );
     EXPECT_TRUE( 0 == z6.as_int( ok ) ) << "failed to convert std::int32_t 0 to Integer ";
@@ -87,7 +71,7 @@ TEST( IntegerOpsTest, string_to_Integer ) {
 
 TEST( IntegerOpsTest, test_integer_conversion ) {
 
-    bool_t    ok = true;
+    bool    ok = true;
     const std::int32_t n  = 10000;
     const std::int32_t l  = n * sizeof( std::int32_t );
     Integer   x, y, z;
@@ -103,7 +87,7 @@ TEST( IntegerOpsTest, test_integer_conversion ) {
 
 TEST( IntegerOpsTest, test_string_conversion ) {
 
-    bool_t  ok      = true;
+    bool  ok      = true;
     Integer z1;
     char    * s1_in = "123456";
     IntegerOps::string_to_Integer( s1_in, 10, z1 );
@@ -121,22 +105,22 @@ TEST( IntegerOpsTest, test_string_conversion ) {
 
 TEST( IntegerOpsTest, test_string_conversion_negative_input ) {
 
-    bool_t  ok      = true;
+    bool  ok      = true;
     Integer z2;
     char    * s2_in = "-123456";
     IntegerOps::string_to_Integer( s2_in, 10, z2 );
     std::int32_t s2_out = z2.as_int( ok );
     EXPECT_EQ( z2.as_int( ok ), -123456 );
 
-    _console->print_cr( "ok: [%s] converted to [%d]", s2_in, s2_out );
-    _console->print_cr( "ok: z2._first_digit [%d], z._signed_length [%d]", z2._first_digit, z2._signed_length );
+    spdlog::info( "ok: [%s] converted to [{}]", s2_in, s2_out );
+    spdlog::info( "ok: z2._first_digit [{}], z._signed_length [{}]", z2._first_digit, z2._signed_length );
 
 }
 
 
 TEST( IntegerOpsTest, test_addition ) {
 
-    bool_t  ok = true;
+    bool  ok = true;
     Integer x, y, z;
 
     for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
@@ -152,7 +136,7 @@ TEST( IntegerOpsTest, test_addition ) {
 
 TEST( IntegerOpsTest, test_subtraction ) {
 
-    bool_t  ok = true;
+    bool  ok = true;
     Integer x, y, z;
 
     for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
@@ -174,7 +158,7 @@ TEST( IntegerOpsTest, test_subtraction ) {
 
 TEST( IntegerOpsTest, test_multiplication ) {
 
-    bool_t  ok = true;
+    bool  ok = true;
     Integer x, y, z;
 
     for ( std::int32_t i = -12345; i <= 12345; i += 1234 ) {
@@ -190,7 +174,7 @@ TEST( IntegerOpsTest, test_multiplication ) {
 
 // testing
 
-static void check( bool_t p, char * s ) {
+static void check( bool p, char * s ) {
     if ( not p ) fatal( s );
 }
 
@@ -291,7 +275,7 @@ TEST( IntegerOpsTest, int_to_Integer ) {
     while ( i <= 10 ) {
         Integer z;
         IntegerOps::int_to_Integer( i, z );
-        bool_t ok;
+        bool ok;
         i++;
     }
 
@@ -299,7 +283,7 @@ TEST( IntegerOpsTest, int_to_Integer ) {
     while ( i <= 100 ) {
         Integer z;
         IntegerOps::int_to_Integer( i, z );
-        bool_t ok;
+        bool ok;
         i += 10;
     }
 }

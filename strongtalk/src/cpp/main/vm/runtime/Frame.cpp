@@ -17,8 +17,6 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 std::uint8_t *Frame::hp() const {
     // Lars, please check -- assertion fails
@@ -87,17 +85,17 @@ NativeMethod *Frame::code() const {
 }
 
 
-bool_t Frame::is_interpreted_frame() const {
+bool Frame::is_interpreted_frame() const {
     return Interpreter::contains( pc() );
 }
 
 
-bool_t Frame::is_compiled_frame() const {
+bool Frame::is_compiled_frame() const {
     return Universe::code->contains( pc() );
 }
 
 
-bool_t Frame::is_deoptimized_frame() const {
+bool Frame::is_deoptimized_frame() const {
     return pc() == StubRoutines::unpack_unoptimized_frames();
 }
 
@@ -129,9 +127,9 @@ InlineCacheIterator *Frame::current_ic_iterator() const {
 InterpretedInlineCache *Frame::current_interpretedIC() const {
 
     if ( is_interpreted_frame() ) {
-        MethodOop m             = method();
-        std::int32_t       byteCodeIndex = m->byteCodeIndex_from( hp() );
-        std::uint8_t *codeptr = m->codes( byteCodeIndex );
+        MethodOop    m             = method();
+        std::int32_t byteCodeIndex = m->byteCodeIndex_from( hp() );
+        std::uint8_t *codeptr      = m->codes( byteCodeIndex );
         if ( ByteCodes::is_send_code( ByteCodes::Code( *codeptr ) ) ) {
             InterpretedInlineCache *ic = as_InterpretedIC( (const char *) hp() );
             st_assert( ic->send_code_addr() == codeptr, "found wrong ic" );
@@ -151,12 +149,12 @@ CompiledInlineCache *Frame::current_compiledIC() const {
 }
 
 
-bool_t Frame::is_entry_frame() const {
+bool Frame::is_entry_frame() const {
     return pc() == StubRoutines::return_from_Delta();
 }
 
 
-bool_t Frame::has_next_Delta_fp() const {
+bool Frame::has_next_Delta_fp() const {
     return at( frame_next_Delta_fp_offset ) not_eq 0;
 }
 
@@ -171,12 +169,12 @@ Oop *Frame::next_Delta_sp() const {
 }
 
 
-bool_t Frame::is_first_frame() const {
+bool Frame::is_first_frame() const {
     return is_entry_frame() and not has_next_Delta_fp();
 }
 
 
-bool_t Frame::is_first_delta_frame() const {
+bool Frame::is_first_delta_frame() const {
     // last Delta frame isn't necessarily is_first_frame(), so check is a bit more complicated
     // [I don't understand why, but the first Delta frame of a process isn't an entry frame  -Urs 2/96]
     Frame s;
@@ -197,17 +195,17 @@ const char *Frame::print_name() const {
 
 
 void Frame::print() const {
-    _console->print( "[%s frame: fp = %#lx, sp = %#lx, pc = %#lx", print_name(), fp(), sp(), pc() );
+    _console->print( "[%s frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}", print_name(), fp(), sp(), pc() );
     if ( is_compiled_frame() ) {
-        _console->print( ", nm = %#x", findNativeMethod( pc() ) );
+        _console->print( ", nm = 0x{0:x}", findNativeMethod( pc() ) );
     } else if ( is_interpreted_frame() ) {
-        _console->print( ", hp = %#x, method = %#x", hp(), method() );
+        _console->print( ", hp = 0x{0:x}, method = 0x{0:x}", hp(), method() );
     }
-    _console->print_cr( "]" );
+    spdlog::info( "]" );
 
     if ( PrintLongFrames ) {
         for ( Oop *p = sp(); p < (Oop *) fp(); p++ )
-            _console->print_cr( "  - 0x%lx: 0x%lx", p, *p );
+            spdlog::info( "  - 0x%lx: 0x%lx", static_cast<const void *>(p), static_cast<const void *>(*p) );
     }
 }
 
@@ -237,11 +235,11 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         if ( ActivationShowByteCodeIndex ) {
             stream->print( " byteCodeIndex=0x%08x ", vf->byteCodeIndex() );
         }
-        _console->print_cr( " @ 0x%lx", fp() );
+        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray<Oop> *stack = vf->expression_stack();
-            for ( std::int32_t index = 0; index < stack->length(); index++ ) {
+            for ( std::int32_t index  = 0; index < stack->length(); index++ ) {
                 stream->print( "    %3d: ", index );
                 stack->at( index )->print_value_on( stream );
                 stream->cr();
@@ -255,12 +253,12 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
         vf->code()->print_value_on( stream );
-        _console->print_cr( " @ 0x%lx", fp() );
+        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
 
         while ( true ) {
             stream->print( "    " );
             vf->method()->print_value_on( stream );
-            _console->print_cr( " @ 0x%08x", vf->scope()->offset() );
+            spdlog::info( " @ 0x%08x", vf->scope()->offset() );
             print_context_chain( vf->compiled_context(), stream );
             if ( vf->is_top() )
                 break;
@@ -273,7 +271,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
     if ( is_deoptimized_frame() ) {
         stream->print( "D " );
         frame_array()->print_value();
-        _console->print_cr( " @ 0x%lx", fp() );
+        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
 
         DeoptimizedVirtualFrame *vf = (DeoptimizedVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_deoptimized_frame(), "should be deoptimized VirtualFrame" );
@@ -296,9 +294,12 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
 
 void Frame::layout_iterate( FrameLayoutClosure *blk ) {
     if ( is_interpreted_frame() ) {
-        Oop       *eos = temp_addr( 0 );
-        for ( Oop *p   = sp(); p <= eos; p++ )
+        Oop *eos = temp_addr( 0 );
+
+        for ( Oop *p = sp(); p <= eos; p++ ) {
             blk->do_stack( eos - p, p );
+        }
+
         blk->do_hp( hp_addr() );
         blk->do_receiver( receiver_addr() );
         blk->do_link( link_addr() );
@@ -307,17 +308,17 @@ void Frame::layout_iterate( FrameLayoutClosure *blk ) {
 }
 
 
-bool_t Frame::has_interpreted_float_marker() const {
+bool Frame::has_interpreted_float_marker() const {
     return Oop( at( interpreted_frame_float_magic_offset ) ) == Floats::magic_value();
 }
 
 
-bool_t Frame::has_compiled_float_marker() const {
+bool Frame::has_compiled_float_marker() const {
     return Oop( at( compiled_frame_magic_oop_offset ) ) == Floats::magic_value();
 }
 
 
-bool_t Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
+bool Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
     MethodOop m = MethodOopDescriptor::methodOop_from_hcode( hp() );
     // Return if this activation has no floats (the marker is conservative)
     if ( not m->has_float_temporaries() )
@@ -343,8 +344,8 @@ bool_t Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
 }
 
 
-bool_t Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
-    warning( "oop_iterate_compiled_float_frame not implemented" );
+bool Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
+    spdlog::warn( "oop_iterate_compiled_float_frame not implemented" );
     return false;
 }
 
@@ -354,16 +355,16 @@ void Frame::oop_iterate( OopClosure *blk ) {
         if ( has_interpreted_float_marker() and oop_iterate_interpreted_float_frame( blk ) )
             return;
 
-        // lprintf("Frame: fp = %#lx, sp = %#lx]\n", fp(), sp());
+        // spdlog::info("Frame: fp = 0x{0:x}, sp = 0x{0:x}]", fp(), sp());
         for ( Oop *p = sp(); p <= temp_addr( 0 ); p++ ) {
-            // lprintf("\t[%#lx]: ", p);
+            // spdlog::info("\t[0x{0:x}]: ", p);
             // (*p)->short_print();
-            // lprintf("\n");
+            // spdlog::info("");
             blk->do_oop( p );
         }
-        // lprintf("\t{%#lx}: ", receiver_addr());
+        // spdlog::info("\t{0x{0:x}}: ", receiver_addr());
         // (*receiver_addr())->short_print();
-        // lprintf("\n");
+        // spdlog::info("");
         blk->do_oop( receiver_addr() );
         return;
     }
@@ -401,7 +402,7 @@ void Frame::oop_iterate( OopClosure *blk ) {
 }
 
 
-bool_t Frame::follow_roots_interpreted_float_frame() {
+bool Frame::follow_roots_interpreted_float_frame() {
     MethodOop m = MethodOop( hp() );
     st_assert( m->is_method(), "must be method" );
     // Return if this activation has no floats (the marker is conservative)
@@ -428,8 +429,8 @@ bool_t Frame::follow_roots_interpreted_float_frame() {
 }
 
 
-bool_t Frame::follow_roots_compiled_float_frame() {
-    warning( "follow_roots_compiled_float_frame not implemented" );
+bool Frame::follow_roots_compiled_float_frame() {
+    spdlog::warn( "follow_roots_compiled_float_frame not implemented" );
     return true;
 }
 
@@ -491,7 +492,7 @@ void Frame::convert_heap_code_pointer() {
     // Save the offset
     MarkSweep::add_heap_code_offset( h - obj );
     if ( WizardMode )
-        lprintf( "[0x%lx+%d]\n", obj, h - obj );
+        spdlog::info( "[0x%lx+%d]", obj, h - obj );
 }
 
 
@@ -499,10 +500,10 @@ void Frame::restore_heap_code_pointer() {
     if ( not is_interpreted_frame() )
         return;
     // Readjust hcode pointer
-    std::uint8_t *obj = hp();
+    std::uint8_t *obj   = hp();
     std::int32_t offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
-        lprintf( "[0x%lx+%d]\n", obj, offset );
+        spdlog::info( "[0x%lx+%d]", obj, offset );
     set_hp( obj + offset );
 }
 
@@ -515,7 +516,7 @@ public:
     void do_oop( Oop *o ) {
         Oop obj = *o;
         if ( not obj->verify() ) {
-            lprintf( "Verify failed in frame:\n" );
+            spdlog::info( "Verify failed in frame:" );
             fr->print();
         }
     }
@@ -555,7 +556,7 @@ Frame Frame::delta_sender() const {
 }
 
 
-bool_t Frame::should_be_deoptimized() const {
+bool Frame::should_be_deoptimized() const {
     if ( not is_compiled_frame() )
         return false;
     NativeMethod *nm = code();

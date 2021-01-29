@@ -10,7 +10,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/os.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/GrowableArray.hpp"
@@ -53,7 +52,7 @@ private:
     }
 
 
-    static bool_t equals( void *token, Thread *element ) {
+    static bool equals( void *token, Thread *element ) {
         return token == (void *) element;
     }
 

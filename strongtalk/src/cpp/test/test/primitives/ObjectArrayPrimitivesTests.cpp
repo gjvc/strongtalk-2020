@@ -39,156 +39,74 @@ protected:
 
 };
 
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateArrayOfCorrectSize ) {
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateArrayOfCorrectSize
-) {
+    HandleMark handles;
+    Handle     arrayClassHandle( arrayClass );
+    Oop        result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), arrayClass );
 
-HandleMark handles;
-Handle     arrayClassHandle( arrayClass );
+    ASSERT_TRUE( result->is_objArray() );
+    ASSERT_EQ( 10, ObjectArrayOop( result ) -> length() );
+    ASSERT_EQ( (const char *) arrayClassHandle.as_klass(), (const char *) result->klass() );
 
-Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_objArray()
-);
-ASSERT_EQ( 10,
-ObjectArrayOop( result )
-->
-length()
-);
-ASSERT_EQ( ( const char * ) arrayClassHandle.
-as_klass(),
-( const char * ) result->
-klass()
-);
-for (
-std::int32_t index = 10;
-index > 0; index-- )
-ASSERT_TRUE ( Universe::nilObject()
-== (
-ObjectArrayOop( result )
-->
-obj_at( index )
-) );
+    for ( std::int32_t index = 10; index > 0; index-- )ASSERT_TRUE ( Universe::nilObject() == ( ObjectArrayOop( result )->obj_at( index ) ) );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredArrayOfCorrectSize
-) {
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredArrayOfCorrectSize ) {
 
-HandleMark handles;
-Handle     arrayClassHandle( arrayClass );
+    HandleMark handles;
+    Handle     arrayClassHandle( arrayClass );
+    Oop        result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( 10 ), arrayClass );
 
-Oop result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( 10 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_objArray()
-);
-ASSERT_EQ( 10,
-ObjectArrayOop( result )
-->
-length()
-);
-ASSERT_TRUE( result
-->
-is_old()
-);
-ASSERT_EQ( ( const char * ) arrayClassHandle.
-as_klass(),
-( const char * ) result->
-klass()
-);
-for (
-std::int32_t index = 10;
-index > 0; index-- )
-ASSERT_TRUE ( Universe::nilObject()
-== (
-ObjectArrayOop( result )
-->
-obj_at( index )
-) );
+    ASSERT_TRUE( result->is_objArray() );
+    ASSERT_EQ( 10, ObjectArrayOop( result ) -> length() );
+    ASSERT_TRUE( result->is_old() );
+    ASSERT_EQ( (const char *) arrayClassHandle.as_klass(), (const char *) result->klass() );
+
+    for ( std::int32_t index = 10; index > 0; index-- )ASSERT_TRUE ( Universe::nilObject() == ( ObjectArrayOop( result )->obj_at( index ) ) );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonObjectArray
-) {
-Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-ASSERT_EQ( ( const char * )
-markSymbol( vmSymbols::invalid_klass() ),
-( const char * ) result );
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonObjectArray ) {
+    Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
+    ASSERT_TRUE( result->is_mark() );
+    ASSERT_EQ( (const char *) markSymbol( vmSymbols::invalid_klass() ), (const char *) result );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonInteger
-) {
-Oop result = objArrayPrimitives::allocateSize2( falseObject, arrayClass, arrayClass );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-ASSERT_EQ( ( const char * )
-markSymbol( vmSymbols::first_argument_has_wrong_type() ),
-( const char * ) result );
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonInteger ) {
+    Oop result = objArrayPrimitives::allocateSize2( falseObject, arrayClass, arrayClass );
+    ASSERT_TRUE( result->is_mark() );
+    ASSERT_EQ( (const char *) markSymbol( vmSymbols::first_argument_has_wrong_type() ), (const char *) result );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNegativeSize
-) {
-Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( -1 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-ASSERT_EQ( ( const char * )
-markSymbol( vmSymbols::negative_size() ),
-( const char * ) result );
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNegativeSize ) {
+    Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( -1 ), arrayClass );
+    ASSERT_TRUE( result->is_mark() );
+    ASSERT_EQ( (const char *) markSymbol( vmSymbols::negative_size() ), (const char *) result );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean
-) {
-Oop result = objArrayPrimitives::allocateSize2( Universe::nilObject(), smiOopFromValue( 10 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-ASSERT_EQ( ( const char * )
-markSymbol( vmSymbols::second_argument_has_wrong_type() ),
-( const char * ) result );
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean ) {
+    Oop result = objArrayPrimitives::allocateSize2( Universe::nilObject(), smiOopFromValue( 10 ), arrayClass );
+    ASSERT_TRUE( result->is_mark() );
+    ASSERT_EQ( (const char *) markSymbol( vmSymbols::second_argument_has_wrong_type() ), (const char *) result );
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
-) {
-std::int32_t size   = Universe::new_gen.eden()->free() / oopSize;
-Oop result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result
-) <<
-unmarkSymbol( result )
-->
-as_string();
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
+    std::int32_t size   = Universe::new_gen.eden()->free() / oopSize;
+    Oop          result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), arrayClass );
+    ASSERT_TRUE( result->is_mark() );
+    EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();
 }
 
 
-TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen
-) {
-std::int32_t size   = Universe::old_gen.free() / oopSize;
-Oop result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), arrayClass );
-ASSERT_TRUE( result
-->
-is_mark()
-);
-EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result
-) <<
-unmarkSymbol( result )
-->
-as_string();
+TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
+    std::int32_t size   = Universe::old_gen.free() / oopSize;
+    Oop          result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), arrayClass );
+    ASSERT_TRUE( result->is_mark() );
+    EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();
 }

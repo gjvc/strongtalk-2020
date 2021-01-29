@@ -40,13 +40,13 @@ public:
     }
 
 
-    bool_t isAllocated( std::int32_t l ) {
+    bool isAllocated( std::int32_t l ) {
         st_assert(  l < BitsPerWord, "need longer bit vector" );
         return isBitSet( _bits, l );
     }
 
 
-    bool_t isEmpty() {
+    bool isEmpty() {
         return _bits == 0;
     }
 
@@ -70,7 +70,7 @@ protected:
     }
 
 
-    bool_t getBitInWord( std::int32_t i, std::int32_t o ) {
+    bool getBitInWord( std::int32_t i, std::int32_t o ) {
         return isBitSet( _bits[ i ], o );
     }
 
@@ -134,10 +134,10 @@ public:
     }
 
 
-    bool_t includes( std::int32_t i ) {
+    bool includes( std::int32_t i ) {
         st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
-        bool_t b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
+        bool b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
         return b;
     }
 
@@ -161,9 +161,9 @@ public:
     void removeFromTo( std::int32_t first, std::int32_t last );    // clear bits [first..last]
 
     // union/intersect return true if receiver has changed
-    bool_t unionWith( BitVector *other );          // this |= other
-    bool_t intersectWith( BitVector *other );      // this &= other
-    bool_t isDisjointFrom( BitVector *other );     // (this & other) == {}
+    bool unionWith( BitVector *other );          // this |= other
+    bool intersectWith( BitVector *other );      // this &= other
+    bool isDisjointFrom( BitVector *other );     // (this & other) == {}
 
     void doForAllOnes( intDoFn f );  // call f for all 1 bits
 

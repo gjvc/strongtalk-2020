@@ -7,7 +7,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/lookup/LookupType.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 
 #include <cstring>
@@ -16,11 +15,11 @@
 
 
 void printLookupType( LookupType l ) {
-    lprintf( lookupTypeName( l ) );
+    spdlog::info( lookupTypeName( l ) );
 }
 
 
-static void addFlag( bool_t &flag, char *name, const char *add ) {
+static void addFlag( bool &flag, char *name, const char *add ) {
     if ( not flag )
         strcat( name, " { " );
     flag = true;
@@ -44,7 +43,7 @@ char *lookupTypeName( LookupType l ) {
         default: st_fatal( "Unknown lookupType" );
     }
 
-    bool_t hasFlag = false;
+    bool hasFlag = false;
     switch ( countType( l ) ) {
         case CountType::NonCounting:
             break;

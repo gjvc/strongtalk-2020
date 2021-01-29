@@ -89,5 +89,5 @@ public:
 
     void print();
 
-    virtual bool_t verify() const;
+    virtual bool verify() const;
 };

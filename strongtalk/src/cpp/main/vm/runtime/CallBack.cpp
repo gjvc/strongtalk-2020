@@ -82,7 +82,7 @@ void CallBack::unregister( void *block ) {
 typedef void *(__CALLING_CONVENTION *call_out_func_4)( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d );
 
 extern "C" {
-extern bool_t have_nlr_through_C;
+extern bool have_nlr_through_C;
 }
 
 extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t params ) {
@@ -90,7 +90,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
     DeltaProcess *proc = nullptr;
 
     if ( Universe::callBack_receiver()->is_nil() ) {
-        warning( "callBack receiver is not set" );
+        spdlog::warn( "callBack receiver is not set" );
     }
 
     std::int32_t low  = get_unsigned_bitfield( params, 0, 16 );
@@ -129,7 +129,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
     } else if ( res->is_proxy() ) {
         result = (void *) ProxyOop( res )->get_pointer();
     } else {
-        warning( "Wrong return type for call back, returning nullptr" );
+        spdlog::warn( "Wrong return type for call back, returning nullptr" );
         result = nullptr;
     }
 

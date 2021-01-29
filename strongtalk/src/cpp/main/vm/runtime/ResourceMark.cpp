@@ -8,10 +8,8 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/lprintf.hpp"
 
-
-bool_t ResourceMark::_enabled = true;
+bool ResourceMark::_enabled = true;
 
 
 ResourceMark::ResourceMark() {
@@ -36,7 +34,7 @@ ResourceMark::~ResourceMark() {
     st_assert( _resourceArea->_nestingLevel > 0, "_nesting must be positive" );
     _resourceArea->_nestingLevel--;
     if ( PrintResourceAllocation ) {
-        lprintf( "deallocating to mark %#lx\n", _top );
+        spdlog::info( "deallocating to mark 0x{0:x}", _top );
     }
 
     ResourceAreaChunk *prevc;

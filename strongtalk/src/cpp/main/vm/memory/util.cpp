@@ -7,7 +7,7 @@
 
 #include "vm/memory/util.hpp"
 #include "allocation.hpp"
-#include "vm/utilities/lprintf.hpp"
+
 #include "vm/runtime/flags.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/os.hpp"
@@ -19,7 +19,7 @@ std::int32_t Indent = 0;
 
 void printIndent() {
     for ( std::int32_t i = 0; i < Indent; i++ )
-        lprintf( "  " );
+        spdlog::info( "  " );
 }
 
 
@@ -203,6 +203,6 @@ void breakpoint() {
 
 
 void error_breakpoint() {
-    flush_logFile();
+    //flush_logFile();
     os::breakpoint();
 }

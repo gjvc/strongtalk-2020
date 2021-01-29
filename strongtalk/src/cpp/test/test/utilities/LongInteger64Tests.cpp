@@ -43,7 +43,7 @@ as_double(),
 TEST( LongInteger64Tests, asDoubleFromLongInt
 ) {
 LongInteger64 value( 3, 1 );
-double        expected = ( ( (int64_t) 1 ) << 32 ) + 3;
+double        expected = ( ( (std::int64_t) 1 ) << 32 ) + 3;
 EXPECT_NEAR( expected, value
 .
 as_double(),

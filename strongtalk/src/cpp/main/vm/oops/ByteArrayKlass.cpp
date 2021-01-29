@@ -10,7 +10,7 @@
 #include "vm/runtime/flags.hpp"
 
 
-Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop ByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
 
     // This should not be fatal!
@@ -21,7 +21,7 @@ Oop ByteArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
     KlassOop k        = as_klassOop();
     std::int32_t      ni_size  = non_indexable_size();
     std::int32_t      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
@@ -77,7 +77,7 @@ void setKlassVirtualTableFromByteArrayKlass( Klass *k ) {
 }
 
 
-bool_t ByteArrayKlass::oop_verify( Oop obj ) {
+bool ByteArrayKlass::oop_verify( Oop obj ) {
     st_assert_byteArray( obj, "Argument must be byteArray" );
     return ByteArrayOop( obj )->verify();
 }

@@ -11,7 +11,7 @@
 #include "vm/memory/MarkSweep.hpp"
 
 
-Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t tenured ) {
+Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool tenured ) {
     KlassOop k        = as_klassOop();
     std::int32_t      ni_size  = non_indexable_size();
     std::int32_t      obj_size = ni_size + 1 + size;

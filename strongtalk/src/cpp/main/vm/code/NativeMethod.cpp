@@ -51,7 +51,7 @@ NativeMethod *new_nativeMethod( Compiler *c ) {
 }
 
 
-void *NativeMethod::operator new( std::int32_t size ) {
+void *NativeMethod::operator new( std::size_t size ) {
     st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
     std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), oopSize );
     void *p = Universe::code->allocate( nativeMethod_size );
@@ -159,7 +159,7 @@ NativeMethod::NativeMethod( Compiler *c ) :
         }
     }
     if ( this == (NativeMethod *) catchThisOne )
-        warning( "caught NativeMethod" );
+        spdlog::warn( "caught NativeMethod" );
 
     // turned off because they're very slow  -Urs 4/96
     LookupCache::verify();
@@ -258,9 +258,9 @@ void NativeMethod::moveTo( void *p, std::int32_t size ) {
     NativeMethod* to = (NativeMethod*)p;
     if (this == to) return;
     if (PrintCodeCompaction) {
-      printf("*moving NativeMethod %#lx (", this);
+      spdlog::info("*moving NativeMethod 0x{0:x} (", this);
       key.print();
-      printf(") to %#lx\n", to);
+      spdlog::info(") to 0x{0:x}\n", to);
       fflush(stdout);
     }
 
@@ -272,7 +272,7 @@ void NativeMethod::moveTo( void *p, std::int32_t size ) {
     std::int32_t delta = (char*) to - (char*) this;
 
     for (RelocationInformation* q = locs(), *pend = locsEnd(); q < pend; q++) {
-      bool_t needShift;		// speed optimization - q->shift() is slow
+      bool needShift;		// speed optimization - q->shift() is slow
       if (q->isIC()) {
         InlineCache* sd = q->asIC(this);
         sd->shift(delta, this);
@@ -319,7 +319,7 @@ void NativeMethod::cleanup_inline_caches() {
 
 
 void NativeMethod::makeOld() {
-    LOG_EVENT1( "marking NativeMethod %#x as old", this );
+    LOG_EVENT1( "marking NativeMethod 0x{0:x} as old", this );
     _nativeMethodFlags.isYoung = 0;
 }
 
@@ -331,7 +331,7 @@ void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
 
 
 void NativeMethod::unlink() {
-    LOG_EVENT1( "unlinking NativeMethod %#lx", this );
+    LOG_EVENT1( "unlinking NativeMethod 0x{0:x}", this );
 
     if ( is_method() ) {
         // Remove from LookupCache.
@@ -347,7 +347,7 @@ void NativeMethod::unlink() {
 }
 
 
-void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
+void NativeMethod::makeZombie( bool clearInlineCaches ) {
     // mark this NativeMethod as zombie (it is almost dead and can be flushed as soon as it is no longer on the stack)
     if ( isZombie() )
         return;
@@ -359,7 +359,7 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
     }
 
     // overwrite call to recompiler by call to zombie handler
-    LOG_EVENT2( "%s NativeMethod 0x%x becomes zombie", ( is_method() ? "normal" : "block" ), this );
+    LOG_EVENT2( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), this );
     NativeCall *call = nativeCall_at( specialHandlerCall() );
 
     // Fix this:
@@ -393,9 +393,9 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
     p[ 2 ] = char( offset );
 
     if ( TraceZombieCreation ) {
-        _console->print_cr( "%s NativeMethod 0x%x becomes zombie", ( is_method() ? "normal" : "block" ), this );
+        spdlog::info( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>(this) );
         if ( WizardMode ) {
-            _console->print_cr( "entry code sequence:" );
+            spdlog::info( "entry code sequence:" );
             char *beg = (char *) min( std::int32_t( specialHandlerCall() ), std::int32_t( entryPoint() ), std::int32_t( verifiedEntryPoint() ) );
             char *end = (char *) max( std::int32_t( specialHandlerCall() ), std::int32_t( entryPoint() ), std::int32_t( verifiedEntryPoint() ) );
             Disassembler::decode( beg, end + 10 );
@@ -417,7 +417,7 @@ void NativeMethod::makeZombie( bool_t clearInlineCaches ) {
 }
 
 
-bool_t NativeMethod::has_noninlined_blocks() const {
+bool NativeMethod::has_noninlined_blocks() const {
     return number_of_noninlined_blocks() > 0;
 }
 
@@ -461,9 +461,9 @@ JumpTableEntry *NativeMethod::noninlined_block_jumpEntry_at( std::int32_t noninl
 
 void NativeMethod::flush() {
     // completely deallocate this method
-    EventMarker em( "flushing NativeMethod %#lx %s", this, "" );
+    EventMarker em( "flushing NativeMethod 0x{0:x} %s", this, "" );
     if ( PrintMethodFlushing ) {
-        _console->print_cr( "*flushing NativeMethod %#lx", this );
+        spdlog::info( "*flushing NativeMethod 0x{0:x}", static_cast<const void *>(this) );
     }
 
     if ( isZombie() ) {
@@ -477,7 +477,7 @@ void NativeMethod::flush() {
 }
 
 
-bool_t NativeMethod::depends_on_invalid_klass() {
+bool NativeMethod::depends_on_invalid_klass() {
     // Check receiver class
     if ( receiver_klass()->is_invalid() )
         return true;
@@ -543,7 +543,7 @@ ProgramCounterDescriptor *NativeMethod::containingProgramCounterDescriptorOrNULL
     do {
         // avoid pointer arithmetic -- gcc uses a division for ProgramCounterDescriptor* - ProgramCounterDescriptor*
         std::int32_t m = l + ( h - l ) / 2;
-        _console->print_cr( "l [0x%x], h [0x%x], m [0x%x], middle [%#lx]", l, h, m, middle );
+        spdlog::info( "l [0x{0:x}], h [0x{0:x}], m [0x{0:x}], middle [0x{0:x}]", l, h, m, static_cast<const void *>(middle) );
 
         middle = &start[ m ];
         if ( middle->_pc < offset ) {
@@ -620,7 +620,7 @@ void NativeMethod::relocate() {
 }
 
 
-bool_t NativeMethod::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
+bool NativeMethod::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
     _lookupKey.switch_pointers( from, to );
     scopes()->switch_pointers( from, to, nativeMethods_to_invalidate );
     check_store();
@@ -657,27 +657,27 @@ void NativeMethod::verify() {
     // The interpreter counts on it for InterpreterPICs
 
     if ( not Oop( instructionsStart() )->is_smi() )
-        error( "NativeMethod at %#lx has unaligned instruction start", this );
+        error( "NativeMethod at 0x{0:x} has unaligned instruction start", this );
 
     if ( not Oop( entryPoint() )->is_smi() )
-        error( "NativeMethod at %#lx has unaligned entryPoint", this );
+        error( "NativeMethod at 0x{0:x} has unaligned entryPoint", this );
 
     if ( not Oop( verifiedEntryPoint() )->is_smi() )
-        error( "NativeMethod at %#lx has unaligned verifiedEntryPoint", this );
+        error( "NativeMethod at 0x{0:x} has unaligned verifiedEntryPoint", this );
 
     if ( not Universe::code->contains( this ) )
-        error( "NativeMethod at %#lx not in zone", this );
+        error( "NativeMethod at 0x{0:x} not in zone", this );
 
     scopes()->verify();
 
     for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ ) {
         if ( not p->verify( this ) ) {
-            _console->print_cr( "\t\tin NativeMethod at %#lx (pcs)", this );
+            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (pcs)", static_cast<const void *>(this) );
         }
     }
 
     if ( findNativeMethod( (char *) instructionsEnd() - oopSize ) not_eq this ) {
-        error( "findNativeMethod did not find this NativeMethod (%#lx)", this );
+        error( "findNativeMethod did not find this NativeMethod (0x{0:x})", this );
     }
 
     verify_expression_stacks();
@@ -741,7 +741,7 @@ void NativeMethod::PrimitiveICs_do( void f( PrimitiveInlineCache * ) ) {
 void NativeMethod::print() {
     ResourceMark resourceMark;
     printIndent();
-    _console->print( "NativeMethod [%#lx] for method [%#lx]", this, method() );
+    _console->print( "NativeMethod [0x{0:x}] for method [0x{0:x}]", this, method() );
     _lookupKey.print();
     _console->print( " { " );
 
@@ -757,13 +757,13 @@ void NativeMethod::print() {
         _console->print( "TBR " );
     if ( isUncommonRecompiled() )
         _console->print( "UNCOMMON " );
-    _console->print_cr( "}:" );
+    spdlog::info( "}:" );
     Indent++;
 
     printIndent();
-    _console->print_cr( "instructions (%ld bytes): [%#lx..%#lx]", size(), instructionsStart(), instructionsEnd() );
+    spdlog::info( "instructions (%ld bytes): [0x{0:x}..0x{0:x}]", size(), instructionsStart(), instructionsEnd() );
     printIndent();
-    _console->print_cr( "NativeMethod [%#lx]", this );
+    spdlog::info( "NativeMethod [0x{0:x}]", static_cast<const void *>(this) );
     // don't print code/locs/pcs by default -- too much output   -Urs 1/95
 //    printCode();
     scopes()->print();
@@ -782,7 +782,7 @@ void NativeMethod::printCode() {
 void NativeMethod::printLocs() {
     ResourceMark m;    // in case methods get printed via the debugger
     printIndent();
-    _console->print_cr( "locations:" );
+    spdlog::info( "locations:" );
     Indent++;
     RelocationInformationIterator iter( this );
     std::int32_t                           last_offset = 0;
@@ -801,7 +801,7 @@ void NativeMethod::printLocs() {
 void NativeMethod::printPcs() {
     ResourceMark m;    // in case methods get printed via debugger
     printIndent();
-    lprintf( "pc-bytecode offsets:\n" );
+    spdlog::info( "pc-bytecode offsets:" );
     Indent++;
     for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ )
         p->print( this );
@@ -818,7 +818,7 @@ void NativeMethod::print_value_on( ConsoleOutputStream *stream ) {
 }
 
 
-static ScopeDescriptor *print_scope_node( NativeMethodScopes *scopes, ScopeDescriptor *sd, std::int32_t level, ConsoleOutputStream *stream, bool_t with_debug_info ) {
+static ScopeDescriptor *print_scope_node( NativeMethodScopes *scopes, ScopeDescriptor *sd, std::int32_t level, ConsoleOutputStream *stream, bool with_debug_info ) {
     // indent
     stream->fill_to( 2 + level * 2 );
 
@@ -837,7 +837,7 @@ static ScopeDescriptor *print_scope_node( NativeMethodScopes *scopes, ScopeDescr
 }
 
 
-void NativeMethod::print_inlining( ConsoleOutputStream *stream, bool_t with_debug_info ) {
+void NativeMethod::print_inlining( ConsoleOutputStream *stream, bool with_debug_info ) {
     // Takes advantage of the fact that the scope tree is stored in a depth first traversal order.
     ResourceMark resourceMark;
     if ( stream == nullptr )
@@ -845,7 +845,7 @@ void NativeMethod::print_inlining( ConsoleOutputStream *stream, bool_t with_debu
     stream->print_cr( "NativeMethod inlining structure" );
     ScopeDescriptor *result = print_scope_node( scopes(), scopes()->root(), 0, stream, with_debug_info );
     if ( result not_eq nullptr )
-        warning( "print_inlining returned prematurely" );
+        spdlog::warn( "print_inlining returned prematurely" );
 }
 
 
@@ -874,12 +874,12 @@ NativeMethod *findNativeMethod_maybe( void *start ) {
 }
 
 
-bool_t includes( const void *p, const void *from, void *to ) {
+bool includes( const void *p, const void *from, void *to ) {
     return from <= p and p < to;
 }
 
 
-bool_t NativeMethod::encompasses( const void *p ) const {
+bool NativeMethod::encompasses( const void *p ) const {
     return includes( p, (const void *) this, pcsEnd() );
 }
 
@@ -932,7 +932,7 @@ Oop *NativeMethod::embeddedOop_at( const char *p ) const {
 }
 
 
-bool_t NativeMethod::in_delta_code_at( const char *pc ) const {
+bool NativeMethod::in_delta_code_at( const char *pc ) const {
     ProgramCounterDescriptor *pd = containingProgramCounterDescriptorOrNULL( pc );
     if ( pd == nullptr )
         return false;
@@ -1019,7 +1019,7 @@ void NativeMethod::sweeper_step( double decay_factor ) {
 }
 
 
-bool_t NativeMethod::isYoung() {
+bool NativeMethod::isYoung() {
     if ( not UseNativeMethodAging )
         return false;
     if ( not _nativeMethodFlags.isYoung )

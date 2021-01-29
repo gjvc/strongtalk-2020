@@ -12,7 +12,7 @@ void setKlassVirtualTableFromProxyKlass( Klass *k ) {
 }
 
 
-Oop ProxyKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop ProxyKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k    = as_klassOop();
     std::int32_t      size = non_indexable_size();
     // allocate

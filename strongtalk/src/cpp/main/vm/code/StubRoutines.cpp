@@ -68,15 +68,15 @@ const char *StubRoutines::_alien_call_entries[max_fast_alien_call_size + 1];
 
 extern "C" {
 
-extern char *method_entry_point;
-extern bool_t have_nlr_through_C;
-extern Oop    nlr_result;
-extern std::int32_t    nlr_home;
-extern std::int32_t    nlr_home_id;
-extern char *C_frame_return_addr;
+extern char         *method_entry_point;
+extern bool         have_nlr_through_C;
+extern Oop          nlr_result;
+extern std::int32_t nlr_home;
+extern std::int32_t nlr_home_id;
+extern char         *C_frame_return_addr;
 
 extern std::int32_t *last_Delta_fp;    // ebp of the last Delta frame before a C call
-extern Oop *last_Delta_sp;    // esp of the last Delta frame before a C call
+extern Oop          *last_Delta_sp;    // esp of the last Delta frame before a C call
 
 void popStackHandles( const char *nextFrame );
 
@@ -92,8 +92,8 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
     Frame f = DeltaProcess::active()->last_frame();
     if ( f.is_interpreted_frame() ) {
         // called from within interpreter -> Interpreted_DLLCache available
-        MethodOop    m = f.method();
-        CodeIterator it( m, m->byteCodeIndex_from( f.hp() ) );
+        MethodOop            m      = f.method();
+        CodeIterator         it( m, m->byteCodeIndex_from( f.hp() ) );
         Interpreted_DLLCache *cache = it.dll_cache();
         st_assert( cache->entry_point() == function, "inconsistency with Interpreted_DLLCache" );
         st_assert( cache->number_of_arguments() == nof_arguments, "inconsistency with Interpreted_DLLCache" );
@@ -112,11 +112,10 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
         Oop arg = *arg_ptr;
         _console->print( "%6d. ", i );
         if ( arg->is_smi() ) {
-            _console->print_cr( "smi_t   value = 0x%08x", static_cast<SMIOop>( arg )->value() );
+            spdlog::info( "smi_t   value = 0x%08x", static_cast<SMIOop>( arg )->value() );
 
         } else {
-            _console->print_cr( "proxy   value = 0x%08x  address = 0x%08x", arg, static_cast<ProxyOop>( arg )->get_pointer() );
-
+            spdlog::info( "proxy   value = 0x%08x  address = 0x%08x", static_cast<const void *>(arg), static_cast<const void *>( static_cast<ProxyOop>( arg )->get_pointer() ) );
         }
 
 //            if ( i == 5 and static_cast<proxyOop>( arg )->get_pointer() == 0x80000000 ) {
@@ -135,14 +134,14 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
 void StubRoutines::trace_DLL_call_2( std::int32_t result ) {
     if ( not TraceDLLCalls )
         return; // in case it has been turned off during run-time
-    _console->print_cr( "    result = 0x%08x", result );
+    spdlog::info( "    result = 0x%08x", result );
 }
 
 
 void StubRoutines::wrong_DLL_call() {
     {
         ResourceMark resourceMark;
-        _console->print_cr( "DLL call error: number of arguments probably wrong" );
+        spdlog::info( "DLL call error: number of arguments probably wrong" );
     }
 
     if ( DeltaProcess::active()->is_scheduler() ) {
@@ -239,9 +238,9 @@ const char *StubRoutines::generate_zombie_nativeMethod( MacroAssembler *masm ) {
 // and generate_deoptimize_block(...)) is working correctly. See also call site
 // (code for PrologueNode). - gri 6/25/96
 
-static bool_t validateContextChain( BlockClosureOop block ) {
+static bool validateContextChain( BlockClosureOop block ) {
     st_assert( block->is_block(), "must be block" );
-    bool_t is_valid = true;
+    bool is_valid = true;
 
     {
         ContextOop con      = block->lexical_scope();
@@ -284,8 +283,8 @@ static bool_t validateContextChain( BlockClosureOop block ) {
     st_assert( block->isCompiledBlock(), "we should be in a compiled block" );
 
     // Patch the blockClosure
-    MethodOop method = block->method();
-    NativeMethod *nm = block->jump_table_entry()->block_nativeMethod();
+    MethodOop    method = block->method();
+    NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
     LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
     {
@@ -308,8 +307,8 @@ static void deoptimize_context_and_patch_block( BlockClosureOop block ) {
     st_assert( block->isCompiledBlock(), "we should be in a compiled block" );
 
     // Patch the blockClosure
-    MethodOop method = block->method();
-    NativeMethod *nm = block->jump_table_entry()->block_nativeMethod();
+    MethodOop    method = block->method();
+    NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
     LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
 
@@ -530,7 +529,7 @@ const char *StubRoutines::generate_continue_NonLocalReturn( MacroAssembler *masm
 }
 
 
-const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool_t async ) {
+const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) {
 
     // The following routine provides the extra frame for DLL calls.
     // Note: 1. Its code has to be *outside* the interpreters code! (see also: DLL calls in interpreter)
@@ -675,7 +674,7 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool_t async 
 }
 
 
-const char *StubRoutines::generate_lookup_DLL( MacroAssembler *masm, bool_t async ) {
+const char *StubRoutines::generate_lookup_DLL( MacroAssembler *masm, bool async ) {
     // Lookup routine called from "empty" DLL caches in compiled code only.
     // Calls a lookup & patch routine which updates the DLL cache and then
     // continues with call_DLL.
@@ -805,7 +804,7 @@ static BlockClosureOop deoptimize_block( BlockClosureOop block ) {
     st_assert( block->isCompiledBlock(), "we should be in a compiled block" );
 
     // just checking if the context chain really contains an unoptimized context
-    bool_t has_unoptimized_context = false;
+    bool has_unoptimized_context = false;
     {
         ContextOop con = block->lexical_scope();
         // verify entire context chain
@@ -1028,7 +1027,7 @@ const char *StubRoutines::generate_nlr_return_from_Delta( MacroAssembler *masm )
 // single_step_stub
 
 extern "C" std::int32_t *frame_breakpoint;   // dispatch table
-extern "C" doFn   original_table[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+extern "C" doFn         original_table[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 extern "C" void single_step_handler();
 
 void (*StubRoutines::single_step_fn)() = nullptr;
@@ -1103,8 +1102,8 @@ const char *StubRoutines::generate_single_step_stub( MacroAssembler *masm ) {
 
 extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, std::int32_t *old_fp, ObjectArrayOop frame_array, std::int32_t *current_frame );
 extern "C" void unpack_frame_array();
-extern "C" bool_t nlr_through_unpacking;
-extern "C" Oop    result_through_unpacking;
+extern "C" bool         nlr_through_unpacking;
+extern "C" Oop          result_through_unpacking;
 
 
 const char *StubRoutines::generate_unpack_unoptimized_frames( MacroAssembler *masm ) {
@@ -1292,7 +1291,7 @@ const char *StubRoutines::generate_handle_C_callback_stub( MacroAssembler *masm 
     // Incomming arguments:
     // eax = index               (passed on to Delta)
 
-    Label stackOK;
+    Label      stackOK;
     const char *entry_point = masm->pc();
 
     // create link
@@ -1576,11 +1575,11 @@ const char *StubRoutines::generate_alien_call_with_args( MacroAssembler *masm ) 
     Label isSMI, isDirect, startMove, isPointer, nextArg, moveLoopHead, moveLoopEnd, moveLoopTest, argLoopExit, argLoopTest, pushArgs;
     Label sizeLoopTest, sizeLoopStart;
 
-    Address fnptr( ebp, 8 );
-    Address result( ebp, 12 );
-    Address argCount( ebp, 16 );
-    Address argArray( ebp, 20 );
-    Address proc( ebp, -16 );
+    Address    fnptr( ebp, 8 );
+    Address    result( ebp, 12 );
+    Address    argCount( ebp, 16 );
+    Address    argArray( ebp, 20 );
+    Address    proc( ebp, -16 );
     const char *entry_point = masm->pc();
 
     masm->enter();
@@ -1685,10 +1684,10 @@ const char *StubRoutines::generate_alien_call_with_args( MacroAssembler *masm ) 
 
 
 const char *StubRoutines::generate_alien_call( MacroAssembler *masm, std::int32_t args ) {
-    Label   no_result, ptr_result, short_ptr_result, short_result, pushArgs;
-    Address fnptr( ebp, 8 );
-    Address result( ebp, 12 );
-    Address proc( ebp, -8 );
+    Label      no_result, ptr_result, short_ptr_result, short_result, pushArgs;
+    Address    fnptr( ebp, 8 );
+    Address    result( ebp, 12 );
+    Address    proc( ebp, -8 );
     const char *entry_point = masm->pc();
 
     masm->enter();
@@ -1811,8 +1810,8 @@ const char *StubRoutines::alien_call_entry( std::int32_t args ) {
 
 // Initialization
 
-bool_t     StubRoutines::_is_initialized = false;
-const char *StubRoutines::_code = nullptr;
+bool       StubRoutines::_is_initialized = false;
+const char *StubRoutines::_code          = nullptr;
 
 
 const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char *title, const char *gen( MacroAssembler * ) ) {
@@ -1821,7 +1820,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm );
     const char *new_pc      = masm->pc();
 
-    _console->print_cr( "%%stubroutine-generate [%s], size [0x%08x] bytes, entry point address [0x%08x]", title, new_pc - old_pc, entry_point );
+    spdlog::info( "%stubroutine-generate[{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1837,7 +1836,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm, argument );
     const char *new_pc      = masm->pc();
 
-    _console->print_cr( "%%stubroutine-generate [%s], argument [%d], size [0x%08x] bytes, entry point address [0x%08x]", title, argument, new_pc - old_pc, entry_point );
+    spdlog::info( "%stubroutine-generate[{}], argument [{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, argument, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1852,9 +1851,9 @@ void StubRoutines::init() {
     if ( _is_initialized )
         return;
 
-    _code = os::exec_memory( _code_size );
+    _code                = os::exec_memory( _code_size );
 
-    ResourceMark rm;
+    ResourceMark   rm;
     CodeBuffer     *code = new CodeBuffer( _code, _code_size );
     MacroAssembler *masm = new MacroAssembler( code );
 
@@ -1901,7 +1900,7 @@ void StubRoutines::init() {
     masm->finalize();
     st_assert( code->code_size() < _code_size, "Stub routines too large for allocated space" );
     _is_initialized = true;
-    _console->print_cr( "%%stubroutines-size: [0x%08x] bytes", masm->offset() );
+    spdlog::info( "%stubroutines-size: [0x{08:x}] bytes", masm->offset() );
 }
 
 /*

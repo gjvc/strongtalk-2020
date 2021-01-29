@@ -39,50 +39,38 @@ protected:
 
 
     KlassOop theClass;
-    Oop *oldEdenTop;
+    Oop      *oldEdenTop;
 
 };
 
-TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleValueArray
-) {
-eden_top = eden_end;
-ASSERT_TRUE( theClass
-->klass_part()->oop_is_doubleValueArray() );
+TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleValueArray ) {
+    eden_top = eden_end;
+    ASSERT_TRUE( theClass->klass_part()->oop_is_doubleValueArray() );
 }
 
 
-TEST_F( DoubleValueArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
+TEST_F( DoubleValueArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
 }
 
 
-TEST_F( DoubleValueArrayKlassTests, allocateShouldAllocateTenuredWhenRequired
-) {
-ASSERT_TRUE( Universe::old_gen
-.
-contains( theClass
-->klass_part()->allocateObjectSize( 100, false, true ) ) );
+TEST_F( DoubleValueArrayKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
+    ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObjectSize( 100, false, true ) ) );
 }
 
 
-TEST_F( DoubleValueArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_TRUE( Universe::new_gen
-.eden()->free() < 4 * oopSize );
-ASSERT_TRUE( Universe::new_gen
-.
-contains( theClass
-->klass_part()->allocateObjectSize( 100, true ) ) );
+TEST_F( DoubleValueArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
+    ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObjectSize( 100, true ) ) );
 }
 
 
 class findDoubleValueArray : public klassOopClosure {
 public:
-    char *className;
-    bool_t found;
+    char   *className;
+    bool found;
 
 
     findDoubleValueArray() {
@@ -94,19 +82,19 @@ public:
     void do_klass( KlassOop klass ) {
         Oop instance = klass->primitive_allocate_size( 1 );
         if ( instance->is_doubleValueArray() ) {
-            SymbolOop name = SymbolOop( klass->instVarAt( KlassOopDescriptor::header_size() ) );
-            char *sname = name->chars();
+            SymbolOop name   = SymbolOop( klass->instVarAt( KlassOopDescriptor::header_size() ) );
+            char      *sname = name->chars();
             className = sname;
             found     = true;
-            printf( "Class name is : %s)", sname );
+            spdlog::info( "Class name is : %s)", sname );
         }
     }
 };
 
-TEST_F( DoubleValueArrayKlassTests, findDoubleValueArrayClass
-) {
-findDoubleValueArray closure;
-Universe::classes_do( &closure );
-if ( !closure.found )
-printf( "No matching class found :(" );
+TEST_F( DoubleValueArrayKlassTests, findDoubleValueArrayClass ) {
+    findDoubleValueArray closure;
+    Universe::classes_do( &closure );
+    if ( !closure.found ) {
+        spdlog::info( "No matching class found :(" );
+    }
 }

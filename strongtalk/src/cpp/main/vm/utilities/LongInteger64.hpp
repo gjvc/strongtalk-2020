@@ -26,9 +26,9 @@ public:
 
     LongInteger64 operator+( const LongInteger64 &rhs );
 
-    bool_t operator==( const LongInteger64 &rhs );
+    bool operator==( const LongInteger64 &rhs );
 
-    bool_t operator!=( const LongInteger64 &rhs );
+    bool operator!=( const LongInteger64 &rhs );
 
     double as_double();
 };

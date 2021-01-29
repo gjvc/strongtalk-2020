@@ -54,7 +54,7 @@ protected:
     friend class GenericSList;
 };
 
-typedef bool_t (*slistFindFn)( void *token, void *elem );
+typedef bool (*slistFindFn)( void *token, void *elem );
 
 class GenericSList : public PrintableResourceObject {
 protected:
@@ -101,12 +101,12 @@ public:
     void applyL( void f( void * ) );
 
 
-    bool_t isEmpty() const {
+    bool isEmpty() const {
         return _head == nullptr;
     }
 
 
-    bool_t nonEmpty() const {
+    bool nonEmpty() const {
         return not isEmpty();
     }
 
@@ -116,7 +116,7 @@ public:
     }
 
 
-    bool_t includesL( void *p ) const {
+    bool includesL( void *p ) const {
         return findL( p ) not_eq nullptr;
     }
 
@@ -231,7 +231,7 @@ public:
     }
 
 
-    bool_t includes( T e ) const {
+    bool includes( T e ) const {
         return GenericSList::includesL( (void *) e );
     }
 

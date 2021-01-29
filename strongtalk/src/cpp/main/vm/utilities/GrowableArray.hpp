@@ -13,7 +13,7 @@
 
 typedef void   (*voidDoFn)( void *p );
 
-typedef bool_t (*growableArrayFindFn)( void *token, void *elem );
+typedef bool (*growableArrayFindFn)( void *token, void *elem );
 
 
 class GenericGrowableArray : public PrintableResourceObject {
@@ -22,12 +22,12 @@ protected:
     std::int32_t         _length;                    // current length
     std::int32_t         _maxLength;                 // maximum length
     void                **_data;                    // data array
-    bool_t              _allocatedOnSystemHeap;     // is data allocated on C heap?
+    bool              _allocatedOnSystemHeap;     // is data allocated on C heap?
     std::vector<void *> _vector;                    //
 
     void grow( std::int32_t j );     // grow data array (double length until j is a valid index)
 
-    bool_t raw_contains( const void *p ) const;
+    bool raw_contains( const void *p ) const;
 
     std::int32_t raw_find( const void *p ) const;
 
@@ -47,9 +47,9 @@ protected:
 
     void raw_sort( std::int32_t f( const void *, const void * ) );
 
-    GenericGrowableArray( std::int32_t initial_size, bool_t on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, bool on_C_heap = false );
 
-    GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool_t on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool on_C_heap = false );
 
 public:
     void clear();
@@ -58,11 +58,11 @@ public:
 
     std::int32_t capacity() const;
 
-    bool_t isEmpty() const;
+    bool isEmpty() const;
 
-    bool_t nonEmpty() const;
+    bool nonEmpty() const;
 
-    bool_t isFull() const;
+    bool isFull() const;
 
     void **data_addr() const;    // for sorting
     void print_short();
@@ -75,12 +75,12 @@ template<typename T>
 class GrowableArray : public GenericGrowableArray {
 
 public:
-    GrowableArray( std::int32_t initial_size, bool_t on_C_heap = false ) :
+    GrowableArray( std::int32_t initial_size, bool on_C_heap = false ) :
             GenericGrowableArray( initial_size, on_C_heap ) {
     }
 
 
-    GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool_t on_C_heap = false ) :
+    GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool on_C_heap = false ) :
             GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
     }
 
@@ -155,7 +155,7 @@ public:
     }
 
 
-    bool_t contains( const T elem ) const {
+    bool contains( const T elem ) const {
         return raw_contains( (const void *) elem );
     }
 
@@ -165,7 +165,7 @@ public:
     }
 
 
-    std::int32_t find( void *token, bool_t f( void *, T ) ) const {
+    std::int32_t find( void *token, bool f( void *, T ) ) const {
         return raw_find( token, (growableArrayFindFn) f );
     }
 

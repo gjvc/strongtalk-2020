@@ -62,54 +62,54 @@ public:
     }
 
 
-    bool_t isInlineCache() const {
+    bool isInlineCache() const {
         return type() == RelocationInformation::RelocationType::ic_type;
     }
 
 
-    bool_t isPrimitive() const {
+    bool isPrimitive() const {
         return type() == RelocationInformation::RelocationType::primitive_type;
     }
 
 
-    bool_t isUncommonTrap() const {
+    bool isUncommonTrap() const {
         return type() == RelocationInformation::RelocationType::uncommon_type;
     }
 
 
-    bool_t isOop() const {
+    bool isOop() const {
         return type() == RelocationInformation::RelocationType::oop_type;
     }
 
 
-    bool_t isRuntimeCall() const {
+    bool isRuntimeCall() const {
         return type() == RelocationInformation::RelocationType::runtime_call_type;
     }
 
 
-    bool_t isInternalWord() const {
+    bool isInternalWord() const {
         return type() == RelocationInformation::RelocationType::internal_word_type;
     }
 
 
-    bool_t isExternalWord() const {
+    bool isExternalWord() const {
         return type() == RelocationInformation::RelocationType::external_word_type;
     }
 
 
-    bool_t isDLL() const {
+    bool isDLL() const {
         return type() == RelocationInformation::RelocationType::dll_type;
     }
 
 
-    bool_t isCall() const {
+    bool isCall() const {
         return not isOop();
     }
 
 
     // If the offset is 0 the RelocationInformation is invalid.
     // Only used for padding (RelocationInformation array is Oop aligned in NativeMethod).
-    bool_t isValid() const {
+    bool isValid() const {
         return offset() not_eq 0;
     }
 
@@ -155,7 +155,7 @@ public:
     RelocationInformationIterator( const NativeMethod *nm );
 
 
-    bool_t next() {
+    bool next() {
         _current++;
         if ( _current == _end )
             return false;
@@ -170,7 +170,7 @@ public:
     }
 
 
-    bool_t is_call() const {
+    bool is_call() const {
         return _current->isCall();
     }
 
@@ -217,8 +217,8 @@ public:
 
 
     // for uncommon traps only: was it ever executed?
-    bool_t wasUncommonTrapExecuted() const;
+    bool wasUncommonTrapExecuted() const;
 
     // is current reloc position dependent
-    bool_t is_position_dependent() const;
+    bool is_position_dependent() const;
 };

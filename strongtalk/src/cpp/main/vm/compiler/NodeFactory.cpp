@@ -33,7 +33,7 @@ NonLocalReturnTestNode *NodeFactory::NonLocalReturnTestNode( std::int32_t byteCo
 }
 
 
-SendNode *NodeFactory::SendNode( LookupKey *key, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool_t superSend, SendInfo *info ) {
+SendNode *NodeFactory::SendNode( LookupKey *key, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool superSend, SendInfo *info ) {
     class SendNode *res = new class SendNode( key, nlrTestPoint, args, expr_stack, superSend, info );
     st_assert( expr_stack, "must have expression stack" );
     res->scope()->addSend( expr_stack, true );  // arguments to call are debug-visible
@@ -56,7 +56,7 @@ PrimitiveNode *NodeFactory::PrimitiveNode( PrimitiveDescriptor *pdesc, class Mer
 }
 
 
-DLLNode *NodeFactory::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) {
+DLLNode *NodeFactory::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, class MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) {
     class DLLNode *res = new class DLLNode( dll_name, function_name, function, async, nlrTestPoint, args, expr_stack );
     res->scope()->addSend( expr_stack, true );  // arguments to DLL call are debug-visible
     registerNode( res );
@@ -64,7 +64,7 @@ DLLNode *NodeFactory::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_
 }
 
 
-TypeTestNode *NodeFactory::TypeTestNode( PseudoRegister *recv, GrowableArray<KlassOop> *classes, bool_t hasUnknown ) {
+TypeTestNode *NodeFactory::TypeTestNode( PseudoRegister *recv, GrowableArray<KlassOop> *classes, bool hasUnknown ) {
     class TypeTestNode *res = new class TypeTestNode( recv, classes, hasUnknown );
     registerNode( res );
     res->scope()->addTypeTest( res );
@@ -72,7 +72,7 @@ TypeTestNode *NodeFactory::TypeTestNode( PseudoRegister *recv, GrowableArray<Kla
 }
 
 
-InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi ) {
+InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) {
     class InlinedPrimitiveNode *res = new class InlinedPrimitiveNode( op, result, error, recv, arg1, arg1_is_smi, arg2, arg2_is_smi );
     registerNode( res );
     return res;

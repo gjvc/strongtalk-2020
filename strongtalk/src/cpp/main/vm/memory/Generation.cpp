@@ -9,13 +9,12 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/memory/WaterMark.hpp"
 
 
 void Generation::print() {
     _console->print( " total %6dK, %d%% used ", capacity() / 1024, ( 100 * used() ) / capacity() );
-    _console->print_cr( " [%#x, %#x[", _lowBoundary, _highBoundary );
+    spdlog::info( " [0x{0:x}, 0x{0:x}[", _lowBoundary, _highBoundary );
 }
 
 
@@ -110,7 +109,7 @@ void NewGeneration::switch_pointers( Oop f, Oop t ) {
 
 void NewGeneration::print() {
     if ( WizardMode ) {
-        _console->print_cr( " New generation" );
+        spdlog::info( " New generation" );
         Generation::print();
     }
     eden()->print();
@@ -157,7 +156,7 @@ void OldGeneration::initialize( ReservedSpace rs, std::int32_t initial_size ) {
 }
 
 
-bool_t OldGeneration::contains( void *p ) {
+bool OldGeneration::contains( void *p ) {
     FOR_EACH_OLD_SPACE( s ) {
         if ( s->contains( p ) )
             return true;
@@ -234,7 +233,7 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     // Scavenge breaks the there is more than one old Space chunks
     // Fix this with VirtualSpace
     // 4/5/96 Lars
-    warning( "Second old Space chunk allocated, this could mean trouble" );
+    spdlog::warn( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
         std::int32_t space_size = _currentSpace->capacity();
         OldSpace *s = new OldSpace( "old", space_size );
@@ -261,7 +260,7 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
 
 void OldGeneration::print() {
     if ( WizardMode ) {
-        _console->print_cr( " Old generation" );
+        spdlog::info( " Old generation" );
         Generation::print();
     }
     FOR_EACH_OLD_SPACE( s )s->print();
@@ -269,7 +268,7 @@ void OldGeneration::print() {
 
 
 void OldGeneration::print_remembered_set() {
-    lprintf( "Remembered set\n" );
+    spdlog::info( "Remembered set" );
     FOR_EACH_OLD_SPACE( s )Universe::remembered_set->print_set_for_space( s );
 }
 

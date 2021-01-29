@@ -7,7 +7,6 @@
 #include "vm/memory/util.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/code/RelocationInformation.hpp"
 #include "vm/assembler/CodeBuffer.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
@@ -100,6 +99,6 @@ void CodeBuffer::copyTo( NativeMethod *nm ) {
 
 
 void CodeBuffer::print() {
-    _console->print_cr( "CodeBuffer: Code  [0x%x <- used -> 0x%x[ <- free -> 0x%x[", _codeStart, _codeEnd, _codeOverflow );
-    _console->print_cr( "CodeBuffer: Reloc [0x%x <- used -> 0x%x[ <- free -> 0x%x[", _locsStart, _locsEnd, _locsOverflow );
+    spdlog::info( "CodeBuffer: Code  [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", _codeStart, _codeEnd, _codeOverflow );
+    spdlog::info( "CodeBuffer: Reloc [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", static_cast<const void *>(_locsStart), static_cast<const void *>(_locsEnd), static_cast<const void *>(_locsOverflow) );
 }

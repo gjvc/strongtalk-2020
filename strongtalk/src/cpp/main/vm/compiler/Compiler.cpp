@@ -22,7 +22,7 @@
 #include "vm/compiler/NodeFactory.hpp"
 
 
-bool_t verifyOften = false;
+bool verifyOften = false;
 
 std::int32_t        compilationCount = 0;
 Compiler           *theCompiler     = nullptr;
@@ -31,7 +31,7 @@ BasicBlockIterator *last_bbIterator;
 
 
 void compiler_init() {
-    _console->print_cr( "%%system-init:  compiler_init" );
+    spdlog::info( "%system-init:  compiler_init" );
 
     CompilerDebug = true;
 }
@@ -163,7 +163,7 @@ void Compiler::initialize( RecompilationScope *remote_scope ) {
     st_assert( VMProcess::vm_operation() not_eq nullptr, "must be in vmProcess to compile" );
 
     if ( VMProcess::vm_operation() == nullptr )
-        warning( "should be in vmProcess to compile" ); // softened to a warning to support testing
+        spdlog::warn( "should be in vmProcess to compile" ); // softened to a warning to support testing
 
     compilationCount++;
     messages = new StringOutputStream( 250 * 1024 );
@@ -224,7 +224,7 @@ void Compiler::initLimits() {
         } else {
             _nextLevel = recompilee->level() + 1;
             if ( _nextLevel >= MaxRecompilationLevels ) {
-                warning( "recompilation level too high -- should not happen" );
+                spdlog::warn( "recompilation level too high -- should not happen" );
                 _nextLevel = MaxRecompilationLevels;
             }
         }
@@ -256,7 +256,7 @@ void Compiler::initLimits() {
 }
 
 
-bool_t Compiler::registerUninlinable( Inliner *inliner ) {
+bool Compiler::registerUninlinable( Inliner *inliner ) {
     // All sends that aren't inlined for some reason are registered here
     // to determine the minimum optimization level needed for recompilation
     // (i.e. if the send wouldn't be inlined even at the highest optimization
@@ -295,7 +295,7 @@ bool_t Compiler::registerUninlinable( Inliner *inliner ) {
 }
 
 
-bool_t Compiler::is_uncommon_compile() const {
+bool Compiler::is_uncommon_compile() const {
     return DeltaProcess::active()->isUncommon();
 }
 
@@ -313,12 +313,12 @@ bool_t Compiler::is_uncommon_compile() const {
 
 class NewBackendGuard : StackAllocatedObject {
 private:
-    static bool_t _first_use;
+    static bool _first_use;
 
-    bool_t _UseNewBackend;
-    bool_t _LocalCopyPropagate;
-    bool_t _OptimizeLoops;
-    bool_t _OptimizeIntegerLoops;
+    bool _UseNewBackend;
+    bool _LocalCopyPropagate;
+    bool _OptimizeLoops;
+    bool _OptimizeIntegerLoops;
 
 public:
     NewBackendGuard() {
@@ -331,7 +331,7 @@ public:
         if ( TryNewBackend ) {
             // print out a warning if this class is used
             if ( _first_use ) {
-                warning( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
+                spdlog::warn( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
                 _first_use = false;
             }
 
@@ -353,7 +353,7 @@ public:
     }
 };
 
-bool_t NewBackendGuard::_first_use = true;
+bool NewBackendGuard::_first_use = true;
 
 
 NativeMethod *Compiler::compile() {
@@ -372,7 +372,7 @@ NativeMethod *Compiler::compile() {
             compiling = recompilee ? "Recompiling " : "Compiling ";
         }
     }
-    EventMarker em( "%s%#lx %#lx", compiling, key->selector(), nullptr );
+    EventMarker em( "%s0x{0:x} 0x{0:x}", compiling, key->selector(), nullptr );
 
     // don't use uncommon traps when recompiling because of trap
     useUncommonTraps = DeferUncommonBranches and not is_uncommon_compile();
@@ -385,13 +385,13 @@ NativeMethod *Compiler::compile() {
     // don't use counters when compiling from DB
     FlagSetting fs( UseRecompilation, UseRecompilation and not is_database_compile() );
 
-    bool_t    should_trace = _uses_inlining_database ? PrintInliningDatabaseCompilation : PrintCompilation;
+    bool    should_trace = _uses_inlining_database ? PrintInliningDatabaseCompilation : PrintCompilation;
     TraceTime t( compiling, should_trace );
 
     if ( should_trace or PrintCode ) {
         print_key( _console );
         if ( PrintCode or PrintInlining ) {
-            _console->print_cr( "" );
+            spdlog::info( "" );
         }
     }
 
@@ -479,7 +479,7 @@ NativeMethod *Compiler::compile() {
     if ( PrintDebugInfoGeneration ) {
         _console->cr();
         _console->cr();
-        _console->print_cr( "Start of debugging info." );
+        spdlog::info( "Start of debugging info." );
     }
     topScope->generateDebugInfo();    // must come before gen to set getScopeInfo
     topScope->generateDebugInfoForNonInlinedBlocks();
@@ -501,7 +501,7 @@ NativeMethod *Compiler::compile() {
     theMacroAssembler = nullptr;
 
     if ( verifyOften ) {
-        bool_t ok = bbIterator->verifyLabels();
+        bool ok = bbIterator->verifyLabels();
         if ( not ok )
             print_code( false );
     }
@@ -515,8 +515,8 @@ NativeMethod *Compiler::compile() {
 
     reporter->finish_reporting();
     if ( should_trace ) {
-        lprintf( ": %#lx (%d bytes; level %ld v%d)\n", nm, nm->instructionsLength(), nm->level(), nm->version() );
-        flush_logFile();
+        spdlog::info( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void*>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
+        //flush_logFile();
     }
 
     if ( verifyOften )
@@ -557,7 +557,7 @@ void Compiler::computeBlockInfo() {
     // remove all unused contexts
     // need to iterate because removing a nested context may enable removal of a parent context
     // (could avoid iteration with topo sort, but there are few contexts anyway)
-    bool_t changed = EliminateContexts;
+    bool changed = EliminateContexts;
     while ( changed ) {
         changed             = false;
         for ( std::int32_t i = allContexts->length() - 1; i >= 0; i-- ) {
@@ -569,7 +569,7 @@ void Compiler::computeBlockInfo() {
 
             GrowableArray<Expression *> *temps = s->contextTemporaries();
 
-            bool_t noUplevelAccesses = true;
+            bool noUplevelAccesses = true;
 
             // check if all context temps can be stack-allocated
             for ( std::int32_t j = temps->length() - 1; j >= 0; j-- ) {
@@ -720,15 +720,15 @@ void Compiler::initTopScope() {
 
 void Compiler::print() {
     print_short();
-    lprintf( ":" );
+    spdlog::info( ":" );
     key->print();
-    lprintf( "\tmethod: %s\n", method->print_string() );
-    lprintf( "\tp ((Compiler*)%#lx)->print_code()\n", this );
+    spdlog::info( "\tmethod: %s", method->print_string() );
+    spdlog::info( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void*>( this ) );
 }
 
 
 void Compiler::print_short() {
-    lprintf( "(Compiler*) %#lx", this );
+    spdlog::info( "(Compiler*) 0x{0:x}", static_cast<void*>( this ) );
 }
 
 
@@ -737,7 +737,7 @@ void Compiler::print_key( ConsoleOutputStream *stream ) {
     if ( topScope == nullptr )
         return; // print_key may be used during fatals where the compiler isn't set up yet
 
-    stream->print( " (no. %d, method %#x", compilationCount, method );
+    stream->print( " (no. %d, method 0x{0:x}", compilationCount, method );
     // print the parent scope offset for block compiles.
     if ( blockScope ) {
         _console->print( ", parent offset %d", blockScope->parent()->offset() );
@@ -746,14 +746,14 @@ void Compiler::print_key( ConsoleOutputStream *stream ) {
 }
 
 
-void Compiler::print_code( bool_t suppressTrivial ) {
+void Compiler::print_code( bool suppressTrivial ) {
     if ( theCompiler == nullptr ) {
         // This will not work, another indication that firstNode should be stored with the BasicBlockIterator
         // anyway, not fixed for now (gri 6/6/96)
         last_bbIterator->print_code( suppressTrivial );
         last_bbIterator->print();
     } else {
-        bool_t hadBBs = bbIterator not_eq nullptr;
+        bool hadBBs = bbIterator not_eq nullptr;
         if ( not hadBBs ) {
             // need BBs for printing
             bbIterator = new BasicBlockIterator;
@@ -766,7 +766,7 @@ void Compiler::print_code( bool_t suppressTrivial ) {
             bbIterator = nullptr;
         }
     }
-    lprintf( "\n\n" );
+    spdlog::info( "\n" );
 }
 
 
@@ -818,7 +818,7 @@ void Compiler::copy_noninlined_block_info( NativeMethod *nm ) {
 }
 
 
-ConsoleOutputStream *cout( bool_t flag ) {
+ConsoleOutputStream *cout( bool flag ) {
     return ( flag or theCompiler == nullptr ) ? _console : theCompiler->messages;
 }
 

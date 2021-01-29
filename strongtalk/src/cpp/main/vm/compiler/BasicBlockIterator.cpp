@@ -78,16 +78,16 @@ void BasicBlockIterator::localAlloc() {
     }
     if ( PrintLocalAllocation ) {
         std::int32_t total = globals->length() + done;
-        lprintf( "*local reg. allocations done; %ld out of %ld = (%3.1f%%).\n", done, total, 100.0 * done / total );
+        spdlog::info( "*local reg. allocations done; %ld out of %ld = (%3.1f%%).", done, total, 100.0 * done / total );
     }
 }
 
 
 void BasicBlockIterator::print() {
     for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
-        lprintf( "  " );
+        spdlog::info( "  " );
         _basicBlockTable->at( i )->print_short();
-        lprintf( "\n" );
+        spdlog::info( "" );
     }
 }
 
@@ -140,12 +140,12 @@ void BasicBlockIterator::computeUplevelAccesses() {
 }
 
 
-bool_t BasicBlockIterator::isSequentialCode( BasicBlock *curr, BasicBlock *next ) const {
+bool BasicBlockIterator::isSequentialCode( BasicBlock *curr, BasicBlock *next ) const {
     return curr == next or ( curr->genCount() + 1 == next->genCount() and curr->next() == next );
 }
 
 
-bool_t BasicBlockIterator::isSequential( std::int32_t curr, std::int32_t next ) const {
+bool BasicBlockIterator::isSequential( std::int32_t curr, std::int32_t next ) const {
     // is control flow between current and next BasicBlock sequential?
     if ( curr == next )
         return true;
@@ -220,16 +220,16 @@ GrowableArray<BasicBlock *> *BasicBlockIterator::code_generation_order() {
 }
 
 
-void BasicBlockIterator::print_code( bool_t suppressTrivial ) {
+void BasicBlockIterator::print_code( bool suppressTrivial ) {
     GrowableArray<BasicBlock *> *list = code_generation_order();
     for ( std::int32_t                   i     = 0; i < list->length(); i++ ) {
         BasicBlock *bb = list->at( i );
         if ( bb->_nodeCount > 0 )
             bb->print_code( suppressTrivial );
         if ( bb->next() not_eq nullptr )
-            _console->print_cr( "\tgoto N%d", bb->next()->_first->id() );
+            spdlog::info( "\tgoto N{}", bb->next()->_first->id() );
         if ( not suppressTrivial )
-            lprintf( "\n" );
+            spdlog::info( "" );
     }
 }
 
@@ -248,8 +248,8 @@ void BasicBlockIterator::apply( NodeVisitor *v ) {
 }
 
 
-bool_t BasicBlockIterator::verifyLabels() {
-    bool_t    ok = true;
+bool BasicBlockIterator::verifyLabels() {
+    bool    ok = true;
     for ( std::int32_t i  = 0; i < _basicBlockCount; i++ )
         ok &= _basicBlockTable->at( i )->verifyLabels();
     return ok;

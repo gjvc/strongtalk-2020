@@ -12,7 +12,7 @@ IntervalInfo::IntervalInfo( MethodInterval *interval, InlinedScope *scope ) {
 }
 
 
-bool_t IntervalInfo::isParentOf( IntervalInfo *other ) const {
+bool IntervalInfo::isParentOf( IntervalInfo *other ) const {
 
     MethodInterval *parent = other->interval()->parent();
 
@@ -23,7 +23,7 @@ bool_t IntervalInfo::isParentOf( IntervalInfo *other ) const {
 }
 
 
-bool_t IntervalInfo::dominates( std::int32_t byteCodeIndex, IntervalInfo *other, std::int32_t otherByteCodeIndex ) const {
+bool IntervalInfo::dominates( std::int32_t byteCodeIndex, IntervalInfo *other, std::int32_t otherByteCodeIndex ) const {
 
     // "x dominates y" --> "if y is executed, x was executed earlier"
     // Bytecode byteCodeIndex1 in interval i1 dominates bytecode byteCodeIndex2 in interval i2 if
@@ -39,5 +39,5 @@ bool_t IntervalInfo::dominates( std::int32_t byteCodeIndex, IntervalInfo *other,
 
 
 void IntervalInfo::print() {
-    lprintf( "((IntervalInfo*)%#x\n", this );
+    spdlog::info( "(IntervalInfo*){0:x}", static_cast<void *>(this) );
 }

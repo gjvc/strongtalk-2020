@@ -279,7 +279,7 @@ PRIM_DECL_0( SystemPrimitives::elapsedTime ) {
 PRIM_DECL_1( SystemPrimitives::writeSnapshot, Oop fileName ) {
     PROLOGUE_1( "writeSnapshot", fileName );
     SnapshotDescriptor sd;
-    const char *name = "fisk.snap";
+    const char         *name = "fisk.snap";
     sd.write_on( name );
     if ( sd.has_error() )
         return markSymbol( sd.error_symbol() );
@@ -425,7 +425,7 @@ PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
     PROLOGUE_1( "defWindowProc", resultProxy );
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    _console->print_cr( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
+    spdlog::info( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
     dll_func_ptr_t func = DLLs::lookup( oopFactory::new_symbol( "user" ), oopFactory::new_symbol( "DefWindowProcA" ) );
     ProxyOop( resultProxy )->set_pointer( (void *) func );
     return resultProxy;
@@ -621,8 +621,8 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
 
     ResourceMark resourceMark;
 
-    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
-    char *str = new_c_heap_array<char>( len + 1 );
+    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    char         *str = new_c_heap_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     // Potential memory leak, but this is temporary
     InliningDatabase::set_directory( str );
@@ -659,8 +659,8 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
 
     ResourceMark resourceMark;
 
-    std::int32_t len = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
-    char *str = new_resource_array<char>( len + 1 );
+    std::int32_t len  = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
+    char         *str = new_resource_array<char>( len + 1 );
     file_name->is_byteArray() ? ByteArrayOop( file_name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( file_name )->copy_null_terminated( str, len + 1 );
 
     RecompilationScope *rs = InliningDatabase::file_in( str );
@@ -675,15 +675,15 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
         VMProcess::execute( &op );
 
         if ( TraceInliningDatabase ) {
-            _console->print_cr( "compiling {%s} completed", str );
-            _console->print_cr( "[Database]" );
+            spdlog::info( "compiling {%s} completed", str );
+            spdlog::info( "[Database]" );
             rs->print_inlining_database_on( _console, nullptr, -1, 0 );
-            _console->print_cr( "[Compiled method]" );
+            spdlog::info( "[Compiled method]" );
             op.result()->print_inlining_database_on( _console );
         }
     } else {
         if ( TraceInliningDatabase ) {
-            _console->print_cr( "compiling {%s} failed", str );
+            spdlog::info( "compiling {%s} failed", str );
         }
     }
     return trueObject;
@@ -696,7 +696,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
         return falseObject;
     }
 
-    bool_t end_of_table;
+    bool               end_of_table;
     RecompilationScope *rs = InliningDatabase::select_and_remove( &end_of_table );
     if ( rs ) {
         VM_OptimizeRScope op( rs );
@@ -704,7 +704,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
         if ( TraceInliningDatabase ) {
             _console->print( "Compiling " );
             op.result()->_lookupKey.print_on( _console );
-            _console->print_cr( " in background = 0x%lx", op.result() );
+            spdlog::info( " in background = 0x%lx", static_cast<const void *>(op.result()) );
         }
     }
     return end_of_table ? falseObject : trueObject;
@@ -720,8 +720,8 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
-    char *str = new_resource_array<char>( len + 1 );
+    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    char         *str = new_resource_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::mangle_name( str ) );
 }
@@ -735,8 +735,8 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
 
     ResourceMark resourceMark;
 
-    std::int32_t len = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
-    char *str = new_resource_array<char>( len + 1 );
+    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    char         *str = new_resource_array<char>( len + 1 );
     name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     return oopFactory::new_byteArray( InliningDatabase::unmangle_name( str ) );
 }
@@ -790,8 +790,8 @@ public:
     }
 
 
-    std::int32_t      _limit;
-    KlassOop _target;
+    std::int32_t       _limit;
+    KlassOop           _target;
     GrowableArray<Oop> *_result;
 
 
@@ -821,7 +821,7 @@ PRIM_DECL_2( SystemPrimitives::instances_of, Oop klass, Oop limit ) {
     InstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    std::int32_t            length = blk._result->length();
+    std::int32_t   length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
 
     for ( std::int32_t i = 1; i <= length; i++ ) {
@@ -858,7 +858,7 @@ public:
     }
 
 
-    bool_t _result;
+    bool _result;
 };
 
 class ReferencesToClosure : public ObjectClosure {
@@ -871,12 +871,12 @@ public:
     }
 
 
-    std::int32_t _limit;
-    Oop _target;
+    std::int32_t       _limit;
+    Oop                _target;
     GrowableArray<Oop> *_result;
 
 
-    bool_t has_reference( MemOop obj ) {
+    bool has_reference( MemOop obj ) {
         HasReferenceClosure blk( _target );
         obj->oop_iterate( &blk );
         return blk._result;
@@ -906,9 +906,9 @@ PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
     ReferencesToClosure blk( obj, SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    std::int32_t            length = blk._result->length();
-    ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( std::int32_t      index  = 1; index <= length; index++ ) {
+    std::int32_t       length = blk._result->length();
+    ObjectArrayOop     result = oopFactory::new_objArray( length );
+    for ( std::int32_t index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -933,7 +933,7 @@ public:
     }
 
 
-    bool_t _result;
+    bool _result;
 };
 
 class ReferencesToInstancesOfClosure : public ObjectClosure {
@@ -946,12 +946,12 @@ public:
     }
 
 
-    std::int32_t      _limit;
-    KlassOop _target;
+    std::int32_t       _limit;
+    KlassOop           _target;
     GrowableArray<Oop> *_result;
 
 
-    bool_t has_reference( MemOop obj ) {
+    bool has_reference( MemOop obj ) {
         HasInstanceReferenceClosure blk( _target );
         obj->oop_iterate( &blk );
         return blk._result;
@@ -984,7 +984,7 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
     ReferencesToInstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    std::int32_t            length = blk._result->length();
+    std::int32_t   length = blk._result->length();
     ObjectArrayOop result = oopFactory::new_objArray( length );
 
     for ( std::int32_t index = 1; index <= length; index++ ) {
@@ -1003,7 +1003,7 @@ public:
     }
 
 
-    std::int32_t _limit;
+    std::int32_t       _limit;
     GrowableArray<Oop> *_result;
 
 
@@ -1028,9 +1028,9 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
     AllObjectsClosure blk( SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    std::int32_t            length = blk._result->length();
-    ObjectArrayOop result = oopFactory::new_objArray( length );
-    for ( std::int32_t      index  = 1; index <= length; index++ ) {
+    std::int32_t       length = blk._result->length();
+    ObjectArrayOop     result = oopFactory::new_objArray( length );
+    for ( std::int32_t index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
     return result;
@@ -1054,8 +1054,8 @@ PRIM_DECL_0( SystemPrimitives::flush_dead_code ) {
 PRIM_DECL_0( SystemPrimitives::command_line_args ) {
     PROLOGUE_0( "command_line_args" );
 
-    std::int32_t argc = os::argc();
-    char **argv = os::argv();
+    std::int32_t argc   = os::argc();
+    char         **argv = os::argv();
 
     ObjectArrayOop result = oopFactory::new_objArray( argc );
     result->set_length( argc );
@@ -1132,9 +1132,9 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
 
     } else { // LargeInteger
         BlockScavenge bs;
-        Integer *largeAddress = &ByteArrayOop( address )->number();
-        bool_t ok;
-        std::int32_t    intAddress     = largeAddress->as_int( ok );
+        Integer       *largeAddress = &ByteArrayOop( address )->number();
+        bool          ok;
+        std::int32_t  intAddress    = largeAddress->as_int( ok );
         if ( intAddress == 0 or not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
         free( (void *) intAddress );

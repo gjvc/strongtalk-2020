@@ -12,12 +12,13 @@
 
 #include <gtest/gtest.h>
 
+
 typedef Oop (__CALLING_CONVENTION *smifntype)( SMIOop, SMIOop );
 
 extern "C" std::int32_t expansion_count;
 
 
-class SmiPrimitivessTests : public ::testing::Test {
+class SmiPrimitivesTests : public ::testing::Test {
 
 protected:
     void SetUp() override {
@@ -39,20 +40,12 @@ protected:
 };
 
 
-TEST_F( SmiPrimitivessTests, quoShouldReturnDivideReceiverByArgument
-) {
-ASSERT_EQ( 5,
-SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) )
-)->
-value()
-);
+TEST_F( SmiPrimitivesTests, quoShouldReturnDivideReceiverByArgument ) {
+    ASSERT_EQ( 5, SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) ) )->value() );
 }
 
 
-TEST_F( SmiPrimitivessTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI
-) {
-Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
-ASSERT_EQ( ( std::int32_t )
-markSymbol( vmSymbols::receiver_has_wrong_type() ),
-( std::int32_t ) result );
+TEST_F( SmiPrimitivesTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI ) {
+    Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
+    ASSERT_EQ( (std::int32_t) markSymbol( vmSymbols::receiver_has_wrong_type() ), (std::int32_t) result );
 }

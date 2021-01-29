@@ -36,6 +36,7 @@ class Variable : ValueObject {
 private:
     std::int32_t _value;
 
+public:
     enum {
         special_type = 0, //
         reg_type     = 1, //
@@ -65,7 +66,6 @@ private:
     }
 
 
-public:
     Variable() {
         _value = 0;
     }
@@ -85,20 +85,20 @@ public:
 
 
     // Testing
-    bool_t in_register() const;
+    bool in_register() const;
 
 
-    bool_t on_stack() const {
+    bool on_stack() const {
         return type() == stack_type;
     }
 
 
-    bool_t is_unused() const {
+    bool is_unused() const {
         return type() == special_type and offset() == 0;
     }
 
 
-    bool_t is_top_of_stack() const {
+    bool is_top_of_stack() const {
         return type() == special_type and offset() == 1;
     }
 
@@ -124,12 +124,12 @@ public:
 
 
     // Comparison
-    bool_t operator==( const Variable &rhs ) {
+    bool operator==( const Variable &rhs ) {
         return rhs.value() == value();
     }
 
 
-    bool_t operator!=( const Variable &rhs ) {
+    bool operator!=( const Variable &rhs ) {
         return rhs.value() != value();
     }
 
@@ -157,12 +157,12 @@ public:
     }
 
 
-    bool_t has_reg() const {
+    bool has_reg() const {
         return not reg().is_unused();
     }
 
 
-    bool_t has_stack() const {
+    bool has_stack() const {
         return not stack().is_unused();
     }
 
@@ -188,9 +188,9 @@ class MappingTask : public ResourceObject {
 private:
     MappingTask *_next;         // next task with same source
     MappingTask *_parent;       // parent chain for recursion
-    bool_t _is_processed;
+    bool _is_processed;
     const char *_what_happened; // what happened to this task
-    bool_t   _uses_top_of_stack;
+    bool   _uses_top_of_stack;
     Variable _variable_to_free;
 
 public:
@@ -205,7 +205,7 @@ public:
     }
 
 
-    bool_t is_processed() const {
+    bool is_processed() const {
         return _is_processed;
     }
 
@@ -255,12 +255,12 @@ public:
     }
 
 
-    bool_t uses_top_of_stack() const {
+    bool uses_top_of_stack() const {
         return _uses_top_of_stack;
     }
 
 
-    void set_uses_top_of_stack( bool_t b ) {
+    void set_uses_top_of_stack( bool b ) {
         _uses_top_of_stack = b;
     }
 
@@ -272,11 +272,11 @@ public:
 
     void generate_code( MapConformance *mc );
 
-    bool_t target_includes( Variable var )const;
+    bool target_includes( Variable var )const;
 
-    bool_t is_dependent( MapConformance *mc, MappingTask *task )const;
+    bool is_dependent( MapConformance *mc, MappingTask *task )const;
 
-    bool_t in_parent_chain( MappingTask *task )const;
+    bool in_parent_chain( MappingTask *task )const;
 
     std::int32_t number_of_targets() const;
 
@@ -290,7 +290,7 @@ private:
     Variable *_usedVariables;
     std::int32_t _numberOfUsedVariables;
 
-    bool_t reduce_noop_task( MappingTask *task );
+    bool reduce_noop_task( MappingTask *task );
 
     void simplify();
 

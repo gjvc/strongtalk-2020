@@ -89,7 +89,7 @@ memConverter *ClassChange::create_converter_for( KlassOopDescriptor *old_class, 
 
 void ClassChange::update_class_vars() {
     if ( TraceApplyChange ) {
-        _console->print( " - updating class variables for: " );
+        spdlog::info( " - updating class variables for:" );
         old_klass()->print_value();
         _console->cr();
     }

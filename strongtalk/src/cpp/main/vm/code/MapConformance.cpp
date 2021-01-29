@@ -45,7 +45,7 @@ Variable Variable::top_of_stack() {
 }
 
 
-bool_t Variable::in_register() const {
+bool Variable::in_register() const {
     return type() == reg_type;
 }
 
@@ -82,7 +82,7 @@ void MappingEntry::print() {
 }
 
 
-bool_t operator==( MappingEntry x, MappingEntry y ) {
+bool operator==( MappingEntry x, MappingEntry y ) {
     return x.reg() == y.reg() and x.stack() == y.stack();
 }
 
@@ -102,7 +102,7 @@ std::int32_t MappingTask::number_of_targets() const {
 }
 
 
-bool_t MappingTask::in_parent_chain( MappingTask *task ) const {
+bool MappingTask::in_parent_chain( MappingTask *task ) const {
     for ( const MappingTask *current = this; current; current = current->parent() ) {
         if ( current == task )
             return true;
@@ -111,7 +111,7 @@ bool_t MappingTask::in_parent_chain( MappingTask *task ) const {
 }
 
 
-bool_t MappingTask::target_includes( Variable var ) const {
+bool MappingTask::target_includes( Variable var ) const {
     for ( const MappingTask *current = this; current; current = current->next() ) {
         if ( current->dst.reg() == var or current->dst.stack() == var )
             return true;
@@ -120,14 +120,14 @@ bool_t MappingTask::target_includes( Variable var ) const {
 }
 
 
-bool_t MappingTask::is_dependent( MapConformance *mc, MappingTask *task ) const {
+bool MappingTask::is_dependent( MapConformance *mc, MappingTask *task ) const {
     // Do we have to process task before this?
     // => do task->results overlap with src?
     if ( this == task )
         return false;
 
-    bool_t is_reg_dependent   = false;
-    bool_t is_stack_dependent = false;
+    bool is_reg_dependent   = false;
+    bool is_stack_dependent = false;
 
     if ( task->src.has_reg() ) {
         is_reg_dependent = target_includes( task->src.reg() );
@@ -197,7 +197,7 @@ void MappingTask::process_task( MapConformance *mc, MappingTask *p ) {
 
 
 void MappingTask::generate_code( MapConformance *mc ) {
-    bool_t uses_temp = false;
+    bool uses_temp = false;
 
     if ( uses_top_of_stack() ) {
         //Use source register for moves
@@ -301,39 +301,42 @@ void MapConformance::generate( Variable free_register1, Variable free_register2 
 
 
 void MapConformance::move( Variable src, Variable dst ) {
-    _console->print( "	move  " );
-    src.print();
-    _console->print( ",	" );
-    dst.print();
-    _console->cr();
+    spdlog::info("move {:d} {:d}", src.value(), dst.value() );
+//    _console->print( "	move  " );
+//    src.print();
+//    _console->print( ",	" );
+//    dst.print();
+//    _console->cr();
 }
 
 
 void MapConformance::push( Variable src ) {
-    _console->print( "	push  " );
-    src.print();
-    _console->cr();
+    spdlog::info("push {:d}", src.value() );
+//    _console->print( "	push  " );
+//    src.print();
+//    _console->cr();
 }
 
 
 void MapConformance::pop( Variable dst ) {
-    _console->print( "	pop  " );
-    dst.print();
-    _console->cr();
+    spdlog::info("pop {:d}", dst.value() );
+//    _console->print( "	pop  " );
+//    dst.print();
+//    _console->cr();
 }
 
 
 void MapConformance::print() {
-    _console->print_cr( "MapConformance" );
+    spdlog::info( "MapConformance" );
     for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->print( i );
     }
 }
 
 
-bool_t MapConformance::reduce_noop_task( MappingTask *task ) {
+bool MapConformance::reduce_noop_task( MappingTask *task ) {
     // A noop task if destination is a subset of source
-    bool_t result = true;
+    bool result = true;
 
     if ( task->dst.has_reg() and task->src.reg() not_eq task->dst.reg() ) {
         result = false;

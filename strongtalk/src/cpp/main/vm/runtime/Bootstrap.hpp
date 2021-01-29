@@ -21,16 +21,16 @@ class Bootstrap : CHeapAllocatedObject {
 
 private:
 
-    Oop *_oop_table;
-    std::int32_t           _number_of_oops;
-    std::int32_t           _max_number_of_oops;
-    bool_t        _new_format;
-    std::int32_t           _objectCount;
+    Oop           *_oop_table;
+    std::int32_t  _number_of_oops;
+    std::int32_t  _max_number_of_oops;
+    bool          _new_format;
+    std::int32_t  _objectCount;
     std::string   _filename;
     std::ifstream _stream;
 
-    std::map<char, std::int32_t>         _countByType{};
-    std::map<char, std::string> _nameByTypeByte{};
+    std::map<char, std::int32_t> _countByType{};
+    std::map<char, std::string>  _nameByTypeByte{};
 
 public:
     Bootstrap( const std::string &name );
@@ -39,9 +39,9 @@ public:
 
     char readNextChar();
 
-    std::int32_t get_integer();
+    std::int32_t get_next_int32_t();
 
-    bool_t has_error();
+    bool has_error();
 
     void read_mark( MarkOop *mark_addr );
 
@@ -55,9 +55,9 @@ public:
 
     double read_double();
 
-    bool_t new_format() const;
+    bool new_format() const;
 
-    bool_t is_byte();
+    bool is_byte();
 
     void klass_case_func( void (*function)( Klass * ), MemOop m );
 
@@ -93,4 +93,5 @@ public:
 
     void summary();
     Oop oopFromTable( const std::int32_t index );
+    char getNextTypeByte();
 };

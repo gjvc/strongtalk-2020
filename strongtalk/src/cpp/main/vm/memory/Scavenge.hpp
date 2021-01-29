@@ -19,7 +19,7 @@ public:
     }
 
 
-    static bool_t is_blocked() {
+    static bool is_blocked() {
         return counter > 0;
     }
 

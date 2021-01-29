@@ -7,12 +7,12 @@
 #include "vm/memory/oopFactory.hpp"
 
 
-bool_t ObjectArrayOopDescriptor::verify() {
-    bool_t flag = MemOopDescriptor::verify();
+bool ObjectArrayOopDescriptor::verify() {
+    bool flag = MemOopDescriptor::verify();
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "objArrayOop %#lx has negative length", this );
+            error( "objArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }

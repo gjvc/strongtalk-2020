@@ -40,19 +40,19 @@ public:
 
 
     // Lookup type
-    bool_t is_super_type() const;
-    bool_t is_normal_type() const;
-    bool_t is_block_type() const;
+    bool is_super_type() const;
+    bool is_normal_type() const;
+    bool is_block_type() const;
 
 
-    bool_t equal( const LookupKey *p ) const;
+    bool equal( const LookupKey *p ) const;
     void initialize( KlassOop klass, Oop selector_or_method );
     void clear();
     std::int32_t hash() const;
     void switch_pointers( Oop from, Oop to );
 
     void relocate();
-    bool_t verify() const;
+    bool verify() const;
     void oops_do( void f( Oop * ) );
 
     // Printing support output format is:

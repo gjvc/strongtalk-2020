@@ -115,7 +115,7 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
 }
 
 
-bool_t TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo ) {
+bool TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo ) {
     st_assert( name->is_symbol(), "Must be symbol" );
     for ( std::int32_t i = 1; i <= _num_of_params; i++ ) {
         ByteArrayOop par = ByteArrayOop( tempInfo->obj_at( i ) );
@@ -128,38 +128,38 @@ bool_t TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInf
 
 
 void TempPrinter::decode( MethodOop method, std::int32_t byteCodeIndex ) {
-    _console->print_cr( "TempDecoding:" );
+    spdlog::info( "TempDecoding:" );
     TempDecoder::decode( method, byteCodeIndex );
 }
 
 
 void TempPrinter::parameter( ByteArrayOop name, std::int32_t index ) {
-    _console->print_cr( "  param:      %s@%d", name->as_string(), index );
+    spdlog::info( "  param:      %s@{}", name->as_string(), index );
 }
 
 
 void TempPrinter::stack_temp( ByteArrayOop name, std::int32_t no ) {
-    _console->print_cr( "  stack temp: %s@%d", name->as_string(), no );
+    spdlog::info( "  stack temp: %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
-    _console->print_cr( "  stack float temp: %s@%d", name->as_string(), fno );
+    spdlog::info( "  stack float temp: %s@{}", name->as_string(), fno );
 }
 
 
 void TempPrinter::heap_temp( ByteArrayOop name, std::int32_t no ) {
-    _console->print_cr( "  heap temp:  %s@%d", name->as_string(), no );
+    spdlog::info( "  heap temp:  %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::heap_parameter( ByteArrayOop name, std::int32_t no ) {
-    _console->print_cr( "  heap param:  %s@%d", name->as_string(), no );
+    spdlog::info( "  heap param:  %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::no_debug_info() {
-    _console->print_cr( "method has no debug information" );
+    spdlog::info( "method has no debug information" );
 }
 
 

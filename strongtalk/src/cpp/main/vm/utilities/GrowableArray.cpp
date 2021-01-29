@@ -7,10 +7,9 @@
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/lprintf.hpp"
 
 
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool_t c_heap ) {
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool c_heap ) {
     _length    = 0;
     _maxLength = initial_size * 4;
     st_assert( _length <= _maxLength, "initial_size too small" );
@@ -23,7 +22,7 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool_t c_
 }
 
 
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool_t c_heap ) {
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool c_heap ) {
     _length    = initial_len;
     _maxLength = initial_size;
     st_assert( _length <= _maxLength, "initial_len too big" );
@@ -39,12 +38,12 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int3
 
 
 void GenericGrowableArray::grow( std::int32_t j ) {
-    void **newData;
+    void         **newData;
     std::int32_t oldMax = _maxLength;
     if ( _maxLength == 0 ) st_fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
     while ( j >= _maxLength )
         _maxLength = _maxLength * 2;
-    // _console->print_cr( "GenericGrowableArray::grow from [%d] to [%d]", oldMax, max );
+    // spdlog::info( "GenericGrowableArray::grow from [{}] to [{}]", oldMax, max );
     // j < max
     if ( _allocatedOnSystemHeap ) {
         newData = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
@@ -57,7 +56,7 @@ void GenericGrowableArray::grow( std::int32_t j ) {
 }
 
 
-bool_t GenericGrowableArray::raw_contains( const void *elem ) const {
+bool GenericGrowableArray::raw_contains( const void *elem ) const {
     for ( std::int32_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem )
             return true;
@@ -68,7 +67,7 @@ bool_t GenericGrowableArray::raw_contains( const void *elem ) const {
 
 GenericGrowableArray *GenericGrowableArray::raw_copy() const {
     GenericGrowableArray *copy = new GenericGrowableArray( _maxLength, _length, nullptr );
-    for ( std::int32_t i = 0; i < _length; i++ ) {
+    for ( std::int32_t   i     = 0; i < _length; i++ ) {
         copy->_data[ i ] = _data[ i ];
     }
     return copy;
@@ -145,10 +144,10 @@ void GenericGrowableArray::raw_at_put_grow( std::int32_t i, const void *p, const
 
 void GenericGrowableArray::print() {
     print_short();
-    lprintf( ": length %ld (max %ld) { ", _length, _maxLength );
+    spdlog::info( ": length %ld (max {0:d}) { ", _length, _maxLength );
     for ( std::int32_t i = 0; i < _length; i++ )
-        lprintf( "%#lx ", (std::int32_t) _data[ i ] );
-    lprintf( "}\n" );
+        spdlog::info( "0x{0:x} ", (std::int32_t) _data[ i ] );
+    spdlog::info( "}" );
 }
 
 
@@ -158,7 +157,7 @@ void GenericGrowableArray::raw_sort( std::int32_t f( const void *, const void * 
 
 
 void GenericGrowableArray::print_short() {
-    _console->print( "Growable Array %#lx", this );
+    spdlog::info( "Growable Array 0x{0:x}", static_cast<const void *>(this) );
 }
 
 
@@ -177,17 +176,17 @@ std::int32_t GenericGrowableArray::capacity() const {
 }
 
 
-bool_t GenericGrowableArray::isEmpty() const {
+bool GenericGrowableArray::isEmpty() const {
     return _length == 0;
 }
 
 
-bool_t GenericGrowableArray::nonEmpty() const {
+bool GenericGrowableArray::nonEmpty() const {
     return _length not_eq 0;
 }
 
 
-bool_t GenericGrowableArray::isFull() const {
+bool GenericGrowableArray::isFull() const {
     return _length == _maxLength;
 }
 

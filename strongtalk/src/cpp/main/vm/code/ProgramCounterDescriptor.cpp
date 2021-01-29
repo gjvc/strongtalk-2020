@@ -7,8 +7,6 @@
 #include "vm/memory/util.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 ProgramCounterDescriptor::ProgramCounterDescriptor( std::uint16_t pc, std::uint16_t scope, std::uint16_t byteCode ) {
     _pc            = pc;
@@ -29,10 +27,10 @@ ScopeDescriptor *ProgramCounterDescriptor::containingDesc( const NativeMethod *n
 
 void ProgramCounterDescriptor::print( NativeMethod *nm ) {
     printIndent();
-    lprintf( "ProgramCounterDescriptor %#lx: pc: %#lx; scope: %5ld; byte code: %ld\n", this, real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
+    spdlog::info( "ProgramCounterDescriptor {0:x}: pc: 0x{0:x}; scope: %5ld; byte code: %ld", static_cast<void *>(this), real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
 }
 
 
-bool_t ProgramCounterDescriptor::verify( NativeMethod *nm ) {
+bool ProgramCounterDescriptor::verify( NativeMethod *nm ) {
     return true;
 }

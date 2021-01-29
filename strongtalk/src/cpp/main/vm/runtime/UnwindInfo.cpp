@@ -10,7 +10,7 @@
 #include "vm/code/ScopeDescriptor.hpp"
 
 
-extern "C" bool_t have_nlr_through_C;
+extern "C" bool have_nlr_through_C;
 extern "C" char *C_frame_return_addr;
 extern "C" std::int32_t nlr_home;
 extern "C" std::int32_t nlr_home_id;

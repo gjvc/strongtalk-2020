@@ -6,8 +6,6 @@
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 std::int32_t LookupKey::hash() const {
     return klass()->identity_hash() ^ selector_or_method()->identity_hash();
@@ -29,14 +27,14 @@ SymbolOop LookupKey::selector() const {
 }
 
 
-bool_t LookupKey::verify() const {
-    bool_t flag = true;
+bool LookupKey::verify() const {
+    bool flag = true;
     if ( not klass()->is_klass() ) {
-        error( "klass %#lx isn't a klass", klass() );
+        error( "klass 0x{0:x} isn't a klass", klass() );
         flag = false;
     }
     if ( not selector_or_method()->is_symbol() and not selector_or_method()->is_method() ) {
-        lprintf( "\tin selector_or_method of LookupKey %#lx\n", this );
+        spdlog::info( "\tin selector_or_method of LookupKey 0x{0:x}", static_cast<const void *>(this) );
         flag = false;
     }
     return flag;
@@ -133,22 +131,22 @@ MethodOop LookupKey::method() const {
 }
 
 
-bool_t LookupKey::is_super_type() const {
+bool LookupKey::is_super_type() const {
     return selector_or_method()->is_method() and not MethodOop( selector_or_method() )->is_blockMethod();
 }
 
 
-bool_t LookupKey::is_normal_type() const {
+bool LookupKey::is_normal_type() const {
     return not selector_or_method()->is_method();
 }
 
 
-bool_t LookupKey::is_block_type() const {
+bool LookupKey::is_block_type() const {
     return selector_or_method()->is_method() and MethodOop( selector_or_method() )->is_blockMethod();
 }
 
 
-bool_t LookupKey::equal( const LookupKey *p ) const {
+bool LookupKey::equal( const LookupKey *p ) const {
     return klass() == p->klass() and selector_or_method() == p->selector_or_method();
 }
 

@@ -17,27 +17,27 @@ public:
     LookupKey _inner;
 
 
-    bool_t is_empty() const {
+    bool is_empty() const {
         return _outer.selector_or_method() == smiOop_zero;
     }
 
 
-    bool_t is_filled() const {
+    bool is_filled() const {
         return SMIOop( _outer.klass() ) not_eq smiOop_zero;
     }
 
 
-    bool_t is_deleted() const {
+    bool is_deleted() const {
         return _outer.selector_or_method() == smiOop_one;
     }
 
 
-    bool_t is_inner() const {
+    bool is_inner() const {
         return _inner.selector_or_method() not_eq smiOop_zero;
     }
 
 
-    bool_t is_outer() const {
+    bool is_outer() const {
         return not is_inner();
     }
 
@@ -53,7 +53,7 @@ public:
     }
 
 
-    bool_t equal( LookupKey *o, LookupKey *i ) {
+    bool equal( LookupKey *o, LookupKey *i ) {
         return _outer.equal( o ) and ( is_outer() or _inner.equal( i ) );
     }
 
@@ -93,7 +93,7 @@ private:
     static void local_file_out_klass( NativeMethod *nm );
 
     // Returns the file name for the two keys and creates the necessary directories
-    static const char *compute_file_name( LookupKey *outer, LookupKey *inner, bool_t create_directories );
+    static const char *compute_file_name( LookupKey *outer, LookupKey *inner, bool create_directories );
 
     // Returns the file name for the index file
     static const char *index_file_name();
@@ -115,11 +115,11 @@ public:
 
     // Writes the inlining structure for all compiled code.
     // Returns the number of written inlining structures.
-    static bool_t file_out_all();
+    static bool file_out_all();
 
     // Writes the inlining structure for compiled method.
     // Returns whether the information was written.
-    static bool_t file_out( NativeMethod *nm, ConsoleOutputStream *index_st = nullptr );
+    static bool file_out( NativeMethod *nm, ConsoleOutputStream *index_st = nullptr );
 
     // Writes the inlining structure for all compiled methods with a
     // specific receiver klass, returns the number of written structures.
@@ -145,11 +145,11 @@ public:
 
     static void add_lookup_entry( LookupKey *outer, LookupKey *inner = nullptr );
 
-    static bool_t lookup( LookupKey *outer, LookupKey *inner = nullptr );
+    static bool lookup( LookupKey *outer, LookupKey *inner = nullptr );
 
     static RecompilationScope *lookup_and_remove( LookupKey *outer, LookupKey *inner = nullptr );
 
-    static RecompilationScope *select_and_remove( bool_t *end_of_table ); // For background compilation
+    static RecompilationScope *select_and_remove( bool *end_of_table ); // For background compilation
 
     // Index file
     static void load_index_file();

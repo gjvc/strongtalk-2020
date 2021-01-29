@@ -31,13 +31,13 @@ void Interpreted_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     funct_name()->print_value();
-    _console->print_cr( " (0x%x, %s, interpreted)", entry_point(), async() ? "asynchronous" : "synchronous" );
+    spdlog::info( " (0x{0:x}, %s, interpreted)", reinterpret_cast<void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
 // Compiled_DLLCache implementation
 
-bool_t Compiled_DLLCache::async() const {
+bool Compiled_DLLCache::async() const {
     char *d = destination();
     return d == StubRoutines::lookup_DLL_entry( true ) or d == StubRoutines::call_DLL_entry( true );
 }
@@ -55,7 +55,7 @@ void Compiled_DLLCache::verify() {
     // check destination
     char *d = destination();
     if ( d not_eq StubRoutines::lookup_DLL_entry( true ) and d not_eq StubRoutines::lookup_DLL_entry( false ) and d not_eq StubRoutines::call_DLL_entry( true ) and d not_eq StubRoutines::call_DLL_entry( false ) ) {
-        st_fatal1( "Compiled_DLLCache destination 0x%x incorrect", d );
+        st_fatal1( "Compiled_DLLCache destination 0x{0:x} incorrect", d );
     }
 }
 
@@ -65,7 +65,7 @@ void Compiled_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     function_name()->print_value();
-    _console->print_cr( " (0x%x, %s, compiled)", entry_point(), async() ? "asynchronous" : "synchronous" );
+    spdlog::info( " (0x{0:x}, %s, compiled)", reinterpret_cast<const void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
@@ -85,7 +85,7 @@ DLL *DLLs::load( SymbolOop name ) {
 }
 
 
-bool_t DLLs::unload( DLL *library ) {
+bool DLLs::unload( DLL *library ) {
     return os::dll_unload( library );
 }
 
@@ -93,7 +93,7 @@ bool_t DLLs::unload( DLL *library ) {
 dll_func_ptr_t DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
     // Call backs to Delta
     if ( Universe::dll_lookup_receiver()->is_nil() ) {
-        warning( "dll lookup receiver is not set" );
+        spdlog::warn( "dll lookup receiver is not set" );
     }
     st_assert( theCompiler == nullptr, "Cannot handle call back during compilation" );
 
@@ -108,12 +108,12 @@ dll_func_ptr_t DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
     dll_func_ptr_t result = lookup_fail( dll_name, function_name );
     if ( result ) {
         if ( TraceDLLLookup ) {
-            _console->print_cr( "address [0x%lx], DLL name [%s], function name [%s]", result, dll_name->print_value_string(), function_name->print_value_string() );
+            spdlog::info( "address [0x%lx], DLL name[{}], function name[{}]", reinterpret_cast<void *>(result), dll_name->print_value_string(), function_name->print_value_string() );
         }
         return result;
     } else {
         if ( TraceDLLLookup ) {
-            _console->print_cr( "could not find function name [%s] in DLL name [%s]", function_name->print_value_string(), dll_name->print_value_string() );
+            spdlog::info( "could not find function name[{}] in DLL name[{}]", function_name->print_value_string(), dll_name->print_value_string() );
         }
     }
 
@@ -173,12 +173,14 @@ void DLLs::exit_sync_call( DeltaProcess **addr ) {
 
 
 extern "C" {
+
 void __CALLING_CONVENTION enter_async_call( DeltaProcess **addr ) {
     DLLs::enter_async_call( addr );
 }
 void __CALLING_CONVENTION exit_async_call( DeltaProcess **addr ) {
     DLLs::exit_async_call( addr );
 }
+
 }
 
 

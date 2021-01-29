@@ -12,7 +12,6 @@
 #if __SIZE_WIDTH__ == 32
 
 typedef std::intptr_t smi_t;     //
-typedef std::int32_t  bool_t;    //
 typedef std::uint32_t address_t; //
 
 #endif
@@ -21,7 +20,6 @@ typedef std::uint32_t address_t; //
 #if __SIZE_WIDTH__ == 64
 
 typedef std::intptr_t  smi_t;        //
-typedef std::int64_t   bool_t;       //
 typedef std::uint64_t  address_t;    //
 
 #endif
@@ -36,9 +34,11 @@ static_assert( sizeof( smi_t ) == sizeof( address_t ) );
 
 constexpr std::int32_t SIZEOF_FLOAT = sizeof( double );
 
+
 constexpr std::int32_t st_log2( std::int32_t n ) {
     return ( ( n < 2 ) ? 1 : 1 + st_log2( n / 2 ) );
 }
+
 
 constexpr std::int32_t BitsPerByte    = 8;
 constexpr std::int32_t LogBitsPerByte = st_log2( BitsPerByte );

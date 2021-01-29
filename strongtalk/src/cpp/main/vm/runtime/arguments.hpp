@@ -11,4 +11,4 @@ extern const char *rc_basename;
 
 void parse_arguments( std::int32_t argc, char *argv[] );
 
-void process_settings_file( const char *file_name, bool_t quiet = false );
+void process_settings_file( const char *file_name, bool quiet = false );

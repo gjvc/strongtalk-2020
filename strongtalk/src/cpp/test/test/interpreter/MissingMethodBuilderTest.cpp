@@ -52,7 +52,7 @@ protected:
     void CHECK_OOPS( Oop expectedOops[], ObjectArrayOop oops, std::int32_t index ) {
         Oop expected = expectedOops[ index ];
         Oop actual   = oops->obj_at( index + 1 );
-        sprintf( msg, "Incorrect Oop at %d. Expected: 0x%x, but was: 0x%x", index, expected, actual );
+        sprintf( msg, "Incorrect Oop at %d. Expected: 0x{0:x}, but was: 0x{0:x}", index, expected, actual );
         EXPECT_EQ( std::int32_t( expected ), std::int32_t( actual ) ) << msg;
     }
 };

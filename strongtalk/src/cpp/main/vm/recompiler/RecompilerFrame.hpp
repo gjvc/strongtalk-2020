@@ -43,17 +43,17 @@ public:
     static RecompilerFrame *new_RFrame( Frame frame, const RecompilerFrame *callee );
 
 
-    virtual bool_t is_interpreted() const {
+    virtual bool is_interpreted() const {
         return false;
     }
 
 
-    virtual bool_t is_compiled() const {
+    virtual bool is_compiled() const {
         return false;
     }
 
 
-    bool_t is_super() const;        // invoked by super send?
+    bool is_super() const;        // invoked by super send?
     std::int32_t invocations() const {
         return _invocations;
     }
@@ -92,7 +92,7 @@ public:
     }
 
 
-    bool_t is_blockMethod() const;
+    bool is_blockMethod() const;
 
 
     Frame fr() const {
@@ -115,7 +115,7 @@ public:
     }
 
 
-    bool_t hasBlockArgs() const;        // does top method receive block arguments?
+    bool hasBlockArgs() const;        // does top method receive block arguments?
     GrowableArray<BlockClosureOop> *blockArgs() const;  // return list of all block args
 
     RecompilerFrame *caller();
@@ -154,7 +154,7 @@ protected:
 public:
 
     CompiledRecompilerFrame( Frame fr );    // for NativeMethod triggering its counter (callee == nullptr)
-    bool_t is_compiled() const {
+    bool is_compiled() const {
         return true;
     }
 
@@ -198,7 +198,7 @@ protected:
 
 public:
     InterpretedRecompilerFrame( Frame fr, MethodOop m, KlassOop rcvrKlass );    // for method triggering its invocation counter
-    bool_t is_interpreted() const {
+    bool is_interpreted() const {
         return true;
     }
 

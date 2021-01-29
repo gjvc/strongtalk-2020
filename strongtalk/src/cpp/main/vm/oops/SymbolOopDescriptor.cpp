@@ -15,16 +15,16 @@ SymbolOop SymbolOopDescriptor::scavenge() {
 }
 
 
-bool_t SymbolOopDescriptor::verify() {
-    bool_t flag = ByteArrayOopDescriptor::verify();
+bool SymbolOopDescriptor::verify() {
+    bool flag = ByteArrayOopDescriptor::verify();
     if ( flag ) {
         if ( not is_old() ) {
-            error( "SymbolOop %#lx isn't tenured", this );
+            error( "SymbolOop 0x{0:x} isn't tenured", this );
             flag = false;
         }
         SymbolOop s = Universe::symbol_table->lookup( (const char *) bytes(), length() );
         if ( s not_eq this ) {
-            error( "SymbolOop %#lx isn't canonical", this );
+            error( "SymbolOop 0x{0:x} isn't canonical", this );
             flag = false;
         }
     }

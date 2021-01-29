@@ -23,7 +23,7 @@ inline RegisterMask & allocate( RegisterMask & s1, RegisterMask s2 ) {
     return s1;
 }
 
-inline bool_t isAllocated( RegisterMask s, Location l ) {
+inline bool isAllocated( RegisterMask s, Location l ) {
     Unimplemented();
     // return isBitSet(s, l);
     return false;
@@ -60,7 +60,7 @@ class LongRegisterMask : ResourceObject {
         LongRegisterMask();
         void allocate( Location l );
         void deallocate( Location l );
-        bool_t isAllocated( Location l );
+        bool isAllocated( Location l );
         RegisterMask regs();        // returns mask for registers
         void print();
 

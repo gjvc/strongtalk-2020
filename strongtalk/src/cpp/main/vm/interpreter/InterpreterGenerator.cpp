@@ -92,8 +92,8 @@ void InterpreterGenerator::stack_check_pop() {
     if ( not _stack_check )
         return;
     Label L;
-    // ;_print "pop:  esp = 0x%x", esp, 0
-    // ;_print "      tos = 0x%x", eax, 0
+    // ;_print "pop:  esp = 0x{0:x}", esp, 0
+    // ;_print "      tos = 0x{0:x}", eax, 0
     _macroAssembler->cmpl( eax, STACK_CHECKER_MAGIC_VALUE );
     _macroAssembler->jcc( Assembler::Condition::notEqual, _stack_misaligned );
     _macroAssembler->bind( L );
@@ -363,7 +363,7 @@ const char *InterpreterGenerator::push_arg_n() {
 }
 
 
-const char *InterpreterGenerator::push_smi( bool_t negative ) {
+const char *InterpreterGenerator::push_smi( bool negative ) {
     const char *ep = entry_point();
     _macroAssembler->movb( ebx, Address( esi, 1 ) );    // get b
     _macroAssembler->addl( esi, 2 );            // advance to next bytecode
@@ -434,7 +434,7 @@ const char *InterpreterGenerator::push_instVar() {
 }
 
 
-const char *InterpreterGenerator::store_instVar( bool_t pop ) {
+const char *InterpreterGenerator::store_instVar( bool pop ) {
     const char *ep = entry_point();
     advance_aligned( 1 + oopSize );
     _macroAssembler->movl( ecx, self_addr() );
@@ -469,7 +469,7 @@ const char *InterpreterGenerator::only_pop() {
 }
 
 
-const char *InterpreterGenerator::store_temp( std::int32_t i, bool_t pop ) {
+const char *InterpreterGenerator::store_temp( std::int32_t i, bool pop ) {
     const char *ep = entry_point();
     next_ebx();
     _macroAssembler->movl( temp_addr( i ), eax );
@@ -480,7 +480,7 @@ const char *InterpreterGenerator::store_temp( std::int32_t i, bool_t pop ) {
 }
 
 
-const char *InterpreterGenerator::store_temp_n( bool_t pop ) {
+const char *InterpreterGenerator::store_temp_n( bool pop ) {
     const char *ep = entry_point();
     _macroAssembler->addl( esi, 2 );
     _macroAssembler->movb( ebx, Address( esi, -1 ) );
@@ -495,7 +495,7 @@ const char *InterpreterGenerator::store_temp_n( bool_t pop ) {
 
 extern "C" void trace_push_global( Oop assoc, Oop value ) {
     ResourceMark resourceMark;
-    _console->print_cr( "Trace push_global: " );
+    spdlog::info( "Trace push_global: " );
     assoc->print_value();
     _console->cr();
     value->print_value();
@@ -526,7 +526,7 @@ const char *InterpreterGenerator::push_global() {
 }
 
 
-const char *InterpreterGenerator::store_global( bool_t pop ) {
+const char *InterpreterGenerator::store_global( bool pop ) {
     const char *ep = entry_point();
     skip_words( 1 );
     _macroAssembler->movl( ecx, Address( esi, -oopSize ) );                    // get association
@@ -598,12 +598,12 @@ const char *InterpreterGenerator::set_self_via_context() {
 }
 
 
-const char *InterpreterGenerator::with_context_temp( bool_t store, std::int32_t tempNo, std::int32_t contextNo ) {
+const char *InterpreterGenerator::with_context_temp( bool store, std::int32_t tempNo, std::int32_t contextNo ) {
     st_assert( contextNo >= -1, "illegal context no." );
     st_assert( tempNo >= -1, "illegal temporary no." );
 
-    Label _loop;
-    std::int32_t   codeSize = 1 + ( contextNo == -1 ? 1 : 0 ) + ( tempNo == -1 ? 1 : 0 );
+    Label        _loop;
+    std::int32_t codeSize = 1 + ( contextNo == -1 ? 1 : 0 ) + ( tempNo == -1 ? 1 : 0 );
 
     const char *ep = entry_point();
 
@@ -661,11 +661,11 @@ const char *InterpreterGenerator::with_context_temp( bool_t store, std::int32_t 
 // Copy parameters into context
 //
 
-const char *InterpreterGenerator::copy_params_into_context( bool_t self, std::int32_t paramsCount ) {
+const char *InterpreterGenerator::copy_params_into_context( bool self, std::int32_t paramsCount ) {
     st_assert( paramsCount >= -1, "illegal params count." );
 
-    Label _loop;
-    std::int32_t   oneIfSelf = self ? 1 : 0;
+    Label        _loop;
+    std::int32_t oneIfSelf = self ? 1 : 0;
 
     const char *ep = entry_point();
 
@@ -730,7 +730,7 @@ extern "C" Oop allocateBlock1();
 extern "C" Oop allocateBlock2();
 */
 
-const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool_t use_context ) {
+const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_context ) {
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                            // save tos
     if ( nofArgs == -1 ) {
@@ -801,7 +801,7 @@ extern "C" Oop allocateContext1();
 extern "C" Oop allocateContext2();
 */
 
-const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool_t for_method ) {
+const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool for_method ) {
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                // save tos
     if ( nofArgs == -1 ) {
@@ -851,7 +851,7 @@ const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool_t 
 
 const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
 
-    bool_t isByte, isTrue, isCond;
+    bool isByte, isTrue, isCond;
 
     switch ( code ) {
         case ByteCodes::Code::ifTrue_byte:
@@ -897,10 +897,10 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
         default: ShouldNotReachHere();
     }
 
-    Label   _else;
-    Address cond     = isTrue ? true_addr() : false_addr();
-    Address not_cond = not isTrue ? true_addr() : false_addr();
-    std::int32_t     codeSize = ( isCond ? 1 : 2 ) + ( isByte ? 1 : 4 );
+    Label        _else;
+    Address      cond     = isTrue ? true_addr() : false_addr();
+    Address      not_cond = not isTrue ? true_addr() : false_addr();
+    std::int32_t codeSize = ( isCond ? 1 : 2 ) + ( isByte ? 1 : 4 );
 
     const char *ep = entry_point();
 
@@ -939,7 +939,7 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
 
 const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
-    bool_t isByte, isTrue;
+    bool isByte, isTrue;
 
     switch ( code ) {
         case ByteCodes::Code::whileTrue_byte:
@@ -963,9 +963,9 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
     Label _exit, _overflow, _call_overflow;
 
-    Address cond     = isTrue ? true_addr() : false_addr();
-    Address not_cond = not isTrue ? true_addr() : false_addr();
-    std::int32_t     codeSize = 1 + ( isByte ? 1 : oopSize );
+    Address      cond     = isTrue ? true_addr() : false_addr();
+    Address      not_cond = not isTrue ? true_addr() : false_addr();
+    std::int32_t codeSize = 1 + ( isByte ? 1 : oopSize );
 
     const char *ep = entry_point();
 
@@ -1024,7 +1024,7 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
 const char *InterpreterGenerator::control_jump( ByteCodes::Code code ) {
 
-    bool_t isByte, isLoop;
+    bool isByte, isLoop;
 
     switch ( code ) {
         case ByteCodes::Code::jump_else_byte:
@@ -1261,7 +1261,7 @@ const char *InterpreterGenerator::float_set() {
 }
 
 
-const char *InterpreterGenerator::float_op( std::int32_t nof_args, bool_t returns_float ) {
+const char *InterpreterGenerator::float_op( std::int32_t nof_args, bool returns_float ) {
     st_assert( 0 <= nof_args and nof_args <= 8, "illegal nof_args specification" );
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                // make sure all floats are completely in memory
@@ -1290,7 +1290,7 @@ const char *InterpreterGenerator::float_op( std::int32_t nof_args, bool_t return
 //       in lookup_primitive(). However, esi (i.e. f.hp()) is adjusted in the
 //       lookup_and_patch routine.
 
-const char *InterpreterGenerator::predict_prim( bool_t canFail ) {
+const char *InterpreterGenerator::predict_prim( bool canFail ) {
     // _predict_prim & _predict_prim_ifFail are two bytecodes that are
     // used during lookup, during execution they can be simply ignored.
     const char *ep = entry_point();
@@ -1387,7 +1387,7 @@ const char *InterpreterGenerator::call_primitive_can_fail() {
 // arguments don't need to be popped since the NonLocalReturn is simply returning too
 // (as for ordinary NonLocalReturns). Thus, NonLocalReturns are just propagated as usual.
 
-const char *InterpreterGenerator::call_DLL( bool_t async ) {
+const char *InterpreterGenerator::call_DLL( bool async ) {
 
     const char *ep = entry_point();
     Label      L;
@@ -1463,7 +1463,7 @@ const char *Interpreter::_dr_from_dll_call                                     =
 const char *Interpreter::_dr_from_dll_call_restore                             = nullptr;
 
 extern "C" std::int32_t number_of_arguments_through_unpacking;
-extern "C" Oop result_through_unpacking;
+extern "C" Oop          result_through_unpacking;
 
 
 void InterpreterGenerator::generate_deoptimized_return_restore() {
@@ -2115,7 +2115,7 @@ void InterpreterGenerator::zap_context() {
 // Local returns
 //
 
-const char *InterpreterGenerator::local_return( bool_t push_self, std::int32_t nofArgs, bool_t zap ) {
+const char *InterpreterGenerator::local_return( bool push_self, std::int32_t nofArgs, bool zap ) {
     const char *ep = entry_point();
     if ( zap ) {
         zap_context();
@@ -2390,7 +2390,7 @@ const char *InterpreterGenerator::nonlocal_return_self() {
 // Should change this at some point (optimization).
 //
 
-const char *InterpreterGenerator::access_send( bool_t self ) {
+const char *InterpreterGenerator::access_send( bool self ) {
 
     const char *ep                      = entry_point();
 
@@ -2460,18 +2460,18 @@ const char *InterpreterGenerator::access_send( bool_t self ) {
 //       have changed in the meantime which may cause problems.
 //       Right now we try to minimize the chance for this to happen by loading the cached method as soon as possible, thereby reducing the time frame for the sweeper (gri).
 
-const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool_t allow_methodOop, bool_t allow_nativeMethod, bool_t primitive_send ) {
+const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_methodOop, bool allow_nativeMethod, bool primitive_send ) {
     st_assert( allow_methodOop or allow_nativeMethod or primitive_send, "must allow at least one method representation" );
 
     Label is_smi, compare_class, is_methodOop, is_nativeMethod;
 
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
-    bool_t                  pop_tos  = ByteCodes::pop_tos( code );
+    bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t     length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
-    Address method_addr = Address( esi, -2 * oopSize );
-    Address klass_addr  = Address( esi, -1 * oopSize );
+    std::int32_t length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    Address      method_addr = Address( esi, -2 * oopSize );
+    Address      klass_addr  = Address( esi, -1 * oopSize );
 
     _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
     _macroAssembler->movl( edi, smiKlass_addr() );        // load smi_t klass
@@ -2569,10 +2569,10 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
 
     // inline cache layout
-    std::int32_t     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
-    bool_t  pop_tos       = ByteCodes::pop_tos( code );
-    Address selector_addr = Address( esi, -2 * oopSize );
-    Address klass_addr    = Address( esi, -1 * oopSize );
+    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    bool         pop_tos       = ByteCodes::pop_tos( code );
+    Address      selector_addr = Address( esi, -2 * oopSize );
+    Address      klass_addr    = Address( esi, -1 * oopSize );
 
     _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
     _macroAssembler->movl( ecx, smiKlass_addr() );        // load smi_t klass
@@ -2665,12 +2665,12 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     Label loop, found, is_nativeMethod;
 
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
-    bool_t                  pop_tos  = ByteCodes::pop_tos( code );
+    bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t     length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
-    Address selector_addr = Address( esi, -2 * oopSize );
-    Address pic_addr      = Address( esi, -1 * oopSize );
+    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    Address      selector_addr = Address( esi, -2 * oopSize );
+    Address      pic_addr      = Address( esi, -1 * oopSize );
 
     // pic layout
     std::int32_t length_offset = 2 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
@@ -2751,7 +2751,7 @@ const char *InterpreterGenerator::special_primitive_send_hint() {
 }
 
 
-const char *InterpreterGenerator::compare( bool_t equal ) {
+const char *InterpreterGenerator::compare( bool equal ) {
     Assembler::Condition cond = equal ? Assembler::Condition::equal : Assembler::Condition::notEqual;
 
     Label _return_true;
@@ -2786,10 +2786,10 @@ const char *InterpreterGenerator::halt() {
 const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
     // constants for readability
-    const bool_t  pop           = true;
-    const bool_t  returns_float = true;
-    const bool_t  push          = false;
-    const bool_t  store_pop     = true;
+    const bool             pop           = true;
+    const bool             returns_float = true;
+    const bool             push          = false;
+    const bool             store_pop     = true;
     constexpr std::int32_t n             = -1;
 
     switch ( code ) {
@@ -3295,7 +3295,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
 void InterpreterGenerator::info( const char *name ) {
 
-    _console->print_cr( "%%interpreter-generate [%s]", name );
+    spdlog::info( "%interpreter-generate[{}]", name );
 
     if ( not PrintInterpreter ) {
         return;
@@ -3360,9 +3360,9 @@ void InterpreterGenerator::generate_all() {
 
         ByteCodes::set_entry_point( ByteCodes::Code( i ), entry );
         if ( PrintInterpreter ) {
-            std::int32_t        length = _macroAssembler->pc() - start;
-            const char *name  = ByteCodes::name( (ByteCodes::Code) i );
-            _console->print_cr( "bytecode # [0x%02x], address [0x%0x], size [0x%04x], name [%s]", i, entry, length, name );
+            std::int32_t length = _macroAssembler->pc() - start;
+            const char   *name  = ByteCodes::name( (ByteCodes::Code) i );
+            spdlog::info( "bytecode # [0x%02x], address[0x{0:x}], size [0x%04x], name[{}]", i, entry, length, name );
             _macroAssembler->code()->decode();
             _console->cr();
         }
@@ -3374,7 +3374,7 @@ void InterpreterGenerator::generate_all() {
 }
 
 
-InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool_t debug ) {
+InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool debug ) {
     _macroAssembler = new MacroAssembler( code );
     _debug          = debug;
     _stack_check    = Interpreter::has_stack_checks();
@@ -3382,20 +3382,20 @@ InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool_t debug ) {
 
 
 static constexpr std::int32_t interpreter_size = 40000;
-static const char    *interpreter_code;
+static const char             *interpreter_code;
 
 
 void interpreter_init() {
-    _console->print_cr( "%%system-init:  interpreter_init" );
+    spdlog::info( "%system-init:  interpreter_init" );
 
     interpreter_code = os::exec_memory( interpreter_size );
 
     CodeBuffer *code = new CodeBuffer( &interpreter_code[ 0 ], interpreter_size );
 
-    const bool_t debug = true; // change this to switch between debug/optimized version
+    const bool debug = true; // change this to switch between debug/optimized version
 
     InterpreterGenerator( code, debug ).generate_all();
-    _console->print_cr( "%%interpreter-size [%d] [0x%0x] bytes", code->code_size(), code->code_size() );
+    spdlog::info( "%interpreter-size [{}][0x{0:x}] bytes", code->code_size(), code->code_size() );
 
     Interpreter::init();
 }

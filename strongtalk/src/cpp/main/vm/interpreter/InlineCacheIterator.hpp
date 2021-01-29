@@ -60,28 +60,28 @@ public:
     }
 
 
-    virtual bool_t is_interpreted_ic() const {
+    virtual bool is_interpreted_ic() const {
         return false;
     }    // is sender interpreted?
 
-    virtual bool_t is_compiled_ic() const {
+    virtual bool is_compiled_ic() const {
         return false;
     }    // is sender compiled?
 
-    virtual bool_t is_super_send() const = 0;            // is super send?
+    virtual bool is_super_send() const = 0;            // is super send?
 
     // Iterating through entries
     virtual void init_iteration() = 0;
 
     virtual void advance() = 0;
 
-    virtual bool_t at_end() const = 0;
+    virtual bool at_end() const = 0;
 
     // Accessing entries
     virtual KlassOop klass() const = 0;
 
-    virtual bool_t is_interpreted() const = 0;    // is current target interpreted?
-    virtual bool_t is_compiled() const = 0;    // is current target compiled?
+    virtual bool is_interpreted() const = 0;    // is current target interpreted?
+    virtual bool is_compiled() const = 0;    // is current target compiled?
 
     virtual MethodOop interpreted_method() const = 0;    // target methodOop (always non-nullptr)
     virtual NativeMethod *compiled_method() const = 0;    // target NativeMethod; nullptr if interpreted
@@ -161,17 +161,17 @@ public:
     }
 
 
-    bool_t is_interpreted_ic() const {
+    bool is_interpreted_ic() const {
         return _iter->is_interpreted_ic();
     }
 
 
-    bool_t is_compiled_ic() const {
+    bool is_compiled_ic() const {
         return _iter->is_compiled_ic();
     }
 
 
-    bool_t is_super_send() const {
+    bool is_super_send() const {
         return _iter->is_super_send();
     }
 
@@ -218,7 +218,7 @@ public:
     }
 
 
-    bool_t at_end() const {
+    bool at_end() const {
         return state() == at_the_end;
     }
 
@@ -228,9 +228,9 @@ public:
 
     char *get_call_addr() const;
 
-    bool_t is_interpreted() const;
+    bool is_interpreted() const;
 
-    bool_t is_compiled() const;
+    bool is_compiled() const;
 
     MethodOop interpreted_method() const;
 
@@ -266,12 +266,12 @@ public:
 
 
     // InlineCache information
-    bool_t is_compiled_ic() const {
+    bool is_compiled_ic() const {
         return true;
     }
 
 
-    bool_t is_super_send() const;
+    bool is_super_send() const;
 
 
     std::int32_t number_of_targets() const {
@@ -298,7 +298,7 @@ public:
     void init_iteration();
 
     void advance();            // advance iterator to next target
-    bool_t at_end() const {
+    bool at_end() const {
         return _index >= number_of_targets();
     }
 
@@ -306,8 +306,8 @@ public:
     // Accessing entries
     KlassOop klass() const;            // receiver klass of current target
 
-    bool_t is_interpreted() const;          // is current target interpreted?
-    bool_t is_compiled() const;
+    bool is_interpreted() const;          // is current target interpreted?
+    bool is_compiled() const;
 
     MethodOop interpreted_method() const;   // current target method (whether compiled or not)
     NativeMethod *compiled_method() const; // current compiled target or nullptr if interpreted

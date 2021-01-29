@@ -33,7 +33,7 @@ SplitSig * new_SplitSig( SplitSig * current, std::int32_t splitID ) {
 
 void SplitSig::print() {
     char buf[MaxSplitDepth + 1];
-    lprintf( "SplitSig %#lx: %s", this, prefix( buf ) );
+    spdlog::info( "SplitSig 0x{0:x}: %s", this, prefix( buf ) );
 }
 
 char * SplitSig::prefix( const char * buf ) {
@@ -51,7 +51,7 @@ char * SplitSig::prefix( const char * buf ) {
 
 // compiler code for splitting
 
-bool_t CodeScope::shouldSplit( SendInfo * info ) {
+bool CodeScope::shouldSplit( SendInfo * info ) {
     assert( info->receiver->isMergeExpression(), "should be merge expr" );
     MergeExpression * r = ( MergeExpression * ) info->receiver;
     assert( r->isSplittable(), "should be splittable" );
@@ -77,7 +77,7 @@ bool_t CodeScope::shouldSplit( SendInfo * info ) {
                 // could fix this with better splitting (introduce temps to
                 // "synchronize" the value's scopes)
                 if ( PrintInlining ) {
-                    lprintf( "%*s*not splitting %s: too complicated (scopes)\n",
+                    spdlog::info( "%*s*not splitting %s: too complicated (scopes)",
                              depth, "", info->sel->copy_null_terminated() );
                 }
                 r->setSplittable( false );    // no sense trying again
@@ -88,7 +88,7 @@ bool_t CodeScope::shouldSplit( SendInfo * info ) {
                 cost -= n->cost();
                 if ( not n->isSplittable() ) {
                     if ( PrintInlining ) {
-                        lprintf( "%*s*not splitting %s: unsplittable node\n",
+                        spdlog::info( "%*s*not splitting %s: unsplittable node",
                                  depth, "", info->sel->copy_null_terminated() );
                     }
                     return false;
@@ -103,7 +103,7 @@ bool_t CodeScope::shouldSplit( SendInfo * info ) {
 done:
     if ( n not_eq current or cost < 0 ) {
         if ( PrintInlining ) {
-            lprintf( "%*s*not splitting %s: cost too high (>%ld)\n", depth, "",
+            spdlog::info( "%*s*not splitting %s: cost too high (>%ld)", depth, "",
                      info->sel->copy_null_terminated(),
                      theCompiler->inlineLimit[ InlineLimitIType::SplitCostLimit ] - cost );
         }
@@ -130,14 +130,14 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
     std::int32_t ncases = r->exprs->length();
     memoizeBlocks( info->sel );
     if ( PrintInlining ) {
-        lprintf( "%*s*splitting %s\n", depth, "", selector_string( info->sel ) );
+        spdlog::info( "%*s*splitting %s", depth, "", selector_string( info->sel ) );
     }
     Node * current = theNodeGen->current;
-    bool_t first = true;
+    bool first = true;
     GrowableArray <Oop> * splitReceiverKlasss = new GrowableArray <Oop>( 10 );// receiver map of each branch
     GrowableArray <PseudoRegister *> * splitReceivers = new GrowableArray <PseudoRegister *>( 10 );    // receiver reg of each branch
     GrowableArray <Node *>           * splitHeads = new GrowableArray <Node *>( 10 );    // first node of each branch
-    bool_t needKlassLoad                          = false;
+    bool needKlassLoad                          = false;
 
     for ( std::int32_t i = 0; i < ncases; i++ ) {
         Expression * nth = r->exprs->at( i );
@@ -218,7 +218,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
         std::int32_t diff;
         if ( WizardMode and PrintInlining and
              ( diff = r->exprs->length() - splitReceiverKlasss->length() ) > 1 ) {
-            lprintf( "*unnecessary %d-way type test for %d cases\n",
+            spdlog::info( "*unnecessary %d-way type test for %d cases",
                      splitReceiverKlasss->length(), diff );
         }
         Node * oldMerge = r->node();
@@ -250,7 +250,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
             }
             theNodeGen->uncommonBranch( currentExprStack( 0 ), info->restartPrim );
             if ( PrintInlining ) {
-                lprintf( "%*s*making %s uncommon (3)\n",
+                spdlog::info( "%*s*making %s uncommon (3)",
                          depth, "", selector_string( info->sel ) );
             }
         }
@@ -280,7 +280,7 @@ Node * CodeScope::copyPath( Node * n, Node * start, Node * end,
     // with newPR; append copies to n, return last node
     if ( CompilerDebug ) {
         char * s = new_resource_array<char>( 100 );
-        sprintf( s, "start of copied code: %#lx(N%d) --> %#lx(N%d) @ %#lx(N%d)",
+        sprintf( s, "start of copied code: 0x{0:x}(N%d) --> 0x{0:x}(N%d) @ 0x{0:x}(N%d)",
                  start, start->id(), end, end->id(), n, n->id() );
         n = n->append( new CommentNode( s ) );
     }

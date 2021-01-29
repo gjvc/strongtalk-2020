@@ -6,7 +6,7 @@
 #include "vm/code/BlockScopeNode.hpp"
 
 
-void BlockScopeNode::generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool_t bigHeader ) {
+void BlockScopeNode::generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
     ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
     rec->genValue( _offset - _parent->_offset );
 }

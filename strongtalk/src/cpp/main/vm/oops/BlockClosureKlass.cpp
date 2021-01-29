@@ -52,8 +52,8 @@ KlassOop BlockClosureKlass::blockKlassFor( std::int32_t numberOfArguments ) {
 }
 
 
-bool_t BlockClosureKlass::oop_verify( Oop obj ) {
-    bool_t flag = Klass::oop_verify( obj );
+bool BlockClosureKlass::oop_verify( Oop obj ) {
+    bool flag = Klass::oop_verify( obj );
     // FIX LATER
     return flag;
 }
@@ -65,7 +65,7 @@ void setKlassVirtualTableFromBlockClosureKlass( Klass *k ) {
 }
 
 
-Oop BlockClosureKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop BlockClosureKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k = as_klassOop();
 
     // allocate

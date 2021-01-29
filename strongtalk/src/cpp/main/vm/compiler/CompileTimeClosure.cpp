@@ -8,11 +8,11 @@
 #include "vm/compiler/Compiler.hpp"
 
 
-bool_t CompileTimeClosure::verify() const {
-    bool_t ok;
+bool CompileTimeClosure::verify() const {
+    bool ok;
     if ( not _method->is_method() ) {
         ok = false;
-        error( "CompileTimeClosure %#lx: Oop %#lx is not a method", this, _method );
+        error( "CompileTimeClosure 0x{0:x}: Oop 0x{0:x} is not a method", this, _method );
     }
     return ok and _method->verify();
 }
@@ -39,6 +39,6 @@ void CompileTimeClosure::generateDebugInfo() {
 
 
 void CompileTimeClosure::print() {
-    lprintf( "(CompileTimeClosure*)%#x for method %#x: ", this, _method );
+    spdlog::info( "(CompileTimeClosure*)0x{0:x} for method 0x{0:x}: ", static_cast<void*>( this ), static_cast<void*>( _method ) );
     _method->pretty_print();
 }

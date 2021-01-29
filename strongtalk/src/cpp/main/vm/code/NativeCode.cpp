@@ -25,8 +25,8 @@ void OopNativeCode::relocate() {
 }
 
 
-bool_t OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
-    bool_t needToInvalICache = false;
+bool OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
+    bool needToInvalICache = false;
     Unimplemented();
     return needToInvalICache;
 }
@@ -34,9 +34,9 @@ bool_t OopNativeCode::switch_pointers( Oop from, Oop to, GrowableArray<NativeMet
 
 void NativeCodeBase::verify2( const char *name ) {
     if ( (std::int32_t) this & ( oopSize - 1 ) )
-        error( "alignment error in %s at %#lx", name, this );
+        error( "alignment error in %s at 0x{0:x}", name, this );
     if ( instructionsLength() > 256 * 1024 )
-        error( "instr length of %s at %#lx seems too big (%ld)", name, this, instructionsLength() );
+        error( "instr length of %s at 0x{0:x} seems too big (%ld)", name, this, instructionsLength() );
 }
 
 

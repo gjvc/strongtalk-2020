@@ -51,7 +51,7 @@ void MemOopKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-bool_t MemOopKlass::oop_verify( Oop obj ) {
+bool MemOopKlass::oop_verify( Oop obj ) {
     return Universe::verify_oop( MemOop( obj ) );
 }
 
@@ -94,11 +94,11 @@ void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
         print_name_on( stream );
     }
     if ( PrintOopAddress )
-        stream->print( " (%#x)", this );
+        stream->print( " (0x{0:x})", this );
 }
 
 
-Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop MemOopKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k    = as_klassOop();
     std::int32_t      size = non_indexable_size();
 
@@ -115,7 +115,7 @@ Oop MemOopKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
 }
 
 
-Oop MemOopKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop MemOopKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
     return markSymbol( vmSymbols::not_indexable() );
 }
 
@@ -142,7 +142,7 @@ KlassOop MemOopKlass::create_subclass( MixinOop mixin, Format format ) {
         return WeakArrayKlass::create_class( as_klassOop(), mixin );
 
     if ( number_of_instance_variables() > 0 ) {
-        warning( "super class has instance variables when mixing in special mixin" );
+        spdlog::warn( "super class has instance variables when mixing in special mixin" );
         return nullptr;
     }
 
@@ -162,7 +162,7 @@ KlassOop MemOopKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 }
 
 
-Oop MemOopKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop MemOopKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     // Do not copy oddballs (nil, true, false)
     if ( obj == nilObject )
         return obj;

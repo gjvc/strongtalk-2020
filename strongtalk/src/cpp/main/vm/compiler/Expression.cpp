@@ -91,32 +91,32 @@ Expression *MergeExpression::asReceiver() const {
 
 // equals: do two expression denote the same type information?
 
-bool_t UnknownExpression::equals( Expression *other ) const {
+bool UnknownExpression::equals( Expression *other ) const {
     return other->isUnknownExpression();
 }
 
 
-bool_t NoResultExpression::equals( Expression *other ) const {
+bool NoResultExpression::equals( Expression *other ) const {
     return other->isNoResultExpression();
 }
 
 
-bool_t KlassExpression::equals( Expression *other ) const {
+bool KlassExpression::equals( Expression *other ) const {
     return ( other->isKlassExpression() or other->isConstantExpression() ) and other->klass() == klass();
 }
 
 
-bool_t BlockExpression::equals( Expression *other ) const {
+bool BlockExpression::equals( Expression *other ) const {
     return other->isBlockExpression() and other->klass() == klass();
 }
 
 
-bool_t ConstantExpression::equals( Expression *other ) const {
+bool ConstantExpression::equals( Expression *other ) const {
     return ( other->isConstantExpression() and other->constant() == constant() ) or ( other->isKlassExpression() and other->klass() == klass() );
 }
 
 
-bool_t MergeExpression::equals( Expression *other ) const {
+bool MergeExpression::equals( Expression *other ) const {
     return false; // for now -- fix this later
 }
 
@@ -352,7 +352,7 @@ Expression *MergeExpression::copyWithout( Expression *e ) const {
 }
 
 
-bool_t MergeExpression::really_hasKlass( InlinedScope *s ) const {
+bool MergeExpression::really_hasKlass( InlinedScope *s ) const {
     // Check if receiver really has only one klass.  Specifically, if we're
     // at the place that made the receiver's unknown part unlikely, the
     // receiver should *not* be considered a KlassExpression because the unknown
@@ -361,20 +361,20 @@ bool_t MergeExpression::really_hasKlass( InlinedScope *s ) const {
 }
 
 
-bool_t MergeExpression::hasKlass() const {
+bool MergeExpression::hasKlass() const {
     // treat a merge expr like a single klass if it contains only one klass and
     // possibly an unlikely unknown
     if ( exprs->length() > 2 )
         return false;
     Expression *e1 = exprs->at( 0 );
-    bool_t haveKlass1 = e1->hasKlass();
+    bool haveKlass1 = e1->hasKlass();
     if ( exprs->length() == 1 )
         return haveKlass1;    // only one expr
     UnknownExpression *u1 = e1->findUnknown();
     if ( u1 and not u1->isUnlikely() )
         return false;  // 1st = likely unknown
     Expression *e2 = exprs->at( 1 );
-    bool_t haveKlass2 = e2->hasKlass();
+    bool haveKlass2 = e2->hasKlass();
     UnknownExpression *u2 = e2->findUnknown();
     if ( u2 and not u2->isUnlikely() )
         return false;  // 2nd = likely unknown
@@ -399,7 +399,7 @@ KlassOop MergeExpression::klass() const {
 }
 
 
-bool_t MergeExpression::hasConstant() const {
+bool MergeExpression::hasConstant() const {
     // see hasKlass()...also, must be careful about different constants with
     // same klass (i.e. expr->next is set)
     return false;
@@ -435,7 +435,7 @@ Expression *MergeExpression::convertToKlass( PseudoRegister *p, Node *n ) const 
 }
 
 
-bool_t MergeExpression::containsUnknown() {
+bool MergeExpression::containsUnknown() {
     if ( isUnknownSet() ) {
         st_assert ( ( findUnknown() == nullptr ) not_eq isContainingUnknown(), "isContainingUnknown wrong" );
         return isContainingUnknown();
@@ -509,12 +509,12 @@ Expression *ConstantExpression::findKlass( KlassOop m ) const {
 
 
 // needsStoreCheck: when storing the expr into the heap, do we need a GC store check?
-bool_t KlassExpression::needsStoreCheck() const {
+bool KlassExpression::needsStoreCheck() const {
     return _klass not_eq smiKlassObject;
 }
 
 
-bool_t ConstantExpression::needsStoreCheck() const {
+bool ConstantExpression::needsStoreCheck() const {
     // don't need a check if either
     // - it's a smi_t, or
     // - it's an old object (old objects never become young again)
@@ -568,75 +568,76 @@ InlinedScope *Expression::scope() const {
 }
 
 
-NameNode *Expression::nameNode( bool_t mustBeLegal ) const {
+NameNode *Expression::nameNode( bool mustBeLegal ) const {
     return preg()->nameNode( mustBeLegal );
 }
 
 
-NameNode *ConstantExpression::nameNode( bool_t mustBeLegal ) const {
+NameNode *ConstantExpression::nameNode( bool mustBeLegal ) const {
 //c    return newValueName(constant()); }
     return 0;
 }
 
 
 void Expression::print_helper( const char *type ) {
-    lprintf( " (Node %#lx)", node() );
-    if ( next )
-        lprintf( " (next %#lx)", next );
-    lprintf( "    ((%s*)%#x)\n", type, this );
+    spdlog::info( " (Node 0x{0:x})", static_cast<void*>( node() ) );
+    if ( next ) {
+        spdlog::info( " (next 0x{0:x})", static_cast<void *>( next ) );
+    }
+    spdlog::info( "    ((%s*)0x{0:x})", type, static_cast<void*>( this ) );
 }
 
 
 void UnknownExpression::print() {
-    lprintf( "UnknownExpression %s", isUnlikely() ? "unlikely" : "" );
+    spdlog::info( "UnknownExpression %s", isUnlikely() ? "unlikely" : "" );
     Expression::print_helper( "UnknownExpression" );
 }
 
 
 void NoResultExpression::print() {
-    lprintf( "NoResultExpression " );
+    spdlog::info( "NoResultExpression " );
     Expression::print_helper( "NoResultExpression" );
 }
 
 
 void ContextExpression::print() {
-    lprintf( "ContextExpression %s", preg()->safeName() );
+    spdlog::info( "ContextExpression %s", preg()->safeName() );
     Expression::print_helper( "ContextExpression" );
 }
 
 
 void ConstantExpression::print() {
-    lprintf( "ConstantExpression %s", constant()->print_value_string() );
+    spdlog::info( "ConstantExpression %s", constant()->print_value_string() );
     Expression::print_helper( "ConstantExpression" );
 }
 
 
 void KlassExpression::print() {
-    lprintf( "KlassExpression %s", klass()->print_value_string() );
+    spdlog::info( "KlassExpression %s", klass()->print_value_string() );
     Expression::print_helper( "KlassExpression" );
 }
 
 
 void BlockExpression::print() {
-    lprintf( "BlockExpression %s", preg()->name() );
+    spdlog::info( "BlockExpression %s", preg()->name() );
     Expression::print_helper( "BlockExpression" );
 }
 
 
 void MergeExpression::print() {
-    lprintf( "MergeExpression %s(\n", isSplittable() ? "splittable " : "" );
+    spdlog::info( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
     for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
-        lprintf( "\t%#lx%s ", exprs->at( i ), exprs->at( i )->next ? "*" : "" );
+        spdlog::info( "\t0x{0:x}%s ", static_cast<void*>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
-    lprintf( ")" );
+    spdlog::info( ")" );
     Expression::print_helper( "MergeExpression" );
 }
 
 
 void Expression::verify() const {
     if ( _pseudoRegister == nullptr ) {
-        error( "Expression %#lx: no preg", this );
+        error( "Expression 0x{0:x}: no preg", this );
     } else {
         _pseudoRegister->verify();
     }
@@ -649,14 +650,14 @@ void KlassExpression::verify() const {
     Expression::verify();
     _klass->verify();
     if ( not _klass->is_klass() )
-        error( "KlassExpression %#lx: _klass %#lx isn't a klass", this, _klass );
+        error( "KlassExpression 0x{0:x}: _klass 0x{0:x} isn't a klass", this, _klass );
 }
 
 
 void BlockExpression::verify() const {
     Expression::verify();
     if ( _blockScope not_eq preg()->creationScope() )
-        error( "BlockExpression %#lx: inconsistent parent scope", this, _blockScope, preg()->creationScope() );
+        error( "BlockExpression 0x{0:x}: inconsistent parent scope", this, _blockScope, preg()->creationScope() );
 }
 
 
@@ -672,11 +673,11 @@ void MergeExpression::verify() const {
         Expression *e = exprs->at( i );
         e->verify();
         if ( e->isMergeExpression() )
-            error( "MergeExpression %#lx contains nested MergeExpression %#lx", this, e );
+            error( "MergeExpression 0x{0:x} contains nested MergeExpression 0x{0:x}", this, e );
         Node *n = e->node();
         if ( n ) {
             if ( nodes.contains( n ) )
-                error( "MergeExpression %#lx contains 2 expressions with same node %#lx", this, n );
+                error( "MergeExpression 0x{0:x} contains 2 expressions with same node 0x{0:x}", this, n );
             nodes.append( n );
         }
     }
@@ -768,7 +769,7 @@ void ExpressionStack::pop( std::int32_t nofExprsToPop ) {
 void ExpressionStack::print() {
     const std::int32_t len = length();
     for ( std::int32_t i   = 0; i < len; i++ ) {
-        lprintf( "[TOS - %2d]:  ", len - i - 1 );
+        spdlog::info( "[TOS - %2d]:  ", len - i - 1 );
         at( i )->print();
     }
 }

@@ -31,7 +31,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -82,7 +82,7 @@ public:
 
 
     // memory operations
-    bool_t verify();
+    bool verify();
 
     friend class doubleValueArrayKlass;
 };

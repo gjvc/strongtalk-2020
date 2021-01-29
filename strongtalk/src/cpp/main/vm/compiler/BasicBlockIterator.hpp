@@ -22,8 +22,8 @@ public:                                                         // was protected
     std::int32_t                          _basicBlockCount;      // number of BBs
     GrowableArray<PseudoRegister *>      *pregTable;            // holds all PseudoRegisters; indexed by their id
     GrowableArray<PseudoRegister *>      *globals;              // holds globally allocated PseudoRegisters; indexed by their num()
-    bool_t                               _usesBuilt;            // true after uses have been built
-    bool_t                               _blocksBuilt;          // true after basic blocks have been built
+    bool                               _usesBuilt;            // true after uses have been built
+    bool                               _blocksBuilt;          // true after basic blocks have been built
     GrowableArray<BlockPseudoRegister *> *exposedBlks;          // list of escaping blocks
 
 public:
@@ -48,8 +48,8 @@ protected:
     void add_BBs_to_list( GrowableArray<BasicBlock *> &list, GrowableArray<BasicBlock *> &work );
 
 public:
-    bool_t isSequential( std::int32_t curr, std::int32_t next ) const;        // are the two BasicBlock indices sequential in bbTable order?
-    bool_t isSequentialCode( BasicBlock *curr, BasicBlock *next ) const;    // are the two BBs sequential in codeGen order?
+    bool isSequential( std::int32_t curr, std::int32_t next ) const;        // are the two BasicBlock indices sequential in bbTable order?
+    bool isSequentialCode( BasicBlock *curr, BasicBlock *next ) const;    // are the two BBs sequential in codeGen order?
     GrowableArray<BasicBlock *> *code_generation_order();        // list of BBs in code generation order
 
     void clear();                            // clear bbTable
@@ -75,11 +75,11 @@ public:
 
     void apply( NodeVisitor *v );
 
-    bool_t verifyLabels();
+    bool verifyLabels();
 
     void print();
 
-    void print_code( bool_t suppressTrivial );
+    void print_code( bool suppressTrivial );
 
     void verify();
 };

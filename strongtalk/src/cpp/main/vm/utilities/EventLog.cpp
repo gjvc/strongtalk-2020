@@ -6,13 +6,11 @@
 
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 EventLog *eventLog;
 
 
 void eventlog_init() {
-    _console->print_cr( "%%system-init:  eventlog_init" );
+    spdlog::info( "%system-init:  eventlog_init" );
     eventLog = new EventLog;
 }
 
@@ -74,14 +72,14 @@ void EventLog::printPartial( std::int32_t n ) {
                 s = "- ";
                 break;
         }
-        lprintf( "%*.s%s", 2 * indent, " ", s );
-        lprintf( e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
-        lprintf( "\n" );
+        spdlog::info( "%*.s%s", 2 * indent, " ", s );
+        spdlog::info( e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
+        spdlog::info( "" );
         if ( e->_status == EventLogEventStatus::starting )
             indent++;
     }
     if ( indent not_eq _nestingDepth )
-        lprintf( "Actual event nesting is %ld greater than shown.\n", _nestingDepth - indent );
+        spdlog::info( "Actual event nesting is %ld greater than shown.", _nestingDepth - indent );
 }
 
 

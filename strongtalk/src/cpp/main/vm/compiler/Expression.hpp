@@ -17,8 +17,8 @@
  protected:                                      \
     static const std::int32_t CONC(name,Bit);                          \
  prot                                              \
- bool_t CONC(is,name)() const { return flags & CONC(name,Bit) ? true : false; }              \
-  void CONC(set,name)(bool_t b) {                              \
+ bool CONC(is,name)() const { return flags & CONC(name,Bit) ? true : false; }              \
+  void CONC(set,name)(bool b) {                              \
     if (b) flags |= CONC(name,Bit); else flags &= ~CONC(name,Bit); }          \
 
 
@@ -49,48 +49,48 @@ public:
     Expression( PseudoRegister *p, Node *n );
 
 
-    virtual bool_t isUnknownExpression() const {
+    virtual bool isUnknownExpression() const {
         return false;
     }
 
 
-    virtual bool_t isNoResultExpression() const {
+    virtual bool isNoResultExpression() const {
         return false;
     }
 
 
-    virtual bool_t isKlassExpression() const {
+    virtual bool isKlassExpression() const {
         return false;
     }
 
 
-    virtual bool_t isBlockExpression() const {
+    virtual bool isBlockExpression() const {
         return false;
     }
 
 
-    virtual bool_t isConstantExpression() const {
+    virtual bool isConstantExpression() const {
         return false;
     }
 
 
-    virtual bool_t isMergeExpression() const {
+    virtual bool isMergeExpression() const {
         return false;
     }
 
 
-    virtual bool_t isContextExpression() const {
+    virtual bool isContextExpression() const {
         return false;
     }
 
 
-    virtual bool_t hasKlass() const {
+    virtual bool hasKlass() const {
         return false;
     }
 
 
     virtual std::int32_t nklasses() const = 0;    // number of klasses contained in expr
-    virtual bool_t really_hasKlass( InlinedScope *s ) const {
+    virtual bool really_hasKlass( InlinedScope *s ) const {
         return hasKlass();
     }
 
@@ -101,7 +101,7 @@ public:
     }
 
 
-    virtual bool_t hasConstant() const {
+    virtual bool hasConstant() const {
         return false;
     }
 
@@ -112,7 +112,7 @@ public:
     }
 
 
-    virtual bool_t containsUnknown() = 0;
+    virtual bool containsUnknown() = 0;
 
 
     virtual Expression *makeUnknownUnlikely( InlinedScope *s ) {
@@ -121,12 +121,12 @@ public:
     }
 
 
-    virtual bool_t isUnknownUnlikely() const {
+    virtual bool isUnknownUnlikely() const {
         return false;
     }
 
 
-    virtual bool_t needsStoreCheck() const {
+    virtual bool needsStoreCheck() const {
         return true;
     }
 
@@ -166,7 +166,7 @@ public:
     virtual Expression *copyWithout( Expression *e ) const = 0;  // return receiver w/o expr case
     virtual Expression *mergeWith( Expression *other, Node *n ) = 0;  // return receiver merged with other
     virtual Expression *convertToKlass( PseudoRegister *p, Node *n ) const = 0;  // convert constants to klasses
-    virtual bool_t equals( Expression *other ) const = 0;
+    virtual bool equals( Expression *other ) const = 0;
 
 
     Node *node() const {
@@ -185,14 +185,14 @@ public:
     }
 
 
-    bool_t is_smi() const {
+    bool is_smi() const {
         return hasKlass() and klass() == smiKlassObject;
     }
 
 
     InlinedScope *scope() const;
 
-    virtual NameNode *nameNode( bool_t mustBeLegal = true ) const;
+    virtual NameNode *nameNode( bool mustBeLegal = true ) const;
 
     virtual void verify() const;
 
@@ -203,18 +203,18 @@ protected:
 // an expression whose type is unknown
 class UnknownExpression : public Expression {
 public:
-    UnknownExpression( PseudoRegister *p, Node *n = nullptr, bool_t u = false ) :
+    UnknownExpression( PseudoRegister *p, Node *n = nullptr, bool u = false ) :
             Expression( p, n ) {
         setUnlikely( u );
     }
 
 
-    bool_t isUnknownExpression() const {
+    bool isUnknownExpression() const {
         return true;
     }
 
 
-    bool_t containsUnknown() {
+    bool containsUnknown() {
         return true;
     }
 
@@ -226,7 +226,7 @@ FLAG_DEF( Unlikely );            // true e.g. if this is the "unknown" branch of
     }
 
 
-    bool_t isUnknownUnlikely() const {
+    bool isUnknownUnlikely() const {
         return isUnlikely();
     }
 
@@ -253,7 +253,7 @@ FLAG_DEF( Unlikely );            // true e.g. if this is the "unknown" branch of
 
     Expression *makeUnknownUnlikely( InlinedScope *s );
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 };
@@ -266,7 +266,7 @@ public:
     NoResultExpression( Node *n = nullptr );
 
 
-    bool_t isNoResultExpression() const {
+    bool isNoResultExpression() const {
         return true;
     }
 
@@ -276,7 +276,7 @@ public:
     }
 
 
-    bool_t containsUnknown() {
+    bool containsUnknown() {
         return false;
     }
 
@@ -296,7 +296,7 @@ public:
         return shallowCopy( p, n );
     };
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 };
@@ -310,12 +310,12 @@ public:
     KlassExpression( KlassOop m, PseudoRegister *p, Node *n );
 
 
-    bool_t isKlassExpression() const {
+    bool isKlassExpression() const {
         return true;
     }
 
 
-    bool_t containsUnknown() {
+    bool containsUnknown() {
         return false;
     }
 
@@ -325,7 +325,7 @@ public:
     }
 
 
-    bool_t hasKlass() const {
+    bool hasKlass() const {
         return true;
     }
 
@@ -340,7 +340,7 @@ public:
     }
 
 
-    virtual bool_t needsStoreCheck() const;
+    virtual bool needsStoreCheck() const;
 
     Expression *shallowCopy( PseudoRegister *p, Node *n ) const;
 
@@ -359,7 +359,7 @@ public:
     }
 
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 
@@ -374,7 +374,7 @@ public:
     BlockExpression( BlockPseudoRegister *p, Node *n );
 
 
-    bool_t isBlockExpression() const {
+    bool isBlockExpression() const {
         return true;
     }
 
@@ -398,7 +398,7 @@ public:
 
     Expression *mergeWith( Expression *other, Node *n );
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 
@@ -418,17 +418,17 @@ public:
     }
 
 
-    bool_t isConstantExpression() const {
+    bool isConstantExpression() const {
         return true;
     }
 
 
-    bool_t containsUnknown() {
+    bool containsUnknown() {
         return false;
     }
 
 
-    bool_t hasKlass() const {
+    bool hasKlass() const {
         return true;
     }
 
@@ -451,7 +451,7 @@ public:
     }
 
 
-    bool_t hasConstant() const {
+    bool hasConstant() const {
         return true;
     }
 
@@ -461,9 +461,9 @@ public:
     }
 
 
-    virtual bool_t needsStoreCheck() const;
+    virtual bool needsStoreCheck() const;
 
-    NameNode *nameNode( bool_t mustBeLegal = true ) const;
+    NameNode *nameNode( bool mustBeLegal = true ) const;
 
     Expression *shallowCopy( PseudoRegister *p, Node *n ) const;
 
@@ -475,7 +475,7 @@ public:
 
     Expression *findKlass( KlassOop map ) const;
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 
@@ -505,7 +505,7 @@ public:
     // one of the first nodes after the control flow merge.  It is always legal to pass
     // nullptr for n, but doing so prevents splitting.
 
-    bool_t isMergeExpression() const {
+    bool isMergeExpression() const {
         return true;
     }
 
@@ -514,7 +514,7 @@ FLAG_DEF( Splittable );
 PFLAG_DEF( UnknownSet );
 PFLAG_DEF( ContainingUnknown );
 public:
-    bool_t containsUnknown();
+    bool containsUnknown();
 
 
     MergeExpression *asMergeExpression() const {
@@ -522,19 +522,19 @@ public:
     }
 
 
-    bool_t hasKlass() const;
+    bool hasKlass() const;
 
     std::int32_t nklasses() const;
 
     KlassExpression *asKlassExpression() const;
 
-    bool_t really_hasKlass( InlinedScope *s ) const;
+    bool really_hasKlass( InlinedScope *s ) const;
 
     KlassOop klass() const;
 
     Expression *asReceiver() const;
 
-    bool_t hasConstant() const;
+    bool hasConstant() const;
 
     Oop constant() const;
 
@@ -548,7 +548,7 @@ public:
 
     Expression *makeUnknownUnlikely( InlinedScope *s );
 
-    bool_t equals( Expression *other ) const;
+    bool equals( Expression *other ) const;
 
     void print();
 
@@ -573,12 +573,12 @@ public:
     ContextExpression( PseudoRegister *r );
 
 
-    bool_t isContextExpression() const {
+    bool isContextExpression() const {
         return true;
     }
 
 
-    bool_t containsUnknown() {
+    bool containsUnknown() {
         ShouldNotCallThis();
         return false;
     }
@@ -613,7 +613,7 @@ public:
     };
 
 
-    bool_t equals( Expression *other ) const {
+    bool equals( Expression *other ) const {
         ShouldNotCallThis();
         return false;
     }

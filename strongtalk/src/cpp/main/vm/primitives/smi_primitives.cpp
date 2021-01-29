@@ -156,7 +156,7 @@ PRIM_DECL_1( smiOopPrimitives::asObject, Oop receiver ) {
 PRIM_DECL_1( smiOopPrimitives::printCharacter, Oop receiver ) {
     PROLOGUE_1( "printCharacter", receiver );
     ASSERT_RECEIVER;
-    lprintf( "%c", SMIOop( receiver )->value() );
+    spdlog::info( "%c", SMIOop( receiver )->value() );
     return receiver;
 }
 

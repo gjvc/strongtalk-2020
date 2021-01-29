@@ -42,7 +42,7 @@ public:
 
 
     // testers
-    bool_t oop_is_weakArray() const {
+    bool oop_is_weakArray() const {
         return true;
     }
 
@@ -82,34 +82,34 @@ public:
     // Scavenge interface
     static void begin_scavenge();
 
-    static bool_t scavenge_register( WeakArrayOop obj );
+    static bool scavenge_register( WeakArrayOop obj );
 
     static void check_and_scavenge_contents();
 
     // Mark sweep interface
     static void begin_mark_sweep();
 
-    static bool_t mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size );
+    static bool mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size );
 
     static void check_and_follow_contents();
 
 private:
     // Variables
-    static bool_t                      during_registration;
+    static bool                      during_registration;
     static GrowableArray<WeakArrayOop> *weakArrays;
     static GrowableArray<std::int32_t>  *nis;
 
     // Scavenge operations
     static void scavenge_contents();
 
-    static inline bool_t scavenge_is_near_death( Oop obj );
+    static inline bool scavenge_is_near_death( Oop obj );
 
     static void scavenge_check_for_dying_objects();
 
     // Mark sweep operations
     static void follow_contents();
 
-    static inline bool_t mark_sweep_is_near_death( Oop obj );
+    static inline bool mark_sweep_is_near_death( Oop obj );
 
     static void mark_sweep_check_for_dying_objects();
 };
@@ -122,7 +122,7 @@ public:
     static void mark_elements();   // Marks all elements as queued (by using the sentinel bit)
     static void clear_elements();  // Reset the sentinel bit
 
-    static bool_t is_empty();
+    static bool is_empty();
 
     static Oop get();
 

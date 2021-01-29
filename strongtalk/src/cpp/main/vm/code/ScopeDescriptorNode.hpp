@@ -35,11 +35,11 @@ class ScopeDescriptorNode : public ResourceObject {
 
 public:
     MethodOop _method;
-    bool_t    _allocates_compiled_context;
+    bool    _allocates_compiled_context;
     std::int32_t       _scopeID;
-    bool_t    _lite;
+    bool    _lite;
     std::int32_t       _senderByteCodeIndex;
-    bool_t    _visible;
+    bool    _visible;
 
     GrowableArray<LogicalAddress *> *_arg_list;
     GrowableArray<LogicalAddress *> *_temp_list;
@@ -48,32 +48,32 @@ public:
 
     std::int32_t _offset; // byte offset to the encoded scopeDesc Initial value is  INVALID_OFFSET
 
-    bool_t _usedInPcs;
+    bool _usedInPcs;
 
 public:
-    bool_t has_args() const;
+    bool has_args() const;
 
-    bool_t has_temps() const;
+    bool has_temps() const;
 
-    bool_t has_context_temps() const;
+    bool has_context_temps() const;
 
-    bool_t has_expr_stack() const;
+    bool has_expr_stack() const;
 
-    bool_t has_context() const;
+    bool has_context() const;
 
-    bool_t has_nameDescs() const;
+    bool has_nameDescs() const;
 
     ScopeInfo _scopesHead;
     ScopeInfo _scopesTail;
     ScopeInfo _next;
 
-    ScopeDescriptorNode( MethodOop method, bool_t allocates_compiled_context, std::int32_t scopeID, bool_t lite, std::int32_t senderByteCodeIndex, bool_t visible );
+    ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible );
 
     void addNested( ScopeInfo scope );
 
     virtual std::uint8_t code() = 0;
 
-    virtual void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool_t bigHeader );
+    virtual void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader );
 
     void generateBody( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset );
 
@@ -83,7 +83,7 @@ public:
 
     void generate_sparse( GrowableArray<LogicalAddress *> *list, ScopeDescriptorRecorder *rec );
 
-    bool_t computeVisibility();
+    bool computeVisibility();
 
     ScopeInfo find_scope( std::int32_t scope_id );
 
@@ -108,14 +108,14 @@ public:
 
 public:
 
-    TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) :
+    TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool allocates_compiled_context ) :
             ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ) {
         _receiverLocation = receiver_location;
         _receiverKlass    = receiver_klass;
     }
 
 
-    void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool_t bigHeader ) {
+    void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
         ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
         _receiverLocation->generate( rec );
         rec->genOop( _receiverKlass );

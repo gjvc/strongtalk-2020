@@ -225,17 +225,17 @@ public:
 
 private:
     // Float support
-    inline bool_t has_interpreted_float_marker() const;
+    inline bool has_interpreted_float_marker() const;
 
-    bool_t oop_iterate_interpreted_float_frame( OopClosure *blk );
+    bool oop_iterate_interpreted_float_frame( OopClosure *blk );
 
-    bool_t follow_roots_interpreted_float_frame();
+    bool follow_roots_interpreted_float_frame();
 
-    inline bool_t has_compiled_float_marker() const;
+    inline bool has_compiled_float_marker() const;
 
-    bool_t oop_iterate_compiled_float_frame( OopClosure *blk );
+    bool oop_iterate_compiled_float_frame( OopClosure *blk );
 
-    bool_t follow_roots_compiled_float_frame();
+    bool follow_roots_compiled_float_frame();
 
 public:
 
@@ -276,31 +276,31 @@ public:
     Frame delta_sender() const;
 
     // tells whether there is another chunk of Delta stack above (entry frames only)
-    bool_t has_next_Delta_fp() const;
+    bool has_next_Delta_fp() const;
 
     // returns the next C entry frame (entry frames only)
     std::int32_t *next_Delta_fp() const;
 
     Oop *next_Delta_sp() const;
 
-    bool_t is_first_frame() const;            // oldest frame? (has no sender)
-    bool_t is_first_delta_frame() const;        // same for Delta frame
+    bool is_first_frame() const;            // oldest frame? (has no sender)
+    bool is_first_delta_frame() const;        // same for Delta frame
 
     // testers
-    bool_t is_interpreted_frame() const;
+    bool is_interpreted_frame() const;
 
-    bool_t is_compiled_frame() const;
+    bool is_compiled_frame() const;
 
 
-    bool_t is_delta_frame() const {
+    bool is_delta_frame() const {
         return is_interpreted_frame() or is_compiled_frame();
     }
 
 
-    bool_t should_be_deoptimized() const;
+    bool should_be_deoptimized() const;
 
-    bool_t is_entry_frame() const;        // Delta frame called from C?
-    bool_t is_deoptimized_frame() const;
+    bool is_entry_frame() const;        // Delta frame called from C?
+    bool is_deoptimized_frame() const;
 
     // inline caches
     InlineCacheIterator *sender_ic_iterator() const;    // sending InlineCache (nullptr if entry frame or if a perform rather than a send)

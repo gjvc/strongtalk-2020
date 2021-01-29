@@ -41,9 +41,9 @@ public:
 
     PrimitiveDescriptor *pdesc() const;
 
-    bool_t has_receiver() const;
+    bool has_receiver() const;
 
-    bool_t has_failure_code() const;
+    bool has_failure_code() const;
 };
 
 

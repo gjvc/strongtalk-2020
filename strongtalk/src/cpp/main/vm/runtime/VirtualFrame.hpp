@@ -64,7 +64,7 @@ public:
 
     // answers if the receiver is the top VirtualFrame in the frame, i.e., if the sender VirtualFrame
     // is in the caller frame
-    virtual bool_t is_top() const {
+    virtual bool is_top() const {
         return true;
     }
 
@@ -73,36 +73,36 @@ public:
     virtual VirtualFrame *top() const;
 
     // comparison operation
-    virtual bool_t equal( const VirtualFrame *virtualFrame ) const;
+    virtual bool equal( const VirtualFrame *virtualFrame ) const;
 
 
     // type testing operations
-    virtual bool_t is_c_frame() const {
+    virtual bool is_c_frame() const {
         return false;
     }
 
 
-    virtual bool_t is_c_chunk() const {
+    virtual bool is_c_chunk() const {
         return false;
     }
 
 
-    virtual bool_t is_delta_frame() const {
+    virtual bool is_delta_frame() const {
         return false;
     }
 
 
-    virtual bool_t is_interpreted_frame() const {
+    virtual bool is_interpreted_frame() const {
         return false;
     }
 
 
-    virtual bool_t is_compiled_frame() const {
+    virtual bool is_compiled_frame() const {
         return false;
     }
 
 
-    virtual bool_t is_deoptimized_frame() const {
+    virtual bool is_deoptimized_frame() const {
         return false;
     }
 
@@ -139,7 +139,7 @@ public:
     }
 
 
-    bool_t is_delta_frame() const {
+    bool is_delta_frame() const {
         return true;
     }
 
@@ -239,16 +239,16 @@ private:
 
     Oop *expression_addr( std::int32_t offset ) const;
 
-    bool_t has_interpreter_context() const;
+    bool has_interpreter_context() const;
 
 public:
     // Virtuals from VirtualFrame
-    bool_t is_interpreted_frame() const {
+    bool is_interpreted_frame() const {
         return true;
     }
 
 
-    bool_t equal( const VirtualFrame *f ) const;
+    bool equal( const VirtualFrame *f ) const;
 
 public:
     // Virtuals from DeltaVirtualFrame
@@ -334,14 +334,14 @@ protected:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_compiled_frame() const {
+    bool is_compiled_frame() const {
         return true;
     }
 
 
     VirtualFrame *sender() const;
 
-    bool_t equal( const VirtualFrame *f ) const;
+    bool equal( const VirtualFrame *f ) const;
 
 public:
     // Virtuals defined in DeltaVirtualFrame
@@ -387,7 +387,7 @@ public:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_top() const;
+    bool is_top() const;
 
 public:
     // Virtuals defined in DeltaVirtualFrame
@@ -414,7 +414,7 @@ public:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_top() const;
+    bool is_top() const;
 
 public:
     // Virtuals defined in DeltaVirtualFrame
@@ -435,7 +435,7 @@ public:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_top() const {
+    bool is_top() const {
         return true;
     }
 
@@ -488,17 +488,17 @@ private:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t equal( const VirtualFrame *f ) const;
+    bool equal( const VirtualFrame *f ) const;
 
 
-    bool_t is_deoptimized_frame() const {
+    bool is_deoptimized_frame() const {
         return true;
     }
 
 
     VirtualFrame *sender() const;
 
-    bool_t is_top() const;
+    bool is_top() const;
 
 public:
     // Virtuals defined in DeltaVirtualFrame
@@ -535,7 +535,7 @@ public:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_c_frame() const {
+    bool is_c_frame() const {
         return true;
     }
 
@@ -554,7 +554,7 @@ public:
 
 public:
     // Virtuals defined in VirtualFrame
-    bool_t is_c_chunk() const {
+    bool is_c_chunk() const {
         return true;
     }
 

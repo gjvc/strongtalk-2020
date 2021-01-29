@@ -9,7 +9,6 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/code/NodeVisitor.hpp"
 #include "vm/compiler/defUse.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/compiler/DefinitionUsageInfo.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/runtime/ResourceObject.hpp"
@@ -35,7 +34,7 @@ public:
 
 
     void print_short() {
-        lprintf( "BasicBlockDefinitionAndUsageTable [%#lx[", this );
+        spdlog::info( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void*>( this ) );
     }
 
 
@@ -47,7 +46,7 @@ public:
 class BasicBlock : public PrintableResourceObject {
 
 protected:
-    bool_t _visited;
+    bool _visited;
 
 public: // was "protected:" originally
     Node         *_first;            //
@@ -82,23 +81,23 @@ public:
     }
 
 
-    bool_t visited() const {
+    bool visited() const {
         return _visited;
     }
 
 
     // successor/predecessor functionality
-    bool_t hasSingleSuccessor() const;
+    bool hasSingleSuccessor() const;
 
-    bool_t hasSinglePredecessor() const;
+    bool hasSinglePredecessor() const;
 
     std::int32_t nPredecessors() const;
 
     std::int32_t nSuccessors() const;
 
-    bool_t isPredecessor( const BasicBlock *n ) const;
+    bool isPredecessor( const BasicBlock *n ) const;
 
-    bool_t isSuccessor( const BasicBlock *n ) const;
+    bool isSuccessor( const BasicBlock *n ) const;
 
     BasicBlock *next() const;
 
@@ -137,7 +136,7 @@ public:
 
     void makeUses();
 
-    Usage *addUse( NonTrivialNode *n, PseudoRegister *r, bool_t soft = false );
+    Usage *addUse( NonTrivialNode *n, PseudoRegister *r, bool soft = false );
 
     Definition *addDef( NonTrivialNode *n, PseudoRegister *r );
 
@@ -157,9 +156,9 @@ public:
 
     void apply( NodeVisitor *v );
 
-    bool_t verifyLabels();
+    bool verifyLabels();
 
-    bool_t contains( const Node *n ) const;
+    bool contains( const Node *n ) const;
 
     void verify();
 
@@ -167,7 +166,7 @@ public:
 
     void print_short();
 
-    void print_code( bool_t suppressTrivial );
+    void print_code( bool suppressTrivial );
 
     void print();
 

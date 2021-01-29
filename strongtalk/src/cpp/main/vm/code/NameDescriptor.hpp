@@ -18,32 +18,32 @@
 class NameDescriptor : public PrintableResourceObject { // ResourceObject because some are created on-the-fly
 
 public:
-    virtual bool_t isLocation() const {
+    virtual bool isLocation() const {
         return false;
     }
 
 
-    virtual bool_t isValue() const {
+    virtual bool isValue() const {
         return false;
     }
 
 
-    virtual bool_t isBlockValue() const {
+    virtual bool isBlockValue() const {
         return false;
     }
 
 
-    virtual bool_t isMemoizedBlock() const {
+    virtual bool isMemoizedBlock() const {
         return false;
     }
 
 
-    virtual bool_t isIllegal() const {
+    virtual bool isIllegal() const {
         return false;
     }
 
 
-    virtual bool_t hasLocation() const {
+    virtual bool hasLocation() const {
         return false;
     }
 
@@ -60,7 +60,7 @@ public:
     }
 
 
-    virtual bool_t verify() {
+    virtual bool verify() {
         return true;
     }
 
@@ -68,7 +68,7 @@ public:
     virtual void print() = 0;
 
 
-    virtual bool_t equal( NameDescriptor *other ) const {
+    virtual bool equal( NameDescriptor *other ) const {
         return false;
     }
 
@@ -86,7 +86,7 @@ struct LocationNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t isLocation() const {
+    bool isLocation() const {
         return true;
     }
 
@@ -96,12 +96,12 @@ struct LocationNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t hasLocation() const {
+    bool hasLocation() const {
         return true;
     }
 
 
-    bool_t equal( NameDescriptor *other ) const;
+    bool equal( NameDescriptor *other ) const;
 
     void print();
 };
@@ -116,7 +116,7 @@ struct ValueNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t isValue() const {
+    bool isValue() const {
         return true;
     }
 
@@ -126,7 +126,7 @@ struct ValueNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t equal( NameDescriptor *other ) const;
+    bool equal( NameDescriptor *other ) const;
 
     void print();
 };
@@ -146,7 +146,7 @@ struct BlockValueNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t isBlockValue() const {
+    bool isBlockValue() const {
         return true;
     }
 
@@ -168,7 +168,7 @@ struct BlockValueNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t equal( NameDescriptor *other ) const;
+    bool equal( NameDescriptor *other ) const;
 
     void print();
 };
@@ -187,7 +187,7 @@ struct MemoizedBlockNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t isMemoizedBlock() const {
+    bool isMemoizedBlock() const {
         return true;
     }
 
@@ -212,14 +212,14 @@ struct MemoizedBlockNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t hasLocation() const {
+    bool hasLocation() const {
         return true;
     }
 
 
     Oop value( const Frame *f = nullptr ) const;
 
-    bool_t equal( NameDescriptor *other ) const;
+    bool equal( NameDescriptor *other ) const;
 
     void print();
 };
@@ -230,12 +230,12 @@ struct IllegalNameDescriptor : public NameDescriptor {
     }
 
 
-    bool_t isIllegal() const {
+    bool isIllegal() const {
         return true;
     }
 
 
-    bool_t equal( NameDescriptor *other ) const;
+    bool equal( NameDescriptor *other ) const;
 
     void print();
 };

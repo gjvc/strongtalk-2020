@@ -55,22 +55,22 @@ public:
     }
 
 
-    virtual bool_t is_message() {
+    virtual bool is_message() {
         return false;
     }
 
 
-    virtual bool_t is_statement() {
+    virtual bool is_statement() {
         return false;
     }
 
 
-    virtual bool_t is_code() {
+    virtual bool is_code() {
         return false;
     }
 
 
-    virtual bool_t is_cascade() {
+    virtual bool is_cascade() {
         return false;
     }
 
@@ -82,7 +82,7 @@ public:
 
     void top_level_print( prettyPrintStream *output );
 
-    virtual bool_t print( prettyPrintStream *output );
+    virtual bool print( prettyPrintStream *output );
 
 
     virtual std::int32_t width( prettyPrintStream *output ) {
@@ -95,7 +95,7 @@ public:
     }
 
 
-    virtual bool_t should_wrap_argument( astNode *argument ) {
+    virtual bool should_wrap_argument( astNode *argument ) {
         return false;
     };
 
@@ -109,7 +109,7 @@ public:
 class PrintWrapper {
 private:
     astNode *_astNode;
-    bool_t _hit;
+    bool _hit;
     prettyPrintStream *_output;
 public:
     PrintWrapper( astNode *astNode, prettyPrintStream *output );
@@ -120,20 +120,20 @@ public:
 
 #define HIGHLIGHT PrintWrapper pw(this, output);
 
-bool_t should_wrap( std::int32_t type, astNode *arg );
+bool should_wrap( std::int32_t type, astNode *arg );
 
 
-static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOop selector, GrowableArray<astNode *> *arguments, bool_t split ) {
+static bool print_selector_with_arguments( prettyPrintStream *output, SymbolOop selector, GrowableArray<astNode *> *arguments, bool split ) {
 
     if ( selector->is_binary() ) {
         // binary send
         output->print( selector->as_string() );
         output->space();
         astNode *arg = arguments->at( 0 );
-        bool_t wrap = should_wrap( 1, arg );
+        bool wrap = should_wrap( 1, arg );
         if ( wrap )
             output->print( "(" );
-        bool_t result = arg->print( output );
+        bool result = arg->print( output );
         if ( wrap )
             output->print( ")" );
         return result;
@@ -152,7 +152,7 @@ static bool_t print_selector_with_arguments( prettyPrintStream *output, SymbolOo
         if ( c == ':' ) {
             output->space();
             astNode *a = arguments->at( --arg );
-            bool_t wrap = should_wrap( 2, a );
+            bool wrap = should_wrap( 2, a );
             if ( wrap )
                 output->print( "(" );
             a->print( output );
@@ -221,7 +221,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( string() );
@@ -253,7 +253,7 @@ public:
     }
 
 
-    bool_t is_param() {
+    bool is_param() {
         return true;
     }
 };
@@ -273,7 +273,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         output->print( _name );
         output->print( " \"" );
         output->print( _value );
@@ -327,7 +327,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         if ( _beginSym ) {
             output->print( _beginSym );
             output->space();
@@ -437,7 +437,7 @@ public:
     }
 
 
-    bool_t is_block_method() {
+    bool is_block_method() {
         return method()->is_blockMethod();
     }
 
@@ -447,7 +447,7 @@ public:
     }
 
 
-    bool_t is_context_allocated() {
+    bool is_context_allocated() {
         return method()->allocatesInterpretedContext();
     }
 
@@ -457,7 +457,7 @@ public:
     }
 
 
-    bool_t isFor( MethodOop method ) {
+    bool isFor( MethodOop method ) {
         return _methodOop == method;
     }
 
@@ -467,7 +467,7 @@ public:
     }
 
 
-    const char *param_string( std::int32_t index, bool_t in_block = false ) {
+    const char *param_string( std::int32_t index, bool in_block = false ) {
         ByteArrayOop res = find_parameter_name( method(), index );
         if ( in_block ) {
             if ( not res )
@@ -577,7 +577,7 @@ public:
     }
 
 
-    astNode *parameter_at( std::int32_t index, bool_t in_block = false ) {
+    astNode *parameter_at( std::int32_t index, bool in_block = false ) {
         const char *name = param_string( index, in_block );
         if ( not fr() )
             return new nameNode( name );
@@ -698,7 +698,7 @@ PrintWrapper::~PrintWrapper() {
 }
 
 
-bool_t astNode::print( prettyPrintStream *output ) {
+bool astNode::print( prettyPrintStream *output ) {
     if ( ActivationShowNameDescs ) {
         if ( _scopeNode and _scopeNode->sd() ) {
             NameDescriptor *nd = _scopeNode->sd()->exprStackElem( _byteCodeIndex );
@@ -733,10 +733,10 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output );
+    bool print( prettyPrintStream *output );
 
 
-    bool_t is_code() {
+    bool is_code() {
         return true;
     }
 
@@ -774,8 +774,8 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
-        bool_t split = output->remaining() < width( output );
+    bool print( prettyPrintStream *output ) {
+        bool split = output->remaining() < width( output );
         output->print( "[" );
         if ( split )
             output->inc_newline();
@@ -796,7 +796,7 @@ public:
 class statement : public astNode {
 
 private:
-    bool_t _hasReturn;
+    bool _hasReturn;
     astNode *_stat;
 
 
@@ -807,12 +807,12 @@ private:
 
 public:
 
-    bool_t is_statement() {
+    bool is_statement() {
         return true;
     }
 
 
-    statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool_t has_return ) :
+    statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool has_return ) :
             astNode( byteCodeIndex, scope ) {
         this->_stat      = stat;
         this->_hasReturn = has_return;
@@ -824,12 +824,12 @@ public:
     }
 
 
-    bool_t has_hat() {
+    bool has_hat() {
         return _hasReturn;
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
         if ( _hasReturn )
             output->print( hat() );
@@ -843,9 +843,9 @@ public:
 };
 
 
-bool_t codeNode::print( prettyPrintStream *output ) {
+bool codeNode::print( prettyPrintStream *output ) {
 
-    bool_t first = true;
+    bool first = true;
 
     for ( std::int32_t i = 0; i < _statements->length(); i++ ) {
         astNode *s = _statements->at( i );
@@ -870,7 +870,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         output->inc_indent();
         output->indent();
 
@@ -898,9 +898,9 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
-        bool_t split = false;
+        bool split = false;
         output->print( "[" );
         astNode *p = _scopeNode->params();
         if ( p ) {
@@ -988,9 +988,9 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
-        bool_t split = output->remaining() < width( output );
+        bool split = output->remaining() < width( output );
         _variable->print( output );
         output->space();
         output->print( sym() );
@@ -1018,10 +1018,10 @@ private:
     astNode *_receiver;
     SymbolOop                _selector;
     GrowableArray<astNode *> *_arguments;
-    bool_t                   _is_prim;
+    bool                   _is_prim;
 
 public:
-    messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool_t is_prim = false ) :
+    messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool is_prim = false ) :
             astNode( byteCodeIndex, scope ) {
         this->_selector = selector;
         _arguments = new GrowableArray<astNode *>( 10 );
@@ -1030,22 +1030,22 @@ public:
     }
 
 
-    bool_t is_unary() {
+    bool is_unary() {
         return _selector->is_unary();
     }
 
 
-    bool_t is_binary() {
+    bool is_binary() {
         return _selector->is_binary();
     }
 
 
-    bool_t is_keyword() {
+    bool is_keyword() {
         return _selector->is_keyword();
     }
 
 
-    bool_t should_wrap_receiver() {
+    bool should_wrap_receiver() {
         if ( receiver() and receiver()->is_message() ) {
             if ( ( (messageNode *) _receiver )->is_keyword() )
                 return true;
@@ -1056,7 +1056,7 @@ public:
     }
 
 
-    bool_t should_wrap_argument( astNode *arg ) {
+    bool should_wrap_argument( astNode *arg ) {
         if ( arg->is_message() ) {
             if ( ( (messageNode *) arg )->is_keyword() )
                 return true;
@@ -1067,8 +1067,8 @@ public:
     }
 
 
-    bool_t print_receiver( prettyPrintStream *output ) {
-        bool_t wrap = should_wrap_receiver();
+    bool print_receiver( prettyPrintStream *output ) {
+        bool wrap = should_wrap_receiver();
         if ( wrap )
             output->print( "(" );
         _receiver->print( output );
@@ -1079,9 +1079,9 @@ public:
     }
 
 
-    bool_t real_print( prettyPrintStream *output ) {
+    bool real_print( prettyPrintStream *output ) {
         HIGHLIGHT
-        bool_t split;
+        bool split;
         if ( _is_prim )
             output->print( "{{" );
         if ( valid_receiver() )
@@ -1102,7 +1102,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         if ( receiver() and receiver()->is_cascade() )
             return receiver()->print( output );
         return real_print( output );
@@ -1154,12 +1154,12 @@ public:
     }
 
 
-    bool_t valid_receiver() {
+    bool valid_receiver() {
         return receiver() ? not receiver()->is_cascade() : false;
     }
 
 
-    bool_t is_message() {
+    bool is_message() {
         return true;
     }
 };
@@ -1229,11 +1229,11 @@ class symbolNode : public astNode {
 
 private:
     SymbolOop _value;
-    bool_t    _isOuter;
+    bool    _isOuter;
     const char *_str;
 
 public:
-    symbolNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop value, bool_t is_outer = true ) :
+    symbolNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop value, bool is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
         this->_value   = value;
         this->_isOuter = is_outer;
@@ -1241,7 +1241,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         astNode::print( output );
         if ( _isOuter )
             output->print( "#" );
@@ -1270,7 +1270,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         astNode::print( output );
         output->print( "'" );
         output->print( _str );
@@ -1299,7 +1299,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "'" );
@@ -1388,11 +1388,11 @@ class objArrayNode : public astNode {
 
 private:
     ObjectArrayOop           _value;
-    bool_t                   _isOuter;
+    bool                   _isOuter;
     GrowableArray<astNode *> *_elements;
 
 public:
-    objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool_t is_outer = true ) :
+    objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
         this->_value    = value;
         this->_isOuter  = is_outer;
@@ -1403,7 +1403,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "#(" );
@@ -1458,7 +1458,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "{{<" );
@@ -1594,7 +1594,7 @@ public:
 class primitiveResultNode : public leafNode {
 
 public:
-    bool_t is_primitive_result() {
+    bool is_primitive_result() {
         return true;
     }
 
@@ -1645,7 +1645,7 @@ public:
     }
 
 
-    bool_t is_cascade() {
+    bool is_cascade() {
         return true;
     }
 
@@ -1655,7 +1655,7 @@ public:
     }
 
 
-    bool_t print( prettyPrintStream *output ) {
+    bool print( prettyPrintStream *output ) {
         _receiver->print( output );
         output->inc_newline();
         for ( std::int32_t i = 0; i < _messages->length(); i++ ) {
@@ -1784,12 +1784,12 @@ private:
     scopeNode *_scope; // debugging scope
 
     // the receiver is on the stack
-    void normal_send( SymbolOop selector, bool_t is_prim = false );
+    void normal_send( SymbolOop selector, bool is_prim = false );
 
     // the receiver is provided
-    void special_send( astNode *receiver, SymbolOop selector, bool_t is_prim = false );
+    void special_send( astNode *receiver, SymbolOop selector, bool is_prim = false );
 
-    astNode *generateInlineBlock( MethodInterval *interval, bool_t produces_result, astNode *push_elem = nullptr );
+    astNode *generateInlineBlock( MethodInterval *interval, bool produces_result, astNode *push_elem = nullptr );
 
 
     void store( astNode *node ) {
@@ -1855,7 +1855,7 @@ public:
     }
 
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool forMethod ) {
         scope()->context_allocated();
     }
 
@@ -2066,7 +2066,7 @@ MethodPrettyPrinter::MethodPrettyPrinter( scopeNode *scope ) {
 }
 
 
-void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
+void MethodPrettyPrinter::normal_send( SymbolOop selector, bool is_prim ) {
     std::int32_t nargs = selector->number_of_arguments();
     messageNode *msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
@@ -2083,7 +2083,7 @@ void MethodPrettyPrinter::normal_send( SymbolOop selector, bool_t is_prim ) {
 }
 
 
-void MethodPrettyPrinter::special_send( astNode *receiver, SymbolOop selector, bool_t is_prim ) {
+void MethodPrettyPrinter::special_send( astNode *receiver, SymbolOop selector, bool is_prim ) {
     std::int32_t nargs = selector->number_of_arguments();
     messageNode *msg = new messageNode( byteCodeIndex(), scope(), selector, is_prim );
 
@@ -2176,15 +2176,15 @@ public:
 
     ~StackChecker() {
         if ( _methodPrettyPrinter->_size() not_eq _size + _offset ) {
-            _console->print_cr( "StackTracer found misaligned stack" );
-            _console->print_cr( "Expecting %d but found %d", _size + _offset, _methodPrettyPrinter->_size() );
+            spdlog::info( "StackTracer found misaligned stack" );
+            spdlog::info( "Expecting {} but found {}", _size + _offset, _methodPrettyPrinter->_size() );
             st_fatal( "aborting" );
         }
     }
 };
 
 
-astNode *MethodPrettyPrinter::generateInlineBlock( MethodInterval *interval, bool_t produces_result, astNode *push_elem ) {
+astNode *MethodPrettyPrinter::generateInlineBlock( MethodInterval *interval, bool produces_result, astNode *push_elem ) {
     inlinedBlockNode *block = new inlinedBlockNode( byteCodeIndex(), scope() );
     _push( block );
     if ( push_elem )
@@ -2341,7 +2341,7 @@ ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass
 }
 
 
-bool_t should_wrap( std::int32_t type, astNode *arg ) {
+bool should_wrap( std::int32_t type, astNode *arg ) {
     if ( not arg->is_message() )
         return false;
     messageNode *msg = (messageNode *) arg;

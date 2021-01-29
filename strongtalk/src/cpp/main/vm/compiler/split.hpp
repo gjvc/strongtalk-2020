@@ -25,7 +25,7 @@ class SplitSig {
         friend SplitSig * new_SplitSig( SplitSig * current, std::int32_t splitID );
 
         std::int32_t level() { return std::uint32_t( this ) & LevelMask; }
-        bool_t contains( SplitSig * other ) {
+        bool contains( SplitSig * other ) {
             // other sig is in same branch iff the receiver is a prefix of other
             // NB: this is not symmetric, i.e. it's like <=, not ==
             std::int32_t shift = ( MaxSplitDepth - level() + 1 ) << 2;

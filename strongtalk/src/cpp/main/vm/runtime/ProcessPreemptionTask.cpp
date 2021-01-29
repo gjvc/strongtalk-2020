@@ -17,7 +17,7 @@ void ProcessPreemptionTask::task() {
 
 
 void preemption_init() {
-    _console->print_cr( "%%system-init:  preemption_init" );
+    spdlog::info( "%system-init:  preemption_init" );
 
     ProcessPreemptionTask *task = new ProcessPreemptionTask;
     task->enroll();

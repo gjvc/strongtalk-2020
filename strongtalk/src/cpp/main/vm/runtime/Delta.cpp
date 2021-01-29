@@ -98,9 +98,9 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, std::int32_t n
             // doesNotUnderstand: not found ==> process error
             {
                 ResourceMark resourceMark;
-                _console->print_cr( "LOOKUP ERROR" );
+                spdlog::info( "LOOKUP ERROR" );
                 sel->print_value();
-                _console->print_cr( " not found" );
+                spdlog::info( " not found" );
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();

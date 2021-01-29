@@ -14,7 +14,7 @@
 class SnapshotDescriptor : StackAllocatedObject {
 private:
     FILE *_file;
-    bool_t _has_error;
+    bool _has_error;
 
     // HEADER
     void read_header();
@@ -50,7 +50,7 @@ public:
     void write_on( const char *name );
 
 
-    bool_t has_error() {
+    bool has_error() {
         return _has_error;
     }
 

@@ -38,7 +38,7 @@ public:
 
     static SymbolOop new_symbol( ByteArrayOop b );
 
-    static AssociationOop new_association( SymbolOop key, Oop value, bool_t is_constant );
+    static AssociationOop new_association( SymbolOop key, Oop value, bool is_constant );
 
     static VirtualFrameOop new_vframe( ProcessOop process, std::int32_t index );
 };

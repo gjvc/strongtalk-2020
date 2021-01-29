@@ -12,7 +12,7 @@
 #include "PrimitivesGenerator.hpp"
 
 
-static bool_t stop = false;
+static bool stop = false;
 
 
 const char *PrimitivesGenerator::primitiveNew( std::int32_t n ) {

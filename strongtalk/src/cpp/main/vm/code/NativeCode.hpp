@@ -20,7 +20,7 @@ protected:
     std::int32_t _instructionsLength;
 
 public:
-    void *operator new( std::int32_t size ) throw() {
+    void *operator new( std::size_t size ) throw() {
         SubclassResponsibility();
         return nullptr;
     }
@@ -40,27 +40,27 @@ public:
     }
 
 
-    bool_t contains( const void *p ) const {
+    bool contains( const void *p ) const {
         return (void *) instructionsStart() <= p and p < (void *) instructionsEnd();
     }
 
 
-    virtual bool_t isNativeMethod() const {
+    virtual bool isNativeMethod() const {
         return false;
     }
 
 
-    virtual bool_t isPIC() const {
+    virtual bool isPIC() const {
         return false;
     }
 
 
-    virtual bool_t isCountStub() const {
+    virtual bool isCountStub() const {
         return false;
     }
 
 
-    virtual bool_t isAgingStub() const {
+    virtual bool isAgingStub() const {
         return false;
     }
 
@@ -112,13 +112,13 @@ public:
     }
 
 
-    virtual bool_t isNativeMethod() const {
+    virtual bool isNativeMethod() const {
         return false;
     }
 
 
     // Memory operations: return true if need to invalidate instruction cache
-    virtual bool_t switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
+    virtual bool switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
 
     void relocate();
 

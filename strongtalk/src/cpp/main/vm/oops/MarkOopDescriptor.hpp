@@ -95,7 +95,7 @@ public:
 
 
     // accessors
-    bool_t has_sentinel() const {
+    bool has_sentinel() const {
         return maskBits( value(), sentinel_mask_in_place ) not_eq 0;
     }
 
@@ -110,12 +110,12 @@ public:
     }
 
 
-    bool_t has_tagged_contents() const {
+    bool has_tagged_contents() const {
         return maskBits( value(), tagged_contents_mask_in_place ) not_eq 0;
     }
 
 
-    bool_t is_near_death() const {
+    bool is_near_death() const {
         return maskBits( value(), near_death_mask_in_place ) not_eq 0;
     }
 
@@ -131,7 +131,7 @@ public:
 
 
     // klass invalidation (via sentinel bit)
-    bool_t is_klass_invalid() const {
+    bool is_klass_invalid() const {
         return not has_sentinel();
     }
 
@@ -152,7 +152,7 @@ public:
     }
 
 
-    bool_t has_context_forward() const {
+    bool has_context_forward() const {
         return is_near_death();
     }
 
@@ -163,7 +163,7 @@ public:
 
 
     // notification queue check
-    bool_t is_queued() const {
+    bool is_queued() const {
         return not has_sentinel();
     }
 
@@ -210,7 +210,7 @@ public:
     }
 
 
-    bool_t has_valid_hash() const {
+    bool has_valid_hash() const {
         return hash() not_eq no_hash;
     }
 
@@ -252,7 +252,7 @@ public:
 
 // tells whether p is a root to an Oop or a markOop
 // used during pointer reversal during GC.
-// inline bool_t is_oop_root(Oop* p) { return not markOop(p)->has_sentinel(); }
-inline bool_t is_oop_root( Oop *p ) {
+// inline bool is_oop_root(Oop* p) { return not markOop(p)->has_sentinel(); }
+inline bool is_oop_root( Oop *p ) {
     return not MarkOop( p )->is_mark();
 }

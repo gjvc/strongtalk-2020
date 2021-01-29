@@ -6,16 +6,15 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/system/bits.hpp"
 #include "vm/compiler/BitVector.hpp"
 
 
-bool_t BitVector::unionWith( BitVector *other ) {
+bool BitVector::unionWith( BitVector *other ) {
     while ( length < other->length )
         _bits[ length++ ] = 0;
     st_assert( length <= _maxLength, "grew too much" );
-    bool_t            changed = false;
+    bool            changed = false;
     for ( std::int32_t i       = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] |= other->_bits[ i ];
@@ -25,8 +24,8 @@ bool_t BitVector::unionWith( BitVector *other ) {
 }
 
 
-bool_t BitVector::intersectWith( BitVector *other ) {
-    bool_t            changed = false;
+bool BitVector::intersectWith( BitVector *other ) {
+    bool            changed = false;
     for ( std::int32_t i       = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] &= other->_bits[ i ];
@@ -36,7 +35,7 @@ bool_t BitVector::intersectWith( BitVector *other ) {
 }
 
 
-bool_t BitVector::isDisjointFrom( BitVector *other ) {
+bool BitVector::isDisjointFrom( BitVector *other ) {
     for ( std::int32_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         if ( ( _bits[ i ] & other->_bits[ i ] ) not_eq 0 )
             return false;
@@ -99,7 +98,7 @@ void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
 
 
 void BitVector::print_short() {
-    lprintf( "BitVector %#lx", this );
+    spdlog::info( "BitVector {0:x}", static_cast<void *>(this) );
 }
 
 
@@ -120,22 +119,22 @@ void BitVector::doForAllOnes( intDoFn f ) {
 
 void BitVector::print() {
     print_short();
-    lprintf( ": {" );
+    spdlog::info( ": {" );
     std::int32_t         last = -1;
     std::int32_t i    = 0;
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {
             if ( last < 0 ) {
-                lprintf( " %ld", i );    // first bit after string of 0s
+                spdlog::info( " %ld", i );    // first bit after string of 0s
                 last = i;
             }
         } else {
             if ( last >= 0 )
-                lprintf( "..%ld", i - 1 );    // ended a group
+                spdlog::info( "..%ld", i - 1 );    // ended a group
             last = -1;
         }
     }
     if ( last >= 0 )
-        lprintf( "..%ld", i - 1 );
-    lprintf( " }" );
+        spdlog::info( "..%ld", i - 1 );
+    spdlog::info( " }" );
 }

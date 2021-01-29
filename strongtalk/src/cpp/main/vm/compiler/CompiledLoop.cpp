@@ -80,17 +80,17 @@ void CompiledLoop::set_endOfCond( Node *current ) {
 }
 
 
-bool_t CompiledLoop::isInLoop( Node *n ) const {
+bool CompiledLoop::isInLoop( Node *n ) const {
     return _firstNodeID <= n->id() and n->id() <= _lastNodeID;
 }
 
 
-bool_t CompiledLoop::isInLoopCond( Node *n ) const {
+bool CompiledLoop::isInLoopCond( Node *n ) const {
     return _startOfCond->id() <= n->id() and n->id() <= _endOfCond->id();
 }
 
 
-bool_t CompiledLoop::isInLoopBody( Node *n ) const {
+bool CompiledLoop::isInLoopBody( Node *n ) const {
     return _startOfBody->id() <= n->id() and n->id() <= _endOfBody->id();
 }
 
@@ -120,7 +120,7 @@ void CompiledLoop::discoverLoopNesting() {
     // discover enclosing loop (if any) and set up loop header links
     for ( InlinedScope *s = _scope; s not_eq nullptr; s = s->sender() ) {
         GrowableArray<CompiledLoop *> *loops = s->loops();
-        for ( std::int32_t                     i      = loops->length() - 1; i >= 0; i-- ) {
+        for ( std::int32_t            i      = loops->length() - 1; i >= 0; i-- ) {
             CompiledLoop *l = loops->at( i );
             if ( l->isInLoop( _loopHeader ) ) {
                 // this is out enclosing loop
@@ -379,7 +379,7 @@ const char *CompiledLoop::checkLoopVar() {
     // at this point, we finally know for sure whether the loop is counting up or down
     // check that loop is bounded at all
     BranchOpCode   branchOp          = _loopBranch->op();
-    bool_t         loopVarMustBeLeft = ( branchOp == BranchOpCode::GTBranchOp or branchOp == BranchOpCode::GEBranchOp ) ^not _isCountingUp;
+    bool           loopVarMustBeLeft = ( branchOp == BranchOpCode::GTBranchOp or branchOp == BranchOpCode::GEBranchOp ) ^not _isCountingUp;
     NonTrivialNode *compare          = (NonTrivialNode *) _loopBranch->firstPrev();
     if ( loopVarMustBeLeft not_eq ( compare->src() == _loopVar ) ) {
         return "loopVar is on wrong side of comparison (loop not bounded)";
@@ -389,7 +389,7 @@ const char *CompiledLoop::checkLoopVar() {
 }
 
 
-bool_t CompiledLoop::isIncrement( PseudoRegister *p, ArithOpCode op ) {
+bool CompiledLoop::isIncrement( PseudoRegister *p, ArithOpCode op ) {
     // is p a suitable increment (i.e., a positive constant or loop-invariant variable)?
     _increment = p;
     if ( p->isConstPseudoRegister() ) {
@@ -536,7 +536,7 @@ void CompiledLoop::removeLoopVarOverflow() {
 void CompiledLoop::checkForArraysDefinedInLoop() {
     // remove all arrays from loopHeader's list which are defined in the loop
     GrowableArray<AbstractArrayAtNode *> arraysToRemove( 10 );
-    std::int32_t                                  len = _loopHeader->_arrayAccesses->length();
+    std::int32_t                         len = _loopHeader->_arrayAccesses->length();
 
     for ( std::int32_t i = 0; i < len; i++ ) {
         AbstractArrayAtNode *n = _loopHeader->_arrayAccesses->at( i );
@@ -574,7 +574,7 @@ public:
 
     void do_it( InlinedScope *s ) {
         GrowableArray<NonTrivialNode *> *tests = s->typeTests();
-        std::int32_t                             len    = tests->length();
+        std::int32_t                    len    = tests->length();
 
         for ( std::int32_t i = 0; i < len; i++ ) {
 
@@ -657,7 +657,7 @@ void CompiledLoop::hoistTypeTests() {
 }
 
 
-bool_t CompiledLoop::isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 ) {
+bool CompiledLoop::isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 ) {
     // are the two lists klasses1 and klasses2 equivalent (i.e., contain the same set of klasses)?
     if ( klasses1->length() not_eq klasses2->length() )
         return false;
@@ -723,8 +723,8 @@ void CompiledLoop::findRegCandidates() {
 
     GrowableArray<LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
-    const std::int32_t        len              = _bbs->length();
-    const BasicBlock *startBasicBlock = _startOfLoop->bb();
+    const std::int32_t len              = _bbs->length();
+    const BasicBlock   *startBasicBlock = _startOfLoop->bb();
 
     std::int32_t i;
     for ( i = 0; _bbs->at( i ) not_eq startBasicBlock; i++ );    // search for first BasicBlock
@@ -778,8 +778,8 @@ void CompiledLoop::findRegCandidates() {
 
 
 void CompiledLoop::print() {
-    _console->print_cr( "((CompiledLoop*)%#x) = [N%d..N%d], cond = [N%d..N%d], body = [N%d..N%d] (byteCodeIndex %d..%d)", this, _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
-    _console->print_cr( "\tloopVar=%s, lower=%s, upper=%s", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
+    spdlog::info( "((CompiledLoop*)0x{0:x}) = [N{}..N{}], cond = [N{}..N%d], body = [N%d..N%d] (byteCodeIndex %d..%d)", static_cast<const void *>(this), _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
+    spdlog::info( "\tloopVar=%s, lower=%s, upper=%s", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
 }
 
 
@@ -807,12 +807,12 @@ void HoistedTypeTest::print_test_on( ConsoleOutputStream *s ) {
 
 
 void HoistedTypeTest::print() {
-    _console->print( "((HoistedTypeTest*)%#x): ", this );
+    _console->print( "((HoistedTypeTest*)0x{0:x}): ", static_cast<const void *>(this) );
     print_test_on( _console );
     _console->cr();
 }
 
 
 void LoopRegCandidate::print() {
-    _console->print_cr( "((LoopRegCandidate*)%#x): %s, %d uses, %d definitions", this, _pseudoRegister->name(), _nuses, _ndefs );
+    spdlog::info( "((LoopRegCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
 }

@@ -6,8 +6,12 @@
 
 #pragma once
 
+#include <mutex>
+
 
 // -----------------------------------------------------------------------------
+
+// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
 
 #include "vm/system/gnu.hpp"
 #include "vm/system/msvc.hpp"
@@ -21,5 +25,51 @@
 
 // -----------------------------------------------------------------------------
 
-// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
-//
+#define SPDLOG_COMPILED_LIB
+
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/bundled/printf.h>
+
+
+// -----------------------------------------------------------------------------
+
+#include "vm/utilities/lprintf.hpp"
+
+
+// -----------------------------------------------------------------------------
+
+namespace strongtalk::vm {
+
+    class Log {
+    public:
+        Log();
+        static Log *getInstance();
+
+        template<typename... Args>
+        void info( const char *message, const Args &... args ) {
+            logger_->info( fmt::sprintf( message, args... ) );
+        }
+
+    private:
+        static Log *_instance;
+        static std::once_flag                  initFlag_;   //
+        static std::shared_ptr<spdlog::logger> logger_;     //
+    };
+
+
+    template<typename... Args>
+    void Info( const char *message, const Args &... args ) {
+        Log::getInstance()->info( message, args... );
+    }
+
+};
+
+#define LOG_INFO( MESSAGE, ... ) strongtalk::vm::Log::Info(MESSAGE, ##__VA_ARGS__)
+
+
+// -----------------------------------------------------------------------------
+
+#define LOGI( ... )  \
+ do{char buf[256]; snprintf(buf, 256,__VA_ARGS__);  spdlog::info(buf);}while(0)
+//use:
+//LOGI("hello %d, %s", 0, "msg");

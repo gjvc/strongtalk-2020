@@ -45,14 +45,14 @@ void VM_Scavenge::doit() {
     }
 
     if ( PrintStackAtScavenge ) {
-        _console->print_cr( "*** BEFORE ***" );
+        spdlog::info( "*** BEFORE ***" );
         Processes::print();
     }
     Universe::scavenge( _addr );
     if ( PrintStackAtScavenge ) {
-        _console->print_cr( "*** AFTER ***" );
+        spdlog::info( "*** AFTER ***" );
         Processes::print();
-        _console->print_cr( "******" );
+        spdlog::info( "******" );
     }
 }
 
@@ -124,7 +124,7 @@ std::int32_t vmProcessMain( void *ignored ) {
 std::int32_t createVMProcess() {
 
     std::int32_t ignored;
-    _console->print_cr( "createVMProcess() calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
+    spdlog::info( "createVMProcess() calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
     os::create_thread( &vmProcessMain, nullptr, &ignored );
 
     return 0;
@@ -137,16 +137,16 @@ std::int32_t vm_main( std::int32_t argc, char *argv[] ) {
     init_globals();
 
     load_image();
-    _console->print_cr( "%%status-image-loaded" );
+    spdlog::info( "%status-image-loaded" );
 
     if ( UseInliningDatabase )
         InliningDatabase::load_index_file();
 
     DeltaProcess::createMainProcess();
-    _console->print_cr( "%%status-main-process-created" );
+    spdlog::info( "%status-main-process-created" );
 
     createVMProcess();
-    _console->print_cr( "%%vm-process-created" );
+    spdlog::info( "%vm-process-created" );
 
     DeltaProcess::runMainProcess();
 

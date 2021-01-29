@@ -26,16 +26,16 @@ public:
     std::int32_t number() const;
 
 
-    bool_t isValid() const;
+    bool isValid() const;
 
 
-    bool_t hasByteRegister() const;
+    bool hasByteRegister() const;
 
 
-    bool_t operator==( const Register &rhs ) const;
+    bool operator==( const Register &rhs ) const;
 
 
-    bool_t operator!=( const Register &rhs ) const;
+    bool operator!=( const Register &rhs ) const;
 
 
     // debugging

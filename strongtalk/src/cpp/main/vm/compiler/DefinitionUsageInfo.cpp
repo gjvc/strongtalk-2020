@@ -15,28 +15,28 @@
 #include "vm/compiler/DefinitionUsageInfo.hpp"
 
 
-void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, Usage *use, const NonTrivialNode *fromNode, PseudoRegister *src, NonTrivialNode *toNode, const bool_t global ) {
+void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, Usage *use, const NonTrivialNode *fromNode, PseudoRegister *src, NonTrivialNode *toNode, const bool global ) {
     // r1 := r2; ...; r3 := op(r1)  -->  r1 := r2; ...; r3 := op(r2)
-    bool_t ok = toNode->copyPropagate( useBasicBlock, use, src );
+    bool ok = toNode->copyPropagate( useBasicBlock, use, src );
     if ( CompilerDebug ) {
-        cout( PrintCopyPropagation )->print( "*%s copy-propagation:%s propagate %s from N%ld (%#lx) to N%ld (%#lx)\n", global ? "global" : "local", ok ? "" : " couldn't", src->name(), fromNode ? fromNode->id() : 0, PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
+        cout( PrintCopyPropagation )->print( "*%s copy-propagation:%s propagate %s from N%ld (0x{0:x}) to N%ld (0x{0:x})\n", global ? "global" : "local", ok ? "" : " couldn't", src->name(), fromNode ? fromNode->id() : 0, PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
     }
 }
 
 
-void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRegister *r, const Definition *def, Usage *use, const bool_t global ) {
+void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRegister *r, const Definition *def, Usage *use, const bool global ) {
     // def reaches use; try to eliminate r's use by using copy propagation
     NonTrivialNode *fromNode    = def->_node;
-    const bool_t   isAssignment = fromNode->isAssignmentLike();
+    const bool   isAssignment = fromNode->isAssignmentLike();
     NonTrivialNode *toNode      = use->_node;
-    const bool_t   hasSrc       = fromNode->hasSrc();
+    const bool   hasSrc       = fromNode->hasSrc();
     PseudoRegister *fromPR      = hasSrc ? fromNode->src() : nullptr;
-    const bool_t   isConst      = hasSrc and fromPR->isConstPseudoRegister();
+    const bool   isConst      = hasSrc and fromPR->isConstPseudoRegister();
 
     if ( isAssignment and isConst and toNode->canCopyPropagateOop() ) {
         // loadOop r1, Oop; ...; r2 := op(r1)    --->
         // loadOop r1, Oop; ...; r2 := op(Oop)
-        bool_t ok = toNode->copyPropagate( useBasicBlock, use, fromPR );
+        bool ok = toNode->copyPropagate( useBasicBlock, use, fromPR );
         if ( CompilerDebug ) {
             // the original code broke the MSC++ 3.0 optimizer, so now it looks a bit weird.  -Urs 7/96
             const char *glob = global ? "global" : "local";
@@ -44,7 +44,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRe
             const char *name = def->_node->src()->name();        // using fromNode or fromPR here will break
             void       *from = PrintHexAddresses ? fromNode : 0;
             void       *to   = PrintHexAddresses ? toNode : 0;
-            cout( PrintCopyPropagation )->print( "*%s copy-propagation:%s %s from N%ld (%#lx) to N%ld (%#lx)\n", glob, prop, name, def->_node->id(), from, toNode->id(), to );
+            cout( PrintCopyPropagation )->print( "*%s copy-propagation:%s %s from N%ld (0x{0:x}) to N%ld (0x{0:x})\n", glob, prop, name, def->_node->id(), from, toNode->id(), to );
         }
         return;
     }
@@ -56,7 +56,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRe
         // toNode (but at same loop nesting), so loopDepths match
         st_assert( global, "can't be local copy-propagation" );
         if ( CompilerDebug ) {
-            cout( PrintCopyPropagation )->print( "*global copy-propagation: can't propagate %s from N%ld (%#lx) to N%ld (%#lx) -- loopDepth mismatch\n", fromPR->name(), fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
+            cout( PrintCopyPropagation )->print( "*global copy-propagation: can't propagate %s from N%ld (0x{0:x}) to N%ld (0x{0:x}) -- loopDepth mismatch\n", fromPR->name(), fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
         }
         return;
     }
@@ -76,7 +76,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRe
         // currently not done (extendLiveRange handles only forward extensions), but as
         // std::int32_t as this optimization isn't performed globally this shouldn't hurt
         if ( CompilerDebug ) {
-            cout( PrintCopyPropagation )->print( "*%s copy-propagation: changing dest of N%ld (%#lx) to %s to match use at N%ld (%#lx)\n", global ? "global" : "local", fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->dest()->name(), toNode->id(), PrintHexAddresses ? toNode : 0 );
+            cout( PrintCopyPropagation )->print( "*%s copy-propagation: changing dest of N%ld (0x{0:x}) to %s to match use at N%ld (0x{0:x})\n", global ? "global" : "local", fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->dest()->name(), toNode->id(), PrintHexAddresses ? toNode : 0 );
         }
         st_assert( not r->incorrectDU(), "shouldn't try copy-propagation on this" );
         st_assert( not global or r->isSinglyAssigned(), "not safe with >1 definitions" );
@@ -88,7 +88,7 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRe
 
     // nothing worked
     if ( CompilerDebug ) {
-        cout( PrintCopyPropagation )->print( "*%s copy-propagation: can't propagate N%ld (%#lx) to N%ld (%#lx)\n", global ? "global" : "local", fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
+        cout( PrintCopyPropagation )->print( "*%s copy-propagation: can't propagate N%ld (0x{0:x}) to N%ld (0x{0:x})\n", global ? "global" : "local", fromNode->id(), PrintHexAddresses ? fromNode : 0, toNode->id(), PrintHexAddresses ? toNode : 0 );
     }
 }
 
@@ -148,17 +148,17 @@ void DefinitionUsageInfo::getLiveRange( std::int32_t &firstNodeNum, std::int32_t
 
 
 void DefinitionUsageInfo::print_short() {
-    lprintf( "DefinitionUsageInfo %#lx", this );
+    spdlog::info( "DefinitionUsageInfo 0x{0:x}", static_cast<void*>( this ) );
 }
 
 
 void DefinitionUsageInfo::print() {
     print_short();
-    lprintf( " for " );
+    spdlog::info( " for " );
     _pseudoRegister->print_short();
-    lprintf( ": " );
+    spdlog::info( ": " );
     _usages.print();
-    lprintf( "; " );
+    spdlog::info( "; " );
     _definitions.print();
-    lprintf( "\n" );
+    spdlog::info( "" );
 }

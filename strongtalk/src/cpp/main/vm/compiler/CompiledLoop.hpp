@@ -79,12 +79,12 @@ private:
     std::int32_t _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
 
     // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
-    bool_t _isIntegerLoop;               // is this loop a recognized integer loop?
+    bool _isIntegerLoop;               // is this loop a recognized integer loop?
     PseudoRegister *_loopVar;                   // suspected loop variable
     PseudoRegister *_lowerBound;                // lower bound of for-like loop (see comment in findLowerBound)
     PseudoRegister *_upperBound;                // upper bound
     PseudoRegister *_increment;                 // increment of loopVar
-    bool_t _isCountingUp;                // true if loop is counting up, false if counting down
+    bool _isCountingUp;                // true if loop is counting up, false if counting down
     NonTrivialNode *_incNode;                   // node incrementing loop var
     PseudoRegister *_loopArray;                 // array whose size is upper bound (or nullptr)
     LoadOffsetNode *_loopSizeLoad;              // node loading loopArray's size
@@ -109,11 +109,11 @@ public:
 
     void set_endOfLoop( Node *end );
 
-    bool_t isInLoop( Node *n ) const;
+    bool isInLoop( Node *n ) const;
 
-    bool_t isInLoopCond( Node *n ) const;
+    bool isInLoopCond( Node *n ) const;
 
-    bool_t isInLoopBody( Node *n ) const;
+    bool isInLoopBody( Node *n ) const;
 
 
     LoopHeaderNode *loopHeader() const {
@@ -123,7 +123,7 @@ public:
 
     const char *recognize(); // does integer loop recognition; called after definitions/uses built (returns nullptr if successful, reason otherwise)
 
-    bool_t isIntegerLoop() const {
+    bool isIntegerLoop() const {
         return _isIntegerLoop;
     }
 
@@ -147,7 +147,7 @@ protected:
     const char *checkUpperBound();
 
     NonTrivialNode *findDefInLoop( PseudoRegister *r );      // find single definition of r in loop
-    bool_t isIncrement( PseudoRegister *r, ArithOpCode op );      // is r a suitable loop variable increment?
+    bool isIncrement( PseudoRegister *r, ArithOpCode op );      // is r a suitable loop variable increment?
     void removeTagChecks();
 
     void removeLoopVarOverflow();
@@ -160,7 +160,7 @@ protected:
 
     void findRegCandidates();
 
-    bool_t isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 );
+    bool isEquivalentType( GrowableArray<KlassOop> *klasses1, GrowableArray<KlassOop> *klasses2 );
 
 public:  // for iterators
     std::int32_t defsInLoop( PseudoRegister *r, NonTrivialNode **defNode = nullptr );   // return number of definitions of r in loop and sets defNode if non-nullptr
@@ -173,7 +173,7 @@ public:
     NonTrivialNode          *_node;         // node (within loop) doing the test
     PseudoRegister          *_testedPR;     // PseudoRegister whose type is tested
     GrowableArray<KlassOop> *_klasses;      // klasses for which the PseudoRegister is tested
-    bool_t _invalid;
+    bool _invalid;
 
     HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses );
 

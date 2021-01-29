@@ -723,12 +723,12 @@ void Assembler::ret( std::int32_t imm16 ) {
 
 void Assembler::print( const Label &L ) {
     if ( L.is_unused() ) {
-        _console->print_cr( "undefined label" );
+        spdlog::info( "undefined label" );
     } else if ( L.is_bound() ) {
-        _console->print_cr( "bound label to %d", L.pos() );
+        spdlog::info( "bound label to {}", L.pos() );
     } else if ( L.is_unbound() ) {
         Label l = L;
-        _console->print_cr( "unbound label" );
+        spdlog::info( "unbound label" );
         while ( l.is_unbound() ) {
             Displacement disp = Displacement( long_at( l.pos() ) );
             _console->print( "@ %d ", l.pos() );
@@ -737,13 +737,13 @@ void Assembler::print( const Label &L ) {
             disp.next( l );
         }
     } else {
-        _console->print_cr( "label in inconsistent state (pos = %d)", L._pos );
+        spdlog::info( "label in inconsistent state (pos = {})", L._pos );
     }
 }
 
 
 void Assembler::bind_to( const Label &L, std::int32_t pos ) {
-    bool_t tellRobert = false;
+    bool tellRobert = false;
 
     st_assert( 0 <= pos and pos <= offset(), "must have a valid binding position" );
     while ( L.is_unbound() ) {
@@ -784,7 +784,7 @@ void Assembler::bind_to( const Label &L, std::int32_t pos ) {
     L.bind_to( pos );
 
     if ( tellRobert ) {
-        //warning("jmp to next has not been eliminated - tell Robert, please");
+        //spdlog::warn("jmp to next has not been eliminated - tell Robert, please");
         code()->decode();
     }
 }
@@ -835,7 +835,7 @@ void Assembler::bind( const Label &L ) {
             constexpr std::int32_t long_size = 5;
             st_assert( byte_at( offset() - long_size ) == 0xE9, "jmp expected" );
             if ( PrintEliminatedJumps )
-                _console->print_cr( "@ %d jump to next eliminated", L.pos() );
+                spdlog::info( "@ {} jump to next eliminated", L.pos() );
             // remove first entry from label list
             Displacement( long_at( L.pos() ) ).next( L );
             // eliminate instruction (set code pointers back)
@@ -929,7 +929,7 @@ void Assembler::jmp( const Label &L ) {
         if ( EliminateJumpsToJumps and _unbound_label.is_unbound() and _binding_pos == offset() ) {
             // current position is target of jumps
             if ( PrintEliminatedJumps ) {
-                _console->print_cr( "eliminated jumps/calls to %d", _binding_pos );
+                spdlog::info( "eliminated jumps/calls to {}", _binding_pos );
                 _console->print( "from " );
                 print( _unbound_label );
             }

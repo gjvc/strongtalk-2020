@@ -16,7 +16,7 @@ class TempDecoder {
 private:
     std::int32_t _num_of_params;
 
-    bool_t is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo );
+    bool is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo );
 
 public:
     virtual void decode( MethodOop method, std::int32_t byteCodeIndex = 0 );

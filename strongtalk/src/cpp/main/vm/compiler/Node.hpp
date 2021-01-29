@@ -93,8 +93,8 @@ protected:
 
 public:
     Label  _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
-    bool_t _dontEliminate; // for special cases: must not eliminate this node
-    bool_t _deleted;       // node has been deleted
+    bool _dontEliminate; // for special cases: must not eliminate this node
+    bool _deleted;       // node has been deleted
 
     std::int32_t id() const {
         return this == nullptr ? -1 : _id;
@@ -141,152 +141,152 @@ public:
     BasicNode();
 
 
-    virtual bool_t isPrologueNode() const {
+    virtual bool isPrologueNode() const {
         return false;
     }
 
 
-    virtual bool_t isAssignNode() const {
+    virtual bool isAssignNode() const {
         return false;
     }
 
 
-    virtual bool_t isTArithNode() const {
+    virtual bool isTArithNode() const {
         return false;
     }
 
 
-    virtual bool_t isArithNode() const {
+    virtual bool isArithNode() const {
         return false;
     }
 
 
-    virtual bool_t isNonLocalReturnSetupNode() const {
+    virtual bool isNonLocalReturnSetupNode() const {
         return false;
     }
 
 
-    virtual bool_t isNonLocalReturnTestNode() const {
+    virtual bool isNonLocalReturnTestNode() const {
         return false;
     }
 
 
-    virtual bool_t isNonLocalReturnContinuationNode() const {
+    virtual bool isNonLocalReturnContinuationNode() const {
         return false;
     }
 
 
-    virtual bool_t isReturnNode() const {
+    virtual bool isReturnNode() const {
         return false;
     }
 
 
-    virtual bool_t isInlinedReturnNode() const {
+    virtual bool isInlinedReturnNode() const {
         return false;
     }
 
 
-    virtual bool_t isLoopHeaderNode() const {
+    virtual bool isLoopHeaderNode() const {
         return false;
     }
 
 
-    virtual bool_t isExitNode() const {
+    virtual bool isExitNode() const {
         return false;
     }
 
 
-    virtual bool_t isMergeNode() const {
+    virtual bool isMergeNode() const {
         return false;
     }
 
 
-    virtual bool_t isBranchNode() const {
+    virtual bool isBranchNode() const {
         return false;
     }
 
 
-    virtual bool_t isBlockCreateNode() const {
+    virtual bool isBlockCreateNode() const {
         return false;
     }
 
 
-    virtual bool_t isContextCreateNode() const {
+    virtual bool isContextCreateNode() const {
         return false;
     }
 
 
-    virtual bool_t isContextInitNode() const {
+    virtual bool isContextInitNode() const {
         return false;
     }
 
 
-    virtual bool_t isContextZapNode() const {
+    virtual bool isContextZapNode() const {
         return false;
     }
 
 
-    virtual bool_t isCommentNode() const {
+    virtual bool isCommentNode() const {
         return false;
     }
 
 
-    virtual bool_t isSendNode() const {
+    virtual bool isSendNode() const {
         return false;
     }
 
 
-    virtual bool_t isCallNode() const {
+    virtual bool isCallNode() const {
         return false;
     }
 
 
-    virtual bool_t isStoreNode() const {
+    virtual bool isStoreNode() const {
         return false;
     }
 
 
-    virtual bool_t isDeadEndNode() const {
+    virtual bool isDeadEndNode() const {
         return false;
     }
 
 
-    virtual bool_t isTypeTestNode() const {
+    virtual bool isTypeTestNode() const {
         return false;
     }
 
 
-    virtual bool_t isUncommonNode() const {
+    virtual bool isUncommonNode() const {
         return false;
     }
 
 
-    virtual bool_t isUncommonSendNode() const {
+    virtual bool isUncommonSendNode() const {
         return false;
     }
 
 
-    virtual bool_t isNopNode() const {
+    virtual bool isNopNode() const {
         return false;
     }
 
 
-    virtual bool_t isCmpNode() const {
+    virtual bool isCmpNode() const {
         return false;
     }
 
 
-    virtual bool_t isArraySizeLoad() const {
+    virtual bool isArraySizeLoad() const {
         return false;
     }
 
 
-    virtual bool_t isAccessingFloats() const {
+    virtual bool isAccessingFloats() const {
         return false;
     }
 
 
-    virtual bool_t isTrivial() const = 0;
+    virtual bool isTrivial() const = 0;
 
 protected:
     virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
@@ -304,46 +304,46 @@ public:
     }
 
 
-    virtual bool_t hasDest() const {
+    virtual bool hasDest() const {
         return false;
     }
 
 
-    virtual bool_t canCopyPropagate() const {
+    virtual bool canCopyPropagate() const {
         return false;
     }
 
 
     // canCopyPropagate: can node replace a use with copy-propagated PseudoRegister?
     // if true, must implement copyPropagate below
-    bool_t canCopyPropagate( Node *fromNode ) const; // can copy-propagate from fromNode to receiver?
-    virtual bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false ) = 0;
+    bool canCopyPropagate( Node *fromNode ) const; // can copy-propagate from fromNode to receiver?
+    virtual bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false ) = 0;
 
 
-    virtual bool_t canCopyPropagateOop() const {
+    virtual bool canCopyPropagateOop() const {
         return false;
     }
 
 
     // canCopyPropagateOop: can node replace a use with a copy-propagated Oop?
     // if true, must handle ConstPseudoRegisters; implies canCopyPropagate
-    virtual bool_t isAssignmentLike() const {
+    virtual bool isAssignmentLike() const {
         return false;
     }
 
 
     // isAssignmentLike: node copies src to dest (implies hasSrc/Dest)
-    virtual bool_t shouldCopyWhenSplitting() const {
+    virtual bool shouldCopyWhenSplitting() const {
         return false;
     }
 
 
-    virtual bool_t hasSrc() const {
+    virtual bool hasSrc() const {
         return false;
     }
 
 
-    virtual bool_t hasConstantSrc() const {
+    virtual bool hasConstantSrc() const {
         return false;
     }
 
@@ -354,16 +354,16 @@ public:
     }
 
 
-    virtual bool_t canChangeDest() const {
+    virtual bool canChangeDest() const {
         st_assert( hasDest(), "shouldn't call" );
         return true;
     }
 
 
-    virtual bool_t endsBasicBlock() const = 0;
+    virtual bool endsBasicBlock() const = 0;
 
 
-    virtual bool_t startsBasicBlock() const {
+    virtual bool startsBasicBlock() const {
         return false;
     }
 
@@ -384,10 +384,10 @@ public:
     }
 
 
-    virtual void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false ) = 0;
+    virtual void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false ) = 0;
 
 
-    virtual bool_t canBeEliminated() const {
+    virtual bool canBeEliminated() const {
         return not _dontEliminate;
     }
 
@@ -417,11 +417,11 @@ public:
     // If a node includes one or more type tests of its argument(s), it should return true for doesTypeTests
     // and implement the other four methods in this group.  It can then benefit from type test optimizations
     // (e.g., moving a test out of a loop).
-    virtual bool_t doesTypeTests() const {
+    virtual bool doesTypeTests() const {
         return false;
     }          // does node perform any type test?
 
-    virtual bool_t hasUnknownCode() const {
+    virtual bool hasUnknownCode() const {
         return false;
     }          // does handle unknown cases? (with real code, not uncommon branch)
 
@@ -445,7 +445,7 @@ public:
     }
 
 
-    virtual const char *print_string( const char *buf, bool_t printAddr = true ) const = 0;
+    virtual char *print_string( char *buf, bool printAddr = true ) const = 0;
 
     void printID() const;
 
@@ -460,7 +460,7 @@ public:
     PseudoRegisterMapping *mapping() const;
 
 
-    bool_t hasMapping() const {
+    bool hasMapping() const {
         return _pseudoRegisterMapping not_eq nullptr;
     }
 
@@ -486,25 +486,25 @@ protected:
 
 
 public:
-    virtual bool_t endsBasicBlock() const;
+    virtual bool endsBasicBlock() const;
 
     virtual Node *likelySuccessor() const;
 
     virtual Node *uncommonSuccessor() const;
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     virtual void verify() const;
 
     friend class NodeFactory;
 
 
-    virtual bool_t hasSingleSuccessor() const {
+    virtual bool hasSingleSuccessor() const {
         return true;
     }
 
 
-    virtual bool_t hasSinglePredecessor() const {
+    virtual bool hasSinglePredecessor() const {
         return true;
     }
 
@@ -519,12 +519,12 @@ public:
     }
 
 
-    virtual bool_t isPredecessor( const Node *n ) const {
+    virtual bool isPredecessor( const Node *n ) const {
         return _prev == n;
     }
 
 
-    virtual bool_t isSuccessor( const Node *n ) const {
+    virtual bool isSuccessor( const Node *n ) const {
         return _next == n;
     }
 
@@ -658,7 +658,7 @@ public:
 
 class TrivialNode : public Node {
 public:
-    bool_t isTrivial() const {
+    bool isTrivial() const {
         return true;
     }
 
@@ -668,7 +668,7 @@ public:
     }
 
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false ) {
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false ) {
         return false;
     }
 
@@ -693,7 +693,7 @@ protected:
     NonTrivialNode();
 
 public:
-    bool_t isTrivial() const {
+    bool isTrivial() const {
         return false;
     }
 
@@ -710,7 +710,7 @@ public:
 
     void setDest( BasicBlock *bb, PseudoRegister *d );
 
-    virtual bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    virtual bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void makeUses( BasicBlock *bb );
 
@@ -738,12 +738,12 @@ protected:
 
 
 public:
-    bool_t isPrologueNode() const {
+    bool isPrologueNode() const {
         return true;
     }
 
 
-    virtual bool_t canChangeDest() const {
+    virtual bool canChangeDest() const {
         return false;
     }    // has no dest
 
@@ -765,7 +765,7 @@ public:
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
@@ -774,7 +774,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -790,17 +790,17 @@ protected:
 
 
 public:
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
@@ -811,7 +811,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     friend class NodeFactory;
 };
@@ -845,7 +845,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -856,10 +856,10 @@ class LoadOffsetNode : public LoadNode {
 public:
     // _src is base address (e.g. object containing a slot)
     std::int32_t    _offset;          // offset in words
-    bool_t _isArraySize;     // is this load implementing an array size primitive?
+    bool _isArraySize;     // is this load implementing an array size primitive?
 
 protected:
-    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, std::int32_t offs, bool_t arr ) :
+    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, std::int32_t offs, bool arr ) :
             LoadNode( dst ) {
         _src         = b;
         _offset      = offs;
@@ -876,12 +876,12 @@ public:
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t isArraySizeLoad() const {
+    bool isArraySizeLoad() const {
         return _isArraySize;
     }
 
@@ -892,9 +892,9 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void gen();
 
@@ -906,7 +906,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -948,9 +948,9 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -962,7 +962,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -978,33 +978,33 @@ protected:
 
 
 public:
-    bool_t isStoreNode() const {
+    bool isStoreNode() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    virtual bool_t needsStoreCheck() const {
+    virtual bool needsStoreCheck() const {
         return false;
     }
 
 
-    virtual const char *action() const = 0;        // for debugging messages
-    virtual void setStoreCheck( bool_t ncs ) {
+    virtual char *action() const = 0;        // for debugging messages
+    virtual void setStoreCheck( bool ncs ) {
     }
 
 
@@ -1016,7 +1016,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
@@ -1031,10 +1031,10 @@ private:
     PseudoRegister *_base;              // base address (object containing the slot)
     Usage          *_baseUse;           //
     std::int32_t            _offset;             // offset in words
-    bool_t         _needsStoreCheck;    // does store need a GC store check?
+    bool         _needsStoreCheck;    // does store need a GC store check?
 
 protected:
-    StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool_t nsc ) :
+    StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool nsc ) :
             StoreNode( s ) {
         _base = b;
         st_assert( b, "base is nullptr" );
@@ -1054,22 +1054,22 @@ public:
     }
 
 
-    bool_t needsStoreCheck() const {
+    bool needsStoreCheck() const {
         return _needsStoreCheck;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    void setStoreCheck( bool_t ncs ) {
+    void setStoreCheck( bool ncs ) {
         _needsStoreCheck = ncs;
     }
 
 
-    const char *action() const {
+    char *action() const {
         return "stored into an object";
     }
 
@@ -1082,12 +1082,12 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
@@ -1102,7 +1102,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1116,11 +1116,11 @@ private:
     PseudoRegister *_context0;          // starting context
     std::int32_t            _nofLevels;          // no. of indirections to follow via context home field
     std::int32_t            _offset;             // offset of temporary in final context
-    bool_t         _needsStoreCheck;    // generate a store check if true
+    bool         _needsStoreCheck;    // generate a store check if true
     SymbolOop      _name;               // temporary name (for printing)
 
 protected:
-    StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool_t needsStoreCheck );
+    StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool needsStoreCheck );
 
 public:
     PseudoRegister *context0() const {
@@ -1138,17 +1138,17 @@ public:
     }
 
 
-    bool_t needsStoreCheck() const {
+    bool needsStoreCheck() const {
         return _needsStoreCheck;
     }
 
 
-    void setStoreCheck( bool_t ncs ) {
+    void setStoreCheck( bool ncs ) {
         _needsStoreCheck = ncs;
     }
 
 
-    const char *action() const {
+    char *action() const {
         return "stored into a context temporary";
     }
 
@@ -1161,9 +1161,9 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -1175,7 +1175,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1190,45 +1190,45 @@ public:
     std::int32_t cost() const {
         return oopSize / 2;
     }  // assume 50% eliminated
-    bool_t isAccessingFloats() const;
+    bool isAccessingFloats() const;
 
 
-    bool_t isAssignNode() const {
+    bool isAssignNode() const {
         return true;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t hasConstantSrc() const {
+    bool hasConstantSrc() const {
         return _src->isConstPseudoRegister();
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return true;
     }
 
 
-    bool_t shouldCopyWhenSplitting() const {
+    bool shouldCopyWhenSplitting() const {
         return true;
     }
 
 
-    bool_t canBeEliminated() const;
+    bool canBeEliminated() const;
 
     Oop constantSrc() const;
 
 
-    const char *action() const {
+    char *action() const {
         return _dest->isSinglyAssignedPseudoRegister() ? "passed as an argument" : "assigned to a local";
     }
 
@@ -1241,7 +1241,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -1251,7 +1251,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
 protected:
     void genOop();
@@ -1271,42 +1271,42 @@ protected:
 
 
 public:
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
 
-    bool_t isReturnNode() const {
+    bool isReturnNode() const {
         return true;
     }
 
 
-    bool_t endsBasicBlock() const {
+    bool endsBasicBlock() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return true;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
@@ -1336,27 +1336,27 @@ protected:
 
 
 public:
-    bool_t isInlinedReturnNode() const {
+    bool isInlinedReturnNode() const {
         return true;
     }
 
 
-    bool_t endsBasicBlock() const {
+    bool endsBasicBlock() const {
         return NonTrivialNode::endsBasicBlock();
     }
 
 
-    bool_t isTrivial() const {
+    bool isTrivial() const {
         return true;
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return true;
     }
 
 
-    bool_t shouldCopyWhenSplitting() const {
+    bool shouldCopyWhenSplitting() const {
         return true;
     }
 
@@ -1378,7 +1378,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1398,41 +1398,41 @@ protected:
     NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex );
 
 public:
-    bool_t isExitNode() const {
+    bool isExitNode() const {
         return true;
     }
 
 
-    bool_t isNonLocalReturnSetupNode() const {
+    bool isNonLocalReturnSetupNode() const {
         return true;
     }
 
 
     // uses hardwired regs, has no src or dest
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return false;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return false;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }  // otherwise breaks nonlocal_return
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return false;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return false;
     }
 
 
-    bool_t canChangeDest() const {
+    bool canChangeDest() const {
         return false;
     }    // has no dest
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -1451,7 +1451,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1465,43 +1465,43 @@ protected:
 
 
 public:
-    bool_t isExitNode() const {
+    bool isExitNode() const {
         return true;
     }
 
 
-    bool_t isNonLocalReturnContinuationNode() const {
+    bool isNonLocalReturnContinuationNode() const {
         return true;
     }
 
 
     // uses hardwired regs, has no src or dest
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return false;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return false;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return false;
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return false;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return false;
     }
 
 
-    bool_t canChangeDest() const {
+    bool canChangeDest() const {
         return false;
     }    // has no dest
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -1520,7 +1520,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1538,22 +1538,22 @@ public:
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-    bool_t isExitNode() const {
+    bool isExitNode() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return false;
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return false;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return false;
     }
 
@@ -1564,7 +1564,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -1576,7 +1576,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1609,7 +1609,7 @@ public:
     }
 
 
-    bool_t hasSinglePredecessor() const {
+    bool hasSinglePredecessor() const {
         return _prevs->length() <= 1;
     }
 
@@ -1649,7 +1649,7 @@ protected:
 public:
     void movePrev( Node *from, Node *to );
 
-    bool_t isPredecessor( const Node *n ) const;
+    bool isPredecessor( const Node *n ) const;
 };
 
 
@@ -1661,26 +1661,26 @@ protected:
     MergeNode( Node *prev1, Node *prev2 );
 
 public:
-    bool_t _isLoopStart;        // does this node start a loop?
-    bool_t _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
-    bool_t _didStartBasicBlock; // used for debugging / assertion checks
+    bool _isLoopStart;        // does this node start a loop?
+    bool _isLoopEnd;          // does this node end a loop? (i.e., first node after loop)
+    bool _didStartBasicBlock; // used for debugging / assertion checks
 
     std::int32_t cost() const {
         return 0;
     }
 
 
-    bool_t isTrivial() const {
+    bool isTrivial() const {
         return _prevs->length() <= 1;
     }
 
 
-    bool_t startsBasicBlock() const {
+    bool startsBasicBlock() const {
         return _prevs->length() > 1 or _isLoopStart;
     }
 
 
-    bool_t isMergeNode() const {
+    bool isMergeNode() const {
         return true;
     }
 
@@ -1699,7 +1699,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1720,37 +1720,37 @@ protected:
 
 
 public:
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return _constResult not_eq nullptr;
     }
 
 
-    bool_t isArithNode() const {
+    bool isArithNode() const {
         return true;
     }
 
 
-    bool_t isCmpNode() const {
+    bool isCmpNode() const {
         return _op == ArithOpCode::tCmpArithOp;
     }
 
@@ -1761,9 +1761,9 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
 
     ArithOpCode op() const {
@@ -1771,13 +1771,13 @@ public:
     }
 
 
-    virtual bool_t operIsConst() const = 0;
+    virtual bool operIsConst() const = 0;
 
     virtual std::int32_t operConst() const = 0;
 
-    virtual bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t repl );
+    virtual bool doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool repl );
 
-    const char *opName() const;
+    char *opName() const;
 
     friend class NodeFactory;
 };
@@ -1799,11 +1799,11 @@ public:
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    bool_t operIsConst() const;
+    bool operIsConst() const;
 
     std::int32_t operConst() const;
 
-    bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace );
+    bool doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace );
 
     void makeUses( BasicBlock *bb );
 
@@ -1811,7 +1811,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -1823,7 +1823,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1837,12 +1837,12 @@ class FloatArithRRNode : public ArithRRNode {  // for untagged float operations
 
 
 public:
-    bool_t isAccessingFloats() const {
+    bool isAccessingFloats() const {
         return true;
     }
 
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void gen();
 
@@ -1854,7 +1854,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1869,20 +1869,20 @@ class FloatUnaryArithNode : public ArithNode {
 
 
 public:
-    bool_t isAccessingFloats() const {
+    bool isAccessingFloats() const {
         return true;
     }
 
 
-    bool_t isCmpNode() const {
+    bool isCmpNode() const {
         return false;
     }
 
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
 
-    bool_t operIsConst() const {
+    bool operIsConst() const {
         return false;
     }
 
@@ -1903,7 +1903,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1938,7 +1938,7 @@ public:
     }
 
 
-    bool_t operIsConst() const {
+    bool operIsConst() const {
         return true;
     }
 
@@ -1948,7 +1948,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1957,13 +1957,13 @@ public:
 class AbstractBranchNode : public NonTrivialNode {
     // next() is the fall-through case, next1() the taken branch
 public:
-    virtual bool_t canFail() const = 0;        // does node have a failure branch?
+    virtual bool canFail() const = 0;        // does node have a failure branch?
     virtual Node *failureBranch() const {
         return next1();
     }
 
 
-    bool_t endsBasicBlock() const {
+    bool endsBasicBlock() const {
         return true;
     }
 
@@ -1976,7 +1976,7 @@ protected:
 
     void removeFailureIfPossible();
 
-    void verify( bool_t verifySuccessors ) const;
+    void verify( bool verifySuccessors ) const;
 
     // ---------- node linking code --------------
 private:
@@ -1993,7 +1993,7 @@ public:
     }
 
 
-    bool_t hasSingleSuccessor() const {
+    bool hasSingleSuccessor() const {
         return next1() == nullptr;
     }
 
@@ -2033,7 +2033,7 @@ public:
 
     void moveNext( Node *from, Node *to );
 
-    bool_t isSuccessor( const Node *n ) const;
+    bool isSuccessor( const Node *n ) const;
 };
 
 class TArithRRNode : public AbstractBranchNode {
@@ -2043,11 +2043,11 @@ protected:
     ArithOpCode         _op;
     PseudoRegister      *_oper;
     Usage               *_operUse;
-    bool_t              _arg1IsInt;            // is _src a smi_t?
-    bool_t              _arg2IsInt;            // is _oper a smi_t?
+    bool              _arg1IsInt;            // is _src a smi_t?
+    bool              _arg2IsInt;            // is _oper a smi_t?
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
-    TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool_t a1, bool_t a2 );
+    TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool a1, bool a2 );
 
 public:
     ArithOpCode op() const {
@@ -2060,57 +2060,57 @@ public:
     }
 
 
-    bool_t arg1IsInt() const {
+    bool arg1IsInt() const {
         return _arg1IsInt;
     }
 
 
-    bool_t arg2IsInt() const {
+    bool arg2IsInt() const {
         return _arg2IsInt;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return not( _arg1IsInt and _arg2IsInt );
     }
 
 
-    bool_t isTArithNode() const {
+    bool isTArithNode() const {
         return true;
     }
 
 
-    bool_t isAssignmentLike() const {
+    bool isAssignmentLike() const {
         return _constResult not_eq nullptr;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
 
-    bool_t doesTypeTests() const {
+    bool doesTypeTests() const {
         return true;
     }
 
 
-    bool_t hasUnknownCode() const;
+    bool hasUnknownCode() const;
 
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
@@ -2124,7 +2124,7 @@ public:
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     Node *likelySuccessor() const;
 
@@ -2140,10 +2140,10 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
 protected:
-    bool_t doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     friend class NodeFactory;
 };
@@ -2165,34 +2165,34 @@ public:
     GrowableArray<PseudoRegister *> *args;        // args including receiver (at index 0, followed by first arg), or nullptr
     std::int32_t                             nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return true;
     }
 
 
-    bool_t isCallNode() const {
+    bool isCallNode() const {
         return true;
     }
 
 
-    bool_t canChangeDest() const {
+    bool canChangeDest() const {
         return false;
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
 
-    virtual bool_t canInvokeDelta() const = 0;    // can call invoke Delta code?
+    virtual bool canInvokeDelta() const = 0;    // can call invoke Delta code?
     MergeNode *nlrTestPoint() const;
 
     Node *likelySuccessor() const;
 
     Node *uncommonSuccessor() const;
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
 
@@ -2215,35 +2215,35 @@ class SendNode : public CallNode {
 
 protected:
     LookupKey *_key;      // lookup key (for selector)
-    bool_t    _superSend;  // is it a super send?
+    bool    _superSend;  // is it a super send?
     SendInfo  *_info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
 
-    SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool_t superSend, SendInfo *info );
+    SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool superSend, SendInfo *info );
 
 public:
-    bool_t isSendNode() const {
+    bool isSendNode() const {
         return true;
     }
 
 
-    bool_t isSuperSend() const {
+    bool isSuperSend() const {
         return _superSend;
     }
 
 
-    bool_t isCounting() const;
+    bool isCounting() const;
 
-    bool_t isUninlinable() const;
+    bool isUninlinable() const;
 
-    bool_t staticReceiver() const;
+    bool staticReceiver() const;
 
 
-    bool_t canInvokeDelta() const {
+    bool canInvokeDelta() const {
         return true;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return false;
     }
 
@@ -2265,7 +2265,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2279,11 +2279,11 @@ protected:
     PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
 public:
-    bool_t canBeEliminated() const;
+    bool canBeEliminated() const;
 
-    bool_t canInvokeDelta() const;
+    bool canInvokeDelta() const;
 
-    bool_t canFail() const;
+    bool canFail() const;
 
 
     PrimitiveDescriptor *pdesc() const {
@@ -2295,7 +2295,7 @@ public:
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -2305,7 +2305,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2316,15 +2316,15 @@ protected:
     SymbolOop      _dll_name;
     SymbolOop      _function_name;
     dll_func_ptr_t _function;
-    bool_t         _async;
+    bool         _async;
 
-    DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool_t async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
+    DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
 public:
-    bool_t canInvokeDelta() const;
+    bool canInvokeDelta() const;
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return true;
     }
 
@@ -2349,7 +2349,7 @@ public:
     }
 
 
-    bool_t async() const {
+    bool async() const {
         return _async;
     }
 
@@ -2366,7 +2366,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2393,7 +2393,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2413,7 +2413,7 @@ class LoopHeaderNode : public TrivialNode {
 
 protected:
     // info for integer loops
-    bool_t                               _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
+    bool                               _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
     PseudoRegister                       *_loopVar;              // loop variable
     PseudoRegister                       *_lowerBound;           // lower bound
     PseudoRegister                       *_upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
@@ -2425,28 +2425,28 @@ protected:
     GrowableArray<HoistedTypeTest *>  *_tests;              // type tests hoisted out of loop
     GrowableArray<LoopHeaderNode *>   *_nestedLoops;        // nested loops (nullptr if none)
     GrowableArray<LoopRegCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-    bool_t                            _activated;            // gen() does nothing until activated
+    bool                            _activated;            // gen() does nothing until activated
     std::int32_t                               _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
 
 public:
-    bool_t isLoopHeaderNode() const {
+    bool isLoopHeaderNode() const {
         return true;
     }
 
 
-    bool_t isActivated() const {
+    bool isActivated() const {
         return _activated;
     }
 
 
-    bool_t isInnerLoop() const {
+    bool isInnerLoop() const {
         return _nestedLoops == nullptr;
     }
 
 
-    bool_t isIntegerLoop() const {
+    bool isIntegerLoop() const {
         return _integerLoop;
     }
 
@@ -2534,7 +2534,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 
@@ -2569,13 +2569,13 @@ protected:
 
 public:
 
-    bool_t isBlockCreateNode() const {
+    bool isBlockCreateNode() const {
         return true;
     }
 
 
     // block creation nodes are like assignments if memoized, so don't end BBs here
-    bool_t endsBasicBlock() const {
+    bool endsBasicBlock() const {
         return not isMemoized() or NonTrivialNode::endsBasicBlock();
     }
 
@@ -2586,17 +2586,17 @@ public:
     }
 
 
-    bool_t isMemoized() const {
+    bool isMemoized() const {
         return block()->isMemoized();
     }
 
 
-    bool_t hasConstantSrc() const {
+    bool hasConstantSrc() const {
         return false;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return false;
     }
 
@@ -2608,7 +2608,7 @@ public:
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return not _dontEliminate;
     }
 
@@ -2629,7 +2629,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2648,12 +2648,12 @@ protected:
 
 
 public:
-    bool_t endsBasicBlock() const {
+    bool endsBasicBlock() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
@@ -2670,7 +2670,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void gen();
 
@@ -2680,7 +2680,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2700,27 +2700,27 @@ protected:
     ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ); // for cloning
 
 public:
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return _src not_eq nullptr;
     }
 
 
-    bool_t canChangeDest() const {
+    bool canChangeDest() const {
         return false;
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
 
-    bool_t isContextCreateNode() const {
+    bool isContextCreateNode() const {
         return true;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return false;
     }
 
@@ -2761,7 +2761,7 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
@@ -2775,7 +2775,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2796,32 +2796,32 @@ protected:
     ContextInitNode( PseudoRegister *b, const ContextInitNode *node );    // for cloning
 
 public:
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return _src not_eq nullptr;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return false;
     }
 
 
-    bool_t isContextInitNode() const {
+    bool isContextInitNode() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
 
-    bool_t wasEliminated() const {
+    bool wasEliminated() const {
         return _src == nullptr;
     }
 
@@ -2853,7 +2853,7 @@ public:
     void notifyNoContext();
 
 
-    bool_t hasNoContext() const {
+    bool hasNoContext() const {
         return _src == nullptr;
     }
 
@@ -2866,9 +2866,9 @@ public:
 
     void removeUses( BasicBlock *bb );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
@@ -2884,7 +2884,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2903,22 +2903,22 @@ private:
 
 
 public:
-    bool_t isActive() const {
+    bool isActive() const {
         return scope()->needsContextZapping();
     }
 
 
-    bool_t isContextZapNode() const {
+    bool isContextZapNode() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t shouldCopyWhenSplitting() const {
+    bool shouldCopyWhenSplitting() const {
         return true;
     }
 
@@ -2946,7 +2946,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2960,22 +2960,22 @@ protected:
     NonLocalReturnTestNode( std::int32_t byteCodeIndex );
 
 public:
-    bool_t isNonLocalReturnTestNode() const {
+    bool isNonLocalReturnTestNode() const {
         return true;
     }
 
 
-    bool_t canChangeDest() const {
+    bool canChangeDest() const {
         return false;
     }
 
 
-    bool_t canBeEliminated() const {
+    bool canBeEliminated() const {
         return false;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return false;
     }
 
@@ -2989,7 +2989,7 @@ public:
     void removeUses( BasicBlock *bb );
 
 
-    // void eliminate(BasicBlock* bb, PseudoRegister* r, bool_t removing = false, bool_t cp = false);
+    // void eliminate(BasicBlock* bb, PseudoRegister* r, bool removing = false, bool cp = false);
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     };
 
@@ -3007,7 +3007,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3019,9 +3019,9 @@ class BranchNode : public AbstractBranchNode {
     // usually after a node that sets CCs
 protected:
     BranchOpCode _op;                       // branch untaken is likely
-    bool_t       _taken_is_uncommon;        // true if branch taken is uncommon
+    bool       _taken_is_uncommon;        // true if branch taken is uncommon
 
-    BranchNode( BranchOpCode op, bool_t taken_is_uncommon ) {
+    BranchNode( BranchOpCode op, bool taken_is_uncommon ) {
         _op                = op;
         _taken_is_uncommon = taken_is_uncommon;
     }
@@ -3033,19 +3033,19 @@ public:
     }
 
 
-    bool_t isBranchNode() const {
+    bool isBranchNode() const {
         return true;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return false;
     }
 
 
     void eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
@@ -3066,7 +3066,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
 
     void verify() {
@@ -3083,11 +3083,11 @@ class TypeTestNode : public AbstractBranchNode {
     // _src is the register containing the receiver
 protected:
     GrowableArray<KlassOop> *_classes;    // classes to test for
-    bool_t                  _hasUnknown;                // can recv be anything? (if false, recv class
+    bool                  _hasUnknown;                // can recv be anything? (if false, recv class
     // guaranteed to be in classes list)
 
-    bool_t needsKlassLoad() const;        // does test need object's klass?
-    TypeTestNode( PseudoRegister *r, GrowableArray<KlassOop> *classes, bool_t hasUnknown );
+    bool needsKlassLoad() const;        // does test need object's klass?
+    TypeTestNode( PseudoRegister *r, GrowableArray<KlassOop> *classes, bool hasUnknown );
 
 public:
     GrowableArray<KlassOop> *classes() const {
@@ -3095,12 +3095,12 @@ public:
     }
 
 
-    bool_t hasUnknown() const {
+    bool hasUnknown() const {
         return _hasUnknown;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return _hasUnknown;
     }
 
@@ -3110,27 +3110,27 @@ public:
     }
 
 
-    void setUnknown( bool_t u ) {
+    void setUnknown( bool u ) {
         _hasUnknown = u;
     }
 
 
-    bool_t isTypeTestNode() const {
+    bool isTypeTestNode() const {
         return true;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
@@ -3142,19 +3142,19 @@ public:
 
     Node *smiCase() const;            // the continuation for the smi_t case, nullptr if there is none
 
-    bool_t doesTypeTests() const {
+    bool doesTypeTests() const {
         return true;
     }
 
 
-    bool_t hasUnknownCode() const;            // is there code (send) for unknown case?
+    bool hasUnknownCode() const;            // is there code (send) for unknown case?
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
     void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
     void makeUses( BasicBlock *bb );
 
@@ -3162,7 +3162,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     void eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegister *c, KlassOop m );
 
@@ -3182,7 +3182,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3196,12 +3196,12 @@ protected:
     Usage          *_argUse;       //
     PseudoRegister *_error;        // where to move the error string
     Definition     *_errorDef;     //
-    bool_t         _needBoundsCheck;        // need array bounds check?
-    bool_t         _intArg;                 // need not test for std::int32_t if true
+    bool         _needBoundsCheck;        // need array bounds check?
+    bool         _intArg;                 // need not test for std::int32_t if true
     std::int32_t            _dataOffset;             // where start of array is (Oop offset)
     std::int32_t            _sizeOffset;             // where size of array is (Oop offset)
 
-    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool_t ia, PseudoRegister *res, PseudoRegister *_err, std::int32_t dataOffset, std::int32_t sizeOffset ) {
+    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool ia, PseudoRegister *res, PseudoRegister *_err, std::int32_t dataOffset, std::int32_t sizeOffset ) {
         _src             = r;
         _arg             = idx;
         _intArg          = ia;
@@ -3215,23 +3215,23 @@ protected:
 
 
 public:
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return true;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return _dest not_eq nullptr;
     }
 
 
-    bool_t canFail() const = 0;
+    bool canFail() const = 0;
 
 
     std::int32_t cost() const {
         return 20 + ( _intArg ? 0 : 12 );
     } // fix this
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return true;
     }
 
@@ -3241,20 +3241,20 @@ public:
     }
 
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
 
-    bool_t doesTypeTests() const {
+    bool doesTypeTests() const {
         return true;
     }
 
 
-    bool_t needsBoundsCheck() const {
+    bool needsBoundsCheck() const {
         return _needBoundsCheck;
     }
 
 
-    bool_t hasUnknownCode() const;
+    bool hasUnknownCode() const;
 
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
@@ -3268,7 +3268,7 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
     Node *likelySuccessor() const;
 
@@ -3294,7 +3294,7 @@ protected:
     ArrayAtNode( AccessType access_type,    // specifies the operation
                  PseudoRegister *array,    // holds the array
                  PseudoRegister *index,    // holds the index
-                 bool_t smiIndex,           // true if index is known to be a smi_t, false otherwise
+                 bool smiIndex,           // true if index is known to be a smi_t, false otherwise
                  PseudoRegister *result,   // where the result is stored
                  PseudoRegister *error,    // where the error symbol is stored if the operation fails
                  std::int32_t data_offset,           // data offset in oops relative to array
@@ -3322,17 +3322,17 @@ public:
     }
 
 
-    bool_t index_is_smi() const {
+    bool index_is_smi() const {
         return _intArg;
     }
 
 
-    bool_t index_needs_bounds_check() const {
+    bool index_needs_bounds_check() const {
         return _needBoundsCheck;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return not index_is_smi() or index_needs_bounds_check();
     }
 
@@ -3349,7 +3349,7 @@ public:
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     void gen();
 
@@ -3371,17 +3371,17 @@ protected:
     Usage          *elemUse;
 
 
-    AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool_t ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, std::int32_t doff, std::int32_t soff ) :
+    AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, std::int32_t doff, std::int32_t soff ) :
             AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
         elem = el;
     }
 
 
 public:
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace = false );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return true;
     }
 
@@ -3406,28 +3406,28 @@ public:
     };
 
 
-    static bool_t stores_smi_elements( AccessType t ) {
+    static bool stores_smi_elements( AccessType t ) {
         return t not_eq object_at_put;
     }
 
 
 protected:
     AccessType _access_type;
-    bool_t     _needs_store_check;
-    bool_t     _smi_element;
-    bool_t     _needs_element_range_check;
+    bool     _needs_store_check;
+    bool     _smi_element;
+    bool     _needs_element_range_check;
 
     ArrayAtPutNode( AccessType access_type,     // specifies the operation
                     PseudoRegister *array,     // holds the array
                     PseudoRegister *index,     // holds the index
-                    bool_t smi_index,           // true if index is known to be a smi_t, false otherwise
+                    bool smi_index,           // true if index is known to be a smi_t, false otherwise
                     PseudoRegister *element,   // holds the element
-                    bool_t smi_element,         // true if element is known to be a smi_t, false otherwise
+                    bool smi_element,         // true if element is known to be a smi_t, false otherwise
                     PseudoRegister *result,    // where the result is stored
                     PseudoRegister *error,     // where the error symbol is stored if the operation fails
                     std::int32_t data_offset,            // data offset in oops relative to array
                     std::int32_t length_offset,          // array length offset in oops relative to array
-                    bool_t needs_store_check    // indicates whether a store check is necessary or not
+                    bool needs_store_check    // indicates whether a store check is necessary or not
     );
 
 public:
@@ -3456,32 +3456,32 @@ public:
     }
 
 
-    bool_t index_is_smi() const {
+    bool index_is_smi() const {
         return _intArg;
     }
 
 
-    bool_t element_is_smi() const {
+    bool element_is_smi() const {
         return _smi_element;
     }
 
 
-    bool_t index_needs_bounds_check() const {
+    bool index_needs_bounds_check() const {
         return _needBoundsCheck;
     }
 
 
-    bool_t element_needs_range_check() const {
+    bool element_needs_range_check() const {
         return _needs_element_range_check;
     }
 
 
-    bool_t canFail() const {
+    bool canFail() const {
         return not index_is_smi() or index_needs_bounds_check() or ( access_type() not_eq object_at_put and ( not element_is_smi() or element_needs_range_check() ) );
     }
 
 
-    bool_t needs_store_check() const {
+    bool needs_store_check() const {
         return _needs_store_check;
     }
 
@@ -3504,7 +3504,7 @@ public:
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     void gen();
 
@@ -3535,12 +3535,12 @@ private:
     Usage          *_arg1_use;     //
     Usage          *_arg2_use;     //
     Definition     *_error_def;    //
-    bool_t         _arg1_is_smi;    // true if 1st argument is known to be a smi_t
-    bool_t         _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+    bool         _arg1_is_smi;    // true if 1st argument is known to be a smi_t
+    bool         _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
     Operation      _operation;      //
     // _src is	_recv;			    // receiver or nullptr
 
-    InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool_t arg1_is_smi, PseudoRegister *arg2, bool_t arg2_is_smi );
+    InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi );
 
 public:
     Operation op() const {
@@ -3563,27 +3563,27 @@ public:
     }
 
 
-    bool_t arg1_is_smi() const {
+    bool arg1_is_smi() const {
         return _arg1_is_smi;
     }
 
 
-    bool_t arg2_is_smi() const {
+    bool arg2_is_smi() const {
         return _arg2_is_smi;
     }
 
 
-    bool_t hasSrc() const {
+    bool hasSrc() const {
         return _src not_eq nullptr;
     }
 
 
-    bool_t hasDest() const {
+    bool hasDest() const {
         return _dest not_eq nullptr;
     }
 
 
-    bool_t canFail() const;
+    bool canFail() const;
 
     void makeUses( BasicBlock *bb );
 
@@ -3591,22 +3591,22 @@ public:
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count );
 
-    bool_t canBeEliminated() const;
+    bool canBeEliminated() const;
 
-    void eliminate( BasicBlock *bb, PseudoRegister *r, bool_t removing = false, bool_t cp = false );
+    void eliminate( BasicBlock *bb, PseudoRegister *r, bool removing = false, bool cp = false );
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return false;
     }
 
 
-    bool_t canCopyPropagateOop() const {
+    bool canCopyPropagateOop() const {
         return false;
     }
 
 
-    bool_t copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool_t replace );
+    bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace );
 
     Node *likelySuccessor() const;
 
@@ -3622,7 +3622,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3635,7 +3635,7 @@ protected:
     UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex );
 
 public:
-    bool_t isUncommonNode() const {
+    bool isUncommonNode() const {
         return true;
     }
 
@@ -3644,12 +3644,12 @@ public:
         return 4;
     } // fix this
 
-    bool_t isExitNode() const {
+    bool isExitNode() const {
         return true;
     }
 
 
-    bool_t isendsBasicBlock() const {
+    bool isendsBasicBlock() const {
         return true;
     }
 
@@ -3671,7 +3671,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
 
     GrowableArray<PseudoRegister *> *expressionStack() const {
@@ -3697,7 +3697,7 @@ public:
     }
 
 
-    bool_t isUncommonSendNode() const {
+    bool isUncommonSendNode() const {
         return true;
     }
 
@@ -3708,7 +3708,7 @@ public:
 
     void makeUses( BasicBlock *bb );
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
 
@@ -3734,12 +3734,12 @@ protected:
 
 
 public:
-    bool_t isExitNode() const {
+    bool isExitNode() const {
         return _kind == FixedCodeKind::dead_end;
     }
 
 
-    bool_t isDeadEndNode() const {
+    bool isDeadEndNode() const {
         return _kind == FixedCodeKind::dead_end;
     }
 
@@ -3759,7 +3759,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3772,7 +3772,7 @@ protected:
 
 
 public:
-    bool_t isNopNode() const {
+    bool isNopNode() const {
         return true;
     }
 
@@ -3785,7 +3785,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3793,13 +3793,13 @@ public:
 
 class CommentNode : public TrivialNode {
 protected:
-    CommentNode( const char *s );
+    CommentNode( char *s );
 
 public:
-    const char *comment;
+    char *comment;
 
 
-    bool_t isCommentNode() const {
+    bool isCommentNode() const {
         return true;
     }
 
@@ -3812,7 +3812,7 @@ public:
     }
 
 
-    const char *print_string( const char *buf, bool_t printAddr = true ) const;
+    char *print_string( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };

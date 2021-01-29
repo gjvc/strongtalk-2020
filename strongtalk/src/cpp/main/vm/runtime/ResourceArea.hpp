@@ -61,7 +61,7 @@ public:
     }
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         if ( p >= (void *) _bottom and p < (void *) _top )
             return true;
         else if ( _prev )
@@ -105,7 +105,7 @@ public:
     std::int32_t used();
 
 
-    bool_t contains( void *p ) {
+    bool contains( void *p ) {
         return _resourceAreaChunk not_eq nullptr and _resourceAreaChunk->contains( p );
     }
 };
@@ -133,7 +133,7 @@ class Resources {
 private:
     ResourceAreaChunk *freeChunks;          // list of unused chunks
     std::int32_t               _allocated;           // total number of bytes allocated
-    bool_t            _in_consistent_state; //
+    bool            _in_consistent_state; //
     ResourceAreaChunk *getFromFreeList( std::int32_t min_capacity );
 
 public:
@@ -144,12 +144,12 @@ public:
     void addToFreeList( ResourceAreaChunk *c );
 
 
-    bool_t in_consistent_state() {
+    bool in_consistent_state() {
         return _in_consistent_state;
     }
 
 
-    bool_t contains( const char *p );
+    bool contains( const char *p );
 
     std::int32_t capacity();
 

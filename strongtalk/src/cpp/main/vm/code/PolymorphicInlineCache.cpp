@@ -11,8 +11,6 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 // A PolymorphicInlineCache implements a Polymorphic Inline Cache for compiled code.
 //
@@ -82,13 +80,13 @@
 
 
 // Opcodes for code pattern generation/parsing
-static const char          test_opcode     = '\xa8';
-static const char          call_opcode     = '\xe8';
-static const char          jmp_opcode      = '\xe9';
-static const std::uint16_t jz_opcode       = 0x840f;
-static const std::uint16_t mov_opcode      = 0x508b;
-static const std::uint16_t cmp_opcode      = 0xfa81;
-static constexpr std::int32_t       cmp_opcode_size = sizeof( std::uint16_t );
+static const char             test_opcode     = '\xa8';
+static const char             call_opcode     = '\xe8';
+static const char             jmp_opcode      = '\xe9';
+static const std::uint16_t    jz_opcode       = 0x840f;
+static const std::uint16_t    mov_opcode      = 0x508b;
+static const std::uint16_t    cmp_opcode      = 0xfa81;
+static constexpr std::int32_t cmp_opcode_size = sizeof( std::uint16_t );
 
 
 // -----------------------------------------------------------------------------
@@ -139,13 +137,13 @@ public:
     MethodOop smi_methodOop;
 
     // NativeMethod entries
-    KlassOop    nativeMethod_klasses[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
-    char        *nativeMethods[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
+    KlassOop     nativeMethod_klasses[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
+    char         *nativeMethods[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
     std::int32_t n;    // nativeMethods index
 
     // methodOop entries
-    KlassOop    methodOop_klasses[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
-    MethodOop   methodOops[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
+    KlassOop     methodOop_klasses[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
+    MethodOop    methodOops[static_cast<std::int32_t>(PolymorphicInlineCache::Constant::max_nof_entries)];
     std::int32_t m;    // methodOops index
 
     void append_NativeMethod_entry( KlassOop klass, char *entry );
@@ -168,12 +166,12 @@ public:
     }
 
 
-    bool_t has_smi_case() const {
+    bool has_smi_case() const {
         return ( smi_methodOop not_eq nullptr ) or ( smi_nativeMethod not_eq nullptr );
     }
 
 
-    bool_t has_nativeMethods() const {
+    bool has_nativeMethods() const {
         return ( n > 0 ) or ( smi_nativeMethod not_eq nullptr );
     }
 
@@ -343,13 +341,13 @@ MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
 
 
 void PolymorphicInlineCacheIterator::print() {
-    lprintf( "a PolymorphicInlineCacheIterator\n" );
+    spdlog::info( "a PolymorphicInlineCacheIterator" );
 }
 
 
 // Implementation of PICs
 
-bool_t PolymorphicInlineCache::in_heap( const char *addr ) {
+bool PolymorphicInlineCache::in_heap( const char *addr ) {
     return Universe::code->_picHeap->contains( addr );
 }
 
@@ -375,7 +373,7 @@ char *PolymorphicInlineCacheIterator::get_call_addr() const {
 }
 
 
-bool_t PolymorphicInlineCacheIterator::is_compiled() const {
+bool PolymorphicInlineCacheIterator::is_compiled() const {
     switch ( state() ) {
         case at_smi_nativeMethod:
             return true;
@@ -390,7 +388,7 @@ bool_t PolymorphicInlineCacheIterator::is_compiled() const {
 }
 
 
-bool_t PolymorphicInlineCacheIterator::is_interpreted() const {
+bool PolymorphicInlineCacheIterator::is_interpreted() const {
     return not is_compiled();
 }
 
@@ -441,7 +439,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
     if ( is_megamorphic() )
         return this;
 
-    LOG_EVENT3( "compiled PolymorphicInlineCache at 0x%x: new NativeMethod 0x%x for klass 0x%x replaces old entry", this, nm, nm->_lookupKey.klass() );
+    LOG_EVENT3( "compiled PolymorphicInlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry", this, nm, nm->_lookupKey.klass() );
 
     { // do the replace without creating a new PolymorphicInlineCache if possible
         PolymorphicInlineCacheIterator it( this );
@@ -470,7 +468,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
             }
             it.advance();
         }
-        std::int32_t                            allocated_code_size = contents.code_size();
+        std::int32_t                   allocated_code_size = contents.code_size();
         return new( allocated_code_size ) PolymorphicInlineCache( _ic, &contents, allocated_code_size );
     }
 }
@@ -481,7 +479,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
     if ( is_megamorphic() )
         return this;
 
-    bool_t pic_layout_has_changed = false;
+    bool pic_layout_has_changed = false;
 
     // Iterate over the PolymorphicInlineCache and
     //  - patch the PolymorphicInlineCache if possible
@@ -587,7 +585,7 @@ std::int32_t PolymorphicInlineCache::code_for_methodOops_only( const char *entry
 
     }
 
-    char              *p1 = p;
+    char               *p1 = p;
     for ( std::int32_t i   = 0; i < c->m; i++ ) {
         st_assert( c->methodOop_klasses[ i ] not_eq smiKlassObject, "should not be smiKlassObject" );
         put_word( p, std::int32_t( c->methodOop_klasses[ i ] ) );
@@ -677,7 +675,7 @@ void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache *pic, K
 }
 
 
-void *PolymorphicInlineCache::operator new( std::int32_t size, std::int32_t code_size ) {
+void *PolymorphicInlineCache::operator new( std::size_t size, std::int32_t code_size ) {
     return Universe::code->_picHeap->allocate( size + code_size );
 }
 
@@ -701,7 +699,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *i
 
     PolymorphicInlineCache *old_pic          = ic->pic();
     NativeMethod           *old_nativeMethod = ic->target();
-    bool_t                 switch_to_MIC     = false;
+    bool                   switch_to_MIC     = false;
 
     // 3 possible cases:
     //
@@ -805,26 +803,28 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
 
 
 void PolymorphicInlineCache::print() {
-    lprintf( "\tPolymorphicInlineCache with %d entr%s\n", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
-    lprintf( "\t- selector    : " );
+    spdlog::info( "\tPolymorphicInlineCache with %d entr%s", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
+    spdlog::info( "\t- selector    : {}", selector()->print_value_string() );
     selector()->print_symbol_on();
-    lprintf( "\n" );
+//    spdlog::info( "" );
 
     // Disassembler::decode(entry(), entry() + code_size());
 
-    std::int32_t                            i = 1;
+
     PolymorphicInlineCacheIterator it( this );
+
+    std::int32_t i = 1;
     while ( not it.at_end() ) {
-        lprintf( "\t- %d. klass    : ", i );
+        spdlog::info( "\t- %d. klass    : ", i );
         it.get_klass()->print_value();
-        lprintf( "\n" );
+        spdlog::info( "" );
         switch ( it.state() ) {
             case PolymorphicInlineCacheIterator::at_smi_nativeMethod: // fall through
             case PolymorphicInlineCacheIterator::at_nativeMethod:
-                printf( "\t-    NativeMethod  : %#x (entry %#x)\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
+                spdlog::info( "\t-    NativeMethod  : 0x{0:x} (entry 0x{0:x})\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
                 break;
             case PolymorphicInlineCacheIterator::at_methodOop:
-                printf( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
+                spdlog::info( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
                 break;
             default: ShouldNotReachHere();
         }
@@ -844,8 +844,8 @@ void PolymorphicInlineCache::verify() {
             if ( k->at( i ) == k->at( j ) ) {
                 _console->print( "The class " );
                 k->at( i )->klass_part()->print_name_on( _console );
-                _console->print_cr( "is twice in PolymorphicInlineCache 0x%lx", this );
-                warning( "PolymorphicInlineCache verify error" );
+                spdlog::info( "is twice in PolymorphicInlineCache 0x%lx", static_cast<const void *>(this) );
+                spdlog::warn( "PolymorphicInlineCache verify error" );
             }
         }
     }

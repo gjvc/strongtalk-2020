@@ -6,8 +6,6 @@
 #include "vm/code/CodeTable.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/code/NativeMethod.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 CodeTable::CodeTable( std::int32_t size ) {
     tableSize = size;
@@ -57,7 +55,7 @@ NativeMethod *CodeTable::lookup( const LookupKey *L ) {
 void CodeTable::add( NativeMethod *nm ) {
 
     if ( lookup( &nm->_lookupKey ) ) {
-        st_fatal2( "adding duplicate key to code table: %#lx and new %#lx", lookup( &nm->_lookupKey ), nm );
+        st_fatal2( "adding duplicate key to code table: 0x{0:x} and new 0x{0:x}", lookup( &nm->_lookupKey ), nm );
     }
     CodeTableEntry *bucket = bucketFor( nm->_lookupKey.hash() );
 
@@ -81,7 +79,7 @@ void CodeTable::addIfAbsent( NativeMethod *nm ) {
 }
 
 
-bool_t CodeTable::is_present( NativeMethod *nm ) {
+bool CodeTable::is_present( NativeMethod *nm ) {
     return lookup( &nm->_lookupKey ) == nm;
 }
 
@@ -121,14 +119,14 @@ void CodeTable::remove( NativeMethod *nm ) {
 }
 
 
-bool_t CodeTable::verify() {
-    bool_t flag = true;
+bool CodeTable::verify() {
+    bool flag = true;
     return flag;
 }
 
 
 void CodeTable::print() {
-    lprintf( "CodeTable\n" );
+    spdlog::info( "CodeTable" );
 }
 
 
@@ -147,9 +145,9 @@ void CodeTable::print_stats() {
       total += len;
       histo[min(len, N-1)]++;
     }
-    lprintf("\ncodeTable statistics: 0x%08x nativeMethods; min chain = 0x%08x, max = 0x%08x, avg = %4.1f\n", total, nmin, nmax, (float)total / nonzero);
-    lprintf("histogram:\n");
-    for (std::int32_t i = 0; i < N - 1; i++) lprintf("%4d:\t%d", i, histo[i]);
-    lprintf(">=0x%08x:\t0x%08x\n", N-1, histo[N-1]);
+    spdlog::info("\ncodeTable statistics: 0x%08x nativeMethods; min chain = 0x%08x, max = 0x%08x, avg = %4.1f", total, nmin, nmax, (float)total / nonzero);
+    spdlog::info("histogram:");
+    for (std::int32_t i = 0; i < N - 1; i++) spdlog::info("%4d:\t%d", i, histo[i]);
+    spdlog::info(">=0x%08x:\t0x%08x", N-1, histo[N-1]);
 #endif
 }

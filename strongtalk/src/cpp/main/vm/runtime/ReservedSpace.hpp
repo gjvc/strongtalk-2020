@@ -35,7 +35,7 @@ public:
     }
 
 
-    bool_t is_reserved() {
+    bool is_reserved() {
         return _base not_eq nullptr;
     }
 

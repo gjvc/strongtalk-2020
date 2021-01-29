@@ -13,7 +13,7 @@
 
 const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
 
-    _console->print_cr( "PrimitivesGenerator::allocateBlock [%d]", n );
+    spdlog::info( "PrimitivesGenerator::allocateBlock [{}]", n );
 
     KlassOopDescriptor **block_klass;
 

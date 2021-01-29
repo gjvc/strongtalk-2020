@@ -7,11 +7,9 @@
 #include "vm/runtime/Bootstrap.hpp"
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/system/os.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/oops/KlassKlass.hpp"
 #include "vm/oops/SMIKlass.hpp"
@@ -29,7 +27,6 @@
 #include "vm/oops/DoubleValueArrayKlass.hpp"
 #include "vm/oops/VirtualFrameKlass.hpp"
 #include "vm/oops/ContextKlass.hpp"
-#include "vm/utilities/lprintf.hpp"
 
 
 // -----------------------------------------------------------------------------
@@ -95,10 +92,12 @@ void Bootstrap::initNameByTypeByte() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::load() {
+    spdlog::info( "%booststrap-load: entry" );
     open_file();
     parse_file();
     close_file();
     summary();
+    spdlog::info( "%booststrap-load: exit" );
 }
 
 
@@ -106,33 +105,33 @@ void Bootstrap::open_file() {
     _stream.open( _filename, std::ifstream::binary );
 
     if ( not _stream.good() ) {
-        _console->print_cr( "%%bootstrap-file-error: failed to open file [%s] for reading", _filename.c_str() );
+        spdlog::info( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    _console->print_cr( "%%bootstrap-file-opened [%s]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-opened [{}]", _filename.c_str() );
     check_version();
 }
 
 
 void Bootstrap::parse_file() {
 
-    _console->print_cr( "%%bootstrap-file-load: [%s]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-load: [{}]", _filename.c_str() );
     parse_objects();
-    _console->print_cr( "%%bootstrap-file-load-complete: [%d] objects read from [%s]", _objectCount, _filename.c_str() );
+    spdlog::info( "%bootstrap-file-load-complete: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
 
 }
 
 
 void Bootstrap::close_file() {
     _stream.close();
-    _console->print_cr( "%%bootstrap-file-closed [%s]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-closed: [{}]", _filename.c_str() );
 }
 
 
 void Bootstrap::summary() {
     initNameByTypeByte();
     for ( auto item : _countByType ) {
-        _console->print_cr( "%%bootstrap-object-count    %-4c %-24s %d", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
+        spdlog::info( "%bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
     }
 }
 
@@ -142,11 +141,12 @@ void Bootstrap::summary() {
 void Bootstrap::extend_oop_table() {
     std::int32_t new_size = _max_number_of_oops * 2;
 
-    _console->print_cr( "Expanding boot table to [0x%08x]", new_size );
+    spdlog::info( "bootstrap-expand: expanding oop_table to [0x{08:x}]", new_size );
     Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
-    for ( std::int32_t i = 0; i < _max_number_of_oops; i++ )
+    for ( std::int32_t i = 0; i < _max_number_of_oops; i++ ) {
         new_oop_table[ i ] = _oop_table[ i ];
+    }
 
     _max_number_of_oops = new_size;
     FreeHeap( _oop_table );
@@ -172,7 +172,7 @@ char Bootstrap::readNextChar() {
 }
 
 
-std::int32_t Bootstrap::get_integer() {
+std::int32_t Bootstrap::get_next_int32_t() {
 
     std::uint8_t lo;
     _stream.read( reinterpret_cast<char *>(&lo), 1 );
@@ -181,13 +181,13 @@ std::int32_t Bootstrap::get_integer() {
         return lo;
     }
 
-    std::int32_t hi = get_integer();
+    std::int32_t hi = get_next_int32_t();
     return ( hi * 128 ) + ( lo % 128 );
 }
 
 
 std::uint16_t Bootstrap::read_doubleByte() {
-    return (std::uint16_t) get_integer();
+    return (std::uint16_t) get_next_int32_t();
 }
 
 
@@ -207,7 +207,7 @@ void Bootstrap::read_oop( Oop *oop_addr ) {
 
 void Bootstrap::check_version() {
 
-    std::int32_t version_number = get_integer();
+    std::int32_t version_number = get_next_int32_t();
     if ( version_number > 100 ) {
         _new_format = true;
         version_number -= 100;
@@ -218,7 +218,7 @@ void Bootstrap::check_version() {
     std::int32_t expected = ByteCodes::version();
     std::int32_t observed = version_number;
     if ( expected != observed ) {
-        lprintf( "fatal: filename [%s] has unexpected bytecode version: expected: [0x%08x], observed: [0x%08x]\n", _filename.c_str(), expected, observed );
+        spdlog::info( "fatal: filename[{}] has unexpected bytecode version: expected: [0x{08:x}], observed: [0x{08:x}]", _filename.c_str(), expected, observed );
         exit( EXIT_FAILURE );
     }
 
@@ -226,6 +226,8 @@ void Bootstrap::check_version() {
 
 
 void Bootstrap::parse_objects() {
+
+    spdlog::info( "%booststrap-parse-objects: entry" );
 
     Universe::_systemDictionaryObject = ObjectArrayOop( readNextObject() );
     nilObject                         = MemOop( readNextObject() );
@@ -250,7 +252,7 @@ void Bootstrap::parse_objects() {
     eightArgumentBlockKlassObject     = KlassOop( readNextObject() );
     nineArgumentBlockKlassObject      = KlassOop( readNextObject() );
     contextKlassObject                = KlassOop( readNextObject() );
-    Universe::_asciiCharacters     = ObjectArrayOop( readNextObject() );
+    Universe::_asciiCharacters        = ObjectArrayOop( readNextObject() );
     Universe::_vframeKlassObject      = KlassOop( readNextObject() );
 
     KlassOop       platform_klass       = KlassOop( Universe::find_global( os::platform_class_name() ) );
@@ -258,6 +260,8 @@ void Bootstrap::parse_objects() {
     if ( platform_klass not_eq nullptr and platform_association not_eq nullptr ) {
         platform_association->set_value( platform_klass );
     }
+
+    spdlog::info( "%booststrap-parse-objects: exit" );
 
 }
 
@@ -273,10 +277,12 @@ template<typename T>
 void Bootstrap::insert_symbol( MemOop m ) {
     static_cast<T>( m )->bootstrap_object( this );
 
-    if ( Universe::symbol_table->is_present( SymbolOop( static_cast<T>( m ) ) ) ) {
-        _console->print_cr( "Symbol [%s] already present in symbol_table!", SymbolOop( static_cast<T>( m ) )->as_string() );
+    SymbolOopDescriptor *symbolOop = SymbolOop( static_cast<T>( m ) );
+
+    if ( Universe::symbol_table->is_present( symbolOop ) ) {
+        spdlog::info( "Symbol[{}] already present in symbol_table!", symbolOop->as_string() );
     } else {
-        Universe::symbol_table->add_symbol( SymbolOop( static_cast<T>( m ) ) );
+        Universe::symbol_table->add_symbol( symbolOop );
     }
 
 }
@@ -295,105 +301,106 @@ void Bootstrap::object_case_func( MemOop m ) {
 
 
 Oop Bootstrap::oopFromTable( const std::int32_t index ) {
-    if ( index < 0 or index > _number_of_oops )
+    if ( index < 0 or index > _number_of_oops ) {
         error( "Bootstrap Oop table overflow" );
+    }
     return _oop_table[ index ];
 }
 
 
-Oop Bootstrap::readNextObject() {
+inline char Bootstrap::getNextTypeByte() {
 
     // get type byte
     char typeByte = _stream.get();
 
     // update counters
-    _objectCount++;
     _countByType[ typeByte ]++;
+    _objectCount++;
+
+    return typeByte;
+}
+
+
+Oop Bootstrap::readNextObject() {
+
+    // get next byte
+    char typeByte = getNextTypeByte();
 
     // if SMI or OOP, return it...
     switch ( typeByte ) {
         case '0': //
-        {
-            std::int32_t v{ get_integer() };
-            return smiOopFromValue( v );
-        }
+            return smiOopFromValue( get_next_int32_t() );
 
         case '-': //
-        {
-            std::int32_t v{ get_integer() };
-            return smiOopFromValue( -v );
-        }
+            return smiOopFromValue( -1 * get_next_int32_t() );
 
         case '3': //
-        {
-            std::int32_t v{ get_integer() };
-            return oopFromTable( v );
-        }
+            return oopFromTable( get_next_int32_t() );
     };
 
     // not one of the above; get size...
-    std::int32_t    size = get_integer();
-    MemOop m    = as_memOop( Universe::allocate_tenured( size ) );
-    m->raw_at_put( size - 1, smiOop_zero ); // Clear eventual padding area for byteArray, symbol, doubleByteArray.
-    add( m );
+    std::int32_t size   = get_next_int32_t();
+    MemOop       memOop = as_memOop( Universe::allocate_tenured( size ) );
+    memOop->raw_at_put( size - 1, smiOop_zero ); // Clear eventual padding area for byteArray, symbol, doubleByteArray.
+    add( memOop );
 
     // ... call bootstrap_object
     switch ( typeByte ) {
 
         // Classes
         case 'A': //
-            klass_case_func( setKlassVirtualTableFromKlassKlass, m );
+            klass_case_func( setKlassVirtualTableFromKlassKlass, memOop );
             break;
         case 'B': // 
-            klass_case_func( setKlassVirtualTableFromSmiKlass, m );
+            klass_case_func( setKlassVirtualTableFromSmiKlass, memOop );
             break;
         case 'C': // 
-            klass_case_func( setKlassVirtualTableFromMemOopKlass, m );
+            klass_case_func( setKlassVirtualTableFromMemOopKlass, memOop );
             break;
         case 'D': // 
-            klass_case_func( setKlassVirtualTableFromByteArrayKlass, m );
+            klass_case_func( setKlassVirtualTableFromByteArrayKlass, memOop );
             break;
         case 'E': // 
-            klass_case_func( setKlassVirtualTableFromDoubleByteArrayKlass, m );
+            klass_case_func( setKlassVirtualTableFromDoubleByteArrayKlass, memOop );
             break;
         case 'F': // 
-            klass_case_func( setKlassVirtualTableFromObjArrayKlass, m );
+            klass_case_func( setKlassVirtualTableFromObjArrayKlass, memOop );
             break;
         case 'G': // 
-            klass_case_func( setKlassVirtualTableFromSymbolKlass, m );
+            klass_case_func( setKlassVirtualTableFromSymbolKlass, memOop );
             break;
         case 'H': // 
-            klass_case_func( setKlassVirtualTableFromDoubleKlass, m );
+            klass_case_func( setKlassVirtualTableFromDoubleKlass, memOop );
             break;
         case 'I': // 
-            klass_case_func( setKlassVirtualTableFromAssociationKlass, m );
+            klass_case_func( setKlassVirtualTableFromAssociationKlass, memOop );
             break;
         case 'J': // 
-            klass_case_func( setKlassVirtualTableFromMethodKlass, m );
+            klass_case_func( setKlassVirtualTableFromMethodKlass, memOop );
             break;
         case 'K': // 
-            klass_case_func( setKlassVirtualTableFromBlockClosureKlass, m );
+            klass_case_func( setKlassVirtualTableFromBlockClosureKlass, memOop );
             break;
         case 'L': // 
-            klass_case_func( setKlassVirtualTableFromContextKlass, m );
+            klass_case_func( setKlassVirtualTableFromContextKlass, memOop );
             break;
         case 'M': // 
-            klass_case_func( setKlassVirtualTableFromProxyKlass, m );
+            klass_case_func( setKlassVirtualTableFromProxyKlass, memOop );
             break;
         case 'N': // 
-            klass_case_func( setKlassVirtualTableFromMixinKlass, m );
+            klass_case_func( setKlassVirtualTableFromMixinKlass, memOop );
             break;
         case 'O': // 
-            klass_case_func( setKlassVirtualTableFromWeakArrayKlass, m );
+            klass_case_func( setKlassVirtualTableFromWeakArrayKlass, memOop );
             break;
         case 'P': // 
-            klass_case_func( setKlassVirtualTableFromProcessKlass, m );
+            klass_case_func( setKlassVirtualTableFromProcessKlass, memOop );
             break;
         case 'Q': // 
-            klass_case_func( setKlassVirtualTableFromDoubleValueArrayKlass, m );
+            klass_case_func( setKlassVirtualTableFromDoubleValueArrayKlass, memOop );
             break;
         case 'R': // 
-            klass_case_func( setKlassVirtualTableFromVirtualFrameKlass, m );
+            klass_case_func( setKlassVirtualTableFromVirtualFrameKlass, memOop );
             break;
 
             // Objects
@@ -404,28 +411,28 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "smi_t" );
             break;
         case 'c': // 
-            object_case_func<MemOop>( m );
+            object_case_func<MemOop>( memOop );
             break;
         case 'd': // 
-            object_case_func<ByteArrayOop>( m );
+            object_case_func<ByteArrayOop>( memOop );
             break;
         case 'e': // 
-            object_case_func<DoubleByteArrayOop>( m );
+            object_case_func<DoubleByteArrayOop>( memOop );
             break;
         case 'f': // 
-            object_case_func<ObjectArrayOop>( m );
+            object_case_func<ObjectArrayOop>( memOop );
             break;
         case 'g': // 
-            insert_symbol<SymbolOop>( m );
+            insert_symbol<SymbolOop>( memOop );
             break;
         case 'h': // 
-            object_case_func<DoubleOop>( m );
+            object_case_func<DoubleOop>( memOop );
             break;
         case 'i': // 
-            object_case_func<AssociationOop>( m );
+            object_case_func<AssociationOop>( memOop );
             break;
         case 'j': // 
-            object_case_func<MethodOop>( m );
+            object_case_func<MethodOop>( memOop );
             break;
         case 'k': // 
         st_fatal( "blockClosure" );
@@ -437,19 +444,19 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "proxy" );
             break;
         case 'n': // 
-            object_case_func<MixinOop>( m );
+            object_case_func<MixinOop>( memOop );
             break;
         case 'o': // 
         st_fatal( "weakArrayOop" );
             break;
         case 'p': // 
-            object_case_func<ProcessOop>( m );
+            object_case_func<ProcessOop>( memOop );
             break;
         default: // 
         st_fatal( "unknown object typeByte" );
     }
 
-    return m;
+    return memOop;
 }
 
 
@@ -468,13 +475,14 @@ void Bootstrap::read_mark( MarkOop *mark_addr ) {
             break;
         default: //
         st_fatal( "expecting a markup" );
+            break;
     }
     *mark_addr = m;
 }
 
 
 double Bootstrap::read_double() {
-    double value;
+    double       value;
     std::uint8_t *str = (std::uint8_t *) &value;
 
     for ( std::int32_t i = 0; i < 8; i++ ) {
@@ -488,12 +496,12 @@ double Bootstrap::read_double() {
 }
 
 
-bool_t Bootstrap::is_byte() {
+bool Bootstrap::is_byte() {
     return read_byte() == '4';
 }
 
 
-bool_t Bootstrap::new_format() const {
+bool Bootstrap::new_format() const {
     return _new_format;
 }
 
@@ -501,7 +509,7 @@ bool_t Bootstrap::new_format() const {
 /*
 
     if ( TraceBootstrap )
-        _console->print_cr( "%8i  address [0x%lx]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
+        spdlog::info( "%8i  address [0x%lx]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
     else
         if ( _objectCount % 1000 == 0 ) {
             if ( _objectCount % 10000 == 0 ) {

@@ -284,21 +284,21 @@ void Locations::print() {
     std::int32_t len = _freeList->length();
 
     // print used locations
-    _console->print_cr( "Locations:" );
+    spdlog::info( "Locations:" );
     for ( std::int32_t i = 0; i < len; i++ ) {
         if ( nofUses( i ) > 0 ) {
-            _console->print_cr( "%d: %d uses", i, nofUses( i ) );
+            spdlog::info( "{}: {} uses", i, nofUses( i ) );
         }
     }
     _console->cr();
     // print whole free list
-    _console->print_cr( "Free List:" );
-    _console->print_cr( "no. of arguments    : %d", _nofArguments );
-    _console->print_cr( "no. of registers    : %d", _nofRegisters );
-    _console->print_cr( "first free register : %d", _firstFreeRegister );
-    _console->print_cr( "first free stack loc: %d", _firstFreeStackTmp );
+    spdlog::info( "Free List:" );
+    spdlog::info( "no. of arguments    : {}", _nofArguments );
+    spdlog::info( "no. of registers    : {}", _nofRegisters );
+    spdlog::info( "first free register : {}", _firstFreeRegister );
+    spdlog::info( "first free stack loc: {}", _firstFreeStackTmp );
     for ( std::int32_t i = 0; i < len; i++ ) {
-        _console->print_cr( "%d: %d", i, _freeList->at( i ) );
+        spdlog::info( "{}: {}", i, _freeList->at( i ) );
     }
     _console->cr();
 }

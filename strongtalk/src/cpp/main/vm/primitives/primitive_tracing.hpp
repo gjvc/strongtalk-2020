@@ -32,18 +32,18 @@ typedef class OopDescriptor *Oop;
                         const char* s9 = nullptr, Oop a9 = nullptr, \
                         const char* s10 = nullptr, Oop a10 = nullptr) { \
       if (not flag) return; \
-      lprintf("{%s::%s", label, name); \
-      if (s1) { lprintf(" %s=", s1); a1->print_value(); } \
-      if (s2) { lprintf(" %s=", s2); a2->print_value(); } \
-      if (s3) { lprintf(" %s=", s3); a3->print_value(); } \
-      if (s4) { lprintf(" %s=", s4); a4->print_value(); } \
-      if (s5) { lprintf(" %s=", s5); a5->print_value(); } \
-      if (s6) { lprintf(" %s=", s6); a6->print_value(); } \
-      if (s7) { lprintf(" %s=", s7); a7->print_value(); } \
-      if (s8) { lprintf(" %s=", s8); a8->print_value(); } \
-      if (s9) { lprintf(" %s=", s9); a9->print_value(); } \
-      if (s10) { lprintf(" %s=", s10); a10->print_value(); } \
-      lprintf("}\n"); \
+      spdlog::info("{%s::%s", label, name); \
+      if (s1) { spdlog::info(" %s=", s1); a1->print_value(); } \
+      if (s2) { spdlog::info(" %s=", s2); a2->print_value(); } \
+      if (s3) { spdlog::info(" %s=", s3); a3->print_value(); } \
+      if (s4) { spdlog::info(" %s=", s4); a4->print_value(); } \
+      if (s5) { spdlog::info(" %s=", s5); a5->print_value(); } \
+      if (s6) { spdlog::info(" %s=", s6); a6->print_value(); } \
+      if (s7) { spdlog::info(" %s=", s7); a7->print_value(); } \
+      if (s8) { spdlog::info(" %s=", s8); a8->print_value(); } \
+      if (s9) { spdlog::info(" %s=", s9); a9->print_value(); } \
+      if (s10) { spdlog::info(" %s=", s10); a10->print_value(); } \
+      spdlog::info("}"); \
     }
 
 #define TRACE_0( name ) \

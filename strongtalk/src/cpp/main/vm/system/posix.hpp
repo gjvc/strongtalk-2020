@@ -49,7 +49,7 @@ class Lock {
 class Event : public CHeapAllocatedObject {
 
     private:
-        bool_t          _signalled;
+        bool          _signalled;
         pthread_mutex_t _mutex{};
         pthread_cond_t  _notifier{};
 
@@ -60,10 +60,10 @@ class Event : public CHeapAllocatedObject {
         void reset();
 
 
-        bool_t waitFor();
+        bool waitFor();
 
 
-        Event( bool_t state );
+        Event( bool state );
 
 
         ~Event();
@@ -174,7 +174,7 @@ class DLL : CHeapAllocatedObject {
         }
 
 
-        bool_t isValid() {
+        bool isValid() {
             return ( _handle != nullptr ) and ( _name != nullptr );
         }
 

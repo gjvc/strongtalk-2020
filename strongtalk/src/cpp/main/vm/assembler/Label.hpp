@@ -45,11 +45,11 @@ private:
 
 
 public:
-    bool_t is_bound() const;
+    bool is_bound() const;
 
-    bool_t is_unbound() const;
+    bool is_unbound() const;
 
-    bool_t is_unused() const;
+    bool is_unused() const;
 
 
     Label();

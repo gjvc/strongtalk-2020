@@ -9,12 +9,12 @@
 #include "vm/runtime/ResourceArea.hpp"
 
 
-bool_t DoubleByteArrayOopDescriptor::verify() {
-    bool_t flag = MemOopDescriptor::verify();
+bool DoubleByteArrayOopDescriptor::verify() {
+    bool flag = MemOopDescriptor::verify();
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "doubleByteArrayOop %#lx has negative length", this );
+            error( "doubleByteArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }
@@ -113,10 +113,10 @@ std::int32_t DoubleByteArrayOopDescriptor::hash_value() {
 }
 
 
-bool_t DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t max_length ) {
+bool DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t max_length ) {
 
     std::int32_t    len          = length();
-    bool_t is_truncated = false;
+    bool is_truncated = false;
     if ( len >= max_length ) {
         len          = max_length - 1;
         is_truncated = true;

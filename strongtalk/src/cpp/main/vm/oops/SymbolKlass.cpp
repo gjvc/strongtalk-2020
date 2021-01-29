@@ -11,7 +11,7 @@
 
 
 SymbolOop SymbolKlass::allocateSymbol( const char *value, std::int32_t len ) {
-    _console->print_cr( "%%oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol [%s]", value );
+    spdlog::info( "%oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol[{}]", value );
     SymbolOop sym = as_symbolOop( Universe::allocate_tenured( object_size( len ) ) );
     sym->init_untagged_contents_mark();
     sym->set_klass_field( Universe::symbolKlassObject() );
@@ -48,7 +48,7 @@ Oop SymbolKlass::scavenge( Oop obj ) {
 }
 
 
-bool_t SymbolKlass::verify( Oop obj ) {
+bool SymbolKlass::verify( Oop obj ) {
     return SymbolOop( obj )->verify();
 }
 
@@ -79,7 +79,7 @@ void SymbolKlass::print( Oop obj ) {
 }
 
 
-Oop SymbolKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop SymbolKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     st_assert_symbol( obj, "dispatch check" );
     return obj;
 }

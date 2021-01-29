@@ -40,22 +40,22 @@ public:
 
 
     // answers whether the dispatch table is in single step mode.
-    static bool_t in_normal_mode() {
+    static bool in_normal_mode() {
         return mode == Mode::normal_mode;
     }
 
 
-    static bool_t in_step_mode() {
+    static bool in_step_mode() {
         return mode == Mode::step_mode;
     }
 
 
-    static bool_t in_next_mode() {
+    static bool in_next_mode() {
         return mode == Mode::next_mode;
     }
 
 
-    static bool_t in_return_mode() {
+    static bool in_return_mode() {
         return mode == Mode::return_mode;
     }
 };

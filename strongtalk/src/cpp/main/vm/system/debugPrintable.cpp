@@ -6,7 +6,6 @@
 
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
@@ -32,12 +31,12 @@ private:
 public:
     Command( const char *str ) {
         _console->cr();
-        _console->print_cr( "Executing [%s]", str );
+        spdlog::info( "Executing[{}]", str );
     }
 
 
     ~Command() {
-        flush_logFile();
+        //flush_logFile();
     }
 };
 
@@ -47,7 +46,7 @@ void pp( void *p ) {
     Command     c( "pp" );
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
-        lprintf( "0x0" );
+        spdlog::info( "0x0" );
         return;
     }
 
@@ -78,7 +77,7 @@ void pp_short( void *p ) {
     Command     c( "pp_short" );
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
-        lprintf( "0x0" );
+        spdlog::info( "0x0" );
     } else if ( Oop( p )->is_mem() ) {
         // guess that it's a MemOop
         Oop( p )->print();
@@ -161,7 +160,7 @@ void oat( std::int32_t index ) {
         Oop obj = objectIDTable::at( index );
         obj->print();
     } else {
-        _console->print_cr( "index %d out of bounds", index );
+        spdlog::info( "index {} out of bounds", index );
     }
 }
 
@@ -196,7 +195,7 @@ void debug() {        // to set things up for compiler debugging
     PrintCompilation       = PrintInlining        = PrintSplitting = PrintCode    = PrintAssemblyCode = PrintEliminateUnnededNodes = true;
     PrintEliminateContexts = PrintCopyPropagation = PrintRScopes   = PrintExposed = PrintLoopOpts     = true;
     AlwaysFlushVMMessages  = true;
-    flush_logFile();
+    //flush_logFile();
 }
 
 
@@ -205,13 +204,13 @@ void ndebug() {        // undo debug()
     PrintCompilation       = PrintInlining        = PrintSplitting = PrintCode    = PrintAssemblyCode = PrintEliminateUnnededNodes = false;
     PrintEliminateContexts = PrintCopyPropagation = PrintRScopes   = PrintExposed = PrintLoopOpts     = false;
     AlwaysFlushVMMessages  = false;
-    flush_logFile();
+    //flush_logFile();
 }
 
 
 void flush() {
     Command c( "flush" );
-    flush_logFile();
+    //flush_logFile();
 }
 
 
@@ -263,19 +262,19 @@ void pm( std::int32_t m ) {
 
 void print_codes( const char *class_name, const char *selector ) {
     Command c( "print_codes" );
-    _console->print_cr( "Finding %s in %s.", selector, class_name );
+    spdlog::info( "Finding %s in %s.", selector, class_name );
     Oop result = Universe::find_global( class_name );
     if ( not result ) {
-        _console->print_cr( "Could not find global %s.", class_name );
+        spdlog::info( "Could not find global %s.", class_name );
     } else if ( not result->is_klass() ) {
-        _console->print_cr( "Global %s is not a class.", class_name );
+        spdlog::info( "Global %s is not a class.", class_name );
     } else {
         SymbolOop sel    = oopFactory::new_symbol( selector );
         MethodOop method = KlassOop( result )->klass_part()->lookup( sel );
         if ( not method )
             method = result->blueprint()->lookup( sel );
         if ( not method ) {
-            _console->print_cr( "Method %s is not in %s.", selector, class_name );
+            spdlog::info( "Method %s is not in %s.", selector, class_name );
         } else {
             method->pretty_print();
             method->print_codes();
@@ -288,27 +287,27 @@ void help() {
     Command c( "help" );
 
 
-    _console->print_cr( "basic" );
-    _console->print_cr( "  pp(void* p)   - try to make sense of p" );
-    _console->print_cr( "  pv(std::int32_t p)     - ((PrintableResourceObject*) p)->print()" );
-    _console->print_cr( "  ps()          - print current process stack" );
-    _console->print_cr( "  pss()         - print all process stacks" );
-    _console->print_cr( "  oat(std::int32_t i)    - print object with id = i" );
+    spdlog::info( "basic" );
+    spdlog::info( "  pp(void* p)   - try to make sense of p" );
+    spdlog::info( "  pv(std::int32_t p)     - ((PrintableResourceObject*) p)->print()" );
+    spdlog::info( "  ps()          - print current process stack" );
+    spdlog::info( "  pss()         - print all process stacks" );
+    spdlog::info( "  oat(std::int32_t i)    - print object with id = i" );
 
-    _console->print_cr( "methodOop" );
-    _console->print_cr( "  pm(std::int32_t m)     - pretty print methodOop(m)" );
-    _console->print_cr( "  ph(std::int32_t hp)    - pretty print method containing hp" );
-    _console->print_cr( "  findm(std::int32_t hp) - returns methodOop containing hp" );
+    spdlog::info( "methodOop" );
+    spdlog::info( "  pm(std::int32_t m)     - pretty print methodOop(m)" );
+    spdlog::info( "  ph(std::int32_t hp)    - pretty print method containing hp" );
+    spdlog::info( "  findm(std::int32_t hp) - returns methodOop containing hp" );
 
-    _console->print_cr( "misc." );
-    _console->print_cr( "  flush()       - flushes the log file" );
-    _console->print_cr( "  events()      - dump last 50 event" );
+    spdlog::info( "misc." );
+    spdlog::info( "  flush()       - flushes the log file" );
+    spdlog::info( "  events()      - dump last 50 event" );
 
 
-    _console->print_cr( "compiler debugging" );
-    _console->print_cr( "  debug()       - to set things up for compiler debugging" );
-    _console->print_cr( "  ndebug()      - undo debug" );
-    _console->print_cr( "  pc()          - theCompiler->print_code(false)" );
-    _console->print_cr( "  pscopes()     - theCompiler->topScope->printTree()" );
-    _console->print_cr( "  urs_ps()      - print current process stack with many flags turned on" );
+    spdlog::info( "compiler debugging" );
+    spdlog::info( "  debug()       - to set things up for compiler debugging" );
+    spdlog::info( "  ndebug()      - undo debug" );
+    spdlog::info( "  pc()          - theCompiler->print_code(false)" );
+    spdlog::info( "  pscopes()     - theCompiler->topScope->printTree()" );
+    spdlog::info( "  urs_ps()      - print current process stack with many flags turned on" );
 }

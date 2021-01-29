@@ -58,7 +58,7 @@ Oop MemOopDescriptor::scavenge() {
 
 void MemOopDescriptor::follow_contents() {
     st_assert( is_gc_marked(), "pointer reversal should have taken place" );
-    // lprintf("[%s, 0x%lx, 0x%lx]", blueprint()->name(), this, klass());
+    // spdlog::info("[%s, 0x%lx, 0x%lx]", blueprint()->name(), this, klass());
     blueprint()->oop_follow_contents( this );
 }
 
@@ -66,11 +66,11 @@ void MemOopDescriptor::follow_contents() {
 Oop MemOopDescriptor::copy_to_survivor_space() {
     std::int32_t s = size();
     st_assert( Universe::should_scavenge( this ) and not is_forwarded(), "shouldn't be scavenging" );
-    bool_t is_new;
+    bool is_new;
     Oop *x = Universe::allocate_in_survivor_space( this, s, is_new );
 
 #ifdef VERBOSE_SCAVENGING
-    lprintf("{copy %s %#lx -> %#lx (%d)}\n", blueprint()->name(), oops(), x, s);
+    spdlog::info("{copy %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
 #endif
 
     MemOop p = as_memOop( x );
@@ -81,7 +81,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
         Universe::age_table->add( p, s );
     } else {
 # ifdef VERBOSE_SCAVENGING
-        lprintf("{tenuring %s %#lx -> %#lx (%d)}\n", blueprint()->name(), oops(), x, s);
+        spdlog::info("{tenuring %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
 # endif
     }
     forward_to( p );
@@ -99,19 +99,19 @@ void MemOopDescriptor::layout_iterate( ObjectLayoutClosure *blk ) {
 }
 
 
-bool_t MemOopDescriptor::verify() {
-    bool_t flag = true;
+bool MemOopDescriptor::verify() {
+    bool flag = true;
     if ( flag ) {
         MarkOop m = mark();
         if ( not Oop( m )->is_mark() ) {
-            error( "mark of MemOop %#lx isn't a markOop", this );
+            error( "mark of MemOop 0x{0:x} isn't a markOop", this );
             if ( not m->verify() )
-                error( " mark of MemOop %#lx isn't even a legal Oop", this );
+                error( " mark of MemOop 0x{0:x} isn't even a legal Oop", this );
             flag = false;
         }
         KlassOop p = klass();
         if ( not p->is_klass() ) {
-            error( "map of MemOop %#lx isn't a klassOop", this );
+            error( "map of MemOop 0x{0:x} isn't a klassOop", this );
             flag = false;
         }
     }
@@ -151,7 +151,7 @@ void MemOopDescriptor::bootstrap_body( Bootstrap *stream, std::int32_t h_size ) 
 }
 
 
-bool_t MemOopDescriptor::is_within_instVar_bounds( std::int32_t index ) {
+bool MemOopDescriptor::is_within_instVar_bounds( std::int32_t index ) {
     return index >= blueprint()->oop_header_size() and index < blueprint()->non_indexable_size();
 }
 
@@ -246,7 +246,7 @@ void MemOopDescriptor::oop_iterate_body( OopClosure *blk, std::int32_t begin, st
 }
 
 
-void MemOopDescriptor::initialize_header( bool_t has_untagged_contents, KlassOop klass ) {
+void MemOopDescriptor::initialize_header( bool has_untagged_contents, KlassOop klass ) {
     set_klass_field( klass );
     if ( has_untagged_contents )
         init_untagged_contents_mark();
@@ -265,7 +265,7 @@ void MemOopDescriptor::initialize_body( std::int32_t begin, std::int32_t end ) {
 }
 
 
-void MemOopDescriptor::raw_at_put( std::int32_t which, Oop contents, bool_t cs ) {
+void MemOopDescriptor::raw_at_put( std::int32_t which, Oop contents, bool cs ) {
     Universe::store( oops( which ), contents, cs );
 }
 

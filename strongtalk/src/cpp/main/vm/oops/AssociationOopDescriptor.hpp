@@ -69,12 +69,12 @@ public:
     }
 
 
-    bool_t is_constant() const {
+    bool is_constant() const {
         return addr()->_is_constant == trueObject;
     }
 
 
-    void set_is_constant( bool_t v );
+    void set_is_constant( bool v );
 
 
     static std::int32_t key_offset() {

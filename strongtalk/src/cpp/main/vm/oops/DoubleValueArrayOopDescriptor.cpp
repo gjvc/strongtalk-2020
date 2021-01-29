@@ -10,12 +10,12 @@
 #include "vm/oops/DoubleValueArrayOopDescriptor.hpp"
 
 
-bool_t DoubleValueArrayOopDescriptor::verify() {
-    bool_t flag = MemOopDescriptor::verify();
+bool DoubleValueArrayOopDescriptor::verify() {
+    bool flag = MemOopDescriptor::verify();
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "doubleValueArrayOop %#lx has negative length", this );
+            error( "doubleValueArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }

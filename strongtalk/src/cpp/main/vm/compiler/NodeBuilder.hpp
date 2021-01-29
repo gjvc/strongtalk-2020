@@ -61,7 +61,7 @@ private:
 
     GrowableArray<PseudoRegister *> *copyCurrentExprStack();
 
-    void access_temporary( std::int32_t no, std::int32_t context, bool_t push );
+    void access_temporary( std::int32_t no, std::int32_t context, bool push );
 
     GrowableArray<PseudoRegister *> *pass_arguments( PseudoRegister *self, std::int32_t nofArgs );
 
@@ -77,10 +77,10 @@ private:
 
     void materialize( PseudoRegister *r, GrowableArray<BlockPseudoRegister *> *materialized );    // materialize block (always call before storing/assigning PseudoRegister)
 
-    bool_t abortIfDead( Expression *e );                        // helper function for dead code handling
-    void generate_subinterval( MethodInterval *m, bool_t produces_result );    // generate subinterval (e.g., code in then branch)
+    bool abortIfDead( Expression *e );                        // helper function for dead code handling
+    void generate_subinterval( MethodInterval *m, bool produces_result );    // generate subinterval (e.g., code in then branch)
     void constant_if_node( IfNode *node, ConstantExpression *condition );        // code for if with const condition
-    TypeTestNode *makeTestNode( bool_t cond, PseudoRegister *r );            // make boolean type test node
+    TypeTestNode *makeTestNode( bool cond, PseudoRegister *r );            // make boolean type test node
 
     // for Inliner
     void gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result );
@@ -128,7 +128,7 @@ public:
 
 
     void append( Node *node );        // append a node
-    bool_t is_in_dead_code() const {
+    bool is_in_dead_code() const {
         return _current == EndOfCode;
     }
 
@@ -197,7 +197,7 @@ public:
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth );
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod );
+    void allocate_context( std::int32_t nofTemps, bool forMethod );
 
     void set_self_via_context();
 

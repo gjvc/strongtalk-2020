@@ -18,7 +18,7 @@ void HeapCodeBuffer::align() {
 }
 
 
-bool_t HeapCodeBuffer::isAligned() {
+bool HeapCodeBuffer::isAligned() {
     return ( _bytes->length() % oopSize ) == 0;
 }
 

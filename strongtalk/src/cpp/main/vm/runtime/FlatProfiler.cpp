@@ -144,22 +144,22 @@ public:
     }
 
 
-    virtual bool_t is_interpreted() const {
+    virtual bool is_interpreted() const {
         return false;
     }
 
 
-    virtual bool_t is_compiled() const {
+    virtual bool is_compiled() const {
         return false;
     }
 
 
-    virtual bool_t match( MethodOop m, KlassOop k ) {
+    virtual bool match( MethodOop m, KlassOop k ) {
         return false;
     }
 
 
-    virtual bool_t match( NativeMethod *nm ) {
+    virtual bool match( NativeMethod *nm ) {
         return false;
     }
 
@@ -245,12 +245,12 @@ public:
     }
 
 
-    bool_t is_interpreted() const {
+    bool is_interpreted() const {
         return true;
     }
 
 
-    bool_t match( MethodOop m, KlassOop k ) {
+    bool match( MethodOop m, KlassOop k ) {
         return _method == m and _receiver_klass == k;
     }
 
@@ -289,12 +289,12 @@ public:
     }
 
 
-    bool_t is_compiled() const {
+    bool is_compiled() const {
         return true;
     }
 
 
-    bool_t match( NativeMethod *m ) {
+    bool match( NativeMethod *m ) {
         return _nativeMethod == m;
     }
 
@@ -326,7 +326,7 @@ public:
         }
         ProfiledNode::print_method_on( stream );
         if ( CompilerDebug ) {
-            stream->print( " %#x ", _nativeMethod );
+            stream->print( " 0x{0:x} ", _nativeMethod );
         }
     }
 };
@@ -541,7 +541,7 @@ DeltaProcess *FlatProfiler::disengage() {
 }
 
 
-bool_t FlatProfiler::is_active() {
+bool FlatProfiler::is_active() {
     return _flatProfilerTask not_eq nullptr;
 }
 
@@ -555,7 +555,7 @@ static std::int32_t compare_nodes( const void *p1, const void *p2 ) {
 
 void print_ticks( const char *title, std::int32_t ticks, std::int32_t total ) {
     if ( ticks > 0 )
-        _console->print_cr( "total [%5.1f%%]  ticks [%3d]  title [%s]", ticks * 100.0 / total, ticks, title );
+        spdlog::info( "total [%5.1f%%]  ticks [%3d]  title[{}]", ticks * 100.0 / total, ticks, title );
 }
 
 
@@ -580,12 +580,12 @@ void FlatProfiler::print( std::int32_t cutoff ) {
         total += array->at( index )->ticks.total();
     }
 
-    _console->print_cr( "FlatProfiler %3.2f secs, (%d ticks)", secs, total );
+    spdlog::info( "FlatProfiler %3.2f secs, ({} ticks)", secs, total );
 
     // print interpreted methods
     TickCounter interpreted_ticks;
 
-    bool_t has_interpreted_ticks = false;
+    bool has_interpreted_ticks = false;
     std::int32_t    print_count           = 0;
     std::int32_t    index                 = 0;
 
@@ -618,7 +618,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
     // print compiled methods
     print_count = 0;
-    bool_t      has_compiled_ticks = false;
+    bool      has_compiled_ticks = false;
     TickCounter compiled_ticks;
 
     for ( std::int32_t i = 0; i < array->length(); i++ ) {
@@ -652,7 +652,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
     _console->cr();
 
     if ( total_ticks() > 0 ) {
-        _console->print_cr( " Additional ticks:" );
+        spdlog::info( " Additional ticks:" );
         print_ticks( "Garbage collector", _gc_ticks, total );
         print_ticks( "Process semaphore", _semaphore_ticks, total );
         print_ticks( "Unknown code", _unknown_ticks, total );
@@ -664,7 +664,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
 
 void fprofiler_init() {
-    _console->print_cr( "%%system-init:  fprofiler_init" );
+    spdlog::info( "%system-init:  fprofiler_init" );
 
     FlatProfiler::allocate_table();
 }

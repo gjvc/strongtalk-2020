@@ -8,7 +8,6 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 
@@ -63,17 +62,17 @@ void InlineCache::print() {
             break;
         default         : ShouldNotReachHere();
     }
-    _console->print_cr( "%s InlineCache: %d entries", s, number_of_targets() );
+    spdlog::info( "%s InlineCache: {} entries", s, number_of_targets() );
 
     InlineCacheIterator *it = iterator();
     it->init_iteration();
     while ( not it->at_end() ) {
-        lprintf( "\t- klass: " );
+        spdlog::info( "\t- klass: " );
         it->klass()->print_value();
         if ( it->is_interpreted() ) {
-            lprintf( ";\tmethod  %#x\n", it->interpreted_method() );
+            spdlog::info( ";\tmethod  0x{0:x}", static_cast<void *>( it->interpreted_method() ) );
         } else {
-            lprintf( ";\tnativeMethod %#x\n", it->compiled_method() );
+            spdlog::info( ";\tnativeMethod 0x{0:x}", static_cast<void *>(  it->compiled_method() ) );
         }
         it->advance();
     }
@@ -156,7 +155,7 @@ KlassOop CompiledInlineCacheIterator::klass() const {
 }
 
 
-bool_t CompiledInlineCacheIterator::is_interpreted() const {
+bool CompiledInlineCacheIterator::is_interpreted() const {
     st_assert( not at_end(), "iterated over the end" );
     if ( _picit not_eq nullptr ) {
         return _picit->is_interpreted();
@@ -166,7 +165,7 @@ bool_t CompiledInlineCacheIterator::is_interpreted() const {
 }
 
 
-bool_t CompiledInlineCacheIterator::is_compiled() const {
+bool CompiledInlineCacheIterator::is_compiled() const {
     st_assert( not at_end(), "iterated over the end" );
     if ( _picit not_eq nullptr ) {
         return _picit->is_compiled();
@@ -176,8 +175,8 @@ bool_t CompiledInlineCacheIterator::is_compiled() const {
 }
 
 
-bool_t CompiledInlineCacheIterator::is_super_send() const {
-    extern bool_t SuperSendsAreAlwaysInlined;
+bool CompiledInlineCacheIterator::is_super_send() const {
+    extern bool SuperSendsAreAlwaysInlined;
     st_assert( SuperSendsAreAlwaysInlined, "fix this" );
     return false;        // for now, super sends are always inlined
 }
@@ -205,5 +204,5 @@ NativeMethod *CompiledInlineCacheIterator::compiled_method() const {
 
 
 void CompiledInlineCacheIterator::print() {
-    lprintf( "CompiledInlineCacheIterator for ((CompiledInlineCache*)%#x) (%s)\n", _ic, selector()->as_string() );
+    spdlog::info( "CompiledInlineCacheIterator for ((CompiledInlineCache*)0x{0:x}) (%s)", static_cast<void *>( _ic ), selector()->as_string() );
 }

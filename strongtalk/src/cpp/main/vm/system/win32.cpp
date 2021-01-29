@@ -9,11 +9,9 @@
 #include "vm/system/win32.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Process.hpp"
-#include "vm/utilities/lprintf.hpp"
 
 
-
-extern bool_t  bootstrappingInProgress;
+extern bool  bootstrappingInProgress;
 //static CONTEXT context;
 
 
@@ -76,13 +74,13 @@ std::int32_t os::getenv( const char *name, char *buffer, std::int32_t len ) {
 }
 
 
-bool_t os::move_file( const char *from, const char *to ) {
+bool os::move_file( const char *from, const char *to ) {
     return MoveFileEx( from, to, MOVEFILE_REPLACE_EXISTING ) ? true : false;
 }
 
 
-bool_t os::check_directory( const char *dir_name ) {
-    bool_t result = CreateDirectory( dir_name, nullptr ) ? true : false;
+bool os::check_directory( const char *dir_name ) {
+    bool result = CreateDirectory( dir_name, nullptr ) ? true : false;
     if ( not result ) {
         std::int32_t error = GetLastError();
         if ( error == ERROR_ALREADY_EXISTS )
@@ -129,7 +127,7 @@ void os::delete_event( Event *event ) {
 }
 
 
-Event *os::create_event( bool_t initial_state ) {
+Event *os::create_event( bool initial_state ) {
     HANDLE result = CreateEvent( nullptr, TRUE, initial_state, nullptr );
     if ( result == nullptr ) st_fatal( "CreateEvent failed" );
     return (Event *) result;
@@ -249,7 +247,7 @@ DLL *os::dll_load( const char *name ) {
 }
 
 
-bool_t os::dll_unload( DLL *library ) {
+bool os::dll_unload( DLL *library ) {
     return FreeLibrary( (HINSTANCE) library ) ? true : false;
 }
 
@@ -319,13 +317,13 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
         return EXCEPTION_CONTINUE_SEARCH;
     }
 
-    lprintf( "Exception caught \"%s\".\n", exception_name( code ) );
+    spdlog::info( "Exception caught \"%s\".", exception_name( code ) );
 
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
-        lprintf( "  Oops, we encountered a stack overflow.\n" );
-        lprintf( "  You should check your program for infinite recursion!\n" );
+        spdlog::info( "  Oops, we encountered a stack overflow." );
+        spdlog::info( "  You should check your program for infinite recursion!" );
         suspend_process_at_stack_overflow( (std::int32_t *) exceptionInfo->ContextRecord->Esp, (std::int32_t *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
-        lprintf( "  Continue execution ?\n" );
+        spdlog::info( "  Continue execution ?" );
     } else {
         // Do not report vm state when getting stack overflow
         report_vm_state();
@@ -377,27 +375,27 @@ char *os::reserve_memory( std::int32_t size ) {
 }
 
 
-bool_t os::commit_memory( const char *addr, std::int32_t size ) {
-    bool_t result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
+bool os::commit_memory( const char *addr, std::int32_t size ) {
+    bool result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         std::int32_t error = GetLastError();
-        lprintf( "commit_memory error %d 0x%lx\n", error, error );
+        spdlog::info( "commit_memory error %d 0x%lx", error, error );
     }
     return result;
 }
 
 
-bool_t os::uncommit_memory( const char *addr, std::int32_t size ) {
+bool os::uncommit_memory( const char *addr, std::int32_t size ) {
     return VirtualFree( const_cast<char *>( addr ), size, MEM_DECOMMIT ) ? true : false;
 }
 
 
-bool_t os::release_memory( const char *addr, std::int32_t size ) {
+bool os::release_memory( const char *addr, std::int32_t size ) {
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
 
-bool_t os::guard_memory( const char *addr, std::int32_t size ) {
+bool os::guard_memory( const char *addr, std::int32_t size ) {
     DWORD old_status;
     return VirtualProtect( const_cast<char *>( addr ), size, PAGE_READWRITE | PAGE_GUARD, &old_status ) ? true : false;
 }
@@ -501,28 +499,28 @@ void os::signal_event( Event *event ) {
 }
 
 
-bool_t os::wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms ) {
+bool os::wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms ) {
     return WAIT_TIMEOUT == WaitForSingleObject( (HANDLE) event, timeout_in_ms );
 }
 
 
-extern "C" bool_t WizardMode;
+extern "C" bool WizardMode;
 
-void process_settings_file( const char *file_name, bool_t quiet );
+void process_settings_file( const char *file_name, bool quiet );
 
 static std::int32_t number_of_ctrl_c = 0;
 
 
-bool_t WINAPI HandlerRoutine( DWORD dwCtrlType ) {
+bool WINAPI HandlerRoutine( DWORD dwCtrlType ) {
     if ( CTRL_BREAK_EVENT == dwCtrlType ) {
-        _console->print_cr( "%%break" );
+        spdlog::info( "%break" );
         intercept_for_single_step();
     } else {
         if ( number_of_ctrl_c < 10 ) {
-            _console->print_cr( "%%break-loading-breakrc" );
+            spdlog::info( "%break-loading-breakrc" );
             process_settings_file( ".breakrc", false );
         } else {
-            lprintf( "\n{aborting}\n" );
+            spdlog::info( "\n{aborting}" );
 #ifdef __GNUC__
             __asm__("int3;");
 #else
@@ -574,13 +572,13 @@ const char *os::platform_class_name() {
 }
 
 
-extern "C" bool_t EnableTasks;
+extern "C" bool EnableTasks;
 
 LARGE_INTEGER counter;
 
 CRITICAL_SECTION ThreadSection;
 
-bool_t ThreadCritical::_initialized = false;
+bool ThreadCritical::_initialized = false;
 
 
 void ThreadCritical::intialize() {
@@ -605,12 +603,12 @@ ThreadCritical::~ThreadCritical() {
 
 
 void (*handler)( void *fp, void *sp, void *pc ) = nullptr;
-bool_t handling_exception;
+bool handling_exception;
 
 
 LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
-    lprintf( "Caught exception.\n" );
+    spdlog::info( "Caught exception." );
     if ( true and handler and not handling_exception ) {
         handling_exception = true;
         handler( (void *) exceptionInfo->ContextRecord->Ebp, (void *) exceptionInfo->ContextRecord->Esp, (void *) exceptionInfo->ContextRecord->Eip );
@@ -642,9 +640,9 @@ void os_init_processor_affinity() {
     while ( not( processMask & processorId ) and processorId < processMask )
         processorId >>= 1;
 
-    _console->print_cr( "%%system-init:  os-init:  set-processor-affinity: processorId: [%ld]", processorId );
+    spdlog::info( "%system-init:  os-init:  set-processor-affinity: processorId: [%ld]", processorId );
     if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) )
-        _console->print_cr( "error code: %d", GetLastError() );
+        spdlog::info( "error code: {}", GetLastError() );
 
 }
 

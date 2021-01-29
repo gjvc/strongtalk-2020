@@ -38,8 +38,8 @@ public:
     }
 
 
-    bool_t dominates( std::int32_t byteCodeIndex, IntervalInfo *other, std::int32_t otherByteCodeIndex ) const; // does bytecode (receiver, byteCodeIndex) dominate (other, otherByteCodeIndex)?
-    bool_t isParentOf( IntervalInfo *other ) const; // is receiver a parent of other?
+    bool dominates( std::int32_t byteCodeIndex, IntervalInfo *other, std::int32_t otherByteCodeIndex ) const; // does bytecode (receiver, byteCodeIndex) dominate (other, otherByteCodeIndex)?
+    bool isParentOf( IntervalInfo *other ) const; // is receiver a parent of other?
 
     void print();
 

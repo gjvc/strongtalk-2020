@@ -10,7 +10,6 @@
 #include "vm/compiler/slist.hpp"
 #include "vm/compiler/CompileTimeClosure.hpp"
 #include "vm/compiler/defUse.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "BasicBlock.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
@@ -37,27 +36,27 @@ class BlockPseudoRegister;
 class PseudoRegister : public PrintableResourceObject {
 
 protected:
-    std::int16_t _id;               // unique id
-    std::int16_t _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-    std::int16_t _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
-    std::int16_t _softUsageCount;   // number of "soft" uses
-    LogicalAddress *_logicalAddress; // for new backend only: logical address if created or nullptr
+    std::int16_t              _id;               // unique id
+    std::int16_t              _usageCount;       // number of uses (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+    std::int16_t              _definitionCount;  // number of definitions  (including soft uses) (negative means incorrect/unknown values, e.g. hardwired regs)
+    std::int16_t              _softUsageCount;   // number of "soft" uses
+    LogicalAddress            *_logicalAddress; // for new backend only: logical address if created or nullptr
     static const std::int32_t AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
 public:
-    static std::int32_t                                     currentNo;              // id of next PseudoRegister created
+    static std::int32_t                            currentNo;              // id of next PseudoRegister created
     GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
-    InlinedScope *_scope;               // scope to which this belongs
-    Location _location;              // real location assigned to this preg
-    CopyPropagationInfo *_copyPropagationInfo; // to follow effects of copy propagation
-    GrowableArray<PseudoRegister *> *cpRegs;               // registers copy-propagated away by this
-    std::int32_t                             regClass;               // register equivalence class number
-    PseudoRegister *regClassLink;         // next element in class
-    std::int32_t                                  _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
-    GrowableArray<BlockPseudoRegister *> *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
-    GrowableArray<BlockPseudoRegister *> *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
-    bool_t                               _debug;                 // value/loc needed for debugging info?
-    std::int32_t                                  _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
+    InlinedScope                                   *_scope;               // scope to which this belongs
+    Location                                       _location;              // real location assigned to this preg
+    CopyPropagationInfo                            *_copyPropagationInfo; // to follow effects of copy propagation
+    GrowableArray<PseudoRegister *>                *cpRegs;               // registers copy-propagated away by this
+    std::int32_t                                   regClass;               // register equivalence class number
+    PseudoRegister                                 *regClassLink;         // next element in class
+    std::int32_t                                   _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
+    GrowableArray<BlockPseudoRegister *>           *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
+    GrowableArray<BlockPseudoRegister *>           *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
+    bool                                         _debug;                 // value/loc needed for debugging info?
+    std::int32_t                                   _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
 
 protected:
     void initialize() {
@@ -90,7 +89,7 @@ public:
     }
 
 
-    PseudoRegister( InlinedScope *s, Location l, bool_t incU, bool_t incD ) :
+    PseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
             _dus( AvgBBIndexLen ) {
         st_assert( s, "must have a scope" );
         st_assert( not l.equals( illegalLocation ), "illegal location" );
@@ -114,57 +113,57 @@ public:
     }
 
 
-    virtual bool_t isSinglyAssignedPseudoRegister() const {
+    virtual bool isSinglyAssignedPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isArgSinglyAssignedPseudoRegister() const {
+    virtual bool isArgSinglyAssignedPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isSplitPseudoRegister() const {
+    virtual bool isSplitPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isTempPseudoRegister() const {
+    virtual bool isTempPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isNoPseudoRegister() const {
+    virtual bool isNoPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isBlockPseudoRegister() const {
+    virtual bool isBlockPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isConstPseudoRegister() const {
+    virtual bool isConstPseudoRegister() const {
         return false;
     }
 
 
-    virtual bool_t isMemoized() const {
+    virtual bool isMemoized() const {
         return false;
     }
 
 
-    bool_t uplevelR() const {
+    bool uplevelR() const {
         return _uplevelReaders not_eq nullptr;
     }
 
 
-    bool_t uplevelW() const {
+    bool uplevelW() const {
         return _uplevelWriters not_eq nullptr;
     }
 
 
-    void addUplevelAccessor( BlockPseudoRegister *blk, bool_t read, bool_t write );
+    void addUplevelAccessor( BlockPseudoRegister *blk, bool read, bool write );
 
     void removeUplevelAccessor( BlockPseudoRegister *blk );
 
@@ -181,25 +180,25 @@ public:
     }
 
 
-    virtual bool_t canCopyPropagate() const;
+    virtual bool canCopyPropagate() const;
 
 
-    bool_t incorrectDU() const {
+    bool incorrectDU() const {
         return _usageCount < 0 or _definitionCount < 0;
     }
 
 
-    bool_t incorrectD() const {
+    bool incorrectD() const {
         return _definitionCount < 0;
     }
 
 
-    bool_t incorrectU() const {
+    bool incorrectU() const {
         return _usageCount < 0;
     }
 
 
-    void makeIncorrectDU( bool_t incU, bool_t incD );
+    void makeIncorrectDU( bool incU, bool incD );
 
 protected:
     // don't use nuses() et al, use isUsed() instead
@@ -228,34 +227,34 @@ public:
     }
 
 
-    bool_t isUsed() const {
+    bool isUsed() const {
         return _definitionCount or _usageCount;
     }
 
 
-    bool_t isUnused() const {
+    bool isUnused() const {
         return not isUsed();
     }
 
 
-    bool_t hasNoUses() const {
+    bool hasNoUses() const {
         return _usageCount == 0;
     }
 
 
     // NB: be careful with isUnused() vs. hasNoUses() -- they're different if a PseudoRegister has
     // no (hard) uses but has definitions
-    virtual bool_t isSinglyAssigned() const {
+    virtual bool isSinglyAssigned() const {
         return _definitionCount == 1;
     }
 
 
-    bool_t isSinglyUsed() const {
+    bool isSinglyUsed() const {
         return _usageCount == 1;
     }
 
 
-    bool_t isOnlySoftUsed() const {
+    bool isOnlySoftUsed() const {
         return hardUses() == 0;
     }
 
@@ -285,40 +284,40 @@ public:
 
     void removeDef( BasicBlock *bb, Definition *d );
 
-    virtual bool_t extendLiveRange( Node *n );
+    virtual bool extendLiveRange( Node *n );
 
-    virtual bool_t extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
+    virtual bool extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
 
     void forAllDefsDo( Closure<Definition *> *c );
 
     void forAllUsesDo( Closure<Usage *> *c );
 
-    bool_t isLocalTo( BasicBlock *bb ) const;
+    bool isLocalTo( BasicBlock *bb ) const;
 
     void makeSameRegClass( PseudoRegister *other, GrowableArray<RegisterEqClass *> *classes );
 
     virtual void allocateTo( Location r );
 
-    virtual bool_t canBeEliminated( bool_t withUses = false ) const;
+    virtual bool canBeEliminated( bool withUses = false ) const;
 
-    virtual void eliminate( bool_t withUses = false );
+    virtual void eliminate( bool withUses = false );
 
-    bool_t isCPEquivalent( PseudoRegister *r ) const;
+    bool isCPEquivalent( PseudoRegister *r ) const;
 
-    bool_t checkEquivalentDefs() const;
+    bool checkEquivalentDefs() const;
 
-    bool_t slow_isLiveAt( Node *n ) const;
+    bool slow_isLiveAt( Node *n ) const;
 
-    virtual bool_t isLiveAt( Node *n ) const;
+    virtual bool isLiveAt( Node *n ) const;
 
 protected:
     void addDUHelper( Node *n, SList<DefinitionUsage *> *l, DefinitionUsage *el );
 
-    virtual NameNode *locNameNode( bool_t mustBeLegal ) const;
+    virtual NameNode *locNameNode( bool mustBeLegal ) const;
 
     void eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb );
 
-    void eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, bool_t removing );
+    void eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, bool removing );
 
     void updateCPInfo( NonTrivialNode *n );
 
@@ -327,7 +326,7 @@ public:
 
 
     virtual void print_short() {
-        lprintf( "%s\n", name() );
+        spdlog::info( "%s", name() );
     }
 
 
@@ -338,9 +337,9 @@ public:
     }
 
 
-    virtual bool_t verify() const;
+    virtual bool verify() const;
 
-    virtual NameNode *nameNode( bool_t mustBeLegal = true ) const; // for debugging info
+    virtual NameNode *nameNode( bool mustBeLegal = true ) const; // for debugging info
     LogicalAddress *createLogicalAddress();
 
 
@@ -369,22 +368,22 @@ public:
     }
 
 
-    TemporaryPseudoRegister( InlinedScope *s, Location l, bool_t incU, bool_t incD ) :
+    TemporaryPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
             PseudoRegister( s, l, incU, incD ) {
     }
 
 
-    bool_t isTempPseudoRegister() const {
+    bool isTempPseudoRegister() const {
         return true;
     }
 
 
-    bool_t isLiveAt( Node *n ) const {
+    bool isLiveAt( Node *n ) const {
         return false;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return false;
     }
 
@@ -400,15 +399,15 @@ public:
 class SinglyAssignedPseudoRegister : public PseudoRegister {
 protected:
     InlinedScope *_creationScope;        // source scope to which receiver belongs
-    std::int32_t          creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
-    std::int32_t          _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
+    std::int32_t creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
+    std::int32_t _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
     // (for reg. alloc. purposes)
-    const bool_t _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
+    const bool _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
 public:
-    SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream = IllegalByteCodeIndex, std::int32_t en = IllegalByteCodeIndex, bool_t inContext = false );
+    SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream = IllegalByteCodeIndex, std::int32_t en = IllegalByteCodeIndex, bool inContext = false );
 
 
-    SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool_t incU, bool_t incD, std::int32_t stream, std::int32_t en ) :
+    SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD, std::int32_t stream, std::int32_t en ) :
             PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ) {
         _begByteCodeIndex = creationStartByteCodeIndex = stream;
         _endByteCodeIndex = en;
@@ -426,7 +425,7 @@ public:
     }
 
 
-    bool_t isInContext() const {
+    bool isInContext() const {
         return _isInContext;
     }
 
@@ -436,19 +435,19 @@ public:
     }
 
 
-    bool_t isSinglyAssigned() const {
+    bool isSinglyAssigned() const {
         return true;
     }
 
 
-    bool_t extendLiveRange( Node *n );
+    bool extendLiveRange( Node *n );
 
-    bool_t extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
+    bool extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex );
 
-    bool_t isLiveAt( Node *n ) const;
+    bool isLiveAt( Node *n ) const;
 
 
-    bool_t isSinglyAssignedPseudoRegister() const {
+    bool isSinglyAssignedPseudoRegister() const {
         return true;
     }
 
@@ -458,10 +457,10 @@ public:
     }
 
 
-    bool_t verify() const;
+    bool verify() const;
 
 protected:
-    bool_t basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const;
+    bool basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const;
 
     friend class ExpressionStack;
 };
@@ -469,25 +468,25 @@ protected:
 
 class BlockPseudoRegister : public SinglyAssignedPseudoRegister {
 protected:
-    CompileTimeClosure *_closure;            // the compile-time closure representation
-    bool_t                          _memoized;                // is this a memoized block?
-    bool_t                          _escapes;            // does the block escape?
+    CompileTimeClosure              *_closure;            // the compile-time closure representation
+    bool                          _memoized;                // is this a memoized block?
+    bool                          _escapes;            // does the block escape?
     GrowableArray<Node *>           *_escapeNodes;            // list of all nodes where the block escapes (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelRead;            // list of PseudoRegisters uplevel-read by block method (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelWritten;        // list of PseudoRegisters uplevel-written by block method (or nullptr)
     GrowableArray<Location *>       *_contextCopies;        // list of context location containing a copy of the receiver (or nullptr)
-    static std::int32_t                      _numBlocks;
+    static std::int32_t             _numBlocks;
 
 public:
     BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end );
 
 
-    bool_t isBlockPseudoRegister() const {
+    bool isBlockPseudoRegister() const {
         return true;
     }
 
 
-    virtual NameNode *locNameNode( bool_t mustBeLegal ) const;
+    virtual NameNode *locNameNode( bool mustBeLegal ) const;
 
 
     InlinedScope *scope() const {
@@ -516,19 +515,19 @@ public:
     void memoize();                // memoize this block if possible/desirable
     void markEscaped( Node *n );            // mark this block as escaping at node n
     void markEscaped();                // ditto; receiver escapes because of uplevel access from escaping block
-    bool_t isMemoized() const {
+    bool isMemoized() const {
         return _memoized;
     }
 
 
-    bool_t escapes() const {
+    bool escapes() const {
         return _escapes;
     }
 
 
-    bool_t canBeEliminated( bool_t withUses = false ) const;
+    bool canBeEliminated( bool withUses = false ) const;
 
-    void eliminate( bool_t withUses = false );
+    void eliminate( bool withUses = false );
 
     void computeUplevelAccesses();
 
@@ -558,7 +557,7 @@ public:
 
     const char *name() const;
 
-    bool_t verify() const;
+    bool verify() const;
 
     void print();
 
@@ -577,17 +576,17 @@ public:
     }
 
 
-    virtual bool_t isNoPseudoRegister() const {
+    virtual bool isNoPseudoRegister() const {
         return true;
     }
 
 
-    bool_t canCopyPropagate() const {
+    bool canCopyPropagate() const {
         return false;
     }
 
 
-    NameNode *nameNode( bool_t mustBeLegal ) const;
+    NameNode *nameNode( bool mustBeLegal ) const;
 
 
     const char *name() const {
@@ -595,7 +594,7 @@ public:
     }
 
 
-    bool_t verify() const;
+    bool verify() const;
 };
 
 
@@ -620,7 +619,7 @@ public:
     friend ConstPseudoRegister *findConstPReg( Node *n, Oop c );
 
 
-    bool_t isConstPseudoRegister() const {
+    bool isConstPseudoRegister() const {
         return true;
     }
 
@@ -629,13 +628,13 @@ public:
 
     void extendLiveRange( InlinedScope *s );
 
-    bool_t extendLiveRange( Node *n );
+    bool extendLiveRange( Node *n );
 
-    bool_t covers( Node *n ) const;
+    bool covers( Node *n ) const;
 
-    bool_t needsRegister() const;
+    bool needsRegister() const;
 
-    NameNode *nameNode( bool_t mustBeLegal = true ) const;
+    NameNode *nameNode( bool mustBeLegal = true ) const;
 
 
     const char *prefix() const {
@@ -645,7 +644,7 @@ public:
 
     const char *name() const;
 
-    bool_t verify() const;
+    bool verify() const;
 };
 
 ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c );
@@ -665,10 +664,10 @@ class SplitPReg : public SinglyAssignedPseudoRegister {
     sig = signature;
   }
 
-  bool_t	isSinglyAssigned() const		{ return true; }
-  bool_t	extendLiveRange(Node* n);
-  bool_t	isLiveAt(Node* n) const;
-  bool_t	isSplitPseudoRegister() const 	    		{ return true; }
+  bool	isSinglyAssigned() const		{ return true; }
+  bool	extendLiveRange(Node* n);
+  bool	isLiveAt(Node* n) const;
+  bool	isSplitPseudoRegister() const 	    		{ return true; }
   char*	prefix() const				{ return "SplitP"; }
   char*	name() const;
 };

@@ -14,8 +14,6 @@
 #include "vm/system/asserts.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 void Klass::initialize() {
     set_untagged_contents( false );
@@ -26,12 +24,12 @@ void Klass::initialize() {
 }
 
 
-Oop Klass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop Klass::allocateObject( bool permit_scavenge, bool tenured ) {
     return markSymbol( vmSymbols::not_oops() );
 }
 
 
-Oop Klass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop Klass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
     return markSymbol( vmSymbols::not_oops() );
 }
 
@@ -41,7 +39,7 @@ void Klass::mark_for_schema_change() {
 }
 
 
-bool_t Klass::is_marked_for_schema_change() {
+bool Klass::is_marked_for_schema_change() {
     return mixin() == nullptr;
 }
 
@@ -88,7 +86,7 @@ const char *Klass::name_from_format( Format format ) {
 }
 
 
-bool_t Klass::has_same_layout_as( KlassOop klass ) {
+bool Klass::has_same_layout_as( KlassOop klass ) {
 
     st_assert( klass->is_klass(), "argument must be klass" );
 
@@ -114,7 +112,7 @@ bool_t Klass::has_same_layout_as( KlassOop klass ) {
 }
 
 
-bool_t Klass::has_same_inst_vars_as( KlassOop klass ) {
+bool Klass::has_same_inst_vars_as( KlassOop klass ) {
 
     st_assert( klass->is_klass(), "argument must be klass" );
 
@@ -297,7 +295,7 @@ AssociationOop Klass::remove_classVar_at( std::int32_t index ) {
 }
 
 
-bool_t Klass::includes_classVar( SymbolOop name ) {
+bool Klass::includes_classVar( SymbolOop name ) {
     ObjectArrayOop array = classVars();
     for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         AssociationOop elem = AssociationOop( array->obj_at( index ) );
@@ -398,7 +396,7 @@ MethodOop Klass::lookup( SymbolOop selector ) {
 }
 
 
-bool_t Klass::is_method_holder_for( MethodOop method ) {
+bool Klass::is_method_holder_for( MethodOop method ) {
 
     // Always use the home  of the method in case of a blockMethod
     MethodOop m = method->home();
@@ -439,24 +437,24 @@ void Klass::flush_methods() {
 }
 
 
-bool_t Klass::is_specialized_class() const {
+bool Klass::is_specialized_class() const {
     MemOopKlass m;
     return name() == m.name();
 }
 
 
-bool_t Klass::is_named_class() const {
+bool Klass::is_named_class() const {
     return mixin()->primary_invocation() == as_klassOop();
 }
 
 
 void Klass::print_klass() {
-    lprintf( "%sKlass (%s)", name(), name_from_format( format() ) );
+    spdlog::info( "%sKlass (%s)", name(), name_from_format( format() ) );
 }
 
 
 char *Klass::delta_name() {
-    bool_t    meta   = false;
+    bool    meta   = false;
     std::int32_t       offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
     SymbolOop name   = nullptr;
 
@@ -497,7 +495,7 @@ void Klass::print_name_on( ConsoleOutputStream *stream ) {
     if ( name not_eq nullptr )
         name->print_symbol_on( stream );
     else {
-        bool_t meta;
+        bool meta;
         name = Universe::find_global_key_for( as_klassOop(), &meta );
         if ( name ) {
             name->print_symbol_on( stream );
@@ -560,7 +558,7 @@ void Klass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
 }
 
 
-bool_t Klass::oop_verify( Oop obj ) {
+bool Klass::oop_verify( Oop obj ) {
     // FIX LATER
     return true;
 }
@@ -580,7 +578,7 @@ void Klass::bootstrap_klass_part_two( Bootstrap *stream ) {
 }
 
 
-Oop Klass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t tenured ) {
+Oop Klass::oop_primitive_allocate( Oop obj, bool allow_scavenge, bool tenured ) {
     return markSymbol( vmSymbols::not_klass() );
 }
 
@@ -590,6 +588,6 @@ Oop Klass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
 }
 
 
-Oop Klass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop Klass::oop_shallow_copy( Oop obj, bool tenured ) {
     return markSymbol( vmSymbols::not_oops() );
 }

@@ -40,7 +40,7 @@ std::int32_t BlockClosureOopDescriptor::number_of_arguments() {
 }
 
 
-bool_t BlockClosureOopDescriptor::is_pure() const {
+bool BlockClosureOopDescriptor::is_pure() const {
     return not lexical_scope()->is_context();
 }
 
@@ -52,7 +52,7 @@ void BlockClosureOopDescriptor::verify() {
         JumpTableEntry *e = (JumpTableEntry *) m;
         e->verify();
         if ( not e->is_block_closure_stub() )
-            error( "stub %#x of block %#x isn't a closure stub", e, this );
+            error( "stub 0x{0:x} of block 0x{0:x} isn't a closure stub", e, this );
     } else {
         m->verify();
     }

@@ -97,7 +97,7 @@ public:
 
 
     // Tester
-    bool_t is_blockMethod() const {
+    bool is_blockMethod() const {
         return not selector_or_method()->is_symbol();
     }
 
@@ -196,7 +196,7 @@ public:
 
     void dec_sharing_count();
 
-    bool_t was_never_executed();        // was method never executed? (count = 0, empty inline caches)
+    bool was_never_executed();        // was method never executed? (count = 0, empty inline caches)
 
     std::int32_t size_of_codes() const {        // size of byte codes in words
         return get_unsigned_bitfield( (std::int32_t) size_and_flags(), method_size_mask_bitno, method_size_mask_size );
@@ -267,7 +267,7 @@ public:
 
 
     // Method with hardwired floating-point operations
-    bool_t has_float_temporaries() const {
+    bool has_float_temporaries() const {
         return *codes( 1 ) == static_cast<std::uint8_t>(ByteCodes::Code::float_allocate);
     }
 
@@ -302,16 +302,16 @@ public:
 
 
     // Testers
-    bool_t is_accessMethod() const {
+    bool is_accessMethod() const {
         return *codes() == static_cast<std::uint8_t>(ByteCodes::Code::return_instVar);
     }
 
 
-    bool_t is_primitiveMethod() const;
+    bool is_primitiveMethod() const;
 
 
     // For predicted sends (smi_t +, -, *, etc.)
-    bool_t is_special_primitiveMethod() const {
+    bool is_special_primitiveMethod() const {
         return *codes( 1 ) == static_cast<std::uint8_t>(ByteCodes::Code::special_primitive_send_1_hint);
     }
 
@@ -369,69 +369,69 @@ public:
 
 
     // Tells if an activation of this method has a context stored as temp 0.
-    bool_t activation_has_context() const {
+    bool activation_has_context() const {
         return allocatesInterpretedContext() or ( is_blockMethod() and expectsContext() );
     }
 
 
     // Tells if byteCodeIndex is a context allocation
-    bool_t in_context_allocation( std::int32_t byteCodeIndex ) const;
+    bool in_context_allocation( std::int32_t byteCodeIndex ) const;
 
 
-    bool_t containsNonLocalReturn() const {
+    bool containsNonLocalReturn() const {
         return isBitSet( flags(), containsNonLocalReturnFlag );
     }
 
 
-    bool_t allocatesInterpretedContext() const {
+    bool allocatesInterpretedContext() const {
         return isBitSet( flags(), allocatesContextFlag );
     }
 
 
-    bool_t mustBeCustomizedToClass() const {
+    bool mustBeCustomizedToClass() const {
         return isBitSet( flags(), mustBeCustomizedFlag );
     }
 
 
-    bool_t expectsContext() const {
+    bool expectsContext() const {
         return block_info() == expects_context;
     }
 
 
-    bool_t hasNestedBlocks() const;
+    bool hasNestedBlocks() const;
 
 
-    bool_t is_clean_block() const {
+    bool is_clean_block() const {
         return block_info() == expects_nil;
     }
 
 
-    bool_t is_copying_block() const {
+    bool is_copying_block() const {
         return block_info() == expects_self or block_info() == expects_parameter;
     }
 
 
-    bool_t is_full_block() const {
+    bool is_full_block() const {
         return block_info() == expects_context;
     }
 
 
     // Method customization
-    bool_t has_instVar_access() const {
+    bool has_instVar_access() const {
         return true;
     } // for now - conservative - FIX THIS
-    bool_t has_classVar_access() const {
+    bool has_classVar_access() const {
         return true;
     } // for now - conservative - FIX THIS
-    bool_t has_inlineCache() const {
+    bool has_inlineCache() const {
         return true;
     } // for now - conservative - FIX THIS
-    bool_t is_customized() const {
+    bool is_customized() const {
         return isBitSet( flags(), isCustomizedFlag );
     }
 
 
-    bool_t should_be_customized() const {
+    bool should_be_customized() const {
         return has_instVar_access() or has_classVar_access() or has_inlineCache();
     }
 
@@ -496,7 +496,7 @@ public:
     // self_in_context tells if self is copied into context.
     // Note: This function is extremely slow, so please use it for
     //       verify and debug code only.
-    std::int32_t number_of_context_temporaries( bool_t *self_in_context = nullptr );
+    std::int32_t number_of_context_temporaries( bool *self_in_context = nullptr );
 
     // Checks if the context matches this method
     void verify_context( ContextOop con );
@@ -521,11 +521,11 @@ inline MethodOop as_methodOop( void *p ) {
 
 class StopInSelector : public ValueObject {
 private:
-    static bool_t ignored;
-    bool_t        enable;
-    bool_t        stop;
+    static bool ignored;
+    bool        enable;
+    bool        stop;
     FlagSetting   oldFlag;
 
 public:
-    StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool_t &fl = StopInSelector::ignored, bool_t stop = true );
+    StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl = StopInSelector::ignored, bool stop = true );
 };

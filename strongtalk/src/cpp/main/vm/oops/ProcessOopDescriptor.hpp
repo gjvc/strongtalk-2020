@@ -40,7 +40,7 @@ public:
 
 
     // Returns whether the process is alive.
-    bool_t is_live() {
+    bool is_live() {
         return process() not_eq nullptr;
     }
 

@@ -19,15 +19,15 @@ GrowableArray<ClassChange *> *Reflection::_classChanges = nullptr;
 GrowableArray<MemOop> *Reflection::_converted = nullptr;
 
 
-bool_t Reflection::needs_schema_change() {
-    bool_t result = false;
+bool Reflection::needs_schema_change() {
+    bool result = false;
 
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
-        bool_t sub_result = _classChanges->at( i )->needs_schema_change();
+        bool sub_result = _classChanges->at( i )->needs_schema_change();
         if ( TraceApplyChange and sub_result ) {
             _classChanges->at( i )->old_klass()->print_value();
             _console->cr();
-            _console->print_cr( "  needs schema change because: %s.", _classChanges->at( i )->reason_for_schema_change() );
+            spdlog::info( "  needs schema change because: %s.", _classChanges->at( i )->reason_for_schema_change() );
         }
         result = result or sub_result;
     }
@@ -49,7 +49,7 @@ void Reflection::forward( MemOop old_obj, MemOop new_obj ) {
 }
 
 
-bool_t Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin ) {
+bool Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin ) {
     if ( new_mixin->number_of_methods() not_eq old_mixin->number_of_methods() )
         return true;
 
@@ -62,7 +62,7 @@ bool_t Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin )
 }
 
 
-bool_t Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixin ) {
+bool Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixin ) {
     if ( new_mixin->number_of_classVars() not_eq old_mixin->number_of_classVars() )
         return true;
 
@@ -107,7 +107,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
 }
 
 
-void Reflection::invalidate_classes( bool_t value ) {
+void Reflection::invalidate_classes( bool value ) {
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
         KlassOop old_klass = _classChanges->at( i )->old_klass();
         old_klass->set_invalid( value );
@@ -116,7 +116,7 @@ void Reflection::invalidate_classes( bool_t value ) {
 }
 
 
-void Reflection::update_classes( bool_t class_vars_changed, bool_t instance_methods_changed, bool_t class_methods_changed ) {
+void Reflection::update_classes( bool class_vars_changed, bool instance_methods_changed, bool class_methods_changed ) {
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->update_class( class_vars_changed, instance_methods_changed, class_methods_changed );
     }
@@ -140,11 +140,11 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
     ResourceMark resourceMark;
     if ( TraceApplyChange ) {
         _console->print( "Reflective change" );
-        _console->print_cr( "[new]" );
+        spdlog::info( "[new]" );
         new_mixin->print();
-        _console->print_cr( "[old]" );
+        spdlog::info( "[old]" );
         old_mixin->print();
-        _console->print_cr( "[invocations]" );
+        spdlog::info( "[invocations]" );
         invocations->print();
         Universe::verify();
     }
@@ -159,15 +159,15 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
     Universe::code->make_marked_nativeMethods_zombies();
 
     // check for change mixin format too
-    bool_t format_changed = needs_schema_change();
+    bool format_changed = needs_schema_change();
 
-    bool_t class_vars_changed       = has_class_vars_changed( new_mixin, old_mixin );
-    bool_t instance_methods_changed = has_methods_changed( new_mixin, old_mixin );
-    bool_t class_methods_changed    = has_methods_changed( new_mixin->class_mixin(), old_mixin->class_mixin() );
+    bool class_vars_changed       = has_class_vars_changed( new_mixin, old_mixin );
+    bool instance_methods_changed = has_methods_changed( new_mixin, old_mixin );
+    bool class_methods_changed    = has_methods_changed( new_mixin->class_mixin(), old_mixin->class_mixin() );
 
     if ( format_changed ) {
         if ( TraceApplyChange ) {
-            _console->print_cr( " - schema change is needed" );
+            spdlog::info( " - schema change is needed" );
         }
 
         _converted = new GrowableArray<MemOop>( 100 );
@@ -198,8 +198,8 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
         for ( std::int32_t j = 0; j < _converted->length(); j++ ) {
             MemOop obj = _converted->at( j );
             if ( TraceApplyChange ) {
-                _console->print_cr( "Old: 0x%lx, 0x%lx", obj, obj->mark() );
-                _console->print_cr( "New: 0x%lx, 0x%lx", obj->forwardee(), obj->forwardee()->mark() );
+                spdlog::info( "Old: 0x%lx, 0x%lx", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
+                spdlog::info( "New: 0x%lx, 0x%lx", static_cast<const void *>(obj->forwardee()), static_cast<const void *>(obj->forwardee()->mark()) );
             }
             obj->set_mark( obj->forwardee()->mark() );
         }
@@ -209,7 +209,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
 
     } else {
         if ( TraceApplyChange ) {
-            _console->print_cr( " - no schema change (%s%s%s)", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
+            spdlog::info( " - no schema change (%s%s%s)", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
         }
         update_classes( class_vars_changed, instance_methods_changed, class_methods_changed );
     }

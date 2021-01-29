@@ -9,7 +9,6 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/GrowableArray.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/code/NativeCode.hpp"
@@ -24,8 +23,8 @@ ByteCodes::Format           ByteCodes::_format[static_cast<std::int32_t>(ByteCod
 ByteCodes::CodeType         ByteCodes::_code_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 ByteCodes::ArgumentSpec     ByteCodes::_argument_spec[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 ByteCodes::SendType         ByteCodes::_send_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-bool_t                      ByteCodes::_single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-bool_t                      ByteCodes::_pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+bool                        ByteCodes::_single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+bool                        ByteCodes::_pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
 
 void ByteCodes::def( Code code ) {
@@ -33,18 +32,18 @@ void ByteCodes::def( Code code ) {
 }
 
 
-void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool single_step, bool pop_tos ) {
     def( code, name, format, code_type, single_step, ByteCodes::ArgumentSpec::no_args, ByteCodes::SendType::no_send, pop_tos );
 }
 
 
-void ByteCodes::def( Code code, const char *name, Format format, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, ArgumentSpec argument_spec, SendType send_type, bool pop_tos ) {
     st_assert( send_type not_eq ByteCodes::SendType::no_send, "must be a send" );
     def( code, name, format, ByteCodes::CodeType::message_send, true, argument_spec, send_type, pop_tos );
 }
 
 
-void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos ) {
+void ByteCodes::def( Code code, const char *name, Format format, CodeType code_type, bool single_step, ArgumentSpec argument_spec, SendType send_type, bool pop_tos ) {
     st_assert( 0 <= static_cast<std::int32_t>(code) and static_cast<std::int32_t>(code) < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES), "out of bounds" );
     st_assert( _name[ static_cast<std::int32_t>(code) ] == nullptr, "bytecode defined twice" );
 
@@ -114,9 +113,9 @@ void ByteCodes::init() {
     }
 
     // for better readability
-    const bool_t do_sst = true;
-    const bool_t no_sst = false;
-    const bool_t pop    = true;
+    const bool do_sst = true;
+    const bool no_sst = false;
+    const bool pop    = true;
 
     def( ByteCodes::Code::push_temp_0, "push_temp_0", ByteCodes::Format::B, ByteCodes::CodeType::local_access, no_sst );
     def( ByteCodes::Code::push_temp_1, "push_temp_1", ByteCodes::Format::B, ByteCodes::CodeType::local_access, no_sst );
@@ -562,7 +561,7 @@ const char *ByteCodes::loop_type_as_string( LoopType loop_type ) {
 }
 
 
-bool_t ByteCodes::is_self_send( ByteCodes::Code code ) {
+bool ByteCodes::is_self_send( ByteCodes::Code code ) {
     switch ( code ) {
         case ByteCodes::Code::interpreted_send_self: // fall through
         case ByteCodes::Code::compiled_send_self: // fall through
@@ -581,7 +580,7 @@ bool_t ByteCodes::is_self_send( ByteCodes::Code code ) {
 }
 
 
-bool_t ByteCodes::is_super_send( ByteCodes::Code code ) {
+bool ByteCodes::is_super_send( ByteCodes::Code code ) {
     switch ( code ) {
         case ByteCodes::Code::interpreted_send_super: // fall through
         case ByteCodes::Code::compiled_send_super: // fall through
@@ -600,7 +599,7 @@ bool_t ByteCodes::is_super_send( ByteCodes::Code code ) {
 }
 
 
-bool_t ByteCodes::has_access_send_code( ByteCodes::Code code ) {
+bool ByteCodes::has_access_send_code( ByteCodes::Code code ) {
     switch ( code ) {
         case ByteCodes::Code::interpreted_send_0: // fall through
         case ByteCodes::Code::interpreted_send_self:
@@ -613,7 +612,7 @@ bool_t ByteCodes::has_access_send_code( ByteCodes::Code code ) {
 }
 
 
-bool_t ByteCodes::has_predicted_send_code( ByteCodes::Code code ) {
+bool ByteCodes::has_predicted_send_code( ByteCodes::Code code ) {
     switch ( code ) {
         case ByteCodes::Code::interpreted_send_1:
             return true;
@@ -974,9 +973,9 @@ void ByteCodes::print() {
     for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         Code code = Code( i );
         if ( is_defined( code ) ) {
-            _console->print_cr( "%s", name( code ) );
-            _console->print_cr( "  %s", code_type_as_string( code_type( code ) ) );
-            _console->print_cr( "  %s", send_type_as_string( send_type( code ) ) );
+            spdlog::info( "%s", name( code ) );
+            spdlog::info( "  %s", code_type_as_string( code_type( code ) ) );
+            spdlog::info( "  %s", send_type_as_string( send_type( code ) ) );
             _console->cr();
         }
     }
@@ -986,49 +985,49 @@ void ByteCodes::print() {
 // Smalltalk generation
 
 static void generate_comment() {
-    _console->print_cr( "\t\"" );
-    _console->print_cr( "\tGenerated method - do not modify manually" );
-    _console->print_cr( "\t(use delta +GenerateSmalltalk to generate)." );
-    _console->print_cr( "\t\"" );
+    spdlog::info( "\t\"" );
+    spdlog::info( "\tGenerated method - do not modify manually" );
+    spdlog::info( "\t(use delta +GenerateSmalltalk to generate)." );
+    spdlog::info( "\t\"" );
 }
 
 
-static bool_t actually_generated( ByteCodes::Code code ) {
+static bool actually_generated( ByteCodes::Code code ) {
     return ByteCodes::is_defined( code ) and ( ByteCodes::send_type( code ) == ByteCodes::SendType::no_send or ByteCodes::send_type( code ) == ByteCodes::SendType::interpreted_send or ByteCodes::send_type( code ) == ByteCodes::SendType::predicted_send );
 }
 
 
 static void generate_instr_method() {
 
-    _console->print_cr( "instr: i" );
+    spdlog::info( "instr: i" );
     generate_comment();
-    _console->print_cr( "\t| h l |" );
-    _console->print_cr( "\th := i // 16r10." );
-    _console->print_cr( "\tl := i \\\\ 16r10.\n" );
+    spdlog::info( "\t| h l |" );
+    spdlog::info( "\th := i // 16r10." );
+    spdlog::info( "\tl := i \\\\ 16r10." );
     for ( std::int32_t h = 0; h < 0x10; h++ ) {
-        _console->print_cr( "\th = 16r%X ifTrue: [", h );
+        spdlog::info( "\th = 16r{0:x} ifTrue: [", h );
         for ( std::int32_t l = 0; l < 0x10; l++ ) {
             ByteCodes::Code code = ByteCodes::Code( h * 0x10 + l );
             if ( actually_generated( code ) ) {
-                _console->print_cr( "\t\tl = 16r%X\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
+                spdlog::info( "\t\tl = 16r{0:x}\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
             }
         }
-        _console->print_cr( "\t\t^ ''" );
-        _console->print_cr( "\t].\n" );
+        spdlog::info( "\t\t^ ''" );
+        spdlog::info( "\t]." );
     }
-    _console->print_cr( "\tself halt" );
-    _console->print_cr( "!\n" );
+    spdlog::info( "\tself halt" );
+    spdlog::info( "!" );
 }
 
 
 static void print_table_entry_for( const char *selector, ByteCodes::Code code ) {
-    _console->print_cr( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
+    spdlog::info( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
 }
 
 
 static void generate_codeForPrimitive_method() {
 
-    _console->print_cr( "codeForPrimitive: selector" );
+    spdlog::info( "codeForPrimitive: selector" );
     generate_comment();
     print_table_entry_for( "primitiveAdd:ifFail:", ByteCodes::Code::smi_add );
     print_table_entry_for( "primitiveSubtract:ifFail:", ByteCodes::Code::smi_sub );
@@ -1045,8 +1044,8 @@ static void generate_codeForPrimitive_method() {
     print_table_entry_for( "primitiveBitOr:ifFail:", ByteCodes::Code::smi_or );
     print_table_entry_for( "primitiveBitXor:ifFail:", ByteCodes::Code::smi_xor );
     print_table_entry_for( "primitiveRawBitShift:ifFail:", ByteCodes::Code::smi_shift );
-    _console->print_cr( "\t^ nil" );
-    _console->print_cr( "!\n" );
+    spdlog::info( "\t^ nil" );
+    spdlog::info( "!" );
 
 }
 
@@ -1080,17 +1079,17 @@ static void generate_signature( const char *sig, char separator ) {
 }
 
 
-static bool_t has_instVar_access( ByteCodes::Code code ) {
+static bool has_instVar_access( ByteCodes::Code code ) {
     return ByteCodes::code_type( code ) == ByteCodes::CodeType::instVar_access;
 }
 
 
-static bool_t has_classVar_access( ByteCodes::Code code ) {
+static bool has_classVar_access( ByteCodes::Code code ) {
     return ByteCodes::code_type( code ) == ByteCodes::CodeType::classVar_access;
 }
 
 
-static bool_t has_inline_cache( ByteCodes::Code code ) {
+static bool has_inline_cache( ByteCodes::Code code ) {
     return ByteCodes::send_type( code ) not_eq ByteCodes::SendType::no_send;
 }
 
@@ -1103,27 +1102,27 @@ static void generate_gen_method( ByteCodes::Code code ) {
     generate_comment();
     _console->print( "\tself byte: 16r%02X", code );
     generate_signature( sig, ' ' );
-    _console->print_cr( "." );
+    spdlog::info( "." );
     if ( has_instVar_access( code ) )
-        _console->print_cr( "\tself has_instVar_access." );
+        spdlog::info( "\tself has_instVar_access." );
     if ( has_classVar_access( code ) )
-        _console->print_cr( "\tself has_classVar_access." );
+        spdlog::info( "\tself has_classVar_access." );
     if ( has_inline_cache( code ) )
-        _console->print_cr( "\tself has_inline_cache." );
-    _console->print_cr( "!\n" );
+        spdlog::info( "\tself has_inline_cache." );
+    spdlog::info( "!" );
 }
 
 
 static void generate_float_function_constant_method( Floats::Function f ) {
-    _console->print_cr( "float_%s", Floats::function_name_for( f ) );
+    spdlog::info( "float_%s", Floats::function_name_for( f ) );
     generate_comment();
-    _console->print_cr( "\t^ %d", f );
-    _console->print_cr( "!\n" );
+    spdlog::info( "\t^ {}", f );
+    spdlog::info( "!" );
 }
 
 
 static void generate_heap_code_methods() {
-    _console->print_cr( "not DeltaHCode methods !\n" );
+    spdlog::info( "not DeltaHCode methods !" );
 
     generate_instr_method();
     generate_codeForPrimitive_method();
@@ -1140,7 +1139,7 @@ static void generate_heap_code_methods() {
         generate_float_function_constant_method( f );
     }
 
-    _console->print_cr( "!\n" );
+    spdlog::info( "!" );
 }
 
 
@@ -1155,18 +1154,18 @@ public:
 
     Markup( const char *tag ) {
         _tag = tag;
-        _console->print_cr( "<%s>", _tag );
+        spdlog::info( "<%s>", _tag );
     }
 
 
     ~Markup() {
-        _console->print_cr( "</%s>", _tag );
+        spdlog::info( "</%s>", _tag );
     }
 };
 
 
 static void markup( const char *tag, const char *text ) {
-    _console->print_cr( "<%s>%s</%s>", tag, text, tag );
+    spdlog::info( "<%s>%s</%s>", tag, text, tag );
 }
 
 
@@ -1223,43 +1222,43 @@ static void generate_HTML_for( ByteCodes::Code code ) {
         _console->print( "<td>%s", ByteCodes::send_type_as_string( ByteCodes::send_type( code ) ) );
         _console->print( "<td>%s", arguments_as_string( ByteCodes::argument_spec( code ) ) );
     }
-    _console->print_cr( "<tr>" );
+    spdlog::info( "<tr>" );
 }
 
 
 static void generate_HTML_for( ByteCodes::CodeType type ) {
     {
         Markup tag( "h3" );
-        _console->print_cr( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
+        spdlog::info( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
     }
     {
         Markup tag( "table" );
         _console->print( "<th>Code<th>Name<th>Format<th>Single step" );
         if ( type == ByteCodes::CodeType::message_send )
             _console->print( "<th>Send type<th>Arguments" );
-        _console->print_cr( "<tr>" );
+        spdlog::info( "<tr>" );
         for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
             if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type )
                 generate_HTML_for( code );
         }
     }
-    _console->print_cr( "<hr/>" );
+    spdlog::info( "<hr/>" );
 }
 
 
 static void generate_HTML_docu() {
     Markup tag( "html" );
-    _console->print_cr( "<!-- do not modify - use delta +GenerateHTML to generate -->" );
+    spdlog::info( "<!-- do not modify - use delta +GenerateHTML to generate -->" );
     {
         Markup tag( "head" );
         markup( "title", "Delta ByteCodes" );
     }
     {
-        Markup    tag( "body" );
+        Markup             tag( "body" );
         {
             Markup tag( "h2" );
-            _console->print_cr( "Delta ByteCodes (Version %d)", ByteCodes::version() );
+            spdlog::info( "Delta ByteCodes (Version {})", ByteCodes::version() );
         }
         for ( std::int32_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ )
             generate_HTML_for( ByteCodes::CodeType( i ) );
@@ -1268,7 +1267,7 @@ static void generate_HTML_docu() {
 
 
 void bytecodes_init() {
-    _console->print_cr( "%%system-init:  bytecodes_init" );
+    spdlog::info( "%system-init:  bytecodes_init" );
 
     ByteCodes::init();
 

@@ -36,7 +36,7 @@ class ProgramCounterDescriptorInfoClass;
 class ScopeDescriptorRecorder : public ResourceObject {
 
 private:
-    bool_t _hasCodeBeenGenerated;
+    bool _hasCodeBeenGenerated;
     Array                             *_oops;
     Array                             *_values;
     ByteArray                         *_codes;
@@ -63,28 +63,28 @@ public:
     ScopeInfo addMethodScope( LookupKey *key,                      // lookup key
                               MethodOop method,                     // result of the lookup
                               LogicalAddress *receiver_location,   // location of receiver
-                              bool_t allocates_compiled_context,    // tells whether the code allocates a context
-                              bool_t lite = false,                  //
+                              bool allocates_compiled_context,    // tells whether the code allocates a context
+                              bool lite = false,                  //
                               std::int32_t scopeID = 0,                      //
                               ScopeInfo senderScope = nullptr,      //
                               std::int32_t senderByteCodeIndex = IllegalByteCodeIndex,
-                              bool_t visible = false );
+                              bool visible = false );
 
 
     // Adds an inlined block scope
     ScopeInfo addBlockScope( MethodOop method,                      // block method
                              ScopeInfo parent,                      // parent scope
-                             bool_t allocates_compiled_context,     // tells whether the code allocates a context
-                             bool_t lite = false, std::int32_t scopeID = 0,  //
+                             bool allocates_compiled_context,     // tells whether the code allocates a context
+                             bool lite = false, std::int32_t scopeID = 0,  //
                              ScopeInfo senderScope = nullptr,       //
                              std::int32_t senderByteCodeIndex = IllegalByteCodeIndex,
-                             bool_t visible = false );
+                             bool visible = false );
 
     // Adds a top level block scope
     ScopeInfo addTopLevelBlockScope( MethodOop method,                      // block method
                                      LogicalAddress *receiver_location,    // location of receiver
                                      KlassOop receiver_klass,               // receiver klass
-                                     bool_t allocates_compiled_context );   // tells whether the code allocates a context
+                                     bool allocates_compiled_context );   // tells whether the code allocates a context
 
     // Adds an noninlined block scope
     // Used for retrieving information about block closure stubs
@@ -134,14 +134,14 @@ private:
 
     NonInlinedBlockScopeNode *addNonInlinedBlockScope( NonInlinedBlockScopeNode *scope );
 
-    void genScopeDescHeader( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader );
+    void genScopeDescHeader( std::uint8_t code, bool lite, bool args, bool temps, bool context_temps, bool expr_stack, bool has_context, bool bigHeader );
 
     // Generate the collected dependecies
     void generateDependencies();
 
     void emit_termination_node();
 
-    void emit_illegal_node( bool_t is_last );
+    void emit_illegal_node( bool is_last );
 
     // Returns true if was possible to save exprOffset and nextOffset in the two pre-allocated bytes.
     std::int32_t updateScopeDescHeader( std::int32_t offset, std::int32_t next );
@@ -232,27 +232,27 @@ public:
     }
 
 
-    bool_t is_illegal() {
+    bool is_illegal() {
         return raw_index() == _illegalIndex;
     }
 
 
-    bool_t is_termination() {
+    bool is_termination() {
         return raw_index() == _terminationIndex;
     }
 
 
-    bool_t is_last() {
+    bool is_last() {
         return isBitSet( _byte, _isLastBitNum );
     }
 
 
-    bool_t has_index() {
+    bool has_index() {
         return raw_index() <= _maxIndex;
     }
 
 
-    void pack( std::uint8_t code, bool_t is_last, std::uint8_t i ) {
+    void pack( std::uint8_t code, bool is_last, std::uint8_t i ) {
         st_assert( code <= _maxCode, "code too high" );
         st_assert( i <= _noIndex, "index too high" );
 
@@ -263,7 +263,7 @@ public:
     }
 
 
-    void pack_illegal( bool_t is_last ) {
+    void pack_illegal( bool is_last ) {
 
         _byte = addBits( _illegalIndex << _codeWidth, 0 );
 
@@ -272,7 +272,7 @@ public:
     }
 
 
-    void pack_termination( bool_t is_last ) {
+    void pack_termination( bool is_last ) {
 
         _byte = addBits( _terminationIndex << _codeWidth, 0 );
 
@@ -310,42 +310,42 @@ public:
     }
 
 
-    bool_t is_lite() {
+    bool is_lite() {
         return isBitSet( _byte, _liteBitNum );
     }
 
 
-    bool_t has_args() {
+    bool has_args() {
         return isBitSet( _byte, _argsBitNum );
     }
 
 
-    bool_t has_temps() {
+    bool has_temps() {
         return isBitSet( _byte, _tempsBitNum );
     }
 
 
-    bool_t has_context_temps() {
+    bool has_context_temps() {
         return isBitSet( _byte, _contextTempsBitNum );
     }
 
 
-    bool_t has_expr_stack() {
+    bool has_expr_stack() {
         return isBitSet( _byte, _exprStackBitNum );
     }
 
 
-    bool_t has_compiled_context() {
+    bool has_compiled_context() {
         return isBitSet( _byte, _contextBitNum );
     }
 
 
-    bool_t has_nameDescs() {
+    bool has_nameDescs() {
         return has_args() or has_temps() or has_context_temps() or has_expr_stack();
     }
 
 
-    void pack( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_compiled_context ) {
+    void pack( std::uint8_t code, bool lite, bool args, bool temps, bool context_temps, bool expr_stack, bool has_compiled_context ) {
 
         st_assert( code <= _maxCode, "code too high" );
 

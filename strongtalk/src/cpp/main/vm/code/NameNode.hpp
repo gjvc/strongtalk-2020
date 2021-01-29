@@ -26,15 +26,15 @@ class ScopeDescriptorRecorder;
 class NameNode : public ResourceObject {        // abstract superclass of all NameNodes
 
 public:
-    bool_t genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, std::int32_t index );
+    bool genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool is_last, std::int32_t index );
 
 
-    virtual bool_t hasLocation() {
+    virtual bool hasLocation() {
         return false;
     }
 
 
-    virtual bool_t isIllegal() {
+    virtual bool isIllegal() {
         return false;
     }
 
@@ -45,7 +45,7 @@ public:
     }
 
 
-    virtual void generate( ScopeDescriptorRecorder *rec, bool_t is_last ) = 0;
+    virtual void generate( ScopeDescriptorRecorder *rec, bool is_last ) = 0;
 };
 
 
@@ -55,7 +55,7 @@ class LocationName : public NameNode {
 private:
     Location _location;
 
-    void generate( ScopeDescriptorRecorder *rec, bool_t is_last );
+    void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
     LocationName( Location location ) {
@@ -63,7 +63,7 @@ public:
     }
 
 
-    bool_t hasLocation() {
+    bool hasLocation() {
         return true;
     }
 
@@ -80,7 +80,7 @@ class ValueName : public NameNode {
 private:
     Oop _value;
 
-    void generate( ScopeDescriptorRecorder *rec, bool_t is_last );
+    void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
     ValueName( Oop val ) {
@@ -97,7 +97,7 @@ private:
     MethodOop _blockMethod;   // The block method
     ScopeInfo _parentScope; // The scope where to find the context
 
-    void generate( ScopeDescriptorRecorder *rec, bool_t is_last );
+    void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
     BlockValueName( MethodOop block_method, ScopeInfo parent_scope ) {
@@ -121,7 +121,7 @@ private:
     MethodOop _blockMethod;
     ScopeInfo _parentScope;
 
-    void generate( ScopeDescriptorRecorder *rec, bool_t is_last );
+    void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
     MemoizedName( Location loc, MethodOop block_method, ScopeInfo parent_scope ) {
@@ -131,7 +131,7 @@ public:
     }
 
 
-    bool_t hasLocation() {
+    bool hasLocation() {
         return true;
     }
 
@@ -152,10 +152,10 @@ NameNode *newValueName( Oop value );
 class IllegalName : public NameNode {
 
 private:
-    bool_t isIllegal() {
+    bool isIllegal() {
         return true;
     }
 
 
-    void generate( ScopeDescriptorRecorder *rec, bool_t is_last );
+    void generate( ScopeDescriptorRecorder *rec, bool is_last );
 };

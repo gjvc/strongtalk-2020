@@ -10,7 +10,7 @@
 
 void MarkOopDescriptor::print_on( ConsoleOutputStream *stream ) {
     stream->print( "mark(%c,%c,", has_tagged_contents() ? 'U' : '_', is_near_death() ? 'D' : '_' );
-    stream->print( "hash %#lx,", hash() );
+    stream->print( "hash 0x{0:x},", hash() );
     stream->print( "age %d)", age() );
 }
 

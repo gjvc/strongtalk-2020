@@ -52,7 +52,7 @@ class Stub : public ResourceObject {
 private:
     PseudoRegisterMapping *_mapping;
     Node                  *_dst;
-    Label _stub_code;
+    Label                 _stub_code;
 
 
     Stub( PseudoRegisterMapping *mapping, Node *dst ) {
@@ -90,8 +90,8 @@ public:
 class DebugInfoWriter : public PseudoRegisterClosure {
 private:
     GrowableArray<PseudoRegister *> *_pregs;            // maps index -> preg
-    GrowableArray<std::int32_t>    *_locations;        // previous preg location or illegalLocation
-    GrowableArray<bool_t> *_present;          // true if preg is currently present
+    GrowableArray<std::int32_t>     *_locations;        // previous preg location or illegalLocation
+    GrowableArray<bool>             *_present;          // true if preg is currently present
 
     Location location_at( std::int32_t i ) {
         return Location( _locations->at( i ) );
@@ -107,7 +107,7 @@ public:
     DebugInfoWriter( std::int32_t number_of_pregs ) {
         _pregs     = new GrowableArray<PseudoRegister *>( number_of_pregs, number_of_pregs, nullptr );
         _locations = new GrowableArray<std::int32_t>( number_of_pregs, number_of_pregs, illegalLocation._loc );
-        _present   = new GrowableArray<bool_t>( number_of_pregs, number_of_pregs, false );
+        _present   = new GrowableArray<bool>( number_of_pregs, number_of_pregs, false );
     }
 
 
@@ -128,11 +128,11 @@ public:
         mapping->iterate( this );
         // determine changes & notify ScopeDescriptorRecorder if necessary
         ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-        for ( std::int32_t i = _locations->length(); i-- > 0; ) {
-            PseudoRegister *preg = _pregs->at( i );
-            bool_t   present = _present->at( i );
-            Location old_loc = location_at( i );
-            Location new_loc = present ? mapping->locationFor( preg ) : illegalLocation;
+        for ( std::int32_t      i    = _locations->length(); i-- > 0; ) {
+            PseudoRegister *preg   = _pregs->at( i );
+            bool           present = _present->at( i );
+            Location       old_loc = location_at( i );
+            Location       new_loc = present ? mapping->locationFor( preg ) : illegalLocation;
             if ( ( not present and old_loc not_eq illegalLocation ) or
                  // preg not present anymore but has been there before
                  ( present and old_loc == illegalLocation ) or    // preg present but has not been there before
@@ -146,7 +146,7 @@ public:
                 }
                 // debugging
                 if ( PrintDebugInfoGeneration ) {
-                    _console->print_cr( "%5d: %-20s @ %s", pc_offset, preg->name(), new_loc.name() );
+                    spdlog::info( "%5d: %-20s @ %s", pc_offset, preg->name(), new_loc.name() );
                 }
                 rec->changeLogicalAddress( preg->logicalAddress(), nameNode, pc_offset );
             }
@@ -157,7 +157,7 @@ public:
 
 
     void print() {
-        _console->print_cr( "a DebugInfoWriter" );
+        spdlog::info( "a DebugInfoWriter" );
     }
 };
 
@@ -179,7 +179,7 @@ CodeGenerator::CodeGenerator( MacroAssembler *masm, PseudoRegisterMapping *mappi
 
 
 void CodeGenerator::setMapping( PseudoRegisterMapping *mapping ) {
-    maxNofStackTmps(); // enforce adjustement of _maxNofStackTmps
+    maxNofStackTmps(); // enforce adjustment of _maxNofStackTmps
     _currentMapping = mapping;
 }
 
@@ -199,15 +199,16 @@ Register CodeGenerator::def( PseudoRegister *preg ) const {
 }
 
 
-bool_t CodeGenerator::isLiveRangeBoundary( Node *a, Node *b ) const {
+bool CodeGenerator::isLiveRangeBoundary( Node *a, Node *b ) const {
     return a->scope() not_eq b->scope() or a->byteCodeIndex() not_eq b->byteCodeIndex();
 }
 
 
-void CodeGenerator::jmp( Node *from, Node *to, bool_t to_maybe_nontrivial ) {
+void CodeGenerator::jmp( Node *from, Node *to, bool to_maybe_nontrivial ) {
     // keep only PseudoRegisters that are still alive at dst
     if ( from not_eq nullptr and isLiveRangeBoundary( from, to ) )
         _currentMapping->killDeadsAt( to );
+
     // make mappings conformant if necessary
     if ( to_maybe_nontrivial or ( to->isMergeNode() and not to->isTrivial() ) ) {
         // dst has more than one predecessor
@@ -229,7 +230,7 @@ void CodeGenerator::jmp( Node *from, Node *to, bool_t to_maybe_nontrivial ) {
 }
 
 
-void CodeGenerator::jcc( Assembler::Condition cc, Node *from, Node *to, bool_t to_maybe_nontrivial ) {
+void CodeGenerator::jcc( Assembler::Condition cc, Node *from, Node *to, bool to_maybe_nontrivial ) {
     // make mappings conformant if necessary
     if ( to_maybe_nontrivial or ( to->isMergeNode() and not to->isTrivial() ) ) {
         // dst has more than one predecessor
@@ -346,8 +347,8 @@ void CodeGenerator::generateMergeStubs() {
         _mergeStubs.pop()->generateMergeStub();
 
     if ( PrintCodeGeneration and _masm->pc() > start_pc ) {
-        _console->print_cr( "---" );
-        _console->print_cr( "fixup merge stubs" );
+        spdlog::info( "---" );
+        spdlog::info( "fixup merge stubs" );
         _masm->code()->decode();
     }
 }
@@ -422,10 +423,10 @@ void CodeGenerator::finalize( InlinedScope *scope ) {
         _masm->movl( eax, compilationCount );
 
     if ( PrintCodeGeneration ) {
-        _console->print_cr( "---" );
-        _console->print_cr( "merge stubs" );
+        spdlog::info( "---" );
+        spdlog::info( "merge stubs" );
         _masm->code()->decode();
-        _console->print_cr( "---" );
+        spdlog::info( "---" );
     }
 }
 
@@ -461,7 +462,7 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
         // If this is a block method and we expect a context then the incoming context chain must be checked.
         // The context chain may contain a deoptimized contextOop. (see StubRoutines::verify_context_chain for details)
         if ( scope->method()->block_info() == MethodOopDescriptor::expects_context ) {
-            const bool_t use_fast_check = false;
+            const bool use_fast_check = false;
             _masm->call( StubRoutines::verify_context_chain(), RelocationInformation::RelocationType::runtime_call_type );
         }
     }
@@ -516,10 +517,10 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     if ( CompilerDebug ) _masm->movl( eax, _nofCompilations );
 
     if ( PrintCodeGeneration ) {
-        _console->print( "---\n" );
-        _console->print( "entry point\n" );
+        spdlog::info( "---" );
+        spdlog::info( "entry point" );
         _masm->code()->decode();
-        _console->print( "---\n" );
+        spdlog::info( "---" );
     }
 }
 
@@ -547,7 +548,7 @@ void CodeGenerator::storeCheck( Register obj ) {
 }
 
 
-void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t needsStoreCheck ) {
+void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool needsStoreCheck ) {
     PseudoRegisterLocker lock( src );        // make sure src stays in register if it's in a register
     enum {
         is_const,       //
@@ -556,8 +557,8 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t nee
         is_undefined    //
     }                    state = is_undefined;
 
-    Oop      value;            // valid if state == is_const
-    Register reg;            // valid if state == is_loaded
+    Oop            value;            // valid if state == is_const
+    Register       reg;            // valid if state == is_loaded
     PseudoRegister *preg;            // valid if state == is_mapped
 
     {
@@ -583,7 +584,7 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t nee
         state = is_mapped;
     } else if ( src->_location.isContextLocation() ) {
         PseudoRegister *context = theCompiler->contextList->at( src->_location.contextNo() )->context();
-        Address addr = Address( use( context ), Mapping::contextOffset( src->_location.tempNo() ) );
+        Address        addr     = Address( use( context ), Mapping::contextOffset( src->_location.tempNo() ) );
         _masm->movl( reg, addr );
         state = is_loaded;
     } else {
@@ -607,9 +608,9 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool_t nee
             default       : ShouldNotReachHere();
         }
     } else if ( dst->_location.isContextLocation() ) {
-        PseudoRegister *context   = theCompiler->contextList->at( dst->_location.contextNo() )->context();
+        PseudoRegister       *context = theCompiler->contextList->at( dst->_location.contextNo() )->context();
         PseudoRegisterLocker lock( context );
-        Address              addr = Address( use( context ), Mapping::contextOffset( dst->_location.tempNo() ) );
+        Address              addr     = Address( use( context ), Mapping::contextOffset( dst->_location.tempNo() ) );
         switch ( state ) {
             case is_const:
                 _masm->movl( addr, value );
@@ -667,21 +668,30 @@ const char *CodeGenerator::nativeMethodName() {
 
 
 void CodeGenerator::verifyObject( Oop obj ) {
-    if ( not obj->is_smi() and not obj->is_mem() ) st_fatal( "should be an ordinary Oop" );
+    if ( not obj->is_smi() and not obj->is_mem() ) {
+        st_fatal( "should be an ordinary Oop" );
+    }
+
     KlassOop klass = obj->klass();
-    if ( klass == nullptr or not klass->is_mem() ) st_fatal( "should be an ordinary MemOop" );
+    if ( klass == nullptr or not klass->is_mem() ) {
+        st_fatal( "should be an ordinary MemOop" );
+    }
+
     if ( obj->is_block() )
         BlockClosureOop( obj )->verify();
 }
 
 
 void CodeGenerator::verifyContext( Oop obj ) {
-    if ( obj->is_mark() )
+    if ( obj->is_mark() ) {
         error( "context should never be mark" );
-    if ( not Universe::is_heap( (Oop *) obj ) )
+    }
+    if ( not Universe::is_heap( (Oop *) obj ) ) {
         error( "context outside of heap" );
-    if ( not obj->is_context() )
+    }
+    if ( not obj->is_context() ) {
         error( "should be a context" );
+    }
     Oop c = (Oop) ( ContextOop( obj )->parent() );
     if ( c->is_mem() )
         verifyContext( c );
@@ -689,7 +699,7 @@ void CodeGenerator::verifyContext( Oop obj ) {
 
 
 void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) {
-    bool_t       print_args_long = true;
+    bool         print_args_long = true;
     ResourceMark resourceMark;
     _numberOfCalls++;
     _callDepth++;
@@ -700,8 +710,8 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) 
     }
 
     verifyObject( recv );
-    std::int32_t i = nofArgs;
-    Oop *arg = ebp + ( nofArgs + 2 );
+    std::int32_t i    = nofArgs;
+    Oop          *arg = ebp + ( nofArgs + 2 );
     while ( i-- > 0 ) {
         arg--;
         verifyObject( *arg );
@@ -710,7 +720,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) 
             if ( print_args_long or ( *arg )->is_smi() ) {
                 _console->print( "%s ", ( *arg )->print_value_string() );
             } else {
-                _console->print( "0x%x ", *arg );
+                _console->print( "0x{0:x} ", *arg );
             }
         }
     }
@@ -734,7 +744,7 @@ void CodeGenerator::verifyReturn( Oop result ) {
     if ( TraceCalls ) {
         ResourceMark resourceMark;
         indent();
-        _console->print_cr( ") %s -> %s", nativeMethodName(), result->print_value_string() );
+        spdlog::info( ") {} -> {}", nativeMethodName(), result->print_value_string() );
     }
     _callDepth--;
 }
@@ -742,18 +752,19 @@ void CodeGenerator::verifyReturn( Oop result ) {
 
 void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result ) {
     _numberOfNonLocalReturns++;
-    LOG_EVENT3( "verifyNonLocalReturn(%#x, %#x, %d, %#x)", fp, nlrFrame, result );
+    LOG_EVENT3( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", fp, nlrFrame, result );
     if ( nlrFrame <= fp )
-        error( "NonLocalReturn went too far: %#x <= %#x", nlrFrame, fp );
+        error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
     // treat >99 scopes as likely error -- might actually be ok
-//  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID %#x", nlrScopeID);
+//  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
     if ( result->is_mark() )
         error( "NonLocalReturn result is a markOop" );
     result->verify();
+
     if ( TraceCalls ) {
         ResourceMark resourceMark;
         indent();
-        _console->print_cr( ") %s  ^ %s", nativeMethodName(), result->print_value_string() );
+        spdlog::info( ") {} ^ {}", nativeMethodName(), result->print_value_string() );
     }
     _callDepth--;
 }
@@ -762,8 +773,9 @@ void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, 
 void CodeGenerator::callVerifyObject( Register obj ) {
     // generates transparent check code which verifies that obj is
     // a legal Oop and halts if not - for debugging purposes only
-    if ( not VerifyCode )
-        warning( ": verifyObject should not be called" );
+    if ( not VerifyCode ) {
+        spdlog::warn( ": verifyObject should not be called" );
+    }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyObject, obj );
     _masm->popad();
@@ -773,8 +785,9 @@ void CodeGenerator::callVerifyObject( Register obj ) {
 void CodeGenerator::callVerifyContext( Register context ) {
     // generates transparent check code which verifies that context is
     // a legal context and halts if not - for debugging purposes only
-    if ( not VerifyCode )
-        warning( ": verifyContext should not be called" );
+    if ( not VerifyCode ) {
+        spdlog::warn( ": verifyContext should not be called" );
+    }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyContext, context );
     _masm->popad();
@@ -784,8 +797,9 @@ void CodeGenerator::callVerifyContext( Register context ) {
 void CodeGenerator::callVerifyArguments( Register recv, std::int32_t nofArgs ) {
     // generates transparent check code which verifies that all arguments
     // are legal oops and halts if not - for debugging purposes only
-    if ( not VerifyCode and not TraceCalls and not TraceResults )
-        warning( ": performance bug: verifyArguments should not be called" );
+    if ( not VerifyCode and not TraceCalls and not TraceResults ) {
+        spdlog::warn( ": performance bug: verifyArguments should not be called" );
+    }
     st_assert( recv not_eq temp1, "use another temporary register" );
     _masm->pushad();
     _masm->movl( temp1, nofArgs );
@@ -797,8 +811,9 @@ void CodeGenerator::callVerifyArguments( Register recv, std::int32_t nofArgs ) {
 void CodeGenerator::callVerifyReturn() {
     // generates transparent check code which verifies that result contains
     // a legal Oop and halts if not - for debugging purposes only
-    if ( not VerifyCode and not TraceCalls and not TraceResults )
-        warning( ": verifyReturn should not be called" );
+    if ( not VerifyCode and not TraceCalls and not TraceResults ) {
+        spdlog::warn( ": verifyReturn should not be called" );
+    }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyReturn, result_reg );
     _masm->popad();
@@ -807,8 +822,9 @@ void CodeGenerator::callVerifyReturn() {
 
 void CodeGenerator::callVerifyNonLocalReturn() {
     // generates transparent check code which verifies NonLocalReturn check & continuation
-    if ( not VerifyCode and not TraceCalls and not TraceResults )
-        warning( ": verifyNonLocalReturn should not be called" );
+    if ( not VerifyCode and not TraceCalls and not TraceResults ) {
+        spdlog::warn( ": verifyNonLocalReturn should not be called" );
+    }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyNonLocalReturn, ebp, NonLocalReturn_home_reg, NonLocalReturn_homeId_reg, NonLocalReturn_result_reg );
     _masm->popad();
@@ -817,7 +833,7 @@ void CodeGenerator::callVerifyNonLocalReturn() {
 
 // Basic blocks
 
-static bool_t bb_needs_jump;
+static bool bb_needs_jump;
 // true if basic block needs a jump at the end to its successor, false otherwise
 // Note: most gen() nodes with more than one successor are implemented such that
 //       next() is the fall-through case. If that's not the case, an extra jump
@@ -831,8 +847,9 @@ static bool_t bb_needs_jump;
 
 
 void CodeGenerator::beginOfBasicBlock( Node *node ) {
-    if ( PrintCodeGeneration and WizardMode )
-        _console->print_cr( "--- begin of basic block (N%d) ---", node->id() );
+    if ( PrintCodeGeneration and WizardMode ) {
+        spdlog::info( "--- begin of basic block (N{}) ---", node->id() );
+    }
     bindLabel( node );
 }
 
@@ -842,7 +859,7 @@ void CodeGenerator::endOfBasicBlock( Node *node ) {
         Node *from = node;
         Node *to   = node->next();
         if ( PrintCodeGeneration ) {
-            _console->print_cr( "branch from N%d to N%d", from->id(), to->id() );
+            spdlog::info( "branch from N{} to N{}", from->id(), to->id() );
             if ( PrintPRegMapping )
                 _currentMapping->print();
         }
@@ -852,14 +869,15 @@ void CodeGenerator::endOfBasicBlock( Node *node ) {
             _masm->code()->decode();
     }
 
-    if ( PrintCodeGeneration and WizardMode )
-        _console->print_cr( "--- end of basic block (N%d) ---", node->id() );
+    if ( PrintCodeGeneration and WizardMode ) {
+        spdlog::info( "--- end of basic block (N{}) ---", node->id() );
+    }
 }
 
 
 void CodeGenerator::updateDebuggingInfo( Node *node ) {
-    ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    std::int32_t pc_offset = assembler()->offset();
+    ScopeDescriptorRecorder *rec      = theCompiler->scopeDescRecorder();
+    std::int32_t            pc_offset = assembler()->offset();
     rec->addProgramCounterDescriptor( pc_offset, node->scope()->getScopeInfo(), node->byteCodeIndex() );
     _debugInfoWriter->write_debug_info( _currentMapping, pc_offset );
 }
@@ -867,22 +885,28 @@ void CodeGenerator::updateDebuggingInfo( Node *node ) {
 
 // For all nodes
 void CodeGenerator::beginOfNode( Node *node ) {
+
     st_assert( _currentMapping not_eq nullptr, "must have a valid mapping" );
+
     // adjust mapping to liveness of PseudoRegisters
-    if ( _previousNode not_eq nullptr and isLiveRangeBoundary( _previousNode, node ) )
+    if ( _previousNode not_eq nullptr and isLiveRangeBoundary( _previousNode, node ) ) {
         _currentMapping->killDeadsAt( node );
+    }
     _currentMapping->cleanupContextReferences();
+
     // adjust debugging information if desired (e.g., when using disassembler with full symbolic support)
-    if ( GenerateFullDebugInfo )
+    if ( GenerateFullDebugInfo ) {
         updateDebuggingInfo( node );
+    }
+
     // debugging
     if ( PrintCodeGeneration ) {
-        _console->print_cr( "---" );
-        _console->print( "N%d: ", node->id() );
+        spdlog::info( "begin node [{}]", node->id() );
         node->print();
-        _console->print_cr( " (byteCodeIndex = %d)", node->byteCodeIndex() );
-        if ( PrintPRegMapping )
+        spdlog::info( "end node [{}], byteCodeIndex [{}]", node->id(), node->byteCodeIndex() );
+        if ( PrintPRegMapping ) {
             _currentMapping->print();
+        }
     }
     bb_needs_jump = true;
 }
@@ -909,8 +933,8 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     theCompiler->set_entry_point_offset( _masm->offset() );
 
     // verify receiver
-    InlinedScope   *scope = node->scope();
-    PseudoRegister *recv  = scope->self()->preg();
+    InlinedScope         *scope = node->scope();
+    PseudoRegister       *recv  = scope->self()->preg();
     PseudoRegisterLocker lock( recv );
     if ( scope->isMethodScope() ) {
         // check class
@@ -929,7 +953,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
         // If this is a block method and we expect a context then the incoming context chain must be checked.
         // The context chain may contain a deoptimized contextOop. (see StubRoutines::verify_context_chain for details)
         if ( scope->method()->block_info() == MethodOopDescriptor::expects_context ) {
-            const bool_t use_fast_check = false;
+            const bool use_fast_check = false;
             if ( use_fast_check ) {
                 // look in old backend for this code
                 Unimplemented();
@@ -949,8 +973,8 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
         Temporary t( _currentMapping );
         _masm->movl( t.reg(), Universe::nilObject() );
         _nilReg = t.reg();
-        const char *beg = _masm->pc();
-        std::int32_t i = 10;
+        const char   *beg = _masm->pc();
+        std::int32_t i    = 10;
         while ( i-- > 0 )
             _masm->nop();
         const char *end = _masm->pc();
@@ -1070,12 +1094,12 @@ void CodeGenerator::aStoreUplevelNode( StoreUplevelNode *node ) {
 }
 
 
-void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool_t &x_attr, bool_t &y_attr ) {
+void CodeGenerator::moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool &x_attr, bool &y_attr ) {
     if ( x->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         PseudoRegister *t1 = x;
         x = y;
         y = t1;
-        bool_t t2 = x_attr;
+        bool t2 = x_attr;
         x_attr = y_attr;
         y_attr = t2;
     }
@@ -1141,7 +1165,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
         case ArithOpCode::tAddArithOp: // fall through
         case ArithOpCode::AddArithOp:
             if ( y == 0 ) {
-                warning( "code generated to add 0 (no load required)" );
+                spdlog::warn( "code generated to add 0 (no load required)" );
             } else {
                 _masm->addl( x, y );
             }
@@ -1150,7 +1174,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
         case ArithOpCode::tSubArithOp: // fall through
         case ArithOpCode::SubArithOp:
             if ( y == 0 ) {
-                warning( "code generated to subtract 0 (no load required)" );
+                spdlog::warn( "code generated to subtract 0 (no load required)" );
             } else {
                 _masm->subl( x, y );
             }
@@ -1170,11 +1194,11 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
                     _masm->negl( x );
                     break;
                 case 0:
-                    warning( "code generated to multiply with 0 (no load required)" );
+                    spdlog::warn( "code generated to multiply with 0 (no load required)" );
                     _masm->xorl( x, x );
                     break;
                 case 1:
-                    warning( "code generated to multiply with 1 (no load required)" );
+                    spdlog::warn( "code generated to multiply with 1 (no load required)" );
                     // do nothing
                     break;
                 case 2:
@@ -1253,7 +1277,7 @@ void CodeGenerator::arithRXOp( ArithOpCode op, Register x, Oop y ) { // x := x o
 }
 
 
-bool_t CodeGenerator::producesResult( ArithOpCode op ) {
+bool CodeGenerator::producesResult( ArithOpCode op ) {
     return ( op not_eq ArithOpCode::TestArithOp ) and ( op not_eq ArithOpCode::CmpArithOp ) and ( op not_eq ArithOpCode::tCmpArithOp );
 }
 
@@ -1290,7 +1314,7 @@ void CodeGenerator::anArithRRNode( ArithRRNode *node ) {
     PseudoRegister *x        = node->src();
     PseudoRegister *y        = node->operand();
 
-    bool_t dummy;
+    bool dummy;
     moveConstant( op, x, y, dummy, dummy );
 
     PseudoRegisterLocker lock( z, x, y );
@@ -1305,10 +1329,10 @@ void CodeGenerator::anArithRRNode( ArithRRNode *node ) {
 
 
 void CodeGenerator::anArithRCNode( ArithRCNode *node ) {
-    ArithOpCode op = node->op();
-    PseudoRegister *z = node->dst();
-    PseudoRegister *x = node->src();
-    std::int32_t                  y   = node->operand();
+    ArithOpCode          op  = node->op();
+    PseudoRegister       *z  = node->dst();
+    PseudoRegister       *x  = node->src();
+    std::int32_t         y   = node->operand();
     PseudoRegisterLocker lock( z, x );
     Register             reg = targetRegister( op, z, x );
     arithRCOp( op, reg, y );
@@ -1316,12 +1340,12 @@ void CodeGenerator::anArithRCNode( ArithRCNode *node ) {
 
 
 void CodeGenerator::aTArithRRNode( TArithRRNode *node ) {
-    ArithOpCode op = node->op();
-    PseudoRegister *z = node->dst();
-    PseudoRegister *x = node->src();
-    PseudoRegister *y = node->operand();
-    bool_t x_is_int           = node->arg1IsInt();
-    bool_t y_is_int           = node->arg2IsInt();
+    ArithOpCode    op         = node->op();
+    PseudoRegister *z         = node->dst();
+    PseudoRegister *x         = node->src();
+    PseudoRegister *y         = node->operand();
+    bool           x_is_int   = node->arg1IsInt();
+    bool           y_is_int   = node->arg2IsInt();
     moveConstant( op, x, y, x_is_int, y_is_int );
     PseudoRegisterLocker lock( z, x, y );
     Register             tags = noreg;
@@ -1464,7 +1488,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode *node ) {
     // Urs 4/96
     //
 
-    BlockPseudoRegister *blk = node->block();
+    BlockPseudoRegister       *blk    = node->block();
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies not_eq nullptr ) {
         for ( std::int32_t i = copies->length(); i-- > 0; ) {
@@ -1493,7 +1517,7 @@ void CodeGenerator::materializeBlock( BlockCreateNode *node ) {
     // allocate closure
     _currentMapping->kill( node->dst() );    // kill it so that aPrimNode(node) can map the result to it
 
-    std::int32_t nofArgs                      = closure->nofArgs();
+    std::int32_t nofArgs             = closure->nofArgs();
 
     switch ( nofArgs ) {
         case 0 : // fall through for now - fix this
@@ -1526,7 +1550,7 @@ void CodeGenerator::aBlockCreateNode( BlockCreateNode *node ) {
     if ( node->block()->closure()->method()->is_clean_block() ) {
         // create the block now (doesn't need to be copied at run-time
         CompileTimeClosure *closure = node->block()->closure();
-        BlockClosureOop blk = BlockClosureOopDescriptor::create_clean_block( closure->nofArgs(), closure->jump_table_entry() );
+        BlockClosureOop    blk      = BlockClosureOopDescriptor::create_clean_block( closure->nofArgs(), closure->jump_table_entry() );
         _masm->movl( def( node->dst() ), blk );
     } else if ( node->block()->isMemoized() ) {
         // initialize block variable
@@ -1737,7 +1761,7 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
       } else if (t->klasses->length() == 2 and
 		 testForBoolKlasses(obj, t->klasses->at(0), t->klasses->at(1), klassReg, true,
 		 *ok, *ok, failure)) {
-	// ok, was a bool_t test
+	// ok, was a bool test
       } else {
 	const std::int32_t len = t->klasses->length();
 	GrowableArray<Label*> labels(len + 1);
@@ -1837,7 +1861,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
     // use the loop variable without an index range check, we need to check it here.
     PseudoRegister      *loopArray = node->upperLoad()->src();
     AbstractArrayAtNode *atNode;
-    std::int32_t i = node->arrayAccesses()->length();
+    std::int32_t        i          = node->arrayAccesses()->length();
     while ( i-- > 0 ) {
         atNode = node->arrayAccesses()->at( i );
         if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
@@ -1911,7 +1935,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
 void CodeGenerator::aLoopHeaderNode( LoopHeaderNode *node ) {
 
     if ( node->isActivated() ) {
-        warning( "loop header node not yet implemented" );
+        spdlog::warn( "loop header node not yet implemented" );
         return;
 
         // the loop header node performs all checks hoisted out of the loop:
@@ -2002,8 +2026,8 @@ void CodeGenerator::aNonLocalReturnSetupNode( NonLocalReturnSetupNode *node ) {
     //
     // QUESTION: Who is popping the arguments (for an ordinary return it happens automatically in the return).
     // Couldn't that be a problem in loops? How's this done in the old backend? In the interpreter?
-    Label     NonLocalReturn_error;                            // for NonLocalReturns to non-existing frames
-    Temporary home( _currentMapping, NonLocalReturn_home_reg );            // try to allocate temporary home into right register
+    Label        NonLocalReturn_error;                            // for NonLocalReturns to non-existing frames
+    Temporary    home( _currentMapping, NonLocalReturn_home_reg );            // try to allocate temporary home into right register
     uplevelBase( scope->context(), scope->homeContext() + 1, home.reg() );    // compute home
     _masm->testl( home.reg(), home.reg() );                    // check if zapped
     _masm->jcc( Assembler::Condition::zero, NonLocalReturn_error );                // zero -> home has been zapped
@@ -2106,7 +2130,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     //         However, for debugging purposes right now all cases are always explicitly checked.
     //
 
-    const std::int32_t len                           = node->classes()->length();
+    const std::int32_t len                  = node->classes()->length();
 
     if ( ReorderBBs ) {
         PseudoRegisterLocker lock( node->src() );
@@ -2157,7 +2181,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
             }
 
             if ( klass1 == bool1->klass() and klass2 == bool2->klass() ) {
-                const bool_t ignoreNoUnknownForNow = true;
+                const bool ignoreNoUnknownForNow = true;
 
                 // Note: Uncommon case: A TypeTestNode with no uncommon case has a successor
                 //       at next(0) anyhow (because there are no "holes" (= NULLs) in the
@@ -2191,11 +2215,11 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     // general case
     Label                unknownCase;
     Temporary            objKlass( _currentMapping );
-    bool_t               klassHasBeenLoaded = false;
-    bool_t               smiHasBeenChecked  = false;
+    bool                 klassHasBeenLoaded = false;
+    bool                 smiHasBeenChecked  = false;
     PseudoRegisterLocker lock( node->src() );
     Register             obj                = use( node->src() );
-    for ( std::int32_t            i                  = 0; i < len; i++ ) {
+    for ( std::int32_t   i                  = 0; i < len; i++ ) {
         KlassOop klass = node->classes()->at( i );
         if ( klass == trueObject->klass() ) {
             // only one instance: compare with trueObject
@@ -2264,7 +2288,7 @@ void CodeGenerator::aNonLocalReturnTestNode( NonLocalReturnTestNode *node ) {
     st_assert( _currentMapping->NonLocalReturninProgress(), "NonLocalReturn must be in progress" );
     InlinedScope *scope = node->scope();
     // check if arrived at the right frame
-    Label L;
+    Label        L;
     _masm->cmpl( NonLocalReturn_home_reg, frame_reg );
     _masm->jcc( Assembler::Condition::notEqual, L );
     // check if arrived at the right scope within the frame
@@ -2300,10 +2324,10 @@ void CodeGenerator::jcc_error( Assembler::Condition cc, AbstractBranchNode *node
 
 
 void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
-    PseudoRegister *array          = node->array();
-    PseudoRegister *index          = node->index();
-    PseudoRegister *result         = node->dst();
-    PseudoRegister *error          = node->error();
+    PseudoRegister       *array    = node->array();
+    PseudoRegister       *index    = node->index();
+    PseudoRegister       *result   = node->dst();
+    PseudoRegister       *error    = node->error();
     PseudoRegisterLocker lock( array, index );
     Register             array_reg = use( array );
     // use temporary register for index - will be modified
@@ -2428,7 +2452,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
     // store element
     st_assert( TAG_SIZE == 2, "check this code" );
     const std::int32_t data_offset = byteOffset( node->data_word_offset() );
-    Label     elementNotSmi, elementOutOfRange;
+    Label              elementNotSmi, elementOutOfRange;
     switch ( node->access_type() ) {
         case ArrayAtPutNode::byte_at_put: { // use temporary register for element - will be modified
             Temporary elt( _currentMapping, element );
@@ -2558,10 +2582,10 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
         };
             break;
         case InlinedPrimitiveNode::Operation::proxy_byte_at: {
-            PseudoRegister *proxy  = node->src();
-            PseudoRegister *index  = node->arg1();
-            PseudoRegister *result = node->dst();
-            PseudoRegister *error  = node->error();
+            PseudoRegister       *proxy  = node->src();
+            PseudoRegister       *index  = node->arg1();
+            PseudoRegister       *result = node->dst();
+            PseudoRegister       *error  = node->error();
             PseudoRegisterLocker lock( proxy, index );
             // use Temporary register for proxy & index - will be modified
             Temporary            base( _currentMapping, proxy );
@@ -2609,24 +2633,24 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             break;
 
         case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
-            bool_t const_val = node->arg2()->isConstPseudoRegister();
-            PseudoRegister *proxy = node->src();
-            PseudoRegister *index = node->arg1();
-            PseudoRegister *value = node->arg2();
-            PseudoRegister *error = node->error();
+            bool           const_val = node->arg2()->isConstPseudoRegister();
+            PseudoRegister *proxy    = node->src();
+            PseudoRegister *index    = node->arg1();
+            PseudoRegister *value    = node->arg2();
+            PseudoRegister *error    = node->error();
             // Locking turned off for now -> blocks too many registers for
             // this code (however may add unnecessary moves) -> find a better
             // solution for this
             //
             // PseudoRegisterLocker lock(proxy, index, value);
             // use Temporary register for proxy & index - will be modified
-            Temporary base( _currentMapping, proxy );
-            Temporary offset( _currentMapping, index );
+            Temporary      base( _currentMapping, proxy );
+            Temporary      offset( _currentMapping, index );
             // use temporary register for value - will be modified
             // (actually only needed if not const_val - however right now
             // we can only allocate temps via constructors (i.e., they have
             // to be allocated/deallocated in a nested manner)).
-            Temporary val( _currentMapping );
+            Temporary      val( _currentMapping );
             if ( const_val ) {
                 // value doesn't have to be loaded -> do nothing here
                 if ( not node->arg2_is_smi() ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );

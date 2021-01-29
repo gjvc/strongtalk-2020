@@ -14,7 +14,7 @@
 #include "vm/compiler/NodeFactory.hpp"
 
 
-bool_t InliningPolicy::shouldNotInline() const {
+bool InliningPolicy::shouldNotInline() const {
     if ( _methodOop->method_inlining_info() == MethodOopDescriptor::never_inline )
         return true;
     const SymbolOop sel = _methodOop->selector();
@@ -22,7 +22,7 @@ bool_t InliningPolicy::shouldNotInline() const {
 }
 
 
-bool_t InliningPolicy::isCriticalSmiSelector( const SymbolOop sel ) {
+bool InliningPolicy::isCriticalSmiSelector( const SymbolOop sel ) {
     // true if performance-critical smi_t method in standard library
     // could also handle these by putting a bit in the methodOops
     return sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() or sel == vmSymbols::mod() or sel == vmSymbols::equal() or sel == vmSymbols::not_equal() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than_or_equal() or sel == vmSymbols::greater_than() or sel == vmSymbols::greater_than_or_equal() or sel == vmSymbols::double_equal() or sel == vmSymbols::bitAnd_() or sel == vmSymbols::bitOr_() or sel == vmSymbols::bitXor_() or sel == vmSymbols::bitShift_() or sel == vmSymbols::bitInvert();
@@ -59,64 +59,64 @@ const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
 }
 
 
-bool_t InliningPolicy::isCriticalArraySelector( const SymbolOop sel ) {
+bool InliningPolicy::isCriticalArraySelector( const SymbolOop sel ) {
     return sel == vmSymbols::at() or sel == vmSymbols::at_put() or sel == vmSymbols::size();
 }
 
 
-bool_t InliningPolicy::isCriticalBoolSelector( const SymbolOop sel ) {
+bool InliningPolicy::isCriticalBoolSelector( const SymbolOop sel ) {
     return sel == vmSymbols::and_() or sel == vmSymbols::or_() or sel == vmSymbols::_and() or sel == vmSymbols::_or() or sel == vmSymbols::and1() or sel == vmSymbols::or1() or sel == vmSymbols::_and() or sel == vmSymbols::_not() or sel == vmSymbols::xor_() or sel == vmSymbols::eqv_();
 }
 
 
-bool_t InliningPolicy::isPredictedSmiSelector( const SymbolOop sel ) {
+bool InliningPolicy::isPredictedSmiSelector( const SymbolOop sel ) {
     return sel not_eq vmSymbols::equal() and sel not_eq vmSymbols::not_equal() and isCriticalSmiSelector( sel );
 }
 
 
-bool_t InliningPolicy::isPredictedArraySelector( const SymbolOop sel ) {
+bool InliningPolicy::isPredictedArraySelector( const SymbolOop sel ) {
     return isCriticalArraySelector( sel );
 }
 
 
-bool_t InliningPolicy::isPredictedBoolSelector( const SymbolOop sel ) {
+bool InliningPolicy::isPredictedBoolSelector( const SymbolOop sel ) {
     return isCriticalBoolSelector( sel );
 }
 
 
-bool_t InliningPolicy::isInterpreterPredictedSmiSelector( const SymbolOop sel ) {
+bool InliningPolicy::isInterpreterPredictedSmiSelector( const SymbolOop sel ) {
     // true if performance-critical smi_t method in standard library
     // could also handle these by putting a bit in the methodOops
     return sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() or sel == vmSymbols::mod() or sel == vmSymbols::equal() or sel == vmSymbols::not_equal() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than_or_equal() or sel == vmSymbols::greater_than() or sel == vmSymbols::greater_than_or_equal();
 }
 
 
-bool_t InliningPolicy::isInterpreterPredictedArraySelector( const SymbolOop sel ) {
+bool InliningPolicy::isInterpreterPredictedArraySelector( const SymbolOop sel ) {
     return false;
 }
 
 
-bool_t InliningPolicy::isInterpreterPredictedBoolSelector( const SymbolOop sel ) {
+bool InliningPolicy::isInterpreterPredictedBoolSelector( const SymbolOop sel ) {
     return false;
 }
 
 
-bool_t InliningPolicy::isBuiltinMethod() const {
+bool InliningPolicy::isBuiltinMethod() const {
     // true if performance-critical method in standard library
     // could also handle these by putting a bit in the methodOops
     if ( _methodOop->method_inlining_info() == MethodOopDescriptor::always_inline )
         return true;
     const SymbolOop sel   = _methodOop->selector();
     const KlassOop  klass = receiverKlass();
-    const bool_t    isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
+    const bool    isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
     if ( isNum and isCriticalSmiSelector( sel ) )
         return true;
 
-    const bool_t isArr = klass == Universe::objArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
+    const bool isArr = klass == Universe::objArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
     if ( isArr and isCriticalArraySelector( sel ) )
         return true;
 
-    const bool_t isBool = klass == Universe::trueObject()->klass() or klass == Universe::falseObject()->klass();
+    const bool isBool = klass == Universe::trueObject()->klass() or klass == Universe::falseObject()->klass();
     if ( isBool and isCriticalBoolSelector( sel ) )
         return true;
     return false;
@@ -188,7 +188,7 @@ const char *RecompilerInliningPolicy::shouldInline( RecompilerFrame *recompilerF
     // return nullptr if ok, reason for not inlining otherwise (for performance debugging)
 
     // for now, always inline super rfrfsends
-    extern bool_t SuperSendsAreAlwaysInlined;
+    extern bool SuperSendsAreAlwaysInlined;
     st_assert( SuperSendsAreAlwaysInlined, "SuperSendsAreAlwaysInlined is set to true; fix this" );
     if ( recompilerFrame->is_super() )
         return nullptr;

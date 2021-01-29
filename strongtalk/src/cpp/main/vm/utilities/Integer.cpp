@@ -28,7 +28,7 @@ std::int32_t Integer::length_in_bits() const {
 }
 
 
-std::int32_t Integer::as_int( bool_t &ok ) const {
+std::int32_t Integer::as_int( bool &ok ) const {
 
     ok = true;
     switch ( _signed_length ) {
@@ -48,7 +48,7 @@ std::int32_t Integer::as_int( bool_t &ok ) const {
 }
 
 
-std::uint32_t Integer::as_unsigned_int( bool_t &ok ) const {
+std::uint32_t Integer::as_unsigned_int( bool &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case 0:
@@ -62,7 +62,7 @@ std::uint32_t Integer::as_unsigned_int( bool_t &ok ) const {
 }
 
 
-double Integer::as_double( bool_t &ok ) const {
+double Integer::as_double( bool &ok ) const {
 
     // filter out trivial result 0.0
     ok = true;
@@ -107,7 +107,7 @@ double Integer::as_double( bool_t &ok ) const {
 }
 
 
-SMIOop Integer::as_smi( bool_t &ok ) const {
+SMIOop Integer::as_smi( bool &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case -1:
@@ -162,37 +162,37 @@ std::int32_t Integer::signum() const {
 }
 
 
-bool_t Integer::is_zero() const {
+bool Integer::is_zero() const {
     return signum() == 0;
 }
 
 
-bool_t Integer::is_not_zero() const {
+bool Integer::is_not_zero() const {
     return signum() not_eq 0;
 }
 
 
-bool_t Integer::is_positive() const {
+bool Integer::is_positive() const {
     return signum() > 0;
 }
 
 
-bool_t Integer::is_negative() const {
+bool Integer::is_negative() const {
     return signum() < 0;
 }
 
 
-bool_t Integer::is_odd() const {
+bool Integer::is_odd() const {
     return is_not_zero() and ( _first_digit & 1 ) == 1;
 }
 
 
-bool_t Integer::is_even() const {
+bool Integer::is_even() const {
     return not is_odd();
 }
 
 
-bool_t Integer::is_valid() const {
+bool Integer::is_valid() const {
     return is_zero() or operator[]( length() - 1 ) not_eq 0;
 }
 

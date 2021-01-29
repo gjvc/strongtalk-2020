@@ -15,7 +15,7 @@
 class Interpreter : AllStatic {
 
 public:
-    static bool_t _is_initialized;              // true if Interpreter has been initialized
+    static bool _is_initialized;              // true if Interpreter has been initialized
     static const char *_code_begin_addr;            // the first byte of the interpreter's code
     static const char *_code_end_addr;              // the first byte after the interpreter's code
     static std::int32_t        *_invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
@@ -69,20 +69,20 @@ public:
     //       called entry point is stored. Remove this variable if the bug has been found! (gri 7-24-96)
     static char *_last_native_called;    // last NativeMethod entry point called by the interpreter
 
-    static bool_t contains( const char *pc );    // true if pc is within interpreter code; false otherwise
+    static bool contains( const char *pc );    // true if pc is within interpreter code; false otherwise
 
     // Properties of the interpreter code (depends on defines in the assembler code)
-    static bool_t is_optimized();
+    static bool is_optimized();
 
-    static bool_t can_trace_bytecodes();
+    static bool can_trace_bytecodes();
 
-    static bool_t can_trace_sends();
+    static bool can_trace_sends();
 
-    static bool_t has_assertions();
+    static bool has_assertions();
 
-    static bool_t has_stack_checks();
+    static bool has_stack_checks();
 
-    static bool_t has_timers();
+    static bool has_timers();
 
     static void print_code_status();
 
@@ -150,7 +150,7 @@ public:
 
 
     // Initialization
-    static bool_t is_initialized() {
+    static bool is_initialized() {
         return _is_initialized;
     }
 

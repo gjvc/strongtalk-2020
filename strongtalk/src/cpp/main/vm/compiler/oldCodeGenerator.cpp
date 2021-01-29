@@ -34,7 +34,7 @@ inline std::int32_t byteOffset( std::int32_t offset ) {
 }
 
 
-static bool_t bb_needs_jump;
+static bool bb_needs_jump;
 // true if basic block needs a jump at the end to its successor, false otherwise
 // Note: most gen() nodes with more than one successor are implemented such that
 //       next() is the fall-through case. If that's not the case, an extra jump
@@ -263,7 +263,7 @@ void OldCodeGenerator::aCommentNode( CommentNode *node ) {
 // does not modify the CPU state except the flags which are in
 // an undefined state after a call, anyway.
 
-static void inlineCache( Label &nlrTestPoint, SendInfo *info, bool_t super ) {
+static void inlineCache( Label &nlrTestPoint, SendInfo *info, bool super ) {
     // generates the inline cache information (must follow a call instruction immediately)
     char flags = 0;
     if ( super )
@@ -282,7 +282,7 @@ static void inlineCache( Label &nlrTestPoint, SendInfo *info, bool_t super ) {
 // When leaving C land, last_Delta_fp has to be reset to 0. This is required to
 // allow proper stack traversal.
 
-static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool_t needsDeltaFPCode ) {
+static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool needsDeltaFPCode ) {
     if ( needsDeltaFPCode )
         theMacroAssembler->set_last_Delta_frame_before_call();
     theMacroAssembler->call( dest, relocType );
@@ -291,7 +291,7 @@ static void call_C( const char *dest, RelocationInformation::RelocationType relo
 }
 
 
-static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool_t needsDeltaFPCode, Label &nlrTestPoint ) {
+static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool needsDeltaFPCode, Label &nlrTestPoint ) {
     if ( needsDeltaFPCode )
         theMacroAssembler->set_last_Delta_frame_before_call();
     theMacroAssembler->call( dest, relocType );
@@ -314,9 +314,9 @@ static std::int32_t numberOfCalls = 0;    // # of traced calls since start
 static void indent() {
     const std::int32_t maxIndent = 30;
     if ( callDepth < maxIndent ) {
-        lprintf( "%*s", callDepth, " " );
+        spdlog::info( "%*s", callDepth, " " );
     } else {
-        lprintf( "%*s <%5d>", maxIndent - 9, " ", callDepth );
+        spdlog::info( "%*s <%5d>", maxIndent - 9, " ", callDepth );
     }
 }
 
@@ -331,7 +331,7 @@ static void breakpointCode() {
     // generates a transparent call to a breakpoint routine where
     // a breakpoint can be set - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": breakpoint should not be called" );
+        spdlog::warn( ": breakpoint should not be called" );
     theMacroAssembler->pushad();
     call_C( (const char *) breakpoint, RelocationInformation::RelocationType::runtime_call_type, true );
     theMacroAssembler->popad();
@@ -342,7 +342,7 @@ static void verifyOopCode( Register reg ) {
     // generates transparent check code which test the contents of
     // reg for the mark bit and halts if set - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyOop should not be called" );
+        spdlog::warn( ": verifyOop should not be called" );
     Label L;
     theMacroAssembler->test( reg, MARK_TAG_BIT );
     theMacroAssembler->jcc( Assembler::Condition::zero, L );
@@ -375,7 +375,7 @@ static void verifyContextCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyContext should not be called" );
+        spdlog::warn( ": verifyContext should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyContext, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -394,7 +394,7 @@ static void verifyNilOrContextCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyNilOrContext should not be called" );
+        spdlog::warn( ": verifyNilOrContext should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyNilOrContext, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -412,7 +412,7 @@ static void verifyBlockCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyBlockCode should not be called" );
+        spdlog::warn( ": verifyBlockCode should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyBlock, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -430,7 +430,7 @@ extern "C" void verifyReturn( Oop obj ) {
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        lprintf( "return %s from %s\n", obj->print_value_string(), nativeMethodName() );
+        spdlog::info( "return %s from %s", obj->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -439,7 +439,7 @@ static void verifyReturnCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode and not GenTraceCalls )
-        warning( ": verifyReturn should not be called" );
+        spdlog::warn( ": verifyReturn should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyReturn, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -449,18 +449,18 @@ static void verifyReturnCode( Register reg ) {
 
 
 extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
-    LOG_EVENT3( "verifyNonLocalReturn(%#x, %#x, %d, %#x)", fp, nlrFrame, nlrResult );
+    LOG_EVENT3( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", fp, nlrFrame, nlrResult );
     if ( nlrFrame <= fp )
-        error( "NonLocalReturn went too far: %#x <= %#x", nlrFrame, fp );
+        error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
     // treat >99 scopes as likely error -- might actually be ok
-//  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID %#x", nlrScopeID);
+//  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
     if ( nlrResult->is_mark() )
         error( "NonLocalReturn result is a markOop" );
     if ( TraceCalls ) {
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        lprintf( "NonLocalReturn %s from/thru %s\n", nlrResult->print_value_string(), nativeMethodName() );
+        spdlog::info( "NonLocalReturn %s from/thru %s", nlrResult->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -468,7 +468,7 @@ extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32
 static void verifyNonLocalReturnCode() {
     // generates transparent check code which verifies NonLocalReturn check & continuation
     if ( not VerifyCode )
-        warning( ": verifyNonLocalReturnCode should not be called" );
+        spdlog::warn( ": verifyNonLocalReturnCode should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( Mapping::asRegister( NonLocalReturnResultLoc ) );    // pass argument (C calling convention)
     theMacroAssembler->pushl( Mapping::asRegister( NonLocalReturnHomeIdLoc ) );
@@ -489,7 +489,7 @@ static void verifySmiCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal smi_t and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifySmi should not be called" );
+        spdlog::warn( ": verifySmi should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifySmi, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -511,7 +511,7 @@ static void verifyObjCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        warning( ": verifyObject should not be called" );
+        spdlog::warn( ": verifyObject should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyObject, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -526,7 +526,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
     if ( TraceCalls ) {
         callDepth++;
         indent();
-        lprintf( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
+        spdlog::info( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObject( recv );
     std::int32_t i = nofArgs;
@@ -536,7 +536,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
         verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
-            lprintf( "%s, ", ( *arg )->print_value_string() );
+            spdlog::info( "%s, ", ( *arg )->print_value_string() );
         }
     }
     if ( VerifyDebugInfo ) {
@@ -570,7 +570,7 @@ static void trace_result( std::int32_t compilation, MethodOop method, Oop result
     ResourceMark resourceMark;
     _console->print( "%6d: 0x%08x (compilation %4d, ", result_counter++, std::int32_t( result ), compilation );
     method->selector()->print_value();
-    _console->print_cr( ")", compilation );
+    spdlog::info( ")", compilation );
 }
 
 
@@ -647,7 +647,7 @@ static void fload( PseudoRegister *src, Register base, Register temp ) {
 }
 
 
-static void store( Register src, PseudoRegister *dst, Register temp1, Register temp2, bool_t needsStoreCheck = true ) {
+static void store( Register src, PseudoRegister *dst, Register temp1, Register temp2, bool needsStoreCheck = true ) {
     // Stores register src to dst.
     st_assert( not dst->isConstPseudoRegister(), "destination cannot be a constant" );
     Mapping::store( src, dst->_location, temp1, temp2, needsStoreCheck );
@@ -661,7 +661,7 @@ static void fstore( PseudoRegister *dst, Register base ) {
 }
 
 
-static void storeO( ConstPseudoRegister *src, PseudoRegister *dst, Register temp1, Register temp2, bool_t needsStoreCheck = true ) {
+static void storeO( ConstPseudoRegister *src, PseudoRegister *dst, Register temp1, Register temp2, bool needsStoreCheck = true ) {
     // Stores constant src to dst.
     st_assert( not dst->isConstPseudoRegister(), "destination cannot be a constant" );
     Mapping::storeO( src->constant, dst->_location, temp1, temp2, needsStoreCheck );
@@ -673,7 +673,7 @@ static void storeO( ConstPseudoRegister *src, PseudoRegister *dst, Register temp
 // all node accessing floats are using the same base register (temp3); this allows us to
 // get rid of unneccessary base register setup code if the previous node set it up already.
 
-static void set_floats_base( Node *node, Register base, bool_t enforce = false ) {
+static void set_floats_base( Node *node, Register base, bool enforce = false ) {
     // Stores aligned ebp value into base
     st_assert( SIZEOF_FLOAT == 8, "check this code" );
     st_assert( node->isAccessingFloats(), "must be a node accessing floats" );
@@ -688,7 +688,7 @@ static void set_floats_base( Node *node, Register base, bool_t enforce = false )
 }
 
 
-static void assign( Node *node, PseudoRegister *src, PseudoRegister *dst, Register temp1, Register temp2, Register temp3, bool_t needsStoreCheck = true ) {
+static void assign( Node *node, PseudoRegister *src, PseudoRegister *dst, Register temp1, Register temp2, Register temp3, bool needsStoreCheck = true ) {
     // General assignment
     st_assert( temp1 not_eq temp2 and temp1 not_eq temp3 and temp2 not_eq temp3, "registers must be different" );
     if ( src->_location not_eq dst->_location ) {
@@ -883,7 +883,7 @@ void PrologueNode::gen() {
         // If this is a block method and we expect a context then the incoming context chain must be checked.
         // The context chain may contain a deoptimized contextOop. (see StubRoutines::verify_context_chain for details)
         if ( scope()->method()->block_info() == MethodOopDescriptor::expects_context ) {
-            const bool_t use_fast_check = false;            // turn this off if it doesn't work
+            const bool use_fast_check = false;            // turn this off if it doesn't work
             if ( use_fast_check ) {
                 // What happens if the context chain is not anchored in a method?
                 // Probably doesn't work correctly - think about this - gri 6/26/96
@@ -1086,16 +1086,16 @@ void DLLNode::gen() {
 }
 
 
-static bool_t producesResult( ArithOpCode op ) {
+static bool producesResult( ArithOpCode op ) {
     return ( op not_eq ArithOpCode::TestArithOp ) and ( op not_eq ArithOpCode::CmpArithOp ) and ( op not_eq ArithOpCode::tCmpArithOp );
 }
 
 
-static bool_t setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode op, Register &x, Register t ) {
+static bool setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode op, Register &x, Register t ) {
     // Sets up register x such that x := x op <some constant> corresponds to dst := arg op <some constant>.
     // If the temporary register t is used at all, x will be in t.
     // Returns true if op generated a result in x; returns false otherwise.
-    bool_t result = producesResult( op );
+    bool result = producesResult( op );
     if ( result ) {
         // operation generates result, try to use as few registers as possible
         if ( ( dst->_location == arg->_location ) /* or lastUsageOf(arg) */) {
@@ -1115,12 +1115,12 @@ static bool_t setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCo
 }
 
 
-static bool_t setupRegisters( PseudoRegister *dst, PseudoRegister *arg1, ArithOpCode op, PseudoRegister *arg2, Register &x, Register &y, Register t1, Register t2 ) {
+static bool setupRegisters( PseudoRegister *dst, PseudoRegister *arg1, ArithOpCode op, PseudoRegister *arg2, Register &x, Register &y, Register t1, Register t2 ) {
     // Sets up registers x & y such that x := x op y corresponds to dst := arg1 op arg2.
     // If the temporary registers t1 & t2 are used at all, x will be in t1 and y in t2.
     // Returns true if op generated a result in x; returns false otherwise.
     st_assert( t1 not_eq t2, "registers should be different" );
-    bool_t result = producesResult( op );
+    bool result = producesResult( op );
     if ( result ) {
         // operation generates result, try to use as few registers as possible
         if ( ( dst->_location == arg1->_location ) /* or lastUsageOf(arg1) */) {
@@ -1271,7 +1271,7 @@ void TArithRRNode::gen() {
         if ( _arg2IsInt ) {
             // perform operation
             Register x;
-            bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
+            bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
             if ( not _arg1IsInt ) {
                 // tag check necessary for arg1
                 theMacroAssembler->test( x, MEMOOP_TAG );
@@ -1286,7 +1286,7 @@ void TArithRRNode::gen() {
         }
     } else {
         Register x, y;
-        bool_t   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         // check argument tags
         Register tags   = noreg;
         if ( _arg1IsInt ) {
@@ -1329,7 +1329,7 @@ void ArithRRNode::gen() {
     if ( arg2->isConstPseudoRegister() ) {
         Oop      y      = ( (ConstPseudoRegister *) arg2 )->constant;
         Register x;
-        bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
+        bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
         if ( y->is_smi() ) {
             arithRCOp( _op, x, std::int32_t( y ) );        // y is SMIOop -> needs no relocation info
         } else {
@@ -1339,7 +1339,7 @@ void ArithRRNode::gen() {
             store( x, _dest, temp2, temp3 );
     } else {
         Register x, y;
-        bool_t   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         arithRROp( _op, x, y );
         if ( result ) {
             Register t = ( x == temp1 ) ? temp2 : temp1;
@@ -1354,7 +1354,7 @@ void ArithRCNode::gen() {
     PseudoRegister *arg1 = _src;
     std::int32_t      y      = _oper;
     Register x;
-    bool_t   result = setupRegister( _dest, arg1, _op, x, temp1 );
+    bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );
     if ( result )
         store( x, _dest, temp2, temp3 );
@@ -1388,8 +1388,8 @@ static void floatArithRROp( ArithOpCode op ) {
 
 void FloatArithRRNode::gen() {
     BasicNode::gen();
-    bool_t   noResult = ( _op == ArithOpCode::fCmpArithOp );
-    bool_t   exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
+    bool   noResult = ( _op == ArithOpCode::fCmpArithOp );
+    bool   exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
     Register base     = temp3;
     set_floats_base( this, base );
     fload( _src, base, temp1 );
@@ -1717,7 +1717,7 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
 }
 
 
-static bool_t testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, Register klassReg, bool_t hasUnknown, Label &success1, Label &success2, Label &failure ) {
+static bool testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, Register klassReg, bool hasUnknown, Label &success1, Label &success2, Label &failure ) {
     Oop bool1 = Universe::trueObject();
     Oop bool2 = Universe::falseObject();
     if ( klass1 == bool2->klass() and klass2 == bool1->klass() ) {
@@ -1743,7 +1743,7 @@ static bool_t testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2
 }
 
 
-static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown, GrowableArray<KlassOop> *classes, GrowableArray<Label *> *next ) {
+static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, GrowableArray<KlassOop> *classes, GrowableArray<Label *> *next ) {
     // handle general case: N klasses, N+1 labels (first label = unknown case)
     std::int32_t                     smi_case = -1;            // index of smi_t case in next array (if there)
     const std::int32_t               len      = classes->length();
@@ -1773,7 +1773,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool_t hasUnknown,
         theMacroAssembler->jcc( Assembler::Condition::zero, *next->at( smi_case ) );
     }
 
-    bool_t    klassHasBeenLoaded = false;
+    bool    klassHasBeenLoaded = false;
     const std::int32_t nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
     for ( std::int32_t i                  = 0; i < nof_cmps; i++ ) {
         const KlassOop klass = klasses.at( i );
@@ -1938,7 +1938,7 @@ void TypeTestNode::gen() {
     theMacroAssm->jcc(Assembler::Condition::zero, smi_case->label);
   }
 
-  bool_t klassHasBeenLoaded = false;
+  bool klassHasBeenLoaded = false;
   const std::int32_t nof_cmps = hasUnknown() ? klasses.length() : klasses.length() - 1;
   for (std::int32_t i = 0; i < nof_cmps; i++) {
     const klassOop klass = klasses.at(i);
@@ -2163,7 +2163,7 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
             if ( t->_klasses->length() == 1 ) {
                 testForSingleKlass( obj, t->_klasses->at( 0 ), klassReg, *ok, failure );
             } else if ( t->_klasses->length() == 2 and testForBoolKlasses( obj, t->_klasses->at( 0 ), t->_klasses->at( 1 ), klassReg, true, *ok, *ok, failure ) ) {
-                // ok, was a bool_t test
+                // ok, was a bool test
             } else {
                 const std::int32_t              len = t->_klasses->length();
                 GrowableArray<Label *> labels( len + 1 );
@@ -2541,7 +2541,7 @@ void InlinedPrimitiveNode::gen() {
         }
             break;
         case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
-            bool_t   const_val = _arg2->isConstPseudoRegister();
+            bool   const_val = _arg2->isConstPseudoRegister();
             Register proxy     = temp1;
             load( _src, proxy );            // proxy is modified
             Register index = temp2;

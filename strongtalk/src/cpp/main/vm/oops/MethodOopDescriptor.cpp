@@ -109,7 +109,7 @@ std::int32_t MethodOopDescriptor::number_of_arguments() const {
 
 
 std::int32_t MethodOopDescriptor::number_of_stack_temporaries() const {
-    std::int32_t          n  = 1;        // temporary 0 is always there
+    std::int32_t n  = 1;        // temporary 0 is always there
     std::uint8_t b0 = *codes( 1 );// if there's more than one temporary there's an allocate temp or allocate float at the beginning
     switch ( b0 ) {
         case static_cast<std::int32_t>(ByteCodes::Code::allocate_temp_1):
@@ -360,7 +360,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                     break;
                 }
                 default:
-                    _console->print_cr( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
+                    spdlog::info( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
                     st_fatal( "aborting" );
             }
         }
@@ -390,7 +390,7 @@ MethodOopDescriptor::Block_Info MethodOopDescriptor::block_info() const {
 }
 
 
-bool_t MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) const {
+bool MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) const {
     CodeIterator c( MethodOop( this ), byteCodeIndex );
     return c.code_type() == ByteCodes::CodeType::new_context;
 }
@@ -398,7 +398,7 @@ bool_t MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) 
 
 class BlockFinderClosure : public SpecializedMethodClosure {
 public:
-    bool_t hasBlock;
+    bool hasBlock;
 
 
     BlockFinderClosure() {
@@ -412,7 +412,7 @@ public:
 };
 
 
-bool_t MethodOopDescriptor::hasNestedBlocks() const {
+bool MethodOopDescriptor::hasNestedBlocks() const {
     // should be a bit in the methodOop -- fix this, Robert (delete class above)
     BlockFinderClosure cl;
     MethodIterator     it( MethodOop( this ), &cl );
@@ -430,9 +430,9 @@ bool_t MethodOopDescriptor::hasNestedBlocks() const {
 //			     enclosing scope is 1
 
 std::int32_t MethodOopDescriptor::lexicalDistance( std::int32_t contextNo ) {
-    MethodOop m = this;
-    std::int32_t       c = -1;
-    std::int32_t       d = -1;
+    MethodOop    m = this;
+    std::int32_t c = -1;
+    std::int32_t d = -1;
     while ( c < contextNo ) {
         if ( m->allocatesInterpretedContext() )
             c++;
@@ -444,9 +444,9 @@ std::int32_t MethodOopDescriptor::lexicalDistance( std::int32_t contextNo ) {
 
 
 std::int32_t MethodOopDescriptor::contextNo( std::int32_t lexicalDistance ) {
-    MethodOop m = this;
-    std::int32_t       c = -1;
-    std::int32_t       d = -1;
+    MethodOop    m = this;
+    std::int32_t c = -1;
+    std::int32_t d = -1;
     while ( d < lexicalDistance ) {
         if ( m->allocatesInterpretedContext() )
             c++;
@@ -458,7 +458,7 @@ std::int32_t MethodOopDescriptor::contextNo( std::int32_t lexicalDistance ) {
 
 
 std::int32_t MethodOopDescriptor::context_chain_length() const {
-    std::int32_t             length = 0;
+    std::int32_t    length = 0;
     for ( MethodOop method = MethodOop( this ); method; method = method->parent() ) {
         if ( method->allocatesInterpretedContext() )
             length++;
@@ -524,7 +524,7 @@ void MethodOopDescriptor::cleanup_inline_caches() {
 }
 
 
-bool_t MethodOopDescriptor::was_never_executed() {
+bool MethodOopDescriptor::was_never_executed() {
     // if the method is not customized it has never been executed.
     if ( not is_customized() )
         return true;
@@ -545,7 +545,7 @@ bool_t MethodOopDescriptor::was_never_executed() {
 std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass ) {
     // the result of this calculation should be cached in the method; 8 bits are enough
     CodeIterator c( this );
-    std::int32_t          cost = 0;
+    std::int32_t cost = 0;
     do {
         cost += CostModel::cost_for( c.code() );
         switch ( c.code() ) {
@@ -568,7 +568,7 @@ std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass 
                 break;
             }
         }
-        extern bool_t SuperSendsAreAlwaysInlined;
+        extern bool SuperSendsAreAlwaysInlined;
         if ( ByteCodes::is_super_send( c.code() ) and SuperSendsAreAlwaysInlined and receiverKlass ) {
             KlassOop  mh          = receiverKlass->klass_part()->lookup_method_holder_for( this );
             // TODO: the following is wrong. A super send may use a different selector than
@@ -585,7 +585,7 @@ std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass 
 
 std::int32_t MethodOopDescriptor::find_byteCodeIndex_from( std::int32_t nbyteCodeIndex ) const {
     CodeIterator c( MethodOop( this ) );
-    std::int32_t          prev_byteCodeIndex = 1;
+    std::int32_t prev_byteCodeIndex = 1;
     do {
         if ( c.byteCodeIndex() == nbyteCodeIndex )
             return prev_byteCodeIndex;
@@ -605,8 +605,8 @@ std::int32_t MethodOopDescriptor::next_byteCodeIndex( std::int32_t byteCodeIndex
 GrowableArray<std::int32_t> *MethodOopDescriptor::expression_stack_mapping( std::int32_t byteCodeIndex ) {
 
     GrowableArray<std::int32_t> *mapping = new GrowableArray<std::int32_t>( 10 );
-    ExpressionStackMapper      blk( mapping, byteCodeIndex );
-    MethodIterator             i( this, &blk );
+    ExpressionStackMapper       blk( mapping, byteCodeIndex );
+    MethodIterator              i( this, &blk );
 
     // reverse the mapping so the top of the expression stack is first
     // %todo:
@@ -631,7 +631,7 @@ static void lookup_primitive_and_patch( std::uint8_t *p, std::uint8_t byte ) {
 }
 
 
-bool_t MethodOopDescriptor::is_primitiveMethod() const {
+bool MethodOopDescriptor::is_primitiveMethod() const {
     char b = *codes();
     switch ( static_cast<ByteCodes::Code>(*codes()) ) {
         case ByteCodes::Code::predict_primitive_call:
@@ -747,8 +747,8 @@ private:
         sentinel = -1 //
     };
 
-    std::int32_t    count;
-    bool_t _self_in_context;
+    std::int32_t count;
+    bool         _self_in_context;
 
 public:
     ContextMethodIterator() {
@@ -757,7 +757,7 @@ public:
     }
 
 
-    bool_t self_in_context() {
+    bool self_in_context() {
         return _self_in_context;
     }
 
@@ -768,7 +768,7 @@ public:
     }
 
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool forMethod ) {
         st_assert( count == sentinel, "make sure it is not called more than one" );
         count = nofTemps;
     }
@@ -780,7 +780,7 @@ public:
 };
 
 
-std::int32_t MethodOopDescriptor::number_of_context_temporaries( bool_t *self_in_context ) {
+std::int32_t MethodOopDescriptor::number_of_context_temporaries( bool *self_in_context ) {
     // Use this for debugging only
     st_assert( allocatesInterpretedContext(), "can only be called if method allocates context" );
     ContextMethodIterator blk;
@@ -911,10 +911,10 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
 MethodOop MethodOopDescriptor::copy_for_customization() const {
     // Copy this method
     std::int32_t len    = size();
-    Oop *clone = Universe::allocate_tenured( len );
-    Oop *to    = clone;
-    Oop *from  = (Oop *) addr();
-    Oop *end   = to + len;
+    Oop          *clone = Universe::allocate_tenured( len );
+    Oop          *to    = clone;
+    Oop          *from  = (Oop *) addr();
+    Oop          *end   = to + len;
     while ( to < end )
         *to++ = *from++;
 
@@ -952,17 +952,20 @@ MethodOop MethodOopDescriptor::copy_for_customization() const {
 
 
 void MethodOopDescriptor::verify_context( ContextOop con ) {
+
     // Check if we should expect a context
     if ( not activation_has_context() ) {
-        warning( "Activation has no context (0x%lx).", con );
+        spdlog::warn( "Activation has no context (0x{0:x})", static_cast<const void *>(con) );
     }
+
     // Check the static vs. dynamic chain length
     if ( context_chain_length() not_eq con->chain_length() ) {
-        warning( "Wrong context chain length (got %d expected %d)", con->chain_length(), context_chain_length() );
+        spdlog::warn( "Wrong context chain length (got %d expected %d)", con->chain_length(), context_chain_length() );
     }
+
     // Check the context has no forward reference
     if ( con->unoptimized_context() not_eq nullptr ) {
-        warning( "Context is optimized (0x%lx).", con );
+        spdlog::warn( "Context is optimized (0x{0:x})", static_cast<const void *>(con) );
     }
 }
 
@@ -1097,7 +1100,7 @@ public:
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth );
 
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+    void allocate_context( std::int32_t nofTemps, bool forMethod ) {
     }
 
 
@@ -1457,10 +1460,10 @@ SymbolOop selectorFrom( Oop method_or_selector ) {
 
 
 void stopInSelector( const char *name, MethodOop method ) {
-    std::int32_t       len      = strlen( name );
-    SymbolOop selector = selectorFrom( method );
+    std::int32_t len      = strlen( name );
+    SymbolOop    selector = selectorFrom( method );
     if ( selector == nullptr )
-        warning( "Selector was nullptr!" );
+        spdlog::warn( "Selector was nullptr!" );
     else if ( selector->length() == len and strncmp( name, selector->chars(), len ) == 0 ) {
         TraceCanonicalContext = true;
         //method->pretty_print();
@@ -1470,7 +1473,7 @@ void stopInSelector( const char *name, MethodOop method ) {
 }
 
 
-bool_t StopInSelector::ignored = false;
+bool StopInSelector::ignored = false;
 
 
 SymbolOop className( KlassOop klass ) {
@@ -1487,7 +1490,7 @@ SymbolOop className( KlassOop klass ) {
 }
 
 
-bool_t selcmp( const char *name, SymbolOop selector ) {
+bool selcmp( const char *name, SymbolOop selector ) {
     std::int32_t len = strlen( name );
     if ( selector == nullptr and name == nullptr )
         return true;
@@ -1498,12 +1501,12 @@ bool_t selcmp( const char *name, SymbolOop selector ) {
 }
 
 
-bool_t shouldStop( const char *name, Oop method_or_selector, const char *class_name, KlassOop klass ) {
+bool shouldStop( const char *name, Oop method_or_selector, const char *class_name, KlassOop klass ) {
     return selcmp( name, selectorFrom( method_or_selector ) ) and selcmp( class_name, className( klass ) );
 }
 
 
-StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool_t &fl, bool_t stop ) :
+StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl, bool stop ) :
         enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
     if ( enable and stop )
         breakpoint();

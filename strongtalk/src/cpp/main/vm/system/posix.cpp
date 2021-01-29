@@ -41,7 +41,7 @@ void Event::reset() {
 }
 
 
-bool_t Event::waitFor() {
+bool Event::waitFor() {
     Lock mark( &_mutex );
     while ( !_signalled )
         pthread_cond_wait( &_notifier, &_mutex );
@@ -49,7 +49,7 @@ bool_t Event::waitFor() {
 }
 
 
-Event::Event( bool_t state ) {
+Event::Event( bool state ) {
     _signalled = state;
     pthread_mutex_init( &_mutex, nullptr );
     pthread_cond_init( &_notifier, nullptr );
@@ -67,15 +67,15 @@ const auto STACK_SIZE = ThreadStackSize * 1024;
 
 void os_dump_context2( ucontext_t * context ) {
     mcontext_t mcontext = context->uc_mcontext;
-    printf( "\nEAX: %x", mcontext.gregs[ REG_EAX ] );
-    printf( "\nEBX: %x", mcontext.gregs[ REG_EBX ] );
-    printf( "\nECX: %x", mcontext.gregs[ REG_ECX ] );
-    printf( "\nEDX: %x", mcontext.gregs[ REG_EDX ] );
-    printf( "\nEIP: %x", mcontext.gregs[ REG_EIP ] );
-    printf( "\nESP: %x", mcontext.gregs[ REG_ESP ] );
-    printf( "\nEBP: %x", mcontext.gregs[ REG_EBP ] );
-    printf( "\nEDI: %x", mcontext.gregs[ REG_EDI ] );
-    printf( "\nESI: %x", mcontext.gregs[ REG_ESI ] );
+    spdlog::info( "\nEAX: %x", mcontext.gregs[ REG_EAX ] );
+    spdlog::info( "\nEBX: %x", mcontext.gregs[ REG_EBX ] );
+    spdlog::info( "\nECX: %x", mcontext.gregs[ REG_ECX ] );
+    spdlog::info( "\nEDX: %x", mcontext.gregs[ REG_EDX ] );
+    spdlog::info( "\nEIP: %x", mcontext.gregs[ REG_EIP ] );
+    spdlog::info( "\nESP: %x", mcontext.gregs[ REG_ESP ] );
+    spdlog::info( "\nEBP: %x", mcontext.gregs[ REG_EBP ] );
+    spdlog::info( "\nEDI: %x", mcontext.gregs[ REG_EDI ] );
+    spdlog::info( "\nESI: %x", mcontext.gregs[ REG_ESI ] );
 }
 
 
@@ -119,12 +119,12 @@ std::int32_t os::getenv( const char * name, char * buffer, std::int32_t len ) {
 }
 
 
-bool_t os::move_file( const char * from, const char * to ) {
+bool os::move_file( const char * from, const char * to ) {
     return false;
 }
 
 
-bool_t os::check_directory( const char * dir_name ) {
+bool os::check_directory( const char * dir_name ) {
     return false;
 }
 
@@ -215,7 +215,7 @@ void os::delete_event( Event * event ) {
 }
 
 
-Event * os::create_event( bool_t initial_state ) {
+Event * os::create_event( bool initial_state ) {
     return new Event( initial_state );
 }
 
@@ -274,7 +274,7 @@ DLL * os::dll_load( const char * name ) {
 }
 
 
-bool_t os::dll_unload( DLL * library ) {
+bool os::dll_unload( DLL * library ) {
     delete library;
     return true;
 }
@@ -323,22 +323,22 @@ char * os::reserve_memory( std::int32_t size ) {
 }
 
 
-bool_t os::commit_memory( const char * addr, std::int32_t size ) {
+bool os::commit_memory( const char * addr, std::int32_t size ) {
     return !mprotect( const_cast<char *>( addr ), size, PROT_READ | PROT_WRITE );
 }
 
 
-bool_t os::uncommit_memory( const char * addr, std::int32_t size ) {
+bool os::uncommit_memory( const char * addr, std::int32_t size ) {
     return !mprotect( const_cast<char *>(addr), size, PROT_NONE );
 }
 
 
-bool_t os::release_memory( const char * addr, std::int32_t size ) {
+bool os::release_memory( const char * addr, std::int32_t size ) {
     return !munmap( ( char * ) addr, size );
 }
 
 
-bool_t os::guard_memory( const char * addr, std::int32_t size ) {
+bool os::guard_memory( const char * addr, std::int32_t size ) {
     return false;
 }
 
@@ -426,14 +426,14 @@ void os::signal_event( Event * event ) {
 }
 
 
-bool_t os::wait_for_event_or_timer( Event * event, std::int32_t timeout_in_ms ) {
+bool os::wait_for_event_or_timer( Event * event, std::int32_t timeout_in_ms ) {
     return false;
 }
 
 
-extern "C" bool_t WizardMode;
+extern "C" bool WizardMode;
 
-void process_settings_file( const char * file_name, bool_t quiet );
+void process_settings_file( const char * file_name, bool quiet );
 
 static std::int32_t number_of_ctrl_c = 0;
 
@@ -503,11 +503,11 @@ std::int32_t os::error_code() {
 }
 
 
-extern "C" bool_t EnableTasks;
+extern "C" bool EnableTasks;
 
 pthread_mutex_t ThreadSection;
 
-bool_t ThreadCritical::_initialized = false;
+bool ThreadCritical::_initialized = false;
 
 
 void ThreadCritical::intialize() {
@@ -550,7 +550,7 @@ void * watcherMain( void * ignored ) {
 
 
 void segv_repeated( std::int32_t signum, siginfo_t * info, void * context ) {
-    printf( "SEGV during signal handling. Aborting." );
+    spdlog::info( "SEGV during signal handling. Aborting." );
     exit( EXIT_FAILURE );
 }
 
@@ -562,7 +562,7 @@ void install_dummy_handler() {
     sa.sa_flags     = SA_RESTART | SA_SIGINFO;
     sa.sa_sigaction = segv_repeated;
     if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
-        printf( "SIGSEGV\n" );
+        spdlog::info( "SIGSEGV\n" );
     }
 }
 
@@ -578,7 +578,7 @@ static void handler( std::int32_t signum, siginfo_t * info, void * context ) {
     trace_stack( os::current_thread_id() );
 
     if ( !userHandler ) {
-        printf( "\nsignal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
+        spdlog::info( "\nsignal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
         os_dump_context2( ( ucontext_t * ) context );
     } else {
         mcontext_t mcontext = ( ( ucontext_t * ) context )->uc_mcontext;
@@ -601,13 +601,13 @@ void install_signal_handlers() {
     sa.sa_flags     = SA_RESTART; // Restart functions if interrupted by handler
     sa.sa_handler   = suspendHandler;
     if ( sigaction( SIGUSR1, &sa, nullptr ) == -1 ) {
-        printf( "SIGUSR1\n" );
+        spdlog::info( "SIGUSR1\n" );
     }
 
     sa.sa_flags |= SA_SIGINFO;
     sa.sa_sigaction = handler;
     if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
-        printf( "SIGSEGV\n" );
+        spdlog::info( "SIGSEGV\n" );
     }
 
 }
@@ -615,7 +615,7 @@ void install_signal_handlers() {
 
 void os_init() {
 
-    _console->print_cr( "%%system-init:  os_init" );
+    spdlog::info( "%system-init:  os_init" );
 
     ThreadCritical::intialize();
 

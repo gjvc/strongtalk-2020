@@ -106,7 +106,7 @@ void WeakArrayKlass::oop_follow_contents( Oop obj ) {
 
 // WeakArrayRegister
 // - static variables
-bool_t                      WeakArrayRegister::during_registration = false;
+bool                      WeakArrayRegister::during_registration = false;
 GrowableArray<WeakArrayOop> *WeakArrayRegister::weakArrays         = nullptr;
 GrowableArray<std::int32_t> *WeakArrayRegister::nis = nullptr;
 
@@ -118,7 +118,7 @@ void WeakArrayRegister::begin_scavenge() {
 }
 
 
-bool_t WeakArrayRegister::scavenge_register( WeakArrayOop obj ) {
+bool WeakArrayRegister::scavenge_register( WeakArrayOop obj ) {
     if ( during_registration )
         weakArrays->push( obj );
     return during_registration;
@@ -139,7 +139,7 @@ void WeakArrayRegister::scavenge_contents() {
 }
 
 
-bool_t WeakArrayRegister::scavenge_is_near_death( Oop obj ) {
+bool WeakArrayRegister::scavenge_is_near_death( Oop obj ) {
     // must be MemOop and unmarked (no forward pointer)
     return obj->is_new() and not MemOop( obj )->is_forwarded();
 }
@@ -150,7 +150,7 @@ void WeakArrayRegister::scavenge_check_for_dying_objects() {
     NotificationQueue::mark_elements();
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
         WeakArrayOop w                            = weakArrays->at( i );
-        bool_t       encounted_near_death_objects = false;
+        bool       encounted_near_death_objects = false;
 
         for ( std::int32_t j = 1; j <= w->length(); j++ ) {
             Oop obj = w->obj_at( j );
@@ -175,7 +175,7 @@ void WeakArrayRegister::begin_mark_sweep() {
 }
 
 
-bool_t WeakArrayRegister::mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size ) {
+bool WeakArrayRegister::mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size ) {
     if ( during_registration ) {
         weakArrays->push( obj );
         nis->push( non_indexable_size );
@@ -199,7 +199,7 @@ void WeakArrayRegister::follow_contents() {
 
         WeakArrayOop w                            = weakArrays->at( i );
         std::int32_t          non_indexable_size           = nis->at( i );
-        bool_t       encounted_near_death_objects = false;
+        bool       encounted_near_death_objects = false;
         std::int32_t          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
@@ -210,7 +210,7 @@ void WeakArrayRegister::follow_contents() {
 }
 
 
-bool_t WeakArrayRegister::mark_sweep_is_near_death( Oop obj ) {
+bool WeakArrayRegister::mark_sweep_is_near_death( Oop obj ) {
     return obj->is_mem() and not MemOop( obj )->is_gc_marked();
 }
 
@@ -221,7 +221,7 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
 
         WeakArrayOop w                            = weakArrays->at( i );
         std::int32_t          non_indexable_size           = nis->at( i );
-        bool_t       encounted_near_death_objects = false;
+        bool       encounted_near_death_objects = false;
         std::int32_t          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
@@ -245,7 +245,7 @@ std::int32_t  NotificationQueue::first = 0;
 std::int32_t  NotificationQueue::last  = 0;
 
 
-bool_t NotificationQueue::is_empty() {
+bool NotificationQueue::is_empty() {
     return first == last;
 }
 

@@ -89,46 +89,46 @@ public:
     }
 
 
-    bool_t is_special_prim() const {
+    bool is_special_prim() const {
         return group() not_eq PrimitiveGroup::NormalPrimitive;
     }
 
 
-    bool_t can_scavenge() const {
+    bool can_scavenge() const {
         return isBitSet( _flags, 16 );
     }   // can it trigger a scavenge/GC?
 
-    bool_t can_perform_NonLocalReturn() const {
+    bool can_perform_NonLocalReturn() const {
         return isBitSet( _flags, 17 );
     }   // can it do an NonLocalReturn or process abort?
 
-    bool_t can_fail() const {
+    bool can_fail() const {
         return isBitSet( _flags, 18 );
     }
 
 
     // can_fail: can primitive fail with arguments of correct type?  (NB: even if not can_fail(), primitive will fail if argument types are wrong)
-    bool_t can_invoke_delta() const {
+    bool can_invoke_delta() const {
         return can_perform_NonLocalReturn();
     }   // can it call other Delta code?
 
-    bool_t can_be_constant_folded() const {
+    bool can_be_constant_folded() const {
         return isBitSet( _flags, 19 );
     }   // is it side-effect free? (so it can be const-folded if args are const)
 
-    bool_t has_receiver() const {
+    bool has_receiver() const {
         return isBitSet( _flags, 20 );
     }   // does it require a receiver? ({{self prim...}})
 
-    bool_t is_internal() const {
+    bool is_internal() const {
         return isBitSet( _flags, 21 );
     }   // true for VM-internal primitives
 
-    bool_t needs_delta_fp_code() const {
+    bool needs_delta_fp_code() const {
         return !isBitSet( _flags, 22 );
     }   // must caller set up lastDeltaFP?
 
-    bool_t can_walk_stack() const; // can it trigger a stack print? (debug/interrupt point)
+    bool can_walk_stack() const; // can it trigger a stack print? (debug/interrupt point)
 
     // the name of the primitive as a symbol
     SymbolOop selector() const;

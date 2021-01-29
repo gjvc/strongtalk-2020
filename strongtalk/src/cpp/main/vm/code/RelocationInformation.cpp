@@ -78,13 +78,13 @@ RelocationInformationIterator::RelocationInformationIterator( const NativeMethod
 }
 
 
-bool_t RelocationInformationIterator::wasUncommonTrapExecuted() const {
+bool RelocationInformationIterator::wasUncommonTrapExecuted() const {
     st_assert( _current->isUncommonTrap(), "not an uncommon branch" );
     return callDestination() == (const char *) StubRoutines::used_uncommon_trap_entry();
 }
 
 
-bool_t RelocationInformationIterator::is_position_dependent() const {
+bool RelocationInformationIterator::is_position_dependent() const {
     switch ( type() ) {
         case RelocationInformation::RelocationType::ic_type:
         case RelocationInformation::RelocationType::primitive_type:

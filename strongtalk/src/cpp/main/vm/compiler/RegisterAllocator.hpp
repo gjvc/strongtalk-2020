@@ -26,7 +26,7 @@ public:
 
     void allocate( GrowableArray<PseudoRegister *> *globals );
 
-    bool_t allocateConst( ConstPseudoRegister *r, Location preferred = unAllocated );
+    bool allocateConst( ConstPseudoRegister *r, Location preferred = unAllocated );
 
 
     std::int32_t nofStackTemps() {

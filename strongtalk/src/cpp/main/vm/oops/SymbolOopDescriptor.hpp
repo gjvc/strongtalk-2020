@@ -21,7 +21,7 @@ public:
     // memory operations
     SymbolOop scavenge();
 
-    bool_t verify();
+    bool verify();
 
     void print_symbol_on( ConsoleOutputStream *stream = nullptr );
 };

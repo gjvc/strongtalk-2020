@@ -57,28 +57,28 @@ public:
     void print();
 
 
-    std::int32_t as_int( bool_t &ok ) const;
+    std::int32_t as_int( bool &ok ) const;
 
-    std::uint32_t as_unsigned_int( bool_t &ok ) const;
+    std::uint32_t as_unsigned_int( bool &ok ) const;
 
-    double as_double( bool_t &ok ) const;
+    double as_double( bool &ok ) const;
 
-    SMIOop as_smi( bool_t &ok ) const;
+    SMIOop as_smi( bool &ok ) const;
 
 
-    bool_t is_zero() const;
+    bool is_zero() const;
 
-    bool_t is_not_zero() const;
+    bool is_not_zero() const;
 
-    bool_t is_positive() const;
+    bool is_positive() const;
 
-    bool_t is_negative() const;
+    bool is_negative() const;
 
-    bool_t is_odd() const;
+    bool is_odd() const;
 
-    bool_t is_even() const;
+    bool is_even() const;
 
-    bool_t is_valid() const;
+    bool is_valid() const;
 
     friend class IntegerOps;
 };

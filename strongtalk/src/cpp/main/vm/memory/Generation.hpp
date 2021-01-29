@@ -31,8 +31,8 @@ private:
 protected:
     // Minimum and maximum addresses, used by card marking code.
     // Must not overlap with address ranges of other generation(s).
-    const char *_lowBoundary;
-    const char *_highBoundary;
+    const char   *_lowBoundary;
+    const char   *_highBoundary;
     VirtualSpace _virtualSpace;
 
 public:
@@ -49,7 +49,6 @@ public:
 
 // ------------------------------------------------------------------------------
 
-
 // ensure that you surround the call with {} to prevent s leaking out!
 #define FOR_EACH_OLD_SPACE( s ) \
     for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
@@ -65,7 +64,7 @@ inline void SCAVENGE_TEMPLATE( const auto &p ) {
 
 inline void VERIFY_TEMPLATE( const auto &p ) {
     if ( not Oop( *p )->verify() ) {
-        lprintf( "\tof object at %#lx\n", p );
+        spdlog::info( "\tof object at {0:x}", static_cast<const void *>(p) );
     }
 }
 

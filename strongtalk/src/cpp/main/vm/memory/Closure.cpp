@@ -29,7 +29,7 @@ void FilteredObjectClosure::do_object( MemOop obj ) {
 }
 
 
-bool_t FilteredObjectClosure::include_object( MemOop obj ) {
+bool FilteredObjectClosure::include_object( MemOop obj ) {
     return true;
 }
 

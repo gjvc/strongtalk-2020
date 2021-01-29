@@ -8,7 +8,7 @@
 #include "vm/memory/Closure.hpp"
 
 
-Oop DoubleKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop DoubleKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
     // allocate
     Oop *result = basicAllocate( DoubleOopDescriptor::object_size(), &doubleKlassObject, permit_scavenge, tenured );

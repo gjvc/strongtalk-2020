@@ -52,7 +52,7 @@ public:
     }
 
 
-    virtual bool_t isSoft() const {
+    virtual bool isSoft() const {
         return false;
     }
 
@@ -68,7 +68,7 @@ public:
     }
 
 
-    bool_t isSoft() const {
+    bool isSoft() const {
         return true;
     }
 

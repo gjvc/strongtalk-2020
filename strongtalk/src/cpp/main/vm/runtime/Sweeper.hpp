@@ -28,12 +28,12 @@ private:
 
 
     static std::int32_t       _sweepSeconds;
-    static bool_t    _isRunning;
+    static bool    _isRunning;
     static MethodOop _activeMethod;
     static NativeMethod *_activeNativeMethod;
 
 public:
-    static bool_t register_active_frame( Frame fr );
+    static bool register_active_frame( Frame fr );
 
     static void clear_active_frame();
 
@@ -55,7 +55,7 @@ public:
 
 
     // Tells is the sweeper is running
-    static bool_t is_running() {
+    static bool is_running() {
         return _isRunning;
     }
 
@@ -70,14 +70,14 @@ protected:
 
 
     std::int32_t    _sweep_start;     // time of last activation
-    bool_t _is_active;          // are we waiting to do something?
+    bool _is_active;          // are we waiting to do something?
 
-    bool_t is_active() const {
+    bool is_active() const {
         return _is_active;
     }
 
 
-    void set_active( bool_t value ) {
+    void set_active( bool value ) {
         _is_active = value;
     }
 

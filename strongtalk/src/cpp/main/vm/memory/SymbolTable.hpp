@@ -37,19 +37,19 @@ struct SymbolTableLink {
     SymbolTableLink *next;
 
     // memory operations
-    bool_t verify( std::int32_t i );
+    bool verify( std::int32_t i );
 };
 
 struct SymbolTableEntry {
     void *symbol_or_link;
 
 
-    bool_t is_empty() {
+    bool is_empty() {
         return symbol_or_link == nullptr;
     }
 
 
-    bool_t is_symbol() {
+    bool is_symbol() {
         return Oop( symbol_or_link )->is_mem();
     }
 
@@ -80,7 +80,7 @@ struct SymbolTableEntry {
 
 
     // memory operations
-    bool_t verify( std::int32_t i );
+    bool verify( std::int32_t i );
 
     void deallocate();
 
@@ -102,7 +102,7 @@ public:
     SymbolOop lookup( const char *name, std::int32_t len );
 
     // Used in Bootstrap for checking
-    bool_t is_present( SymbolOop sym );
+    bool is_present( SymbolOop sym );
 
 protected:
     void add_symbol( SymbolOop s ); // Only used by Bootstrap

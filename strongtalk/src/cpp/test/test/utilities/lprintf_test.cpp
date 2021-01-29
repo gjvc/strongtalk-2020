@@ -69,7 +69,7 @@ ASSERT_EQ( 0, strcmp( "format arg1 arg2", notifier->errorAt( 0 ) ) );
 
 TEST_F( errorTests, warningShouldReportWarningWithOneArgToNotifier
 ) {
-::warning( "format %s", "arg1" );
+::spdlog::warn( "format %s", "arg1" );
 
 ASSERT_EQ( 1, notifier->
 warningCount()

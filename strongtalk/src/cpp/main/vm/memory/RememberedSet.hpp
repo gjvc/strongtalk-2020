@@ -57,7 +57,7 @@ public:
 
     RememberedSet();
 
-    void *operator new( std::int32_t size );
+    void *operator new( std::size_t size );
 
     void clear();
 
@@ -72,19 +72,19 @@ public:
     }
 
 
-    bool_t is_dirty( void *p ) const {
+    bool is_dirty( void *p ) const {
         return *byte_for( p ) == 0;
     }
 
 
     // Tells is any card for obj is dirty
-    bool_t is_object_dirty( MemOop obj );
+    bool is_object_dirty( MemOop obj );
 
     void scavenge_contents( OldSpace *s );
 
     char *scavenge_contents( OldSpace *s, char *begin, char *limit );
 
-    bool_t verify( bool_t postScavenge );
+    bool verify( bool postScavenge );
 
     void print_set_for_space( OldSpace *sp );
 
@@ -108,5 +108,5 @@ private:
 
     RememberedSet( RememberedSet *old, const char *start, const char *end );
 
-    bool_t has_page_dirty_objects( OldSpace *sp, char *page );
+    bool has_page_dirty_objects( OldSpace *sp, char *page );
 };

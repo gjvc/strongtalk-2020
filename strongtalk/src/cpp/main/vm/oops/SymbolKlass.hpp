@@ -16,13 +16,13 @@
 class SymbolKlass : public ByteArrayKlass {
 public:
     // testers
-    bool_t oop_is_symbol() const {
+    bool oop_is_symbol() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
@@ -40,12 +40,12 @@ public:
 
 
     // reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 
@@ -54,12 +54,12 @@ public:
     SymbolOop allocateSymbol( const char *name, std::int32_t len );
 
     // copy operation
-    Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    Oop oop_shallow_copy( Oop obj, bool tenured );
 
     // memory operations
     Oop scavenge( Oop obj );
 
-    bool_t verify( Oop obj );
+    bool verify( Oop obj );
 
     // printing operations
     void oop_print_value_on( Oop obj, ConsoleOutputStream *stream );

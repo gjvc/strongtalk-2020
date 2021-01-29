@@ -50,13 +50,13 @@ public:
     LookupKey      *_lookupKey;        //
     PseudoRegister *_resultRegister;   // register where result should end up
     SymbolOop      _selector;                //
-    bool_t         _needRealSend;            // need a real (non-inlined) send
-    bool_t         _counting;                // count # sends? (for non-inlined send)
+    bool         _needRealSend;            // need a real (non-inlined) send
+    bool         _counting;                // count # sends? (for non-inlined send)
     std::int32_t    _sendCount;               // estimated # of invocations (< 0 == unknown)
-    bool_t         _predicted;               // was receiver type-predicted?
-    bool_t         uninlinable;              // was send considered uninlinable?
-    bool_t         _receiverStatic;          // receiver type is statically known
-    bool_t         _inPrimitiveFailure;      // sent from within prim. failure block
+    bool         _predicted;               // was receiver type-predicted?
+    bool         uninlinable;              // was send considered uninlinable?
+    bool         _receiverStatic;          // receiver type is statically known
+    bool         _inPrimitiveFailure;      // sent from within prim. failure block
 
 protected:
     void init();
@@ -101,32 +101,32 @@ public:
 
 
     // test functions
-    virtual bool_t isInlinedScope() const {
+    virtual bool isInlinedScope() const {
         return false;
     }
 
 
-    virtual bool_t isMethodScope() const {
+    virtual bool isMethodScope() const {
         return false;
     }
 
 
-    virtual bool_t isBlockScope() const {
+    virtual bool isBlockScope() const {
         return false;
     }
 
 
-    virtual bool_t isOutlinedScope() const {
+    virtual bool isOutlinedScope() const {
         return false;
     }
 
 
-    virtual bool_t isOutlinedMethodScope() const {
+    virtual bool isOutlinedMethodScope() const {
         return false;
     }
 
 
-    virtual bool_t isOutlinedBlockScope() const {
+    virtual bool isOutlinedBlockScope() const {
         return false;
     }
 
@@ -141,34 +141,34 @@ public:
     virtual InlinedScope *sender() const = 0;    // caller scope
     virtual KlassOop methodHolder() const = 0;    // for super sends
 
-    virtual bool_t allocatesInterpretedContext() const = 0;// true if the scope allocates its own context in the interpreter
-    virtual bool_t allocatesCompiledContext() const = 0;    // true if the scope allocates a context in the compiled code
-    virtual bool_t expectsContext() const = 0;    // true if the scope has an incoming context in the interpreter
-    bool_t needsContextZapping() const {
+    virtual bool allocatesInterpretedContext() const = 0;// true if the scope allocates its own context in the interpreter
+    virtual bool allocatesCompiledContext() const = 0;    // true if the scope allocates a context in the compiled code
+    virtual bool expectsContext() const = 0;    // true if the scope has an incoming context in the interpreter
+    bool needsContextZapping() const {
         return ( parent() == nullptr ) and allocatesCompiledContext();
     }
 
 
     virtual Scope *home() const = 0;    // the home scope
-    bool_t isTop() const {
+    bool isTop() const {
         return sender() == nullptr;
     }
 
 
-    bool_t isInlined() const {
+    bool isInlined() const {
         return sender() not_eq nullptr;
     }
 
 
-    virtual bool_t isSenderOf( InlinedScope *s ) const {
+    virtual bool isSenderOf( InlinedScope *s ) const {
         return false;
     } // isSenderOf = this is a proper caller of s
-    bool_t isSenderOrSame( InlinedScope *s ) {
+    bool isSenderOrSame( InlinedScope *s ) {
         return (Scope *) s == this or isSenderOf( s );
     }
 
 
-    virtual bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) = 0;
+    virtual bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) = 0;
 
 
     virtual void genCode() {
@@ -189,8 +189,8 @@ protected:
     MethodOop    _method;
     std::int32_t  _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
     std::int32_t  _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
-    bool_t       _primFailure;               // true if in a primitive call failure branch
-    bool_t       _endsDead;                  // true if method ends with dead code
+    bool       _primFailure;               // true if in a primitive call failure branch
+    bool       _endsDead;                  // true if method ends with dead code
     Expression   *_self;                      // the receiver
     NodeBuilder  _gen;                       // the generator of the intermediate representation
 
@@ -214,7 +214,7 @@ protected:
     MergeNode       *_NonLocalReturneturnPoint;         // starting point for shared non-local return code
     MergeNode       *_nlrTestPoint;          // where NonLocalReturns coming from callees will jump to (or nullptr)
     ContextInitNode *_contextInitializer;    // node initializing context (if any)
-    bool_t          _hasBeenGenerated;      // true iff genCode() was called
+    bool          _hasBeenGenerated;      // true iff genCode() was called
 
 public:
     // for node builders
@@ -234,7 +234,7 @@ public:
     }
 
 
-    bool_t has_nlrTestPoint() {
+    bool has_nlrTestPoint() {
         return _nlrTestPoint not_eq nullptr;
     }
 
@@ -246,7 +246,7 @@ public:
 
 public:
     RecompilationScope *rscope;         // equiv. scope in recompilee (if any) - used for type feedback
-    bool_t             predicted;      // was receiver type-predicted?
+    bool             predicted;      // was receiver type-predicted?
     std::int32_t        depth;          // call nesting level (top = 0)
     std::int32_t        loopDepth;      // loop nesting level (top = 0)
     Expression         *result;         // result of normal return (nullptr if none)
@@ -284,7 +284,7 @@ public:
     }
 
 
-    bool_t isInlinedScope() const {
+    bool isInlinedScope() const {
         return true;
     }
 
@@ -294,7 +294,7 @@ public:
     }
 
 
-    bool_t hasTemporaries() const {
+    bool hasTemporaries() const {
         return _temporaries not_eq nullptr;
     }
 
@@ -304,7 +304,7 @@ public:
     }
 
 
-    bool_t hasFloatTemporaries() const {
+    bool hasFloatTemporaries() const {
         return _floatTemporaries not_eq nullptr;
     }
 
@@ -320,20 +320,20 @@ public:
     }
 
 
-    bool_t allocatesInterpretedContext() const {
+    bool allocatesInterpretedContext() const {
         return _method->allocatesInterpretedContext();
     }
 
 
-    bool_t allocatesCompiledContext() const;
+    bool allocatesCompiledContext() const;
 
 
-    bool_t expectsContext() const {
+    bool expectsContext() const {
         return _method->expectsContext();
     }
 
 
-    bool_t isSenderOf( InlinedScope *s ) const;
+    bool isSenderOf( InlinedScope *s ) const;
 
 
     GrowableArray<Expression *> *contextTemporaries() const {
@@ -351,12 +351,12 @@ public:
     }
 
 
-    bool_t containsNonLocalReturn() const {
+    bool containsNonLocalReturn() const {
         return _method->containsNonLocalReturn();
     }
 
 
-    bool_t primFailure() const {
+    bool primFailure() const {
         return _primFailure;
     }
 
@@ -407,7 +407,7 @@ public:
     }
 
 
-    bool_t isLite() const;
+    bool isLite() const;
 
 
     Expression *argument( std::int32_t no ) const {
@@ -455,7 +455,7 @@ public:
     }
 
 
-    virtual bool_t is_self_initialized() const {
+    virtual bool is_self_initialized() const {
         return true;
     }
 
@@ -465,7 +465,7 @@ public:
     }
 
 
-    bool_t hasBeenGenerated() const {
+    bool hasBeenGenerated() const {
         return _hasBeenGenerated;
     }
 
@@ -484,7 +484,7 @@ public:
 
     void genCode();
 
-    void addSend( GrowableArray<PseudoRegister *> *exprStack, bool_t isSend );
+    void addSend( GrowableArray<PseudoRegister *> *exprStack, bool isSend );
 
 
     GrowableArray<NonTrivialNode *> *typeTests() const {
@@ -570,7 +570,7 @@ public:
     static MethodScope *new_MethodScope( MethodOop method, KlassOop methodHolder, InlinedScope *sen, RecompilationScope *rs, SendInfo *info );
 
 
-    bool_t isMethodScope() const {
+    bool isMethodScope() const {
         return true;
     }
 
@@ -585,7 +585,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
+    bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
 
     void generateDebugInfo();
 
@@ -599,7 +599,7 @@ public:
 class BlockScope : public InlinedScope {        // block methods
 protected:
     Scope  *_parent;                // lexically enclosing scope
-    bool_t _self_is_initialized;            // true if self has been loaded
+    bool _self_is_initialized;            // true if self has been loaded
     void initialize( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
     void initializeSelf();
@@ -610,12 +610,12 @@ public:
     static BlockScope *new_BlockScope( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
 
-    bool_t isBlockScope() const {
+    bool isBlockScope() const {
         return true;
     }
 
 
-    bool_t is_self_initialized() const {
+    bool is_self_initialized() const {
         return _self_is_initialized;
     }
 
@@ -640,7 +640,7 @@ public:
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
+    bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n );
 
     void generateDebugInfo();
 
@@ -662,7 +662,7 @@ public:
     OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope );
 
 
-    bool_t isOutlinedScope() const {
+    bool isOutlinedScope() const {
         return true;
     }
 
@@ -692,17 +692,17 @@ public:
     }
 
 
-    bool_t allocatesInterpretedContext() const {
+    bool allocatesInterpretedContext() const {
         return method()->allocatesInterpretedContext();
     }
 
 
-    bool_t allocatesCompiledContext() const {
+    bool allocatesCompiledContext() const {
         return _scope->allocates_compiled_context();
     }
 
 
-    bool_t expectsContext() const {
+    bool expectsContext() const {
         return method()->expectsContext();
     }
 
@@ -723,12 +723,12 @@ public:
     }
 
 
-    bool_t isOutlinedMethodScope() const {
+    bool isOutlinedMethodScope() const {
         return true;
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
+    bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
         ShouldNotCallThis();
         return false;
     }
@@ -771,12 +771,12 @@ public:
     OutlinedBlockScope( NativeMethod *nm, ScopeDescriptor *sen );
 
 
-    bool_t isOutlinedBlockScope() const {
+    bool isOutlinedBlockScope() const {
         return true;
     }
 
 
-    bool_t isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
+    bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
         ShouldNotCallThis();
         return false;
     }

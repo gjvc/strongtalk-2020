@@ -101,7 +101,7 @@ public:
 
 
     // Inline cache information
-    bool_t is_empty() const {
+    bool is_empty() const {
         return second_word() == nullptr;
     }
 
@@ -188,12 +188,12 @@ public:
     }
 
 
-    bool_t is_interpreted_ic() const {
+    bool is_interpreted_ic() const {
         return true;
     }
 
 
-    bool_t is_super_send() const;
+    bool is_super_send() const;
 
 
     InterpretedInlineCache *interpreted_ic() const {
@@ -207,7 +207,7 @@ public:
     void advance();
 
 
-    bool_t at_end() const {
+    bool at_end() const {
         return _index >= number_of_targets();
     }
 
@@ -219,12 +219,12 @@ public:
 
 
     // answer whether current target method is compiled or interpreted
-    bool_t is_interpreted() const {
+    bool is_interpreted() const {
         return _nativeMethod == nullptr;
     }
 
 
-    bool_t is_compiled() const {
+    bool is_compiled() const {
         return _nativeMethod not_eq nullptr;
     }
 

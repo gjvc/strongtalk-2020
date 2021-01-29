@@ -192,7 +192,7 @@ public:
     }
 
 
-    bool_t includes( ScopeDescriptor *d ) const {
+    bool includes( ScopeDescriptor *d ) const {
         return this == d->_scopes;
     }
 
@@ -249,7 +249,7 @@ public:
     NameDescriptor *unpackNameDescAt( std::int32_t &offset, const char *pc ) const;    // Unpacks a string of name descs and returns one matching the pc
 
 private:
-    NameDescriptor *unpackNameDescAt( std::int32_t &offset, bool_t &is_last, const char *pc ) const;    // Unpacks a single name desc at offset
+    NameDescriptor *unpackNameDescAt( std::int32_t &offset, bool &is_last, const char *pc ) const;    // Unpacks a single name desc at offset
 
 public:
 
@@ -260,7 +260,7 @@ public:
 
     void switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate );
 
-    bool_t is_new() const;
+    bool is_new() const;
 
     void relocate();
 

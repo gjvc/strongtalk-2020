@@ -41,22 +41,22 @@ public:
 std::int32_t compareByteCodeIndex( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 );
 
 
-inline bool_t byteCodeIndexLT( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
+inline bool byteCodeIndexLT( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) < 0;
 }
 
 
-inline bool_t byteCodeIndexLE( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
+inline bool byteCodeIndexLE( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) <= 0;
 }
 
 
-inline bool_t byteCodeIndexGT( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
+inline bool byteCodeIndexGT( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) > 0;
 }
 
 
-inline bool_t byteCodeIndexGE( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
+inline bool byteCodeIndexGE( std::int32_t byteCodeIndex1, std::int32_t byteCodeIndex2 ) {
     return compareByteCodeIndex( byteCodeIndex1, byteCodeIndex2 ) >= 0;
 }
 
@@ -93,15 +93,15 @@ protected:
 
 protected:
     // Cached information
-    bool_t       _hasTemporaries;
-    bool_t       _hasContextTemporaries;
-    bool_t       _hasExpressionStack;
+    bool       _hasTemporaries;
+    bool       _hasContextTemporaries;
+    bool       _hasExpressionStack;
     MethodOop    _method;
     std::int32_t  _scopeID;
-    bool_t       _lite;
+    bool       _lite;
     std::int32_t  _senderScopeOffset;
     std::int16_t _senderByteCodeIndex;
-    bool_t       _allocatesCompiledContext;
+    bool       _allocatesCompiledContext;
     std::int32_t  _name_desc_offset;
     std::int32_t  _next;
 
@@ -131,18 +131,18 @@ public:
     }
 
 
-    bool_t is_equal( ScopeDescriptor *s ) const {
+    bool is_equal( ScopeDescriptor *s ) const {
         return _scopes == s->_scopes and _offset == s->_offset;
     }
 
 
     // A lite scopeDesc has no information saved on temporaries or expression stack.
-    bool_t is_lite() const {
+    bool is_lite() const {
         return _lite;
     }
 
 
-    bool_t allocates_interpreted_context() const;
+    bool allocates_interpreted_context() const;
 
 
     MethodOop method() const {
@@ -151,7 +151,7 @@ public:
 
 
     // Tells whether a compiled context is allocated for this scope.
-    bool_t allocates_compiled_context() const {
+    bool allocates_compiled_context() const {
         return _allocatesCompiledContext;
     }
 
@@ -182,9 +182,9 @@ public:
     // Returns the parent scope
     // If cross_NativeMethod_boundary is false parent will return nullptr if
     // the parent is located in another compilation unit (NativeMethod).
-    virtual ScopeDescriptor *parent( bool_t cross_NativeMethod_boundary = false ) const = 0;
+    virtual ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const = 0;
 
-    ScopeDescriptor *home( bool_t cross_NativeMethod_boundary = false ) const;
+    ScopeDescriptor *home( bool cross_NativeMethod_boundary = false ) const;
 
 
     // Returns the byteCodeIndex of the calling method if this scopeDesc is inlined.
@@ -196,7 +196,7 @@ public:
 
 
     // Root scope?
-    bool_t isTop() const {
+    bool isTop() const {
         return _senderScopeOffset == 0;
     }
 
@@ -205,37 +205,37 @@ public:
     virtual LookupKey *key() const = 0;
 
     // scope equivalence -- for compiler
-    virtual bool_t s_equivalent( ScopeDescriptor *s ) const;
+    virtual bool s_equivalent( ScopeDescriptor *s ) const;
 
-    virtual bool_t l_equivalent( LookupKey *s ) const;
+    virtual bool l_equivalent( LookupKey *s ) const;
 
 
     // types test operations
-    virtual bool_t isMethodScope() const {
+    virtual bool isMethodScope() const {
         return false;
     }
 
 
-    virtual bool_t isBlockScope() const {
+    virtual bool isBlockScope() const {
         return false;
     }
 
 
-    virtual bool_t isTopLevelBlockScope() const {
+    virtual bool isTopLevelBlockScope() const {
         return false;
     }
 
 
-    virtual bool_t isNonInlinedBlockScope() const {
+    virtual bool isNonInlinedBlockScope() const {
         return false;
     }
 
 
     virtual NameDescriptor *self() const = 0;
 
-    NameDescriptor *temporary( std::int32_t index, bool_t canFail = false );
+    NameDescriptor *temporary( std::int32_t index, bool canFail = false );
 
-    NameDescriptor *contextTemporary( std::int32_t index, bool_t canFail = false );
+    NameDescriptor *contextTemporary( std::int32_t index, bool canFail = false );
 
     NameDescriptor *exprStackElem( std::int32_t byteCodeIndex );
 
@@ -250,12 +250,12 @@ public:
     }
 
 
-    bool_t verify();
+    bool verify();
 
     void verify_expression_stack( std::int32_t byteCodeIndex );
 
     // printing support
-    void print( std::int32_t indent, bool_t all_pcs );        // print info for current/all pc's
+    void print( std::int32_t indent, bool all_pcs );        // print info for current/all pc's
     void print() {
         print( 0, false );
     }
@@ -264,7 +264,7 @@ public:
     virtual void print_value_on( ConsoleOutputStream *stream ) const;
 
 protected:
-    virtual bool_t shallow_verify() {
+    virtual bool shallow_verify() {
         return true;
     }
 
@@ -294,12 +294,12 @@ protected:
 public:
     MethodScopeDescriptor( NativeMethodScopes *scopes, std::int32_t offset, const char *pc );
 
-    bool_t s_equivalent( ScopeDescriptor *s ) const;
+    bool s_equivalent( ScopeDescriptor *s ) const;
 
-    bool_t l_equivalent( LookupKey *s ) const;
+    bool l_equivalent( LookupKey *s ) const;
 
 
-    bool_t isMethodScope() const {
+    bool isMethodScope() const {
         return true;
     }
 
@@ -319,7 +319,7 @@ public:
     }
 
 
-    ScopeDescriptor *parent( bool_t cross_NativeMethod_boundary = false ) const {
+    ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const {
         return nullptr;
     }
 
@@ -346,14 +346,14 @@ public:
 
     NameDescriptor *self() const;
 
-    ScopeDescriptor *parent( bool_t cross_NativeMethod_boundary = false ) const;
+    ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const;
 
     LookupKey *key() const;
 
-    bool_t s_equivalent( ScopeDescriptor *s ) const;
+    bool s_equivalent( ScopeDescriptor *s ) const;
 
 
-    bool_t isBlockScope() const {
+    bool isBlockScope() const {
         return true;
     }
 
@@ -379,12 +379,12 @@ public:
 
 
     // type test operations
-    bool_t isBlockScope() const {
+    bool isBlockScope() const {
         return true;
     }
 
 
-    bool_t isTopLevelBlockScope() const {
+    bool isTopLevelBlockScope() const {
         return true;
     }
 
@@ -400,11 +400,11 @@ public:
 
 
     // NB: parent() may return nullptr for clean blocks
-    ScopeDescriptor *parent( bool_t cross_NativeMethod_boundary = false ) const;
+    ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const;
 
     LookupKey *key() const;
 
-    bool_t s_equivalent( ScopeDescriptor *s ) const;
+    bool s_equivalent( ScopeDescriptor *s ) const;
 
     // print operations
     void printSelf();

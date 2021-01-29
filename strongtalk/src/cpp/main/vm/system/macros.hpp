@@ -59,7 +59,7 @@
 // Warning: does not wrap in '{' and '}'!
 
 #define CHECKOOPBOOL( ref, val )        \
-    bool_t val;                         \
+    bool val;                         \
     if (ref == falseObject)                \
       val = false;                      \
     else if (ref == trueObject)            \

@@ -32,7 +32,7 @@ extern "C" void single_step_handler() {
 std::int32_t *saved_frame;
 
 
-bool_t patch_last_delta_frame( std::int32_t *fr, std::int32_t *dist ) {
+bool patch_last_delta_frame( std::int32_t *fr, std::int32_t *dist ) {
 
     // change the current to next byteCodeIndex;
     Frame v( nullptr, fr, nullptr );
@@ -61,7 +61,7 @@ void restore_hp( std::int32_t *fr, std::int32_t dist ) {
 }
 
 
-static bool_t is_aborting = false;
+static bool is_aborting = false;
 
 
 void evaluator::single_step( std::int32_t *fr ) {
@@ -88,7 +88,7 @@ void evaluator::single_step( std::int32_t *fr ) {
 }
 
 
-bool_t evaluator::get_line( char *line ) {
+bool evaluator::get_line( char *line ) {
     std::int32_t end = 0;
     std::int32_t c;
 
@@ -112,7 +112,7 @@ private:
     void tokenize( char *str );
 
 
-    bool_t match( const char *str ) {
+    bool match( const char *str ) {
         return strcmp( current(), str ) == 0;
     }
 
@@ -135,112 +135,112 @@ public:
     }
 
 
-    bool_t eos() {
+    bool eos() {
         return pos >= tokens->length();
     }
 
 
     // testers
-    bool_t is_hat() {
+    bool is_hat() {
         return match( "^" );
     }
 
 
-    bool_t is_step() {
+    bool is_step() {
         return match( "s" ) or match( "step" );
     }
 
 
-    bool_t is_next() {
+    bool is_next() {
         return match( "n" ) or match( "next" );
     }
 
 
-    bool_t is_end() {
+    bool is_end() {
         return match( "e" ) or match( "end" );
     }
 
 
-    bool_t is_cont() {
+    bool is_cont() {
         return match( "c" ) or match( "cont" );
     }
 
 
-    bool_t is_stack() {
+    bool is_stack() {
         return match( "stack" );
     }
 
 
-    bool_t is_abort() {
+    bool is_abort() {
         return match( "abort" );
     }
 
 
-    bool_t is_genesis() {
+    bool is_genesis() {
         return match( "genesis" );
     }
 
 
-    bool_t is_top() {
+    bool is_top() {
         return match( "top" );
     }
 
 
-    bool_t is_show() {
+    bool is_show() {
         return match( "show" );
     }
 
 
-    bool_t is_break() {
+    bool is_break() {
         return match( "break" );
     }
 
 
-    bool_t is_events() {
+    bool is_events() {
         return match( "events" );
     }
 
 
-    bool_t is_status() {
+    bool is_status() {
         return match( "status" );
     }
 
 
-    bool_t is_help() {
+    bool is_help() {
         return match( "?" ) or match( "help" );
     }
 
 
-    bool_t is_quit() {
+    bool is_quit() {
         return match( "q" ) or match( "quit" );
     }
 
 
-    bool_t is_plus() {
+    bool is_plus() {
         return match( "+" );
     }
 
 
-    bool_t is_minus() {
+    bool is_minus() {
         return match( "-" );
     }
 
 
-    bool_t is_smi( Oop *addr );
+    bool is_smi( Oop *addr );
 
-    bool_t is_table_entry( Oop *addr );
+    bool is_table_entry( Oop *addr );
 
-    bool_t is_object_search( Oop *addr );
+    bool is_object_search( Oop *addr );
 
-    bool_t is_name( Oop *addr );
+    bool is_name( Oop *addr );
 
-    bool_t is_symbol( Oop *addr );
+    bool is_symbol( Oop *addr );
 
-    bool_t is_unary();
+    bool is_unary();
 
-    bool_t is_binary();
+    bool is_binary();
 
-    bool_t is_keyword();
+    bool is_keyword();
 };
 
 
@@ -256,7 +256,7 @@ void TokenStream::tokenize( char *str ) {
 }
 
 
-bool_t TokenStream::is_smi( Oop *addr ) {
+bool TokenStream::is_smi( Oop *addr ) {
     std::int32_t           value;
     std::uint32_t length;
 
@@ -268,12 +268,12 @@ bool_t TokenStream::is_smi( Oop *addr ) {
 }
 
 
-bool_t TokenStream::is_table_entry( Oop *addr ) {
+bool TokenStream::is_table_entry( Oop *addr ) {
     std::int32_t           value;
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not objectIDTable::is_index_ok( value ) ) {
-            _console->print_cr( "Could not find index %d in object table.", value );
+            spdlog::info( "Could not find index {} in object table.", value );
             return true;
         }
         *addr = objectIDTable::at( value );
@@ -283,12 +283,12 @@ bool_t TokenStream::is_table_entry( Oop *addr ) {
 }
 
 
-bool_t TokenStream::is_object_search( Oop *addr ) {
+bool TokenStream::is_object_search( Oop *addr ) {
     std::int32_t           address;
     Oop           obj;
     std::uint32_t length;
 
-    if ( sscanf( current(), "0x%X%u", &address, &length ) == 1 and strlen( current() ) == length ) {
+    if ( sscanf( current(), "0x{0:x}%u", &address, &length ) == 1 and strlen( current() ) == length ) {
         if ( obj = Oop( Universe::object_start( (Oop *) address ) ) ) {
             *addr = obj;
             return true;
@@ -298,7 +298,7 @@ bool_t TokenStream::is_object_search( Oop *addr ) {
 }
 
 
-bool_t TokenStream::is_name( Oop *addr ) {
+bool TokenStream::is_name( Oop *addr ) {
     char          name[200];
     Oop           obj;
     std::uint32_t length;
@@ -312,7 +312,7 @@ bool_t TokenStream::is_name( Oop *addr ) {
 }
 
 
-bool_t TokenStream::is_symbol( Oop *addr ) {
+bool TokenStream::is_symbol( Oop *addr ) {
     char          name[200];
     std::uint32_t length;
     if ( sscanf( current(), "#%[a-zA-Z0-9_]%u", name, &length ) == 1 and strlen( current() ) == length ) {
@@ -323,26 +323,26 @@ bool_t TokenStream::is_symbol( Oop *addr ) {
 }
 
 
-bool_t TokenStream::is_unary() {
+bool TokenStream::is_unary() {
     char          name[40];
     std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length;
 }
 
 
-bool_t TokenStream::is_binary() {
+bool TokenStream::is_binary() {
     return not is_unary() and not is_keyword();
 }
 
 
-bool_t TokenStream::is_keyword() {
+bool TokenStream::is_keyword() {
     char          name[40];
     std::uint32_t length;
     return sscanf( current(), "%[a-zA-Z]:%u", name, &length ) == 1 and strlen( current() ) == length;
 }
 
 
-bool_t evaluator::get_oop( TokenStream *stream, Oop *addr ) {
+bool evaluator::get_oop( TokenStream *stream, Oop *addr ) {
 
     if ( stream->is_smi( addr ) ) {
         stream->advance();
@@ -364,15 +364,15 @@ bool_t evaluator::get_oop( TokenStream *stream, Oop *addr ) {
         stream->advance();
         return true;
     }
-    _console->print_cr( "Error: could not Oop'ify [%s]", stream->current() );
+    spdlog::info( "Error: could not Oop'ify[{}]", stream->current() );
     return false;
 }
 
 
-bool_t validate_lookup( Oop receiver, SymbolOop selector ) {
+bool validate_lookup( Oop receiver, SymbolOop selector ) {
     LookupKey key( receiver->klass(), selector );
     if ( LookupCache::lookup( &key ).is_empty() ) {
-        _console->print_cr( "Lookup error" );
+        spdlog::info( "Lookup error" );
         key.print_on( _console );
         _console->cr();
         return false;
@@ -440,27 +440,27 @@ void evaluator::top_command( TokenStream *stream ) {
         }
         stream->advance();
         if ( not stream->eos() ) {
-            _console->print_cr( "warning: garbage at end" );
+            spdlog::info( "warning: garbage at end" );
         }
     }
     DeltaProcess::active()->trace_top( 1, number_of_frames_to_show );
 }
 
 
-void evaluator::change_debug_flag( TokenStream *stream, bool_t value ) {
+void evaluator::change_debug_flag( TokenStream *stream, bool value ) {
     stream->advance();
     if ( not stream->eos() ) {
         stream->current();
-        bool_t r = value;
+        bool r = value;
         if ( not debugFlags::boolAtPut( stream->current(), &r ) ) {
-            _console->print_cr( "boolean flag %s not found", stream->current() );
+            spdlog::info( "boolean flag %s not found", stream->current() );
         }
         stream->advance();
         if ( not stream->eos() ) {
-            _console->print_cr( "warning: garbage at end" );
+            spdlog::info( "warning: garbage at end" );
         }
     } else {
-        _console->print_cr( "boolean flag expected" );
+        spdlog::info( "boolean flag expected" );
     }
 }
 
@@ -482,7 +482,7 @@ void evaluator::show_command( TokenStream *stream ) {
             }
             stream->advance();
             if ( not stream->eos() ) {
-                _console->print_cr( "warning: garbage at end" );
+                spdlog::info( "warning: garbage at end" );
             }
         }
     }
@@ -490,7 +490,7 @@ void evaluator::show_command( TokenStream *stream ) {
 }
 
 
-bool_t evaluator::process_line( const char *line ) {
+bool evaluator::process_line( const char *line ) {
 
     TokenStream stream( line );
     if ( stream.eos() )
@@ -560,8 +560,8 @@ bool_t evaluator::process_line( const char *line ) {
         }
         if ( stream.is_abort() ) {
             if ( DeltaProcess::active()->is_scheduler() ) {
-                _console->print_cr( "You cannot abort in the scheduler" );
-                _console->print_cr( "Try another command" );
+                spdlog::info( "You cannot abort in the scheduler" );
+                spdlog::info( "Try another command" );
             } else {
                 DispatchTable::reset();
                 is_aborting = true;
@@ -578,7 +578,7 @@ bool_t evaluator::process_line( const char *line ) {
         if ( get_oop( &stream, &receiver ) ) {
             stream.advance();
             if ( not stream.eos() ) {
-                _console->print_cr( "warning: garbage at end" );
+                spdlog::info( "warning: garbage at end" );
             }
             receiver->print();
             _console->cr();
@@ -630,7 +630,7 @@ void evaluator::read_eval_loop() {
 
 
 void evaluator::print_mini_help() {
-    _console->print_cr( "Use '?' for help ('c' to continue)" );
+    spdlog::info( "Use '?' for help ('c' to continue)" );
 }
 
 
@@ -651,7 +651,7 @@ public:
 
 
 void evaluator::print_status() {
-    _console->print_cr( "Processes:" );
+    spdlog::info( "Processes:" );
     ProcessStatusClosure iter;
     Processes::process_iterate( &iter );
 }
@@ -659,30 +659,30 @@ void evaluator::print_status() {
 
 void evaluator::print_help() {
     _console->cr();
-    _console->print_cr( "<command>  ::= 'q'     | 'quit'    -> quits the system" );
-    _console->print_cr( "             | 's'     | 'step'    -> single step byte code" );
-    _console->print_cr( "             | 'n'     | 'next'    -> single step statement" );
-    _console->print_cr( "             | 'e'     | 'end'     -> single step to end of method" );
-    _console->print_cr( "             | 'c'     | 'cont'    -> continue execution" );
-    _console->print_cr( "                       | 'abort'   -> aborts the current process" );
-    _console->print_cr( "                       | 'genesis' -> aborts all processes and restarts the scheduler" );
-    _console->print_cr( "                       | 'break'   -> provokes fatal() to get into C++ debugger" );
-    _console->print_cr( "                       | 'events'  -> prints the event log" );
-    _console->print_cr( "                       | 'stack'   -> prints the stack of current process" );
-    _console->print_cr( "                       | 'status'  -> prints the status all processes" );
-    _console->print_cr( "                       | 'top' <n> -> prints the top of current process" );
-    _console->print_cr( "                       | 'show' <s> <n> -> prints some activation" );
-    _console->print_cr( "             | '?'     | 'help'    -> prints this help\n" );
-    _console->print_cr( "             | '^' <expr>          -> evaluates the expression" );
-    _console->print_cr( "             | '-' name            -> turns off debug flag" );
-    _console->print_cr( "             | '+' name            -> turns on debug flag" );
-    _console->print_cr( "             | <object>            -> prints this object\n" );
+    spdlog::info( "<command>  ::= 'q'     | 'quit'    -> quits the system" );
+    spdlog::info( "             | 's'     | 'step'    -> single step byte code" );
+    spdlog::info( "             | 'n'     | 'next'    -> single step statement" );
+    spdlog::info( "             | 'e'     | 'end'     -> single step to end of method" );
+    spdlog::info( "             | 'c'     | 'cont'    -> continue execution" );
+    spdlog::info( "                       | 'abort'   -> aborts the current process" );
+    spdlog::info( "                       | 'genesis' -> aborts all processes and restarts the scheduler" );
+    spdlog::info( "                       | 'break'   -> provokes fatal() to get into C++ debugger" );
+    spdlog::info( "                       | 'events'  -> prints the event log" );
+    spdlog::info( "                       | 'stack'   -> prints the stack of current process" );
+    spdlog::info( "                       | 'status'  -> prints the status all processes" );
+    spdlog::info( "                       | 'top' <n> -> prints the top of current process" );
+    spdlog::info( "                       | 'show' <s> <n> -> prints some activation" );
+    spdlog::info( "             | '?'     | 'help'    -> prints this help" );
+    spdlog::info( "             | '^' <expr>          -> evaluates the expression" );
+    spdlog::info( "             | '-' name            -> turns off debug flag" );
+    spdlog::info( "             | '+' name            -> turns on debug flag" );
+    spdlog::info( "             | <object>            -> prints this object" );
     _console->cr();
-    _console->print_cr( "<expr>     ::= <unary>  | <binary>  | <keyword>\n" );
-    _console->print_cr( "<object>   ::= <number>            -> smi_t(number)" );
-    _console->print_cr( "             | !<number>           -> objectTable[number]" );
-    _console->print_cr( "             | 0x<hex_number>      -> object_start(number)" );
-    _console->print_cr( "             | name                -> Smalltalk at: #name" );
-    _console->print_cr( "             | #name               -> new_symbol(name)" );
+    spdlog::info( "<expr>     ::= <unary>  | <binary>  | <keyword>" );
+    spdlog::info( "<object>   ::= <number>            -> smi_t(number)" );
+    spdlog::info( "             | !<number>           -> objectTable[number]" );
+    spdlog::info( "             | 0x<hex_number>      -> object_start(number)" );
+    spdlog::info( "             | name                -> Smalltalk at: #name" );
+    spdlog::info( "             | #name               -> new_symbol(name)" );
     _console->cr();
 }

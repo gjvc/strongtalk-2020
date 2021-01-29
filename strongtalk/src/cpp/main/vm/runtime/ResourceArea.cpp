@@ -5,7 +5,6 @@
 //
 
 #include "vm/runtime/ResourceArea.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/system/os.hpp"
@@ -22,7 +21,7 @@
 
 // Commented out to prevent conflict with dynamically loaded routines.
 //
-//void *operator new( std::int32_t size ) {
+//void *operator new( std::size_t size ) {
 //    st_fatal( "should not call global (default) operator new" );
 //    return (void *) AllocateHeap( size, "global operator new" );
 //}
@@ -53,11 +52,11 @@ ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChu
     _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );
     _top    = _bottom + size;
 
-//    _console->print_cr( "%ResourceAreaChunk-allocated [0x%08x] ", resources.capacity() );
-//    _console->print_cr( "%ResourceAreaChunk-used [0x%08x] ", resources.used() );
-//    _console->print_cr( "%ResourceAreaChunk-size [0x%08x] ", size );
+//    spdlog::info( "%ResourceAreaChunk-allocated [0x{08:x}] ", resources.capacity() );
+//    spdlog::info( "%ResourceAreaChunk-used [0x{08:x}] ", resources.used() );
+//    spdlog::info( "%ResourceAreaChunk-size [0x{08:x}] ", size );
 
-    _console->print_cr( "%%ResourceAreaChunk: create size [%d], [%d] used out of [%d] ", size, resources.used(), resources.capacity() );
+    spdlog::info( "%ResourceAreaChunk: create size [{}], [{}] used out of [{}] ", size, resources.used(), resources.capacity() );
 
     initialize( previous );
 }
@@ -79,20 +78,21 @@ ResourceAreaChunk::~ResourceAreaChunk() {
 
 
 void ResourceAreaChunk::print() {
-    if ( _prev )
+    if ( _prev ) {
         _prev->print();
+    }
     print_short();
-    lprintf( ": _bottom [%#lx], _top [%#lx], _prev [%#lx]\n", _bottom, _top, _prev );
+    spdlog::info( ": _bottom [0x{0:x}], _top [0x{0:x}], _prev [0x{0:x}]", static_cast<void *>( _bottom ), static_cast<void *>( _top  ), static_cast<void *>( _prev ) );
 }
 
 
 void ResourceAreaChunk::print_short() {
-    _console->print( "ResourceAreaChunk [%#lx]", this );
+    _console->print( "ResourceAreaChunk [0x{0:x}]", this );
 }
 
 
 void ResourceAreaChunk::print_alloc( const char *addr, std::int32_t size ) {
-    _console->print_cr( "allocating %ld bytes at %#lx", size, addr );
+    spdlog::info( "allocating %ld bytes at 0x{0:x}", size, addr );
 }
 
 
@@ -171,11 +171,11 @@ std::int32_t Resources::used() {
 }
 
 
-static bool_t     in_rsrc;
+static bool       in_rsrc;
 static const char *p_rsrc;
 
 
-bool_t Resources::contains( const char *p ) {
+bool Resources::contains( const char *p ) {
     in_rsrc = false;
     p_rsrc  = p;
     // FIX LATER  processes->processesDo(rsrcf2);
@@ -228,7 +228,7 @@ ResourceAreaChunk *Resources::new_chunk( std::int32_t min_capacity, ResourceArea
         res = new ResourceAreaChunk( min_capacity, previous );
         _allocated += res->capacity();
         if ( PrintResourceChunkAllocation ) {
-            _console->print_cr( "*allocating new resource area chunk of >=0x%08x bytes, new total = 0x%08x bytes", min_capacity, _allocated );
+            spdlog::info( "*allocating new resource area chunk of >=0x%08x bytes, new total = 0x%08x bytes", min_capacity, _allocated );
         }
     }
 
@@ -281,16 +281,16 @@ NoGCVerifier::NoGCVerifier() {
 
 NoGCVerifier::~NoGCVerifier() {
     if ( old_scavenge_count not_eq Universe::scavengeCount ) {
-        warning( "scavenge in a NoGCVerifier secured function" );
+        spdlog::warn( "scavenge in a NoGCVerifier secured function" );
     }
 }
 
 
 char *AllocatePageAligned( std::int32_t size, const char *name ) {
-    std::int32_t  page_size = Universe::page_size();
-    char *block    = (char *) align( os::malloc( size + page_size ), page_size );
+    std::int32_t page_size = Universe::page_size();
+    char         *block    = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
-        lprintf( "Malloc (page-aligned) %s: 0x%08x = %#lx\n", name, size, block );
+        spdlog::info( "Malloc (page-aligned) %s: 0x%08x = 0x{0:x}", name, size, block );
 
     return block;
 }
@@ -298,7 +298,7 @@ char *AllocatePageAligned( std::int32_t size, const char *name ) {
 
 char *AllocateHeap( std::int32_t size, const char *name ) {
     if ( PrintHeapAllocation )
-        lprintf( "Heap %7d %s\n", size, name );
+        spdlog::info( "Heap %7d %s", size, name );
     return (char *) os::malloc( size );
 }
 

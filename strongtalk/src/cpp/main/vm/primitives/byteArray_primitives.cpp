@@ -226,7 +226,7 @@ PRIM_DECL_2( byteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
 
 Oop simplified( ByteArrayOop result ) {
     // Tries to simplify result, a large integer, into a small integer if possible.
-    bool_t ok;
+    bool ok;
     Oop    smi_result = result->number().as_smi( ok );
     return ok ? smi_result : result;
 }
@@ -479,7 +479,7 @@ PRIM_DECL_1( byteArrayPrimitives::largeIntegerToFloat, Oop receiver ) {
     PROLOGUE_1( "largeIntegerToFloat", receiver );
     ASSERT_RECEIVER;
 
-    bool_t ok;
+    bool ok;
     double result = ByteArrayOop( receiver )->number().as_double( ok );
 
     if ( not ok )
@@ -775,7 +775,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
     if ( argument2->is_smi() )
         value = SMIOop( argument2 )->value();
     else {
-        bool_t ok;
+        bool ok;
         value = ByteArrayOop( argument2 )->number().as_unsigned_int( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
@@ -815,7 +815,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
     if ( argument2->is_smi() )
         value = SMIOop( argument2 )->value();
     else {
-        bool_t ok;
+        bool ok;
         value = ByteArrayOop( argument2 )->number().as_int( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
@@ -925,7 +925,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
     if ( argument->is_smi() )
         value = SMIOop( argument )->value();
     else {
-        bool_t ok;
+        bool ok;
         value = ByteArrayOop( argument )->number().as_unsigned_int( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
@@ -966,7 +966,7 @@ void break_on_error( void *address, Oop result ) {
     std::int32_t err = os::error_code();
     if ( value == 0 and err ) {
         ResourceMark resourceMark;
-        _console->print_cr( "Last error: 0x%x %d", address, err );
+        spdlog::info( "Last error: 0x{0:x} {}", address, err );
         DeltaProcess::active()->trace_top( 1, 5 );
         if ( false )
             os::breakpoint();

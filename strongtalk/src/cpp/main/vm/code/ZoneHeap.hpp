@@ -80,7 +80,7 @@ public:
     }
 
 
-    bool_t isEmpty() const {
+    bool isEmpty() const {
         return next() == anchor();
     }
 
@@ -162,11 +162,11 @@ public:
 
     ChunkKlass *findStart( ChunkKlass *mapStart, ChunkKlass *mapEnd );
 
-    bool_t verify();
+    bool verify();
 
     void print();
 
-    bool_t isValid();
+    bool isValid();
 
 
     void invalidate() {
@@ -179,12 +179,12 @@ public:
     }
 
 
-    bool_t isUsed() {
+    bool isUsed() {
         return state() >= chunkState::used;
     }
 
 
-    bool_t isUnused() {
+    bool isUnused() {
         return not isUsed();
     }
 
@@ -209,7 +209,7 @@ public:
     }
 
 
-    bool_t contains( std::uint8_t *p ) {
+    bool contains( std::uint8_t *p ) {
         return asByte() <= p and p < asByte() + size();
     }
 
@@ -261,7 +261,7 @@ protected:
 
 public:
     ZoneHeap *_newHeap;                 // only set when growing a heap (i.e. replacing it)
-    bool_t _combineOnDeallocation;    // do eager block combination on deallocs?
+    bool _combineOnDeallocation;    // do eager block combination on deallocs?
 
 public:
     ZoneHeap( std::int32_t s, std::int32_t bs );
@@ -317,7 +317,7 @@ public:
 
 
     // Queries
-    bool_t contains( const void *p ) const;
+    bool contains( const void *p ) const;
 
     const void *firstUsed() const; // Address of first used object
     const void *nextUsed( const void *prev ) const;
@@ -360,7 +360,7 @@ protected:
     // Free list management
     void *allocFromLists( std::int32_t wantedBytes );
 
-    bool_t addToFreeList( ChunkKlass *m );
+    bool addToFreeList( ChunkKlass *m );
 
     void removeFromFreeList( ChunkKlass *m );
 

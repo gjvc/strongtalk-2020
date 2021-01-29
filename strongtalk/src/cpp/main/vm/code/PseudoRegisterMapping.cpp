@@ -109,7 +109,7 @@ void PseudoRegisterMapping::ensureOneFreeRegister() {
         // no free registers available => find a register to spill
         std::int32_t i = spillablePRegIndex();
         if ( i < 0 ) st_fatal( "too many temporaries or locked pregs: out of spillable registers" );
-        // _console->print("WARNING: Register spilling - check if this works\n");
+        // spdlog::info("WARNING: Register spilling - check if this works");
         spillRegister( regLoc( i ) );
         st_assert( _locations->freeRegisters(), "at least one register should be available now" );
         verify();
@@ -209,7 +209,7 @@ PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping *m ) {
 }
 
 
-bool_t PseudoRegisterMapping::isInjective() {
+bool PseudoRegisterMapping::isInjective() {
     std::int32_t i = size();
     while ( i-- > 0 ) {
         if ( used( i ) ) {
@@ -223,7 +223,7 @@ bool_t PseudoRegisterMapping::isInjective() {
 }
 
 
-bool_t PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
+bool PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
     // checks conformity on the intersection of this and with
     if ( NonLocalReturninProgress() not_eq with->NonLocalReturninProgress() )
         return false;
@@ -692,7 +692,7 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
     const char *end_of_code = _macroAssembler->pc();
 
     if ( PrintMakeConformantCode and begin_of_code < end_of_code ) {
-        _console->print_cr( "MakeConformant:" );
+        spdlog::info( "MakeConformant:" );
         Disassembler::decode( begin_of_code, end_of_code );
         _console->cr();
     }
@@ -776,7 +776,7 @@ void ConformanceHelper::pop( Variable dst ) {
 
 void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
     // set up ConformanceHelper
-    bool_t            makeConformant = false;
+    bool            makeConformant = false;
     Variable          unused         = Variable::unused();
     ConformanceHelper chelper;
     std::int32_t               j              = with->size();
@@ -853,7 +853,7 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
         const char *end_of_code = _macroAssembler->pc();
         if ( PrintMakeConformantCode ) {
             chelper.print();
-            _console->print_cr( "(using R%d & R%d as temporary registers)", temp1.register_number(), temp2.register_number() );
+            spdlog::info( "(using R{} & R{} as temporary registers)", temp1.register_number(), temp2.register_number() );
             Disassembler::decode( begin_of_code, end_of_code );
             _console->cr();
         }
@@ -870,7 +870,7 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     //guarantee(NonLocalReturninProgress() == with->NonLocalReturninProgress(), "cannot be made conformant");
 
     if ( PrintPRegMapping and WizardMode ) {
-        _console->print_cr( "make conformant:" );
+        spdlog::info( "make conformant:" );
         print();
         _console->print( "with " );
         with->print();
@@ -973,26 +973,26 @@ void PseudoRegisterMapping::print() {
     if ( WizardMode )
         _locations->print();
     if ( nofPRegs() > 0 ) {
-        _console->print_cr( "PseudoRegister mapping:" );
+        spdlog::info( "PseudoRegister mapping:" );
         for ( std::int32_t i = 0; i < size(); i++ ) {
             if ( used( i ) )
                 print( i );
         }
     } else {
-        _console->print_cr( "PseudoRegister mapping is empty" );
+        spdlog::info( "PseudoRegister mapping is empty" );
     }
     _console->cr();
     if ( _temporaryLocations->length() > 0 ) {
-        _console->print_cr( "Temporaries in use:" );
+        spdlog::info( "Temporaries in use:" );
         for ( std::int32_t i = 0; i < _temporaryLocations->length(); i++ ) {
             std::int32_t loc = _temporaryLocations->at( i );
             st_assert( _locations->isRegister( loc ), "temporaries must be in registers" );
-            _console->print_cr( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
+            spdlog::info( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
         }
         _console->cr();
     }
     if ( NonLocalReturninProgress() ) {
-        _console->print_cr( "NonLocalReturn in progress" );
+        spdlog::info( "NonLocalReturn in progress" );
         _console->cr();
     }
 }
@@ -1078,7 +1078,7 @@ PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *
 }
 
 
-bool_t PseudoRegisterLocker::holds( PseudoRegister *preg ) const {
+bool PseudoRegisterLocker::holds( PseudoRegister *preg ) const {
     st_assert( preg not_eq nullptr, "undefined preg" );
     std::int32_t i = sizeof( _pregs ) / sizeof( PseudoRegister * );
     while ( i-- > 0 ) {
@@ -1089,7 +1089,7 @@ bool_t PseudoRegisterLocker::holds( PseudoRegister *preg ) const {
 }
 
 
-bool_t PseudoRegisterLocker::locks( PseudoRegister *preg ) {
+bool PseudoRegisterLocker::locks( PseudoRegister *preg ) {
     st_assert( preg not_eq nullptr, "undefined preg" );
     PseudoRegisterLocker *p = _top;
     while ( p not_eq nullptr and not p->holds( preg ) )
@@ -1109,7 +1109,7 @@ Temporary::Temporary( PseudoRegisterMapping *mapping, Register hint ) {
 
 Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *preg ) {
     // old code - keep around for time comparison purposes
-    const bool_t old_code = false;
+    const bool old_code = false;
     if ( old_code ) {
         _mapping = mapping;
         _regLoc  = mapping->allocateTemporary( noreg );

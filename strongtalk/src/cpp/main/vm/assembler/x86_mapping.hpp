@@ -64,21 +64,21 @@ public:
 
 
     // predicates
-    static bool_t isTemporaryRegister( const Location loc ) {
+    static bool isTemporaryRegister( const Location loc ) {
         return false;
     }    // fix this
-    static bool_t isLocalRegister( const Location loc ) {
+    static bool isLocalRegister( const Location loc ) {
         return _localRegisterIndex[ loc.number() ] not_eq -1;
     }
 
 
-    static bool_t isTrashedRegister( const Location loc ) {
+    static bool isTrashedRegister( const Location loc ) {
         return true;
     }    // fix this
 
-    static bool_t isNormalTemporary( Location loc );
+    static bool isNormalTemporary( Location loc );
 
-    static bool_t isFloatTemporary( Location loc );
+    static bool isFloatTemporary( Location loc );
 
     //
     // helper functions for code generation
@@ -88,9 +88,9 @@ public:
     //
     static void load( const Location &src, const Register &dst );
 
-    static void store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck );
+    static void store( Register src, const Location &dst, const Register &temp1, const Register &temp2, bool needsStoreCheck );
 
-    static void storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool_t needsStoreCheck );
+    static void storeO( Oop obj, const Location &dst, const Register &temp1, const Register &temp2, bool needsStoreCheck );
 
     // helper functions for float code
     static void fload( const Location &src, const Register &base );

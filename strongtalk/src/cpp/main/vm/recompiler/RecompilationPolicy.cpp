@@ -111,7 +111,7 @@ RecompilerFrame *RecompilationPolicy::findTopInlinableFrame() {
         checkCurrent( current, prev, prevMethod );
 
     if ( PrintRecompilation and _msg )
-        lprintf( "%s\n", _msg );
+        spdlog::info( "%s", _msg );
 
     return current;
 }
@@ -123,7 +123,7 @@ void RecompilationPolicy::checkCurrent( RecompilerFrame *&current, RecompilerFra
         // can't recompile blocks in isolation, and this block is too big to inline
         // thus, optimize method called by block
         if ( PrintRecompilation and _msg )
-            lprintf( "%s\n", _msg );
+            spdlog::info( "%s", _msg );
         fixBlockParent( current );
         if ( prev and not prev->is_blockMethod() ) {
             current = prev;
@@ -321,7 +321,7 @@ void RecompilationPolicy::printStack() {    // for debugging
 }
 
 
-bool_t RecompilationPolicy::needRecompileCounter( Compiler *c ) {
+bool RecompilationPolicy::needRecompileCounter( Compiler *c ) {
     if ( not UseRecompilation )
         return false;
     if ( c->version() == MaxVersions )
@@ -334,14 +334,14 @@ bool_t RecompilationPolicy::needRecompileCounter( Compiler *c ) {
 }
 
 
-bool_t RecompilationPolicy::shouldRecompileAfterUncommonTrap( NativeMethod *nm ) {
+bool RecompilationPolicy::shouldRecompileAfterUncommonTrap( NativeMethod *nm ) {
     // called after nm encountered an uncommon trap; should it be recompiled into
     // less optimized form (without uncommon branches)?
     return nm->uncommon_trap_counter() >= UncommonRecompileLimit;
 }
 
 
-bool_t RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod *nm ) {
+bool RecompilationPolicy::shouldRecompileUncommonNativeMethod( NativeMethod *nm ) {
     st_assert( nm->isUncommonRecompiled(), "expected an uncommon NativeMethod" );
     // nm looks like a recompilation candidate; can it really be optimized?
     // isUncommonRecompiled nativeMethods were created after the original NativeMethod encountered

@@ -174,7 +174,7 @@ void MethodPrinterClosure::push_temporary( std::int32_t no ) {
 
 void MethodPrinterClosure::push_temporary( std::int32_t no, std::int32_t context ) {
     indent();
-    _outputStream->print_cr( "push temp 0x%08x [0x%08x]", no, context );
+    _outputStream->print_cr( "push temp 0x%08x [0x{08:x}]", no, context );
 }
 
 
@@ -224,7 +224,7 @@ void MethodPrinterClosure::store_temporary( std::int32_t no ) {
 
 void MethodPrinterClosure::store_temporary( std::int32_t no, std::int32_t context ) {
     indent();
-    _outputStream->print_cr( "store temp 0x%08x [0x%08x]", no, context );
+    _outputStream->print_cr( "store temp 0x%08x [0x{08:x}]", no, context );
 }
 
 
@@ -354,7 +354,7 @@ void MethodPrinterClosure::allocate_closure( AllocationType type, std::int32_t n
 }
 
 
-void MethodPrinterClosure::allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+void MethodPrinterClosure::allocate_context( std::int32_t nofTemps, bool forMethod ) {
     indent();
     _outputStream->print_cr( "allocate %s context with 0x%08x temporaries", forMethod ? "method" : "block", nofTemps );
 }

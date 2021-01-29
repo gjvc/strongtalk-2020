@@ -13,13 +13,13 @@ class ObjectArrayKlass : public MemOopKlass {
 
 public:
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
 
     // creation operation
-    Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t size, bool permit_scavenge = true, bool tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -78,12 +78,12 @@ public:
 
 
     // testers
-    bool_t oop_is_objArray() const {
+    bool oop_is_objArray() const {
         return true;
     }
 
 
-    bool_t oop_is_indexable() const {
+    bool oop_is_indexable() const {
         return true;
     }
 

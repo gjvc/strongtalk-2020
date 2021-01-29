@@ -14,18 +14,18 @@
 void PrimitiveDescriptor::print() {
 
     //
-    _console->print( "%-72s  %d  %s%s%s%s%s%s%s%s%s",
+    spdlog::info( "%-72s  %d  {}{}{}{}{}{}{}{}{}",
                      name(),
                      number_of_parameters(),
-                     has_receiver() ? "R" : "_",
-                     can_fail() ? "F" : "_",
-                     can_scavenge() ? "S" : "_",
-                     can_walk_stack() ? "W" : "_",
-                     can_perform_NonLocalReturn() ? "N" : "_",
-                     can_be_constant_folded() ? "C" : "_",
-                     can_invoke_delta() ? "D" : "_",
-                     is_internal() ? "I" : "_",
-                     needs_delta_fp_code() ? "P" : "_" );
+                     has_receiver() ? 'R' : '_',
+                     can_fail() ? 'F' : '_',
+                     can_scavenge() ? 'S' : '_',
+                     can_walk_stack() ? 'W' : '_',
+                     can_perform_NonLocalReturn() ? 'N' : '_',
+                     can_be_constant_folded() ? 'C' : '_',
+                     can_invoke_delta() ? 'D' : '_',
+                     is_internal() ? 'I' : '_',
+                     needs_delta_fp_code() ? 'P' : '_' );
 
     //
     switch ( group() ) {
@@ -82,7 +82,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 #endif
 
     //
-    const bool_t reverseArgs = true;    // change this when changing primitive calling convention
+    const bool reverseArgs = true;    // change this when changing primitive calling convention
     Oop          res;                   //
 
     //
@@ -174,7 +174,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 #endif
 
     if ( ebx_now not_eq ebx_on_stack ) {
-        _console->print_cr( "ebx changed (%X -> %X) in :", ebx_on_stack, ebx_now );
+        spdlog::info( "ebx changed from ({0:x} to {0:x}) in:", ebx_on_stack, ebx_now );
         print();
     }
 

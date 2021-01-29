@@ -109,7 +109,7 @@ public:
     // Accessors
 
     // isDirty() --> has had misses
-    bool_t isDirty() const {
+    bool isDirty() const {
         return isBitSet( compiler_info(), dirty_send_bit_no );
     }
 
@@ -120,7 +120,7 @@ public:
 
 
     // isOptimized() --> nativeMethods called from here should be optimized
-    bool_t isOptimized() const {
+    bool isOptimized() const {
         return isBitSet( compiler_info(), optimized_bit_no );
     }
 
@@ -136,19 +136,19 @@ public:
 
 
     // isUninlinable() --> compiler says don't try to inline this send
-    bool_t isUninlinable() const {
+    bool isUninlinable() const {
         return isBitSet( compiler_info(), uninlinable_bit_no );
     }
 
 
     // isSuperSend() --> send is a super send
-    bool_t isSuperSend() const {
+    bool isSuperSend() const {
         return isBitSet( compiler_info(), super_send_bit_no );
     }
 
 
     // isMegamorphic() --> send is megamorphic
-    bool_t isMegamorphic() const {
+    bool isMegamorphic() const {
         return isBitSet( compiler_info(), megamorphic_bit_no );
     }
 
@@ -159,7 +159,7 @@ public:
 
 
     // isReceiverStatic() --> receiver klass is known statically (connect to verifiedEntryPoint)
-    bool_t isReceiverStatic() const {
+    bool isReceiverStatic() const {
         return isBitSet( compiler_info(), receiver_static_bit_no );
     }
 
@@ -169,7 +169,7 @@ public:
     }
 
 
-    bool_t wasNeverExecuted() const;
+    bool wasNeverExecuted() const;
 
     InterpretedInlineCache *inlineCache() const;    // corresponding source-level inline cache (nullptr if none, e.g. perform)
     PolymorphicInlineCache *pic() const;            // nullptr if 0 or 1 targets
@@ -197,13 +197,13 @@ public:
 public:
     SymbolOop selector() const;
 
-    bool_t is_empty() const;
+    bool is_empty() const;
 
-    bool_t is_monomorphic() const;
+    bool is_monomorphic() const;
 
-    bool_t is_polymorphic() const;
+    bool is_polymorphic() const;
 
-    bool_t is_megamorphic() const;
+    bool is_megamorphic() const;
 
     NativeMethod *target() const;    // directly called NativeMethod or nullptr if none/PolymorphicInlineCache
     KlassOop targetKlass() const;    // klass of compiled or interpreted target;
@@ -212,7 +212,7 @@ public:
     KlassOop get_klass( std::int32_t i ) const; // receiver klass of ith target (i=0..ntargets()-1)
 
     // returns the lookup key for PolymorphicInlineCache index
-    LookupKey *key( std::int32_t which, bool_t is_normal_send ) const;
+    LookupKey *key( std::int32_t which, bool is_normal_send ) const;
 
     void reset_jump_addr();
 
@@ -221,7 +221,7 @@ public:
     void clear();        // clear inline cache
     void cleanup();        // cleanup inline cache
 
-    bool_t verify();
+    bool verify();
 
     void print();
 };

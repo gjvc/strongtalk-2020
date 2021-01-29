@@ -10,8 +10,6 @@
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/EventLog.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 
 
@@ -108,13 +106,13 @@ ChunkKlass *ChunkKlass::findStart( ChunkKlass *mapStart, ChunkKlass *mapEnd ) {
 }
 
 
-bool_t ChunkKlass::isValid() {
+bool ChunkKlass::isValid() {
     std::uint8_t *p = asByte();
-    bool_t ok;
+    bool         ok;
     if ( p[ 0 ] == static_cast<std::uint8_t>( chunkState::invalid ) or p[ 0 ] < static_cast<std::uint8_t>( chunkState::MaxDistance ) ) {
         ok = false;
     } else {
-        std::uint8_t *e = next()->asByte() - 1;
+        std::uint8_t *e   = next()->asByte() - 1;
         std::int32_t ovfl = isUsed() ? static_cast<std::int32_t>( chunkState::usedOvfl ) : static_cast<std::int32_t>( chunkState::unusedOvfl );
         ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
     }
@@ -123,13 +121,13 @@ bool_t ChunkKlass::isValid() {
 
 
 void ChunkKlass::print() {
-    lprintf( "chunk [%#lx..%#lx[\n", this, next() );
+    spdlog::info( "chunk [0x{0:x}..0x{0:x}[", static_cast<const void *>(this), static_cast<const void *>(next()) );
 }
 
 
-bool_t ChunkKlass::verify() {
+bool ChunkKlass::verify() {
     if ( not isValid() ) {
-        error( "inconsistent chunk map %#lx", this );
+        error( "inconsistent chunk map 0x{0:x}", this );
         return false;
     }
     return true;
@@ -158,7 +156,7 @@ HeapChunk *FreeList::get() {
 
 
 std::int32_t FreeList::length() const {
-    std::int32_t i = 0;
+    std::int32_t    i  = 0;
     HeapChunk       *f = anchor();
     for ( HeapChunk *p = f->next(); p not_eq f; p = p->next() )
         i++;
@@ -223,7 +221,7 @@ void ZoneHeap::clear() {
 #define between( p, low, high ) ((void *)(p) >= (void *)(low) and (void *)(p) < (void *)(high))
 
 
-bool_t ZoneHeap::contains( const void *p ) const {
+bool ZoneHeap::contains( const void *p ) const {
     return between( p, base, base + capacity() ) or between( p, _freeList, _freeList + nfree );
 }
 
@@ -244,9 +242,9 @@ void ZoneHeap::removeFromFreeList( ChunkKlass *m ) {
 }
 
 
-bool_t ZoneHeap::addToFreeList( ChunkKlass *m ) {
+bool ZoneHeap::addToFreeList( ChunkKlass *m ) {
     m->verify();
-    HeapChunk *p = (HeapChunk *) blockAddr( m );
+    HeapChunk    *p = (HeapChunk *) blockAddr( m );
     std::int32_t sz = m->size();
     if ( sz <= nfree ) {
         _freeList[ sz - 1 ].append( p );
@@ -264,7 +262,7 @@ void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
     std::int32_t wantedBlocks = wantedBytes >> log2BS;
     st_assert( wantedBlocks > 0, "negative alloc size" );
     std::int32_t blocks = wantedBlocks - 1;
-    void *p = nullptr;
+    void         *p     = nullptr;
     while ( not p and ++blocks <= nfree ) {
         p = _freeList[ blocks - 1 ].get();
     }
@@ -290,7 +288,7 @@ void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
             if ( not bootstrappingInProgress ) LOG_EVENT( "zoneHeap: splitting allocated block" );
 //#endif
             std::int32_t freeChunkSize = blocks - wantedBlocks;
-            ChunkKlass *freeChunk = m->next();
+            ChunkKlass   *freeChunk    = m->next();
             freeChunk->markUnused( freeChunkSize );
             addToFreeList( freeChunk );
         }
@@ -317,14 +315,14 @@ void *ZoneHeap::allocate( std::int32_t wantedBytes ) {
 
 
 void ZoneHeap::deallocate( void *p, std::int32_t bytes ) {
-    ChunkKlass *m = mapAddr( p );
+    ChunkKlass   *m           = mapAddr( p );
     std::int32_t myChunkSize  = m->size();
     std::int32_t blockedBytes = myChunkSize << log2BS;
     _bytesUsed -= blockedBytes;
     _ifrag -= blockedBytes - bytes;
     m->markUnused( myChunkSize );
-    bool_t big = addToFreeList( m );
-    HeapChunk *c = (HeapChunk *) p;
+    bool      big = addToFreeList( m );
+    HeapChunk *c  = (HeapChunk *) p;
     if ( _combineOnDeallocation or big )
         combine( c );    // always keep bigList combined
 
@@ -424,18 +422,18 @@ std::int32_t ZoneHeap::combine( HeapChunk *&c ) {
 
 // Try to combine adjacent free chunks; return size of biggest chunk (in blks).
 std::int32_t ZoneHeap::combineAll() {
-    std::int32_t       biggest      = 0;
-    for ( std::int32_t i            = 0; i < nfree; i++ ) {
+    std::int32_t       biggest = 0;
+    for ( std::int32_t i       = 0; i < nfree; i++ ) {
         HeapChunk       *f = _freeList[ i ].anchor();
         for ( HeapChunk *c = f->next(); c not_eq f; ) {
-            HeapChunk *c1 = c;
-            std::int32_t sz = combine( c );
+            HeapChunk    *c1 = c;
+            std::int32_t sz  = combine( c );
             if ( c1 == c ) st_fatal( "infinite loop detected while combining blocks" );
             if ( sz > biggest )
                 biggest = sz;
         }
     }
-    _combineOnDeallocation = true;
+    _combineOnDeallocation     = true;
     if ( VerifyZoneOften ) {
         verify();
     }
@@ -519,66 +517,66 @@ void ZoneHeap::verify() const {
     ChunkKlass *m   = _heapKlass;
     ChunkKlass *end = heapEnd();
     if ( end->isUnused() or end->size() not_eq 1 )
-        error( "wrong end-sentinel %d in heap %#lx", *(std::uint8_t *) end, this );
+        error( "wrong end-sentinel %d in heap 0x{0:x}", *(std::uint8_t *) end, this );
     ChunkKlass *begin = asChunkKlass( _heapKlass->asByte() - 1 );
     if ( begin->isUnused() or begin->size() not_eq 1 )
-        error( "wrong begin-sentinel %d in heap %#lx", *(std::uint8_t *) begin, this );
+        error( "wrong begin-sentinel %d in heap 0x{0:x}", *(std::uint8_t *) begin, this );
 
     // verify map structure
     while ( m < end ) {
         if ( not m->verify() )
-            lprintf( " in heap %#lx", this );
+            spdlog::info( " in heap {0:x}", static_cast<const void *>(this) );
         m = m->next();
     }
 
     // verify free lists
-    std::int32_t i = 0;
+    std::int32_t    i  = 0;
     for ( ; i < nfree; i++ ) {
-        std::int32_t j        = 0;
-        std::int32_t lastSize = 0;
-        HeapChunk       *f = _freeList[ i ].anchor();
-        for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
+        std::int32_t    j        = 0;
+        std::int32_t    lastSize = 0;
+        HeapChunk       *f       = _freeList[ i ].anchor();
+        for ( HeapChunk *h       = f->next(); h not_eq f; h = h->next(), j++ ) {
             ChunkKlass *p = mapAddr( h );
             if ( not p->verify() )
-                lprintf( " in free list %ld (elem %ld) of heap %#lx", i, j, this );
+                spdlog::info( " in free list{0:d} (elem{0:d}) of heap 0x{0:x}", i, j, static_cast<const void *>(this) );
             if ( p->isUsed() ) {
-                error( "inconsistent freeList %ld elem %#lx in heap %#lx (map %#lx)", i, h, this, p );
+                error( "inconsistent freeList %ld elem 0x{0:x} in heap 0x{0:x} (map 0x{0:x})", i, h, this, p );
             }
             if ( p->size() not_eq lastSize and j not_eq 0 ) {
-                error( "freeList %ld elem %#lx in heap %#lx (map %#lx) has wrong size", i, h, this, p );
+                error( "freeList %ld elem 0x{0:x} in heap 0x{0:x} (map 0x{0:x}) has wrong size", i, h, this, p );
             }
             lastSize = p->size();
             if ( h->next() == h ) {
-                error( "loop in freeList %ld elem %#lx in heap %#lx", i, h, this );
+                error( "loop in freeList %ld elem 0x{0:x} in heap 0x{0:x}", i, h, this );
                 break;
             }
         }
     }
-    std::int32_t j = 0;
+    std::int32_t    j  = 0;
     HeapChunk       *f = _bigList->anchor();
     for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
         ChunkKlass *p = mapAddr( h );
         if ( not p->verify() )
-            lprintf( " in bigList (elem %ld) of heap %#lx", j, this );
+            spdlog::info( " in bigList (elem %ld) of heap 0x{0:x}", j, static_cast<const void *>(this) );
         if ( p->isUsed() ) {
-            error( "inconsistent freeList %ld elem %#lx in heap %#lx (map 0xlx)", i, h, this, p );
+            error( "inconsistent freeList %ld elem 0x{0:x} in heap 0x{0:x} (map 0xlx)", i, h, this, p );
         }
     }
     if ( not _lastCombine->verify() )
-        error( " chunkState::invalid lastCombine in heap %#lx", this );
+        error( " chunkState::invalid lastCombine in heap 0x{0:x}", this );
 
 }
 
 
 void ZoneHeap::print() const {
-    lprintf( "%#lx: [%#lx..%#lx)\n", this, base, base + capacity() );
+    spdlog::info( "0x{0:x}: [0x{0:x}..0x{0:x})", static_cast<const void *>(this), base, base + capacity() );
     printIndent();
-    lprintf( "  size %ld (blk %ld), used %ld (%1.1f%%), ifrag %1.1f%%;\n", capacity(), blockSize, usedBytes(), 100.0 * usedBytes() / capacity(), 100.0 * intFrag() );
+    spdlog::info( "  size %ld (blk %ld), used %ld (%1.1f%%), ifrag %1.1f%%;", capacity(), blockSize, usedBytes(), 100.0 * usedBytes() / capacity(), 100.0 * intFrag() );
     printIndent();
-    lprintf( "  grand total allocs = %ld bytes\n", _total );
+    spdlog::info( "  grand total allocs = %ld bytes", _total );
     printIndent();
-    lprintf( "  free lists: " );
+    spdlog::info( "  free lists: " );
     for ( std::int32_t i = 0; i < nfree; i++ )
-        lprintf( "%ld ", _freeList[ i ].length() );
-    lprintf( "; %ld\n", _bigList->length() );
+        spdlog::info( "%ld ", _freeList[ i ].length() );
+    spdlog::info( "; %ld", _bigList->length() );
 }

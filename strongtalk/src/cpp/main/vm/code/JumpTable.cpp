@@ -116,7 +116,7 @@ void JumpTable::freeID( std::int32_t index ) {
 
 
 void JumpTable::print() {
-    _console->print_cr( "JumpTable %#lx: capacity %ld (%ld used)", this, length, usedIDs );
+    spdlog::info( "JumpTable 0x{0:x}: capacity{0:d} (%ld used)", static_cast<const void *>(this), length, usedIDs );
     for ( std::int32_t i = 0; i < length; i++ ) {
         if ( not major_at( i )->is_unused() ) {
             _console->print( " %3d: ", i );
@@ -168,7 +168,7 @@ void JumpTable::verify() {
     ResourceMark resourceMark;
     std::int32_t          prev = -1;
 
-    bool_t *check = new_resource_array<bool_t>( length );
+    bool *check = new_resource_array<bool>( length );
     for ( std::int32_t i = 0; i < length; i++ )
         check[ i ] = false;
 
@@ -233,22 +233,22 @@ void JumpTableEntry::initialize_block_closure_stub() {
 }
 
 
-bool_t JumpTableEntry::is_NativeMethod_stub() const {
+bool JumpTableEntry::is_NativeMethod_stub() const {
     return state() == nativeMethod_entry;
 }
 
 
-bool_t JumpTableEntry::is_block_closure_stub() const {
+bool JumpTableEntry::is_block_closure_stub() const {
     return state() == block_closure_entry;
 }
 
 
-bool_t JumpTableEntry::is_unused() const {
+bool JumpTableEntry::is_unused() const {
     return state() == unused_entry;
 }
 
 
-bool_t JumpTableEntry::is_link() const {
+bool JumpTableEntry::is_link() const {
     return state() == link_entry;
 }
 
@@ -285,7 +285,7 @@ NativeMethod *JumpTableEntry::method() const {
 }
 
 
-bool_t JumpTableEntry::block_has_nativeMethod() const {
+bool JumpTableEntry::block_has_nativeMethod() const {
     st_assert( is_block_closure_stub(), "must be a block_closure_stub" );
     return destination() not_eq StubRoutines::compile_block_entry();
 }
@@ -337,7 +337,7 @@ NativeMethod *JumpTableEntry::parent_nativeMethod( std::int32_t &index ) const {
 
 void JumpTableEntry::print() {
     if ( is_unused() ) {
-        _console->print_cr( "Unused {next = %d}", (std::int32_t) destination() );
+        spdlog::info( "Unused {next = {}}", (std::int32_t) destination() );
         return;
     }
     if ( is_NativeMethod_stub() ) {
@@ -347,7 +347,7 @@ void JumpTableEntry::print() {
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
-            _console->print_cr( "{not pointing to NativeMethod}" );
+            spdlog::info( "{not pointing to NativeMethod}" );
         }
         return;
     }
@@ -359,13 +359,13 @@ void JumpTableEntry::print() {
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
-            _console->print_cr( "{not compiled yet}" );
+            spdlog::info( "{not compiled yet}" );
         }
         return;
     }
 
     if ( is_link() ) {
-        _console->print_cr( "Link for:" );
+        spdlog::info( "Link for:" );
         JumpTable::jump_entry_for_at( link(), 0 )->print();
         return;
     }
@@ -375,7 +375,7 @@ void JumpTableEntry::print() {
 
 
 void JumpTableEntry::report_verify_error( const char *message ) {
-    error( "JumpTableEntry %#x: %s", this, message );
+    error( "JumpTableEntry 0x{0:x}: %s", this, message );
 }
 
 

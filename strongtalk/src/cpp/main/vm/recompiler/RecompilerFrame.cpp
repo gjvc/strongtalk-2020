@@ -14,8 +14,6 @@
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 const RecompilerFrame *noCaller    = (RecompilerFrame *) 0x1;        // no caller (i.e., initial frame)
 const RecompilerFrame *noCallerYet = (RecompilerFrame *) 0x0;        // caller not yet computed
@@ -90,7 +88,7 @@ RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame
 }
 
 
-bool_t RecompilerFrame::is_blockMethod() const {
+bool RecompilerFrame::is_blockMethod() const {
     return top_method()->is_blockMethod();
 }
 
@@ -115,7 +113,7 @@ MethodOop CompiledRecompilerFrame::top_method() const {
 }
 
 
-bool_t RecompilerFrame::is_super() const {
+bool RecompilerFrame::is_super() const {
     if ( is_blockMethod() )
         return false;
     InlineCacheIterator *it = _frame.sender_ic_iterator();
@@ -123,7 +121,7 @@ bool_t RecompilerFrame::is_super() const {
 }
 
 
-bool_t RecompilerFrame::hasBlockArgs() const {
+bool RecompilerFrame::hasBlockArgs() const {
     DeltaVirtualFrame *vf = top_vframe();
     if ( not vf )
         return false;
@@ -175,7 +173,7 @@ LookupKey *InterpretedRecompilerFrame::key() const {
             _lookupKey->initialize( superKlass, sel );
         } else {
             if ( WizardMode )
-                warning( "sending method holder not found??" );
+                spdlog::warn( "sending method holder not found??" );
             ( (InterpretedRecompilerFrame *) this )->_lookupKey = nullptr;
         }
     } else {
@@ -335,7 +333,7 @@ class CumulCounter : public SpecializedMethodClosure {
 public:
     MethodOop method;            // the method currently being scanned for uplevel-accesses
     std::int32_t       cumulSends;
-    bool_t    top;
+    bool    top;
 
 
     CumulCounter( MethodOop m ) {
@@ -370,7 +368,7 @@ std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
 
 
 void RecompilerFrame::print( const char *kind ) {
-    lprintf( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d\n", _num, is_interpreted() ? "I" : "C", top_method()->selector()->as_string(), _invocations, _ncallers, _sends, _cumulSends, _loopDepth, cost() );
+    spdlog::info( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d", _num, is_interpreted() ? "I" : "C", top_method()->selector()->as_string(), _invocations, _ncallers, _sends, _cumulSends, _loopDepth, cost() );
 }
 
 

@@ -62,12 +62,12 @@ public:
     }
 
 
-    bool_t is_null() const {
+    bool is_null() const {
         return get_pointer() == nullptr;
     }
 
 
-    bool_t is_allOnes() const {
+    bool is_allOnes() const {
         return get_pointer() == (void *) -1;
     }
 
@@ -77,7 +77,7 @@ public:
     }
 
 
-    bool_t same_pointer_as( ProxyOop x ) const {
+    bool same_pointer_as( ProxyOop x ) const {
         return get_pointer() == x->get_pointer();
     }
 

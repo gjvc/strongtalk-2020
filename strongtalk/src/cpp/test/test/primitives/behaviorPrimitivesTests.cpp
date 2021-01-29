@@ -9,7 +9,7 @@
 #include "vm/primitives/behavior_primitives.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "test/memory/edenMark.hpp"
+#include "test/memory/EdenMark.hpp"
 
 
 #include <gtest/gtest.h>
@@ -34,52 +34,28 @@ protected:
 
 };
 
-
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldReportFailureWhenNoSpace
-) {
-EXPECT_TRUE( Universe::new_gen
-.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
-EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), behaviorPrimitives::allocate3( Universe::falseObject(), objectClass )
-) << "Allocation should fail";
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldReportFailureWhenNoSpace ) {
+    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
+    EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), behaviorPrimitives::allocate3( Universe::falseObject(), objectClass ) ) << "Allocation should fail";
 }
 
 
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldAllocateTenureWhenRequired
-) {
-ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObject(), objectClass )
-->
-is_old()
-);
-}
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldAllocateTenureWhenRequired ) { ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObject(), objectClass )->is_old() ); }
 
 
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldCheckTenuredIsBoolean
-) {
-ASSERT_TRUE( markSymbol( vmSymbols::second_argument_has_wrong_type() )
-==
-behaviorPrimitives::allocate3( Universe::nilObject(), objectClass
-) );
-}
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldCheckTenuredIsBoolean ) { ASSERT_TRUE( markSymbol( vmSymbols::second_argument_has_wrong_type() ) == behaviorPrimitives::allocate3( Universe::nilObject(), objectClass ) ); }
 
 
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldScavengeAndAllocateWhenAllowed
-) {
-HandleMark mark;
-Handle     objectClassHandle( objectClass );
-EXPECT_TRUE( Universe::new_gen
-.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
-Oop object = behaviorPrimitives::allocate( objectClass );
-EXPECT_TRUE( !object->
-is_mark()
-) << "result should not be marked";
-EXPECT_TRUE( object
-->
-is_mem()
-) << "result should be mem";
-EXPECT_EQ( MemOop( object )
-->
-klass(), objectClassHandle
-.
-as_memOop()
-) << "wrong class";
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldScavengeAndAllocateWhenAllowed ) {
+
+    HandleMark mark;
+    Handle     objectClassHandle( objectClass );
+
+    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
+
+    Oop object = behaviorPrimitives::allocate( objectClass );
+
+    EXPECT_TRUE( !object->is_mark() ) << "result should not be marked";
+    EXPECT_TRUE( object->is_mem() ) << "result should be mem";
+    EXPECT_EQ( MemOop( object ) -> klass(), objectClassHandle.as_memOop() ) << "wrong class";
 }

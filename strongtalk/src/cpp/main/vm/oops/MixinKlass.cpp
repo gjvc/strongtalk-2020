@@ -16,7 +16,7 @@ void setKlassVirtualTableFromMixinKlass( Klass *k ) {
 }
 
 
-Oop MixinKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop MixinKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k    = as_klassOop();
     std::int32_t      size = non_indexable_size();
     // allocate
@@ -50,7 +50,7 @@ KlassOop MixinKlass::create_class( KlassOop super_class, MixinOop mixin ) {
 }
 
 
-Oop MixinKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop MixinKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     MixinOop copy = MixinOop( MemOopKlass::oop_shallow_copy( obj, tenured ) );
     copy->set_installed( falseObject );
     return copy;

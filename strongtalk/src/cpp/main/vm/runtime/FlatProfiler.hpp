@@ -73,7 +73,7 @@ public:
 
     static DeltaProcess *disengage();
 
-    static bool_t is_active();
+    static bool is_active();
 
     static void print( std::int32_t cutoff );
 

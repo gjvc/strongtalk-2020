@@ -108,7 +108,7 @@ Expression *Inliner::inlineSend() {
 
 Expression *Inliner::genRealSend() {
     const std::int32_t nofArgs     = _info->_selector->number_of_arguments();
-    bool_t    uninlinable = theCompiler->registerUninlinable( this );
+    bool    uninlinable = theCompiler->registerUninlinable( this );
     if ( CompilerDebug ) {
         cout( PrintInlining )->print( "%*s*sending %s %s%s\n", depth, "", _info->_selector->as_string(), uninlinable ? "(unlinlinable) " : "", _info->_counting ? "(counting) " : "" );
     }
@@ -132,7 +132,7 @@ void Inliner::tryInlineSend() {
     const SymbolOop sel = _info->_selector;
 
     UnknownExpression *u = _info->_receiver->findUnknown();
-    bool_t usingInliningDB = _sender->rscope->isDatabaseScope();
+    bool usingInliningDB = _sender->rscope->isDatabaseScope();
     // first, use type feedback
     if ( TypeFeedback and u ) {
         st_assert( _sendKind not_eq SendKind::SuperSend, "shouldn't PolymorphicInlineCache-predict super sends" );
@@ -221,7 +221,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     GrowableArray<Expression *>   *others  = new GrowableArray<Expression *>( nexprs );
     GrowableArray<KlassOop> *klasses  = new GrowableArray<KlassOop>( nexprs );
     GrowableArray<KlassOop> *klasses2 = new GrowableArray<KlassOop>( nexprs );
-    const bool_t containsUnknown = r->containsUnknown();
+    const bool containsUnknown = r->containsUnknown();
 
     for ( std::int32_t i = 0; i < nexprs; i++ ) {
         Expression *nth = r->exprs->at( i )->shallowCopy( r->preg(), nullptr );
@@ -265,7 +265,7 @@ Expression *Inliner::inlineMerge( SendInfo *info ) {
     scopes->appendAll( scopes2 );
 
     // decide whether to use uncommon branch for unknown case (if any) NB: *must* use uncommon branch if marked unlikely because future type tests won't test for unknown
-    bool_t useUncommonBranchForUnknown = false;
+    bool useUncommonBranchForUnknown = false;
     if ( others->length() == 1 and others->first()->isUnknownExpression() and ( (UnknownExpression *) others->first() )->isUnlikely() ) {
         // generate an uncommon branch for the unknown case, not a send
         useUncommonBranchForUnknown = true;
@@ -375,7 +375,7 @@ Expression *Inliner::doInline( Node *start ) {
 #define calleeSize( n ) 0
 
     if ( CompilerDebug ) {
-        cout( PrintInlining )->print( "%*s*inlining %s, cost %ld/size %ld (%#lx)%s\n", depth, "", _callee->selector()->as_string(), inliningPolicy.calleeCost, calleeSize( _callee->rscope ), PrintHexAddresses ? _callee : 0, _callee->rscope->isNullScope() ? "" : "*" );
+        cout( PrintInlining )->print( "%*s*inlining %s, cost %ld/size %ld (0x{0:x})%s\n", depth, "", _callee->selector()->as_string(), inliningPolicy.calleeCost, calleeSize( _callee->rscope ), PrintHexAddresses ? _callee : 0, _callee->rscope->isNullScope() ? "" : "*" );
         if ( PrintInlining )
             _callee->method()->pretty_print();
     }
@@ -547,7 +547,7 @@ Expression *Inliner::picPredict() {
 
     // mark unknown branch as unlikely
     UnknownExpression *u = _info->_receiver->findUnknown();
-    const bool_t canBeUnlikely = theCompiler->useUncommonTraps;
+    const bool canBeUnlikely = theCompiler->useUncommonTraps;
     if ( u and canBeUnlikely and not rscope->isNotUncommonAt( byteCodeIndex ) ) {
         _info->_receiver = _info->_receiver->makeUnknownUnlikely( _sender );
     }
@@ -561,7 +561,7 @@ Expression *Inliner::picPredictUnlikely( SendInfo *info, UntakenRecompilationSco
     if ( not theCompiler->useUncommonTraps )
         return info->_receiver;
 
-    bool_t makeUncommon = uscope->isUnlikely();
+    bool makeUncommon = uscope->isUnlikely();
     if ( not makeUncommon and info->_inPrimitiveFailure ) {
         // this send was never executed in the recompilee only make the send unlikely if it had a chance to execute
         // (If the send isn't a prim failure, don't trust the info -- it's unlikely that the method just stops executing in the middle.
@@ -617,7 +617,7 @@ Expression *Inliner::typePredict() {
 }
 
 
-bool_t SuperSendsAreAlwaysInlined = true;    // remove when removing super hack
+bool SuperSendsAreAlwaysInlined = true;    // remove when removing super hack
 
 InlinedScope *Inliner::tryLookup( Expression *receiver ) {
 
@@ -647,7 +647,7 @@ InlinedScope *Inliner::tryLookup( Expression *receiver ) {
     LookupKey *key = _sendKind == SendKind::SuperSend ? LookupKey::allocate( receiver->klass(), method ) : LookupKey::allocate( receiver->klass(), selector );
 
     if ( CompilerDebug )
-        cout( PrintInlining )->print( "%*s found %s --> %#x\n", _sender->depth, "", key->print_string(), PrintHexAddresses ? method : 0 );
+        cout( PrintInlining )->print( "%*s found %s --> 0x{0:x}\n", _sender->depth, "", key->print_string(), PrintHexAddresses ? method : 0 );
 
     // NB: use receiver->klass() (not klass) for the scope -- klass may be the method holder (for super sends)
     // was bug -- Urs 3/16/96
@@ -690,7 +690,7 @@ const char *Inliner::checkSendInPrimFailure() {
         // never executed; shouldn't even generate code for failure!
         // (note: if failure block has several sends, this can happen, but in the standard system it's probably a performance bug)
         if ( WizardMode )
-            warning( "probably should have made primitive failure uncommon" );
+            spdlog::warn( "probably should have made primitive failure uncommon" );
 
         return "untaken send in primitive failure";
     }
@@ -765,7 +765,7 @@ RecompilationScope *Inliner::makeBlockRScope( const Expression *receiver, Lookup
 }
 
 
-bool_t Inliner::checkSenderPath( Scope *here, ScopeDescriptor *there ) const {
+bool Inliner::checkSenderPath( Scope *here, ScopeDescriptor *there ) const {
     // return true if sender paths of here and there match
     // NB: I believe the code below isn't totally correct, in the sense that it
     // will return ok == true if the sender paths match up to the point where
@@ -797,7 +797,7 @@ InlinedScope *Inliner::makeScope( const Expression *receiver, const KlassOop kla
 
     if ( method->is_blockMethod() ) {
         RecompilationScope *rs = makeBlockRScope( receiver, calleeInfo->_lookupKey, method );
-        bool_t isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
+        bool isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
         if ( receiver->preg()->isBlockPseudoRegister() ) {
             InlinedScope *parent = receiver->preg()->scope();
             calleeInfo->_receiver = parent->self();
@@ -811,7 +811,7 @@ InlinedScope *Inliner::makeScope( const Expression *receiver, const KlassOop kla
     } else {
         // normal method
         RecompilationScope *rs = _sender->rscope->subScope( _sender->byteCodeIndex(), calleeInfo->_lookupKey );
-        bool_t isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
+        bool isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
         _callee = MethodScope::new_MethodScope( method, methodHolder, _sender, rs, calleeInfo );
         _callee->set_self( receiver->asReceiver() );
     }
@@ -830,7 +830,7 @@ InlinedScope *Inliner::notify( const char *msg ) {
 
 
 void Inliner::print() {
-    _console->print_cr( "((Inliner*)%#x)", PrintHexAddresses ? this : 0 );
+    spdlog::info( "((Inliner*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0) );
 }
 
 

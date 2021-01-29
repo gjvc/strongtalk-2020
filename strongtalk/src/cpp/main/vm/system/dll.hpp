@@ -40,7 +40,7 @@ public:
     }
 
 
-    bool_t async() const;
+    bool async() const;
 
 
     void set_entry_point( dll_func_ptr_t f ) {
@@ -98,7 +98,7 @@ public:
     }
 
 
-    bool_t async() const;
+    bool async() const;
 
 
     void set_entry_point( dll_func_ptr_t f ) {
@@ -125,7 +125,7 @@ public:
 
     static DLL *load( SymbolOop name );
 
-    static bool_t unload( DLL *library );
+    static bool unload( DLL *library );
 
     static dll_func_ptr_t lookup_fail( SymbolOop dll_name, SymbolOop function_name );
 

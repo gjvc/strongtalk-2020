@@ -28,14 +28,14 @@ public:
     PeriodicTask( std::int32_t interval_time ); // interval is in milliseconds of elapsed time
     ~PeriodicTask();
 
-    bool_t is_enrolled() const;
+    bool is_enrolled() const;
 
     void enroll();
 
     void deroll();
 
 
-    bool_t is_pending( std::int32_t delay_time ) {
+    bool is_pending( std::int32_t delay_time ) {
         _counter += delay_time;
         return _counter >= _interval;
     }

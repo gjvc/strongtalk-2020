@@ -30,32 +30,32 @@ public:
     char *real_pc( const NativeMethod *nm ) const;
 
 
-    bool_t equals( const ProgramCounterDescriptor *other ) const {
+    bool equals( const ProgramCounterDescriptor *other ) const {
         return _pc == other->_pc and _scope == other->_scope and _byteCodeIndex == other->_byteCodeIndex;
     }
 
 
-    bool_t operator==( const ProgramCounterDescriptor &rhs ) const {
+    bool operator==( const ProgramCounterDescriptor &rhs ) const {
         return ( _pc == rhs._pc ) and ( _scope == rhs._scope ) and ( _byteCodeIndex == rhs._byteCodeIndex );
     }
 
 
-    bool_t source_equals( const ProgramCounterDescriptor *other ) const {
+    bool source_equals( const ProgramCounterDescriptor *other ) const {
         return _scope == other->_scope and _byteCodeIndex == other->_byteCodeIndex;
     }
 
 
-    bool_t is_prologue() const {
+    bool is_prologue() const {
         return _byteCodeIndex == PrologueByteCodeIndex;
     }
 
 
-    bool_t is_epilogue() const {
+    bool is_epilogue() const {
         return _byteCodeIndex == EpilogueByteCodeIndex;
     }
 
 
     void print( NativeMethod *nm );
 
-    bool_t verify( NativeMethod *nm );
+    bool verify( NativeMethod *nm );
 };

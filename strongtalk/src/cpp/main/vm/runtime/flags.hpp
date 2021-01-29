@@ -16,11 +16,11 @@
 class FlagSetting {
 
 private:
-    bool_t _value;
-    bool_t *_flag;
+    bool _value;
+    bool *_flag;
 
 public:
-    FlagSetting( bool_t &fl, bool_t newValue ) {
+    FlagSetting( bool &fl, bool newValue ) {
         _flag  = &fl;
         _value = fl;
         fl     = newValue;
@@ -36,34 +36,34 @@ public:
 class debugFlags {
 
 public:
-    static bool_t boolAt( const char *name, std::int32_t len, bool_t *value );
+    static bool boolAt( const char *name, std::int32_t len, bool *value );
 
 
-    static bool_t boolAt( const char *name, bool_t *value ) {
+    static bool boolAt( const char *name, bool *value ) {
         return boolAt( name, strlen( name ), value );
     }
 
 
-    static bool_t boolAtPut( const char *name, std::int32_t len, bool_t *value );
+    static bool boolAtPut( const char *name, std::int32_t len, bool *value );
 
 
-    static bool_t boolAtPut( const char *name, bool_t *value ) {
+    static bool boolAtPut( const char *name, bool *value ) {
         return boolAtPut( name, strlen( name ), value );
     }
 
 
-    static bool_t intAt( const char *name, std::int32_t len, std::int32_t *value );
+    static bool intAt( const char *name, std::int32_t len, std::int32_t *value );
 
 
-    static bool_t intAt( const char *name, std::int32_t *value ) {
+    static bool intAt( const char *name, std::int32_t *value ) {
         return intAt( name, strlen( name ), value );
     }
 
 
-    static bool_t intAtPut( const char *name, std::int32_t len, std::int32_t *value );
+    static bool intAtPut( const char *name, std::int32_t len, std::int32_t *value );
 
 
-    static bool_t intAtPut( const char *name, std::int32_t *value ) {
+    static bool intAtPut( const char *name, std::int32_t *value ) {
         return intAtPut( name, strlen( name ), value );
     }
 
@@ -203,7 +203,7 @@ public:
     develop( Inline,                               true, "Inline message sends"                                                        ) \
     develop( InlinePrims,                          true, "Inline some primitive calls"                                                 ) \
     develop( ConstantFoldPrims,                    true, "Constant-fold primitive calls"                                               ) \
-    develop( TypePredict,                          true, "Predict smi_t/bool_t/array message sends"                                    ) \
+    develop( TypePredict,                          true, "Predict smi_t/bool/array message sends"                                    ) \
     develop( TypePredictArrays,                   false, "Predict at:/at:Put: message sends"                                           ) \
     develop( TypeFeedback,                         true, "use type feedback data"                                                      ) \
     develop( CodeSizeImpactsInlining,              true, "code size is used as parameter to guide inlining"                            ) \
@@ -317,7 +317,7 @@ public:
 
 // declaration of boolean flags
 #define DECLARE_BOOLEAN_FLAG( name, value, doc ) \
-  extern "C" bool_t name;
+  extern "C" bool name;
 
 APPLY_TO_BOOLEAN_FLAGS( DECLARE_BOOLEAN_FLAG )
 

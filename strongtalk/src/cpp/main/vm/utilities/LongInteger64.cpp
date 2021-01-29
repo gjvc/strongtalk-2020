@@ -33,12 +33,12 @@ LongInteger64 LongInteger64::operator-( const LongInteger64 &rhs ) {
 }
 
 
-bool_t LongInteger64::operator==( const LongInteger64 &rhs ) {
+bool LongInteger64::operator==( const LongInteger64 &rhs ) {
     return *(int64_t *) &_low == *(int64_t *) &rhs._low;
 }
 
 
-bool_t LongInteger64::operator!=( const LongInteger64 &rhs ) {
+bool LongInteger64::operator!=( const LongInteger64 &rhs ) {
     return *(int64_t *) &_low not_eq *(int64_t *) &rhs._low;
 }
 

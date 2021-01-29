@@ -12,30 +12,30 @@
 class DoubleKlass : public MemOopKlass {
 public:
     // testers
-    bool_t oop_is_double() const {
+    bool oop_is_double() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
 
     // reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 
 
     // allocates a double
-    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );

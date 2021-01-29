@@ -11,13 +11,13 @@
 #include "vm/system/os.hpp"
 
 
-VirtualSpace::VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool_t low_to_high ) {
+VirtualSpace::VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool low_to_high ) {
     ReservedSpace rs( reserved_size );
     initialize( rs, committed_size, low_to_high );
 }
 
 
-VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high ) {
+VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high ) {
     initialize( reserved, committed_size, low_to_high );
 }
 
@@ -31,7 +31,7 @@ VirtualSpace::VirtualSpace() {
 }
 
 
-void VirtualSpace::initialize( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high ) {
+void VirtualSpace::initialize( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high ) {
     _low_boundary  = reserved.base();
     _high_boundary = low_boundary() + reserved.size();
 
@@ -80,12 +80,12 @@ std::int32_t VirtualSpace::uncommitted_size() const {
 }
 
 
-bool_t VirtualSpace::contains( void *p ) const {
+bool VirtualSpace::contains( void *p ) const {
     return low() <= (const char *) p and (const char *) p < high();
 }
 
 
-bool_t VirtualSpace::low_to_high() const {
+bool VirtualSpace::low_to_high() const {
     return _low_to_high;
 }
 
@@ -118,12 +118,12 @@ void VirtualSpace::shrink( std::int32_t size ) {
 
 
 void VirtualSpace::print() {
-    _console->print_cr( "Virtual Space:" );
-    _console->print_cr( " - uncommitted_size() [%d]", uncommitted_size() );
-    _console->print_cr( " - committed_size() [%d]", committed_size() );
-    _console->print_cr( " - reserved_size() [%d]", reserved_size() );
-    _console->print_cr( " - [low, high]: [0x%lx, 0x%lx]", low(), high() );
-    _console->print_cr( " - [low_b, high_b]: [0x%lx, 0x%lx]", low_boundary(), high_boundary() );
+    spdlog::info( "Virtual Space:" );
+    spdlog::info( " - uncommitted_size() [{}]", uncommitted_size() );
+    spdlog::info( " - committed_size() [{}]", committed_size() );
+    spdlog::info( " - reserved_size() [{}]", reserved_size() );
+    spdlog::info( " - [low, high]: [0x%lx, 0x%lx]", low(), high() );
+    spdlog::info( " - [low_b, high_b]: [0x%lx, 0x%lx]", low_boundary(), high_boundary() );
 }
 
 
@@ -176,7 +176,7 @@ std::int32_t VirtualSpaces::uncommitted_size() {
 
 
 void VirtualSpaces::print() {
-    _console->print_cr( "VirtualSpaces:" );
+    spdlog::info( "VirtualSpaces:" );
     for ( VirtualSpace *p = head; p; p = p->next ) {
         p->print();
     }

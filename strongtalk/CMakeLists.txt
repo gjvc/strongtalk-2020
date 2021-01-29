@@ -1,8 +1,8 @@
 
-##
-##  (C) 1994 - 2021, The Strongtalk authors and contributors
-##  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
-##
+####
+####  (C) 1994 - 2021, The Strongtalk authors and contributors
+####  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
+####
 
 
 # cmake -----------------------------------------------------------------------
@@ -25,9 +25,9 @@ endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 set ( arch i686 )
 set ( platform w64-mingw32 )
-set ( compiler-family gnu )
+set ( compiler-family llvm )
 set ( compiler-version 10 )
-set ( runtime win32 )
+set ( runtime posix )
 set ( runtime-platform linux-gnu )
 set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
 
@@ -58,7 +58,6 @@ set ( cpp-test-dir ${cpp-src-dir}/test )
 
 set ( CMAKE_CXX_STANDARD 20 )
 set ( CMAKE_CXX_EXTENSIONS ON )
-set ( CMAKE_CXX_STANDARD_REQUIRED YES )
 
 set ( CMAKE_BUILD_TYPE Debug )
 set ( CMAKE_EXPORT_COMPILE_COMMANDS YES )
@@ -74,17 +73,18 @@ message ( STATUS ">>> CMAKE_ variables" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
 
-message ( STATUS "CMAKE_HOST_SYSTEM_NAME        [${CMAKE_HOST_SYSTEM_NAME}]" )
-message ( STATUS "CMAKE_HOST_SYSTEM_VERSION     [${CMAKE_HOST_SYSTEM_VERSION}]" )
-message ( STATUS "CMAKE_SYSTEM_NAME             [${CMAKE_SYSTEM_NAME}]" )
-message ( STATUS "CMAKE_SYSTEM                  [${CMAKE_SYSTEM}]" )
-message ( STATUS "CMAKE_VERSION                 [${CMAKE_VERSION}]" )
-message ( STATUS "CMAKE_C_COMPILER              [${CMAKE_C_COMPILER}]" )
-message ( STATUS "CMAKE_CXX_COMPILER            [${CMAKE_CXX_COMPILER}]" )
-message ( STATUS "CMAKE_VERBOSE_MAKEFILE        [${CMAKE_VERBOSE_MAKEFILE}]" )
-message ( STATUS "CMAKE_BUILD_TYPE              [${CMAKE_BUILD_TYPE}]" )
-message ( STATUS "CMAKE_CXX_STANDARD_REQUIRED   [${CMAKE_CXX_STANDARD_REQUIRED}]" )
-message ( STATUS "CMAKE_C_COMPILER_LAUNCHER     [${CMAKE_C_COMPILER_LAUNCHER}]" )
+message ( STATUS "CMAKE_HOST_SYSTEM_NAME       [${CMAKE_HOST_SYSTEM_NAME}]" )
+message ( STATUS "CMAKE_HOST_SYSTEM_VERSION    [${CMAKE_HOST_SYSTEM_VERSION}]" )
+message ( STATUS "CMAKE_SYSTEM_NAME            [${CMAKE_SYSTEM_NAME}]" )
+message ( STATUS "CMAKE_SYSTEM                 [${CMAKE_SYSTEM}]" )
+message ( STATUS "CMAKE_VERSION                [${CMAKE_VERSION}]" )
+message ( STATUS "CMAKE_C_COMPILER             [${CMAKE_C_COMPILER}]" )
+message ( STATUS "CMAKE_CXX_COMPILER           [${CMAKE_CXX_COMPILER}]" )
+message ( STATUS "CMAKE_VERBOSE_MAKEFILE       [${CMAKE_VERBOSE_MAKEFILE}]" )
+message ( STATUS "CMAKE_BUILD_TYPE             [${CMAKE_BUILD_TYPE}]" )
+message ( STATUS "CMAKE_CXX_STANDARD_REQUIRED  [${CMAKE_CXX_STANDARD_REQUIRED}]" )
+message ( STATUS "CMAKE_C_COMPILER_LAUNCHER    [${CMAKE_C_COMPILER_LAUNCHER}]" )
+message ( STATUS "CMAKE_CXX_COMPILER_LAUNCHER  [${CMAKE_CXX_COMPILER_LAUNCHER}]" )
 
 
 # global ----------------------------------------------------------------------
@@ -96,6 +96,8 @@ message ( STATUS ">>> ${CMAKE_CXX_COMPILER_ID}" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
 
+set ( spdlog-include ${CMAKE_SOURCE_DIR}/src/ext/spdlog/include )
+
 
 # sources ----------------------------------------------------------------------
 
@@ -105,6 +107,7 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 
 # library ---------------------------------------------------------------------
 
+include_directories ( SYSTEM ${CMAKE_SOURCE_DIR}/src/ext/googletest/googletest/include )
 include_directories ( SYSTEM ${object-path}/src/ext/nasm/include )
 add_compile_options ( -fpermissive )
 
@@ -114,16 +117,19 @@ add_compile_options ( -fpermissive )
 file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" )
 list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
+#target_include_directories ( st20-main-library-object PUBLIC /usr/include ) # do not use files from /usr/include unless they are header-only
 target_include_directories ( st20-main-library-object PRIVATE ${cpp-main-dir} )
-target_include_directories ( st20-main-library-object INTERFACE ${object-path}/debug/ext/nasm/include/ )
-target_include_directories ( st20-main-library-object INTERFACE ${object-path}/debug/ext/udis86/include/ )
+target_include_directories ( st20-main-library-object PRIVATE ${spdlog-include} )
+target_include_directories ( st20-main-library-object PUBLIC ${object-path}/debug/src/ext/nasm/include/ )
 add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library-object> )
+add_compile_definitions ( st20-main-library-static __MINGW32__ )
 
 
 # binary ----------------------------------------------------------------------
 
 file ( GLOB_RECURSE st20-main-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/main/*.cpp" )
 add_executable ( st20-main-binary ${st20-main-binary-sources} )
+#target_include_directories ( st20-main-binary PUBLIC /usr/include ) # do not use files from /usr/include unless they are header-only
 target_include_directories ( st20-main-binary PRIVATE ${cpp-main-dir} )
 
 
@@ -133,8 +139,12 @@ file ( GLOB st20-test-library-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/
 list ( FILTER st20-test-library-sources EXCLUDE REGEX "main.cpp" )
 
 add_library ( st20-test-library-object OBJECT ${st20-test-library-sources} )
+#target_include_directories ( st20-test-library-object PUBLIC /usr/include ) # do not use files from /usr/include unless they are header-only
 target_include_directories ( st20-test-library-object PRIVATE ${cpp-main-dir} )
 target_include_directories ( st20-test-library-object PRIVATE ${cpp-test-dir} )
-target_include_directories ( st20-test-library-object SYSTEM INTERFACE ${CMAKE_SOURCE_DIR}/ext/googletest/googletest/include/ )
+target_include_directories ( st20-main-library-object PRIVATE ${spdlog-include} )
+#target_include_directories ( st20-test-library-object SYSTEM INTERFACE ${CMAKE_SOURCE_DIR}/ext/googletest/googletest/include/ )
+target_include_directories ( st20-main-library-object PUBLIC ${object-path}/debug/src/ext/googletest/include/ )
+
 
 add_library ( st20-test-library-static STATIC $<TARGET_OBJECTS:st20-test-library-object> )

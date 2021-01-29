@@ -29,7 +29,7 @@ enum class InlineLimitType {
     LastLimit               // sentinel
 };
 
-typedef bool_t (*checkLocalSendFn)( SymbolOop sel );
+typedef bool (*checkLocalSendFn)( SymbolOop sel );
 
 enum class InlineFnType {
     NormalFn,               // normal method
@@ -70,7 +70,7 @@ class PerformanceDebugger : public ResourceObject {
 
 private:
     Compiler *_compiler;
-    bool_t                               _compileAlreadyReported;          // have we already reported something for this compile?
+    bool                               _compileAlreadyReported;          // have we already reported something for this compile?
     GrowableArray<BlockPseudoRegister *> *_blockPseudoRegisters;
     GrowableArray<char *>                *_reports;                                // list of reports already printed (to avoid duplicates)
     StringOutputStream *_stringStream;
@@ -82,7 +82,7 @@ public:
     void report_context( InlinedScope *s );                                     // couldn't eliminate scope's context
     void report_block( Node *s, BlockPseudoRegister *blk, const char *what );   // couldn't eliminate block
     void report_toobig( InlinedScope *s );                                      // NativeMethod getting too big
-    void report_uncommon( bool_t reoptimizing );                                // uncommon recompile
+    void report_uncommon( bool reoptimizing );                                // uncommon recompile
     void report_primitive_failure( PrimitiveDescriptor *pd );                   // failure not uncommon
     void finish_reporting();
 

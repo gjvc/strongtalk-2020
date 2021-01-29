@@ -16,8 +16,8 @@ std::int32_t           num_tasks = 0;
 std::array<PeriodicTask *, max_tasks> tasks;
 
 
-bool_t pending_tasks( std::int32_t delay_time ) {
-    bool_t result = false;
+bool pending_tasks( std::int32_t delay_time ) {
+    bool result = false;
 
     for ( std::int32_t i = 0; i < num_tasks; i++ ) {
         result = tasks[ i ]->is_pending( delay_time ) or result;
@@ -62,7 +62,7 @@ PeriodicTask::~PeriodicTask() {
 }
 
 
-bool_t PeriodicTask::is_enrolled() const {
+bool PeriodicTask::is_enrolled() const {
     for ( std::int32_t i = 0; i < num_tasks; i++ )
         if ( tasks[ i ] == this )
             return true;

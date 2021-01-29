@@ -74,7 +74,7 @@ void CompilerTests::exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize
     std::int32_t blockSize = Universe::code->_methodHeap->blockSize;
     std::int32_t size      = Universe::code->_methodHeap->freeBytes();
 
-    bool_t hasFailed = false;
+    bool hasFailed = false;
     while ( !hasFailed ) {
         NativeMethod *newnm = alloc_nativeMethod( &key, size );
         if ( newnm ) {

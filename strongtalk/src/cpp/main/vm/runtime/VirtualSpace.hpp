@@ -24,7 +24,7 @@ private:
     const char *_high;
 
     // Grow direction
-    bool_t _low_to_high;
+    bool _low_to_high;
 
     VirtualSpace *next;
 
@@ -52,13 +52,13 @@ public:
 
 
 public:
-    VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool_t low_to_high = true );
+    VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool low_to_high = true );
 
-    VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high = true );
+    VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high = true );
 
     VirtualSpace();
 
-    void initialize( ReservedSpace reserved, std::int32_t committed_size, bool_t low_to_high = true );
+    void initialize( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high = true );
 
     ~VirtualSpace();
 
@@ -69,9 +69,9 @@ public:
 
     std::int32_t uncommitted_size() const;
 
-    bool_t contains( void *p ) const;
+    bool contains( void *p ) const;
 
-    bool_t low_to_high() const;
+    bool low_to_high() const;
 
     // operations
     void expand( std::int32_t size );

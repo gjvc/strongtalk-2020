@@ -22,7 +22,7 @@ public:
 
     static std::int32_t find_index( Oop obj );
 
-    static bool_t is_index_ok( std::int32_t index );
+    static bool is_index_ok( std::int32_t index );
 
     static void allocateSize( std::int32_t size );
 

@@ -30,9 +30,9 @@ private:
 
     static LookupResult ic_lookup( KlassOop receiver_klass, Oop selector_or_method );
 
-    static LookupResult lookup( LookupKey *key, bool_t compile );
+    static LookupResult lookup( LookupKey *key, bool compile );
 
-    static LookupResult cache_miss_lookup( LookupKey *key, bool_t compile );
+    static LookupResult cache_miss_lookup( LookupKey *key, bool compile );
 
     static NativeMethod *compile_method( LookupKey *key, MethodOop method );
 

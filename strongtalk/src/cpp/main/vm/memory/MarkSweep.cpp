@@ -39,7 +39,7 @@ public:
     }
 
 
-    bool_t isFull() {
+    bool isFull() {
         return next >= oop_end;
     }
 
@@ -144,7 +144,7 @@ Oop MarkSweep::collect( Oop p ) {
     }
 
     if ( PrintGC ) {
-        _console->print( " %.1fM -> %.1fM", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
+        spdlog::info( " %.1fM -> %.1fM", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
     }
 
     return p;

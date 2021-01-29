@@ -15,9 +15,9 @@
 #include "vm/memory/SpaceSizes.hpp"
 
 
-extern bool_t scavengeRequired;             // set when eden overflows
-extern bool_t garbageCollectionInProgress;  // garbage collection or scavenge in progress
-extern bool_t bootstrappingInProgress;      // true only at the very beginning
+extern bool scavengeRequired;             // set when eden overflows
+extern bool garbageCollectionInProgress;  // garbage collection or scavenge in progress
+extern bool bootstrappingInProgress;      // true only at the very beginning
 
 
 //
@@ -96,7 +96,7 @@ private:
     static SymbolOop _dll_lookup_selector;
 
     static MethodOop _sweeper_method; // used by Sweeper only
-    static bool_t    _scavenge_blocked;
+    static bool    _scavenge_blocked;
 
     friend class Bootstrap;
 
@@ -219,7 +219,7 @@ public:
 
 
     // Space operations
-    static bool_t is_heap( Oop *p ) {
+    static bool is_heap( Oop *p ) {
         return new_gen.contains( p ) or old_gen.contains( p );
     }
 
@@ -229,10 +229,10 @@ public:
     // relocate is used for moving objects around after reading in a snapshot
     static MemOop relocate( MemOop p );
 
-    static bool_t verify_oop( MemOop p );
+    static bool verify_oop( MemOop p );
 
 
-    static bool_t really_contains( void *p ) {
+    static bool really_contains( void *p ) {
         return new_gen.contains( p ) or old_gen.contains( p );
     }
 
@@ -246,7 +246,7 @@ public:
 
 
     // allocators
-    static Oop *allocate( std::int32_t size, MemOop *p = nullptr, bool_t permit_scavenge = true ) {
+    static Oop *allocate( std::int32_t size, MemOop *p = nullptr, bool permit_scavenge = true ) {
 
         if ( _scavenge_blocked and can_scavenge() and permit_scavenge )
             return scavenge_and_allocate( size, (Oop *) p );
@@ -265,16 +265,16 @@ public:
     }
 
 
-    static Oop *allocate_tenured( std::int32_t size, bool_t permit_expansion = true ) {
+    static Oop *allocate_tenured( std::int32_t size, bool permit_expansion = true ) {
         return old_gen.allocate( size, permit_expansion );
     }
 
 
     // Tells whether we should force a garbage collection
-    static bool_t needs_garbage_collection();
+    static bool needs_garbage_collection();
 
     // tells if the vm is in a state where we can scavenge.
-    static bool_t can_scavenge();
+    static bool can_scavenge();
 
     // scavenging operations.
     static Oop *scavenge_and_allocate( std::int32_t size, Oop *p );
@@ -294,17 +294,17 @@ public:
     }
 
 
-    static bool_t needs_scavenge() {
+    static bool needs_scavenge() {
         return scavengeRequired;
     }
 
 
-    static bool_t should_scavenge( MemOop p ) {
+    static bool should_scavenge( MemOop p ) {
         return not( ( (const char *) p > Universe::old_gen._lowBoundary ) or Universe::new_gen.to()->contains( p ) );
     }
 
 
-    static Oop *allocate_in_survivor_space( MemOop p, std::int32_t size, bool_t &is_new );
+    static Oop *allocate_in_survivor_space( MemOop p, std::int32_t size, bool &is_new );
 
 
     static std::int32_t free() {
@@ -334,13 +334,13 @@ public:
     }
 
 
-    static void store( Oop *p, Oop contents, bool_t cs = true );
+    static void store( Oop *p, Oop contents, bool cs = true );
 
     static void cleanup_after_bootstrap();
 
     static void switch_pointers( Oop from, Oop to );
 
-    static void verify( bool_t postScavenge = false );
+    static void verify( bool postScavenge = false );
 
     // printing operations
     static void print();
@@ -373,9 +373,9 @@ public:
 
     static KlassOop method_holder_of( MethodOop m );
 
-    static SymbolOop find_global_key_for( Oop value, bool_t *meta );
+    static SymbolOop find_global_key_for( Oop value, bool *meta );
 
-    static Oop find_global( const char *name, bool_t must_be_constant = false );
+    static Oop find_global( const char *name, bool must_be_constant = false );
 
     static AssociationOop find_global_association( const char *name );
 
@@ -394,7 +394,7 @@ private:
 public:
     static void methodOops_do( void f( MethodOop ) );
 
-    static bool_t on_page_boundary( void *addr );
+    static bool on_page_boundary( void *addr );
 
     static std::int32_t page_size();
 };

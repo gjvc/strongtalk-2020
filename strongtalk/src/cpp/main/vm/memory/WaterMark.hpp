@@ -28,21 +28,21 @@ public:
 };
 
 
-inline bool_t operator==( const NewWaterMark &x, const NewWaterMark &y ) {
+inline bool operator==( const NewWaterMark &x, const NewWaterMark &y ) {
     return x._point == y._point;
 }
 
 
-inline bool_t operator!=( const NewWaterMark &x, const NewWaterMark &y ) {
+inline bool operator!=( const NewWaterMark &x, const NewWaterMark &y ) {
     return not( x == y );
 }
 
 
-inline bool_t operator==( const OldWaterMark &x, const OldWaterMark &y ) {
+inline bool operator==( const OldWaterMark &x, const OldWaterMark &y ) {
     return ( x._space == y._space ) and ( x._point == y._point );
 }
 
 
-inline bool_t operator!=( const OldWaterMark &x, const OldWaterMark &y ) {
+inline bool operator!=( const OldWaterMark &x, const OldWaterMark &y ) {
     return not( x == y );
 }

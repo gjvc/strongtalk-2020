@@ -198,7 +198,7 @@ void DispatchTable::intercept_for_return( std::int32_t *fr ) {
 
 
 void dispatchTable_init() {
-    _console->print_cr( "%%system-init:  dispatchTable_init" );
+    spdlog::info( "%system-init:  dispatchTable_init" );
 
     DispatchTable::reset();
 }
@@ -211,7 +211,7 @@ void intercept_for_single_step() {
 
 void print_dt() {
     for ( std::int32_t i = 0; i < 255; i++ ) {
-        printf( "0x%02x: 0x%08x\n", i, ( (std::int32_t *) DispatchTable::table() )[ i ] );
+        spdlog::info( "0x%02x: 0x%08x\n", i, ( (std::int32_t *) DispatchTable::table() )[ i ] );
     }
-    printf( "\n" );
+    spdlog::info( "\n" );
 }

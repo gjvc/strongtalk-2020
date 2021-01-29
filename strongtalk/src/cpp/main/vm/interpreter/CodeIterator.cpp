@@ -12,7 +12,7 @@
 #include "vm/oops/AssociationOopDescriptor.hpp"
 
 
-bool_t Interpreted_DLLCache::async() const {
+bool Interpreted_DLLCache::async() const {
     std::uint8_t *p = (std::uint8_t *) this;                // p point to first Oop in DLL call
     while ( ByteCodes::Code( *--p ) == ByteCodes::Code::halt );    // search back for DLL call bytecode
     ByteCodes::Code code = ByteCodes::Code( *p );
@@ -131,7 +131,7 @@ InterpretedPrimitiveCache *CodeIterator::primitive_cache() {
 }
 
 
-const char *CodeIterator::interpreter_return_point( bool_t restore_value ) const {
+const char *CodeIterator::interpreter_return_point( bool restore_value ) const {
     // The return is only valid if we are in a send/primtive call/dll call.
 
     if ( is_message_send() ) {

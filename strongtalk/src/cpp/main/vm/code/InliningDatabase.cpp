@@ -125,12 +125,12 @@ char *InliningDatabase::klass_string( KlassOop klass ) {
 }
 
 
-bool_t check_directory( const char *dir_name ) {
+bool check_directory( const char *dir_name ) {
     return os::check_directory( dir_name );
 }
 
 
-const char *InliningDatabase::compute_file_name( LookupKey *outer, LookupKey *inner, bool_t create_directories ) {
+const char *InliningDatabase::compute_file_name( LookupKey *outer, LookupKey *inner, bool create_directories ) {
     char *name = new_resource_array<char>( 1024 );
 
     // Outer key
@@ -178,7 +178,7 @@ const char *InliningDatabase::compute_file_name( LookupKey *outer, LookupKey *in
 }
 
 
-bool_t InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_st ) {
+bool InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_st ) {
     ResourceMark resourceMark;
 
     LookupKey *outer_key = nullptr;
@@ -219,7 +219,7 @@ bool_t InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_
         return false;
 
     if ( TraceInliningDatabase ) {
-        _console->print_cr( "Dumping %s", file_name );
+        spdlog::info( "Dumping %s", file_name );
     }
     FileOutputStream out( file_name );
     if ( out.is_open() ) {
@@ -233,7 +233,7 @@ bool_t InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_
 }
 
 
-char *find_type( const char *line, bool_t *is_super, bool_t *is_block ) {
+char *find_type( const char *line, bool *is_super, bool *is_block ) {
 
     char *sub = nullptr;
 
@@ -264,9 +264,9 @@ char *find_type( const char *line, bool_t *is_super, bool_t *is_block ) {
 
 
 // Returns whether the key was succesfully scanned
-bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klass, MethodOop *method ) {
-    bool_t is_super;
-    bool_t is_block;
+bool scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klass, MethodOop *method ) {
+    bool is_super;
+    bool is_block;
 
     char *sub = find_type( line, &is_super, &is_block );
     if ( sub == nullptr )
@@ -277,7 +277,7 @@ bool_t scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klas
     char *class_name = line;
     char *method_id  = sub + 2;
 
-    bool_t class_side   = false;
+    bool class_side   = false;
     char   *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
@@ -359,12 +359,12 @@ std::int32_t scan_prefix( const char *line, std::int32_t *byteCodeIndex, std::in
 
 
 // Returns whether the uncommon word was succesfully scanned
-bool_t scan_uncommon( const char *line ) {
+bool scan_uncommon( const char *line ) {
     return strcmp( line, "uncommon" ) == 0;
 }
 
 
-static bool_t create_rscope( char *line, GrowableArray<InliningDatabaseRecompilationScope *> *stack ) {
+static bool create_rscope( char *line, GrowableArray<InliningDatabaseRecompilationScope *> *stack ) {
 
     // remove the cr
     std::int32_t len = strlen( line );
@@ -427,14 +427,14 @@ const char *InliningDatabase::index_file_name() {
 }
 
 
-bool_t scan_key( char *line, LookupKey *key ) {
+bool scan_key( char *line, LookupKey *key ) {
 
     std::int32_t len = strlen( line );
     if ( len > 1 and line[ len - 1 ] == '\n' )
         line[ len - 1 ] = '\0';
 
-    bool_t is_super;
-    bool_t is_block;
+    bool is_super;
+    bool is_block;
 
     char *sub = find_type( line, &is_super, &is_block );
     if ( sub == nullptr )
@@ -445,7 +445,7 @@ bool_t scan_key( char *line, LookupKey *key ) {
     char *class_name = line;
     char *method_id  = sub + 2;
 
-    bool_t class_side   = false;
+    bool class_side   = false;
     char   *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
@@ -523,7 +523,7 @@ void InliningDatabase::load_index_file() {
                         // _console->cr();
                         add_lookup_entry( &second, &first );
                     } else {
-                        _console->print_cr( "%%inlining-database-index-file: filename [%s], parsing block failed for [%s]", index_file_name(), line );
+                        spdlog::info( "%inlining-database-index-file: filename[{}], parsing block failed for[{}]", index_file_name(), line );
 
                     }
                 }
@@ -534,7 +534,7 @@ void InliningDatabase::load_index_file() {
                 add_lookup_entry( &first );
             }
         } else {
-            _console->print_cr( "%%inlining-database-index-file: filename [%s], parsing failed for [%s]", index_file_name(), line );
+            spdlog::info( "%inlining-database-index-file: filename[{}], parsing failed for[{}]", index_file_name(), line );
 
         }
     }
@@ -656,7 +656,7 @@ void InliningDatabase::reset_lookup_table() {
 }
 
 
-RecompilationScope *InliningDatabase::select_and_remove( bool_t *end_of_table ) {
+RecompilationScope *InliningDatabase::select_and_remove( bool *end_of_table ) {
 
     if ( _table_no == 0 )
         return nullptr;
@@ -680,7 +680,7 @@ RecompilationScope *InliningDatabase::select_and_remove( bool_t *end_of_table ) 
 void InliningDatabase::allocate_table( std::uint32_t size ) {
 
     if ( TraceInliningDatabase ) {
-        _console->print_cr( "InliningDatabase::allocate_table(%d)", size );
+        spdlog::info( "InliningDatabase::allocate_table({})", size );
     }
 
     _table_size      = size;
@@ -728,7 +728,7 @@ void InliningDatabase::add_lookup_entry( LookupKey *outer, LookupKey *inner ) {
     _table_no++;
 
     if ( TraceInliningDatabase ) {
-        _console->print_cr( "InliningDatabase::add_lookup_entry @ %d", index );
+        spdlog::info( "InliningDatabase::add_lookup_entry @ {}", index );
         if ( inner ) {
             inner->print();
             _console->print( " " );
@@ -739,7 +739,7 @@ void InliningDatabase::add_lookup_entry( LookupKey *outer, LookupKey *inner ) {
 }
 
 
-bool_t InliningDatabase::lookup( LookupKey *outer, LookupKey *inner ) {
+bool InliningDatabase::lookup( LookupKey *outer, LookupKey *inner ) {
     if ( _table_no == 0 )
         return false;
 
@@ -781,7 +781,7 @@ void InliningDatabase::oops_do( void f( Oop * ) ) {
 }
 
 
-bool_t InliningDatabase::file_out_all() {
+bool InliningDatabase::file_out_all() {
     ResourceMark resourceMark;
 
     // The lookup table is used to create the index file.

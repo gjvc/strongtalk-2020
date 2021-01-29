@@ -12,7 +12,7 @@ void setKlassVirtualTableFromProcessKlass( Klass *k ) {
 }
 
 
-Oop ProcessKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop ProcessKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k    = as_klassOop();
     std::int32_t      size = non_indexable_size();
 

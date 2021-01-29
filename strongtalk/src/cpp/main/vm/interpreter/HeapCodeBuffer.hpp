@@ -36,7 +36,7 @@ private:
 
     void align();
 
-    bool_t isAligned();
+    bool isAligned();
 
 public:
     HeapCodeBuffer() {

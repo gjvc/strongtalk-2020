@@ -17,30 +17,30 @@ class ContextKlass : public MemOopKlass {
 
 public:
     // testers
-    bool_t oop_is_context() const {
+    bool oop_is_context() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
 
     // reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 
 
     // allocation
-    Oop allocateObjectSize( std::int32_t num_of_temps, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t num_of_temps, bool permit_scavenge = true, bool tenured = false );
 
     static ContextOop allocate_context( std::int32_t num_of_temps );
 

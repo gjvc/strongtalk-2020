@@ -30,7 +30,7 @@ struct CodeTableLink : public CHeapAllocatedObject {
     CodeTableLink *_next;
 
     // memory operations
-    bool_t verify( std::int32_t i );
+    bool verify( std::int32_t i );
 };
 
 struct CodeTableEntry : ValueObject {
@@ -39,12 +39,12 @@ struct CodeTableEntry : ValueObject {
     void *_nativeMethodOrLink;
 
 
-    bool_t is_empty() {
+    bool is_empty() {
         return _nativeMethodOrLink == nullptr;
     }
 
 
-    bool_t is_nativeMethod() {
+    bool is_nativeMethod() {
         return (std::int32_t) _nativeMethodOrLink & 1;
     }
 
@@ -81,7 +81,7 @@ struct CodeTableEntry : ValueObject {
 
     std::int32_t length();   // returns the number of NativeMethod in this bucket.
 
-    bool_t verify( std::int32_t i );
+    bool verify( std::int32_t i );
 };
 
 class CodeTable : public PrintableCHeapAllocatedObject {
@@ -109,14 +109,14 @@ public:
 
     NativeMethod *lookup( const LookupKey *L );
 
-    bool_t verify();
+    bool verify();
 
     void print();
 
     void print_stats();
 
     // Tells whether a NativeMethod is present
-    bool_t is_present( NativeMethod *nm );
+    bool is_present( NativeMethod *nm );
 
     // Removes a NativeMethod from the table
     void remove( NativeMethod *nm );

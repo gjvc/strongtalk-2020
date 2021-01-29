@@ -15,21 +15,21 @@ class MixinKlass : public MemOopKlass {
 
 public:
     // testers
-    bool_t oop_is_mixin() const {
+    bool oop_is_mixin() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
 
     // allocation operations
-    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
-    Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    Oop oop_shallow_copy( Oop obj, bool tenured );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );

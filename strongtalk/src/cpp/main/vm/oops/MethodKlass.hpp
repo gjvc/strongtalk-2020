@@ -10,13 +10,13 @@
 
 class MethodKlass : public MemOopKlass {
 public:
-    bool_t oop_is_method() const {
+    bool oop_is_method() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
@@ -32,12 +32,12 @@ public:
 
 
     // Reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 

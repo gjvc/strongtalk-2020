@@ -36,7 +36,7 @@ public:
     }
 
 
-    bool_t has_stack() const {
+    bool has_stack() const {
         return false;
     }
 

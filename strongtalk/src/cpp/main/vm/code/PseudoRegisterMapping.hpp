@@ -40,7 +40,7 @@ class PseudoRegisterMapping : public PrintableResourceObject {
 
 private:
     MacroAssembler                  *_macroAssembler;              // the low_level assembler (for spill code generation, etc.)
-    bool_t                          _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
+    bool                          _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
     Locations                       *_locations;                   // the locations freelist
     GrowableArray<PseudoRegister *> *_pseudoRegisters;             // the PseudoRegisters; a nullptr entry means the slot is not used
     GrowableArray<std::int32_t>     *_registerLocations;           // the register to which a PseudoRegister is mapped or -1
@@ -53,7 +53,7 @@ private:
     }
 
 
-    bool_t used( std::int32_t i ) const {
+    bool used( std::int32_t i ) const {
         return _pseudoRegisters->at( i ) not_eq nullptr;
     }
 
@@ -68,12 +68,12 @@ private:
     }
 
 
-    bool_t hasRegLoc( std::int32_t i ) const {
+    bool hasRegLoc( std::int32_t i ) const {
         return _locations->isLocation( regLoc( i ) );
     }
 
 
-    bool_t hasStkLoc( std::int32_t i ) const {
+    bool hasStkLoc( std::int32_t i ) const {
         return _locations->isLocation( stkLoc( i ) );
     }
 
@@ -125,23 +125,23 @@ public:
 
 
     // Testers
-    bool_t isInjective();
+    bool isInjective();
 
-    bool_t isConformant( PseudoRegisterMapping *with );
+    bool isConformant( PseudoRegisterMapping *with );
 
 
-    bool_t isDefined( PseudoRegister *preg ) {
+    bool isDefined( PseudoRegister *preg ) {
         return index( preg ) >= 0;
     }
 
 
-    bool_t inRegister( PseudoRegister *preg ) {
+    bool inRegister( PseudoRegister *preg ) {
         std::int32_t i = index( preg );
         return used( i ) and hasRegLoc( i );
     }
 
 
-    bool_t onStack( PseudoRegister *preg ) {
+    bool onStack( PseudoRegister *preg ) {
         std::int32_t i = index( preg );
         return used( i ) and hasStkLoc( i );
     }
@@ -179,7 +179,7 @@ public:
 
 
     // Non-local returns
-    bool_t NonLocalReturninProgress() const {
+    bool NonLocalReturninProgress() const {
         return _nonLocalReturnInProgress;
     }
 
@@ -234,7 +234,7 @@ private:
     }
 
 
-    bool_t holds( PseudoRegister *preg ) const;            // returns true if preg belongs to the locked PseudoRegisters
+    bool holds( PseudoRegister *preg ) const;            // returns true if preg belongs to the locked PseudoRegisters
 
 public:
     PseudoRegisterLocker( PseudoRegister *r0 );
@@ -249,7 +249,7 @@ public:
     }
 
 
-    static bool_t locks( PseudoRegister *preg );        // returns true if preg is locked in any PseudoRegisterLocker instance
+    static bool locks( PseudoRegister *preg );        // returns true if preg is locked in any PseudoRegisterLocker instance
     static void initialize() {
         _top = nullptr;
     }

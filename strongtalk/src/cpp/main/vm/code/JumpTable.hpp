@@ -52,17 +52,17 @@ public:
     }
 
 
-    bool_t has_minor() const {
+    bool has_minor() const {
         return _minor not_eq max_value;
     }
 
 
-    bool_t is_block() const {
+    bool is_block() const {
         return _minor > 0;
     }
 
 
-    bool_t is_valid() const {
+    bool is_valid() const {
         return _major not_eq max_value;
     }
 
@@ -174,13 +174,13 @@ private:
 
 public:
     // testing operations	    LARS: please add comments explaining what the 4 cases are  -Urs 4/96
-    bool_t is_NativeMethod_stub() const;
+    bool is_NativeMethod_stub() const;
 
-    bool_t is_block_closure_stub() const;
+    bool is_block_closure_stub() const;
 
-    bool_t is_link() const;
+    bool is_link() const;
 
-    bool_t is_unused() const;
+    bool is_unused() const;
 
 
     // entry point
@@ -204,7 +204,7 @@ public:
     NativeMethod *method() const;        // nullptr if not pointing to a method
 
     // operations for block stubs (is_block_closure_stub() == true)
-    bool_t block_has_nativeMethod() const;
+    bool block_has_nativeMethod() const;
 
     NativeMethod *block_nativeMethod() const;    // block NativeMethod (or nullptr if not compiled yet)
     MethodOop block_method() const;    // block method

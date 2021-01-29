@@ -16,7 +16,7 @@ void setKlassVirtualTableFromKlassKlass( Klass *k ) {
 }
 
 
-Oop KlassKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop KlassKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     // allocate
     MemOop obj = as_memOop( Universe::allocate_tenured( non_indexable_size() ) );
     // header + instance variables
@@ -87,7 +87,7 @@ void KlassKlass::oop_follow_contents( Oop obj ) {
 }
 
 
-bool_t KlassKlass::oop_verify( Oop obj ) {
+bool KlassKlass::oop_verify( Oop obj ) {
     st_assert( obj->is_klass(), "must be class" );
     Klass *k = KlassOop( obj )->klass_part();
 
@@ -96,11 +96,11 @@ bool_t KlassKlass::oop_verify( Oop obj ) {
 //        std::int32_t b = k->oop_header_size();
 //        std::int32_t c = k->number_of_instance_variables();
 //        if ( a not_eq b + c ) {
-//            warning( "inconsistent non indexable size" );
+//            spdlog::warn( "inconsistent non indexable size" );
 //        }
 //    }
 
-    bool_t flag = MemOop( obj )->verify();
+    bool flag = MemOop( obj )->verify();
     return flag;
 }
 
@@ -154,7 +154,7 @@ void KlassKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
 }
 
 
-Oop KlassKlass::oop_primitive_allocate( Oop obj, bool_t allow_scavenge, bool_t tenured ) {
+Oop KlassKlass::oop_primitive_allocate( Oop obj, bool allow_scavenge, bool tenured ) {
     return KlassOop( obj )->klass_part()->allocateObject( allow_scavenge, tenured );
 }
 
@@ -164,6 +164,6 @@ Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
 }
 
 
-Oop KlassKlass::oop_shallow_copy( Oop obj, bool_t tenured ) {
+Oop KlassKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     return markSymbol( vmSymbols::not_clonable() );
 }

@@ -11,14 +11,14 @@
 
 
 // The following variables are used to do NonLocalReturns through C code
-//extern "C" bool_t     have_nlr_through_C;
+//extern "C" bool     have_nlr_through_C;
 //extern "C" Oop        nlr_result;
 //extern "C" std::int32_t        nlr_home;
 //extern "C" std::int32_t        nlr_home_id;
 //extern "C" ContextOop nlr_home_context;
 
 extern "C" {
-bool_t     have_nlr_through_C = false;
+bool     have_nlr_through_C = false;
 Oop        nlr_result;
 std::int32_t        nlr_home;
 std::int32_t        nlr_home_id;

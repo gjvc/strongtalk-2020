@@ -14,8 +14,6 @@
 #include "vm/interpreter/Floats.hpp"
 #include "vm/memory/oopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 
 //
@@ -47,7 +45,7 @@ static constexpr std::int32_t max_nof_temps  = 256;
 static constexpr std::int32_t max_nof_floats = 256;
 
 
-bool_t     Interpreter::_is_initialized   = false;
+bool       Interpreter::_is_initialized   = false;
 const char *Interpreter::_code_begin_addr = nullptr;
 const char *Interpreter::_code_end_addr   = nullptr;
 
@@ -55,7 +53,7 @@ std::int32_t Interpreter::_interpreter_loop_counter       = 0;
 std::int32_t Interpreter::_interpreter_loop_counter_limit = 0;
 
 
-bool_t Interpreter::contains( const char *pc ) {
+bool Interpreter::contains( const char *pc ) {
     return ( _code_begin_addr <= pc and pc < _code_end_addr ) or ( pc == StubRoutines::single_step_continuation() );
 }
 
@@ -65,44 +63,44 @@ extern "C" const char *InterpreterCodeStatus() {
 }
 
 
-bool_t Interpreter::is_optimized() {
+bool Interpreter::is_optimized() {
     return InterpreterCodeStatus()[ 0 ] == 1;
 }
 
 
-bool_t Interpreter::can_trace_bytecodes() {
+bool Interpreter::can_trace_bytecodes() {
     return InterpreterCodeStatus()[ 1 ] == 1;
 }
 
 
-bool_t Interpreter::can_trace_sends() {
+bool Interpreter::can_trace_sends() {
     return InterpreterCodeStatus()[ 2 ] == 1;
 }
 
 
-bool_t Interpreter::has_assertions() {
+bool Interpreter::has_assertions() {
     return InterpreterCodeStatus()[ 3 ] == 1;
 }
 
 
-bool_t Interpreter::has_stack_checks() {
+bool Interpreter::has_stack_checks() {
     return InterpreterCodeStatus()[ 4 ] == 1;
 }
 
 
-bool_t Interpreter::has_timers() {
+bool Interpreter::has_timers() {
     return InterpreterCodeStatus()[ 5 ] == 1;
 }
 
 
 void Interpreter::print_code_status() {
 
-    _console->print_cr( "%%interpreter-status-optimized [%s]", is_optimized() ? "yes" : "no" );
-    _console->print_cr( "%%interpreter-trace-bytecodes [%s]", can_trace_bytecodes() ? "yes" : "no" );
-    _console->print_cr( "%%interpreter-trace-sends [%s]", can_trace_sends() ? "yes" : "no" );
-    _console->print_cr( "%%interpreter-trace-assertions [%s]", has_assertions() ? "yes" : "no" );
-    _console->print_cr( "%%interpreter-trace-stack_checks [%s]", has_stack_checks() ? "yes" : "no" );
-    _console->print_cr( "%%interpreter-trace-timers [%s]", has_timers() ? "yes" : "no" );
+    spdlog::info( "%interpreter-status-optimized[{}]", is_optimized() ? "yes" : "no" );
+    spdlog::info( "%interpreter-trace-bytecodes[{}]", can_trace_bytecodes() ? "yes" : "no" );
+    spdlog::info( "%interpreter-trace-sends[{}]", can_trace_sends() ? "yes" : "no" );
+    spdlog::info( "%interpreter-trace-assertions[{}]", has_assertions() ? "yes" : "no" );
+    spdlog::info( "%interpreter-trace-stack_checks[{}]", has_stack_checks() ? "yes" : "no" );
+    spdlog::info( "%interpreter-trace-timers[{}]", has_timers() ? "yes" : "no" );
 
 }
 
@@ -111,14 +109,14 @@ void Interpreter::print_code_status() {
 
 void Interpreter::loop_counter_overflow() {
 
-    const bool_t debug  = false;
-    MethodOop    method = DeltaProcess::active()->last_frame().method();
+    const bool debug  = false;
+    MethodOop  method = DeltaProcess::active()->last_frame().method();
     method->set_invocation_count( method->invocation_count() + loop_counter_limit() );
 
     if ( debug ) {
         ResourceMark resourceMark;
-        _console->print_cr( "loop_counter_overflow: loop counter [%d] exceeds loop counter limit [%d], method [%s]",
-                            loop_counter(), loop_counter_limit(), method->print_value_string() );
+        spdlog::info( "loop_counter_overflow: loop counter [{}] exceeds loop counter limit [{}], method[{}]",
+                      loop_counter(), loop_counter_limit(), method->print_value_string() );
     }
 
     reset_loop_counter();
@@ -171,26 +169,27 @@ void Interpreter::trace_bytecode() {
     if ( TraceInterpreterFramesAt ) {
         if ( TraceInterpreterFramesAt < NumberOfBytecodesExecuted ) {
             Frame f = DeltaProcess::active()->last_frame();
-            lprintf( "Frame: fp = %#lx, sp = %#lx]\n", f.fp(), f.sp() );
+            spdlog::info( "Frame: fp = 0x{0:x}, sp = 0x{0:x}]", static_cast<void *>( f.fp() ), static_cast<void *>( f.sp() ) );
+
             for ( Oop    *p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
-                lprintf( "\t[%#lx]: ", p );
+                spdlog::info( "\t[0x{0:x}]: ", static_cast<void *>( p ) );
                 ( *p )->print_value();
-                lprintf( "\n" );
+                spdlog::info( "" );
             }
             std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
             const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-            _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+            spdlog::info( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
         std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
         const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-        _console->print_cr( "%9d 0x%x: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+        spdlog::info( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
     }
 }
 
 
 void Interpreter::warning_illegal( std::int32_t ebx, std::int32_t esi ) {
-    warning( "illegal instruction (ebx = 0x%x, esi = 0x%x)", ebx, esi );
+    spdlog::warn( "illegal instruction (ebx = 0x{0:x}, esi = 0x{0:x})", ebx, esi );
 }
 
 

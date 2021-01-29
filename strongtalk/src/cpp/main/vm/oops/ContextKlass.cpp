@@ -23,7 +23,7 @@ void setKlassVirtualTableFromContextKlass( Klass *k ) {
 }
 
 
-Oop ContextKlass::allocateObjectSize( std::int32_t num_of_temps, bool_t permit_scavenge, bool_t tenured ) {
+Oop ContextKlass::allocateObjectSize( std::int32_t num_of_temps, bool permit_scavenge, bool tenured ) {
     KlassOop   k        = as_klassOop();
     std::int32_t        obj_size = ContextOopDescriptor::header_size() + num_of_temps;
     // allocate

@@ -30,15 +30,14 @@
 #include "vm/utilities/EventLog.hpp"
 #include "vm/utilities/objectIDTable.hpp"
 #include "vm/memory/Scavenge.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/memory/WaterMark.hpp"
 
 
-bool_t      garbageCollectionInProgress = false;
-bool_t      scavengeRequired            = false;
-bool_t      bootstrappingInProgress     = true;
+bool         garbageCollectionInProgress = false;
+bool         scavengeRequired            = false;
+bool         bootstrappingInProgress     = true;
 std::int32_t BlockScavenge::counter      = 0;
-bool_t        Universe::_scavenge_blocked = false;
+bool          Universe::_scavenge_blocked = false;
 NewGeneration Universe::new_gen;
 OldGeneration Universe::old_gen;
 SymbolTable   *Universe::symbol_table;
@@ -92,14 +91,14 @@ void Universe::genesis() {
 
     ResourceMark resourceMark;
 
-    _console->print_cr( "%%system-genesis:  -----------------------------------------------------------------------------" );
-    _console->print_cr( "%%system-genesis:  Strongtalk Delta Virtual Machine, %d.%d%s (%s, %s)", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    _console->print_cr( "%%system-genesis:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
-    _console->print_cr( "%%system-genesis:  -----------------------------------------------------------------------------" );
+    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
+    spdlog::info( "%system-genesis:  Strongtalk Delta Virtual Machine, {}.{}%s (%s, %s)", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
+    spdlog::info( "%system-genesis:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
+    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
 
-    _console->print_cr( "%vm-backend-implementation [%s]", UseNewBackend | TryNewBackend ? "new" : "old" );
+    spdlog::info( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
     if ( UseNewBackend | TryNewBackend )
-        _console->print_cr( "%vm-backend-makeConformant [%s]", UseNewMakeConformant ? "yes" : "no" );
+        spdlog::info( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
 
     if ( not Interpreter::is_optimized() )
         Interpreter::print_code_status();
@@ -184,7 +183,7 @@ MemOop Universe::relocate( MemOop p ) {
 }
 
 
-bool_t Universe::verify_oop( MemOop p ) {
+bool Universe::verify_oop( MemOop p ) {
     if ( new_gen.eden()->contains( p ) )
         return true;
     if ( new_gen.from()->contains( p ) )
@@ -192,44 +191,44 @@ bool_t Universe::verify_oop( MemOop p ) {
     if ( old_gen.contains( p ) )
         return true;
     if ( new_gen.to()->contains( p ) ) {
-        error( "MemOop %#lx is in new generation to-space", p );
+        error( "MemOop 0x{0:x} is in new generation to-space", p );
     } else {
-        error( "MemOop %#lx is not in new generation to-space", p );
+        error( "MemOop 0x{0:x} is not in new generation to-space", p );
     }
     return false;
 }
 
 
-void Universe::verify( bool_t postScavenge ) {
+void Universe::verify( bool postScavenge ) {
     ResourceMark resourceMark;
-    lprintf( "%%status-verify:  " );
+    spdlog::info( "%status-verify:  " );
 
     new_gen.verify();
-    lprintf( "newgen, " );
+    spdlog::info( "newgen, " );
 
     old_gen.verify();
-    lprintf( "oldgen, " );
+    spdlog::info( "oldgen, " );
 
     remembered_set->verify( postScavenge );
-    lprintf( "remembered_set, " );
+    spdlog::info( "remembered_set, " );
 
     symbol_table->verify();
-    lprintf( "symbol_table, " );
+    spdlog::info( "symbol_table, " );
 
     Processes::verify();
-    lprintf( "processes " );
+    spdlog::info( "processes " );
 
-    lprintf( "ok\n" );
+    spdlog::info( "ok" );
 }
 
 
 void Universe::print() {
 
-    _console->print_cr( "Memory:" );
+    spdlog::info( "Memory:" );
     new_gen.print();
     old_gen.print();
     if ( WizardMode ) {
-        _console->print_cr( ", tenuring_threshold=[0x%08x]", tenuring_threshold );
+        spdlog::info( ", tenuring_threshold=[0x{08:x}]", tenuring_threshold );
     }
 
 }
@@ -340,7 +339,7 @@ void Universe::print_klass_name( KlassOop k ) {
             return;
         } else if ( assoc->value()->klass() == k ) {
             assoc->key()->print_symbol_on();
-            lprintf( " class" );
+            spdlog::info( " class" );
             return;
         }
     }
@@ -398,14 +397,15 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
         }
     }
 
-    if ( WizardMode )
-        warning( "could not find methodHolder of method at %#x", m );
+    if ( WizardMode ) {
+        spdlog::warn( "could not find methodHolder of method at 0x{0:x}", static_cast<const void *>(m) );
+    }
 
     return nullptr;
 }
 
 
-SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
+SymbolOop Universe::find_global_key_for( Oop value, bool *meta ) {
     *meta = false;
     std::int32_t l = systemDictionaryObject()->length();
 
@@ -423,11 +423,12 @@ SymbolOop Universe::find_global_key_for( Oop value, bool_t *meta ) {
             }
         }
     }
+
     return nullptr;
 }
 
 
-Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
+Oop Universe::find_global( const char *name, bool must_be_constant ) {
 
     if ( not must_be_constant ) {
         if ( strcmp( name, "true" ) == 0 )
@@ -438,7 +439,7 @@ Oop Universe::find_global( const char *name, bool_t must_be_constant ) {
             return nilObject();
     }
 
-    SymbolOop   sym = oopFactory::new_symbol( name );
+    SymbolOop    sym = oopFactory::new_symbol( name );
     std::int32_t l   = systemDictionaryObject()->length();
 
     for ( std::int32_t i = 1; i <= l; i++ ) {
@@ -529,7 +530,7 @@ void Universe::classes_for_do( KlassOop klass, klassOopClosure *iterator ) {
 void Universe::classes_do( klassOopClosure *iterator ) {
 
     ObjectArrayOop array  = Universe::systemDictionaryObject();
-    std::int32_t    length = array->length();
+    std::int32_t   length = array->length();
 
     for ( std::int32_t i = 1; i <= length; i++ ) {
         AssociationOop assoc = AssociationOop( array->obj_at( i ) );
@@ -598,7 +599,7 @@ void Universe::cleanup_all_inline_caches() {
 
 
 void universe_init() {
-    _console->print_cr( "%%system-init:  universe_init" );
+    spdlog::info( "%system-init:  universe_init" );
 
     Universe::genesis();
 }
@@ -673,7 +674,7 @@ void Universe::remove_global_at( std::int32_t index ) {
 }
 
 
-bool_t Universe::on_page_boundary( void *addr ) {
+bool Universe::on_page_boundary( void *addr ) {
     return ( (std::int32_t) addr ) % page_size() == 0;
 }
 
@@ -683,7 +684,7 @@ std::int32_t Universe::page_size() {
 }
 
 
-void Universe::store( Oop *p, Oop contents, bool_t cs ) {
+void Universe::store( Oop *p, Oop contents, bool cs ) {
     st_assert( is_heap( p ) or not cs, "Reference must be in object memory to mark card." );
     *p = contents;
     if ( cs and ( p >= (Oop *) Universe::new_gen.boundary() ) ) remembered_set->record_store( p );
@@ -692,7 +693,7 @@ void Universe::store( Oop *p, Oop contents, bool_t cs ) {
 }
 
 
-Oop *Universe::allocate_in_survivor_space( MemOop p, std::int32_t size, bool_t &is_new ) {
+Oop *Universe::allocate_in_survivor_space( MemOop p, std::int32_t size, bool &is_new ) {
     if ( p->mark()->age() < tenuring_threshold and new_gen.would_fit( size ) ) {
         is_new = true;
         return new_gen.allocate_in_survivor_space( size );
@@ -713,7 +714,7 @@ Oop Universe::tenure( Oop p ) {
 }
 
 
-bool_t Universe::can_scavenge() {
+bool Universe::can_scavenge() {
     // don't scavenge if we're in critical vm operation
     if ( processSemaphore )
         return false;
@@ -757,7 +758,7 @@ void Universe::scavenge_oop( Oop *p ) {
 }
 
 
-bool_t Universe::needs_garbage_collection() {
+bool Universe::needs_garbage_collection() {
     return old_gen.free() < new_gen.to()->capacity();
 }
 

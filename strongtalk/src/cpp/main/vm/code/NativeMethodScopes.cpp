@@ -12,8 +12,6 @@
 #include "vm/code/ScopeDescriptorNode.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 ScopeDescriptor *NativeMethodScopes::at( std::int32_t offset, const char *pc ) const {
 
@@ -91,7 +89,7 @@ std::int32_t NativeMethodScopes::unpackValueAt( std::int32_t &offset ) const {
 }
 
 
-NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool_t &is_last, const char *pc ) const {
+NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool &is_last, const char *pc ) const {
     std::int32_t                startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
@@ -143,7 +141,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool
 
 void NativeMethodScopes::iterate( std::int32_t &offset, UnpackClosure *closure ) const {
     char           *pc = my_nativeMethod()->instructionsStart();
-    bool_t         is_last;
+    bool         is_last;
     NameDescriptor *nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
     if ( nd == nullptr )
         return;        // if at termination byte
@@ -159,7 +157,7 @@ void NativeMethodScopes::iterate( std::int32_t &offset, UnpackClosure *closure )
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, const char *pc ) const {
     std::int32_t            pc_offset         = pc - my_nativeMethod()->instructionsStart();
     std::int32_t            current_pc_offset = 0;
-    bool_t         is_last;
+    bool         is_last;
     NameDescriptor *result           = unpackNameDescAt( offset, is_last, pc );
     if ( result == nullptr )
         return nullptr;    // if at termination byte
@@ -188,7 +186,7 @@ void NativeMethodScopes::verify() {
     // Verify all scopedesc
     FOR_EACH_SCOPE( this, s ) {
         if ( not s->verify() )
-            lprintf( "\t\tin NativeMethod at %#lx (scopes)\n", my_nativeMethod() );
+            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (scopes)", static_cast<void*>( my_nativeMethod() ) );
     }
 }
 
@@ -253,8 +251,8 @@ void NativeMethodScopes::relocate() {
 }
 
 
-bool_t NativeMethodScopes::is_new() const {
-    bool_t result = false;
+bool NativeMethodScopes::is_new() const {
+    bool result = false;
     FOR_EACH_OOPADDR( addr ) {
         if ( ( *addr )->is_new() )
             return true;
@@ -266,7 +264,7 @@ bool_t NativeMethodScopes::is_new() const {
 void NativeMethodScopes::print() {
     ResourceMark m;    // in case methods get printed via debugger
     printIndent();
-    lprintf( "scopes:\n" );
+    spdlog::info( "scopes:" );
     Indent++;
     FOR_EACH_SCOPE( this, d )d->print();
     Indent--;
@@ -281,5 +279,5 @@ void NativeMethodScopes::print_partition() {
     std::int32_t v_size = value_size() * sizeof( std::int32_t );
     std::int32_t total  = v_size + p_size + o_size + d_size;
 
-    _console->print_cr( "{deps %d%%, oops %d%%, bytes %d%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
+    spdlog::info( "{deps {}%%, oops {}%%, bytes {}%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
 }

@@ -50,11 +50,11 @@ private:
 
     std::int32_t maxNofStackTmps();
 
-    bool_t isLiveRangeBoundary( Node *a, Node *b ) const;
+    bool isLiveRangeBoundary( Node *a, Node *b ) const;
 
-    void jmp( Node *from, Node *to, bool_t to_maybe_nontrivial = false );
+    void jmp( Node *from, Node *to, bool to_maybe_nontrivial = false );
 
-    void jcc( Assembler::Condition cc, Node *from, Node *to, bool_t to_maybe_nontrivial = false );
+    void jcc( Assembler::Condition cc, Node *from, Node *to, bool to_maybe_nontrivial = false );
 
     void bindLabel( Node *node );
 
@@ -73,11 +73,11 @@ private:
 
     void storeCheck( Register obj );
 
-    void assign( PseudoRegister *dst, PseudoRegister *src, bool_t needsStoreCheck = true );
+    void assign( PseudoRegister *dst, PseudoRegister *src, bool needsStoreCheck = true );
 
     void uplevelBase( PseudoRegister *startContext, std::int32_t nofLevels, Register base );
 
-    void moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool_t &x_attr, bool_t &y_attr );
+    void moveConstant( ArithOpCode op, PseudoRegister *&x, PseudoRegister *&y, bool &x_attr, bool &y_attr );
 
     void arithRROp( ArithOpCode op, Register x, Register y );
 
@@ -87,7 +87,7 @@ private:
 
     void arithRXOp( ArithOpCode op, Register x, Oop y );
 
-    bool_t producesResult( ArithOpCode op );
+    bool producesResult( ArithOpCode op );
 
     Register targetRegister( ArithOpCode op, PseudoRegister *z, PseudoRegister *x );
 

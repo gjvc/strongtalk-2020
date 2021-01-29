@@ -41,7 +41,7 @@ PRIM_DECL_1( debugPrimitives::boolAt, Oop name ) {
     PROLOGUE_1( "boolAt", name )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    bool_t result;
+    bool result;
     if ( debugFlags::boolAt( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &result ) )
         return result ? trueObject : falseObject;
     return markSymbol( vmSymbols::not_found() );
@@ -52,7 +52,7 @@ PRIM_DECL_2( debugPrimitives::boolAtPut, Oop name, Oop value ) {
     PROLOGUE_2( "boolAtPut", name, value )
     if ( not name->is_byteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    bool_t b;
+    bool b;
     if ( value == trueObject )
         b = true;
     else if ( value == falseObject )
@@ -144,7 +144,7 @@ PRIM_DECL_2( debugPrimitives::printMethodCodes, Oop receiver, Oop sel ) {
 
 
 PRIM_DECL_2( debugPrimitives::generateIR, Oop receiver, Oop sel ) {
-    _console->print_cr( "primitiveGenerateIR called..." );
+    spdlog::info( "primitiveGenerateIR called..." );
     ResourceMark resourceMark;    // needed to avoid memory leaks!
     PROLOGUE_2( "generateIR", receiver, sel )
     if ( not sel->is_byteArray() )
@@ -300,7 +300,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     // Collect the methods
     CollectMethodClosure blk( col, SMIOop( size )->value() );
     Universe::object_iterate( &blk );
-    _console->print_cr( "Collected %d methods", col->length() );
+    spdlog::info( "Collected {} methods", col->length() );
 
     // Sort the methods based on the invocation counters.
     col->sort( &compare_method_counters );
@@ -352,7 +352,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     // Collect the nativeMethods
     FOR_ALL_NMETHOD( nm )col->push( nm );
 
-    _console->print_cr( "Collected %d nativeMethods", col->length() );
+    spdlog::info( "Collected {} nativeMethods", col->length() );
     // Sort the methods based on the invocation counters.
     col->sort( &compare_NativeMethod_counters );
 
@@ -462,7 +462,7 @@ public:
     void print( const char *prefix ) {
         _console->print( "%s%s", prefix, title );
         _console->fill_to( 22 );
-        _console->print_cr( "%6d %8d", number, total_size * oopSize );
+        spdlog::info( "%6d %8d", number, total_size * oopSize );
     }
 
 
@@ -567,7 +567,7 @@ Counter *ObjectHistogram::counter( MemOop obj ) {
 void ObjectHistogram::print() {
     _console->print( "Object Histogram" );
     _console->fill_to( 22 );
-    _console->print_cr( "number    bytes" );
+    spdlog::info( "number    bytes" );
     Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
 

@@ -22,7 +22,7 @@ Oop objectIDTable::at( std::int32_t index ) {
 }
 
 
-bool_t objectIDTable::is_index_ok( std::int32_t index ) {
+bool objectIDTable::is_index_ok( std::int32_t index ) {
     return 1 <= index and index <= Universe::objectIDTable()->length();
 }
 

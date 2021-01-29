@@ -45,7 +45,7 @@ void init_globals() {
 
 void exit_globals() {
 
-    static bool_t destructorsCalled = false;
+    static bool destructorsCalled = false;
     if ( destructorsCalled )
         return;
 

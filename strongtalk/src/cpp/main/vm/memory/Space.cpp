@@ -5,7 +5,6 @@
 //
 
 #include "vm/memory/Space.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
@@ -60,7 +59,7 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
         if ( m->is_gc_marked() ) {
             if ( first_free ) {
                 first_free->set_mark( q );
-                lprintf( "first_free [%#lx] = first_free->mark() [%#lx], q [%#lx]\n", first_free, first_free->mark(), q );
+                spdlog::info( "first_free [0x{0:x}] = first_free->mark() [0x{0:x}], q [0x{0:x}]", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
                 first_free = nullptr;
             }
 
@@ -80,14 +79,14 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
         } else {
             if ( not first_free ) {
                 first_free = m;
-//                lprintf( "First free %#lx\n", q );
+                spdlog::info( "First free 0x{0:x}", static_cast<const void *>(q) );
             }
             q += m->size();
         }
     }
     if ( first_free ) {
         first_free->set_mark( q );
-//        lprintf( "[%#lx] = %#lx, %#lx\n", first_free, first_free->mark(), q );
+        spdlog::info( "[0x{0:x}] = 0x{0:x}, 0x{0:x}", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
     }
     mark->_point = new_top;
 }
@@ -105,7 +104,7 @@ void Space::compact( OldWaterMark *mark ) {
     while ( q < t ) {
         MemOop m = as_memOop( q );
         if ( m->mark()->is_smi() ) {
-//            lprintf( "Space::compact()  expand [%#lx] -> [%#lx]\n", q, *q );
+//            spdlog::info( "Space::compact()  expand [0x{0:x}] -> [0x{0:x}]", q, *q );
             q = (Oop *) *q;
         } else {
             std::int32_t size = m->gc_retrieve_size();
@@ -115,7 +114,7 @@ void Space::compact( OldWaterMark *mark ) {
 
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
-//                lprintf( "Space::compact()  copy [%#lx] -> [%#lx] (%d)\n", q, new_top, size );
+//                spdlog::info( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] (%d)", q, new_top, size );
                 st_assert( ( *new_top )->is_mark(), "should be header" );
             }
             mark->_space->update_offsets( new_top, new_top + size );
@@ -169,7 +168,7 @@ SurvivorSpace::SurvivorSpace() {
 void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
 
 #ifdef VERBOSE_SCAVENGING
-    lprintf("{scavenge_contents [ %#lx <= %#lx <= %#lx]}\n", bottom(), mark->_point, top());
+    spdlog::info("{scavenge_contents [ 0x{0:x} <= 0x{0:x} <= 0x{0:x}]}", bottom(), mark->_point, top());
 #endif
 
     if ( top() == mark->_point )
@@ -183,8 +182,8 @@ void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
         MemOop m = as_memOop( p );
 
 #ifdef VERBOSE_SCAVENGING
-        lprintf("{scavenge %#lx (%#lx)} ", p, m->klass());
-        lprintf("%s\n", m->klass()->name());
+        spdlog::info("{scavenge 0x{0:x} (0x{0:x})} ", p, m->klass());
+        spdlog::info("%s", m->klass()->name());
         Oop *prev = p;
 #endif
 
@@ -334,7 +333,7 @@ void Space::object_iterate( ObjectClosure *blk ) {
 
 
 void NewSpace::verify() {
-    lprintf( "%s, ", name() );
+    spdlog::info( "%s, ", name() );
     Oop *p = bottom();
     Oop *t = top();
 
@@ -364,22 +363,22 @@ public:
         if ( Universe::remembered_set->is_object_dirty( _the_obj ) != 0 ) return;
 
         _console->cr();
-        _console->print_cr( "New obj reference found in non dirty page." );
-        _console->print_cr( "- object containing the reference:" );
+        spdlog::info( "New obj reference found in non dirty page." );
+        spdlog::info( "- object containing the reference:" );
         _the_obj->print();
-        _console->print_cr( "- the referred object:" );
+        spdlog::info( "- the referred object:" );
         _console->print( "[0x%lx]: 0x%lx = ", o, obj );
         obj->print_value();
         _console->cr();
 
         Universe::remembered_set->print_set_for_object( _the_obj );
-        warning( "gc problem" );
+        spdlog::warn( "gc problem" );
     }
 };
 
 
 void OldSpace::verify() {
-    lprintf( "%s ", name() );
+    spdlog::info( "%s ", name() );
     Oop                 *p = _bottom;
     MemOop              m;
     VerifyOldOopClosure blk;
@@ -401,7 +400,7 @@ void OldSpace::verify() {
 
 Oop *OldSpace::object_start( Oop *p ) {
     // Find the page start
-    Oop *q = p;
+    Oop          *q = p;
     std::int32_t b  = (std::int32_t) q;
     clearBits( b, nthMask( card_shift ) );
     q = (Oop *) b;

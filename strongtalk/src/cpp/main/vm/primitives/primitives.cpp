@@ -80,35 +80,35 @@ const char *name_from_group( const PrimitiveGroup &group ) {
 void Primitives::print_table() {
 
     //
-    _console->print_cr( "%%primitive-table:" );
-    _console->print_cr( "%%primitive-table:                                                     P = needs Delta FP code ------------------------------." );
-    _console->print_cr( "%%primitive-table:                                                     I = internal ----------------------------------------.|" );
-    _console->print_cr( "%%primitive-table:                                                     D = can invoke Delta code --------------------------.||" );
-    _console->print_cr( "%%primitive-table:                                                     C = can be constant folded ------------------------.|||" );
-    _console->print_cr( "%%primitive-table:                                                     N = can perform non-local return -----------------.||||" );
-    _console->print_cr( "%%primitive-table:                                                     W = can walk stack (computed) -------------------.|||||" );
-    _console->print_cr( "%%primitive-table:                                                     S = can scavenge -------------------------------.||||||" );
-    _console->print_cr( "%%primitive-table:                                                     F = has failure block -------------------------.|||||||" );
-    _console->print_cr( "%%primitive-table:                                                     R = has receiver -----------------------------.||||||||" );
-    _console->print_cr( "%%primitive-table:                                                                                                   |||||||||" );
-    _console->print_cr( "%%primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
+    spdlog::info( "%primitive-table:" );
+    spdlog::info( "%primitive-table:                                                     P = needs Delta FP code ------------------------------." );
+    spdlog::info( "%primitive-table:                                                     I = internal ----------------------------------------.|" );
+    spdlog::info( "%primitive-table:                                                     D = can invoke Delta code --------------------------.||" );
+    spdlog::info( "%primitive-table:                                                     C = can be constant folded ------------------------.|||" );
+    spdlog::info( "%primitive-table:                                                     N = can perform non-local return -----------------.||||" );
+    spdlog::info( "%primitive-table:                                                     W = can walk stack (computed) -------------------.|||||" );
+    spdlog::info( "%primitive-table:                                                     S = can scavenge -------------------------------.||||||" );
+    spdlog::info( "%primitive-table:                                                     F = has failure block -------------------------.|||||||" );
+    spdlog::info( "%primitive-table:                                                     R = has receiver -----------------------------.||||||||" );
+    spdlog::info( "%primitive-table:                                                                                                   |||||||||" );
+    spdlog::info( "%primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
 
     //
     for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
-        _console->print_cr( "%%primitive-table:  %.5d  %-84s  %2d  %s%s%s%s%s%s%s%s%s  %s",
+        spdlog::info( "%primitive-table:  {:5d}  {:<84}  {:2d}  {}{}{}{}{}{}{}{}{}  {}",
                             i,
                             e->name(),
                             e->number_of_parameters(),
-                            e->has_receiver() ? "R" : "_",
-                            e->can_fail() ? "F" : "_",
-                            e->can_scavenge() ? "S" : "_",
-                            e->can_walk_stack() ? "W" : "_",
-                            e->can_perform_NonLocalReturn() ? "N" : "_",
-                            e->can_be_constant_folded() ? "C" : "_",
-                            e->can_invoke_delta() ? "D" : "_",
-                            e->is_internal() ? "I" : "_",
-                            e->needs_delta_fp_code() ? "P" : "_",
+                            e->has_receiver() ? 'R' : '_',
+                            e->can_fail() ? 'F' : '_',
+                            e->can_scavenge() ? 'S' : '_',
+                            e->can_walk_stack() ? 'W' : '_',
+                            e->can_perform_NonLocalReturn() ? 'N' : '_',
+                            e->can_be_constant_folded() ? 'C' : '_',
+                            e->can_invoke_delta() ? 'D' : '_',
+                            e->is_internal() ? 'I' : '_',
+                            e->needs_delta_fp_code() ? 'P' : '_',
                             name_from_group( e->group() )
         );
     }
@@ -116,7 +116,7 @@ void Primitives::print_table() {
 }
 
 
-bool_t PrimitiveDescriptor::can_walk_stack() const {
+bool PrimitiveDescriptor::can_walk_stack() const {
     return can_scavenge() or can_invoke_delta() or can_perform_NonLocalReturn();
 }
 
@@ -239,9 +239,9 @@ void Primitives::lookup_and_patch() {
         {
             ResourceMark resourceMark;
             // primitive not found => process error
-            _console->print_cr( "primitive lookup error" );
+            spdlog::info( "primitive lookup error" );
             sel->print_value();
-            _console->print_cr( " not found" );
+            spdlog::info( " not found" );
 
         }
         if ( DeltaProcess::active()->is_scheduler() ) {
@@ -259,7 +259,7 @@ void Primitives::lookup_and_patch() {
 
 
 void primitives_init() {
-    _console->print_cr( "%%system-init:  primitives_init" );
+    spdlog::info( "%system-init:  primitives_init" );
 
     Primitives::initialize();
     PrimitiveDescriptor *prev = nullptr;
@@ -299,7 +299,7 @@ void Primitives::clear_counters() {
 
 static void print_calls( const char *name, std::int32_t inc, std::int32_t *total ) {
     if ( inc > 0 ) {
-        lprintf( " %s:\t%6d\n", name, inc );
+        spdlog::info( " %s:\t%6d", name, inc );
         *total = *total + inc;
     }
 }
@@ -307,7 +307,7 @@ static void print_calls( const char *name, std::int32_t inc, std::int32_t *total
 
 void Primitives::print_counters() {
     std::int32_t total = 0;
-    lprintf( "Primitive call counters:\n" );
+    spdlog::info( "Primitive call counters:" );
     print_calls( "Behavior", behaviorPrimitives::_numberOfCalls, &total );
     print_calls( "byteArray", byteArrayPrimitives::number_of_calls, &total );
     print_calls( "callBack", callBackPrimitives::number_of_calls, &total );
@@ -322,7 +322,7 @@ void Primitives::print_counters() {
     print_calls( "proxy", proxyOopPrimitives::number_of_calls, &total );
     print_calls( "smi_t", smiOopPrimitives::number_of_calls, &total );
     print_calls( "system", SystemPrimitives::number_of_calls, &total );
-    lprintf( "Total:\t%6d\n", total );
+    spdlog::info( "Total:\t%6d", total );
 
 }
 
@@ -349,7 +349,7 @@ PrimitiveDescriptor *InterpretedPrimitiveCache::pdesc() const {
 }
 
 
-bool_t InterpretedPrimitiveCache::has_receiver() const {
+bool InterpretedPrimitiveCache::has_receiver() const {
     CodeIterator c( hp() );
     switch ( c.code() ) {
         case ByteCodes::Code::primitive_call_self:
@@ -398,7 +398,7 @@ std::int32_t InterpretedPrimitiveCache::number_of_parameters() const {
 }
 
 
-bool_t InterpretedPrimitiveCache::has_failure_code() const {
+bool InterpretedPrimitiveCache::has_failure_code() const {
     CodeIterator c( hp() );
     switch ( c.code() ) {
         case ByteCodes::Code::primitive_call_failure:
@@ -432,7 +432,7 @@ PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
 PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t selector_length ) {
     std::int32_t first = 0;
     std::int32_t last  = size_of_primitive_table;
-    _console->print_cr( "%%primitives-lookup: [%s] [%d]", selector, selector_length  );
+    spdlog::info( "%primitives-lookup: [{}] [{}]", selector, selector_length  );
 
     PrimitiveDescriptor *element;
     do {
@@ -465,7 +465,7 @@ PrimitiveDescriptor *Primitives::verified_lookup( const char *selector ) {
     std::int32_t         selector_length = strlen( selector );
     PrimitiveDescriptor *result         = lookup( selector, selector_length );
     if ( result == nullptr ) {
-        _console->print_cr( "%%primitives-lookup: Verified primitive lookup failed: selector = [%s]", selector );
+        spdlog::info( "%primitives-lookup: Verified primitive lookup failed: selector =[{}]", selector );
         st_fatal( "aborted" );
     }
     return result;
@@ -503,7 +503,7 @@ void Primitives::initialize() {
 
 
 void Primitives::patch( const char *name, const char *entry_point ) {
-    _console->print_cr( "%%primitives-patch:  name [%s], entry_point [0x%0x]", name, entry_point );
+    spdlog::info( "%primitives-patch:  name[{}], entry_point[0x{0:x}]", name, entry_point );
     st_assert( entry_point, "just checking" );
     PrimitiveDescriptor *pdesc = verified_lookup( name );
     pdesc->_fn = (primitiveFunctionType) entry_point;

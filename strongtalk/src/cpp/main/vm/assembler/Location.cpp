@@ -86,22 +86,22 @@ const char *Location::name() const {
 
 // predicates
 
-bool_t Location::isTopOfStack() const {
+bool Location::isTopOfStack() const {
     return *this == topOfStack or *this == topOfFloatStack;
 }
 
 
-bool_t Location::isTemporaryRegister() const {
+bool Location::isTemporaryRegister() const {
     return isRegisterLocation() and Mapping::isTemporaryRegister( *this );
 }
 
 
-bool_t Location::isTrashedRegister() const {
+bool Location::isTrashedRegister() const {
     return isRegisterLocation() and Mapping::isTrashedRegister( *this );
 }
 
 
-bool_t Location::isLocalRegister() const {
+bool Location::isLocalRegister() const {
     return isRegisterLocation() and Mapping::isLocalRegister( *this );
 }
 
@@ -155,6 +155,6 @@ std::int32_t IntFreeList::length() {
 
 
 void IntFreeList::print() {
-    _console->print( "FreeList 0x%x:", this );
+    spdlog::info( "FreeList 0x{0:x}:", static_cast<const void *>(this) );
     _list->print();
 }

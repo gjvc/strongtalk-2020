@@ -107,32 +107,32 @@ public:
 
     std::int32_t nofFreeRegisters() const;        // the number of available registers
 
-    bool_t freeRegisters() const {
+    bool freeRegisters() const {
         return _firstFreeRegister not_eq sentinel;
     }
 
 
-    bool_t isLocation( std::int32_t i ) const {
+    bool isLocation( std::int32_t i ) const {
         return locationsBeg() <= i and i < locationsEnd();
     }
 
 
-    bool_t isArgument( std::int32_t i ) const {
+    bool isArgument( std::int32_t i ) const {
         return argumentsBeg() <= i and i < argumentsEnd();
     }
 
 
-    bool_t isRegister( std::int32_t i ) const {
+    bool isRegister( std::int32_t i ) const {
         return registersBeg() <= i and i < registersEnd();
     }
 
 
-    bool_t isStackTmp( std::int32_t i ) const {
+    bool isStackTmp( std::int32_t i ) const {
         return stackTmpsBeg() <= i and i < stackTmpsEnd();
     }
 
 
-    bool_t isStackLoc( std::int32_t i ) const {
+    bool isStackLoc( std::int32_t i ) const {
         return isArgument( i ) or isStackTmp( i );
     }
 

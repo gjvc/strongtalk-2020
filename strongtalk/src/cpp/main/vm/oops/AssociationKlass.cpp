@@ -16,7 +16,7 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k ) {
 }
 
 
-Oop AssociationKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop AssociationKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     KlassOop k    = as_klassOop();
     std::int32_t      size = non_indexable_size();
 
@@ -52,8 +52,8 @@ KlassOop AssociationKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 }
 
 
-bool_t AssociationKlass::oop_verify( Oop obj ) {
-    bool_t flag = MemOop( obj )->verify();
+bool AssociationKlass::oop_verify( Oop obj ) {
+    bool flag = MemOop( obj )->verify();
     return flag;
 }
 
@@ -87,7 +87,7 @@ void AssociationKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream 
     }
     stream->print( "}" );
     if ( PrintOopAddress )
-        stream->print( " (%#x)", this );
+        stream->print( " (0x{0:x})", this );
 }
 
 

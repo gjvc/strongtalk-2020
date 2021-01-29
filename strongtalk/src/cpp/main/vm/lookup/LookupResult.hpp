@@ -35,17 +35,17 @@ public:
     void clear();
 
 
-    bool_t is_empty() const;
+    bool is_empty() const;
 
 
-    bool_t is_method() const;
+    bool is_method() const;
 
 
-    bool_t is_entry() const;
+    bool is_entry() const;
 
 
-    bool_t matches( MethodOop m ) const; // Checks whether the result is methodOop m.
-    bool_t matches( NativeMethod *nm ) const; // Checks whether the result is NativeMethod nm.
+    bool matches( MethodOop m ) const; // Checks whether the result is methodOop m.
+    bool matches( NativeMethod *nm ) const; // Checks whether the result is NativeMethod nm.
 
     Oop value() const;
 

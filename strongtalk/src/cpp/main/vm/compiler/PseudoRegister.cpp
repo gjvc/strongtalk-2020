@@ -14,10 +14,10 @@
 
 std::int32_t                                 PseudoRegister::currentNo       = 0;
 std::int32_t                                 BlockPseudoRegister::_numBlocks = 0;
-static GrowableArray<ConstPseudoRegister *> *constants                      = 0;
-static PseudoRegister                       *dummyPR;
-const std::int32_t PseudoRegister::AvgBBIndexLen = 10;
-const std::int32_t PseudoRegister::VeryNegative  = -9999;        // fix this -- should be std::int16_t, really
+static GrowableArray<ConstPseudoRegister *>  *constants                      = 0;
+static PseudoRegister                        *dummyPR;
+const std::int32_t                           PseudoRegister::AvgBBIndexLen   = 10;
+const std::int32_t                           PseudoRegister::VeryNegative    = -9999;        // fix this -- should be std::int16_t, really
 
 #define BAD_SCOPE  ((InlinedScope*)1)
 
@@ -53,7 +53,7 @@ void PseudoRegister::initPRegs() {
 }
 
 
-SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool_t inContext ) :
+SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool inContext ) :
         PseudoRegister( s ), _isInContext( inContext ) {
     creationStartByteCodeIndex = _begByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
     _endByteCodeIndex          = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
@@ -83,7 +83,7 @@ void BlockPseudoRegister::addContextCopy( Location *l ) {
 }
 
 
-void PseudoRegister::makeIncorrectDU( bool_t incU, bool_t incD ) {
+void PseudoRegister::makeIncorrectDU( bool incU, bool incD ) {
     if ( incU )
         _usageCount      = VeryNegative;
     if ( incD )
@@ -91,7 +91,7 @@ void PseudoRegister::makeIncorrectDU( bool_t incU, bool_t incD ) {
 }
 
 
-bool_t PseudoRegister::isLocalTo( BasicBlock *bb ) const {
+bool PseudoRegister::isLocalTo( BasicBlock *bb ) const {
     // is this a preg local to bb? (i.e. can it be allocated to temp regs?)
     // treat ConstPseudoRegisters as non-local so they don't get allocated prematurely
     // (possible performance bug)
@@ -100,7 +100,7 @@ bool_t PseudoRegister::isLocalTo( BasicBlock *bb ) const {
 
 
 // check basic conditions for global copy-propagation
-bool_t PseudoRegister::canCopyPropagate() const {
+bool PseudoRegister::canCopyPropagate() const {
 
     if ( nuses() == 0 or ndefs() not_eq 1 )
         return false;
@@ -114,7 +114,7 @@ bool_t PseudoRegister::canCopyPropagate() const {
 
 
 // NB: _uplevelR/W are initialized lazily to reduce memory consumption
-void PseudoRegister::addUplevelAccessor( BlockPseudoRegister *blk, bool_t read, bool_t write ) {
+void PseudoRegister::addUplevelAccessor( BlockPseudoRegister *blk, bool read, bool write ) {
 
     if ( read ) {
         if ( not _uplevelReaders )
@@ -191,7 +191,7 @@ ConstPseudoRegister *findConstPReg( Node *n, Oop c ) {
 }
 
 
-bool_t ConstPseudoRegister::needsRegister() const {
+bool ConstPseudoRegister::needsRegister() const {
     // register only pays off if we're used more than once and aren't a
     // small immediate constant
 //   return CompilerCSEConstants and weight > 1 and (std::int32_t(constant) > maxImmediate or std::int32_t(constant) < -maxImmediate);
@@ -302,7 +302,7 @@ void PseudoRegister::removeDef( BasicBlock *bb, Definition *def ) {
 
 
 void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, DefinitionUsage *el ) {
-    std::int32_t                          myNum = n->num();
+    std::int32_t                 myNum = n->num();
     SListElem<DefinitionUsage *> *prev = nullptr;
 
     for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
@@ -365,14 +365,16 @@ void PseudoRegister::forAllUsesDo( Closure<Usage *> *c ) {
 
 
 void PseudoRegister::allocateTo( Location r ) {
-    if ( CompilerDebug )
+    if ( CompilerDebug ) {
         cout( PrintRegAlloc )->print( "allocating PseudoRegister %s to Location %s\n", name(), r.name() );
+    }
+
     st_assert( _location.equals( unAllocated ), "already allocated" );
     _location = r;
 }
 
 
-bool_t PseudoRegister::extendLiveRange( Node *n ) {
+bool PseudoRegister::extendLiveRange( Node *n ) {
     // the receiver is being copy-propagated to n
     // PseudoRegisters currently can't be propagated outside their scope
     // should fix copy-propagation: treat all PseudoRegisters like SinglyAssignedPseudoRegister so can propagate anywhere?
@@ -380,7 +382,7 @@ bool_t PseudoRegister::extendLiveRange( Node *n ) {
 }
 
 
-bool_t PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
+bool PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
     // the receiver is being copy-propagated to n
     // PseudoRegisters currently can't be propagated outside their scope
     // should fix copy-propagation: treat all PseudoRegisters like SinglyAssignedPseudoRegister so can propagate anywhere?
@@ -394,13 +396,13 @@ bool_t PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIn
 }
 
 
-bool_t SinglyAssignedPseudoRegister::extendLiveRange( Node *n ) {
+bool SinglyAssignedPseudoRegister::extendLiveRange( Node *n ) {
     // the receiver is being copy-propagated to n; try to extend its live range
     return extendLiveRange( n->scope(), n->byteCodeIndex() );
 }
 
 
-bool_t SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
+bool SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
     // the receiver is being copy-propagated to scope s at byteCodeIndex; try to extend its live range
     st_assert( _begByteCodeIndex not_eq IllegalByteCodeIndex and creationStartByteCodeIndex not_eq IllegalByteCodeIndex and _endByteCodeIndex not_eq IllegalByteCodeIndex, "live range not set" );
     if ( isInContext() ) {
@@ -409,7 +411,7 @@ bool_t SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, std::int3
         // was bug 5/3/96  -Urs
         return PseudoRegister::extendLiveRange( s, byteCodeIndex );
     }
-    bool_t ok = true;
+    bool ok = true;
     if ( s == _scope ) {
         if ( byteCodeIndexLT( byteCodeIndex, _begByteCodeIndex ) ) {
             // seems like we're propagating backwards!  happens because of the non-source
@@ -472,7 +474,7 @@ void ConstPseudoRegister::extendLiveRange( InlinedScope *s ) {
 }
 
 
-bool_t ConstPseudoRegister::covers( Node *n ) const {
+bool ConstPseudoRegister::covers( Node *n ) const {
     // does receiver cover node n (is it live at n)?
     InlinedScope *s = n->scope();
     if ( _scope->isSenderOrSame( s ) ) {
@@ -483,18 +485,21 @@ bool_t ConstPseudoRegister::covers( Node *n ) const {
 }
 
 
-bool_t ConstPseudoRegister::extendLiveRange( Node *n ) {
+bool ConstPseudoRegister::extendLiveRange( Node *n ) {
     extendLiveRange( n->scope() );
     return true;
 }
 
 
-bool_t PseudoRegister::checkEquivalentDefs() const {
+bool PseudoRegister::checkEquivalentDefs() const {
     // check if all definitions are equivalent, i.e. assign the same preg
-    if ( ndefs() == 1 )
+    if ( ndefs() == 1 ) {
         return true;
-    PseudoRegister    *rhs = nullptr;
-    for ( std::int32_t i    = 0; i < _dus.length(); i++ ) {
+    }
+
+    PseudoRegister *rhs = nullptr;
+
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         BasicBlock                    *bb    = index->_basicBlock;
         DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
@@ -515,7 +520,7 @@ bool_t PseudoRegister::checkEquivalentDefs() const {
 }
 
 
-bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
+bool PseudoRegister::canBeEliminated( bool withUses ) const {
 
     // can this PseudoRegister be eliminated without compromising the debugging info?
     st_assert( _usageCount == 0 or withUses, "still has uses" );
@@ -566,7 +571,7 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
         }
         NonTrivialNode *defNode = e->data()->_node;
         PseudoRegister *defSrc;
-        bool_t         ok;
+        bool         ok;
         if ( defNode->hasConstantSrc() ) {
             // constant assignment - easy to handle
             ok = true;
@@ -587,9 +592,11 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
                 // try to extend defSrc's live range to cover ours
                 ok = defSrc->extendLiveRange( _scope, endByteCodeIndex() );
             }
+
         } else {
             ok = false;
         }
+
         if ( not ok ) {
             if ( CompilerDebug )
                 cout( PrintEliminateUnnededNodes )->print( "*not eliminating %s: can't recover debug info\n", name() );
@@ -600,11 +607,13 @@ bool_t PseudoRegister::canBeEliminated( bool_t withUses ) const {
 }
 
 
-bool_t BlockPseudoRegister::canBeEliminated( bool_t withUses ) const {
+bool BlockPseudoRegister::canBeEliminated( bool withUses ) const {
     if ( not PseudoRegister::canBeEliminated( withUses ) )
         return false;
+
     if ( not _escapes )
         return true;
+
     if ( uplevelR() )
         return false;
 
@@ -617,7 +626,7 @@ bool_t BlockPseudoRegister::canBeEliminated( bool_t withUses ) const {
 
 
 // eliminate all nodes defining me (if possible)
-void PseudoRegister::eliminate( bool_t withUses ) {
+void PseudoRegister::eliminate( bool withUses ) {
     if ( not canBeEliminated( withUses ) )
         return;
     for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
@@ -636,8 +645,8 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
     // eliminate all use nodes in info
     SListElem<Usage *> *usageElement = info->_usages.head();
     while ( usageElement ) {
-        std::int32_t  oldLength = info->_usages.length();      // for debugging
-        Node *n        = usageElement->data()->_node;
+        std::int32_t oldLength = info->_usages.length();      // for debugging
+        Node         *n        = usageElement->data()->_node;
         if ( CompilerDebug ) {
             char buf[1024];
             cout( PrintEliminateUnnededNodes )->print( "*%seliminating node N%ld: %s\n", n->canBeEliminated() ? "" : "not ", n->id(), n->print_string( buf ) );
@@ -651,11 +660,11 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
 }
 
 
-void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, bool_t removing ) {
+void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, bool removing ) {
     // eliminate all defining nodes in info
     SListElem<Definition *> *e = info->_definitions.head();
     while ( e ) {
-        std::int32_t            oldlen = info->_definitions.length();      // for debugging
+        std::int32_t   oldlen = info->_definitions.length();      // for debugging
         NonTrivialNode *n     = e->data()->_node;
         if ( n->canBeEliminated() ) {
             updateCPInfo( n );
@@ -674,7 +683,7 @@ void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, b
 }
 
 
-void BlockPseudoRegister::eliminate( bool_t withUses ) {
+void BlockPseudoRegister::eliminate( bool withUses ) {
     PseudoRegister::eliminate( withUses );
     if ( nuses() == 0 ) {
         // the block has been eliminated; remove the uplevel accesses
@@ -724,7 +733,7 @@ void PseudoRegister::updateCPInfo( NonTrivialNode *n ) {
 // scope somewhere below the receiver's scope
 // otherwise, use slow_isLiveAt
 
-bool_t PseudoRegister::slow_isLiveAt( Node *n ) const {
+bool PseudoRegister::slow_isLiveAt( Node *n ) const {
     if ( _scope->isSenderOrSame( n->scope() ) ) {
         return isLiveAt( n );
     } else {
@@ -733,7 +742,7 @@ bool_t PseudoRegister::slow_isLiveAt( Node *n ) const {
 }
 
 
-bool_t PseudoRegister::isLiveAt( Node *n ) const {
+bool PseudoRegister::isLiveAt( Node *n ) const {
     // pregs are live in the entire scope (according to Urs, 2/24/96)
     if ( not _scope->isSenderOrSame( n->scope() ) )
         return false; // cannot be live anymore if s is outside subscopes of _scope
@@ -768,13 +777,13 @@ InlinedScope *findAncestor( InlinedScope *s1, std::int32_t &byteCodeIndex1, Inli
 }
 
 
-bool_t SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
+bool SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
     // is receiver live at Node n?  (may give conservative answer; i.e., it's ok to
     // return true even if the receiver is provably dead)
     // check if receiver is live in source-level terms; if that says
     // dead it really means dead
     InlinedScope *s   = n->scope();
-    bool_t       live = basic_isLiveAt( s, n->byteCodeIndex() );
+    bool       live = basic_isLiveAt( s, n->byteCodeIndex() );
     if ( not live or not _location.isTemporaryRegister() )
         return live;
     st_fatal( "cannot handle temp registers" );
@@ -782,7 +791,7 @@ bool_t SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
 }
 
 
-bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const {
+bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const {
     std::int32_t id = this->id();
     if ( not _scope->isSenderOrSame( s ) )
         return false; // cannot be live anymore if s is outside subscopes of _scope
@@ -791,8 +800,8 @@ bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32
 
     // find closest common ancestor of s and creationScope, and the
     // respective byteCodeIndexs in that scope
-    std::int32_t          bs  = byteCodeIndex;
-    std::int32_t          bc  = creationStartByteCodeIndex;
+    std::int32_t bs  = byteCodeIndex;
+    std::int32_t bc  = creationStartByteCodeIndex;
     InlinedScope *ss = findAncestor( s, bs, creationScope(), bc );
     if ( not _scope->isSenderOrSame( ss ) ) st_fatal( "bad scope arg in basic_isLiveAt" );
 
@@ -819,7 +828,7 @@ bool_t SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32
 }
 
 
-bool_t PseudoRegister::isCPEquivalent( PseudoRegister *r ) const {
+bool PseudoRegister::isCPEquivalent( PseudoRegister *r ) const {
 
     // is receiver in same register as argument?
     if ( this == r )
@@ -843,7 +852,7 @@ bool_t PseudoRegister::isCPEquivalent( PseudoRegister *r ) const {
 // all the nameNode() functions translate the PseudoRegister info into debugging info for
 // the scopeDescRecorder
 
-NameNode *PseudoRegister::locNameNode( bool_t mustBeLegal ) const {
+NameNode *PseudoRegister::locNameNode( bool mustBeLegal ) const {
     st_assert( not _location.isTemporaryRegister() or not mustBeLegal, "shouldn't be in temp reg" );
     if ( _location.isTemporaryRegister() and not _debug ) {
         return new IllegalName;
@@ -860,7 +869,7 @@ InlinedScope *BlockPseudoRegister::parent() const {
 }
 
 
-NameNode *BlockPseudoRegister::locNameNode( bool_t mustBeLegal ) const {
+NameNode *BlockPseudoRegister::locNameNode( bool mustBeLegal ) const {
     st_assert( not _location.isTemporaryRegister(), "shouldn't be in temp reg" );
     // for now, always use MemoizedName to describe block (even if always created)
     // makes debugging info easier to read (can see which locs must be blocks)
@@ -868,7 +877,7 @@ NameNode *BlockPseudoRegister::locNameNode( bool_t mustBeLegal ) const {
 }
 
 
-NameNode *PseudoRegister::nameNode( bool_t mustBeLegal ) const {
+NameNode *PseudoRegister::nameNode( bool mustBeLegal ) const {
     PseudoRegister *r = cpReg();
     if ( not( r->_location.equals( unAllocated ) ) ) {
         return r->locNameNode( mustBeLegal );
@@ -892,12 +901,12 @@ NameNode *PseudoRegister::nameNode( bool_t mustBeLegal ) const {
 }
 
 
-NameNode *ConstPseudoRegister::nameNode( bool_t mustBeLegal ) const {
+NameNode *ConstPseudoRegister::nameNode( bool mustBeLegal ) const {
     return newValueName( constant );
 }
 
 
-NameNode *NoResultPseudoRegister::nameNode( bool_t mustBeLegal ) const {
+NameNode *NoResultPseudoRegister::nameNode( bool mustBeLegal ) const {
     return new IllegalName;
 }
 
@@ -958,8 +967,8 @@ public:
     InlinedScope                    *_scope;            // r's scope (i.e., scope creating the block)
     GrowableArray<PseudoRegister *> *_read;             // list of rscope's temps read by r
     GrowableArray<PseudoRegister *> *_written;          // same for written temps
-    std::int32_t                             _nestingLevel;      // nesting level (0 = block itself, 1 = block within block, etc)
-    std::int32_t                             _enclosingDepth;    // depth to which we're nested within outer method
+    std::int32_t                    _nestingLevel;      // nesting level (0 = block itself, 1 = block within block, etc)
+    std::int32_t                    _enclosingDepth;    // depth to which we're nested within outer method
     GrowableArray<Scope *>          *_enclosingScopes;  // 0 = scope immediately enclosing block (= this->scope), etc.
     MethodOop                       _methodOop;         // the method currently being scanned for uplevel-accesses; either r's block method or a nested block method
 
@@ -977,7 +986,7 @@ public:
     }
 
 
-    void record_temporary( bool_t reading, std::int32_t no, std::int32_t ctx ) {
+    void record_temporary( bool reading, std::int32_t no, std::int32_t ctx ) {
         // distance is the lexical nesting distance in source-level terms (i.e., regardless of what the interpreter
         // does or whether the intermediate scopes have contexts or not) between r's scope and the scope
         // resolving the access; e.g., 1 --> the scope creating r
@@ -1034,10 +1043,14 @@ void BlockPseudoRegister::computeUplevelAccesses() {
     st_assert( not _uplevelWritten, "shouldn't be there" );
     _uplevelRead    = c._read;
     _uplevelWritten = c._written;
-    for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- )
+    for ( std::int32_t i = _uplevelRead->length() - 1; i >= 0; i-- ) {
         _uplevelRead->at( i )->addUplevelAccessor( this, true, false );
-    for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- )
+    }
+
+    for ( std::int32_t i = _uplevelWritten->length() - 1; i >= 0; i-- ) {
         _uplevelWritten->at( i )->addUplevelAccessor( this, false, true );
+    }
+
 }
 
 
@@ -1063,65 +1076,54 @@ const char *PseudoRegister::name() const {
 
 
 void PseudoRegister::print() {
-    lprintf( "%s: ", name() );
+    spdlog::info( "%s: ", name() );
     printDefsAndUses( &_dus );
-    lprintf( "\n" );
+    spdlog::info( "" );
 }
 
 
 void BlockPseudoRegister::print() {
     print_short();
-    lprintf( ": " );
+    spdlog::info( ": " );
     printDefsAndUses( &_dus );
     if ( _uplevelRead ) {
-        lprintf( "; uplevel-read: " );
+        spdlog::info( "; uplevel-read: " );
         _uplevelRead->print();
     }
     if ( _uplevelWritten ) {
-        lprintf( "; uplevel-written: " );
+        spdlog::info( "; uplevel-written: " );
         _uplevelWritten->print();
     }
     if ( _escapeNodes ) {
-        lprintf( "; escapes at: " );
+        spdlog::info( "; escapes at: " );
         for ( std::int32_t i = 0; i < _escapeNodes->length(); i++ )
-            lprintf( "N%d ", _escapeNodes->at( i )->id() );
+            spdlog::info( "N%d ", _escapeNodes->at( i )->id() );
     }
-    lprintf( "\n" );
+    spdlog::info( "" );
 }
 
 
 const char *BlockPseudoRegister::name() const {
     char *n = new_resource_array<char>( 25 );
-    sprintf( n, "%s <%#lx>%s", PseudoRegister::name(), PrintHexAddresses ? this : 0, _memoized ? "#" : "" );
+    sprintf( n, "%s <0x{0:x}>%s", PseudoRegister::name(), PrintHexAddresses ? this : 0, _memoized ? "#" : "" );
     return n;
 }
 
 
 const char *ConstPseudoRegister::name() const {
     char *n = new_resource_array<char>( 25 );
-    sprintf( n, "%s <%#lx>", PseudoRegister::name(), constant );
+    sprintf( n, "%s <0x{0:x}>", PseudoRegister::name(), constant );
     return n;
 }
 
 
-#if 0
-char *SplitPReg::name() const {
-    char *n = new_resource_array <char>( 25 );
-    // char buf[MaxSplitDepth+1];
-    // sprintf(n, "%s <%s>", PseudoRegister::name(), sig->prefix(buf));
-    sprintf( n, "%s", PseudoRegister::name() );
-    return n;
-}
-#endif
-
-
-bool_t PseudoRegister::verify() const {
-    bool_t ok = true;
+bool PseudoRegister::verify() const {
+    bool ok = true;
     if ( _id < 0 or _id >= currentNo ) {
         ok = false;
-        error( "PseudoRegister %#lx %s: invalid ID %ld", this, name(), _id );
+        error( "PseudoRegister 0x{0:x} %s: invalid ID %ld", this, name(), _id );
     }
-    std::int32_t               uses = 0, definitions = 0;
+    std::int32_t       uses = 0, definitions = 0;
     for ( std::int32_t i    = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
@@ -1131,47 +1133,47 @@ bool_t PseudoRegister::verify() const {
     if ( definitions not_eq _definitionCount and not incorrectD() and not isConstPseudoRegister() ) {
         // ConstPseudoRegisters have fake def
         ok = false;
-        error( "PseudoRegister %#lx %s: wrong def count (%ld instead of %ld)", this, name(), _definitionCount, definitions );
+        error( "PseudoRegister 0x{0:x} %s: wrong def count (%ld instead of %ld)", this, name(), _definitionCount, definitions );
     }
     if ( uses not_eq _usageCount and not incorrectU() ) {
         ok = false;
-        error( "PseudoRegister %#lx %s: wrong use count (%ld instead of %ld)", this, name(), _usageCount, uses );
+        error( "PseudoRegister 0x{0:x} %s: wrong use count (%ld instead of %ld)", this, name(), _usageCount, uses );
     }
     if ( not incorrectD() and _definitionCount == 0 and _usageCount > 0 ) {
         ok = false;
-        error( "PseudoRegister %#lx %s: used but not defined", this, name() );
+        error( "PseudoRegister 0x{0:x} %s: used but not defined", this, name() );
     }
 #ifdef FIXME  // fix this - may still be needed
     if ( debug and not incorrectDU() and isTrashedReg( loc ) ) {
         ok = false;
-        error( "PseudoRegister %#lx %s: debug-visible but allocated to temp reg", this, name() );
+        error( "PseudoRegister 0x{0:x} %s: debug-visible but allocated to temp reg", this, name() );
     }
 #endif
     return ok;
 }
 
 
-bool_t SinglyAssignedPseudoRegister::verify() const {
-    bool_t ok = PseudoRegister::verify();
+bool SinglyAssignedPseudoRegister::verify() const {
+    bool ok = PseudoRegister::verify();
     if ( ok ) {
         if ( _begByteCodeIndex == IllegalByteCodeIndex ) {
             if ( creationStartByteCodeIndex not_eq IllegalByteCodeIndex or _endByteCodeIndex not_eq IllegalByteCodeIndex ) {
                 ok = false;
-                error( "SinglyAssignedPseudoRegister %#lx %s: live range only partially set", this, name() );
+                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: live range only partially set", this, name() );
             }
         } else if ( _scope->isInlinedScope() ) {
             std::int32_t ncodes = scope()->nofBytes();
             if ( creationStartByteCodeIndex < PrologueByteCodeIndex or creationStartByteCodeIndex > creationScope()->nofBytes() ) {
                 ok = false;
-                error( "SinglyAssignedPseudoRegister %#lx %s: invalid creationStartByteCodeIndex %ld", this, name(), creationStartByteCodeIndex );
+                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: invalid creationStartByteCodeIndex %ld", this, name(), creationStartByteCodeIndex );
             }
             if ( _begByteCodeIndex < PrologueByteCodeIndex or _begByteCodeIndex > ncodes ) {
                 ok = false;
-                error( "SinglyAssignedPseudoRegister %#lx %s: invalid startByteCodeIndex %ld", this, name(), _begByteCodeIndex );
+                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: invalid startByteCodeIndex %ld", this, name(), _begByteCodeIndex );
             }
             if ( _endByteCodeIndex < PrologueByteCodeIndex or ( _endByteCodeIndex > ncodes and _endByteCodeIndex not_eq EpilogueByteCodeIndex ) ) {
                 ok = false;
-                error( "SinglyAssignedPseudoRegister %#lx %s: invalid endByteCodeIndex %ld", this, name(), _endByteCodeIndex );
+                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: invalid endByteCodeIndex %ld", this, name(), _endByteCodeIndex );
             }
         }
     }
@@ -1179,15 +1181,15 @@ bool_t SinglyAssignedPseudoRegister::verify() const {
 }
 
 
-bool_t BlockPseudoRegister::verify() const {
-    bool_t ok = SinglyAssignedPseudoRegister::verify() and _closure->verify();
+bool BlockPseudoRegister::verify() const {
+    bool ok = SinglyAssignedPseudoRegister::verify() and _closure->verify();
     // check uplevel-accessed vars: if they are blocks, they must be exposed
     if ( _uplevelRead ) {
         for ( std::int32_t i = 0; i < _uplevelRead->length(); i++ ) {
             if ( _uplevelRead->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
                 if ( not blk->escapes() ) {
-                    error( "BlockPseudoRegister %#lx is uplevel-accessed by escaping BlockPseudoRegister %#lx but isn't marked escaping itself", blk, this );
+                    error( "BlockPseudoRegister 0x{0:x} is uplevel-accessed by escaping BlockPseudoRegister 0x{0:x} but isn't marked escaping itself", blk, this );
                     ok = false;
                 }
             }
@@ -1195,7 +1197,7 @@ bool_t BlockPseudoRegister::verify() const {
         for ( std::int32_t i = 0; i < _uplevelWritten->length(); i++ ) {
             if ( _uplevelWritten->at( i )->isBlockPseudoRegister() ) {
                 BlockPseudoRegister *blk = (BlockPseudoRegister *) _uplevelRead->at( i );
-                error( "BlockPseudoRegister %#lx is uplevel-written by escaping BlockPseudoRegister %#lx, but BlockPseudoRegisters should never be assigned", blk, this );
+                error( "BlockPseudoRegister 0x{0:x} is uplevel-written by escaping BlockPseudoRegister 0x{0:x}, but BlockPseudoRegisters should never be assigned", blk, this );
                 ok                       = false;
             }
         }
@@ -1204,9 +1206,9 @@ bool_t BlockPseudoRegister::verify() const {
 }
 
 
-bool_t NoResultPseudoRegister::verify() const {
+bool NoResultPseudoRegister::verify() const {
     if ( _usageCount not_eq 0 ) {
-        error( "NoResultPseudoRegister %#lx: has uses", this );
+        error( "NoResultPseudoRegister 0x{0:x}: has uses", this );
         return false;
     } else {
         return true;
@@ -1214,22 +1216,18 @@ bool_t NoResultPseudoRegister::verify() const {
 }
 
 
-bool_t ConstPseudoRegister::verify() const {
-    bool_t ok = ( PseudoRegister::verify() and constant->is_klass() ) or constant->verify();
-    /*
-    if (std::int32_t(constant) < maxImmediate and std::int32_t(constant) > -maxImmediate
-      and loc not_eq UnAllocated) {
-      error("ConstPseudoRegister %#lx: could use load immediate to load Oop %#lx",
-         this, constant);
-      ok = false;
-    }
-    */
+bool ConstPseudoRegister::verify() const {
+    bool ok = ( PseudoRegister::verify() and constant->is_klass() ) or constant->verify();
+//    if ( std::int32_t( constant ) < maxImmediate and std::int32_t( constant ) > -maxImmediate and _location not_eq UnAllocated ) {
+//        error( "ConstPseudoRegister 0x{0:x}: could use load immediate to load Oop 0x{0:x}", this, constant );
+//        ok = false;
+//    }
     if ( not( _location.equals( unAllocated ) ) and not _location.isRegisterLocation() ) {
-        error( "ConstPseudoRegister %#lx: was allocated to stack", this );
+        error( "ConstPseudoRegister 0x{0:x}: was allocated to stack", this );
         ok = false;
     }
     if ( not( _location.equals( unAllocated ) ) and _location.isTrashedRegister() ) {
-        error( "ConstPseudoRegister %#lx: was allocated to trashed reg", this );
+        error( "ConstPseudoRegister 0x{0:x}: was allocated to trashed reg", this );
         ok = false;
     }
     return ok;

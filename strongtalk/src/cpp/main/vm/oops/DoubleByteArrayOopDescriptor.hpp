@@ -32,7 +32,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -89,12 +89,12 @@ public:
     std::int32_t hash_value();
 
     // copy string to buffer as null terminated ascii string.
-    bool_t copy_null_terminated( char *buffer, std::int32_t max_length );
+    bool copy_null_terminated( char *buffer, std::int32_t max_length );
 
     char *as_string();
 
     // memory operations
-    bool_t verify();
+    bool verify();
 
     friend class doubleByteArrayKlass;
 };

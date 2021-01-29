@@ -29,7 +29,7 @@ private:
 
 
     void map_push( std::int32_t b ) {
-        // lprintf("push(%d)", byteCodeIndex);
+        // spdlog::info("push(%d)", byteCodeIndex);
         if ( b >= _targetByteCodeIndex ) {
             abort();
         } else {
@@ -42,13 +42,13 @@ private:
         if ( byteCodeIndex() >= _targetByteCodeIndex ) {
             abort();
         } else {
-            // lprintf("pop(%d)", byteCodeIndex());
+            // spdlog::info("pop(%d)", byteCodeIndex());
             _mapping->pop();
         }
     }
 
 
-    void map_send( bool_t has_receiver, std::int32_t number_of_arguments ) {
+    void map_send( bool has_receiver, std::int32_t number_of_arguments ) {
         if ( has_receiver )
             map_pop();
         for ( std::int32_t i = 0; i < number_of_arguments; i++ )
@@ -211,7 +211,7 @@ public:
     }
 
 
-    void allocate_context( std::int32_t nofTemps, bool_t forMethod = false ) {
+    void allocate_context( std::int32_t nofTemps, bool forMethod = false ) {
     }
 
 

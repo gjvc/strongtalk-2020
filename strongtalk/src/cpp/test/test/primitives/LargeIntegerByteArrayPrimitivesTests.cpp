@@ -109,7 +109,7 @@ protected:
 
 
     char *reportHex( const char *prefix, std::int32_t expected, std::int32_t actual ) {
-        sprintf( message, "%s. Expected: 0x%x, but was: 0x%x", prefix, expected, actual );
+        sprintf( message, "%s. Expected: 0x{0:x}, but was: 0x{0:x}", prefix, expected, actual );
         return message;
     }
 

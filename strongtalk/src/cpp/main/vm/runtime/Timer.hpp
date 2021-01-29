@@ -70,10 +70,10 @@ public:
 
 class TraceTime {
 private:
-    bool_t       active;
+    bool       active;
     ElapsedTimer t;
 public:
-    TraceTime( const char *title, bool_t doit = true );
+    TraceTime( const char *title, bool doit = true );
 
     ~TraceTime();
 };

@@ -40,7 +40,7 @@ public:
 
     // Advance to next instruction
     // Returns false if we passed the end.
-    bool_t advance() {
+    bool advance() {
         _current = next_hp();
         return _current < _end;
     }
@@ -87,7 +87,7 @@ public:
     }
 
 
-    bool_t pop_result() const {
+    bool pop_result() const {
         return ByteCodes::pop_tos( code() );
     }
 
@@ -111,7 +111,7 @@ public:
 
     // FOR DEOPTIMIZATION
     // Returns the interpreter return point for the current byte code.
-    const char *interpreter_return_point( bool_t restore_value = false ) const;
+    const char *interpreter_return_point( bool restore_value = false ) const;
 
     void set_byteCodeIndex( std::int32_t byteCodeIndex );
 
@@ -122,17 +122,17 @@ public:
     }
 
 
-    bool_t is_message_send() const {
+    bool is_message_send() const {
         return ByteCodes::code_type( code() ) == ByteCodes::CodeType::message_send;
     }
 
 
-    bool_t is_primitive_call() const {
+    bool is_primitive_call() const {
         return ByteCodes::code_type( code() ) == ByteCodes::CodeType::primitive_call;
     }
 
 
-    bool_t is_dll_call() const {
+    bool is_dll_call() const {
         return ByteCodes::code_type( code() ) == ByteCodes::CodeType::dll_call;
     }
 

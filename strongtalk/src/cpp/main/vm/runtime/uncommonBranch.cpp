@@ -27,7 +27,7 @@
 // %note:
 //    This function is highly INTEL specific.
 
-bool_t patch_uncommon_call( Frame *f ) {
+bool patch_uncommon_call( Frame *f ) {
     // patch the call site:
     //  from: call _unused_uncommon_trap
     //  to:   call _used_uncommon_trap
@@ -54,7 +54,7 @@ bool_t patch_uncommon_call( Frame *f ) {
 
 // Tells whether the frame is a candidate for deoptimization by
 // checking if the frame uses contextOops with forward pointers.
-static bool_t has_invalid_context( Frame *f ) {
+static bool has_invalid_context( Frame *f ) {
     // Return false if we're not in compiled code
     if ( not f->is_compiled_frame() )
         return false;
@@ -65,7 +65,7 @@ static bool_t has_invalid_context( Frame *f ) {
     while ( true ) {
         ContextOop con = vf->compiled_context();
 
-        // _console->print_cr("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
+        // spdlog::info("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
         if ( con )
             con->print();
 
@@ -134,7 +134,7 @@ public:
 void uncommon_trap() {
 
 //    if ( UseNewBackend ) {
-//        warning( "uncommon traps not supported yet for new backend" );
+//        spdlog::warn( "uncommon traps not supported yet for new backend" );
 //        Unimplemented();
 //    }
 
@@ -150,7 +150,7 @@ void uncommon_trap() {
     Frame f = process->last_frame();
 
     // Patch the call destination if necessary
-    bool_t used = patch_uncommon_call( &f );
+    bool used = patch_uncommon_call( &f );
 
     // Find the NativeMethod containing the uncommon trap
     CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &f );
@@ -178,7 +178,7 @@ void uncommon_trap() {
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            _console->print( " @%d called from %#x", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+            spdlog::info( "{:d} called from {:x}", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )
@@ -216,7 +216,7 @@ void uncommon_trap() {
                 collect_compiled_contexts_for( &current_frame, elements );
             }
 
-            bool_t done = false;
+            bool done = false;
 
             while ( not done ) {
                 done = true;

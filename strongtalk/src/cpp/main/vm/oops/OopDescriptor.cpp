@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -103,12 +104,12 @@ Oop OopDescriptor::relocate() {
 
 
 // generation testers
-bool_t OopDescriptor::is_old() const {
+bool OopDescriptor::is_old() const {
     return is_mem() and MemOop( this )->is_old();
 }
 
 
-bool_t OopDescriptor::is_new() const {
+bool OopDescriptor::is_new() const {
     return is_mem() and MemOop( this )->is_new();
 }
 
@@ -119,98 +120,98 @@ Generation *OopDescriptor::my_generation() {
 
 
 // type test operations
-bool_t OopDescriptor::is_double() const {
+bool OopDescriptor::is_double() const {
     return is_mem() and MemOop( this )->klass_field() == doubleKlassObject;
 }
 
 
-bool_t OopDescriptor::is_block() const {
+bool OopDescriptor::is_block() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_block();
 }
 
 
-bool_t OopDescriptor::is_byteArray() const {
+bool OopDescriptor::is_byteArray() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_byteArray();
 }
 
 
-bool_t OopDescriptor::is_doubleByteArray() const {
+bool OopDescriptor::is_doubleByteArray() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_doubleByteArray();
 }
 
 
-bool_t OopDescriptor::is_doubleValueArray() const {
+bool OopDescriptor::is_doubleValueArray() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_doubleValueArray();
 }
 
 
-bool_t OopDescriptor::is_symbol() const {
+bool OopDescriptor::is_symbol() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_symbol();
 }
 
 
-bool_t OopDescriptor::is_objArray() const {
+bool OopDescriptor::is_objArray() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_objArray();
 }
 
 
-bool_t OopDescriptor::is_weakArray() const {
+bool OopDescriptor::is_weakArray() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_weakArray();
 }
 
 
-bool_t OopDescriptor::is_association() const {
+bool OopDescriptor::is_association() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_association();
 }
 
 
-bool_t OopDescriptor::is_context() const {
+bool OopDescriptor::is_context() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_context();
 }
 
 
-bool_t OopDescriptor::is_klass() const {
+bool OopDescriptor::is_klass() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_klass();
 }
 
 
-bool_t OopDescriptor::is_proxy() const {
+bool OopDescriptor::is_proxy() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_proxy();
 }
 
 
-bool_t OopDescriptor::is_mixin() const {
+bool OopDescriptor::is_mixin() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_mixin();
 }
 
 
-bool_t OopDescriptor::is_process() const {
+bool OopDescriptor::is_process() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_process();
 }
 
 
-bool_t OopDescriptor::is_vframe() const {
+bool OopDescriptor::is_vframe() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_vframe();
 }
 
 
-bool_t OopDescriptor::is_method() const {
+bool OopDescriptor::is_method() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_method();
 }
 
 
-bool_t OopDescriptor::is_indexable() const {
+bool OopDescriptor::is_indexable() const {
     return is_mem() and MemOop( this )->blueprint()->oop_is_indexable();
 }
 
 
 // Primitives
-bool_t OopDescriptor::verify() {
+bool OopDescriptor::verify() {
     return blueprint()->oop_verify( this );
 }
 
 
-Oop OopDescriptor::primitive_allocate( bool_t allow_scavenge, bool_t tenured ) {
+Oop OopDescriptor::primitive_allocate( bool allow_scavenge, bool tenured ) {
     return blueprint()->oop_primitive_allocate( this, allow_scavenge, tenured );
 }
 
@@ -220,6 +221,6 @@ Oop OopDescriptor::primitive_allocate_size( std::int32_t size ) {
 }
 
 
-Oop OopDescriptor::shallow_copy( bool_t tenured ) {
+Oop OopDescriptor::shallow_copy( bool tenured ) {
     return blueprint()->oop_shallow_copy( this, tenured );
 }

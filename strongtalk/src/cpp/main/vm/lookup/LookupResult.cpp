@@ -40,14 +40,14 @@ NativeMethod *LookupResult::get_nativeMethod() const {
 }
 
 
-bool_t LookupResult::matches( MethodOop m ) const {
+bool LookupResult::matches( MethodOop m ) const {
     if ( is_empty() )
         return false;
     return is_method() ? method() == m : false;
 }
 
 
-bool_t LookupResult::matches( NativeMethod *nm ) const {
+bool LookupResult::matches( NativeMethod *nm ) const {
     if ( is_empty() )
         return false;
     return is_entry() ? entry()->method() == nm : false;
@@ -88,17 +88,17 @@ void LookupResult::clear() {
 }
 
 
-bool_t LookupResult::is_empty() const {
+bool LookupResult::is_empty() const {
     return _result == nullptr;
 }
 
 
-bool_t LookupResult::is_method() const {
+bool LookupResult::is_method() const {
     return _result->is_mem();
 }
 
 
-bool_t LookupResult::is_entry() const {
+bool LookupResult::is_entry() const {
     return not is_method();
 }
 

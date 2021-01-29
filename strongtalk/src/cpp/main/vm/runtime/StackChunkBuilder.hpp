@@ -35,7 +35,7 @@ private:
     }
 
 
-    static bool_t _is_deoptimizing;
+    static bool _is_deoptimizing;
 
     GrowableArray<Oop> *array;
 
@@ -61,7 +61,7 @@ public:
     static void end_deoptimization();
 
 
-    static bool_t is_deoptimizing() {
+    static bool is_deoptimizing() {
         return _is_deoptimizing;
     }
 

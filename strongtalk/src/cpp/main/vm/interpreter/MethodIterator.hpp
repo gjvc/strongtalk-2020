@@ -30,10 +30,10 @@ protected:
     MethodOop _method;
     std::int32_t       _begin_byteCodeIndex;
     std::int32_t       _end_byteCodeIndex;
-    bool_t    _in_primitive_failure;            // currently in primitive failure block?
+    bool    _in_primitive_failure;            // currently in primitive failure block?
     IntervalInfo *_info;
 
-    void initialize( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool_t failBlock );
+    void initialize( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool failBlock );
 
 
     void set_end_byteCodeIndex( std::int32_t byteCodeIndex ) {
@@ -44,13 +44,13 @@ protected:
     // Constructors
     MethodInterval( MethodOop method, MethodInterval *parent );
 
-    MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false );
+    MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool failureBlock = false );
 
     friend class MethodIntervalFactory;
 
 public:
     // Test operations
-    bool_t includes( std::int32_t byteCodeIndex ) const {
+    bool includes( std::int32_t byteCodeIndex ) const {
         return begin_byteCodeIndex() <= byteCodeIndex and byteCodeIndex < end_byteCodeIndex();
     }
 
@@ -77,12 +77,12 @@ public:
 
 
     // primitive failure block recognition (for inlining policy of compiler)
-    bool_t in_primitive_failure_block() const {
+    bool in_primitive_failure_block() const {
         return _in_primitive_failure;
     }
 
 
-    void set_primitive_failure( bool_t f ) {
+    void set_primitive_failure( bool f ) {
         _in_primitive_failure = f;
     }
 
@@ -136,9 +136,9 @@ public:
 
 
     // Accessor operations
-    virtual bool_t is_and() const = 0;
+    virtual bool is_and() const = 0;
 
-    virtual bool_t is_or() const = 0;
+    virtual bool is_or() const = 0;
 };
 
 
@@ -152,12 +152,12 @@ public:
     SymbolOop selector() const;
 
 
-    bool_t is_and() const {
+    bool is_and() const {
         return true;
     }
 
 
-    bool_t is_or() const {
+    bool is_or() const {
         return false;
     }
 };
@@ -174,12 +174,12 @@ public:
     SymbolOop selector() const;
 
 
-    bool_t is_and() const {
+    bool is_and() const {
         return false;
     }
 
 
-    bool_t is_or() const {
+    bool is_or() const {
         return true;
     }
 };
@@ -187,7 +187,7 @@ public:
 
 class WhileNode : public InlineSendNode {
 protected:
-    bool_t _cond;
+    bool _cond;
     MethodInterval *_expr_code;
     MethodInterval *_body_code;
 
@@ -212,12 +212,12 @@ public:
     SymbolOop selector() const;
 
 
-    bool_t is_whileTrue() const {
+    bool is_whileTrue() const {
         return _cond;
     }
 
 
-    bool_t is_whileFalse() const {
+    bool is_whileFalse() const {
         return not _cond;
     }
 };
@@ -225,13 +225,13 @@ public:
 
 class IfNode : public InlineSendNode {
 protected:
-    bool_t _cond;
-    bool_t _ignore_else_while_printing;
-    bool_t _produces_result;
+    bool _cond;
+    bool _ignore_else_while_printing;
+    bool _produces_result;
     MethodInterval *_then_code;
     MethodInterval *_else_code;
 
-    IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure );
+    IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure );
 
     friend class MethodIntervalFactory;
 
@@ -252,22 +252,22 @@ public:
     SymbolOop selector() const;
 
 
-    bool_t is_ifTrue() const {
+    bool is_ifTrue() const {
         return _cond;
     }
 
 
-    bool_t is_ifFalse() const {
+    bool is_ifFalse() const {
         return not _cond;
     }
 
 
-    bool_t ignore_else_while_printing() const {
+    bool ignore_else_while_printing() const {
         return _ignore_else_while_printing;
     }
 
 
-    bool_t produces_result() const {
+    bool produces_result() const {
         return _produces_result;
     }
 };
@@ -293,13 +293,13 @@ public:
 class PrimitiveCallNode : public ExternalCallNode {
 protected:
     PrimitiveDescriptor *_pdesc;
-    bool_t    _has_receiver;
+    bool    _has_receiver;
     SymbolOop _name;
 
     // Constructors
-    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
+    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
 
-    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
+    PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
 
     friend class MethodIntervalFactory;
 
@@ -310,7 +310,7 @@ public:
     }
 
 
-    bool_t has_receiver() const {
+    bool has_receiver() const {
         return _has_receiver;
     }
 
@@ -332,7 +332,7 @@ protected:
     SymbolOop _function_name;
     std::int32_t       _nofArgs;
     dll_func_ptr_t  _function;
-    bool_t    _async;
+    bool    _async;
 
     void initialize( Interpreted_DLLCache *cache );
 
@@ -359,12 +359,12 @@ public:
 
 
     dll_func_ptr_t function() const {
-        _console->print( "calling DLL [%s], function [%s]", _dll_name, _function_name );
+        _console->print( "calling DLL[{}], function[{}]", _dll_name, _function_name );
         return _function;
     }
 
 
-    bool_t async() const {
+    bool async() const {
         return _async;
     }
 };
@@ -388,8 +388,8 @@ private:
     MethodOop _method;                  //
     std::int32_t       _byteCodeIndex;           //
     std::int32_t       _next_byteCodeIndex;      //
-    bool_t    _aborting;                //
-    bool_t    _in_primitive_failure;    // currently in primitive failure block?
+    bool    _aborting;                //
+    bool    _in_primitive_failure;    // currently in primitive failure block?
     std::int32_t       _float0_index;            //
 
     void set_method( MethodOop method );
@@ -440,7 +440,7 @@ public:
     }
 
 
-    bool_t aborting() const {
+    bool aborting() const {
         return _aborting;
     }// was iteration aborted?  (dead code)
 
@@ -454,12 +454,12 @@ public:
     virtual void dll_call_node( DLLCallNode *node ) = 0; // dll call
 
     // primitive failure block recognition (for inlining policy of compiler)
-    virtual bool_t in_primitive_failure_block() const {
+    virtual bool in_primitive_failure_block() const {
         return _in_primitive_failure;
     }
 
 
-    virtual void set_primitive_failure( bool_t f ) {
+    virtual void set_primitive_failure( bool f ) {
         _in_primitive_failure = f;
     }
 
@@ -534,7 +534,7 @@ public:
 
     virtual void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) = 0;
 
-    virtual void allocate_context( std::int32_t nofTemps, bool_t forMethod ) = 0;
+    virtual void allocate_context( std::int32_t nofTemps, bool forMethod ) = 0;
 
     // fp->recv = fp->context->bottom()->recv
     virtual void set_self_via_context() = 0;
@@ -723,7 +723,7 @@ public:
     }
 
 
-    virtual void allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+    virtual void allocate_context( std::int32_t nofTemps, bool forMethod ) {
         instruction();
     }
 
@@ -804,7 +804,7 @@ class AbstractMethodIntervalFactory : StackAllocatedObject {
 public:
     virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent ) = 0;
 
-    virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false ) = 0;
+    virtual MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool failureBlock = false ) = 0;
 
     virtual AndNode *new_AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) = 0;
 
@@ -812,11 +812,11 @@ public:
 
     virtual WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset ) = 0;
 
-    virtual IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure ) = 0;
+    virtual IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure ) = 0;
 
-    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) = 0;
+    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) = 0;
 
-    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) = 0;
+    virtual PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) = 0;
 
     virtual DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache ) = 0;
 };
@@ -827,7 +827,7 @@ class MethodIntervalFactory : public AbstractMethodIntervalFactory {
 public:
     MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent );
 
-    MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool_t failureBlock = false );
+    MethodInterval *new_MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1, bool failureBlock = false );
 
     AndNode *new_AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
 
@@ -835,11 +835,11 @@ public:
 
     WhileNode *new_WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset );
 
-    IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t cond, std::int32_t else_offset, std::uint8_t structure );
+    IfNode *new_IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure );
 
-    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
+    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
 
-    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool_t has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
+    PrimitiveCallNode *new_PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset );
 
     DLLCallNode *new_DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache );
 };

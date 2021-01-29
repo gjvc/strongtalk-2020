@@ -30,34 +30,21 @@ protected:
 
 };
 
-
-TEST_F( MethodLookupTests, lookupShouldAddDNUInvokerWhenNoMatch
-) {
-BlockScavenge bs;
-SymbolOop     selector = oopFactory::new_symbol( "unknownSelector" );
-MethodOop     method   = fixture->as_klassOop()->klass_part()->lookup( selector );
-EXPECT_TRUE( method
-!= nullptr ) << "Should find method";
-EXPECT_TRUE( selector
-== method->
-selector()
-) << "Wrong selector";
-method->
-pretty_print();
+TEST_F( MethodLookupTests, lookupShouldAddDNUInvokerWhenNoMatch ) {
+    BlockScavenge bs;
+    SymbolOop     selector = oopFactory::new_symbol( "unknownSelector" );
+    MethodOop     method   = fixture->as_klassOop()->klass_part()->lookup( selector );
+    EXPECT_TRUE( method != nullptr ) << "Should find method";
+    EXPECT_TRUE( selector == method->selector() ) << "Wrong selector";
+    method->pretty_print();
 }
 
 
-TEST_F( MethodLookupTests, lookupShouldAddDNUInvokerForOneArgSelector
-) {
-BlockScavenge bs;
-SymbolOop     selector = oopFactory::new_symbol( "unknownSelector:" );
-MethodOop     method   = fixture->as_klassOop()->klass_part()->lookup( selector );
-EXPECT_TRUE( method
-!= nullptr ) << "Should find method";
-EXPECT_TRUE( selector
-== method->
-selector()
-) << "Wrong selector";
-method->
-pretty_print();
+TEST_F( MethodLookupTests, lookupShouldAddDNUInvokerForOneArgSelector ) {
+    BlockScavenge bs;
+    SymbolOop     selector = oopFactory::new_symbol( "unknownSelector:" );
+    MethodOop     method   = fixture->as_klassOop()->klass_part()->lookup( selector );
+    EXPECT_TRUE( method != nullptr ) << "Should find method";
+    EXPECT_TRUE( selector == method->selector() ) << "Wrong selector";
+    method->pretty_print();
 }

@@ -15,7 +15,7 @@ public:
     friend void setKlassVirtualTableFromSmiKlass( Klass *k );
 
 
-    bool_t oop_is_smi() const {
+    bool oop_is_smi() const {
         return true;
     }
 
@@ -26,12 +26,12 @@ public:
 
 
     // Reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 
@@ -47,7 +47,7 @@ public:
 
 
     // Copy operations
-    Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    Oop oop_shallow_copy( Oop obj, bool tenured );
 
     // printing operations
     void oop_print_value( Oop obj, ConsoleOutputStream *stream );

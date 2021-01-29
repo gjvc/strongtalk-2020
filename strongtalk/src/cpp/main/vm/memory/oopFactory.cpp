@@ -95,7 +95,7 @@ SymbolOop oopFactory::new_symbol( ByteArrayOop b ) {
 }
 
 
-AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool_t is_constant ) {
+AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool is_constant ) {
     AssociationOop as = AssociationOop( Universe::associationKlassObject()->klass_part()->allocateObject() );
     st_assert( as->is_association(), "type check" );
     as->set_key( key );

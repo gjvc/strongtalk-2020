@@ -136,7 +136,7 @@ extern "C" Oop primitiveNew9( Oop );
 const char *GeneratedPrimitives::primitiveNew( std::int32_t n ) {
     st_assert( _is_initialized, "GeneratedPrimitives not initialized yet" );
     st_assert( 0 <= n and n <= 9, "index out of range" )
-    _console->print_cr( "GeneratedPrimitives::primitiveNew [%d]", n );
+    spdlog::info( "GeneratedPrimitives::primitiveNew [{}]", n );
     return _primitiveNew[ n ];
 }
 
@@ -159,7 +159,7 @@ const char *GeneratedPrimitives::allocateBlock( std::int32_t n ) {
     if ( n == -1 )
         return (const char *) ::allocateBlock;        // convenience
     st_assert( 0 <= n and n <= 9, "index out of range" )
-    _console->print_cr( "%%primitive-generate:  GeneratedPrimitives::allocateBlock [%d]", n );
+    spdlog::info( "%primitive-generate:  GeneratedPrimitives::allocateBlock [{}]", n );
 
     return _allocateBlock[ n ];
 }
@@ -183,7 +183,7 @@ const char *GeneratedPrimitives::allocateContext( std::int32_t n ) {
 
 // Initialization
 
-bool_t     GeneratedPrimitives::_is_initialized = false;
+bool     GeneratedPrimitives::_is_initialized = false;
 //char GeneratedPrimitives::_code[GeneratedPrimitives::_code_size];
 const char *GeneratedPrimitives::_code          = nullptr;
 
@@ -324,14 +324,14 @@ Oop GeneratedPrimitives::smiOopPrimitives_remainder( Oop receiver, Oop argument 
 
 
 void generatedPrimitives_init_before_interpreter() {
-    _console->print_cr( "%%system-init:  generatedPrimitives_init_before_interpreter" );
+    spdlog::info( "%system-init:  generatedPrimitives_init_before_interpreter" );
 
     GeneratedPrimitives::init();
 }
 
 
 void generatedPrimitives_init_after_interpreter() {
-    _console->print_cr( "%%system-init:  generatedPrimitives_init_after_interpreter" );
+    spdlog::info( "%system-init:  generatedPrimitives_init_after_interpreter" );
 
     GeneratedPrimitives::patch_primitiveValue();
 }

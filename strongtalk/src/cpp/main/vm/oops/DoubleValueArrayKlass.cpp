@@ -13,13 +13,13 @@
 #include "vm/memory/Closure.hpp"
 
 
-Oop DoubleValueArrayKlass::allocateObject( bool_t permit_scavenge, bool_t tenured ) {
+Oop DoubleValueArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     st_fatal( "should never call allocateObject in doubleValueArrayKlass" );
     return badOop;
 }
 
 
-Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool_t permit_scavenge, bool_t permit_tenured ) {
+Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
 
     //
     KlassOop k        = as_klassOop();
@@ -66,7 +66,7 @@ void setKlassVirtualTableFromDoubleValueArrayKlass( Klass *k ) {
 }
 
 
-bool_t DoubleValueArrayKlass::oop_verify( Oop obj ) {
+bool DoubleValueArrayKlass::oop_verify( Oop obj ) {
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     return doubleValueArrayOop( obj )->verify();
 }

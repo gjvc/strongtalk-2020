@@ -12,33 +12,33 @@
 class MemOopKlass : public Klass {
 
 protected:
-    Oop *basicAllocate( std::int32_t size, KlassOop *klass, bool_t permit_scavenge, bool_t tenured ) {
+    Oop *basicAllocate( std::int32_t size, KlassOop *klass, bool permit_scavenge, bool tenured ) {
         return tenured ? Universe::allocate_tenured( size, permit_scavenge ) : Universe::allocate( size, (MemOop *) klass, permit_scavenge );
     }
 
 
 public:
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return true;
     }
 
 
     // reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return true;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return true;
     }
 
 
     // allocation operations
-    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
-    Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObjectSize( std::int32_t size, bool permit_scavenge = true, bool tenured = false );
 
     // invocation creation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -55,7 +55,7 @@ public:
 
 
     // copy operation
-    Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    Oop oop_shallow_copy( Oop obj, bool tenured );
 
 
     // printing support
@@ -87,7 +87,7 @@ public:
     void oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk );
 
     // verification
-    bool_t oop_verify( Oop obj );
+    bool oop_verify( Oop obj );
 
 
     // sizing

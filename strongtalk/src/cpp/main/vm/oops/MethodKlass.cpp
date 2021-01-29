@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,7 +7,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/oops/MethodKlass.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
@@ -37,7 +37,7 @@ void MethodKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     blk->do_oop( "sizeCodes", (Oop *) &m->addr()->_size_and_flags );
 
     // indexables
-    lprintf( "MethodKlass::oop_layout_iterate not implemented yet\n" );
+    spdlog::info( "MethodKlass::oop_layout_iterate not implemented yet" );
     CodeIterator c( m );
     do {
         // Put in the meat here.
@@ -302,7 +302,7 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t fla
 
     // then merge in the oops
     for ( std::int32_t i = 1; i <= oops->length(); i++ ) {
-        bool_t copyOop  = true;
+        bool copyOop  = true;
         std::int32_t    bc_index = i * oopSize - ( oopSize - 1 );
 
         for ( std::int32_t j = 0; j < oopSize; j++ ) {

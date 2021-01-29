@@ -58,12 +58,12 @@ NameNode *newValueName( Oop value ) {
 }
 
 
-bool_t NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool_t is_last, std::int32_t index ) {
+bool NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool is_last, std::int32_t index ) {
     // Since id is most likely to be 0, the info part of the header byte indicates if is is non zero.
     // Experiments show id is zero in at least 90% of the generated nameDescs.
     // returns true if index could be inlined in headerByte.
     nameDescHeaderByte b;
-    bool_t             can_inline  = index <= b._maxIndex;
+    bool             can_inline  = index <= b._maxIndex;
     std::uint8_t       coded_index = can_inline ? index : b._noIndex;
     b.pack( code, is_last, coded_index );
     rec->_codes->appendByte( b.value() );
@@ -85,7 +85,7 @@ std::int32_t ScopeDescriptorRecorder::getOopIndex( Oop o ) {
 }
 
 
-void ScopeDescriptorRecorder::emit_illegal_node( bool_t is_last ) {
+void ScopeDescriptorRecorder::emit_illegal_node( bool is_last ) {
     nameDescHeaderByte b;
     b.pack_illegal( is_last );
     _codes->appendByte( b.value() );
@@ -99,7 +99,7 @@ void ScopeDescriptorRecorder::emit_termination_node() {
 }
 
 
-void IllegalName::generate( ScopeDescriptorRecorder *rec, bool_t is_last ) {
+void IllegalName::generate( ScopeDescriptorRecorder *rec, bool is_last ) {
     rec->emit_illegal_node( is_last );
 }
 
@@ -175,17 +175,17 @@ std::int32_t ScopeDescriptorRecorder::offset_for_noninlined_scope_node( NonInlin
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool_t allocates_compiled_context, bool_t lite, std::int32_t scopeID, ScopeInfo senderScope, std::int32_t senderByteCodeIndex, bool_t visible ) {
+ScopeInfo ScopeDescriptorRecorder::addMethodScope( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool allocates_compiled_context, bool lite, std::int32_t scopeID, ScopeInfo senderScope, std::int32_t senderByteCodeIndex, bool visible ) {
     return addScope( new MethodScopeNode( key, method, receiver_location, allocates_compiled_context, lite, scopeID, senderByteCodeIndex, visible ), senderScope );
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addBlockScope( MethodOop method, ScopeInfo parent, bool_t allocates_compiled_context, bool_t lite, std::int32_t scopeID, ScopeInfo senderScope, std::int32_t senderByteCodeIndex, bool_t visible ) {
+ScopeInfo ScopeDescriptorRecorder::addBlockScope( MethodOop method, ScopeInfo parent, bool allocates_compiled_context, bool lite, std::int32_t scopeID, ScopeInfo senderScope, std::int32_t senderByteCodeIndex, bool visible ) {
     return addScope( new BlockScopeNode( method, parent, allocates_compiled_context, lite, scopeID, senderByteCodeIndex, visible ), senderScope );
 }
 
 
-ScopeInfo ScopeDescriptorRecorder::addTopLevelBlockScope( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool_t allocates_compiled_context ) {
+ScopeInfo ScopeDescriptorRecorder::addTopLevelBlockScope( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool allocates_compiled_context ) {
     return addScope( new TopLevelBlockScopeNode( method, receiver_location, receiver_klass, allocates_compiled_context ), nullptr );
 }
 
@@ -230,7 +230,7 @@ void ScopeDescriptorRecorder::changeLogicalAddress( LogicalAddress *location, Na
 }
 
 
-void ScopeDescriptorRecorder::genScopeDescHeader( std::uint8_t code, bool_t lite, bool_t args, bool_t temps, bool_t context_temps, bool_t expr_stack, bool_t has_context, bool_t bigHeader ) {
+void ScopeDescriptorRecorder::genScopeDescHeader( std::uint8_t code, bool lite, bool args, bool temps, bool context_temps, bool expr_stack, bool has_context, bool bigHeader ) {
     ScopeDescriptorHeaderByte b;
     b.pack( code, lite, args, temps, context_temps, expr_stack, has_context );
     _codes->appendByte( b.value() );
@@ -291,7 +291,7 @@ Location ScopeDescriptorRecorder::convert_location( Location loc ) {
     ScopeInfo scope = theCompiler->scopes->at( scope_id )->getScopeInfo();
     st_assert( scope, "scope must exist" );
     if ( scope->_offset == INVALID_OFFSET ) {
-        _console->print_cr( loc.name() );
+        spdlog::info( loc.name() );
         theCompiler->print_code( false );
         st_fatal( "compiler error: context location appears outside its scope" );    // Urs 5/96
     }

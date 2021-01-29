@@ -86,13 +86,13 @@ public:
 
     static char *reserve_memory( std::int32_t size );
 
-    static bool_t commit_memory( const char *addr, std::int32_t size );
+    static bool commit_memory( const char *addr, std::int32_t size );
 
-    static bool_t uncommit_memory( const char *addr, std::int32_t size );
+    static bool uncommit_memory( const char *addr, std::int32_t size );
 
-    static bool_t release_memory( const char *addr, std::int32_t size );
+    static bool release_memory( const char *addr, std::int32_t size );
 
-    static bool_t guard_memory( const char *addr, std::int32_t size );
+    static bool guard_memory( const char *addr, std::int32_t size );
 
     static const char *exec_memory( std::int32_t size );
 
@@ -108,7 +108,7 @@ public:
 
     static Thread *create_thread( std::int32_t main( void *parameter ), void *parameter, std::int32_t *id_addr );
 
-    static Event *create_event( bool_t initial_state );
+    static Event *create_event( bool initial_state );
 
     static void *stack_limit( Thread *thread );
 
@@ -128,7 +128,7 @@ public:
 
     static void signal_event( Event *event );
 
-    static bool_t wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms );
+    static bool wait_for_event_or_timer( Event *event, std::int32_t timeout_in_ms );
 
     static void sleep( std::int32_t ms );
 
@@ -145,16 +145,16 @@ public:
 
     static void fatalExit( std::int32_t num );
 
-    static bool_t move_file( const char *from, const char *to );
+    static bool move_file( const char *from, const char *to );
 
-    static bool_t check_directory( const char *dir_name );
+    static bool check_directory( const char *dir_name );
 
     // DLL support
     static dll_func_ptr_t dll_lookup( const char *name, DLL *library );
 
     static DLL *dll_load( const char *name );
 
-    static bool_t dll_unload( DLL *library );
+    static bool dll_unload( DLL *library );
 
     static const char *dll_extension();
 
@@ -169,7 +169,7 @@ public:
 class ThreadCritical {
 
 private:
-    static bool_t _initialized;
+    static bool _initialized;
 
     friend void os_init();
 
@@ -180,7 +180,7 @@ private:
     static void release();
 
 public:
-    static bool_t initialized() {
+    static bool initialized() {
         return _initialized;
     }
 

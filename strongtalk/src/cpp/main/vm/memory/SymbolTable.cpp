@@ -7,8 +7,6 @@
 #include "vm/oops/SymbolKlass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 #define FOR_ALL_ENTRIES( entry ) \
   for (entry = firstBucket(); entry <= lastBucket(); entry ++)
@@ -70,7 +68,7 @@ SymbolOop SymbolTable::basic_add( const char *name, std::int32_t len, std::int32
 }
 
 
-bool_t SymbolTable::is_present( SymbolOop sym ) {
+bool SymbolTable::is_present( SymbolOop sym ) {
 
     const char *name = (const char *) sym->bytes();
     std::int32_t len       = sym->length();
@@ -210,11 +208,11 @@ void SymbolTableEntry::deallocate() {
 }
 
 
-bool_t SymbolTableEntry::verify( std::int32_t i ) {
-    bool_t flag = true;
+bool SymbolTableEntry::verify( std::int32_t i ) {
+    bool flag = true;
     if ( is_symbol() ) {
         if ( not get_symbol()->is_symbol() ) {
-            error( "entry %#lx in symbol table isn't a symbol", get_symbol() );
+            error( "entry 0x{0:x} in symbol table isn't a symbol", get_symbol() );
             flag = false;
         }
     } else {
@@ -228,7 +226,7 @@ bool_t SymbolTableEntry::verify( std::int32_t i ) {
 void SymbolTable::verify() {
     for ( std::int32_t i = 0; i < symbol_table_size; i++ )
         if ( not buckets[ i ].verify( i ) )
-            lprintf( "\tof bucket %ld of symbol table\n", std::int32_t( i ) );
+            spdlog::info( "\tof bucket %ld of symbol table", std::int32_t( i ) );
 }
 
 
@@ -241,17 +239,17 @@ void SymbolTable::relocate() {
 }
 
 
-bool_t SymbolTableLink::verify( std::int32_t i ) {
-    bool_t flag = true;
+bool SymbolTableLink::verify( std::int32_t i ) {
+    bool flag = true;
     for ( SymbolTableLink *l = this; l; l = l->next ) {
         if ( not l->symbol->is_symbol() ) {
-            error( "entry %#lx in symbol table isn't a symbol", l->symbol );
+            error( "entry 0x{0:x} in symbol table isn't a symbol", l->symbol );
             flag = false;
         } else if ( hash( reinterpret_cast<const char *>( l->symbol->bytes() ), l->symbol->length() ) % symbol_table_size not_eq i ) {
-            error( "entry %#lx in symbol table has wrong hash value", l->symbol );
+            error( "entry 0x{0:x} in symbol table has wrong hash value", l->symbol );
             flag = false;
         } else if ( not l->symbol->is_old() ) {
-            error( "entry %#lx in symbol table isn't tenured", l->symbol );
+            error( "entry 0x{0:x} in symbol table isn't tenured", l->symbol );
             flag = false;
         }
     }
@@ -331,37 +329,37 @@ void SymbolTable::print_histogram() {
         min_symbols = min( min_symbols, counter );
         max_symbols = max( max_symbols, counter );
     }
-    lprintf( "Symbol Table:\n" );
-    lprintf( "%8s %5d\n", "Total  ", total );
-    lprintf( "%8s %5d\n", "Minimum", min_symbols );
-    lprintf( "%8s %5d\n", "Maximum", max_symbols );
-    lprintf( "%8s %3.2f\n", "Average", ( (float) total / (float) symbol_table_size ) );
-    lprintf( "%s\n", "Histogram:" );
-    lprintf( " %s %29s\n", "Length", "Number chains that length" );
+    spdlog::info( "Symbol Table:" );
+    spdlog::info( "%8s %5d", "Total  ", total );
+    spdlog::info( "%8s %5d", "Minimum", min_symbols );
+    spdlog::info( "%8s %5d", "Maximum", max_symbols );
+    spdlog::info( "%8s %3.2f", "Average", ( (float) total / (float) symbol_table_size ) );
+    spdlog::info( "%s", "Histogram:" );
+    spdlog::info( " %s %29s", "Length", "Number chains that length" );
 
 
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            lprintf( "%6d %10d\n", i, results[ i ] );
+            spdlog::info( "%6d %10d", i, results[ i ] );
         }
     }
 
 
     std::int32_t line_length = 70;
-    lprintf( "%s %30s\n", " Length", "Number chains that length" );
+    spdlog::info( "%s %30s", " Length", "Number chains that length" );
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            lprintf( "%4d", i );
+            spdlog::info( "%4d", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {
-                lprintf( "%1s", "*" );
+                spdlog::info( "%1s", "*" );
             }
             if ( j == line_length ) {
-                lprintf( "%1s", "+" );
+                spdlog::info( "%1s", "+" );
             }
-            lprintf( "\n" );
+            spdlog::info( "" );
         }
     }
-    lprintf( " %s %d: %d\n", "Number chains longer than", results_length, out_of_range );
+    spdlog::info( " %s %d: %d", "Number chains longer than", results_length, out_of_range );
 }
 
 

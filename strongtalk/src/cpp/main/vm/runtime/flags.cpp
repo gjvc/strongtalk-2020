@@ -6,14 +6,13 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/macros.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 
 
 // -----------------------------------------------------------------------------
 
-bool_t BeingDebugged = false;
+bool BeingDebugged = false;
 
 
 // -----------------------------------------------------------------------------
@@ -22,17 +21,17 @@ class BooleanFlag {
 
 public:
     const char *_name;
-    bool_t     *_value;
-    bool_t _default;
+    bool     *_value;
+    bool _default;
     const char *_description;
 
 
-    bool operator==( const bool_t &rhs ) const {
+    bool operator==( const bool &rhs ) const {
         return *_value == rhs;
     }
 
 
-    const BooleanFlag &operator=( const bool_t &rhs ) {
+    const BooleanFlag &operator=( const bool &rhs ) {
         *_value = rhs;
         return *this;
     }
@@ -40,7 +39,7 @@ public:
 };
 
 #define MATERIALIZE_BOOLEAN_FLAG( name, value, doc ) \
-  bool_t name = value;
+  bool name = value;
 
 APPLY_TO_BOOLEAN_FLAGS( MATERIALIZE_BOOLEAN_FLAG )
 
@@ -62,12 +61,12 @@ public:
     const char *_description;
 
 
-    bool operator==( const bool_t &rhs ) const {
+    bool operator==( const bool &rhs ) const {
         return *_value == rhs;
     }
 
 
-    const IntegerFlag &operator=( const bool_t &rhs ) {
+    const IntegerFlag &operator=( const bool &rhs ) {
         *_value = rhs;
         return *this;
     }
@@ -88,7 +87,7 @@ static IntegerFlag integerDebugFlags[] = {
 
 // -----------------------------------------------------------------------------
 
-bool_t str_equal( const char *s, const char *q, std::int32_t len ) {
+bool str_equal( const char *s, const char *q, std::int32_t len ) {
     // s is null terminated, q is not!
     if ( strlen( s ) not_eq (std::uint32_t) len )
         return false;
@@ -96,7 +95,7 @@ bool_t str_equal( const char *s, const char *q, std::int32_t len ) {
 }
 
 
-bool_t debugFlags::boolAt( const char *name, std::int32_t len, bool_t *value ) {
+bool debugFlags::boolAt( const char *name, std::int32_t len, bool *value ) {
     for ( BooleanFlag *current = &booleanDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
             *value = *current->_value;
@@ -107,7 +106,7 @@ bool_t debugFlags::boolAt( const char *name, std::int32_t len, bool_t *value ) {
 }
 
 
-bool_t debugFlags::boolAtPut( const char *name, std::int32_t len, bool_t *value ) {
+bool debugFlags::boolAtPut( const char *name, std::int32_t len, bool *value ) {
 
     if ( str_equal( "m", name, len ) ) {
         TraceOopPrims             = *value;
@@ -133,7 +132,7 @@ bool_t debugFlags::boolAtPut( const char *name, std::int32_t len, bool_t *value 
 
     for ( BooleanFlag *current = &booleanDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
-            bool_t old_value = *current->_value;
+            bool old_value = *current->_value;
             *current->_value = *value;
             *value           = old_value;
             return true;
@@ -144,7 +143,7 @@ bool_t debugFlags::boolAtPut( const char *name, std::int32_t len, bool_t *value 
 }
 
 
-bool_t debugFlags::intAt( const char *name, std::int32_t len, std::int32_t *value ) {
+bool debugFlags::intAt( const char *name, std::int32_t len, std::int32_t *value ) {
     for ( IntegerFlag *current = &integerDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
             *value = *current->_value;
@@ -155,7 +154,7 @@ bool_t debugFlags::intAt( const char *name, std::int32_t len, std::int32_t *valu
 }
 
 
-bool_t debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *value ) {
+bool debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *value ) {
     for ( IntegerFlag *current = &integerDebugFlags[ 0 ]; current->_name; current++ ) {
         if ( str_equal( current->_name, name, len ) ) {
             std::int32_t old_value = *current->_value;
@@ -173,10 +172,10 @@ bool_t debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *v
 void debugFlags::printFlags() {
 
     for ( BooleanFlag *b = &booleanDebugFlags[ 0 ]; b->_name; b++ )
-        lprintf( "%30s = %s\n", b->_name, *b->_value ? "true" : "false" );
+        spdlog::info( "%30s = %s", b->_name, *b->_value ? "true" : "false" );
 
     for ( IntegerFlag *i = &integerDebugFlags[ 0 ]; i->_name; i++ )
-        lprintf( "%30s = 0x%08x\n", i->_name, *i->_value );
+        spdlog::info( "%30s = 0x%08x", i->_name, *i->_value );
 }
 
 

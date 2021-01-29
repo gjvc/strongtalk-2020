@@ -34,12 +34,12 @@ class Process : public PrintableCHeapAllocatedObject {
 
 public:
 
-    virtual bool_t is_vmProcess() const {
+    virtual bool is_vmProcess() const {
         return false;
     }
 
 
-    virtual bool_t is_deltaProcess() const {
+    virtual bool is_deltaProcess() const {
         return false;
     }
 
@@ -59,7 +59,7 @@ public:
     }
 
 
-    static bool_t external_suspend_current();
+    static bool external_suspend_current();
 
     static void external_resume_current();
 
@@ -97,7 +97,7 @@ public:
 
 
     // tester
-    bool_t is_vmProcess() const {
+    bool is_vmProcess() const {
         return true;
     }
 
@@ -177,22 +177,22 @@ private:
     Oop        *_last_Delta_sp;
     const char *_last_Delta_pc;      // For now only used for stack overflow
 
-    volatile bool_t _is_terminating;
+    volatile bool _is_terminating;
 
     std::int32_t       _time_stamp;
     DebugInfo _debugInfo;               // debug info used while stepping
-    bool_t    _isCallback;
+    bool    _isCallback;
 
     friend class VMProcess;
 
 public:
-    static bool_t stepping;
+    static bool stepping;
 
-    DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThread = true );
+    DeltaProcess( Oop receiver, SymbolOop selector, bool createThread = true );
 
     virtual ~DeltaProcess();
 
-    void setIsCallback( bool_t isCallback );
+    void setIsCallback( bool isCallback );
 
     virtual void applyStepping();
 
@@ -209,9 +209,9 @@ public:
     void returnToDebugger();
 
     // testers
-    bool_t is_deltaProcess() const;
+    bool is_deltaProcess() const;
 
-    bool_t isUncommon() const;
+    bool isUncommon() const;
 
     // Accessors
     Oop receiver() const;
@@ -228,7 +228,7 @@ public:
 
     void set_processObject( ProcessOop p );
 
-    bool_t is_terminating();
+    bool is_terminating();
 
     void set_terminating();
 
@@ -287,10 +287,10 @@ public:
     void setFirstHandle( BaseHandle *handle );
 
     // returns whether this process has a stack.
-    bool_t has_stack() const;
+    bool has_stack() const;
 
     // returns whether this process is ready for execution.
-    bool_t is_ready() const;
+    bool is_ready() const;
 
     // Memory operations
     void follow_roots();
@@ -342,7 +342,7 @@ public:
     std::int32_t vdepth( Frame *f = nullptr );
 
     // Debugging state
-    bool_t stopping;    // just returned from "finish" operation; stop ASAP
+    bool stopping;    // just returned from "finish" operation; stop ASAP
 
     // Profiling operation (see fprofile.cpp)
     Frame profile_top_frame();
@@ -353,13 +353,13 @@ private:
 public:
 
     // returns whether this process is the active delta process.
-    bool_t is_active() const;
+    bool is_active() const;
 
     // returns whether this process is the scheduler.
-    bool_t is_scheduler() const;
+    bool is_scheduler() const;
 
     // returns whether this process currently is executing a vm_operation.
-    bool_t in_vm_operation() const;
+    bool in_vm_operation() const;
 
     // transfer control to the scheduler.
     void suspend( ProcessState reason );
@@ -382,9 +382,9 @@ private:
     static DeltaProcess    *_active_delta_process;
     static DeltaProcess    *_main_process;
     static DeltaProcess    *_scheduler_process;
-    static bool_t          _is_idle;
+    static bool          _is_idle;
     static volatile char   *_active_stack_limit;    //
-    static volatile bool_t _interrupt;              //
+    static volatile bool _interrupt;              //
 
     // The launch function for a new thread
     static std::int32_t launch_delta( DeltaProcess *process );
@@ -405,19 +405,19 @@ public:
     static DeltaProcess *main();
 
     // tells whether the system is idle (waiting in wait_for_async_dll).
-    static bool_t is_idle();
+    static bool is_idle();
 
     // returns the scheduler process
     static DeltaProcess *scheduler();
 
     static void set_terminating_process( ProcessState state );
 
-    static bool_t process_has_terminated();
+    static bool process_has_terminated();
 
     static ProcessState state_of_terminated_process();
 
 private:
-    static volatile bool_t _process_has_terminated;
+    static volatile bool _process_has_terminated;
     static ProcessState    _state_of_terminated_process;
 
     static void check_stack_overflow();
@@ -430,7 +430,7 @@ public:
 
     // Waits for a completed async call or timeout.
     // Returns whether the timer expired.
-    static bool_t wait_for_async_dll( std::int32_t timeout_in_ms );
+    static bool wait_for_async_dll( std::int32_t timeout_in_ms );
 
     static void preempt_active();
 
@@ -465,7 +465,7 @@ public:
 
     static void remove( DeltaProcess *p );
 
-    static bool_t includes( DeltaProcess *p );
+    static bool includes( DeltaProcess *p );
 
     static DeltaProcess *last();
 
@@ -475,7 +475,7 @@ public:
     static void start( VMProcess *p );
 
     // State
-    static bool_t has_completed_async_call();
+    static bool has_completed_async_call();
 
     // Killing
     static void kill_all();
@@ -523,7 +523,7 @@ public:
 
 
 // "semaphore" to protect some vm critical sections (process transfer etc.)
-extern "C" bool_t processSemaphore;
+extern "C" bool processSemaphore;
 
 extern "C" std::int32_t *last_Delta_fp;
 extern "C" Oop         *last_Delta_sp;

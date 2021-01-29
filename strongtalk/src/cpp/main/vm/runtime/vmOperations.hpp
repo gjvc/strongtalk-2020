@@ -29,17 +29,17 @@ public:
     }
 
 
-    virtual bool_t is_scavenge() const {
+    virtual bool is_scavenge() const {
         return false;
     }
 
 
-    virtual bool_t is_garbage_collect() const {
+    virtual bool is_garbage_collect() const {
         return false;
     }
 
 
-    virtual bool_t is_single_step() const {
+    virtual bool is_single_step() const {
         return false;
     }
 
@@ -64,7 +64,7 @@ class VM_Scavenge : public VM_Operation {
 private:
     Oop *_addr;
 public:
-    bool_t is_scavenge() const {
+    bool is_scavenge() const {
         return true;
     }
 
@@ -100,7 +100,7 @@ private:
     Oop *_addr;
 
 public:
-    bool_t is_garbage_collect() const {
+    bool is_garbage_collect() const {
         return true;
     }
 

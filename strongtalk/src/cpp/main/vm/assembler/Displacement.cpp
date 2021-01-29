@@ -69,7 +69,7 @@ void Displacement::print() {
             s = "????";
             break;
     }
-    _console->print( "%s (info = 0x%x)", s, info() );
+    _console->print( "%s (info = 0x{0:x})", s, info() );
 }
 
 

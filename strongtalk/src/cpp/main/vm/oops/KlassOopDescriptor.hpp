@@ -44,12 +44,12 @@ public:
     }
 
 
-    bool_t is_invalid() const {
+    bool is_invalid() const {
         return mark()->is_klass_invalid();
     }
 
 
-    void set_invalid( bool_t value ) {
+    void set_invalid( bool value ) {
         set_mark( value ? mark()->set_klass_invalid() : mark()->clear_klass_invalid() );
     }
 

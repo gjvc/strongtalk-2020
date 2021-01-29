@@ -24,7 +24,7 @@ public:
     }
 
 
-    bool_t isConstant() const;
+    bool isConstant() const;
 
     Oop constant() const;
 

@@ -56,7 +56,7 @@ void NodeBuilder::initialize( InlinedScope *scope ) {
 
 void NodeBuilder::append( Node *node ) {
     if ( node->isExitNode() )
-        warning( "should use append_exit for consistency" );
+        spdlog::warn( "should use append_exit for consistency" );
 
     if ( aborting() or _current == EndOfCode ) {
         if ( node->nPredecessors() == 0 ) {
@@ -116,7 +116,7 @@ void NodeBuilder::abort() {
 }
 
 
-bool_t NodeBuilder::abortIfDead( Expression *e ) {
+bool NodeBuilder::abortIfDead( Expression *e ) {
     if ( e->isNoResultExpression() ) {
         // dead code
         abort();
@@ -131,7 +131,7 @@ bool_t NodeBuilder::abortIfDead( Expression *e ) {
 // Otherwise, things will break in the presence of dead code.
 // Also, after calling generate_subinterval, make sure you set current (since
 // the subinterval may have ended dead, leaving current at EndOfCode).
-void NodeBuilder::generate_subinterval( MethodInterval *m, bool_t produces_result ) {
+void NodeBuilder::generate_subinterval( MethodInterval *m, bool produces_result ) {
     st_assert( not aborting(), "shouldn't generate when already aborting" );
     std::int32_t            savedLen = exprStack()->length();
     MethodIterator mi( m, this );
@@ -196,7 +196,7 @@ void NodeBuilder::constant_if_node( IfNode *node, ConstantExpression *condition 
 }
 
 
-TypeTestNode *NodeBuilder::makeTestNode( bool_t cond, PseudoRegister *r ) {
+TypeTestNode *NodeBuilder::makeTestNode( bool cond, PseudoRegister *r ) {
     GrowableArray<KlassOop> *list = new GrowableArray<KlassOop>( 2 );
     if ( cond ) {
         list->append( trueObject->klass() );
@@ -241,7 +241,7 @@ void NodeBuilder::if_node( IfNode *node ) {
             // then branch
             setCurrent( ifBranch );
             generate_subinterval( node->then_code(), node->produces_result() );
-            bool_t ifEndsDead = is_in_dead_code();
+            bool ifEndsDead = is_in_dead_code();
             if ( node->produces_result() ) {
                 ifResult = exprStack()->pop();
                 if ( not ifResult->isNoResultExpression() ) {
@@ -257,7 +257,7 @@ void NodeBuilder::if_node( IfNode *node ) {
             // else branch
             setCurrent( elseBranch );
             generate_subinterval( node->else_code(), node->produces_result() );
-            bool_t elseEndsDead = is_in_dead_code();
+            bool elseEndsDead = is_in_dead_code();
             if ( node->produces_result() ) {
                 elseResult = exprStack()->pop();
                 if ( not elseResult->isNoResultExpression() ) {
@@ -510,7 +510,7 @@ void NodeBuilder::push_temporary( std::int32_t no ) {
 }
 
 
-void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool_t push ) {
+void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool push ) {
     // generates code to access temporary no in (logical, i.e., interpreter) context
     // context numbering starts a 0
     st_assert( _scope->allocatesInterpretedContext() == ( _scope->contextInitializer() not_eq nullptr ), "context must exist already if used (find_scope)" );
@@ -650,8 +650,8 @@ void NodeBuilder::materialize( PseudoRegister *r, GrowableArray<BlockPseudoRegis
     if ( materialized == nullptr )
         return;
 
-    bool_t isBlockPseudoRegister = r->isBlockPseudoRegister();
-    bool_t contains              = materialized->contains( (BlockPseudoRegister *) r );
+    bool isBlockPseudoRegister = r->isBlockPseudoRegister();
+    bool contains              = materialized->contains( (BlockPseudoRegister *) r );
 
     // make sure the block (and all parent blocks / uplevel-accessed blocks) exist
     // materialized is a list of blocks already materialized (nullptr if none)
@@ -880,7 +880,7 @@ void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
             // now assign to result register and jump to NonLocalReturn setup code to set up remaining NonLocalReturn regs
             // NB: each scope needs its own setup node because the home fp/id is different
             std::int32_t    endByteCodeIndex = scope()->nlrPoint()->byteCodeIndex();
-            bool_t haveSetupNode    = scope()->nlrPoint()->next() not_eq nullptr;
+            bool haveSetupNode    = scope()->nlrPoint()->next() not_eq nullptr;
             st_assert( not haveSetupNode or scope()->nlrPoint()->next()->isNonLocalReturnSetupNode(), "expected setup node" );
             PseudoRegister *res = haveSetupNode ? ( (NonTrivialNode *) scope()->nlrPoint()->next() )->src() : new SinglyAssignedPseudoRegister( scope(), NonLocalReturnResultLoc, true, true, byteCodeIndex(), endByteCodeIndex );
             append( NodeFactory::createAndRegisterNode<AssignNode>( src, res ) );
@@ -903,8 +903,8 @@ GrowableArray<NonTrivialNode *> *NodeBuilder::nodesBetween( Node *from, Node *to
     while ( n not_eq to ) {
         if ( not n->hasSingleSuccessor() )
             return nullptr;   // can't copy both paths
-        bool_t shouldCopy = n->shouldCopyWhenSplitting();
-        bool_t ok         = ( n == from ) or shouldCopy or n->isTrivial() or n->isMergeNode();
+        bool shouldCopy = n->shouldCopyWhenSplitting();
+        bool ok         = ( n == from ) or shouldCopy or n->isTrivial() or n->isMergeNode();
         if ( not ok )
             return nullptr;                  // can't copy this node
         if ( shouldCopy and n not_eq from )
@@ -962,7 +962,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
         start->removeNext( start->next() );
         // append copies of all assignments
         Node *current = start;
-        bool_t found = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
+        bool found = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
 
         for ( std::int32_t i = 0; i < nodesToCopy->length(); i++ ) {
             NonTrivialNode *orig = nodesToCopy->at( i );
@@ -1017,7 +1017,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
             while ( n not_eq test ) {
                 if ( not n->hasSingleSuccessor() )
                     goto nextExpression;   // can't copy both paths
-                bool_t ok = ( n == start ) or n->isTrivial() or n->isAssignNode() or n->isMergeNode();
+                bool ok = ( n == start ) or n->isTrivial() or n->isAssignNode() or n->isMergeNode();
                 if ( not ok )
                     goto nextExpression;                  // can't copy this node
                 n = n->next();
@@ -1034,13 +1034,13 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
         Node       *start = okExprs->at( i )->node()->next();
         for ( Node *n     = start; n not_eq (Node *) test; n = n->next() ) {
             if ( exprNodes->contains( n ) ) {
-                lprintf( "error in splittable boolean expression:\n" );
+                spdlog::info( "error in splittable boolean expression:" );
                 m->print();
                 okExprs->at( i )->print();
                 printNodes( okExprs->at( i )->node() );
                 for ( std::int32_t j = 0; j < exprNodes->length(); j++ ) {
                     exprNodes->at( j )->print();
-                    lprintf( "\n" );
+                    spdlog::info( "" );
                 }
                 st_fatal( "compiler error" );
             }
@@ -1077,7 +1077,7 @@ static MethodOopDescriptor::Block_Info incoming_info( MethodOop m ) {
 }
 
 
-void NodeBuilder::allocate_context( std::int32_t nofTemps, bool_t forMethod ) {
+void NodeBuilder::allocate_context( std::int32_t nofTemps, bool forMethod ) {
     _scope->createContextTemporaries( nofTemps );
     st_assert( not scope()->contextInitializer(), "should not already have a contextInitializer" );
     PseudoRegister *parent;    // previous context in the context chain

@@ -29,40 +29,49 @@
 
 
 void LocationNameDescriptor::print() {
-    _console->print( "@%s (0x%08x)", location().name(), offset );
+    spdlog::info( "[@{} = {}]  0x{0:x}", location().name(), offset );
+
+//    _console->print( "@%s  (0x%08x)", location().name(), offset );
 }
 
 
 void ValueNameDescriptor::print() {
-    _console->print( "=" );
-    value()->print_value();
-    _console->print( " (0x%08x)", offset );
+    spdlog::info( "={}  0x{0:x}", value()->print_value_string(), offset );
+//    _console->print( "=" );
+//    value()->print_value();
+//    _console->print( " (0x%08x)", offset );
 }
 
 
 void BlockValueNameDescriptor::print() {
-    _console->print( "[=" );
-    block_method()->print_value();
-    _console->print( "]" );
-    _console->print( " (0x%08x)", offset );
+    spdlog::info( "[={}]  0x{0:x}", block_method()->print_value_string(), offset );
+
+//    _console->print( "[=" );
+//    block_method()->print_value();
+//    _console->print( "]" );
+//    _console->print( " (0x%08x)", offset );
 }
 
 
 void MemoizedBlockNameDescriptor::print() {
-    _console->print( "[@%s =", location().name() );
-    block_method()->print_value();
-    _console->print( "]" );
-    _console->print( " (0x%08x)", offset );
+    spdlog::info( "[@{} = {}]  0x{0:x}", location().name(), block_method()->print_value_string() );
+
+//    _console->print( "[@%s =", location().name() );
+//    block_method()->print_value();
+//    _console->print( "]" );
+//    _console->print( " (0x%08x)", offset );
 }
 
 
 void IllegalNameDescriptor::print() {
-    _console->print( "###illegal###" );
-    _console->print( " (0x%08x)", offset );
+    spdlog::info("###illegal###");
+    spdlog::info(" (0x{0:x})", offset);
+//    _console->print( "###illegal###" );
+//    _console->print( " (0x%08x)", offset );
 }
 
 
-bool_t LocationNameDescriptor::equal( NameDescriptor *other ) const {
+bool LocationNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isLocation() ) {
         return location() == ( (LocationNameDescriptor *) other )->location();
     }
@@ -70,7 +79,7 @@ bool_t LocationNameDescriptor::equal( NameDescriptor *other ) const {
 }
 
 
-bool_t ValueNameDescriptor::equal( NameDescriptor *other ) const {
+bool ValueNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isValue() ) {
         return value() == ( (ValueNameDescriptor *) other )->value();
     }
@@ -78,7 +87,7 @@ bool_t ValueNameDescriptor::equal( NameDescriptor *other ) const {
 }
 
 
-bool_t BlockValueNameDescriptor::equal( NameDescriptor *other ) const {
+bool BlockValueNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isBlockValue() ) {
         return block_method() == ( (BlockValueNameDescriptor *) other )->block_method() and parent_scope()->s_equivalent( ( (BlockValueNameDescriptor *) other )->parent_scope() );
     }
@@ -86,7 +95,7 @@ bool_t BlockValueNameDescriptor::equal( NameDescriptor *other ) const {
 }
 
 
-bool_t MemoizedBlockNameDescriptor::equal( NameDescriptor *other ) const {
+bool MemoizedBlockNameDescriptor::equal( NameDescriptor *other ) const {
     if ( other->isMemoizedBlock() ) {
         return location() == ( (MemoizedBlockNameDescriptor *) other )->location() and block_method() == ( (MemoizedBlockNameDescriptor *) other )->block_method() and parent_scope()->s_equivalent( ( (MemoizedBlockNameDescriptor *) other )->parent_scope() );
     }
@@ -94,7 +103,7 @@ bool_t MemoizedBlockNameDescriptor::equal( NameDescriptor *other ) const {
 }
 
 
-bool_t IllegalNameDescriptor::equal( NameDescriptor *other ) const {
+bool IllegalNameDescriptor::equal( NameDescriptor *other ) const {
     return other->isIllegal();
 }
 

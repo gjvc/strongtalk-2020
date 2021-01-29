@@ -20,13 +20,13 @@ typedef class OopDescriptor *Oop;
 class evaluator : AllStatic {
 
 protected:
-    static bool_t get_line( char *line );
+    static bool get_line( char *line );
 
-    static bool_t process_line( const char *line );
+    static bool process_line( const char *line );
 
     static void eval_message( TokenStream *stream );
 
-    static bool_t get_oop( TokenStream *stream, Oop *addr );
+    static bool get_oop( TokenStream *stream, Oop *addr );
 
     static void print_mini_help();
 
@@ -36,7 +36,7 @@ protected:
 
     static void show_command( TokenStream *stream );
 
-    static void change_debug_flag( TokenStream *stream, bool_t value );
+    static void change_debug_flag( TokenStream *stream, bool value );
 
     static void print_status();
 

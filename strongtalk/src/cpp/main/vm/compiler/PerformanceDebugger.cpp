@@ -44,7 +44,7 @@ void PerformanceDebugger::stop_report() {
 void PerformanceDebugger::report_compile() {
     if ( not _compileAlreadyReported ) {
         _compileAlreadyReported = true;
-        _console->print_cr( "\n*while compiling NativeMethod for %s:", _compiler->key->print_string() );
+        spdlog::info( "\n*while compiling NativeMethod for %s:", _compiler->key->print_string() );
     }
 }
 
@@ -126,7 +126,7 @@ void PerformanceDebugger::report_toobig( InlinedScope *s ) {
 }
 
 
-void PerformanceDebugger::report_uncommon( bool_t reoptimizing ) {
+void PerformanceDebugger::report_uncommon( bool reoptimizing ) {
     if ( not DebugPerformance )
         return;
     Reporter r( this );

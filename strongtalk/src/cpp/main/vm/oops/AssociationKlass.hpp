@@ -22,19 +22,19 @@ public:
     friend void setKlassVirtualTableFromAssociationKlass( Klass *k );
 
 
-    bool_t oop_is_association() const {
+    bool oop_is_association() const {
         return true;
     }
 
 
     // allocation properties
-    bool_t can_inline_allocation() const {
+    bool can_inline_allocation() const {
         return false;
     }
 
 
     // allocation operations
-    Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
     // creates invocation
     KlassOop create_subclass( MixinOop mixin, Format format );
@@ -49,7 +49,7 @@ public:
 
 
     // memory operations
-    bool_t oop_verify( Oop obj );
+    bool oop_verify( Oop obj );
 
 
     const char *name() const {
@@ -58,12 +58,12 @@ public:
 
 
     // Reflective properties
-    bool_t can_have_instance_variables() const {
+    bool can_have_instance_variables() const {
         return false;
     }
 
 
-    bool_t can_be_subclassed() const {
+    bool can_be_subclassed() const {
         return false;
     }
 

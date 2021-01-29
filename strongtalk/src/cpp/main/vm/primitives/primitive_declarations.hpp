@@ -7,8 +7,6 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 // -----------------------------------------------------------------------------
 

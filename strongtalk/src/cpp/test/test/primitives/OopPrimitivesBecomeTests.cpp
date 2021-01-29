@@ -67,77 +67,42 @@ protected:
 
 };
 
-
-TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacement
-) {
-oopPrimitives::become( replacement, target
-);
-EXPECT_EQ( replacement, targetContainer
-->obj_at( 1 ) ) << "target of become: has not been replaced by replacement";
-EXPECT_EQ( target, replacementContainer
-->obj_at( 1 ) ) << "replacement has not been replaced by target of become:";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacement ) {
+    oopPrimitives::become( replacement, target );
+    EXPECT_EQ( replacement, targetContainer->obj_at( 1 ) ) << "target of become: has not been replaced by replacement";
+    EXPECT_EQ( target, replacementContainer->obj_at( 1 ) ) << "replacement has not been replaced by target of become:";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget
-) {
-EXPECT_EQ( target, oopPrimitives::become( replacement, target )
-) << "should return target";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget ) { EXPECT_EQ( target, oopPrimitives::become( replacement, target ) ) << "should return target"; }
+
+
+TEST_F( OopPrimitivesBecomeTest, becomeShouldMarkStoredCards ) {
+    Universe::remembered_set->clear();
+    oopPrimitives::become( replacement, target );
+    EXPECT_TRUE( Universe::remembered_set->is_dirty( targetContainer ) ) << "target container should be diry";
+    EXPECT_TRUE( Universe::remembered_set->is_dirty( replacementContainer ) ) << "replacement container should be diry";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldMarkStoredCards
-) {
-Universe::remembered_set->
-clear();
-
-oopPrimitives::become( replacement, target
-);
-
-EXPECT_TRUE( Universe::remembered_set
-->
-is_dirty( targetContainer )
-) << "target container should be diry";
-EXPECT_TRUE( Universe::remembered_set
-->
-is_dirty( replacementContainer )
-) << "replacement container should be diry";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacementReferencesInTenuredObjects ) {
+    oopPrimitives::become( replacement, target );
+    EXPECT_EQ( replacement, tenuredTargetContainer->value() ) << "target of become: has not been replaced by replacement";
+    EXPECT_EQ( target, tenuredReplacementContainer->value() ) << "replacement has not been replaced by target of become:";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacementReferencesInTenuredObjects
-) {
-oopPrimitives::become( replacement, target
-);
-EXPECT_EQ( replacement, tenuredTargetContainer
-->
-value()
-) << "target of become: has not been replaced by replacement";
-EXPECT_EQ( target, tenuredReplacementContainer
-->
-value()
-) << "replacement has not been replaced by target of become:";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldUpdateRoots ) {
+    oopPrimitives::become( Universe::nilObject(), target );
+    EXPECT_EQ( target, Universe::nilObject() ) << "nilObject should now be target";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldUpdateRoots
-) {
-oopPrimitives::become( Universe::nilObject(), target
-);
-EXPECT_EQ( target, Universe::nilObject()
-) << "nilObject should now be target";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReceiverIsSmallInteger ) {
+    EXPECT_EQ( markSymbol( vmSymbols::first_argument_has_wrong_type() ), oopPrimitives::become( replacement, smiOop_one ) ) << "receiver cannot be small integer";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReceiverIsSmallInteger
-) {
-EXPECT_EQ( markSymbol( vmSymbols::first_argument_has_wrong_type() ), oopPrimitives::become( replacement, smiOop_one )
-) << "receiver cannot be small integer";
-}
-
-
-TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReplacementIsSmallInteger
-) {
-EXPECT_EQ( markSymbol( vmSymbols::second_argument_has_wrong_type() ), oopPrimitives::become( smiOop_one, replacement )
-) << "replacement cannot be small integer";
+TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReplacementIsSmallInteger ) {
+    EXPECT_EQ( markSymbol( vmSymbols::second_argument_has_wrong_type() ), oopPrimitives::become( smiOop_one, replacement ) ) << "replacement cannot be small integer";
 }

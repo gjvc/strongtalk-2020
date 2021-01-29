@@ -34,7 +34,7 @@ public:
     static void clearAll();     // clears all DeltaCallCaches (called by GC, etc.)
 
 
-    bool_t match( KlassOop klass, SymbolOop selector ) {
+    bool match( KlassOop klass, SymbolOop selector ) {
         return Oop( selector ) == _key.selector_or_method() and klass == _key.klass();
     }
 

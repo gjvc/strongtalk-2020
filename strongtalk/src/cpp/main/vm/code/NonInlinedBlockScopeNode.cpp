@@ -6,8 +6,6 @@
 #include "vm/code/NonInlinedBlockScopeNode.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/utilities/lprintf.hpp"
-
 
 void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder *rec ) {
 
@@ -17,5 +15,5 @@ void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder *rec ) {
     rec->genValue( _offset - _parent->_offset );
 
     if ( WizardMode )
-        lprintf( "generating NonInlinedBlockScopeNode at %d\n", _offset );
+        spdlog::info( "generating NonInlinedBlockScopeNode at %d", _offset );
 }

@@ -70,7 +70,7 @@ MethodOop MixinOopDescriptor::remove_method_at( std::int32_t index ) {
 }
 
 
-bool_t MixinOopDescriptor::includes_method( MethodOop method ) {
+bool MixinOopDescriptor::includes_method( MethodOop method ) {
     ObjectArrayOop array = methods();
     for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         MethodOop m = MethodOop( array->obj_at( index ) );
@@ -111,7 +111,7 @@ SymbolOop MixinOopDescriptor::remove_instVar_at( std::int32_t index ) {
 }
 
 
-bool_t MixinOopDescriptor::includes_instVar( SymbolOop name ) {
+bool MixinOopDescriptor::includes_instVar( SymbolOop name ) {
     ObjectArrayOop array = instVars();
     for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         SymbolOop elem = SymbolOop( array->obj_at( index ) );
@@ -152,7 +152,7 @@ SymbolOop MixinOopDescriptor::remove_classVar_at( std::int32_t index ) {
 }
 
 
-bool_t MixinOopDescriptor::includes_classVar( SymbolOop name ) {
+bool MixinOopDescriptor::includes_classVar( SymbolOop name ) {
     ObjectArrayOop array = classVars();
     for ( std::int32_t      index = 1; index <= array->length(); index++ ) {
         SymbolOop elem = SymbolOop( array->obj_at( index ) );
@@ -163,7 +163,7 @@ bool_t MixinOopDescriptor::includes_classVar( SymbolOop name ) {
 }
 
 
-bool_t MixinOopDescriptor::is_installed() const {
+bool MixinOopDescriptor::is_installed() const {
     if ( installed() == trueObject )
         return true;
     st_assert( installed() == falseObject, "verify installed" );
@@ -171,7 +171,7 @@ bool_t MixinOopDescriptor::is_installed() const {
 }
 
 
-bool_t MixinOopDescriptor::has_primary_invocation() const {
+bool MixinOopDescriptor::has_primary_invocation() const {
     return primary_invocation()->is_klass();
 }
 

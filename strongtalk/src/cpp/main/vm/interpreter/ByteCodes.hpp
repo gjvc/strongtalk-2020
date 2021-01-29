@@ -444,16 +444,16 @@ private:
     static CodeType     _code_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
     static ArgumentSpec _argument_spec[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
     static SendType     _send_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool_t       _single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool_t       _pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool       _single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool       _pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
     static void def( Code code );
 
-    static void def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, bool_t pop_tos = false );
+    static void def( Code code, const char *name, Format format, CodeType code_type, bool single_step, bool pop_tos = false );
 
-    static void def( Code code, const char *name, Format format, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos = false );
+    static void def( Code code, const char *name, Format format, ArgumentSpec argument_spec, SendType send_type, bool pop_tos = false );
 
-    static void def( Code code, const char *name, Format format, CodeType code_type, bool_t single_step, ArgumentSpec argument_spec, SendType send_type, bool_t pop_tos );
+    static void def( Code code, const char *name, Format format, CodeType code_type, bool single_step, ArgumentSpec argument_spec, SendType send_type, bool pop_tos );
 
 public:
     // Define entry points
@@ -461,23 +461,23 @@ public:
 
 
     // Testers
-    static bool_t is_defined( Code code ) {
+    static bool is_defined( Code code ) {
 //        return 0 <= static_cast<std::int32_t>(code)
         return static_cast<std::int32_t>(code) < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES) and
                _format[ static_cast<std::int32_t>(code) ] not_eq ByteCodes::Format::UNDEFINED;
     }
 
 
-    static bool_t is_self_send( Code code );
+    static bool is_self_send( Code code );
 
-    static bool_t is_super_send( Code code );
+    static bool is_super_send( Code code );
 
-    static bool_t has_access_send_code( Code code );
+    static bool has_access_send_code( Code code );
 
-    static bool_t has_predicted_send_code( Code code );
+    static bool has_predicted_send_code( Code code );
 
 
-    static bool_t is_send_code( Code code ) {
+    static bool is_send_code( Code code ) {
         return send_type( code ) not_eq ByteCodes::SendType::no_send;
     }
 
@@ -513,12 +513,12 @@ public:
     }
 
 
-    static bool_t single_step( const Code code ) {
+    static bool single_step( const Code code ) {
         return _single_step[ static_cast<std::int32_t>(code) ];
     }
 
 
-    static bool_t pop_tos( const Code code ) {
+    static bool pop_tos( const Code code ) {
         return _pop_tos[ static_cast<std::int32_t>(code) ];
     }
 

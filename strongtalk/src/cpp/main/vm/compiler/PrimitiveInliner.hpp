@@ -34,8 +34,8 @@ private:
     InlinedScope    *_scope;                // the current scope
     ExpressionStack *_expressionStack;            // the current expression stack
     GrowableArray<Expression *> *_params;            // the copy of the top number_of_parameters() elements of _exprStack NB: don't use _params->at(...) -- use parameter() below
-    bool_t                      _usingUncommonTrap;                // using uncommon trap for prim. failure?
-    bool_t                      _cannotFail;                        // true if primitive can't fail
+    bool                      _usingUncommonTrap;                // using uncommon trap for prim. failure?
+    bool                      _cannotFail;                        // true if primitive can't fail
 
     std::int32_t number_of_parameters() const {
         return _primitiveDescriptor->number_of_parameters();
@@ -45,7 +45,7 @@ private:
     Expression *parameter( std::int32_t index ) const {
         return _params->at( index );
     }        // parameter of primitive call
-    bool_t is_power_of_2( std::int32_t x ) const {
+    bool is_power_of_2( std::int32_t x ) const {
         return x > 0 and ( x & ( x - 1 ) ) == 0;
     }    // true if there's an n with 2^n = x
     std::int32_t log2( std::int32_t x ) const;                // if is_power_of_2(x) then 2^(log2(x)) = x
@@ -57,13 +57,13 @@ private:
     Expression *tryConstantFold();                // try constant-folding the primitive
     Expression *tryTypeCheck();                    // try constant-folding primitive failures
     Expression *tryInline();                    // try inlining or special-casing the primitive
-    Expression *genCall( bool_t canFail );                // generate non-inlined primitive call
+    Expression *genCall( bool canFail );                // generate non-inlined primitive call
     Expression *primitiveFailure( SymbolOop failureCode );    // handle primitive that always fail
-    Expression *merge_failure_block( Node *ok_exit, Expression *ok_result, Node *failure_exit, Expression *failure_code, bool_t ok_result_is_read_only = true );
+    Expression *merge_failure_block( Node *ok_exit, Expression *ok_result, Node *failure_exit, Expression *failure_code, bool ok_result_is_read_only = true );
 
     SymbolOop failureSymbolForArg( std::int32_t i );            // error string for "n.th arg has wrong type"
-    bool_t shouldUseUncommonTrap();            // use uncommon trap for primitive failure?
-    bool_t basic_shouldUseUncommonTrap() const;
+    bool shouldUseUncommonTrap();            // use uncommon trap for primitive failure?
+    bool basic_shouldUseUncommonTrap() const;
 
     Expression *smi_ArithmeticOp( ArithOpCode op, Expression *x, Expression *y );
 
@@ -89,9 +89,9 @@ private:
 
     Expression *obj_equal();
 
-    Expression *obj_class( bool_t has_receiver );
+    Expression *obj_class( bool has_receiver );
 
-    Expression *obj_hash( bool_t has_receiver );
+    Expression *obj_hash( bool has_receiver );
 
     Expression *proxy_byte_at();
 

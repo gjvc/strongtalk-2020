@@ -50,17 +50,17 @@ protected:
     }
 
 
-    bool_t is8bit( std::int32_t x ) {
+    bool is8bit( std::int32_t x ) {
         return -0x80 <= x and x < 0x80;
     }
 
 
-    bool_t isByte( std::int32_t x ) {
+    bool isByte( std::int32_t x ) {
         return 0 <= x and x < 0x100;
     }
 
 
-    bool_t isShiftCount( std::int32_t x ) {
+    bool isShiftCount( std::int32_t x ) {
         return 0 <= x and x < 32;
     }
 

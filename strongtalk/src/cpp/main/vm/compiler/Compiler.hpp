@@ -36,8 +36,8 @@ private:
     std::int32_t                           _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
     CodeBuffer                    *_code;                              // the buffer used for code generation
     std::int32_t                           _nextLevel;                          // optimization level for NativeMethod being created
-    bool_t                        _hasInlinableSendsRemaining;         // no inlinable sends remaining?
-    bool_t                        _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
+    bool                        _hasInlinableSendsRemaining;         // no inlinable sends remaining?
+    bool                        _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
 
 public:
     LookupKey                               *key;
@@ -49,7 +49,7 @@ public:
     std::int32_t                                     countID;                   // recompile counter ID
     JumpTableID                             main_jumpTable_id;         // jump table id
     JumpTableID                             promoted_jumpTable_id;     // promoted jump table entry for block method only
-    bool_t                                  useUncommonTraps;          // ok to use uncommon traps?
+    bool                                  useUncommonTraps;          // ok to use uncommon traps?
     ScopeDescriptorRecorder                 *rec;                      //
     InlinedScope                            *topScope;                 // top scope
     BasicBlock                              *firstBasicBlock;          // first basic block
@@ -125,7 +125,7 @@ public:
     }
 
 
-    bool_t has_float_temporaries() const {
+    bool has_float_temporaries() const {
         return totalNofFloatTemporaries() > 0;
     }
 
@@ -145,18 +145,18 @@ public:
     void set_float_section_start_offset( std::int32_t offset );
 
 
-    bool_t is_block_compile() const {
+    bool is_block_compile() const {
         return parentNativeMethod not_eq nullptr;
     }
 
 
-    bool_t is_method_compile() const {
+    bool is_method_compile() const {
         return not is_block_compile();
     }
 
 
-    bool_t is_uncommon_compile() const;            // recompiling because of uncommon trap?
-    bool_t is_database_compile() const {
+    bool is_uncommon_compile() const;            // recompiling because of uncommon trap?
+    bool is_database_compile() const {
         return _uses_inlining_database;
     }
 
@@ -180,9 +180,9 @@ public:
 
     void exitScope( InlinedScope *s );
 
-    void allocateArgs( std::int32_t nargs, bool_t isPrimCall );
+    void allocateArgs( std::int32_t nargs, bool isPrimCall );
 
-    bool_t registerUninlinable( Inliner *inliner );
+    bool registerUninlinable( Inliner *inliner );
 
     void print();
 
@@ -190,12 +190,12 @@ public:
 
     void print_key( ConsoleOutputStream *s );
 
-    void print_code( bool_t suppressTrivial );
+    void print_code( bool suppressTrivial );
 };
 
 
 // cout: output stream for compiler messages
 // Intended usage pattern: if (CompilerDebug) cout(PrintXXX)->print("....").
 // This will print the message to _console if the PrintXXX flag is set or to the compiler's string buffer otherwise.
-ConsoleOutputStream *cout( bool_t flag );    // for compiler debugging; returns stdout or compiler-internal string stream depending on flag
+ConsoleOutputStream *cout( bool flag );    // for compiler debugging; returns stdout or compiler-internal string stream depending on flag
 void print_cout();        // prints hidden messages of current compilation

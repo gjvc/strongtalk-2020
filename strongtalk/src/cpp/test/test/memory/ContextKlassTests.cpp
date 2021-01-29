@@ -34,34 +34,23 @@ protected:
 
 
     KlassOop theClass;
-    Oop *oldEdenTop;
+    Oop      *oldEdenTop;
 
 };
 
-
-TEST_F( ContextKlassTests, allocateShouldFailWhenAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_EQ( ( std::int32_t ) nullptr, ( std::int32_t ) ( theClass->klass_part()->allocateObject( false ) ) );
+TEST_F( ContextKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( theClass->klass_part()->allocateObject( false ) ) );
 }
 
 
-TEST_F( ContextKlassTests, allocateShouldAllocateTenuredWhenRequired
-) {
-ASSERT_TRUE( Universe::old_gen
-.
-contains( theClass
-->klass_part()->allocateObject( false, true ) ) );
+TEST_F( ContextKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
+    ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObject( false, true ) ) );
 }
 
 
-TEST_F( ContextKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
-) {
-eden_top = eden_end;
-ASSERT_TRUE( Universe::new_gen
-.eden()->free() < 4 * oopSize );
-ASSERT_TRUE( Universe::new_gen
-.
-contains( theClass
-->klass_part()->allocateObject( true ) ) );
+TEST_F( ContextKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
+    eden_top = eden_end;
+    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
+    ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObject( true ) ) );
 }

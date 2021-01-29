@@ -36,8 +36,8 @@ private:
     NativeMethod      *_nativeMethod;       // trigger NativeMethod (if compiled, nullptr otherwise)
     NativeMethod      *_newNativeMethod;    // new NativeMethod replacing trigger (if any)
     DeltaVirtualFrame *_deltaVirtualFrame;  // VirtualFrame of trigger method/NativeMethod (NOT COMPLETELY INITIALIZED)
-    bool_t _isUncommonBranch;    // recompiling because of uncommon branch?
-    bool_t _recompiledTrigger;   // is newNM the new version of _nm?
+    bool _isUncommonBranch;    // recompiling because of uncommon branch?
+    bool _recompiledTrigger;   // is newNM the new version of _nm?
 
 public:
 
@@ -50,7 +50,7 @@ public:
     }
 
 
-    Recompilation( Oop receiver, NativeMethod *nm, bool_t unc = false ) {  // used if compiled method triggers counter
+    Recompilation( Oop receiver, NativeMethod *nm, bool unc = false ) {  // used if compiled method triggers counter
         _method           = nm->method();
         _receiver         = receiver;
         _nativeMethod     = nm;
@@ -67,12 +67,12 @@ public:
     void doit();
 
 
-    bool_t isCompiled() const {
+    bool isCompiled() const {
         return _nativeMethod not_eq nullptr;
     }
 
 
-    bool_t recompiledTrigger() const {
+    bool recompiledTrigger() const {
         return _recompiledTrigger;
     }
 
@@ -101,7 +101,7 @@ protected:
 
     void recompile_block( Recompilee *r );
 
-    bool_t handleStaleInlineCache( RecompilerFrame *first );
+    bool handleStaleInlineCache( RecompilerFrame *first );
 };
 
 
@@ -118,12 +118,12 @@ protected:
 
 
 public:
-    virtual bool_t is_interpreted() const {
+    virtual bool is_interpreted() const {
         return false;
     }
 
 
-    virtual bool_t is_compiled() const {
+    virtual bool is_compiled() const {
         return false;
     }
 
@@ -161,7 +161,7 @@ public:
     }
 
 
-    bool_t is_interpreted() const {
+    bool is_interpreted() const {
         return true;
     }
 
@@ -188,7 +188,7 @@ public:
     }
 
 
-    bool_t is_compiled() const {
+    bool is_compiled() const {
         return true;
     }
 

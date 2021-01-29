@@ -28,7 +28,7 @@ double Timer::seconds() {
 
 
 void Timer::print() {
-    _console->print_cr( "%3.3f", _userTime );
+    spdlog::info( "%3.3f", _userTime );
 }
 
 
@@ -50,7 +50,7 @@ double ElapsedTimer::seconds() {
 
 
 void ElapsedTimer::print() {
-    _console->print_cr( "%3.3f", seconds() );
+    spdlog::info( "%3.3f", seconds() );
 }
 
 
@@ -72,7 +72,7 @@ double TimeStamp::seconds() {
 }
 
 
-TraceTime::TraceTime( const char *title, bool_t doit ) {
+TraceTime::TraceTime( const char *title, bool doit ) {
     active = doit;
     if ( active ) {
         _console->print( "[%s", title );
@@ -84,6 +84,6 @@ TraceTime::TraceTime( const char *title, bool_t doit ) {
 TraceTime::~TraceTime() {
     if ( active ) {
         t.stop();
-        _console->print_cr( ", %3.3f secs]", t.seconds() );
+        spdlog::info( ", %3.3f secs]", t.seconds() );
     }
 }

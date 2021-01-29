@@ -34,7 +34,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -72,7 +72,7 @@ public:
     }
 
 
-    void obj_at_put( std::int32_t which, Oop contents, bool_t cs = true ) {
+    void obj_at_put( std::int32_t which, Oop contents, bool cs = true ) {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
         st_assert( not is_symbol(), "shouldn't be modifying a canonical string" );
         st_assert( contents->verify(), "check contents" );
@@ -87,7 +87,7 @@ public:
     ObjectArrayOop growBy( std::int32_t increment );
 
     // memory operations
-    bool_t verify();
+    bool verify();
 
     ObjectArrayOop copy_remove( std::int32_t from, std::int32_t number = 1 );
 

@@ -45,23 +45,23 @@
 //extern "C" char redo_bytecode_after_deoptimization;
 
 extern "C" {
-bool_t nlr_through_unpacking                 = false;
-Oop    result_through_unpacking              = nullptr;
-std::int32_t    number_of_arguments_through_unpacking = 0;
-char   *C_frame_return_addr                  = nullptr;
+bool         nlr_through_unpacking                 = false;
+Oop          result_through_unpacking              = nullptr;
+std::int32_t number_of_arguments_through_unpacking = 0;
+char         *C_frame_return_addr                  = nullptr;
 
-extern ContextOop nlr_home_context;
-extern bool_t     have_nlr_through_C;
-extern std::int32_t        nlr_home;
-extern std::int32_t        nlr_home_id;
-extern Oop        nlr_result;
+extern ContextOop   nlr_home_context;
+extern bool         have_nlr_through_C;
+extern std::int32_t nlr_home;
+extern std::int32_t nlr_home_id;
+extern Oop          nlr_result;
 }
 
-bool_t processSemaphore = false;
+bool processSemaphore = false;
 
 // For current Delta process, the last FP/Sp is stored in these global vars, not the instance vars of the process
 std::int32_t *last_Delta_fp = nullptr;
-Oop         *last_Delta_sp = nullptr;
+Oop          *last_Delta_sp = nullptr;
 
 
 // last_Delta_fp
@@ -108,7 +108,7 @@ void DeltaProcess::set_last_Delta_pc( const char *pc ) {
 std::int32_t CurrentHash = 23;
 
 
-bool_t Process::external_suspend_current() {
+bool Process::external_suspend_current() {
     if ( current() == nullptr )
         return false;
     os::suspend_thread( current()->_thread );
@@ -223,7 +223,7 @@ void VMProcess::loop() {
 
 
 void VMProcess::print() {
-    _console->print_cr( "VMProcess" );
+    spdlog::info( "VMProcess" );
 }
 
 
@@ -253,7 +253,7 @@ void DeltaProcess::returnToDebugger() {
 }
 
 
-bool_t DeltaProcess::stepping = false;
+bool DeltaProcess::stepping = false;
 
 VMProcess    *VMProcess::_vm_process   = nullptr;
 VM_Operation *VMProcess::_vm_operation = nullptr;
@@ -265,15 +265,15 @@ extern "C" const char *active_stack_limit() {
     return (const char *) &DeltaProcess::_active_stack_limit;
 }
 
-Process         *Process::_current_process           = nullptr;
-DeltaProcess    *DeltaProcess::_active_delta_process = nullptr;
-DeltaProcess    *DeltaProcess::_main_process         = nullptr;
-volatile char   *DeltaProcess::_active_stack_limit   = nullptr;
-DeltaProcess    *DeltaProcess::_scheduler_process    = nullptr;
-bool_t          DeltaProcess::_is_idle               = false;
-volatile bool_t DeltaProcess::_interrupt             = false;
+Process       *Process::_current_process           = nullptr;
+DeltaProcess  *DeltaProcess::_active_delta_process = nullptr;
+DeltaProcess  *DeltaProcess::_main_process         = nullptr;
+volatile char *DeltaProcess::_active_stack_limit   = nullptr;
+DeltaProcess  *DeltaProcess::_scheduler_process    = nullptr;
+bool          DeltaProcess::_is_idle               = false;
+volatile bool DeltaProcess::_interrupt             = false;
 
-volatile bool_t DeltaProcess::_process_has_terminated      = false;
+volatile bool   DeltaProcess::_process_has_terminated      = false;
 ProcessState    DeltaProcess::_state_of_terminated_process = ProcessState::initialized;
 
 Event *DeltaProcess::_async_dll_completion_event = nullptr;
@@ -355,7 +355,7 @@ void DeltaProcess::transfer_to_vm() {
 void DeltaProcess::suspend_at_creation() {
     // This is called as soon a DeltaProcess is created
     // Let's wait until we're given the torch.
-    _console->print_cr( "%%status-delta-process-suspend-at-creation: thread_id [%d]", this->thread_id() );
+    spdlog::info( "%status-delta-process-suspend-at-creation: thread_id [{}]", this->thread_id() );
 
     os::wait_for_event( _event );
 }
@@ -394,7 +394,7 @@ void DeltaProcess::transfer_and_continue() {
 }
 
 
-bool_t DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
+bool DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
 
     if ( not os::wait_for_event_or_timer( _async_dll_completion_event, 0 ) ) {
         os::reset_event( _async_dll_completion_event );
@@ -409,14 +409,14 @@ bool_t DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
     }
 
     _is_idle = true;
-    bool_t result = os::wait_for_event_or_timer( _async_dll_completion_event, timeout_in_ms );
+    bool result = os::wait_for_event_or_timer( _async_dll_completion_event, timeout_in_ms );
     _is_idle = false;
 
     if ( not result )
         os::reset_event( _async_dll_completion_event );
 
     if ( TraceProcessEvents ) {
-        _console->print_cr( result ? " {timeout}" : " {async}" );
+        spdlog::info( result ? " {timeout}" : " {async}" );
     }
 
     return result;
@@ -446,7 +446,7 @@ void DeltaProcess::wait_for_control() {
 }
 
 
-extern "C" bool_t have_nlr_through_C;
+extern "C" bool have_nlr_through_C;
 
 
 void DeltaProcess::createMainProcess() {
@@ -468,7 +468,7 @@ void DeltaProcess::runMainProcess() {
 // Code entry point for at Delta process
 std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
-    _console->print_cr( "%%delta-process-launch-delta-process:  thread_id [%d]", process->thread_id() );
+    spdlog::info( "%{}elta-process-launch-delta-process:  thread_id [{}]", process->thread_id() );
 
     // Wait until we get the torch
     process->suspend_at_creation();
@@ -498,7 +498,7 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 }
 
 
-DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThread ) {
+DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread ) {
 
     _receiver = receiver;
     _selector = selector;
@@ -517,7 +517,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool_t createThrea
     _time_stamp  = 0;
     _isCallback  = false;
 
-    LOG_EVENT1( "creating process %#lx", this );
+    LOG_EVENT1( "creating process 0x{0:x}", this );
 
     set_last_Delta_fp( nullptr );
     set_last_Delta_sp( nullptr );
@@ -542,9 +542,9 @@ extern "C" void popStackHandles( const char *nextFrame ) {
 
 
 Frame DeltaProcess::profile_top_frame() {
-    std::int32_t  *sp;
-    std::int32_t  *fp;
-    char *pc;
+    std::int32_t *sp;
+    std::int32_t *fp;
+    char         *pc;
     os::fetch_top_frame( _thread, &sp, &fp, &pc );
     Frame result( (Oop *) sp, fp, pc );
     return result;
@@ -556,7 +556,7 @@ static std::int32_t interruptions = 0;
 
 void DeltaProcess::check_stack_overflow() {
 
-    bool_t isInterrupted = false;
+    bool isInterrupted = false;
     if ( EnableProcessPreemption ) {
         ThreadCritical tc;
         isInterrupted = _interrupt;
@@ -568,7 +568,7 @@ void DeltaProcess::check_stack_overflow() {
         interruptions++;
         _active_stack_limit = active()->_stack_limit;
         if ( interruptions % 1000 == 0 )
-            warning( "Interruptions: %d", interruptions );
+            spdlog::warn( "Interruptions: %d", interruptions );
         if ( DeltaProcess::active()->is_scheduler() )
             return;
         active()->suspend( ProcessState::yielded );
@@ -605,43 +605,43 @@ void DeltaProcess::print() {
     _console->print( " " );
     switch ( state() ) {
         case ProcessState::initialized:
-            _console->print_cr( "initialized" );
+            spdlog::info( "initialized" );
             break;
         case ProcessState::running:
-            _console->print_cr( "running" );
+            spdlog::info( "running" );
             break;
         case ProcessState::yielded:
-            _console->print_cr( "yielded" );
+            spdlog::info( "yielded" );
             break;
         case ProcessState::in_async_dll:
-            _console->print_cr( "in asynchronous dll all" );
+            spdlog::info( "in asynchronous dll all" );
             break;
         case ProcessState::yielded_after_async_dll:
-            _console->print_cr( "yielded after asynchronous dll" );
+            spdlog::info( "yielded after asynchronous dll" );
             break;
         case ProcessState::preempted:
-            _console->print_cr( "preempted" );
+            spdlog::info( "preempted" );
             break;
         case ProcessState::completed:
-            _console->print_cr( "completed" );
+            spdlog::info( "completed" );
             break;
         case ProcessState::boolean_error:
-            _console->print_cr( "boolean error" );
+            spdlog::info( "boolean error" );
             break;
         case ProcessState::lookup_error:
-            _console->print_cr( "lookup error" );
+            spdlog::info( "lookup error" );
             break;
         case ProcessState::primitive_lookup_error:
-            _console->print_cr( "primitive lookup error" );
+            spdlog::info( "primitive lookup error" );
             break;
         case ProcessState::DLL_lookup_error:
-            _console->print_cr( "DLL lookup error" );
+            spdlog::info( "DLL lookup error" );
             break;
         case ProcessState::NonLocalReturn_error:
-            _console->print_cr( "NonLocalReturn error" );
+            spdlog::info( "NonLocalReturn error" );
             break;
         case ProcessState::stack_overflow:
-            _console->print_cr( "stack overflow" );
+            spdlog::info( "stack overflow" );
             break;
     }
 }
@@ -719,7 +719,7 @@ SymbolOop DeltaProcess::symbol_from_state( ProcessState state ) {
 }
 
 
-bool_t DeltaProcess::has_stack() const {
+bool DeltaProcess::has_stack() const {
     if ( state() == ProcessState::initialized )
         return false;
     if ( state() == ProcessState::completed )
@@ -782,8 +782,8 @@ void DeltaProcess::exit_uncommon() {
 
 static Oop            *old_sp;
 static Oop            *new_sp;
-static std::int32_t    *old_fp;
-static std::int32_t    *cur_fp;
+static std::int32_t   *old_fp;
+static std::int32_t   *cur_fp;
 static ObjectArrayOop frame_array;
 
 extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, std::int32_t *old_fp, ObjectArrayOop frame_array, std::int32_t *current_frame ) {
@@ -807,7 +807,7 @@ extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, std::int32_
 
 
 // Used to transfer information from deoptimize_stretch to unpack_frame_array.
-static bool_t redo_the_send;
+static bool redo_the_send;
 
 extern "C" {
 std::int32_t redo_send_offset = 0;
@@ -829,7 +829,7 @@ void trace_deoptimization_start() {
         _console->cr();
         _console->print( " - array " );
         frame_array->print_value();
-        _console->print_cr( " @ 0x%lx", old_fp );
+        spdlog::info( " @ 0x%lx", static_cast<const void *>(old_fp) );
     }
 
 }
@@ -894,17 +894,17 @@ extern "C" void unpack_frame_array() {
 
     trace_deoptimization_start();
 
-    bool_t must_find_nlr_target = nlr_through_unpacking and nlr_home == (std::int32_t) cur_fp;
-    bool_t nlr_target_found     = false; // For verification
+    bool must_find_nlr_target = nlr_through_unpacking and nlr_home == (std::int32_t) cur_fp;
+    bool nlr_target_found     = false; // For verification
 
     // link for the current frame
     std::int32_t *link_addr = (std::int32_t *) new_sp - 2;
 
-    Oop    *current_sp = new_sp;
-    std::int32_t    pos         = 3;
-    std::int32_t    length      = frame_array->length();
-    bool_t first       = true;
-    Frame  current;
+    Oop          *current_sp = new_sp;
+    std::int32_t pos         = 3;
+    std::int32_t length      = frame_array->length();
+    bool         first       = true;
+    Frame        current;
     // unpack one frame at at time from most recent to least recent
     do {
         Oop       receiver = frame_array->obj_at( pos++ );
@@ -982,7 +982,7 @@ extern "C" void verify_at_end_of_deoptimization() {
         BlockScavenge bs;
         ResourceMark  rm;
         DeltaProcess::active()->verify();
-        _console->print_cr( "[Stack after unpacking]" );
+        spdlog::info( "[Stack after unpacking]" );
         DeltaProcess::active()->trace_stack_for_deoptimization();
     }
 }
@@ -991,7 +991,7 @@ extern "C" void verify_at_end_of_deoptimization() {
 void DeltaProcess::deoptimize_stretch( Frame *first_frame, Frame *last_frame ) {
 
     if ( TraceDeoptimization ) {
-        _console->print_cr( "[Deoptimizing]" );
+        spdlog::info( "[Deoptimizing]" );
         Frame c = *first_frame;
         c.print_for_deoptimization( _console );
         while ( c.fp() not_eq last_frame->fp() ) {
@@ -1063,8 +1063,8 @@ DeltaVirtualFrame *DeltaProcess::last_delta_vframe() {
 
 
 std::int32_t DeltaProcess::depth() {
-    std::int32_t         d = 0;
-    for ( Frame v = last_frame(); v.link(); v = v.sender() )
+    std::int32_t d = 0;
+    for ( Frame  v = last_frame(); v.link(); v = v.sender() )
         d++;
     return d;
 }
@@ -1082,8 +1082,8 @@ void DeltaProcess::trace_stack() {
 
 
 void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
-    _console->print_cr( "- Stack trace" );
-    std::int32_t                vframe_no = 1;
+    spdlog::info( "- Stack trace" );
+    std::int32_t       vframe_no = 1;
     for ( VirtualFrame *f        = start_frame; f; f = f->sender() ) {
         if ( f->is_delta_frame() ) {
             ( (DeltaVirtualFrame *) f )->print_activation( vframe_no++ );
@@ -1091,7 +1091,7 @@ void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
             f->print();
         }
         if ( vframe_no == StackPrintLimit ) {
-            _console->print_cr( "...<more frames>..." );
+            spdlog::info( "...<more frames>..." );
             return;
         }
     }
@@ -1100,13 +1100,13 @@ void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
 
 void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
     if ( has_stack() ) {
-        std::int32_t   vframe_no = 1;
-        Frame v         = f ? *f : last_frame();
+        std::int32_t vframe_no = 1;
+        Frame        v         = f ? *f : last_frame();
         do {
             v.print_for_deoptimization( _console );
             v = v.sender();
             if ( vframe_no == StackPrintLimit ) {
-                _console->print_cr( "...<more frames>..." );
+                spdlog::info( "...<more frames>..." );
                 return;
             }
             vframe_no++;
@@ -1118,7 +1118,7 @@ void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
 void DeltaProcess::trace_top( std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
-    _console->print_cr( "- Stack trace (%d, %d)", start_frame, number_of_frames );
+    spdlog::info( "- Stack trace ({}, {})", start_frame, number_of_frames );
     std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = last_delta_vframe(); f; f = f->sender() ) {
@@ -1152,7 +1152,7 @@ double DeltaProcess::system_time() {
 }
 
 
-void DeltaProcess::setIsCallback( bool_t isCallback ) {
+void DeltaProcess::setIsCallback( bool isCallback ) {
     _isCallback = isCallback;
 }
 
@@ -1187,12 +1187,12 @@ void DeltaProcess::resetStep() {
 }
 
 
-bool_t DeltaProcess::is_deltaProcess() const {
+bool DeltaProcess::is_deltaProcess() const {
     return true;
 }
 
 
-bool_t DeltaProcess::isUncommon() const {
+bool DeltaProcess::isUncommon() const {
     return _state == ProcessState::uncommon;
 }
 
@@ -1227,7 +1227,7 @@ void DeltaProcess::set_processObject( ProcessOop p ) {
 }
 
 
-bool_t DeltaProcess::is_terminating() {
+bool DeltaProcess::is_terminating() {
     return _is_terminating;
 }
 
@@ -1284,22 +1284,22 @@ void DeltaProcess::setFirstHandle( BaseHandle *handle ) {
 }
 
 
-bool_t DeltaProcess::is_ready() const {
+bool DeltaProcess::is_ready() const {
     return state() == ProcessState::initialized or state() == ProcessState::yielded;
 }
 
 
-bool_t DeltaProcess::is_active() const {
+bool DeltaProcess::is_active() const {
     return this == active();
 }
 
 
-bool_t DeltaProcess::is_scheduler() const {
+bool DeltaProcess::is_scheduler() const {
     return this == scheduler();
 }
 
 
-bool_t DeltaProcess::in_vm_operation() const {
+bool DeltaProcess::in_vm_operation() const {
     return is_active() and VMProcess::vm_operation() not_eq nullptr;
 }
 
@@ -1334,7 +1334,7 @@ DeltaProcess *DeltaProcess::main() {
 }
 
 
-bool_t DeltaProcess::is_idle() {
+bool DeltaProcess::is_idle() {
     return _is_idle;
 }
 
@@ -1350,8 +1350,8 @@ void DeltaProcess::set_terminating_process( ProcessState state ) {
 }
 
 
-bool_t DeltaProcess::process_has_terminated() {
-    bool_t result = _process_has_terminated;
+bool DeltaProcess::process_has_terminated() {
+    bool result = _process_has_terminated;
     _process_has_terminated = false;
     return result;
 }
@@ -1410,7 +1410,7 @@ void Processes::verify() {
 }
 
 
-bool_t Processes::has_completed_async_call() {
+bool Processes::has_completed_async_call() {
     ALL_PROCESSES( p ) {
         if ( p->state() == ProcessState::yielded_after_async_dll )
             return true;
@@ -1420,7 +1420,7 @@ bool_t Processes::has_completed_async_call() {
 
 
 void Processes::print() {
-    _console->print_cr( "All processes:" );
+    spdlog::info( "All processes:" );
     ALL_PROCESSES( p ) {
         ResourceMark resourceMark;
         p->print();
@@ -1447,8 +1447,9 @@ void Processes::remove( DeltaProcess *p ) {
 }
 
 
-bool_t Processes::includes( DeltaProcess *p ) {
-    ALL_PROCESSES( q )if ( q == p )
+bool Processes::includes( DeltaProcess *p ) {
+    ALL_PROCESSES( q )
+        if ( q == p )
             return true;
     return false;
 }
@@ -1586,7 +1587,7 @@ void Processes::deoptimize_all() {
 void handle_error( ProcessState error ) {
     DeltaProcess *proc = DeltaProcess::active();
     if ( proc->is_scheduler() ) {
-        _console->print_cr( "Error happened in the scheduler" );
+        spdlog::info( "Error happened in the scheduler" );
         _console->print( "Status: " );
         proc->status_symbol()->print_symbol_on( _console );
         _console->cr();
@@ -1600,7 +1601,7 @@ void handle_error( ProcessState error ) {
 
 
 void handle_interpreter_error( const char *message ) {
-    warning( "Interpreter error: %s", message );
+    spdlog::warn( "Interpreter error: %s", message );
     handle_error( ProcessState::stopped );
 }
 
@@ -1653,7 +1654,7 @@ extern "C" void suspend_on_NonLocalReturn_error() {
 void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *pc ) {
     ResourceMark resourceMark;
 
-    _console->print_cr( "Trace at exception" );
+    spdlog::info( "Trace at exception" );
 
     VirtualFrame *vf;
     if ( last_Delta_fp ) {
@@ -1676,7 +1677,7 @@ void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, cons
     last_Delta_sp = (Oop *) sp;
 
     if ( proc->is_scheduler() ) {
-        _console->print_cr( "Stack overflow happened in scheduler" );
+        spdlog::info( "Stack overflow happened in scheduler" );
     } else {
         proc->suspend( ProcessState::stack_overflow );
         proc->set_terminating();

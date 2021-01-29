@@ -38,7 +38,7 @@ public:
     }
 
 
-    bool_t is_within_bounds( std::int32_t index ) const {
+    bool is_within_bounds( std::int32_t index ) const {
         return 1 <= index and index <= length();
     }
 
@@ -99,7 +99,7 @@ public:
 
 
     // memory operations
-    bool_t verify();
+    bool verify();
 
 
     // C-string operations
@@ -111,7 +111,7 @@ public:
     // Clength is set to length of the copy (may be longer due to escaping).
     // Presence of null chars can be detected by comparing Clength to length().
 
-    bool_t copy_null_terminated( char *buffer, std::int32_t max_length );
+    bool copy_null_terminated( char *buffer, std::int32_t max_length );
 
 
     char *copy_null_terminated() {
@@ -123,17 +123,17 @@ public:
     char *copy_c_heap_null_terminated();
     // Identical to copy_null_terminated but allocates the resulting string in the C heap instead of in the resource area.
 
-    bool_t equals( const char *name ) {
+    bool equals( const char *name ) {
         return equals( name, strlen( name ) );
     }
 
 
-    bool_t equals( const char *name, std::int32_t len ) {
+    bool equals( const char *name, std::int32_t len ) {
         return len == length() and strncmp( chars(), name, len ) == 0;
     }
 
 
-    bool_t equals( ByteArrayOop s ) {
+    bool equals( ByteArrayOop s ) {
         return equals( s->chars(), s->length() );
     }
 
@@ -153,11 +153,11 @@ public:
     // Selector specific operations.
     std::int32_t number_of_arguments() const;
 
-    bool_t is_unary() const;
+    bool is_unary() const;
 
-    bool_t is_binary() const;
+    bool is_binary() const;
 
-    bool_t is_keyword() const;
+    bool is_keyword() const;
 
     friend class ByteArrayKlass;
 

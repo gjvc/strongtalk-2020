@@ -69,7 +69,7 @@ public:
     };
 
 private:
-    static bool_t                                            _is_initialized;    // true if Floats has been initialized
+    static bool                                            _is_initialized;    // true if Floats has been initialized
     static std::array<const char *, max_number_of_functions> _function_names;
 
     static void generate_tst( MacroAssembler *masm, Assembler::Condition cc );
@@ -87,7 +87,7 @@ public:
     static const char *function_name_for( Function f );
 
     // Tells if there is a selector for the float operation
-    static bool_t has_selector_for( Function f );
+    static bool has_selector_for( Function f );
 
     // Returns the selector for the float operation; nullptr is there is no selector
     static SymbolOop selector_for( Function f );
@@ -99,7 +99,7 @@ public:
 
 
     // Initialization/debugging
-    static bool_t is_initialized() {
+    static bool is_initialized() {
         return _is_initialized;
     }
 

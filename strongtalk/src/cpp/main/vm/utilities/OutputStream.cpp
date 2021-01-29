@@ -6,7 +6,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
 
@@ -30,7 +29,7 @@ void ConsoleOutputStream::print( const char *format, ... ) {
     va_list ap;
     va_start( ap, format );
     if ( vsnprintf( buffer, BUFLEN, format, ap ) < 0 ) {
-        warning( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     va_end( ap );
@@ -43,7 +42,7 @@ void ConsoleOutputStream::print_cr( const char *format, ... ) {
     va_list ap;
     va_start( ap, format );
     if ( vsnprintf( buffer, BUFLEN, format, ap ) < 0 ) {
-        warning( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     va_end( ap );
@@ -55,7 +54,7 @@ void ConsoleOutputStream::print_cr( const char *format, ... ) {
 void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
     char buffer[BUFLEN];
     if ( vsnprintf( buffer, BUFLEN, format, argptr ) < 0 ) {
-        warning( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     basic_print( buffer );
@@ -171,5 +170,5 @@ void console_init() {
     if ( _console )
         return;
     _console = new( true ) ConsoleOutputStream;
-    _console->print_cr( "%%system-init:  ConsoleOutputStream-open" );
+    spdlog::info( "%system-init:  ConsoleOutputStream-open" );
 }

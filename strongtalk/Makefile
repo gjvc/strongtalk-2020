@@ -36,14 +36,6 @@ ccache := /usr/bin/ccache
 export CCACHE_DIR=$(ROOT)/.ccache
 
 
-# cmake -----------------------------------------------------------------------
-
-cmake-program           := /usr/bin/cmake
-cmake-system-name       := Windows
-cmake-generator-name    := Ninja
-ninja-program           := /usr/bin/ninja
-
-
 # git -------------------------------------------------------------------------
 
 git-current-branch      := $(shell git branch --show-current)
@@ -63,21 +55,61 @@ export WINEARCH=win32
 
 # toolchain -------------------------------------------------------------------
 
-arch                := i686
+compiler-family := gnu
+
+ifeq ($(compiler-family),gnu)
+machine             := i686
 platform            := w64-mingw32
 compiler-family     := gnu
 compiler-version    := 10
-runtime             := win32
-toolchain-name      := $(arch)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
+runtime             := posix
+toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
 
-ar   		        := /usr/bin/$(arch)-$(platform)-gcc-ar-$(runtime)
+ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
 ar-flags            := Dcrs
 
-cc-compiler         := /usr/bin/$(arch)-$(platform)-gcc-$(runtime)
-cxx-compiler        := /usr/bin/$(arch)-$(platform)-g++-$(runtime)
+cc-compiler         := /usr/bin/$(machine)-$(platform)-gcc-$(runtime)
+cxx-compiler        := /usr/bin/$(machine)-$(platform)-g++-$(runtime)
 
 export CC=$(ccache) $(cc-compiler)
 export CXX=$(ccache) $(cxx-compiler)
+endif
+
+
+ifeq ($(compiler-family),llvm)
+machine                := i686
+platform            := linux
+compiler-family     := llvm
+compiler-version    := 10
+runtime             := posix
+toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
+
+ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
+ar-flags            := Dcrs
+
+cc-compiler         := /usr/bin/clang-$(compiler-version)
+cxx-compiler        := /usr/bin/clang++-$(compiler-version)
+
+run-clang-tidy-py   := /usr/lib/$(compiler-family)-$(compiler-version)/share/clang/run-clang-tidy.py
+
+export CC=$(ccache) $(cc-compiler)
+export CXX=$(ccache) $(cxx-compiler)
+endif
+
+
+# cmake -----------------------------------------------------------------------
+
+ifeq ($(compiler-family),gnu)
+cmake-system-name   := Windows
+endif
+
+ifeq ($(compiler-family),llvm)
+cmake-system-name   := Linux
+endif
+
+cmake-program           := /usr/bin/cmake
+cmake-generator-name    := Ninja
+ninja-program           := /usr/bin/ninja
 
 
 # object files ----------------------------------------------------------------
@@ -94,6 +126,24 @@ object-root         := obj/$(object-path)
 external-package-path           := src/ext
 external-package-root           := $(ROOT)/$(external-package-path)
 external-package-object-root    := $(ROOT)/$(object-root)/$(external-package-path)
+
+
+# spdlog ----------------------------------------------------------------------
+
+spdlog-root-dir             := $(external-package-root)/spdlog
+spdlog-include-paths        := $(spdlog-root-dir)/include
+spdlog-object-dir           := $(external-package-object-root)/spdlog
+libspdlog-a                 := $(spdlog-object-dir)/libspdlog.a
+libspdlog-a-flags           := -L $(spdlog-object-dir) -l spdlog
+
+
+# fmt -------------------------------------------------------------------------
+
+fmt-root-dir             := $(external-package-root)/fmt
+fmt-include-paths        := $(fmt-root-dir)/include
+fmt-object-dir           := $(external-package-object-root)/fmt
+libfmt-a                 := $(fmt-object-dir)/lib/libfmt.a
+libfmt-a-flags           := -L $(fmt-object-dir)/lib -l fmt
 
 
 # googletest ------------------------------------------------------------------
@@ -118,9 +168,6 @@ libnasm-a-flags             := -L $(nasm-object-dir)/lib -l nasm
 
 # compiler flags --------------------------------------------------------------
 
-cxx-arch-options            := 
-cxx-arch-flags            	:= $(addprefix -march=,$(cxx-arch-options))
-
 cxx-debug-options           := dwarf
 cxx-debug-flags             := $(addprefix -g,$(cxx-debug-options))
 
@@ -133,36 +180,32 @@ cxx-feature-flags           := $(addprefix -f,$(cxx-feature-options))
 cxx-language-options        := c++2a
 cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 
-cxx-machine-options         := 32
+cxx-machine-options         := arch=native
 cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
 cxx-no-warning-options      := unused-parameter
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
-ifeq ($(build-type),release)
 cxx-optimisation-options    := 3
-else
-cxx-optimisation-options    := 0
-endif
 cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 
-cxx-other-options           := pthread
+cxx-other-options           := 
 cxx-other-flags             := $(addprefix -,$(cxx-other-options))
 
-cxx-other-long-options      := diagnostics-color=always
+#diagnostics-color=always
+cxx-other-long-options      := 
 cxx-other-long-flags        := $(addprefix --,$(cxx-other-long-options))
 
-cxx-warning-options-all-all := $(shell $(cxx-compiler) -Q --help=warning | sed -e 's/^\s*\-W\(\S*\)\s*\[\w*\]/\1 /gp;d' | tr -d '\n' )
+#cxx-warning-options-all-all := $(shell $(cxx-compiler) -Q --help=warning | sed -e 's/^\s*\-W\(\S*\)\s*\[\w*\]/\1 /gp;d' | tr -d '\n' )
 cxx-warning-options         := all extra
 cxx-warning-flags           := $(addprefix -W,$(cxx-warning-options))
 
 cxx-compile-flags = \
-    $(cxx-arch-flags) \
+    $(cxx-machine-flags) \
     $(cxx-debug-flags) \
     $(cxx-depends-flags) \
     $(cxx-feature-flags) \
     $(cxx-language-flags) \
-    $(cxx-machine-flags) \
     $(cxx-no-warning-flags) \
     $(cxx-optimisation-flags) \
     $(cxx-other-flags) \
@@ -170,21 +213,20 @@ cxx-compile-flags = \
     $(cxx-warning-flags) \
 
 cxx-link-flags = \
+    -static \
     $(cxx-machine-flags)
 
 libgcc-link-flags := \
     -static-libgcc \
     -static-libstdc++
 
-ifeq ($(runtime),posix)
-    libgcc-link-flags := $(libgcc-link-flags) \
-        -Wl,-Bstatic \
-        -lstdc++ -lwinpthread \
-        -Wl,-Bdynamic
-endif
 
 
 # ==== RULES ====================================================================
+
+st20-global-define-values := MINGW_HAS_SECURE_API=1
+st20-global-define-flags  := $(addprefix -D ,$(st20-global-define-values))
+
 
 # st20-main-lib -----------------------------------------------------------------
 
@@ -194,7 +236,7 @@ st20-main-lib-sources       := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-ma
 st20-main-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
 st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-lib-sources))
 
-st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(udis86-include-paths)
+st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-main-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-main-lib-cxx-include-paths-external))
 st20-main-lib-cxx-include-paths-internal := src/cpp/main
 st20-main-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-main-lib-cxx-include-paths-internal))
@@ -225,7 +267,7 @@ st20-test-exe-sources       := $(wildcard src/cpp/test/test/main/*.cpp)
 st20-test-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-exe-sources))
 st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-test-exe-sources))
 
-st20-test-lib-cxx-include-paths-external := $(googletest-include-paths)
+st20-test-lib-cxx-include-paths-external := $(googletest-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-test-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-test-lib-cxx-include-paths-external))
 st20-test-lib-cxx-include-paths-internal := src/cpp/main src/cpp/test
 st20-test-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-test-lib-cxx-include-paths-internal))
@@ -243,6 +285,21 @@ st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
 .PHONY : init init-3rd-party init-wine 
 
 default : st20-main-exe st20-test-exe
+
+cmake-build : 
+	@$(cmake-program) \
+        -G $(cmake-generator-name) \
+        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+        -S $(ROOT) \
+        -B $(object-root)
+	@$(ninja-program) -k 0 -C $(object-root)
+
+run-clang-tidy :
+	$(run-clang-tidy-py) -p $(object-root) 
 
 help  : 
 	@echo ""
@@ -313,7 +370,8 @@ wine-st20-test-exe : $(st20-test-exe)
 
 # tags ------------------------------------------------------------------------
 
-tags : GPATH GRTAGS GTAGS
+tags : $(st20-sources) $(st20-test-lib-sources)
+	@ctags-exuberant -R src/cpp/main/
 
 GPATH GRTAGS GTAGS : $(st20-sources) $(st20-test-lib-sources)
 	gtags --verbose --statistics $<
@@ -321,22 +379,18 @@ GPATH GRTAGS GTAGS : $(st20-sources) $(st20-test-lib-sources)
 
 # clean -----------------------------------------------------------------------
 
-clean : clean-main clean-test
-
-clean-main :
+clean :
 	-@rm $(st20-main-lib-objects)
 	-@rm $(st20-main-lib-depends)
 	-@rm $(st20-main-exe-objects)
 	-@rm $(st20-main-exe-depends)
 	-@rm $(st20-main-exe)
-
-clean-test :
 	-@rm $(st20-test-lib-depends)
 	-@rm $(st20-test-exe-objects)
 	-@rm $(st20-test-exe-depends)
 	-@rm $(st20-test-exe)
 
-.PHONY : clean clean-main
+.PHONY : clean
 
 
 # st20-main-lib-a -------------------------------------------------------
@@ -361,18 +415,19 @@ $(st20-test-lib-a) : $(st20-test-lib-objects)
 
 $(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
 	-@mkdir -p $(dir $@)
-	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-main-lib-cxx-include-flags) -c $< -o $@
-	@echo ok: $@ from $<
+	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-main-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
 $(st20-main-exe) : $(st20-main-exe-objects) $(st20-main-lib-a)
+	@echo ok: linking: $@
 	@$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
 		$(st20-main-exe-objects) \
 		$(st20-main-lib-a) \
 		$(libnasm-a-flags) \
-		-o $(st20-main-exe)
-	@echo ok: $@ linked 
+		$(libspdlog-a-flags) \
+		-o $(st20-main-exe) \
+    && echo ok: binary: $@
 
 $(st20-main-exe-depends) :
 include $(wildcard $(st20-main-exe-depends))
@@ -385,10 +440,10 @@ include $(wildcard $(st20-main-lib-depends))
 
 $(st20-test-exe-objects) $(st20-test-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
 	-@mkdir -p $(dir $@)
-	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-test-lib-cxx-include-flags) -c $< -o $@
-	@echo ok: $@ from $<
+	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-test-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
 $(st20-test-exe) : $(st20-test-exe-objects) $(st20-main-lib-a) $(st20-test-lib-a)
+	@echo ok: linking: $@
 	@$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
@@ -396,8 +451,9 @@ $(st20-test-exe) : $(st20-test-exe-objects) $(st20-main-lib-a) $(st20-test-lib-a
 		$(st20-test-lib-a) \
 		$(st20-main-lib-a) \
 		$(libgtest-a-flags) \
-		-o $(st20-test-exe)
-	@echo ok: $@ linked
+		$(libspdlog-a-flags) \
+		-o $(st20-test-exe) \
+	&& echo ok: binary: $@
 
 $(st20-test-exe-depends) :
 include $(wildcard $(st20-test-exe-depends))
@@ -424,11 +480,43 @@ $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
 
 
+# fmt -------------------------------------------------------------------------
+
+fmt :
+	$(cmake-program) \
+        -G $(cmake-generator-name) \
+        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+        -S $(fmt-root-dir) \
+        -B $(fmt-object-dir)
+	$(ninja-program) -C $(fmt-object-dir)
+
+
+# spdlog ----------------------------------------------------------------------
+
+spdlog :
+	$(cmake-program) \
+        -G $(cmake-generator-name) \
+        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
+        -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
+        -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
+        -S $(spdlog-root-dir) \
+        -B $(spdlog-object-dir)
+	$(ninja-program) -C $(spdlog-object-dir)
+
+
 # googletest ------------------------------------------------------------------
 
 googletest :
 	$(cmake-program) \
         -G $(cmake-generator-name) \
+        -D CMAKE_C_COMPILER=$(cc-compiler) \
+        -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_CXX_COMPILER=$(cxx-compiler) \
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
@@ -441,7 +529,7 @@ googletest :
 
 nasm :
 	cd $(nasm-root-dir) && make distclean || /bin/true
-	cd $(nasm-root-dir) && ./configure --host $(arch)-$(platform) --prefix $(nasm-object-dir)
+	cd $(nasm-root-dir) && ./configure --host $(machine)-$(platform) --prefix $(nasm-object-dir)
 	cd $(nasm-root-dir) && make libnasm.a
 	objcopy --remove-leading-char $(nasm-root-dir)/libnasm.a $(nasm-root-dir)/libnasm.a
 	install --verbose $(nasm-root-dir)/config/* 	-D --target-directory $(nasm-object-dir)/include/config
@@ -514,7 +602,7 @@ nasm :
 #
 #udis86 :
 #	cd $(udis86-root-dir) && make distclean || /bin/true
-#	cd $(udis86-root-dir) && ./configure --host $(arch)-$(platform) --prefix $(ROOT)/$(udis86-object-dir)
+#	cd $(udis86-root-dir) && ./configure --host $(machine)-$(platform) --prefix $(ROOT)/$(udis86-object-dir)
 #	cd $(udis86-root-dir) && make install
 #
 #

@@ -77,12 +77,12 @@ public:
     }
 
 
-    bool_t has_untagged_contents() const {
+    bool has_untagged_contents() const {
         return _has_untagged_contents == smiOop_one;
     }
 
 
-    void set_untagged_contents( bool_t v ) {
+    void set_untagged_contents( bool v ) {
         _has_untagged_contents = v ? smiOop_one : smiOop_zero;
     }
 
@@ -128,7 +128,7 @@ public:
 
 
     // Tells whether here is a super class
-    bool_t has_superKlass() const {
+    bool has_superKlass() const {
         return Oop( superKlass() ) not_eq nilObject;
     }
 
@@ -143,7 +143,7 @@ public:
     AssociationOop classVar_at( std::int32_t index ) const;  // Returns the class variable at index.
     void add_classVar( AssociationOop assoc );      // Adds or overwrites class variable.
     AssociationOop remove_classVar_at( std::int32_t index ); // Removes class variable at index and returns the removed association.
-    bool_t includes_classVar( SymbolOop name );     // Tells whether the name is present
+    bool includes_classVar( SymbolOop name );     // Tells whether the name is present
 
     // virtual pointer value
     std::int32_t vtbl_value() const {
@@ -166,7 +166,7 @@ public:
     void fixup_after_snapshot_read();  // must not be virtual; vtbl not fixed yet
 
     // allocation operations
-    virtual bool_t can_inline_allocation() const {
+    virtual bool can_inline_allocation() const {
         return false;
     }
     // If this returns true, the compiler may inline the allocation code.
@@ -174,20 +174,20 @@ public:
     // Fix this compare member function pointers (9/9-1994)
 
     // Reflective properties
-    virtual bool_t can_have_instance_variables() const {
+    virtual bool can_have_instance_variables() const {
         return false;
     }
 
 
-    virtual bool_t can_be_subclassed() const {
+    virtual bool can_be_subclassed() const {
         return false;
     }
 
 
-    bool_t is_specialized_class() const;
+    bool is_specialized_class() const;
 
     // Tells whether this is a named class
-    bool_t is_named_class() const;
+    bool is_named_class() const;
 
 
     // allocation operations
@@ -196,9 +196,9 @@ public:
     }
 
 
-    virtual Oop allocateObject( bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObject( bool permit_scavenge = true, bool tenured = false );
 
-    virtual Oop allocateObjectSize( std::int32_t size, bool_t permit_scavenge = true, bool_t tenured = false );
+    virtual Oop allocateObjectSize( std::int32_t size, bool permit_scavenge = true, bool tenured = false );
 
     // KlassFormat
     enum class Format {
@@ -236,9 +236,9 @@ public:
     static const char *name_from_format( Format format );
 
     // Tells whether the two klass have same layout (format and instance variables)
-    bool_t has_same_layout_as( KlassOop klass );
+    bool has_same_layout_as( KlassOop klass );
 
-    bool_t has_same_inst_vars_as( KlassOop klass );
+    bool has_same_inst_vars_as( KlassOop klass );
 
     // creates invocation
     virtual KlassOop create_subclass( MixinOop mixin, Format format );
@@ -268,7 +268,7 @@ public:
 
     MethodOop lookup( SymbolOop selector );
 
-    bool_t is_method_holder_for( MethodOop method );
+    bool is_method_holder_for( MethodOop method );
 
     KlassOop lookup_method_holder_for( MethodOop method );
 
@@ -296,7 +296,7 @@ public:
     // Schema change support
     void mark_for_schema_change();
 
-    bool_t is_marked_for_schema_change();
+    bool is_marked_for_schema_change();
 
     void initialize();
 
@@ -316,7 +316,7 @@ public:
 
 
     // memory operations
-    virtual bool_t oop_verify( Oop obj );
+    virtual bool oop_verify( Oop obj );
 
     virtual std::int32_t oop_scavenge_contents( Oop obj );
 
@@ -326,107 +326,107 @@ public:
 
 
     // type testing operations
-    virtual bool_t oop_is_smi() const {
+    virtual bool oop_is_smi() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_double() const {
+    virtual bool oop_is_double() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_block() const {
+    virtual bool oop_is_block() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_byteArray() const {
+    virtual bool oop_is_byteArray() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_doubleByteArray() const {
+    virtual bool oop_is_doubleByteArray() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_doubleValueArray() const {
+    virtual bool oop_is_doubleValueArray() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_symbol() const {
+    virtual bool oop_is_symbol() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_objArray() const {
+    virtual bool oop_is_objArray() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_weakArray() const {
+    virtual bool oop_is_weakArray() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_klass() const {
+    virtual bool oop_is_klass() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_process() const {
+    virtual bool oop_is_process() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_vframe() const {
+    virtual bool oop_is_vframe() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_method() const {
+    virtual bool oop_is_method() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_proxy() const {
+    virtual bool oop_is_proxy() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_mixin() const {
+    virtual bool oop_is_mixin() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_association() const {
+    virtual bool oop_is_association() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_context() const {
+    virtual bool oop_is_context() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_message() const {
+    virtual bool oop_is_message() const {
         return false;
     }
 
 
-    virtual bool_t oop_is_indexable() const {
+    virtual bool oop_is_indexable() const {
         return false;
     }
 
 
     // Dispatched primitives
-    virtual Oop oop_primitive_allocate( Oop obj, bool_t allow_scavenge = true, bool_t tenured = false );
+    virtual Oop oop_primitive_allocate( Oop obj, bool allow_scavenge = true, bool tenured = false );
 
     virtual Oop oop_primitive_allocate_size( Oop obj, std::int32_t size );
 
-    virtual Oop oop_shallow_copy( Oop obj, bool_t tenured );
+    virtual Oop oop_shallow_copy( Oop obj, bool tenured );
 
     // printing operations
     virtual void oop_print_on( Oop obj, ConsoleOutputStream *stream );

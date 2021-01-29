@@ -14,7 +14,6 @@
 #include "vm/recompiler/RecompilationPolicy.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/utilities/lprintf.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/Timer.hpp"
@@ -34,7 +33,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
     // It seems that sometimes the method is screwed up, which causes a crash in consequence.
     // The following tests are for debugging only and should be removed at some point - gri 7/11/96.
     // If the method is illegal, recompilation is simply aborted.
-    bool_t ok = false;
+    bool ok = false;
     if ( Universe::is_heap( (Oop *) method ) ) {
         MemOop obj = as_memOop( Universe::object_start( (Oop *) method ) );
         if ( obj->is_method() ) {
@@ -46,7 +45,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
         const char *msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
-        LOG_EVENT3( "invocation counter overflow with broken methodOop 0x%x (recv = 0x%x) %s", method, receiver, msg );
+        LOG_EVENT3( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", method, receiver, msg );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
         // continuing here is probably catastrophal because the invocation counter
@@ -75,7 +74,7 @@ const char *Recompilation::nativeMethod_invocation_counter_overflow( Oop receive
     // the invocation counter overflow).
     ResourceMark resourceMark;
     NativeMethod *trigger = findNativeMethod( retpc );
-    LOG_EVENT3( "nativeMethod_invocation_counter_overflow: receiver = %#x, pc = %#x (NativeMethod %#x)", receiver, retpc, trigger );
+    LOG_EVENT3( "nativeMethod_invocation_counter_overflow: receiver = 0x{0:x}, pc = 0x{0:x} (NativeMethod 0x{0:x})", receiver, retpc, trigger );
     const char        *continuationAddr = trigger->verifiedEntryPoint();   // where to continue
     DeltaVirtualFrame *vf               = DeltaProcess::active()->last_delta_vframe();
     st_assert( vf->is_compiled_frame() and ( (CompiledVirtualFrame *) vf )->code() == trigger, "stack isn't set up right" );
@@ -87,7 +86,7 @@ const char *Recompilation::nativeMethod_invocation_counter_overflow( Oop receive
             continuationAddr = recomp.result();
         }
     } else {
-        //compiler_warning("if UseRecompilation is off, why does NativeMethod %#x have a counter?", trigger);
+        //compiler_warning("if UseRecompilation is off, why does NativeMethod 0x{0:x} have a counter?", trigger);
         trigger->set_invocation_count( 1 );
     }
     return continuationAddr;
@@ -104,7 +103,7 @@ NativeMethod *compile_method( LookupKey *key, MethodOop m ) {
             VM_OptimizeRScope op( rscope );
             VMProcess::execute( &op );
             if ( TraceInliningDatabase ) {
-                _console->print_cr( "Inlining database compile " );
+                spdlog::info( "Inlining database compile " );
                 key->print_on( _console );
                 _console->cr();
             }
@@ -142,7 +141,7 @@ void Recompilation::init() {
 void Recompilation::doit() {
     ResourceMark resourceMark;
     if ( PrintRecompilation ) {
-        lprintf( "recompilation trigger: %s (%#x)\n", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
+        spdlog::info( "recompilation trigger: %s (0x{0:x})", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
     }
 
     _deltaVirtualFrame = calling_process()->last_delta_vframe();
@@ -178,7 +177,7 @@ void Recompilation::doit() {
             _console->cr();
             _method->print_value_on( _console );
             _console->cr();
-            _console->print_cr( "uncommon? %d", _nativeMethod->isUncommonRecompiled() );
+            spdlog::info( "uncommon? {}", _nativeMethod->isUncommonRecompiled() );
         }
         //slr debugging
 
@@ -197,7 +196,7 @@ void Recompilation::doit() {
 }
 
 
-bool_t Recompilation::handleStaleInlineCache( RecompilerFrame *first ) {
+bool Recompilation::handleStaleInlineCache( RecompilerFrame *first ) {
 
     // check if the trigger was an interpreted method that has already been compiled; return true if so
     LookupKey *key = first->key();
@@ -225,9 +224,9 @@ bool_t Recompilation::handleStaleInlineCache( RecompilerFrame *first ) {
             // replace it with the compiled one; no need to recompile anything now
             if ( PrintRecompilation ) {
                 if ( it->is_interpreted_ic() ) {
-                    lprintf( "replacing nm %#x in InterpretedInlineCache %#x\n", nm, it->interpreted_ic() );
+                    spdlog::info( "replacing nm 0x{0:x} in InterpretedInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->interpreted_ic() ) );
                 } else {
-                    lprintf( "replacing nm %#x in CompiledInlineCache %#x\n", nm, it->compiled_ic() );
+                    spdlog::info( "replacing nm 0x{0:x} in CompiledInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->compiled_ic() ) );
                 }
             }
 
@@ -312,7 +311,7 @@ void Recompilation::recompile( Recompilee *r ) {
 void Recompilation::recompile_method( Recompilee *r ) {
     // recompile method r
     LookupKey *key = r->key();
-    MethodOop m = r->method();
+    MethodOop m    = r->method();
 
     LookupResult res = LookupCache::lookup( key );
     st_assert( res.method() == m, "mismatched method" );
@@ -358,14 +357,14 @@ void Recompilation::recompile_block( Recompilee *r ) {
     st_assert( recompilee not_eq nullptr, "must have block recompilee" );
 
     DeltaVirtualFrame *vf = r->rframe()->top_vframe();
-    Oop block;
+    Oop               block;
     if ( recompilee and recompilee->is_block() ) {
         DeltaVirtualFrame *sender = vf->sender_delta_frame();
         if ( sender == nullptr )
             return;              // pathological case (not sure it can happen)
         GrowableArray<Oop> *exprs = sender->expression_stack();
         // primitiveValue takes block as first argument
-        std::int32_t nargs = recompilee->method()->nofArgs();
+        std::int32_t       nargs  = recompilee->method()->nofArgs();
         block = exprs->at( nargs );
     } else {
         block = receiverOf( vf );

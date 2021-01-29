@@ -37,17 +37,17 @@ void Label::unuse() {
 }
 
 
-bool_t Label::is_bound() const {
+bool Label::is_bound() const {
     return _pos < 0;
 }
 
 
-bool_t Label::is_unbound() const {
+bool Label::is_unbound() const {
     return _pos > 0;
 }
 
 
-bool_t Label::is_unused() const {
+bool Label::is_unused() const {
     return _pos == 0;
 }
 

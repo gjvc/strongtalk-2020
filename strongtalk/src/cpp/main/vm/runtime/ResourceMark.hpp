@@ -23,7 +23,7 @@ class AbstractResourceMark : StackAllocatedObject {
 class ResourceMark : StackAllocatedObject {
 
 protected:
-    static bool_t _enabled;
+    static bool _enabled;
     ResourceArea      *_resourceArea;
     ResourceAreaChunk *_resourceAreaChunk;
     char              *_top;
@@ -42,7 +42,7 @@ public:
     };
 
 
-    void *operator new( std::int32_t size ) {
+    void *operator new( std::size_t size ) {
         return CHeapAllocatedObject::operator new( size );
     }
 

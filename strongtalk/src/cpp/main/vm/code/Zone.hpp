@@ -74,9 +74,9 @@ public:
 
 protected:
     NativeMethod *LRUhand;          // for LRU algorithm; sweeps through iZone
-    bool_t _needsCompaction;  //
-    bool_t _needsLRUSweep;    //
-    bool_t _needsSweep;       //
+    bool _needsCompaction;  //
+    bool _needsLRUSweep;    //
+    bool _needsSweep;       //
 
     std::int32_t    compactTime;                // time of last compaction
     std::int32_t    compactDuration;            // duration of last compaction
@@ -87,7 +87,7 @@ public:
     Zone( std::int32_t &size );
 
 
-    void *operator new( std::int32_t size ) {
+    void *operator new( std::size_t size ) {
         return AllocateHeap( size, "NativeMethod zone header" );
     }
 
@@ -121,20 +121,20 @@ public:
 
     void addToCodeTable( NativeMethod *nm );
 
-    void compact( bool_t forced = false );
+    void compact( bool forced = false );
 
 
-    bool_t needsCompaction() const {
+    bool needsCompaction() const {
         return _needsCompaction;
     }
 
 
-    bool_t needsWork() const {
+    bool needsWork() const {
         return needsCompaction() or _needsSweep;
     }
 
 
-    bool_t needsSweep() const {
+    bool needsSweep() const {
         return _needsSweep;
     }
 
@@ -145,7 +145,7 @@ public:
 
     void flush();
 
-    void flushZombies( bool_t deoptimize = true );
+    void flushZombies( bool deoptimize = true );
 
     void flushUnused();
 
@@ -156,10 +156,10 @@ public:
 
     std::int32_t findReplCandidates( std::int32_t needed );
 
-    bool_t isDeltaPC( void *p ) const;
+    bool isDeltaPC( void *p ) const;
 
 
-    bool_t contains( const void *p ) const {
+    bool contains( const void *p ) const {
         return _methodHeap->contains( p );
     }
 
@@ -224,7 +224,7 @@ public:
     void make_marked_nativeMethods_zombies();
 
 protected:
-    void print_helper( bool_t stats );
+    void print_helper( bool stats );
 
     void adjustPolicy();
 

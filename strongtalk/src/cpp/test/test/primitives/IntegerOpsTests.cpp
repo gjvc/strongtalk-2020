@@ -98,7 +98,7 @@ protected:
 
 
     char *reportHex( const char *prefix, std::int32_t expected, std::int32_t actual ) {
-        sprintf( message, "%s. Expected: 0x%x, but was: 0x%x", prefix, expected, actual );
+        sprintf( message, "%s. Expected: 0x{0:x}, but was: 0x{0:x}", prefix, expected, actual );
         return message;
     }
 
@@ -125,7 +125,7 @@ IntegerOps::int_to_Integer( 2, *y );
 IntegerOps::Div( *x, *y, *z
 );
 
-bool_t ok;
+bool ok;
 std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
@@ -140,7 +140,7 @@ IntegerOps::int_to_Integer( -2, *y );
 IntegerOps::Div( *x, *y, *z
 );
 
-bool_t ok;
+bool ok;
 std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
@@ -155,7 +155,7 @@ IntegerOps::int_to_Integer( 2, *y );
 IntegerOps::Div( *x, *y, *z
 );
 
-bool_t ok;
+bool ok;
 std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
@@ -170,7 +170,7 @@ IntegerOps::int_to_Integer( -2, *y );
 IntegerOps::Div( *x, *y, *z
 );
 
-bool_t ok;
+bool ok;
 std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
@@ -185,7 +185,7 @@ IntegerOps::int_to_Integer( -2, *y );
 IntegerOps::Div( *x, *y, *z
 );
 
-bool_t ok;
+bool ok;
 std::int32_t    result = z->as_int( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";

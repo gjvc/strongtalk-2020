@@ -63,12 +63,12 @@ std::int32_t BasicBlock::nPredecessors() const {
 }
 
 
-bool_t BasicBlock::isSuccessor( const BasicBlock *bb ) const {
+bool BasicBlock::isSuccessor( const BasicBlock *bb ) const {
     return _last->isSuccessor( bb->_first );
 }
 
 
-bool_t BasicBlock::isPredecessor( const BasicBlock *bb ) const {
+bool BasicBlock::isPredecessor( const BasicBlock *bb ) const {
     return _first->isPredecessor( bb->_last );
 }
 
@@ -121,7 +121,7 @@ void propagateTo( BasicBlock *useBasicBlock, Usage *use, NonTrivialNode *fromNod
             return;
         }
         PseudoRegister *replaced = fromNode->dest();
-        bool_t         ok        = toNode->copyPropagate( useBasicBlock, use, src, true );
+        bool           ok        = toNode->copyPropagate( useBasicBlock, use, src, true );
 
         if ( not ok ) {
             // This if statement has been added by Lars Bak 29-4-96 to work around the type check node elimination problem. (Ask Urs for details).
@@ -146,7 +146,7 @@ void propagateTo( BasicBlock *useBasicBlock, Usage *use, NonTrivialNode *fromNod
 }
 
 
-bool_t regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node *endNode ) {
+bool regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node *endNode ) {
     // check if r is assigned somewhere between start and end node
     // quite inefficient
     // search backwards from end to start
@@ -158,7 +158,7 @@ bool_t regAssignedBetween( const PseudoRegister *r, const Node *startNode, Node 
         BasicBlock *bb = n->bb();
         if ( bb == bbWithoutDefs )
             continue; // no definitions here
-        bool_t            hasDefs = false;
+        bool               hasDefs = false;
         for ( std::int32_t i       = 0; i < bb->duInfo.info->length(); i++ ) {// forall def/use info lists
             DefinitionUsageInfo *dui = bb->duInfo.info->at( i );
             if ( dui->_pseudoRegister == r and not dui->_definitions.isEmpty() ) {
@@ -230,9 +230,9 @@ void BasicBlock::localCopyPropagate() {
     // perform local copy propagation using the local def/use information
     // should be rewritten to make just one pass over the nodes, keeping track of
     // aliases created by assignments -- fix this
-    const std::int32_t       len       = duInfo.info->length();
-    SimpleBitVector used      = 0;        // hardwired registers used
-    SimpleBitVector usedTwice = 0;
+    const std::int32_t len       = duInfo.info->length();
+    SimpleBitVector    used      = 0;        // hardwired registers used
+    SimpleBitVector    usedTwice = 0;
 
     for ( std::int32_t i = 0; i < len; i++ ) {
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
@@ -247,9 +247,9 @@ void BasicBlock::localCopyPropagate() {
     }
 
     for ( std::int32_t i = 0; i < len; i++ ) {
-        constexpr std::int32_t       BIG  = 9999999;
-        DefinitionUsageInfo *dui = duInfo.info->at( i );
-        PseudoRegister      *r   = dui->_pseudoRegister;
+        constexpr std::int32_t BIG  = 9999999;
+        DefinitionUsageInfo    *dui = duInfo.info->at( i );
+        PseudoRegister         *r   = dui->_pseudoRegister;
         if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() and usedTwice.isAllocated( r->_location.number() ) ) {
             // this preallocated PseudoRegister has aliases - don't do copy-propagation
             continue;
@@ -325,8 +325,8 @@ void BasicBlock::makeUses() {
 
 
 void BasicBlock::renumber() {
-    std::int32_t        count = 0;
-    for ( Node *n    = _first; n not_eq _last->next(); n = n->next() )
+    std::int32_t count = 0;
+    for ( Node   *n    = _first; n not_eq _last->next(); n = n->next() )
         n->setNum( count++ );
     _nodeCount = count;
 }
@@ -373,7 +373,7 @@ static void duChecker( PseudoRegisterBasicBlockIndex *p ) {
 }
 
 
-static bool_t findMyBasicBlock( void *bb, PseudoRegisterBasicBlockIndex *p ) {
+static bool findMyBasicBlock( void *bb, PseudoRegisterBasicBlockIndex *p ) {
     return p->_basicBlock == (BasicBlock *) bb;
 }
 
@@ -412,7 +412,7 @@ std::int32_t BasicBlock::addUDHelper( PseudoRegister *r ) {
 }
 
 
-Usage *BasicBlock::addUse( NonTrivialNode *n, PseudoRegister *r, bool_t soft ) {
+Usage *BasicBlock::addUse( NonTrivialNode *n, PseudoRegister *r, bool soft ) {
     st_assert( not soft, "soft use" );
     st_assert( contains( n ), "node isn't in this BasicBlock" );
     if ( r->isNoPseudoRegister() )
@@ -471,8 +471,8 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
             NonTrivialNode *n        = (NonTrivialNode *) nn;
             PseudoRegister *src      = n->src();
             PseudoRegister *dest     = n->dest();
-            bool_t         localSrc  = src->isLocalTo( this );
-            bool_t         localDest = dest->isLocalTo( this );
+            bool           localSrc  = src->isLocalTo( this );
+            bool           localDest = dest->isLocalTo( this );
             if ( src->_location.isRegisterLocation() ) {
                 if ( dest->_location.equals( unAllocated ) and localDest ) {
                     // PR = PR2(reg)
@@ -512,7 +512,7 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
     }
 
     // allocate other local regs (using the untouched temp regs of this BasicBlock)
-    std::int32_t               temp = 0;
+    std::int32_t       temp = 0;
     for ( std::int32_t i    = 0; i < duInfo.info->length(); i++ ) {
         // collect local regs
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
@@ -621,7 +621,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             st_assert( r->regClass == 0, "should have been cleared" );
             continue;
         }
-        BitVector         *liveRange = lives->at( i );
+        BitVector          *liveRange = lives->at( i );
         for ( std::int32_t tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
             if ( liveRange->isDisjointFrom( hardwired->at( tempNo ) ) ) {
                 Location temp = Mapping::localRegister( tempNo );
@@ -633,7 +633,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
         }
         if ( CompilerDebug ) {
             if ( r->_location.equals( unAllocated ) ) {
-                cout( PrintLocalAllocation )->print( "*could NOT find local assignment for local %s in BasicBlock%ld\n", r->name(), id() );
+                cout( PrintLocalAllocation )->print( "*could not find local assignment for local %s in BasicBlock%ld\n", r->name(), id() );
             }
         }
         r->regClass = 0;
@@ -661,8 +661,10 @@ void BasicBlock::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l 
 
 void BasicBlock::apply( NodeVisitor *v ) {
     if ( _nodeCount > 0 ) {
-        Node       *end = _last->next();
-        for ( Node *n   = _first; n not_eq end; n = n->next() ) {
+
+        Node *end = _last->next();
+
+        for ( Node *n = _first; n not_eq end; n = n->next() ) {
             if ( not n->_deleted ) {
                 v->beginOfNode( n );
                 n->apply( v );
@@ -679,15 +681,15 @@ void BasicBlock::apply( NodeVisitor *v ) {
 }
 
 
-bool_t BasicBlock::verifyLabels() {
-    bool_t ok = true;
+bool BasicBlock::verifyLabels() {
+    bool ok = true;
     if ( _nodeCount > 0 ) {
         for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
             if ( n->_deleted )
                 continue;
             if ( n->_label.is_unbound() ) {
                 ok = false;
-                lprintf( "unbound label at N%d\n", n->id() );
+                spdlog::info( "unbound label at N%d", n->id() );
             }
         }
     }
@@ -696,37 +698,40 @@ bool_t BasicBlock::verifyLabels() {
 
 
 static void printPrevBBs( BasicBlock *b, const char *str ) {
-    lprintf( "BasicBlock%ld%s", b->id(), str );
+    spdlog::info( "BasicBlock%ld%s", b->id(), str );
 }
 
 
 void BasicBlock::print_short() {
 
-    lprintf( "BasicBlock%-3ld[%d] %#lx (%ld, %ld); prevs ", id(), _loopDepth, this, _first->id(), _last->id() );
+    spdlog::info( "BasicBlock %-3ld [{}] {0:x} (%ld, %ld); prevs ", id(), _loopDepth, static_cast<void *>(this), _first->id(), _last->id() );
 
-    for ( std::int32_t i = 0; i < nPredecessors(); i++ )
+    for ( std::int32_t i = 0; i < nPredecessors(); i++ ) {
         printPrevBBs( prev( i ), ( i == nPredecessors() - 1 ) ? " : " : ", " );
+    }
 
-    lprintf( "; " );
-    if ( next() )
-        lprintf( "next BasicBlock%ld", next()->id() );
+    spdlog::info( "; " );
+    if ( next() ) {
+        spdlog::info( "next BasicBlock%ld", next()->id() );
+    }
 
-    for ( std::int32_t i = 1; i < nSuccessors(); i++ )
+    for ( std::int32_t i = 1; i < nSuccessors(); i++ ) {
         printPrevBBs( next( i ), ( i == nSuccessors() - 1 ) ? " : " : ", " );
+    }
 
 }
 
 
 void BasicBlock::print() {
     print_short();
-    lprintf( "(%ld nodes):\n", _nodeCount );
+    spdlog::info( "(%ld nodes):", _nodeCount );
     print_code( false );
-    lprintf( "duInfo: " );
+    spdlog::info( "duInfo: " );
     duInfo.print();
 }
 
 
-void BasicBlock::print_code( bool_t suppressTrivial ) {
+void BasicBlock::print_code( bool suppressTrivial ) {
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
         if ( n->_deleted and not( n == _first or n == _last ) )
             continue;
@@ -735,13 +740,13 @@ void BasicBlock::print_code( bool_t suppressTrivial ) {
         } else {
             n->printID();
             n->print_short();
-            lprintf( "\n" );
+            spdlog::info( "" );
         }
     }
 }
 
 
-bool_t BasicBlock::contains( const Node *which ) const {
+bool BasicBlock::contains( const Node *which ) const {
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
         if ( n == which )
             return true;
@@ -751,28 +756,28 @@ bool_t BasicBlock::contains( const Node *which ) const {
 
 
 void BasicBlock::verify() {
-    std::int32_t        count = 0;
-    for ( Node *n    = _first; n not_eq _last->next(); n = n->next() ) {
+    std::int32_t count = 0;
+    for ( Node   *n    = _first; n not_eq _last->next(); n = n->next() ) {
         count++;
         if ( n->_deleted )
             continue;
         n->verify();
         if ( n->bb() not_eq this )
-            error( "BasicBlock %#lx: Node %#lx doesn't point back to me", this, n );
+            error( "BasicBlock 0x{0:x}: Node 0x{0:x} doesn't point back to me", static_cast<const void*>(this), n );
         if ( n == _last and not n->endsBasicBlock() and not( n->next() and n->next()->isMergeNode() and ( (MergeNode *) ( n->next() ) )->_didStartBasicBlock ) ) {
-            error( "BasicBlock %#lx: last Node %#lx isn't endsBasicBlock()", this, n );
+            error( "BasicBlock 0x{0:x}: last Node 0x{0:x} isn't endsBasicBlock()", static_cast<const void*>(this), n );
         }
         if ( n->endsBasicBlock() and n not_eq _last )
-            error( "BasicBlock %#lx: Node %#lx ends BasicBlock but isn't last node", this, n );
+            error( "BasicBlock 0x{0:x}: Node 0x{0:x} ends BasicBlock but isn't last node", static_cast<const void*>(this), n );
     }
     if ( count not_eq _nodeCount )
-        error( "incorrect nnodes in BasicBlock %#lx", this );
+        error( "incorrect nnodes in BasicBlock 0x{0:x}", static_cast<const void*>(this) );
     if ( _loopDepth < 0 )
-        error( "BasicBlock %#lx: negative loopDepth %d", this, _loopDepth );
+        error( "BasicBlock 0x{0:x}: negative loopDepth {:d}", static_cast<const void*>(this), _loopDepth );
 
     // Fix this Urs, 3/11/96
     if ( _loopDepth > 9 )
-        warning( "BasicBlock %#lx: suspiciously high loopDepth %d", this, _loopDepth );
+        spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void*>(this), _loopDepth );
 }
 
 
@@ -799,7 +804,7 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     //       has n successors they're all assumed to be non-nullptr. Code with
     //       missing successors (e.g. TypeTestNode with no next(0) = nullptr)
     //       cause the BasicBlock graph to screw up after this node. (gri 7/22/96)
-    std::int32_t               n = _last->nSuccessors();
+    std::int32_t       n = _last->nSuccessors();
     for ( std::int32_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
