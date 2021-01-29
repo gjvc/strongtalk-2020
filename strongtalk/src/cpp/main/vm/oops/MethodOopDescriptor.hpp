@@ -32,7 +32,7 @@ class MethodOopDescriptor : public MemOopDescriptor {
 private:
     ObjectArrayOop _debugInfo;             //
     Oop            _selector_or_method;    // selector for normal methods, enclosing method for blocks
-    std::int32_t            _counters;              // invocation counter and sharing counter
+    std::int32_t   _counters;              // invocation counter and sharing counter
     SMIOop         _size_and_flags;        //
 
 
@@ -44,7 +44,7 @@ private:
 
     // returns the header size of a methodOop
     static std::int32_t header_size() {
-        return sizeof( MethodOopDescriptor ) / oopSize;
+        return sizeof( MethodOopDescriptor ) / OOP_SIZE;
     }
 
 
@@ -215,7 +215,7 @@ public:
 
 
     std::uint8_t *codes_end() const {
-        return codes() + size_of_codes() * oopSize;
+        return codes() + size_of_codes() * OOP_SIZE;
     }
 
 
@@ -297,7 +297,7 @@ public:
 
 
     std::int32_t float_section_size() const {
-        return total_number_of_floats() * SIZEOF_FLOAT / oopSize;
+        return total_number_of_floats() * SIZEOF_FLOAT / OOP_SIZE;
     }
 
 
@@ -524,7 +524,7 @@ private:
     static bool ignored;
     bool        enable;
     bool        stop;
-    FlagSetting   oldFlag;
+    FlagSetting oldFlag;
 
 public:
     StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl = StopInSelector::ignored, bool stop = true );

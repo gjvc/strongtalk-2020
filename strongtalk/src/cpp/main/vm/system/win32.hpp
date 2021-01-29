@@ -38,7 +38,7 @@ private:
     static GrowableArray<Thread *> *threads;
     static Event                   *thread_created;
     HANDLE                         thread_handle;
-    std::int32_t                    thread_id;
+    std::int32_t                   thread_id;
     void                           *stack_limit;
 
 

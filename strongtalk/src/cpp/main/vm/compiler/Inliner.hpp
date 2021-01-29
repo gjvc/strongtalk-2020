@@ -43,8 +43,8 @@ protected:
     NodeBuilder                  *_generator;      // current generator (sender's or callee's)
     MergeNode                    *_merge;          // where multiple versions merge (nullptr if only one)
     const char                   *_msg;            // reason for not inlining the send
-    SendKind _sendKind;         //
-    bool   _lastLookupFailed; // last tryLookup failed because no method found
+    SendKind                     _sendKind;         //
+    bool                         _lastLookupFailed; // last tryLookup failed because no method found
 
 
 public:

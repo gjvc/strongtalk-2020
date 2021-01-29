@@ -25,7 +25,7 @@ enum class BranchOpCode {
     GEUBranchOp,    // greater than or equal unsigned
     VSBranchOp,     //
     VCBranchOp,     //
-                    // Overflow set/cleared
+    // Overflow set/cleared
 
     LastBranchOp    //
 };
@@ -81,4 +81,4 @@ enum class ArithOpCode {
 
 extern std::array<const char *, 13> BranchOpName; // indexed by BranchOpCode
 extern std::array<const char *, 34> ArithOpName; // indexed by ArithOpCode
-extern std::array<bool, 34>       ArithOpIsCommutative; // indexed by ArithOpCode
+extern std::array<bool, 34>         ArithOpIsCommutative; // indexed by ArithOpCode

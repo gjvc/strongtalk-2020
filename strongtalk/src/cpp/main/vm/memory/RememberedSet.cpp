@@ -121,8 +121,8 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
     Oop *e = min( oop_for( end ), (Oop *) sp->top() );
 
     while ( s < e ) {
-        MemOop m    = as_memOop( s );
-        std::int32_t    size = m->scavenge_tenured_contents();
+        MemOop       m    = as_memOop( s );
+        std::int32_t size = m->scavenge_tenured_contents();
         st_assert( size = m->size(), "just checking" );
         s += size;
     }
@@ -169,9 +169,9 @@ void RememberedSet::print_set_for_space( OldSpace *sp ) {
 
 
 std::int32_t RememberedSet::number_of_dirty_pages_in( OldSpace *sp ) {
-    std::int32_t count = 0;
-    char *current_byte = byte_for( sp->bottom() );
-    char *end_byte     = byte_for( sp->top() );
+    std::int32_t count         = 0;
+    char         *current_byte = byte_for( sp->bottom() );
+    char         *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
         if ( !*current_byte )
             count++;
@@ -228,9 +228,9 @@ bool RememberedSet::has_page_dirty_objects( OldSpace *sp, char *page ) {
 
 
 std::int32_t RememberedSet::number_of_pages_with_dirty_objects_in( OldSpace *sp ) {
-    std::int32_t count = 0;
-    char *current_byte = byte_for( sp->bottom() );
-    char *end_byte     = byte_for( sp->top() );
+    std::int32_t count         = 0;
+    char         *current_byte = byte_for( sp->bottom() );
+    char         *end_byte     = byte_for( sp->top() );
     while ( current_byte <= end_byte ) {
         if ( has_page_dirty_objects( sp, current_byte ) )
             count++;
@@ -323,7 +323,7 @@ void RememberedSet::set_size( MemOop obj, std::int32_t size ) {
 
 std::int32_t RememberedSet::get_size( MemOop obj ) {
     std::uint8_t *p = (std::uint8_t *) byte_for( obj->addr() );
-    std::uint8_t h = *p++;
+    std::uint8_t h  = *p++;
     if ( h <= lim_0 + 1 )
         return h + lim_0;
     if ( h == lim_0 + 2 )

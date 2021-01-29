@@ -13,8 +13,8 @@
 #include "vm/compiler/CodeGenerator.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
-extern std::int32_t      compilationCount;
-extern Compiler *theCompiler;
+extern std::int32_t compilationCount;
+extern Compiler     *theCompiler;
 
 class CodeGenerator;
 
@@ -27,17 +27,17 @@ class Compiler : public PrintableResourceObject {
 
 private:
     GrowableArray<InlinedScope *> _scopeStack;                         // to keep track of current scope
-    std::int32_t                           _totalNofBytes;                      // total no. of bytes compiled (for statistics)
-    std::int32_t                           _special_handler_call_offset;        // call to recompilation stub or zombie handler (offset in bytes)
-    std::int32_t                           _entry_point_offset;                 // NativeMethod entry point if receiver is unknown (offset in bytes)
-    std::int32_t                           _verified_entry_point_offset;        // NativeMethod entry point if receiver is known (offset in bytes)
-    std::int32_t                           _totalNofFloatTemporaries;           // the number of floatTemporaries for this NativeMethod
-    std::int32_t                           _float_section_size;                 // the size of the float section on the stack in oops
-    std::int32_t                           _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
+    std::int32_t                  _totalNofBytes;                      // total no. of bytes compiled (for statistics)
+    std::int32_t                  _special_handler_call_offset;        // call to recompilation stub or zombie handler (offset in bytes)
+    std::int32_t                  _entry_point_offset;                 // NativeMethod entry point if receiver is unknown (offset in bytes)
+    std::int32_t                  _verified_entry_point_offset;        // NativeMethod entry point if receiver is known (offset in bytes)
+    std::int32_t                  _totalNofFloatTemporaries;           // the number of floatTemporaries for this NativeMethod
+    std::int32_t                  _float_section_size;                 // the size of the float section on the stack in oops
+    std::int32_t                  _float_section_start_offset;         // the offset of the float section on the stack relative to ebp in oops
     CodeBuffer                    *_code;                              // the buffer used for code generation
-    std::int32_t                           _nextLevel;                          // optimization level for NativeMethod being created
-    bool                        _hasInlinableSendsRemaining;         // no inlinable sends remaining?
-    bool                        _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
+    std::int32_t                  _nextLevel;                          // optimization level for NativeMethod being created
+    bool                          _hasInlinableSendsRemaining;         // no inlinable sends remaining?
+    bool                          _uses_inlining_database;             // tells whether the compilation is base on inlinine database information.
 
 public:
     LookupKey                               *key;
@@ -46,10 +46,10 @@ public:
     MethodOop                               method;                    // top-level method being compiled
     NonInlinedBlockScopeDescriptor          *blockScope;               // or nullptr if not compiling a block method
     RecompilationScope                      *recompileeRScope;         // recompilee's rscope (or nullptr)
-    std::int32_t                                     countID;                   // recompile counter ID
+    std::int32_t                            countID;                   // recompile counter ID
     JumpTableID                             main_jumpTable_id;         // jump table id
     JumpTableID                             promoted_jumpTable_id;     // promoted jump table entry for block method only
-    bool                                  useUncommonTraps;          // ok to use uncommon traps?
+    bool                                    useUncommonTraps;          // ok to use uncommon traps?
     ScopeDescriptorRecorder                 *rec;                      //
     InlinedScope                            *topScope;                 // top scope
     BasicBlock                              *firstBasicBlock;          // first basic block

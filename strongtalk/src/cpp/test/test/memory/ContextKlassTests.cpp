@@ -51,6 +51,6 @@ TEST_F( ContextKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
 
 TEST_F( ContextKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
     eden_top = eden_end;
-    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
+    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * OOP_SIZE );
     ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObject( true ) ) );
 }

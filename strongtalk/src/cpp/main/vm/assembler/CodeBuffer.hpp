@@ -21,7 +21,7 @@ private:
     RelocationInformation *_locsStart;
     RelocationInformation *_locsEnd;
     RelocationInformation *_locsOverflow;
-    std::int32_t _last_reloc_offset;
+    std::int32_t          _last_reloc_offset;
 
     const char *_decode_begin;
 

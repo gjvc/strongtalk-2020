@@ -90,7 +90,7 @@ public:
 class DebugInfoWriter : public PseudoRegisterClosure {
 private:
     GrowableArray<PseudoRegister *> *_pregs;            // maps index -> preg
-    GrowableArray<std::int32_t>     *_locations;        // previous preg location or illegalLocation
+    GrowableArray<std::int32_t>     *_locations;        // previous preg location or Location::ILLEGAL_LOCATION
     GrowableArray<bool>             *_present;          // true if preg is currently present
 
     Location location_at( std::int32_t i ) {
@@ -106,7 +106,7 @@ private:
 public:
     DebugInfoWriter( std::int32_t number_of_pregs ) {
         _pregs     = new GrowableArray<PseudoRegister *>( number_of_pregs, number_of_pregs, nullptr );
-        _locations = new GrowableArray<std::int32_t>( number_of_pregs, number_of_pregs, illegalLocation._loc );
+        _locations = new GrowableArray<std::int32_t>( number_of_pregs, number_of_pregs, Location::ILLEGAL_LOCATION._loc );
         _present   = new GrowableArray<bool>( number_of_pregs, number_of_pregs, false );
     }
 
@@ -132,14 +132,14 @@ public:
             PseudoRegister *preg   = _pregs->at( i );
             bool           present = _present->at( i );
             Location       old_loc = location_at( i );
-            Location       new_loc = present ? mapping->locationFor( preg ) : illegalLocation;
-            if ( ( not present and old_loc not_eq illegalLocation ) or
+            Location       new_loc = present ? mapping->locationFor( preg ) : Location::ILLEGAL_LOCATION;
+            if ( ( not present and old_loc not_eq Location::ILLEGAL_LOCATION ) or
                  // preg not present anymore but has been there before
-                 ( present and old_loc == illegalLocation ) or    // preg present but has not been there before
+                 ( present and old_loc == Location::ILLEGAL_LOCATION ) or    // preg present but has not been there before
                  ( present and old_loc not_eq new_loc ) ) {        // preg present but has changed location
                 // preg location has changed => notify ScopeDescriptorRecorder
                 NameNode *nameNode;
-                if ( new_loc == illegalLocation ) {
+                if ( new_loc == Location::ILLEGAL_LOCATION ) {
                     nameNode = new IllegalName();
                 } else {
                     nameNode = new LocationName( new_loc );
@@ -440,7 +440,7 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     generateMergeStubs();
 
     // set unverified entry point
-    _masm->align( oopSize );
+    _masm->align( OOP_SIZE );
     theCompiler->set_entry_point_offset( _masm->offset() );
 
     // verify receiver
@@ -468,7 +468,7 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     }
 
     // set verified entry point (for callers who know the receiver is correct)
-    _masm->align( oopSize );
+    _masm->align( OOP_SIZE );
     theCompiler->set_verified_entry_point_offset( _masm->offset() );
 
     // build stack frame & initialize locals
@@ -578,7 +578,7 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool needs
     if ( src->isConstPseudoRegister() ) {
         value = ( (ConstPseudoRegister *) src )->constant;
         state = is_const;
-    } else if ( src->_location == resultOfNonLocalReturn ) {
+    } else if ( src->_location == Location::RESULT_OF_NON_LOCAL_RETURN ) {
         _currentMapping->mapToRegister( src, NonLocalReturn_result_reg );
         preg  = src;
         state = is_mapped;
@@ -594,7 +594,7 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool needs
     }
 
     // map/store to dest
-    if ( dst->_location == topOfStack ) {
+    if ( dst->_location == Location::TOP_OF_STACK ) {
         switch ( state ) {
             case is_const:
                 _masm->pushl( value );
@@ -929,7 +929,7 @@ extern "C" void check_stack_overflow();
 
 void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     // set unverified entry point
-    _masm->align( oopSize );
+    _masm->align( OOP_SIZE );
     theCompiler->set_entry_point_offset( _masm->offset() );
 
     // verify receiver
@@ -964,7 +964,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
     }
 
     // set verified entry point (for callers who know the receiver is correct)
-    _masm->align( oopSize );
+    _masm->align( OOP_SIZE );
     theCompiler->set_verified_entry_point_offset( _masm->offset() );
 
     // build stack frame & initialize locals
@@ -1045,7 +1045,7 @@ void CodeGenerator::aLoadOffsetNode( LoadOffsetNode *node ) {
 std::int32_t CodeGenerator::byteOffset( std::int32_t offset ) {
     // Computes the byte offset from the beginning of an Oop
     st_assert( offset >= 0, "wrong offset" );
-    return offset * oopSize - MEMOOP_TAG;
+    return offset * OOP_SIZE - MEMOOP_TAG;
 }
 
 
@@ -1406,7 +1406,7 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
         default:
             _masm->pushl( std::int32_t( smiOopFromValue( node->nofTemps() ) ) );
             aPrimitiveNode( node );
-            _masm->addl( esp, oopSize );    // pop argument, this is not a Pascal call - change this as some point?
+            _masm->addl( esp, OOP_SIZE );    // pop argument, this is not a Pascal call - change this as some point?
             break;
     }
 
@@ -1497,7 +1497,7 @@ void CodeGenerator::copyIntoContexts( BlockCreateNode *node ) {
             InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
             PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
 
-            if ( r->_location == unAllocated )
+            if ( r->_location == Location::UNALLOCATED_LOCATION )
                 continue;      // not uplevel-accessed (eliminated)
 
             if ( r->isBlockPseudoRegister() )
@@ -1526,7 +1526,7 @@ void CodeGenerator::materializeBlock( BlockCreateNode *node ) {
         default:
             _masm->pushl( std::int32_t( smiOopFromValue( nofArgs ) ) );
             aPrimitiveNode( node );            // Note: primitive calls are called via call_C - also necessary for primitiveValue calls?
-            _masm->addl( esp, oopSize );    // pop argument, this is not a Pascal call - change this at some point?
+            _masm->addl( esp, OOP_SIZE );    // pop argument, this is not a Pascal call - change this at some point?
             break;
     }
 
@@ -1661,7 +1661,7 @@ void CodeGenerator::aDLLNode( DLLNode *node ) {
     // (make sure somebody is popping arguments if NonLocalReturns are used).
     inlineCache( node, node->scope()->nlrTestPoint() );
     _currentMapping->mapToRegister( node->dst(), result_reg );
-    _masm->addl( esp, node->nofArguments() * oopSize );    // get rid of arguments
+    _masm->addl( esp, node->nofArguments() * OOP_SIZE );    // get rid of arguments
 }
 
 
@@ -1724,10 +1724,10 @@ void CodeGenerator::generateTypeTests( LoopHeaderNode *node, Label &failure ) {
     std::int32_t       last = 0;
     for ( std::int32_t i    = 0; i <= last; i++ ) {
         HoistedTypeTest *t = node->tests()->at( i );
-        if ( t->_testedPR->_location == unAllocated )
+        if ( t->_testedPR->_location == Location::UNALLOCATED_LOCATION )
             continue;    // optimized away, or ConstPseudoRegister
         if ( t->_testedPR->isConstPseudoRegister() ) {
-            guarantee( t->_testedPR->_location == unAllocated, "code assumes ConstPRegs are unallocated" );
+            guarantee( t->_testedPR->_location == Location::UNALLOCATED_LOCATION, "code assumes ConstPRegs are unallocated" );
             //handleConstantTypeTest((ConstPseudoRegister*)t->testedPR, t->klasses);
         } else {
 
@@ -1744,13 +1744,13 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
   const Register klassReg = temp2;
   const std::int32_t len = _tests->length() - 1;
   std::int32_t last;						// last case that generates a test
-  for (last = len; last >= 0 and _tests->at(last)->testedPR->loc == unAllocated; last--) ;
+  for (last = len; last >= 0 and _tests->at(last)->testedPR->loc ==Location::UNALLOCATED_LOCATION; last--) ;
   if (last < 0) return;					// no tests at all
   for (std::int32_t i = 0; i <= last; i++) {
     HoistedTypeTest* t = _tests->at(i);
-    if (t->testedPR->loc == unAllocated) continue;	// optimized away, or ConstPseudoRegister
+    if (t->testedPR->loc ==Location::UNALLOCATED_LOCATION) continue;	// optimized away, or ConstPseudoRegister
     if (t->testedPR->isConstPseudoRegister()) {
-      guarantee(t->testedPR->loc == unAllocated, "code assumes ConstPseudoRegisters are unallocated");
+      guarantee(t->testedPR->loc ==Location::UNALLOCATED_LOCATION, "code assumes ConstPseudoRegisters are unallocated");
       handleConstantTypeTest((ConstPseudoRegister*)t->testedPR, t->klasses);
     } else {
       const Register obj = movePRegToReg(t->testedPR, temp1);
@@ -1795,7 +1795,7 @@ void CodeGenerator::generateIntegerLoopTest( PseudoRegister *preg, LoopHeaderNod
         if ( preg->isConstPseudoRegister() ) {
             // no run-time test necessary
             //handleConstantTypeTest((ConstPseudoRegister*)preg, nullptr);
-        } else if ( preg->_location == unAllocated ) {
+        } else if ( preg->_location == Location::UNALLOCATED_LOCATION ) {
             // preg is never used in loop => no test needed
             guarantee( preg->cpReg() == preg, "should use cpReg()" );
         } else {
@@ -1819,7 +1819,7 @@ void LoopHeaderNode::generateIntegerLoopTest(PseudoRegister* p, Label& prev, Lab
     if (p->isConstPseudoRegister()) {
       // no run-time test necessary
       handleConstantTypeTest((ConstPseudoRegister*)p, nullptr);
-    } else if (p->loc == unAllocated) {
+    } else if (p->loc ==Location::UNALLOCATED_LOCATION) {
       // p is never used in loop, so no test needed
       guarantee(p->cpReg() == p, "should use cpReg()");
     } else {
@@ -1879,7 +1879,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
     } else {
         // test lower bound
         //
-        if ( lo->_location == unAllocated ) {
+        if ( lo->_location == Location::UNALLOCATED_LOCATION ) {
 
         } else {
             //
@@ -1911,7 +1911,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
       } else {
 	// test lower bound
        if (prev.is_unbound()) theMacroAssm->bind(prev);
-       if (_lowerBound->loc == unAllocated) {
+       if (_lowerBound->loc ==Location::UNALLOCATED_LOCATION) {
 	 guarantee(_lowerBound->cpReg() == _lowerBound, "should use cpReg()");
        } else {
 	 const Register t = movePRegToReg(_lowerBound ? _lowerBound : _loopVar, tempReg);
@@ -2013,7 +2013,7 @@ void CodeGenerator::aReturnNode( ReturnNode *node ) {
         no_of_args_to_pop++;
     }
     _masm->leave();
-    _masm->ret( no_of_args_to_pop * oopSize );
+    _masm->ret( no_of_args_to_pop * OOP_SIZE );
     // no pregs accessible anymore
     setMapping( nullptr );
 }

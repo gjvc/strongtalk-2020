@@ -11,7 +11,7 @@
 #include "vm/runtime/Process.hpp"
 
 
-extern bool  bootstrappingInProgress;
+extern bool bootstrappingInProgress;
 //static CONTEXT context;
 
 
@@ -32,9 +32,9 @@ std::int32_t WINAPI startThread( void *params ) {
 Event *Thread::thread_created = nullptr;
 GrowableArray<Thread *> *Thread::threads = nullptr;
 
-static HANDLE      main_process;
-static HANDLE      watcher_thread;
-static Thread      *main_thread;
+static HANDLE       main_process;
+static HANDLE       watcher_thread;
+static Thread       *main_thread;
 static std::int32_t main_thread_id;
 
 static FILETIME process_creation_time;
@@ -173,7 +173,7 @@ double os::system_time_for( Thread *thread ) {
 }
 
 
-static std::int32_t   has_performance_count = 0;
+static std::int32_t  has_performance_count = 0;
 static LongInteger64 initial_performance_count( 0, 0 );
 static LongInteger64 performance_frequency( 0, 0 );
 
@@ -336,8 +336,8 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
 }
 
 
-HINSTANCE   _hInstance     = nullptr;
-HINSTANCE   _hPrevInstance = nullptr;
+HINSTANCE    _hInstance     = nullptr;
+HINSTANCE    _hPrevInstance = nullptr;
 std::int32_t _nCmdShow      = 0;
 
 
@@ -354,7 +354,6 @@ void *os::get_prevInstance() {
 std::int32_t os::get_nCmdShow() {
     return _nCmdShow;
 }
-
 
 
 void os::timerStart() {
@@ -648,6 +647,8 @@ void os_init_processor_affinity() {
 
 
 void os_init() {
+    spdlog::info( "%os-init:  Win32" );
+
     ThreadCritical::intialize();
     Thread::initialize();
 

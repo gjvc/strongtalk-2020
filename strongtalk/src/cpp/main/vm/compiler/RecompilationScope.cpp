@@ -52,7 +52,7 @@ std::int32_t NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a
 
 
 NonDummyRecompilationScope::NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level ) :
-        RecompilationScope( s, byteCodeIndex ), _level( level ), uncommon( 1 ), ncodes( m == nullptr ? 1 : m->size_of_codes() * oopSize ) {
+        RecompilationScope( s, byteCodeIndex ), _level( level ), uncommon( 1 ), ncodes( m == nullptr ? 1 : m->size_of_codes() * OOP_SIZE ) {
     _subScopes = new_resource_array<GrowableArray<RecompilationScope *> *>( ncodes + 1 );
     for ( std::int32_t i = 0; i <= ncodes; i++ )
         _subScopes[ i ] = nullptr;
@@ -377,10 +377,10 @@ static void getCallees( const NativeMethod *nm, GrowableArray<ProgramCounterDesc
                 if ( useInfo ) {
                     CompiledInlineCacheIterator it( sd );
                     while ( not it.at_end() ) {
-                        NativeMethod *callee = it.compiled_method();
-                        MethodOop m = it.interpreted_method();
+                        NativeMethod    *callee = it.compiled_method();
+                        MethodOop       m       = it.interpreted_method();
                         ScopeDescriptor *desc;
-                        std::int32_t count;
+                        std::int32_t    count;
                         if ( callee not_eq nullptr ) {
                             // compiled target
                             desc  = callee->scopes()->root();
@@ -408,8 +408,8 @@ NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const 
     // construct nm's RecompilationScope tree and return the root
     // level > 0 means recursive invocation through a PICRecompilationScope (level
     // is the recursion depth); trusted means PICs info is considered accurate
-    NonDummyRecompilationScope *current = nullptr;
-    NonDummyRecompilationScope *root    = nullptr;
+    NonDummyRecompilationScope                  *current = nullptr;
+    NonDummyRecompilationScope                  *root    = nullptr;
     GrowableArray<ProgramCounterDescriptor *>   *taken_uncommon;
     GrowableArray<ProgramCounterDescriptor *>   *untaken_uncommon;
     GrowableArray<ProgramCounterDescriptor *>   *uninlinable;
@@ -425,7 +425,7 @@ NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const 
             if ( rsender->isInlinedScope() and ( (InlinedRecompilationScope *) rsender )->desc->is_equal( sender ) )
                 break;
         }
-        std::int32_t                      byteCodeIndex = sender ? s->senderByteCodeIndex() : IllegalByteCodeIndex;
+        std::int32_t byteCodeIndex = sender ? s->senderByteCodeIndex() : IllegalByteCodeIndex;
         current = new InlinedRecompilationScope( (InlinedRecompilationScope *) rsender, byteCodeIndex, nm, s, level );
         if ( not root ) {
             root = current;
@@ -452,7 +452,7 @@ NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const 
         }
 
         // enter uninlinable sends
-        while ( uninlinable->nonEmpty() and ( u      = uninlinable->top() )->_scope == s->offset() ) {
+        while ( uninlinable->nonEmpty() and ( u = uninlinable->top() )->_scope == s->offset() ) {
             // only add uninlinable markers for sends that have no inlined cases
             std::int32_t byteCodeIndex = u->_byteCodeIndex;
             if ( not current->hasSubScopes( byteCodeIndex ) ) {
@@ -484,15 +484,15 @@ void NonDummyRecompilationScope::constructSubScopes( bool trusted ) {
             case ByteCodes::SendType::accessor_send:
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::primitive_send  : {
-                NonDummyRecompilationScope *s  = nullptr;
-                InterpretedInlineCache     *ic = iter.ic();
+                NonDummyRecompilationScope           *s  = nullptr;
+                InterpretedInlineCache               *ic = iter.ic();
                 for ( InterpretedInlineCacheIterator it( ic ); not it.at_end(); it.advance() ) {
                     if ( it.is_compiled() ) {
                         NativeMethod               *nm = it.compiled_method();
                         NonDummyRecompilationScope *s  = constructRScopes( nm, trusted and trustPICs( m ), _level + 1 );
                         addScope( iter.byteCodeIndex(), s );
                     } else {
-                        MethodOop m = it.interpreted_method();
+                        MethodOop m  = it.interpreted_method();
                         LookupKey *k = LookupKey::allocate( it.klass(), it.selector() );
                         new InterpretedRecompilationScope( this, iter.byteCodeIndex(), k, m, _level + 1, trusted and trustPICs( m ) );
                         // NB: constructor adds callee to our subScope list
@@ -529,8 +529,8 @@ bool PICRecompilationScope::trustPICs( const NativeMethod *nm ) {
     if ( invoc < MinInvocationsBeforeTrust )
         return false;
 
-    std::int32_t       ncallers = nm->ncallers();
-    SymbolOop sel      = nm->_lookupKey.selector();
+    std::int32_t ncallers = nm->ncallers();
+    SymbolOop    sel      = nm->_lookupKey.selector();
 
     if ( sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() ) {
         // code Space optimization: try to avoid unnecessary mixed-type arithmetic

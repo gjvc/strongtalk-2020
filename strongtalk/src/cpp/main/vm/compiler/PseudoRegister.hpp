@@ -55,7 +55,7 @@ public:
     std::int32_t                                   _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
     GrowableArray<BlockPseudoRegister *>           *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
     GrowableArray<BlockPseudoRegister *>           *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
-    bool                                         _debug;                 // value/loc needed for debugging info?
+    bool                                           _debug;                 // value/loc needed for debugging info?
     std::int32_t                                   _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
 
 protected:
@@ -85,14 +85,14 @@ public:
         st_assert( s, "must have a scope" );
         initialize();
         _scope    = s;
-        _location = unAllocated;
+        _location = Location::UNALLOCATED_LOCATION;
     }
 
 
     PseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
             _dus( AvgBBIndexLen ) {
         st_assert( s, "must have a scope" );
-        st_assert( not l.equals( illegalLocation ), "illegal location" );
+        st_assert( not l.equals( Location::ILLEGAL_LOCATION ), "illegal location" );
         initialize();
         _scope               = s;
         _location            = l;
@@ -402,7 +402,7 @@ protected:
     std::int32_t creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
     std::int32_t _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
     // (for reg. alloc. purposes)
-    const bool _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
+    const bool   _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
 public:
     SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream = IllegalByteCodeIndex, std::int32_t en = IllegalByteCodeIndex, bool inContext = false );
 
@@ -469,8 +469,8 @@ protected:
 class BlockPseudoRegister : public SinglyAssignedPseudoRegister {
 protected:
     CompileTimeClosure              *_closure;            // the compile-time closure representation
-    bool                          _memoized;                // is this a memoized block?
-    bool                          _escapes;            // does the block escape?
+    bool                            _memoized;                // is this a memoized block?
+    bool                            _escapes;            // does the block escape?
     GrowableArray<Node *>           *_escapeNodes;            // list of all nodes where the block escapes (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelRead;            // list of PseudoRegisters uplevel-read by block method (or nullptr)
     GrowableArray<PseudoRegister *> *_uplevelWritten;        // list of PseudoRegisters uplevel-written by block method (or nullptr)
@@ -571,7 +571,7 @@ class NoResultPseudoRegister : public PseudoRegister {    // "no result" registe
 public:
     NoResultPseudoRegister( InlinedScope *scope ) :
             PseudoRegister( scope ) {
-        _location = noRegister;
+        _location = Location::NO_REGISTER;
         initialize();
     }
 

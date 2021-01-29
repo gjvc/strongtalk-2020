@@ -13,6 +13,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
+
 ScopeDescriptor *NativeMethodScopes::at( std::int32_t offset, const char *pc ) const {
 
     // Read the first byte and decode the ScopeDescriptor type at the location.
@@ -90,7 +91,7 @@ std::int32_t NativeMethodScopes::unpackValueAt( std::int32_t &offset ) const {
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool &is_last, const char *pc ) const {
-    std::int32_t                startOffset = offset;
+    std::int32_t       startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
     is_last = b.is_last();
@@ -117,7 +118,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool
             case BLOCKVALUE_CODE: {
                 Oop blkMethod = unpackOopFromIndex( index, offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                std::int32_t             parent_scope_offset = unpackValueAt( offset );
+                std::int32_t    parent_scope_offset = unpackValueAt( offset );
                 ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
                 nd                                  = new BlockValueNameDescriptor( MethodOop( blkMethod ), parent_scope );
                 break;
@@ -126,7 +127,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool
                 Location l         = Location( unpackValueFromIndex( index, offset ) );
                 Oop      blkMethod = unpackOopAt( offset );
                 st_assert( blkMethod->is_method(), "must be a method" );
-                std::int32_t             parent_scope_offset = unpackValueAt( offset );
+                std::int32_t    parent_scope_offset = unpackValueAt( offset );
                 ScopeDescriptor *parent_scope       = at( parent_scope_offset, pc );
                 nd                                  = new MemoizedBlockNameDescriptor( l, MethodOop( blkMethod ), parent_scope );
                 break;
@@ -141,7 +142,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool
 
 void NativeMethodScopes::iterate( std::int32_t &offset, UnpackClosure *closure ) const {
     char           *pc = my_nativeMethod()->instructionsStart();
-    bool         is_last;
+    bool           is_last;
     NameDescriptor *nd = unpackNameDescAt( offset, is_last, ScopeDescriptor::invalid_pc );
     if ( nd == nullptr )
         return;        // if at termination byte
@@ -155,9 +156,9 @@ void NativeMethodScopes::iterate( std::int32_t &offset, UnpackClosure *closure )
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, const char *pc ) const {
-    std::int32_t            pc_offset         = pc - my_nativeMethod()->instructionsStart();
-    std::int32_t            current_pc_offset = 0;
-    bool         is_last;
+    std::int32_t   pc_offset         = pc - my_nativeMethod()->instructionsStart();
+    std::int32_t   current_pc_offset = 0;
+    bool           is_last;
     NameDescriptor *result           = unpackNameDescAt( offset, is_last, pc );
     if ( result == nullptr )
         return nullptr;    // if at termination byte
@@ -186,7 +187,7 @@ void NativeMethodScopes::verify() {
     // Verify all scopedesc
     FOR_EACH_SCOPE( this, s ) {
         if ( not s->verify() )
-            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (scopes)", static_cast<void*>( my_nativeMethod() ) );
+            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (scopes)", static_cast<void *>( my_nativeMethod() ) );
     }
 }
 

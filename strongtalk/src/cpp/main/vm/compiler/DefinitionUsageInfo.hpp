@@ -9,12 +9,11 @@
 #include "vm/compiler/PseudoRegister.hpp"
 
 
-
 // DefinitionUsageInfo represents PseudoRegister's definitions/uses within BasicBlock
 class DefinitionUsageInfo : public PrintableResourceObject {
 
 public:
-    PseudoRegister *_pseudoRegister;
+    PseudoRegister      *_pseudoRegister;
     SList<Usage *>      _usages;    // uses (in order of nodes within BasicBlock)
     SList<Definition *> _definitions;
 

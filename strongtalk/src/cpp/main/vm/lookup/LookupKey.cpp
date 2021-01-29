@@ -7,6 +7,7 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 
+
 std::int32_t LookupKey::hash() const {
     return klass()->identity_hash() ^ selector_or_method()->identity_hash();
 }

@@ -24,7 +24,7 @@ static std::int32_t compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
 
 RegisterAllocator::RegisterAllocator() {
     theAllocator = this;
-    _stackLocs   = new IntFreeList( 2 );
+    _stackLocs   = new IntegerFreeList( 2 );
 }
 
 
@@ -42,7 +42,7 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
     while ( i-- > 0 ) {
         PseudoRegister *r = globals->at( i );
         st_assert( r->ndefs() + r->nuses() > 0 or r->incorrectDU(), "PseudoRegister is unused" );
-        if ( r->_location != unAllocated ) {
+        if ( r->_location != Location::UNALLOCATED_LOCATION ) {
             // already allocated
         } else if ( r->isConstPseudoRegister() ) {
             // don't allocate constants for now

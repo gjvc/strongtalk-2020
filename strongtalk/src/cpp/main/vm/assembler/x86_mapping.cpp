@@ -38,7 +38,7 @@ void Mapping::initialize() {
 // C++ won't compile array with 0 elements
 //std::int32_t      Mapping::_localRegisterIndex[REGISTER_COUNT + 1];
 
-std::array<Location, nofLocalRegisters>     Mapping::_localRegisters;      //
+std::array<Location, nofLocalRegisters>      Mapping::_localRegisters;      //
 std::array<std::int32_t, REGISTER_COUNT>     Mapping::_localRegisterIndex;  //
 
 
@@ -66,7 +66,7 @@ Location Mapping::incomingArg( std::int32_t i, std::int32_t nofArgs ) {
 
 Location Mapping::outgoingArg( std::int32_t i, std::int32_t nofArgs ) {
     st_assert( ( 0 <= i ) and ( i < nofArgs ), "illegal arg number" );
-    return topOfStack;
+    return Location::TOP_OF_STACK;
 }
 
 
@@ -74,14 +74,14 @@ Location Mapping::outgoingArg( std::int32_t i, std::int32_t nofArgs ) {
 Location Mapping::localTemporary( std::int32_t i ) {
     st_assert( i >= 0, "illegal temporary number" );
     std::int32_t floats = theCompiler->totalNofFloatTemporaries();
-    std::int32_t offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - i;
+    std::int32_t offset = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / OOP_SIZE ) : first_temp_offset ) - i;
     return Location::stackLocation( offset );
 }
 
 
 std::int32_t Mapping::localTemporaryIndex( const Location &l ) {
     std::int32_t floats = theCompiler->totalNofFloatTemporaries();
-    std::int32_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / oopSize ) : first_temp_offset ) - l.offset();
+    std::int32_t i      = ( floats > 0 ? first_float_offset - floats * ( SIZEOF_FLOAT / OOP_SIZE ) : first_temp_offset ) - l.offset();
     st_assert( localTemporary( i ) == l, "incorrect mapping" );
     return i;
 }
@@ -101,9 +101,9 @@ Location Mapping::floatTemporary( std::int32_t scope_id, std::int32_t i ) {
     // base - 3: (global) float 0 hi word
     // base - 4: (global) float 0 lo word
     //
-    st_assert( SIZEOF_FLOAT == 2 * oopSize, "check this code" );
-    Location loc = Location::stackLocation( first_float_offset - ( scope->firstFloatIndex() + i ) * ( SIZEOF_FLOAT / oopSize ) );
-    st_assert( ( loc.offset() * oopSize ) % SIZEOF_FLOAT == 0, "offset is not correctly aligned" );
+    st_assert( SIZEOF_FLOAT == 2 * OOP_SIZE, "check this code" );
+    Location loc = Location::stackLocation( first_float_offset - ( scope->firstFloatIndex() + i ) * ( SIZEOF_FLOAT / OOP_SIZE ) );
+    st_assert( ( loc.offset() * OOP_SIZE ) % SIZEOF_FLOAT == 0, "offset is not correctly aligned" );
     return loc;
 }
 
@@ -117,30 +117,30 @@ Location Mapping::contextTemporary( std::int32_t contextNo, std::int32_t i, std:
 
 Location *Mapping::new_contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_id ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
-    return new Location( Mode::contextLoc1, contextNo, i, scope_id );
+    return new Location( Mode::CONTEXT_LOCATIION_1, contextNo, i, scope_id );
 }
 
 
 std::int32_t Mapping::contextOffset( std::int32_t tempNo ) {
     // computes the byte offset within the context object
-    return tempNo * oopSize + ContextOopDescriptor::temp0_byte_offset();
+    return tempNo * OOP_SIZE + ContextOopDescriptor::temp0_byte_offset();
 }
 
 
 // predicates
 bool Mapping::isNormalTemporary( Location loc ) {
-    st_assert( not loc.isFloatLocation(), "must have been converted into stackLoc by register allocation" );
+    st_assert( not loc.isFloatLocation(), "must have been converted into STACK_LOCATION by register allocation" );
     return loc.isStackLocation() and not isFloatTemporary( loc );
 }
 
 
 bool Mapping::isFloatTemporary( Location loc ) {
-    st_assert( not loc.isFloatLocation(), "must have been converted into stackLoc by register allocation" );
+    st_assert( not loc.isFloatLocation(), "must have been converted into STACK_LOCATION by register allocation" );
     if ( not loc.isStackLocation() )
         return false;
     std::int32_t floats = theCompiler->totalNofFloatTemporaries();
     std::int32_t offset = loc.offset();
-    return floats > 0 and first_float_offset + 2 >= offset and offset > first_float_offset - floats * ( SIZEOF_FLOAT / oopSize );
+    return floats > 0 and first_float_offset + 2 >= offset and offset > first_float_offset - floats * ( SIZEOF_FLOAT / OOP_SIZE );
 }
 
 
@@ -148,8 +148,8 @@ bool Mapping::isFloatTemporary( Location loc ) {
 void Mapping::load( const Location &src, const Register &dst ) {
 
     switch ( src.mode() ) {
-        case Mode::specialLoc: {
-            if ( src == resultOfNonLocalReturn ) {
+        case Mode::SPECIAL_LOCATION: {
+            if ( src == Location::RESULT_OF_NON_LOCAL_RETURN ) {
                 // treat as NonLocalReturn_result_reg
                 if ( NonLocalReturn_result_reg not_eq dst )
                     theMacroAssembler->movl( dst, NonLocalReturn_result_reg );
@@ -158,18 +158,18 @@ void Mapping::load( const Location &src, const Register &dst ) {
             }
             break;
         }
-        case Mode::registerLoc: {
+        case Mode::REGISTER_LOCATION: {
             Register s = asRegister( src );
             if ( s not_eq dst )
                 theMacroAssembler->movl( dst, s );
             break;
         }
-        case Mode::stackLoc: {
+        case Mode::STACK_LOCATION: {
             st_assert( isNormalTemporary( src ), "must be a normal temporary location" );
-            theMacroAssembler->Load( ebp, src.offset() * oopSize, dst );
+            theMacroAssembler->Load( ebp, src.offset() * OOP_SIZE, dst );
             break;
         }
-        case Mode::contextLoc1: {
+        case Mode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( src.contextNo() )->context();
             load( base->_location, dst );
             theMacroAssembler->Load( dst, contextOffset( src.tempNo() ), dst );
@@ -187,26 +187,26 @@ void Mapping::store( Register src, const Location &dst, const Register &temp1, c
 
     st_assert( src not_eq temp1 and src not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
-        case Mode::specialLoc: {
-            if ( dst == topOfStack ) {
+        case Mode::SPECIAL_LOCATION: {
+            if ( dst == Location::TOP_OF_STACK ) {
                 theMacroAssembler->pushl( src );
             } else {
                 ShouldNotReachHere();
             }
             break;
         }
-        case Mode::registerLoc: {
+        case Mode::REGISTER_LOCATION: {
             Register d = asRegister( dst );
             if ( d not_eq src )
                 theMacroAssembler->movl( d, src );
             break;
         }
-        case Mode::stackLoc: {
+        case Mode::STACK_LOCATION: {
             st_assert( isNormalTemporary( dst ), "must be a normal temporary location" );
-            theMacroAssembler->Store( src, ebp, dst.offset() * oopSize );
+            theMacroAssembler->Store( src, ebp, dst.offset() * OOP_SIZE );
             break;
         }
-        case Mode::contextLoc1: {
+        case Mode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->Store( src, temp1, contextOffset( dst.tempNo() ) );
@@ -226,24 +226,24 @@ void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const
 
     st_assert( temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
-        case Mode::specialLoc: {
-            if ( dst == topOfStack ) {
+        case Mode::SPECIAL_LOCATION: {
+            if ( dst == Location::TOP_OF_STACK ) {
                 theMacroAssembler->pushl( obj );
             } else {
                 ShouldNotReachHere();
             }
             break;
         }
-        case Mode::registerLoc: {
+        case Mode::REGISTER_LOCATION: {
             theMacroAssembler->movl( asRegister( dst ), obj );
             break;
         }
-        case Mode::stackLoc: {
+        case Mode::STACK_LOCATION: {
             st_assert( isNormalTemporary( dst ), "must be a normal temporary location" );
-            theMacroAssembler->movl( Address( ebp, dst.offset() * oopSize ), obj );
+            theMacroAssembler->movl( Address( ebp, dst.offset() * OOP_SIZE ), obj );
             break;
         }
-        case Mode::contextLoc1: {
+        case Mode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->movl( Address( temp1, contextOffset( dst.tempNo() ) ), obj );
@@ -261,7 +261,7 @@ void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const
 
 void Mapping::fload( const Location &src, const Register &base ) {
 
-    if ( src == topOfFloatStack ) {
+    if ( src == Location::TOP_OF_FLOAT_STACK ) {
         if ( UseFPUStack ) {
             // nothing to do, value is on stack already
         } else {
@@ -269,15 +269,15 @@ void Mapping::fload( const Location &src, const Register &base ) {
         }
     } else {
         st_assert( isFloatTemporary( src ), "must be a float location" );
-        st_assert( ( src.offset() * oopSize ) % SIZEOF_FLOAT == 0, "float is not aligned" );
-        theMacroAssembler->fld_d( Address( base, src.offset() * oopSize ) );
+        st_assert( ( src.offset() * OOP_SIZE ) % SIZEOF_FLOAT == 0, "float is not aligned" );
+        theMacroAssembler->fld_d( Address( base, src.offset() * OOP_SIZE ) );
     }
 }
 
 
 void Mapping::fstore( const Location &dst, const Register &base ) {
 
-    if ( dst == topOfFloatStack ) {
+    if ( dst == Location::TOP_OF_FLOAT_STACK ) {
         if ( UseFPUStack ) {
             // nothing to do, value is on stack already
         } else {
@@ -285,8 +285,8 @@ void Mapping::fstore( const Location &dst, const Register &base ) {
         }
     } else {
         st_assert( isFloatTemporary( dst ), "must be a float location" );
-        st_assert( ( dst.offset() * oopSize ) % SIZEOF_FLOAT == 0, "float is not aligned" );
-        theMacroAssembler->fstp_d( Address( base, dst.offset() * oopSize ) );
+        st_assert( ( dst.offset() * OOP_SIZE ) % SIZEOF_FLOAT == 0, "float is not aligned" );
+        theMacroAssembler->fstp_d( Address( base, dst.offset() * OOP_SIZE ) );
     }
 }
 

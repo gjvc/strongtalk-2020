@@ -40,10 +40,10 @@ constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compa
 constexpr std::int32_t CODE_BLOCK_SIZE                = 64;  /* block size for nativeMethods */
 constexpr std::int32_t POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    /* block size for PICs */
 
-constexpr std::int32_t   FREE       = 20;        /* # of free lists */
-constexpr std::int32_t   StubBlock  = 16;        /* block size for PolymorphicInlineCache zone */
-constexpr std::int32_t   StubFree   = 20;        /* # of free lists for PolymorphicInlineCache zone */
-constexpr float MaxExtFrag = 0.05;    /* max. tolerated ext. fragmentation */
+constexpr std::int32_t FREE       = 20;        /* # of free lists */
+constexpr std::int32_t StubBlock  = 16;        /* block size for PolymorphicInlineCache zone */
+constexpr std::int32_t StubFree   = 20;        /* # of free lists for PolymorphicInlineCache zone */
+constexpr float        MaxExtFrag = 0.05;    /* max. tolerated ext. fragmentation */
 
 #define FOR_ALL_NMETHODS( var )                              \
     for (NativeMethod *var = first_nm(); var; var = next_nm(var))
@@ -57,8 +57,8 @@ std::int32_t roundSize( std::int32_t s, std::int32_t blockSize ) {
 }
 
 
-LRUcount *LRUtable;    // for optimized methods
-std::int32_t      *LRUflag;        // == LRUtable, just different type for convenience
+LRUcount     *LRUtable;    // for optimized methods
+std::int32_t *LRUflag;        // == LRUtable, just different type for convenience
 
 static std::int32_t LRUtime;        // virtual time; incremented after every full sweep
 
@@ -483,9 +483,9 @@ public:
 
 
 void Zone::print() {
-    nmsizes nms;
-    nmsizes zombies;
-    std::int32_t     uncommon = 0;
+    nmsizes      nms;
+    nmsizes      zombies;
+    std::int32_t uncommon = 0;
 
     FOR_ALL_NMETHODS( p ) {
         if ( p->isZombie() ) {
@@ -536,8 +536,8 @@ struct nm_hist_elem {
 
 static std::int32_t compareOop( const void *m1, const void *m2 ) {
     ResourceMark rm;
-    const auto *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
-    const auto *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
+    const auto   *nativeMethod1 = reinterpret_cast<const struct nm_hist_elem *>( m1 );
+    const auto   *nativeMethod2 = reinterpret_cast<const struct nm_hist_elem *>( m2 );
     return nativeMethod2->nm->method() - nativeMethod1->nm->method();
 }
 

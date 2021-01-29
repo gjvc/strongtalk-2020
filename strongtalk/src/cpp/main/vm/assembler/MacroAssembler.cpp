@@ -66,9 +66,9 @@ void MacroAssembler::set_last_Delta_frame_before_call() {
 
 
 void MacroAssembler::set_last_Delta_frame_after_call() {
-    addl( esp, oopSize );    // sets esp to value before call (i.e., before pushing the return address)
+    addl( esp, OOP_SIZE );    // sets esp to value before call (i.e., before pushing the return address)
     set_last_Delta_frame_before_call();
-    subl( esp, oopSize );    // resets esp to original value
+    subl( esp, OOP_SIZE );    // resets esp to original value
 }
 
 
@@ -153,7 +153,7 @@ void MacroAssembler::call_C( const char *entry, const Register &arg1 ) {
     bind( L2 );
     pushl( arg1 );
     call( entry, RelocationInformation::RelocationType::runtime_call_type );
-    addl( esp, 1 * oopSize );
+    addl( esp, 1 * OOP_SIZE );
     ret( 0 );
 
     bind( L1 );
@@ -169,7 +169,7 @@ void MacroAssembler::call_C( const char *entry, const Register &arg1, const Regi
     pushl( arg2 );
     pushl( arg1 );
     call( entry, RelocationInformation::RelocationType::runtime_call_type );
-    addl( esp, 2 * oopSize );
+    addl( esp, 2 * OOP_SIZE );
     ret( 0 );
 
     bind( L1 );
@@ -186,7 +186,7 @@ void MacroAssembler::call_C( const char *entry, const Register &arg1, const Regi
     pushl( arg2 );
     pushl( arg1 );
     call( entry, RelocationInformation::RelocationType::runtime_call_type );
-    addl( esp, 3 * oopSize );
+    addl( esp, 3 * OOP_SIZE );
     ret( 0 );
 
     bind( L1 );
@@ -204,7 +204,7 @@ void MacroAssembler::call_C( const char *entry, const Register &arg1, const Regi
     pushl( arg2 );
     pushl( arg1 );
     call( entry, RelocationInformation::RelocationType::runtime_call_type );
-    addl( esp, 4 * oopSize );
+    addl( esp, 4 * OOP_SIZE );
     ret( 0 );
 
     bind( L1 );

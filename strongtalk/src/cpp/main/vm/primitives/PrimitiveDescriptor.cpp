@@ -7,7 +7,6 @@
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/primitives/dByteArray_primitives.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/primitives/primitives_table.cpp"
 #include "PrimitiveDescriptor.hpp"
 
 
@@ -15,46 +14,46 @@ void PrimitiveDescriptor::print() {
 
     //
     spdlog::info( "%-72s  %d  {}{}{}{}{}{}{}{}{}",
-                     name(),
-                     number_of_parameters(),
-                     has_receiver() ? 'R' : '_',
-                     can_fail() ? 'F' : '_',
-                     can_scavenge() ? 'S' : '_',
-                     can_walk_stack() ? 'W' : '_',
-                     can_perform_NonLocalReturn() ? 'N' : '_',
-                     can_be_constant_folded() ? 'C' : '_',
-                     can_invoke_delta() ? 'D' : '_',
-                     is_internal() ? 'I' : '_',
-                     needs_delta_fp_code() ? 'P' : '_' );
+                  name(),
+                  number_of_parameters(),
+                  has_receiver() ? 'R' : '_',
+                  can_fail() ? 'F' : '_',
+                  can_scavenge() ? 'S' : '_',
+                  can_walk_stack() ? 'W' : '_',
+                  can_perform_NonLocalReturn() ? 'N' : '_',
+                  can_be_constant_folded() ? 'C' : '_',
+                  can_invoke_delta() ? 'D' : '_',
+                  is_internal() ? 'I' : '_',
+                  needs_delta_fp_code() ? 'P' : '_' );
 
     //
     switch ( group() ) {
         case PrimitiveGroup::IntComparisonPrimitive:
-            _console->print( "IntComparisonPrimitive / smi_t");
+            _console->print( "IntComparisonPrimitive / smi_t" );
             break;
         case PrimitiveGroup::IntArithmeticPrimitive:
-            _console->print( "IntArithmeticPrimitive / smi_t");
+            _console->print( "IntArithmeticPrimitive / smi_t" );
             break;
         case PrimitiveGroup::FloatComparisonPrimitive:
-            _console->print( "FloatComparisonPrimitive");
+            _console->print( "FloatComparisonPrimitive" );
             break;
         case PrimitiveGroup::FloatArithmeticPrimitive:
-            _console->print( "FloatArithmeticPrimitive");
+            _console->print( "FloatArithmeticPrimitive" );
             break;
         case PrimitiveGroup::ByteArrayPrimitive:
-            _console->print( "ByteArrayPrimitive");
+            _console->print( "ByteArrayPrimitive" );
             break;
         case PrimitiveGroup::DoubleByteArrayPrimitive:
-            _console->print( "DoubleByteArrayPrimitive");
+            _console->print( "DoubleByteArrayPrimitive" );
             break;
         case PrimitiveGroup::ObjArrayPrimitive:
-            _console->print( "ObjArrayPrimitive");
+            _console->print( "ObjArrayPrimitive" );
             break;
         case PrimitiveGroup::BlockPrimitive:
-            _console->print( "BlockPrimitive");
+            _console->print( "BlockPrimitive" );
             break;
         case PrimitiveGroup::NormalPrimitive:
-            _console->print( "NormalPrimitive");
+            _console->print( "NormalPrimitive" );
             break;
         default: st_fatal( "Unknown primitive group" );
     }
@@ -83,7 +82,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 
     //
     const bool reverseArgs = true;    // change this when changing primitive calling convention
-    Oop          res;                   //
+    Oop        res;                   //
 
     //
     if ( reverseArgs ) {

@@ -39,9 +39,9 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
     if ( SMIOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    KlassOop k        = KlassOop( receiver );
-    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t      obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, oopSize ) / oopSize;
+    KlassOop     k        = KlassOop( receiver );
+    std::int32_t ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, OOP_SIZE ) / OOP_SIZE;
 
     // allocate
     DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -163,8 +163,8 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
     ASSERT_RECEIVER;
 
     ResourceMark resourceMark;
-    std::int32_t          len = DoubleByteArrayOop( receiver )->length();
-    char *buffer = new_resource_array<char>( len );
+    std::int32_t len     = DoubleByteArrayOop( receiver )->length();
+    char         *buffer = new_resource_array<char>( len );
 
     for ( std::int32_t i   = 0; i < len; i++ ) {
         std::int32_t c = DoubleByteArrayOop( receiver )->doubleByte_at( i + 1 );
@@ -173,7 +173,7 @@ PRIM_DECL_1( doubleByteArrayPrimitives::intern, Oop receiver ) {
         }
         buffer[ i ] = c;
     }
-    SymbolOop sym = Universe::symbol_table->lookup( buffer, len );
+    SymbolOop          sym = Universe::symbol_table->lookup( buffer, len );
     return sym;
 }
 

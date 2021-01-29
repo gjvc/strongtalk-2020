@@ -119,8 +119,8 @@ SymbolOop WhileNode::selector() const {
 
 IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure ) :
         InlineSendNode( method, parent, begin_byteCodeIndex ) {
-    bool has_else_branch;
-    std::int32_t    else_jump_size;
+    bool         has_else_branch;
+    std::int32_t else_jump_size;
     _cond                       = cond;
     _produces_result            = isBitSet( structure, 0 );
     has_else_branch             = isBitSet( structure, 1 );
@@ -131,7 +131,7 @@ IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byt
         std::int32_t else_jump = next_byteCodeIndex + else_offset - else_jump_size;
         _then_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, else_jump );
         CodeIterator c( method, else_jump );
-        std::int32_t          end_offset;
+        std::int32_t end_offset;
         switch ( c.code() ) {
             case ByteCodes::Code::jump_else_byte:
                 end_offset = c.byte_at( 1 );
@@ -832,7 +832,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 should_never_encounter( static_cast<std::uint8_t>(ByteCodes::Code::jump_else_word) );
                 break;
             case ByteCodes::Code::jump_loop_word: {
-                WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + oopSize ), iter.word_at( 1 ) );
+                WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + OOP_SIZE ), iter.word_at( 1 ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->while_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
@@ -974,7 +974,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::primitive_call_failure: // fall through
             case ByteCodes::Code::primitive_call_self_failure: {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
-                PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + oopSize ) );
+                PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + OOP_SIZE ) );
                 st_assert( pdesc->has_receiver() == ( iter.code() == ByteCodes::Code::primitive_call_self_failure ), "just checking" );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->primitive_call_node( node );
@@ -982,7 +982,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             }
             case ByteCodes::Code::predict_primitive_call_failure:
-                blk->predict_primitive_call( Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) ), iter.next_byteCodeIndex() + iter.word_at( 1 + oopSize ) );
+                blk->predict_primitive_call( Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) ), iter.next_byteCodeIndex() + iter.word_at( 1 + OOP_SIZE ) );
                 break;
             case ByteCodes::Code::dll_call_sync: {
                 DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
@@ -1014,14 +1014,14 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::primitive_call_self_failure_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
-                PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + oopSize ) );
+                PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + OOP_SIZE ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::predict_primitive_call_failure_lookup:
-                blk->predict_primitive_call( Primitives::lookup( SymbolOop( iter.word_at( 1 ) ) ), iter.byteCodeIndex() + iter.word_at( 1 + oopSize ) );
+                blk->predict_primitive_call( Primitives::lookup( SymbolOop( iter.word_at( 1 ) ) ), iter.byteCodeIndex() + iter.word_at( 1 + OOP_SIZE ) );
                 break;
             case ByteCodes::Code::dll_call_async: {
                 DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );

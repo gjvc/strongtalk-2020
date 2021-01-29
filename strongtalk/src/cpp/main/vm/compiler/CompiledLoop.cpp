@@ -787,7 +787,7 @@ HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR
     _node     = node;
     _testedPR = testedPR;
     _klasses  = klasses;
-    _invalid = false;
+    _invalid  = false;
 }
 
 

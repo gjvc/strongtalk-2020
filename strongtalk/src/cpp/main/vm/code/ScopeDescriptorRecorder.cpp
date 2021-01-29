@@ -63,7 +63,7 @@ bool NameNode::genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, b
     // Experiments show id is zero in at least 90% of the generated nameDescs.
     // returns true if index could be inlined in headerByte.
     nameDescHeaderByte b;
-    bool             can_inline  = index <= b._maxIndex;
+    bool               can_inline  = index <= b._maxIndex;
     std::uint8_t       coded_index = can_inline ? index : b._noIndex;
     b.pack( code, is_last, coded_index );
     rec->_codes->appendByte( b.value() );

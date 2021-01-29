@@ -22,8 +22,8 @@ protected:
     const char *_code_limit;     // first byte after code buffer
     const char *_code_pos;       // current code generation position
 
-    Label _unbound_label;   // the last label to be bound to _binding_pos, if unbound
-    std::int32_t   _binding_pos;     // the position to which _unbound_label has to be bound, if there
+    Label        _unbound_label;   // the last label to be bound to _binding_pos, if unbound
+    std::int32_t _binding_pos;     // the position to which _unbound_label has to be bound, if there
 
     const char *addr_at( std::int32_t pos ) {
         return _code_begin + pos;

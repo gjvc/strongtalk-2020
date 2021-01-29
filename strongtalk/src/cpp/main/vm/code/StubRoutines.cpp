@@ -400,11 +400,11 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     masm->xorl( edi, edx );
     masm->andl( edi, ( primary_cache_size - 1 ) << 4 );
     // probe cache
-    masm->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * oopSize ) );
+    masm->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * OOP_SIZE ) );
     masm->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
-    masm->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * oopSize ) );
+    masm->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * OOP_SIZE ) );
     masm->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
-    masm->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * oopSize ) );
+    masm->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * OOP_SIZE ) );
 
     // call method
     //
@@ -440,11 +440,11 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     masm->bind( probe_secondary_cache );        // compute hash value
     masm->andl( edi, ( secondary_cache_size - 1 ) << 4 );
     // probe cache
-    masm->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * oopSize ) );
+    masm->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * OOP_SIZE ) );
     masm->jcc( Assembler::Condition::notEqual, do_lookup );
-    masm->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * oopSize ) );
+    masm->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * OOP_SIZE ) );
     masm->jcc( Assembler::Condition::notEqual, do_lookup );
-    masm->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * oopSize ) );
+    masm->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * OOP_SIZE ) );
     masm->jmp( call_method );
 
     // do lookup
@@ -653,7 +653,7 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
     // next argument
     masm->bind( next_argument );
     masm->pushl( eax );                                 // push converted argument
-    masm->addl( ecx, oopSize );                         // go to previous argument
+    masm->addl( ecx, OOP_SIZE );                         // go to previous argument
     masm->decl( ebx );                                  // decrement argument counter
     masm->jcc( MacroAssembler::Condition::zero, no_arguments );    // continue until no arguments
 
@@ -884,10 +884,10 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
 
     // extern "C" Oop call_delta(void* method, Oop receiver, std::int32_t nofArgs, Oop* args)
     // incoming arguments
-    Address method   = Address( ebp, +2 * oopSize );
-    Address receiver = Address( ebp, +3 * oopSize );
-    Address nofArgs  = Address( ebp, +4 * oopSize );
-    Address args     = Address( ebp, +5 * oopSize );
+    Address method   = Address( ebp, +2 * OOP_SIZE );
+    Address receiver = Address( ebp, +3 * OOP_SIZE );
+    Address nofArgs  = Address( ebp, +4 * OOP_SIZE );
+    Address args     = Address( ebp, +5 * OOP_SIZE );
 
     const char *entry_point = masm->pc();
 
@@ -922,7 +922,7 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
 
     masm->bind( _loop );
     masm->movl( edx, Address( ecx ) );    // get argument
-    masm->addl( ecx, oopSize );        // advance to next argument
+    masm->addl( ecx, OOP_SIZE );        // advance to next argument
     masm->pushl( edx );            // push argument on stack
     masm->decl( ebx );            // decrement argument counter
     masm->jcc( Assembler::Condition::notZero, _loop );    // until no arguments
@@ -949,7 +949,7 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     masm->movl( Address( (std::int32_t) &have_nlr_through_C, RelocationInformation::RelocationType::external_word_type ), 0 );
 
     masm->bind( _return );
-    masm->leal( esp, Address( ebp, -4 * oopSize ) );
+    masm->leal( esp, Address( ebp, -4 * OOP_SIZE ) );
     masm->popl( esi );    // restore registers for C calling convetion
     masm->popl( edi );
     masm->popl( Address( (std::int32_t) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ) ); // reset _last_Delta_sp
@@ -961,19 +961,19 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     // sets up the global NonLocalReturn variables and patches the return address
     // of the first C frame in the last_C_chunk of the stack (see below).
     masm->bind( _nlr_test );
-    masm->movl( ecx, Address( ebp, -2 * oopSize ) );    // get pushed value of _last_Delta_sp
+    masm->movl( ecx, Address( ebp, -2 * OOP_SIZE ) );    // get pushed value of _last_Delta_sp
     masm->testl( ecx, ecx );
     masm->jcc( Assembler::Condition::zero, _nlr_setup );
 
-    masm->movl( edx, Address( ecx, -oopSize ) ); // get return address of the first C function called
+    masm->movl( edx, Address( ecx, -OOP_SIZE ) ); // get return address of the first C function called
     // store return address for nlr_return_from_Delta
     masm->movl( Address( (std::int32_t) &C_frame_return_addr, RelocationInformation::RelocationType::external_word_type ), edx );
 //  masm->hlt();
 
 //  char* nlr_return_from_Delta_addr = StubRoutines::nlr_return_from_Delta();
 //  assert(nlr_return_from_Delta_addr, "nlr_return_from_Delta not initialized yet");
-//  masm->movl(Address(ecx, -oopSize), (std::int32_t)nlr_return_from_Delta_addr);  // patch return address
-    masm->movl( Address( ecx, -oopSize ), (std::int32_t) nlr_return_from_Delta_entry );  // patch return address
+//  masm->movl(Address(ecx, -OOP_SIZE), (std::int32_t)nlr_return_from_Delta_addr);  // patch return address
+    masm->movl( Address( ecx, -OOP_SIZE ), (std::int32_t) nlr_return_from_Delta_entry );  // patch return address
     masm->pushl( eax );
     masm->pushl( ebx );
     masm->pushl( edx );
@@ -1050,7 +1050,7 @@ const char *StubRoutines::generate_single_step_stub( MacroAssembler *masm ) {
     masm->reset_last_Delta_frame();
     masm->popl( eax );
     // restore bytecode pointer
-    masm->movl( esi, Address( ebp, -2 * oopSize ) );
+    masm->movl( esi, Address( ebp, -2 * OOP_SIZE ) );
     // reload bytecode
     masm->xorl( ebx, ebx );
     masm->movb( ebx, Address( esi ) );
@@ -1074,7 +1074,7 @@ const char *StubRoutines::generate_single_step_stub( MacroAssembler *masm ) {
     masm->jmp( Address( noreg, ebx, Address::ScaleFactor::times_4, (std::int32_t) original_table ) );
 
     masm->bind( is_break );
-    masm->movl( Address( ebp, -2 * oopSize ), esi );    // save esi
+    masm->movl( Address( ebp, -2 * OOP_SIZE ), esi );    // save esi
     masm->pushl( eax );                // save tos
     masm->set_last_Delta_frame_before_call();
 
@@ -1115,8 +1115,8 @@ const char *StubRoutines::generate_unpack_unoptimized_frames( MacroAssembler *ma
 // Since a NonLocalReturn may have its home inside the optimized frames we have to deoptimize
 // and then continue the NonLocalReturn.
 
-    Address real_sender_sp = Address( ebp, -2 * oopSize );
-    Address frame_array    = Address( ebp, -1 * oopSize );
+    Address real_sender_sp = Address( ebp, -2 * OOP_SIZE );
+    Address frame_array    = Address( ebp, -1 * OOP_SIZE );
     Address real_fp        = Address( ebp );
 
     Register nlr_result_reg  = eax; // holds the result of the method
@@ -1176,9 +1176,9 @@ const char *StubRoutines::generate_unpack_unoptimized_frames( MacroAssembler *ma
 
 const char *StubRoutines::generate_provoke_nlr_at( MacroAssembler *masm ) {
     // extern "C" void provoke_nlr_at(std::int32_t* frame_pointer, Oop* stack_pointer);
-    Address old_ret_addr  = Address( esp, -1 * oopSize );
-    Address frame_pointer = Address( esp, +1 * oopSize );
-    Address stack_pointer = Address( esp, +2 * oopSize );
+    Address old_ret_addr  = Address( esp, -1 * OOP_SIZE );
+    Address frame_pointer = Address( esp, +1 * OOP_SIZE );
+    Address stack_pointer = Address( esp, +2 * OOP_SIZE );
 
     Register nlr_result_reg  = eax; // holds the result of the method
     Register nlr_home_reg    = edi; // the home frame ptr
@@ -1205,9 +1205,9 @@ const char *StubRoutines::generate_provoke_nlr_at( MacroAssembler *masm ) {
 
 const char *StubRoutines::generate_continue_nlr_in_delta( MacroAssembler *masm ) {
     // extern "C" void continue_nlr_in_delta(std::int32_t* frame_pointer, Oop* stack_pointer);
-    Address old_ret_addr  = Address( esp, -1 * oopSize );
-    Address frame_pointer = Address( esp, +1 * oopSize );
-    Address stack_pointer = Address( esp, +2 * oopSize );
+    Address old_ret_addr  = Address( esp, -1 * OOP_SIZE );
+    Address frame_pointer = Address( esp, +1 * OOP_SIZE );
+    Address stack_pointer = Address( esp, +2 * OOP_SIZE );
 
     Register nlr_result_reg  = eax; // holds the result of the method
     Register nlr_home_reg    = edi; // the home frame ptr
@@ -1260,7 +1260,7 @@ const char *StubRoutines::generate_handle_pascal_callback_stub( MacroAssembler *
     masm->pushl( edx );        // &params
     masm->pushl( ecx );        // index
     masm->call( (const char *) handleCallBack, RelocationInformation::RelocationType::runtime_call_type );
-    masm->addl( esp, 2 * oopSize );    // pop the arguments
+    masm->addl( esp, 2 * OOP_SIZE );    // pop the arguments
 
     // restore number of bytes in parameter list
     masm->popl( edx );
@@ -1311,7 +1311,7 @@ const char *StubRoutines::generate_handle_C_callback_stub( MacroAssembler *masm 
     masm->pushl( edx ); // &params
     masm->pushl( ecx ); // index
     masm->call( (const char *) handleCallBack, RelocationInformation::RelocationType::runtime_call_type );
-    masm->addl( esp, 2 * oopSize );    // pop the arguments
+    masm->addl( esp, 2 * OOP_SIZE );    // pop the arguments
     masm->popl( esi );
     masm->cmpl( esi, esp );
     masm->jcc( Assembler::Condition::equal, stackOK );

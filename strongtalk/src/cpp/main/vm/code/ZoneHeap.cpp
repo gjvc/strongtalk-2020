@@ -227,7 +227,7 @@ bool ZoneHeap::contains( const void *p ) const {
 
 
 ZoneHeap::~ZoneHeap() {
-    set_oops( (Oop *) base, capacity() / oopSize, nullptr );
+    set_oops( (Oop *) base, capacity() / OOP_SIZE, nullptr );
     free( const_cast<char *>(_base) );
     free( _heapKlass - 1 );        // -1 to get rid of sentinel
     free( _freeList );

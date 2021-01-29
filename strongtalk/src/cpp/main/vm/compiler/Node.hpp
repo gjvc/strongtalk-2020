@@ -92,9 +92,9 @@ protected:
     PseudoRegisterMapping *_pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
 
 public:
-    Label  _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
-    bool _dontEliminate; // for special cases: must not eliminate this node
-    bool _deleted;       // node has been deleted
+    Label _label;         // for jumps to this node -- SHOULD BE MOVED TO BasicBlock -- fix this
+    bool  _dontEliminate; // for special cases: must not eliminate this node
+    bool  _deleted;       // node has been deleted
 
     std::int32_t id() const {
         return this == nullptr ? -1 : _id;
@@ -135,7 +135,7 @@ public:
 
     static std::int32_t currentID;              // current node ID
     static std::int32_t currentCommentID;       // current ID for comment nodes
-    static ScopeInfo   lastScopeInfo;          // for programCounterDescriptor generation
+    static ScopeInfo    lastScopeInfo;          // for programCounterDescriptor generation
     static std::int32_t lastByteCodeIndex;      //
 
     BasicNode();
@@ -300,7 +300,7 @@ protected:
 public:
     // for splitting: rough estimate of Space cost of node (in bytes)
     virtual std::int32_t cost() const {
-        return oopSize;
+        return OOP_SIZE;
     }
 
 
@@ -726,7 +726,7 @@ class PrologueNode : public NonTrivialNode {
 
 protected:
 
-    LookupKey *_key;
+    LookupKey          *_key;
     const std::int32_t _nofArgs;
     const std::int32_t _nofTemps;
 
@@ -855,15 +855,15 @@ class LoadOffsetNode : public LoadNode {
 
 public:
     // _src is base address (e.g. object containing a slot)
-    std::int32_t    _offset;          // offset in words
-    bool _isArraySize;     // is this load implementing an array size primitive?
+    std::int32_t _offset;          // offset in words
+    bool         _isArraySize;     // is this load implementing an array size primitive?
 
 protected:
-    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *b, std::int32_t offs, bool arr ) :
+    LoadOffsetNode( PseudoRegister *dst, PseudoRegister *src, std::int32_t offset, bool isArraySize ) :
             LoadNode( dst ) {
-        _src         = b;
-        _offset      = offs;
-        _isArraySize = arr;
+        _src         = src;
+        _offset      = offset;
+        _isArraySize = isArraySize;
     }
 
 
@@ -917,8 +917,8 @@ class LoadUplevelNode : public LoadNode {
 private:
     Usage          *_context0Use;   //
     PseudoRegister *_context0;      // starting context
-    std::int32_t            _nofLevels;      // no. of indirections to follow via context home field
-    std::int32_t            _offset;         // offset of temporary in final context
+    std::int32_t   _nofLevels;      // no. of indirections to follow via context home field
+    std::int32_t   _offset;         // offset of temporary in final context
     SymbolOop      _name;           // temporary name (for printing)
 
 protected:
@@ -1030,8 +1030,8 @@ class StoreOffsetNode : public StoreNode {
 private:
     PseudoRegister *_base;              // base address (object containing the slot)
     Usage          *_baseUse;           //
-    std::int32_t            _offset;             // offset in words
-    bool         _needsStoreCheck;    // does store need a GC store check?
+    std::int32_t   _offset;             // offset in words
+    bool           _needsStoreCheck;    // does store need a GC store check?
 
 protected:
     StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool nsc ) :
@@ -1114,9 +1114,9 @@ class StoreUplevelNode : public StoreNode {
 private:
     Usage          *_context0Use;       //
     PseudoRegister *_context0;          // starting context
-    std::int32_t            _nofLevels;          // no. of indirections to follow via context home field
-    std::int32_t            _offset;             // offset of temporary in final context
-    bool         _needsStoreCheck;    // generate a store check if true
+    std::int32_t   _nofLevels;          // no. of indirections to follow via context home field
+    std::int32_t   _offset;             // offset of temporary in final context
+    bool           _needsStoreCheck;    // generate a store check if true
     SymbolOop      _name;               // temporary name (for printing)
 
 protected:
@@ -1188,7 +1188,7 @@ protected:
 
 public:
     std::int32_t cost() const {
-        return oopSize / 2;
+        return OOP_SIZE / 2;
     }  // assume 50% eliminated
     bool isAccessingFloats() const;
 
@@ -2043,8 +2043,8 @@ protected:
     ArithOpCode         _op;
     PseudoRegister      *_oper;
     Usage               *_operUse;
-    bool              _arg1IsInt;            // is _src a smi_t?
-    bool              _arg2IsInt;            // is _oper a smi_t?
+    bool                _arg1IsInt;            // is _src a smi_t?
+    bool                _arg2IsInt;            // is _oper a smi_t?
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
     TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool a1, bool a2 );
@@ -2163,7 +2163,7 @@ public:
     GrowableArray<Usage *>          *uplevelUses; // uses for uplevel-read names
     GrowableArray<Definition *>     *uplevelDefs; // definitions for uplevel-written names
     GrowableArray<PseudoRegister *> *args;        // args including receiver (at index 0, followed by first arg), or nullptr
-    std::int32_t                             nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
+    std::int32_t                    nblocks;       // number of possibly live blocks at this point (for uplevel access computation)
 
     bool hasDest() const {
         return true;
@@ -2215,7 +2215,7 @@ class SendNode : public CallNode {
 
 protected:
     LookupKey *_key;      // lookup key (for selector)
-    bool    _superSend;  // is it a super send?
+    bool      _superSend;  // is it a super send?
     SendInfo  *_info;     // to set CompiledInlineCache flags (counting, uninlinable, etc.)
 
     SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool superSend, SendInfo *info );
@@ -2249,7 +2249,7 @@ public:
 
 
     std::int32_t cost() const {
-        return oopSize * 5;
+        return OOP_SIZE * 5;
     }      // include InlineCache + some param pushing
     PseudoRegister *recv() const;
 
@@ -2316,7 +2316,7 @@ protected:
     SymbolOop      _dll_name;
     SymbolOop      _function_name;
     dll_func_ptr_t _function;
-    bool         _async;
+    bool           _async;
 
     DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
@@ -2413,7 +2413,7 @@ class LoopHeaderNode : public TrivialNode {
 
 protected:
     // info for integer loops
-    bool                               _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
+    bool                                 _integerLoop;                    // integer loop? (if no: inst. vars below are not set)
     PseudoRegister                       *_loopVar;              // loop variable
     PseudoRegister                       *_lowerBound;           // lower bound
     PseudoRegister                       *_upperBound;           // upper bound (or nullptr; mutually exclusive with boundArray)
@@ -2425,8 +2425,8 @@ protected:
     GrowableArray<HoistedTypeTest *>  *_tests;              // type tests hoisted out of loop
     GrowableArray<LoopHeaderNode *>   *_nestedLoops;        // nested loops (nullptr if none)
     GrowableArray<LoopRegCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-    bool                            _activated;            // gen() does nothing until activated
-    std::int32_t                               _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
+    bool                              _activated;            // gen() does nothing until activated
+    std::int32_t                      _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
 
@@ -2602,7 +2602,7 @@ public:
 
 
     std::int32_t cost() const {
-        return 2 * oopSize;
+        return 2 * OOP_SIZE;
     }    // hope it's memoized
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -2659,7 +2659,7 @@ public:
 
 
     std::int32_t cost() const {
-        return 5 * oopSize;
+        return 5 * OOP_SIZE;
     } // assume blk is memoized
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -2689,9 +2689,9 @@ public:
 class ContextCreateNode : public PrimitiveNode {
     // src is parent context, dest is register holding created context
 protected:
-    std::int32_t                             _nofTemps;             // no. of temps in context
-    std::int32_t                             _contextSize;          // size of compiled context
-    std::int32_t                             _contextNo;            // context number (index into compiler's contextList)
+    std::int32_t                    _nofTemps;             // no. of temps in context
+    std::int32_t                    _contextSize;          // size of compiled context
+    std::int32_t                    _contextNo;            // context number (index into compiler's contextList)
     GrowableArray<PseudoRegister *> *_parentContexts;     // context chain above parent context (if any)
     GrowableArray<Usage *>          *_parentContextUses;  // for _parentContexts
 
@@ -3019,7 +3019,7 @@ class BranchNode : public AbstractBranchNode {
     // usually after a node that sets CCs
 protected:
     BranchOpCode _op;                       // branch untaken is likely
-    bool       _taken_is_uncommon;        // true if branch taken is uncommon
+    bool         _taken_is_uncommon;        // true if branch taken is uncommon
 
     BranchNode( BranchOpCode op, bool taken_is_uncommon ) {
         _op                = op;
@@ -3083,7 +3083,7 @@ class TypeTestNode : public AbstractBranchNode {
     // _src is the register containing the receiver
 protected:
     GrowableArray<KlassOop> *_classes;    // classes to test for
-    bool                  _hasUnknown;                // can recv be anything? (if false, recv class
+    bool                    _hasUnknown;                // can recv be anything? (if false, recv class
     // guaranteed to be in classes list)
 
     bool needsKlassLoad() const;        // does test need object's klass?
@@ -3136,7 +3136,7 @@ public:
 
 
     std::int32_t cost() const {
-        return 2 * oopSize * ( _classes->length() + needsKlassLoad() ? 1 : 0 );
+        return 2 * OOP_SIZE * ( _classes->length() + needsKlassLoad() ? 1 : 0 );
     }
 
 
@@ -3196,10 +3196,10 @@ protected:
     Usage          *_argUse;       //
     PseudoRegister *_error;        // where to move the error string
     Definition     *_errorDef;     //
-    bool         _needBoundsCheck;        // need array bounds check?
-    bool         _intArg;                 // need not test for std::int32_t if true
-    std::int32_t            _dataOffset;             // where start of array is (Oop offset)
-    std::int32_t            _sizeOffset;             // where size of array is (Oop offset)
+    bool           _needBoundsCheck;        // need array bounds check?
+    bool           _intArg;                 // need not test for std::int32_t if true
+    std::int32_t   _dataOffset;             // where start of array is (Oop offset)
+    std::int32_t   _sizeOffset;             // where size of array is (Oop offset)
 
     AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool ia, PseudoRegister *res, PseudoRegister *_err, std::int32_t dataOffset, std::int32_t sizeOffset ) {
         _src             = r;
@@ -3413,9 +3413,9 @@ public:
 
 protected:
     AccessType _access_type;
-    bool     _needs_store_check;
-    bool     _smi_element;
-    bool     _needs_element_range_check;
+    bool       _needs_store_check;
+    bool       _smi_element;
+    bool       _needs_element_range_check;
 
     ArrayAtPutNode( AccessType access_type,     // specifies the operation
                     PseudoRegister *array,     // holds the array
@@ -3535,8 +3535,8 @@ private:
     Usage          *_arg1_use;     //
     Usage          *_arg2_use;     //
     Definition     *_error_def;    //
-    bool         _arg1_is_smi;    // true if 1st argument is known to be a smi_t
-    bool         _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+    bool           _arg1_is_smi;    // true if 1st argument is known to be a smi_t
+    bool           _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
     Operation      _operation;      //
     // _src is	_recv;			    // receiver or nullptr
 

@@ -108,7 +108,7 @@ bool InliningPolicy::isBuiltinMethod() const {
         return true;
     const SymbolOop sel   = _methodOop->selector();
     const KlassOop  klass = receiverKlass();
-    const bool    isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
+    const bool      isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
     if ( isNum and isCriticalSmiSelector( sel ) )
         return true;
 
@@ -125,7 +125,7 @@ bool InliningPolicy::isBuiltinMethod() const {
 
 KlassOop CompilerInliningPolicy::nthArgKlass( std::int32_t i ) const {
     std::int32_t first = _sender->exprStack()->length() - _methodOop->number_of_arguments();
-    Expression *e = _sender->exprStack()->at( first + i );
+    Expression   *e    = _sender->exprStack()->at( first + i );
     return e->hasKlass() ? e->klass() : nullptr;
 }
 

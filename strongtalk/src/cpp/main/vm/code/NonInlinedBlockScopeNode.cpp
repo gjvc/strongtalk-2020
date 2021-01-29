@@ -7,6 +7,7 @@
 #include "vm/memory/Array.hpp"
 #include "vm/runtime/flags.hpp"
 
+
 void NonInlinedBlockScopeNode::generate( ScopeDescriptorRecorder *rec ) {
 
     _offset = rec->_codes->size();

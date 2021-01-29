@@ -22,16 +22,16 @@ class DeltaVirtualFrame;
 class RecompilerFrame : public PrintableResourceObject {
 
 protected:
-    Frame _frame;                                      // my frame
+    Frame           _frame;                                      // my frame
     RecompilerFrame *_caller;           //
     RecompilerFrame *_callee;            // caller / callee RecompilerFrame (or nullptr)
-    std::int32_t _num;                // stack frame number (0 = most recent)
-    std::int32_t _distance;           // recompilation search "distance" (measured in # of interpreted frames)
-    std::int32_t _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
-    std::int32_t _ncallers;           // number of callers
-    std::int32_t _sends;              // sends caused by this frame
-    std::int32_t _cumulSends;         // sends including sends from nested blocks
-    std::int32_t _loopDepth;          // loop depth of callee
+    std::int32_t    _num;                // stack frame number (0 = most recent)
+    std::int32_t    _distance;           // recompilation search "distance" (measured in # of interpreted frames)
+    std::int32_t    _invocations;        // current invocation estimate (for this frame) (i.e., how often was thus frame called)
+    std::int32_t    _ncallers;           // number of callers
+    std::int32_t    _sends;              // sends caused by this frame
+    std::int32_t    _cumulSends;         // sends including sends from nested blocks
+    std::int32_t    _loopDepth;          // loop depth of callee
 
     RecompilerFrame( Frame frame, const RecompilerFrame *callee );
 
@@ -184,9 +184,9 @@ public:
 class InterpretedRecompilerFrame : public RecompilerFrame {    // interpreter frame
 
 protected:
-    MethodOop _method;              //
-    std::int32_t       _byteCodeIndex;       // current byteCodeIndex
-    KlassOop  _receiverKlass;       //
+    MethodOop         _method;              //
+    std::int32_t      _byteCodeIndex;       // current byteCodeIndex
+    KlassOop          _receiverKlass;       //
     DeltaVirtualFrame *_deltaVirtualFrame;  // may be nullptr (for most recent frame)
     LookupKey         *_lookupKey;          // cached value of key()
 

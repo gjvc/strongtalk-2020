@@ -45,7 +45,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( MixinOopDescriptor ) / oopSize;
+        return sizeof( MixinOopDescriptor ) / OOP_SIZE;
     }
 
 

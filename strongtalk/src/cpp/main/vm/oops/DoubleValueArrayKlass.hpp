@@ -21,7 +21,7 @@ public:
 
     // Return the Oop size for a doubleValueArrayOop
     std::int32_t object_size( std::int32_t number_of_doubleValues ) const {
-        return non_indexable_size() + 1 + roundTo( number_of_doubleValues * sizeof( double ), oopSize ) / oopSize;
+        return non_indexable_size() + 1 + roundTo( number_of_doubleValues * sizeof( double ), OOP_SIZE ) / OOP_SIZE;
     }
 
 

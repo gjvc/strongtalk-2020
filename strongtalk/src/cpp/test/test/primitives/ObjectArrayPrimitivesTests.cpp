@@ -97,7 +97,7 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean
 
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
-    std::int32_t size   = Universe::new_gen.eden()->free() / oopSize;
+    std::int32_t size   = Universe::new_gen.eden()->free() / OOP_SIZE;
     Oop          result = objArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );
     EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();
@@ -105,7 +105,7 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
-    std::int32_t size   = Universe::old_gen.free() / oopSize;
+    std::int32_t size   = Universe::old_gen.free() / OOP_SIZE;
     Oop          result = objArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), arrayClass );
     ASSERT_TRUE( result->is_mark() );
     EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();

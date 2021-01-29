@@ -15,8 +15,8 @@ void setKlassVirtualTableFromVirtualFrameKlass( Klass *k ) {
 
 
 Oop VirtualFrameKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    KlassOop k    = as_klassOop();
-    std::int32_t      size = non_indexable_size();
+    KlassOop     k    = as_klassOop();
+    std::int32_t size = non_indexable_size();
 
     // allocate
     Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );

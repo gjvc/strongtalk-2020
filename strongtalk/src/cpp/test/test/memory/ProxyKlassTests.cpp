@@ -56,7 +56,7 @@ TEST_F( ProxyKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace
 ) {
 eden_top = eden_end;
 ASSERT_TRUE( Universe::new_gen
-.eden()->free() < 4 * oopSize );
+.eden()->free() < 4 * OOP_SIZE );
 ASSERT_TRUE( Universe::new_gen
 .
 contains( theClass

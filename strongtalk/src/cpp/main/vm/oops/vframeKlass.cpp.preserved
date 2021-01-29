@@ -96,13 +96,13 @@ oop vframeKlass::mirror_line( oop obj ) {
 
 oop vframeKlass::mirror_contents_at( oop obj, symbolOop name ) {
     TEST;
-    slotDesc * sd = vfo->method()->find_nonVM_slot( name );
+    slotDesc *sd = vfo->method()->find_nonVM_slot( name );
     if ( sd == nullptr )
         return prim_error( SLOTNAMEERROR );
     if ( sd->is_assignment_slot() )
         return Memory->assignmentMirrorObject;
-    VirtualFrame * vf     = vfo->as_vframe();
-    oop          contents = vf->get_slot( sd );
+    VirtualFrame *vf = vfo->as_vframe();
+    oop contents = vf->get_slot( sd );
     return contents->as_mirror();
 }
 
@@ -130,7 +130,7 @@ oop vframeKlass::mirror_receiver( oop obj ) {
 
 oop vframeKlass::mirror_parent( oop obj ) {
     TEST;
-    VirtualFrame * parent = vfo->as_vframe()->parent();
+    VirtualFrame *parent = vfo->as_vframe()->parent();
     if ( !parent )
         return prim_error( NOPARENTERROR );
     assert( vfo->process() == vmProcess || !parent->is_first_self_vframe(), "doIt of a process cannot have blocks!" );
@@ -141,8 +141,8 @@ oop vframeKlass::mirror_parent( oop obj ) {
 
 oop vframeKlass::mirror_sender( oop obj ) {
     TEST;
-    VirtualFrame * vf     = vfo->as_vframe();
-    VirtualFrame * sender = vf->sender();
+    VirtualFrame *vf     = vfo->as_vframe();
+    VirtualFrame *sender = vf->sender();
     if ( !sender || vfo->process() != vmProcess && sender->is_first_self_vframe() )
         return prim_error( NOSENDERERROR );
 
@@ -155,7 +155,7 @@ oop vframeKlass::mirror_sender( oop obj ) {
 oop vframeKlass::mirror_expr_stack( oop obj ) {
     TEST;
     smi len;
-    oop * vec;
+    oop *vec;
     vfo->as_vframe()->get_expr_stack( vec, len );
     objArrayOop objVec = Memory->objArrayObject->cloneSize( len );
     for ( smi   i      = 0; i < len; i++ )
@@ -196,8 +196,8 @@ void vframeKlass::print( oop obj ) {
     if ( WizardMode && !obj->is_Klass() ) {
         vframeOop vfo = vframeOop( obj );
         if ( vfo->is_live() ) {
-            VirtualFrame * vf  = vfo->as_vframe();
-            char         * sel = vf->selector() ? symbolOop( vf->selector() )->copy_null_terminated() : "...";
+            VirtualFrame *vf  = vfo->as_vframe();
+            char         *sel = vf->selector() ? symbolOop( vf->selector() )->copy_null_terminated() : "...";
             lprintf( "(%s / %#lx %#lx) ", sel, vfo->_frame(), vfo->locals() );
         } else {
             lprintf( "(DEAD)" );
@@ -212,11 +212,11 @@ void vframeKlass::print_oop( oop obj ) {
     lprintf( "<a%s activation object", live ? "n" : " dead" );
     if ( WizardMode && live ) {
         ResourceMark resourceMark;
-        VirtualFrame * vf = vframeOop( obj )->as_vframe();
+        VirtualFrame *vf = vframeOop( obj )->as_vframe();
         lprintf( " <%#lx @ %#lx # %ld>", vf->_frame, vf->code, long( vf->descOffset()->value() ) );
 
-        methodKlass * mm = ( methodKlass * ) vf->method()->Klass();
-        symbolOop   file = mm->file();
+        methodKlass *mm = (methodKlass *) vf->method()->Klass();
+        symbolOop file = mm->file();
         if ( file->length() > 0 ) {
             lprintf( " (" );
             lprintf( ":%ld): ", mm->line()->value() );
@@ -231,6 +231,6 @@ void vframeKlass::print_oop( oop obj ) {
 
 
 // enumerating
-bool vframeKlass::is_enumerable( oop obj, oop * matching_cell ) {
+bool vframeKlass::is_enumerable( oop obj, oop *matching_cell ) {
     return matching_cell >= vframeOop( obj )->oops( empty_object_size() ) || *matching_cell == vframeOop( obj )->method() || *matching_cell == oop( vframeOop( obj )->process() );
 };

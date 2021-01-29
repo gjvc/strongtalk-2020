@@ -19,10 +19,10 @@ class ScopeDescriptorRecorder;
 class LogicalAddress : public ResourceObject {
 
 private:
-    NameNode *_physicalAddress;
-    std::int32_t _pcOffset;
+    NameNode       *_physicalAddress;
+    std::int32_t   _pcOffset;
     LogicalAddress *_next;
-    std::int32_t _offset;
+    std::int32_t   _offset;
 
 public:
     LogicalAddress( NameNode *physical_address, std::int32_t pc_offset = 0 );

@@ -40,9 +40,9 @@ PRIM_DECL_3( objArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop 
     if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    KlassOop k        = KlassOop( receiver );
-    std::int32_t      ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t      obj_size = ni_size + 1 + SMIOop( argument )->value();
+    KlassOop     k        = KlassOop( receiver );
+    std::int32_t ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t obj_size = ni_size + 1 + SMIOop( argument )->value();
 
     // allocate
     Oop *result = ( tenured == Universe::trueObject() ) ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, false );
@@ -72,8 +72,8 @@ PRIM_DECL_2( objArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop       k        = KlassOop( receiver );
-    std::int32_t            ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t            obj_size = ni_size + 1 + SMIOop( argument )->value();
+    std::int32_t   ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t   obj_size = ni_size + 1 + SMIOop( argument )->value();
     // allocate
     ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
@@ -227,8 +227,8 @@ PRIM_DECL_4( objArrayPrimitives::copy_size, Oop receiver, Oop from, Oop start, O
 
     // allocation of object array
     KlassOop       k        = receiver->klass();
-    std::int32_t            ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t            obj_size = ni_size + 1 + SMIOop( size )->value();
+    std::int32_t   ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t   obj_size = ni_size + 1 + SMIOop( size )->value();
     // allocate
     ObjectArrayOop obj      = as_objArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
 

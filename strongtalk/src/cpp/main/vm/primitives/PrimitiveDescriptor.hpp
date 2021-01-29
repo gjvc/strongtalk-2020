@@ -60,7 +60,7 @@ class PrimitiveDescriptor {
 public:
     const char            *_name;       // name of the primitive
     primitiveFunctionType _fn;          // primitive entry point
-    std::int32_t                   _flags;       // see unpacking below
+    std::int32_t          _flags;       // see unpacking below
     const char            **_types;     // the return type and parameter types [0] contains the return type, [1..number_of_parameters] contains types for the parameters
     const char            **_errors;    // a null terminated list of errors for the primitive excluding {FirstArgumenthasWrongType, SecondArgumenthasWrongType ...}
 
@@ -157,6 +157,7 @@ public:
     const char *error( std::int32_t index ) const {
         return _errors[ index ];
     }
+
 
     // Comparison operation (must have signed result)
     std::int32_t compare( const char *str, std::int32_t len ) const;

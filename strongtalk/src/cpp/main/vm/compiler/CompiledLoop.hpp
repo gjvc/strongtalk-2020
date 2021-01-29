@@ -20,7 +20,7 @@ class LoopRegCandidate : public PrintableResourceObject {
 
 private:
     PseudoRegister *_pseudoRegister;
-    std::int32_t _nuses, _ndefs;
+    std::int32_t   _nuses, _ndefs;
 
 public:
     LoopRegCandidate( PseudoRegister *r ) {
@@ -76,15 +76,15 @@ private:
     Node           *_startOfCond;               //
     Node           *_endOfCond;                 //
     BranchNode     *_loopBranch;                // branch ending loop condition
-    std::int32_t _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
+    std::int32_t   _firstNodeID, _lastNodeID;    // all node IDs in loop are between these two
 
     // the instance variables below are set as a result of recognize() and are valid only if isIntegerLoop()
-    bool _isIntegerLoop;               // is this loop a recognized integer loop?
+    bool           _isIntegerLoop;               // is this loop a recognized integer loop?
     PseudoRegister *_loopVar;                   // suspected loop variable
     PseudoRegister *_lowerBound;                // lower bound of for-like loop (see comment in findLowerBound)
     PseudoRegister *_upperBound;                // upper bound
     PseudoRegister *_increment;                 // increment of loopVar
-    bool _isCountingUp;                // true if loop is counting up, false if counting down
+    bool           _isCountingUp;                // true if loop is counting up, false if counting down
     NonTrivialNode *_incNode;                   // node incrementing loop var
     PseudoRegister *_loopArray;                 // array whose size is upper bound (or nullptr)
     LoadOffsetNode *_loopSizeLoad;              // node loading loopArray's size
@@ -173,7 +173,7 @@ public:
     NonTrivialNode          *_node;         // node (within loop) doing the test
     PseudoRegister          *_testedPR;     // PseudoRegister whose type is tested
     GrowableArray<KlassOop> *_klasses;      // klasses for which the PseudoRegister is tested
-    bool _invalid;
+    bool                    _invalid;
 
     HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses );
 

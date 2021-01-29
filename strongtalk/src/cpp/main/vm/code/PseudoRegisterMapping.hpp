@@ -40,7 +40,7 @@ class PseudoRegisterMapping : public PrintableResourceObject {
 
 private:
     MacroAssembler                  *_macroAssembler;              // the low_level assembler (for spill code generation, etc.)
-    bool                          _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
+    bool                            _nonLocalReturnInProgress;     // indicates that a NonLocalReturn is in progress (see also Note above)
     Locations                       *_locations;                   // the locations freelist
     GrowableArray<PseudoRegister *> *_pseudoRegisters;             // the PseudoRegisters; a nullptr entry means the slot is not used
     GrowableArray<std::int32_t>     *_registerLocations;           // the register to which a PseudoRegister is mapped or -1

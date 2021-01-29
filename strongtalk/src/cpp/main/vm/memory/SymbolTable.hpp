@@ -33,7 +33,7 @@ std::int32_t hash( const char *name, std::int32_t len );
 
 struct SymbolTableLink {
     // instance variable
-    SymbolOop symbol;
+    SymbolOop       symbol;
     SymbolTableLink *next;
 
     // memory operations
@@ -91,9 +91,9 @@ class SymbolTable : public CHeapAllocatedObject {
 
 private:
     std::array<SymbolTableEntry, symbol_table_size> buckets;
-    SymbolTableLink *free_list;
-    SymbolTableLink *first_free_link;
-    SymbolTableLink *end_block;
+    SymbolTableLink                                 *free_list;
+    SymbolTableLink                                 *first_free_link;
+    SymbolTableLink                                 *end_block;
 
 public:
     SymbolTable();

@@ -35,18 +35,18 @@ protected:
 public:
     // returns the header size of a MemOop
     static std::int32_t header_size() {
-        return sizeof( MemOopDescriptor ) / oopSize;
+        return sizeof( MemOopDescriptor ) / OOP_SIZE;
     }
 
 
     // field offsets for code generation
     static std::int32_t mark_byte_offset() {
-        return ( 0 * oopSize ) - MEMOOP_TAG;
+        return ( 0 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 
     static std::int32_t klass_byte_offset() {
-        return ( 1 * oopSize ) - MEMOOP_TAG;
+        return ( 1 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 

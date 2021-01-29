@@ -183,7 +183,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey *key, bool compile ) {
 
     // Check Inlining database
     if ( UseInliningDatabase and UseInliningDatabaseEagerly and compile ) {
-        ResourceMark rm;
+        ResourceMark       rm;
         RecompilationScope *rs = InliningDatabase::lookup_and_remove( key );
         if ( rs ) {
             if ( TraceInliningDatabase ) {
@@ -193,7 +193,7 @@ LookupResult LookupCache::cache_miss_lookup( LookupKey *key, bool compile ) {
             }
 
             // Remove old NativeMethod if present
-            NativeMethod *old_nm = Universe::code->lookup( rs->key() );
+            NativeMethod      *old_nm = Universe::code->lookup( rs->key() );
             VM_OptimizeRScope op( rs );
             VMProcess::execute( &op );
             if ( old_nm )

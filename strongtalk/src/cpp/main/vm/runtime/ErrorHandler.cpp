@@ -18,11 +18,11 @@
 //extern "C" ContextOop nlr_home_context;
 
 extern "C" {
-bool     have_nlr_through_C = false;
-Oop        nlr_result;
-std::int32_t        nlr_home;
-std::int32_t        nlr_home_id;
-ContextOop nlr_home_context;
+bool         have_nlr_through_C = false;
+Oop          nlr_result;
+std::int32_t nlr_home;
+std::int32_t nlr_home_id;
+ContextOop   nlr_home_context;
 }
 
 

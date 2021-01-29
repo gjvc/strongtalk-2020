@@ -107,7 +107,7 @@ class TokenStream : public StackAllocatedObject {
 
 private:
     GrowableArray<char *> *tokens;
-    std::int32_t                   pos;
+    std::int32_t          pos;
 
     void tokenize( char *str );
 
@@ -257,7 +257,7 @@ void TokenStream::tokenize( char *str ) {
 
 
 bool TokenStream::is_smi( Oop *addr ) {
-    std::int32_t           value;
+    std::int32_t  value;
     std::uint32_t length;
 
     if ( sscanf( current(), "%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
@@ -269,7 +269,7 @@ bool TokenStream::is_smi( Oop *addr ) {
 
 
 bool TokenStream::is_table_entry( Oop *addr ) {
-    std::int32_t           value;
+    std::int32_t  value;
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not ObjectIDTable::is_index_ok( value ) ) {
@@ -284,7 +284,7 @@ bool TokenStream::is_table_entry( Oop *addr ) {
 
 
 bool TokenStream::is_object_search( Oop *addr ) {
-    std::int32_t           address;
+    std::int32_t  address;
     Oop           obj;
     std::uint32_t length;
 
@@ -407,9 +407,9 @@ void evaluator::eval_message( TokenStream *stream ) {
             return;
         result = Delta::call( receiver, selector, argument );
     } else if ( stream->is_keyword() ) {
-        char name[100];
-        Oop  arguments[10];
-        std::int32_t  nofArgs = 0;
+        char         name[100];
+        Oop          arguments[10];
+        std::int32_t nofArgs = 0;
         name[ 0 ] = '\0';
         while ( not stream->eos() ) {
             strcat( name, stream->current() );

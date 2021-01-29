@@ -7,6 +7,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/code/NativeMethod.hpp"
 
+
 CodeTable::CodeTable( std::int32_t size ) {
     tableSize = size;
     buckets   = new_c_heap_array<CodeTableEntry>( size );

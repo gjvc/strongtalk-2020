@@ -86,7 +86,7 @@ struct CodeTableEntry : ValueObject {
 
 class CodeTable : public PrintableCHeapAllocatedObject {
 protected:
-    std::int32_t tableSize;
+    std::int32_t   tableSize;
     CodeTableEntry *buckets;
 
 

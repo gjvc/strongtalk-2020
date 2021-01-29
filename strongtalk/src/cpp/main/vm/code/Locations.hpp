@@ -22,11 +22,11 @@
 class Locations : public PrintableResourceObject {
 
 private:
-    std::int32_t _nofArguments;          // the number of arguments
-    std::int32_t _nofRegisters;          // the maximum number of available registers
+    std::int32_t                _nofArguments;          // the number of arguments
+    std::int32_t                _nofRegisters;          // the maximum number of available registers
     GrowableArray<std::int32_t> *_freeList;             // the list of free locations
-    std::int32_t _firstFreeRegister;     // the index of the first free register in _freeList
-    std::int32_t _firstFreeStackTmp;     // the index of the first free stack temporary in _freeList
+    std::int32_t                _firstFreeRegister;     // the index of the first free register in _freeList
+    std::int32_t                _firstFreeStackTmp;     // the index of the first free stack temporary in _freeList
 
     std::int32_t argumentsBeg() const {
         return 0;
@@ -153,7 +153,7 @@ public:
 
     std::int32_t locationAsWordOffset( std::int32_t loc ) const;    // the (ebp) word offset corresponding to loc
     std::int32_t locationAsByteOffset( std::int32_t loc ) const {
-        return locationAsWordOffset( loc ) * oopSize;
+        return locationAsWordOffset( loc ) * OOP_SIZE;
     }
 
 

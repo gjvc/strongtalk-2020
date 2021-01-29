@@ -27,11 +27,11 @@ void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, Usage *use, co
 void DefinitionUsageInfo::propagateTo( BasicBlock *useBasicBlock, const PseudoRegister *r, const Definition *def, Usage *use, const bool global ) {
     // def reaches use; try to eliminate r's use by using copy propagation
     NonTrivialNode *fromNode    = def->_node;
-    const bool   isAssignment = fromNode->isAssignmentLike();
+    const bool     isAssignment = fromNode->isAssignmentLike();
     NonTrivialNode *toNode      = use->_node;
-    const bool   hasSrc       = fromNode->hasSrc();
+    const bool     hasSrc       = fromNode->hasSrc();
     PseudoRegister *fromPR      = hasSrc ? fromNode->src() : nullptr;
-    const bool   isConst      = hasSrc and fromPR->isConstPseudoRegister();
+    const bool     isConst      = hasSrc and fromPR->isConstPseudoRegister();
 
     if ( isAssignment and isConst and toNode->canCopyPropagateOop() ) {
         // loadOop r1, Oop; ...; r2 := op(r1)    --->
@@ -148,7 +148,7 @@ void DefinitionUsageInfo::getLiveRange( std::int32_t &firstNodeNum, std::int32_t
 
 
 void DefinitionUsageInfo::print_short() {
-    spdlog::info( "DefinitionUsageInfo 0x{0:x}", static_cast<void*>( this ) );
+    spdlog::info( "DefinitionUsageInfo 0x{0:x}", static_cast<void *>( this ) );
 }
 
 

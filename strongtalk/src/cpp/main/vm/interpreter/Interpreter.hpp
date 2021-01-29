@@ -15,10 +15,10 @@
 class Interpreter : AllStatic {
 
 public:
-    static bool _is_initialized;              // true if Interpreter has been initialized
-    static const char *_code_begin_addr;            // the first byte of the interpreter's code
-    static const char *_code_end_addr;              // the first byte after the interpreter's code
-    static std::int32_t        *_invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
+    static bool         _is_initialized;              // true if Interpreter has been initialized
+    static const char   *_code_begin_addr;            // the first byte of the interpreter's code
+    static const char   *_code_end_addr;              // the first byte after the interpreter's code
+    static std::int32_t *_invocation_counter_addr;    // the address of the invocation counter (used in method entry code)
 
     // entry points
     static const char *_redo_send_entry;    // entry point to redo an interpreted send that called a zombie NativeMethod
@@ -47,7 +47,7 @@ public:
 
     static const char *_restart_primitiveValue;
     static const char *_nlr_single_step_continuation_entry;
-    static Label _nlr_single_step_continuation; // used by single step stub routine
+    static Label      _nlr_single_step_continuation; // used by single step stub routine
     static const char *_redo_bytecode_after_deoptimization;
     static const char *_illegal;
 
@@ -58,6 +58,10 @@ public:
 
     static void wrong_eax();        // called in debug mode only
     static void wrong_esp();        // called in debug mode only
+    static void wrong_ebx();        // called in debug mode only
+    static void wrong_obj();        // called in debug mode only
+    static void wrong_primitive_result();        // called in debug mode only
+
 
     // Floats
     static DoubleOop oopify_FloatValue();

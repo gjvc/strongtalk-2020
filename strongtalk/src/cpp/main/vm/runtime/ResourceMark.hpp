@@ -23,7 +23,7 @@ class AbstractResourceMark : StackAllocatedObject {
 class ResourceMark : StackAllocatedObject {
 
 protected:
-    static bool _enabled;
+    static bool       _enabled;
     ResourceArea      *_resourceArea;
     ResourceAreaChunk *_resourceAreaChunk;
     char              *_top;

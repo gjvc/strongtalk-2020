@@ -27,7 +27,7 @@ class Mapping : AllStatic {
 private:
 //        static Location _localRegisters[nofLocalRegisters + 1]; // the list of local registers
 //        static std::int32_t      _localRegisterIndex[REGISTER_COUNT + 1];  // the inverse of localRegisters[]
-    static std::array<Location, nofLocalRegisters> _localRegisters;
+    static std::array<Location, nofLocalRegisters>  _localRegisters;
     static std::array<std::int32_t, REGISTER_COUNT> _localRegisterIndex;
 
 public:

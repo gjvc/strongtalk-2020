@@ -151,7 +151,7 @@ char *ResourceArea::allocate_bytes( std::int32_t size ) {
         return (char *) 1;
     }
 
-    size = roundTo( size, oopSize );
+    size = roundTo( size, OOP_SIZE );
     char *p;
     if ( _resourceAreaChunk and ( p = _resourceAreaChunk->allocate_bytes( size ) ) )
         return p;

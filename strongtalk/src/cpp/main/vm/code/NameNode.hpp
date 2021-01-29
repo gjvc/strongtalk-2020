@@ -41,7 +41,7 @@ public:
 
     virtual Location location() {
         ShouldNotCallThis();
-        return unAllocated;
+        return Location::UNALLOCATED_LOCATION;
     }
 
 

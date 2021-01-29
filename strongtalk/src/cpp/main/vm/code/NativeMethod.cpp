@@ -37,9 +37,9 @@ static std::int32_t nof_noninlined_blocks;
 NativeMethod *new_nativeMethod( Compiler *c ) {
 
     // This grossness is brought to you by the great way in which C++ handles non-standard allocation...
-    instruction_length    = roundTo( c->code()->code_size(), oopSize );
-    location_length       = roundTo( c->code()->reloc_size(), oopSize );
-    scope_length          = roundTo( c->scopeDescRecorder()->size(), oopSize );
+    instruction_length    = roundTo( c->code()->code_size(), OOP_SIZE );
+    location_length       = roundTo( c->code()->reloc_size(), OOP_SIZE );
+    scope_length          = roundTo( c->scopeDescRecorder()->size(), OOP_SIZE );
     nof_noninlined_blocks = c->number_of_noninlined_blocks();
 
     NativeMethod *nm = new NativeMethod( c );
@@ -52,9 +52,9 @@ NativeMethod *new_nativeMethod( Compiler *c ) {
 
 
 void *NativeMethod::operator new( std::size_t size ) {
-    st_assert( sizeof( NativeMethod ) % oopSize == 0, "NativeMethod size must be multiple of a word" );
-    std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), oopSize );
-    void *p = Universe::code->allocate( nativeMethod_size );
+    st_assert( sizeof( NativeMethod ) % OOP_SIZE == 0, "NativeMethod size must be multiple of a word" );
+    std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), OOP_SIZE );
+    void         *p                = Universe::code->allocate( nativeMethod_size );
     if ( not p ) st_fatal( "out of Space in code cache" );
     return p;
 }
@@ -109,8 +109,8 @@ NativeMethod::NativeMethod( Compiler *c ) :
     _entryPointOffset         = theCompiler->entry_point_offset();
     _verifiedEntryPointOffset = theCompiler->verified_entry_point_offset();
 
-    st_assert( _entryPointOffset % oopSize == 0, "entry point is not aligned" );
-    st_assert( _verifiedEntryPointOffset % oopSize == 0, "verified entry point is not aligned" );
+    st_assert( _entryPointOffset % OOP_SIZE == 0, "entry point is not aligned" );
+    st_assert( _verifiedEntryPointOffset % OOP_SIZE == 0, "verified entry point is not aligned" );
     st_assert( 0 <= _specialHandlerCallOffset and _specialHandlerCallOffset < instruction_length, "bad special handler call offset" );
     st_assert( 0 <= _entryPointOffset and _entryPointOffset < instruction_length, "bad entry point offset" );
     st_assert( 0 <= _verifiedEntryPointOffset and _verifiedEntryPointOffset < instruction_length, "bad verified entry point offset" );
@@ -266,8 +266,8 @@ void NativeMethod::moveTo( void *p, std::int32_t size ) {
 
     assert(iabs((char*)to - (char*)this) >= sizeof(NCodeBase),
        "nativeMethods overlap too much");
-    assert(sizeof(NCodeBase) % oopSize == 0, "should be word-aligned");
-    copy_oops((Oop*)this, (Oop*)to, sizeof(NCodeBase) / oopSize);
+    assert(sizeof(NCodeBase) % OOP_SIZE == 0, "should be word-aligned");
+    copy_oops((Oop*)this, (Oop*)to, sizeof(NCodeBase) / OOP_SIZE);
             // init to's vtable
     std::int32_t delta = (char*) to - (char*) this;
 
@@ -285,8 +285,8 @@ void NativeMethod::moveTo( void *p, std::int32_t size ) {
       }
     }
 
-    assert(size % oopSize == 0, "not a multiple of oopSize");
-    copy_oops_overlapping((Oop*) this, (Oop*) to, size / oopSize);
+    assert(size % OOP_SIZE == 0, "not a multiple of OOP_SIZE");
+    copy_oops_overlapping((Oop*) this, (Oop*) to, size / OOP_SIZE);
     flushICacheRange(to->insts(), to->instsEnd());
 #endif
 }
@@ -384,9 +384,9 @@ void NativeMethod::makeZombie( bool clearInlineCaches ) {
     guarantee( p[ 0 ] == enter[ 0 ] and p[ 1 ] == enter[ 1 ] and p[ 2 ] == enter[ 2 ], "not \"push ebp, mov ebp esp\" - check this" );
 
     // overwrite with "nop, jmp specialHandlerCall" (nop first so it can be replaced by int3 for debugging)
-    const char nop    = '\x90';
-    const char jmp    = '\xeb'; // std::int16_t jump with 8bit signed offset
-    std::int32_t        offset = specialHandlerCall() - &p[ 3 ];
+    const char   nop    = '\x90';
+    const char   jmp    = '\xeb'; // std::int16_t jump with 8bit signed offset
+    std::int32_t offset = specialHandlerCall() - &p[ 3 ];
     guarantee( -128 <= offset and offset < 128, "offset too big for std::int16_t jump" );
     p[ 0 ] = nop;
     p[ 1 ] = jmp;
@@ -484,7 +484,7 @@ bool NativeMethod::depends_on_invalid_klass() {
 
     // Check dependents
     NativeMethodScopes *ns = scopes();
-    for ( std::int32_t i = ns->dependent_length() - 1; i >= 0; i-- ) {
+    for ( std::int32_t i   = ns->dependent_length() - 1; i >= 0; i-- ) {
         if ( ns->dependent_at( i )->is_invalid() )
             return true;
     }
@@ -524,7 +524,7 @@ ProgramCounterDescriptor *NativeMethod::containingProgramCounterDescriptorOrNULL
     // called a lot, so watch out for performance bugs
 
     st_assert( contains( pc ), "NativeMethod must contain pc into frame" );
-    std::int32_t offset = pc - instructionsStart();
+    std::int32_t             offset = pc - instructionsStart();
     ProgramCounterDescriptor *start = stream ? stream : pcs();
     ProgramCounterDescriptor *end   = pcsEnd() - 1;
 
@@ -676,7 +676,7 @@ void NativeMethod::verify() {
         }
     }
 
-    if ( findNativeMethod( (char *) instructionsEnd() - oopSize ) not_eq this ) {
+    if ( findNativeMethod( (char *) instructionsEnd() - OOP_SIZE ) not_eq this ) {
         error( "findNativeMethod did not find this NativeMethod (0x{0:x})", this );
     }
 
@@ -689,8 +689,8 @@ void NativeMethod::verify_expression_stacks_at( const char *pc ) {
     ProgramCounterDescriptor *pd = containingProgramCounterDescriptor( pc );
     if ( not pd ) st_fatal( "ProgramCounterDescriptor not found" );
 
-    ScopeDescriptor *sd = scopes()->at( pd->_scope, pc );
-    std::int32_t byteCodeIndex = pd->_byteCodeIndex;
+    ScopeDescriptor *sd           = scopes()->at( pd->_scope, pc );
+    std::int32_t    byteCodeIndex = pd->_byteCodeIndex;
     while ( sd ) {
         sd->verify_expression_stack( byteCodeIndex );
         ScopeDescriptor *next = sd->sender();
@@ -785,7 +785,7 @@ void NativeMethod::printLocs() {
     spdlog::info( "locations:" );
     Indent++;
     RelocationInformationIterator iter( this );
-    std::int32_t                           last_offset = 0;
+    std::int32_t                  last_offset = 0;
 
     for ( RelocationInformation *l = locs(); l < locsEnd(); l++ ) {
         iter.next();
@@ -971,8 +971,8 @@ void NativeMethod::print_inlining_database() {
 
 void NativeMethod::print_inlining_database_on( ConsoleOutputStream *stream ) {
     // WARNING: this method is for debugging only -- it's not used to actually file out the DB
-    ResourceMark rm;
-    RecompilationScope *root = NonDummyRecompilationScope::constructRScopes( this, false );
+    ResourceMark                              rm;
+    RecompilationScope                        *root     = NonDummyRecompilationScope::constructRScopes( this, false );
     GrowableArray<ProgramCounterDescriptor *> *uncommon = uncommonBranchList();
     root->print_inlining_database_on( stream, uncommon );
 }

@@ -55,9 +55,9 @@ bool SymbolKlass::verify( Oop obj ) {
 
 void SymbolKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_symbol( obj, "dispatch check" );
-    SymbolOop array = SymbolOop( obj );
-    std::int32_t       len   = array->length();
-    std::int32_t       n     = min( MaxElementPrintSize, len );
+    SymbolOop    array = SymbolOop( obj );
+    std::int32_t len   = array->length();
+    std::int32_t n     = min( MaxElementPrintSize, len );
     stream->print( "#" );
     for ( std::int32_t i = 1; i <= n; i++ ) {
         char c = array->byte_at( i );

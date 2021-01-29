@@ -23,7 +23,7 @@ class InterpretedInlineCache;
 class CodeIterator : public StackAllocatedObject {
 
 private:
-    MethodOop _methodOop;
+    MethodOop    _methodOop;
     std::uint8_t *_current;
     std::uint8_t *_end;
 

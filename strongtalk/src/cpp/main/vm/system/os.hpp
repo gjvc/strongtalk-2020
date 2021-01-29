@@ -8,7 +8,6 @@
 #include "vm/utilities/LongInteger64.hpp"
 
 
-
 //typedef void ( __CALLING_CONVENTION *dll_func_ptr_t )( ... );
 typedef void (  *dll_func_ptr_t )( ... );
 

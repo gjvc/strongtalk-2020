@@ -81,12 +81,12 @@ ScopeDescriptor *ScopeDescriptor::home( bool cross_NativeMethod_boundary ) const
 
 
 NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool canFail ) {
-    std::int32_t    pos     = _name_desc_offset;
+    std::int32_t   pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::int32_t    i        = 0;
+        std::int32_t   i        = 0;
         while ( current not_eq nullptr ) {
             if ( i == index ) {
                 result = current;
@@ -106,7 +106,7 @@ NameDescriptor *ScopeDescriptor::temporary( std::int32_t index, bool canFail ) {
 
 
 NameDescriptor *ScopeDescriptor::contextTemporary( std::int32_t index, bool canFail ) {
-    std::int32_t    pos     = _name_desc_offset;
+    std::int32_t   pos     = _name_desc_offset;
     NameDescriptor *result = nullptr;
 
     if ( _hasTemporaries ) {
@@ -118,7 +118,7 @@ NameDescriptor *ScopeDescriptor::contextTemporary( std::int32_t index, bool canF
 
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::int32_t    i        = 0;
+        std::int32_t   i        = 0;
         while ( current ) {
             if ( i == index ) {
                 result = current;
@@ -173,7 +173,7 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
     if ( _hasTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::int32_t            number   = 0;
+        std::int32_t   number   = 0;
         while ( current ) {
             blk->temp( number++, current, pc() );
             current = nameDescAt( pos );
@@ -182,7 +182,7 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
     if ( _hasContextTemporaries ) {
         NameDescriptor *current = nameDescAt( pos );
-        std::int32_t            number   = 0;
+        std::int32_t   number   = 0;
         while ( current ) {
             blk->context_temp( number++, current, pc() );
             current = nameDescAt( pos );
@@ -203,9 +203,9 @@ void ScopeDescriptor::iterate( NameDescriptorClosure *blk ) {
 
 class IterationHelper : public UnpackClosure {
 protected:
-    std::int32_t                   _no;
+    std::int32_t          _no;
     NameDescriptorClosure *_blk;
-    bool                _is_used;
+    bool                  _is_used;
 
 
     void use() {
@@ -258,8 +258,8 @@ class IH_stack_expr : public IterationHelper {
 void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
     std::int32_t pos = _name_desc_offset;
     if ( _hasTemporaries ) {
-        std::int32_t     no = 0;
-        IH_temp helper;
+        std::int32_t no = 0;
+        IH_temp      helper;
         do {
             helper.init( no++, blk );
             _scopes->iterate( pos, &helper );
@@ -267,7 +267,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
     }
 
     if ( _hasContextTemporaries ) {
-        std::int32_t             no = 0;
+        std::int32_t    no = 0;
         IH_context_temp helper;
         do {
             helper.init( no++, blk );
@@ -276,7 +276,7 @@ void ScopeDescriptor::iterate_all( NameDescriptorClosure *blk ) {
     }
 
     if ( _hasExpressionStack ) {
-        std::int32_t           no = 0;
+        std::int32_t  no = 0;
         IH_stack_expr helper;
         do {
             helper.init( no++, blk );
@@ -348,7 +348,7 @@ bool ScopeDescriptor::verify() {
 // verify expression stack at a call or primitive call
 void ScopeDescriptor::verify_expression_stack( std::int32_t byteCodeIndex ) {
     GrowableArray<std::int32_t> *mapping = method()->expression_stack_mapping( byteCodeIndex );
-    for ( std::int32_t  index    = 0; index < mapping->length(); index++ ) {
+    for ( std::int32_t          index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
             spdlog::warn( "expression not found in NativeMethod" );
@@ -365,8 +365,8 @@ void ScopeDescriptor::verify_expression_stack( std::int32_t byteCodeIndex ) {
 
 class PrintNameDescClosure : public NameDescriptorClosure {
 private:
-    std::int32_t  _indent;
-    char *_pc0;
+    std::int32_t _indent;
+    char         *_pc0;
 
 
     void print( const char *title, std::int32_t no, NameDescriptor *nd, char *pc ) {
@@ -595,7 +595,7 @@ ScopeDescriptor *TopLevelBlockScopeDescriptor::parent( bool cross_NativeMethod_b
     if ( not cross_NativeMethod_boundary )
         return nullptr;
     NativeMethod                   *nm     = _scopes->my_nativeMethod();
-    std::int32_t                            index;
+    std::int32_t                   index;
     NativeMethod                   *parent = nm->jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope  = parent->noninlined_block_scope_at( index );
     return scope->parent();

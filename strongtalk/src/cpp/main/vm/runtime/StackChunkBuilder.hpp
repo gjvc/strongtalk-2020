@@ -26,8 +26,8 @@ class StackChunkBuilder : public ResourceObject {
 
 private:
     // These numbers enable calculation of the corresponding deoptimized interpreter stack.
-    std::int32_t _virtualFrameCount;      // Number of VirtualFrame collected
-    std::int32_t _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
+    std::int32_t        _virtualFrameCount;      // Number of VirtualFrame collected
+    std::int32_t        _localExpressionCount;   // Sum of all temporaries and expressions in collected VirtualFrame
     static std::int32_t *_framePointer;          // Frame pointer of the resulting frame
 
     static std::int32_t header_size() {

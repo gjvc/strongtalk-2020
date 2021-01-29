@@ -748,8 +748,8 @@ void Assembler::bind_to( const Label &L, std::int32_t pos ) {
     st_assert( 0 <= pos and pos <= offset(), "must have a valid binding position" );
     while ( L.is_unbound() ) {
         Displacement disp      = Displacement( long_at( L.pos() ) );
-        std::int32_t          fixup_pos = L.pos();
-        std::int32_t          imm32     = 0;
+        std::int32_t fixup_pos = L.pos();
+        std::int32_t imm32     = 0;
         switch ( disp.type() ) {
             case Displacement::Type::call: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE8, "call expected" );

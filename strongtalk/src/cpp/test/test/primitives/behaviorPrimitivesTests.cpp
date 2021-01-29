@@ -35,7 +35,7 @@ protected:
 };
 
 TEST_F( BehaviorPrimitives, allocateForMemOopShouldReportFailureWhenNoSpace ) {
-    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
+    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * OOP_SIZE ) ) << "Too much free Space";
     EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), behaviorPrimitives::allocate3( Universe::falseObject(), objectClass ) ) << "Allocation should fail";
 }
 
@@ -51,7 +51,7 @@ TEST_F( BehaviorPrimitives, allocateForMemOopShouldScavengeAndAllocateWhenAllowe
     HandleMark mark;
     Handle     objectClassHandle( objectClass );
 
-    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * oopSize ) ) << "Too much free Space";
+    EXPECT_TRUE( Universe::new_gen.eden()->free() < ( 2 * OOP_SIZE ) ) << "Too much free Space";
 
     Oop object = behaviorPrimitives::allocate( objectClass );
 

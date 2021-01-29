@@ -21,7 +21,7 @@ public:
 
     // Return the Oop size for a ByteArrayOop
     std::int32_t object_size( std::int32_t number_of_bytes ) const {
-        return non_indexable_size() + 1 + roundTo( number_of_bytes, oopSize ) / oopSize;
+        return non_indexable_size() + 1 + roundTo( number_of_bytes, OOP_SIZE ) / OOP_SIZE;
     }
 
 

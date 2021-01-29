@@ -76,8 +76,8 @@ void ProgramCounterDescriptorInfoClass::copy_to( std::int32_t *&addr ) {
 
 
 void LocationName::generate( ScopeDescriptorRecorder *rec, bool is_last ) {
-    Location converted_location = rec->convert_location( _location );
-    std::int32_t      index              = rec->getValueIndex( converted_location._loc );
+    Location     converted_location = rec->convert_location( _location );
+    std::int32_t index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, LOCATION_CODE, is_last, index ) )
         rec->genIndex( index );
 }
@@ -91,8 +91,8 @@ void ValueName::generate( ScopeDescriptorRecorder *rec, bool is_last ) {
 
 
 void MemoizedName::generate( ScopeDescriptorRecorder *rec, bool is_last ) {
-    Location converted_location = rec->convert_location( _location );
-    std::int32_t      index              = rec->getValueIndex( converted_location._loc );
+    Location     converted_location = rec->convert_location( _location );
+    std::int32_t index              = rec->getValueIndex( converted_location._loc );
     if ( not genHeaderByte( rec, MEMOIZEDBLOCK_CODE, is_last, index ) )
         rec->genIndex( index );
     rec->genOop( Oop( _blockMethod ) );

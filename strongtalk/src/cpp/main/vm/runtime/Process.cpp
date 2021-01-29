@@ -1448,8 +1448,7 @@ void Processes::remove( DeltaProcess *p ) {
 
 
 bool Processes::includes( DeltaProcess *p ) {
-    ALL_PROCESSES( q )
-        if ( q == p )
+    ALL_PROCESSES( q )if ( q == p )
             return true;
     return false;
 }

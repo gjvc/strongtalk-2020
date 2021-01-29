@@ -41,8 +41,8 @@ TEST_F( AssociationKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
     {
         OldSpaceMark oldMark( Universe::old_gen.top_mark()._space );
         std::int32_t freeSpace = Universe::old_gen.free();
-        Universe::allocate_tenured( freeSpace / oopSize - 1 );
-        ASSERT_TRUE( Universe::old_gen.free() < 5 * oopSize );
+        Universe::allocate_tenured( freeSpace / OOP_SIZE - 1 );
+        ASSERT_TRUE( Universe::old_gen.free() < 5 * OOP_SIZE );
         ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( (AssociationKlass *) objectClass.as_klass()->klass_part() )->allocateObject( false ) );
     }
 }
@@ -54,8 +54,8 @@ TEST_F( AssociationKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
     {
         OldSpaceMark oldMark( Universe::old_gen.top_mark()._space );
         std::int32_t freeSpace = Universe::old_gen.free();
-        Universe::allocate_tenured( freeSpace / oopSize - 1 );
-        ASSERT_TRUE( Universe::old_gen.free() < 5 * oopSize );
+        Universe::allocate_tenured( freeSpace / OOP_SIZE - 1 );
+        ASSERT_TRUE( Universe::old_gen.free() < 5 * OOP_SIZE );
         ASSERT_TRUE( Universe::old_gen.contains( ( (AssociationKlass *) objectClass.as_klass()->klass_part() )->allocateObject( true ) ) );
     }
 }

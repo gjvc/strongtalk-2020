@@ -37,12 +37,12 @@ public:
 class NativeMethodScopes : public ValueObject {
 
 private:
-    std::int32_t           _nativeMethodOffset;   //
+    std::int32_t  _nativeMethodOffset;   //
     std::uint16_t _length;               //
     std::uint16_t _oopsOffset;           // word offset to the oops array
     std::uint16_t _valueOffset;          // word offset to the value array
     std::uint16_t _pcsOffset;            // word offset to ProgramCounterDescriptor array
-    std::int32_t           _dependentsEnd;        // size of dependents
+    std::int32_t  _dependentsEnd;        // size of dependents
 
 private:
     static std::uint16_t pack_word_aligned( std::int32_t value ) {

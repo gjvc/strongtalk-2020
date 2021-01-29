@@ -121,8 +121,8 @@ public:
 class StringOutputStream : public ConsoleOutputStream {
 
 protected:
-    std::string _string;
-    char *buffer;
+    std::string  _string;
+    char         *buffer;
     std::int32_t buffer_pos;
     std::int32_t buffer_length;
 

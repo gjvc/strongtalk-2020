@@ -23,7 +23,7 @@ std::int32_t doubleOopPrimitives::number_of_calls;
 
 
 static Oop new_double( double value ) {
-    DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / oopSize ) );
+    DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / OOP_SIZE ) );
     d->init_untagged_contents_mark();
     d->set_klass_field( doubleKlassObject );
     d->set_value( value );
@@ -331,7 +331,7 @@ PRIM_DECL_2( doubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     PROLOGUE_2( "printFormat", receiver, argument );
     ASSERT_RECEIVER;
     const std::int32_t size = 100;
-    char      format[size];
+    char               format[size];
 
     if ( argument->is_byteArray() ) {
         ByteArrayOop( argument )->copy_null_terminated( format, size );
@@ -349,15 +349,15 @@ PRIM_DECL_1( doubleOopPrimitives::printString, Oop receiver ) {
     PROLOGUE_1( "printString", receiver );
     ASSERT_RECEIVER;
     ResourceMark resourceMark;
-    char *result = new_resource_array<char>( 4 * 1024 );
-    std::int32_t len = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
+    char         *result = new_resource_array<char>( 4 * 1024 );
+    std::int32_t len     = sprintf( result, "%1.6f", DoubleOop( receiver )->value() );
     while ( len > 1 and result[ len - 1 ] == '0' and result[ len - 2 ] not_eq '.' )
         len--;
-    result[ len ]    = '\0';
+    result[ len ]         = '\0';
 
-    BlockScavenge bs;
-    ByteArrayOop  ba = oopFactory::new_byteArray( len );
-    for ( std::int32_t     i  = 0; i < len; i++ ) {
+    BlockScavenge      bs;
+    ByteArrayOop       ba = oopFactory::new_byteArray( len );
+    for ( std::int32_t i  = 0; i < len; i++ ) {
         ba->byte_at_put( i + 1, result[ i ] );
     }
     return ba;
@@ -381,11 +381,11 @@ PRIM_DECL_1( doubleOopPrimitives::store_string, Oop receiver ) {
     ASSERT_RECEIVER;
     BlockScavenge bs;
 
-    double value = DoubleOop( receiver )->value();
+    double       value = DoubleOop( receiver )->value();
     std::uint8_t *addr = (std::uint8_t *) &value;
 
-    ByteArrayOop result = oopFactory::new_byteArray( 8 );
-    for ( std::int32_t    index  = 0; index < 8; index++ ) {
+    ByteArrayOop       result = oopFactory::new_byteArray( 8 );
+    for ( std::int32_t index  = 0; index < 8; index++ ) {
         result->byte_at_put( index + 1, addr[ index ] );
     }
     return result;

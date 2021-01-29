@@ -188,10 +188,10 @@ class MappingTask : public ResourceObject {
 private:
     MappingTask *_next;         // next task with same source
     MappingTask *_parent;       // parent chain for recursion
-    bool _is_processed;
-    const char *_what_happened; // what happened to this task
-    bool   _uses_top_of_stack;
-    Variable _variable_to_free;
+    bool        _is_processed;
+    const char  *_what_happened; // what happened to this task
+    bool        _uses_top_of_stack;
+    Variable    _variable_to_free;
 
 public:
     MappingTask( Variable src_register, Variable src_stack, Variable dst_register, Variable dst_stack ) :
@@ -272,11 +272,11 @@ public:
 
     void generate_code( MapConformance *mc );
 
-    bool target_includes( Variable var )const;
+    bool target_includes( Variable var ) const;
 
-    bool is_dependent( MapConformance *mc, MappingTask *task )const;
+    bool is_dependent( MapConformance *mc, MappingTask *task ) const;
 
-    bool in_parent_chain( MappingTask *task )const;
+    bool in_parent_chain( MappingTask *task ) const;
 
     std::int32_t number_of_targets() const;
 
@@ -287,8 +287,8 @@ class MapConformance : public ResourceObject {
 private:
     Variable                     _free_register;
     GrowableArray<MappingTask *> *_mappings;
-    Variable *_usedVariables;
-    std::int32_t _numberOfUsedVariables;
+    Variable                     *_usedVariables;
+    std::int32_t                 _numberOfUsedVariables;
 
     bool reduce_noop_task( MappingTask *task );
 

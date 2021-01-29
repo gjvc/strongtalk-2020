@@ -17,17 +17,17 @@ void setKlassVirtualTableFromMixinKlass( Klass *k ) {
 
 
 Oop MixinKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    KlassOop k    = as_klassOop();
-    std::int32_t      size = non_indexable_size();
+    KlassOop     k       = as_klassOop();
+    std::int32_t size    = non_indexable_size();
     // allocate
-    Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
+    Oop          *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( result == nullptr )
         return nullptr;
     MixinOop obj = as_mixinOop( result );
     // header + instance variables
     MemOop( obj )->initialize_header( true, k );
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), size );
-    ObjectArrayOop filler = oopFactory::new_objArray( std::int32_t{0} );
+    ObjectArrayOop filler = oopFactory::new_objArray( std::int32_t{ 0 } );
     obj->set_methods( filler );
     obj->set_instVars( filler );
     obj->set_classVars( filler );

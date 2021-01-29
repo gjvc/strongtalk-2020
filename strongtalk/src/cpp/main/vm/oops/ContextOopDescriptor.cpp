@@ -70,7 +70,7 @@ ContextOop ContextOopDescriptor::unoptimized_context() {
 
 std::int32_t ContextOopDescriptor::chain_length() const {
 
-    std::int32_t size = 1;
+    std::int32_t              size  = 1;
     GrowableArray<ContextOop> *path = new GrowableArray<ContextOop>( 10 );
 
     for ( ContextOop cc = ContextOop( this ); cc->has_outer_context(); cc = cc->outer_context() ) {

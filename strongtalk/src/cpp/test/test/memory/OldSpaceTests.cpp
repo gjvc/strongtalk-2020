@@ -50,7 +50,7 @@ OldSpaceMark mark( theSpace );
 ASSERT_TRUE( theSpace
 ->allocate( 100, false ) != nullptr );
 ASSERT_EQ( freeSpace
-- ( 100 * oopSize ), theSpace->
+- ( 100 * OOP_SIZE ), theSpace->
 free()
 );
 }

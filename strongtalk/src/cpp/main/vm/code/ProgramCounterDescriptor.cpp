@@ -8,6 +8,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
+
 ProgramCounterDescriptor::ProgramCounterDescriptor( std::uint16_t pc, std::uint16_t scope, std::uint16_t byteCode ) {
     _pc            = pc;
     _scope         = scope;

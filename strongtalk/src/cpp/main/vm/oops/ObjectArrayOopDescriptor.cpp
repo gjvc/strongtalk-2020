@@ -135,7 +135,7 @@ void ObjectArrayOopDescriptor::replace_and_fill( std::int32_t from, std::int32_t
 
 
 void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
-    Oop *p  = objs( 1 );
+    Oop          *p  = objs( 1 );
     std::int32_t len = length();
 
     for ( std::int32_t i = 1; i <= len; i++ )
@@ -144,7 +144,7 @@ void WeakArrayOopDescriptor::scavenge_contents_after_registration() {
 
 
 void WeakArrayOopDescriptor::follow_contents_after_registration() {
-    Oop *p  = objs( 1 );
+    Oop          *p  = objs( 1 );
     std::int32_t len = length();
 
     for ( std::int32_t i = 1; i <= len; i++ )

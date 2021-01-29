@@ -182,12 +182,12 @@ PRIM_DECL_6( methodOopPrimitives::constructMethod, Oop selector_or_method, Oop f
     if ( not oops->is_objArray() )
         return markSymbol( vmSymbols::sixth_argument_has_wrong_type() );
 
-    if ( ObjectArrayOop( oops )->length() * oopSize not_eq ByteArrayOop( bytes )->length() ) {
+    if ( ObjectArrayOop( oops )->length() * OOP_SIZE not_eq ByteArrayOop( bytes )->length() ) {
         return markSymbol( vmSymbols::method_construction_failed() );
     }
 
-    MethodKlass *k = (MethodKlass *) Universe::methodKlassObject()->klass_part();
-    MethodOop result = k->constructMethod( selector_or_method, SMIOop( flags )->value(), SMIOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
+    MethodKlass *k     = (MethodKlass *) Universe::methodKlassObject()->klass_part();
+    MethodOop   result = k->constructMethod( selector_or_method, SMIOop( flags )->value(), SMIOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
     if ( result )
         return result;
     return markSymbol( vmSymbols::method_construction_failed() );
@@ -206,7 +206,7 @@ static Oop allocate_block_for( MethodOop method, Oop self ) {
 
     // allocate the context for the block (make room for the self)
     ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
-    ContextOop con = ContextOop( ok->allocateObjectSize( 1 ) );
+    ContextOop   con = ContextOop( ok->allocateObjectSize( 1 ) );
     con->kill();
     con->obj_at_put( 0, self );
 

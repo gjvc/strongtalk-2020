@@ -13,7 +13,7 @@
 
 
 // Age table for feedback-mediated tenuring (generation scavenging).
-// Note: all sizes are in oopSize
+// Note: all sizes are in OOP_SIZE
 class AgeTable : public CHeapAllocatedObject {
 
 public:

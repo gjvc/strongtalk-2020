@@ -106,7 +106,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
   in debugging of the exception.
  */
 void except_init() {
-    spdlog::info( "%system-init:  except_init" );
 
+    spdlog::info( "%except-init:  add_exception_handler" );
     os::add_exception_handler( handle_exception );
 }

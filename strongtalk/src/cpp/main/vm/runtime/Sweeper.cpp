@@ -21,7 +21,7 @@
 Sweeper *Sweeper::_head = nullptr;
 
 std::int32_t     Sweeper::_sweepSeconds = 0;
-bool          Sweeper::_isRunning           = false;
+bool            Sweeper::_isRunning           = false;
 MethodOop       Sweeper::_activeMethod        = nullptr;
 NativeMethod    *Sweeper::_activeNativeMethod = nullptr;
 
@@ -164,8 +164,8 @@ std::int32_t MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
 
 
 std::int32_t MethodSweeper::klass_task( KlassOop klass ) {
-    std::int32_t   result = 0;
-    Klass *k     = klass->klass_part();
+    std::int32_t result = 0;
+    Klass        *k     = klass->klass_part();
 
     // Fix the customized methods
     result += method_dict_task( k->methods() );
@@ -198,8 +198,8 @@ void MethodSweeper::task() {
     }
 
     ObjectArrayOop array             = Universe::systemDictionaryObject();
-    std::int32_t            length            = array->length();
-    std::int32_t            number_of_entries = length / _fractionPerTask;
+    std::int32_t   length            = array->length();
+    std::int32_t   number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep )
         spdlog::info( "*method sweep: {} entries...", number_of_entries );
     TraceTime t( "MethodSweep ", PrintCodeSweep );

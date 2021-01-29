@@ -134,8 +134,7 @@ extern "C" void my_sprintf_len( char *&buf, const std::int32_t len, const char *
     vsprintf( static_cast<char *>(buf), format, ap );
     va_end( ap );
     buf += strlen( buf );
-    for ( ; buf < oldbuf + len; *buf++ = ' ' )
-        ;
+    for ( ; buf < oldbuf + len; *buf++ = ' ' );
 
     *buf = '\0';
 }

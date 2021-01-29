@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -32,14 +33,14 @@
 // (a non-Oop), if there were no temp_0 always).
 //
 
-static constexpr std::int32_t float_0_offset  = oopSize * ( frame_temp_offset - 3 );
-static constexpr std::int32_t temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
-static constexpr std::int32_t temp_0_offset   = oopSize * frame_temp_offset;
-static constexpr std::int32_t esi_offset      = oopSize * frame_hp_offset;
-static constexpr std::int32_t self_offset     = oopSize * frame_receiver_offset;
-static constexpr std::int32_t link_offset     = oopSize * frame_link_offset;
-static constexpr std::int32_t ret_addr_offset = oopSize * frame_return_addr_offset;
-static constexpr std::int32_t arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
+static constexpr std::int32_t float_0_offset  = OOP_SIZE * ( frame_temp_offset - 3 );
+static constexpr std::int32_t temp_1_offset   = OOP_SIZE * ( frame_temp_offset - 1 );
+static constexpr std::int32_t temp_0_offset   = OOP_SIZE * frame_temp_offset;
+static constexpr std::int32_t esi_offset      = OOP_SIZE * frame_hp_offset;
+static constexpr std::int32_t self_offset     = OOP_SIZE * frame_receiver_offset;
+static constexpr std::int32_t link_offset     = OOP_SIZE * frame_link_offset;
+static constexpr std::int32_t ret_addr_offset = OOP_SIZE * frame_return_addr_offset;
+static constexpr std::int32_t arg_n_offset    = OOP_SIZE * ( frame_arg_offset - 1 );
 
 static constexpr std::int32_t max_nof_temps  = 256;
 static constexpr std::int32_t max_nof_floats = 256;
@@ -203,19 +204,19 @@ void Interpreter::wrong_esp() {
 }
 
 
-/*
 void Interpreter::wrong_ebx() {
-  fatal("interpreter bug: high 3 bytes of ebx # 0");
+    st_fatal( "interpreter bug: high 3 bytes of ebx # 0" );
 }
+
 
 void Interpreter::wrong_obj() {
-  fatal("interpreter bug: register doesn't contain a valid Oop");
+    st_fatal( "interpreter bug: register doesn't contain a valid Oop" );
 }
 
+
 void Interpreter::wrong_primitive_result() {
-  fatal("interpreter bug: primitive failed that is not supposed to fail");
+    st_fatal( "interpreter bug: primitive failed that is not supposed to fail" );
 }
-*/
 
 
 DoubleOop Interpreter::oopify_FloatValue() {
@@ -272,7 +273,8 @@ const char *Interpreter::redo_send_entry() {
 }
 
 
-//char* Interpreter::restart_primitiveValue() 			{ return access((char*)::restart_primitiveValue); }
+//char *Interpreter::restart_primitiveValue() { return access( (char *) ::restart_primitiveValue ); }
+
 
 const char *Interpreter::nlr_single_step_continuation_entry() {
     return access( Interpreter::_nlr_single_step_continuation_entry );
@@ -408,8 +410,10 @@ char* Interpreter::deoptimized_return_from_dll_call_restore() 					{ return acce
 // Interpreter initialization
 
 void Interpreter::init() {
-    if ( _is_initialized )
+    if ( _is_initialized ) {
         return;
+    }
+
     reset_loop_counter();
     set_loop_counter_limit( LoopCounterLimit );
     set_invocation_counter_limit( InvocationCounterLimit );

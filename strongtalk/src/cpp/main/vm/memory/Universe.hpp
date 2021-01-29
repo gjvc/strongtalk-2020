@@ -96,7 +96,7 @@ private:
     static SymbolOop _dll_lookup_selector;
 
     static MethodOop _sweeper_method; // used by Sweeper only
-    static bool    _scavenge_blocked;
+    static bool      _scavenge_blocked;
 
     friend class Bootstrap;
 

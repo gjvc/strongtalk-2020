@@ -585,9 +585,9 @@ void FlatProfiler::print( std::int32_t cutoff ) {
     // print interpreted methods
     TickCounter interpreted_ticks;
 
-    bool has_interpreted_ticks = false;
-    std::int32_t    print_count           = 0;
-    std::int32_t    index                 = 0;
+    bool         has_interpreted_ticks = false;
+    std::int32_t print_count           = 0;
+    std::int32_t index                 = 0;
 
     for ( ; index < array->length(); index++ ) {
         ProfiledNode *n = array->at( index );
@@ -618,7 +618,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
     // print compiled methods
     print_count = 0;
-    bool      has_compiled_ticks = false;
+    bool        has_compiled_ticks = false;
     TickCounter compiled_ticks;
 
     for ( std::int32_t i = 0; i < array->length(); i++ ) {

@@ -40,10 +40,10 @@ protected:
     PseudoRegister *_pseudoRegister;        // PseudoRegister holding it
     Node           *_node;                  // defining node or nullptr if unknown
     InlinedScope   *_unlikelyScope;         // scope/byteCodeIndex making unknown unlikely
-    std::int32_t _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
+    std::int32_t   _unlikelyByteCodeIndex;  // (only set if isUnknownUnlikely())
 
 public:
-    Expression *next;                    // used for splittable MergeExprs
+    Expression   *next;                    // used for splittable MergeExprs
     std::int32_t flags;
 
     Expression( PseudoRegister *p, Node *n );

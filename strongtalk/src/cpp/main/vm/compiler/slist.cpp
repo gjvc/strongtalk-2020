@@ -28,7 +28,7 @@ GenericSListElem *GenericSList::findL( void *token, slistFindFn f ) const {
 
 void *GenericSList::nthL( std::int32_t n ) const {
     st_assert( n < length(), "non-existing element" );
-    GenericSListElem  *e = headL();
+    GenericSListElem   *e = headL();
     for ( std::int32_t i  = 0; i < n; i++, e = e->nextL() );
     return e->dataL();
 }
@@ -82,7 +82,7 @@ void GenericSList::applyL( void f( void * ) ) {
 
 
 void GenericSList::print_short() {
-    spdlog::info( "GenericSList 0x{0:x}", static_cast<void*>( this ) );
+    spdlog::info( "GenericSList 0x{0:x}", static_cast<void *>( this ) );
 }
 
 

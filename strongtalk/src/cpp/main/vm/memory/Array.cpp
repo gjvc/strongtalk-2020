@@ -60,7 +60,7 @@ ByteArray::ByteArray( std::int32_t size ) {
 
 
 void ByteArray::extend() {
-    std::int32_t newMax = _max * 2;
+    std::int32_t newMax    = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
     for ( std::int32_t i = 0; i < _top; i++ )
@@ -109,7 +109,7 @@ void ByteArray::alignToWord() {
 
 void ByteArray::copy_to( std::int32_t *&addr ) {
     std::int32_t *fromAddr = (std::int32_t *) start();
-    std::int32_t len = size() / sizeof( std::int32_t );
+    std::int32_t len       = size() / sizeof( std::int32_t );
 
     for ( std::int32_t i = 0; i < len; i++ ) {
         *addr++ = *fromAddr++;

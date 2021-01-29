@@ -14,7 +14,7 @@ bool BitVector::unionWith( BitVector *other ) {
     while ( length < other->length )
         _bits[ length++ ] = 0;
     st_assert( length <= _maxLength, "grew too much" );
-    bool            changed = false;
+    bool               changed = false;
     for ( std::int32_t i       = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] |= other->_bits[ i ];
@@ -25,7 +25,7 @@ bool BitVector::unionWith( BitVector *other ) {
 
 
 bool BitVector::intersectWith( BitVector *other ) {
-    bool            changed = false;
+    bool               changed = false;
     for ( std::int32_t i       = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] &= other->_bits[ i ];
@@ -104,7 +104,7 @@ void BitVector::print_short() {
 
 void BitVector::doForAllOnes( intDoFn f ) {
     for ( std::int32_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
-        std::int32_t               b = _bits[ i ];
+        std::int32_t       b = _bits[ i ];
         for ( std::int32_t j = 0; j < BITS_PER_WORD; j++ ) {
             if ( isBitSet( b, j ) ) {
                 f( i * BITS_PER_WORD + j );
@@ -120,7 +120,7 @@ void BitVector::doForAllOnes( intDoFn f ) {
 void BitVector::print() {
     print_short();
     spdlog::info( ": {" );
-    std::int32_t         last = -1;
+    std::int32_t last = -1;
     std::int32_t i    = 0;
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {

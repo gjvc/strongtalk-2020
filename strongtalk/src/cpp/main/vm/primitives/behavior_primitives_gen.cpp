@@ -16,15 +16,15 @@ static bool stop = false;
 
 
 const char *PrimitivesGenerator::primitiveNew( std::int32_t n ) {
-    Address     klass_addr = Address( esp, +2 * oopSize );
-    Label       need_scavenge, fill_object;
+    Address      klass_addr = Address( esp, +2 * OOP_SIZE );
+    Label        need_scavenge, fill_object;
     std::int32_t size       = n + 2;
 
     // %note: it looks like the compiler assumes we spill only eax/ebx here -Marc 04/07
 
     const char *entry_point = masm->pc();
 
-    test_for_scavenge( eax, size * oopSize, allocation_failure );
+    test_for_scavenge( eax, size * OOP_SIZE, allocation_failure );
     Address _stop = Address( (std::int32_t) &stop, RelocationInformation::RelocationType::external_word_type );
     Label   _break, no_break;
     masm->bind( fill_object );
@@ -33,18 +33,18 @@ const char *PrimitivesGenerator::primitiveNew( std::int32_t n ) {
     masm->jcc( Assembler::Condition::notEqual, _break );
     masm->bind( no_break );
     masm->movl( ebx, klass_addr );
-    masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
-    masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );        // obj->init_mark()
+    masm->movl( Address( eax, ( -size + 0 ) * OOP_SIZE ), 0x80000003 );    // obj->init_mark()
+    masm->movl( Address( eax, ( -size + 1 ) * OOP_SIZE ), ebx );        // obj->init_mark()
 
     if ( n > 0 ) {
         masm->movl( ebx, nil_addr() );
         for ( std::int32_t i = 0; i < n; i++ ) {
-            masm->movl( Address( eax, ( -size + 2 + i ) * oopSize ), ebx );    // obj->obj_at_put(i,nilObject)
+            masm->movl( Address( eax, ( -size + 2 + i ) * OOP_SIZE ), ebx );    // obj->obj_at_put(i,nilObject)
         }
     }
 
-    masm->subl( eax, ( size * oopSize ) - 1 );
-    masm->ret( 2 * oopSize );
+    masm->subl( eax, ( size * OOP_SIZE ) - 1 );
+    masm->ret( 2 * OOP_SIZE );
 
     masm->bind( _break );
     masm->int3();

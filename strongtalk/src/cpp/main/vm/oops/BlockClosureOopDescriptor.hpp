@@ -35,12 +35,12 @@ private:
 public:
 
     static std::int32_t method_or_entry_byte_offset() {
-        return ( 2 * oopSize ) - MEMOOP_TAG;
+        return ( 2 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 
     static std::int32_t context_byte_offset() {
-        return ( 3 * oopSize ) - MEMOOP_TAG;
+        return ( 3 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 
@@ -74,7 +74,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( BlockClosureOopDescriptor ) / oopSize;
+        return sizeof( BlockClosureOopDescriptor ) / OOP_SIZE;
     }
 
 

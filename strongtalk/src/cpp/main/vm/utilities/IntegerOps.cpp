@@ -14,7 +14,7 @@
 static std::int32_t exponent( double x ) {
     // Extracts the un-biased (binary) exponent of x.
     const std::int32_t n = DOUBLE_LENGTH / logB;
-    Digit     d[n];
+    Digit              d[n];
     *( (double *) d ) = x;
     return std::int32_t( ( d[ n - 1 ] << SIGN_LENGTH ) >> ( logB - EXPONENT_LENGTH ) ) - EXPONENT_BIAS;
 }
@@ -41,7 +41,7 @@ void shift_left( Digit d[], std::int32_t length, std::int32_t shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit-shifting needed
         std::int32_t i = length - 1;
-        std::int32_t         k = shift_count / logB;
+        std::int32_t k = shift_count / logB;
         while ( i > k ) {
             d[ i ] = d[ i - k ];
             i--;
@@ -53,14 +53,14 @@ void shift_left( Digit d[], std::int32_t length, std::int32_t shift_count ) {
     } else {
         // bit-shifting needed
         std::int32_t i = length - 1;
-        std::int32_t         k = shift_count / logB;
-        std::int32_t         h = shift_count % logB;
-        std::int32_t         l = logB - h;
+        std::int32_t k = shift_count / logB;
+        std::int32_t h = shift_count % logB;
+        std::int32_t l = logB - h;
         while ( i > k ) {
             d[ i ] = ( d[ i - k ] << h ) | ( d[ i - k - 1 ] >> l );
             i--;
         }
-        d[ i ]        = d[ i - k ] << h;
+        d[ i ]         = d[ i - k ] << h;
         i--;
         while ( i > 0 ) {
             d[ i ] = 0;
@@ -80,7 +80,7 @@ void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count ) {
     if ( shift_count % logB == 0 ) {
         // no bit shifting needed
         std::int32_t i = 0;
-        std::int32_t         k = shift_count / logB;
+        std::int32_t k = shift_count / logB;
         while ( i < length - k ) {
             d[ i ] = d[ i + k ];
             i++;
@@ -93,14 +93,14 @@ void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count ) {
     } else {
         // bit-shifting needed
         std::int32_t i = 0;
-        std::int32_t         k = shift_count / logB;
-        std::int32_t         l = shift_count % logB;
-        std::int32_t         h = logB - l;
+        std::int32_t k = shift_count / logB;
+        std::int32_t l = shift_count % logB;
+        std::int32_t h = logB - l;
         while ( i < length - k - 1 ) {
             d[ i ] = ( d[ i + k + 1 ] << h ) | ( d[ i + k ] >> l );
             i++;
         }
-        d[ i ]        = d[ i + k ] >> l;
+        d[ i ]         = d[ i + k ] >> l;
         i++;
         while ( i < length ) {
             d[ i ] = 0;
@@ -179,9 +179,9 @@ Digit IntegerOps::xdy( Digit x, Digit y, Digit &carry ) {
 
 
 Digit IntegerOps::power( Digit x, std::int32_t n ) {
-    Digit f = x;
-    Digit p = 1;
-    std::int32_t   i = n;
+    Digit        f = x;
+    Digit        p = 1;
+    std::int32_t i = n;
     while ( i > 0 ) {
         // p * f^i = x^n
         if ( ( i & 1 ) == 1 ) {
@@ -211,11 +211,11 @@ Digit IntegerOps::max_power( Digit x ) {
 // Unsigned operations
 
 void IntegerOps::unsigned_add( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t   xl = x.length();
-    std::int32_t   yl = y.length();
-    std::int32_t   l  = min( xl, yl );
-    std::int32_t   i  = 0;
-    Digit c  = 0;
+    std::int32_t xl = x.length();
+    std::int32_t yl = y.length();
+    std::int32_t l  = min( xl, yl );
+    std::int32_t i  = 0;
+    Digit        c  = 0;
     while ( i < l ) {
         z[ i ] = xpy( x[ i ], y[ i ], c );
         i++;
@@ -237,10 +237,10 @@ void IntegerOps::unsigned_add( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t   xl = x.length();
-    std::int32_t   yl = y.length();
-    std::int32_t   i  = 0;
-    Digit c  = 0;
+    std::int32_t xl = x.length();
+    std::int32_t yl = y.length();
+    std::int32_t i  = 0;
+    Digit        c  = 0;
     while ( i < yl ) {
         z[ i ] = xmy( x[ i ], y[ i ], c );
         i++;
@@ -257,8 +257,8 @@ void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t         xl = x.length();
-    std::int32_t         yl = y.length();
+    std::int32_t xl = x.length();
+    std::int32_t yl = y.length();
     // initialize z
     std::int32_t i  = xl + yl;
     while ( i > 0 ) {
@@ -294,8 +294,8 @@ Digit IntegerOps::scale( Digit *array, Digit factor, std::int32_t length ) {
 // scale multiplies an integer representation stored
 // in array by factor and returns the last carry.
 
-    std::int32_t   i = 0;
-    Digit c = 0;
+    std::int32_t i = 0;
+    Digit        c = 0;
     while ( i < length ) {
         array[ i ] = axpy( factor, array[ i ], 0, c );
         i++;
@@ -305,7 +305,7 @@ Digit IntegerOps::scale( Digit *array, Digit factor, std::int32_t length ) {
 
 
 Digit *IntegerOps::copyDigits( Digit *source, std::int32_t length, std::int32_t toCopy ) {
-    Digit             *x = new_resource_array<Digit>( length );
+    Digit              *x = new_resource_array<Digit>( length );
     for ( std::int32_t i  = toCopy - 1; i >= 0; i-- )
         x[ i ] = source[ i ];
     return x;
@@ -313,7 +313,7 @@ Digit *IntegerOps::copyDigits( Digit *source, std::int32_t length, std::int32_t 
 
 
 Digit *IntegerOps::qr_decomposition_single_digit( Digit *x, std::int32_t length, Digit divisor ) {
-    Digit             c = 0;
+    Digit              c = 0;
     for ( std::int32_t i = length - 1; i >= 0; i-- )
         x[ i + 1 ] = xdy( x[ i ], divisor, c );
     x[ 0 ]         = c;
@@ -329,10 +329,10 @@ Digit IntegerOps::qr_estimate_digit_quotient( Digit &xhi, Digit xlo, Digit y ) {
 
 
 Digit IntegerOps::qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, std::int32_t qrStart, std::int32_t stop ) {
-    Digit c = 0;
-    std::int32_t   j = qrStart;
-    std::int32_t   k = 0;
-    Digit b = 0;
+    Digit        c = 0;
+    std::int32_t j = qrStart;
+    std::int32_t k = 0;
+    Digit        b = 0;
     while ( k < stop ) {
         qr[ j ]   = xmy( qr[ j ], 0, b );
         Digit qyk = axpy( q, divisor[ k ], 0, c );
@@ -349,9 +349,9 @@ Digit IntegerOps::qr_calculate_remainder( Digit *qr, Digit *divisor, Digit q, st
 
 
 Digit IntegerOps::qr_adjust_for_underflow( Digit *qr, Digit *divisor, Digit q, std::int32_t qrStart, std::int32_t stop ) {
-    std::int32_t   j = qrStart;
-    std::int32_t   k = 0;
-    Digit c = 0;
+    std::int32_t j = qrStart;
+    std::int32_t k = 0;
+    Digit        c = 0;
     while ( k < stop ) {
         qr[ j ] = xpy( qr[ j ], divisor[ k ], c );
         j++;
@@ -389,7 +389,7 @@ Digit IntegerOps::qr_scaling_factor( Digit firstDivisorDigit ) {
 
 
 void IntegerOps::qr_unscale_remainder( Digit *qr, Digit scalingFactor, std::int32_t length ) {
-    Digit             c = 0;
+    Digit              c = 0;
     for ( std::int32_t i = length - 1; i >= 0; i-- )
         qr[ i ] = xdy( qr[ i ], scalingFactor, c ); // undo scaling to get remainder
     st_assert( c == 0, "qr scaling broken" );
@@ -435,9 +435,9 @@ Digit *IntegerOps::qr_decomposition( Integer &dividend, Integer &y0 ) {
         if ( c not_eq 0 ) st_fatal( "qr_decomposition broken" );
     }
 
-    Digit y1 = y[ divisorLength - 1 ];
-    Digit y2 = y[ divisorLength - 2 ];
-    std::int32_t   i  = dividendLength;
+    Digit        y1 = y[ divisorLength - 1 ];
+    Digit        y2 = y[ divisorLength - 2 ];
+    std::int32_t i  = dividendLength;
     while ( i >= divisorLength ) {
         Digit xi = x[ i ]; //x[i] gets overwritten by remainder so save it for later
         Digit q  = qr_estimate_digit_quotient( x[ i ], x[ i - 1 ], y1 ); // estimate q = rem/y
@@ -470,7 +470,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
         // xl >= yl
         ResourceMark resourceMark;
         Digit        *qr = qr_decomposition( x, y );
-        std::int32_t  i   = xl;
+        std::int32_t i   = xl;
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
@@ -492,10 +492,10 @@ bool IntegerOps::sd_all_zero( Digit *digits, std::int32_t start, std::int32_t st
 
 
 void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t    xl   = x.length();
-    bool xneg = x.is_negative();
-    std::int32_t    yl   = y.length();
-    bool yneg = y.is_negative();
+    std::int32_t xl   = x.length();
+    bool         xneg = x.is_negative();
+    std::int32_t yl   = y.length();
+    bool         yneg = y.is_negative();
 
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = 0
@@ -515,8 +515,8 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
-        Digit             carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
-        std::int32_t               digits = i - yl + 1;
+        Digit              carry  = not sd_all_zero( qr, 0, yl ) and xneg not_eq yneg;
+        std::int32_t       digits = i - yl + 1;
         for ( std::int32_t j      = 0; j < digits; j++ )
             z[ j ] = xpy( qr[ yl + j ], 0, carry );
 
@@ -544,12 +544,12 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
     std::int32_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = (y - x)
-        Digit             carry = 0;
-        std::int32_t               i;
+        Digit              carry = 0;
+        std::int32_t       i;
         for ( std::int32_t i     = 0; i < xl; i++ )
-            z[ i ]          = xmy( y[ i ], x[ i ], carry );
+            z[ i ]           = xmy( y[ i ], x[ i ], carry );
         for ( std::int32_t i = xl; i < yl; i++ )
-            z[ i ]          = xmy( y[ i ], 0, carry );
+            z[ i ]           = xmy( y[ i ], 0, carry );
         st_assert( carry == 0, "Remainder too large" );
 
         z.set_signed_length( last_non_zero_index( z.digits(), yl - 1 ) + 1 );
@@ -559,7 +559,7 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
         Digit        *qr = qr_decomposition( x, y );
 
         if ( not sd_all_zero( qr, 0, yl ) ) {
-            Digit             carry = 0;
+            Digit              carry = 0;
             for ( std::int32_t j     = 0; j < yl; j++ )
                 qr[ j ] = xmy( y[ j ], qr[ j ], carry );
             st_assert( carry == 0, "Remainder too large" );
@@ -585,7 +585,7 @@ void IntegerOps::unsigned_rem( Integer &x, Integer &y, Integer &z ) {
         // xl >= yl
         ResourceMark resourceMark;
         Digit        *qr = qr_decomposition( x, y );
-        std::int32_t  i   = yl - 1;
+        std::int32_t i   = yl - 1;
         while ( i >= 0 and qr[ i ] == 0 )
             i--;
         // i < 0 or qr[i] not_eq 0
@@ -615,9 +615,9 @@ std::int32_t IntegerOps::unsigned_cmp( Integer &x, Integer &y ) {
 
 
 Digit IntegerOps::last_digit( Integer &x, Digit b ) {
-    std::int32_t   xl = x.length();
-    std::int32_t   i  = xl;
-    Digit c  = 0;
+    std::int32_t xl = x.length();
+    std::int32_t i  = xl;
+    Digit        c  = 0;
     while ( i > 0 ) {
         i--;
         x[ i ] = xdy( x[ i ], b, c );
@@ -630,7 +630,7 @@ Digit IntegerOps::last_digit( Integer &x, Digit b ) {
 
 void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
 
-    std::int32_t         xl = x.length();
+    std::int32_t xl = x.length();
     std::int32_t i  = 0;
     while ( i < xl ) {
         x[ i ] = axpy( base, x[ i ], 0, carry );
@@ -758,13 +758,13 @@ std::int32_t IntegerOps::ash_result_size_in_bytes( Integer &x, std::int32_t n ) 
     if ( x.is_zero() or n == 0 ) {
         digitLength = x.length();
     } else if ( n > 0 ) {
-        std::int32_t    rem      = n % logB;
-        Digit  mask     = nthMask( logB - rem ) ^oneB;
-        bool overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
+        std::int32_t rem      = n % logB;
+        Digit        mask     = nthMask( logB - rem ) ^oneB;
+        bool         overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
         digitLength = x.length() + ( n / logB ) + overflow;
     } else {
-        std::int32_t   rem  = ( -n ) % logB;
-        Digit mask = nthMask( rem ) ^oneB;
+        std::int32_t rem  = ( -n ) % logB;
+        Digit        mask = nthMask( rem ) ^oneB;
         digitLength = max( x.length() + ( n / logB ), 1 );
     }
 
@@ -905,7 +905,7 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
     if ( x.is_zero() or y.is_zero() ) {
         z.set_signed_length( 0 );
     } else if ( x.is_positive() and y.is_positive() ) {
-        std::int32_t         l = min( x.length(), y.length() );
+        std::int32_t l = min( x.length(), y.length() );
         std::int32_t i = 0;
         while ( i < l ) {
             z[ i ] = x[ i ] & y[ i ];
@@ -925,10 +925,10 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
 void IntegerOps::and_both_negative( Integer &x, Integer &y, Integer &z ) {
     std::int32_t digitLength = max( x.length(), y.length() );
 
-    Digit xcarry = 1;
-    Digit ycarry = 1;
-    Digit zcarry = 1;
-    std::int32_t   i      = 0;
+    Digit        xcarry = 1;
+    Digit        ycarry = 1;
+    Digit        zcarry = 1;
+    std::int32_t i      = 0;
 
     while ( i < min( x.length(), y.length() ) ) {
         z[ i ] = xpy( ( xpy( x[ i ] ^ 0xffffffff, 0, xcarry ) & xpy( y[ i ] ^ 0xffffffff, 0, ycarry ) ) ^ 0xffffffff, 0, zcarry );
@@ -949,8 +949,8 @@ void IntegerOps::and_both_negative( Integer &x, Integer &y, Integer &z ) {
 void IntegerOps::and_one_positive( Integer &positive, Integer &negative, Integer &z ) {
     std::int32_t digitLength = positive.length();
 
-    Digit carry = 1;
-    std::int32_t   i     = 0;
+    Digit        carry = 1;
+    std::int32_t i     = 0;
     while ( i < min( positive.length(), negative.length() ) ) { // digits in both
         z[ i ] = positive[ i ] & xpy( ( negative[ i ] ^ oneB ), 0, carry );
         i++;
@@ -964,13 +964,13 @@ void IntegerOps::and_one_positive( Integer &positive, Integer &negative, Integer
 
 
 void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t   xl     = x.length();
-    std::int32_t   yl     = y.length();
-    std::int32_t   l      = min( xl, yl );
-    Digit xcarry = 1;
-    Digit ycarry = 1;
-    Digit zcarry = 1;
-    std::int32_t   i      = 0;
+    std::int32_t xl     = x.length();
+    std::int32_t yl     = y.length();
+    std::int32_t l      = min( xl, yl );
+    Digit        xcarry = 1;
+    Digit        ycarry = 1;
+    Digit        zcarry = 1;
+    std::int32_t i      = 0;
     if ( not x.is_negative() and not y.is_negative() ) {
         while ( i < l ) {
             z[ i ] = x[ i ] | y[ i ];
@@ -1018,9 +1018,9 @@ void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
-    std::int32_t         xl = x.length();
-    std::int32_t         yl = y.length();
-    std::int32_t         l  = min( xl, yl );
+    std::int32_t xl = x.length();
+    std::int32_t yl = y.length();
+    std::int32_t l  = min( xl, yl );
     std::int32_t i  = 0;
     if ( not x.is_negative() and not y.is_negative() ) {
         while ( i < l ) {
@@ -1069,12 +1069,12 @@ void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
 
 
 void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer &z ) {
-    std::int32_t   pl     = positive.length();
-    std::int32_t   nl     = negative.length();
-    std::int32_t   l      = min( pl, nl );
-    std::int32_t   i      = 0;
-    Digit ncarry = 1;
-    Digit zcarry = 1;
+    std::int32_t pl     = positive.length();
+    std::int32_t nl     = negative.length();
+    std::int32_t l      = min( pl, nl );
+    std::int32_t i      = 0;
+    Digit        ncarry = 1;
+    Digit        zcarry = 1;
 
     while ( i < l ) {
         z[ i ] = xpy( positive[ i ] ^ xmy( negative[ i ], 0, ncarry ), 0, zcarry );
@@ -1102,8 +1102,8 @@ void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer
 void IntegerOps::ash( Integer &x, std::int32_t n, Integer &z ) {
     if ( n > 0 ) {
         std::int32_t i          = 0;
-        std::int32_t         bitShift   = n % logB;
-        std::int32_t         digitShift = n / logB;
+        std::int32_t bitShift   = n % logB;
+        std::int32_t digitShift = n / logB;
         while ( i < digitShift ) {
             z[ i ] = 0;
             i++;
@@ -1122,16 +1122,16 @@ void IntegerOps::ash( Integer &x, std::int32_t n, Integer &z ) {
         if ( x.is_negative() )
             neg( z );
     } else {
-        std::int32_t   digitShift = -n / logB;
-        std::int32_t   bitShift   = -n % logB;
-        std::int32_t   i          = x.length() - digitShift;
-        Digit carry      = 0;
+        std::int32_t digitShift = -n / logB;
+        std::int32_t bitShift   = -n % logB;
+        std::int32_t i          = x.length() - digitShift;
+        Digit        carry      = 0;
         while ( i > 0 ) {
             i--;
             z[ i ] = ( x[ i + digitShift ] >> bitShift ) + carry;
             carry = bitShift ? ( x[ i + digitShift ] & nthMask( bitShift ) ) << ( logB - bitShift ) : 0;
         }
-        i                = x.length() - digitShift;
+        i                       = x.length() - digitShift;
         while ( i > 0 and z[ i - 1 ] == 0 )
             i--;
         z.set_signed_length( max( i, 0 ) );
@@ -1221,7 +1221,7 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     // so that we don't loose bits after shifting (note that the mantissa
     // consists of one (implicit) extra bit which is always 1).
     const std::int32_t n = ( MANTISSA_LENGTH + 1 ) / logB + 2;
-    Digit     d[n];
+    Digit              d[n];
     std::int32_t       i = 0;
     while ( i < n ) {
         d[ i ] = 0;

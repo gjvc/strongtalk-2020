@@ -60,7 +60,7 @@ class GenericSList : public PrintableResourceObject {
 protected:
     GenericSListElem *_head;
     GenericSListElem *_tail;
-    std::int32_t _len;
+    std::int32_t     _len;
 public:
     GenericSList() {
         _head = _tail = nullptr;

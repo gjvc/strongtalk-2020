@@ -13,12 +13,12 @@
 // static class variables).
 
 static std::int32_t *stored_frame_pointer = nullptr;
-static Oop saved_eax;
-static Oop saved_ecx;
-static Oop saved_edx;
-static Oop saved_ebx;
-static Oop saved_esi;
-static Oop saved_edi;
+static Oop          saved_eax;
+static Oop          saved_ecx;
+static Oop          saved_edx;
+static Oop          saved_ebx;
+static Oop          saved_esi;
+static Oop          saved_edi;
 
 
 Oop SavedRegisters::fetch( std::int32_t register_number, std::int32_t *frame_pointer ) {

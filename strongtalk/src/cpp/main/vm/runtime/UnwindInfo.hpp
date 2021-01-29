@@ -18,9 +18,9 @@ class UnwindInfo : public StackAllocatedObject {
 
 private:
     // NonLocalReturn state
-    std::int32_t        _nlr_home;
-    std::int32_t        _nlr_home_id;
-    ContextOop _nlr_home_context;
+    std::int32_t _nlr_home;
+    std::int32_t _nlr_home_id;
+    ContextOop   _nlr_home_context;
 
 public:
     Oop _nlr_result;

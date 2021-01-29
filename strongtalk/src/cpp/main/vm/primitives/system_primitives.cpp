@@ -151,8 +151,8 @@ PRIM_DECL_1( SystemPrimitives::scavenge, Oop receiver ) {
 
 
 PRIM_DECL_0( SystemPrimitives::oopSize ) {
-    PROLOGUE_0( "oopSize" )
-    return smiOopFromValue( ::oopSize );
+    PROLOGUE_0( "OOP_SIZE" )
+    return smiOopFromValue( ::OOP_SIZE );
 }
 
 

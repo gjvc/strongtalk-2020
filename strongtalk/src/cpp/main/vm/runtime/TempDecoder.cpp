@@ -36,7 +36,7 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
         return;
 
     std::int32_t pos     = 1;
-    Oop current = tempInfo->obj_at( pos );
+    Oop          current = tempInfo->obj_at( pos );
 
     { // scan parameters
         _num_of_params = 0;

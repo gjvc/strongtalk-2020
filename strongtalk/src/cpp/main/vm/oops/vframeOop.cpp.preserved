@@ -34,12 +34,12 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISE
 // Process::handleVFrameOops checks for this situation and adjusts the
 // values accordingly.
 
-frame * vframeOopDesc::fr() {
-    return localsInBottomHalfFrame ? ( frame * ) locals() : locals()->full_frame();
+frame *vframeOopDesc::fr() {
+    return localsInBottomHalfFrame ? (frame *) locals() : locals()->full_frame();
 }
 
 
-VirtualFrame * vframeOopDesc::as_vframe() {
+VirtualFrame *vframeOopDesc::as_vframe() {
     assert( is_live(), "not live" );
     return new VirtualFrame( fr(), descOffset() );
 }
@@ -53,22 +53,22 @@ void vframeOopDesc::kill_vframe() {
 }
 
 
-bool vframeOopDesc::is_below( frame * fr ) {
+bool vframeOopDesc::is_below( frame *fr ) {
     return locals() < fr->stack_locals();
 }
 
 
-bool vframeOopDesc::is_equal( frame * fr ) {
+bool vframeOopDesc::is_equal( frame *fr ) {
     return locals() == fr->stack_locals();
 }
 
 
-bool vframeOopDesc::is_above( frame * fr ) {
+bool vframeOopDesc::is_above( frame *fr ) {
     return locals() > fr->stack_locals();
 }
 
 
-bool vframeOopDesc::is_below( VirtualFrame * vf ) {
+bool vframeOopDesc::is_below( VirtualFrame *vf ) {
     if ( is_below( vf->_frame ) )
         return true;
     if ( is_above( vf->_frame ) )
@@ -77,12 +77,12 @@ bool vframeOopDesc::is_below( VirtualFrame * vf ) {
 }
 
 
-bool vframeOopDesc::is_equal( VirtualFrame * vf ) {
+bool vframeOopDesc::is_equal( VirtualFrame *vf ) {
     return is_equal( vf->_frame ) && descOffset() == vf->descOffset();
 }
 
 
-bool vframeOopDesc::is_above( VirtualFrame * vf ) {
+bool vframeOopDesc::is_above( VirtualFrame *vf ) {
     if ( is_above( vf->_frame ) )
         return true;
     if ( is_below( vf->_frame ) )
@@ -91,7 +91,7 @@ bool vframeOopDesc::is_above( VirtualFrame * vf ) {
 }
 
 
-vframeOop new_senderVFrameOop( Process * p, vframeOop from, VirtualFrame * vf ) {
+vframeOop new_senderVFrameOop( Process *p, vframeOop from, VirtualFrame *vf ) {
     vframeOop vfo;
     // vframeOops are canonical, so check first for existing vframeOop
 
@@ -126,7 +126,7 @@ vframeOop new_senderVFrameOop( Process * p, vframeOop from, VirtualFrame * vf ) 
 }
 
 
-vframeOop new_vframeOop( Process * p, VirtualFrame * vf ) {
+vframeOop new_vframeOop( Process *p, VirtualFrame *vf ) {
     vframeOop vfo;
     // vframeOops are canonical, so check first for existing vframeOop
     vfo = p->findVFrameOop( vf );
@@ -182,8 +182,8 @@ vframeOop create_vframeOop( oop method ) {
             fatal( "unexpected kind" );
     }
     assert( sizeof( vframeKlass ) == sizeof( bvframeKlass ) && sizeof( vframeKlass ) == sizeof( ovframeKlass ), "should be the same" );
-    vframeKlass * m = ( vframeKlass * ) create_map( sizeof( vframeKlass ), 0, vtbl );
-    vframeOop   p   = vframeOop( m->fill_in_slots( nullptr, 0 ) );
+    vframeKlass *m = (vframeKlass *) create_map( sizeof( vframeKlass ), 0, vtbl );
+    vframeOop p = vframeOop( m->fill_in_slots( nullptr, 0 ) );
     p->set_next( nullptr );
     p->set_method( method );
     p->set_locals( nullptr );
@@ -215,7 +215,7 @@ bool vframeOopDesc::verify() {
             error( "vframeOop %#lx: locals ptr isn't a smi_t", this );
             flag = false;
         }
-        frame * f = fr();
+        frame *f = fr();
         if ( !oop( f )->is_smi() ) {
             error( "vframeOop %#lx: frame ptr isn't a smi_t", this );
             flag = false;
@@ -224,8 +224,8 @@ bool vframeOopDesc::verify() {
             error( "vframeOop %#lx: desc isn't a smi_t", this );
             flag = false;
         }
-        nmethod   * nm = f->code();
-        ScopeDesc * d  = nm->scopes->at( descOffset() );
+        nmethod   *nm = f->code();
+        ScopeDesc *d  = nm->scopes->at( descOffset() );
         if ( !nm->scopes->includes( d ) ) {
             error( "vframeOop %#lx: desc isn't a valid scope offset", this );
             flag = false;

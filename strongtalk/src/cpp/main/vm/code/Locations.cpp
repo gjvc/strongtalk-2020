@@ -261,10 +261,10 @@ Register Locations::locationAsRegister( std::int32_t loc ) const {
 // Stack frame
 //
 // |    ^   |
-// |1st temp| <-- ebp - 1*oopSize (firstTemporaryOffset)
+// |1st temp| <-- ebp - 1*OOP_SIZE (firstTemporaryOffset)
 // |ebp save| <-- ebp
 // |ret addr|
-// |last arg| <-- ebp + 2*oopSize (lastParameterOffset)
+// |last arg| <-- ebp + 2*OOP_SIZE (lastParameterOffset)
 // |        |
 
 std::int32_t Locations::locationAsWordOffset( std::int32_t loc ) const {

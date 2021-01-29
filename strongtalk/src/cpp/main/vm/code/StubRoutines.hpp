@@ -28,8 +28,8 @@ class StubRoutines : AllStatic {
 
 private:
     static constexpr std::int32_t _code_size = 1024 * 64;
-    static bool        _is_initialized;           // true if StubRoutines has been initialized
-    static const char *_code;                      // the code buffer for the stub routines
+    static bool                   _is_initialized;           // true if StubRoutines has been initialized
+    static const char             *_code;                      // the code buffer for the stub routines
     static void (*single_step_fn)();               // pointer to the current single step function (used by evaluator and ST debugger)
     //  static char _code[_code_size];		        // the code buffer for the stub routines
 

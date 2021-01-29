@@ -18,6 +18,7 @@
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 
+
 std::uint8_t *Frame::hp() const {
     // Lars, please check -- assertion fails
     // st_assert(is_nullptrinterpreted_frame(), "must be interpreted");

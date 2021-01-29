@@ -43,7 +43,7 @@ static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const cha
 static void st_disasm( const char *begin, const char *end, const NativeMethod *nm, ConsoleOutputStream *stream ) {
 
     static char  output[MAX_OUTBUF_SIZE];
-    std::int32_t  outbufsize{ sizeof( output ) };
+    std::int32_t outbufsize{ sizeof( output ) };
     std::int32_t data_size{ 4 }; //
 
 //    ud_t ud_obj;
@@ -102,7 +102,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 
     PrimitiveDescriptor *pd;
     const char          *target;
-    std::int32_t                 *addr;
+    std::int32_t        *addr;
 
     stream->print( "[reloc @ " );
     addr = iter->word_addr();
@@ -122,7 +122,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 
         case RelocationInformation::RelocationType::primitive_type:
             stream->print( "%p, primitive call, ", addr );
-            target = (const char *) ( *addr + (std::int32_t) addr + oopSize );
+            target = (const char *) ( *addr + (std::int32_t) addr + OOP_SIZE );
 
             pd = Primitives::lookup( (primitiveFunctionType) target );
             if ( pd not_eq nullptr ) {
@@ -167,7 +167,7 @@ static void printRelocInfo( RelocationInformationIterator *iter, ConsoleOutputSt
 static void printRelocInfo( const NativeMethod *nm, const char *pc, std::int32_t lendis, ConsoleOutputStream *stream ) {
 
     RelocationInformationIterator iter( nm );
-    char *addr;
+    char                          *addr;
 
     while ( iter.next() ) {
         addr = (char *) iter.word_addr();

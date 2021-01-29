@@ -115,8 +115,8 @@ std::int32_t DoubleByteArrayOopDescriptor::hash_value() {
 
 bool DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t max_length ) {
 
-    std::int32_t    len          = length();
-    bool is_truncated = false;
+    std::int32_t len          = length();
+    bool         is_truncated = false;
     if ( len >= max_length ) {
         len          = max_length - 1;
         is_truncated = true;
@@ -132,12 +132,12 @@ bool DoubleByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int3
 
 
 char *DoubleByteArrayOopDescriptor::as_string() {
-    std::int32_t len = length();
-    char *str = new_resource_array<char>( len + 1 );
-    std::int32_t index    = 0;
+    std::int32_t len   = length();
+    char         *str  = new_resource_array<char>( len + 1 );
+    std::int32_t index = 0;
     for ( ; index < len; index++ ) {
         str[ index ] = (char) doubleByte_at( index + 1 );
     }
-    str[ index ] = '\0';
+    str[ index ]       = '\0';
     return str;
 }

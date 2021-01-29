@@ -308,7 +308,7 @@ public:
 
 protected:
     ScopeDescriptor *_scopeDescriptor;
-    std::int32_t _byteCodeIndex;
+    std::int32_t    _byteCodeIndex;
 
     static ContextOop compute_canonical_context( ScopeDescriptor *sd, const CompiledVirtualFrame *vf, ContextOop con = nullptr );
 
@@ -369,7 +369,7 @@ public:
 class DeferredExpression : public ResourceObject {
 private:
     CompiledVirtualFrame const *const _frame;
-    NameDescriptor             *expression;
+    NameDescriptor *expression;
 public:
     DeferredExpression( CompiledVirtualFrame const *const aframe, NameDescriptor *expression ) :
             _frame( aframe ), expression( expression ) {
@@ -465,7 +465,7 @@ public:
     ContextOop deoptimized_context() const;
 
 private:
-    std::int32_t            _offset;
+    std::int32_t   _offset;
     ObjectArrayOop _frameArray;
 
     // Retrieves the frame array from the frame

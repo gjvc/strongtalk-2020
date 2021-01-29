@@ -69,7 +69,7 @@ public:
     };
 
 private:
-    static bool                                            _is_initialized;    // true if Floats has been initialized
+    static bool                                              _is_initialized;    // true if Floats has been initialized
     static std::array<const char *, max_number_of_functions> _function_names;
 
     static void generate_tst( MacroAssembler *masm, Assembler::Condition cc );

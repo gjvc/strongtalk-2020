@@ -12,7 +12,7 @@
 // -----------------------------------------------------------------------------
 
 typedef class OopDescriptor *Oop;
-constexpr std::int32_t oopSize = sizeof( Oop );
+constexpr std::int32_t      OOP_SIZE = sizeof( Oop );
 
 
 // -----------------------------------------------------------------------------

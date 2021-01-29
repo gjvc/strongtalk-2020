@@ -29,7 +29,7 @@ ByteArrayOop oopFactory::new_byteArray( std::int32_t size ) {
 
 
 ByteArrayOop oopFactory::new_byteArray( const char *name ) {
-    std::int32_t          len    = strlen( name );
+    std::int32_t len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
     for ( std::int32_t index = 0; index < len; index++ ) {
@@ -40,8 +40,8 @@ ByteArrayOop oopFactory::new_byteArray( const char *name ) {
 
 
 ObjectArrayOop oopFactory::new_objArray( std::int32_t size ) {
-    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
-    ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
+    ObjectArrayKlass *ok    = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
+    ObjectArrayOop   result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
     return result;
 }
@@ -50,8 +50,8 @@ ObjectArrayOop oopFactory::new_objArray( std::int32_t size ) {
 ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
-    std::int32_t size = array->length();
-    ObjectArrayKlass *ok = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
+    std::int32_t     size = array->length();
+    ObjectArrayKlass *ok  = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
@@ -63,7 +63,7 @@ ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
 
 
 DoubleOop oopFactory::new_double( double value ) {
-    DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / oopSize ) );
+    DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / OOP_SIZE ) );
     d->init_untagged_contents_mark();
     d->set_klass_field( doubleKlassObject );
     d->set_value( value );
@@ -72,7 +72,7 @@ DoubleOop oopFactory::new_double( double value ) {
 
 
 DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
-    DoubleOop d = as_doubleOop( Universe::allocate_tenured( sizeof( DoubleOopDescriptor ) / oopSize ) );
+    DoubleOop d = as_doubleOop( Universe::allocate_tenured( sizeof( DoubleOopDescriptor ) / OOP_SIZE ) );
     d->init_untagged_contents_mark();
     d->set_klass_field( doubleKlassObject );
     d->set_value( value->value() );
@@ -106,7 +106,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool is_co
 
 
 VirtualFrameOop oopFactory::new_vframe( ProcessOop process, std::int32_t index ) {
-    BlockScavenge bs;
+    BlockScavenge     bs;
     VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObject()->klass_part();
 
     VirtualFrameOop result = VirtualFrameOop( vk->allocateObject() );

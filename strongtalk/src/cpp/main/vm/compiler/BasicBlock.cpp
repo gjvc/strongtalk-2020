@@ -187,7 +187,7 @@ void BasicBlock::bruteForceCopyPropagate() {
     for ( std::int32_t i = 0; i < len; i++ ) {        // forall def/use info lists
         DefinitionUsageInfo  *dui = duInfo.info->at( i );
         const PseudoRegister *r   = dui->_pseudoRegister;
-        if ( not r->isSinglyAssignedPseudoRegister() or not r->_location.equals( unAllocated ) ) {
+        if ( not r->isSinglyAssignedPseudoRegister() or not r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
             // optimize only SinglyAssignedPseudoRegisters for now
             // preallocated PseudoRegister may have aliases - don't do copy-propagation
             continue;
@@ -203,7 +203,7 @@ void BasicBlock::bruteForceCopyPropagate() {
             continue;    // no def found
 
         PseudoRegister *candidate = ( (NonTrivialNode *) defNode )->src();
-        if ( not candidate->_location.equals( unAllocated ) )
+        if ( not candidate->_location.equals( Location::UNALLOCATED_LOCATION ) )
             continue;
         st_assert( candidate->isUsed(), "should not be unused" );
         if ( not regAssignedBetween( candidate, defNode, firstUseNode ) ) {
@@ -236,7 +236,7 @@ void BasicBlock::localCopyPropagate() {
 
     for ( std::int32_t i = 0; i < len; i++ ) {
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
-        if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() ) {
+        if ( not r->_location.equals( Location::UNALLOCATED_LOCATION ) and r->_location.isRegisterLocation() ) {
             if ( used.isAllocated( r->_location.number() ) ) {
                 // two PseudoRegisters have same preallocated reg - algorithm below can't handle this
                 usedTwice = usedTwice.allocate( r->_location.number() );
@@ -250,7 +250,7 @@ void BasicBlock::localCopyPropagate() {
         constexpr std::int32_t BIG  = 9999999;
         DefinitionUsageInfo    *dui = duInfo.info->at( i );
         PseudoRegister         *r   = dui->_pseudoRegister;
-        if ( not r->_location.equals( unAllocated ) and r->_location.isRegisterLocation() and usedTwice.isAllocated( r->_location.number() ) ) {
+        if ( not r->_location.equals( Location::UNALLOCATED_LOCATION ) and r->_location.isRegisterLocation() and usedTwice.isAllocated( r->_location.number() ) ) {
             // this preallocated PseudoRegister has aliases - don't do copy-propagation
             continue;
         }
@@ -474,14 +474,14 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
             bool           localSrc  = src->isLocalTo( this );
             bool           localDest = dest->isLocalTo( this );
             if ( src->_location.isRegisterLocation() ) {
-                if ( dest->_location.equals( unAllocated ) and localDest ) {
+                if ( dest->_location.equals( Location::UNALLOCATED_LOCATION ) and localDest ) {
                     // PR = PR2(reg)
                     // allocate dest->loc to src->loc, but only if src->loc
                     // isn't defined again
                     cands.append( new RegCandidate( dest, src->_location, def_count[ src->_location.number() ] ) );
                 }
             } else if ( dest->_location.isRegisterLocation() ) {
-                if ( src->_location.equals( unAllocated ) and localSrc ) {
+                if ( src->_location.equals( Location::UNALLOCATED_LOCATION ) and localSrc ) {
                     // PR2(reg) = PR
                     // should allocate src->loc to dest->loc, but only if dest->loc
                     // has single definition (this one) and isn't used before
@@ -516,7 +516,7 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
     for ( std::int32_t i    = 0; i < duInfo.info->length(); i++ ) {
         // collect local regs
         PseudoRegister *r = duInfo.info->at( i )->_pseudoRegister;
-        if ( r->_location.equals( unAllocated ) and not r->isUnused() and r->isLocalTo( this ) ) {
+        if ( r->_location.equals( Location::UNALLOCATED_LOCATION ) and not r->isUnused() and r->isLocalTo( this ) ) {
             st_assert( r->_dus.first()->_index == i, "should be the same" );
             for ( ; temp < nofLocalRegisters and use_count[ Mapping::localRegister( temp ).number() ] + def_count[ Mapping::localRegister( temp ).number() ] > 0; temp++ );
             if ( temp == nofLocalRegisters )
@@ -579,7 +579,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             }
         } else if ( r->_location.isLocalRegister() ) {
             // already allocated (i.e., hardwired register)
-            st_assert( not r->_location.equals( unAllocated ), "unAllocated should not count as isRegister()" );
+            st_assert( not r->_location.equals( Location::UNALLOCATED_LOCATION ), "UNALLOCATED_LOCATION should not count as isRegister()" );
             std::int32_t firstUse = 0, lastUse = _nodeCount - 1;
             if ( not r->incorrectDU() ) {
                 duInfo.info->at( i )->getLiveRange( firstUse, lastUse );
@@ -617,7 +617,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     for ( std::int32_t i = 0; i < localRegs->length(); i++ ) {
         // try to allocate localRegs[i] to a local (temp) register
         PseudoRegister *r = localRegs->at( i );
-        if ( not r->_location.equals( unAllocated ) ) {
+        if ( not r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
             st_assert( r->regClass == 0, "should have been cleared" );
             continue;
         }
@@ -632,7 +632,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             }
         }
         if ( CompilerDebug ) {
-            if ( r->_location.equals( unAllocated ) ) {
+            if ( r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
                 cout( PrintLocalAllocation )->print( "*could not find local assignment for local %s in BasicBlock%ld\n", r->name(), id() );
             }
         }
@@ -763,21 +763,21 @@ void BasicBlock::verify() {
             continue;
         n->verify();
         if ( n->bb() not_eq this )
-            error( "BasicBlock 0x{0:x}: Node 0x{0:x} doesn't point back to me", static_cast<const void*>(this), n );
+            error( "BasicBlock 0x{0:x}: Node 0x{0:x} doesn't point back to me", static_cast<const void *>(this), n );
         if ( n == _last and not n->endsBasicBlock() and not( n->next() and n->next()->isMergeNode() and ( (MergeNode *) ( n->next() ) )->_didStartBasicBlock ) ) {
-            error( "BasicBlock 0x{0:x}: last Node 0x{0:x} isn't endsBasicBlock()", static_cast<const void*>(this), n );
+            error( "BasicBlock 0x{0:x}: last Node 0x{0:x} isn't endsBasicBlock()", static_cast<const void *>(this), n );
         }
         if ( n->endsBasicBlock() and n not_eq _last )
-            error( "BasicBlock 0x{0:x}: Node 0x{0:x} ends BasicBlock but isn't last node", static_cast<const void*>(this), n );
+            error( "BasicBlock 0x{0:x}: Node 0x{0:x} ends BasicBlock but isn't last node", static_cast<const void *>(this), n );
     }
     if ( count not_eq _nodeCount )
-        error( "incorrect nnodes in BasicBlock 0x{0:x}", static_cast<const void*>(this) );
+        error( "incorrect nnodes in BasicBlock 0x{0:x}", static_cast<const void *>(this) );
     if ( _loopDepth < 0 )
-        error( "BasicBlock 0x{0:x}: negative loopDepth {:d}", static_cast<const void*>(this), _loopDepth );
+        error( "BasicBlock 0x{0:x}: negative loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
 
     // Fix this Urs, 3/11/96
     if ( _loopDepth > 9 )
-        spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void*>(this), _loopDepth );
+        spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
 }
 
 

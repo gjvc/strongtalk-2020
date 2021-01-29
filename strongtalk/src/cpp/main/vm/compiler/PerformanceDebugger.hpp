@@ -69,12 +69,12 @@ class InlinedScope;
 class PerformanceDebugger : public ResourceObject {
 
 private:
-    Compiler *_compiler;
-    bool                               _compileAlreadyReported;          // have we already reported something for this compile?
+    Compiler                             *_compiler;
+    bool                                 _compileAlreadyReported;          // have we already reported something for this compile?
     GrowableArray<BlockPseudoRegister *> *_blockPseudoRegisters;
     GrowableArray<char *>                *_reports;                                // list of reports already printed (to avoid duplicates)
-    StringOutputStream *_stringStream;
-    GrowableArray<InlinedScope *> *_notInlinedBecauseNativeMethodTooBig;
+    StringOutputStream                   *_stringStream;
+    GrowableArray<InlinedScope *>        *_notInlinedBecauseNativeMethodTooBig;
 
 public:
     PerformanceDebugger( Compiler *c );

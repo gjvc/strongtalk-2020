@@ -92,9 +92,9 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
         return;
     Reporter                    r( this );
     GrowableArray<Expression *> *temps = s->contextTemporaries();
-    const std::int32_t                   len    = temps->length();
-    std::int32_t                         nused  = 0;
-    for ( std::int32_t                   i      = 0; i < len; i++ ) {
+    const std::int32_t          len    = temps->length();
+    std::int32_t                nused  = 0;
+    for ( std::int32_t          i      = 0; i < len; i++ ) {
         PseudoRegister *r = temps->at( i )->preg();
         if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPseudoRegister() and not r->isUnused() ) )
             nused++;

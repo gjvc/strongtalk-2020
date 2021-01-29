@@ -97,8 +97,8 @@ void NodeBuilder::comment( const char *s ) {
 
 GrowableArray<PseudoRegister *> *NodeBuilder::copyCurrentExprStack() {
 
-    std::int32_t l = exprStack()->length();
-    auto *es = new GrowableArray<PseudoRegister *>( l );
+    std::int32_t l   = exprStack()->length();
+    auto         *es = new GrowableArray<PseudoRegister *>( l );
 
     for ( std::int32_t i = 0; i < l; i++ ) {
         es->push( exprStack()->at( i )->preg() );
@@ -133,7 +133,7 @@ bool NodeBuilder::abortIfDead( Expression *e ) {
 // the subinterval may have ended dead, leaving current at EndOfCode).
 void NodeBuilder::generate_subinterval( MethodInterval *m, bool produces_result ) {
     st_assert( not aborting(), "shouldn't generate when already aborting" );
-    std::int32_t            savedLen = exprStack()->length();
+    std::int32_t   savedLen = exprStack()->length();
     MethodIterator mi( m, this );
     if ( aborting() ) {
         // the subinterval ended with dead code
@@ -165,7 +165,7 @@ void NodeBuilder::generate_subinterval( MethodInterval *m, bool produces_result 
 
 void NodeBuilder::constant_if_node( IfNode *node, ConstantExpression *condition ) {
     // if statement with constant condition
-    Oop c                   = condition->constant();
+    Oop          c                   = condition->constant();
     std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( c == trueObject or c == falseObject ) {
         if ( node->is_ifTrue() == ( c == trueObject ) ) {
@@ -213,7 +213,7 @@ TypeTestNode *NodeBuilder::makeTestNode( bool cond, PseudoRegister *r ) {
 
 void NodeBuilder::if_node( IfNode *node ) {
 
-    Expression *cond = exprStack()->pop();
+    Expression   *cond               = exprStack()->pop();
     std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( abortIfDead( cond ) ) {
         if ( node->produces_result() )
@@ -302,7 +302,7 @@ void NodeBuilder::if_node( IfNode *node ) {
 
 
 void NodeBuilder::cond_node( CondNode *node ) {
-    Expression *cond = exprStack()->pop();
+    Expression   *cond               = exprStack()->pop();
     std::int32_t resultByteCodeIndex = node->begin_byteCodeIndex();
     if ( abortIfDead( cond ) ) {
         exprStack()->push( cond, scope(), resultByteCodeIndex );
@@ -370,9 +370,9 @@ void NodeBuilder::cond_node( CondNode *node ) {
 
 
 void NodeBuilder::while_node( WhileNode *node ) {
-    std::int32_t loop_byteCodeIndex = node->body_code() not_eq nullptr ? node->body_code()->begin_byteCodeIndex() : node->expr_code()->begin_byteCodeIndex();
-    CompiledLoop   *wloop  = _scope->addLoop();
-    LoopHeaderNode *header = NodeFactory::createAndRegisterNode<LoopHeaderNode>();
+    std::int32_t   loop_byteCodeIndex = node->body_code() not_eq nullptr ? node->body_code()->begin_byteCodeIndex() : node->expr_code()->begin_byteCodeIndex();
+    CompiledLoop   *wloop             = _scope->addLoop();
+    LoopHeaderNode *header            = NodeFactory::createAndRegisterNode<LoopHeaderNode>();
     append( header );
     wloop->set_startOfLoop( header );
     MergeNode *loop  = NodeFactory::createAndRegisterNode<MergeNode>( loop_byteCodeIndex );
@@ -515,7 +515,7 @@ void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool 
     // context numbering starts a 0
     st_assert( _scope->allocatesInterpretedContext() == ( _scope->contextInitializer() not_eq nullptr ), "context must exist already if used (find_scope)" );
     st_assert( context >= 0, "context must be >= 0" );
-    std::int32_t nofIndirections;
+    std::int32_t  nofIndirections;
     OutlinedScope *out = nullptr;
     InlinedScope  *s   = _scope->find_scope( context, nofIndirections, out );
     if ( nofIndirections < 0 ) {
@@ -545,7 +545,7 @@ void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool 
         st_assert( out, "must be set" );
         st_assert( out->scope()->allocates_compiled_context(), "must allocate context" );
         NameDescriptor *nd = out->scope()->contextTemporary( no );
-        Location loc = nd->location();    // location of temp in compiled context
+        Location       loc = nd->location();    // location of temp in compiled context
         st_assert( loc.isContextLocation(), "must be in context" );
         std::int32_t tempNo = loc.tempNo();        // compiled offset
         if ( tempNo not_eq no ) {
@@ -585,7 +585,7 @@ void NodeBuilder::push_global( AssociationOop associationObject ) {
     SinglyAssignedPseudoRegister *dst = new SinglyAssignedPseudoRegister( _scope );
     if ( associationObject->is_constant() ) {
         // constant association -- can inline the constant
-        Oop c = associationObject->value();
+        Oop                 c  = associationObject->value();
         ConstPseudoRegister *r = new_ConstPReg( _scope, c );
         exprStack()->push( new ConstantExpression( c, r, nullptr ), _scope, scope()->byteCodeIndex() );
     } else {
@@ -674,11 +674,11 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
     // Generate code for argument passing (move all args into the right locations).
     // If the arguments are passed on the stack (including the receiver) they should be assigned in the order of textual appearance.
     // If the receiver is passed in a register that should happen at the end to allow this register to be used as std::int32_t as possible.
-    std::int32_t                             nofFormals = ( receiver == nullptr ) ? nofArgs : nofArgs + 1;
+    std::int32_t                    nofFormals = ( receiver == nullptr ) ? nofArgs : nofArgs + 1;
     GrowableArray<PseudoRegister *> *formals   = new GrowableArray<PseudoRegister *>( nofFormals );
 
     // setup formal receiver and pass if passed on the stack
-    SinglyAssignedPseudoRegister *formalReceiver;
+    SinglyAssignedPseudoRegister         *formalReceiver;
     GrowableArray<BlockPseudoRegister *> blocks( 32 );
     if ( receiver not_eq nullptr ) {
         materialize( receiver, &blocks );
@@ -726,7 +726,7 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
 
 void NodeBuilder::gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( exprStack()->at( exprStack()->length() - nofArgs - 1 )->preg(), nofArgs );
-    SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
+    SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
     append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -735,7 +735,7 @@ void NodeBuilder::gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyA
 
 void NodeBuilder::gen_self_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
-    SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
+    SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
     append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -744,7 +744,7 @@ void NodeBuilder::gen_self_send( SendInfo *info, std::int32_t nofArgs, SinglyAss
 
 void NodeBuilder::gen_super_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
     GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
-    SendNode *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), true, info );
+    SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), true, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
     append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -752,11 +752,11 @@ void NodeBuilder::gen_super_send( SendInfo *info, std::int32_t nofArgs, SinglyAs
 
 
 void NodeBuilder::normal_send( InterpretedInlineCache *ic ) {
-    std::int32_t nofArgs = ic->selector()->number_of_arguments();
-    LookupKey  *key      = LookupKey::allocate( nullptr, ic->selector() );
-    Expression *receiver = exprStack()->at( exprStack()->length() - nofArgs - 1 );
-    SendInfo   *info     = new SendInfo( _scope, key, receiver );
-    Expression *result   = _inliner->inlineNormalSend( info );
+    std::int32_t nofArgs   = ic->selector()->number_of_arguments();
+    LookupKey    *key      = LookupKey::allocate( nullptr, ic->selector() );
+    Expression   *receiver = exprStack()->at( exprStack()->length() - nofArgs - 1 );
+    SendInfo     *info     = new SendInfo( _scope, key, receiver );
+    Expression   *result   = _inliner->inlineNormalSend( info );
     exprStack()->pop( nofArgs + 1 ); // pop arguments & receiver
     exprStack()->push( result, _scope, scope()->byteCodeIndex() );
     abortIfDead( result );
@@ -765,9 +765,9 @@ void NodeBuilder::normal_send( InterpretedInlineCache *ic ) {
 
 void NodeBuilder::self_send( InterpretedInlineCache *ic ) {
     std::int32_t nofArgs = ic->selector()->number_of_arguments();
-    LookupKey  *key    = LookupKey::allocate( _scope->selfKlass(), ic->selector() );
-    SendInfo   *info   = new SendInfo( _scope, key, _scope->self() );
-    Expression *result = _inliner->inlineSelfSend( info );
+    LookupKey    *key    = LookupKey::allocate( _scope->selfKlass(), ic->selector() );
+    SendInfo     *info   = new SendInfo( _scope, key, _scope->self() );
+    Expression   *result = _inliner->inlineSelfSend( info );
     exprStack()->pop( nofArgs );    // receiver has not been pushed
     exprStack()->push( result, _scope, scope()->byteCodeIndex() );
     abortIfDead( result );
@@ -775,12 +775,12 @@ void NodeBuilder::self_send( InterpretedInlineCache *ic ) {
 
 
 void NodeBuilder::super_send( InterpretedInlineCache *ic ) {
-    std::int32_t      nofArgs = ic->selector()->number_of_arguments();
+    std::int32_t nofArgs = ic->selector()->number_of_arguments();
     //LookupKey* key = ic->lookupKey(0);
-    KlassOop klass   = _scope->selfKlass()->klass_part()->superKlass();
-    LookupKey  *key    = LookupKey::allocate( klass, LookupCache::method_lookup( klass, ic->selector() ) );
-    SendInfo   *info   = new SendInfo( _scope, key, _scope->self() );
-    Expression *result = _inliner->inlineSuperSend( info );
+    KlassOop     klass   = _scope->selfKlass()->klass_part()->superKlass();
+    LookupKey    *key    = LookupKey::allocate( klass, LookupCache::method_lookup( klass, ic->selector() ) );
+    SendInfo     *info   = new SendInfo( _scope, key, _scope->self() );
+    Expression   *result = _inliner->inlineSuperSend( info );
     exprStack()->pop( nofArgs );    // receiver has not been pushed
     exprStack()->push( result, _scope, scope()->byteCodeIndex() );
     abortIfDead( result );
@@ -879,8 +879,8 @@ void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
 
             // now assign to result register and jump to NonLocalReturn setup code to set up remaining NonLocalReturn regs
             // NB: each scope needs its own setup node because the home fp/id is different
-            std::int32_t    endByteCodeIndex = scope()->nlrPoint()->byteCodeIndex();
-            bool haveSetupNode    = scope()->nlrPoint()->next() not_eq nullptr;
+            std::int32_t endByteCodeIndex = scope()->nlrPoint()->byteCodeIndex();
+            bool         haveSetupNode    = scope()->nlrPoint()->next() not_eq nullptr;
             st_assert( not haveSetupNode or scope()->nlrPoint()->next()->isNonLocalReturnSetupNode(), "expected setup node" );
             PseudoRegister *res = haveSetupNode ? ( (NonTrivialNode *) scope()->nlrPoint()->next() )->src() : new SinglyAssignedPseudoRegister( scope(), NonLocalReturnResultLoc, true, true, byteCodeIndex(), endByteCodeIndex );
             append( NodeFactory::createAndRegisterNode<AssignNode>( src, res ) );
@@ -899,7 +899,7 @@ void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
 GrowableArray<NonTrivialNode *> *NodeBuilder::nodesBetween( Node *from, Node *to ) {
     // collect assignments along the path from --> to (for splitting)
     GrowableArray<NonTrivialNode *> *nodes = new GrowableArray<NonTrivialNode *>( 5 );
-    Node *n = from;
+    Node                            *n     = from;
     while ( n not_eq to ) {
         if ( not n->hasSingleSuccessor() )
             return nullptr;   // can't copy both paths
@@ -941,14 +941,14 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
         return;
 
     for ( std::int32_t i = exprsToSplit->length() - 1; i >= 0; i-- ) {
-        Expression *e     = exprsToSplit->at( i );
-        Node       *start = e->node();
+        Expression                      *e           = exprsToSplit->at( i );
+        Node                            *start       = e->node();
         GrowableArray<NonTrivialNode *> *nodesToCopy = nodesBetween( start, test );
         st_assert( nodesToCopy not_eq nullptr, "should have worked" );
 
         // find corresponding 'to' node in type test
-        KlassOop c = e->asConstantExpression()->klass();
-        std::int32_t      j = test->classes()->length();
+        KlassOop     c = e->asConstantExpression()->klass();
+        std::int32_t j = test->classes()->length();
         while ( j-- > 0 and test->classes()->at( j ) not_eq c );
         st_assert( j >= 0, "didn't find klass in type test" );
         Node *to = test->next( j + 1 );    // +1 because next(i) is branch for class i-1
@@ -962,7 +962,7 @@ void NodeBuilder::splitMergeExpression( Expression *expr, TypeTestNode *test ) {
         start->removeNext( start->next() );
         // append copies of all assignments
         Node *current = start;
-        bool found = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
+        bool found    = nodesToCopy->length() == 0;    // hard to test if no nodes to copy, so assume it's ok
 
         for ( std::int32_t i = 0; i < nodesToCopy->length(); i++ ) {
             NonTrivialNode *orig = nodesToCopy->at( i );
@@ -1111,7 +1111,7 @@ void NodeBuilder::allocate_context( std::int32_t nofTemps, bool forMethod ) {
     scope()->set_contextInitializer( NodeFactory::createAndRegisterNode<ContextInitNode>( creator ) );
     append( scope()->contextInitializer() );
     ConstantExpression *nil = new ConstantExpression( nilObject, new_ConstPReg( _scope, nilObject ), nullptr );
-    for ( std::int32_t i = 0; i < nofTemps; i++ )
+    for ( std::int32_t i    = 0; i < nofTemps; i++ )
         scope()->contextInitializer()->initialize( i, nil );
 }
 
@@ -1155,7 +1155,7 @@ void NodeBuilder::set_self_via_context() {
     // allocated. Thus, for the time being, explicitly generate
     // the uplevel access node. Note: the incoming context is in the recv location!
     const std::int32_t self_no = 0; // self is always the first entry in the top context, if there
-    PseudoRegister *reg = _scope->self()->preg();
+    PseudoRegister     *reg    = _scope->self()->preg();
     append( NodeFactory::createAndRegisterNode<LoadUplevelNode>( reg, reg, contextNo, ContextOopDescriptor::temp0_word_offset() + self_no, nullptr ) );
 }
 
@@ -1186,9 +1186,9 @@ Expression *NodeBuilder::copy_into_context( Expression *e, std::int32_t no ) {
 
 
 void NodeBuilder::copy_self_into_context() {
-    const std::int32_t self_no = 0; // self is always the first temporary in a context, if there
+    const std::int32_t self_no               = 0; // self is always the first temporary in a context, if there
     // caution: must create new expr/preg for self in context because the two locations must be different
-    Expression *self_expr_in_context = copy_into_context( scope()->self(), self_no );
+    Expression         *self_expr_in_context = copy_into_context( scope()->self(), self_no );
     scope()->contextTemporariesAtPut( self_no, self_expr_in_context );
     scope()->contextInitializer()->initialize( self_no, scope()->self() );
 }
@@ -1224,7 +1224,7 @@ PseudoRegister *NodeBuilder::float_at( std::int32_t fno ) {
             // fno refers to a float on the float expression stack,
             // it must refer to the top since code is generated for
             // a stack machine
-            return new SinglyAssignedPseudoRegister( _scope, topOfFloatStack, true, true, byteCodeIndex(), byteCodeIndex() );
+            return new SinglyAssignedPseudoRegister( _scope, Location::TOP_OF_FLOAT_STACK, true, true, byteCodeIndex(), byteCodeIndex() );
         }
     } else {
         // intermediate expressions are treated as temporaries
@@ -1414,7 +1414,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
             break;
         default: st_fatal1( "bad float comparison code %d", f );
     }
-    std::int32_t                  mask;
+    std::int32_t         mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc1, mask, cond );
     PseudoRegister               *op1        = float_at( fno );

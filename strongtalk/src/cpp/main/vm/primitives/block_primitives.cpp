@@ -40,7 +40,7 @@ static inline void inc_context_counter() {
 
 extern "C" BlockClosureOop allocateTenuredBlock( SMIOop nofArgs ) {
     PROLOGUE_1( "allocateBlock", nofArgs );
-    BlockClosureOop blk = as_blockClosureOop( Universe::allocate_tenured( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
+    BlockClosureOop blk = as_blockClosureOop( Universe::allocate_tenured( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
     blk->set_klass_field( BlockClosureKlass::blockKlassFor( nofArgs->value() ) );
     inc_block_counter();
@@ -50,7 +50,7 @@ extern "C" BlockClosureOop allocateTenuredBlock( SMIOop nofArgs ) {
 // TODO: Implement the following function (gri)
 extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs ) {
     PROLOGUE_1( "allocateBlock", nofArgs );
-    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
+    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
     blk->set_klass_field( BlockClosureKlass::blockKlassFor( nofArgs->value() ) );
     inc_block_counter();
@@ -59,7 +59,7 @@ extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs ) {
 
 extern "C" BlockClosureOop allocateBlock0() {
     PROLOGUE_0( "allocateBlock0" );
-    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
+    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
     blk->set_klass_field( Universe::zeroArgumentBlockKlassObject() );
     inc_block_counter();
@@ -68,7 +68,7 @@ extern "C" BlockClosureOop allocateBlock0() {
 
 extern "C" BlockClosureOop allocateBlock1() {
     PROLOGUE_0( "allocateBlock1" );
-    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
+    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
     blk->set_klass_field( Universe::oneArgumentBlockKlassObject() );
     inc_block_counter();
@@ -77,7 +77,7 @@ extern "C" BlockClosureOop allocateBlock1() {
 
 extern "C" BlockClosureOop allocateBlock2() {
     PROLOGUE_0( "allocateBlock2" );
-    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / oopSize ) );
+    BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
     blk->set_klass_field( Universe::twoArgumentBlockKlassObject() );
     inc_block_counter();
@@ -121,7 +121,7 @@ extern "C" ContextOop allocateContext2() {
 
 
 extern "C" bool have_nlr_through_C;
-extern "C" Oop    nlr_result;
+extern "C" Oop  nlr_result;
 
 
 PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
@@ -135,7 +135,7 @@ PRIM_DECL_2( unwindprotect, Oop receiver, Oop protectBlock ) {
     }
 
     if ( have_nlr_through_C ) {
-        UnwindInfo enabler;
+        UnwindInfo       enabler;
         PersistentHandle *result = new PersistentHandle( res );
         Delta::call( block, vmSymbols::value(), nlr_result );
         // Now since we have to continue the first non-local-return the nlr_result must be correct.

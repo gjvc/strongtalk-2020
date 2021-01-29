@@ -31,13 +31,13 @@ extern NativeMethod  *recompilee;        // method currently being recompiled
 class Recompilation : public VM_Operation {
 
 private:
-    Oop       _receiver;            // receiver of trigger method/NativeMethod
-    MethodOop _method;              // trigger method
+    Oop               _receiver;            // receiver of trigger method/NativeMethod
+    MethodOop         _method;              // trigger method
     NativeMethod      *_nativeMethod;       // trigger NativeMethod (if compiled, nullptr otherwise)
     NativeMethod      *_newNativeMethod;    // new NativeMethod replacing trigger (if any)
     DeltaVirtualFrame *_deltaVirtualFrame;  // VirtualFrame of trigger method/NativeMethod (NOT COMPLETELY INITIALIZED)
-    bool _isUncommonBranch;    // recompiling because of uncommon branch?
-    bool _recompiledTrigger;   // is newNM the new version of _nm?
+    bool              _isUncommonBranch;    // recompiling because of uncommon branch?
+    bool              _recompiledTrigger;   // is newNM the new version of _nm?
 
 public:
 
@@ -205,8 +205,8 @@ public:
 
 
 extern std::int32_t nstages;                     // # of recompilation stages
-extern smi_t *compileCounts;           // # of compilations indexed by stage
-extern std::int32_t   *recompileLimits;         // recompilation limits indexed by stage
+extern smi_t        *compileCounts;           // # of compilations indexed by stage
+extern std::int32_t *recompileLimits;         // recompilation limits indexed by stage
 
 constexpr std::int32_t MaxRecompilationLevels = 4;           // max. # recompilation levels
 constexpr std::int32_t MaxVersions            = 4 - 1;       // desired max. # NativeMethod recompilations

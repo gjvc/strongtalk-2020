@@ -82,7 +82,7 @@ protected:
 
     // OS data associated with the process
     Thread         *_thread;            // Native thread
-    std::int32_t            _thread_id;          // Native thread id (set by OS when created)
+    std::int32_t   _thread_id;          // Native thread id (set by OS when created)
     Event          *_event;             // Thread lock
     char           *_stack_limit;       // lower limit of stack
     static Process *_current_process;   //  active Delta process or vm process
@@ -173,15 +173,15 @@ private:
     ProcessOop   _processObject;    // the Delta level process object.
     ProcessState _state;         // process state.
 
-    std::int32_t        *_last_Delta_fp;
-    Oop        *_last_Delta_sp;
-    const char *_last_Delta_pc;      // For now only used for stack overflow
+    std::int32_t *_last_Delta_fp;
+    Oop          *_last_Delta_sp;
+    const char   *_last_Delta_pc;      // For now only used for stack overflow
 
     volatile bool _is_terminating;
 
-    std::int32_t       _time_stamp;
-    DebugInfo _debugInfo;               // debug info used while stepping
-    bool    _isCallback;
+    std::int32_t _time_stamp;
+    DebugInfo    _debugInfo;               // debug info used while stepping
+    bool         _isCallback;
 
     friend class VMProcess;
 
@@ -379,11 +379,11 @@ public:
 
     // Static operations
 private:
-    static DeltaProcess    *_active_delta_process;
-    static DeltaProcess    *_main_process;
-    static DeltaProcess    *_scheduler_process;
+    static DeltaProcess  *_active_delta_process;
+    static DeltaProcess  *_main_process;
+    static DeltaProcess  *_scheduler_process;
     static bool          _is_idle;
-    static volatile char   *_active_stack_limit;    //
+    static volatile char *_active_stack_limit;    //
     static volatile bool _interrupt;              //
 
     // The launch function for a new thread
@@ -418,7 +418,7 @@ public:
 
 private:
     static volatile bool _process_has_terminated;
-    static ProcessState    _state_of_terminated_process;
+    static ProcessState  _state_of_terminated_process;
 
     static void check_stack_overflow();
 
@@ -526,7 +526,7 @@ public:
 extern "C" bool processSemaphore;
 
 extern "C" std::int32_t *last_Delta_fp;
-extern "C" Oop         *last_Delta_sp;
+extern "C" Oop          *last_Delta_sp;
 
 extern std::int32_t CurrentHash;
 

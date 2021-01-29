@@ -11,13 +11,21 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-static std::array<const char *, nofSpecialLocations> specialLocNames{
-        "illegalLocation",          //
-        "unAllocated",              //
-        "noRegister",               //
-        "topOfStack",               //
-        "resultOfNonLocalReturn",   //
-        "topOfFloatStack"           //
+// special locations
+Location Location::ILLEGAL_LOCATION           = Location::specialLocation( 0 );
+Location Location::UNALLOCATED_LOCATION       = Location::specialLocation( 1 );
+Location Location::NO_REGISTER                = Location::specialLocation( 2 );
+Location Location::TOP_OF_STACK               = Location::specialLocation( 3 );
+Location Location::RESULT_OF_NON_LOCAL_RETURN = Location::specialLocation( 4 );
+Location Location::TOP_OF_FLOAT_STACK         = Location::specialLocation( 5 );    // only used if UseFPUStack is true
+
+static std::array<const char *, 6> specialLocationNames{
+        "ILLEGAL_LOCATION",             //
+        "UNALLOCATED_LOCATION",         //
+        "NO_REGISTER",                  //
+        "TOP_OF_STACK",                 //
+        "RESULT_OF_NON_LOCAL_RETURN",   //
+        "TOP_OF_FLOAT_STACK"            //
 };
 
 
@@ -45,34 +53,34 @@ const char *Location::name() const {
 
     char *s;
     switch ( mode() ) {
-        case Mode::specialLoc: {
-            const char *name = specialLocNames[ id() ];
+        case Mode::SPECIAL_LOCATION: {
+            const char *name = specialLocationNames[ id() ];
             s = new_resource_array<char>( strlen( name ) );
             sprintf( s, name );
             break;
         }
-        case Mode::registerLoc: {
+        case Mode::REGISTER_LOCATION: {
             const char *name = Mapping::asRegister( *this ).name();
             s                = new_resource_array<char>( 8 );
             sprintf( s, name );
             break;
         }
-        case Mode::stackLoc: {
+        case Mode::STACK_LOCATION: {
             s = new_resource_array<char>( 8 );
             sprintf( s, "S%d", offset() );
             break;
         }
-        case Mode::contextLoc1: {
+        case Mode::CONTEXT_LOCATIION_1: {
             s = new_resource_array<char>( 24 );
             sprintf( s, "C0x%08x,%d(%d)", contextNo(), tempNo(), scopeID() );
             break;
         }
-        case Mode::contextLoc2: {
+        case Mode::CONTEXT_LOCATIION_2: {
             s = new_resource_array<char>( 24 );
             sprintf( s, "C%d,%d[%d]", contextNo(), tempNo(), scopeOffs() );
             break;
         }
-        case Mode::floatLoc: {
+        case Mode::FLOAT_LOCATION: {
             s = new_resource_array<char>( 16 );
             sprintf( s, "F%d(%d)", floatNo(), scopeNo() );
             break;
@@ -87,7 +95,7 @@ const char *Location::name() const {
 // predicates
 
 bool Location::isTopOfStack() const {
-    return *this == topOfStack or *this == topOfFloatStack;
+    return *this == TOP_OF_STACK or *this == TOP_OF_FLOAT_STACK;
 }
 
 
@@ -105,22 +113,22 @@ bool Location::isLocalRegister() const {
     return isRegisterLocation() and Mapping::isLocalRegister( *this );
 }
 
-// Implementation of IntFreeList
+// Implementation of IntegerFreeList
 
-void IntFreeList::grow() {
+void IntegerFreeList::grow() {
     _list->append( _first );
     _first = _list->length() - 1;
 }
 
 
-IntFreeList::IntFreeList( std::int32_t size ) {
+IntegerFreeList::IntegerFreeList( std::int32_t size ) {
     _first = -1;
     _list  = new GrowableArray<std::int32_t>( 2 );
     st_assert( _list->length() == 0, "should be zero" );
 }
 
 
-std::int32_t IntFreeList::allocate() {
+std::int32_t IntegerFreeList::allocate() {
     if ( _first < 0 )
         grow();
     std::int32_t i = _first;
@@ -130,7 +138,7 @@ std::int32_t IntFreeList::allocate() {
 }
 
 
-std::int32_t IntFreeList::allocated() {
+std::int32_t IntegerFreeList::allocated() {
     std::int32_t n = length();
     std::int32_t i = _first;
     while ( i >= 0 ) {
@@ -142,19 +150,19 @@ std::int32_t IntFreeList::allocated() {
 }
 
 
-void IntFreeList::release( std::int32_t i ) {
+void IntegerFreeList::release( std::int32_t i ) {
     st_assert( _list->at( i ) == -1, "should have been allocated before" );
     _list->at_put( i, _first );
     _first = i;
 }
 
 
-std::int32_t IntFreeList::length() {
+std::int32_t IntegerFreeList::length() {
     return _list->length();
 }
 
 
-void IntFreeList::print() {
+void IntegerFreeList::print() {
     spdlog::info( "FreeList 0x{0:x}:", static_cast<const void *>(this) );
     _list->print();
 }

@@ -221,7 +221,7 @@ void MappingTask::generate_code( MapConformance *mc ) {
         }
     } else {
         //Use register in target or free register
-        Variable temp;
+        Variable          temp;
         for ( MappingTask *current = this; current; current = current->next() ) {
             if ( current->dst.has_reg() )
                 temp = current->dst.reg();
@@ -301,7 +301,7 @@ void MapConformance::generate( Variable free_register1, Variable free_register2 
 
 
 void MapConformance::move( Variable src, Variable dst ) {
-    spdlog::info("move {:d} {:d}", src.value(), dst.value() );
+    spdlog::info( "move {:d} {:d}", src.value(), dst.value() );
 //    _console->print( "	move  " );
 //    src.print();
 //    _console->print( ",	" );
@@ -311,7 +311,7 @@ void MapConformance::move( Variable src, Variable dst ) {
 
 
 void MapConformance::push( Variable src ) {
-    spdlog::info("push {:d}", src.value() );
+    spdlog::info( "push {:d}", src.value() );
 //    _console->print( "	push  " );
 //    src.print();
 //    _console->cr();
@@ -319,7 +319,7 @@ void MapConformance::push( Variable src ) {
 
 
 void MapConformance::pop( Variable dst ) {
-    spdlog::info("pop {:d}", dst.value() );
+    spdlog::info( "pop {:d}", dst.value() );
 //    _console->print( "	pop  " );
 //    dst.print();
 //    _console->cr();

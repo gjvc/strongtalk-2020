@@ -34,7 +34,7 @@ public:
 
 
     void print_short() {
-        spdlog::info( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void*>( this ) );
+        spdlog::info( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void *>( this ) );
     }
 
 
@@ -60,7 +60,7 @@ protected:
 
 public:
     BasicBlockDefinitionAndUsageTable duInfo;        // definitions/uses of PseudoRegisters
-    static std::int32_t                genCounter;    // to enumerate BBs in code-generation order
+    static std::int32_t               genCounter;    // to enumerate BBs in code-generation order
 
 public:
     BasicBlock( Node *f, Node *l, std::int32_t n ) {

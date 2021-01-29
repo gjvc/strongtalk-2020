@@ -35,7 +35,7 @@ StackChunkBuilder::~StackChunkBuilder() {
 
 void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
     MethodOop          method;
-    std::int32_t                number_of_temps;
+    std::int32_t       number_of_temps;
     GrowableArray<Oop> *stack;
     {
         //FlagSetting fl(TraceCanonicalContext, false);
@@ -48,8 +48,8 @@ void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
         array->push( smiOopFromValue( f->byteCodeIndex() ) );
 
         // push locals
-        /*std::int32_t*/ number_of_temps        = method->number_of_stack_temporaries();
-        /*GrowableArray<Oop>* */ stack = f->expression_stack();
+        /*std::int32_t*/ number_of_temps = method->number_of_stack_temporaries();
+        /*GrowableArray<Oop>* */ stack   = f->expression_stack();
 
         // push number of locals
         std::int32_t locals = number_of_temps + stack->length();

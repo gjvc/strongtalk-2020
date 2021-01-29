@@ -27,9 +27,9 @@ private:
     }
 
 
-    static std::int32_t       _sweepSeconds;
-    static bool    _isRunning;
-    static MethodOop _activeMethod;
+    static std::int32_t _sweepSeconds;
+    static bool         _isRunning;
+    static MethodOop    _activeMethod;
     static NativeMethod *_activeNativeMethod;
 
 public:
@@ -69,8 +69,8 @@ protected:
     }
 
 
-    std::int32_t    _sweep_start;     // time of last activation
-    bool _is_active;          // are we waiting to do something?
+    std::int32_t _sweep_start;     // time of last activation
+    bool         _is_active;          // are we waiting to do something?
 
     bool is_active() const {
         return _is_active;
@@ -128,10 +128,10 @@ private:
 
 class CodeSweeper : public Sweeper {
 protected:
-    std::int32_t    _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
-    double _decayFactor;            // decay factor for invocation counts
-    std::int32_t    _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
-    std::int32_t    _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
+    std::int32_t _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
+    double       _decayFactor;            // decay factor for invocation counts
+    std::int32_t _oldHalfLifeTime;        // old half-life time (to detect changes in half-life setting)
+    std::int32_t _fractionPerTask;        // a task invocation does (1 / fractionPerTask) of the entire work
 
     void updateInterval();          // check for change in half-life setting
 

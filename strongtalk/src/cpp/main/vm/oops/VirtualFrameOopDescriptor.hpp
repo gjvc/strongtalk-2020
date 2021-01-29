@@ -72,7 +72,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( VirtualFrameOopDescriptor ) / oopSize;
+        return sizeof( VirtualFrameOopDescriptor ) / OOP_SIZE;
     }
 
 

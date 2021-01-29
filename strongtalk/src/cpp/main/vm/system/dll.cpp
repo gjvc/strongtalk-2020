@@ -141,7 +141,7 @@ dll_func_ptr_t DLLs::lookup_and_patch_Interpreted_DLLCache() {
 
 dll_func_ptr_t DLLs::lookup_and_patch_Compiled_DLLCache() {
     // get DLL call info
-    Frame f = DeltaProcess::active()->last_frame();
+    Frame             f      = DeltaProcess::active()->last_frame();
     Compiled_DLLCache *cache = compiled_DLLCache_from_return_address( f.pc() );
     st_assert( cache->entry_point() == nullptr, "should not be set yet" );
     // do lookup, patch & return entry point

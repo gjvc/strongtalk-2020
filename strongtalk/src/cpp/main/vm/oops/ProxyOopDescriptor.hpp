@@ -17,7 +17,7 @@
 //    [klass_field ]
 //    [pointer     ]
 
-const std::int32_t pointer_no     = sizeof( MemOopDescriptor ) / oopSize;
+const std::int32_t pointer_no     = sizeof( MemOopDescriptor ) / OOP_SIZE;
 const std::int32_t pointer_offset = sizeof( MemOopDescriptor ) - MEMOOP_TAG;
 
 class ProxyOopDescriptor : public MemOopDescriptor {
@@ -34,7 +34,7 @@ protected:
 public:
     // field offsets for code generation
     static std::int32_t pointer_byte_offset() {
-        return ( 2 * oopSize ) - MEMOOP_TAG;
+        return ( 2 * OOP_SIZE ) - MEMOOP_TAG;
     }
 
 
@@ -43,7 +43,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( ProxyOopDescriptor ) / oopSize;
+        return sizeof( ProxyOopDescriptor ) / OOP_SIZE;
     }
 
 

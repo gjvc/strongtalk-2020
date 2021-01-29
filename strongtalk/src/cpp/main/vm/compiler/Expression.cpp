@@ -219,11 +219,11 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
         setSplittable( false );
     _node = n;
     if ( other->isMergeExpression() ) {
-        MergeExpression *o = other->asMergeExpression();
+        MergeExpression    *o = other->asMergeExpression();
         if ( o->isSplittable() and not isSplittable() ) {
             std::int32_t i = 0;
         }
-        for ( std::int32_t       i  = 0; i < o->exprs->length(); i++ ) {
+        for ( std::int32_t i  = 0; i < o->exprs->length(); i++ ) {
             // must be careful when adding splittable exprs (e->next not_eq nullptr)
             // to avoid creating loops in the ->next chain
             Expression *e = o->exprs->at( i );
@@ -240,8 +240,8 @@ void MergeExpression::mergeInto( Expression *other, Node *n ) {
 
     std::int32_t       len = exprs->length();
     for ( std::int32_t i   = 0; i < len; i++ ) {
-        Expression *e = exprs->at( i );
-        for ( std::int32_t j = i + 1; j < len; j++ ) {
+        Expression         *e = exprs->at( i );
+        for ( std::int32_t j  = i + 1; j < len; j++ ) {
             Expression *e2 = exprs->at( j );
             st_assert( not e->equals( e2 ), "duplicate expr" );
             st_assert( not( e->hasKlass() and e2->hasKlass() and e->klass() == e2->klass() ), "duplicate klasses" );
@@ -366,16 +366,16 @@ bool MergeExpression::hasKlass() const {
     // possibly an unlikely unknown
     if ( exprs->length() > 2 )
         return false;
-    Expression *e1 = exprs->at( 0 );
-    bool haveKlass1 = e1->hasKlass();
+    Expression *e1        = exprs->at( 0 );
+    bool       haveKlass1 = e1->hasKlass();
     if ( exprs->length() == 1 )
         return haveKlass1;    // only one expr
     UnknownExpression *u1 = e1->findUnknown();
     if ( u1 and not u1->isUnlikely() )
         return false;  // 1st = likely unknown
-    Expression *e2 = exprs->at( 1 );
-    bool haveKlass2 = e2->hasKlass();
-    UnknownExpression *u2 = e2->findUnknown();
+    Expression        *e2        = exprs->at( 1 );
+    bool              haveKlass2 = e2->hasKlass();
+    UnknownExpression *u2        = e2->findUnknown();
     if ( u2 and not u2->isUnlikely() )
         return false;  // 2nd = likely unknown
     if ( haveKlass1 and haveKlass2 )
@@ -423,8 +423,8 @@ KlassExpression *ConstantExpression::asKlassExpression() const {
 
 
 Expression *MergeExpression::convertToKlass( PseudoRegister *p, Node *n ) const {
-    MergeExpression *e = new MergeExpression( p, n );
-    for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
+    MergeExpression    *e = new MergeExpression( p, n );
+    for ( std::int32_t i  = 0; i < exprs->length(); i++ ) {
         Expression *expr = exprs->at( i )->convertToKlass( p, n );
         e->add( expr );
     }
@@ -580,11 +580,11 @@ NameNode *ConstantExpression::nameNode( bool mustBeLegal ) const {
 
 
 void Expression::print_helper( const char *type ) {
-    spdlog::info( " (Node 0x{0:x})", static_cast<void*>( node() ) );
+    spdlog::info( " (Node 0x{0:x})", static_cast<void *>( node() ) );
     if ( next ) {
         spdlog::info( " (next 0x{0:x})", static_cast<void *>( next ) );
     }
-    spdlog::info( "    ((%s*)0x{0:x})", type, static_cast<void*>( this ) );
+    spdlog::info( "    ((%s*)0x{0:x})", type, static_cast<void *>( this ) );
 }
 
 
@@ -627,7 +627,7 @@ void BlockExpression::print() {
 void MergeExpression::print() {
     spdlog::info( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
     for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
-        spdlog::info( "\t0x{0:x}%s ", static_cast<void*>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
+        spdlog::info( "\t0x{0:x}%s ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
     spdlog::info( ")" );
@@ -669,7 +669,7 @@ void ConstantExpression::verify() const {
 
 void MergeExpression::verify() const {
     GrowableArray<Node *> nodes( 10 );
-    for ( std::int32_t             i = 0; i < exprs->length(); i++ ) {
+    for ( std::int32_t    i = 0; i < exprs->length(); i++ ) {
         Expression *e = exprs->at( i );
         e->verify();
         if ( e->isMergeExpression() )

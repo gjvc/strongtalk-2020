@@ -41,7 +41,7 @@ TEST( SystemPrimitivesTests, expansionShouldReturnMarkedResultWhenNegative ) {
 }
 
 
-TEST( SystemPrimitivesTests, oopSize ) { EXPECT_EQ( smiOopFromValue( oopSize ), SystemPrimitives::oopSize() ) << "oopSize is wrong"; }
+TEST( SystemPrimitivesTests, OOP_SIZE ) { EXPECT_EQ( smiOopFromValue( OOP_SIZE ), SystemPrimitives::oopSize() ) << "OOP_SIZE is wrong"; }
 
 
 extern "C" std::int32_t expansion_count; TEST( SystemPrimitivesTests, expansionsShouldReturnExpansionCountAsSMI ) {

@@ -56,7 +56,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( KlassOopDescriptor ) / oopSize;
+        return sizeof( KlassOopDescriptor ) / OOP_SIZE;
     }
 
 

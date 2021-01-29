@@ -83,14 +83,14 @@ void CodeBuffer::copyTo( NativeMethod *nm ) {
 
     const char hlt = '\xF4';
 
-    while ( code_size() % oopSize not_eq 0 )
+    while ( code_size() % OOP_SIZE not_eq 0 )
         *_codeEnd++ = hlt; // align code
 
-    while ( reloc_size() % oopSize not_eq 0 )
+    while ( reloc_size() % OOP_SIZE not_eq 0 )
         *_locsEnd++ = RelocationInformation( RelocationInformation::RelocationType::oop_type, 0 ); // align relocation info
 
-    copy_oops( (Oop *) _codeStart, (Oop *) nm->instructionsStart(), code_size() / oopSize );
-    copy_oops( (Oop *) _locsStart, (Oop *) nm->locs(), reloc_size() / oopSize );
+    copy_oops( (Oop *) _codeStart, (Oop *) nm->instructionsStart(), code_size() / OOP_SIZE );
+    copy_oops( (Oop *) _locsStart, (Oop *) nm->locs(), reloc_size() / OOP_SIZE );
 
     // Fix the pc relative information after the move
     std::int32_t delta = (const char *) _codeStart - (const char *) nm->instructionsStart();

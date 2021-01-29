@@ -12,7 +12,7 @@
 
 class ReservedSpace : public ValueObject {
 private:
-    const char *_base;
+    const char   *_base;
     std::int32_t _size;
 public:
     ReservedSpace( std::int32_t size );

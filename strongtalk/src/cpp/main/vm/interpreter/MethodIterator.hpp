@@ -27,11 +27,11 @@ class MethodInterval : public ResourceObject {
 
 protected:
     MethodInterval *_parent;            // enclosing interval (or nullptr if top-level)
-    MethodOop _method;
-    std::int32_t       _begin_byteCodeIndex;
-    std::int32_t       _end_byteCodeIndex;
-    bool    _in_primitive_failure;            // currently in primitive failure block?
-    IntervalInfo *_info;
+    MethodOop      _method;
+    std::int32_t   _begin_byteCodeIndex;
+    std::int32_t   _end_byteCodeIndex;
+    bool           _in_primitive_failure;            // currently in primitive failure block?
+    IntervalInfo   *_info;
 
     void initialize( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool failBlock );
 
@@ -187,7 +187,7 @@ public:
 
 class WhileNode : public InlineSendNode {
 protected:
-    bool _cond;
+    bool           _cond;
     MethodInterval *_expr_code;
     MethodInterval *_body_code;
 
@@ -225,9 +225,9 @@ public:
 
 class IfNode : public InlineSendNode {
 protected:
-    bool _cond;
-    bool _ignore_else_while_printing;
-    bool _produces_result;
+    bool           _cond;
+    bool           _ignore_else_while_printing;
+    bool           _produces_result;
     MethodInterval *_then_code;
     MethodInterval *_else_code;
 
@@ -293,8 +293,8 @@ public:
 class PrimitiveCallNode : public ExternalCallNode {
 protected:
     PrimitiveDescriptor *_pdesc;
-    bool    _has_receiver;
-    SymbolOop _name;
+    bool                _has_receiver;
+    SymbolOop           _name;
 
     // Constructors
     PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc );
@@ -328,11 +328,11 @@ class Interpreted_DLLCache;
 
 class DLLCallNode : public ExternalCallNode {
 protected:
-    SymbolOop _dll_name;
-    SymbolOop _function_name;
-    std::int32_t       _nofArgs;
-    dll_func_ptr_t  _function;
-    bool    _async;
+    SymbolOop      _dll_name;
+    SymbolOop      _function_name;
+    std::int32_t   _nofArgs;
+    dll_func_ptr_t _function;
+    bool           _async;
 
     void initialize( Interpreted_DLLCache *cache );
 
@@ -385,12 +385,12 @@ class MethodIterator;
 
 class MethodClosure : ValueObject {
 private:
-    MethodOop _method;                  //
-    std::int32_t       _byteCodeIndex;           //
-    std::int32_t       _next_byteCodeIndex;      //
-    bool    _aborting;                //
-    bool    _in_primitive_failure;    // currently in primitive failure block?
-    std::int32_t       _float0_index;            //
+    MethodOop    _method;                  //
+    std::int32_t _byteCodeIndex;           //
+    std::int32_t _next_byteCodeIndex;      //
+    bool         _aborting;                //
+    bool         _in_primitive_failure;    // currently in primitive failure block?
+    std::int32_t _float0_index;            //
 
     void set_method( MethodOop method );
 
@@ -855,7 +855,7 @@ private:
 
     void should_never_encounter( std::uint8_t code );
 
-    MethodInterval *_interval;
+    MethodInterval               *_interval;
     static MethodIntervalFactory defaultFactory;      // default factory
 
 public:

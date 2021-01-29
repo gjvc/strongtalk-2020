@@ -97,19 +97,19 @@ void Primitives::print_table() {
     for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
         spdlog::info( "%primitive-table:  {:5d}  {:<84}  {:2d}  {}{}{}{}{}{}{}{}{}  {}",
-                            i,
-                            e->name(),
-                            e->number_of_parameters(),
-                            e->has_receiver() ? 'R' : '_',
-                            e->can_fail() ? 'F' : '_',
-                            e->can_scavenge() ? 'S' : '_',
-                            e->can_walk_stack() ? 'W' : '_',
-                            e->can_perform_NonLocalReturn() ? 'N' : '_',
-                            e->can_be_constant_folded() ? 'C' : '_',
-                            e->can_invoke_delta() ? 'D' : '_',
-                            e->is_internal() ? 'I' : '_',
-                            e->needs_delta_fp_code() ? 'P' : '_',
-                            name_from_group( e->group() )
+                      i,
+                      e->name(),
+                      e->number_of_parameters(),
+                      e->has_receiver() ? 'R' : '_',
+                      e->can_fail() ? 'F' : '_',
+                      e->can_scavenge() ? 'S' : '_',
+                      e->can_walk_stack() ? 'W' : '_',
+                      e->can_perform_NonLocalReturn() ? 'N' : '_',
+                      e->can_be_constant_folded() ? 'C' : '_',
+                      e->can_invoke_delta() ? 'D' : '_',
+                      e->is_internal() ? 'I' : '_',
+                      e->needs_delta_fp_code() ? 'P' : '_',
+                      name_from_group( e->group() )
         );
     }
 
@@ -203,7 +203,7 @@ void PrimitiveDescriptor::verify() {
 
 std::int32_t PrimitiveDescriptor::compare( const char *str, std::int32_t len ) const {
 
-    std::int32_t  src_len = strlen( name() );
+    std::int32_t src_len = strlen( name() );
     std::int32_t sign    = strncmp( name(), str, min( src_len, len ) );
 
 //    if ( sign not_eq 0 or src_len == len ) return sign;
@@ -259,13 +259,13 @@ void Primitives::lookup_and_patch() {
 
 
 void primitives_init() {
-    spdlog::info( "%system-init:  primitives_init" );
 
     Primitives::initialize();
     PrimitiveDescriptor *prev = nullptr;
 
     for ( std::int32_t index = 0; index < size_of_primitive_table; index++ ) {
         PrimitiveDescriptor *e = primitive_table[ index ];
+        spdlog::info( "%primitives-init:  primitive_table: {0:3d}  {}", index, e->name() );
         e->verify();
         if ( prev ) {
             guarantee( strcmp( prev->name(), e->name() ) == -1, "primitive table not sorted" );
@@ -278,6 +278,8 @@ void primitives_init() {
 
 // For debugging/profiling
 void Primitives::clear_counters() {
+
+    spdlog::info( "%primitives-init:  primitive_table: clear counters" );
 
     behaviorPrimitives::_numberOfCalls         = 0;
     byteArrayPrimitives::number_of_calls       = 0;
@@ -432,7 +434,7 @@ PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
 PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t selector_length ) {
     std::int32_t first = 0;
     std::int32_t last  = size_of_primitive_table;
-    spdlog::info( "%primitives-lookup: [{}] [{}]", selector, selector_length  );
+    spdlog::info( "%primitives-lookup: [{}] [{}]", selector, selector_length );
 
     PrimitiveDescriptor *element;
     do {
@@ -462,7 +464,7 @@ PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t sele
 
 PrimitiveDescriptor *Primitives::verified_lookup( const char *selector ) {
 
-    std::int32_t         selector_length = strlen( selector );
+    std::int32_t        selector_length = strlen( selector );
     PrimitiveDescriptor *result         = lookup( selector, selector_length );
     if ( result == nullptr ) {
         spdlog::info( "%primitives-lookup: Verified primitive lookup failed: selector =[{}]", selector );

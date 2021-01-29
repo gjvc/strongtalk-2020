@@ -13,7 +13,7 @@ const char *PrimitivesGenerator::double_op( arith_op op ) {
     const char *entry_point = masm->pc();
 
     // 	Tag test for argument
-    masm->movl( ebx, Address( esp, +oopSize ) );
+    masm->movl( ebx, Address( esp, +OOP_SIZE ) );
     masm->movl( edx, doubleKlass_addr() );
     masm->testb( ebx, 0x01 );
     masm->jcc( Assembler::Condition::zero, error_first_argument_has_wrong_type );
@@ -23,49 +23,49 @@ const char *PrimitivesGenerator::double_op( arith_op op ) {
     masm->jcc( Assembler::Condition::notEqual, error_first_argument_has_wrong_type );
 
     // 	allocate_double
-    test_for_scavenge( eax, 4 * oopSize, need_scavenge );
+    test_for_scavenge( eax, 4 * OOP_SIZE, need_scavenge );
 
-    // 	mov	DWORD PTR [eax-(4 * oopSize)], 0A0000003H ; obj->init_mark()
+    // 	mov	DWORD PTR [eax-(4 * OOP_SIZE)], 0A0000003H ; obj->init_mark()
     // 	fld  QWORD PTR [ecx+07]
-    // 	mov	DWORD PTR [eax-(3 * oopSize)], edx        ; obj->set_klass(klass)
+    // 	mov	DWORD PTR [eax-(3 * OOP_SIZE)], edx        ; obj->set_klass(klass)
     //
     // 	op   QWORD PTR [ebx+07]
 
     masm->bind( fill_object );
-    masm->movl( ecx, Address( esp, +2 * oopSize ) );
+    masm->movl( ecx, Address( esp, +2 * OOP_SIZE ) );
 
     masm->movl( edx, doubleKlass_addr() );
-    masm->movl( Address( eax, -4 * oopSize ), 0xA0000003 );         // obj->init_mark()
-    masm->movl( Address( eax, -3 * oopSize ), edx );                // obj->set_klass(klass)
+    masm->movl( Address( eax, -4 * OOP_SIZE ), 0xA0000003 );         // obj->init_mark()
+    masm->movl( Address( eax, -3 * OOP_SIZE ), edx );                // obj->set_klass(klass)
 
-    masm->fld_d( Address( ecx, ( 2 * oopSize ) - 1 ) );
+    masm->fld_d( Address( ecx, ( 2 * OOP_SIZE ) - 1 ) );
 
     switch ( op ) {
         case op_add:
-            masm->fadd_d( Address( ebx, ( 2 * oopSize ) - 1 ) );
+            masm->fadd_d( Address( ebx, ( 2 * OOP_SIZE ) - 1 ) );
             break;
         case op_sub:
-            masm->fsub_d( Address( ebx, ( 2 * oopSize ) - 1 ) );
+            masm->fsub_d( Address( ebx, ( 2 * OOP_SIZE ) - 1 ) );
             break;
         case op_mul:
-            masm->fmul_d( Address( ebx, ( 2 * oopSize ) - 1 ) );
+            masm->fmul_d( Address( ebx, ( 2 * OOP_SIZE ) - 1 ) );
             break;
         case op_div:
-            masm->fdiv_d( Address( ebx, ( 2 * oopSize ) - 1 ) );
+            masm->fdiv_d( Address( ebx, ( 2 * OOP_SIZE ) - 1 ) );
             break;
     }
 
-    masm->subl( eax, ( 4 * oopSize ) - 1 );
+    masm->subl( eax, ( 4 * OOP_SIZE ) - 1 );
 
     // 	eax result   DoubleOop
     // 	ecx receiver DoubleOop
     // 	ebx argument DoubleOop
-    masm->fstp_d( Address( eax, ( 2 * oopSize ) - 1 ) );
+    masm->fstp_d( Address( eax, ( 2 * OOP_SIZE ) - 1 ) );
     masm->ret( 8 );
 
     masm->bind( need_scavenge );
     scavenge( 4 );
-    masm->movl( ebx, Address( esp, +oopSize ) );
+    masm->movl( ebx, Address( esp, +OOP_SIZE ) );
     masm->movl( edx, doubleKlass_addr() );
     masm->jmp( fill_object );
 
@@ -78,20 +78,20 @@ const char *PrimitivesGenerator::double_from_smi() {
 
     const char *entry_point = masm->pc();
 
-    test_for_scavenge( eax, 4 * oopSize, need_scavenge );
+    test_for_scavenge( eax, 4 * OOP_SIZE, need_scavenge );
 
     masm->bind( fill_object );
-    masm->movl( ecx, Address( esp, +oopSize ) );
+    masm->movl( ecx, Address( esp, +OOP_SIZE ) );
     masm->movl( edx, doubleKlass_addr() );
     masm->sarl( ecx, TAG_SIZE );
-    masm->movl( Address( eax, -4 * oopSize ), 0xA0000003 );         // obj->init_mark()
-    masm->movl( Address( esp, -oopSize ), ecx );
-    masm->movl( Address( eax, -3 * oopSize ), edx );                // obj->set_klass(klass)
-    masm->fild_s( Address( esp, -oopSize ) );
-    masm->subl( eax, ( 4 * oopSize ) - 1 );
+    masm->movl( Address( eax, -4 * OOP_SIZE ), 0xA0000003 );         // obj->init_mark()
+    masm->movl( Address( esp, -OOP_SIZE ), ecx );
+    masm->movl( Address( eax, -3 * OOP_SIZE ), edx );                // obj->set_klass(klass)
+    masm->fild_s( Address( esp, -OOP_SIZE ) );
+    masm->subl( eax, ( 4 * OOP_SIZE ) - 1 );
 
     //	eax result   DoubleOop
-    masm->fstp_d( Address( eax, ( 2 * oopSize ) - 1 ) );
+    masm->fstp_d( Address( eax, ( 2 * OOP_SIZE ) - 1 ) );
     masm->ret( 4 );
 
     masm->bind( need_scavenge );

@@ -74,13 +74,13 @@ public:
 
 protected:
     NativeMethod *LRUhand;          // for LRU algorithm; sweeps through iZone
-    bool _needsCompaction;  //
-    bool _needsLRUSweep;    //
-    bool _needsSweep;       //
+    bool         _needsCompaction;  //
+    bool         _needsLRUSweep;    //
+    bool         _needsSweep;       //
 
-    std::int32_t    compactTime;                // time of last compaction
-    std::int32_t    compactDuration;            // duration of last compaction
-    double minFreeFrac;             // fraction of free Space needed at compaction time
+    std::int32_t compactTime;                // time of last compaction
+    std::int32_t compactDuration;            // duration of last compaction
+    double       minFreeFrac;             // fraction of free Space needed at compaction time
 
 
 public:
@@ -254,5 +254,5 @@ public:
     }
 };
 
-extern LRUcount *LRUtable;      // for optimized methods
-extern std::int32_t      *LRUflag;       // == LRUtable, just different type for convenience
+extern LRUcount     *LRUtable;      // for optimized methods
+extern std::int32_t *LRUflag;       // == LRUtable, just different type for convenience

@@ -39,6 +39,6 @@ void CompileTimeClosure::generateDebugInfo() {
 
 
 void CompileTimeClosure::print() {
-    spdlog::info( "(CompileTimeClosure*)0x{0:x} for method 0x{0:x}: ", static_cast<void*>( this ), static_cast<void*>( _method ) );
+    spdlog::info( "(CompileTimeClosure*)0x{0:x} for method 0x{0:x}: ", static_cast<void *>( this ), static_cast<void *>( _method ) );
     _method->pretty_print();
 }

@@ -27,7 +27,7 @@ class RecompilationScope : public PrintableResourceObject {
 
 protected:
     NonDummyRecompilationScope *_sender;
-    const std::int32_t _senderByteCodeIndex;
+    const std::int32_t         _senderByteCodeIndex;
 
 public:
     std::int32_t _invocationCount;        // estimated # of invocations (-1 == unknown)
@@ -275,8 +275,8 @@ class RUncommonBranch;
 class NonDummyRecompilationScope : public RecompilationScope {
     // abstract -- a non-dummy scope with subscopes
 protected:
-    const std::int32_t                           _level;                // distance from root
-    const std::int32_t                           ncodes;                        // # byte codes in method
+    const std::int32_t                  _level;                // distance from root
+    const std::int32_t                  ncodes;                        // # byte codes in method
     GrowableArray<RecompilationScope *> **_subScopes;        // indexed by byteCodeIndex
 public:
     GrowableArray<RUncommonBranch *> uncommon;    // list of uncommon branches
@@ -337,8 +337,8 @@ class InterpretedRecompilationScope : public NonDummyRecompilationScope {
     // a scope corresponding to an interpreted method
     LookupKey *_key;
     MethodOop _method;
-    bool    _is_trusted;            // is PolymorphicInlineCache info trusted?
-    bool    extended;        // subScopes computed?
+    bool      _is_trusted;            // is PolymorphicInlineCache info trusted?
+    bool      extended;        // subScopes computed?
 public:
     InterpretedRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, LookupKey *key, MethodOop m, std::int32_t level, bool trusted );
 
@@ -450,12 +450,12 @@ protected:
     const NativeMethod             *caller;    // calling NativeMethod
     const CompiledInlineCache      *_sd;    // calling InlineCache
     const ProgramCounterDescriptor *programCounterDescriptor;    // calling programCounterDescriptor
-    const KlassOop klass;            // receiver klass
-    const NativeMethod *nm;        // called NativeMethod (or nullptr if interpreted)
-    const MethodOop _method;    // called method
-    const bool    trusted;        // is PolymorphicInlineCache info trusted?
-    bool          _extended;        // subScopes computed?
-    const ScopeDescriptor *_desc;    // scope (or nullptr if interpreted)
+    const KlassOop                 klass;            // receiver klass
+    const NativeMethod             *nm;        // called NativeMethod (or nullptr if interpreted)
+    const MethodOop                _method;    // called method
+    const bool                     trusted;        // is PolymorphicInlineCache info trusted?
+    bool                           _extended;        // subScopes computed?
+    const ScopeDescriptor          *_desc;    // scope (or nullptr if interpreted)
 
 public:
     PICRecompilationScope( const NativeMethod *caller, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *d, NativeMethod *n, MethodOop m, std::int32_t nsends, std::int32_t level, bool trusted );
@@ -521,9 +521,9 @@ protected:
 class InliningDatabaseRecompilationScope : public NonDummyRecompilationScope {
     // a scope created from the inlining database
 private:
-    KlassOop  _receiver_klass;
-    MethodOop _method;
-    LookupKey             *_key;
+    KlassOop            _receiver_klass;
+    MethodOop           _method;
+    LookupKey           *_key;
     GrowableArray<bool> *_uncommon;  // list of uncommon branch
 public:
     InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, KlassOop receiver_klass, MethodOop method, std::int32_t level );
@@ -571,7 +571,7 @@ public:
 
 class UntakenRecompilationScope : public NonDummyRecompilationScope {
     //  send/inline cache that was never executed (either an empty ic or an untaken uncommon branch)
-    const bool isUncommon;            // true iff untaken uncommon branch
+    const bool                     isUncommon;            // true iff untaken uncommon branch
     const ProgramCounterDescriptor *pc;
 public:
     UntakenRecompilationScope( NonDummyRecompilationScope *sender, ProgramCounterDescriptor *pc, bool isUnlikely );

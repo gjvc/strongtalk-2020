@@ -34,12 +34,12 @@ class LogicalAddress;
 class ScopeDescriptorNode : public ResourceObject {
 
 public:
-    MethodOop _method;
-    bool    _allocates_compiled_context;
-    std::int32_t       _scopeID;
-    bool    _lite;
-    std::int32_t       _senderByteCodeIndex;
-    bool    _visible;
+    MethodOop    _method;
+    bool         _allocates_compiled_context;
+    std::int32_t _scopeID;
+    bool         _lite;
+    std::int32_t _senderByteCodeIndex;
+    bool         _visible;
 
     GrowableArray<LogicalAddress *> *_arg_list;
     GrowableArray<LogicalAddress *> *_temp_list;
@@ -98,7 +98,7 @@ class TopLevelBlockScopeNode : public ScopeDescriptorNode {
 
 public:
     LogicalAddress *_receiverLocation;
-    KlassOop _receiverKlass;
+    KlassOop       _receiverKlass;
 
 
     std::uint8_t code() {

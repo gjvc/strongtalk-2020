@@ -17,8 +17,8 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k ) {
 
 
 Oop AssociationKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    KlassOop k    = as_klassOop();
-    std::int32_t      size = non_indexable_size();
+    KlassOop     k    = as_klassOop();
+    std::int32_t size = non_indexable_size();
 
     // allocate
     Oop *result = Universe::allocate_tenured( size, permit_scavenge );

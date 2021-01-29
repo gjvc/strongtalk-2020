@@ -63,7 +63,7 @@ public:
     // Returns the enclosing klassOop
     KlassOop as_klassOop() const {
         // see klassOop.hpp for layout.
-        return (KlassOop) ( ( (const char *) this ) - sizeof( MemOopDescriptor ) + MEMOOP_TAG );
+        return ( KlassOop )( ( (const char *) this ) - sizeof( MemOopDescriptor ) + MEMOOP_TAG );
     }
 
 

@@ -24,7 +24,7 @@ class BaseHandle {
 
 private:
     const char *_label;
-    bool     _log;
+    bool       _log;
     Oop        _saved;
     BaseHandle *_next;
     BaseHandle *_prev;
@@ -141,7 +141,7 @@ class Handles : AllStatic {
 private:
     static std::int32_t _top;
     static std::int32_t _size;
-    static Oop         _array[];
+    static Oop          _array[];
 
     static Oop oop_at( std::int32_t index );
 

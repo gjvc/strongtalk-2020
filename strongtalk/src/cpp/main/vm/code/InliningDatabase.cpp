@@ -47,9 +47,9 @@ const char *quote_string = "_\\/:; *?~|><,+=@%&!-";
 
 
 const char *InliningDatabase::mangle_name( const char *str ) {
-    char        *result = new_resource_array<char>( 100 );
+    char         *result = new_resource_array<char>( 100 );
     std::int32_t i       = 0;
-    std::int32_t         j       = 0;
+    std::int32_t j       = 0;
     while ( str[ i ] not_eq '\0' ) {
         std::int32_t c = str[ i ];
         if ( strchr( quote_string, c ) ) {
@@ -65,15 +65,15 @@ const char *InliningDatabase::mangle_name( const char *str ) {
         }
         i++;
     }
-    result[ j++ ]       = '\0';
+    result[ j++ ]        = '\0';
     return result;
 }
 
 
 const char *InliningDatabase::unmangle_name( const char *str ) {
-    char        *result = new_resource_array<char>( 100 );
+    char         *result = new_resource_array<char>( 100 );
     std::int32_t i       = 0;
-    std::int32_t         j       = 0;
+    std::int32_t j       = 0;
     while ( str[ i ] not_eq '\0' ) {
         std::int32_t c = str[ i ];
         if ( c == quote ) {
@@ -84,7 +84,7 @@ const char *InliningDatabase::unmangle_name( const char *str ) {
                 std::int32_t value = ( c - '0' ) << 6;
                 i++;
                 st_assert( str[ i ] not_eq '\0', "we cannot end with a quote" );
-                c         = str[ i ];
+                c                  = str[ i ];
                 value += ( c - '0' ) << 3;
                 i++;
                 st_assert( str[ i ] not_eq '\0', "we cannot end with a quote" );
@@ -99,7 +99,7 @@ const char *InliningDatabase::unmangle_name( const char *str ) {
         }
         i++;
     }
-    result[ j++ ]       = '\0';
+    result[ j++ ]        = '\0';
     return result;
 }
 
@@ -278,7 +278,7 @@ bool scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klass,
     char *method_id  = sub + 2;
 
     bool class_side   = false;
-    char   *class_start = strstr( class_name, " class" );
+    char *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;
@@ -371,10 +371,10 @@ static bool create_rscope( char *line, GrowableArray<InliningDatabaseRecompilati
     if ( len > 1 and line[ len - 1 ] == '\n' )
         line[ len - 1 ] = '\0';
 
-    std::int32_t       byteCodeIndex  = 0;
-    std::int32_t       level          = 0;
-    MethodOop method         = nullptr;
-    KlassOop  receiver_klass = nullptr;
+    std::int32_t byteCodeIndex  = 0;
+    std::int32_t level          = 0;
+    MethodOop    method         = nullptr;
+    KlassOop     receiver_klass = nullptr;
 
     RecompilationScope *result = nullptr;
 
@@ -446,7 +446,7 @@ bool scan_key( char *line, LookupKey *key ) {
     char *method_id  = sub + 2;
 
     bool class_side   = false;
-    char   *class_start = strstr( class_name, " class" );
+    char *class_start = strstr( class_name, " class" );
     if ( class_start not_eq nullptr ) {
         *class_start = '\0';
         class_side = true;

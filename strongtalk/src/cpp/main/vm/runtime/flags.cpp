@@ -21,8 +21,8 @@ class BooleanFlag {
 
 public:
     const char *_name;
-    bool     *_value;
-    bool _default;
+    bool       *_value;
+    bool       _default;
     const char *_description;
 
 
@@ -55,10 +55,10 @@ static BooleanFlag booleanDebugFlags[] = {
 
 class IntegerFlag {
 public:
-    const char *_name;
-    std::int32_t        *_value;
+    const char   *_name;
+    std::int32_t *_value;
     std::int32_t _default;
-    const char *_description;
+    const char   *_description;
 
 
     bool operator==( const bool &rhs ) const {

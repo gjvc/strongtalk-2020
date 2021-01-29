@@ -94,7 +94,7 @@ protected:
     JumpTableEntry *major_at( std::uint16_t index );
 
 public:
-    const char *_entries;
+    const char   *_entries;
     std::int32_t length;        // max. number of IDs
     std::int32_t usedIDs;        // # of used ID
 

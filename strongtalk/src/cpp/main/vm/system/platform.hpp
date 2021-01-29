@@ -47,13 +47,15 @@ namespace strongtalk::vm {
         Log();
         static Log *getInstance();
 
+
         template<typename... Args>
         void info( const char *message, const Args &... args ) {
             logger_->info( fmt::sprintf( message, args... ) );
         }
 
+
     private:
-        static Log *_instance;
+        static Log                             *_instance;
         static std::once_flag                  initFlag_;   //
         static std::shared_ptr<spdlog::logger> logger_;     //
     };

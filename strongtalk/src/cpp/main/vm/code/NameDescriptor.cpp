@@ -64,8 +64,8 @@ void MemoizedBlockNameDescriptor::print() {
 
 
 void IllegalNameDescriptor::print() {
-    spdlog::info("###illegal###");
-    spdlog::info(" (0x{0:x})", offset);
+    spdlog::info( "###illegal###" );
+    spdlog::info( " (0x{0:x})", offset );
 //    _console->print( "###illegal###" );
 //    _console->print( " (0x%08x)", offset );
 }

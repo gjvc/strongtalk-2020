@@ -444,8 +444,8 @@ private:
     static CodeType     _code_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
     static ArgumentSpec _argument_spec[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
     static SendType     _send_type[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool       _single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
-    static bool       _pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool         _single_step[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
+    static bool         _pop_tos[static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)];
 
     static void def( Code code );
 

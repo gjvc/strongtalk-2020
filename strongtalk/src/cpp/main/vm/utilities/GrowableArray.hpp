@@ -19,10 +19,10 @@ typedef bool (*growableArrayFindFn)( void *token, void *elem );
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    std::int32_t         _length;                    // current length
-    std::int32_t         _maxLength;                 // maximum length
+    std::int32_t        _length;                    // current length
+    std::int32_t        _maxLength;                 // maximum length
     void                **_data;                    // data array
-    bool              _allocatedOnSystemHeap;     // is data allocated on C heap?
+    bool                _allocatedOnSystemHeap;     // is data allocated on C heap?
     std::vector<void *> _vector;                    //
 
     void grow( std::int32_t j );     // grow data array (double length until j is a valid index)

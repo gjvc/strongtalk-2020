@@ -19,7 +19,7 @@ void HeapCodeBuffer::align() {
 
 
 bool HeapCodeBuffer::isAligned() {
-    return ( _bytes->length() % oopSize ) == 0;
+    return ( _bytes->length() % OOP_SIZE ) == 0;
 }
 
 
@@ -44,7 +44,7 @@ void HeapCodeBuffer::pushOop( Oop arg ) {
 ByteArrayOop HeapCodeBuffer::bytes() {
     BlockScavenge bs;
     align();
-    Klass *klass = Universe::byteArrayKlassObject()->klass_part();
+    Klass        *klass = Universe::byteArrayKlassObject()->klass_part();
     ByteArrayOop result = ByteArrayOop( klass->allocateObjectSize( byteLength() ) );
 
     for ( std::int32_t i = 0; i < byteLength(); i++ )
@@ -55,8 +55,8 @@ ByteArrayOop HeapCodeBuffer::bytes() {
 
 
 ObjectArrayOop HeapCodeBuffer::oops() {
-    BlockScavenge bs;
-    Klass *klass = Universe::objArrayKlassObject()->klass_part();
+    BlockScavenge  bs;
+    Klass          *klass = Universe::objArrayKlassObject()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( klass->allocateObjectSize( oopLength() ) );
 
     for ( std::int32_t i = 0; i < oopLength(); i++ )

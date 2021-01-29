@@ -821,7 +821,7 @@ void Universe::scavenge( Oop *p ) {
 
         // Set the desired survivor size to half the real survivor Space
         std::int32_t desired_survivor_size = new_gen.to()->capacity() / 2;
-        tenuring_threshold = age_table->tenuring_threshold( desired_survivor_size / oopSize );
+        tenuring_threshold = age_table->tenuring_threshold( desired_survivor_size / OOP_SIZE );
 
         if ( VerifyAfterScavenge )
             verify( true );
@@ -841,8 +841,7 @@ Space *Universe::spaceFor( void *p ) {
         return new_gen.eden();
 
     {
-        FOR_EACH_OLD_SPACE( s )
-            if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
                 return s;
     }
 

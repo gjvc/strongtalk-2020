@@ -6,6 +6,7 @@
 
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/flags.hpp"
+
 EventLog *eventLog;
 
 

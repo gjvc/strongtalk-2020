@@ -220,7 +220,7 @@ public:
 
 
     ChunkKlass *prev() {
-        ChunkKlass *p = asChunkKlass( asByte() - 1 );
+        ChunkKlass   *p   = asChunkKlass( asByte() - 1 );
         std::int32_t ovfl = static_cast<std::int32_t>( p->isUsed() ? chunkState::usedOvfl : chunkState::unusedOvfl );
         std::int32_t len;
         if ( c( -1 ) not_eq ovfl ) {
@@ -251,8 +251,8 @@ protected:
     std::int32_t _bytesUsed;     // used bytes (rounded to block size)
     std::int32_t _total;         // total bytes allocated so far
     std::int32_t _ifrag;         // bytes wasted by internal fragmentation
-    const char *_base;         // for deallocation
-    const char *base;          // base addr of heap (aligned to block size)
+    const char   *_base;         // for deallocation
+    const char   *base;          // base addr of heap (aligned to block size)
 
     ChunkKlass *_heapKlass;     // map of heap (1 byte / block)
     FreeList   *_freeList;      // array of free lists for different chunk sizes
@@ -261,7 +261,7 @@ protected:
 
 public:
     ZoneHeap *_newHeap;                 // only set when growing a heap (i.e. replacing it)
-    bool _combineOnDeallocation;    // do eager block combination on deallocs?
+    bool     _combineOnDeallocation;    // do eager block combination on deallocs?
 
 public:
     ZoneHeap( std::int32_t s, std::int32_t bs );

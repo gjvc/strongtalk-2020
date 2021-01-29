@@ -53,7 +53,7 @@ void PrimitivesGenerator::scavenge( std::int32_t size ) {
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
     masm->reset_last_Delta_frame();
-    masm->addl( eax, size * oopSize );
+    masm->addl( eax, size * OOP_SIZE );
 }
 
 
@@ -84,23 +84,23 @@ void PrimitivesGenerator::error_jumps() {
     masm->bind( error_receiver_has_wrong_type );
     masm->movl( eax, _receiver_has_wrong_type );
     masm->addl( eax, 2 );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
     masm->bind( error_first_argument_has_wrong_type );
     masm->movl( eax, _first_argument_has_wrong_type );
     masm->addl( eax, 2 );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
     masm->bind( error_overflow );
     masm->movl( eax, _smi_overflow );
     masm->addl( eax, 2 );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
     masm->bind( error_division_by_zero );
     masm->movl( eax, _division_by_zero );
     masm->addl( eax, 2 );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
     masm->bind( allocation_failure );
     masm->movl( eax, _allocation_failure );
     masm->addl( eax, 2 );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
 }
 
 
@@ -183,7 +183,7 @@ const char *GeneratedPrimitives::allocateContext( std::int32_t n ) {
 
 // Initialization
 
-bool     GeneratedPrimitives::_is_initialized = false;
+bool       GeneratedPrimitives::_is_initialized = false;
 //char GeneratedPrimitives::_code[GeneratedPrimitives::_code_size];
 const char *GeneratedPrimitives::_code          = nullptr;
 

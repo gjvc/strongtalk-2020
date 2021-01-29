@@ -31,7 +31,7 @@ void setKlassVirtualTableFromWeakArrayKlass( Klass *k ) {
 
 void WeakArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
-    Oop *p  = ObjectArrayOop( obj )->objs( 0 );
+    Oop          *p  = ObjectArrayOop( obj )->objs( 0 );
     std::int32_t len = ObjectArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );
@@ -47,7 +47,7 @@ void WeakArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 
 void WeakArrayKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // Retrieve length information in case the iterator mutates the object
-    Oop *p  = WeakArrayOop( obj )->objs( 0 );
+    Oop          *p  = WeakArrayOop( obj )->objs( 0 );
     std::int32_t len = WeakArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_oop_iterate( obj, blk );
@@ -106,7 +106,7 @@ void WeakArrayKlass::oop_follow_contents( Oop obj ) {
 
 // WeakArrayRegister
 // - static variables
-bool                      WeakArrayRegister::during_registration = false;
+bool                        WeakArrayRegister::during_registration = false;
 GrowableArray<WeakArrayOop> *WeakArrayRegister::weakArrays         = nullptr;
 GrowableArray<std::int32_t> *WeakArrayRegister::nis = nullptr;
 
@@ -150,7 +150,7 @@ void WeakArrayRegister::scavenge_check_for_dying_objects() {
     NotificationQueue::mark_elements();
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
         WeakArrayOop w                            = weakArrays->at( i );
-        bool       encounted_near_death_objects = false;
+        bool         encounted_near_death_objects = false;
 
         for ( std::int32_t j = 1; j <= w->length(); j++ ) {
             Oop obj = w->obj_at( j );
@@ -198,9 +198,9 @@ void WeakArrayRegister::follow_contents() {
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                            = weakArrays->at( i );
-        std::int32_t          non_indexable_size           = nis->at( i );
-        bool       encounted_near_death_objects = false;
-        std::int32_t          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
+        std::int32_t non_indexable_size           = nis->at( i );
+        bool         encounted_near_death_objects = false;
+        std::int32_t length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
             MarkSweep::reverse_and_follow( w->oops( non_indexable_size + j ) );
@@ -220,9 +220,9 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                            = weakArrays->at( i );
-        std::int32_t          non_indexable_size           = nis->at( i );
-        bool       encounted_near_death_objects = false;
-        std::int32_t          length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
+        std::int32_t non_indexable_size           = nis->at( i );
+        bool         encounted_near_death_objects = false;
+        std::int32_t length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
             Oop obj = w->raw_at( non_indexable_size + j );
@@ -272,7 +272,7 @@ void NotificationQueue::put( Oop obj ) {
         std::int32_t new_size   = size * 2;
         std::int32_t new_last   = 0;
         // allocate new_array
-        Oop *new_array = new_c_heap_array<Oop>( new_size );
+        Oop          *new_array = new_c_heap_array<Oop>( new_size );
 
         // copy from array to new_array
         for ( std::int32_t i = first; i not_eq last; i = succ( i ) ) {

@@ -42,7 +42,7 @@ public:
 
     // sizing
     static std::int32_t header_size() {
-        return sizeof( AssociationOopDescriptor ) / oopSize;
+        return sizeof( AssociationOopDescriptor ) / OOP_SIZE;
     }
 
 

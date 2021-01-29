@@ -99,8 +99,8 @@ void MemOopKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 Oop MemOopKlass::allocateObject( bool permit_scavenge, bool tenured ) {
-    KlassOop k    = as_klassOop();
-    std::int32_t      size = non_indexable_size();
+    KlassOop     k    = as_klassOop();
+    std::int32_t size = non_indexable_size();
 
     Oop *result = basicAllocate( size, &k, permit_scavenge, tenured );
     if ( not result )
@@ -171,12 +171,12 @@ Oop MemOopKlass::oop_shallow_copy( Oop obj, bool tenured ) {
     if ( obj == falseObject )
         return obj;
 
-    std::int32_t len = MemOop( obj )->size();
+    std::int32_t len    = MemOop( obj )->size();
     // Important to preserve obj (in case of scavenge).
-    Oop *clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, (MemOop *) &obj );
-    Oop *to    = clone;
-    Oop *from  = (Oop *) MemOop( obj )->addr();
-    Oop *end   = to + len;
+    Oop          *clone = tenured ? Universe::allocate_tenured( len ) : Universe::allocate( len, (MemOop *) &obj );
+    Oop          *to    = clone;
+    Oop          *from  = (Oop *) MemOop( obj )->addr();
+    Oop          *end   = to + len;
     while ( to < end )
         *to++ = *from++;
 

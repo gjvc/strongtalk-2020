@@ -276,10 +276,10 @@ static Oop tenured( Oop obj ) {
 
 
 MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t flags, std::int32_t nofArgs, ObjectArrayOop debugInfo, ByteArrayOop bytes, ObjectArrayOop oops ) {
-    KlassOop k        = as_klassOop();
-    std::int32_t      obj_size = MethodOopDescriptor::header_size() + oops->length();
+    KlassOop     k        = as_klassOop();
+    std::int32_t obj_size = MethodOopDescriptor::header_size() + oops->length();
 
-    st_assert( oops->length() * oopSize == bytes->length(), "Invalid array sizes" );
+    st_assert( oops->length() * OOP_SIZE == bytes->length(), "Invalid array sizes" );
 
     // allocate
     MethodOop method = as_methodOop( Universe::allocate_tenured( obj_size ) );
@@ -302,10 +302,10 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t fla
 
     // then merge in the oops
     for ( std::int32_t i = 1; i <= oops->length(); i++ ) {
-        bool copyOop  = true;
-        std::int32_t    bc_index = i * oopSize - ( oopSize - 1 );
+        bool         copyOop  = true;
+        std::int32_t bc_index = i * OOP_SIZE - ( OOP_SIZE - 1 );
 
-        for ( std::int32_t j = 0; j < oopSize; j++ ) {
+        for ( std::int32_t j = 0; j < OOP_SIZE; j++ ) {
             // copy Oop if bytearray holds 4 consecutive aligned zeroes
             if ( bytes->byte_at( bc_index + j ) not_eq 0 ) {
                 copyOop = false;

@@ -15,12 +15,6 @@ void init_globals() {
 
     ResourceMark resourceMark;
 
-    // announce
-    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
-    spdlog::info( "%system-genesis:  Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    spdlog::info( "%system-genesis:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
-    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
-
     // general
     logging_init();
     console_init();

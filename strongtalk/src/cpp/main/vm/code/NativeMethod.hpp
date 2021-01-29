@@ -54,19 +54,19 @@ class nativeMethod_patch;
 class NativeMethod : public OopNativeCode {
 
 protected:
-    std::uint16_t     _specialHandlerCallOffset;   // offset (in bytes) of call to special handler (*) (see comment below)
-    std::uint16_t     _entryPointOffset;           // offset (in bytes) of entry point with class check
-    std::uint16_t     _verifiedEntryPointOffset;   // offset (in bytes) of entry point without class check
-    std::uint16_t     _scopeLen;                   //
-    std::uint16_t     _numberOfNoninlinedBlocks;   //
-    std::uint16_t     _numberOfLinks;              // # of inline caches (including PICs) calling this NativeMethod
-    std::uint16_t     _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
-    std::uint16_t     _floatSectionSize;           // size of float section in words
-    std::uint16_t     _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
-    std::int32_t               _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
-    std::int32_t               _uncommonTrapCounter;        // # of times uncommon traps have been executed
-    static std::int32_t        _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
-    NativeMethodFlags _nativeMethodFlags;          // various flags to keep track of NativeMethod state
+    std::uint16_t       _specialHandlerCallOffset;   // offset (in bytes) of call to special handler (*) (see comment below)
+    std::uint16_t       _entryPointOffset;           // offset (in bytes) of entry point with class check
+    std::uint16_t       _verifiedEntryPointOffset;   // offset (in bytes) of entry point without class check
+    std::uint16_t       _scopeLen;                   //
+    std::uint16_t       _numberOfNoninlinedBlocks;   //
+    std::uint16_t       _numberOfLinks;              // # of inline caches (including PICs) calling this NativeMethod
+    std::uint16_t       _numberOfFloatTemporaries;   // # of floats in activation frame of this NativeMethod
+    std::uint16_t       _floatSectionSize;           // size of float section in words
+    std::uint16_t       _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
+    std::int32_t        _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
+    std::int32_t        _uncommonTrapCounter;        // # of times uncommon traps have been executed
+    static std::int32_t _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
+    NativeMethodFlags   _nativeMethodFlags;          // various flags to keep track of NativeMethod state
 
     // (*) At this address there's 5 bytes of extra Space reserved to accommodate for a call to the zombie handler if the NativeMethod is a zombie.
     // If the NativeMethod is not a zombie, there's a call to StubRoutines::recompile_stub_entry() instead (even if the NativeMethod doesn't count invocations).

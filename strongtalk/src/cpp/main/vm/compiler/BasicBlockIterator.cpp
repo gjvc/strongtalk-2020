@@ -16,12 +16,12 @@
 #include "vm/compiler/BasicBlockIterator.hpp"
 
 
-
 static void clearNodes( BasicBlock *bb ) {
     for ( Node *n = bb->_first; n not_eq bb->_last->next(); n = n->next() ) {
         n->setBasicBlock( nullptr );
     }
 }
+
 
 void BasicBlockIterator::clear() {
     apply( clearNodes );
@@ -69,7 +69,7 @@ void BasicBlockIterator::localAlloc() {
         if ( r ) {
             if ( r->isUnused() ) {
                 pregTable->at_put( i, nullptr );        // no longer needed
-            } else if ( r->_location.equals( unAllocated ) ) {
+            } else if ( r->_location.equals( Location::UNALLOCATED_LOCATION ) ) {
                 globals->append( r );
             } else {
                 done++;                // locally allocated
@@ -204,7 +204,7 @@ GrowableArray<BasicBlock *> *BasicBlockIterator::code_generation_order() {
     if ( not ReorderBBs )
         return _basicBlockTable;
     // initialize visited field for all nodes
-    for ( std::int32_t                   i     = 0; i < _basicBlockCount; i++ )
+    for ( std::int32_t          i     = 0; i < _basicBlockCount; i++ )
         _basicBlockTable->at( i )->before_visit();
     // working sets
     GrowableArray<BasicBlock *> *list = new GrowableArray<BasicBlock *>( _basicBlockCount );    // eventually holds all reachable BBs again
@@ -222,7 +222,7 @@ GrowableArray<BasicBlock *> *BasicBlockIterator::code_generation_order() {
 
 void BasicBlockIterator::print_code( bool suppressTrivial ) {
     GrowableArray<BasicBlock *> *list = code_generation_order();
-    for ( std::int32_t                   i     = 0; i < list->length(); i++ ) {
+    for ( std::int32_t          i     = 0; i < list->length(); i++ ) {
         BasicBlock *bb = list->at( i );
         if ( bb->_nodeCount > 0 )
             bb->print_code( suppressTrivial );
@@ -236,8 +236,8 @@ void BasicBlockIterator::print_code( bool suppressTrivial ) {
 
 void BasicBlockIterator::apply( NodeVisitor *v ) {
     GrowableArray<BasicBlock *> *list  = code_generation_order();
-    std::int32_t                         length = list->length();
-    for ( std::int32_t                   i      = 0; i < length; i++ ) {
+    std::int32_t                length = list->length();
+    for ( std::int32_t          i      = 0; i < length; i++ ) {
         BasicBlock *bb    = list->at( i );
         Node       *first = bb->_first;
         Node       *last  = bb->_last;
@@ -249,7 +249,7 @@ void BasicBlockIterator::apply( NodeVisitor *v ) {
 
 
 bool BasicBlockIterator::verifyLabels() {
-    bool    ok = true;
+    bool               ok = true;
     for ( std::int32_t i  = 0; i < _basicBlockCount; i++ )
         ok &= _basicBlockTable->at( i )->verifyLabels();
     return ok;
@@ -263,10 +263,10 @@ void BasicBlockIterator::globalCopyPropagate() {
         PseudoRegister *r = pregTable->at( i );
         if ( not r or r->isConstPseudoRegister() or not r->canCopyPropagate() )
             continue;
-        Definition *def     = nullptr;
+        Definition   *def     = nullptr;
         // get definition
-        std::int32_t        dulength = r->_dus.length();
-        std::int32_t        e        = 0;
+        std::int32_t dulength = r->_dus.length();
+        std::int32_t e        = 0;
         for ( ; e < dulength; e++ ) {
             PseudoRegisterBasicBlockIndex *index = r->_dus.at( e );
             DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
@@ -300,7 +300,7 @@ void BasicBlockIterator::globalCopyPropagate() {
             DefinitionUsageInfo           *info  = bb->duInfo.info->at( index->_index );
             // caution: propagateTo may eliminate nodes and thus shorten
             // info->uses
-            std::int32_t                           j      = 0;
+            std::int32_t                  j      = 0;
             while ( j < info->_usages.length() ) {
                 std::int32_t oldLen = info->_usages.length();
                 info->propagateTo( bb, info->_pseudoRegister, def, info->_usages.at( j ), true );
@@ -346,7 +346,6 @@ void BasicBlockIterator::verify() {
         }
     }
 }
-
 
 
 BasicBlockIterator *bbIterator;

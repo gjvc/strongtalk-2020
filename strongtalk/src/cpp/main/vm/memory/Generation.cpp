@@ -236,7 +236,7 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     spdlog::warn( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
         std::int32_t space_size = _currentSpace->capacity();
-        OldSpace *s = new OldSpace( "old", space_size );
+        OldSpace     *s         = new OldSpace( "old", space_size );
 
         if ( (const char *) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
 
@@ -307,7 +307,7 @@ void OldGeneration::object_iterate_from( OldWaterMark *mark, ObjectClosure *blk 
 
 void OldGeneration::verify() {
     std::int32_t n = 0;
-    OldSpace *p;
+    OldSpace     *p;
     FOR_EACH_OLD_SPACE( s ) {
         n++;
         p = s;

@@ -88,22 +88,22 @@ class ScopeDescriptor : public PrintableResourceObject {        // abstract
 protected:
     // Creation information
     const NativeMethodScopes *_scopes;
-    std::int32_t              _offset;
+    std::int32_t             _offset;
     const char               *_pc;
 
 protected:
     // Cached information
-    bool       _hasTemporaries;
-    bool       _hasContextTemporaries;
-    bool       _hasExpressionStack;
+    bool         _hasTemporaries;
+    bool         _hasContextTemporaries;
+    bool         _hasExpressionStack;
     MethodOop    _method;
-    std::int32_t  _scopeID;
-    bool       _lite;
-    std::int32_t  _senderScopeOffset;
+    std::int32_t _scopeID;
+    bool         _lite;
+    std::int32_t _senderScopeOffset;
     std::int16_t _senderByteCodeIndex;
-    bool       _allocatesCompiledContext;
-    std::int32_t  _name_desc_offset;
-    std::int32_t  _next;
+    bool         _allocatesCompiledContext;
+    std::int32_t _name_desc_offset;
+    std::int32_t _next;
 
     // If the pc of a ScopeDescriptor is equal to invalid_pc, the scopeDesc is pc independent.
     // A pc independent ScopeDescriptor prints out all the locations for its nameDescs.
@@ -418,11 +418,11 @@ class NonInlinedBlockScopeDescriptor : public PrintableResourceObject {
 protected:
     // Creation information
     const NativeMethodScopes *_scopes;
-    std::int32_t              _offset;
+    std::int32_t             _offset;
 
 protected:
     // Cached information
-    MethodOop   _method;
+    MethodOop    _method;
     std::int32_t _parentScopeOffset;
 
 public:

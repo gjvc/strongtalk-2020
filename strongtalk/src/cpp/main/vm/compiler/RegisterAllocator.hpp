@@ -17,7 +17,7 @@
 class RegisterAllocator : public ResourceObject {
 
 private:
-    IntFreeList *_stackLocs;
+    IntegerFreeList *_stackLocs;
 
 public:
     RegisterAllocator();
@@ -26,7 +26,7 @@ public:
 
     void allocate( GrowableArray<PseudoRegister *> *globals );
 
-    bool allocateConst( ConstPseudoRegister *r, Location preferred = unAllocated );
+    bool allocateConst( ConstPseudoRegister *r, Location preferred = Location::UNALLOCATED_LOCATION );
 
 
     std::int32_t nofStackTemps() {
@@ -43,8 +43,8 @@ class RegCandidate : public ResourceObject {
 
 public:
     PseudoRegister *_pseudoRegister;    // PseudoRegister to be allocated
-    Location _location;           // possible location for it
-    std::int32_t      _ndefs;              // required # definitions of loc
+    Location       _location;           // possible location for it
+    std::int32_t   _ndefs;              // required # definitions of loc
 
 public:
     RegCandidate( PseudoRegister *reg, Location l, std::int32_t n ) {

@@ -260,7 +260,7 @@ void InlinedScope::initializeArguments() {
     if ( isTop() ) {
         // create expr for self but do not allocate a location yet
         // (self is setup by the prologue node)
-        _self = new KlassExpression( KlassOop( selfKlass() ), new SinglyAssignedPseudoRegister( this, unAllocated, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex ), nullptr );
+        _self = new KlassExpression( KlassOop( selfKlass() ), new SinglyAssignedPseudoRegister( this, Location::UNALLOCATED_LOCATION, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex ), nullptr );
         // preallocate incoming arguments, i.e., create their expressions
         // using SAPRegs that are already allocated
         for ( std::int32_t i = 0; i < nofArgs; i++ ) {
@@ -671,7 +671,7 @@ void InlinedScope::addToPRegsEndSorted( PseudoRegister *r ) {
 }
 
 
-void InlinedScope::allocatePRegs( IntFreeList *f ) {
+void InlinedScope::allocatePRegs( IntegerFreeList *f ) {
     std::int32_t byteCodeIndex = PrologueByteCodeIndex;
     std::int32_t bi            = 0;
     std::int32_t si            = 0;

@@ -115,16 +115,16 @@ void set_oops( Oop *to, std::int32_t count, Oop value ) {
 
 
 char *copy_string( const char *s ) {
-    std::int32_t len = strlen( s ) + 1;
-    char *str = new_resource_array<char>( len );
+    std::int32_t len  = strlen( s ) + 1;
+    char         *str = new_resource_array<char>( len );
     strcpy( str, s );
     return str;
 }
 
 
 char *copy_c_heap_string( const char *s ) {
-    std::int32_t len = strlen( s ) + 1;
-    char *str = new_c_heap_array<char>( len );
+    std::int32_t len  = strlen( s ) + 1;
+    char         *str = new_c_heap_array<char>( len );
     strcpy( str, s );
     return str;
 }

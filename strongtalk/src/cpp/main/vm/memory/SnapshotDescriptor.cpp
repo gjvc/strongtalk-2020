@@ -10,7 +10,6 @@
 #include "vm/memory/SnapshotDescriptor.hpp"
 
 
-
 class ReadClosure : public OopClosure {
 
 private:
@@ -43,8 +42,6 @@ public:
         _snapshotDescriptor = s;
     }
 };
-
-
 
 
 void SnapshotDescriptor::read_header() {

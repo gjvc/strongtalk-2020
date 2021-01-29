@@ -36,14 +36,14 @@ class ProgramCounterDescriptorInfoClass;
 class ScopeDescriptorRecorder : public ResourceObject {
 
 private:
-    bool _hasCodeBeenGenerated;
+    bool                              _hasCodeBeenGenerated;
     Array                             *_oops;
     Array                             *_values;
     ByteArray                         *_codes;
     ProgramCounterDescriptorInfoClass *_programCounterDescriptorInfo;
 
     GrowableArray<KlassOop> *_dependents;
-    std::int32_t _dependentsEnd;
+    std::int32_t            _dependentsEnd;
 
     NonInlinedBlockScopeNode *_nonInlinedBlockScopeNode;
     NonInlinedBlockScopeNode *_nonInlinedBlockScopesTail;

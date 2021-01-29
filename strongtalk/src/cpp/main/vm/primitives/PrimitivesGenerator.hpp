@@ -120,7 +120,7 @@ class GeneratedPrimitives : AllStatic {
 private:
     static constexpr std::int32_t _code_size = 1024 * 1024; // simply increase if too small (assembler will crash if too small)
 
-    static bool _is_initialized;            // true if GeneratedPrimitives has been initialized
+    static bool       _is_initialized;            // true if GeneratedPrimitives has been initialized
     //  static char _code[_code_size];		// the code buffer for the primitives
     static const char *_code;        // the code buffer for the primitives
 

@@ -16,9 +16,9 @@ Oop DoubleByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 Oop DoubleByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool tenured ) {
-    KlassOop k        = as_klassOop();
-    std::int32_t      ni_size  = non_indexable_size();
-    std::int32_t      obj_size = ni_size + 1 + roundTo( size * 2, oopSize ) / oopSize;
+    KlassOop     k        = as_klassOop();
+    std::int32_t ni_size  = non_indexable_size();
+    std::int32_t obj_size = ni_size + 1 + roundTo( size * 2, OOP_SIZE ) / OOP_SIZE;
 
     // allocate
     Oop *result = tenured ? Universe::allocate_tenured( obj_size, permit_scavenge ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
@@ -77,8 +77,8 @@ bool DoubleByteArrayKlass::oop_verify( Oop obj ) {
 void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_doubleByteArray( obj, "Argument must be doubleByteArray" );
     DoubleByteArrayOop array = DoubleByteArrayOop( obj );
-    std::int32_t                len   = array->length();
-    std::int32_t                n     = min( MaxElementPrintSize, len );
+    std::int32_t       len   = array->length();
+    std::int32_t       n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
     for ( std::int32_t i = 1; i <= n; i++ ) {
         std::int32_t c = array->doubleByte_at( i );
@@ -96,9 +96,9 @@ void DoubleByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *str
 
 
 void DoubleByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
-    std::uint16_t *p = DoubleByteArrayOop( obj )->doubleBytes();
-    Oop           *l = DoubleByteArrayOop( obj )->length_addr();
-    std::int32_t len = DoubleByteArrayOop( obj )->length();
+    std::uint16_t *p  = DoubleByteArrayOop( obj )->doubleBytes();
+    Oop           *l  = DoubleByteArrayOop( obj )->length_addr();
+    std::int32_t  len = DoubleByteArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
     blk->begin_indexables();

@@ -15,14 +15,14 @@
 #include "vm/memory/Universe.hpp"
 
 
-constexpr std::int32_t float_0_offset  = oopSize * ( frame_temp_offset - 3 );
-constexpr std::int32_t temp_1_offset   = oopSize * ( frame_temp_offset - 1 );
-constexpr std::int32_t temp_0_offset   = oopSize * frame_temp_offset;
-constexpr std::int32_t esi_offset      = oopSize * frame_hp_offset;
-constexpr std::int32_t self_offset     = oopSize * frame_receiver_offset;
-constexpr std::int32_t link_offset     = oopSize * frame_link_offset;
-constexpr std::int32_t ret_addr_offset = oopSize * frame_return_addr_offset;
-constexpr std::int32_t arg_n_offset    = oopSize * ( frame_arg_offset - 1 );
+constexpr std::int32_t float_0_offset  = OOP_SIZE * ( frame_temp_offset - 3 );
+constexpr std::int32_t temp_1_offset   = OOP_SIZE * ( frame_temp_offset - 1 );
+constexpr std::int32_t temp_0_offset   = OOP_SIZE * frame_temp_offset;
+constexpr std::int32_t esi_offset      = OOP_SIZE * frame_hp_offset;
+constexpr std::int32_t self_offset     = OOP_SIZE * frame_receiver_offset;
+constexpr std::int32_t link_offset     = OOP_SIZE * frame_link_offset;
+constexpr std::int32_t ret_addr_offset = OOP_SIZE * frame_return_addr_offset;
+constexpr std::int32_t arg_n_offset    = OOP_SIZE * ( frame_arg_offset - 1 );
 
 constexpr std::int32_t max_nof_temps  = 256;
 constexpr std::int32_t max_nof_floats = 256;

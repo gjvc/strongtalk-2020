@@ -15,15 +15,19 @@
 // For each physical location (register, stack position or context temporary), there is a corresponding location and vice versa.
 
 enum class Mode {
+
+    //                                    1         2         3
+    //                          01234567890123456789012345678901
     //
-    //			        3..9	10..16	17..31
-    // mode/bits		3...................31	describes
-    specialLoc,     //	--------id------------	sentinel values/global locations
-    registerLoc,    //	--------regLoc--------	register locations
-    stackLoc,       //	--------offset--------	stack locations
-    contextLoc1,    //	ctxtNo	offset	scID	context locations during compilation (scope ID identifies InlinedScope)
-    contextLoc2,    //	ctxtNo	offset	scOffs	context locations (scOffs is scope offset within encoded scopes)
-    floatLoc,       //	0	floatNo	scopeN  float locations
+    //			                3..9	10..16	17..31
+    // mode/bits		        3...................31	describes
+    SPECIAL_LOCATION,     //	--------id------------	sentinel values/global locations
+    REGISTER_LOCATION,    //	--------regLoc--------	register locations
+    STACK_LOCATION,       //	--------offset--------	stack locations
+    CONTEXT_LOCATIION_1,  //	ctxtNo	offset	scID	context locations during compilation (scope ID identifies InlinedScope)
+    CONTEXT_LOCATIION_2,  //	ctxtNo	offset	scOffs	context locations (scOffs is scope offset within encoded scopes)
+    FLOAT_LOCATION,       //	0	floatNo	scopeN  float locations
+
 };
 
 
@@ -71,32 +75,32 @@ public:
 
     // factory
     static Location specialLocation( std::int32_t id ) {
-        return Location( Mode::specialLoc, id );
+        return Location( Mode::SPECIAL_LOCATION, id );
     }
 
 
     static Location registerLocation( std::int32_t number ) {
-        return Location( Mode::registerLoc, number );
+        return Location( Mode::REGISTER_LOCATION, number );
     }
 
 
     static Location stackLocation( std::int32_t offset ) {
-        return Location( Mode::stackLoc, offset );
+        return Location( Mode::STACK_LOCATION, offset );
     }
 
 
     static Location compiledContextLocation( std::int32_t contextNo, std::int32_t tempNo, std::int32_t id ) {
-        return Location( Mode::contextLoc1, contextNo, tempNo, id );
+        return Location( Mode::CONTEXT_LOCATIION_1, contextNo, tempNo, id );
     }
 
 
     static Location runtimeContextLocation( std::int32_t contextNo, std::int32_t tempNo, std::int32_t offs ) {
-        return Location( Mode::contextLoc2, contextNo, tempNo, offs );
+        return Location( Mode::CONTEXT_LOCATIION_2, contextNo, tempNo, offs );
     }
 
 
     static Location floatLocation( std::int32_t scopeNo, std::int32_t tempNo ) {
-        return Location( Mode::floatLoc, 0, tempNo, scopeNo );
+        return Location( Mode::FLOAT_LOCATION, 0, tempNo, scopeNo );
     }
 
 
@@ -107,56 +111,56 @@ public:
 
 
     std::int32_t id() const {
-        st_assert( mode() == Mode::specialLoc, "not a special location" );
+        st_assert( mode() == Mode::SPECIAL_LOCATION, "not a special location" );
         return ( _loc >> _fPos ) & _fMask;
     }
 
 
     std::int32_t number() const {
-        st_assert( mode() == Mode::registerLoc, "not a register location" );
+        st_assert( mode() == Mode::REGISTER_LOCATION, "not a register location" );
         return ( _loc >> _fPos ) & _fMask;
     }
 
 
     std::int32_t offset() const {
-        st_assert( mode() == Mode::stackLoc, "not a stack location" );
+        st_assert( mode() == Mode::STACK_LOCATION, "not a stack location" );
         std::int32_t t = _loc >> _fPos;
         return _loc < 0 ? ( t | ~_fMask ) : t;
     }
 
 
     std::int32_t contextNo() const {
-        st_assert( mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2, "not a context location" );
+        st_assert( mode() == Mode::CONTEXT_LOCATIION_1 or mode() == Mode::CONTEXT_LOCATIION_2, "not a context location" );
         return ( _loc >> _f1Pos ) & _f1Mask;
     }
 
 
     std::int32_t tempNo() const {
-        st_assert( mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2, "not a context location" );
+        st_assert( mode() == Mode::CONTEXT_LOCATIION_1 or mode() == Mode::CONTEXT_LOCATIION_2, "not a context location" );
         return ( _loc >> _f2Pos ) & _f2Mask;
     }
 
 
     std::int32_t scopeID() const {
-        st_assert( mode() == Mode::contextLoc1, "not a compiled context location" );
+        st_assert( mode() == Mode::CONTEXT_LOCATIION_1, "not a compiled context location" );
         return ( _loc >> _f3Pos ) & _f3Mask;
     }
 
 
     std::int32_t scopeOffs() const {
-        st_assert( mode() == Mode::contextLoc2, "not a runtime context location" );
+        st_assert( mode() == Mode::CONTEXT_LOCATIION_2, "not a runtime context location" );
         return ( _loc >> _f3Pos ) & _f3Mask;
     }
 
 
     std::int32_t floatNo() const {
-        st_assert( mode() == Mode::floatLoc, "not a float location" );
+        st_assert( mode() == Mode::FLOAT_LOCATION, "not a float location" );
         return ( _loc >> _f2Pos ) & _f2Mask;
     }
 
 
     std::int32_t scopeNo() const {
-        st_assert( mode() == Mode::floatLoc, "not a float location" );
+        st_assert( mode() == Mode::FLOAT_LOCATION, "not a float location" );
         return ( _loc >> _f3Pos ) & _f3Mask;
     }
 
@@ -167,27 +171,27 @@ public:
 
     // predicates
     bool isSpecialLocation() const {
-        return mode() == Mode::specialLoc;
+        return mode() == Mode::SPECIAL_LOCATION;
     }
 
 
     bool isRegisterLocation() const {
-        return mode() == Mode::registerLoc;
+        return mode() == Mode::REGISTER_LOCATION;
     }
 
 
     bool isStackLocation() const {
-        return mode() == Mode::stackLoc;
+        return mode() == Mode::STACK_LOCATION;
     }
 
 
     bool isContextLocation() const {
-        return mode() == Mode::contextLoc1 or mode() == Mode::contextLoc2;
+        return mode() == Mode::CONTEXT_LOCATIION_1 or mode() == Mode::CONTEXT_LOCATIION_2;
     }
 
 
     bool isFloatLocation() const {
-        return mode() == Mode::floatLoc;
+        return mode() == Mode::FLOAT_LOCATION;
     }
 
 
@@ -231,38 +235,37 @@ public:
     friend class MemoizedName;
 
     friend class DebugInfoWriter;
+
+    //
+    static Location ILLEGAL_LOCATION;
+    static Location UNALLOCATED_LOCATION;
+    static Location NO_REGISTER;
+    static Location TOP_OF_STACK;
+    static Location RESULT_OF_NON_LOCAL_RETURN;
+    static Location TOP_OF_FLOAT_STACK;
 };
 
 
-// special locations
-constexpr std::int32_t nofSpecialLocations    = 6;
-const Location         illegalLocation        = Location::specialLocation( 0 );
-const Location         unAllocated            = Location::specialLocation( 1 );
-const Location         noRegister             = Location::specialLocation( 2 );
-const Location         topOfStack             = Location::specialLocation( 3 );
-const Location         resultOfNonLocalReturn = Location::specialLocation( 4 );
-const Location         topOfFloatStack        = Location::specialLocation( 5 );    // only used if UseFPUStack is true
 
+// An IntegerFreeList maintains a lsist of 'available' integers in the range [0, n[ where n is the maximum number of integers ever allocated.
+// An IntegerFreeList may be used to allocate/release stack locations.
 
-// An IntFreeList maintains a list of 'available' integers in the range [0, n[ where n is the maximum number of integers ever allocated.
-// An IntFreeList may be used to allocate/release stack locations.
-
-class IntFreeList : public PrintableResourceObject {
+class IntegerFreeList : public PrintableResourceObject {
 
 protected:
-    std::int32_t                _first;                     // the first available integer
-    GrowableArray<std::int32_t> *_list;    // the list
-    std::vector<std::int32_t>   _vector;      //
+    std::int32_t                _first;     // the first available integer
+    GrowableArray<std::int32_t> *_list;     // the list
+    std::vector<std::int32_t>   _vector;    //
 
     void grow();
 
 public:
-    IntFreeList( std::int32_t size );
+    IntegerFreeList( std::int32_t size );
 
-    std::int32_t allocate();         // returns a new integer, grows the list if necessary
-    std::int32_t allocated();        // returns the number of allocated integers
-    void release( std::int32_t i );  // marks the integer i as 'available' again
-    std::int32_t length();           // the maximum number of integers ever allocated
-    void print();           //
+    std::int32_t allocate();        // returns a new integer, grows the list if necessary
+    std::int32_t allocated();       // returns the number of allocated integers
+    void release( std::int32_t i ); // marks the integer i as 'available' again
+    std::int32_t length();          // the maximum number of integers ever allocated
+    void print();                   //
 
 };

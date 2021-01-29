@@ -41,14 +41,14 @@ std::int32_t RelocationInformation::print( NativeMethod *m, std::int32_t last_of
         return 0;
 
     std::int32_t current_offset = offset() + last_offset;
-    std::int32_t *addr = (std::int32_t *) ( m->instructionsStart() + current_offset );
+    std::int32_t *addr          = (std::int32_t *) ( m->instructionsStart() + current_offset );
     printIndent();
     if ( isOop() ) {
         _console->print( "embedded Oop   @0x%lx = ", addr );
         Oop( *addr )->print_value();
     } else {
         st_assert( isCall(), "must be a call" );
-        const char *target = (const char *) ( *addr + (std::int32_t) addr + oopSize );
+        const char *target = (const char *) ( *addr + (std::int32_t) addr + OOP_SIZE );
         if ( isInlineCache() ) {
             _console->print( "inline cache   @0x%lx", addr );
         } else if ( isPrimitive() ) {

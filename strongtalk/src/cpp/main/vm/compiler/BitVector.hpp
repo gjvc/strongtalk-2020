@@ -58,7 +58,7 @@ class BitVector : public PrintableResourceObject {
 protected:
     std::int32_t _maxLength; // max # bits
     std::int32_t length;     // number of bits, not words
-    std::int32_t         *_bits;     // array containing the bits
+    std::int32_t *_bits;     // array containing the bits
 
     std::int32_t indexFromNumber( std::int32_t i ) {
         return i >> LOG_2_BITS_PER_WORD;

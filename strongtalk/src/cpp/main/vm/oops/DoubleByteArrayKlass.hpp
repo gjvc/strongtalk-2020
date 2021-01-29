@@ -21,7 +21,7 @@ public:
 
     // Return the Oop size for a doubleByteArrayOop
     std::int32_t object_size( std::int32_t number_of_doubleBytes ) const {
-        return non_indexable_size() + 1 + roundTo( number_of_doubleBytes * 2, oopSize ) / oopSize;
+        return non_indexable_size() + 1 + roundTo( number_of_doubleBytes * 2, OOP_SIZE ) / OOP_SIZE;
     }
 
 

@@ -31,9 +31,9 @@ enum class EventLogEventStatus {
 
 
 struct EventLogEvent /* no superclass - never allocated individually */ {
-    const char *_name;                 // in printf format
+    const char          *_name;                 // in printf format
     EventLogEventStatus _status;        // for nested events
-    const void *args[EVENT_PARAMS];    //
+    const void          *args[EVENT_PARAMS];    //
 };
 
 
@@ -42,7 +42,7 @@ struct EventLog : public CHeapAllocatedObject {
     EventLogEvent *_eventBuffer;    // event buffer
     EventLogEvent *_end;            //
     EventLogEvent *_next;           // where the next entry will go
-    std::int32_t _nestingDepth;               // current nesting depth
+    std::int32_t  _nestingDepth;               // current nesting depth
 
     EventLog();
 

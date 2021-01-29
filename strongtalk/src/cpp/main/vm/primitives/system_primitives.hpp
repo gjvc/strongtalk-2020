@@ -101,7 +101,7 @@ public:
 
     //%prim
     // <NoReceiver> primitiveSizeOfOop ^<SmallInteger> =
-    //   Internal { name  = 'systemPrimitives::oopSize' }
+    //   Internal { name  = 'systemPrimitives::OOP_SIZE' }
     //%
     static PRIM_DECL_0( oopSize );
 

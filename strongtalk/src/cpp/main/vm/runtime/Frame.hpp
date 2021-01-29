@@ -61,9 +61,9 @@ class NativeMethod;
 class Frame : ValueObject {
 
 private:
-    Oop        *_sp; // stack pointer
-    std::int32_t        *_fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
-    const char *_pc; // program counter
+    Oop          *_sp; // stack pointer
+    std::int32_t *_fp; // frame pointer - %TODO should be void ** or similar to allow for 64 bit
+    const char   *_pc; // program counter
 
 public:
     Frame() {

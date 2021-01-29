@@ -13,9 +13,9 @@
 class Array : public ResourceObject {
 
 private:
-    std::int32_t  _index;     //
-    std::int32_t  _size;      //
-    std::int32_t  _offset;    //
+    std::int32_t _index;     //
+    std::int32_t _size;      //
+    std::int32_t _offset;    //
     std::int32_t *_values;   //
 
 public:
@@ -38,8 +38,8 @@ class ByteArray : public ResourceObject {
 
 private:
     std::uint8_t *_array;
-    std::int32_t          _top;
-    std::int32_t          _max;
+    std::int32_t _top;
+    std::int32_t _max;
 
     void extend();
 

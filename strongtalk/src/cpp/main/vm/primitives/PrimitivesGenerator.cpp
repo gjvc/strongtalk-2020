@@ -55,15 +55,15 @@ const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
 
     const char *entry_point = masm->pc();
 
-    test_for_scavenge( eax, 4 * oopSize, need_scavenge );
+    test_for_scavenge( eax, 4 * OOP_SIZE, need_scavenge );
 
     masm->bind( fill_object );
     masm->movl( ebx, block_klass_addr );
-    masm->movl( Address( eax, -4 * oopSize ), 0x80000003 ); // obj->init_mark()
-    masm->movl( Address( eax, -3 * oopSize ), ebx ); // obj->set_klass(klass)
-    masm->movl( Address( eax, -2 * oopSize ), 0 );	// obj->set_method(nullptr)
-    masm->movl( Address( eax, -1 * oopSize ), 0 ); // obj->set_lexical_scope(nullptr)
-    masm->subl( eax, ( 4 * oopSize ) - 1 );
+    masm->movl( Address( eax, -4 * OOP_SIZE ), 0x80000003 ); // obj->init_mark()
+    masm->movl( Address( eax, -3 * OOP_SIZE ), ebx ); // obj->set_klass(klass)
+    masm->movl( Address( eax, -2 * OOP_SIZE ), 0 );    // obj->set_method(nullptr)
+    masm->movl( Address( eax, -1 * OOP_SIZE ), 0 ); // obj->set_lexical_scope(nullptr)
+    masm->subl( eax, ( 4 * OOP_SIZE ) - 1 );
     masm->ret( 0 );
 
     masm->bind( need_scavenge );
@@ -84,12 +84,12 @@ const char *PrimitivesGenerator::allocateContext_var() {
 
     const char *entry_point = masm->pc();
 
-    masm->movl( ecx, Address( esp, +oopSize ) );    // load length  (remember this is a SMIOop)
+    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // load length  (remember this is a SMIOop)
     masm->movl( eax, Address( (std::int32_t) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( edx, ecx );
-    masm->addl( edx, 3 * oopSize );
+    masm->addl( edx, 3 * OOP_SIZE );
     masm->addl( edx, eax );
-// Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::times_1, 3*oopSize));
+// Equals? ==>  masm->leal(edx, Address(ecx, eax, Address::times_1, 3*OOP_SIZE));
     masm->cmpl( edx, Address( (std::int32_t) &eden_end, RelocationInformation::RelocationType::external_word_type ) );
     masm->jcc( Assembler::Condition::greater, need_scavenge );
     masm->movl( Address( (std::int32_t) &eden_top, RelocationInformation::RelocationType::external_word_type ), edx );
@@ -101,14 +101,14 @@ const char *PrimitivesGenerator::allocateContext_var() {
     masm->movl( Address( eax ), ecx );
     masm->movl( ecx, nil_addr() );
 
-    masm->movl( Address( eax, 1 * oopSize ), ebx );        // obj->set_klass(klass)
-    masm->movl( Address( eax, 2 * oopSize ), 0 );        // obj->set_home(nullptr)
-    masm->leal( ebx, Address( eax, +3 * oopSize ) );
+    masm->movl( Address( eax, 1 * OOP_SIZE ), ebx );        // obj->set_klass(klass)
+    masm->movl( Address( eax, 2 * OOP_SIZE ), 0 );        // obj->set_home(nullptr)
+    masm->leal( ebx, Address( eax, +3 * OOP_SIZE ) );
     masm->jmp( _loop_end );
 
     masm->bind( _loop );
     masm->movl( Address( ebx ), ecx );
-    masm->addl( ebx, oopSize );
+    masm->addl( ebx, OOP_SIZE );
 
     masm->bind( _loop_end );
     masm->cmpl( ebx, edx );
@@ -125,9 +125,9 @@ const char *PrimitivesGenerator::allocateContext_var() {
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
     masm->reset_last_Delta_frame();
-    masm->movl( ecx, Address( esp, +oopSize ) );    // reload length  (remember this is a SMIOop)
+    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // reload length  (remember this is a SMIOop)
     masm->movl( edx, ecx );
-    masm->addl( edx, 3 * oopSize );
+    masm->addl( edx, 3 * OOP_SIZE );
     masm->addl( edx, eax );
     masm->jmp( fill_object );
 
@@ -137,23 +137,23 @@ const char *PrimitivesGenerator::allocateContext_var() {
 
 const char *PrimitivesGenerator::allocateContext( std::int32_t n ) {
 
-    Label need_scavenge, fill_object;
-    std::int32_t   size = n + 3;
+    Label        need_scavenge, fill_object;
+    std::int32_t size = n + 3;
 
     const char *entry_point = masm->pc();
 
-    test_for_scavenge( eax, size * oopSize, need_scavenge );
+    test_for_scavenge( eax, size * OOP_SIZE, need_scavenge );
 
     masm->bind( fill_object );
     masm->movl( ebx, contextKlass_addr() );
     masm->movl( ecx, nil_addr() );
-    masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 + ( ( n + 1 ) * 4 ) );// obj->init_mark()
-    masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );             // obj->set_klass(klass)
-    masm->movl( Address( eax, ( -size + 2 ) * oopSize ), 0 );               // obj->set_home(nullptr)
+    masm->movl( Address( eax, ( -size + 0 ) * OOP_SIZE ), 0x80000003 + ( ( n + 1 ) * 4 ) );// obj->init_mark()
+    masm->movl( Address( eax, ( -size + 1 ) * OOP_SIZE ), ebx );             // obj->set_klass(klass)
+    masm->movl( Address( eax, ( -size + 2 ) * OOP_SIZE ), 0 );               // obj->set_home(nullptr)
     for ( std::int32_t i = 0; i < n; i++ ) {
-        masm->movl( Address( eax, ( -size + 3 + i ) * oopSize ), ecx );     // obj->obj_at_put(i,nilObject)
+        masm->movl( Address( eax, ( -size + 3 + i ) * OOP_SIZE ), ecx );     // obj->obj_at_put(i,nilObject)
     }
-    masm->subl( eax, size * oopSize - 1 );
+    masm->subl( eax, size * OOP_SIZE - 1 );
     masm->ret( 0 );
 
     masm->bind( need_scavenge );
@@ -165,11 +165,11 @@ const char *PrimitivesGenerator::allocateContext( std::int32_t n ) {
 
 
 const char *PrimitivesGenerator::inline_allocation() {
-    Address klass_addr = Address( esp, +2 * oopSize );
-    Address count_addr = Address( esp, +1 * oopSize );
+    Address klass_addr = Address( esp, +2 * OOP_SIZE );
+    Address count_addr = Address( esp, +1 * OOP_SIZE );
 
-    Label need_scavenge1, fill_object1, need_scavenge2, fill_object2, loop, loop_test, exit;
-    std::int32_t   size         = 2;
+    Label        need_scavenge1, fill_object1, need_scavenge2, fill_object2, loop, loop_test, exit;
+    std::int32_t size  = 2;
 
     const char *entry_point = masm->pc();
 
@@ -180,25 +180,25 @@ const char *PrimitivesGenerator::inline_allocation() {
     masm->sarl( edx, 3 );
     masm->bind( loop );
 
-    test_for_scavenge( eax, size * oopSize, need_scavenge1 );
+    test_for_scavenge( eax, size * OOP_SIZE, need_scavenge1 );
     masm->bind( fill_object1 );
-    masm->movl( Address( eax, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
-    masm->movl( Address( eax, ( -size + 1 ) * oopSize ), ebx );        // obj->init_mark()
+    masm->movl( Address( eax, ( -size + 0 ) * OOP_SIZE ), 0x80000003 );    // obj->init_mark()
+    masm->movl( Address( eax, ( -size + 1 ) * OOP_SIZE ), ebx );        // obj->init_mark()
 
-    masm->subl( eax, ( size * oopSize ) - 1 );
+    masm->subl( eax, ( size * OOP_SIZE ) - 1 );
 
-    test_for_scavenge( ecx, size * oopSize, need_scavenge2 );
+    test_for_scavenge( ecx, size * OOP_SIZE, need_scavenge2 );
     masm->bind( fill_object2 );
-    masm->movl( Address( ecx, ( -size + 0 ) * oopSize ), 0x80000003 );    // obj->init_mark()
-    masm->movl( Address( ecx, ( -size + 1 ) * oopSize ), ebx );        // obj->init_mark()
+    masm->movl( Address( ecx, ( -size + 0 ) * OOP_SIZE ), 0x80000003 );    // obj->init_mark()
+    masm->movl( Address( ecx, ( -size + 1 ) * OOP_SIZE ), ebx );        // obj->init_mark()
 
-    masm->subl( ecx, ( size * oopSize ) - 1 );
+    masm->subl( ecx, ( size * OOP_SIZE ) - 1 );
     //masm->jmp(loop);
     masm->bind( loop_test );
     masm->decl( edx );
     masm->jcc( Assembler::Condition::notEqual, loop );
     masm->bind( exit );
-    masm->ret( 2 * oopSize );
+    masm->ret( 2 * OOP_SIZE );
 
     masm->bind( need_scavenge1 );
     masm->pushl( ebx );

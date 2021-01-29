@@ -13,10 +13,10 @@
 
 class Interpreted_DLLCache : public ValueObject {
 private:
-    SymbolOop _dll_name;
-    SymbolOop _funct_name;
-    dll_func_ptr_t  _entry_point;
-    char      _number_of_arguments;
+    SymbolOop      _dll_name;
+    SymbolOop      _funct_name;
+    dll_func_ptr_t _entry_point;
+    char           _number_of_arguments;
     // Do not add more instance variables! Layout must correspond to DLL call in ByteCodes!
 
 public:

@@ -358,7 +358,7 @@ void CompiledVirtualFrame::rewind_byteCodeIndex() {
 CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         DeltaVirtualFrame( fr ) {
     _scopeDescriptor = sd;
-    _byteCodeIndex = byteCodeIndex;
+    _byteCodeIndex   = byteCodeIndex;
 }
 
 

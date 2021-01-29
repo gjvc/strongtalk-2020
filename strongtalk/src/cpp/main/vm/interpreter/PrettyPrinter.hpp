@@ -25,9 +25,9 @@
 
 class prettyPrintStream : public PrintableResourceObject {
 protected:
-    std::int32_t    _indentation;
-    std::int32_t    pos;
-    bool in_hl;
+    std::int32_t _indentation;
+    std::int32_t pos;
+    bool         in_hl;
 
 
     void set_highlight( bool value ) {

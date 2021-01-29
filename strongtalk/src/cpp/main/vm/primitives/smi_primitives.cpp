@@ -100,7 +100,7 @@ PRIM_DECL_2( smiOopPrimitives::bitShift, Oop receiver, Oop argument ) {
     if ( not argument->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     st_assert( INTEGER_TAG == 0, "check this code" );
-    constexpr std::int32_t bitsPerWord = oopSize * 8;
+    constexpr std::int32_t bitsPerWord = OOP_SIZE * 8;
     constexpr std::int32_t maxShiftCnt = bitsPerWord - TAG_SIZE - 1;
     std::int32_t           n           = SMIOop( argument )->value();
     if ( n > 0 ) {
@@ -131,7 +131,7 @@ PRIM_DECL_2( smiOopPrimitives::rawBitShift, Oop receiver, Oop argument ) {
     if ( not argument->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     st_assert( INTEGER_TAG == 0, "check this code" );
-    const std::int32_t bitsPerWord = oopSize * 8;
+    const std::int32_t bitsPerWord = OOP_SIZE * 8;
     std::int32_t       n           = SMIOop( argument )->value();
     if ( n >= 0 ) {
         // logical shift right

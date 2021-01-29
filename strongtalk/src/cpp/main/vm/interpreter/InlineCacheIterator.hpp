@@ -201,7 +201,7 @@ private:
     PolymorphicInlineCache *_pic;                  // the PolymorphicInlineCache over which is iterated
     char                   *_pos;                  // the current iterator position
     enum State             _state;                  // current iterator state
-    std::int32_t                    _methodOop_counter;      // remaining no. of methodOop entries
+    std::int32_t           _methodOop_counter;      // remaining no. of methodOop entries
 
     std::int32_t *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
     void computeNextState();
@@ -257,9 +257,9 @@ private:
     CompiledInlineCache            *_ic;
     PolymorphicInlineCacheIterator *_picit;
 
-    std::int32_t      _number_of_targets;    // the no. of InlineCache entries
+    std::int32_t     _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _shape;                // shape of inline cache
-    std::int32_t      _index;                // the next entry no.
+    std::int32_t     _index;                // the next entry no.
 
 public:
     CompiledInlineCacheIterator( CompiledInlineCache *ic );

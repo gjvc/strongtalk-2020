@@ -111,23 +111,23 @@ void InterpreterGenerator::should_not_reach_here() {
 
 Address InterpreterGenerator::arg_addr( std::int32_t i ) {
     st_assert( 1 <= i, "argument number must be positive" );
-    return Address( ebp, arg_n_offset + i * oopSize );
+    return Address( ebp, arg_n_offset + i * OOP_SIZE );
 }
 
 
 Address InterpreterGenerator::arg_addr( Register arg_no ) {
-    return Address( ebp, arg_no, Address::ScaleFactor::times_4, arg_n_offset + 1 * oopSize, RelocationInformation::RelocationType::none );
+    return Address( ebp, arg_no, Address::ScaleFactor::times_4, arg_n_offset + 1 * OOP_SIZE, RelocationInformation::RelocationType::none );
 }
 
 
 Address InterpreterGenerator::temp_addr( std::int32_t i ) {
     st_assert( 0 <= i, "temporary number must be positive" );
-    return Address( ebp, temp_0_offset - i * oopSize );
+    return Address( ebp, temp_0_offset - i * OOP_SIZE );
 }
 
 
 Address InterpreterGenerator::temp_addr( Register temp_no ) {
-    return Address( ebp, temp_no, Address::ScaleFactor::times_4, temp_0_offset - ( max_nof_temps - 1 ) * oopSize, RelocationInformation::RelocationType::none );
+    return Address( ebp, temp_no, Address::ScaleFactor::times_4, temp_0_offset - ( max_nof_temps - 1 ) * OOP_SIZE, RelocationInformation::RelocationType::none );
 }
 
 
@@ -150,14 +150,14 @@ Address InterpreterGenerator::field_addr( Register obj, Register smi_offset ) {
 // Instruction sequencing
 
 void InterpreterGenerator::skip_words( std::int32_t n ) {
-    _macroAssembler->addl( esi, ( n + 1 ) * oopSize ); // advance
-    _macroAssembler->andl( esi, -oopSize ); // align
+    _macroAssembler->addl( esi, ( n + 1 ) * OOP_SIZE ); // advance
+    _macroAssembler->andl( esi, -OOP_SIZE ); // align
 }
 
 
 void InterpreterGenerator::advance_aligned( std::int32_t n ) {
-    _macroAssembler->addl( esi, n + oopSize - 1 ); // advance
-    _macroAssembler->andl( esi, -oopSize ); // align
+    _macroAssembler->addl( esi, n + OOP_SIZE - 1 ); // advance
+    _macroAssembler->andl( esi, -OOP_SIZE ); // align
 }
 
 
@@ -296,10 +296,10 @@ void InterpreterGenerator::load_recv( ByteCodes::ArgumentSpec arg_spec ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
             break; // recv already in eax
         case ByteCodes::ArgumentSpec::recv_1_args:
-            _macroAssembler->movl( eax, Address( esp, 1 * oopSize ) );
+            _macroAssembler->movl( eax, Address( esp, 1 * OOP_SIZE ) );
             break;
         case ByteCodes::ArgumentSpec::recv_2_args:
-            _macroAssembler->movl( eax, Address( esp, 2 * oopSize ) );
+            _macroAssembler->movl( eax, Address( esp, 2 * OOP_SIZE ) );
             break;
         case ByteCodes::ArgumentSpec::recv_n_args:
             // byte after send byte code specifies the number of arguments (0..255)
@@ -423,9 +423,9 @@ const char *InterpreterGenerator::push_const( Address obj_addr ) {
 
 const char *InterpreterGenerator::push_instVar() {
     const char *ep = entry_point();
-    advance_aligned( 1 + oopSize );
+    advance_aligned( 1 + OOP_SIZE );
     _macroAssembler->movl( ecx, self_addr() );
-    _macroAssembler->movl( edx, Address( esi, -oopSize ) );
+    _macroAssembler->movl( edx, Address( esi, -OOP_SIZE ) );
     _macroAssembler->pushl( eax );
     load_ebx();
     _macroAssembler->movl( eax, field_addr( ecx, edx ) );
@@ -436,9 +436,9 @@ const char *InterpreterGenerator::push_instVar() {
 
 const char *InterpreterGenerator::store_instVar( bool pop ) {
     const char *ep = entry_point();
-    advance_aligned( 1 + oopSize );
+    advance_aligned( 1 + OOP_SIZE );
     _macroAssembler->movl( ecx, self_addr() );
-    _macroAssembler->movl( edx, Address( esi, -oopSize ) );
+    _macroAssembler->movl( edx, Address( esi, -OOP_SIZE ) );
     load_ebx();
     _macroAssembler->movl( field_addr( ecx, edx ), eax );
     _macroAssembler->store_check( ecx, edx );
@@ -451,9 +451,9 @@ const char *InterpreterGenerator::store_instVar( bool pop ) {
 
 const char *InterpreterGenerator::return_instVar() {
     const char *ep = entry_point();
-    advance_aligned( 1 + oopSize );
+    advance_aligned( 1 + OOP_SIZE );
     _macroAssembler->movl( ecx, self_addr() );
-    _macroAssembler->movl( edx, Address( esi, -oopSize ) );
+    _macroAssembler->movl( edx, Address( esi, -OOP_SIZE ) );
     _macroAssembler->movl( eax, field_addr( ecx, edx ) );
     return_tos( ByteCodes::ArgumentSpec::recv_0_args );
     return ep;
@@ -507,7 +507,7 @@ const char *InterpreterGenerator::push_global() {
     const char *ep = entry_point();
     skip_words( 1 );
     _macroAssembler->pushl( eax );
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );                    // get association
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );                    // get association
     load_ebx();
     _macroAssembler->movl( eax, field_addr( ecx, AssociationOopDescriptor::value_offset() ) );    // get value via association
 
@@ -517,7 +517,7 @@ const char *InterpreterGenerator::push_global() {
         _macroAssembler->pushl( eax );    // pass arguments (C calling convention)
         _macroAssembler->pushl( ecx );
         _macroAssembler->call_C( (const char *) trace_push_global, RelocationInformation::RelocationType::runtime_call_type );
-        _macroAssembler->addl( esp, oopSize * 2 );   // get rid of arguments
+        _macroAssembler->addl( esp, OOP_SIZE * 2 );   // get rid of arguments
         _macroAssembler->popad();
     }
 
@@ -529,7 +529,7 @@ const char *InterpreterGenerator::push_global() {
 const char *InterpreterGenerator::store_global( bool pop ) {
     const char *ep = entry_point();
     skip_words( 1 );
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );                    // get association
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );                    // get association
     load_ebx();
     _macroAssembler->movl( field_addr( ecx, AssociationOopDescriptor::value_offset() ), eax );    // store value via association
     _macroAssembler->store_check( ecx, edx );
@@ -639,7 +639,7 @@ const char *InterpreterGenerator::with_context_temp( bool store, std::int32_t te
         _macroAssembler->movb( ebx, Address( esi, 1 ) );
         slot = Address( ecx, ebx, Address::ScaleFactor::times_4, ContextOopDescriptor::temp0_byte_offset() );
     } else {
-        slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + tempNo * oopSize );
+        slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + tempNo * OOP_SIZE );
     }
 
     if ( not store ) {
@@ -686,7 +686,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool self, std::int3
         _macroAssembler->bind( _loop );
         _macroAssembler->movb( ebx, Address( esi ) );                  // get parameter index
         _macroAssembler->movl( edx, arg_addr( ebx ) );                 // get parameter
-        Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + oopSize * oneIfSelf );
+        Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + OOP_SIZE * oneIfSelf );
         _macroAssembler->movl( slot, edx );                // store in context variable
         _macroAssembler->addl( ecx, 4 );
         _macroAssembler->incl( esi );
@@ -696,7 +696,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool self, std::int3
         for ( std::int32_t i = 0; i < paramsCount; i++ ) {
             _macroAssembler->movb( ebx, Address( esi, 1 + i ) );    // get i.th parameter index
             _macroAssembler->movl( edx, arg_addr( ebx ) );                     // get parameter
-            Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + oopSize * ( i + oneIfSelf ) );
+            Address slot = Address( ecx, ContextOopDescriptor::temp0_byte_offset() + OOP_SIZE * ( i + oneIfSelf ) );
             _macroAssembler->movl( slot, edx );                // store (i+oneIfSelf).th in context variable
         }
         _macroAssembler->addl( esi, 1 + paramsCount );
@@ -736,7 +736,7 @@ const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_c
     if ( nofArgs == -1 ) {
         // no. of arguments specified by 2nd byte
         _macroAssembler->movb( ebx, Address( esi, 1 ) );    //  get no. of arguments
-        advance_aligned( 2 + oopSize );                      // go to next instruction
+        advance_aligned( 2 + OOP_SIZE );                      // go to next instruction
         _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into smi_t (pushed on the stack!)
         save_esi();                                             // save vital registers
         _macroAssembler->pushl( ebx );                                     // pass as argument
@@ -746,12 +746,12 @@ const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_c
         _macroAssembler->popl( ebx );                            // get rid of argument
     } else {
         // no. of arguments implied by 1st byte
-        advance_aligned( 1 + oopSize );                    // go to next instruction
+        advance_aligned( 1 + OOP_SIZE );                    // go to next instruction
         save_esi();                                // no last Delta frame setup needed => save vital registers
         _macroAssembler->call( GeneratedPrimitives::allocateBlock( nofArgs ), RelocationInformation::RelocationType::runtime_call_type );    // eax: = block closure
     }
     restore_esi();                            // returning from C land => restore esi (ebx is restored later)
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );                // get block methodOop
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );                // get block methodOop
     if ( use_context ) {                            // if full block then
         _macroAssembler->movl( edx, context_addr() );                    //   get context of this activation
         if ( _debug ) {
@@ -925,7 +925,7 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
         _macroAssembler->movb( ebx, Address( esi, codeSize - 1 ) );
         _macroAssembler->leal( esi, Address( esi, ebx, Address::ScaleFactor::times_1, codeSize ) );
     } else {
-        _macroAssembler->addl( esi, Address( esi, -oopSize ) );
+        _macroAssembler->addl( esi, Address( esi, -OOP_SIZE ) );
     }
     load_ebx();
     if ( not isCond ) {
@@ -965,7 +965,7 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
     Address      cond     = isTrue ? true_addr() : false_addr();
     Address      not_cond = not isTrue ? true_addr() : false_addr();
-    std::int32_t codeSize = 1 + ( isByte ? 1 : oopSize );
+    std::int32_t codeSize = 1 + ( isByte ? 1 : OOP_SIZE );
 
     const char *ep = entry_point();
 
@@ -978,7 +978,7 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
     } else {
         _macroAssembler->leal( edx, Address( esi, codeSize + 3 ) );         // unaligned address of next instruction
         _macroAssembler->andl( edx, ~3 );                                           // aligned address of next instruction
-        _macroAssembler->subl( esi, Address( edx, -oopSize ) );
+        _macroAssembler->subl( esi, Address( edx, -OOP_SIZE ) );
     }
 
     _macroAssembler->movl( edx, Address( (std::int32_t) &Interpreter::_interpreter_loop_counter, RelocationInformation::RelocationType::external_word_type ) );
@@ -1046,7 +1046,7 @@ const char *InterpreterGenerator::control_jump( ByteCodes::Code code ) {
         default: ShouldNotReachHere();
     }
 
-    std::int32_t codeSize = 1 + ( isByte ? 1 : oopSize ) * ( isLoop ? 2 : 1 );
+    std::int32_t codeSize = 1 + ( isByte ? 1 : OOP_SIZE ) * ( isLoop ? 2 : 1 );
 
     const char *ep = entry_point();
 
@@ -1059,7 +1059,7 @@ const char *InterpreterGenerator::control_jump( ByteCodes::Code code ) {
         _macroAssembler->leal( esi, Address( esi, ebx, Address::ScaleFactor::times_1, codeSize ) ); // jump destination
     } else {
         advance_aligned( codeSize );
-        _macroAssembler->addl( esi, Address( esi, -oopSize ) ); // jump destination
+        _macroAssembler->addl( esi, Address( esi, -OOP_SIZE ) ); // jump destination
     }
 
     load_ebx();
@@ -1250,8 +1250,8 @@ const char *InterpreterGenerator::float_set() {
     const char *ep = entry_point();
     _macroAssembler->pushl( eax );                // make sure last float is completely in memory
     _macroAssembler->movb( ebx, Address( esi, 1 ) );        // get float number
-    advance_aligned( 2 + oopSize );            // advance to next instruction
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );    // get DoubleOop address
+    advance_aligned( 2 + OOP_SIZE );            // advance to next instruction
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );    // get DoubleOop address
     _macroAssembler->fld_d( Address( ecx, byteOffset( DoubleOopDescriptor::value_offset() ) ) ); // unbox float
     _macroAssembler->fstp_d( float_addr( ebx ) );        // store it
     load_ebx();
@@ -1294,7 +1294,7 @@ const char *InterpreterGenerator::predict_prim( bool canFail ) {
     // _predict_prim & _predict_prim_ifFail are two bytecodes that are
     // used during lookup, during execution they can be simply ignored.
     const char *ep = entry_point();
-    advance_aligned( 1 + ( canFail ? 2 : 1 ) * oopSize );
+    advance_aligned( 1 + ( canFail ? 2 : 1 ) * OOP_SIZE );
     load_ebx();
     jump_ebx();
     return ep;
@@ -1314,9 +1314,9 @@ const char *InterpreterGenerator::lookup_primitive() {
 
 const char *InterpreterGenerator::call_primitive() {
     const char *ep = entry_point();
-    advance_aligned( 1 + oopSize );
+    advance_aligned( 1 + OOP_SIZE );
     _macroAssembler->pushl( eax );                // push last argument
-    _macroAssembler->movl( eax, Address( esi, -oopSize ) );    // get primitive entry point
+    _macroAssembler->movl( eax, Address( esi, -OOP_SIZE ) );    // get primitive entry point
     call_C( eax );                    // eax: = primitive call(...)
     if ( _debug ) {                    // (Pascal calling conv. => args are popped by callee)
         _macroAssembler->testb( eax, MARK_TAG_BIT );
@@ -1331,13 +1331,13 @@ const char *InterpreterGenerator::call_primitive() {
 const char *InterpreterGenerator::call_primitive_can_fail() {
     Label      failed;
     const char *ep = entry_point();
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     _macroAssembler->pushl( eax );                // push last argument
-    _macroAssembler->movl( eax, Address( esi, -2 * oopSize ) );    // get primitive entry point
+    _macroAssembler->movl( eax, Address( esi, -2 * OOP_SIZE ) );    // get primitive entry point
     call_C( eax );                    // eax: = primitive call(...) (Pascal calling conv.)
     _macroAssembler->testb( eax, MARK_TAG_BIT );        // if not marked then
     _macroAssembler->jcc( Assembler::Condition::notZero, failed );
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );    // get jump offset
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );    // get jump offset
     _macroAssembler->addl( esi, ecx );            // jump over failure block
     load_ebx();
     jump_ebx();
@@ -1391,10 +1391,10 @@ const char *InterpreterGenerator::call_DLL( bool async ) {
 
     const char *ep = entry_point();
     Label      L;
-    advance_aligned( 1 + 3 * oopSize );                 // advance to no. of arguments byte
+    advance_aligned( 1 + 3 * OOP_SIZE );                 // advance to no. of arguments byte
     _macroAssembler->incl( esi );                                  // advance to next instruction (skip no. of arguments byte)
     _macroAssembler->pushl( eax );                                 // push last argument
-    _macroAssembler->movl( edx, Address( esi, -1 - oopSize ) );    // get dll function ptr
+    _macroAssembler->movl( edx, Address( esi, -1 - OOP_SIZE ) );    // get dll function ptr
     _macroAssembler->testl( edx, edx );                            // test if function has been looked up already
     _macroAssembler->jcc( Assembler::Condition::notZero, L );                 // and continue - otherwise lookup dll function & patch
     call_C( (const char *) DLLs::lookup_and_patch_Interpreted_DLLCache );    // eax: = returns dll function ptr
@@ -1573,7 +1573,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     _macroAssembler->reset_last_Delta_frame();
     _macroAssembler->test( eax, MARK_TAG_BIT );          // if not marked then
     _macroAssembler->jcc( Assembler::Condition::notZero, _deoptimized_return_from_primitive_call_with_failure_block_failed );
-    _macroAssembler->movl( ecx, Address( esi, -oopSize ) );      // load jump offset
+    _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );      // load jump offset
     _macroAssembler->addl( esi, ecx );                  // and jump over failure block
     load_ebx();
     jump_ebx();
@@ -1612,7 +1612,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
 
 void InterpreterGenerator::generate_primitiveValue( std::int32_t i ) {
     GeneratedPrimitives::set_primitiveValue( i, _macroAssembler->pc() );
-    _macroAssembler->movl( eax, Address( esp, ( i + 1 ) * oopSize ) ); // load recv (= block)
+    _macroAssembler->movl( eax, Address( esp, ( i + 1 ) * OOP_SIZE ) ); // load recv (= block)
     _macroAssembler->jmp( _block_entry );
 }
 
@@ -1681,7 +1681,7 @@ void InterpreterGenerator::call_method() {
         _macroAssembler->pushl( ecx );    // pass arguments (C calling convention)
         _macroAssembler->pushl( eax );
         _macroAssembler->call_C( (const char *) trace_send, RelocationInformation::RelocationType::runtime_call_type );
-        _macroAssembler->addl( esp, oopSize * 2 );   // get rid of arguments
+        _macroAssembler->addl( esp, OOP_SIZE * 2 );   // get rid of arguments
         _macroAssembler->popad();
     }
 
@@ -1702,7 +1702,7 @@ void InterpreterGenerator::call_native( Register entry ) {
         _macroAssembler->pushl( eax );    // pass arguments (C calling convention)
         _macroAssembler->pushl( ecx );
         _macroAssembler->call_C( (const char *) trace_send, RelocationInformation::RelocationType::runtime_call_type );
-        _macroAssembler->addl( esp, oopSize * 2 );   // get rid of arguments
+        _macroAssembler->addl( esp, OOP_SIZE * 2 );   // get rid of arguments
         _macroAssembler->popad();
     }
 
@@ -1760,7 +1760,7 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->movl( Address( ecx, counter_offset ), edx );                           // store method invocation counter
     load_ebx();                                                                             // get first byte code of method
     _macroAssembler->cmpl( edx, 0xFFFF << MethodOopDescriptor::_invocation_count_offset );  // make sure cmpl uses imm32 field
-    Interpreter::_invocation_counter_addr = (std::int32_t *) ( _macroAssembler->pc() - oopSize );  // compute invocation counter address
+    Interpreter::_invocation_counter_addr = (std::int32_t *) ( _macroAssembler->pc() - OOP_SIZE );  // compute invocation counter address
     _macroAssembler->jcc( Assembler::Condition::aboveEqual, counter_overflow );             // treat invocation counter overflow
     _macroAssembler->bind( start_execution );                                               // continuation point after overflow
     _macroAssembler->movl( eax, edi );                                                      // initialize temp0
@@ -1793,7 +1793,7 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->pushl( ecx );                            // pass methodOop argument
     _macroAssembler->pushl( eax );                            // pass receiver argument
     _macroAssembler->call( (const char *) Recompilation::methodOop_invocation_counter_overflow, RelocationInformation::RelocationType::runtime_call_type ); // methodOop_invocation_counter_overflow(receiver, methodOop)
-    _macroAssembler->addl( esp, 2 * oopSize );                        // discard arguments
+    _macroAssembler->addl( esp, 2 * OOP_SIZE );                        // discard arguments
     _macroAssembler->ret( 0 );
 
 
@@ -1848,7 +1848,7 @@ void InterpreterGenerator::generate_inline_cache_miss_handler() {
     _macroAssembler->testl( eax, eax );
     _macroAssembler->jcc( Assembler::Condition::equal, _normal_return );
     _macroAssembler->movl( ecx, Address( eax ) ); // pop arguments
-    _macroAssembler->movl( eax, Address( eax, oopSize ) ); // doesNotUnderstand: result
+    _macroAssembler->movl( eax, Address( eax, OOP_SIZE ) ); // doesNotUnderstand: result
     _macroAssembler->addl( esp, ecx ); // pop arguments
     load_ebx();
     jump_ebx();
@@ -1893,7 +1893,7 @@ const char *InterpreterGenerator::smi_add() {
     check_smi_tags();
     _macroAssembler->addl( eax, edx );
     _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     jump_ebx();
 
@@ -1912,7 +1912,7 @@ const char *InterpreterGenerator::smi_sub() {
     check_smi_tags();
     _macroAssembler->subl( edx, eax );
     _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     _macroAssembler->movl( eax, edx );
     load_ebx();
     jump_ebx();
@@ -1934,7 +1934,7 @@ const char *InterpreterGenerator::smi_mul() {
     _macroAssembler->sarl( edx, TAG_SIZE );
     _macroAssembler->imull( eax, edx );
     _macroAssembler->jcc( Assembler::Condition::overflow, overflow );
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     jump_ebx();
 
@@ -1953,7 +1953,7 @@ const char *InterpreterGenerator::smi_compare_op( ByteCodes::Code code ) {
     Label      is_true;
     const char *ep = entry_point();
     check_smi_tags();
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     _macroAssembler->cmpl( edx, eax );
     Assembler::Condition cc;
@@ -1992,7 +1992,7 @@ const char *InterpreterGenerator::smi_compare_op( ByteCodes::Code code ) {
 const char *InterpreterGenerator::smi_logical_op( ByteCodes::Code code ) {
     const char *ep = entry_point();
     check_smi_tags();
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     switch ( code ) {
         case ByteCodes::Code::smi_and:
@@ -2018,7 +2018,7 @@ const char *InterpreterGenerator::smi_shift() {
 
     const char *ep = entry_point();
     check_smi_tags();
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     _macroAssembler->sarl( eax, TAG_SIZE );                // convert argument (shift count) into std::int32_t (sets zero flag)
     _macroAssembler->movl( ecx, eax );                // move shift count into CL
@@ -2078,13 +2078,13 @@ void InterpreterGenerator::return_tos( ByteCodes::ArgumentSpec arg_spec ) {
     _macroAssembler->leave();
     switch ( arg_spec ) {
         case ByteCodes::ArgumentSpec::recv_0_args:
-            _macroAssembler->ret( 0 * oopSize );
+            _macroAssembler->ret( 0 * OOP_SIZE );
             break;
         case ByteCodes::ArgumentSpec::recv_1_args:
-            _macroAssembler->ret( 1 * oopSize );
+            _macroAssembler->ret( 1 * OOP_SIZE );
             break;
         case ByteCodes::ArgumentSpec::recv_2_args:
-            _macroAssembler->ret( 2 * oopSize );
+            _macroAssembler->ret( 2 * OOP_SIZE );
             break;
         case ByteCodes::ArgumentSpec::recv_n_args: {
             // no. of arguments is in the next byte
@@ -2160,6 +2160,8 @@ const char *Interpreter::_illegal = nullptr;
 
 
 void InterpreterGenerator::generate_error_handler_code() {
+    spdlog::info( "%interpreter-generate:  generate_error_handler_code" );
+
     st_assert( not _boolean_expected.is_bound(), "code has been generated before" );
 
     Label suspend, call_suspend;
@@ -2395,8 +2397,8 @@ const char *InterpreterGenerator::access_send( bool self ) {
     const char *ep                      = entry_point();
 
     ByteCodes::ArgumentSpec arg_spec;
-    Address                 method_addr = Address( esi, -2 * oopSize );
-    Address                 klass_addr  = Address( esi, -1 * oopSize );
+    Address                 method_addr = Address( esi, -2 * OOP_SIZE );
+    Address                 klass_addr  = Address( esi, -1 * OOP_SIZE );
 
     if ( self ) {
         arg_spec = ByteCodes::ArgumentSpec::args_only;
@@ -2405,7 +2407,7 @@ const char *InterpreterGenerator::access_send( bool self ) {
     }
 
     load_recv( arg_spec );
-    advance_aligned( 1 + 2 * oopSize );
+    advance_aligned( 1 + 2 * OOP_SIZE );
 
     // mov ecx, [method]		        ; get method
     // lea edx, [ecx._hcodes(4)]    	; start address of hcode + 4
@@ -2428,7 +2430,7 @@ const char *InterpreterGenerator::access_send( bool self ) {
     _macroAssembler->cmpl( edx, edi );            // compare with inline cache
     _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
 
-    Address primitive_addr = Address( ecx, MethodOopDescriptor::codes_byte_offset() + oopSize );
+    Address primitive_addr = Address( ecx, MethodOopDescriptor::codes_byte_offset() + OOP_SIZE );
     _macroAssembler->movl( edx, primitive_addr );        // get instVar offset
     _macroAssembler->movl( eax, field_addr( eax, edx ) );
 
@@ -2469,9 +2471,9 @@ const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_
     bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
-    Address      method_addr = Address( esi, -2 * oopSize );
-    Address      klass_addr  = Address( esi, -1 * oopSize );
+    std::int32_t length      = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    Address      method_addr = Address( esi, -2 * OOP_SIZE );
+    Address      klass_addr  = Address( esi, -1 * OOP_SIZE );
 
     _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
     _macroAssembler->movl( edi, smiKlass_addr() );        // load smi_t klass
@@ -2526,7 +2528,7 @@ const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_
 
     if ( primitive_send ) {
         Label   _failed;
-        Address primitive_addr = Address( ecx, MethodOopDescriptor::codes_byte_offset() + oopSize );
+        Address primitive_addr = Address( ecx, MethodOopDescriptor::codes_byte_offset() + OOP_SIZE );
 
         _macroAssembler->movl( edx, primitive_addr );        // get primitive address
         call_C( edx );                // eax: = primitive call
@@ -2569,10 +2571,10 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
 
     // inline cache layout
-    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
+    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
     bool         pop_tos       = ByteCodes::pop_tos( code );
-    Address      selector_addr = Address( esi, -2 * oopSize );
-    Address      klass_addr    = Address( esi, -1 * oopSize );
+    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
+    Address      klass_addr    = Address( esi, -1 * OOP_SIZE );
 
     _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
     _macroAssembler->movl( ecx, smiKlass_addr() );        // load smi_t klass
@@ -2599,11 +2601,11 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     _macroAssembler->xorl( edi, edx );
     _macroAssembler->andl( edi, ( primary_cache_size - 1 ) << 4 );
     // probe cache
-    _macroAssembler->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * oopSize ) );
+    _macroAssembler->cmpl( ecx, Address( edi, LookupCache::primary_cache_address() + 0 * OOP_SIZE ) );
     _macroAssembler->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
-    _macroAssembler->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * oopSize ) );
+    _macroAssembler->cmpl( edx, Address( edi, LookupCache::primary_cache_address() + 1 * OOP_SIZE ) );
     _macroAssembler->jcc( Assembler::Condition::notEqual, probe_secondary_cache );
-    _macroAssembler->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * oopSize ) );
+    _macroAssembler->movl( ecx, Address( edi, LookupCache::primary_cache_address() + 2 * OOP_SIZE ) );
     _macroAssembler->test( ecx, MEMOOP_TAG );            // check if NativeMethod
     _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
 
@@ -2636,11 +2638,11 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     _macroAssembler->bind( probe_secondary_cache );
     _macroAssembler->andl( edi, ( secondary_cache_size - 1 ) << 4 );
     // probe cache
-    _macroAssembler->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * oopSize ) );
+    _macroAssembler->cmpl( ecx, Address( edi, LookupCache::secondary_cache_address() + 0 * OOP_SIZE ) );
     _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
-    _macroAssembler->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * oopSize ) );
+    _macroAssembler->cmpl( edx, Address( edi, LookupCache::secondary_cache_address() + 1 * OOP_SIZE ) );
     _macroAssembler->jcc( Assembler::Condition::notEqual, _inline_cache_miss );
-    _macroAssembler->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * oopSize ) );
+    _macroAssembler->movl( ecx, Address( edi, LookupCache::secondary_cache_address() + 2 * OOP_SIZE ) );
     _macroAssembler->test( ecx, MEMOOP_TAG );            // check if NativeMethod
     _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );    // nativeMethods (jump table entries) are 4-byte aligned
     _macroAssembler->jmp( is_methodOop );
@@ -2668,13 +2670,13 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * oopSize;
-    Address      selector_addr = Address( esi, -2 * oopSize );
-    Address      pic_addr      = Address( esi, -1 * oopSize );
+    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
+    Address      pic_addr      = Address( esi, -1 * OOP_SIZE );
 
     // pic layout
-    std::int32_t length_offset = 2 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
-    std::int32_t data_offset   = 3 * oopSize - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
+    std::int32_t length_offset = 2 * OOP_SIZE - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
+    std::int32_t data_offset   = 3 * OOP_SIZE - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
 
     const char *ep = entry_point();
     load_recv( arg_spec );
@@ -2696,7 +2698,7 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     // ecx: counter
     // edx: receiver class
     // esi: next instruction
-    _macroAssembler->cmpl( edx, Address( ebx, ecx, Address::ScaleFactor::times_8, data_offset - 1 * oopSize, RelocationInformation::RelocationType::none ) );
+    _macroAssembler->cmpl( edx, Address( ebx, ecx, Address::ScaleFactor::times_8, data_offset - 1 * OOP_SIZE, RelocationInformation::RelocationType::none ) );
     _macroAssembler->jcc( Assembler::Condition::equal, found );
     _macroAssembler->decl( ecx );
     _macroAssembler->jcc( Assembler::Condition::notZero, loop );
@@ -2710,7 +2712,7 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     // ecx: counter (> 0)
     // edx: receiver class
     // esi: next instruction
-    _macroAssembler->movl( ecx, Address( ebx, ecx, Address::ScaleFactor::times_8, data_offset - 2 * oopSize, RelocationInformation::RelocationType::none ) );
+    _macroAssembler->movl( ecx, Address( ebx, ecx, Address::ScaleFactor::times_8, data_offset - 2 * OOP_SIZE, RelocationInformation::RelocationType::none ) );
     _macroAssembler->testl( ecx, MEMOOP_TAG );
     _macroAssembler->jcc( Assembler::Condition::zero, is_nativeMethod );
     restore_ebx();
@@ -3295,7 +3297,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
 void InterpreterGenerator::info( const char *name ) {
 
-    spdlog::info( "%interpreter-generate[{}]", name );
+    spdlog::info( "%interpreter-generate [{}]", name );
 
     if ( not PrintInterpreter ) {
         return;
@@ -3343,6 +3345,7 @@ void InterpreterGenerator::generate_all() {
 
     for ( std::int32_t n = 0; n < 10; n++ )
         generate_primitiveValue( n );
+
     info( "primitiveValues" );
 
 
@@ -3395,7 +3398,7 @@ void interpreter_init() {
     const bool debug = true; // change this to switch between debug/optimized version
 
     InterpreterGenerator( code, debug ).generate_all();
-    spdlog::info( "%interpreter-size [{}][0x{0:x}] bytes", code->code_size(), code->code_size() );
+    spdlog::info( "%interpreter-size:  [{}]  [0x{0:x}] bytes", code->code_size(), code->code_size() );
 
     Interpreter::init();
 }

@@ -24,7 +24,7 @@
 
 bool verifyOften = false;
 
-std::int32_t        compilationCount = 0;
+std::int32_t       compilationCount = 0;
 Compiler           *theCompiler     = nullptr;
 Compiler           *lastCompiler    = nullptr;        // for debugging
 BasicBlockIterator *last_bbIterator;
@@ -85,7 +85,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope )
 
     st_assert( blk->isCompiledBlock(), "must be compiled block" );
     JumpTableEntry *e = blk->jump_table_entry();
-    std::int32_t    sub_index;
+    std::int32_t   sub_index;
     parentNativeMethod = e->parent_nativeMethod( sub_index );
 
     std::int16_t main_index = parentNativeMethod->_mainId.is_block() ? parentNativeMethod->_promotedId.major() : parentNativeMethod->_mainId.major();
@@ -385,7 +385,7 @@ NativeMethod *Compiler::compile() {
     // don't use counters when compiling from DB
     FlagSetting fs( UseRecompilation, UseRecompilation and not is_database_compile() );
 
-    bool    should_trace = _uses_inlining_database ? PrintInliningDatabaseCompilation : PrintCompilation;
+    bool      should_trace = _uses_inlining_database ? PrintInliningDatabaseCompilation : PrintCompilation;
     TraceTime t( compiling, should_trace );
 
     if ( should_trace or PrintCode ) {
@@ -515,7 +515,7 @@ NativeMethod *Compiler::compile() {
 
     reporter->finish_reporting();
     if ( should_trace ) {
-        spdlog::info( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void*>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
+        spdlog::info( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void *>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
         //flush_logFile();
     }
 
@@ -559,7 +559,7 @@ void Compiler::computeBlockInfo() {
     // (could avoid iteration with topo sort, but there are few contexts anyway)
     bool changed = EliminateContexts;
     while ( changed ) {
-        changed             = false;
+        changed              = false;
         for ( std::int32_t i = allContexts->length() - 1; i >= 0; i-- ) {
             InlinedScope *s = allContexts->at( i );
             if ( s == nullptr )
@@ -723,12 +723,12 @@ void Compiler::print() {
     spdlog::info( ":" );
     key->print();
     spdlog::info( "\tmethod: %s", method->print_string() );
-    spdlog::info( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void*>( this ) );
+    spdlog::info( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void *>( this ) );
 }
 
 
 void Compiler::print_short() {
-    spdlog::info( "(Compiler*) 0x{0:x}", static_cast<void*>( this ) );
+    spdlog::info( "(Compiler*) 0x{0:x}", static_cast<void *>( this ) );
 }
 
 
@@ -786,13 +786,13 @@ void Compiler::set_special_handler_call_offset( std::int32_t offset ) {
 
 
 void Compiler::set_entry_point_offset( std::int32_t offset ) {
-    st_assert( offset % oopSize == 0, "entry point must be aligned" );
+    st_assert( offset % OOP_SIZE == 0, "entry point must be aligned" );
     _entry_point_offset = offset;
 }
 
 
 void Compiler::set_verified_entry_point_offset( std::int32_t offset ) {
-    st_assert( offset % oopSize == 0, "verified entry point must be aligned" );
+    st_assert( offset % OOP_SIZE == 0, "verified entry point must be aligned" );
     _verified_entry_point_offset = offset;
 }
 

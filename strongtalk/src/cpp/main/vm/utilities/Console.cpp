@@ -20,7 +20,7 @@ void console_init() {
     if ( _console )
         return;
     _console = new( true ) ConsoleOutputStream;
-    spdlog::info( "%system-init:  ConsoleOutputStream-open" );
+    spdlog::info( "%console-init:  ConsoleOutputStream-open" );
 }
 
 
@@ -29,11 +29,15 @@ void logging_init() {
     auto console = spdlog::stdout_color_mt( "console" );
     spdlog::set_level( spdlog::level::debug );
 
-    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S [%l] [%t] - <%s>|<%#>|<%!>,%v" );
-
-    spdlog::set_pattern( "[source %s] [function %!] [line %#] %v" );
+    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S  [%l]  [%t]  -  <%s>|<%#>|<%!>,%v" );
+    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S  %v" );
+//    spdlog::set_pattern( "[source %s] [function %!] [line %#] %v" );
     spdlog::set_default_logger( console );
 
-    spdlog::info( "%logging-init: hello-world" );
+    // announce
+    spdlog::info( "%logging-init:  -----------------------------------------------------------------------------" );
+    spdlog::info( "%logging-init:  Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
+    spdlog::info( "%logging-init:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
+    spdlog::info( "%logging-init:  -----------------------------------------------------------------------------" );
 
 }

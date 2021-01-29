@@ -35,7 +35,7 @@ Recompilee *RecompilationPolicy::findRecompilee() {
 
 
 void RecompilationPolicy::cleanupStaleInlineCaches() {
-    std::int32_t               len = min( 20, _stack->length() );
+    std::int32_t       len = min( 20, _stack->length() );
     for ( std::int32_t i   = 0; i < len; i++ )
         _stack->at( i )->cleanupStaleInlineCaches();
 }
@@ -210,10 +210,10 @@ void RecompilationPolicy::fixBlockParent( RecompilerFrame *rf ) {
     // find the parent method and increase its counter so it will be recompiled next time
     MethodOop blk = rf->top_method();
     st_assert( blk->is_blockMethod(), "must be a block" );
-    MethodOop   home  = blk->home();
+    MethodOop    home  = blk->home();
     std::int32_t count = home->invocation_count();
     count += Interpreter::get_invocation_counter_limit();
-    count             = min( count, MethodOopDescriptor::_invocation_count_max - 1 );
+    count              = min( count, MethodOopDescriptor::_invocation_count_max - 1 );
     home->set_invocation_count( count );
     st_assert( home->invocation_count() >= Interpreter::get_invocation_counter_limit(), "counter increment didn't work" );
 }
@@ -249,7 +249,7 @@ RecompilerFrame *RecompilationPolicy::senderOrParentOf( RecompilerFrame *rf ) {
         // bug: should check how often block is created / invoked
         GrowableArray<BlockClosureOop> *blockArgs = rf->blockArgs();
         RecompilerFrame                *max       = nullptr;
-        for ( std::int32_t              i          = 0; i < blockArgs->length(); i++ ) {
+        for ( std::int32_t             i          = 0; i < blockArgs->length(); i++ ) {
             BlockClosureOop blk   = blockArgs->at( i );
             //JumpTableEntry* e = blk->jump_table_entry();
             RecompilerFrame *home = parentOfBlock( blk );
@@ -302,7 +302,7 @@ RecompilerFrame *RecompilationPolicy::parentOfBlock( BlockClosureOop blk ) {
         return nullptr;    // non-LIFO block
     }
     // try to find context's RecompilerFrame
-    RecompilerFrame   *parent = _stack->first();
+    RecompilerFrame    *parent = _stack->first();
     for ( std::int32_t i       = 0; i < MaxRecompilationSearchLength; i++ ) {
         parent = senderOf( parent );
         if ( not parent )

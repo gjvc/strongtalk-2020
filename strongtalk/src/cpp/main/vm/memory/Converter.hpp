@@ -32,13 +32,13 @@
 class memConverter : public ResourceObject {
 
 protected:
-    KlassOop _oldKlass;
-    KlassOop _newKlass;
+    KlassOop                    _oldKlass;
+    KlassOop                    _newKlass;
     GrowableArray<std::int32_t> *_mapping;
 
 
     void compute_mapping() {
-        _mapping            = new GrowableArray<std::int32_t>( 20 );
+        _mapping                     = new GrowableArray<std::int32_t>( 20 );
         std::int32_t old_header_size = _oldKlass->klass_part()->oop_header_size();
         std::int32_t new_header_size = _newKlass->klass_part()->oop_header_size();
         std::int32_t n               = _oldKlass->klass_part()->number_of_instance_variables();

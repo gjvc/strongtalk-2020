@@ -29,10 +29,10 @@ void MemOopDescriptor::layout_iterate_body( ObjectLayoutClosure *blk, std::int32
     Oop *q = p + end;
     p += begin;
     while ( p < q ) {
-        std::int32_t       offset = p - (Oop *) addr();
+        std::int32_t offset = p - (Oop *) addr();
         // Compute the instance variable name at the current offset
-        SymbolOop name   = blueprint()->inst_var_name_at( offset );
-        const char *n = "instVar?";
+        SymbolOop    name   = blueprint()->inst_var_name_at( offset );
+        const char   *n     = "instVar?";
         if ( name ) {
             StringOutputStream stream( 50 );
             name->print_symbol_on( &stream );
@@ -67,7 +67,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
     std::int32_t s = size();
     st_assert( Universe::should_scavenge( this ) and not is_forwarded(), "shouldn't be scavenging" );
     bool is_new;
-    Oop *x = Universe::allocate_in_survivor_space( this, s, is_new );
+    Oop  *x        = Universe::allocate_in_survivor_space( this, s, is_new );
 
 #ifdef VERBOSE_SCAVENGING
     spdlog::info("{copy %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
@@ -257,8 +257,8 @@ void MemOopDescriptor::initialize_header( bool has_untagged_contents, KlassOop k
 
 void MemOopDescriptor::initialize_body( std::int32_t begin, std::int32_t end ) {
     Oop value = nilObject;
-    Oop *p = (Oop *) addr();
-    Oop *q = p + end;
+    Oop *p    = (Oop *) addr();
+    Oop *q    = p + end;
     p += begin;
     while ( p < q )
         Universe::store( p++, value, false );

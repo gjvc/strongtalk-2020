@@ -319,9 +319,9 @@ PRIM_DECL_2( processOopPrimitives::stack, Oop receiver, Oop limit ) {
     ResourceMark  rm;
     BlockScavenge bs;
 
-    std::int32_t        l       = SMIOop( limit )->value();
-    ProcessOop process = ProcessOop( receiver );
-    GrowableArray<Oop> *stack = new GrowableArray<Oop>( 100 );
+    std::int32_t       l       = SMIOop( limit )->value();
+    ProcessOop         process = ProcessOop( receiver );
+    GrowableArray<Oop> *stack  = new GrowableArray<Oop>( 100 );
 
     VirtualFrame *vf = ProcessOop( receiver )->process()->last_delta_vframe();
 

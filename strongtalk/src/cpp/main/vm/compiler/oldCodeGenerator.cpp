@@ -379,7 +379,7 @@ static void verifyContextCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyContext, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -398,7 +398,7 @@ static void verifyNilOrContextCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyNilOrContext, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -416,7 +416,7 @@ static void verifyBlockCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyBlock, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -443,7 +443,7 @@ static void verifyReturnCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyReturn, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -475,7 +475,7 @@ static void verifyNonLocalReturnCode() {
     theMacroAssembler->pushl( Mapping::asRegister( NonLocalReturnHomeLoc ) );
     theMacroAssembler->pushl( ebp );
     call_C( (const char *) verifyNonLocalReturn, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, 4 * oopSize );   // get rid of arguments
+    theMacroAssembler->addl( esp, 4 * OOP_SIZE );   // get rid of arguments
     theMacroAssembler->popad();
 }
 
@@ -493,7 +493,7 @@ static void verifySmiCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifySmi, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -515,7 +515,7 @@ static void verifyObjCode( Register reg ) {
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyObject, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, oopSize );   // get rid of argument
+    theMacroAssembler->addl( esp, OOP_SIZE );   // get rid of argument
     theMacroAssembler->popad();
 }
 
@@ -529,8 +529,8 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
         spdlog::info( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObject( recv );
-    std::int32_t i = nofArgs;
-    Oop *arg = (Oop *) ( ebp + ( nofArgs + 2 ) * oopSize );
+    std::int32_t i    = nofArgs;
+    Oop          *arg = (Oop *) ( ebp + ( nofArgs + 2 ) * OOP_SIZE );
     while ( i-- > 0 ) {
         arg--;
         verifyObject( *arg );
@@ -558,7 +558,7 @@ static void verifyArgumentsCode( Register recv, std::int32_t nofArgs ) {
     theMacroAssembler->pushl( ebp );
     theMacroAssembler->pushl( recv );
     call_C( (const char *) verifyArguments, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, 3 * oopSize );   // get rid of arguments
+    theMacroAssembler->addl( esp, 3 * OOP_SIZE );   // get rid of arguments
     theMacroAssembler->popad();
 }
 
@@ -580,7 +580,7 @@ static void call_trace_result( Register result ) {
     theMacroAssembler->pushl( theCompiler->method );
     theMacroAssembler->pushl( compilationCount );
     call_C( (const char *) trace_result, RelocationInformation::RelocationType::runtime_call_type, true );
-    theMacroAssembler->addl( esp, 3 * oopSize );   // get rid of arguments
+    theMacroAssembler->addl( esp, 3 * OOP_SIZE );   // get rid of arguments
     theMacroAssembler->popad();
 }
 
@@ -862,7 +862,7 @@ void PrologueNode::gen() {
     theMacroAssembler->call( StubRoutines::recompile_stub_entry(), RelocationInformation::RelocationType::runtime_call_type );
 
     // entry point for callers who need to verify receiver klass or if block
-    theMacroAssembler->align( oopSize );
+    theMacroAssembler->align( OOP_SIZE );
     theCompiler->set_entry_point_offset( theMacroAssembler->offset() );
     Register recv = moveLocToReg( selfLoc, temp1 );
     if ( scope()->isMethodScope() ) {
@@ -899,7 +899,7 @@ void PrologueNode::gen() {
     }
 
     // callers who know the receiver class (e.g., PICs) should enter here
-    theMacroAssembler->align( oopSize );
+    theMacroAssembler->align( OOP_SIZE );
     theCompiler->set_verified_entry_point_offset( theMacroAssembler->offset() );
     // build stack frame
     std::int32_t frame_size = 2;    // return address & old ebp
@@ -907,12 +907,12 @@ void PrologueNode::gen() {
     // allocate float temporaries
     std::int32_t nofFloats = theCompiler->totalNofFloatTemporaries();
     if ( nofFloats > 0 ) {
-        st_assert( SIZEOF_FLOAT == oopSize * 2, "check this code" );
+        st_assert( SIZEOF_FLOAT == OOP_SIZE * 2, "check this code" );
         st_assert( first_float_offset == -4, "check this code" );
-        std::int32_t float_section_size = nofFloats * ( SIZEOF_FLOAT / oopSize ) + 2;    // 2 additional words for filler & float alignment
+        std::int32_t float_section_size = nofFloats * ( SIZEOF_FLOAT / OOP_SIZE ) + 2;    // 2 additional words for filler & float alignment
         frame_size += 1 + float_section_size;            // magic word & floats
         theMacroAssembler->pushl( Floats::magic );                // magic word
-        theMacroAssembler->subl( esp, float_section_size * oopSize );    // add one word for float alignment
+        theMacroAssembler->subl( esp, float_section_size * OOP_SIZE );    // add one word for float alignment
         theCompiler->set_float_section_size( float_section_size );
         theCompiler->set_float_section_start_offset( -2 );        // float_section after ebp & magic word
     }
@@ -1080,7 +1080,7 @@ void DLLNode::gen() {
     //       if DLL is called within a loop - fix this at some point.
     inlineCache( scope()->nlrTestPoint()->_label, nullptr, false );
     // assign result
-    theMacroAssembler->addl( esp, nofArguments() * oopSize );    // get rid of arguments
+    theMacroAssembler->addl( esp, nofArguments() * OOP_SIZE );    // get rid of arguments
     Register t = moveLocToReg( resultLoc, answerPRegReg( _dest, temp1 ) );
     store( t, _dest, temp2, temp3 );
 }
@@ -1271,7 +1271,7 @@ void TArithRRNode::gen() {
         if ( _arg2IsInt ) {
             // perform operation
             Register x;
-            bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
+            bool     result = setupRegister( _dest, arg1, _op, x, temp1 );
             if ( not _arg1IsInt ) {
                 // tag check necessary for arg1
                 theMacroAssembler->test( x, MEMOOP_TAG );
@@ -1286,7 +1286,7 @@ void TArithRRNode::gen() {
         }
     } else {
         Register x, y;
-        bool   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool     result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         // check argument tags
         Register tags   = noreg;
         if ( _arg1IsInt ) {
@@ -1329,7 +1329,7 @@ void ArithRRNode::gen() {
     if ( arg2->isConstPseudoRegister() ) {
         Oop      y      = ( (ConstPseudoRegister *) arg2 )->constant;
         Register x;
-        bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
+        bool     result = setupRegister( _dest, arg1, _op, x, temp1 );
         if ( y->is_smi() ) {
             arithRCOp( _op, x, std::int32_t( y ) );        // y is SMIOop -> needs no relocation info
         } else {
@@ -1339,7 +1339,7 @@ void ArithRRNode::gen() {
             store( x, _dest, temp2, temp3 );
     } else {
         Register x, y;
-        bool   result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool     result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         arithRROp( _op, x, y );
         if ( result ) {
             Register t = ( x == temp1 ) ? temp2 : temp1;
@@ -1351,10 +1351,10 @@ void ArithRRNode::gen() {
 
 void ArithRCNode::gen() {
     BasicNode::gen();
-    PseudoRegister *arg1 = _src;
-    std::int32_t      y      = _oper;
-    Register x;
-    bool   result = setupRegister( _dest, arg1, _op, x, temp1 );
+    PseudoRegister *arg1  = _src;
+    std::int32_t   y      = _oper;
+    Register       x;
+    bool           result = setupRegister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );
     if ( result )
         store( x, _dest, temp2, temp3 );
@@ -1388,8 +1388,8 @@ static void floatArithRROp( ArithOpCode op ) {
 
 void FloatArithRRNode::gen() {
     BasicNode::gen();
-    bool   noResult = ( _op == ArithOpCode::fCmpArithOp );
-    bool   exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
+    bool     noResult = ( _op == ArithOpCode::fCmpArithOp );
+    bool     exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
     Register base     = temp3;
     set_floats_base( this, base );
     fload( _src, base, temp1 );
@@ -1446,7 +1446,7 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
 //	theMacroAssm->int3();
             theMacroAssembler->call( StubRoutines::oopify_float(), RelocationInformation::RelocationType::runtime_call_type );
             //      theMacroAssm->call((char*)oopify_float, RelocationInformation::RelocationType::runtime_call_type);
-            theMacroAssembler->movl( Address( esp, REGISTER_COUNT * oopSize ), eax );    // store result at reserved stack location
+            theMacroAssembler->movl( Address( esp, REGISTER_COUNT * OOP_SIZE ), eax );    // store result at reserved stack location
             theMacroAssembler->popad();                    // restore register contents
             theMacroAssembler->popl( reg );                // get result
         }
@@ -1463,8 +1463,8 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
             // convert smi_t
             theMacroAssembler->bind( is_smi );
             theMacroAssembler->sarl( reg, TAG_SIZE );            // convert smi_t into std::int32_t
-            theMacroAssembler->movl( Address( esp, -oopSize ), reg );    // store it at end of stack
-            theMacroAssembler->fild_s( Address( esp, -oopSize ) );        // load & convert into FloatValue
+            theMacroAssembler->movl( Address( esp, -OOP_SIZE ), reg );    // store it at end of stack
+            theMacroAssembler->fild_s( Address( esp, -OOP_SIZE ) );        // load & convert into FloatValue
             theMacroAssembler->jmp( done );
 
             // unbox DoubleOop
@@ -1484,7 +1484,7 @@ void FloatUnaryArithNode::gen() {
     Register reg;
     Register base = temp3;
     set_floats_base( this, base );
-    if ( Mapping::isFloatTemporary( _src->_location ) or _src->_location == topOfFloatStack ) {
+    if ( Mapping::isFloatTemporary( _src->_location ) or _src->_location == Location::TOP_OF_FLOAT_STACK ) {
         // load argument on FPU stack & setup reg if result is an Oop
         fload( _src, base, temp1 );
         reg = temp1;
@@ -1493,7 +1493,7 @@ void FloatUnaryArithNode::gen() {
         reg = movePRegToReg( _src, temp1 );
     }
     floatArithROp( _op, reg, temp2 );
-    if ( Mapping::isFloatTemporary( _dest->_location ) or _dest->_location == topOfFloatStack ) {
+    if ( Mapping::isFloatTemporary( _dest->_location ) or _dest->_location == Location::TOP_OF_FLOAT_STACK ) {
         // result is on FPU stack
         fstore( _dest, base );
     } else {
@@ -1543,7 +1543,7 @@ void ContextCreateNode::gen() {
             st_assert( _pdesc == Primitives::context_allocate(), "bad context create prim" );
             theMacroAssembler->pushl( (std::int32_t) smiOopFromValue( _contextSize ) );
             primitiveCall( scope(), _pdesc );
-            theMacroAssembler->addl( esp, oopSize );    // pop argument, this is not a Pascal call - should fix this
+            theMacroAssembler->addl( esp, OOP_SIZE );    // pop argument, this is not a Pascal call - should fix this
     }
     Register context = Mapping::asRegister( resultLoc );
     if ( _src == nullptr ) {
@@ -1629,7 +1629,7 @@ void ReturnNode::gen() {
         no_of_args_to_pop++;
     }
     theMacroAssembler->leave();
-    theMacroAssembler->ret( no_of_args_to_pop * oopSize );
+    theMacroAssembler->ret( no_of_args_to_pop * OOP_SIZE );
 }
 
 
@@ -1745,8 +1745,8 @@ static bool testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, 
 
 static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, GrowableArray<KlassOop> *classes, GrowableArray<Label *> *next ) {
     // handle general case: N klasses, N+1 labels (first label = unknown case)
-    std::int32_t                     smi_case = -1;            // index of smi_t case in next array (if there)
-    const std::int32_t               len      = classes->length();
+    std::int32_t            smi_case = -1;            // index of smi_t case in next array (if there)
+    const std::int32_t      len      = classes->length();
     GrowableArray<KlassOop> klasses( len );    // list of classes excluding smi_t case
     GrowableArray<Label *>  labels( len );    // list of nodes   excluding smi_t case
 
@@ -1773,7 +1773,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, G
         theMacroAssembler->jcc( Assembler::Condition::zero, *next->at( smi_case ) );
     }
 
-    bool    klassHasBeenLoaded = false;
+    bool               klassHasBeenLoaded = false;
     const std::int32_t nof_cmps           = hasUnknown ? klasses.length() : klasses.length() - 1;
     for ( std::int32_t i                  = 0; i < nof_cmps; i++ ) {
         const KlassOop klass = klasses.at( i );
@@ -1808,9 +1808,9 @@ static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, G
 
 void TypeTestNode::gen() {
     BasicNode::gen();
-    const std::int32_t      len      = classes()->length();
-    const Register obj      = movePRegToReg( _src, temp1 );
-    const Register klassReg = temp2;
+    const std::int32_t len      = classes()->length();
+    const Register     obj      = movePRegToReg( _src, temp1 );
+    const Register     klassReg = temp2;
     bb_needs_jump            = false;  // we generate all jumps explicitly
 
     if ( ReorderBBs ) {
@@ -1837,7 +1837,7 @@ void TypeTestNode::gen() {
 
     // handle general case
     GrowableArray<Label *> labels( len + 1 );
-    for ( std::int32_t              i = 0; i <= len; i++ )
+    for ( std::int32_t     i = 0; i <= len; i++ )
         labels.append( &next( i )->_label );
     generalTypeTest( obj, klassReg, hasUnknown(), classes(), &labels );
 }
@@ -1993,7 +1993,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
     //       must already exist since it was materialized when the first uplevel-
     //       accessing block was created.
     // Urs 4/96
-    BlockPseudoRegister *blk = block();
+    BlockPseudoRegister       *blk    = block();
     GrowableArray<Location *> *copies = blk->contextCopies();
     if ( copies == nullptr )
         return;
@@ -2001,7 +2001,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
         Location       *l                = copies->at( i );
         InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
         PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
-        if ( r->_location == unAllocated )
+        if ( r->_location == Location::UNALLOCATED_LOCATION )
             continue;      // not uplevel-accessed (eliminated)
         if ( r->isBlockPseudoRegister() )
             continue;          // ditto
@@ -2036,7 +2036,7 @@ void BlockCreateNode::materialize() {
             st_assert( _pdesc == Primitives::block_allocate(), "bad block clone prim" );
             theMacroAssembler->pushl( (std::int32_t) smiOopFromValue( nofArgs ) );
             primitiveCall( scope(), _pdesc );
-            theMacroAssembler->addl( esp, oopSize ); // pop argument, this is not a Pascal call - should fix this
+            theMacroAssembler->addl( esp, OOP_SIZE ); // pop argument, this is not a Pascal call - should fix this
     }
     // assign result
     Register t = moveLocToReg( resultLoc, answerPRegReg( _dest, temp1 ) );
@@ -2085,7 +2085,7 @@ void BlockCreateNode::gen() {
     if ( block()->closure()->method()->is_clean_block() ) {
         // create the block now (doesn't need to be copied at run-time)
         CompileTimeClosure *closure = block()->closure();
-        BlockClosureOop blk = BlockClosureOopDescriptor::create_clean_block( closure->nofArgs(), closure->jump_table_entry() );
+        BlockClosureOop    blk      = BlockClosureOopDescriptor::create_clean_block( closure->nofArgs(), closure->jump_table_entry() );
         Mapping::storeO( blk, _dest->_location, temp1, temp3, true );
     } else if ( block()->isMemoized() ) {
         // initialize block variable
@@ -2142,19 +2142,19 @@ void LoopHeaderNode::gen() {
 
 void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
     // test all values against expected classes
-    Label *ok;
-    const Register klassReg = temp2;
-    const std::int32_t      len      = _tests->length() - 1;
-    std::int32_t            last;                        // last case that generates a test
-    for ( last = len; last >= 0 and _tests->at( last )->_testedPR->_location == unAllocated; last-- );
+    Label              *ok;
+    const Register     klassReg = temp2;
+    const std::int32_t len      = _tests->length() - 1;
+    std::int32_t       last;                        // last case that generates a test
+    for ( last = len; last >= 0 and _tests->at( last )->_testedPR->_location == Location::UNALLOCATED_LOCATION; last-- );
     if ( last < 0 )
         return;                    // no tests at all
     for ( std::int32_t i = 0; i <= last; i++ ) {
         HoistedTypeTest *t = _tests->at( i );
-        if ( t->_testedPR->_location == unAllocated )
+        if ( t->_testedPR->_location == Location::UNALLOCATED_LOCATION )
             continue;    // optimized away, or ConstPseudoRegister
         if ( t->_testedPR->isConstPseudoRegister() ) {
-            guarantee( t->_testedPR->_location == unAllocated, "code assumes ConstPseudoRegisters are unallocated" );
+            guarantee( t->_testedPR->_location == Location::UNALLOCATED_LOCATION, "code assumes ConstPseudoRegisters are unallocated" );
             handleConstantTypeTest( (ConstPseudoRegister *) t->_testedPR, t->_klasses );
         } else {
             const Register obj = movePRegToReg( t->_testedPR, temp1 );
@@ -2165,7 +2165,7 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
             } else if ( t->_klasses->length() == 2 and testForBoolKlasses( obj, t->_klasses->at( 0 ), t->_klasses->at( 1 ), klassReg, true, *ok, *ok, failure ) ) {
                 // ok, was a bool test
             } else {
-                const std::int32_t              len = t->_klasses->length();
+                const std::int32_t     len = t->_klasses->length();
                 GrowableArray<Label *> labels( len + 1 );
                 labels.append( &failure );
                 for ( std::int32_t i = 0; i < len; i++ )
@@ -2185,7 +2185,7 @@ void LoopHeaderNode::generateIntegerLoopTest( PseudoRegister *p, Label &prev, La
         if ( p->isConstPseudoRegister() ) {
             // no run-time test necessary
             handleConstantTypeTest( (ConstPseudoRegister *) p, nullptr );
-        } else if ( p->_location == unAllocated ) {
+        } else if ( p->_location == Location::UNALLOCATED_LOCATION ) {
             // p is never used in loop, so no test needed
             guarantee( p->cpReg() == p, "should use cpReg()" );
         } else {
@@ -2232,7 +2232,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
         // without an index range check, we need to check it here.
         PseudoRegister      *loopArray = _upperLoad->src();
         AbstractArrayAtNode *atNode;
-        std::int32_t i = _arrayAccesses->length() - 1;
+        std::int32_t        i          = _arrayAccesses->length() - 1;
         for ( ; i >= 0; i-- ) {
             atNode = _arrayAccesses->at( i );
             if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
@@ -2246,7 +2246,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                 // test lower bound
                 if ( prev.is_unbound() )
                     theMacroAssembler->bind( prev );
-                if ( _lowerBound->_location == unAllocated ) {
+                if ( _lowerBound->_location == Location::UNALLOCATED_LOCATION ) {
                     guarantee( _lowerBound->cpReg() == _lowerBound, "should use cpReg()" );
                 } else {
                     const Register t = movePRegToReg( _lowerBound ? _lowerBound : _loopVar, tempReg );
@@ -2541,7 +2541,7 @@ void InlinedPrimitiveNode::gen() {
         }
             break;
         case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
-            bool   const_val = _arg2->isConstPseudoRegister();
+            bool     const_val = _arg2->isConstPseudoRegister();
             Register proxy     = temp1;
             load( _src, proxy );            // proxy is modified
             Register index = temp2;

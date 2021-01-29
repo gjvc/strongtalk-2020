@@ -163,9 +163,9 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    DeltaVirtualFrame  *df    = (DeltaVirtualFrame *) vf;
-    GrowableArray<Oop> *temps = new GrowableArray<Oop>( 10 );
-    MethodOop method    = df->method();
+    DeltaVirtualFrame  *df       = (DeltaVirtualFrame *) vf;
+    GrowableArray<Oop> *temps    = new GrowableArray<Oop>( 10 );
+    MethodOop          method    = df->method();
     std::int32_t       tempCount = method->number_of_stack_temporaries();
 
     for ( std::int32_t offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
@@ -357,7 +357,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::step_return, Oop activation ) {
         deoptimize( proc );
 
         VirtualFrame *vf           = VirtualFrameOop( activationHandle.as_oop() )->get_vframe();
-        std::int32_t          *framePointer = vf->fr().fp();
+        std::int32_t *framePointer = vf->fr().fp();
 
         proc->setupStepReturn( framePointer );
 

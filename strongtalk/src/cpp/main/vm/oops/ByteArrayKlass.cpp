@@ -22,11 +22,11 @@ Oop ByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
-    KlassOop k        = as_klassOop();
-    std::int32_t      ni_size  = non_indexable_size();
-    std::int32_t      obj_size = ni_size + 1 + roundTo( size, oopSize ) / oopSize;
+    KlassOop     k        = as_klassOop();
+    std::int32_t ni_size  = non_indexable_size();
+    std::int32_t obj_size = ni_size + 1 + roundTo( size, OOP_SIZE ) / OOP_SIZE;
     // allocate
-    Oop *result = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
+    Oop          *result  = permit_tenured ? Universe::allocate_tenured( obj_size, false ) : Universe::allocate( obj_size, (MemOop *) &k, permit_scavenge );
 
     if ( not result )
         return nullptr;
@@ -86,8 +86,8 @@ bool ByteArrayKlass::oop_verify( Oop obj ) {
 void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_byteArray( obj, "Argument must be byteArray" );
     ByteArrayOop array = ByteArrayOop( obj );
-    std::int32_t          len   = array->length();
-    std::int32_t          n     = min( MaxElementPrintSize, len );
+    std::int32_t len   = array->length();
+    std::int32_t n     = min( MaxElementPrintSize, len );
     stream->print( "'" );
     for ( std::int32_t i = 1; i <= n; i++ ) {
         char c = array->byte_at( i );
@@ -103,8 +103,8 @@ void ByteArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) 
 
 
 void ByteArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
-    std::uint8_t *p = ByteArrayOop( obj )->bytes();
-    Oop          *l = ByteArrayOop( obj )->length_addr();
+    std::uint8_t *p  = ByteArrayOop( obj )->bytes();
+    Oop          *l  = ByteArrayOop( obj )->length_addr();
     std::int32_t len = ByteArrayOop( obj )->length();
     // header + instance variables
     MemOopKlass::oop_layout_iterate( obj, blk );

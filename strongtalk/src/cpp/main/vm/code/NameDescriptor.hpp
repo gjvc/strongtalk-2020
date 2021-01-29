@@ -50,7 +50,7 @@ public:
 
     virtual Location location() const {
         SubclassResponsibility();
-        return unAllocated;
+        return Location::UNALLOCATED_LOCATION;
     }
 
 
@@ -136,7 +136,7 @@ class ScopeDescriptor;
 
 // a block closure "constant", i.e., a block that has been optimized away
 struct BlockValueNameDescriptor : public NameDescriptor {
-    MethodOop _blockMethod;
+    MethodOop       _blockMethod;
     ScopeDescriptor *_parentScope;
 
 
@@ -175,8 +175,8 @@ struct BlockValueNameDescriptor : public NameDescriptor {
 
 // a block closure that may or may not be created at runtime, so location l contains either the real block or a dummy block
 struct MemoizedBlockNameDescriptor : public NameDescriptor {
-    Location  _location;
-    MethodOop _blockMethod;
+    Location        _location;
+    MethodOop       _blockMethod;
     ScopeDescriptor *_parentScope;
 
 

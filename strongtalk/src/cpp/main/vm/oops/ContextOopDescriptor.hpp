@@ -19,6 +19,7 @@ class ContextOopDescriptor : public MemOopDescriptor {
 private:
     SMIOop _parent;
 
+
     //
     // %note: Robert please describe the parent states in excruciating details.
     //        The description below is far from complete (Lars, 1/9/96).
@@ -78,7 +79,7 @@ public:
 
 
     static std::int32_t header_size() {
-        return sizeof( ContextOopDescriptor ) / oopSize;
+        return sizeof( ContextOopDescriptor ) / OOP_SIZE;
     }
 
 

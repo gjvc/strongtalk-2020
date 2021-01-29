@@ -83,7 +83,7 @@ PRIM_DECL_2( mixinOopPrimitives::remove_method_at, Oop mixin, Oop index ) {
         return markSymbol( vmSymbols::is_installed() );
 
     BlockScavenge bs;
-    std::int32_t           i = SMIOop( index )->value();
+    std::int32_t  i = SMIOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_methods() )
         return MixinOop( mixin )->remove_method_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -156,7 +156,7 @@ PRIM_DECL_2( mixinOopPrimitives::remove_instance_variable_at, Oop mixin, Oop ind
 
 
     BlockScavenge bs;
-    std::int32_t           i = SMIOop( index )->value();
+    std::int32_t  i = SMIOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_instVars() )
         return MixinOop( mixin )->remove_instVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -228,7 +228,7 @@ PRIM_DECL_2( mixinOopPrimitives::remove_class_variable_at, Oop mixin, Oop index 
         return markSymbol( vmSymbols::is_installed() );
 
     BlockScavenge bs;
-    std::int32_t           i = SMIOop( index )->value();
+    std::int32_t  i = SMIOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_classVars() )
         return MixinOop( mixin )->remove_classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );

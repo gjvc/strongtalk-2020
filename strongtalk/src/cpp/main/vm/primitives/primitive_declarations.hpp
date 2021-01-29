@@ -8,6 +8,7 @@
 
 #include "vm/system/platform.hpp"
 
+
 // -----------------------------------------------------------------------------
 
 typedef class OopDescriptor *Oop;
@@ -26,4 +27,3 @@ typedef class OopDescriptor *Oop;
 #define PRIM_DECL_7( name, a1, a2, a3, a4, a5, a6, a7 )               Oop __CALLING_CONVENTION name( a7, a6, a5, a4, a3, a2, a1 )
 #define PRIM_DECL_8( name, a1, a2, a3, a4, a5, a6, a7, a8 )           Oop __CALLING_CONVENTION name( a8, a7, a6, a5, a4, a3, a2, a1 )
 #define PRIM_DECL_9( name, a1, a2, a3, a4, a5, a6, a7, a8, a9 )       Oop __CALLING_CONVENTION name( a9, a8, a7, a6, a5, a4, a3, a2, a1 )
-#define PRIM_DECL_10( name, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10 ) Oop __CALLING_CONVENTION name(a10, a9, a8, a7, a6, a5, a4, a3, a2, a1 )

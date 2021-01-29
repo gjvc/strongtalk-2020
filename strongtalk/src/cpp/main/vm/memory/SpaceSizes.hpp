@@ -20,11 +20,11 @@ public:
     std::int32_t _old_size;               // size of old Space
 
     // compiled code
-    std::int32_t         _reserved_codes_size;    // reserved Space for NativeMethod zone
+    std::int32_t _reserved_codes_size;    // reserved Space for NativeMethod zone
     std::int32_t _code_size;              // size of NativeMethod zone
-    std::int32_t         _reserved_pic_heap_size; // reserved Space for PolymorphicInlineCache zone
-    std::int32_t         _pic_heap_size;          // size of pic_heap
-    std::int32_t         _jump_table_size;        // size of jump table
+    std::int32_t _reserved_pic_heap_size; // reserved Space for PolymorphicInlineCache zone
+    std::int32_t _pic_heap_size;          // size of pic_heap
+    std::int32_t _jump_table_size;        // size of jump table
 
     // Reads debug variables for initial settings.
     void initialize();

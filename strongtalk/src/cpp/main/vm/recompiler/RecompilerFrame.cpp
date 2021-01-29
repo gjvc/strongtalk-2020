@@ -73,7 +73,7 @@ CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
 
 RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame *callee ) {
     RecompilerFrame *rf;
-    std::int32_t             dist = callee ? callee->distance() : -1;
+    std::int32_t    dist = callee ? callee->distance() : -1;
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
         dist++;
@@ -125,7 +125,7 @@ bool RecompilerFrame::hasBlockArgs() const {
     DeltaVirtualFrame *vf = top_vframe();
     if ( not vf )
         return false;
-    std::int32_t               nargs = vf->method()->number_of_arguments();
+    std::int32_t       nargs = vf->method()->number_of_arguments();
     for ( std::int32_t i     = 0; i < nargs; i++ ) {
         Oop b = vf->argument_at( i );
         if ( b->is_block() )
@@ -137,7 +137,7 @@ bool RecompilerFrame::hasBlockArgs() const {
 
 GrowableArray<BlockClosureOop> *RecompilerFrame::blockArgs() const {
     DeltaVirtualFrame              *vf     = top_vframe();
-    std::int32_t                            nargs   = top_method()->number_of_arguments();
+    std::int32_t                   nargs   = top_method()->number_of_arguments();
     GrowableArray<BlockClosureOop> *blocks = new GrowableArray<BlockClosureOop>( nargs );
     if ( not vf )
         return blocks;
@@ -219,7 +219,7 @@ std::int32_t RecompilerFrame::computeSends( MethodOop m ) {
 
     // how many sends did m cause?  (rough approximation)
     // add up invocation counts of all methods called by m
-    std::int32_t  sends = 0;
+    std::int32_t sends = 0;
     CodeIterator iter( m );
 
     do {
@@ -260,7 +260,7 @@ std::int32_t RecompilerFrame::computeSends( MethodOop m ) {
 
 
 static CompiledRecompilerFrame *this_rframe   = nullptr;
-static std::int32_t             sum_ics_result = 0;
+static std::int32_t            sum_ics_result = 0;
 
 
 static void sum_ics( CompiledInlineCache *ic ) {
@@ -331,9 +331,9 @@ void InterpretedRecompilerFrame::init() {
 class CumulCounter : public SpecializedMethodClosure {
 
 public:
-    MethodOop method;            // the method currently being scanned for uplevel-accesses
-    std::int32_t       cumulSends;
-    bool    top;
+    MethodOop    method;            // the method currently being scanned for uplevel-accesses
+    std::int32_t cumulSends;
+    bool         top;
 
 
     CumulCounter( MethodOop m ) {

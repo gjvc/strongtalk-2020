@@ -13,7 +13,7 @@
 Location pick( RegisterMask & alloc, RegisterMask mask ) {
     Unimplemented();
     unsigned r = mask & ~alloc;
-    if ( r == 0 ) return unAllocated;
+    if ( r == 0 ) return Location::UNALLOCATED_LOCATION;
     for ( std::int32_t reg = 0; not isBitSet( r, 0 ); reg++, r >>= 1 );
     setNthBit( alloc, reg );
     // return Location(ireg, reg); /// fix this

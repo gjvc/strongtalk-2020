@@ -22,7 +22,7 @@ Oop *eden_end    = nullptr;
 void Space::clear() {
     set_top( bottom() );
     // to detect scavenging bugs
-    set_oops( bottom(), capacity() / oopSize, Oop( 1 ) );
+    set_oops( bottom(), capacity() / OOP_SIZE, Oop( 1 ) );
 }
 
 
@@ -110,7 +110,7 @@ void Space::compact( OldWaterMark *mark ) {
             std::int32_t size = m->gc_retrieve_size();
             // make sure we don't run out of old Space!
             if ( size > mark->_space->end() - new_top )
-                mark->_space->expand( size * oopSize );
+                mark->_space->expand( size * OOP_SIZE );
 
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
@@ -260,7 +260,7 @@ std::int32_t OldSpace::shrink( std::int32_t size ) {
 
 
 Oop *OldSpace::expand_and_allocate( std::int32_t size ) {
-    expand( size * oopSize );
+    expand( size * OOP_SIZE );
     return allocate( size );
 }
 

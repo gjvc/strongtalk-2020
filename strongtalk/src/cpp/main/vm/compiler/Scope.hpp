@@ -50,13 +50,13 @@ public:
     LookupKey      *_lookupKey;        //
     PseudoRegister *_resultRegister;   // register where result should end up
     SymbolOop      _selector;                //
-    bool         _needRealSend;            // need a real (non-inlined) send
-    bool         _counting;                // count # sends? (for non-inlined send)
-    std::int32_t    _sendCount;               // estimated # of invocations (< 0 == unknown)
-    bool         _predicted;               // was receiver type-predicted?
-    bool         uninlinable;              // was send considered uninlinable?
-    bool         _receiverStatic;          // receiver type is statically known
-    bool         _inPrimitiveFailure;      // sent from within prim. failure block
+    bool           _needRealSend;            // need a real (non-inlined) send
+    bool           _counting;                // count # sends? (for non-inlined send)
+    std::int32_t   _sendCount;               // estimated # of invocations (< 0 == unknown)
+    bool           _predicted;               // was receiver type-predicted?
+    bool           uninlinable;              // was send considered uninlinable?
+    bool           _receiverStatic;          // receiver type is statically known
+    bool           _inPrimitiveFailure;      // sent from within prim. failure block
 
 protected:
     void init();
@@ -180,17 +180,17 @@ public:
 class InlinedScope : public Scope {
 
 protected:
-    std::int32_t  _scopeID;                   //
+    std::int32_t _scopeID;                   //
     InlinedScope *_sender;                    // nullptr for top scope
-    std::int32_t  _senderByteCodeIndex;       // call position in sender (if inlined)
+    std::int32_t _senderByteCodeIndex;       // call position in sender (if inlined)
     ScopeInfo    _scopeInfo;                 // for debugging information (see scopeDescRecoder.hpp)
     LookupKey    *_key;                       //
     KlassOop     _methodHolder;              // not_eq receiver klass only for methods invoked by super sends
     MethodOop    _method;
-    std::int32_t  _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
-    std::int32_t  _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
-    bool       _primFailure;               // true if in a primitive call failure branch
-    bool       _endsDead;                  // true if method ends with dead code
+    std::int32_t _nofSends;                  // no. of non-inlined sends, cumulative (incl. subScopes)
+    std::int32_t _nofInterruptPoints;        // no. of interrupt points, cumulative (incl. subScopes) (_nofInterruptPoints == 0 => needs no debug info)
+    bool         _primFailure;               // true if in a primitive call failure branch
+    bool         _endsDead;                  // true if method ends with dead code
     Expression   *_self;                      // the receiver
     NodeBuilder  _gen;                       // the generator of the intermediate representation
 
@@ -214,7 +214,7 @@ protected:
     MergeNode       *_NonLocalReturneturnPoint;         // starting point for shared non-local return code
     MergeNode       *_nlrTestPoint;          // where NonLocalReturns coming from callees will jump to (or nullptr)
     ContextInitNode *_contextInitializer;    // node initializing context (if any)
-    bool          _hasBeenGenerated;      // true iff genCode() was called
+    bool            _hasBeenGenerated;      // true iff genCode() was called
 
 public:
     // for node builders
@@ -246,9 +246,9 @@ public:
 
 public:
     RecompilationScope *rscope;         // equiv. scope in recompilee (if any) - used for type feedback
-    bool             predicted;      // was receiver type-predicted?
-    std::int32_t        depth;          // call nesting level (top = 0)
-    std::int32_t        loopDepth;      // loop nesting level (top = 0)
+    bool               predicted;      // was receiver type-predicted?
+    std::int32_t       depth;          // call nesting level (top = 0)
+    std::int32_t       loopDepth;      // loop nesting level (top = 0)
     Expression         *result;         // result of normal return (nullptr if none)
     Expression         *nlrResult;      // NonLocalReturn result (non-nullptr only for blocks)
     PseudoRegister     *resultPR;       // pseudo register containing result
@@ -540,7 +540,7 @@ public:
 
     void addToPRegsEndSorted( PseudoRegister *r );
 
-    void allocatePRegs( IntFreeList *f );
+    void allocatePRegs( IntegerFreeList *f );
 
     std::int32_t allocateFloatTemporaries( std::int32_t firstFloatIndex );    // returns the number of float temps allocated for
     // this and all subscopes; sets _firstFloatIndex
@@ -598,8 +598,8 @@ public:
 
 class BlockScope : public InlinedScope {        // block methods
 protected:
-    Scope  *_parent;                // lexically enclosing scope
-    bool _self_is_initialized;            // true if self has been loaded
+    Scope *_parent;                // lexically enclosing scope
+    bool  _self_is_initialized;            // true if self has been loaded
     void initialize( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
     void initializeSelf();

@@ -119,7 +119,7 @@ SymbolOop Floats::selector_for( Function f ) {
 
 void Floats::generate_tst( MacroAssembler *masm, Assembler::Condition cc ) {
 
-    std::int32_t                  mask;
+    std::int32_t         mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc, mask, cond );
     Label L;
@@ -138,7 +138,7 @@ void Floats::generate_tst( MacroAssembler *masm, Assembler::Condition cc ) {
 
 
 void Floats::generate_cmp( MacroAssembler *masm, Assembler::Condition cc ) {
-    std::int32_t                  mask;
+    std::int32_t         mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc, mask, cond );
     Label L;
@@ -246,8 +246,8 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
     masm->ret( 0 );
     _function_table[ static_cast<std::int32_t>(f) ] = entry_point;
 
-    std::int32_t        length = masm->pc() - entry_point;
-    const char *name  = function_name_for( f );
+    std::int32_t length = masm->pc() - entry_point;
+    const char   *name  = function_name_for( f );
     spdlog::info( "%float-generate: Float function index [{}]: name[{}], length [{}] bytes, entry point [0x{0:x}]", f, name, length, entry_point );
     if ( PrintInterpreter ) {
         masm->code()->decode();

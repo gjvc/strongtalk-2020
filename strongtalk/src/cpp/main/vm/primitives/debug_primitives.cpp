@@ -30,12 +30,13 @@ std::int32_t debugPrimitives::number_of_calls;
 
 
 template<typename T>
-void boring_template_fn(T t){
-    auto identity = [](decltype(t) t){
+void boring_template_fn( T t ) {
+    auto identity = []( decltype( t ) t ) {
         return t;
     };
-    std::cout << identity(t) << std::endl;
+    std::cout << identity( t ) << std::endl;
 }
+
 
 PRIM_DECL_1( debugPrimitives::boolAt, Oop name ) {
     PROLOGUE_1( "boolAt", name )
@@ -266,7 +267,7 @@ class CollectMethodClosure : public ObjectClosure {
 
 private:
     GrowableArray<MethodOop> *_col;
-    std::int32_t _cutoff;
+    std::int32_t             _cutoff;
 
 public:
     CollectMethodClosure( GrowableArray<MethodOop> *col, std::int32_t cutoff ) {
@@ -294,7 +295,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     if ( not size->is_smi() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    ResourceMark rm;
+    ResourceMark             rm;
     GrowableArray<MethodOop> *col = new GrowableArray<MethodOop>( 1024 );
 
     // Collect the methods
@@ -441,7 +442,7 @@ PRIM_DECL_0( debugPrimitives::printPrimitiveCounters ) {
 
 class Counter : public ResourceObject {
 public:
-    const char *title;
+    const char   *title;
     std::int32_t total_size;
     std::int32_t number;
 
@@ -462,7 +463,7 @@ public:
     void print( const char *prefix ) {
         _console->print( "%s%s", prefix, title );
         _console->fill_to( 22 );
-        spdlog::info( "%6d %8d", number, total_size * oopSize );
+        spdlog::info( "%6d %8d", number, total_size * OOP_SIZE );
     }
 
 
@@ -480,21 +481,21 @@ public:
 
 class ObjectHistogram : public ObjectClosure {
 private:
-    Counter *doubles;
-    Counter *blocks;
-    Counter *objArrays;
-    Counter *symbols;
-    Counter *byteArrays;
-    Counter *doubleByteArrays;
-    Counter *klasses;
-    Counter *processes;
-    Counter *vframes;
-    Counter *methods;
-    Counter *proxies;
-    Counter *mixins;
-    Counter *associations;
-    Counter *contexts;
-    Counter *memOops;
+    Counter                  *doubles;
+    Counter                  *blocks;
+    Counter                  *objArrays;
+    Counter                  *symbols;
+    Counter                  *byteArrays;
+    Counter                  *doubleByteArrays;
+    Counter                  *klasses;
+    Counter                  *processes;
+    Counter                  *vframes;
+    Counter                  *methods;
+    Counter                  *proxies;
+    Counter                  *mixins;
+    Counter                  *associations;
+    Counter                  *contexts;
+    Counter                  *memOops;
     GrowableArray<Counter *> *counters;
 public:
     ObjectHistogram();

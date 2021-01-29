@@ -95,7 +95,7 @@ bool PseudoRegister::isLocalTo( BasicBlock *bb ) const {
     // is this a preg local to bb? (i.e. can it be allocated to temp regs?)
     // treat ConstPseudoRegisters as non-local so they don't get allocated prematurely
     // (possible performance bug)
-    return _location.equals( unAllocated ) and not uplevelR() and not _debug and not incorrectDU() and not isConstPseudoRegister() and _dus.length() == 1 and _dus.first()->_basicBlock == bb;
+    return _location.equals( Location::UNALLOCATED_LOCATION ) and not uplevelR() and not _debug and not incorrectDU() and not isConstPseudoRegister() and _dus.length() == 1 and _dus.first()->_basicBlock == bb;
 }
 
 
@@ -369,7 +369,7 @@ void PseudoRegister::allocateTo( Location r ) {
         cout( PrintRegAlloc )->print( "allocating PseudoRegister %s to Location %s\n", name(), r.name() );
     }
 
-    st_assert( _location.equals( unAllocated ), "already allocated" );
+    st_assert( _location.equals( Location::UNALLOCATED_LOCATION ), "already allocated" );
     _location = r;
 }
 
@@ -571,7 +571,7 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
         }
         NonTrivialNode *defNode = e->data()->_node;
         PseudoRegister *defSrc;
-        bool         ok;
+        bool           ok;
         if ( defNode->hasConstantSrc() ) {
             // constant assignment - easy to handle
             ok = true;
@@ -783,7 +783,7 @@ bool SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
     // check if receiver is live in source-level terms; if that says
     // dead it really means dead
     InlinedScope *s   = n->scope();
-    bool       live = basic_isLiveAt( s, n->byteCodeIndex() );
+    bool         live = basic_isLiveAt( s, n->byteCodeIndex() );
     if ( not live or not _location.isTemporaryRegister() )
         return live;
     st_fatal( "cannot handle temp registers" );
@@ -879,7 +879,7 @@ NameNode *BlockPseudoRegister::locNameNode( bool mustBeLegal ) const {
 
 NameNode *PseudoRegister::nameNode( bool mustBeLegal ) const {
     PseudoRegister *r = cpReg();
-    if ( not( r->_location.equals( unAllocated ) ) ) {
+    if ( not( r->_location.equals( Location::UNALLOCATED_LOCATION ) ) ) {
         return r->locNameNode( mustBeLegal );
     } else if ( r->isConstPseudoRegister() ) {
         return r->nameNode( mustBeLegal );
@@ -912,7 +912,7 @@ NameNode *NoResultPseudoRegister::nameNode( bool mustBeLegal ) const {
 
 
 PseudoRegister *PseudoRegister::cpReg() const {
-    // assert(not cpInfo or loc.equals(unAllocated), "allocated regs shouldn't have cpInfo");
+    // assert(not cpInfo or loc.equals(UNALLOCATED_LOCATION), "allocated regs shouldn't have cpInfo");
     // NB: the above assertion looks tempting but can be wrong: some unused PseudoRegisters may still
     // retain their definition because the defining node cannot be eliminated (because it might fail
     // or have other side effects)
@@ -1065,7 +1065,7 @@ const char *PseudoRegister::safeName() const {
 
 const char *PseudoRegister::name() const {
     char *n = new_resource_array<char>( 25 );
-    if ( _location.equals( unAllocated ) ) {
+    if ( _location.equals( Location::UNALLOCATED_LOCATION ) ) {
         sprintf( n, "%s%d%s%s%s", prefix(), id(), uplevelR() or uplevelW() ? "^" : "", uplevelR() ? "R" : "", uplevelW() ? "W" : "" );
     } else {
         sprintf( n, "%s%d(%s)%s%s%s", prefix(), id(), _location.name(), uplevelR() or uplevelW() ? "^" : "", uplevelR() ? "R" : "", uplevelW() ? "W" : "" );
@@ -1222,11 +1222,11 @@ bool ConstPseudoRegister::verify() const {
 //        error( "ConstPseudoRegister 0x{0:x}: could use load immediate to load Oop 0x{0:x}", this, constant );
 //        ok = false;
 //    }
-    if ( not( _location.equals( unAllocated ) ) and not _location.isRegisterLocation() ) {
+    if ( not( _location.equals( Location::UNALLOCATED_LOCATION ) ) and not _location.isRegisterLocation() ) {
         error( "ConstPseudoRegister 0x{0:x}: was allocated to stack", this );
         ok = false;
     }
-    if ( not( _location.equals( unAllocated ) ) and _location.isTrashedRegister() ) {
+    if ( not( _location.equals( Location::UNALLOCATED_LOCATION ) ) and _location.isTrashedRegister() ) {
         error( "ConstPseudoRegister 0x{0:x}: was allocated to trashed reg", this );
         ok = false;
     }

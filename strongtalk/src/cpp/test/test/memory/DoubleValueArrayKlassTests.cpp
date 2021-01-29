@@ -62,7 +62,7 @@ TEST_F( DoubleValueArrayKlassTests, allocateShouldAllocateTenuredWhenRequired ) 
 
 TEST_F( DoubleValueArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
     eden_top = eden_end;
-    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * oopSize );
+    ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * OOP_SIZE );
     ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObjectSize( 100, true ) ) );
 }
 

@@ -31,8 +31,8 @@ PRIM_DECL_2( doubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argumen
     std::int32_t length = SMIOop( argument )->value();
 
     KlassOop            k        = KlassOop( receiver );
-    std::int32_t                 ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t                 obj_size = ni_size + 1 + roundTo( length * sizeof( double ), oopSize ) / oopSize;
+    std::int32_t        ni_size  = k->klass_part()->non_indexable_size();
+    std::int32_t        obj_size = ni_size + 1 + roundTo( length * sizeof( double ), OOP_SIZE ) / OOP_SIZE;
     // allocate
     doubleValueArrayOop obj      = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header

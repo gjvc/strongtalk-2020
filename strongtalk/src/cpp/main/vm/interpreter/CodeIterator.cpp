@@ -32,7 +32,7 @@ std::uint8_t *CodeIterator::align( std::uint8_t *p ) const {
 
 
 CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) {
-    st_assert( PrologueByteCodeIndex <= startByteCodeIndex and startByteCodeIndex <= method->size_of_codes() * oopSize, "startByteCodeIndex out of range" );
+    st_assert( PrologueByteCodeIndex <= startByteCodeIndex and startByteCodeIndex <= method->size_of_codes() * OOP_SIZE, "startByteCodeIndex out of range" );
     _methodOop = method;
     set_byteCodeIndex( startByteCodeIndex );
     _end = method->codes_end();
@@ -77,22 +77,22 @@ std::uint8_t *CodeIterator::next_hp() const {
             return _current + 4;
         case ByteCodes::Format::BBO:   // fall through
         case ByteCodes::Format::BBL:
-            return align( _current + 2 ) + oopSize;
+            return align( _current + 2 ) + OOP_SIZE;
         case ByteCodes::Format::BO:    // fall through
         case ByteCodes::Format::BL:
-            return align( _current + 1 ) + oopSize;
+            return align( _current + 1 ) + OOP_SIZE;
         case ByteCodes::Format::BLB:
-            return align( _current + 1 ) + oopSize + 1;
+            return align( _current + 1 ) + OOP_SIZE + 1;
         case ByteCodes::Format::BOO:   // fall through
         case ByteCodes::Format::BLO:   // fall through
         case ByteCodes::Format::BOL:   // fall through
         case ByteCodes::Format::BLL:
-            return align( _current + 1 ) + oopSize + oopSize;
+            return align( _current + 1 ) + OOP_SIZE + OOP_SIZE;
         case ByteCodes::Format::BBOO:  // fall through
         case ByteCodes::Format::BBLO:
-            return align( _current + 2 ) + oopSize + oopSize;
+            return align( _current + 2 ) + OOP_SIZE + OOP_SIZE;
         case ByteCodes::Format::BOOLB:
-            return align( _current + 1 ) + oopSize + oopSize + oopSize + 1;
+            return align( _current + 1 ) + OOP_SIZE + OOP_SIZE + OOP_SIZE + 1;
         case ByteCodes::Format::BBS:
             return _current + 2 + ( _current[ 1 ] == 0 ? 256 : _current[ 1 ] );
     }
@@ -209,7 +209,7 @@ MethodOop CodeIterator::block_method() {
 void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar_name or code() == ByteCodes::Code::store_classVar_pop_name or code() == ByteCodes::Code::store_classVar_name, "must be class variable byte code" );
 
-    Oop *p = aligned_oop( 1 );
+    Oop       *p   = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     AssociationOop assoc = to_klass->klass_part()->lookup_class_var( name );
@@ -228,7 +228,7 @@ void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
 void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop *p = aligned_oop( 1 );
+    Oop            *p        = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     if ( code() == ByteCodes::Code::push_classVar )
@@ -244,7 +244,7 @@ void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
 void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
-    Oop *p = aligned_oop( 1 );
+    Oop            *p        = aligned_oop( 1 );
     AssociationOop old_assoc = AssociationOop( *p );
     st_assert( old_assoc->is_association(), "must be association" );
     AssociationOop new_assoc = to_klass->klass_part()->lookup_class_var( old_assoc->key() );
@@ -265,7 +265,7 @@ void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_
 void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar_name or code() == ByteCodes::Code::store_instVar_pop_name or code() == ByteCodes::Code::store_instVar_name or code() == ByteCodes::Code::return_instVar_name, "must be instance variable byte code" );
 
-    Oop *p = aligned_oop( 1 );
+    Oop       *p   = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
     st_assert( name->is_symbol(), "name must be symbol" );
     std::int32_t offset = to_klass->klass_part()->lookup_inst_var( name );
@@ -288,8 +288,8 @@ void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
 
     Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
-    std::int32_t       old_offset = SMIOop( *p )->value();
-    SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
+    std::int32_t old_offset = SMIOop( *p )->value();
+    SymbolOop    name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
     }
@@ -310,8 +310,8 @@ void CodeIterator::recustomize_inst_var_code( KlassOop from_klass, KlassOop to_k
 
     Oop *p = aligned_oop( 1 );
     st_assert( ( *p )->is_smi(), "must be smi_t" );
-    std::int32_t       old_offset = SMIOop( *p )->value();
-    SymbolOop name       = from_klass->klass_part()->inst_var_name_at( old_offset );
+    std::int32_t old_offset = SMIOop( *p )->value();
+    SymbolOop    name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
     }

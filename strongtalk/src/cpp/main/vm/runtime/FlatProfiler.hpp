@@ -38,7 +38,7 @@ private:
 
     static DeltaProcess     *_deltaProcess;
     static FlatProfilerTask *_flatProfilerTask;
-    static Timer _timer;
+    static Timer            _timer;
 
     static std::int32_t _gc_ticks;           // total ticks in GC/scavenge
     static std::int32_t _semaphore_ticks;    //
