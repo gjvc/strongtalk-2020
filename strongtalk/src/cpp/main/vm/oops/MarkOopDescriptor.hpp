@@ -54,7 +54,7 @@ private:
         near_death_bits      = 1, //
         tagged_contents_bits = 1, //
         age_bits             = 7, //
-        hash_bits            = BitsPerWord - sentinel_bits - near_death_bits - tagged_contents_bits - age_bits - TAG_SIZE
+        hash_bits            = BITS_PER_WORD - sentinel_bits - near_death_bits - tagged_contents_bits - age_bits - TAG_SIZE
     };
 
     enum {

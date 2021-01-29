@@ -223,10 +223,10 @@ PRIM_DECL_0( debugPrimitives::timerPrintBuffer ) {
 PRIM_DECL_0( debugPrimitives::interpreterInvocationCounterLimit ) {
     PROLOGUE_0( "interpreterInvocationCounterLimit" );
     std::int32_t limit = Interpreter::get_invocation_counter_limit();
-    if ( limit < smi_min )
-        limit = smi_min;
-    else if ( limit > smi_max )
-        limit = smi_max;
+    if ( limit < SMI_MIN_VALUE )
+        limit = SMI_MIN_VALUE;
+    else if ( limit > SMI_MAX_VALUE )
+        limit = SMI_MAX_VALUE;
     return smiOopFromValue( limit );
 }
 

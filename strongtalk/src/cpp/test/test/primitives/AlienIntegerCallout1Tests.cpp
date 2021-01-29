@@ -119,7 +119,7 @@ protected:
             ok = false;
             return 0;
         }
-        return ByteArrayOop( intOop )->number().as_int( ok );
+        return ByteArrayOop( intOop )->number().as_int32_t( ok );
     }
 
 

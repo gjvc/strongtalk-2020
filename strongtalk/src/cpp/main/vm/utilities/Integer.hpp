@@ -12,8 +12,22 @@
 
 // -----------------------------------------------------------------------------
 
-typedef std::uint32_t Digit;
-typedef std::uint64_t DoubleDigit;
+typedef std::uint32_t Digit;        //
+typedef std::uint64_t DoubleDigit;  //
+
+
+// -----------------------------------------------------------------------------
+// double layout
+//
+//      double fields: [s|exponent|mantissa]
+//      field lengths: |1|<--11-->|<--52-->|
+
+constexpr std::int32_t SIGN_LENGTH     = 1;      //
+constexpr std::int32_t EXPONENT_LENGTH = 11;     //
+constexpr std::int32_t MANTISSA_LENGTH = 52;     //
+constexpr std::int32_t DOUBLE_LENGTH   = 64;     //
+constexpr std::int32_t EXPONENT_BIAS   = 1023;   //
+constexpr std::int32_t MAX_EXPONENT    = 2046;   //
 
 
 // -----------------------------------------------------------------------------
@@ -38,7 +52,6 @@ public:
 
     std::int32_t length() const;
 
-    void set_length( std::int32_t l );
 
     Digit *digits() const;
 
@@ -48,18 +61,18 @@ public:
 
     std::int32_t length_in_bits() const;
 
-    std::int32_t signum() const;
-    // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
+    std::int32_t signed_length() const; // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
     std::int32_t size_in_bytes() const;
 
+    void set_signed_length( std::int32_t l );
 
-    void print();
+    void print() const;
 
 
-    std::int32_t as_int( bool &ok ) const;
+    std::int32_t as_int32_t( bool &ok ) const;
 
-    std::uint32_t as_unsigned_int( bool &ok ) const;
+    std::uint32_t as_uint32_t( bool &ok ) const;
 
     double as_double( bool &ok ) const;
 

@@ -124,7 +124,7 @@ TEST_F( UncommonSendNodeTests, verifyShouldCallErrorWhenMoreArgsThanExpressions 
 TEST_F( UncommonSendNodeTests, print_stringShouldReturnFormattedString ) {
     node = NodeFactory::UncommonSendNode( exprStack, 1, 1 );
     char buffer[2048];
-    node->print_string( buffer, false );
+    node->toString( buffer, false );
     EXPECT_EQ( 0, strncmp( "UncommonSend(1 arg)", buffer, 19 ) ) << buffer;
 }
 
@@ -134,7 +134,7 @@ TEST_F( UncommonSendNodeTests, print_stringShouldReturnFormattedStringWithAddres
     char expected[100];
     sprintf( expected, "UncommonSend(1 arg)                     (UncommonSendNode*)0x{0:x})", std::int32_t( node ) );
     char buffer[100];
-    node->print_string( buffer );
+    node->toString( buffer );
     EXPECT_EQ( 0, strcmp( expected, buffer ) ) << buffer;
 }
 

@@ -62,7 +62,7 @@ protected:
 
     std::int32_t asInteger( Oop largeInteger, bool &ok ) {
         Integer *number = &ByteArrayOop( largeInteger )->number();
-        return number->as_int( ok );
+        return number->as_int32_t( ok );
     }
 
 
@@ -81,7 +81,7 @@ protected:
         char message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
         bool        ok;
-        std::uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
+        std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: 0x%08x, was: 0x%08x", expected, actual );
         EXPECT_EQ( expected, actual ) << message;

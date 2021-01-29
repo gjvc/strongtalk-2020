@@ -38,7 +38,7 @@ PRIM_DECL_1( proxyOopPrimitives::getSmi, Oop receiver ) {
     PROLOGUE_1( "getSmi", receiver );
     ASSERT_RECEIVER;
     std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->get_pointer();
-    std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
+    std::uint32_t topBits = value >> ( BITS_PER_WORD - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
     return smiOopFromValue( (std::int32_t) value );
@@ -197,7 +197,7 @@ PRIM_DECL_2( proxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
         return markSymbol( vmSymbols::illegal_state() );
 
     std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->long_at( SMIOop( offset )->value() );
-    std::uint32_t topBits = value >> ( BitsPerWord - TAG_SIZE );
+    std::uint32_t topBits = value >> ( BITS_PER_WORD - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
     return smiOopFromValue( (std::int32_t) value );

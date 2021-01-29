@@ -54,7 +54,7 @@ void BasicBlockIterator::localAlloc() {
         GrowableArray<BitVector *>      lives( BasicNode::currentID );
 
         for ( std::int32_t i = 0; i < nofLocalRegisters; i++ ) {
-            hardwired.at_put( i, new BitVector( roundTo( BasicNode::currentID, BitsPerWord ) ) );
+            hardwired.at_put( i, new BitVector( roundTo( BasicNode::currentID, BITS_PER_WORD ) ) );
         }
 
         for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {

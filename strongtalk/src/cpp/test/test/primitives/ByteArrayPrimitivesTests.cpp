@@ -68,7 +68,7 @@ protected:
 
     std::int32_t asInteger( Oop largeInteger, bool &ok ) {
         Integer *number = &ByteArrayOop( largeInteger )->number();
-        return number->as_int( ok );
+        return number->as_int32_t( ok );
     }
 
 
@@ -307,7 +307,7 @@ is_byteArray()
 ) << "should be large integer";
 Integer *number      = &ByteArrayOop( result )->number();
 bool ok;
-std::int32_t    resultAddress = number->as_int( ok );
+std::int32_t    resultAddress = number->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "too large for std::int32_t";
 EXPECT_EQ( address, resultAddress

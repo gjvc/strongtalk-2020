@@ -241,10 +241,10 @@ PRIM_DECL_1( doubleOopPrimitives::smi_floor, Oop receiver ) {
     ASSERT_RECEIVER;
     double result = ::floor( DoubleOop( receiver )->value() );
     if ( result < 0.0 ) {
-        if ( result > smi_min )
+        if ( result > SMI_MIN_VALUE )
             return smiOopFromValue( (std::int32_t) result );
     } else {
-        if ( result < smi_max )
+        if ( result < SMI_MAX_VALUE )
             return smiOopFromValue( (std::int32_t) result );
     }
     return markSymbol( vmSymbols::conversion_failed() );
@@ -299,11 +299,11 @@ PRIM_DECL_1( doubleOopPrimitives::roundedAsSmallInteger, Oop receiver ) {
     ASSERT_RECEIVER;
     if ( DoubleOop( receiver )->value() < 0.0 ) {
         double result = ::ceil( DoubleOop( receiver )->value() - 0.5 );
-        if ( result > smi_min )
+        if ( result > SMI_MIN_VALUE )
             return smiOopFromValue( (std::int32_t) result );
     } else {
         double result = ::floor( DoubleOop( receiver )->value() + 0.5 );
-        if ( result < smi_max )
+        if ( result < SMI_MAX_VALUE )
             return smiOopFromValue( (std::int32_t) result );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );
@@ -317,10 +317,10 @@ PRIM_DECL_1( doubleOopPrimitives::asSmallInteger, Oop receiver ) {
     if ( value not_eq ::floor( value ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
     if ( value < 0.0 ) {
-        if ( value > smi_min )
+        if ( value > SMI_MIN_VALUE )
             return smiOopFromValue( (std::int32_t) value );
     } else {
-        if ( value < smi_max )
+        if ( value < SMI_MAX_VALUE )
             return smiOopFromValue( (std::int32_t) value );
     }
     return markSymbol( vmSymbols::smi_conversion_failed() );

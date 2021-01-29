@@ -39,7 +39,7 @@ Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge,
     // indexables
     Oop *base = (Oop *) obj->addr();
     Oop *end  = base + obj_size;
-    // %optimized 'obj->set_length(size)'
+    // %optimized 'obj->set_signed_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'

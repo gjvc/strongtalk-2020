@@ -11,9 +11,8 @@
 
 // -----------------------------------------------------------------------------
 
-constexpr std::int32_t MAX_DIGITS     = 36;                    //
+constexpr std::int32_t DIGITS_BASE    = 36;                    //
 constexpr std::int32_t logB           = sizeof( Digit ) * 8;   //
-constexpr Digit        hlfB           = 0x80000000;            //
 constexpr Digit        oneB           = 0xFFFFFFFF;            //
 constexpr std::int32_t digitBitLength = sizeof( Digit ) * 8;   //
 
@@ -41,8 +40,8 @@ public:
 
     static Digit xdy( Digit x, Digit y, Digit &carry );
 
-    static Digit power( Digit x, std::int32_t n );       // returns x^n
-    static Digit max_power( Digit x );          // returns the largest y with x^y <= B
+    static Digit power( Digit x, std::int32_t n );      // returns x^n
+    static Digit max_power( Digit x );                  // returns the largest y with x^y <= B
 
     static std::int32_t unsigned_add_result_length( Integer &x, Integer &y );
 
@@ -160,7 +159,7 @@ public:
     static std::int32_t hash( Integer &x );
 
     // copy & conversion operations
-    static void copy( Integer &x, Integer &z );
+    static void copy( const Integer &x, Integer &z );
 
     static void int_to_Integer( std::int32_t i, Integer &z );
 
@@ -170,7 +169,7 @@ public:
 
     static void string_to_Integer( const char *s, std::int32_t base, Integer &z );
 
-    static void Integer_to_string( Integer &x, std::int32_t base, char *s );
+    static void Integer_to_string( const Integer &x, std::int32_t base, char *s );
 };
 
 std::int32_t length_in_bits( Digit x );

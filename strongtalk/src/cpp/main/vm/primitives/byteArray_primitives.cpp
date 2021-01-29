@@ -57,7 +57,7 @@ PRIM_DECL_2( byteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     // indexables
     Oop *base = (Oop *) obj->addr();
     Oop *end  = base + obj_size;
-    // %optimized 'obj->set_length(size)'
+    // %optimized 'obj->set_signed_length(size)'
     base[ ni_size ] = argument;
     // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->byte_at_put(index, '\000')'
@@ -776,7 +776,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
         value = SMIOop( argument2 )->value();
     else {
         bool ok;
-        value = ByteArrayOop( argument2 )->number().as_unsigned_int( ok );
+        value = ByteArrayOop( argument2 )->number().as_uint32_t( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
@@ -816,7 +816,7 @@ PRIM_DECL_3( byteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
         value = SMIOop( argument2 )->value();
     else {
         bool ok;
-        value = ByteArrayOop( argument2 )->number().as_int( ok );
+        value = ByteArrayOop( argument2 )->number().as_int32_t( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
@@ -918,7 +918,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
     checkAlienReceiver( receiver );
     if ( alienSize( receiver ) > 0 )
         return markSymbol( vmSymbols::illegal_state() );
-    if ( not argument->is_smi() and not( argument->is_byteArray() and ByteArrayOop( argument )->number().signum() > 0 ) )
+    if ( not argument->is_smi() and not( argument->is_byteArray() and ByteArrayOop( argument )->number().signed_length() > 0 ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     std::uint32_t value;
@@ -926,7 +926,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
         value = SMIOop( argument )->value();
     else {
         bool ok;
-        value = ByteArrayOop( argument )->number().as_unsigned_int( ok );
+        value = ByteArrayOop( argument )->number().as_uint32_t( ok );
         if ( not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
     }

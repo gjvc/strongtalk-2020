@@ -126,7 +126,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool ok;
-std::int32_t    result = z->as_int( ok );
+std::int32_t    result = z->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( 0, result ) << "wrong result";
@@ -141,7 +141,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool ok;
-std::int32_t    result = z->as_int( ok );
+std::int32_t    result = z->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";
@@ -156,7 +156,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool ok;
-std::int32_t    result = z->as_int( ok );
+std::int32_t    result = z->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";
@@ -171,7 +171,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool ok;
-std::int32_t    result = z->as_int( ok );
+std::int32_t    result = z->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( 0, result ) << "wrong result";
@@ -186,7 +186,7 @@ IntegerOps::Div( *x, *y, *z
 );
 
 bool ok;
-std::int32_t    result = z->as_int( ok );
+std::int32_t    result = z->as_int32_t( ok );
 EXPECT_TRUE( ok )
 << "invalid Integer";
 EXPECT_EQ( -1, result ) << "wrong result";

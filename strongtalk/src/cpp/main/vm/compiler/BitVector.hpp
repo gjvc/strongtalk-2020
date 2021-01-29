@@ -29,19 +29,19 @@ public:
 
 
     SimpleBitVector allocate( std::int32_t l ) {
-        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        st_assert( l < BITS_PER_WORD, "need longer bit vector" );
         return SimpleBitVector( addNthBit( _bits, l ) );
     }
 
 
     SimpleBitVector deallocate( std::int32_t l ) {
-        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        st_assert( l < BITS_PER_WORD, "need longer bit vector" );
         return SimpleBitVector( subNthBit( _bits, l ) );
     }
 
 
     bool isAllocated( std::int32_t l ) {
-        st_assert(  l < BitsPerWord, "need longer bit vector" );
+        st_assert( l < BITS_PER_WORD, "need longer bit vector" );
         return isBitSet( _bits, l );
     }
 
@@ -61,12 +61,12 @@ protected:
     std::int32_t         *_bits;     // array containing the bits
 
     std::int32_t indexFromNumber( std::int32_t i ) {
-        return i >> LogBitsPerWord;
+        return i >> LOG_2_BITS_PER_WORD;
     }
 
 
     std::int32_t offsetFromNumber( std::int32_t i ) {
-        return lowerBits( i, LogBitsPerWord );
+        return lowerBits( i, LOG_2_BITS_PER_WORD );
     }
 
 

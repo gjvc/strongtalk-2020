@@ -11,7 +11,6 @@
 
 #if __SIZE_WIDTH__ == 32
 
-typedef std::intptr_t smi_t;     //
 typedef std::uint32_t address_t; //
 
 #endif
@@ -19,13 +18,14 @@ typedef std::uint32_t address_t; //
 
 #if __SIZE_WIDTH__ == 64
 
-typedef std::intptr_t  smi_t;        //
 typedef std::uint64_t  address_t;    //
 
 #endif
 
 
 // -----------------------------------------------------------------------------
+
+typedef std::intptr_t smi_t;        //
 
 static_assert( sizeof( smi_t ) == sizeof( address_t ) );
 
@@ -40,10 +40,10 @@ constexpr std::int32_t st_log2( std::int32_t n ) {
 }
 
 
-constexpr std::int32_t BitsPerByte    = 8;
-constexpr std::int32_t LogBitsPerByte = st_log2( BitsPerByte );
+constexpr std::int32_t BITS_PER_BYTE       = 8;
+constexpr std::int32_t LOG_2_BITS_PER_BYTE = st_log2( BITS_PER_BYTE );
 
-constexpr std::int32_t BitsPerWord     = __SIZE_WIDTH__;
-constexpr std::int32_t BytesPerWord    = __SIZE_WIDTH__ / BitsPerByte;
-constexpr std::int32_t LogBytesPerWord = st_log2( BytesPerWord );
-constexpr std::int32_t LogBitsPerWord  = st_log2( BitsPerByte ) + st_log2( BytesPerWord );
+constexpr std::int32_t BITS_PER_WORD        = __SIZE_WIDTH__;
+constexpr std::int32_t BYTES_PER_WORD       = __SIZE_WIDTH__ / BITS_PER_BYTE;
+constexpr std::int32_t LOG_2_BYTES_PER_WORD = st_log2( BYTES_PER_WORD );
+constexpr std::int32_t LOG_2_BITS_PER_WORD  = st_log2( BITS_PER_BYTE ) + st_log2( BYTES_PER_WORD );

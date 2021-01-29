@@ -5,15 +5,9 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/double.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/utilities/OutputStream.hpp"
-
-
-std::int32_t Integer::length() const {
-    return abs( _signed_length );
-}
 
 
 std::int32_t Integer::length_in_bits() const {
@@ -28,7 +22,7 @@ std::int32_t Integer::length_in_bits() const {
 }
 
 
-std::int32_t Integer::as_int( bool &ok ) const {
+std::int32_t Integer::as_int32_t( bool &ok ) const {
 
     ok = true;
     switch ( _signed_length ) {
@@ -36,6 +30,7 @@ std::int32_t Integer::as_int( bool &ok ) const {
             if ( -std::int32_t( _first_digit ) < 0 )
                 return -std::int32_t( _first_digit );
             break;
+
         case 0:
             return 0;
         case 1:
@@ -48,7 +43,7 @@ std::int32_t Integer::as_int( bool &ok ) const {
 }
 
 
-std::uint32_t Integer::as_unsigned_int( bool &ok ) const {
+std::uint32_t Integer::as_uint32_t( bool &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case 0:
@@ -73,7 +68,7 @@ double Integer::as_double( bool &ok ) const {
     // n needs to be big enough so that we have enough bits for the mantissa (note
     // that the mantissa consists of one (implicit) extra bit which is always 1).
     const std::int32_t n = ( MANTISSA_LENGTH + 1 ) / logB + 2;
-    Digit     d[n];
+    Digit              d[n];
     std::int32_t       l = length();
     std::int32_t       i = 1;
     while ( i <= n ) {
@@ -111,13 +106,13 @@ SMIOop Integer::as_smi( bool &ok ) const {
     ok = true;
     switch ( _signed_length ) {
         case -1:
-            if ( _first_digit <= -smi_min )
+            if ( _first_digit <= -SMI_MIN_VALUE )
                 return smiOopFromValue( -std::int32_t( _first_digit ) );
             break;
         case 0:
             return smiOopFromValue( 0 );
         case 1:
-            if ( _first_digit <= smi_max )
+            if ( _first_digit <= SMI_MAX_VALUE )
                 return smiOopFromValue( std::int32_t( _first_digit ) );
             break;
     }
@@ -126,7 +121,7 @@ SMIOop Integer::as_smi( bool &ok ) const {
 }
 
 
-void Integer::print() {
+void Integer::print() const {
     char s[100000]; // for the time being - FIX THIS
     IntegerOps::Integer_to_string( *this, 10, s );
     std::int32_t i = 0;
@@ -137,8 +132,18 @@ void Integer::print() {
 }
 
 
-void Integer::set_length( std::int32_t l ) {
+void Integer::set_signed_length( std::int32_t l ) {
     _signed_length = l;
+}
+
+
+std::int32_t Integer::signed_length() const {
+    return _signed_length;
+}
+
+
+std::int32_t Integer::length() const {
+    return abs( _signed_length );
 }
 
 
@@ -157,28 +162,23 @@ std::int32_t Integer::length_to_size_in_bytes( std::int32_t l ) {
 }
 
 
-std::int32_t Integer::signum() const {
-    return _signed_length;
-}
-
-
 bool Integer::is_zero() const {
-    return signum() == 0;
+    return signed_length() == 0;
 }
 
 
 bool Integer::is_not_zero() const {
-    return signum() not_eq 0;
+    return signed_length() not_eq 0;
 }
 
 
 bool Integer::is_positive() const {
-    return signum() > 0;
+    return signed_length() > 0;
 }
 
 
 bool Integer::is_negative() const {
-    return signum() < 0;
+    return signed_length() < 0;
 }
 
 

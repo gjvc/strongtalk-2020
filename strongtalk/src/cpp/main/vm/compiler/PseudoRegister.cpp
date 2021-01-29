@@ -649,7 +649,7 @@ void PseudoRegister::eliminateUses( DefinitionUsageInfo *info, BasicBlock *bb ) 
         Node         *n        = usageElement->data()->_node;
         if ( CompilerDebug ) {
             char buf[1024];
-            cout( PrintEliminateUnnededNodes )->print( "*%seliminating node N%ld: %s\n", n->canBeEliminated() ? "" : "not ", n->id(), n->print_string( buf ) );
+            cout( PrintEliminateUnnededNodes )->print( "*%seliminating node N%ld: %s\n", n->canBeEliminated() ? "" : "not ", n->id(), n->toString( buf ) );
         }
         st_assert( n->canBeEliminated(), "must be able to eliminate this" );
         n->eliminate( bb, this );
@@ -674,7 +674,7 @@ void PseudoRegister::eliminateDefs( DefinitionUsageInfo *info, BasicBlock *bb, b
         } else {
             if ( CompilerDebug ) {
                 char buf[1024];
-                cout( PrintEliminateUnnededNodes )->print( "*not eliminating node N%ld: %s\n", n->id(), n->print_string( buf ) );
+                cout( PrintEliminateUnnededNodes )->print( "*not eliminating node N%ld: %s\n", n->id(), n->toString( buf ) );
             }
             st_assert( not removing, "cannot eliminate this?" );
             e = e->next();

@@ -19,11 +19,11 @@ inline auto smiOop_zero = reinterpret_cast<SMIOop>( ( 0L << TAG_SIZE ) + INTEGER
 inline auto smiOop_one  = reinterpret_cast<SMIOop>( ( 1L << TAG_SIZE ) + INTEGER_TAG );
 
 // minimum and maximum smiOops
-constexpr auto smi_min = ( -( 1 << ( BitsPerWord - 3 ) ) );      // -2^2
-constexpr auto smi_max = ( +( 1 << ( BitsPerWord - 3 ) ) - 1 );  // +2^29 - 1
+constexpr auto SMI_MIN_VALUE = ( -( 1 << ( BITS_PER_WORD - 3 ) ) );      // -2^2
+constexpr auto SMI_MAX_VALUE = ( +( 1 << ( BITS_PER_WORD - 3 ) ) - 1 );  // +2^29 - 1
 
-inline auto smiOop_min = SMIOop( ( smi_min << TAG_SIZE ) + INTEGER_TAG );
-inline auto smiOop_max = SMIOop( ( smi_max << TAG_SIZE ) + INTEGER_TAG );
+inline auto smiOop_min = SMIOop( ( SMI_MIN_VALUE << TAG_SIZE ) + INTEGER_TAG );
+inline auto smiOop_max = SMIOop( ( SMI_MAX_VALUE << TAG_SIZE ) + INTEGER_TAG );
 
 
 // -----------------------------------------------------------------------------

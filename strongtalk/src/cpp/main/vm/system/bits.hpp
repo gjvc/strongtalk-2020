@@ -63,7 +63,7 @@ constexpr auto anyBitSet( auto x, const auto m ) { return maskBits( x, m ) not_e
 constexpr auto isBitSet( auto x, const auto n ) { return anyBitSet( x, nthBit( n ) ); }
 
 
-constexpr auto nthMask( const auto n ) { return ( n == BitsPerWord ? AllBitsSet : ( nthBit( n ) - OneBitSet ) ); }
+constexpr auto nthMask( const auto n ) { return ( n == BITS_PER_WORD ? AllBitsSet : ( nthBit( n ) - OneBitSet ) ); }
 
 
 // -----------------------------------------------------------------------------

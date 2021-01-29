@@ -55,7 +55,7 @@ PRIM_DECL_2( doubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
     // indexables
     Oop *base = (Oop *) obj->addr();
     Oop *end  = base + obj_size;
-    // %optimized 'obj->set_length(size)'
+    // %optimized 'obj->set_signed_length(size)'
     base[ ni_size ] = argument;
     // %optimized 'for (std::int32_t index = 1; index <= size; index++)
     //               obj->doubleByte_at_put(index, 0)'

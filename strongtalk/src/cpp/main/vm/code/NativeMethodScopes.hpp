@@ -46,14 +46,14 @@ private:
 
 private:
     static std::uint16_t pack_word_aligned( std::int32_t value ) {
-        st_assert( value % BytesPerWord == 0, "value should be word aligned" );
-        st_assert( value >> BytesPerWord <= nthMask( BitsPerByte * sizeof( std::uint16_t ) ), "value exceeds limit" );
-        return value >> LogBytesPerWord;
+        st_assert( value % BYTES_PER_WORD == 0, "value should be word aligned" );
+        st_assert( value >> BYTES_PER_WORD <= nthMask( BITS_PER_BYTE * sizeof( std::uint16_t ) ), "value exceeds limit" );
+        return value >> LOG_2_BYTES_PER_WORD;
     }
 
 
     static std::int32_t unpack_word_aligned( std::uint16_t v ) {
-        return v << LogBytesPerWord;
+        return v << LOG_2_BYTES_PER_WORD;
     }
 
 

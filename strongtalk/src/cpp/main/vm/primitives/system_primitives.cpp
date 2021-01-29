@@ -1134,7 +1134,7 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
         BlockScavenge bs;
         Integer       *largeAddress = &ByteArrayOop( address )->number();
         bool          ok;
-        std::int32_t  intAddress    = largeAddress->as_int( ok );
+        std::int32_t  intAddress    = largeAddress->as_int32_t( ok );
         if ( intAddress == 0 or not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
         free( (void *) intAddress );

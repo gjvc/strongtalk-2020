@@ -76,7 +76,7 @@ protected:
         char         message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
         bool       ok;
-        std::int32_t actual = ByteArrayOop( result )->number().as_int( ok );
+        std::int32_t actual = ByteArrayOop( result )->number().as_int32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
@@ -87,7 +87,7 @@ protected:
         char          message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
         bool        ok;
-        std::uint32_t actual = ByteArrayOop( result )->number().as_unsigned_int( ok );
+        std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;

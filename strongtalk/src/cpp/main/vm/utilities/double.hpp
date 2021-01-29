@@ -5,18 +5,3 @@
 //
 
 #pragma once
-
-
-
-// -----------------------------------------------------------------------------
-// double layout
-//
-//      double fields: [s|exponent|mantissa]
-//      field lengths: |1|<--11-->|<--52-->|
-
-constexpr std::int32_t SIGN_LENGTH     = 1;      //
-constexpr std::int32_t EXPONENT_LENGTH = 11;     //
-constexpr std::int32_t MANTISSA_LENGTH = 52;     //
-constexpr std::int32_t DOUBLE_LENGTH   = 64;     //
-constexpr std::int32_t EXPONENT_BIAS   = 1023;   //
-constexpr std::int32_t MAX_EXPONENT    = 2046;   //

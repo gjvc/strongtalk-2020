@@ -445,7 +445,7 @@ public:
     }
 
 
-    virtual const char *print_string( char *buf, bool printAddr = true ) const = 0;
+    virtual const char *toString( char *buf, bool printAddr = true ) const = 0;
 
     void printID() const;
 
@@ -774,7 +774,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -845,7 +845,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -906,7 +906,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -962,7 +962,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1102,7 +1102,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1175,7 +1175,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1251,7 +1251,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
 protected:
     void genOop();
@@ -1378,7 +1378,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1451,7 +1451,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1520,7 +1520,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1576,7 +1576,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1699,7 +1699,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1823,7 +1823,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1854,7 +1854,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1903,7 +1903,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -1948,7 +1948,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2140,7 +2140,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
 protected:
     bool doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
@@ -2265,7 +2265,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2305,7 +2305,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2366,7 +2366,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2393,7 +2393,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2534,7 +2534,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 
@@ -2629,7 +2629,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2680,7 +2680,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -2775,7 +2775,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2884,7 +2884,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend void node_init();
 
@@ -2946,7 +2946,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3007,7 +3007,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3066,7 +3066,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
 
     void verify() {
@@ -3182,7 +3182,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3349,7 +3349,7 @@ public:
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     void gen();
 
@@ -3504,7 +3504,7 @@ public:
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     void gen();
 
@@ -3622,7 +3622,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3671,7 +3671,7 @@ public:
 
     void verify() const;
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
 
     GrowableArray<PseudoRegister *> *expressionStack() const {
@@ -3708,7 +3708,7 @@ public:
 
     void makeUses( BasicBlock *bb );
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll );
 
@@ -3759,7 +3759,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3785,7 +3785,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };
@@ -3812,7 +3812,7 @@ public:
     }
 
 
-    const char *print_string( char *buf, bool printAddr = true ) const;
+    const char *toString( char *buf, bool printAddr = true ) const;
 
     friend class NodeFactory;
 };

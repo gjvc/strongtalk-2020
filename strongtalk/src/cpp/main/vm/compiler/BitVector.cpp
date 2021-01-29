@@ -54,7 +54,7 @@ void BitVector::addFromTo( std::int32_t first, std::int32_t last ) {
     std::int32_t endIndex   = indexFromNumber( last );
 
     if ( startIndex == endIndex ) {
-        st_assert( last - first < BitsPerWord, "oops" );
+        st_assert( last - first < BITS_PER_WORD, "oops" );
         std::int32_t mask = nthMask( last - first + 1 );
         _bits[ startIndex ] |= mask << offsetFromNumber( first );
     } else {
@@ -80,7 +80,7 @@ void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
     std::int32_t endIndex   = indexFromNumber( last );
 
     if ( startIndex == endIndex ) {
-        st_assert( last - first < BitsPerWord, "oops" );
+        st_assert( last - first < BITS_PER_WORD, "oops" );
         std::int32_t mask = ~nthMask( last - first + 1 );
         _bits[ startIndex ] &= mask << offsetFromNumber( first );
     } else {
@@ -105,9 +105,9 @@ void BitVector::print_short() {
 void BitVector::doForAllOnes( intDoFn f ) {
     for ( std::int32_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
         std::int32_t               b = _bits[ i ];
-        for ( std::int32_t j = 0; j < BitsPerWord; j++ ) {
+        for ( std::int32_t j = 0; j < BITS_PER_WORD; j++ ) {
             if ( isBitSet( b, j ) ) {
-                f( i * BitsPerWord + j );
+                f( i * BITS_PER_WORD + j );
                 clearNthBit( b, j );
                 if ( not b )
                     break;

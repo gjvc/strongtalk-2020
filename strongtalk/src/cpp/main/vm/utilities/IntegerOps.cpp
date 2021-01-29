@@ -9,7 +9,6 @@
 #include "vm/runtime/ResourceArea.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
-#include "vm/utilities/double.hpp"
 
 
 static std::int32_t exponent( double x ) {
@@ -129,7 +128,7 @@ Digit IntegerOps::as_Digit( char c ) {
 
 
 char IntegerOps::as_char( std::int32_t i ) {
-    st_assert( 0 <= i and i < MAX_DIGITS, "illegal digit" );
+    st_assert( 0 <= i and i < DIGITS_BASE, "illegal digit" );
     return "0123456789abcdefghijklmnopqrstuvwxyz"[ i ];
 }
 
@@ -233,7 +232,7 @@ void IntegerOps::unsigned_add( Integer &x, Integer &y, Integer &z ) {
         z[ i ] = c;
         i++;
     }
-    z.set_length( i );
+    z.set_signed_length( i );
 }
 
 
@@ -253,7 +252,7 @@ void IntegerOps::unsigned_sub( Integer &x, Integer &y, Integer &z ) {
     if ( c not_eq 0 ) st_fatal( "negative result" );
     while ( i > 0 and z[ i - 1 ] == 0 )
         i--;
-    z.set_length( i );
+    z.set_signed_length( i );
 }
 
 
@@ -287,7 +286,7 @@ void IntegerOps::unsigned_mul( Integer &x, Integer &y, Integer &z ) {
             i++;
         }
     }
-    z.set_length( k );
+    z.set_signed_length( k );
 }
 
 
@@ -466,7 +465,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
     std::int32_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = 0
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
     } else {
         // xl >= yl
         ResourceMark resourceMark;
@@ -475,7 +474,7 @@ void IntegerOps::unsigned_quo( Integer &x, Integer &y, Integer &z ) {
         while ( i >= yl and qr[ i ] == 0 )
             i--;
         // i < yl or qr[i] not_eq 0
-        z.set_length( i - yl + 1 );
+        z.set_signed_length( i - yl + 1 );
         while ( i >= yl ) {
             z[ i - yl ] = qr[ i ];
             i--;
@@ -501,9 +500,9 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = 0
         if ( xneg == yneg )
-            z.set_length( 0 );
+            z.set_signed_length( 0 );
         else {
-            z.set_length( 1 );
+            z.set_signed_length( 1 );
             z[ 0 ] = 1;
             neg( z );
         }
@@ -522,10 +521,10 @@ void IntegerOps::signed_div( Integer &x, Integer &y, Integer &z ) {
             z[ j ] = xpy( qr[ yl + j ], 0, carry );
 
         if ( carry ) {
-            z.set_length( i - yl + 2 );
+            z.set_signed_length( i - yl + 2 );
             z[ i - yl + 1 ] = carry;
         } else
-            z.set_length( i - yl + 1 );
+            z.set_signed_length( i - yl + 1 );
         if ( xneg not_eq yneg )
             neg( z );
     }
@@ -553,7 +552,7 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
             z[ i ]          = xmy( y[ i ], 0, carry );
         st_assert( carry == 0, "Remainder too large" );
 
-        z.set_length( last_non_zero_index( z.digits(), yl - 1 ) + 1 );
+        z.set_signed_length( last_non_zero_index( z.digits(), yl - 1 ) + 1 );
     } else {
         // xl >= yl
         ResourceMark resourceMark;
@@ -567,7 +566,7 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
         }
 
         std::int32_t i = last_non_zero_index( qr, yl - 1 );
-        z.set_length( i + 1 );
+        z.set_signed_length( i + 1 );
         while ( i >= 0 ) {
             z[ i ] = qr[ i ];
             i--;
@@ -590,7 +589,7 @@ void IntegerOps::unsigned_rem( Integer &x, Integer &y, Integer &z ) {
         while ( i >= 0 and qr[ i ] == 0 )
             i--;
         // i < 0 or qr[i] not_eq 0
-        z.set_length( i + 1 );
+        z.set_signed_length( i + 1 );
         while ( i >= 0 ) {
             z[ i ] = qr[ i ];
             i--;
@@ -624,7 +623,7 @@ Digit IntegerOps::last_digit( Integer &x, Digit b ) {
         x[ i ] = xdy( x[ i ], b, c );
     }
     if ( xl > 0 and x[ xl - 1 ] == 0 )
-        x.set_length( xl - 1 );
+        x.set_signed_length( xl - 1 );
     return c;
 }
 
@@ -643,7 +642,7 @@ void IntegerOps::first_digit( Integer &x, Digit base, Digit carry ) {
         i++;
     }
 
-    x.set_length( i );
+    x.set_signed_length( i );
 }
 
 
@@ -849,7 +848,7 @@ void IntegerOps::sub( Integer &x, Integer &y, Integer &z ) {
 void IntegerOps::mul( Integer &x, Integer &y, Integer &z ) {
 
     if ( x.is_zero() || y.is_zero() ) {
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
     } else if ( x.length() < y.length() ) {
         unsigned_mul( x, y, z );
     } else {
@@ -904,7 +903,7 @@ void IntegerOps::Mod( Integer &x, Integer &y, Integer &z ) {
 
 void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
     if ( x.is_zero() or y.is_zero() ) {
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
     } else if ( x.is_positive() and y.is_positive() ) {
         std::int32_t         l = min( x.length(), y.length() );
         std::int32_t i = 0;
@@ -912,7 +911,7 @@ void IntegerOps::And( Integer &x, Integer &y, Integer &z ) {
             z[ i ] = x[ i ] & y[ i ];
             i++;
         }
-        z.set_length( i );
+        z.set_signed_length( i );
     } else if ( x.is_positive() ) {
         and_one_positive( x, y, z );
     } else if ( y.is_positive() ) {
@@ -943,7 +942,7 @@ void IntegerOps::and_both_negative( Integer &x, Integer &y, Integer &z ) {
         z[ i ] = y[ i ];
         i++;
     }
-    z.set_length( -digitLength );
+    z.set_signed_length( -digitLength );
 }
 
 
@@ -960,7 +959,7 @@ void IntegerOps::and_one_positive( Integer &positive, Integer &negative, Integer
         z[ i ] = positive[ i ];
         i++;
     }
-    z.set_length( digitLength );
+    z.set_signed_length( digitLength );
 }
 
 
@@ -985,7 +984,7 @@ void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
             z[ i ] = y[ i ];
             i++;
         }
-        z.set_length( i );
+        z.set_signed_length( i );
         return;
     } else if ( not x.is_negative() ) {
         while ( i < l ) {
@@ -1014,7 +1013,7 @@ void IntegerOps::Or( Integer &x, Integer &y, Integer &z ) {
     }
     while ( i > 0 and not z[ i - 1 ] )
         i--;
-    z.set_length( -i );
+    z.set_signed_length( -i );
 }
 
 
@@ -1038,7 +1037,7 @@ void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
         }
         while ( i > 0 and not z[ i - 1 ] )
             i--;
-        z.set_length( i );
+        z.set_signed_length( i );
 
     } else if ( not y.is_negative() ) {
         xor_one_positive( y, x, z );
@@ -1064,7 +1063,7 @@ void IntegerOps::Xor( Integer &x, Integer &y, Integer &z ) {
         }
         while ( i > 0 and z[ i - 1 ] == 0 )
             i--;
-        z.set_length( i );
+        z.set_signed_length( i );
     }
 }
 
@@ -1096,7 +1095,7 @@ void IntegerOps::xor_one_positive( Integer &positive, Integer &negative, Integer
         z[ i ] = 1;
         i++;
     }
-    z.set_length( -i );
+    z.set_signed_length( -i );
 }
 
 
@@ -1119,7 +1118,7 @@ void IntegerOps::ash( Integer &x, std::int32_t n, Integer &z ) {
             z[ i ] = carry;
             i++;
         }
-        z.set_length( i );
+        z.set_signed_length( i );
         if ( x.is_negative() )
             neg( z );
     } else {
@@ -1135,11 +1134,11 @@ void IntegerOps::ash( Integer &x, std::int32_t n, Integer &z ) {
         i                = x.length() - digitShift;
         while ( i > 0 and z[ i - 1 ] == 0 )
             i--;
-        z.set_length( max( i, 0 ) );
+        z.set_signed_length( max( i, 0 ) );
         if ( x.is_negative() )
             neg( z );
         if ( x.is_negative() and z.is_zero() ) {
-            z.set_length( -1 );
+            z.set_signed_length( -1 );
             z[ 0 ] = 1;
         }
     }
@@ -1150,7 +1149,7 @@ std::int32_t IntegerOps::cmp( Integer &x, Integer &y ) {
     if ( x.is_negative() == y.is_negative() ) {
         return x.is_negative() ? unsigned_cmp( y, x ) : unsigned_cmp( x, y );
     } else {
-        return x.is_zero() ? -y.signum() : x.signum();
+        return x.is_zero() ? -y.signed_length() : x.signed_length();
     }
 }
 
@@ -1162,11 +1161,11 @@ void IntegerOps::abs( Integer &x ) {
 
 
 void IntegerOps::neg( Integer &x ) {
-    x.set_length( -x._signed_length );
+    x.set_signed_length( -x._signed_length );
 }
 
 
-void IntegerOps::copy( Integer &x, Integer &z ) {
+void IntegerOps::copy( const Integer &x, Integer &z ) {
     z._signed_length = x._signed_length;
     std::int32_t i = x.length();
     while ( i > 0 ) {
@@ -1178,9 +1177,9 @@ void IntegerOps::copy( Integer &x, Integer &z ) {
 
 void IntegerOps::unsigned_int_to_Integer( std::uint32_t i, Integer &z ) {
     if ( i == 0 ) {
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
     } else {
-        z.set_length( 1 );
+        z.set_signed_length( 1 );
         z._first_digit = Digit( i );
     }
 }
@@ -1189,15 +1188,15 @@ void IntegerOps::unsigned_int_to_Integer( std::uint32_t i, Integer &z ) {
 void IntegerOps::int_to_Integer( std::int32_t i, Integer &z ) {
 
     if ( i < 0 ) {
-        z.set_length( -1 );
+        z.set_signed_length( -1 );
         z._first_digit = Digit( -i );
 
     } else if ( i == 0 ) {
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
         z._first_digit = Digit( 0 ); // no digits in this case
 
     } else {
-        z.set_length( 1 );
+        z.set_signed_length( 1 );
         z._first_digit = Digit( i );
     }
 
@@ -1214,7 +1213,7 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
 
     // filter out trivial cases
     if ( x < 1.0 ) {
-        z.set_length( 0 );
+        z.set_signed_length( 0 );
         return;
     }
 
@@ -1258,7 +1257,7 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     }
 
     // set length & adjust sign
-    z.set_length( l );
+    z.set_signed_length( l );
     if ( negative )
         neg( z );
 }
@@ -1276,9 +1275,9 @@ void IntegerOps::string_to_Integer( const char *s, std::int32_t base, Integer &z
 }
 
 
-void IntegerOps::Integer_to_string( Integer &x, std::int32_t base, char *s ) {
+void IntegerOps::Integer_to_string( const Integer &x, std::int32_t base, char *s ) {
 
-    st_assert( 2 <= base and base <= MAX_DIGITS, "illegal base" );
+    st_assert( 2 <= base and base <= DIGITS_BASE, "illegal base" );
     st_assert( x.size_in_bytes() <= 10001 * sizeof( Digit ), "temporary array too small" );
 
     Integer t;
@@ -1318,7 +1317,7 @@ std::int32_t IntegerOps::hash( Integer &x ) {
         hash ^= x[ i ];
     }
 
-    hash ^= x.signum();
+    hash ^= x.signed_length();
     return hash >> 2;
 }
 

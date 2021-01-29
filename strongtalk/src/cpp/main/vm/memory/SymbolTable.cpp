@@ -35,7 +35,7 @@ std::int32_t hash( const char *name, std::int32_t len ) {
 
     // hashpjw from Dragon book (ASU p. 436), except increment differently
 
-    st_assert( BitsPerByte * BytesPerWord == 32, "assumes 32-bit words" );
+    st_assert( BITS_PER_BYTE * BYTES_PER_WORD == 32, "assumes 32-bit words" );
     std::int32_t unsigned h = 0;
     std::int32_t unsigned g;
 
