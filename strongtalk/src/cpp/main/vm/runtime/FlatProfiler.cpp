@@ -284,7 +284,7 @@ private:
 public:
     CompiledNode( NativeMethod *nm, TickPosition where ) :
             ProfiledNode() {
-        this->_nativeMethod = nm;
+        _nativeMethod = nm;
         update( where );
     }
 

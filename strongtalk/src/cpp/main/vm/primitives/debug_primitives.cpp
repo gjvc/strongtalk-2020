@@ -270,8 +270,8 @@ private:
 
 public:
     CollectMethodClosure( GrowableArray<MethodOop> *col, std::int32_t cutoff ) {
-        this->_col    = col;
-        this->_cutoff = cutoff;
+        _col    = col;
+        _cutoff = cutoff;
     }
 
 

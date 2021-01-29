@@ -683,7 +683,7 @@ UncommonNode::UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byt
 
 UncommonSendNode::UncommonSendNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex, std::int32_t argCount ) :
         UncommonNode( e, byteCodeIndex ) {
-    this->_argCount = argCount;
+    _argCount = argCount;
 }
 
 

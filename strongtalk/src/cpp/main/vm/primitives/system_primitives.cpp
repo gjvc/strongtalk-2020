@@ -784,9 +784,9 @@ class InstancesOfClosure : public ObjectClosure {
 
 public:
     InstancesOfClosure( KlassOop target, std::int32_t limit ) {
-        this->_result = new GrowableArray<Oop>( 100 );
-        this->_target = target;
-        this->_limit  = limit;
+        _result = new GrowableArray<Oop>( 100 );
+        _target = target;
+        _limit  = limit;
     }
 
 
@@ -922,8 +922,8 @@ private:
 
 public:
     HasInstanceReferenceClosure( KlassOop target ) {
-        this->_target = target;
-        this->_result = false;
+        _target = target;
+        _result = false;
     }
 
 
@@ -940,9 +940,9 @@ class ReferencesToInstancesOfClosure : public ObjectClosure {
 
 public:
     ReferencesToInstancesOfClosure( KlassOop target, std::int32_t limit ) {
-        this->_result = new GrowableArray<Oop>( 100 );
-        this->_target = target;
-        this->_limit  = limit;
+        _result = new GrowableArray<Oop>( 100 );
+        _target = target;
+        _limit  = limit;
     }
 
 
@@ -998,8 +998,8 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
 class AllObjectsClosure : public ObjectClosure {
 public:
     AllObjectsClosure( std::int32_t limit ) {
-        this->_result = new GrowableArray<Oop>( 20000 );
-        this->_limit  = limit;
+        _result = new GrowableArray<Oop>( 20000 );
+        _limit  = limit;
     }
 
 

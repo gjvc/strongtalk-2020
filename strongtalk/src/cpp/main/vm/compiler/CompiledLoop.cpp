@@ -784,9 +784,9 @@ void CompiledLoop::print() {
 
 
 HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses ) {
-    this->_node     = node;
-    this->_testedPR = testedPR;
-    this->_klasses  = klasses;
+    _node     = node;
+    _testedPR = testedPR;
+    _klasses  = klasses;
     _invalid = false;
 }
 

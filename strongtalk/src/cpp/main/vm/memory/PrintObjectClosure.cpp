@@ -14,7 +14,7 @@ constexpr std::int32_t value_col  = 16;
 
 
 PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) {
-    this->_stream = stream ? stream : _console;
+    _stream = stream ? stream : _console;
 }
 
 

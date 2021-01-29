@@ -8,6 +8,13 @@
 #include "vm/memory/oopFactory.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
+#define SPDLOG_DEBUG_ON
+#define SPDLOG_TRACE_ON
+
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 constexpr std::int32_t BUFLEN{ 64 * 1024 };  // max size of output of individual print() methods
 
@@ -142,8 +149,8 @@ char *StringOutputStream::as_string() {
 
 
 ByteArrayOop StringOutputStream::as_byteArray() {
-    ByteArrayOop a = oopFactory::new_byteArray( buffer_pos );
-    for ( std::int32_t    i = 0; i < buffer_pos; i++ ) {
+    ByteArrayOop       a = oopFactory::new_byteArray( buffer_pos );
+    for ( std::int32_t i = 0; i < buffer_pos; i++ ) {
         a->byte_at_put( i + 1, buffer[ i ] );
     }
     return a;
@@ -171,4 +178,19 @@ void console_init() {
         return;
     _console = new( true ) ConsoleOutputStream;
     spdlog::info( "%system-init:  ConsoleOutputStream-open" );
+}
+
+
+void logging_init() {
+
+    auto console = spdlog::stdout_color_mt( "console" );
+    spdlog::set_level( spdlog::level::debug );
+
+    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S [%l] [%t] - <%s>|<%#>|<%!>,%v" );
+
+    spdlog::set_pattern( "[source %s] [function %!] [line %#] %v" );
+    spdlog::set_default_logger( console );
+
+    spdlog::info( "%logging-init: hello-world" );
+
 }

@@ -91,11 +91,6 @@ void Universe::genesis() {
 
     ResourceMark resourceMark;
 
-    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
-    spdlog::info( "%system-genesis:  Strongtalk Delta Virtual Machine, {}.{}%s (%s, %s)", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    spdlog::info( "%system-genesis:  (C) 1994 - 2021, The Strongtalk authors and contributors" );
-    spdlog::info( "%system-genesis:  -----------------------------------------------------------------------------" );
-
     spdlog::info( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
     if ( UseNewBackend | TryNewBackend )
         spdlog::info( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
@@ -499,7 +494,7 @@ private:
 
 public:
     MethodsClosure( void f( MethodOop method ) ) {
-        this->_function = f;
+        _function = f;
     }
 
 
@@ -569,7 +564,7 @@ private:
 
 public:
     AllMethodsClosure( void f( MethodOop m ) ) {
-        this->_function = f;
+        _function = f;
     }
 
 

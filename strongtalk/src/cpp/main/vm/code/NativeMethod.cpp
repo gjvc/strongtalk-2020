@@ -61,7 +61,7 @@ void *NativeMethod::operator new( std::size_t size ) {
 
 
 void NativeMethod::initForTesting( std::int32_t size, LookupKey *key ) {
-    this->_lookupKey.initialize( key->klass(), key->selector_or_method() );
+    _lookupKey.initialize( key->klass(), key->selector_or_method() );
 
     _instructionsLength       = size - ( sizeof( NativeMethod ) );
     _locsLen                  = 0;

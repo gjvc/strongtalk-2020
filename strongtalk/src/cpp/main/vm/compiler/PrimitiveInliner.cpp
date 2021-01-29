@@ -249,7 +249,7 @@ public:
 
 
     PrimitiveSendFinder( RecompilationScope *rs ) {
-        this->_recompilationScope = rs;
+        _recompilationScope = rs;
         _wasExecuted = false;
         rs->extend();
     }

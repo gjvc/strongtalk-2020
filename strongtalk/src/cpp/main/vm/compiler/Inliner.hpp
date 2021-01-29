@@ -51,7 +51,7 @@ public:
     std::int32_t depth;            // nesting depth (for debug output)
 
     Inliner( InlinedScope *s ) {
-        this->_sender = s;
+        _sender = s;
         initialize();
     }
 

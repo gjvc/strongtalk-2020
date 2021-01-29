@@ -23,7 +23,7 @@ private:
 
 public:
     ReadClosure( SnapshotDescriptor *s ) {
-        this->_snapshotDescriptor = s;
+        _snapshotDescriptor = s;
     }
 };
 
@@ -40,7 +40,7 @@ private:
 
 public:
     WriteClosure( SnapshotDescriptor *s ) {
-        this->_snapshotDescriptor = s;
+        _snapshotDescriptor = s;
     }
 };
 

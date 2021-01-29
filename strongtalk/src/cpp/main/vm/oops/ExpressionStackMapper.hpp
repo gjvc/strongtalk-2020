@@ -59,8 +59,8 @@ private:
 
 public:
     ExpressionStackMapper( GrowableArray<std::int32_t> *mapping, std::int32_t targetByteCodeIndex ) {
-        this->_mapping             = mapping;
-        this->_targetByteCodeIndex = targetByteCodeIndex;
+        _mapping             = mapping;
+        _targetByteCodeIndex = targetByteCodeIndex;
     }
 
 

@@ -40,8 +40,8 @@ protected:
 
 public:
     astNode( std::int32_t byteCodeIndex, scopeNode *scope ) {
-        this->_byteCodeIndex = byteCodeIndex;
-        this->_scopeNode     = scope;
+        _byteCodeIndex = byteCodeIndex;
+        _scopeNode     = scope;
     }
 
 
@@ -181,7 +181,7 @@ public:
 
 
     void decode( MethodOop method, scopeNode *scope ) {
-        this->_scope = scope;
+        _scope = scope;
         _elements = new GrowableArray<astNode *>( 10 );
         TempDecoder::decode( method );
     }
@@ -203,7 +203,7 @@ public:
 
 
     void decode( MethodOop method, scopeNode *scope ) {
-        this->_scope = scope;
+        _scope = scope;
         _elements = new GrowableArray<astNode *>( 10 );
         TempDecoder::decode( method );
     }
@@ -268,8 +268,8 @@ private:
 public:
     nameValueNode( const char *name, char *value ) :
             astNode( 0, 0 ) {
-        this->_name  = name;
-        this->_value = value;
+        _name  = name;
+        _value = value;
     }
 
 
@@ -296,7 +296,7 @@ private:
 public:
     nameNode( const char *str ) :
             leafNode( 0, 0 ) {
-        this->_str = str;
+        _str = str;
     }
 
 
@@ -316,8 +316,8 @@ protected:
 public:
     listNode( const char *begin_sym, const char *end_sym ) :
             astNode( 0, 0 ) {
-        this->_beginSym = begin_sym;
-        this->_endSym   = end_sym;
+        _beginSym = begin_sym;
+        _endSym   = end_sym;
         _elements = new GrowableArray<astNode *>( 10 );
     }
 
@@ -674,15 +674,15 @@ public:
 
 paramNode::paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no ) :
         leafNode( byteCodeIndex, scope ) {
-    this->_no  = no;
-    this->_str = scope->param_string( no );
+    _no  = no;
+    _str = scope->param_string( no );
 }
 
 
 PrintWrapper::PrintWrapper( astNode *astNode, prettyPrintStream *output ) {
-    this->_astNode = astNode;
-    this->_output  = output;
-    this->_hit     = false;
+    _astNode = astNode;
+    _output  = output;
+    _hit     = false;
     if ( not astNode->this_scope() )
         return;
     if ( astNode->this_byteCodeIndex() == astNode->this_scope()->hot_byteCodeIndex() and not output->in_highlight() ) {
@@ -814,8 +814,8 @@ public:
 
     statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool has_return ) :
             astNode( byteCodeIndex, scope ) {
-        this->_stat      = stat;
-        this->_hasReturn = has_return;
+        _stat      = stat;
+        _hasReturn = has_return;
     }
 
 
@@ -894,7 +894,7 @@ private:
 public:
     blockNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t numOfArgs ) :
             codeNode( byteCodeIndex, scope ) {
-        this->_numOfArgs = numOfArgs;
+        _numOfArgs = numOfArgs;
     }
 
 
@@ -983,8 +983,8 @@ private:
 public:
     assignment( std::int32_t byteCodeIndex, scopeNode *scope, astNode *variable, astNode *e ) :
             astNode( byteCodeIndex, scope ) {
-        this->_variable = variable;
-        this->_e        = e;
+        _variable = variable;
+        _e        = e;
     }
 
 
@@ -1023,7 +1023,7 @@ private:
 public:
     messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool is_prim = false ) :
             astNode( byteCodeIndex, scope ) {
-        this->_selector = selector;
+        _selector = selector;
         _arguments = new GrowableArray<astNode *>( 10 );
         _receiver  = nullptr;
         _is_prim   = is_prim;
@@ -1215,7 +1215,7 @@ private:
 public:
     literalNode( std::int32_t byteCodeIndex, scopeNode *scope, const char *str ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_str = str;
+        _str = str;
     }
 
 
@@ -1235,9 +1235,9 @@ private:
 public:
     symbolNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop value, bool is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
-        this->_value   = value;
-        this->_isOuter = is_outer;
-        this->_str     = value->as_string();
+        _value   = value;
+        _isOuter = is_outer;
+        _str     = value->as_string();
     }
 
 
@@ -1265,8 +1265,8 @@ private:
 public:
     doubleByteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, DoubleByteArrayOop value ) :
             astNode( byteCodeIndex, scope ) {
-        this->_value = value;
-        this->_str   = value->as_string();
+        _value = value;
+        _str   = value->as_string();
     }
 
 
@@ -1294,8 +1294,8 @@ private:
 public:
     byteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ByteArrayOop value ) :
             astNode( byteCodeIndex, scope ) {
-        this->_value = value;
-        this->_str   = value->as_string();
+        _value = value;
+        _str   = value->as_string();
     }
 
 
@@ -1324,9 +1324,9 @@ private:
 public:
     smiNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t value ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_value = value;
-        this->_str   = new_resource_array<char>( 10 );
-        sprintf( this->_str, "%d", value );
+        _value = value;
+        _str   = new_resource_array<char>( 10 );
+        sprintf( _str, "%d", value );
     }
 
 
@@ -1344,9 +1344,9 @@ private:
 public:
     doubleNode( std::int32_t byteCodeIndex, scopeNode *scope, double value ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_value = value;
-        this->_str   = new_resource_array<char>( 30 );
-        sprintf( this->_str, "%1.10gd", value );
+        _value = value;
+        _str   = new_resource_array<char>( 30 );
+        sprintf( _str, "%1.10gd", value );
     }
 
 
@@ -1365,16 +1365,16 @@ private:
 public:
     characterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_value = value;
-        this->_str   = new_resource_array<char>( 3 );
+        _value = value;
+        _str   = new_resource_array<char>( 3 );
         if ( value->is_mem() ) {
             Oop ch = MemOop( value )->instVarAt( 2 );
             if ( ch->is_smi() ) {
-                sprintf( this->_str, "$%c", SMIOop( ch )->value() );
+                sprintf( _str, "$%c", SMIOop( ch )->value() );
                 return;
             }
         }
-        this->_str = "$%c";
+        _str = "$%c";
     }
 
 
@@ -1394,9 +1394,9 @@ private:
 public:
     objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool is_outer = true ) :
             astNode( byteCodeIndex, scope ) {
-        this->_value    = value;
-        this->_isOuter  = is_outer;
-        this->_elements = new GrowableArray<astNode *>( 10 );
+        _value    = value;
+        _isOuter  = is_outer;
+        _elements = new GrowableArray<astNode *>( 10 );
 
         for ( std::int32_t i = 1; i <= value->length(); i++ )
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
@@ -1441,8 +1441,8 @@ private:
 public:
     dllNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop dll_name, SymbolOop func_name ) :
             astNode( byteCodeIndex, scope ) {
-        this->_dllName  = new symbolNode( byteCodeIndex, scope, dll_name, false );
-        this->_funcName = new symbolNode( byteCodeIndex, scope, func_name, false );
+        _dllName  = new symbolNode( byteCodeIndex, scope, dll_name, false );
+        _funcName = new symbolNode( byteCodeIndex, scope, func_name, false );
         _arguments = new GrowableArray<astNode *>( 10 );
         _proxy     = nullptr;
     }
@@ -1493,8 +1493,8 @@ private:
 public:
     stackTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_offset = offset;
-        this->_str    = scope->stack_temp_string( this_byteCodeIndex(), offset );
+        _offset = offset;
+        _str    = scope->stack_temp_string( this_byteCodeIndex(), offset );
     }
 
 
@@ -1514,9 +1514,9 @@ private:
 public:
     heapTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset, std::int32_t context_level ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_offset       = offset;
-        this->_contextLevel = context_level;
-        this->_str          = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
+        _offset       = offset;
+        _contextLevel = context_level;
+        _str          = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
     }
 
 
@@ -1533,7 +1533,7 @@ private:
 public:
     floatNode( std::int32_t no, std::int32_t byteCodeIndex, scopeNode *scope ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_str = scope->stack_temp_string( this_byteCodeIndex(), no );
+        _str = scope->stack_temp_string( this_byteCodeIndex(), no );
     }
 
 
@@ -1552,7 +1552,7 @@ private:
 public:
     instVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_obj = obj;
+        _obj = obj;
         if ( obj->is_smi() ) {
             _str = scope->inst_var_string( SMIOop( obj )->value() );
         } else {
@@ -1576,7 +1576,7 @@ private:
 public:
     classVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_obj = obj;
+        _obj = obj;
         if ( obj->is_association() ) {
             _str = AssociationOop( obj )->key()->as_string();
         } else {
@@ -1619,8 +1619,8 @@ private:
 public:
     assocNode( std::int32_t byteCodeIndex, scopeNode *scope, AssociationOop assoc ) :
             leafNode( byteCodeIndex, scope ) {
-        this->_assoc = assoc;
-        this->_str   = assoc->key()->as_string();
+        _assoc = assoc;
+        _str   = assoc->key()->as_string();
     }
 
 
@@ -2167,10 +2167,10 @@ public:
 
 
     StackChecker( const char *name, MethodPrettyPrinter *pp, std::int32_t offset = 0 ) {
-        this->_methodPrettyPrinter = pp;
-        this->_size                = pp->_size();
-        this->_name                = name;
-        this->_offset              = offset;
+        _methodPrettyPrinter = pp;
+        _size                = pp->_size();
+        _name                = name;
+        _offset              = offset;
     }
 
 

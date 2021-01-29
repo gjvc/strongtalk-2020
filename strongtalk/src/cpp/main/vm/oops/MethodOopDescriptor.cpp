@@ -1247,8 +1247,8 @@ public:
 
 public:
     ReferencedInstVarNamesClosure( std::int32_t size, MixinOop mixin ) {
-        this->_result = new GrowableArray<Oop>( size );
-        this->_mixin  = mixin;
+        _result = new GrowableArray<Oop>( size );
+        _mixin  = mixin;
     }
 
 

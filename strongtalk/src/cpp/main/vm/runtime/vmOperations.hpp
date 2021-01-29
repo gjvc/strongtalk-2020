@@ -9,6 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/lookup/LookupKey.hpp"
+#include "vm/code/ScopeDescriptor.hpp"
 
 
 // The following classes are used for operations initiated by a delta process but must take place in the vmProcess.
@@ -70,7 +71,7 @@ public:
 
 
     VM_Scavenge( Oop *addr ) {
-        this->_addr = addr;
+        _addr = addr;
     }
 
 
@@ -106,7 +107,7 @@ public:
 
 
     VM_GarbageCollect( Oop *addr ) {
-        this->_addr = addr;
+        _addr = addr;
     }
 
 
@@ -125,7 +126,7 @@ private:
 
 public:
     VM_TerminateProcess( DeltaProcess *target ) {
-        this->_target = target;
+        _target = target;
     }
 
 
@@ -152,8 +153,8 @@ public:
 class VM_OptimizeMethod : public VM_Operation {
 
 private:
-    LookupKey _key;
-    MethodOop _method;
+    LookupKey    _key;
+    MethodOop    _method;
     NativeMethod *_nativeMethod;
 
 public:
@@ -209,19 +210,17 @@ public:
 
 // -----------------------------------------------------------------------------
 
-class NonInlinedBlockScopeDescriptor;
-
 class VM_OptimizeBlockMethod : public VM_Operation {
 
 private:
-    BlockClosureOop _closure;
+    BlockClosureOop                _closure;
     NonInlinedBlockScopeDescriptor *_scope;
     NativeMethod                   *_nativeMethod;
 
 public:
     VM_OptimizeBlockMethod( BlockClosureOop closure, NonInlinedBlockScopeDescriptor *scope ) {
-        this->_closure = closure;
-        this->_scope   = scope;
+        _closure = closure;
+        _scope   = scope;
     }
 
 

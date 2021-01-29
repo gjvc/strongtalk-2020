@@ -357,7 +357,7 @@ void CompiledVirtualFrame::rewind_byteCodeIndex() {
 
 CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
         DeltaVirtualFrame( fr ) {
-    this->_scopeDescriptor = sd;
+    _scopeDescriptor = sd;
     _byteCodeIndex = byteCodeIndex;
 }
 
@@ -968,15 +968,15 @@ std::int32_t DeoptimizedVirtualFrame::end_of_expressions() const {
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
         DeltaVirtualFrame( fr ) {
     // the first frame in the array is located at position 3 (after #frames, #locals)
-    this->_offset     = StackChunkBuilder::first_frame_index;
-    this->_frameArray = retrieve_frame_array();
+    _offset     = StackChunkBuilder::first_frame_index;
+    _frameArray = retrieve_frame_array();
 }
 
 
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset ) :
         DeltaVirtualFrame( fr ) {
-    this->_offset     = offset;
-    this->_frameArray = retrieve_frame_array();
+    _offset     = offset;
+    _frameArray = retrieve_frame_array();
 }
 
 

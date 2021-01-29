@@ -20,6 +20,7 @@ void init_globals();            // call constructors at startup
 
 //
 void console_init();
+void logging_init();
 
 void os_init();
 
