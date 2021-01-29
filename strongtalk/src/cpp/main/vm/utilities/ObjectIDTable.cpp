@@ -4,30 +4,30 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/memory/oopFactory.hpp"
 
-// Memory->objectIDTable[1.. numberOfIDs] contains the valid entries
+// Memory->ObjectIDTable[1.. numberOfIDs] contains the valid entries
 
 static std::int32_t nextID;
 
 
-ObjectArrayOop objectIDTable::array() {
+ObjectArrayOop ObjectIDTable::array() {
     return Universe::objectIDTable();
 }
 
 
-Oop objectIDTable::at( std::int32_t index ) {
+Oop ObjectIDTable::at( std::int32_t index ) {
     return array()->obj_at( index );
 }
 
 
-bool objectIDTable::is_index_ok( std::int32_t index ) {
+bool ObjectIDTable::is_index_ok( std::int32_t index ) {
     return 1 <= index and index <= Universe::objectIDTable()->length();
 }
 
 
-std::int32_t objectIDTable::find_index( Oop obj ) {
+std::int32_t ObjectIDTable::find_index( Oop obj ) {
     std::int32_t len = Universe::objectIDTable()->length();
 
     for ( std::int32_t i = 1; i <= len; i++ ) {
@@ -35,12 +35,12 @@ std::int32_t objectIDTable::find_index( Oop obj ) {
             return i;
         }
     }
-    
+
     return 0;
 }
 
 
-std::int32_t objectIDTable::insert( Oop obj ) {
+std::int32_t ObjectIDTable::insert( Oop obj ) {
     std::int32_t id = find_index( obj );
     if ( not id ) {
         if ( nextID < array()->length() ) {
@@ -55,7 +55,7 @@ std::int32_t objectIDTable::insert( Oop obj ) {
 }
 
 
-void objectIDTable::cleanup_after_bootstrap() {
+void ObjectIDTable::cleanup_after_bootstrap() {
     Universe::set_objectIDTable( oopFactory::new_objArray( 200 ) );
     nextID = 1;
 }

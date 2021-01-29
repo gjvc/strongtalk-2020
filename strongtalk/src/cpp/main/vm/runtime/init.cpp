@@ -8,6 +8,7 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/init.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/utilities/Console.hpp"
 
 
 void init_globals() {

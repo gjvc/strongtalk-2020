@@ -9,6 +9,9 @@
 
 // -----------------------------------------------------------------------------
 
+// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
+
+
 #if defined( _MSC_VER )
 
 #define __CALLING_CONVENTION __stdcall
@@ -43,8 +46,3 @@
 #define __CALLING_CONVENTION __stdcall
 
 #endif
-
-
-// -----------------------------------------------------------------------------
-
-// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html

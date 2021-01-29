@@ -235,13 +235,13 @@ public:
 
 
 // special locations
-constexpr std::int32_t  nofSpecialLocations    = 6;
-const Location illegalLocation        = Location::specialLocation( 0 );
-const Location unAllocated            = Location::specialLocation( 1 );
-const Location noRegister             = Location::specialLocation( 2 );
-const Location topOfStack             = Location::specialLocation( 3 );
-const Location resultOfNonLocalReturn = Location::specialLocation( 4 );
-const Location topOfFloatStack        = Location::specialLocation( 5 );    // only used if UseFPUStack is true
+constexpr std::int32_t nofSpecialLocations    = 6;
+const Location         illegalLocation        = Location::specialLocation( 0 );
+const Location         unAllocated            = Location::specialLocation( 1 );
+const Location         noRegister             = Location::specialLocation( 2 );
+const Location         topOfStack             = Location::specialLocation( 3 );
+const Location         resultOfNonLocalReturn = Location::specialLocation( 4 );
+const Location         topOfFloatStack        = Location::specialLocation( 5 );    // only used if UseFPUStack is true
 
 
 // An IntFreeList maintains a list of 'available' integers in the range [0, n[ where n is the maximum number of integers ever allocated.
@@ -250,9 +250,9 @@ const Location topOfFloatStack        = Location::specialLocation( 5 );    // on
 class IntFreeList : public PrintableResourceObject {
 
 protected:
-    std::int32_t _first;                     // the first available integer
+    std::int32_t                _first;                     // the first available integer
     GrowableArray<std::int32_t> *_list;    // the list
-    std::vector<std::int32_t> _vector;      //
+    std::vector<std::int32_t>   _vector;      //
 
     void grow();
 

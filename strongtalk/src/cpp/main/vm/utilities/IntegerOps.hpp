@@ -11,11 +11,11 @@
 
 // -----------------------------------------------------------------------------
 
-constexpr std::int32_t   maxD           = 36;                    //
-constexpr std::int32_t   logB           = sizeof( Digit ) * 8;   //
-constexpr Digit hlfB           = 0x80000000;            //
-constexpr Digit oneB           = 0xFFFFFFFF;            //
-constexpr std::int32_t   digitBitLength = sizeof( Digit ) * 8;   //
+constexpr std::int32_t MAX_DIGITS     = 36;                    //
+constexpr std::int32_t logB           = sizeof( Digit ) * 8;   //
+constexpr Digit        hlfB           = 0x80000000;            //
+constexpr Digit        oneB           = 0xFFFFFFFF;            //
+constexpr std::int32_t digitBitLength = sizeof( Digit ) * 8;   //
 
 
 // -----------------------------------------------------------------------------

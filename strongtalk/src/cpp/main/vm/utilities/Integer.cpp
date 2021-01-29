@@ -72,7 +72,7 @@ double Integer::as_double( bool &ok ) const {
     // get an n-Digit integer d[n] built from the n most significant digits of self
     // n needs to be big enough so that we have enough bits for the mantissa (note
     // that the mantissa consists of one (implicit) extra bit which is always 1).
-    const std::int32_t n = ( mantissa_length + 1 ) / logB + 2;
+    const std::int32_t n = ( MANTISSA_LENGTH + 1 ) / logB + 2;
     Digit     d[n];
     std::int32_t       l = length();
     std::int32_t       i = 1;
@@ -86,12 +86,12 @@ double Integer::as_double( bool &ok ) const {
     shift_left( d, n, left_shift_count );
 
     // shift d[n] to the right so it builds the mantissa of a double
-    const std::int32_t right_shift_count = sign_length + exponent_length;
+    const std::int32_t right_shift_count = SIGN_LENGTH + EXPONENT_LENGTH;
     shift_right( d, n, right_shift_count );
 
     // add exponent to d
-    std::int32_t exponent = exponent_bias + length_in_bits() - 1;
-    if ( exponent > max_exponent ) {
+    std::int32_t exponent = EXPONENT_BIAS + length_in_bits() - 1;
+    if ( exponent > MAX_EXPONENT ) {
         // integer too large => doesn't fit into double representation
         ok = false;
         return 0.0;
@@ -100,7 +100,7 @@ double Integer::as_double( bool &ok ) const {
     d[ n - 1 ] = d[ n - 1 ] | ( Digit( exponent ) << ( logB - right_shift_count ) );
 
     // cast d into double & set sign
-    double result = *( (double *) &d[ n - ( double_length / logB ) ] );
+    double result = *( (double *) &d[ n - ( DOUBLE_LENGTH / logB ) ] );
     if ( is_negative() )
         result = -result;
     return result;

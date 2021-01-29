@@ -7,7 +7,13 @@
 #pragma once
 
 
-#if defined( __MINGW32__ ) && defined( __GNUC__ )
+// -----------------------------------------------------------------------------
+
+// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
+
+
+#if defined( __GNUC__ ) && defined( __MINGW32__ )
+
 
 #define __CALLING_CONVENTION __attribute__((__stdcall__))
 
@@ -23,9 +29,6 @@ extern "C" {
 #include <cfloat>
 #include <cmath>
 }
+
+
 #endif
-
-
-// -----------------------------------------------------------------------------
-
-// https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html

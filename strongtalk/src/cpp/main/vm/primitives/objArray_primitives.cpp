@@ -5,7 +5,7 @@
 
 #include "vm/primitives/objArray_primitives.hpp"
 #include "vm/system/platform.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"

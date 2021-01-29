@@ -12,10 +12,8 @@
 //
 // Each entry of _freeList corresponds to a register or stack location. If the location
 // is used, the _freeList entry holds the negative reference count for that location. If
-// the location is not used, the _freeList entry holds a link (an index) to the next un-
-// used location or a sentinel value which indicates the end of the list. There are two
-// free lists, one for registers and one for stack locations; the end of a list is indi-
-// cated by a sentinel entry.
+// the location is not used, the _freeList entry holds a link (an index) to the next unused location or a sentinel value which indicates the end of the list. There are two
+// free lists, one for registers and one for stack locations; the end of a list is indicated by a sentinel entry.
 //
 // _freeList->at(i) >= 0: unused, entry is index to next unused entry or sentinel
 // _freeList->at(i) <  0: used, entry is negative reference count
@@ -27,11 +25,13 @@ Locations::Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t n
     _nofRegisters = nofRegs;
     _freeList     = new GrowableArray<std::int32_t>( nofArgs + nofRegs + nofInitialStackTmps );
     std::int32_t i = 0;
+
     // initialize argument reference counts
     while ( i < nofArgs ) {
         _freeList->at_put_grow( i, 0 );
         i++;
     }
+
     // initialize register free list
     while ( i < nofArgs + nofRegs ) {
         _freeList->at_put_grow( i, i - 1 );
@@ -39,6 +39,7 @@ Locations::Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t n
     }
     _freeList->at_put( nofArgs, sentinel ); // end of list
     _firstFreeRegister = i - 1;
+
     // initialize stackTmps free list
     while ( i < nofArgs + nofRegs + nofInitialStackTmps ) {
         _freeList->at_put_grow( i, i - 1 );
@@ -82,7 +83,7 @@ std::int32_t Locations::allocateRegister() {
 
 
 std::int32_t Locations::allocateStackTmp() {
-    std::int32_t i              = _firstFreeStackTmp;
+    std::int32_t i     = _firstFreeStackTmp;
     if ( not isStackTmp( i ) ) {
         // grow _freeList
         _freeList->append( sentinel );
@@ -284,13 +285,12 @@ void Locations::print() {
     std::int32_t len = _freeList->length();
 
     // print used locations
-    spdlog::info( "Locations:" );
     for ( std::int32_t i = 0; i < len; i++ ) {
         if ( nofUses( i ) > 0 ) {
-            spdlog::info( "{}: {} uses", i, nofUses( i ) );
+            spdlog::info( "location: {}: {} uses", i, nofUses( i ) );
         }
     }
-    _console->cr();
+
     // print whole free list
     spdlog::info( "Free List:" );
     spdlog::info( "no. of arguments    : {}", _nofArguments );
@@ -300,7 +300,7 @@ void Locations::print() {
     for ( std::int32_t i = 0; i < len; i++ ) {
         spdlog::info( "{}: {}", i, _freeList->at( i ) );
     }
-    _console->cr();
+
 }
 
 
@@ -311,12 +311,14 @@ void Locations::verify() {
     std::int32_t nofFreeStackTmps = 0;
     std::int32_t nofUsedLocations = 0;
     std::int32_t i;
+
     // verify arguments reference counts
     i = 0;
     while ( i < _nofArguments ) {
         if ( _freeList->at( i ) > 0 ) st_fatal( "bug in argument reference counts" );
         i++;
     }
+
     // verify register free list
     i = _firstFreeRegister;
     while ( i not_eq sentinel ) {
@@ -325,6 +327,7 @@ void Locations::verify() {
         i = _freeList->at( i );
     }
     if ( nofFreeRegisters > _nofRegisters ) st_fatal( "too many free registers" );
+
     // verify stack locs free list
     i = _firstFreeStackTmp;
     while ( i not_eq sentinel ) {
@@ -333,12 +336,14 @@ void Locations::verify() {
         i = _freeList->at( i );
     }
     if ( nofFreeStackTmps > _freeList->length() - _nofRegisters - _nofArguments ) st_fatal( "too many free stack locs" );
+
     // verify used locations
     i = _freeList->length();
     while ( i-- > _nofArguments ) {
         if ( _freeList->at( i ) < 0 )
             nofUsedLocations++;
     }
+
     // verify total number
     if ( _nofArguments + nofFreeRegisters + nofFreeStackTmps + nofUsedLocations not_eq _freeList->length() ) st_fatal( "locations data structure is leaking" );
 }

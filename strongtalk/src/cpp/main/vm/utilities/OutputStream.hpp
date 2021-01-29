@@ -7,7 +7,6 @@
 
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/utilities/OutputStream.hpp"
 
 #include <fstream>
 

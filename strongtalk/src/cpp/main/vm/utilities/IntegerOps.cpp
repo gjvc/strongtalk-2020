@@ -14,10 +14,10 @@
 
 static std::int32_t exponent( double x ) {
     // Extracts the un-biased (binary) exponent of x.
-    const std::int32_t n = double_length / logB;
+    const std::int32_t n = DOUBLE_LENGTH / logB;
     Digit     d[n];
     *( (double *) d ) = x;
-    return std::int32_t( ( d[ n - 1 ] << sign_length ) >> ( logB - exponent_length ) ) - exponent_bias;
+    return std::int32_t( ( d[ n - 1 ] << SIGN_LENGTH ) >> ( logB - EXPONENT_LENGTH ) ) - EXPONENT_BIAS;
 }
 
 
@@ -129,7 +129,7 @@ Digit IntegerOps::as_Digit( char c ) {
 
 
 char IntegerOps::as_char( std::int32_t i ) {
-    st_assert( 0 <= i and i < maxD, "illegal digit" );
+    st_assert( 0 <= i and i < MAX_DIGITS, "illegal digit" );
     return "0123456789abcdefghijklmnopqrstuvwxyz"[ i ];
 }
 
@@ -1221,21 +1221,21 @@ void IntegerOps::double_to_Integer( double x, Integer &z ) {
     // get an n-Digit integer d[n] built from x. n needs to be big enough
     // so that we don't loose bits after shifting (note that the mantissa
     // consists of one (implicit) extra bit which is always 1).
-    const std::int32_t n = ( mantissa_length + 1 ) / logB + 2;
+    const std::int32_t n = ( MANTISSA_LENGTH + 1 ) / logB + 2;
     Digit     d[n];
     std::int32_t       i = 0;
     while ( i < n ) {
         d[ i ] = 0;
         i++;
     }
-    *( (double *) &d[ n - ( double_length / logB ) ] ) = x;
+    *( (double *) &d[ n - ( DOUBLE_LENGTH / logB ) ] ) = x;
 
     // compute length l of integer
     std::int32_t length_in_bits = exponent( x ) + 1;
     std::int32_t l              = ( length_in_bits + logB - 1 ) / logB;
 
     // shift sign & exponent out but keep Space for implicit 1 bit
-    const std::int32_t left_shift_count = sign_length + exponent_length - 1;
+    const std::int32_t left_shift_count = SIGN_LENGTH + EXPONENT_LENGTH - 1;
     shift_left( d, n, left_shift_count );
 
     // add implicit 1 bit
@@ -1278,9 +1278,10 @@ void IntegerOps::string_to_Integer( const char *s, std::int32_t base, Integer &z
 
 void IntegerOps::Integer_to_string( Integer &x, std::int32_t base, char *s ) {
 
-    st_assert( 2 <= base and base <= maxD, "illegal base" );
-    Integer t;
+    st_assert( 2 <= base and base <= MAX_DIGITS, "illegal base" );
     st_assert( x.size_in_bytes() <= 10001 * sizeof( Digit ), "temporary array too small" );
+
+    Integer t;
     copy( x, t );
 
     // convert t into s (destructive)

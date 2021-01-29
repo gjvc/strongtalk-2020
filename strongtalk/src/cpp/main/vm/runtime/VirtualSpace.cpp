@@ -122,8 +122,8 @@ void VirtualSpace::print() {
     spdlog::info( " - uncommitted_size() [{}]", uncommitted_size() );
     spdlog::info( " - committed_size() [{}]", committed_size() );
     spdlog::info( " - reserved_size() [{}]", reserved_size() );
-    spdlog::info( " - [low, high]: [0x%lx, 0x%lx]", low(), high() );
-    spdlog::info( " - [low_b, high_b]: [0x%lx, 0x%lx]", low_boundary(), high_boundary() );
+    spdlog::info( " - [low, high]: [0x{0:x}, 0x{0:x}]", low(), high() );
+    spdlog::info( " - [low_boundary, high_boundary]: [0x{0:x}, 0x{0:x}", low_boundary(), high_boundary() );
 }
 
 
@@ -152,7 +152,7 @@ void VirtualSpaces::remove( VirtualSpace *sp ) {
 
 
 std::int32_t VirtualSpaces::committed_size() {
-    std::int32_t        total = 0;
+    std::int32_t       total = 0;
     for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->committed_size();
     return total;
@@ -160,7 +160,7 @@ std::int32_t VirtualSpaces::committed_size() {
 
 
 std::int32_t VirtualSpaces::reserved_size() {
-    std::int32_t        total = 0;
+    std::int32_t       total = 0;
     for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->reserved_size();
     return total;
@@ -168,7 +168,7 @@ std::int32_t VirtualSpaces::reserved_size() {
 
 
 std::int32_t VirtualSpaces::uncommitted_size() {
-    std::int32_t        total = 0;
+    std::int32_t       total = 0;
     for ( VirtualSpace *p    = head; p; p = p->next )
         total += p->uncommitted_size();
     return total;

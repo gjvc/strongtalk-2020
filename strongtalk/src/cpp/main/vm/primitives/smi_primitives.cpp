@@ -4,7 +4,7 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitives/smi_primitives.hpp"
 #include "vm/memory/vmSymbols.hpp"
@@ -147,8 +147,8 @@ PRIM_DECL_1( smiOopPrimitives::asObject, Oop receiver ) {
     PROLOGUE_1( "asObject", receiver );
     ASSERT_RECEIVER;
     std::int32_t id = SMIOop( receiver )->value();
-    if ( objectIDTable::is_index_ok( id ) )
-        return objectIDTable::at( id );
+    if ( ObjectIDTable::is_index_ok( id ) )
+        return ObjectIDTable::at( id );
     return markSymbol( vmSymbols::index_not_valid() );
 }
 

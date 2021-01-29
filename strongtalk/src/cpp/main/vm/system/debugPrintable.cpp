@@ -14,7 +14,7 @@
 #include "vm/oops/Klass.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/memory/oopFactory.hpp"
@@ -156,8 +156,8 @@ void pd() { // print stack
 
 void oat( std::int32_t index ) {
     Command c( "oat" );
-    if ( objectIDTable::is_index_ok( index ) ) {
-        Oop obj = objectIDTable::at( index );
+    if ( ObjectIDTable::is_index_ok( index ) ) {
+        Oop obj = ObjectIDTable::at( index );
         obj->print();
     } else {
         spdlog::info( "index {} out of bounds", index );

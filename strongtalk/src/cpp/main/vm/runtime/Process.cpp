@@ -1691,8 +1691,3 @@ void trace_stack( std::int32_t thread_id ) {
     if ( process->is_deltaProcess() )
         ( (DeltaProcess *) process )->trace_stack();
 }
-
-
-//
-//#pragma clang diagnostic pop
-//

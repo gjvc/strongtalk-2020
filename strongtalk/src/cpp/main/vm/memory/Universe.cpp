@@ -28,7 +28,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/utilities/EventLog.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/memory/WaterMark.hpp"
 
@@ -134,7 +134,7 @@ void Universe::genesis() {
 
 
 void Universe::cleanup_after_bootstrap() {
-    objectIDTable::cleanup_after_bootstrap();
+    ObjectIDTable::cleanup_after_bootstrap();
 
     Universe::_callBack_receiver = nilObject();
     Universe::_callBack_selector = SymbolOop( nilObject() );

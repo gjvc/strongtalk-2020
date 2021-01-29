@@ -16,7 +16,7 @@
 #include "vm/oops/WeakArrayKlass.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/SlidingSystemAverage.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
@@ -201,7 +201,7 @@ PRIM_DECL_1( oopPrimitives::printValue, Oop receiver ) {
 
 PRIM_DECL_1( oopPrimitives::asObjectID, Oop receiver ) {
     PROLOGUE_1( "asObjectID", receiver )
-    return SMIOop( objectIDTable::insert( receiver ) );
+    return SMIOop( ObjectIDTable::insert( receiver ) );
 }
 
 

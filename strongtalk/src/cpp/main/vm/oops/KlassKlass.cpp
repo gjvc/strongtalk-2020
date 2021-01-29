@@ -5,7 +5,7 @@
 
 #include "vm/oops/KlassKlass.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
 

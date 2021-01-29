@@ -10,7 +10,7 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 
 
-class objectIDTable : AllStatic {
+class ObjectIDTable : AllStatic {
 
 private:
     static ObjectArrayOop array();

@@ -13,7 +13,8 @@
 
 // https://blog.kowalczyk.info/article/j/guide-to-predefined-macros-in-c-compilers-gcc-clang-msvc-etc..html
 
-#include "vm/system/gnu.hpp"
+#include "vm/system/gnu-mingw32.hpp"
+#include "vm/system/llvm.hpp"
 #include "vm/system/msvc.hpp"
 
 
@@ -28,6 +29,7 @@
 #define SPDLOG_COMPILED_LIB
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/fmt/bundled/printf.h>
 
 
@@ -63,6 +65,7 @@ namespace strongtalk::vm {
     }
 
 };
+
 
 #define LOG_INFO( MESSAGE, ... ) strongtalk::vm::Log::Info(MESSAGE, ##__VA_ARGS__)
 

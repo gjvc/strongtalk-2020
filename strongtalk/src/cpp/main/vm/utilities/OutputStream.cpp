@@ -7,6 +7,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/memory/oopFactory.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/Console.hpp"
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #define SPDLOG_DEBUG_ON
@@ -170,27 +171,4 @@ void FileOutputStream::put( char c ) {
 
 FileOutputStream::~FileOutputStream() {
     _file.close();
-}
-
-
-void console_init() {
-    if ( _console )
-        return;
-    _console = new( true ) ConsoleOutputStream;
-    spdlog::info( "%system-init:  ConsoleOutputStream-open" );
-}
-
-
-void logging_init() {
-
-    auto console = spdlog::stdout_color_mt( "console" );
-    spdlog::set_level( spdlog::level::debug );
-
-    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S [%l] [%t] - <%s>|<%#>|<%!>,%v" );
-
-    spdlog::set_pattern( "[source %s] [function %!] [line %#] %v" );
-    spdlog::set_default_logger( console );
-
-    spdlog::info( "%logging-init: hello-world" );
-
 }

@@ -6,7 +6,7 @@
 
 #include "vm/system/os.hpp"
 #include "vm/runtime/evaluator.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
@@ -272,11 +272,11 @@ bool TokenStream::is_table_entry( Oop *addr ) {
     std::int32_t           value;
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
-        if ( not objectIDTable::is_index_ok( value ) ) {
+        if ( not ObjectIDTable::is_index_ok( value ) ) {
             spdlog::info( "Could not find index {} in object table.", value );
             return true;
         }
-        *addr = objectIDTable::at( value );
+        *addr = ObjectIDTable::at( value );
         return true;
     }
     return false;

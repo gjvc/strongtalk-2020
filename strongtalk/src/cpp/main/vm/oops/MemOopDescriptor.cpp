@@ -10,7 +10,7 @@
 #include "vm/memory/Closure.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/utilities/OutputStream.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 
 
 MemOop as_memOop( void *p ) {
@@ -174,7 +174,7 @@ void MemOopDescriptor::print_on( ConsoleOutputStream *stream ) {
 
 void MemOopDescriptor::print_id_on( ConsoleOutputStream *stream ) {
     std::int32_t id;
-    if ( garbageCollectionInProgress or not( id = objectIDTable::insert( MemOop( this ) ) ) )
+    if ( garbageCollectionInProgress or not( id = ObjectIDTable::insert( MemOop( this ) ) ) )
         stream->print( "(%#-6lx)", addr() );
     else
         stream->print( "%d", id );

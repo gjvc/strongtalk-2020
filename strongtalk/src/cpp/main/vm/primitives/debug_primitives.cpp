@@ -5,7 +5,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/os.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/primitives/smi_primitives.hpp"
 #include "vm/memory/vmSymbols.hpp"

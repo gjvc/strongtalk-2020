@@ -13,7 +13,7 @@
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/primitives/oop_primitives.hpp"
-#include "vm/utilities/objectIDTable.hpp"
+#include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/Handle.hpp"
