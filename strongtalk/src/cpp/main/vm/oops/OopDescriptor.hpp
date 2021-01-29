@@ -127,7 +127,7 @@ public:
     void print_value();
 
     // return the print strings
-    char *print_string();
+    const char *print_string();
 
     char *print_value_string();
 

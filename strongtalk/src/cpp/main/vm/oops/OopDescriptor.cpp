@@ -57,7 +57,7 @@ void OopDescriptor::print_value() {
 }
 
 
-char *OopDescriptor::print_string() {
+const char *OopDescriptor::print_string() {
     StringOutputStream *stream = new StringOutputStream( 50 );
     print_on( stream );
     return stream->as_string();

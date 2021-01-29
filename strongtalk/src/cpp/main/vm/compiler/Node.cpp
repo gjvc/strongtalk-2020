@@ -2234,18 +2234,23 @@ bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, b
 
 
 bool TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
-    bool res;
+
+    bool res{ false };
+
     if ( u == _srcUse ) {
         if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->is_smi() )
             _arg1IsInt = true;
         CP_HELPER( _src, _srcUse, res = );
+
     } else if ( u == _operUse ) {
         if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->is_smi() )
             _arg2IsInt = true;
         CP_HELPER( _oper, _operUse, res = );
+
     } else {
         st_fatal( "copyPropagate: not the source use" );
     }
+
     removeFailureIfPossible();
     return res;
 }
@@ -2526,7 +2531,7 @@ SimpleBitVector CallNode::trashedMask() {
 // computeEscapingBlocks: find escaping blocks
 // ==================================================================================
 
-void computeEscapingBlocks( Node *n, PseudoRegister *src, GrowableArray<BlockPseudoRegister *> *l, char *msg ) {
+void computeEscapingBlocks( Node *n, PseudoRegister *src, GrowableArray<BlockPseudoRegister *> *l, const char *msg ) {
     // helper function for computing exposed blocks
     if ( src->isBlockPseudoRegister() ) {
         BlockPseudoRegister *r = (BlockPseudoRegister *) src;
@@ -2901,7 +2906,7 @@ static std::int32_t id_of( Node *node ) {
 }
 
 
-char *PrologueNode::print_string( char *buf, bool printAddr ) const {
+const char *PrologueNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Prologue" );
     if ( printAddr )
@@ -2910,7 +2915,7 @@ char *PrologueNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *InterruptCheckNode::print_string( char *buf, bool printAddr ) const {
+const char *InterruptCheckNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InterruptCheckNode" );
     if ( printAddr )
@@ -2919,7 +2924,7 @@ char *InterruptCheckNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *LoadOffsetNode::print_string( char *buf, bool printAddr ) const {
+const char *LoadOffsetNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadOffset %s := %s[0x{0:x}]", _dest->safeName(), _src->safeName(), _offset );
     if ( printAddr )
@@ -2928,7 +2933,7 @@ char *LoadOffsetNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *LoadIntNode::print_string( char *buf, bool printAddr ) const {
+const char *LoadIntNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadInt %s := 0x{0:x}", _dest->safeName(), _value );
     if ( printAddr )
@@ -2937,7 +2942,7 @@ char *LoadIntNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *LoadUplevelNode::print_string( char *buf, bool printAddr ) const {
+const char *LoadUplevelNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadUpLevel %s := %s^%d[%d]", _dest->safeName(), _context0->safeName(), _nofLevels, _offset );
     if ( printAddr )
@@ -2946,7 +2951,7 @@ char *LoadUplevelNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *StoreOffsetNode::print_string( char *buf, bool printAddr ) const {
+const char *StoreOffsetNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "StoreOffset %s[0x{0:x}] := %s", _base->safeName(), _offset, _src->safeName() );
     if ( printAddr )
@@ -2955,7 +2960,7 @@ char *StoreOffsetNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *StoreUplevelNode::print_string( char *buf, bool printAddr ) const {
+const char *StoreUplevelNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "StoreUpLevel %s^%d[%d] := %s", _context0->safeName(), _nofLevels, _offset, _src->safeName() );
     if ( printAddr )
@@ -2964,7 +2969,7 @@ char *StoreUplevelNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *AssignNode::print_string( char *buf, bool printAddr ) const {
+const char *AssignNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
@@ -2973,7 +2978,7 @@ char *AssignNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *SendNode::print_string( char *buf, bool printAddr ) const {
+const char *SendNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Send %s NonLocalReturn %ld ", _key->print_string(), id_of( nlrTestPoint() ) );
     if ( printAddr )
@@ -2982,7 +2987,7 @@ char *SendNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *PrimitiveNode::print_string( char *buf, bool printAddr ) const {
+const char *PrimitiveNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "PrimCall _%s NonLocalReturn %ld", _pdesc->name(), id_of( nlrTestPoint() ) );
     if ( printAddr )
@@ -2991,7 +2996,7 @@ char *PrimitiveNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *DLLNode::print_string( char *buf, bool printAddr ) const {
+const char *DLLNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DLLCall <%s, %s> NonLocalReturn %ld", _dll_name->as_string(), _function_name->as_string(), id_of( nlrTestPoint() ) );
     if ( printAddr )
@@ -3000,7 +3005,7 @@ char *DLLNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *BlockCreateNode::print_string( char *buf, bool printAddr ) const {
+const char *BlockCreateNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockCreate %s", _dest->safeName() );
     if ( printAddr )
@@ -3009,7 +3014,7 @@ char *BlockCreateNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *BlockMaterializeNode::print_string( char *buf, bool printAddr ) const {
+const char *BlockMaterializeNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockMaterialize %s", _dest->safeName() );
     if ( printAddr )
@@ -3018,7 +3023,7 @@ char *BlockMaterializeNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *InlinedReturnNode::print_string( char *buf, bool printAddr ) const {
+const char *InlinedReturnNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InlinedReturn %s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
@@ -3027,7 +3032,7 @@ char *InlinedReturnNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *NonLocalReturnSetupNode::print_string( char *buf, bool printAddr ) const {
+const char *NonLocalReturnSetupNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturneturn %s := %s", _dest->safeName(), _src->safeName() );
     if ( printAddr )
@@ -3036,7 +3041,7 @@ char *NonLocalReturnSetupNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *NonLocalReturnContinuationNode::print_string( char *buf, bool printAddr ) const {
+const char *NonLocalReturnContinuationNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturn Continuation" );
     if ( printAddr )
@@ -3045,7 +3050,7 @@ char *NonLocalReturnContinuationNode::print_string( char *buf, bool printAddr ) 
 }
 
 
-char *ReturnNode::print_string( char *buf, bool printAddr ) const {
+const char *ReturnNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "MethodReturn  %s", _src->safeName() );
     if ( printAddr )
@@ -3054,7 +3059,7 @@ char *ReturnNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *NonLocalReturnTestNode::print_string( char *buf, bool printAddr ) const {
+const char *NonLocalReturnTestNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturnTest  N%ld N%ld", id_of( next1() ), id_of( next() ) );
     if ( printAddr )
@@ -3068,7 +3073,7 @@ char *ArithNode::opName() const {
 }
 
 
-char *ArithRRNode::print_string( char *buf, bool printAddr ) const {
+const char *ArithRRNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
     if ( printAddr )
@@ -3077,7 +3082,7 @@ char *ArithRRNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *FloatArithRRNode::print_string( char *buf, bool printAddr ) const {
+const char *FloatArithRRNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
     if ( printAddr )
@@ -3086,7 +3091,7 @@ char *FloatArithRRNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *FloatUnaryArithNode::print_string( char *buf, bool printAddr ) const {
+const char *FloatUnaryArithNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s", _dest->safeName(), opName(), _src->safeName() );
     if ( printAddr )
@@ -3095,7 +3100,7 @@ char *FloatUnaryArithNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *TArithRRNode::print_string( char *buf, bool printAddr ) const {
+const char *TArithRRNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::int32_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
     if ( printAddr )
@@ -3104,7 +3109,7 @@ char *TArithRRNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ArithRCNode::print_string( char *buf, bool printAddr ) const {
+const char *ArithRCNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s 0x{0:x}", _dest->safeName(), _src->safeName(), opName(), _oper );
     if ( printAddr )
@@ -3113,7 +3118,7 @@ char *ArithRCNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *BranchNode::print_string( char *buf, bool printAddr ) const {
+const char *BranchNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::int32_t>( _op ) ], id_of( next1() ), id_of( next() ) );
     if ( printAddr )
@@ -3122,7 +3127,7 @@ char *BranchNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *TypeTestNode::print_string( char *buf, bool printAddr ) const {
+const char *TypeTestNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf( buf, "TypeTest %s, ", _src->safeName() );
     for ( std::int32_t i = 1; i <= _classes->length(); i++ ) {
@@ -3137,7 +3142,7 @@ char *TypeTestNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ArrayAtNode::print_string( char *buf, bool printAddr ) const {
+const char *ArrayAtNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAt %s := %s[%s]", _dest->safeName(), _src->safeName(), _arg->safeName() );
     if ( printAddr )
@@ -3146,7 +3151,7 @@ char *ArrayAtNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ArrayAtPutNode::print_string( char *buf, bool printAddr ) const {
+const char *ArrayAtPutNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAtPut %s[%s] := %s", _src->safeName(), _arg->safeName(), elem->safeName() );
     if ( printAddr )
@@ -3155,7 +3160,7 @@ char *ArrayAtPutNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *FixedCodeNode::print_string( char *buf, bool printAddr ) const {
+const char *FixedCodeNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DeadEnd" );
     if ( printAddr )
@@ -3173,7 +3178,7 @@ static void printPrevNodes( Node *n ) {
 }
 
 
-char *MergeNode::print_string( char *buf, bool printAddr ) const {
+const char *MergeNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf( buf, "Merge " );
     prevsLen      = _prevs->length();
@@ -3187,7 +3192,7 @@ char *MergeNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *LoopHeaderNode::print_string( char *buf, bool printAddr ) const {
+const char *LoopHeaderNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf( buf, "LoopHeader " );
     if ( _activated ) {
@@ -3220,7 +3225,7 @@ char *LoopHeaderNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ContextCreateNode::print_string( char *buf, bool printAddr ) const {
+const char *ContextCreateNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Create Context %s", _dest->safeName() );
     if ( printAddr )
@@ -3229,7 +3234,7 @@ char *ContextCreateNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ContextInitNode::print_string( char *buf, bool printAddr ) const {
+const char *ContextInitNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf( buf, "Initialize context " );
     if ( _src == nullptr ) {
@@ -3249,7 +3254,7 @@ char *ContextInitNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *ContextZapNode::print_string( char *buf, bool printAddr ) const {
+const char *ContextZapNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Zap Context %s", isActive() ? context()->safeName() : "- inactive" );
     if ( printAddr )
@@ -3258,7 +3263,7 @@ char *ContextZapNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *InlinedPrimitiveNode::print_string( char *buf, bool printAddr ) const {
+const char *InlinedPrimitiveNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf( buf, "%s := ", _dest->safeName() );
     char *op_name;
@@ -3286,11 +3291,11 @@ char *InlinedPrimitiveNode::print_string( char *buf, bool printAddr ) const {
     my_sprintf_len( buf, b + PrintStringLen - buf, ")" );
     if ( printAddr )
         my_sprintf( buf, "((InlinedPrimitiveNode*)0x{0:x})", this );
-    return b;
+    return const_cast<char*>( b );
 }
 
 
-char *UncommonNode::print_string( char *buf, bool printAddr ) const {
+const char *UncommonNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonBranch" );
     if ( printAddr )
@@ -3299,7 +3304,7 @@ char *UncommonNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *UncommonSendNode::print_string( char *buf, bool printAddr ) const {
+const char *UncommonSendNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonSend(%d arg%s)", _argCount, _argCount not_eq 1 ? "s" : "" );
     if ( printAddr )
@@ -3308,7 +3313,7 @@ char *UncommonSendNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *NopNode::print_string( char *buf, bool printAddr ) const {
+const char *NopNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Nop" );
     if ( printAddr )
@@ -3317,7 +3322,7 @@ char *NopNode::print_string( char *buf, bool printAddr ) const {
 }
 
 
-char *CommentNode::print_string( char *buf, bool printAddr ) const {
+const char *CommentNode::print_string( char *buf, bool printAddr ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "'%s' ", comment );
     if ( printAddr )
