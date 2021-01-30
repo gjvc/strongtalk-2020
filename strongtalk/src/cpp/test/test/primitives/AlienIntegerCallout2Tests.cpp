@@ -84,15 +84,15 @@ protected:
     }
 
 
-    HeapResourceMark *rm;
+    HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
-    PersistentHandle *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle *directAlien, *invalidFunctionAlien;
-    SMIOop                         smi0, smi1, smim1;
-    static constexpr std::int32_t           argCount = 2;
-    std::array<void *, argCount>   intCalloutFunctions;
-    std::array<void *, argCount>   intPointerCalloutFunctions;
-    char                           address[8];
+    PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
+    PersistentHandle                   *directAlien, *invalidFunctionAlien;
+    SMIOop                             smi0, smi1, smim1;
+    static constexpr std::int32_t      argCount = 2;
+    std::array<void *, argCount>       intCalloutFunctions;
+    std::array<void *, argCount>       intPointerCalloutFunctions;
+    char                               address[8];
 
 
     void allocateAlien( PersistentHandle *&alienHandle, std::int32_t arraySize, std::int32_t alienSize, void *ptr = nullptr ) {
@@ -114,9 +114,9 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
-        char   text[200];
-        bool ok;
-        std::int32_t    actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
+        char         text[200];
+        bool         ok;
+        std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
         EXPECT_TRUE( actual == expected ) << text;
@@ -136,11 +136,11 @@ protected:
 
 
     Oop asOop( std::int32_t value ) {
-        std::int32_t          size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
+        std::int32_t size     = IntegerOps::int_to_Integer_result_size_in_bytes( value );
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool ok;
-        Oop    result         = valueOop->number().as_smi( ok );
+        Oop  result           = valueOop->number().as_smi( ok );
         return ok ? result : valueOop;
     }
 

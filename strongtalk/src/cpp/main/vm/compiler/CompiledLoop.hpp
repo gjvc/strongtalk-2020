@@ -16,20 +16,20 @@
 // allocation within a loop, plus integer-specific optimizations (removing tag checks and bound checks).
 
 // a candidate for register allocation within a loop
-class LoopRegCandidate : public PrintableResourceObject {
+class LoopseudoRegisterCandidate : public PrintableResourceObject {
 
 private:
     PseudoRegister *_pseudoRegister;
     std::int32_t   _nuses, _ndefs;
 
 public:
-    LoopRegCandidate( PseudoRegister *r ) {
+    LoopseudoRegisterCandidate( PseudoRegister *r ) {
         _pseudoRegister = r;
         _nuses          = _ndefs = 0;
     }
 
 
-    PseudoRegister *preg() const {
+    PseudoRegister *pseudoRegister() const {
         return _pseudoRegister;
     }
 

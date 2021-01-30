@@ -109,7 +109,7 @@ public:
 public:
 
     TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool allocates_compiled_context ) :
-            ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ) {
+        ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ) {
         _receiverLocation = receiver_location;
         _receiverKlass    = receiver_klass;
     }

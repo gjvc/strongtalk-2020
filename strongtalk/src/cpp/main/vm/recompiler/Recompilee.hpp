@@ -60,7 +60,7 @@ private:
 
 public:
     InterpretedRecompilee( RecompilerFrame *rf, LookupKey *k, MethodOop m ) :
-            Recompilee( rf ) {
+        Recompilee( rf ) {
         _key    = k;
         _method = m;
     }
@@ -89,7 +89,7 @@ private:
 
 public:
     CompiledRecompilee( RecompilerFrame *rf, NativeMethod *nm ) :
-            Recompilee( rf ) {
+        Recompilee( rf ) {
         _nativeMethod = nm;
     }
 

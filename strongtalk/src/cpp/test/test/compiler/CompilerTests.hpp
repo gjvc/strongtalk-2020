@@ -17,8 +17,8 @@ class CompilerTests : public ::testing::Test {
 protected:
 
     HeapResourceMark *rm;
-    std::int32_t count;
-    NativeMethod *seed;
+    std::int32_t     count;
+    NativeMethod     *seed;
 
     void SetUp() override;
     void TearDown() override;

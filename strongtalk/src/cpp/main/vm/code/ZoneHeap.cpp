@@ -114,7 +114,14 @@ bool ChunkKlass::isValid() {
     } else {
         std::uint8_t *e   = next()->asByte() - 1;
         std::int32_t ovfl = isUsed() ? static_cast<std::int32_t>( chunkState::usedOvfl ) : static_cast<std::int32_t>( chunkState::unusedOvfl );
-        ok = p[ 0 ] == e[ 0 ] and ( p[ 0 ] not_eq ovfl or p[ 1 ] == e[ -3 ] and p[ 2 ] == e[ -2 ] and p[ 3 ] == e[ -1 ] );
+        ok = p[ 0 ] == e[ 0 ] and (
+            ( p[ 0 ] not_eq ovfl ) or
+            (
+                ( p[ 1 ] == e[ -3 ] ) and
+                ( p[ 2 ] == e[ -2 ] ) and
+                ( p[ 3 ] == e[ -1 ] )
+            )
+        );
     }
     return ok;
 }

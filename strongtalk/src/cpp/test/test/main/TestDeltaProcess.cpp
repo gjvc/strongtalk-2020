@@ -58,7 +58,7 @@ void TestDeltaProcess::addToProcesses() {
 
 
 TestDeltaProcess::TestDeltaProcess() :
-        DeltaProcess( nullptr, nullptr ) {
+    DeltaProcess( nullptr, nullptr ) {
     std::int32_t ignore;
     Processes::remove( this );
     os::terminate_thread( _thread ); // don't want to launch delta!
@@ -73,7 +73,7 @@ TestDeltaProcess::TestDeltaProcess() :
 
 
 TestDeltaProcess::TestDeltaProcess( fn launchfn ) :
-        DeltaProcess( nullptr, nullptr ) {
+    DeltaProcess( nullptr, nullptr ) {
 
     std::int32_t ignore;
     Processes::remove( this );

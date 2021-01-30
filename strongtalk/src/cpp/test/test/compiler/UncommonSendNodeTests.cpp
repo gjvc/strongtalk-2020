@@ -112,7 +112,7 @@ TEST_F( UncommonSendNodeTests, verifyShouldCallErrorWhenMoreArgsThanExpressions 
     nop->append( node );
     char buffer[2048];
 
-    sprintf( buffer, "Too few expressions on stack for ((UncommonSendNode*)0x{0:x}): required %d, but got %d", std::int32_t( node ), 1, 0 );
+    sprintf( buffer, "Too few expressions on stack for ((UncommonSendNode*)0x%08x): required %d, but got %d", std::int32_t( node ), 1, 0 );
     BasicBlock *bb = new BasicBlock( nop, node, 0 );
     node->setBasicBlock( bb );
     node->verify();
@@ -132,7 +132,7 @@ TEST_F( UncommonSendNodeTests, toStringShouldReturnFormattedString ) {
 TEST_F( UncommonSendNodeTests, toStringShouldReturnFormattedStringWithAddress ) {
     node = NodeFactory::UncommonSendNode( exprStack, 1, 1 );
     char expected[100];
-    sprintf( expected, "UncommonSend(1 arg)                     (UncommonSendNode*)0x{0:x})", std::int32_t( node ) );
+    sprintf( expected, "UncommonSend(1 arg)                     (UncommonSendNode*)0x%08x)", std::int32_t( node ) );
     char buffer[100];
     node->toString( buffer );
     EXPECT_EQ( 0, strcmp( expected, buffer ) ) << buffer;
@@ -145,7 +145,7 @@ TEST_F( UncommonSendNodeTests, makeUsesShouldAddUseForOneArgument ) {
     Node *nop = NodeFactory::createAndRegisterNode<NopNode>();
     node = NodeFactory::UncommonSendNode( exprStack, 1, 1 );
     nop->append( node );
-    bbIterator->pregTable = new GrowableArray<PseudoRegister *>;
+    bbIterator->pseudoRegisterTable = new GrowableArray<PseudoRegister *>;
     bb = new BasicBlock( nop, node, 2 );
     node->setBasicBlock( bb );
     ASSERT_TRUE( bb->duInfo.info == nullptr );
@@ -163,7 +163,7 @@ TEST_F( UncommonSendNodeTests, makeUsesShouldAddUseForTwoArguments ) {
     Node *nop = NodeFactory::createAndRegisterNode<NopNode>();
     node = NodeFactory::UncommonSendNode( exprStack, 1, 2 );
     nop->append( node );
-    bbIterator->pregTable = new GrowableArray<PseudoRegister *>;
+    bbIterator->pseudoRegisterTable = new GrowableArray<PseudoRegister *>;
     bb = new BasicBlock( nop, node, 2 );
     node->setBasicBlock( bb );
     ASSERT_TRUE                    ( bb->duInfo.info == nullptr );

@@ -20,12 +20,12 @@ Location Location::RESULT_OF_NON_LOCAL_RETURN = Location::specialLocation( 4 );
 Location Location::TOP_OF_FLOAT_STACK         = Location::specialLocation( 5 );    // only used if UseFPUStack is true
 
 static std::array<const char *, 6> specialLocationNames{
-        "ILLEGAL_LOCATION",             //
-        "UNALLOCATED_LOCATION",         //
-        "NO_REGISTER",                  //
-        "TOP_OF_STACK",                 //
-        "RESULT_OF_NON_LOCAL_RETURN",   //
-        "TOP_OF_FLOAT_STACK"            //
+    "ILLEGAL_LOCATION",             //
+    "UNALLOCATED_LOCATION",         //
+    "NO_REGISTER",                  //
+    "TOP_OF_STACK",                 //
+    "RESULT_OF_NON_LOCAL_RETURN",   //
+    "TOP_OF_FLOAT_STACK"            //
 };
 
 

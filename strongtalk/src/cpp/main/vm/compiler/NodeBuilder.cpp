@@ -101,7 +101,7 @@ GrowableArray<PseudoRegister *> *NodeBuilder::copyCurrentExprStack() {
     auto         *es = new GrowableArray<PseudoRegister *>( l );
 
     for ( std::int32_t i = 0; i < l; i++ ) {
-        es->push( exprStack()->at( i )->preg() );
+        es->push( exprStack()->at( i )->pseudoRegister() );
     }
 
     return es;
@@ -225,7 +225,7 @@ void NodeBuilder::if_node( IfNode *node ) {
         constant_if_node( node, (ConstantExpression *) cond );
     } else {
         // non-constant condition
-        TypeTestNode *test = makeTestNode( node->is_ifTrue(), cond->preg() );
+        TypeTestNode *test = makeTestNode( node->is_ifTrue(), cond->pseudoRegister() );
         append( test );
         if ( node->else_code() not_eq nullptr ) {
             // with else branch
@@ -247,8 +247,8 @@ void NodeBuilder::if_node( IfNode *node ) {
                 if ( not ifResult->isNoResultExpression() ) {
                     // NB: must materialize block because it is merged with result of else branch
                     // (was bug 7/4/96 -Urs)
-                    materialize( ifResult->preg(), nullptr );
-                    append( NodeFactory::createAndRegisterNode<AssignNode>( ifResult->preg(), resultReg ) );
+                    materialize( ifResult->pseudoRegister(), nullptr );
+                    append( NodeFactory::createAndRegisterNode<AssignNode>( ifResult->pseudoRegister(), resultReg ) );
                 } else {
                     st_assert( ifEndsDead, "oops" );
                 }
@@ -261,8 +261,8 @@ void NodeBuilder::if_node( IfNode *node ) {
             if ( node->produces_result() ) {
                 elseResult = exprStack()->pop();
                 if ( not elseResult->isNoResultExpression() ) {
-                    materialize( elseResult->preg(), nullptr );
-                    append( NodeFactory::createAndRegisterNode<AssignNode>( elseResult->preg(), resultReg ) );
+                    materialize( elseResult->pseudoRegister(), nullptr );
+                    append( NodeFactory::createAndRegisterNode<AssignNode>( elseResult->pseudoRegister(), resultReg ) );
                 } else {
                     st_assert( elseEndsDead, "oops" );
                 }
@@ -312,7 +312,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
         // constant condition
         Oop c = cond->asConstantExpression()->constant();
         if ( c == trueObject or c == falseObject ) {
-            if ( node->is_and() and c == trueObject or node->is_or() and c == falseObject ) {
+            if ( ( node->is_and() and c == trueObject ) or ( node->is_or() and c == falseObject ) ) {
                 generate_subinterval( node->expr_code(), true );
                 // result of and:/or: is result of 2nd expression
                 Expression *res = exprStack()->top();
@@ -330,7 +330,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
     } else {
         // non-constant condition
         SinglyAssignedPseudoRegister *resultReg = new SinglyAssignedPseudoRegister( scope() );
-        TypeTestNode                 *test      = makeTestNode( node->is_and(), cond->preg() );
+        TypeTestNode                 *test      = makeTestNode( node->is_and(), cond->pseudoRegister() );
         append( test );
         MergeNode *condExpression = NodeFactory::createAndRegisterNode<MergeNode>( node->expr_code()->begin_byteCodeIndex() );
         MergeNode *otherwise      = NodeFactory::createAndRegisterNode<MergeNode>( node->expr_code()->begin_byteCodeIndex() );
@@ -338,7 +338,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
         test->append( 1, condExpression );
         test->append( 2, otherwise );
         setCurrent( otherwise );
-        append( NodeFactory::createAndRegisterNode<AssignNode>( cond->preg(), resultReg ) );
+        append( NodeFactory::createAndRegisterNode<AssignNode>( cond->pseudoRegister(), resultReg ) );
         append( endOfCond );
         splitMergeExpression( cond, test );        // split on result of first expression
         // evaluate second conditional expression
@@ -349,7 +349,7 @@ void NodeBuilder::cond_node( CondNode *node ) {
             exprStack()->push2nd( new NoResultExpression, scope(), resultByteCodeIndex );    // dead code
             setCurrent( endOfCond );
         } else {
-            append( NodeFactory::createAndRegisterNode<AssignNode>( condResult->preg(), resultReg ) );
+            append( NodeFactory::createAndRegisterNode<AssignNode>( condResult->pseudoRegister(), resultReg ) );
             append( endOfCond );
             setCurrent( endOfCond );
             // end
@@ -412,7 +412,7 @@ void NodeBuilder::while_node( WhileNode *node ) {
         }
     } else {
         // non-constant condition
-        TypeTestNode *test = makeTestNode( node->is_whileTrue(), cond->preg() );
+        TypeTestNode *test = makeTestNode( node->is_whileTrue(), cond->pseudoRegister() );
         append( test );
         wloop->set_endOfCond( test );
         test->append( 1, loop );
@@ -464,7 +464,7 @@ void NodeBuilder::dll_call_node( DLLCallNode *node ) {
     // a proxy object has been pushed before the arguments, assign result
     // to its _pointer field - the proxy is also the result of the dll call
     // (since the result is NOT a Delta pointer, no store check is needed)
-    append( NodeFactory::createAndRegisterNode<StoreOffsetNode>( dcall->dest(), exprStack()->top()->preg(), pointer_no, false ) );
+    append( NodeFactory::createAndRegisterNode<StoreOffsetNode>( dcall->dest(), exprStack()->top()->pseudoRegister(), pointer_no, false ) );
 }
 
 
@@ -486,7 +486,7 @@ void NodeBuilder::push_tos() {
 
 
 void NodeBuilder::push_literal( Oop obj ) {
-    exprStack()->push( new ConstantExpression( obj, new_ConstPReg( _scope, obj ), nullptr ), scope(), scope()->byteCodeIndex() );
+    exprStack()->push( new ConstantExpression( obj, new_ConstPseudoRegister( _scope, obj ), nullptr ), scope(), scope()->byteCodeIndex() );
 }
 
 
@@ -503,7 +503,7 @@ void NodeBuilder::push_temporary( std::int32_t no ) {
     // that actually consumes the value
     st_assert( ( 0 <= no ) and ( no < _scope->nofTemporaries() ), "illegal temporary no" );
     Expression                   *temp = _scope->temporary( no );
-    PseudoRegister               *src  = temp->preg();
+    PseudoRegister               *src  = temp->pseudoRegister();
     SinglyAssignedPseudoRegister *dst  = new SinglyAssignedPseudoRegister( _scope );
     append( NodeFactory::createAndRegisterNode<AssignNode>( src, dst ) );
     exprStack()->push( temp, scope(), scope()->byteCodeIndex() );
@@ -522,7 +522,7 @@ void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool 
         // the accessed variable is in the same stack frame, in scope s
         if ( push ) {
             Expression     *contextTemp = s->contextTemporary( no );
-            PseudoRegister *src         = contextTemp->preg();
+            PseudoRegister *src         = contextTemp->pseudoRegister();
             Expression     *res;
             if ( src->isBlockPseudoRegister() ) {
                 // don't copy around blocks; see ContextInitializeNode et al.
@@ -535,9 +535,9 @@ void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool 
             exprStack()->push( res, scope(), scope()->byteCodeIndex() );
         } else {
             // store
-            PseudoRegister *src = exprStack()->top()->preg();
+            PseudoRegister *src = exprStack()->top()->pseudoRegister();
             materialize( src, nullptr );
-            PseudoRegister *dst = s->contextTemporary( no )->preg();
+            PseudoRegister *dst = s->contextTemporary( no )->pseudoRegister();
             append( NodeFactory::createAndRegisterNode<AssignNode>( src, dst ) );
         }
     } else {
@@ -558,7 +558,7 @@ void NodeBuilder::access_temporary( std::int32_t no, std::int32_t context, bool 
         } else {
             // store
             Expression     *srcExpression = exprStack()->top();
-            PseudoRegister *src           = srcExpression->preg();
+            PseudoRegister *src           = srcExpression->pseudoRegister();
             materialize( src, nullptr );
             append( NodeFactory::createAndRegisterNode<StoreUplevelNode>( src, s->context(), nofIndirections, ContextOopDescriptor::temp0_word_offset() + tempNo, nullptr, srcExpression->needsStoreCheck() ) );
         }
@@ -574,7 +574,7 @@ void NodeBuilder::push_temporary( std::int32_t no, std::int32_t context ) {
 void NodeBuilder::push_instVar( std::int32_t offset ) {
     st_assert( offset >= 0, "offset must be positive" );
     SinglyAssignedPseudoRegister *dst  = new SinglyAssignedPseudoRegister( _scope );
-    PseudoRegister               *base = _scope->self()->preg();
+    PseudoRegister               *base = _scope->self()->pseudoRegister();
 //    append( NodeFactory::LoadOffsetNode( dst, base, offset, false ) );
     append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( dst, base, offset, false ) );
     exprStack()->push( new UnknownExpression( dst, _current ), scope(), scope()->byteCodeIndex() );
@@ -586,13 +586,13 @@ void NodeBuilder::push_global( AssociationOop associationObject ) {
     if ( associationObject->is_constant() ) {
         // constant association -- can inline the constant
         Oop                 c  = associationObject->value();
-        ConstPseudoRegister *r = new_ConstPReg( _scope, c );
+        ConstPseudoRegister *r = new_ConstPseudoRegister( _scope, c );
         exprStack()->push( new ConstantExpression( c, r, nullptr ), _scope, scope()->byteCodeIndex() );
     } else {
         // Removed by Lars Bak, 4-22-96
         // if (associationObject->value()->is_klass())
         //    compiler_warning("potential performance bug: non-constant association containing klassOop");
-        ConstPseudoRegister *base = new_ConstPReg( _scope, associationObject );
+        ConstPseudoRegister *base = new_ConstPseudoRegister( _scope, associationObject );
 //        append( NodeFactory::LoadOffsetNode( dst, base, AssociationOopDescriptor::value_offset(), false ) );
         append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( dst, base, AssociationOopDescriptor::value_offset(), false ) );
         exprStack()->push( new UnknownExpression( dst, _current ), _scope, scope()->byteCodeIndex() );
@@ -601,11 +601,11 @@ void NodeBuilder::push_global( AssociationOop associationObject ) {
 
 
 void NodeBuilder::store_temporary( std::int32_t no ) {
-    PseudoRegister *src = exprStack()->top()->preg();
+    PseudoRegister *src = exprStack()->top()->pseudoRegister();
     // should check here whether src is memoized block pushed in preceding byte code;
     // if so, un-memoize it  -- fix this
     materialize( src, nullptr );
-    PseudoRegister *dst = _scope->temporary( no )->preg();
+    PseudoRegister *dst = _scope->temporary( no )->pseudoRegister();
     if ( src not_eq dst ) {
 //        append( NodeFactory::createAndRegisterNode<AssignNode>( src, dst ) );
         append( NodeFactory::createAndRegisterNode<AssignNode>( src, dst ) );
@@ -621,18 +621,18 @@ void NodeBuilder::store_temporary( std::int32_t no, std::int32_t context ) {
 void NodeBuilder::store_instVar( std::int32_t offset ) {
     st_assert( offset >= 0, "offset must be positive" );
     Expression     *srcExpression = exprStack()->top();
-    PseudoRegister *src           = srcExpression->preg();
+    PseudoRegister *src           = srcExpression->pseudoRegister();
     materialize( src, nullptr );
-    PseudoRegister *base = _scope->self()->preg();
+    PseudoRegister *base = _scope->self()->pseudoRegister();
     append( NodeFactory::createAndRegisterNode<StoreOffsetNode>( src, base, offset, srcExpression->needsStoreCheck() ) );
 }
 
 
 void NodeBuilder::store_global( AssociationOop associationObject ) {
     Expression     *srcExpression = exprStack()->top();
-    PseudoRegister *src           = srcExpression->preg();
+    PseudoRegister *src           = srcExpression->pseudoRegister();
     materialize( src, nullptr );
-    ConstPseudoRegister *base = new_ConstPReg( _scope, associationObject );
+    ConstPseudoRegister *base = new_ConstPseudoRegister( _scope, associationObject );
     append( NodeFactory::createAndRegisterNode<StoreOffsetNode>( src, base, AssociationOopDescriptor::value_offset(), srcExpression->needsStoreCheck() ) );
 }
 
@@ -650,21 +650,24 @@ void NodeBuilder::materialize( PseudoRegister *r, GrowableArray<BlockPseudoRegis
     if ( materialized == nullptr )
         return;
 
-    bool isBlockPseudoRegister = r->isBlockPseudoRegister();
-    bool contains              = materialized->contains( (BlockPseudoRegister *) r );
+//    bool isBlockPseudoRegister = r->isBlockPseudoRegister();
+//    bool contains = materialized->contains( (BlockPseudoRegister *) r );
 
     // make sure the block (and all parent blocks / uplevel-accessed blocks) exist
     // materialized is a list of blocks already materialized (nullptr if none)
     if ( r->isBlockPseudoRegister() and ( materialized == nullptr or not materialized->contains( (BlockPseudoRegister *) r ) ) ) {
         BlockPseudoRegister *blk = (BlockPseudoRegister *) r;
         append( NodeFactory::createAndRegisterNode<BlockMaterializeNode>( blk, copyCurrentExprStack() ) );
-        if ( materialized == nullptr )
+        if ( materialized == nullptr ) {
             materialized = new GrowableArray<BlockPseudoRegister *>( 5 );
+        }
+
         materialized->append( blk );
         GrowableArray<PseudoRegister *> *reads = blk->uplevelRead();
         if ( reads ) {
-            for ( std::int32_t i = reads->length() - 1; i >= 0; i-- )
+            for ( std::int32_t i = reads->length() - 1; i >= 0; i-- ) {
                 materialize( reads->at( i ), materialized );
+            }
         }
     }
 }
@@ -698,17 +701,17 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
 
     // materialize blocks
     for ( sp = first_arg; sp < limit_arg; sp++ ) {
-        ExpressionStack *temp1 = exprStack();
-        Expression      *temp2 = temp1->at( sp );
-        PseudoRegister  *pReg  = temp2->preg();
+        ExpressionStack *temp1          = exprStack();
+        Expression      *temp2          = temp1->at( sp );
+//        PseudoRegister  *pseudoRegister = temp2->pseudoRegister();
 
-        PseudoRegister *actual = exprStack()->at( sp )->preg();
+        PseudoRegister *actual = exprStack()->at( sp )->pseudoRegister();
         materialize( actual, &blocks );
     }
 
     // pass arguments
     for ( sp = first_arg; sp < limit_arg; sp++ ) {
-        PseudoRegister               *actual = exprStack()->at( sp )->preg();
+        PseudoRegister               *actual = exprStack()->at( sp )->pseudoRegister();
         SinglyAssignedPseudoRegister *formal = new SinglyAssignedPseudoRegister( _scope, Mapping::outgoingArg( sp - first_arg, nofArgs ), false, false, byteCodeIndex(), byteCodeIndex() );
         formals->append( formal );
 //        append( NodeFactory::createAndRegisterNode<AssignNode>( actual, formal ) );
@@ -725,7 +728,7 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
 
 
 void NodeBuilder::gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
-    GrowableArray<PseudoRegister *> *args = pass_arguments( exprStack()->at( exprStack()->length() - nofArgs - 1 )->preg(), nofArgs );
+    GrowableArray<PseudoRegister *> *args = pass_arguments( exprStack()->at( exprStack()->length() - nofArgs - 1 )->pseudoRegister(), nofArgs );
     SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -734,7 +737,7 @@ void NodeBuilder::gen_normal_send( SendInfo *info, std::int32_t nofArgs, SinglyA
 
 
 void NodeBuilder::gen_self_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
-    GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
+    GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->pseudoRegister(), nofArgs );
     SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), false, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -743,7 +746,7 @@ void NodeBuilder::gen_self_send( SendInfo *info, std::int32_t nofArgs, SinglyAss
 
 
 void NodeBuilder::gen_super_send( SendInfo *info, std::int32_t nofArgs, SinglyAssignedPseudoRegister *result ) {
-    GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->preg(), nofArgs );
+    GrowableArray<PseudoRegister *> *args = pass_arguments( _scope->self()->pseudoRegister(), nofArgs );
     SendNode                        *send = NodeFactory::SendNode( info->_lookupKey, scope()->nlrTestPoint(), args, copyCurrentExprStack(), true, info );
     append( send );
 //    append( NodeFactory::createAndRegisterNode<AssignNode>( send->dest(), result ) );
@@ -814,7 +817,7 @@ void NodeBuilder::method_return( std::int32_t nofArgs ) {
         _scope->addResult( result );    // make sure scope->result not_eq nullptr
     } else {
         // return TOS
-        PseudoRegister *src = result->preg();
+        PseudoRegister *src = result->pseudoRegister();
         materialize( src, nullptr );
         if ( _scope->isTop() ) {
             // real return from NativeMethod
@@ -856,7 +859,7 @@ void NodeBuilder::method_return( std::int32_t nofArgs ) {
 void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
     // assign result & return
     Expression     *resultExpression = exprStack()->pop();
-    PseudoRegister *src              = resultExpression->preg();
+    PseudoRegister *src              = resultExpression->pseudoRegister();
     materialize( src, nullptr );
     if ( scope()->isTop() ) {
         // real NonLocalReturn from NativeMethod
@@ -1025,7 +1028,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
             // ok, the path from this node is splittable
             okExprs->append( x );
         }
-        nextExpression:;
+            nextExpression:;
     }
 
     // check that no exprNode is along the path from any other exprNode to the test node
@@ -1054,7 +1057,7 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
 void NodeBuilder::allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop method ) {
     PseudoRegister *context;
     if ( type == AllocationType::tos_as_scope ) {
-        context = exprStack()->pop()->preg();
+        context = exprStack()->pop()->pseudoRegister();
     } else {
         context = _scope->context();
     }
@@ -1093,7 +1096,7 @@ void NodeBuilder::allocate_context( std::int32_t nofTemps, bool forMethod ) {
             // incoming context is passed in self's location (interpreter invariant); fix this to use different PseudoRegister
             // parent should never be used, set to 0 for debugging (note: the interpreter sets parent always to self)
             if ( incoming_info( _scope->method() ) == MethodOopDescriptor::expects_context ) {
-                parent = _scope->self()->preg();
+                parent = _scope->self()->pseudoRegister();
             } else {
                 parent = nullptr;
             }
@@ -1110,7 +1113,7 @@ void NodeBuilder::allocate_context( std::int32_t nofTemps, bool forMethod ) {
     // append context initializer and initialize with nil
     scope()->set_contextInitializer( NodeFactory::createAndRegisterNode<ContextInitNode>( creator ) );
     append( scope()->contextInitializer() );
-    ConstantExpression *nil = new ConstantExpression( nilObject, new_ConstPReg( _scope, nilObject ), nullptr );
+    ConstantExpression *nil = new ConstantExpression( nilObject, new_ConstPseudoRegister( _scope, nilObject ), nullptr );
     for ( std::int32_t i    = 0; i < nofTemps; i++ )
         scope()->contextInitializer()->initialize( i, nil );
 }
@@ -1155,7 +1158,7 @@ void NodeBuilder::set_self_via_context() {
     // allocated. Thus, for the time being, explicitly generate
     // the uplevel access node. Note: the incoming context is in the recv location!
     const std::int32_t self_no = 0; // self is always the first entry in the top context, if there
-    PseudoRegister     *reg    = _scope->self()->preg();
+    PseudoRegister     *reg    = _scope->self()->pseudoRegister();
     append( NodeFactory::createAndRegisterNode<LoadUplevelNode>( reg, reg, contextNo, ContextOopDescriptor::temp0_word_offset() + self_no, nullptr ) );
 }
 
@@ -1166,7 +1169,7 @@ Expression *NodeBuilder::copy_into_context( Expression *e, std::int32_t no ) {
         // is uplevel-accessed).
         // Must materialize it here to make sure it's created; this BlockMaterializeNode should
         // be deleted if the context is eliminated, so register it with the context.
-        BlockPseudoRegister  *block = (BlockPseudoRegister *) e->preg();
+        BlockPseudoRegister  *block = (BlockPseudoRegister *) e->pseudoRegister();
         BlockMaterializeNode *n     = NodeFactory::createAndRegisterNode<BlockMaterializeNode>( block, copyCurrentExprStack() );
         scope()->contextInitializer()->addBlockMaterializer( n );
         append( n );
@@ -1187,7 +1190,7 @@ Expression *NodeBuilder::copy_into_context( Expression *e, std::int32_t no ) {
 
 void NodeBuilder::copy_self_into_context() {
     const std::int32_t self_no               = 0; // self is always the first temporary in a context, if there
-    // caution: must create new expr/preg for self in context because the two locations must be different
+    // caution: must create new expr/pseudoRegister for self in context because the two locations must be different
     Expression         *self_expr_in_context = copy_into_context( scope()->self(), self_no );
     scope()->contextTemporariesAtPut( self_no, self_expr_in_context );
     scope()->contextInitializer()->initialize( self_no, scope()->self() );
@@ -1195,7 +1198,7 @@ void NodeBuilder::copy_self_into_context() {
 
 
 void NodeBuilder::copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
-    // caution: must create new expr/preg for arg in context because the two locations must be different
+    // caution: must create new expr/pseudoRegister for arg in context because the two locations must be different
     // i.e., arg is on stack, arg in context may be on heap
     Expression *arg_expr_in_context = copy_into_context( scope()->argument( argNo ), no );
     scope()->contextTemporariesAtPut( no, arg_expr_in_context );
@@ -1219,7 +1222,7 @@ PseudoRegister *NodeBuilder::float_at( std::int32_t fno ) {
     if ( UseFPUStack ) {
         if ( fno < scope()->nofFloatTemporaries() ) {
             // fno refers to a float temporary
-            return scope()->floatTemporary( fno )->preg();
+            return scope()->floatTemporary( fno )->pseudoRegister();
         } else {
             // fno refers to a float on the float expression stack,
             // it must refer to the top since code is generated for
@@ -1228,7 +1231,7 @@ PseudoRegister *NodeBuilder::float_at( std::int32_t fno ) {
         }
     } else {
         // intermediate expressions are treated as temporaries
-        return scope()->floatTemporary( fno )->preg();
+        return scope()->floatTemporary( fno )->pseudoRegister();
     }
 }
 
@@ -1277,7 +1280,7 @@ void NodeBuilder::float_floatify( Floats::Function f, std::int32_t fno ) {
     } else {
         // put in a type test - fix this!
     }
-    append( NodeFactory::createAndRegisterNode<FloatUnaryArithNode>( ArithOpCode::f2FloatArithOp, t->preg(), float_at( fno ) ) );
+    append( NodeFactory::createAndRegisterNode<FloatUnaryArithNode>( ArithOpCode::f2FloatArithOp, t->pseudoRegister(), float_at( fno ) ) );
 }
 
 
@@ -1289,7 +1292,7 @@ void NodeBuilder::float_move( std::int32_t to, std::int32_t from ) {
 
 void NodeBuilder::float_set( std::int32_t to, DoubleOop value ) {
     // float(to) := value
-    ConstPseudoRegister *val = new_ConstPReg( _scope, value );
+    ConstPseudoRegister *val = new_ConstPseudoRegister( _scope, value );
     append( NodeFactory::createAndRegisterNode<AssignNode>( val, float_at( to ) ) );
 }
 
@@ -1312,7 +1315,8 @@ void NodeBuilder::float_nullary( Floats::Function f, std::int32_t to ) {
 void NodeBuilder::float_unary( Floats::Function f, std::int32_t fno ) {
     // float(fno) := f(float(fno))
     // f refers to one of the functions in Floats
-    ArithOpCode op;
+
+    ArithOpCode op{ ArithOpCode::NilArithOp };
     switch ( f ) {
         case Floats::Function::abs:
             op = ArithOpCode::fAbsArithOp;
@@ -1331,15 +1335,17 @@ void NodeBuilder::float_unary( Floats::Function f, std::int32_t fno ) {
         case Floats::Function::ln: Unimplemented();
         default: st_fatal1( "bad float unary code %d", f );
     }
-    PseudoRegister *preg = float_at( fno );
-    append( NodeFactory::createAndRegisterNode<FloatUnaryArithNode>( op, preg, preg ) );
+    PseudoRegister *pseudoRegister = float_at( fno );
+    append( NodeFactory::createAndRegisterNode<FloatUnaryArithNode>( op, pseudoRegister, pseudoRegister ) );
 }
 
 
 void NodeBuilder::float_binary( Floats::Function f, std::int32_t fno ) {
+
     // float(fno) := f(float(fno), float(fno+1))
     // f refers to one of the functions in Floats
-    ArithOpCode op;
+
+    ArithOpCode op{ ArithOpCode::NilArithOp };
     switch ( f ) {
         case Floats::Function::add:
             op = ArithOpCode::fAddArithOp;
@@ -1372,7 +1378,7 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, std::int32_t fno ) {
     switch ( f ) {
         case Floats::Function::is_zero: // fall through
         case Floats::Function::is_not_zero: {
-            ConstPseudoRegister *zero = new_ConstPReg( _scope, oopFactory::new_double( 0.0 ) );
+            ConstPseudoRegister *zero = new_ConstPseudoRegister( _scope, oopFactory::new_double( 0.0 ) );
             NodeFactory::createAndRegisterNode<FloatArithRRNode>( ArithOpCode::fCmpArithOp, src, zero, new NoResultPseudoRegister( _scope ) );
             BranchOpCode cond = f == Floats::Function::is_zero ? BranchOpCode::EQBranchOp : BranchOpCode::NEBranchOp;
             _expressionStack->push( PrimitiveInliner::generate_cond( cond, this, res ), scope(), scope()->byteCodeIndex() );
@@ -1414,6 +1420,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
             break;
         default: st_fatal1( "bad float comparison code %d", f );
     }
+
     std::int32_t         mask;
     Assembler::Condition cond;
     MacroAssembler::fpu_mask_and_cond_for( cc1, mask, cond );
@@ -1422,6 +1429,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
     SinglyAssignedPseudoRegister *fpu_status = new SinglyAssignedPseudoRegister( _scope, Mapping::asLocation( eax ), false, false, byteCodeIndex(), byteCodeIndex() );
     append( NodeFactory::createAndRegisterNode<FloatArithRRNode>( ArithOpCode::fCmpArithOp, op1, op2, fpu_status ) );
     append( NodeFactory::createAndRegisterNode<ArithRCNode>( ArithOpCode::TestArithOp, fpu_status, mask, new NoResultPseudoRegister( _scope ) ) );
+
     BranchOpCode cc2;
     switch ( cond ) {
         case Assembler::Condition::zero:
@@ -1432,6 +1440,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
             break;
         default: ShouldNotReachHere();
     }
+
     SinglyAssignedPseudoRegister *res = new SinglyAssignedPseudoRegister( _scope );
     _expressionStack->push( PrimitiveInliner::generate_cond( cc2, this, res ), scope(), scope()->byteCodeIndex() );
 }

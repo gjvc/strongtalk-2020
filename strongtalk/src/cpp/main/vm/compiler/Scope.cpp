@@ -107,10 +107,10 @@ void InlinedScope::initialize( MethodOop method, KlassOop methodHolder, InlinedS
     _loops              = new GrowableArray<CompiledLoop *>( 5 );
     _typeTests          = new GrowableArray<NonTrivialNode *>( 10 );
 
-    _pregsBegSorted   = new GrowableArray<PseudoRegister *>( 5 );
-    _pregsEndSorted   = new GrowableArray<PseudoRegister *>( 5 );
-    _firstFloatIndex  = -1;        // set during float allocation
-    _hasBeenGenerated = false;
+    _pseudoRegistersBegSorted = new GrowableArray<PseudoRegister *>( 5 );
+    _pseudoRegistersEndSorted = new GrowableArray<PseudoRegister *>( 5 );
+    _firstFloatIndex          = -1;        // set during float allocation
+    _hasBeenGenerated         = false;
 
     theCompiler->nofBytesCompiled( nofBytes() );
     if ( not rs->isNullScope() and rs->method() not_eq method ) {
@@ -157,7 +157,7 @@ void BlockScope::initialize( MethodOop method, KlassOop methodHolder, Scope *p, 
                 _context = nullptr;
                 break;
             case MethodOopDescriptor::expects_self:
-                _context = self()->preg();
+                _context = self()->pseudoRegister();
                 st_fatal( "self not known yet -- fix this" );
                 break;
             case MethodOopDescriptor::expects_parameter:    // fix this -- should find which
@@ -245,7 +245,7 @@ MergeNode *InlinedScope::nlrTestPoint() {
 
 void InlinedScope::addResult( Expression *e ) {
     // e is a possible return value; add it to our return expression to keep track of all possible return types
-    st_assert( e->preg() == resultPR or resultPR == nullptr or e->isNoResultExpression(), "bad result PseudoRegister" );
+    st_assert( e->pseudoRegister() == resultPR or resultPR == nullptr or e->isNoResultExpression(), "bad result PseudoRegister" );
     if ( result == nullptr ) {
         result = e;
     } else {
@@ -262,7 +262,7 @@ void InlinedScope::initializeArguments() {
         // (self is setup by the prologue node)
         _self = new KlassExpression( KlassOop( selfKlass() ), new SinglyAssignedPseudoRegister( this, Location::UNALLOCATED_LOCATION, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex ), nullptr );
         // preallocate incoming arguments, i.e., create their expressions
-        // using SAPRegs that are already allocated
+        // using SAPseudoRegisters that are already allocated
         for ( std::int32_t i = 0; i < nofArgs; i++ ) {
             SinglyAssignedPseudoRegister *arg = new SinglyAssignedPseudoRegister( this, Mapping::incomingArg( i, nofArgs ), false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex );
             _arguments->at_put( i, new UnknownExpression( arg ) );
@@ -316,7 +316,7 @@ void InlinedScope::createTemporaries( std::int32_t nofTemps ) {
             _temporaries->at_put( i, oldTemps->at( i ) );
     }
     // initialize new temps
-    ConstPseudoRegister *nil = new_ConstPReg( this, nilObject );
+    ConstPseudoRegister *nil = new_ConstPseudoRegister( this, nilObject );
     for ( std::int32_t  i    = firstNew; i < nofTemps; i++ ) {
         PseudoRegister *r = new PseudoRegister( this );
         _temporaries->at_put( i, new UnknownExpression( r, nullptr ) );
@@ -334,8 +334,8 @@ void InlinedScope::createFloatTemporaries( std::int32_t nofFloats ) {
     _floatTemporaries = new GrowableArray<Expression *>( nofFloats, nofFloats, nullptr );
     // initialize float temps
     for ( std::int32_t i = 0; i < nofFloats; i++ ) {
-        PseudoRegister *preg = new PseudoRegister( this, Location::floatLocation( scopeID(), i ), false, false );
-        _floatTemporaries->at_put( i, new UnknownExpression( preg, nullptr ) );
+        PseudoRegister *pseudoRegister = new PseudoRegister( this, Location::floatLocation( scopeID(), i ), false, false );
+        _floatTemporaries->at_put( i, new UnknownExpression( pseudoRegister, nullptr ) );
         if ( isTop() ) {
             // floats are initialized by PrologueNode
         } else {
@@ -374,7 +374,7 @@ void InlinedScope::createContextTemporaries( std::int32_t nofTemps ) {
 
 
 void InlinedScope::contextTemporariesAtPut( std::int32_t no, Expression *e ) {
-    st_assert( not e->preg()->isSinglyAssignedPseudoRegister() or e->preg()->isBlockPseudoRegister() or ( (SinglyAssignedPseudoRegister *) e->preg() )->isInContext(), "not in context" );
+    st_assert( not e->pseudoRegister()->isSinglyAssignedPseudoRegister() or e->pseudoRegister()->isBlockPseudoRegister() or ( (SinglyAssignedPseudoRegister *) e->pseudoRegister() )->isInContext(), "not in context" );
     _contextTemporaries->at_put( no, e );
 }
 
@@ -480,21 +480,21 @@ void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *expr
 //    std::int32_t       i;
     if ( _nofSends <= 1 ) {
         // first time we're called
-        self()->preg()->_debug = true;
+        self()->pseudoRegister()->_debug = true;
 
         for ( std::int32_t i = nofArguments() - 1; i >= 0; i-- ) {
-            argument( i )->preg()->_debug = true;
+            argument( i )->pseudoRegister()->_debug = true;
         }
 
         for ( std::int32_t i = nofTemporaries() - 1; i >= 0; i-- ) {
-            temporary( i )->preg()->_debug = true;
+            temporary( i )->pseudoRegister()->_debug = true;
         }
 
         // if there's a context, mark all context variables as debug-visible too.
         GrowableArray<Expression *> *ct = contextTemporaries();
         if ( ct not_eq nullptr ) {
             for ( std::int32_t i = 0; i < ct->length(); i++ ) {
-                ct->at( i )->preg()->_debug = true;
+                ct->at( i )->pseudoRegister()->_debug = true;
             }
         }
     }
@@ -660,51 +660,51 @@ void InlinedScope::optimizeLoops() {
 
 // register allocation
 
-void InlinedScope::addToPRegsBegSorted( PseudoRegister *r ) {
+void InlinedScope::addToPseudoRegistersBegSorted( PseudoRegister *r ) {
     st_assert( PrologueByteCodeIndex <= r->begByteCodeIndex() and r->begByteCodeIndex() <= EpilogueByteCodeIndex, "illegal byteCodeIndex" );
-    st_assert( _pregsBegSorted->isEmpty() or _pregsBegSorted->last()->begByteCodeIndex() <= r->begByteCodeIndex(), "sort order wrong" );
-    _pregsBegSorted->append( r );
+    st_assert( _pseudoRegistersBegSorted->isEmpty() or _pseudoRegistersBegSorted->last()->begByteCodeIndex() <= r->begByteCodeIndex(), "sort order wrong" );
+    _pseudoRegistersBegSorted->append( r );
 }
 
 
-void InlinedScope::addToPRegsEndSorted( PseudoRegister *r ) {
+void InlinedScope::addToPseudoRegistersEndSorted( PseudoRegister *r ) {
     st_assert( PrologueByteCodeIndex <= r->endByteCodeIndex() and r->endByteCodeIndex() <= EpilogueByteCodeIndex, "illegal byteCodeIndex" );
-    st_assert( _pregsEndSorted->isEmpty() or _pregsEndSorted->last()->endByteCodeIndex() <= r->endByteCodeIndex(), "sort order wrong" );
-    _pregsEndSorted->append( r );
+    st_assert( _pseudoRegistersEndSorted->isEmpty() or _pseudoRegistersEndSorted->last()->endByteCodeIndex() <= r->endByteCodeIndex(), "sort order wrong" );
+    _pseudoRegistersEndSorted->append( r );
 }
 
 
-void InlinedScope::allocatePRegs( IntegerFreeList *f ) {
+void InlinedScope::allocatePseudoRegisters( IntegerFreeList *f ) {
     std::int32_t byteCodeIndex = PrologueByteCodeIndex;
     std::int32_t bi            = 0;
     std::int32_t si            = 0;
     std::int32_t ei            = 0;
-    std::int32_t blen          = _pregsBegSorted->length();
+    std::int32_t blen          = _pseudoRegistersBegSorted->length();
     std::int32_t slen          = _subScopes->length();
-    std::int32_t elen          = _pregsEndSorted->length();
+    std::int32_t elen          = _pseudoRegistersEndSorted->length();
     std::int32_t n             = f->allocated();
     st_assert( blen == elen, "should be the same" );
     while ( byteCodeIndex <= EpilogueByteCodeIndex ) {
         // allocate registers that begin at byteCodeIndex
-        while ( bi < blen and _pregsBegSorted->at( bi )->begByteCodeIndex() == byteCodeIndex ) {
-            _pregsBegSorted->at( bi )->allocateTo( Mapping::localTemporary( f->allocate() ) );
+        while ( bi < blen and _pseudoRegistersBegSorted->at( bi )->begByteCodeIndex() == byteCodeIndex ) {
+            _pseudoRegistersBegSorted->at( bi )->allocateTo( Mapping::localTemporary( f->allocate() ) );
             bi++;
-            st_assert( bi == blen or _pregsBegSorted->at( bi )->begByteCodeIndex() >= _pregsBegSorted->at( bi - 1 )->begByteCodeIndex(), "_pregsBegSorted not sorted" );
+            st_assert( bi == blen or _pseudoRegistersBegSorted->at( bi )->begByteCodeIndex() >= _pseudoRegistersBegSorted->at( bi - 1 )->begByteCodeIndex(), "_pseudoRegistersBegSorted not sorted" );
         }
         // allocate registers for subscopes that begin at byteCodeIndex
         while ( si < slen and _subScopes->at( si )->senderByteCodeIndex() == byteCodeIndex ) {
-            _subScopes->at( si )->allocatePRegs( f );
+            _subScopes->at( si )->allocatePseudoRegisters( f );
             si++;
             st_assert( si == slen or _subScopes->at( si )->senderByteCodeIndex() >= _subScopes->at( si - 1 )->senderByteCodeIndex(), "_subScopes not sorted" );
         }
         // release registers that end at byteCodeIndex
-        while ( ei < elen and _pregsEndSorted->at( ei )->endByteCodeIndex() == byteCodeIndex ) {
-            f->release( Mapping::localTemporaryIndex( _pregsEndSorted->at( ei )->_location ) );
+        while ( ei < elen and _pseudoRegistersEndSorted->at( ei )->endByteCodeIndex() == byteCodeIndex ) {
+            f->release( Mapping::localTemporaryIndex( _pseudoRegistersEndSorted->at( ei )->_location ) );
             ei++;
-            st_assert( ei == elen or _pregsEndSorted->at( ei )->endByteCodeIndex() >= _pregsEndSorted->at( ei - 1 )->endByteCodeIndex(), "_pregsEndSorted not sorted" );
+            st_assert( ei == elen or _pseudoRegistersEndSorted->at( ei )->endByteCodeIndex() >= _pseudoRegistersEndSorted->at( ei - 1 )->endByteCodeIndex(), "_pseudoRegistersEndSorted not sorted" );
         }
         // advance byteCodeIndex
-        byteCodeIndex = min( bi < blen ? _pregsBegSorted->at( bi )->begByteCodeIndex() : EpilogueByteCodeIndex + 1, si < slen ? _subScopes->at( si )->senderByteCodeIndex() : EpilogueByteCodeIndex + 1, ei < elen ? _pregsEndSorted->at( ei )->endByteCodeIndex() : EpilogueByteCodeIndex + 1 );
+        byteCodeIndex = min( bi < blen ? _pseudoRegistersBegSorted->at( bi )->begByteCodeIndex() : EpilogueByteCodeIndex + 1, si < slen ? _subScopes->at( si )->senderByteCodeIndex() : EpilogueByteCodeIndex + 1, ei < elen ? _pseudoRegistersEndSorted->at( ei )->endByteCodeIndex() : EpilogueByteCodeIndex + 1 );
     }
     st_assert( f->allocated() == n, "inconsistent allocation/release" );
 }
@@ -716,11 +716,11 @@ std::int32_t InlinedScope::allocateFloatTemporaries( std::int32_t firstFloatInde
     std::int32_t       nofFloatTemps             = hasFloatTemporaries() ? nofFloatTemporaries() : 0;
     // convert floatLocs into stackLocs
     for ( std::int32_t k                         = 0; k < nofFloatTemps; k++ ) {
-        PseudoRegister *preg = floatTemporary( k )->preg();
-        Location       loc   = preg->_location;
+        PseudoRegister *pseudoRegister = floatTemporary( k )->pseudoRegister();
+        Location       loc             = pseudoRegister->_location;
         st_assert( loc.scopeNo() == scopeID() and loc.floatNo() == k, "inconsistency" );
-        preg->_location = Mapping::floatTemporary( scopeID(), k );
-        st_assert( preg->_location.isStackLocation(), "must be a stack location" );
+        pseudoRegister->_location = Mapping::floatTemporary( scopeID(), k );
+        st_assert( pseudoRegister->_location.isStackLocation(), "must be a stack location" );
     }
     std::int32_t       startFloatIndex           = firstFloatIndex + nofFloatTemps;    // start index for first float in subscopes
     std::int32_t       totalNofFloatsInSubscopes = 0;
@@ -850,7 +850,7 @@ void InlinedScope::generateDebugInfo() {
         if ( isMethodScope() ) {
             _console->print( "Method: " );
             print_selector_cr( method()->selector() );
-            spdlog::info( "self: %s", _self->preg()->name() );
+            spdlog::info( "self: %s", _self->pseudoRegister()->name() );
         } else {
             MethodOop m;
             _console->print( "Method: " );
@@ -871,30 +871,30 @@ void InlinedScope::generateDebugInfo() {
         if ( hasTemporaries() ) {
             len = _temporaries->length();
             for ( std::int32_t i = 0; i < len; i++ ) {
-                PseudoRegister *preg = _temporaries->at( i )->preg();
-                rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
+                PseudoRegister *pseudoRegister = _temporaries->at( i )->pseudoRegister();
+                rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "temp[%2d]: %s", i, preg->name() );
+                    spdlog::info( "temp[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // float temporaries
         if ( hasFloatTemporaries() ) {
             len                  = _floatTemporaries->length();
             for ( std::int32_t i = 0; i < len; i++ ) {
-                PseudoRegister *preg = _floatTemporaries->at( i )->preg();
-                rec->addTemporary( _scopeInfo, i, preg->createLogicalAddress() );
+                PseudoRegister *pseudoRegister = _floatTemporaries->at( i )->pseudoRegister();
+                rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "float[%2d]: %s", i, preg->name() );
+                    spdlog::info( "float[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // context temporaries
         if ( allocatesInterpretedContext() ) {
             len                  = _contextTemporaries->length();
             for ( std::int32_t i = 0; i < len; i++ ) {
-                PseudoRegister *preg = _contextTemporaries->at( i )->preg();
-                rec->addContextTemporary( _scopeInfo, i, preg->createLogicalAddress() );
+                PseudoRegister *pseudoRegister = _contextTemporaries->at( i )->pseudoRegister();
+                rec->addContextTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "c_temp[%2d]: %s", i, preg->name() );
+                    spdlog::info( "c_temp[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // expr stack
@@ -902,7 +902,7 @@ void InlinedScope::generateDebugInfo() {
         for ( std::int32_t i = 0; i < len; i++ ) {
             Expression *elem = _exprStackElems->at( i );
             if ( elem not_eq nullptr ) {
-                PseudoRegister *r = elem->preg()->cpReg();
+                PseudoRegister *r = elem->pseudoRegister()->cpseudoRegister();
                 if ( r->scope()->isSenderOrSame( this ) ) {
                     // Note: Is it still needed to create this info here, since the
                     //       PseudoRegister locations may change over time and thus produce more
@@ -935,7 +935,7 @@ void InlinedScope::generateDebugInfo() {
 void MethodScope::generateDebugInfo() {
     ScopeDescriptorRecorder *rec    = theCompiler->scopeDescRecorder();
     const bool              visible = true;
-    _scopeInfo = rec->addMethodScope( _key, _method, _self->preg()->createLogicalAddress(), allocatesCompiledContext(), isLite(), _scopeID, _sender ? _sender->getScopeInfo() : nullptr, _senderByteCodeIndex, visible );
+    _scopeInfo = rec->addMethodScope( _key, _method, _self->pseudoRegister()->createLogicalAddress(), allocatesCompiledContext(), isLite(), _scopeID, _sender ? _sender->getScopeInfo() : nullptr, _senderByteCodeIndex, visible );
     InlinedScope::generateDebugInfo();
 }
 
@@ -943,7 +943,7 @@ void MethodScope::generateDebugInfo() {
 void BlockScope::generateDebugInfo() {
     ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
     if ( _parent->isOutlinedScope() ) {
-        _scopeInfo = rec->addTopLevelBlockScope( _method, _self->preg()->createLogicalAddress(), _self->klass(), allocatesCompiledContext() );
+        _scopeInfo = rec->addTopLevelBlockScope( _method, _self->pseudoRegister()->createLogicalAddress(), _self->klass(), allocatesCompiledContext() );
     } else {
         st_assert( _parent->isInlinedScope(), "oops" );
         const bool visible = true;
@@ -971,7 +971,7 @@ OutlinedScope::OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope ) {
 
 
 OutlinedBlockScope::OutlinedBlockScope( NativeMethod *nm, ScopeDescriptor *sc ) :
-        OutlinedScope( nm, sc ) {
+    OutlinedScope( nm, sc ) {
     ScopeDescriptor *parent = sc->parent( true );
     if ( parent ) {
         _parent = new_OutlinedScope( nm, parent );

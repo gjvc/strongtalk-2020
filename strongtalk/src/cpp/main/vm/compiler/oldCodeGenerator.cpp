@@ -599,7 +599,7 @@ static Register moveLocToReg( Location src, Register temp ) {
 }
 
 
-static Register movePRegToReg( PseudoRegister *src, Register temp ) {
+static Register movePseudoRegisterToReg( PseudoRegister *src, Register temp ) {
     // Returns the src register if a register has been assigned to src,
     // otherwise loads the value src into register temp and returns temp.
     if ( src->isConstPseudoRegister() ) {
@@ -618,7 +618,7 @@ static inline Register answerLocReg( Location src, Register temp ) {
 }
 
 
-static inline Register answerPRegReg( PseudoRegister *src, Register temp ) {
+static inline Register answerPseudoRegisterReg( PseudoRegister *src, Register temp ) {
     // Returns the src register if a register has been assigned to src,
     // otherwise returns temp.
     return answerLocReg( src->_location, temp );
@@ -701,7 +701,7 @@ static void assign( Node *node, PseudoRegister *src, PseudoRegister *dst, Regist
             // assign constants directly without loading into temporary register first
             storeO( (ConstPseudoRegister *) src, dst, temp1, temp2, needsStoreCheck );
         } else {
-            Register t = movePRegToReg( src, answerPRegReg( dst, temp1 ) );
+            Register t = movePseudoRegisterToReg( src, answerPseudoRegisterReg( dst, temp1 ) );
             store( t, dst, temp2, temp3, needsStoreCheck );
         }
     }
@@ -710,7 +710,7 @@ static void assign( Node *node, PseudoRegister *src, PseudoRegister *dst, Regist
 
 static Register uplevelBase( PseudoRegister *startContext, std::int32_t nofLevels, Register temp ) {
     // Compute uplevel base; nofLevels is number of indirections (0 = in this context)
-    Register b = nofLevels > 0 ? temp : answerPRegReg( startContext, temp );
+    Register b = nofLevels > 0 ? temp : answerPseudoRegisterReg( startContext, temp );
     load( startContext, b );
     while ( nofLevels-- > 0 ) {
         if ( VerifyCode )
@@ -781,7 +781,7 @@ static void primitiveCall( InlinedScope *scope, PrimitiveDescriptor *pdesc ) {
 
 
 static void zapContext( PseudoRegister *context, Register temp ) {
-    Register c = movePRegToReg( context, temp );
+    Register c = movePseudoRegisterToReg( context, temp );
     theMacroAssembler->movl( Address( c, ContextOopDescriptor::parent_byte_offset() ), 0 );
 }
 
@@ -941,12 +941,12 @@ void PrologueNode::gen() {
     // initialize self and context (for blocks)
     // recv has already been loaded (possibly into temp1)
     if ( scope()->isMethodScope() ) {
-        store( recv, scope()->self()->preg(), temp2, temp3 );
+        store( recv, scope()->self()->pseudoRegister(), temp2, temp3 );
     } else {
         // recv contains block closure -> get context out of it
-        Register c = answerPRegReg( scope()->self()->preg(), temp2 );
+        Register c = answerPseudoRegisterReg( scope()->self()->pseudoRegister(), temp2 );
         theMacroAssembler->Load( recv, BlockClosureOopDescriptor::context_byte_offset(), c );
-        store( c, scope()->self()->preg(), temp1, temp3 );
+        store( c, scope()->self()->pseudoRegister(), temp1, temp3 );
         store( c, scope()->context(), temp1, temp3 );
 
         if ( VerifyCode ) {
@@ -976,7 +976,7 @@ void PrologueNode::gen() {
 
 void LoadIntNode::gen() {
     BasicNode::gen();
-    Register t = answerPRegReg( _dest, temp1 );
+    Register t = answerPseudoRegisterReg( _dest, temp1 );
     theMacroAssembler->movl( t, _value );
     store( t, _dest, temp2, temp3 );
 }
@@ -984,8 +984,8 @@ void LoadIntNode::gen() {
 
 void LoadOffsetNode::gen() {
     BasicNode::gen();
-    Register b = movePRegToReg( _src, temp1 );
-    Register t = answerPRegReg( _dest, temp2 );
+    Register b = movePseudoRegisterToReg( _src, temp1 );
+    Register t = answerPseudoRegisterReg( _dest, temp2 );
     theMacroAssembler->Load( b, byteOffset( _offset ), t );
     store( t, _dest, temp1, temp3 );
 }
@@ -994,7 +994,7 @@ void LoadOffsetNode::gen() {
 void LoadUplevelNode::gen() {
     BasicNode::gen();
     Register b = uplevelBase( _context0, _nofLevels, temp1 );
-    Register t = answerPRegReg( _dest, temp2 );
+    Register t = answerPseudoRegisterReg( _dest, temp2 );
     theMacroAssembler->Load( b, byteOffset( _offset ), t );
     if ( VerifyCode )
         verifyObjCode( t );
@@ -1004,8 +1004,8 @@ void LoadUplevelNode::gen() {
 
 void StoreOffsetNode::gen() {
     BasicNode::gen();
-    Register b = movePRegToReg( _base, temp1 );
-    Register t = movePRegToReg( _src, temp2 );
+    Register b = movePseudoRegisterToReg( _base, temp1 );
+    Register t = movePseudoRegisterToReg( _src, temp2 );
     theMacroAssembler->Store( t, b, byteOffset( _offset ) );
     if ( _needsStoreCheck ) {
         // NB: make sure b is a copy of base because storeCheck overwrites it (was bug 3/9/96 -Urs)
@@ -1019,7 +1019,7 @@ void StoreOffsetNode::gen() {
 void StoreUplevelNode::gen() {
     StoreNode::gen();
     Register b = uplevelBase( _context0, _nofLevels, temp1 );
-    Register t = movePRegToReg( _src, temp2 );
+    Register t = movePseudoRegisterToReg( _src, temp2 );
     theMacroAssembler->Store( t, b, byteOffset( _offset ) );
     if ( _needsStoreCheck ) {
         // NB: make sure b is a copy of _context0 because storeCheck overwrites it
@@ -1051,7 +1051,7 @@ void PrimitiveNode::gen() {
     BasicNode::gen();
     primitiveCall( scope(), _pdesc );
     // assign result
-    Register t = moveLocToReg( resultLoc, answerPRegReg( _dest, temp1 ) );
+    Register t = moveLocToReg( resultLoc, answerPseudoRegisterReg( _dest, temp1 ) );
     store( t, _dest, temp2, temp3 );
 }
 
@@ -1081,7 +1081,7 @@ void DLLNode::gen() {
     inlineCache( scope()->nlrTestPoint()->_label, nullptr, false );
     // assign result
     theMacroAssembler->addl( esp, nofArguments() * OOP_SIZE );    // get rid of arguments
-    Register t = moveLocToReg( resultLoc, answerPRegReg( _dest, temp1 ) );
+    Register t = moveLocToReg( resultLoc, answerPseudoRegisterReg( _dest, temp1 ) );
     store( t, _dest, temp2, temp3 );
 }
 
@@ -1091,7 +1091,7 @@ static bool producesResult( ArithOpCode op ) {
 }
 
 
-static bool setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode op, Register &x, Register t ) {
+static bool setupseudoRegisterister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode op, Register &x, Register t ) {
     // Sets up register x such that x := x op <some constant> corresponds to dst := arg op <some constant>.
     // If the temporary register t is used at all, x will be in t.
     // Returns true if op generated a result in x; returns false otherwise.
@@ -1100,7 +1100,7 @@ static bool setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode
         // operation generates result, try to use as few registers as possible
         if ( ( dst->_location == arg->_location ) /* or lastUsageOf(arg) */) {
             // arg is not used anymore afterwards, can be overwritten
-            x = movePRegToReg( arg, t );
+            x = movePseudoRegisterToReg( arg, t );
         } else {
             // have to load arg into a temporary register
             x = t;
@@ -1108,14 +1108,14 @@ static bool setupRegister( PseudoRegister *dst, PseudoRegister *arg, ArithOpCode
         }
     } else {
         // operation generates no result, use argument register directly
-        st_assert( dst->isNoPseudoRegister(), "dst should be a noPReg" );
-        x = movePRegToReg( arg, t );
+        st_assert( dst->isNoPseudoRegister(), "dst should be a noPseudoRegister" );
+        x = movePseudoRegisterToReg( arg, t );
     }
     return result;
 }
 
 
-static bool setupRegisters( PseudoRegister *dst, PseudoRegister *arg1, ArithOpCode op, PseudoRegister *arg2, Register &x, Register &y, Register t1, Register t2 ) {
+static bool setupseudoRegisteristers( PseudoRegister *dst, PseudoRegister *arg1, ArithOpCode op, PseudoRegister *arg2, Register &x, Register &y, Register t1, Register t2 ) {
     // Sets up registers x & y such that x := x op y corresponds to dst := arg1 op arg2.
     // If the temporary registers t1 & t2 are used at all, x will be in t1 and y in t2.
     // Returns true if op generated a result in x; returns false otherwise.
@@ -1125,19 +1125,19 @@ static bool setupRegisters( PseudoRegister *dst, PseudoRegister *arg1, ArithOpCo
         // operation generates result, try to use as few registers as possible
         if ( ( dst->_location == arg1->_location ) /* or lastUsageOf(arg1) */) {
             // arg1 is not used anymore afterwards, can be overwritten
-            x = movePRegToReg( arg1, t1 );
-            y = movePRegToReg( arg2, t2 );
+            x = movePseudoRegisterToReg( arg1, t1 );
+            y = movePseudoRegisterToReg( arg2, t2 );
         } else {
             // have to load arg1 into a temporary register
             x = t1;
             load( arg1, t1 );
-            y = movePRegToReg( arg2, t2 );
+            y = movePseudoRegisterToReg( arg2, t2 );
         }
     } else {
         // operation generates no result, use argument registers directly
-        st_assert( dst->isNoPseudoRegister(), "dst should be a noPReg" );
-        x = movePRegToReg( arg1, t1 );
-        y = movePRegToReg( arg2, t2 );
+        st_assert( dst->isNoPseudoRegister(), "dst should be a noPseudoRegister" );
+        x = movePseudoRegisterToReg( arg1, t1 );
+        y = movePseudoRegisterToReg( arg2, t2 );
     }
     return result;
 }
@@ -1271,7 +1271,7 @@ void TArithRRNode::gen() {
         if ( _arg2IsInt ) {
             // perform operation
             Register x;
-            bool     result = setupRegister( _dest, arg1, _op, x, temp1 );
+            bool     result = setupseudoRegisterister( _dest, arg1, _op, x, temp1 );
             if ( not _arg1IsInt ) {
                 // tag check necessary for arg1
                 theMacroAssembler->test( x, MEMOOP_TAG );
@@ -1286,7 +1286,7 @@ void TArithRRNode::gen() {
         }
     } else {
         Register x, y;
-        bool     result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool     result = setupseudoRegisteristers( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         // check argument tags
         Register tags   = noreg;
         if ( _arg1IsInt ) {
@@ -1329,7 +1329,7 @@ void ArithRRNode::gen() {
     if ( arg2->isConstPseudoRegister() ) {
         Oop      y      = ( (ConstPseudoRegister *) arg2 )->constant;
         Register x;
-        bool     result = setupRegister( _dest, arg1, _op, x, temp1 );
+        bool     result = setupseudoRegisterister( _dest, arg1, _op, x, temp1 );
         if ( y->is_smi() ) {
             arithRCOp( _op, x, std::int32_t( y ) );        // y is SMIOop -> needs no relocation info
         } else {
@@ -1339,7 +1339,7 @@ void ArithRRNode::gen() {
             store( x, _dest, temp2, temp3 );
     } else {
         Register x, y;
-        bool     result = setupRegisters( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
+        bool     result = setupseudoRegisteristers( _dest, arg1, _op, arg2, x, y, temp1, temp2 );
         arithRROp( _op, x, y );
         if ( result ) {
             Register t = ( x == temp1 ) ? temp2 : temp1;
@@ -1354,7 +1354,7 @@ void ArithRCNode::gen() {
     PseudoRegister *arg1  = _src;
     std::int32_t   y      = _oper;
     Register       x;
-    bool           result = setupRegister( _dest, arg1, _op, x, temp1 );
+    bool           result = setupseudoRegisterister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );
     if ( result )
         store( x, _dest, temp2, temp3 );
@@ -1490,7 +1490,7 @@ void FloatUnaryArithNode::gen() {
         reg = temp1;
     } else {
         // load argument into reg
-        reg = movePRegToReg( _src, temp1 );
+        reg = movePseudoRegisterToReg( _src, temp1 );
     }
     floatArithROp( _op, reg, temp2 );
     if ( Mapping::isFloatTemporary( _dest->_location ) or _dest->_location == Location::TOP_OF_FLOAT_STACK ) {
@@ -1555,7 +1555,7 @@ void ContextCreateNode::gen() {
         // This should be unified at some point. (gri 5/9/96)
     } else {
         // parent is in _src (incoming)
-        Register parent = movePRegToReg( _src, temp1 );
+        Register parent = movePseudoRegisterToReg( _src, temp1 );
         theMacroAssembler->movl( Address( context, ContextOopDescriptor::parent_byte_offset() ), parent );
     }
     store( context, _dest, temp2, temp3 );
@@ -1567,13 +1567,13 @@ void ContextInitNode::gen() {
     BasicNode::gen();
     // initialize context fields
     for ( std::int32_t i = nofTemps() - 1; i >= 0; i-- ) {
-        PseudoRegister *src = _initializers->at( i )->preg();
+        PseudoRegister *src = _initializers->at( i )->pseudoRegister();
         PseudoRegister *dest;
         if ( src->isBlockPseudoRegister() and wasEliminated() ) {
             // Blocks aren't actually assigned (at the PseudoRegister level) so that the inlining info isn't lost.
             continue;                // there's no assignment (context was eliminated)
         }
-        dest = contents()->at( i )->preg();
+        dest = contents()->at( i )->pseudoRegister();
         assign( this, src, dest, temp1, temp2, temp3, false );
     }
     // NB: no store check necessary (done in ContextCreateNode)
@@ -1809,7 +1809,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, G
 void TypeTestNode::gen() {
     BasicNode::gen();
     const std::int32_t len      = classes()->length();
-    const Register     obj      = movePRegToReg( _src, temp1 );
+    const Register     obj      = movePseudoRegisterToReg( _src, temp1 );
     const Register     klassReg = temp2;
     bb_needs_jump            = false;  // we generate all jumps explicitly
 
@@ -1847,7 +1847,7 @@ void TypeTestNode::gen() {
 void TypeTestNode::gen() {
   BasicNode::gen();
   const std::int32_t len = classes()->length();
-  const Register obj = movePRegToReg(_src, temp1);
+  const Register obj = movePseudoRegisterToReg(_src, temp1);
   const Register klassReg = temp2;
 
   if (ReorderBBs) {
@@ -2000,7 +2000,7 @@ void BlockCreateNode::copyIntoContexts( Register val, Register t1, Register t2 )
     for ( std::int32_t i = copies->length() - 1; i >= 0; i-- ) {
         Location       *l                = copies->at( i );
         InlinedScope   *scopeWithContext = theCompiler->scopes->at( l->scopeID() );
-        PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->preg();
+        PseudoRegister *r                = scopeWithContext->contextTemporaries()->at( l->tempNo() )->pseudoRegister();
         if ( r->_location == Location::UNALLOCATED_LOCATION )
             continue;      // not uplevel-accessed (eliminated)
         if ( r->isBlockPseudoRegister() )
@@ -2039,7 +2039,7 @@ void BlockCreateNode::materialize() {
             theMacroAssembler->addl( esp, OOP_SIZE ); // pop argument, this is not a Pascal call - should fix this
     }
     // assign result
-    Register t = moveLocToReg( resultLoc, answerPRegReg( _dest, temp1 ) );
+    Register t = moveLocToReg( resultLoc, answerPseudoRegisterReg( _dest, temp1 ) );
     store( t, _dest, temp2, temp3 );
     // copy into all contexts that have a copy
     if ( block()->isMemoized() )
@@ -2053,7 +2053,7 @@ void BlockCreateNode::materialize() {
         contextReg = temp1;
         theMacroAssembler->popl( contextReg );
     } else {
-        contextReg = movePRegToReg( closure->context(), temp1 );
+        contextReg = movePseudoRegisterToReg( closure->context(), temp1 );
     }
     if ( VerifyCode ) {
         switch ( closure->method()->block_info() ) {
@@ -2103,7 +2103,7 @@ void BlockMaterializeNode::gen() {
         // materialize block if it is not already materialized
         // (nothing to do in case of non-memoized or clean blocks)
         Label    L;
-        Register t = movePRegToReg( block(), temp1 );
+        Register t = movePseudoRegisterToReg( block(), temp1 );
         st_assert( MemoizedBlockNameDescriptor::uncreatedBlockValue() == Oop( 0 ), "change the code generation here" );
         theMacroAssembler->testl( t, t );
         theMacroAssembler->jcc( Assembler::Condition::notZero, L );
@@ -2157,7 +2157,7 @@ void LoopHeaderNode::generateTypeTests( Label &cont, Label &failure ) {
             guarantee( t->_testedPR->_location == Location::UNALLOCATED_LOCATION, "code assumes ConstPseudoRegisters are unallocated" );
             handleConstantTypeTest( (ConstPseudoRegister *) t->_testedPR, t->_klasses );
         } else {
-            const Register obj = movePRegToReg( t->_testedPR, temp1 );
+            const Register obj = movePseudoRegisterToReg( t->_testedPR, temp1 );
             Label          okLabel;
             ok = ( i == last ) ? &cont : &okLabel;
             if ( t->_klasses->length() == 1 ) {
@@ -2187,13 +2187,13 @@ void LoopHeaderNode::generateIntegerLoopTest( PseudoRegister *p, Label &prev, La
             handleConstantTypeTest( (ConstPseudoRegister *) p, nullptr );
         } else if ( p->_location == Location::UNALLOCATED_LOCATION ) {
             // p is never used in loop, so no test needed
-            guarantee( p->cpReg() == p, "should use cpReg()" );
+            guarantee( p->cpseudoRegister() == p, "should use cpseudoRegister()" );
         } else {
             // generate run-time test
             if ( prev.is_unbound() )
                 theMacroAssembler->bind( prev );
             Label          ok;
-            const Register obj = movePRegToReg( p, temp1 );
+            const Register obj = movePseudoRegisterToReg( p, temp1 );
             testForSingleKlass( obj, Universe::smiKlassObject(), klassReg, ok, failure );
             theMacroAssembler->bind( ok );
         }
@@ -2225,8 +2225,8 @@ void LoopHeaderNode::handleConstantTypeTest( ConstPseudoRegister *r, GrowableArr
 void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
     if ( not _integerLoop )
         return;
-    Register       boundReg = temp1;
-    const Register tempReg  = temp2;
+    Register       boundReg          = temp1;
+    const Register tempseudoRegister = temp2;
     if ( _upperLoad not_eq nullptr ) {
         // The loop variable iterates from lowerBound...array size; if any of the array accesses use the loop variable
         // without an index range check, we need to check it here.
@@ -2247,17 +2247,17 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                 if ( prev.is_unbound() )
                     theMacroAssembler->bind( prev );
                 if ( _lowerBound->_location == Location::UNALLOCATED_LOCATION ) {
-                    guarantee( _lowerBound->cpReg() == _lowerBound, "should use cpReg()" );
+                    guarantee( _lowerBound->cpseudoRegister() == _lowerBound, "should use cpseudoRegister()" );
                 } else {
-                    const Register t = movePRegToReg( _lowerBound ? _lowerBound : _loopVar, tempReg );
+                    const Register t = movePseudoRegisterToReg( _lowerBound ? _lowerBound : _loopVar, tempseudoRegister );
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
                     theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }
             }
 
             // test upper bound
-            boundReg = movePRegToReg( _upperBound, boundReg );
-            const Register t = movePRegToReg( atNode->src(), tempReg );
+            boundReg = movePseudoRegisterToReg( _upperBound, boundReg );
+            const Register t = movePseudoRegisterToReg( atNode->src(), tempseudoRegister );
             theMacroAssembler->movl( t, Address( t, byteOffset( atNode->sizeOffset() ) ) );
             theMacroAssembler->cmpl( boundReg, t );
             theMacroAssembler->jcc( Assembler::Condition::above, failure );
@@ -2288,7 +2288,7 @@ void ArrayAtNode::gen() {
     Register size  = temp3;
     Register index = temp2;
     load( _arg, index );    // index is modified -> load always into register
-    Register array = movePRegToReg( _src, temp1 );    // array is read_only
+    Register array = movePseudoRegisterToReg( _src, temp1 );    // array is read_only
     // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
     theMacroAssembler->subl( index, std::int32_t( smiOop_one ) );
     // preload size for bounds check if necessary
@@ -2308,7 +2308,7 @@ void ArrayAtNode::gen() {
         jcc_error( this, Assembler::Condition::aboveEqual, indexOutOfBounds );
     }
     // load element
-    Register t = answerPRegReg( _dest, temp3 );
+    Register t = answerPseudoRegisterReg( _dest, temp3 );
     st_assert( TAG_SIZE == 2, "check this code" );
     switch ( _access_type ) {
         case byte_at:
@@ -2487,7 +2487,7 @@ void InlinedPrimitiveNode::gen() {
     BasicNode::gen();
     switch ( _operation ) {
         case InlinedPrimitiveNode::Operation::obj_klass: {
-            Register obj   = movePRegToReg( _src, temp1 );            // obj is read_only
+            Register obj   = movePseudoRegisterToReg( _src, temp1 );            // obj is read_only
             Register klass = temp2;
             Label    is_smi;
             theMacroAssembler->movl( klass, Universe::smiKlassObject() );
@@ -2509,7 +2509,7 @@ void InlinedPrimitiveNode::gen() {
             load( _src, proxy );            // proxy is modified
             Register index = temp2;
             load( _arg1, index );            // index is modified
-            Register result = answerPRegReg( _dest, temp3 );
+            Register result = answerPseudoRegisterReg( _dest, temp3 );
             Label    indexNotSmi;
             // do index smi_t check if necessary
             if ( not _arg1_is_smi ) {

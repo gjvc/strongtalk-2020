@@ -41,8 +41,8 @@ class InterpretedInlineCache : ValueObject {
 
 public:
     static constexpr std::int32_t size               = 8;    // inline cache size in words
-    static constexpr std::int32_t         first_word_offset  = 0;    // layout info: first word
-    static constexpr std::int32_t         second_word_offset = 4;    // layout info: second word
+    static constexpr std::int32_t first_word_offset  = 0;    // layout info: first word
+    static constexpr std::int32_t second_word_offset = 4;    // layout info: second word
 
 
 public:
@@ -143,7 +143,7 @@ InterpretedInlineCache *as_InterpretedIC( const char *address_of_next_instr );
 
 static constexpr std::int32_t size_of_smallest_interpreterPIC                   = 2;
 static constexpr std::int32_t size_of_largest_interpreterPIC                    = 5;
-static constexpr std::int32_t         number_of_interpreterPolymorphicInlineCache_sizes = size_of_largest_interpreterPIC - size_of_smallest_interpreterPIC + 1;
+static constexpr std::int32_t number_of_interpreterPolymorphicInlineCache_sizes = size_of_largest_interpreterPIC - size_of_smallest_interpreterPIC + 1;
 
 
 // An InterpretedInlineCacheIterator is used to iterate through the entries of an inline cache in a methodOop.
@@ -158,9 +158,9 @@ private:
     ObjectArrayOop         _pic;            // the PolymorphicInlineCache if there is one
 
     // state machine
-    std::int32_t      _number_of_targets;    // the no. of InlineCache entries
+    std::int32_t     _number_of_targets;    // the no. of InlineCache entries
     InlineCacheShape _info;                 // send site information
-    std::int32_t      _index;                // the current entry no.
+    std::int32_t     _index;                // the current entry no.
     KlassOop         _klass;                // the current klass
     MethodOop        _method;               // the current method
     NativeMethod     *_nativeMethod;        // current NativeMethod (nullptr if none)

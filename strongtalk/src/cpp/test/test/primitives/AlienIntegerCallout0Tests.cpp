@@ -53,11 +53,11 @@ protected:
 
 
     HeapResourceMark *rm;
-    ByteArrayOop fnAlien;
-    ByteArrayOop invalidFunctionAlien;
-    ByteArrayOop resultAlien, addressAlien, pointerAlien, argumentAlien;
-    SMIOop       smi0, smi1;
-    char         address[8];
+    ByteArrayOop     fnAlien;
+    ByteArrayOop     invalidFunctionAlien;
+    ByteArrayOop     resultAlien, addressAlien, pointerAlien, argumentAlien;
+    SMIOop           smi0, smi1;
+    char             address[8];
 
 
     ByteArrayOop allocateAlien( std::int32_t arraySize, std::int32_t alienSize ) {
@@ -95,7 +95,7 @@ protected:
 };
 
 TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldReturnResultAlien ) {
-    Oop          result      = byteArrayPrimitives::alienCallResult0( resultAlien, fnAlien );
+    Oop result = byteArrayPrimitives::alienCallResult0( resultAlien, fnAlien );
     EXPECT_TRUE( result == resultAlien ) << "should return result alien";
 }
 

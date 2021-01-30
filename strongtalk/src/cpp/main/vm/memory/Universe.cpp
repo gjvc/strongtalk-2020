@@ -841,7 +841,8 @@ Space *Universe::spaceFor( void *p ) {
         return new_gen.eden();
 
     {
-        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )
+            if ( s->contains( p ) )
                 return s;
     }
 

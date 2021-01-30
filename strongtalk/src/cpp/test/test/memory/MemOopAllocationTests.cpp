@@ -35,7 +35,7 @@ protected:
 
 
     KlassOop theClass;
-    Oop *oldEdenTop;
+    Oop      *oldEdenTop;
 
 
 };

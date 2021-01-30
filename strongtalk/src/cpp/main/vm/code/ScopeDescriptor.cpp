@@ -462,7 +462,7 @@ bool MethodScopeDescriptor::l_equivalent( LookupKey *l ) const {
 
 
 MethodScopeDescriptor::MethodScopeDescriptor( NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
-        ScopeDescriptor( scopes, offset, pc ), _key() {
+    ScopeDescriptor( scopes, offset, pc ), _key() {
     Oop k = _scopes->unpackOopAt( _name_desc_offset );
     Oop s = _scopes->unpackOopAt( _name_desc_offset );
     _key.initialize( (KlassOop) k, s );
@@ -498,7 +498,7 @@ void BlockScopeDescriptor::printSelf() {
 
 
 BlockScopeDescriptor::BlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
-        ScopeDescriptor( scopes, offset, pc ) {
+    ScopeDescriptor( scopes, offset, pc ) {
     _parentScopeOffset = _scopes->unpackValueAt( _name_desc_offset );
 
     if ( _next == -1 )
@@ -575,7 +575,7 @@ ScopeDescriptor *NonInlinedBlockScopeDescriptor::parent() const {
 
 
 TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
-        ScopeDescriptor( scopes, offset, pc ) {
+    ScopeDescriptor( scopes, offset, pc ) {
     _self_name  = _scopes->unpackNameDescAt( _name_desc_offset, pc );
     _self_klass = KlassOop( scopes->unpackOopAt( _name_desc_offset ) );
     if ( _next == -1 )

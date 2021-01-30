@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/compiler/defUse.hpp"
+#include "vm/compiler/DefinitionUsage.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/CopyPropagationInfo.hpp"
@@ -313,7 +313,7 @@ void BasicBlock::localCopyPropagate() {
 
 
 void BasicBlock::makeUses() {
-    // collect definitions and uses for all pregs (and fill pregTable in the process)
+    // collect definitions and uses for all pseudoRegisters (and fill pseudoRegisterTable in the process)
     st_assert( duInfo.info == nullptr, "shouldn't be set" );
     duInfo.info = new GrowableArray<DefinitionUsageInfo *>( _nodeCount + 10 );
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
@@ -380,9 +380,9 @@ static bool findMyBasicBlock( void *bb, PseudoRegisterBasicBlockIndex *p ) {
 
 std::int32_t BasicBlock::addUDHelper( PseudoRegister *r ) {
     // we're computing the uses block by block, and the current BasicBlock's
-    // PseudoRegisterBasicBlockIndex is always the last entry in the preg's list.
+    // PseudoRegisterBasicBlockIndex is always the last entry in the pseudoRegister's list.
     st_assert( _nodeCount, "shouldn't add anything to this BasicBlock" );
-    bbIterator->pregTable->at_put_grow( r->id(), r );
+    bbIterator->pseudoRegisterTable->at_put_grow( r->id(), r );
     PseudoRegisterBasicBlockIndex *p;
     if ( bbIterator->_usesBuilt ) {
         // find entry for the PseudoRegister
@@ -521,7 +521,7 @@ void BasicBlock::localAlloc( GrowableArray<BitVector *> *hardwired, GrowableArra
             for ( ; temp < nofLocalRegisters and use_count[ Mapping::localRegister( temp ).number() ] + def_count[ Mapping::localRegister( temp ).number() ] > 0; temp++ );
             if ( temp == nofLocalRegisters )
                 break;        // ran out of regs
-            // ok, allocate Mapping::localRegisters[temp] to the preg and equivalent pregs
+            // ok, allocate Mapping::localRegisters[temp] to the pseudoRegister and equivalent pseudoRegisters
             Location             t     = Mapping::localRegister( temp++ );
             PseudoRegister       *frst = r->regClass ? regClasses.at( r->regClass )->first : r;
             for ( PseudoRegister *pr   = frst; pr; pr = pr->regClassLink ) {
@@ -569,7 +569,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             if ( r->isUnused() ) {
                 // unused register - ignore
             } else {
-                DefinitionUsageInfo *info = duInfo.info->at( r->_dus.first()->_index );
+//                DefinitionUsageInfo *info = duInfo.info->at( r->_dus.first()->_index );
                 localRegs->append( r );
                 BitVector *bv = new BitVector( _nodeCount );
                 lives->append( bv );
@@ -804,11 +804,17 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     //       has n successors they're all assumed to be non-nullptr. Code with
     //       missing successors (e.g. TypeTestNode with no next(0) = nullptr)
     //       cause the BasicBlock graph to screw up after this node. (gri 7/22/96)
+
+
+    //
     std::int32_t       n = _last->nSuccessors();
     for ( std::int32_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
+        (void) nextBB;
     }
+
+    //
     for ( std::int32_t i = nSuccessors() - 1; i >= 0; i-- ) {
         BasicBlock *nextBB = next( i );
         // only follow the link if next->bb hasn't been visited yet

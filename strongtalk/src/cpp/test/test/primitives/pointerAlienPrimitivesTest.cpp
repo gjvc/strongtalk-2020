@@ -53,11 +53,11 @@ protected:
 
 
     HeapResourceMark *rm;
-    ByteArrayOop alien, invalidAlien;
-    ByteArrayOop largeUnsignedInteger;
-    ByteArrayOop largeSignedInteger;
-    std::uint8_t alien_byte_region[16];
-    DoubleOop    doubleValue;
+    ByteArrayOop     alien, invalidAlien;
+    ByteArrayOop     largeUnsignedInteger;
+    ByteArrayOop     largeSignedInteger;
+    std::uint8_t     alien_byte_region[16];
+    DoubleOop        doubleValue;
 
 
     std::int32_t asInteger( Oop largeInteger, bool &ok ) {
@@ -67,10 +67,10 @@ protected:
 
 
     void checkLargeInteger( Oop result, std::int32_t expected ) {
-        char message[200];
+        char         message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
-        bool ok;
-        std::int32_t    actual = asInteger( result, ok );
+        bool         ok;
+        std::int32_t actual = asInteger( result, ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: 0x%08x, was: 0x%08x", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
@@ -78,9 +78,9 @@ protected:
 
 
     void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
-        char message[200];
+        char          message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
-        bool        ok;
+        bool          ok;
         std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: 0x%08x, was: 0x%08x", expected, actual );
@@ -89,7 +89,7 @@ protected:
 
 
     void checkSmallInteger( Oop result, std::int32_t expected ) {
-        char message[200];
+        char         message[200];
         EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
         std::int32_t actual = SMIOop( result )->value();
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );

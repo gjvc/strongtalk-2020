@@ -79,7 +79,7 @@ protected:
     void checkLargeInteger( Oop result, std::int32_t expected ) {
         char         message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
-        bool       ok;
+        bool         ok;
         std::int32_t actual = asInteger( result, ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
@@ -90,7 +90,7 @@ protected:
     void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
         char          message[200];
         EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
-        bool        ok;
+        bool          ok;
         std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );

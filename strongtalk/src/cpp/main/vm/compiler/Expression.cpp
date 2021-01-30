@@ -31,10 +31,10 @@ Expression::Expression( PseudoRegister *p, Node *n ) {
 
 
 MergeExpression::MergeExpression( Expression *e1, Expression *e2, PseudoRegister *p, Node *nod ) :
-        Expression( p, nod ) {
+    Expression( p, nod ) {
     initialize();
     if ( not p )
-        _pseudoRegister = e1->preg();
+        _pseudoRegister = e1->pseudoRegister();
     mergeInto( e1, nod );
     mergeInto( e2, nod );
     verify();
@@ -42,7 +42,7 @@ MergeExpression::MergeExpression( Expression *e1, Expression *e2, PseudoRegister
 
 
 MergeExpression::MergeExpression( PseudoRegister *p, Node *nod ) :
-        Expression( p, nod ) {
+    Expression( p, nod ) {
     initialize();
 }
 
@@ -54,24 +54,24 @@ void MergeExpression::initialize() {
 
 
 NoResultExpression::NoResultExpression( Node *n ) :
-        Expression( new NoResultPseudoRegister( n ? n->scope() : theCompiler->currentScope() ), n ) {
+    Expression( new NoResultPseudoRegister( n ? n->scope() : theCompiler->currentScope() ), n ) {
 }
 
 
 ContextExpression::ContextExpression( PseudoRegister *r ) :
-        Expression( r, nullptr ) {
+    Expression( r, nullptr ) {
 }
 
 
 KlassExpression::KlassExpression( KlassOop k, PseudoRegister *p, Node *n ) :
-        Expression( p, n ) {
+    Expression( p, n ) {
     _klass = k;
     st_assert( k, "must have klass" );
 }
 
 
 BlockExpression::BlockExpression( BlockPseudoRegister *p, Node *n ) :
-        KlassExpression( BlockClosureKlass::blockKlassFor( p->closure()->nofArgs() ), p, n ) {
+    KlassExpression( BlockClosureKlass::blockKlassFor( p->closure()->nofArgs() ), p, n ) {
     st_assert( n, "must have a node" );
     _blockScope = p->scope();
 }
@@ -128,7 +128,7 @@ Expression *UnknownExpression::mergeWith( Expression *other, Node *n ) {
     if ( other->isUnknownExpression() ) {
         if ( n and node() and other->node() ) {
             // preserve splitting info
-            MergeExpression *e = new MergeExpression( this, other, preg(), n );
+            MergeExpression *e = new MergeExpression( this, other, pseudoRegister(), n );
             st_assert( e->isSplittable(), "wasted effort" );
             return e;
         } else {
@@ -136,7 +136,7 @@ Expression *UnknownExpression::mergeWith( Expression *other, Node *n ) {
             return this;
         }
     } else {
-        PseudoRegister *r = _pseudoRegister == other->preg() ? _pseudoRegister : nullptr;
+        PseudoRegister *r = _pseudoRegister == other->pseudoRegister() ? _pseudoRegister : nullptr;
         return new MergeExpression( this, other, r, n );
     }
 }
@@ -155,7 +155,7 @@ Expression *KlassExpression::mergeWith( Expression *other, Node *n ) {
         _node = nullptr;    // prevent future splitting
         return this;
     } else {
-        PseudoRegister *r = _pseudoRegister == other->preg() ? _pseudoRegister : nullptr;
+        PseudoRegister *r = _pseudoRegister == other->pseudoRegister() ? _pseudoRegister : nullptr;
         return new MergeExpression( this, other, r, n );
     }
 }
@@ -167,7 +167,7 @@ Expression *BlockExpression::mergeWith( Expression *other, Node *n ) {
     if ( equals( other ) ) {
         if ( n and node() and other->node() ) {
             // preserve splitting info
-            MergeExpression *e = new MergeExpression( this, other, preg(), n );
+            MergeExpression *e = new MergeExpression( this, other, pseudoRegister(), n );
             st_assert( e->isSplittable(), "wasted effort" );
             return e;
         } else {
@@ -175,7 +175,7 @@ Expression *BlockExpression::mergeWith( Expression *other, Node *n ) {
             return this;
         }
     } else {
-        PseudoRegister *r = _pseudoRegister == other->preg() ? _pseudoRegister : nullptr;
+        PseudoRegister *r = _pseudoRegister == other->pseudoRegister() ? _pseudoRegister : nullptr;
         return new MergeExpression( this, other, r, n );
     }
 }
@@ -188,7 +188,7 @@ Expression *ConstantExpression::mergeWith( Expression *other, Node *n ) {
     if ( other->isConstantExpression() and other->constant() == constant() ) {
         if ( n and node() and other->node() ) {
             // preserve splitting info
-            MergeExpression *e = new MergeExpression( this, other, preg(), n );
+            MergeExpression *e = new MergeExpression( this, other, pseudoRegister(), n );
             st_assert( e->isSplittable(), "wasted effort" );
             return e;
         } else {
@@ -198,14 +198,14 @@ Expression *ConstantExpression::mergeWith( Expression *other, Node *n ) {
     } else if ( other->isKlassExpression() ) {
         return other->mergeWith( this, n );
     } else {
-        PseudoRegister *r = _pseudoRegister == other->preg() ? _pseudoRegister : nullptr;
+        PseudoRegister *r = _pseudoRegister == other->pseudoRegister() ? _pseudoRegister : nullptr;
         return new MergeExpression( this, other, r, n );
     }
 }
 
 
 Expression *MergeExpression::mergeWith( Expression *other, Node *n ) {
-    st_assert( _pseudoRegister == other->preg() or other->isNoResultExpression(), "mismatched PRegs" );
+    st_assert( _pseudoRegister == other->pseudoRegister() or other->isNoResultExpression(), "mismatched PseudoRegisters" );
     return new MergeExpression( this, other, _pseudoRegister, n );
 }
 
@@ -298,11 +298,11 @@ void MergeExpression::add( Expression *e ) {
                 // leave them as constants
             } else {
                 if ( e->isConstantExpression() ) {
-                    e = e->convertToKlass( e->preg(), e->node() );
+                    e = e->convertToKlass( e->pseudoRegister(), e->node() );
                 }
                 if ( e1->isConstantExpression() ) {
                     // convertToKlass e1 and replace it in receiver
-                    Expression *ee = e1->convertToKlass( e1->preg(), e1->node() );
+                    Expression *ee = e1->convertToKlass( e1->pseudoRegister(), e1->node() );
                     ee->next = e1->next;
                     exprs->at_put( i, ee );
                 }
@@ -319,7 +319,7 @@ void MergeExpression::add( Expression *e ) {
         // our capacity overflows, so make sure we've got at least one Unknown
         // type in our set
         if ( findUnknown() == nullptr )
-            exprs->append( new UnknownExpression( e->preg(), nullptr ) );
+            exprs->append( new UnknownExpression( e->pseudoRegister(), nullptr ) );
     } else {
         exprs->append( e );
     }
@@ -350,7 +350,7 @@ Expression *ConstantExpression::copyWithout( Expression *e ) const {
 
 
 Expression *MergeExpression::copyWithout( Expression *e ) const {
-    MergeExpression *res = (MergeExpression *) shallowCopy( preg(), node() );
+    MergeExpression *res = (MergeExpression *) shallowCopy( pseudoRegister(), node() );
     res->exprs->remove( e );
     return res;
 }
@@ -493,10 +493,10 @@ Expression *MergeExpression::makeUnknownUnlikely( InlinedScope *s ) {
             if ( not( (UnknownExpression *) e )->isUnlikely() ) {
                 // must make a copy to avoid side-effecting e.g. incoming arg
                 UnknownExpression *u     = (UnknownExpression *) e;
-                UnknownExpression *new_u = new UnknownExpression( u->preg(), u->node(), true );
+                UnknownExpression *new_u = new UnknownExpression( u->pseudoRegister(), u->node(), true );
                 exprs->at_put( i, new_u );
                 for ( u = (UnknownExpression *) u->next; u; u = (UnknownExpression *) u->next, new_u = (UnknownExpression *) new_u->next ) {
-                    new_u->next = new UnknownExpression( u->preg(), u->node(), true );
+                    new_u->next = new UnknownExpression( u->pseudoRegister(), u->node(), true );
                 }
             }
             return this;
@@ -573,7 +573,7 @@ InlinedScope *Expression::scope() const {
 
 
 NameNode *Expression::nameNode( bool mustBeLegal ) const {
-    return preg()->nameNode( mustBeLegal );
+    return pseudoRegister()->nameNode( mustBeLegal );
 }
 
 
@@ -605,7 +605,7 @@ void NoResultExpression::print() {
 
 
 void ContextExpression::print() {
-    spdlog::info( "ContextExpression %s", preg()->safeName() );
+    spdlog::info( "ContextExpression %s", pseudoRegister()->safeName() );
     Expression::print_helper( "ContextExpression" );
 }
 
@@ -623,7 +623,7 @@ void KlassExpression::print() {
 
 
 void BlockExpression::print() {
-    spdlog::info( "BlockExpression %s", preg()->name() );
+    spdlog::info( "BlockExpression %s", pseudoRegister()->name() );
     Expression::print_helper( "BlockExpression" );
 }
 
@@ -641,7 +641,7 @@ void MergeExpression::print() {
 
 void Expression::verify() const {
     if ( _pseudoRegister == nullptr ) {
-        error( "Expression 0x{0:x}: no preg", this );
+        error( "Expression 0x{0:x}: no pseudoRegister", this );
     } else {
         _pseudoRegister->verify();
     }
@@ -660,8 +660,8 @@ void KlassExpression::verify() const {
 
 void BlockExpression::verify() const {
     Expression::verify();
-    if ( _blockScope not_eq preg()->creationScope() )
-        error( "BlockExpression 0x{0:x}: inconsistent parent scope", this, _blockScope, preg()->creationScope() );
+    if ( _blockScope not_eq pseudoRegister()->creationScope() )
+        error( "BlockExpression 0x{0:x}: inconsistent parent scope", this, _blockScope, pseudoRegister()->creationScope() );
 }
 
 
@@ -695,7 +695,7 @@ void ContextExpression::verify() const {
 
 
 ExpressionStack::ExpressionStack( InlinedScope *scope, std::int32_t size ) :
-        GrowableArray<Expression *>( size ) {
+    GrowableArray<Expression *>( size ) {
     _scope = scope;
 }
 
@@ -706,14 +706,14 @@ void ExpressionStack::push( Expression *expr, InlinedScope *currentScope, std::i
     currentScope->setExprForByteCodeIndex( byteCodeIndex, expr );
     // Set r's startByteCodeIndex if it is an expr stack entry and not already set,
     // currentScope is the scope doing the push.
-    PseudoRegister *r = expr->preg();
+    PseudoRegister *r = expr->pseudoRegister();
     if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
                 sr->_begByteCodeIndex = sr->creationStartByteCodeIndex = _scope->byteCodeIndex();
         } else {
-            st_assert( sr->scope()->isSenderOf( _scope ), "preg scope too low" );
+            st_assert( sr->scope()->isSenderOf( _scope ), "pseudoRegister scope too low" );
         }
     }
     GrowableArray<Expression *>::push( expr );
@@ -726,14 +726,14 @@ void ExpressionStack::push2nd( Expression *expr, InlinedScope *currentScope, std
     currentScope->set2ndExprForByteCodeIndex( byteCodeIndex, expr );
     // Set r's startByteCodeIndex if it is an expr stack entry and not already set,
     // currentScope is the scope doing the push.
-    PseudoRegister *r = expr->preg();
+    PseudoRegister *r = expr->pseudoRegister();
     if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
                 sr->_begByteCodeIndex = sr->creationStartByteCodeIndex = _scope->byteCodeIndex();
         } else {
-            st_assert( sr->scope()->isSenderOf( _scope ), "preg scope too low" );
+            st_assert( sr->scope()->isSenderOf( _scope ), "pseudoRegister scope too low" );
         }
     }
     GrowableArray<Expression *>::push( expr );
@@ -748,7 +748,7 @@ void ExpressionStack::assign_top( Expression *expr ) {
 
 Expression *ExpressionStack::pop() {
     Expression     *e = GrowableArray<Expression *>::pop();
-    PseudoRegister *r = e->preg();
+    PseudoRegister *r = e->pseudoRegister();
     if ( r->isSinglyAssignedPseudoRegister() ) {
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
@@ -757,7 +757,7 @@ Expression *ExpressionStack::pop() {
             if ( byteCodeIndexLT( sr->endByteCodeIndex(), newByteCodeIndex ) )
                 sr->_endByteCodeIndex = newByteCodeIndex;
         } else {
-            st_assert( sr->scope()->isSenderOf( _scope ), "preg scope too low" );
+            st_assert( sr->scope()->isSenderOf( _scope ), "pseudoRegister scope too low" );
         }
     }
     return e;

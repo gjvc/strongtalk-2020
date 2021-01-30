@@ -122,10 +122,10 @@ protected:
 
     MixinOop createMixinSide( const char *mixinClassName ) {
         PersistentHandle classHandle( Universe::find_global( mixinClassName ) );
-        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{0} ) );
+        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
 
         MixinOop mixin = MixinOop( classHandle.as_klassOop()->klass_part()->allocateObject() );
         mixin->set_methods( ObjectArrayOop( methods.as_oop() ) );
@@ -166,7 +166,7 @@ protected:
     void remove( PersistentHandle *classNameHandle ) {
         ResourceMark resourceMark;
         SymbolOop    className = as_symbol( classNameHandle );
-        const char *name = className->as_string();
+        const char   *name     = className->as_string();
 
         if ( Universe::find_global( name ) )
             Delta::call( delta->as_oop(), oopFactory::new_symbol( "removeKey:" ), className );

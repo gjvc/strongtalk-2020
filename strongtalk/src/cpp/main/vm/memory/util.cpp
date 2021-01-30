@@ -197,12 +197,13 @@ Oop catchThisOne;
 
 
 void breakpoint() {
-    if ( BreakAtWarning )
+    if ( BreakAtWarning ) {
         error_breakpoint();
+    }
 }
 
 
 void error_breakpoint() {
-    //flush_logFile();
+    flush_logFile();
     os::breakpoint();
 }

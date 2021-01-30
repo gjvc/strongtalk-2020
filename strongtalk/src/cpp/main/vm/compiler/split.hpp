@@ -10,8 +10,8 @@
 
 // various Compiler functionality associated with splitting
 
-// A split signature encodes the position of a SplitPReg or a node;
-// 0 means the node/preg isn't involved in any split,
+// A split signature encodes the position of a SplitPseudoRegister or a node;
+// 0 means the node/pseudoRegister isn't involved in any split,
 // 1 means it is in the first split path, etc.
 
 const std::int32_t MaxSplitDepth = 7;

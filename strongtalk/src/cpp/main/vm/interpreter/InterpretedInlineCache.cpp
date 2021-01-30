@@ -59,8 +59,8 @@ public:
         std::int32_t old_size = old_pic->length() / 2;
         if ( old_size >= size_of_largest_interpreterPIC )
             return nullptr;
-        ObjectArrayOop result = allocate( old_size + 1 );
-        for ( std::int32_t      index  = 1; index <= old_size * 2; index++ ) {
+        ObjectArrayOop     result = allocate( old_size + 1 );
+        for ( std::int32_t index  = 1; index <= old_size * 2; index++ ) {
             result->obj_at_put( index, old_pic->obj_at( index ) );
         }
         return result;
@@ -69,7 +69,7 @@ public:
 
     static void deallocate( ObjectArrayOop pic ) {
         std::int32_t entry = ( pic->length() / 2 ) - 1;
-        Oop first = free_list()->obj_at( entry );
+        Oop          first = free_list()->obj_at( entry );
         pic->obj_at_put( 1, first );
         free_list()->obj_at_put( entry, pic );
     }
@@ -206,7 +206,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
     ByteCodes::Code code_before  = send_code();
     Oop             word1_before = first_word();
     Oop             word2_before = second_word();
-    std::int32_t             transition   = 0;
+    std::int32_t    transition   = 0;
 
     // modify InlineCache
     guarantee( word2_before == receiver_klass, "klass should be the same" );
@@ -275,7 +275,7 @@ void InterpretedInlineCache::cleanup() {
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
             JumpTableEntry *entry = (JumpTableEntry *) first_word();
             NativeMethod   *nm    = entry->method();
-            LookupResult result = LookupCache::lookup( &nm->_lookupKey );
+            LookupResult   result = LookupCache::lookup( &nm->_lookupKey );
             if ( not result.matches( nm ) ) {
                 replace( result, receiver_klass );
             }
@@ -290,7 +290,7 @@ void InterpretedInlineCache::cleanup() {
             if ( first_word()->is_smi() ) {
                 JumpTableEntry *entry = (JumpTableEntry *) first_word();
                 NativeMethod   *nm    = entry->method();
-                LookupResult result = LookupCache::lookup( &nm->_lookupKey );
+                LookupResult   result = LookupCache::lookup( &nm->_lookupKey );
                 if ( not result.matches( nm ) ) {
                     replace( result, receiver_klass );
                 }
@@ -318,15 +318,15 @@ void InterpretedInlineCache::cleanup() {
             //   in case of a super send we do not have to cleanup because
             //   no nativeMethods are compiled for super sends.
             if ( not ByteCodes::is_super_send( send_code() ) ) {
-                ObjectArrayOop pic   = pic_array();
-                for ( std::int32_t      index = pic->length(); index > 0; index -= 2 ) {
+                ObjectArrayOop     pic   = pic_array();
+                for ( std::int32_t index = pic->length(); index > 0; index -= 2 ) {
                     KlassOop klass = KlassOop( pic->obj_at( index ) );
                     st_assert( klass->is_klass(), "receiver klass must be klass" );
                     Oop first = pic->obj_at( index - 1 );
                     if ( first->is_smi() ) {
                         JumpTableEntry *entry = (JumpTableEntry *) first;
                         NativeMethod   *nm    = entry->method();
-                        LookupResult result = LookupCache::lookup( &nm->_lookupKey );
+                        LookupResult   result = LookupCache::lookup( &nm->_lookupKey );
                         if ( not result.matches( nm ) ) {
                             pic->obj_at_put( index - 1, result.value() );
                         }
@@ -378,8 +378,8 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             set( send_code(), entry_point, nm->_lookupKey.klass() );
             break;
         case ByteCodes::SendType::polymorphic_send: {
-            ObjectArrayOop pic   = pic_array();
-            for ( std::int32_t      index = pic->length(); index > 0; index -= 2 ) {
+            ObjectArrayOop     pic   = pic_array();
+            for ( std::int32_t index = pic->length(); index > 0; index -= 2 ) {
                 KlassOop receiver_klass = KlassOop( pic->obj_at( index ) );
                 st_assert( receiver_klass->is_klass(), "receiver klass must be klass" );
                 if ( receiver_klass == nm->_lookupKey.klass() ) {
@@ -555,9 +555,9 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         msg = MemOop( obj );
-        std::int32_t            nofArgs = ic->selector()->number_of_arguments();
-        ObjectArrayOop args    = oopFactory::new_objArray( nofArgs );
-        for ( std::int32_t      i       = 1; i <= nofArgs; i++ ) {
+        std::int32_t       nofArgs = ic->selector()->number_of_arguments();
+        ObjectArrayOop     args    = oopFactory::new_objArray( nofArgs );
+        for ( std::int32_t i       = 1; i <= nofArgs; i++ ) {
             args->obj_at_put( i, f->expr( nofArgs - i ) );
         }
         // for now: assume instance variables are there...
@@ -626,9 +626,9 @@ Oop *InterpretedInlineCache::inline_cache_miss() {
     NoGCVerifier noGC;
 
     // get ic info
-    Frame f = DeltaProcess::active()->last_frame();
-    InterpretedInlineCache *ic = f.current_interpretedIC();
-    ByteCodes::Code send_code = ic->send_code();
+    Frame                  f         = DeltaProcess::active()->last_frame();
+    InterpretedInlineCache *ic       = f.current_interpretedIC();
+    ByteCodes::Code        send_code = ic->send_code();
 
     Oop receiver = ic->argument_spec() == ByteCodes::ArgumentSpec::args_only // Are we at a self or super send?
                    ? f.receiver()                                //  yes: take receiver of frame

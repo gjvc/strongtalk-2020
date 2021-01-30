@@ -85,7 +85,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
             return nullptr;
         }
     }
-    ConstPseudoRegister          *constResult = new_ConstPReg( _scope, res );
+    ConstPseudoRegister          *constResult = new_ConstPseudoRegister( _scope, res );
     SinglyAssignedPseudoRegister *result      = new SinglyAssignedPseudoRegister( _scope );
     _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( constResult, result ) );
     if ( CompilerDebug )
@@ -108,7 +108,7 @@ Expression *PrimitiveInliner::tryTypeCheck() {
     for ( std::int32_t i = 0; i < num; i++ ) {
         Expression *a = parameter( i );
         if ( a->hasKlass() ) {
-            Expression *primArgType = _primitiveDescriptor->parameter_klass( i, a->preg(), nullptr );
+            Expression *primArgType = _primitiveDescriptor->parameter_klass( i, a->pseudoRegister(), nullptr );
             if ( primArgType and primArgType->hasKlass() and ( a->klass() not_eq primArgType->klass() ) ) {
                 // types differ -> primitive must fail
                 return primitiveFailure( failureSymbolForArg( i ) );
@@ -160,7 +160,7 @@ public:
     MethodInterval *interval;    // the rest of the block without the assignment
 
     AssignmentFinder( MethodInterval *b ) :
-            SpecializedMethodClosure() {
+        SpecializedMethodClosure() {
         block    = b;
         interval = nullptr;
         MethodIterator iter( block, this );
@@ -195,7 +195,7 @@ Expression *PrimitiveInliner::primitiveFailure( SymbolOop failureCode ) {
     AssignmentFinder closure( _failure_block );
     st_assert( closure.interval not_eq nullptr, "no assignment found" );
     Expression *old_temp = _scope->temporary( closure.tempNo );    // save temp
-    Expression *res      = new ConstantExpression( failureCode, new_ConstPReg( _scope, failureCode ), _gen->current() );
+    Expression *res      = new ConstantExpression( failureCode, new_ConstPseudoRegister( _scope, failureCode ), _gen->current() );
     _scope->set_temporary( closure.tempNo, res );
     closure.set_primitive_failure( false );        // allow inlining sends in failure branch
     _gen->generate_subinterval( closure.interval, true );
@@ -223,20 +223,20 @@ Expression *PrimitiveInliner::merge_failure_block( Node *ok_exit, Expression *ok
             // cannot assign to ok_result directly => introduce extra PseudoRegister & extra assignment
             // (was bug detected with new backend: assignment to ok_result is not legal if it
             // refers to parameter/receiver of the method calling the primitive - gri 6/29/96)
-            PseudoRegister *resPReg       = new SinglyAssignedPseudoRegister( _scope );
-            Node           *node          = NodeFactory::createAndRegisterNode<AssignNode>( ok_result->preg(), resPReg );
-            Expression     *resExpression = ok_result->shallowCopy( resPReg, node );
+            PseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+            Node           *node              = NodeFactory::createAndRegisterNode<AssignNode>( ok_result->pseudoRegister(), resPseudoRegister );
+            Expression     *resExpression     = ok_result->shallowCopy( resPseudoRegister, node );
             ok_exit->append( node );
             ok_exit   = node;
             ok_result = resExpression;
         }
-        _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( failure_block_result->preg(), ok_result->preg() ) );
+        _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( failure_block_result->pseudoRegister(), ok_result->pseudoRegister() ) );
         // merge after failure block
         MergeNode *prim_exit = NodeFactory::createAndRegisterNode<MergeNode>( _failure_block->end_byteCodeIndex() );
         _gen->append( prim_exit );
         ok_exit->append( prim_exit );
         _gen->setCurrent( prim_exit );
-        return new MergeExpression( ok_result, failure_block_result, ok_result->preg(), prim_exit );
+        return new MergeExpression( ok_result, failure_block_result, ok_result->pseudoRegister(), prim_exit );
     }
 }
 
@@ -326,37 +326,37 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1       = arg1->is_smi();
-    bool                         intArg2       = arg2->is_smi();
-    bool                         intBoth       = intArg1 and intArg2;            // if true, tag error cannot occur
-    SinglyAssignedPseudoRegister *resPReg      = new SinglyAssignedPseudoRegister( _scope );            // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg      = new SinglyAssignedPseudoRegister( _scope );            // holds the error message if primitive failed
-    MergeNode                    *failureStart = NodeFactory::createAndRegisterNode<MergeNode>( _failure_block->begin_byteCodeIndex() );
+    bool                         intArg1            = arg1->is_smi();
+    bool                         intArg2            = arg2->is_smi();
+    bool                         intBoth            = intArg1 and intArg2;            // if true, tag error cannot occur
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );            // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );            // holds the error message if primitive failed
+    MergeNode                    *failureStart      = NodeFactory::createAndRegisterNode<MergeNode>( _failure_block->begin_byteCodeIndex() );
 
     // n1: operation & treatment of tag error
     Node               *n1;
     AssignNode         *n1Err;
-    ConstantExpression *n1Expression           = nullptr;
+    ConstantExpression *n1Expression                = nullptr;
 
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->preg(), arg2->preg(), resPReg );
+        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
     } else {
         // tag error can occur
-        n1 = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->preg(), arg2->preg(), resPReg, intArg1, intArg2 );
+        n1 = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister, intArg1, intArg2 );
         if ( shouldUseUncommonTrap() ) {
             // simply jump to uncommon branch code
             n1->append( 1, failureStart );
         } else {
-            ConstPseudoRegister *n1PReg = new_ConstPReg( _scope, vmSymbols::first_argument_has_wrong_type() );
-            n1Err                       = NodeFactory::createAndRegisterNode<AssignNode>( n1PReg, errPReg );
-            n1Expression                = new ConstantExpression( n1PReg->constant, errPReg, n1Err );
+            ConstPseudoRegister *n1PseudoRegister = new_ConstPseudoRegister( _scope, vmSymbols::first_argument_has_wrong_type() );
+            n1Err                                 = NodeFactory::createAndRegisterNode<AssignNode>( n1PseudoRegister, errPseudoRegister );
+            n1Expression                          = new ConstantExpression( n1PseudoRegister->constant, errPseudoRegister, n1Err );
             n1->append( 1, n1Err );
             n1Err->append( failureStart );
         }
     }
     _gen->append( n1 );
-    Expression *result = new KlassExpression( smiKlassObject, resPReg, n1 );
+    Expression *result = new KlassExpression( smiKlassObject, resPseudoRegister, n1 );
 
     // n2: overflow check & treatment of overflow
     const bool         taken_is_uncommon = true;
@@ -367,9 +367,9 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
         // simply jump to uncommon branch code
         n2->append( 1, failureStart );
     } else {
-        ConstPseudoRegister *n2PReg = new_ConstPReg( _scope, vmSymbols::smi_overflow() );
-        n2Err        = NodeFactory::createAndRegisterNode<AssignNode>( n2PReg, errPReg );
-        n2Expression = new ConstantExpression( n2PReg->constant, errPReg, n2Err );
+        ConstPseudoRegister *n2PseudoRegister = new_ConstPseudoRegister( _scope, vmSymbols::smi_overflow() );
+        n2Err        = NodeFactory::createAndRegisterNode<AssignNode>( n2PseudoRegister, errPseudoRegister );
+        n2Expression = new ConstantExpression( n2PseudoRegister->constant, errPseudoRegister, n2Err );
         n2->append( 1, n2Err );
         n2Err->append( failureStart );
     }
@@ -383,7 +383,7 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
         st_assert( n2Expression not_eq nullptr, "no error message defined" );
         Expression *error;
         if ( n1Expression not_eq nullptr ) {
-            error = new MergeExpression( n1Expression, n2Expression, errPReg, failureStart );
+            error = new MergeExpression( n1Expression, n2Expression, errPseudoRegister, failureStart );
         } else {
             error = n2Expression;
         }
@@ -398,11 +398,11 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1  = arg1->is_smi();
-    bool                         intArg2  = arg2->is_smi();
-    bool                         intBoth  = intArg1 and intArg2;    // if true, tag error cannot occur
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    bool                         intArg1            = arg1->is_smi();
+    bool                         intArg2            = arg2->is_smi();
+    bool                         intBoth            = intArg1 and intArg2;    // if true, tag error cannot occur
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // n1: operation & treatment of tag error
     Node               *n1;
@@ -410,19 +410,19 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
     ConstantExpression *n1Expression;
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->preg(), arg2->preg(), resPReg );
+        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
     } else {
         // tag error can occur
-        n1                          = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->preg(), arg2->preg(), resPReg, intArg1, intArg2 );
-        ConstPseudoRegister *n1PReg = new_ConstPReg( _scope, vmSymbols::first_argument_has_wrong_type() );
-        n1Err        = NodeFactory::createAndRegisterNode<AssignNode>( n1PReg, errPReg );
-        n1Expression = new ConstantExpression( n1PReg->constant, errPReg, n1Err );
+        n1                                    = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister, intArg1, intArg2 );
+        ConstPseudoRegister *n1PseudoRegister = new_ConstPseudoRegister( _scope, vmSymbols::first_argument_has_wrong_type() );
+        n1Err        = NodeFactory::createAndRegisterNode<AssignNode>( n1PseudoRegister, errPseudoRegister );
+        n1Expression = new ConstantExpression( n1PseudoRegister->constant, errPseudoRegister, n1Err );
         n1->append( 1, n1Err );
     }
     _gen->append( n1 );
 
     // continuation
-    Expression *result = new KlassExpression( smiKlassObject, resPReg, n1 );
+    Expression *result = new KlassExpression( smiKlassObject, resPseudoRegister, n1 );
     if ( not intBoth ) {
         // failure can occur
         if ( shouldUseUncommonTrap() ) {
@@ -438,13 +438,13 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
 
 
 Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
-    if ( y->preg()->isConstPseudoRegister() ) {
+    if ( y->pseudoRegister()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
-        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
+        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with shift
-            ConstPseudoRegister *preg = new_ConstPReg( _scope, smiOopFromValue( -log2( d ) ) );
-            return smi_BitOp( ArithOpCode::tShiftArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
+            ConstPseudoRegister *pseudoRegister = new_ConstPseudoRegister( _scope, smiOopFromValue( -log2( d ) ) );
+            return smi_BitOp( ArithOpCode::tShiftArithOp, x, new ConstantExpression( pseudoRegister->constant, pseudoRegister, _gen->_current ) );
         }
     }
     // otherwise leave it alone
@@ -453,13 +453,13 @@ Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
 
 
 Expression *PrimitiveInliner::smi_Mod( Expression *x, Expression *y ) {
-    if ( y->preg()->isConstPseudoRegister() ) {
+    if ( y->pseudoRegister()->isConstPseudoRegister() ) {
         st_assert( y->is_smi(), "type check should have failed" );
-        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->preg() )->constant )->value();
+        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with mask
-            ConstPseudoRegister *preg = new_ConstPReg( _scope, smiOopFromValue( d - 1 ) );
-            return smi_BitOp( ArithOpCode::tAndArithOp, x, new ConstantExpression( preg->constant, preg, _gen->_current ) );
+            ConstPseudoRegister *pseudoRegister = new_ConstPseudoRegister( _scope, smiOopFromValue( d - 1 ) );
+            return smi_BitOp( ArithOpCode::tAndArithOp, x, new ConstantExpression( pseudoRegister->constant, pseudoRegister, _gen->_current ) );
         }
     }
     // otherwise leave it alone
@@ -468,7 +468,7 @@ Expression *PrimitiveInliner::smi_Mod( Expression *x, Expression *y ) {
 
 
 Expression *PrimitiveInliner::smi_Shift( Expression *arg1, Expression *arg2 ) {
-    if ( parameter( 1 )->preg()->isConstPseudoRegister() ) {
+    if ( parameter( 1 )->pseudoRegister()->isConstPseudoRegister() ) {
         // inline if the shift count is a constant
         st_assert( arg2->is_smi(), "type check should have failed" );
         return smi_BitOp( ArithOpCode::tShiftArithOp, arg1, arg2 );
@@ -510,7 +510,7 @@ static BranchOpCode Not( BranchOpCode cond ) {
 }
 
 
-Expression *PrimitiveInliner::generate_cond( BranchOpCode cond, NodeBuilder *gen, PseudoRegister *resPReg ) {
+Expression *PrimitiveInliner::generate_cond( BranchOpCode cond, NodeBuilder *gen, PseudoRegister *resPseudoRegister ) {
     // generate code loading true or false depending on current condition code
     // Note: condition is negated in order to provoke a certain code order
     //       when compiling whileTrue loops - gri 6/26/96
@@ -520,20 +520,20 @@ Expression *PrimitiveInliner::generate_cond( BranchOpCode cond, NodeBuilder *gen
     gen->append( n2 );
 
     // tAsgn: true branch
-    ConstPseudoRegister *tPReg       = new_ConstPReg( gen->scope(), trueObject );
-    AssignNode          *tAsgn       = NodeFactory::createAndRegisterNode<AssignNode>( tPReg, resPReg );
-    ConstantExpression  *tExpression = new ConstantExpression( trueObject, resPReg, tAsgn );
+    ConstPseudoRegister *tPseudoRegister = new_ConstPseudoRegister( gen->scope(), trueObject );
+    AssignNode          *tAsgn           = NodeFactory::createAndRegisterNode<AssignNode>( tPseudoRegister, resPseudoRegister );
+    ConstantExpression  *tExpression     = new ConstantExpression( trueObject, resPseudoRegister, tAsgn );
     n2->append( 0, tAsgn );
 
     // fAsgn: false branch
-    ConstPseudoRegister *fPReg       = new_ConstPReg( gen->scope(), falseObject );
-    AssignNode          *fAsgn       = NodeFactory::createAndRegisterNode<AssignNode>( fPReg, resPReg );
-    ConstantExpression  *fExpression = new ConstantExpression( falseObject, resPReg, fAsgn );
+    ConstPseudoRegister *fPseudoRegister = new_ConstPseudoRegister( gen->scope(), falseObject );
+    AssignNode          *fAsgn           = NodeFactory::createAndRegisterNode<AssignNode>( fPseudoRegister, resPseudoRegister );
+    ConstantExpression  *fExpression     = new ConstantExpression( falseObject, resPseudoRegister, fAsgn );
     n2->append( 1, fAsgn );
 
     // ftm: false & true branch merger
     MergeNode  *ftm    = NodeFactory::createAndRegisterNode<MergeNode>( fAsgn, tAsgn );
-    Expression *result = new MergeExpression( fExpression, tExpression, resPReg, ftm );
+    Expression *result = new MergeExpression( fExpression, tExpression, resPseudoRegister, ftm );
     gen->setCurrent( ftm );
     return result;
 }
@@ -544,31 +544,31 @@ Expression *PrimitiveInliner::smi_Comparison( BranchOpCode cond, Expression *arg
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1  = arg1->is_smi();
-    bool                         intArg2  = arg2->is_smi();
-    bool                         intBoth  = intArg1 and intArg2;    // if true, tag error cannot occur
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    bool                         intArg1            = arg1->is_smi();
+    bool                         intArg2            = arg2->is_smi();
+    bool                         intBoth            = intArg1 and intArg2;    // if true, tag error cannot occur
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // n1: comparison & treatment of tag error
     Node                *n1;
-    ConstPseudoRegister *n1PReg;
+    ConstPseudoRegister *n1PseudoRegister;
     AssignNode          *n1Err;
     ConstantExpression  *n1Expression;
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( ArithOpCode::tCmpArithOp, arg1->preg(), arg2->preg(), new NoResultPseudoRegister( _scope ) );
+        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( ArithOpCode::tCmpArithOp, arg1->pseudoRegister(), arg2->pseudoRegister(), new NoResultPseudoRegister( _scope ) );
     } else {
         // tag error can occur
-        n1           = NodeFactory::createAndRegisterNode<TArithRRNode>( ArithOpCode::tCmpArithOp, arg1->preg(), arg2->preg(), new NoResultPseudoRegister( _scope ), intArg1, intArg2 );
-        n1PReg       = new_ConstPReg( _scope, vmSymbols::first_argument_has_wrong_type() );
-        n1Err        = NodeFactory::createAndRegisterNode<AssignNode>( n1PReg, errPReg );
-        n1Expression = new ConstantExpression( n1PReg->constant, errPReg, n1Err );
+        n1               = NodeFactory::createAndRegisterNode<TArithRRNode>( ArithOpCode::tCmpArithOp, arg1->pseudoRegister(), arg2->pseudoRegister(), new NoResultPseudoRegister( _scope ), intArg1, intArg2 );
+        n1PseudoRegister = new_ConstPseudoRegister( _scope, vmSymbols::first_argument_has_wrong_type() );
+        n1Err            = NodeFactory::createAndRegisterNode<AssignNode>( n1PseudoRegister, errPseudoRegister );
+        n1Expression     = new ConstantExpression( n1PseudoRegister->constant, errPseudoRegister, n1Err );
         n1->append( 1, n1Err );
     }
     _gen->append( n1 );
 
-    Expression *result = generate_cond( cond, _gen, resPReg );
+    Expression *result = generate_cond( cond, _gen, resPseudoRegister );
 
     // continuation
     if ( not intBoth ) {
@@ -596,7 +596,7 @@ Expression *PrimitiveInliner::array_size() {
 
     // get size
     SinglyAssignedPseudoRegister *res = new SinglyAssignedPseudoRegister( _scope );
-    _gen->append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( res, array->preg(), lenOffs, true ) );
+    _gen->append( NodeFactory::createAndRegisterNode<LoadOffsetNode>( res, array->pseudoRegister(), lenOffs, true ) );
     return new KlassExpression( smiKlassObject, res, _gen->_current );
 }
 
@@ -606,16 +606,16 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     assert_receiver();
 
     // parameters & result registers
-    Expression                   *array   = parameter( 0 );
-    Expression                   *index   = parameter( 1 );
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
-    Klass                        *klass   = array->klass()->klass_part();
-    std::int32_t                 lenOffs  = klass->non_indexable_size();
-    std::int32_t                 arrOffs  = lenOffs + 1;
+    Expression                   *array             = parameter( 0 );
+    Expression                   *index             = parameter( 1 );
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    Klass                        *klass             = array->klass()->klass_part();
+    std::int32_t                 lenOffs            = klass->non_indexable_size();
+    std::int32_t                 arrOffs            = lenOffs + 1;
 
     // at node
-    ArrayAtNode *at = NodeFactory::createAndRegisterNode<ArrayAtNode>( access_type, array->preg(), index->preg(), index->is_smi(), resPReg, errPReg, arrOffs, lenOffs );
+    ArrayAtNode *at = NodeFactory::createAndRegisterNode<ArrayAtNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->is_smi(), resPseudoRegister, errPseudoRegister, arrOffs, lenOffs );
     _gen->append( at );
 
     // continuation
@@ -623,13 +623,13 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     switch ( access_type ) {
         case ArrayAtNode::byte_at        : // fall through
         case ArrayAtNode::double_byte_at:
-            resExpression = new KlassExpression( Universe::smiKlassObject(), resPReg, at );
+            resExpression = new KlassExpression( Universe::smiKlassObject(), resPseudoRegister, at );
             break;
         case ArrayAtNode::character_at:
-            resExpression = new KlassExpression( Universe::characterKlassObject(), resPReg, at );
+            resExpression = new KlassExpression( Universe::characterKlassObject(), resPseudoRegister, at );
             break;
         case ArrayAtNode::object_at:
-            resExpression = new UnknownExpression( resPReg, at );
+            resExpression = new UnknownExpression( resPseudoRegister, at );
             break;
         default: ShouldNotReachHere();
     }
@@ -641,7 +641,7 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             at->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, at );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPseudoRegister, at );
             resExpression             = merge_failure_block( at, resExpression, err, errExpression, false );
         }
     }
@@ -654,23 +654,23 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
     assert_receiver();
 
     // parameters & result registers
-    Expression                   *array     = parameter( 0 );
-    Expression                   *index     = parameter( 1 );
-    Expression                   *element   = parameter( 2 );
-    SinglyAssignedPseudoRegister *resPReg   = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg   = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
-    Klass                        *klass     = array->klass()->klass_part();
-    std::int32_t                 lenOffs    = klass->non_indexable_size();
-    std::int32_t                 arrOffs    = lenOffs + 1;
-    bool                         storeCheck = ( access_type == ArrayAtPutNode::object_at_put ) and element->needsStoreCheck();
+    Expression                   *array             = parameter( 0 );
+    Expression                   *index             = parameter( 1 );
+    Expression                   *element           = parameter( 2 );
+//    SinglyAssignedPseudoRegister *resPseudoRegister   = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    Klass                        *klass             = array->klass()->klass_part();
+    std::int32_t                 lenOffs            = klass->non_indexable_size();
+    std::int32_t                 arrOffs            = lenOffs + 1;
+    bool                         storeCheck         = ( access_type == ArrayAtPutNode::object_at_put ) and element->needsStoreCheck();
 
     if ( access_type == ArrayAtPutNode::object_at_put ) {
         // make sure blocks stored into array are created
-        _gen->materialize( element->preg(), nullptr );
+        _gen->materialize( element->pseudoRegister(), nullptr );
     }
 
     // atPut node
-    ArrayAtPutNode *atPut = NodeFactory::createAndRegisterNode<ArrayAtPutNode>( access_type, array->preg(), index->preg(), index->is_smi(), element->preg(), element->is_smi(), nullptr, errPReg, arrOffs, lenOffs, storeCheck );
+    ArrayAtPutNode *atPut = NodeFactory::createAndRegisterNode<ArrayAtPutNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->is_smi(), element->pseudoRegister(), element->is_smi(), nullptr, errPseudoRegister, arrOffs, lenOffs, storeCheck );
     _gen->append( atPut );
 
     // continuation
@@ -683,7 +683,7 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             atPut->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, atPut );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPseudoRegister, atPut );
             resExpression = merge_failure_block( atPut, resExpression, err, errExpression, true );
         }
     }
@@ -739,7 +739,7 @@ Expression *PrimitiveInliner::obj_new() {
         }
     }
     Expression   *u   = genCall( true );
-    return new KlassExpression( klass->as_klassOop(), u->preg(), u->node() );
+    return new KlassExpression( klass->as_klassOop(), u->pseudoRegister(), u->node() );
 }
 
 
@@ -748,7 +748,7 @@ Expression *PrimitiveInliner::obj_shallowCopy() {
     // Fix this Robert, 10/24-95, Lars
     Expression *u = genCall( false );
     st_assert( u->isUnknownExpression(), "oops" );
-    return new KlassExpression( parameter( 0 )->klass(), u->preg(), u->node() );
+    return new KlassExpression( parameter( 0 )->klass(), u->pseudoRegister(), u->node() );
 }
 
 
@@ -756,12 +756,12 @@ Expression *PrimitiveInliner::obj_equal() {
     assert_no_failure_block();
 
     // parameters & result registers
-    PseudoRegister *arg1 = parameter( 0 )->preg();
-    PseudoRegister *arg2 = parameter( 1 )->preg();
+    PseudoRegister *arg1 = parameter( 0 )->pseudoRegister();
+    PseudoRegister *arg2 = parameter( 1 )->pseudoRegister();
     // comparison
     _gen->append( NodeFactory::createAndRegisterNode<ArithRRNode>( ArithOpCode::CmpArithOp, arg1, arg2, new NoResultPseudoRegister( _scope ) ) );
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );
-    return generate_cond( BranchOpCode::EQBranchOp, _gen, resPReg );
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+    return generate_cond( BranchOpCode::EQBranchOp, _gen, resPseudoRegister );
 }
 
 
@@ -774,13 +774,13 @@ Expression *PrimitiveInliner::obj_class( bool has_receiver ) {
     if ( obj->hasKlass() ) {
         // constant-fold it
         KlassOop k = obj->klass();
-        return new ConstantExpression( k, new_ConstPReg( _scope, k ), nullptr );
+        return new ConstantExpression( k, new_ConstPseudoRegister( _scope, k ), nullptr );
     } else {
-        SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );
-        InlinedPrimitiveNode         *n       = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_klass, resPReg, nullptr, obj->preg() );
+        SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_klass, resPseudoRegister, nullptr, obj->pseudoRegister() );
         _gen->append( n );
         // don't know exactly what it is - just use PolymorphicInlineCache info
-        return new UnknownExpression( resPReg, n );
+        return new UnknownExpression( resPseudoRegister, n );
     }
 }
 
@@ -800,10 +800,10 @@ Expression *PrimitiveInliner::obj_hash( bool has_receiver ) {
         // code in x86_node.cpp not yet implemented - fix this at some point
         //
         // has value taken from header field
-        SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );
-        InlinedPrimitiveNode         *n       = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_hash, resPReg, nullptr, obj->preg() );
+        SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_hash, resPseudoRegister, nullptr, obj->pseudoRegister() );
         _gen->append( n );
-        return new KlassExpression( Universe::smiKlassObject(), resPReg, n );
+        return new KlassExpression( Universe::smiKlassObject(), resPseudoRegister, n );
     }
 }
 
@@ -813,17 +813,17 @@ Expression *PrimitiveInliner::proxy_byte_at() {
     assert_receiver();
 
     // parameters & result registers
-    Expression                   *proxy   = parameter( 0 );
-    Expression                   *index   = parameter( 1 );
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
-    SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    Expression                   *proxy             = parameter( 0 );
+    Expression                   *index             = parameter( 1 );
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // at node
-    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::proxy_byte_at, resPReg, errPReg, proxy->preg(), index->preg(), index->is_smi() );
+    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::proxy_byte_at, resPseudoRegister, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi() );
     _gen->append( at );
 
     // continuation
-    Expression *resExpression = new KlassExpression( Universe::smiKlassObject(), resPReg, at );
+    Expression *resExpression = new KlassExpression( Universe::smiKlassObject(), resPseudoRegister, at );
     if ( at->canFail() ) {
         if ( shouldUseUncommonTrap() ) {
             // uncommon branch instead of failure code
@@ -832,7 +832,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             at->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, at );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPseudoRegister, at );
             resExpression = merge_failure_block( at, resExpression, err, errExpression, false );
         }
     }
@@ -845,13 +845,13 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
     assert_receiver();
 
     // parameters & result registers
-    Expression                   *proxy   = parameter( 0 );
-    Expression                   *index   = parameter( 1 );
-    Expression                   *value   = parameter( 2 );
-    SinglyAssignedPseudoRegister *errPReg = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
+    Expression                   *proxy             = parameter( 0 );
+    Expression                   *index             = parameter( 1 );
+    Expression                   *value             = parameter( 2 );
+    SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // atPut node
-    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::proxy_byte_at_put, nullptr, errPReg, proxy->preg(), index->preg(), index->is_smi(), value->preg(), value->is_smi() );
+    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::proxy_byte_at_put, nullptr, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi(), value->pseudoRegister(), value->is_smi() );
     _gen->append( atPut );
 
     // continuation
@@ -864,7 +864,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
             // append failure code
             NopNode *err = NodeFactory::createAndRegisterNode<NopNode>();
             atPut->append( 1, err );
-            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPReg, atPut );
+            Expression *errExpression = new KlassExpression( Universe::symbolKlassObject(), errPseudoRegister, atPut );
             resExpression = merge_failure_block( atPut, resExpression, err, errExpression, true );
         }
     }
@@ -873,7 +873,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
 
 
 Expression *PrimitiveInliner::block_primitiveValue() {
-    PseudoRegister *r = parameter( 0 )->preg();
+    PseudoRegister *r = parameter( 0 )->pseudoRegister();
     if ( r->isBlockPseudoRegister() ) {
         // we know the identity of the block -- inline it if possible
         Inliner    *inliner = _gen->inliner();
@@ -1148,20 +1148,20 @@ Expression *PrimitiveInliner::genCall( bool canFail ) {
         _gen->append( branch );
     }
 
-    // primitive didn't fail (with or without failure block) -> assign to resPReg & determine its expression
-    SinglyAssignedPseudoRegister *resPReg = new SinglyAssignedPseudoRegister( _scope );
-    _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( pcall->dst(), resPReg ) );
+    // primitive didn't fail (with or without failure block) -> assign to resPseudoRegister & determine its expression
+    SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+    _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( pcall->dst(), resPseudoRegister ) );
     Node       *ok_exit       = _gen->_current;
-    Expression *resExpression = _primitiveDescriptor->return_klass( resPReg, ok_exit );
+    Expression *resExpression = _primitiveDescriptor->return_klass( resPseudoRegister, ok_exit );
     if ( resExpression == nullptr )
-        resExpression = new UnknownExpression( resPReg, ok_exit );
+        resExpression = new UnknownExpression( resPseudoRegister, ok_exit );
 
     if ( branch not_eq nullptr ) {
         // add failure block if primitive can fail -> reset MARK_TAG_BIT first
-        SinglyAssignedPseudoRegister *errPReg      = new SinglyAssignedPseudoRegister( _scope );
-        ArithRCNode                  *failure_exit = NodeFactory::createAndRegisterNode<ArithRCNode>( ArithOpCode::AndArithOp, pcall->dst(), ~MARK_TAG_BIT, errPReg );
+        SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
+        ArithRCNode                  *failure_exit      = NodeFactory::createAndRegisterNode<ArithRCNode>( ArithOpCode::AndArithOp, pcall->dst(), ~MARK_TAG_BIT, errPseudoRegister );
         branch->append( 1, failure_exit );
-        resExpression = merge_failure_block( ok_exit, resExpression, failure_exit, new KlassExpression( Universe::symbolKlassObject(), errPReg, failure_exit ), false );
+        resExpression = merge_failure_block( ok_exit, resExpression, failure_exit, new KlassExpression( Universe::symbolKlassObject(), errPseudoRegister, failure_exit ), false );
     }
 
     return resExpression;

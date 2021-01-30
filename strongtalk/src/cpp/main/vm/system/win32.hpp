@@ -58,7 +58,7 @@ private:
 
 
     Thread( HANDLE handle, std::int32_t id, void *stackLimit ) :
-            thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
+        thread_handle( handle ), thread_id( id ), stack_limit( stackLimit ) {
 
         std::int32_t index = threads->find( nullptr, equals );
         if ( index < 0 ) {

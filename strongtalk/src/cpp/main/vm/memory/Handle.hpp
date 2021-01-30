@@ -36,11 +36,16 @@ protected:
 
     virtual void setFirst( BaseHandle * ) = 0;
 
-    BaseHandle( Oop toSave, bool log, const char *label );
+
+    BaseHandle( Oop toSave, bool log, const char *label ) :
+        _label( label ), _log( log ), _saved( toSave ) {
+    }
+
 
     void oops_do( void f( Oop * ) );
 
 public:
+
     void pop();
 
 

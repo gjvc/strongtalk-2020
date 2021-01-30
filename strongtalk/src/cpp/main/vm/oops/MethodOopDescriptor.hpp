@@ -14,7 +14,6 @@
 #include "vm/utilities/GrowableArray.hpp"
 
 
-
 // A methodOop is a method with byte codes.
 
 const std::int32_t method_size_mask_bitno = 2;

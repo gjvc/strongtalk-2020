@@ -12,12 +12,12 @@
 RegisterAllocator *theAllocator;
 
 
-static std::int32_t compare_pregBegs( PseudoRegister **a, PseudoRegister **b ) {
+static std::int32_t compare_pseudoRegisterBegs( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->begByteCodeIndex() - ( *b )->begByteCodeIndex();
 }
 
 
-static std::int32_t compare_pregEnds( PseudoRegister **a, PseudoRegister **b ) {
+static std::int32_t compare_pseudoRegisterEnds( PseudoRegister **a, PseudoRegister **b ) {
     return ( *a )->endByteCodeIndex() - ( *b )->endByteCodeIndex();
 }
 
@@ -56,25 +56,25 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
     if ( len > 0 ) {
 
         // sort begByteCodeIndexs & distribute to scopes
-        regs->sort( &compare_pregBegs );
+        regs->sort( &compare_pseudoRegisterBegs );
         st_assert( regs->isEmpty() or regs->first()->begByteCodeIndex() <= regs->last()->begByteCodeIndex(), "wrong sort order" );
         for ( std::int32_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
             st_assert( r->begByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal begByteCodeIndex" );
             st_assert( r->endByteCodeIndex() not_eq IllegalByteCodeIndex, "illegal endByteCodeIndex" );
-            r->scope()->addToPRegsBegSorted( r );
+            r->scope()->addToPseudoRegistersBegSorted( r );
         }
 
         // sort endByteCodeIndexs & distribute to scopes
-        regs->sort( &compare_pregEnds );
+        regs->sort( &compare_pseudoRegisterEnds );
         st_assert( regs->isEmpty() or regs->first()->endByteCodeIndex() <= regs->last()->endByteCodeIndex(), "wrong sort order" );
         for ( std::int32_t i = 0; i < len; i++ ) {
             PseudoRegister *r = regs->at( i );
-            r->scope()->addToPRegsEndSorted( r );
+            r->scope()->addToPseudoRegistersEndSorted( r );
         }
 
         // do register allocation
-        theCompiler->topScope->allocatePRegs( _stackLocs );
+        theCompiler->topScope->allocatePseudoRegisters( _stackLocs );
 
         // result
         if ( CompilerDebug )

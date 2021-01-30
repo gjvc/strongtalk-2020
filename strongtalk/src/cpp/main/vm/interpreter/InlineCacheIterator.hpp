@@ -121,7 +121,7 @@ private:
 
 public:
     InlineCache( InlineCacheIterator *iter ) :
-            _iter( iter ) {
+        _iter( iter ) {
     }
 
 

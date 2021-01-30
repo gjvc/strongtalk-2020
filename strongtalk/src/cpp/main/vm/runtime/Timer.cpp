@@ -55,7 +55,7 @@ void ElapsedTimer::print() {
 
 
 TimeStamp::TimeStamp() :
-        counter( 0, 0 ) {
+    counter( 0, 0 ) {
 }
 
 

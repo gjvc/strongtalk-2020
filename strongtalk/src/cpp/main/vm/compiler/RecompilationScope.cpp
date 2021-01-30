@@ -23,7 +23,7 @@
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex ) :
-        _senderByteCodeIndex( byteCodeIndex ) {
+    _senderByteCodeIndex( byteCodeIndex ) {
     _sender = s;
     if ( s ) {
         s->addScope( byteCodeIndex, this );
@@ -52,50 +52,52 @@ std::int32_t NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a
 
 
 NonDummyRecompilationScope::NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level ) :
-        RecompilationScope( s, byteCodeIndex ), _level( level ), uncommon( 1 ), ncodes( m == nullptr ? 1 : m->size_of_codes() * OOP_SIZE ) {
-    _subScopes = new_resource_array<GrowableArray<RecompilationScope *> *>( ncodes + 1 );
-    for ( std::int32_t i = 0; i <= ncodes; i++ )
+    _level( level ),
+    _ncodes( m == nullptr ? 1 : m->size_of_codes() * OOP_SIZE ),
+    _subScopes( new_resource_array<GrowableArray<RecompilationScope *> *>( _ncodes + 1 ) ),
+    RecompilationScope( s, byteCodeIndex ), uncommon( 1 ) {
+    for ( std::int32_t i = 0; i <= _ncodes; i++ )
         _subScopes[ i ] = nullptr;
 }
 
 
 InlinedRecompilationScope::InlinedRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, const NativeMethod *n, ScopeDescriptor *d, std::int32_t level ) :
-        NonDummyRecompilationScope( s, byteCodeIndex, d->method(), level ), desc( d ), nm( n ) {
+    NonDummyRecompilationScope( s, byteCodeIndex, d->method(), level ), desc( d ), nm( n ) {
 }
 
 
 PICRecompilationScope::PICRecompilationScope( const NativeMethod *c, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *dsc, NativeMethod *n, MethodOop m, std::int32_t ns, std::int32_t lev, bool tr ) :
-        NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc ) {
+    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc ) {
     _invocationCount = ns;
     _extended        = false;
 }
 
 
 InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, KlassOop receiver_klass, MethodOop method, std::int32_t level ) :
-        NonDummyRecompilationScope( sender, byteCodeIndex, method, level ) {
+    NonDummyRecompilationScope( sender, byteCodeIndex, method, level ) {
     _receiver_klass = receiver_klass;
     _method         = method;
     _key            = LookupKey::allocate( receiver_klass, method->is_blockMethod() ? Oop( method ) : Oop( _method->selector() ) );
-    _uncommon       = new GrowableArray<bool>( ncodes );
-    for ( std::int32_t i = 0; i <= ncodes; i++ )
+    _uncommon       = new GrowableArray<bool>( _ncodes );
+    for ( std::int32_t i = 0; i <= _ncodes; i++ )
         _uncommon->append( false );
 }
 
 
 UntakenRecompilationScope::UntakenRecompilationScope( NonDummyRecompilationScope *sender, ProgramCounterDescriptor *p, bool u ) :
-        NonDummyRecompilationScope( sender, p->_byteCodeIndex, nullptr, 0 ), isUncommon( u ), pc( p ) {
+    NonDummyRecompilationScope( sender, p->_byteCodeIndex, nullptr, 0 ), isUncommon( u ), pc( p ) {
 //    std::int32_t i = 0;    // to allow setting breakpoints
 }
 
 
 UninlinableRecompilationScope::UninlinableRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex ) :
-        NullRecompilationScope( sender, byteCodeIndex ) {
+    NullRecompilationScope( sender, byteCodeIndex ) {
 //    std::int32_t i = 0;    // to allow setting breakpoints
 }
 
 
 InterpretedRecompilationScope::InterpretedRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, LookupKey *key, MethodOop m, std::int32_t level, bool trusted ) :
-        NonDummyRecompilationScope( sender, byteCodeIndex, m, level ) {
+    NonDummyRecompilationScope( sender, byteCodeIndex, m, level ) {
     _key             = key;
     _method          = m;
     _invocationCount = m->invocation_count();
@@ -190,7 +192,7 @@ bool PICRecompilationScope::equivalent( LookupKey *l ) const {
 
 RecompilationScope *NonDummyRecompilationScope::subScope( std::int32_t byteCodeIndex, LookupKey *k ) const {
     // return the subscope matching the lookup
-    st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
+    st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
     GrowableArray<RecompilationScope *> *list = _subScopes[ byteCodeIndex ];
     if ( list == nullptr )
         return new NullRecompilationScope;
@@ -205,7 +207,7 @@ RecompilationScope *NonDummyRecompilationScope::subScope( std::int32_t byteCodeI
 
 GrowableArray<RecompilationScope *> *NonDummyRecompilationScope::subScopes( std::int32_t byteCodeIndex ) const {
     // return all subscopes at byteCodeIndex
-    st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
+    st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
     GrowableArray<RecompilationScope *> *list = _subScopes[ byteCodeIndex ];
     if ( list == nullptr )
         return new GrowableArray<RecompilationScope *>( 1 );
@@ -214,13 +216,13 @@ GrowableArray<RecompilationScope *> *NonDummyRecompilationScope::subScopes( std:
 
 
 bool NonDummyRecompilationScope::hasSubScopes( std::int32_t byteCodeIndex ) const {
-    st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
+    st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
     return _subScopes[ byteCodeIndex ] not_eq nullptr;
 }
 
 
 void NonDummyRecompilationScope::addScope( std::int32_t byteCodeIndex, RecompilationScope *s ) {
-    st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
+    st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
     if ( _subScopes[ byteCodeIndex ] == nullptr )
         _subScopes[ byteCodeIndex ] = new GrowableArray<RecompilationScope *>( 5 );
 
@@ -251,7 +253,7 @@ bool NonDummyRecompilationScope::isUncommonAt( std::int32_t byteCodeIndex ) cons
 
 
 bool NonDummyRecompilationScope::isNotUncommonAt( std::int32_t byteCodeIndex ) const {
-    st_assert( byteCodeIndex >= 0 and byteCodeIndex < ncodes, "byteCodeIndex out of range" );
+    st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
 
     // check if program got uncommon trap in the past
     for ( std::int32_t i = 0; i < uncommon.length(); i++ ) {
@@ -312,8 +314,8 @@ KlassOop InlinedRecompilationScope::receiverKlass() const {
 
 
 void NonDummyRecompilationScope::unify( NonDummyRecompilationScope *s ) {
-    st_assert( ncodes == s->ncodes, "should be the same" );
-    for ( std::int32_t i = 0; i < ncodes; i++ ) {
+    st_assert( _ncodes == s->_ncodes, "should be the same" );
+    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
         _subScopes[ i ] = s->_subScopes[ i ];
         if ( _subScopes[ i ] ) {
             for ( std::int32_t j = _subScopes[ i ]->length() - 1; j >= 0; j-- ) {
@@ -576,10 +578,10 @@ void RecompilationScope::print() {
 
 void NonDummyRecompilationScope::printSubScopes() const {
     std::int32_t i = 0;
-    for ( ; i < ncodes and _subScopes[ i ] == nullptr; i++ );
-    if ( i < ncodes ) {
+    for ( ; i < _ncodes and _subScopes[ i ] == nullptr; i++ );
+    if ( i < _ncodes ) {
         _console->print( "{ " );
-        for ( std::int32_t i = 0; i < ncodes; i++ ) {
+        for ( std::int32_t i = 0; i < _ncodes; i++ ) {
             _console->print( "0x{0:x} ", PrintHexAddresses ? _subScopes[ i ] : 0 );
         }
         _console->print( "}" );
@@ -670,7 +672,7 @@ void NonDummyRecompilationScope::printTree( std::int32_t senderByteCodeIndex, st
 
     std::int32_t u = 0;          // current position in uncommon
 
-    for ( std::int32_t byteCodeIndex = 0; byteCodeIndex < ncodes; byteCodeIndex++ ) {
+    for ( std::int32_t byteCodeIndex = 0; byteCodeIndex < _ncodes; byteCodeIndex++ ) {
         if ( _subScopes[ byteCodeIndex ] ) {
             for ( std::int32_t j = 0; j < _subScopes[ byteCodeIndex ]->length(); j++ ) {
                 _subScopes[ byteCodeIndex ]->at( j )->printTree( byteCodeIndex, level + 1 );
@@ -722,7 +724,7 @@ bool InliningDatabaseRecompilationScope::isNotUncommonAt( std::int32_t byteCodeI
 std::int32_t InlinedRecompilationScope::inlining_database_size() {
     std::int32_t result = 1; // Count this node
 
-    for ( std::int32_t i = 0; i < ncodes; i++ ) {
+    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
             for ( std::int32_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 result += _subScopes[ i ]->at( j )->inlining_database_size();
@@ -768,7 +770,7 @@ void InlinedRecompilationScope::print_inlining_database_on( ConsoleOutputStream 
     ProgramCounterDescriptor *current_uncommon = next_uncommon( scope, u, uncommon );
 
     // File out subscopes
-    for ( std::int32_t i = 0; i < ncodes; i++ ) {
+    for ( std::int32_t i = 0; i < _ncodes; i++ ) {
         if ( _subScopes[ i ] ) {
             for ( std::int32_t j = 0; j < _subScopes[ i ]->length(); j++ ) {
                 _subScopes[ i ]->at( j )->print_inlining_database_on( stream, uncommon, i, level + 1 );

@@ -17,7 +17,7 @@ bool       InterpreterStatistics::_is_initialized = false;
 
 
 void InterpreterStatistics::reset_bytecode_counters() {
-    for ( auto & x : _bytecode_counters ) {
+    for ( auto &x : _bytecode_counters ) {
         x = 0;
     }
 }

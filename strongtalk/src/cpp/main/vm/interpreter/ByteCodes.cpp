@@ -1234,13 +1234,15 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
     {
         Markup tag( "table" );
         _console->print( "<th>Code<th>Name<th>Format<th>Single step" );
-        if ( type == ByteCodes::CodeType::message_send )
+        if ( type == ByteCodes::CodeType::message_send ) {
             _console->print( "<th>Send type<th>Arguments" );
+        }
         spdlog::info( "<tr>" );
         for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
-            if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type )
+            if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type ) {
                 generate_HTML_for( code );
+            }
         }
     }
     spdlog::info( "<hr/>" );
@@ -1260,8 +1262,9 @@ static void generate_HTML_docu() {
             Markup tag( "h2" );
             spdlog::info( "Delta ByteCodes (Version {})", ByteCodes::version() );
         }
-        for ( std::int32_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ )
+        for ( std::int32_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ ) {
             generate_HTML_for( ByteCodes::CodeType( i ) );
+        }
     }
 }
 

@@ -168,7 +168,7 @@ template<typename TAG_TYPE, class T, std::uint32_t num_tags = mylog2<std::alignm
 class tagged_ptr_t {
 public:
     tagged_ptr_t() noexcept
-            : tagged_ptr_t( nullptr ) {
+        : tagged_ptr_t( nullptr ) {
     }
 
 

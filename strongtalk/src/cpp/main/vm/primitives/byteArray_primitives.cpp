@@ -340,8 +340,8 @@ PRIM_DECL_2( byteArrayPrimitives::largeIntegerSubtract, Oop receiver, Oop argume
 
 
 PRIM_DECL_2( byteArrayPrimitives::largeIntegerMultiply, Oop
-        receiver, Oop
-                     argument ) {
+    receiver, Oop
+                 argument ) {
     PROLOGUE_2( "largeIntegerMultiply", receiver, argument );
     ASSERT_RECEIVER;
 
@@ -518,7 +518,7 @@ PRIM_DECL_1( byteArrayPrimitives::largeIntegerHash, Oop receiver ) {
 
 
 PRIM_DECL_1( byteArrayPrimitives::hash, Oop
-        receiver ) {
+    receiver ) {
     PROLOGUE_1( "hash", receiver );
     ASSERT_RECEIVER;
     return smiOopFromValue( ByteArrayOop( receiver )->hash_value() );
@@ -683,8 +683,8 @@ PRIM_DECL_3( byteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argu
 
 
 PRIM_DECL_2( byteArrayPrimitives::alienSignedByteAt, Oop
-        receiver, Oop
-                     argument ) {
+    receiver, Oop
+                 argument ) {
     PROLOGUE_2( "alienSignedByteAt", receiver, argument );
     checkAlienAtReceiver( receiver );
     checkAlienAtIndex( receiver, argument, char );
@@ -1122,15 +1122,15 @@ PRIM_DECL_8( byteArrayPrimitives::alienCallResult6, Oop receiver, Oop argument1,
 
 
 PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
-        receiver, Oop
-                     argument1, Oop
-                     argument2, Oop
-                     argument3, Oop
-                     argument4, Oop
-                     argument5, Oop
-                     argument6, Oop
-                     argument7, Oop
-                     argument8 ) {
+    receiver, Oop
+                 argument1, Oop
+                 argument2, Oop
+                 argument3, Oop
+                 argument4, Oop
+                 argument5, Oop
+                 argument6, Oop
+                 argument7, Oop
+                 argument8 ) {
     PROLOGUE_9( "alienCallResult7", receiver, argument1, argument2, argument3, argument4, argument5, argument6, argument7, argument8 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );
@@ -1155,9 +1155,9 @@ PRIM_DECL_9( byteArrayPrimitives::alienCallResult7, Oop
 
 
 PRIM_DECL_3( byteArrayPrimitives::alienCallResultWithArguments, Oop
-        receiver, Oop
-                     argument1, Oop
-                     argument2 ) {
+    receiver, Oop
+                 argument1, Oop
+                 argument2 ) {
     PROLOGUE_3( "alienCallResultWithArguments", receiver, argument1, argument2 );
     checkAlienCalloutReceiver( receiver );
     checkAlienCalloutResultArgs( argument1 );

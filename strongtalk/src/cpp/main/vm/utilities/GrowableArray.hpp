@@ -76,17 +76,17 @@ class GrowableArray : public GenericGrowableArray {
 
 public:
     GrowableArray( std::int32_t initial_size, bool on_C_heap = false ) :
-            GenericGrowableArray( initial_size, on_C_heap ) {
+        GenericGrowableArray( initial_size, on_C_heap ) {
     }
 
 
     GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool on_C_heap = false ) :
-            GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
+        GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
     }
 
 
     GrowableArray() :
-            GenericGrowableArray( 2 ) {
+        GenericGrowableArray( 2 ) {
     }
 
 

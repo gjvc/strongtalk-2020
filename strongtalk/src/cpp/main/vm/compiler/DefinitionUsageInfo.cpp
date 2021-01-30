@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/compiler/defUse.hpp"
+#include "vm/compiler/DefinitionUsage.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/compiler/CopyPropagationInfo.hpp"

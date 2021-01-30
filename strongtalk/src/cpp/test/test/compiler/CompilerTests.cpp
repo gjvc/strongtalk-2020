@@ -190,7 +190,7 @@ TEST_F( CompilerTests, uncommonTrap
         LookupResult result = interpreter_normal_lookup( varClass.as_klass(), SymbolOop( toCompile.as_oop() ) );
         LookupKey    key( varClass.as_klass(), toCompile.as_oop() );
         ASSERT_TRUE( !result.
-                is_empty()
+            is_empty()
         );
         VM_OptimizeMethod op( &key, result.method() );
         VMProcess::execute( &op );
@@ -198,13 +198,13 @@ TEST_F( CompilerTests, uncommonTrap
         LookupCache::flush();
         std::int32_t trapCount = op.result()->uncommon_trap_counter();
         Delta::call( newTest
-                             .
-                                     as_oop(), triggerTrap
-                             .
-                                     as_oop()
+                         .
+                             as_oop(), triggerTrap
+                         .
+                             as_oop()
         );
         ASSERT_EQ( trapCount
-                           +1, op.result()->uncommon_trap_counter() );
+                       +1, op.result()->uncommon_trap_counter() );
     }
 }
 
@@ -259,9 +259,9 @@ TEST_F( CompilerTests, recompileZombieForcingFlush
         Handle setup( oopFactory::new_symbol( "testSetup2" ) );
         Handle varClass( Universe::find_global( "NonInlinedBlockTest" ) );
         Universe::code->
-                flush();
+            flush();
         Universe::code->
-                compact();
+            compact();
         LookupCache::flush();
         ASSERT_TRUE( lookup( "NonInlinedBlockTest", "exercise2:value:" )
                      == nullptr );
@@ -276,19 +276,19 @@ TEST_F( CompilerTests, recompileZombieForcingFlush
         NativeMethod   *blocknm = entry->block_nativeMethod();
         LookupKey      bogus( varClass.as_klass(), setup.as_oop() );
         exhaustMethodHeap( bogus, blocknm
-                ->
-                        size()
+            ->
+                size()
         );
         blocknm->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         blocknm->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         blocknm->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         blocknm->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         blocknm->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         call( "NonInlinedBlockTest", "testTrap2" );
     }
 }
@@ -305,26 +305,26 @@ TEST_F( CompilerTests, recompileZombieWhenMethodHeapExhausted
         call( "CompilerTest", "testOnce" );
         seed             = lookup( "CompilerTest", "with:" );
         seed->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         seed->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         seed->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         seed->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         seed->
-                inc_uncommon_trap_counter();
+            inc_uncommon_trap_counter();
         exhaustMethodHeap( seed
-                                   ->_lookupKey, seed->
-                size()
+                               ->_lookupKey, seed->
+            size()
         );
         ASSERT_FALSE( seed
-                              ->
-                                      isZombie()
+                          ->
+                              isZombie()
         ); /* forces deoptimization and recompilation.*/ call( "CompilerTest", "testTwice" );
         ASSERT_TRUE( seed
-                             ->
-                                     isZombie()
+                         ->
+                             isZombie()
         );
         NativeMethod *nm = lookup( "CompilerTest", "with:" );
         ASSERT_FALSE( ( nm

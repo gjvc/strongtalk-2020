@@ -78,7 +78,7 @@ Compiler::Compiler( RecompilationScope *scope ) {
 
 
 Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope ) :
-        _scopeStack( 10 ) {
+    _scopeStack( 10 ) {
     // Create a valid key for the compiled method.
     // {receiver class, block method} see key.hpp
     key = LookupKey::allocate( scope->parent()->selfKlass(), scope->method() );
@@ -178,7 +178,7 @@ void Compiler::initialize( RecompilationScope *remote_scope ) {
     st_assert( theCompiler == nullptr, "shouldn't have but one compiler at a time" );
     st_assert( theMacroAssembler == nullptr, "shouldn't have an assembler yet" );
 
-    PseudoRegister::initPRegs();    // must come early (before any PseudoRegister allocation)
+    PseudoRegister::initPseudoRegisters();    // must come early (before any PseudoRegister allocation)
     initNodes();        // same here (before creating nodes)
     initLimits();
 
@@ -468,7 +468,7 @@ NativeMethod *Compiler::compile() {
     // the previous context after calling a primitive; i.e., self or the previous
     // context should not be allocated to a register. Currently not working correctly
     // -> allocated to stack as a temporary fix for the problem.
-    theAllocator->preAllocate( topScope->self()->preg() );
+    theAllocator->preAllocate( topScope->self()->pseudoRegister() );
     bbIterator->localAlloc();        // allocate regs within basic blocks
     theAllocator->allocate( bbIterator->globals );
 
@@ -574,7 +574,7 @@ void Compiler::computeBlockInfo() {
             // check if all context temps can be stack-allocated
             for ( std::int32_t j = temps->length() - 1; j >= 0; j-- ) {
 
-                PseudoRegister *r = temps->at( j )->preg();
+                PseudoRegister *r = temps->at( j )->pseudoRegister();
 
                 if ( r->uplevelR() or r->uplevelW() ) { // this temp is still uplevel-accessed, so can't eliminate context
                     noUplevelAccesses = false;
@@ -588,13 +588,14 @@ void Compiler::computeBlockInfo() {
 
             }
 
-            // TO DO: check if context is needed for NonLocalReturns
-            // (noUplevelAccesses alone does not allow elimination)
-            if (/*noUplevelAccesses or */contextPR->isSinglyUsed() ) {
-                // can eliminate context -- no uplevel-accessed vars
-                // (single use is context initializer)
+            // TO DO: check if context is needed for NonLocalReturns (noUplevelAccesses alone does not allow elimination)
+            (void) noUplevelAccesses;
+//            if ( noUplevelAccesses or contextPR->isSinglyUsed() ) {
+            if ( contextPR->isSinglyUsed() ) {
+                // can eliminate context -- no uplevel-accessed vars (single use is context initializer)
                 if ( CompilerDebug )
                     cout( PrintEliminateContexts )->print( "%*s*eliminating context %s\n", s->depth, "", contextPR->safeName() );
+
                 contextPR->scope()->gen()->removeContextCreation();
                 allContexts->at_put( i, nullptr );      // make code generator break if it tries to access this context
                 changed = true;
@@ -611,10 +612,12 @@ void Compiler::computeBlockInfo() {
         InlinedScope *s = allContexts->at( i );
         if ( s == nullptr )
             continue;
+
         PseudoRegister *contextPR = s->context();
         if ( CompilerDebug ) {
             cout( PrintEliminateContexts )->print( "%*s*could not eliminate context %s in scope %s\n", s->depth, "", contextPR->safeName(), s->key()->toString() );
         }
+
         reporter->report_context( s );
         contextList->at_put( i, s );
         ContextCreateNode *c = s->contextInitializer()->creator();
@@ -626,7 +629,7 @@ void Compiler::computeBlockInfo() {
         std::int32_t size   = 0;
 
         for ( std::int32_t j = 0; j < ntemps; j++ ) {
-            PseudoRegister *p = temps->at( j )->preg();
+            PseudoRegister *p = temps->at( j )->pseudoRegister();
 
             // should be:
             //     if (p->isUsed() and (p->uplevelR() or p->uplevelW())) {

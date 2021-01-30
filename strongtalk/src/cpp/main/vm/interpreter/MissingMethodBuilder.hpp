@@ -21,7 +21,7 @@ private:
 
 public:
     MissingMethodBuilder( SymbolOop selector ) :
-            _selector( selector ) {
+        _selector( selector ) {
         _method = nullptr;
     };
 

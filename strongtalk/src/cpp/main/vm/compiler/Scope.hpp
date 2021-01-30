@@ -203,8 +203,8 @@ protected:
     GrowableArray<InlinedScope *>   *_subScopes;          // the inlined scopes
     GrowableArray<CompiledLoop *>   *_loops;              // loops contained in this scope
     GrowableArray<NonTrivialNode *> *_typeTests;          // type test-like nodes contained in this scope
-    GrowableArray<PseudoRegister *> *_pregsBegSorted;     // the scope's PseudoRegisters sorted with begByteCodeIndex (used for regAlloc)
-    GrowableArray<PseudoRegister *> *_pregsEndSorted;     // the scope's PseudoRegisters sorted with endByteCodeIndex (used for regAlloc)
+    GrowableArray<PseudoRegister *> *_pseudoRegistersBegSorted;     // the scope's PseudoRegisters sorted with begByteCodeIndex (used for regAlloc)
+    GrowableArray<PseudoRegister *> *_pseudoRegistersEndSorted;     // the scope's PseudoRegisters sorted with endByteCodeIndex (used for regAlloc)
 
     // float temporaries
     std::int32_t _firstFloatIndex;    // the (stack) float temporary index for the first float
@@ -536,11 +536,11 @@ protected:
 
 public:
     // for global register allocation
-    void addToPRegsBegSorted( PseudoRegister *r );
+    void addToPseudoRegistersBegSorted( PseudoRegister *r );
 
-    void addToPRegsEndSorted( PseudoRegister *r );
+    void addToPseudoRegistersEndSorted( PseudoRegister *r );
 
-    void allocatePRegs( IntegerFreeList *f );
+    void allocatePseudoRegisters( IntegerFreeList *f );
 
     std::int32_t allocateFloatTemporaries( std::int32_t firstFloatIndex );    // returns the number of float temps allocated for
     // this and all subscopes; sets _firstFloatIndex
@@ -719,7 +719,7 @@ OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *sc );
 class OutlinedMethodScope : public OutlinedScope {
 public:
     OutlinedMethodScope( NativeMethod *nm, ScopeDescriptor *s ) :
-            OutlinedScope( nm, s ) {
+        OutlinedScope( nm, s ) {
     }
 
 

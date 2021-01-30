@@ -42,21 +42,21 @@ protected:
 
 TEST( GrowableArrayTests, push_pop
 ) {
-GrowableArray<std::int32_t> ga;
-ga.push( 32 );
-auto result = ga.pop();
-EXPECT_EQ( result,
-32 );
+    GrowableArray<std::int32_t> ga;
+    ga.push( 32 );
+    auto result = ga.pop();
+    EXPECT_EQ( result,
+               32 );
 }
 
 
 TEST( GrowableArrayTests, append_pop
 ) {
-GrowableArray<std::int32_t> ga;
-ga.append( 32 );
-auto result = ga.pop();
-EXPECT_EQ( result,
-32 );
+    GrowableArray<std::int32_t> ga;
+    ga.append( 32 );
+    auto result = ga.pop();
+    EXPECT_EQ( result,
+               32 );
 }
 
 

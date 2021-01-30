@@ -197,10 +197,10 @@ void WeakArrayRegister::follow_contents() {
 
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
 
-        WeakArrayOop w                            = weakArrays->at( i );
-        std::int32_t non_indexable_size           = nis->at( i );
-        bool         encounted_near_death_objects = false;
-        std::int32_t length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
+        WeakArrayOop w                  = weakArrays->at( i );
+        std::int32_t non_indexable_size = nis->at( i );
+//        bool         encounted_near_death_objects = false;
+        std::int32_t length             = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
             MarkSweep::reverse_and_follow( w->oops( non_indexable_size + j ) );

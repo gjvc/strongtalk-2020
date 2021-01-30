@@ -157,7 +157,7 @@ public:
 
 
     SendFinder( MethodOop m, std::int32_t byteCodeIndex ) :
-            SpecializedMethodClosure() {
+        SpecializedMethodClosure() {
         theByteCodeIndex      = byteCodeIndex;
         lastSendByteCodeIndex = IllegalByteCodeIndex;
         MethodIterator iter( m, this );
@@ -275,7 +275,7 @@ public:
 
 
     LoopDefCounter( CompiledLoop *l ) :
-            LoopClosure( l ) {
+        LoopClosure( l ) {
         defCount = 0;
     }
 
@@ -304,7 +304,7 @@ std::int32_t CompiledLoop::defsInLoop( PseudoRegister *r, NonTrivialNode **defNo
 class LoopDefFinder : public LoopClosure {
 public:
     LoopDefFinder( CompiledLoop *l ) :
-            LoopClosure( l ) {
+        LoopClosure( l ) {
     }      // don't ask why this is necessary... (MS C++ 4.0)
     void do_it( Definition *d ) {
         if ( theLoop->isInLoop( d->_node ) )
@@ -457,21 +457,21 @@ class UntagClosure : public Closure<Usage *> {
 
 public:
     CompiledLoop            *theLoop;
-    PseudoRegister          *theLoopPReg;
+    PseudoRegister          *theLoopPseudoRegister;
     GrowableArray<KlassOop> *smi_type;
 
 
     UntagClosure( CompiledLoop *l, PseudoRegister *r ) {
-        theLoop     = l;
-        theLoopPReg = r;
-        smi_type    = new GrowableArray<KlassOop>( 1 );
+        theLoop               = l;
+        theLoopPseudoRegister = r;
+        smi_type              = new GrowableArray<KlassOop>( 1 );
         smi_type->append( smiKlassObject );
     }
 
 
     void do_it( Usage *u ) {
         if ( theLoop->isInLoop( u->_node ) ) {
-            u->_node->assert_preg_type( theLoopPReg, smi_type, theLoop->loopHeader() );
+            u->_node->assert_pseudoRegister_type( theLoopPseudoRegister, smi_type, theLoop->loopHeader() );
         }
     }
 };
@@ -483,10 +483,10 @@ void CompiledLoop::removeTagChecks() {
     UntagClosure uc( this, _loopVar );
     _loopVar->forAllUsesDo( &uc );
     if ( _lowerBound ) {
-        uc.theLoopPReg = _lowerBound;
+        uc.theLoopPseudoRegister = _lowerBound;
         _lowerBound->forAllUsesDo( &uc );
     }
-    uc.theLoopPReg = _upperBound;
+    uc.theLoopPseudoRegister = _upperBound;
     _upperBound->forAllUsesDo( &uc );
 }
 
@@ -649,7 +649,7 @@ void CompiledLoop::hoistTypeTests() {
     for ( std::int32_t i = _hoistableTests->length() - 1; i >= 0; i-- ) {
         HoistedTypeTest *t = _hoistableTests->at( i );
         if ( not t->_invalid ) {
-            t->_node->assert_preg_type( t->_testedPR, t->_klasses, _loopHeader );
+            t->_node->assert_pseudoRegister_type( t->_testedPR, t->_klasses, _loopHeader );
         }
     }
     if ( not _loopHeader->isActivated() )
@@ -675,14 +675,14 @@ class BoundsCheckRemover : public Closure<Usage *> {
 
 public:
     CompiledLoop                         *theLoop;
-    PseudoRegister                       *theLoopPReg;
+    PseudoRegister                       *theLoopPseudoRegister;
     GrowableArray<AbstractArrayAtNode *> *theArrayList;
 
 
     BoundsCheckRemover( CompiledLoop *l, PseudoRegister *r, GrowableArray<AbstractArrayAtNode *> *arrays ) {
-        theLoop      = l;
-        theLoopPReg  = r;
-        theArrayList = arrays;
+        theLoop               = l;
+        theLoopPseudoRegister = r;
+        theArrayList          = arrays;
     }
 
 
@@ -691,7 +691,7 @@ public:
              // the cast to AbstractArrayAtNode* isn't correct (u->node may be something else),
              // but it's safe since we're only searching in the array list using pointer identity
              theArrayList->contains( (AbstractArrayAtNode *) u->_node ) ) {
-            u->_node->assert_in_bounds( theLoopPReg, theLoop->loopHeader() );
+            u->_node->assert_in_bounds( theLoopPseudoRegister, theLoop->loopHeader() );
         }
     }
 };
@@ -721,10 +721,10 @@ void CompiledLoop::findRegCandidates() {
         _bbs = bbIterator->code_generation_order();
 
 
-    GrowableArray<LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
+    GrowableArray<LoopseudoRegisterCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
     //const std::int32_t len              = _bbs->length();
-    const BasicBlock   *startBasicBlock = _startOfLoop->bb();
+    const BasicBlock *startBasicBlock = _startOfLoop->bb();
 
     std::int32_t i;
     for ( i = 0; _bbs->at( i ) not_eq startBasicBlock; i++ );    // search for first BasicBlock
@@ -742,19 +742,19 @@ void CompiledLoop::findRegCandidates() {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
             if ( candidates.at( r->id() ) == nullptr )
-                candidates.at_put( r->id(), new LoopRegCandidate( r ) );
-            LoopRegCandidate *c = candidates.at( r->id() );
+                candidates.at_put( r->id(), new LoopseudoRegisterCandidate( r ) );
+            LoopseudoRegisterCandidate *c = candidates.at( r->id() );
             c->incDUs( info->_usages.length(), info->_definitions.length() );
         }
     }
     loopHeader()->set_nofCallsInLoop( ncalls );
 
     // find the top 2 candidates...
-    LoopRegCandidate *first  = new LoopRegCandidate( nullptr );
-    LoopRegCandidate *second = new LoopRegCandidate( nullptr );
+    LoopseudoRegisterCandidate *first  = new LoopseudoRegisterCandidate( nullptr );
+    LoopseudoRegisterCandidate *second = new LoopseudoRegisterCandidate( nullptr );
 
     for ( std::int32_t j = candidates.length() - 1; j >= 0; j-- ) {
-        LoopRegCandidate *c = candidates.at( j );
+        LoopseudoRegisterCandidate *c = candidates.at( j );
         if ( c == nullptr )
             continue;
         if ( c->weight() > first->weight() ) {
@@ -766,13 +766,13 @@ void CompiledLoop::findRegCandidates() {
     }
 
     // ...and add them to the loop header
-    if ( first->preg() not_eq nullptr ) {
+    if ( first->pseudoRegister() not_eq nullptr ) {
         loopHeader()->addRegisterCandidate( first );
-        if ( second->preg() not_eq nullptr ) {
+        if ( second->pseudoRegister() not_eq nullptr ) {
             loopHeader()->addRegisterCandidate( second );
         }
     } else {
-        st_assert( second->preg() == nullptr, "bad sorting" );
+        st_assert( second->pseudoRegister() == nullptr, "bad sorting" );
     }
 }
 
@@ -813,6 +813,6 @@ void HoistedTypeTest::print() {
 }
 
 
-void LoopRegCandidate::print() {
-    spdlog::info( "((LoopRegCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
+void LoopseudoRegisterCandidate::print() {
+    spdlog::info( "((LoopseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
 }

@@ -264,7 +264,7 @@ TEST_F( ByteArrayPrimsTests, unsignedByteAtWithDirectAlienShouldReturnCorrectByt
 
 
 TEST_F( ByteArrayPrimsTests, unsignedByteAtWithIndirectAlienShouldReturnCorrectByteFromIndirectAlien ) {
-    std::uint8_t *bytes    = alien->bytes();
+    std::uint8_t *bytes = alien->bytes();
     //std::uint8_t *contents = bytes + 4;
     ( (std::int32_t *) bytes )[ 0 ]  = -16;
     ( (std::uint8_t **) bytes )[ 1 ] = alien_byte_region;

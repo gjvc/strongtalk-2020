@@ -85,7 +85,7 @@ void NativeMethod::initForTesting( std::int32_t size, LookupKey *key ) {
 
 
 NativeMethod::NativeMethod( Compiler *c ) :
-        _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
+    _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
 
     LookupCache::verify();
 

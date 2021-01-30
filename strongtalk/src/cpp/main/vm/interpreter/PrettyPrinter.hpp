@@ -114,7 +114,7 @@ public:
 class defaultPrettyPrintStream : public prettyPrintStream {
 public:
     defaultPrettyPrintStream() :
-            prettyPrintStream() {
+        prettyPrintStream() {
     }
 
 

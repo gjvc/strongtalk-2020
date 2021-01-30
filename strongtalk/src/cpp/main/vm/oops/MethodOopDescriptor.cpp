@@ -138,7 +138,7 @@ std::int32_t MethodOopDescriptor::number_of_stack_temporaries() const {
 
 
     return
-            n;
+        n;
 }
 
 
@@ -708,7 +708,7 @@ MethodOop MethodOopDescriptor::block_method_at( std::int32_t byteCodeIndex ) {
             break;
 
         default:
-            nullptr;
+            (void)0;
     }
 
     return nullptr;
@@ -1507,7 +1507,7 @@ bool shouldStop( const char *name, Oop method_or_selector, const char *class_nam
 
 
 StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl, bool stop ) :
-        enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
+    enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
     if ( enable and stop )
         breakpoint();
 }

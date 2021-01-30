@@ -159,7 +159,7 @@ private:
 
 public:
     VM_OptimizeMethod( LookupKey *key, MethodOop method ) :
-            _key( key ) {
+        _key( key ) {
         _method = method;
     }
 

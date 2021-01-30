@@ -431,8 +431,8 @@ public:
     }
 
 
-    // return a list of pregs tested and, for each preg, a list of its types
-    virtual void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
+    // return a list of pseudoRegisters tested and, for each pseudoRegister, a list of its types
+    virtual void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
     } // assert that the klass of r (used by the reciver) is oneof(klasses)
 
     virtual void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
@@ -733,7 +733,7 @@ protected:
 
 
     PrologueNode( LookupKey *key, std::int32_t nofArgs, std::int32_t nofTemps ) :
-            _nofArgs( nofArgs ), _nofTemps( nofTemps ) {
+        _nofArgs( nofArgs ), _nofTemps( nofTemps ) {
         _key = key;
     }
 
@@ -824,7 +824,7 @@ protected:
     std::int32_t _value;        // constant (vm-level, not an Oop) to be loaded
 
     LoadIntNode( PseudoRegister *dst, std::int32_t value ) :
-            LoadNode( dst ) {
+        LoadNode( dst ) {
         _value = value;
     }
 
@@ -861,7 +861,7 @@ public:
 
 protected:
     LoadOffsetNode( PseudoRegister *dst, PseudoRegister *src, std::int32_t offset, bool isArraySize ) :
-            LoadNode( dst ) {
+        LoadNode( dst ) {
         _src         = src;
         _offset      = offset;
         _isArraySize = isArraySize;
@@ -1009,7 +1009,7 @@ public:
     }
 
 
-    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+    void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     void makeUses( BasicBlock *bb );
 
@@ -1036,7 +1036,7 @@ private:
 
 protected:
     StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool nsc ) :
-            StoreNode( s ) {
+        StoreNode( s ) {
         _base = b;
         st_assert( b, "base is nullptr" );
         _offset          = o;
@@ -1332,7 +1332,7 @@ class InlinedReturnNode : public AbstractReturnNode {
     // should replace with AssignNode + ContextZap (if needed)
 protected:
     InlinedReturnNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
-            AbstractReturnNode( byteCodeIndex, src, dest ) {
+        AbstractReturnNode( byteCodeIndex, src, dest ) {
     }
 
 
@@ -1461,7 +1461,7 @@ public:
 class NonLocalReturnContinuationNode : public AbstractReturnNode {
 protected:
     NonLocalReturnContinuationNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
-            AbstractReturnNode( byteCodeIndex, src, dest ) {
+        AbstractReturnNode( byteCodeIndex, src, dest ) {
     }
 
 
@@ -1833,7 +1833,7 @@ public:
 class FloatArithRRNode : public ArithRRNode {  // for untagged float operations
 
     FloatArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d ) :
-            ArithRRNode( o, s, o2, d ) {
+        ArithRRNode( o, s, o2, d ) {
     }
 
 
@@ -1865,7 +1865,7 @@ class FloatUnaryArithNode : public ArithNode {
     // unary untagged float operation; src is an untagged float, dest is either another
     // untagged float or a floatOop
     FloatUnaryArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
-            ArithNode( op, src, dst ) {
+        ArithNode( op, src, dst ) {
     }
 
 
@@ -1918,7 +1918,7 @@ protected:
 
 
     ArithRCNode( ArithOpCode o, PseudoRegister *s, std::int32_t o2, PseudoRegister *d ) :
-            ArithNode( o, s, d ) {
+        ArithNode( o, s, d ) {
         _oper = o2;
     }
 
@@ -2115,7 +2115,7 @@ public:
 
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
-    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+    void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     void makeUses( BasicBlock *bb );
 
@@ -2379,7 +2379,7 @@ protected:
 
 
     InterruptCheckNode( GrowableArray<PseudoRegister *> *exprs ) :
-            PrimitiveNode( _intrCheck, nullptr, nullptr, exprs ) {
+        PrimitiveNode( _intrCheck, nullptr, nullptr, exprs ) {
     }
 
 
@@ -2404,7 +2404,7 @@ public:
 
 class HoistedTypeTest;
 
-class LoopRegCandidate;
+class LoopseudoRegisterCandidate;
 
 
 //
@@ -2421,13 +2421,13 @@ protected:
     LoadOffsetNode                       *_upperLoad;            // loads array size that is the upper bound
     GrowableArray<AbstractArrayAtNode *> *_arrayAccesses;     // arrays indexed by loopVar
 
-    LoopHeaderNode                    *_enclosingLoop;      // enclosing loop or nullptr
+    LoopHeaderNode                              *_enclosingLoop;      // enclosing loop or nullptr
     // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
-    GrowableArray<HoistedTypeTest *>  *_tests;              // type tests hoisted out of loop
-    GrowableArray<LoopHeaderNode *>   *_nestedLoops;        // nested loops (nullptr if none)
-    GrowableArray<LoopRegCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-    bool                              _activated;            // gen() does nothing until activated
-    std::int32_t                      _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
+    GrowableArray<HoistedTypeTest *>            *_tests;              // type tests hoisted out of loop
+    GrowableArray<LoopHeaderNode *>             *_nestedLoops;        // nested loops (nullptr if none)
+    GrowableArray<LoopseudoRegisterCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
+    bool                                        _activated;            // gen() does nothing until activated
+    std::int32_t                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
 
@@ -2520,12 +2520,12 @@ public:
     void addNestedLoop( LoopHeaderNode *l );
 
 
-    GrowableArray<LoopRegCandidate *> *registerCandidates() const {
+    GrowableArray<LoopseudoRegisterCandidate *> *registerCandidates() const {
         return _registerCandidates;
     }
 
 
-    void addRegisterCandidate( LoopRegCandidate *c );
+    void addRegisterCandidate( LoopseudoRegisterCandidate *c );
 
     void gen();
 
@@ -2643,7 +2643,7 @@ class BlockMaterializeNode : public BlockCreateNode {
     // src and dest are the BlockPseudoRegister
 protected:
     BlockMaterializeNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack ) :
-            BlockCreateNode( b, expr_stack ) {
+        BlockCreateNode( b, expr_stack ) {
         _src = _dest;
     }
 
@@ -3151,7 +3151,7 @@ public:
     bool hasUnknownCode() const;            // is there code (send) for unknown case?
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
-    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+    void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
 
@@ -3259,7 +3259,7 @@ public:
 
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
-    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+    void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n );
 
@@ -3373,7 +3373,7 @@ protected:
 
 
     AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, std::int32_t doff, std::int32_t soff ) :
-            AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
+        AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
         elem = el;
     }
 
@@ -3501,7 +3501,7 @@ public:
 
     void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const;
 
-    void assert_preg_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
+    void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n );
 
     void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l );
 
@@ -3730,7 +3730,7 @@ protected:
 
 
     FixedCodeNode( FixedCodeKind k ) :
-            _kind( k ) {
+        _kind( k ) {
     }
 
 

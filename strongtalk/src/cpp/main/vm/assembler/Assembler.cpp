@@ -841,7 +841,7 @@ void Assembler::bind( Label &L ) {
             if ( PrintEliminatedJumps )
                 spdlog::info( "@ {} jump to next eliminated", L.pos() );
             // remove first entry from label list
-            
+
             Displacement( long_at( L.pos() ) ).next( L );
             // eliminate instruction (set code pointers back)
             _code_pos -= long_size;

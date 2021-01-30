@@ -183,7 +183,7 @@ vframeOop create_vframeOop( oop method ) {
     }
     assert( sizeof( vframeKlass ) == sizeof( bvframeKlass ) && sizeof( vframeKlass ) == sizeof( ovframeKlass ), "should be the same" );
     vframeKlass *m = (vframeKlass *) create_map( sizeof( vframeKlass ), 0, vtbl );
-    vframeOop p = vframeOop( m->fill_in_slots( nullptr, 0 ) );
+    vframeOop   p  = vframeOop( m->fill_in_slots( nullptr, 0 ) );
     p->set_next( nullptr );
     p->set_method( method );
     p->set_locals( nullptr );

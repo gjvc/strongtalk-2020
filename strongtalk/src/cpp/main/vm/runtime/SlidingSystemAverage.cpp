@@ -58,7 +58,7 @@ class SystemAverageTask : public PeriodicTask {
 
 public:
     SystemAverageTask() :
-            PeriodicTask( 10 ) {
+        PeriodicTask( 10 ) {
     }
 
 

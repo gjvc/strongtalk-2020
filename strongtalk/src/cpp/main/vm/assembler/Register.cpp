@@ -11,7 +11,7 @@
 #include <array>
 
 std::array<const char *, REGISTER_COUNT> registerNames = {
-        "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
+    "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
 };
 
 
@@ -21,12 +21,12 @@ const char *Register::name() const {
 
 
 Register::Register( void ) :
-        _number( -1 ) {
+    _number( -1 ) {
 }
 
 
 Register::Register( std::int32_t number, char f ) :
-        _number( number ) {
+    _number( number ) {
 }
 
 

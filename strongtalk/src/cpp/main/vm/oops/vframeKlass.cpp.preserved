@@ -101,8 +101,8 @@ oop vframeKlass::mirror_contents_at( oop obj, symbolOop name ) {
         return prim_error( SLOTNAMEERROR );
     if ( sd->is_assignment_slot() )
         return Memory->assignmentMirrorObject;
-    VirtualFrame *vf = vfo->as_vframe();
-    oop contents = vf->get_slot( sd );
+    VirtualFrame *vf      = vfo->as_vframe();
+    oop          contents = vf->get_slot( sd );
     return contents->as_mirror();
 }
 
@@ -215,8 +215,8 @@ void vframeKlass::print_oop( oop obj ) {
         VirtualFrame *vf = vframeOop( obj )->as_vframe();
         lprintf( " <%#lx @ %#lx # %ld>", vf->_frame, vf->code, long( vf->descOffset()->value() ) );
 
-        methodKlass *mm = (methodKlass *) vf->method()->Klass();
-        symbolOop file = mm->file();
+        methodKlass *mm  = (methodKlass *) vf->method()->Klass();
+        symbolOop   file = mm->file();
         if ( file->length() > 0 ) {
             lprintf( " (" );
             lprintf( ":%ld): ", mm->line()->value() );

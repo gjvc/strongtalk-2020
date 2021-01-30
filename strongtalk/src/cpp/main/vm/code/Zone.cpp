@@ -337,7 +337,7 @@ void Zone::compact( bool forced ) {
         if ( PrintCodeReclamation ) {
             _console->print( "I" );
         }
-        const char *firstFree = _methodHeap->compact( moveInsts );
+//        const char *firstFree = _methodHeap->compact( moveInsts );
     }
     // unchainFrames();
     //    flushICache();
@@ -649,7 +649,7 @@ bool Zone::isDeltaPC( void *p ) const {
 
 
 NativeMethod *Zone::findNativeMethod( const void *start ) const {
-    NativeMethod *n{ nullptr};
+    NativeMethod *n{ nullptr };
     if ( _methodHeap->contains( start ) ) {
         n = (NativeMethod *) _methodHeap->findStartOfBlock( start );
         st_assert( (const char *) start < (const char *) n->locsEnd(), "found wrong NativeMethod" );

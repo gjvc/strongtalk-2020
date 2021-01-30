@@ -173,12 +173,12 @@ public:
 class NullRecompilationScope : public RecompilationScope {
 public:
     NullRecompilationScope() :
-            RecompilationScope( nullptr, 0 ) {
+        RecompilationScope( nullptr, 0 ) {
     }
 
 
     NullRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex ) :
-            RecompilationScope( sender, byteCodeIndex ) {
+        RecompilationScope( sender, byteCodeIndex ) {
     }
 
 
@@ -272,14 +272,16 @@ public:
 
 class RUncommonBranch;
 
+// abstract class -- a non-dummy scope with subscopes
 class NonDummyRecompilationScope : public RecompilationScope {
-    // abstract -- a non-dummy scope with subscopes
+
 protected:
-    const std::int32_t                  _level;                // distance from root
-    const std::int32_t                  ncodes;                        // # byte codes in method
-    GrowableArray<RecompilationScope *> **_subScopes;        // indexed by byteCodeIndex
+    const std::int32_t                  _level;         // distance from root
+    const std::int32_t                  _ncodes;        // # byte codes in method
+    GrowableArray<RecompilationScope *> **_subScopes;   // indexed by byteCodeIndex
+
 public:
-    GrowableArray<RUncommonBranch *> uncommon;    // list of uncommon branches
+    GrowableArray<RUncommonBranch *> uncommon;          // list of uncommon branches
 
     NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level );
 

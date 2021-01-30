@@ -33,7 +33,7 @@ private:
 
 public:
     ElapsedTimer() :
-            _counter( 0, 0 ) {
+        _counter( 0, 0 ) {
     }
 
 

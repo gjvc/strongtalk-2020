@@ -49,7 +49,7 @@ APPLY_TO_BOOLEAN_FLAGS( MATERIALIZE_BOOLEAN_FLAG )
 
 
 static BooleanFlag booleanDebugFlags[] = {
-        APPLY_TO_BOOLEAN_FLAGS( MATERIALIZE_BOOLEAN_FLAG_STRUCT ) { 0, nullptr, false, nullptr } // indicates end of table
+    APPLY_TO_BOOLEAN_FLAGS( MATERIALIZE_BOOLEAN_FLAG_STRUCT ) { 0, nullptr, false, nullptr } // indicates end of table
 };
 
 
@@ -81,7 +81,7 @@ APPLY_TO_INTEGER_FLAGS( MATERIALIZE_INTEGER_FLAG )
 #define MATERIALIZE_INTEGER_FLAG_STRUCT( name, value, doc ) { XSTR(name), &name, value, doc },
 
 static IntegerFlag integerDebugFlags[] = {
-        APPLY_TO_INTEGER_FLAGS( MATERIALIZE_INTEGER_FLAG_STRUCT ) { 0, nullptr, 0, nullptr } // indicates end of table
+    APPLY_TO_INTEGER_FLAGS( MATERIALIZE_INTEGER_FLAG_STRUCT ) { 0, nullptr, 0, nullptr } // indicates end of table
 };
 
 

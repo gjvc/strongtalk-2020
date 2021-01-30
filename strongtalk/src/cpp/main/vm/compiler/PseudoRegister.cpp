@@ -32,7 +32,7 @@ LogicalAddress *PseudoRegister::createLogicalAddress() {
 
 
 //LogicalAddress * PseudoRegister::createLogicalAddress() {
-//    PseudoRegister * r = cpReg();
+//    PseudoRegister * r = cpseudoRegister();
 //    if ( r->_logicalAddress == nullptr ) {
 //        r->_logicalAddress = theCompiler->scopeDescRecorder()->createLogicalAddress( nameNode() );
 //    };
@@ -45,7 +45,7 @@ static const std::int32_t udWeight[]  = { 1, 8, 8 * 8, 8 * 8 * 8, 8 * 8 * 8 * 8 
 const std::int32_t        udWeightLen = sizeof( udWeight ) / sizeof( std::int32_t ) - 1;
 
 
-void PseudoRegister::initPRegs() {
+void PseudoRegister::initPseudoRegisters() {
     PseudoRegister::currentNo       = 0;
     BlockPseudoRegister::_numBlocks = 0;
     constants                       = new GrowableArray<ConstPseudoRegister *>( 50 );
@@ -54,7 +54,7 @@ void PseudoRegister::initPRegs() {
 
 
 SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool inContext ) :
-        PseudoRegister( s ), _isInContext( inContext ) {
+    PseudoRegister( s ), _isInContext( inContext ) {
     creationStartByteCodeIndex = _begByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
     _endByteCodeIndex          = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
     _creationScope             = s;
@@ -62,7 +62,7 @@ SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std
 
 
 BlockPseudoRegister::BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end ) :
-        SinglyAssignedPseudoRegister( scope, beg, end ) {
+    SinglyAssignedPseudoRegister( scope, beg, end ) {
     _closure = closure;
     st_assert( closure, "need a closure" );
     _memoized      = _escapes        = false;
@@ -92,7 +92,7 @@ void PseudoRegister::makeIncorrectDU( bool incU, bool incD ) {
 
 
 bool PseudoRegister::isLocalTo( BasicBlock *bb ) const {
-    // is this a preg local to bb? (i.e. can it be allocated to temp regs?)
+    // is this a pseudoRegister local to bb? (i.e. can it be allocated to temp regs?)
     // treat ConstPseudoRegisters as non-local so they don't get allocated prematurely
     // (possible performance bug)
     return _location.equals( Location::UNALLOCATED_LOCATION ) and not uplevelR() and not _debug and not incorrectDU() and not isConstPseudoRegister() and _dus.length() == 1 and _dus.first()->_basicBlock == bb;
@@ -158,7 +158,7 @@ void PseudoRegister::removeAllUplevelAccessors() {
 }
 
 
-ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c ) {
+ConstPseudoRegister *new_ConstPseudoRegister( InlinedScope *s, Oop c ) {
 
     for ( std::int32_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
@@ -178,9 +178,9 @@ ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c ) {
 }
 
 
-ConstPseudoRegister *findConstPReg( Node *n, Oop c ) {
+ConstPseudoRegister *findConstPseudoRegister( Node *n, Oop c ) {
 
-    // return const preg for Oop or nullptr if none exists
+    // return const pseudoRegister for Oop or nullptr if none exists
     for ( std::int32_t i = 0; i < constants->length(); i++ ) {
         ConstPseudoRegister *r = constants->at( i );
         if ( r->constant == c ) {
@@ -494,7 +494,7 @@ bool ConstPseudoRegister::extendLiveRange( Node *n ) {
 
 
 bool PseudoRegister::checkEquivalentDefs() const {
-    // check if all definitions are equivalent, i.e. assign the same preg
+    // check if all definitions are equivalent, i.e. assign the same pseudoRegister
     if ( ndefs() == 1 ) {
         return true;
     }
@@ -517,7 +517,7 @@ bool PseudoRegister::checkEquivalentDefs() const {
             }
         }
     }
-    // yup, rhs is the only preg ever assigned to me
+    // yup, rhs is the only pseudoRegister ever assigned to me
     return true;
 }
 
@@ -530,7 +530,7 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
         return false;    // nothing to eliminate
 
     // check if reg can be eliminated
-    if ( incorrectDU() ) { // don't elim if uses are incorrect (hardwired pregs)
+    if ( incorrectDU() ) { // don't elim if uses are incorrect (hardwired pseudoRegisters)
         return false;
     }
 
@@ -546,7 +546,7 @@ bool PseudoRegister::canBeEliminated( bool withUses ) const {
         // can be reconstructed
         if ( _copyPropagationInfo ) {
             // already computed cpInfo, thus can be eliminated
-            st_assert( not cpReg()->_location.isLocalRegister(), "shouldn't be eliminated (was bug 4/27  -Urs)" );
+            st_assert( not cpseudoRegister()->_location.isLocalRegister(), "shouldn't be eliminated (was bug 4/27  -Urs)" );
             return true;
         }
         if ( _definitionCount > 1 ) {
@@ -708,7 +708,7 @@ void PseudoRegister::updateCPInfo( NonTrivialNode *n ) {
         if ( _debug ) {
             // canBeEliminated assures that all definitions are equivalent
             CopyPropagationInfo *cpi = new_CPInfo( n );
-            st_assert( cpi and cpi->_register->cpReg() == cpReg(), "can't handle this" );
+            st_assert( cpi and cpi->_register->cpseudoRegister() == cpseudoRegister(), "can't handle this" );
         } else {
             // can't really handle copy-propagation w/multiple definitions; make sure we don't use
             // bad information
@@ -718,14 +718,14 @@ void PseudoRegister::updateCPInfo( NonTrivialNode *n ) {
         _copyPropagationInfo = new_CPInfo( n );
         st_assert( not _debug or _copyPropagationInfo or isBlockPseudoRegister(), "couldn't create info" );
         if ( _copyPropagationInfo ) {
-            PseudoRegister *r = _copyPropagationInfo->_register;
+            PseudoRegister *r       = _copyPropagationInfo->_register;
             // if we're eliminating a debug-visible PseudoRegister, the replacement
             // must be debug-visible, too (so that it isn't allocated to
             // a temp reg)
             r->_debug |= _debug;
-            if ( r->cpRegs == nullptr )
-                r->cpRegs     = new GrowableArray<PseudoRegister *>( 5 );
-            r->cpRegs->append( this );
+            if ( r->cpseudoRegisters == nullptr )
+                r->cpseudoRegisters = new GrowableArray<PseudoRegister *>( 5 );
+            r->cpseudoRegisters->append( this );
         }
     }
 }
@@ -745,7 +745,7 @@ bool PseudoRegister::slow_isLiveAt( Node *n ) const {
 
 
 bool PseudoRegister::isLiveAt( Node *n ) const {
-    // pregs are live in the entire scope (according to Urs, 2/24/96)
+    // pseudoRegisters are live in the entire scope (according to Urs, 2/24/96)
     if ( not _scope->isSenderOrSame( n->scope() ) )
         return false; // cannot be live anymore if s is outside subscopes of _scope
     st_assert( PrologueByteCodeIndex == begByteCodeIndex() and endByteCodeIndex() == EpilogueByteCodeIndex, "must be live in the entire scope" );
@@ -885,7 +885,7 @@ NameNode *BlockPseudoRegister::locNameNode( bool mustBeLegal ) const {
 
 
 NameNode *PseudoRegister::nameNode( bool mustBeLegal ) const {
-    PseudoRegister *r = cpReg();
+    PseudoRegister *r = cpseudoRegister();
     if ( not( r->_location.equals( Location::UNALLOCATED_LOCATION ) ) ) {
         return r->locNameNode( mustBeLegal );
     } else if ( r->isConstPseudoRegister() ) {
@@ -918,7 +918,7 @@ NameNode *NoResultPseudoRegister::nameNode( bool mustBeLegal ) const {
 }
 
 
-PseudoRegister *PseudoRegister::cpReg() const {
+PseudoRegister *PseudoRegister::cpseudoRegister() const {
     // assert(not cpInfo or loc.equals(UNALLOCATED_LOCATION), "allocated regs shouldn't have cpInfo");
     // NB: the above assertion looks tempting but can be wrong: some unused PseudoRegisters may still
     // retain their definition because the defining node cannot be eliminated (because it might fail
@@ -1005,7 +1005,7 @@ public:
             // temporary is defined in this NativeMethod
             InlinedScope *target = (InlinedScope *) s;
             st_assert( target->allocatesInterpretedContext(), "find_scope returned bad scope" );
-            PseudoRegister *reg = target->contextTemporary( no )->preg();
+            PseudoRegister *reg = target->contextTemporary( no )->pseudoRegister();
             if ( CompilerDebug ) {
                 cout( PrintExposed )->print( "*adding %s to uplevel-%s of block %s\n", reg->name(), reading ? "read" : "written", _r->name() );
             }

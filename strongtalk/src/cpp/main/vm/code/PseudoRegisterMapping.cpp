@@ -21,15 +21,15 @@ extern Compiler *theCompiler;
 
 
 //
-// Implementation of PRegMapping
+// Implementation of PseudoRegisterMapping
 //
-// The mapping is done via a simple dictionary implemented via the _pregs array holding
-// the keys (the pregs), and the _reg_map & _stack_map arrays holding the values (the
-// location indices). Note: A preg may be mapped to a register (via _reg_map & and a
+// The mapping is done via a simple dictionary implemented via the _pseudoRegisters array holding
+// the keys (the pseudoRegisters), and the _reg_map & _stack_map arrays holding the values (the
+// location indices). Note: A pseudoRegister may be mapped to a register (via _reg_map & and a
 // stack location at the same time). An unused dictionary entry is marked by a nullptr
-// _pregs entry. An unused map entry is marked by a number < 0.
+// _pseudoRegisters entry. An unused map entry is marked by a number < 0.
 //
-// Invariant: A particular preg exists only once in the _pregs array; it has at least
+// Invariant: A particular pseudoRegister exists only once in the _pseudoRegisters array; it has at least
 //            one and at most two locations (a register and a stack location).
 //
 // Note: A future implementation might use little "mapping objects" instead if these
@@ -38,34 +38,34 @@ extern Compiler *theCompiler;
 //
 //
 
-std::int32_t PseudoRegisterMapping::index( PseudoRegister *preg ) {
-    st_assert( preg not_eq nullptr, "no preg specified" );
+std::int32_t PseudoRegisterMapping::index( PseudoRegister *pseudoRegister ) {
+    st_assert( pseudoRegister not_eq nullptr, "no pseudoRegister specified" );
     // try cashed index first
-    std::int32_t i = preg->_map_index_cache;
+    std::int32_t i = pseudoRegister->_map_index_cache;
     st_assert( 0 <= i, "_map_index_cache must always be > 0" );
-    if ( i < size() and _pseudoRegisters->at( i ) == preg )
+    if ( i < size() and _pseudoRegisters->at( i ) == pseudoRegister )
         return i;
     // otherwise search for it
     i = size();
-    while ( i-- > 0 and _pseudoRegisters->at( i ) not_eq preg );
-    // (-1 <= i < size() and (i >= 0 => _pregs->at(i) == preg)
+    while ( i-- > 0 and _pseudoRegisters->at( i ) not_eq pseudoRegister );
+    // (-1 <= i < size() and (i >= 0 => _pseudoRegisters->at(i) == pseudoRegister)
     // if found, set cash for next time
     if ( i >= 0 )
-        preg->_map_index_cache = i;
+        pseudoRegister->_map_index_cache = i;
     return i;
 }
 
 
-void PseudoRegisterMapping::set_entry( std::int32_t i, PseudoRegister *preg, std::int32_t rloc, std::int32_t sloc ) {
-    st_assert( preg not_eq nullptr, "no preg specified" );
+void PseudoRegisterMapping::set_entry( std::int32_t i, PseudoRegister *pseudoRegister, std::int32_t rloc, std::int32_t sloc ) {
+    st_assert( pseudoRegister not_eq nullptr, "no pseudoRegister specified" );
     st_assert( not _locations->isLocation( rloc ) or _locations->isRegister( rloc ), "should be a register location if at all" );
     st_assert( not _locations->isLocation( sloc ) or _locations->isArgument( sloc ) or _locations->isStackTmp( sloc ), "should be a stack location if at all" );
     st_assert( _locations->isLocation( rloc ) or _locations->isLocation( sloc ), "at least one location expected" );
-    _pseudoRegisters->at_put( i, preg );
+    _pseudoRegisters->at_put( i, pseudoRegister );
     _registerLocations->at_put( i, rloc );
     _stackLocations->at_put( i, sloc );
     // set cash for next time
-    preg->_map_index_cache = i;
+    pseudoRegister->_map_index_cache = i;
 }
 
 
@@ -86,16 +86,16 @@ std::int32_t PseudoRegisterMapping::freeSlot() {
 }
 
 
-std::int32_t PseudoRegisterMapping::spillablePRegIndex() {
+std::int32_t PseudoRegisterMapping::spillablePseudoRegisterIndex() {
     // Finds a PseudoRegister that is mapped to a register location and that is not locked.
     // Returns a value < 0 if there's no such PseudoRegister.
     std::int32_t uses = 999999999;
     std::int32_t i0   = -1;
     std::int32_t i    = size();
     while ( i-- > 0 ) {
-        PseudoRegister *preg = _pseudoRegisters->at( i );
-        std::int32_t   rloc  = regLoc( i );
-        if ( preg not_eq nullptr and _locations->isRegister( rloc ) and not PseudoRegisterLocker::locks( preg ) and _locations->nofUses( rloc ) < uses ) {
+        PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
+        std::int32_t   rloc            = regLoc( i );
+        if ( pseudoRegister not_eq nullptr and _locations->isRegister( rloc ) and not PseudoRegisterLocker::locks( pseudoRegister ) and _locations->nofUses( rloc ) < uses ) {
             uses = _locations->nofUses( rloc );
             i0   = i;
         }
@@ -107,8 +107,8 @@ std::int32_t PseudoRegisterMapping::spillablePRegIndex() {
 void PseudoRegisterMapping::ensureOneFreeRegister() {
     if ( not _locations->freeRegisters() ) {
         // no free registers available => find a register to spill
-        std::int32_t i = spillablePRegIndex();
-        if ( i < 0 ) st_fatal( "too many temporaries or locked pregs: out of spillable registers" );
+        std::int32_t i = spillablePseudoRegisterIndex();
+        if ( i < 0 ) st_fatal( "too many temporaries or locked pseudoRegisters: out of spillable registers" );
         // spdlog::info("WARNING: Register spilling - check if this works");
         spillRegister( regLoc( i ) );
         st_assert( _locations->freeRegisters(), "at least one register should be available now" );
@@ -120,7 +120,7 @@ void PseudoRegisterMapping::ensureOneFreeRegister() {
 void PseudoRegisterMapping::spillRegister( std::int32_t loc ) {
     st_assert( _locations->isRegister( loc ), "must be a register" );
     std::int32_t spillLoc = _locations->allocateStackTmp();
-    // remap pregs
+    // remap pseudoRegisters
     std::int32_t i        = size();
     while ( i-- > 0 ) {
         if ( used( i ) and regLoc( i ) == loc ) {
@@ -241,37 +241,37 @@ bool PseudoRegisterMapping::isConformant( PseudoRegisterMapping *with ) {
 }
 
 
-void PseudoRegisterMapping::mapToArgument( PseudoRegister *preg, std::int32_t argNo ) {
-    st_assert( index( preg ) < 0, "preg for argument defined twice" );
+void PseudoRegisterMapping::mapToArgument( PseudoRegister *pseudoRegister, std::int32_t argNo ) {
+    st_assert( index( pseudoRegister ) < 0, "pseudoRegister for argument defined twice" );
     std::int32_t loc = _locations->argumentAsLocation( argNo );
     _locations->use( loc );
-    set_entry( freeSlot(), preg, _locations->noLocation, loc );
+    set_entry( freeSlot(), pseudoRegister, _locations->noLocation, loc );
     verify();
 }
 
 
-void PseudoRegisterMapping::mapToTemporary( PseudoRegister *preg, std::int32_t tempNo ) {
-    st_assert( index( preg ) < 0, "preg for argument defined twice" );
+void PseudoRegisterMapping::mapToTemporary( PseudoRegister *pseudoRegister, std::int32_t tempNo ) {
+    st_assert( index( pseudoRegister ) < 0, "pseudoRegister for argument defined twice" );
     std::int32_t loc = _locations->temporaryAsLocation( tempNo );
     _locations->allocate( loc );
-    set_entry( freeSlot(), preg, _locations->noLocation, loc );
+    set_entry( freeSlot(), pseudoRegister, _locations->noLocation, loc );
     verify();
 }
 
 
-void PseudoRegisterMapping::mapToRegister( PseudoRegister *preg, Register reg ) {
-    st_assert( index( preg ) < 0, "preg for register defined twice" );
+void PseudoRegisterMapping::mapToRegister( PseudoRegister *pseudoRegister, Register reg ) {
+    st_assert( index( pseudoRegister ) < 0, "pseudoRegister for register defined twice" );
     std::int32_t loc = _locations->registerAsLocation( reg );
     _locations->allocate( loc );
-    set_entry( freeSlot(), preg, loc, _locations->noLocation );
+    set_entry( freeSlot(), pseudoRegister, loc, _locations->noLocation );
     verify();
 }
 
 
-void PseudoRegisterMapping::kill( PseudoRegister *preg ) {
-    std::int32_t i = index( preg );
+void PseudoRegisterMapping::kill( PseudoRegister *pseudoRegister ) {
+    std::int32_t i = index( pseudoRegister );
     if ( i >= 0 ) {
-        if ( PrintPRegMapping ) {
+        if ( PrintPseudoRegisterMapping ) {
             _console->print( "kill " );
             print( i );
         }
@@ -292,7 +292,7 @@ void PseudoRegisterMapping::killAll( PseudoRegister *exception ) {
     while ( i-- > 0 ) {
         if ( used( i ) and _pseudoRegisters->at( i ) not_eq exception ) {
             st_assert( not PseudoRegisterLocker::locks( _pseudoRegisters->at( i ) ), "PseudoRegister is locked" );
-            if ( PrintPRegMapping ) {
+            if ( PrintPseudoRegisterMapping ) {
                 _console->print( "kill " );
                 print( i );
             }
@@ -322,9 +322,9 @@ void PseudoRegisterMapping::killDeadsAt( Node *node, PseudoRegister *exception )
     st_assert( node->id() >= 0, "should not be a comment" );
     std::int32_t i = size();
     while ( i-- > 0 ) {
-        PseudoRegister *preg = _pseudoRegisters->at( i );
-        if ( preg not_eq nullptr and preg not_eq exception and ( not preg->isLiveAt( node ) or preg->isConstPseudoRegister() ) )
-            kill( preg );
+        PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
+        if ( pseudoRegister not_eq nullptr and pseudoRegister not_eq exception and ( not pseudoRegister->isLiveAt( node ) or pseudoRegister->isConstPseudoRegister() ) )
+            kill( pseudoRegister );
     }
 }
 
@@ -332,27 +332,27 @@ void PseudoRegisterMapping::killDeadsAt( Node *node, PseudoRegister *exception )
 void PseudoRegisterMapping::cleanupContextReferences() {
     std::int32_t i = size();
     while ( i-- > 0 ) {
-        PseudoRegister *preg = _pseudoRegisters->at( i );
-        if ( preg not_eq nullptr and preg->_location.isContextLocation() ) {
+        PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
+        if ( pseudoRegister not_eq nullptr and pseudoRegister->_location.isContextLocation() ) {
             // refers to a context temporary -> kill it
-            kill( preg );
+            kill( pseudoRegister );
         }
     }
 }
 
 
 // Note: Right now, if there's a hint register given, def() and use() make sure that the
-// preg will be mapped to the hint register; and hint must be unallocated. This is not the
+// pseudoRegister will be mapped to the hint register; and hint must be unallocated. This is not the
 // same behaviour as in Temporary, where the hint register is only used if it is actually
-// available. Furthermore, this behaviour seems inconsistent somehow, because if the preg
+// available. Furthermore, this behaviour seems inconsistent somehow, because if the pseudoRegister
 // is already in the hint register it will be used even though it is not actually available
 // (kind of academic subtlety).
 
-Register PseudoRegisterMapping::def( PseudoRegister *preg, Register hint ) {
-    st_assert( not preg->isSinglyAssignedPseudoRegister() or index( preg ) < 0, "SinglyAssignedPseudoRegisters can be defined only once" );
-    std::int32_t i = index( preg );
+Register PseudoRegisterMapping::def( PseudoRegister *pseudoRegister, Register hint ) {
+    st_assert( not pseudoRegister->isSinglyAssignedPseudoRegister() or index( pseudoRegister ) < 0, "SinglyAssignedPseudoRegisters can be defined only once" );
+    std::int32_t i = index( pseudoRegister );
     st_assert( i < 0 or not hasStkLoc( i ) or not _locations->isArgument( stkLoc( i ) ), "cannot assign to parameters" );
-    kill( preg );
+    kill( pseudoRegister );
     std::int32_t loc;
     if ( hint == noreg ) {
         ensureOneFreeRegister();
@@ -362,20 +362,20 @@ Register PseudoRegisterMapping::def( PseudoRegister *preg, Register hint ) {
         loc = _locations->registerAsLocation( hint );
         _locations->allocate( loc );
     }
-    set_entry( freeSlot(), preg, loc, _locations->noLocation );
+    set_entry( freeSlot(), pseudoRegister, loc, _locations->noLocation );
     verify();
     return hint;
 }
 
 
-Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
-    std::int32_t i = index( preg );
-    if ( i < 0 and preg->_location.isContextLocation() ) {
-        // preg refers to context temporary
+Register PseudoRegisterMapping::use( PseudoRegister *pseudoRegister, Register hint ) {
+    std::int32_t i = index( pseudoRegister );
+    if ( i < 0 and pseudoRegister->_location.isContextLocation() ) {
+        // pseudoRegister refers to context temporary
         // determine context temporary address
-        PseudoRegister       *context = theCompiler->contextList->at( preg->_location.contextNo() )->context();
+        PseudoRegister       *context = theCompiler->contextList->at( pseudoRegister->_location.contextNo() )->context();
         PseudoRegisterLocker lock( context );
-        Address              addr     = Address( use( context ), Mapping::contextOffset( preg->_location.tempNo() ) );
+        Address              addr     = Address( use( context ), Mapping::contextOffset( pseudoRegister->_location.tempNo() ) );
         // determine a target register
         std::int32_t         loc;
         if ( hint == noreg ) {
@@ -387,10 +387,10 @@ Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
             _locations->allocate( loc );
         }
         _macroAssembler->movl( hint, addr );
-        set_entry( freeSlot(), preg, loc, _locations->noLocation );
+        set_entry( freeSlot(), pseudoRegister, loc, _locations->noLocation );
     }
-    i              = index( preg );
-    st_assert( i >= 0, "preg must have been defined" )
+    i              = index( pseudoRegister );
+    st_assert( i >= 0, "pseudoRegister must have been defined" )
     if ( hasRegLoc( i ) ) {
         Register old = _locations->locationAsRegister( regLoc( i ) );
         if ( hint == noreg or hint == old ) {
@@ -422,13 +422,13 @@ Register PseudoRegisterMapping::use( PseudoRegister *preg, Register hint ) {
 }
 
 
-Register PseudoRegisterMapping::use( PseudoRegister *preg ) {
+Register PseudoRegisterMapping::use( PseudoRegister *pseudoRegister ) {
     Register reg;
-    if ( preg->isConstPseudoRegister() and not isDefined( preg ) ) {
-        reg = def( preg );
-        _macroAssembler->movl( reg, ( (ConstPseudoRegister *) preg )->constant );
+    if ( pseudoRegister->isConstPseudoRegister() and not isDefined( pseudoRegister ) ) {
+        reg = def( pseudoRegister );
+        _macroAssembler->movl( reg, ( (ConstPseudoRegister *) pseudoRegister )->constant );
     } else {
-        reg = use( preg, noreg );
+        reg = use( pseudoRegister, noreg );
     }
     return reg;
 }
@@ -453,7 +453,7 @@ void PseudoRegisterMapping::move( PseudoRegister *dst, PseudoRegister *src ) {
 void PseudoRegisterMapping::saveRegister( std::int32_t loc ) {
     st_assert( _locations->isRegister( loc ), "must be a register" );
     std::int32_t spillLoc = _locations->allocateStackTmp();
-    // remap pregs
+    // remap pseudoRegisters
     std::int32_t i        = size();
     while ( i-- > 0 ) {
         if ( used( i ) and regLoc( i ) == loc ) {
@@ -489,7 +489,7 @@ void PseudoRegisterMapping::killRegisters( PseudoRegister *exception ) {
             _locations->release( regLoc( i ) );
             _registerLocations->at_put( i, _locations->noLocation );
             if ( not hasStkLoc( i ) ) {
-                // remove entry for preg alltogether
+                // remove entry for pseudoRegister alltogether
                 _pseudoRegisters->at_put( i, nullptr );
             }
         }
@@ -498,15 +498,15 @@ void PseudoRegisterMapping::killRegisters( PseudoRegister *exception ) {
 }
 
 
-void PseudoRegisterMapping::killRegister( PseudoRegister *preg ) {
-    std::int32_t i = index( preg );
-    st_assert( i >= 0, "preg must have been defined" )
+void PseudoRegisterMapping::killRegister( PseudoRegister *pseudoRegister ) {
+    std::int32_t i = index( pseudoRegister );
+    st_assert( i >= 0, "pseudoRegister must have been defined" )
     if ( hasRegLoc( i ) ) {
         // remove that register from mapping & release it
         _locations->release( regLoc( i ) );
         _registerLocations->at_put( i, _locations->noLocation );
         if ( not hasStkLoc( i ) ) {
-            // remove entry for preg alltogether
+            // remove entry for pseudoRegister alltogether
             _pseudoRegisters->at_put( i, nullptr );
         }
     }
@@ -542,7 +542,7 @@ void PseudoRegisterMapping::makeInjective() {
             st_assert( _locations->isLocation( rloc ) or _locations->isLocation( sloc ), "must have at least one location" );
             if ( _locations->isLocation( rloc ) and _locations->isLocation( sloc ) ) {
                 if ( _locations->nofUses( rloc ) > 1 and _locations->nofUses( sloc ) > 1 ) {
-                    // preg is mapped to both register and stack location that are shared with other pregs
+                    // pseudoRegister is mapped to both register and stack location that are shared with other pseudoRegisters
                     // => map to a new stack location
                     std::int32_t newLoc = _locations->allocateStackTmp();
                     _macroAssembler->movl( _locations->locationAsAddress( newLoc ), _locations->locationAsRegister( rloc ) );
@@ -551,17 +551,17 @@ void PseudoRegisterMapping::makeInjective() {
                     _registerLocations->at_put( i, _locations->noLocation );
                     _stackLocations->at_put( i, newLoc );
                 } else if ( _locations->nofUses( rloc ) > 1 ) {
-                    // preg mapped to a register that is shared with other pregs => use stack location only
+                    // pseudoRegister mapped to a register that is shared with other pseudoRegisters => use stack location only
                     _locations->release( rloc );
                     _registerLocations->at_put( i, _locations->noLocation );
                 } else if ( _locations->nofUses( sloc ) > 1 ) {
-                    // preg mapped to a stack location that is shared with other pregs => use register location only
+                    // pseudoRegister mapped to a stack location that is shared with other pseudoRegisters => use register location only
                     _locations->release( sloc );
                     _stackLocations->at_put( i, _locations->noLocation );
                 }
             } else if ( _locations->isLocation( rloc ) ) {
                 if ( _locations->nofUses( rloc ) > 1 ) {
-                    // preg is mapped to a register that shared with other pregs => map to a new stack location
+                    // pseudoRegister is mapped to a register that shared with other pseudoRegisters => map to a new stack location
                     std::int32_t newLoc = _locations->allocateStackTmp();
                     _macroAssembler->movl( _locations->locationAsAddress( newLoc ), _locations->locationAsRegister( rloc ) );
                     _locations->release( rloc );
@@ -570,7 +570,7 @@ void PseudoRegisterMapping::makeInjective() {
                 }
             } else if ( _locations->isLocation( sloc ) ) {
                 if ( _locations->nofUses( sloc ) > 1 ) {
-                    // preg is mapped to a stack location that is shared with other pregs => map to a new stack location
+                    // pseudoRegister is mapped to a stack location that is shared with other pseudoRegisters => map to a new stack location
                     ensureOneFreeRegister();
                     std::int32_t tmpLoc = _locations->allocateRegister();
                     std::int32_t newLoc = _locations->allocateStackTmp();
@@ -638,7 +638,7 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
                         if ( hasStkLoc( i ) )
                             _locations->release( stkLoc( i ) );
                     }
-                    // mapping differs for this preg => remember entries
+                    // mapping differs for this pseudoRegister => remember entries
                     src.push( i );
                     dst.push( j );
                 }
@@ -869,7 +869,7 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
 void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     //guarantee(NonLocalReturninProgress() == with->NonLocalReturninProgress(), "cannot be made conformant");
 
-    if ( PrintPRegMapping and WizardMode ) {
+    if ( PrintPseudoRegisterMapping and WizardMode ) {
         spdlog::info( "make conformant:" );
         print();
         _console->print( "with " );
@@ -882,7 +882,7 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     st_assert( _locations->nofStackTmps() >= with->_locations->nofStackTmps(), "must be greater or equal" );
     st_assert( with->isInjective(), "'with' mapping not injective" );
 
-    // strip mapping so that it contains the same pregs as 'with' mapping
+    // strip mapping so that it contains the same pseudoRegisters as 'with' mapping
     std::int32_t i = size();
     while ( i-- > 0 ) {
         if ( used( i ) ) {
@@ -904,18 +904,18 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
 
 void PseudoRegisterMapping::iterate( PseudoRegisterClosure *closure ) {
     for ( std::int32_t i = size(); i-- > 0; ) {
-        PseudoRegister *preg = _pseudoRegisters->at( i );
-        if ( preg not_eq nullptr ) {
-            preg->_map_index_cache = i;
-            closure->preg_do( preg );
+        PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
+        if ( pseudoRegister not_eq nullptr ) {
+            pseudoRegister->_map_index_cache = i;
+            closure->pseudoRegister_do( pseudoRegister );
         }
     }
 }
 
 
-Location PseudoRegisterMapping::locationFor( PseudoRegister *preg ) {
-    std::int32_t i = index( preg );
-    st_assert( i >= 0, "preg must be defined" );
+Location PseudoRegisterMapping::locationFor( PseudoRegister *pseudoRegister ) {
+    std::int32_t i = index( pseudoRegister );
+    st_assert( i >= 0, "pseudoRegister must be defined" );
     Location loc = Location::ILLEGAL_LOCATION;
     if ( hasStkLoc( i ) ) {
         loc = Location::stackLocation( _locations->locationAsWordOffset( stkLoc( i ) ) );
@@ -928,7 +928,7 @@ Location PseudoRegisterMapping::locationFor( PseudoRegister *preg ) {
 }
 
 
-std::int32_t PseudoRegisterMapping::nofPRegs() {
+std::int32_t PseudoRegisterMapping::nofPseudoRegisters() {
     std::int32_t i = size();
     std::int32_t n = 0;
     while ( i-- > 0 ) {
@@ -972,7 +972,7 @@ void PseudoRegisterMapping::print( std::int32_t i ) {
 void PseudoRegisterMapping::print() {
     if ( WizardMode )
         _locations->print();
-    if ( nofPRegs() > 0 ) {
+    if ( nofPseudoRegisters() > 0 ) {
         spdlog::info( "PseudoRegister mapping:" );
         for ( std::int32_t i = 0; i < size(); i++ ) {
             if ( used( i ) )
@@ -1012,13 +1012,13 @@ void PseudoRegisterMapping::verify() {
             // verify mapping for entry i
             std::int32_t rloc = regLoc( i );
             std::int32_t sloc = stkLoc( i );
-            if ( rloc < 0 and sloc < 0 ) st_fatal( "no location associated with preg" );
+            if ( rloc < 0 and sloc < 0 ) st_fatal( "no location associated with pseudoRegister" );
             std::int32_t rlocUses = 0;
             std::int32_t slocUses = 0;
             std::int32_t j        = size();
             while ( j-- > 0 ) {
                 if ( used( j ) ) {
-                    if ( i not_eq j and _pseudoRegisters->at( i ) == _pseudoRegisters->at( j ) ) st_fatal( "preg found twice in mapping" );
+                    if ( i not_eq j and _pseudoRegisters->at( i ) == _pseudoRegisters->at( j ) ) st_fatal( "pseudoRegister found twice in mapping" );
                     if ( rloc >= 0 and regLoc( j ) == rloc )
                         rlocUses++;
                     if ( sloc >= 0 and stkLoc( j ) == sloc )
@@ -1067,34 +1067,34 @@ PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0 ) {
 
 
 PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1 ) {
-    st_assert( r0 not_eq nullptr and r1 not_eq nullptr, "PRegs must be defined" );
+    st_assert( r0 not_eq nullptr and r1 not_eq nullptr, "PseudoRegisters must be defined" );
     lock( r0, r1, nullptr );
 }
 
 
 PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) {
-    st_assert( r0 not_eq nullptr and r1 not_eq nullptr and r2 not_eq nullptr, "PRegs must be defined" );
+    st_assert( r0 not_eq nullptr and r1 not_eq nullptr and r2 not_eq nullptr, "PseudoRegisters must be defined" );
     lock( r0, r1, r2 );
 }
 
 
-bool PseudoRegisterLocker::holds( PseudoRegister *preg ) const {
-    st_assert( preg not_eq nullptr, "undefined preg" );
-    std::int32_t i = sizeof( _pregs ) / sizeof( PseudoRegister * );
+bool PseudoRegisterLocker::holds( PseudoRegister *pseudoRegister ) const {
+    st_assert( pseudoRegister not_eq nullptr, "undefined pseudoRegister" );
+    std::int32_t i = sizeof( _pseudoRegisters ) / sizeof( PseudoRegister * );
     while ( i-- > 0 ) {
-        if ( preg == _pregs[ i ] )
+        if ( pseudoRegister == _pseudoRegisters[ i ] )
             return true;
     }
     return false;
 }
 
 
-bool PseudoRegisterLocker::locks( PseudoRegister *preg ) {
-    st_assert( preg not_eq nullptr, "undefined preg" );
+bool PseudoRegisterLocker::locks( PseudoRegister *pseudoRegister ) {
+    st_assert( pseudoRegister not_eq nullptr, "undefined pseudoRegister" );
     PseudoRegisterLocker *p = _top;
-    while ( p not_eq nullptr and not p->holds( preg ) )
+    while ( p not_eq nullptr and not p->holds( pseudoRegister ) )
         p = p->_prev;
-    // p == nullptr or p->holds(preg)
+    // p == nullptr or p->holds(pseudoRegister)
     return p not_eq nullptr;
 }
 
@@ -1107,25 +1107,25 @@ Temporary::Temporary( PseudoRegisterMapping *mapping, Register hint ) {
 }
 
 
-Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *preg ) {
+Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *pseudoRegister ) {
     // old code - keep around for time comparison purposes
     const bool old_code = false;
     if ( old_code ) {
         _mapping = mapping;
         _regLoc  = mapping->allocateTemporary( noreg );
-        mapping->assembler()->movl( Temporary::reg(), mapping->use( preg ) );
+        mapping->assembler()->movl( Temporary::reg(), mapping->use( pseudoRegister ) );
         return;
     }
 
     _mapping = mapping;
-    Register reg = mapping->use( preg );
-    // preg is guaranteed to be in a register
-    if ( mapping->onStack( preg ) ) {
-        // preg is also on stack -> release register location from mapping and use it as copy
-        mapping->killRegister( preg );
+    Register reg = mapping->use( pseudoRegister );
+    // pseudoRegister is guaranteed to be in a register
+    if ( mapping->onStack( pseudoRegister ) ) {
+        // pseudoRegister is also on stack -> release register location from mapping and use it as copy
+        mapping->killRegister( pseudoRegister );
         _regLoc = mapping->allocateTemporary( reg );
     } else {
-        // preg is only in register -> need to allocate a new register & copy it explicitly
+        // pseudoRegister is only in register -> need to allocate a new register & copy it explicitly
         _regLoc = mapping->allocateTemporary( noreg );
         mapping->assembler()->movl( Temporary::reg(), reg );
     }

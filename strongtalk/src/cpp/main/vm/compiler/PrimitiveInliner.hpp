@@ -106,8 +106,8 @@ public:
 
     void generate();
 
-    static Expression *generate_cond( BranchOpCode cond, NodeBuilder *gen, PseudoRegister *resPReg );
-    // generates cond. branch and code to assign true/false to resPReg
+    static Expression *generate_cond( BranchOpCode cond, NodeBuilder *gen, PseudoRegister *resPseudoRegister );
+    // generates cond. branch and code to assign true/false to resPseudoRegister
 
     void print();
 };

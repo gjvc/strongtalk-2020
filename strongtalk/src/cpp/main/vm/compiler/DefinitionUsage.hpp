@@ -37,7 +37,7 @@ public:
 class Definition : public DefinitionUsage {
 public:
     Definition( NonTrivialNode *n ) :
-            DefinitionUsage( n ) {
+        DefinitionUsage( n ) {
     }
 
 
@@ -48,7 +48,7 @@ public:
 class Usage : public DefinitionUsage {
 public:
     Usage( NonTrivialNode *n ) :
-            DefinitionUsage( n ) {
+        DefinitionUsage( n ) {
     }
 
 
@@ -64,7 +64,7 @@ public:
 class PSoftUsage : public Usage {
 public:
     PSoftUsage( NonTrivialNode *n ) :
-            Usage( n ) {
+        Usage( n ) {
     }
 
 

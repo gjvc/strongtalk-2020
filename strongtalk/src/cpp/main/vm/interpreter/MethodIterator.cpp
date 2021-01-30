@@ -40,14 +40,14 @@ void MethodInterval::initialize( MethodOop method, MethodInterval *parent, std::
 // InlineSendNode
 
 InlineSendNode::InlineSendNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex ) :
-        MethodInterval( method, parent, begin_byteCodeIndex, end_byteCodeIndex ) {
+    MethodInterval( method, parent, begin_byteCodeIndex, end_byteCodeIndex ) {
 }
 
 
 // CondNode
 
 CondNode::CondNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) :
-        InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ) {
     _expr_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex() );
 }
 
@@ -55,7 +55,7 @@ CondNode::CondNode( MethodOop method, MethodInterval *parent, std::int32_t begin
 // AndNode
 
 AndNode::AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) :
-        CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
+    CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
 }
 
 
@@ -67,7 +67,7 @@ SymbolOop AndNode::selector() const {
 // OrNode
 
 OrNode::OrNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) :
-        CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
+    CondNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, dest_offset ) {
 }
 
 
@@ -79,7 +79,7 @@ SymbolOop OrNode::selector() const {
 // WhileNode
 
 WhileNode::WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset ) :
-        InlineSendNode( method, parent, begin_byteCodeIndex ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex ) {
 
     CodeIterator c( method, next_byteCodeIndex + cond_offset + end_offset );
     switch ( c.code() ) {
@@ -118,7 +118,7 @@ SymbolOop WhileNode::selector() const {
 // IfNode
 
 IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure ) :
-        InlineSendNode( method, parent, begin_byteCodeIndex ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex ) {
     bool         has_else_branch;
     std::int32_t else_jump_size;
     _cond                       = cond;
@@ -162,13 +162,13 @@ SymbolOop IfNode::selector() const {
 // ExternalCallNode
 
 ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex ) :
-        MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     _failure_code = nullptr;
 }
 
 
 ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t end_offset ) :
-        MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ) {
+    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ) {
     st_assert( end_offset > 0, "wrong offset" );
     _failure_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex(), true );
 }
@@ -177,7 +177,7 @@ ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, st
 // PrimitiveCallNode
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) :
-        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _has_receiver = has_receiver;
     _name         = ( name == nullptr ) ? pdesc->selector() : name;
@@ -187,7 +187,7 @@ PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, 
 // DLLCallNode
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) :
-        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ) {
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _has_receiver = has_receiver;
     _name         = ( name == nullptr ) ? pdesc->selector() : name;
@@ -212,7 +212,7 @@ void DLLCallNode::initialize( Interpreted_DLLCache *cache ) {
 
 
 DLLCallNode::DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache ) :
-        ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
     initialize( cache );
 }
 

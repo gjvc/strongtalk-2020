@@ -38,7 +38,7 @@ public:
 class HeapResourceMark : public CHeapAllocatedObject, public ResourceMark {
 public:
     HeapResourceMark() :
-            ResourceMark() {
+        ResourceMark() {
     };
 
 

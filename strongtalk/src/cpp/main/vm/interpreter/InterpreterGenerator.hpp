@@ -33,7 +33,7 @@ constexpr std::int32_t max_nof_floats = 256;
 class InterpreterGenerator : StackAllocatedObject {
 private:
     MacroAssembler *_macroAssembler;    // used to generate code
-    bool _debug;              // indicates debug mode
+    bool           _debug;              // indicates debug mode
 
     bool _stack_check;            //
 
@@ -50,11 +50,11 @@ private:
     Label _NonLocalReturn_to_dead_frame;    // NonLocalReturn error
     Label _halted;                          // halt executed
 
-    Label _stack_misaligned;       // assertion errors
-    Label _ebx_wrong;               //
-    Label _obj_wrong;               //
-    Label _last_Delta_fp_wrong;     //
-    Label _primitive_result_wrong;  //
+    Label      _stack_misaligned;       // assertion errors
+    Label      _ebx_wrong;               //
+    Label      _obj_wrong;               //
+    Label      _last_Delta_fp_wrong;     //
+    Label      _primitive_result_wrong;  //
     const char *_illegal;           //
 
     // Debugging

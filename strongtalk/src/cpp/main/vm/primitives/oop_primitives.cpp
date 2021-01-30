@@ -41,7 +41,7 @@ private:
     Oop replacement;
 public:
     TwoWayBecomeClosure( Oop target, Oop replacement ) :
-            target( target ), replacement( replacement ) {
+        target( target ), replacement( replacement ) {
     }
 
 

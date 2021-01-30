@@ -156,7 +156,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
             // must have a PseudoRegister that's live from the producing point to here.)
             SplitSetting setting( theCompiler->splitSig, new_SplitSig( sig, i + 1 ) );
             if ( s->isCodeScope() ) ( ( CodeScope * ) s )->sig = theCompiler->splitSig;
-            SplitPReg  * newPR   = coveringRegFor( nth, theCompiler->splitSig );
+            SplitPseudoRegister  * newPR   = coveringRegFor( nth, theCompiler->splitSig );
             Expression * newReceiver = nth->shallowCopy( newPR, nth->node() );
 
             Node * mapMerge = new MergeNode;        // where all copied paths merge
@@ -175,7 +175,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
             assert( rmerge, "should have a node" );
             for ( Expression * expr = nth; expr; expr = expr->next ) {
                 Node           * n     = expr->node();
-                PseudoRegister * oldPR = expr->preg();
+                PseudoRegister * oldPR = expr->pseudoRegister();
                 assert( n->isSplittable(), "can't handle branches etc. yet" );
                 Node * frst = n->next();
                 n->removeNext( frst );
@@ -224,7 +224,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
         Node * oldMerge = r->node();
         Node * oldNext  = oldMerge->next();
         if ( oldNext ) oldMerge->removeNext( oldNext );
-        PseudoRegister * pr       = r->preg();
+        PseudoRegister * pr       = r->pseudoRegister();
         Node           * typeCase = new TypeTestNode( pr, splitReceiverKlasss, needKlassLoad, true );
         oldMerge->append( typeCase );
         if ( info->needRealSend or not theCompiler->useUncommonTraps ) {
@@ -295,14 +295,14 @@ Node * CodeScope::copyPath( Node * n, Node * start, Node * end,
     return n;
 }
 
-SplitPReg * CodeScope::coveringRegFor( Expression * expr, SplitSig * sg ) {
+SplitPseudoRegister * CodeScope::coveringRegFor( Expression * expr, SplitSig * sg ) {
     // create a PseudoRegister with a live range covering all nodes between the
     // producer and the receiver scope/byteCodeIndex
     // see also SinglyAssignedPseudoRegister::isLiveAt
     InlinedScope * s = expr->node()->scope();
     std::int32_t byteCodeIndex = expr->node()->byteCodeIndex();
     assert( s->isCodeScope(), "oops" );
-    SplitPReg * r = regCovering( this, _byteCodeIndex, ( CodeScope * ) s, byteCodeIndex, sg );
+    SplitPseudoRegister * r = regCovering( this, _byteCodeIndex, ( CodeScope * ) s, byteCodeIndex, sg );
 
     for ( Expression * e = expr; e; e = e->next ) {
         InlinedScope * s2 = e->node()->scope();

@@ -195,7 +195,7 @@ private:
 
 public:
     MappingTask( Variable src_register, Variable src_stack, Variable dst_register, Variable dst_stack ) :
-            src( src_register, src_stack ), dst( dst_register, dst_stack ) {
+        src( src_register, src_stack ), dst( dst_register, dst_stack ) {
         _next              = nullptr;
         _is_processed      = false;
         _what_happened     = "Nothing";

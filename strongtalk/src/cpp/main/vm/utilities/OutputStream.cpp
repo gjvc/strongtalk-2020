@@ -119,7 +119,7 @@ void ConsoleOutputStream::cr() {
 
 
 StringOutputStream::StringOutputStream( const std::int32_t initial_size ) :
-        ConsoleOutputStream() {
+    ConsoleOutputStream() {
     buffer_length = initial_size;
     buffer        = new_resource_array<char>( buffer_length );
     buffer_pos    = 0;

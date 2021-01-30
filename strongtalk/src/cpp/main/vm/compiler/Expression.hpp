@@ -174,7 +174,7 @@ public:
     }
 
 
-    PseudoRegister *preg() const {
+    PseudoRegister *pseudoRegister() const {
         return _pseudoRegister;
     }
 
@@ -204,7 +204,7 @@ protected:
 class UnknownExpression : public Expression {
 public:
     UnknownExpression( PseudoRegister *p, Node *n = nullptr, bool u = false ) :
-            Expression( p, n ) {
+        Expression( p, n ) {
         setUnlikely( u );
     }
 
@@ -384,7 +384,7 @@ public:
     }
 
 
-    BlockPseudoRegister *preg() const {
+    BlockPseudoRegister *pseudoRegister() const {
         return (BlockPseudoRegister *) _pseudoRegister;
     }
 
@@ -413,7 +413,7 @@ private:
 
 public:
     ConstantExpression( Oop c, PseudoRegister *p, Node *n ) :
-            Expression( p, n ) {
+        Expression( p, n ) {
         _c = c;
     }
 

@@ -15,11 +15,6 @@ std::int32_t      Handles::_size = 20;
 Oop              Handles::_array[20];
 
 
-BaseHandle::BaseHandle( Oop toSave, bool log, const char *label ) :
-        _saved( toSave ), _log( log ), _label( label ) {
-}
-
-
 void BaseHandle::push() {
     _next = first();
     _prev = nullptr;
@@ -100,7 +95,7 @@ void StackHandle::setFirst( BaseHandle *handle ) {
 
 
 StackHandle::StackHandle( Oop toSave, bool log, const char *label ) :
-        BaseHandle( toSave, log, label ) {
+    BaseHandle( toSave, log, label ) {
     push();
 }
 
@@ -111,7 +106,7 @@ StackHandle::~StackHandle() {
 
 
 PersistentHandle::PersistentHandle( Oop toSave ) :
-        _saved( toSave ) {
+    _saved( toSave ) {
     _next = _first;
     _prev = nullptr;
     if ( _first )

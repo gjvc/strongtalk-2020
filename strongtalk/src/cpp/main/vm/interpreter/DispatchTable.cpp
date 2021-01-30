@@ -165,18 +165,18 @@ void DispatchTable::intercept_for_next( std::int32_t *fr ) {
 static std::int32_t return_codes_size = 12;
 
 static ByteCodes::Code return_codes[] = {
-        ByteCodes::Code::return_tos_pop_0, //
-        ByteCodes::Code::return_tos_pop_1, //
-        ByteCodes::Code::return_tos_pop_2, //
-        ByteCodes::Code::return_tos_pop_n, //
-        ByteCodes::Code::return_self_pop_0, //
-        ByteCodes::Code::return_self_pop_1, //
-        ByteCodes::Code::return_self_pop_2, //
-        ByteCodes::Code::return_self_pop_n, //
-        ByteCodes::Code::return_tos_zap_pop_n, //
-        ByteCodes::Code::return_self_zap_pop_n, //
-        ByteCodes::Code::non_local_return_tos_pop_n, //
-        ByteCodes::Code::non_local_return_self_pop_n //
+    ByteCodes::Code::return_tos_pop_0, //
+    ByteCodes::Code::return_tos_pop_1, //
+    ByteCodes::Code::return_tos_pop_2, //
+    ByteCodes::Code::return_tos_pop_n, //
+    ByteCodes::Code::return_self_pop_0, //
+    ByteCodes::Code::return_self_pop_1, //
+    ByteCodes::Code::return_self_pop_2, //
+    ByteCodes::Code::return_self_pop_n, //
+    ByteCodes::Code::return_tos_zap_pop_n, //
+    ByteCodes::Code::return_self_zap_pop_n, //
+    ByteCodes::Code::non_local_return_tos_pop_n, //
+    ByteCodes::Code::non_local_return_self_pop_n //
 };
 
 

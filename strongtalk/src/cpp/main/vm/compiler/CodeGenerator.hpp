@@ -38,11 +38,11 @@ private:
 
 private:
     // Helper routines for mapping
-    Register def( PseudoRegister *preg ) const;
+    Register def( PseudoRegister *pseudoRegister ) const;
 
 
-    Register use( PseudoRegister *preg ) const {
-        return _currentMapping->use( preg );
+    Register use( PseudoRegister *pseudoRegister ) const {
+        return _currentMapping->use( pseudoRegister );
     }
 
 
@@ -105,7 +105,7 @@ private:
 
     void generateTypeTests( LoopHeaderNode *node, Label &failure );
 
-    void generateIntegerLoopTest( PseudoRegister *preg, LoopHeaderNode *node, Label &failure );
+    void generateIntegerLoopTest( PseudoRegister *pseudoRegister, LoopHeaderNode *node, Label &failure );
 
     void generateIntegerLoopTests( LoopHeaderNode *node, Label &failure );
 

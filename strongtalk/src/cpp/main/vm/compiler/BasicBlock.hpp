@@ -8,7 +8,7 @@
 
 #include "vm/memory/allocation.hpp"
 #include "vm/code/NodeVisitor.hpp"
-#include "vm/compiler/defUse.hpp"
+#include "vm/compiler/DefinitionUsage.hpp"
 #include "vm/compiler/DefinitionUsageInfo.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/runtime/ResourceObject.hpp"

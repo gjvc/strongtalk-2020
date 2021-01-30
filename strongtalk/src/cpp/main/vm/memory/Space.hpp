@@ -380,7 +380,7 @@ public:
 
 
     OldSpaceMark( OldSpace *aSpace ) :
-            theSpace( aSpace ) {
+        theSpace( aSpace ) {
         oldTop = theSpace->top();
     }
 

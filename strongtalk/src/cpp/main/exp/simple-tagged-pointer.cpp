@@ -25,9 +25,9 @@ class tagged_ptr {
 
 public:
 
-    static constexpr std::int32_t alignment = alignof( T );
-    static constexpr std::uintptr_t   tag_bits  = LOG2<alignment>::value;
-    static constexpr std::uintptr_t   tag_mask  = alignment - static_cast<std::uintptr_t>(1);
+    static constexpr std::int32_t   alignment = alignof( T );
+    static constexpr std::uintptr_t tag_bits  = LOG2<alignment>::value;
+    static constexpr std::uintptr_t tag_mask  = alignment - static_cast<std::uintptr_t>(1);
 
     class proxy {
     private:
@@ -38,7 +38,7 @@ public:
 
 
         std::uintptr_t *p;
-        std::int32_t i;
+        std::int32_t   i;
 
 
     public:
@@ -67,7 +67,7 @@ public:
 
 private:
     union {
-        T *_ptr;
+        T              *_ptr;
         std::uintptr_t _bits{};
     };
 

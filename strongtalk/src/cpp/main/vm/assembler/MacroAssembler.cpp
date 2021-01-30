@@ -12,7 +12,7 @@
 
 
 MacroAssembler::MacroAssembler( CodeBuffer *code ) :
-        Assembler( code ) {
+    Assembler( code ) {
 }
 
 

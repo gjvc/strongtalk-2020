@@ -38,17 +38,17 @@ private:
 
 public:
     JumpTableID() :
-            _major( max_value ), _minor( max_value ) {
+        _major( max_value ), _minor( max_value ) {
     }
 
 
     JumpTableID( std::uint16_t major ) :
-            _major( major ), _minor( max_value ) {
+        _major( major ), _minor( max_value ) {
     }
 
 
     JumpTableID( std::uint16_t major, std::uint16_t minor ) :
-            _major( major ), _minor( minor ) {
+        _major( major ), _minor( minor ) {
     }
 
 

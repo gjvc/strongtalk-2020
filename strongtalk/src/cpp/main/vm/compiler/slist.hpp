@@ -182,7 +182,7 @@ template<typename T>
 class SListElem : public GenericSListElem {
 public:
     SListElem( T d, SListElem<T> *n = nullptr ) :
-            GenericSListElem( (void *) d, (GenericSListElem *) n ) {
+        GenericSListElem( (void *) d, (GenericSListElem *) n ) {
     }
 
 

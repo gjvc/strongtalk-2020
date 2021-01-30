@@ -103,7 +103,7 @@ protected:
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
         char         text[200];
-        bool       ok;
+        bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
@@ -128,7 +128,7 @@ protected:
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool ok;
-        Oop    result         = valueOop->number().as_smi( ok );
+        Oop  result           = valueOop->number().as_smi( ok );
         return ok ? result : valueOop;
     }
 
@@ -228,11 +228,11 @@ TEST_F( AlienIntegerCallout1Tests, alienCallResult1WithOddSizedArgumentShouldCal
 
 
 TEST_F( AlienIntegerCallout1Tests, alienCallResult1WithScavengeShouldReturnCorrectResult ) {
-    Oop address   = asOop( (std::int32_t) &forceScavenge1 );
+    Oop address = asOop( (std::int32_t) &forceScavenge1 );
     byteArrayPrimitives::alienSetAddress( address, functionAlien->as_oop() );
     byteArrayPrimitives::alienCallResult1( directAlien->as_oop(), resultAlien->as_oop(), functionAlien->as_oop() );
     bool ok;
-    Oop    result = (Oop) asInt( ok, byteArrayPrimitives::alienUnsignedLongAt( smi1, resultAlien->as_oop() ) );
+    Oop  result = (Oop) asInt( ok, byteArrayPrimitives::alienUnsignedLongAt( smi1, resultAlien->as_oop() ) );
     EXPECT_TRUE( ok ) << "std::uint32_t at failed";
     EXPECT_TRUE ( vmSymbols::completed() == result ) << "wrong result";
 }

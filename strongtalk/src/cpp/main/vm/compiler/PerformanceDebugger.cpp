@@ -95,7 +95,7 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
     const std::int32_t          len    = temps->length();
     std::int32_t                nused  = 0;
     for ( std::int32_t          i      = 0; i < len; i++ ) {
-        PseudoRegister *r = temps->at( i )->preg();
+        PseudoRegister *r = temps->at( i )->pseudoRegister();
         if ( r->uplevelR() or r->uplevelW() or ( r->isBlockPseudoRegister() and not r->isUnused() ) )
             nused++;
     }
@@ -104,7 +104,7 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
     } else {
         _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
         for ( std::int32_t j = 0; j < len; j++ ) {
-            PseudoRegister *r = temps->at( j )->preg();
+            PseudoRegister *r = temps->at( j )->pseudoRegister();
             if ( r->uplevelR() or r->uplevelW() ) {
                 _stringStream->print( "%d ", j );
             } else if ( r->isBlockPseudoRegister() and not r->isUnused() ) {

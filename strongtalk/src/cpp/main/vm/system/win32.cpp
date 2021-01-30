@@ -92,6 +92,7 @@ bool os::check_directory( const char *dir_name ) {
 
 
 void os::breakpoint() {
+    spdlog::info( "os::breakpoint()" );
     DebugBreak();
 }
 

@@ -356,7 +356,7 @@ void CompiledVirtualFrame::rewind_byteCodeIndex() {
 
 
 CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
-        DeltaVirtualFrame( fr ) {
+    DeltaVirtualFrame( fr ) {
     _scopeDescriptor = sd;
     _byteCodeIndex   = byteCodeIndex;
 }
@@ -802,7 +802,7 @@ void CompiledVirtualFrame::verify() const {
 // ------------- compiledMethodVFrame --------------
 
 CompiledMethodVirtualFrame::CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
-        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -829,7 +829,7 @@ ContextOop CompiledMethodVirtualFrame::canonical_context() const {
 // ------------- CompiledBlockVirtualFrame --------------
 
 CompiledBlockVirtualFrame::CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
-        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -876,7 +876,7 @@ ScopeDescriptor *CompiledBlockVirtualFrame::parent_scope() const {
 // ------------- CompiledTopLevelBlockVirtualFrame --------------
 
 CompiledTopLevelBlockVirtualFrame::CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
-        CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
+    CompiledVirtualFrame( fr, sd, byteCodeIndex ) {
 }
 
 
@@ -966,7 +966,7 @@ std::int32_t DeoptimizedVirtualFrame::end_of_expressions() const {
 
 
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
-        DeltaVirtualFrame( fr ) {
+    DeltaVirtualFrame( fr ) {
     // the first frame in the array is located at position 3 (after #frames, #locals)
     _offset     = StackChunkBuilder::first_frame_index;
     _frameArray = retrieve_frame_array();
@@ -974,7 +974,7 @@ DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
 
 
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset ) :
-        DeltaVirtualFrame( fr ) {
+    DeltaVirtualFrame( fr ) {
     _offset     = offset;
     _frameArray = retrieve_frame_array();
 }

@@ -9,7 +9,7 @@
 
 
 template<
-        typename FIRST
+    typename FIRST
 >
 void write_debug_output( std::ostream
                          &out, FIRST const &f ) {
@@ -21,7 +21,7 @@ void write_debug_output( std::ostream
 struct tracer {
 
     std::ostream &
-                         _out;
+                     _out;
 
 
     tracer( std::ostream
@@ -29,15 +29,15 @@ struct tracer {
             char const *file,
             std::int32_t line
     ) :
-            _out( out ) { out << file << ":" << line << ": "; }
+        _out( out ) { out << file << ":" << line << ": "; }
 
 
     ~tracer() { _out << std::endl; }
 
 
     template<
-            typename FIRST, typename
-            ... REST>
+        typename FIRST, typename
+        ... REST>
     void write( FIRST const
                 &f, REST const &... rest ) {
         write_debug_output( _out, f );
@@ -47,7 +47,7 @@ struct tracer {
 
 
     template<
-            typename FIRST
+        typename FIRST
     >
     void write( FIRST const
                 &f ) { write_debug_output( _out, f ); }

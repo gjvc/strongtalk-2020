@@ -135,7 +135,7 @@ private:
 
 public:
     DeltaVirtualFrame( const Frame *fr ) :
-            VirtualFrame( fr ) {
+        VirtualFrame( fr ) {
     }
 
 
@@ -210,7 +210,7 @@ public:
 class InterpretedVirtualFrame : public DeltaVirtualFrame {
 public:
     InterpretedVirtualFrame( Frame *fr ) :
-            DeltaVirtualFrame( fr ) {
+        DeltaVirtualFrame( fr ) {
     };
 
     // Sets the receiver object
@@ -372,7 +372,7 @@ private:
     NameDescriptor *expression;
 public:
     DeferredExpression( CompiledVirtualFrame const *const aframe, NameDescriptor *expression ) :
-            _frame( aframe ), expression( expression ) {
+        _frame( aframe ), expression( expression ) {
     }
 
 
@@ -529,7 +529,7 @@ class cVFrame : public VirtualFrame {
 
 public:
     cVFrame( const Frame *fr ) :
-            VirtualFrame( fr ) {
+        VirtualFrame( fr ) {
     }
 
 
@@ -548,7 +548,7 @@ public:
 class cChunk : public cVFrame {
 public:
     cChunk( const Frame *fr ) :
-            cVFrame( fr ) {
+        cVFrame( fr ) {
     }
 
 

@@ -63,7 +63,8 @@ public:
     }
 
 
-    enum class Format { // Format of instruction: * means align to Oop
+    // Format of instruction: * means align to Oop
+    enum class Format {
         B,          // {byte}
         BB,         // {byte, byte}
         BBB,        // {byte, byte, byte}
@@ -86,7 +87,8 @@ public:
         NUMBER_OF_FORMATS
     };
 
-    enum class CodeType {       // Instruction classification
+    // Instruction classification
+    enum class CodeType {
         local_access,       // loads & stores of temps and args
         instVar_access,     // loads & stores of instVars
         context_access,     // loads & stores of context temps
@@ -105,7 +107,8 @@ public:
         NUMBER_OF_CODE_TYPES
     };
 
-    enum class ArgumentSpec {     // Argument specification for sends
+    // Argument specification for sends
+    enum class ArgumentSpec {
         recv_0_args,        // recv & 0 arguments on stack
         recv_1_args,        // recv & 1 arguments on stack
         recv_2_args,        // recv & 2 arguments on stack
@@ -140,6 +143,7 @@ public:
 
         NUMBER_OF_LOOP_TYPES
     };
+
 
     // bytecodes
     enum class Code {

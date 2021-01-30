@@ -14,31 +14,31 @@
 
 std::array<const char *, Floats::max_number_of_functions>Floats::_function_table{};
 std::array<const char *, Floats::max_number_of_functions>Floats::_function_names{
-        "zero", //
-        "one", //
-        "abs", //
-        "negated", //
-        "squared", //
-        "sqrt", //
-        "sin", //
-        "cos", //
-        "tan", //
-        "exp", //
-        "ln", //
-        "add", //
-        "subtract", //
-        "multiply", //
-        "divide", //
-        "modulo", //
-        "is_zero", //
-        "is_not_zero", //
-        "oopify", //
-        "is_equal", //
-        "is_not_equal", //
-        "is_less", //
-        "is_less_equal", //
-        "is_greater", //
-        "is_greater_equal" //
+    "zero", //
+    "one", //
+    "abs", //
+    "negated", //
+    "squared", //
+    "sqrt", //
+    "sin", //
+    "cos", //
+    "tan", //
+    "exp", //
+    "ln", //
+    "add", //
+    "subtract", //
+    "multiply", //
+    "divide", //
+    "modulo", //
+    "is_zero", //
+    "is_not_zero", //
+    "oopify", //
+    "is_equal", //
+    "is_not_equal", //
+    "is_less", //
+    "is_less_equal", //
+    "is_greater", //
+    "is_greater_equal" //
 };
 
 

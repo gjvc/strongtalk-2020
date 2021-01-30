@@ -13,12 +13,12 @@
 
 
 InlineCache::InlineCache( CompiledInlineCache *ic ) :
-        _iter( new CompiledInlineCacheIterator( ic ) ) {
+    _iter( new CompiledInlineCacheIterator( ic ) ) {
 }
 
 
 InlineCache::InlineCache( InterpretedInlineCache *ic ) :
-        _iter( new InterpretedInlineCacheIterator( ic ) ) {
+    _iter( new InterpretedInlineCacheIterator( ic ) ) {
 }
 
 

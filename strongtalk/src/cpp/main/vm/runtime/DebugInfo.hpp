@@ -21,7 +21,7 @@ private:
 
 public:
     DebugInfo() :
-            _interceptorEntryPoint( nullptr ), _frameBreakpoint( nullptr ) {
+        _interceptorEntryPoint( nullptr ), _frameBreakpoint( nullptr ) {
     }
 
 

@@ -9,7 +9,7 @@
 #include "vm/code/LogicalAddress.hpp"
 #include "vm/compiler/slist.hpp"
 #include "vm/compiler/CompileTimeClosure.hpp"
-#include "vm/compiler/defUse.hpp"
+#include "vm/compiler/DefinitionUsage.hpp"
 #include "BasicBlock.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
@@ -20,7 +20,7 @@
 // PseudoRegister are standard pseudo regs; the different kinds of PseudoRegisters differ mainly in their purpose and in their live ranges
 // PseudoRegister: locals etc., multiply assigned, live range is the entire scope
 // SinglyAssignedPseudoRegister: single source-level assignment, live range = arbitrary subrange
-// SplitPReg: used for splitting
+// SplitPseudoRegister: used for splitting
 // BlockPseudoRegisters: for blocks, live range = creating byteCodeIndex .. end
 // TempPseudoRegisters: local to one BasicBlock, used for certain hard-coded idioms (e.g. loading an uplevel-accessed value)
 
@@ -47,16 +47,16 @@ public:
     static std::int32_t                            currentNo;              // id of next PseudoRegister created
     GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
     InlinedScope                                   *_scope;               // scope to which this belongs
-    Location                                       _location;              // real location assigned to this preg
+    Location                                       _location;              // real location assigned to this pseudoRegister
     CopyPropagationInfo                            *_copyPropagationInfo; // to follow effects of copy propagation
-    GrowableArray<PseudoRegister *>                *cpRegs;               // registers copy-propagated away by this
+    GrowableArray<PseudoRegister *>                *cpseudoRegisters;               // registers copy-propagated away by this
     std::int32_t                                   regClass;               // register equivalence class number
     PseudoRegister                                 *regClassLink;         // next element in class
     std::int32_t                                   _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
     GrowableArray<BlockPseudoRegister *>           *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
     GrowableArray<BlockPseudoRegister *>           *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
     bool                                           _debug;                 // value/loc needed for debugging info?
-    std::int32_t                                   _map_index_cache;       // caches old map index - used to improve PregMapping access speed - must be >= 0
+    std::int32_t                                   _map_index_cache;       // caches old map index - used to improve PseudoRegisterMapping access speed - must be >= 0
 
 protected:
     void initialize() {
@@ -72,7 +72,7 @@ protected:
         _copyPropagationInfo = nullptr;
         regClass             = 0;
         regClassLink         = 0;
-        cpRegs               = nullptr;
+        cpseudoRegisters     = nullptr;
         _map_index_cache     = 0;
     }
 
@@ -81,7 +81,7 @@ protected:
 
 public:
     PseudoRegister( InlinedScope *s ) :
-            _dus( AvgBBIndexLen ) {
+        _dus( AvgBBIndexLen ) {
         st_assert( s, "must have a scope" );
         initialize();
         _scope    = s;
@@ -90,7 +90,7 @@ public:
 
 
     PseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
-            _dus( AvgBBIndexLen ) {
+        _dus( AvgBBIndexLen ) {
         st_assert( s, "must have a scope" );
         st_assert( not l.equals( Location::ILLEGAL_LOCATION ), "illegal location" );
         initialize();
@@ -330,7 +330,7 @@ public:
     }
 
 
-    virtual const char *name() const;            // string representing the preg name
+    virtual const char *name() const;            // string representing the pseudoRegister name
     const char *safeName() const;            // same as name() but handles nullptr receiver
     virtual const char *prefix() const {
         return "P";
@@ -348,28 +348,28 @@ public:
     }
 
 
-    PseudoRegister *cpReg() const;                // return "copy-propagation-equivalent" PseudoRegister
+    PseudoRegister *cpseudoRegister() const;                // return "copy-propagation-equivalent" PseudoRegister
 
     friend InlinedScope *findAncestor( InlinedScope *s1, std::int32_t &byteCodeIndex1, InlinedScope *s2, std::int32_t &byteCodeIndex2 );
     // find closest common ancestor of s1 and s2, and the
     // respective sender byteCodeIndexs in that scope
 
     // Initialization (before every compile)
-    static void initPRegs();
+    static void initPseudoRegisters();
 };
 
 
-// A temp preg is exactly like a PseudoRegister except that it is live for only
+// A temp pseudoRegister is exactly like a PseudoRegister except that it is live for only
 // a very std::int16_t (hard-wired) code sequence such as loading a frame ptr etc.
 class TemporaryPseudoRegister : public PseudoRegister {
 public:
     TemporaryPseudoRegister( InlinedScope *s ) :
-            PseudoRegister( s ) {
+        PseudoRegister( s ) {
     }
 
 
     TemporaryPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
-            PseudoRegister( s, l, incU, incD ) {
+        PseudoRegister( s, l, incU, incD ) {
     }
 
 
@@ -408,7 +408,7 @@ public:
 
 
     SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD, std::int32_t stream, std::int32_t en ) :
-            PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ) {
+        PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ) {
         _begByteCodeIndex = creationStartByteCodeIndex = stream;
         _endByteCodeIndex = en;
         _creationScope    = s;
@@ -570,7 +570,7 @@ public:
 class NoResultPseudoRegister : public PseudoRegister {    // "no result" register (should have no uses)
 public:
     NoResultPseudoRegister( InlinedScope *scope ) :
-            PseudoRegister( scope ) {
+        PseudoRegister( scope ) {
         _location = Location::NO_REGISTER;
         initialize();
     }
@@ -607,16 +607,16 @@ public:
     Oop constant;
 protected:
     ConstPseudoRegister( InlinedScope *s, Oop c ) :
-            PseudoRegister( s ) {
+        PseudoRegister( s ) {
         constant = c;
         st_assert( not c->is_mem() or c->is_old(), "constant must be tenured" );
     }
 
 
 public:
-    friend ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c );
+    friend ConstPseudoRegister *new_ConstPseudoRegister( InlinedScope *s, Oop c );
 
-    friend ConstPseudoRegister *findConstPReg( Node *n, Oop c );
+    friend ConstPseudoRegister *findConstPseudoRegister( Node *n, Oop c );
 
 
     bool isConstPseudoRegister() const {
@@ -647,7 +647,7 @@ public:
     bool verify() const;
 };
 
-ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c );
+ConstPseudoRegister *new_ConstPseudoRegister( InlinedScope *s, Oop c );
 
 
 #if 0
@@ -656,11 +656,11 @@ ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c );
 // purpose is to make register allocation/live range computation simple
 // and efficient without implementing general live range analysis
 
-class SplitPReg : public SinglyAssignedPseudoRegister {
+class SplitPseudoRegister : public SinglyAssignedPseudoRegister {
  public:
   SplitSig* sig;
 
-  SplitPReg(InlinedScope* s, std::int32_t stream, std::int32_t en, SplitSig* signature) : SinglyAssignedPseudoRegister(s, stream, en) {
+  SplitPseudoRegister(InlinedScope* s, std::int32_t stream, std::int32_t en, SplitSig* signature) : SinglyAssignedPseudoRegister(s, stream, en) {
     sig = signature;
   }
 

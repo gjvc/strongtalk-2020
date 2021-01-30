@@ -21,7 +21,7 @@ class PseudoRegister;
 
 class PseudoRegisterClosure : public PrintableResourceObject {
 public:
-    virtual void preg_do( PseudoRegister *preg ) {
+    virtual void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
     }        // called for each PseudoRegister in the mapping
 };
 
@@ -84,9 +84,9 @@ private:
     }
 
 
-    void set_entry( std::int32_t i, PseudoRegister *preg, std::int32_t rloc, std::int32_t sloc );
+    void set_entry( std::int32_t i, PseudoRegister *pseudoRegister, std::int32_t rloc, std::int32_t sloc );
 
-    std::int32_t index( PseudoRegister *preg );
+    std::int32_t index( PseudoRegister *pseudoRegister );
 
     std::int32_t freeSlot();
 
@@ -95,7 +95,7 @@ private:
     void destroy();                // destroys mapping to make sure it is not accidentally used afterwards
 
     // Register allocation/spilling
-    std::int32_t spillablePRegIndex();            // returns the _pregs/_mappings index of a PseudoRegister mapped to a non-locked register
+    std::int32_t spillablePseudoRegisterIndex();            // returns the _pseudoRegisters/_mappings index of a PseudoRegister mapped to a non-locked register
     void ensureOneFreeRegister();            // ensures at least one free register in locations - spill a register if necessary
     void spillRegister( std::int32_t loc );            // spills register loc to a free stack location
     void saveRegister( std::int32_t loc );
@@ -130,31 +130,31 @@ public:
     bool isConformant( PseudoRegisterMapping *with );
 
 
-    bool isDefined( PseudoRegister *preg ) {
-        return index( preg ) >= 0;
+    bool isDefined( PseudoRegister *pseudoRegister ) {
+        return index( pseudoRegister ) >= 0;
     }
 
 
-    bool inRegister( PseudoRegister *preg ) {
-        std::int32_t i = index( preg );
+    bool inRegister( PseudoRegister *pseudoRegister ) {
+        std::int32_t i = index( pseudoRegister );
         return used( i ) and hasRegLoc( i );
     }
 
 
-    bool onStack( PseudoRegister *preg ) {
-        std::int32_t i = index( preg );
+    bool onStack( PseudoRegister *pseudoRegister ) {
+        std::int32_t i = index( pseudoRegister );
         return used( i ) and hasStkLoc( i );
     }
 
 
     // Definition
-    void mapToArgument( PseudoRegister *preg, std::int32_t argNo );
+    void mapToArgument( PseudoRegister *pseudoRegister, std::int32_t argNo );
 
-    void mapToRegister( PseudoRegister *preg, Register reg );
+    void mapToRegister( PseudoRegister *pseudoRegister, Register reg );
 
-    void mapToTemporary( PseudoRegister *preg, std::int32_t tempNo );
+    void mapToTemporary( PseudoRegister *pseudoRegister, std::int32_t tempNo );
 
-    void kill( PseudoRegister *preg );
+    void kill( PseudoRegister *pseudoRegister );
 
     void killDeadsAt( Node *node, PseudoRegister *exception = nullptr );
 
@@ -163,9 +163,9 @@ public:
     void cleanupContextReferences();
 
     // Expressions
-    Register def( PseudoRegister *preg, Register hint = noreg );    // defines a new value for preg (uses hint if given)
-    Register use( PseudoRegister *preg, Register hint );        // uses the value of preg (uses hint if given)
-    Register use( PseudoRegister *preg );                // deals also with constants (code originally in CodeGenerator)
+    Register def( PseudoRegister *pseudoRegister, Register hint = noreg );    // defines a new value for pseudoRegister (uses hint if given)
+    Register use( PseudoRegister *pseudoRegister, Register hint );        // uses the value of pseudoRegister (uses hint if given)
+    Register use( PseudoRegister *pseudoRegister );                // deals also with constants (code originally in CodeGenerator)
 
     // Assignments
     void move( PseudoRegister *dst, PseudoRegister *src );
@@ -175,7 +175,7 @@ public:
 
     void killRegisters( PseudoRegister *exception = nullptr );
 
-    void killRegister( PseudoRegister *preg );
+    void killRegister( PseudoRegister *pseudoRegister );
 
 
     // Non-local returns
@@ -196,10 +196,10 @@ public:
     // Iteration/Debug info
     void iterate( PseudoRegisterClosure *closure );
 
-    Location locationFor( PseudoRegister *preg );
+    Location locationFor( PseudoRegister *pseudoRegister );
 
     // Space usage
-    std::int32_t nofPRegs();
+    std::int32_t nofPseudoRegisters();
 
     std::int32_t maxNofStackTmps();
 
@@ -216,25 +216,25 @@ public:
 
 // A PseudoRegisterLocker is used to lock certain PseudoRegisters for the existence of the scope of
 // a C++ function activation. A PseudoRegister that is locked in a PseudoRegisterLocker is kept in
-// the same register once it has been mapped to a register location by a PRegMapping.
-// NOTE: PRegLockers MUST only be created/destructed in a stack-fashioned manner.
+// the same register once it has been mapped to a register location by a PseudoRegisterMapping.
+// NOTE: PseudoRegisterLockers MUST only be created/destructed in a stack-fashioned manner.
 
 class PseudoRegisterLocker : StackAllocatedObject {
 private:
     static PseudoRegisterLocker *_top;            // the topmost PseudoRegisterLocker
     PseudoRegisterLocker        *_prev;            // the previous PseudoRegisterLocker
-    PseudoRegister              *_pregs[3];        // the locked PRregs
+    PseudoRegister              *_pseudoRegisters[3];        // the locked PRregs
 
     void lock( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) {
         _prev = _top;
         _top  = this;
-        _pregs[ 0 ] = r0;
-        _pregs[ 1 ] = r1;
-        _pregs[ 2 ] = r2;
+        _pseudoRegisters[ 0 ] = r0;
+        _pseudoRegisters[ 1 ] = r1;
+        _pseudoRegisters[ 2 ] = r2;
     }
 
 
-    bool holds( PseudoRegister *preg ) const;            // returns true if preg belongs to the locked PseudoRegisters
+    bool holds( PseudoRegister *pseudoRegister ) const;            // returns true if pseudoRegister belongs to the locked PseudoRegisters
 
 public:
     PseudoRegisterLocker( PseudoRegister *r0 );
@@ -249,7 +249,7 @@ public:
     }
 
 
-    static bool locks( PseudoRegister *preg );        // returns true if preg is locked in any PseudoRegisterLocker instance
+    static bool locks( PseudoRegister *pseudoRegister );        // returns true if pseudoRegister is locked in any PseudoRegisterLocker instance
     static void initialize() {
         _top = nullptr;
     }
@@ -270,7 +270,7 @@ private:
 public:
     Temporary( PseudoRegisterMapping *mapping, Register hint = noreg );
 
-    Temporary( PseudoRegisterMapping *mapping, PseudoRegister *preg );    // keep a (modifiable) copy of the preg value in temporary register
+    Temporary( PseudoRegisterMapping *mapping, PseudoRegister *pseudoRegister );    // keep a (modifiable) copy of the pseudoRegister value in temporary register
     ~Temporary();
 
 

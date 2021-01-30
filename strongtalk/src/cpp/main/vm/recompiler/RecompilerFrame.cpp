@@ -19,7 +19,7 @@ const RecompilerFrame *noCaller    = (RecompilerFrame *) 0x1;        // no calle
 const RecompilerFrame *noCallerYet = (RecompilerFrame *) 0x0;        // caller not yet computed
 
 RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame *callee ) :
-        _frame( frame ) {
+    _frame( frame ) {
     _caller      = (RecompilerFrame *) noCallerYet;
     _callee      = (RecompilerFrame *) callee;
     _invocations = _sends = _cumulSends = _loopDepth = 0;
@@ -34,7 +34,7 @@ void RecompilerFrame::set_distance( std::int32_t d ) {
 
 
 InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
-        RecompilerFrame( fr, callee ) {
+    RecompilerFrame( fr, callee ) {
     VirtualFrame *vf1 = VirtualFrame::new_vframe( &_frame );
     st_assert( vf1->is_interpreted_frame(), "must be interpreted" );
     InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) vf1;
@@ -47,7 +47,7 @@ InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const Recompil
 
 
 InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, MethodOop m, KlassOop rcvrKlass ) :
-        RecompilerFrame( fr, nullptr ) {
+    RecompilerFrame( fr, nullptr ) {
     _method = m;
     st_assert( _method->codes() <= _frame.hp() and _frame.hp() < _method->codes_end(), "frame doesn't match method" );
     _byteCodeIndex = PrologueByteCodeIndex;
@@ -61,12 +61,12 @@ InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, MethodOop m, K
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
-        RecompilerFrame( fr, callee ) {
+    RecompilerFrame( fr, callee ) {
 }
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
-        RecompilerFrame( fr, nullptr ) {
+    RecompilerFrame( fr, nullptr ) {
     init();
 }
 

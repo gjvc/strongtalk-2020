@@ -114,9 +114,9 @@ ninja-program           := /usr/bin/ninja
 
 # object files ----------------------------------------------------------------
 
-build-type          ?= debug
-object-path         := $(toolchain-name)/$(build-type)
-object-root         := obj/$(object-path)
+build-type      ?= debug
+object-path     := $(toolchain-name)/$(build-type)
+object-root     := obj/$(object-path)
 
 
 # ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
@@ -130,20 +130,20 @@ external-package-object-root    := $(ROOT)/$(object-root)/$(external-package-pat
 
 # spdlog ----------------------------------------------------------------------
 
-spdlog-root-dir             := $(external-package-root)/spdlog
-spdlog-include-paths        := $(spdlog-root-dir)/include
-spdlog-object-dir           := $(external-package-object-root)/spdlog
-libspdlog-a                 := $(spdlog-object-dir)/libspdlog.a
-libspdlog-a-flags           := -L $(spdlog-object-dir) -l spdlog
+spdlog-root-dir         := $(external-package-root)/spdlog
+spdlog-include-paths    := $(spdlog-root-dir)/include
+spdlog-object-dir       := $(external-package-object-root)/spdlog
+libspdlog-a             := $(spdlog-object-dir)/libspdlog.a
+libspdlog-a-flags       := -L $(spdlog-object-dir) -l spdlog
 
 
 # fmt -------------------------------------------------------------------------
 
-fmt-root-dir             := $(external-package-root)/fmt
-fmt-include-paths        := $(fmt-root-dir)/include
-fmt-object-dir           := $(external-package-object-root)/fmt
-libfmt-a                 := $(fmt-object-dir)/lib/libfmt.a
-libfmt-a-flags           := -L $(fmt-object-dir)/lib -l fmt
+fmt-root-dir            := $(external-package-root)/fmt
+fmt-include-paths       := $(fmt-root-dir)/include
+fmt-object-dir          := $(external-package-object-root)/fmt
+libfmt-a                := $(fmt-object-dir)/lib/libfmt.a
+libfmt-a-flags          := -L $(fmt-object-dir)/lib -l fmt
 
 
 # googletest ------------------------------------------------------------------
@@ -157,11 +157,11 @@ libgtest-a-flags            := -L $(googletest-object-dir)/lib -l gtest
 
 # nasm ------------------------------------------------------------------------
 
-nasm-root-dir               := $(external-package-root)/nasm
-nasm-object-dir             := $(external-package-object-root)/nasm
-nasm-include-paths          := $(external-package-object-root)/nasm/include
-libnasm-a                   := $(external-package-object-root)/nasm/lib/libnasm.a
-libnasm-a-flags             := -L $(nasm-object-dir)/lib -l nasm
+nasm-root-dir           := $(external-package-root)/nasm
+nasm-object-dir         := $(external-package-object-root)/nasm
+nasm-include-paths      := $(external-package-object-root)/nasm/include
+libnasm-a               := $(external-package-object-root)/nasm/lib/libnasm.a
+libnasm-a-flags         := -L $(nasm-object-dir)/lib -l nasm
 
 
 # ==== BUILDING ===============================================================
@@ -183,7 +183,7 @@ cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 cxx-machine-options         := arch=native
 cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
-cxx-no-warning-options      := unused-parameter
+cxx-no-warning-options      := switch unused-function unused-parameter implicit-fallthrough
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
 cxx-optimisation-options    := 3
@@ -192,11 +192,9 @@ cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 cxx-other-options           := 
 cxx-other-flags             := $(addprefix -,$(cxx-other-options))
 
-#diagnostics-color=always
 cxx-other-long-options      := 
 cxx-other-long-flags        := $(addprefix --,$(cxx-other-long-options))
 
-#cxx-warning-options-all-all := $(shell $(cxx-compiler) -Q --help=warning | sed -e 's/^\s*\-W\(\S*\)\s*\[\w*\]/\1 /gp;d' | tr -d '\n' )
 cxx-warning-options         := all extra
 cxx-warning-flags           := $(addprefix -W,$(cxx-warning-options))
 
@@ -221,11 +219,10 @@ libgcc-link-flags := \
     -static-libstdc++
 
 
-
 # ==== RULES ====================================================================
 
-st20-global-define-values := MINGW_HAS_SECURE_API=1
-st20-global-define-flags  := $(addprefix -D ,$(st20-global-define-values))
+st20-global-define-values   := MINGW_HAS_SECURE_API=1
+st20-global-define-flags    := $(addprefix -D ,$(st20-global-define-values))
 
 
 # st20-main-lib -----------------------------------------------------------------
@@ -273,8 +270,8 @@ st20-test-lib-cxx-include-paths-internal := src/cpp/auto src/cpp/main src/cpp/te
 st20-test-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-test-lib-cxx-include-paths-internal))
 st20-test-lib-cxx-include-flags          := $(st20-test-lib-cxx-include-flags-external) $(st20-test-lib-cxx-include-flags-internal)
 
-st20-test-define-values := 
-st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
+st20-test-define-values     := 
+st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 
 
 # ==== TARGETS ==================================================================

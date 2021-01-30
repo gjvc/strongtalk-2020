@@ -27,8 +27,9 @@ NativeMethod    *Sweeper::_activeNativeMethod = nullptr;
 
 
 void Sweeper::print_all() {
-    for ( Sweeper *n = head(); n; n = n->next() )
+    for ( Sweeper *n = head(); n; n = n->next() ) {
         n->print();
+    }
 }
 
 
@@ -55,8 +56,10 @@ void Sweeper::clear_active_frame() {
 void Sweeper::step_all() {
     _isRunning       = true;
     ResourceMark  rm;
-    for ( Sweeper *n = head(); n; n = n->next() )
+    for ( Sweeper *n = head(); n; n = n->next() ) {
         n->step();
+    }
+
     _sweepSeconds++;
     _isRunning = false;
 }
@@ -123,8 +126,9 @@ void CodeSweeper::updateInterval() {
         _fractionPerTask     = 8;
         const double log2 = 0.69314718055995;   // log(2)
         _decayFactor = exp( log2 * _codeSweeperInterval * _fractionPerTask / CounterHalfLifeTime );
-        if ( PrintCodeSweep )
+        if ( PrintCodeSweep ) {
             spdlog::info( "*method sweep: decay factor %f", _decayFactor );
+        }
     }
 }
 
@@ -159,6 +163,7 @@ std::int32_t MethodSweeper::method_dict_task( ObjectArrayOop methods ) {
         st_assert( method->is_method(), "just checking" );
         method_task( method );
     }
+
     return length;
 }
 
@@ -177,11 +182,13 @@ std::int32_t MethodSweeper::klass_task( KlassOop klass ) {
         result += method_dict_task( klass->klass()->klass_part()->mixin()->methods() );
     }
 
-    if ( not k->has_superKlass() )
+    if ( not k->has_superKlass() ) {
         return result;
+    }
 
-    if ( k->superKlass()->klass_part()->is_named_class() )
+    if ( k->superKlass()->klass_part()->is_named_class() ) {
         return result;
+    }
 
     // super class is an unnamed class so we have to handle it
     result += klass_task( k->superKlass() );
@@ -190,6 +197,7 @@ std::int32_t MethodSweeper::klass_task( KlassOop klass ) {
 
 
 void MethodSweeper::task() {
+
     // Prologue: check is there is leftover from last sweep
     if ( excluded_method() ) {
         MethodOop m = excluded_method();
@@ -200,13 +208,15 @@ void MethodSweeper::task() {
     ObjectArrayOop array             = Universe::systemDictionaryObject();
     std::int32_t   length            = array->length();
     std::int32_t   number_of_entries = length / _fractionPerTask;
-    if ( PrintCodeSweep )
+    if ( PrintCodeSweep ) {
         spdlog::info( "*method sweep: {} entries...", number_of_entries );
+    }
     TraceTime t( "MethodSweep ", PrintCodeSweep );
 
     std::int32_t end = ( _index + number_of_entries );
-    if ( end > length )
+    if ( end > length ) {
         end = length;
+    }
 
     std::int32_t begin  = _index;
     std::int32_t result = 0;
@@ -215,13 +225,16 @@ void MethodSweeper::task() {
         AssociationOop assoc = AssociationOop( array->obj_at( _index ) );
         st_assert( assoc->is_association(), "just checking" );
         if ( assoc->is_constant() and assoc->value()->is_klass() ) {
-            std::int32_t result = klass_task( KlassOop( assoc->value() ) );
+            klass_task( KlassOop( assoc->value() ) );
         }
     }
+
     LOG_EVENT3( "MethodSweeper task [%d, %d] #%d", begin, end, result );
 
-    if ( _index > length )
+    if ( _index > length ) {
         deactivate();
+    }
+
 }
 
 
@@ -292,7 +305,7 @@ private:
     std::int32_t counter;
 public:
     SweeperTask() :
-            PeriodicTask( 100 ) {
+        PeriodicTask( 100 ) {
         counter = 0;
     }
 
