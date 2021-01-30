@@ -12,8 +12,8 @@ template<typename T>
 class ConfigurationValue {
 private:
     std::string _name;
-    std::string _description;
     T           _value;
+    std::string _description;
     T           _default_value;
 public:
     explicit ConfigurationValue( const T &value ) : _name{ "" }, _value{ value } {
@@ -99,12 +99,12 @@ constexpr T _flag( const char *name, T default_value, const char *description ) 
 
     if constexpr ( std::is_same<T, bool>::value ) {
         auto co = ConfigurationOverride<T>( cv, not default_value );
-        std::cout << "bool [" << cv.name() << "] default value is [" << cv.value() << "], overridden value is [" << co.value() << "]" << std::endl;
+        spdlog::info( "bool [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
     }
 
     if constexpr ( std::is_same<T, std::int32_t>::value ) {
         auto co = ConfigurationOverride<T>( cv, default_value + 1 );
-        std::cout << " std::int32_t [" << cv.name() << "] default value is [" << cv.value() << "], overridden value is [" << co.value() << "]" << std::endl;
+        spdlog::info( "std::int32_t [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
     }
 
     return T( default_value );

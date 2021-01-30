@@ -77,14 +77,14 @@ void MacroAssembler::reset_last_Delta_frame() {
 }
 
 
-void MacroAssembler::call_C( const Label &L ) {
+void MacroAssembler::call_C( Label &L ) {
     set_last_Delta_frame_before_call();
     call( L );
     reset_last_Delta_frame();
 }
 
 
-void MacroAssembler::call_C( const Label &L, const Label &nlrTestPoint ) {
+void MacroAssembler::call_C( Label &L, Label &nlrTestPoint ) {
     set_last_Delta_frame_before_call();
     call( L );
     Assembler::ic_info( nlrTestPoint, 0 );
@@ -114,7 +114,7 @@ void MacroAssembler::call_C( const Register &entry ) {
 }
 
 
-void MacroAssembler::call_C( const Register &entry, const Label &nlrTestPoint ) {
+void MacroAssembler::call_C( const Register &entry, Label &nlrTestPoint ) {
     set_last_Delta_frame_before_call();
     call( entry );
     Assembler::ic_info( nlrTestPoint, 0 );

@@ -85,7 +85,7 @@ void LookupKey::print() const {
 }
 
 
-const char *LookupKey::print_string() const {
+const char *LookupKey::toString() const {
     StringOutputStream *stream = new StringOutputStream( 50 );
     print_on( stream );
     return stream->as_string();

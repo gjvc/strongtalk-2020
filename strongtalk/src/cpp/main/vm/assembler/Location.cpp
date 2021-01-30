@@ -51,7 +51,8 @@ Location::Location( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3
 
 const char *Location::name() const {
 
-    char *s;
+    char *s{ nullptr };
+
     switch ( mode() ) {
         case Mode::SPECIAL_LOCATION: {
             const char *name = specialLocationNames[ id() ];

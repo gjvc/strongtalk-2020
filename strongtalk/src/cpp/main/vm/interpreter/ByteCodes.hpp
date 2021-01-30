@@ -141,6 +141,7 @@ public:
         NUMBER_OF_LOOP_TYPES
     };
 
+    // bytecodes
     enum class Code {
 
         // row 0x00

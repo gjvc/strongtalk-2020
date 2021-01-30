@@ -39,12 +39,12 @@ void CacheElement::verify() {
         }
         const NativeMethod *nm = Universe::code->lookup( &_lookupKey );
         if ( _lookupResult.is_method() and nm ) {
-            error( "key %s has interpreted method in lookupTable but should have NativeMethod 0x{0:x}", _lookupKey.print_string(), nm );
+            error( "key %s has interpreted method in lookupTable but should have NativeMethod 0x{0:x}", _lookupKey.toString(), nm );
         } else if ( _lookupResult.is_entry() and _lookupResult.get_nativeMethod() not_eq nm ) {
-            error( "key %s: NativeMethod does not match codeTable NativeMethod", _lookupKey.print_string() );
+            error( "key %s: NativeMethod does not match codeTable NativeMethod", _lookupKey.toString() );
         }
         if ( UseInliningDatabaseEagerly and _lookupResult.is_method() and InliningDatabase::lookup( &_lookupKey ) ) {
-            error( "key %s: interpreted method in lookupTable despite inlining DB entry", _lookupKey.print_string() );
+            error( "key %s: interpreted method in lookupTable despite inlining DB entry", _lookupKey.toString() );
         }
     }
 }

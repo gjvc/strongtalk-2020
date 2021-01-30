@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -16,7 +17,6 @@
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/code/PolymorphicInlineCache.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
@@ -84,13 +84,13 @@ InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummy
 
 UntakenRecompilationScope::UntakenRecompilationScope( NonDummyRecompilationScope *sender, ProgramCounterDescriptor *p, bool u ) :
         NonDummyRecompilationScope( sender, p->_byteCodeIndex, nullptr, 0 ), isUncommon( u ), pc( p ) {
-    std::int32_t i = 0;    // to allow setting breakpoints
+//    std::int32_t i = 0;    // to allow setting breakpoints
 }
 
 
 UninlinableRecompilationScope::UninlinableRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex ) :
         NullRecompilationScope( sender, byteCodeIndex ) {
-    std::int32_t i = 0;    // to allow setting breakpoints
+//    std::int32_t i = 0;    // to allow setting breakpoints
 }
 
 
@@ -484,7 +484,7 @@ void NonDummyRecompilationScope::constructSubScopes( bool trusted ) {
             case ByteCodes::SendType::accessor_send:
             case ByteCodes::SendType::polymorphic_send:
             case ByteCodes::SendType::primitive_send  : {
-                NonDummyRecompilationScope           *s  = nullptr;
+//                NonDummyRecompilationScope           *s  = nullptr;
                 InterpretedInlineCache               *ic = iter.ic();
                 for ( InterpretedInlineCacheIterator it( ic ); not it.at_end(); it.advance() ) {
                     if ( it.is_compiled() ) {
@@ -584,18 +584,18 @@ void NonDummyRecompilationScope::printSubScopes() const {
         }
         _console->print( "}" );
     } else {
-        _console->print( "none" );
+        spdlog::info( "none" );
     }
 }
 
 
 void InterpretedRecompilationScope::print_short() {
-    _console->print( "((InterpretedRecompilationScope*)0x{0:x}) \"%s\" #%ld", PrintHexAddresses ? this : 0, _key->print_string(), _invocationCount );
+    spdlog::info( "((InterpretedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), _key->toString(), _invocationCount );
 }
 
 
 void InlinedRecompilationScope::print_short() {
-    _console->print( "((InlinedRecompilationScope*)0x{0:x}) \"%s\" #%ld", PrintHexAddresses ? this : 0, desc->selector()->as_string(), _invocationCount );
+    spdlog::info( "((InlinedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), desc->selector()->as_string(), _invocationCount );
 }
 
 
@@ -612,13 +612,13 @@ void InlinedRecompilationScope::print() {
 
 
 void PICRecompilationScope::print_short() {
-    _console->print( "((PICRecompilationScope*)0x{0:x}) \"%s\" #%ld", PrintHexAddresses ? this : 0, method()->selector()->as_string(), _invocationCount );
+    spdlog::info( "((PICRecompilationScope*) 0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0), method()->selector()->as_string(), _invocationCount );
 }
 
 
 void PICRecompilationScope::print() {
     print_short();
-    _console->print( ": InlineCache 0x{0:x}; subScopes: ", PrintHexAddresses ? _sd : 0 );
+    spdlog::info( ": InlineCache 0x{0:x}; subScopes: ", static_cast<const void *>( PrintHexAddresses ? _sd : 0 ) );
     printSubScopes();
     if ( uncommon.nonEmpty() ) {
         _console->print( "; uncommon " );
@@ -628,7 +628,7 @@ void PICRecompilationScope::print() {
 
 
 void UntakenRecompilationScope::print_short() {
-    _console->print( "((UntakenRecompilationScope*)0x{0:x}) \"%s\"", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
+    _console->print( "((UntakenRecompilationScope*)0x{0:x}) [{}]", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
 }
 
 
@@ -645,12 +645,12 @@ void RUncommonBranch::print() {
 
 
 void UninlinableRecompilationScope::print_short() {
-    _console->print( "((UninlinableRecompilationScope*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0 ) );
+    spdlog::info( "((UninlinableRecompilationScope*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0 ) );
 }
 
 
 void NullRecompilationScope::print_short() {
-    _console->print( "((NullRecompilationScope*)0x{0:x})", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
+    spdlog::info( "((NullRecompilationScope*)0x{0:x})", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
 }
 
 
@@ -659,7 +659,7 @@ void NullRecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t
 
 
 void RecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t level ) const {
-    _console->print( "%*s%3ld: ", level * 2, "", byteCodeIndex );
+    spdlog::info( "{:s} {:3d} ", level * 2, "", byteCodeIndex );
     ( (RecompilationScope *) this )->print_short();
     spdlog::info( "" );
 }
@@ -692,7 +692,7 @@ void InliningDatabaseRecompilationScope::print() {
 
 
 void InliningDatabaseRecompilationScope::print_short() {
-    _console->print( "((InliningDatabaseRecompilationScope*)0x{0:x})  \"%s\"", PrintHexAddresses ? this : 0, _key->print_string() );
+    spdlog::info( "((InliningDatabaseRecompilationScope*)0x{0:x}) [{}]", static_cast<const void *>(PrintHexAddresses ? this : 0), _key->toString() );
 }
 
 

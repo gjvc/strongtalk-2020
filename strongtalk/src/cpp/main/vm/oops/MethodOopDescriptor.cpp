@@ -632,8 +632,8 @@ static void lookup_primitive_and_patch( std::uint8_t *p, std::uint8_t byte ) {
 
 
 bool MethodOopDescriptor::is_primitiveMethod() const {
-    char b = *codes();
-    switch ( static_cast<ByteCodes::Code>(*codes()) ) {
+    auto b = static_cast<ByteCodes::Code>(*codes());
+    switch ( b ) {
         case ByteCodes::Code::predict_primitive_call:
             return true;
         case ByteCodes::Code::predict_primitive_call_failure:

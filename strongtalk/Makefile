@@ -231,14 +231,14 @@ st20-global-define-flags  := $(addprefix -D ,$(st20-global-define-values))
 # st20-main-lib -----------------------------------------------------------------
 
 st20-main-lib               := $(object-root)/st20-main-lib.a
-st20-main-lib-sources       := $(wildcard src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
+st20-main-lib-sources       := $(wildcard src/cpp/auto/vm/*/*.cpp src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
 st20-main-lib-sources       := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-main-lib-sources))
 st20-main-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
 st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-lib-sources))
 
 st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-main-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-main-lib-cxx-include-paths-external))
-st20-main-lib-cxx-include-paths-internal := src/cpp/main
+st20-main-lib-cxx-include-paths-internal := src/cpp/auto src/cpp/main
 st20-main-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-main-lib-cxx-include-paths-internal))
 st20-main-lib-cxx-include-flags          := $(st20-main-lib-cxx-include-flags-external) $(st20-main-lib-cxx-include-flags-internal)
 
@@ -269,7 +269,7 @@ st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-te
 
 st20-test-lib-cxx-include-paths-external := $(googletest-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-test-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-test-lib-cxx-include-paths-external))
-st20-test-lib-cxx-include-paths-internal := src/cpp/main src/cpp/test
+st20-test-lib-cxx-include-paths-internal := src/cpp/auto src/cpp/main src/cpp/test
 st20-test-lib-cxx-include-flags-internal := $(addprefix -I ,$(st20-test-lib-cxx-include-paths-internal))
 st20-test-lib-cxx-include-flags          := $(st20-test-lib-cxx-include-flags-external) $(st20-test-lib-cxx-include-flags-internal)
 
@@ -285,6 +285,8 @@ st20-test-define-flags  := $(addprefix -D ,$(st20-test-define-values))
 .PHONY : init init-3rd-party init-wine 
 
 default : st20-main-exe st20-test-exe
+
+ext : fmt googletest nasm spdlog
 
 cmake-build : 
 	@$(cmake-program) \
@@ -370,10 +372,10 @@ wine-st20-test-exe : $(st20-test-exe)
 
 # tags ------------------------------------------------------------------------
 
-tags : $(st20-sources) $(st20-test-lib-sources)
+tags : $(st20-main-lib-sources) $(st20-test-lib-sources)
 	@ctags-exuberant -R src/cpp/main/
 
-GPATH GRTAGS GTAGS : $(st20-sources) $(st20-test-lib-sources)
+GPATH GRTAGS GTAGS : $(st20-main-lib-sources) $(st20-test-lib-sources)
 	gtags --verbose --statistics $<
 
 

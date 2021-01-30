@@ -87,9 +87,9 @@ protected:
 
     void print( const Label &L );
 
-    void bind_to( const Label &L, std::int32_t pos );
+    void bind_to( Label &L, std::int32_t pos );
 
-    void link_to( const Label &L, const Label &appendix );
+    void link_to( Label &L, Label &appendix );
 
 public:
     enum class Condition {
@@ -114,12 +114,13 @@ public:
     };
 
     enum class Constants {
-        sizeOfCall = 5            // length of call instruction in bytes
+        sizeOfCall = 5      // length of call instruction in bytes
     };
 
     Assembler( CodeBuffer *code );
 
     void finalize();        // call this before using/copying the code
+
     CodeBuffer *code() const {
         return _code;
     }
@@ -305,12 +306,11 @@ public:
     void ret( std::int32_t imm16 = 0 );
 
     // Labels
-
-    void bind( const Label &L );            // binds an unbound label L to the current code position
+    void bind( Label &L );            // binds an unbound label L to the current code position
     void merge( const Label &L, const Label &with );    // merges L and with, L is the merged label
 
     // Calls
-    void call( const Label &L );
+    void call( Label &L );
 
     void call( const char *entry, RelocationInformation::RelocationType rtype );
 
@@ -326,7 +326,7 @@ public:
     void jmp( const Address &adr );
 
     // Label operations & relative jumps (PPUM Appendix D)
-    void jmp( const Label &L );        // unconditional jump to L
+    void jmp( Label &L );        // unconditional jump to L
 
     // jccI is the generic conditional branch generator to run-time routines, while jcc is used for branches to labels.
     // jcc takes a branch opcode (cc) and a label (L) and generates either a backward branch or a forward branch and links it to the label fixup chain.
@@ -347,7 +347,7 @@ public:
     void jcc( Condition cc, Label &L );
 
     // Support for inline cache information (see also InlineCacheInfo)
-    void ic_info( const Label &L, std::int32_t flags );
+    void ic_info( Label &L, std::int32_t flags );
 
     // Floating-point operations
     void fld1();

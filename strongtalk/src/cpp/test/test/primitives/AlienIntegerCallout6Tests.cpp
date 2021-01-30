@@ -146,7 +146,7 @@ protected:
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
         char         text[200];
-        bool       ok;
+        bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
@@ -171,7 +171,7 @@ protected:
         ByteArrayOop valueOop = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( size ) );
         IntegerOps::int_to_Integer( value, valueOop->number() );
         bool ok;
-        Oop    result         = valueOop->number().as_smi( ok );
+        Oop  result           = valueOop->number().as_smi( ok );
         return ok ? result : valueOop;
     }
 
@@ -302,4 +302,8 @@ TEST_F( AlienIntegerCallout6Tests, alienCallResult6ShouldReturnMarkedResultWhenR
 }
 
 
-TEST_F( AlienIntegerCallout6Tests, alienCallResult6ShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI ) { for ( std::int32_t arg = 0; arg < argCount; arg++ )checkIllegalArgnPassed( arg, trueObject ); }
+TEST_F( AlienIntegerCallout6Tests, alienCallResult6ShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI ) {
+    for ( std::int32_t arg = 0; arg < argCount; arg++ ) {
+        checkIllegalArgnPassed( arg, trueObject );
+    }
+}

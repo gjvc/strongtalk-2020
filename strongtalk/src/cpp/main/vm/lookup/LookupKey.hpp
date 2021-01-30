@@ -61,7 +61,7 @@ public:
     //   "class->selector {byteCodeIndex}+" for block keys
     void print() const;
 
-    const char *print_string() const;
+    const char *toString() const;
 
     void print_on( ConsoleOutputStream *stream ) const;
 

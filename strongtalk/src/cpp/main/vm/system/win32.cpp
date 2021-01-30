@@ -511,6 +511,8 @@ static std::int32_t number_of_ctrl_c = 0;
 
 
 bool WINAPI HandlerRoutine( DWORD dwCtrlType ) {
+    spdlog::info( "HandlerRoutine" );
+
     if ( CTRL_BREAK_EVENT == dwCtrlType ) {
         spdlog::info( "%break" );
         intercept_for_single_step();
@@ -561,8 +563,7 @@ void os::initialize_system_info() {
 
 std::int32_t os::message_box( const char *title, const char *message ) {
     std::int32_t result = MessageBox( nullptr, message, title, MB_YESNO | MB_ICONERROR | MB_SYSTEMMODAL | MB_DEFAULT_DESKTOP_ONLY );
-//    std::int32_t result = IDYES; // ugly hack to reduce DLL depends
-    return result == IDYES;
+    return result == IDYES; // 6
 }
 
 
@@ -693,8 +694,8 @@ void os_exit() {
 
 extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow ) {
 
-    MSG       msg;
-    HWND      hwnd;
+    //MSG       msg;
+    //HWND      hwnd;
     WNDCLASSW wc;
 
     wc.style         = CS_HREDRAW | CS_VREDRAW;

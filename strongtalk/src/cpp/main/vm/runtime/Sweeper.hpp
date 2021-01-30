@@ -126,6 +126,7 @@ private:
     }
 };
 
+
 class CodeSweeper : public Sweeper {
 protected:
     std::int32_t _codeSweeperInterval;    // time interval (sec) between starting zone sweep; computed from half-life time
@@ -136,7 +137,9 @@ protected:
     void updateInterval();          // check for change in half-life setting
 
 public:
-    CodeSweeper() : _oldHalfLifeTime( -1 ), _codeSweeperInterval( 1 ), _decayFactor( 1 ) {}
+    CodeSweeper() : _codeSweeperInterval( 1 ), _decayFactor( 1 ), _oldHalfLifeTime( -1 ), _fractionPerTask( -1 ) {
+
+    }
 
 
     std::int32_t interval() const;

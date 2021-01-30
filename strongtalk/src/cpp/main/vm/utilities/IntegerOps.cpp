@@ -544,12 +544,16 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
     std::int32_t yl = y.length();
     if ( xl < yl ) {
         // unsigned x < unsigned y => z = (y - x)
-        Digit              carry = 0;
-        std::int32_t       i;
-        for ( std::int32_t i     = 0; i < xl; i++ )
-            z[ i ]           = xmy( y[ i ], x[ i ], carry );
-        for ( std::int32_t i = xl; i < yl; i++ )
-            z[ i ]           = xmy( y[ i ], 0, carry );
+        Digit carry = 0;
+
+        for ( std::int32_t i = 0; i < xl; i++ ) {
+            z[ i ] = xmy( y[ i ], x[ i ], carry );
+        }
+
+        for ( std::int32_t i = xl; i < yl; i++ ) {
+            z[ i ] = xmy( y[ i ], 0, carry );
+        }
+
         st_assert( carry == 0, "Remainder too large" );
 
         z.set_signed_length( last_non_zero_index( z.digits(), yl - 1 ) + 1 );
@@ -559,9 +563,12 @@ void IntegerOps::signed_mod( Integer &x, Integer &y, Integer &z ) {
         Digit        *qr = qr_decomposition( x, y );
 
         if ( not sd_all_zero( qr, 0, yl ) ) {
-            Digit              carry = 0;
-            for ( std::int32_t j     = 0; j < yl; j++ )
+
+            Digit carry = 0;
+
+            for ( std::int32_t j = 0; j < yl; j++ ) {
                 qr[ j ] = xmy( y[ j ], qr[ j ], carry );
+            }
             st_assert( carry == 0, "Remainder too large" );
         }
 

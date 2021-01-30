@@ -122,7 +122,7 @@ void Compiler::finalize() {
 
 
 std::int32_t Compiler::level() const {
-    return _hasInlinableSendsRemaining ? MaxRecompilationLevels - 1 : _nextLevel;
+    return _hasInlinableSendsRemaining ? MAX_RECOMPILATION_LEVELS - 1 : _nextLevel;
 }
 
 
@@ -216,16 +216,16 @@ void Compiler::initialize( RecompilationScope *remote_scope ) {
 void Compiler::initLimits() {
     if ( recompileeRScope ) {
         // We're compiling from the inlining data base
-        _nextLevel = MaxRecompilationLevels - 1;
+        _nextLevel = MAX_RECOMPILATION_LEVELS - 1;
     } else if ( recompilee ) {
         if ( DeltaProcess::active()->isUncommon() ) {
             // when recompiling because of an uncommon trap, reset level
             _nextLevel = 0;
         } else {
             _nextLevel = recompilee->level() + 1;
-            if ( _nextLevel >= MaxRecompilationLevels ) {
+            if ( _nextLevel >= MAX_RECOMPILATION_LEVELS ) {
                 spdlog::warn( "recompilation level too high -- should not happen" );
-                _nextLevel = MaxRecompilationLevels;
+                _nextLevel = MAX_RECOMPILATION_LEVELS;
             }
         }
     } else {
@@ -613,7 +613,7 @@ void Compiler::computeBlockInfo() {
             continue;
         PseudoRegister *contextPR = s->context();
         if ( CompilerDebug ) {
-            cout( PrintEliminateContexts )->print( "%*s*could not eliminate context %s in scope %s\n", s->depth, "", contextPR->safeName(), s->key()->print_string() );
+            cout( PrintEliminateContexts )->print( "%*s*could not eliminate context %s in scope %s\n", s->depth, "", contextPR->safeName(), s->key()->toString() );
         }
         reporter->report_context( s );
         contextList->at_put( i, s );
@@ -653,7 +653,7 @@ void Compiler::computeBlockInfo() {
         c->set_sizeOfContext( size );
         if ( size < ntemps and c->scope()->number_of_noninlined_blocks() > 0 ) {
             // this hasn't been exercised much
-            compiler_warning( "while compiling %s: eliminated some context temps", key->print_string() );
+            compiler_warning( "while compiling %s: eliminated some context temps", key->toString() );
         }
     }
 
@@ -722,7 +722,7 @@ void Compiler::print() {
     print_short();
     spdlog::info( ":" );
     key->print();
-    spdlog::info( "\tmethod: %s", method->print_string() );
+    spdlog::info( "\tmethod: %s", method->toString() );
     spdlog::info( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void *>( this ) );
 }
 

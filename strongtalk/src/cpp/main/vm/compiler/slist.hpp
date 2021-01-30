@@ -26,7 +26,8 @@ public:
 
 
     void *dataL() const {
-        return this ? _data : nullptr;
+//        return this ? _data : nullptr;
+        return _data;
     }
 
 

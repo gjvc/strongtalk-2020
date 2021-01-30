@@ -40,6 +40,7 @@ protected:
 
 };
 
+
 TEST_F( ByteArrayKlassTests, shouldBeDoubleByteArray ) {
     eden_top = eden_end;
     ASSERT_TRUE( theClass->klass_part()->oop_is_byteArray() );

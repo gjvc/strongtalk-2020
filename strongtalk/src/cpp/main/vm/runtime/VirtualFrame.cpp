@@ -98,7 +98,7 @@ void VirtualFrame::print_value() const {
 GrowableArray<Oop> *DeltaVirtualFrame::arguments() const {
     std::int32_t       nargs   = method()->number_of_arguments();
     GrowableArray<Oop> *result = new GrowableArray<Oop>( nargs );
-    VirtualFrame       *s      = sender();
+    //VirtualFrame       *s      = sender();
     for ( std::int32_t index   = 0; index < nargs; index++ ) {
         result->push( argument_at( index ) );
     }

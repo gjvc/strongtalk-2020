@@ -32,17 +32,22 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int3
     } else {
         _data = new_resource_array<void *>( _maxLength );
     }
-    for ( std::int32_t i = 0; i < _length; i++ )
+    for ( std::int32_t i = 0; i < _length; i++ ) {
         _data[ i ] = filler;
+    }
 }
 
 
 void GenericGrowableArray::grow( std::int32_t j ) {
-    void         **newData;
-    std::int32_t oldMax = _maxLength;
-    if ( _maxLength == 0 ) st_fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
-    while ( j >= _maxLength )
+    void **newData;
+//    std::int32_t oldMax = _maxLength;
+    if ( _maxLength == 0 ) {
+        st_fatal( "cannot grow array with max = 0" ); // for debugging - should create such arrays with max > 0
+    }
+    while ( j >= _maxLength ) {
         _maxLength = _maxLength * 2;
+    }
+
     // spdlog::info( "GenericGrowableArray::grow from [{}] to [{}]", oldMax, max );
     // j < max
     if ( _allocatedOnSystemHeap ) {
@@ -50,16 +55,19 @@ void GenericGrowableArray::grow( std::int32_t j ) {
     } else {
         newData = new_resource_array<void *>( _maxLength );
     }
-    for ( std::int32_t i = 0; i < _length; i++ )
+
+    for ( std::int32_t i = 0; i < _length; i++ ) {
         newData[ i ] = _data[ i ];
+    }
     _data = newData;
 }
 
 
 bool GenericGrowableArray::raw_contains( const void *elem ) const {
     for ( std::int32_t i = 0; i < _length; i++ ) {
-        if ( _data[ i ] == elem )
+        if ( _data[ i ] == elem ) {
             return true;
+        }
     }
     return false;
 }
@@ -83,8 +91,9 @@ void GenericGrowableArray::raw_appendAll( GenericGrowableArray *l ) {
 
 std::int32_t GenericGrowableArray::raw_find( const void *elem ) const {
     for ( std::int32_t i = 0; i < _length; i++ ) {
-        if ( _data[ i ] == elem )
+        if ( _data[ i ] == elem ) {
             return i;
+        }
     }
     return -1;
 }
@@ -102,8 +111,9 @@ std::int32_t GenericGrowableArray::raw_find( void *token, growableArrayFindFn f 
 void GenericGrowableArray::raw_remove( const void *elem ) {
     for ( std::int32_t i = 0; i < _length; i++ ) {
         if ( _data[ i ] == elem ) {
-            for ( std::int32_t j = i + 1; j < _length; j++ )
+            for ( std::int32_t j = i + 1; j < _length; j++ ) {
                 _data[ j - 1 ] = _data[ j ];
+            }
             _length--;
             return;
         }
@@ -113,17 +123,20 @@ void GenericGrowableArray::raw_remove( const void *elem ) {
 
 
 void GenericGrowableArray::raw_apply( voidDoFn f ) const {
-    for ( std::int32_t i = 0; i < _length; i++ )
+    for ( std::int32_t i = 0; i < _length; i++ ) {
         f( _data[ i ] );
+    }
 }
 
 
 void *GenericGrowableArray::raw_at_grow( std::int32_t i, const void *fill ) {
     if ( i >= _length ) {
-        if ( i >= _maxLength )
+        if ( i >= _maxLength ) {
             grow( i );
-        for ( std::int32_t j = _length; j <= i; j++ )
+        }
+        for ( std::int32_t j = _length; j <= i; j++ ) {
             _data[ j ] = (void *) fill;
+        }
         _length = i + 1;
     }
     return _data[ i ];
@@ -132,10 +145,12 @@ void *GenericGrowableArray::raw_at_grow( std::int32_t i, const void *fill ) {
 
 void GenericGrowableArray::raw_at_put_grow( std::int32_t i, const void *p, const void *fill ) {
     if ( i >= _length ) {
-        if ( i >= _maxLength )
+        if ( i >= _maxLength ) {
             grow( i );
-        for ( std::int32_t j = _length; j < i; j++ )
+        }
+        for ( std::int32_t j = _length; j < i; j++ ) {
             _data[ j ] = (void *) fill;
+        }
         _length = i + 1;
     }
     _data[ i ] = (void *) p;
@@ -145,8 +160,9 @@ void GenericGrowableArray::raw_at_put_grow( std::int32_t i, const void *p, const
 void GenericGrowableArray::print() {
     print_short();
     spdlog::info( ": length %ld (max {0:d}) { ", _length, _maxLength );
-    for ( std::int32_t i = 0; i < _length; i++ )
+    for ( std::int32_t i = 0; i < _length; i++ ) {
         spdlog::info( "0x{0:x} ", (std::int32_t) _data[ i ] );
+    }
     spdlog::info( "}" );
 }
 

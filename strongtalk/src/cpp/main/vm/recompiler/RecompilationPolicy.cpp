@@ -6,6 +6,7 @@
 
 #include "vm/recompiler/RecompilationPolicy.hpp"
 #include "vm/recompiler/Recompilation.hpp"
+#include "vm/recompiler/Recompilee.hpp"
 #include "vm/compiler/InliningPolicy.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/interpreter/Interpreter.hpp"
@@ -187,9 +188,9 @@ const char *RecompilationPolicy::shouldNotRecompileNativeMethod( NativeMethod *n
         } else {
             return "uncommon NativeMethod too young";
         }
-    } else if ( nm->version() >= MaxVersions ) {
+    } else if ( nm->version() >= MAX_NATIVE_METHOD_RECOMPILATION_LEVELS ) {
         return "max. version reached";
-    } else if ( nm->level() == MaxRecompilationLevels - 1 ) {
+    } else if ( nm->level() == MAX_RECOMPILATION_LEVELS - 1 ) {
         return "maximally optimized";
     } else if ( nm->isYoung() ) {
         return "NativeMethod too young";
@@ -324,13 +325,13 @@ void RecompilationPolicy::printStack() {    // for debugging
 bool RecompilationPolicy::needRecompileCounter( Compiler *c ) {
     if ( not UseRecompilation )
         return false;
-    if ( c->version() == MaxVersions )
+    if ( c->version() == MAX_NATIVE_METHOD_RECOMPILATION_LEVELS )
         return false;    // to prevent endless recompilation
     // also stop counting for "perfect" nativeMethods where nothing more can be optimized
     // NB: it is tempting to leave counters in very small methods (so that e.g. accessor functions
     // still trigger counters), but that won't work if they're invoked from megamorphic
     // call sites --> put the counters in the caller, not the callee.
-    return c->level() < MaxRecompilationLevels - 1;
+    return c->level() < MAX_RECOMPILATION_LEVELS - 1;
 }
 
 

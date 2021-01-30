@@ -27,6 +27,7 @@ protected:
 
 };
 
+
 TEST_F( AssociationKlassTests, shouldAllocateTenured ) {
     HandleMark mark;
     Handle     objectClass( Universe::find_global( "GlobalAssociation" ) );

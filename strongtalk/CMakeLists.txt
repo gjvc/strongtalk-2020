@@ -50,6 +50,7 @@ set ( CMAKE_VERBOSE_MAKEFILE ON )
 # source directories ----------------------------------------------------------
 
 set ( cpp-src-dir ${CMAKE_CURRENT_SOURCE_DIR}/src/cpp )
+set ( cpp-auto-dir ${cpp-src-dir}/auto )
 set ( cpp-main-dir ${cpp-src-dir}/main )
 set ( cpp-test-dir ${cpp-src-dir}/test )
 
@@ -119,6 +120,7 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
 #target_include_directories ( st20-main-library-object PUBLIC /usr/include ) # do not use files from /usr/include unless they are header-only
 target_include_directories ( st20-main-library-object PRIVATE ${cpp-main-dir} )
+target_include_directories ( st20-main-library-object PRIVATE ${cpp-auto-dir} )
 target_include_directories ( st20-main-library-object PRIVATE ${spdlog-include} )
 target_include_directories ( st20-main-library-object PUBLIC ${object-path}/debug/src/ext/nasm/include/ )
 add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library-object> )

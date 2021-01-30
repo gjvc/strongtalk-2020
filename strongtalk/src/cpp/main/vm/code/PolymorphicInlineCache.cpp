@@ -292,7 +292,7 @@ void PolymorphicInlineCacheIterator::advance() {
 
 
 KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
-    std::int32_t offs;
+    std::int32_t offs{ 0 };
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no klass stored -> no klass address available
         case at_nativeMethod:
@@ -309,7 +309,7 @@ KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
 
 
 std::int32_t *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
-    std::int32_t offs;
+    std::int32_t offs{ 0 };
     switch ( state() ) {
         case at_smi_nativeMethod:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset);
@@ -326,7 +326,7 @@ std::int32_t *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
 
 
 MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
-    std::int32_t offs;
+    std::int32_t offs{ 0 };
     switch ( state() ) {
         case at_smi_nativeMethod: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
         case at_nativeMethod    : ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
@@ -489,7 +489,8 @@ PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
     PolymorphicInlineCacheContents contents;
     PolymorphicInlineCacheIterator it( this );
     while ( not it.at_end() ) {
-        KlassOop receiver_klass = it.get_klass();
+//        KlassOop receiver_klass = it.get_klass();
+
         if ( it.is_interpreted() ) {
             // Interpreted methodOop
             if ( compiled_ic()->isSuperSend() ) {

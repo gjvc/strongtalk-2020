@@ -9,7 +9,6 @@
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/Console.hpp"
 
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #define SPDLOG_DEBUG_ON
 #define SPDLOG_TRACE_ON
 
@@ -26,8 +25,10 @@ ConsoleOutputStream *_console;
 
 void ConsoleOutputStream::basic_print( const char *str ) {
 
-    for ( std::int32_t i = 0; i < strlen( str ); i++ )
+    for ( std::size_t i = 0; i < strlen( str ); i++ ) {
         put( str[ i ] );
+    }
+
 }
 
 

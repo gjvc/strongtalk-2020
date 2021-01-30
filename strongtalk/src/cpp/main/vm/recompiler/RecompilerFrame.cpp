@@ -72,8 +72,10 @@ CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
 
 
 RecompilerFrame *RecompilerFrame::new_RFrame( Frame frame, const RecompilerFrame *callee ) {
-    RecompilerFrame *rf;
+
+    RecompilerFrame *rf{ nullptr };
     std::int32_t    dist = callee ? callee->distance() : -1;
+
     if ( frame.is_interpreted_frame() ) {
         rf = new InterpretedRecompilerFrame( frame, callee );
         dist++;

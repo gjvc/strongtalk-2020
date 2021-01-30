@@ -10,6 +10,7 @@
 #include "vm/primitives/oop_primitives.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/oops/OopDescriptor.hpp"
 
 #include <gtest/gtest.h>
 
@@ -36,14 +37,14 @@ protected:
 
 TEST_F( OopPrimitivesPerformTest, noArgPerformWithUnknownShouldInvokeDoesNotUnderstand ) {
 
-    SymbolOop selector = oopFactory::new_symbol( "unknown" );
-//    Oop       result        = oopPrimitives::perform( selector, fixture );
-//    klassOop  expectedKlass = klassOop( Universe::find_global( "Message" ) );
+    SymbolOop selector      = oopFactory::new_symbol( "unknown" );
+    Oop       result        = oopPrimitives::perform( selector, fixture );
+    KlassOop  expectedKlass = KlassOop( Universe::find_global( "Message" ) );
 
-//    EXPECT_TRUE( result->is_mem() ) << "result should be object";
-//    EXPECT_EQ( expectedKlass, result->klass() ) << "wrong class returned";
-//    EXPECT_EQ( fixture, MemOop ( result )->raw_at( 2 ) ) << "message should contain receiver";
-//    EXPECT_EQ( selector, MemOop( result )->raw_at( 3 ) ) << "message should contain selector";
+    EXPECT_TRUE( result->is_mem() ) << "result should be object";
+    EXPECT_EQ( expectedKlass, result->klass() ) << "wrong class returned";
+    EXPECT_EQ( fixture, MemOop ( result )->raw_at( 2 ) ) << "message should contain receiver";
+    EXPECT_EQ( selector, MemOop( result )->raw_at( 3 ) ) << "message should contain selector";
 }
 
 

@@ -376,7 +376,7 @@ static bool create_rscope( char *line, GrowableArray<InliningDatabaseRecompilati
     MethodOop    method         = nullptr;
     KlassOop     receiver_klass = nullptr;
 
-    RecompilationScope *result = nullptr;
+//    RecompilationScope *result = nullptr;
 
     if ( stack->isEmpty() ) {
         // the root scope

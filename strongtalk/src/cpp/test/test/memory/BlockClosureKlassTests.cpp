@@ -36,6 +36,7 @@ protected:
 
 };
 
+
 TEST_F( BlockClosureKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
     eden_top = eden_end;
     ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( theClass->klass_part()->allocateObject( false ) ) );

@@ -111,7 +111,8 @@ public:
 
 
     std::int32_t id() const {
-        return this == nullptr ? -1 : _id;
+//        return this == nullptr ? -1 : _id;
+        return _id;
     }
 
 

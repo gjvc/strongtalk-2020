@@ -63,8 +63,9 @@ void ByteArray::extend() {
     std::int32_t newMax    = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
-    for ( std::int32_t i = 0; i < _top; i++ )
+    for ( std::size_t i = 0; i < _top; i++ ) {
         newArray[ i ] = _array[ i ];
+    }
 
     _array = newArray;
     _max   = newMax;
@@ -73,8 +74,9 @@ void ByteArray::extend() {
 
 void ByteArray::appendHalf( std::int16_t p ) {
 
-    if ( _top + (std::int32_t) sizeof( std::int16_t ) > _max )
+    if ( _top + (std::int32_t) sizeof( std::int16_t ) > _max ) {
         extend();
+    }
 
     // Saving the half as two bytes to avoid alignment problem.
     _array[ _top++ ] = p >> BYTE_WIDTH;
@@ -90,8 +92,10 @@ void ByteArray::putHalfAt( std::int16_t p, std::int32_t offset ) {
 
 
 void ByteArray::appendWord( std::int32_t p ) {
-    if ( _top + sizeof( std::int32_t ) > _max )
+    if ( _top + sizeof( std::int32_t ) > _max ) {
         extend();
+    }
+
     st_assert( size() % sizeof( std::int32_t ) == 0, "Not word aligned" );
     std::int32_t *s = (std::int32_t *) &_array[ _top ];
     *s = p;
@@ -102,8 +106,10 @@ void ByteArray::appendWord( std::int32_t p ) {
 void ByteArray::alignToWord() {
     std::int32_t fill_size = ( sizeof( std::int32_t ) - ( size() % sizeof( std::int32_t ) ) ) % sizeof( std::int32_t );
 
-    for ( std::int32_t i = 0; i < fill_size; i++ )
+    for ( std::int32_t i = 0; i < fill_size; i++ ) {
         appendByte( 0 );
+    }
+
 }
 
 

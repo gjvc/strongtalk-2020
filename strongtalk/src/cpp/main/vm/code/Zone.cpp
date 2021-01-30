@@ -202,11 +202,13 @@ void moveInsts( const char *from, char *to, std::int32_t size ) {
     NativeMethod *n   = (NativeMethod *) from;
     NativeMethod *nTo = (NativeMethod *) to;
 
-    char *n1 = n->instructionsStart();
-    char *n2 = n->instructionsEnd();
+//    char *n1 = n->instructionsStart();
+//    char *n2 = n->instructionsEnd();
+
     n->moveTo( to, (const char *) n->locsEnd() - (const char *) n );
-    if ( Universe::code->LRUhand == n )
+    if ( Universe::code->LRUhand == n ) {
         Universe::code->LRUhand = nTo;
+    }
 }
 
 
@@ -242,8 +244,9 @@ void Zone::flushZombies( bool deoptimize ) {
     FOR_ALL_NMETHODS( p ) {
         debug_nm = p;
         if ( p->isZombie() ) {
-            if ( deoptimize )
+            if ( deoptimize ) {
                 Processes::deoptimize_wrt( p );
+            }
             p->flush();
         }
     }
@@ -326,16 +329,18 @@ void Zone::compact( bool forced ) {
 
     // chainFrames();
     flushZombies();
-    const char *firstFree = nullptr;
+//    const char *firstFree = nullptr;
     if ( not forced )
         adjustPolicy();
+
     if ( needsCompaction() ) {
-        if ( PrintCodeReclamation )
+        if ( PrintCodeReclamation ) {
             _console->print( "I" );
-        firstFree = _methodHeap->compact( moveInsts );
+        }
+        const char *firstFree = _methodHeap->compact( moveInsts );
     }
     // unchainFrames();
-//    flushICache();
+    //    flushICache();
 
     verify_if_often();
     _needsCompaction = false;
@@ -345,8 +350,9 @@ void Zone::compact( bool forced ) {
 
 void Zone::free( NativeMethod *nm ) {
     verify_if_often();
-    if ( LRUhand == nm )
+    if ( LRUhand == nm ) {
         LRUhand = next_nm( nm );
+    }
     _methodHeap->deallocate( nm, nm->size() );
     verify_if_often();
 }
@@ -643,14 +649,16 @@ bool Zone::isDeltaPC( void *p ) const {
 
 
 NativeMethod *Zone::findNativeMethod( const void *start ) const {
-    NativeMethod *n;
+    NativeMethod *n{ nullptr};
     if ( _methodHeap->contains( start ) ) {
         n = (NativeMethod *) _methodHeap->findStartOfBlock( start );
         st_assert( (const char *) start < (const char *) n->locsEnd(), "found wrong NativeMethod" );
     }
+
     st_assert( _methodHeap->contains( n ), "not in zone" );
     st_assert( n->isNativeMethod(), "findNativeMethod didn't find NativeMethod" );
     st_assert( n->encompasses( start ), "doesn't encompass start" );
+
     return n;
 }
 

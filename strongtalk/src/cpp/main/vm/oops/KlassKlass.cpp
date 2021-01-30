@@ -38,12 +38,12 @@ std::int32_t KlassKlass::oop_scavenge_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_header();
     Klass *k = KlassOop( obj )->klass_part();
-    scavenge_oop( (Oop *) &k->_non_indexable_size );
-    scavenge_oop( (Oop *) &k->_has_untagged_contents );
-    scavenge_oop( (Oop *) &k->_classVars );
-    scavenge_oop( (Oop *) &k->_methods );
-    scavenge_oop( (Oop *) &k->_superKlass );
-    scavenge_oop( (Oop *) &k->_mixin );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_non_indexable_size ) );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_has_untagged_contents ) );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_classVars ) );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_methods ) );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_superKlass ) );
+    scavenge_oop( reinterpret_cast<Oop *>( &k->_mixin ) );
 
     // instance variables
     MemOop( obj )->scavenge_body( KlassOopDescriptor::header_size(), size );
@@ -57,12 +57,12 @@ std::int32_t KlassKlass::oop_scavenge_tenured_contents( Oop obj ) {
     // header
     MemOop( obj )->scavenge_tenured_header();
     Klass *k = KlassOop( obj )->klass_part();
-    scavenge_tenured_oop( (Oop *) &k->_non_indexable_size );
-    scavenge_tenured_oop( (Oop *) &k->_has_untagged_contents );
-    scavenge_tenured_oop( (Oop *) &k->_classVars );
-    scavenge_tenured_oop( (Oop *) &k->_methods );
-    scavenge_tenured_oop( (Oop *) &k->_superKlass );
-    scavenge_tenured_oop( (Oop *) &k->_mixin );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_non_indexable_size ) );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_has_untagged_contents ) );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_classVars ) );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_methods ) );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_superKlass ) );
+    scavenge_tenured_oop( reinterpret_cast<Oop *>( &k->_mixin ) );
 
     // instance variables
     MemOop( obj )->scavenge_tenured_body( KlassOopDescriptor::header_size(), size );
@@ -75,12 +75,12 @@ void KlassKlass::oop_follow_contents( Oop obj ) {
     // header
     MemOop( obj )->follow_header();
     Klass *k = KlassOop( obj )->klass_part();
-    MarkSweep::reverse_and_push( (Oop *) &k->_non_indexable_size );
-    MarkSweep::reverse_and_push( (Oop *) &k->_has_untagged_contents );
-    MarkSweep::reverse_and_push( (Oop *) &k->_classVars );
-    MarkSweep::reverse_and_push( (Oop *) &k->_methods );
-    MarkSweep::reverse_and_push( (Oop *) &k->_superKlass );
-    MarkSweep::reverse_and_push( (Oop *) &k->_mixin );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_non_indexable_size ) );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_has_untagged_contents ) );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_classVars ) );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_methods ) );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_superKlass ) );
+    MarkSweep::reverse_and_push( reinterpret_cast<Oop *>( &k->_mixin ) );
 
     // instance variables
     MemOop( obj )->follow_body( KlassOopDescriptor::header_size(), non_indexable_size() );
@@ -91,14 +91,14 @@ bool KlassKlass::oop_verify( Oop obj ) {
     st_assert( obj->is_klass(), "must be class" );
     Klass *k = KlassOop( obj )->klass_part();
 
-//    if ( not k->oop_is_smi() ) {
-//        std::int32_t a = k->non_indexable_size();
-//        std::int32_t b = k->oop_header_size();
-//        std::int32_t c = k->number_of_instance_variables();
-//        if ( a not_eq b + c ) {
-//            spdlog::warn( "inconsistent non indexable size" );
-//        }
-//    }
+    if ( not k->oop_is_smi() ) {
+        std::int32_t a = k->non_indexable_size();
+        std::int32_t b = k->oop_header_size();
+        std::int32_t c = k->number_of_instance_variables();
+        if ( a not_eq b + c ) {
+            spdlog::warn( "KlassKlass::oop_verify: inconsistent non-indexable size {:d} not_eq {:d} + {:d}", a, b, c );
+        }
+    }
 
     bool flag = MemOop( obj )->verify();
     return flag;
@@ -125,12 +125,12 @@ void KlassKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     // header
     MemOop( obj )->layout_iterate_header( blk );
     Klass *k = KlassOop( obj )->klass_part();
-    blk->do_oop( "size", (Oop *) &k->_non_indexable_size );
-    blk->do_oop( "untag", (Oop *) &k->_has_untagged_contents );
-    blk->do_oop( "classVars", (Oop *) &k->_classVars );
-    blk->do_oop( "methods", (Oop *) &k->_methods );
-    blk->do_oop( "super", (Oop *) &k->_superKlass );
-    blk->do_oop( "mixin", (Oop *) &k->_mixin );
+    blk->do_oop( "size", reinterpret_cast<Oop *>( &k->_non_indexable_size ) );
+    blk->do_oop( "untag", reinterpret_cast<Oop *>( &k->_has_untagged_contents ) );
+    blk->do_oop( "classVars", reinterpret_cast<Oop *>( &k->_classVars ) );
+    blk->do_oop( "methods", reinterpret_cast<Oop *>( &k->_methods ) );
+    blk->do_oop( "super", reinterpret_cast<Oop *>( &k->_superKlass ) );
+    blk->do_oop( "mixin", reinterpret_cast<Oop *>( &k->_mixin ) );
 
     // instance variables
     MemOop( obj )->layout_iterate_body( blk, KlassOopDescriptor::header_size(), non_indexable_size() );
@@ -142,12 +142,12 @@ void KlassKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
     // header
     MemOop( obj )->oop_iterate_header( blk );
     Klass *k = KlassOop( obj )->klass_part();
-    blk->do_oop( (Oop *) &k->_non_indexable_size );
-    blk->do_oop( (Oop *) &k->_has_untagged_contents );
-    blk->do_oop( (Oop *) &k->_classVars );
-    blk->do_oop( (Oop *) &k->_methods );
-    blk->do_oop( (Oop *) &k->_superKlass );
-    blk->do_oop( (Oop *) &k->_mixin );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_non_indexable_size ) );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_has_untagged_contents ) );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_classVars ) );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_methods ) );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_superKlass ) );
+    blk->do_oop( reinterpret_cast<Oop *>( &k->_mixin ) );
 
     // instance variables
     MemOop( obj )->oop_iterate_body( blk, KlassOopDescriptor::header_size(), non_indexable_size() );

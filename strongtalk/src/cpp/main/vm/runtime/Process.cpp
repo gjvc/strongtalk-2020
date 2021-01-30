@@ -898,7 +898,7 @@ extern "C" void unpack_frame_array() {
     bool nlr_target_found     = false; // For verification
 
     // link for the current frame
-    std::int32_t *link_addr = (std::int32_t *) new_sp - 2;
+//    std::int32_t *link_addr = (std::int32_t *) new_sp - 2;
 
     Oop          *current_sp = new_sp;
     std::int32_t pos         = 3;

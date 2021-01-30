@@ -71,8 +71,8 @@ void CompilerTests::exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize
 
     GrowableArray<NativeMethod *> *nativeMethods = new GrowableArray<NativeMethod *>;
 
-    std::int32_t blockSize = Universe::code->_methodHeap->blockSize;
-    std::int32_t size      = Universe::code->_methodHeap->freeBytes();
+//    std::int32_t blockSize = Universe::code->_methodHeap->blockSize;
+    std::int32_t size = Universe::code->_methodHeap->freeBytes();
 
     bool hasFailed = false;
     while ( !hasFailed ) {
@@ -80,11 +80,14 @@ void CompilerTests::exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize
         if ( newnm ) {
             nativeMethods->append( newnm );
         } else {
-            if ( size == requiredSize )
+            if ( size == requiredSize ) {
                 hasFailed = true;
+            }
+
             size /= 2;
-            if ( size < requiredSize )
-                size      = requiredSize;
+            if ( size < requiredSize ) {
+                size = requiredSize;
+            }
         }
     }
 }
@@ -164,167 +167,167 @@ void CompilerTests::resetInvocationCounter( MethodOop method ) {
 
 TEST_F( CompilerTests, compileContentsDo
 ) {
-call( "ContextNestingTest", "testOnce" );
-compile( "ContextNestingTest", "testWith:" );
-call( "ContextNestingTest", "testTwice" );
+    call( "ContextNestingTest", "testOnce" );
+    compile( "ContextNestingTest", "testWith:" );
+    call( "ContextNestingTest", "testTwice" );
 }
 
 
 TEST_F( CompilerTests, uncommonTrap
 ) {
-AddTestProcess addTest;
-{
-HandleMark mark;
-initializeSmalltalkEnvironment();
-Handle     _new( oopFactory::new_symbol( "new" ) );
-Handle     setup( oopFactory::new_symbol( "populatePIC" ) );
-Handle     toCompile( oopFactory::new_symbol( "type" ) );
-Handle     triggerTrap( oopFactory::new_symbol( "testTriggerUncommonTrap" ) );
-Handle     testClass( Universe::find_global( "DeltaParameterTest" ) );
-Handle     varClass( Universe::find_global( "DeltaParameter" ) );
-Handle     newTest( Delta::call( testClass.as_klass(), _new.as_oop() ) );
-call( "DeltaParameterTest", "populatePIC" );
-LookupResult result = interpreter_normal_lookup( varClass.as_klass(), SymbolOop( toCompile.as_oop() ) );
-LookupKey    key( varClass.as_klass(), toCompile.as_oop() );
-ASSERT_TRUE( !result.
-is_empty()
-);
-VM_OptimizeMethod op( &key, result.method() );
-VMProcess::execute( &op );
-DeltaCallCache::clearAll();
-LookupCache::flush();
-std::int32_t trapCount = op.result()->uncommon_trap_counter();
-Delta::call( newTest
-.
-as_oop(), triggerTrap
-.
-as_oop()
-);
-ASSERT_EQ( trapCount
-+ 1, op.result()->uncommon_trap_counter() );
-}
+    AddTestProcess addTest;
+    {
+        HandleMark mark;
+        initializeSmalltalkEnvironment();
+        Handle _new( oopFactory::new_symbol( "new" ) );
+        Handle setup( oopFactory::new_symbol( "populatePIC" ) );
+        Handle toCompile( oopFactory::new_symbol( "type" ) );
+        Handle triggerTrap( oopFactory::new_symbol( "testTriggerUncommonTrap" ) );
+        Handle testClass( Universe::find_global( "DeltaParameterTest" ) );
+        Handle varClass( Universe::find_global( "DeltaParameter" ) );
+        Handle newTest( Delta::call( testClass.as_klass(), _new.as_oop() ) );
+        call( "DeltaParameterTest", "populatePIC" );
+        LookupResult result = interpreter_normal_lookup( varClass.as_klass(), SymbolOop( toCompile.as_oop() ) );
+        LookupKey    key( varClass.as_klass(), toCompile.as_oop() );
+        ASSERT_TRUE( !result.
+                is_empty()
+        );
+        VM_OptimizeMethod op( &key, result.method() );
+        VMProcess::execute( &op );
+        DeltaCallCache::clearAll();
+        LookupCache::flush();
+        std::int32_t trapCount = op.result()->uncommon_trap_counter();
+        Delta::call( newTest
+                             .
+                                     as_oop(), triggerTrap
+                             .
+                                     as_oop()
+        );
+        ASSERT_EQ( trapCount
+                           +1, op.result()->uncommon_trap_counter() );
+    }
 }
 
 
 TEST_F( CompilerTests, invalidJumptableID
 ) {
-AddTestProcess addTest;
-{
-initializeSmalltalkEnvironment();
-call( "BlockMaterializeTest", "testIgnoredBlock" );
-compile( "BlockMaterializeTest", "testIgnoredBlock" );
+    AddTestProcess addTest;
+    {
+        initializeSmalltalkEnvironment();
+        call( "BlockMaterializeTest", "testIgnoredBlock" );
+        compile( "BlockMaterializeTest", "testIgnoredBlock" );
 /* was causing assertion failure in CompileTimeClosure::jump_table_entry() due to no _id*/
-}
+    }
 }
 
 
 TEST_F( CompilerTests, toplevelBlockScopeOuterContextFilledWithNils
 ) {
-AddTestProcess addTest;
-{
-initializeSmalltalkEnvironment();
-call( "NonInlinedBlockTest", "testSetup" );
-compile( "NonInlinedBlockTest", "exercise:value:" );
-clearICs( "NonInlinedBlockTest", "testSetup" );
-call( "NonInlinedBlockTest", "testSetup" );
-call( "NonInlinedBlockTest", "testTrap" );
-}
+    AddTestProcess addTest;
+    {
+        initializeSmalltalkEnvironment();
+        call( "NonInlinedBlockTest", "testSetup" );
+        compile( "NonInlinedBlockTest", "exercise:value:" );
+        clearICs( "NonInlinedBlockTest", "testSetup" );
+        call( "NonInlinedBlockTest", "testSetup" );
+        call( "NonInlinedBlockTest", "testTrap" );
+    }
 }
 
 
 TEST_F( CompilerTests, toplevelBlockScopeWithContextContainingBlockReferencingContext
 ) {
-AddTestProcess addTest;
-{
-initializeSmalltalkEnvironment();
-call( "NonInlinedBlockTest", "testSetup2" );
-compile( "NonInlinedBlockTest", "exercise2:value:" );
-clearICs( "NonInlinedBlockTest", "testSetup2" );
-call( "NonInlinedBlockTest", "testSetup2" );
+    AddTestProcess addTest;
+    {
+        initializeSmalltalkEnvironment();
+        call( "NonInlinedBlockTest", "testSetup2" );
+        compile( "NonInlinedBlockTest", "exercise2:value:" );
+        clearICs( "NonInlinedBlockTest", "testSetup2" );
+        call( "NonInlinedBlockTest", "testSetup2" );
 
-call( "NonInlinedBlockTest", "testTrap2" );
-}
+        call( "NonInlinedBlockTest", "testTrap2" );
+    }
 }
 
 
 TEST_F( CompilerTests, recompileZombieForcingFlush
 ) {
-AddTestProcess addTest;
-{
-HandleMark mark;
-initializeSmalltalkEnvironment();
-Handle     setup( oopFactory::new_symbol( "testSetup2" ) );
-Handle     varClass( Universe::find_global( "NonInlinedBlockTest" ) );
-Universe::code->
-flush();
-Universe::code->
-compact();
-LookupCache::flush();
-ASSERT_TRUE( lookup( "NonInlinedBlockTest", "exercise2:value:" )
-== nullptr );
-clearICs( "NonInlinedBlockTest", "testSetup2" );
-call( "NonInlinedBlockTest", "testSetup2" );
-ASSERT_TRUE( lookup( "NonInlinedBlockTest", "exercise2:value:" )
-== nullptr );
-seed = compile( "NonInlinedBlockTest", "exercise2:value:" );
-clearICs( "NonInlinedBlockTest", "testSetup2" );
-call( "NonInlinedBlockTest", "testSetup2" );
-JumpTableEntry *entry   = seed->noninlined_block_jumpEntry_at( 1 );
-NativeMethod   *blocknm = entry->block_nativeMethod();
-LookupKey      bogus( varClass.as_klass(), setup.as_oop() );
-exhaustMethodHeap( bogus, blocknm
-->
-size()
-);
-blocknm->
-inc_uncommon_trap_counter();
-blocknm->
-inc_uncommon_trap_counter();
-blocknm->
-inc_uncommon_trap_counter();
-blocknm->
-inc_uncommon_trap_counter();
-blocknm->
-inc_uncommon_trap_counter();
-call( "NonInlinedBlockTest", "testTrap2" );
-}
+    AddTestProcess addTest;
+    {
+        HandleMark mark;
+        initializeSmalltalkEnvironment();
+        Handle setup( oopFactory::new_symbol( "testSetup2" ) );
+        Handle varClass( Universe::find_global( "NonInlinedBlockTest" ) );
+        Universe::code->
+                flush();
+        Universe::code->
+                compact();
+        LookupCache::flush();
+        ASSERT_TRUE( lookup( "NonInlinedBlockTest", "exercise2:value:" )
+                     == nullptr );
+        clearICs( "NonInlinedBlockTest", "testSetup2" );
+        call( "NonInlinedBlockTest", "testSetup2" );
+        ASSERT_TRUE( lookup( "NonInlinedBlockTest", "exercise2:value:" )
+                     == nullptr );
+        seed = compile( "NonInlinedBlockTest", "exercise2:value:" );
+        clearICs( "NonInlinedBlockTest", "testSetup2" );
+        call( "NonInlinedBlockTest", "testSetup2" );
+        JumpTableEntry *entry   = seed->noninlined_block_jumpEntry_at( 1 );
+        NativeMethod   *blocknm = entry->block_nativeMethod();
+        LookupKey      bogus( varClass.as_klass(), setup.as_oop() );
+        exhaustMethodHeap( bogus, blocknm
+                ->
+                        size()
+        );
+        blocknm->
+                inc_uncommon_trap_counter();
+        blocknm->
+                inc_uncommon_trap_counter();
+        blocknm->
+                inc_uncommon_trap_counter();
+        blocknm->
+                inc_uncommon_trap_counter();
+        blocknm->
+                inc_uncommon_trap_counter();
+        call( "NonInlinedBlockTest", "testTrap2" );
+    }
 }
 
 
 TEST_F( CompilerTests, recompileZombieWhenMethodHeapExhausted
 ) {
-AddTestProcess addTest;
-{
-initializeSmalltalkEnvironment();
-call( "CompilerTest", "testOnce" );
-compile( "CompilerTest", "with:" );
-clearICs( "CompilerTest", "testOnce" );
-call( "CompilerTest", "testOnce" );
-seed = lookup( "CompilerTest", "with:" );
-seed->
-inc_uncommon_trap_counter();
-seed->
-inc_uncommon_trap_counter();
-seed->
-inc_uncommon_trap_counter();
-seed->
-inc_uncommon_trap_counter();
-seed->
-inc_uncommon_trap_counter();
-exhaustMethodHeap( seed
-->_lookupKey, seed->
-size()
-);
-ASSERT_FALSE( seed
-->
-isZombie()
-); /* forces deoptimization and recompilation.*/ call( "CompilerTest", "testTwice" );
-ASSERT_TRUE( seed
-->
-isZombie()
-);
-NativeMethod *nm = lookup( "CompilerTest", "with:" );
-ASSERT_FALSE( ( nm
-== seed ) );
-}
+    AddTestProcess addTest;
+    {
+        initializeSmalltalkEnvironment();
+        call( "CompilerTest", "testOnce" );
+        compile( "CompilerTest", "with:" );
+        clearICs( "CompilerTest", "testOnce" );
+        call( "CompilerTest", "testOnce" );
+        seed             = lookup( "CompilerTest", "with:" );
+        seed->
+                inc_uncommon_trap_counter();
+        seed->
+                inc_uncommon_trap_counter();
+        seed->
+                inc_uncommon_trap_counter();
+        seed->
+                inc_uncommon_trap_counter();
+        seed->
+                inc_uncommon_trap_counter();
+        exhaustMethodHeap( seed
+                                   ->_lookupKey, seed->
+                size()
+        );
+        ASSERT_FALSE( seed
+                              ->
+                                      isZombie()
+        ); /* forces deoptimization and recompilation.*/ call( "CompilerTest", "testTwice" );
+        ASSERT_TRUE( seed
+                             ->
+                                     isZombie()
+        );
+        NativeMethod *nm = lookup( "CompilerTest", "with:" );
+        ASSERT_FALSE( ( nm
+                        == seed ) );
+    }
 }

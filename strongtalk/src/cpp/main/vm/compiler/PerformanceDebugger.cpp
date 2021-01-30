@@ -44,7 +44,7 @@ void PerformanceDebugger::stop_report() {
 void PerformanceDebugger::report_compile() {
     if ( not _compileAlreadyReported ) {
         _compileAlreadyReported = true;
-        spdlog::info( "\n*while compiling NativeMethod for %s:", _compiler->key->print_string() );
+        spdlog::info( "\n*while compiling NativeMethod for %s:", _compiler->key->toString() );
     }
 }
 
@@ -78,7 +78,7 @@ void PerformanceDebugger::finish_reporting() {
             if ( i % 3 == 0 )
                 _stringStream->print_cr( "" );
             InlinedScope *s = _notInlinedBecauseNativeMethodTooBig->at( i );
-            _stringStream->print( "%s  ", s->key()->print_string() );
+            _stringStream->print( "%s  ", s->key()->toString() );
         }
         if ( i < len )
             _stringStream->print( "\n    (%d more sends omitted)\n", len );
@@ -100,9 +100,9 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
             nused++;
     }
     if ( nused == 0 ) {
-        _stringStream->print( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->print_string() );
+        _stringStream->print( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
     } else {
-        _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->print_string() );
+        _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
         for ( std::int32_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->preg();
             if ( r->uplevelR() or r->uplevelW() ) {
@@ -157,7 +157,7 @@ void PerformanceDebugger::report_block( Node *n, BlockPseudoRegister *blk, const
     Reporter r( this );
     _stringStream->print( " could not eliminate block in " );
     blk->method()->home()->selector()->print_symbol_on( _stringStream );
-    _stringStream->print( " because it is %s in scope %s at bytecode %d", what, n->scope()->key()->print_string(), n->byteCodeIndex() );
+    _stringStream->print( " because it is %s in scope %s at bytecode %d", what, n->scope()->key()->toString(), n->byteCodeIndex() );
     InterpretedInlineCache *ic = n->scope()->method()->ic_at( n->byteCodeIndex() );
     if ( ic )
         _stringStream->print( " (send of %s)", ic->selector()->copy_null_terminated() );

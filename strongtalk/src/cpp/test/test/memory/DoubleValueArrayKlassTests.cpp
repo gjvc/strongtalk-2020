@@ -43,6 +43,7 @@ protected:
 
 };
 
+
 TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleValueArray ) {
     eden_top = eden_end;
     ASSERT_TRUE( theClass->klass_part()->oop_is_doubleValueArray() );
@@ -69,7 +70,7 @@ TEST_F( DoubleValueArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpac
 
 class findDoubleValueArray : public klassOopClosure {
 public:
-    char   *className;
+    char *className;
     bool found;
 
 

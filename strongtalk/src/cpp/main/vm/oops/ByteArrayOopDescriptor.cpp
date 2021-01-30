@@ -42,11 +42,15 @@ char *ByteArrayOopDescriptor::copy_null_terminated( std::int32_t &Clength ) {
         return res;                   // Simple case, no '\0' in byte array.
 
     // Simple case failed ...
-    smi_t              t = length();               // Copy and 'escape' null chars.
-    smi_t              i;
-    for ( std::int32_t i = length() - 1; i >= 0; i-- )
-        if ( byte_at( i ) == '\0' )
+    smi_t t = length();               // Copy and 'escape' null chars.
+//    smi_t              i;
+
+    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+        if ( byte_at( i ) == '\0' ) {
             t++;
+        }
+    }
+
     // t is total length of result string.
     res = new_resource_array<char>( t + 1 );
     res[ t-- ] = '\0';
@@ -70,13 +74,17 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // NOTE: The resulting string is allocated in Cheap
 
     st_assert_byteArray( this, "should be a byte array" );
-    smi_t              t    = length();               // Copy and 'escape' null chars.
-    smi_t              i;
-    for ( std::int32_t i    = length() - 1; i >= 0; i-- )
-        if ( byte_at( i ) == '\0' )
+    smi_t t = length();               // Copy and 'escape' null chars.
+//    smi_t              i;
+
+    for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
+        if ( byte_at( i ) == '\0' ) {
             t++;
+        }
+    }
+
     // t is total length of result string.
-    char               *res = new_c_heap_array<char>( t + 1 );
+    char *res = new_c_heap_array<char>( t + 1 );
     res[ t-- ] = '\0';
     for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) not_eq '\0' ) {
@@ -86,6 +94,7 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
             res[ t-- ] = '\\';
         }
     }
+
     st_assert( t == -1, "sanity check" );
     return res;
 }
@@ -199,33 +208,36 @@ std::int32_t ByteArrayOopDescriptor::hash_value() {
 
 
 const char *ByteArrayOopDescriptor::as_string() {
-    std::int32_t len   = length();
-    char         *str  = new_resource_array<char>( len + 1 );
-    std::int32_t index = 0;
-    for ( ; index < len; index++ ) {
+
+    std::int32_t len  = length();
+    char         *str = new_resource_array<char>( len + 1 );
+
+    for ( std::int32_t index = 0; index < len; index++ ) {
         str[ index ] = byte_at( index + 1 );
     }
-    str[ index ]       = '\0';
+
+    str[ len ] = '\0';
+
     return str;
 }
 
-//
+
 //const char *ByteArrayOopDescriptor::as_string() {
 //    return as_std_string().c_str();
 //}
+
+
+//const std::string &ByteArrayOopDescriptor::as_std_string() {
 //
-
-const std::string &ByteArrayOopDescriptor::as_std_string() {
-
-    std::string s{};
-
-    for ( std::int32_t index = 0; index < length(); index++ ) {
-        s += byte_at( index + 1 );
-    }
-    s += '\0';
-
-    return s;
-}
+//    std::string s{};
+//
+//    for ( std::int32_t index = 0; index < length(); index++ ) {
+//        s += byte_at( index + 1 );
+//    }
+//    s += '\0';
+//
+//    return s;
+//}
 
 
 std::int32_t ByteArrayOopDescriptor::number_of_arguments() const {

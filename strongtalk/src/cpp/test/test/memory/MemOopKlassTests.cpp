@@ -36,11 +36,11 @@ protected:
         PersistentHandle classMixinClass( Universe::find_global( "ClassMixin" ) );
         PersistentHandle metaClassMixinClass( Universe::find_global( "MetaClassMixin" ) );
 
-        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle classIvars( oopFactory::new_objArray( std::int32_t{0} ) );
-        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{0} ) );
+        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle classIvars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
 
         PersistentHandle classMixin( classMixinClass.as_klassOop()->klass_part()->allocateObject() );
         PersistentHandle metaClassMixin( metaClassMixinClass.as_klassOop()->klass_part()->allocateObject() );
@@ -63,10 +63,11 @@ protected:
 
 
     KlassOop theClass;
-    Oop *oldEdenTop;
+    Oop      *oldEdenTop;
 
 
 };
+
 
 TEST_F( MemOopKlassTests, createSubclassShouldCreateClassWithCorrectSuperForClassAndMeta ) {
     PersistentHandle kl( Universe::find_global( "Class" ) );
@@ -90,9 +91,9 @@ TEST_F( MemOopKlassTests, oldCreateSubclassShouldCreateClassWithCorrectSuperForC
     PersistentHandle instSuper( Universe::find_global( "Test" ) );
     ASSERT_TRUE( kl.as_oop() );
     PersistentHandle classMixin( createMixin() );
-    KlassOop         newKlass = instSuper.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), Klass::Format::mem_klass );
+    KlassOop         newKlass   = instSuper.as_klassOop()->klass_part()->create_subclass( MixinOop( classMixin.as_oop() ), Klass::Format::mem_klass );
     KlassOop         superClass = instSuper.as_klassOop();
-    MixinOop         mixin = MixinOop( classMixin.as_oop() );
+    MixinOop         mixin      = MixinOop( classMixin.as_oop() );
     ASSERT_TRUE( newKlass );
     ASSERT_TRUE( newKlass->klass_part()->superKlass() == superClass );
     ASSERT_TRUE( newKlass->klass()->klass_part()->superKlass() == superClass->klass() );

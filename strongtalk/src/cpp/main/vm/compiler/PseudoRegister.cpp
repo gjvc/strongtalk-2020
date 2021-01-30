@@ -173,6 +173,7 @@ ConstPseudoRegister *new_ConstPReg( InlinedScope *s, Oop c ) {
     ConstPseudoRegister *r = new ConstPseudoRegister( s, c );
     constants->append( r );
     r->_definitionCount = 1;    // fake def
+
     return r;
 }
 
@@ -192,9 +193,8 @@ ConstPseudoRegister *findConstPReg( Node *n, Oop c ) {
 
 
 bool ConstPseudoRegister::needsRegister() const {
-    // register only pays off if we're used more than once and aren't a
-    // small immediate constant
-//   return CompilerCSEConstants and weight > 1 and (std::int32_t(constant) > maxImmediate or std::int32_t(constant) < -maxImmediate);
+    // register only pays off if we're used more than once and aren't a small immediate constant
+    //   return CompilerCSEConstants and weight > 1 and (std::int32_t(constant) > maxImmediate or std::int32_t(constant) < -maxImmediate);
     return false;
 }
 
@@ -262,9 +262,11 @@ void PseudoRegister::removeUse( DefinitionUsageInfo *info, Usage *use ) {
 
 
 void PseudoRegister::removeUse( BasicBlock *bb, Usage *use ) {
-    if ( use == nullptr )
+    if ( use == nullptr ) {
         return;
-    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
+    }
+
+    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -792,9 +794,12 @@ bool SinglyAssignedPseudoRegister::isLiveAt( Node *n ) const {
 
 
 bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t byteCodeIndex ) const {
-    std::int32_t id = this->id();
-    if ( not _scope->isSenderOrSame( s ) )
+//    std::int32_t id = this->id();
+
+    if ( not _scope->isSenderOrSame( s ) ) {
         return false; // cannot be live anymore if s is outside subscopes of _scope
+    }
+
     st_assert( byteCodeIndexLE( byteCodeIndex, s->nofBytes() ) or byteCodeIndex == EpilogueByteCodeIndex, "byteCodeIndex too high" );
     st_assert( _scope->isSenderOrSame( s ), "s is not below my scope" );
 
@@ -803,7 +808,9 @@ bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t
     std::int32_t bs  = byteCodeIndex;
     std::int32_t bc  = creationStartByteCodeIndex;
     InlinedScope *ss = findAncestor( s, bs, creationScope(), bc );
-    if ( not _scope->isSenderOrSame( ss ) ) st_fatal( "bad scope arg in basic_isLiveAt" );
+    if ( not _scope->isSenderOrSame( ss ) ) {
+        st_fatal( "bad scope arg in basic_isLiveAt" );
+    }
 
     // Attention: Originally, the live range of a PseudoRegister excluded its defining node.
     // The new backend however requires them to be live at the beginning as well.

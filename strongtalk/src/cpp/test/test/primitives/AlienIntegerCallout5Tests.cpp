@@ -135,7 +135,7 @@ protected:
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
         char         text[200];
-        bool       ok;
+        bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
@@ -287,4 +287,8 @@ TEST_F( AlienIntegerCallout5Tests, alienCallResult5ShouldReturnMarkedResultWhenR
 }
 
 
-TEST_F( AlienIntegerCallout5Tests, alienCallResult5ShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI ) { for ( std::int32_t arg = 0; arg < argCount; arg++ )checkIllegalArgnPassed( arg, trueObject ); }
+TEST_F( AlienIntegerCallout5Tests, alienCallResult5ShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI ) {
+    for ( std::int32_t arg = 0; arg < argCount; arg++ ) {
+        checkIllegalArgnPassed( arg, trueObject );
+    }
+}

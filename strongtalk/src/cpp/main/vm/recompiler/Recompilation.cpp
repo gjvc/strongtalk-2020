@@ -6,6 +6,7 @@
 
 #include "vm/code/NativeMethod.hpp"
 #include "vm/recompiler/Recompilation.hpp"
+#include "vm/recompiler/Recompilee.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/code/InliningDatabase.hpp"
@@ -130,7 +131,7 @@ void Recompilation::init() {
         // should compute receiver via context (although receiver isn't actually used
         // for block RFrames right now) -- fix this
         if ( _receiver->is_context() ) {
-            ContextOop ctx = (ContextOop) _receiver;
+//            ContextOop ctx = (ContextOop) _receiver;
         } else {
             st_assert( _receiver == nilObject, "expected nil" );
         }

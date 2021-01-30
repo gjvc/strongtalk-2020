@@ -34,13 +34,13 @@ std::int32_t Displacement::data() const {
 }
 
 
-void Displacement::next( const Label &L ) const {
+void Displacement::next( Label &L ) const {
     std::int32_t n = ( ( _data >> next_pos ) & next_mask );
     n > 0 ? L.link_to( n ) : L.unuse();
 }
 
 
-void Displacement::link_to( const Label &L ) {
+void Displacement::link_to( Label &L ) {
     init( L, type(), info() );
 }
 

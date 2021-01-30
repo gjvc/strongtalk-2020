@@ -91,11 +91,13 @@ std::int32_t NativeMethodScopes::unpackValueAt( std::int32_t &offset ) const {
 
 
 NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool &is_last, const char *pc ) const {
+
     std::int32_t       startOffset = offset;
     nameDescHeaderByte b;
     b.unpack( get_next_char( offset ) );
     is_last = b.is_last();
-    NameDescriptor *nd;
+
+    NameDescriptor *nd{ nullptr };
     if ( b.is_illegal() ) {
         nd = new IllegalNameDescriptor;
     } else if ( b.is_termination() ) {
@@ -135,6 +137,7 @@ NameDescriptor *NativeMethodScopes::unpackNameDescAt( std::int32_t &offset, bool
             default: st_fatal1( "no such name desc (code 0x%08x)", b.code() );
         }
     }
+
     nd->offset = startOffset;
     return nd;
 }
@@ -253,7 +256,7 @@ void NativeMethodScopes::relocate() {
 
 
 bool NativeMethodScopes::is_new() const {
-    bool result = false;
+//    bool result = false;
     FOR_EACH_OOPADDR( addr ) {
         if ( ( *addr )->is_new() )
             return true;

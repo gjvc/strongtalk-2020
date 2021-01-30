@@ -10,22 +10,23 @@
 
 #include <array>
 
-std::array<std::uint32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>InterpreterStatistics::_bytecode_counters;
+std::array<std::uint32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>         InterpreterStatistics::_bytecode_counters;
 std::array<std::int32_t, static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES)>          InterpreterStatistics::_bytecode_generation_order;
 
 bool       InterpreterStatistics::_is_initialized = false;
 
 
 void InterpreterStatistics::reset_bytecode_counters() {
-    for ( auto x : _bytecode_counters ) {
+    for ( auto & x : _bytecode_counters ) {
         x = 0;
     }
 }
 
 
 void InterpreterStatistics::reset_bytecode_generation_order() {
-    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ )
+    for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         _bytecode_generation_order[ i ] = i;
+    }
 }
 
 
@@ -36,8 +37,9 @@ ByteCodes::Code InterpreterStatistics::ith_bytecode_to_generate( std::int32_t i 
 
 
 void InterpreterStatistics::initialize() {
-    if ( is_initialized() )
+    if ( is_initialized() ) {
         return;
+    }
     reset_bytecode_counters();
     reset_bytecode_generation_order();
     _is_initialized = true;

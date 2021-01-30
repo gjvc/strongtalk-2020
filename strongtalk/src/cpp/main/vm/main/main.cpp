@@ -34,6 +34,5 @@ int main( std::int32_t argc, char *argv[] ) {
     os::set_args( argc, argv );
     std::int32_t status = vm_main( argc, argv );
 
-    std::cout << "returning from main\n";
-    return EXIT_SUCCESS;
+    return status;
 }

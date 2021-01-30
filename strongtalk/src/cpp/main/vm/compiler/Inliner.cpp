@@ -647,7 +647,7 @@ InlinedScope *Inliner::tryLookup( Expression *receiver ) {
     LookupKey *key = _sendKind == SendKind::SuperSend ? LookupKey::allocate( receiver->klass(), method ) : LookupKey::allocate( receiver->klass(), selector );
 
     if ( CompilerDebug )
-        cout( PrintInlining )->print( "%*s found %s --> 0x{0:x}\n", _sender->depth, "", key->print_string(), PrintHexAddresses ? method : 0 );
+        cout( PrintInlining )->print( "%*s found %s --> 0x{0:x}\n", _sender->depth, "", key->toString(), PrintHexAddresses ? method : 0 );
 
     // NB: use receiver->klass() (not klass) for the scope -- klass may be the method holder (for super sends)
     // was bug -- Urs 3/16/96
@@ -797,7 +797,7 @@ InlinedScope *Inliner::makeScope( const Expression *receiver, const KlassOop kla
 
     if ( method->is_blockMethod() ) {
         RecompilationScope *rs          = makeBlockRScope( receiver, calleeInfo->_lookupKey, method );
-        bool               isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
+//        bool               isNullRScope = rs->isNullScope();    // for conditional breakpoints (no type feedback info)
         if ( receiver->preg()->isBlockPseudoRegister() ) {
             InlinedScope *parent = receiver->preg()->scope();
             calleeInfo->_receiver = parent->self();

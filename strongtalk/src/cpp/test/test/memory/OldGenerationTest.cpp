@@ -21,8 +21,8 @@ protected:
 
 
     void expandAndCheckCapacity( std::int32_t expansionSize ) {
-        char msg[100];
-        std::int32_t  oldSize = Universe::old_gen.capacity();
+        char         msg[100];
+        std::int32_t oldSize = Universe::old_gen.capacity();
 
         Universe::old_gen.expand( expansionSize );
 
@@ -36,57 +36,38 @@ protected:
 };
 
 
-TEST_F( OldGenerationTest, expansionShouldExpandOldGenerationCapacity
-) {
-expandAndCheckCapacity( 1000 * 1024 );
+TEST_F( OldGenerationTest, expansionShouldExpandOldGenerationCapacity ) {
+    expandAndCheckCapacity( 1000 * 1024 );
 }
 
 
-TEST_F( OldGenerationTest, expansionShouldExpandOldGenerationCapacityByMinimumAmount
-) {
-expandAndCheckCapacity( 10 );
+TEST_F( OldGenerationTest, expansionShouldExpandOldGenerationCapacityByMinimumAmount ) {
+    expandAndCheckCapacity( 10 );
 }
 
 
-TEST_F( OldGenerationTest, expansionShouldAlignExpansionWithExpansionSize
-) {
-expandAndCheckCapacity( ObjectHeapExpandSize
-* 1024 * 3 / 2 );
+TEST_F( OldGenerationTest, expansionShouldAlignExpansionWithExpansionSize ) {
+    expandAndCheckCapacity( ObjectHeapExpandSize * 1024 * 3 / 2 );
 }
 
 
-TEST_F( OldGenerationTest, allocateWithoutExpansionWhenEmptyShouldFail
-) {
-std::int32_t free = Universe::old_gen.free();
-Oop *result = Universe::old_gen.allocate( free + 1, false );
-EXPECT_EQ( nullptr, result ) << "Result should be nullptr";
+TEST_F( OldGenerationTest, allocateWithoutExpansionWhenEmptyShouldFail ) {
+    std::int32_t free    = Universe::old_gen.free();
+    Oop          *result = Universe::old_gen.allocate( free + 1, false );
+    EXPECT_EQ( nullptr, result ) << "Result should be nullptr";
 }
 
 
-TEST_F( OldGenerationTest, shrinkShouldReduceOldSpaceCapacity
-) {
-std::int32_t freeSpace = Universe::old_gen.free();
-Universe::old_gen.
-expand( ObjectHeapExpandSize
-* 1024 );
-Universe::old_gen.
-shrink( ObjectHeapExpandSize
-* 1024 );
-ASSERT_EQ( freeSpace, Universe::old_gen
-.
-free()
-);
+TEST_F( OldGenerationTest, shrinkShouldReduceOldSpaceCapacity ) {
+    std::int32_t freeSpace = Universe::old_gen.free();
+    Universe::old_gen.expand( ObjectHeapExpandSize * 1024 );
+    Universe::old_gen.shrink( ObjectHeapExpandSize * 1024 );
+    ASSERT_EQ( freeSpace, Universe::old_gen.free() );
 }
 
 
-TEST_F( OldGenerationTest, shrinkShouldReturnZeroWhenInsufficientFreeSpace
-) {
-std::int32_t freeSpace = Universe::old_gen.free();
-ASSERT_EQ( 0, Universe::old_gen.
-shrink( freeSpace
-+ 1 ) );
-ASSERT_EQ( freeSpace, Universe::old_gen
-.
-free()
-);
+TEST_F( OldGenerationTest, shrinkShouldReturnZeroWhenInsufficientFreeSpace ) {
+    std::int32_t freeSpace = Universe::old_gen.free();
+    ASSERT_EQ( 0, Universe::old_gen.shrink( freeSpace + 1 ) );
+    ASSERT_EQ( freeSpace, Universe::old_gen.free() );
 }

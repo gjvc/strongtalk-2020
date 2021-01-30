@@ -52,7 +52,7 @@ void process_settings_file( const char *file_name, bool quiet ) {
     if ( not stream.good() ) {
         if ( quiet )
             return;
-        spdlog::info( "Could not open %s\n", file_name );
+        spdlog::info( "Could not open settings file [{:s}]\n", file_name );
         exit( EXIT_FAILURE );
     }
 
@@ -108,9 +108,9 @@ void print_credits() {
 
     std::int32_t mask = 0xa729b65d;
 
-    for ( std::int32_t i = 0; i < sizeof( credits ) - 1; i++ ) {
+    for ( std::size_t i = 0; i < sizeof( credits ) - 1; i++ ) {
         fputc( ( credits[ i ] ^ mask ) & 0x7f, stdout );
-        mask = ( mask << 1 ) | ( mask >> 31 ) & 1; // rotate mask
+        mask = ( mask << 1 ) | ( ( mask >> 31 ) & 1 ); // rotate mask
     }
 }
 

@@ -30,6 +30,7 @@ protected:
 
 };
 
+
 TEST_F( MethodLookupTests, lookupShouldAddDNUInvokerWhenNoMatch ) {
     BlockScavenge bs;
     SymbolOop     selector = oopFactory::new_symbol( "unknownSelector" );

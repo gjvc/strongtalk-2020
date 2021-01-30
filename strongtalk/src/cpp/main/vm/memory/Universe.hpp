@@ -362,7 +362,7 @@ public:
     static void remove_global_at( std::int32_t index );
 
 public:
-    static char *printAddr; // used for debug printing
+    static char *printAddress; // used for debug printing
 
     static void printRegion( const char *&caddr, std::int32_t count = 16 );
 

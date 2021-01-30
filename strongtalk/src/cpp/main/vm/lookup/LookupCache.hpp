@@ -8,8 +8,8 @@
 #include "vm/system/platform.hpp"
 #include "vm/lookup/LookupResult.hpp"
 
-const std::uint32_t primary_cache_size   = 16 * 1024;
-const std::uint32_t secondary_cache_size = 2 * 1024;
+constexpr std::int32_t primary_cache_size   = 16 * 1024;
+constexpr std::int32_t secondary_cache_size = 2 * 1024;
 
 extern LookupResult interpreter_normal_lookup( KlassOop receiver_klass, SymbolOop selector );
 

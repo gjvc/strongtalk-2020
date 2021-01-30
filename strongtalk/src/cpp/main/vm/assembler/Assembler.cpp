@@ -742,7 +742,7 @@ void Assembler::print( const Label &L ) {
 }
 
 
-void Assembler::bind_to( const Label &L, std::int32_t pos ) {
+void Assembler::bind_to( Label &L, std::int32_t pos ) {
     bool tellRobert = false;
 
     st_assert( 0 <= pos and pos <= offset(), "must have a valid binding position" );
@@ -790,7 +790,7 @@ void Assembler::bind_to( const Label &L, std::int32_t pos ) {
 }
 
 
-void Assembler::link_to( const Label &L, const Label &appendix ) {
+void Assembler::link_to( Label &L, Label &appendix ) {
     if ( appendix.is_unbound() ) {
         if ( L.is_unbound() ) {
             // append appendix to L's list
@@ -812,8 +812,12 @@ void Assembler::link_to( const Label &L, const Label &appendix ) {
 }
 
 
-void Assembler::bind( const Label &L ) {
+void Assembler::bind( Label &L ) {
+
+    //
     st_assert( not L.is_bound(), "label can only be bound once" );
+
+    //
     if ( EliminateJumpsToJumps ) {
         // resolve unbound label
         if ( _unbound_label.is_unbound() ) {
@@ -837,6 +841,7 @@ void Assembler::bind( const Label &L ) {
             if ( PrintEliminatedJumps )
                 spdlog::info( "@ {} jump to next eliminated", L.pos() );
             // remove first entry from label list
+            
             Displacement( long_at( L.pos() ) ).next( L );
             // eliminate instruction (set code pointers back)
             _code_pos -= long_size;
@@ -847,6 +852,7 @@ void Assembler::bind( const Label &L ) {
         _binding_pos   = offset();
         L.unuse();
     }
+
     bind_to( L, offset() );
 }
 
@@ -856,7 +862,7 @@ void Assembler::merge( const Label &L, const Label &with ) {
 }
 
 
-void Assembler::call( const Label &L ) {
+void Assembler::call( Label &L ) {
     if ( L.is_bound() ) {
         constexpr std::int32_t long_size = 5;
         std::int32_t           offs      = L.pos() - offset();
@@ -886,9 +892,9 @@ void Assembler::call( const Register &dst ) {
 }
 
 
-void Assembler::call( const Address &adr ) {
+void Assembler::call( const Address &address ) {
     emit_byte( 0xFF );
-    emit_operand( edx, adr );
+    emit_operand( edx, address );
 }
 
 
@@ -904,13 +910,13 @@ void Assembler::jmp( const Register &reg ) {
 }
 
 
-void Assembler::jmp( const Address &adr ) {
+void Assembler::jmp( const Address &address ) {
     emit_byte( 0xFF );
-    emit_operand( esp, adr );
+    emit_operand( esp, address );
 }
 
 
-void Assembler::jmp( const Label &L ) {
+void Assembler::jmp( Label &L ) {
     if ( L.is_bound() ) {
         constexpr std::int32_t short_size = 2;
         constexpr std::int32_t long_size  = 5;
@@ -983,7 +989,7 @@ void Assembler::jcc( Condition cc, const char *dst, RelocationInformation::Reloc
 }
 
 
-void Assembler::ic_info( const Label &L, std::int32_t flags ) {
+void Assembler::ic_info( Label &L, std::int32_t flags ) {
     st_assert( (std::uint32_t) flags >> InlineCacheInfo::number_of_flags == 0, "too many flags set" );
     if ( L.is_bound() ) {
         std::int32_t offs = L.pos() - offset();

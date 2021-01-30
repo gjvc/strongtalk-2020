@@ -45,9 +45,11 @@ private:
     Expression *parameter( std::int32_t index ) const {
         return _params->at( index );
     }        // parameter of primitive call
+
     bool is_power_of_2( std::int32_t x ) const {
         return x > 0 and ( x & ( x - 1 ) ) == 0;
     }    // true if there's an n with 2^n = x
+
     std::int32_t log2( std::int32_t x ) const;                // if is_power_of_2(x) then 2^(log2(x)) = x
 
     void assert_failure_block();            // debugging: asserts that there's a failure block

@@ -111,7 +111,7 @@ public:
     static class CommentNode *CommentNode( const char *comment );
 
 
-    template<typename T, typename...Args>
+    template<typename T, typename... Args>
     static T *createAndRegisterNode( Args... args ) {
         T *res = new T( args... );
         registerNode( res );

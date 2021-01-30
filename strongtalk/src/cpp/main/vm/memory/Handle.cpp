@@ -228,7 +228,7 @@ MemOop Handle::as_memOop() {
 
 
 KlassOop Handle::as_klass() {
-    spdlog::info( "klassOop as_klass()[{}]", Handles::oop_at( _index )->print_string() );
+    spdlog::info( "klassOop as_klass()[{}]", Handles::oop_at( _index )->toString() );
     st_assert( Handles::oop_at( _index )->is_klass(), "as_klass() type check" );
     return KlassOop( Handles::oop_at( _index ) );
 }

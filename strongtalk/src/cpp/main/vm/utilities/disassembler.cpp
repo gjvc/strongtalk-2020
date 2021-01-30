@@ -43,7 +43,7 @@ static void printProgramCounterDescriptorInfo( const NativeMethod *nm, const cha
 static void st_disasm( const char *begin, const char *end, const NativeMethod *nm, ConsoleOutputStream *stream ) {
 
     static char  output[MAX_OUTBUF_SIZE];
-    std::int32_t outbufsize{ sizeof( output ) };
+//    std::int32_t outbufsize{ sizeof( output ) };
     std::int32_t data_size{ 4 }; //
 
 //    ud_t ud_obj;

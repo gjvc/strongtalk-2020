@@ -87,7 +87,7 @@ void ResourceAreaChunk::print() {
 
 
 void ResourceAreaChunk::print_short() {
-    _console->print( "ResourceAreaChunk [0x{0:x}]", this );
+    spdlog::info( "ResourceAreaChunk [0x{0:x}]", static_cast<void *>( this ) );
 }
 
 

@@ -106,11 +106,10 @@ AssignNode::AssignNode( PseudoRegister *s, PseudoRegister *d ) :
 }
 
 
-CommentNode::CommentNode( char *s ) {
-    comment = s;
-    // give all comments negative ids (don't disturb node numbers by turning
-    // CompilerDebug off and on)
-    _id     = --currentCommentID;
+CommentNode::CommentNode( const char *s ) {
+    _comment = s;
+    // give all comments negative ids (don't disturb node numbers by turning CompilerDebug off and on)
+    _id      = --currentCommentID;
     currentID--;
 }
 
@@ -1635,8 +1634,8 @@ void BlockMaterializeNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool re
 
 void BasicNode::removeUpToMerge() {
     BasicBlock *thisBasicBlock = _basicBlock;
-    Node       *n              = (Node *)
-            this;
+    Node       *n              = (Node *) this;
+
     for ( ; n and n->hasSinglePredecessor(); ) {
         while ( n->nSuccessors() > 1 ) {
             std::int32_t i     = n->nSuccessors() - 1;
@@ -1645,6 +1644,7 @@ void BasicNode::removeUpToMerge() {
             /* Must removeNext after removeUpToMerge to avoid false removal of MergeNode with 2 predecessors. SLR 08/08 */
             n->removeNext( succ );
         }
+
         Node *nextn = n->next();
         if ( not n->_deleted )
             n->eliminate( thisBasicBlock, nullptr, true, false );
@@ -1663,9 +1663,11 @@ void BasicNode::removeUpToMerge() {
                 thisBasicBlock = nextBasicBlock;
             }
         }
-        n           = nextn;
+
+        n = nextn;
     }
-    BasicBlock *nextBB         = n ? n->bb() : nullptr;
+
+//    BasicBlock *nextBB = n ? n->bb() : nullptr;
 }
 
 
@@ -2903,163 +2905,163 @@ static std::int32_t id_of( Node *node ) {
 }
 
 
-const char *PrologueNode::toString( char *buf, bool printAddr ) const {
+const char *PrologueNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Prologue" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((PrologueNode*)0x{0:x}", this );
     return b;
 }
 
 
-const char *InterruptCheckNode::toString( char *buf, bool printAddr ) const {
+const char *InterruptCheckNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InterruptCheckNode" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((InterruptCheckNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadOffsetNode::toString( char *buf, bool printAddr ) const {
+const char *LoadOffsetNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadOffset %s := %s[0x{0:x}]", _dest->safeName(), _src->safeName(), _offset );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((LoadOffsetNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadIntNode::toString( char *buf, bool printAddr ) const {
+const char *LoadIntNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadInt %s := 0x{0:x}", _dest->safeName(), _value );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((LoadIntNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoadUplevelNode::toString( char *buf, bool printAddr ) const {
+const char *LoadUplevelNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "LoadUpLevel %s := %s^%d[%d]", _dest->safeName(), _context0->safeName(), _nofLevels, _offset );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((LoadUplevelNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *StoreOffsetNode::toString( char *buf, bool printAddr ) const {
+const char *StoreOffsetNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "StoreOffset %s[0x{0:x}] := %s", _base->safeName(), _offset, _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((StoreOffsetNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *StoreUplevelNode::toString( char *buf, bool printAddr ) const {
+const char *StoreUplevelNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "StoreUpLevel %s^%d[%d] := %s", _context0->safeName(), _nofLevels, _offset, _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((StoreUplevelNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *AssignNode::toString( char *buf, bool printAddr ) const {
+const char *AssignNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s", _dest->safeName(), _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((AssignNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *SendNode::toString( char *buf, bool printAddr ) const {
+const char *SendNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "Send %s NonLocalReturn %ld ", _key->print_string(), id_of( nlrTestPoint() ) );
-    if ( printAddr )
+    my_sprintf_len( buf, PrintStringLen, "Send %s NonLocalReturn %ld ", _key->toString(), id_of( nlrTestPoint() ) );
+    if ( printAddress )
         my_sprintf( buf, " ((SendNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *PrimitiveNode::toString( char *buf, bool printAddr ) const {
+const char *PrimitiveNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "PrimCall _%s NonLocalReturn %ld", _pdesc->name(), id_of( nlrTestPoint() ) );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((PrimitiveNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *DLLNode::toString( char *buf, bool printAddr ) const {
+const char *DLLNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DLLCall <%s, %s> NonLocalReturn %ld", _dll_name->as_string(), _function_name->as_string(), id_of( nlrTestPoint() ) );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((DLLNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BlockCreateNode::toString( char *buf, bool printAddr ) const {
+const char *BlockCreateNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockCreate %s", _dest->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((BlockCreateNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BlockMaterializeNode::toString( char *buf, bool printAddr ) const {
+const char *BlockMaterializeNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "BlockMaterialize %s", _dest->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((BlockMaterializeNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *InlinedReturnNode::toString( char *buf, bool printAddr ) const {
+const char *InlinedReturnNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "InlinedReturn %s := %s", _dest->safeName(), _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((InlinedReturnNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnSetupNode::toString( char *buf, bool printAddr ) const {
+const char *NonLocalReturnSetupNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturneturn %s := %s", _dest->safeName(), _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((NonLocalReturnSetupNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnContinuationNode::toString( char *buf, bool printAddr ) const {
+const char *NonLocalReturnContinuationNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturn Continuation" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((NonLocalReturnContinuationNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ReturnNode::toString( char *buf, bool printAddr ) const {
+const char *ReturnNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "MethodReturn  %s", _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ReturnNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NonLocalReturnTestNode::toString( char *buf, bool printAddr ) const {
+const char *NonLocalReturnTestNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "NonLocalReturnTest  N%ld N%ld", id_of( next1() ), id_of( next() ) );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((NonLocalReturnTestNode*)0x{0:x})", this );
     return b;
 }
@@ -3070,61 +3072,61 @@ char *ArithNode::opName() const {
 }
 
 
-const char *ArithRRNode::toString( char *buf, bool printAddr ) const {
+const char *ArithRRNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FloatArithRRNode::toString( char *buf, bool printAddr ) const {
+const char *FloatArithRRNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((FloatArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FloatUnaryArithNode::toString( char *buf, bool printAddr ) const {
+const char *FloatUnaryArithNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s", _dest->safeName(), opName(), _src->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((FloatUnaryArithNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *TArithRRNode::toString( char *buf, bool printAddr ) const {
+const char *TArithRRNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s   N%d, N%d", _dest->safeName(), _src->safeName(), ArithOpName[ static_cast<std::int32_t>( _op ) ], _oper->safeName(), id_of( next1() ), id_of( next() ) );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((TArithRRNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArithRCNode::toString( char *buf, bool printAddr ) const {
+const char *ArithRCNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s 0x{0:x}", _dest->safeName(), _src->safeName(), opName(), _oper );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ArithRCNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *BranchNode::toString( char *buf, bool printAddr ) const {
+const char *BranchNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s  N%ld N%ld", BranchOpName[ static_cast<std::int32_t>( _op ) ], id_of( next1() ), id_of( next() ) );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((BranchNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *TypeTestNode::toString( char *buf, bool printAddr ) const {
+const char *TypeTestNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " TypeTest %s, ", _src->safeName() );
     for ( std::int32_t i = 1; i <= _classes->length(); i++ ) {
@@ -3133,34 +3135,34 @@ const char *TypeTestNode::toString( char *buf, bool printAddr ) const {
         my_sprintf( buf, " : N%ld; ", ( i < nSuccessors() and next( i ) not_eq nullptr ) ? next( i )->id() : -1 );
     }
     my_sprintf_len( buf, b + PrintStringLen - buf, "N%ld%s", id_of( next() ), _hasUnknown ? "" : "*" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((TypeTestNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArrayAtNode::toString( char *buf, bool printAddr ) const {
+const char *ArrayAtNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAt %s := %s[%s]", _dest->safeName(), _src->safeName(), _arg->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ArrayAtNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ArrayAtPutNode::toString( char *buf, bool printAddr ) const {
+const char *ArrayAtPutNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "ArrayAtPut %s[%s] := %s", _src->safeName(), _arg->safeName(), elem->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ArrayAtPutNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *FixedCodeNode::toString( char *buf, bool printAddr ) const {
+const char *FixedCodeNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "DeadEnd" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((FixedCodeNode*)0x{0:x})", this );
     return b;
 }
@@ -3175,7 +3177,7 @@ static void printPrevNodes( Node *n ) {
 }
 
 
-const char *MergeNode::toString( char *buf, bool printAddr ) const {
+const char *MergeNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " Merge " );
     prevsLen      = _prevs->length();
@@ -3183,13 +3185,13 @@ const char *MergeNode::toString( char *buf, bool printAddr ) const {
     _prevs->apply( printPrevNodes );
     buf = mergePrintBuf;
     my_sprintf_len( buf, b + PrintStringLen - buf, " " );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((MergeNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *LoopHeaderNode::toString( char *buf, bool printAddr ) const {
+const char *LoopHeaderNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " LoopHeader " );
     if ( _activated ) {
@@ -3216,22 +3218,22 @@ const char *LoopHeaderNode::toString( char *buf, bool printAddr ) const {
     } else {
         my_sprintf_len( buf, PrintStringLen - 11, "(inactive)" );
     }
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((LoopHeaderNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextCreateNode::toString( char *buf, bool printAddr ) const {
+const char *ContextCreateNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Create Context %s", _dest->safeName() );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ContextCreateNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextInitNode::toString( char *buf, bool printAddr ) const {
+const char *ContextInitNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " Initialize context " );
     if ( _src == nullptr ) {
@@ -3245,25 +3247,25 @@ const char *ContextInitNode::toString( char *buf, bool printAddr ) const {
         }
     }
     my_sprintf_len( buf, b + PrintStringLen - buf, "}" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ContextInitNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *ContextZapNode::toString( char *buf, bool printAddr ) const {
+const char *ContextZapNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Zap Context %s", isActive() ? context()->safeName() : "- inactive" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((ContextZapNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *InlinedPrimitiveNode::toString( char *buf, bool printAddr ) const {
+const char *InlinedPrimitiveNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf( buf, " %s := ", _dest->safeName() );
-    char *op_name;
+    const char *op_name;
     switch ( _operation ) {
         case InlinedPrimitiveNode::Operation::obj_klass:
             op_name = "obj_klass";
@@ -3286,43 +3288,43 @@ const char *InlinedPrimitiveNode::toString( char *buf, bool printAddr ) const {
     my_sprintf( buf, "  %s", _arg1->safeName() );
     my_sprintf( buf, "  %s", _arg2->safeName() );
     my_sprintf_len( buf, b + PrintStringLen - buf, ")" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((InlinedPrimitiveNode*)0x{0:x})", this );
     return const_cast<char *>( b );
 }
 
 
-const char *UncommonNode::toString( char *buf, bool printAddr ) const {
+const char *UncommonNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonBranch" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((UncommonNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *UncommonSendNode::toString( char *buf, bool printAddr ) const {
+const char *UncommonSendNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "UncommonSend(%d arg%s)", _argCount, _argCount not_eq 1 ? "s" : "" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((UncommonSendNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *NopNode::toString( char *buf, bool printAddr ) const {
+const char *NopNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "Nop" );
-    if ( printAddr )
+    if ( printAddress )
         my_sprintf( buf, " ((NopNode*)0x{0:x})", this );
     return b;
 }
 
 
-const char *CommentNode::toString( char *buf, bool printAddr ) const {
+const char *CommentNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "'%s' ", comment );
-    if ( printAddr )
+    my_sprintf_len( buf, PrintStringLen, "'%s' ", _comment );
+    if ( printAddress )
         my_sprintf( buf, " ((CommentNode*)0x{0:x})", this );
     return b;
 }

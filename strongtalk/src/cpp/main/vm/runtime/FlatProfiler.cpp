@@ -535,7 +535,7 @@ DeltaProcess *FlatProfiler::disengage() {
     delete _flatProfilerTask;
     _flatProfilerTask = nullptr;
     _timer.stop();
-    DeltaProcess *p = process();
+//    DeltaProcess *p = process();
     _deltaProcess = nullptr;
     return _deltaProcess;
 }

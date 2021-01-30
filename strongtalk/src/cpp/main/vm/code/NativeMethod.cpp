@@ -186,7 +186,7 @@ NativeMethod *NativeMethod::outermost() {
 
 
 std::int32_t NativeMethod::level() const {
-    st_assert( _nativeMethodFlags.level >= 0 and _nativeMethodFlags.level <= MaxRecompilationLevels, "invalid level" );
+    st_assert( _nativeMethodFlags.level >= 0 and _nativeMethodFlags.level <= MAX_RECOMPILATION_LEVELS, "invalid level" );
     return _nativeMethodFlags.level;
 }
 
@@ -197,7 +197,7 @@ JumpTableEntry *NativeMethod::jump_table_entry() const {
 
 
 void NativeMethod::setVersion( std::int32_t v ) {
-    st_assert( v > 0 and v <= MaxVersions, "bad version" );
+    st_assert( v > 0 and v <= MAX_NATIVE_METHOD_RECOMPILATION_LEVELS, "bad version" );
     _nativeMethodFlags.version = v;
 }
 
@@ -599,11 +599,11 @@ std::int32_t NativeMethod::estimatedInvocationCount() const {
 }
 
 
-static std::int32_t cmp_addrs( const void *p1, const void *p2 ) {
-    char **r1 = (char **) p1;
-    char **r2 = (char **) p2;
-    return *r1 - *r2;
-}
+//static std::int32_t cmp_addrs( const void *p1, const void *p2 ) {
+//    char **r1 = (char **) p1;
+//    char **r2 = (char **) p2;
+//    return *r1 - *r2;
+//}
 
 
 std::int32_t NativeMethod::ncallers() const {

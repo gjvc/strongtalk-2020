@@ -477,16 +477,19 @@ void InlinedScope::addSend( GrowableArray<PseudoRegister *> *expStk, bool isSend
 
 void InlinedScope::markLocalsDebugVisible( GrowableArray<PseudoRegister *> *exprStack ) {
     // this scope has at least one send - mark params & locals as debug-visible
-    std::int32_t       i;
+//    std::int32_t       i;
     if ( _nofSends <= 1 ) {
         // first time we're called
-        self()->preg()->_debug          = true;
-        for ( std::int32_t          i   = nofArguments() - 1; i >= 0; i-- ) {
+        self()->preg()->_debug = true;
+
+        for ( std::int32_t i = nofArguments() - 1; i >= 0; i-- ) {
             argument( i )->preg()->_debug = true;
         }
-        for ( std::int32_t          i   = nofTemporaries() - 1; i >= 0; i-- ) {
+
+        for ( std::int32_t i = nofTemporaries() - 1; i >= 0; i-- ) {
             temporary( i )->preg()->_debug = true;
         }
+
         // if there's a context, mark all context variables as debug-visible too.
         GrowableArray<Expression *> *ct = contextTemporaries();
         if ( ct not_eq nullptr ) {
@@ -640,9 +643,9 @@ void InlinedScope::optimizeLoops() {
         const char   *msg  = loop->recognize();
 
         if ( msg ) {
-            cout( PrintLoopOpts )->print( "*loop %d in scope %s not an integer loop: %s\n", i, key()->print_string(), msg );
+            cout( PrintLoopOpts )->print( "*loop %d in scope %s not an integer loop: %s\n", i, key()->toString(), msg );
         } else {
-            cout( PrintLoopOpts )->print( "*optimizing integer loop %d in scope %s\n", i, key()->print_string() );
+            cout( PrintLoopOpts )->print( "*optimizing integer loop %d in scope %s\n", i, key()->toString() );
             loop->optimizeIntegerLoop();
         }
         if ( OptimizeLoops )
@@ -861,7 +864,7 @@ void InlinedScope::generateDebugInfo() {
     }
 
     ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-    std::int32_t            len, i;
+    std::int32_t            len;
 
     if ( not isLite() ) {
         // temporaries

@@ -939,7 +939,7 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
 
 const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
-    bool isByte, isTrue;
+    bool isByte{ false }, isTrue{ false };
 
     switch ( code ) {
         case ByteCodes::Code::whileTrue_byte:
@@ -2126,7 +2126,7 @@ const char *InterpreterGenerator::local_return( bool push_self, std::int32_t nof
 
     // return bytecodes aren't sends, so they don't have any ArgumentSpec, yet
     // return_tos takes one as argument ... hence this weird device		-Marc 4/07
-    ByteCodes::ArgumentSpec arg_spec;
+    ByteCodes::ArgumentSpec arg_spec{ ByteCodes::ArgumentSpec::no_args }; // need to initialise it to something
     switch ( nofArgs ) {
         case 0:
             arg_spec = ByteCodes::ArgumentSpec::recv_0_args;

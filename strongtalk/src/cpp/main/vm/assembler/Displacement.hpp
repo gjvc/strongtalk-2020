@@ -66,9 +66,9 @@ private:
 
     Type type() const;
 
-    void next( const Label &L ) const;
+    void next( Label &L ) const;
 
-    void link_to( const Label &L );
+    void link_to( Label &L );
 
     Displacement( std::int32_t data );
 

@@ -463,7 +463,7 @@ Oop Bootstrap::readNextObject() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::read_mark( MarkOop *mark_addr ) {
-    MarkOop m;
+    MarkOop m{ nullptr };
     char    typeByte = _stream.get();
 
     switch ( typeByte ) {
@@ -482,7 +482,7 @@ void Bootstrap::read_mark( MarkOop *mark_addr ) {
 
 
 double Bootstrap::read_double() {
-    double       value;
+    double       value{ 0 };
     std::uint8_t *str = (std::uint8_t *) &value;
 
     for ( std::int32_t i = 0; i < 8; i++ ) {

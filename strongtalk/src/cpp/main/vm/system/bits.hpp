@@ -71,7 +71,7 @@ constexpr auto nthMask( const auto n ) { return ( n == BITS_PER_WORD ? AllBitsSe
 constexpr auto lowerBits( auto x, const auto n ) { return maskBits( x, nthMask( n ) ); }
 
 
-constexpr auto roundMask( auto x, const auto m ) { return x + m & ~m; }
+constexpr auto roundMask( auto x, const auto m ) { return ( x + m ) & ~m; }
 
 
 constexpr auto roundTo( auto x, const auto v ) { return roundMask( x, v - OneBitSet ); }
@@ -88,7 +88,7 @@ constexpr std::int32_t MARK_TAG     = 3;
 constexpr std::int32_t MARK_TAG_BIT = 2;    // if ( (Oop & MARK_TAG_BIT) not_eq 0 )  then Oop is a markOop
 constexpr std::int32_t TAG_SIZE     = 2;
 constexpr std::int32_t TAG_MASK     = nthMask( TAG_SIZE );
-constexpr std::int32_t Num_Tags     = nthBit( TAG_SIZE );
+//constexpr std::int32_t Num_Tags     = nthBit( TAG_SIZE );
 
 //
 //// -----------------------------------------------------------------------------

@@ -212,20 +212,24 @@ Expression *MergeExpression::mergeWith( Expression *other, Node *n ) {
 
 // mergeInto: merge other expr into receiver; modifies receiver
 void MergeExpression::mergeInto( Expression *other, Node *n ) {
-    if ( other->isNoResultExpression() )
+    if ( other->isNoResultExpression() ) {
         return;
+    }
+
     setUnknownSet( false );
-    if ( n == nullptr )
+    if ( n == nullptr ) {
         setSplittable( false );
+    }
     _node = n;
     if ( other->isMergeExpression() ) {
-        MergeExpression    *o = other->asMergeExpression();
+
+        MergeExpression *o = other->asMergeExpression();
         if ( o->isSplittable() and not isSplittable() ) {
-            std::int32_t i = 0;
+//            std::int32_t i = 0;
         }
-        for ( std::int32_t i  = 0; i < o->exprs->length(); i++ ) {
-            // must be careful when adding splittable exprs (e->next not_eq nullptr)
-            // to avoid creating loops in the ->next chain
+
+        for ( std::int32_t i = 0; i < o->exprs->length(); i++ ) {
+            // must be careful when adding splittable exprs (e->next not_eq nullptr) to avoid creating loops in the ->next chain
             Expression *e = o->exprs->at( i );
             Expression *nexte;
             for ( ; e; e = nexte ) {

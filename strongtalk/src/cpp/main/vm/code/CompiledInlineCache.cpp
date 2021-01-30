@@ -98,6 +98,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         spdlog::info( "interpreter call at [0x{0:x}]", begin_addr() );
         spdlog::info( "NativeMethod entry point [0x{0:x}]", Interpreter::_last_native_called );
         InterpretedInlineCache *ic = as_InterpretedIC( next_instruction_address() );
+        spdlog::info( "[0x{0:x}]", static_cast<void *>( ic ) );
         st_fatal( "please notify VM people" );
     }
 
@@ -159,10 +160,12 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
 
         // return marked result of doesNotUnderstand: message
         Oop result = Delta::call( recv, sel, msg );
+        spdlog::info( "result [0x{0:x}]", static_cast<void *>( result ) );
 
         if ( not have_nlr_through_C ) {
             Unimplemented();
         }
+
         // return a substitute NativeMethod so that stub routine doesn't crash
         return (const char *) nativeMethod_substitute;
 
@@ -299,7 +302,7 @@ KlassOop CompiledInlineCache::sending_method_holder() {
 
 const char *CompiledInlineCache::superLookup( Oop recv ) {
     ResourceMark resourceMark;
-    const char   *entry_point;
+    const char   *entry_point{ nullptr };
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
 
     KlassOop  recv_klass = recv->klass();
@@ -323,31 +326,39 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
     st_assert( not result.is_empty(), "lookup cache error" );
     if ( result.is_method() ) {
         // a methodOop
-        if ( TraceLookup2 )
+        if ( TraceLookup2 ) {
             spdlog::info( "methodOop found, m = 0x{0:x}", static_cast<void *>( result.method() ) );
+        }
         //result = (char*)&interpreter_call;
         //if (UseInlineCaching) set_call_destination(result);
         spdlog::warn( "CompiledInlineCache::superLookup didn't find a NativeMethod - check this" );
         Unimplemented();
     } else {
         // result is a jump table entry for an NativeMethod
-        if ( TraceLookup2 )
+        if ( TraceLookup2 ) {
             spdlog::info( "NativeMethod 0x{0:x} found", static_cast<void *>( result.get_nativeMethod() ) );
+        }
         // fetch the destination of the jump table entry to avoid the indirection
         entry_point = result.entry()->destination();
     }
-    if ( UseInlineCaching )
+
+    if ( UseInlineCaching ) {
         set_call_destination( entry_point );
-    if ( TraceLookup2 )
+    }
+
+    if ( TraceLookup2 ) {
         print();
+    }
+
     LOG_EVENT3( "SuperLookup (0x{0:x}, 0x{0:x}) to 0x{0:x}", recv_klass, sel, entry_point );
     return entry_point;
 }
 
 
 bool CompiledInlineCache::is_monomorphic() const {
-    if ( target() not_eq nullptr )
+    if ( target() not_eq nullptr ) {
         return true;
+    }
     PolymorphicInlineCache *p = pic();
     return p not_eq nullptr and p->is_monomorphic();
 }

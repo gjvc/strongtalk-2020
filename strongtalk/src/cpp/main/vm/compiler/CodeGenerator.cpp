@@ -380,14 +380,16 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
     // the PrologueNode.
 
     // setup arguments
-    std::int32_t       i;
+//    std::int32_t       i;
     for ( std::int32_t i = 0; i < scope->nofArguments(); i++ ) {
         _currentMapping->mapToArgument( scope->argument( i )->preg(), i );
     }
+
     // setup temporaries (finalize() generates initialization code)
     for ( std::int32_t i = 0; i < scope->nofTemporaries(); i++ ) {
         _currentMapping->mapToTemporary( scope->temporary( i )->preg(), i );
     }
+
     // setup receiver
     _currentMapping->mapToRegister( scope->self()->preg(), self_reg );
 }

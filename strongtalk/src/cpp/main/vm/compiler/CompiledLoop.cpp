@@ -723,7 +723,7 @@ void CompiledLoop::findRegCandidates() {
 
     GrowableArray<LoopRegCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
-    const std::int32_t len              = _bbs->length();
+    //const std::int32_t len              = _bbs->length();
     const BasicBlock   *startBasicBlock = _startOfLoop->bb();
 
     std::int32_t i;

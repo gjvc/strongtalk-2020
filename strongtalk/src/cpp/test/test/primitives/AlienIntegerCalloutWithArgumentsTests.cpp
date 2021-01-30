@@ -292,5 +292,7 @@ TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShoul
 
 
 TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShouldReturnMarkedResultWhenFunctionParameterNotAlienOrSMI ) {
-    for ( std::int32_t arg = 0; arg < argCount; arg++ )checkIllegalArgnPassed( arg, trueObject );
+    for ( std::int32_t arg = 0; arg < argCount; arg++ ) {
+        checkIllegalArgnPassed( arg, trueObject );
+    }
 }

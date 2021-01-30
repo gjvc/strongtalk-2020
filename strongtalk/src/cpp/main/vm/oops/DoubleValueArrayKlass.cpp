@@ -75,16 +75,16 @@ bool DoubleValueArrayKlass::oop_verify( Oop obj ) {
 void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
     doubleValueArrayOop array = doubleValueArrayOop( obj );
-    std::int32_t        len   = array->length();
-    std::int32_t        n     = min( MaxElementPrintSize, len );
+//    std::int32_t        len   = array->length();
+//    std::int32_t        n     = min( MaxElementPrintSize, len );
     Unimplemented();
 }
 
 
 void DoubleValueArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
-    double       *p  = doubleValueArrayOop( obj )->double_start();
+//    double       *p  = doubleValueArrayOop( obj )->double_start();
     Oop          *l  = doubleValueArrayOop( obj )->length_addr();
-    std::int32_t len = doubleValueArrayOop( obj )->length();
+//    std::int32_t len = doubleValueArrayOop( obj )->length();
     MemOopKlass::oop_layout_iterate( obj, blk );
     blk->do_oop( "length", l );
     blk->begin_indexables();

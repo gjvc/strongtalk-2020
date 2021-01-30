@@ -28,31 +28,23 @@ protected:
 };
 
 
-TEST_F( UniverseTests, allocateShouldAllocateInNewSpaceWhenSpaceAvailable
-) {
-ASSERT_TRUE( Universe::new_gen
-.eden()->free() > 10 );
-Oop *chunk = Universe::allocate( 10, nullptr, false );
-ASSERT_TRUE( chunk
-!= nullptr );
-ASSERT_TRUE( Universe::new_gen
-.eden()->
-contains   ( chunk )
-);
+TEST_F( UniverseTests, allocateShouldAllocateInNewSpaceWhenSpaceAvailable ) {
+    ASSERT_TRUE( Universe::new_gen.eden()->free() > 10 );
+    Oop *chunk = Universe::allocate( 10, nullptr, false );
+    ASSERT_TRUE( chunk != nullptr );
+    ASSERT_TRUE( Universe::new_gen.eden()->contains( chunk ) );
 }
 
 
-TEST_F( UniverseTests, allocateShouldFailWhenNoSpaceAndScavengeDisallowed
-) {
-std::int32_t freeSpace = Universe::new_gen.eden()->free();
-Oop *chunk = Universe::allocate( freeSpace / OOP_SIZE + 1, nullptr, false );
-ASSERT_EQ( nullptr, ( const char * ) chunk );
+TEST_F( UniverseTests, allocateShouldFailWhenNoSpaceAndScavengeDisallowed ) {
+    std::int32_t freeSpace = Universe::new_gen.eden()->free();
+    Oop          *chunk    = Universe::allocate( freeSpace / OOP_SIZE + 1, nullptr, false );
+    ASSERT_EQ( nullptr, (const char *) chunk );
 }
 
 
-TEST_F( UniverseTests, allocateTenuredShouldFailWhenNoSpaceAndExpansionDisallowed
-) {
-std::int32_t freeSpace = Universe::old_gen.free();
-Oop *chunk = Universe::allocate_tenured( freeSpace / OOP_SIZE + 1, false );
-ASSERT_EQ( nullptr, ( const char * ) chunk );
+TEST_F( UniverseTests, allocateTenuredShouldFailWhenNoSpaceAndExpansionDisallowed ) {
+    std::int32_t freeSpace = Universe::old_gen.free();
+    Oop          *chunk    = Universe::allocate_tenured( freeSpace / OOP_SIZE + 1, false );
+    ASSERT_EQ( nullptr, (const char *) chunk );
 }

@@ -4,8 +4,6 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#pragma once
-
 #include "vm/oops/ExpressionStackMapper.hpp"
 
 

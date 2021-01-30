@@ -40,10 +40,14 @@ TEST_F( BehaviorPrimitives, allocateForMemOopShouldReportFailureWhenNoSpace ) {
 }
 
 
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldAllocateTenureWhenRequired ) { ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObject(), objectClass )->is_old() ); }
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldAllocateTenureWhenRequired ) {
+    ASSERT_TRUE( behaviorPrimitives::allocate3( Universe::trueObject(), objectClass )->is_old() );
+}
 
 
-TEST_F( BehaviorPrimitives, allocateForMemOopShouldCheckTenuredIsBoolean ) { ASSERT_TRUE( markSymbol( vmSymbols::second_argument_has_wrong_type() ) == behaviorPrimitives::allocate3( Universe::nilObject(), objectClass ) ); }
+TEST_F( BehaviorPrimitives, allocateForMemOopShouldCheckTenuredIsBoolean ) {
+    ASSERT_TRUE( markSymbol( vmSymbols::second_argument_has_wrong_type() ) == behaviorPrimitives::allocate3( Universe::nilObject(), objectClass ) );
+}
 
 
 TEST_F( BehaviorPrimitives, allocateForMemOopShouldScavengeAndAllocateWhenAllowed ) {
