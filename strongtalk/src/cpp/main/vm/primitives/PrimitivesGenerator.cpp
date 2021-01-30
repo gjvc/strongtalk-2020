@@ -15,7 +15,7 @@ const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
 
     spdlog::info( "PrimitivesGenerator::allocateBlock [{}]", n );
 
-    KlassOopDescriptor **block_klass;
+    KlassOopDescriptor **block_klass{ nullptr };
 
     switch ( n ) {
         case 0:
@@ -47,6 +47,9 @@ const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
             break;
         case 9:
             block_klass = &::nineArgumentBlockKlassObject;
+            break;
+        default:
+            spdlog::info( "PrimitivesGenerator::allocateBlock [{}] -- block_klass unset", n );
             break;
     }
 

@@ -17,11 +17,6 @@ const std::int32_t EVENT_PARAMS = 3;       // number of params per EventLogEvent
 
 // helper macros
 
-#define LOG_EVENT( name )               eventLog->log(name)
-#define LOG_EVENT1( name, p1 )          eventLog->log(name, (void *)(p1))
-#define LOG_EVENT2( name, p1, p2 )      eventLog->log(name, (void *)(p1), (void *)(p2))
-#define LOG_EVENT3( name, p1, p2, p3 )  eventLog->log(name, (void *)(p1), (void *)(p2), (void *)(p3))
-
 
 enum class EventLogEventStatus {
     starting,   //
@@ -109,6 +104,7 @@ struct EventLog : public CHeapAllocatedObject {
 };
 
 extern EventLog *eventLog;
+
 
 class EventMarker : StackAllocatedObject {    // for events which have a duration
 public:

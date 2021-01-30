@@ -288,8 +288,9 @@ bool TokenStream::is_object_search( Oop *addr ) {
     Oop           obj;
     std::uint32_t length;
 
-    if ( sscanf( current(), "0x{0:x}%u", &address, &length ) == 1 and strlen( current() ) == length ) {
-        if ( obj = Oop( Universe::object_start( (Oop *) address ) ) ) {
+    if ( sscanf( current(), "0x%x%n", &address, &length ) == 1 && strlen( current() ) == length ) {
+        obj = Oop( Universe::object_start( (Oop *) address ) );
+        if ( obj ) {
             *addr = obj;
             return true;
         }
@@ -303,7 +304,8 @@ bool TokenStream::is_name( Oop *addr ) {
     Oop           obj;
     std::uint32_t length;
     if ( sscanf( current(), "%[a-zA-Z]%u", name, &length ) == 1 and strlen( current() ) == length ) {
-        if ( obj = Universe::find_global( name ) ) {
+        obj = Universe::find_global( name );
+        if ( obj ) {
             *addr = obj;
             return true;
         }

@@ -439,7 +439,10 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
     if ( is_megamorphic() )
         return this;
 
-    LOG_EVENT3( "compiled PolymorphicInlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry", this, nm, nm->_lookupKey.klass() );
+    spdlog::info( "compiled PolymorphicInlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+                  static_cast<const void *>( this ),
+                  static_cast<const void *>( nm ),
+                  static_cast<const void *>( nm->_lookupKey.klass() ) );
 
     { // do the replace without creating a new PolymorphicInlineCache if possible
         PolymorphicInlineCacheIterator it( this );
@@ -468,7 +471,9 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
             }
             it.advance();
         }
-        std::int32_t                   allocated_code_size = contents.code_size();
+
+        std::int32_t allocated_code_size = contents.code_size();
+
         return new( allocated_code_size ) PolymorphicInlineCache( _ic, &contents, allocated_code_size );
     }
 }

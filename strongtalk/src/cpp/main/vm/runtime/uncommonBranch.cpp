@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -8,7 +9,6 @@
 #include "vm/code/StubRoutines.hpp"
 #include "vm/runtime/Frame.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/code/NativeMethod.hpp"
@@ -16,9 +16,7 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/recompiler/RecompilationPolicy.hpp"
 #include "vm/runtime/uncommonBranch.hpp"
-#include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
 
 
 // -----------------------------------------------------------------------------
@@ -37,8 +35,9 @@ bool patch_uncommon_call( Frame *f ) {
     std::int32_t dest       = *dest_addr + (std::int32_t) next_inst;
 
     // return true if the call has been executed before
-    if ( dest == (std::int32_t) StubRoutines::used_uncommon_trap_entry() )
+    if ( dest == (std::int32_t) StubRoutines::used_uncommon_trap_entry() ) {
         return true;
+    }
 
     st_assert( dest == (std::int32_t) StubRoutines::unused_uncommon_trap_entry(), "Make sure we are patching the right call" );
 
@@ -56,8 +55,9 @@ bool patch_uncommon_call( Frame *f ) {
 // checking if the frame uses contextOops with forward pointers.
 static bool has_invalid_context( Frame *f ) {
     // Return false if we're not in compiled code
-    if ( not f->is_compiled_frame() )
+    if ( not f->is_compiled_frame() ) {
         return false;
+    }
 
     // Iterate over the vframes and check the compiled_context
     CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( f );
@@ -76,29 +76,16 @@ static bool has_invalid_context( Frame *f ) {
         vf = (CompiledVirtualFrame *) vf->sender();
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     }
+
     return false;
 }
 
 
-// -----------------------------------------------------------------------------
-
-class FrameAndContextElement : public ResourceObject {
-public:
-    Frame      _frame;
-    ContextOop _context;
-
-
-    FrameAndContextElement( Frame *f, ContextOop c ) {
-        _frame   = *f;
-        _context = c;
-    }
-};
-
-
 void collect_compiled_contexts_for( Frame *f, GrowableArray<FrameAndContextElement *> *elements ) {
     // Return false if we're not in compiled code
-    if ( not f->is_compiled_frame() )
+    if ( not f->is_compiled_frame() ) {
         return;
+    }
 
     // Iterate over the vframes and check the compiled_context
     CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( f );
@@ -116,27 +103,12 @@ void collect_compiled_contexts_for( Frame *f, GrowableArray<FrameAndContextEleme
 }
 
 
-// -----------------------------------------------------------------------------
-
-class EnableDeoptimization : StackAllocatedObject {
-public:
-    EnableDeoptimization() {
-        StackChunkBuilder::begin_deoptimization();
-    }
-
-
-    ~EnableDeoptimization() {
-        StackChunkBuilder::end_deoptimization();
-    }
-};
-
-
 void uncommon_trap() {
 
-//    if ( UseNewBackend ) {
-//        spdlog::warn( "uncommon traps not supported yet for new backend" );
-//        Unimplemented();
-//    }
+    if ( UseNewBackend ) {
+        spdlog::warn( "uncommon traps not supported yet for new backend" );
+        Unimplemented();
+    }
 
     ResourceMark resourceMark;
     // Find the frame that caused the uncommon trap
@@ -159,9 +131,8 @@ void uncommon_trap() {
 
     nm->inc_uncommon_trap_counter();
 
-    LOG_EVENT3( "Uncommon trap in 0x%lx@%d #%d", nm, vf->scope()->offset(), nm->uncommon_trap_counter() );
+    spdlog::info( "Uncommon trap in 0x{x} @ {d} #{d}", static_cast<const void *>( nm ), vf->scope()->offset(), nm->uncommon_trap_counter() );
 
-//    /* For Debugging inserted by Lars Bak 5-13-96
     if ( nm->is_block() ) {
         PrintUncommonBranches = true;
         TraceDeoptimization   = true;
@@ -169,7 +140,6 @@ void uncommon_trap() {
         PrintUncommonBranches = false;
         TraceDeoptimization   = false;
     }
-//    */
 
     if ( PrintUncommonBranches ) {
 
@@ -226,9 +196,11 @@ void uncommon_trap() {
                         process->deoptimize_stretch( &e->_frame, &e->_frame );
 
                         for ( std::int32_t j = 0; j < elements->length(); j++ ) {
-                            if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() )
+                            if ( elements->at( j ) and elements->at( j )->_frame.fp() == e->_frame.fp() ) {
                                 elements->at_put( j, nullptr );
+                            }
                         }
+
                         done = false;
                     }
                 }

@@ -74,7 +74,7 @@ void PrimitivesGenerator::error_jumps() {
     Address _smi_overflow                  = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( smi_overflow ) ], RelocationInformation::RelocationType::external_word_type );
     Address _division_by_zero              = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_by_zero ) ], RelocationInformation::RelocationType::external_word_type );
     Address _receiver_has_wrong_type       = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( receiver_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
-    Address _division_not_exact            = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_not_exact ) ], RelocationInformation::RelocationType::external_word_type );
+//    Address _division_not_exact            = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( division_not_exact ) ], RelocationInformation::RelocationType::external_word_type );
     Address _first_argument_has_wrong_type = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( first_argument_has_wrong_type ) ], RelocationInformation::RelocationType::external_word_type );
     Address _allocation_failure            = Address( (std::int32_t) &vm_symbols[ VMSYMBOL_ENUM_NAME( failed_allocation ) ], RelocationInformation::RelocationType::external_word_type );
 

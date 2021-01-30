@@ -241,9 +241,10 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
     Oop             word2_after = second_word();
 
     // log modification
-    LOG_EVENT3( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition %d)", this, receiver_klass, transition );
-    LOG_EVENT3( "  from (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), word1_before, word2_before );
-    LOG_EVENT3( "  to   (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), word1_after, word2_after );
+    spdlog::info( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition %d)", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
+    spdlog::info( "  from (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+    spdlog::info( "  to   (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+
 }
 
 
@@ -392,7 +393,10 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             break;
         default: st_fatal( "unknown send type" );
     }
-    LOG_EVENT3( "interpreted InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry", this, nm, nm->_lookupKey.klass() );
+    spdlog::info( "interpreted InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+                  static_cast<const void *>( this ),
+                  static_cast<const void *>( nm ),
+                  static_cast<const void *>( nm->_lookupKey.klass() ) );
 }
 
 

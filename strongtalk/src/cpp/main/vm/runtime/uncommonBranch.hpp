@@ -5,6 +5,11 @@
 
 #pragma once
 
+#include "vm/runtime/ResourceObject.hpp"
+#include "vm/runtime/Frame.hpp"
+#include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/runtime/StackChunkBuilder.hpp"
+
 
 // Run-time system code to handle uncommon traps
 //
@@ -20,3 +25,34 @@
 // (see StubRoutines.hpp).
 
 extern void uncommon_trap();
+
+
+
+// -----------------------------------------------------------------------------
+
+class FrameAndContextElement : public ResourceObject {
+public:
+    Frame      _frame;
+    ContextOop _context;
+
+
+    FrameAndContextElement( Frame *f, ContextOop c ) {
+        _frame   = *f;
+        _context = c;
+    }
+};
+
+
+// -----------------------------------------------------------------------------
+
+class EnableDeoptimization : StackAllocatedObject {
+public:
+    EnableDeoptimization() {
+        StackChunkBuilder::begin_deoptimization();
+    }
+
+
+    ~EnableDeoptimization() {
+        StackChunkBuilder::end_deoptimization();
+    }
+};

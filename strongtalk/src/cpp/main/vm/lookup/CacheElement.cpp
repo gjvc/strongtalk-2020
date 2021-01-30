@@ -24,17 +24,9 @@ void CacheElement::verify() {
 
     if ( _lookupKey.klass() or _lookupKey.selector_or_method() ) {
         if ( _lookupResult.is_empty() ) {
-            _console->print( "Verify failed in LookupCache: " );
-            _console->cr();
-            _console->print( "  element = (" );
-            _lookupKey.klass()->print_value_on( _console );
-            _console->print( "::" );
-            _lookupKey.selector_or_method()->print_value_on( _console );
-            _console->print( ")" );
-            _console->cr();
-            _console->print( "  result = (" );
-            _lookupResult.print_on( _console );
-            spdlog::info( ")" );
+            spdlog::info( "Verify failed in LookupCache: " );
+            spdlog::info( "  element = ({}::{})", _lookupKey.klass()->print_value_string(), _lookupKey.selector_or_method()->print_value_string() );
+//            spdlog::info( "result = ({})", _lookupResult.print_value_string() );
             st_fatal( "LookupCache verify failed" );
         }
         const NativeMethod *nm = Universe::code->lookup( &_lookupKey );

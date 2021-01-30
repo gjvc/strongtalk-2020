@@ -438,8 +438,9 @@ extern "C" void verifyReturn( Oop obj ) {
 static void verifyReturnCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
-    if ( not VerifyCode and not GenTraceCalls )
+    if ( not VerifyCode and not GenTraceCalls ) {
         spdlog::warn( ": verifyReturn should not be called" );
+    }
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyReturn, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -449,9 +450,10 @@ static void verifyReturnCode( Register reg ) {
 
 
 extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
-    LOG_EVENT3( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", fp, nlrFrame, nlrResult );
-    if ( nlrFrame <= fp )
+    spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
+    if ( nlrFrame <= fp ) {
         error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
+    }
     // treat >99 scopes as likely error -- might actually be ok
 //  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
     if ( nlrResult->is_mark() )

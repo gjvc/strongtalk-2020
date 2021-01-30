@@ -19,7 +19,7 @@
 TRACE_FUNC( TraceBehaviorPrims, "behavior" )
 
 
-std::int32_t behaviorPrimitives::_numberOfCalls;
+std::int32_t behaviorPrimitives::number_of_calls;
 
 #define ASSERT_RECEIVER st_assert(receiver->is_klass(), "receiver must be klass object")
 

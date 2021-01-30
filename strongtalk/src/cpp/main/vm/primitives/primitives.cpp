@@ -281,8 +281,8 @@ void Primitives::clear_counters() {
 
     spdlog::info( "%primitives-init:  primitive_table: clear counters" );
 
-    behaviorPrimitives::_numberOfCalls         = 0;
-    byteArrayPrimitives::number_of_calls       = 0;
+    behaviorPrimitives::number_of_calls  = 0;
+    byteArrayPrimitives::number_of_calls = 0;
     callBackPrimitives::number_of_calls        = 0;
     doubleByteArrayPrimitives::number_of_calls = 0;
     debugPrimitives::number_of_calls           = 0;
@@ -309,8 +309,9 @@ static void print_calls( const char *name, std::int32_t inc, std::int32_t *total
 
 void Primitives::print_counters() {
     std::int32_t total = 0;
+
     spdlog::info( "Primitive call counters:" );
-    print_calls( "Behavior", behaviorPrimitives::_numberOfCalls, &total );
+    print_calls( "Behavior", behaviorPrimitives::number_of_calls, &total );
     print_calls( "byteArray", byteArrayPrimitives::number_of_calls, &total );
     print_calls( "callBack", callBackPrimitives::number_of_calls, &total );
     print_calls( "doubleByteArray", doubleByteArrayPrimitives::number_of_calls, &total );

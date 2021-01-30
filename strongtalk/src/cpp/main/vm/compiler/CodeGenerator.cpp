@@ -764,13 +764,15 @@ void CodeGenerator::verifyReturn( Oop result ) {
 
 void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result ) {
     _numberOfNonLocalReturns++;
-    LOG_EVENT3( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", fp, nlrFrame, result );
+    spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
     if ( nlrFrame <= fp )
-        error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
+        spdlog::error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", static_cast<const void *>( nlrFrame ), static_cast<const void *>( fp ) );
+
     // treat >99 scopes as likely error -- might actually be ok
 //  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
-    if ( result->is_mark() )
-        error( "NonLocalReturn result is a markOop" );
+    if ( result->is_mark() ) {
+        spdlog::error( "NonLocalReturn result is a markOop" );
+    }
     result->verify();
 
     if ( TraceCalls ) {

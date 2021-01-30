@@ -51,8 +51,8 @@ Klass::Format Klass::format_from_symbol( SymbolOop format ) {
         return Klass::Format::mem_klass;
     if ( format->equals( "ExternalProxy" ) )
         return Klass::Format::proxy_klass;
-//     if (format->equals("Process"))
-//        return Klass::Format::process_klass;
+    if (format->equals("Process"))
+       return Klass::Format::process_klass;
     if ( format->equals( "IndexedInstanceVariables" ) )
         return Klass::Format::objArray_klass;
     if ( format->equals( "IndexedByteInstanceVariables" ) )
@@ -208,7 +208,7 @@ SymbolOop Klass::inst_var_name_at( std::int32_t offset ) const {
             if ( offset == current_offset )
                 return m->instVar_at( i );
         }
-    } while ( current_klass = ( current_klass->superKlass() == nilObject ? nullptr : current_klass->superKlass()->klass_part() ) );
+    } while ( ( current_klass = ( current_klass->superKlass() == nilObject ? nullptr : current_klass->superKlass()->klass_part() ) ) );
 
     return nullptr;
 }

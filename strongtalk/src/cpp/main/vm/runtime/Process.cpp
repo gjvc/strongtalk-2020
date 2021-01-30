@@ -517,7 +517,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
     _time_stamp  = 0;
     _isCallback  = false;
 
-    LOG_EVENT1( "creating process 0x{0:x}", this );
+    spdlog::info( "creating process 0x{0:x}", static_cast<const void *>( this ) );
 
     set_last_Delta_fp( nullptr );
     set_last_Delta_sp( nullptr );
@@ -1448,8 +1448,7 @@ void Processes::remove( DeltaProcess *p ) {
 
 
 bool Processes::includes( DeltaProcess *p ) {
-    ALL_PROCESSES( q )
-        if ( q == p )
+    ALL_PROCESSES( q )if ( q == p )
             return true;
     return false;
 }

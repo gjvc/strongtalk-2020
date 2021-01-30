@@ -197,6 +197,6 @@ bool Integer::is_valid() const {
 }
 
 
-std::int32_t Integer::size_in_bytes() const {
+std::size_t Integer::size_in_bytes() const {
     return length_to_size_in_bytes( length() );
 }

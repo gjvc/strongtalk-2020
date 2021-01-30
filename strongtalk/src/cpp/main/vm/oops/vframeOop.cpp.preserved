@@ -48,7 +48,7 @@ VirtualFrame *vframeOopDesc::as_vframe() {
 void vframeOopDesc::kill_vframe() {
     if ( traceV )
         lprintf( "*** killing vframeOop %#lx\n", this );
-    LOG_EVENT2( "killing VirtualFrame %#lx (locals = %#lx)", this, locals() );
+    spdlog::info( "killing VirtualFrame %#lx (locals = %#lx)", this, locals() );
     set_locals( nullptr );
 }
 

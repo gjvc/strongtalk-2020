@@ -12,10 +12,14 @@
 
 
 static std::int32_t exponent( double x ) {
+
     // Extracts the un-biased (binary) exponent of x.
-    const std::int32_t n = DOUBLE_LENGTH / logB;
-    Digit              d[n];
+    constexpr std::int32_t n = DOUBLE_LENGTH / logB;
+
+    Digit d[n]{};
+
     *( (double *) d ) = x;
+
     return std::int32_t( ( d[ n - 1 ] << SIGN_LENGTH ) >> ( logB - EXPONENT_LENGTH ) ) - EXPONENT_BIAS;
 }
 
@@ -770,8 +774,8 @@ std::int32_t IntegerOps::ash_result_size_in_bytes( Integer &x, std::int32_t n ) 
         bool         overflow = ( mask & x[ x.length() - 1 ] ) not_eq 0;
         digitLength = x.length() + ( n / logB ) + overflow;
     } else {
-        std::int32_t rem  = ( -n ) % logB;
-        Digit        mask = nthMask( rem ) ^oneB;
+//        std::int32_t rem  = ( -n ) % logB;
+//        Digit        mask = nthMask( rem ) ^oneB;
         digitLength = max( x.length() + ( n / logB ), 1 );
     }
 
@@ -880,11 +884,11 @@ void IntegerOps::rem( Integer &x, Integer &y, Integer &z ) {
 }
 
 
-//#define copyInteger( x )\
-//  (Integer*)memcpy((void*)NEW_RESOURCE_ARRAY(Digit, x.length() + 1), \
-//                 (void*)&x._signed_length,\
-//                 (x.length() + 1) * sizeof(Digit))
-//
+#define copyInteger( x ) \
+  (Integer*)memcpy((void*)NEW_RESOURCE_ARRAY(Digit, x.length() + 1), \
+                 (void*)&x._signed_length,\
+                 (x.length() + 1) * sizeof(Digit))
+
 
 void IntegerOps::Div( Integer &x, Integer &y, Integer &z ) {
     ResourceMark resourceMark;

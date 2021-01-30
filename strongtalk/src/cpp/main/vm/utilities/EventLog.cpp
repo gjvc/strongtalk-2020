@@ -53,10 +53,12 @@ void EventLog::printPartial( std::int32_t n ) {
     if ( n >= EventLogLength )
         n = EventLogLength - 1;
     std::int32_t i = 0;
-    for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) );
+    for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) )
+        (void) nullptr;
 
     // skip empty entries
-    for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) );
+    for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) )
+        (void) nullptr;
 
     std::int32_t indent = 0;
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
@@ -74,13 +76,15 @@ void EventLog::printPartial( std::int32_t n ) {
                 break;
         }
         spdlog::info( "%*.s%s", 2 * indent, " ", s );
-        spdlog::info( e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
+        spdlog::info( "{}  {}  {}  {}", e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
         spdlog::info( "" );
-        if ( e->_status == EventLogEventStatus::starting )
+        if ( e->_status == EventLogEventStatus::starting ) {
             indent++;
+        }
     }
-    if ( indent not_eq _nestingDepth )
-        spdlog::info( "Actual event nesting is %ld greater than shown.", _nestingDepth - indent );
+    if ( indent not_eq _nestingDepth ) {
+        spdlog::info( "Actual event nesting is {} greater than shown.", _nestingDepth - indent );
+    }
 }
 
 

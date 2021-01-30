@@ -46,7 +46,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
         const char *msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
-        LOG_EVENT3( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", method, receiver, msg );
+        spdlog::info( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
         // continuing here is probably catastrophal because the invocation counter
@@ -75,9 +75,11 @@ const char *Recompilation::nativeMethod_invocation_counter_overflow( Oop receive
     // the invocation counter overflow).
     ResourceMark resourceMark;
     NativeMethod *trigger = findNativeMethod( retpc );
-    LOG_EVENT3( "nativeMethod_invocation_counter_overflow: receiver = 0x{0:x}, pc = 0x{0:x} (NativeMethod 0x{0:x})", receiver, retpc, trigger );
+    spdlog::info( "nativeMethod_invocation_counter_overflow: receiver = 0x{0:x}, pc = 0x{0:x} (NativeMethod 0x{0:x})", static_cast<const void *>( receiver ), static_cast<const void *>( retpc ), static_cast<const void *>( trigger ) );
+
     const char        *continuationAddr = trigger->verifiedEntryPoint();   // where to continue
     DeltaVirtualFrame *vf               = DeltaProcess::active()->last_delta_vframe();
+
     st_assert( vf->is_compiled_frame() and ( (CompiledVirtualFrame *) vf )->code() == trigger, "stack isn't set up right" );
     DeltaProcess::active()->trace_stack();
     if ( UseRecompilation ) {

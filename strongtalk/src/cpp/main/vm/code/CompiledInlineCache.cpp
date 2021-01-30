@@ -95,7 +95,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
     if ( Interpreter::contains( begin_addr() ) ) {
         spdlog::info( "NativeMethod called from interpreter reports ic miss:" );
-        spdlog::info( "interpreter call at [0x{0:x}]", begin_addr() );
+        spdlog::info( "interpreter call at [0x{0:x}]", static_cast<const void *>( begin_addr() ) );
         spdlog::info( "NativeMethod entry point [0x{0:x}]", Interpreter::_last_native_called );
         InterpretedInlineCache *ic = as_InterpretedIC( next_instruction_address() );
         spdlog::info( "[0x{0:x}]", static_cast<void *>( ic ) );
@@ -233,7 +233,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         set_call_destination( entry_point );
     if ( TraceLookup2 )
         print();
-    LOG_EVENT3( "CompiledICLookup (0x{0:x}, 0x{0:x}) --> 0x{0:x}", klass, sel, entry_point );
+    spdlog::info( "CompiledICLookup (0x{0:x}, 0x{0:x}) --> 0x{0:x}", static_cast<const void *>( klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
     return entry_point;
 }
 
@@ -262,7 +262,7 @@ extern "C" const char *zombie_nativeMethod( const char *return_addr ) {
         // NativeMethod called from interpreted code
         Frame                  f   = DeltaProcess::active()->last_frame();
         InterpretedInlineCache *ic = f.current_interpretedIC();
-        LOG_EVENT1( "zombie NativeMethod called => interpreted InlineCache 0x{0:x} cleared", ic );
+        spdlog::info( "zombie NativeMethod called => interpreted InlineCache 0x{0:x} cleared", static_cast<const void *>( ic ) );
         ic->cleanup();
         // reset instruction pointer => next instruction beeing executed is the same send
         f.set_hp( ic->send_code_addr() );
@@ -272,7 +272,7 @@ extern "C" const char *zombie_nativeMethod( const char *return_addr ) {
     } else {
         // NativeMethod called from compiled code
         CompiledInlineCache *ic = CompiledIC_from_return_addr( return_addr );
-        LOG_EVENT1( "zombie NativeMethod called => compiled InlineCache 0x{0:x} cleaned up", ic );
+        spdlog::info( "zombie NativeMethod called => compiled InlineCache 0x{0:x} cleaned up", static_cast<const void *>( ic ) );
         ic->cleanup();
         // restart send entry point is call address
         return ic->begin_addr();
@@ -350,7 +350,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
         print();
     }
 
-    LOG_EVENT3( "SuperLookup (0x{0:x}, 0x{0:x}) to 0x{0:x}", recv_klass, sel, entry_point );
+    spdlog::info( "SuperLookup (0x{0:x}, 0x{0:x}) to 0x{0:x}", static_cast<const void *>( recv_klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
     return entry_point;
 }
 
@@ -378,7 +378,10 @@ bool CompiledInlineCache::is_megamorphic() const {
 
 void CompiledInlineCache::replace( NativeMethod *nm ) {
     st_assert( selector() == nm->_lookupKey.selector(), "mismatched selector" );
-    LOG_EVENT3( "compiled InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry", this, nm, nm->_lookupKey.klass() );
+    spdlog::info( "compiled InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+                  static_cast<const void *>( this ),
+                  static_cast<const void *>( nm ),
+                  static_cast<const void *>( nm->_lookupKey.klass() ) );
 
     // MONO
     if ( is_monomorphic() ) {

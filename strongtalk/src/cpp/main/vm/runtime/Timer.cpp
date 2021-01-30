@@ -28,7 +28,7 @@ double Timer::seconds() {
 
 
 void Timer::print() {
-    spdlog::info( "%3.3f", _userTime );
+    spdlog::info( "{3.3f}", _userTime );
 }
 
 
@@ -50,7 +50,7 @@ double ElapsedTimer::seconds() {
 
 
 void ElapsedTimer::print() {
-    spdlog::info( "%3.3f", seconds() );
+    spdlog::info( "{3.3f}", seconds() );
 }
 
 
@@ -67,8 +67,8 @@ void TimeStamp::update() {
 double TimeStamp::seconds() {
     LongInteger64 new_count = os::elapsed_counter();
     double        count     = ( new_count - counter ).as_double();
-    double        freq      = os::elapsed_frequency().as_double();
-    return count / freq;
+    double        frequency = os::elapsed_frequency().as_double();
+    return count / frequency;
 }
 
 
@@ -85,6 +85,6 @@ TraceTime::TraceTime( const char *title, bool doit ) {
 TraceTime::~TraceTime() {
     if ( active ) {
         t.stop();
-        spdlog::info( "end timer [{s}] [{f:3.3} secs]", _title, t.seconds() );
+        spdlog::info( "end timer [{}] [{}]", _title, t.seconds() );
     }
 }

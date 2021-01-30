@@ -17,12 +17,12 @@ class behaviorPrimitives : AllStatic {
 
 private:
     static void inc_calls() {
-        _numberOfCalls++;
+        number_of_calls++;
     }
 
 
 public:
-    static std::int32_t _numberOfCalls;
+    static std::int32_t number_of_calls;
 
     //%prim
     // <NoReceiver> primitiveNew: class <Behavior>

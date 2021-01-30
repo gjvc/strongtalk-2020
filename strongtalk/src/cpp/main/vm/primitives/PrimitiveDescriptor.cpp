@@ -82,7 +82,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 
     //
     const bool reverseArgs = true;    // change this when changing primitive calling convention
-    Oop        res;                   //
+    Oop        res{};                 //
 
     //
     if ( reverseArgs ) {
@@ -117,7 +117,10 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
             case 9:
                 res = ( reinterpret_cast<prim_fntype9>( _fn ) )( a[ 8 ], a[ 7 ], a[ 6 ], a[ 5 ], a[ 4 ], a[ 3 ], a[ 2 ], a[ 1 ], a[ 0 ] );
                 break;
-            default: ShouldNotReachHere();
+            default:
+                res = nullptr;
+                ShouldNotReachHere();
+                ::exit( 111 );
         }
 
     } else {
@@ -152,7 +155,10 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
             case 9:
                 res = ( reinterpret_cast<prim_fntype9>( _fn ) )( a[ 0 ], a[ 1 ], a[ 2 ], a[ 3 ], a[ 4 ], a[ 5 ], a[ 6 ], a[ 7 ], a[ 8 ] );
                 break;
-            default: ShouldNotReachHere();
+            default:
+                res = nullptr;
+                ShouldNotReachHere();
+                ::exit( 111 );
         }
     }
 

@@ -286,7 +286,7 @@ static bool validateContextChain( BlockClosureOop block ) {
     MethodOop    method = block->method();
     NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
-    LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
+    spdlog::info( "Deoptimized context in blockClosure -> switch to methodOop 0x{x}", static_cast<const void *>( nm ) );
     {
         block->set_method( method );
         ContextOop con    = block->lexical_scope();
@@ -310,7 +310,7 @@ static void deoptimize_context_and_patch_block( BlockClosureOop block ) {
     MethodOop    method = block->method();
     NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
-    LOG_EVENT1( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", nm );
+    spdlog::info( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", static_cast<const void *>( nm ) );
 
     ContextOop con = block->lexical_scope();
     block->set_method( method );

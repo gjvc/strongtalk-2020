@@ -97,13 +97,13 @@ void Sweeper::print() const {
 
 void Sweeper::activate() {
     _is_active = true;
-    LOG_EVENT1( "Activating %s", name() );
+    spdlog::info( "Activating %s", name() );
 }
 
 
 void Sweeper::deactivate() {
     _is_active = false;
-    LOG_EVENT1( "Deactivating %s", name() );
+    spdlog::info( "Deactivating %s", name() );
 }
 
 // ---------------- HeapSweeper -----------------
@@ -229,7 +229,7 @@ void MethodSweeper::task() {
         }
     }
 
-    LOG_EVENT3( "MethodSweeper task [%d, %d] #%d", begin, end, result );
+    spdlog::info( "MethodSweeper task [%d, %d] #%d", begin, end, result );
 
     if ( _index > length ) {
         deactivate();

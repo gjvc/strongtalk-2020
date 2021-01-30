@@ -320,7 +320,7 @@ void NativeMethod::cleanup_inline_caches() {
 
 
 void NativeMethod::makeOld() {
-    LOG_EVENT1( "marking NativeMethod 0x{0:x} as old", this );
+    spdlog::info( "marking NativeMethod 0x{0:x} as old", static_cast<const void *>( this ) );
     _nativeMethodFlags.isYoung = 0;
 }
 
@@ -332,14 +332,15 @@ void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
 
 
 void NativeMethod::unlink() {
-    LOG_EVENT1( "unlinking NativeMethod 0x{0:x}", this );
+    spdlog::info( "unlinking NativeMethod 0x{0:x}", static_cast<const void *>( this ) );
 
     if ( is_method() ) {
         // Remove from LookupCache.
         LookupCache::flush( &_lookupKey );
         // Remove the NativeMethod from the code table.if it's still there (another NativeMethod with the same key may have been added in the meantime).
-        if ( Universe::code->_methodTable->is_present( this ) )
+        if ( Universe::code->_methodTable->is_present( this ) ) {
             Universe::code->_methodTable->remove( this );
+        }
     }
 
     // Now clear all inline caches filled with this NativeMethod
@@ -360,7 +361,7 @@ void NativeMethod::makeZombie( bool clearInlineCaches ) {
     }
 
     // overwrite call to recompiler by call to zombie handler
-    LOG_EVENT2( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), this );
+    spdlog::info( "{} NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>( this ) );
     NativeCall *call = nativeCall_at( specialHandlerCall() );
 
     // Fix this:

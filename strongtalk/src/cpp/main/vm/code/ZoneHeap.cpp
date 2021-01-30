@@ -26,7 +26,6 @@
 extern bool bootstrappingInProgress;
 
 
-
 ChunkKlass *asChunkKlass( std::uint8_t *c ) {
     return (ChunkKlass *) c;
 }
@@ -294,8 +293,11 @@ void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
         st_assert( m->size() == blocks, "inconsistent sizes" );
         m->markUsed( wantedBlocks );
         if ( blocks > wantedBlocks ) {
+
 //#ifdef LOG_LOTSA_STUFF
-            if ( not bootstrappingInProgress ) LOG_EVENT( "zoneHeap: splitting allocated block" );
+            if ( not bootstrappingInProgress ) {
+                spdlog::info( "zoneHeap: splitting allocated block" );
+            }
 //#endif
             std::int32_t freeChunkSize = blocks - wantedBlocks;
             ChunkKlass   *freeChunk    = m->next();

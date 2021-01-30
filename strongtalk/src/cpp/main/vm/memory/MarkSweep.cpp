@@ -144,7 +144,7 @@ Oop MarkSweep::collect( Oop p ) {
     }
 
     if ( PrintGC ) {
-        spdlog::info( " %.1fM -> %.1fM", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
+        spdlog::info( "%garbage-collection:  before [{:3f}M], after [{:3f}M]", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
     }
 
     return p;

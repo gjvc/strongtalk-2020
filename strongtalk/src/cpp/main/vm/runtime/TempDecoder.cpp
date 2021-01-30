@@ -13,12 +13,6 @@
 #include "vm/runtime/TempDecoder.hpp"
 
 
-#define NEXT                        \
-  pos++;                            \
-  if (pos > len) return;            \
-  current = tempInfo->obj_at(pos)
-
-
 void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     // Format:
     //   name*                     parameters
@@ -43,17 +37,17 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
         _num_of_params = 0;
         while ( current->is_byteArray() ) {
             parameter( ByteArrayOop( current ), _num_of_params++ );
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         }
     }
 
     { // scan global stack temps
         st_assert_smi( current, "expecting smi_t" );
         std::int32_t offset = SMIOop( current )->value();
-        NEXT;
+        { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         while ( current->is_byteArray() ) {
             stack_temp( ByteArrayOop( current ), offset++ );
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         }
     }
 
@@ -61,55 +55,55 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
         st_assert_smi( current, "expecting smi_t" );
         st_assert( SMIOop(current)->value() == 0, "should be zero" )
         std::int32_t fno = SMIOop( current )->value();
-        NEXT;
+        { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         while ( current->is_byteArray() ) {
             stack_float_temp( ByteArrayOop( current ), fno++ );
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         }
     }
 
     { // scan global heap temps
         st_assert_smi( current, "expecting smi_t" );
         std::int32_t offset = SMIOop( current )->value();
-        NEXT;
+        { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         while ( current->is_byteArray() ) {
             if ( is_heap_parameter( ByteArrayOop( current ), tempInfo ) ) {
                 heap_parameter( ByteArrayOop( current ), offset++ );
             } else {
                 heap_temp( ByteArrayOop( current ), offset++ );
             }
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
         }
     }
     { // scan inlined temps
         while ( 1 ) {
             st_assert_smi( current, "expecting smi_t" );
             std::int32_t begin = SMIOop( current )->value();
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             st_assert_smi( current, "expecting smi_t" );
             std::int32_t end = SMIOop( current )->value();
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             // Oop temps
             st_assert_smi( current, "expecting smi_t" );
             std::int32_t offset = SMIOop( current )->value();
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             while ( current->is_byteArray() ) {
                 if ( ( begin <= byteCodeIndex ) and ( byteCodeIndex <= end ) ) {
                     stack_temp( ByteArrayOop( current ), offset );
                 }
                 offset++;
-                NEXT;
+                { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             }
             // Floats
             st_assert_smi( current, "expecting smi_t" );
             offset = SMIOop( current )->value();
-            NEXT;
+            { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             while ( current->is_byteArray() ) {
                 if ( ( begin <= byteCodeIndex ) and ( byteCodeIndex <= end ) ) {
                     stack_float_temp( ByteArrayOop( current ), offset );
                 }
                 offset++;
-                NEXT;
+                { pos++; if (pos > len) return; current = tempInfo->obj_at(pos); } // advance-to-next
             }
         }
     }

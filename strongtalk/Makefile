@@ -283,7 +283,6 @@ st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 
 default : st20-main-exe st20-test-exe
 
-
 cmake-build : 
 	@$(cmake-program) \
         -G $(cmake-generator-name) \
