@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -12,6 +13,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/WeakArrayKlass.hpp"
 #include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/runtime/ResourceObject.hpp"

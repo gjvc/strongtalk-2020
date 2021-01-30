@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -7,12 +8,13 @@
 #include "vm/runtime/PeriodicTask.hpp"
 #include "vm/runtime/ProcessPreemptionTask.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 void ProcessPreemptionTask::task() {
-    if ( EnableProcessPreemption )
+    if ( EnableProcessPreemption ) {
         DeltaProcess::preempt_active();
+    }
 }
 
 

@@ -6,7 +6,7 @@
 #include "vm/runtime/Sweeper.hpp"
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/PeriodicTask.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"

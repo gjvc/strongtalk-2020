@@ -13,7 +13,7 @@
 #include "vm/runtime/arguments.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/code/InliningDatabase.hpp"
 #include "vm/system/os.hpp"
 #include "vm/runtime/init.hpp"

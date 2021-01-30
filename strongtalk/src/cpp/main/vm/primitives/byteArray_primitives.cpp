@@ -22,6 +22,8 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 
 
 TRACE_FUNC( TraceByteArrayPrims, "byteArray" )

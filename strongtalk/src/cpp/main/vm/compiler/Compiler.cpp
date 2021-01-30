@@ -22,6 +22,7 @@
 #include "vm/compiler/NodeFactory.hpp"
 #include "vm/utilities/StringOutputStream.hpp"
 #include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 bool verifyOften = false;

@@ -5,6 +5,7 @@
 
 #include "vm/oops/ProcessOopDescriptor.hpp"
 #include "vm/memory/vmSymbols.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 void ProcessOopDescriptor::bootstrap_object( Bootstrap *stream ) {

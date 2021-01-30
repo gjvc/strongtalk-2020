@@ -5,14 +5,16 @@
 //
 
 #include "vm/memory/Handle.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/utilities/OutputStream.hpp"
 
 
-PersistentHandle *PersistentHandle::_first = nullptr;
-std::int32_t      Handles::_top  = 0;
-std::int32_t      Handles::_size = 20;
-Oop              Handles::_array[20];
+PersistentHandle *PersistentHandle::_first{ nullptr };
+
+std::int32_t   Handles::_top{ 0 };
+std::int32_t   Handles::_size{ 20 };
+Oop Handles::_array[20]{};
 
 
 void BaseHandle::push() {

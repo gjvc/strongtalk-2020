@@ -12,7 +12,7 @@
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/oops/Klass.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/utilities/EventLog.hpp"

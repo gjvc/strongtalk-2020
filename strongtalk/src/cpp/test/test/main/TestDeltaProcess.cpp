@@ -1,12 +1,17 @@
+
 //
-//
-//
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
+//  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/runtime/Delta.hpp"
 #include "vm/system/os.hpp"
 
+#include "vm/runtime/Processes.hpp"
 #include "test/main/TestDeltaProcess.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
+
 #include "test/main/main.hpp"
 
 #include <gtest/gtest.h>

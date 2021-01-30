@@ -6,7 +6,7 @@
 #include "vm/runtime/CallBack.hpp"
 #include "vm/oops/ProxyOopDescriptor.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/system/dll.hpp"

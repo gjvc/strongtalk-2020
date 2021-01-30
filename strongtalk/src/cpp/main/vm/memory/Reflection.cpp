@@ -13,6 +13,7 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/WaterMark.hpp"
+#include "vm/runtime/Processes.hpp"
 
 
 GrowableArray<ClassChange *> *Reflection::_classChanges = nullptr;

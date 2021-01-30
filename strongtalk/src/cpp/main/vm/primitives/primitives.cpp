@@ -26,6 +26,7 @@
 #include "vm/primitives/primitives_table.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/primitives/PrimitiveDescriptor.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 PrimitiveDescriptor *Primitives::_new0;

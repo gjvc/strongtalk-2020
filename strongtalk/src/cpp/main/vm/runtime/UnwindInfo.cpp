@@ -5,7 +5,7 @@
 
 #include "vm/runtime/UnwindInfo.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 

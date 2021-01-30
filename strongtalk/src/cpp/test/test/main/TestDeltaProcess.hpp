@@ -1,14 +1,14 @@
 
 //
-//
-//
+//  (C) 1994 - 2021, The Strongtalk authors and contributors
+//  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #pragma once
 
 #include "vm/system/platform.hpp"
 #include "vm/system/posix.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 typedef std::int32_t (*osfn)( void * );

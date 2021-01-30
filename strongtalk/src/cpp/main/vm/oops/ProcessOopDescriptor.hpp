@@ -7,7 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 // A processOop is the Delta level process.

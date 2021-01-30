@@ -15,6 +15,7 @@
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/Processes.hpp"
 
 
 constexpr std::int32_t LRU_RESOLUTION     = 16;    /* resolution (in secs) of LRU timer */

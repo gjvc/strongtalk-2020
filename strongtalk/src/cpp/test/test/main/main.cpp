@@ -18,6 +18,11 @@
 #include "vm/runtime/vmOperations.hpp"
 
 #include "test/runtime/testProcess.hpp"
+#include "vm/runtime/Processes.hpp"
+
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
+
 #include "test/main/TestDeltaProcess.hpp"
 
 #include <gtest/gtest.h>

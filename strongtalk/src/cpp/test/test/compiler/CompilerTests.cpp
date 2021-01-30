@@ -13,6 +13,8 @@
 
 #include "test/compiler/CompilerTests.hpp"
 #include "test/runtime/testProcess.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 
 #include <gtest/gtest.h>
 

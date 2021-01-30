@@ -7,6 +7,7 @@
 #include "vm/code/StubRoutines.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/lookup/LookupCache.hpp"
 
 

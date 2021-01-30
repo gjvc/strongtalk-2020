@@ -9,16 +9,15 @@
 #include "vm/memory/Reflection.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/utilities/Integer.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/StubRoutines.hpp"
-#include "vm/primitives/primitives.hpp"
 #include "vm/oops/WeakArrayKlass.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/runtime/SlidingSystemAverage.hpp"
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/Processes.hpp"
 
 
 TRACE_FUNC( TraceOopPrims, "Oop" )

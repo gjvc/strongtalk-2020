@@ -21,6 +21,8 @@
 #include "vm/primitives/debug_primitives.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 
 
 TRACE_FUNC( TraceDebugPrims, "debug" )

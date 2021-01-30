@@ -3,12 +3,11 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-
 #include "vm/system/os.hpp"
 #include "vm/runtime/evaluator.hpp"
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/Processes.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/runtime/VirtualFrame.hpp"

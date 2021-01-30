@@ -31,6 +31,9 @@
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/memory/WaterMark.hpp"
+#include "vm/runtime/Processes.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 
 
 bool         garbageCollectionInProgress = false;
