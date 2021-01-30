@@ -6,6 +6,7 @@
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/Process.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void MarkOopDescriptor::print_on( ConsoleOutputStream *stream ) {

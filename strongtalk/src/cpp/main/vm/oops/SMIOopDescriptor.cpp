@@ -5,6 +5,7 @@
 
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void SMIOopDescriptor::print_on( ConsoleOutputStream *stream ) {

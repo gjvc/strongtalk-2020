@@ -8,6 +8,7 @@
 #include "vm/oops/SymbolKlass.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/runtime/Delta.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 SymbolOop SymbolKlass::allocateSymbol( const char *value, std::int32_t len ) {

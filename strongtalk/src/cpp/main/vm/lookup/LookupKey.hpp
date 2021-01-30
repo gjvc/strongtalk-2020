@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // LookupKeys are the keys into the code table.

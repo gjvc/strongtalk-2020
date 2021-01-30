@@ -7,7 +7,11 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/utilities/Console.hpp"
-#include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/memory/Universe.hpp"
+
+
+extern bool bootstrappingInProgress;
 
 
 template<typename... Args>
@@ -30,8 +34,7 @@ void logging_init() {
     spdlog::set_level( spdlog::level::debug );
 
     spdlog::set_pattern( "%Y-%m-%d %H:%M:%S  [%l]  [%t]  -  <%s>|<%#>|<%!>,%v" );
-    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S  %v" );
-//    spdlog::set_pattern( "[source %s] [function %!] [line %#] %v" );
+    spdlog::set_pattern( "%Y-%m-%d %H:%M:%S.%f  %v" );
     spdlog::set_default_logger( console );
 
     // announce

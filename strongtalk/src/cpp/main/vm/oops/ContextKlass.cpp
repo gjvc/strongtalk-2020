@@ -15,6 +15,7 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/oops/BlockClosureKlass.hpp"
 #include "ContextKlass.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void setKlassVirtualTableFromContextKlass( Klass *k ) {

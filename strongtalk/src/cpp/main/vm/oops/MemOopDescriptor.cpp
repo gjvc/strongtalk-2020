@@ -11,6 +11,8 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/ObjectIDTable.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 MemOop as_memOop( void *p ) {

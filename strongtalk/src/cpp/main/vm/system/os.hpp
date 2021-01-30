@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,6 +7,7 @@
 #pragma once
 
 #include "vm/utilities/LongInteger64.hpp"
+#include "vm/system/ThreadCritical.hpp"
 
 
 //typedef void ( __CALLING_CONVENTION *dll_func_ptr_t )( ... );
@@ -161,30 +163,4 @@ public:
     static const char *platform_class_name();
 
     static std::int32_t error_code();
-};
-
-
-// A critical region for controlling thread transfer at interrupts
-class ThreadCritical {
-
-private:
-    static bool _initialized;
-
-    friend void os_init();
-
-    friend void os_exit();
-
-    static void intialize();
-
-    static void release();
-
-public:
-    static bool initialized() {
-        return _initialized;
-    }
-
-
-    ThreadCritical();
-
-    ~ThreadCritical();
 };

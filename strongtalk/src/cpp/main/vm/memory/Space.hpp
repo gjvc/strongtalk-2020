@@ -7,9 +7,9 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
-#include "allocation.hpp"
-#include "vm/memory/util.hpp"
+#include "vm/memory/allocation.hpp"
 #include "vm/memory/WaterMark.hpp"
+#include "vm/memory/util.hpp"
 
 
 class ObjectClosure;

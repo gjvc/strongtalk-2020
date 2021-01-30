@@ -108,7 +108,7 @@ void Bootstrap::open_file() {
         spdlog::info( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    spdlog::info( "%bootstrap-file-opened [{}]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-open: [{}]", _filename.c_str() );
     check_version();
 }
 
@@ -117,14 +117,14 @@ void Bootstrap::parse_file() {
 
     spdlog::info( "%bootstrap-file-load: [{}]", _filename.c_str() );
     parse_objects();
-    spdlog::info( "%bootstrap-file-load-complete: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
+    spdlog::info( "%bootstrap-file-load-done: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
 
 }
 
 
 void Bootstrap::close_file() {
     _stream.close();
-    spdlog::info( "%bootstrap-file-closed: [{}]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-close: [{}]", _filename.c_str() );
 }
 
 
@@ -174,15 +174,15 @@ char Bootstrap::readNextChar() {
 
 std::int32_t Bootstrap::get_next_int32_t() {
 
-    std::uint8_t lo;
-    _stream.read( reinterpret_cast<char *>(&lo), 1 );
+    std::uint8_t lowByte;
+    _stream.read( reinterpret_cast<char *>(&lowByte), 1 );
 
-    if ( lo < 128 ) {
-        return lo;
+    if ( lowByte < 128 ) {
+        return lowByte;
     }
 
-    std::int32_t hi = get_next_int32_t();
-    return ( hi * 128 ) + ( lo % 128 );
+    std::int32_t highByte = get_next_int32_t();
+    return ( highByte * 128 ) + ( lowByte % 128 );
 }
 
 
@@ -403,7 +403,7 @@ Oop Bootstrap::readNextObject() {
             klass_case_func( setKlassVirtualTableFromVirtualFrameKlass, memOop );
             break;
 
-            // Objects
+        // Objects
         case 'a': // 
         st_fatal( "klass" );
             break;
@@ -435,25 +435,25 @@ Oop Bootstrap::readNextObject() {
             object_case_func<MethodOop>( memOop );
             break;
         case 'k': // 
-        st_fatal( "blockClosure" );
+            st_fatal( "blockClosure" );
             break;
         case 'l': // 
-        st_fatal( "context" );
+            st_fatal( "context" );
             break;
         case 'm': // 
-        st_fatal( "proxy" );
+            st_fatal( "proxy" );
             break;
         case 'n': // 
             object_case_func<MixinOop>( memOop );
             break;
         case 'o': // 
-        st_fatal( "weakArrayOop" );
+            st_fatal( "weakArrayOop" );
             break;
         case 'p': // 
             object_case_func<ProcessOop>( memOop );
             break;
         default: // 
-        st_fatal( "unknown object typeByte" );
+            st_fatal( "unknown object typeByte" );
     }
 
     return memOop;

@@ -8,6 +8,7 @@
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class KlassKlass : public MemOopKlass {

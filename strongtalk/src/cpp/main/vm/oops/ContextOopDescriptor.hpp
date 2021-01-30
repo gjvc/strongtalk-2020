@@ -11,6 +11,7 @@
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class ContextOopDescriptor : public MemOopDescriptor {

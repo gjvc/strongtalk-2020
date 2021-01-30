@@ -17,6 +17,7 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/oops/ContextKlass.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
 
 // Ideas:
 //   Maybe cache methodOop in DeltaVirtualFrame for faster argument access. (Lars 8/10/95)

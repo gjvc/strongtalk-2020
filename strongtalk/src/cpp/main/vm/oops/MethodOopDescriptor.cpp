@@ -22,6 +22,7 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/oops/ExpressionStackMapper.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {

@@ -8,6 +8,7 @@
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void setKlassVirtualTableFromKlassKlass( Klass *k ) {

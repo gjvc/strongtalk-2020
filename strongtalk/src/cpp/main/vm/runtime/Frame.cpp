@@ -17,6 +17,7 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 std::uint8_t *Frame::hp() const {

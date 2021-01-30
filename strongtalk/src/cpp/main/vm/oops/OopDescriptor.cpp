@@ -9,6 +9,8 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)

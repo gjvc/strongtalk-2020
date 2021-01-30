@@ -283,7 +283,6 @@ st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 
 default : st20-main-exe st20-test-exe
 
-ext : fmt googletest nasm spdlog
 
 cmake-build : 
 	@$(cmake-program) \
@@ -479,9 +478,16 @@ $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
 
 
+
+ext : fmt googletest nasm spdlog
+
+
 # fmt -------------------------------------------------------------------------
 
-fmt :
+src/ext/fmt :
+	git clone https://github.com/fmtlib/fmt.git src/ext/fmt
+
+fmt : src/ext/fmt
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -496,7 +502,10 @@ fmt :
 
 # spdlog ----------------------------------------------------------------------
 
-spdlog :
+src/ext/spdlog :
+	git clone https://github.com/gabime/spdlog.git src/ext/spdlog
+
+spdlog : src/ext/spdlog
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -511,7 +520,10 @@ spdlog :
 
 # googletest ------------------------------------------------------------------
 
-googletest :
+src/ext/googletest :
+	git clone https://github.com/google/googletest src/ext/googletest
+
+googletest : src/ext/googletest
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -526,8 +538,11 @@ googletest :
 
 # nasm ------------------------------------------------------------------------
 
-nasm :
-	cd $(nasm-root-dir) && make distclean || /bin/true
+src/ext/nasm :
+	git clone https://github.com/netwide-assembler/nasm src/ext/nasm
+
+nasm : src/ext/nasm
+	cd $(nasm-root-dir) && ./autogen.sh
 	cd $(nasm-root-dir) && ./configure --host $(machine)-$(platform) --prefix $(nasm-object-dir)
 	cd $(nasm-root-dir) && make libnasm.a
 	objcopy --remove-leading-char $(nasm-root-dir)/libnasm.a $(nasm-root-dir)/libnasm.a
@@ -536,4 +551,3 @@ nasm :
 	install --verbose $(nasm-root-dir)/include/* 	-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/x86/* 		-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
-

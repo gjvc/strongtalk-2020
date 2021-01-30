@@ -5,6 +5,7 @@
 
 #include "vm/oops/SMIKlass.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 KlassOop SMIKlass::create_subclass( MixinOop mixin, Format format ) {

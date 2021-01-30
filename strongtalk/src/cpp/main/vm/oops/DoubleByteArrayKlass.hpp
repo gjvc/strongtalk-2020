@@ -8,6 +8,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class DoubleByteArrayKlass : public MemOopKlass {

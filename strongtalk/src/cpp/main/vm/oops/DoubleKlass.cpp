@@ -6,6 +6,7 @@
 #include "vm/oops/DoubleKlass.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 Oop DoubleKlass::allocateObject( bool permit_scavenge, bool tenured ) {

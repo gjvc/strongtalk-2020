@@ -20,6 +20,7 @@
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex ) :

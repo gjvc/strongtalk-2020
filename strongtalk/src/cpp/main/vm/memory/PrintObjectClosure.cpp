@@ -7,6 +7,7 @@
 #include "vm/runtime/flags.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 constexpr std::int32_t indent_col = 3;

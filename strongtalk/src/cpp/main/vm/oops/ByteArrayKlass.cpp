@@ -8,6 +8,7 @@
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/runtime/flags.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 Oop ByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {

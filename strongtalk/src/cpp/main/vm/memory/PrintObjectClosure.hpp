@@ -9,6 +9,7 @@
 #include "allocation.hpp"
 #include "vm/memory/Closure.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class PrintObjectClosure : public ObjectLayoutClosure {

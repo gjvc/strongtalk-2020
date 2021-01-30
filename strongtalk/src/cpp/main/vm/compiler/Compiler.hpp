@@ -12,6 +12,8 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/compiler/CodeGenerator.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
+
 
 extern std::int32_t compilationCount;
 extern Compiler     *theCompiler;

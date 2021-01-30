@@ -4,6 +4,7 @@
 //
 
 #include "vm/lookup/LookupResult.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 LookupResult::LookupResult() {

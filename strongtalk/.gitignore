@@ -1,10 +1,12 @@
+\#*\#
+.idea/
+.ccache/
+.venv/
 GPATH
 GRTAGS
 GTAGS
 obj/
-src/smalltalk/source/strongtalkchange.log
-src/smalltalk/source/strongtalkrestore.log
-strongtalk.log
 tags
+TAGS
 var/
-\#*\#
+src/ext/

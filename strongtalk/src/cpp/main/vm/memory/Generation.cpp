@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -7,7 +8,6 @@
 #include "vm/memory/NewGeneration.hpp"
 #include "vm/memory/OldGeneration.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/WaterMark.hpp"
 

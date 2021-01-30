@@ -11,6 +11,7 @@
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class ContextKlass : public MemOopKlass {

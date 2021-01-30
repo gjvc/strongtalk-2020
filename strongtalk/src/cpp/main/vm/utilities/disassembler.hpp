@@ -8,6 +8,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/system/platform.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // A disassembler prints out intel 386 code annotated with delta specific information.

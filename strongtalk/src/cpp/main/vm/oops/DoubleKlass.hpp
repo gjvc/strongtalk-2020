@@ -7,6 +7,7 @@
 
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class DoubleKlass : public MemOopKlass {

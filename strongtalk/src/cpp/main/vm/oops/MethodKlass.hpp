@@ -7,6 +7,7 @@
 
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/oops/MemOopKlass.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 class MethodKlass : public MemOopKlass {
 public:

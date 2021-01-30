@@ -15,6 +15,7 @@
 #include "vm/code/StubRoutines.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 ProfiledNode **FlatProfiler::_table = nullptr;

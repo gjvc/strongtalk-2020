@@ -11,6 +11,7 @@
 #include "vm/code/RelocationInformation.hpp"
 
 #include "disasm.h"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 

@@ -73,9 +73,10 @@ double TimeStamp::seconds() {
 
 
 TraceTime::TraceTime( const char *title, bool doit ) {
+    _title = title;
     active = doit;
     if ( active ) {
-        _console->print( "[%s", title );
+        spdlog::info( "start timer [{}]", _title );
         t.start();
     }
 }
@@ -84,6 +85,6 @@ TraceTime::TraceTime( const char *title, bool doit ) {
 TraceTime::~TraceTime() {
     if ( active ) {
         t.stop();
-        spdlog::info( ", %3.3f secs]", t.seconds() );
+        spdlog::info( "end timer [{s}] [{f:3.3} secs]", _title, t.seconds() );
     }
 }

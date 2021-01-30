@@ -9,7 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
-#include "vm/oops/OopDescriptor.hpp"
+
 
 // A generation is a bunch of spaces of similarly-aged objects
 
@@ -48,6 +48,8 @@ public:
 
 
 // ------------------------------------------------------------------------------
+
+#include "vm/oops/OopDescriptor.hpp"
 
 // ensure that you surround the call with {} to prevent s leaking out!
 #define FOR_EACH_OLD_SPACE( s ) \

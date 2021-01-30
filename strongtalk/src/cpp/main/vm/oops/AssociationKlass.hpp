@@ -11,6 +11,7 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 //
 void setKlassVirtualTableFromAssociationKlass( Klass *k );

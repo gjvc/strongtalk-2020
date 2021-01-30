@@ -4,7 +4,6 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/lookup/LookupKey.hpp"
@@ -23,6 +22,7 @@
 
 #include "test/utilities/TestNotifier.hpp"
 #include <gtest/gtest.h>
+
 
 class UncommonSendNodeTests : public ::testing::Test {
 

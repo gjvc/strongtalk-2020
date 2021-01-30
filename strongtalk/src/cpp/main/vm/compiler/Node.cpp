@@ -19,6 +19,7 @@
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
 #include "vm/compiler/NodeFactory.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
 
 
 std::int32_t         BasicNode::currentID;

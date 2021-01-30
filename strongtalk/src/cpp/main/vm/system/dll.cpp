@@ -177,6 +177,7 @@ extern "C" {
 void __CALLING_CONVENTION enter_async_call( DeltaProcess **addr ) {
     DLLs::enter_async_call( addr );
 }
+
 void __CALLING_CONVENTION exit_async_call( DeltaProcess **addr ) {
     DLLs::exit_async_call( addr );
 }

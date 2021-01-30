@@ -10,6 +10,7 @@
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/memory/Closure.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 //

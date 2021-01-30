@@ -17,6 +17,7 @@
 #include "vm/interpreter/MethodPrinterClosure.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream *stream ) {

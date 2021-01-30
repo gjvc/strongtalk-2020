@@ -14,6 +14,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void Klass::initialize() {

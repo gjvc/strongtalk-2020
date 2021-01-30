@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/Klass.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class SMIKlass : public Klass {

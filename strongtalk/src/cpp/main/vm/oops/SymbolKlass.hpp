@@ -9,6 +9,7 @@
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/ByteArrayKlass.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // symbolOops are canonical symbols; all symbolOops are registered in the symbol table

@@ -1,13 +1,13 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/memory/Closure.hpp"
-
 #include "vm/memory/SnapshotDescriptor.hpp"
+#include "vm/memory/Universe.hpp"
 
 
 class ReadClosure : public OopClosure {
@@ -77,8 +77,10 @@ void SnapshotDescriptor::write_revision() {
     std::int32_t major, snap;
     if ( fscanf( _file, revision_format, &major, &snap ) not_eq 2 )
         error( "reading revision" );
+
     if ( Universe::major_version() not_eq major )
         error( "major revision number conflict" );
+
     if ( Universe::snapshot_version() not_eq snap )
         error( "snapshot revision number conflict" );
 }

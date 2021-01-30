@@ -10,6 +10,7 @@
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/primitives/primitives.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
 
 
 PerformanceDebugger::PerformanceDebugger( Compiler *c ) {

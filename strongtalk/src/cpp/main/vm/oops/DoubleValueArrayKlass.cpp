@@ -11,6 +11,7 @@
 #include "vm/oops/Klass.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Closure.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 Oop DoubleValueArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {

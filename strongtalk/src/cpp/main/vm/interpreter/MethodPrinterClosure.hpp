@@ -9,6 +9,7 @@
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 

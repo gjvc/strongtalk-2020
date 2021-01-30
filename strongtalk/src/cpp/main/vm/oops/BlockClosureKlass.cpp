@@ -12,6 +12,7 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 KlassOop BlockClosureKlass::blockKlassFor( std::int32_t numberOfArguments ) {

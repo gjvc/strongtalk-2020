@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -16,8 +17,8 @@ extern "C" {
 void error( const char *m, ... );               //
 void warning( const char *m, ... );             //
 void compiler_warning( const char *m, ... );    //
-void breakpoint();                               // called at every warning
-void error_breakpoint();                         // called at every error or fatal
+void breakpoint();                              // called at every warning
+void error_breakpoint();                        // called at every error or fatal
 }
 
 
@@ -55,6 +56,12 @@ void error_breakpoint();                         // called at every error or fat
 
 
 // -----------------------------------------------------------------------------
+
+//void inline st_fatal( const char *m ) {
+//    report_fatal( __FILE__, __LINE__, m );
+//    error_breakpoint();
+//}
+
 
 #define st_fatal( m )                                      { report_fatal( __FILE__, __LINE__, m                                     ); error_breakpoint(); }
 #define st_fatal1( m, x1 )                                 { report_fatal( __FILE__, __LINE__, m, x1                                 ); error_breakpoint(); }

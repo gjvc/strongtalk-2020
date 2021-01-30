@@ -7,11 +7,12 @@
 #pragma once
 
 #include "vm/system/platform.hpp"
+#include "vm/oops/Oop.hpp"
 
 
 // -----------------------------------------------------------------------------
 
-typedef class OopDescriptor *Oop;
+//typedef class OopDescriptor *Oop;
 
 
 // -----------------------------------------------------------------------------

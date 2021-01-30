@@ -9,6 +9,7 @@
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
+#include "vm/oops/ByteArrayOopDescriptor.hpp"
 #include "vm/runtime/TempDecoder.hpp"
 
 

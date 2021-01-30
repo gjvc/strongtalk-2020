@@ -8,11 +8,10 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/OopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // -----------------------------------------------------------------------------
-
-typedef class SMIOopDescriptor *SMIOop;
 
 // 0, 1 in SMIOop format
 inline auto smiOop_zero = reinterpret_cast<SMIOop>( ( 0L << TAG_SIZE ) + INTEGER_TAG );
@@ -73,3 +72,6 @@ public:
         return smi_t( this ) - INTEGER_TAG;
     }
 };
+
+
+typedef class SMIOopDescriptor *SMIOop;

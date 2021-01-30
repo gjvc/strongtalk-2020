@@ -6,6 +6,7 @@
 #pragma once
 
 #include "vm/oops/Klass.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 // superclass for all heap objects
 

@@ -7,6 +7,7 @@
 
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class BlockClosureKlass : public MemOopKlass {

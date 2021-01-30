@@ -9,6 +9,7 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/memory/MarkSweep.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool tenured ) {

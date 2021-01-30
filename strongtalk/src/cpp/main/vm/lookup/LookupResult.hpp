@@ -9,6 +9,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/code/JumpTable.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // The lookup cache is a 2-way associative cache mapping LookupKeys into LookupResult.

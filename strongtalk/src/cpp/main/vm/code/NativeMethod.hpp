@@ -10,6 +10,7 @@
 #include "vm/code/NativeMethodScopes.hpp"
 #include "vm/code/JumpTable.hpp"
 #include "vm/code/Zone.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 

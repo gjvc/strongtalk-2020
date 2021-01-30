@@ -7,6 +7,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/OopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 //

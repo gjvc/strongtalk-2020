@@ -12,7 +12,7 @@
 
 #include <cstdarg>
 
-constexpr std::int32_t BUFLEN = 2048;
+constexpr std::int32_t TEST_NOTIFIER_BUFLEN = 2048;
 
 
 class TestNotifier : public Notifier, public ResourceObject {
@@ -61,22 +61,22 @@ public:
 
 
     void error( const char *m, va_list ap ) {
-        char *buffer = new_resource_array<char>( ::BUFLEN );
-        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        char *buffer = new_resource_array<char>( ::TEST_NOTIFIER_BUFLEN );
+        vsnprintf( buffer, ::TEST_NOTIFIER_BUFLEN - 1, m, ap );
         errors->append( buffer );
     }
 
 
     void warning( const char *m, va_list ap ) {
-        char *buffer = new_resource_array<char>( ::BUFLEN );
-        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        char *buffer = new_resource_array<char>( ::TEST_NOTIFIER_BUFLEN );
+        vsnprintf( buffer, ::TEST_NOTIFIER_BUFLEN - 1, m, ap );
         warnings->append( buffer );
     }
 
 
     void compiler_warning( const char *m, va_list ap ) {
-        char *buffer = new_resource_array<char>( ::BUFLEN );
-        vsnprintf( buffer, ::BUFLEN - 1, m, ap );
+        char *buffer = new_resource_array<char>( ::TEST_NOTIFIER_BUFLEN );
+        vsnprintf( buffer, ::TEST_NOTIFIER_BUFLEN - 1, m, ap );
         compilerWarnings->append( buffer );
     }
 };

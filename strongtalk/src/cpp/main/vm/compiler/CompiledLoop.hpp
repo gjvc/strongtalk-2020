@@ -11,6 +11,7 @@
 #include "vm/compiler/Scope.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 #include "vm/compiler/OpCode.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 // Implementation of loop optimizations: moving type tests out of loops, finding candidates for register
 // allocation within a loop, plus integer-specific optimizations (removing tag checks and bound checks).

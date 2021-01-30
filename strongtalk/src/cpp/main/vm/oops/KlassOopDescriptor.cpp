@@ -5,6 +5,7 @@
 
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void KlassOopDescriptor::bootstrap_object( Bootstrap *stream ) {

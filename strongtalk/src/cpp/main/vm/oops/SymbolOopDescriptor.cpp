@@ -6,6 +6,7 @@
 #include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/utilities/OutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 SymbolOop SymbolOopDescriptor::scavenge() {

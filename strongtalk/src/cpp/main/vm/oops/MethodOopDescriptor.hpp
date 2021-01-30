@@ -12,6 +12,7 @@
 #include "vm/runtime/Frame.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/GrowableArray.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // A methodOop is a method with byte codes.

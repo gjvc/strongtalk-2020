@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,11 +6,9 @@
 
 #pragma once
 
-
-#include "vm/system/platform.hpp"
-#include "vm/oops/Klass.hpp"
-#include "vm/oops/OopDescriptor.hpp"
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
+#include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 // symbols are immutable, canonicalized byteArrays.
 

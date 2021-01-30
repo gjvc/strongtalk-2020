@@ -23,6 +23,7 @@
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/code/NativeMethodScopes.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 char *ScopeDescriptor::invalid_pc = (char *) -1;

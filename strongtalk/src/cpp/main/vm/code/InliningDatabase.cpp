@@ -17,6 +17,9 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/code/InliningDatabase.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utilities/FileOutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 const char *InliningDatabase::_directory = nullptr;

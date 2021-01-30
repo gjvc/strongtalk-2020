@@ -11,6 +11,7 @@
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
 
 class Node;
 

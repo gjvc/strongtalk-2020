@@ -8,6 +8,7 @@
 #include "vm/oops/AssociationKlass.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void setKlassVirtualTableFromAssociationKlass( Klass *k ) {

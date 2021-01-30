@@ -8,8 +8,32 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/oops/Oop.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
+//
+// oopDescriptor ("object-orientated pointer descriptor") is the top of the Oop hierarchy.
+//
+
+// The "*Descriptor" classes describe the format of ST objects so the fields can be accessed from C++.
+// "*Oop" pointers to "*Descriptor" structures (e.g., Oop, proxyOop) are TAGGED and thus should not be used to access the fields.
+// Instead, convert the xxxOop to a xxxDescriptor* with the ->addr() function, then work with the xxxDescriptor* pointer.
+
+// xxxOop pointers are tagged.
+// xxxDescriptor* pointers are not tagged.
+// convert xxxOop to a xxxDescriptor* with the xxxOop->addr() function
+
+// NB: the above is true only for memOops
+
+
+//
+class Klass;
+class Generation;
+extern "C" Oop nilObject;
+
+typedef class ScopeDescriptorNode *ScopeInfo;
+
+//
 class OopDescriptor {
 
 protected:

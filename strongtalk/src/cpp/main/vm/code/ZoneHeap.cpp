@@ -10,7 +10,8 @@
 #include "vm/code/ZoneHeap.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/EventLog.hpp"
-
+#include "vm/oops/Oop.hpp"
+#include "vm/memory/util.hpp"
 
 
 // format of chunks in free map: first & last byte hold chunk size
@@ -21,6 +22,8 @@
 // usedOvfl:		used, encoded length in next (prev) 3 bytes
 //
 
+
+extern bool bootstrappingInProgress;
 
 
 

@@ -72,6 +72,7 @@ class TraceTime {
 private:
     bool         active;
     ElapsedTimer t;
+    const char   *_title;
 public:
     TraceTime( const char *title, bool doit = true );
 

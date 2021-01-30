@@ -15,6 +15,7 @@
 #include "vm/memory/PrintObjectClosure.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void setKlassVirtualTableFromMemOopKlass( Klass *k ) {

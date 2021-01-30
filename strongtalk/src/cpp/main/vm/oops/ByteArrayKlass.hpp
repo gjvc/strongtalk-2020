@@ -8,6 +8,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class ByteArrayKlass : public MemOopKlass {

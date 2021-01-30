@@ -24,13 +24,21 @@
 #include "vm/system/bits.hpp"
 
 
-// -----------------------------------------------------------------------------
+// spdlog ----------------------------------------------------------------------
 
 #define SPDLOG_COMPILED_LIB
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/fmt/bundled/printf.h>
+
+//
+//#define SPDLOG_DEBUG_ON
+//#define SPDLOG_TRACE_ON
+//
+//#include <spdlog/spdlog.h>
+//#include <spdlog/sinks/stdout_sinks.h>
+//#include <spdlog/sinks/stdout_color_sinks.h>
 
 
 // -----------------------------------------------------------------------------

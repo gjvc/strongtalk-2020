@@ -26,6 +26,7 @@
 #include "vm/code/NameDescriptor.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
 
 
 void LocationNameDescriptor::print() {

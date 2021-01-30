@@ -13,6 +13,7 @@
 #include "vm/memory/OldGeneration.hpp"
 #include "vm/memory/RememberedSet.hpp"
 #include "vm/memory/SpaceSizes.hpp"
+#include "vm/memory/Space.hpp"
 
 
 extern bool scavengeRequired;             // set when eden overflows

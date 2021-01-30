@@ -20,6 +20,8 @@
 #include "vm/compiler/RegisterAllocator.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/compiler/NodeFactory.hpp"
+#include "vm/utilities/StringOutputStream.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 bool verifyOften = false;

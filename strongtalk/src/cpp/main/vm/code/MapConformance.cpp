@@ -8,6 +8,7 @@
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/code/MapConformance.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 void Variable::print() {

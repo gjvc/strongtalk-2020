@@ -10,6 +10,7 @@
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 constexpr std::int16_t IllegalByteCodeIndex  = -1;       //

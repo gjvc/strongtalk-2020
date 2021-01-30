@@ -272,29 +272,26 @@ static void decode_method( MethodOop method, KlassOop klass ) {
 
 static void decode_klass( SymbolOop name, KlassOop klass ) {
 
-    // Klass methods
-    {
-        ObjectArrayOop f = klass->klass_part()->methods();
+    ObjectArrayOop f{ nullptr };
 
-        for ( std::int32_t index = 1; index <= f->length(); index++ )
-            decode_method( MethodOop( f->obj_at( index ) ), klass );
+    // Klass methods
+    f = klass->klass_part()->methods();
+    for ( std::int32_t index = 1; index <= f->length(); index++ ) {
+        decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
     // Mixin methods
-    {
-        ObjectArrayOop f = klass->klass_part()->mixin()->methods();
-
-        for ( std::int32_t index = 1; index <= f->length(); index++ )
-            decode_method( MethodOop( f->obj_at( index ) ), klass );
+    f = klass->klass_part()->mixin()->methods();
+    for ( std::int32_t index = 1; index <= f->length(); index++ ) {
+        decode_method( MethodOop( f->obj_at( index ) ), klass );
     }
 
 }
 
 
 void Universe::decode_methods() {
-    std::int32_t l = Universe::systemDictionaryObject()->length();
 
-    for ( std::int32_t i = 1; i <= l; i++ ) {
+    for ( std::int32_t i = 1; i <= Universe::systemDictionaryObject()->length(); i++ ) {
         AssociationOop assoc = (AssociationOop) Universe::systemDictionaryObject()->obj_at( i );
         if ( assoc->value()->is_klass() )
             decode_klass( assoc->key(), KlassOop( assoc->value() ) );
@@ -841,8 +838,7 @@ Space *Universe::spaceFor( void *p ) {
         return new_gen.eden();
 
     {
-        FOR_EACH_OLD_SPACE( s )
-            if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
                 return s;
     }
 

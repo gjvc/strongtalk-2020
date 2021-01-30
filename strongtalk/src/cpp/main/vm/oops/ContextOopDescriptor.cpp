@@ -13,6 +13,7 @@
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 // Computes the byte offset from the beginning of an Oop

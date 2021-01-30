@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "vm/oops/OopDescriptor.hpp"
+#include "vm/oops/Oop.hpp"
 
 // conveniences
 

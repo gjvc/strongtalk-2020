@@ -7,6 +7,7 @@
 
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 class ObjectArrayKlass : public MemOopKlass {

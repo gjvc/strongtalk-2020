@@ -7,6 +7,7 @@
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Closure.hpp"
+#include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 Oop DoubleByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
