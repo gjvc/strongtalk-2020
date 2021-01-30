@@ -14,7 +14,6 @@
 #include "vm/runtime/Sweeper.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/runtime/Delta.hpp"
-#include "vm/utilities/EventLog.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -94,8 +93,8 @@ void DeltaProcess::set_last_Delta_sp( Oop *sp ) {
 
 
 const char *DeltaProcess::last_Delta_pc() const {
-    if ( this == nullptr )
-        return nullptr;
+//    if ( this == nullptr )
+//        return nullptr;
     return _last_Delta_pc;
 }
 
@@ -109,8 +108,10 @@ std::int32_t CurrentHash = 23;
 
 
 bool Process::external_suspend_current() {
-    if ( current() == nullptr )
+    if ( current() == nullptr ) {
         return false;
+    }
+
     os::suspend_thread( current()->_thread );
     return true;
 }
@@ -479,6 +480,7 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
     DeltaProcess *p     = static_cast<DeltaProcess *>(process);
     Oop          result = Delta::call( p->receiver(), p->selector() );
+    (void) result;
 
     if ( have_nlr_through_C ) {
         if ( nlr_home_id == ErrorHandler::aborting_nlr_home_id() ) {
