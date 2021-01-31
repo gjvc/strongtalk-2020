@@ -609,10 +609,8 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
     }
 
 
-    // cycle through the temp registers to (hopefully) allow more optimizations
-    // later (e.g. scheduling)
+    // cycle through the temp registers to (hopefully) allow more optimizations later (e.g. scheduling)
     std::int32_t lastTemp = 0;
-
 
     for ( std::int32_t i = 0; i < localRegs->length(); i++ ) {
         // try to allocate localRegs[i] to a local (temp) register
@@ -642,8 +640,9 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
 
 
 void BasicBlock::doAlloc( PseudoRegister *r, Location l ) {
-    if ( CompilerDebug )
+    if ( CompilerDebug ) {
         cout( PrintLocalAllocation )->print( "*assigning %s to local %s in BasicBlock%ld\n", l.name(), r->name(), id() );
+    }
     st_assert( not r->_debug, "should not allocate to temp reg" );
     r->_location = l;
 }
@@ -757,7 +756,8 @@ bool BasicBlock::contains( const Node *which ) const {
 
 void BasicBlock::verify() {
     std::int32_t count = 0;
-    for ( Node   *n    = _first; n not_eq _last->next(); n = n->next() ) {
+
+    for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
         count++;
         if ( n->_deleted )
             continue;
@@ -770,14 +770,19 @@ void BasicBlock::verify() {
         if ( n->endsBasicBlock() and n not_eq _last )
             error( "BasicBlock 0x{0:x}: Node 0x{0:x} ends BasicBlock but isn't last node", static_cast<const void *>(this), n );
     }
-    if ( count not_eq _nodeCount )
+
+    if ( count not_eq _nodeCount ) {
         error( "incorrect nnodes in BasicBlock 0x{0:x}", static_cast<const void *>(this) );
-    if ( _loopDepth < 0 )
+    }
+
+    if ( _loopDepth < 0 ) {
         error( "BasicBlock 0x{0:x}: negative loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
+    }
 
     // Fix this Urs, 3/11/96
-    if ( _loopDepth > 9 )
+    if ( _loopDepth > 9 ) {
         spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
+    }
 }
 
 
@@ -786,18 +791,22 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     if ( _id == 1 )
         return;
     _id = 1;        // mark as visited
-#ifdef fix_this
-    setting of _isLoopStart/End is broken -- fix this (currently not used)
-    if (first->isMergeNode()) {
-      MergeNode* m = (MergeNode*)first;
-      if (m->_isLoopStart) {
-        loopDepth++;
-      } else if (m->_isLoopEnd) {
-        assert(loopDepth > 0, "bad loop end marker");
-        loopDepth--;
-      }
+
+#if 0
+
+    //    setting of _isLoopStart/End is broken -- fix this (currently not used)
+    if ( _first->isMergeNode() ) {
+        MergeNode *m = (MergeNode *) _first;
+        if ( m->_isLoopStart ) {
+            loopDepth++;
+        } else if ( m->_isLoopEnd ) {
+            st_assert( loopDepth > 0, "bad loop end marker" );
+            loopDepth--;
+        }
     }
+
 #endif
+
     _loopDepth = loopDepth;
     // Note: originally this code simply skipped missing (nullptr) successors;
     //       however it doesn't work correctly because if a node (or a BasicBlock)

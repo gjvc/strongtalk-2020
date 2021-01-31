@@ -6,6 +6,7 @@
 
 #include "vm/memory/Handle.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/utilities/OutputStream.hpp"
 

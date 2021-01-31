@@ -118,12 +118,6 @@ enum class ProcessState {
 extern "C" const char *active_stack_limit();
 extern "C" void check_stack_overflow();
 
-//#include "vm/runtime/DeltaProcess.hpp"
-
-class VMProcess;
-
-
-
 // "semaphore" to protect some vm critical sections (process transfer etc.)
 extern "C" bool processSemaphore;
 

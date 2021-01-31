@@ -10,6 +10,7 @@
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
+#include "vm/primitives/PrimitiveDescriptor.hpp"
 
 
 

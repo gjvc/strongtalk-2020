@@ -10,7 +10,7 @@
 #include "vm/compiler/slist.hpp"
 #include "vm/compiler/CompileTimeClosure.hpp"
 #include "vm/compiler/DefinitionUsage.hpp"
-#include "BasicBlock.hpp"
+#include "vm/compiler/BasicBlock.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

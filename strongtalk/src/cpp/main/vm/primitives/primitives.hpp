@@ -8,8 +8,10 @@
 #include "vm/system/platform.hpp"
 #include "vm/primitives/primitive_declarations.hpp"
 #include "vm/primitives/PrimitiveGroup.hpp"
+#include "vm/primitives/InterpretedPrimitiveCache.hpp"
 #include "vm/primitives/primitive_tracing.hpp"
 #include "vm/oops/SymbolOopDescriptor.hpp"
+#include "vm/primitives/PrimitiveDescriptor.hpp"
 
 
 
@@ -23,28 +25,6 @@
 // 4) Primitives who might scavenge, gc, or call delta    (true,        false, false)
 //    .
 
-class PrimitiveDescriptor;
-
-
-class InterpretedPrimitiveCache : public ValueObject {
-
-private:
-    std::uint8_t *hp() const {
-        return (std::uint8_t *) this;
-    }
-
-
-public:
-    SymbolOop name() const;
-
-    std::int32_t number_of_parameters() const;
-
-    PrimitiveDescriptor *pdesc() const;
-
-    bool has_receiver() const;
-
-    bool has_failure_code() const;
-};
 
 
 // The PrimitiveDescriptor structure exposes all properties of a primitive.
@@ -56,7 +36,6 @@ class Expression;
 
 class Node;
 
-#include "vm/primitives/PrimitiveDescriptor.hpp"
 
 class Primitives : AllStatic {
 

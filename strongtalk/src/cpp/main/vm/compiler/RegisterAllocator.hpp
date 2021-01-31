@@ -54,6 +54,7 @@ public:
     }
 };
 
+
 class RegisterEqClass : public ResourceObject {
 
 public:

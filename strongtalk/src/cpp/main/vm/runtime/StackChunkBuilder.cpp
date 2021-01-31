@@ -8,7 +8,7 @@
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/memory/oopFactory.hpp"

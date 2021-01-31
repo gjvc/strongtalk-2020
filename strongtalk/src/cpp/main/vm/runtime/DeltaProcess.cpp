@@ -8,31 +8,23 @@
 #include "vm/runtime/Processes.hpp"
 #include "vm/system/os.hpp"
 #include "vm/runtime/flags.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
-#include "vm/runtime/vmOperations.hpp"
-#include "vm/runtime/Sweeper.hpp"
-#include "vm/runtime/ErrorHandler.hpp"
-#include "vm/runtime/Delta.hpp"
-#include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/MarkSweep.hpp"
-#include "vm/runtime/ResourceMark.hpp"
-#include "vm/runtime/VirtualFrame.hpp"
+#include "vm/interpreter/CodeIterator.hpp"
+#include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
-#include "vm/interpreter/CodeIterator.hpp"
-#include "vm/code/NativeInstruction.hpp"
+#include "vm/runtime/ResourceMark.hpp"
+#include "vm/memory/Scavenge.hpp"
+#include "vm/memory/MarkSweep.hpp"
+#include "vm/memory/vmSymbols.hpp"
 #include "vm/interpreter/Interpreter.hpp"
+#include "vm/code/StubRoutines.hpp"
+#include "vm/runtime/ErrorHandler.hpp"
+#include "vm/memory/oopFactory.hpp"
+#include "vm/runtime/vmOperations.hpp"
+#include "vm/runtime/Delta.hpp"
+#include "vm/oops/ProcessOopDescriptor.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/primitives/primitives.hpp"
-#include "vm/runtime/evaluator.hpp"
-#include "vm/code/StubRoutines.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/memory/Scavenge.hpp"
-#include "vm/runtime/DeltaProcess.hpp"
-
 
 
 // The tricky part is to restore the original return address of the primitive before the delta call.
@@ -61,7 +53,6 @@ extern Oop          nlr_result;
 }
 
 
-
 DeltaProcess  *DeltaProcess::_active_delta_process = nullptr;
 DeltaProcess  *DeltaProcess::_main_process         = nullptr;
 volatile char *DeltaProcess::_active_stack_limit   = nullptr;
@@ -73,7 +64,6 @@ volatile bool   DeltaProcess::_process_has_terminated      = false;
 ProcessState    DeltaProcess::_state_of_terminated_process = ProcessState::initialized;
 
 Event *DeltaProcess::_async_dll_completion_event = nullptr;
-
 
 
 bool processSemaphore = false;
@@ -122,7 +112,6 @@ const char *DeltaProcess::last_Delta_pc() const {
 void DeltaProcess::set_last_Delta_pc( const char *pc ) {
     _last_Delta_pc = pc;
 }
-
 
 
 void DeltaProcess::transfer( ProcessState reason, DeltaProcess *target ) {
@@ -1207,8 +1196,6 @@ bool DeltaProcess::process_has_terminated() {
 ProcessState DeltaProcess::state_of_terminated_process() {
     return _state_of_terminated_process;
 }
-
-
 
 
 void DeltaProcess::returnToDebugger() {

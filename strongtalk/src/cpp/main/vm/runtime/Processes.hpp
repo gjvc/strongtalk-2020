@@ -6,6 +6,8 @@
 #pragma once
 
 #include "vm/runtime/Process.hpp"
+#include "vm/runtime/VMProcess.hpp"
+#include "vm/runtime/DeltaProcess.hpp"
 
 
 class Processes : AllStatic {

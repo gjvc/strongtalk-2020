@@ -9,6 +9,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/posix.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
+#include "vm/runtime/VMProcess.hpp"
 
 
 typedef std::int32_t (*osfn)( void * );

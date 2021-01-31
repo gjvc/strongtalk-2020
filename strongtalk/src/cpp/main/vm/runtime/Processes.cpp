@@ -5,33 +5,9 @@
 
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Processes.hpp"
-#include "vm/system/os.hpp"
-#include "vm/runtime/flags.hpp"
-#include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
-#include "vm/runtime/vmOperations.hpp"
-#include "vm/runtime/Sweeper.hpp"
-#include "vm/runtime/ErrorHandler.hpp"
-#include "vm/runtime/Delta.hpp"
-#include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/MarkSweep.hpp"
+#include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/runtime/VirtualFrame.hpp"
-#include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
-#include "vm/interpreter/CodeIterator.hpp"
-#include "vm/code/NativeInstruction.hpp"
-#include "vm/interpreter/Interpreter.hpp"
-#include "vm/interpreter/InterpretedInlineCache.hpp"
-#include "vm/primitives/primitives.hpp"
-#include "vm/runtime/evaluator.hpp"
-#include "vm/code/StubRoutines.hpp"
-#include "vm/oops/ContextOopDescriptor.hpp"
-#include "vm/memory/Scavenge.hpp"
-
-
 
 
 // ======= Processes ========

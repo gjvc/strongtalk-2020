@@ -5,14 +5,13 @@
 //
 
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/oops/OopDescriptor.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/Universe.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/Timer.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/WeakArrayKlass.hpp"
-#include "vm/runtime/Process.hpp"
+#include "vm/runtime/VMProcess.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/SymbolTable.hpp"
