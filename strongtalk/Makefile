@@ -124,18 +124,19 @@ object-root-cmake := obj/$(toolchain-name)/cmake/$(build-type)
 
 # ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
 
-# third-party packages --------------------------------------------------------
+# third-party package object roots --------------------------------------------
 
-external-package-path           := ext
-external-package-root           := $(ROOT)/$(external-package-path)
-external-package-object-root    := $(ROOT)/$(object-root)/$(external-package-path)
+external-package-path               := ext
+external-package-root               := $(ROOT)/ext
+external-package-object-root        := $(ROOT)/obj/$(toolchain-name)/gnu-make/$(build-type)/ext
+external-package-object-root-cmake  := $(ROOT)/obj/$(toolchain-name)/cmake/$(build-type)/ext
 
 
 # spdlog ----------------------------------------------------------------------
 
 spdlog-root-dir         := $(external-package-root)/spdlog
 spdlog-include-paths    := $(spdlog-root-dir)/include
-spdlog-object-dir       := $(external-package-object-root)/spdlog
+spdlog-object-dir       := $(external-package-object-root-cmake)/spdlog
 libspdlog-a             := $(spdlog-object-dir)/libspdlog.a
 libspdlog-a-flags       := -L $(spdlog-object-dir) -l spdlog
 
@@ -144,7 +145,7 @@ libspdlog-a-flags       := -L $(spdlog-object-dir) -l spdlog
 
 fmt-root-dir            := $(external-package-root)/fmt
 fmt-include-paths       := $(fmt-root-dir)/include
-fmt-object-dir          := $(external-package-object-root)/fmt
+fmt-object-dir          := $(external-package-object-root-cmake)/fmt
 libfmt-a                := $(fmt-object-dir)/lib/libfmt.a
 libfmt-a-flags          := -L $(fmt-object-dir)/lib -l fmt
 
@@ -153,7 +154,7 @@ libfmt-a-flags          := -L $(fmt-object-dir)/lib -l fmt
 
 googletest-root-dir         := $(external-package-root)/googletest
 googletest-include-paths    := $(googletest-root-dir)/googletest/include
-googletest-object-dir       := $(external-package-object-root)/googletest
+googletest-object-dir       := $(external-package-object-root-cmake)/googletest
 libgtest-a                  := $(googletest-object-dir)/lib/libgtest.a
 libgtest-a-flags            := -L $(googletest-object-dir)/lib -l gtest
 
@@ -481,7 +482,7 @@ $(CCACHE_DIR) :
 
 
 
-ext : fmt googletest nasm spdlog
+ext : fmt googletest spdlog
 
 
 # fmt -------------------------------------------------------------------------

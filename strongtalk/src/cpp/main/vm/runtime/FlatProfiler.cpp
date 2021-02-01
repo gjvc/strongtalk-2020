@@ -35,303 +35,6 @@ static constexpr std::int32_t col2 = 11;    // position of output column 2
 static constexpr std::int32_t col3 = 30;    // position of output column 3
 static constexpr std::int32_t col4 = 55;    // position of output column 4
 
-class TickCounter {
-public:
-    std::int32_t ticks_in_code;
-    std::int32_t ticks_in_primitives;
-    std::int32_t ticks_in_compiler;
-    std::int32_t ticks_in_pics;
-    std::int32_t ticks_in_other;
-
-
-    TickCounter() {
-        ticks_in_code       = 0;
-        ticks_in_primitives = 0;
-        ticks_in_compiler   = 0;
-        ticks_in_pics       = 0;
-        ticks_in_other      = 0;
-    }
-
-
-    std::int32_t total() const {
-        return ticks_in_code + ticks_in_primitives + ticks_in_compiler + ticks_in_pics + ticks_in_other;
-    }
-
-
-    void add( TickCounter *a ) {
-        ticks_in_code += a->ticks_in_code;
-        ticks_in_primitives += a->ticks_in_primitives;
-        ticks_in_compiler += a->ticks_in_compiler;
-        ticks_in_pics += a->ticks_in_pics;
-        ticks_in_other += a->ticks_in_other;
-    }
-
-
-    void update( TickPosition where ) {
-        switch ( where ) {
-            case TickPosition::in_code:
-                ticks_in_code++;
-                break;
-            case TickPosition::in_primitive:
-                ticks_in_primitives++;
-                break;
-            case TickPosition::in_compiler:
-                ticks_in_compiler++;
-                break;
-            case TickPosition::in_pic:
-                ticks_in_pics++;
-                break;
-            case TickPosition::other:
-                ticks_in_other++;
-                break;
-        }
-    }
-
-
-    void print_code( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
-        stream->print( "%5.1f%% %3d ", total() * 100.0 / total_ticks, ticks_in_code );
-    }
-
-
-    void print_other( ConsoleOutputStream *stream ) {
-        if ( ticks_in_primitives > 0 )
-            stream->print( "prim=%d ", ticks_in_primitives );
-        if ( ticks_in_compiler > 0 )
-            stream->print( "comp=%d ", ticks_in_compiler );
-        if ( ticks_in_pics > 0 )
-            stream->print( "pics=%d ", ticks_in_pics );
-        if ( ticks_in_other > 0 )
-            stream->print( "other=%d ", ticks_in_other );
-    }
-};
-
-class ProfiledNode : public CHeapAllocatedObject {
-
-private:
-    ProfiledNode *_next;
-
-public:
-    TickCounter ticks;
-
-public:
-    ProfiledNode() {
-        _next = nullptr;
-    }
-
-
-    virtual ~ProfiledNode() {
-        if ( _next )
-            delete _next;
-    }
-
-
-    void set_next( ProfiledNode *n ) {
-        _next = n;
-    }
-
-
-    ProfiledNode *next() {
-        return _next;
-    }
-
-
-    void update( TickPosition where ) {
-        ticks.update( where );
-    }
-
-
-    std::int32_t total_ticks() {
-        return ticks.total();
-    }
-
-
-    virtual bool is_interpreted() const {
-        return false;
-    }
-
-
-    virtual bool is_compiled() const {
-        return false;
-    }
-
-
-    virtual bool match( MethodOop m, KlassOop k ) {
-        return false;
-    }
-
-
-    virtual bool match( NativeMethod *nm ) {
-        return false;
-    }
-
-
-    static void print_title( ConsoleOutputStream *stream ) {
-        stream->fill_to( col2 );
-        stream->print( "Receiver" );
-        stream->fill_to( col3 );
-        stream->print( "Method" );
-        stream->fill_to( col4 );
-        stream->print_cr( "Leaf ticks" );
-    }
-
-
-    static void print_total( ConsoleOutputStream *stream, TickCounter *t, std::int32_t total, const char *msg ) {
-        t->print_code( stream, total );
-        stream->print( msg );
-        stream->fill_to( col4 );
-        t->print_other( stream );
-        stream->cr();
-    }
-
-
-    virtual MethodOop method() = 0;
-
-    virtual KlassOop receiver_klass() = 0;
-
-
-    void print_receiver_klass_on( ConsoleOutputStream *stream ) {
-        receiver_klass()->klass_part()->print_name_on( stream );
-    }
-
-
-    virtual void print_method_on( ConsoleOutputStream *stream ) {
-        MethodOop m = method();
-        if ( m->is_blockMethod() ) {
-            stream->print( "[] " );
-            m->enclosing_method_selector()->print_symbol_on( stream );
-        } else {
-            m->selector()->print_symbol_on( stream );
-        }
-
-        if ( ProfilerShowMethodHolder ) {
-            KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
-            if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
-                _console->print( ", in " );
-                method_holder->klass_part()->print_name_on( _console );
-            }
-        }
-    }
-
-
-    virtual void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
-        ticks.print_code( stream, total_ticks );
-        stream->fill_to( col2 );
-        print_receiver_klass_on( stream );
-        stream->fill_to( col3 );
-
-        print_method_on( stream );
-        stream->fill_to( col4 );
-
-        ticks.print_other( stream );
-        stream->cr();
-    }
-
-
-    // for sorting
-    static std::int32_t compare( ProfiledNode **a, ProfiledNode **b ) {
-        return ( *b )->total_ticks() - ( *a )->total_ticks();
-    }
-};
-
-class InterpretedNode : public ProfiledNode {
-private:
-    MethodOop _method;
-    KlassOop  _receiver_klass;
-public:
-    InterpretedNode( MethodOop method, KlassOop receiver_klass, TickPosition where ) :
-        ProfiledNode() {
-        _method         = method;
-        _receiver_klass = receiver_klass;
-        update( where );
-    }
-
-
-    bool is_interpreted() const {
-        return true;
-    }
-
-
-    bool match( MethodOop m, KlassOop k ) {
-        return _method == m and _receiver_klass == k;
-    }
-
-
-    MethodOop method() {
-        return _method;
-    }
-
-
-    KlassOop receiver_klass() {
-        return _receiver_klass;
-    }
-
-
-    static void print_title( ConsoleOutputStream *stream ) {
-        stream->print( "       std::int32_t" );
-        ProfiledNode::print_title( stream );
-    }
-
-
-    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
-        ProfiledNode::print( stream, total_ticks );
-    }
-};
-
-class CompiledNode : public ProfiledNode {
-
-private:
-    NativeMethod *_nativeMethod;
-
-public:
-    CompiledNode( NativeMethod *nm, TickPosition where ) :
-        ProfiledNode() {
-        _nativeMethod = nm;
-        update( where );
-    }
-
-
-    bool is_compiled() const {
-        return true;
-    }
-
-
-    bool match( NativeMethod *m ) {
-        return _nativeMethod == m;
-    }
-
-
-    MethodOop method() {
-        return _nativeMethod->method();
-    }
-
-
-    KlassOop receiver_klass() {
-        return _nativeMethod->receiver_klass();
-    }
-
-
-    static void print_title( ConsoleOutputStream *stream ) {
-        stream->print( "       Opt" );
-        ProfiledNode::print_title( stream );
-    }
-
-
-    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) {
-        ProfiledNode::print( stream, total_ticks );
-    }
-
-
-    void print_method_on( ConsoleOutputStream *stream ) {
-        if ( _nativeMethod->isUncommonRecompiled() ) {
-            stream->print( "Uncommom recompiled " );
-        }
-        ProfiledNode::print_method_on( stream );
-        if ( CompilerDebug ) {
-            stream->print( " 0x{0:x} ", _nativeMethod );
-        }
-    }
-};
-
 
 std::int32_t FlatProfiler::entry( std::int32_t value ) {
     return value % _tableSize;
@@ -586,7 +289,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
         total += array->at( index )->ticks.total();
     }
 
-    spdlog::info( "FlatProfiler %3.2f secs, ({} ticks)", secs, total );
+    spdlog::info( "FlatProfiler {:3.2f} secs, ({} ticks)", secs, total );
 
     // print interpreted methods
     TickCounter interpreted_ticks;
@@ -673,4 +376,168 @@ void fprofiler_init() {
     spdlog::info( "%system-init:  fprofiler_init" );
 
     FlatProfiler::allocate_table();
+}
+
+
+void ProfiledNode::print( ConsoleOutputStream *stream, std::int32_t total_ticks ) const {
+
+    MethodOop m = method();
+    if ( m->is_blockMethod() ) {
+        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->enclosing_method_selector()->print_value_string() );
+    } else {
+        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->selector()->print_value_string() );
+    }
+//            m->selector()->print_symbol_on( stream );
+//
+//        if ( ProfilerShowMethodHolder ) {
+//            KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
+//            if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
+//                spdlog::info( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), method_holder->klass_part()->name() );
+//                method_holder->klass_part()->print_name_on( _console );
+//            }
+//        }
+
+
+//        spdlog::info( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->enclosing_method_selector()->print_value_string() );
+//        ticks.print_code( stream, total_ticks );
+//        stream->fill_to( col2 );
+//        print_receiver_klass_on( stream );
+//        stream->fill_to( col3 );
+//
+//        print_method_on( stream );
+//        stream->fill_to( col4 );
+//
+//        ticks.print_other( stream );
+//        stream->cr();
+}
+
+
+std::int32_t ProfiledNode::compare( ProfiledNode **a, ProfiledNode **b ) {
+    return ( *b )->total_ticks() - ( *a )->total_ticks();
+}
+
+
+void ProfiledNode::print_method_on( ConsoleOutputStream *stream ) const {
+//        MethodOop m = method();
+//        if ( m->is_blockMethod() ) {
+//            stream->print( "[] " );
+//            m->enclosing_method_selector()->print_symbol_on( stream );
+//        } else {
+//            m->selector()->print_symbol_on( stream );
+//        }
+//
+//        if ( ProfilerShowMethodHolder ) {
+//            KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
+//            if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
+//                _console->print( ", in " );
+//                method_holder->klass_part()->print_name_on( _console );
+//            }
+//        }
+}
+
+
+void ProfiledNode::print_total( ConsoleOutputStream *stream, TickCounter *t, std::int32_t total, const char *msg ) {
+//    t->print_code( stream, total );
+//    stream->print( msg );
+//    stream->fill_to( col4 );
+//    t->print_other( stream );
+    spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", "TOTALS", "", "", "" );
+}
+
+
+void ProfiledNode::print_title( ConsoleOutputStream *stream ) {
+//        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", "Receiver", "Method", "Leaf ticks", "extra1" );
+}
+
+
+void ProfiledNode::print_receiver_klass_on( ConsoleOutputStream *stream ) const {
+    receiver_klass()->klass_part()->print_name_on( stream );
+}
+
+
+ProfiledNode::ProfiledNode() {
+    _next = nullptr;
+}
+
+
+ProfiledNode::~ProfiledNode() {
+    if ( _next ) {
+        delete _next;
+    }
+}
+
+
+void ProfiledNode::set_next( ProfiledNode *n ) {
+    _next = n;
+}
+
+
+ProfiledNode *ProfiledNode::next() const {
+    return _next;
+}
+
+
+void ProfiledNode::update( TickPosition where ) {
+    ticks.update( where );
+}
+
+
+TickCounter::TickCounter() {
+    ticks_in_code       = 0;
+    ticks_in_primitives = 0;
+    ticks_in_compiler   = 0;
+    ticks_in_pics       = 0;
+    ticks_in_other      = 0;
+}
+
+
+void TickCounter::update( TickPosition where ) {
+    switch ( where ) {
+        case TickPosition::in_code:
+            ticks_in_code++;
+            break;
+        case TickPosition::in_primitive:
+            ticks_in_primitives++;
+            break;
+        case TickPosition::in_compiler:
+            ticks_in_compiler++;
+            break;
+        case TickPosition::in_pic:
+            ticks_in_pics++;
+            break;
+        case TickPosition::other:
+            ticks_in_other++;
+            break;
+    }
+}
+
+
+void TickCounter::print_other( ConsoleOutputStream *stream ) const {
+    if ( ticks_in_primitives > 0 )
+        stream->print( "prim=%d ", ticks_in_primitives );
+    if ( ticks_in_compiler > 0 )
+        stream->print( "comp=%d ", ticks_in_compiler );
+    if ( ticks_in_pics > 0 )
+        stream->print( "pics=%d ", ticks_in_pics );
+    if ( ticks_in_other > 0 )
+        stream->print( "other=%d ", ticks_in_other );
+}
+
+
+void TickCounter::print_code( ConsoleOutputStream *stream, std::int32_t total_ticks ) const {
+    stream->print( "%5.1f%% %3d ", total() * 100.0 / total_ticks, ticks_in_code );
+}
+
+
+void TickCounter::add( TickCounter *a ) {
+    ticks_in_code += a->ticks_in_code;
+    ticks_in_primitives += a->ticks_in_primitives;
+    ticks_in_compiler += a->ticks_in_compiler;
+    ticks_in_pics += a->ticks_in_pics;
+    ticks_in_other += a->ticks_in_other;
+}
+
+
+std::int32_t TickCounter::total() const {
+    return ticks_in_code + ticks_in_primitives + ticks_in_compiler + ticks_in_pics + ticks_in_other;
 }

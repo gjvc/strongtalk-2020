@@ -102,7 +102,7 @@ void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count ) {
         std::int32_t k = shift_count / logB;
         std::int32_t l = shift_count % logB;
         std::int32_t h = logB - l;
-        
+
         while ( i < length - k - 1 ) {
             d[ i ] = ( d[ i + k + 1 ] << h ) | ( d[ i + k ] >> l );
             i++;

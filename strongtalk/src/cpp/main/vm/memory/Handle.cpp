@@ -24,7 +24,8 @@ void BaseHandle::push() {
     if ( _next ) {
         if ( _log ) {
             char msg[200];
-            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%0#x -> 0x%0#x", _label, _next->_label, this, _next );
+//            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%0#x -> 0x%0#x", _label, _next->_label, this, _next );
+            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%0#x -> 0x%0#x", _label, _next->_label, reinterpret_cast<unsigned int>(this), reinterpret_cast<unsigned int>(_next) );
             st_assert( (const char *) this < (const char *) _next, msg );
         }
         _next->_prev = this;

@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -9,13 +10,7 @@
 #include "vm/runtime/Timer.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
-
-
-class ProfiledNode;
-
-class FlatProfilerTask;
-
-class NativeMethod;
+#include "vm/code/NativeMethod.hpp"
 
 
 enum class TickPosition {
@@ -26,9 +21,104 @@ enum class TickPosition {
     other           //
 };
 
-class Frame;
 
-class DeltaProcess;
+class TickCounter {
+public:
+    std::int32_t ticks_in_code;
+    std::int32_t ticks_in_primitives;
+    std::int32_t ticks_in_compiler;
+    std::int32_t ticks_in_pics;
+    std::int32_t ticks_in_other;
+
+
+    TickCounter();
+
+
+    std::int32_t total() const;
+
+
+    void add( TickCounter *a );
+
+
+    void update( TickPosition where );
+
+
+    void print_code( ConsoleOutputStream *stream, std::int32_t total_ticks ) const;
+
+
+    void print_other( ConsoleOutputStream *stream ) const;
+};
+
+
+class ProfiledNode : public CHeapAllocatedObject {
+
+private:
+    ProfiledNode *_next;
+
+public:
+    TickCounter ticks;
+
+public:
+    ProfiledNode();
+
+
+    virtual ~ProfiledNode();
+
+
+    void set_next( ProfiledNode *n );
+
+
+    ProfiledNode *next() const;
+
+
+    void update( TickPosition where );
+
+
+    std::int32_t total_ticks() const {
+        return ticks.total();
+    }
+
+
+    virtual bool is_interpreted() const {
+        return false;
+    }
+
+
+    virtual bool is_compiled() const {
+        return false;
+    }
+
+
+    virtual bool match( MethodOop m, KlassOop k ) const {
+        return false;
+    }
+
+
+    virtual bool match( NativeMethod *nm ) const {
+        return false;
+    }
+
+
+    void print_receiver_klass_on( ConsoleOutputStream *stream ) const;
+
+    virtual MethodOop method() const = 0;
+
+    virtual KlassOop receiver_klass() const = 0;
+
+    virtual void print_method_on( ConsoleOutputStream *stream ) const;
+
+    virtual void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) const;
+
+    static std::int32_t compare( ProfiledNode **a, ProfiledNode **b );
+
+    static void print_title( ConsoleOutputStream *stream );
+
+    static void print_total( ConsoleOutputStream *stream, TickCounter *t, std::int32_t total, const char *msg );
+
+};
+
+
+class FlatProfilerTask;
 
 class FlatProfiler : AllStatic {
 
@@ -83,4 +173,107 @@ public:
     static DeltaProcess *process() {
         return _deltaProcess;
     }
+};
+
+
+class InterpretedNode : public ProfiledNode {
+
+private:
+    MethodOop _method;
+    KlassOop  _receiver_klass;
+
+public:
+    InterpretedNode( MethodOop method, KlassOop receiver_klass, TickPosition where ) :
+        ProfiledNode() {
+        _method         = method;
+        _receiver_klass = receiver_klass;
+        update( where );
+    }
+
+
+    bool is_interpreted() const {
+        return true;
+    }
+
+
+    bool match( MethodOop m, KlassOop k ) const {
+        return _method == m and _receiver_klass == k;
+    }
+
+
+    MethodOop method() const {
+        return _method;
+    }
+
+
+    KlassOop receiver_klass() const {
+        return _receiver_klass;
+    }
+
+
+    static void print_title( ConsoleOutputStream *stream ) {
+        ProfiledNode::print_title( stream );
+    }
+
+
+    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) const {
+        ProfiledNode::print( stream, total_ticks );
+    }
+};
+
+
+class CompiledNode : public ProfiledNode {
+
+private:
+    NativeMethod *_nativeMethod;
+
+public:
+    CompiledNode( NativeMethod *nm, TickPosition where ) :
+        ProfiledNode() {
+        _nativeMethod = nm;
+        update( where );
+    }
+
+
+    bool is_compiled() const {
+        return true;
+    }
+
+
+    bool match( NativeMethod *m ) const {
+        return _nativeMethod == m;
+    }
+
+
+    MethodOop method() const {
+        return _nativeMethod->method();
+    }
+
+
+    KlassOop receiver_klass() const {
+        return _nativeMethod->receiver_klass();
+    }
+
+
+    static void print_title( ConsoleOutputStream *stream ) {
+        stream->print( "       Opt" );
+        ProfiledNode::print_title( stream );
+    }
+
+
+    void print( ConsoleOutputStream *stream, std::int32_t total_ticks ) const {
+        ProfiledNode::print( stream, total_ticks );
+    }
+
+
+    void print_method_on( ConsoleOutputStream *stream ) const {
+        if ( _nativeMethod->isUncommonRecompiled() ) {
+            stream->print( "Uncommom recompiled " );
+        }
+        ProfiledNode::print_method_on( stream );
+        if ( CompilerDebug ) {
+            stream->print( " 0x{0:x} ", _nativeMethod );
+        }
+    }
+
 };

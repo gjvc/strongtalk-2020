@@ -57,26 +57,6 @@ void error_breakpoint();                        // called at every error or fata
 
 // -----------------------------------------------------------------------------
 
-//void inline st_fatal( const char *m ) {
-//    report_fatal( __FILE__, __LINE__, m );
-//    error_breakpoint();
-//}
-
-
-#define st_fatal( m )                                      { report_fatal( __FILE__, __LINE__, m                                     ); error_breakpoint(); }
-#define st_fatal1( m, x1 )                                 { report_fatal( __FILE__, __LINE__, m, x1                                 ); error_breakpoint(); }
-#define st_fatal2( m, x1, x2 )                             { report_fatal( __FILE__, __LINE__, m, x1, x2                             ); error_breakpoint(); }
-#define st_fatal3( m, x1, x2, x3 )                         { report_fatal( __FILE__, __LINE__, m, x1, x2, x3                         ); error_breakpoint(); }
-#define st_fatal4( m, x1, x2, x3, x4 )                     { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4                     ); error_breakpoint(); }
-#define st_fatal5( m, x1, x2, x3, x4, x5 )                 { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4, x5                 ); error_breakpoint(); }
-#define st_fatal6( m, x1, x2, x3, x4, x5, x6 )             { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4, x5, x6             ); error_breakpoint(); }
-#define st_fatal7( m, x1, x2, x3, x4, x5, x6, x7 )         { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4, x5, x6, x7         ); error_breakpoint(); }
-#define st_fatal8( m, x1, x2, x3, x4, x5, x6, x7, x8 )     { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4, x5, x6, x7, x8     ); error_breakpoint(); }
-#define st_fatal9( m, x1, x2, x3, x4, x5, x6, x7, x8, x9 ) { report_fatal( __FILE__, __LINE__, m, x1, x2, x3, x4, x5, x6, x7, x8, x9 ); error_breakpoint(); }
-
-
-// -----------------------------------------------------------------------------
-
 void report_assertion_failure( const char *code_str, const char *file_name, std::int32_t line_no, const char *message );
 
 void report_fatal( const char *file_name, std::int32_t line_no, const char *format, ... );
@@ -92,6 +72,19 @@ void report_unimplemented( const char *file_name, std::int32_t line_no );
 void report_vm_state();
 
 void report_error( const char *title, const char *format, ... );
+
+
+// -----------------------------------------------------------------------------
+
+void inline st_fatal_inline( const char *m ) {
+    report_fatal( __FILE__, __LINE__, m );
+    error_breakpoint();
+}
+
+
+#define st_fatal( m )           { report_fatal( __FILE__, __LINE__, m         ); error_breakpoint(); }
+#define st_fatal1( m, x1 )      { report_fatal( __FILE__, __LINE__, m, x1     ); error_breakpoint(); }
+#define st_fatal2( m, x1, x2 )  { report_fatal( __FILE__, __LINE__, m, x1, x2 ); error_breakpoint(); }
 
 
 // -----------------------------------------------------------------------------

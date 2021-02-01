@@ -17,6 +17,7 @@ private:
 
     }
 
+
     SnapshotDescriptor *_snapshotDescriptor;
 
 public:
@@ -30,7 +31,7 @@ class WriteClosure : public OopClosure {
 
 private:
     void do_oop( Oop *o ) {
-        fprintf( _snapshotDescriptor->_file, "0x%lx\n", o );
+        fprintf( _snapshotDescriptor->_file, "%#X\n", reinterpret_cast<unsigned int>(o) );
     }
 
 

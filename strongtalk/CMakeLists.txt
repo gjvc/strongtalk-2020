@@ -34,6 +34,8 @@ set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-
 set ( cc-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} ) # i686-w64-mingw32-gcc-posix
 set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} ) # i686-w64-mingw32-g++-posix
 
+set ( build-type debug )
+
 
 # cmake -----------------------------------------------------------------------
 
@@ -56,9 +58,12 @@ set ( cpp-main-dir ${cpp-src-dir}/main )
 set ( cpp-test-dir ${cpp-src-dir}/test )
 
 
-# spdlog ----------------------------------------------------------------------
+# object directories ----------------------------------------------------------
 
-set( spdlog-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/debug/ext/spdlog/ )
+set( fmt-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/fmt/ )
+set( googletest-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/googletest/ )
+set( nasm-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/gnu-make/${build-type}/ext/nasm/ )
+set( spdlog-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/spdlog/ )
 
 
 # cmake -----------------------------------------------------------------------
@@ -115,7 +120,10 @@ message ( STATUS "cpp-auto-dir      [${cpp-auto-dir}]" )
 message ( STATUS "cpp-main-dir      [${cpp-main-dir}]" )
 message ( STATUS "cpp-test-dir      [${cpp-test-dir}]" )
 message ( STATUS "" )
-message ( STATUS "spdlog-object-dir [${spdlog-object-dir}]" )
+message ( STATUS "spdlog-object-dir     [${spdlog-object-dir}]" )
+message ( STATUS "nasm-object-dir       [${nasm-object-dir}]" )
+message ( STATUS "fmt-object-dir        [${fmt-object-dir}]" )
+message ( STATUS "googletest-object-dir [${googletest-object-dir}]" )
 message ( STATUS "" )
 message ( STATUS "" )
 
@@ -169,4 +177,7 @@ add_library ( st20-test-library-static STATIC $<TARGET_OBJECTS:st20-test-library
 
 file ( GLOB_RECURSE st20-test-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/main/*.cpp" )
 add_executable ( st20-test-binary ${st20-test-binary-sources} )
-target_link_libraries ( st20-test-binary PUBLIC st20-test-library-static st20-main-library-static spdlog )
+target_link_directories ( st20-test-binary PUBLIC ${spdlog-object-dir} )
+target_link_directories ( st20-test-binary PUBLIC ${googletest-object-dir}/lib )
+target_link_libraries ( st20-test-binary PUBLIC st20-test-library-static st20-main-library-static spdlog gtest )
+

@@ -108,7 +108,7 @@ void print_credits() {
 
     std::int32_t mask = 0xa729b65d;
 
-    for ( std::int32_t i = 0; i < sizeof( credits ) - 1; i++ ) {
+    for ( std::size_t i = 0; i < sizeof( credits ) - 1; i++ ) {
         fputc( ( credits[ i ] ^ mask ) & 0x7f, stdout );
         mask = ( mask << 1 ) | ( ( mask >> 31 ) & 1 ); // rotate mask
     }
