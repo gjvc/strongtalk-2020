@@ -53,6 +53,8 @@ AUTHORS
 
     Stephen L. Rees
 
+        made the first attempt at porting to Linux.
+
 
     George Cox
 
@@ -63,3 +65,4 @@ AUTHORS
 SEE ALSO
 
     http://strongtalk.org/history.html
+

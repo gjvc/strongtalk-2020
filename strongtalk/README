@@ -6,7 +6,7 @@ INDEX
 
 QUICK START
 
-    make init
+    make ext
     make strongtalk-exe
     make strongtalk-exe-run
 
