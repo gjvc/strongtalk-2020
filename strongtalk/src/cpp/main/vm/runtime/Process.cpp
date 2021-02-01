@@ -26,7 +26,6 @@
 #include "vm/oops/ContextOopDescriptor.hpp"
 
 
-
 std::int32_t CurrentHash = 23;
 
 
@@ -68,7 +67,7 @@ extern "C" const char *active_stack_limit() {
     return (const char *) &DeltaProcess::_active_stack_limit;
 }
 
-Process       *Process::_current_process           = nullptr;
+Process *Process::_current_process = nullptr;
 
 
 void handle_error( ProcessState error ) {
@@ -100,34 +99,55 @@ extern "C" void suspend_on_error( InterpreterErrorConstants error_code ) {
     switch ( error_code ) {
         case InterpreterErrorConstants::primitive_lookup_failed:
             handle_error( ProcessState::primitive_lookup_error );
+            break;
         case InterpreterErrorConstants::boolean_expected:
             handle_error( ProcessState::boolean_error );
+            break;
         case InterpreterErrorConstants::nonlocal_return_error:
             handle_error( ProcessState::NonLocalReturn_error );
+            break;
         case InterpreterErrorConstants::float_expected:
             handle_error( ProcessState::float_error );
+            break;
+        default:
+            nullptr;
+            break;
+
     }
+
 
     // Interpreter errors
     switch ( error_code ) {
         case InterpreterErrorConstants::halted:
             handle_interpreter_error( "executed halt bytecode" );
+            break;
         case InterpreterErrorConstants::illegal_code:
             handle_interpreter_error( "illegal code" );
+            break;
         case InterpreterErrorConstants::not_implemented:
             handle_interpreter_error( "not implemented" );
+            break;
         case InterpreterErrorConstants::stack_misaligned:
             handle_interpreter_error( "stack misaligned" );
+            break;
         case InterpreterErrorConstants::ebx_wrong:
             handle_interpreter_error( "ebx wrong" );
+            break;
         case InterpreterErrorConstants::obj_wrong:
             handle_interpreter_error( "obj wrong" );
+            break;
         case InterpreterErrorConstants::nlr_offset_wrong:
             handle_interpreter_error( "NonLocalReturn offset wrong" );
+            break;
         case InterpreterErrorConstants::last_Delta_fp_wrong:
             handle_interpreter_error( "last Delta frame wrong" );
+            break;
         case InterpreterErrorConstants::primitive_result_wrong:
             handle_interpreter_error( "ilast C entry frame wrong" );
+            break;
+        default:
+            nullptr;
+            break;
     }
     ShouldNotReachHere();
 }
@@ -173,8 +193,12 @@ void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, cons
 
 
 void trace_stack( std::int32_t thread_id ) {
+
     ResourceMark resourceMark;
     Process      *process = Processes::find_from_thread_id( thread_id );
-    if ( process->is_deltaProcess() )
+
+    if ( process->is_deltaProcess() ) {
         ( (DeltaProcess *) process )->trace_stack();
+    }
+
 }

@@ -441,14 +441,14 @@ public:
 
     // return a list of pseudoRegisters tested and, for each pseudoRegister, a list of its types
     virtual void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
-        (void) r; // unused
-        (void) klasses; // unused
-        (void) n; // unused
+        static_cast<void>( r ); // unused
+        static_cast<void>( klasses ); // unused
+        static_cast<void>( n ); // unused
     } // assert that the klass of r (used by the receiver) is oneof(klasses)
 
     virtual void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
-        (void) r; // unused
-        (void) n; // unused
+        static_cast<void>( r ); // unused
+        static_cast<void>( n ); // unused
     }// assert that r (used by the reciver) is within array bounds
 
     virtual void print_short();
@@ -3023,8 +3023,8 @@ public:
 
     // void eliminate(BasicBlock* bb, PseudoRegister* r, bool removing = false, bool cp = false);
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
-        (void) use_count; // unused
-        (void) def_count; // unused
+        static_cast<void>( use_count ); // unused
+        static_cast<void>( def_count ); // unused
     };
 
     Node *likelySuccessor() const;

@@ -2260,7 +2260,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                     guarantee( _lowerBound->cpseudoRegister() == _lowerBound, "should use cpseudoRegister()" );
                 } else {
                     const Register t = movePseudoRegisterToReg( _lowerBound ? _lowerBound : _loopVar, tempseudoRegister );
-                    (void) t; // unused
+                    static_cast<void>( t ); // unused
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
                     theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }

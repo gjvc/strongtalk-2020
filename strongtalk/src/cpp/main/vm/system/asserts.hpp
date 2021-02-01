@@ -94,3 +94,8 @@ void inline st_fatal_inline( const char *m ) {
 #define ShouldNotReachHere()     { report_should_not_reach_here  ( __FILE__, __LINE__ ); error_breakpoint(); }
 #define SubclassResponsibility() { report_subclass_responsibility( __FILE__, __LINE__ ); error_breakpoint(); }
 #define Unimplemented()          { report_unimplemented          ( __FILE__, __LINE__ ); error_breakpoint(); }
+
+inline void ShouldNotCallThis_inline() {
+
+    error_breakpoint();
+}

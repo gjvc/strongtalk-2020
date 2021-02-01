@@ -54,11 +54,11 @@ void EventLog::printPartial( std::int32_t n ) {
         n = EventLogLength - 1;
     std::int32_t i = 0;
     for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) )
-        (void) nullptr;
+        static_cast<void>( nullptr );
 
     // skip empty entries
     for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) )
-        (void) nullptr;
+        static_cast<void>( nullptr );
 
     std::int32_t indent = 0;
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {

@@ -170,6 +170,7 @@ std::int32_t InterpretedInlineCache::nof_arguments() const {
         }
         case ByteCodes::ArgumentSpec::args_only:
             return selector()->number_of_arguments();
+        default: nullptr;
     }
     ShouldNotReachHere();
     return 0;

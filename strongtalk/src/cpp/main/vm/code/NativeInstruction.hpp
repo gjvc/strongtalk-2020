@@ -30,12 +30,12 @@ protected:
 
 
     std::int32_t long_at( std::int32_t offset ) const {
-        return *(std::int32_t *) addr_at( offset );
+        return reinterpret_cast<std::int32_t>(*reinterpret_cast<Oop *>( addr_at( offset ) ));
     }
 
 
     Oop oop_at( std::int32_t offset ) const {
-        return *(Oop *) addr_at( offset );
+        return *reinterpret_cast<Oop *>( addr_at( offset ) );
     }
 
 

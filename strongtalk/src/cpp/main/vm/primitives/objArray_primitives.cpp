@@ -55,7 +55,7 @@ PRIM_DECL_3( objArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop 
     // instance variables
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     // %optimized 'obj->set_signed_length(size)'
-    Oop *base = (Oop *) obj->addr();
+    Oop *base = reinterpret_cast<Oop*>(  obj->addr() );
     base[ ni_size ] = argument;
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );
     return obj;
@@ -81,7 +81,7 @@ PRIM_DECL_2( objArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     // instance variables
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), ni_size );
     // %optimized 'obj->set_signed_length(size)'
-    Oop *base = (Oop *) obj->addr();
+    Oop *base = reinterpret_cast<Oop*>(  obj->addr() );
     base[ ni_size ] = argument;
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );
     return obj;

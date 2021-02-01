@@ -95,6 +95,8 @@ std::uint8_t *CodeIterator::next_hp() const {
             return align( _current + 1 ) + OOP_SIZE + OOP_SIZE + OOP_SIZE + 1;
         case ByteCodes::Format::BBS:
             return _current + 2 + ( _current[ 1 ] == 0 ? 256 : _current[ 1 ] );
+        default:
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;
@@ -184,6 +186,7 @@ Oop *CodeIterator::block_method_addr() {
         case ByteCodes::Code::push_new_closure_tos_n:      // fall through
         case ByteCodes::Code::push_new_closure_context_n:
             return aligned_oop( 2 );
+        default: return nullptr;
     }
     return nullptr;
 }
@@ -201,6 +204,7 @@ MethodOop CodeIterator::block_method() {
         case ByteCodes::Code::push_new_closure_tos_n:      // fall through
         case ByteCodes::Code::push_new_closure_context_n:
             return MethodOop( oop_at( 2 ) );
+        default: return nullptr;
     }
     return nullptr;
 }

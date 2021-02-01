@@ -78,8 +78,8 @@ const char *Klass::name_from_format( Format format ) {
             return "Oops";
         case Format::proxy_klass:
             return "ExternalProxy";
-            // case Format::process_klass:
-            // return "Process";
+        case Format::process_klass: // was commented
+            return "Process";       // was commented
         case Format::objArray_klass:
             return "IndexedInstanceVariables";
         case Format::byteArray_klass:
@@ -88,6 +88,8 @@ const char *Klass::name_from_format( Format format ) {
             return "IndexedDoubleByteInstanceVariables";
         case Format::weakArray_klass:
             return "IndexedNextOfKinInstanceVariables";
+        default:
+            return "Special";
     }
     return "Special";
 }

@@ -54,6 +54,7 @@ bool patch_uncommon_call( Frame *f ) {
 // Tells whether the frame is a candidate for deoptimization by
 // checking if the frame uses contextOops with forward pointers.
 static bool has_invalid_context( Frame *f ) {
+
     // Return false if we're not in compiled code
     if ( not f->is_compiled_frame() ) {
         return false;
@@ -66,13 +67,18 @@ static bool has_invalid_context( Frame *f ) {
         ContextOop con = vf->compiled_context();
 
         // spdlog::info("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
-        if ( con )
+        if ( con ) {
             con->print();
+        }
 
-        if ( con and con->unoptimized_context() )
+        if ( con and con->unoptimized_context() ) {
             return true;
-        if ( vf->is_top() )
+        }
+
+        if ( vf->is_top() ) {
             break;
+        }
+
         vf = (CompiledVirtualFrame *) vf->sender();
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
     }

@@ -592,7 +592,7 @@ void Compiler::computeBlockInfo() {
             }
 
             // TO DO: check if context is needed for NonLocalReturns (noUplevelAccesses alone does not allow elimination)
-            (void) noUplevelAccesses;
+            static_cast<void>( noUplevelAccesses );
 //            if ( noUplevelAccesses or contextPR->isSinglyUsed() ) {
             if ( contextPR->isSinglyUsed() ) {
                 // can eliminate context -- no uplevel-accessed vars (single use is context initializer)

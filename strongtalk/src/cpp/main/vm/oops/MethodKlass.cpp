@@ -80,6 +80,7 @@ void MethodKlass::oop_oop_iterate( Oop obj, OopClosure *blk ) {
             case ByteCodes::Format::BLO:
                 blk->do_oop( c.aligned_oop( 1 ) + 1 );
                 break; // BOO, BOOLB, BLO
+            default: nullptr;
         }
     } while ( c.advance() );
 
@@ -265,6 +266,8 @@ void MethodKlass::oop_follow_contents( Oop obj ) {
             case ByteCodes::Format::BLO:
                 MarkSweep::reverse_and_push( c.aligned_oop( 1 ) + 1 );
                 break; // BOO, BOOLB, BLO
+
+            default: nullptr;
         }
     } while ( c.advance() );
 

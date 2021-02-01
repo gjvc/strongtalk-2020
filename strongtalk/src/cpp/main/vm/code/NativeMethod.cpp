@@ -723,6 +723,7 @@ void NativeMethod::verify_expression_stacks() {
                     verify_expression_stacks_at( iter.primIC()->begin_addr() );
                 }
                 break;
+            default: nullptr;
         }
     }
 }
@@ -964,6 +965,7 @@ void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
                 break;
             case RelocationInformation::RelocationType::uncommon_type:
                 break;
+            default: nullptr;
         }
     }
 }

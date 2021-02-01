@@ -506,6 +506,8 @@ static BranchOpCode Not( BranchOpCode cond ) {
             return BranchOpCode::VCBranchOp;
         case BranchOpCode::VCBranchOp:
             return BranchOpCode::VSBranchOp;
+        default:
+            return BranchOpCode::EQBranchOp;
     }
     ShouldNotReachHere();
     return BranchOpCode::EQBranchOp;

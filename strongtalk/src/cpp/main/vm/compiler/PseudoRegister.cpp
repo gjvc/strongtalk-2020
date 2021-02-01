@@ -308,7 +308,7 @@ void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, Definiti
     SListElem<DefinitionUsage *> *prev = nullptr;
 
     for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
-        (void) 0;
+        static_cast<void>( 0 );
     }
     l->insertAfter( prev, el );
 }

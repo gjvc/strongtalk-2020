@@ -257,16 +257,20 @@ bool SymbolTableLink::verify( std::int32_t i ) {
     bool flag = true;
 
     for ( SymbolTableLink *l = this; l; l = l->next ) {
+
         if ( not l->symbol->is_symbol() ) {
             error( "entry 0x{0:x} in symbol table isn't a symbol", l->symbol );
             flag = false;
+
         } else if ( hash( reinterpret_cast<const char *>( l->symbol->bytes() ), l->symbol->length() ) % symbol_table_size not_eq i ) {
             error( "entry 0x{0:x} in symbol table has wrong hash value", l->symbol );
             flag = false;
+
         } else if ( not l->symbol->is_old() ) {
             error( "entry 0x{0:x} in symbol table isn't tenured", l->symbol );
             flag = false;
         }
+
     }
 
     return flag;

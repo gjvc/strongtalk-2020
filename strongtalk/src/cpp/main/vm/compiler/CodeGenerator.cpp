@@ -2153,6 +2153,7 @@ Assembler::Condition CodeGenerator::mapToCC( BranchOpCode op ) {
             return Assembler::Condition::overflow;
         case BranchOpCode::VCBranchOp:
             return Assembler::Condition::noOverflow;
+        default: nullptr;
     }
     ShouldNotReachHere();
     return Assembler::Condition::zero;

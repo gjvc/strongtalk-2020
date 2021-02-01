@@ -804,6 +804,7 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
                     f( (Oop *) it.methodOop_addr() );  // fall through
                 case PolymorphicInlineCacheIterator::at_nativeMethod:
                     f( (Oop *) it.klass_addr() );
+                default: nullptr;
             }
             it.advance();
         }

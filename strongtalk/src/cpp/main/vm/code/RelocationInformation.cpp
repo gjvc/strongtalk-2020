@@ -93,6 +93,7 @@ bool RelocationInformationIterator::is_position_dependent() const {
         case RelocationInformation::RelocationType::internal_word_type:
         case RelocationInformation::RelocationType::dll_type:
             return true;
+        default: nullptr;
     }
     return false;
 }

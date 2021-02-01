@@ -757,39 +757,48 @@ void Assembler::print( const Label &L ) {
 
 
 void Assembler::bind_to( Label &L, std::int32_t pos ) {
-    bool tellRobert = false;
+    bool         tellRobert = false;
+    std::int32_t imm32      = 0;
 
     st_assert( 0 <= pos and pos <= offset(), "must have a valid binding position" );
     while ( L.is_unbound() ) {
+
         Displacement disp      = Displacement( long_at( L.pos() ) );
         std::int32_t fixup_pos = L.pos();
-        std::int32_t imm32     = 0;
+
         switch ( disp.type() ) {
             case Displacement::Type::call: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE8, "call expected" );
                 imm32 = pos - ( fixup_pos + sizeof( std::int32_t ) );
-            }
                 break;
+            }
+
             case Displacement::Type::absolute_jump: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xE9, "jmp expected" );
-                imm32          = pos - ( fixup_pos + sizeof( std::int32_t ) );
-                if ( imm32 == 0 and EliminateJumpsToJumps )
+
+                imm32 = pos - ( fixup_pos + sizeof( std::int32_t ) );
+                if ( imm32 == 0 and EliminateJumpsToJumps ) {
                     tellRobert = true;
-            }
+                }
+
                 break;
+            }
+
             case Displacement::Type::conditional_jump: {
                 st_assert( byte_at( fixup_pos - 2 ) == 0x0F, "jcc expected" );
                 st_assert( byte_at( fixup_pos - 1 ) == ( 0x80 | disp.info() ), "jcc expected" );
                 imm32 = pos - ( fixup_pos + sizeof( std::int32_t ) );
-            }
                 break;
+            }
+
             case Displacement::Type::ic_info: {
                 st_assert( byte_at( fixup_pos - 1 ) == 0xA9, "test eax expected" );
                 std::int32_t offs = pos - ( fixup_pos - InlineCacheInfo::info_offset );
                 st_assert( ( ( offs << InlineCacheInfo::number_of_flags ) >> InlineCacheInfo::number_of_flags ) == offs, "NonLocalReturn offset out of bounds" );
                 imm32 = ( offs << InlineCacheInfo::number_of_flags ) | disp.info();
-            }
                 break;
+            }
+
             default: ShouldNotReachHere();
         }
         long_at_put( fixup_pos, imm32 );
@@ -798,9 +807,10 @@ void Assembler::bind_to( Label &L, std::int32_t pos ) {
     L.bind_to( pos );
 
     if ( tellRobert ) {
-        //spdlog::warn("jmp to next has not been eliminated - tell Robert, please");
+        spdlog::warn( "jmp to next has not been eliminated - tell Robert, please" );
         code()->decode();
     }
+
 }
 
 
@@ -951,7 +961,7 @@ void Assembler::jmp( Label &L ) {
         if ( EliminateJumpsToJumps and _unbound_label.is_unbound() and _binding_pos == offset() ) {
             // current position is target of jumps
             if ( PrintEliminatedJumps ) {
-                spdlog::info( "eliminated jumps/calls to {}", _binding_pos );
+                spdlog::info( "eliminated jumps/calls to {} from ", _binding_pos );
                 _console->print( "from " );
                 print( _unbound_label );
             }

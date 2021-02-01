@@ -82,6 +82,8 @@ memConverter *ClassChange::create_converter_for( KlassOopDescriptor *old_class, 
             return new processConverter( old_class, new_class );
         case Klass::Format::proxy_klass:
             return new proxyConverter( old_class, new_class );
+        default:
+            return nullptr;
     }
     st_fatal( "cannot create converter for type" );
     return nullptr;
@@ -124,9 +126,7 @@ void ClassChange::update_class_vars() {
 void ClassChange::update_methods( std::int32_t instance_side ) {
 
     if ( TraceApplyChange ) {
-        _console->print( " updating %s-side methods for: ", instance_side ? "instance" : "class" );
-        old_klass()->print_value();
-        _console->cr();
+        spdlog::info( " updating {}-side methods for [{}] ", instance_side ? "instance" : "class", old_klass()->print_value_string() );
     }
 
     if ( instance_side ) {
@@ -142,16 +142,22 @@ void ClassChange::update_methods( std::int32_t instance_side ) {
 void ClassChange::update_class( std::int32_t class_vars_changed, std::int32_t instance_methods_changed, std::int32_t class_methods_changed ) {
     // The format has not changed which means we can patch the existing classes and mixins
     // We only have to change classes using the old_mixin
-    if ( old_mixin() == new_mixin() )
+    if ( old_mixin() == new_mixin() ) {
         return;
+    }
 
     // This is an invocation
-    if ( class_vars_changed )
+    if ( class_vars_changed ) {
         update_class_vars();
-    if ( instance_methods_changed )
+    }
+
+    if ( instance_methods_changed ) {
         update_methods( true );
-    if ( class_methods_changed )
+    }
+
+    if ( class_methods_changed ) {
         update_methods( false );
+    }
 
     if ( old_klass()->klass_part()->superKlass() not_eq new_super() ) {
         old_klass()->klass_part()->set_superKlass( new_super() );

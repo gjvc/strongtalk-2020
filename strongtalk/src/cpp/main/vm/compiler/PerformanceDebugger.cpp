@@ -36,6 +36,7 @@ void PerformanceDebugger::stop_report() {
         if ( strcmp( _reports->at( i ), report ) == 0 )
             return;  // already printed identical msg
     }
+
     _console->print( report );
     _reports->append( report );
     _stringStream = nullptr;
@@ -54,7 +55,10 @@ void PerformanceDebugger::report_compile() {
 // see PerformanceDebugger::report_context for an example
 
 class Reporter {
+
+private:
     PerformanceDebugger *_performanceDebugger;
+
 public:
     Reporter( PerformanceDebugger *d ) {
         _performanceDebugger = d;
@@ -65,6 +69,7 @@ public:
     ~Reporter() {
         _performanceDebugger->stop_report();
     }
+
 };
 
 
@@ -72,18 +77,18 @@ void PerformanceDebugger::finish_reporting() {
     // output messages about non-inlined sends
     if ( DebugPerformance and _notInlinedBecauseNativeMethodTooBig ) {
         Reporter r( this );
-        _stringStream->print( "  did not inline the following sends because the NativeMethod was getting too big:" );
+        spdlog::info( "  did not inline the following sends because the NativeMethod was getting too big:" );
         std::int32_t len = _notInlinedBecauseNativeMethodTooBig->length();
         std::int32_t i   = 0;
         for ( ; i < min( 9, len ); i++ ) {
             if ( i % 3 == 0 )
-                _stringStream->print_cr( "" );
+                spdlog::info( "" );
             InlinedScope *s = _notInlinedBecauseNativeMethodTooBig->at( i );
-            _stringStream->print( "%s  ", s->key()->toString() );
+            spdlog::info( "%s  ", s->key()->toString() );
         }
         if ( i < len )
-            _stringStream->print( "\n    (%d more sends omitted)\n", len );
-        _stringStream->put( '\n' );
+            spdlog::info( "\n    (%d more sends omitted)\n", len );
+//        _stringStream->put( '\n' );
     }
 }
 
@@ -101,18 +106,18 @@ void PerformanceDebugger::report_context( InlinedScope *s ) {
             nused++;
     }
     if ( nused == 0 ) {
-        _stringStream->print( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
+        spdlog::info( "  could not eliminate context of scope %s (fixable compiler restriction; should be eliminated)\n", s->key()->toString() );
     } else {
-        _stringStream->print( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
+        spdlog::info( "  could not eliminate context of scope %s; temp(s) still used: ", s->key()->toString() );
         for ( std::int32_t j = 0; j < len; j++ ) {
             PseudoRegister *r = temps->at( j )->pseudoRegister();
             if ( r->uplevelR() or r->uplevelW() ) {
-                _stringStream->print( "%d ", j );
+                spdlog::info( "%d ", j );
             } else if ( r->isBlockPseudoRegister() and not r->isUnused() ) {
-                _stringStream->print( "%d (non-inlined block)", j );
+                spdlog::info( "%d (non-inlined block)", j );
             }
         }
-        _stringStream->print_cr( "" );
+        spdlog::info( "" );
     }
 }
 
@@ -132,9 +137,9 @@ void PerformanceDebugger::report_uncommon( bool reoptimizing ) {
         return;
     Reporter r( this );
     if ( reoptimizing ) {
-        _stringStream->print_cr( " -- reoptimizing previously compiled 'uncommon' version of NativeMethod" );
+        spdlog::info( " -- reoptimizing previously compiled 'uncommon' version of NativeMethod" );
     } else {
-        _stringStream->print_cr( " -- creating 'uncommon' version of NativeMethod" );
+        spdlog::info( " -- creating 'uncommon' version of NativeMethod" );
     }
 }
 
@@ -144,7 +149,7 @@ void PerformanceDebugger::report_primitive_failure( PrimitiveDescriptor *pd ) {
     if ( not DebugPerformance or theCompiler->is_uncommon_compile() )
         return;
     Reporter r( this );
-    _stringStream->print( " primitive failure of %s not uncommon\n", pd->name() );
+    spdlog::info( " primitive failure of %s not uncommon\n", pd->name() );
 }
 
 
@@ -156,12 +161,13 @@ void PerformanceDebugger::report_block( Node *n, BlockPseudoRegister *blk, const
     if ( blk->method()->is_clean_block() )
         return;
     Reporter r( this );
-    _stringStream->print( " could not eliminate block in " );
-    blk->method()->home()->selector()->print_symbol_on( _stringStream );
-    _stringStream->print( " because it is %s in scope %s at bytecode %d", what, n->scope()->key()->toString(), n->byteCodeIndex() );
+    spdlog::info( " could not eliminate block in [{}]", blk->method()->home()->selector()->print_value_string() );
+//    blk->method()->home()->selector()->print_symbol_on( _stringStream );
+    spdlog::info( " because it is [{}] in scope [{}] at bytecode [{}]", what, n->scope()->key()->toString(), n->byteCodeIndex() );
     InterpretedInlineCache *ic = n->scope()->method()->ic_at( n->byteCodeIndex() );
-    if ( ic )
-        _stringStream->print( " (send of %s)", ic->selector()->copy_null_terminated() );
-    _stringStream->print_cr( "" );
+    if ( ic ) {
+        spdlog::info( " (send of [{}])", ic->selector()->copy_null_terminated() );
+    }
+    spdlog::info( "" );
     _blockPseudoRegisters->append( blk );
 }

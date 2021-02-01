@@ -314,7 +314,7 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
     DeltaProcess *p     = static_cast<DeltaProcess *>(process);
     Oop          result = Delta::call( p->receiver(), p->selector() );
-    (void) result;
+    static_cast<void>( result );
 
     if ( have_nlr_through_C ) {
         if ( nlr_home_id == ErrorHandler::aborting_nlr_home_id() ) {
@@ -369,11 +369,13 @@ extern "C" void popStackHandles( const char *nextFrame ) {
     if ( active->thread_id() not_eq os::current_thread_id() ) {
         active = Processes::find_from_thread_id( os::current_thread_id() );
     }
+
     BaseHandle *current = active->firstHandle();
     while ( current and (const char *) current < nextFrame ) {
         current->pop();
         current = active->firstHandle();
     }
+
 }
 
 
@@ -479,6 +481,7 @@ void DeltaProcess::print() {
         case ProcessState::stack_overflow:
             spdlog::info( "stack overflow" );
             break;
+        default: nullptr;
     }
 }
 
@@ -550,6 +553,8 @@ SymbolOop DeltaProcess::symbol_from_state( ProcessState state ) {
             return vmSymbols::NonLocalReturn_error();
         case ProcessState::stack_overflow:
             return vmSymbols::stack_overflow();
+        default:
+            return vmSymbols::not_found();
     }
     return vmSymbols::not_found();
 }

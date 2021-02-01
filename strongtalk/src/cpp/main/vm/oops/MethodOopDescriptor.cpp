@@ -51,6 +51,7 @@ void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
                 block_method->decay_invocation_count( decay_factor );
             }
                 break;
+            default: nullptr;
         }
     } while ( c.advance() );
 }
@@ -502,6 +503,7 @@ void MethodOopDescriptor::clear_inline_caches() {
                     block_method->clear_inline_caches();
                 }
                     break;
+                default: nullptr;
             }
         }
     } while ( c.advance() );
@@ -571,6 +573,7 @@ std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass 
                 cost += m->estimated_inline_cost( receiverKlass );
                 break;
             }
+            default: nullptr;
         }
         extern bool SuperSendsAreAlwaysInlined;
         if ( ByteCodes::is_super_send( c.code() ) and SuperSendsAreAlwaysInlined and receiverKlass ) {
@@ -850,6 +853,7 @@ void MethodOopDescriptor::customize_for( KlassOop klass, MixinOop mixin ) {
                 block_method->customize_for( klass, mixin );
             }
                 break;
+            default: nullptr;
         }
     } while ( c.advance() );
     // set customized flag
@@ -904,6 +908,7 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
                 block_method->uncustomize_for( mixin );
             }
                 break;
+            default: nullptr;
         }
     } while ( c.advance() );
 
@@ -950,6 +955,8 @@ MethodOop MethodOopDescriptor::copy_for_customization() const {
                 Universe::store( c.aligned_oop( 2 ), new_block_method );
             }
                 break;
+            default:
+                nullptr;
         }
     } while ( c.advance() );
     return new_method;

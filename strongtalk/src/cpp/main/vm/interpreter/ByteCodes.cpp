@@ -461,6 +461,9 @@ const char *ByteCodes::format_as_string( Format format ) {
             return "BBS";
         case ByteCodes::Format::UNDEFINED:
             return "UNDEFINED";
+        default: 
+            spdlog::error( "unhandled case [{}] in switch", format );
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;
@@ -485,6 +488,9 @@ const char *ByteCodes::send_type_as_string( SendType send_type ) {
             return "primitive_send";
         case ByteCodes::SendType::no_send:
             return "no_send";
+        default:
+            spdlog::error( "unhandled case [{}] in switch", send_type );
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;
@@ -521,6 +527,9 @@ const char *ByteCodes::code_type_as_string( CodeType code_type ) {
             return "float_operation";
         case ByteCodes::CodeType::miscellaneous:
             return "miscellaneous";
+        default:
+            spdlog::error( "unhandled case [{}] in switch", code_type );
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;
@@ -541,6 +550,9 @@ const char *ByteCodes::argument_spec_as_string( ArgumentSpec argument_spec ) {
             return "ByteCodes::ArgumentSpec::args_only";
         case ByteCodes::ArgumentSpec::no_args:
             return "no_args";
+        default:
+            spdlog::error( "unhandled case [{}] in switch", argument_spec );
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;
@@ -555,6 +567,8 @@ const char *ByteCodes::loop_type_as_string( LoopType loop_type ) {
             return "loop_end";
         case ByteCodes::LoopType::no_loop:
             return "no_loop";
+        default:
+            return nullptr;
     }
     ShouldNotReachHere();
     return nullptr;

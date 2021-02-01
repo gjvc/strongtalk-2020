@@ -834,7 +834,7 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     for ( std::int32_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
-        (void) nextBB;
+        static_cast<void>( nextBB );
     }
 
     //

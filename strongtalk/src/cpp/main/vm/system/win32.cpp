@@ -574,8 +574,6 @@ const char *os::platform_class_name() {
 
 extern "C" bool EnableTasks;
 
-LARGE_INTEGER counter;
-
 CRITICAL_SECTION ThreadSection;
 
 bool ThreadCritical::_initialized = false;
@@ -710,7 +708,6 @@ void os_init() {
     SetUnhandledExceptionFilter( topLevelExceptionFilter );
 
     // Create the watcher thread
-
     if ( EnableTasks ) {
         DWORD watcher_id;
         watcher_thread = CreateThread( nullptr, 0, &WatcherMain, 0, 0, &watcher_id );
@@ -730,10 +727,7 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
     static_cast<void>(cmdLine); // unused
     static_cast<void>(cmdShow); // unused
 
-    //MSG       msg;
-    //HWND      hwnd;
     WNDCLASSW wc;
-
     wc.style         = CS_HREDRAW | CS_VREDRAW;
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = 0;
