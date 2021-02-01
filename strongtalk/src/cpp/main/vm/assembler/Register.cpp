@@ -27,6 +27,7 @@ Register::Register( void ) :
 
 Register::Register( std::int32_t number, char f ) :
     _number( number ) {
+    static_cast<void>(f); // unused
 }
 
 

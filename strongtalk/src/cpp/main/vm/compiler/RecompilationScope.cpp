@@ -53,17 +53,18 @@ std::int32_t NonDummyRecompilationScope::compare( NonDummyRecompilationScope **a
 
 
 NonDummyRecompilationScope::NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level ) :
+    RecompilationScope( s, byteCodeIndex ),
     _level( level ),
     _ncodes( m == nullptr ? 1 : m->size_of_codes() * OOP_SIZE ),
     _subScopes( new_resource_array<GrowableArray<RecompilationScope *> *>( _ncodes + 1 ) ),
-    RecompilationScope( s, byteCodeIndex ), uncommon( 1 ) {
+    uncommon( 1 ) {
     for ( std::int32_t i = 0; i <= _ncodes; i++ )
         _subScopes[ i ] = nullptr;
 }
 
 
 InlinedRecompilationScope::InlinedRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, const NativeMethod *n, ScopeDescriptor *d, std::int32_t level ) :
-    NonDummyRecompilationScope( s, byteCodeIndex, d->method(), level ), desc( d ), nm( n ) {
+    NonDummyRecompilationScope( s, byteCodeIndex, d->method(), level ), nm( n ), desc( d ) {
 }
 
 

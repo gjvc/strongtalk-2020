@@ -75,15 +75,18 @@ void sweepTrigger() {
 
 
 static void idOverflowError( std::int32_t delta ) {
+    static_cast<void>(delta); // unused
+
     // fix this - maybe eliminate NativeMethod IDs altogether?
     st_fatal( "zone: NativeMethod ID table overflowed" );
 }
 
 
 Zone::Zone( std::int32_t &size ) {
-    _methodHeap = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
-    _picHeap    = new ZoneHeap( Universe::current_sizes._pic_heap_size, POLYMORPHIC_INLINE_CACHE_BLOCK );
+    static_cast<void>(size); // unused
 
+    _methodHeap  = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
+    _picHeap     = new ZoneHeap( Universe::current_sizes._pic_heap_size, POLYMORPHIC_INLINE_CACHE_BLOCK );
     _methodTable = new CodeTable( codeTableSize );
 
     // LRUflag = idManager->data;
@@ -169,6 +172,8 @@ void Zone::flush() {
 
 
 std::int32_t Zone::findReplCandidates( std::int32_t needed ) {
+    static_cast<void>(needed); // unused
+
     // find replacement candidates; stop if > needed bytes found or if
     // there seem to be no more candidates
 # ifdef NOT_IMPLEMENTED
@@ -193,6 +198,7 @@ std::int32_t Zone::findReplCandidates( std::int32_t needed ) {
 
 // flush next replacement candidate; return # bytes freed
 std::int32_t Zone::flushNextMethod( std::int32_t needed ) {
+    static_cast<void>(needed); // unused
     std::int32_t freed = 0;
     Unimplemented();
     return freed;
@@ -200,6 +206,8 @@ std::int32_t Zone::flushNextMethod( std::int32_t needed ) {
 
 
 void moveInsts( const char *from, char *to, std::int32_t size ) {
+    static_cast<void>(size); // unused
+
     NativeMethod *n   = (NativeMethod *) from;
     NativeMethod *nTo = (NativeMethod *) to;
 
@@ -411,6 +419,8 @@ void Zone::verify() {
 
 
 void Zone::switch_pointers( Oop from, Oop to ) {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     Unimplemented();
 }
 
@@ -557,6 +567,7 @@ static std::int32_t compareCount( const void *m1, const void *m2 ) {
 
 
 void Zone::print_NativeMethod_histogram( std::int32_t size ) {
+    static_cast<void>(size); // unused
 #ifdef NOT_IMPLEMENTED
     ResourceMark resourceMark;
     nm_hist_elem* hist_array = NEW_RESOURCE_ARRAY(nm_hist_elem, numberOfNativeMethods());
@@ -731,9 +742,12 @@ std::int32_t Zone::instsSize() {
 
 
 NativeMethod *Zone::next_circular_nm( NativeMethod *nm ) {
-    nm     = next_nm( nm );
-    if ( nm == nullptr )
+    nm = next_nm( nm );
+
+    if ( nm == nullptr ) {
         nm = first_nm();
+    }
+
     return nm;
 }
 
@@ -741,6 +755,10 @@ NativeMethod *Zone::next_circular_nm( NativeMethod *nm ) {
 // called every LRU_RESOLUTION seconds or by reclaimNativeMethods if needed
 // returns time at which oldest non-reclaimed NativeMethod will be reclaimed
 std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std::int32_t *nvisited, std::int32_t *nbytesReclaimed ) {
+    static_cast<void>(maxVisit); // unused
+    static_cast<void>(maxReclaim); // unused
+    static_cast<void>(nvisited); // unused
+    static_cast<void>(nbytesReclaimed); // unused
 #ifdef NOT_IMPLEMENTED
     EventMarker  em( "LRU sweep" );
     ResourceMark resourceMark;
@@ -858,8 +876,11 @@ void printAllNativeMethods() {
 // On the x86, the I cache is consistent after the next branch or call, so don't need to do any flushing.
 
 void flushICacheWord( void *addr ) {
+    static_cast<void>(addr); // unused
 }
 
 
 void flushICacheRange( void *start, void *end ) {
+    static_cast<void>(start); // unused
+    static_cast<void>(end); // unused
 }

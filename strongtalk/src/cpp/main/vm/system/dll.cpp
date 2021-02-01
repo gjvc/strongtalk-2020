@@ -168,6 +168,7 @@ void DLLs::exit_async_call( DeltaProcess **addr ) {
 
 
 void DLLs::exit_sync_call( DeltaProcess **addr ) {
+    static_cast<void>(addr); // unused
     // nothing to do here for now
 }
 

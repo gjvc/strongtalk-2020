@@ -288,6 +288,8 @@ void MapConformance::append_mapping( Variable src_register, Variable src_stack, 
 
 
 void MapConformance::generate( Variable free_register1, Variable free_register2 ) {
+    static_cast<void>(free_register2); // unused
+
     _free_register         = free_register1;
     // There is max. 2 used variables per mapping.
     _usedVariables         = new_resource_array<Variable>( _mappings->length() * 2 );

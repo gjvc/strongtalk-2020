@@ -21,18 +21,30 @@ class NameDescriptorClosure {
 
 public:
     virtual void arg( std::int32_t no, NameDescriptor *a, const char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(a); // unused
+        static_cast<void>(pc); // unused
     }
 
 
     virtual void temp( std::int32_t no, NameDescriptor *t, const char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(t); // unused
+        static_cast<void>(pc); // unused
     }
 
 
     virtual void context_temp( std::int32_t no, NameDescriptor *c, const char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(c); // unused
+        static_cast<void>(pc); // unused
     }
 
 
     virtual void stack_expr( std::int32_t no, NameDescriptor *e, const char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(e); // unused
+        static_cast<void>(pc); // unused
     }
 };
 
@@ -321,6 +333,7 @@ public:
 
 
     ScopeDescriptor *parent( bool cross_NativeMethod_boundary = false ) const {
+        static_cast<void>(cross_NativeMethod_boundary); // unused
         return nullptr;
     }
 

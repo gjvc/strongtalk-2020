@@ -18,38 +18,74 @@
 
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirst4( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d ) {
+    // a
+    static_cast<void>(b); // unused
+    static_cast<void>(c); // unused
+    static_cast<void>(d); // unused
     return a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer4( std::int32_t *a, std::int32_t b, std::int32_t c, std::int32_t d ) {
+    // a
+    static_cast<void>(b); // unused
+    static_cast<void>(c); // unused
+    static_cast<void>(d); // unused
     return *a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecond4( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d ) {
+    static_cast<void>(a); // unused
+    // b
+    static_cast<void>(c); // unused
+    static_cast<void>(d); // unused
     return b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer4( std::int32_t a, std::int32_t *b, std::int32_t c, std::int32_t d ) {
+    static_cast<void>(a); // unused
+    // b
+    static_cast<void>(c); // unused
+    static_cast<void>(d); // unused
     return *b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnThird4( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d ) {
+    static_cast<void>(a); // unused
+    static_cast<void>(b); // unused
+    // c
+    static_cast<void>(d); // unused
     return c;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnThirdPointer4( std::int32_t a, std::int32_t b, std::int32_t *c, std::int32_t d ) {
+    static_cast<void>(a); // unused
+    static_cast<void>(b); // unused
+    // c
+    static_cast<void>(d); // unused
     return *c;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFourth4( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t d ) {
+    static_cast<void>(a); // unused
+    static_cast<void>(b); // unused
+    static_cast<void>(c); // unused
+    // d
     return d;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFourthPointer4( std::int32_t a, std::int32_t b, std::int32_t c, std::int32_t *d ) {
+    static_cast<void>(a); // unused
+    static_cast<void>(b); // unused
+    static_cast<void>(c); // unused
+    // d
     return *d;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION forceScavenge4( std::int32_t ignore1, std::int32_t ignore2, std::int32_t ignore3, std::int32_t d ) {
+    static_cast<void>(ignore1); // unused
+    static_cast<void>(ignore2); // unused
+    static_cast<void>(ignore3); // unused
+    static_cast<void>(d); // unused
     Universe::scavenge();
     return -1;
 }
@@ -125,6 +161,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
+        static_cast<void>(message); // unused
         char         text[200];
         bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );

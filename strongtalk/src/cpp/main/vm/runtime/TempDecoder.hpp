@@ -24,22 +24,32 @@ public:
 
     // arguments are numbered from 1 to n
     virtual void parameter( ByteArrayOop name, std::int32_t index ) {
+        static_cast<void>(name); // unused
+        static_cast<void>(index); // unused
     }
 
 
     virtual void stack_temp( ByteArrayOop name, std::int32_t no ) {
+        static_cast<void>(name); // unused
+        static_cast<void>(no); // unused
     }
 
 
     virtual void stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
+        static_cast<void>(name); // unused
+        static_cast<void>(fno); // unused
     }
 
 
     virtual void heap_temp( ByteArrayOop name, std::int32_t no ) {
+        static_cast<void>(name); // unused
+        static_cast<void>(no); // unused
     }
 
 
     virtual void heap_parameter( ByteArrayOop name, std::int32_t no ) {
+        static_cast<void>(name); // unused
+        static_cast<void>(no); // unused
     }
 
 

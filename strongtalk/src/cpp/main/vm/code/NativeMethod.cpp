@@ -53,6 +53,8 @@ NativeMethod *new_nativeMethod( Compiler *c ) {
 
 
 void *NativeMethod::operator new( std::size_t size ) {
+    static_cast<void>(size); // unused
+
     st_assert( sizeof( NativeMethod ) % OOP_SIZE == 0, "NativeMethod size must be multiple of a word" );
     std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), OOP_SIZE );
     void         *p                = Universe::code->allocate( nativeMethod_size );
@@ -255,6 +257,9 @@ KlassOop NativeMethod::receiver_klass() const {
 
 
 void NativeMethod::moveTo( void *p, std::int32_t size ) {
+    static_cast<void>(p); // unused
+    static_cast<void>(size); // unused
+
 #ifdef NOT_IMPLEMENTED
     NativeMethod* to = (NativeMethod*)p;
     if (this == to) return;
@@ -326,6 +331,7 @@ void NativeMethod::makeOld() {
 
 
 void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
+    static_cast<void>(to); // unused
     // the to NativeMethod is about to replace the receiver; replace receiver in all inline caches
     Unimplemented();
 }
@@ -962,6 +968,7 @@ void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
 
 
 void NativeMethod::restore_from_patch( nativeMethod_patch *data ) {
+    static_cast<void>(data); // unused
     Unimplemented();
 }
 
@@ -972,6 +979,7 @@ void NativeMethod::print_inlining_database() {
 
 
 void NativeMethod::print_inlining_database_on( ConsoleOutputStream *stream ) {
+    static_cast<void>(stream); // unused
     // WARNING: this method is for debugging only -- it's not used to actually file out the DB
     ResourceMark                              rm;
     RecompilationScope                        *root     = NonDummyRecompilationScope::constructRScopes( this, false );

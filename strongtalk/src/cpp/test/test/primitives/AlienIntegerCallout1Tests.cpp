@@ -31,6 +31,7 @@ extern "C" std::int32_t __CALLING_CONVENTION size5( size5_t arg ) {
 }
 
 extern "C" Oop __CALLING_CONVENTION forceScavenge1( std::int32_t ignore ) {
+    static_cast<void>(ignore); // unused
     Universe::scavenge();
     return vmSymbols::completed();
 }
@@ -102,6 +103,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
+        static_cast<void>(message); // unused
         char         text[200];
         bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
@@ -140,6 +142,7 @@ protected:
 
 
     void allocateUnsafe( PersistentHandle *&handle, PersistentHandle *&contents ) {
+        static_cast<void>(handle); // unused
         KlassOop unsafeKlass = KlassOop( Universe::find_global( "UnsafeAlien" ) );
         unsafeAlien = new PersistentHandle( unsafeKlass->primitive_allocate() );
         std::int32_t offset = unsafeKlass->klass_part()->lookup_inst_var( oopFactory::new_symbol( "nonPointerObject" ) );

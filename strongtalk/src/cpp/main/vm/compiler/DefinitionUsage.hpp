@@ -90,6 +90,7 @@ public:
     PseudoRegisterBasicBlockIndex( BasicBlock *b, std::int32_t i, PseudoRegister *pr ) {
         _basicBlock = b;
         _index      = i;
+        static_cast<void>(pr); // unused
     }
 
 

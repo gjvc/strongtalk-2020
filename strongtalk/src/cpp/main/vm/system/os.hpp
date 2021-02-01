@@ -30,6 +30,7 @@ private:
     static std::int32_t _vm_page_size;
 
     static void initialize_system_info();
+    static void find_system_page_size();
 
     friend void os_init();
 
@@ -113,6 +114,7 @@ public:
 
     static void *stack_limit( Thread *thread );
 
+    static std::int32_t find_current_process_id();
     static std::int32_t current_thread_id();
 
     static void wait_for_event( Event *event );

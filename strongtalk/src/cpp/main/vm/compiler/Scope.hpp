@@ -161,8 +161,11 @@ public:
 
 
     virtual bool isSenderOf( InlinedScope *s ) const {
+        static_cast<void>(s); // unused
         return false;
     } // isSenderOf = this is a proper caller of s
+
+
     bool isSenderOrSame( InlinedScope *s ) {
         return (Scope *) s == this or isSenderOf( s );
     }
@@ -729,6 +732,9 @@ public:
 
 
     bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
+        static_cast<void>(method); // unused
+        static_cast<void>(rcvrKlass); // unused
+        static_cast<void>(n); // unused
         ShouldNotCallThis();
         return false;
     }
@@ -777,6 +783,9 @@ public:
 
 
     bool isRecursiveCall( MethodOop method, KlassOop rcvrKlass, std::int32_t n ) {
+        static_cast<void>(method); // unused
+        static_cast<void>(rcvrKlass); // unused
+        static_cast<void>(n); // unused
         ShouldNotCallThis();
         return false;
     }

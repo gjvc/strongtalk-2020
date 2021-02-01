@@ -230,9 +230,11 @@ public:
 
 
     void aNopNode( NopNode *node ) {
+        static_cast<void>(node); // unused
     }
 
 
     void aCommentNode( CommentNode *node ) {
+        static_cast<void>(node); // unused
     }
 };

@@ -686,14 +686,18 @@ UncommonSendNode::UncommonSendNode( GrowableArray<PseudoRegister *> *e, std::int
 
 
 Node *UncommonSendNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::UncommonSendNode( this->expressionStack()->copy(), byteCodeIndex(), _argCount );
 }
 
 
 void UncommonSendNode::makeUses( BasicBlock *bb ) {
-    std::int32_t       expressionCount = expressionStack()->length();
-    for ( std::int32_t pos             = expressionCount - _argCount; pos < expressionCount; pos++ )
+    std::int32_t expressionCount = expressionStack()->length();
+
+    for ( std::int32_t pos = expressionCount - _argCount; pos < expressionCount; pos++ ) {
         bb->addUse( this, expressionStack()->at( pos ) );
+    }
 }
 
 
@@ -750,6 +754,7 @@ bool DLLNode::canInvokeDelta() const {
 
 
 NonLocalReturnTestNode::NonLocalReturnTestNode( std::int32_t byteCodeIndex ) {
+    static_cast<void>(byteCodeIndex); // unused
 }
 
 
@@ -836,36 +841,50 @@ Node *BasicNode::copy( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *PrologueNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *NonLocalReturnSetupNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *NonLocalReturnContinuationNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *ReturnNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *BranchNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *TypeTestNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
 
 Node *FixedCodeNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     SHOULD_NOT_CLONE
 }
 
@@ -916,6 +935,8 @@ Node *ArithRCNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *SendNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     // NB: use current split signature, not the receiver's sig!
     SendNode *n = NodeFactory::SendNode( _key, nlrTestPoint(), args, exprStack, _superSend, _info );
     n->_dest = _dest;        // don't give it a new dest!
@@ -924,6 +945,7 @@ Node *SendNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *PrimitiveNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(to); // unused
     // NB: use scope's current sig, not the receiver's sig!
     PrimitiveNode *n = NodeFactory::PrimitiveNode( _pdesc, nlrTestPoint(), args, exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
@@ -933,6 +955,7 @@ Node *PrimitiveNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *DLLNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(to); // unused
     // NB: use scope's current sig, not the receiver's sig!
     DLLNode *n = NodeFactory::DLLNode( _dll_name, _function_name, _function, _async, nlrTestPoint(), args, exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
@@ -942,6 +965,7 @@ Node *DLLNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *InterruptCheckNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(to); // unused
     // NB: use scope's current sig, not the receiver's sig!
     InterruptCheckNode *n = NodeFactory::createAndRegisterNode<InterruptCheckNode>( exprStack );
     st_assert( _dest not_eq from, "shouldn't change dest" );
@@ -969,42 +993,58 @@ Node *BlockMaterializeNode::clone( PseudoRegister *from, PseudoRegister *to ) co
 
 
 Node *ContextCreateNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<ContextCreateNode>( TRANSLATE( _dest ), this, exprStack );
 }
 
 
 Node *ContextInitNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<ContextInitNode>( TRANSLATE( _src ), this );
 }
 
 
 Node *ContextZapNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<ContextZapNode>( TRANSLATE( _src ) );
 }
 
 
 Node *NonLocalReturnTestNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     Unimplemented();
     return nullptr;
 }
 
 
 Node *ArrayAtNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<ArrayAtNode>( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset );
 }
 
 
 Node *ArrayAtPutNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<ArrayAtPutNode>( _access_type, TRANSLATE( _src ), TRANSLATE( _arg ), _intArg, TRANSLATE( elem ), _smi_element, TRANSLATE( _dest ), TRANSLATE( _error ), _dataOffset, _sizeOffset, _needs_store_check );
 }
 
 
 Node *UncommonNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::UncommonNode( exprStack, _byteCodeIndex );
 }
 
 
 Node *InlinedReturnNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     return NodeFactory::createAndRegisterNode<InlinedReturnNode>( byteCodeIndex(), TRANSLATE( src() ), TRANSLATE( dest() ) );
 }
 
@@ -1013,16 +1053,22 @@ Node *InlinedReturnNode::clone( PseudoRegister *from, PseudoRegister *to ) const
 
 
 Node *MergeNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     NO_NEED_TO_COPY
 }
 
 
 Node *NopNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     NO_NEED_TO_COPY
 }
 
 
 Node *CommentNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     NO_NEED_TO_COPY
 }
 
@@ -1513,6 +1559,10 @@ void InlinedPrimitiveNode::removeUses( BasicBlock *bb ) {
 // ==================================================================================
 
 void Node::eliminate( BasicBlock *bb, PseudoRegister *r, bool removing, bool cp ) {
+    static_cast<void>(bb); // unused
+    static_cast<void>(r); // unused
+    static_cast<void>(cp); // unused
+
     st_assert( not _deleted, "already deleted this node" );
     if ( CompilerDebug ) {
         char buf[1024];
@@ -1707,12 +1757,14 @@ void PrimitiveNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool
 
 
 void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *rr, bool rem, bool cp ) {
+    static_cast<void>(rem); // unused
+    static_cast<void>(cp); // unused
+
     // completely eliminate receiver and all successors
     if ( _deleted )
         return;
 
-    eliminate( bb, rr, (ConstPseudoRegister *)
-        nullptr, (KlassOop) badOop );
+    eliminate( bb, rr, (ConstPseudoRegister *) nullptr, (KlassOop) badOop );
 }
 
 
@@ -1821,6 +1873,7 @@ void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool removin
 
 
 void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res ) {
+    static_cast<void>(res); // unused
 
     // the receiver can be eliminated because the result it is testing is a constant (res)
 
@@ -2077,6 +2130,10 @@ bool StoreUplevelNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
 
 
 bool CallNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    static_cast<void>(bb); // unused
+    static_cast<void>(u); // unused
+    static_cast<void>(d); // unused
+    static_cast<void>(replace); // unused
     //spdlog::warn("fix this -- propagate args somewhere");
     return false;
 }
@@ -2337,6 +2394,11 @@ bool AbstractArrayAtPutNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegi
 
 
 bool InlinedPrimitiveNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+    static_cast<void>(bb); // unused
+    static_cast<void>(u); // unused
+    static_cast<void>(d); // unused
+    static_cast<void>(replace); // unused
+
     // copyPropagate should be fairly easy to put in, right now it is doing nothing.
     return false;
 }
@@ -2371,6 +2433,8 @@ bool ContextInitNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d
 
 
 void LoadNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     D_CHECK( _dest );
 }
 
@@ -2388,6 +2452,8 @@ void LoadUplevelNode::markAllocated( std::int32_t *use_count, std::int32_t *def_
 
 
 void StoreNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     U_CHECK( _src );
 }
 
@@ -2474,6 +2540,8 @@ void ContextCreateNode::markAllocated( std::int32_t *use_count, std::int32_t *de
 
 
 void ContextInitNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     if ( _src )
         U_CHECK( _src );
     std::int32_t i = nofTemps();
@@ -2484,16 +2552,22 @@ void ContextInitNode::markAllocated( std::int32_t *use_count, std::int32_t *def_
 
 
 void ContextZapNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     U_CHECK( _src );
 }
 
 
 void TypeTestNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     U_CHECK( _src );
 }
 
 
 void AbstractArrayAtNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     U_CHECK( _src );
     if ( _dest )
         D_CHECK( _dest );
@@ -2511,6 +2585,8 @@ void AbstractArrayAtPutNode::markAllocated( std::int32_t *use_count, std::int32_
 
 
 void InlinedPrimitiveNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+    static_cast<void>(use_count); // unused
+    static_cast<void>(def_count); // unused
     if ( _src )
         U_CHECK( _src );
     if ( _arg1 )
@@ -2560,17 +2636,20 @@ void StoreNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll 
 
 void AbstractReturnNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
     // a block returned by a NativeMethod escapes
-    if ( _src )
+    if ( _src ) {
         ::computeEscapingBlocks( this, _src, ll, "returned" );
+    }
 }
 
 
 void CallNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
+    static_cast<void>(ll); // unused
     SubclassResponsibility();
 }
 
 
 void SendNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *ll ) {
+    static_cast<void>(ll); // unused
     // all arguments to a non-inlined call escape
     if ( exprStack and ( args not_eq nullptr ) ) {
         // if the receiver is not pushed on the exprStack (self/super sends),
@@ -2763,6 +2842,7 @@ GrowableArray<KlassOop> *make_smi_type() {
 
 
 void StoreNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
+    static_cast<void>(n); // unused
     if ( is_smi_type( klasses ) and r == src() ) {
         if ( CompilerDebug )
             cout( PrintLoopOpts )->print( "*removing store check from N%d\n", id() );
@@ -2772,6 +2852,7 @@ void StoreNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<Kla
 
 
 void AbstractArrayAtNode::assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
+    static_cast<void>(n); // unused
     if ( r == _arg ) {
         if ( CompilerDebug and _needBoundsCheck )
             cout( PrintLoopOpts )->print( "*removing bounds check from N%d\n", id() );
@@ -2781,8 +2862,7 @@ void AbstractArrayAtNode::assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n
 }
 
 
-void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
-> &klasses ) const {
+void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
 // ArrayAt node tests index for smi_t-ness
     regs.
         append( _arg );
@@ -2804,23 +2884,15 @@ void AbstractArrayAtNode::assert_pseudoRegister_type( PseudoRegister *r, Growabl
 }
 
 
-void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
-> &klasses ) const {
+void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
 // atPut node tests element for smi_t-ness if character array
-    AbstractArrayAtNode::collectTypeTests( regs, klasses
-    );
-    if (
-        stores_smi_elements( _access_type )
-        ) {
-        regs.
-            append( elem );
-        st_assert          ( klasses
-                                 .first()->first() == smiKlassObject, "must be smi_t type for index" );
-        klasses.
-            append( klasses
-                        .
-                            first()
-        );    // reuse smi_t type descriptor
+    AbstractArrayAtNode::collectTypeTests( regs, klasses );
+    if ( stores_smi_elements( _access_type ) ) {
+        regs.append( elem );
+
+        st_assert( klasses.first()->first() == smiKlassObject, "must be smi_t type for index" );
+
+        klasses.append( klasses.first() );    /* reuse smi_t type descriptor*/
     }
 }
 
@@ -2837,40 +2909,39 @@ void ArrayAtPutNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArra
 }
 
 
-void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
-> &klasses ) const {
+void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
 // tests receiver and/or arg for smi_t-ness
     if (
         canFail()
         ) {
         GrowableArray<KlassOop> *t = make_smi_type();
         if ( not _arg1IsInt ) {
-            regs.
-                append( _src );
-            klasses.
-                append( t );
+            regs.append( _src );
+            klasses.append( t );
         }
         if ( not _arg2IsInt ) {
-            regs.
-                append( _oper );
-            klasses.
-                append( t );
+            regs.append( _oper );
+            klasses.append( t );
         }
     }
 }
 
 
 void TArithRRNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
+    static_cast<void>(n); // unused
+
     if ( is_smi_type( klasses ) and r == _src ) {
         if ( CompilerDebug and not _arg1IsInt )
             cout( PrintLoopOpts )->print( "*removing arith arg1 tag check from N%d\n", id() );
         _arg1IsInt = true;
     }
+
     if ( is_smi_type( klasses ) and r == _oper ) {
         if ( CompilerDebug and not _arg2IsInt )
             cout( PrintLoopOpts )->print( "*removing arith arg2 tag check from N%d\n", id() );
         _arg2IsInt = true;
     }
+
     removeFailureIfPossible();
 }
 
@@ -2882,6 +2953,7 @@ void TypeTestNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, Grow
 
 
 void TypeTestNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *k, LoopHeaderNode *n ) {
+    static_cast<void>(n); // unused
     st_assert( r == src(), "must be source" );
     if ( k->length() == 1 ) {
         // common case: tests for one klass --> can be eliminated

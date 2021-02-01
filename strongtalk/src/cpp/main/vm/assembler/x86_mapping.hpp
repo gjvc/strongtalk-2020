@@ -65,14 +65,17 @@ public:
 
     // predicates
     static bool isTemporaryRegister( const Location loc ) {
+        static_cast<void>(loc); // unused
         return false;
     }    // fix this
+
     static bool isLocalRegister( const Location loc ) {
         return _localRegisterIndex[ loc.number() ] not_eq -1;
     }
 
 
     static bool isTrashedRegister( const Location loc ) {
+        static_cast<void>(loc); // unused
         return true;
     }    // fix this
 

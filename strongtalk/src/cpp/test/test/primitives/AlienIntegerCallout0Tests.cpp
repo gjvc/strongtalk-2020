@@ -76,6 +76,7 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, std::int32_t actual ) {
+        static_cast<void>(message); // unused
         char text[200];
         sprintf( text, "Should be: %d, was: %d", expected, actual );
         EXPECT_TRUE( actual == expected ) << text;

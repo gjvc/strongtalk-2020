@@ -9,6 +9,7 @@
 #include "vm/system/win32.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Process.hpp"
+#include "os.hpp"
 
 
 extern bool bootstrappingInProgress;
@@ -192,7 +193,7 @@ LongInteger64 os::elapsed_frequency() {
 }
 
 
-static void initialze_performance_counter() {
+static void initialize_performance_counter() {
     LARGE_INTEGER count;
     if ( QueryPerformanceFrequency( &count ) ) {
         has_performance_count = 1;
@@ -508,34 +509,6 @@ extern "C" bool WizardMode;
 
 void process_settings_file( const char *file_name, bool quiet );
 
-static std::int32_t number_of_ctrl_c = 0;
-
-
-int WINAPI HandlerRoutine( DWORD dwCtrlType ) {
-    spdlog::info( "HandlerRoutine" );
-
-    if ( CTRL_BREAK_EVENT == dwCtrlType ) {
-        spdlog::info( "%break" );
-        intercept_for_single_step();
-    } else {
-        if ( number_of_ctrl_c < 10 ) {
-            spdlog::info( "%break-loading-breakrc" );
-            process_settings_file( ".breakrc", false );
-        } else {
-            spdlog::info( "\n{aborting}" );
-#ifdef __GNUC__
-            __asm__("int3;");
-#else
-            __asm std::int32_t 3
-#endif
-
-            breakpoint();
-        }
-        number_of_ctrl_c++;
-    }
-    return TRUE;
-}
-
 
 void real_time_tick( std::int32_t delay_time );
 
@@ -554,11 +527,24 @@ DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
 std::int32_t os::_vm_page_size = 0;
 
 
+void os::find_system_page_size() {
+
+    SYSTEM_INFO systemInfo;
+    GetSystemInfo( &systemInfo );
+    spdlog::info( "system page size detected as [{:d}]", systemInfo.dwPageSize );
+    _vm_page_size = systemInfo.dwPageSize;
+
+}
+
+
+std::int32_t os::find_current_process_id() {
+    return 0;
+}
+
+
 void os::initialize_system_info() {
-    SYSTEM_INFO si;
-    GetSystemInfo( &si );
-    _vm_page_size = si.dwPageSize;
-    initialze_performance_counter();
+    find_system_page_size();
+    initialize_performance_counter();
 }
 
 
@@ -648,6 +634,38 @@ void os_init_processor_affinity() {
 }
 
 
+static std::int32_t number_of_ctrl_c = 0;
+
+
+int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
+    spdlog::info( "strongtalkConsoleCtrlHandler" );
+
+    if ( CTRL_BREAK_EVENT == dwCtrlType ) {
+        spdlog::info( "%break" );
+        intercept_for_single_step();
+
+    } else {
+        if ( number_of_ctrl_c < 10 ) {
+            spdlog::info( "%break-loading-breakrc" );
+            process_settings_file( ".breakrc", false );
+        } else {
+            spdlog::info( "\n{aborting}" );
+#ifdef __GNUC__
+            __asm__("int3;");
+#else
+            __asm std::int32_t 3
+#endif
+            breakpoint();
+        }
+        number_of_ctrl_c++;
+    }
+
+    return true;
+}
+
+
+
+
 void os_init() {
     spdlog::info( "%os-init:  Win32" );
 
@@ -661,8 +679,8 @@ void os_init() {
 
     os::initialize_system_info();
 
-    WINBOOL Add{true};
-    SetConsoleCtrlHandler( &HandlerRoutine, Add );
+    WINBOOL Add{ true };
+    SetConsoleCtrlHandler( &strongtalkConsoleCtrlHandler, Add );
 
     HANDLE threadHandle;
     // Initialize main_process and main_thread

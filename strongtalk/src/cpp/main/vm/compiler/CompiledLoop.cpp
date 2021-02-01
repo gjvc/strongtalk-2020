@@ -173,16 +173,19 @@ public:
 
 
     virtual void normal_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         send();
     }
 
 
     virtual void self_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         send();
     }
 
 
     virtual void super_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         send();
     }
 };

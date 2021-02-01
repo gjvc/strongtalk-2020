@@ -351,21 +351,33 @@ void Assembler::movsxw( const Register &dst, const Register &src ) {
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, std::int32_t imm32 ) {
+    static_cast<void>(cc); // unused
+    static_cast<void>(dst); // unused
+    static_cast<void>(imm32); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, Oop obj ) {
+    static_cast<void>(cc); // unused
+    static_cast<void>(dst); // unused
+    static_cast<void>(obj); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, const Register &src ) {
+    static_cast<void>(cc); // unused
+    static_cast<void>(dst); // unused
+    static_cast<void>(src); // unused
     Unimplemented();
 }
 
 
 void Assembler::cmovccl( Condition cc, const Register &dst, const Address &src ) {
+    static_cast<void>(cc); // unused
+    static_cast<void>(dst); // unused
+    static_cast<void>(src); // unused
     Unimplemented();
 }
 

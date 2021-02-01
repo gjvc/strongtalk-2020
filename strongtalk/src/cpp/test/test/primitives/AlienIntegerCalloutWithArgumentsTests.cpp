@@ -19,27 +19,34 @@
 
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirst2( std::int32_t a, std::int32_t b ) {
+    static_cast<void>(b); // unused
     return a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnFirstPointer2( std::int32_t *a, std::int32_t b ) {
+    static_cast<void>(b); // unused
     return *a;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecond2( std::int32_t a, std::int32_t b ) {
+    static_cast<void>(a); // unused
     return b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION returnSecondPointer2( std::int32_t a, std::int32_t *b ) {
+    static_cast<void>(a); // unused
     return *b;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION forceScavengeWA( std::int32_t a, std::int32_t b ) {
+    static_cast<void>(a); // unused
+    static_cast<void>(b); // unused
     Universe::scavenge();
     return -1;
 }
 
 extern "C" std::int32_t __CALLING_CONVENTION argAlignment2( std::int32_t a, std::int32_t b ) {
+    static_cast<void>(b); // unused
     return ( (std::int32_t) &a ) & 0xF;
 }
 
@@ -114,6 +121,8 @@ protected:
 
 
     void checkIntResult( const char *message, std::int32_t expected, PersistentHandle *alien ) {
+        static_cast<void>(message); // unused
+
         char         text[200];
         bool         ok;
         std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );

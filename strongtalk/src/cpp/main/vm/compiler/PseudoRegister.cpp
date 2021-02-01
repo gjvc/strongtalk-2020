@@ -1131,8 +1131,9 @@ bool PseudoRegister::verify() const {
         ok = false;
         error( "PseudoRegister 0x{0:x} %s: invalid ID %ld", this, name(), _id );
     }
-    std::int32_t       uses = 0, definitions = 0;
-    for ( std::int32_t i    = 0; i < _dus.length(); i++ ) {
+    std::int32_t uses = 0, definitions = 0;
+
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
         definitions += info->_definitions.length();
@@ -1151,12 +1152,14 @@ bool PseudoRegister::verify() const {
         ok = false;
         error( "PseudoRegister 0x{0:x} %s: used but not defined", this, name() );
     }
+
 #ifdef FIXME  // fix this - may still be needed
     if ( debug and not incorrectDU() and isTrashedReg( loc ) ) {
         ok = false;
         error( "PseudoRegister 0x{0:x} %s: debug-visible but allocated to temp reg", this, name() );
     }
 #endif
+
     return ok;
 }
 

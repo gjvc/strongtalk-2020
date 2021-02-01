@@ -379,6 +379,7 @@ public:
 
 
     bool isLiveAt( Node *n ) const {
+        static_cast<void>(n); // unused
         return false;
     }
 
@@ -393,9 +394,11 @@ public:
     }
 };
 
+
 // singly-assigned PseudoRegister (in source-level terms, e.g. expr. stack entry, arg;
 // may have several definitions because of splitting etc.
 // makes copy propagation simpler
+
 class SinglyAssignedPseudoRegister : public PseudoRegister {
 protected:
     InlinedScope *_creationScope;        // source scope to which receiver belongs

@@ -75,46 +75,56 @@ public:
 
 
     void push_literal( Oop obj ) {
+        static_cast<void>(obj); // unused
         map_push();
     }
 
 
     void push_argument( std::int32_t no ) {
+        static_cast<void>(no); // unused
         map_push();
     }
 
 
     void push_temporary( std::int32_t no ) {
+        static_cast<void>(no); // unused
         map_push();
     }
 
 
     void push_temporary( std::int32_t no, std::int32_t context ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(context); // unused
         map_push();
     }
 
 
     void push_instVar( std::int32_t offset ) {
+        static_cast<void>(offset); // unused
         map_push();
     }
 
 
     void push_instVar_name( SymbolOop name ) {
+        static_cast<void>(name); // unused
         map_push();
     }
 
 
     void push_classVar( AssociationOop assoc ) {
+        static_cast<void>(assoc); // unused
         map_push();
     }
 
 
     void push_classVar_name( SymbolOop name ) {
+        static_cast<void>(name); // unused
         map_push();
     }
 
 
     void push_global( AssociationOop obj ) {
+        static_cast<void>(obj); // unused
         map_push();
     }
 
@@ -150,16 +160,21 @@ public:
 
 
     void method_return( std::int32_t nofArgs ) {
+        static_cast<void>(nofArgs); // unused
         map_pop();
     }
 
 
     void nonlocal_return( std::int32_t nofArgs ) {
+        static_cast<void>(nofArgs); // unused
         map_pop();
     }
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
+        static_cast<void>(nofArgs); // unused
+        static_cast<void>(meth); // unused
+
         if ( type == AllocationType::tos_as_scope )
             map_pop();
         map_push();
@@ -180,38 +195,49 @@ public:
 
     // call backs to ignore
     void allocate_temporaries( std::int32_t nofTemps ) {
+        static_cast<void>(nofTemps); // unused
     }
 
 
     void store_temporary( std::int32_t no ) {
+        static_cast<void>(no); // unused
     }
 
 
     void store_temporary( std::int32_t no, std::int32_t context ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(context); // unused
     }
 
 
     void store_instVar( std::int32_t offset ) {
+        static_cast<void>(offset); // unused
     }
 
 
     void store_instVar_name( SymbolOop name ) {
+        static_cast<void>(name); // unused
     }
 
 
     void store_classVar( AssociationOop assoc ) {
+        static_cast<void>(assoc); // unused
     }
 
 
     void store_classVar_name( SymbolOop name ) {
+        static_cast<void>(name); // unused
     }
 
 
     void store_global( AssociationOop obj ) {
+        static_cast<void>(obj); // unused
     }
 
 
     void allocate_context( std::int32_t nofTemps, bool forMethod = false ) {
+        static_cast<void>(nofTemps); // unused
+        static_cast<void>(forMethod); // unused
     }
 
 
@@ -224,6 +250,8 @@ public:
 
 
     void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
+        static_cast<void>(argNo); // unused
+        static_cast<void>(no); // unused
     }
 
 
@@ -232,44 +260,64 @@ public:
 
 
     void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
+        static_cast<void>(pdesc); // unused
+        static_cast<void>(failure_start); // unused
     }
 
 
     void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
+        static_cast<void>(nofFloatTemps); // unused
+        static_cast<void>(nofFloatExprs); // unused
     }
 
 
     void float_floatify( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
         map_pop();
     }
 
 
     void float_move( std::int32_t tof, std::int32_t from ) {
+        static_cast<void>(tof); // unused
+        static_cast<void>(from); // unused
     }
 
 
     void float_set( std::int32_t tof, DoubleOop value ) {
+        static_cast<void>(tof); // unused
+        static_cast<void>(value); // unused
     }
 
 
     void float_nullary( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
     }
 
 
     void float_unary( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
     }
 
 
     void float_binary( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
     }
 
 
     void float_unaryToOop( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
         map_push();
     }
 
 
     void float_binaryToOop( Floats::Function f, std::int32_t tof ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(tof); // unused
         map_push();
     }
 };

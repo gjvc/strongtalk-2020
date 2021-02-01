@@ -25,6 +25,8 @@ std::int32_t behaviorPrimitives::number_of_calls;
 
 
 PRIM_DECL_2( behaviorPrimitives::allocate3, Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     PROLOGUE_2( "allocate3", receiver, tenured )
     ASSERT_RECEIVER;
     if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
@@ -459,51 +461,71 @@ extern "C" Oop primitiveInlineAllocations( Oop receiver, Oop count ) {
 }
 
 extern "C" Oop primitiveNew0( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew1( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew2( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew3( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew4( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew5( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew6( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew7( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew8( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop primitiveNew9( Oop receiver, Oop tenured ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(tenured); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

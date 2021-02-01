@@ -35,6 +35,7 @@ GrowableArray<KlassOop> *InlineCache::receiver_klasses() const {
 
 
 void InlineCache::replace( NativeMethod *nm ) {
+    static_cast<void>(nm); // unused
     Unimplemented();
     InlineCacheIterator *it = iterator();
     it->init_iteration();

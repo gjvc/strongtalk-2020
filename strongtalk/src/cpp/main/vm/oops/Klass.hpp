@@ -306,6 +306,7 @@ public:
 public:
     // actual Oop size of obj in memory
     virtual std::int32_t oop_size( Oop obj ) const {
+        static_cast<void>(obj); // unused
         return non_indexable_size();
     }
 
@@ -330,7 +331,6 @@ public:
     virtual bool oop_is_smi() const {
         return false;
     }
-
 
     virtual bool oop_is_double() const {
         return false;

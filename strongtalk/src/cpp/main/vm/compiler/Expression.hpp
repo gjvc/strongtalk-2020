@@ -90,7 +90,9 @@ public:
 
 
     virtual std::int32_t nklasses() const = 0;    // number of klasses contained in expr
+
     virtual bool really_hasKlass( InlinedScope *s ) const {
+        static_cast<void>(s); // unused
         return hasKlass();
     }
 
@@ -116,6 +118,7 @@ public:
 
 
     virtual Expression *makeUnknownUnlikely( InlinedScope *s ) {
+        static_cast<void>(s); // unused
         ShouldNotCallThis();
         return 0;
     }
@@ -137,6 +140,7 @@ public:
 
 
     virtual Expression *findKlass( KlassOop map ) const {
+        static_cast<void>(map); // unused
         return nullptr;
     }
 
@@ -240,6 +244,7 @@ FLAG_DEF( Unlikely );            // true e.g. if this is the "unknown" branch of
 
 
     Expression *copyWithout( Expression *e ) const {
+        static_cast<void>(e); // unused
         return (Expression *) this;
     }
 
@@ -285,6 +290,7 @@ public:
 
 
     Expression *copyWithout( Expression *e ) const {
+        static_cast<void>(e); // unused
         return (Expression *) this;
     }
 
@@ -591,18 +597,23 @@ public:
 
 
     Expression *shallowCopy( PseudoRegister *p, Node *n ) const {
+        static_cast<void>(p); // unused
+        static_cast<void>(n); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
 
 
     Expression *copyWithout( Expression *e ) const {
+        static_cast<void>(e); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
 
 
     Expression *mergeWith( Expression *other, Node *n ) {
+        static_cast<void>(other); // unused
+        static_cast<void>(n); // unused
         ShouldNotCallThis();
         return (Expression *) this;
     }
@@ -614,6 +625,7 @@ public:
 
 
     bool equals( Expression *other ) const {
+        static_cast<void>(other); // unused
         ShouldNotCallThis();
         return false;
     }

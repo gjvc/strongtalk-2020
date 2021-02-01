@@ -287,6 +287,7 @@ NoGCVerifier::~NoGCVerifier() {
 
 
 char *AllocatePageAligned( std::int32_t size, const char *name ) {
+
     std::int32_t page_size = Universe::page_size();
     char         *block    = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
@@ -297,9 +298,12 @@ char *AllocatePageAligned( std::int32_t size, const char *name ) {
 
 
 char *AllocateHeap( std::int32_t size, const char *name ) {
+
+    char * bytes = (char *) os::malloc( size );
     if ( PrintHeapAllocation )
         spdlog::info( "Heap %7d %s", size, name );
-    return (char *) os::malloc( size );
+
+    return bytes;
 }
 
 

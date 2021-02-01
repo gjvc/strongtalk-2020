@@ -30,6 +30,7 @@ bool VirtualFrame::equal( const VirtualFrame *virtualFrame ) const {
 
 
 Oop VirtualFrame::callee_argument_at( std::int32_t index ) const {
+    static_cast<void>(index); // unused
     spdlog::info( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
     st_fatal( "aborting" );
     return nullptr;
@@ -265,6 +266,8 @@ void InterpretedVirtualFrame::temp_at_put( std::int32_t offset, Oop obj ) {
 
 
 void InterpretedVirtualFrame::expression_at_put( std::int32_t offset, Oop obj ) {
+    static_cast<void>(offset); // unused
+    static_cast<void>(obj); // unused
     // FIX LATER p.set_expr(offset) = obj;
     Unimplemented();
 }
@@ -390,6 +393,7 @@ public:
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
+        static_cast<void>(pc); // unused
         if ( no == i )
             result = a;
     }
@@ -426,6 +430,8 @@ public:
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(pc); // unused
         result->append( a );
     }
 };
@@ -625,16 +631,25 @@ public:
 
 
     void arg( std::int32_t no, NameDescriptor *a, char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(a); // unused
+        static_cast<void>(pc); // unused
         CHECK( a );
     }
 
 
     void temp( std::int32_t no, NameDescriptor *a, char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(a); // unused
+        static_cast<void>(pc); // unused
         CHECK( a );
     }
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(a); // unused
+        static_cast<void>(pc); // unused
         CHECK( a );
     }
 };

@@ -22,6 +22,7 @@ class PseudoRegister;
 class PseudoRegisterClosure : public PrintableResourceObject {
 public:
     virtual void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
+        static_cast<void>(pseudoRegister); // unused
     }        // called for each PseudoRegister in the mapping
 };
 

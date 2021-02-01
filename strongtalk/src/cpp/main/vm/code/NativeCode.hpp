@@ -21,6 +21,7 @@ protected:
 
 public:
     void *operator new( std::size_t size ) throw() {
+        static_cast<void>(size); // unused
         SubclassResponsibility();
         return nullptr;
     }
@@ -66,6 +67,7 @@ public:
 
 
     virtual void moveTo( void *to, std::int32_t size ) = 0; // (possibly overlapping) copy
+
     virtual void relocate() {
     }
 

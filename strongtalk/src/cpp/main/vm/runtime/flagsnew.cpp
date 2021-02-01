@@ -69,7 +69,7 @@ private:
 
 public:
     ConfigurationOverride( ConfigurationValue<T> &configuration_value, const T &default_value ) : _cv{ configuration_value } {
-
+        static_cast<void>(default_value); // unused
     }
 
 

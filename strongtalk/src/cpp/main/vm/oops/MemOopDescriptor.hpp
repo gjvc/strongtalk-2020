@@ -100,6 +100,7 @@ public:
 
 
     void set_klass_field( KlassOop k, bool cs = true ) {
+        static_cast<void>(cs); // unused
         // %optimization
         //   since klasses are tenured the store check can be avoided
         addr()->_klass_field = k;

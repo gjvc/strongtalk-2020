@@ -149,6 +149,7 @@ public:
 
 
     std::int32_t width_of_char( char c ) {
+        static_cast<void>(c); // unused
         return 1;
     }
 

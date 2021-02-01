@@ -55,6 +55,7 @@ public:
 
 
     virtual Oop value( const Frame *f = nullptr ) const {
+        static_cast<void>(f); // unused
         SubclassResponsibility();
         return nullptr;
     }
@@ -69,6 +70,7 @@ public:
 
 
     virtual bool equal( NameDescriptor *other ) const {
+        static_cast<void>(other); // unused
         return false;
     }
 
@@ -122,6 +124,7 @@ struct ValueNameDescriptor : public NameDescriptor {
 
 
     Oop value( const Frame *f = nullptr ) const {
+        static_cast<void>(f); // unused
         return _v;
     }
 

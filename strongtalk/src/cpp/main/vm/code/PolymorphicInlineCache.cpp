@@ -677,6 +677,9 @@ std::int32_t PolymorphicInlineCache::code_for_megamorphic_case( char *entry ) {
 
 
 void PolymorphicInlineCache::shrink_and_generate( PolymorphicInlineCache *pic, KlassOop klass, void *method ) {
+    static_cast<void>(pic); // unused
+    static_cast<void>(klass); // unused
+    static_cast<void>(method); // unused
     Unimplemented();
 }
 

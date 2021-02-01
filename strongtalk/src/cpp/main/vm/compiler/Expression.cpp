@@ -117,6 +117,7 @@ bool ConstantExpression::equals( Expression *other ) const {
 
 
 bool MergeExpression::equals( Expression *other ) const {
+    static_cast<void>(other); // unused
     return false; // for now -- fix this later
 }
 
@@ -143,6 +144,8 @@ Expression *UnknownExpression::mergeWith( Expression *other, Node *n ) {
 
 
 Expression *NoResultExpression::mergeWith( Expression *other, Node *n ) {
+    static_cast<void>(other); // unused
+    static_cast<void>(n); // unused
     return other;
 }
 
@@ -476,6 +479,7 @@ Expression *MergeExpression::findKlass( KlassOop klass ) const {
 
 
 Expression *UnknownExpression::makeUnknownUnlikely( InlinedScope *s ) {
+    static_cast<void>(s); // unused
     st_assert( DeferUncommonBranches, "shouldn't make unlikely" );
     // called on an UnknownExpression itself, this is a no-op; works only
     // with merge exprs
@@ -532,6 +536,8 @@ Expression *UnknownExpression::shallowCopy( PseudoRegister *p, Node *n ) const {
 
 
 Expression *NoResultExpression::shallowCopy( PseudoRegister *p, Node *n ) const {
+    static_cast<void>(p); // unused
+    static_cast<void>(n); // unused
     return new NoResultExpression();
 }
 
@@ -578,7 +584,9 @@ NameNode *Expression::nameNode( bool mustBeLegal ) const {
 
 
 NameNode *ConstantExpression::nameNode( bool mustBeLegal ) const {
-//c    return newValueName(constant()); }
+    static_cast<void>(mustBeLegal); // unused
+
+    // return newValueName(constant()); }
     return 0;
 }
 

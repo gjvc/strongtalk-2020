@@ -77,7 +77,9 @@ public:
     void operator delete( void *p );
 
 
-    void operator delete( void *p, std::int32_t ) {
+    void operator delete( void *p, std::int32_t size ) {
+        static_cast<void>(p); // unused
+        static_cast<void>(size); // unused
     };
 
     // Allocates and returns a new ready to execute pic.

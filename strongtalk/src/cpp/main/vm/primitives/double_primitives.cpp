@@ -430,22 +430,39 @@ static void trap() {
 
 
 extern "C" Oop __CALLING_CONVENTION double_subtract( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
+
+
 extern "C" Oop __CALLING_CONVENTION double_divide( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
+
+
 extern "C" Oop __CALLING_CONVENTION double_add( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
+
+
 extern "C" Oop __CALLING_CONVENTION double_multiply( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
+
+
 extern "C" Oop __CALLING_CONVENTION double_from_smi( Oop receiver ) {
+    static_cast<void>(receiver); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

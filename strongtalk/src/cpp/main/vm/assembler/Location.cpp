@@ -32,6 +32,11 @@ static std::array<const char *, 6> specialLocationNames{
 // Constructors
 
 void Location::overflow( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
+    static_cast<void>(mode); // unused
+    static_cast<void>(f1); // unused
+    static_cast<void>(f2); // unused
+    static_cast<void>(f3); // unused
+
     // should handle field overflow somehow - for now: fatal error
     st_fatal( "Location field overflow - please notify the compiler folks" );
 }
@@ -123,6 +128,7 @@ void IntegerFreeList::grow() {
 
 
 IntegerFreeList::IntegerFreeList( std::int32_t size ) {
+    static_cast<void>(size); // unused
     _first = -1;
     _list  = new GrowableArray<std::int32_t>( 2 );
     st_assert( _list->length() == 0, "should be zero" );

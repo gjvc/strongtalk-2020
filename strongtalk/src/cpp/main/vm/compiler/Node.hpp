@@ -291,6 +291,8 @@ public:
 
 protected:
     virtual Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
+        static_cast<void>(from); // unused
+        static_cast<void>(to); // unused
         SubclassResponsibility();
         return nullptr;
     }
@@ -378,10 +380,12 @@ public:
 
 
     virtual void makeUses( BasicBlock *bb ) {
+        static_cast<void>(bb); // unused
     }
 
 
     virtual void removeUses( BasicBlock *bb ) {
+        static_cast<void>(bb); // unused
     }
 
 
@@ -394,6 +398,7 @@ public:
 
 
     virtual void computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *lst ) {
+        static_cast<void>(lst); // unused
     }
 
 
@@ -405,6 +410,7 @@ public:
 
 
     virtual void apply( NodeVisitor *v ) {
+        static_cast<void>(v); // unused
         ShouldNotCallThis();
     }
 
@@ -427,15 +433,22 @@ public:
     }          // does handle unknown cases? (with real code, not uncommon branch)
 
     virtual void collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
+        static_cast<void>(regs); // unused
+        static_cast<void>(klasses); // unused
         ShouldNotCallThis();
     }
 
 
     // return a list of pseudoRegisters tested and, for each pseudoRegister, a list of its types
     virtual void assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
-    } // assert that the klass of r (used by the reciver) is oneof(klasses)
+        (void) r; // unused
+        (void) klasses; // unused
+        (void) n; // unused
+    } // assert that the klass of r (used by the receiver) is oneof(klasses)
 
     virtual void assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n ) {
+        (void) r; // unused
+        (void) n; // unused
     }// assert that r (used by the reciver) is within array bounds
 
     virtual void print_short();
@@ -582,6 +595,7 @@ public:
 
 
     virtual void setNext1( Node *n ) {
+        static_cast<void>(n); // unused
         ShouldNotCallThis();
     }
 
@@ -670,11 +684,17 @@ public:
 
 
     bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false ) {
+        static_cast<void>(bb); // unused
+        static_cast<void>(u); // unused
+        static_cast<void>(d); // unused
+        static_cast<void>(replace); // unused
         return false;
     }
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        static_cast<void>(use_count); // unused
+        static_cast<void>(def_count); // unused
     }
 
 
@@ -754,6 +774,7 @@ public:
 
 
     void removeUses( BasicBlock *bb ) {
+        static_cast<void>(bb); // unused
         ShouldNotCallThis();
     }
 
@@ -772,6 +793,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        static_cast<void>(use_count); // unused
+        static_cast<void>(def_count); // unused
     }
 
 
@@ -1005,7 +1028,10 @@ public:
 
 
     virtual const char *action() const = 0;        // for debugging messages
+
     virtual void setStoreCheck( bool ncs ) {
+        static_cast<void>(ncs); // unused
+
     }
 
 
@@ -1320,6 +1346,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        static_cast<void>(use_count); // unused
+        static_cast<void>(def_count); // unused
     }
 
 
@@ -2390,6 +2418,7 @@ public:
 
 
     void apply( NodeVisitor *v ) {
+        static_cast<void>(v); // unused
         Unimplemented();
     }
 
@@ -2483,6 +2512,8 @@ public:
 
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const {
+        static_cast<void>(from); // unused
+        static_cast<void>(to); // unused
         ShouldNotCallThis();
         return nullptr;
     }
@@ -2992,6 +3023,8 @@ public:
 
     // void eliminate(BasicBlock* bb, PseudoRegister* r, bool removing = false, bool cp = false);
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        (void) use_count; // unused
+        (void) def_count; // unused
     };
 
     Node *likelySuccessor() const;
@@ -3050,6 +3083,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        static_cast<void>(use_count); // unused
+        static_cast<void>(def_count); // unused
     }
 
 
@@ -3659,6 +3694,8 @@ public:
 
 
     void markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+        static_cast<void>(use_count); // unused
+        static_cast<void>(def_count); // unused
     }
 
 

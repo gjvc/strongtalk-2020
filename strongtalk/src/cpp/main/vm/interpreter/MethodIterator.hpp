@@ -614,6 +614,7 @@ public:
 
 public:
     virtual void allocate_temporaries( std::int32_t nofTemps ) {
+        static_cast<void>(nofTemps); // unused
         instruction();
     }
 
@@ -629,51 +630,63 @@ public:
 
 
     virtual void push_literal( Oop obj ) {
+        static_cast<void>(obj); // unused
         instruction();
     }
 
 
     virtual void push_argument( std::int32_t no ) {
+        static_cast<void>(no); // unused
         instruction();
     }
 
 
     virtual void push_temporary( std::int32_t no ) {
+        static_cast<void>(no); // unused
         instruction();
     }
 
 
     virtual void push_temporary( std::int32_t no, std::int32_t context ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(context); // unused
         instruction();
     }
 
 
     virtual void push_instVar( std::int32_t offset ) {
+        static_cast<void>(offset); // unused
         instruction();
     }
 
 
     virtual void push_global( AssociationOop obj ) {
+        static_cast<void>(obj); // unused
         instruction();
     }
 
 
     virtual void store_temporary( std::int32_t no ) {
+        static_cast<void>(no); // unused
         instruction();
     }
 
 
     virtual void store_temporary( std::int32_t no, std::int32_t context ) {
+        static_cast<void>(no); // unused
+        static_cast<void>(context); // unused
         instruction();
     }
 
 
     virtual void store_instVar( std::int32_t offset ) {
+        static_cast<void>(offset); // unused
         instruction();
     }
 
 
     virtual void store_global( AssociationOop obj ) {
+        static_cast<void>(obj); // unused
         instruction();
     }
 
@@ -684,16 +697,19 @@ public:
 
 
     virtual void normal_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         instruction();
     }
 
 
     virtual void self_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         instruction();
     }
 
 
     virtual void super_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
         instruction();
     }
 
@@ -709,21 +725,28 @@ public:
 
 
     virtual void method_return( std::int32_t nofArgs ) {
+        static_cast<void>(nofArgs); // unused
         instruction();
     }
 
 
     virtual void nonlocal_return( std::int32_t nofArgs ) {
+        static_cast<void>(nofArgs); // unused
         instruction();
     }
 
 
     virtual void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
+        static_cast<void>(type); // unused
+        static_cast<void>(nofArgs); // unused
+        static_cast<void>(meth); // unused
         instruction();
     }
 
 
     virtual void allocate_context( std::int32_t nofTemps, bool forMethod ) {
+        static_cast<void>(nofTemps); // unused
+        static_cast<void>(forMethod); // unused
         instruction();
     }
 
@@ -739,6 +762,8 @@ public:
 
 
     virtual void copy_argument_into_context( std::int32_t argNo, std::int32_t no ) {
+        static_cast<void>(argNo); // unused
+        static_cast<void>(no); // unused
         instruction();
     }
 
@@ -749,51 +774,71 @@ public:
 
 
     virtual void predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
+        static_cast<void>(pdesc); // unused
+        static_cast<void>(failure_start); // unused
         instruction();
     }
 
 
     virtual void float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFloatExprs ) {
+        static_cast<void>(nofFloatTemps); // unused
+        static_cast<void>(nofFloatExprs); // unused
         instruction();
     }
 
 
     virtual void float_floatify( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 
 
     virtual void float_move( std::int32_t fno, std::int32_t from ) {
+        static_cast<void>(fno); // unused
+        static_cast<void>(from); // unused
         instruction();
     }
 
 
     virtual void float_set( std::int32_t fno, DoubleOop value ) {
+        static_cast<void>(fno); // unused
+        static_cast<void>(value); // unused
         instruction();
     }
 
 
     virtual void float_nullary( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 
 
     virtual void float_unary( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 
 
     virtual void float_binary( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 
 
     virtual void float_unaryToOop( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 
 
     virtual void float_binaryToOop( Floats::Function f, std::int32_t fno ) {
+        static_cast<void>(f); // unused
+        static_cast<void>(fno); // unused
         instruction();
     }
 };
