@@ -419,7 +419,7 @@ $(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.c
 	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-main-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
 $(st20-main-exe) : $(st20-main-exe-objects) $(st20-main-lib-a)
-	@echo ok: linking: $@
+	-@mkdir -p $(dir $@)
 	@$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
@@ -444,7 +444,7 @@ $(st20-test-exe-objects) $(st20-test-lib-objects) : $(object-root)/%.cpp.o : %.c
 	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-test-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
 $(st20-test-exe) : $(st20-test-exe-objects) $(st20-main-lib-a) $(st20-test-lib-a)
-	@echo ok: linking: $@
+	-@mkdir -p $(dir $@)
 	@$(cxx-compiler) \
 		$(cxx-link-flags) \
 		$(libgcc-link-flags) \
