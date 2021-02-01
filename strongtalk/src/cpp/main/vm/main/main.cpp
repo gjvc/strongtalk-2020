@@ -4,7 +4,6 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/os.hpp"
 #include "vm/runtime/vmOperations.hpp"
 
 #include <iostream>
@@ -31,7 +30,6 @@ int main( std::int32_t argc, char *argv[] ) {
         return EXIT_FAILURE;
     }
 
-    os::set_args( argc, argv );
     std::int32_t status = vm_main( argc, argv );
 
     return status;

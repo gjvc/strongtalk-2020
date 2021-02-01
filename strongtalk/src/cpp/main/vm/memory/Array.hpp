@@ -38,13 +38,13 @@ class ByteArray : public ResourceObject {
 
 private:
     std::uint8_t *_array;
-    std::size_t  _top;
-    std::size_t  _max;
+    std::int32_t  _top;
+    std::int32_t  _max;
 
     void extend();
 
 public:
-    std::size_t size() {
+    std::int32_t size() {
         return _top;
     }
 
@@ -70,7 +70,7 @@ public:
     void appendWord( std::int32_t p );
 
 
-    void putByteAt( std::uint8_t p, std::size_t offset ) {
+    void putByteAt( std::uint8_t p, std::int32_t offset ) {
         st_assert( offset < _max, "index out of bound" );
         _array[ offset ] = p;
     }
@@ -80,7 +80,7 @@ public:
 
 
     // Cut off some of the generated code.
-    void setTop( std::size_t offset ) {
+    void setTop( std::int32_t offset ) {
         st_assert( _top >= offset, "A smaller top is expected" );
         _top = offset;
     }

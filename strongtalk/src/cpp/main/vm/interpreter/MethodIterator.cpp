@@ -131,7 +131,7 @@ IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byt
         std::int32_t else_jump = next_byteCodeIndex + else_offset - else_jump_size;
         _then_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, else_jump );
         CodeIterator c( method, else_jump );
-        std::int32_t end_offset;
+        std::int32_t end_offset{ 0 };
         switch ( c.code() ) {
             case ByteCodes::Code::jump_else_byte:
                 end_offset = c.byte_at( 1 );

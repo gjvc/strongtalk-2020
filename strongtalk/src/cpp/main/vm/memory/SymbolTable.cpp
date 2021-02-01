@@ -11,21 +11,23 @@
 #define FOR_ALL_ENTRIES( entry ) \
   for (entry = firstBucket(); entry <= lastBucket(); entry ++)
 
-#define FOR_ALL_SYMBOL_ADDR( bucket, var, code )                        \
-    { if (bucket->is_symbol()) {                                        \
-         var = (SymbolOop*) bucket; code;                               \
-      } else {                                                          \
-        for (SymbolTableLink* l = bucket->get_link(); l; l = l->next) { \
-          var = &l->symbol; code;                                       \
-        }                                                               \
-      }                                                                 \
+#define FOR_ALL_SYMBOL_ADDR( bucket, var, code )                            \
+                                                                            \
+    {                                                                       \
+        if ( bucket->is_symbol() ) {                                        \
+            var = (SymbolOop*) bucket; code;                                \
+        } else {                                                            \
+            for (SymbolTableLink* l = bucket->get_link(); l; l = l->next) { \
+                var = &l->symbol; code;                                     \
+            }                                                               \
+        }                                                                   \
     }
 
 
-std::int32_t hash( const char *name, std::int32_t len ) {
+std::uint32_t hash( const char *name, std::int32_t len ) {
 
     // hash on at most 32 characters, evenly spaced
-    std::int32_t increment;
+    std::uint32_t increment;
 
     if ( len < 32 ) {
         increment = 1;
@@ -36,26 +38,29 @@ std::int32_t hash( const char *name, std::int32_t len ) {
     // hashpjw from Dragon book (ASU p. 436), except increment differently
 
     st_assert( BITS_PER_BYTE * BYTES_PER_WORD == 32, "assumes 32-bit words" );
-    std::int32_t unsigned h = 0;
-    std::int32_t unsigned g;
+    std::uint32_t h = 0;
+    std::uint32_t g;
 
     const char *s   = name;
     const char *end = s + len;
 
     for ( ; s < end; s = s + increment ) {
 
-        h = ( h << 4 ) + (std::int32_t unsigned) *s;
+        h = ( h << 4 ) + (std::uint32_t) *s;
 
-        if ( g = h & 0xf0000000 )
+        g = h & 0xf0000000;
+        if ( g )
             h ^= g | ( g >> 24 );
     }
+
     return h;
 }
 
 
 SymbolTable::SymbolTable() {
-    for ( std::int32_t i = 0; i < symbol_table_size; i++ )
+    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
         buckets[ i ].clear();
+    }
     free_list = first_free_link = end_block = nullptr;
 }
 
@@ -75,15 +80,20 @@ bool SymbolTable::is_present( SymbolOop sym ) {
     std::int32_t     hashValue = hash( name, len );
     SymbolTableEntry *bucket   = bucketFor( hashValue );
 
-    if ( bucket->is_empty() )
+    if ( bucket->is_empty() ) {
         return false;
+    }
 
-    if ( bucket->is_symbol() )
+    if ( bucket->is_symbol() ) {
         return bucket->get_symbol()->equals( name, len );
+    }
 
-    for ( SymbolTableLink *l = bucket->get_link(); l; l = l->next )
-        if ( l->symbol->equals( name, len ) )
+    for ( SymbolTableLink *l = bucket->get_link(); l; l = l->next ) {
+        if ( l->symbol->equals( name, len ) ) {
             return true;
+        }
+    }
+
     return false;
 }
 
@@ -126,7 +136,7 @@ SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
     st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
 
-    // Add the indentity hash for the new symbol
+    // Add the identity hash for the new symbol
     s->hash_value();
     st_assert( not s->mark()->has_valid_hash(), "should not have a hash yet" );
     s->set_mark( s->mark()->set_hash( s->hash_value() ) );
@@ -152,19 +162,21 @@ SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
 void SymbolTable::switch_pointers( Oop from, Oop to ) {
     if ( not from->is_symbol() )
         return;
+
     st_assert( to->is_symbol(), "cannot replace a symbol with a non-symbol" );
 
-    SymbolTableEntry *e;
+    SymbolTableEntry *e{ nullptr };
     FOR_ALL_ENTRIES( e ) {
         SymbolOop *addr;
         FOR_ALL_SYMBOL_ADDR( e, addr, SWITCH_POINTERS_TEMPLATE( addr ) );
     }
+
 }
 
 
 void SymbolTable::follow_used_symbols() {
     // throw out unreachable symbols
-    SymbolTableEntry *e;
+    SymbolTableEntry *e{ nullptr };
     FOR_ALL_ENTRIES( e ) {
         // If we have a one element list; preserve the symbol but remove the chain
         // This moving around cannot take place after follow_root has been called
@@ -203,8 +215,10 @@ void SymbolTable::follow_used_symbols() {
 
 
 void SymbolTableEntry::deallocate() {
+
     if ( not is_symbol() and get_link() )
         Universe::symbol_table->delete_link( get_link() );
+
 }
 
 
@@ -240,8 +254,9 @@ void SymbolTable::relocate() {
 
 
 bool SymbolTableLink::verify( std::int32_t i ) {
-    bool                  flag = true;
-    for ( SymbolTableLink *l   = this; l; l = l->next ) {
+    bool flag = true;
+
+    for ( SymbolTableLink *l = this; l; l = l->next ) {
         if ( not l->symbol->is_symbol() ) {
             error( "entry 0x{0:x} in symbol table isn't a symbol", l->symbol );
             flag = false;
@@ -253,6 +268,7 @@ bool SymbolTableLink::verify( std::int32_t i ) {
             flag = false;
         }
     }
+
     return flag;
 }
 
@@ -262,15 +278,20 @@ std::int32_t SymbolTableEntry::length() {
         return 1;
     if ( not get_link() )
         return 0;
-    std::int32_t          count = 0;
-    for ( SymbolTableLink *l    = get_link(); l; l = l->next )
+
+    std::int32_t count = 0;
+
+    for ( SymbolTableLink *l = get_link(); l; l = l->next )
         count++;
+
     return count;
 }
 
 
 SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
-    SymbolTableLink *res;
+
+    SymbolTableLink *res{ nullptr };
+
     if ( free_list ) {
         res       = free_list;
         free_list = free_list->next;
@@ -280,7 +301,8 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
             first_free_link = new_c_heap_array<SymbolTableLink>( block_size );
             end_block       = first_free_link + block_size;
         }
-        res                           = first_free_link++;
+
+        res = first_free_link++;
     }
     res->symbol = s;
     res->next   = n;
@@ -291,8 +313,10 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
 void SymbolTable::delete_link( SymbolTableLink *l ) {
     // Add the link to the freelist
     SymbolTableLink *end = l;
-    while ( end->next )
+    while ( end->next ) {
         end = end->next;
+    }
+
     end->next = free_list;
     free_list = l;
 }
@@ -301,6 +325,7 @@ void SymbolTable::delete_link( SymbolTableLink *l ) {
 // much of this comes from the print_histogram routine in mapTable.c,
 // so if bug fixes are made here, also make them in mapTable.cpp.
 void SymbolTable::print_histogram() {
+    
     const std::int32_t results_length = 100;
     std::int32_t       results[results_length];
 
@@ -330,36 +355,36 @@ void SymbolTable::print_histogram() {
         max_symbols = max( max_symbols, counter );
     }
     spdlog::info( "Symbol Table:" );
-    spdlog::info( "%8s %5d", "Total  ", total );
-    spdlog::info( "%8s %5d", "Minimum", min_symbols );
-    spdlog::info( "%8s %5d", "Maximum", max_symbols );
-    spdlog::info( "%8s %3.2f", "Average", ( (float) total / (float) symbol_table_size ) );
-    spdlog::info( "%s", "Histogram:" );
-    spdlog::info( " %s %29s", "Length", "Number chains that length" );
+    spdlog::info( "{:8s} {:5d}", "Total  ", total );
+    spdlog::info( "{:8s} {:5d}", "Minimum", min_symbols );
+    spdlog::info( "{:8s} {:5d}", "Maximum", max_symbols );
+    spdlog::info( "{:8s} {:2f}", "Average", ( (float) total / (float) symbol_table_size ) );
+    spdlog::info( "{:s}", "Histogram:" );
+    spdlog::info( "{:s} {:29s}", "Length", "Number chains that length" );
 
 
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            spdlog::info( "%6d %10d", i, results[ i ] );
+            spdlog::info( "{:6d} {:10d}", i, results[ i ] );
         }
     }
 
 
     std::int32_t line_length = 70;
-    spdlog::info( "%s %30s", " Length", "Number chains that length" );
+    spdlog::info( "{} {:30s}", " Length", "Number chains that length" );
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            spdlog::info( "%4d", i );
+            spdlog::info( "{:4d}", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {
-                spdlog::info( "%1s", "*" );
+                spdlog::info( "{:1s}", "*" );
             }
             if ( j == line_length ) {
-                spdlog::info( "%1s", "+" );
+                spdlog::info( "{:1s}", "+" );
             }
             spdlog::info( "" );
         }
     }
-    spdlog::info( " %s %d: %d", "Number chains longer than", results_length, out_of_range );
+    spdlog::info( " {} {:d}: {:d}", "Number chains longer than", results_length, out_of_range );
 }
 
 

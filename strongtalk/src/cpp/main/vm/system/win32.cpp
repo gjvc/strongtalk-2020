@@ -4,7 +4,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#if defined( __MINGW32__ ) || defined( _MSC_VER )
+#if ( defined( __GNUC__ ) && defined( __MINGW32__ ) ) || defined( _MSC_VER )
 
 #include "vm/system/win32.hpp"
 #include "vm/runtime/vmOperations.hpp"
@@ -511,7 +511,7 @@ void process_settings_file( const char *file_name, bool quiet );
 static std::int32_t number_of_ctrl_c = 0;
 
 
-bool WINAPI HandlerRoutine( DWORD dwCtrlType ) {
+int WINAPI HandlerRoutine( DWORD dwCtrlType ) {
     spdlog::info( "HandlerRoutine" );
 
     if ( CTRL_BREAK_EVENT == dwCtrlType ) {
@@ -661,7 +661,8 @@ void os_init() {
 
     os::initialize_system_info();
 
-    SetConsoleCtrlHandler( &HandlerRoutine, TRUE );
+    WINBOOL Add{true};
+    SetConsoleCtrlHandler( &HandlerRoutine, Add );
 
     HANDLE threadHandle;
     // Initialize main_process and main_thread

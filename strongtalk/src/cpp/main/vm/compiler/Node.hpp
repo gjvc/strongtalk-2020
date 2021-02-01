@@ -1778,7 +1778,7 @@ public:
 
     virtual bool doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool repl );
 
-    char *opName() const;
+    const char *opName() const;
 
     friend class NodeFactory;
 };

@@ -1390,7 +1390,7 @@ static void floatArithRROp( ArithOpCode op ) {
 
 void FloatArithRRNode::gen() {
     BasicNode::gen();
-    bool     noResult = ( _op == ArithOpCode::fCmpArithOp );
+//    bool     noResult = ( _op == ArithOpCode::fCmpArithOp );
     bool     exchange = ( _op == ArithOpCode::fModArithOp or _op == ArithOpCode::fCmpArithOp );
     Register base     = temp3;
     set_floats_base( this, base );
@@ -2252,6 +2252,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                     guarantee( _lowerBound->cpseudoRegister() == _lowerBound, "should use cpseudoRegister()" );
                 } else {
                     const Register t = movePseudoRegisterToReg( _lowerBound ? _lowerBound : _loopVar, tempseudoRegister );
+                    (void)t; // unused
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
                     theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }

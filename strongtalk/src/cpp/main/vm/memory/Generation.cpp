@@ -37,7 +37,7 @@ void NewGeneration::swap_spaces() {
 
 
 void NewGeneration::initialize( ReservedSpace rs, std::int32_t eden_size, std::int32_t surv_size ) {
-    std::int32_t new_size = eden_size + surv_size + surv_size;
+//    std::int32_t new_size = eden_size + surv_size + surv_size;
 
     _virtualSpace.initialize( rs, rs.size() );
 
@@ -307,7 +307,7 @@ void OldGeneration::object_iterate_from( OldWaterMark *mark, ObjectClosure *blk 
 
 void OldGeneration::verify() {
     std::int32_t n = 0;
-    OldSpace     *p;
+    OldSpace     *p{ nullptr };
     FOR_EACH_OLD_SPACE( s ) {
         n++;
         p = s;

@@ -24,20 +24,22 @@ void BaseHandle::push() {
     if ( _next ) {
         if ( _log ) {
             char msg[200];
-            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x{0:x}->0x{0:x}", _label, _next->_label, this, _next );
+            sprintf( msg, "unpopped StackHandle '%s->%s' : 0x%0#x -> 0x%0#x", _label, _next->_label, this, _next );
             st_assert( (const char *) this < (const char *) _next, msg );
         }
         _next->_prev = this;
     }
-    if ( _log )
+    if ( _log ) {
         spdlog::info( "Pushing handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
+    }
     setFirst( this );
 }
 
 
 void BaseHandle::pop() {
-    if ( _log )
+    if ( _log ) {
         spdlog::info( "Popping handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
+    }
     if ( _prev ) {
         _prev->_next = _next;
     } else {

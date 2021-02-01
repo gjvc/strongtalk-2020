@@ -29,9 +29,12 @@
 
 constexpr std::int32_t symbol_table_size = 20011;
 
-std::int32_t hash( const char *name, std::int32_t len );
+std::uint32_t hash( const char *name, std::int32_t len );
 
-struct SymbolTableLink {
+
+class SymbolTableLink {
+public:
+
     // instance variable
     SymbolOop       symbol;
     SymbolTableLink *next;
@@ -40,7 +43,10 @@ struct SymbolTableLink {
     bool verify( std::int32_t i );
 };
 
-struct SymbolTableEntry {
+
+class SymbolTableEntry {
+public:
+
     void *symbol_or_link;
 
 
@@ -86,6 +92,8 @@ struct SymbolTableEntry {
 
     std::int32_t length();
 };
+
+
 
 class SymbolTable : public CHeapAllocatedObject {
 

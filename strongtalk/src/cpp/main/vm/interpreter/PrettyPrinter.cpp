@@ -80,12 +80,12 @@ public:
     }
 
 
-    void top_level_print( prettyPrintStream *output );
+    void top_level_print( PrettyPrintStream *output );
 
-    virtual bool print( prettyPrintStream *output );
+    virtual bool print( PrettyPrintStream *output );
 
 
-    virtual std::int32_t width( prettyPrintStream *output ) {
+    virtual std::int32_t width( PrettyPrintStream *output ) {
         return output->infinity();
     }
 
@@ -110,9 +110,9 @@ class PrintWrapper {
 private:
     astNode           *_astNode;
     bool              _hit;
-    prettyPrintStream *_output;
+    PrettyPrintStream *_output;
 public:
-    PrintWrapper( astNode *astNode, prettyPrintStream *output );
+    PrintWrapper( astNode *astNode, PrettyPrintStream *output );
 
     ~PrintWrapper();
 };
@@ -123,7 +123,7 @@ public:
 bool should_wrap( std::int32_t type, astNode *arg );
 
 
-static bool print_selector_with_arguments( prettyPrintStream *output, SymbolOop selector, GrowableArray<astNode *> *arguments, bool split ) {
+static bool print_selector_with_arguments( PrettyPrintStream *output, SymbolOop selector, GrowableArray<astNode *> *arguments, bool split ) {
 
     if ( selector->is_binary() ) {
         // binary send
@@ -221,7 +221,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( string() );
@@ -229,7 +229,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return output->width_of_string( string() );
     }
 
@@ -273,7 +273,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         output->print( _name );
         output->print( " \"" );
         output->print( _value );
@@ -282,7 +282,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return output->width_of_string( _name ) + 3 + output->width_of_string( _value );
     }
 };
@@ -327,7 +327,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         if ( _beginSym ) {
             output->print( _beginSym );
             output->space();
@@ -344,7 +344,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t w = 0;
         if ( _beginSym )
             w += output->width_of_string( _beginSym ) + output->width_of_space();
@@ -586,7 +586,7 @@ public:
     }
 
 
-    void print_frame_header( prettyPrintStream *output ) {
+    void print_frame_header( PrettyPrintStream *output ) {
         char num[10];
         output->newline();
         output->print( "#" );
@@ -653,7 +653,7 @@ public:
     }
 
 
-    void print_header( prettyPrintStream *output ) {
+    void print_header( PrettyPrintStream *output ) {
         if ( fr() ) {
             print_frame_header( output );
         } else {
@@ -662,7 +662,7 @@ public:
     }
 
 
-    void print_method_header( prettyPrintStream *output ) {
+    void print_method_header( PrettyPrintStream *output ) {
         GrowableArray<astNode *> *arguments = new GrowableArray<astNode *>( 10 );
         for ( std::int32_t       i          = method()->number_of_arguments() - 1; i >= 0; i-- ) {
             arguments->push( parameter_at( i ) );
@@ -679,7 +679,7 @@ paramNode::paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t
 }
 
 
-PrintWrapper::PrintWrapper( astNode *astNode, prettyPrintStream *output ) {
+PrintWrapper::PrintWrapper( astNode *astNode, PrettyPrintStream *output ) {
     _astNode = astNode;
     _output  = output;
     _hit     = false;
@@ -698,7 +698,7 @@ PrintWrapper::~PrintWrapper() {
 }
 
 
-bool astNode::print( prettyPrintStream *output ) {
+bool astNode::print( PrettyPrintStream *output ) {
     if ( ActivationShowNameDescs ) {
         if ( _scopeNode and _scopeNode->sd() ) {
             NameDescriptor *nd = _scopeNode->sd()->exprStackElem( _byteCodeIndex );
@@ -710,7 +710,7 @@ bool astNode::print( prettyPrintStream *output ) {
 }
 
 
-void astNode::top_level_print( prettyPrintStream *output ) {
+void astNode::top_level_print( PrettyPrintStream *output ) {
     _scopeNode->print_header( output );
     print( output );
 }
@@ -733,7 +733,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output );
+    bool print( PrettyPrintStream *output );
 
 
     bool is_code() {
@@ -750,7 +750,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t len = _statements->length();
         if ( len == 0 )
             return 0;
@@ -774,7 +774,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         bool split = output->remaining() < width( output );
         output->print( "[" );
         if ( split )
@@ -787,7 +787,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return output->width_of_string( "[" ) + codeNode::width( output ) + output->width_of_string( "]" );
     }
 };
@@ -829,7 +829,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         if ( _hasReturn )
             output->print( hat() );
@@ -837,13 +837,13 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return ( _hasReturn ? output->width_of_string( hat() ) : 0 ) + _stat->width( output );
     }
 };
 
 
-bool codeNode::print( prettyPrintStream *output ) {
+bool codeNode::print( PrettyPrintStream *output ) {
 
     bool first = true;
 
@@ -870,7 +870,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         output->inc_indent();
         output->indent();
 
@@ -898,7 +898,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         bool split = false;
         output->print( "[" );
@@ -953,7 +953,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t w  = output->width_of_string( "[" ) + output->width_of_string( "]" );
         astNode      *p = _scopeNode->params();
         if ( p )
@@ -988,7 +988,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         bool split = output->remaining() < width( output );
         _variable->print( output );
@@ -1006,7 +1006,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return _variable->width( output ) + 2 * output->width_of_space() + output->width_of_string( sym() );
     }
 };
@@ -1067,7 +1067,7 @@ public:
     }
 
 
-    bool print_receiver( prettyPrintStream *output ) {
+    bool print_receiver( PrettyPrintStream *output ) {
         bool wrap = should_wrap_receiver();
         if ( wrap )
             output->print( "(" );
@@ -1079,7 +1079,7 @@ public:
     }
 
 
-    bool real_print( prettyPrintStream *output ) {
+    bool real_print( PrettyPrintStream *output ) {
         HIGHLIGHT
         bool split;
         if ( _is_prim )
@@ -1102,14 +1102,14 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         if ( receiver() and receiver()->is_cascade() )
             return receiver()->print( output );
         return real_print( output );
     }
 
 
-    std::int32_t width_receiver( prettyPrintStream *output ) {
+    std::int32_t width_receiver( PrettyPrintStream *output ) {
         std::int32_t w = receiver() ? receiver()->width( output ) + output->width_of_space() : 0;
         if ( should_wrap_receiver() ) {
             w += output->width_of_string( "(" ) + output->width_of_string( ")" );
@@ -1118,7 +1118,7 @@ public:
     }
 
 
-    std::int32_t width_send( prettyPrintStream *output ) {
+    std::int32_t width_send( PrettyPrintStream *output ) {
         std::int32_t arg = _selector->number_of_arguments();
         std::int32_t w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
 
@@ -1129,12 +1129,12 @@ public:
     }
 
 
-    std::int32_t real_width( prettyPrintStream *output ) {
+    std::int32_t real_width( PrettyPrintStream *output ) {
         return ( receiver() ? width_receiver( output ) + output->width_of_space() : 0 ) + width_send( output );
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         if ( receiver() and receiver()->is_cascade() )
             return receiver()->width( output );
         return real_width( output );
@@ -1241,7 +1241,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         astNode::print( output );
         if ( _isOuter )
             output->print( "#" );
@@ -1250,7 +1250,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return ( _isOuter ? output->width_of_string( "#" ) : 0 ) + output->width_of_string( _str );
     }
 };
@@ -1270,7 +1270,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         astNode::print( output );
         output->print( "'" );
         output->print( _str );
@@ -1279,7 +1279,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return 2 * output->width_of_string( "'" ) + output->width_of_string( _str );
     }
 };
@@ -1299,7 +1299,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "'" );
@@ -1309,7 +1309,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return 2 * output->width_of_string( "'" ) + output->width_of_string( _str );
     }
 };
@@ -1363,6 +1363,7 @@ private:
     char *_str;
 
 public:
+
     characterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
         leafNode( byteCodeIndex, scope ) {
         _value = value;
@@ -1403,7 +1404,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "#(" );
@@ -1417,7 +1418,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t w = output->width_of_string( "#(" ) + output->width_of_string( ")" );
 
         for ( std::int32_t i = 0; i < _elements->length(); i++ ) {
@@ -1458,7 +1459,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         astNode::print( output );
         output->print( "{{<" );
@@ -1478,7 +1479,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return output->width_of_string( "<" ) + output->width_of_string( "Printing dll call" ) + output->width_of_string( ">" );
     }
 };
@@ -1655,7 +1656,7 @@ public:
     }
 
 
-    bool print( prettyPrintStream *output ) {
+    bool print( PrettyPrintStream *output ) {
         _receiver->print( output );
         output->inc_newline();
         for ( std::int32_t i = 0; i < _messages->length(); i++ ) {
@@ -1672,7 +1673,7 @@ public:
     }
 
 
-    std::int32_t width( prettyPrintStream *output ) {
+    std::int32_t width( PrettyPrintStream *output ) {
         return 0;
     }
 };
@@ -1709,12 +1710,12 @@ static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode
 }
 
 
-void prettyPrintStream::print() {
+void PrettyPrintStream::print() {
     _console->print( "pretty-printer stream" );
 }
 
 
-void defaultPrettyPrintStream::indent() {
+void DefaultPrettyPrintStream::indent() {
     for ( std::int32_t i = 0; i < _indentation; i++ ) {
         space();
         space();
@@ -1722,19 +1723,19 @@ void defaultPrettyPrintStream::indent() {
 }
 
 
-void defaultPrettyPrintStream::print( const char *str ) {
+void DefaultPrettyPrintStream::print( const char *str ) {
     for ( std::int32_t i = 0; str[ i ]; i++ )
         print_char( str[ i ] );
 }
 
 
-void defaultPrettyPrintStream::print_char( char c ) {
+void DefaultPrettyPrintStream::print_char( char c ) {
     _console->print( "%c", c );
     pos += width_of_char( c );
 }
 
 
-std::int32_t defaultPrettyPrintStream::width_of_string( const char *str ) {
+std::int32_t DefaultPrettyPrintStream::width_of_string( const char *str ) {
     std::int32_t       w = 0;
     for ( std::int32_t i = 0; str[ i ]; i++ )
         w += width_of_char( str[ i ] );
@@ -1742,31 +1743,31 @@ std::int32_t defaultPrettyPrintStream::width_of_string( const char *str ) {
 }
 
 
-void defaultPrettyPrintStream::space() {
+void DefaultPrettyPrintStream::space() {
     print_char( ' ' );
 }
 
 
-void defaultPrettyPrintStream::newline() {
+void DefaultPrettyPrintStream::newline() {
     print_char( '\n' );
     pos = 0;
     indent();
 }
 
 
-void defaultPrettyPrintStream::begin_highlight() {
+void DefaultPrettyPrintStream::begin_highlight() {
     set_highlight( true );
     print( "{" );
 }
 
 
-void defaultPrettyPrintStream::end_highlight() {
+void DefaultPrettyPrintStream::end_highlight() {
     set_highlight( false );
     print( "}" );
 }
 
 
-void byteArrayPrettyPrintStream::newline() {
+void ByteArrayPrettyPrintStream::newline() {
     print_char( '\r' );
     pos = 0;
     indent();
@@ -2275,20 +2276,20 @@ astNode *generateForBlock( MethodOop method, KlassOop klass, std::int32_t byteCo
 }
 
 
-void PrettyPrinter::print( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, prettyPrintStream *output ) {
+void PrettyPrinter::print( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex, PrettyPrintStream *output ) {
     ResourceMark resourceMark;
     if ( not output )
-        output = new defaultPrettyPrintStream;
+        output = new DefaultPrettyPrintStream;
     astNode *root = generateForMethod( method, klass, byteCodeIndex );
     root->top_level_print( output );
     output->newline();
 }
 
 
-void PrettyPrinter::print( std::int32_t index, DeltaVirtualFrame *fr, prettyPrintStream *output ) {
+void PrettyPrinter::print( std::int32_t index, DeltaVirtualFrame *fr, PrettyPrintStream *output ) {
     ResourceMark resourceMark;
     if ( not output )
-        output = new defaultPrettyPrintStream;
+        output = new DefaultPrettyPrintStream;
 
     if ( ActivationShowCode ) {
         astNode *root = generateForActivation( fr, index );
@@ -2301,29 +2302,29 @@ void PrettyPrinter::print( std::int32_t index, DeltaVirtualFrame *fr, prettyPrin
 }
 
 
-void PrettyPrinter::print_body( DeltaVirtualFrame *fr, prettyPrintStream *output ) {
+void PrettyPrinter::print_body( DeltaVirtualFrame *fr, PrettyPrintStream *output ) {
     ResourceMark resourceMark;
     if ( not output )
-        output = new defaultPrettyPrintStream;
+        output = new DefaultPrettyPrintStream;
 
     astNode *root = generateForActivation( fr, 0 );
     root->print( output );
 }
 
 
-byteArrayPrettyPrintStream::byteArrayPrettyPrintStream() :
-    defaultPrettyPrintStream() {
+ByteArrayPrettyPrintStream::ByteArrayPrettyPrintStream() :
+    DefaultPrettyPrintStream() {
     _buffer = new GrowableArray<std::int32_t>( 200 );
 }
 
 
-void byteArrayPrettyPrintStream::print_char( char c ) {
+void ByteArrayPrettyPrintStream::print_char( char c ) {
     _buffer->append( (std::int32_t) c );
     pos += width_of_char( c );
 }
 
 
-ByteArrayOop byteArrayPrettyPrintStream::asByteArray() {
+ByteArrayOop ByteArrayPrettyPrintStream::asByteArray() {
     std::int32_t       l = _buffer->length();
     ByteArrayOop       a = oopFactory::new_byteArray( l );
     for ( std::int32_t i = 0; i < l; i++ ) {
@@ -2335,7 +2336,7 @@ ByteArrayOop byteArrayPrettyPrintStream::asByteArray() {
 
 ByteArrayOop PrettyPrinter::print_in_byteArray( MethodOop method, KlassOop klass, std::int32_t byteCodeIndex ) {
     ResourceMark               rm;
-    byteArrayPrettyPrintStream *stream = new byteArrayPrettyPrintStream();
+    ByteArrayPrettyPrintStream *stream = new ByteArrayPrettyPrintStream();
     PrettyPrinter::print( method, klass, byteCodeIndex, stream );
     return stream->asByteArray();
 }

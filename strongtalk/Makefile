@@ -115,15 +115,18 @@ ninja-program           := /usr/bin/ninja
 # object files ----------------------------------------------------------------
 
 build-type      ?= debug
-object-path     := $(toolchain-name)/$(build-type)
+build-system    ?= gnu-make
+object-path     := $(toolchain-name)/$(build-system)/$(build-type)
 object-root     := obj/$(object-path)
+
+object-root-cmake := obj/$(toolchain-name)/cmake/$(build-type)
 
 
 # ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
 
 # third-party packages --------------------------------------------------------
 
-external-package-path           := src/ext
+external-package-path           := ext
 external-package-root           := $(ROOT)/$(external-package-path)
 external-package-object-root    := $(ROOT)/$(object-root)/$(external-package-path)
 
@@ -172,7 +175,7 @@ cxx-debug-options           := dwarf
 cxx-debug-flags             := $(addprefix -g,$(cxx-debug-options))
 
 cxx-depends-options         := 
-cxx-depends-flags           = -MMD -MP -MT $@ -MF $(object-root)/$*.cpp.d
+cxx-depends-flags           = -MMD -MP -MT $@ -MF $(object-root)/$*.cpp.depends
 
 cxx-feature-options         := permissive
 cxx-feature-flags           := $(addprefix -f,$(cxx-feature-options))
@@ -231,7 +234,7 @@ st20-main-lib               := $(object-root)/st20-main-lib.a
 st20-main-lib-sources       := $(wildcard src/cpp/auto/vm/*/*.cpp src/cpp/main/vm/*/*.cpp src/cpp/main/vm/*/*/*.cpp)
 st20-main-lib-sources       := $(filter-out src/cpp/main/vm/main/%.cpp,$(st20-main-lib-sources))
 st20-main-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-lib-sources))
-st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-lib-sources))
+st20-main-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-lib-sources))
 
 st20-main-lib-cxx-include-paths-external := $(nasm-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-main-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-main-lib-cxx-include-paths-external))
@@ -248,7 +251,7 @@ st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
 st20-main-exe               := $(object-root)/st20-main.exe
 st20-main-exe-sources       := $(wildcard src/cpp/main/vm/main/*.cpp)
 st20-main-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-exe-sources))
-st20-main-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-main-exe-sources))
+st20-main-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-exe-sources))
 
 
 # st20-test-exe -----------------------------------------------------------------
@@ -257,12 +260,12 @@ st20-test-lib               := $(object-root)/st20-test-lib.a
 st20-test-lib-sources       := $(wildcard src/cpp/test/test/*/*.cpp)
 st20-test-lib-sources       := $(filter-out src/cpp/test/test/main/%.cpp,$(st20-test-lib-sources))
 st20-test-lib-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-lib-sources))
-st20-test-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-test-lib-sources))
+st20-test-lib-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-lib-sources))
 
 st20-test-exe               := $(object-root)/st20-test.exe
 st20-test-exe-sources       := $(wildcard src/cpp/test/test/main/*.cpp)
 st20-test-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-test-exe-sources))
-st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.d,$(st20-test-exe-sources))
+st20-test-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-test-exe-sources))
 
 st20-test-lib-cxx-include-paths-external := $(googletest-include-paths) $(fmt-include-paths) $(spdlog-include-paths)
 st20-test-lib-cxx-include-flags-external := $(addprefix -isystem ,$(st20-test-lib-cxx-include-paths-external))
@@ -284,7 +287,7 @@ st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 default : st20-main-exe st20-test-exe
 
 cmake-build : 
-	@$(cmake-program) \
+	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
@@ -292,8 +295,8 @@ cmake-build :
         -D CMAKE_CXX_COMPILER_LAUNCHER=$(ccache) \
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
         -S $(ROOT) \
-        -B $(object-root)
-	@$(ninja-program) -k 0 -C $(object-root)
+        -B $(object-root-cmake)
+	@$(ninja-program) -k 0 -C $(object-root-cmake)
 
 run-clang-tidy :
 	$(run-clang-tidy-py) -p $(object-root) 
@@ -410,7 +413,7 @@ $(st20-test-lib-a) : $(st20-test-lib-objects)
 
 # st20-main.exe ---------------------------------------------------------
 
-$(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
+$(st20-main-exe-objects) $(st20-main-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.depends
 	-@mkdir -p $(dir $@)
 	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-main-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
@@ -435,7 +438,7 @@ include $(wildcard $(st20-main-lib-depends))
 
 # st20-test.exe ----------------------------------------------------------
 
-$(st20-test-exe-objects) $(st20-test-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.d
+$(st20-test-exe-objects) $(st20-test-lib-objects) : $(object-root)/%.cpp.o : %.cpp $(object-root)/%.cpp.depends
 	-@mkdir -p $(dir $@)
 	@$(ccache) $(cxx-compiler) $(cxx-compile-flags) $(st20-test-lib-cxx-include-flags) -c $< -o $@ && echo ok: object: $@
 
@@ -483,10 +486,10 @@ ext : fmt googletest nasm spdlog
 
 # fmt -------------------------------------------------------------------------
 
-src/ext/fmt :
-	git clone https://github.com/fmtlib/fmt.git src/ext/fmt
+$(fmt-root-dir) :
+	git clone https://github.com/fmtlib/fmt.git $(fmt-root-dir)
 
-fmt : src/ext/fmt
+fmt : $(fmt-root-dir)
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -501,10 +504,10 @@ fmt : src/ext/fmt
 
 # spdlog ----------------------------------------------------------------------
 
-src/ext/spdlog :
-	git clone https://github.com/gabime/spdlog.git src/ext/spdlog
+$(spdlog-root-dir) :
+	git clone https://github.com/gabime/spdlog.git $(spdlog-root-dir)
 
-spdlog : src/ext/spdlog
+spdlog : $(spdlog-root-dir)
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -519,10 +522,10 @@ spdlog : src/ext/spdlog
 
 # googletest ------------------------------------------------------------------
 
-src/ext/googletest :
-	git clone https://github.com/google/googletest src/ext/googletest
+$(googletest-root-dir) :
+	git clone https://github.com/google/googletest $(googletest-root-dir)
 
-googletest : src/ext/googletest
+googletest : $(googletest-root-dir)
 	$(cmake-program) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
@@ -537,10 +540,10 @@ googletest : src/ext/googletest
 
 # nasm ------------------------------------------------------------------------
 
-src/ext/nasm :
-	git clone https://github.com/netwide-assembler/nasm src/ext/nasm
+$(nasm-root-dir) :
+	git clone https://github.com/netwide-assembler/nasm $(nasm-root-dir)
 
-nasm : src/ext/nasm
+nasm : $(nasm-root-dir)
 	cd $(nasm-root-dir) && ./autogen.sh
 	cd $(nasm-root-dir) && ./configure --host $(machine)-$(platform) --prefix $(nasm-object-dir)
 	cd $(nasm-root-dir) && make libnasm.a
@@ -550,3 +553,4 @@ nasm : src/ext/nasm
 	install --verbose $(nasm-root-dir)/include/* 	-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/x86/* 		-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
+

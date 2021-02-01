@@ -266,7 +266,7 @@ void PseudoRegister::removeUse( BasicBlock *bb, Usage *use ) {
         return;
     }
 
-    for ( std::size_t i = 0; i < _dus.length(); i++ ) {
+    for ( std::int32_t i = 0; i < _dus.length(); i++ ) {
         PseudoRegisterBasicBlockIndex *index = _dus.at( i );
         if ( index->_basicBlock == bb ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( index->_index );
@@ -308,7 +308,7 @@ void PseudoRegister::addDUHelper( Node *n, SList<DefinitionUsage *> *l, Definiti
     SListElem<DefinitionUsage *> *prev = nullptr;
 
     for ( SListElem<DefinitionUsage *> *e = l->head(); e and e->data()->_node->num() < myNum; prev = e, e = e->next() ) {
-        void;
+        (void) 0;
     }
     l->insertAfter( prev, el );
 }
@@ -826,7 +826,7 @@ bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t
     // Note: the isLiveAt methods are only used by the new backend (gri 3/27/96).
     if ( ss == _scope ) {
         // live range = [startByteCodeIndex, endByteCodeIndex]			// originally: ]startByteCodeIndex, endByteCodeIndex]
-        st_assert( _begByteCodeIndex == bc or ss == creationScope() and creationStartByteCodeIndex == bc, "oops" );
+        st_assert( ( _begByteCodeIndex == bc ) or ( ss == creationScope() and creationStartByteCodeIndex == bc ), "oops" );
         return byteCodeIndexLE( _begByteCodeIndex, bs ) and byteCodeIndexLE( bs, _endByteCodeIndex );    // originally: byteCodeIndexLT(_begByteCodeIndex, bs) and byteCodeIndexLE(bs, _endByteCodeIndex);
     } else {
         // live range = [bc, end of scope]			// originally: ]bc, end of scope]
@@ -1062,11 +1062,12 @@ void BlockPseudoRegister::computeUplevelAccesses() {
 
 
 const char *PseudoRegister::safeName() const {
-    if ( this == nullptr ) {
-        return "(null)";     // for safer debugging
-    } else {
-        return name();
-    }
+    return name();
+//    if ( this == nullptr ) {
+//        return "(null)";     // for safer debugging
+//    } else {
+//        return name();
+//    }
 }
 
 
@@ -1112,14 +1113,14 @@ void BlockPseudoRegister::print() {
 
 const char *BlockPseudoRegister::name() const {
     char *n = new_resource_array<char>( 25 );
-    sprintf( n, "%s <0x{0:x}>%s", PseudoRegister::name(), PrintHexAddresses ? this : 0, _memoized ? "#" : "" );
+    sprintf( n, "%s <0x%0x}>%s", PseudoRegister::name(), PrintHexAddresses ? this : 0, _memoized ? "#" : "" );
     return n;
 }
 
 
 const char *ConstPseudoRegister::name() const {
     char *n = new_resource_array<char>( 25 );
-    sprintf( n, "%s <0x{0:x}>", PseudoRegister::name(), constant );
+    sprintf( n, "%s <0x%0x>", PseudoRegister::name(), constant );
     return n;
 }
 

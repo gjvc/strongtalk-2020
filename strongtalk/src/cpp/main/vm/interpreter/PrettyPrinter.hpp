@@ -11,10 +11,11 @@
 #include "vm/system/platform.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+#include "vm/runtime/VirtualFrame.hpp"
 
 
 // This file contains the interface to the vm pretty printer.
-//    prettyPrintStream describes the output media.
+//    PrettyPrintStream describes the output media.
 //    PrettyPrinter     defined the interface for printing.
 
 // WARNING WARNING WARNING WARNING WARNING WARNING
@@ -23,7 +24,8 @@
 // for vm debugging I hope we can live  with it!!!!!
 // -- Lars 3/24-95
 
-class prettyPrintStream : public PrintableResourceObject {
+
+class PrettyPrintStream : public PrintableResourceObject {
 protected:
     std::int32_t _indentation;
     std::int32_t pos;
@@ -42,7 +44,7 @@ public:
 
 
     // creation
-    prettyPrintStream() {
+    PrettyPrintStream() {
         _indentation = pos = 0;
         set_highlight( false );
     }
@@ -110,11 +112,12 @@ public:
     void print();
 };
 
+
 // Default pretty-printer stream
-class defaultPrettyPrintStream : public prettyPrintStream {
+class DefaultPrettyPrintStream : public PrettyPrintStream {
 public:
-    defaultPrettyPrintStream() :
-        prettyPrintStream() {
+    DefaultPrettyPrintStream() :
+        PrettyPrintStream() {
     }
 
 
@@ -160,12 +163,13 @@ public:
     }
 };
 
-class byteArrayPrettyPrintStream : public defaultPrettyPrintStream {
+
+class ByteArrayPrettyPrintStream : public DefaultPrettyPrintStream {
 private:
     GrowableArray<std::int32_t> *_buffer;
 
 public:
-    byteArrayPrettyPrintStream();
+    ByteArrayPrettyPrintStream();
 
     void newline();
 
@@ -178,18 +182,17 @@ public:
 // based on the byte codes of the method and then printing the AST.
 // A simple ad-hoc strategy is used for splitting!
 
-class DeltaVirtualFrame;
 
 class PrettyPrinter : AllStatic {
 
 public:
     // Pretty prints the method with the byteCodeIndex highlighted.
     // If output is nullptr a default stream is used.
-    static void print( std::int32_t index, DeltaVirtualFrame *fr, prettyPrintStream *output = nullptr );
+    static void print( std::int32_t index, DeltaVirtualFrame *fr, PrettyPrintStream *output = nullptr );
 
-    static void print_body( DeltaVirtualFrame *fr, prettyPrintStream *output = nullptr );
+    static void print_body( DeltaVirtualFrame *fr, PrettyPrintStream *output = nullptr );
 
-    static void print( MethodOop method, KlassOop klass = nullptr, std::int32_t byteCodeIndex = -1, prettyPrintStream *output = nullptr );
+    static void print( MethodOop method, KlassOop klass = nullptr, std::int32_t byteCodeIndex = -1, PrettyPrintStream *output = nullptr );
 
     // Pretty prints the method with the byteCodeIndex highlighted into a byteArray.
     static ByteArrayOop print_in_byteArray( MethodOop method, KlassOop klass = nullptr, std::int32_t byteCodeIndex = -1 );

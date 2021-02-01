@@ -25,12 +25,14 @@ static std::int32_t exponent( double x ) {
 
 
 std::int32_t length_in_bits( Digit x ) {
+
     // Computes the index of the most significant bit + 1 (length is 0 for x = 0).
     std::int32_t i = 0;
     while ( x not_eq 0 ) {
         x >>= 1;
         i++;
     }
+
     return i;
 }
 
@@ -100,11 +102,13 @@ void shift_right( Digit d[], std::int32_t length, std::int32_t shift_count ) {
         std::int32_t k = shift_count / logB;
         std::int32_t l = shift_count % logB;
         std::int32_t h = logB - l;
+        
         while ( i < length - k - 1 ) {
             d[ i ] = ( d[ i + k + 1 ] << h ) | ( d[ i + k ] >> l );
             i++;
         }
-        d[ i ]         = d[ i + k ] >> l;
+
+        d[ i ] = d[ i + k ] >> l;
         i++;
         while ( i < length ) {
             d[ i ] = 0;

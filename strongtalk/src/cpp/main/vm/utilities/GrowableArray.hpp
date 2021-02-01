@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -11,19 +12,19 @@
 
 #include <vector>
 
-typedef void   (*voidDoFn)( void *p );
+typedef void (*voidDoFn)( void *p );
 
 typedef bool (*growableArrayFindFn)( void *token, void *elem );
 
+constexpr std::size_t INITIAL_ARRAY_SIZE{ 32 };
 
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
-    std::int32_t        _length;                    // current length
-    std::int32_t        _maxLength;                 // maximum length
-    void                **_data;                    // data array
-    bool                _allocatedOnSystemHeap;     // is data allocated on C heap?
-    std::vector<void *> _vector;                    //
+    std::int32_t _length;                    // current length
+    std::int32_t _maxLength;                 // maximum length
+    void         **_data;                    // data array
+    bool         _allocatedOnSystemHeap;     // is data allocated on C heap?
 
     void grow( std::int32_t j );     // grow data array (double length until j is a valid index)
 
@@ -73,8 +74,11 @@ public:
 
 template<typename T>
 class GrowableArray : public GenericGrowableArray {
-
+private:
+    std::vector<T>                    _vector; //
+    std::array<T, INITIAL_ARRAY_SIZE> _array; //
 public:
+
     GrowableArray( std::int32_t initial_size, bool on_C_heap = false ) :
         GenericGrowableArray( initial_size, on_C_heap ) {
     }
@@ -91,27 +95,28 @@ public:
 
 
     void append( const T elem ) {
-        if ( _length == _maxLength )
+        if ( _length == _maxLength ) {
             grow( _length );
+        }
         _data[ _length++ ] = (void *) ( elem );
     }
 
 
     T at( std::int32_t i ) const {
         st_assert( 0 <= i, "i not greater than 0" );
-        return reinterpret_cast<T> (_data[ i ]);
+        return reinterpret_cast<T>( _data[ i ] );
     }
 
 
     T first() const {
         st_assert( _length > 0, "empty list" );
-        return reinterpret_cast<T> (_data[ 0 ]);
+        return reinterpret_cast<T>( _data[ 0 ] );
     }
 
 
     T last() const {
         st_assert( _length > 0, "empty list" );
-        return reinterpret_cast<T> (_data[ _length - 1 ]);
+        return reinterpret_cast<T>( _data[ _length - 1 ] );
     }
 
 
@@ -150,8 +155,9 @@ public:
 
 
     void apply( Closure<T> *c ) const {
-        for ( std::int32_t i = 0; i < _length; i++ )
+        for ( std::int32_t i = 0; i < _length; i++ ) {
             c->do_it( (T) _data[ i ] );
+        }
     }
 
 
@@ -181,16 +187,17 @@ public:
 
 
     GrowableArray<T> *copy() const {
-        return (GrowableArray<T> *) raw_copy();
+        return static_cast<GrowableArray<T> *>( raw_copy() );
     }
 
 
     void appendAll( GrowableArray<T> *l ) {
-        raw_appendAll( (GenericGrowableArray *) l );
+        raw_appendAll( static_cast<GenericGrowableArray *>( l ) );
     }
 
 
     void sort( std::int32_t f( T *, T * ) ) {
         raw_sort( (std::int32_t ( * )( const void *, const void * )) f );
     }
+
 };

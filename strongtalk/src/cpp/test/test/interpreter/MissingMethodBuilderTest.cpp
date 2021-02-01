@@ -48,7 +48,7 @@ protected:
     }
 
 
-    void CHECK_OOPS( Oop expectedOops[], ObjectArrayOop oops, std::size_t index ) {
+    void CHECK_OOPS( Oop expectedOops[], ObjectArrayOop oops, std::int32_t index ) {
         Oop expected = expectedOops[ index ];
         Oop actual   = oops->obj_at( index + 1 );
         sprintf( msg, "Incorrect Oop at index 0x%0x.  Expected 0x%p, but got 0x%p", index, expected, actual );

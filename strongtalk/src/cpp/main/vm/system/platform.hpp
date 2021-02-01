@@ -28,6 +28,7 @@
 
 #define SPDLOG_COMPILED_LIB
 
+#include <mutex>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/fmt/bundled/printf.h>

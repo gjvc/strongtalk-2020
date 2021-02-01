@@ -216,7 +216,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::arguments, Oop receiver ) {
 }
 
 
-class vframeStream : public byteArrayPrettyPrintStream {
+class vframeStream : public ByteArrayPrettyPrintStream {
     void begin_highlight() {
         set_highlight( true );
         print_char( 27 );
@@ -245,7 +245,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::pretty_print, Oop receiver ) {
     if ( not vf->is_delta_frame() )
         return markSymbol( vmSymbols::external_activation() );
 
-    byteArrayPrettyPrintStream *stream = new vframeStream;
+    ByteArrayPrettyPrintStream *stream = new vframeStream;
     PrettyPrinter::print_body( (DeltaVirtualFrame *) vf, stream );
 
     return stream->asByteArray();

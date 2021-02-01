@@ -1821,9 +1821,11 @@ void ContextInitNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool removin
 
 
 void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32_t res ) {
-    // the receiver can be eliminated because the result it is testing
-    // is a constant (res)
-    bool ok;
+
+    // the receiver can be eliminated because the result it is testing is a constant (res)
+
+    bool ok{ false };
+
     switch ( _op ) {
         case BranchOpCode::EQBranchOp:
             ok = op1 == op2;
@@ -1844,23 +1846,26 @@ void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32
             ok = op1 >= op2;
             break;
         case BranchOpCode::LTUBranchOp:
-            ok = (unsigned) op1 < (unsigned) op2;
+            ok = static_cast<std::uint32_t>(op1) < static_cast<std::uint32_t>(op2);
             break;
         case BranchOpCode::LEUBranchOp:
-            ok = (unsigned) op1 <= (unsigned) op2;
+            ok = static_cast<std::uint32_t>(op1) <= static_cast<std::uint32_t>(op2);
             break;
         case BranchOpCode::GTUBranchOp:
-            ok = (unsigned) op1 > (unsigned) op2;
+            ok = static_cast<std::uint32_t>(op1) > static_cast<std::uint32_t>(op2);
             break;
         case BranchOpCode::GEUBranchOp:
-            ok = (unsigned) op1 >= (unsigned) op2;
+            ok = static_cast<std::uint32_t>(op1) >= static_cast<std::uint32_t>(op2);
             break;
         case BranchOpCode::VSBranchOp:
-            return;        // can't handle yet
+            // can't handle yet
+            return;
         case BranchOpCode::VCBranchOp:
-            return;        // can't handle yet
+            // can't handle yet
+            return;
         default: st_fatal( "unexpected branch type" );
     }
+
     std::int32_t nodeToRemove;
     if ( ok ) {
         nodeToRemove = 0; // branch is taken
@@ -1872,9 +1877,9 @@ void BranchNode::eliminateBranch( std::int32_t op1, std::int32_t op2, std::int32
     Node *discard = next( nodeToRemove );
     discard->removeUpToMerge();
     removeNext( discard );
-    Node *succ = next( 1 - nodeToRemove );
-    removeNext( succ );
-    append( succ );
+    Node *successor = next( 1 - nodeToRemove );
+    removeNext( successor );
+    append( successor );
     bb()->remove( this );    // delete the branch
 }
 
@@ -2160,7 +2165,7 @@ bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, b
         // can constant-fold this operation
         Oop c1 = ( (ConstPseudoRegister *) _src )->constant;
         Oop c2 = ( (ConstPseudoRegister *) _oper )->constant;
-        Oop result;
+        Oop result{};
         switch ( _op ) {
             case ArithOpCode::tAddArithOp:
                 result = GeneratedPrimitives::smiOopPrimitives_add( c1, c2 );
@@ -2197,8 +2202,9 @@ bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, b
         bool ok = not result->is_mark();
         if ( ok ) {
             // constant-fold this operation
-            if ( CompilerDebug )
+            if ( CompilerDebug ) {
                 cout( PrintCopyPropagation )->print( "*constant-folding N%d --> 0x{0:x}\n", _id, result );
+            }
             _constResult  = new_ConstPseudoRegister( scope(), result );
             // first, discard the error branch (if there)
             Node *discard = next1();
@@ -3066,7 +3072,7 @@ const char *NonLocalReturnTestNode::toString( char *buf, bool printAddress ) con
 }
 
 
-char *ArithNode::opName() const {
+const char *ArithNode::opName() const {
     return ArithOpName[ static_cast<std::int32_t>( _op ) ];
 }
 

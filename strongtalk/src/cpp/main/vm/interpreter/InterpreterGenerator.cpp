@@ -851,7 +851,7 @@ const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool fo
 
 const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
 
-    bool isByte, isTrue, isCond;
+    bool isByte{ false }, isTrue{ false }, isCond{ false };
 
     switch ( code ) {
         case ByteCodes::Code::ifTrue_byte:
@@ -928,8 +928,9 @@ const char *InterpreterGenerator::control_cond( ByteCodes::Code code ) {
         _macroAssembler->addl( esi, Address( esi, -OOP_SIZE ) );
     }
     load_ebx();
+
     if ( not isCond ) {
-        _macroAssembler->popl( eax );                        // discard condition
+        _macroAssembler->popl( eax );  // discard condition
     }
     jump_ebx();
 
@@ -1024,7 +1025,7 @@ const char *InterpreterGenerator::control_while( ByteCodes::Code code ) {
 
 const char *InterpreterGenerator::control_jump( ByteCodes::Code code ) {
 
-    bool isByte, isLoop;
+    bool isByte{ false }, isLoop{ false };
 
     switch ( code ) {
         case ByteCodes::Code::jump_else_byte:
@@ -1956,7 +1957,7 @@ const char *InterpreterGenerator::smi_compare_op( ByteCodes::Code code ) {
     advance_aligned( 1 + 2 * OOP_SIZE );
     load_ebx();
     _macroAssembler->cmpl( edx, eax );
-    Assembler::Condition cc;
+    Assembler::Condition cc{};
     switch ( code ) {
         case ByteCodes::Code::smi_equal:
             cc = Assembler::Condition::equal;
@@ -2574,7 +2575,7 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
     bool         pop_tos       = ByteCodes::pop_tos( code );
     Address      selector_addr = Address( esi, -2 * OOP_SIZE );
-    Address      klass_addr    = Address( esi, -1 * OOP_SIZE );
+//    Address      klass_addr    = Address( esi, -1 * OOP_SIZE );
 
     _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
     _macroAssembler->movl( ecx, smiKlass_addr() );        // load smi_t klass
@@ -2671,7 +2672,7 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
 
     // inline cache layout
     std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
-    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
+//    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
     Address      pic_addr      = Address( esi, -1 * OOP_SIZE );
 
     // pic layout

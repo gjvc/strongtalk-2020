@@ -63,7 +63,7 @@ void ByteArray::extend() {
     std::int32_t newMax    = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
-    for ( std::size_t i = 0; i < _top; i++ ) {
+    for ( std::int32_t i = 0; i < _top; i++ ) {
         newArray[ i ] = _array[ i ];
     }
 
@@ -92,6 +92,7 @@ void ByteArray::putHalfAt( std::int16_t p, std::int32_t offset ) {
 
 
 void ByteArray::appendWord( std::int32_t p ) {
+
     if ( _top + sizeof( std::int32_t ) > _max ) {
         extend();
     }

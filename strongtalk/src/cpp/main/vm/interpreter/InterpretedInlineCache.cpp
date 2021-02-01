@@ -237,13 +237,13 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
 
     // InlineCache entries after modification - used for loging only
     ByteCodes::Code code_after  = send_code();
-    Oop             word1_after = first_word();
-    Oop             word2_after = second_word();
+//    Oop             word1_after = first_word();
+//    Oop             word2_after = second_word();
 
     // log modification
-    spdlog::info( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition %d)", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
-    spdlog::info( "  from (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
-    spdlog::info( "  to   (%s, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+    spdlog::info( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition {:d})", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
+    spdlog::info( "  from ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+    spdlog::info( "  to   ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
 
 }
 

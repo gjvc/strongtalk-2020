@@ -25,7 +25,7 @@ endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 set ( arch i686 )
 set ( platform w64-mingw32 )
-set ( compiler-family llvm )
+set ( compiler-family gnu )
 set ( compiler-version 10 )
 set ( runtime posix )
 set ( runtime-platform linux-gnu )
@@ -50,16 +50,22 @@ set ( CMAKE_VERBOSE_MAKEFILE ON )
 # source directories ----------------------------------------------------------
 
 set ( cpp-src-dir ${CMAKE_CURRENT_SOURCE_DIR}/src/cpp )
+set ( ext-dir ${CMAKE_CURRENT_SOURCE_DIR}/ext )
 set ( cpp-auto-dir ${cpp-src-dir}/auto )
 set ( cpp-main-dir ${cpp-src-dir}/main )
 set ( cpp-test-dir ${cpp-src-dir}/test )
 
 
+# spdlog ----------------------------------------------------------------------
+
+set( spdlog-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/debug/ext/spdlog/ )
+
+
 # cmake -----------------------------------------------------------------------
 
+set ( CMAKE_CXX_EXTENSIONS ON )
 set ( CMAKE_CXX_STANDARD 20 )
 set ( CMAKE_CXX_STANDARD_REQUIRED YES )
-set ( CMAKE_CXX_EXTENSIONS ON )
 
 set ( CMAKE_BUILD_TYPE Debug )
 set ( CMAKE_EXPORT_COMPILE_COMMANDS YES )
@@ -92,12 +98,31 @@ message ( STATUS "CMAKE_VERBOSE_MAKEFILE       [${CMAKE_VERBOSE_MAKEFILE}]" )
 message ( STATUS "CMAKE_VERSION                [${CMAKE_VERSION}]" )
 message ( STATUS "" )
 message ( STATUS "" )
-
+message ( STATUS "-----------------------------------------------------------------------------" )
+message ( STATUS ">>> toolchain variables" )
+message ( STATUS "-----------------------------------------------------------------------------" )
+message ( STATUS "" )
+message ( STATUS "arch              [${arch}]" )
+message ( STATUS "platform          [${platform}]" )
+message ( STATUS "compiler-family   [${compiler-family}]" )
+message ( STATUS "compiler-version  [${compiler-version}]" )
+message ( STATUS "runtime           [${runtime}]" )
+message ( STATUS "runtime-platform  [${runtime-platform}]" )
+message ( STATUS "toolchain-name    [${toolchain-name}]" )
+message ( STATUS "" )
+message ( STATUS "ext-dir           [${ext-dir}]" )
+message ( STATUS "cpp-auto-dir      [${cpp-auto-dir}]" )
+message ( STATUS "cpp-main-dir      [${cpp-main-dir}]" )
+message ( STATUS "cpp-test-dir      [${cpp-test-dir}]" )
+message ( STATUS "" )
+message ( STATUS "spdlog-object-dir [${spdlog-object-dir}]" )
+message ( STATUS "" )
+message ( STATUS "" )
 
 # sources ----------------------------------------------------------------------
 
-file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" )
-list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
+file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" "${cpp-auto-dir}/vm/*/*.cpp" )
+list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main.cpp" )
 
 
 # library ---------------------------------------------------------------------
@@ -105,17 +130,21 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
 include_directories ( PRIVATE ${cpp-main-dir} )
 include_directories ( PRIVATE ${cpp-test-dir} )
 include_directories ( PRIVATE ${cpp-auto-dir} )
-include_directories ( PRIVATE ${spdlog-include} )
-include_directories ( SYSTEM ${CMAKE_SOURCE_DIR}/src/ext/googletest/googletest/include )
-include_directories ( SYSTEM ${CMAKE_SOURCE_DIR}/src/ext/nasm/include ${CMAKE_SOURCE_DIR}/src/ext/nasm/disasm ${CMAKE_SOURCE_DIR}/src/ext/nasm ${CMAKE_SOURCE_DIR}/src/ext/nasm/x86 )
-include_directories ( SYSTEM ${CMAKE_SOURCE_DIR}/src/ext/spdlog/include )
+
+include_directories ( SYSTEM ${ext-dir}/googletest/googletest/include )
+include_directories ( SYSTEM ${ext-dir}/nasm/include )
+include_directories ( SYSTEM ${ext-dir}/nasm )
+include_directories ( SYSTEM ${ext-dir}/nasm/disasm )
+include_directories ( SYSTEM ${ext-dir}/nasm/x86 )
+include_directories ( SYSTEM ${ext-dir}/spdlog/include )
+
 add_compile_options ( -fpermissive )
 
 
 # library ----------------------------------------------------------------------
 
-file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" )
-list ( FILTER st20-main-library-sources EXCLUDE REGEX "main.cpp" )
+file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" "${cpp-auto-dir}/vm/*/*.cpp" )
+list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main.cpp" )
 add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
 add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library-object> )
 
@@ -124,18 +153,20 @@ add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library
 
 file ( GLOB_RECURSE st20-main-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/main/*.cpp" )
 add_executable ( st20-main-binary ${st20-main-binary-sources} )
-target_link_libraries( st20-main-binary PRIVATE ${st20-main-library-static} )
+set_target_properties ( st20-main-binary PROPERTIES OUTPUT_NAME st20-main )
+
+target_link_directories ( st20-main-binary PUBLIC ${spdlog-object-dir} )
+target_link_libraries ( st20-main-binary PUBLIC st20-main-library-static spdlog )
 
 
-# # test ------------------------------------------------------------------------
-# 
-# file ( GLOB st20-test-library-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/*/*.cpp" )
-# list ( FILTER st20-test-library-sources EXCLUDE REGEX "main.cpp" )
-# 
-# add_library ( st20-test-library-object OBJECT ${st20-test-library-sources} )
-# add_library ( st20-test-library-static STATIC $<TARGET_OBJECTS:st20-test-library-object> )
-# 
-# file ( GLOB_RECURSE st20-test-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/main/*.cpp" )
-# add_executable ( st20-test-binary ${st20-test-binary-sources} )
-# target_link_libraries( st20-test-binary ${st20-main-library-static} ${st20-test-library-static} )
-# 
+# test ------------------------------------------------------------------------
+
+file ( GLOB st20-test-library-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/*/*.cpp" )
+list ( FILTER st20-test-library-sources EXCLUDE REGEX "src/cpp/test/test/main/main.cpp" )
+
+add_library ( st20-test-library-object OBJECT ${st20-test-library-sources} )
+add_library ( st20-test-library-static STATIC $<TARGET_OBJECTS:st20-test-library-object> )
+
+file ( GLOB_RECURSE st20-test-binary-sources ${CMAKE_SOURCE_DIR} "${cpp-test-dir}/test/main/*.cpp" )
+add_executable ( st20-test-binary ${st20-test-binary-sources} )
+target_link_libraries ( st20-test-binary PUBLIC st20-test-library-static st20-main-library-static spdlog )

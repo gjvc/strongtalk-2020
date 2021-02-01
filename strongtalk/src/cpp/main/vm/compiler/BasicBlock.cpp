@@ -619,6 +619,7 @@ void BasicBlock::slowLocalAlloc( GrowableArray<BitVector *> *hardwired, Growable
             st_assert( r->regClass == 0, "should have been cleared" );
             continue;
         }
+
         BitVector          *liveRange = lives->at( i );
         for ( std::int32_t tempNo     = lastTemp, ntries = 0; ntries < nofLocalRegisters; tempNo = nextTemp( tempNo ), ntries++ ) {
             if ( liveRange->isDisjointFrom( hardwired->at( tempNo ) ) ) {
@@ -651,8 +652,9 @@ void BasicBlock::doAlloc( PseudoRegister *r, Location l ) {
 void BasicBlock::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *> *l ) {
     // add all escaping blocks to l
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
-        if ( n->_deleted )
+        if ( n->_deleted ) {
             continue;
+        }
         n->computeEscapingBlocks( l );
     }
 }
@@ -684,8 +686,9 @@ bool BasicBlock::verifyLabels() {
     bool ok = true;
     if ( _nodeCount > 0 ) {
         for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
-            if ( n->_deleted )
+            if ( n->_deleted ) {
                 continue;
+            }
             if ( n->_label.is_unbound() ) {
                 ok = false;
                 spdlog::info( "unbound label at N%d", n->id() );
@@ -732,8 +735,9 @@ void BasicBlock::print() {
 
 void BasicBlock::print_code( bool suppressTrivial ) {
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
-        if ( n->_deleted and not( n == _first or n == _last ) )
+        if ( n->_deleted and not( n == _first or n == _last ) ) {
             continue;
+        }
         if ( suppressTrivial and n->isTrivial() ) {
             // don't print
         } else {
@@ -747,8 +751,9 @@ void BasicBlock::print_code( bool suppressTrivial ) {
 
 bool BasicBlock::contains( const Node *which ) const {
     for ( Node *n = _first; n not_eq _last->next(); n = n->next() ) {
-        if ( n == which )
+        if ( n == which ) {
             return true;
+        }
     }
     return false;
 }
@@ -762,13 +767,17 @@ void BasicBlock::verify() {
         if ( n->_deleted )
             continue;
         n->verify();
-        if ( n->bb() not_eq this )
+        if ( n->bb() not_eq this ) {
             error( "BasicBlock 0x{0:x}: Node 0x{0:x} doesn't point back to me", static_cast<const void *>(this), n );
+        }
+
         if ( n == _last and not n->endsBasicBlock() and not( n->next() and n->next()->isMergeNode() and ( (MergeNode *) ( n->next() ) )->_didStartBasicBlock ) ) {
             error( "BasicBlock 0x{0:x}: last Node 0x{0:x} isn't endsBasicBlock()", static_cast<const void *>(this), n );
         }
-        if ( n->endsBasicBlock() and n not_eq _last )
+
+        if ( n->endsBasicBlock() and n not_eq _last ) {
             error( "BasicBlock 0x{0:x}: Node 0x{0:x} ends BasicBlock but isn't last node", static_cast<const void *>(this), n );
+        }
     }
 
     if ( count not_eq _nodeCount ) {
@@ -783,14 +792,18 @@ void BasicBlock::verify() {
     if ( _loopDepth > 9 ) {
         spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
     }
+
 }
 
 
 void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth ) {
+
     // build BasicBlock graph with depth-first traversal
-    if ( _id == 1 )
+    if ( _id == 1 ) {
         return;
-    _id = 1;        // mark as visited
+    }
+
+    _id = 1; // mark as visited
 
 #if 0
 
@@ -816,7 +829,8 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
 
 
     //
-    std::int32_t       n = _last->nSuccessors();
+    std::int32_t n = _last->nSuccessors();
+
     for ( std::int32_t i = 0; i < n; i++ ) {
         Node       *next   = _last->next( i );
         BasicBlock *nextBB = next->newBasicBlock();
@@ -827,8 +841,11 @@ void BasicBlock::dfs( GrowableArray<BasicBlock *> *list, std::int32_t loopDepth 
     for ( std::int32_t i = nSuccessors() - 1; i >= 0; i-- ) {
         BasicBlock *nextBB = next( i );
         // only follow the link if next->bb hasn't been visited yet
-        if ( nextBB->id() == 0 )
+        if ( nextBB->id() == 0 ) {
             nextBB->dfs( list, loopDepth );
+        }
     }
+
+    //
     list->append( this );
 }

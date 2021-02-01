@@ -310,14 +310,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
     SymbolOop sel        = selector();
 
     if ( TraceLookup ) {
-        _console->print( "CompiledInlineCache super lookup (" );
-        recv_klass->print_value();
-        _console->print( ", " );
-        mhld_klass->print_value();
-        _console->print( ", " );
-        selector()->print_value();
-        _console->print( ")" );
-        _console->cr();
+        spdlog::info( "CompiledInlineCache super lookup ({}, {}, {})", recv_klass->print_value_string(), mhld_klass->print_value_string(), selector()->print_value_string() );
     }
 
     // The inline cache for super sends looks like the inline cache for normal sends.

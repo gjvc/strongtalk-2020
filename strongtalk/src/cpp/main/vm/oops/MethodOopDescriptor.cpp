@@ -1508,7 +1508,7 @@ bool shouldStop( const char *name, Oop method_or_selector, const char *class_nam
 
 
 StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl, bool stop ) :
-    enable( shouldStop( name, method_or_selector, class_name, klass ) ), oldFlag( enable ? fl : ignored, true ), stop( stop ) {
+    enable( shouldStop( name, method_or_selector, class_name, klass ) ), stop( stop ), oldFlag( enable ? fl : ignored, true )  {
     if ( enable and stop )
         breakpoint();
 }

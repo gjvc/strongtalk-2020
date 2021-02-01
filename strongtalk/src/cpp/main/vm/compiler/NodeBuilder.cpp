@@ -701,8 +701,8 @@ GrowableArray<PseudoRegister *> *NodeBuilder::pass_arguments( PseudoRegister *re
 
     // materialize blocks
     for ( sp = first_arg; sp < limit_arg; sp++ ) {
-        ExpressionStack *temp1          = exprStack();
-        Expression      *temp2          = temp1->at( sp );
+//        ExpressionStack *temp1          = exprStack();
+//        Expression      *temp2          = temp1->at( sp );
 //        PseudoRegister  *pseudoRegister = temp2->pseudoRegister();
 
         PseudoRegister *actual = exprStack()->at( sp )->pseudoRegister();
@@ -1430,7 +1430,7 @@ void NodeBuilder::float_binaryToOop( Floats::Function f, std::int32_t fno ) {
     append( NodeFactory::createAndRegisterNode<FloatArithRRNode>( ArithOpCode::fCmpArithOp, op1, op2, fpu_status ) );
     append( NodeFactory::createAndRegisterNode<ArithRCNode>( ArithOpCode::TestArithOp, fpu_status, mask, new NoResultPseudoRegister( _scope ) ) );
 
-    BranchOpCode cc2;
+    BranchOpCode cc2{};
     switch ( cond ) {
         case Assembler::Condition::zero:
             cc2 = BranchOpCode::EQBranchOp;

@@ -5,9 +5,9 @@
 //
 
 #include "vm/system/platform.hpp"
-#include "vm/memory/allocation.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/runtime/arguments.hpp"
+#include "vm/system/os.hpp"
 
 #include <fstream>
 
@@ -108,7 +108,7 @@ void print_credits() {
 
     std::int32_t mask = 0xa729b65d;
 
-    for ( std::size_t i = 0; i < sizeof( credits ) - 1; i++ ) {
+    for ( std::int32_t i = 0; i < sizeof( credits ) - 1; i++ ) {
         fputc( ( credits[ i ] ^ mask ) & 0x7f, stdout );
         mask = ( mask << 1 ) | ( ( mask >> 31 ) & 1 ); // rotate mask
     }
@@ -169,7 +169,11 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
             // signals to ignore the rest of the command line, which will be
             // interpreted by Smalltalk code as benchmark commands.
             return;
-        } else
+        } else {
             process_token( argv[ i ] );
+        }
     }
+
+    os::set_args( argc, argv );
+
 }

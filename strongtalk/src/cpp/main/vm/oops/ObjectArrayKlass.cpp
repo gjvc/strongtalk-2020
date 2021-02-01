@@ -32,6 +32,8 @@ Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scaveng
     // indexables
     Oop *base = (Oop *) obj->addr();
     Oop *end  = base + obj_size;
+    (void)end; // unused
+
     // %optimized 'obj->set_signed_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );
@@ -76,6 +78,8 @@ ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::int32_t size ) {
     // indexables
     Oop *base = (Oop *) obj->addr();
     Oop *end  = base + obj_size;
+    (void)end; // unused
+
     // %optimized 'obj->set_signed_length(size)'
     base[ ni_size ] = smiOopFromValue( size );
     MemOop( obj )->initialize_body( ni_size + 1, obj_size );

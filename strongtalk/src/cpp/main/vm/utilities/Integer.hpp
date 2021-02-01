@@ -63,7 +63,7 @@ public:
 
     std::int32_t signed_length() const; // returns < 0 for x < 0; 0 for x == 0; > 0 for x > 0
 
-    std::size_t size_in_bytes() const;
+    std::int32_t size_in_bytes() const;
 
     void set_signed_length( std::int32_t l );
 

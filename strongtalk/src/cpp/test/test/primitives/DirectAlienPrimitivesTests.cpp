@@ -50,8 +50,8 @@ protected:
         _doubleValue->set_value( 1.625 );
 
         IntegerOps::unsigned_int_to_Integer( (std::uint32_t) 0xFFFFFFFF, ByteArrayOop( _largeUnsignedInteger )->number() );
-        IntegerOps::int_to_Integer( 1 << 30, ByteArrayOop( _largeUnsignedInteger2 )->number() );
-        IntegerOps::int_to_Integer( -1 << 31, ByteArrayOop( _largeSignedInteger )->number() );
+        IntegerOps::int_to_Integer( +( 1 << 30 ), ByteArrayOop( _largeUnsignedInteger2 )->number() );
+        IntegerOps::int_to_Integer( -( 1 << 31 ), ByteArrayOop( _largeSignedInteger )->number() );
 //            IntegerOps::mul( _largeUnsignedInteger->number(), _largeUnsignedInteger->number(), _veryLargeUnsignedInteger->number() );
         byteArrayPrimitives::alienSetSize( smiOopFromValue( 8 ), _alien );
     }

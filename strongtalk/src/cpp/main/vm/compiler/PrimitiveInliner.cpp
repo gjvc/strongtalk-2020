@@ -619,7 +619,7 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     _gen->append( at );
 
     // continuation
-    Expression *resExpression;
+    Expression *resExpression{};
     switch ( access_type ) {
         case ArrayAtNode::byte_at        : // fall through
         case ArrayAtNode::double_byte_at:

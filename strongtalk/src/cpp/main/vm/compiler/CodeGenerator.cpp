@@ -128,11 +128,14 @@ public:
         mapping->iterate( this );
         // determine changes & notify ScopeDescriptorRecorder if necessary
         ScopeDescriptorRecorder *rec = theCompiler->scopeDescRecorder();
-        for ( std::int32_t      i    = _locations->length(); i-- > 0; ) {
+
+        for ( std::int32_t i = _locations->length(); i-- > 0; ) {
+
             PseudoRegister *pseudoRegister = _pseudoRegisters->at( i );
             bool           present         = _present->at( i );
             Location       old_loc         = location_at( i );
             Location       new_loc         = present ? mapping->locationFor( pseudoRegister ) : Location::ILLEGAL_LOCATION;
+
             if ( ( not present and old_loc not_eq Location::ILLEGAL_LOCATION ) or
                  // pseudoRegister not present anymore but has been there before
                  ( present and old_loc == Location::ILLEGAL_LOCATION ) or    // pseudoRegister present but has not been there before
@@ -146,12 +149,12 @@ public:
                 }
                 // debugging
                 if ( PrintDebugInfoGeneration ) {
-                    spdlog::info( "%5d: %-20s @ %s", pc_offset, pseudoRegister->name(), new_loc.name() );
+                    spdlog::info( "{:5d}: {:20s} @ {}", pc_offset, pseudoRegister->name(), new_loc.name() );
                 }
                 rec->changeLogicalAddress( pseudoRegister->logicalAddress(), nameNode, pc_offset );
             }
-            location_at_put( i, new_loc );        // record current location
-            _present->at_put( i, false );        // mark as not present for next round
+            location_at_put( i, new_loc );  // record current location
+            _present->at_put( i, false );   // mark as not present for next round
         }
     }
 
@@ -559,7 +562,7 @@ void CodeGenerator::assign( PseudoRegister *dst, PseudoRegister *src, bool needs
         IS_UNDEFINED    //
     }                    state = IS_UNDEFINED;
 
-    Oop            value;               // valid if state == is_const
+    Oop            value{};               // valid if state == is_const
     Register       reg;                 // valid if state == is_loaded
     PseudoRegister *pseudoRegister{ nullptr };    // valid if state == is_mapped
 
@@ -1862,14 +1865,12 @@ void CodeGenerator::generateIntegerLoopTests( LoopHeaderNode *node, Label &failu
 }
 
 
-/*
-void LoopHeaderNode::generateIntegerLoopTests(Label& prev, Label& failure) {
-  if (not _integerLoop) return;
-  generateIntegerLoopTest(_lowerBound, prev, failure);
-  generateIntegerLoopTest(_upperBound, prev, failure);
-  generateIntegerLoopTest(_loopVar   , prev, failure);
-}
-*/
+//void LoopHeaderNode::generateIntegerLoopTests( Label &prev, Label &failure ) {
+//    if ( not _integerLoop ) return;
+//    generateIntegerLoopTest( _lowerBound, prev, failure );
+//    generateIntegerLoopTest( _upperBound, prev, failure );
+//    generateIntegerLoopTest( _loopVar, prev, failure );
+//}
 
 
 void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure ) {
@@ -1880,28 +1881,36 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
     // use the loop variable without an index range check, we need to check it here.
     PseudoRegister      *loopArray = node->upperLoad()->src();
     AbstractArrayAtNode *atNode;
-    std::int32_t        i          = node->arrayAccesses()->length();
+
+    std::int32_t i = node->arrayAccesses()->length();
     while ( i-- > 0 ) {
         atNode = node->arrayAccesses()->at( i );
-        if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() )
+        if ( atNode->src() == loopArray and not atNode->needsBoundsCheck() ) {
             break;
+        }
     }
 
-    if ( i < 0 ) return;
-
+    if ( i < 0 ) {
+        return;
+    }
 
     // loopVar is used to index into array; make sure lower & upper bound is within array range
     PseudoRegister *lo = node->lowerBound();
-    PseudoRegister *hi = node->upperBound();
-    if ( lo not_eq nullptr and lo->isConstPseudoRegister() and ( (ConstPseudoRegister *) lo )->constant->is_smi() and ( (ConstPseudoRegister *) lo )->constant >= smiOopFromValue( 1 ) ) {
+//    PseudoRegister *hi = node->upperBound();
+
+    if ( ( lo not_eq nullptr ) and
+         ( lo->isConstPseudoRegister() ) and
+         ( (ConstPseudoRegister *) lo )->constant->is_smi() and
+         ( (ConstPseudoRegister *) lo )->constant >= smiOopFromValue( 1 ) ) {
+        // nothing
 
     } else {
         // test lower bound
         //
         if ( lo->_location == Location::UNALLOCATED_LOCATION ) {
-
+            // nothing
         } else {
-            //
+            // nothing
         }
     }
     // test upper bound

@@ -54,10 +54,11 @@ public:
     }
 
 
-    smi_t length() const {
+    std::int32_t length() const {
         Oop len = *length_addr();
         st_assert( len->is_smi(), "length of indexable should be smi_t" );
-        return SMIOop( len )->value();
+        auto value = SMIOop( len )->value();
+        return static_cast<std::int32_t>( value );
     }
 
 

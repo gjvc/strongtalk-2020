@@ -135,7 +135,7 @@ public:
 
 
     bool includes( std::int32_t i ) {
-        st_assert( this, "shouldn't be a null pointer" );
+        //st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
         bool b = getBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
         return b;
@@ -143,7 +143,7 @@ public:
 
 
     void add( std::int32_t i ) {
-        st_assert( this, "shouldn't be a null pointer" );
+        //st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
         setBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
     }
@@ -152,7 +152,7 @@ public:
     void addFromTo( std::int32_t first, std::int32_t last );    // set bits [first..last]
 
     void remove( std::int32_t i ) {
-        st_assert( this, "shouldn't be a null pointer" );
+        //st_assert( this, "shouldn't be a null pointer" );
         st_assert( i < length, "not in range" );
         clearBitInWord( indexFromNumber( i ), offsetFromNumber( i ) );
     }

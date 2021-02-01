@@ -519,11 +519,7 @@ void InliningDatabase::load_index_file() {
             if ( first.is_block_type() ) {
                 if ( stream.getline( line, 1000 ) ) {
                     if ( scan_key( line, &second ) ) {
-                        // _console->print("Block ");
-                        // first.print_on(_console);
-                        // _console->print(" outer ");
-                        // second.print_on(_console);
-                        // _console->cr();
+//                        spdlog::info( "Block [{}], outer [{}]", first.print_value_on(), second.print_value_on() );
                         add_lookup_entry( &second, &first );
                     } else {
                         spdlog::info( "%inlining-database-index-file: filename[{}], parsing block failed for[{}]", index_file_name(), line );
@@ -531,9 +527,7 @@ void InliningDatabase::load_index_file() {
                     }
                 }
             } else {
-                // _console->print("Method ");
-                // first.print_on(_console);
-                // _console->cr();
+                // spdlog::info( "Method [{}]", first.print_value_on() );
                 add_lookup_entry( &first );
             }
         } else {
@@ -595,6 +589,7 @@ RecompilationScope *InliningDatabase::file_in( const char *file_path ) {
     if ( not stream.good() ) {
         return nullptr;
     }
+
     RecompilationScope *result = file_in_from( stream );
 
     stream.close();
@@ -619,13 +614,11 @@ RecompilationScope *InliningDatabase::file_in( LookupKey *outer, LookupKey *inne
     RecompilationScope *result = file_in( file_name );
 
     if ( TraceInliningDatabase and result == nullptr ) {
-        _console->print( "Failed parsing file for " );
         if ( inner ) {
-            inner->print();
-            _console->print( " " );
+//            spdlog::info( "Failed parsing file for [{}]", inner->print_value_on() );
         }
-        outer->print();
-        _console->cr();
+//        spdlog::info( "[{}]", outer->print_value_on() );
+
     }
 
     return result;
@@ -731,7 +724,7 @@ void InliningDatabase::add_lookup_entry( LookupKey *outer, LookupKey *inner ) {
     _table_no++;
 
     if ( TraceInliningDatabase ) {
-        spdlog::info( "InliningDatabase::add_lookup_entry @ {}", index );
+        spdlog::info( "InliningDatabase::add_lookup_entry @ [{}]", index );
         if ( inner ) {
             inner->print();
             _console->print( " " );

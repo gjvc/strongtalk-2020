@@ -362,7 +362,7 @@ void InlinedScope::createContextTemporaries( std::int32_t nofTemps ) {
         // replaced old assertion with the one below. Since assert disappears in the
         // fast version, put in a warning so that we can look at this if it happens
         // again (couldn't re-create the situation yet) - gri 5/10/96
-        st_assert( isMethodScope() or isBlockScope() and method()->block_info() == MethodOopDescriptor::expects_nil, "check this" );
+        st_assert( isMethodScope() or ( isBlockScope() and method()->block_info() == MethodOopDescriptor::expects_nil ), "check this" );
         //if (isBlockScope()) spdlog::warn("possibly a bug in InlinedScope::createContextTemporaries - tell Robert");
         _context = new SinglyAssignedPseudoRegister( this, PrologueByteCodeIndex, EpilogueByteCodeIndex );
     }
