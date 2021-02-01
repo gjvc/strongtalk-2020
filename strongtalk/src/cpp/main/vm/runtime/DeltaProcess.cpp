@@ -907,6 +907,7 @@ std::int32_t DeltaProcess::depth() {
 
 
 std::int32_t DeltaProcess::vdepth( Frame *f ) {
+    static_cast<void>(f); // unused
     Unimplemented();
     return 0;
 }
@@ -919,8 +920,9 @@ void DeltaProcess::trace_stack() {
 
 void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
     spdlog::info( "- Stack trace" );
-    std::int32_t       vframe_no = 1;
-    for ( VirtualFrame *f        = start_frame; f; f = f->sender() ) {
+    std::int32_t vframe_no = 1;
+
+    for ( VirtualFrame *f = start_frame; f; f = f->sender() ) {
         if ( f->is_delta_frame() ) {
             ( (DeltaVirtualFrame *) f )->print_activation( vframe_no++ );
         } else {

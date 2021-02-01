@@ -152,6 +152,8 @@ double os::systemTime() {
 
 
 double os::user_time_for( Thread *thread ) {
+    static_cast<void>(thread); // unused
+
     FILETIME creation_time;
     FILETIME exit_time;
     FILETIME user_time;
@@ -164,6 +166,8 @@ double os::user_time_for( Thread *thread ) {
 
 
 double os::system_time_for( Thread *thread ) {
+    static_cast<void>(thread); // unused
+
     FILETIME creation_time;
     FILETIME exit_time;
     FILETIME user_time;
@@ -392,6 +396,7 @@ bool os::uncommit_memory( const char *addr, std::int32_t size ) {
 
 
 bool os::release_memory( const char *addr, std::int32_t size ) {
+    static_cast<void>(size); // unused
     return VirtualFree( const_cast<char *>( addr ), 0, MEM_RELEASE ) ? true : false;
 }
 
@@ -438,6 +443,9 @@ void os::free( void *p ) {
 
 
 void os::transfer( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
+    static_cast<void>(from_thread); // unused
+    static_cast<void>(to_thread); // unused
+
     ResetEvent( (HANDLE) from_event );
     SetEvent( (HANDLE) to_event );
     WaitForSingleObject( (HANDLE) from_event, INFINITE );
@@ -445,6 +453,9 @@ void os::transfer( Thread *from_thread, Event *from_event, Thread *to_thread, Ev
 
 
 void os::transfer_and_continue( Thread *from_thread, Event *from_event, Thread *to_thread, Event *to_event ) {
+    static_cast<void>(from_thread); // unused
+    static_cast<void>(to_thread); // unused
+
     ResetEvent( (HANDLE) from_event );
     SetEvent( (HANDLE) to_event );
 }
@@ -515,6 +526,8 @@ void real_time_tick( std::int32_t delay_time );
 // The sole purpose of the watcher thread is simulating timer interrupts.
 
 DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
+    static_cast<void>(lpvParam); // unused
+
     const std::int32_t delay_interval = 1; // Delay 1 ms
     while ( 1 ) {
         Sleep( delay_interval );
@@ -713,6 +726,9 @@ void os_exit() {
 
 
 extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR cmdLine, int cmdShow ) {
+    static_cast<void>(hPrevInst); // unused
+    static_cast<void>(cmdLine); // unused
+    static_cast<void>(cmdShow); // unused
 
     //MSG       msg;
     //HWND      hwnd;
@@ -737,6 +753,8 @@ extern "C" int CALLBACK WinMain( HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR
 
 
 void os::set_args( std::int32_t argc, char *argv[] ) {
+    static_cast<void>(argc); // unused
+    static_cast<void>(argv); // unused
 }
 
 

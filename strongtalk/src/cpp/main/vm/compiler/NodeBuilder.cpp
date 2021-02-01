@@ -803,6 +803,8 @@ void NodeBuilder::double_not_equal() {
 
 
 void NodeBuilder::method_return( std::int32_t nofArgs ) {
+    static_cast<void>(nofArgs); // unused
+
     // assign result & return
     Expression *result = exprStack()->pop();
     if ( _current == EndOfCode ) {
@@ -857,6 +859,8 @@ void NodeBuilder::method_return( std::int32_t nofArgs ) {
 
 
 void NodeBuilder::nonlocal_return( std::int32_t nofArgs ) {
+    static_cast<void>(nofArgs); // unused
+
     // assign result & return
     Expression     *resultExpression = exprStack()->pop();
     PseudoRegister *src              = resultExpression->pseudoRegister();
@@ -1214,6 +1218,8 @@ void NodeBuilder::zap_scope() {
 
 
 void NodeBuilder::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
+    static_cast<void>(pdesc); // unused
+    static_cast<void>(failure_start); // unused
     // ignored
 }
 
@@ -1273,6 +1279,8 @@ void NodeBuilder::float_allocate( std::int32_t nofFloatTemps, std::int32_t nofFl
 
 
 void NodeBuilder::float_floatify( Floats::Function f, std::int32_t fno ) {
+    static_cast<void>(f); // unused
+
     // top of stack must be a boxed float, it is unboxed and stored at float(fno).
     Expression *t = _expressionStack->pop();
     if ( t->hasKlass() and t->klass() == doubleKlassObject ) {

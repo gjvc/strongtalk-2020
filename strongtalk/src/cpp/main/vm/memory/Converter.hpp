@@ -94,6 +94,7 @@ public:
 
 
     virtual MemOop allocate( MemOop src ) {
+        static_cast<void>(src); // unused
         return MemOop( _newKlass->klass_part()->allocateObject() );
     }
 };
@@ -269,6 +270,8 @@ public:
 
 
     MemOop allocate( MemOop src ) {
+        static_cast<void>(src); // unused
+
         Unimplemented();
         return nullptr;
     }

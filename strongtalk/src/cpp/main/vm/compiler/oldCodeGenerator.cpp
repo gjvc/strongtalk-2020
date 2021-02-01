@@ -52,12 +52,14 @@ void OldCodeGenerator::beginOfBasicBlock( Node *node ) {
 
 
 void OldCodeGenerator::endOfBasicBlock( Node *node ) {
-    if ( bb_needs_jump and node->next() not_eq nullptr )
+    if ( bb_needs_jump and node->next() not_eq nullptr ) {
         theMacroAssembler->jmp( node->next()->_label );
+    }
 }
 
 
 void OldCodeGenerator::beginOfNode( Node *node ) {
+    static_cast<void>(node); // unused
     // assume that all nodes that may terminate a basic block need a jump at the end
     // (turned off for individual nodes by their gen() methods if no jump is needed
     // because they generate code patterns that generate the jumps already)
@@ -66,6 +68,7 @@ void OldCodeGenerator::beginOfNode( Node *node ) {
 
 
 void OldCodeGenerator::endOfNode( Node *node ) {
+    static_cast<void>(node); // unused
     // nothing to do
 }
 
@@ -374,8 +377,9 @@ extern "C" void verifyContext( Oop obj ) {
 static void verifyContextCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
-    if ( not VerifyCode )
+    if ( not VerifyCode ) {
         spdlog::warn( ": verifyContext should not be called" );
+    }
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyContext, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -450,6 +454,8 @@ static void verifyReturnCode( Register reg ) {
 
 
 extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
+    static_cast<void>(nlrScopeID); // unused
+
     spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
     if ( nlrFrame <= fp ) {
         error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
@@ -1720,6 +1726,8 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
 
 
 static bool testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, Register klassReg, bool hasUnknown, Label &success1, Label &success2, Label &failure ) {
+    static_cast<void>(klassReg); // unused
+
     Oop bool1 = Universe::trueObject();
     Oop bool2 = Universe::falseObject();
     if ( klass1 == bool2->klass() and klass2 == bool1->klass() ) {
@@ -2252,7 +2260,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
                     guarantee( _lowerBound->cpseudoRegister() == _lowerBound, "should use cpseudoRegister()" );
                 } else {
                     const Register t = movePseudoRegisterToReg( _lowerBound ? _lowerBound : _loopVar, tempseudoRegister );
-                    (void)t; // unused
+                    (void) t; // unused
                     theMacroAssembler->cmpl( boundReg, smiOopFromValue( 1 ) );
                     theMacroAssembler->jcc( Assembler::Condition::less, failure );
                 }

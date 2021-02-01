@@ -385,6 +385,8 @@ bool PseudoRegister::extendLiveRange( Node *n ) {
 
 
 bool PseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
+    static_cast<void>(byteCodeIndex); // unused
+
     // the receiver is being copy-propagated to n
     // PseudoRegisters currently can't be propagated outside their scope
     // should fix copy-propagation: treat all PseudoRegisters like SinglyAssignedPseudoRegister so can propagate anywhere?
@@ -877,6 +879,8 @@ InlinedScope *BlockPseudoRegister::parent() const {
 
 
 NameNode *BlockPseudoRegister::locNameNode( bool mustBeLegal ) const {
+    static_cast<void>(mustBeLegal); // unused
+
     st_assert( not _location.isTemporaryRegister(), "shouldn't be in temp reg" );
     // for now, always use MemoizedName to describe block (even if always created)
     // makes debugging info easier to read (can see which locs must be blocks)
@@ -909,11 +913,13 @@ NameNode *PseudoRegister::nameNode( bool mustBeLegal ) const {
 
 
 NameNode *ConstPseudoRegister::nameNode( bool mustBeLegal ) const {
+    static_cast<void>(mustBeLegal); // unused
     return newValueName( constant );
 }
 
 
 NameNode *NoResultPseudoRegister::nameNode( bool mustBeLegal ) const {
+    static_cast<void>(mustBeLegal); // unused
     return new IllegalName;
 }
 
@@ -1028,6 +1034,9 @@ public:
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) {
+        static_cast<void>(type); // unused
+        static_cast<void>(nofArgs); // unused
+
         // recursively search nested blocks
         _nestingLevel++;
         MethodOop savedMethod = _methodOop;

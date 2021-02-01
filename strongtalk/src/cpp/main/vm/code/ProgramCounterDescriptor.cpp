@@ -33,5 +33,6 @@ void ProgramCounterDescriptor::print( NativeMethod *nm ) {
 
 
 bool ProgramCounterDescriptor::verify( NativeMethod *nm ) {
+    static_cast<void>(nm); // unused
     return true;
 }

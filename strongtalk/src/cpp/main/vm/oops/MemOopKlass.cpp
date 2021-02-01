@@ -117,11 +117,17 @@ Oop MemOopKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 Oop MemOopKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
+    static_cast<void>(size); // unused
+    static_cast<void>(permit_scavenge); // unused
+    static_cast<void>(permit_tenured); // unused
+
     return markSymbol( vmSymbols::not_indexable() );
 }
 
 
 KlassOop MemOopKlass::create_subclass( MixinOop mixin, KlassOop instSuper, KlassOop metaClass, Format format ) {
+    static_cast<void>(format); // unused
+
     MemOopKlass o;
     return create_generic_class( as_klassOop(), instSuper, metaClass, mixin, o.vtbl_value() );
 }

@@ -239,6 +239,9 @@ std::int32_t MarkSweep::next_heap_code_offset() {
 
 
 void MarkSweep::mark_sweep_phase1( Oop *p ) {
+
+    static_cast<void>(p); // unused
+
     // Recursively traverse all live objects and mark them by reversing pointers.
     EventMarker em( "1 reverse pointers" );
 

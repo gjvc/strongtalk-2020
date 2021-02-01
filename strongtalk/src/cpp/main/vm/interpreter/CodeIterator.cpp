@@ -226,6 +226,8 @@ void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
 
 
 void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
+    static_cast<void>(from_klass); // unused
+
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
     Oop            *p        = aligned_oop( 1 );
@@ -242,6 +244,7 @@ void CodeIterator::uncustomize_class_var_code( KlassOop from_klass ) {
 
 
 void CodeIterator::recustomize_class_var_code( KlassOop from_klass, KlassOop to_klass ) {
+    static_cast<void>(from_klass); // unused
     st_assert( code() == ByteCodes::Code::push_classVar or code() == ByteCodes::Code::store_classVar_pop or code() == ByteCodes::Code::store_classVar, "must be class variable byte code" );
 
     Oop            *p        = aligned_oop( 1 );

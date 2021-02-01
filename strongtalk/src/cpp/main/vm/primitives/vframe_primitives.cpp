@@ -265,6 +265,7 @@ public:
 
 
     void end_process( Process *process ) {
+        static_cast<void>(process); // unused
         theProcess = nullptr;
     }
 

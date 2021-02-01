@@ -271,6 +271,8 @@ public:
 
 
     void check_send( InterpretedInlineCache *ic ) {
+        static_cast<void>(ic); // unused
+
         GrowableArray<RecompilationScope *> *sub = _recompilationScope->subScopes( byteCodeIndex() );
         if ( sub->length() == 1 and sub->first()->isUntakenScope() ) {
             // this send was never taken

@@ -244,21 +244,25 @@ std::int32_t MethodClosure::float_at( std::int32_t index ) {
 // CustomizedMethodClosure
 
 void CustomizedMethodClosure::push_instVar_name( SymbolOop name ) {
+    static_cast<void>(name); // unused
     st_fatal( "instance variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::store_instVar_name( SymbolOop name ) {
+    static_cast<void>(name); // unused
     st_fatal( "instance variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::push_classVar_name( SymbolOop name ) {
+    static_cast<void>(name); // unused
     st_fatal( "class variable not resolved" );
 }
 
 
 void CustomizedMethodClosure::store_classVar_name( SymbolOop name ) {
+    static_cast<void>(name); // unused
     st_fatal( "class variable not resolved" );
 }
 

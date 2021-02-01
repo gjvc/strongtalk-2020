@@ -594,6 +594,8 @@ void Assembler::sarl( const Register &dst ) {
 
 
 void Assembler::sbbl( const Register &dst, std::int32_t imm32 ) {
+    static_cast<void>(dst); // unused
+    static_cast<void>(imm32); // unused
     Unimplemented();
 }
 
@@ -870,6 +872,8 @@ void Assembler::bind( Label &L ) {
 
 
 void Assembler::merge( const Label &L, const Label &with ) {
+    static_cast<void>(L); // unused
+    static_cast<void>(with); // unused
     Unimplemented();
 }
 

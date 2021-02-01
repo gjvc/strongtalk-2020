@@ -18,6 +18,9 @@ void setKlassVirtualTableFromKlassKlass( Klass *k ) {
 
 
 Oop KlassKlass::allocateObject( bool permit_scavenge, bool tenured ) {
+    static_cast<void>(permit_scavenge); // unused
+    static_cast<void>(tenured); // unused
+
     // allocate
     MemOop obj = as_memOop( Universe::allocate_tenured( non_indexable_size() ) );
     // header + instance variables
@@ -28,6 +31,8 @@ Oop KlassKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop KlassKlass::create_subclass( MixinOop mixin, Format format ) {
+    static_cast<void>(format); // unused
+
     KlassKlass o;
     return create_generic_class( as_klassOop(), mixin, o.vtbl_value() );
 }
@@ -166,5 +171,8 @@ Oop KlassKlass::oop_primitive_allocate_size( Oop obj, std::int32_t size ) {
 
 
 Oop KlassKlass::oop_shallow_copy( Oop obj, bool tenured ) {
+    static_cast<void>(obj); // unused
+    static_cast<void>(tenured); // unused
+
     return markSymbol( vmSymbols::not_clonable() );
 }

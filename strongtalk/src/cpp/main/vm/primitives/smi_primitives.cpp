@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -167,36 +168,50 @@ static void trap() {
 
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_add( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_subtract( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_multiply( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_mod( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_div( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_quo( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }
 
 extern "C" Oop __CALLING_CONVENTION smiOopPrimitives_remainder( Oop receiver, Oop argument ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(argument); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

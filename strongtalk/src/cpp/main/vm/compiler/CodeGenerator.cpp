@@ -399,6 +399,7 @@ void CodeGenerator::initialize( InlinedScope *scope ) {
 
 
 void CodeGenerator::finalize( InlinedScope *scope ) {
+    static_cast<void>(scope); // unused
 
     // first generate stubs if there are any
     generateMergeStubs();
@@ -766,6 +767,8 @@ void CodeGenerator::verifyReturn( Oop result ) {
 
 
 void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, std::int32_t nlrScopeID, Oop result ) {
+    static_cast<void>(nlrScopeID); // unused
+
     _numberOfNonLocalReturns++;
     spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
     if ( nlrFrame <= fp )
@@ -1405,11 +1408,13 @@ void CodeGenerator::aTArithRRNode( TArithRRNode *node ) {
 
 
 void CodeGenerator::aFloatArithRRNode( FloatArithRRNode *node ) {
+    static_cast<void>(node); // unused
     Unimplemented();
 }
 
 
 void CodeGenerator::aFloatUnaryArithNode( FloatUnaryArithNode *node ) {
+    static_cast<void>(node); // unused
     Unimplemented();
 }
 
@@ -1741,6 +1746,9 @@ void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register k
 
 
 void CodeGenerator::generateTypeTests( LoopHeaderNode *node, Label &failure ) {
+    static_cast<void>(node); // unused
+    static_cast<void>(failure); // unused
+
     Unimplemented();
 
     std::int32_t       last = 0;
@@ -1813,6 +1821,9 @@ void CodeGenerator::handleConstantTypeTest(ConstPseudoRegister* r, GrowableArray
 
 
 void CodeGenerator::generateIntegerLoopTest( PseudoRegister *pseudoRegister, LoopHeaderNode *node, Label &failure ) {
+    static_cast<void>(node); // unused
+    static_cast<void>(failure); // unused
+
     if ( pseudoRegister not_eq nullptr ) {
         if ( pseudoRegister->isConstPseudoRegister() ) {
             // no run-time test necessary
@@ -1874,6 +1885,9 @@ void CodeGenerator::generateIntegerLoopTests( LoopHeaderNode *node, Label &failu
 
 
 void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure ) {
+    static_cast<void>(node); // unused
+    static_cast<void>(failure); // unused
+
     st_assert( node->isIntegerLoop(), "must be integer loop" );
     if ( node->upperLoad() == nullptr ) return;
 
@@ -2093,6 +2107,7 @@ void CodeGenerator::aNonLocalReturnSetupNode( NonLocalReturnSetupNode *node ) {
 
 
 void CodeGenerator::anInlinedReturnNode( InlinedReturnNode *node ) {
+    static_cast<void>(node); // unused
     // Not generated anymore for new backend
     ShouldNotReachHere();
 }

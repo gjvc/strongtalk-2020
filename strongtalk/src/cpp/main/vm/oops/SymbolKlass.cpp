@@ -43,6 +43,8 @@ void setKlassVirtualTableFromSymbolKlass( Klass *k ) {
 
 
 Oop SymbolKlass::scavenge( Oop obj ) {
+    static_cast<void>(obj); // unused
+
     ShouldNotCallThis(); // shouldn't need to scavenge canonical symbols
     // (should be tenured)
     return nullptr;
@@ -81,6 +83,8 @@ void SymbolKlass::print( Oop obj ) {
 
 
 Oop SymbolKlass::oop_shallow_copy( Oop obj, bool tenured ) {
+    static_cast<void>(tenured); // unused
+
     st_assert_symbol( obj, "dispatch check" );
     return obj;
 }

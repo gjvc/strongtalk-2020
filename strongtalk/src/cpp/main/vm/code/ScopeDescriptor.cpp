@@ -530,6 +530,7 @@ NameDescriptor *BlockScopeDescriptor::self() const {
 
 
 ScopeDescriptor *BlockScopeDescriptor::parent( bool cross_NativeMethod_boundary ) const {
+    static_cast<void>(cross_NativeMethod_boundary); // unused
     return _parentScopeOffset ? _scopes->at( _offset - _parentScopeOffset, pc() ) : nullptr;
 }
 

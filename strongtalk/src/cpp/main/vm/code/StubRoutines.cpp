@@ -1426,6 +1426,8 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
 
 
 const char *StubRoutines::generate_allocate( MacroAssembler *masm, std::int32_t size ) {
+    static_cast<void>(size); // unused
+
     const char *entry_point = masm->pc();
     masm->hlt();
     return entry_point;

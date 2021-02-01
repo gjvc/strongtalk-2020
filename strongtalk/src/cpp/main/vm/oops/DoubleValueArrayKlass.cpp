@@ -15,12 +15,18 @@
 
 
 Oop DoubleValueArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
+    static_cast<void>(permit_scavenge); // unused
+    static_cast<void>(tenured); // unused
+
     st_fatal( "should never call allocateObject in doubleValueArrayKlass" );
     return badOop;
 }
 
 
 Oop DoubleValueArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge, bool permit_tenured ) {
+
+    static_cast<void>(permit_scavenge); // unused
+    static_cast<void>(permit_tenured); // unused
 
     //
     KlassOop     k        = as_klassOop();
@@ -74,6 +80,8 @@ bool DoubleValueArrayKlass::oop_verify( Oop obj ) {
 
 
 void DoubleValueArrayKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
+    static_cast<void>(stream); // unused
+
     st_assert_doubleValueArray( obj, "Argument must be doubleValueArray" );
 //    doubleValueArrayOop array = doubleValueArrayOop( obj );
 //    std::int32_t        len   = array->length();

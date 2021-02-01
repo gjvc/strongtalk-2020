@@ -951,6 +951,8 @@ bool NativeMethod::in_delta_code_at( const char *pc ) const {
 // Support for preemption:
 
 void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
+    static_cast<void>(data); // unused
+
     RelocationInformationIterator iter( this );
     while ( iter.next() ) {
         switch ( iter.type() ) {

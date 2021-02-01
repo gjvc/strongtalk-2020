@@ -27,6 +27,8 @@ void Space::clear() {
 
 
 void Space::switch_pointers( Oop from, Oop to ) {
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
     // FIX LATER
     st_fatal( "not implemented yet" );
 }
@@ -209,6 +211,7 @@ void OldSpace::initialize_threshold() {
 
 
 OldSpace::OldSpace( const char *name, std::int32_t &size ) {
+    static_cast<void>(size); // unused
     _nextSpace = nullptr;
 
     _offsetArray = new_c_heap_array<std::uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );

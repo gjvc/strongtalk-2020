@@ -1,14 +1,17 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
 #include "vm/oops/SMIKlass.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/utilities/ConsoleOutputStream.hpp"
 
 
 KlassOop SMIKlass::create_subclass( MixinOop mixin, Format format ) {
+    static_cast<void>(mixin); // unused
+    static_cast<void>(format); // unused
+
     return nullptr;
 }
 
@@ -20,6 +23,8 @@ void setKlassVirtualTableFromSmiKlass( Klass *k ) {
 
 
 Oop SMIKlass::oop_shallow_copy( Oop obj, bool tenured ) {
+    static_cast<void>(tenured); // unused
+
     return obj;
 }
 

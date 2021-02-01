@@ -92,11 +92,13 @@ bool InliningPolicy::isInterpreterPredictedSmiSelector( const SymbolOop sel ) {
 
 
 bool InliningPolicy::isInterpreterPredictedArraySelector( const SymbolOop sel ) {
+    static_cast<void>(sel); // unused
     return false;
 }
 
 
 bool InliningPolicy::isInterpreterPredictedBoolSelector( const SymbolOop sel ) {
+    static_cast<void>(sel); // unused
     return false;
 }
 

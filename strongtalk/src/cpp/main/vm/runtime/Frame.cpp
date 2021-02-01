@@ -347,6 +347,8 @@ bool Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
 
 
 bool Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
+    static_cast<void>(blk); // unused
+
     spdlog::warn( "oop_iterate_compiled_float_frame not implemented" );
     return false;
 }

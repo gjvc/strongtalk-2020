@@ -139,6 +139,8 @@ void DispatchTable::patch_with_sst_stub() {
 
 
 void DispatchTable::intercept_for_step( std::int32_t *fr ) {
+    static_cast<void>(fr); // unused
+
     if ( not in_step_mode() ) {
         patch_with_sst_stub();
         mode = Mode::step_mode;

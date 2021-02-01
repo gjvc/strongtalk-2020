@@ -130,12 +130,17 @@ Oop Delta::call( Oop receiver, Oop selector, Oop arg1 ) {
 
 
 Oop Delta::call( Oop receiver, Oop selector, Oop arg1, Oop arg2 ) {
+    static_cast<void>(arg2); // unused
+
     static DeltaCallCache cache;
     return call_generic( &cache, receiver, selector, 2, &arg1 );
 }
 
 
 Oop Delta::call( Oop receiver, Oop selector, Oop arg1, Oop arg2, Oop arg3 ) {
+    static_cast<void>(arg2); // unused
+    static_cast<void>(arg3); // unused
+
     static DeltaCallCache cache;
     return call_generic( &cache, receiver, selector, 3, &arg1 );
 }

@@ -13,5 +13,8 @@ void *ResourceObject::operator new( std::size_t size, bool on_C_heap ) {
 }
 
 
-void ResourceObject::operator delete( void *p, std::int32_t ) {
+void ResourceObject::operator delete( void *p, std::int32_t size ) {
+    static_cast<void>(p); // unused
+    static_cast<void>(size); // unused
+
 }

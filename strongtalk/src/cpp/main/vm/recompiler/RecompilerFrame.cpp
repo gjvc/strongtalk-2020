@@ -354,6 +354,9 @@ public:
 
 
     void allocate_closure( AllocationType type, std::int32_t nofArgs, MethodOop meth ) { // recursively search nested blocks
+        static_cast<void>(type); // unused
+        static_cast<void>(nofArgs); // unused
+
         MethodOop savedMethod = method;
         method = meth;
         count();
@@ -370,7 +373,18 @@ std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
 
 
 void RecompilerFrame::print( const char *kind ) {
-    spdlog::info( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d", _num, is_interpreted() ? "I" : "C", top_method()->selector()->as_string(), _invocations, _ncallers, _sends, _cumulSends, _loopDepth, cost() );
+    static_cast<void>(kind); // unused
+
+    spdlog::info( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d",
+                  _num,
+                  is_interpreted() ? "I" : "C",
+                  top_method()->selector()->as_string(),
+                  _invocations,
+                  _ncallers,
+                  _sends,
+                  _cumulSends,
+                  _loopDepth,
+                  cost() );
 }
 
 

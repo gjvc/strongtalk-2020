@@ -116,6 +116,8 @@ void load_image() {
 
 
 std::int32_t vmProcessMain( void *ignored ) {
+    static_cast<void>(ignored); // unused
+
     Processes::start( new VMProcess );
     return 0;
 }

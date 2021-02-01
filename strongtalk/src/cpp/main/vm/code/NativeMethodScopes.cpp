@@ -204,6 +204,11 @@ void NativeMethodScopes::scavenge_contents() {
 
 void NativeMethodScopes::switch_pointers( Oop from, Oop to, GrowableArray<NativeMethod *> *nativeMethods_to_invalidate ) {
 
+    static_cast<void>(from); // unused
+    static_cast<void>(to); // unused
+    static_cast<void>(nativeMethods_to_invalidate); // unused
+
+
 //  This is tricky!
 //  First, since some inlined methods are not included in scopes (those that generate no code such as asSmallInteger),
 //  you might think that this would not be needed, since memory is swept and dependencies flushed (see Space::switch_pointers_in_region).

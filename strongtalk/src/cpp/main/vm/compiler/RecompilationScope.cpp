@@ -36,6 +36,7 @@ RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int3
 
 
 GrowableArray<RecompilationScope *> *NullRecompilationScope::subScopes( std::int32_t byteCodeIndex ) const {
+    static_cast<void>(byteCodeIndex); // unused
     return new GrowableArray<RecompilationScope *>( 1 );
 }
 
@@ -178,8 +179,8 @@ bool InlinedRecompilationScope::equivalent( InlinedScope *s ) const {
 
 
 bool PICRecompilationScope::equivalent( InlinedScope *s ) const {
-// an PICRecompilationScope represents a non-inlined scope, so it can't be equivalent
-    // to any InlinedScope
+    static_cast<void>(s); // unused
+    // an PICRecompilationScope represents a non-inlined scope, so it can't be equivalent to any InlinedScope
     return false;
 }
 
@@ -187,6 +188,7 @@ bool PICRecompilationScope::equivalent( InlinedScope *s ) const {
 bool PICRecompilationScope::equivalent( LookupKey *l ) const {
     if ( _desc not_eq nullptr )
         return _desc->l_equivalent( l );   // compiled case
+
     st_assert( not _sd->isSuperSend(), "this code probably doesn't work for super sends" );
     return klass == l->klass() and _method->selector() == l->selector();
 }
@@ -196,8 +198,10 @@ RecompilationScope *NonDummyRecompilationScope::subScope( std::int32_t byteCodeI
     // return the subscope matching the lookup
     st_assert( byteCodeIndex >= 0 and byteCodeIndex < _ncodes, "byteCodeIndex out of range" );
     GrowableArray<RecompilationScope *> *list = _subScopes[ byteCodeIndex ];
-    if ( list == nullptr )
+    if ( list == nullptr ) {
         return new NullRecompilationScope;
+    }
+
     for ( std::int32_t i = 0; i < list->length(); i++ ) {
         RecompilationScope *rs = list->at( i );
         if ( rs->equivalent( k ) )
@@ -238,6 +242,7 @@ void NonDummyRecompilationScope::addScope( std::int32_t byteCodeIndex, Recompila
 
 
 bool InterpretedRecompilationScope::isUncommonAt( std::int32_t byteCodeIndex ) const {
+    static_cast<void>(byteCodeIndex); // unused
     return DeferUncommonBranches;
 }
 
@@ -659,6 +664,8 @@ void NullRecompilationScope::print_short() {
 
 
 void NullRecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t level ) const {
+    static_cast<void>(byteCodeIndex); // unused
+    static_cast<void>(level); // unused
 }
 
 
@@ -701,6 +708,7 @@ void InliningDatabaseRecompilationScope::print_short() {
 
 
 bool InliningDatabaseRecompilationScope::equivalent( InlinedScope *s ) const {
+    static_cast<void>(s); // unused
     Unimplemented();
     return false;
 }
@@ -750,6 +758,11 @@ ProgramCounterDescriptor *next_uncommon( std::int32_t scope, std::int32_t u, Gro
 
 
 void UninlinableRecompilationScope::print_inlining_database_on( ConsoleOutputStream *stream, GrowableArray<ProgramCounterDescriptor *> *uncommon, std::int32_t byteCodeIndex, std::int32_t level ) {
+    static_cast<void>(stream); // unused
+    static_cast<void>(uncommon); // unused
+    static_cast<void>(byteCodeIndex); // unused
+    static_cast<void>(level); // unused
+
     // not necessary to actually write out this info since DB-driven compilation won't inline anything not inlined in DB
     // stream->print_cr("%*s%d uninlinable", level * 2, "", byteCodeIndex);
 }

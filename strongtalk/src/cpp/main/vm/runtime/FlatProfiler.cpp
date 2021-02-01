@@ -269,6 +269,8 @@ void print_ticks( const char *title, std::int32_t ticks, std::int32_t total ) {
 
 
 void FlatProfiler::print( std::int32_t cutoff ) {
+    static_cast<void>(cutoff); // unused
+
     FlagSetting  f( PrintObjectID, false );
     ResourceMark resourceMark;
     double       secs = _timer.seconds();
@@ -380,6 +382,7 @@ void fprofiler_init() {
 
 
 void ProfiledNode::print( ConsoleOutputStream *stream, std::int32_t total_ticks ) const {
+    static_cast<void>(stream); // unused
 
     MethodOop m = method();
     if ( m->is_blockMethod() ) {
@@ -418,6 +421,8 @@ std::int32_t ProfiledNode::compare( ProfiledNode **a, ProfiledNode **b ) {
 
 
 void ProfiledNode::print_method_on( ConsoleOutputStream *stream ) const {
+    static_cast<void>(stream); // unused
+
 //        MethodOop m = method();
 //        if ( m->is_blockMethod() ) {
 //            stream->print( "[] " );
@@ -437,6 +442,10 @@ void ProfiledNode::print_method_on( ConsoleOutputStream *stream ) const {
 
 
 void ProfiledNode::print_total( ConsoleOutputStream *stream, TickCounter *t, std::int32_t total, const char *msg ) {
+    static_cast<void>(stream); // unused
+    static_cast<void>(t); // unused
+    static_cast<void>(total); // unused
+    static_cast<void>(msg); // unused
 //    t->print_code( stream, total );
 //    stream->print( msg );
 //    stream->fill_to( col4 );
@@ -446,6 +455,7 @@ void ProfiledNode::print_total( ConsoleOutputStream *stream, TickCounter *t, std
 
 
 void ProfiledNode::print_title( ConsoleOutputStream *stream ) {
+    static_cast<void>(stream); // unused
 //        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", "Receiver", "Method", "Leaf ticks", "extra1" );
 }
 

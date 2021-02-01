@@ -175,6 +175,8 @@ void Universe::switch_pointers( Oop from, Oop to ) {
 
 
 MemOop Universe::relocate( MemOop p ) {
+    static_cast<void>(p); // unused
+
     //APPLY_TO_SPACES(SPACE_OOP_RELOCATE_TEMPLATE);
     ShouldNotReachHere(); // Oop not in any old Space
     return nullptr;
@@ -274,6 +276,7 @@ static void decode_method( MethodOop method, KlassOop klass ) {
 
 
 static void decode_klass( SymbolOop name, KlassOop klass ) {
+    static_cast<void>(name); // unused
 
     ObjectArrayOop f{ nullptr };
 

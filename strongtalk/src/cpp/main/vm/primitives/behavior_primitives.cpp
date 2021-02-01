@@ -456,6 +456,8 @@ static void trap() {
 
 
 extern "C" Oop primitiveInlineAllocations( Oop receiver, Oop count ) {
+    static_cast<void>(receiver); // unused
+    static_cast<void>(count); // unused
     trap();
     return markSymbol( vmSymbols::primitive_trap() );
 }

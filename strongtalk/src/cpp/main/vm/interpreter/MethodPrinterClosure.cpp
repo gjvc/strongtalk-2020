@@ -386,6 +386,9 @@ void MethodPrinterClosure::zap_scope() {
 
 
 void MethodPrinterClosure::predict_primitive_call( PrimitiveDescriptor *pdesc, std::int32_t failure_start ) {
+    static_cast<void>(pdesc); // unused
+    static_cast<void>(failure_start); // unused
+
     indent();
     _outputStream->print_cr( "predicted prim method" );
 }

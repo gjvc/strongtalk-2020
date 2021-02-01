@@ -42,12 +42,16 @@ void CHeapAllocatedObject::operator delete( void *p ) {
 // -----------------------------------------------------------------------------
 
 void *StackAllocatedObject::operator new( std::size_t size ) {
+    static_cast<void>(size); // unused
+
     ShouldNotCallThis();
     return nullptr;
 }
 
 
 void StackAllocatedObject::operator delete( void *p ) {
+    static_cast<void>(p); // unused
+
     ShouldNotCallThis();
 }
 
@@ -55,11 +59,15 @@ void StackAllocatedObject::operator delete( void *p ) {
 // -----------------------------------------------------------------------------
 
 void *ValueObject::operator new( std::size_t size ) throw() {
+    static_cast<void>(size); // unused
+
     ShouldNotCallThis();
     return nullptr;
 }
 
 
 void ValueObject::operator delete( void *p ) {
+    static_cast<void>(p); // unused
+
     ShouldNotCallThis();
 }

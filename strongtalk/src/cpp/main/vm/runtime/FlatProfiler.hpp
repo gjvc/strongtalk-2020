@@ -90,11 +90,14 @@ public:
 
 
     virtual bool match( MethodOop m, KlassOop k ) const {
+        static_cast<void>(m); // unused
+        static_cast<void>(k); // unused
         return false;
     }
 
 
     virtual bool match( NativeMethod *nm ) const {
+        static_cast<void>(nm); // unused
         return false;
     }
 

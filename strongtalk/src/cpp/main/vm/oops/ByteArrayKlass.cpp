@@ -12,6 +12,10 @@
 
 
 Oop ByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
+
+    static_cast<void>(permit_scavenge); // unused
+    static_cast<void>(tenured); // unused
+
     st_assert( not can_inline_allocation(), "using nonstandard allocation" );
 
     // This should not be fatal!

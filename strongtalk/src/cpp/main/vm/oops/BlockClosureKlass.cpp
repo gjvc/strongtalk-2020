@@ -85,6 +85,8 @@ Oop BlockClosureKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop BlockClosureKlass::create_subclass( MixinOop mixin, Format format ) {
+    static_cast<void>(mixin); // unused
+    static_cast<void>(format); // unused
     return nullptr;
 }
 

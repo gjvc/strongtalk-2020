@@ -24,6 +24,8 @@ void setKlassVirtualTableFromMethodKlass( Klass *k ) {
 
 
 KlassOop MethodKlass::create_subclass( MixinOop mixin, Format format ) {
+    static_cast<void>(mixin); // unused
+    static_cast<void>(format); // unused
     return nullptr;
 }
 
@@ -223,6 +225,7 @@ void MethodKlass::oop_print_value_on( Oop obj, ConsoleOutputStream *stream ) {
 
 
 std::int32_t MethodKlass::oop_scavenge_contents( Oop obj ) {
+    static_cast<void>(obj); // unused
     // Methods must reside in old Space
     ShouldNotCallThis();
     return -1;

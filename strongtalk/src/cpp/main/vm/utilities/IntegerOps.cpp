@@ -1343,6 +1343,8 @@ std::int32_t IntegerOps::unsigned_add_result_length( Integer &x, Integer &y ) {
 
 
 std::int32_t IntegerOps::unsigned_sub_result_length( Integer &x, Integer &y ) {
+    static_cast<void>(y); // unused
+
     return x.length();
 }
 
@@ -1358,5 +1360,7 @@ std::int32_t IntegerOps::unsigned_quo_result_length( Integer &x, Integer &y ) {
 
 
 std::int32_t IntegerOps::unsigned_rem_result_length( Integer &x, Integer &y ) {
+    static_cast<void>(x); // unused
+
     return y.length();
 }
