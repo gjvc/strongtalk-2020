@@ -19,24 +19,31 @@ const std::int32_t MergeExpression::ContainingUnknownBit = 8;
 
 const std::int32_t MaxMergeExprSize = 5;    // max. # exprs in a merge expression
 
-Expression::Expression( PseudoRegister *p, Node *n ) {
+
+Expression::Expression( PseudoRegister *p, Node *n ) :
+    _pseudoRegister{ p },
+    _node{ n },
+    next{ nullptr },
+    flags{ 0 } {
+
+    //
     st_assert( p, "must have PseudoRegister" );
-    _pseudoRegister = p;
-    _node           = n;
-    next            = nullptr;
-    flags           = 0;
     st_assert( p->scope()->isInlinedScope(), "should be InlinedScope" );
     st_assert( n not_eq NodeBuilder::EndOfCode, "should be a real node" );
+
 }
 
 
 MergeExpression::MergeExpression( Expression *e1, Expression *e2, PseudoRegister *p, Node *nod ) :
+    exprs{ nullptr },
     Expression( p, nod ) {
     initialize();
-    if ( not p )
+    if ( not p ) {
         _pseudoRegister = e1->pseudoRegister();
+    }
     mergeInto( e1, nod );
     mergeInto( e2, nod );
+
     verify();
 }
 
@@ -719,7 +726,7 @@ void ExpressionStack::push( Expression *expr, InlinedScope *currentScope, std::i
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
-                sr->_begByteCodeIndex = sr->creationStartByteCodeIndex = _scope->byteCodeIndex();
+                sr->_begByteCodeIndex = sr->_creationStartByteCodeIndex = _scope->byteCodeIndex();
         } else {
             st_assert( sr->scope()->isSenderOf( _scope ), "pseudoRegister scope too low" );
         }
@@ -739,7 +746,7 @@ void ExpressionStack::push2nd( Expression *expr, InlinedScope *currentScope, std
         SinglyAssignedPseudoRegister *sr = (SinglyAssignedPseudoRegister *) r;
         if ( sr->scope() == _scope ) {
             if ( sr->begByteCodeIndex() == IllegalByteCodeIndex )
-                sr->_begByteCodeIndex = sr->creationStartByteCodeIndex = _scope->byteCodeIndex();
+                sr->_begByteCodeIndex = sr->_creationStartByteCodeIndex = _scope->byteCodeIndex();
         } else {
             st_assert( sr->scope()->isSenderOf( _scope ), "pseudoRegister scope too low" );
         }

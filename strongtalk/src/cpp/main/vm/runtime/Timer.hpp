@@ -61,6 +61,7 @@ public:
     double seconds();
 };
 
+//
 // TraceTime is used for tracing the execution time of a block
 // Usage:
 //  { TraceTime t("block time")

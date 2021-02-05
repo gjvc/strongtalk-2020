@@ -31,31 +31,32 @@ constexpr std::int32_t max_nof_floats = 256;
 // The InterpreterGenerator contains the functionality to generate the interpreter during the system initialization phase.
 
 class InterpreterGenerator : StackAllocatedObject {
+
 private:
-    MacroAssembler *_macroAssembler;    // used to generate code
-    bool           _debug;              // indicates debug mode
+    MacroAssembler  *_macroAssembler;       // used to generate code
+    bool           _debug;                  // indicates debug mode
 
-    bool _stack_check;            //
+    bool _stack_check;                      //
 
-    Label _method_entry;            // entry point to activate method execution
-    Label _block_entry;             // entry point to activate block execution (primitiveValue)
-    Label _inline_cache_miss;       // inline cache misses handling
-    Label _smi_send_failure;        // handles predicted smi_t send failures
-    Label _issue_NonLocalReturn;    // the starting point for NonLocalReturns in interpreted code
-    Label _nlr_testpoint;           // the return point for NonLocalReturns in interpreted sends
-    Label _C_nlr_testpoint;         // the return point for NonLocalReturns in C
+    Label _method_entry;                    // entry point to activate method execution
+    Label _block_entry;                     // entry point to activate block execution (primitiveValue)
+    Label _inline_cache_miss;               // inline cache misses handling
+    Label _smi_send_failure;                // handles predicted smi_t send failures
+    Label _issue_NonLocalReturn;            // the starting point for NonLocalReturns in interpreted code
+    Label _nlr_testpoint;                   // the return point for NonLocalReturns in interpreted sends
+    Label _C_nlr_testpoint;                 // the return point for NonLocalReturns in C
 
     Label _boolean_expected;                // boolean expected error
     Label _float_expected;                  // float expected error
     Label _NonLocalReturn_to_dead_frame;    // NonLocalReturn error
     Label _halted;                          // halt executed
 
-    Label      _stack_misaligned;       // assertion errors
-    Label      _ebx_wrong;               //
-    Label      _obj_wrong;               //
-    Label      _last_Delta_fp_wrong;     //
-    Label      _primitive_result_wrong;  //
-    const char *_illegal;           //
+    Label      _stack_misaligned;           // assertion errors
+    Label      _ebx_wrong;                  //
+    Label      _obj_wrong;                  //
+    Label      _last_Delta_fp_wrong;        //
+    Label      _primitive_result_wrong;     //
+    const char *_illegal;                   //
 
     // Debugging
     void check_ebx();

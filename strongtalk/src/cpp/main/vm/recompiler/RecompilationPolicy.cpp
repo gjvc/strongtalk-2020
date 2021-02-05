@@ -329,7 +329,7 @@ bool RecompilationPolicy::needRecompileCounter( Compiler *c ) {
         return false;    // to prevent endless recompilation
     // also stop counting for "perfect" nativeMethods where nothing more can be optimized
     // NB: it is tempting to leave counters in very small methods (so that e.g. accessor functions
-    // still trigger counters), but that won't work if they're invoked from megamorphic
+    // still trigger counters), but that won't work if they're invoked from MEGAMORPHIC
     // call sites --> put the counters in the caller, not the callee.
     return c->level() < MAX_RECOMPILATION_LEVELS - 1;
 }

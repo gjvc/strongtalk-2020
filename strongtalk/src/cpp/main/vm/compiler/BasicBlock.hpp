@@ -28,8 +28,8 @@ class BasicBlockDefinitionAndUsageTable : public PrintableResourceObject {
 
 public:
     GrowableArray<DefinitionUsageInfo *> *info;        // one element per PseudoRegister used / defined
-    BasicBlockDefinitionAndUsageTable() {
-        info = nullptr;
+    BasicBlockDefinitionAndUsageTable() :
+        info{ nullptr } {
     }
 
 
@@ -63,9 +63,18 @@ public:
     static std::int32_t               genCounter;    // to enumerate BBs in code-generation order
 
 public:
-    BasicBlock( Node *f, Node *l, std::int32_t n ) {
-        init( f, l, n );
-        _visited = false;
+    BasicBlock( Node *f, Node *l, std::int16_t n ) :
+        _first{ f },
+        _last{ l },
+        _nodeCount{ n },
+        _id{ 0 },
+        _genCount{ 0 },
+        duInfo{},
+        _loopDepth{ 0 },
+        _visited{ false } {
+
+        BasicBlock::genCounter = 0;
+
     }
 
 

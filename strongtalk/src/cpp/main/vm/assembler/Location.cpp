@@ -19,6 +19,7 @@ Location Location::TOP_OF_STACK               = Location::specialLocation( 3 );
 Location Location::RESULT_OF_NON_LOCAL_RETURN = Location::specialLocation( 4 );
 Location Location::TOP_OF_FLOAT_STACK         = Location::specialLocation( 5 );    // only used if UseFPUStack is true
 
+
 static std::array<const char *, 6> specialLocationNames{
     "ILLEGAL_LOCATION",             //
     "UNALLOCATED_LOCATION",         //
@@ -31,7 +32,7 @@ static std::array<const char *, 6> specialLocationNames{
 
 // Constructors
 
-void Location::overflow( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
+void Location::overflow( LocationMode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
     static_cast<void>(mode); // unused
     static_cast<void>(f1); // unused
     static_cast<void>(f2); // unused
@@ -42,14 +43,17 @@ void Location::overflow( Mode mode, std::int32_t f1, std::int32_t f2, std::int32
 }
 
 
-Location::Location( Mode mode, std::int32_t f ) {
-    _loc = (std::int32_t) mode + ( f << _fPos );
+Location::Location( LocationMode mode, std::int32_t f ) :
+    _loc{ (std::int32_t) mode + ( f << _fPos ) } {
 }
 
 
-Location::Location( Mode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) {
-    if ( ( f1 & _f1Mask ) not_eq f1 or ( f2 & _f2Mask ) not_eq f2 or ( f3 & _f3Mask ) not_eq f3 )
+Location::Location( LocationMode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) : _loc{ 0} {
+
+    if ( ( f1 & _f1Mask ) not_eq f1 or ( f2 & _f2Mask ) not_eq f2 or ( f3 & _f3Mask ) not_eq f3 ) {
         overflow( mode, f1, f2, f3 );
+    }
+
     _loc = std::int32_t( mode ) + ( f1 << _f1Pos ) + ( f2 << _f2Pos ) + ( f3 << _f3Pos );
 }
 
@@ -59,34 +63,34 @@ const char *Location::name() const {
     char *s{ nullptr };
 
     switch ( mode() ) {
-        case Mode::SPECIAL_LOCATION: {
+        case LocationMode::SPECIAL_LOCATION: {
             const char *name = specialLocationNames[ id() ];
             s = new_resource_array<char>( strlen( name ) );
             sprintf( s, name );
             break;
         }
-        case Mode::REGISTER_LOCATION: {
+        case LocationMode::REGISTER_LOCATION: {
             const char *name = Mapping::asRegister( *this ).name();
             s                = new_resource_array<char>( 8 );
             sprintf( s, name );
             break;
         }
-        case Mode::STACK_LOCATION: {
+        case LocationMode::STACK_LOCATION: {
             s = new_resource_array<char>( 8 );
             sprintf( s, "S%d", offset() );
             break;
         }
-        case Mode::CONTEXT_LOCATIION_1: {
+        case LocationMode::CONTEXT_LOCATIION_1: {
             s = new_resource_array<char>( 24 );
             sprintf( s, "C0x%08x,%d(%d)", contextNo(), tempNo(), scopeID() );
             break;
         }
-        case Mode::CONTEXT_LOCATIION_2: {
+        case LocationMode::CONTEXT_LOCATIION_2: {
             s = new_resource_array<char>( 24 );
             sprintf( s, "C%d,%d[%d]", contextNo(), tempNo(), scopeOffs() );
             break;
         }
-        case Mode::FLOAT_LOCATION: {
+        case LocationMode::FLOAT_LOCATION: {
             s = new_resource_array<char>( 16 );
             sprintf( s, "F%d(%d)", floatNo(), scopeNo() );
             break;
@@ -97,6 +101,7 @@ const char *Location::name() const {
 
     return s;
 }
+
 
 // predicates
 
@@ -127,20 +132,23 @@ void IntegerFreeList::grow() {
 }
 
 
-IntegerFreeList::IntegerFreeList( std::int32_t size ) {
-    static_cast<void>(size); // unused
-    _first = -1;
-    _list  = new GrowableArray<std::int32_t>( 2 );
+IntegerFreeList::IntegerFreeList( std::int32_t size ) :
+    _first{ -1 },
+    _list{ new GrowableArray<std::int32_t>( 2 ) },
+    _vector{} {
     st_assert( _list->length() == 0, "should be zero" );
 }
 
 
 std::int32_t IntegerFreeList::allocate() {
-    if ( _first < 0 )
+    if ( _first < 0 ) {
         grow();
+    }
+
     std::int32_t i = _first;
     _first = _list->at( i );
     _list->at_put( i, -1 ); // for debugging only
+
     return i;
 }
 
@@ -151,7 +159,8 @@ std::int32_t IntegerFreeList::allocated() {
     while ( i >= 0 ) {
         i = _list->at( i );
         n--;
-    };
+    }
+
     st_assert( n >= 0, "should be >= 0" );
     return n;
 }

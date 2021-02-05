@@ -12,6 +12,14 @@
 #include "vm/code/ScopeDescriptor.hpp"
 
 
+// -----------------------------------------------------------------------------
+
+std::int32_t vm_main( std::int32_t argc, char *argv[] );
+std::int32_t createVMProcess();
+std::int32_t vmProcessMain( void *ignored );
+void load_image();
+
+
 // The following classes are used for operations initiated by a delta process but must take place in the vmProcess.
 
 class VM_Operation : public PrintableStackAllocatedObject {
@@ -20,6 +28,11 @@ private:
     DeltaProcess *_calling_process;
 
 public:
+    VM_Operation() :
+        _calling_process{ nullptr } {
+    }
+
+
     void set_calling_process( DeltaProcess *p ) {
         _calling_process = p;
     }
@@ -61,6 +74,7 @@ public:
     }
 };
 
+
 class VM_Scavenge : public VM_Operation {
 private:
     Oop *_addr;
@@ -70,8 +84,8 @@ public:
     }
 
 
-    VM_Scavenge( Oop *addr ) {
-        _addr = addr;
+    VM_Scavenge( Oop *addr ) :
+        VM_Operation(), _addr{ addr } {
     }
 
 
@@ -82,6 +96,7 @@ public:
         return "scavenge";
     }
 };
+
 
 class VM_Genesis : public VM_Operation {
 public:
@@ -95,19 +110,22 @@ public:
     }
 };
 
+
 class VM_GarbageCollect : public VM_Operation {
 
 private:
+    VM_GarbageCollect();
     Oop *_addr;
 
 public:
+
+
     bool is_garbage_collect() const {
         return true;
     }
 
 
-    VM_GarbageCollect( Oop *addr ) {
-        _addr = addr;
+    VM_GarbageCollect( Oop *addr ) : _addr{ addr } {
     }
 
 
@@ -119,14 +137,14 @@ public:
     }
 };
 
+
 class VM_TerminateProcess : public VM_Operation {
 
 private:
     DeltaProcess *_target;
 
 public:
-    VM_TerminateProcess( DeltaProcess *target ) {
-        _target = target;
+    VM_TerminateProcess( DeltaProcess *target ) : _target{ target } {
     }
 
 
@@ -159,8 +177,9 @@ private:
 
 public:
     VM_OptimizeMethod( LookupKey *key, MethodOop method ) :
-        _key( key ) {
-        _method = method;
+        _key{ key },
+        _method{ method },
+        _nativeMethod{ nullptr } {
     }
 
 
@@ -177,6 +196,7 @@ public:
     }
 };
 
+
 // -----------------------------------------------------------------------------
 
 
@@ -189,8 +209,9 @@ private:
     NativeMethod       *_nativeMethod;
 
 public:
-    VM_OptimizeRScope( RecompilationScope *scope ) {
-        _scope = scope;
+    VM_OptimizeRScope( RecompilationScope *scope ) :
+        _scope{ scope },
+        _nativeMethod{ nullptr } {
     }
 
 
@@ -205,6 +226,7 @@ public:
     const char *name() {
         return "optimize rscope";
     }
+
 };
 
 
@@ -218,9 +240,10 @@ private:
     NativeMethod                   *_nativeMethod;
 
 public:
-    VM_OptimizeBlockMethod( BlockClosureOop closure, NonInlinedBlockScopeDescriptor *scope ) {
-        _closure = closure;
-        _scope   = scope;
+    VM_OptimizeBlockMethod( BlockClosureOop closure, NonInlinedBlockScopeDescriptor *scope ) :
+        _closure{ closure },
+        _scope{ scope },
+        _nativeMethod{ nullptr } {
     }
 
 
@@ -236,11 +259,3 @@ public:
         return "optimize block method";
     }
 };
-
-
-// -----------------------------------------------------------------------------
-
-std::int32_t vm_main( std::int32_t argc, char *argv[] );
-std::int32_t createVMProcess();
-std::int32_t vmProcessMain( void *ignored );
-void load_image();

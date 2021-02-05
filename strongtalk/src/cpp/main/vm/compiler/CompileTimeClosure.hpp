@@ -34,20 +34,21 @@ class InlinedScope;
 class CompileTimeClosure : public PrintableResourceObject {
 
 protected:
-    InlinedScope             *_parent_scope;           // scope to which the closure belongs
+    InlinedScope             *_parent_scope;            // scope to which the closure belongs
     MethodOop                _method;                   // block method
-    PseudoRegister           *_context;                // parent context
+    PseudoRegister           *_context;                 // parent context
     std::int32_t             _nofArgs;                  // number of arguments for the block
     JumpTableID              _id;                       // unique identification of this closure within the parent NativeMethod.
-    NonInlinedBlockScopeNode *_noninlined_block_scope; // an NonInlinedScopeDesc
+    NonInlinedBlockScopeNode *_noninlined_block_scope;  // an NonInlinedScopeDesc
 
 public:
-    CompileTimeClosure( InlinedScope *s, MethodOop method, PseudoRegister *context, std::int32_t nofArgs ) {
-        _parent_scope           = s;
-        _method                 = method;
-        _context                = context;
-        _nofArgs                = nofArgs;
-        _noninlined_block_scope = nullptr;
+    CompileTimeClosure( InlinedScope *s, MethodOop method, PseudoRegister *context, std::int32_t nofArgs ) :
+        _parent_scope{ s },
+        _method{ method },
+        _context{ context },
+        _nofArgs{ nofArgs },
+        _id{},
+        _noninlined_block_scope{ nullptr } {
     }
 
 

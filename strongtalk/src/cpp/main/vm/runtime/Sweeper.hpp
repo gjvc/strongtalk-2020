@@ -10,6 +10,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/WaterMark.hpp"
+
 // This is where the dirty work takes place.
 
 // A Sweeper is an incremental cleaner for Decaying invocation counters and cleanup inline caches in methodOops (MethodSweeper).
@@ -69,8 +70,9 @@ protected:
     }
 
 
-    std::int32_t _sweep_start;     // time of last activation
-    bool         _is_active;          // are we waiting to do something?
+    std::int32_t _sweep_start;      // time of last activation
+    bool         _is_active;        // are we waiting to do something?
+
 
     bool is_active() const {
         return _is_active;
@@ -124,6 +126,13 @@ private:
     const char *name() const {
         return "HeapSweeper";
     }
+
+
+public:
+    HeapSweeper() :
+        _oldWaterMark{} {
+    }
+
 };
 
 
@@ -191,9 +200,11 @@ private:
 extern MethodSweeper *methodSweeper;      // single instance
 
 class ZoneSweeper : public CodeSweeper {
+
 private:
     NativeMethod *_excluded_nativeMethod;
     NativeMethod *next;
+
 private:
     NativeMethod *excluded_nativeMethod() {
         return _excluded_nativeMethod;
@@ -215,4 +226,12 @@ private:
     const char *name() const {
         return "ZoneSweeper";
     }
+
+
+public:
+    ZoneSweeper() :
+        _excluded_nativeMethod{ nullptr },
+        next{ nullptr } {
+    }
+
 };

@@ -21,9 +21,9 @@ public:
 
 
     MethodScopeNode( LookupKey *key, MethodOop method, LogicalAddress *receiver_location, bool allocates_compiled_context, bool lite, std::int32_t scopeID, std::int32_t senderByteCodeIndex, bool visible ) :
-        ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ) {
-        _lookupKey        = key;
-        _receiverLocation = receiver_location;
+        ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ),
+        _lookupKey{ key },
+        _receiverLocation{ receiver_location } {
     }
 
 

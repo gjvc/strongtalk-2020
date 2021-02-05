@@ -62,9 +62,10 @@ protected:
 
 
 public:
-    memConverter( KlassOop old_klass, KlassOop new_klass ) {
-        _oldKlass = old_klass;
-        _newKlass = new_klass;
+    memConverter( KlassOop old_klass, KlassOop new_klass ) :
+        _oldKlass{ old_klass },
+        _newKlass{ new_klass },
+        _mapping{ nullptr } {
         compute_mapping();
     }
 
@@ -99,41 +100,51 @@ public:
     }
 };
 
+
 class proxyConverter : public memConverter {
 private:
     bool _sourceIsProxy;
+
 public:
     proxyConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        _sourceIsProxy{ false } {
+
         st_assert( new_klass->klass_part()->oop_is_proxy(), "new_klass must be a proxy klass" );
         _sourceIsProxy = old_klass->klass_part()->oop_is_proxy();
     }
 
 
     void transfer( MemOop src, MemOop dst ) {
-        if ( _sourceIsProxy )
+        if ( _sourceIsProxy ) {
             ProxyOop( dst )->set_pointer( ProxyOop( src )->get_pointer() );
+        }
         memConverter::transfer( src, dst );
     }
 };
+
 
 class processConverter : public memConverter {
 private:
     bool _sourceIsProcess;
 public:
     processConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        _sourceIsProcess{ false } {
+
         st_assert( new_klass->klass_part()->oop_is_process(), "new_klass must be a process klass" );
         _sourceIsProcess = old_klass->klass_part()->oop_is_process();
     }
 
 
     void transfer( MemOop src, MemOop dst ) {
-        if ( _sourceIsProcess )
+        if ( _sourceIsProcess ) {
             ProcessOop( dst )->set_process( ProcessOop( src )->process() );
+        }
         memConverter::transfer( src, dst );
     }
 };
+
 
 class byteArrayConverter : public memConverter {
 
@@ -142,7 +153,9 @@ private:
 
 public:
     byteArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        _sourceIsByteArray{ false } {
+
         st_assert( new_klass->klass_part()->oop_is_byteArray(), "new_klass must be a byteArray klass" );
         _sourceIsByteArray = old_klass->klass_part()->oop_is_byteArray();
     }
@@ -153,8 +166,9 @@ public:
         if ( _sourceIsByteArray ) {
             std::int32_t length = ByteArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ ) {
                 ByteArrayOop( dst )->byte_at_put( i, ByteArrayOop( src )->byte_at( i ) );
+            }
         }
     }
 
@@ -165,6 +179,7 @@ public:
     }
 };
 
+
 class doubleByteArrayConverter : public memConverter {
 
 private:
@@ -172,7 +187,8 @@ private:
 
 public:
     doubleByteArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        _sourceIsDoubleByteArray{ false } {
         st_assert( new_klass->klass_part()->oop_is_doubleByteArray(), "new_klass must be a byteArray klass" );
         _sourceIsDoubleByteArray = old_klass->klass_part()->oop_is_doubleByteArray();
     }
@@ -183,8 +199,10 @@ public:
         if ( _sourceIsDoubleByteArray ) {
             std::int32_t length = DoubleByteArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ ) {
                 DoubleByteArrayOop( dst )->doubleByte_at_put( i, DoubleByteArrayOop( src )->doubleByte_at( i ) );
+            }
+
         }
     }
 
@@ -195,6 +213,7 @@ public:
     }
 };
 
+
 class objArrayConverter : public memConverter {
 
 private:
@@ -202,7 +221,8 @@ private:
 
 public:
     objArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        _sourceIsObjArray{ false } {
         st_assert( new_klass->klass_part()->oop_is_objArray(), "new_klass must be a objArray klass" );
         _sourceIsObjArray = old_klass->klass_part()->oop_is_objArray();
     }
@@ -214,8 +234,10 @@ public:
 
             std::int32_t length = ObjectArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ ) {
                 ObjectArrayOop( dst )->obj_at_put( i, ObjectArrayOop( src )->obj_at( i ) );
+            }
+
         }
     }
 
@@ -226,12 +248,14 @@ public:
     }
 };
 
+
 class doubleValueArrayConverter : public memConverter {
 private:
     bool source_is_obj_array;
 public:
     doubleValueArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
-        memConverter( old_klass, new_klass ) {
+        memConverter( old_klass, new_klass ),
+        source_is_obj_array{ false } {
         st_assert( new_klass->klass_part()->oop_is_doubleValueArray(), "new_klass must be a doubleValueArray klass" );
         source_is_obj_array = old_klass->klass_part()->oop_is_doubleValueArray();
     }
@@ -242,8 +266,9 @@ public:
         if ( source_is_obj_array ) {
             std::int32_t length = doubleValueArrayOop( src )->length();
 
-            for ( std::int32_t i = 1; i <= length; i++ )
+            for ( std::int32_t i = 1; i <= length; i++ ) {
                 doubleValueArrayOop( dst )->double_at_put( i, doubleValueArrayOop( src )->double_at( i ) );
+            }
         }
     }
 
@@ -253,6 +278,7 @@ public:
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
+
 
 class klassConverter : public memConverter {
 
@@ -276,6 +302,7 @@ public:
         return nullptr;
     }
 };
+
 
 class mixinConverter : public memConverter {
 
@@ -302,12 +329,15 @@ private:
     }
 };
 
+
 class ConvertOopClosure : public ObjectClosure {
 
 public:
     void do_object( MemOop obj ) {
-        if ( obj->klass()->klass_part()->is_marked_for_schema_change() )
+        if ( obj->klass()->klass_part()->is_marked_for_schema_change() ) {
             return;
+        }
+
         ConvertClosure blk;
         obj->oop_iterate( &blk );
     }

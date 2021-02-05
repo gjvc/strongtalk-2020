@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -66,8 +67,7 @@ public:
     }
 
 
-    Variable() {
-        _value = 0;
+    Variable() : _value{ 0 } {
     }
 
 
@@ -141,9 +141,9 @@ private:
     Variable _reg;
     Variable _stack;
 public:
-    MappingEntry( Variable reg, Variable stack ) {
-        _reg   = reg;
-        _stack = stack;
+    MappingEntry( Variable reg, Variable stack ) :
+        _reg{ reg },
+        _stack{ stack } {
     }
 
 
@@ -195,13 +195,14 @@ private:
 
 public:
     MappingTask( Variable src_register, Variable src_stack, Variable dst_register, Variable dst_stack ) :
-        src( src_register, src_stack ), dst( dst_register, dst_stack ) {
-        _next              = nullptr;
-        _is_processed      = false;
-        _what_happened     = "Nothing";
-        _parent            = nullptr;
-        _uses_top_of_stack = false;
-        _variable_to_free  = Variable::unused();
+        src( src_register, src_stack ),
+        dst( dst_register, dst_stack ),
+        _next{ nullptr },
+        _is_processed{ false },
+        _what_happened{ "Nothing" },
+        _parent{ nullptr },
+        _uses_top_of_stack{ false },
+        _variable_to_free{ Variable::unused() } {
     }
 
 
@@ -282,6 +283,7 @@ public:
 
     void print( std::int32_t index );
 };
+
 
 class MapConformance : public ResourceObject {
 private:

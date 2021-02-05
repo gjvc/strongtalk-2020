@@ -50,15 +50,16 @@ void real_time_tick( std::int32_t delay_time ) {
 }
 
 
-PeriodicTask::PeriodicTask( std::int32_t interval_time ) {
-    _counter  = 0;
-    _interval = interval_time;
+PeriodicTask::PeriodicTask( std::int32_t interval_time ) :
+    _counter{ 0 },
+    _interval{ interval_time } {
 }
 
 
 PeriodicTask::~PeriodicTask() {
-    if ( is_enrolled() )
+    if ( is_enrolled() ) {
         deroll();
+    }
 }
 
 
@@ -78,9 +79,14 @@ void PeriodicTask::enroll() {
 
 void PeriodicTask::deroll() {
     std::int32_t index = 0;
-    for ( ; index < num_tasks and tasks[ index ] not_eq this; index++ );
-    if ( index == max_tasks )
+    for ( ; index < num_tasks and tasks[ index ] not_eq this; index++ ) {
+        void( 1 );
+    }
+
+    if ( index == max_tasks ) {
         return;
+    }
+
     num_tasks--;
     for ( ; index < num_tasks; index++ ) {
         tasks[ index ] = tasks[ index + 1 ];

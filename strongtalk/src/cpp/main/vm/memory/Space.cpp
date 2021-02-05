@@ -163,7 +163,10 @@ EdenSpace::EdenSpace() {
 }
 
 
-SurvivorSpace::SurvivorSpace() {
+SurvivorSpace::SurvivorSpace() :
+    _bottom{ nullptr },
+    _end{ nullptr },
+    _top{ nullptr } {
 }
 
 
@@ -175,6 +178,7 @@ void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
 
     if ( top() == mark->_point )
         return;
+
     st_assert( mark->_point < top(), "scavenging past top" );
 
     Oop *p = mark->_point; // for performance
@@ -210,9 +214,16 @@ void OldSpace::initialize_threshold() {
 }
 
 
-OldSpace::OldSpace( const char *name, std::int32_t &size ) {
+OldSpace::OldSpace( const char *name, std::int32_t &size ) :
+    _end{ nullptr },
+    _bottom{ nullptr },
+    _nextOffsetIndex{ 0 },
+    _nextOffsetThreshold{ nullptr },
+    _nextSpace{ nullptr },
+    _offsetArray{ nullptr } {
+
+    //
     static_cast<void>(size); // unused
-    _nextSpace = nullptr;
 
     _offsetArray = new_c_heap_array<std::uint8_t>( Universe::old_gen._virtualSpace.reserved_size() / card_size );
     set_name( name );
@@ -381,10 +392,13 @@ public:
 
 
 void OldSpace::verify() {
+    //
     spdlog::info( "%s ", name() );
     Oop                 *p = _bottom;
     MemOop              m;
     VerifyOldOopClosure blk;
+
+    //
     while ( p < _top ) {
         st_assert( Oop(*p)->is_mark(), "First word must be mark" );
         m = as_memOop( p );

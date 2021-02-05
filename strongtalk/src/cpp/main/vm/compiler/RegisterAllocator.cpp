@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -77,7 +78,10 @@ void RegisterAllocator::allocate( GrowableArray<PseudoRegister *> *globals ) {
         theCompiler->topScope->allocatePseudoRegisters( _stackLocs );
 
         // result
-        if ( CompilerDebug )
+        if ( CompilerDebug ) {
             cout( PrintRegAlloc )->print_cr( "%d (-2) stack locations allocated for %d PseudoRegisters", _stackLocs->length(), regs->length() );
+        }
+        
     }
+
 }

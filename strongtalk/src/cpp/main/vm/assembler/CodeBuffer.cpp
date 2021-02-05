@@ -17,24 +17,26 @@
 MacroAssembler *theMacroAssembler = nullptr;
 
 
-CodeBuffer::CodeBuffer( std::int32_t instsSize, std::int32_t locsSize ) {
-    _codeStart         = _codeEnd = new_resource_array<char>( instsSize );
-    _codeOverflow      = _codeStart + instsSize;
-    _locsStart         = _locsEnd = (RelocationInformation *) new_resource_array<char>( locsSize );
-    _locsOverflow      = (RelocationInformation *) ( (const char *) _locsStart + locsSize );
-    _last_reloc_offset = code_size();
-    _decode_begin      = nullptr;
+CodeBuffer::CodeBuffer( std::int32_t instsSize, std::int32_t locsSize ) :
+    _codeStart{ _codeEnd = new_resource_array<char>( instsSize ) },
+    _codeOverflow{ _codeStart + instsSize },
+    _locsStart{ (RelocationInformation *) new_resource_array<char>( locsSize ) },
+    _locsEnd{ (RelocationInformation *) new_resource_array<char>( locsSize ) },
+    _locsOverflow{ (RelocationInformation *) ( (const char *) _locsStart + locsSize ) },
+    _last_reloc_offset{ code_size() },
+    _decode_begin{ nullptr } {
 }
 
 
-CodeBuffer::CodeBuffer( const char *code_start, std::int32_t code_size ) {
-    _codeStart         = (const char *) code_start;
-    _codeEnd           = (char *) code_start;
-    _codeOverflow      = _codeStart + code_size;
-    _locsStart         = _locsEnd = nullptr;
-    _locsOverflow      = nullptr;
-    _last_reloc_offset = CodeBuffer::code_size();
-    _decode_begin      = nullptr;
+CodeBuffer::CodeBuffer( const char *code_start, std::int32_t code_size ) :
+    _codeStart{ (const char *) code_start },
+    _codeEnd{ (char *) code_start },
+    _codeOverflow{ _codeStart + code_size },
+    _locsStart{ nullptr },
+    _locsEnd{ nullptr },
+    _locsOverflow{ nullptr },
+    _last_reloc_offset{ CodeBuffer::code_size() },
+    _decode_begin{ nullptr } {
 }
 
 
@@ -52,10 +54,11 @@ void CodeBuffer::set_code_end( const char *end ) {
 void CodeBuffer::relocate( const char *at, RelocationInformation::RelocationType rtype ) {
     st_assert( code_begin() <= at and at <= code_end(), "cannot relocate data outside code boundaries" );
     if ( _locsEnd == nullptr ) {
-        // no Space for relocation information provided => code cannot be relocated
-        // make sure that relocate is only called with rtypes that can be ignored for
-        // this kind of code.
-        st_assert( rtype == RelocationInformation::RelocationType::none or rtype == RelocationInformation::RelocationType::runtime_call_type or rtype == RelocationInformation::RelocationType::external_word_type, "code needs relocation information" );
+        // no Space for relocation information provided => code cannot be relocated make sure that relocate is only called with rtypes that can be ignored for this kind of code.
+        st_assert( ( rtype == RelocationInformation::RelocationType::none ) or
+                   ( rtype == RelocationInformation::RelocationType::runtime_call_type ) or
+                   ( rtype == RelocationInformation::RelocationType::external_word_type ),
+                   "code needs relocation information" );
 
     } else {
         st_assert( sizeof( RelocationInformation ) == sizeof( std::int16_t ), "change this code" );

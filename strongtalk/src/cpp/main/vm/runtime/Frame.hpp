@@ -67,21 +67,24 @@ private:
     const char   *_pc; // program counter
 
 public:
-    Frame() {
+    Frame() :
+        _sp{ nullptr },
+        _fp{ nullptr },
+        _pc{ nullptr } {
     }
 
 
-    Frame( Oop *sp, std::int32_t *fp, const char *pc ) {
-        _sp = sp;
-        _fp = fp;
-        _pc = pc;
+    Frame( Oop *sp, std::int32_t *fp, const char *pc ) :
+        _sp{ sp },
+        _fp{ fp },
+        _pc{ pc } {
     }
 
 
-    Frame( Oop *sp, std::int32_t *fp ) {
-        _sp = sp;
-        _fp = fp;
-        _pc = (const char *) sp[ -1 ];
+    Frame( Oop *sp, std::int32_t *fp ) :
+        _sp{ sp },
+        _fp{ fp },
+        _pc{ (const char *) sp[ -1 ] } {
     }
 
 

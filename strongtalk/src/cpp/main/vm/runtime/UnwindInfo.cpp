@@ -17,31 +17,30 @@ extern "C" std::int32_t nlr_home_id;
 extern "C" Oop          nlr_result;
 
 
-UnwindInfo::UnwindInfo() {
+UnwindInfo::UnwindInfo() :
+    _nlr_home{ ::nlr_home },
+    _nlr_home_id{ ::nlr_home_id },
+    _nlr_home_context{ nullptr },
+    _nlr_result{ ::nlr_result },
+    _next{ nullptr },
+    saved_C_frame_return_addr{ C_frame_return_addr },
+    saved_C_frame_return_addr_location{ (char **) ( last_Delta_sp - 1 ) },
+    saved_patch_return_address{ *saved_C_frame_return_addr_location },
+    _is_compiled{ _nlr_home_id >= 0 } {
+
     st_assert( have_nlr_through_C, "you must have have_nlr_through_C before using unwindInfo" );
-
-    // Save NonLocalReturn state
-    _nlr_home    = ::nlr_home;
-    _nlr_home_id = ::nlr_home_id;
-    _nlr_result  = ::nlr_result;
-
-    // Save patch information
     st_assert( last_Delta_fp, "last_Delta_fp must be set" );
-    saved_C_frame_return_addr          = C_frame_return_addr;
-    saved_C_frame_return_addr_location = (char **) ( last_Delta_sp - 1 );
-    saved_patch_return_address         = *saved_C_frame_return_addr_location;
 
     // Restore original return address
     *saved_C_frame_return_addr_location = saved_C_frame_return_addr;
 
-    _is_compiled = _nlr_home_id >= 0;
+    //
     DeltaProcess::active()->push_unwind( this );
 }
 
 
 UnwindInfo::~UnwindInfo() {
-    // If we get an aborting NonLocalReturn in the protect part we should continue the aborting NonLocalReturn
-    // and not the original NonLocalReturn.
+    // If we get an aborting NonLocalReturn in the protect part we should continue the aborting NonLocalReturn and not the original NonLocalReturn.
     if ( ::nlr_home not_eq 0 ) {
         // Restore NonLocalReturn state
         ::nlr_home    = _nlr_home;

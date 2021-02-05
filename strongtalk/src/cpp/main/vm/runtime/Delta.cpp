@@ -17,8 +17,10 @@
 DeltaCallCache *DeltaCallCache::_root = nullptr;    // anchor of all DeltaCallCaches
 
 
-DeltaCallCache::DeltaCallCache() {
-    _link = _root;
+DeltaCallCache::DeltaCallCache() :
+    _key{},
+    _result{},
+    _link{ _root } {
     _root = this;
     clear();
 }

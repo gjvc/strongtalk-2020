@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -31,6 +32,7 @@ class TopLevelBlockScopeNode;
 class LogicalAddress;
 
 class ProgramCounterDescriptorInfoClass;
+
 
 // Interface to generate scope information for a NativeMethod
 class ScopeDescriptorRecorder : public ResourceObject {
@@ -285,6 +287,7 @@ public:
         _byte = value;
     }
 };
+
 
 class ScopeDescriptorHeaderByte : public ValueObject {
 

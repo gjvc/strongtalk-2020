@@ -68,7 +68,7 @@ public:
 
 public:
     // Note: The variable below has been introduced for debugging only: It seems that sometimes a NativeMethod
-    //       is called from the interpreter (last time it was via a megamorphic self send) that is invalid,
+    //       is called from the interpreter (last time it was via a MEGAMORPHIC self send) that is invalid,
     //       i.e., the NativeMethod reports a cache miss by calling the lookup routines. In order to backtrack
     //       called entry point is stored. Remove this variable if the bug has been found! (gri 7-24-96)
     static char *_last_native_called;    // last NativeMethod entry point called by the interpreter

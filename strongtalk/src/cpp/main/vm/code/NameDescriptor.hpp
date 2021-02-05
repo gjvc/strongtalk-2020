@@ -17,7 +17,17 @@
 
 class NameDescriptor : public PrintableResourceObject { // ResourceObject because some are created on-the-fly
 
+private:
+
 public:
+    std::int32_t offset;
+
+    NameDescriptor() :
+        PrintableResourceObject(),
+        offset{ 0 } {
+    }
+
+
     virtual bool isLocation() const {
         return false;
     }
@@ -75,16 +85,16 @@ public:
     }
 
 
-    std::int32_t offset;
 };
+
 
 // something stored at a location
 struct LocationNameDescriptor : public NameDescriptor {
     Location _location;
 
 
-    LocationNameDescriptor( Location loc ) {
-        _location = loc;
+    LocationNameDescriptor( Location loc ) :
+        _location{ loc } {
     }
 
 
@@ -108,13 +118,14 @@ struct LocationNameDescriptor : public NameDescriptor {
     void print();
 };
 
+
 // a run-time constant
 struct ValueNameDescriptor : public NameDescriptor {
     Oop _v;
 
 
-    ValueNameDescriptor( Oop v ) {
-        _v = v;
+    ValueNameDescriptor( Oop v ) :
+        _v{ v } {
     }
 
 
@@ -143,9 +154,9 @@ struct BlockValueNameDescriptor : public NameDescriptor {
     ScopeDescriptor *_parentScope;
 
 
-    BlockValueNameDescriptor( MethodOop block_method, ScopeDescriptor *parent_scope ) {
-        _blockMethod = block_method;
-        _parentScope = parent_scope;
+    BlockValueNameDescriptor( MethodOop block_method, ScopeDescriptor *parent_scope ) :
+        _blockMethod{ block_method },
+        _parentScope{ parent_scope } {
     }
 
 
@@ -183,11 +194,11 @@ struct MemoizedBlockNameDescriptor : public NameDescriptor {
     ScopeDescriptor *_parentScope;
 
 
-    MemoizedBlockNameDescriptor( Location loc, MethodOop block_method, ScopeDescriptor *parent_scope ) {
-        _location    = loc;
-        _blockMethod = block_method;
-        _parentScope = parent_scope;
-    }
+    MemoizedBlockNameDescriptor( Location loc, MethodOop block_method, ScopeDescriptor *parent_scope ) :
+        _location{ loc },
+        _blockMethod{ block_method },
+        _parentScope{ parent_scope } {
+    };
 
 
     bool isMemoizedBlock() const {

@@ -187,9 +187,9 @@ private:
 
 public:
     InterpretedNode( MethodOop method, KlassOop receiver_klass, TickPosition where ) :
-        ProfiledNode() {
-        _method         = method;
-        _receiver_klass = receiver_klass;
+        ProfiledNode(),
+        _method{ method },
+        _receiver_klass{ receiver_klass } {
         update( where );
     }
 
@@ -232,8 +232,8 @@ private:
 
 public:
     CompiledNode( NativeMethod *nm, TickPosition where ) :
-        ProfiledNode() {
-        _nativeMethod = nm;
+        ProfiledNode(),
+        _nativeMethod{ nm } {
         update( where );
     }
 

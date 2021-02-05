@@ -346,6 +346,7 @@ CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDe
         return new CompiledTopLevelBlockVirtualFrame( fr, sd, byteCodeIndex );
     if ( sd->isBlockScope() )
         return new CompiledBlockVirtualFrame( fr, sd, byteCodeIndex );
+
     st_fatal( "unknown scope desc" );
     return nullptr;
 }
@@ -360,15 +361,17 @@ void CompiledVirtualFrame::rewind_byteCodeIndex() {
 
 
 CompiledVirtualFrame::CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex ) :
-    DeltaVirtualFrame( fr ) {
-    _scopeDescriptor = sd;
-    _byteCodeIndex   = byteCodeIndex;
+    DeltaVirtualFrame( fr ),
+    _scopeDescriptor{ sd },
+    _byteCodeIndex{ byteCodeIndex } {
 }
 
 
 VirtualFrame *CompiledVirtualFrame::sender() const {
-    if ( _scopeDescriptor->isTop() )
+    if ( _scopeDescriptor->isTop() ) {
         return VirtualFrame::sender();
+    }
+
     return CompiledVirtualFrame::new_vframe( &_frame, _scopeDescriptor->sender(), _scopeDescriptor->senderByteCodeIndex() );
 }
 
@@ -386,17 +389,19 @@ public:
     std::int32_t   i;
 
 
-    ContextTempFindClosure( std::int32_t index ) {
-        i      = index;
-        result = nullptr;
-    }
+    ContextTempFindClosure( std::int32_t index ) :
+        i{ index },
+        result{ nullptr } {
+    };
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         static_cast<void>(pc); // unused
-        if ( no == i )
+        if ( no == i ) {
             result = a;
+        }
     }
+
 };
 
 
@@ -424,8 +429,8 @@ public:
     GrowableArray<NameDescriptor *> *result;
 
 
-    CollectContextInfoClosure() {
-        result = new GrowableArray<NameDescriptor *>( 10 );
+    CollectContextInfoClosure() :
+        result{ new GrowableArray<NameDescriptor *>( 10 ) } {
     }
 
 
@@ -625,8 +630,8 @@ public:
     bool ok;
 
 
-    VerifyNDClosure() {
-        ok = true;
+    VerifyNDClosure() :
+        ok{ true } {
     }
 
 
@@ -672,6 +677,7 @@ void CompiledVirtualFrame::verify_debug_info() const {
 
 
 class Indenting : public ValueObject {
+private:
 public:
     Indenting() {
         _console->inc();
@@ -982,16 +988,17 @@ std::int32_t DeoptimizedVirtualFrame::end_of_expressions() const {
 
 
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr ) :
-    DeltaVirtualFrame( fr ) {
+    DeltaVirtualFrame( fr ),
+    _offset{ StackChunkBuilder::first_frame_index },
+    _frameArray{ retrieve_frame_array() } {
     // the first frame in the array is located at position 3 (after #frames, #locals)
-    _offset     = StackChunkBuilder::first_frame_index;
-    _frameArray = retrieve_frame_array();
 }
 
 
 DeoptimizedVirtualFrame::DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset ) :
-    DeltaVirtualFrame( fr ) {
-    _offset     = offset;
+    DeltaVirtualFrame( fr ),
+    _offset{ offset },
+    _frameArray{} {
     _frameArray = retrieve_frame_array();
 }
 

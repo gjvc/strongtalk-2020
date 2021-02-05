@@ -65,9 +65,10 @@ void Sweeper::step_all() {
 }
 
 
-Sweeper::Sweeper() {
-    _is_active   = false;
-    _sweep_start = _sweepSeconds;
+Sweeper::Sweeper() :
+    _is_active{ false },
+    _next{ nullptr },
+    _sweep_start{ _sweepSeconds } {
 }
 
 

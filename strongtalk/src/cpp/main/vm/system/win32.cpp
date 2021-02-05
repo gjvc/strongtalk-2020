@@ -373,6 +373,8 @@ void os::timerStop() {
 void os::timerPrintBuffer() {
 }
 
+
+
 // Virtual Memory
 
 char *os::reserve_memory( std::int32_t size ) {
@@ -384,8 +386,9 @@ bool os::commit_memory( const char *addr, std::int32_t size ) {
     bool result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         std::int32_t error = GetLastError();
-        spdlog::info( "commit_memory error %d 0x%lx", error, error );
+        spdlog::info( "commit_memory error {:d} 0x{:0x}", error, error );
     }
+
     return result;
 }
 
@@ -528,11 +531,13 @@ void real_time_tick( std::int32_t delay_time );
 DWORD WINAPI WatcherMain( LPVOID lpvParam ) {
     static_cast<void>(lpvParam); // unused
 
-    const std::int32_t delay_interval = 1; // Delay 1 ms
-    while ( 1 ) {
+    const std::int32_t delay_interval = 10; // Delay 1 ms
+    while ( true ) {
         Sleep( delay_interval );
         real_time_tick( delay_interval );
     }
+
+    //
     return 0;
 }
 
@@ -544,7 +549,6 @@ void os::find_system_page_size() {
 
     SYSTEM_INFO systemInfo;
     GetSystemInfo( &systemInfo );
-    spdlog::info( "system page size detected as [{:d}]", systemInfo.dwPageSize );
     _vm_page_size = systemInfo.dwPageSize;
 
 }
@@ -557,6 +561,7 @@ std::int32_t os::find_current_process_id() {
 
 void os::initialize_system_info() {
     find_system_page_size();
+    spdlog::info( "system page size detected as [{:d}] bytes", _vm_page_size );
     initialize_performance_counter();
 }
 

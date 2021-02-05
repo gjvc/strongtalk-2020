@@ -29,15 +29,15 @@ private:
     ResourceMark resourceMark;
 
 public:
-    Command( const char *str ) {
-        _console->cr();
+    Command( const char *str ) :
+        resourceMark{} {
         spdlog::info( "Executing[{}]", str );
     }
 
 
     ~Command() {
-        //flush_logFile();
     }
+
 };
 
 

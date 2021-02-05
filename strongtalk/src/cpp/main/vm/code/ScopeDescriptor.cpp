@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,15 +7,10 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "vm/runtime/Process.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/lookup/LookupKey.hpp"
-#include "vm/code/NativeInstruction.hpp"
 #include "vm/code/CompiledInlineCache.hpp"
 #include "vm/code/RelocationInformation.hpp"
 #include "vm/code/NativeMethod.hpp"
@@ -35,13 +31,25 @@ std::int32_t compareByteCodeIndex( std::int32_t byteCodeIndex1, std::int32_t byt
 }
 
 
-ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) {
-    _scopes = scopes;
-    _offset = offset;
-    _pc     = pc;
+ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
 
-    _name_desc_offset = offset;
+    _hasTemporaries{ false },
+    _hasContextTemporaries{ false },
+    _hasExpressionStack{ false },
+    _method{ nullptr },
+    _scopeID{ 0 },
+    _lite{ false },
+    _senderScopeOffset{ 0 },
+    _senderByteCodeIndex{ 0 },
+    _allocatesCompiledContext{ false },
+    //_name_desc_offset{0},
+    _next{ 0 },
+    _scopes{ scopes },
+    _offset{ offset },
+    _pc{ pc },
+    _name_desc_offset{ offset } {
 
+    //
     ScopeDescriptorHeaderByte b;
     b.unpack( _scopes->get_next_char( _name_desc_offset ) );
 
@@ -227,12 +235,14 @@ public:
     }
 };
 
+
 class IH_arg : public IterationHelper {
     void nameDescAt( NameDescriptor *nd, const char *pc ) {
         use();
         _blk->arg( _no, nd, pc );
     }
 };
+
 
 class IH_temp : public IterationHelper {
     void nameDescAt( NameDescriptor *nd, const char *pc ) {
@@ -241,12 +251,14 @@ class IH_temp : public IterationHelper {
     }
 };
 
+
 class IH_context_temp : public IterationHelper {
     void nameDescAt( NameDescriptor *nd, const char *pc ) {
         use();
         _blk->context_temp( _no, nd, pc );
     }
 };
+
 
 class IH_stack_expr : public IterationHelper {
     void nameDescAt( NameDescriptor *nd, const char *pc ) {

@@ -222,9 +222,9 @@ public:
 
 class PseudoRegisterLocker : StackAllocatedObject {
 private:
-    static PseudoRegisterLocker *_top;            // the topmost PseudoRegisterLocker
-    PseudoRegisterLocker        *_prev;            // the previous PseudoRegisterLocker
-    PseudoRegister              *_pseudoRegisters[3];        // the locked PRregs
+    static PseudoRegisterLocker *_top;                  // the topmost PseudoRegisterLocker
+    PseudoRegisterLocker        *_prev;                 // the previous PseudoRegisterLocker
+    PseudoRegister              *_pseudoRegisters[3];   // the locked PRregs
 
     void lock( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) {
         _prev = _top;

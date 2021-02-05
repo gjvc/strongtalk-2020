@@ -23,13 +23,19 @@ void EventLog::init() {
     _eventBuffer = _next = new_c_heap_array<EventLogEvent>( EventLogLength );
     _end         = _eventBuffer + EventLogLength;
 
-    for ( EventLogEvent *e = _eventBuffer; e < _end; e++ )
+    for ( EventLogEvent *e = _eventBuffer; e < _end; e++ ) {
         e->_name = noEvent;
+    }
+
 }
 
 
-EventLog::EventLog() {
-    _nestingDepth = 0;
+EventLog::EventLog() :
+    _eventBuffer{ nullptr },
+    _end{ nullptr },
+    _next{ nullptr },
+    _nestingDepth{ 0 } {
+
     init();
 }
 
@@ -39,26 +45,36 @@ void EventLog::resize() {
     EventLogEvent *oldEnd  = _end;
     EventLogEvent *oldNext = _next;
     init();
+
     // copy events
     for ( EventLogEvent *e = nextEvent( oldNext, oldBuf, oldEnd ); e not_eq oldNext; e = nextEvent( e, oldBuf, oldEnd ), _next = nextEvent( _next, _eventBuffer, _end ) ) {
         *_next = *e;
     }
+
     FreeHeap( oldBuf );
 }
 
 
 void EventLog::printPartial( std::int32_t n ) {
     EventLogEvent *e = _next;
+
     // find starting point
-    if ( n >= EventLogLength )
+    if ( n >= EventLogLength ) {
         n = EventLogLength - 1;
+    }
+
+    //
     std::int32_t i = 0;
-    for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) )
+
+    //
+    for ( i = 0; i < n; i++, e = prevEvent( e, _eventBuffer, _end ) ) {
         static_cast<void>( nullptr );
+    }
 
     // skip empty entries
-    for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) )
+    for ( i = 0; e not_eq _next and e->_name == noEvent; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
         static_cast<void>( nullptr );
+    }
 
     std::int32_t indent = 0;
     for ( ; i < n and e not_eq _next; i++, e = nextEvent( e, _eventBuffer, _end ) ) {
@@ -82,6 +98,7 @@ void EventLog::printPartial( std::int32_t n ) {
             indent++;
         }
     }
+
     if ( indent not_eq _nestingDepth ) {
         spdlog::info( "Actual event nesting is {} greater than shown.", _nestingDepth - indent );
     }

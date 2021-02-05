@@ -58,16 +58,19 @@ void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
 }
 
 
-ConsoleOutputStream::ConsoleOutputStream( std::int32_t width ) {
-    _width       = width;
-    _position    = 0;
-    _indentation = 0;
+ConsoleOutputStream::ConsoleOutputStream( std::int32_t width ) :
+    _width{ width },
+    _position{ 0 },
+    _indentation{ 0 } {
 }
 
 
 void ConsoleOutputStream::indent() {
-    while ( _position < _indentation )
+
+    while ( _position < _indentation ) {
         sp();
+    }
+
 }
 
 
@@ -78,8 +81,9 @@ void ConsoleOutputStream::vprint_cr( const char *format, va_list argptr ) {
 
 
 void ConsoleOutputStream::fill_to( std::int32_t col ) {
-    while ( position() < col )
+    while ( position() < col ) {
         sp();
+    }
 }
 
 

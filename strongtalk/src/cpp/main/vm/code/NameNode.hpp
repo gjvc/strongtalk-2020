@@ -58,8 +58,8 @@ private:
     void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
-    LocationName( Location location ) {
-        _location = location;
+    LocationName( Location location ) :
+        _location{ location } {
     }
 
 
@@ -83,10 +83,11 @@ private:
     void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
-    ValueName( Oop val ) {
-        _value = val;
+    ValueName( Oop val ) :
+        _value{ val } {
         st_assert( not val->is_block(), "should use BlockValueName" );
     }
+
 };
 
 
@@ -100,9 +101,9 @@ private:
     void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
-    BlockValueName( MethodOop block_method, ScopeInfo parent_scope ) {
-        _blockMethod = block_method;
-        _parentScope = parent_scope;
+    BlockValueName( MethodOop block_method, ScopeInfo parent_scope ) :
+        _blockMethod{ block_method },
+        _parentScope{ parent_scope } {
     }
 };
 
@@ -124,10 +125,10 @@ private:
     void generate( ScopeDescriptorRecorder *rec, bool is_last );
 
 public:
-    MemoizedName( Location loc, MethodOop block_method, ScopeInfo parent_scope ) {
-        _location    = loc;
-        _blockMethod = block_method;
-        _parentScope = parent_scope;
+    MemoizedName( Location loc, MethodOop block_method, ScopeInfo parent_scope ) :
+        _location{ loc },
+        _blockMethod{ block_method },
+        _parentScope{ parent_scope } {
     }
 
 

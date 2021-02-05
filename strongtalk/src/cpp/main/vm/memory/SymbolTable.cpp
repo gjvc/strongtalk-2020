@@ -17,8 +17,8 @@
         if ( bucket->is_symbol() ) {                                        \
             var = (SymbolOop*) bucket; code;                                \
         } else {                                                            \
-            for (SymbolTableLink* l = bucket->get_link(); l; l = l->next) { \
-                var = &l->symbol; code;                                     \
+            for (SymbolTableLink* l = bucket->get_link(); l; l = l->_next) { \
+                var = &l->_symbol; code;                                     \
             }                                                               \
         }                                                                   \
     }
@@ -49,8 +49,10 @@ std::uint32_t hash( const char *name, std::int32_t len ) {
         h = ( h << 4 ) + (std::uint32_t) *s;
 
         g = h & 0xf0000000;
-        if ( g )
+        if ( g ) {
             h ^= g | ( g >> 24 );
+        }
+
     }
 
     return h;
@@ -58,9 +60,11 @@ std::uint32_t hash( const char *name, std::int32_t len ) {
 
 
 SymbolTable::SymbolTable() {
+
     for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
         buckets[ i ].clear();
     }
+
     free_list = first_free_link = end_block = nullptr;
 }
 
@@ -69,6 +73,7 @@ SymbolOop SymbolTable::basic_add( const char *name, std::int32_t len, std::int32
     SymbolKlass *sk = (SymbolKlass *) Universe::symbolKlassObject()->klass_part();
     SymbolOop   str = sk->allocateSymbol( name, len );
     basic_add( str, hashValue );
+
     return str;
 }
 
@@ -88,8 +93,8 @@ bool SymbolTable::is_present( SymbolOop sym ) {
         return bucket->get_symbol()->equals( name, len );
     }
 
-    for ( SymbolTableLink *l = bucket->get_link(); l; l = l->next ) {
-        if ( l->symbol->equals( name, len ) ) {
+    for ( SymbolTableLink *l = bucket->get_link(); l; l = l->_next ) {
+        if ( l->_symbol->equals( name, len ) ) {
             return true;
         }
     }
@@ -106,12 +111,16 @@ SymbolOop SymbolTable::lookup( const char *name, std::int32_t len ) {
 
     if ( not bucket->is_empty() ) {
         if ( bucket->is_symbol() ) {
-            if ( bucket->get_symbol()->equals( name, len ) )
+            if ( bucket->get_symbol()->equals( name, len ) ) {
                 return bucket->get_symbol();
+            }
+
         } else {
-            for ( SymbolTableLink *l = bucket->get_link(); l; l = l->next )
-                if ( l->symbol->equals( name, len ) )
-                    return l->symbol;
+            for ( SymbolTableLink *l = bucket->get_link(); l; l = l->_next ) {
+                if ( l->_symbol->equals( name, len ) ) {
+                    return l->_symbol;
+                }
+            }
         }
     }
 
@@ -133,6 +142,8 @@ void SymbolTable::add_symbol( SymbolOop s ) {
 
 
 SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
+
+    //
     st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
 
@@ -160,8 +171,11 @@ SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
 
 
 void SymbolTable::switch_pointers( Oop from, Oop to ) {
-    if ( not from->is_symbol() )
+
+    //
+    if ( not from->is_symbol() ) {
         return;
+    }
 
     st_assert( to->is_symbol(), "cannot replace a symbol with a non-symbol" );
 
@@ -181,31 +195,34 @@ void SymbolTable::follow_used_symbols() {
         // If we have a one element list; preserve the symbol but remove the chain
         // This moving around cannot take place after follow_root has been called
         // since follow_root reverse pointers.
-        if ( e->get_link() and not e->get_link()->next ) {
+        if ( e->get_link() and not e->get_link()->_next ) {
             SymbolTableLink *old = e->get_link();
-            e->set_symbol( old->symbol );
+            e->set_symbol( old->_symbol );
             delete_link( old );
         }
 
         if ( e->is_symbol() ) {
-            if ( e->get_symbol()->is_gc_marked() )
+
+            if ( e->get_symbol()->is_gc_marked() ) {
                 MarkSweep::follow_root( (Oop *) e );
-            else
+            } else {
                 e->clear(); // unreachable; clear entry
+            }
+
         } else {
             SymbolTableLink **p   = (SymbolTableLink **) e;
             SymbolTableLink *link = e->get_link();
             while ( link ) {
-                if ( link->symbol->is_gc_marked() ) {
-                    MarkSweep::follow_root( (Oop *) &link->symbol );
-                    p    = &link->next;
-                    link = link->next;
+                if ( link->_symbol->is_gc_marked() ) {
+                    MarkSweep::follow_root( (Oop *) &link->_symbol );
+                    p    = &link->_next;
+                    link = link->_next;
                 } else {
                     // unreachable; remove from table
                     SymbolTableLink *old = link;
-                    *p = link->next;
-                    link = link->next;
-                    old->next = nullptr;
+                    *p = link->_next;
+                    link = link->_next;
+                    old->_next = nullptr;
                     delete_link( old );
                 }
             }
@@ -216,31 +233,39 @@ void SymbolTable::follow_used_symbols() {
 
 void SymbolTableEntry::deallocate() {
 
-    if ( not is_symbol() and get_link() )
+    if ( not is_symbol() and get_link() ) {
         Universe::symbol_table->delete_link( get_link() );
+    }
 
 }
 
 
 bool SymbolTableEntry::verify( std::int32_t i ) {
     bool flag = true;
+
     if ( is_symbol() ) {
         if ( not get_symbol()->is_symbol() ) {
             error( "entry 0x{0:x} in symbol table isn't a symbol", get_symbol() );
             flag = false;
         }
     } else {
-        if ( get_link() )
+        if ( get_link() ) {
             flag = get_link()->verify( i );
+        }
     }
+
     return flag;
 }
 
 
 void SymbolTable::verify() {
-    for ( std::int32_t i = 0; i < symbol_table_size; i++ )
-        if ( not buckets[ i ].verify( i ) )
+
+    for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
+        if ( not buckets[ i ].verify( i ) ) {
             spdlog::info( "\tof bucket %ld of symbol table", std::int32_t( i ) );
+        }
+    }
+
 }
 
 
@@ -256,18 +281,18 @@ void SymbolTable::relocate() {
 bool SymbolTableLink::verify( std::int32_t i ) {
     bool flag = true;
 
-    for ( SymbolTableLink *l = this; l; l = l->next ) {
+    for ( SymbolTableLink *l = this; l; l = l->_next ) {
 
-        if ( not l->symbol->is_symbol() ) {
-            error( "entry 0x{0:x} in symbol table isn't a symbol", l->symbol );
+        if ( not l->_symbol->is_symbol() ) {
+            error( "entry 0x{0:x} in symbol table isn't a symbol", l->_symbol );
             flag = false;
 
-        } else if ( hash( reinterpret_cast<const char *>( l->symbol->bytes() ), l->symbol->length() ) % symbol_table_size not_eq i ) {
-            error( "entry 0x{0:x} in symbol table has wrong hash value", l->symbol );
+        } else if ( hash( reinterpret_cast<const char *>( l->_symbol->bytes() ), l->_symbol->length() ) % symbol_table_size not_eq i ) {
+            error( "entry 0x{0:x} in symbol table has wrong hash value", l->_symbol );
             flag = false;
 
-        } else if ( not l->symbol->is_old() ) {
-            error( "entry 0x{0:x} in symbol table isn't tenured", l->symbol );
+        } else if ( not l->_symbol->is_old() ) {
+            error( "entry 0x{0:x} in symbol table isn't tenured", l->_symbol );
             flag = false;
         }
 
@@ -278,15 +303,20 @@ bool SymbolTableLink::verify( std::int32_t i ) {
 
 
 std::int32_t SymbolTableEntry::length() {
-    if ( is_symbol() )
+
+    if ( is_symbol() ) {
         return 1;
-    if ( not get_link() )
+    }
+
+    if ( not get_link() ) {
         return 0;
+    }
 
     std::int32_t count = 0;
 
-    for ( SymbolTableLink *l = get_link(); l; l = l->next )
+    for ( SymbolTableLink *l = get_link(); l; l = l->_next ) {
         count++;
+    }
 
     return count;
 }
@@ -298,7 +328,7 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
 
     if ( free_list ) {
         res       = free_list;
-        free_list = free_list->next;
+        free_list = free_list->_next;
     } else {
         const std::int32_t block_size = 500;
         if ( first_free_link == end_block ) {
@@ -308,8 +338,8 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
 
         res = first_free_link++;
     }
-    res->symbol = s;
-    res->next   = n;
+    res->_symbol = s;
+    res->_next   = n;
     return res;
 }
 
@@ -317,11 +347,11 @@ SymbolTableLink *SymbolTable::new_link( SymbolOop s, SymbolTableLink *n ) {
 void SymbolTable::delete_link( SymbolTableLink *l ) {
     // Add the link to the freelist
     SymbolTableLink *end = l;
-    while ( end->next ) {
-        end = end->next;
+    while ( end->_next ) {
+        end = end->_next;
     }
 
-    end->next = free_list;
+    end->_next = free_list;
     free_list = l;
 }
 
@@ -329,7 +359,7 @@ void SymbolTable::delete_link( SymbolTableLink *l ) {
 // much of this comes from the print_histogram routine in mapTable.c,
 // so if bug fixes are made here, also make them in mapTable.cpp.
 void SymbolTable::print_histogram() {
-    
+
     const std::int32_t results_length = 100;
     std::int32_t       results[results_length];
 

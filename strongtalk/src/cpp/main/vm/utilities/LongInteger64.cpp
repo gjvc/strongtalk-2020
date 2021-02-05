@@ -7,17 +7,21 @@
 #include "vm/utilities/LongInteger64.hpp"
 
 
-LongInteger64::LongInteger64() {
+LongInteger64::LongInteger64() :
+    _low{ 0 },
+    _high{ 0 } {
 }
 
 
-LongInteger64::LongInteger64( std::uint32_t low, std::uint32_t high ) {
-    _low  = low;
-    _high = high;
+LongInteger64::LongInteger64( std::uint32_t low, std::uint32_t high ) :
+    _low{ low },
+    _high{ high } {
 }
 
 
-LongInteger64::LongInteger64( double value ) {
+LongInteger64::LongInteger64( double value ) :
+    _low{ 0 },
+    _high{ 0 } {
     *(int64_t *) &_low = value;
 }
 

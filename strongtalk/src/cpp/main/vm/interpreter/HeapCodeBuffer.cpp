@@ -13,8 +13,9 @@
 
 
 void HeapCodeBuffer::align() {
-    while ( not isAligned() )
+    while ( not isAligned() ) {
         _bytes->append( 0xFF );
+    }
 }
 
 
@@ -24,8 +25,10 @@ bool HeapCodeBuffer::isAligned() {
 
 
 void HeapCodeBuffer::pushByte( std::uint8_t op ) {
-    if ( isAligned() )
+
+    if ( isAligned() ) {
         _oops->append( smiOopFromValue( 0 ) );
+    }
     _bytes->append( op );
 }
 
@@ -47,8 +50,9 @@ ByteArrayOop HeapCodeBuffer::bytes() {
     Klass        *klass = Universe::byteArrayKlassObject()->klass_part();
     ByteArrayOop result = ByteArrayOop( klass->allocateObjectSize( byteLength() ) );
 
-    for ( std::int32_t i = 0; i < byteLength(); i++ )
+    for ( std::int32_t i = 0; i < byteLength(); i++ ) {
         result->byte_at_put( i + 1, (std::uint8_t) _bytes->at( i ) );
+    }
 
     return result;
 }
@@ -59,8 +63,9 @@ ObjectArrayOop HeapCodeBuffer::oops() {
     Klass          *klass = Universe::objArrayKlassObject()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( klass->allocateObjectSize( oopLength() ) );
 
-    for ( std::int32_t i = 0; i < oopLength(); i++ )
+    for ( std::int32_t i = 0; i < oopLength(); i++ ) {
         result->obj_at_put( i + 1, _oops->at( i ) );
+    }
 
     return result;
 }

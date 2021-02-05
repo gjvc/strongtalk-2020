@@ -169,7 +169,10 @@ public:
 
 CodeGenerator::CodeGenerator( MacroAssembler *masm, PseudoRegisterMapping *mapping ) :
     _mergeStubs( 16 ) {
+
+
     st_assert( masm == mapping->assembler(), "should be the same" );
+
     PseudoRegisterLocker::initialize();
     _masm            = masm;
     _currentMapping  = mapping;

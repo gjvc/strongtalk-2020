@@ -13,13 +13,13 @@
 #include "vm/utilities/StringOutputStream.hpp"
 
 
-PerformanceDebugger::PerformanceDebugger( Compiler *c ) {
-    _compiler                            = c;
-    _compileAlreadyReported              = false;
-    _blockPseudoRegisters                = new GrowableArray<BlockPseudoRegister *>( 5 );
-    _reports                             = new GrowableArray<char *>( 5 );
-    _stringStream                        = nullptr;
-    _notInlinedBecauseNativeMethodTooBig = nullptr;
+PerformanceDebugger::PerformanceDebugger( Compiler *c ) :
+    _compiler{ c },
+    _compileAlreadyReported{ false },
+    _blockPseudoRegisters{ new GrowableArray<BlockPseudoRegister *>( 5 ) },
+    _reports{ new GrowableArray<char *>( 5 ) },
+    _stringStream{ nullptr },
+    _notInlinedBecauseNativeMethodTooBig{ nullptr } {
 }
 
 
@@ -33,8 +33,9 @@ void PerformanceDebugger::stop_report() {
     char *report = _stringStream->as_string();
 
     for ( std::int32_t i = _reports->length() - 1; i >= 0; i-- ) {
-        if ( strcmp( _reports->at( i ), report ) == 0 )
+        if ( strcmp( _reports->at( i ), report ) == 0 ) {
             return;  // already printed identical msg
+        }
     }
 
     _console->print( report );
@@ -60,8 +61,8 @@ private:
     PerformanceDebugger *_performanceDebugger;
 
 public:
-    Reporter( PerformanceDebugger *d ) {
-        _performanceDebugger = d;
+    Reporter( PerformanceDebugger *d ) :
+        _performanceDebugger{ d } {
         d->start_report();
     }
 

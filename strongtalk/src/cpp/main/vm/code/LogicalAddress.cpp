@@ -7,11 +7,11 @@
 #include "vm/code/LogicalAddress.hpp"
 
 
-LogicalAddress::LogicalAddress( NameNode *physical_address, std::int32_t pc_offset ) {
-    _physicalAddress = physical_address;
-    _pcOffset        = pc_offset;
-    _next            = nullptr;
-    _offset          = -1; // Illegal value
+LogicalAddress::LogicalAddress( NameNode *physical_address, std::int32_t pc_offset ) :
+    _physicalAddress{ physical_address },
+    _pcOffset{ pc_offset },
+    _next{ nullptr },
+    _offset{ -1 } {
 }
 
 

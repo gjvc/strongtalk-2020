@@ -153,8 +153,11 @@ std::int32_t PseudoRegisterMapping::allocateTemporary( Register hint ) {
             regLoc = hintLoc;
         }
     }
-    if ( not _locations->isLocation( regLoc ) )
-        regLoc          = _locations->allocateRegister();
+
+    if ( not _locations->isLocation( regLoc ) ) {
+        regLoc = _locations->allocateRegister();
+    }
+
     st_assert( _locations->isLocation( regLoc ) and _locations->nofUses( regLoc ) == 1, "should be allocated exactly once" );
     _temporaryLocations->push( regLoc );
     return regLoc;
@@ -173,8 +176,12 @@ void PseudoRegisterMapping::releaseTemporary( std::int32_t regLoc ) {
 
 
 void PseudoRegisterMapping::releaseAllTemporaries() {
-    while ( _temporaryLocations->nonEmpty() )
+
+    //
+    while ( _temporaryLocations->nonEmpty() ) {
         _locations->release( _temporaryLocations->pop() );
+    }
+
 }
 
 
@@ -183,7 +190,15 @@ void PseudoRegisterMapping::destroy() {
 }
 
 
-PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofTemps ) {
+PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofTemps ) :
+    _stackLocations{ nullptr },
+    _temporaryLocations{ nullptr },
+    _pseudoRegisters{ nullptr },
+    _registerLocations{ nullptr },
+    _locations{ nullptr },
+    _macroAssembler{ nullptr },
+    _nonLocalReturnInProgress{ false } {
+
     constexpr std::int32_t initialSize = 8;
     _macroAssembler           = assm;
     _nonLocalReturnInProgress = false;
@@ -196,7 +211,16 @@ PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::int32_t
 }
 
 
-PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping *m ) {
+PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping *m ) :
+    _stackLocations{ nullptr },
+    _temporaryLocations{ nullptr },
+    _pseudoRegisters{ nullptr },
+    _registerLocations{ nullptr },
+    _locations{ nullptr },
+    _macroAssembler{ nullptr },
+    _nonLocalReturnInProgress{ false } {
+
+    //
     _macroAssembler           = m->_macroAssembler;
     _nonLocalReturnInProgress = m->_nonLocalReturnInProgress;
     _locations                = new Locations( m->_locations );
@@ -1060,19 +1084,25 @@ void PseudoRegisterMapping::verify() {
 PseudoRegisterLocker *PseudoRegisterLocker::_top;
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0 ) :
+    _prev{ nullptr },
+    _pseudoRegisters{} {
     st_assert( r0 not_eq nullptr, "PseudoRegister must be defined" );
     lock( r0, nullptr, nullptr );
 }
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1 ) :
+    _prev{ nullptr },
+    _pseudoRegisters{} {
     st_assert( r0 not_eq nullptr and r1 not_eq nullptr, "PseudoRegisters must be defined" );
     lock( r0, r1, nullptr );
 }
 
 
-PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) {
+PseudoRegisterLocker::PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 ) :
+    _prev{ nullptr },
+    _pseudoRegisters{} {
     st_assert( r0 not_eq nullptr and r1 not_eq nullptr and r2 not_eq nullptr, "PseudoRegisters must be defined" );
     lock( r0, r1, r2 );
 }

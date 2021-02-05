@@ -43,9 +43,10 @@ protected:
     Frame _frame;
 
 
-    VirtualFrame( const Frame *frame ) {
-        _frame = *frame;
-    }    // for subclass use only
+    VirtualFrame( const Frame *frame ) :
+        _frame{ *frame } {
+    }
+
 
 public:
     // constructor: creates bottom (most recent) VirtualFrame from a frame
@@ -128,6 +129,7 @@ public:
 
     friend class DeoptimizedVirtualFrame;
 };
+
 
 class DeltaVirtualFrame : public VirtualFrame {
 private:
@@ -273,6 +275,7 @@ public:
     void verify() const;
 };
 
+
 class DeferredExpression;
 
 class ScopeDescriptor;
@@ -366,6 +369,7 @@ public:
     friend class DeferredExpression;
 };
 
+
 class DeferredExpression : public ResourceObject {
 private:
     CompiledVirtualFrame const *const _frame;
@@ -380,6 +384,7 @@ public:
         return CompiledVirtualFrame::resolve_name( expression, _frame );
     }
 };
+
 
 class CompiledMethodVirtualFrame : public CompiledVirtualFrame {
 public:
@@ -525,6 +530,7 @@ public:
     ContextOop canonical_context() const;
 };
 
+
 class cVFrame : public VirtualFrame {
 
 public:
@@ -544,6 +550,7 @@ public:
 
     void print();
 };
+
 
 class cChunk : public cVFrame {
 public:

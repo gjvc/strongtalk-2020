@@ -136,8 +136,10 @@ class Thread : CHeapAllocatedObject {
         friend class os;
 };
 
+
 class DLLLoadError {
 };
+
 
 class DLL : CHeapAllocatedObject {
 

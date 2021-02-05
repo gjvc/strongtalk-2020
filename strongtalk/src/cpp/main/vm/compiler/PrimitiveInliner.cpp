@@ -1079,18 +1079,19 @@ Expression *PrimitiveInliner::tryInline() {
 }
 
 
-PrimitiveInliner::PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc, MethodInterval *failure_block ) {
-    st_assert( pdesc, "must have a primitive desc to inline" );
-    _gen                 = gen;
-    _primitiveDescriptor = pdesc;
-    _failure_block       = failure_block;
+PrimitiveInliner::PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc, MethodInterval *failure_block ) :
+    _gen{ gen },
+    _primitiveDescriptor{ pdesc },
+    _failure_block{ failure_block },
+    _scope{ gen->_scope },
+    _byteCodeIndex{ gen->byteCodeIndex() },
+    _expressionStack{ gen->_expressionStack },
+    _cannotFail{ true },
+    _params{ new GrowableArray<Expression *>( number_of_parameters(), number_of_parameters(), nullptr ) },
+    _usingUncommonTrap{ false } {
 
-    _scope             = gen->_scope;
-    _byteCodeIndex     = gen->byteCodeIndex();      // byteCodeIndex of primitive call
-    _expressionStack   = gen->_expressionStack;
-    _cannotFail        = true;
-    _params            = new GrowableArray<Expression *>( number_of_parameters(), number_of_parameters(), nullptr );
-    _usingUncommonTrap = false;
+    //
+    st_assert( pdesc, "must have a primitive desc to inline" );
 
     // get parameters
     std::int32_t i     = number_of_parameters();

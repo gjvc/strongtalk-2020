@@ -128,8 +128,11 @@ void NewGeneration::object_iterate( ObjectClosure *blk ) {
 
 void NewGeneration::verify() {
 
-    if ( eden()->next_space not_eq _fromSpace or from()->next_space not_eq _toSpace or to()->next_space not_eq nullptr )
-        error( "misconnnected spaces in new gen" );
+    if ( ( eden()->next_space not_eq _fromSpace ) or
+         ( from()->next_space not_eq _toSpace ) or
+         ( to()->next_space not_eq nullptr ) ) {
+        error( "mis-connected spaces in new generation" );
+    }
 
     eden()->verify();
     from()->verify();
@@ -140,7 +143,8 @@ void NewGeneration::verify() {
 #undef FOR_EACH_OLD_SPACE
 // this version used with old_gen
 // ensure that you surround the call with {} to prevent s leaking out!
-#define FOR_EACH_OLD_SPACE( s ) \
+
+#define FOR_EACH_OLD_SPACE( s )   \
   for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace )
 
 
@@ -157,31 +161,39 @@ void OldGeneration::initialize( ReservedSpace rs, std::int32_t initial_size ) {
 
 
 bool OldGeneration::contains( void *p ) {
-    FOR_EACH_OLD_SPACE( s ) {
+
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
         if ( s->contains( p ) )
             return true;
     }
+
     return false;
 }
 
 
 std::int32_t OldGeneration::capacity() {
-    std::int32_t sum = 0;
-    FOR_EACH_OLD_SPACE( s )sum += s->capacity();
+    std::int32_t   sum = 0;
+    for ( OldSpace *s  = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        sum += s->capacity();
+    }
     return sum;
 }
 
 
 std::int32_t OldGeneration::used() {
-    std::int32_t sum = 0;
-    FOR_EACH_OLD_SPACE( s )sum += s->used();
+    std::int32_t   sum = 0;
+    for ( OldSpace *s  = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        sum += s->used();
+    }
     return sum;
 }
 
 
 std::int32_t OldGeneration::free() {
-    std::int32_t sum = 0;
-    FOR_EACH_OLD_SPACE( s )sum += s->free();
+    std::int32_t   sum = 0;
+    for ( OldSpace *s  = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        sum += s->free();
+    }
     return sum;
 }
 
@@ -196,7 +208,7 @@ void OldGeneration::scavenge_contents_from( OldWaterMark *mark ) {
 
 
 void OldGeneration::switch_pointers( Oop from, Oop to ) {
-    FOR_EACH_OLD_SPACE( space )space->switch_pointers( from, to );
+    FOR_EACH_OLD_SPACE( space ) { space->switch_pointers( from, to ); }
 }
 
 
@@ -212,13 +224,19 @@ std::int32_t OldGeneration::shrink( std::int32_t size ) {
 
 void OldGeneration::prepare_for_compaction( OldWaterMark *mark ) {
     // %note same order as in compact
-    FOR_EACH_OLD_SPACE( s )s->prepare_for_compaction( mark );
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+
+
+        s->prepare_for_compaction( mark );
+    }
 }
 
 
 void OldGeneration::compact( OldWaterMark *mark ) {
     // %note same order as in prepare_for_compaction
-    FOR_EACH_OLD_SPACE( s )s->compact( mark );
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        s->compact( mark );
+    }
 }
 
 
@@ -235,11 +253,13 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     // 4/5/96 Lars
     spdlog::warn( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
+
         std::int32_t space_size = _currentSpace->capacity();
         OldSpace     *s         = new OldSpace( "old", space_size );
 
-        if ( (const char *) s->bottom() < Universe::new_gen._highBoundary ) st_fatal( "allocation of old Space before new Space" );
-
+        if ( (const char *) s->bottom() < Universe::new_gen._highBoundary ) {
+            st_fatal( "allocation of old Space before new Space" );
+        }
         append_space( s );
     }
     _currentSpace = _currentSpace->_nextSpace;
@@ -247,7 +267,8 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     const char *sStart = (const char *) _currentSpace->bottom();
     const char *sEnd   = (const char *) _currentSpace->end();
     if ( sStart < _lowBoundary )
-        _lowBoundary  = sStart;
+        _lowBoundary = sStart;
+
     if ( sEnd > _highBoundary )
         _highBoundary = sEnd;
 
@@ -263,19 +284,25 @@ void OldGeneration::print() {
         spdlog::info( " Old generation" );
         Generation::print();
     }
-    FOR_EACH_OLD_SPACE( s )s->print();
+
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        s->print();
+    }
 }
 
 
 void OldGeneration::print_remembered_set() {
     spdlog::info( "Remembered set" );
-    FOR_EACH_OLD_SPACE( s )Universe::remembered_set->print_set_for_space( s );
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        Universe::remembered_set->print_set_for_space( s );
+    }
 }
 
 
 std::int32_t OldGeneration::number_of_dirty_pages() {
     std::int32_t count = 0;
-    FOR_EACH_OLD_SPACE( s ) {
+
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
         count += Universe::remembered_set->number_of_dirty_pages_in( s );
     }
     return count;
@@ -284,7 +311,8 @@ std::int32_t OldGeneration::number_of_dirty_pages() {
 
 std::int32_t OldGeneration::number_of_pages_with_dirty_objects() {
     std::int32_t count = 0;
-    FOR_EACH_OLD_SPACE( s ) {
+
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
         count += Universe::remembered_set->number_of_pages_with_dirty_objects_in( s );
     }
     return count;
@@ -292,7 +320,9 @@ std::int32_t OldGeneration::number_of_pages_with_dirty_objects() {
 
 
 void OldGeneration::object_iterate( ObjectClosure *blk ) {
-    FOR_EACH_OLD_SPACE( s )s->object_iterate( blk );
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        s->object_iterate( blk );
+    }
 }
 
 
@@ -308,7 +338,8 @@ void OldGeneration::object_iterate_from( OldWaterMark *mark, ObjectClosure *blk 
 void OldGeneration::verify() {
     std::int32_t n = 0;
     OldSpace     *p{ nullptr };
-    FOR_EACH_OLD_SPACE( s ) {
+
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
         n++;
         p = s;
     }
@@ -321,19 +352,24 @@ void OldGeneration::verify() {
 static std::int32_t addr_cmp( OldSpace **s1, OldSpace **s2 ) {
     const char *s1start = (const char *) ( *s1 )->bottom();
     const char *s2start = (const char *) ( *s2 )->bottom();
-    if ( s1start < s2start )
+
+
+    if ( s1start < s2start ) {
         return -1;
-    else if ( s1start > s2start )
+    } else if ( s1start > s2start ) {
         return 1;
-    else
+    } else {
         return 0;
+    }
+
 }
 
 
 Oop *OldGeneration::object_start( Oop *p ) {
-    FOR_EACH_OLD_SPACE( s ) {
-        if ( s->contains( p ) )
+    for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
+        if ( s->contains( p ) ) {
             return s->object_start( p );
+        }
     }
     return nullptr;
 }

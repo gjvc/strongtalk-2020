@@ -84,6 +84,7 @@ struct CodeTableEntry : ValueObject {
     bool verify( std::int32_t i );
 };
 
+
 class CodeTable : public PrintableCHeapAllocatedObject {
 protected:
     std::int32_t   tableSize;

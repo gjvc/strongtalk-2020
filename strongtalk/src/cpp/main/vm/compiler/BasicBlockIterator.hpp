@@ -20,7 +20,7 @@ private:
 public:                                                         // was protected: originally
     GrowableArray<BasicBlock *>          *_basicBlockTable;     // BBs sorted in topological order
     std::int32_t                         _basicBlockCount;      // number of BBs
-    GrowableArray<PseudoRegister *>      *pseudoRegisterTable;            // holds all PseudoRegisters; indexed by their id
+    GrowableArray<PseudoRegister *>      *pseudoRegisterTable;  // holds all PseudoRegisters; indexed by their id
     GrowableArray<PseudoRegister *>      *globals;              // holds globally allocated PseudoRegisters; indexed by their num()
     bool                                 _usesBuilt;            // true after uses have been built
     bool                                 _blocksBuilt;          // true after basic blocks have been built
@@ -28,11 +28,15 @@ public:                                                         // was protected
 
 public:
 
-    BasicBlockIterator() {
-        _basicBlockTable = nullptr;     //
-        _basicBlockCount = 0;           //
-        _usesBuilt       = false;       //
-        _blocksBuilt     = false;       //
+    BasicBlockIterator() :
+        _first{ nullptr },
+        _basicBlockTable{ nullptr },
+        _basicBlockCount{ 0 },
+        pseudoRegisterTable{ nullptr },
+        globals{ nullptr },
+        _usesBuilt{ false },
+        _blocksBuilt{ nullptr },
+        exposedBlks{ nullptr } {
     }
 
 

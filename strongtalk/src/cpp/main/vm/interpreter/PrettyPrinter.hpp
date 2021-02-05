@@ -28,25 +28,26 @@
 class PrettyPrintStream : public PrintableResourceObject {
 protected:
     std::int32_t _indentation;
-    std::int32_t pos;
-    bool         in_hl;
+    std::int32_t _position;
+    bool         _inHighlight;
 
 
     void set_highlight( bool value ) {
-        in_hl = value;
+        _inHighlight = value;
     }
 
 
 public:
     bool in_highlight() {
-        return in_hl;
+        return _inHighlight;
     }
 
 
     // creation
-    PrettyPrintStream() {
-        _indentation = pos = 0;
-        set_highlight( false );
+    PrettyPrintStream() :
+        _indentation{ 0 },
+        _inHighlight{ false },
+        _position{ 0 } {
     }
 
 
@@ -65,7 +66,7 @@ public:
 
 
     std::int32_t position() {
-        return pos;
+        return _position;
     }
 
 
@@ -144,7 +145,7 @@ public:
 
 
     std::int32_t remaining() {
-        return width() - pos;
+        return width() - _position;
     }
 
 

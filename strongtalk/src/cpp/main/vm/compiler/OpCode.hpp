@@ -10,8 +10,6 @@
 #include "vm/system/platform.hpp"
 
 
-// opcodes used by the Compiler
-
 enum class BranchOpCode {
     EQBranchOp,     // equal
     NEBranchOp,     // not equal
@@ -26,9 +24,10 @@ enum class BranchOpCode {
     VSBranchOp,     //
     VCBranchOp,     //
     // Overflow set/cleared
-
     LastBranchOp    //
 };
+
+extern std::array<const char *, static_cast<std::size_t >( BranchOpCode::LastBranchOp )> BranchOpName; // indexed by BranchOpCode
 
 
 enum class ArithOpCode {
@@ -79,6 +78,5 @@ enum class ArithOpCode {
     LastArithOp     //
 };
 
-extern std::array<const char *, 13> BranchOpName; // indexed by BranchOpCode
-extern std::array<const char *, 34> ArithOpName; // indexed by ArithOpCode
-extern std::array<bool, 34>         ArithOpIsCommutative; // indexed by ArithOpCode
+extern std::array<const char *, static_cast<std::size_t >( ArithOpCode::LastArithOp )> ArithOpName;
+extern std::array<bool, static_cast<std::size_t >( ArithOpCode::LastArithOp )>         ArithOpIsCommutative;

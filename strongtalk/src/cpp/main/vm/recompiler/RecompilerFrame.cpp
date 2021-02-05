@@ -8,23 +8,26 @@
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/interpreter/InlineCacheIterator.hpp"
-#include "vm/oops/SymbolOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 
-const RecompilerFrame *noCaller    = (RecompilerFrame *) 0x1;        // no caller (i.e., initial frame)
-const RecompilerFrame *noCallerYet = (RecompilerFrame *) 0x0;        // caller not yet computed
+const RecompilerFrame *noCaller    = reinterpret_cast<RecompilerFrame *>(0x1 );        // no caller (i.e., initial frame)
+const RecompilerFrame *noCallerYet = reinterpret_cast<RecompilerFrame *>(0x0 );     // caller not yet computed
 
 RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame *callee ) :
-    _frame( frame ) {
-    _caller      = (RecompilerFrame *) noCallerYet;
-    _callee      = (RecompilerFrame *) callee;
-    _invocations = _sends = _cumulSends = _loopDepth = 0;
-    _num         = callee ? callee->num() + 1 : 0;
-    _distance    = -1;
+    _frame( frame ),
+    _cumulSends{},
+    _loopDepth{},
+    _ncallers{},
+    _sends{},
+    _caller{ (RecompilerFrame *) noCallerYet },
+    _callee{ (RecompilerFrame *) callee },
+    _invocations{ _sends = _cumulSends = _loopDepth = 0 },
+    _num{ callee ? callee->num() + 1 : 0 },
+    _distance{ -1 } {
 }
 
 
@@ -34,7 +37,13 @@ void RecompilerFrame::set_distance( std::int32_t d ) {
 
 
 InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
-    RecompilerFrame( fr, callee ) {
+    RecompilerFrame( fr, callee ),
+    _method{},
+    _byteCodeIndex{},
+    _receiverKlass{},
+    _deltaVirtualFrame{ nullptr },
+    _lookupKey{ nullptr } {
+
     VirtualFrame *vf1 = VirtualFrame::new_vframe( &_frame );
     st_assert( vf1->is_interpreted_frame(), "must be interpreted" );
     InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) vf1;
@@ -47,26 +56,36 @@ InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, const Recompil
 
 
 InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, MethodOop m, KlassOop rcvrKlass ) :
-    RecompilerFrame( fr, nullptr ) {
-    _method = m;
+    RecompilerFrame( fr, nullptr ),
+    _method{ m },
+    _byteCodeIndex{ PrologueByteCodeIndex },
+    _receiverKlass{ rcvrKlass },
+    _deltaVirtualFrame{ nullptr },
+    _lookupKey{ nullptr } {
+
     st_assert( _method->codes() <= _frame.hp() and _frame.hp() < _method->codes_end(), "frame doesn't match method" );
-    _byteCodeIndex = PrologueByteCodeIndex;
-    _receiverKlass = rcvrKlass;
     VirtualFrame *vf1 = VirtualFrame::new_vframe( &_frame );
     st_assert( vf1->is_interpreted_frame(), "must be interpreted" );
+
     InterpretedVirtualFrame *vf = (InterpretedVirtualFrame *) vf1;
     _deltaVirtualFrame = vf;
+
     init();
+
 }
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
-    RecompilerFrame( fr, callee ) {
+    RecompilerFrame( fr, callee ),
+    _deltaVirtualFrame{},
+    _nativeMethod{} {
 }
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
-    RecompilerFrame( fr, nullptr ) {
+    RecompilerFrame( fr, nullptr ),
+    _deltaVirtualFrame{},
+    _nativeMethod{} {
     init();
 }
 
@@ -226,11 +245,11 @@ std::int32_t RecompilerFrame::computeSends( MethodOop m ) {
 
     do {
         switch ( iter.send() ) {
-            case ByteCodes::SendType::interpreted_send:
-            case ByteCodes::SendType::compiled_send:
-            case ByteCodes::SendType::polymorphic_send:
-            case ByteCodes::SendType::predicted_send:
-            case ByteCodes::SendType::accessor_send: {
+            case ByteCodes::SendType::INTERPRETED_SEND:
+            case ByteCodes::SendType::COMPILED_SEND:
+            case ByteCodes::SendType::POLYMORPHIC_SEND:
+            case ByteCodes::SendType::PREDICTED_SEND:
+            case ByteCodes::SendType::ACCESSOR_SEND: {
                 InterpretedInlineCache         *ic = iter.ic();
                 InterpretedInlineCacheIterator it( ic );
                 while ( not it.at_end() ) {
@@ -246,12 +265,12 @@ std::int32_t RecompilerFrame::computeSends( MethodOop m ) {
             }
                 break;
 
-            case ByteCodes::SendType::megamorphic_send:
-                // don't know how to count megamorphic sends; for now, just ignore them
+            case ByteCodes::SendType::MEGAMORPHIC_SEND:
+                // don't know how to count MEGAMORPHIC sends; for now, just ignore them
                 // because compiler can't eliminate them anyway
                 break;
-            case ByteCodes::SendType::primitive_send  : // send to method containing predicted primitive
-            case ByteCodes::SendType::no_send:
+            case ByteCodes::SendType::PRIMITIVE_SEND  : // send to method containing predicted primitive
+            case ByteCodes::SendType::NO_SEND:
                 break;
             default: st_fatal1( "unexpected send type 0x%08x", iter.send() );
         }
@@ -289,6 +308,7 @@ void CompiledRecompilerFrame::init() {
     _nativeMethod = ( (CompiledVirtualFrame *) vf )->code();
     _nativeMethod->verify();
     vf = vf->top();
+
     st_assert( vf->is_compiled_frame(), "must be compiled" );
     _deltaVirtualFrame = (DeltaVirtualFrame *) vf;
     _invocations       = _nativeMethod->invocation_count();
@@ -301,26 +321,31 @@ void CompiledRecompilerFrame::init() {
 
 
 void InterpretedRecompilerFrame::init() {
+
     // find the InlineCache
     if ( _byteCodeIndex not_eq PrologueByteCodeIndex ) {
         CodeIterator iter( _method );
         while ( byteCodeIndexLT( iter.byteCodeIndex(), _byteCodeIndex ) ) {
             switch ( iter.loopType() ) {
-                case ByteCodes::LoopType::loop_start:
+                case ByteCodes::LoopType::LOOP_START:
                     _loopDepth++;
                     break;
-                case ByteCodes::LoopType::loop_end:
+                case ByteCodes::LoopType::LOOP_END:
                     _loopDepth--;
                     break;
-                case ByteCodes::LoopType::no_loop:
+                case ByteCodes::LoopType::NO_LOOP:
                     break;
                 default: st_fatal1( "unexpected loop type 0x%08x", iter.loopType() );
             }
-            if ( not iter.advance() )
+
+            if ( not iter.advance() ) {
                 break;
+            }
         }
         st_assert( iter.byteCodeIndex() == _byteCodeIndex, "should have found exact byteCodeIndex" );
     }
+
+    //
     _invocations = _method->invocation_count();
     _ncallers    = _method->sharing_count();
     _sends       = computeSends( _method );
@@ -338,16 +363,15 @@ public:
     bool         top;
 
 
-    CumulCounter( MethodOop m ) {
-        cumulSends = 0;
-        method     = m;
-        top        = true;
+    CumulCounter( MethodOop m ) : cumulSends{ 0 }, method{ m }, top{ true } {
     }
 
 
     void count() {
-        if ( not top )
+        if ( not top ) {
             cumulSends += RecompilerFrame::computeSends( method );
+        }
+
         top = false;
         MethodIterator iter( method, this );
     }
@@ -373,9 +397,9 @@ std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
 
 
 void RecompilerFrame::print( const char *kind ) {
-    static_cast<void>(kind); // unused
 
-    spdlog::info( "%3d %s %-15.15s: inv=%5d/%3d snd=%6d cum=%6d loop=%2d cst=%4d",
+    spdlog::info( "{<16s} {:3d} {} {<15s}  invocations={:5d}  numberOfCallers={:3d}  sends={:6d}  cumulativeSends={:6d}  loopDepth={:2d}  cost={:4d}",
+                  kind,
                   _num,
                   is_interpreted() ? "I" : "C",
                   top_method()->selector()->as_string(),
@@ -384,15 +408,17 @@ void RecompilerFrame::print( const char *kind ) {
                   _sends,
                   _cumulSends,
                   _loopDepth,
-                  cost() );
+                  cost()
+    );
+
 }
 
 
 void CompiledRecompilerFrame::print() {
-    RecompilerFrame::print( "comp" );
+    RecompilerFrame::print( "CompiledRecompilerFrame" );
 }
 
 
 void InterpretedRecompilerFrame::print() {
-    RecompilerFrame::print( "std::int32_t." );
+    RecompilerFrame::print( "InterpretedRecompilerFrame" );
 }

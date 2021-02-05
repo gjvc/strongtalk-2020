@@ -9,6 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
+#include "vm/oops/OopDescriptor.hpp"
 
 
 // A generation is a bunch of spaces of similarly-aged objects
@@ -49,13 +50,12 @@ public:
 
 // ------------------------------------------------------------------------------
 
-#include "vm/oops/OopDescriptor.hpp"
 
 // ensure that you surround the call with {} to prevent s leaking out!
-#define FOR_EACH_OLD_SPACE( s ) \
+#define FOR_EACH_OLD_SPACE( s )   \
     for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
 
-//inline void FOR_EACH_OLD_SPACE( const auto & s ) {
+//inline void FOR_EACH_OLD_SPACE( const auto & s )   {
 //    for ( OldSpace *s = Universe::old_gen._firstSpace; s not_eq nullptr; s = s->_nextSpace )
 //}
 
@@ -85,13 +85,13 @@ inline void SPACE_VERIFY_TEMPLATE( const auto &s ) {
     if ((Oop) *p == (Oop) from) *((Oop*) p) = (Oop) to;
 
 
-#define APPLY_TO_YOUNG_SPACES( t ) \
-    t( new_gen.eden() ) \
-    t( new_gen.from() ) \
-    t( new_gen.to() )
+//#define APPLY_TO_YOUNG_SPACES( t ) \
+//    t( new_gen.eden() ) \
+//    t( new_gen.from() ) \
+//    t( new_gen.to() )
 
 #define APPLY_TO_OLD_SPACES( t ) \
-    { FOR_EACH_OLD_SPACE(s) { t(s); } }
+    { FOR_EACH_OLD_SPACE(s)  { t(s) ; } }
 
 
 

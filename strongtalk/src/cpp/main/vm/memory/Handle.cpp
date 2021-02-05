@@ -194,8 +194,8 @@ std::int32_t Handles::top() {
 
 // -----------------------------------------------------------------------------
 
-HandleMark::HandleMark() {
-    _top = Handles::top();
+HandleMark::HandleMark() :
+    _top{ Handles::top() } {
 }
 
 

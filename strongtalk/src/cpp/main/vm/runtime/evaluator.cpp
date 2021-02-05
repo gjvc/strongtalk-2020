@@ -117,10 +117,10 @@ private:
 
 
 public:
-    TokenStream( const char *line ) {
-        tokens = new GrowableArray<char *>( 10 );
+    TokenStream( const char *line ) :
+        tokens{ new GrowableArray<char *>( 10 ) },
+        pos{ 0 } {
         tokenize( const_cast<char *>( line ) );
-        pos = 0;
     }
 
 
@@ -639,13 +639,12 @@ class ProcessStatusClosure : public ProcessClosure {
 private:
     std::int32_t index;
 public:
-    ProcessStatusClosure() {
-        index = 1;
+    ProcessStatusClosure() : index{ 1 } {
     }
 
 
     void do_process( DeltaProcess *p ) {
-        _console->print( " %d:%s ", index++, DeltaProcess::active() == p ? "*" : " " );
+        spdlog::info( "{:d}:{}", index++, DeltaProcess::active() == p ? "*" : " " );
         p->print();
     }
 };

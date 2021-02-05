@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -21,8 +22,9 @@ private:
 
 public:
     MissingMethodBuilder( SymbolOop selector ) :
+        _method(),
+        _buffer(),
         _selector( selector ) {
-        _method = nullptr;
     };
 
     void build();
@@ -35,4 +37,5 @@ public:
     MethodOop method() {
         return _method;
     };
+
 };

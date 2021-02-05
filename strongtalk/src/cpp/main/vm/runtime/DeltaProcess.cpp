@@ -334,24 +334,23 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 }
 
 
-DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread ) {
+DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread ) :
+    _receiver{ receiver },
+    _selector{ selector },
+    _state{ ProcessState::initialized },
+    _is_terminating{ false },
+    _unwind_head{ nullptr },
+    _firstHandle{ nullptr },
+    _time_stamp{ 0 },
+    _debugInfo{},
+    _isCallback{ false } {
 
-    _receiver = receiver;
-    _selector = selector;
+    _event  = os::create_event( false );
+    _thread = createThread
+              ? os::create_thread( (std::int32_t ( * )( void * )) &launch_delta, (void *) this, &_thread_id )
+              : os::starting_thread( &_thread_id );
 
-    _state = ProcessState::initialized;
-
-    _is_terminating = false;
-
-    _event = os::create_event( false );
-
-    _thread      = createThread ? os::create_thread( (std::int32_t ( * )( void * )) &launch_delta, (void *) this, &_thread_id ) : os::starting_thread( &_thread_id );
     _stack_limit = (char *) os::stack_limit( _thread );
-
-    _unwind_head = nullptr;
-    _firstHandle = nullptr;
-    _time_stamp  = 0;
-    _isCallback  = false;
 
     spdlog::info( "creating process 0x{0:x}", static_cast<const void *>( this ) );
 
@@ -439,56 +438,60 @@ void DeltaProcess::preempt_active() {
 
 
 void DeltaProcess::print() {
-    processObject()->print_value();
-    _console->print( " " );
+
     switch ( state() ) {
         case ProcessState::initialized:
-            spdlog::info( "initialized" );
+            spdlog::info( "{} initialized", processObject()->print_value_string() );
             break;
         case ProcessState::running:
-            spdlog::info( "running" );
+            spdlog::info( "{} running", processObject()->print_value_string() );
             break;
         case ProcessState::yielded:
-            spdlog::info( "yielded" );
+            spdlog::info( "{} yielded", processObject()->print_value_string() );
             break;
         case ProcessState::in_async_dll:
-            spdlog::info( "in asynchronous dll all" );
+            spdlog::info( "{} in asynchronous dll all", processObject()->print_value_string() );
             break;
         case ProcessState::yielded_after_async_dll:
-            spdlog::info( "yielded after asynchronous dll" );
+            spdlog::info( "{} yielded after asynchronous dll", processObject()->print_value_string() );
             break;
         case ProcessState::preempted:
-            spdlog::info( "preempted" );
+            spdlog::info( "{} preempted", processObject()->print_value_string() );
             break;
         case ProcessState::completed:
-            spdlog::info( "completed" );
+            spdlog::info( "{} completed", processObject()->print_value_string() );
             break;
         case ProcessState::boolean_error:
-            spdlog::info( "boolean error" );
+            spdlog::info( "{} boolean error", processObject()->print_value_string() );
             break;
         case ProcessState::lookup_error:
-            spdlog::info( "lookup error" );
+            spdlog::info( "{} lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::primitive_lookup_error:
-            spdlog::info( "primitive lookup error" );
+            spdlog::info( "{} primitive lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::DLL_lookup_error:
-            spdlog::info( "DLL lookup error" );
+            spdlog::info( "{} DLL lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::NonLocalReturn_error:
-            spdlog::info( "NonLocalReturn error" );
+            spdlog::info( "{} NonLocalReturn error", processObject()->print_value_string() );
             break;
         case ProcessState::stack_overflow:
-            spdlog::info( "stack overflow" );
+            spdlog::info( "{} stack overflow", processObject()->print_value_string() );
             break;
-        default: nullptr;
+        default:
+            nullptr;
     }
+
 }
 
 
 void DeltaProcess::frame_iterate( FrameClosure *blk ) {
+
+    //
     blk->begin_process( this );
 
+    //
     if ( has_stack() ) {
         Frame v = last_frame();
         do {
@@ -497,18 +500,25 @@ void DeltaProcess::frame_iterate( FrameClosure *blk ) {
         } while ( not v.is_first_frame() );
     }
 
+    //
     blk->end_process( this );
 }
 
 
 void DeltaProcess::oop_iterate( OopClosure *blk ) {
+
+    //
     blk->do_oop( (Oop *) &_receiver );
     blk->do_oop( (Oop *) &_selector );
     blk->do_oop( (Oop *) &_processObject );
 
-    for ( UnwindInfo *p = _unwind_head; p; p = p->next() )
-        blk->do_oop( (Oop *) &p->_nlr_result );
 
+    //
+    for ( UnwindInfo *p = _unwind_head; p; p = p->next() ) {
+        blk->do_oop( (Oop *) &p->_nlr_result );
+    }
+
+    //
     if ( has_stack() ) {
         Frame v = last_frame();
         do {
@@ -516,6 +526,7 @@ void DeltaProcess::oop_iterate( OopClosure *blk ) {
             v = v.sender();
         } while ( not v.is_first_frame() );
     }
+
 }
 
 
@@ -556,15 +567,18 @@ SymbolOop DeltaProcess::symbol_from_state( ProcessState state ) {
         default:
             return vmSymbols::not_found();
     }
+
     return vmSymbols::not_found();
 }
 
 
 bool DeltaProcess::has_stack() const {
-    if ( state() == ProcessState::initialized )
+    if ( state() == ProcessState::initialized ) {
         return false;
-    if ( state() == ProcessState::completed )
+    }
+    if ( state() == ProcessState::completed ) {
         return false;
+    }
     return true;
 }
 
@@ -615,11 +629,9 @@ void DeltaProcess::exit_uncommon() {
 //  [-1            ] <-- link to next frame
 //  [-1            ] <-- return address
 //
-//
-//
 //  [              ] <-- old_sp
 //  ...
-//  [              ] <--   old_fp
+//  [              ] <-- old_fp
 
 static Oop            *old_sp;
 static Oop            *new_sp;
@@ -663,13 +675,15 @@ void DeltaProcess::deoptimize_redo_last_send() {
 void trace_deoptimization_start() {
 
     if ( TraceDeoptimization ) {
-        _console->print( "[Unpacking]" );
         if ( nlr_through_unpacking ) {
-            _console->print( " NonLocalReturn %s", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
+            spdlog::info( " NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
+        } else {
+            spdlog::info( " Unpacking NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
         }
-        _console->cr();
         _console->print( " - array " );
         frame_array->print_value();
+
+        //
         spdlog::info( " @ 0x%lx", static_cast<const void *>(old_fp) );
     }
 
@@ -688,7 +702,7 @@ void unpack_first_frame( const char *&current_pc, Frame &current, CodeIterator &
 
     // first VirtualFrame in the array
     if ( nlr_through_unpacking ) {
-        // NonLocalReturn is comming through unpacked vframes
+        // NonLocalReturn is coming through unpacked vfraes
         current_pc = c.interpreter_return_point();
         // current_pc points to a normal return point in the interpreter.
         // To find the nlr return point we first compute the nlr offset.

@@ -32,6 +32,7 @@
 // During GC, the bytes are used to remember object sizes, see comment further below
 //
 
+//
 // To do list for the remembered set
 //
 // 1. Optimization suggested by Urs 9/30/95
@@ -40,10 +41,12 @@
 //
 // 2. Handle objArrays in a more efficient way. Scavenge only parts of the objArray with dirty cards.
 //    The current implementation is REALLY slow for huge tenured objArrays with few new pointers.
+//
 
-RememberedSet::RememberedSet() {
-    _lowBoundary  = Universe::new_gen._lowBoundary;
-    _highBoundary = Universe::old_gen._highBoundary;
+RememberedSet::RememberedSet() :
+    _lowBoundary{ Universe::new_gen._lowBoundary },
+    _highBoundary{ Universe::old_gen._highBoundary },
+    _byteMap{} {
     clear();
     Set_Byte_Map_Base( byte_for( nullptr ) );
     st_assert( byte_for( _lowBoundary ) == _byteMap, "Checking start of map" );
@@ -207,6 +210,15 @@ public:
             */
         }
     }
+
+
+    //
+    CheckDirtyClosure() :
+        OopClosure(),
+        is_dirty{ false } {
+
+    }
+
 };
 
 

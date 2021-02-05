@@ -46,13 +46,14 @@ struct CostParam {
     std::int32_t blockArgPenalty;    // penalty if non-cheap send has block arg(s)
     std::int32_t primCallCost;       // primitive call
 
-    CostParam( std::int32_t l, std::int32_t c, std::int32_t s, std::int32_t b, std::int32_t p ) {
-        localCost       = l;
-        cheapSendCost   = c;
-        sendCost        = s;
-        blockArgPenalty = b;
-        primCallCost    = p;
+    CostParam( std::int32_t l, std::int32_t c, std::int32_t s, std::int32_t b, std::int32_t p ) :
+        localCost{ l },
+        cheapSendCost{ c },
+        sendCost{ s },
+        blockArgPenalty{ b },
+        primCallCost{ p } {
     }
+
 };
 
 

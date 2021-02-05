@@ -23,12 +23,12 @@
 //    <send_type> is one of:
 //
 //
-//        interpreted	monomorphic send to interpreted method
-//        compiled	    monomorphic send to compiled method
-//        primitive	    monomorphic send to primitive method
-//        access	    monomorphic send to access method
-//        polymorphic	polymorphic send to interpreted or compiled method
-//        megamorphic	megamorphic send to interpreted or compiled method
+//        interpreted	MONOMORPHIC send to interpreted method
+//        compiled	    MONOMORPHIC send to compiled method
+//        primitive	    MONOMORPHIC send to primitive method
+//        access	    MONOMORPHIC send to access method
+//        POLYMORPHIC	POLYMORPHIC send to interpreted or compiled method
+//        MEGAMORPHIC	MEGAMORPHIC send to interpreted or compiled method
 //
 //
 //    <argument specification> is one of:
@@ -47,7 +47,7 @@
 //
 //
 //      interpreted_send_self_pop
-//          interpreted	monomorphic send to interpreted method
+//          interpreted	MONOMORPHIC send to interpreted method
 //          self	    no receiver, arguments on stack, normal send
 //
 //
@@ -89,20 +89,20 @@ public:
 
     // Instruction classification
     enum class CodeType {
-        local_access,       // loads & stores of temps and args
-        instVar_access,     // loads & stores of instVars
-        context_access,     // loads & stores of context temps
-        classVar_access,    // loads & stores to class variables
-        global_access,      // loads & stores to global variables
-        new_closure,        // closure creation
-        new_context,        // context creation
-        control_structure,  // control structures (incl. local return)
-        message_send,       // all sends
-        nonlocal_return,    // non-local returns
-        primitive_call,     // primitive calls
-        dll_call,           // dll calls
-        float_operation,    // float operations
-        miscellaneous,      // for all other instructions
+        LOCAL_ACCESS,               // loads & stores of temps and args
+        INSTANCE_VARIABLE_ACCESS,   // loads & stores of instance variable
+        CONTEXT_ACCESS,             // loads & stores of context temps
+        CLASS_VARIABLE_ACCESS,      // loads & stores to class variables
+        GLOBAL_ACCESS,              // loads & stores to global variables
+        NEW_CLOSURE,                // closure creation
+        NEW_CONTEXT,                // context creation
+        CONTROL_STRUCTURE,          // control structures (incl. local return)
+        MESSAGE_SEND,               // all sends
+        NONLOCAL_RETURN,            // non-local returns
+        PRIMITIVE_CALL,             // primitive calls
+        DLL_CALL,                   // dll calls
+        FLOAT_OPERATION,            // float operations
+        MISCELLANEOUS,              // for all other instructions
 
         NUMBER_OF_CODE_TYPES
     };
@@ -122,14 +122,14 @@ public:
 
     // Send classification
     enum class SendType {
-        interpreted_send,   // interpreted monomorphic send
-        compiled_send,      // compiled monomorphic send
-        polymorphic_send,   // interpreted polymorphic send
-        megamorphic_send,   // interpreted megamorphic send
-        predicted_send,     // send to interpreted predicted method (method containing a predicted primitive call with own bytecode)
-        accessor_send,      // send to interpreted accessor method (method containing a predicted instVar access)
-        primitive_send,     // send to interpreted primitive method (method containing a predicted primitive call)
-        no_send,            // for non-send instructions
+        INTERPRETED_SEND,   // interpreted MONOMORPHIC send
+        COMPILED_SEND,      // compiled MONOMORPHIC send
+        POLYMORPHIC_SEND,   // interpreted POLYMORPHIC send
+        MEGAMORPHIC_SEND,   // interpreted MEGAMORPHIC send
+        PREDICTED_SEND,     // send to interpreted predicted method (method containing a predicted primitive call with own bytecode)
+        ACCESSOR_SEND,      // send to interpreted accessor method (method containing a predicted instVar access)
+        PRIMITIVE_SEND,     // send to interpreted primitive method (method containing a predicted primitive call)
+        NO_SEND,            // for non-send instructions
 
         NUMBER_OF_SEND_TYPES
     };
@@ -137,9 +137,9 @@ public:
 
     // Loop classification
     enum class LoopType {
-        loop_start,         // instruction starting a loop
-        loop_end,           // instruction ending a loop
-        no_loop,            // for non-loop instructions
+        LOOP_START,         // instruction starting a loop
+        LOOP_END,           // instruction ending a loop
+        NO_LOOP,            // for non-loop instructions
 
         NUMBER_OF_LOOP_TYPES
     };
@@ -483,7 +483,7 @@ public:
 
 
     static bool is_send_code( Code code ) {
-        return send_type( code ) not_eq ByteCodes::SendType::no_send;
+        return send_type( code ) not_eq ByteCodes::SendType::NO_SEND;
     }
 
 
@@ -545,7 +545,7 @@ public:
     // Send bytecode transitions
     //
     // The following functions return the corresponding interpreted, compiled,
-    // polymorphic or megamorphic send bytecode for a given send bytecode.
+    // POLYMORPHIC or MEGAMORPHIC send bytecode for a given send bytecode.
     //
     // They are used to implement the bytecode transitions during interpreter inline cache misses.
     //

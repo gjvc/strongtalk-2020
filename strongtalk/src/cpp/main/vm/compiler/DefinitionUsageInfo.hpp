@@ -18,8 +18,10 @@ public:
     SList<Definition *> _definitions;
 
 
-    DefinitionUsageInfo( PseudoRegister *r ) {
-        _pseudoRegister = r;
+    DefinitionUsageInfo( PseudoRegister *r ) :
+        _usages{},
+        _definitions{},
+        _pseudoRegister{ r } {
     }
 
 

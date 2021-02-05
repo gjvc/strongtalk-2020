@@ -14,7 +14,6 @@
 
 #if defined( __GNUC__ ) && defined( __MINGW32__ )
 
-
 #define __CALLING_CONVENTION __attribute__((__stdcall__))
 
 #include <cstddef>

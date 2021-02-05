@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,31 +6,35 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/VirtualSpace.hpp"
 #include "vm/runtime/ReservedSpace.hpp"
 #include "vm/system/os.hpp"
 
 
-VirtualSpace::VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool low_to_high ) {
+// -----------------------------------------------------------------------------
+
+VirtualSpace::VirtualSpace( std::int32_t reserved_size, std::int32_t committed_size, bool low_to_high ) : VirtualSpace() {
     ReservedSpace rs( reserved_size );
     initialize( rs, committed_size, low_to_high );
 }
 
 
-VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high ) {
+VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high ) : VirtualSpace() {
     initialize( reserved, committed_size, low_to_high );
 }
 
 
-VirtualSpace::VirtualSpace() {
-    _low_boundary  = nullptr;
-    _high_boundary = nullptr;
-    _low_to_high   = true;
-    _low           = nullptr;
-    _high          = nullptr;
+VirtualSpace::VirtualSpace() :
+    _low_boundary{ nullptr },
+    _high_boundary{ nullptr },
+    _low_to_high{ true },
+    _low{ nullptr },
+    _high{ nullptr },
+    next{ nullptr } {
 }
 
+
+// -----------------------------------------------------------------------------
 
 void VirtualSpace::initialize( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high ) {
     _low_boundary  = reserved.base();

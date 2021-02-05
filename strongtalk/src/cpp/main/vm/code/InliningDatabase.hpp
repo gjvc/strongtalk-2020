@@ -69,6 +69,7 @@ public:
 
 };
 
+
 class RecompilationScope;
 
 class InliningDatabase : AllStatic {

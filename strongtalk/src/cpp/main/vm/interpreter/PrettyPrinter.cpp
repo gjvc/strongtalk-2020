@@ -39,9 +39,9 @@ protected:
     scopeNode    *_scopeNode;
 
 public:
-    astNode( std::int32_t byteCodeIndex, scopeNode *scope ) {
-        _byteCodeIndex = byteCodeIndex;
-        _scopeNode     = scope;
+    astNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
+        _byteCodeIndex{ byteCodeIndex },
+        _scopeNode{ scope } {
     }
 
 
@@ -318,9 +318,10 @@ protected:
 
 public:
     listNode( const char *begin_sym, const char *end_sym ) :
-        astNode( 0, 0 ) {
-        _beginSym = begin_sym;
-        _endSym   = end_sym;
+        astNode( 0, 0 ),
+        _elements{ nullptr },
+        _beginSym{ begin_sym },
+        _endSym{ end_sym } {
         _elements = new GrowableArray<astNode *>( 10 );
     }
 
@@ -380,7 +381,16 @@ protected:
 
 public:
     scopeNode( DeltaVirtualFrame *fr, std::int32_t index, scopeNode *scope = nullptr ) :
-        astNode( 0, nullptr ) {
+        astNode( 0, nullptr ),
+        _methodOop{},
+        _klassOop{},
+        _in{ 0 },
+        _hotByteCodeIndex{ 0 },
+        _frameIndex{ 0 },
+        _deltaVirtualFrame{ nullptr },
+        _parentScope{ nullptr },
+        _scopeDescriptor{ nullptr },
+        _innerScope{ scope } {
 
         _frameIndex        = index;
         _methodOop         = fr->method();
@@ -396,6 +406,16 @@ public:
 
 
     scopeNode( MethodOop method, KlassOop klass, std::int32_t hot_byteCodeIndex, scopeNode *scope = nullptr ) :
+
+        _methodOop{},
+        _klassOop{},
+        _in{ 0 },
+        _hotByteCodeIndex{ 0 },
+        _frameIndex{ 0 },
+        _deltaVirtualFrame{ nullptr },
+        _scopeDescriptor{ nullptr },
+        _innerScope{ nullptr },
+
         astNode( 0, nullptr ) {
 
         _methodOop         = method;
@@ -676,18 +696,23 @@ public:
 
 
 paramNode::paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no ) :
+    _no{ no },
+    _str{ nullptr },
     leafNode( byteCodeIndex, scope ) {
     _no  = no;
     _str = scope->param_string( no );
 }
 
 
-PrintWrapper::PrintWrapper( astNode *astNode, PrettyPrintStream *output ) {
-    _astNode = astNode;
-    _output  = output;
-    _hit     = false;
-    if ( not astNode->this_scope() )
+PrintWrapper::PrintWrapper( astNode *astNode, PrettyPrintStream *output ) :
+    _astNode{ astNode },
+    _output{ output },
+    _hit{ false } {
+
+    if ( not astNode->this_scope() ) {
         return;
+    }
+
     if ( astNode->this_byteCodeIndex() == astNode->this_scope()->hot_byteCodeIndex() and not output->in_highlight() ) {
         output->begin_highlight();
         _hit = true;
@@ -696,8 +721,9 @@ PrintWrapper::PrintWrapper( astNode *astNode, PrettyPrintStream *output ) {
 
 
 PrintWrapper::~PrintWrapper() {
-    if ( _hit )
+    if ( _hit ) {
         _output->end_highlight();
+    }
 }
 
 
@@ -707,8 +733,9 @@ bool astNode::print( PrettyPrintStream *output ) {
     if ( ActivationShowNameDescs ) {
         if ( _scopeNode and _scopeNode->sd() ) {
             NameDescriptor *nd = _scopeNode->sd()->exprStackElem( _byteCodeIndex );
-            if ( nd )
+            if ( nd ) {
                 nd->print();
+            }
         }
     }
 
@@ -758,10 +785,14 @@ public:
 
     std::int32_t width( PrettyPrintStream *output ) {
         std::int32_t len = _statements->length();
-        if ( len == 0 )
+        if ( len == 0 ) {
             return 0;
-        if ( len == 1 )
+        }
+
+        if ( len == 1 ) {
             return _statements->at( 0 )->width( output );
+        }
+
         return output->infinity();
     }
 };
@@ -1028,11 +1059,11 @@ private:
 
 public:
     messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool is_prim = false ) :
+        _selector{ selector },
+        _arguments{ new GrowableArray<astNode *>( 10 ) },
+        _receiver{ nullptr },
+        _is_prim{ is_prim },
         astNode( byteCodeIndex, scope ) {
-        _selector  = selector;
-        _arguments = new GrowableArray<astNode *>( 10 );
-        _receiver  = nullptr;
-        _is_prim   = is_prim;
     }
 
 
@@ -1053,10 +1084,14 @@ public:
 
     bool should_wrap_receiver() {
         if ( receiver() and receiver()->is_message() ) {
-            if ( ( (messageNode *) _receiver )->is_keyword() )
+            if ( ( (messageNode *) _receiver )->is_keyword() ) {
                 return true;
-            if ( ( (messageNode *) _receiver )->is_binary() and is_binary() )
+            }
+
+            if ( ( (messageNode *) _receiver )->is_binary() and is_binary() ) {
                 return true;
+            }
+
         }
         return false;
     }
@@ -1064,10 +1099,12 @@ public:
 
     bool should_wrap_argument( astNode *arg ) {
         if ( arg->is_message() ) {
-            if ( ( (messageNode *) arg )->is_keyword() )
+            if ( ( (messageNode *) arg )->is_keyword() ) {
                 return true;
-            if ( ( (messageNode *) arg )->is_binary() and is_binary() )
+            }
+            if ( ( (messageNode *) arg )->is_binary() and is_binary() ) {
                 return true;
+            }
         }
         return false;
     }
@@ -1128,8 +1165,9 @@ public:
         std::int32_t arg = _selector->number_of_arguments();
         std::int32_t w   = output->width_of_string( _selector->as_string() ) + arg * output->width_of_space();
 
-        for ( std::int32_t i = 0; i < _arguments->length(); i++ )
+        for ( std::int32_t i = 0; i < _arguments->length(); i++ ) {
             w += _arguments->at( i )->width( output );
+        }
 
         return w;
     }
@@ -1141,8 +1179,10 @@ public:
 
 
     std::int32_t width( PrettyPrintStream *output ) {
-        if ( receiver() and receiver()->is_cascade() )
+        if ( receiver() and receiver()->is_cascade() ) {
             return receiver()->width( output );
+        }
+
         return real_width( output );
     }
 
@@ -1329,9 +1369,9 @@ private:
 
 public:
     smiNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t value ) :
+        _value{ value },
+        _str{ new_resource_array<char>( 10 ) },
         leafNode( byteCodeIndex, scope ) {
-        _value = value;
-        _str   = new_resource_array<char>( 10 );
         sprintf( _str, "%d", value );
     }
 
@@ -1341,6 +1381,7 @@ public:
     }
 };
 
+
 class doubleNode : public leafNode {
 
 private:
@@ -1349,9 +1390,9 @@ private:
 
 public:
     doubleNode( std::int32_t byteCodeIndex, scopeNode *scope, double value ) :
+        _value{ value },
+        _str{ new_resource_array<char>( 10 ) },
         leafNode( byteCodeIndex, scope ) {
-        _value = value;
-        _str   = new_resource_array<char>( 30 );
         sprintf( _str, "%1.10gd", value );
     }
 
@@ -1371,9 +1412,10 @@ private:
 public:
 
     characterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
+        _value{ value },
+        _str{ new_resource_array<char>( 3 ) },
         leafNode( byteCodeIndex, scope ) {
-        _value = value;
-        _str   = new_resource_array<char>( 3 );
+
         if ( value->is_mem() ) {
             Oop ch = MemOop( value )->instVarAt( 2 );
             if ( ch->is_smi() ) {
@@ -1405,8 +1447,9 @@ public:
         _isOuter  = is_outer;
         _elements = new GrowableArray<astNode *>( 10 );
 
-        for ( std::int32_t i = 1; i <= value->length(); i++ )
+        for ( std::int32_t i = 1; i <= value->length(); i++ ) {
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
+        }
     }
 
 
@@ -1447,7 +1490,11 @@ private:
 
 public:
     dllNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop dll_name, SymbolOop func_name ) :
-        astNode( byteCodeIndex, scope ) {
+        astNode( byteCodeIndex, scope ),
+        _dllName{ nullptr },
+        _funcName{ nullptr },
+        _arguments{ nullptr },
+        _proxy{ nullptr } {
         _dllName   = new symbolNode( byteCodeIndex, scope, dll_name, false );
         _funcName  = new symbolNode( byteCodeIndex, scope, func_name, false );
         _arguments = new GrowableArray<astNode *>( 10 );
@@ -1499,9 +1546,9 @@ private:
 
 public:
     stackTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset ) :
+        _offset{ offset },
         leafNode( byteCodeIndex, scope ) {
-        _offset = offset;
-        _str    = scope->stack_temp_string( this_byteCodeIndex(), offset );
+        _str = scope->stack_temp_string( this_byteCodeIndex(), offset );
     }
 
 
@@ -1520,10 +1567,10 @@ private:
 
 public:
     heapTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset, std::int32_t context_level ) :
+        _offset{ offset },
+        _contextLevel{ context_level },
         leafNode( byteCodeIndex, scope ) {
-        _offset       = offset;
-        _contextLevel = context_level;
-        _str          = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
+        _str = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
     }
 
 
@@ -1531,6 +1578,7 @@ public:
         return _str;
     }
 };
+
 
 class floatNode : public leafNode {
 
@@ -1558,8 +1606,10 @@ private:
 
 public:
     instVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
-        leafNode( byteCodeIndex, scope ) {
-        _obj = obj;
+        leafNode( byteCodeIndex, scope ),
+        _obj{ obj },
+        _str{ nullptr } {
+
         if ( obj->is_smi() ) {
             _str = scope->inst_var_string( SMIOop( obj )->value() );
         } else {
@@ -1739,14 +1789,17 @@ void DefaultPrettyPrintStream::print( const char *str ) {
 
 void DefaultPrettyPrintStream::print_char( char c ) {
     _console->print( "%c", c );
-    pos += width_of_char( c );
+    _position += width_of_char( c );
 }
 
 
 std::int32_t DefaultPrettyPrintStream::width_of_string( const char *str ) {
-    std::int32_t       w = 0;
-    for ( std::int32_t i = 0; str[ i ]; i++ )
+    std::int32_t w = 0;
+
+    for ( std::int32_t i = 0; str[ i ]; i++ ) {
         w += width_of_char( str[ i ] );
+    }
+
     return w;
 }
 
@@ -1758,7 +1811,7 @@ void DefaultPrettyPrintStream::space() {
 
 void DefaultPrettyPrintStream::newline() {
     print_char( '\n' );
-    pos = 0;
+    _position = 0;
     indent();
 }
 
@@ -1777,7 +1830,7 @@ void DefaultPrettyPrintStream::end_highlight() {
 
 void ByteArrayPrettyPrintStream::newline() {
     print_char( '\r' );
-    pos = 0;
+    _position = 0;
     indent();
 }
 
@@ -2349,7 +2402,7 @@ ByteArrayPrettyPrintStream::ByteArrayPrettyPrintStream() :
 
 void ByteArrayPrettyPrintStream::print_char( char c ) {
     _buffer->append( (std::int32_t) c );
-    pos += width_of_char( c );
+    _position += width_of_char( c );
 }
 
 

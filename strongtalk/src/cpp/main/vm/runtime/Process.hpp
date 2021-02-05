@@ -14,6 +14,7 @@
 #include "vm/runtime/VirtualFrame.hpp"
 
 
+//
 void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *pc );
 void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, const char *pc );
 
@@ -91,8 +92,6 @@ protected:
 };
 
 
-//#include "vm/runtime/VMProcess.hpp"
-
 enum class ProcessState {
     initialized,                // State right after creation.
     running,                    // The process is running.
@@ -134,6 +133,7 @@ extern "C" void suspend_on_NonLocalReturn_error();
 
 
 enum class InterpreterErrorConstants {
+
     start_of_runtime_system_errors = 512,                                   //
     primitive_lookup_failed        = 1 + start_of_runtime_system_errors,    //
     boolean_expected               = 2 + start_of_runtime_system_errors,    //
@@ -148,6 +148,7 @@ enum class InterpreterErrorConstants {
     last_Delta_fp_wrong            = 11 + start_of_runtime_system_errors,   //
     primitive_result_wrong         = 12 + start_of_runtime_system_errors,   //
     float_expected                 = 13 + start_of_runtime_system_errors,   //
+
 };
 
 void trace_stack( std::int32_t thread_id );

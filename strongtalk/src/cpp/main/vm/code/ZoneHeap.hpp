@@ -30,7 +30,8 @@ class HeapChunk : public ValueObject {    // a heap chunk is a consecutive seque
 protected:
     HeapChunk *_next, *_prev;  // doubly-linked ring
     void initialize() {
-        _next = _prev = this;
+        _next = this;
+        _prev = this;
         size  = 0;
     }
 
@@ -38,8 +39,10 @@ protected:
 public:
     std::int32_t size;    // size in blocks (only for heterogenuous list)
 
-    HeapChunk() {
-        initialize();
+    HeapChunk() :
+        _next{ this },
+        _prev{ this },
+        size{ 0 } {
     }
 
 
@@ -67,6 +70,7 @@ public:
         initialize();
     }
 };
+
 
 class FreeList : private HeapChunk {
 public:
@@ -108,12 +112,11 @@ enum class chunkState {
 };
 
 
-// The other bytes hold the distance to the chunk header (or an approximation
-// thereof); headers are found by following the distance pointers downwards
+// The other bytes hold the distance to the chunk header (or an approximation thereof);
+// headers are found by following the distance pointers downwards
 
 constexpr std::int32_t minHeaderSize = 1;
 constexpr std::int32_t maxHeaderSize = 4;
-
 
 constexpr std::int32_t MaxDistLog    = log2( static_cast<double>( chunkState::MaxDistance ) );
 constexpr std::int32_t maxOneByteLen = ( static_cast<std::int32_t>( chunkState::usedOvfl ) - static_cast<std::int32_t>(chunkState::used ) );
@@ -143,7 +146,7 @@ public:
 
 
     std::uint8_t *asByte() {
-        return (std::uint8_t *) this;
+        return reinterpret_cast<std::uint8_t *>( this );
     }
 
 

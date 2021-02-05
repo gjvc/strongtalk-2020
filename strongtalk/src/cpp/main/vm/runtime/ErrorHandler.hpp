@@ -7,21 +7,19 @@
 
 
 #include "vm/memory/allocation.hpp"
+
+
 // The ErrorHandler takes care of error recovery
 
 class ErrorHandler : AllStatic {
 public:
-    // Aborts the current compilation and continues the process execution
-    static void abort_compilation();
+    static void abort_compilation();      // Aborts the current compilation and continues the process execution
 
-    // Aborts the current process and terminates it
-    static void abort_current_process();
+    static void abort_current_process();      // Aborts the current process and terminates it
 
-    // Continues the NonLocalReturn at the next Delta frame
-    static void continue_nlr_in_delta();
+    static void continue_nlr_in_delta();      // Continues the NonLocalReturn at the next Delta frame
 
-    // Aborts all processes and restarts the scheduler
-    static void genesis();
+    static void genesis(); // Aborts all processes and restarts the scheduler
 
 
     // Returns the value used during an abort

@@ -14,7 +14,8 @@ constexpr std::int32_t indent_col = 3;
 constexpr std::int32_t value_col  = 16;
 
 
-PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) {
+PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) :
+    _stream{ nullptr } {
     _stream = stream ? stream : _console;
 }
 

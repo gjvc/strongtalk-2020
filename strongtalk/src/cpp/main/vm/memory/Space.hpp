@@ -40,6 +40,10 @@ public:
     }
 
 
+    Space() : _name{ nullptr } {
+    }
+
+
 protected:
     virtual void set_bottom( Oop *value ) = 0;
 
@@ -94,6 +98,7 @@ public:
 
     void object_iterate( ObjectClosure *blk );
 };
+
 
 class NewSpace : public Space {
 public:
@@ -366,6 +371,7 @@ public:
         m._point = _bottom;
         return m;
     }
+
 };
 
 
@@ -373,19 +379,21 @@ public:
 class OldSpaceMark : public ValueObject {
 
 private:
-    Oop *oldTop;
+    Oop *_oldTop;
 
 public:
-    OldSpace *theSpace;
+    OldSpace *_theSpace;
 
 
-    OldSpaceMark( OldSpace *aSpace ) :
-        theSpace( aSpace ) {
-        oldTop = theSpace->top();
+    OldSpaceMark( OldSpace *oldSpace ) :
+        _theSpace{ oldSpace },
+        _oldTop{ nullptr } {
+        _oldTop = _theSpace->top();
     }
 
 
     ~OldSpaceMark() {
-        theSpace->set_top( oldTop );
+        _theSpace->set_top( _oldTop );
     }
+
 };

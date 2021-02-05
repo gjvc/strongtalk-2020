@@ -20,13 +20,39 @@ smi_t Scope::_currentScopeID;
 
 // SendInfo implementation
 
-SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *receiver ) {
-    _senderScope = senderScope;
-    _receiver    = receiver;
-    _selector    = lookupKey->selector();
-    _lookupKey   = lookupKey;
-    init();
+SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *receiver ) :
+    _senderScope{ senderScope },
+    _receiver{ receiver },
+    _selector{ lookupKey->selector() },
+    _lookupKey{ lookupKey },
+    _counting{ false },
+    _needRealSend{ false },
+    _resultRegister{ nullptr },
+    _sendCount{ -1 },
+    _inPrimitiveFailure{ false } {
+
+    _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
+
 }
+
+SendInfo::SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) :
+    _senderScope{ sen },
+    _receiver{ r },
+    _lookupKey{ nullptr },
+    _counting{ false },
+    _needRealSend{ false },
+    _resultRegister{ nullptr },
+    _selector{ nullptr },
+    _sendCount{ -1 },
+    _predicted{ false },
+    uninlinable{ false },
+    _receiverStatic{ false },
+    _inPrimitiveFailure{ false } {
+
+    _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
+
+}
+
 
 
 void SendInfo::computeNSends( RecompilationScope *rscope, std::int32_t byteCodeIndex ) {
@@ -39,22 +65,47 @@ void SendInfo::computeNSends( RecompilationScope *rscope, std::int32_t byteCodeI
 
 
 void SendInfo::init() {
-    _resultRegister     = nullptr;
-    _needRealSend       = false;
-    _counting           = false;
-    _sendCount          = -1;
-    _receiverStatic     = false;
-    _predicted          = false;
-    uninlinable         = false;
     _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
 }
-
 
 
 // Scopes
 // NB: constructors are protected to avoid stupid "call-of-virtual-in-constructor" bugs
 
-InlinedScope::InlinedScope() {
+InlinedScope::InlinedScope() :
+    _scopeID{ 0 },
+    _sender{ nullptr },
+    _senderByteCodeIndex{ 0 },
+    _scopeInfo{},
+    _key{ nullptr },
+    _methodHolder{},
+    _method{},
+    _nofSends{ 0 },
+    _nofInterruptPoints{ 0 },
+    _primFailure{ false },
+    _endsDead{ false },
+    _self{ nullptr },
+    _gen{},
+
+    _context{ nullptr },
+    _arguments{ nullptr },
+    _temporaries{ nullptr },
+    _floatTemporaries{ nullptr },
+    _contextTemporaries{ nullptr },
+    _exprStackElems{ nullptr },
+    _subScopes{ nullptr },
+    _loops{ nullptr },
+    _typeTests{ nullptr },
+    _pseudoRegistersBegSorted{ nullptr },
+    _pseudoRegistersEndSorted{ nullptr },
+
+    _firstFloatIndex{ 0 },
+
+    _returnPoint{ nullptr },
+    _NonLocalReturneturnPoint{ nullptr },
+    _nlrTestPoint{ nullptr },
+    _contextInitializer{ nullptr },
+    _hasBeenGenerated{ false } {
 }
 
 
@@ -64,6 +115,7 @@ void InlinedScope::initialize( MethodOop method, KlassOop methodHolder, InlinedS
     st_assert( theCompiler->scopes->at( _scopeID ) == this, "bad list" );
     _sender    = sender;
     _scopeInfo = nullptr;
+
     if ( sender ) {
         _senderByteCodeIndex = sender->byteCodeIndex();
         sender->addSubScope( this );
@@ -73,8 +125,9 @@ void InlinedScope::initialize( MethodOop method, KlassOop methodHolder, InlinedS
         _senderByteCodeIndex = IllegalByteCodeIndex;
         depth                = loopDepth = 0;
     }
-    result     = nullptr;
-    nlrResult  = nullptr;    // these are set during compilation
+
+    result    = nullptr;   //
+    nlrResult = nullptr;   // these are set during compilation
     if ( info and info->_resultRegister ) {
         resultPR = info->_resultRegister;
     } else {
@@ -82,7 +135,7 @@ void InlinedScope::initialize( MethodOop method, KlassOop methodHolder, InlinedS
         st_assert( isTop(), "should have resReg for inlined scope" );
         resultPR = new SinglyAssignedPseudoRegister( this, resultLoc, false, false, PrologueByteCodeIndex, EpilogueByteCodeIndex );
     }
-    rscope     = rs;
+    rscope    = rs;
     rs->extend();
 
     predicted = info ? info->_predicted : false;
@@ -1003,6 +1056,8 @@ void SendInfo::print() {
     _selector->print_symbol_on();
     spdlog::info( "(receiver = 0x{0:x}, nsends = %ld)", static_cast<void *>( _receiver ), reinterpret_cast<void *>( _sendCount ) );
 }
+
+
 
 
 void InlinedScope::printTree() {

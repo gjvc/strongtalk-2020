@@ -45,30 +45,24 @@ class RecompilationScope;
 
 class SendInfo : public PrintableResourceObject {
 public:
-    InlinedScope   *_senderScope;      //
-    Expression     *_receiver;         //
-    LookupKey      *_lookupKey;        //
-    PseudoRegister *_resultRegister;   // register where result should end up
-    SymbolOop      _selector;                //
-    bool           _needRealSend;            // need a real (non-inlined) send
-    bool           _counting;                // count # sends? (for non-inlined send)
-    std::int32_t   _sendCount;               // estimated # of invocations (< 0 == unknown)
-    bool           _predicted;               // was receiver type-predicted?
-    bool           uninlinable;              // was send considered uninlinable?
-    bool           _receiverStatic;          // receiver type is statically known
-    bool           _inPrimitiveFailure;      // sent from within prim. failure block
+    InlinedScope   *_senderScope;       //
+    Expression     *_receiver;          //
+    LookupKey      *_lookupKey;         //
+    PseudoRegister *_resultRegister;    // register where result should end up
+    SymbolOop      _selector;           //
+    bool           _needRealSend;       // need a real (non-inlined) send
+    bool           _counting;           // count # sends? (for non-inlined send)
+    std::int32_t   _sendCount;          // estimated # of invocations (< 0 == unknown)
+    bool           _predicted;          // was receiver type-predicted?
+    bool           uninlinable;         // was send considered uninlinable?
+    bool           _receiverStatic;     // receiver type is statically known
+    bool           _inPrimitiveFailure; // sent from within prim. failure block
 
 protected:
     void init();
 
 public:
-    SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) {
-        _senderScope = sen;
-        _receiver    = r;
-        _selector    = s;
-        _lookupKey   = nullptr;
-        init();
-    }
+    SendInfo( InlinedScope *sen, Expression *r, SymbolOop s );
 
 
     SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *r );

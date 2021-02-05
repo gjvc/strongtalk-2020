@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -18,8 +19,9 @@ protected:
 public:
     std::int32_t calleeCost;        // cost of inlining candidate
 
-    InliningPolicy() {
-        _methodOop = nullptr;
+    InliningPolicy() :
+        _methodOop{ nullptr },
+        calleeCost{ 0 } {
     }
 
 

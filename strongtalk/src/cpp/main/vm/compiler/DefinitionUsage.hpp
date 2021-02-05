@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -27,8 +28,8 @@ public:
     NonTrivialNode *_node;
 
 
-    DefinitionUsage( NonTrivialNode *n ) {
-        _node = n;
+    DefinitionUsage( NonTrivialNode *n ) :
+        _node{ n } {
     }
 
 };
@@ -76,6 +77,7 @@ public:
     void print();
 };
 
+
 class PseudoRegister;
 
 class BasicBlock;
@@ -87,10 +89,9 @@ public:
     BasicBlock   *_basicBlock;    // BasicBlock containing some of PseudoRegister's definitions/uses
     std::int32_t _index;          // index into BasicBlock's BasicBlockDefinitionAndUsageTable
 
-    PseudoRegisterBasicBlockIndex( BasicBlock *b, std::int32_t i, PseudoRegister *pr ) {
-        _basicBlock = b;
-        _index      = i;
-        static_cast<void>(pr); // unused
+    PseudoRegisterBasicBlockIndex( BasicBlock *b, std::int32_t i, PseudoRegister *pr ) :
+        _basicBlock{ b },
+        _index{ i } {
     }
 
 

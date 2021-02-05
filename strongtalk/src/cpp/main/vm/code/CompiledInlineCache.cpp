@@ -89,7 +89,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
     // The assertion below is turned into an if so we can see possible problems in the fast version as well - gri 6/21/96
     //
     // Last problem reported by Steffen (gri 7/24/96):
-    // This has been called via a NativeMethod called from within a megamorphic self send in the interpreter.
+    // This has been called via a NativeMethod called from within a MEGAMORPHIC self send in the interpreter.
     // I've added Interpreter::_last_native_called for better debugging.
     //
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
@@ -186,7 +186,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
 
     if ( isOptimized() and result.is_method() ) {
         // If this call site is optimized only nativeMethods should be called.
-        st_assert( not isMegamorphic(), "megamorphic ICs should not be optimized" );
+        st_assert( not isMegamorphic(), "MEGAMORPHIC ICs should not be optimized" );
         LookupKey         key( klass, sel );
         VM_OptimizeMethod op( &key, result.method() );
         VMProcess::execute( &op );
@@ -200,7 +200,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
     if ( not empty or result.is_method() ) {
         PolymorphicInlineCache *pic = PolymorphicInlineCache::allocate( this, klass, result );
         if ( pic == nullptr ) {
-            // PolymorphicInlineCache too large & MICs (megamorphic PICs) turned off
+            // PolymorphicInlineCache too large & MICs (MEGAMORPHIC PICs) turned off
             // => start with empty InlineCache again
             st_assert( not UseMICs, "should return a MIC" );
             clear();
@@ -434,7 +434,7 @@ void CompiledInlineCache::cleanup() {
         if ( pic() ) {
             // Must be interpreter send
             PolymorphicInlineCacheIterator it( pic() );
-            st_assert( it.is_interpreted(), "must be interpreted send in monomorphic case" );
+            st_assert( it.is_interpreted(), "must be interpreted send in MONOMORPHIC case" );
             // Since it is impossible to retrieve the sending method for a methodOop
             // we leave the InlineCache unchanged if we're in a super send.
             if ( isSuperSend() )
@@ -496,14 +496,14 @@ void CompiledInlineCache::cleanup() {
         PolymorphicInlineCache *result = p->cleanup( &nm );
         if ( result not_eq p ) {
             if ( p not_eq nullptr ) {
-                // still polymorphic
+                // still POLYMORPHIC
                 set_call_destination( result->entry() );
             } else {
                 if ( nm ) {
-                    // monomorphic
+                    // MONOMORPHIC
                     set_call_destination( nm->entryPoint() );
                 } else {
-                    // anamorphic
+                    // ANAMORPHIC
                     clear();
                 }
             }
@@ -535,7 +535,7 @@ void CompiledInlineCache::print() {
     if ( isSuperSend() )
         spdlog::info( "super " );
     if ( isMegamorphic() )
-        spdlog::info( "megamorphic " );
+        spdlog::info( "MEGAMORPHIC " );
     spdlog::info( "" );
 
     spdlog::info( "\t- selector    : " );

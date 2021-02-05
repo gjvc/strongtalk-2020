@@ -97,7 +97,7 @@ public:
     }
 
 
-    // Returns the polymorphic inline cache array. Assert fails if no pic is present.
+    // Returns the POLYMORPHIC inline cache array. Assert fails if no pic is present.
     ObjectArrayOop pic_array();
 
 

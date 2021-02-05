@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -27,11 +28,11 @@ class StubRoutines : AllStatic {
 
 
 private:
-    static constexpr std::int32_t _code_size = 1024 * 64;
-    static bool                   _is_initialized;           // true if StubRoutines has been initialized
-    static const char             *_code;                      // the code buffer for the stub routines
-    static void (*single_step_fn)();               // pointer to the current single step function (used by evaluator and ST debugger)
-    //  static char _code[_code_size];		        // the code buffer for the stub routines
+    static constexpr std::int32_t _code_size = 1024 * 64;   //
+    static bool                   _is_initialized;          // true if StubRoutines has been initialized
+    static const char             *_code;                   // the code buffer for the stub routines
+    static void (*single_step_fn)();                        // pointer to the current single step function (used by evaluator and ST debugger)
+    //  static char _code[_code_size];		                // the code buffer for the stub routines
 
     // add entry points here
     static const char *_icNormalLookupEntry;

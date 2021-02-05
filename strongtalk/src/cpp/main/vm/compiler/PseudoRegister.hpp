@@ -44,62 +44,80 @@ protected:
     static const std::int32_t AvgBBIndexLen;     // estimated # of BasicBlock instances in which this appears
 
 public:
-    static std::int32_t                            currentNo;              // id of next PseudoRegister created
-    GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                   // definitions and uses
-    InlinedScope                                   *_scope;               // scope to which this belongs
-    Location                                       _location;              // real location assigned to this pseudoRegister
-    CopyPropagationInfo                            *_copyPropagationInfo; // to follow effects of copy propagation
-    GrowableArray<PseudoRegister *>                *cpseudoRegisters;               // registers copy-propagated away by this
-    std::int32_t                                   regClass;               // register equivalence class number
-    PseudoRegister                                 *regClassLink;         // next element in class
-    std::int32_t                                   _weight;                // weight (importance) for reg. allocation (-1 if targeted register)
-    GrowableArray<BlockPseudoRegister *>           *_uplevelReaders;      // list of blocks that uplevel-read this (or nullptr)
-    GrowableArray<BlockPseudoRegister *>           *_uplevelWriters;      // list of blocks that uplevel-write this (or nullptr)
-    bool                                           _debug;                 // value/loc needed for debugging info?
-    std::int32_t                                   _map_index_cache;       // caches old map index - used to improve PseudoRegisterMapping access speed - must be >= 0
+    static std::int32_t                            currentNo;               // id of next PseudoRegister created
+    GrowableArray<PseudoRegisterBasicBlockIndex *> _dus;                    // definitions and uses
+    InlinedScope                                   *_scope;                 // scope to which this belongs
+    Location                                       _location;               // real location assigned to this pseudoRegister
+    CopyPropagationInfo                            *_copyPropagationInfo;   // to follow effects of copy propagation
+    GrowableArray<PseudoRegister *>                *cpseudoRegisters;       // registers copy-propagated away by this
+    std::int32_t                                   regClass;                // register equivalence class number
+    PseudoRegister                                 *regClassLink;           // next element in class
+    std::int32_t                                   _weight;                 // weight (importance) for reg. allocation (-1 if targeted register)
+    GrowableArray<BlockPseudoRegister *>           *_uplevelReaders;        // list of blocks that uplevel-read this (or nullptr)
+    GrowableArray<BlockPseudoRegister *>           *_uplevelWriters;        // list of blocks that uplevel-write this (or nullptr)
+    bool                                           _debug;                  // value/loc needed for debugging info?
+    std::int32_t                                   _map_index_cache;        // caches old map index - used to improve PseudoRegisterMapping access speed - must be >= 0
 
 protected:
-    void initialize() {
-        _id                  = currentNo++;
-        _uplevelReaders      = nullptr;
-        _uplevelWriters      = nullptr;
-        _debug               = false;
-        _usageCount          = 0;
-        _definitionCount     = 0;
-        _softUsageCount      = 0;
-        _weight              = 0;
-        _logicalAddress      = nullptr;
-        _copyPropagationInfo = nullptr;
-        regClass             = 0;
-        regClassLink         = 0;
-        cpseudoRegisters     = nullptr;
-        _map_index_cache     = 0;
-    }
-
-
     static const std::int32_t VeryNegative;
 
 public:
     PseudoRegister( InlinedScope *s ) :
+        _id{ static_cast<int16_t>(currentNo++) },
+        _usageCount{},
+        _definitionCount{},
+        _softUsageCount{},
+        _logicalAddress{ nullptr },
+        _scope{ nullptr },
+        _location{ Location::UNALLOCATED_LOCATION },
+        _copyPropagationInfo{ nullptr },
+        cpseudoRegisters{ nullptr },
+        regClass{},
+        regClassLink{ nullptr },
+        _weight{},
+        _uplevelReaders{ nullptr },
+        _uplevelWriters{ nullptr },
+        _debug{ false },
+        _map_index_cache{},
         _dus( AvgBBIndexLen ) {
+        _scope = s;
         st_assert( s, "must have a scope" );
-        initialize();
-        _scope    = s;
-        _location = Location::UNALLOCATED_LOCATION;
     }
 
 
     PseudoRegister( InlinedScope *s, Location l, bool incU, bool incD ) :
+        _id{ static_cast<int16_t>(currentNo++) },
+        _usageCount{},
+        _definitionCount{},
+        _softUsageCount{},
+        _logicalAddress{ nullptr },
+        _scope{ nullptr },
+        _location{ Location::UNALLOCATED_LOCATION },
+        _copyPropagationInfo{ nullptr },
+        cpseudoRegisters{ nullptr },
+        regClass{},
+        regClassLink{ nullptr },
+        _weight{},
+        _uplevelReaders{ nullptr },
+        _uplevelWriters{ nullptr },
+        _debug{ false },
+        _map_index_cache{},
         _dus( AvgBBIndexLen ) {
+
         st_assert( s, "must have a scope" );
         st_assert( not l.equals( Location::ILLEGAL_LOCATION ), "illegal location" );
-        initialize();
-        _scope               = s;
-        _location            = l;
-        if ( incU )
-            _usageCount      = VeryNegative;
-        if ( incD )
+
+        _scope    = s;
+        _location = l;
+
+        if ( incU ) {
+            _usageCount = VeryNegative;
+        }
+
+        if ( incD ) {
             _definitionCount = VeryNegative;
+        }
+
     }
 
 
@@ -401,20 +419,21 @@ public:
 
 class SinglyAssignedPseudoRegister : public PseudoRegister {
 protected:
-    InlinedScope *_creationScope;        // source scope to which receiver belongs
-    std::int32_t creationStartByteCodeIndex;        // startByteCodeIndex in creationScope
-    std::int32_t _begByteCodeIndex, _endByteCodeIndex;        // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope
-    // (for reg. alloc. purposes)
-    const bool   _isInContext;        // is this SinglyAssignedPseudoRegister a context location?
+    InlinedScope *_creationScope;                       // source scope to which receiver belongs
+    std::int32_t _creationStartByteCodeIndex;           // startByteCodeIndex in creationScope
+    std::int32_t _begByteCodeIndex, _endByteCodeIndex;  // live range = [_begByteCodeIndex, _endByteCodeIndex] in scope (for reg. alloc. purposes)
+    const bool   _isInContext;                          // is this SinglyAssignedPseudoRegister a context location?
+
 public:
     SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream = IllegalByteCodeIndex, std::int32_t en = IllegalByteCodeIndex, bool inContext = false );
 
 
     SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD, std::int32_t stream, std::int32_t en ) :
-        PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ) {
-        _begByteCodeIndex = creationStartByteCodeIndex = stream;
-        _endByteCodeIndex = en;
-        _creationScope    = s;
+        PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ),
+        _begByteCodeIndex{ stream },
+        _creationStartByteCodeIndex{ stream },
+        _endByteCodeIndex{ en },
+        _creationScope{ s } {
     }
 
 
@@ -575,7 +594,6 @@ public:
     NoResultPseudoRegister( InlinedScope *scope ) :
         PseudoRegister( scope ) {
         _location = Location::NO_REGISTER;
-        initialize();
     }
 
 
@@ -606,12 +624,14 @@ class ConstPseudoRegister : public PseudoRegister {
     // they can either get a register (if one is available), or they're
     // treated as literals by code generation, i.e. loaded into a temp reg
     // before each use.
+
 public:
     Oop constant;
+
 protected:
     ConstPseudoRegister( InlinedScope *s, Oop c ) :
-        PseudoRegister( s ) {
-        constant = c;
+        PseudoRegister( s ),
+        constant{ c } {
         st_assert( not c->is_mem() or c->is_old(), "constant must be tenured" );
     }
 

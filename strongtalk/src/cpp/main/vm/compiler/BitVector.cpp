@@ -11,35 +11,46 @@
 
 
 bool BitVector::unionWith( BitVector *other ) {
-    while ( length < other->length )
+
+    while ( length < other->length ) {
         _bits[ length++ ] = 0;
+    }
+
     st_assert( length <= _maxLength, "grew too much" );
-    bool               changed = false;
-    for ( std::int32_t i       = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
+
+    bool changed = false;
+
+    for ( std::int32_t i = indexFromNumber( other->length - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] |= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
     }
+
     return changed;
 }
 
 
 bool BitVector::intersectWith( BitVector *other ) {
-    bool               changed = false;
-    for ( std::int32_t i       = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
+    bool changed = false;
+
+    for ( std::int32_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
         std::int32_t old = _bits[ i ];
         _bits[ i ] &= other->_bits[ i ];
         changed |= ( old not_eq _bits[ i ] );
     }
+
     return changed;
 }
 
 
 bool BitVector::isDisjointFrom( BitVector *other ) {
+
     for ( std::int32_t i = indexFromNumber( min( length, other->length ) - 1 ); i >= 0; i-- ) {
-        if ( ( _bits[ i ] & other->_bits[ i ] ) not_eq 0 )
+        if ( ( _bits[ i ] & other->_bits[ i ] ) not_eq 0 ) {
             return false;
+        }
     }
+
     return true;
 }
 
@@ -66,8 +77,10 @@ void BitVector::addFromTo( std::int32_t first, std::int32_t last ) {
 
         _bits[ endIndex ] |= nthMask( offsetFromNumber( last ) + 1 );
     }
-    for ( std::int32_t i = first; i <= last; i++ )
+
+    for ( std::int32_t i = first; i <= last; i++ ) {
         st_assert( includes( i ), "bit should be set" );
+    }
 }
 
 
@@ -92,8 +105,11 @@ void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
 
         _bits[ endIndex ] &= ~nthMask( offsetFromNumber( last ) + 1 );
     }
-    for ( std::int32_t i = first; i <= last; i++ )
+
+    for ( std::int32_t i = first; i <= last; i++ ) {
         st_assert( not includes( i ), "bit shouldn't be set" );
+    }
+
 }
 
 
@@ -103,25 +119,32 @@ void BitVector::print_short() {
 
 
 void BitVector::doForAllOnes( intDoFn f ) {
+
     for ( std::int32_t i = indexFromNumber( length - 1 ); i >= 0; i-- ) {
-        std::int32_t       b = _bits[ i ];
+
+        std::int32_t b = _bits[ i ];
+
         for ( std::int32_t j = 0; j < BITS_PER_WORD; j++ ) {
             if ( isBitSet( b, j ) ) {
                 f( i * BITS_PER_WORD + j );
                 clearNthBit( b, j );
-                if ( not b )
+                if ( not b ) {
                     break;
+                }
             }
         }
     }
+
 }
 
 
 void BitVector::print() {
+
     print_short();
     spdlog::info( ": {" );
     std::int32_t last = -1;
     std::int32_t i    = 0;
+
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {
             if ( last < 0 ) {
@@ -129,12 +152,16 @@ void BitVector::print() {
                 last = i;
             }
         } else {
-            if ( last >= 0 )
+            if ( last >= 0 ) {
                 spdlog::info( "..%ld", i - 1 );    // ended a group
+            }
             last = -1;
         }
     }
-    if ( last >= 0 )
+
+    if ( last >= 0 ) {
         spdlog::info( "..%ld", i - 1 );
+    }
+
     spdlog::info( " }" );
 }

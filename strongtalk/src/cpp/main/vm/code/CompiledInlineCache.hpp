@@ -149,7 +149,7 @@ public:
     }
 
 
-    // isMegamorphic() --> send is megamorphic
+    // isMegamorphic() --> send is MEGAMORPHIC
     bool isMegamorphic() const {
         return isBitSet( compiler_info(), megamorphic_bit_no );
     }

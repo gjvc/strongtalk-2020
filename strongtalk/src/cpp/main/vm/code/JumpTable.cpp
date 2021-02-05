@@ -31,11 +31,22 @@ JumpTableEntry *JumpTable::jump_entry_for_at( const char *entries, std::int32_t 
 }
 
 
-JumpTable::JumpTable() {
-    length = Universe::current_sizes._jump_table_size;
+JumpTable::JumpTable() :
+    length{ Universe::current_sizes._jump_table_size },
+    _firstFree{ 0 },
+    usedIDs{ 0 } {
     st_assert( length < 32 * 1024, "must change code to handle >32K entries" );
     _entries = allocate_jump_entries( length );
     init();
+}
+
+
+void JumpTable::init() {
+    // free list: firstFree keeps first free index
+    // entries[firstFree] keeps index of next free element, etc.
+    for ( std::int32_t i = 0; i < length; i++ ) {
+        major_at( i )->initialize_as_unused( i + 1 );
+    }
 }
 
 
@@ -76,15 +87,6 @@ JumpTableEntry *JumpTable::at( JumpTableID id ) {
     if ( not id.has_minor() )
         return major_at( id.major() );
     return jump_entry_for_at( major_at( id._major )->link(), id._minor );
-}
-
-
-void JumpTable::init() {
-    // free list: firstFree keeps first free index, entries[firstFree] keeps index
-    // of next free element, etc.
-    _firstFree = usedIDs = 0;
-    for ( std::int32_t i = 0; i < length; i++ )
-        major_at( i )->initialize_as_unused( i + 1 );
 }
 
 

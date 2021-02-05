@@ -17,8 +17,8 @@ protected:
     RecompilerFrame *_rf;
 
 
-    Recompilee( RecompilerFrame *rf ) {
-        _rf = rf;
+    Recompilee( RecompilerFrame *rf ) :
+        _rf{ rf } {
     }
 
 
@@ -35,6 +35,7 @@ public:
 
     virtual LookupKey *key() const = 0;
 
+
     virtual MethodOop method() const = 0;
 
 
@@ -42,6 +43,7 @@ public:
         ShouldNotCallThis();
         return nullptr;
     }    // only for compiled recompileed
+
 
     RecompilerFrame *rframe() const {
         return _rf;
@@ -60,9 +62,9 @@ private:
 
 public:
     InterpretedRecompilee( RecompilerFrame *rf, LookupKey *k, MethodOop m ) :
-        Recompilee( rf ) {
-        _key    = k;
-        _method = m;
+        Recompilee( rf ),
+        _key{ k },
+        _method{ m } {
     }
 
 
@@ -89,8 +91,8 @@ private:
 
 public:
     CompiledRecompilee( RecompilerFrame *rf, NativeMethod *nm ) :
-        Recompilee( rf ) {
-        _nativeMethod = nm;
+        Recompilee( rf ),
+        _nativeMethod{ nm } {
     }
 
 
@@ -100,6 +102,7 @@ public:
 
 
     LookupKey *key() const;
+
 
     MethodOop method() const;
 

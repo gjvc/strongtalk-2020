@@ -450,7 +450,7 @@ Expression *Inliner::picPredict() {
     // l is the list of receivers predicted by the PolymorphicInlineCache
     GrowableArray<RecompilationScope *> *predictedReceivers = _sender->rscope->subScopes( _sender->byteCodeIndex() );
 
-    // check special cases: never executed or uninlinable/megamorphic
+    // check special cases: never executed or uninlinable/MEGAMORPHIC
     if ( predictedReceivers->length() == 1 ) {
         if ( predictedReceivers->first()->isUntakenScope() ) {
             // send was never executed
@@ -458,7 +458,7 @@ Expression *Inliner::picPredict() {
 
         } else if ( predictedReceivers->first()->isUninlinableScope() ) {
             if ( CompilerDebug )
-                cout( PrintInlining )->print( "%*s*PolymorphicInlineCache-predicting %s as uninlinable/megamorphic\n", depth, "", _info->_selector->as_string() );
+                cout( PrintInlining )->print( "%*s*PolymorphicInlineCache-predicting %s as uninlinable/MEGAMORPHIC\n", depth, "", _info->_selector->as_string() );
             _info->uninlinable = true;    // prevent static type prediction
             return _info->_receiver;
         }

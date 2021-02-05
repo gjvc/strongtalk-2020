@@ -50,37 +50,112 @@ CodeBuffer *Compiler::code() const {
 }
 
 
-Compiler::Compiler( LookupKey *k, MethodOop m, CompiledInlineCache *i ) {
-    key                = k;
-    method             = m;
-    ic                 = i;
-    parentNativeMethod = nullptr;
-    blockScope         = nullptr;
-
-    main_jumpTable_id     = JumpTableID();
-    promoted_jumpTable_id = JumpTableID();
-
+Compiler::Compiler( LookupKey *k, MethodOop m, CompiledInlineCache *i ) :
+    key{ k },
+    method{ m },
+    ic{ i },
+    parentNativeMethod{ nullptr },
+    blockScope{ nullptr },
+    main_jumpTable_id{ JumpTableID() },
+    promoted_jumpTable_id{ JumpTableID() },
+    _special_handler_call_offset{},
+    _entry_point_offset{},
+    _verified_entry_point_offset{},
+    _totalNofFloatTemporaries{},
+    _float_section_size{},
+    _float_section_start_offset{},
+    _code{},
+    _nextLevel{},
+    _hasInlinableSendsRemaining{},
+    _uses_inlining_database{},
+    recompileeRScope{},
+    countID{},
+    useUncommonTraps{},
+    rec{},
+    topScope{},
+    firstBasicBlock{},
+    nlrTestPoints{},
+    scopes{},
+    contextList{},
+    blockClosures{},
+    firstNode{},
+    reporter{},
+    messages{},
+    inlineLimit{} {
     initialize();
 }
 
 
-Compiler::Compiler( RecompilationScope *scope ) {
+Compiler::Compiler( RecompilationScope *scope ) :
+    key{ scope->key() },
+    method{ scope->method() },
+    ic{ nullptr },
+    parentNativeMethod{ nullptr },
+    blockScope{ nullptr },
+    main_jumpTable_id{ JumpTableID() },
+    promoted_jumpTable_id{ JumpTableID() },
+    _special_handler_call_offset{},
+    _entry_point_offset{},
+    _verified_entry_point_offset{},
+    _totalNofFloatTemporaries{},
+    _float_section_size{},
+    _float_section_start_offset{},
+    _code{},
+    _nextLevel{},
+    _hasInlinableSendsRemaining{},
+    _uses_inlining_database{},
+    recompileeRScope{},
+    countID{},
+    useUncommonTraps{},
+    rec{},
+    topScope{},
+    firstBasicBlock{},
+    nlrTestPoints{},
+    scopes{},
+    contextList{},
+    blockClosures{},
+    firstNode{},
+    reporter{},
+    messages{},
+    inlineLimit{} {
     st_assert( scope not_eq nullptr, "scope must exist" );
-
-    key                = scope->key();
-    method             = scope->method();
-    ic                 = nullptr;
-    parentNativeMethod = nullptr;
-    blockScope         = nullptr;
-
-    main_jumpTable_id     = JumpTableID();
-    promoted_jumpTable_id = JumpTableID();
 
     initialize( scope );
 }
 
 
 Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope ) :
+    _special_handler_call_offset{},
+    _entry_point_offset{},
+    _verified_entry_point_offset{},
+    _totalNofFloatTemporaries{},
+    _float_section_size{},
+    _float_section_start_offset{},
+    _code{},
+    _nextLevel{},
+    _hasInlinableSendsRemaining{},
+    _uses_inlining_database{},
+    key{},
+    ic{},
+    parentNativeMethod{},
+    method{},
+    blockScope{},
+    recompileeRScope{},
+    countID{},
+    main_jumpTable_id{},
+    promoted_jumpTable_id{},
+    useUncommonTraps{},
+    rec{},
+    topScope{},
+    firstBasicBlock{},
+    nlrTestPoints{},
+    scopes{},
+    contextList{},
+    blockClosures{},
+    firstNode{},
+    reporter{},
+    messages{},
+    inlineLimit{},
     _scopeStack( 10 ) {
     // Create a valid key for the compiled method.
     // {receiver class, block method} see key.hpp
@@ -165,8 +240,9 @@ void Compiler::exitScope( InlinedScope *s ) {
 void Compiler::initialize( RecompilationScope *remote_scope ) {
     st_assert( VMProcess::vm_operation() not_eq nullptr, "must be in vmProcess to compile" );
 
-    if ( VMProcess::vm_operation() == nullptr )
+    if ( VMProcess::vm_operation() == nullptr ) {
         spdlog::warn( "should be in vmProcess to compile" ); // softened to a warning to support testing
+    }
 
     compilationCount++;
     messages = new StringOutputStream( 250 * 1024 );
@@ -237,29 +313,30 @@ void Compiler::initLimits() {
     }
     _hasInlinableSendsRemaining = true;
 
-#ifdef LATER
-    inlineLimit[InlineLimitIType::NormalFnLimit] 	     = getLimit(limits[InlineLimitIType::NormalFnLimit],		level);
-    inlineLimit[InlineLimitIType::BlockFnLimit] 	     = getLimit(limits[InlineLimitIType::BlockFnLimit],		level);
-    inlineLimit[InlineLimitIType::BlockArgFnLimit]       = getLimit(limits[InlineLimitIType::BlockArgFnLimit],	level);
-    inlineLimit[InlineLimitIType::NormalFnInstrLimit]    = getLimit(limits[InlineLimitIType::NormalFnInstrLimit],	level);
-    inlineLimit[InlineLimitIType::BlockFnInstrLimit]     = getLimit(limits[InlineLimitIType::BlockFnInstrLimit],	level);
-    inlineLimit[InlineLimitIType::BlockArgFnInstrLimit]  = getLimit(limits[InlineLimitIType::BlockArgFnInstrLimit],	level);
-    inlineLimit[InlineLimitIType::SplitCostLimit]        = getLimit(limits[InlineLimitIType::SplitCostLimit],		level);
-    inlineLimit[InlineLimitIType::NmInstrLimit]          = getLimit(limits[InlineLimitIType::NmInstrLimit],		level);
+#if 0
+    inlineLimit[ InlineLimitType::NormalFnLimit ]        = getLimit( limits[ InlineLimitType::NormalFnLimit ], level );
+    inlineLimit[ InlineLimitType::BlockFnLimit ]         = getLimit( limits[ InlineLimitType::BlockFnLimit ], level );
+    inlineLimit[ InlineLimitType::BlockArgFnLimit ]      = getLimit( limits[ InlineLimitType::BlockArgFnLimit ], level );
+    inlineLimit[ InlineLimitType::NormalFnInstrLimit ]   = getLimit( limits[ InlineLimitType::NormalFnInstrLimit ], level );
+    inlineLimit[ InlineLimitType::BlockFnInstrLimit ]    = getLimit( limits[ InlineLimitType::BlockFnInstrLimit ], level );
+    inlineLimit[ InlineLimitType::BlockArgFnInstrLimit ] = getLimit( limits[ InlineLimitType::BlockArgFnInstrLimit ], level );
+    inlineLimit[ InlineLimitType::SplitCostLimit ]       = getLimit( limits[ InlineLimitType::SplitCostLimit ], level );
+    inlineLimit[ InlineLimitType::NmInstrLimit ]         = getLimit( limits[ InlineLimitType::NmInstrLimit ], level );
 
-    if (CompilerAdjustLimits) {
-      // adjust InlineLimitIType::NmInstrLimit if top-level method is large
-      std::int32_t cost = sicCost((MethodKlass*)method->klass(), topScope, costP);
-      if (cost > NormalMethodLen) {
-        float l = (float)cost / NormalMethodLen * inlineLimit[InlineLimitIType::NmInstrLimit];
-        inlineLimit[InlineLimitIType::NmInstrLimit] = min(std::int32_t(l), CompilerInstructionsSize / 3);
-      }
+    if ( CompilerAdjustLimits ) {
+        // adjust InlineLimitType::NmInstrLimit if top-level method is large
+        std::int32_t cost = sicCost( (MethodKlass *) method->klass(), topScope, costP );
+        if ( cost > NormalMethodLen ) {
+            float l = (float) cost / NormalMethodLen * inlineLimit[ InlineLimitType::NmInstrLimit ];
+            inlineLimit[ InlineLimitType::NmInstrLimit ] = min( std::int32_t( l ), CompilerInstructionsSize / 3 );
+        }
     }
 #endif
 }
 
 
 bool Compiler::registerUninlinable( Inliner *inliner ) {
+
     // All sends that aren't inlined for some reason are registered here
     // to determine the minimum optimization level needed for recompilation
     // (i.e. if the send wouldn't be inlined even at the highest optimization
@@ -267,13 +344,16 @@ bool Compiler::registerUninlinable( Inliner *inliner ) {
     // At the end of compilation, _nextLevel will contain the lowest
     // optimization level that will generate better code than the current level.
     // Return true if the send is considered non-inlinable.
-    if ( not Inline )
-        return true;            // no point recompiling
+
+
+    if ( not Inline ) {
+        return true;  // no point point recompiling
+    }
+
     SendInfo *info = inliner->info();
     if ( is_database_compile() ) {
-        info->_counting   = false;
-        info->uninlinable = true;            // for now, never inline if not inlined in DB
-        // (would need to change DB format to allow counting and uninlinable sends)
+        info->_counting   = false;  //
+        info->uninlinable = true;   // for now, never inline if not inlined in DB (would need to change DB format to allow counting and uninlinable sends)
     }
 
     if ( not UseRecompilation ) {

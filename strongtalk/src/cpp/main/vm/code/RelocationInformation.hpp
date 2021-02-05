@@ -37,6 +37,7 @@ protected:
 public:
 
     enum class RelocationType {
+
         none               = -1,    //
         oop_type           = 0,     // embedded Oop (non-smi_t)
         ic_type            = 1,     // inline cache

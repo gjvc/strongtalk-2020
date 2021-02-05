@@ -95,11 +95,13 @@ void Universe::genesis() {
     ResourceMark resourceMark;
 
     spdlog::info( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
-    if ( UseNewBackend | TryNewBackend )
+    if ( UseNewBackend | TryNewBackend ) {
         spdlog::info( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
+    }
 
-    if ( not Interpreter::is_optimized() )
+    if ( not Interpreter::is_optimized() ) {
         Interpreter::print_code_status();
+    }
 
     scavengeCount = 0;
 
@@ -184,17 +186,25 @@ MemOop Universe::relocate( MemOop p ) {
 
 
 bool Universe::verify_oop( MemOop p ) {
-    if ( new_gen.eden()->contains( p ) )
+
+    if ( new_gen.eden()->contains( p ) ) {
         return true;
-    if ( new_gen.from()->contains( p ) )
+    }
+
+    if ( new_gen.from()->contains( p ) ) {
         return true;
-    if ( old_gen.contains( p ) )
+    }
+
+    if ( old_gen.contains( p ) ) {
         return true;
+    }
+
     if ( new_gen.to()->contains( p ) ) {
         error( "MemOop 0x{0:x} is in new generation to-space", p );
     } else {
         error( "MemOop 0x{0:x} is not in new generation to-space", p );
     }
+
     return false;
 }
 
@@ -705,9 +715,14 @@ Oop *Universe::allocate_in_survivor_space( MemOop p, std::int32_t size, bool &is
 Oop Universe::tenure( Oop p ) {
     tenuring_threshold = 0;        // tenure everything
     scavenge( &p );
-#define checkIt( s ) st_assert(s->used() == 0, "new spaces should be empty");
-    APPLY_TO_YOUNG_SPACES( checkIt )
-#undef checkIt
+//#define checkIt( s ) st_assert(s->used() == 0, "new spaces should be empty");
+//    APPLY_TO_YOUNG_SPACES( checkIt )
+//#undef checkIt
+
+    st_assert( new_gen.eden()->used() == 0, "new spaces should be empty" );
+    st_assert( new_gen.from()->used() == 0, "new spaces should be empty" );
+    st_assert( new_gen.to()->used() == 0, "new spaces should be empty" );
+
     return p;
 }
 
@@ -779,12 +794,12 @@ void Universe::scavenge( Oop *p ) {
         TraceTime   t( "Scavenge", PrintScavenge );
 
         if ( PrintScavenge and WizardMode ) {
-            _console->print( " %d", tenuring_threshold );
+            spdlog::info( " {:d}", tenuring_threshold );
         }
 
-        if ( VerifyBeforeScavenge )
+        if ( VerifyBeforeScavenge ) {
             verify();
-
+        }
         WeakArrayRegister::begin_scavenge();
 
         // Getting ready for scavenge
@@ -797,15 +812,18 @@ void Universe::scavenge( Oop *p ) {
         OldWaterMark old_mark = old_gen.top_mark();
 
         // Scavenge all roots
-        if ( p )
+        if ( p ) {
             SCAVENGE_TEMPLATE( p );
+        }
 
         Universe::oops_do( scavenge_oop );
         //Universe::roots_do(scavenge_oop);
         //Handles::oops_do(scavenge_oop);
 
         {
-            FOR_EACH_OLD_SPACE( s )s->scavenge_recorded_stores();
+            FOR_EACH_OLD_SPACE( s ) {
+                s->scavenge_recorded_stores();
+            }
         }
 
         Processes::scavenge_contents();
@@ -826,8 +844,9 @@ void Universe::scavenge( Oop *p ) {
         std::int32_t desired_survivor_size = new_gen.to()->capacity() / 2;
         tenuring_threshold = age_table->tenuring_threshold( desired_survivor_size / OOP_SIZE );
 
-        if ( VerifyAfterScavenge )
+        if ( VerifyAfterScavenge ) {
             verify( true );
+        }
 
         // do this at end so an overflow during a scavenge doesnt cause another one
         scavengeRequired = false;
@@ -837,14 +856,17 @@ void Universe::scavenge( Oop *p ) {
 
 Space *Universe::spaceFor( void *p ) {
 
-    if ( new_gen.from()->contains( p ) )
+    if ( new_gen.from()->contains( p ) ) {
         return new_gen.from();
+    }
 
-    if ( new_gen.eden()->contains( p ) )
+    if ( new_gen.eden()->contains( p ) ) {
         return new_gen.eden();
+    }
 
     {
-        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )
+            if ( s->contains( p ) )
                 return s;
     }
 

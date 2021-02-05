@@ -268,6 +268,7 @@ void Recompilation::recompile( Recompilee *r ) {
 
     // recompile r
     recompilee = r->is_compiled() ? r->code() : nullptr;    // previous version (if any)
+
     if ( r->rframe()->is_blockMethod() ) {
         recompile_block( r );
     } else {

@@ -2446,7 +2446,7 @@ const char *InterpreterGenerator::access_send( bool self ) {
 
 
 //-----------------------------------------------------------------------------------------
-// Inline cache structure for non-polymorphic sends
+// Inline cache structure for non-POLYMORPHIC sends
 //
 // [send byte code ]      1 byte
 // [no. of args    ]      1 byte, only if arg_spec == recv_n_args
@@ -2652,7 +2652,7 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
 }
 
 //-----------------------------------------------------------------------------------------
-// Inline cache structure for polymorphic sends
+// Inline cache structure for POLYMORPHIC sends
 //
 // [send byte code ]      1 byte
 // [no. of args    ]      1 byte, only if arg_spec == recv_n_args
@@ -2671,9 +2671,9 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     bool                    pop_tos  = ByteCodes::pop_tos( code );
 
     // inline cache layout
-    std::int32_t length        = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
+    std::int32_t length   = ( arg_spec == ByteCodes::ArgumentSpec::recv_n_args ? 2 : 1 ) + 2 * OOP_SIZE;
 //    Address      selector_addr = Address( esi, -2 * OOP_SIZE );
-    Address      pic_addr      = Address( esi, -1 * OOP_SIZE );
+    Address      pic_addr = Address( esi, -1 * OOP_SIZE );
 
     // pic layout
     std::int32_t length_offset = 2 * OOP_SIZE - MEMOOP_TAG;    // these constants should be mapped to the objectArrayOop definition
@@ -2789,11 +2789,13 @@ const char *InterpreterGenerator::halt() {
 const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
     // constants for readability
-    const bool             pop           = true;
-    const bool             returns_float = true;
-    const bool             push          = false;
-    const bool             store_pop     = true;
-    constexpr std::int32_t n             = -1;
+    const bool pop           = true;
+    const bool returns_float = true;
+    const bool push          = false;
+    const bool store_pop     = true;
+
+    //
+    constexpr std::int32_t n = -1;
 
     switch ( code ) {
 
@@ -3119,7 +3121,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
         case ByteCodes::Code::compiled_send_super_pop:
             return compiled_send( code );
 
-            // polymorphic sends
+            // POLYMORPHIC sends
         case ByteCodes::Code::polymorphic_send_0:             // fall through
         case ByteCodes::Code::polymorphic_send_1:             // fall through
         case ByteCodes::Code::polymorphic_send_2:             // fall through
@@ -3137,7 +3139,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
         case ByteCodes::Code::polymorphic_send_super_pop:
             return polymorphic_send( code );
 
-            // megamorphic sends
+            // MEGAMORPHIC sends
         case ByteCodes::Code::megamorphic_send_0:             // fall through
         case ByteCodes::Code::megamorphic_send_1:             // fall through
         case ByteCodes::Code::megamorphic_send_2:             // fall through
@@ -3378,10 +3380,27 @@ void InterpreterGenerator::generate_all() {
 }
 
 
-InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool debug ) {
-    _macroAssembler = new MacroAssembler( code );
-    _debug          = debug;
-    _stack_check    = Interpreter::has_stack_checks();
+InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool debug ) :
+    _macroAssembler{ new MacroAssembler( code ) },
+    _debug{ debug },
+    _stack_check{ Interpreter::has_stack_checks() },
+    _method_entry{},
+    _block_entry{},
+    _inline_cache_miss{},
+    _smi_send_failure{},
+    _issue_NonLocalReturn{},
+    _nlr_testpoint{},
+    _C_nlr_testpoint{},
+    _boolean_expected{},
+    _float_expected{},
+    _NonLocalReturn_to_dead_frame{},
+    _halted{},
+    _stack_misaligned{},
+    _ebx_wrong{},
+    _obj_wrong{},
+    _last_Delta_fp_wrong{},
+    _primitive_result_wrong{},
+    _illegal{ nullptr } {
 }
 
 

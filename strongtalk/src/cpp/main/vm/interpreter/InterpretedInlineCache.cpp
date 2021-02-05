@@ -148,7 +148,7 @@ SymbolOop InterpretedInlineCache::selector() const {
 
 
 JumpTableEntry *InterpretedInlineCache::jump_table_entry() const {
-    st_assert( send_type() == ByteCodes::SendType::compiled_send or send_type() == ByteCodes::SendType::megamorphic_send, "must be a compiled call" );
+    st_assert( send_type() == ByteCodes::SendType::COMPILED_SEND or send_type() == ByteCodes::SendType::MEGAMORPHIC_SEND, "must be a compiled call" );
     st_assert( first_word()->is_smi(), "must be smi_t" );
     return (JumpTableEntry *) first_word();
 }
@@ -170,7 +170,8 @@ std::int32_t InterpretedInlineCache::nof_arguments() const {
         }
         case ByteCodes::ArgumentSpec::args_only:
             return selector()->number_of_arguments();
-        default: nullptr;
+        default:
+            nullptr;
     }
     ShouldNotReachHere();
     return 0;
@@ -192,7 +193,7 @@ void InterpretedInlineCache::clear() {
     if ( is_empty() )
         return;
 
-    if ( send_type() == ByteCodes::SendType::polymorphic_send ) {
+    if ( send_type() == ByteCodes::SendType::POLYMORPHIC_SEND ) {
         // recycle PolymorphicInlineCache
         st_assert( second_word()->is_objArray(), "must be a pic" );
         Interpreter_PICs::deallocate( ObjectArrayOop( second_word() ) );
@@ -215,7 +216,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
         clear();
         transition = 1;
     } else if ( result.is_method() ) {
-        if ( send_type() == ByteCodes::SendType::megamorphic_send ) {
+        if ( send_type() == ByteCodes::SendType::MEGAMORPHIC_SEND ) {
             set( send_code(), result.method(), receiver_klass );
             transition = 2;
         } else {
@@ -225,7 +226,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
             transition = 3;
         }
     } else {
-        if ( send_type() == ByteCodes::SendType::megamorphic_send ) {
+        if ( send_type() == ByteCodes::SendType::MEGAMORPHIC_SEND ) {
             set( send_code(), Oop( result.entry() ), receiver_klass );
             transition = 4;
         } else {
@@ -237,7 +238,7 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
     }
 
     // InlineCache entries after modification - used for loging only
-    ByteCodes::Code code_after  = send_code();
+    ByteCodes::Code code_after = send_code();
 //    Oop             word1_after = first_word();
 //    Oop             word2_after = second_word();
 
@@ -254,10 +255,10 @@ void InterpretedInlineCache::cleanup() {
         return; // Nothing to cleanup
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::accessor_send:    // fall through
-        case ByteCodes::SendType::primitive_send:   // fall through
-        case ByteCodes::SendType::predicted_send:   // fall through
-        case ByteCodes::SendType::interpreted_send: { // check if the interpreted send should be replaced by a compiled send
+        case ByteCodes::SendType::ACCESSOR_SEND:    // fall through
+        case ByteCodes::SendType::PRIMITIVE_SEND:   // fall through
+        case ByteCodes::SendType::PREDICTED_SEND:   // fall through
+        case ByteCodes::SendType::INTERPRETED_SEND: { // check if the interpreted send should be replaced by a compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
             MethodOop method = MethodOop( first_word() );
@@ -272,7 +273,7 @@ void InterpretedInlineCache::cleanup() {
             }
         }
             break;
-        case ByteCodes::SendType::compiled_send: { // check if the current compiled send is valid
+        case ByteCodes::SendType::COMPILED_SEND: { // check if the current compiled send is valid
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
             JumpTableEntry *entry = (JumpTableEntry *) first_word();
@@ -283,9 +284,9 @@ void InterpretedInlineCache::cleanup() {
             }
         }
             break;
-        case ByteCodes::SendType::megamorphic_send:
+        case ByteCodes::SendType::MEGAMORPHIC_SEND:
             // Note that with the current definition of is_empty()
-            // this will not be called for normal megamorphic sends
+            // this will not be called for normal MEGAMORPHIC sends
             // since they store only the selector.
         {
             KlassOop receiver_klass = KlassOop( second_word() );
@@ -310,7 +311,7 @@ void InterpretedInlineCache::cleanup() {
             }
         }
             break;
-        case ByteCodes::SendType::polymorphic_send: {
+        case ByteCodes::SendType::POLYMORPHIC_SEND: {
             // %implementation note:
             //   when cleaning up we can always preserve the old pic since the
             //   the only transitions are:
@@ -363,10 +364,10 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
         return;
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::accessor_send:    // fall through
-        case ByteCodes::SendType::primitive_send:   // fall through
-        case ByteCodes::SendType::predicted_send:   // fall through
-        case ByteCodes::SendType::interpreted_send: { // replace the monomorphic interpreted send with compiled send
+        case ByteCodes::SendType::ACCESSOR_SEND:    // fall through
+        case ByteCodes::SendType::PRIMITIVE_SEND:   // fall through
+        case ByteCodes::SendType::PREDICTED_SEND:   // fall through
+        case ByteCodes::SendType::INTERPRETED_SEND: { // replace the MONOMORPHIC interpreted send with compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
             if ( receiver_klass == nm->_lookupKey.klass() ) {
@@ -374,12 +375,12 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             }
         }
             break;
-        case ByteCodes::SendType::compiled_send:   // fall through
-        case ByteCodes::SendType::megamorphic_send:
-            // replace the monomorphic compiled send with compiled send
+        case ByteCodes::SendType::COMPILED_SEND:   // fall through
+        case ByteCodes::SendType::MEGAMORPHIC_SEND:
+            // replace the MONOMORPHIC compiled send with compiled send
             set( send_code(), entry_point, nm->_lookupKey.klass() );
             break;
-        case ByteCodes::SendType::polymorphic_send: {
+        case ByteCodes::SendType::POLYMORPHIC_SEND: {
             ObjectArrayOop     pic   = pic_array();
             for ( std::int32_t index = pic->length(); index > 0; index -= 2 ) {
                 KlassOop receiver_klass = KlassOop( pic->obj_at( index ) );
@@ -426,7 +427,7 @@ void InterpretedInlineCache::print() {
 
 
 ObjectArrayOop InterpretedInlineCache::pic_array() {
-    st_assert( send_type() == ByteCodes::SendType::polymorphic_send, "Must be a polymorphic send site" );
+    st_assert( send_type() == ByteCodes::SendType::POLYMORPHIC_SEND, "Must be a POLYMORPHIC send site" );
     ObjectArrayOop result = ObjectArrayOop( second_word() );
     st_assert( result->is_objArray(), "interpreter pic must be object array" );
     st_assert( result->length() >= 4, "pic should contain at least two entries" );
@@ -436,7 +437,7 @@ ObjectArrayOop InterpretedInlineCache::pic_array() {
 
 void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Frame *f, ByteCodes::Code send_code, KlassOop klass, LookupResult result ) {
     // update inline cache
-    if ( ic->is_empty() and ic->send_type() not_eq ByteCodes::SendType::megamorphic_send ) {
+    if ( ic->is_empty() and ic->send_type() not_eq ByteCodes::SendType::MEGAMORPHIC_SEND ) {
         // fill ic for the first time
         ByteCodes::Code new_send_code = ByteCodes::Code::halt;
         if ( result.is_entry() ) {
@@ -450,7 +451,7 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
             } else if ( UsePredictedMethods and ByteCodes::has_predicted_send_code( send_code ) and method->is_special_primitiveMethod() ) {
                 // predictable method found ==> switch to predicted send
                 // NB: ic of predicted send should be empty so that the compiler knows whether another type occurred or not
-                // i.e., {predicted + empty} --> 1 class, {predicted + nonempty} --> 2 klasses (polymorphic)
+                // i.e., {predicted + empty} --> 1 class, {predicted + nonempty} --> 2 klasses (POLYMORPHIC)
                 // but: this actually doesn't work (yet?) since the interpreter fills the ic on any failure (e.g. overflow)
                 new_send_code = method->special_primitive_code();
                 method        = MethodOop( ic->selector() ); // ic must stay empty
@@ -473,7 +474,7 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
             } else if ( UsePredictedMethods and ByteCodes::has_predicted_send_code( send_code ) and method->is_special_primitiveMethod() ) {
                 // predictable method found ==> switch to predicted send
                 // NB: ic of predicted send should be empty so that the compiler knows whether another type occurred or not
-                // i.e., {predicted + empty} --> 1 class, {predicted + nonempty} --> 2 klasses (polymorphic)
+                // i.e., {predicted + empty} --> 1 class, {predicted + nonempty} --> 2 klasses (POLYMORPHIC)
                 // but: this actually doesn't work (yet?) since the interpreter fills the ic on any failure (e.g. overflow)
                 new_send_code = method->special_primitive_code();
                 method        = MethodOop( ic->selector() ); // ic must stay empty
@@ -495,12 +496,12 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
     } else {
         // ic not empty
         switch ( ic->send_type() ) {
-            // monomorphic send
-            case ByteCodes::SendType::accessor_send   : // fall through
-            case ByteCodes::SendType::predicted_send  : // fall through
-            case ByteCodes::SendType::compiled_send   : // fall through
-            case ByteCodes::SendType::interpreted_send: {
-                // switch to polymorphic send with 2 entries
+            // MONOMORPHIC send
+            case ByteCodes::SendType::ACCESSOR_SEND   : // fall through
+            case ByteCodes::SendType::PREDICTED_SEND  : // fall through
+            case ByteCodes::SendType::COMPILED_SEND   : // fall through
+            case ByteCodes::SendType::INTERPRETED_SEND: {
+                // switch to POLYMORPHIC send with 2 entries
                 ObjectArrayOop pic = Interpreter_PICs::allocate( 2 );
                 Interpreter_PICs::set_first( pic, ic->first_word(), ic->second_word() );
                 Interpreter_PICs::set_second( pic, result.value(), klass );
@@ -508,20 +509,20 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
                 break;
             }
 
-                // polymorphic send
-            case ByteCodes::SendType::polymorphic_send: {
+                // POLYMORPHIC send
+            case ByteCodes::SendType::POLYMORPHIC_SEND: {
 
                 ObjectArrayOop old_pic = ic->pic_array();
                 ObjectArrayOop new_pic = Interpreter_PICs::extend( old_pic ); // add an entry to the PolymorphicInlineCache if appropriate
                 if ( new_pic == nullptr ) {
-                    // switch to megamorphic send
+                    // switch to MEGAMORPHIC send
                     if ( ByteCodes::is_super_send( send_code ) ) {
                         ic->set( ByteCodes::megamorphic_send_code_for( send_code ), result.value(), klass );
                     } else {
                         ic->set( ByteCodes::megamorphic_send_code_for( send_code ), ic->selector(), nullptr );
                     }
                 } else {
-                    // still a polymorphic send, add entry and set ic to new_pic
+                    // still a POLYMORPHIC send, add entry and set ic to new_pic
                     Interpreter_PICs::set_last( new_pic, result.value(), klass );
                     ic->set( send_code, ic->selector(), new_pic );
                 }
@@ -530,8 +531,8 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
                 break;
             }
 
-                // megamorphic send
-            case ByteCodes::SendType::megamorphic_send: {
+                // MEGAMORPHIC send
+            case ByteCodes::SendType::MEGAMORPHIC_SEND: {
                 if ( ByteCodes::is_super_send( send_code ) ) {
                     ic->set( send_code, result.value(), klass );
                 }
@@ -657,10 +658,20 @@ Oop *InterpretedInlineCache::inline_cache_miss() {
     }
 }
 
+
 // Implementation of InterpretedInlineCacheIterator
 
-InterpretedInlineCacheIterator::InterpretedInlineCacheIterator( InterpretedInlineCache *ic ) {
-    _ic = ic;
+InterpretedInlineCacheIterator::InterpretedInlineCacheIterator( InterpretedInlineCache *ic ) :
+    _ic{ ic },
+    _pic{},
+    _number_of_targets{ 0 },
+    _info{},
+    _index{ 0 },
+    _klass{},
+    _method{},
+    _nativeMethod{ nullptr } {
+
+    //
     init_iteration();
 }
 
@@ -689,55 +700,55 @@ void InterpretedInlineCacheIterator::init_iteration() {
     _index = 0;
     // determine initial state
     switch ( _ic->send_type() ) {
-        case ByteCodes::SendType::interpreted_send:
+        case ByteCodes::SendType::INTERPRETED_SEND:
             if ( _ic->is_empty() ) {
-                // anamorphic call site (has never been executed => no type information)
+                // ANAMORPHIC call site (has never been executed => no type information)
                 _number_of_targets = 0;
-                _info              = InlineCacheShape::anamorphic;
+                _info              = InlineCacheShape::ANAMORPHIC;
             } else {
-                // monomorphic call site
+                // MONOMORPHIC call site
                 _number_of_targets = 1;
-                _info              = InlineCacheShape::monomorphic;
+                _info              = InlineCacheShape::MONOMORPHIC;
                 set_klass( _ic->second_word() );
                 set_method( _ic->first_word() );
             }
             break;
-        case ByteCodes::SendType::compiled_send:
+        case ByteCodes::SendType::COMPILED_SEND:
             _number_of_targets = 1;
-            _info              = InlineCacheShape::monomorphic;
+            _info              = InlineCacheShape::MONOMORPHIC;
             set_klass( _ic->second_word() );
             st_assert( _ic->first_word()->is_smi(), "must have JumpTableEntry" );
             set_method( _ic->first_word() );
             st_assert( is_compiled(), "bad type" );
             break;
-        case ByteCodes::SendType::accessor_send   : // fall through
-        case ByteCodes::SendType::primitive_send:
+        case ByteCodes::SendType::ACCESSOR_SEND: // fall through
+        case ByteCodes::SendType::PRIMITIVE_SEND:
             _number_of_targets = 1;
-            _info              = InlineCacheShape::monomorphic;
+            _info              = InlineCacheShape::MONOMORPHIC;
             set_klass( _ic->second_word() );
             set_method( _ic->first_word() );
             st_assert( is_interpreted(), "bad type" );
             break;
-        case ByteCodes::SendType::megamorphic_send:
+        case ByteCodes::SendType::MEGAMORPHIC_SEND:
             // no type information stored
             _number_of_targets = 0;
-            _info              = InlineCacheShape::megamorphic;
+            _info              = InlineCacheShape::MEGAMORPHIC;
             break;
-        case ByteCodes::SendType::polymorphic_send:
+        case ByteCodes::SendType::POLYMORPHIC_SEND:
             // information on many types
             _pic               = ObjectArrayOop( _ic->second_word() );
             _number_of_targets = _pic->length() / 2;
-            _info              = InlineCacheShape::polymorphic;
+            _info              = InlineCacheShape::POLYMORPHIC;
             set_klass( _pic->obj_at( 2 ) );
             set_method( _pic->obj_at( 1 ) );
             break;
-        case ByteCodes::SendType::predicted_send:
+        case ByteCodes::SendType::PREDICTED_SEND:
             if ( _ic->is_empty() or _ic->second_word() == smiKlassObject ) {
                 _number_of_targets = 1;
-                _info              = InlineCacheShape::monomorphic;
+                _info              = InlineCacheShape::MONOMORPHIC;
             } else {
                 _number_of_targets = 2;
-                _info              = InlineCacheShape::polymorphic;
+                _info              = InlineCacheShape::POLYMORPHIC;
             }
             set_klass( smiKlassObject );
             set_method( interpreter_normal_lookup( smiKlassObject, selector() ).value() );
@@ -745,7 +756,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
             break;
         default: ShouldNotReachHere();
     }
-    st_assert( ( number_of_targets() > 1 ) == ( _info == InlineCacheShape::polymorphic ), "inconsistency" );
+    st_assert( ( number_of_targets() > 1 ) == ( _info == InlineCacheShape::POLYMORPHIC ), "inconsistency" );
 }
 
 
@@ -754,7 +765,7 @@ void InterpretedInlineCacheIterator::advance() {
     _index++;
     if ( not at_end() ) {
         if ( _pic not_eq nullptr ) {
-            // polymorphic inline cache
+            // POLYMORPHIC inline cache
             std::int32_t index = _index + 1;    // array is 1-origin
             set_klass( _pic->obj_at( 2 * index ) );
             set_method( _pic->obj_at( 2 * index - 1 ) );

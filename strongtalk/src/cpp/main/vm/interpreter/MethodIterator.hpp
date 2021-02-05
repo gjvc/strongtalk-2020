@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -8,8 +9,6 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/system/platform.hpp"
-
-
 #include "vm/system/os.hpp"
 #include "vm/utilities/OutputStream.hpp"
 #include "vm/interpreter/Floats.hpp"
@@ -26,20 +25,18 @@ class IntervalInfo;
 class MethodInterval : public ResourceObject {
 
 protected:
-    MethodInterval *_parent;            // enclosing interval (or nullptr if top-level)
-    MethodOop      _method;
-    std::int32_t   _begin_byteCodeIndex;
-    std::int32_t   _end_byteCodeIndex;
-    bool           _in_primitive_failure;            // currently in primitive failure block?
-    IntervalInfo   *_info;
+    MethodInterval *_parent;                // enclosing interval (or nullptr if top-level)
+    MethodOop      _method;                 //
+    std::int32_t   _begin_byteCodeIndex;    //
+    std::int32_t   _end_byteCodeIndex;      //
+    bool           _in_primitive_failure;   // currently in primitive failure block?
+    IntervalInfo   *_info;                  //
 
     void initialize( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool failBlock );
-
 
     void set_end_byteCodeIndex( std::int32_t byteCodeIndex ) {
         _end_byteCodeIndex = byteCodeIndex;
     }
-
 
     // Constructors
     MethodInterval( MethodOop method, MethodInterval *parent );
@@ -378,6 +375,7 @@ enum class AllocationType {
     context_as_scope    // context of current stack frame (i.e. content of temp0) is used a context
 };
 
+
 class MethodIterator;
 
 // A MethodClosure is the object handling the call backs when iterating through a MethodInterval.
@@ -568,6 +566,7 @@ public:
 
     virtual void float_binaryToOop( Floats::Function f, std::int32_t fno ) = 0;
 };
+
 
 class CustomizedMethodClosure : public MethodClosure {
 

@@ -11,8 +11,10 @@
 
 
 class BlockScavenge {
+
 private:
     static std::int32_t counter;
+
 public:
     static std::int32_t *counter_addr() {
         return &counter;
@@ -41,8 +43,8 @@ private:
     std::int32_t _scavengeCount;
 
 public:
-    VerifyNoScavenge() {
-        _scavengeCount = Universe::scavengeCount;
+    VerifyNoScavenge() :
+        _scavengeCount{ Universe::scavengeCount } {
     }
 
 
@@ -59,8 +61,8 @@ private:
     Oop *_top_of_eden;
 
 public:
-    VerifyNoAllocation() {
-        _top_of_eden = Universe::new_gen.eden()->top();
+    VerifyNoAllocation() :
+        _top_of_eden{ Universe::new_gen.eden()->top() } {
     }
 
 

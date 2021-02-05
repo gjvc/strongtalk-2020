@@ -14,7 +14,6 @@
 #include "vm/oops/ProxyOopDescriptor.hpp"
 #include "vm/oops/BlockClosureKlass.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/primitives/block_primitives.hpp"
 #include "vm/runtime/UnwindInfo.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"

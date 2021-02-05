@@ -377,20 +377,22 @@ class SumMethodInvocationClosure : public ObjectClosure {
 private:
     std::int32_t sum;
 public:
-    SumMethodInvocationClosure() {
-        sum = 0;
+    SumMethodInvocationClosure() :
+        sum{ 0 } {
     }
 
 
     void do_object( MemOop obj ) {
-        if ( obj->is_method() )
+        if ( obj->is_method() ) {
             sum += MethodOop( obj )->invocation_count();
+        }
     }
 
 
     std::int32_t result() {
         return sum;
     }
+
 };
 
 
@@ -449,10 +451,10 @@ public:
     std::int32_t number;
 
 
-    Counter( const char *t ) {
-        title      = t;
-        total_size = 0;
-        number     = 0;
+    Counter( const char *t ) :
+        title{ t },
+        total_size{ 0 },
+        number{ 0 } {
     }
 
 
@@ -463,9 +465,7 @@ public:
 
 
     void print( const char *prefix ) {
-        _console->print( "%s%s", prefix, title );
-        _console->fill_to( 22 );
-        spdlog::info( "%6d %8d", number, total_size * OOP_SIZE );
+        spdlog::info( "{}  {:22s}  {:6d}  {:8d}", prefix, title, number, total_size * OOP_SIZE );
     }
 
 
@@ -478,6 +478,7 @@ public:
     static std::int32_t compare( Counter **a, Counter **b ) {
         return ( *b )->total_size - ( *a )->total_size;
     }
+
 };
 
 
@@ -499,6 +500,7 @@ private:
     Counter                  *contexts;
     Counter                  *memOops;
     GrowableArray<Counter *> *counters;
+
 public:
     ObjectHistogram();
 
@@ -514,7 +516,25 @@ public:
 };
 
 
-ObjectHistogram::ObjectHistogram() {
+ObjectHistogram::ObjectHistogram() :
+    doubles{ nullptr },
+    blocks{ nullptr },
+    objArrays{ nullptr },
+    symbols{ nullptr },
+    byteArrays{ nullptr },
+    doubleByteArrays{ nullptr },
+    klasses{ nullptr },
+    processes{ nullptr },
+    vframes{ nullptr },
+    methods{ nullptr },
+    proxies{ nullptr },
+    mixins{ nullptr },
+    associations{ nullptr },
+    contexts{ nullptr },
+    memOops{ nullptr },
+    counters{ nullptr } {
+
+    //
     counters = new GrowableArray<Counter *>( 20 );
     counters->push( doubles          = new Counter( "doubles" ) );
     counters->push( blocks           = new Counter( "blocks" ) );
@@ -535,6 +555,7 @@ ObjectHistogram::ObjectHistogram() {
 
 
 Counter *ObjectHistogram::counter( MemOop obj ) {
+
     if ( obj->is_double() )
         return doubles;
     if ( obj->is_block() )
@@ -563,13 +584,13 @@ Counter *ObjectHistogram::counter( MemOop obj ) {
         return associations;
     if ( obj->is_context() )
         return contexts;
+
     return memOops;
 }
 
 
 void ObjectHistogram::print() {
-    _console->print( "Object Histogram" );
-    _console->fill_to( 22 );
+    spdlog::info( "Object Histogram" );
     spdlog::info( "number    bytes" );
     Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
@@ -577,6 +598,7 @@ void ObjectHistogram::print() {
     for ( std::int32_t i = 0; i < counters->length(); i++ ) {
         Counter *c = counters->at( i );
         if ( c->number > 0 ) {
+//            spdlog::info( "{}", c->print() );
             c->print( " - " );
             total->add( c );
         }

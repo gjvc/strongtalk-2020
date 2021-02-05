@@ -241,29 +241,29 @@ std::int32_t ClassChange::compute_needed_schema_change() {
 }
 
 
-ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, struct MixinOopDescriptor *new_mixin, Klass::Format new_format, struct KlassOopDescriptor *new_super ) {
-    _old_klass                 = old_klass;
-    _new_mixin                 = new_mixin;
-    _new_format                = new_format;
-    _new_super                 = new_super;
-    _new_klass                 = nullptr;
-    _converter                 = nullptr;
-    _super_change              = nullptr;
-    _is_schema_change_computed = false;
-    _reason_for_schema_change  = "";
+ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, struct MixinOopDescriptor *new_mixin, Klass::Format new_format, struct KlassOopDescriptor *new_super ) :
+    _old_klass{ old_klass },
+    _new_mixin{ new_mixin },
+    _new_format{ new_format },
+    _new_super{ new_super },
+    _new_klass{ nullptr },
+    _converter{ nullptr },
+    _super_change{ nullptr },
+    _is_schema_change_computed{ false },
+    _reason_for_schema_change{ "" } {
 }
 
 
-ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format new_format ) {
-    _old_klass                 = old_klass;
-    _new_mixin                 = old_klass->klass_part()->mixin();
-    _new_format                = new_format;
-    _new_super                 = nullptr;
-    _new_klass                 = nullptr;
-    _converter                 = nullptr;
-    _super_change              = nullptr;
-    _is_schema_change_computed = false;
-    _reason_for_schema_change  = "";
+ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format new_format ) :
+    _old_klass{ old_klass },
+    _new_mixin{ old_klass->klass_part()->mixin() },
+    _new_format{ new_format },
+    _new_super{ nullptr },
+    _new_klass{ nullptr },
+    _converter{ nullptr },
+    _super_change{ nullptr },
+    _is_schema_change_computed{ false },
+    _reason_for_schema_change{ "" } {
 }
 
 

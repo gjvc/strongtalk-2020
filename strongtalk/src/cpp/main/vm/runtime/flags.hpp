@@ -17,14 +17,14 @@
 class FlagSetting {
 
 private:
-    bool _value;
     bool *_flag;
+    bool _value;
 
 public:
-    FlagSetting( bool &fl, bool newValue ) {
-        _flag  = &fl;
-        _value = fl;
-        fl     = newValue;
+    FlagSetting( bool &fl, bool newValue ) :
+        _flag{ &fl },
+        _value{ fl } {
+        fl = newValue;
     }
 
 
@@ -182,7 +182,7 @@ public:
 \
     develop( ProfilerShowMethodHolder,             true, "Show method holder for method"                                               ) \
 \
-    develop( UseMICs,                              true, "Use megamorphic PICs (MegamorphicInlineCache)"                               ) \
+    develop( UseMICs,                              true, "Use MEGAMORPHIC PICs (MegamorphicInlineCache)"                               ) \
     develop( UseLRUInterrupts,                     true, "User timers for zone LRU info"                                               ) \
     develop( UseNewBackend,                       false, "Use new backend"                                                             ) \
     develop( TryNewBackend,                       false, "Use new backend & set additional flags as needed for compilation"            ) \

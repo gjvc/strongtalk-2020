@@ -26,9 +26,9 @@ class RememberedSet : public CHeapAllocatedObject {
     friend class SetOopClosure;
 
 private:
-    const char *_lowBoundary;    // duplicate of old_gen var so byte_for can be inlined
-    const char *_highBoundary;
-    char       _byteMap[1];    // size is a lie XXX XXX
+    const char *_lowBoundary;       // duplicate of old_gen var so byte_for can be inlined
+    const char *_highBoundary;      //
+    char       _byteMap[1];         // size is a lie XXX XXX
 
     // friend void OldSpace::switch_pointers_by_card(Oop, Oop);
     char *byte_for( const void *p ) const {

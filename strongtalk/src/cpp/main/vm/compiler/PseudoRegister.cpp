@@ -54,40 +54,55 @@ void PseudoRegister::initPseudoRegisters() {
 
 
 SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool inContext ) :
-    PseudoRegister( s ), _isInContext( inContext ) {
-    creationStartByteCodeIndex = _begByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
-    _endByteCodeIndex          = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
-    _creationScope             = s;
+    PseudoRegister( s ),
+    _isInContext( inContext ),
+    _creationScope{ nullptr } {
+    _creationStartByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
+    _begByteCodeIndex           = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
+    _endByteCodeIndex           = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
+    _creationScope              = s;
 }
 
 
 BlockPseudoRegister::BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end ) :
-    SinglyAssignedPseudoRegister( scope, beg, end ) {
-    _closure = closure;
+    SinglyAssignedPseudoRegister( scope, beg, end ),
+    _closure{ closure },
+    _memoized{ false },
+    _escapes{ false },
+    _escapeNodes{ nullptr },
+    _uplevelRead{ nullptr },
+    _uplevelWritten{ nullptr },
+    _contextCopies{ nullptr } {
+
+    //
     st_assert( closure, "need a closure" );
-    _memoized      = _escapes        = false;
-    _escapeNodes   = nullptr;
-    _uplevelRead   = _uplevelWritten = nullptr;
-    _contextCopies = nullptr;
     _numBlocks++;
     theCompiler->blockClosures->append( this );
-    if ( MemoizeBlocks )
+    if ( MemoizeBlocks ) {
         memoize();
+    }
 }
 
 
 void BlockPseudoRegister::addContextCopy( Location *l ) {
-    if ( not _contextCopies )
+    if ( not _contextCopies ) {
         _contextCopies = new GrowableArray<Location *>( 3 );
+    }
+
     _contextCopies->append( l );
 }
 
 
 void PseudoRegister::makeIncorrectDU( bool incU, bool incD ) {
-    if ( incU )
-        _usageCount      = VeryNegative;
-    if ( incD )
+
+    if ( incU ) {
+        _usageCount = VeryNegative;
+    }
+
+    if ( incD ) {
         _definitionCount = VeryNegative;
+    }
+
 }
 
 
@@ -408,7 +423,7 @@ bool SinglyAssignedPseudoRegister::extendLiveRange( Node *n ) {
 
 bool SinglyAssignedPseudoRegister::extendLiveRange( InlinedScope *s, std::int32_t byteCodeIndex ) {
     // the receiver is being copy-propagated to scope s at byteCodeIndex; try to extend its live range
-    st_assert( _begByteCodeIndex not_eq IllegalByteCodeIndex and creationStartByteCodeIndex not_eq IllegalByteCodeIndex and _endByteCodeIndex not_eq IllegalByteCodeIndex, "live range not set" );
+    st_assert( _begByteCodeIndex not_eq IllegalByteCodeIndex and _creationStartByteCodeIndex not_eq IllegalByteCodeIndex and _endByteCodeIndex not_eq IllegalByteCodeIndex, "live range not set" );
     if ( isInContext() ) {
         // context locations cannot be propagated beyond their scope
         // (otherwise the context pointer's live range would have to be extended)
@@ -808,7 +823,7 @@ bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t
     // find closest common ancestor of s and creationScope, and the
     // respective byteCodeIndexs in that scope
     std::int32_t bs  = byteCodeIndex;
-    std::int32_t bc  = creationStartByteCodeIndex;
+    std::int32_t bc  = _creationStartByteCodeIndex;
     InlinedScope *ss = findAncestor( s, bs, creationScope(), bc );
     if ( not _scope->isSenderOrSame( ss ) ) {
         st_fatal( "bad scope arg in basic_isLiveAt" );
@@ -828,7 +843,7 @@ bool SinglyAssignedPseudoRegister::basic_isLiveAt( InlinedScope *s, std::int32_t
     // Note: the isLiveAt methods are only used by the new backend (gri 3/27/96).
     if ( ss == _scope ) {
         // live range = [startByteCodeIndex, endByteCodeIndex]			// originally: ]startByteCodeIndex, endByteCodeIndex]
-        st_assert( ( _begByteCodeIndex == bc ) or ( ss == creationScope() and creationStartByteCodeIndex == bc ), "oops" );
+        st_assert( ( _begByteCodeIndex == bc ) or ( ss == creationScope() and _creationStartByteCodeIndex == bc ), "oops" );
         return byteCodeIndexLE( _begByteCodeIndex, bs ) and byteCodeIndexLE( bs, _endByteCodeIndex );    // originally: byteCodeIndexLT(_begByteCodeIndex, bs) and byteCodeIndexLE(bs, _endByteCodeIndex);
     } else {
         // live range = [bc, end of scope]			// originally: ]bc, end of scope]
@@ -1177,15 +1192,15 @@ bool SinglyAssignedPseudoRegister::verify() const {
     bool ok = PseudoRegister::verify();
     if ( ok ) {
         if ( _begByteCodeIndex == IllegalByteCodeIndex ) {
-            if ( creationStartByteCodeIndex not_eq IllegalByteCodeIndex or _endByteCodeIndex not_eq IllegalByteCodeIndex ) {
+            if ( _creationStartByteCodeIndex not_eq IllegalByteCodeIndex or _endByteCodeIndex not_eq IllegalByteCodeIndex ) {
                 ok = false;
                 error( "SinglyAssignedPseudoRegister 0x{0:x} %s: live range only partially set", this, name() );
             }
         } else if ( _scope->isInlinedScope() ) {
             std::int32_t ncodes = scope()->nofBytes();
-            if ( creationStartByteCodeIndex < PrologueByteCodeIndex or creationStartByteCodeIndex > creationScope()->nofBytes() ) {
+            if ( _creationStartByteCodeIndex < PrologueByteCodeIndex or _creationStartByteCodeIndex > creationScope()->nofBytes() ) {
                 ok = false;
-                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: invalid creationStartByteCodeIndex %ld", this, name(), creationStartByteCodeIndex );
+                error( "SinglyAssignedPseudoRegister 0x{0:x} %s: invalid _creationStartByteCodeIndex %ld", this, name(), _creationStartByteCodeIndex );
             }
             if ( _begByteCodeIndex < PrologueByteCodeIndex or _begByteCodeIndex > ncodes ) {
                 ok = false;

@@ -32,6 +32,7 @@ void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
     // Take care of the block methods
     CodeIterator c( this );
     do {
+
         switch ( c.code() ) {
             case ByteCodes::Code::push_new_closure_tos_0:      // fall through
             case ByteCodes::Code::push_new_closure_tos_1:      // fall through
@@ -51,8 +52,10 @@ void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
                 block_method->decay_invocation_count( decay_factor );
             }
                 break;
-            default: nullptr;
+            default:
+                nullptr;
         }
+
     } while ( c.advance() );
 }
 
@@ -227,8 +230,8 @@ public:
     GrowableArray<Oop> *result;
 
 
-    methodStream() {
-        result = new GrowableArray<Oop>( 1000 );
+    methodStream() :
+        result{ new GrowableArray<Oop>( 1000 ) } {
     }
 
 
@@ -272,7 +275,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
 
     CodeIterator c( this );
     do {
-        if ( ByteCodes::send_type( c.code() ) not_eq ByteCodes::SendType::no_send ) {
+        if ( ByteCodes::send_type( c.code() ) not_eq ByteCodes::SendType::NO_SEND ) {
             // Send
             ByteCodes::Code original = ByteCodes::original_send_code_for( c.code() );
             out.put_byte( static_cast<std::int32_t>(original) );
@@ -394,7 +397,7 @@ MethodOopDescriptor::Block_Info MethodOopDescriptor::block_info() const {
 
 bool MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) const {
     CodeIterator c( MethodOop( this ), byteCodeIndex );
-    return c.code_type() == ByteCodes::CodeType::new_context;
+    return c.code_type() == ByteCodes::CodeType::NEW_CONTEXT;
 }
 
 
@@ -503,7 +506,8 @@ void MethodOopDescriptor::clear_inline_caches() {
                     block_method->clear_inline_caches();
                 }
                     break;
-                default: nullptr;
+                default:
+                    nullptr;
             }
         }
     } while ( c.advance() );
@@ -573,7 +577,8 @@ std::int32_t MethodOopDescriptor::estimated_inline_cost( KlassOop receiverKlass 
                 cost += m->estimated_inline_cost( receiverKlass );
                 break;
             }
-            default: nullptr;
+            default:
+                nullptr;
         }
         extern bool SuperSendsAreAlwaysInlined;
         if ( ByteCodes::is_super_send( c.code() ) and SuperSendsAreAlwaysInlined and receiverKlass ) {
@@ -660,7 +665,7 @@ bool MethodOopDescriptor::is_primitiveMethod() const {
 ByteCodes::Code MethodOopDescriptor::special_primitive_code() const {
     st_assert( is_special_primitiveMethod(), "should only be called for special primitive methods" );
     ByteCodes::Code code = ByteCodes::Code( *codes( 2 ) );
-    st_assert( ByteCodes::send_type( code ) == ByteCodes::SendType::predicted_send, "code or bytecode table inconsistent" );
+    st_assert( ByteCodes::send_type( code ) == ByteCodes::SendType::PREDICTED_SEND, "code or bytecode table inconsistent" );
     return code;
 }
 
@@ -715,7 +720,7 @@ MethodOop MethodOopDescriptor::block_method_at( std::int32_t byteCodeIndex ) {
             break;
 
         default:
-            (void)0;
+            (void) 0;
     }
 
     return nullptr;
@@ -853,7 +858,8 @@ void MethodOopDescriptor::customize_for( KlassOop klass, MixinOop mixin ) {
                 block_method->customize_for( klass, mixin );
             }
                 break;
-            default: nullptr;
+            default:
+                nullptr;
         }
     } while ( c.advance() );
     // set customized flag
@@ -908,7 +914,8 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
                 block_method->uncustomize_for( mixin );
             }
                 break;
-            default: nullptr;
+            default:
+                nullptr;
         }
     } while ( c.advance() );
 
@@ -1278,8 +1285,9 @@ private:
 
     void collect( std::int32_t offset ) {
         SymbolOop name = _mixin->primary_invocation()->klass_part()->inst_var_name_at( offset );
-        if ( name )
+        if ( name ) {
             _result->append( name );
+        }
     }
 
 
@@ -1310,9 +1318,9 @@ public:
 
 
 public:
-    ReferencedInstVarNamesClosure( std::int32_t size, MixinOop mixin ) {
-        _result = new GrowableArray<Oop>( size );
-        _mixin  = mixin;
+    ReferencedInstVarNamesClosure( std::int32_t size, MixinOop mixin ) :
+        _result{ new GrowableArray<Oop>( size ) },
+        _mixin{ mixin } {
     }
 
 
@@ -1358,8 +1366,8 @@ public:
 
 
 public:
-    ReferencedClassVarNamesClosure( std::int32_t size ) {
-        _result = new GrowableArray<Oop>( size );
+    ReferencedClassVarNamesClosure( std::int32_t size ) :
+        _result{ new GrowableArray<Oop>( size ) } {
     }
 
 
@@ -1393,9 +1401,8 @@ public:
     }
 
 
-public:
-    ReferencedGlobalsClosure( std::int32_t size ) {
-        result = new GrowableArray<Oop>( size );
+    ReferencedGlobalsClosure( std::int32_t size ) :
+        result{ new GrowableArray<Oop>( size ) } {
     }
 
 
@@ -1493,8 +1500,8 @@ public:
 
 
 public:
-    SendersClosure( std::int32_t size ) {
-        result = new GrowableArray<Oop>( size );
+    SendersClosure( std::int32_t size ) :
+        result{ new GrowableArray<Oop>( size ) } {
     }
 
 
@@ -1577,7 +1584,7 @@ bool shouldStop( const char *name, Oop method_or_selector, const char *class_nam
 
 
 StopInSelector::StopInSelector( const char *class_name, const char *name, KlassOop klass, Oop method_or_selector, bool &fl, bool stop ) :
-    enable( shouldStop( name, method_or_selector, class_name, klass ) ), stop( stop ), oldFlag( enable ? fl : ignored, true )  {
+    enable( shouldStop( name, method_or_selector, class_name, klass ) ), stop( stop ), oldFlag( enable ? fl : ignored, true ) {
     if ( enable and stop )
         breakpoint();
 }

@@ -57,8 +57,12 @@ void *NativeMethod::operator new( std::size_t size ) {
 
     st_assert( sizeof( NativeMethod ) % OOP_SIZE == 0, "NativeMethod size must be multiple of a word" );
     std::int32_t nativeMethod_size = sizeof( NativeMethod ) + instruction_length + location_length + scope_length + roundTo( ( nof_noninlined_blocks ) * sizeof( std::uint16_t ), OOP_SIZE );
-    void         *p                = Universe::code->allocate( nativeMethod_size );
-    if ( not p ) st_fatal( "out of Space in code cache" );
+
+    void *p = Universe::code->allocate( nativeMethod_size );
+    if ( not p ) {
+        st_fatal( "out of Space in code cache" );
+    }
+
     return p;
 }
 
@@ -88,6 +92,17 @@ void NativeMethod::initForTesting( std::int32_t size, LookupKey *key ) {
 
 
 NativeMethod::NativeMethod( Compiler *c ) :
+
+//    _instructionsLength{},
+//    _locsLen{},
+    _scopeLen{},
+    _mainId{},
+    _promotedId{},
+    _numberOfNoninlinedBlocks{},
+    _invocationCount{},
+    _uncommonTrapCounter{},
+    _numberOfLinks{},
+
     _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
 
     LookupCache::verify();
@@ -103,10 +118,6 @@ NativeMethod::NativeMethod( Compiler *c ) :
     _promotedId = c->promoted_jumpTable_id;
 
     _numberOfNoninlinedBlocks = nof_noninlined_blocks;
-
-    _invocationCount     = 0;
-    _uncommonTrapCounter = 0;
-    _numberOfLinks       = 0;
 
     _specialHandlerCallOffset = theCompiler->special_handler_call_offset();
     _entryPointOffset         = theCompiler->entry_point_offset();
@@ -723,7 +734,8 @@ void NativeMethod::verify_expression_stacks() {
                     verify_expression_stacks_at( iter.primIC()->begin_addr() );
                 }
                 break;
-            default: nullptr;
+            default:
+                nullptr;
         }
     }
 }
@@ -965,7 +977,8 @@ void NativeMethod::overwrite_for_trapping( nativeMethod_patch *data ) {
                 break;
             case RelocationInformation::RelocationType::uncommon_type:
                 break;
-            default: nullptr;
+            default:
+                nullptr;
         }
     }
 }

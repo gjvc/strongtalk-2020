@@ -16,10 +16,10 @@
 #include "vm/memory/Array.hpp"
 
 
-Array::Array( std::int32_t sz ) {
-    _size   = sz;
-    _index  = 0;
-    _values = new_resource_array<std::int32_t>( sz );
+Array::Array( std::int32_t sz ) :
+    _size{ sz },
+    _index{ 0 },
+    _values{ new_resource_array<std::int32_t>( sz ) } {
 }
 
 
@@ -52,21 +52,25 @@ void Array::copy_to( std::int32_t *&addr ) {
 }
 
 
-ByteArray::ByteArray( std::int32_t size ) {
-    _array = new_resource_array<std::uint8_t>( size );
-    _max   = size;
-    _top   = 0;
+ByteArray::ByteArray( std::int32_t size ) :
+    _array{ new_resource_array<std::uint8_t>( size ) },
+    _max{ size },
+    _top{ 0 } {
 }
 
 
 void ByteArray::extend() {
+
+    //
     std::int32_t newMax    = _max * 2;
     std::uint8_t *newArray = new_resource_array<std::uint8_t>( newMax );
 
+    //
     for ( std::int32_t i = 0; i < _top; i++ ) {
         newArray[ i ] = _array[ i ];
     }
 
+    //
     _array = newArray;
     _max   = newMax;
 }

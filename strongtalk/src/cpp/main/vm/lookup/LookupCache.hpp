@@ -59,7 +59,7 @@ public:
     // Lookup support for LookupKey
     static LookupResult lookup( LookupKey *key );
 
-    // Lookup support for megamorphic sends (no super sends)
+    // Lookup support for MEGAMORPHIC sends (no super sends)
     static Oop normal_lookup( KlassOop receiver_klass, SymbolOop selector );            // returns {methodOop or jump table entry}
 
     // Flushing

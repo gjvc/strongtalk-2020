@@ -141,7 +141,7 @@ void FlatProfiler::record_tick_for_calling_frame( Frame fr ) {
             return;
         st_assert( method->is_method(), "must be method" );
         std::int32_t byteCodeIndex = method->byteCodeIndex_from( fr.hp() );
-        if ( ByteCodes::code_type( (ByteCodes::Code) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::primitive_call ) {
+        if ( ByteCodes::code_type( (ByteCodes::Code) *method->codes( byteCodeIndex ) ) == ByteCodes::CodeType::PRIMITIVE_CALL ) {
             where = TickPosition::in_primitive;
         }
         FlatProfiler::interpreted_update( method, fr.receiver()->klass(), where );
@@ -492,12 +492,12 @@ void ProfiledNode::update( TickPosition where ) {
 }
 
 
-TickCounter::TickCounter() {
-    ticks_in_code       = 0;
-    ticks_in_primitives = 0;
-    ticks_in_compiler   = 0;
-    ticks_in_pics       = 0;
-    ticks_in_other      = 0;
+TickCounter::TickCounter() :
+    ticks_in_code{ 0 },
+    ticks_in_primitives{ 0 },
+    ticks_in_compiler{ 0 },
+    ticks_in_pics{ 0 },
+    ticks_in_other{ 0 } {
 }
 
 

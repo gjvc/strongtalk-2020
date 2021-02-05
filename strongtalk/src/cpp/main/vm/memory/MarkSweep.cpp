@@ -34,9 +34,9 @@ private:
     oopAssoc       *next;
 
 public:
-    OopChunk() {
-        oop_end = oop_start + 1000 - 1; // account for pre-increment in append
-        next    = oop_start - 1;
+    OopChunk() :
+        oop_end{ oop_start + 1000 - 1 },// account for pre-increment in append
+        next{ oop_start - 1 } {
     }
 
 
@@ -65,6 +65,7 @@ public:
     }
 };
 
+
 class OopRelocations : public ResourceObject {
 private:
     GrowableArray<OopChunk *> *chunks;
@@ -78,8 +79,8 @@ private:
 
 
 public:
-    OopRelocations() {
-        chunks = new GrowableArray<OopChunk *>( 10 );
+    OopRelocations() :
+        chunks{ new GrowableArray<OopChunk *>( 10 ) } {
         newChunk();
     }
 

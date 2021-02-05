@@ -18,12 +18,19 @@
 // _freeList->at(i) >= 0: unused, entry is index to next unused entry or sentinel
 // _freeList->at(i) <  0: used, entry is negative reference count
 
-Locations::Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofInitialStackTmps ) {
+Locations::Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofInitialStackTmps ) :
+
+    _nofArguments{ nofArgs },
+    _nofRegisters{ nofRegs },
+    _freeList{ nullptr },
+    _firstFreeRegister{ 0 },
+    _firstFreeStackTmp{ 0 } {
+
+    //
     st_assert( 0 <= nofArgs, "illegal number of arguments" );
     st_assert( 0 <= nofRegs and nofRegs <= maxNofUsableRegisters, "too many registers required" );
-    _nofArguments = nofArgs;
-    _nofRegisters = nofRegs;
-    _freeList     = new GrowableArray<std::int32_t>( nofArgs + nofRegs + nofInitialStackTmps );
+
+    _freeList = new GrowableArray<std::int32_t>( nofArgs + nofRegs + nofInitialStackTmps );
     std::int32_t i = 0;
 
     // initialize argument reference counts
@@ -51,7 +58,13 @@ Locations::Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t n
 }
 
 
-Locations::Locations( Locations *l ) {
+Locations::Locations( Locations *l ) :
+    _nofArguments{ 0 },
+    _nofRegisters{ 0 },
+    _freeList{ nullptr },
+    _firstFreeRegister{ 0 },
+    _firstFreeStackTmp{ 0 } {
+
     l->verify();
     _nofArguments      = l->_nofArguments;
     _nofRegisters      = l->_nofRegisters;
@@ -59,6 +72,7 @@ Locations::Locations( Locations *l ) {
     _firstFreeRegister = l->_firstFreeRegister;
     _firstFreeStackTmp = l->_firstFreeStackTmp;
     verify();
+
 }
 
 
@@ -68,16 +82,21 @@ void Locations::extendTo( std::int32_t newValue ) {
         _freeList->append( _firstFreeStackTmp );
         _firstFreeStackTmp = _freeList->length() - 1;
     }
+
+    //
     verify();
 }
 
 
 std::int32_t Locations::allocateRegister() {
     std::int32_t i = _firstFreeRegister;
-    if ( not isRegister( i ) ) st_fatal( "out of registers" );
+    if ( not isRegister( i ) ) {
+        st_fatal( "out of registers" );
+    }
     _firstFreeRegister = _freeList->at( i );
     _freeList->at_put( i, -1 ); // initialize reference count
     verify();
+
     return i;
 }
 

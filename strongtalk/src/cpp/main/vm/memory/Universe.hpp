@@ -400,7 +400,10 @@ public:
     static std::int32_t page_size();
 };
 
-#define STORE_OOP( ADDR, VALUE ) Universe::store((Oop*) ADDR, (Oop) VALUE)
+// #define STORE_OOP( ADDR, VALUE ) {Universe::store((Oop*) ADDR, (Oop) VALUE)}
+inline void STORE_OOP( const auto &ADDR, const auto &VALUE ) {
+    Universe::store( (Oop *) ADDR, (Oop) VALUE );
+}
 
 
 inline void scavenge_oop( Oop *p ) {

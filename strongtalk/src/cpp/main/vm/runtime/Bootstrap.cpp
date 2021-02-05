@@ -31,12 +31,18 @@
 
 // -----------------------------------------------------------------------------
 
-Bootstrap::Bootstrap( const std::string &name ) {
-    _filename           = name;
-    _number_of_oops     = 0;
-    _max_number_of_oops = 512 * 1024;
-    _objectCount        = 0;
-    _oop_table          = new_c_heap_array<Oop>( _max_number_of_oops );
+Bootstrap::Bootstrap( const std::string &name ) :
+    _filename{ name },
+    _number_of_oops{ 0 },
+    _max_number_of_oops{ 512 * 1024 },
+    _new_format{ false },
+    _objectCount{ 0 },
+//    _filename{},
+    _stream{},
+    _oop_table{ nullptr } {
+
+    //
+    _oop_table = new_c_heap_array<Oop>( _max_number_of_oops );
 }
 
 
@@ -403,7 +409,7 @@ Oop Bootstrap::readNextObject() {
             klass_case_func( setKlassVirtualTableFromVirtualFrameKlass, memOop );
             break;
 
-        // Objects
+            // Objects
         case 'a': // 
         st_fatal( "klass" );
             break;
@@ -435,25 +441,25 @@ Oop Bootstrap::readNextObject() {
             object_case_func<MethodOop>( memOop );
             break;
         case 'k': // 
-            st_fatal( "blockClosure" );
+        st_fatal( "blockClosure" );
             break;
         case 'l': // 
-            st_fatal( "context" );
+        st_fatal( "context" );
             break;
         case 'm': // 
-            st_fatal( "proxy" );
+        st_fatal( "proxy" );
             break;
         case 'n': // 
             object_case_func<MixinOop>( memOop );
             break;
         case 'o': // 
-            st_fatal( "weakArrayOop" );
+        st_fatal( "weakArrayOop" );
             break;
         case 'p': // 
             object_case_func<ProcessOop>( memOop );
             break;
         default: // 
-            st_fatal( "unknown object typeByte" );
+        st_fatal( "unknown object typeByte" );
     }
 
     return memOop;

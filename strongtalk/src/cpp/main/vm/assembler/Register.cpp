@@ -11,7 +11,14 @@
 #include <array>
 
 std::array<const char *, REGISTER_COUNT> registerNames = {
-    "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"
+    "eax",  //
+    "ecx",  //
+    "edx",  //
+    "ebx",  //
+    "esp",  //
+    "ebp",  //
+    "esi",  //
+    "edi"   //
 };
 
 

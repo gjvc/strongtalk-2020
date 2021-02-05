@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -5,19 +6,21 @@
 
 #pragma once
 
-
 #include "vm/memory/allocation.hpp"
-
-class ResourceArea;
-
-class ResourceAreaChunk;
 
 
 // A resource mark releases all resources allocated after it was created when the mark is deleted.  Typically used as a local variable.
 
 class AbstractResourceMark : StackAllocatedObject {
-
+private:
+public:
 };
+
+
+//
+class ResourceArea;
+
+class ResourceAreaChunk;
 
 
 class ResourceMark : StackAllocatedObject {
@@ -35,6 +38,7 @@ public:
 };
 
 
+//
 class HeapResourceMark : public CHeapAllocatedObject, public ResourceMark {
 public:
     HeapResourceMark() :

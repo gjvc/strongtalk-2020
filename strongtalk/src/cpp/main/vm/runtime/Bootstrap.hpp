@@ -32,6 +32,9 @@ private:
     std::map<char, std::int32_t> _countByType{};
     std::map<char, std::string>  _nameByTypeByte{};
 
+    Bootstrap( const Bootstrap & ); // private copy constructor -> cannot copy [-Weffc++]
+    const Bootstrap &operator=( const Bootstrap & ); // private assignment operator -> cannot assign[-Weffc++]
+
 public:
     Bootstrap( const std::string &name );
     ~Bootstrap();

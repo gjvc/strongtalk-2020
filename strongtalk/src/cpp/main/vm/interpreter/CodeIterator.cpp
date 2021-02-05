@@ -39,10 +39,10 @@ CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) 
 }
 
 
-CodeIterator::CodeIterator( std::uint8_t *hp ) {
-    _methodOop = MethodOopDescriptor::methodOop_from_hcode( hp );
-    _current   = hp;
-    _end       = _methodOop->codes_end();
+CodeIterator::CodeIterator( std::uint8_t *hp ) :
+    _methodOop{ MethodOopDescriptor::methodOop_from_hcode( hp ) },
+    _current{ hp },
+    _end{ _methodOop->codes_end() } {
 }
 
 
@@ -186,7 +186,8 @@ Oop *CodeIterator::block_method_addr() {
         case ByteCodes::Code::push_new_closure_tos_n:      // fall through
         case ByteCodes::Code::push_new_closure_context_n:
             return aligned_oop( 2 );
-        default: return nullptr;
+        default:
+            return nullptr;
     }
     return nullptr;
 }
@@ -204,7 +205,8 @@ MethodOop CodeIterator::block_method() {
         case ByteCodes::Code::push_new_closure_tos_n:      // fall through
         case ByteCodes::Code::push_new_closure_context_n:
             return MethodOop( oop_at( 2 ) );
-        default: return nullptr;
+        default:
+            return nullptr;
     }
     return nullptr;
 }

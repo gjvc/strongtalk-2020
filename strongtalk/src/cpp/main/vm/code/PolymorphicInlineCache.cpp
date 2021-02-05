@@ -56,7 +56,7 @@
 // 16 + n*12 + i*8 + 4	: methodOop
 //
 //
-// Layout c)		(megamorphic inline cache, selector only)
+// Layout c)		(MEGAMORPHIC inline cache, selector only)
 //
 //  0			: call MIC stub routine
 //  5			: selector
@@ -186,12 +186,15 @@ public:
     }
 
 
-    PolymorphicInlineCacheContents() {
-        smi_nativeMethod = nullptr;
-        smi_methodOop    = nullptr;
-        n                = 0;
-        m                = 0;
+    //
+    PolymorphicInlineCacheContents() :
+        smi_nativeMethod{ nullptr },
+        smi_methodOop{ nullptr },
+        n{ 0 },
+        m{ 0 } {
     }
+
+
 };
 
 
@@ -224,19 +227,26 @@ void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop me
 
 // Implementation of PolymorphicInlineCache_Iterators
 
-PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic ) {
-    _pic = pic;
+PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic ) :
+
+    _pic{ pic },
+    _pos{ nullptr } {
+
+    //
     _pos = pic->entry();
+
     // determine initial state
     if ( pic->is_megamorphic() ) {
         // MIC -> do not use cached information
         st_assert( get_disp( _pos + 1 ) == StubRoutines::megamorphic_ic_entry(), "MIC stub expected" );
         _state = at_the_end;
+
     } else if ( *_pos == call_opcode ) {
         // PolymorphicInlineCache without nativeMethods
         _state             = at_methodOop;
         _methodOop_counter = PolymorphicInlineCache::nof_entries( get_disp( _pos + 1 ) );
         _pos += static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_only_offset);
+
     } else {
         // nativeMethods -> handle smis first
         const char *dest = get_disp( _pos + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset ) );
@@ -394,8 +404,9 @@ bool PolymorphicInlineCacheIterator::is_interpreted() const {
 
 
 NativeMethod *PolymorphicInlineCacheIterator::compiled_method() const {
-    if ( not is_compiled() )
+    if ( not is_compiled() ) {
         return nullptr;
+    }
     return findNativeMethod( get_call_addr() - sizeof( NativeMethod ) );
 }
 
@@ -435,7 +446,7 @@ SymbolOop *PolymorphicInlineCache::MegamorphicInlineCache_selector_address() con
 
 
 PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
-    // nothing to do in megamorphic case
+    // nothing to do in MEGAMORPHIC case
     if ( is_megamorphic() )
         return this;
 
@@ -446,8 +457,10 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
 
     { // do the replace without creating a new PolymorphicInlineCache if possible
         PolymorphicInlineCacheIterator it( this );
-        while ( it.get_klass() not_eq nm->_lookupKey.klass() )
+        while ( it.get_klass() not_eq nm->_lookupKey.klass() ) {
             it.advance();
+        }
+
         st_assert( not it.at_end(), "unexpected end during replace" );
         if ( it.is_compiled() ) {
             it.set_nativeMethod( nm );
@@ -480,7 +493,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
 
 
 PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
-    // nothing to do in megamorphic case
+    // nothing to do in MEGAMORPHIC case
     if ( is_megamorphic() )
         return this;
 
@@ -565,8 +578,9 @@ PolymorphicInlineCache *PolymorphicInlineCache::cleanup( NativeMethod **nm ) {
 std::int32_t PolymorphicInlineCache::nof_entries( const char *pic_stub ) {
     std::int32_t i = 1;
     while ( true ) {
-        if ( pic_stub == StubRoutines::PolymorphicInlineCache_stub_entry( i ) )
+        if ( pic_stub == StubRoutines::PolymorphicInlineCache_stub_entry( i ) ) {
             return i;
+        }
         i++;
     }
     ShouldNotReachHere();
@@ -765,7 +779,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *i
 
 
 PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::int32_t allocated_code_size ) {
-    st_assert( contents->number_of_targets() >= 1, "at least one entry needed for non-megamorphic case" );
+    st_assert( contents->number_of_targets() >= 1, "at least one entry needed for non-MEGAMORPHIC case" );
     _ic              = ic;
     _numberOfTargets = contents->number_of_targets();
     _codeSize        = code_for_polymorphic_case( entry(), contents );
@@ -775,7 +789,7 @@ PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, Polymor
 
 PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic ) {
     _ic              = ic;
-    _numberOfTargets = 0; // indicates megamorphic case
+    _numberOfTargets = 0; // indicates MEGAMORPHIC case
     _codeSize        = code_for_megamorphic_case( entry() );
     st_assert( code_size() == static_cast<std::int32_t>( PolymorphicInlineCache::Constant::MegamorphicInlineCache_code_size ), "Please adjust PolymorphicInlineCacheContents::code_size()" );
 }
@@ -804,7 +818,8 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
                     f( (Oop *) it.methodOop_addr() );  // fall through
                 case PolymorphicInlineCacheIterator::at_nativeMethod:
                     f( (Oop *) it.klass_addr() );
-                default: nullptr;
+                default:
+                    nullptr;
             }
             it.advance();
         }

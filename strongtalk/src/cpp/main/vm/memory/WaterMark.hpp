@@ -15,7 +15,14 @@ class NewWaterMark : ValueObject {
 public:
     Oop *_point;
 
+
+    NewWaterMark() :
+        ValueObject(),
+        _point{ nullptr } {
+    }
+
 };
+
 
 class OldSpace;
 
@@ -25,6 +32,13 @@ public:
     Oop      *_point;
 
     Oop *pseudo_allocate( std::int32_t size );
+
+
+    OldWaterMark() :
+        ValueObject(),
+        _point{ nullptr },
+        _space{ nullptr } {
+    }
 };
 
 

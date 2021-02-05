@@ -117,7 +117,7 @@ Location Mapping::contextTemporary( std::int32_t contextNo, std::int32_t i, std:
 
 Location *Mapping::new_contextTemporary( std::int32_t contextNo, std::int32_t i, std::int32_t scope_id ) {
     st_assert( ( 0 <= contextNo ) and ( 0 <= i ), "illegal context or temporary no" );
-    return new Location( Mode::CONTEXT_LOCATIION_1, contextNo, i, scope_id );
+    return new Location( LocationMode::CONTEXT_LOCATIION_1, contextNo, i, scope_id );
 }
 
 
@@ -148,7 +148,7 @@ bool Mapping::isFloatTemporary( Location loc ) {
 void Mapping::load( const Location &src, const Register &dst ) {
 
     switch ( src.mode() ) {
-        case Mode::SPECIAL_LOCATION: {
+        case LocationMode::SPECIAL_LOCATION: {
             if ( src == Location::RESULT_OF_NON_LOCAL_RETURN ) {
                 // treat as NonLocalReturn_result_reg
                 if ( NonLocalReturn_result_reg not_eq dst )
@@ -158,18 +158,18 @@ void Mapping::load( const Location &src, const Register &dst ) {
             }
             break;
         }
-        case Mode::REGISTER_LOCATION: {
+        case LocationMode::REGISTER_LOCATION: {
             Register s = asRegister( src );
             if ( s not_eq dst )
                 theMacroAssembler->movl( dst, s );
             break;
         }
-        case Mode::STACK_LOCATION: {
+        case LocationMode::STACK_LOCATION: {
             st_assert( isNormalTemporary( src ), "must be a normal temporary location" );
             theMacroAssembler->Load( ebp, src.offset() * OOP_SIZE, dst );
             break;
         }
-        case Mode::CONTEXT_LOCATIION_1: {
+        case LocationMode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( src.contextNo() )->context();
             load( base->_location, dst );
             theMacroAssembler->Load( dst, contextOffset( src.tempNo() ), dst );
@@ -187,7 +187,7 @@ void Mapping::store( Register src, const Location &dst, const Register &temp1, c
 
     st_assert( src not_eq temp1 and src not_eq temp2 and temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
-        case Mode::SPECIAL_LOCATION: {
+        case LocationMode::SPECIAL_LOCATION: {
             if ( dst == Location::TOP_OF_STACK ) {
                 theMacroAssembler->pushl( src );
             } else {
@@ -195,18 +195,18 @@ void Mapping::store( Register src, const Location &dst, const Register &temp1, c
             }
             break;
         }
-        case Mode::REGISTER_LOCATION: {
+        case LocationMode::REGISTER_LOCATION: {
             Register d = asRegister( dst );
             if ( d not_eq src )
                 theMacroAssembler->movl( d, src );
             break;
         }
-        case Mode::STACK_LOCATION: {
+        case LocationMode::STACK_LOCATION: {
             st_assert( isNormalTemporary( dst ), "must be a normal temporary location" );
             theMacroAssembler->Store( src, ebp, dst.offset() * OOP_SIZE );
             break;
         }
-        case Mode::CONTEXT_LOCATIION_1: {
+        case LocationMode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->Store( src, temp1, contextOffset( dst.tempNo() ) );
@@ -226,7 +226,7 @@ void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const
 
     st_assert( temp1 not_eq temp2, "registers must be different" );
     switch ( dst.mode() ) {
-        case Mode::SPECIAL_LOCATION: {
+        case LocationMode::SPECIAL_LOCATION: {
             if ( dst == Location::TOP_OF_STACK ) {
                 theMacroAssembler->pushl( obj );
             } else {
@@ -234,16 +234,16 @@ void Mapping::storeO( Oop obj, const Location &dst, const Register &temp1, const
             }
             break;
         }
-        case Mode::REGISTER_LOCATION: {
+        case LocationMode::REGISTER_LOCATION: {
             theMacroAssembler->movl( asRegister( dst ), obj );
             break;
         }
-        case Mode::STACK_LOCATION: {
+        case LocationMode::STACK_LOCATION: {
             st_assert( isNormalTemporary( dst ), "must be a normal temporary location" );
             theMacroAssembler->movl( Address( ebp, dst.offset() * OOP_SIZE ), obj );
             break;
         }
-        case Mode::CONTEXT_LOCATIION_1: {
+        case LocationMode::CONTEXT_LOCATIION_1: {
             PseudoRegister *base = theCompiler->contextList->at( dst.contextNo() )->context();
             load( base->_location, temp1 );
             theMacroAssembler->movl( Address( temp1, contextOffset( dst.tempNo() ) ), obj );

@@ -270,7 +270,7 @@ public:
 
 
 class UninlinableRecompilationScope : public NullRecompilationScope {
-    // scope marking "callee" of an uninlinable or megamorphic send
+    // scope marking "callee" of an uninlinable or MEGAMORPHIC send
 public:
     UninlinableRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex );        // for interpreted senders
 
@@ -354,6 +354,7 @@ protected:
 
     friend class InliningDatabase;
 };
+
 
 class InterpretedRecompilationScope : public NonDummyRecompilationScope {
     // a scope corresponding to an interpreted method
@@ -542,6 +543,7 @@ protected:
     friend NonDummyRecompilationScope *NonDummyRecompilationScope::constructRScopes( const NativeMethod *nm, bool trusted, std::int32_t level );
 };
 
+
 class InliningDatabaseRecompilationScope : public NonDummyRecompilationScope {
     // a scope created from the inlining database
 private:
@@ -592,6 +594,7 @@ public:
 
     void print_short();
 };
+
 
 class UntakenRecompilationScope : public NonDummyRecompilationScope {
     //  send/inline cache that was never executed (either an empty ic or an untaken uncommon branch)
@@ -665,9 +668,9 @@ public:
     RecompilationScope       *scope;
     ProgramCounterDescriptor *programCounterDescriptor;        // where the trap instruction is
 
-    RUncommonBranch( RecompilationScope *r, ProgramCounterDescriptor *pc ) {
-        scope                    = r;
-        programCounterDescriptor = pc;
+    RUncommonBranch( RecompilationScope *r, ProgramCounterDescriptor *pc ) :
+        scope{ r },
+        programCounterDescriptor{ pc } {
     }
 
 

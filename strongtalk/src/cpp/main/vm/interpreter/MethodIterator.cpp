@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -13,16 +14,26 @@
 #include "vm/oops/AssociationOopDescriptor.hpp"
 
 
-
-
 // MethodInterval
 
-MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent ) {
+MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent ) :
+    _method{ method },
+    _parent{ parent },
+    _begin_byteCodeIndex{ 1 },
+    _end_byteCodeIndex{ method->end_byteCodeIndex() },
+    _in_primitive_failure{ false },
+    _info{ nullptr } {
     initialize( method, parent, 1, method->end_byteCodeIndex(), false );
 }
 
 
-MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool failBlock ) {
+MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex, bool failBlock ) :
+    _method{ method },
+    _parent{ parent },
+    _begin_byteCodeIndex{ 1 },
+    _end_byteCodeIndex{ end_byteCodeIndex },
+    _in_primitive_failure{ failBlock },
+    _info{ nullptr } {
     initialize( method, parent, begin_byteCodeIndex, end_byteCodeIndex, failBlock );
 }
 
@@ -79,7 +90,10 @@ SymbolOop OrNode::selector() const {
 // WhileNode
 
 WhileNode::WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex ),
+    _cond{ false },
+    _expr_code{ nullptr },
+    _body_code{ nullptr } {
 
     CodeIterator c( method, next_byteCodeIndex + cond_offset + end_offset );
     switch ( c.code() ) {
@@ -177,21 +191,27 @@ ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, st
 // PrimitiveCallNode
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ),
+    _name{ nullptr },
+    _has_receiver{ has_receiver },
+    _pdesc{} {
+
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
-    _has_receiver = has_receiver;
-    _name         = ( name == nullptr ) ? pdesc->selector() : name;
-    _pdesc        = ( pdesc == nullptr ) ? Primitives::lookup( name ) : pdesc;
+    _name  = ( name == nullptr ) ? pdesc->selector() : name;
+    _pdesc = ( pdesc == nullptr ) ? Primitives::lookup( name ) : pdesc;
 }
 
 // DLLCallNode
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ),
+    _name{ nullptr },
+    _has_receiver{ has_receiver },
+    _pdesc{} {
+
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
-    _has_receiver = has_receiver;
-    _name         = ( name == nullptr ) ? pdesc->selector() : name;
-    _pdesc        = ( pdesc == nullptr ) ? Primitives::lookup( name ) : pdesc;
+    _name  = ( name == nullptr ) ? pdesc->selector() : name;
+    _pdesc = ( pdesc == nullptr ) ? Primitives::lookup( name ) : pdesc;
 }
 
 
@@ -212,19 +232,25 @@ void DLLCallNode::initialize( Interpreted_DLLCache *cache ) {
 
 
 DLLCallNode::DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, Interpreted_DLLCache *cache ) :
-    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
+    ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ),
+    _dll_name{},
+    _function_name{},
+    _nofArgs{ 0 },
+    _function{},
+    _async{ false } {
     initialize( cache );
 }
 
 
 // MethodClosure
 
-MethodClosure::MethodClosure() {
-    _method               = nullptr;
-    _byteCodeIndex        = _next_byteCodeIndex = PrologueByteCodeIndex;
-    _aborting             = false;
-    _in_primitive_failure = false;
-    _float0_index         = 0;
+MethodClosure::MethodClosure() :
+    _method{ nullptr },
+    _byteCodeIndex{ PrologueByteCodeIndex },
+    _next_byteCodeIndex{ PrologueByteCodeIndex },
+    _aborting{ false },
+    _in_primitive_failure{ false },
+    _float0_index{ 0 } {
 }
 
 
@@ -756,28 +782,28 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             }
             case ByteCodes::Code::ifTrue_byte: {
                 IfNode *node = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.byte_at( 2 ), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::ifTrue_byte: just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifFalse_byte: {
                 IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.byte_at( 2 ), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::ifFalse_byte: just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::and_byte: {
                 AndNode *node      = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::and_byte: just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::or_byte: {
                 OrNode *node       = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::or_byte: just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -793,35 +819,35 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::jump_loop_byte: {
                 WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.byte_at( 2 ), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::jump_loop_byte: just checking" );
                 blk->while_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifTrue_word: {
                 IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), true, iter.word_at( 2 ), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::ifTrue_word: just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::ifFalse_word: {
                 IfNode *node       = MethodIterator::factory->new_IfNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), false, iter.word_at( 2 ), iter.byte_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::ifFalse_word: just checking" );
                 blk->if_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::and_word: {
                 AndNode *node      = MethodIterator::factory->new_AndNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::and_word: just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
             case ByteCodes::Code::or_word: {
                 OrNode *node       = MethodIterator::factory->new_OrNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::or_word: just checking" );
                 blk->cond_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -837,7 +863,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::jump_loop_word: {
                 WhileNode *node = MethodIterator::factory->new_WhileNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.word_at( 1 + OOP_SIZE ), iter.word_at( 1 ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::jump_loop_word: just checking" );
                 blk->while_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -967,7 +993,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc );
                 // %hack: this assertion fails
                 // assert(pdesc->has_receiver() == (iter.code() == ByteCodes::Code::primitive_call_self), "just checking");
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self: just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -980,7 +1006,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
                 PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + OOP_SIZE ) );
                 st_assert( pdesc->has_receiver() == ( iter.code() == ByteCodes::Code::primitive_call_self_failure ), "just checking" );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self_failure: just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -990,7 +1016,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::dll_call_sync: {
                 DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::dll_call_sync: just checking" );
                 blk->dll_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -1006,7 +1032,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
                 PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_lookup, name, nullptr );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self_lookup: just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -1019,7 +1045,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
                 PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + OOP_SIZE ) );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self_failure_lookup just checking" );
                 blk->primitive_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
@@ -1029,7 +1055,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::dll_call_async: {
                 DLLCallNode *node = MethodIterator::factory->new_DLLCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.dll_cache() );
-                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "just checking" );
+                st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::dll_call_async: just checking" );
                 blk->dll_call_node( node );
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;

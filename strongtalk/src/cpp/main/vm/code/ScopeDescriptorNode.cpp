@@ -1,9 +1,9 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/GrowableArray.hpp"
 #include "vm/code/LogicalAddress.hpp"
@@ -17,24 +17,25 @@ constexpr std::int32_t INITIAL_CONTEXT_TEMP_SIZE = 5;
 constexpr std::int32_t INITIAL_EXPR_STACK_SIZE   = 10;
 
 
-ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible ) {
+ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible ) :
 
-    _scopeID                    = scopeID;
-    _method                     = method;
-    _lite                       = lite;
-    _senderByteCodeIndex        = senderByteCodeIndex;
-    _visible                    = visible;
-    _allocates_compiled_context = allocates_compiled_context;
+    _scopeID{ scopeID },
+    _method{ method },
+    _lite{ lite },
+    _senderByteCodeIndex{ senderByteCodeIndex },
+    _visible{ visible },
+    _allocates_compiled_context{ allocates_compiled_context },
 
-    _arg_list          = new GrowableArray<LogicalAddress *>( INITIAL_ARG_SIZE );
-    _temp_list         = new GrowableArray<LogicalAddress *>( INITIAL_TEMP_SIZE );
-    _context_temp_list = new GrowableArray<LogicalAddress *>( INITIAL_CONTEXT_TEMP_SIZE );
-    _expr_stack_list   = new GrowableArray<LogicalAddress *>( INITIAL_EXPR_STACK_SIZE );
+    _arg_list{ new GrowableArray<LogicalAddress *>( INITIAL_ARG_SIZE ) },
+    _temp_list{ new GrowableArray<LogicalAddress *>( INITIAL_TEMP_SIZE ) },
+    _context_temp_list{ new GrowableArray<LogicalAddress *>( INITIAL_CONTEXT_TEMP_SIZE ) },
+    _expr_stack_list{ new GrowableArray<LogicalAddress *>( INITIAL_EXPR_STACK_SIZE ) },
 
-    _offset     = INVALID_OFFSET;
-    _scopesHead = nullptr;
-    _scopesTail = nullptr;
-    _usedInPcs  = false;
+    _offset{ INVALID_OFFSET },
+    _scopesHead{ nullptr },
+    _scopesTail{ nullptr },
+    _usedInPcs{ false } {
+
 }
 
 

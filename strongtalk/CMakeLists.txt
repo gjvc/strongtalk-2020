@@ -21,12 +21,18 @@ if ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 endif ( "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux" )
 
 
+# git -------------------------------------------------------------------------
+
+execute_process ( COMMAND git branch --show-current WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_BRANCH ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
+execute_process ( COMMAND git rev-parse ${GIT_CURRENT_BRANCH} WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" OUTPUT_VARIABLE GIT_CURRENT_REVISION ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE )
+
+
 # toolchain -------------------------------------------------------------------
 
 set ( arch i686 )
 set ( platform w64-mingw32 )
 set ( compiler-family gnu )
-set ( compiler-version 10 )
+set ( compiler-version 11 )
 set ( runtime posix )
 set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
 
@@ -59,10 +65,10 @@ set ( cpp-test-dir ${cpp-src-dir}/test )
 
 # object directories ----------------------------------------------------------
 
-set( fmt-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/fmt/ )
-set( googletest-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/googletest/ )
-set( nasm-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/gnu-make/${build-type}/ext/nasm/ )
-set( spdlog-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/spdlog/ )
+set ( fmt-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/fmt/ )
+set ( googletest-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/googletest/ )
+set ( nasm-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/gnu-make/${build-type}/ext/nasm/ )
+set ( spdlog-object-dir ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}/cmake/${build-type}/ext/spdlog/ )
 
 
 # cmake -----------------------------------------------------------------------
@@ -123,7 +129,11 @@ message ( STATUS "nasm-object-dir       [${nasm-object-dir}]" )
 message ( STATUS "fmt-object-dir        [${fmt-object-dir}]" )
 message ( STATUS "googletest-object-dir [${googletest-object-dir}]" )
 message ( STATUS "" )
+message ( STATUS "GIT_CURRENT_BRANCH    [${GIT_CURRENT_BRANCH}]" )
+message ( STATUS "GIT_CURRENT_REVISION  [${GIT_CURRENT_REVISION}]" )
 message ( STATUS "" )
+message ( STATUS "" )
+
 
 # sources ----------------------------------------------------------------------
 
@@ -146,11 +156,11 @@ include_directories ( SYSTEM ${ext-dir}/spdlog/include )
 
 add_compile_options ( -fpermissive )
 
-
 # library ----------------------------------------------------------------------
 
 file ( GLOB_RECURSE st20-main-library-sources ${CMAKE_SOURCE_DIR} "${cpp-main-dir}/vm/*/*.cpp" "${cpp-auto-dir}/vm/*/*.cpp" )
 list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main.cpp" )
+list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/version.cpp" )
 add_library ( st20-main-library-object OBJECT ${st20-main-library-sources} )
 add_library ( st20-main-library-static STATIC $<TARGET_OBJECTS:st20-main-library-object> )
 
@@ -163,6 +173,8 @@ set_target_properties ( st20-main-binary PROPERTIES OUTPUT_NAME st20-main )
 
 target_link_directories ( st20-main-binary PUBLIC ${spdlog-object-dir} )
 target_link_libraries ( st20-main-binary PUBLIC st20-main-library-static spdlog )
+add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_BRANCH=${GIT_CURRENT_BRANCH} )
+add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
 
 
 # test ------------------------------------------------------------------------

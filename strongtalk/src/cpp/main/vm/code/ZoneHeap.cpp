@@ -32,6 +32,8 @@ ChunkKlass *asChunkKlass( std::uint8_t *c ) {
 
 
 void ChunkKlass::markSize( std::int32_t nChunks, chunkState s ) {
+
+
     // write header
     std::uint8_t *p = asByte();
     std::uint8_t *e = p + nChunks - 1;
@@ -173,7 +175,21 @@ std::int32_t FreeList::length() const {
 }
 
 
-ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) {
+ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) :
+    blockSize{},
+    nfree{ 30 },
+    log2BS{},
+    _bytesUsed{},
+    _total{},
+    _ifrag{},
+    _base{},
+    base{},
+    _heapKlass{},
+    _freeList{},
+    _bigList{},
+    _lastCombine{},
+    _newHeap{},
+    _combineOnDeallocation{} {
 
     st_assert( s % bs == 0, "size not a multiple of blockSize" );
     size = s;

@@ -308,20 +308,23 @@ std::int32_t ScopeDescriptorRecorder::size() {
 }
 
 
-ScopeDescriptorRecorder::ScopeDescriptorRecorder( std::int32_t byte_size, std::int32_t pcDesc_size ) {
-    // size is the initial size of the byte array.
-    _root                         = nullptr;
-    _oops                         = new Array( INITIAL_OOPS_SIZE );
-    _values                       = new Array( INITIAL_VALUES_SIZE );
-    _codes                        = new ByteArray( byte_size );
-    _programCounterDescriptorInfo = new ProgramCounterDescriptorInfoClass( pcDesc_size );
+ScopeDescriptorRecorder::ScopeDescriptorRecorder( std::int32_t byte_size, std::int32_t pcDesc_size ) :
 
-    _dependents = new GrowableArray<KlassOop>( INITIAL_DEPENDENTS_SIZE );
+    _hasCodeBeenGenerated{ false },
 
-    _hasCodeBeenGenerated = false;
+    _oops{ new Array( INITIAL_OOPS_SIZE ) },
+    _values{ new Array( INITIAL_VALUES_SIZE ) },
+    _codes{ new ByteArray( byte_size ) },
+    _programCounterDescriptorInfo{ new ProgramCounterDescriptorInfoClass( pcDesc_size ) },
 
-    _nonInlinedBlockScopeNode  = nullptr;
-    _nonInlinedBlockScopesTail = nullptr;
+    _dependents{ new GrowableArray<KlassOop>( INITIAL_DEPENDENTS_SIZE ) },
+    _dependentsEnd{ 0 },
+
+    _nonInlinedBlockScopeNode{ nullptr },
+    _nonInlinedBlockScopesTail{ nullptr },
+
+    _root{ nullptr } {
+
 }
 
 
@@ -331,7 +334,7 @@ void ScopeDescriptorRecorder::copyTo( NativeMethod *nativeMethod ) {
     NativeMethodScopes *d = (NativeMethodScopes *) nativeMethod->scopes();
 
     // Copy the body part of the NativeMethodScopes
-    std::int32_t *start = (std::int32_t *) ( d + 1 );
+    std::int32_t *start = ( std::int32_t * )( d + 1 );
     std::int32_t *p     = start;
 
     d->set_nativeMethodOffset( (const char *) d - (const char *) nativeMethod );

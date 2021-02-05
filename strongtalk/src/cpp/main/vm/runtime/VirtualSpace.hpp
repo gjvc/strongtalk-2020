@@ -89,6 +89,7 @@ public:
     }
 };
 
+
 class VirtualSpaces : AllStatic {
 private:
     static VirtualSpace *head;

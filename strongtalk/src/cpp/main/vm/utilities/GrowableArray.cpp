@@ -9,32 +9,49 @@
 #include "vm/utilities/OutputStream.hpp"
 
 
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool c_heap ) {
-    _length    = 0;
-    _maxLength = initial_size * 4;
+
+
+// -----------------------------------------------------------------------------
+
+
+
+
+
+// -----------------------------------------------------------------------------
+
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool c_heap ) :
+    _length{ 0 },
+    _maxLength{ initial_size * 4 },
+    _data{ nullptr },
+    _allocatedOnSystemHeap{ c_heap } {
+
     st_assert( _length <= _maxLength, "initial_size too small" );
-    _allocatedOnSystemHeap = c_heap;
     if ( c_heap ) {
         _data = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
     } else {
         _data = new_resource_array<void *>( _maxLength );
     }
+
 }
 
 
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool c_heap ) {
-    _length    = initial_len;
-    _maxLength = initial_size;
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool c_heap ) :
+    _length{ initial_len },
+    _maxLength{ initial_size },
+    _data{ nullptr },
+    _allocatedOnSystemHeap{ c_heap } {
+
     st_assert( _length <= _maxLength, "initial_len too big" );
-    _allocatedOnSystemHeap = c_heap;
     if ( c_heap ) {
         _data = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
     } else {
         _data = new_resource_array<void *>( _maxLength );
     }
+
     for ( std::int32_t i = 0; i < _length; i++ ) {
         _data[ i ] = filler;
     }
+    
 }
 
 

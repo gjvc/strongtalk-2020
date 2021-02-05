@@ -16,22 +16,24 @@
 GrowableArray<BasicBlock *> *CompiledLoop::_bbs;
 
 
-CompiledLoop::CompiledLoop() {
-    _bbs            = nullptr;
-    _startOfLoop    = nullptr;
-    _endOfLoop      = nullptr;
-    _startOfBody    = nullptr;
-    _endOfBody      = nullptr;
-    _startOfCond    = nullptr;
-    _endOfCond      = nullptr;
-    _loopVar        = nullptr;
-    _lowerBound     = nullptr;
-    _upperBound     = nullptr;
-    _isIntegerLoop  = false;
-    _hoistableTests = nullptr;
-    _loopBranch     = nullptr;
-    _isCountingUp   = true;         // initial guess
-    _scope          = nullptr;      // in case loop creation is aborted
+CompiledLoop::CompiledLoop() :
+    _startOfLoop{ nullptr },
+    _beforeLoop{ nullptr },
+    _endOfLoop{ nullptr },
+    _startOfBody{ nullptr },
+    _endOfBody{ nullptr },
+    _startOfCond{ nullptr },
+    _endOfCond{ nullptr },
+    _loopVar{ nullptr },
+    _lowerBound{ nullptr },
+    _upperBound{ nullptr },
+    _isIntegerLoop{ false },
+    _hoistableTests{ nullptr },
+    _loopBranch{ nullptr },
+    _isCountingUp{ true },          // initial guess
+    _scope{ nullptr }               // in case loop creation is aborted
+{
+    CompiledLoop::_bbs = nullptr;
 }
 
 
@@ -725,7 +727,7 @@ void CompiledLoop::findRegCandidates() {
         _bbs = bbIterator->code_generation_order();
 
 
-    GrowableArray<LoopseudoRegisterCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
+    GrowableArray<LoopPseudoRegisterCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
     //const std::int32_t len              = _bbs->length();
     const BasicBlock *startBasicBlock = _startOfLoop->bb();
@@ -746,19 +748,19 @@ void CompiledLoop::findRegCandidates() {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
             if ( candidates.at( r->id() ) == nullptr )
-                candidates.at_put( r->id(), new LoopseudoRegisterCandidate( r ) );
-            LoopseudoRegisterCandidate *c = candidates.at( r->id() );
+                candidates.at_put( r->id(), new LoopPseudoRegisterCandidate( r ) );
+            LoopPseudoRegisterCandidate *c = candidates.at( r->id() );
             c->incDUs( info->_usages.length(), info->_definitions.length() );
         }
     }
     loopHeader()->set_nofCallsInLoop( ncalls );
 
     // find the top 2 candidates...
-    LoopseudoRegisterCandidate *first  = new LoopseudoRegisterCandidate( nullptr );
-    LoopseudoRegisterCandidate *second = new LoopseudoRegisterCandidate( nullptr );
+    LoopPseudoRegisterCandidate *first  = new LoopPseudoRegisterCandidate( nullptr );
+    LoopPseudoRegisterCandidate *second = new LoopPseudoRegisterCandidate( nullptr );
 
     for ( std::int32_t j = candidates.length() - 1; j >= 0; j-- ) {
-        LoopseudoRegisterCandidate *c = candidates.at( j );
+        LoopPseudoRegisterCandidate *c = candidates.at( j );
         if ( c == nullptr )
             continue;
         if ( c->weight() > first->weight() ) {
@@ -817,6 +819,6 @@ void HoistedTypeTest::print() {
 }
 
 
-void LoopseudoRegisterCandidate::print() {
-    spdlog::info( "((LoopseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
+void LoopPseudoRegisterCandidate::print() {
+    spdlog::info( "((LoopPseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
 }

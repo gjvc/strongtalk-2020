@@ -78,9 +78,9 @@ protected:
     bool         _needsLRUSweep;    //
     bool         _needsSweep;       //
 
-    std::int32_t compactTime;                // time of last compaction
-    std::int32_t compactDuration;            // duration of last compaction
-    double       minFreeFrac;             // fraction of free Space needed at compaction time
+    std::int32_t compactTime;       // time of last compaction
+    std::int32_t compactDuration;   // duration of last compaction
+    double       minFreeFrac;       // fraction of free Space needed at compaction time
 
 
 public:
@@ -243,15 +243,22 @@ protected:
 // holds usage information for nativeMethods (or index of next free NativeMethod ID if not assigned to any NativeMethod)
 class LRUcount : ValueObject {
 public:
-    std::uint16_t unused;    // NativeMethod prologue clears BOTH fields to 0
-    std::uint16_t lastUsed;    // time of last use
+    std::uint16_t unused;       // NativeMethod prologue clears BOTH fields to 0
+    std::uint16_t lastUsed;     // time of last use
 
-    LRUcount() {
-        ShouldNotCallThis();
-    } // shouldn't create
     void set( std::int32_t i ) {
         *(std::int32_t *) this = i;
     }
+
+
+private:
+    LRUcount() :
+        unused{},
+        lastUsed{} {
+        ShouldNotCallThis();
+    } // shouldn't create
+
+
 };
 
 extern LRUcount     *LRUtable;      // for optimized methods

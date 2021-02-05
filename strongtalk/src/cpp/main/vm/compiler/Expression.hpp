@@ -419,8 +419,8 @@ private:
 
 public:
     ConstantExpression( Oop c, PseudoRegister *p, Node *n ) :
-        Expression( p, n ) {
-        _c = c;
+        Expression( p, n ),
+        _c{ c } {
     }
 
 

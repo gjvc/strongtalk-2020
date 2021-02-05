@@ -18,6 +18,7 @@ typedef bool (*growableArrayFindFn)( void *token, void *elem );
 
 constexpr std::size_t INITIAL_ARRAY_SIZE{ 32 };
 
+
 class GenericGrowableArray : public PrintableResourceObject {
 
 protected:
@@ -52,6 +53,7 @@ protected:
 
     GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool on_C_heap = false );
 
+
 public:
     void clear();
 
@@ -74,23 +76,32 @@ public:
 
 template<typename T>
 class GrowableArray : public GenericGrowableArray {
+
 private:
     std::vector<T>                    _vector; //
     std::array<T, INITIAL_ARRAY_SIZE> _array; //
+
+
 public:
 
     GrowableArray( std::int32_t initial_size, bool on_C_heap = false ) :
-        GenericGrowableArray( initial_size, on_C_heap ) {
+        GenericGrowableArray( initial_size, on_C_heap ),
+        _vector(),
+        _array() {
     }
 
 
     GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool on_C_heap = false ) :
-        GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ) {
+        GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ),
+        _vector(),
+        _array() {
     }
 
 
     GrowableArray() :
-        GenericGrowableArray( 2 ) {
+        GenericGrowableArray( 2 ),
+        _vector(),
+        _array() {
     }
 
 

@@ -14,8 +14,8 @@
 #include "vm/assembler/Label.hpp"
 
 
-Displacement::Displacement( std::int32_t data ) {
-    _data = data;
+Displacement::Displacement( std::int32_t data ) :
+    _data{ data } {
 }
 
 

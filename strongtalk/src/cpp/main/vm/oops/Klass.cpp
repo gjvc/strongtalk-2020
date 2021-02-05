@@ -68,6 +68,7 @@ Klass::Format Klass::format_from_symbol( SymbolOop format ) {
         return Klass::Format::weakArray_klass;
     if ( format->equals( "Special" ) )
         return Klass::Format::special_klass;
+
     return Klass::Format::no_klass;
 }
 
@@ -129,7 +130,8 @@ bool Klass::has_same_inst_vars_as( KlassOop klass ) {
     if ( as_klassOop() == klass )
         return true;
 
-    Klass        *classPart = klass->klass_part();
+    Klass *classPart = klass->klass_part();
+
     // Check instance size
     std::int32_t ivars      = number_of_instance_variables();
     std::int32_t classIvars = classPart->number_of_instance_variables();

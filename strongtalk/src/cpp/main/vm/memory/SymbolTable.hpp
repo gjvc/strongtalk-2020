@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -33,14 +34,14 @@ std::uint32_t hash( const char *name, std::int32_t len );
 
 
 class SymbolTableLink {
+
 public:
 
-    // instance variable
-    SymbolOop       symbol;
-    SymbolTableLink *next;
+    SymbolOop       _symbol;    //
+    SymbolTableLink *_next;     //
 
-    // memory operations
     bool verify( std::int32_t i );
+
 };
 
 
@@ -92,7 +93,6 @@ public:
 
     std::int32_t length();
 };
-
 
 
 class SymbolTable : public CHeapAllocatedObject {

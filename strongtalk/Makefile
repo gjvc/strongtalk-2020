@@ -28,6 +28,7 @@ this-file-dir   := $(dir $(this-file))
 ROOT            := $(this-file-dir:/=)
 
 
+
 # ==== TOOLS ==================================================================
 
 # ccache ----------------------------------------------------------------------
@@ -39,7 +40,9 @@ export CCACHE_DIR=$(ROOT)/.ccache
 # git -------------------------------------------------------------------------
 
 git-current-branch      := $(shell git branch --show-current)
-git-current-revision    := $(shell git rev-parse $(git-branch))
+git-current-revision    := $(shell git rev-parse $(git-current-branch))
+export GIT_CURRENT_BRANCH=$(git-current-branch)
+export GIT_CURRENT_REVISION=$(git-current-revision)
 
 
 # wine ------------------------------------------------------------------------
@@ -77,10 +80,10 @@ endif
 
 
 ifeq ($(compiler-family),llvm)
-machine                := i686
+machine             := i686
 platform            := linux
 compiler-family     := llvm
-compiler-version    := 10
+compiler-version    := 11
 runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
 
@@ -122,6 +125,8 @@ object-root     := obj/$(object-path)
 object-root-cmake := obj/$(toolchain-name)/cmake/$(build-type)
 
 
+
+
 # ==== EXTERNAL PACKAGES / DEPENDENCIES =======================================
 
 # third-party package object roots --------------------------------------------
@@ -130,15 +135,6 @@ external-package-path               := ext
 external-package-root               := $(ROOT)/ext
 external-package-object-root        := $(ROOT)/obj/$(toolchain-name)/gnu-make/$(build-type)/ext
 external-package-object-root-cmake  := $(ROOT)/obj/$(toolchain-name)/cmake/$(build-type)/ext
-
-
-# spdlog ----------------------------------------------------------------------
-
-spdlog-root-dir         := $(external-package-root)/spdlog
-spdlog-include-paths    := $(spdlog-root-dir)/include
-spdlog-object-dir       := $(external-package-object-root-cmake)/spdlog
-libspdlog-a             := $(spdlog-object-dir)/libspdlog.a
-libspdlog-a-flags       := -L $(spdlog-object-dir) -l spdlog
 
 
 # fmt -------------------------------------------------------------------------
@@ -168,12 +164,26 @@ libnasm-a               := $(external-package-object-root)/nasm/lib/libnasm.a
 libnasm-a-flags         := -L $(nasm-object-dir)/lib -l nasm
 
 
+# spdlog ----------------------------------------------------------------------
+
+spdlog-root-dir         := $(external-package-root)/spdlog
+spdlog-include-paths    := $(spdlog-root-dir)/include
+spdlog-object-dir       := $(external-package-object-root-cmake)/spdlog
+libspdlog-a             := $(spdlog-object-dir)/libspdlog.a
+libspdlog-a-flags       := -L $(spdlog-object-dir) -l spdlog
+
+
+
+
 # ==== BUILDING ===============================================================
 
 # compiler flags --------------------------------------------------------------
 
-cxx-debug-options           := dwarf
+cxx-debug-options           := gdb 3 dwarf-2
 cxx-debug-flags             := $(addprefix -g,$(cxx-debug-options))
+
+cxx-define-options          :=
+cxx-define-flags            := $(addprefix -D,$(cxx-define-options))
 
 cxx-depends-options         := 
 cxx-depends-flags           = -MMD -MP -MT $@ -MF $(object-root)/$*.cpp.depends
@@ -199,10 +209,11 @@ cxx-other-flags             := $(addprefix -,$(cxx-other-options))
 cxx-other-long-options      := 
 cxx-other-long-flags        := $(addprefix --,$(cxx-other-long-options))
 
-cxx-warning-options         := all extra
+cxx-warning-options         := all extra effc++
 cxx-warning-flags           := $(addprefix -W,$(cxx-warning-options))
 
 cxx-compile-flags = \
+    $(cxx-define-flags) \
     $(cxx-machine-flags) \
     $(cxx-debug-flags) \
     $(cxx-depends-flags) \
@@ -224,10 +235,6 @@ libgcc-link-flags := \
 
 
 # ==== RULES ====================================================================
-
-st20-global-define-values   := MINGW_HAS_SECURE_API=1
-st20-global-define-flags    := $(addprefix -D ,$(st20-global-define-values))
-
 
 # st20-main-lib -----------------------------------------------------------------
 
@@ -253,6 +260,9 @@ st20-main-exe               := $(object-root)/st20-main.exe
 st20-main-exe-sources       := $(wildcard src/cpp/main/vm/main/*.cpp)
 st20-main-exe-objects       := $(patsubst %.cpp,$(object-root)/%.cpp.o,$(st20-main-exe-sources))
 st20-main-exe-depends       := $(patsubst %.cpp,$(object-root)/%.cpp.depends,$(st20-main-exe-sources))
+
+st20-main-lib-define-values := GIT_CURRENT_REVISION=$(GIT_CURRENT_REVISION) GIT_CURRENT_BRANCH=$(GIT_CURRENT_BRANCH)
+st20-main-lib-define-flags  := $(addprefix -D ,$(st20-main-lib-define-values))
 
 
 # st20-test-exe -----------------------------------------------------------------
@@ -302,7 +312,7 @@ cmake-build :
 run-clang-tidy :
 	$(run-clang-tidy-py) -p $(object-root) 
 
-help  : 
+help :
 	@echo ""
 	@echo "NAME"
 	@echo ""
@@ -337,6 +347,23 @@ help  :
 	@echo "    this file is [$(THIS-FILE)]"
 	@echo ""
 
+
+settings :
+	@echo ""
+	@echo "ar                      $(ar)"
+	@echo "cc-compiler             $(cc-compiler)"
+	@echo "cmake-generator-name    $(cmake-generator-name)"
+	@echo "cmake-program           $(cmake-program)"
+	@echo "cmake-system-name       $(cmake-system-name)"
+	@echo "compiler-family         $(compiler-family)"
+	@echo "compiler-version        $(compiler-version)"
+	@echo "cxx-compiler            $(cxx-compiler)"
+	@echo "git-current-branch      $(git-current-branch)"
+	@echo "git-current-revision    $(git-current-revision)"
+	@echo "object-root-cmake       $(object-root-cmake)"
+	@echo "runtime                 $(runtime)"
+	@echo "toolchain-name          $(toolchain-name)"
+	@echo ""
 
 # environment -----------------------------------------------------------------
 
@@ -479,7 +506,6 @@ $(CCACHE_DIR)/ccache.conf : | $(CCACHE_DIR)
 
 $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
-
 
 
 ext : fmt googletest spdlog

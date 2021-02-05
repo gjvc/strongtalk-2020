@@ -69,8 +69,13 @@ private:
     void test_for_scavenge( Register dst, std::int32_t size, Label &need_scavenge );
 
 protected:
-    PrimitivesGenerator( MacroAssembler *_masm ) {
-        masm = _masm;
+    PrimitivesGenerator( MacroAssembler *m ) :
+        masm{ m },
+        error_receiver_has_wrong_type{},
+        error_first_argument_has_wrong_type{},
+        error_division_by_zero{},
+        error_overflow{},
+        allocation_failure{} {
     }
 
 

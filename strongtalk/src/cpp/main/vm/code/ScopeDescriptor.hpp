@@ -428,6 +428,7 @@ public:
     void print_value_on( ConsoleOutputStream *stream ) const;
 };
 
+
 class NonInlinedBlockScopeDescriptor : public PrintableResourceObject {
 protected:
     // Creation information

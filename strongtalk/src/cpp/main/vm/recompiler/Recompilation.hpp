@@ -48,20 +48,26 @@ private:
 
 public:
 
-    Recompilation( Oop receiver, MethodOop method ) {            // used if interpreted method triggers counter
-        _method           = method;
-        _receiver         = receiver;
-        _nativeMethod     = nullptr;
-        _isUncommonBranch = false;
+    Recompilation( Oop receiver, MethodOop method ) :
+        _receiver{ receiver },
+        _method{ method },
+        _nativeMethod{ nullptr },
+        _newNativeMethod{ nullptr },
+        _deltaVirtualFrame{ nullptr },
+        _isUncommonBranch{ false }, // used if interpreted method triggers counter
+        _recompiledTrigger{ false } {
         init();
     }
 
 
-    Recompilation( Oop receiver, NativeMethod *nm, bool unc = false ) {  // used if compiled method triggers counter
-        _method           = nm->method();
-        _receiver         = receiver;
-        _nativeMethod     = nm;
-        _isUncommonBranch = unc;
+    Recompilation( Oop receiver, NativeMethod *nativeMethod, bool isUncommonBranch = false ) :
+        _receiver{ receiver },
+        _method{ nativeMethod->method() },
+        _nativeMethod{ nativeMethod },
+        _newNativeMethod{ nullptr },
+        _deltaVirtualFrame{ nullptr },
+        _isUncommonBranch{ isUncommonBranch }, // used if interpreted method triggers counter
+        _recompiledTrigger{ false } {
         init();
     }
 

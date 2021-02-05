@@ -36,10 +36,11 @@ public:
     ContextOop _context;
 
 
-    FrameAndContextElement( Frame *f, ContextOop c ) {
-        _frame   = *f;
-        _context = c;
+    FrameAndContextElement( Frame *f, ContextOop c ) :
+        _frame{ *f },
+        _context{ c } {
     }
+
 };
 
 

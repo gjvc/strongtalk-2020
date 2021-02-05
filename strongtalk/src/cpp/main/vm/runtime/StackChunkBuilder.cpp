@@ -22,11 +22,11 @@ bool StackChunkBuilder::_is_deoptimizing = false;
 std::int32_t *StackChunkBuilder::_framePointer = nullptr;
 
 
-StackChunkBuilder::StackChunkBuilder( std::int32_t *fp, std::int32_t size ) {
-    _virtualFrameCount    = 0;
-    _localExpressionCount = 0;
-    array                 = new GrowableArray<Oop>( size );
-    _framePointer         = fp;
+StackChunkBuilder::StackChunkBuilder( std::int32_t *fp, std::int32_t size ) :
+    _virtualFrameCount{ 0 },
+    _localExpressionCount{ 0 },
+    array{ new GrowableArray<Oop>( size ) } {
+    _framePointer = fp; // static
 }
 
 

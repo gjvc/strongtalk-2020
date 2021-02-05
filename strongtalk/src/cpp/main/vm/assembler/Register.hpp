@@ -43,13 +43,14 @@ public:
 };
 
 
+
 // Available registers
-const Register eax = Register( 0, ' ' );
-const Register ecx = Register( 1, ' ' );
-const Register edx = Register( 2, ' ' );
-const Register ebx = Register( 3, ' ' );
-const Register esp = Register( 4, ' ' );
-const Register ebp = Register( 5, ' ' );
-const Register esi = Register( 6, ' ' );
-const Register edi = Register( 7, ' ' );
-const Register noreg; // Dummy register used in Load, LoadAddr, and Store.
+const Register eax = Register( 0, ' ' );   //
+const Register ecx = Register( 1, ' ' );   //
+const Register edx = Register( 2, ' ' );   //
+const Register ebx = Register( 3, ' ' );   //
+const Register esp = Register( 4, ' ' );   //
+const Register ebp = Register( 5, ' ' );   //
+const Register esi = Register( 6, ' ' );   //
+const Register edi = Register( 7, ' ' );   //
+const Register noreg;                               // Dummy register used in Load, LoadAddr, and Store.

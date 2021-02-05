@@ -154,6 +154,7 @@ protected:
 public:
 
     CompiledRecompilerFrame( Frame fr );    // for NativeMethod triggering its counter (callee == nullptr)
+
     bool is_compiled() const {
         return true;
     }
@@ -180,6 +181,7 @@ public:
 
     void print();
 };
+
 
 class InterpretedRecompilerFrame : public RecompilerFrame {    // interpreter frame
 

@@ -1360,7 +1360,7 @@ void ArithRRNode::gen() {
 void ArithRCNode::gen() {
     BasicNode::gen();
     PseudoRegister *arg1  = _src;
-    std::int32_t   y      = _oper;
+    std::int32_t   y      = _operand;
     Register       x;
     bool           result = setupseudoRegisterister( _dest, arg1, _op, x, temp1 );
     arithRCOp( _op, x, y );

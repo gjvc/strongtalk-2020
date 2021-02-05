@@ -17,16 +17,16 @@ void CostModel::set_default_costs() {
     set_cost_for_all( 1 );
 
     // specialize for individual code types
-    set_cost_for_type( ByteCodes::CodeType::new_closure, 3 );
-    set_cost_for_type( ByteCodes::CodeType::new_context, 3 );
-    set_cost_for_type( ByteCodes::CodeType::message_send, 5 );
-    set_cost_for_type( ByteCodes::CodeType::nonlocal_return, 3 );
-    set_cost_for_type( ByteCodes::CodeType::primitive_call, 5 );
-    set_cost_for_type( ByteCodes::CodeType::dll_call, 5 );
+    set_cost_for_type( ByteCodes::CodeType::NEW_CLOSURE, 3 );
+    set_cost_for_type( ByteCodes::CodeType::NEW_CONTEXT, 3 );
+    set_cost_for_type( ByteCodes::CodeType::MESSAGE_SEND, 5 );
+    set_cost_for_type( ByteCodes::CodeType::NONLOCAL_RETURN, 3 );
+    set_cost_for_type( ByteCodes::CodeType::PRIMITIVE_CALL, 5 );
+    set_cost_for_type( ByteCodes::CodeType::DLL_CALL, 5 );
 
     // specialize for individual send types
-    set_cost_for_send( ByteCodes::SendType::predicted_send, 2 );
-    set_cost_for_send( ByteCodes::SendType::accessor_send, 2 );
+    set_cost_for_send( ByteCodes::SendType::PREDICTED_SEND, 2 );
+    set_cost_for_send( ByteCodes::SendType::ACCESSOR_SEND, 2 );
 }
 
 

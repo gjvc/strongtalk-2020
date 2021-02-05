@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -19,9 +20,9 @@ protected:
     GenericSListElem *_next;
 
 public:
-    GenericSListElem( void *d, GenericSListElem *n = nullptr ) {
-        _data = d;
-        _next = n;
+    GenericSListElem( void *d, GenericSListElem *n = nullptr ) :
+        _data{ d },
+        _next{ n } {
     }
 
 
@@ -57,22 +58,29 @@ protected:
 
 typedef bool (*slistFindFn)( void *token, void *elem );
 
+
 class GenericSList : public PrintableResourceObject {
+
 protected:
     GenericSListElem *_head;
     GenericSListElem *_tail;
     std::int32_t     _len;
+
 public:
-    GenericSList() {
-        _head = _tail = nullptr;
-        _len  = 0;
+    GenericSList() :
+        _head{ nullptr },
+        _tail{ nullptr },
+        _len{ 0 } {
     }
 
 
     void prependL( void *d ) {
-        _head     = new GenericSListElem( d, _head );
-        if ( _tail == nullptr )
+        _head = new GenericSListElem( d, _head );
+
+        if ( _tail == nullptr ) {
             _tail = _head;
+        }
+
         _len++;
     }
 

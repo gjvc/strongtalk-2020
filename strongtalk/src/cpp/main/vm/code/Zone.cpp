@@ -38,6 +38,7 @@ constexpr float COMPACT_OVERHEAD = 0.05; /* desired max. overhead for zone compa
 //   overhead for the heap maps and increased effectiveness of the free lists
 // - longer free lists cover a wider range of allocations but can slow down
 //   allocation (when most lists are empty but still have to be scanned).
+
 constexpr std::int32_t CODE_BLOCK_SIZE                = 64;  /* block size for nativeMethods */
 constexpr std::int32_t POLYMORPHIC_INLINE_CACHE_BLOCK = 32;    /* block size for PICs */
 
@@ -82,7 +83,19 @@ static void idOverflowError( std::int32_t delta ) {
 }
 
 
-Zone::Zone( std::int32_t &size ) {
+Zone::Zone( std::int32_t &size ) :
+    _methodHeap{ nullptr },
+    _picHeap{ nullptr },
+    _methodTable{ nullptr },
+    _jumpTable{},
+    LRUhand{ nullptr },
+    _needsCompaction{ false },
+    _needsLRUSweep{ false },
+    _needsSweep{ false },
+    compactTime{ 0 },
+    compactDuration{ 0 },
+    minFreeFrac{ 0 } {
+
     static_cast<void>(size); // unused
 
     _methodHeap  = new ZoneHeap( Universe::current_sizes._code_size, CODE_BLOCK_SIZE );
@@ -106,6 +119,7 @@ void Zone::clear() {
     LRUhand = nullptr;
     LRUtime = 0;
     jump_table()->init();
+
     _needsCompaction = _needsSweep = false;
     compactTime      = 0;
     compactDuration  = 1;

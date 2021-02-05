@@ -26,12 +26,24 @@ void VM_Operation::evaluate() {
 }
 
 
-VM_Genesis::VM_Genesis() {
+VM_Genesis::VM_Genesis() :
+    VM_Operation() {
 }
 
 
 void VM_Genesis::doit() {
     ErrorHandler::genesis();
+}
+
+
+VM_GarbageCollect::VM_GarbageCollect() :
+    VM_Operation(),
+    _addr{ nullptr } {
+}
+
+
+void VM_GarbageCollect::doit() {
+    *_addr = MarkSweep::collect( *_addr );
 }
 
 
@@ -54,11 +66,6 @@ void VM_Scavenge::doit() {
         Processes::print();
         spdlog::info( "******" );
     }
-}
-
-
-void VM_GarbageCollect::doit() {
-    *_addr = MarkSweep::collect( *_addr );
 }
 
 
@@ -141,8 +148,9 @@ std::int32_t vm_main( std::int32_t argc, char *argv[] ) {
     load_image();
     spdlog::info( "%status-image-loaded" );
 
-    if ( UseInliningDatabase )
+    if ( UseInliningDatabase ) {
         InliningDatabase::load_index_file();
+    }
 
     DeltaProcess::createMainProcess();
     spdlog::info( "%status-main-process-created" );

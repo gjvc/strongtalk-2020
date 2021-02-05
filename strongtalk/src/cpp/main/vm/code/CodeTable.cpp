@@ -8,9 +8,11 @@
 #include "vm/code/NativeMethod.hpp"
 
 
-CodeTable::CodeTable( std::int32_t size ) {
-    tableSize = size;
-    buckets   = new_c_heap_array<CodeTableEntry>( size );
+CodeTable::CodeTable( std::int32_t size ) :
+    tableSize{ size },
+    buckets{ new_c_heap_array<CodeTableEntry>( size ) } {
+
+    //
     clear();
 }
 
@@ -24,8 +26,12 @@ CodeTableLink *CodeTable::new_link( NativeMethod *nm, CodeTableLink *n ) {
 
 
 void CodeTable::clear() {
-    for ( std::int32_t i = 0; i < tableSize; i++ )
+
+    //
+    for ( std::int32_t i = 0; i < tableSize; i++ ) {
         at( i )->clear();
+    }
+
 }
 
 
@@ -45,8 +51,9 @@ NativeMethod *CodeTable::lookup( const LookupKey *L ) {
 
     // Bucket
     for ( CodeTableLink *l = bucket->get_link(); l; l = l->_next ) {
-        if ( l->_nativeMethod->_lookupKey.equal( L ) )
+        if ( l->_nativeMethod->_lookupKey.equal( L ) ) {
             return l->_nativeMethod;
+        }
     }
 
     return nullptr;
@@ -75,8 +82,9 @@ void CodeTable::add( NativeMethod *nm ) {
 
 
 void CodeTable::addIfAbsent( NativeMethod *nm ) {
-    if ( not lookup( &nm->_lookupKey ) )
+    if ( not lookup( &nm->_lookupKey ) ) {
         add( nm );
+    }
 }
 
 

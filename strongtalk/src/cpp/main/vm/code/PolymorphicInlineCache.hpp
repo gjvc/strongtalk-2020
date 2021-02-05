@@ -15,7 +15,7 @@
 
 
 // A PolymorphicInlineCache implements a PolymorphicInlineCache for compiled code.
-// It may be megamorphic, in which case it may cache only the last method and do a lookup whenever there is a cache miss.
+// It may be MEGAMORPHIC, in which case it may cache only the last method and do a lookup whenever there is a cache miss.
 
 //class PolymorphicInlineCacheIterator;
 
@@ -143,9 +143,9 @@ public:
     PolymorphicInlineCache *replace( NativeMethod *nm );
 
     // Cleans up the pic and returns:
-    //  1) A PolymorphicInlineCache			(still polymorphic or megamorphic)
-    //  2) A NativeMethod		(now   monomorphic)
-    //  3) nothing		(now   anamorphic)
+    //  1) A PolymorphicInlineCache			(still POLYMORPHIC or MEGAMORPHIC)
+    //  2) A NativeMethod		(now   MONOMORPHIC)
+    //  3) nothing		(now   ANAMORPHIC)
     PolymorphicInlineCache *cleanup( NativeMethod **nm );
 
     GrowableArray<KlassOop> *klasses() const;

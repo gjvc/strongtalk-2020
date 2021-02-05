@@ -1,14 +1,16 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
+
 #include "vm/compiler/IntervalInfo.hpp"
 
 
-IntervalInfo::IntervalInfo( MethodInterval *interval, InlinedScope *scope ) {
-    _interval = interval;
-    _scope    = scope;
+IntervalInfo::IntervalInfo( MethodInterval *interval, InlinedScope *scope ) :
+    _interval{ interval },
+    _scope{ scope } {
 }
 
 
@@ -31,8 +33,9 @@ bool IntervalInfo::dominates( std::int32_t byteCodeIndex, IntervalInfo *other, s
     // - i1 is a parent of i2 and byteCodeIndex1 < byteCodeIndex2
     //   (e.g., i1 is a method and i2 a loop body or if condition)
 
-    if ( this == other and byteCodeIndex <= otherByteCodeIndex )
+    if ( this == other and byteCodeIndex <= otherByteCodeIndex ) {
         return true;
+    }
 
     return isParentOf( other ) and byteCodeIndex < otherByteCodeIndex;
 }

@@ -123,17 +123,17 @@ public:
 
 
     bool is_message_send() const {
-        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::message_send;
+        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::MESSAGE_SEND;
     }
 
 
     bool is_primitive_call() const {
-        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::primitive_call;
+        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::PRIMITIVE_CALL;
     }
 
 
     bool is_dll_call() const {
-        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::dll_call;
+        return ByteCodes::code_type( code() ) == ByteCodes::CodeType::DLL_CALL;
     }
 
 

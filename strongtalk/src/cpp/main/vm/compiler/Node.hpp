@@ -84,9 +84,9 @@ class PseudoRegisterMapping;
 class BasicNode : public PrintableResourceObject {
 
 protected:
-    std::int16_t          _id;                      // unique node id for debugging
-    std::int16_t          _num;                     // node number within basic block
-    std::int16_t          _byteCodeIndex;           // byteCodeIndex within the sc
+    std::int32_t          _id;                      // unique node id for debugging
+    std::int32_t          _num;                     // node number within basic block
+    std::int32_t          _byteCodeIndex;           // byteCodeIndex within the sc
     BasicBlock            *_basicBlock;            // basic block to which this instance belongs
     InlinedScope          *_scope;                 // scope to which this instance belongs
     PseudoRegisterMapping *_pseudoRegisterMapping; // the mapping at that node, if any (will be modified during code generation)
@@ -493,9 +493,9 @@ protected:
     Node *_next;
 
 
-    Node() {
-        _prev = nullptr;
-        _next = nullptr;
+    Node() :
+        _prev{ nullptr },
+        _next{ nullptr } {
     }
 
 
@@ -753,8 +753,9 @@ protected:
 
 
     PrologueNode( LookupKey *key, std::int32_t nofArgs, std::int32_t nofTemps ) :
-        _nofArgs( nofArgs ), _nofTemps( nofTemps ) {
-        _key = key;
+        _key{ key },
+        _nofArgs{ nofArgs },
+        _nofTemps{ nofTemps } {
     }
 
 
@@ -847,8 +848,8 @@ protected:
     std::int32_t _value;        // constant (vm-level, not an Oop) to be loaded
 
     LoadIntNode( PseudoRegister *dst, std::int32_t value ) :
-        LoadNode( dst ) {
-        _value = value;
+        LoadNode( dst ),
+        _value{ value } {
     }
 
 
@@ -884,10 +885,11 @@ public:
 
 protected:
     LoadOffsetNode( PseudoRegister *dst, PseudoRegister *src, std::int32_t offset, bool isArraySize ) :
-        LoadNode( dst ) {
-        _src         = src;
-        _offset      = offset;
-        _isArraySize = isArraySize;
+        LoadNode( dst ),
+//        _src{ src },
+        _offset{ offset },
+        _isArraySize{ isArraySize } {
+        _src = src;
     }
 
 
@@ -1062,11 +1064,12 @@ private:
 
 protected:
     StoreOffsetNode( PseudoRegister *s, PseudoRegister *b, std::int32_t o, bool nsc ) :
-        StoreNode( s ) {
-        _base = b;
+        StoreNode( s ),
+        _base{ b },
+        _baseUse{ nullptr },
+        _offset{ o },
+        _needsStoreCheck{ nsc } {
         st_assert( b, "base is nullptr" );
-        _offset          = o;
-        _needsStoreCheck = nsc;
     }
 
 
@@ -1624,13 +1627,13 @@ protected:
     GrowableArray<Node *> *_prevs;
 
 public:
-    AbstractMergeNode() {
-        _prevs = new GrowableArray<Node *>( N );
+    AbstractMergeNode() :
+        _prevs{ new GrowableArray<Node *>( N ) } {
     }
 
 
-    AbstractMergeNode( Node *prev1, Node *prev2 ) {
-        _prevs = new GrowableArray<Node *>( N );
+    AbstractMergeNode( Node *prev1, Node *prev2 ) :
+        _prevs{ new GrowableArray<Node *>( N ) } {
         _prevs->append( prev1 );
         prev1->setNext( this );
         _prevs->append( prev2 );
@@ -1740,11 +1743,13 @@ protected:
     ArithOpCode         _op;
     ConstPseudoRegister *_constResult;    // non-nullptr if constant-folded
 
-    ArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) {
-        _op          = op;
-        _src         = src;
-        _dest        = dst;
-        _constResult = nullptr;
+    ArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
+        _op{ op },
+//        _src{ src },
+//        _dest{ dst },
+        _constResult{ nullptr } {
+        _src  = src;
+        _dest = dst;
     }
 
 
@@ -1942,22 +1947,23 @@ class ArithRCNode : public ArithNode {  // reg op const => reg
     // used to compare against non-Oop constants (e.g. for markOop test)
     // DO NOT USE to add a reg and an Oop constant -- use ArithRR + ConstPseudoRegisters for that
 protected:
-    std::int32_t _oper;
+    std::int32_t _operand;
 
 
     ArithRCNode( ArithOpCode o, PseudoRegister *s, std::int32_t o2, PseudoRegister *d ) :
-        ArithNode( o, s, d ) {
-        _oper = o2;
+        ArithNode( o, s, d ),
+        _operand{ o2 } {
     }
 
 
 public:
     std::int32_t operand() const {
-        return _oper;
+        return _operand;
     }
 
 
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
+
 
     void gen();
 
@@ -1973,7 +1979,7 @@ public:
 
 
     std::int32_t operConst() const {
-        return _oper;
+        return _operand;
     }
 
 
@@ -1998,8 +2004,8 @@ public:
 
 
 protected:
-    AbstractBranchNode() {
-        _nxt = new GrowableArray<Node *>( EstimatedSuccessors );
+    AbstractBranchNode() :
+        _nxt{ new GrowableArray<Node *>( EstimatedSuccessors ) } {
     }
 
 
@@ -2007,11 +2013,10 @@ protected:
 
     void verify( bool verifySuccessors ) const;
 
-    // ---------- node linking code --------------
 private:
-    enum {
-        EstimatedSuccessors = 2  // most nodes have only 2 successors
-    };
+    constexpr static std::size_t EstimatedSuccessors = 2;  // most nodes have only 2 successors
+
+
 protected:
     GrowableArray<Node *> *_nxt;            /* elem 0 is next1 */
 
@@ -2065,6 +2070,7 @@ public:
     bool isSuccessor( const Node *n ) const;
 };
 
+
 class TArithRRNode : public AbstractBranchNode {
     // tagged arithmetic operation; next() is success case, next1()
     // is failure (leaving ORed operands in Temp1 for tag test)
@@ -2073,7 +2079,7 @@ protected:
     PseudoRegister      *_oper;
     Usage               *_operUse;
     bool                _arg1IsInt;            // is _src a smi_t?
-    bool                _arg2IsInt;            // is _oper a smi_t?
+    bool                _arg2IsInt;            // is _operand a smi_t?
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
     TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool a1, bool a2 );
@@ -2433,7 +2439,7 @@ public:
 
 class HoistedTypeTest;
 
-class LoopseudoRegisterCandidate;
+class LoopPseudoRegisterCandidate;
 
 
 //
@@ -2454,7 +2460,7 @@ protected:
     // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
     GrowableArray<HoistedTypeTest *>            *_tests;              // type tests hoisted out of loop
     GrowableArray<LoopHeaderNode *>             *_nestedLoops;        // nested loops (nullptr if none)
-    GrowableArray<LoopseudoRegisterCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
+    GrowableArray<LoopPseudoRegisterCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
     bool                                        _activated;            // gen() does nothing until activated
     std::int32_t                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
@@ -2551,12 +2557,12 @@ public:
     void addNestedLoop( LoopHeaderNode *l );
 
 
-    GrowableArray<LoopseudoRegisterCandidate *> *registerCandidates() const {
+    GrowableArray<LoopPseudoRegisterCandidate *> *registerCandidates() const {
         return _registerCandidates;
     }
 
 
-    void addRegisterCandidate( LoopseudoRegisterCandidate *c );
+    void addRegisterCandidate( LoopPseudoRegisterCandidate *c );
 
     void gen();
 
@@ -3055,9 +3061,9 @@ protected:
     BranchOpCode _op;                       // branch untaken is likely
     bool         _taken_is_uncommon;        // true if branch taken is uncommon
 
-    BranchNode( BranchOpCode op, bool taken_is_uncommon ) {
-        _op                = op;
-        _taken_is_uncommon = taken_is_uncommon;
+    BranchNode( BranchOpCode op, bool taken_is_uncommon ) :
+        _op{ op },
+        _taken_is_uncommon{ taken_is_uncommon } {
     }
 
 
@@ -3228,25 +3234,31 @@ class AbstractArrayAtNode : public AbstractBranchNode {
     // array access: test index type & range, load element next() is the success case, next1() the failure
 protected:
     // _src is the array, _dest the result
-    PseudoRegister *_arg;          // index value
-    Usage          *_argUse;       //
-    PseudoRegister *_error;        // where to move the error string
-    Definition     *_errorDef;     //
-    bool           _needBoundsCheck;        // need array bounds check?
-    bool           _intArg;                 // need not test for std::int32_t if true
-    std::int32_t   _dataOffset;             // where start of array is (Oop offset)
-    std::int32_t   _sizeOffset;             // where size of array is (Oop offset)
+    PseudoRegister *_arg;               // index value
+    Usage          *_argUse;            //
+    PseudoRegister *_error;             // where to move the error string
+    Definition     *_errorDef;          //
+    bool           _needBoundsCheck;    // need array bounds check?
+    bool           _intArg;             // need not test for std::int32_t if true
+    std::int32_t   _dataOffset;         // where start of array is (Oop offset)
+    std::int32_t   _sizeOffset;         // where size of array is (Oop offset)
 
-    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *idx, bool ia, PseudoRegister *res, PseudoRegister *_err, std::int32_t dataOffset, std::int32_t sizeOffset ) {
-        _src             = r;
-        _arg             = idx;
-        _intArg          = ia;
-        _dest            = res;
-        _error           = _err;
-        _dataOffset      = dataOffset;
-        _sizeOffset      = sizeOffset;
-        _dontEliminate   = true;
-        _needBoundsCheck = true;
+    AbstractArrayAtNode( PseudoRegister *r, PseudoRegister *arg, bool intArg, PseudoRegister *res, PseudoRegister *error, std::int32_t dataOffset, std::int32_t sizeOffset ) :
+//        _src{ r },
+        _arg{ arg },
+        _argUse{ nullptr },
+//        _dest{ res },
+        _error{ error },
+        _errorDef{ nullptr },
+        _needBoundsCheck{ true },
+        _intArg{ intArg },
+        _dataOffset{ dataOffset },
+        _sizeOffset{ sizeOffset }
+//        _dontEliminate{ true },
+    {
+        _src           = r;
+        _dest          = res;
+        _dontEliminate = true;
     }
 
 
@@ -3267,6 +3279,8 @@ public:
     std::int32_t cost() const {
         return 20 + ( _intArg ? 0 : 12 );
     } // fix this
+
+
     bool canCopyPropagate() const {
         return true;
     }
@@ -3328,13 +3342,13 @@ protected:
     AccessType _access_type;
 
     ArrayAtNode( AccessType access_type,    // specifies the operation
-                 PseudoRegister *array,    // holds the array
-                 PseudoRegister *index,    // holds the index
-                 bool smiIndex,           // true if index is known to be a smi_t, false otherwise
-                 PseudoRegister *result,   // where the result is stored
-                 PseudoRegister *error,    // where the error symbol is stored if the operation fails
-                 std::int32_t data_offset,           // data offset in oops relative to array
-                 std::int32_t length_offset          // array length offset in oops relative to array
+                 PseudoRegister *array,     // holds the array
+                 PseudoRegister *index,     // holds the index
+                 bool smiIndex,             // true if index is known to be a smi_t, false otherwise
+                 PseudoRegister *result,    // where the result is stored
+                 PseudoRegister *error,     // where the error symbol is stored if the operation fails
+                 std::int32_t data_offset,  // data offset in oops relative to array
+                 std::int32_t length_offset // array length offset in oops relative to array
     );
 
 public:
@@ -3408,8 +3422,9 @@ protected:
 
 
     AbstractArrayAtPutNode( PseudoRegister *arr, PseudoRegister *idx, bool ia, PseudoRegister *el, PseudoRegister *res, PseudoRegister *_err, std::int32_t doff, std::int32_t soff ) :
-        AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ) {
-        elem = el;
+        AbstractArrayAtNode( arr, idx, ia, res, _err, doff, soff ),
+        elem{ el },
+        elemUse{ nullptr } {
     }
 
 

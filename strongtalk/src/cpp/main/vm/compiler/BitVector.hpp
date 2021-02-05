@@ -23,8 +23,8 @@ class SimpleBitVector : public ValueObject {
     std::int32_t _bits;
 
 public:
-    SimpleBitVector( std::int32_t b = 0 ) {
-        _bits = b;
+    SimpleBitVector( std::int32_t b = 0 ) :
+        _bits{ b } {
     }
 
 
@@ -106,25 +106,28 @@ protected:
         std::int32_t *bs     = new_resource_array<std::int32_t>( blen );
         std::int32_t blength = bitsLength( _maxLength );
         copy_words( _bits, bs, blength );
-        if ( blength < blen )
+        if ( blength < blen ) {
             set_words( bs + blength, blen - blength, 0 );
+        }
+
         return bs;
     }
 
 
 public:
-    BitVector( std::int32_t l ) {
+    BitVector( std::int32_t l ) :
+        length{ l },
+        _maxLength{ l },
+        _bits{ createBitString( l ) } {
         st_assert( l > 0, "should have some length" );
-        length = _maxLength = l;
-        _bits  = createBitString( l );
     }
 
 
 protected:
-    BitVector( std::int32_t l, std::int32_t ml, std::int32_t *bs ) {
-        _maxLength = ml;
-        length     = l;
-        _bits      = bs;
+    BitVector( std::int32_t l, std::int32_t ml, std::int32_t *bs ) :
+        _maxLength{ ml },
+        length{ l },
+        _bits{ bs } {
     }
 
 

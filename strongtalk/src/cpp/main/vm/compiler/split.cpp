@@ -60,7 +60,7 @@ bool CodeScope::shouldSplit( SendInfo * info ) {
     Node * current = theNodeGen->current;
     if ( not current->isSplittable() ) return false;
 
-    std::int32_t cost = theCompiler->inlineLimit[ InlineLimitIType::SplitCostLimit ];
+    std::int32_t cost = theCompiler->inlineLimit[ InlineLimitType::SplitCostLimit ];
     Node * n    = nullptr;
     // compute the cost of all nodes that would be copied (i.e. all exprs
     // with a map type)
@@ -105,9 +105,9 @@ done:
         if ( PrintInlining ) {
             spdlog::info( "%*s*not splitting %s: cost too high (>%ld)", depth, "",
                      info->sel->copy_null_terminated(),
-                     theCompiler->inlineLimit[ InlineLimitIType::SplitCostLimit ] - cost );
+                     theCompiler->inlineLimit[ InlineLimitType::SplitCostLimit ] - cost );
         }
-        if ( n == current ) theCompiler->registerUninlinable( info, InlineLimitIType::SplitCostLimit, cost );
+        if ( n == current ) theCompiler->registerUninlinable( info, InlineLimitType::SplitCostLimit, cost );
         return false;
     }
 

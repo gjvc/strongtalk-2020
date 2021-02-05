@@ -27,7 +27,7 @@ public:
 };
 
 
-FileOutputStream::FileOutputStream( const char *file_name ) {
+FileOutputStream::FileOutputStream( const char *file_name ) : _file{} {
     _file.open( file_name );
 }
 

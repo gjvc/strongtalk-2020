@@ -47,10 +47,10 @@ public:
     std::int32_t   _ndefs;              // required # definitions of loc
 
 public:
-    RegCandidate( PseudoRegister *reg, Location l, std::int32_t n ) {
-        _pseudoRegister = reg;
-        _location       = l;
-        _ndefs          = n;
+    RegCandidate( PseudoRegister *reg, Location l, std::int32_t n ) :
+        _pseudoRegister{ reg },
+        _location{ l },
+        _ndefs{ n } {
     }
 };
 

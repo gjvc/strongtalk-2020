@@ -18,9 +18,9 @@ public:
     ReservedSpace( std::int32_t size );
 
 
-    ReservedSpace( const char *base, std::int32_t size ) {
-        _base = base;
-        _size = size;
+    ReservedSpace( const char *base, std::int32_t size ) :
+        _base{ base },
+        _size{ size } {
     }
 
 

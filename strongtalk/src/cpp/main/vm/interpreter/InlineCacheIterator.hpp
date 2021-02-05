@@ -21,15 +21,15 @@
 // Note: InlineCacheShape is the LOGICAL shape and it does not necessarily
 // correspond with the physical implementation of a call site; e.g.
 // a call site may contain a pic but nevertheless hold only one
-// receiver and therefore be monomorphic!
+// receiver and therefore be MONOMORPHIC!
 //
 
 enum class InlineCacheShape {
 
-    anamorphic,     // send has never been executed => no type information (size = 0)
-    monomorphic,    // only one receiver type available	(size = 1)
-    polymorphic,    // more than one receiver type available (size > 1)
-    megamorphic     // many receiver types, only last one is available (size = 1)
+    ANAMORPHIC,     // send has never been executed => no type information (size = 0)
+    MONOMORPHIC,    // only one receiver type available	(size = 1)
+    POLYMORPHIC,    // more than one receiver type available (size > 1)
+    MEGAMORPHIC     // many receiver types, only last one is available (size = 1)
 
 };
 
@@ -112,7 +112,7 @@ public:
 // and CompiledInlineCache, which in turn are using InterpretedInlineCacheIterator and CompiledInlineCacheIterator.
 // However, right now, CompiledInlineCache shares a common super class with PrimitiveInlineCache, and
 // furthermore, the real ICs are composed out of at least 2 classes, one for the
-// monormorphic case and one for the polymorphic case. Having InlineCache based on the
+// monormorphic case and one for the POLYMORPHIC case. Having InlineCache based on the
 // iterator seems to simplify this.)
 
 class InlineCache : public PrintableResourceObject {

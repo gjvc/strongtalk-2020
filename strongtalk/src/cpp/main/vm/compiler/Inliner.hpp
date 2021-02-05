@@ -20,6 +20,7 @@ enum class SendKind {
     SuperSend   //
 };
 
+
 class Scope;
 
 class ScopeDescriptor;
@@ -50,9 +51,18 @@ protected:
 public:
     std::int32_t depth;            // nesting depth (for debug output)
 
-    Inliner( InlinedScope *s ) {
-        _sender = s;
-        initialize();
+    Inliner( InlinedScope *s ) :
+        _sender{ s },
+        _info{ nullptr },
+        _result{ nullptr },
+        _callee{ nullptr },
+        _generator{ nullptr },
+        _merge{ nullptr },
+        _resultPR{ nullptr },
+        depth{ 0 },
+        _msg{ nullptr },
+        _sendKind{},
+        _lastLookupFailed{ false } {
     }
 
 

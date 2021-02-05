@@ -777,21 +777,23 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
     return result;
 }
 
+
 // Enumeration primitives
 // - it is important to exclude contextOops since they should be invisible to the Smalltalk level.
 
 class InstancesOfClosure : public ObjectClosure {
 
 public:
-    InstancesOfClosure( KlassOop target, std::int32_t limit ) {
+    InstancesOfClosure( KlassOop target, std::int32_t limit ) :
+        _target{ target },
+        _limit{ limit },
+        _result{ nullptr } {
         _result = new GrowableArray<Oop>( 100 );
-        _target = target;
-        _limit  = limit;
     }
 
 
-    std::int32_t       _limit;
     KlassOop           _target;
+    std::int32_t       _limit;
     GrowableArray<Oop> *_result;
 
 
@@ -802,6 +804,7 @@ public:
             }
         }
     }
+
 };
 
 
@@ -840,15 +843,16 @@ private:
     }
 };
 
+
 class HasReferenceClosure : public OopClosure {
 
 private:
     Oop _target;
 
 public:
-    HasReferenceClosure( Oop target ) {
-        _target = target;
-        _result = false;
+    HasReferenceClosure( Oop target ) :
+        _target{ target },
+        _result{ false } {
     }
 
 
@@ -861,13 +865,15 @@ public:
     bool _result;
 };
 
+
 class ReferencesToClosure : public ObjectClosure {
 
 public:
-    ReferencesToClosure( Oop target, std::int32_t limit ) {
+    ReferencesToClosure( Oop target, std::int32_t limit ) :
+        _target{ target },
+        _limit{ limit },
+        _result{ nullptr } {
         _result = new GrowableArray<Oop>( 100 );
-        _target = target;
-        _limit  = limit;
     }
 
 
@@ -897,8 +903,9 @@ PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
     PROLOGUE_2( "references_to", obj, limit );
 
     // Check type of argument
-    if ( not limit->is_smi() )
+    if ( not limit->is_smi() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
+    }
 
     BlockScavenge bs;
     ResourceMark  rm;
@@ -921,29 +928,31 @@ private:
     KlassOop _target;
 
 public:
-    HasInstanceReferenceClosure( KlassOop target ) {
-        _target = target;
-        _result = false;
+    HasInstanceReferenceClosure( KlassOop target ) :
+        _target{ target },
+        _result{ false } {
     }
 
 
     void do_oop( Oop *o ) {
-        if ( ( *o )->klass() == _target )
+        if ( ( *o )->klass() == _target ) {
             _result = true;
+        }
     }
 
 
     bool _result;
 };
 
+
 class ReferencesToInstancesOfClosure : public ObjectClosure {
 
 public:
-    ReferencesToInstancesOfClosure( KlassOop target, std::int32_t limit ) {
-        _result = new GrowableArray<Oop>( 100 );
-        _target = target;
-        _limit  = limit;
-    }
+    ReferencesToInstancesOfClosure( KlassOop target, std::int32_t limit ) :
+        _result{ new GrowableArray<Oop>( 100 ) },
+        _target{ target },
+        _limit{ limit } {
+    };
 
 
     std::int32_t       _limit;
@@ -965,6 +974,7 @@ public:
             }
         }
     }
+
 };
 
 
@@ -997,9 +1007,11 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
 
 class AllObjectsClosure : public ObjectClosure {
 public:
-    AllObjectsClosure( std::int32_t limit ) {
+    AllObjectsClosure( std::int32_t limit ) :
+        _limit{ limit },
+        _result{ nullptr } {
+
         _result = new GrowableArray<Oop>( 20000 );
-        _limit  = limit;
     }
 
 
@@ -1012,6 +1024,7 @@ public:
             _result->append( obj );
         }
     }
+
 };
 
 
@@ -1019,8 +1032,9 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
     PROLOGUE_1( "all_objects", limit );
 
     // Check type of argument
-    if ( not limit->is_smi() )
+    if ( not limit->is_smi() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
+    }
 
     BlockScavenge bs;
     ResourceMark  rm;
@@ -1028,11 +1042,13 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
     AllObjectsClosure blk( SMIOop( limit )->value() );
     Universe::object_iterate( &blk );
 
-    std::int32_t       length = blk._result->length();
-    ObjectArrayOop     result = oopFactory::new_objArray( length );
-    for ( std::int32_t index  = 1; index <= length; index++ ) {
+    std::int32_t   length = blk._result->length();
+    ObjectArrayOop result = oopFactory::new_objArray( length );
+
+    for ( std::int32_t index = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
+
     return result;
 }
 
@@ -1059,10 +1075,12 @@ PRIM_DECL_0( SystemPrimitives::command_line_args ) {
 
     ObjectArrayOop result = oopFactory::new_objArray( argc );
     result->set_length( argc );
+
     for ( std::int32_t i = 0; i < argc; i++ ) {
         ByteArrayOop arg = oopFactory::new_byteArray( argv[ i ] );
         result->obj_at_put( i + 1, arg );
     }
+
     return result;
 }
 
@@ -1134,9 +1152,11 @@ PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
         BlockScavenge bs;
         Integer       *largeAddress = &ByteArrayOop( address )->number();
         bool          ok;
-        std::int32_t  intAddress    = largeAddress->as_int32_t( ok );
+
+        std::int32_t intAddress = largeAddress->as_int32_t( ok );
         if ( intAddress == 0 or not ok )
             return markSymbol( vmSymbols::argument_is_invalid() );
+
         free( (void *) intAddress );
     }
 

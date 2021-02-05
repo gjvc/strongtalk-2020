@@ -72,13 +72,16 @@ double TimeStamp::seconds() {
 }
 
 
-TraceTime::TraceTime( const char *title, bool doit ) {
-    _title = title;
-    active = doit;
+TraceTime::TraceTime( const char *title, bool doit ) :
+    active{ doit },
+    _title{ title },
+    t{} {
+
     if ( active ) {
         spdlog::info( "start timer [{}]", _title );
         t.start();
     }
+
 }
 
 

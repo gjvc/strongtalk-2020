@@ -19,4 +19,8 @@ public:
 
 protected:
     const std::ostream &_output;
+
+
+
+
 };

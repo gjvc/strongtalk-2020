@@ -19,11 +19,11 @@ public:
     ScopeInfo                _parent;
 
 public:
-    NonInlinedBlockScopeNode( MethodOop method, ScopeInfo parent ) {
-        _method = method;
-        _parent = parent;
-        _offset = INVALID_OFFSET;
-        _next   = nullptr;
+    NonInlinedBlockScopeNode( MethodOop method, ScopeInfo parent ) :
+        _method{ method },
+        _parent{ parent },
+        _offset{ INVALID_OFFSET },
+        _next{ nullptr } {
     }
 
 

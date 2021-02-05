@@ -23,9 +23,11 @@ InlineCache::InlineCache( InterpretedInlineCache *ic ) :
 
 
 GrowableArray<KlassOop> *InlineCache::receiver_klasses() const {
+
     GrowableArray<KlassOop> *result = new GrowableArray<KlassOop>();
     InlineCacheIterator     *it     = iterator();
     it->init_iteration();
+
     while ( not it->at_end() ) {
         result->append( it->klass() );
         it->advance();
@@ -49,16 +51,16 @@ void InlineCache::replace( NativeMethod *nm ) {
 void InlineCache::print() {
     const char *s;
     switch ( shape() ) {
-        case InlineCacheShape::anamorphic:
+        case InlineCacheShape::ANAMORPHIC:
             s = "Anamorphic";
             break;
-        case InlineCacheShape::monomorphic:
+        case InlineCacheShape::MONOMORPHIC:
             s = "Monomorphic";
             break;
-        case InlineCacheShape::polymorphic:
+        case InlineCacheShape::POLYMORPHIC:
             s = "Polymorphic";
             break;
-        case InlineCacheShape::megamorphic:
+        case InlineCacheShape::MEGAMORPHIC:
             s = "Megamorphic";
             break;
         default         : ShouldNotReachHere();
@@ -116,21 +118,21 @@ void CompiledInlineCacheIterator::init_iteration() {
     _index = 0;
     if ( _ic->is_empty() ) {
         _number_of_targets = 0;
-        _shape             = InlineCacheShape::anamorphic;
+        _shape             = InlineCacheShape::ANAMORPHIC;
     } else if ( _ic->is_monomorphic() ) {
         _number_of_targets = 1;
-        _shape             = InlineCacheShape::monomorphic;
+        _shape             = InlineCacheShape::MONOMORPHIC;
         PolymorphicInlineCache *pic = _ic->pic();
         if ( pic )
             _picit = new PolymorphicInlineCacheIterator( pic );  // calls an interpreted method
     } else if ( _ic->is_polymorphic() ) {
         PolymorphicInlineCache *pic = _ic->pic();
         _number_of_targets = pic->number_of_targets();
-        _shape             = InlineCacheShape::polymorphic;
+        _shape             = InlineCacheShape::POLYMORPHIC;
         _picit             = new PolymorphicInlineCacheIterator( pic );
     } else if ( _ic->is_megamorphic() ) {
         _number_of_targets = 0;
-        _shape             = InlineCacheShape::megamorphic;
+        _shape             = InlineCacheShape::MEGAMORPHIC;
     } else {
         ShouldNotReachHere();
     }
@@ -198,7 +200,7 @@ NativeMethod *CompiledInlineCacheIterator::compiled_method() const {
     if ( _picit not_eq nullptr ) {
         return _picit->compiled_method();
     } else {
-        st_assert( number_of_targets() == 1, "must be monomorphic" );
+        st_assert( number_of_targets() == 1, "must be MONOMORPHIC" );
         return _ic->target();
     }
 }

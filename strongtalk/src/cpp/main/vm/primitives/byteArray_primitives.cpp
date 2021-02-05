@@ -9,7 +9,6 @@
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
 #include "vm/primitives/byteArray_primitives.hpp"
-#include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
@@ -23,7 +22,6 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/runtime/DeltaProcess.hpp"
-#include "vm/runtime/VMProcess.hpp"
 
 
 TRACE_FUNC( TraceByteArrayPrims, "byteArray" )
@@ -933,6 +931,7 @@ PRIM_DECL_2( byteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
             return markSymbol( vmSymbols::argument_is_invalid() );
     }
     alienAddress( receiver ) = (void *) value;
+
 
     return receiver;
 }

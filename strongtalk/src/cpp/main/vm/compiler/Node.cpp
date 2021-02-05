@@ -22,9 +22,9 @@
 #include "vm/utilities/StringOutputStream.hpp"
 
 
-std::int32_t         BasicNode::currentID;
-std::int32_t         BasicNode::currentCommentID;
-std::int32_t         BasicNode::lastByteCodeIndex;
+std::int32_t        BasicNode::currentID;
+std::int32_t        BasicNode::currentCommentID;
+std::int32_t        BasicNode::lastByteCodeIndex;
 ScopeInfo           BasicNode::lastScopeInfo;
 PrimitiveDescriptor *InterruptCheckNode::_intrCheck;
 
@@ -44,13 +44,15 @@ void BasicNode::setScope( InlinedScope *s ) {
 }
 
 
-BasicNode::BasicNode() {
-    _id         = currentID++;
-    _basicBlock = nullptr;
+BasicNode::BasicNode() :
+    _id{ currentID++ },
+    _basicBlock{ nullptr },
+    _num{ -1 },
+    _dontEliminate{ false },
+    _deleted{ false },
+    _pseudoRegisterMapping{ nullptr } {
     setScope( theCompiler->currentScope() );
-    _num                   = -1;
-    _dontEliminate         = _deleted = false;
-    _pseudoRegisterMapping = nullptr;
+
 }
 
 
@@ -65,36 +67,39 @@ void BasicNode::setMapping( PseudoRegisterMapping *mapping ) {
 }
 
 
-NonTrivialNode::NonTrivialNode() {
-    _src     = _dest = nullptr;
-    _srcUse  = nullptr;
-    _destDef = nullptr;
+NonTrivialNode::NonTrivialNode() :
+    _src{ nullptr },
+    _dest{ nullptr },
+    _srcUse{ nullptr },
+    _destDef{ nullptr } {
+
 }
 
 
 LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name ) :
-    LoadNode( dst ) {
+    LoadNode( dst ),
+    _context0{ context0 },
+    _context0Use{ nullptr },
+    _nofLevels{ nofLevels },
+    _offset{ offset },
+    _name{ name } {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
     st_assert( offset >= 0, "offset must be >= 0" );
-    _context0    = context0;
-    _context0Use = nullptr;
-    _nofLevels   = nofLevels;
-    _offset      = offset;
-    _name        = name;
 }
 
 
 StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool needsStoreCheck ) :
-    StoreNode( src ) {
+    StoreNode( src ),
+    _context0{ context0 },
+    _context0Use{ nullptr },
+    _nofLevels{ nofLevels },
+    _needsStoreCheck{ needsStoreCheck },
+    _offset{ offset },
+    _name{ name } {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
     st_assert( offset >= 0, "offset must be >= 0" );
-    _context0        = context0;
-    _nofLevels       = nofLevels;
-    _offset          = offset;
-    _needsStoreCheck = needsStoreCheck;
-    _name            = name;
 }
 
 
@@ -107,17 +112,17 @@ AssignNode::AssignNode( PseudoRegister *s, PseudoRegister *d ) :
 }
 
 
-CommentNode::CommentNode( const char *s ) {
-    _comment = s;
+CommentNode::CommentNode( const char *s ) :
+    _comment{ s } {
     // give all comments negative ids (don't disturb node numbers by turning CompilerDebug off and on)
-    _id      = --currentCommentID;
+    _id = --currentCommentID;
     currentID--;
 }
 
 
 ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool smiIndex, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset ) :
-    AbstractArrayAtNode( array, index, smiIndex, result, error, data_offset, length_offset ) {
-    _access_type = access_type;
+    AbstractArrayAtNode( array, index, smiIndex, result, error, data_offset, length_offset ),
+    _access_type{ access_type } {
 }
 
 
@@ -163,7 +168,18 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *
 }
 
 
-TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool arg1IsInt, bool arg2IsInt ) {
+TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool arg1IsInt, bool arg2IsInt ) :
+
+    _op{ op },
+//    _src{ arg1 },
+    _oper{ arg2 },
+//    _dest{ dst },
+    _arg1IsInt{ arg1IsInt },
+    _arg2IsInt{ arg2IsInt },
+    _constResult{ nullptr }
+//    _dontEliminate{ true }
+{
+
     if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = arg1;
@@ -173,14 +189,12 @@ TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister
         arg1IsInt = arg2IsInt;
         arg2IsInt = t2;
     }
-    _op            = op;
+
     _src           = arg1;
-    _oper          = arg2;
     _dest          = dst;
-    _arg1IsInt     = arg1IsInt;
-    _arg2IsInt     = arg2IsInt;
-    _constResult   = nullptr;
-    _dontEliminate = true; // don't eliminate even if result unused because primitive might fail
+    _dontEliminate = true;
+
+    // don't eliminate even if result unused because primitive might fail
 }
 
 
@@ -192,14 +206,19 @@ PseudoRegister *NonTrivialNode::dest() const {
 
 void NonTrivialNode::setDest( BasicBlock *bb, PseudoRegister *d ) {
     // bb == nullptr means don't update definitions
-    if ( not hasDest() ) st_fatal( "has no dest" );
+    if ( not hasDest() ) {
+        st_fatal( "has no dest" );
+    }
+
     st_assert( bb or not _destDef, "shouldn't have a def" );
-    if ( _destDef )
+    if ( _destDef ) {
         _dest->removeDef( bb, _destDef );
-    _dest        = d;
-    if ( bb )
-        _destDef = _dest->addDef( bb, (NonTrivialNode *)
-            this );
+    }
+
+    _dest = d;
+    if ( bb ) {
+        _destDef = _dest->addDef( bb, (NonTrivialNode *) this );
+    }
 }
 
 
@@ -373,11 +392,14 @@ BasicBlock *BasicNode::newBasicBlock() {
         return _basicBlock;
 
     std::int32_t len = 0;
-    _basicBlock = new BasicBlock( (Node *) this, (Node *) this, 1 );
+    _basicBlock = new BasicBlock( (Node *)
+                                      this, (Node *)
+                                      this, 1 );
 
     Node *n{ nullptr };
 
-    for ( n = (Node *) this; not n->endsBasicBlock() and n->next() not_eq nullptr; n = n->next() ) {
+    for ( n = (Node *) this; not n->endsBasicBlock() and n->next() not_eq nullptr;
+          n = n->next() ) {
         n->_num        = len++;
         n->_basicBlock = _basicBlock;
     }
@@ -439,16 +461,24 @@ MergeNode *CallNode::nlrTestPoint() const {
 }
 
 
-CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableArray<PseudoRegister *> *e ) {
-    if ( n not_eq nullptr )
+CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableArray<PseudoRegister *> *e ) :
+
+    nblocks{ 0 },
+//    _dest{ nullptr },
+    exprStack{ e },
+    args{ a },
+    argUses{ nullptr },
+    uplevelUses{ nullptr },
+    uplevelDefs{ nullptr },
+    uplevelUsed{ nullptr } {
+
+    //
+    if ( n not_eq nullptr ) {
         append1( n );
-    exprStack   = e;
-    args        = a;
-    _dest       = new SinglyAssignedPseudoRegister( scope(), resultLoc, false, false, _byteCodeIndex, _byteCodeIndex );
-    argUses     = uplevelUses = nullptr;
-    uplevelDefs = nullptr;
-    uplevelUsed = uplevelDefd = nullptr;
-    nblocks     = theCompiler->blockClosures->length();
+    }
+
+    _dest   = new SinglyAssignedPseudoRegister( scope(), resultLoc, false, false, _byteCodeIndex, _byteCodeIndex );
+    nblocks = theCompiler->blockClosures->length();
 }
 
 
@@ -458,39 +488,54 @@ SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<Pseud
     _superSend = superSend;
     _info      = info;
     st_assert( exprStack, "should have expr stack" );
-    // Fix this when compiler is more flexible
-    // not a fatal because it could happen for super sends that fail (no super method found)
-    if ( _superSend and not UseNewBackend )
+    // Fix this when compiler is more flexible not a fatal because it could happen for super sends that fail (no super method found)
+
+    if ( _superSend and not UseNewBackend ) {
         spdlog::warn( "We cannot yet have super sends in nativeMethods" );
+    }
+
 }
 
 
 ContextCreateNode::ContextCreateNode( PseudoRegister *parent, PseudoRegister *context, std::int32_t nofTemps, GrowableArray<PseudoRegister *> *expr_stack ) :
-    PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ) {
-    _src               = parent;
-    _dest              = context;
-    _nofTemps          = nofTemps;
-    _contextSize       = 0;
-    _parentContexts    = nullptr;
-    _parentContextUses = nullptr;
+    PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ),
+    _nofTemps{ nofTemps },
+    _contextSize{ 0 },
+    _contextNo{ 0 },
+    _parentContexts{ nullptr },
+    _parentContextUses{ nullptr } {
+
+    _src  = parent;
+    _dest = context;
+
     Scope          *p           = _scope->parent();
     PseudoRegister *prevContext = parent;
     // collect all parent contexts
+
     while ( p and p->isInlinedScope() and ( (InlinedScope *) p )->context() ) {
         PseudoRegister *c = ( (InlinedScope *) p )->context();
         if ( c not_eq prevContext ) {
-            if ( not _parentContexts )
+            if ( not _parentContexts ) {
                 _parentContexts = new GrowableArray<PseudoRegister *>( 5 );
+            }
             _parentContexts->append( c );
             prevContext = c;
         }
-        p                 = p->parent();
+
+        p = p->parent();
     }
 }
 
 
 ContextCreateNode::ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ) :
-    PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ) {
+    PrimitiveNode( Primitives::context_allocate(), nullptr, nullptr, expr_stack ),
+//    _dest{ nullptr },
+    _nofTemps{ n->_nofTemps },
+    _contextSize{ 0 },
+    _contextNo{ 0 },
+    _parentContexts{ nullptr },
+    _parentContextUses{ nullptr } {
+
     spdlog::warn( "check this implementation" );
     Unimplemented();
     // Urs, don't we need a source here?
@@ -503,25 +548,27 @@ ContextCreateNode::ContextCreateNode( PseudoRegister *b, const ContextCreateNode
 }
 
 
-ContextInitNode::ContextInitNode( ContextCreateNode *creator ) {
+ContextInitNode::ContextInitNode( ContextCreateNode *creator ) :
+    _initializers{ nullptr },
+    _contentDefs{ nullptr },
+    _initializerUses{ nullptr },
+    _materializedBlocks{ nullptr } {
+
     std::int32_t nofTemps = creator->nofTemps();
     _src = creator->context();
     st_assert( _src, "must have context" );
-    _initializers       = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );    // holds initializer for each element (or nullptr)
-    _contentDefs        = nullptr;
-    _initializerUses    = nullptr;
-    _materializedBlocks = nullptr;
+    _initializers = new GrowableArray<Expression *>( nofTemps, nofTemps, nullptr );    // holds initializer for each element (or nullptr)
 }
 
 
-ContextInitNode::ContextInitNode( PseudoRegister *b, const ContextInitNode *node ) {
+ContextInitNode::ContextInitNode( PseudoRegister *b, const ContextInitNode *node ) :
+    _contentDefs{ nullptr },
+    _initializerUses{ nullptr },
+    _materializedBlocks{ nullptr },
+    _initializers{ node->_initializers } {
     _src = b;
     st_assert( _src, "must have context" );
-    _initializers = node->_initializers;
     st_assert( ( node->_contentDefs == nullptr ) and ( node->_initializerUses == nullptr ), "shouldn't copy after uses have been built" );
-    _contentDefs        = nullptr;
-    _initializerUses    = nullptr;
-    _materializedBlocks = nullptr;
 }
 
 
@@ -530,6 +577,7 @@ BlockCreateNode::BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRe
     _src        = nullptr;
     _dest       = b;
     _contextUse = nullptr;
+
     switch ( b->method()->block_info() ) {
         case MethodOopDescriptor::expects_nil:        // no context needed
             _context = nullptr;
@@ -629,19 +677,22 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoin
 }
 
 
-InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) {
-    _operation   = op;
-    _dest        = result;
-    _error       = error;
-    _src         = recv;
-    _arg1        = arg1;
-    _arg2        = arg2;
-    _arg1_is_smi = arg1_is_smi;
-    _arg2_is_smi = arg2_is_smi;
+InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) :
+    _operation{ op },
+    _error{ error },
+    _arg1{ arg1 },
+    _arg2{ arg2 },
+    _arg1_is_smi{ arg1_is_smi },
+    _arg2_is_smi{ arg2_is_smi } {
+
+    _dest = result;
+    _src  = recv;
+
 }
 
 
 bool InlinedPrimitiveNode::canFail() const {
+
     switch ( op() ) {
         case Operation::obj_klass:
             return false;
@@ -651,13 +702,17 @@ bool InlinedPrimitiveNode::canFail() const {
             return not arg1_is_smi();
         case Operation::proxy_byte_at_put:
             return not arg1_is_smi() or not arg2_is_smi();
+        default:
+            return false;
     };
+
     ShouldNotReachHere();
     return false;
 }
 
 
 bool InlinedPrimitiveNode::canBeEliminated() const {
+
     switch ( op() ) {
         case Operation::obj_klass:
             return true;
@@ -667,7 +722,10 @@ bool InlinedPrimitiveNode::canBeEliminated() const {
             return not canFail();
         case Operation::proxy_byte_at_put:
             return false;
+        default:
+            return false;
     };
+
     ShouldNotReachHere();
     return false;
 }
@@ -740,11 +798,12 @@ bool PrimitiveNode::canFail() const {
 
 
 DLLNode::DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
-    CallNode( nlrTestPoint, args, expr_stack ) {
-    _dll_name      = dll_name;
-    _function_name = function_name;
-    _function      = function;
-    _async         = async;
+    CallNode( nlrTestPoint, args, expr_stack ),
+    _dll_name{ dll_name },
+    _function_name{ function_name },
+    _function{ function },
+    _async{ async } {
+
 }
 
 
@@ -930,7 +989,7 @@ Node *TArithRRNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 
 
 Node *ArithRCNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::createAndRegisterNode<ArithRCNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ) );
+    return NodeFactory::createAndRegisterNode<ArithRCNode>( _op, TRANSLATE( _src ), _operand, TRANSLATE( _dest ) );
 }
 
 
@@ -1683,7 +1742,8 @@ void BlockMaterializeNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool re
 
 void BasicNode::removeUpToMerge() {
     BasicBlock *thisBasicBlock = _basicBlock;
-    Node       *n              = (Node *) this;
+    Node       *n              = (Node *)
+        this;
 
     for ( ; n and n->hasSinglePredecessor(); ) {
         while ( n->nSuccessors() > 1 ) {
@@ -1764,7 +1824,8 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *rr, bool rem, bool
     if ( _deleted )
         return;
 
-    eliminate( bb, rr, (ConstPseudoRegister *) nullptr, (KlassOop) badOop );
+    eliminate( bb, rr, (ConstPseudoRegister *)
+        nullptr, (KlassOop) badOop );
 }
 
 
@@ -2772,14 +2833,19 @@ Node *TypeTestNode::smiCase() const {
 // integer loop optimization
 // ==================================================================================
 
-LoopHeaderNode::LoopHeaderNode() {
-    _activated          = false;
-    _integerLoop        = false;
-    _tests              = nullptr;
-    _enclosingLoop      = nullptr;
-    _nestedLoops        = nullptr;
-    _nofCalls           = 0;
-    _registerCandidates = nullptr;
+LoopHeaderNode::LoopHeaderNode() :
+    _activated{ false },
+    _integerLoop{ false },
+    _tests{ nullptr },
+    _enclosingLoop{ nullptr },
+    _nestedLoops{ nullptr },
+    _nofCalls{ 0 },
+    _loopVar{ 0 },
+    _lowerBound{ 0 },
+    _upperBound{ 0 },
+    _arrayAccesses{ nullptr },
+    _registerCandidates{ nullptr } {
+
 }
 
 
@@ -2822,9 +2888,9 @@ void LoopHeaderNode::addNestedLoop( LoopHeaderNode *l ) {
 }
 
 
-void LoopHeaderNode::addRegisterCandidate( LoopseudoRegisterCandidate *c ) {
+void LoopHeaderNode::addRegisterCandidate( LoopPseudoRegisterCandidate *c ) {
     if ( _registerCandidates == nullptr )
-        _registerCandidates = new GrowableArray<LoopseudoRegisterCandidate *>( 2 );
+        _registerCandidates = new GrowableArray<LoopPseudoRegisterCandidate *>( 2 );
     _registerCandidates->append( c );
 }
 
@@ -2862,7 +2928,8 @@ void AbstractArrayAtNode::assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n
 }
 
 
-void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
+void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
+> &klasses ) const {
 // ArrayAt node tests index for smi_t-ness
     regs.
         append( _arg );
@@ -2884,15 +2951,24 @@ void AbstractArrayAtNode::assert_pseudoRegister_type( PseudoRegister *r, Growabl
 }
 
 
-void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
+void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
+> &klasses ) const {
 // atPut node tests element for smi_t-ness if character array
-    AbstractArrayAtNode::collectTypeTests( regs, klasses );
-    if ( stores_smi_elements( _access_type ) ) {
-        regs.append( elem );
+    AbstractArrayAtNode::collectTypeTests( regs, klasses
+    );
+    if (
+        stores_smi_elements( _access_type )
+        ) {
+        regs.
+            append( elem );
 
         st_assert( klasses.first()->first() == smiKlassObject, "must be smi_t type for index" );
 
-        klasses.append( klasses.first() );    /* reuse smi_t type descriptor*/
+        klasses.
+            append( klasses
+                        .
+                            first()
+        );    /* reuse smi_t type descriptor*/
     }
 }
 
@@ -2909,19 +2985,24 @@ void ArrayAtPutNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArra
 }
 
 
-void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
+void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
+> &klasses ) const {
 // tests receiver and/or arg for smi_t-ness
     if (
         canFail()
         ) {
         GrowableArray<KlassOop> *t = make_smi_type();
         if ( not _arg1IsInt ) {
-            regs.append( _src );
-            klasses.append( t );
+            regs.
+                append( _src );
+            klasses.
+                append( t );
         }
         if ( not _arg2IsInt ) {
-            regs.append( _oper );
-            klasses.append( t );
+            regs.
+                append( _oper );
+            klasses.
+                append( t );
         }
     }
 }
@@ -2946,9 +3027,12 @@ void TArithRRNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<
 }
 
 
-void TypeTestNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *> &klasses ) const {
-    regs.append( _src );
-    klasses.append( _classes );
+void TypeTestNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
+> &klasses ) const {
+    regs.
+        append( _src );
+    klasses.
+        append( _classes );
 }
 
 
@@ -3187,7 +3271,7 @@ const char *TArithRRNode::toString( char *buf, bool printAddress ) const {
 
 const char *ArithRCNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
-    my_sprintf_len( buf, PrintStringLen, "%s := %s %s 0x{0:x}", _dest->safeName(), _src->safeName(), opName(), _oper );
+    my_sprintf_len( buf, PrintStringLen, "%s := %s %s 0x{0:x}", _dest->safeName(), _src->safeName(), opName(), _operand );
     if ( printAddress )
         my_sprintf( buf, " ((ArithRCNode*)0x{0:x})", this );
     return b;

@@ -23,14 +23,13 @@ private:
     ContextOop   _nlr_home_context;
 
 public:
-    Oop _nlr_result;
+    Oop _nlr_result;    //
 
 private:
 
-    bool _is_compiled;
+    bool _is_compiled;  //
 
-    // Link to next unwindinfo
-    UnwindInfo *_next;
+    UnwindInfo *_next;  // Link to next UnwindInfo
 
     // Return address patch state
     char *saved_C_frame_return_addr;                //

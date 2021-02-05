@@ -39,9 +39,9 @@ private:
     bool isAligned();
 
 public:
-    HeapCodeBuffer() {
-        _bytes = new GrowableArray<std::uint32_t>();
-        _oops  = new GrowableArray<Oop>();
+    HeapCodeBuffer() :
+        _bytes{ new GrowableArray<std::uint32_t>() },
+        _oops{ new GrowableArray<Oop>() } {
     }
 
 

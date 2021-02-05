@@ -112,27 +112,35 @@ public:
     EventLogEvent *here;
 
 
-    EventMarker( const char *n ) {
-        init( n, 0, 0, 0 );
+    EventMarker( const char *n ) :
+        event(),
+        here{ nullptr } {
+        init( n );
     }
 
 
-    EventMarker( const char *n, const void *p1 ) {
-        init( n, p1, 0, 0 );
+    EventMarker( const char *n, const void *p1 ) :
+        event(),
+        here{ nullptr } {
+        init( n, p1 );
     }
 
 
-    EventMarker( const char *n, const void *p1, const void *p2 ) {
-        init( n, p1, p2, 0 );
+    EventMarker( const char *n, const void *p1, const void *p2 ) :
+        event(),
+        here{ nullptr } {
+        init( n, p1, p2 );
     }
 
 
-    EventMarker( const char *n, const void *p1, const void *p2, const void *p3 ) {
+    EventMarker( const char *n, const void *p1, const void *p2, const void *p3 ) :
+        event(),
+        here{ nullptr } {
         init( n, p1, p2, p3 );
     }
 
 
-    void init( const char *n, const void *p1, const void *p2, const void *p3 ) {
+    void init( const char *n, const void *p1 = nullptr, const void *p2 = nullptr, const void *p3 = nullptr ) {
         here = eventLog->_next;
         eventLog->log( n, p1, p2, p3 );
         here->_status = EventLogEventStatus::starting;

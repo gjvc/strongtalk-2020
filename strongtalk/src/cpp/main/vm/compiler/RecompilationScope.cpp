@@ -70,20 +70,30 @@ InlinedRecompilationScope::InlinedRecompilationScope( NonDummyRecompilationScope
 
 
 PICRecompilationScope::PICRecompilationScope( const NativeMethod *c, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *dsc, NativeMethod *n, MethodOop m, std::int32_t ns, std::int32_t lev, bool tr ) :
-    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc ) {
+    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc )  {
     _invocationCount = ns;
     _extended        = false;
 }
 
 
 InliningDatabaseRecompilationScope::InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, KlassOop receiver_klass, MethodOop method, std::int32_t level ) :
-    NonDummyRecompilationScope( sender, byteCodeIndex, method, level ) {
+    NonDummyRecompilationScope( sender, byteCodeIndex, method, level ),
+    _receiver_klass{ receiver_klass },
+    _method{ method },
+    _key{ nullptr },
+    _uncommon{ nullptr } {
+
+    //
     _receiver_klass = receiver_klass;
     _method         = method;
     _key            = LookupKey::allocate( receiver_klass, method->is_blockMethod() ? Oop( method ) : Oop( _method->selector() ) );
     _uncommon       = new GrowableArray<bool>( _ncodes );
-    for ( std::int32_t i = 0; i <= _ncodes; i++ )
+
+    //
+    for ( std::int32_t i = 0; i <= _ncodes; i++ ) {
         _uncommon->append( false );
+    }
+
 }
 
 
@@ -487,12 +497,12 @@ void NonDummyRecompilationScope::constructSubScopes( bool trusted ) {
     CodeIterator iter( m );
     do {
         switch ( iter.send() ) {
-            case ByteCodes::SendType::interpreted_send:
-            case ByteCodes::SendType::compiled_send:
-            case ByteCodes::SendType::predicted_send:
-            case ByteCodes::SendType::accessor_send:
-            case ByteCodes::SendType::polymorphic_send:
-            case ByteCodes::SendType::primitive_send  : {
+            case ByteCodes::SendType::INTERPRETED_SEND:
+            case ByteCodes::SendType::COMPILED_SEND:
+            case ByteCodes::SendType::PREDICTED_SEND:
+            case ByteCodes::SendType::ACCESSOR_SEND:
+            case ByteCodes::SendType::POLYMORPHIC_SEND:
+            case ByteCodes::SendType::PRIMITIVE_SEND  : {
 //                NonDummyRecompilationScope           *s  = nullptr;
                 InterpretedInlineCache               *ic = iter.ic();
                 for ( InterpretedInlineCacheIterator it( ic ); not it.at_end(); it.advance() ) {
@@ -509,10 +519,10 @@ void NonDummyRecompilationScope::constructSubScopes( bool trusted ) {
                 }
             }
                 break;
-            case ByteCodes::SendType::megamorphic_send:
+            case ByteCodes::SendType::MEGAMORPHIC_SEND:
                 new UninlinableRecompilationScope( this, iter.byteCodeIndex() );  // constructor adds callee to our subScope list
                 break;
-            case ByteCodes::SendType::no_send:
+            case ByteCodes::SendType::NO_SEND:
                 break;
             default: st_fatal1( "unexpected send type %d", iter.send() );
         }

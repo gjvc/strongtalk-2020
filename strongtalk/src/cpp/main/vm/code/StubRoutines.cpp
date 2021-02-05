@@ -86,8 +86,11 @@ void popStackHandles( const char *nextFrame );
 // tracing
 
 void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument, std::int32_t nof_arguments ) {
-    if ( not TraceDLLCalls )
+
+    //
+    if ( not TraceDLLCalls ) {
         return; // in case it has been turned off during run-time
+    }
 
     Frame f = DeltaProcess::active()->last_frame();
     if ( f.is_interpreted_frame() ) {
@@ -363,13 +366,13 @@ extern "C" char *o;
 
 const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
 
-    // Called from within a MIC (megamorphic inline cache), the special variant of PICs for compiled code (see compiledPIC.hpp/cpp).
+    // Called from within a MIC (MEGAMORPHIC inline cache), the special variant of PICs for compiled code (see compiledPIC.hpp/cpp).
     // The MIC layout is as follows:
     //
     // call <this stub routine>
     // selector			<--- return address (tos)
     //
-    // Note: Don't use this for megamorphic super sends!
+    // Note: Don't use this for MEGAMORPHIC super sends!
 
     Label is_smi, probe_primary_cache, probe_secondary_cache, call_method, is_methodOop, do_lookup;
 
@@ -379,7 +382,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
 
     // eax    : receiver
     // tos    : return address pointing to selector in MIC
-    // tos + 4: return address of megamorphic send in compiled code
+    // tos + 4: return address of MEGAMORPHIC send in compiled code
     // tos + 8: last argument/receiver
     const char *entry_point = masm->pc();
     masm->popl( ebx );                // get return address (MIC cache)
@@ -392,7 +395,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // eax: receiver
     // ebx: MIC cache pointer
     // ecx: receiver klass
-    // tos: return address of megamorphic send in compiled code (ic)
+    // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->bind( probe_primary_cache );        // compute hash value
     masm->movl( edx, Address( ebx ) );        // get selector
     // compute hash value
@@ -410,7 +413,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     //
     // eax: receiver
     // ecx: methodOop/NativeMethod
-    // tos: return address of megamorphic send in compiled code (ic)
+    // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->bind( call_method );
     masm->test( ecx, MEMOOP_TAG );            // check if methodOop
     masm->jcc( Assembler::Condition::notZero, is_methodOop );    // otherwise
@@ -426,7 +429,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // ebx: 00000000
     // ecx: methodOop
     // edx: entry point
-    // tos: return address of megamorphic send in compiled code (ic)
+    // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->jmp( edx );                // call method_entry
 
     // probe secondary cache
@@ -436,7 +439,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // ecx: receiver klass
     // edx: selector
     // edi: primary cache index
-    // tos: return address of megamorphic send in compiled code (ic)
+    // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->bind( probe_secondary_cache );        // compute hash value
     masm->andl( edi, ( secondary_cache_size - 1 ) << 4 );
     // probe cache
@@ -454,7 +457,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // ecx: receiver klass
     // edx: selector
     // edi: secondary cache index
-    // tos: return address of megamorphic send in compiled code (ic)
+    // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->bind( do_lookup );
     masm->set_last_Delta_frame_after_call();
     masm->pushl( eax );                // save receiver
@@ -472,7 +475,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // method not found in the lookup cache - full lookup needed (message not understood may happen)
     // eax: receiver
     // ebx: points to MIC cache
-    // tos: return address of megamorphic send in compiled code
+    // tos: return address of MEGAMORPHIC send in compiled code
     //
     // Note: This should not happen right now, since normal_lookup always returns a value
     //       if the method exists (and 'message not understood' is not yet supported in
@@ -1362,7 +1365,7 @@ const char *StubRoutines::generate_oopify_float( MacroAssembler *masm ) {
 
 
 const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *masm, std::int32_t pic_size ) {
-// Called from within a PolymorphicInlineCache (polymorphic inline cache).
+// Called from within a PolymorphicInlineCache (POLYMORPHIC inline cache).
 // The stub interprets the methodOop section of compiled PICs.
 // The methodOop section layout is as follows:
 //
@@ -1376,7 +1379,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
 // cached klass n
 // cached methodOop n
 //
-// Note: Don't use this for polymorphic super sends!
+// Note: Don't use this for POLYMORPHIC super sends!
 
     Label found, loop;
 
@@ -1386,7 +1389,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     // ebx: PolymorphicInlineCache table pointer
     // ecx: methodOop
     // edx: receiver klass
-    // tos: return address of polymorphic send in compiled code
+    // tos: return address of POLYMORPHIC send in compiled code
     masm->bind( found );
     masm->movl( edx, Address( std::int32_t( &method_entry_point ), RelocationInformation::RelocationType::external_word_type ) );
     // (Note: cannot use value in method_entry_point directly since interpreter is generated afterwards)
@@ -1398,7 +1401,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
 
     // eax    : receiver
     // tos    : return address pointing to table in PolymorphicInlineCache
-    // tos + 4: return address of polymorphic send in compiled code
+    // tos + 4: return address of POLYMORPHIC send in compiled code
     // tos + 8: last argument/receiver
     const char *entry_point = masm->pc();
     masm->popl( ebx );                // get return address (PolymorphicInlineCache table pointer)
@@ -1410,7 +1413,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     // eax: receiver
     // ebx: PolymorphicInlineCache table pointer
     // edx: receiver klass
-    // tos: return address of polymorphic send in compiled code
+    // tos: return address of POLYMORPHIC send in compiled code
     masm->bind( loop );
     for ( std::int32_t i = 0; i < pic_size; i++ ) {
         // compare receiver klass with klass in PolymorphicInlineCache table at index

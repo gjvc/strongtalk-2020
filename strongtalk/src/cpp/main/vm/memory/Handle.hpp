@@ -38,7 +38,11 @@ protected:
 
 
     BaseHandle( Oop toSave, bool log, const char *label ) :
-        _label( label ), _log( log ), _saved( toSave ) {
+        _label{ label },
+        _log{ log },
+        _saved{ toSave },
+        _next{ nullptr },
+        _prev{ nullptr } {
     }
 
 

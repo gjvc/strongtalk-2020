@@ -37,22 +37,27 @@ bool Reflection::needs_schema_change() {
 
 
 void Reflection::forward( MemOop old_obj, MemOop new_obj ) {
-    if ( old_obj == new_obj )
+    if ( old_obj == new_obj ) {
         return;
+    }
+
     if ( old_obj->is_forwarded() ) {
         if ( old_obj->forwardee() not_eq new_obj ) {
             st_fatal( "inconsistent forwarding" );
         }
         return;
     }
+
     old_obj->forward_to( new_obj );
     _converted->append( old_obj );
 }
 
 
 bool Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin ) {
-    if ( new_mixin->number_of_methods() not_eq old_mixin->number_of_methods() )
+
+    if ( new_mixin->number_of_methods() not_eq old_mixin->number_of_methods() ) {
         return true;
+    }
 
     for ( std::int32_t i = 1; i <= new_mixin->number_of_methods(); i++ ) {
         if ( not old_mixin->includes_method( new_mixin->method_at( i ) ) )
@@ -64,23 +69,29 @@ bool Reflection::has_methods_changed( MixinOop new_mixin, MixinOop old_mixin ) {
 
 
 bool Reflection::has_class_vars_changed( MixinOop new_mixin, MixinOop old_mixin ) {
+
     if ( new_mixin->number_of_classVars() not_eq old_mixin->number_of_classVars() )
         return true;
 
     for ( std::int32_t i = 1; i <= new_mixin->number_of_classVars(); i++ ) {
-        if ( not old_mixin->includes_classVar( new_mixin->classVar_at( i ) ) )
+        if ( not old_mixin->includes_classVar( new_mixin->classVar_at( i ) ) ) {
             return true;
+        }
     }
+
     return false;
 }
 
 
 ClassChange *Reflection::find_change_for( KlassOop klass ) {
+
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
         ClassChange *e = _classChanges->at( i );
-        if ( e->old_klass() == klass )
+        if ( e->old_klass() == klass ) {
             return e;
+        }
     }
+
     return nullptr;
 }
 
@@ -125,28 +136,29 @@ void Reflection::update_classes( bool class_vars_changed, bool instance_methods_
 
 
 void Reflection::setup_schema_change() {
+
+    //
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
         _classChanges->at( i )->setup_schema_change();
     }
+
+    //
     for ( std::int32_t i = 0; i < _classChanges->length(); i++ ) {
         // Mark old class for schema change
         _classChanges->at( i )->old_klass()->klass_part()->mark_for_schema_change();
         // Mark old metaclass for schema change
         _classChanges->at( i )->old_klass()->klass()->klass_part()->mark_for_schema_change();
     }
+
 }
 
 
 void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArrayOop invocations ) {
+
+    //
     ResourceMark resourceMark;
     if ( TraceApplyChange ) {
-        _console->print( "Reflective change" );
-        spdlog::info( "[new]" );
-        new_mixin->print();
-        spdlog::info( "[old]" );
-        old_mixin->print();
-        spdlog::info( "[invocations]" );
-        invocations->print();
+        spdlog::info( "Reflective change  [new] {}  [old] {}", new_mixin->print_value_string(), old_mixin->print_value_string(), invocations->print_value_string() );
         Universe::verify();
     }
 
@@ -167,6 +179,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
     bool class_methods_changed    = has_methods_changed( new_mixin->class_mixin(), old_mixin->class_mixin() );
 
     if ( format_changed ) {
+
         if ( TraceApplyChange ) {
             spdlog::info( " - schema change is needed" );
         }

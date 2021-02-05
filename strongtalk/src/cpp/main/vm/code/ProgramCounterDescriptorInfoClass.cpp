@@ -8,10 +8,10 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 
 
-ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::int32_t sz ) {
-    _nodes = new_resource_array<ProgramCounterDescriptorNode>( sz );
-    _end   = 0;
-    _size  = sz;
+ProgramCounterDescriptorInfoClass::ProgramCounterDescriptorInfoClass( std::int32_t sz ) :
+    _nodes{ new_resource_array<ProgramCounterDescriptorNode>( sz ) },
+    _end{ 0 },
+    _size{ sz } {
 }
 
 
@@ -19,8 +19,9 @@ void ProgramCounterDescriptorInfoClass::extend( std::int32_t newSize ) {
 
     ProgramCounterDescriptorNode *newNodes = new_resource_array<ProgramCounterDescriptorNode>( newSize );
 
-    for ( std::int32_t i = 0; i < _end; i++ )
+    for ( std::int32_t i = 0; i < _end; i++ ) {
         newNodes[ i ] = _nodes[ i ];
+    }
 
     _nodes = newNodes;
     _size  = newSize;
@@ -28,8 +29,12 @@ void ProgramCounterDescriptorInfoClass::extend( std::int32_t newSize ) {
 
 
 void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo scope, std::int32_t byteCodeIndex ) {
+
+    //
     if ( scope->_lite and not GenerateLiteScopeDescs )
         return;
+
+    //
     if ( _end == _size )
         extend( _size * 2 );
 
@@ -58,8 +63,9 @@ void ProgramCounterDescriptorInfoClass::add( std::int32_t pcOffset, ScopeInfo sc
 
 void ProgramCounterDescriptorInfoClass::mark_scopes() {
     for ( std::int32_t i = 0; i < _end; i++ ) {
-        if ( _nodes[ i ]._scopeInfo )
+        if ( _nodes[ i ]._scopeInfo ) {
             _nodes[ i ]._scopeInfo->_usedInPcs = true;
+        }
     }
 }
 

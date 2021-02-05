@@ -46,7 +46,13 @@ constexpr std::int32_t min_resource_free_size  = 32 * 1024;
 constexpr std::int32_t min_resource_chunk_size = 256 * 1024;
 
 
-ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChunk *previous ) {
+ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChunk *previous ) :
+    _allocated{ 0 },
+    _previous_used{ 0 },
+    _bottom{ nullptr },
+    _top{ nullptr },
+    _firstFree{ nullptr },
+    _prev{ nullptr } {
 
     std::int32_t size = max( min_capacity + min_resource_free_size, min_resource_chunk_size );
     _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );
@@ -96,15 +102,16 @@ void ResourceAreaChunk::print_alloc( const char *addr, std::int32_t size ) {
 }
 
 
-ResourceArea::ResourceArea() {
-    _resourceAreaChunk = nullptr;
-    _nestingLevel      = 0;
+ResourceArea::ResourceArea() :
+    _resourceAreaChunk{ nullptr },
+    _nestingLevel{ 0 } {
 }
 
 
 ResourceArea::~ResourceArea() {
     // deallocate all chunks
-    ResourceAreaChunk       *prevc;
+    ResourceAreaChunk *prevc;
+
     for ( ResourceAreaChunk *c = _resourceAreaChunk; c not_eq nullptr; c = prevc ) {
         prevc = c->_prev;
         resources.addToFreeList( c );
@@ -266,9 +273,10 @@ void ResourceAreaChunk::freeTo( char *new_first_free ) {
 }
 
 
-Resources::Resources() {
-    _allocated           = 0;
-    _in_consistent_state = true;
+Resources::Resources() :
+    _allocated{ 0 },
+    _in_consistent_state{ true } {
+
 }
 
 
@@ -299,7 +307,7 @@ char *AllocatePageAligned( std::int32_t size, const char *name ) {
 
 char *AllocateHeap( std::int32_t size, const char *name ) {
 
-    char * bytes = (char *) os::malloc( size );
+    char *bytes = (char *) os::malloc( size );
     if ( PrintHeapAllocation )
         spdlog::info( "Heap %7d %s", size, name );
 

@@ -26,15 +26,18 @@ MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream *stream ) {
 
 
 void MethodPrinterClosure::indent() {
+
     if ( WizardMode ) {
         _outputStream->indent();
         _outputStream->print( "      <" );
         GrowableArray<std::int32_t> *map = method()->expression_stack_mapping( byteCodeIndex() );
 
-        for ( std::int32_t i = 0; i < map->length(); i++ )
+        for ( std::int32_t i = 0; i < map->length(); i++ ) {
             _outputStream->print( " 0x%08x", map->at( i ) );
+        }
         _outputStream->print_cr( " >" );
     }
+
     _outputStream->indent();
     _outputStream->print( "[%3d] ", byteCodeIndex() );
 }
@@ -49,25 +52,25 @@ void MethodPrinterClosure::show( const char *str ) {
 void MethodPrinterClosure::print_sendtype( ByteCodes::SendType type ) {
     _outputStream->print( "(" );
     switch ( type ) {
-        case ByteCodes::SendType::interpreted_send:
+        case ByteCodes::SendType::INTERPRETED_SEND:
             _outputStream->print( "interpreted" );
             break;
-        case ByteCodes::SendType::compiled_send:
+        case ByteCodes::SendType::COMPILED_SEND:
             _outputStream->print( "compiled" );
             break;
-        case ByteCodes::SendType::polymorphic_send:
-            _outputStream->print( "polymorphic" );
+        case ByteCodes::SendType::POLYMORPHIC_SEND:
+            _outputStream->print( "POLYMORPHIC" );
             break;
-        case ByteCodes::SendType::megamorphic_send:
-            _outputStream->print( "megamorphic" );
+        case ByteCodes::SendType::MEGAMORPHIC_SEND:
+            _outputStream->print( "MEGAMORPHIC" );
             break;
-        case ByteCodes::SendType::predicted_send:
+        case ByteCodes::SendType::PREDICTED_SEND:
             _outputStream->print( "predicted" );
             break;
-        case ByteCodes::SendType::accessor_send:
+        case ByteCodes::SendType::ACCESSOR_SEND:
             _outputStream->print( "access" );
             break;
-        default                         : ShouldNotReachHere();
+        default: ShouldNotReachHere();
             break;
     }
     _outputStream->print( ")" );
