@@ -139,15 +139,17 @@ external-package-object-root-cmake  := $(ROOT)/obj/$(toolchain-name)/cmake/$(bui
 
 # fmt -------------------------------------------------------------------------
 
-fmt-root-dir            := $(external-package-root)/fmt
-fmt-include-paths       := $(fmt-root-dir)/include
-fmt-object-dir          := $(external-package-object-root-cmake)/fmt
-libfmt-a                := $(fmt-object-dir)/lib/libfmt.a
-libfmt-a-flags          := -L $(fmt-object-dir)/lib -l fmt
+fmt-git-url         := https://github.com/fmtlib/fmt.git
+fmt-root-dir        := $(external-package-root)/fmt
+fmt-include-paths   := $(fmt-root-dir)/include
+fmt-object-dir      := $(external-package-object-root-cmake)/fmt
+libfmt-a            := $(fmt-object-dir)/lib/libfmt.a
+libfmt-a-flags      := -L $(fmt-object-dir)/lib -l fmt
 
 
 # googletest ------------------------------------------------------------------
 
+googletest-git-url          := https://github.com/google/googletest
 googletest-root-dir         := $(external-package-root)/googletest
 googletest-include-paths    := $(googletest-root-dir)/googletest/include
 googletest-object-dir       := $(external-package-object-root-cmake)/googletest
@@ -157,15 +159,17 @@ libgtest-a-flags            := -L $(googletest-object-dir)/lib -l gtest
 
 # nasm ------------------------------------------------------------------------
 
-nasm-root-dir           := $(external-package-root)/nasm
-nasm-object-dir         := $(external-package-object-root)/nasm
-nasm-include-paths      := $(external-package-object-root)/nasm/include
-libnasm-a               := $(external-package-object-root)/nasm/lib/libnasm.a
-libnasm-a-flags         := -L $(nasm-object-dir)/lib -l nasm
+nasm-git-url        := https://github.com/netwide-assembler/nasm
+nasm-root-dir       := $(external-package-root)/nasm
+nasm-object-dir     := $(external-package-object-root)/nasm
+nasm-include-paths  := $(external-package-object-root)/nasm/include
+libnasm-a           := $(external-package-object-root)/nasm/lib/libnasm.a
+libnasm-a-flags     := -L $(nasm-object-dir)/lib -l nasm
 
 
 # spdlog ----------------------------------------------------------------------
 
+spdlog-git-url          := https://github.com/gabime/spdlog.git
 spdlog-root-dir         := $(external-package-root)/spdlog
 spdlog-include-paths    := $(spdlog-root-dir)/include
 spdlog-object-dir       := $(external-package-object-root-cmake)/spdlog
@@ -508,13 +512,13 @@ $(CCACHE_DIR) :
 	-@mkdir -p $(CCACHE_DIR)
 
 
-ext : fmt googletest spdlog
+ext : fmt googletest spdlog nasm
 
 
 # fmt -------------------------------------------------------------------------
 
 $(fmt-root-dir) :
-	git clone https://github.com/fmtlib/fmt.git $(fmt-root-dir)
+	git clone $(fmt-git-url) $(fmt-root-dir)
 
 fmt : $(fmt-root-dir)
 	$(cmake-program) \
@@ -532,7 +536,7 @@ fmt : $(fmt-root-dir)
 # spdlog ----------------------------------------------------------------------
 
 $(spdlog-root-dir) :
-	git clone https://github.com/gabime/spdlog.git $(spdlog-root-dir)
+	git clone $(spdlog-git-url) $(spdlog-root-dir)
 
 spdlog : $(spdlog-root-dir)
 	$(cmake-program) \
@@ -550,7 +554,7 @@ spdlog : $(spdlog-root-dir)
 # googletest ------------------------------------------------------------------
 
 $(googletest-root-dir) :
-	git clone https://github.com/google/googletest $(googletest-root-dir)
+	git clone $(googletest-git-url) $(googletest-root-dir)
 
 googletest : $(googletest-root-dir)
 	$(cmake-program) \
@@ -568,7 +572,7 @@ googletest : $(googletest-root-dir)
 # nasm ------------------------------------------------------------------------
 
 $(nasm-root-dir) :
-	git clone https://github.com/netwide-assembler/nasm $(nasm-root-dir)
+	git clone $(nasm-git-url) $(nasm-root-dir)
 
 nasm : $(nasm-root-dir)
 	cd $(nasm-root-dir) && ./autogen.sh
