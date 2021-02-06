@@ -126,7 +126,7 @@ void Universe::genesis() {
     new_gen.initialize( new_rs, current_sizes._eden_size, current_sizes._surv_size );
     old_gen.initialize( old_rs, current_sizes._old_size );
 
-    st_assert( new_gen._highBoundary <= old_gen._lowBoundary, "old Space allocated lower than new Space!" );
+    st_assert( new_gen._highBoundary <= old_gen._lowBoundary, "old Space allocated lower than new Space" );
 
     remembered_set = new RememberedSet; // uses _boundary's
 
@@ -576,15 +576,16 @@ private:
     void (*_function)( MethodOop m );
 
 public:
-    AllMethodsClosure( void f( MethodOop m ) ) {
-        _function = f;
+    AllMethodsClosure( void f( MethodOop m ) ) : _function{ f } {
     }
 
 
     void do_object( MemOop obj ) {
-        if ( obj->is_method() )
+        if ( obj->is_method() ) {
             _function( MethodOop( obj ) );
+        }
     }
+
 };
 
 

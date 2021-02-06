@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -7,7 +8,7 @@
 #include "vm/utilities/ConsoleOutputStream.hpp"
 
 
-LookupResult::LookupResult() {
+LookupResult::LookupResult() : _result{} {
     clear();
 }
 
@@ -74,12 +75,12 @@ void LookupResult::print_short_on( ConsoleOutputStream *stream ) const {
 }
 
 
-LookupResult::LookupResult( MethodOop method ) {
+LookupResult::LookupResult( MethodOop method ) : _result{} {
     set( method );
 }
 
 
-LookupResult::LookupResult( const NativeMethod *nm ) {
+LookupResult::LookupResult( const NativeMethod *nm ) : _result{} {
     set( nm );
 }
 

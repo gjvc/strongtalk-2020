@@ -710,7 +710,7 @@ public:
     void print( const char *name );
 };
 
-OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *sc );
+OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope );
 
 
 class OutlinedMethodScope : public OutlinedScope {

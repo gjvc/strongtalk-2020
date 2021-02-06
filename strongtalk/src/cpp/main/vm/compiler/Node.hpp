@@ -493,7 +493,7 @@ protected:
     Node *_next;
 
 
-    Node() :
+    Node() : BasicNode(),
         _prev{ nullptr },
         _next{ nullptr } {
     }
@@ -2456,13 +2456,13 @@ protected:
     LoadOffsetNode                       *_upperLoad;            // loads array size that is the upper bound
     GrowableArray<AbstractArrayAtNode *> *_arrayAccesses;     // arrays indexed by loopVar
 
-    LoopHeaderNode                              *_enclosingLoop;      // enclosing loop or nullptr
+    LoopHeaderNode                               *_enclosingLoop;      // enclosing loop or nullptr
     // info for generic loops; all instance variables below this line are valid only after the loop optimization pass!
-    GrowableArray<HoistedTypeTest *>            *_tests;              // type tests hoisted out of loop
-    GrowableArray<LoopHeaderNode *>             *_nestedLoops;        // nested loops (nullptr if none)
+    GrowableArray<HoistedTypeTest *>             *_tests;              // type tests hoisted out of loop
+    GrowableArray<LoopHeaderNode *>              *_nestedLoops;        // nested loops (nullptr if none)
     GrowableArray<LoopPseudoRegisterCandidate *> *_registerCandidates; // candidates for reg. allocation within loop (best comes first); nullptr if none
-    bool                                        _activated;            // gen() does nothing until activated
-    std::int32_t                                _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
+    bool                                         _activated;            // gen() does nothing until activated
+    std::int32_t                                 _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
 
@@ -2592,15 +2592,14 @@ protected:
 
 
 class BlockCreateNode : public PrimitiveNode {
-    // Initializes block (closure) location with closure if it's
-    // not a memoized block; and with 0 otherwise
+    // Initializes block (closure) location with closure if it's not a memoized block; and with 0 otherwise
     // src is nullptr (but non-nullptr for subclass instances)
 
 protected:
-    PseudoRegister *_context;    // context or parameter/self that's copied into the block (or nullptr)
+    PseudoRegister *_context;       // context or parameter/self that's copied into the block (or nullptr)
     Usage          *_contextUse;    // use of _context
 
-    void materialize();                // generates code to materialize the block
+    void materialize();             // generates code to materialize the block
     void copyIntoContexts( Register val, Register t1, Register t2 );    // helper for above
 
     BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
@@ -3573,19 +3572,19 @@ class InlinedPrimitiveNode : public AbstractBranchNode {
 
 public:
     enum class Operation {
-        obj_klass,                  // corresponds to primitiveClass
-        obj_hash,                   // corresponds to primitiveHash
-        proxy_byte_at,              // corresponds to primitiveProxyByteAt:ifFail:
-        proxy_byte_at_put,          // corresponds to primitiveProxyByteAt:put:ifFail:
+        OBJ_KLASS,                  // corresponds to primitiveClass
+        OBJ_HASH,                   // corresponds to primitiveHash
+        PROXY_BYTE_AT,              // corresponds to primitiveProxyByteAt:ifFail:
+        PROXY_BYTE_AT_PUT,          // corresponds to primitiveProxyByteAt:put:ifFail:
     };
 
 private:
-    PseudoRegister *_arg1;         // 1st argument or nullptr
-    PseudoRegister *_arg2;         // 2nd argument or nullptr
-    PseudoRegister *_error;        // primitive error or nullptr if primitive can't fail
-    Usage          *_arg1_use;     //
-    Usage          *_arg2_use;     //
-    Definition     *_error_def;    //
+    PseudoRegister *_arg1;          // 1st argument or nullptr
+    PseudoRegister *_arg2;          // 2nd argument or nullptr
+    PseudoRegister *_error;         // primitive error or nullptr if primitive can't fail
+    Usage          *_arg1_use;      //
+    Usage          *_arg2_use;      //
+    Definition     *_error_def;     //
     bool           _arg1_is_smi;    // true if 1st argument is known to be a smi_t
     bool           _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
     Operation      _operation;      //

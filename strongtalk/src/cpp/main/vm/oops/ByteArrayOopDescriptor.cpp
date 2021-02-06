@@ -121,12 +121,12 @@ bool ByteArrayOopDescriptor::copy_null_terminated( char *buffer, std::int32_t ma
 }
 
 
-void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
-    MemOopDescriptor::bootstrap_object( stream );
+void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *bootstrap ) {
+    MemOopDescriptor::bootstrap_object( bootstrap );
 
-    stream->read_oop( length_addr() );
+    bootstrap->read_oop( length_addr() );
     for ( std::int32_t i = 1; i <= length(); i++ ) {
-        byte_at_put( i, stream->read_byte() );
+        byte_at_put( i, bootstrap->read_uint8_t() );
     }
 }
 
@@ -134,8 +134,10 @@ void ByteArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 static std::int32_t sub_sign( std::int32_t a, std::int32_t b ) {
     if ( a < b )
         return -1;
+
     if ( a > b )
         return 1;
+
     return 0;
 }
 
@@ -148,6 +150,7 @@ std::int32_t compare_as_bytes( const std::uint8_t *a, const std::uint8_t *b ) {
         return sub_sign( a[ 1 ], b[ 1 ] );
     if ( a[ 2 ] - b[ 2 ] )
         return sub_sign( a[ 2 ], b[ 2 ] );
+
     return sub_sign( a[ 3 ], b[ 3 ] );
 }
 
@@ -277,8 +280,10 @@ bool ByteArrayOopDescriptor::is_binary() const {
 bool ByteArrayOopDescriptor::is_keyword() const {
     if ( is_binary() )
         return false;
+
     for ( std::int32_t i = 1; i <= length(); i++ )
         if ( byte_at( i ) == ':' )
             return true;
+
     return false;
 }

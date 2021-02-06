@@ -65,15 +65,22 @@ CopyPropagationInfo *new_CPInfo( NonTrivialNode *n ) {
 }
 
 
-CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode *n ) {
-    _definition = n;
+CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode *n ) :
+    _register{ nullptr },
+    _definition{ n } {
+
+    //
     if ( not n->hasSrc() ) {
         cpCreateFailed = true;        // can't eliminate register
         return;
     }
-    _register   = n->src();
-    if ( _register->isConstPseudoRegister() )
+
+    //
+    _register = n->src();
+    if ( _register->isConstPseudoRegister() ) {
         return;   // can always eliminate if defined by constant  (was bug; fixed 7/26/96 -Urs)
+    }
+
     // (as std::int32_t as constants aren't register-allocated)
     PseudoRegister *eliminatee = n->dest();
     if ( eliminatee->_debug ) {

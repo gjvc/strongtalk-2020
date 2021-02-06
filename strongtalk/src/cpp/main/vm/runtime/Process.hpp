@@ -79,6 +79,14 @@ public:
     }
 
 
+    Process() :
+        _thread{ nullptr },
+        _thread_id{ 0 },
+        _event{ nullptr },
+        _stack_limit{ nullptr } {
+    }
+
+
 protected:
     // transfer to control
     void basic_transfer( Process *target );
@@ -88,7 +96,8 @@ protected:
     std::int32_t   _thread_id;          // Native thread id (set by OS when created)
     Event          *_event;             // Thread lock
     char           *_stack_limit;       // lower limit of stack
-    static Process *_current_process;   //  active Delta process or vm process
+    static Process *_current_process;   // active Delta process or vm process
+
 };
 
 

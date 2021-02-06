@@ -272,17 +272,20 @@ private:
     std::int32_t             _cutoff;
 
 public:
-    CollectMethodClosure( GrowableArray<MethodOop> *col, std::int32_t cutoff ) {
-        _col    = col;
-        _cutoff = cutoff;
+    CollectMethodClosure( GrowableArray<MethodOop> *col, std::int32_t cutoff ) :
+        _col{ col },
+        _cutoff{ cutoff } {
     }
 
 
     void do_object( MemOop obj ) {
-        if ( obj->is_method() )
-            if ( MethodOop( obj )->invocation_count() >= _cutoff )
+        if ( obj->is_method() ) {
+            if ( MethodOop( obj )->invocation_count() >= _cutoff ) {
                 _col->push( MethodOop( obj ) );
+            }
+        }
     }
+
 };
 
 
@@ -294,9 +297,9 @@ static std::int32_t compare_method_counters( MethodOop *a, MethodOop *b ) {
 PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     PROLOGUE_1( "printInvocationCounterHistogram", size );
 
-    if ( not size->is_smi() )
+    if ( not size->is_smi() ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-
+    }
     ResourceMark             rm;
     GrowableArray<MethodOop> *col = new GrowableArray<MethodOop>( 1024 );
 

@@ -60,21 +60,20 @@ public:
 };
 
 void setKlassVirtualTableFromWeakArrayKlass( Klass *k );
-// The weak array register is used during memory management to
-// split the object scanning into two parts:
-//   1. Transively traverse all object except the indexable part
-//      of weakArrays. Then a weakArray is encountered it is registered
+// The weak array register is used during memory management to split the object scanning into two parts:
+//   1. Transitively traverse all object except the indexable part of weakArrays. Then a weakArray is encountered it is registered
 //   2. Using the registered weakArrays continue the transitive traverse.
-// Inbetween we can easily compute the set of object with a
-// near death experience.
+// Inbetween we can easily compute the set of object with a near death experience.
 //
 // Scavenge and Mark Sweep use to disjunct parts of the interface.
 
 // Implementation note:
 //  During phase1 of Mark Sweep pointers are reversed and a objects
-//  structure cannot be used (the klass pointer is gone). This makes
-//  it necessary to register weakArrays along with their non indexable sizes.
-//  'nis' contains the non indexable sizes.
+//  structure cannot be used (the klass pointer is gone).
+//
+//  This makes
+//  it necessary to register weakArrays along with their non-indexable sizes.
+//  'non_indexable_sizes' contains the non indexable sizes.
 
 // Interface for weak array support
 class WeakArrayRegister : AllStatic {
@@ -97,7 +96,7 @@ private:
     // Variables
     static bool                        during_registration;
     static GrowableArray<WeakArrayOop> *weakArrays;
-    static GrowableArray<std::int32_t> *nis;
+    static GrowableArray<std::int32_t> *non_indexable_sizes;
 
     // Scavenge operations
     static void scavenge_contents();

@@ -24,14 +24,17 @@
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex ) :
-    _senderByteCodeIndex( byteCodeIndex ) {
-    _sender = s;
+    _senderByteCodeIndex( byteCodeIndex ),
+    _invocationCount{ 0 },
+    _sender{ s } {
+
     if ( s ) {
         s->addScope( byteCodeIndex, this );
         _invocationCount = s->_invocationCount;
     } else {
         _invocationCount = -1;
     }
+
 }
 
 
@@ -70,9 +73,19 @@ InlinedRecompilationScope::InlinedRecompilationScope( NonDummyRecompilationScope
 
 
 PICRecompilationScope::PICRecompilationScope( const NativeMethod *c, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *dsc, NativeMethod *n, MethodOop m, std::int32_t ns, std::int32_t lev, bool tr ) :
-    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ), caller( c ), _sd( s ), programCounterDescriptor( pc ), klass( k ), nm( n ), _method( m ), trusted( tr ), _desc( dsc )  {
+    NonDummyRecompilationScope( nullptr, pc->_byteCodeIndex, m, lev ),
+    caller{ c },
+    _sd{ s },
+    programCounterDescriptor{ pc },
+    klass{ k },
+    nm{ n },
+    _extended{ false },
+    _method{ m },
+    trusted{ tr },
+    _desc{ dsc } {
+
+    //
     _invocationCount = ns;
-    _extended        = false;
 }
 
 
@@ -110,12 +123,12 @@ UninlinableRecompilationScope::UninlinableRecompilationScope( NonDummyRecompilat
 
 
 InterpretedRecompilationScope::InterpretedRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, LookupKey *key, MethodOop m, std::int32_t level, bool trusted ) :
-    NonDummyRecompilationScope( sender, byteCodeIndex, m, level ) {
-    _key             = key;
-    _method          = m;
+    NonDummyRecompilationScope( sender, byteCodeIndex, m, level ),
+    _key{ key },
+    _method{ m },
+    _is_trusted{ trusted },
+    extended{ false } {
     _invocationCount = m->invocation_count();
-    _is_trusted      = trusted;
-    extended         = false;
 }
 
 
@@ -126,17 +139,20 @@ LookupKey *InlinedRecompilationScope::key() const {
 
 LookupKey *PICRecompilationScope::key() const {
     // If we have a NativeMethod, return the key of the NativeMethod
-    if ( nm )
+    if ( nm ) {
         return (LookupKey *) &nm->_lookupKey;
+    }
 
     // If we have a scope desc, return the key of the scope desc
-    if ( _desc )
+    if ( _desc ) {
         return _desc->key();
+    }
 
     // If we have a send desc, return an allocated lookup key
     if ( sd() ) {
         return sd()->isSuperSend() ? LookupKey::allocate( klass, _method ) : LookupKey::allocate( klass, _method->selector() );
     }
+
     ShouldNotReachHere();
     // return nm ? (LookupKey*)&nm->key : LookupKey::allocate(klass, _method->selector());
     //			// potential bug -- is key correct?  (super sends) -- fix this

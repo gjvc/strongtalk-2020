@@ -13,7 +13,9 @@
 
 
 CacheElement::CacheElement() :
-    _lookupKey(), _lookupResult() {
+    _lookupKey{},
+    _filler{},
+    _lookupResult{} {
 }
 
 

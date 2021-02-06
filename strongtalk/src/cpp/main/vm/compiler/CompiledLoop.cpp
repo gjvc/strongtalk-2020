@@ -21,6 +21,13 @@ CompiledLoop::CompiledLoop() :
     _beforeLoop{ nullptr },
     _endOfLoop{ nullptr },
     _startOfBody{ nullptr },
+    _firstNodeID{ 0 },
+    _incNode{ nullptr },
+    _increment{ nullptr },
+    _lastNodeID{ 0 },
+    _loopArray{ nullptr },
+    _loopHeader{ nullptr },
+    _loopSizeLoad{ nullptr },
     _endOfBody{ nullptr },
     _startOfCond{ nullptr },
     _endOfCond{ nullptr },
@@ -67,7 +74,7 @@ void CompiledLoop::set_endOfBody( Node *current ) {
     // correct startOfBody -- merge node is created before cond
     if ( isInLoopCond( _startOfBody ) )
         _startOfBody = _startOfBody->next();
-    st_assert( not isInLoopCond( _startOfBody ), "oops!" );
+    st_assert( not isInLoopCond( _startOfBody ), "oops" );
 }
 
 
@@ -160,9 +167,9 @@ public:
 
 
     SendFinder( MethodOop m, std::int32_t byteCodeIndex ) :
-        SpecializedMethodClosure() {
-        theByteCodeIndex      = byteCodeIndex;
-        lastSendByteCodeIndex = IllegalByteCodeIndex;
+        SpecializedMethodClosure(),
+        theByteCodeIndex{ byteCodeIndex },
+        lastSendByteCodeIndex{ IllegalByteCodeIndex } {
         MethodIterator iter( m, this );
     }
 
@@ -267,10 +274,11 @@ public:
     CompiledLoop   *theLoop;
 
 
-    LoopClosure( CompiledLoop *l ) {
-        defNode = nullptr;
-        theLoop = l;
+    LoopClosure( CompiledLoop *l ) :
+        defNode{ nullptr },
+        theLoop{ l } {
     }
+
 };
 
 
@@ -281,8 +289,8 @@ public:
 
 
     LoopDefCounter( CompiledLoop *l ) :
-        LoopClosure( l ) {
-        defCount = 0;
+        LoopClosure( l ),
+        defCount{ 0 } {
     }
 
 
@@ -467,10 +475,11 @@ public:
     GrowableArray<KlassOop> *smi_type;
 
 
-    UntagClosure( CompiledLoop *l, PseudoRegister *r ) {
-        theLoop               = l;
-        theLoopPseudoRegister = r;
-        smi_type              = new GrowableArray<KlassOop>( 1 );
+    UntagClosure( CompiledLoop *l, PseudoRegister *r ) :
+        smi_type{ nullptr },
+        theLoop{ l },
+        theLoopPseudoRegister{ r } {
+        smi_type = new GrowableArray<KlassOop>( 1 );
         smi_type->append( smiKlassObject );
     }
 
@@ -572,13 +581,14 @@ public:
     CompiledLoop                     *theLoop;
 
 
-    TTHoister( CompiledLoop *l, GrowableArray<HoistedTypeTest *> *h ) {
-        hoistableTests = h;
-        theLoop        = l;
+    TTHoister( CompiledLoop *l, GrowableArray<HoistedTypeTest *> *h ) :
+        hoistableTests{ h },
+        theLoop{ l } {
     }
 
 
     void do_it( InlinedScope *s ) {
+
         GrowableArray<NonTrivialNode *> *tests = s->typeTests();
         std::int32_t                    len    = tests->length();
 
@@ -588,8 +598,10 @@ public:
             st_assert( n->doesTypeTests(), "shouldn't be in list" );
             if ( n->_deleted )
                 continue;
+
             if ( n->hasUnknownCode() )
                 continue;      // can't optimize - expects other klasses, so would get uncommon trap at run-time
+
             if ( not theLoop->isInLoop( n ) )
                 continue;      // not in this loop
 
@@ -685,10 +697,10 @@ public:
     GrowableArray<AbstractArrayAtNode *> *theArrayList;
 
 
-    BoundsCheckRemover( CompiledLoop *l, PseudoRegister *r, GrowableArray<AbstractArrayAtNode *> *arrays ) {
-        theLoop               = l;
-        theLoopPseudoRegister = r;
-        theArrayList          = arrays;
+    BoundsCheckRemover( CompiledLoop *l, PseudoRegister *r, GrowableArray<AbstractArrayAtNode *> *arrays ) :
+        theLoop{ l },
+        theLoopPseudoRegister{ r },
+        theArrayList{ arrays } {
     }
 
 
@@ -723,9 +735,9 @@ void CompiledLoop::findRegCandidates() {
     // The BasicBlock ordering algorithm should make sure that the BBs of the loop are consecutive.
 
 
-    if ( _bbs == nullptr )
+    if ( _bbs == nullptr ) {
         _bbs = bbIterator->code_generation_order();
-
+    }
 
     GrowableArray<LoopPseudoRegisterCandidate *> candidates( PseudoRegister::currentNo, PseudoRegister::currentNo, nullptr );
 
@@ -742,16 +754,21 @@ void CompiledLoop::findRegCandidates() {
     // iterate through all BBs in the loop
     for ( BasicBlock *bb = _bbs->at( i ); bb not_eq endBasicBlock; i++, bb = _bbs->at( i ) ) {
         const std::int32_t n = bb->duInfo.info->length();
-        if ( bb->_last->isCallNode() )
+        if ( bb->_last->isCallNode() ) {
             ncalls++;
+        }
+
         for ( std::int32_t j = 0; j < n; j++ ) {
             DefinitionUsageInfo *info = bb->duInfo.info->at( j );
             PseudoRegister      *r    = info->_pseudoRegister;
-            if ( candidates.at( r->id() ) == nullptr )
+
+            if ( candidates.at( r->id() ) == nullptr ) {
                 candidates.at_put( r->id(), new LoopPseudoRegisterCandidate( r ) );
+            }
             LoopPseudoRegisterCandidate *c = candidates.at( r->id() );
             c->incDUs( info->_usages.length(), info->_definitions.length() );
         }
+
     }
     loopHeader()->set_nofCallsInLoop( ncalls );
 
@@ -789,11 +806,11 @@ void CompiledLoop::print() {
 }
 
 
-HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses ) {
-    _node     = node;
-    _testedPR = testedPR;
-    _klasses  = klasses;
-    _invalid  = false;
+HoistedTypeTest::HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses ) :
+    _node{ node },
+    _testedPR{ testedPR },
+    _klasses{ klasses },
+    _invalid{ false } {
 }
 
 

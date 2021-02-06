@@ -55,10 +55,11 @@ private:
     Label                 _stub_code;
 
 
-    Stub( PseudoRegisterMapping *mapping, Node *dst ) {
+    Stub( PseudoRegisterMapping *mapping, Node *dst ) :
+        _mapping{ mapping },
+        _dst{ dst },
+        _stub_code{} {
         st_assert( dst->hasMapping() and not mapping->isConformant( dst->mapping() ), "no stub required" );
-        _mapping = mapping;
-        _dst     = dst;
     }
 
 
@@ -104,7 +105,12 @@ private:
 
 
 public:
-    DebugInfoWriter( std::int32_t number_of_pseudoRegisters ) {
+    DebugInfoWriter( std::int32_t number_of_pseudoRegisters ) :
+        _pseudoRegisters{ nullptr },
+        _locations{ nullptr },
+        _present{ nullptr } {
+
+        //
         _pseudoRegisters = new GrowableArray<PseudoRegister *>( number_of_pseudoRegisters, number_of_pseudoRegisters, nullptr );
         _locations       = new GrowableArray<std::int32_t>( number_of_pseudoRegisters, number_of_pseudoRegisters, Location::ILLEGAL_LOCATION._loc );
         _present         = new GrowableArray<bool>( number_of_pseudoRegisters, number_of_pseudoRegisters, false );
@@ -112,13 +118,14 @@ public:
 
 
     void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
-        if ( pseudoRegister->logicalAddress() not_eq nullptr and not pseudoRegister->_location.isContextLocation() ) {
+
+        if ( ( pseudoRegister->logicalAddress() not_eq nullptr ) and ( not pseudoRegister->_location.isContextLocation() ) ) {
             // record only debug-visible PseudoRegisters & ignore context PseudoRegisters
-            // Note: ContextPseudoRegisters appear in the mapping only because
-            //       their values might also be cached in a register.
+            // Note: ContextPseudoRegisters appear in the mapping only because their values might also be cached in a register.
             std::int32_t i = pseudoRegister->id();
-            _pseudoRegisters->at_put( i, pseudoRegister );        // make sure pseudoRegister is available
-            _present->at_put( i, true );        // mark it as present
+            _pseudoRegisters->at_put( i, pseudoRegister );   // make sure pseudoRegister is available
+            _present->at_put( i, true );                // mark it as present
+
         }
     }
 
@@ -168,19 +175,19 @@ public:
 // Implementation of CodeGenerator
 
 CodeGenerator::CodeGenerator( MacroAssembler *masm, PseudoRegisterMapping *mapping ) :
-    _mergeStubs( 16 ) {
-
+    _mergeStubs( 16 ),
+    _masm{ masm },
+    _currentMapping{ mapping },
+    _nofCompilations{ 0 },
+    _maxNofStackTmps{ 0 },
+    _debugInfoWriter{ nullptr },
+    _previousNode{ nullptr },
+    _nilReg{ noreg },
+    _pushCode{ nullptr } {
 
     st_assert( masm == mapping->assembler(), "should be the same" );
-
     PseudoRegisterLocker::initialize();
-    _masm            = masm;
-    _currentMapping  = mapping;
     _debugInfoWriter = new DebugInfoWriter( bbIterator->pseudoRegisterTable->length() );
-    _maxNofStackTmps = 0;
-    _previousNode    = nullptr;
-    _nilReg          = noreg;
-    _pushCode        = nullptr;
 }
 
 
@@ -1140,11 +1147,13 @@ void CodeGenerator::arithRROp( ArithOpCode op, Register x, Register y ) { // x :
         case ArithOpCode::TestArithOp:
             _masm->testl( x, y );
             break;
-        case ArithOpCode::tAddArithOp: // fall through
+        case ArithOpCode::tAddArithOp:
+            [[fallthrough]];
         case ArithOpCode::AddArithOp:
             _masm->addl( x, y );
             break;
-        case ArithOpCode::tSubArithOp: // fall through
+        case ArithOpCode::tSubArithOp:
+            [[fallthrough]];
         case ArithOpCode::SubArithOp:
             _masm->subl( x, y );
             break;
@@ -1153,27 +1162,33 @@ void CodeGenerator::arithRROp( ArithOpCode op, Register x, Register y ) { // x :
         case ArithOpCode::MulArithOp:
             _masm->imull( x, y );
             break;
-        case ArithOpCode::tDivArithOp: // fall through
+        case ArithOpCode::tDivArithOp:
+            [[fallthrough]];
         case ArithOpCode::DivArithOp: Unimplemented();
             break;
-        case ArithOpCode::tModArithOp: // fall through
+        case ArithOpCode::tModArithOp:
+            [[fallthrough]];
         case ArithOpCode::ModArithOp: Unimplemented();
             break;
-        case ArithOpCode::tAndArithOp: // fall through
+        case ArithOpCode::tAndArithOp:
+            [[fallthrough]];
         case ArithOpCode::AndArithOp:
             _masm->andl( x, y );
             break;
-        case ArithOpCode::tOrArithOp: // fall through
+        case ArithOpCode::tOrArithOp:
+            [[fallthrough]];
         case ArithOpCode::OrArithOp:
             _masm->orl( x, y );
             break;
-        case ArithOpCode::tXOrArithOp: // fall through
+        case ArithOpCode::tXOrArithOp:
+            [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             _masm->xorl( x, y );
             break;
         case ArithOpCode::tShiftArithOp: Unimplemented();
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp: // fall through
+        case ArithOpCode::tCmpArithOp:
+            [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
             break;
@@ -1190,7 +1205,8 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             _masm->testl( x, y );
             break;
 
-        case ArithOpCode::tAddArithOp: // fall through
+        case ArithOpCode::tAddArithOp:
+            [[fallthrough]];
         case ArithOpCode::AddArithOp:
             if ( y == 0 ) {
                 spdlog::warn( "code generated to add 0 (no load required)" );
@@ -1199,7 +1215,8 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             }
             break;
 
-        case ArithOpCode::tSubArithOp: // fall through
+        case ArithOpCode::tSubArithOp:
+            [[fallthrough]];
         case ArithOpCode::SubArithOp:
             if ( y == 0 ) {
                 spdlog::warn( "code generated to subtract 0 (no load required)" );
@@ -1238,25 +1255,30 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             }
             break;
 
-        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::tDivArithOp  :
+            [[fallthrough]];
         case ArithOpCode::DivArithOp  : Unimplemented();
             break;
 
-        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::tModArithOp  :
+            [[fallthrough]];
         case ArithOpCode::ModArithOp  : Unimplemented();
             break;
 
-        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::tAndArithOp  :
+            [[fallthrough]];
         case ArithOpCode::AndArithOp:
             _masm->andl( x, y );
             break;
 
-        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::tOrArithOp   :
+            [[fallthrough]];
         case ArithOpCode::OrArithOp:
             _masm->orl( x, y );
             break;
 
-        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::tXOrArithOp  :
+            [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             _masm->xorl( x, y );
             break;
@@ -1275,7 +1297,8 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             break;
 
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp: // fall through
+        case ArithOpCode::tCmpArithOp:
+            [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
             break;
@@ -1430,9 +1453,12 @@ void CodeGenerator::aContextCreateNode( ContextCreateNode *node ) {
     st_assert( node->dst() == node->scope()->context(), "should assign to scope context" );
     _currentMapping->kill( node->dst() );        // kill it so that aPrimNode(node) can map the result to it
     switch ( node->sizeOfContext() ) {
-        case 0 : // fall through for now - fix this
-        case 1 : // fall through for now - fix this
-        case 2 : // fall through for now - fix this
+        case 0 :
+            [[fallthrough]];
+        case 1 :
+            [[fallthrough]];
+        case 2 :
+            [[fallthrough]];
         default:
             _masm->pushl( std::int32_t( smiOopFromValue( node->nofTemps() ) ) );
             aPrimitiveNode( node );
@@ -1550,9 +1576,12 @@ void CodeGenerator::materializeBlock( BlockCreateNode *node ) {
     std::int32_t nofArgs             = closure->nofArgs();
 
     switch ( nofArgs ) {
-        case 0 : // fall through for now - fix this
-        case 1 : // fall through for now - fix this
-        case 2 : // fall through for now - fix this
+        case 0 :
+            [[fallthrough]];
+        case 1 :
+            [[fallthrough]];
+        case 2 :
+            [[fallthrough]];
         default:
             _masm->pushl( std::int32_t( smiOopFromValue( nofArgs ) ) );
             aPrimitiveNode( node );            // Note: primitive calls are called via call_C - also necessary for primitiveValue calls?
@@ -1815,7 +1844,7 @@ void CodeGenerator::handleConstantTypeTest(ConstPseudoRegister* r, GrowableArray
   if ((klasses == nullptr and r->constant->is_smi()) or (klasses and klasses->contains(r->constant->klass()))) {
     // always ok, no need to test
   } else {
-    compiler_warning("loop header type test will always fail!");
+    compiler_warning("loop header type test will always fail");
     // don't jump to failure because that would make subsequent LoopHeader code unreachable (--> breaks back end)
     theMacroAssm->call(StubRoutines::unused_uncommon_trap_entry(), RelocationInformation::RelocationType::uncommon_type);
   }
@@ -2156,7 +2185,8 @@ Assembler::Condition CodeGenerator::mapToCC( BranchOpCode op ) {
             return Assembler::Condition::overflow;
         case BranchOpCode::VCBranchOp:
             return Assembler::Condition::noOverflow;
-        default: nullptr;
+        default:
+            nullptr;
     }
     ShouldNotReachHere();
     return Assembler::Condition::zero;
@@ -2610,7 +2640,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
 
 void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
     switch ( node->op() ) {
-        case InlinedPrimitiveNode::Operation::obj_klass: {
+        case InlinedPrimitiveNode::Operation::OBJ_KLASS: {
             Label                is_smi;
             PseudoRegisterLocker lock( node->src() );
             Register             obj_reg   = use( node->src() );
@@ -2622,13 +2652,13 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             _masm->bind( is_smi );
         };
             break;
-        case InlinedPrimitiveNode::Operation::obj_hash: {
+        case InlinedPrimitiveNode::Operation::OBJ_HASH: {
             Unimplemented();
             // Implemented for the smi_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
-        case InlinedPrimitiveNode::Operation::proxy_byte_at: {
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT: {
             PseudoRegister       *proxy  = node->src();
             PseudoRegister       *index  = node->arg1();
             PseudoRegister       *result = node->dst();
@@ -2679,7 +2709,7 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
         }
             break;
 
-        case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT: {
             bool           const_val = node->arg2()->isConstPseudoRegister();
             PseudoRegister *proxy    = node->src();
             PseudoRegister *index    = node->arg1();

@@ -59,7 +59,7 @@ std::uint32_t hash( const char *name, std::int32_t len ) {
 }
 
 
-SymbolTable::SymbolTable() {
+SymbolTable::SymbolTable() : buckets{}, end_block{}, first_free_link{}, free_list{} {
 
     for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
         buckets[ i ].clear();

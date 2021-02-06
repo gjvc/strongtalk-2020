@@ -34,6 +34,7 @@ ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compi
     _offset{ INVALID_OFFSET },
     _scopesHead{ nullptr },
     _scopesTail{ nullptr },
+    _next{ nullptr },
     _usedInPcs{ false } {
 
 }

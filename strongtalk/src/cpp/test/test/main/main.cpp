@@ -104,11 +104,9 @@ void stop_vm_process() {
 
 int main( int argc, char *argv[] ) {
 
-    std::cout << std::endl;
-    std::cout << "-----------------------------------------------------------------------------" << std::endl;
-    std::cout << ">>> STRONGTALK TEST HARNESS" << std::endl;
-    std::cout << "-----------------------------------------------------------------------------" << std::endl;
-    std::cout << std::endl;
+    spdlog::info( "-----------------------------------------------------------------------------" );
+    spdlog::info( ">>> STRONGTALK TEST HARNESS" );
+    spdlog::info( "-----------------------------------------------------------------------------" );
 
     ::testing::InitGoogleTest( &argc, argv );
 

@@ -20,6 +20,11 @@ protected:
     std::int32_t _instructionsLength;
 
 public:
+    NativeCodeBase() : PrintableCHeapAllocatedObject(), _instructionsLength{ 0 } {
+
+    }
+
+
     void *operator new( std::size_t size ) throw() {
         static_cast<void>(size); // unused
         SubclassResponsibility();
@@ -94,8 +99,8 @@ protected:
             remember();
     }
 
-
-    std::int32_t _locsLen;                // relocation info length (bytes)
+    // relocation info length (bytes)
+    std::int32_t _locsLen;
 
 public:
 

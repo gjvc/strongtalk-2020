@@ -39,7 +39,11 @@ Bootstrap::Bootstrap( const std::string &name ) :
     _objectCount{ 0 },
 //    _filename{},
     _stream{},
+    _version_number{ 0 },
     _oop_table{ nullptr } {
+
+    //
+    initNameByTypeByte();
 
     //
     _oop_table = new_c_heap_array<Oop>( _max_number_of_oops );
@@ -54,9 +58,12 @@ Bootstrap::~Bootstrap() {
 
 void Bootstrap::initNameByTypeByte() {
 
+    //
     _nameByTypeByte[ '-' ] = "SMIOop (negative)";
     _nameByTypeByte[ '0' ] = "SMIOop";
     _nameByTypeByte[ '3' ] = "Oop";
+
+    //
     _nameByTypeByte[ 'A' ] = "klassKlass";
     _nameByTypeByte[ 'B' ] = "smiKlass";
     _nameByTypeByte[ 'C' ] = "memOopKlass";
@@ -75,6 +82,8 @@ void Bootstrap::initNameByTypeByte() {
     _nameByTypeByte[ 'P' ] = "processKlass";
     _nameByTypeByte[ 'Q' ] = "doubleValueArrayKlass";
     _nameByTypeByte[ 'R' ] = "vframeKlass";
+
+    //
     _nameByTypeByte[ 'a' ] = "klass";
     _nameByTypeByte[ 'b' ] = "smi_t";
     _nameByTypeByte[ 'c' ] = "MemOop";
@@ -115,6 +124,8 @@ void Bootstrap::open_file() {
         exit( EXIT_FAILURE );
     }
     spdlog::info( "%bootstrap-file-open: [{}]", _filename.c_str() );
+
+    _version_number = read_uint32_t();
     check_version();
 }
 
@@ -135,7 +146,6 @@ void Bootstrap::close_file() {
 
 
 void Bootstrap::summary() {
-    initNameByTypeByte();
     for ( auto item : _countByType ) {
         spdlog::info( "%bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
     }
@@ -173,32 +183,27 @@ void Bootstrap::add( Oop obj ) {
 
 // -----------------------------------------------------------------------------
 
-char Bootstrap::readNextChar() {
-    return _stream.get();
+char Bootstrap::read_uint8_t() {
+    std::uint8_t byte;
+    _stream.read( reinterpret_cast<char *>(&byte), 1 );
+    return byte;
 }
 
 
-std::int32_t Bootstrap::get_next_int32_t() {
+std::uint16_t Bootstrap::read_uint16_t() {
+    return (std::uint16_t) read_uint32_t();
+}
 
-    std::uint8_t lowByte;
-    _stream.read( reinterpret_cast<char *>(&lowByte), 1 );
 
+std::int32_t Bootstrap::read_uint32_t() {
+
+    std::uint8_t lowByte = read_uint8_t();
     if ( lowByte < 128 ) {
         return lowByte;
     }
 
-    std::int32_t highByte = get_next_int32_t();
+    std::int32_t highByte = read_uint32_t();
     return ( highByte * 128 ) + ( lowByte % 128 );
-}
-
-
-std::uint16_t Bootstrap::read_doubleByte() {
-    return (std::uint16_t) get_next_int32_t();
-}
-
-
-char Bootstrap::read_byte() {
-    return readNextChar();
 }
 
 
@@ -213,16 +218,15 @@ void Bootstrap::read_oop( Oop *oop_addr ) {
 
 void Bootstrap::check_version() {
 
-    std::int32_t version_number = get_next_int32_t();
-    if ( version_number > 100 ) {
+    if ( _version_number > 100 ) {
         _new_format = true;
-        version_number -= 100;
+        _version_number -= 100;
     } else {
         _new_format = false;
     }
 
     std::int32_t expected = ByteCodes::version();
-    std::int32_t observed = version_number;
+    std::int32_t observed = _version_number;
     if ( expected != observed ) {
         spdlog::info( "fatal: filename[{}] has unexpected bytecode version: expected: [0x{08:x}], observed: [0x{08:x}]", _filename.c_str(), expected, observed );
         exit( EXIT_FAILURE );
@@ -272,11 +276,6 @@ void Bootstrap::parse_objects() {
 }
 
 
-void Bootstrap::object_error_func( const char *str ) {
-    st_fatal( str );
-}
-
-
 // -----------------------------------------------------------------------------
 
 template<typename T>
@@ -286,7 +285,7 @@ void Bootstrap::insert_symbol( MemOop m ) {
     SymbolOopDescriptor *symbolOop = SymbolOop( static_cast<T>( m ) );
 
     if ( Universe::symbol_table->is_present( symbolOop ) ) {
-        spdlog::info( "Symbol[{}] already present in symbol_table!", symbolOop->as_string() );
+        spdlog::info( "Symbol[{}] already present in symbol_table", symbolOop->as_string() );
     } else {
         Universe::symbol_table->add_symbol( symbolOop );
     }
@@ -335,19 +334,23 @@ Oop Bootstrap::readNextObject() {
     // if SMI or OOP, return it...
     switch ( typeByte ) {
         case '0': //
-            return smiOopFromValue( get_next_int32_t() );
+            return smiOopFromValue( read_uint32_t() );
 
         case '-': //
-            return smiOopFromValue( -1 * get_next_int32_t() );
+            return smiOopFromValue( -1 * read_uint32_t() );
 
         case '3': //
-            return oopFromTable( get_next_int32_t() );
+            return oopFromTable( read_uint32_t() );
+
     };
 
+
     // not one of the above; get size...
-    std::int32_t size   = get_next_int32_t();
+    std::int32_t size   = read_uint32_t();
     MemOop       memOop = as_memOop( Universe::allocate_tenured( size ) );
-    memOop->raw_at_put( size - 1, smiOop_zero ); // Clear eventual padding area for byteArray, symbol, doubleByteArray.
+
+    // Clear eventual padding area for byteArray, symbol, doubleByteArray
+    memOop->raw_at_put( size - 1, smiOop_zero );
     add( memOop );
 
     // ... call bootstrap_object
@@ -462,6 +465,8 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "unknown object typeByte" );
     }
 
+//    spdlog::info( "[{:2d}] [{:s}]", size, memOop->print_value_string() );
+
     return memOop;
 }
 
@@ -469,8 +474,11 @@ Oop Bootstrap::readNextObject() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::read_mark( MarkOop *mark_addr ) {
+
+    char typeByte{ 0 };
+    _stream.get( typeByte );
+
     MarkOop m{ nullptr };
-    char    typeByte = _stream.get();
 
     switch ( typeByte ) {
         case '1': //
@@ -483,6 +491,7 @@ void Bootstrap::read_mark( MarkOop *mark_addr ) {
         st_fatal( "expecting a markup" );
             break;
     }
+
     *mark_addr = m;
 }
 
@@ -492,7 +501,7 @@ double Bootstrap::read_double() {
     std::uint8_t *str = (std::uint8_t *) &value;
 
     for ( std::int32_t i = 0; i < 8; i++ ) {
-        char c{};
+        char c{ 0 };
         _stream.get( c );
 
         str[ i ] = c;
@@ -503,7 +512,7 @@ double Bootstrap::read_double() {
 
 
 bool Bootstrap::is_byte() {
-    return read_byte() == '4';
+    return read_uint8_t() == '4';
 }
 
 

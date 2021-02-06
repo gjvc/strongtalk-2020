@@ -6,7 +6,6 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/system/macros.hpp"
-#include "vm/utilities/OutputStream.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/utilities/ConsoleOutputStream.hpp"
 

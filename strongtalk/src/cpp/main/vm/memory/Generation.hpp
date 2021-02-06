@@ -37,6 +37,12 @@ protected:
     VirtualSpace _virtualSpace;
 
 public:
+    Generation() : ValueObject(), _lowBoundary{ nullptr }, _highBoundary{ nullptr } {
+
+    }
+
+
+public:
     // Space enquiries
     virtual std::int32_t capacity() = 0;
 
@@ -92,7 +98,6 @@ inline void SPACE_VERIFY_TEMPLATE( const auto &s ) {
 
 #define APPLY_TO_OLD_SPACES( t ) \
     { FOR_EACH_OLD_SPACE(s)  { t(s) ; } }
-
 
 
 // ------------------------------------------------------------------------------

@@ -384,7 +384,7 @@ void os::suspend_thread( Thread * thread ) {
 
 void suspendHandler( std::int32_t signum ) {
     Thread * current = Thread::find( pthread_self() );
-    st_assert( current, "Suspended thread not found!" );
+    st_assert( current, "Suspended thread not found" );
     current->suspend();
 }
 

@@ -27,6 +27,16 @@ private:
     SurvivorSpace *_toSpace;
 
 public:
+
+    NewGeneration() :
+        Generation(),
+        _edenSpace{},
+        _fromSpace{ nullptr },
+        _toSpace{ nullptr } {
+
+    }
+
+
     EdenSpace *eden() {
         return &_edenSpace;
     }

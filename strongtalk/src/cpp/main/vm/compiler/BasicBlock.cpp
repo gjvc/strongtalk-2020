@@ -676,7 +676,7 @@ void BasicBlock::apply( NodeVisitor *v ) {
         st_assert( _nodeCount == 0, "nnodes should be 0" );
         Node       *end = _last->next();
         for ( Node *n   = _first; n not_eq end; n = n->next() ) {
-            st_assert( n->_deleted, "basic block is not empty even though nnodes == 0!" );
+            st_assert( n->_deleted, "basic block is not empty even though nnodes == 0" );
         }
     }
 }

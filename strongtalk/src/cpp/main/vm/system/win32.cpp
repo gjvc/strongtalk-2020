@@ -327,7 +327,7 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
 
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
         spdlog::info( "  Oops, we encountered a stack overflow." );
-        spdlog::info( "  You should check your program for infinite recursion!" );
+        spdlog::info( "  You should check your program for infinite recursion" );
         suspend_process_at_stack_overflow( (std::int32_t *) exceptionInfo->ContextRecord->Esp, (std::int32_t *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
         spdlog::info( "  Continue execution ?" );
     } else {

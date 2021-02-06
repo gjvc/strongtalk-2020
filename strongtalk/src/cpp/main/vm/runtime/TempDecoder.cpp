@@ -278,8 +278,9 @@ public:
 
 
     void stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
-        if ( the_fno == fno )
+        if ( the_fno == fno ) {
             result = name;
+        }
     }
 };
 

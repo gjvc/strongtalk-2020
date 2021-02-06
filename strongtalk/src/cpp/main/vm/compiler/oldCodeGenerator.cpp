@@ -962,7 +962,7 @@ void PrologueNode::gen() {
                 case MethodOopDescriptor::expects_nil:
                     verifyNilOrContextCode( c );
                     break;
-                case MethodOopDescriptor::expects_self     : // fall through
+                case MethodOopDescriptor::expects_self     :   [[fallthrough]];
                 case MethodOopDescriptor::expects_parameter:
                     verifyOopCode( c );
                     break;
@@ -1157,11 +1157,11 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
         case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::tAddArithOp  :   [[fallthrough]];
         case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::tSubArithOp  :   [[fallthrough]];
         case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
@@ -1170,27 +1170,27 @@ static void arithRROp( ArithOpCode op, Register x, Register y ) {
         case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, y );
             break;
-        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::tDivArithOp  :   [[fallthrough]];
         case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::tModArithOp  :   [[fallthrough]];
         case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::tAndArithOp  :   [[fallthrough]];
         case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::tOrArithOp   :   [[fallthrough]];
         case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::tXOrArithOp  :   [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
         case ArithOpCode::tShiftArithOp: Unimplemented();
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::tCmpArithOp  :   [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
@@ -1205,11 +1205,11 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
         case ArithOpCode::TestArithOp:
             theMacroAssembler->testl( x, y );
             break;
-        case ArithOpCode::tAddArithOp  : // fall through
+        case ArithOpCode::tAddArithOp  :   [[fallthrough]];
         case ArithOpCode::AddArithOp:
             theMacroAssembler->addl( x, y );
             break;
-        case ArithOpCode::tSubArithOp  : // fall through
+        case ArithOpCode::tSubArithOp  :   [[fallthrough]];
         case ArithOpCode::SubArithOp:
             theMacroAssembler->subl( x, y );
             break;
@@ -1218,21 +1218,21 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
         case ArithOpCode::MulArithOp:
             theMacroAssembler->imull( x, x, y );
             break;
-        case ArithOpCode::tDivArithOp  : // fall through
+        case ArithOpCode::tDivArithOp  :   [[fallthrough]];
         case ArithOpCode::DivArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tModArithOp  : // fall through
+        case ArithOpCode::tModArithOp  :   [[fallthrough]];
         case ArithOpCode::ModArithOp  : Unimplemented();
             break;
-        case ArithOpCode::tAndArithOp  : // fall through
+        case ArithOpCode::tAndArithOp  :   [[fallthrough]];
         case ArithOpCode::AndArithOp:
             theMacroAssembler->andl( x, y );
             break;
-        case ArithOpCode::tOrArithOp   : // fall through
+        case ArithOpCode::tOrArithOp   :   [[fallthrough]];
         case ArithOpCode::OrArithOp:
             theMacroAssembler->orl( x, y );
             break;
-        case ArithOpCode::tXOrArithOp  : // fall through
+        case ArithOpCode::tXOrArithOp  :   [[fallthrough]];
         case ArithOpCode::XOrArithOp:
             theMacroAssembler->xorl( x, y );
             break;
@@ -1249,7 +1249,7 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
             }
             break;
         case ArithOpCode::ShiftArithOp: Unimplemented();
-        case ArithOpCode::tCmpArithOp  : // fall through
+        case ArithOpCode::tCmpArithOp  :   [[fallthrough]];
         case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
             break;
@@ -2070,7 +2070,7 @@ void BlockCreateNode::materialize() {
             case MethodOopDescriptor::expects_nil:
                 verifyNilOrContextCode( contextReg );
                 break;
-            case MethodOopDescriptor::expects_self     : // fall through
+            case MethodOopDescriptor::expects_self     :   [[fallthrough]];
             case MethodOopDescriptor::expects_parameter:
                 verifyOopCode( contextReg );
                 break;
@@ -2225,7 +2225,7 @@ void LoopHeaderNode::handleConstantTypeTest( ConstPseudoRegister *r, GrowableArr
     if ( ( klasses == nullptr and r->constant->is_smi() ) or ( klasses and klasses->contains( r->constant->klass() ) ) ) {
         // always ok, no need to test
     } else {
-        compiler_warning( "loop header type test will always fail!" );
+        compiler_warning( "loop header type test will always fail" );
         // don't jump to failure because that would make subsequent LoopHeader code unreachable (--> breaks back end)
         theMacroAssembler->call( StubRoutines::unused_uncommon_trap_entry(), RelocationInformation::RelocationType::uncommon_type );
     }
@@ -2497,7 +2497,7 @@ void ArrayAtPutNode::gen() {
 void InlinedPrimitiveNode::gen() {
     BasicNode::gen();
     switch ( _operation ) {
-        case InlinedPrimitiveNode::Operation::obj_klass: {
+        case InlinedPrimitiveNode::Operation::OBJ_KLASS: {
             Register obj   = movePseudoRegisterToReg( _src, temp1 );            // obj is read_only
             Register klass = temp2;
             Label    is_smi;
@@ -2509,13 +2509,13 @@ void InlinedPrimitiveNode::gen() {
             store( klass, _dest, temp1, temp3 );
         }
             break;
-        case InlinedPrimitiveNode::Operation::obj_hash: {
+        case InlinedPrimitiveNode::Operation::OBJ_HASH: {
             Unimplemented();
             // Implemented for the smi_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
-        case InlinedPrimitiveNode::Operation::proxy_byte_at: {
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT: {
             Register proxy = temp1;
             load( _src, proxy );            // proxy is modified
             Register index = temp2;
@@ -2551,7 +2551,7 @@ void InlinedPrimitiveNode::gen() {
             }
         }
             break;
-        case InlinedPrimitiveNode::Operation::proxy_byte_at_put: {
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT: {
             bool     const_val = _arg2->isConstPseudoRegister();
             Register proxy     = temp1;
             load( _src, proxy );            // proxy is modified

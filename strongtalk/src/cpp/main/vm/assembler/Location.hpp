@@ -187,7 +187,7 @@ public:
 
 
     bool isContextLocation() const {
-        return mode() == LocationMode::CONTEXT_LOCATIION_1 or mode() == LocationMode::CONTEXT_LOCATIION_2;
+        return ( mode() == LocationMode::CONTEXT_LOCATIION_1 ) or ( mode() == LocationMode::CONTEXT_LOCATIION_2 );
     }
 
 

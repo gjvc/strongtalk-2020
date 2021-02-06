@@ -216,6 +216,7 @@ void OldSpace::initialize_threshold() {
 
 OldSpace::OldSpace( const char *name, std::int32_t &size ) :
     _end{ nullptr },
+    _top{ nullptr },
     _bottom{ nullptr },
     _nextOffsetIndex{ 0 },
     _nextOffsetThreshold{ nullptr },

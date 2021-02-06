@@ -161,10 +161,14 @@ public:
 // Traverses all methodOops by traversing the system dictionary.
 class MethodSweeper : public CodeSweeper {
 
+public:
+    MethodSweeper() : CodeSweeper(), _index{ 0 } {}
+
+
 private:
     std::int32_t _index; // next index in systemDictionary to process
 
-private:
+
     MethodOop excluded_method() {
         return Universe::sweeper_method();
     }

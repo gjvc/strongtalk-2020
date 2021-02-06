@@ -1131,13 +1131,17 @@ bool PseudoRegisterLocker::locks( PseudoRegister *pseudoRegister ) {
 
 // Implementation of Temporary
 
-Temporary::Temporary( PseudoRegisterMapping *mapping, Register hint ) {
-    _mapping = mapping;
-    _regLoc  = mapping->allocateTemporary( hint );
+Temporary::Temporary( PseudoRegisterMapping *mapping, Register hint ) :
+    _mapping{ mapping },
+    _regLoc{ 0 } {
+    _regLoc = mapping->allocateTemporary( hint );
 }
 
 
-Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *pseudoRegister ) {
+Temporary::Temporary( PseudoRegisterMapping *mapping, PseudoRegister *pseudoRegister ) :
+    _mapping{ mapping },
+    _regLoc{ 0 } {
+
     // old code - keep around for time comparison purposes
     const bool old_code = false;
     if ( old_code ) {

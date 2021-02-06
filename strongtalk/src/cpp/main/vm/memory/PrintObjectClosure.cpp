@@ -15,6 +15,7 @@ constexpr std::int32_t value_col  = 16;
 
 
 PrintObjectClosure::PrintObjectClosure( ConsoleOutputStream *stream ) :
+    _memOop{ nullptr },
     _stream{ nullptr } {
     _stream = stream ? stream : _console;
 }

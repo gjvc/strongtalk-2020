@@ -72,37 +72,37 @@ private:
     OopChunk                  *current;
 
 
-    void newChunk() {
+public:
+    OopRelocations() :
+        chunks{ nullptr },
+        current{ nullptr } {
+        chunks  = new GrowableArray<OopChunk *>( 10 );
         current = new OopChunk();
         chunks->append( current );
     }
 
 
-public:
-    OopRelocations() :
-        chunks{ new GrowableArray<OopChunk *>( 10 ) } {
-        newChunk();
-    }
-
-
     Oop *relocate( Oop *toMove ) {
         if ( current->isFull() ) {
-            newChunk();
+            current = new OopChunk();
+            chunks->append( current );
         }
         return current->append( toMove );
     }
 
 
     void fixupOops() {
-        while ( chunks->nonEmpty() )
+        while ( chunks->nonEmpty() ) {
             chunks->pop()->fixupOops();
+        }
     }
 };
 
-GrowableArray<MemOop> *MarkSweep::_stack;
+
+GrowableArray<MemOop>       *MarkSweep::_stack;
 GrowableArray<std::int32_t> *MarkSweep::hcode_offsets;
-std::int32_t                    MarkSweep::hcode_pos;
-OopRelocations *MarkSweep::_oopRelocations;
+std::int32_t                MarkSweep::hcode_pos;
+OopRelocations              *MarkSweep::_oopRelocations;
 
 
 void oopVerify( Oop *p ) {

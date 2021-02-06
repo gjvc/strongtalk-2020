@@ -130,11 +130,11 @@ void MacroAssembler::call_C( const Register &entry, Label &nlrTestPoint ) {
 
     [return addr] \
     [argument 1 ]  |   extra stub in C land
-    ...           |
+    ...            |
     [argument n ] /
     [return addr] <=== must be valid return address  \
     [...        ] <--- last_Delta_sp                  |
-    ...                                              | last Delta frame in Delta land
+     ...                                              | last Delta frame in Delta land
     [...        ]                                     |
     [previous fp] <--- last_Delta_fp                 /
 
@@ -255,6 +255,7 @@ void MacroAssembler::fpu_mask_and_cond_for( const Condition &cc, std::int32_t &m
             cond = Condition::zero;
             break;
         default: Unimplemented();
+            break;
     };
 }
 
@@ -278,16 +279,16 @@ void MacroAssembler::print_reg( const char *name, Oop obj ) {
     } else if ( obj->is_mem() and Universe::is_heap( (Oop *) obj ) ) {
         // use explicit checks to avoid crashes even in a broken system
         if ( obj == Universe::nilObject() ) {
-            spdlog::info( "nil (0x%08x)", static_cast<const void *>(obj) );
+            spdlog::info( "nil (0x{:x})", static_cast<const void *>(obj) );
         } else if ( obj == Universe::trueObject() ) {
-            spdlog::info( "true (0x%08x)", static_cast<const void *>(obj) );
+            spdlog::info( "true (0x{:x})", static_cast<const void *>(obj) );
         } else if ( obj == Universe::falseObject() ) {
-            spdlog::info( "false (0x%08x)", static_cast<const void *>(obj) );
+            spdlog::info( "false (0x{:x})", static_cast<const void *>(obj) );
         } else {
-            spdlog::info( "MemOop (0x%08x)", static_cast<const void *>(obj) );
+            spdlog::info( "MemOop (0x{:x})", static_cast<const void *>(obj) );
         }
     } else {
-        spdlog::info( "0x%08x", static_cast<const void *>(obj) );
+        spdlog::info( "0x{:x}", static_cast<const void *>(obj) );
     }
 }
 
@@ -295,8 +296,9 @@ void MacroAssembler::print_reg( const char *name, Oop obj ) {
 void MacroAssembler::inspector( Oop edi, Oop esi, Oop ebp, Oop esp, Oop ebx, Oop edx, Oop ecx, Oop eax, char *eip ) {
 
     const char *title = (const char *) ( nativeTest_at( eip )->data() );
-    if ( title not_eq nullptr )
-        spdlog::info( "%s", title );
+    if ( title not_eq nullptr ) {
+        spdlog::info( "[{}]", title );
+    }
 
     print_reg( "eax", eax );
     print_reg( "ebx", ebx );
@@ -304,8 +306,8 @@ void MacroAssembler::inspector( Oop edi, Oop esi, Oop ebp, Oop esp, Oop ebx, Oop
     print_reg( "edx", edx );
     print_reg( "edi", edi );
     print_reg( "esi", esi );
-    spdlog::info( "ebp = 0x%08x", static_cast<const void *>( ebp ) );
-    spdlog::info( "esp = 0x%08x", static_cast<const void *>( esp ) );
+    spdlog::info( "ebp = 0x{:x}", static_cast<const void *>( ebp ) );
+    spdlog::info( "esp = 0x{:x}", static_cast<const void *>( esp ) );
     _console->cr();
 }
 
@@ -313,10 +315,10 @@ void MacroAssembler::inspector( Oop edi, Oop esi, Oop ebp, Oop esp, Oop ebx, Oop
 void MacroAssembler::inspect( const char *title ) {
     const char *entry = StubRoutines::call_inspector_entry();
     if ( entry not_eq nullptr ) {
-        call( entry, RelocationInformation::RelocationType::runtime_call_type );            // call stub invoking the inspector
-        testl( eax, std::int32_t( title ) );                    // additional info for inspector
+        call( entry, RelocationInformation::RelocationType::runtime_call_type );   // call stub invoking the inspector
+        testl( eax, std::int32_t( title ) );                                            // additional info for inspector
     } else {
         const char *s = ( title == nullptr ) ? "" : title;
-        spdlog::info( "cannot call inspector for \"%s\" - no entry point yet", s );
+        spdlog::info( "cannot call inspector for [{}] - no entry point yet", s );
     }
 }

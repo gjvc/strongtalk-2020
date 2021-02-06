@@ -9,6 +9,6 @@
 
 void ProxyOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     MemOopDescriptor::bootstrap_header( stream );
-    set_pointer( (void *) stream->get_next_int32_t() );
+    set_pointer( (void *) stream->read_uint32_t() );
     MemOopDescriptor::bootstrap_body( stream, header_size() );
 }

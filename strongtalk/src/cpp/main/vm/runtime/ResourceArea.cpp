@@ -149,7 +149,7 @@ char *ResourceArea::allocate_bytes( std::int32_t size ) {
     // is a definitive memory leak.  -Urs 10/95
 
 //            static std::int32_t warned = 0;    // to suppress multiple warnings (e.g. when allocating from the debugger)
-//            if (nesting < 1 and not warned++) error("memory leak: allocating w/o ResourceMark!");
+//            if (nesting < 1 and not warned++) error("memory leak: allocating w/o ResourceMark");
 
     if ( size == 0 ) {
         // want to return an invalid pointer for a zero-sized allocation,
@@ -274,6 +274,7 @@ void ResourceAreaChunk::freeTo( char *new_first_free ) {
 
 
 Resources::Resources() :
+    freeChunks{ nullptr },
     _allocated{ 0 },
     _in_consistent_state{ true } {
 
@@ -282,8 +283,8 @@ Resources::Resources() :
 
 // -----------------------------------------------------------------------------
 
-NoGCVerifier::NoGCVerifier() {
-    old_scavenge_count = Universe::scavengeCount;
+NoGCVerifier::NoGCVerifier() :
+    old_scavenge_count{ Universe::scavengeCount } {
 }
 
 

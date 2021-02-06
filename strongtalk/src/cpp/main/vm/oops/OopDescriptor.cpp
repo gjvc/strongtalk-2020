@@ -14,12 +14,15 @@
 
 
 // Called during bootstrappingInProgress for computing vtbl values see (create_*Klass)
-OopDescriptor::OopDescriptor() {
-    if ( not bootstrappingInProgress ) ShouldNotCallThis();
+OopDescriptor::OopDescriptor() : _mark{ nullptr } {
+    if ( not bootstrappingInProgress ) {
+        ShouldNotCallThis();
+    }
 }
 
 
 void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
+
     if ( is_mark() ) {
         MarkOop( this )->print_on( stream );
     } else if ( is_smi() ) {
@@ -35,6 +38,7 @@ void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
             blueprint()->oop_print_value_on( this, stream );
         }
     }
+
 }
 
 

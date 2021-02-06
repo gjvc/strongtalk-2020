@@ -229,6 +229,8 @@ void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop me
 
 PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic ) :
 
+    _methodOop_counter{ 0 },
+    _state{},
     _pic{ pic },
     _pos{ nullptr } {
 
@@ -239,11 +241,11 @@ PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlin
     if ( pic->is_megamorphic() ) {
         // MIC -> do not use cached information
         st_assert( get_disp( _pos + 1 ) == StubRoutines::megamorphic_ic_entry(), "MIC stub expected" );
-        _state = at_the_end;
+        _state = InlineState::AT_THE_END;
 
     } else if ( *_pos == call_opcode ) {
         // PolymorphicInlineCache without nativeMethods
-        _state             = at_methodOop;
+        _state             = InlineState::AT_METHOD_OOP;
         _methodOop_counter = PolymorphicInlineCache::nof_entries( get_disp( _pos + 1 ) );
         _pos += static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_only_offset);
 
@@ -252,11 +254,11 @@ PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlin
         const char *dest = get_disp( _pos + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset ) );
         if ( dest == CompiledInlineCache::normalLookupRoutine() or _pic->contains( dest ) ) {
             // no smis or smi_t case is treated in methodOop section
-            _state = at_nativeMethod;
+            _state = InlineState::AT_NATIVE_METHOD;
             _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset );
         } else {
             // smi_t entry is treated here
-            _state = at_smi_nativeMethod;
+            _state = InlineState::AT_SMI_NATIVE_METHOD;
         }
     }
 }
@@ -266,36 +268,36 @@ void PolymorphicInlineCacheIterator::computeNextState() {
     if ( get_shrt( _pos ) == cmp_opcode ) {
         // same state
     } else if ( *_pos == call_opcode ) {
-        _state             = at_methodOop;
+        _state             = InlineState::AT_METHOD_OOP;
         _methodOop_counter = PolymorphicInlineCache::nof_entries( get_disp( _pos + 1 ) );
         _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_offset ) - static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset );
     } else {
         st_assert( *_pos == jmp_opcode, "jump to lookup routine expected" );
-        _state = at_the_end;
+        _state = InlineState::AT_THE_END;
     }
 }
 
 
 void PolymorphicInlineCacheIterator::advance() {
     switch ( _state ) {
-        case at_smi_nativeMethod:
+        case InlineState::AT_SMI_NATIVE_METHOD:
             st_assert( _pos == _pic->entry(), "must be at beginning" );
             _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset );
-            _state = at_nativeMethod;
+            _state = InlineState::AT_NATIVE_METHOD;
             computeNextState();
             break;
-        case at_nativeMethod:
+        case InlineState::AT_NATIVE_METHOD:
             _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_size );
             computeNextState();
             break;
-        case at_methodOop:
+        case InlineState::AT_METHOD_OOP:
             if ( --_methodOop_counter > 0 ) {
                 _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_entry_size );
             } else {
-                _state = at_the_end;
+                _state = InlineState::AT_THE_END;
             }
             break;
-        case at_the_end: ShouldNotCallThis();
+        case InlineState::AT_THE_END: ShouldNotCallThis();
         default: ShouldNotReachHere();
     }
 }
@@ -304,14 +306,14 @@ void PolymorphicInlineCacheIterator::advance() {
 KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
     std::int32_t offs{ 0 };
     switch ( state() ) {
-        case at_smi_nativeMethod: ShouldNotCallThis();            // no klass stored -> no klass address available
-        case at_nativeMethod:
+        case InlineState::AT_SMI_NATIVE_METHOD: ShouldNotCallThis();            // no klass stored -> no klass address available
+        case InlineState::AT_NATIVE_METHOD:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_klass_offset);
             break;
-        case at_methodOop:
+        case InlineState::AT_METHOD_OOP:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_klass_offset);
             break;
-        case at_the_end: ShouldNotCallThis();            // no klass stored -> no klass address available
+        case InlineState::AT_THE_END: ShouldNotCallThis();            // no klass stored -> no klass address available
         default: ShouldNotReachHere();
     }
     return (KlassOop *) ( _pos + offs );
@@ -321,14 +323,14 @@ KlassOop *PolymorphicInlineCacheIterator::klass_addr() const {
 std::int32_t *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
     std::int32_t offs{ 0 };
     switch ( state() ) {
-        case at_smi_nativeMethod:
+        case InlineState::AT_SMI_NATIVE_METHOD:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset);
             break;
-        case at_nativeMethod:
+        case InlineState::AT_NATIVE_METHOD:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_nativeMethodOffset);
             break;
-        case at_methodOop: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
-        case at_the_end: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
+        case InlineState::AT_METHOD_OOP: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
+        case InlineState::AT_THE_END: ShouldNotCallThis();            // no NativeMethod stored -> no NativeMethod address available
         default: ShouldNotReachHere();
     }
     return (std::int32_t *) ( _pos + offs );
@@ -338,12 +340,12 @@ std::int32_t *PolymorphicInlineCacheIterator::nativeMethod_disp_addr() const {
 MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
     std::int32_t offs{ 0 };
     switch ( state() ) {
-        case at_smi_nativeMethod: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
-        case at_nativeMethod    : ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
-        case at_methodOop:
+        case InlineState::AT_SMI_NATIVE_METHOD: ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
+        case InlineState::AT_NATIVE_METHOD    : ShouldNotCallThis();            // no methodOop stored -> no methodOop address available
+        case InlineState::AT_METHOD_OOP:
             offs = static_cast<std::int32_t>(PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_offset);
             break;
-        case at_the_end    : ShouldNotCallThis();
+        case InlineState::AT_THE_END    : ShouldNotCallThis();
         default            : ShouldNotReachHere();
     }
     return (MethodOop *) ( _pos + offs );
@@ -373,7 +375,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::find( const char *addr ) {
 
 // Accessing PolymorphicInlineCache entries
 KlassOop PolymorphicInlineCacheIterator::get_klass() const {
-    return state() == at_smi_nativeMethod ? smiKlassObject : *klass_addr();
+    return state() == InlineState::AT_SMI_NATIVE_METHOD ? smiKlassObject : *klass_addr();
 }
 
 
@@ -385,13 +387,13 @@ char *PolymorphicInlineCacheIterator::get_call_addr() const {
 
 bool PolymorphicInlineCacheIterator::is_compiled() const {
     switch ( state() ) {
-        case at_smi_nativeMethod:
+        case InlineState::AT_SMI_NATIVE_METHOD:
             return true;
-        case at_nativeMethod:
+        case InlineState::AT_NATIVE_METHOD:
             return true;
-        case at_methodOop:
+        case InlineState::AT_METHOD_OOP:
             return false;
-        case at_the_end: ShouldNotCallThis();
+        case InlineState::AT_THE_END: ShouldNotCallThis();
         default: ShouldNotReachHere();
     }
     return false;
@@ -422,7 +424,7 @@ MethodOop PolymorphicInlineCacheIterator::interpreted_method() const {
 
 // Modifying PolymorphicInlineCache entries
 void PolymorphicInlineCacheIterator::set_klass( KlassOop klass ) {
-    st_assert( state() not_eq at_smi_nativeMethod, "cannot be set" );
+    st_assert( state() not_eq InlineState::AT_SMI_NATIVE_METHOD, "cannot be set" );
     *klass_addr() = klass;
 }
 
@@ -778,19 +780,23 @@ PolymorphicInlineCache *PolymorphicInlineCache::allocate( CompiledInlineCache *i
 }
 
 
-PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::int32_t allocated_code_size ) {
+PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic, PolymorphicInlineCacheContents *contents, std::int32_t allocated_code_size ) :
+    _ic{ ic },
+    _codeSize{ 0 },
+    _numberOfTargets{ 0 } {
     st_assert( contents->number_of_targets() >= 1, "at least one entry needed for non-MEGAMORPHIC case" );
-    _ic              = ic;
     _numberOfTargets = contents->number_of_targets();
     _codeSize        = code_for_polymorphic_case( entry(), contents );
     st_assert( code_size() == allocated_code_size, "Please adjust PolymorphicInlineCacheContents::code_size()" );
 }
 
 
-PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic ) {
-    _ic              = ic;
-    _numberOfTargets = 0; // indicates MEGAMORPHIC case
-    _codeSize        = code_for_megamorphic_case( entry() );
+PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic ) :
+    _ic{ ic },
+    _codeSize{ 0 },
+    _numberOfTargets{ 0 } {
+//    _numberOfTargets = 0; // indicates MEGAMORPHIC case
+    _codeSize = code_for_megamorphic_case( entry() );
     st_assert( code_size() == static_cast<std::int32_t>( PolymorphicInlineCache::Constant::MegamorphicInlineCache_code_size ), "Please adjust PolymorphicInlineCacheContents::code_size()" );
 }
 
@@ -798,10 +804,12 @@ PolymorphicInlineCache::PolymorphicInlineCache( CompiledInlineCache *ic ) {
 GrowableArray<KlassOop> *PolymorphicInlineCache::klasses() const {
     GrowableArray<KlassOop>        *k = new GrowableArray<KlassOop>( 2 );
     PolymorphicInlineCacheIterator it( (PolymorphicInlineCache *) this );
+
     while ( not it.at_end() ) {
         k->append( it.get_klass() );
         it.advance();
     }
+
     return k;
 }
 
@@ -814,9 +822,10 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
         PolymorphicInlineCacheIterator it( this );
         while ( not it.at_end() ) {
             switch ( it.state() ) {
-                case PolymorphicInlineCacheIterator::at_methodOop:
-                    f( (Oop *) it.methodOop_addr() );  // fall through
-                case PolymorphicInlineCacheIterator::at_nativeMethod:
+                case InlineState::AT_METHOD_OOP:
+                    f( (Oop *) it.methodOop_addr() );
+                    [[fallthrough]];
+                case InlineState::AT_NATIVE_METHOD:
                     f( (Oop *) it.klass_addr() );
                 default:
                     nullptr;
@@ -844,11 +853,12 @@ void PolymorphicInlineCache::print() {
         it.get_klass()->print_value();
         spdlog::info( "" );
         switch ( it.state() ) {
-            case PolymorphicInlineCacheIterator::at_smi_nativeMethod: // fall through
-            case PolymorphicInlineCacheIterator::at_nativeMethod:
+            case InlineState::AT_SMI_NATIVE_METHOD:
+                [[fallthrough]];
+            case InlineState::AT_NATIVE_METHOD:
                 spdlog::info( "\t-    NativeMethod  : 0x{0:x} (entry 0x{0:x})\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
                 break;
-            case PolymorphicInlineCacheIterator::at_methodOop:
+            case InlineState::AT_METHOD_OOP:
                 spdlog::info( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
                 break;
             default: ShouldNotReachHere();

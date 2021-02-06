@@ -45,6 +45,9 @@ void BasicNode::setScope( InlinedScope *s ) {
 
 
 BasicNode::BasicNode() :
+    _byteCodeIndex{},
+    _label{},
+    _scope{},
     _id{ currentID++ },
     _basicBlock{ nullptr },
     _num{ -1 },
@@ -127,43 +130,53 @@ ArrayAtNode::ArrayAtNode( AccessType access_type, PseudoRegister *array, PseudoR
 
 
 ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool smi_index, PseudoRegister *element, bool smi_element, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset, bool needs_store_check ) :
-    AbstractArrayAtPutNode( array, index, smi_index, element, result, error, data_offset, length_offset ) {
-    _access_type               = access_type;
-    _needs_store_check         = needs_store_check;
-    _smi_element               = smi_element;
+    AbstractArrayAtPutNode( array, index, smi_index, element, result, error, data_offset, length_offset ),
+    _access_type{ access_type },
+    _needs_store_check{ needs_store_check },
+    _needs_element_range_check{ false },
+    _smi_element{ smi_element } {
     _needs_element_range_check = ( access_type == byte_at_put or access_type == double_byte_at_put );
 }
 
 
-TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes, bool hasUnknown ) {
+TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes, bool hasUnknown ) :
+//_src{rr},
+    _classes{ classes },
+    _hasUnknown{ hasUnknown } {
+
     _src        = rr;
     _classes    = classes;
     _hasUnknown = hasUnknown;
     std::int32_t len = classes->length();
     st_assert( len > 0, "should have at least one class to test" );
-    // The assertion below has been replaced by a warning since
-    // sometimes Inliner::inlineMerge(...) creates such a TypeTestNode.
+
+    // The assertion below has been replaced by a warning since sometimes Inliner::inlineMerge(...) creates such a TypeTestNode.
     // FIX THIS
     // st_assert( (len > 1) or hasUnknown, "TypeTestNode is not necessary" );
     if ( ( len == 1 ) and not hasUnknown ) {
         spdlog::warn( "TypeTestNode with only one klass & no uncommon case => performance bug" );
     }
+
+    //
     for ( std::int32_t i = 0; i < len; i++ ) {
         for ( std::int32_t j = i + 1; j < len; j++ ) {
             st_assert( classes->at( i ) not_eq classes->at( j ), "duplicate class" );
         }
     }
+
 }
 
 
 ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst ) :
-    ArithNode( op, arg1, dst ) {
-    _oper = arg2;
+    ArithNode( op, arg1, dst ),
+    _operUse{ nullptr },
+    _oper{ arg2 } {
+
     if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
         PseudoRegister *t1 = _src;
-        _src               = _oper;
-        _oper              = t1;
+        _src  = _oper;
+        _oper = t1;
     }
 }
 
@@ -173,6 +186,7 @@ TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister
     _op{ op },
 //    _src{ arg1 },
     _oper{ arg2 },
+    _operUse{ nullptr },
 //    _dest{ dst },
     _arg1IsInt{ arg1IsInt },
     _arg2IsInt{ arg2IsInt },
@@ -414,21 +428,29 @@ BasicBlock *BasicNode::newBasicBlock() {
 
 
 MergeNode::MergeNode( Node *prev1, Node *prev2 ) :
-    AbstractMergeNode( prev1, prev2 ) {
+    AbstractMergeNode( prev1, prev2 ),
+    _didStartBasicBlock{ false },
+    _isLoopEnd{ false },
+    _isLoopStart{ false } {
     _byteCodeIndex = max( prev1->byteCodeIndex(), prev2->byteCodeIndex() );
-    _isLoopStart   = _isLoopEnd = _didStartBasicBlock = false;
 }
 
 
-MergeNode::MergeNode( std::int32_t byteCodeIndex ) {
+MergeNode::MergeNode( std::int32_t byteCodeIndex ) :
+//    _byteCodeIndex{byteCodeIndex},
+    _isLoopStart{ false },
+    _isLoopEnd{ false },
+    _didStartBasicBlock{ false } {
+
     _byteCodeIndex = byteCodeIndex;
-    _isLoopStart   = _isLoopEnd = _didStartBasicBlock = false;
+
 }
 
 
 BasicBlock *MergeNode::newBasicBlock() {
-    if ( _basicBlock != nullptr )
+    if ( _basicBlock != nullptr ) {
         return _basicBlock;
+    }
 
     // receiver starts a new BasicBlock
     _didStartBasicBlock = true;
@@ -439,14 +461,16 @@ BasicBlock *MergeNode::newBasicBlock() {
 
 
 ReturnNode::ReturnNode( PseudoRegister *res, std::int32_t byteCodeIndex ) :
-    AbstractReturnNode( byteCodeIndex, res, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ) {
+    AbstractReturnNode( byteCodeIndex, res, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ),
+    _resultUse{ nullptr } {
     st_assert( res->_location == resultLoc, "must be in special location" );
 }
 
 
 NonLocalReturnSetupNode::NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex ) :
-    AbstractReturnNode( byteCodeIndex, result, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ) {
-    _contextUse = _resultUse = nullptr;
+    AbstractReturnNode( byteCodeIndex, result, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ),
+    _contextUse{ nullptr },
+    _resultUse{ nullptr } {
     st_assert( result->_location == NonLocalReturnResultLoc, "must be in special location" );
 }
 
@@ -470,6 +494,7 @@ CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableAr
     argUses{ nullptr },
     uplevelUses{ nullptr },
     uplevelDefs{ nullptr },
+    uplevelDefd{ nullptr },
     uplevelUsed{ nullptr } {
 
     //
@@ -483,10 +508,12 @@ CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableAr
 
 
 SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack, bool superSend, SendInfo *info ) :
-    CallNode( nlrTestPoint, args, expr_stack ) {
-    _key       = key;
-    _superSend = superSend;
-    _info      = info;
+    CallNode( nlrTestPoint, args, expr_stack ),
+    _key{ key },
+    _superSend{ superSend },
+    _info{ info } {
+
+    //
     st_assert( exprStack, "should have expr stack" );
     // Fix this when compiler is more flexible not a fatal because it could happen for super sends that fail (no super method found)
 
@@ -573,10 +600,12 @@ ContextInitNode::ContextInitNode( PseudoRegister *b, const ContextInitNode *node
 
 
 BlockCreateNode::BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack ) :
-    PrimitiveNode( Primitives::block_allocate(), nullptr, nullptr, expr_stack ) {
-    _src        = nullptr;
-    _dest       = b;
-    _contextUse = nullptr;
+    PrimitiveNode( Primitives::block_allocate(), nullptr, nullptr, expr_stack ),
+    _context{ nullptr },
+    _contextUse{ nullptr } {
+
+    _src  = nullptr;
+    _dest = b;
 
     switch ( b->method()->block_info() ) {
         case MethodOopDescriptor::expects_nil:        // no context needed
@@ -663,8 +692,9 @@ void ContextInitNode::notifyNoContext() {
 
 
 PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack ) :
-    CallNode( nlrTestPoint, args, expr_stack ) {
-    _pdesc = pdesc;
+    CallNode( nlrTestPoint, args, expr_stack ),
+    _pdesc{ pdesc } {
+
     st_assert( _pdesc->can_perform_NonLocalReturn() or ( nlrTestPoint == nullptr ), "no NonLocalReturn target needed" );
     if ( pdesc->can_invoke_delta() ) {
         st_assert( expr_stack not_eq nullptr, "should have expr stack" );
@@ -678,10 +708,15 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoin
 
 
 InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) :
+//    _dest{ result },
+//    _src{ recv },
     _operation{ op },
     _error{ error },
+    _error_def{ nullptr },
     _arg1{ arg1 },
     _arg2{ arg2 },
+    _arg1_use{ nullptr },
+    _arg2_use{ nullptr },
     _arg1_is_smi{ arg1_is_smi },
     _arg2_is_smi{ arg2_is_smi } {
 
@@ -694,13 +729,13 @@ InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result
 bool InlinedPrimitiveNode::canFail() const {
 
     switch ( op() ) {
-        case Operation::obj_klass:
+        case Operation::OBJ_KLASS:
             return false;
-        case Operation::obj_hash:
+        case Operation::OBJ_HASH:
             return false;
-        case Operation::proxy_byte_at:
+        case Operation::PROXY_BYTE_AT:
             return not arg1_is_smi();
-        case Operation::proxy_byte_at_put:
+        case Operation::PROXY_BYTE_AT_PUT:
             return not arg1_is_smi() or not arg2_is_smi();
         default:
             return false;
@@ -714,13 +749,13 @@ bool InlinedPrimitiveNode::canFail() const {
 bool InlinedPrimitiveNode::canBeEliminated() const {
 
     switch ( op() ) {
-        case Operation::obj_klass:
+        case Operation::OBJ_KLASS:
             return true;
-        case Operation::obj_hash:
+        case Operation::OBJ_HASH:
             return true;
-        case Operation::proxy_byte_at:
+        case Operation::PROXY_BYTE_AT:
             return not canFail();
-        case Operation::proxy_byte_at_put:
+        case Operation::PROXY_BYTE_AT_PUT:
             return false;
         default:
             return false;
@@ -731,15 +766,15 @@ bool InlinedPrimitiveNode::canBeEliminated() const {
 }
 
 
-UncommonNode::UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex ) {
-    exprStack      = e;
+UncommonNode::UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex ) :
+    exprStack{ e } {
     _byteCodeIndex = byteCodeIndex;
 }
 
 
 UncommonSendNode::UncommonSendNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex, std::int32_t argCount ) :
-    UncommonNode( e, byteCodeIndex ) {
-    _argCount = argCount;
+    UncommonNode( e, byteCodeIndex ),
+    _argCount{ argCount } {
 }
 
 
@@ -2079,7 +2114,7 @@ Node *BranchNode::uncommonSuccessor() const {
 
 Node *TypeTestNode::uncommonSuccessor() const {
     if ( not _deleted and hasUnknown() ) {
-        // fall through case treated as uncommon case
+//          [[fallthrough]];
         st_assert( next() not_eq nullptr, "just checking" );
         return next();
     } else {
@@ -2843,6 +2878,7 @@ LoopHeaderNode::LoopHeaderNode() :
     _loopVar{ 0 },
     _lowerBound{ 0 },
     _upperBound{ 0 },
+    _upperLoad{ nullptr },
     _arrayAccesses{ nullptr },
     _registerCandidates{ nullptr } {
 
@@ -3428,16 +3464,16 @@ const char *InlinedPrimitiveNode::toString( char *buf, bool printAddress ) const
     my_sprintf( buf, " %s := ", _dest->safeName() );
     const char *op_name;
     switch ( _operation ) {
-        case InlinedPrimitiveNode::Operation::obj_klass:
+        case InlinedPrimitiveNode::Operation::OBJ_KLASS:
             op_name = "obj_klass";
             break;
-        case InlinedPrimitiveNode::Operation::obj_hash:
+        case InlinedPrimitiveNode::Operation::OBJ_HASH:
             op_name = "obj_hash";
             break;
-        case InlinedPrimitiveNode::Operation::proxy_byte_at:
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT:
             op_name = "proxy_byte_at";
             break;
-        case InlinedPrimitiveNode::Operation::proxy_byte_at_put:
+        case InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT:
             op_name = "proxy_byte_at_put";
             break;
         default:

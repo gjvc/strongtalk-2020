@@ -104,6 +104,10 @@ class NewSpace : public Space {
 public:
     NewSpace *next_space;
 
+
+    NewSpace() : Space(), next_space{ nullptr } {}
+
+
 public:
     Oop *object_start( Oop *p );
 
@@ -117,6 +121,7 @@ public:
         m._point = top();
         return m;
     }
+
 };
 
 

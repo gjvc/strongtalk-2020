@@ -197,18 +197,21 @@ const char *Frame::print_name() const {
 
 
 void Frame::print() const {
-    _console->print( "[%s frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}", print_name(), fp(), sp(), pc() );
+
     if ( is_compiled_frame() ) {
-        _console->print( ", nm = 0x{0:x}", findNativeMethod( pc() ) );
+        spdlog::info( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, nm = 0x{0:x}]",
+                      print_name(), static_cast<const void *>(fp()), static_cast<const void *>(sp()), static_cast<const void *>(pc()), static_cast<const void *>(findNativeMethod( pc() )) );
     } else if ( is_interpreted_frame() ) {
-        _console->print( ", hp = 0x{0:x}, method = 0x{0:x}", hp(), method() );
+        spdlog::info( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, hp = 0x{0:x}, method = 0x{0:x}]",
+                      print_name(), static_cast<const void *>(fp()), static_cast<const void *>(sp()), static_cast<const void *>(pc()), static_cast<const void *>(hp()), static_cast<const void *>(method()) );
     }
-    spdlog::info( "]" );
 
     if ( PrintLongFrames ) {
-        for ( Oop *p = sp(); p < (Oop *) fp(); p++ )
-            spdlog::info( "  - 0x%lx: 0x%lx", static_cast<const void *>(p), static_cast<const void *>(*p) );
+        for ( Oop *p = sp(); p < (Oop *) fp(); p++ ) {
+            spdlog::info( "long frame [  - 0x{:x} : 0x{:x}]", static_cast<const void *>(p), static_cast<const void *>(*p) );
+        }
     }
+
 }
 
 
@@ -523,6 +526,12 @@ public:
             spdlog::info( "Verify failed in frame:" );
             fr->print();
         }
+    }
+
+
+    VerifyOopClosure() :
+        OopClosure(), fr{ nullptr } {
+
     }
 };
 

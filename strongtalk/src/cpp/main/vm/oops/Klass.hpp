@@ -58,6 +58,18 @@ protected:
     MixinOop       _mixin;
 
 public:
+    Klass() :
+        ValueObject(),
+        _methods{ nullptr },
+        _classVars{ nullptr },
+        _has_untagged_contents{ nullptr },
+        _mixin{ nullptr },
+        _non_indexable_size{ nullptr },
+        _superKlass{ nullptr } {
+
+    }
+
+
     friend KlassOop as_klassOop( void *p );
 
 
@@ -153,7 +165,7 @@ public:
 
 
     void set_vtbl_value( std::int32_t vtbl ) {
-        st_assert( vtbl % 4 == 0, "VTBL should be aligned" ); // XXX hard-coded alignment value
+        st_assert( vtbl % 4 == 0, "vtbl should be aligned" ); // XXX hard-coded alignment value
         ( (std::int32_t *) this )[ VTBL_OFFSET ] = vtbl;
     }
 
@@ -303,6 +315,7 @@ public:
 
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
     // These functions describe behavior for the Oop not the KLASS.
+
 public:
     // actual Oop size of obj in memory
     virtual std::int32_t oop_size( Oop obj ) const {
@@ -331,6 +344,7 @@ public:
     virtual bool oop_is_smi() const {
         return false;
     }
+
 
     virtual bool oop_is_double() const {
         return false;

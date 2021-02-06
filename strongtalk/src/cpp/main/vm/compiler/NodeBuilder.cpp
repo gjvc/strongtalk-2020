@@ -36,11 +36,11 @@ Node *NodeBuilder::EndOfCode = (Node *) -1;
 
 // Initialization
 
-NodeBuilder::NodeBuilder() {
-    _expressionStack = nullptr;
-    _inliner         = nullptr;
-    _scope           = nullptr;
-    _current         = nullptr;
+NodeBuilder::NodeBuilder() :
+    _expressionStack{ nullptr },
+    _inliner{ nullptr },
+    _scope{ nullptr },
+    _current{ nullptr } {
 }
 
 
@@ -55,9 +55,13 @@ void NodeBuilder::initialize( InlinedScope *scope ) {
 // Helper functions for node creation/concatenation
 
 void NodeBuilder::append( Node *node ) {
-    if ( node->isExitNode() )
-        spdlog::warn( "should use append_exit for consistency" );
 
+    //
+    if ( node->isExitNode() ) {
+        spdlog::warn( "should use append_exit for consistency" );
+    }
+
+    //
     if ( aborting() or _current == EndOfCode ) {
         if ( node->nPredecessors() == 0 ) {
             // ignore this code
@@ -1384,7 +1388,8 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, std::int32_t fno ) {
     PseudoRegister               *src = float_at( fno );
     SinglyAssignedPseudoRegister *res = new SinglyAssignedPseudoRegister( _scope );
     switch ( f ) {
-        case Floats::Function::is_zero: // fall through
+        case Floats::Function::is_zero:
+            [[fallthrough]];
         case Floats::Function::is_not_zero: {
             ConstPseudoRegister *zero = new_ConstPseudoRegister( _scope, oopFactory::new_double( 0.0 ) );
             NodeFactory::createAndRegisterNode<FloatArithRRNode>( ArithOpCode::fCmpArithOp, src, zero, new NoResultPseudoRegister( _scope ) );

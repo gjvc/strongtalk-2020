@@ -101,20 +101,20 @@ LookupKey *LookupKey::allocate( KlassOop klass, Oop selector_or_method ) {
 }
 
 
-LookupKey::LookupKey() {
+LookupKey::LookupKey() : _klass{}, _selector_or_method{} {
     clear();
 }
 
 
-LookupKey::LookupKey( KlassOop klass, Oop selector_or_method ) {
-    _klass              = klass;
-    _selector_or_method = selector_or_method;
+LookupKey::LookupKey( KlassOop klass, Oop selector_or_method ) :
+    _klass{ klass },
+    _selector_or_method{ selector_or_method } {
 }
 
 
-LookupKey::LookupKey( LookupKey *key ) {
-    _klass              = key->klass();
-    _selector_or_method = key->selector_or_method();
+LookupKey::LookupKey( LookupKey *key ) :
+    _klass{ key->klass() },
+    _selector_or_method{ key->selector_or_method() } {
 }
 
 

@@ -21,8 +21,8 @@ private:
     struct KlassOopDescriptor *_new_super;
     memConverter              *_converter;
     ClassChange               *_super_change;
-    std::int32_t              _is_schema_change_computed;
-    std::int32_t              _needs_schema_change;
+    std::int32_t              _is_schema_change_computed;   // should be a bool_t
+    std::int32_t              _needs_schema_change;         // should be a bool_t
     const char                *_reason_for_schema_change;
 
 public:

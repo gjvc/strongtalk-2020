@@ -249,6 +249,7 @@ ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, struct MixinOopD
     _new_klass{ nullptr },
     _converter{ nullptr },
     _super_change{ nullptr },
+    _needs_schema_change{ 0 },
     _is_schema_change_computed{ false },
     _reason_for_schema_change{ "" } {
 }
@@ -263,6 +264,7 @@ ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format ne
     _converter{ nullptr },
     _super_change{ nullptr },
     _is_schema_change_computed{ false },
+    _needs_schema_change{ false },
     _reason_for_schema_change{ "" } {
 }
 

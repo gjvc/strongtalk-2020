@@ -73,6 +73,13 @@ protected:
     KlassOop nthArgKlass( std::int32_t n ) const;
 
 public:
+    CompilerInliningPolicy() :
+        InliningPolicy(),
+        _sender{ nullptr },
+        _receiver{ nullptr } {
+
+    }
+
     const char *shouldInline( InlinedScope *sender, InlinedScope *callee );
     // should send be inlined?  returns nullptr (--> yes) or rejection msg
 };
@@ -94,6 +101,12 @@ protected:
     const char *shouldInline( const NativeMethod *nm );    // should nm be inlined?
 
 public:
+    RecompilerInliningPolicy() :
+        InliningPolicy(),
+        _deltaVirtualFrame{ nullptr } {
+
+    }
+
     const char *shouldInline( RecompilerFrame *recompilerFrame );
     // would send be inlined by compiler?  returns nullptr (--> yes) or rejection msg
 };

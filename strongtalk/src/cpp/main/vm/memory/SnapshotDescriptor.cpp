@@ -21,9 +21,10 @@ private:
     SnapshotDescriptor *_snapshotDescriptor;
 
 public:
-    ReadClosure( SnapshotDescriptor *s ) {
-        _snapshotDescriptor = s;
+    ReadClosure( SnapshotDescriptor *s ) :
+        _snapshotDescriptor{ s } {
     }
+
 };
 
 
@@ -38,9 +39,10 @@ private:
     SnapshotDescriptor *_snapshotDescriptor;
 
 public:
-    WriteClosure( SnapshotDescriptor *s ) {
-        _snapshotDescriptor = s;
+    WriteClosure( SnapshotDescriptor *s ) :
+        _snapshotDescriptor{ s } {
     }
+
 };
 
 

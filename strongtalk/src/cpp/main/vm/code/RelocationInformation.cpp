@@ -26,12 +26,13 @@
 #include "vm/primitives/primitives.hpp"
 
 
-RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, std::int32_t off ) {
+RelocationInformation::RelocationInformation( RelocationInformation::RelocationType t, std::int32_t offset ) :
+    _value{} {
 
     st_assert( 0 <= static_cast<std::int32_t>(t) and static_cast<std::int32_t>(t) < ( 1 << reloc_type_width ), "wrong type" );
-    st_assert( off <= nthMask( reloc_offset_width ), "offset out of bounds" );
+    st_assert( offset <= nthMask( reloc_offset_width ), "offset out of bounds" );
 
-    _value = ( static_cast<std::int32_t>(t) << reloc_offset_width ) | off;
+    _value = ( static_cast<std::int32_t>(t) << reloc_offset_width ) | offset;
 }
 
 
@@ -71,7 +72,11 @@ std::int32_t RelocationInformation::print( NativeMethod *m, std::int32_t last_of
 }
 
 
-RelocationInformationIterator::RelocationInformationIterator( const NativeMethod *nm ) {
+RelocationInformationIterator::RelocationInformationIterator( const NativeMethod *nm ) :
+    _current{ nullptr },
+    _end{ nullptr },
+    _address{ nullptr } {
+
     _current = nm->locs() - 1;
     _end     = nm->locsEnd();
     _address = nm->instructionsStart();
@@ -93,7 +98,8 @@ bool RelocationInformationIterator::is_position_dependent() const {
         case RelocationInformation::RelocationType::internal_word_type:
         case RelocationInformation::RelocationType::dll_type:
             return true;
-        default: nullptr;
+        default:
+            nullptr;
     }
     return false;
 }

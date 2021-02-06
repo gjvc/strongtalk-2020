@@ -51,7 +51,7 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int3
     for ( std::int32_t i = 0; i < _length; i++ ) {
         _data[ i ] = filler;
     }
-    
+
 }
 
 

@@ -6,7 +6,7 @@
 #include "vm/memory/AgeTable.hpp"
 
 
-AgeTable::AgeTable() {
+AgeTable::AgeTable() : _sizes{} {
     clear();
 }
 

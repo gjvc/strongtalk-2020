@@ -160,9 +160,10 @@ public:
     MethodInterval *interval;    // the rest of the block without the assignment
 
     AssignmentFinder( MethodInterval *b ) :
-        SpecializedMethodClosure() {
-        block    = b;
-        interval = nullptr;
+        SpecializedMethodClosure(),
+        tempNo{ 0 },
+        block{ b },
+        interval{ nullptr } {
         MethodIterator iter( block, this );
     }
 
@@ -248,9 +249,9 @@ public:
     bool               _wasExecuted;
 
 
-    PrimitiveSendFinder( RecompilationScope *rs ) {
-        _recompilationScope = rs;
-        _wasExecuted        = false;
+    PrimitiveSendFinder( RecompilationScope *rs ) :
+        _recompilationScope{ rs },
+        _wasExecuted{ false } {
         rs->extend();
     }
 
@@ -625,7 +626,8 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     // continuation
     Expression *resExpression{};
     switch ( access_type ) {
-        case ArrayAtNode::byte_at        : // fall through
+        case ArrayAtNode::byte_at        :
+            [[fallthrough]];
         case ArrayAtNode::double_byte_at:
             resExpression = new KlassExpression( Universe::smiKlassObject(), resPseudoRegister, at );
             break;
@@ -781,7 +783,7 @@ Expression *PrimitiveInliner::obj_class( bool has_receiver ) {
         return new ConstantExpression( k, new_ConstPseudoRegister( _scope, k ), nullptr );
     } else {
         SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
-        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_klass, resPseudoRegister, nullptr, obj->pseudoRegister() );
+        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::OBJ_KLASS, resPseudoRegister, nullptr, obj->pseudoRegister() );
         _gen->append( n );
         // don't know exactly what it is - just use PolymorphicInlineCache info
         return new UnknownExpression( resPseudoRegister, n );
@@ -805,7 +807,7 @@ Expression *PrimitiveInliner::obj_hash( bool has_receiver ) {
         //
         // has value taken from header field
         SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
-        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::obj_hash, resPseudoRegister, nullptr, obj->pseudoRegister() );
+        InlinedPrimitiveNode         *n                 = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::OBJ_HASH, resPseudoRegister, nullptr, obj->pseudoRegister() );
         _gen->append( n );
         return new KlassExpression( Universe::smiKlassObject(), resPseudoRegister, n );
     }
@@ -823,7 +825,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // at node
-    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::proxy_byte_at, resPseudoRegister, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi() );
+    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT, resPseudoRegister, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi() );
     _gen->append( at );
 
     // continuation
@@ -855,7 +857,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // atPut node
-    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::proxy_byte_at_put, nullptr, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi(), value->pseudoRegister(), value->is_smi() );
+    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT, nullptr, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi(), value->pseudoRegister(), value->is_smi() );
     _gen->append( atPut );
 
     // continuation

@@ -107,8 +107,8 @@ KlassOop InlineCacheIterator::klass( std::int32_t i ) {
 }
 
 
-CompiledInlineCacheIterator::CompiledInlineCacheIterator( CompiledInlineCache *ic ) {
-    _ic = ic;
+CompiledInlineCacheIterator::CompiledInlineCacheIterator( CompiledInlineCache *ic ) :
+    _ic{ ic }, _picit{ nullptr }, _index{ 0 }, _number_of_targets{ 0 }, _shape{} {
     init_iteration();
 }
 

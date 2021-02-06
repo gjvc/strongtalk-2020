@@ -55,6 +55,8 @@ Compiler::Compiler( LookupKey *k, MethodOop m, CompiledInlineCache *i ) :
     method{ m },
     ic{ i },
     parentNativeMethod{ nullptr },
+    _scopeStack{},
+    _totalNofBytes{},
     blockScope{ nullptr },
     main_jumpTable_id{ JumpTableID() },
     promoted_jumpTable_id{ JumpTableID() },
@@ -94,6 +96,7 @@ Compiler::Compiler( RecompilationScope *scope ) :
     blockScope{ nullptr },
     main_jumpTable_id{ JumpTableID() },
     promoted_jumpTable_id{ JumpTableID() },
+    _scopeStack{},
     _special_handler_call_offset{},
     _entry_point_offset{},
     _verified_entry_point_offset{},
@@ -104,6 +107,7 @@ Compiler::Compiler( RecompilationScope *scope ) :
     _nextLevel{},
     _hasInlinableSendsRemaining{},
     _uses_inlining_database{},
+    _totalNofBytes{},
     recompileeRScope{},
     countID{},
     useUncommonTraps{},
@@ -144,6 +148,7 @@ Compiler::Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope )
     countID{},
     main_jumpTable_id{},
     promoted_jumpTable_id{},
+    _totalNofBytes{},
     useUncommonTraps{},
     rec{},
     topScope{},
@@ -404,12 +409,11 @@ private:
     bool _OptimizeIntegerLoops;
 
 public:
-    NewBackendGuard() {
-        // save original settings in any case
-        _UseNewBackend        = UseNewBackend;
-        _LocalCopyPropagate   = LocalCopyPropagate;
-        _OptimizeLoops        = OptimizeLoops;
-        _OptimizeIntegerLoops = OptimizeIntegerLoops;
+    NewBackendGuard() :
+        _UseNewBackend{ UseNewBackend },
+        _LocalCopyPropagate{ LocalCopyPropagate },
+        _OptimizeLoops{ OptimizeLoops },
+        _OptimizeIntegerLoops{ OptimizeIntegerLoops } {
 
         if ( TryNewBackend ) {
             // print out a warning if this class is used

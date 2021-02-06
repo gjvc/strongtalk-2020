@@ -191,19 +191,23 @@ public:
 // It is used to display PICs visually, to generate new PICs out of old ones and for GC purposes.
 // In the case of a MegamorphicInlineCache, the PolymorphicInlineCacheIterator will be at_end after setup (no entries).
 
+enum class InlineState {
+    AT_SMI_NATIVE_METHOD, //
+    AT_NATIVE_METHOD, //
+    AT_METHOD_OOP, //
+    AT_THE_END //
+};
+
+
 class PolymorphicInlineCacheIterator : public PrintableResourceObject {
 public:
-    enum State {
-        at_smi_nativeMethod, at_nativeMethod, at_methodOop, at_the_end
-    };
 
 private:
-    PolymorphicInlineCache *_pic;                  // the PolymorphicInlineCache over which is iterated
-    char                   *_pos;                  // the current iterator position
-    enum State             _state;                  // current iterator state
+    PolymorphicInlineCache *_pic;                   // the PolymorphicInlineCache over which is iterated
+    char                   *_pos;                   // the current iterator position
+    InlineState            _state;                  // current iterator state
     std::int32_t           _methodOop_counter;      // remaining no. of methodOop entries
-
-    std::int32_t *nativeMethod_disp_addr() const;    // valid if state() in {at_smi_nativeMethod, at_nativeMethod}
+    std::int32_t *nativeMethod_disp_addr() const;   // valid if state() in {InlineState::AT_SMI_NATIVE_METHOD, InlineState::AT_NATIVE_METHOD}
     void computeNextState();
 
 public:
@@ -213,13 +217,13 @@ public:
     void advance();
 
 
-    State state() const {
+    InlineState state() const {
         return _state;
     }
 
 
     bool at_end() const {
-        return state() == at_the_end;
+        return state() == InlineState::AT_THE_END;
     }
 
 
@@ -245,7 +249,7 @@ public:
 
     // Must be public for oops_do in CompiledPIC
     MethodOop *methodOop_addr() const;         // valid if state() is at_PolymorphicInlineCache_methodOop
-    KlassOop *klass_addr() const;              // valid if state() in {at_nativeMethod, at_methodOop}
+    KlassOop *klass_addr() const;              // valid if state() in {InlineState::AT_NATIVE_METHOD, InlineState::AT_METHOD_OOP}
 
     // Debugging
     void print();

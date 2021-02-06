@@ -32,6 +32,7 @@ JumpTableEntry *JumpTable::jump_entry_for_at( const char *entries, std::int32_t 
 
 
 JumpTable::JumpTable() :
+    _entries{ nullptr },
     length{ Universe::current_sizes._jump_table_size },
     _firstFree{ 0 },
     usedIDs{ 0 } {

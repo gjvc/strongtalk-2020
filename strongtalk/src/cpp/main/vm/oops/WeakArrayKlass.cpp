@@ -108,7 +108,7 @@ void WeakArrayKlass::oop_follow_contents( Oop obj ) {
 // - static variables
 bool                        WeakArrayRegister::during_registration = false;
 GrowableArray<WeakArrayOop> *WeakArrayRegister::weakArrays         = nullptr;
-GrowableArray<std::int32_t> *WeakArrayRegister::nis = nullptr;
+GrowableArray<std::int32_t> *WeakArrayRegister::non_indexable_sizes = nullptr;
 
 
 // - Scavenge operations
@@ -171,14 +171,14 @@ void WeakArrayRegister::scavenge_check_for_dying_objects() {
 void WeakArrayRegister::begin_mark_sweep() {
     during_registration = true;
     weakArrays          = new GrowableArray<WeakArrayOop>( 100 );
-    nis                 = new GrowableArray<std::int32_t>( 100 );
+    non_indexable_sizes = new GrowableArray<std::int32_t>( 100 );
 }
 
 
 bool WeakArrayRegister::mark_sweep_register( WeakArrayOop obj, std::int32_t non_indexable_size ) {
     if ( during_registration ) {
         weakArrays->push( obj );
-        nis->push( non_indexable_size );
+        non_indexable_sizes->push( non_indexable_size );
     }
     return during_registration;
 }
@@ -189,7 +189,7 @@ void WeakArrayRegister::check_and_follow_contents() {
     follow_contents();
     during_registration = false;
     weakArrays          = nullptr;
-    nis                 = nullptr;
+    non_indexable_sizes = nullptr;
 }
 
 
@@ -198,7 +198,7 @@ void WeakArrayRegister::follow_contents() {
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                  = weakArrays->at( i );
-        std::int32_t non_indexable_size = nis->at( i );
+        std::int32_t non_indexable_size = non_indexable_sizes->at( i );
 //        bool         encounted_near_death_objects = false;
         std::int32_t length             = SMIOop( w->raw_at( non_indexable_size ) )->value();
 
@@ -220,7 +220,7 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
     for ( std::int32_t i = 0; i < weakArrays->length(); i++ ) {
 
         WeakArrayOop w                            = weakArrays->at( i );
-        std::int32_t non_indexable_size           = nis->at( i );
+        std::int32_t non_indexable_size           = non_indexable_sizes->at( i );
         bool         encounted_near_death_objects = false;
         std::int32_t length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
 

@@ -255,9 +255,9 @@ void InterpretedInlineCache::cleanup() {
         return; // Nothing to cleanup
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::ACCESSOR_SEND:    // fall through
-        case ByteCodes::SendType::PRIMITIVE_SEND:   // fall through
-        case ByteCodes::SendType::PREDICTED_SEND:   // fall through
+        case ByteCodes::SendType::ACCESSOR_SEND:      [[fallthrough]];
+        case ByteCodes::SendType::PRIMITIVE_SEND:     [[fallthrough]];
+        case ByteCodes::SendType::PREDICTED_SEND:     [[fallthrough]];
         case ByteCodes::SendType::INTERPRETED_SEND: { // check if the interpreted send should be replaced by a compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
@@ -364,9 +364,9 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
         return;
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::ACCESSOR_SEND:    // fall through
-        case ByteCodes::SendType::PRIMITIVE_SEND:   // fall through
-        case ByteCodes::SendType::PREDICTED_SEND:   // fall through
+        case ByteCodes::SendType::ACCESSOR_SEND:      [[fallthrough]];
+        case ByteCodes::SendType::PRIMITIVE_SEND:     [[fallthrough]];
+        case ByteCodes::SendType::PREDICTED_SEND:     [[fallthrough]];
         case ByteCodes::SendType::INTERPRETED_SEND: { // replace the MONOMORPHIC interpreted send with compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
@@ -375,7 +375,7 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             }
         }
             break;
-        case ByteCodes::SendType::COMPILED_SEND:   // fall through
+        case ByteCodes::SendType::COMPILED_SEND:     [[fallthrough]];
         case ByteCodes::SendType::MEGAMORPHIC_SEND:
             // replace the MONOMORPHIC compiled send with compiled send
             set( send_code(), entry_point, nm->_lookupKey.klass() );
@@ -497,9 +497,9 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
         // ic not empty
         switch ( ic->send_type() ) {
             // MONOMORPHIC send
-            case ByteCodes::SendType::ACCESSOR_SEND   : // fall through
-            case ByteCodes::SendType::PREDICTED_SEND  : // fall through
-            case ByteCodes::SendType::COMPILED_SEND   : // fall through
+            case ByteCodes::SendType::ACCESSOR_SEND   :   [[fallthrough]];
+            case ByteCodes::SendType::PREDICTED_SEND  :   [[fallthrough]];
+            case ByteCodes::SendType::COMPILED_SEND   :   [[fallthrough]];
             case ByteCodes::SendType::INTERPRETED_SEND: {
                 // switch to POLYMORPHIC send with 2 entries
                 ObjectArrayOop pic = Interpreter_PICs::allocate( 2 );
@@ -721,7 +721,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
             set_method( _ic->first_word() );
             st_assert( is_compiled(), "bad type" );
             break;
-        case ByteCodes::SendType::ACCESSOR_SEND: // fall through
+        case ByteCodes::SendType::ACCESSOR_SEND:   [[fallthrough]];
         case ByteCodes::SendType::PRIMITIVE_SEND:
             _number_of_targets = 1;
             _info              = InlineCacheShape::MONOMORPHIC;

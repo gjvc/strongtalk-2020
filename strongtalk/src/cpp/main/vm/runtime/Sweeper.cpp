@@ -306,8 +306,8 @@ private:
     std::int32_t counter;
 public:
     SweeperTask() :
-        PeriodicTask( 100 ) {
-        counter = 0;
+        PeriodicTask( 100 ),
+        counter{ 0 } {
     }
 
 

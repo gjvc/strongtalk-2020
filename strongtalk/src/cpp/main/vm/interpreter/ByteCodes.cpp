@@ -408,12 +408,16 @@ void ByteCodes::init() {
 
 ByteCodes::LoopType ByteCodes::loop_type( Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::jump_loop_byte: // fall through
+        case ByteCodes::Code::jump_loop_byte:
+            [[fallthrough]];
         case ByteCodes::Code::jump_loop_word:
             return ByteCodes::LoopType::LOOP_START;
-        case ByteCodes::Code::whileTrue_byte: // fall through
-        case ByteCodes::Code::whileFalse_byte: // fall through
-        case ByteCodes::Code::whileTrue_word: // fall through
+        case ByteCodes::Code::whileTrue_byte:
+            [[fallthrough]];
+        case ByteCodes::Code::whileFalse_byte:
+            [[fallthrough]];
+        case ByteCodes::Code::whileTrue_word:
+            [[fallthrough]];
         case ByteCodes::Code::whileFalse_word:
             return ByteCodes::LoopType::LOOP_END;
         default:
@@ -461,7 +465,7 @@ const char *ByteCodes::format_as_string( Format format ) {
             return "BBS";
         case ByteCodes::Format::UNDEFINED:
             return "UNDEFINED";
-        default: 
+        default:
             spdlog::error( "unhandled case [{}] in switch", format );
             return nullptr;
     }
@@ -577,13 +581,20 @@ const char *ByteCodes::loop_type_as_string( LoopType loop_type ) {
 
 bool ByteCodes::is_self_send( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_self: // fall through
-        case ByteCodes::Code::compiled_send_self: // fall through
-        case ByteCodes::Code::polymorphic_send_self: // fall through
-        case ByteCodes::Code::megamorphic_send_self: // fall through
-        case ByteCodes::Code::interpreted_send_self_pop: // fall through
-        case ByteCodes::Code::compiled_send_self_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_self_pop: // fall through
+        case ByteCodes::Code::interpreted_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::megamorphic_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::interpreted_send_self_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_self_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_self_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_self_pop:
             return true;
         default:
@@ -596,13 +607,20 @@ bool ByteCodes::is_self_send( ByteCodes::Code code ) {
 
 bool ByteCodes::is_super_send( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_super: // fall through
-        case ByteCodes::Code::compiled_send_super: // fall through
-        case ByteCodes::Code::polymorphic_send_super: // fall through
-        case ByteCodes::Code::megamorphic_send_super: // fall through
-        case ByteCodes::Code::interpreted_send_super_pop: // fall through
-        case ByteCodes::Code::compiled_send_super_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_super_pop: // fall through
+        case ByteCodes::Code::interpreted_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::megamorphic_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::interpreted_send_super_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_super_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_super_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_super_pop:
             return true;
         default:
@@ -615,7 +633,8 @@ bool ByteCodes::is_super_send( ByteCodes::Code code ) {
 
 bool ByteCodes::has_access_send_code( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_0: // fall through
+        case ByteCodes::Code::interpreted_send_0:
+            [[fallthrough]];
         case ByteCodes::Code::interpreted_send_self:
             return true;
         default:
@@ -640,25 +659,44 @@ bool ByteCodes::has_predicted_send_code( ByteCodes::Code code ) {
 
 ByteCodes::Code ByteCodes::original_send_code_for( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::smi_add: // fall through
-        case ByteCodes::Code::smi_sub: // fall through
-        case ByteCodes::Code::smi_mult: // fall through
-        case ByteCodes::Code::smi_div: // fall through
-        case ByteCodes::Code::smi_mod: // fall through
-        case ByteCodes::Code::smi_create_point: // fall through
-        case ByteCodes::Code::smi_equal: // fall through
-        case ByteCodes::Code::smi_not_equal: // fall through
-        case ByteCodes::Code::smi_less: // fall through
-        case ByteCodes::Code::smi_less_equal: // fall through
-        case ByteCodes::Code::smi_greater: // fall through
-        case ByteCodes::Code::smi_greater_equal: // fall through
-        case ByteCodes::Code::smi_and: // fall through
-        case ByteCodes::Code::smi_or: // fall through
-        case ByteCodes::Code::smi_xor: // fall through
-        case ByteCodes::Code::smi_shift: // fall through
-        case ByteCodes::Code::objArray_at: // fall through
-        case ByteCodes::Code::objArray_at_put: // fall through
-        case ByteCodes::Code::double_equal: // fall through
+        case ByteCodes::Code::smi_add:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_sub:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_mult:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_div:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_mod:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_create_point:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_not_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_less:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_less_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_greater:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_greater_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_and:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_or:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_xor:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_shift:
+            [[fallthrough]];
+        case ByteCodes::Code::objArray_at:
+            [[fallthrough]];
+        case ByteCodes::Code::objArray_at_put:
+            [[fallthrough]];
+        case ByteCodes::Code::double_equal:
+            [[fallthrough]];
         case ByteCodes::Code::double_tilde:
             return code;
         default:
@@ -671,87 +709,135 @@ ByteCodes::Code ByteCodes::original_send_code_for( ByteCodes::Code code ) {
 
 ByteCodes::Code ByteCodes::interpreted_send_code_for( ByteCodes::Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::interpreted_send_0: // fall through
-        case ByteCodes::Code::compiled_send_0: // fall through
-        case ByteCodes::Code::primitive_send_0: // fall through
-        case ByteCodes::Code::polymorphic_send_0: // fall through
+        case ByteCodes::Code::interpreted_send_0:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_0:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_0:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_0:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_0:
             return ByteCodes::Code::interpreted_send_0;
 
-        case ByteCodes::Code::interpreted_send_0_pop: // fall through
-        case ByteCodes::Code::compiled_send_0_pop: // fall through
-        case ByteCodes::Code::primitive_send_0_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_0_pop: // fall through
+        case ByteCodes::Code::interpreted_send_0_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_0_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_0_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_0_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_0_pop:
             return ByteCodes::Code::interpreted_send_0_pop;
 
-        case ByteCodes::Code::interpreted_send_1: // fall through
-        case ByteCodes::Code::compiled_send_1: // fall through
-        case ByteCodes::Code::primitive_send_1: // fall through
-        case ByteCodes::Code::polymorphic_send_1: // fall through
+        case ByteCodes::Code::interpreted_send_1:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_1:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_1:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_1:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_1:
             return ByteCodes::Code::interpreted_send_1;
 
-        case ByteCodes::Code::interpreted_send_1_pop: // fall through
-        case ByteCodes::Code::compiled_send_1_pop: // fall through
-        case ByteCodes::Code::primitive_send_1_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_1_pop: // fall through
+        case ByteCodes::Code::interpreted_send_1_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_1_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_1_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_1_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_1_pop:
             return ByteCodes::Code::interpreted_send_1_pop;
 
-        case ByteCodes::Code::interpreted_send_2: // fall through
-        case ByteCodes::Code::compiled_send_2: // fall through
-        case ByteCodes::Code::primitive_send_2: // fall through
-        case ByteCodes::Code::polymorphic_send_2: // fall through
+        case ByteCodes::Code::interpreted_send_2:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_2:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_2:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_2:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_2:
             return ByteCodes::Code::interpreted_send_2;
 
-        case ByteCodes::Code::interpreted_send_2_pop: // fall through
-        case ByteCodes::Code::compiled_send_2_pop: // fall through
-        case ByteCodes::Code::primitive_send_2_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_2_pop: // fall through
+        case ByteCodes::Code::interpreted_send_2_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_2_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_2_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_2_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_2_pop:
             return ByteCodes::Code::interpreted_send_2_pop;
 
-        case ByteCodes::Code::interpreted_send_n: // fall through
-        case ByteCodes::Code::compiled_send_n: // fall through
-        case ByteCodes::Code::primitive_send_n: // fall through
-        case ByteCodes::Code::polymorphic_send_n: // fall through
+        case ByteCodes::Code::interpreted_send_n:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_n:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_n:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_n:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_n:
             return ByteCodes::Code::interpreted_send_n;
 
-        case ByteCodes::Code::interpreted_send_n_pop: // fall through
-        case ByteCodes::Code::compiled_send_n_pop: // fall through
-        case ByteCodes::Code::primitive_send_n_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_n_pop: // fall through
+        case ByteCodes::Code::interpreted_send_n_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_n_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_n_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_n_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_n_pop:
             return ByteCodes::Code::interpreted_send_n_pop;
 
-        case ByteCodes::Code::interpreted_send_self: // fall through
-        case ByteCodes::Code::compiled_send_self: // fall through
-        case ByteCodes::Code::primitive_send_self: // fall through
-        case ByteCodes::Code::polymorphic_send_self: // fall through
+        case ByteCodes::Code::interpreted_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_self:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_self:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_self:
             return ByteCodes::Code::interpreted_send_self;
 
-        case ByteCodes::Code::interpreted_send_self_pop: // fall through
-        case ByteCodes::Code::compiled_send_self_pop: // fall through
-        case ByteCodes::Code::primitive_send_self_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_self_pop: // fall through
+        case ByteCodes::Code::interpreted_send_self_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_self_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_self_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_self_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_self_pop:
             return ByteCodes::Code::interpreted_send_self_pop;
 
-        case ByteCodes::Code::interpreted_send_super: // fall through
-        case ByteCodes::Code::compiled_send_super: // fall through
-        case ByteCodes::Code::primitive_send_super: // fall through
-        case ByteCodes::Code::polymorphic_send_super: // fall through
+        case ByteCodes::Code::interpreted_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_super:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_super:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_super:
             return ByteCodes::Code::interpreted_send_super;
 
-        case ByteCodes::Code::interpreted_send_super_pop: // fall through
-        case ByteCodes::Code::compiled_send_super_pop: // fall through
-        case ByteCodes::Code::primitive_send_super_pop: // fall through
-        case ByteCodes::Code::polymorphic_send_super_pop: // fall through
+        case ByteCodes::Code::interpreted_send_super_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::compiled_send_super_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::primitive_send_super_pop:
+            [[fallthrough]];
+        case ByteCodes::Code::polymorphic_send_super_pop:
+            [[fallthrough]];
         case ByteCodes::Code::megamorphic_send_super_pop:
             return ByteCodes::Code::interpreted_send_super_pop;
 
@@ -760,24 +846,42 @@ ByteCodes::Code ByteCodes::interpreted_send_code_for( ByteCodes::Code code ) {
         case ByteCodes::Code::access_send_self:
             return ByteCodes::Code::interpreted_send_self;
 
-        case ByteCodes::Code::smi_add: // fall through
-        case ByteCodes::Code::smi_sub: // fall through
-        case ByteCodes::Code::smi_mult: // fall through
-        case ByteCodes::Code::smi_div: // fall through
-        case ByteCodes::Code::smi_mod: // fall through
-        case ByteCodes::Code::smi_create_point: // fall through
-        case ByteCodes::Code::smi_equal: // fall through
-        case ByteCodes::Code::smi_not_equal: // fall through
-        case ByteCodes::Code::smi_less: // fall through
-        case ByteCodes::Code::smi_less_equal: // fall through
-        case ByteCodes::Code::smi_greater: // fall through
-        case ByteCodes::Code::smi_greater_equal: // fall through
-        case ByteCodes::Code::smi_and: // fall through
-        case ByteCodes::Code::smi_or: // fall through
-        case ByteCodes::Code::smi_xor: // fall through
-        case ByteCodes::Code::smi_shift: // fall through
-        case ByteCodes::Code::double_equal: // fall through
-        case ByteCodes::Code::double_tilde: // fall through
+        case ByteCodes::Code::smi_add:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_sub:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_mult:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_div:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_mod:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_create_point:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_not_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_less:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_less_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_greater:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_greater_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_and:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_or:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_xor:
+            [[fallthrough]];
+        case ByteCodes::Code::smi_shift:
+            [[fallthrough]];
+        case ByteCodes::Code::double_equal:
+            [[fallthrough]];
+        case ByteCodes::Code::double_tilde:
+            [[fallthrough]];
         case ByteCodes::Code::objArray_at:
             return ByteCodes::Code::interpreted_send_1;
         case ByteCodes::Code::objArray_at_put:
@@ -943,19 +1047,23 @@ ByteCodes::Code ByteCodes::megamorphic_send_code_for( ByteCodes::Code code ) {
 
 ByteCodes::Code ByteCodes::original_primitive_call_code_for( Code code ) {
     switch ( code ) {
-        case ByteCodes::Code::prim_call: // fall through
+        case ByteCodes::Code::prim_call:
+            [[fallthrough]];
         case ByteCodes::Code::primitive_call_lookup:
             return ByteCodes::Code::primitive_call_lookup;
 
-        case ByteCodes::Code::primitive_call_self: // fall through
+        case ByteCodes::Code::primitive_call_self:
+            [[fallthrough]];
         case ByteCodes::Code::primitive_call_self_lookup:
             return ByteCodes::Code::primitive_call_self_lookup;
 
-        case ByteCodes::Code::primitive_call_failure: // fall through
+        case ByteCodes::Code::primitive_call_failure:
+            [[fallthrough]];
         case ByteCodes::Code::primitive_call_failure_lookup:
             return ByteCodes::Code::primitive_call_failure_lookup;
 
-        case ByteCodes::Code::primitive_call_self_failure: // fall through
+        case ByteCodes::Code::primitive_call_self_failure:
+            [[fallthrough]];
         case ByteCodes::Code::primitive_call_self_failure_lookup:
             return ByteCodes::Code::primitive_call_self_failure_lookup;
 
@@ -1030,7 +1138,7 @@ static void generate_instr_method() {
         spdlog::info( "\t]." );
     }
     spdlog::info( "\tself halt" );
-    spdlog::info( "!" );
+    spdlog::info( "" );
 }
 
 
@@ -1059,7 +1167,7 @@ static void generate_codeForPrimitive_method() {
     print_table_entry_for( "primitiveBitXor:ifFail:", ByteCodes::Code::smi_xor );
     print_table_entry_for( "primitiveRawBitShift:ifFail:", ByteCodes::Code::smi_shift );
     spdlog::info( "\t^ nil" );
-    spdlog::info( "!" );
+    spdlog::info( "" );
 
 }
 
@@ -1123,7 +1231,7 @@ static void generate_gen_method( ByteCodes::Code code ) {
         spdlog::info( "\tself has_classVar_access." );
     if ( has_inline_cache( code ) )
         spdlog::info( "\tself has_inline_cache." );
-    spdlog::info( "!" );
+    spdlog::info( "" );
 }
 
 
@@ -1131,12 +1239,12 @@ static void generate_float_function_constant_method( Floats::Function f ) {
     spdlog::info( "float_%s", Floats::function_name_for( f ) );
     generate_comment();
     spdlog::info( "\t^ {}", f );
-    spdlog::info( "!" );
+    spdlog::info( "" );
 }
 
 
 static void generate_heap_code_methods() {
-    spdlog::info( "not DeltaHCode methods !" );
+    spdlog::info( "not DeltaHCode methods " );
 
     generate_instr_method();
     generate_codeForPrimitive_method();
@@ -1153,7 +1261,7 @@ static void generate_heap_code_methods() {
         generate_float_function_constant_method( f );
     }
 
-    spdlog::info( "!" );
+    spdlog::info( "" );
 }
 
 
@@ -1166,20 +1274,19 @@ private:
 
 public:
 
-    Markup( const char *tag ) {
-        _tag = tag;
-        spdlog::info( "<%s>", _tag );
+    Markup( const char *tag ) : _tag{ tag } {
+        spdlog::info( "<{}>", _tag );
     }
 
 
     ~Markup() {
-        spdlog::info( "</%s>", _tag );
+        spdlog::info( "</{}>", _tag );
     }
 };
 
 
 static void markup( const char *tag, const char *text ) {
-    spdlog::info( "<%s>%s</%s>", tag, text, tag );
+    spdlog::info( "<{}>{}</{}>", tag, text, tag );
 }
 
 
@@ -1190,18 +1297,18 @@ static void print_format( ByteCodes::Format format ) {
     while ( *f ) {
         switch ( *f ) {
             case 'B':
-                _console->print( " byte" );
+                spdlog::info( " byte " );
                 break;
             case 'L':
-                _console->print( " std::int32_t" );
+                spdlog::info( " std::int32_t " );
                 break;
             case 'O':
-                _console->print( " Oop" );
+                spdlog::info( " Oop " );
                 break;
             case 'S':
-                _console->print( " {byte}" );
+                spdlog::info( " {byte} " );
                 break;
-            default : ShouldNotReachHere();
+            default: ShouldNotReachHere();
                 break;
         }
         f++;
@@ -1231,25 +1338,29 @@ static void generate_HTML_for( ByteCodes::Code code ) {
 
     _console->print( "<td>%02X<sub>H</sub><td><B>%s</B><td>", std::int32_t( code ), ByteCodes::name( code ) );
     print_format( ByteCodes::format( code ) );
-    _console->print( "<td>%s", ByteCodes::single_step( code ) ? "intercepted" : "" );
+    spdlog::info( "<td>{}", ByteCodes::single_step( code ) ? "intercepted" : "" );
+
+    //
     if ( ByteCodes::code_type( code ) == ByteCodes::CodeType::MESSAGE_SEND ) {
         _console->print( "<td>%s", ByteCodes::send_type_as_string( ByteCodes::send_type( code ) ) );
         _console->print( "<td>%s", arguments_as_string( ByteCodes::argument_spec( code ) ) );
     }
+
     spdlog::info( "<tr>" );
 }
 
 
 static void generate_HTML_for( ByteCodes::CodeType type ) {
+
     {
         Markup tag( "h3" );
         spdlog::info( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
     }
     {
         Markup tag( "table" );
-        _console->print( "<th>Code<th>Name<th>Format<th>Single step" );
+        spdlog::info( "<th>Code</th><th>Name</th><th>Format</th><th>Single step</th>" );
         if ( type == ByteCodes::CodeType::MESSAGE_SEND ) {
-            _console->print( "<th>Send type<th>Arguments" );
+            _console->print( "<th>Send type</th><th>Arguments</th>" );
         }
         spdlog::info( "<tr>" );
         for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
@@ -1258,7 +1369,10 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
                 generate_HTML_for( code );
             }
         }
+        spdlog::info( "</tr>" );
+
     }
+
     spdlog::info( "<hr/>" );
 }
 
@@ -1271,14 +1385,16 @@ static void generate_HTML_docu() {
         markup( "title", "Delta ByteCodes" );
     }
     {
-        Markup             tag( "body" );
+        Markup tag( "body" );
         {
             Markup tag( "h2" );
             spdlog::info( "Delta ByteCodes (Version {})", ByteCodes::version() );
         }
+
         for ( std::int32_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ ) {
             generate_HTML_for( ByteCodes::CodeType( i ) );
         }
+
     }
 }
 

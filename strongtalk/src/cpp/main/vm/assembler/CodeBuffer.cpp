@@ -18,7 +18,8 @@ MacroAssembler *theMacroAssembler = nullptr;
 
 
 CodeBuffer::CodeBuffer( std::int32_t instsSize, std::int32_t locsSize ) :
-    _codeStart{ _codeEnd = new_resource_array<char>( instsSize ) },
+    _codeStart{ new_resource_array<char>( instsSize ) },
+    _codeEnd{ new_resource_array<char>( instsSize ) },
     _codeOverflow{ _codeStart + instsSize },
     _locsStart{ (RelocationInformation *) new_resource_array<char>( locsSize ) },
     _locsEnd{ (RelocationInformation *) new_resource_array<char>( locsSize ) },

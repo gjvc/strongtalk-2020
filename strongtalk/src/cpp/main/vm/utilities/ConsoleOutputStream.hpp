@@ -27,6 +27,7 @@ protected:
 
 public:
     ConsoleOutputStream( std::int32_t width = 80 );
+
     void print( const char *format, ... );
 
     void print_cr( const char *format, ... );

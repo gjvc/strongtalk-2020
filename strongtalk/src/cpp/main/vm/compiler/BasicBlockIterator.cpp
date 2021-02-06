@@ -272,7 +272,7 @@ void BasicBlockIterator::globalCopyPropagate() {
             DefinitionUsageInfo           *info  = index->_basicBlock->duInfo.info->at( index->_index );
             if ( info->_definitions.length() ) {
                 st_assert( info->_definitions.length() == 1, "should be one definition only" );
-                st_assert( def == nullptr, "already have def!?!" );
+                st_assert( def == nullptr, "already have def!?" );
                 def = info->_definitions.first();
                 break;
             }

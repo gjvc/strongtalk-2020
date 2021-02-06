@@ -57,7 +57,7 @@ void ChunkKlass::markSize( std::int32_t nChunks, chunkState s ) {
             p[ headerSize() ] = headerSize();
     } else {
         if ( nChunks < maxOneByteLen ) {
-            st_assert( maxOneByteLen <= static_cast<std::int32_t>(chunkState::MaxDistance), "oops!" );
+            st_assert( maxOneByteLen <= static_cast<std::int32_t>(chunkState::MaxDistance), "oops" );
             for ( std::int32_t i = minHeaderSize; i < nChunks - minHeaderSize; i++ )
                 p[ i ] = i;
         } else {
@@ -184,6 +184,7 @@ ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) :
     _ifrag{},
     _base{},
     base{},
+    size{},
     _heapKlass{},
     _freeList{},
     _bigList{},

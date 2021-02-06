@@ -34,18 +34,24 @@ void MethodOopDescriptor::decay_invocation_count( double decay_factor ) {
     do {
 
         switch ( c.code() ) {
-            case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-            case ByteCodes::Code::push_new_closure_context_0:  // fall through
-            case ByteCodes::Code::push_new_closure_context_1:  // fall through
+            case ByteCodes::Code::push_new_closure_tos_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_1:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_2:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_1:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_2: {
                 MethodOop block_method = MethodOop( c.oop_at( 1 ) );
                 st_assert( block_method->is_method(), "must be method" );
                 block_method->decay_invocation_count( decay_factor );
             }
                 break;
-            case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+            case ByteCodes::Code::push_new_closure_tos_n:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_n: {
                 MethodOop block_method = MethodOop( c.oop_at( 2 ) );
                 st_assert( block_method->is_method(), "must be method" );
@@ -81,14 +87,17 @@ void MethodOopDescriptor::bootstrap_object( Bootstrap *stream ) {
     set_counters( 0, 0 );
     stream->read_oop( (Oop *) &addr()->_size_and_flags );
 
-    for ( std::int32_t i = 1; i <= size_of_codes() * 4; )
-        if ( stream->is_byte() ) {
-            byte_at_put( i, stream->read_byte() );
+    for ( std::int32_t i = 1; i <= size_of_codes() * 4; ) {
+        uint8_t nextByte = stream->read_uint8_t();
+        if ( nextByte == '4' ) {
+            byte_at_put( i, stream->read_uint8_t() );
             i++;
         } else {
             stream->read_oop( (Oop *) codes( i ) );
             i += 4;
         }
+    }
+
 }
 
 
@@ -406,8 +415,8 @@ public:
     bool hasBlock;
 
 
-    BlockFinderClosure() {
-        hasBlock = false;
+    BlockFinderClosure() :
+        hasBlock{ false } {
     }
 
 
@@ -488,18 +497,24 @@ void MethodOopDescriptor::clear_inline_caches() {
         } else {
             // Call it for blocks
             switch ( c.code() ) {
-                case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-                case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-                case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-                case ByteCodes::Code::push_new_closure_context_0:  // fall through
-                case ByteCodes::Code::push_new_closure_context_1:  // fall through
+                case ByteCodes::Code::push_new_closure_tos_0:
+                    [[fallthrough]];
+                case ByteCodes::Code::push_new_closure_tos_1:
+                    [[fallthrough]];
+                case ByteCodes::Code::push_new_closure_tos_2:
+                    [[fallthrough]];
+                case ByteCodes::Code::push_new_closure_context_0:
+                    [[fallthrough]];
+                case ByteCodes::Code::push_new_closure_context_1:
+                    [[fallthrough]];
                 case ByteCodes::Code::push_new_closure_context_2: {
                     MethodOop block_method = MethodOop( c.oop_at( 1 ) );
                     st_assert( block_method->is_method(), "must be method" );
                     block_method->clear_inline_caches();
                 }
                     break;
-                case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+                case ByteCodes::Code::push_new_closure_tos_n:
+                    [[fallthrough]];
                 case ByteCodes::Code::push_new_closure_context_n: {
                     MethodOop block_method = MethodOop( c.oop_at( 2 ) );
                     st_assert( block_method->is_method(), "must be method" );
@@ -700,18 +715,24 @@ MethodOop MethodOopDescriptor::block_method_at( std::int32_t byteCodeIndex ) {
 
     CodeIterator c( MethodOop( this ), byteCodeIndex );
     switch ( c.code() ) {
-        case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-        case ByteCodes::Code::push_new_closure_context_0:  // fall through
-        case ByteCodes::Code::push_new_closure_context_1:  // fall through
+        case ByteCodes::Code::push_new_closure_tos_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_1:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_2:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_1:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_2: {
             MethodOop block_method = MethodOop( c.oop_at( 1 ) );
             st_assert( block_method->is_method(), "must be method" );
             return block_method;
         }
             break;
-        case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+        case ByteCodes::Code::push_new_closure_tos_n:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_n: {
             MethodOop block_method = MethodOop( c.oop_at( 2 ) );
             st_assert( block_method->is_method(), "must be method" );
@@ -763,9 +784,9 @@ private:
     bool         _self_in_context;
 
 public:
-    ContextMethodIterator() {
-        count            = sentinel;
-        _self_in_context = false;
+    ContextMethodIterator() :
+        count{ sentinel },
+        _self_in_context{ false } {
     }
 
 
@@ -840,18 +861,24 @@ void MethodOopDescriptor::customize_for( KlassOop klass, MixinOop mixin ) {
                 c.recustomize_inst_var_code( mixin->primary_invocation(), klass );
                 break;
 
-            case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-            case ByteCodes::Code::push_new_closure_context_0:  // fall through
-            case ByteCodes::Code::push_new_closure_context_1:  // fall through
+            case ByteCodes::Code::push_new_closure_tos_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_1:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_2:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_1:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_2: {
                 MethodOop block_method = MethodOop( c.oop_at( 1 ) );
                 st_assert( block_method->is_method(), "must be method" );
                 block_method->customize_for( klass, mixin );
             }
                 break;
-            case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+            case ByteCodes::Code::push_new_closure_tos_n:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_n: {
                 MethodOop block_method = MethodOop( c.oop_at( 2 ) );
                 st_assert( block_method->is_method(), "must be method" );
@@ -896,18 +923,24 @@ void MethodOopDescriptor::uncustomize_for( MixinOop mixin ) {
                 c.uncustomize_inst_var_code( mixin->primary_invocation() );
                 break;
 
-            case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-            case ByteCodes::Code::push_new_closure_context_0:  // fall through
-            case ByteCodes::Code::push_new_closure_context_1:  // fall through
+            case ByteCodes::Code::push_new_closure_tos_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_1:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_2:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_1:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_2: {
                 MethodOop block_method = MethodOop( c.oop_at( 1 ) );
                 st_assert( block_method->is_method(), "must be method" );
                 block_method->uncustomize_for( mixin );
             }
                 break;
-            case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+            case ByteCodes::Code::push_new_closure_tos_n:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_n: {
                 MethodOop block_method = MethodOop( c.oop_at( 2 ) );
                 st_assert( block_method->is_method(), "must be method" );
@@ -940,11 +973,16 @@ MethodOop MethodOopDescriptor::copy_for_customization() const {
     CodeIterator c( new_method );
     do {
         switch ( c.code() ) {
-            case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-            case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-            case ByteCodes::Code::push_new_closure_context_0:  // fall through
-            case ByteCodes::Code::push_new_closure_context_1:  // fall through
+            case ByteCodes::Code::push_new_closure_tos_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_1:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_tos_2:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_0:
+                [[fallthrough]];
+            case ByteCodes::Code::push_new_closure_context_1:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_2: {
                 MethodOop block_method = MethodOop( c.oop_at( 1 ) );
                 st_assert( block_method->is_method(), "must be method" );
@@ -953,7 +991,8 @@ MethodOop MethodOopDescriptor::copy_for_customization() const {
                 Universe::store( c.aligned_oop( 1 ), new_block_method );
             }
                 break;
-            case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+            case ByteCodes::Code::push_new_closure_tos_n:
+                [[fallthrough]];
             case ByteCodes::Code::push_new_closure_context_n: {
                 MethodOop block_method = MethodOop( c.oop_at( 2 ) );
                 st_assert( block_method->is_method(), "must be method" );
@@ -1540,7 +1579,7 @@ void stopInSelector( const char *name, MethodOop method ) {
     std::int32_t len      = strlen( name );
     SymbolOop    selector = selectorFrom( method );
     if ( selector == nullptr )
-        spdlog::warn( "Selector was nullptr!" );
+        spdlog::warn( "Selector was nullptr" );
     else if ( selector->length() == len and strncmp( name, selector->chars(), len ) == 0 ) {
         TraceCanonicalContext = true;
         //method->pretty_print();

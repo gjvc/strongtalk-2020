@@ -257,10 +257,11 @@ private:
     DeltaProcess *theProcess;
 public:
     void begin_process( Process *process ) {
-        if ( process->is_deltaProcess() )
+        if ( process->is_deltaProcess() ) {
             theProcess = (DeltaProcess *) process;
-        else
+        } else {
             theProcess = nullptr;
+        }
     }
 
 
@@ -271,8 +272,9 @@ public:
 
 
     void do_frame( Frame *fr ) {
-        if ( theProcess and fr->is_compiled_frame() )
+        if ( theProcess and fr->is_compiled_frame() ) {
             theProcess->deoptimize_stretch( fr, fr );
+        }
     }
 };
 

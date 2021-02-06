@@ -12,7 +12,7 @@
 bool ResourceMark::_enabled = true;
 
 
-ResourceMark::ResourceMark() {
+ResourceMark::ResourceMark() : _resourceArea{}, _resourceAreaChunk{}, _top{} {
 
     if ( not _enabled )
         return;

@@ -20,7 +20,8 @@
 #include "vm/utilities/ConsoleOutputStream.hpp"
 
 
-MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream *stream ) {
+MethodPrinterClosure::MethodPrinterClosure( ConsoleOutputStream *stream ) :
+    _outputStream{ nullptr } {
     _outputStream = stream ? stream : _console;
 }
 

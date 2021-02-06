@@ -23,9 +23,12 @@ smi_t Scope::_currentScopeID;
 SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *receiver ) :
     _senderScope{ senderScope },
     _receiver{ receiver },
+    _receiverStatic{ false },
     _selector{ lookupKey->selector() },
     _lookupKey{ lookupKey },
     _counting{ false },
+    _predicted{ false },
+    uninlinable{ false },
     _needRealSend{ false },
     _resultRegister{ nullptr },
     _sendCount{ -1 },
@@ -34,6 +37,7 @@ SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression 
     _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
 
 }
+
 
 SendInfo::SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) :
     _senderScope{ sen },
@@ -52,7 +56,6 @@ SendInfo::SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) :
     _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
 
 }
-
 
 
 void SendInfo::computeNSends( RecompilationScope *rscope, std::int32_t byteCodeIndex ) {
@@ -86,6 +89,14 @@ InlinedScope::InlinedScope() :
     _endsDead{ false },
     _self{ nullptr },
     _gen{},
+
+    depth{ 0 },
+    loopDepth{ 0 },
+    nlrResult{ 0 },
+    predicted{ false },
+    result{ nullptr },
+    resultPR{ nullptr },
+    rscope{ nullptr },
 
     _context{ nullptr },
     _arguments{ nullptr },
@@ -190,7 +201,9 @@ MethodScope::MethodScope() {
 }
 
 
-BlockScope::BlockScope() {
+BlockScope::BlockScope() :
+    _self_is_initialized{ false },
+    _parent{ nullptr } {
 }
 
 
@@ -1008,29 +1021,33 @@ void BlockScope::generateDebugInfo() {
 
 // Outlined scopes
 
-OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *sc ) {
-    if ( sc->isMethodScope() ) {
-        return new OutlinedMethodScope( nm, sc );
+OutlinedScope *new_OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope ) {
+    if ( scope->isMethodScope() ) {
+        return new OutlinedMethodScope( nm, scope );
     } else {
-        return new OutlinedBlockScope( nm, sc );
+        return new OutlinedBlockScope( nm, scope );
     }
 }
 
 
-OutlinedScope::OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope ) {
-    _nm    = nm;
-    _scope = scope;
+OutlinedScope::OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope ) :
+    _nm{ nm },
+    _scope{ scope } {
 }
 
 
 OutlinedBlockScope::OutlinedBlockScope( NativeMethod *nm, ScopeDescriptor *sc ) :
-    OutlinedScope( nm, sc ) {
+    OutlinedScope( nm, sc ),
+    _parent{ nullptr } {
+
     ScopeDescriptor *parent = sc->parent( true );
+
     if ( parent ) {
         _parent = new_OutlinedScope( nm, parent );
     } else {
         _parent = nullptr;
     }
+
 }
 
 
@@ -1056,8 +1073,6 @@ void SendInfo::print() {
     _selector->print_symbol_on();
     spdlog::info( "(receiver = 0x{0:x}, nsends = %ld)", static_cast<void *>( _receiver ), reinterpret_cast<void *>( _sendCount ) );
 }
-
-
 
 
 void InlinedScope::printTree() {

@@ -29,7 +29,7 @@ class ByteArrayOopDescriptor : public MemOopDescriptor {
 public:
     friend ByteArrayOop as_byteArrayOop( void *p );
 
-    void bootstrap_object( Bootstrap *stream );
+    void bootstrap_object( Bootstrap *bootstrap );
 
 
     // accessors

@@ -19,6 +19,7 @@
 #include "vm/memory/MarkSweep.hpp"
 
 
+//
 // values of bytes in byte map: during normal operation (incl. scavenge),
 // bytes are either -1 (clean) or 0 (dirty); i.e., the interpreter / compiled code
 // clear a byte when storing into that card.
@@ -65,12 +66,13 @@ void *RememberedSet::operator new( std::size_t size ) {
 
 
 // copy the bits from an older, smaller bitmap, add area [start,end)
-RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char *end ) {
+RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char *end ) : _highBoundary{}, _lowBoundary{} {
     static_cast<void>(old); // unused
     static_cast<void>(start); // unused
     static_cast<void>(end); // unused
 
     ShouldNotReachHere();
+
     /*
     low_boundary = Universe::new_gen.low_boundary;
     high_boundary = Universe::old_gen.high_boundary;
@@ -93,16 +95,19 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
     Oop *s = oop_for( begin );
 
     // Return if we're at the end.
-    if ( s >= sp->top() )
+    if ( s >= sp->top() ) {
         return begin + 1;
+    }
 
     s = sp->object_start( s );
     char *end = begin + 1;
 
     Oop *object_end = nullptr;
     while ( !*end and end < limit ) {
-        while ( !*end and end < limit )
+
+        while ( !*end and end < limit ) {
             end++;
+        }
 
         // We now have a string of dirty pages [begin..end[
         Oop *e = min( oop_for( end ), (Oop *) sp->top() );
@@ -121,8 +126,9 @@ char *RememberedSet::scavenge_contents( OldSpace *sp, char *begin, char *limit )
     }
 
     // Clear the cards
-    for ( char *i = begin; i < end; i++ )
+    for ( char *i = begin; i < end; i++ ) {
         *i = -1;
+    }
 
     // Find the end
     Oop *e = min( oop_for( end ), (Oop *) sp->top() );
@@ -261,7 +267,7 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
     obj->print_value();
     _console->cr();
     if ( obj->is_new() ) {
-        spdlog::info( " object is in new Space!" );
+        spdlog::info( " object is in new Space" );
     } else {
         _console->sp();
         char *current_byte = byte_for( obj->addr() );

@@ -468,10 +468,17 @@ void Zone::PICs_do( void f( PolymorphicInlineCache *pic ) ) {
   _console->print(format, (n), 100.0 * (n) / (ntot), 100.0 * (n) / (ntot2))
 
 class nmsizes {
-    std::int32_t n, insts, locs, scopes;
+    std::int32_t n;
+    std::int32_t insts;
+    std::int32_t locs;
+    std::int32_t scopes;
+
 public:
-    nmsizes() {
-        n = insts = locs = scopes = 0;
+    nmsizes() :
+        n{ 0 },
+        insts{ 0 },
+        locs{ 0 },
+        scopes{ 0 } {
     }
 
 

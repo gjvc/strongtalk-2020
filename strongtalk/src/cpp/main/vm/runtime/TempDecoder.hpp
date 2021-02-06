@@ -19,6 +19,12 @@ private:
     bool is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo );
 
 public:
+    TempDecoder() :
+        _num_of_params{ 0 } {
+
+    }
+
+
     virtual void decode( MethodOop method, std::int32_t byteCodeIndex = 0 );
 
 

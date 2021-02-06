@@ -342,6 +342,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
     _unwind_head{ nullptr },
     _firstHandle{ nullptr },
     _time_stamp{ 0 },
+    _processObject{},
     _debugInfo{},
     _isCallback{ false } {
 

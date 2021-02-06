@@ -48,7 +48,7 @@ Location::Location( LocationMode mode, std::int32_t f ) :
 }
 
 
-Location::Location( LocationMode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) : _loc{ 0} {
+Location::Location( LocationMode mode, std::int32_t f1, std::int32_t f2, std::int32_t f3 ) : _loc{ 0 } {
 
     if ( ( f1 & _f1Mask ) not_eq f1 or ( f2 & _f2Mask ) not_eq f2 or ( f3 & _f3Mask ) not_eq f3 ) {
         overflow( mode, f1, f2, f3 );
@@ -106,7 +106,7 @@ const char *Location::name() const {
 // predicates
 
 bool Location::isTopOfStack() const {
-    return *this == TOP_OF_STACK or *this == TOP_OF_FLOAT_STACK;
+    return ( *this == TOP_OF_STACK ) or ( *this == TOP_OF_FLOAT_STACK );
 }
 
 
@@ -141,10 +141,13 @@ IntegerFreeList::IntegerFreeList( std::int32_t size ) :
 
 
 std::int32_t IntegerFreeList::allocate() {
+
+    //
     if ( _first < 0 ) {
         grow();
     }
 
+    //
     std::int32_t i = _first;
     _first = _list->at( i );
     _list->at_put( i, -1 ); // for debugging only

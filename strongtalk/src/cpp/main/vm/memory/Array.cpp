@@ -17,6 +17,7 @@
 
 
 Array::Array( std::int32_t sz ) :
+    _offset{ 0 },
     _size{ sz },
     _index{ 0 },
     _values{ new_resource_array<std::int32_t>( sz ) } {

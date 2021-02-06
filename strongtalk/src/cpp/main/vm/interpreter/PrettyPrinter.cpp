@@ -39,6 +39,8 @@ protected:
     scopeNode    *_scopeNode;
 
 public:
+
+    //
     astNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
         _byteCodeIndex{ byteCodeIndex },
         _scopeNode{ scope } {
@@ -270,9 +272,9 @@ private:
 
 public:
     nameValueNode( const char *name, char *value ) :
-        astNode( 0, 0 ) {
-        _name  = name;
-        _value = value;
+        astNode( 0, 0 ),
+        _name{ name },
+        _value{ value } {
     }
 
 
@@ -298,8 +300,7 @@ private:
 
 public:
     nameNode( const char *str ) :
-        leafNode( 0, 0 ) {
-        _str = str;
+        leafNode( 0, 0 ), _str{ str } {
     }
 
 
@@ -413,6 +414,7 @@ public:
         _hotByteCodeIndex{ 0 },
         _frameIndex{ 0 },
         _deltaVirtualFrame{ nullptr },
+        _parentScope{ nullptr },
         _scopeDescriptor{ nullptr },
         _innerScope{ nullptr },
 
@@ -756,7 +758,8 @@ protected:
 
 public:
     codeNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
-        astNode( byteCodeIndex, scope ) {
+        astNode( byteCodeIndex, scope ),
+        _statements{ nullptr } {
         _statements = new GrowableArray<astNode *>( 10 );
     }
 
@@ -850,9 +853,9 @@ public:
 
 
     statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool has_return ) :
-        astNode( byteCodeIndex, scope ) {
-        _stat = stat;
-        _hasReturn = has_return;
+        astNode( byteCodeIndex, scope ),
+        _stat{ stat },
+        _hasReturn{ has_return } {
     }
 
 
@@ -930,8 +933,8 @@ private:
 
 public:
     blockNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t numOfArgs ) :
-        codeNode( byteCodeIndex, scope ) {
-        _numOfArgs = numOfArgs;
+        codeNode( byteCodeIndex, scope ),
+        _numOfArgs{ numOfArgs } {
     }
 
 
@@ -1019,9 +1022,9 @@ private:
 
 public:
     assignment( std::int32_t byteCodeIndex, scopeNode *scope, astNode *variable, astNode *e ) :
-        astNode( byteCodeIndex, scope ) {
-        _variable = variable;
-        _e        = e;
+        astNode( byteCodeIndex, scope ),
+        _variable{ variable },
+        _e{ e } {
     }
 
 
@@ -1260,8 +1263,8 @@ private:
 
 public:
     literalNode( std::int32_t byteCodeIndex, scopeNode *scope, const char *str ) :
-        leafNode( byteCodeIndex, scope ) {
-        _str = str;
+        leafNode( byteCodeIndex, scope ),
+        _str{ str } {
     }
 
 
@@ -1280,17 +1283,19 @@ private:
 
 public:
     symbolNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop value, bool is_outer = true ) :
-        astNode( byteCodeIndex, scope ) {
-        _value   = value;
-        _isOuter = is_outer;
-        _str     = value->as_string();
+        astNode( byteCodeIndex, scope ),
+        _value{ value },
+        _isOuter{ is_outer },
+        _str{ nullptr } {
+        _str = value->as_string();
     }
 
 
     bool print( PrettyPrintStream *output ) {
         astNode::print( output );
-        if ( _isOuter )
+        if ( _isOuter ) {
             output->print( "#" );
+        }
         output->print( _str );
         return false;
     }
@@ -1310,7 +1315,9 @@ private:
 
 public:
     doubleByteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, DoubleByteArrayOop value ) :
-        astNode( byteCodeIndex, scope ) {
+        astNode( byteCodeIndex, scope ),
+        _value{ value },
+        _str{ nullptr } {
         _value = value;
         _str   = value->as_string();
     }
@@ -1339,9 +1346,10 @@ private:
 
 public:
     byteArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ByteArrayOop value ) :
-        astNode( byteCodeIndex, scope ) {
-        _value = value;
-        _str   = value->as_string();
+        astNode( byteCodeIndex, scope ),
+        _value{ value },
+        _str{ nullptr } {
+        _str = value->as_string();
     }
 
 
@@ -1442,7 +1450,10 @@ private:
 
 public:
     objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool is_outer = true ) :
-        astNode( byteCodeIndex, scope ) {
+        astNode( byteCodeIndex, scope ),
+        _value{},
+        _isOuter{ false },
+        _elements{ nullptr } {
         _value    = value;
         _isOuter  = is_outer;
         _elements = new GrowableArray<astNode *>( 10 );
@@ -1547,6 +1558,7 @@ private:
 public:
     stackTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset ) :
         _offset{ offset },
+        _str{},
         leafNode( byteCodeIndex, scope ) {
         _str = scope->stack_temp_string( this_byteCodeIndex(), offset );
     }
@@ -1567,9 +1579,11 @@ private:
 
 public:
     heapTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset, std::int32_t context_level ) :
+        leafNode( byteCodeIndex, scope ),
+        _str{ nullptr },
         _offset{ offset },
-        _contextLevel{ context_level },
-        leafNode( byteCodeIndex, scope ) {
+        _contextLevel{ context_level } {
+
         _str = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
     }
 
@@ -1587,7 +1601,8 @@ private:
 
 public:
     floatNode( std::int32_t no, std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ) {
+        leafNode( byteCodeIndex, scope ),
+        _str{ nullptr } {
         _str = scope->stack_temp_string( this_byteCodeIndex(), no );
     }
 
@@ -1632,7 +1647,9 @@ private:
 
 public:
     classVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
-        leafNode( byteCodeIndex, scope ) {
+        leafNode( byteCodeIndex, scope ),
+        _obj{ nullptr },
+        _str{ nullptr } {
         _obj = obj;
         if ( obj->is_association() ) {
             _str = AssociationOop( obj )->key()->as_string();
@@ -1675,7 +1692,9 @@ private:
 
 public:
     assocNode( std::int32_t byteCodeIndex, scopeNode *scope, AssociationOop assoc ) :
-        leafNode( byteCodeIndex, scope ) {
+        leafNode( byteCodeIndex, scope ),
+        _assoc{ nullptr },
+        _str{ nullptr } {
         _assoc = assoc;
         _str   = assoc->key()->as_string();
     }
@@ -1695,7 +1714,9 @@ private:
 
 public:
     cascadeSendNode( std::int32_t byteCodeIndex, scopeNode *scope, messageNode *first ) :
-        astNode( byteCodeIndex, scope ) {
+        astNode( byteCodeIndex, scope ),
+        _messages{ nullptr },
+        _receiver{ nullptr } {
         _messages = new GrowableArray<messageNode *>( 10 );
         _receiver = first->receiver();
         first->set_receiver( this );
@@ -2133,13 +2154,17 @@ public:
 };
 
 
-MethodPrettyPrinter::MethodPrettyPrinter( scopeNode *scope ) {
+MethodPrettyPrinter::MethodPrettyPrinter( scopeNode *scope ) :
+    _stack{ nullptr },
+    _scope{ scope } {
     _stack = new GrowableArray<astNode *>( 10 );
-    _scope = scope;
-    if ( scope->method()->is_blockMethod() )
+
+    if ( scope->method()->is_blockMethod() ) {
         _push( new blockNode( 1, scope, scope->method()->number_of_arguments() ) );
-    else
+    } else {
         _push( new methodNode( 1, scope ) );
+    }
+
 }
 
 
@@ -2247,11 +2272,11 @@ public:
     std::int32_t        _offset;
 
 
-    StackChecker( const char *name, MethodPrettyPrinter *pp, std::int32_t offset = 0 ) {
-        _methodPrettyPrinter = pp;
-        _size                = pp->_size();
-        _name                = name;
-        _offset              = offset;
+    StackChecker( const char *name, MethodPrettyPrinter *pp, std::int32_t offset = 0 ) :
+        _methodPrettyPrinter{ pp },
+        _size{ pp->_size() },
+        _name{ name },
+        _offset{ offset } {
     }
 
 
@@ -2386,8 +2411,9 @@ void PrettyPrinter::print( std::int32_t index, DeltaVirtualFrame *fr, PrettyPrin
 
 void PrettyPrinter::print_body( DeltaVirtualFrame *fr, PrettyPrintStream *output ) {
     ResourceMark resourceMark;
-    if ( not output )
+    if ( not output ) {
         output = new DefaultPrettyPrintStream;
+    }
 
     astNode *root = generateForActivation( fr, 0 );
     root->print( output );
@@ -2395,7 +2421,7 @@ void PrettyPrinter::print_body( DeltaVirtualFrame *fr, PrettyPrintStream *output
 
 
 ByteArrayPrettyPrintStream::ByteArrayPrettyPrintStream() :
-    DefaultPrettyPrintStream() {
+    DefaultPrettyPrintStream(), _buffer{ nullptr } {
     _buffer = new GrowableArray<std::int32_t>( 200 );
 }
 

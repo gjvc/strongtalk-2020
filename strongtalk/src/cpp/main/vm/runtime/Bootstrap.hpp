@@ -40,9 +40,7 @@ public:
     ~Bootstrap();
     void initNameByTypeByte();
 
-    char readNextChar();
-
-    std::int32_t get_next_int32_t();
+    std::int32_t read_uint32_t();
 
     bool has_error();
 
@@ -50,9 +48,7 @@ public:
 
     void read_oop( Oop *oop_addr );
 
-    char read_byte();
-
-    std::uint16_t read_doubleByte();
+    std::uint16_t read_uint16_t();
 
     std::int32_t read_integer();
 
@@ -97,4 +93,6 @@ public:
     void summary();
     Oop oopFromTable( const std::int32_t index );
     char getNextTypeByte();
+    char read_uint8_t();
+    int32_t _version_number{};
 };

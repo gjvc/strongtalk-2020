@@ -371,8 +371,8 @@ public:
 // When value is sent to the block, the context field is copied into the activation frame of the block.
 
 enum class AllocationType {
-    tos_as_scope,        // top of stack is used as context (usually nil or self)
-    context_as_scope    // context of current stack frame (i.e. content of temp0) is used a context
+    tos_as_scope,           // top of stack is used as context (usually nil or self)
+    context_as_scope        // context of current stack frame (i.e. content of temp0) is used a context
 };
 
 

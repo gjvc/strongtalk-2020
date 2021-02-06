@@ -13,12 +13,14 @@
 
 
 void Generation::print() {
-    _console->print( " total %6dK, %d%% used ", capacity() / 1024, ( 100 * used() ) / capacity() );
+    spdlog::info( " total {:d} KBytes, {:d} percent used ", capacity() / 1024, ( 100 * used() ) / capacity() );
     spdlog::info( " [0x{0:x}, 0x{0:x}[", _lowBoundary, _highBoundary );
 }
 
 
 void NewGeneration::swap_spaces() {
+
+    //
     eden()->clear();
     from()->clear();
     {

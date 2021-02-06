@@ -56,7 +56,12 @@ void PseudoRegister::initPseudoRegisters() {
 SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool inContext ) :
     PseudoRegister( s ),
     _isInContext( inContext ),
-    _creationScope{ nullptr } {
+    _creationScope{ nullptr },
+    _begByteCodeIndex{ 0 },
+    _endByteCodeIndex{ 0 },
+    _creationStartByteCodeIndex{ 0 } {
+
+    //
     _creationStartByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
     _begByteCodeIndex           = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
     _endByteCodeIndex           = en == IllegalByteCodeIndex ? s->byteCodeIndex() : en;
@@ -1000,7 +1005,15 @@ public:
     GrowableArray<Scope *>          *_enclosingScopes;  // 0 = scope immediately enclosing block (= this->scope), etc.
     MethodOop                       _methodOop;         // the method currently being scanned for uplevel-accesses; either r's block method or a nested block method
 
-    UplevelComputer( BlockPseudoRegister *reg ) {
+    UplevelComputer( BlockPseudoRegister *reg ) :
+        _r{ nullptr },
+        _scope{ nullptr },
+        _read{ nullptr },
+        _written{ nullptr },
+        _nestingLevel{ 0 },
+        _enclosingDepth{ 0 },
+        _enclosingScopes{ nullptr },
+        _methodOop{ nullptr } {
         _r               = reg;
         _scope           = _r->scope();
         _read            = new GrowableArray<PseudoRegister *>( 10 );

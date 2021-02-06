@@ -102,6 +102,13 @@ NativeMethod::NativeMethod( Compiler *c ) :
     _invocationCount{},
     _uncommonTrapCounter{},
     _numberOfLinks{},
+    _entryPointOffset{},
+    _floatSectionSize{},
+    _floatSectionStartOffset{},
+    _nativeMethodFlags{},
+    _numberOfFloatTemporaries{},
+    _specialHandlerCallOffset{},
+    _verifiedEntryPointOffset{},
 
     _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
 

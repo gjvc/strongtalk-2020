@@ -58,7 +58,8 @@ InlineSendNode::InlineSendNode( MethodOop method, MethodInterval *parent, std::i
 // CondNode
 
 CondNode::CondNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex + dest_offset ),
+    _expr_code{ nullptr } {
     _expr_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex() );
 }
 
@@ -132,7 +133,12 @@ SymbolOop WhileNode::selector() const {
 // IfNode
 
 IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure ) :
-    InlineSendNode( method, parent, begin_byteCodeIndex ) {
+    InlineSendNode( method, parent, begin_byteCodeIndex ),
+    _cond{},
+    _produces_result{},
+    _ignore_else_while_printing{},
+    _then_code{},
+    _else_code{} {
     bool         has_else_branch;
     std::int32_t else_jump_size;
     _cond                       = cond;
@@ -176,13 +182,12 @@ SymbolOop IfNode::selector() const {
 // ExternalCallNode
 
 ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex ) :
-    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ) {
-    _failure_code = nullptr;
+    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex ), _failure_code{ nullptr } {
 }
 
 
 ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t end_offset ) :
-    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ) {
+    MethodInterval( method, parent, begin_byteCodeIndex, next_byteCodeIndex + end_offset ), _failure_code{ nullptr } {
     st_assert( end_offset > 0, "wrong offset" );
     _failure_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex, end_byteCodeIndex(), true );
 }
@@ -868,78 +873,138 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 next_byteCodeIndex = node->end_byteCodeIndex();
                 break;
             }
-            case ByteCodes::Code::interpreted_send_0:        // fall through
-            case ByteCodes::Code::interpreted_send_1:        // fall through
-            case ByteCodes::Code::interpreted_send_2:        // fall through
-            case ByteCodes::Code::interpreted_send_n:        // fall through
-            case ByteCodes::Code::compiled_send_0:            // fall through
-            case ByteCodes::Code::compiled_send_1:            // fall through
-            case ByteCodes::Code::compiled_send_2:            // fall through
-            case ByteCodes::Code::compiled_send_n:            // fall through
-            case ByteCodes::Code::primitive_send_0:            // fall through
-            case ByteCodes::Code::primitive_send_1:            // fall through
-            case ByteCodes::Code::primitive_send_2:            // fall through
-            case ByteCodes::Code::primitive_send_n:            // fall through
-            case ByteCodes::Code::polymorphic_send_0:        // fall through
-            case ByteCodes::Code::polymorphic_send_1:        // fall through
-            case ByteCodes::Code::polymorphic_send_2:        // fall through
-            case ByteCodes::Code::polymorphic_send_n:        // fall through
-            case ByteCodes::Code::megamorphic_send_0:        // fall through
-            case ByteCodes::Code::megamorphic_send_1:        // fall through
-            case ByteCodes::Code::megamorphic_send_2:        // fall through
-            case ByteCodes::Code::megamorphic_send_n:        // fall through
+            case ByteCodes::Code::interpreted_send_0:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_1:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_2:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_n:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_0:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_1:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_2:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_n:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_0:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_1:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_2:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_n:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_0:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_1:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_2:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_n:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_0:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_1:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_2:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_n:
+                [[fallthrough]];
                 blk->normal_send( iter.ic() );
                 break;
-            case ByteCodes::Code::interpreted_send_0_pop:        // fall through
-            case ByteCodes::Code::interpreted_send_1_pop:        // fall through
-            case ByteCodes::Code::interpreted_send_2_pop:        // fall through
-            case ByteCodes::Code::interpreted_send_n_pop:        // fall through
-            case ByteCodes::Code::compiled_send_0_pop:        // fall through
-            case ByteCodes::Code::compiled_send_1_pop:        // fall through
-            case ByteCodes::Code::compiled_send_2_pop:        // fall through
-            case ByteCodes::Code::compiled_send_n_pop:        // fall through
-            case ByteCodes::Code::primitive_send_0_pop:        // fall through
-            case ByteCodes::Code::primitive_send_1_pop:        // fall through
-            case ByteCodes::Code::primitive_send_2_pop:        // fall through
-            case ByteCodes::Code::primitive_send_n_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_0_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_1_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_2_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_n_pop:        // fall through
-            case ByteCodes::Code::megamorphic_send_0_pop:        // fall through
-            case ByteCodes::Code::megamorphic_send_1_pop:        // fall through
-            case ByteCodes::Code::megamorphic_send_2_pop:        // fall through
-            case ByteCodes::Code::megamorphic_send_n_pop:        // fall through
+            case ByteCodes::Code::interpreted_send_0_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_1_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_2_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::interpreted_send_n_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_0_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_1_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_2_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_n_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_0_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_1_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_2_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_n_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_0_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_1_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_2_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_n_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_0_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_1_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_2_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_n_pop:
+                [[fallthrough]];
                 blk->normal_send( iter.ic() );
                 blk->pop();
                 break;
-            case ByteCodes::Code::interpreted_send_self:        // fall through
-            case ByteCodes::Code::compiled_send_self:        // fall through
-            case ByteCodes::Code::primitive_send_self:        // fall through
-            case ByteCodes::Code::polymorphic_send_self:        // fall through
-            case ByteCodes::Code::megamorphic_send_self:        // fall through
+            case ByteCodes::Code::interpreted_send_self:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_self:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_self:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_self:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_self:
+                [[fallthrough]];
                 blk->self_send( iter.ic() );
                 break;
-            case ByteCodes::Code::interpreted_send_self_pop:    // fall through
-            case ByteCodes::Code::compiled_send_self_pop:        // fall through
-            case ByteCodes::Code::primitive_send_self_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_self_pop:    // fall through
-            case ByteCodes::Code::megamorphic_send_self_pop:    // fall through
+            case ByteCodes::Code::interpreted_send_self_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_self_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_self_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_self_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_self_pop:
+                [[fallthrough]];
                 blk->self_send( iter.ic() );
                 blk->pop();
                 break;
-            case ByteCodes::Code::interpreted_send_super:        // fall through
-            case ByteCodes::Code::compiled_send_super:        // fall through
-            case ByteCodes::Code::primitive_send_super:        // fall through
-            case ByteCodes::Code::polymorphic_send_super:        // fall through
-            case ByteCodes::Code::megamorphic_send_super:        // fall through
+            case ByteCodes::Code::interpreted_send_super:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_super:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_super:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_super:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_super:
+                [[fallthrough]];
                 blk->super_send( iter.ic() );
                 break;
-            case ByteCodes::Code::interpreted_send_super_pop:    // fall through
-            case ByteCodes::Code::compiled_send_super_pop:        // fall through
-            case ByteCodes::Code::primitive_send_super_pop:        // fall through
-            case ByteCodes::Code::polymorphic_send_super_pop:    // fall through
-            case ByteCodes::Code::megamorphic_send_super_pop:    // fall through
+            case ByteCodes::Code::interpreted_send_super_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::compiled_send_super_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::primitive_send_super_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::polymorphic_send_super_pop:
+                [[fallthrough]];
+            case ByteCodes::Code::megamorphic_send_super_pop:
+                [[fallthrough]];
                 blk->super_send( iter.ic() );
                 blk->pop();
                 break;
@@ -987,7 +1052,8 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 blk->push_self();
                 blk->nonlocal_return( iter.byte_at( 1 ) );
                 break;
-            case ByteCodes::Code::prim_call: // fall through
+            case ByteCodes::Code::prim_call:
+                [[fallthrough]];
             case ByteCodes::Code::primitive_call_self: {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
                 PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc );
@@ -1001,7 +1067,8 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::predict_primitive_call:
                 blk->predict_primitive_call( Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) ), -1 );
                 break;
-            case ByteCodes::Code::primitive_call_failure: // fall through
+            case ByteCodes::Code::primitive_call_failure:
+                [[fallthrough]];
             case ByteCodes::Code::primitive_call_self_failure: {
                 PrimitiveDescriptor *pdesc = Primitives::lookup( (primitiveFunctionType) iter.word_at( 1 ) );
                 PrimitiveCallNode   *node  = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), pdesc->has_receiver(), nullptr, pdesc, iter.word_at( 1 + OOP_SIZE ) );
@@ -1027,7 +1094,8 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::unimplemented_bc:
                 unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_bc) );
                 break;
-            case ByteCodes::Code::primitive_call_lookup: // fall through
+            case ByteCodes::Code::primitive_call_lookup:
+                [[fallthrough]];
             case ByteCodes::Code::primitive_call_self_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
@@ -1040,7 +1108,8 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::predict_primitive_call_lookup:
                 blk->predict_primitive_call( Primitives::lookup( SymbolOop( iter.word_at( 1 ) ) ), -1 );
                 break;
-            case ByteCodes::Code::primitive_call_failure_lookup: // fall through
+            case ByteCodes::Code::primitive_call_failure_lookup:
+                [[fallthrough]];
             case ByteCodes::Code::primitive_call_self_failure_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
                 st_assert( name->is_symbol(), "name must be SymbolOop" );
@@ -1081,23 +1150,40 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::unimplemented_df:
                 unknown_code( static_cast<std::uint8_t>(ByteCodes::Code::unimplemented_df) );
                 break;
-            case ByteCodes::Code::smi_add: // fall through
-            case ByteCodes::Code::smi_sub: // fall through
-            case ByteCodes::Code::smi_mult: // fall through
-            case ByteCodes::Code::smi_div: // fall through
-            case ByteCodes::Code::smi_mod: // fall through
-            case ByteCodes::Code::smi_create_point: // fall through
-            case ByteCodes::Code::smi_equal: // fall through
-            case ByteCodes::Code::smi_not_equal: // fall through
-            case ByteCodes::Code::smi_less: // fall through
-            case ByteCodes::Code::smi_less_equal: // fall through
-            case ByteCodes::Code::smi_greater: // fall through
-            case ByteCodes::Code::smi_greater_equal: // fall through
-            case ByteCodes::Code::objArray_at: // fall through
-            case ByteCodes::Code::objArray_at_put: // fall through
-            case ByteCodes::Code::smi_and: // fall through
-            case ByteCodes::Code::smi_or: // fall through
-            case ByteCodes::Code::smi_xor: // fall through
+            case ByteCodes::Code::smi_add:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_sub:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_mult:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_div:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_mod:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_create_point:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_equal:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_not_equal:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_less:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_less_equal:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_greater:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_greater_equal:
+                [[fallthrough]];
+            case ByteCodes::Code::objArray_at:
+                [[fallthrough]];
+            case ByteCodes::Code::objArray_at_put:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_and:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_or:
+                [[fallthrough]];
+            case ByteCodes::Code::smi_xor:
+                [[fallthrough]];
             case ByteCodes::Code::smi_shift:
                 blk->normal_send( iter.ic() );
                 break;
@@ -1165,14 +1251,14 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
 }
 
 
-MethodIterator::MethodIterator( MethodOop m, MethodClosure *blk, AbstractMethodIntervalFactory *f ) {
+MethodIterator::MethodIterator( MethodOop m, MethodClosure *blk, AbstractMethodIntervalFactory *f ) : _interval{ nullptr } {
     factory   = f;
     _interval = factory->new_MethodInterval( m, nullptr );
     dispatch( blk );
 }
 
 
-MethodIterator::MethodIterator( MethodInterval *interval, MethodClosure *blk, AbstractMethodIntervalFactory *f ) {
+MethodIterator::MethodIterator( MethodInterval *interval, MethodClosure *blk, AbstractMethodIntervalFactory *f ) : _interval{ nullptr } {
     factory   = f;
     _interval = interval;
     dispatch( blk );

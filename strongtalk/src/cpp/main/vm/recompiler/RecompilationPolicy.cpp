@@ -12,7 +12,9 @@
 #include "vm/interpreter/Interpreter.hpp"
 
 
-RecompilationPolicy::RecompilationPolicy( RecompilerFrame *first ) {
+RecompilationPolicy::RecompilationPolicy( RecompilerFrame *first ) :
+    _msg{ nullptr },
+    _stack{ nullptr } {
     _stack = new GrowableArray<RecompilerFrame *>( 50 );
     _stack->push( first );
 }

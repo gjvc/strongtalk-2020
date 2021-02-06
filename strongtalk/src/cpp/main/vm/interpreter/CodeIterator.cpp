@@ -31,9 +31,12 @@ std::uint8_t *CodeIterator::align( std::uint8_t *p ) const {
 }
 
 
-CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) {
-    st_assert( PrologueByteCodeIndex <= startByteCodeIndex and startByteCodeIndex <= method->size_of_codes() * OOP_SIZE, "startByteCodeIndex out of range" );
-    _methodOop = method;
+CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) :
+    _current{},
+    _end{},
+    _methodOop{ method } {
+
+    st_assert( ( PrologueByteCodeIndex <= startByteCodeIndex ) and ( startByteCodeIndex <= method->size_of_codes() * OOP_SIZE ), "startByteCodeIndex out of range" );
     set_byteCodeIndex( startByteCodeIndex );
     _end = method->codes_end();
 }
@@ -63,8 +66,9 @@ std::int32_t CodeIterator::next_byteCodeIndex() const {
 
 std::uint8_t *CodeIterator::next_hp() const {
 
-    if ( _current >= _end )
+    if ( _current >= _end ) {
         return nullptr;
+    }
 
     switch ( format() ) {
         case ByteCodes::Format::B:
@@ -75,20 +79,26 @@ std::uint8_t *CodeIterator::next_hp() const {
             return _current + 3;
         case ByteCodes::Format::BBBB:
             return _current + 4;
-        case ByteCodes::Format::BBO:   // fall through
+        case ByteCodes::Format::BBO:
+            [[fallthrough]];
         case ByteCodes::Format::BBL:
             return align( _current + 2 ) + OOP_SIZE;
-        case ByteCodes::Format::BO:    // fall through
+        case ByteCodes::Format::BO:
+            [[fallthrough]];
         case ByteCodes::Format::BL:
             return align( _current + 1 ) + OOP_SIZE;
         case ByteCodes::Format::BLB:
             return align( _current + 1 ) + OOP_SIZE + 1;
-        case ByteCodes::Format::BOO:   // fall through
-        case ByteCodes::Format::BLO:   // fall through
-        case ByteCodes::Format::BOL:   // fall through
+        case ByteCodes::Format::BOO:
+            [[fallthrough]];
+        case ByteCodes::Format::BLO:
+            [[fallthrough]];
+        case ByteCodes::Format::BOL:
+            [[fallthrough]];
         case ByteCodes::Format::BLL:
             return align( _current + 1 ) + OOP_SIZE + OOP_SIZE;
-        case ByteCodes::Format::BBOO:  // fall through
+        case ByteCodes::Format::BBOO:
+            [[fallthrough]];
         case ByteCodes::Format::BBLO:
             return align( _current + 2 ) + OOP_SIZE + OOP_SIZE;
         case ByteCodes::Format::BOOLB:
@@ -98,8 +108,8 @@ std::uint8_t *CodeIterator::next_hp() const {
         default:
             return nullptr;
     }
+
     ShouldNotReachHere();
-    return nullptr;
 }
 
 
@@ -107,11 +117,13 @@ InterpretedInlineCache *CodeIterator::ic() {
 
     switch ( format() ) {
 
-        case ByteCodes::Format::BOO:   // fall through
+        case ByteCodes::Format::BOO:
+            [[fallthrough]];
         case ByteCodes::Format::BLO:
             return reinterpret_cast<InterpretedInlineCache *>( align( _current + 1 ) );
 
-        case ByteCodes::Format::BBOO:  // fall through
+        case ByteCodes::Format::BBOO:
+            [[fallthrough]];
         case ByteCodes::Format::BBLO:
             return reinterpret_cast<InterpretedInlineCache *>( align( _current + 2 ) );
 
@@ -176,14 +188,20 @@ const char *CodeIterator::interpreter_return_point( bool restore_value ) const {
 
 Oop *CodeIterator::block_method_addr() {
     switch ( code() ) {
-        case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-        case ByteCodes::Code::push_new_closure_context_0:  // fall through
-        case ByteCodes::Code::push_new_closure_context_1:  // fall through
+        case ByteCodes::Code::push_new_closure_tos_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_1:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_2:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_1:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_2:
             return aligned_oop( 1 );
-        case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+        case ByteCodes::Code::push_new_closure_tos_n:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_n:
             return aligned_oop( 2 );
         default:
@@ -195,14 +213,20 @@ Oop *CodeIterator::block_method_addr() {
 
 MethodOop CodeIterator::block_method() {
     switch ( code() ) {
-        case ByteCodes::Code::push_new_closure_tos_0:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_1:      // fall through
-        case ByteCodes::Code::push_new_closure_tos_2:      // fall through
-        case ByteCodes::Code::push_new_closure_context_0:  // fall through
-        case ByteCodes::Code::push_new_closure_context_1:  // fall through
+        case ByteCodes::Code::push_new_closure_tos_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_1:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_tos_2:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_0:
+            [[fallthrough]];
+        case ByteCodes::Code::push_new_closure_context_1:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_2:
             return MethodOop( oop_at( 1 ) );
-        case ByteCodes::Code::push_new_closure_tos_n:      // fall through
+        case ByteCodes::Code::push_new_closure_tos_n:
+            [[fallthrough]];
         case ByteCodes::Code::push_new_closure_context_n:
             return MethodOop( oop_at( 2 ) );
         default:

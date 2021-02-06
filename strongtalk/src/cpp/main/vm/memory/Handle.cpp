@@ -62,15 +62,16 @@ private:
     void (*function)( Oop * );
 
 public:
-    FunctionProcessClosure( void f( Oop * ) ) {
-        function = f;
+    FunctionProcessClosure( void f( Oop * ) ) : function{ f } {
     }
 
 
     void do_process( DeltaProcess *p ) {
-        if ( p->firstHandle() )
+        if ( p->firstHandle() ) {
             p->firstHandle()->oops_do( function );
+        }
     }
+
 };
 
 
@@ -112,11 +113,13 @@ StackHandle::~StackHandle() {
 
 
 PersistentHandle::PersistentHandle( Oop toSave ) :
+    _next{ nullptr },
+    _prev{ nullptr },
     _saved( toSave ) {
     _next = _first;
-    _prev = nullptr;
-    if ( _first )
+    if ( _first ) {
         _first->_prev = this;
+    }
     _first = this;
 }
 
@@ -206,7 +209,8 @@ HandleMark::~HandleMark() {
 
 // -----------------------------------------------------------------------------
 
-Handle::Handle( Oop value ) {
+Handle::Handle( Oop value ) :
+    _index{} {
     _index = Handles::push_oop( value );
 }
 

@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -21,6 +22,8 @@ const std::int32_t MaxMergeExprSize = 5;    // max. # exprs in a merge expressio
 
 
 Expression::Expression( PseudoRegister *p, Node *n ) :
+    _unlikelyByteCodeIndex{ 0 },
+    _unlikelyScope{ nullptr },
     _pseudoRegister{ p },
     _node{ n },
     next{ nullptr },
@@ -35,8 +38,9 @@ Expression::Expression( PseudoRegister *p, Node *n ) :
 
 
 MergeExpression::MergeExpression( Expression *e1, Expression *e2, PseudoRegister *p, Node *nod ) :
-    exprs{ nullptr },
-    Expression( p, nod ) {
+    Expression( p, nod ),
+    exprs{ nullptr } {
+
     initialize();
     if ( not p ) {
         _pseudoRegister = e1->pseudoRegister();
@@ -49,7 +53,8 @@ MergeExpression::MergeExpression( Expression *e1, Expression *e2, PseudoRegister
 
 
 MergeExpression::MergeExpression( PseudoRegister *p, Node *nod ) :
-    Expression( p, nod ) {
+    Expression( p, nod ),
+    exprs{ nullptr } {
     initialize();
 }
 
@@ -71,14 +76,15 @@ ContextExpression::ContextExpression( PseudoRegister *r ) :
 
 
 KlassExpression::KlassExpression( KlassOop k, PseudoRegister *p, Node *n ) :
-    Expression( p, n ) {
-    _klass = k;
+    Expression( p, n ),
+    _klass{ k } {
     st_assert( k, "must have klass" );
 }
 
 
 BlockExpression::BlockExpression( BlockPseudoRegister *p, Node *n ) :
-    KlassExpression( BlockClosureKlass::blockKlassFor( p->closure()->nofArgs() ), p, n ) {
+    KlassExpression( BlockClosureKlass::blockKlassFor( p->closure()->nofArgs() ), p, n ),
+    _blockScope{ nullptr } {
     st_assert( n, "must have a node" );
     _blockScope = p->scope();
 }
@@ -710,8 +716,8 @@ void ContextExpression::verify() const {
 
 
 ExpressionStack::ExpressionStack( InlinedScope *scope, std::int32_t size ) :
-    GrowableArray<Expression *>( size ) {
-    _scope = scope;
+    GrowableArray<Expression *>( size ),
+    _scope{ scope } {
 }
 
 
