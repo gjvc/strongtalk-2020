@@ -5,11 +5,11 @@
 
 #pragma once
 
-
 #include "vm/system/platform.hpp"
-#include "vm/interpreter/MethodIterator.hpp"
-#include "vm/compiler/Scope.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+
+#include "vm/interpreter/MethodInterval.hpp"
+#include "vm/compiler/Scope.hpp"
 
 
 // A IntervalInfo contains compiler-related data/functionality that is associated with a MethodInterval.
@@ -17,6 +17,7 @@
 // (It's not in MethodInterval itself to avoid cluttering it up.)
 // The main purpose of IntervalInfo is to exploit the method structure for optimization (esp. to get a cheap "dominates" relationship).
 // This code is only halfway finished -- not used yet.  -Urs 9/96
+
 
 class IntervalInfo : public PrintableResourceObject {
 
@@ -26,6 +27,12 @@ private:
 
 public:
     IntervalInfo( MethodInterval *interval, InlinedScope *scope );
+    IntervalInfo() = default;
+    virtual ~IntervalInfo() = default;
+    IntervalInfo( const IntervalInfo & ) = default;
+    IntervalInfo &operator=( const IntervalInfo & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     MethodInterval *interval() const {

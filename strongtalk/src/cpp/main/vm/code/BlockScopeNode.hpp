@@ -10,6 +10,7 @@
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 
+
 class BlockScopeNode : public ScopeDescriptorNode {
 
 public:
@@ -20,6 +21,12 @@ public:
         ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ),
         _parent{ parent } {
     }
+    BlockScopeNode() = default;
+    virtual ~BlockScopeNode() = default;
+    BlockScopeNode( const BlockScopeNode & ) = default;
+    BlockScopeNode &operator=( const BlockScopeNode & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     std::uint8_t code() {

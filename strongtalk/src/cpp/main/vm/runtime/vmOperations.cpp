@@ -133,7 +133,7 @@ std::int32_t vmProcessMain( void *ignored ) {
 std::int32_t createVMProcess() {
 
     std::int32_t ignored;
-    spdlog::info( "createVMProcess() calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
+    spdlog::info( "createVMProcess()  calling os::create_thread( &vmProcessMain, nullptr, &ignored )" );
     os::create_thread( &vmProcessMain, nullptr, &ignored );
 
     return 0;
@@ -146,14 +146,14 @@ std::int32_t vm_main( std::int32_t argc, char *argv[] ) {
     init_globals();
 
     load_image();
-    spdlog::info( "%status-image-loaded" );
+    spdlog::info( "status-image-loaded" );
 
     if ( UseInliningDatabase ) {
         InliningDatabase::load_index_file();
     }
 
     DeltaProcess::createMainProcess();
-    spdlog::info( "%status-main-process-created" );
+    spdlog::info( "status-main-process-created" );
 
     createVMProcess();
     spdlog::info( "%vm-process-created" );

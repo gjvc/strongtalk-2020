@@ -323,7 +323,7 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
         return EXCEPTION_CONTINUE_SEARCH;
     }
 
-    spdlog::info( "Exception caught \"%s\".", exception_name( code ) );
+    spdlog::info( "Exception caught [{}]", exception_name( code ) );
 
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
         spdlog::info( "  Oops, we encountered a stack overflow." );
@@ -665,7 +665,7 @@ int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
             spdlog::info( "%break-loading-breakrc" );
             process_settings_file( ".breakrc", false );
         } else {
-            spdlog::info( "\n{aborting}" );
+            spdlog::info( "{aborting}" );
 #ifdef __GNUC__
             __asm__("int3;");
 #else

@@ -211,7 +211,7 @@ bool Universe::verify_oop( MemOop p ) {
 
 void Universe::verify( bool postScavenge ) {
     ResourceMark resourceMark;
-    spdlog::info( "%status-verify:  " );
+    spdlog::info( "status-verify:  " );
 
     new_gen.verify();
     spdlog::info( "newgen, " );

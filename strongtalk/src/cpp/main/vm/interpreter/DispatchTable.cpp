@@ -215,5 +215,5 @@ void print_dt() {
     for ( std::int32_t i = 0; i < 255; i++ ) {
         spdlog::info( "0x%02x: 0x%08x\n", i, ( (std::int32_t *) DispatchTable::table() )[ i ] );
     }
-    spdlog::info( "\n" );
+    spdlog::info( "" );
 }

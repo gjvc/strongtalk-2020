@@ -47,7 +47,7 @@ void PerformanceDebugger::stop_report() {
 void PerformanceDebugger::report_compile() {
     if ( not _compileAlreadyReported ) {
         _compileAlreadyReported = true;
-        spdlog::info( "\n*while compiling NativeMethod for %s:", _compiler->key->toString() );
+        spdlog::info( "*while compiling NativeMethod for %s:", _compiler->key->toString() );
     }
 }
 
@@ -88,7 +88,7 @@ void PerformanceDebugger::finish_reporting() {
             spdlog::info( "%s  ", s->key()->toString() );
         }
         if ( i < len )
-            spdlog::info( "\n    (%d more sends omitted)\n", len );
+            spdlog::info( "    (%d more sends omitted)\n", len );
 //        _stringStream->put( '\n' );
     }
 }

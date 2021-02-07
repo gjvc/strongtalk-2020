@@ -169,7 +169,7 @@ void MarkSweep::deallocate() {
 
 void MarkSweep::trace( const char *msg ) {
     if ( TraceGC )
-        _console->print( "%s", msg );
+        spdlog::info( "{}", msg );
 }
 
 

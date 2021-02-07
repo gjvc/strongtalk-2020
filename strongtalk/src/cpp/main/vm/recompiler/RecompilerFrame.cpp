@@ -12,6 +12,7 @@
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 
 const RecompilerFrame *noCaller    = reinterpret_cast<RecompilerFrame *>(0x1 );        // no caller (i.e., initial frame)

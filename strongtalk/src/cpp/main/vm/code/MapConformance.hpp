@@ -205,6 +205,13 @@ public:
         _variable_to_free{ Variable::unused() } {
     }
 
+    MappingTask() = default;
+    virtual ~MappingTask() = default;
+    MappingTask( const MappingTask & ) = default;
+    MappingTask &operator=( const MappingTask & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 
     bool is_processed() const {
         return _is_processed;
@@ -308,6 +315,13 @@ private:
 
 public:
     MapConformance();
+    virtual ~MapConformance() = default;
+    MapConformance( const MapConformance & ) = default;
+    MapConformance &operator=( const MapConformance & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     // Appends mapping
     void append_mapping( Variable src_register, Variable src_stack, Variable dst_register, Variable dst_stack );

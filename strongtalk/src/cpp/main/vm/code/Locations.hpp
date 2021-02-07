@@ -77,6 +77,12 @@ public:
 
     Locations( std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofInitialStackTmps );    // nofRegisters <= maxNofUsableRegisters
     Locations( Locations *l );                                          // to copy locations
+    Locations() = default;
+    virtual ~Locations() = default;
+    Locations( const Locations & ) = default;
+    Locations &operator=( const Locations & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     void extendTo( std::int32_t newValue );
 

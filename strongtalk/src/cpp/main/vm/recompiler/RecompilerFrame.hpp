@@ -12,6 +12,7 @@
 #include "vm/lookup/LookupType.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+#include "vm/interpreter/MethodIterator.hpp"
 
 
 // RecompilerFrame decorate stack frames with some extra information needed by the recompiler.
@@ -39,6 +40,14 @@ protected:
     void print( const char *name );
 
 public:
+    RecompilerFrame() = default;
+    virtual ~RecompilerFrame() = default;
+    RecompilerFrame( const RecompilerFrame & ) = default;
+    RecompilerFrame &operator=( const RecompilerFrame & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     static RecompilerFrame *new_RFrame( Frame frame, const RecompilerFrame *callee );
 
@@ -154,6 +163,14 @@ protected:
 public:
 
     CompiledRecompilerFrame( Frame fr );    // for NativeMethod triggering its counter (callee == nullptr)
+    CompiledRecompilerFrame() = default;
+    virtual ~CompiledRecompilerFrame() = default;
+    CompiledRecompilerFrame( const CompiledRecompilerFrame & ) = default;
+    CompiledRecompilerFrame &operator=( const CompiledRecompilerFrame & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     bool is_compiled() const {
         return true;
@@ -200,6 +217,14 @@ protected:
 
 public:
     InterpretedRecompilerFrame( Frame fr, MethodOop m, KlassOop rcvrKlass );    // for method triggering its invocation counter
+
+    InterpretedRecompilerFrame() = default;
+    virtual ~InterpretedRecompilerFrame() = default;
+    InterpretedRecompilerFrame( const InterpretedRecompilerFrame & ) = default;
+    InterpretedRecompilerFrame &operator=( const InterpretedRecompilerFrame & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
     bool is_interpreted() const {
         return true;
     }

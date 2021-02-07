@@ -15,8 +15,6 @@
 typedef std::int32_t (*osfn)( void * );
 typedef std::int32_t (*fn)( DeltaProcess * );
 
-
-
 // This is a fake DeltaProcess used to run the tests.
 // It is there to allow VM operations to be executed on the VMProcess thread.
 

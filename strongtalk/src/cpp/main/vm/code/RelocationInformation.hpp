@@ -154,6 +154,12 @@ private:
 public:
 
     RelocationInformationIterator( const NativeMethod *nm );
+    RelocationInformationIterator() = default;
+    virtual ~RelocationInformationIterator() = default;
+    RelocationInformationIterator( const RelocationInformationIterator & ) = default;
+    RelocationInformationIterator &operator=( const RelocationInformationIterator & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     bool next() {

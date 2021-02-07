@@ -48,6 +48,12 @@ public:
 
     ~ResourceAreaChunk();
 
+    ResourceAreaChunk( const ResourceAreaChunk & ) = default;
+
+    ResourceAreaChunk & operator=( const ResourceAreaChunk & ) = default;
+
+    auto operator<=>( const ResourceAreaChunk & ) const = default;
+
     void initialize( ResourceAreaChunk *previous );
 
 
@@ -91,6 +97,8 @@ public:
     ResourceArea();
 
     ~ResourceArea();
+
+    auto operator<=>( const ResourceArea & ) const = default;
 
     char *allocate_more_bytes( std::int32_t size );
 

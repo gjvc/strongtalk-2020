@@ -1085,7 +1085,7 @@ void InlinedScope::printTree() {
 
 void InlinedScope::print() {
     spdlog::info( " method: 0x{0:x}\n\tid: {:d}", static_cast<void *>( method() ), scopeID() );
-    spdlog::info( "\nself:   " );
+    spdlog::info( "self:   " );
     self()->print();
     for ( std::int32_t i = 0; i < nofArguments(); i++ ) {
         spdlog::info( "arg {:2d} : ", i );
@@ -1163,7 +1163,7 @@ void OutlinedMethodScope::print() {
 void OutlinedBlockScope::print() {
     OutlinedScope::print( "OutlinedMethodScope" );
     if ( parent() ) {
-        spdlog::info( "\n    parent: " );
+        spdlog::info( "    parent: " );
         parent()->print_short();
     }
     spdlog::info( "" );

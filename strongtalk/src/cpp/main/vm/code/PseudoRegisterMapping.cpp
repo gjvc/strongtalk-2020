@@ -979,7 +979,7 @@ void PseudoRegisterMapping::print( std::int32_t i ) {
     st_assert( used( i ), "unused slot" );
     std::int32_t rloc = regLoc( i );
     std::int32_t sloc = stkLoc( i );
-    _console->print( "%s -> ", _pseudoRegisters->at( i )->name() );
+    spdlog::info( "{} -> ", _pseudoRegisters->at( i )->name() );
     if ( rloc >= 0 ) {
         _console->print( _locations->locationAsRegister( rloc ).name() );
     }

@@ -16,10 +16,14 @@
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
+#include "vm/interpreter/MethodInterval.hpp"
+#include "vm/interpreter/MethodIntervalFactory.hpp"
+#include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/oopFactory.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 
 
 // ToDo list for pretty printer
@@ -1907,6 +1911,7 @@ public:
 
 
     MethodPrettyPrinter( scopeNode *scope );
+    ~MethodPrettyPrinter() = default;
 
     // node call backs
     void if_node( IfNode *node );

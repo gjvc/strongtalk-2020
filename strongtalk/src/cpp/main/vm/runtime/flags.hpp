@@ -28,6 +28,12 @@ public:
     }
 
 
+    FlagSetting( const FlagSetting & ) = default;
+    operator=(const FlagSetting&) = default;
+
+    auto operator<=>( const FlagSetting & ) const = default;
+
+
     ~FlagSetting() {
         *_flag = _value; // restore original value
     }

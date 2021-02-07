@@ -47,6 +47,7 @@ public:
     std::int32_t flags;
 
     Expression( PseudoRegister *p, Node *n );
+    Expression( const Expression & ) = default;
 
 
     virtual bool isUnknownExpression() const {
@@ -315,6 +316,8 @@ protected:
 public:
     KlassExpression( KlassOop m, PseudoRegister *p, Node *n );
 
+    KlassExpression( const KlassExpression & ) = default;
+
 
     bool isKlassExpression() const {
         return true;
@@ -378,7 +381,7 @@ protected:
     InlinedScope *_blockScope;        // block's parent scope
 public:
     BlockExpression( BlockPseudoRegister *p, Node *n );
-
+    BlockExpression(const BlockExpression&) = default;
 
     bool isBlockExpression() const {
         return true;

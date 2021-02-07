@@ -64,6 +64,8 @@ private:
 public:
     FunctionProcessClosure( void f( Oop * ) ) : function{ f } {
     }
+    void operator delete( void *p ) {}
+
 
 
     void do_process( DeltaProcess *p ) {

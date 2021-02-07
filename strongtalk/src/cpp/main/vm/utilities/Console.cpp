@@ -38,9 +38,9 @@ void logging_init() {
     spdlog::set_default_logger( console );
 
     // announce
-    spdlog::info( "%logging-init:  -----------------------------------------------------------------------------" );
-    spdlog::info( "%logging-init:  >>> Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    spdlog::info( "%logging-init:  >>> (C) 1994 - 2021, The Strongtalk authors and contributors" );
-    spdlog::info( "%logging-init:  -----------------------------------------------------------------------------" );
+    spdlog::info( "logging-init:  -----------------------------------------------------------------------------" );
+    spdlog::info( "logging-init:  >>> Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
+    spdlog::info( "logging-init:  >>> (C) 1994 - 2021, The Strongtalk authors and contributors" );
+    spdlog::info( "logging-init:  -----------------------------------------------------------------------------" );
 
 }

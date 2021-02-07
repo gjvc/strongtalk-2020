@@ -660,7 +660,7 @@ void Zone::print_NativeMethod_histogram( std::int32_t size ) {
       }
     }
 
-    spdlog::info( "\nList of methods with more than %d nativeMethods compiled.\n", size);
+    spdlog::info( "List of methods with more than %d nativeMethods compiled.\n", size);
     spdlog::info( " ALL(#,Kb)  Compiler(#,Kb) Method:\n");
     for (std::int32_t i = 0; i < out; i++) {
       spdlog::info("%4d,%-4d   %4d,%-4d ",
@@ -800,7 +800,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
     }
 
     do {
-        if ( PrintLRUSweep2 ) spdlog::info( "\n*inspecting 0x{0:x} (id %ld): ", p, p->id );
+        if ( PrintLRUSweep2 ) spdlog::info( "*inspecting 0x{0:x} (id %ld): ", p, p->id );
 
         if ( ( p->isZombie() or
                p->isDebug() or
@@ -854,7 +854,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             LRUtime++;
             // The LRU scheme will actually fail if LRUtime > 2^16, but that
             // won't happen very often (every 20*LRU_RESOLUTION CPU hours).
-            if ( PrintLRUSweep2 ) spdlog::info( "\n*new LRU time: %ld", LRUtime );
+            if ( PrintLRUSweep2 ) spdlog::info( "*new LRU time: %ld", LRUtime );
         }
     } while ( ++visited < maxVisit and nbytes < maxReclaim and p );
 

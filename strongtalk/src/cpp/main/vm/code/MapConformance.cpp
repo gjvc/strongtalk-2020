@@ -269,7 +269,7 @@ void MappingTask::print( std::int32_t index ) {
     if ( _what_happened not_eq nullptr ) {
         _console->set_indentation( 35 );
         _console->indent();
-        _console->print( "%s", _what_happened );
+        spdlog::info( "{}", _what_happened );
     }
     _console->cr();
 }

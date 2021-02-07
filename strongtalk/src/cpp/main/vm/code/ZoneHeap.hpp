@@ -45,6 +45,13 @@ public:
         size{ 0 } {
     }
 
+    virtual ~HeapChunk() = default;
+    HeapChunk( const HeapChunk & ) = default;
+    HeapChunk &operator=( const HeapChunk & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+
 
     HeapChunk *next() const {
         return _next;
@@ -268,8 +275,12 @@ public:
 
 public:
     ZoneHeap( std::int32_t s, std::int32_t bs );
+    ZoneHeap() = default;
+    virtual ~ZoneHeap() = default;
+    ZoneHeap( const ZoneHeap & ) = default;
+    ZoneHeap &operator=( const ZoneHeap & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
-    ~ZoneHeap();
 
     // Initializes the Heap
     void clear();

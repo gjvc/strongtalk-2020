@@ -62,7 +62,7 @@ public:
 
     void operator delete( void *p );
 
-    void *new_array( std::int32_t size );
+    void *new_array( std::size_t size );
 };
 
 

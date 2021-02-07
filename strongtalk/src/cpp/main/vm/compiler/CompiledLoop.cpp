@@ -702,6 +702,7 @@ public:
         theLoopPseudoRegister{ r },
         theArrayList{ arrays } {
     }
+    void operator delete( void *p ) {}
 
 
     void do_it( Usage *u ) {

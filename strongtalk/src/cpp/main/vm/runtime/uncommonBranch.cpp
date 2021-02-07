@@ -149,7 +149,7 @@ void uncommon_trap() {
 
     if ( PrintUncommonBranches ) {
 
-        _console->print( "%s trap in ", used ? "Uncommon" : "New uncommon" );
+        spdlog::info( "{} trap in ", used ? "Uncommon" : "New uncommon" );
         nm->print_value_on( _console );
         _console->print( " #%d", nm->uncommon_trap_counter() );
 

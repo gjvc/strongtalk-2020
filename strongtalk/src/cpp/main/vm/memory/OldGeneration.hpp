@@ -40,6 +40,12 @@ public:
     std::int32_t shrink( std::int32_t size );
 
 
+    OldGeneration() :
+    _firstSpace{ nullptr },
+    _currentSpace{ nullptr },
+    _oldSpace{ nullptr } {}
+
+
     Oop *allocate( std::int32_t size, bool allow_expansion = true ) {
         return _currentSpace->allocate( size, allow_expansion );
     }

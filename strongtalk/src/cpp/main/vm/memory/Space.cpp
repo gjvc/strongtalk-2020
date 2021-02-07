@@ -189,7 +189,7 @@ void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
 
 #ifdef VERBOSE_SCAVENGING
         spdlog::info("{scavenge 0x{0:x} (0x{0:x})} ", p, m->klass());
-        spdlog::info("%s", m->klass()->name());
+        spdlog::info("{}", m->klass()->name());
         Oop *prev = p;
 #endif
 
@@ -348,7 +348,7 @@ void Space::object_iterate( ObjectClosure *blk ) {
 
 
 void NewSpace::verify() {
-    spdlog::info( "%s, ", name() );
+    spdlog::info( "{}, ", name() );
     Oop *p = bottom();
     Oop *t = top();
 
@@ -394,7 +394,7 @@ public:
 
 void OldSpace::verify() {
     //
-    spdlog::info( "%s ", name() );
+    spdlog::info( "{} ", name() );
     Oop                 *p = _bottom;
     MemOop              m;
     VerifyOldOopClosure blk;

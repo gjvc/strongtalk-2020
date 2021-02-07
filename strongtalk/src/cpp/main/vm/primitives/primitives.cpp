@@ -81,23 +81,23 @@ const char *name_from_group( const PrimitiveGroup &group ) {
 void Primitives::print_table() {
 
     //
-    spdlog::info( "%primitive-table:" );
-    spdlog::info( "%primitive-table:                                                     P = needs Delta FP code ------------------------------." );
-    spdlog::info( "%primitive-table:                                                     I = internal ----------------------------------------.|" );
-    spdlog::info( "%primitive-table:                                                     D = can invoke Delta code --------------------------.||" );
-    spdlog::info( "%primitive-table:                                                     C = can be constant folded ------------------------.|||" );
-    spdlog::info( "%primitive-table:                                                     N = can perform non-local return -----------------.||||" );
-    spdlog::info( "%primitive-table:                                                     W = can walk stack (computed) -------------------.|||||" );
-    spdlog::info( "%primitive-table:                                                     S = can scavenge -------------------------------.||||||" );
-    spdlog::info( "%primitive-table:                                                     F = has failure block -------------------------.|||||||" );
-    spdlog::info( "%primitive-table:                                                     R = has receiver -----------------------------.||||||||" );
-    spdlog::info( "%primitive-table:                                                                                                   |||||||||" );
-    spdlog::info( "%primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
+    spdlog::info( "primitive-table:" );
+    spdlog::info( "primitive-table:                                                     P = needs Delta FP code ------------------------------." );
+    spdlog::info( "primitive-table:                                                     I = internal ----------------------------------------.|" );
+    spdlog::info( "primitive-table:                                                     D = can invoke Delta code --------------------------.||" );
+    spdlog::info( "primitive-table:                                                     C = can be constant folded ------------------------.|||" );
+    spdlog::info( "primitive-table:                                                     N = can perform non-local return -----------------.||||" );
+    spdlog::info( "primitive-table:                                                     W = can walk stack (computed) -------------------.|||||" );
+    spdlog::info( "primitive-table:                                                     S = can scavenge -------------------------------.||||||" );
+    spdlog::info( "primitive-table:                                                     F = has failure block -------------------------.|||||||" );
+    spdlog::info( "primitive-table:                                                     R = has receiver -----------------------------.||||||||" );
+    spdlog::info( "primitive-table:                                                                                                   |||||||||" );
+    spdlog::info( "primitive-table:  INDEX  NAME                                                                ARGUMENT COUNT ----.  |||||||||  CATEGORY" );
 
     //
     for ( std::int32_t i = 0; i < size_of_primitive_table; i++ ) {
         PrimitiveDescriptor *e = primitive_table[ i ];
-        spdlog::info( "%primitive-table:  {:5d}  {:<84}  {:2d}  {}{}{}{}{}{}{}{}{}  {}",
+        spdlog::info( "primitive-table:  {:5d}  {:<84}  {:2d}  {}{}{}{}{}{}{}{}{}  {}",
                       i,
                       e->name(),
                       e->number_of_parameters(),
@@ -142,12 +142,16 @@ Expression *PrimitiveDescriptor::convertToKlass( const char *type, PseudoRegiste
 
     if ( 0 == strcmp( type, "SmallInteger" ) )
         return new KlassExpression( Universe::smiKlassObject(), p, n );
+
     if ( 0 == strcmp( type, "Double" ) )
         return new KlassExpression( Universe::doubleKlassObject(), p, n );
+
     if ( 0 == strcmp( type, "Float" ) )
         return new KlassExpression( Universe::doubleKlassObject(), p, n );
+
     if ( 0 == strcmp( type, "Symbol" ) )
         return new KlassExpression( Universe::symbolKlassObject(), p, n );
+
     if ( 0 == strcmp( type, "Boolean" ) ) {
         // NB: set expression node to nullptr, not n -- MergeExpression cannot be split
         Expression *t = new ConstantExpression( Universe::trueObject(), p, nullptr );
@@ -282,8 +286,8 @@ void Primitives::clear_counters() {
 
     spdlog::info( "%primitives-init:  primitive_table: clear counters" );
 
-    behaviorPrimitives::number_of_calls  = 0;
-    byteArrayPrimitives::number_of_calls = 0;
+    behaviorPrimitives::number_of_calls        = 0;
+    byteArrayPrimitives::number_of_calls       = 0;
     callBackPrimitives::number_of_calls        = 0;
     doubleByteArrayPrimitives::number_of_calls = 0;
     debugPrimitives::number_of_calls           = 0;
@@ -300,19 +304,19 @@ void Primitives::clear_counters() {
 }
 
 
-static void print_calls( const char *name, std::int32_t inc, std::int32_t *total ) {
-    if ( inc > 0 ) {
-        spdlog::info( " %s:\t%6d", name, inc );
-        *total = *total + inc;
+static void print_calls( const char *name, std::int32_t number_of_calls, std::int32_t *total ) {
+    if ( number_of_calls > 0 ) {
+        spdlog::info( "{<16}{:d}", name, number_of_calls );
+        *total = *total + number_of_calls;
     }
 }
 
 
 void Primitives::print_counters() {
-    std::int32_t total = 0;
+    std::int32_t total{ 0 };
 
     spdlog::info( "Primitive call counters:" );
-    print_calls( "Behavior", behaviorPrimitives::number_of_calls, &total );
+    print_calls( "behavior", behaviorPrimitives::number_of_calls, &total );
     print_calls( "byteArray", byteArrayPrimitives::number_of_calls, &total );
     print_calls( "callBack", callBackPrimitives::number_of_calls, &total );
     print_calls( "doubleByteArray", doubleByteArrayPrimitives::number_of_calls, &total );
@@ -321,12 +325,12 @@ void Primitives::print_counters() {
     print_calls( "method", methodOopPrimitives::number_of_calls, &total );
     print_calls( "mixin", mixinOopPrimitives::number_of_calls, &total );
     print_calls( "objArray", objArrayPrimitives::number_of_calls, &total );
-    print_calls( "Oop", oopPrimitives::number_of_calls, &total );
+    print_calls( "oop", oopPrimitives::number_of_calls, &total );
     print_calls( "process", processOopPrimitives::number_of_calls, &total );
     print_calls( "proxy", proxyOopPrimitives::number_of_calls, &total );
     print_calls( "smi_t", smiOopPrimitives::number_of_calls, &total );
     print_calls( "system", SystemPrimitives::number_of_calls, &total );
-    spdlog::info( "Total:\t%6d", total );
+    spdlog::info( "{<16}{:d}", "total", total );
 
 }
 
@@ -434,9 +438,9 @@ PrimitiveDescriptor *Primitives::lookup( primitiveFunctionType fn ) {
 
 
 PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t selector_length ) {
-    std::int32_t first = 0;
-    std::int32_t last  = size_of_primitive_table;
-    spdlog::info( "%primitives-lookup: [{}] [{}]", selector, selector_length );
+    std::int32_t first{ 0 };
+    std::int32_t last{ size_of_primitive_table };
+    spdlog::info( "primitives-lookup: [{}] [{}]", selector, selector_length );
 
     PrimitiveDescriptor *element;
     do {
@@ -453,10 +457,10 @@ PrimitiveDescriptor *Primitives::lookup( const char *selector, std::int32_t sele
         }
     } while ( first < last );
 
-    // This should not be an assertion as it is possible to compile Aa reference to a non-existent primitive.
+    // This should not be an assertion as it is possible to compile a reference to a non-existent primitive.
     // For an example, see ProcessPrimitiveLookupError>>provoke()
     // In such a case the lookup should fail and signal a PrimitiveLookupError - slr 24/09/2008
-    // st_assert(first == last, "check for one element");
+//    st_assert( first == last, "check for one element" );
 
     element = primitive_table[ first ];
 
@@ -469,7 +473,7 @@ PrimitiveDescriptor *Primitives::verified_lookup( const char *selector ) {
     std::int32_t        selector_length = strlen( selector );
     PrimitiveDescriptor *result         = lookup( selector, selector_length );
     if ( result == nullptr ) {
-        spdlog::info( "%primitives-lookup: Verified primitive lookup failed: selector =[{}]", selector );
+        spdlog::info( "primitives-lookup: verified primitive lookup failed: selector [{}]", selector );
         st_fatal( "aborted" );
     }
     return result;

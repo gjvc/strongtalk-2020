@@ -26,6 +26,13 @@ private:
 
 public:
     LogicalAddress( NameNode *physical_address, std::int32_t pc_offset = 0 );
+    LogicalAddress() = default;
+    virtual ~LogicalAddress() = default;
+    LogicalAddress( const LogicalAddress & ) = default;
+    LogicalAddress &operator=( const LogicalAddress & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
     NameNode *physical_address() const {

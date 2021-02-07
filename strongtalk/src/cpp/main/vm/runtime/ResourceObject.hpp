@@ -46,6 +46,12 @@ public:
 
     void operator delete( void *p, std::int32_t ); // use explicit free() to deallocate heap-allocated objects
 
+    virtual ~ResourceObject() {}
+
+    static void operator delete(void* ptr) {
+        (void)ptr;
+    }
+
 };
 
 
@@ -56,4 +62,5 @@ public:
     virtual void print() = 0;
 
     virtual void print_short();
+
 };

@@ -19,6 +19,9 @@ private:
     ConsoleOutputStream *_stream;
 public:
     PrintObjectClosure( ConsoleOutputStream *stream = nullptr );
+    ~PrintObjectClosure() = default;
+    void operator delete( void *p ) {}
+
 
     void do_object( MemOop obj );
 

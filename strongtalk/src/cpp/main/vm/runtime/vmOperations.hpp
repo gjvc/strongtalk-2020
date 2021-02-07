@@ -33,6 +33,10 @@ public:
     }
 
 
+    ~VM_Operation() = default;
+
+    void operator delete( void *p ) {}
+
     void set_calling_process( DeltaProcess *p ) {
         _calling_process = p;
     }
@@ -65,7 +69,7 @@ public:
 
 
     void print() {
-        _console->print( "%s", name() );
+        spdlog::info( "{}", name() );
     }
 
 

@@ -20,6 +20,9 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k );
 // associations are cons cells used in the Delta system dictionary.
 class AssociationKlass : public MemOopKlass {
 public:
+
+    ~AssociationKlass() = default;
+
     friend void setKlassVirtualTableFromAssociationKlass( Klass *k );
 
 

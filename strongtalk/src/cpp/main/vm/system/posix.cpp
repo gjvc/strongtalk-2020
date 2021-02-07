@@ -67,15 +67,15 @@ const auto STACK_SIZE = ThreadStackSize * 1024;
 
 void os_dump_context2( ucontext_t * context ) {
     mcontext_t mcontext = context->uc_mcontext;
-    spdlog::info( "\nEAX: %x", mcontext.gregs[ REG_EAX ] );
-    spdlog::info( "\nEBX: %x", mcontext.gregs[ REG_EBX ] );
-    spdlog::info( "\nECX: %x", mcontext.gregs[ REG_ECX ] );
-    spdlog::info( "\nEDX: %x", mcontext.gregs[ REG_EDX ] );
-    spdlog::info( "\nEIP: %x", mcontext.gregs[ REG_EIP ] );
-    spdlog::info( "\nESP: %x", mcontext.gregs[ REG_ESP ] );
-    spdlog::info( "\nEBP: %x", mcontext.gregs[ REG_EBP ] );
-    spdlog::info( "\nEDI: %x", mcontext.gregs[ REG_EDI ] );
-    spdlog::info( "\nESI: %x", mcontext.gregs[ REG_ESI ] );
+    spdlog::info( "EAX: %x", mcontext.gregs[ REG_EAX ] );
+    spdlog::info( "EBX: %x", mcontext.gregs[ REG_EBX ] );
+    spdlog::info( "ECX: %x", mcontext.gregs[ REG_ECX ] );
+    spdlog::info( "EDX: %x", mcontext.gregs[ REG_EDX ] );
+    spdlog::info( "EIP: %x", mcontext.gregs[ REG_EIP ] );
+    spdlog::info( "ESP: %x", mcontext.gregs[ REG_ESP ] );
+    spdlog::info( "EBP: %x", mcontext.gregs[ REG_EBP ] );
+    spdlog::info( "EDI: %x", mcontext.gregs[ REG_EDI ] );
+    spdlog::info( "ESI: %x", mcontext.gregs[ REG_ESI ] );
 }
 
 
@@ -578,7 +578,7 @@ static void handler( std::int32_t signum, siginfo_t * info, void * context ) {
     trace_stack( os::current_thread_id() );
 
     if ( !userHandler ) {
-        spdlog::info( "\nsignal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
+        spdlog::info( "signal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
         os_dump_context2( ( ucontext_t * ) context );
     } else {
         mcontext_t mcontext = ( ( ucontext_t * ) context )->uc_mcontext;

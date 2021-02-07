@@ -118,6 +118,13 @@ public:
     };
 
     Assembler( CodeBuffer *code );
+    Assembler() = default;
+    virtual ~Assembler() = default;
+    Assembler( const Assembler & ) = default;
+    Assembler &operator=( const Assembler & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 
     void finalize();        // call this before using/copying the code
 

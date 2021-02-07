@@ -13,6 +13,13 @@
 class SMIKlass : public Klass {
 
 public:
+//    SMIKlass() = default;
+//    ~SMIKlass() = default;
+
+
+    static void operator delete( void *p ) {}
+
+
     friend void setKlassVirtualTableFromSmiKlass( Klass *k );
 
 

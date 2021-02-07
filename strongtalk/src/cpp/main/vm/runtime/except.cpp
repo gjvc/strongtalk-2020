@@ -43,7 +43,7 @@ void traceCompiledFrame( Frame &f ) {
     spdlog::info( "Found NativeMethod: 0x{0:x}", static_cast<const void *>(nm) );
     nm->print_value_on( _console );
 
-    spdlog::info( "\n @{} called from [0x{0:x}]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+    spdlog::info( " @{} called from [0x{0:x}]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
 
     trace( vf, 0, 10 );
 }

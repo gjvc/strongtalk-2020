@@ -104,6 +104,8 @@ protected:
 
 public:
 
+    OopNativeCode() :_locsLen{0} {}
+
     RelocationInformation *locs() const {
         return (RelocationInformation *) instructionsEnd();
     }

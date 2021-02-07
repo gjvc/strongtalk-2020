@@ -14,6 +14,9 @@
 
 class Notifier {
 public:
+    Notifier() = default;
+    virtual ~Notifier() = default;
+
     static Notifier *current;
 
     virtual void error( const char *m, va_list argptr ) = 0;
@@ -26,9 +29,8 @@ public:
 
 class DebugNotifier : public Notifier, public CHeapAllocatedObject {
 public:
-    DebugNotifier() {
-    }
-
+    DebugNotifier() = default;
+    virtual ~DebugNotifier() = default;
 
     void error( const char *m, va_list ap );
 

@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -16,6 +17,7 @@
 constexpr std::int16_t IllegalByteCodeIndex  = -1;       //
 constexpr std::int16_t PrologueByteCodeIndex = 0;        //
 constexpr std::int16_t EpilogueByteCodeIndex = 32766;    //
+
 
 class NameDescriptorClosure {
 
@@ -46,6 +48,8 @@ public:
         static_cast<void>(e); // unused
         static_cast<void>(pc); // unused
     }
+
+    virtual ~NameDescriptorClosure() = default;
 };
 
 
@@ -103,6 +107,14 @@ protected:
     const NativeMethodScopes *_scopes;
     std::int32_t             _offset;
     const char               *_pc;
+
+    ScopeDescriptor() = default;
+    virtual ~ScopeDescriptor() = default;
+    ScopeDescriptor( const ScopeDescriptor & ) = default;
+    ScopeDescriptor &operator=( const ScopeDescriptor & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
+
 
 protected:
     // Cached information
@@ -306,6 +318,12 @@ protected:
 
 public:
     MethodScopeDescriptor( NativeMethodScopes *scopes, std::int32_t offset, const char *pc );
+    MethodScopeDescriptor() = default;
+    virtual ~MethodScopeDescriptor() = default;
+    MethodScopeDescriptor( const MethodScopeDescriptor & ) = default;
+    MethodScopeDescriptor &operator=( const MethodScopeDescriptor & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     bool s_equivalent( ScopeDescriptor *s ) const;
 
@@ -390,6 +408,11 @@ protected:
 
 public:
     TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc );
+    TopLevelBlockScopeDescriptor() = default;
+    virtual ~TopLevelBlockScopeDescriptor() = default;
+    TopLevelBlockScopeDescriptor( const TopLevelBlockScopeDescriptor & ) = default;
+    TopLevelBlockScopeDescriptor &operator=( const TopLevelBlockScopeDescriptor & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
 
 
     // type test operations
@@ -442,6 +465,12 @@ protected:
 
 public:
     NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset );
+    NonInlinedBlockScopeDescriptor() = default;
+    virtual ~NonInlinedBlockScopeDescriptor() = default;
+    NonInlinedBlockScopeDescriptor( const NonInlinedBlockScopeDescriptor & ) = default;
+    NonInlinedBlockScopeDescriptor &operator=( const NonInlinedBlockScopeDescriptor & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     MethodOop method() const {

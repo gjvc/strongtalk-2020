@@ -17,6 +17,10 @@ class NativeInstruction : ValueObject {
 
     // The base class for different kinds of native instruction abstractions.
     // Provides the primitive operations to manipulate code relative to this.
+public:
+    NativeInstruction() = default;
+    ~NativeInstruction() = default;
+    static void operator delete( void *p ) {}
 
 protected:
     char *addr_at( std::int32_t offset ) const {
@@ -62,6 +66,10 @@ protected:
 class NativeCall : public NativeInstruction {
 
 public:
+    NativeCall() = default;
+    ~NativeCall() = default;
+    static void operator delete( void *p ) {}
+
     enum Intel_specific_constants {
         instruction_code      = 0xE8,   //
         instruction_size      = 5,      //
@@ -141,6 +149,9 @@ inline NativeCall *nativeCall_from_relocInfo( const char *displacement_address )
 class NativeMov : public NativeInstruction {
 
 public:
+    NativeMov() = default;
+    ~NativeMov() = default;
+
     enum Intel_specific_constants {
         instruction_code        = 0xB8, //
         instruction_size        = 5,    //

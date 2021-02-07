@@ -856,7 +856,7 @@ void Compiler::print_code( bool suppressTrivial ) {
             bbIterator = nullptr;
         }
     }
-    spdlog::info( "\n" );
+    spdlog::info( "" );
 }
 
 

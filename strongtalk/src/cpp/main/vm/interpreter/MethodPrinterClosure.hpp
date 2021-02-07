@@ -10,6 +10,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/utilities/ConsoleOutputStream.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 
 
 

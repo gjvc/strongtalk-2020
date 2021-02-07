@@ -40,6 +40,13 @@ enum class InlineCacheShape {
 class InlineCacheIterator : public PrintableResourceObject {
 
 public:
+    InlineCacheIterator() = default;
+    virtual ~InlineCacheIterator() = default;
+    InlineCacheIterator( const InlineCacheIterator & ) = default;
+    InlineCacheIterator &operator=( const InlineCacheIterator & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
     // InlineCache information
     virtual std::int32_t number_of_targets() const = 0;
 
@@ -123,6 +130,15 @@ public:
     InlineCache( InlineCacheIterator *iter ) :
         _iter( iter ) {
     }
+
+
+    InlineCache() = default;
+    virtual ~InlineCache() = default;
+    InlineCache( const InlineCache & ) = default;
+    InlineCache &operator=( const InlineCache & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
     InlineCache( CompiledInlineCache *ic );
@@ -212,6 +228,14 @@ private:
 
 public:
     PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic );
+    PolymorphicInlineCacheIterator() = default;
+    virtual ~PolymorphicInlineCacheIterator() = default;
+    PolymorphicInlineCacheIterator( const PolymorphicInlineCacheIterator & ) = default;
+    PolymorphicInlineCacheIterator &operator=( const PolymorphicInlineCacheIterator & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
     // Iterating through PolymorphicInlineCache entries
     void advance();

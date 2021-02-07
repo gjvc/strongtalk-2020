@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -9,6 +10,7 @@
 #include "vm/code/ScopeDescriptorRecorder.hpp"
 #include "vm/oops/OopDescriptor.hpp"
 #include "vm/runtime/ResourceObject.hpp"
+
 
 //
 // the "NameNode" hierarchy is parallel to the "NameDescriptor" hierarchy
@@ -26,6 +28,15 @@ class ScopeDescriptorRecorder;
 class NameNode : public ResourceObject {        // abstract superclass of all NameNodes
 
 public:
+    NameNode() = default;
+    virtual ~NameNode() = default;
+    NameNode( const NameNode & ) = default;
+    NameNode &operator=( const NameNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
     bool genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool is_last, std::int32_t index );
 
 
@@ -49,8 +60,8 @@ public:
 };
 
 
-// a LocationName describes a location; i.e., the corresponding source name (e.g., method temporary)
-// lives in this location for its entire lifetime
+// a LocationName describes a location;
+// i.e., the corresponding source name (e.g., method temporary) lives in this location for its entire lifetime
 class LocationName : public NameNode {
 private:
     Location _location;
@@ -61,6 +72,15 @@ public:
     LocationName( Location location ) :
         _location{ location } {
     }
+
+
+    LocationName() = default;
+    virtual ~LocationName() = default;
+    LocationName( const LocationName & ) = default;
+    LocationName &operator=( const LocationName & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
     bool hasLocation() {
@@ -88,6 +108,16 @@ public:
         st_assert( not val->is_block(), "should use BlockValueName" );
     }
 
+
+    ValueName() = default;
+    virtual ~ValueName() = default;
+    ValueName( const ValueName & ) = default;
+    ValueName &operator=( const ValueName & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 };
 
 
@@ -105,6 +135,17 @@ public:
         _blockMethod{ block_method },
         _parentScope{ parent_scope } {
     }
+
+
+    BlockValueName() = default;
+    virtual ~BlockValueName() = default;
+    BlockValueName( const BlockValueName & ) = default;
+    BlockValueName &operator=( const BlockValueName & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 };
 
 
@@ -130,6 +171,15 @@ public:
         _blockMethod{ block_method },
         _parentScope{ parent_scope } {
     }
+
+
+    MemoizedName() = default;
+    virtual ~MemoizedName() = default;
+    MemoizedName( const MemoizedName & ) = default;
+    MemoizedName &operator=( const MemoizedName & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
     bool hasLocation() {

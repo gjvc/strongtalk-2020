@@ -19,6 +19,7 @@
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/ResourceMark.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 
 
 // The single_step_handler is called from single_step_stub when a single step has taken place

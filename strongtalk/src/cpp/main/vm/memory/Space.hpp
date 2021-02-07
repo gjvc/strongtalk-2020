@@ -44,6 +44,15 @@ public:
     }
 
 
+    virtual ~Space() {}
+
+
+    auto operator<=>( const Space & ) const = default;
+
+    Space( const Space & ) = default;
+
+    Space &operator=( const Space & ) = default;
+
 protected:
     virtual void set_bottom( Oop *value ) = 0;
 
@@ -108,6 +117,13 @@ public:
     NewSpace() : Space(), next_space{ nullptr } {}
 
 
+    auto operator<=>( const NewSpace & ) const = default;
+
+    NewSpace( const NewSpace & ) = default;
+
+    NewSpace &operator=( const NewSpace & ) = default;
+
+
 public:
     Oop *object_start( Oop *p );
 
@@ -170,6 +186,8 @@ protected:
 public:
     EdenSpace();
 
+    EdenSpace( const EdenSpace & ) = default;
+
 
     // allocation
     Oop *allocate( std::int32_t size ) {
@@ -230,6 +248,12 @@ protected:
 
 public:
     SurvivorSpace();
+
+    auto operator<=>( const SurvivorSpace & ) const = default;
+
+    SurvivorSpace( const SurvivorSpace & ) = default;
+
+    SurvivorSpace &operator=( const SurvivorSpace & ) = default;
 
 
     // allocation
@@ -352,6 +376,11 @@ public:
     // constructors
     // allocates object Space too; sets size to amount allocated, 0 if none
     OldSpace( const char *nm, std::int32_t &size );
+    auto operator<=>( const OldSpace & ) const = default;
+
+    OldSpace( const OldSpace & ) = default;
+
+    OldSpace &operator=( const OldSpace & ) = default;
 
     void scavenge_contents_from( OldWaterMark *mark );
 
@@ -391,14 +420,21 @@ public:
 
 
     OldSpaceMark( OldSpace *oldSpace ) :
-        _theSpace{ oldSpace },
-        _oldTop{ nullptr } {
-        _oldTop = _theSpace->top();
+        _oldTop{ nullptr } ,
+        _theSpace{ oldSpace } {
+            _oldTop = _theSpace->top();
     }
 
 
     ~OldSpaceMark() {
         _theSpace->set_top( _oldTop );
     }
+
+
+    auto operator<=>( const OldSpaceMark & ) const = default;
+
+    OldSpaceMark( const OldSpaceMark & ) = default;
+
+    OldSpaceMark &operator=( const OldSpaceMark & ) = default;
 
 };

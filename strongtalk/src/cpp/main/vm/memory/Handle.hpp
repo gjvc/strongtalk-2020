@@ -46,6 +46,15 @@ protected:
     }
 
 
+    BaseHandle() = default;
+    virtual ~BaseHandle() =default;
+    BaseHandle( const BaseHandle & ) = default;
+    BaseHandle &operator=( const BaseHandle & ) = default;
+
+
+//    void operator delete( void *ptr ) { (void)ptr; }
+
+
     void oops_do( void f( Oop * ) );
 
 public:
@@ -79,7 +88,7 @@ protected:
 public:
     StackHandle( Oop toSave, bool log = false, const char *label = "" );
 
-    ~StackHandle();
+    virtual ~StackHandle();
 
     static void all_oops_do( void f( Oop * ) );
 };
@@ -100,7 +109,13 @@ public:
 
     PersistentHandle( Oop toSave );
 
-    ~PersistentHandle();
+    virtual ~PersistentHandle();
+    PersistentHandle( const PersistentHandle & ) = default;
+    PersistentHandle &operator=( const PersistentHandle & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ptr; }
+
 
     Oop as_oop();
 

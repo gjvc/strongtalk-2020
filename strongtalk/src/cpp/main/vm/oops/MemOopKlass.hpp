@@ -19,6 +19,15 @@ protected:
 
 
 public:
+
+    virtual ~MemOopKlass() = default;
+    MemOopKlass( const MemOopKlass & ) = default;
+    MemOopKlass &operator=( const MemOopKlass & ) = default;
+
+
+    void operator delete( void *MemOopKlass ) { static_cast<void *>(MemOopKlass); }
+
+
     // allocation properties
     bool can_inline_allocation() const {
         return true;

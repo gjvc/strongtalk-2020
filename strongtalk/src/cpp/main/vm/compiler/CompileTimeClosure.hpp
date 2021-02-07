@@ -51,6 +51,14 @@ public:
         _noninlined_block_scope{ nullptr } {
     }
 
+    CompileTimeClosure() = default;
+    virtual ~CompileTimeClosure() = default;
+    CompileTimeClosure( const CompileTimeClosure & ) = default;
+    CompileTimeClosure &operator=( const CompileTimeClosure & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+
 
     InlinedScope *parent_scope() const {
         return _parent_scope;

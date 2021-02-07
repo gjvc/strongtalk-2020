@@ -60,14 +60,18 @@ protected:
 public:
     Klass() :
         ValueObject(),
-        _methods{ nullptr },
-        _classVars{ nullptr },
         _has_untagged_contents{ nullptr },
-        _mixin{ nullptr },
         _non_indexable_size{ nullptr },
-        _superKlass{ nullptr } {
+        _classVars{ nullptr },
+        _methods{ nullptr },
+        _superKlass{ nullptr },
+        _mixin{ nullptr } {
 
     }
+    virtual ~Klass() = default;
+
+    Klass( const Klass & ) = default;
+    Klass &operator=( const Klass & ) = default;
 
 
     friend KlassOop as_klassOop( void *p );

@@ -27,6 +27,14 @@ public:
         _selector( selector ) {
     };
 
+    MissingMethodBuilder() = default;
+    virtual ~MissingMethodBuilder() = default;
+    MissingMethodBuilder( const MissingMethodBuilder & ) = default;
+    MissingMethodBuilder &operator=( const MissingMethodBuilder & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+
     void build();
 
     ByteArrayOop bytes();

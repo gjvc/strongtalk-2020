@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -19,6 +20,12 @@ class Closure : StackAllocatedObject {
 public:
     virtual void do_it( T t ) = 0;
 
+    Closure() = default;
+    virtual ~Closure() = default;
+
+
+    void operator delete( void *p ) {}
+
 };
 
 
@@ -26,6 +33,11 @@ public:
 class ObjectClosure : StackAllocatedObject {
 
 public:
+    ObjectClosure() = default;
+    virtual ~ObjectClosure() = default;
+    void operator delete( void *p ) {}
+
+
     // Called when entering a Space.
     virtual void begin_space( Space *s );
 
@@ -46,6 +58,7 @@ private:
     void do_object( MemOop obj );
 
 public:
+
     // Called for each object and returns whether do_filtered_objects should be called.
     virtual bool include_object( MemOop obj );
 
@@ -59,6 +72,9 @@ public:
 class ObjectLayoutClosure : StackAllocatedObject {
 
 public:
+
+    ObjectLayoutClosure() =default;
+    virtual ~ ObjectLayoutClosure() =default;
     // NON-INDEXABLE PART
     // Called for the markOop
     virtual void do_mark( MarkOop *m );
@@ -114,6 +130,13 @@ class Frame;
 
 // A FrameClosure is used for iterating though frames
 class FrameClosure : StackAllocatedObject {
+public:
+    FrameClosure() = default;
+    virtual ~FrameClosure() = default;
+
+
+    void operator delete( void *p ) {}
+
 
 public:
     // Called before iterating through a process.
@@ -156,7 +179,7 @@ public:
 class DeltaProcess;
 
 // A ProcessClosure is used for iterating over Delta processes
-class ProcessClosure : StackAllocatedObject {
+class ProcessClosure : public StackAllocatedObject {
 public:
     // Called for each process
     virtual void do_process( DeltaProcess *p );
@@ -166,6 +189,11 @@ public:
 // A OopClosure is used for iterating through oops (see MemOop::oop_iterate, Universe::root_iterate).
 class OopClosure : StackAllocatedObject {
 public:
+    OopClosure() = default;
+    virtual ~OopClosure() = default;
+
+    void operator delete( void *p ) {}
+
     // Called for each Oop
     virtual void do_oop( Oop *o );
 };
@@ -174,6 +202,10 @@ public:
 // A klassOopClosure is used for iterating through klassOops (see MemOop::oop_iterate, Universe::root_iterate).
 class klassOopClosure : StackAllocatedObject {
 public:
+    klassOopClosure() = default;
+    virtual ~klassOopClosure() = default;
+    void operator delete( void *p ) {}
+
     // Called for each Oop
     virtual void do_klass( KlassOop klass );
 };

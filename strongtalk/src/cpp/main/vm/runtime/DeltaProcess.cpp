@@ -147,8 +147,10 @@ void DeltaProcess::suspend( ProcessState reason ) {
     st_assert( not in_vm_operation(), "must not be in VM operation" );
 
     transfer( reason, scheduler() );
-    if ( is_terminating() )
+    if ( is_terminating() ) {
         ErrorHandler::abort_current_process();
+    }
+
 }
 
 
@@ -190,8 +192,7 @@ void DeltaProcess::transfer_to_vm() {
 void DeltaProcess::suspend_at_creation() {
     // This is called as soon a DeltaProcess is created
     // Let's wait until we're given the torch.
-    spdlog::info( "%status-delta-process-suspend-at-creation: thread_id [{}]", this->thread_id() );
-
+    spdlog::info( "status-delta-process-suspend-at-creation: thread_id [{}] waiting for event", this->thread_id() );
     os::wait_for_event( _event );
 }
 
@@ -236,19 +237,21 @@ bool DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
         return false;
     }
 
-    if ( Processes::has_completed_async_call() )
+    if ( Processes::has_completed_async_call() ) {
         return true;
+    }
 
     if ( TraceProcessEvents ) {
-        _console->print( "Waiting for async %d ms", timeout_in_ms );
+        spdlog::info( "Waiting for async {:d} ms", timeout_in_ms );
     }
 
     _is_idle = true;
     bool result = os::wait_for_event_or_timer( _async_dll_completion_event, timeout_in_ms );
     _is_idle = false;
 
-    if ( not result )
+    if ( not result ) {
         os::reset_event( _async_dll_completion_event );
+    }
 
     if ( TraceProcessEvents ) {
         spdlog::info( result ? " {timeout}" : " {async}" );
@@ -269,6 +272,7 @@ void DeltaProcess::async_dll_call_completed() {
 
 
 void DeltaProcess::wait_for_control() {
+
     if ( TraceProcessEvents ) {
         _console->print( "*" );
     }
@@ -276,8 +280,10 @@ void DeltaProcess::wait_for_control() {
     set_state( ProcessState::yielded_after_async_dll );
     async_dll_call_completed();
     os::wait_for_event( _event );
-    if ( is_terminating() )
+    if ( is_terminating() ) {
         ErrorHandler::abort_current_process();
+    }
+
 }
 
 
@@ -303,7 +309,7 @@ void DeltaProcess::runMainProcess() {
 // Code entry point for at Delta process
 std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
-    spdlog::info( "%{}elta-process-launch-delta-process:  thread_id [{}]", process->thread_id() );
+    spdlog::info( "delta-process-launch-delta-process:  thread_id [{:d}]", process->thread_id() );
 
     // Wait until we get the torch
     process->suspend_at_creation();
@@ -451,7 +457,7 @@ void DeltaProcess::print() {
             spdlog::info( "{} yielded", processObject()->print_value_string() );
             break;
         case ProcessState::in_async_dll:
-            spdlog::info( "{} in asynchronous dll all", processObject()->print_value_string() );
+            spdlog::info( "{} in asynchronous dll call", processObject()->print_value_string() );
             break;
         case ProcessState::yielded_after_async_dll:
             spdlog::info( "{} yielded after asynchronous dll", processObject()->print_value_string() );
@@ -481,7 +487,7 @@ void DeltaProcess::print() {
             spdlog::info( "{} stack overflow", processObject()->print_value_string() );
             break;
         default:
-            nullptr;
+            void(0);
     }
 
 }

@@ -37,9 +37,15 @@ protected:
     VirtualSpace _virtualSpace;
 
 public:
-    Generation() : ValueObject(), _lowBoundary{ nullptr }, _highBoundary{ nullptr } {
+    Generation() :
+        ValueObject(),
+        _lowBoundary{ nullptr },
+        _highBoundary{ nullptr },
+        _virtualSpace{}
+        {}
 
-    }
+
+    virtual ~Generation() {}
 
 
 public:

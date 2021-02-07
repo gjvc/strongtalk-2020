@@ -119,6 +119,11 @@ public:
 
     PseudoRegisterMapping( PseudoRegisterMapping *m );
 
+    auto operator<=>( const PseudoRegisterMapping & ) const = default;
+
+    PseudoRegisterMapping( const PseudoRegisterMapping & ) = default;
+
+    PseudoRegisterMapping &operator=( const PseudoRegisterMapping & ) = default;
 
     MacroAssembler *assembler() const {
         return _macroAssembler;
@@ -248,6 +253,13 @@ public:
     ~PseudoRegisterLocker() {
         _top = _prev;
     }
+
+    xxx() = default;
+    virtual ~xxx() {        _top = _prev;}
+    xxx( const xxx & ) = default;
+    xxx &operator=( const xxx & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     static bool locks( PseudoRegister *pseudoRegister );        // returns true if pseudoRegister is locked in any PseudoRegisterLocker instance

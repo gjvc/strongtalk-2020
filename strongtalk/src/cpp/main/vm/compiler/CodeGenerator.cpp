@@ -743,7 +743,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) 
         if ( TraceCalls ) {
             ResourceMark resourceMark;
             if ( print_args_long or ( *arg )->is_smi() ) {
-                _console->print( "%s ", ( *arg )->print_value_string() );
+                spdlog::info( "{} ", ( *arg )->print_value_string() );
             } else {
                 _console->print( "0x{0:x} ", *arg );
             }

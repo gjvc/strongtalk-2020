@@ -230,6 +230,14 @@ protected:
     }
 
 
+    virtual ~IterationHelper() = default;
+    IterationHelper( const IterationHelper & ) = default;
+    IterationHelper &operator=( const IterationHelper & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     void init( std::int32_t no, NameDescriptorClosure *blk ) {
         _no      = no;
@@ -395,7 +403,7 @@ private:
         if ( UseNewBackend ) {
             _console->print( "%5d: ", pc - _pc0 );
         }
-        _console->print( "%s[%d]\t", title, no );
+        spdlog::info( "{}[%d]\t", title, no );
         nd->print();
         _console->cr();
     }
@@ -406,6 +414,12 @@ public:
         _indent{ indent },
         _pc0{ pc0 } {
     }
+    PrintNameDescClosure() = default;
+    virtual ~PrintNameDescClosure() = default;
+    PrintNameDescClosure( const PrintNameDescClosure & ) = default;
+    PrintNameDescClosure &operator=( const PrintNameDescClosure & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 
     void arg( std::int32_t no, NameDescriptor *a, char *pc ) {

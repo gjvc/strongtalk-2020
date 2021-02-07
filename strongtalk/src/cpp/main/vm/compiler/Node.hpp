@@ -140,6 +140,16 @@ public:
     static std::int32_t lastByteCodeIndex;      //
 
     BasicNode();
+    virtual ~BasicNode() = default;
+    BasicNode( const BasicNode & ) = default;
+    BasicNode &operator=( const BasicNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    auto operator<=>( const BasicNode & ) const = default;
+
 
 
     virtual bool isPrologueNode() const {
@@ -493,10 +503,22 @@ protected:
     Node *_next;
 
 
-    Node() : BasicNode(),
+    Node() :
+        BasicNode(),
         _prev{ nullptr },
         _next{ nullptr } {
     }
+
+
+    virtual ~Node() = default;
+    Node( const Node & ) = default;
+    Node &operator=( const Node & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    auto operator<=>( const Node & ) const = default;
 
 
 public:
@@ -673,6 +695,16 @@ public:
 
 class TrivialNode : public Node {
 public:
+
+    TrivialNode() = default;
+    virtual ~TrivialNode() = default;
+    TrivialNode( const TrivialNode & ) = default;
+    TrivialNode &operator=( const TrivialNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
     bool isTrivial() const {
         return true;
     }
@@ -712,6 +744,13 @@ protected:
     Definition     *_destDef;   //
 
     NonTrivialNode();
+    virtual ~NonTrivialNode() = default;
+    NonTrivialNode( const NonTrivialNode & ) = default;
+    NonTrivialNode &operator=( const NonTrivialNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     bool isTrivial() const {
@@ -757,6 +796,15 @@ protected:
         _nofArgs{ nofArgs },
         _nofTemps{ nofTemps } {
     }
+
+
+    PrologueNode() = default;
+    virtual ~PrologueNode() = default;
+    PrologueNode( const PrologueNode & ) = default;
+    PrologueNode &operator=( const PrologueNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -814,6 +862,15 @@ protected:
     }
 
 
+    LoadNode() = default;
+    virtual ~LoadNode() = default;
+    LoadNode( const LoadNode & ) = default;
+    LoadNode &operator=( const LoadNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     bool hasDest() const {
         return true;
@@ -851,6 +908,15 @@ protected:
         LoadNode( dst ),
         _value{ value } {
     }
+
+
+    LoadIntNode() = default;
+    virtual ~LoadIntNode() = default;
+    LoadIntNode( const LoadIntNode & ) = default;
+    LoadIntNode &operator=( const LoadIntNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -891,6 +957,15 @@ protected:
         _isArraySize{ isArraySize } {
         _src = src;
     }
+
+
+    LoadOffsetNode() = default;
+    virtual ~LoadOffsetNode() = default;
+    LoadOffsetNode( const LoadOffsetNode & ) = default;
+    LoadOffsetNode &operator=( const LoadOffsetNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -949,6 +1024,14 @@ private:
 
 protected:
     LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name );
+    LoadUplevelNode() = default;
+    virtual ~LoadUplevelNode() = default;
+    LoadUplevelNode( const LoadUplevelNode & ) = default;
+    LoadUplevelNode &operator=( const LoadUplevelNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     PseudoRegister *context0() const {
@@ -1001,6 +1084,15 @@ protected:
         _src = s;
         st_assert( _src, "src is nullptr" );
     }
+
+
+    StoreNode() = default;
+    virtual ~StoreNode() = default;
+    StoreNode( const StoreNode & ) = default;
+    StoreNode &operator=( const StoreNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -1071,6 +1163,15 @@ protected:
         _needsStoreCheck{ nsc } {
         st_assert( b, "base is nullptr" );
     }
+
+
+    StoreOffsetNode() = default;
+    virtual ~StoreOffsetNode() = default;
+    StoreOffsetNode( const StoreOffsetNode & ) = default;
+    StoreOffsetNode &operator=( const StoreOffsetNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -1151,6 +1252,14 @@ private:
 
 protected:
     StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool needsStoreCheck );
+    StoreUplevelNode() = default;
+    virtual ~StoreUplevelNode() = default;
+    StoreUplevelNode( const StoreUplevelNode & ) = default;
+    StoreUplevelNode &operator=( const StoreUplevelNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     PseudoRegister *context0() const {
@@ -1215,6 +1324,14 @@ class AssignNode : public StoreNode {
     // _src may be a ConstPseudoRegister*
 protected:
     AssignNode( PseudoRegister *s, PseudoRegister *d );
+    AssignNode() = default;
+    virtual ~AssignNode() = default;
+    AssignNode( const AssignNode & ) = default;
+    AssignNode &operator=( const AssignNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     std::int32_t cost() const {
@@ -1300,6 +1417,15 @@ protected:
     }
 
 
+    AbstractReturnNode() = default;
+    virtual ~AbstractReturnNode() = default;
+    AbstractReturnNode( const AbstractReturnNode & ) = default;
+    AbstractReturnNode &operator=( const AbstractReturnNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     bool canBeEliminated() const {
         return false;
@@ -1367,6 +1493,15 @@ protected:
     }
 
 
+    InlinedReturnNode() = default;
+    virtual ~InlinedReturnNode() = default;
+    InlinedReturnNode( const InlinedReturnNode & ) = default;
+    InlinedReturnNode &operator=( const InlinedReturnNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     bool isInlinedReturnNode() const {
         return true;
@@ -1428,6 +1563,14 @@ class NonLocalReturnSetupNode : public AbstractReturnNode {
     Usage *_contextUse;            // needs context to load home FP
 protected:
     NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex );
+    NonLocalReturnSetupNode() = default;
+    virtual ~NonLocalReturnSetupNode() = default;
+    NonLocalReturnSetupNode( const NonLocalReturnSetupNode & ) = default;
+    NonLocalReturnSetupNode &operator=( const NonLocalReturnSetupNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     bool isExitNode() const {
@@ -1494,6 +1637,15 @@ protected:
     NonLocalReturnContinuationNode( std::int32_t byteCodeIndex, PseudoRegister *src, PseudoRegister *dest ) :
         AbstractReturnNode( byteCodeIndex, src, dest ) {
     }
+
+
+    NonLocalReturnContinuationNode() = default;
+    virtual ~NonLocalReturnContinuationNode() = default;
+    NonLocalReturnContinuationNode( const NonLocalReturnContinuationNode & ) = default;
+    NonLocalReturnContinuationNode &operator=( const NonLocalReturnContinuationNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -1565,6 +1717,14 @@ private:
 
 protected:
     ReturnNode( PseudoRegister *res, std::int32_t byteCodeIndex );
+    ReturnNode() = default;
+    virtual ~ReturnNode() = default;
+    ReturnNode( const ReturnNode & ) = default;
+    ReturnNode &operator=( const ReturnNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     Node *clone( PseudoRegister *from, PseudoRegister *to ) const;
@@ -3129,6 +3289,14 @@ protected:
 
     bool needsKlassLoad() const;        // does test need object's klass?
     TypeTestNode( PseudoRegister *r, GrowableArray<KlassOop> *classes, bool hasUnknown );
+    TypeTestNode() = default;
+    virtual ~TypeTestNode() = default;
+    TypeTestNode( const TypeTestNode & ) = default;
+    TypeTestNode &operator=( const TypeTestNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     GrowableArray<KlassOop> *classes() const {
@@ -3259,6 +3427,15 @@ protected:
         _dest          = res;
         _dontEliminate = true;
     }
+
+
+    AbstractArrayAtNode() = default;
+    virtual ~AbstractArrayAtNode() = default;
+    AbstractArrayAtNode( const AbstractArrayAtNode & ) = default;
+    AbstractArrayAtNode &operator=( const AbstractArrayAtNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 public:
@@ -3427,6 +3604,15 @@ protected:
     }
 
 
+    AbstractArrayAtPutNode() = default;
+    virtual ~AbstractArrayAtPutNode() = default;
+    AbstractArrayAtPutNode( const AbstractArrayAtPutNode & ) = default;
+    AbstractArrayAtPutNode &operator=( const AbstractArrayAtPutNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     bool copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace = false );
 
@@ -3592,6 +3778,15 @@ private:
 
     InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi );
 
+    InlinedPrimitiveNode() = default;
+    virtual ~InlinedPrimitiveNode() = default;
+    InlinedPrimitiveNode( const InlinedPrimitiveNode & ) = default;
+    InlinedPrimitiveNode &operator=( const InlinedPrimitiveNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
 public:
     Operation op() const {
         return _operation;
@@ -3683,6 +3878,14 @@ class UncommonNode : public NonTrivialNode {
 
 protected:
     UncommonNode( GrowableArray<PseudoRegister *> *e, std::int32_t byteCodeIndex );
+    UncommonNode() = default;
+    virtual ~UncommonNode() = default;
+    UncommonNode( const UncommonNode & ) = default;
+    UncommonNode &operator=( const UncommonNode & ) = default;
+
+
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 
 public:
     bool isUncommonNode() const {
@@ -3846,6 +4049,11 @@ public:
 class CommentNode : public TrivialNode {
 protected:
     CommentNode( const char *s );
+    auto operator<=>( const CommentNode & ) const = default;
+
+    CommentNode( const CommentNode & ) = default;
+
+    CommentNode &operator=( const CommentNode & ) = default;
 
 public:
     const char *_comment;

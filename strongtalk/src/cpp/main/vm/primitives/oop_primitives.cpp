@@ -18,6 +18,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/runtime/Processes.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 
 
 TRACE_FUNC( TraceOopPrims, "Oop" )
@@ -42,6 +43,8 @@ public:
     TwoWayBecomeClosure( Oop target, Oop replacement ) :
         target( target ), replacement( replacement ) {
     }
+
+    void operator delete( void *p ) {}
 
 
     void do_object( MemOop obj ) {

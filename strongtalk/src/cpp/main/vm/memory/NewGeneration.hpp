@@ -36,6 +36,24 @@ public:
 
     }
 
+    auto operator<=>( const NewGeneration & ) const = default;
+
+    virtual ~NewGeneration() = default;
+
+    static void *operator new( std::size_t size ) {
+        static_cast<void>(size); // unused
+
+        ShouldNotCallThis();
+        return nullptr;
+    }
+
+
+    static void operator delete( void *p ) {
+        static_cast<void>(p); // unused
+
+        ShouldNotCallThis();
+    }
+
 
     EdenSpace *eden() {
         return &_edenSpace;

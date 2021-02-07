@@ -269,7 +269,7 @@ void MacroAssembler::fpop() {
 // debugging
 
 void MacroAssembler::print_reg( const char *name, Oop obj ) {
-    _console->print( "%s = ", name );
+    spdlog::info( "{} = ", name );
     if ( obj == nullptr ) {
         spdlog::info( "nullptr" );
 

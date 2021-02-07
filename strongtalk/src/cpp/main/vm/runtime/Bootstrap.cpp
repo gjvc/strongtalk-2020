@@ -120,10 +120,10 @@ void Bootstrap::open_file() {
     _stream.open( _filename, std::ifstream::binary );
 
     if ( not _stream.good() ) {
-        spdlog::info( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
+        spdlog::info( "bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    spdlog::info( "%bootstrap-file-open: [{}]", _filename.c_str() );
+    spdlog::info( "bootstrap-file-open: [{}]", _filename.c_str() );
 
     _version_number = read_uint32_t();
     check_version();
@@ -132,22 +132,22 @@ void Bootstrap::open_file() {
 
 void Bootstrap::parse_file() {
 
-    spdlog::info( "%bootstrap-file-load: [{}]", _filename.c_str() );
+    spdlog::info( "bootstrap-file-load: [{}]", _filename.c_str() );
     parse_objects();
-    spdlog::info( "%bootstrap-file-load-done: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
+    spdlog::info( "bootstrap-file-load-done: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
 
 }
 
 
 void Bootstrap::close_file() {
     _stream.close();
-    spdlog::info( "%bootstrap-file-close: [{}]", _filename.c_str() );
+    spdlog::info( "bootstrap-file-close: [{}]", _filename.c_str() );
 }
 
 
 void Bootstrap::summary() {
     for ( auto item : _countByType ) {
-        spdlog::info( "%bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
+        spdlog::info( "bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
     }
 }
 

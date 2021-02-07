@@ -13,6 +13,7 @@
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/interpreter/MethodIterator.hpp"
+#include "vm/interpreter/MethodClosure.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 
 
