@@ -58,7 +58,7 @@ protected:
 public:
 
     MethodClosure();
-//    ~MethodClosure() = default;
+    ~MethodClosure() = default;
     static void operator delete( void * ) {}
 
 

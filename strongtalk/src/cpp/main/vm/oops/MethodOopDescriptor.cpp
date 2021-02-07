@@ -412,6 +412,12 @@ bool MethodOopDescriptor::in_context_allocation( std::int32_t byteCodeIndex ) co
 
 class BlockFinderClosure : public SpecializedMethodClosure {
 public:
+
+    virtual ~BlockFinderClosure() = default;
+    BlockFinderClosure( const BlockFinderClosure & ) = default;
+    BlockFinderClosure &operator=( const BlockFinderClosure & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
     bool hasBlock;
 
 
@@ -1030,6 +1036,14 @@ void MethodOopDescriptor::verify_context( ContextOop con ) {
 
 // Traverses over the method including the blocks inside
 class TransitiveMethodClosure : public MethodClosure {
+
+public:
+    TransitiveMethodClosure() = default;
+    virtual ~TransitiveMethodClosure() = default;
+    TransitiveMethodClosure( const TransitiveMethodClosure & ) = default;
+    TransitiveMethodClosure &operator=( const TransitiveMethodClosure & ) = default;
+    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
 public:
     void if_node( IfNode *node );
 

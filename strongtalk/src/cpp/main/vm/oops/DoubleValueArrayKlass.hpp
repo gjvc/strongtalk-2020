@@ -15,6 +15,7 @@ class DoubleValueArrayKlass : public MemOopKlass {
 
 public:
 
+    DoubleValueArrayKlass() = default;
     virtual ~DoubleValueArrayKlass() = default;
     DoubleValueArrayKlass( const DoubleValueArrayKlass & ) = default;
     DoubleValueArrayKlass &operator=( const DoubleValueArrayKlass & ) = default;

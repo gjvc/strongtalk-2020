@@ -250,16 +250,20 @@ void MethodKlass::oop_follow_contents( Oop obj ) {
 
             case ByteCodes::Format::BBOO:
                 MarkSweep::reverse_and_push( c.aligned_oop( 2 ) );
+                [[fallthrough]];
+
             case ByteCodes::Format::BBLO:
                 MarkSweep::reverse_and_push( c.aligned_oop( 2 ) + 1 );
                 break; // BBOO, BBLO
 
             case ByteCodes::Format::BOL:
+                [[fallthrough]];
             case ByteCodes::Format::BO:
                 MarkSweep::reverse_and_push( c.aligned_oop( 1 ) );
                 break; // BOL, BO
 
             case ByteCodes::Format::BOO:
+                [[fallthrough]];
             case ByteCodes::Format::BOOLB:
                 MarkSweep::reverse_and_push( c.aligned_oop( 1 ) );
 
@@ -267,7 +271,8 @@ void MethodKlass::oop_follow_contents( Oop obj ) {
                 MarkSweep::reverse_and_push( c.aligned_oop( 1 ) + 1 );
                 break; // BOO, BOOLB, BLO
 
-            default: nullptr;
+            default:
+                (void)0;
         }
     } while ( c.advance() );
 

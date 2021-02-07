@@ -20,6 +20,7 @@ protected:
 
 public:
 
+    MemOopKlass() = default;
     virtual ~MemOopKlass() = default;
     MemOopKlass( const MemOopKlass & ) = default;
     MemOopKlass &operator=( const MemOopKlass & ) = default;

@@ -64,6 +64,8 @@ private:
 public:
     FunctionProcessClosure( void f( Oop * ) ) : function{ f } {
     }
+    virtual ~FunctionProcessClosure() {}
+
     void operator delete( void *p ) {}
 
 

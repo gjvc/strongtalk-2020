@@ -13,6 +13,10 @@
 
 class ProxyKlass : public MemOopKlass {
 public:
+
+    //
+    ProxyKlass() = default;
+
     // testers
     bool oop_is_proxy() const {
         return true;

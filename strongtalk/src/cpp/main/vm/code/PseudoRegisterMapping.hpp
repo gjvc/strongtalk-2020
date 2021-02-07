@@ -254,11 +254,11 @@ public:
         _top = _prev;
     }
 
-    xxx() = default;
-    virtual ~xxx() {        _top = _prev;}
-    xxx( const xxx & ) = default;
-    xxx &operator=( const xxx & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    PseudoRegisterLocker() = default;
+//    virtual ~PseudoRegisterLocker() {        _top = _prev;}
+//    PseudoRegisterLocker( const PseudoRegisterLocker & ) = default;
+//    PseudoRegisterLocker &operator=( const PseudoRegisterLocker & ) = default;
+//    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
 

@@ -41,7 +41,6 @@
 class ValueObject {
 public:
     void *operator new( std::size_t size ) throw();
-
     void operator delete( void *p );
 };
 
@@ -63,6 +62,9 @@ public:
     void operator delete( void *p );
 
     void *new_array( std::size_t size );
+
+    virtual ~CHeapAllocatedObject() = default;
+
 };
 
 
@@ -72,6 +74,8 @@ public:
     virtual void print() = 0;
 
     virtual void print_short();
+
+    virtual ~PrintableCHeapAllocatedObject() = default;
 };
 
 
@@ -82,6 +86,9 @@ public:
     void *operator new( std::size_t size );
 
     void operator delete( void *p );
+
+    virtual ~StackAllocatedObject() = default;
+
 };
 
 
@@ -91,4 +98,7 @@ public:
     virtual void print() = 0;
 
     virtual void print_short();
+
+    virtual ~PrintableStackAllocatedObject() = default;
+
 };

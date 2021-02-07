@@ -58,16 +58,17 @@ protected:
     MixinOop       _mixin;
 
 public:
+
     Klass() :
         ValueObject(),
-        _has_untagged_contents{ nullptr },
         _non_indexable_size{ nullptr },
+        _has_untagged_contents{ nullptr },
         _classVars{ nullptr },
         _methods{ nullptr },
         _superKlass{ nullptr },
-        _mixin{ nullptr } {
+        _mixin{ nullptr } {}
 
-    }
+
     virtual ~Klass() = default;
 
     Klass( const Klass & ) = default;

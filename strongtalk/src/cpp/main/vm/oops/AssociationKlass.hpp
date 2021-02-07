@@ -21,6 +21,7 @@ void setKlassVirtualTableFromAssociationKlass( Klass *k );
 class AssociationKlass : public MemOopKlass {
 public:
 
+    AssociationKlass() = default;
     ~AssociationKlass() = default;
 
     friend void setKlassVirtualTableFromAssociationKlass( Klass *k );

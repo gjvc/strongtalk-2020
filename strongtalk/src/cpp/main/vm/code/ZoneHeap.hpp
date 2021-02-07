@@ -276,7 +276,7 @@ public:
 public:
     ZoneHeap( std::int32_t s, std::int32_t bs );
     ZoneHeap() = default;
-    virtual ~ZoneHeap() = default;
+    virtual ~ZoneHeap();
     ZoneHeap( const ZoneHeap & ) = default;
     ZoneHeap &operator=( const ZoneHeap & ) = default;
     void operator delete( void *ptr ) { static_cast<void *>(ptr); }

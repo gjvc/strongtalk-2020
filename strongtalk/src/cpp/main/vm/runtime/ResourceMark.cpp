@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -13,9 +14,9 @@ bool ResourceMark::_enabled = true;
 
 
 ResourceMark::ResourceMark() :
-_resourceArea{ nullptr },
-_resourceAreaChunk{ nullptr },
-_top{ nullptr } {
+    _resourceArea{ nullptr },
+    _resourceAreaChunk{ nullptr },
+    _top{ nullptr } {
 
     if ( not _enabled )
         return;
