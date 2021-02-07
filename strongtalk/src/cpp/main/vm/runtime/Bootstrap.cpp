@@ -40,6 +40,7 @@ Bootstrap::Bootstrap( const std::string &name ) :
 //    _filename{},
     _stream{},
     _version_number{ 0 },
+    _counter{ 0 },
     _oop_table{ nullptr } {
 
     //
@@ -120,10 +121,10 @@ void Bootstrap::open_file() {
     _stream.open( _filename, std::ifstream::binary );
 
     if ( not _stream.good() ) {
-        spdlog::info( "bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
+        spdlog::info( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    spdlog::info( "bootstrap-file-open: [{}]", _filename.c_str() );
+    spdlog::info( "%bootstrap-file-open: [{}]", _filename.c_str() );
 
     _version_number = read_uint32_t();
     check_version();

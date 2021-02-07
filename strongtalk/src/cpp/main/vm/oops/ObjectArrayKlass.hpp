@@ -13,6 +13,9 @@
 class ObjectArrayKlass : public MemOopKlass {
 
 public:
+
+    ObjectArrayKlass() = default;
+
     // allocation properties
     bool can_inline_allocation() const {
         return false;

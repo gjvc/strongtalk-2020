@@ -21,12 +21,15 @@ public:
         ScopeDescriptorNode( method, allocates_compiled_context, scopeID, lite, senderByteCodeIndex, visible ),
         _parent{ parent } {
     }
+
+
     BlockScopeNode() = default;
     virtual ~BlockScopeNode() = default;
     BlockScopeNode( const BlockScopeNode & ) = default;
     BlockScopeNode &operator=( const BlockScopeNode & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     std::uint8_t code() {

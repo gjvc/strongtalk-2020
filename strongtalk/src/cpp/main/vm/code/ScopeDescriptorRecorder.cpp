@@ -15,6 +15,7 @@
 #include "vm/code/NativeMethodScopes.hpp"
 #include "vm/compiler/Compiler.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
+#include "vm/code/TopLevelBlockScopeNode.hpp"
 
 extern Compiler *theCompiler;
 

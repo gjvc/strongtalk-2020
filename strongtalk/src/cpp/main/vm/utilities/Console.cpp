@@ -24,7 +24,7 @@ void console_init() {
     if ( _console )
         return;
     _console = new( true ) ConsoleOutputStream;
-    spdlog::info( "%console-init:  ConsoleOutputStream-open" );
+    spdlog::info( "console-init:  ConsoleOutputStream-open" );
 }
 
 

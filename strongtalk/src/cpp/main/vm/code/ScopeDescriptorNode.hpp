@@ -68,6 +68,12 @@ public:
     ScopeInfo _next;
 
     ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible );
+    ScopeDescriptorNode() = default;
+    virtual ~ScopeDescriptorNode() = default;
+    ScopeDescriptorNode( const ScopeDescriptorNode & ) = default;
+    ScopeDescriptorNode &operator=( const ScopeDescriptorNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void addNested( ScopeInfo scope );
 
@@ -91,39 +97,4 @@ public:
 
     void verifyBody();
 
-};
-
-
-class TopLevelBlockScopeNode : public ScopeDescriptorNode {
-
-public:
-    LogicalAddress *_receiverLocation;
-    KlassOop       _receiverKlass;
-
-
-    std::uint8_t code() {
-        return TOP_LEVEL_BLOCK_CODE;
-    }
-
-
-public:
-
-    TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool allocates_compiled_context ) :
-        ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ),
-        _receiverLocation{ receiver_location },
-        _receiverKlass{ receiver_klass } {
-    }
-
-
-    void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
-        ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
-        _receiverLocation->generate( rec );
-        rec->genOop( _receiverKlass );
-    }
-
-
-    void verify( ScopeDescriptor *sd ) {
-        ScopeDescriptorNode::verify( sd );
-        if ( not sd->isTopLevelBlockScope() ) st_fatal( "TopLevelBlockScope expected" );
-    }
 };

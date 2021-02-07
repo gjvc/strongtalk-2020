@@ -41,10 +41,15 @@ public:
 
 
     OldGeneration() :
-    _firstSpace{ nullptr },
-    _currentSpace{ nullptr },
-    _oldSpace{ nullptr } {}
+        _firstSpace{ nullptr },
+        _currentSpace{ nullptr },
+        _oldSpace{ nullptr } {}
 
+    auto operator<=>( const OldGeneration & ) const = default;
+
+    OldGeneration( const OldGeneration & ) = default;
+
+    OldGeneration &operator=( const OldGeneration & ) = default;
 
     Oop *allocate( std::int32_t size, bool allow_expansion = true ) {
         return _currentSpace->allocate( size, allow_expansion );

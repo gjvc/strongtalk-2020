@@ -66,6 +66,7 @@ protected:
     std::uint16_t       _floatSectionStartOffset;    // offset of float section relative to frame pointer (in oops)
     std::int32_t        _invocationCount;            // incremented for each NativeMethod invocation if CountExecution == true
     std::int32_t        _uncommonTrapCounter;        // # of times uncommon traps have been executed
+
     static std::int32_t _allUncommonTrapCounter;     // # of times uncommon traps have been executed across all nativeMethods
     NativeMethodFlags   _nativeMethodFlags;          // various flags to keep track of NativeMethod state
 
@@ -195,9 +196,11 @@ public:
     // Returns the outermost NativeMethod, or "this" if no parent is present.
     NativeMethod *outermost();
 
-protected:
     NativeMethod( Compiler *c );
-
+    virtual ~NativeMethod() = default;
+    NativeMethod( const NativeMethod & ) = default;
+    NativeMethod &operator=( const NativeMethod & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
     void *operator new( std::size_t size );
 
 public:

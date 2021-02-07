@@ -22,6 +22,11 @@ public:
 
     Closure() = default;
     virtual ~Closure() = default;
+    auto operator<=>( const Closure & ) const = default;
+
+    Closure( const Closure & ) = default;
+
+    Closure &operator=( const Closure & ) = default;
 
 
     void operator delete( void *p ) {}
@@ -35,6 +40,13 @@ class ObjectClosure : StackAllocatedObject {
 public:
     ObjectClosure() = default;
     virtual ~ObjectClosure() = default;
+    auto operator<=>( const ObjectClosure & ) const = default;
+
+    ObjectClosure( const ObjectClosure & ) = default;
+
+    ObjectClosure &operator=( const ObjectClosure & ) = default;
+
+
     void operator delete( void *p ) {}
 
 
@@ -59,6 +71,14 @@ private:
 
 public:
 
+    FilteredObjectClosure() = default;
+    virtual ~FilteredObjectClosure() = default;
+    auto operator<=>( const FilteredObjectClosure & ) const = default;
+
+    FilteredObjectClosure( const FilteredObjectClosure & ) = default;
+
+    FilteredObjectClosure &operator=( const FilteredObjectClosure & ) = default;
+
     // Called for each object and returns whether do_filtered_objects should be called.
     virtual bool include_object( MemOop obj );
 
@@ -73,8 +93,14 @@ class ObjectLayoutClosure : StackAllocatedObject {
 
 public:
 
-    ObjectLayoutClosure() =default;
-    virtual ~ ObjectLayoutClosure() =default;
+    ObjectLayoutClosure() = default;
+    virtual ~ ObjectLayoutClosure() = default;
+    auto operator<=>( const ObjectLayoutClosure & ) const = default;
+
+    ObjectLayoutClosure( const ObjectLayoutClosure & ) = default;
+
+    ObjectLayoutClosure &operator=( const ObjectLayoutClosure & ) = default;
+
     // NON-INDEXABLE PART
     // Called for the markOop
     virtual void do_mark( MarkOop *m );
@@ -133,8 +159,11 @@ class FrameClosure : StackAllocatedObject {
 public:
     FrameClosure() = default;
     virtual ~FrameClosure() = default;
+    auto operator<=>( const FrameClosure & ) const = default;
 
+    FrameClosure( const FrameClosure & ) = default;
 
+    FrameClosure &operator=( const FrameClosure & ) = default;
     void operator delete( void *p ) {}
 
 
@@ -155,6 +184,14 @@ public:
 // A FrameLayoutClosure is used for iterating though the layout of frame
 class FrameLayoutClosure : StackAllocatedObject {
 public:
+    FrameLayoutClosure() = default;
+    virtual ~FrameLayoutClosure() = default;
+    auto operator<=>( const FrameLayoutClosure & ) const = default;
+
+    FrameLayoutClosure( const FrameLayoutClosure & ) = default;
+
+    FrameLayoutClosure &operator=( const FrameLayoutClosure & ) = default;
+
     // Called for each Oop
     virtual void do_stack( std::int32_t index, Oop *o );
 
@@ -191,8 +228,15 @@ class OopClosure : StackAllocatedObject {
 public:
     OopClosure() = default;
     virtual ~OopClosure() = default;
+    auto operator<=>( const OopClosure & ) const = default;
+
+    OopClosure( const OopClosure & ) = default;
+
+    OopClosure &operator=( const OopClosure & ) = default;
+
 
     void operator delete( void *p ) {}
+
 
     // Called for each Oop
     virtual void do_oop( Oop *o );
@@ -204,7 +248,15 @@ class klassOopClosure : StackAllocatedObject {
 public:
     klassOopClosure() = default;
     virtual ~klassOopClosure() = default;
+    auto operator<=>( const klassOopClosure & ) const = default;
+
+    klassOopClosure( const klassOopClosure & ) = default;
+
+    klassOopClosure &operator=( const klassOopClosure & ) = default;
+
+
     void operator delete( void *p ) {}
+
 
     // Called for each Oop
     virtual void do_klass( KlassOop klass );

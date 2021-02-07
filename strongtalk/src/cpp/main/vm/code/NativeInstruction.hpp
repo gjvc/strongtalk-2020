@@ -19,7 +19,7 @@ class NativeInstruction : ValueObject {
     // Provides the primitive operations to manipulate code relative to this.
 public:
     NativeInstruction() = default;
-    ~NativeInstruction() = default;
+    virtual ~NativeInstruction() = default;
     static void operator delete( void *p ) {}
 
 protected:
@@ -67,7 +67,7 @@ class NativeCall : public NativeInstruction {
 
 public:
     NativeCall() = default;
-    ~NativeCall() = default;
+    virtual ~NativeCall() = default;
     static void operator delete( void *p ) {}
 
     enum Intel_specific_constants {
@@ -150,7 +150,7 @@ class NativeMov : public NativeInstruction {
 
 public:
     NativeMov() = default;
-    ~NativeMov() = default;
+    virtual ~NativeMov() = default;
 
     enum Intel_specific_constants {
         instruction_code        = 0xB8, //

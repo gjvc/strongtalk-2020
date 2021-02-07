@@ -34,6 +34,11 @@ public:
     LookupKey( KlassOop klass, Oop selector_or_method );
     LookupKey( LookupKey *key );
 
+//    virtual ~LookupKey() = default;
+//    LookupKey( const LookupKey & ) = default;
+//    LookupKey &operator=( const LookupKey & ) = default;
+//    void operator delete( void *ptr ) { (void)ptr; }
+
     KlassOop klass() const;
     Oop selector_or_method() const;
     SymbolOop selector() const;

@@ -43,6 +43,11 @@ public:
         _bytes{ new GrowableArray<std::uint32_t>() },
         _oops{ new GrowableArray<Oop>() } {
     }
+    virtual ~HeapCodeBuffer() = default;
+    HeapCodeBuffer( const HeapCodeBuffer & ) = default;
+    HeapCodeBuffer &operator=( const HeapCodeBuffer & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     void pushByte( std::uint8_t op );

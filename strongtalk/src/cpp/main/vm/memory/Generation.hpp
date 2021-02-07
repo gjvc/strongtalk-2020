@@ -41,11 +41,16 @@ public:
         ValueObject(),
         _lowBoundary{ nullptr },
         _highBoundary{ nullptr },
-        _virtualSpace{}
-        {}
+        _virtualSpace{} {}
 
 
     virtual ~Generation() {}
+
+    auto operator<=>( const Generation & ) const = default;
+
+    Generation( const Generation & ) = default;
+
+    Generation &operator=( const Generation & ) = default;
 
 
 public:

@@ -145,11 +145,10 @@ public:
     BasicNode &operator=( const BasicNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     auto operator<=>( const BasicNode & ) const = default;
-
 
 
     virtual bool isPrologueNode() const {
@@ -513,12 +512,12 @@ protected:
     virtual ~Node() = default;
     Node( const Node & ) = default;
     Node &operator=( const Node & ) = default;
-
-
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
-
-
     auto operator<=>( const Node & ) const = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
 
 public:
@@ -702,7 +701,7 @@ public:
     TrivialNode &operator=( const TrivialNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isTrivial() const {
@@ -749,7 +748,7 @@ protected:
     NonTrivialNode &operator=( const NonTrivialNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -804,7 +803,7 @@ protected:
     PrologueNode &operator=( const PrologueNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -868,7 +867,7 @@ protected:
     LoadNode &operator=( const LoadNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -916,7 +915,7 @@ protected:
     LoadIntNode &operator=( const LoadIntNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -965,7 +964,7 @@ protected:
     LoadOffsetNode &operator=( const LoadOffsetNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1030,7 +1029,7 @@ protected:
     LoadUplevelNode &operator=( const LoadUplevelNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1092,7 +1091,7 @@ protected:
     StoreNode &operator=( const StoreNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1171,7 +1170,7 @@ protected:
     StoreOffsetNode &operator=( const StoreOffsetNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1258,7 +1257,7 @@ protected:
     StoreUplevelNode &operator=( const StoreUplevelNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1330,7 +1329,7 @@ protected:
     AssignNode &operator=( const AssignNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1423,7 +1422,7 @@ protected:
     AbstractReturnNode &operator=( const AbstractReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1499,7 +1498,7 @@ protected:
     InlinedReturnNode &operator=( const InlinedReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1569,7 +1568,7 @@ protected:
     NonLocalReturnSetupNode &operator=( const NonLocalReturnSetupNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1645,7 +1644,7 @@ protected:
     NonLocalReturnContinuationNode &operator=( const NonLocalReturnContinuationNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -1723,7 +1722,7 @@ protected:
     ReturnNode &operator=( const ReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -3295,7 +3294,7 @@ protected:
     TypeTestNode &operator=( const TypeTestNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -3435,7 +3434,7 @@ protected:
     AbstractArrayAtNode &operator=( const AbstractArrayAtNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -3610,7 +3609,7 @@ protected:
     AbstractArrayAtPutNode &operator=( const AbstractArrayAtPutNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -3784,7 +3783,7 @@ private:
     InlinedPrimitiveNode &operator=( const InlinedPrimitiveNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -3884,7 +3883,7 @@ protected:
     UncommonNode &operator=( const UncommonNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:

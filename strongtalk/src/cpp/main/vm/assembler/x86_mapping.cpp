@@ -292,7 +292,7 @@ void Mapping::fstore( const Location &dst, const Register &base ) {
 
 
 void mapping_init() {
-    spdlog::info( "%system-init:  mapping_init" );
+    spdlog::info( "system-init:  mapping_init" );
 
     Mapping::initialize();
 }

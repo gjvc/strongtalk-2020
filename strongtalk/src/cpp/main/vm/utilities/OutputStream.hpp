@@ -15,12 +15,16 @@ class OutputStream : public ResourceObject {
 
 public:
     OutputStream();
+    virtual ~OutputStream() = default;
+    OutputStream( const OutputStream & ) = default;
+    OutputStream &operator=( const OutputStream & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)ptr; }
 
 
 protected:
     const std::ostream &_output;
-
-
 
 
 };

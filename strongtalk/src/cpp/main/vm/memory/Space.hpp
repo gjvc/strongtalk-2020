@@ -420,9 +420,9 @@ public:
 
 
     OldSpaceMark( OldSpace *oldSpace ) :
-        _oldTop{ nullptr } ,
+        _oldTop{ nullptr },
         _theSpace{ oldSpace } {
-            _oldTop = _theSpace->top();
+        _oldTop = _theSpace->top();
     }
 
 

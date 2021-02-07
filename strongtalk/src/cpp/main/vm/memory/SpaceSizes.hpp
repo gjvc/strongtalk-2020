@@ -28,4 +28,12 @@ public:
 
     // Reads debug variables for initial settings.
     void initialize();
+
+    SpaceSizes() = default;
+    virtual ~SpaceSizes() = default;
+    SpaceSizes( const SpaceSizes & ) = default;
+    SpaceSizes &operator=( const SpaceSizes & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
+
 };

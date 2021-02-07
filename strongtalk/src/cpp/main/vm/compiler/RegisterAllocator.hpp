@@ -24,7 +24,9 @@ public:
     virtual ~RegisterAllocator() = default;
     RegisterAllocator( const RegisterAllocator & ) = default;
     RegisterAllocator &operator=( const RegisterAllocator & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void preAllocate( PseudoRegister *r );
@@ -58,11 +60,14 @@ public:
         _ndefs{ n } {
     }
 
+
     RegCandidate() = default;
     virtual ~RegCandidate() = default;
     RegCandidate( const RegCandidate & ) = default;
     RegCandidate &operator=( const RegCandidate & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 };
@@ -81,8 +86,9 @@ public:
     virtual ~RegisterEqClass() = default;
     RegisterEqClass( const RegisterEqClass & ) = default;
     RegisterEqClass &operator=( const RegisterEqClass & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void append( PseudoRegister *other );

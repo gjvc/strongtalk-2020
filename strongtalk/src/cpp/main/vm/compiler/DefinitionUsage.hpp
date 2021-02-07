@@ -31,13 +31,15 @@ public:
     DefinitionUsage( NonTrivialNode *n ) :
         _node{ n } {
     }
-    
+
+
     DefinitionUsage() = default;
     virtual ~DefinitionUsage() = default;
     DefinitionUsage( const DefinitionUsage & ) = default;
     DefinitionUsage &operator=( const DefinitionUsage & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 };
@@ -49,12 +51,14 @@ public:
         DefinitionUsage( n ) {
     }
 
+
     Definition() = default;
     virtual ~Definition() = default;
     Definition( const Definition & ) = default;
     Definition &operator=( const Definition & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void print();
@@ -67,12 +71,14 @@ public:
         DefinitionUsage( n ) {
     }
 
+
     Usage() = default;
     virtual ~Usage() = default;
     Usage( const Usage & ) = default;
     Usage &operator=( const Usage & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     virtual bool isSoft() const {
@@ -90,13 +96,14 @@ public:
         Usage( n ) {
     }
 
+
     PSoftUsage() = default;
     virtual ~PSoftUsage() = default;
     PSoftUsage( const PSoftUsage & ) = default;
     PSoftUsage &operator=( const PSoftUsage & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isSoft() const {
@@ -131,7 +138,7 @@ public:
     PseudoRegisterBasicBlockIndex &operator=( const PseudoRegisterBasicBlockIndex & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void print_short();

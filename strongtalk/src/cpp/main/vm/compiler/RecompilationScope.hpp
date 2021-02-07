@@ -485,10 +485,12 @@ protected:
 public:
     PICRecompilationScope( const NativeMethod *caller, ProgramCounterDescriptor *pc, CompiledInlineCache *s, KlassOop k, ScopeDescriptor *d, NativeMethod *n, MethodOop m, std::int32_t nsends, std::int32_t level, bool trusted );
     PICRecompilationScope();
-    virtual ~PICRecompilationScope() =default;
+    virtual ~PICRecompilationScope() = default;
     PICRecompilationScope( const PICRecompilationScope & ) = default;
     PICRecompilationScope &operator=( const PICRecompilationScope & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
+
+
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
     bool isPICScope() const {
@@ -677,13 +679,15 @@ public:
         scope{ r },
         programCounterDescriptor{ pc } {
     }
-    
+
+
     RUncommonBranch() = default;
     virtual ~RUncommonBranch() = default;
     RUncommonBranch( const RUncommonBranch & ) = default;
     RUncommonBranch &operator=( const RUncommonBranch & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     std::int32_t byteCodeIndex() const {

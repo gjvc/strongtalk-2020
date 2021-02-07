@@ -11,7 +11,7 @@ EventLog *eventLog;
 
 
 void eventlog_init() {
-    spdlog::info( "%system-init:  eventlog_init" );
+    spdlog::info( "system-init:  eventlog_init" );
     eventLog = new EventLog;
 }
 

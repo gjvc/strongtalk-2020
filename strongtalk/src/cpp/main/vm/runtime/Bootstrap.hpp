@@ -28,6 +28,7 @@ private:
     std::int32_t  _objectCount;
     std::string   _filename;
     std::ifstream _stream;
+    std::int32_t  _counter;
 
     std::map<char, std::int32_t> _countByType{};
     std::map<char, std::string>  _nameByTypeByte{};

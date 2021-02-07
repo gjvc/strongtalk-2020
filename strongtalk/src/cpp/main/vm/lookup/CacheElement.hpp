@@ -20,7 +20,12 @@ public:
     std::int32_t _filler;
 
 
-    CacheElement();
+    CacheElement() :
+        _lookupKey{},
+        _lookupResult{} {
+    }
+
+
     void verify();
     void clear();
     void initialize( LookupKey *k, LookupResult r );

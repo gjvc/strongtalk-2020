@@ -82,7 +82,7 @@ public:
     tagged_ptr( const tagged_ptr &o ) : _ptr( o._ptr ) {}
 
 
-    ~tagged_ptr() = default;
+    virtual ~tagged_ptr() = default;
 
 
     tagged_ptr &operator=( const tagged_ptr &rhs ) {

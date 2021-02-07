@@ -21,8 +21,9 @@ private:
 public:
     TempDecoder() :
         _num_of_params{ 0 } {
-
     }
+
+    virtual ~TempDecoder() {}
 
 
     virtual void decode( MethodOop method, std::int32_t byteCodeIndex = 0 );

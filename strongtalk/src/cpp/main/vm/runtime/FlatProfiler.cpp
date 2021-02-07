@@ -375,7 +375,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
 
 void fprofiler_init() {
-    spdlog::info( "%system-init:  fprofiler_init" );
+    spdlog::info( "system-init:  fprofiler_init" );
 
     FlatProfiler::allocate_table();
 }

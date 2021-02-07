@@ -99,12 +99,14 @@ protected:
             remember();
     }
 
+
     // relocation info length (bytes)
     std::int32_t _locsLen;
 
 public:
 
-    OopNativeCode() :_locsLen{0} {}
+    OopNativeCode() : _locsLen{ 0 } {}
+
 
     RelocationInformation *locs() const {
         return (RelocationInformation *) instructionsEnd();

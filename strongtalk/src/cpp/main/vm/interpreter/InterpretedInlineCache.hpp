@@ -171,6 +171,13 @@ private:
 
 public:
     InterpretedInlineCacheIterator( InterpretedInlineCache *ic );
+    InterpretedInlineCacheIterator() = default;
+    virtual ~InterpretedInlineCacheIterator() = default;
+    InterpretedInlineCacheIterator( const InterpretedInlineCacheIterator & ) = default;
+    InterpretedInlineCacheIterator &operator=( const InterpretedInlineCacheIterator & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     // InlineCache information

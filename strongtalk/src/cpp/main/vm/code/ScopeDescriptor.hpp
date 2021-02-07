@@ -49,6 +49,7 @@ public:
         static_cast<void>(pc); // unused
     }
 
+
     virtual ~NameDescriptorClosure() = default;
 };
 
@@ -112,8 +113,9 @@ protected:
     virtual ~ScopeDescriptor() = default;
     ScopeDescriptor( const ScopeDescriptor & ) = default;
     ScopeDescriptor &operator=( const ScopeDescriptor & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
 
+
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
 protected:
@@ -322,7 +324,9 @@ public:
     virtual ~MethodScopeDescriptor() = default;
     MethodScopeDescriptor( const MethodScopeDescriptor & ) = default;
     MethodScopeDescriptor &operator=( const MethodScopeDescriptor & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool s_equivalent( ScopeDescriptor *s ) const;
@@ -412,7 +416,9 @@ public:
     virtual ~TopLevelBlockScopeDescriptor() = default;
     TopLevelBlockScopeDescriptor( const TopLevelBlockScopeDescriptor & ) = default;
     TopLevelBlockScopeDescriptor &operator=( const TopLevelBlockScopeDescriptor & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
+
+
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
     // type test operations
@@ -469,8 +475,9 @@ public:
     virtual ~NonInlinedBlockScopeDescriptor() = default;
     NonInlinedBlockScopeDescriptor( const NonInlinedBlockScopeDescriptor & ) = default;
     NonInlinedBlockScopeDescriptor &operator=( const NonInlinedBlockScopeDescriptor & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     MethodOop method() const {

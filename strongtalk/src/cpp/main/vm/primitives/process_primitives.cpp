@@ -59,7 +59,7 @@ PRIM_DECL_0( processOopPrimitives::yield ) {
 
 class PrintFrameClosure : public FrameClosure {
 
-    ~PrintFrameClosure() = default;
+    virtual ~PrintFrameClosure() = default;
 
 
     void operator delete( void *p ) {}

@@ -32,7 +32,7 @@ public:
     LogicalAddress &operator=( const LogicalAddress & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     NameNode *physical_address() const {

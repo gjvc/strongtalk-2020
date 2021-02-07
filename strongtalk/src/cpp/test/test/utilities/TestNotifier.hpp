@@ -23,7 +23,7 @@ private:
     GrowableArray<char *> *compilerWarnings;
 
 public:
-    TestNotifier() {
+    TestNotifier() : errors{ nullptr }, warnings{ nullptr }, compilerWarnings{ nullptr } {
         errors           = new GrowableArray<char *>;
         warnings         = new GrowableArray<char *>;
         compilerWarnings = new GrowableArray<char *>;

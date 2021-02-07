@@ -25,7 +25,6 @@ public:
     MemOopKlass( const MemOopKlass & ) = default;
     MemOopKlass &operator=( const MemOopKlass & ) = default;
 
-
     void operator delete( void *MemOopKlass ) { static_cast<void *>(MemOopKlass); }
 
 

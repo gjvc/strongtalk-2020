@@ -100,8 +100,11 @@ public:
 
 public:
     JumpTable();
+    virtual ~JumpTable();
+    JumpTable( const JumpTable & ) = default;
+    JumpTable &operator=( const JumpTable & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
 
-    ~JumpTable();
 
     void init();
 

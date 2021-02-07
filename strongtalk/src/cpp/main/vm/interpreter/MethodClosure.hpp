@@ -58,7 +58,7 @@ protected:
 public:
 
     MethodClosure();
-    ~MethodClosure() = default;
+    virtual ~MethodClosure() = default;
     static void operator delete( void * ) {}
 
 
@@ -212,7 +212,7 @@ class CustomizedMethodClosure : public MethodClosure {
 public:
 
     CustomizedMethodClosure() = default;
-    ~CustomizedMethodClosure() = default;
+    virtual ~CustomizedMethodClosure() = default;
     static void operator delete( void * ) {}
 
     // virtuals from MethodClosure
@@ -241,7 +241,7 @@ class SpecializedMethodClosure : public CustomizedMethodClosure {
 public:
 
     SpecializedMethodClosure() = default;
-    ~SpecializedMethodClosure() = default;
+    virtual ~SpecializedMethodClosure() = default;
     static void operator delete( void * ) {}
 
     virtual void if_node( IfNode *node );

@@ -45,12 +45,13 @@ public:
         size{ 0 } {
     }
 
+
     virtual ~HeapChunk() = default;
     HeapChunk( const HeapChunk & ) = default;
     HeapChunk &operator=( const HeapChunk & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
 
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     HeapChunk *next() const {
@@ -279,7 +280,9 @@ public:
     virtual ~ZoneHeap();
     ZoneHeap( const ZoneHeap & ) = default;
     ZoneHeap &operator=( const ZoneHeap & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     // Initializes the Heap

@@ -158,8 +158,9 @@ public:
     virtual ~RelocationInformationIterator() = default;
     RelocationInformationIterator( const RelocationInformationIterator & ) = default;
     RelocationInformationIterator &operator=( const RelocationInformationIterator & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool next() {

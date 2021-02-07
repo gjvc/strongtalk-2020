@@ -34,7 +34,7 @@ BasicBlockIterator *last_bbIterator;
 
 
 void compiler_init() {
-    spdlog::info( "%system-init:  compiler_init" );
+    spdlog::info( "system-init:  compiler_init" );
 
     CompilerDebug = true;
 }

@@ -105,6 +105,12 @@ protected:
 
 public:
     CodeTable( std::int32_t size );
+    CodeTable() = default;
+    virtual ~CodeTable() = default;
+    CodeTable( const CodeTable & ) = default;
+    CodeTable &operator=( const CodeTable & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void clear();
 

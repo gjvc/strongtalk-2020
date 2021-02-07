@@ -74,7 +74,7 @@ void CostModel::print() {
 
 
 void costModel_init() {
-    spdlog::info( "%system-init:  costModel_init" );
+    spdlog::info( "system-init:  costModel_init" );
 
     CostModel::set_default_costs();
 }

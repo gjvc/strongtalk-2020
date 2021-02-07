@@ -32,6 +32,13 @@ public:
 
     CodeBuffer( std::int32_t instsSize, std::int32_t locsSize );
 
+    virtual ~CodeBuffer() = default;
+    CodeBuffer( const CodeBuffer & ) = default;
+    CodeBuffer &operator=( const CodeBuffer & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
+
+
 
     const char *code_begin() const {
         return _codeStart;

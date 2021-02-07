@@ -150,6 +150,8 @@ public:
 
     }
 
+    virtual ~CodeSweeper() {}
+
 
     std::int32_t interval() const;
 };

@@ -46,7 +46,7 @@ public:
     RecompilerFrame &operator=( const RecompilerFrame & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     static RecompilerFrame *new_RFrame( Frame frame, const RecompilerFrame *callee );
@@ -169,7 +169,7 @@ public:
     CompiledRecompilerFrame &operator=( const CompiledRecompilerFrame & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool is_compiled() const {
@@ -222,7 +222,9 @@ public:
     virtual ~InterpretedRecompilerFrame() = default;
     InterpretedRecompilerFrame( const InterpretedRecompilerFrame & ) = default;
     InterpretedRecompilerFrame &operator=( const InterpretedRecompilerFrame & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool is_interpreted() const {

@@ -54,8 +54,10 @@ public:
         return ( _highBoundary - _lowBoundary ) / card_size;
     }
 
-
     RememberedSet();
+    RememberedSet( const RememberedSet & ) = default;
+    RememberedSet &operator=( const RememberedSet & ) = default;
+
 
     void *operator new( std::size_t size );
 

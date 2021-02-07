@@ -33,7 +33,7 @@ public:
     }
 
 
-    ~VM_Operation() = default;
+    virtual ~VM_Operation() = default;
 
     void operator delete( void *p ) {}
 

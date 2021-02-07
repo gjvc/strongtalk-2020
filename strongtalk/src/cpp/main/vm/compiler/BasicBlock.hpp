@@ -33,6 +33,14 @@ public:
     }
 
 
+    virtual ~BasicBlockDefinitionAndUsageTable() = default;
+    BasicBlockDefinitionAndUsageTable( const BasicBlockDefinitionAndUsageTable & ) = default;
+    BasicBlockDefinitionAndUsageTable &operator=( const BasicBlockDefinitionAndUsageTable & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void print_short() {
         spdlog::info( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void *>( this ) );
     }

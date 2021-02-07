@@ -608,7 +608,7 @@ void Universe::cleanup_all_inline_caches() {
 
 
 void universe_init() {
-    spdlog::info( "%system-init:  universe_init" );
+    spdlog::info( "system-init:  universe_init" );
 
     Universe::genesis();
 }

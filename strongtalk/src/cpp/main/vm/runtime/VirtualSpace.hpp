@@ -57,10 +57,13 @@ public:
     VirtualSpace( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high = true );
 
     VirtualSpace();
+    VirtualSpace( const VirtualSpace & ) = default;
+    VirtualSpace &operator=( const VirtualSpace & ) = default;
+
 
     void initialize( ReservedSpace reserved, std::int32_t committed_size, bool low_to_high = true );
 
-    ~VirtualSpace();
+    virtual ~VirtualSpace();
 
     // testers
     std::int32_t committed_size() const;

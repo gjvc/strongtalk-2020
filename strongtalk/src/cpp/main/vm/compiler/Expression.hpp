@@ -381,7 +381,8 @@ protected:
     InlinedScope *_blockScope;        // block's parent scope
 public:
     BlockExpression( BlockPseudoRegister *p, Node *n );
-    BlockExpression(const BlockExpression&) = default;
+    BlockExpression( const BlockExpression & ) = default;
+
 
     bool isBlockExpression() const {
         return true;
@@ -507,6 +508,8 @@ public:
     MergeExpression( Expression *e1, Expression *e2, PseudoRegister *p, Node *n );
 
     MergeExpression( PseudoRegister *p, Node *n );
+    MergeExpression( const MergeExpression & ) = default;
+
     // A MergeExpression's PseudoRegister says where the merged result is (i.e., it may be different from
     // the PseudoRegisters of the individual expressions); typically, there's an assigmnent from the
     // subexpression's PseudoRegister to the MergeExpression's PseudoRegister just before the control flow merge.

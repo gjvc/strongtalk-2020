@@ -47,7 +47,7 @@ protected:
 
 
     BaseHandle() = default;
-    virtual ~BaseHandle() =default;
+    virtual ~BaseHandle() = default;
     BaseHandle( const BaseHandle & ) = default;
     BaseHandle &operator=( const BaseHandle & ) = default;
 

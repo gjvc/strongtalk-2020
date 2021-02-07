@@ -34,7 +34,7 @@ public:
     NameNode &operator=( const NameNode & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool genHeaderByte( ScopeDescriptorRecorder *rec, std::uint8_t code, bool is_last, std::int32_t index );
@@ -80,7 +80,7 @@ public:
     LocationName &operator=( const LocationName & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool hasLocation() {
@@ -115,7 +115,7 @@ public:
     ValueName &operator=( const ValueName & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 };
@@ -143,7 +143,7 @@ public:
     BlockValueName &operator=( const BlockValueName & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 };
@@ -179,7 +179,7 @@ public:
     MemoizedName &operator=( const MemoizedName & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool hasLocation() {

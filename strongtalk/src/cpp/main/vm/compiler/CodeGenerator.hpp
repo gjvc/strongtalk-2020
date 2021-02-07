@@ -138,6 +138,11 @@ private:
 
 public:
     CodeGenerator( MacroAssembler *masm, PseudoRegisterMapping *mapping );
+    CodeGenerator() = default;
+    virtual ~CodeGenerator() = default;
+    CodeGenerator( const CodeGenerator & ) = default;
+    CodeGenerator &operator=( const CodeGenerator & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
 
 
     Assembler *assembler() const {

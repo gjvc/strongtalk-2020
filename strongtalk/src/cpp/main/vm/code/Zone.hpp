@@ -86,6 +86,11 @@ protected:
 public:
     Zone( std::int32_t &size );
 
+    Zone() = default;
+    virtual ~Zone() = default;
+    Zone( const Zone & ) = default;
+    Zone &operator=( const Zone & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
 
     void *operator new( std::size_t size ) {
         return AllocateHeap( size, "NativeMethod zone header" );

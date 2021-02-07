@@ -334,7 +334,7 @@ MethodSweeper *methodSweeper;
 
 
 void sweeper_init() {
-    spdlog::info( "%system-init:  sweeper_init" );
+    spdlog::info( "system-init:  sweeper_init" );
 
     Sweeper::add( new HeapSweeper() );
     Sweeper::add( new ZoneSweeper() );

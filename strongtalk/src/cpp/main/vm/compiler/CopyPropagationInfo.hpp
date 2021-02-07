@@ -34,6 +34,13 @@ public:
 
 protected:
     CopyPropagationInfo( NonTrivialNode *def );
+    CopyPropagationInfo() = default;
+    virtual ~CopyPropagationInfo() = default;
+    CopyPropagationInfo( const CopyPropagationInfo & ) = default;
+    CopyPropagationInfo &operator=( const CopyPropagationInfo & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
     friend CopyPropagationInfo *new_CPInfo( NonTrivialNode *def );
 };

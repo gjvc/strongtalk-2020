@@ -483,6 +483,12 @@ public:
         smi_type->append( smiKlassObject );
     }
 
+    UntagClosure() = default;
+    virtual ~UntagClosure() = default;
+    UntagClosure( const UntagClosure & ) = default;
+    UntagClosure &operator=( const UntagClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void do_it( Usage *u ) {
         if ( theLoop->isInLoop( u->_node ) ) {
@@ -702,8 +708,13 @@ public:
         theLoopPseudoRegister{ r },
         theArrayList{ arrays } {
     }
-    void operator delete( void *p ) {}
 
+    BoundsCheckRemover() = default;
+    virtual ~BoundsCheckRemover() = default;
+    BoundsCheckRemover( const BoundsCheckRemover & ) = default;
+    BoundsCheckRemover &operator=( const BoundsCheckRemover & ) = default;
+    void operator delete( void *ptr ) { (void) ptr; }
+    
 
     void do_it( Usage *u ) {
         if ( theLoop->isInLoop( u->_node ) and

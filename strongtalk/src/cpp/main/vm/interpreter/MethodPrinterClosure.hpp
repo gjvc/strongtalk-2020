@@ -33,6 +33,7 @@ private:
 
 public:
     MethodPrinterClosure( ConsoleOutputStream *stream = nullptr );
+    virtual ~MethodPrinterClosure() = default;
 
     void if_node( IfNode *node );
 

@@ -35,8 +35,11 @@ public:
     static bool stepping;
 
     DeltaProcess( Oop receiver, SymbolOop selector, bool createThread = true );
-
+    DeltaProcess() = default;
     virtual ~DeltaProcess();
+    DeltaProcess( const DeltaProcess & ) = default;
+    DeltaProcess &operator=( const DeltaProcess & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     void setIsCallback( bool isCallback );
 

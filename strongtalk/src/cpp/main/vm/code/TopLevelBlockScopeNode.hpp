@@ -11,27 +11,36 @@
 #include "vm/code/ScopeDescriptor.hpp"
 
 
-class TopLevelBlockScopeNode: public ScopeDescriptorNode {
+class TopLevelBlockScopeNode : public ScopeDescriptorNode {
+
 public:
-    LogicalAddress* receiver_location;
-    KlassOop        receiver_klass;
+    LogicalAddress *_receiverLocation;
+    KlassOop       _receiverKlass;
 
-    std::uint8_t code() { return TOP_LEVEL_BLOCK_CODE; }
 
-    TopLevelBlockScopeNode(MethodOop  method, LogicalAddress* receiver_location, KlassOop receiver_klass, bool allocates_compiled_context)
-        : ScopeDescriptorNode(method, allocates_compiled_context, false, 0, NULL, true) {
-        this->receiver_location = receiver_location;
-        this->receiver_klass    = receiver_klass;
+    std::uint8_t code() {
+        return TOP_LEVEL_BLOCK_CODE;
     }
 
-    void generate(ScopeDescriptorRecorder* rec, int senderScopeOffset, bool bigHeader) {
-        ScopeDescriptorNode::generate(rec, senderScopeOffset, bigHeader);
-        receiver_location->generate(rec);
-        rec->genOop(receiver_klass);
+
+public:
+
+    TopLevelBlockScopeNode( MethodOop method, LogicalAddress *receiver_location, KlassOop receiver_klass, bool allocates_compiled_context ) :
+        ScopeDescriptorNode( method, allocates_compiled_context, false, 0, 0, true ),
+        _receiverLocation{ receiver_location },
+        _receiverKlass{ receiver_klass } {
     }
 
-    void verify(ScopeDescriptor* sd) {
-        ScopeDescriptorNode::verify(sd);
-        if (!sd->isTopLevelBlockScope()) st_fatal("TopLevelBlockScope expected");
+
+    void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
+        ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
+        _receiverLocation->generate( rec );
+        rec->genOop( _receiverKlass );
+    }
+
+
+    void verify( ScopeDescriptor *sd ) {
+        ScopeDescriptorNode::verify( sd );
+        if ( not sd->isTopLevelBlockScope() ) st_fatal( "TopLevelBlockScope expected" );
     }
 };

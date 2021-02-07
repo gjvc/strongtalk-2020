@@ -16,7 +16,7 @@ class AbstractMethodIntervalFactory : StackAllocatedObject {
 
 public:
     AbstractMethodIntervalFactory() = default;
-    ~AbstractMethodIntervalFactory() = default;
+    virtual ~AbstractMethodIntervalFactory() = default;
 
 
     void operator delete( void *ptr ) {}
@@ -48,7 +48,7 @@ class MethodIntervalFactory : public AbstractMethodIntervalFactory {
 
 public:
     MethodIntervalFactory() = default;
-    ~MethodIntervalFactory() = default;
+    virtual ~MethodIntervalFactory() = default;
 
 
     void operator delete( void *ptr ) {}

@@ -14,10 +14,8 @@
 //
 // A VirtualFrame is a virtual stack frame representing a source-level activation.
 // A DeltaVirtualFrame represents an activation of a Delta level method.
-//
-// A single frame may hold several source level activations in the case of
-// optimized code. The debugging stored with the optimized code enables
-// us to unfold a frame as a stack of vframes.
+// A single frame may hold several source level activations in the case of optimized code.
+// The debugging stored with the optimized code enables us to unfold a frame as a stack of VirtualFrame.
 //
 // A cVFrame represents an activation of a non-Delta method.
 //
@@ -27,7 +25,7 @@
 //   - DeltaVirtualFrame
 //     - InterpretedVirtualFrame
 //     - CompiledVirtualFrame
-//     - DeoptimizedVirtualFrame  ; special DeltaVirtualFrame for deoptimized off stack VFrames
+//     - DeoptimizedVirtualFrame  ; special DeltaVirtualFrame for deoptimized off-stack VFrames
 //
 //   - cVFrame
 //     - cChunk             ; special frame created when entering Delta from C
@@ -288,6 +286,13 @@ public:
     static CompiledVirtualFrame *new_vframe( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
 
     CompiledVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
+    CompiledVirtualFrame() = default;
+    virtual ~CompiledVirtualFrame() = default;
+    CompiledVirtualFrame( const CompiledVirtualFrame & ) = default;
+    CompiledVirtualFrame &operator=( const CompiledVirtualFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
     // Returns the active NativeMethod
     NativeMethod *code() const;
@@ -378,7 +383,11 @@ public:
     DeferredExpression( CompiledVirtualFrame const *const aframe, NameDescriptor *expression ) :
         _frame( aframe ), expression( expression ) {
     }
-
+    DeferredExpression() = default;
+    virtual ~DeferredExpression() = default;
+    DeferredExpression( const DeferredExpression & ) = default;
+    DeferredExpression &operator=( const DeferredExpression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     Oop value() {
         return CompiledVirtualFrame::resolve_name( expression, _frame );
@@ -389,6 +398,12 @@ public:
 class CompiledMethodVirtualFrame : public CompiledVirtualFrame {
 public:
     CompiledMethodVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
+    CompiledMethodVirtualFrame() = default;
+    virtual ~CompiledMethodVirtualFrame() = default;
+    CompiledMethodVirtualFrame( const CompiledMethodVirtualFrame & ) = default;
+    CompiledMethodVirtualFrame &operator=( const CompiledMethodVirtualFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 public:
     // Virtuals defined in VirtualFrame
@@ -416,6 +431,12 @@ public:
 class CompiledBlockVirtualFrame : public CompiledVirtualFrame {
 public:
     CompiledBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
+    CompiledBlockVirtualFrame() = default;
+    virtual ~CompiledBlockVirtualFrame() = default;
+    CompiledBlockVirtualFrame( const CompiledBlockVirtualFrame & ) = default;
+    CompiledBlockVirtualFrame &operator=( const CompiledBlockVirtualFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 public:
     // Virtuals defined in VirtualFrame
@@ -437,6 +458,12 @@ public:
 class CompiledTopLevelBlockVirtualFrame : public CompiledVirtualFrame {
 public:
     CompiledTopLevelBlockVirtualFrame( const Frame *fr, ScopeDescriptor *sd, std::int32_t byteCodeIndex );
+    CompiledTopLevelBlockVirtualFrame() = default;
+    virtual ~CompiledTopLevelBlockVirtualFrame() = default;
+    CompiledTopLevelBlockVirtualFrame( const CompiledTopLevelBlockVirtualFrame & ) = default;
+    CompiledTopLevelBlockVirtualFrame &operator=( const CompiledTopLevelBlockVirtualFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 public:
     // Virtuals defined in VirtualFrame
@@ -462,8 +489,13 @@ public:
 class DeoptimizedVirtualFrame : public DeltaVirtualFrame {
 
 public:
-    DeoptimizedVirtualFrame( const Frame *fr );
+    DeoptimizedVirtualFrame() = default;
+    virtual ~DeoptimizedVirtualFrame() = default;
+    DeoptimizedVirtualFrame( const DeoptimizedVirtualFrame & ) = default;
+    DeoptimizedVirtualFrame &operator=( const DeoptimizedVirtualFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
+    DeoptimizedVirtualFrame( const Frame *fr );
     DeoptimizedVirtualFrame( const Frame *fr, std::int32_t offset );
 
     // Returns the contextOop for this unoptimized frame. nullptr is returned is no context exists.
@@ -534,6 +566,14 @@ public:
 class cVFrame : public VirtualFrame {
 
 public:
+
+    cVFrame() = default;
+    virtual ~cVFrame() = default;
+    cVFrame( const cVFrame & ) = default;
+    cVFrame &operator=( const cVFrame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     cVFrame( const Frame *fr ) :
         VirtualFrame( fr ) {
     }
@@ -557,6 +597,12 @@ public:
     cChunk( const Frame *fr ) :
         cVFrame( fr ) {
     }
+    cChunk() = default;
+    virtual ~cChunk() = default;
+    cChunk( const cChunk & ) = default;
+    cChunk &operator=( const cChunk & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
 public:

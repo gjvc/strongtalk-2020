@@ -159,7 +159,7 @@ const char *GeneratedPrimitives::allocateBlock( std::int32_t n ) {
     if ( n == -1 )
         return (const char *) ::allocateBlock;        // convenience
     st_assert( 0 <= n and n <= 9, "index out of range" )
-    spdlog::info( "%primitive-generate:  GeneratedPrimitives::allocateBlock [{}]", n );
+    spdlog::info( "primitive-generate:  GeneratedPrimitives::allocateBlock [{}]", n );
 
     return _allocateBlock[ n ];
 }
@@ -324,14 +324,14 @@ Oop GeneratedPrimitives::smiOopPrimitives_remainder( Oop receiver, Oop argument 
 
 
 void generatedPrimitives_init_before_interpreter() {
-    spdlog::info( "%system-init:  generatedPrimitives_init_before_interpreter" );
+    spdlog::info( "system-init:  generatedPrimitives_init_before_interpreter" );
 
     GeneratedPrimitives::init();
 }
 
 
 void generatedPrimitives_init_after_interpreter() {
-    spdlog::info( "%system-init:  generatedPrimitives_init_after_interpreter" );
+    spdlog::info( "system-init:  generatedPrimitives_init_after_interpreter" );
 
     GeneratedPrimitives::patch_primitiveValue();
 }

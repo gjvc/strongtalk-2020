@@ -33,6 +33,11 @@ public:
     void clear();               // clears the cache
     static void clearAll();     // clears all DeltaCallCaches (called by GC, etc.)
 
+    virtual ~DeltaCallCache() = default;
+    DeltaCallCache( const DeltaCallCache & ) = default;
+    DeltaCallCache &operator=( const DeltaCallCache & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
 
     bool match( KlassOop klass, SymbolOop selector ) {
         return Oop( selector ) == _key.selector_or_method() and klass == _key.klass();

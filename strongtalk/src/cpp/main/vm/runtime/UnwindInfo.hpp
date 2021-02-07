@@ -38,8 +38,13 @@ private:
 
 public:
     UnwindInfo();
+    virtual ~UnwindInfo();
+    UnwindInfo( const UnwindInfo & ) = default;
+    UnwindInfo &operator=( const UnwindInfo & ) = default;
 
-    ~UnwindInfo();
+
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     UnwindInfo *next() const;
 

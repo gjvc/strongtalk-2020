@@ -615,7 +615,7 @@ void install_signal_handlers() {
 
 void os_init() {
 
-    spdlog::info( "%system-init:  os_init" );
+    spdlog::info( "system-init:  os_init" );
 
     ThreadCritical::intialize();
 

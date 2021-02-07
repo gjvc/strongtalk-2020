@@ -21,6 +21,10 @@ public:
         _point{ nullptr } {
     }
 
+    virtual ~NewWaterMark() = default;
+    NewWaterMark( const NewWaterMark & ) = default;
+    NewWaterMark &operator=( const NewWaterMark & ) = default;
+
 };
 
 
@@ -39,6 +43,12 @@ public:
         _point{ nullptr },
         _space{ nullptr } {
     }
+
+
+    virtual ~OldWaterMark() = default;
+    OldWaterMark( const OldWaterMark & ) = default;
+    OldWaterMark &operator=( const OldWaterMark & ) = default;
+
 };
 
 

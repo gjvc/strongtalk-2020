@@ -1014,6 +1014,14 @@ public:
         _result = new GrowableArray<Oop>( 20000 );
     }
 
+    AllObjectsClosure() = default;
+    virtual ~AllObjectsClosure() = default;
+    AllObjectsClosure( const AllObjectsClosure & ) = default;
+    AllObjectsClosure &operator=( const AllObjectsClosure & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
+
+
 
     std::int32_t       _limit;
     GrowableArray<Oop> *_result;

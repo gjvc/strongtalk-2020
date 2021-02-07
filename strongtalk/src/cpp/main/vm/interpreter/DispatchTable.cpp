@@ -200,7 +200,7 @@ void DispatchTable::intercept_for_return( std::int32_t *fr ) {
 
 
 void dispatchTable_init() {
-    spdlog::info( "%system-init:  dispatchTable_init" );
+    spdlog::info( "system-init:  dispatchTable_init" );
 
     DispatchTable::reset();
 }

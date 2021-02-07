@@ -48,8 +48,9 @@ public:
 
     virtual ~ResourceObject() {}
 
-    static void operator delete(void* ptr) {
-        (void)ptr;
+
+    static void operator delete( void *ptr ) {
+        (void) ptr;
     }
 
 };

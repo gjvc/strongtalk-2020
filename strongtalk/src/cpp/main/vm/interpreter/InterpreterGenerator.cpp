@@ -2161,7 +2161,7 @@ const char *Interpreter::_illegal = nullptr;
 
 
 void InterpreterGenerator::generate_error_handler_code() {
-    spdlog::info( "%interpreter-generate:  generate_error_handler_code" );
+    spdlog::info( "interpreter-generate:  generate_error_handler_code" );
 
     st_assert( not _boolean_expected.is_bound(), "code has been generated before" );
 
@@ -3420,7 +3420,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
 void InterpreterGenerator::info( const char *name ) {
 
-    spdlog::info( "%interpreter-generate [{}]", name );
+    spdlog::info( "interpreter-generate [{}]", name );
 
     if ( not PrintInterpreter ) {
         return;
@@ -3529,7 +3529,7 @@ static const char             *interpreter_code;
 
 
 void interpreter_init() {
-    spdlog::info( "%system-init:  interpreter_init" );
+    spdlog::info( "system-init:  interpreter_init" );
 
     interpreter_code = os::exec_memory( interpreter_size );
 
@@ -3538,7 +3538,7 @@ void interpreter_init() {
     const bool debug = true; // change this to switch between debug/optimized version
 
     InterpreterGenerator( code, debug ).generate_all();
-    spdlog::info( "%interpreter-size:  [{}]  [0x{0:x}] bytes", code->code_size(), code->code_size() );
+    spdlog::info( "interpreter-size:  [{}]  [0x{0:x}] bytes", code->code_size(), code->code_size() );
 
     Interpreter::init();
 }

@@ -82,9 +82,17 @@ public:
     Compiler( LookupKey *k, MethodOop m, CompiledInlineCache *ic = nullptr );   // normal entry point (method lookups)
     Compiler( BlockClosureOop blk, NonInlinedBlockScopeDescriptor *scope );     // for block methods
     Compiler( RecompilationScope *scope );                                      // for inlining database
-    ~Compiler() {
+    virtual ~Compiler() {
         finalize();
     }
+
+
+    Compiler() = default;
+    Compiler( const Compiler & ) = default;
+    Compiler &operator=( const Compiler & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     CodeBuffer *code() const;

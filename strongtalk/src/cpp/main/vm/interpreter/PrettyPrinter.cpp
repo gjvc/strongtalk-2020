@@ -1911,7 +1911,7 @@ public:
 
 
     MethodPrettyPrinter( scopeNode *scope );
-    ~MethodPrettyPrinter() = default;
+    virtual ~MethodPrettyPrinter() = default;
 
     // node call backs
     void if_node( IfNode *node );

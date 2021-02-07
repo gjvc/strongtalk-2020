@@ -72,9 +72,15 @@ public:
     }
 
 
-    ~Recompilation() {
+    virtual ~Recompilation() {
         theRecompilation = nullptr;
     }
+
+    Recompilation() = default;
+    Recompilation( const Recompilation & ) = default;
+    Recompilation &operator=( const Recompilation & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
 
 
     void doit();

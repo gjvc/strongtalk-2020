@@ -15,12 +15,12 @@ class AbstractResourceMark : StackAllocatedObject {
 private:
 public:
     AbstractResourceMark() = default;
-    virtual ~AbstractResourceMark() = default;
+    virtual ~AbstractResourceMark();
     AbstractResourceMark( const AbstractResourceMark & ) = default;
     AbstractResourceMark &operator=( const AbstractResourceMark & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)ptr; }
 
 
 };
@@ -35,15 +35,14 @@ class ResourceAreaChunk;
 class ResourceMark : StackAllocatedObject {
 public:
 
-
     ResourceMark();
     virtual ~ResourceMark();
-//    ResourceMark( const ResourceMark & ) = default;
-//    ResourceMark &operator=( const ResourceMark & ) = default;
-//
-//
-//    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
-//
+    ResourceMark( const ResourceMark & ) = default;
+    ResourceMark &operator=( const ResourceMark & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)ptr; }
+
 
 protected:
     static bool       _enabled;

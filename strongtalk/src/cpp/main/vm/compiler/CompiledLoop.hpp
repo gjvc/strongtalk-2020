@@ -30,6 +30,11 @@ public:
         _nuses{ 0 },
         _ndefs{ 0 } {
     }
+    LoopPseudoRegisterCandidate() = default;
+    virtual ~LoopPseudoRegisterCandidate() = default;
+    LoopPseudoRegisterCandidate( const LoopPseudoRegisterCandidate & ) = default;
+    LoopPseudoRegisterCandidate &operator=( const LoopPseudoRegisterCandidate & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     PseudoRegister *pseudoRegister() const {
@@ -98,6 +103,11 @@ private:
 
 public:
     CompiledLoop();
+    virtual ~CompiledLoop() = default;
+    CompiledLoop( const CompiledLoop & ) = default;
+    CompiledLoop &operator=( const CompiledLoop & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     // the routines below should be called with the appropriate nodes
     void set_startOfLoop( LoopHeaderNode *current );
@@ -179,6 +189,12 @@ public:
     bool                    _invalid;
 
     HoistedTypeTest( NonTrivialNode *node, PseudoRegister *testedPR, GrowableArray<KlassOop> *klasses );
+    HoistedTypeTest() = default;
+    virtual ~HoistedTypeTest() = default;
+    HoistedTypeTest( const HoistedTypeTest & ) = default;
+    HoistedTypeTest &operator=( const HoistedTypeTest & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void print();
 

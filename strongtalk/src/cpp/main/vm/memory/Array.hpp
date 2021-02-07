@@ -55,6 +55,12 @@ public:
 
 
     ByteArray( std::int32_t size );
+    ByteArray() = default;
+    virtual ~ByteArray() = default;
+    ByteArray( const ByteArray & ) = default;
+    ByteArray &operator=( const ByteArray & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
 
 
     void appendByte( std::uint8_t p ) {

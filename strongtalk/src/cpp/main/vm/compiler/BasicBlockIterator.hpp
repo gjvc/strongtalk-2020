@@ -39,6 +39,10 @@ public:
         exposedBlks{ nullptr } {
     }
 
+    virtual ~BasicBlockIterator() = default;
+    BasicBlockIterator( const BasicBlockIterator & ) = default;
+    BasicBlockIterator &operator=( const BasicBlockIterator & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
 
     void build( Node *first );          // build bbTable
 

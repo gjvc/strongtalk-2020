@@ -19,8 +19,12 @@ public:
     ReservedSpace( std::int32_t size );
 
     virtual ~ReservedSpace() = default;
-    
+
     auto operator<=>( const ReservedSpace & ) const = default;
+
+    ReservedSpace( const ReservedSpace & ) = default;
+
+    ReservedSpace &operator=( const ReservedSpace & ) = default;
 
 
     ReservedSpace( const char *base, std::int32_t size ) :

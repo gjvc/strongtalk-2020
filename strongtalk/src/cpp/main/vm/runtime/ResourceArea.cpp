@@ -62,7 +62,7 @@ ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChu
 //    spdlog::info( "%ResourceAreaChunk-used [0x{08:x}] ", resources.used() );
 //    spdlog::info( "%ResourceAreaChunk-size [0x{08:x}] ", size );
 
-    spdlog::info( "%ResourceAreaChunk: create size [{}], [{}] used out of [{}] ", size, resources.used(), resources.capacity() );
+    spdlog::info( "ResourceAreaChunk: create size [{}], [{}] used out of [{}] ", size, resources.used(), resources.capacity() );
 
     initialize( previous );
 }

@@ -17,6 +17,12 @@ class MacroAssembler : public Assembler {
 public:
     MacroAssembler( CodeBuffer *code );
 
+    auto operator<=>( const MacroAssembler & ) const = default;
+
+    MacroAssembler( const MacroAssembler & ) = default;
+
+    MacroAssembler &operator=( const MacroAssembler & ) = default;
+
     // Alignment
     void align( std::int32_t modulus );
 

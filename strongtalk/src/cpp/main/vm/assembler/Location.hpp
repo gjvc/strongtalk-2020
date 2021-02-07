@@ -262,6 +262,11 @@ protected:
 
 public:
     IntegerFreeList( std::int32_t size );
+    IntegerFreeList() = default;
+    virtual ~IntegerFreeList() = default;
+    IntegerFreeList( const IntegerFreeList & ) = default;
+    IntegerFreeList &operator=( const IntegerFreeList & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     std::int32_t allocate();        // returns a new integer, grows the list if necessary
     std::int32_t allocated();       // returns the number of allocated integers

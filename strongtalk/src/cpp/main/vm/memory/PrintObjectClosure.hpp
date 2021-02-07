@@ -19,7 +19,7 @@ private:
     ConsoleOutputStream *_stream;
 public:
     PrintObjectClosure( ConsoleOutputStream *stream = nullptr );
-    ~PrintObjectClosure() = default;
+    virtual ~PrintObjectClosure() = default;
     void operator delete( void *p ) {}
 
 

@@ -149,7 +149,14 @@ public:
     }
 
 
-    ~EventMarker() {
+
+    EventMarker() = default;
+    EventMarker( const EventMarker & ) = default;
+    EventMarker &operator=( const EventMarker & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
+
+    virtual ~EventMarker() {
         eventLog->_nestingDepth--;
         // optimization to make log less verbose; this isn't totally failproof but that's ok
         if ( here == eventLog->_next - 1 ) {

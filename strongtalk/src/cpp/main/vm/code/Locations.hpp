@@ -81,7 +81,9 @@ public:
     virtual ~Locations() = default;
     Locations( const Locations & ) = default;
     Locations &operator=( const Locations & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void extendTo( std::int32_t newValue );

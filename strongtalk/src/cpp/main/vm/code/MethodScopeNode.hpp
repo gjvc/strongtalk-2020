@@ -26,6 +26,12 @@ public:
         _receiverLocation{ receiver_location } {
     }
 
+    MethodScopeNode() = default;
+    virtual ~MethodScopeNode() = default;
+    MethodScopeNode( const MethodScopeNode & ) = default;
+    MethodScopeNode &operator=( const MethodScopeNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader );
 

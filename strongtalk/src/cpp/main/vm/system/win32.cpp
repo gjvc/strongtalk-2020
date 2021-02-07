@@ -643,7 +643,7 @@ void os_init_processor_affinity() {
     while ( not( processMask & processorId ) and processorId < processMask )
         processorId >>= 1;
 
-    spdlog::info( "%system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
+    spdlog::info( "system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
     if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) )
         spdlog::info( "error code: {}", GetLastError() );
 
@@ -683,7 +683,7 @@ int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
 
 
 void os_init() {
-    spdlog::info( "%os-init:  Win32" );
+    spdlog::info( "os-init:  Win32" );
 
     ThreadCritical::intialize();
     Thread::initialize();

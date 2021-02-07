@@ -17,11 +17,20 @@
 class AgeTable : public CHeapAllocatedObject {
 
 public:
+    AgeTable();
+    virtual ~AgeTable() = default;
+    auto operator<=>( const AgeTable & ) const = default;
+
+    AgeTable( const AgeTable & ) = default;
+
+    AgeTable &operator=( const AgeTable & ) = default;
+
 
     static constexpr std::int32_t table_size = MarkOopDescriptor::max_age + 1;
 
     std::array<std::int32_t, table_size> _sizes;
-    AgeTable();
+
+
 
 
     // operations

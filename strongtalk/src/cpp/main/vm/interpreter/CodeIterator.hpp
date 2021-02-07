@@ -36,6 +36,12 @@ public:
     CodeIterator( MethodOop method, std::int32_t startByteCodeIndex = 1 );
 
     CodeIterator( std::uint8_t *hp );
+    CodeIterator() = default;
+    virtual ~CodeIterator() = default;
+    CodeIterator( const CodeIterator & ) = default;
+    CodeIterator &operator=( const CodeIterator & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     // Advance to next instruction

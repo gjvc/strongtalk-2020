@@ -12,14 +12,11 @@
 #include "vm/lookup/CacheElement.hpp"
 
 
-CacheElement::CacheElement() :
-    _lookupKey{},
-    _filler{},
-    _lookupResult{} {
-}
-
 
 void CacheElement::verify() {
+
+    spdlog::info( "this [{:x}], &_lookupKey [{:x}], &_lookupResult [{:x}]", (std::int32_t) this, (std::int32_t) &_lookupKey, (std::int32_t) &_lookupResult );
+
     st_assert( sizeof( CacheElement ) == 16, "checking structure layout" );
     st_assert( (std::int32_t) &_lookupKey - (std::int32_t) this == 0, "checking structure layout" );
     st_assert( (std::int32_t) &_lookupResult - (std::int32_t) this == 8, "checking structure layout" );

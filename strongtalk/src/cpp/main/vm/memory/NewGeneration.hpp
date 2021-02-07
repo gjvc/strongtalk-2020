@@ -36,9 +36,15 @@ public:
 
     }
 
+
     auto operator<=>( const NewGeneration & ) const = default;
 
+    NewGeneration( const NewGeneration & ) = default;
+
+    NewGeneration &operator=( const NewGeneration & ) = default;
+
     virtual ~NewGeneration() = default;
+
 
     static void *operator new( std::size_t size ) {
         static_cast<void>(size); // unused

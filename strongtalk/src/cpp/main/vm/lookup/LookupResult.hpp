@@ -25,6 +25,12 @@ protected:
 
 public:
     LookupResult();
+//    virtual ~LookupResult() = default;
+//    LookupResult( const LookupResult & ) = default;
+//    LookupResult &operator=( const LookupResult & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     LookupResult( MethodOop method );

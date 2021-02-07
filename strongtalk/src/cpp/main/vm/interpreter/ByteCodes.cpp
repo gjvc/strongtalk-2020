@@ -1400,7 +1400,7 @@ static void generate_HTML_docu() {
 
 
 void bytecodes_init() {
-    spdlog::info( "%system-init:  bytecodes_init" );
+    spdlog::info( "system-init:  bytecodes_init" );
 
     ByteCodes::init();
 

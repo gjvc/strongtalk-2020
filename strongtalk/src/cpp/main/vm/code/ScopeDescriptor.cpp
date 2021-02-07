@@ -235,7 +235,7 @@ protected:
     IterationHelper &operator=( const IterationHelper & ) = default;
 
 
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
 public:
@@ -414,12 +414,15 @@ public:
         _indent{ indent },
         _pc0{ pc0 } {
     }
+
+
     PrintNameDescClosure() = default;
     virtual ~PrintNameDescClosure() = default;
     PrintNameDescClosure( const PrintNameDescClosure & ) = default;
     PrintNameDescClosure &operator=( const PrintNameDescClosure & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void arg( std::int32_t no, NameDescriptor *a, char *pc ) {

@@ -22,6 +22,7 @@ private:
 public:
     std::int32_t offset;
 
+
     NameDescriptor() :
         PrintableResourceObject(),
         offset{ 0 } {
@@ -199,6 +200,14 @@ struct MemoizedBlockNameDescriptor : public NameDescriptor {
         _blockMethod{ block_method },
         _parentScope{ parent_scope } {
     };
+
+    MemoizedBlockNameDescriptor() = default;
+    virtual ~MemoizedBlockNameDescriptor() = default;
+    MemoizedBlockNameDescriptor( const MemoizedBlockNameDescriptor & ) = default;
+    MemoizedBlockNameDescriptor &operator=( const MemoizedBlockNameDescriptor & ) = default;
+
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isMemoizedBlock() const {

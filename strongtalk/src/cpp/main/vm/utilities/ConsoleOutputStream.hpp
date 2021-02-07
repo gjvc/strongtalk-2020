@@ -27,6 +27,13 @@ protected:
 
 public:
     ConsoleOutputStream( std::int32_t width = 80 );
+    
+//    ConsoleOutputStream() = default;
+    virtual ~ConsoleOutputStream() = default;
+    ConsoleOutputStream( const ConsoleOutputStream & ) = default;
+    ConsoleOutputStream &operator=( const ConsoleOutputStream & ) = default;
+    void operator delete( void *ptr ) { (void)ptr; }
+
 
     void print( const char *format, ... );
 

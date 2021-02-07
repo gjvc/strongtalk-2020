@@ -97,12 +97,12 @@ bool Interpreter::has_timers() {
 
 void Interpreter::print_code_status() {
 
-    spdlog::info( "%interpreter-status-optimized[{}]", is_optimized() ? "yes" : "no" );
-    spdlog::info( "%interpreter-trace-bytecodes[{}]", can_trace_bytecodes() ? "yes" : "no" );
-    spdlog::info( "%interpreter-trace-sends[{}]", can_trace_sends() ? "yes" : "no" );
-    spdlog::info( "%interpreter-trace-assertions[{}]", has_assertions() ? "yes" : "no" );
-    spdlog::info( "%interpreter-trace-stack_checks[{}]", has_stack_checks() ? "yes" : "no" );
-    spdlog::info( "%interpreter-trace-timers[{}]", has_timers() ? "yes" : "no" );
+    spdlog::info( "interpreter-status-optimized[{}]", is_optimized() ? "yes" : "no" );
+    spdlog::info( "interpreter-trace-bytecodes[{}]", can_trace_bytecodes() ? "yes" : "no" );
+    spdlog::info( "interpreter-trace-sends[{}]", can_trace_sends() ? "yes" : "no" );
+    spdlog::info( "interpreter-trace-assertions[{}]", has_assertions() ? "yes" : "no" );
+    spdlog::info( "interpreter-trace-stack_checks[{}]", has_stack_checks() ? "yes" : "no" );
+    spdlog::info( "interpreter-trace-timers[{}]", has_timers() ? "yes" : "no" );
 
 }
 

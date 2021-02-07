@@ -55,6 +55,14 @@ protected:
 
 
 public:
+
+    GenericGrowableArray() = default;
+    auto operator<=>( const GenericGrowableArray & ) const = default;
+
+    GenericGrowableArray( const GenericGrowableArray & ) = default;
+
+    GenericGrowableArray &operator=( const GenericGrowableArray & ) = default;
+
     void clear();
 
     std::int32_t length() const;
@@ -103,6 +111,12 @@ public:
         _vector(),
         _array() {
     }
+
+    auto operator<=>( const GrowableArray & ) const = default;
+
+    GrowableArray( const GrowableArray & ) = default;
+
+    GrowableArray &operator=( const GrowableArray & ) = default;
 
 
     void append( const T elem ) {

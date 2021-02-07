@@ -21,6 +21,12 @@ protected:
 
 public:
     StringOutputStream( const int32_t initial_size = 1 * 1024 );
+    StringOutputStream() = default;
+    virtual ~StringOutputStream() = default;
+    StringOutputStream( const StringOutputStream & ) = default;
+    StringOutputStream &operator=( const StringOutputStream & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void put( char c );
 

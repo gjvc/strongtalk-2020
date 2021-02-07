@@ -87,6 +87,11 @@ public:
         _pc{ (const char *) sp[ -1 ] } {
     }
 
+    virtual ~Frame() = default;
+    Frame( const Frame & ) = default;
+    Frame &operator=( const Frame & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     Oop *sp() const {
         return _sp;

@@ -31,8 +31,9 @@ public:
     virtual ~IntervalInfo() = default;
     IntervalInfo( const IntervalInfo & ) = default;
     IntervalInfo &operator=( const IntervalInfo & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
 
+
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     MethodInterval *interval() const {

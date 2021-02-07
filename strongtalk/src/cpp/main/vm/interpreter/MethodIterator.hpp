@@ -52,6 +52,12 @@ public:
 
     MethodIterator( MethodInterval *interval, MethodClosure *blk, AbstractMethodIntervalFactory *f = &defaultFactory );
 
+    MethodIterator() = default;
+    virtual ~MethodIterator() = default;
+    MethodIterator( const MethodIterator & ) = default;
+    MethodIterator &operator=( const MethodIterator & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     MethodInterval *interval() const {
         return _interval;

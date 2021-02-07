@@ -53,14 +53,16 @@ void LookupCache::flush() {
 
 
 void LookupCache::flush( LookupKey *key ) {
-    // Flush the entry associated the the lookup key k
+    // Flush the entry associated the the lookup key
     std::int32_t primary_index   = hash_value( key ) % primary_cache_size;
     std::int32_t secondary_index = primary_index % secondary_cache_size;
 
+    // If we have a hit in the primary...
     if ( primary[ primary_index ]._lookupKey.equal( key ) ) {
-        // If we have a hit in the primary cache
-        // promoted the secondary entry
+        // promote the value in the secondary to the primary
         primary[ primary_index ] = secondary[ secondary_index ];
+
+        // clear the secondary
         secondary[ secondary_index ].clear();
         return;
     }

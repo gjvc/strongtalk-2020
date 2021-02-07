@@ -125,6 +125,7 @@ public:
 
     PseudoRegisterMapping &operator=( const PseudoRegisterMapping & ) = default;
 
+
     MacroAssembler *assembler() const {
         return _macroAssembler;
     }
@@ -249,17 +250,12 @@ public:
 
     PseudoRegisterLocker( PseudoRegister *r0, PseudoRegister *r1, PseudoRegister *r2 );
 
-
-    ~PseudoRegisterLocker() {
-        _top = _prev;
-    }
-
     PseudoRegisterLocker() = default;
-//    virtual ~PseudoRegisterLocker() {        _top = _prev;}
-//    PseudoRegisterLocker( const PseudoRegisterLocker & ) = default;
-//    PseudoRegisterLocker &operator=( const PseudoRegisterLocker & ) = default;
-//    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    virtual ~PseudoRegisterLocker() { _top = _prev; }
+    PseudoRegisterLocker( const PseudoRegisterLocker & ) = default;
+    PseudoRegisterLocker &operator=( const PseudoRegisterLocker & ) = default;
 
+    void operator delete( void *ptr ) { (void)ptr; }
 
 
     static bool locks( PseudoRegister *pseudoRegister );        // returns true if pseudoRegister is locked in any PseudoRegisterLocker instance
@@ -282,9 +278,13 @@ private:
 
 public:
     Temporary( PseudoRegisterMapping *mapping, Register hint = noreg );
-
     Temporary( PseudoRegisterMapping *mapping, PseudoRegister *pseudoRegister );    // keep a (modifiable) copy of the pseudoRegister value in temporary register
-    ~Temporary();
+    Temporary() = default;
+    virtual ~Temporary();
+    Temporary( const Temporary & ) = default;
+    Temporary &operator=( const Temporary & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     Register reg() const {
