@@ -262,7 +262,7 @@ void SymbolTable::verify() {
 
     for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
         if ( not buckets[ i ].verify( i ) ) {
-            spdlog::info( "\tof bucket %ld of symbol table", std::int32_t( i ) );
+            SPDLOG_INFO( "\tof bucket %ld of symbol table", std::int32_t( i ) );
         }
     }
 
@@ -388,37 +388,37 @@ void SymbolTable::print_histogram() {
         min_symbols = min( min_symbols, counter );
         max_symbols = max( max_symbols, counter );
     }
-    spdlog::info( "Symbol Table:" );
-    spdlog::info( "{:8s} {:5d}", "Total  ", total );
-    spdlog::info( "{:8s} {:5d}", "Minimum", min_symbols );
-    spdlog::info( "{:8s} {:5d}", "Maximum", max_symbols );
-    spdlog::info( "{:8s} {:2f}", "Average", ( (float) total / (float) symbol_table_size ) );
-    spdlog::info( "{:s}", "Histogram:" );
-    spdlog::info( "{:s} {:29s}", "Length", "Number chains that length" );
+    SPDLOG_INFO( "Symbol Table:" );
+    SPDLOG_INFO( "{:8s} {:5d}", "Total  ", total );
+    SPDLOG_INFO( "{:8s} {:5d}", "Minimum", min_symbols );
+    SPDLOG_INFO( "{:8s} {:5d}", "Maximum", max_symbols );
+    SPDLOG_INFO( "{:8s} {:2f}", "Average", ( (float) total / (float) symbol_table_size ) );
+    SPDLOG_INFO( "{:s}", "Histogram:" );
+    SPDLOG_INFO( "{:s} {:29s}", "Length", "Number chains that length" );
 
 
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            spdlog::info( "{:6d} {:10d}", i, results[ i ] );
+            SPDLOG_INFO( "{:6d} {:10d}", i, results[ i ] );
         }
     }
 
 
     std::int32_t line_length = 70;
-    spdlog::info( "{} {:30s}", " Length", "Number chains that length" );
+    SPDLOG_INFO( "{} {:30s}", " Length", "Number chains that length" );
     for ( std::int32_t i = 0; i < results_length; i++ ) {
         if ( results[ i ] > 0 ) {
-            spdlog::info( "{:4d}", i );
+            SPDLOG_INFO( "{:4d}", i );
             for ( j = 0; ( j < results[ i ] ) and ( j < line_length ); j++ ) {
-                spdlog::info( "{:1s}", "*" );
+                SPDLOG_INFO( "{:1s}", "*" );
             }
             if ( j == line_length ) {
-                spdlog::info( "{:1s}", "+" );
+                SPDLOG_INFO( "{:1s}", "+" );
             }
-            spdlog::info( "" );
+            SPDLOG_INFO( "" );
         }
     }
-    spdlog::info( " {} {:d}: {:d}", "Number chains longer than", results_length, out_of_range );
+    SPDLOG_INFO( " {} {:d}: {:d}", "Number chains longer than", results_length, out_of_range );
 }
 
 

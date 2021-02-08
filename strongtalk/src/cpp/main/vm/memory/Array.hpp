@@ -20,6 +20,11 @@ private:
 
 public:
     Array( std::int32_t size );
+    Array() = default;
+    virtual ~Array() = default;
+    Array( const Array & ) = default;
+    Array &operator=( const Array & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     std::int32_t length() {

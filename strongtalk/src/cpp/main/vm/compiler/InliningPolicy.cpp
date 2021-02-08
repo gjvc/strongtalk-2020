@@ -184,7 +184,7 @@ KlassOop RecompilerInliningPolicy::receiverKlass() const {
 
 const char *RecompilerInliningPolicy::shouldInline( RecompilerFrame *recompilerFrame ) {
 
-    // determine if recompilerFrame's method or NativeMethod should be inlined into its caller
+    // determine if _recompilerFrame's method or NativeMethod should be inlined into its caller
     // use compiled-code size if available, even for interpreted methods
     // (gives better info on how big method will become since it includes inlined methods)
     // return nullptr if ok, reason for not inlining otherwise (for performance debugging)

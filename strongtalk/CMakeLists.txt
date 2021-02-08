@@ -35,6 +35,7 @@ set ( compiler-family gnu )
 set ( compiler-version 10 )
 set ( runtime posix )
 set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
+set ( toolchain-name-debian-style ${compiler-family}/${arch}-${platform}/${compiler-version}-${runtime} ) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
 
 set ( cc-compiler /usr/bin/${arch}-${platform}-gcc-${runtime} ) # i686-w64-mingw32-gcc-posix
 set ( cxx-compiler /usr/bin/${arch}-${platform}-g++-${runtime} ) # i686-w64-mingw32-g++-posix
@@ -172,10 +173,10 @@ add_executable ( st20-main-binary ${st20-main-binary-sources} )
 set_target_properties ( st20-main-binary PROPERTIES OUTPUT_NAME st20-main )
 
 target_link_directories ( st20-main-binary PUBLIC ${spdlog-object-dir} )
-target_link_options ( st20-main-binary PUBLIC     -static-libgcc  -static-libstdc++ )
+target_link_options ( st20-main-binary PUBLIC -static -static-libgcc -static-libstdc++ )
 target_link_libraries ( st20-main-binary PUBLIC st20-main-library-static spdlog )
-add_compile_definitions ( st20-main-binary PRIVATE GIT_CURRENT_BRANCH=${GIT_CURRENT_BRANCH} )
-add_compile_definitions ( st20-main-binary PRIVATE GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
+add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_BRANCH=${GIT_CURRENT_BRANCH} )
+add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
 
 
 # test ------------------------------------------------------------------------

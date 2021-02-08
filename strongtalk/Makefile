@@ -52,7 +52,6 @@ wine-windows-version    := win95
 wine-winedbg            := /usr/bin/winedbg
 wine-wineserver         := /usr/bin/wineserver
 wine-winetricks         := /usr/bin/winetricks
-
 export WINEARCH=win32
 
 
@@ -67,6 +66,7 @@ compiler-family     := gnu
 compiler-version    := 10
 runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
+# toolchain-name-debian-style  := $(compiler-family)/$(machine)-$(platform)/$(compiler-version)-$(runtime) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
 
 ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
 ar-flags            := Dcrs
@@ -110,9 +110,9 @@ ifeq ($(compiler-family),llvm)
 cmake-system-name   := Linux
 endif
 
-cmake-program           := /usr/bin/cmake
+cmake  := /usr/bin/cmake
 cmake-generator-name    := Ninja
-ninja-program           := /usr/bin/ninja
+ninja  := /usr/bin/ninja
 
 
 # object files ----------------------------------------------------------------
@@ -201,10 +201,10 @@ cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 cxx-machine-options         := arch=native
 cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
-cxx-no-warning-options      := 
+cxx-no-warning-options      := reorder
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
-cxx-optimisation-options    := 3
+cxx-optimisation-options    := 0
 cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 
 cxx-other-options           := 
@@ -302,7 +302,7 @@ st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 default : st20-main-exe st20-test-exe
 
 cmake-build : 
-	$(cmake-program) \
+	$(cmake) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
@@ -311,7 +311,7 @@ cmake-build :
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
         -S $(ROOT) \
         -B $(object-root-cmake)
-	@$(ninja-program) -k 0 -C $(object-root-cmake)
+	@$(ninja) -C $(object-root-cmake) -k 0 
 
 run-clang-tidy :
 	$(run-clang-tidy-py) -p $(object-root) 
@@ -356,14 +356,15 @@ settings :
 	@echo ""
 	@echo "ar                      $(ar)"
 	@echo "cc-compiler             $(cc-compiler)"
+	@echo "cmake                   $(cmake)"
 	@echo "cmake-generator-name    $(cmake-generator-name)"
-	@echo "cmake-program           $(cmake-program)"
 	@echo "cmake-system-name       $(cmake-system-name)"
 	@echo "compiler-family         $(compiler-family)"
 	@echo "compiler-version        $(compiler-version)"
 	@echo "cxx-compiler            $(cxx-compiler)"
 	@echo "git-current-branch      $(git-current-branch)"
 	@echo "git-current-revision    $(git-current-revision)"
+	@echo "ninja                   $(ninja)"
 	@echo "object-root-cmake       $(object-root-cmake)"
 	@echo "runtime                 $(runtime)"
 	@echo "toolchain-name          $(toolchain-name)"
@@ -521,7 +522,7 @@ $(fmt-root-dir) :
 	git clone $(fmt-git-url) $(fmt-root-dir)
 
 fmt : $(fmt-root-dir)
-	$(cmake-program) \
+	$(cmake) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
@@ -530,7 +531,7 @@ fmt : $(fmt-root-dir)
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
         -S $(fmt-root-dir) \
         -B $(fmt-object-dir)
-	$(ninja-program) -C $(fmt-object-dir)
+	$(ninja) -C $(fmt-object-dir)
 
 
 # spdlog ----------------------------------------------------------------------
@@ -539,7 +540,7 @@ $(spdlog-root-dir) :
 	git clone $(spdlog-git-url) $(spdlog-root-dir)
 
 spdlog : $(spdlog-root-dir)
-	$(cmake-program) \
+	$(cmake) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
@@ -548,7 +549,7 @@ spdlog : $(spdlog-root-dir)
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
         -S $(spdlog-root-dir) \
         -B $(spdlog-object-dir)
-	$(ninja-program) -C $(spdlog-object-dir)
+	$(ninja) -C $(spdlog-object-dir)
 
 
 # googletest ------------------------------------------------------------------
@@ -557,7 +558,7 @@ $(googletest-root-dir) :
 	git clone $(googletest-git-url) $(googletest-root-dir)
 
 googletest : $(googletest-root-dir)
-	$(cmake-program) \
+	$(cmake) \
         -G $(cmake-generator-name) \
         -D CMAKE_C_COMPILER=$(cc-compiler) \
         -D CMAKE_C_COMPILER_LAUNCHER=$(ccache) \
@@ -566,7 +567,7 @@ googletest : $(googletest-root-dir)
         -D CMAKE_SYSTEM_NAME=$(cmake-system-name) \
         -S $(googletest-root-dir) \
         -B $(googletest-object-dir)
-	$(ninja-program) -C $(googletest-object-dir)
+	$(ninja) -C $(googletest-object-dir)
 
 
 # nasm ------------------------------------------------------------------------
@@ -584,4 +585,3 @@ nasm : $(nasm-root-dir)
 	install --verbose $(nasm-root-dir)/include/* 	-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/x86/* 		-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
-

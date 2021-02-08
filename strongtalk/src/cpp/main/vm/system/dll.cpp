@@ -31,7 +31,7 @@ void Interpreted_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     funct_name()->print_value();
-    spdlog::info( " (0x{0:x}, %s, interpreted)", reinterpret_cast<void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
+    SPDLOG_INFO( " (0x{0:x}, %s, interpreted)", reinterpret_cast<void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
@@ -65,7 +65,7 @@ void Compiled_DLLCache::print() {
     dll_name()->print_value();
     _console->print( "::" );
     function_name()->print_value();
-    spdlog::info( " (0x{0:x}, %s, compiled)", reinterpret_cast<const void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
+    SPDLOG_INFO( " (0x{0:x}, %s, compiled)", reinterpret_cast<const void *>(entry_point()), async() ? "asynchronous" : "synchronous" );
 }
 
 
@@ -108,12 +108,12 @@ dll_func_ptr_t DLLs::lookup( SymbolOop dll_name, SymbolOop function_name ) {
     dll_func_ptr_t result = lookup_fail( dll_name, function_name );
     if ( result ) {
         if ( TraceDLLLookup ) {
-            spdlog::info( "address [0x%lx], DLL name[{}], function name[{}]", reinterpret_cast<void *>(result), dll_name->print_value_string(), function_name->print_value_string() );
+            SPDLOG_INFO( "address [0x%lx], DLL name[{}], function name[{}]", reinterpret_cast<void *>(result), dll_name->print_value_string(), function_name->print_value_string() );
         }
         return result;
     } else {
         if ( TraceDLLLookup ) {
-            spdlog::info( "could not find function name[{}] in DLL name[{}]", function_name->print_value_string(), dll_name->print_value_string() );
+            SPDLOG_INFO( "could not find function name[{}] in DLL name[{}]", function_name->print_value_string(), dll_name->print_value_string() );
         }
     }
 

@@ -51,7 +51,7 @@ protected:
                 if ( TraceApplyChange ) {
                     _console->print( "map " );
                     name->print_symbol_on( _console );
-                    spdlog::info( " {} -> {}", old_index + old_header_size, new_index );
+                    SPDLOG_INFO( " {} -> {}", old_index + old_header_size, new_index );
                 }
                 // We found a match between a old and new class
                 _mapping->push( old_index + old_header_size );
@@ -68,6 +68,14 @@ public:
         _mapping{ nullptr } {
         compute_mapping();
     }
+
+
+    memConverter() = default;
+    virtual ~memConverter() = default;
+    memConverter( const memConverter & ) = default;
+    memConverter &operator=( const memConverter & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     MemOop convert( MemOop src ) {

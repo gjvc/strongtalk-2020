@@ -103,6 +103,6 @@ void CodeBuffer::copyTo( NativeMethod *nm ) {
 
 
 void CodeBuffer::print() {
-    spdlog::info( "CodeBuffer: Code  [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", _codeStart, _codeEnd, _codeOverflow );
-    spdlog::info( "CodeBuffer: Reloc [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", static_cast<const void *>(_locsStart), static_cast<const void *>(_locsEnd), static_cast<const void *>(_locsOverflow) );
+    SPDLOG_INFO( "CodeBuffer: Code  [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", _codeStart, _codeEnd, _codeOverflow );
+    SPDLOG_INFO( "CodeBuffer: Reloc [0x{0:x} <- used -> 0x{0:x}[ <- free -> 0x{0:x}[", static_cast<const void *>(_locsStart), static_cast<const void *>(_locsEnd), static_cast<const void *>(_locsOverflow) );
 }

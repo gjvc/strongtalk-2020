@@ -264,7 +264,7 @@ static std::int32_t compare_nodes( const void *p1, const void *p2 ) {
 
 void print_ticks( const char *title, std::int32_t ticks, std::int32_t total ) {
     if ( ticks > 0 )
-        spdlog::info( "total [%5.1f%%]  ticks [%3d]  title[{}]", ticks * 100.0 / total, ticks, title );
+        SPDLOG_INFO( "total [%5.1f%%]  ticks [%3d]  title[{}]", ticks * 100.0 / total, ticks, title );
 }
 
 
@@ -291,7 +291,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
         total += array->at( index )->ticks.total();
     }
 
-    spdlog::info( "FlatProfiler {:3.2f} secs, ({} ticks)", secs, total );
+    SPDLOG_INFO( "FlatProfiler {:3.2f} secs, ({} ticks)", secs, total );
 
     // print interpreted methods
     TickCounter interpreted_ticks;
@@ -363,7 +363,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
     _console->cr();
 
     if ( total_ticks() > 0 ) {
-        spdlog::info( " Additional ticks:" );
+        SPDLOG_INFO( " Additional ticks:" );
         print_ticks( "Garbage collector", _gc_ticks, total );
         print_ticks( "Process semaphore", _semaphore_ticks, total );
         print_ticks( "Unknown code", _unknown_ticks, total );
@@ -375,7 +375,7 @@ void FlatProfiler::print( std::int32_t cutoff ) {
 
 
 void fprofiler_init() {
-    spdlog::info( "system-init:  fprofiler_init" );
+    SPDLOG_INFO( "system-init:  fprofiler_init" );
 
     FlatProfiler::allocate_table();
 }
@@ -386,22 +386,22 @@ void ProfiledNode::print( ConsoleOutputStream *stream, std::int32_t total_ticks 
 
     MethodOop m = method();
     if ( m->is_blockMethod() ) {
-        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->enclosing_method_selector()->print_value_string() );
+        SPDLOG_INFO( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->enclosing_method_selector()->print_value_string() );
     } else {
-        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->selector()->print_value_string() );
+        SPDLOG_INFO( "{:<24}  {:<24}  {:<48}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->selector()->as_string(), m->selector()->print_value_string() );
     }
 //            m->selector()->print_symbol_on( stream );
 //
 //        if ( ProfilerShowMethodHolder ) {
 //            KlassOop method_holder = receiver_klass()->klass_part()->lookup_method_holder_for( m );
 //            if ( method_holder and ( method_holder not_eq receiver_klass() ) ) {
-//                spdlog::info( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), method_holder->klass_part()->name() );
+//                SPDLOG_INFO( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), method_holder->klass_part()->name() );
 //                method_holder->klass_part()->print_name_on( _console );
 //            }
 //        }
 
 
-//        spdlog::info( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->enclosing_method_selector()->print_value_string() );
+//        SPDLOG_INFO( "{:<24}  {:<24}  {:<24}", total_ticks, receiver_klass()->klass_part()->name(), m->enclosing_method_selector()->print_value_string() );
 //        ticks.print_code( stream, total_ticks );
 //        stream->fill_to( col2 );
 //        print_receiver_klass_on( stream );
@@ -450,13 +450,13 @@ void ProfiledNode::print_total( ConsoleOutputStream *stream, TickCounter *t, std
 //    stream->print( msg );
 //    stream->fill_to( col4 );
 //    t->print_other( stream );
-    spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", "TOTALS", "", "", "" );
+    SPDLOG_INFO( "{:<24}  {:<24}  {:<48}  {:<24}", "TOTALS", "", "", "" );
 }
 
 
 void ProfiledNode::print_title( ConsoleOutputStream *stream ) {
     static_cast<void>(stream); // unused
-//        spdlog::info( "{:<24}  {:<24}  {:<48}  {:<24}", "Receiver", "Method", "Leaf ticks", "extra1" );
+//        SPDLOG_INFO( "{:<24}  {:<24}  {:<48}  {:<24}", "Receiver", "Method", "Leaf ticks", "extra1" );
 }
 
 

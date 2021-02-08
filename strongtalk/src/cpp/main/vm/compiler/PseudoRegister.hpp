@@ -121,6 +121,12 @@ public:
     }
 
 
+    PseudoRegister() = default;
+    virtual ~PseudoRegister() = default;
+    PseudoRegister( const PseudoRegister & ) = default;
+    PseudoRegister &operator=( const PseudoRegister & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     std::int32_t id() const {
         return _id;
     }
@@ -344,7 +350,7 @@ public:
 
 
     virtual void print_short() {
-        spdlog::info( "%s", name() );
+        SPDLOG_INFO( "%s", name() );
     }
 
 
@@ -437,6 +443,14 @@ public:
     }
 
 
+    SinglyAssignedPseudoRegister() = default;
+    virtual ~SinglyAssignedPseudoRegister() = default;
+    SinglyAssignedPseudoRegister( const SinglyAssignedPseudoRegister & ) = default;
+    SinglyAssignedPseudoRegister &operator=( const SinglyAssignedPseudoRegister & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     std::int32_t begByteCodeIndex() const {
         return _begByteCodeIndex;
     }
@@ -501,6 +515,12 @@ protected:
 
 public:
     BlockPseudoRegister( InlinedScope *scope, CompileTimeClosure *closure, std::int32_t beg, std::int32_t end );
+
+    BlockPseudoRegister() = default;
+    virtual ~BlockPseudoRegister() = default;
+    BlockPseudoRegister( const BlockPseudoRegister & ) = default;
+    BlockPseudoRegister &operator=( const BlockPseudoRegister & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isBlockPseudoRegister() const {
@@ -634,6 +654,14 @@ protected:
         constant{ c } {
         st_assert( not c->is_mem() or c->is_old(), "constant must be tenured" );
     }
+
+
+    ConstPseudoRegister() = default;
+    virtual ~ConstPseudoRegister() = default;
+    ConstPseudoRegister( const ConstPseudoRegister & ) = default;
+    ConstPseudoRegister &operator=( const ConstPseudoRegister & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
 public:

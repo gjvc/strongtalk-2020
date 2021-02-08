@@ -605,7 +605,7 @@ void InterpretedRecompilationScope::extend() {
 
 
 void RecompilationScope::print() {
-    spdlog::info( "; sender: 0x{0:x}@%ld; count %ld", static_cast<const void *>( PrintHexAddresses ? _sender : 0 ), _senderByteCodeIndex, _invocationCount );
+    SPDLOG_INFO( "; sender: 0x{0:x}@%ld; count %ld", static_cast<const void *>( PrintHexAddresses ? _sender : 0 ), _senderByteCodeIndex, _invocationCount );
 }
 
 
@@ -619,18 +619,18 @@ void NonDummyRecompilationScope::printSubScopes() const {
         }
         _console->print( "}" );
     } else {
-        spdlog::info( "none" );
+        SPDLOG_INFO( "none" );
     }
 }
 
 
 void InterpretedRecompilationScope::print_short() {
-    spdlog::info( "((InterpretedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), _key->toString(), _invocationCount );
+    SPDLOG_INFO( "((InterpretedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), _key->toString(), _invocationCount );
 }
 
 
 void InlinedRecompilationScope::print_short() {
-    spdlog::info( "((InlinedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), desc->selector()->as_string(), _invocationCount );
+    SPDLOG_INFO( "((InlinedRecompilationScope*)0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0 ), desc->selector()->as_string(), _invocationCount );
 }
 
 
@@ -647,13 +647,13 @@ void InlinedRecompilationScope::print() {
 
 
 void PICRecompilationScope::print_short() {
-    spdlog::info( "((PICRecompilationScope*) 0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0), method()->selector()->as_string(), _invocationCount );
+    SPDLOG_INFO( "((PICRecompilationScope*) 0x{0:x}) [{}] 0x{0:x}", static_cast<void *>( PrintHexAddresses ? this : 0), method()->selector()->as_string(), _invocationCount );
 }
 
 
 void PICRecompilationScope::print() {
     print_short();
-    spdlog::info( ": InlineCache 0x{0:x}; subScopes: ", static_cast<const void *>( PrintHexAddresses ? _sd : 0 ) );
+    SPDLOG_INFO( ": InlineCache 0x{0:x}; subScopes: ", static_cast<const void *>( PrintHexAddresses ? _sd : 0 ) );
     printSubScopes();
     if ( uncommon.nonEmpty() ) {
         _console->print( "; uncommon " );
@@ -675,17 +675,17 @@ void UntakenRecompilationScope::print() {
 
 
 void RUncommonBranch::print() {
-    spdlog::info( "((RUncommonScope*)0x{0:x}) : 0x{0:x}@%ld", static_cast<const void *>(PrintHexAddresses ? this : 0), static_cast<const void *>(PrintHexAddresses ? scope : 0), byteCodeIndex() );
+    SPDLOG_INFO( "((RUncommonScope*)0x{0:x}) : 0x{0:x}@%ld", static_cast<const void *>(PrintHexAddresses ? this : 0), static_cast<const void *>(PrintHexAddresses ? scope : 0), byteCodeIndex() );
 }
 
 
 void UninlinableRecompilationScope::print_short() {
-    spdlog::info( "((UninlinableRecompilationScope*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0 ) );
+    SPDLOG_INFO( "((UninlinableRecompilationScope*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0 ) );
 }
 
 
 void NullRecompilationScope::print_short() {
-    spdlog::info( "((NullRecompilationScope*)0x{0:x})", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
+    SPDLOG_INFO( "((NullRecompilationScope*)0x{0:x})", static_cast<const void *>( PrintHexAddresses ? this : 0 ) );
 }
 
 
@@ -696,9 +696,9 @@ void NullRecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t
 
 
 void RecompilationScope::printTree( std::int32_t byteCodeIndex, std::int32_t level ) const {
-    spdlog::info( "{:s} {:3d} ", level * 2, "", byteCodeIndex );
+    SPDLOG_INFO( "{:s} {:3d} ", level * 2, "", byteCodeIndex );
     ( (RecompilationScope *) this )->print_short();
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 
@@ -716,7 +716,7 @@ void NonDummyRecompilationScope::printTree( std::int32_t senderByteCodeIndex, st
         std::int32_t j = u;
         for ( ; j < uncommon.length() and uncommon.at( j )->byteCodeIndex() < byteCodeIndex; u++, j++ );
         if ( j < uncommon.length() and uncommon.at( j )->byteCodeIndex() == byteCodeIndex ) {
-            spdlog::info( "  %*s%3ld: uncommson", level * 2, "", byteCodeIndex );
+            SPDLOG_INFO( "  %*s%3ld: uncommson", level * 2, "", byteCodeIndex );
         }
     }
 }
@@ -729,7 +729,7 @@ void InliningDatabaseRecompilationScope::print() {
 
 
 void InliningDatabaseRecompilationScope::print_short() {
-    spdlog::info( "((InliningDatabaseRecompilationScope*)0x{0:x}) [{}]", static_cast<const void *>(PrintHexAddresses ? this : 0), _key->toString() );
+    SPDLOG_INFO( "((InliningDatabaseRecompilationScope*)0x{0:x}) [{}]", static_cast<const void *>(PrintHexAddresses ? this : 0), _key->toString() );
 }
 
 

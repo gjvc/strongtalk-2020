@@ -147,7 +147,7 @@ PRIM_DECL_2( debugPrimitives::printMethodCodes, Oop receiver, Oop sel ) {
 
 
 PRIM_DECL_2( debugPrimitives::generateIR, Oop receiver, Oop sel ) {
-    spdlog::info( "primitiveGenerateIR called..." );
+    SPDLOG_INFO( "primitiveGenerateIR called..." );
     ResourceMark resourceMark;    // needed to avoid memory leaks!
     PROLOGUE_2( "generateIR", receiver, sel )
     if ( not sel->is_byteArray() )
@@ -277,6 +277,12 @@ public:
         _cutoff{ cutoff } {
     }
 
+    CollectMethodClosure() = default;
+    virtual ~CollectMethodClosure() = default;
+    CollectMethodClosure( const CollectMethodClosure & ) = default;
+    CollectMethodClosure &operator=( const CollectMethodClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void do_object( MemOop obj ) {
         if ( obj->is_method() ) {
@@ -306,7 +312,7 @@ PRIM_DECL_1( debugPrimitives::printInvocationCounterHistogram, Oop size ) {
     // Collect the methods
     CollectMethodClosure blk( col, SMIOop( size )->value() );
     Universe::object_iterate( &blk );
-    spdlog::info( "Collected {} methods", col->length() );
+    SPDLOG_INFO( "Collected {} methods", col->length() );
 
     // Sort the methods based on the invocation counters.
     col->sort( &compare_method_counters );
@@ -358,7 +364,7 @@ PRIM_DECL_1( debugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     // Collect the nativeMethods
     FOR_ALL_NMETHOD( nm )col->push( nm );
 
-    spdlog::info( "Collected {} nativeMethods", col->length() );
+    SPDLOG_INFO( "Collected {} nativeMethods", col->length() );
     // Sort the methods based on the invocation counters.
     col->sort( &compare_NativeMethod_counters );
 
@@ -459,6 +465,12 @@ public:
         total_size{ 0 },
         number{ 0 } {
     }
+    
+    Counter() = default;
+    virtual ~Counter() = default;
+    Counter( const Counter & ) = default;
+    Counter &operator=( const Counter & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void update( MemOop obj ) {
@@ -468,7 +480,7 @@ public:
 
 
     void print( const char *prefix ) {
-        spdlog::info( "{}  {:22s}  {:6d}  {:8d}", prefix, title, number, total_size * OOP_SIZE );
+        SPDLOG_INFO( "{}  {:22s}  {:6d}  {:8d}", prefix, title, number, total_size * OOP_SIZE );
     }
 
 
@@ -506,6 +518,11 @@ private:
 
 public:
     ObjectHistogram();
+    virtual ~ObjectHistogram() = default;
+    ObjectHistogram( const ObjectHistogram & ) = default;
+    ObjectHistogram &operator=( const ObjectHistogram & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     Counter *counter( MemOop obj );
 
@@ -593,15 +610,15 @@ Counter *ObjectHistogram::counter( MemOop obj ) {
 
 
 void ObjectHistogram::print() {
-    spdlog::info( "Object Histogram" );
-    spdlog::info( "number    bytes" );
+    SPDLOG_INFO( "Object Histogram" );
+    SPDLOG_INFO( "number    bytes" );
     Counter *total = new Counter( "Total" );
     counters->sort( &Counter::compare );
 
     for ( std::int32_t i = 0; i < counters->length(); i++ ) {
         Counter *c = counters->at( i );
         if ( c->number > 0 ) {
-//            spdlog::info( "{}", c->print() );
+//            SPDLOG_INFO( "{}", c->print() );
             c->print( " - " );
             total->add( c );
         }

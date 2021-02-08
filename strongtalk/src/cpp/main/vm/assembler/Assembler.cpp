@@ -739,12 +739,12 @@ void Assembler::ret( std::int32_t imm16 ) {
 
 void Assembler::print( const Label &L ) {
     if ( L.is_unused() ) {
-        spdlog::info( "undefined label" );
+        SPDLOG_INFO( "undefined label" );
     } else if ( L.is_bound() ) {
-        spdlog::info( "bound label to {}", L.pos() );
+        SPDLOG_INFO( "bound label to {}", L.pos() );
     } else if ( L.is_unbound() ) {
         Label l = L;
-        spdlog::info( "unbound label" );
+        SPDLOG_INFO( "unbound label" );
         while ( l.is_unbound() ) {
             Displacement disp = Displacement( long_at( l.pos() ) );
             _console->print( "@ %d ", l.pos() );
@@ -753,7 +753,7 @@ void Assembler::print( const Label &L ) {
             disp.next( l );
         }
     } else {
-        spdlog::info( "label in inconsistent state (pos = {})", L._pos );
+        SPDLOG_INFO( "label in inconsistent state (pos = {})", L._pos );
     }
 }
 
@@ -865,7 +865,7 @@ void Assembler::bind( Label &L ) {
             constexpr std::int32_t long_size = 5;
             st_assert( byte_at( offset() - long_size ) == 0xE9, "jmp expected" );
             if ( PrintEliminatedJumps )
-                spdlog::info( "@ {} jump to next eliminated", L.pos() );
+                SPDLOG_INFO( "@ {} jump to next eliminated", L.pos() );
             // remove first entry from label list
 
             Displacement( long_at( L.pos() ) ).next( L );
@@ -963,7 +963,7 @@ void Assembler::jmp( Label &L ) {
         if ( EliminateJumpsToJumps and _unbound_label.is_unbound() and _binding_pos == offset() ) {
             // current position is target of jumps
             if ( PrintEliminatedJumps ) {
-                spdlog::info( "eliminated jumps/calls to {} from ", _binding_pos );
+                SPDLOG_INFO( "eliminated jumps/calls to {} from ", _binding_pos );
                 _console->print( "from " );
                 print( _unbound_label );
             }

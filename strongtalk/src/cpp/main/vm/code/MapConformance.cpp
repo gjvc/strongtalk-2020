@@ -269,7 +269,7 @@ void MappingTask::print( std::int32_t index ) {
     if ( _what_happened not_eq nullptr ) {
         _console->set_indentation( 35 );
         _console->indent();
-        spdlog::info( "{}", _what_happened );
+        SPDLOG_INFO( "{}", _what_happened );
     }
     _console->cr();
 }
@@ -306,7 +306,7 @@ void MapConformance::generate( Variable free_register1, Variable free_register2 
 
 
 void MapConformance::move( Variable src, Variable dst ) {
-    spdlog::info( "move {:d} {:d}", src.value(), dst.value() );
+    SPDLOG_INFO( "move {:d} {:d}", src.value(), dst.value() );
 //    _console->print( "	move  " );
 //    src.print();
 //    _console->print( ",	" );
@@ -316,7 +316,7 @@ void MapConformance::move( Variable src, Variable dst ) {
 
 
 void MapConformance::push( Variable src ) {
-    spdlog::info( "push {:d}", src.value() );
+    SPDLOG_INFO( "push {:d}", src.value() );
 //    _console->print( "	push  " );
 //    src.print();
 //    _console->cr();
@@ -324,7 +324,7 @@ void MapConformance::push( Variable src ) {
 
 
 void MapConformance::pop( Variable dst ) {
-    spdlog::info( "pop {:d}", dst.value() );
+    SPDLOG_INFO( "pop {:d}", dst.value() );
 //    _console->print( "	pop  " );
 //    dst.print();
 //    _console->cr();
@@ -332,7 +332,7 @@ void MapConformance::pop( Variable dst ) {
 
 
 void MapConformance::print() {
-    spdlog::info( "MapConformance" );
+    SPDLOG_INFO( "MapConformance" );
     for ( std::int32_t i = 0; i < _mappings->length(); i++ ) {
         _mappings->at( i )->print( i );
     }

@@ -269,26 +269,26 @@ void MacroAssembler::fpop() {
 // debugging
 
 void MacroAssembler::print_reg( const char *name, Oop obj ) {
-    spdlog::info( "{} = ", name );
+    SPDLOG_INFO( "{} = ", name );
     if ( obj == nullptr ) {
-        spdlog::info( "nullptr" );
+        SPDLOG_INFO( "nullptr" );
 
     } else if ( obj->is_smi() ) {
-        spdlog::info( "smi_t ({})", SMIOop( obj )->value() );
+        SPDLOG_INFO( "smi_t ({})", SMIOop( obj )->value() );
 
     } else if ( obj->is_mem() and Universe::is_heap( (Oop *) obj ) ) {
         // use explicit checks to avoid crashes even in a broken system
         if ( obj == Universe::nilObject() ) {
-            spdlog::info( "nil (0x{:x})", static_cast<const void *>(obj) );
+            SPDLOG_INFO( "nil (0x{:x})", static_cast<const void *>(obj) );
         } else if ( obj == Universe::trueObject() ) {
-            spdlog::info( "true (0x{:x})", static_cast<const void *>(obj) );
+            SPDLOG_INFO( "true (0x{:x})", static_cast<const void *>(obj) );
         } else if ( obj == Universe::falseObject() ) {
-            spdlog::info( "false (0x{:x})", static_cast<const void *>(obj) );
+            SPDLOG_INFO( "false (0x{:x})", static_cast<const void *>(obj) );
         } else {
-            spdlog::info( "MemOop (0x{:x})", static_cast<const void *>(obj) );
+            SPDLOG_INFO( "MemOop (0x{:x})", static_cast<const void *>(obj) );
         }
     } else {
-        spdlog::info( "0x{:x}", static_cast<const void *>(obj) );
+        SPDLOG_INFO( "0x{:x}", static_cast<const void *>(obj) );
     }
 }
 
@@ -297,7 +297,7 @@ void MacroAssembler::inspector( Oop edi, Oop esi, Oop ebp, Oop esp, Oop ebx, Oop
 
     const char *title = (const char *) ( nativeTest_at( eip )->data() );
     if ( title not_eq nullptr ) {
-        spdlog::info( "[{}]", title );
+        SPDLOG_INFO( "[{}]", title );
     }
 
     print_reg( "eax", eax );
@@ -306,8 +306,8 @@ void MacroAssembler::inspector( Oop edi, Oop esi, Oop ebp, Oop esp, Oop ebx, Oop
     print_reg( "edx", edx );
     print_reg( "edi", edi );
     print_reg( "esi", esi );
-    spdlog::info( "ebp = 0x{:x}", static_cast<const void *>( ebp ) );
-    spdlog::info( "esp = 0x{:x}", static_cast<const void *>( esp ) );
+    SPDLOG_INFO( "ebp = 0x{:x}", static_cast<const void *>( ebp ) );
+    SPDLOG_INFO( "esp = 0x{:x}", static_cast<const void *>( esp ) );
     _console->cr();
 }
 
@@ -319,6 +319,6 @@ void MacroAssembler::inspect( const char *title ) {
         testl( eax, std::int32_t( title ) );                                            // additional info for inspector
     } else {
         const char *s = ( title == nullptr ) ? "" : title;
-        spdlog::info( "cannot call inspector for [{}] - no entry point yet", s );
+        SPDLOG_INFO( "cannot call inspector for [{}] - no entry point yet", s );
     }
 }

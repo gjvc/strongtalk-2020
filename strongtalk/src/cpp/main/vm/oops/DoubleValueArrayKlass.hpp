@@ -19,7 +19,7 @@ public:
     virtual ~DoubleValueArrayKlass() = default;
     DoubleValueArrayKlass( const DoubleValueArrayKlass & ) = default;
     DoubleValueArrayKlass &operator=( const DoubleValueArrayKlass & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     // allocation properties
     bool can_inline_allocation() const {

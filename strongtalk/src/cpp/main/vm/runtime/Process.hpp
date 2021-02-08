@@ -37,6 +37,19 @@ class Process : public PrintableCHeapAllocatedObject {
 
 public:
 
+    Process() :
+        _thread{ nullptr },
+        _thread_id{ 0 },
+        _event{ nullptr },
+        _stack_limit{ nullptr } {
+    }
+
+    virtual ~Process() = default;
+    Process( const Process & ) = default;
+    Process &operator=( const Process & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     virtual bool is_vmProcess() const {
         return false;
     }
@@ -79,12 +92,6 @@ public:
     }
 
 
-    Process() :
-        _thread{ nullptr },
-        _thread_id{ 0 },
-        _event{ nullptr },
-        _stack_limit{ nullptr } {
-    }
 
 
 protected:

@@ -14,12 +14,19 @@
 
 class Recompilee : public ResourceObject {
 protected:
-    RecompilerFrame *_rf;
+    RecompilerFrame *_recompilerFrame;
 
 
-    Recompilee( RecompilerFrame *rf ) :
-        _rf{ rf } {
+    Recompilee( RecompilerFrame *recompilerFrame ) :
+        _recompilerFrame{ recompilerFrame } {
     }
+
+    Recompilee() = default;
+    virtual ~Recompilee() = default;
+    Recompilee( const Recompilee & ) = default;
+    Recompilee &operator=( const Recompilee & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
 public:
@@ -45,12 +52,12 @@ public:
     }    // only for compiled recompileed
 
 
-    RecompilerFrame *rframe() const {
-        return _rf;
+    RecompilerFrame *recompilerFrame() const {
+        return _recompilerFrame;
     }
 
 
-    static Recompilee *new_Recompilee( RecompilerFrame *rf );
+    static Recompilee *new_Recompilee( RecompilerFrame *recompilerFrame );
 };
 
 
@@ -67,6 +74,12 @@ public:
         _method{ m } {
     }
 
+
+    InterpretedRecompilee() = default;
+    virtual ~InterpretedRecompilee() = default;
+    InterpretedRecompilee( const InterpretedRecompilee & ) = default;
+    InterpretedRecompilee &operator=( const InterpretedRecompilee & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     bool is_interpreted() const {
         return true;
@@ -94,6 +107,13 @@ public:
         Recompilee( rf ),
         _nativeMethod{ nm } {
     }
+
+
+    CompiledRecompilee() = default;
+    virtual ~CompiledRecompilee() = default;
+    CompiledRecompilee( const CompiledRecompilee & ) = default;
+    CompiledRecompilee &operator=( const CompiledRecompilee & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool is_compiled() const {

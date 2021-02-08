@@ -168,6 +168,13 @@ public:
     }
 
 
+    AssignmentFinder() = default;
+    virtual ~AssignmentFinder() = default;
+    AssignmentFinder( const AssignmentFinder & ) = default;
+    AssignmentFinder &operator=( const AssignmentFinder & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void instruction() {
         abort();
     }
@@ -249,11 +256,16 @@ public:
     bool               _wasExecuted;
 
 
+    PrimitiveSendFinder() = default;
     PrimitiveSendFinder( RecompilationScope *rs ) :
         _recompilationScope{ rs },
         _wasExecuted{ false } {
         rs->extend();
     }
+    virtual ~PrimitiveSendFinder() = default;
+    PrimitiveSendFinder( const PrimitiveSendFinder & ) = default;
+    PrimitiveSendFinder &operator=( const PrimitiveSendFinder & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     virtual void normal_send( InterpretedInlineCache *ic ) {
@@ -1176,5 +1188,5 @@ Expression *PrimitiveInliner::genCall( bool canFail ) {
 
 
 void PrimitiveInliner::print() {
-    spdlog::info( "a PrimitiveInliner" );
+    SPDLOG_INFO( "a PrimitiveInliner" );
 }

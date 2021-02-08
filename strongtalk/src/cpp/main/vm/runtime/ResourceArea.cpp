@@ -58,11 +58,11 @@ ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChu
     _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );
     _top    = _bottom + size;
 
-//    spdlog::info( "%ResourceAreaChunk-allocated [0x{08:x}] ", resources.capacity() );
-//    spdlog::info( "%ResourceAreaChunk-used [0x{08:x}] ", resources.used() );
-//    spdlog::info( "%ResourceAreaChunk-size [0x{08:x}] ", size );
+//    SPDLOG_INFO( "%ResourceAreaChunk-allocated [0x{08:x}] ", resources.capacity() );
+//    SPDLOG_INFO( "%ResourceAreaChunk-used [0x{08:x}] ", resources.used() );
+//    SPDLOG_INFO( "%ResourceAreaChunk-size [0x{08:x}] ", size );
 
-    spdlog::info( "ResourceAreaChunk: create size [{}], [{}] used out of [{}] ", size, resources.used(), resources.capacity() );
+    SPDLOG_INFO( "ResourceAreaChunk: create size [{}], [{}] used out of [{}] ", size, resources.used(), resources.capacity() );
 
     initialize( previous );
 }
@@ -88,17 +88,17 @@ void ResourceAreaChunk::print() {
         _prev->print();
     }
     print_short();
-    spdlog::info( ": _bottom [0x{0:x}], _top [0x{0:x}], _prev [0x{0:x}]", static_cast<void *>( _bottom ), static_cast<void *>( _top  ), static_cast<void *>( _prev ) );
+    SPDLOG_INFO( ": _bottom [0x{0:x}], _top [0x{0:x}], _prev [0x{0:x}]", static_cast<void *>( _bottom ), static_cast<void *>( _top  ), static_cast<void *>( _prev ) );
 }
 
 
 void ResourceAreaChunk::print_short() {
-    spdlog::info( "ResourceAreaChunk [0x{0:x}]", static_cast<void *>( this ) );
+    SPDLOG_INFO( "ResourceAreaChunk [0x{0:x}]", static_cast<void *>( this ) );
 }
 
 
 void ResourceAreaChunk::print_alloc( const char *addr, std::int32_t size ) {
-    spdlog::info( "allocating %ld bytes at 0x{0:x}", size, addr );
+    SPDLOG_INFO( "allocating %ld bytes at 0x{0:x}", size, addr );
 }
 
 
@@ -235,7 +235,7 @@ ResourceAreaChunk *Resources::new_chunk( std::int32_t min_capacity, ResourceArea
         res = new ResourceAreaChunk( min_capacity, previous );
         _allocated += res->capacity();
         if ( PrintResourceChunkAllocation ) {
-            spdlog::info( "*allocating new resource area chunk of >=0x%08x bytes, new total = 0x%08x bytes", min_capacity, _allocated );
+            SPDLOG_INFO( "*allocating new resource area chunk of >=0x%08x bytes, new total = 0x%08x bytes", min_capacity, _allocated );
         }
     }
 
@@ -300,7 +300,7 @@ char *AllocatePageAligned( std::int32_t size, const char *name ) {
     std::int32_t page_size = Universe::page_size();
     char         *block    = (char *) align( os::malloc( size + page_size ), page_size );
     if ( PrintHeapAllocation )
-        spdlog::info( "Malloc (page-aligned) %s: 0x%08x = 0x{0:x}", name, size, block );
+        SPDLOG_INFO( "Malloc (page-aligned) %s: 0x%08x = 0x{0:x}", name, size, block );
 
     return block;
 }
@@ -310,7 +310,7 @@ char *AllocateHeap( std::int32_t size, const char *name ) {
 
     char *bytes = (char *) os::malloc( size );
     if ( PrintHeapAllocation )
-        spdlog::info( "Heap %7d %s", size, name );
+        SPDLOG_INFO( "Heap %7d %s", size, name );
 
     return bytes;
 }

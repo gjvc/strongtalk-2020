@@ -65,17 +65,17 @@ void InlineCache::print() {
             break;
         default         : ShouldNotReachHere();
     }
-    spdlog::info( "%s InlineCache: {} entries", s, number_of_targets() );
+    SPDLOG_INFO( "%s InlineCache: {} entries", s, number_of_targets() );
 
     InlineCacheIterator *it = iterator();
     it->init_iteration();
     while ( not it->at_end() ) {
-        spdlog::info( "\t- klass: " );
+        SPDLOG_INFO( "\t- klass: " );
         it->klass()->print_value();
         if ( it->is_interpreted() ) {
-            spdlog::info( ";\tmethod  0x{0:x}", static_cast<void *>( it->interpreted_method() ) );
+            SPDLOG_INFO( ";\tmethod  0x{0:x}", static_cast<void *>( it->interpreted_method() ) );
         } else {
-            spdlog::info( ";\tnativeMethod 0x{0:x}", static_cast<void *>(  it->compiled_method() ) );
+            SPDLOG_INFO( ";\tnativeMethod 0x{0:x}", static_cast<void *>(  it->compiled_method() ) );
         }
         it->advance();
     }
@@ -207,5 +207,5 @@ NativeMethod *CompiledInlineCacheIterator::compiled_method() const {
 
 
 void CompiledInlineCacheIterator::print() {
-    spdlog::info( "CompiledInlineCacheIterator for ((CompiledInlineCache*)0x{0:x}) (%s)", static_cast<void *>( _ic ), selector()->as_string() );
+    SPDLOG_INFO( "CompiledInlineCacheIterator for ((CompiledInlineCache*)0x{0:x}) (%s)", static_cast<void *>( _ic ), selector()->as_string() );
 }

@@ -16,17 +16,29 @@ private:
     std::string _description;
     T           _default_value;
 public:
-    explicit ConfigurationValue( const T &value ) : _name{ "" }, _value{ value } {
+    explicit ConfigurationValue( const T &value ) :
+        _name{ "" },
+        _default_value{},
+        _description{ "" },
+        _value{ value } {
 
     }
 
 
-    ConfigurationValue( const char *name, const T &value ) : _name{ name }, _value{ value } {
+    ConfigurationValue( const char *name, const T &value ) :
+        _name{ name },
+        _default_value{},
+        _description{ "" },
+        _value{ value } {
 
     }
 
 
-    ConfigurationValue( const char *name, const T &value, const char *description ) : _name{ name }, _value{ value }, _description{ description } {
+    ConfigurationValue( const char *name, const T &value, const char *description ) :
+        _name{ name },
+        _default_value{},
+        _value{ value },
+        _description{ description } {
 
     }
 
@@ -68,7 +80,10 @@ private:
     T                     _value;
 
 public:
-    ConfigurationOverride( ConfigurationValue<T> &configuration_value, const T &default_value ) : _cv{ configuration_value } {
+    ConfigurationOverride( ConfigurationValue<T> &configuration_value, const T &default_value ) :
+        _cv{ configuration_value },
+        _default_value{ default_value },
+        _value{} {
         static_cast<void>(default_value); // unused
     }
 
@@ -99,12 +114,12 @@ constexpr T _flag( const char *name, T default_value, const char *description ) 
 
     if constexpr ( std::is_same<T, bool>::value ) {
         auto co = ConfigurationOverride<T>( cv, not default_value );
-        spdlog::info( "bool [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
+        SPDLOG_INFO( "bool [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
     }
 
     if constexpr ( std::is_same<T, std::int32_t>::value ) {
         auto co = ConfigurationOverride<T>( cv, default_value + 1 );
-        spdlog::info( "std::int32_t [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
+        SPDLOG_INFO( "std::int32_t [{}], default value [{}], overridden value [{}]", cv.name(), cv.value(), co.value() );
     }
 
     return T( default_value );

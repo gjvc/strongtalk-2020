@@ -201,7 +201,7 @@ std::int32_t Zone::findReplCandidates( std::int32_t needed ) {
         // next sweep wouldn't reclaim anything
         assert(vis == limit, "should have visited them all");
         LRUtime = newTime - 1;
-        if (PrintLRUSweep) spdlog::info("\n*forced new LRU time: %ld", LRUtime);
+        if (PrintLRUSweep) SPDLOG_INFO("\n*forced new LRU time: %ld", LRUtime);
       }
     }
     return reclaimed;
@@ -305,13 +305,13 @@ void Zone::adjustPolicy() {
       float currentFreeFrac = 1 - float(iZone->usedBytes()) / iZone->capacity();
       minFreeFrac = min(float(minFreeFrac * 1.5), float(minFreeFrac + 0.05));
       if (PrintCodeReclamation) {
-        spdlog::info("(compact overhead %3.1f%%: increasing minFreeFrac to %3.1f%%) ",
+        SPDLOG_INFO("(compact overhead %3.1f%%: increasing minFreeFrac to %3.1f%%) ",
            overhead *100, minFreeFrac * 100);
       }
     } else if (overhead < COMPACT_OVERHEAD / 2) {
       minFreeFrac = max(float(minFreeFrac / 1.5), float(minFreeFrac - 0.05));
       if (PrintCodeReclamation) {
-        spdlog::info("(compact overhead %3.1f%%: decreasing minFreeFrac to %3.1f%%) ",
+        SPDLOG_INFO("(compact overhead %3.1f%%: decreasing minFreeFrac to %3.1f%%) ",
            overhead *100, minFreeFrac * 100);
       }
     }
@@ -507,7 +507,7 @@ public:
 
 
     void print( const char *title, std::int32_t t ) {
-        spdlog::info( "   n [%3d] title[{}] nativeMethods %2d%% = [%4dK], hdr [%2d%%], inst [%2d%%], locs [%2d%%], debug [%2d%%]", n, title, total() * 100 / t, total() / 1024, n * sizeof( NativeMethod ) * 100 / total(), insts * 100 / total(), locs * 100 / total(), scopes * 100 / total() );
+        SPDLOG_INFO( "   n [%3d] title[{}] nativeMethods %2d%% = [%4dK], hdr [%2d%%], inst [%2d%%], locs [%2d%%], debug [%2d%%]", n, title, total() * 100 / t, total() / 1024, n * sizeof( NativeMethod ) * 100 / total(), insts * 100 / total(), locs * 100 / total(), scopes * 100 / total() );
     }
 
 
@@ -535,18 +535,18 @@ void Zone::print() {
         }
     }
 
-    spdlog::info( "Zone:" );
+    SPDLOG_INFO( "Zone:" );
 
     if ( not nms.isEmpty() ) {
-        spdlog::info( "  Code ({}K, {}%% used)", _methodHeap->capacity() / 1024, ( _methodHeap->usedBytes() * 100 ) / _methodHeap->capacity() );
+        SPDLOG_INFO( "  Code ({}K, {}%% used)", _methodHeap->capacity() / 1024, ( _methodHeap->usedBytes() * 100 ) / _methodHeap->capacity() );
         nms.print( "live", _methodHeap->capacity() );
     }
     if ( uncommon ) {
-        spdlog::info( "({} live uncommon nativeMethods)", uncommon );
+        SPDLOG_INFO( "({} live uncommon nativeMethods)", uncommon );
     }
     if ( not zombies.isEmpty() ) {
         zombies.print( "dead", _methodHeap->capacity() );
-        spdlog::info( "  PICs ({}K, {}%% used)", _picHeap->capacity() / 1024, ( _picHeap->usedBytes() * 100 ) / _picHeap->capacity() );
+        SPDLOG_INFO( "  PICs ({}K, {}%% used)", _picHeap->capacity() / 1024, ( _picHeap->usedBytes() * 100 ) / _picHeap->capacity() );
     }
 
     std::int32_t n     = 0;
@@ -558,7 +558,7 @@ void Zone::print() {
     std::int32_t total = insts + n * sizeof( PolymorphicInlineCache );
 
     if ( n > 0 ) {
-        spdlog::info( "   %3d entries = {}K (hdr %2d%%, inst %2d%%)", n, total / 1024, n * sizeof( PolymorphicInlineCache ) * 100 / total, insts * 100 / total );
+        SPDLOG_INFO( "   %3d entries = {}K (hdr %2d%%, inst %2d%%)", n, total / 1024, n * sizeof( PolymorphicInlineCache ) * 100 / total, insts * 100 / total );
     }
 }
 
@@ -649,26 +649,26 @@ void Zone::print_NativeMethod_histogram( std::int32_t size ) {
 
     qsort(hist_array, out, sizeof(nm_hist_elem), compareCount);
 
-    spdlog::info("\n# nm \t # methods \t%% acc.\n");
+    SPDLOG_INFO("\n# nm \t # methods \t%% acc.\n");
     std::int32_t nm_count = 0;
     for (std::int32_t i = 0; i < n; i++) {
       if (compiled_nativeMethods[i] > 0) {
         nm_count += i * compiled_nativeMethods[i];
-        spdlog::info("%5ld \t%5ld \t\t%3ld %%\n", i, compiled_nativeMethods[i],
+        SPDLOG_INFO("%5ld \t%5ld \t\t%3ld %%\n", i, compiled_nativeMethods[i],
            (nm_count*100)/n);
 
       }
     }
 
-    spdlog::info( "List of methods with more than %d nativeMethods compiled.\n", size);
-    spdlog::info( " ALL(#,Kb)  Compiler(#,Kb) Method:\n");
+    SPDLOG_INFO( "List of methods with more than %d nativeMethods compiled.\n", size);
+    SPDLOG_INFO( " ALL(#,Kb)  Compiler(#,Kb) Method:\n");
     for (std::int32_t i = 0; i < out; i++) {
-      spdlog::info("%4d,%-4d   %4d,%-4d ",
+      SPDLOG_INFO("%4d,%-4d   %4d,%-4d ",
          hist_array[i].count,     hist_array[i].size / 1024,
          hist_array[i].sic_count, hist_array[i].sic_size / 1024);
       printName((MethodKlass*) hist_array[i].nm->method()->klass(),
              hist_array[i].nm->key.selector);
-      spdlog::info("\n");
+      SPDLOG_INFO("\n");
     }
 
     fflush(stdout);
@@ -794,13 +794,13 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
 
     NativeMethod * p = LRUhand ? LRUhand : first;
     if ( PrintLRUSweep or PrintLRUSweep2 ) {
-        spdlog::info( "*starting LRU sweep..." );
+        SPDLOG_INFO( "*starting LRU sweep..." );
         fflush( stdout );
         tmr.start();
     }
 
     do {
-        if ( PrintLRUSweep2 ) spdlog::info( "*inspecting 0x{0:x} (id %ld): ", p, p->id );
+        if ( PrintLRUSweep2 ) SPDLOG_INFO( "*inspecting 0x{0:x} (id %ld): ", p, p->id );
 
         if ( ( p->isZombie() or
                p->isDebug() or
@@ -808,7 +808,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
              p->frame_chain == nullptr ) {
             // can be flushed - nobody will ever use it again
             if ( PrintLRUSweep2 )
-                spdlog::info( " %s; flushed",
+                SPDLOG_INFO( " %s; flushed",
                         p->isZombie() ? "zombie":
                         ( p->isDebug() ? "debug" : "unreachable" ) );
             nbytes += iZone->sizeOfBlock( p );
@@ -817,9 +817,9 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             // has been used
             nused++;
             if ( PrintLRUSweep2 ) {
-                spdlog::info( "used" );
+                SPDLOG_INFO( "used" );
                 std::int32_t diff = useCount[ p->id ] - p->oldCount;
-                if ( diff ) spdlog::info( " %ld times", diff );
+                if ( diff ) SPDLOG_INFO( " %ld times", diff );
             }
             if ( LRUDecayFactor > 1 ) {
                 useCount[ p->id ] = std::int32_t( useCount[ p->id ] / LRUDecayFactor );
@@ -828,12 +828,12 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             LRUtable[ p->id ].unused   = true;
             LRUtable[ p->id ].lastUsed = LRUtime;
             if ( p->zoneLink.notEmpty() ) {
-                if ( PrintLRUSweep2 ) spdlog::info( "; removed from replCandidates" );
+                if ( PrintLRUSweep2 ) SPDLOG_INFO( "; removed from replCandidates" );
                 p->zoneLink.remove();        // no longer a replacement candidate
                 nbytes -= iZone->sizeOfBlock( p );
             }
         } else if ( retirementAge( p ) < LRUtime and p->zoneLink.isEmpty() ) {
-            if ( PrintLRUSweep2 ) spdlog::info( "added to replCandidates" );
+            if ( PrintLRUSweep2 ) SPDLOG_INFO( "added to replCandidates" );
             replCandidates.add( &p->zoneLink );
             nbytes += iZone->sizeOfBlock( p );
         } else {
@@ -842,9 +842,9 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
                 nextTime = age;
             }
             if ( PrintLRUSweep2 ) {
-                spdlog::info( "unused (age %ld)", LRUtime - p->lastUsed() );
+                SPDLOG_INFO( "unused (age %ld)", LRUtime - p->lastUsed() );
                 if ( p->zoneLink.notEmpty() )
-                    spdlog::info( " already scheduled for replacement" );
+                    SPDLOG_INFO( " already scheduled for replacement" );
             }
         }
 
@@ -854,7 +854,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
             LRUtime++;
             // The LRU scheme will actually fail if LRUtime > 2^16, but that
             // won't happen very often (every 20*LRU_RESOLUTION CPU hours).
-            if ( PrintLRUSweep2 ) spdlog::info( "*new LRU time: %ld", LRUtime );
+            if ( PrintLRUSweep2 ) SPDLOG_INFO( "*new LRU time: %ld", LRUtime );
         }
     } while ( ++visited < maxVisit and nbytes < maxReclaim and p );
 
@@ -866,7 +866,7 @@ std::int32_t Zone::sweeper( std::int32_t maxVisit, std::int32_t maxReclaim, std:
     LRUhand     = p;
     _needsSweep = false;
     if ( PrintLRUSweep or PrintLRUSweep2 ) {
-        spdlog::info( " done: %ld/%ld visits, %ld bytes, %ld ms.\n",
+        SPDLOG_INFO( " done: %ld/%ld visits, %ld bytes, %ld ms.\n",
                 nused, visited, nbytes, tmr.time() );
         fflush( stdout );
     }

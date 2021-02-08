@@ -105,6 +105,10 @@ private:
 
 public:
     SymbolTable();
+    virtual ~SymbolTable() = default;
+    SymbolTable( const SymbolTable & ) = default;
+    SymbolTable &operator=( const SymbolTable & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     // operations
     SymbolOop lookup( const char *name, std::int32_t len );

@@ -15,7 +15,7 @@
 
 void CacheElement::verify() {
 
-    spdlog::info( "this [{:x}], &_lookupKey [{:x}], &_lookupResult [{:x}]", (std::int32_t) this, (std::int32_t) &_lookupKey, (std::int32_t) &_lookupResult );
+//    SPDLOG_INFO( "this [{:x}], &_lookupKey [{:x}], &_lookupResult [{:x}]", (std::int32_t) this, (std::int32_t) &_lookupKey, (std::int32_t) &_lookupResult );
 
     st_assert( sizeof( CacheElement ) == 16, "checking structure layout" );
     st_assert( (std::int32_t) &_lookupKey - (std::int32_t) this == 0, "checking structure layout" );
@@ -23,9 +23,9 @@ void CacheElement::verify() {
 
     if ( _lookupKey.klass() or _lookupKey.selector_or_method() ) {
         if ( _lookupResult.is_empty() ) {
-            spdlog::info( "Verify failed in LookupCache: " );
-            spdlog::info( "  element = ({}::{})", _lookupKey.klass()->print_value_string(), _lookupKey.selector_or_method()->print_value_string() );
-//            spdlog::info( "result = ({})", _lookupResult.print_value_string() );
+            SPDLOG_INFO( "Verify failed in LookupCache: " );
+            SPDLOG_INFO( "  element = ({}::{})", _lookupKey.klass()->print_value_string(), _lookupKey.selector_or_method()->print_value_string() );
+//            SPDLOG_INFO( "result = ({})", _lookupResult.print_value_string() );
             st_fatal( "LookupCache verify failed" );
         }
         const NativeMethod *nm = Universe::code->lookup( &_lookupKey );

@@ -30,7 +30,7 @@ private:
 
 
     void map_push( std::int32_t b ) {
-        // spdlog::info("push(%d)", byteCodeIndex);
+        // SPDLOG_INFO("push(%d)", byteCodeIndex);
         if ( b >= _targetByteCodeIndex ) {
             abort();
         } else {
@@ -43,7 +43,7 @@ private:
         if ( byteCodeIndex() >= _targetByteCodeIndex ) {
             abort();
         } else {
-            // spdlog::info("pop(%d)", byteCodeIndex());
+            // SPDLOG_INFO("pop(%d)", byteCodeIndex());
             _mapping->pop();
         }
     }
@@ -63,6 +63,13 @@ public:
         _mapping{ mapping },
         _targetByteCodeIndex{ targetByteCodeIndex } {
     }
+    ExpressionStackMapper() = default;
+    virtual ~ExpressionStackMapper() = default;
+    ExpressionStackMapper( const ExpressionStackMapper & ) = default;
+    ExpressionStackMapper &operator=( const ExpressionStackMapper & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
 
     void push_self() {

@@ -45,6 +45,19 @@ private:
     void write_zone();
 
 public:
+
+    SnapshotDescriptor() : _file{ nullptr }, _has_error{ false } {
+
+    }
+
+    virtual ~SnapshotDescriptor() = default;
+    SnapshotDescriptor( const SnapshotDescriptor & ) = default;
+    SnapshotDescriptor &operator=( const SnapshotDescriptor & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void read_from( const char *name );
 
     void write_on( const char *name );

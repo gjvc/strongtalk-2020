@@ -27,6 +27,13 @@ class InlineSendNode : public MethodInterval {
 protected:
     InlineSendNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t end_byteCodeIndex = -1 );
 
+
+    InlineSendNode() = default;
+    virtual ~InlineSendNode() = default;
+    InlineSendNode( const InlineSendNode & ) = default;
+    InlineSendNode &operator=( const InlineSendNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
     // Accessor operation
     virtual SymbolOop selector() const = 0;
@@ -38,6 +45,12 @@ protected:
     MethodInterval *_expr_code;
 
     CondNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
+
+    CondNode() = default;
+    virtual ~CondNode() = default;
+    CondNode( const CondNode & ) = default;
+    CondNode &operator=( const CondNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     // Inlined block
@@ -55,6 +68,13 @@ public:
 
 class AndNode : public CondNode {
     AndNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
+
+
+    AndNode() = default;
+    virtual ~AndNode() = default;
+    AndNode( const AndNode & ) = default;
+    AndNode &operator=( const AndNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     friend class MethodIntervalFactory;
 
@@ -77,6 +97,13 @@ public:
 class OrNode : public CondNode {
 protected:
     OrNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t dest_offset );
+
+
+    OrNode() = default;
+    virtual ~OrNode() = default;
+    OrNode( const OrNode & ) = default;
+    OrNode &operator=( const OrNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     friend class MethodIntervalFactory;
 
@@ -103,6 +130,14 @@ protected:
     MethodInterval *_body_code;
 
     WhileNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t cond_offset, std::int32_t end_offset );
+
+
+    WhileNode() = default;
+    virtual ~WhileNode() = default;
+    WhileNode( const WhileNode & ) = default;
+    WhileNode &operator=( const WhileNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     friend class MethodIntervalFactory;
 
@@ -143,6 +178,13 @@ protected:
     MethodInterval *_else_code;
 
     IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure );
+
+
+    IfNode() = default;
+    virtual ~IfNode() = default;
+    IfNode( const IfNode & ) = default;
+    IfNode &operator=( const IfNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     friend class MethodIntervalFactory;
 
@@ -193,11 +235,20 @@ protected:
 
     ExternalCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, std::int32_t end_offset );
 
+
 public:
     // Optional inlined block
     MethodInterval *failure_code() const {
         return _failure_code;
     }
+
+
+    ExternalCallNode() = default;
+    virtual ~ExternalCallNode() = default;
+    ExternalCallNode( const ExternalCallNode & ) = default;
+    ExternalCallNode &operator=( const ExternalCallNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 };
 
 
@@ -215,6 +266,13 @@ protected:
     friend class MethodIntervalFactory;
 
 public:
+
+    PrimitiveCallNode() = default;
+    virtual ~PrimitiveCallNode() = default;
+    PrimitiveCallNode( const PrimitiveCallNode & ) = default;
+    PrimitiveCallNode &operator=( const PrimitiveCallNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     // Returns the primitive descriptor
     PrimitiveDescriptor *pdesc() const {
         return _pdesc;
@@ -253,6 +311,12 @@ protected:
     friend class MethodIntervalFactory;
 
 public:
+    DLLCallNode() = default;
+    virtual ~DLLCallNode() = default;
+    DLLCallNode( const DLLCallNode & ) = default;
+    DLLCallNode &operator=( const DLLCallNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     // DLL accessor operations
     SymbolOop dll_name() const {
         return _dll_name;

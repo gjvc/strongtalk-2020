@@ -32,8 +32,13 @@ private:
     void indent();
 
 public:
+    MethodPrinterClosure() = default;
     MethodPrinterClosure( ConsoleOutputStream *stream = nullptr );
     virtual ~MethodPrinterClosure() = default;
+    MethodPrinterClosure( const MethodPrinterClosure & ) = default;
+    MethodPrinterClosure &operator=( const MethodPrinterClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void if_node( IfNode *node );
 

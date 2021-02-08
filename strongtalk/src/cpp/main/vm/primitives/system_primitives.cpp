@@ -425,7 +425,7 @@ PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
     PROLOGUE_1( "defWindowProc", resultProxy );
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    spdlog::info( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
+    SPDLOG_INFO( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
     dll_func_ptr_t func = DLLs::lookup( oopFactory::new_symbol( "user" ), oopFactory::new_symbol( "DefWindowProcA" ) );
     ProxyOop( resultProxy )->set_pointer( (void *) func );
     return resultProxy;
@@ -675,15 +675,15 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
         VMProcess::execute( &op );
 
         if ( TraceInliningDatabase ) {
-            spdlog::info( "compiling {%s} completed", str );
-            spdlog::info( "[Database]" );
+            SPDLOG_INFO( "compiling {%s} completed", str );
+            SPDLOG_INFO( "[Database]" );
             rs->print_inlining_database_on( _console, nullptr, -1, 0 );
-            spdlog::info( "[Compiled method]" );
+            SPDLOG_INFO( "[Compiled method]" );
             op.result()->print_inlining_database_on( _console );
         }
     } else {
         if ( TraceInliningDatabase ) {
-            spdlog::info( "compiling {%s} failed", str );
+            SPDLOG_INFO( "compiling {%s} failed", str );
         }
     }
     return trueObject;
@@ -704,7 +704,7 @@ PRIM_DECL_0( SystemPrimitives::inlining_database_compile_next ) {
         if ( TraceInliningDatabase ) {
             _console->print( "Compiling " );
             op.result()->_lookupKey.print_on( _console );
-            spdlog::info( " in background = 0x%lx", static_cast<const void *>(op.result()) );
+            SPDLOG_INFO( " in background = 0x%lx", static_cast<const void *>(op.result()) );
         }
     }
     return end_of_table ? falseObject : trueObject;
@@ -792,6 +792,15 @@ public:
     }
 
 
+    InstancesOfClosure() = default;
+    virtual ~InstancesOfClosure() = default;
+    InstancesOfClosure( const InstancesOfClosure & ) = default;
+    InstancesOfClosure &operator=( const InstancesOfClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     KlassOop           _target;
     std::int32_t       _limit;
     GrowableArray<Oop> *_result;
@@ -856,6 +865,15 @@ public:
     }
 
 
+    HasReferenceClosure() = default;
+    virtual ~HasReferenceClosure() = default;
+    HasReferenceClosure( const HasReferenceClosure & ) = default;
+    HasReferenceClosure &operator=( const HasReferenceClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void do_oop( Oop *o ) {
         if ( *o == _target )
             _result = true;
@@ -875,6 +893,15 @@ public:
         _result{ nullptr } {
         _result = new GrowableArray<Oop>( 100 );
     }
+
+
+    ReferencesToClosure() = default;
+    virtual ~ReferencesToClosure() = default;
+    ReferencesToClosure( const ReferencesToClosure & ) = default;
+    ReferencesToClosure &operator=( const ReferencesToClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     std::int32_t       _limit;
@@ -934,6 +961,15 @@ public:
     }
 
 
+    HasInstanceReferenceClosure() = default;
+    virtual ~HasInstanceReferenceClosure() = default;
+    HasInstanceReferenceClosure( const HasInstanceReferenceClosure & ) = default;
+    HasInstanceReferenceClosure &operator=( const HasInstanceReferenceClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void do_oop( Oop *o ) {
         if ( ( *o )->klass() == _target ) {
             _result = true;
@@ -953,6 +989,13 @@ public:
         _target{ target },
         _limit{ limit } {
     };
+
+
+    ReferencesToInstancesOfClosure() = default;
+    virtual ~ReferencesToInstancesOfClosure() = default;
+    ReferencesToInstancesOfClosure( const ReferencesToInstancesOfClosure & ) = default;
+    ReferencesToInstancesOfClosure &operator=( const ReferencesToInstancesOfClosure & ) = default;
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     std::int32_t       _limit;
@@ -1014,13 +1057,14 @@ public:
         _result = new GrowableArray<Oop>( 20000 );
     }
 
+
     AllObjectsClosure() = default;
     virtual ~AllObjectsClosure() = default;
     AllObjectsClosure( const AllObjectsClosure & ) = default;
     AllObjectsClosure &operator=( const AllObjectsClosure & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
 
 
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
     std::int32_t       _limit;

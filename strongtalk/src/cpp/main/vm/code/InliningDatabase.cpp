@@ -243,7 +243,7 @@ bool InliningDatabase::file_out( NativeMethod *nm, ConsoleOutputStream *index_st
     }
 
     if ( TraceInliningDatabase ) {
-        spdlog::info( "Dumping inlining database to [{}]", file_name );
+        SPDLOG_INFO( "Dumping inlining database to [{}]", file_name );
     }
 
     FileOutputStream out( file_name );
@@ -570,18 +570,18 @@ void InliningDatabase::load_index_file() {
             if ( first.is_block_type() ) {
                 if ( stream.getline( line, 1000 ) ) {
                     if ( scan_key( line, &second ) ) {
-//                        spdlog::info( "Block [{}], outer [{}]", first.print_value_on(), second.print_value_on() );
+//                        SPDLOG_INFO( "Block [{}], outer [{}]", first.print_value_on(), second.print_value_on() );
                         add_lookup_entry( &second, &first );
                     } else {
-                        spdlog::info( "%inlining-database-index-file: filename[{}], parsing block failed for[{}]", index_file_name(), line );
+                        SPDLOG_INFO( "%inlining-database-index-file: filename[{}], parsing block failed for[{}]", index_file_name(), line );
                     }
                 }
             } else {
-                // spdlog::info( "Method [{}]", first.print_value_on() );
+                // SPDLOG_INFO( "Method [{}]", first.print_value_on() );
                 add_lookup_entry( &first );
             }
         } else {
-            spdlog::info( "%inlining-database-index-file: filename[{}], parsing failed for[{}]", index_file_name(), line );
+            SPDLOG_INFO( "%inlining-database-index-file: filename[{}], parsing failed for[{}]", index_file_name(), line );
 
         }
     }
@@ -672,9 +672,9 @@ RecompilationScope *InliningDatabase::file_in( LookupKey *outer, LookupKey *inne
 
     if ( TraceInliningDatabase and result == nullptr ) {
         if ( inner ) {
-//            spdlog::info( "Failed parsing file for [{}]", inner->print_value_on() );
+//            SPDLOG_INFO( "Failed parsing file for [{}]", inner->print_value_on() );
         }
-//        spdlog::info( "[{}]", outer->print_value_on() );
+//        SPDLOG_INFO( "[{}]", outer->print_value_on() );
 
     }
 
@@ -734,7 +734,7 @@ RecompilationScope *InliningDatabase::select_and_remove( bool *end_of_table ) {
 void InliningDatabase::allocate_table( std::uint32_t size ) {
 
     if ( TraceInliningDatabase ) {
-        spdlog::info( "InliningDatabase::allocate_table({})", size );
+        SPDLOG_INFO( "InliningDatabase::allocate_table({})", size );
     }
 
     _table_size      = size;
@@ -782,7 +782,7 @@ void InliningDatabase::add_lookup_entry( LookupKey *outer, LookupKey *inner ) {
     _table_no++;
 
     if ( TraceInliningDatabase ) {
-        spdlog::info( "InliningDatabase::add_lookup_entry @ [{}]", index );
+        SPDLOG_INFO( "InliningDatabase::add_lookup_entry @ [{}]", index );
         if ( inner ) {
             inner->print();
             _console->print( " " );

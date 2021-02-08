@@ -87,7 +87,7 @@ public:
             char      *sname = name->chars();
             className = sname;
             found     = true;
-            spdlog::info( "Class name is [{}]", sname );
+            SPDLOG_INFO( "Class name is [{}]", sname );
         }
     }
 };
@@ -96,6 +96,6 @@ TEST_F( DoubleValueArrayKlassTests, findDoubleValueArrayClass ) {
     findDoubleValueArray closure;
     Universe::classes_do( &closure );
     if ( !closure.found ) {
-        spdlog::info( "No matching class found" );
+        SPDLOG_INFO( "No matching class found" );
     }
 }

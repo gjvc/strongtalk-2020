@@ -64,6 +64,11 @@ protected:
 public:
     SendInfo( InlinedScope *sen, Expression *r, SymbolOop s );
 
+    SendInfo() = default;
+    virtual ~SendInfo() = default;
+    SendInfo( const SendInfo & ) = default;
+    SendInfo &operator=( const SendInfo & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *r );
 
@@ -252,6 +257,11 @@ public:
 
 protected:
     InlinedScope();
+    virtual ~InlinedScope() = default;
+    InlinedScope( const InlinedScope & ) = default;
+    InlinedScope &operator=( const InlinedScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void initialize( MethodOop method, KlassOop methodHolder, InlinedScope *sender, RecompilationScope *rs, SendInfo *info );
 
@@ -602,6 +612,11 @@ protected:
     void initializeSelf();
 
     BlockScope();
+    virtual ~BlockScope() = default;
+    BlockScope( const BlockScope & ) = default;
+    BlockScope &operator=( const BlockScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 public:
     static BlockScope *new_BlockScope( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
@@ -657,6 +672,12 @@ protected:
 
 public:
     OutlinedScope( NativeMethod *nm, ScopeDescriptor *scope );
+
+    OutlinedScope() = default;
+    virtual ~OutlinedScope() = default;
+    OutlinedScope( const OutlinedScope & ) = default;
+    OutlinedScope &operator=( const OutlinedScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isOutlinedScope() const {
@@ -769,6 +790,12 @@ protected:
 
 public:
     OutlinedBlockScope( NativeMethod *nm, ScopeDescriptor *sen );
+
+    OutlinedBlockScope() = default;
+    virtual ~OutlinedBlockScope() = default;
+    OutlinedBlockScope( const OutlinedBlockScope & ) = default;
+    OutlinedBlockScope &operator=( const OutlinedBlockScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isOutlinedBlockScope() const {

@@ -123,12 +123,12 @@ void VirtualSpace::shrink( std::int32_t size ) {
 
 
 void VirtualSpace::print() {
-    spdlog::info( "Virtual Space:" );
-    spdlog::info( " - uncommitted_size() [{}]", uncommitted_size() );
-    spdlog::info( " - committed_size() [{}]", committed_size() );
-    spdlog::info( " - reserved_size() [{}]", reserved_size() );
-    spdlog::info( " - [low, high]: [0x{0:x}, 0x{0:x}]", low(), high() );
-    spdlog::info( " - [low_boundary, high_boundary]: [0x{0:x}, 0x{0:x}", low_boundary(), high_boundary() );
+    SPDLOG_INFO( "Virtual Space:" );
+    SPDLOG_INFO( " - uncommitted_size() [{}]", uncommitted_size() );
+    SPDLOG_INFO( " - committed_size() [{}]", committed_size() );
+    SPDLOG_INFO( " - reserved_size() [{}]", reserved_size() );
+    SPDLOG_INFO( " - [low, high]: [0x{0:x}, 0x{0:x}]", low(), high() );
+    SPDLOG_INFO( " - [low_boundary, high_boundary]: [0x{0:x}, 0x{0:x}", low_boundary(), high_boundary() );
 }
 
 
@@ -181,7 +181,7 @@ std::int32_t VirtualSpaces::uncommitted_size() {
 
 
 void VirtualSpaces::print() {
-    spdlog::info( "VirtualSpaces:" );
+    SPDLOG_INFO( "VirtualSpaces:" );
     for ( VirtualSpace *p = head; p; p = p->next ) {
         p->print();
     }

@@ -282,9 +282,9 @@ void NativeMethod::moveTo( void *p, std::int32_t size ) {
     NativeMethod* to = (NativeMethod*)p;
     if (this == to) return;
     if (PrintCodeCompaction) {
-      spdlog::info("*moving NativeMethod 0x{0:x} (", this);
+      SPDLOG_INFO("*moving NativeMethod 0x{0:x} (", this);
       key.print();
-      spdlog::info(") to 0x{0:x}\n", to);
+      SPDLOG_INFO(") to 0x{0:x}\n", to);
       fflush(stdout);
     }
 
@@ -343,7 +343,7 @@ void NativeMethod::cleanup_inline_caches() {
 
 
 void NativeMethod::makeOld() {
-    spdlog::info( "marking NativeMethod 0x{0:x} as old", static_cast<const void *>( this ) );
+    SPDLOG_INFO( "marking NativeMethod 0x{0:x} as old", static_cast<const void *>( this ) );
     _nativeMethodFlags.isYoung = 0;
 }
 
@@ -356,7 +356,7 @@ void NativeMethod::forwardLinkedSends( NativeMethod *to ) {
 
 
 void NativeMethod::unlink() {
-    spdlog::info( "unlinking NativeMethod 0x{0:x}", static_cast<const void *>( this ) );
+    SPDLOG_INFO( "unlinking NativeMethod 0x{0:x}", static_cast<const void *>( this ) );
 
     if ( is_method() ) {
         // Remove from LookupCache.
@@ -385,7 +385,7 @@ void NativeMethod::makeZombie( bool clearInlineCaches ) {
     }
 
     // overwrite call to recompiler by call to zombie handler
-    spdlog::info( "{} NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>( this ) );
+    SPDLOG_INFO( "{} NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>( this ) );
     NativeCall *call = nativeCall_at( specialHandlerCall() );
 
     // Fix this:
@@ -419,9 +419,9 @@ void NativeMethod::makeZombie( bool clearInlineCaches ) {
     p[ 2 ] = char( offset );
 
     if ( TraceZombieCreation ) {
-        spdlog::info( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>(this) );
+        SPDLOG_INFO( "%s NativeMethod 0x{0:x} becomes zombie", ( is_method() ? "normal" : "block" ), static_cast<const void *>(this) );
         if ( WizardMode ) {
-            spdlog::info( "entry code sequence:" );
+            SPDLOG_INFO( "entry code sequence:" );
             char *beg = (char *) min( std::int32_t( specialHandlerCall() ), std::int32_t( entryPoint() ), std::int32_t( verifiedEntryPoint() ) );
             char *end = (char *) max( std::int32_t( specialHandlerCall() ), std::int32_t( entryPoint() ), std::int32_t( verifiedEntryPoint() ) );
             Disassembler::decode( beg, end + 10 );
@@ -489,7 +489,7 @@ void NativeMethod::flush() {
     // completely deallocate this method
     EventMarker em( "flushing NativeMethod 0x{0:x} %s", this, "" );
     if ( PrintMethodFlushing ) {
-        spdlog::info( "*flushing NativeMethod 0x{0:x}", static_cast<const void *>(this) );
+        SPDLOG_INFO( "*flushing NativeMethod 0x{0:x}", static_cast<const void *>(this) );
     }
 
     if ( isZombie() ) {
@@ -569,7 +569,7 @@ ProgramCounterDescriptor *NativeMethod::containingProgramCounterDescriptorOrNULL
     do {
         // avoid pointer arithmetic -- gcc uses a division for ProgramCounterDescriptor* - ProgramCounterDescriptor*
         std::int32_t m = l + ( h - l ) / 2;
-        spdlog::info( "l [0x{0:x}], h [0x{0:x}], m [0x{0:x}], middle [0x{0:x}]", l, h, m, static_cast<const void *>(middle) );
+        SPDLOG_INFO( "l [0x{0:x}], h [0x{0:x}], m [0x{0:x}], middle [0x{0:x}]", l, h, m, static_cast<const void *>(middle) );
 
         middle = &start[ m ];
         if ( middle->_pc < offset ) {
@@ -698,7 +698,7 @@ void NativeMethod::verify() {
 
     for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ ) {
         if ( not p->verify( this ) ) {
-            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (pcs)", static_cast<const void *>(this) );
+            SPDLOG_INFO( "\t\tin NativeMethod at 0x{0:x} (pcs)", static_cast<const void *>(this) );
         }
     }
 
@@ -785,13 +785,13 @@ void NativeMethod::print() {
         _console->print( "TBR " );
     if ( isUncommonRecompiled() )
         _console->print( "UNCOMMON " );
-    spdlog::info( "}:" );
+    SPDLOG_INFO( "}:" );
     Indent++;
 
     printIndent();
-    spdlog::info( "instructions (%ld bytes): [0x{0:x}..0x{0:x}]", size(), instructionsStart(), instructionsEnd() );
+    SPDLOG_INFO( "instructions (%ld bytes): [0x{0:x}..0x{0:x}]", size(), instructionsStart(), instructionsEnd() );
     printIndent();
-    spdlog::info( "NativeMethod [0x{0:x}]", static_cast<const void *>(this) );
+    SPDLOG_INFO( "NativeMethod [0x{0:x}]", static_cast<const void *>(this) );
     // don't print code/locs/pcs by default -- too much output   -Urs 1/95
 //    printCode();
     scopes()->print();
@@ -810,7 +810,7 @@ void NativeMethod::printCode() {
 void NativeMethod::printLocs() {
     ResourceMark m;    // in case methods get printed via the debugger
     printIndent();
-    spdlog::info( "locations:" );
+    SPDLOG_INFO( "locations:" );
     Indent++;
     RelocationInformationIterator iter( this );
     std::int32_t                  last_offset = 0;
@@ -829,7 +829,7 @@ void NativeMethod::printLocs() {
 void NativeMethod::printPcs() {
     ResourceMark m;    // in case methods get printed via debugger
     printIndent();
-    spdlog::info( "pc-bytecode offsets:" );
+    SPDLOG_INFO( "pc-bytecode offsets:" );
     Indent++;
     for ( ProgramCounterDescriptor *p = pcs(); p < pcsEnd(); p++ )
         p->print( this );

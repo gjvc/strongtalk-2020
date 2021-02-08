@@ -123,6 +123,14 @@ public:
     }
 
 
+    BitVector() = default;
+    virtual ~BitVector() = default;
+    BitVector( const BitVector & ) = default;
+    BitVector &operator=( const BitVector & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
 protected:
     BitVector( std::int32_t l, std::int32_t ml, std::int32_t *bs ) :
         _maxLength{ ml },

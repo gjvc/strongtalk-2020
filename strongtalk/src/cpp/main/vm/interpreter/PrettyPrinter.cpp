@@ -51,6 +51,15 @@ public:
     }
 
 
+    astNode() = default;
+    virtual ~astNode() = default;
+    astNode( const astNode & ) = default;
+    astNode &operator=( const astNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     std::int32_t this_byteCodeIndex() {
         return _byteCodeIndex;
     }
@@ -123,7 +132,14 @@ private:
 public:
     PrintWrapper( astNode *astNode, PrettyPrintStream *output );
 
+    PrintWrapper() = default;
     ~PrintWrapper();
+    PrintWrapper( const PrintWrapper & ) = default;
+    PrintWrapper &operator=( const PrintWrapper & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 };
 
 
@@ -189,6 +205,20 @@ public:
     scopeNode                *_scope;
 
 
+    PrintTemps() :
+        TempDecoder(),
+        _elements{ nullptr },
+        _scope{ nullptr } {}
+
+
+    virtual ~PrintTemps() = default;
+    PrintTemps( const PrintTemps & ) = default;
+    PrintTemps &operator=( const PrintTemps & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void decode( MethodOop method, scopeNode *scope ) {
         _scope    = scope;
         _elements = new GrowableArray<astNode *>( 10 );
@@ -211,6 +241,15 @@ public:
     GrowableArray<astNode *> *_elements;
 
 
+    PrintParams() : _scope{nullptr}, _elements{nullptr} {};
+    virtual ~PrintParams() = default;
+    PrintParams( const PrintParams & ) = default;
+    PrintParams &operator=( const PrintParams & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void decode( MethodOop method, scopeNode *scope ) {
         _scope    = scope;
         _elements = new GrowableArray<astNode *>( 10 );
@@ -228,6 +267,15 @@ public:
     leafNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
         astNode( byteCodeIndex, scope ) {
     }
+
+
+    leafNode() = default;
+    virtual ~leafNode() = default;
+    leafNode( const leafNode & ) = default;
+    leafNode &operator=( const leafNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -257,6 +305,15 @@ public:
     paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no );
 
 
+    paramNode() = default;
+    virtual ~paramNode() = default;
+    paramNode( const paramNode & ) = default;
+    paramNode &operator=( const paramNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -280,6 +337,15 @@ public:
         _name{ name },
         _value{ value } {
     }
+
+
+    nameValueNode() = default;
+    virtual ~nameValueNode() = default;
+    nameValueNode( const nameValueNode & ) = default;
+    nameValueNode &operator=( const nameValueNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -308,6 +374,15 @@ public:
     }
 
 
+    nameNode() = default;
+    virtual ~nameNode() = default;
+    nameNode( const nameNode & ) = default;
+    nameNode &operator=( const nameNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -329,6 +404,15 @@ public:
         _endSym{ end_sym } {
         _elements = new GrowableArray<astNode *>( 10 );
     }
+
+
+    listNode() = default;
+    virtual ~listNode() = default;
+    listNode( const listNode & ) = default;
+    listNode &operator=( const listNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void add( astNode *element ) {
@@ -434,6 +518,15 @@ public:
 
         initParent();
     }
+
+
+    scopeNode() = default;
+    virtual ~scopeNode() = default;
+    scopeNode( const scopeNode & ) = default;
+    scopeNode &operator=( const scopeNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void initParent() {
@@ -768,6 +861,15 @@ public:
     }
 
 
+    codeNode() = default;
+    virtual ~codeNode() = default;
+    codeNode( const codeNode & ) = default;
+    codeNode &operator=( const codeNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void add( astNode *statement ) {
         _statements->push( statement );
     }
@@ -813,6 +915,15 @@ public:
     }
 
 
+    inlinedBlockNode() = default;
+    virtual ~inlinedBlockNode() = default;
+    inlinedBlockNode( const inlinedBlockNode & ) = default;
+    inlinedBlockNode &operator=( const inlinedBlockNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void add( astNode *statement ) {
         _statements->push( statement );
     }
@@ -850,6 +961,16 @@ private:
 
 
 public:
+
+
+    statement() = default;
+    virtual ~statement() = default;
+    statement( const statement & ) = default;
+    statement &operator=( const statement & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
     bool is_statement() {
         return true;
@@ -914,6 +1035,15 @@ public:
     }
 
 
+    methodNode() = default;
+    virtual ~methodNode() = default;
+    methodNode( const methodNode & ) = default;
+    methodNode &operator=( const methodNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     bool print( PrettyPrintStream *output ) {
         output->inc_indent();
         output->indent();
@@ -940,6 +1070,15 @@ public:
         codeNode( byteCodeIndex, scope ),
         _numOfArgs{ numOfArgs } {
     }
+
+
+    blockNode() = default;
+    virtual ~blockNode() = default;
+    blockNode( const blockNode & ) = default;
+    blockNode &operator=( const blockNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -1032,6 +1171,15 @@ public:
     }
 
 
+    assignment() = default;
+    virtual ~assignment() = default;
+    assignment( const assignment & ) = default;
+    assignment &operator=( const assignment & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     bool print( PrettyPrintStream *output ) {
         HIGHLIGHT
         bool split = output->remaining() < width( output );
@@ -1072,6 +1220,15 @@ public:
         _is_prim{ is_prim },
         astNode( byteCodeIndex, scope ) {
     }
+
+
+    messageNode() = default;
+    virtual ~messageNode() = default;
+    messageNode( const messageNode & ) = default;
+    messageNode &operator=( const messageNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool is_unary() {
@@ -1226,6 +1383,15 @@ public:
     }
 
 
+    selfNode() = default;
+    virtual ~selfNode() = default;
+    selfNode( const selfNode & ) = default;
+    selfNode &operator=( const selfNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return "self";
     }
@@ -1240,6 +1406,15 @@ public:
     }
 
 
+    ignoreReceiver() = default;
+    virtual ~ignoreReceiver() = default;
+    ignoreReceiver( const ignoreReceiver & ) = default;
+    ignoreReceiver &operator=( const ignoreReceiver & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return "";
     }
@@ -1252,6 +1427,15 @@ public:
     superNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
         leafNode( byteCodeIndex, scope ) {
     }
+
+
+    superNode() = default;
+    virtual ~superNode() = default;
+    superNode( const superNode & ) = default;
+    superNode &operator=( const superNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     const char *string() {
@@ -1270,6 +1454,15 @@ public:
         leafNode( byteCodeIndex, scope ),
         _str{ str } {
     }
+
+
+    literalNode() = default;
+    virtual ~literalNode() = default;
+    literalNode( const literalNode & ) = default;
+    literalNode &operator=( const literalNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     const char *string() {
@@ -1293,6 +1486,15 @@ public:
         _str{ nullptr } {
         _str = value->as_string();
     }
+
+
+    symbolNode() = default;
+    virtual ~symbolNode() = default;
+    symbolNode( const symbolNode & ) = default;
+    symbolNode &operator=( const symbolNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -1325,6 +1527,15 @@ public:
         _value = value;
         _str   = value->as_string();
     }
+
+
+    doubleByteArrayNode() = default;
+    virtual ~doubleByteArrayNode() = default;
+    doubleByteArrayNode( const doubleByteArrayNode & ) = default;
+    doubleByteArrayNode &operator=( const doubleByteArrayNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -1367,6 +1578,15 @@ public:
     }
 
 
+    byteArrayNode() = default;
+    virtual ~byteArrayNode() = default;
+    byteArrayNode( const byteArrayNode & ) = default;
+    byteArrayNode &operator=( const byteArrayNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     std::int32_t width( PrettyPrintStream *output ) {
         return 2 * output->width_of_string( "'" ) + output->width_of_string( _str );
     }
@@ -1388,6 +1608,15 @@ public:
     }
 
 
+    smiNode() = default;
+    virtual ~smiNode() = default;
+    smiNode( const smiNode & ) = default;
+    smiNode &operator=( const smiNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1407,6 +1636,15 @@ public:
         leafNode( byteCodeIndex, scope ) {
         sprintf( _str, "%1.10gd", value );
     }
+
+
+    doubleNode() = default;
+    virtual ~doubleNode() = default;
+    doubleNode( const doubleNode & ) = default;
+    doubleNode &operator=( const doubleNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     const char *string() {
@@ -1439,6 +1677,15 @@ public:
     }
 
 
+    characterNode() = default;
+    virtual ~characterNode() = default;
+    characterNode( const characterNode & ) = default;
+    characterNode &operator=( const characterNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1466,6 +1713,15 @@ public:
             _elements->push( get_literal_node( value->obj_at( i ), byteCodeIndex, scope ) );
         }
     }
+
+
+    objArrayNode() = default;
+    virtual ~objArrayNode() = default;
+    objArrayNode( const objArrayNode & ) = default;
+    objArrayNode &operator=( const objArrayNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool print( PrettyPrintStream *output ) {
@@ -1515,6 +1771,15 @@ public:
         _arguments = new GrowableArray<astNode *>( 10 );
         _proxy     = nullptr;
     }
+
+
+    dllNode() = default;
+    virtual ~dllNode() = default;
+    dllNode( const dllNode & ) = default;
+    dllNode &operator=( const dllNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void add_param( astNode *param ) {
@@ -1568,6 +1833,15 @@ public:
     }
 
 
+    stackTempNode() = default;
+    virtual ~stackTempNode() = default;
+    stackTempNode( const stackTempNode & ) = default;
+    stackTempNode &operator=( const stackTempNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1592,6 +1866,15 @@ public:
     }
 
 
+    heapTempNode() = default;
+    virtual ~heapTempNode() = default;
+    heapTempNode( const heapTempNode & ) = default;
+    heapTempNode &operator=( const heapTempNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1609,6 +1892,15 @@ public:
         _str{ nullptr } {
         _str = scope->stack_temp_string( this_byteCodeIndex(), no );
     }
+
+
+    floatNode() = default;
+    virtual ~floatNode() = default;
+    floatNode( const floatNode & ) = default;
+    floatNode &operator=( const floatNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     const char *string() {
@@ -1637,6 +1929,15 @@ public:
     }
 
 
+    instVarNode() = default;
+    virtual ~instVarNode() = default;
+    instVarNode( const instVarNode & ) = default;
+    instVarNode &operator=( const instVarNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1661,6 +1962,15 @@ public:
             _str = SymbolOop( obj )->as_string();
         }
     }
+
+
+    classVarNode() = default;
+    virtual ~classVarNode() = default;
+    classVarNode( const classVarNode & ) = default;
+    classVarNode &operator=( const classVarNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     const char *string() {
@@ -1704,6 +2014,15 @@ public:
     }
 
 
+    assocNode() = default;
+    virtual ~assocNode() = default;
+    assocNode( const assocNode & ) = default;
+    assocNode &operator=( const assocNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     const char *string() {
         return _str;
     }
@@ -1725,6 +2044,15 @@ public:
         _receiver = first->receiver();
         first->set_receiver( this );
     }
+
+
+    cascadeSendNode() = default;
+    virtual ~cascadeSendNode() = default;
+    cascadeSendNode( const cascadeSendNode & ) = default;
+    cascadeSendNode &operator=( const cascadeSendNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool is_cascade() {
@@ -1885,6 +2213,17 @@ private:
 
 
 public:
+
+
+    MethodPrettyPrinter() = default;
+    virtual ~MethodPrettyPrinter() = default;
+    MethodPrettyPrinter( const MethodPrettyPrinter & ) = default;
+    MethodPrettyPrinter &operator=( const MethodPrettyPrinter & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     void _push( astNode *node ) {
         _stack->push( node );
     }
@@ -1911,7 +2250,6 @@ public:
 
 
     MethodPrettyPrinter( scopeNode *scope );
-    virtual ~MethodPrettyPrinter() = default;
 
     // node call backs
     void if_node( IfNode *node );
@@ -2276,6 +2614,8 @@ public:
     const char          *_name;
     std::int32_t        _offset;
 
+    StackChecker() = default;
+
 
     StackChecker( const char *name, MethodPrettyPrinter *pp, std::int32_t offset = 0 ) :
         _methodPrettyPrinter{ pp },
@@ -2285,13 +2625,21 @@ public:
     }
 
 
-    ~StackChecker() {
+    StackChecker( const StackChecker & ) = default;
+    StackChecker &operator=( const StackChecker & ) = default;
+
+
+    virtual ~StackChecker() {
         if ( _methodPrettyPrinter->_size() not_eq _size + _offset ) {
-            spdlog::info( "StackTracer found misaligned stack" );
-            spdlog::info( "Expecting {} but found {}", _size + _offset, _methodPrettyPrinter->_size() );
+            SPDLOG_INFO( "StackTracer found misaligned stack" );
+            SPDLOG_INFO( "Expecting {} but found {}", _size + _offset, _methodPrettyPrinter->_size() );
             st_fatal( "aborting" );
         }
     }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 };
 
 

@@ -19,7 +19,7 @@ Oop *OldWaterMark::pseudo_allocate( std::int32_t size ) {
     if ( p + size < _space->end() ) {
         _point = p + size;
     } else {
-        spdlog::info( "crossing Space" );
+        SPDLOG_INFO( "crossing Space" );
         st_fatal( "not implemented yet" );
     }
     return p;

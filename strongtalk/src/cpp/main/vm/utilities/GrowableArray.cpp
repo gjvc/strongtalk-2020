@@ -65,7 +65,7 @@ void GenericGrowableArray::grow( std::int32_t j ) {
         _maxLength = _maxLength * 2;
     }
 
-    // spdlog::info( "GenericGrowableArray::grow from [{}] to [{}]", oldMax, max );
+    // SPDLOG_INFO( "GenericGrowableArray::grow from [{}] to [{}]", oldMax, max );
     // j < max
     if ( _allocatedOnSystemHeap ) {
         newData = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
@@ -176,11 +176,11 @@ void GenericGrowableArray::raw_at_put_grow( std::int32_t i, const void *p, const
 
 void GenericGrowableArray::print() {
     print_short();
-    spdlog::info( ": length %ld (max {0:d}) { ", _length, _maxLength );
+    SPDLOG_INFO( ": length %ld (max {0:d}) { ", _length, _maxLength );
     for ( std::int32_t i = 0; i < _length; i++ ) {
-        spdlog::info( "0x{0:x} ", (std::int32_t) _data[ i ] );
+        SPDLOG_INFO( "0x{0:x} ", (std::int32_t) _data[ i ] );
     }
-    spdlog::info( "}" );
+    SPDLOG_INFO( "}" );
 }
 
 
@@ -190,7 +190,7 @@ void GenericGrowableArray::raw_sort( std::int32_t f( const void *, const void * 
 
 
 void GenericGrowableArray::print_short() {
-    spdlog::info( "Growable Array 0x{0:x}", static_cast<const void *>(this) );
+    SPDLOG_INFO( "Growable Array 0x{0:x}", static_cast<const void *>(this) );
 }
 
 

@@ -967,7 +967,7 @@ void break_on_error( void *address, Oop result ) {
     std::int32_t err = os::error_code();
     if ( value == 0 and err ) {
         ResourceMark resourceMark;
-        spdlog::info( "Last error: 0x{0:x} {}", address, err );
+        SPDLOG_INFO( "Last error: 0x{0:x} {}", address, err );
         DeltaProcess::active()->trace_top( 1, 5 );
         if ( false )
             os::breakpoint();

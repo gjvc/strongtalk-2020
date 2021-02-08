@@ -338,6 +338,12 @@ private:
 
 public:
     InterpreterGenerator( CodeBuffer *code, bool debug );
+    InterpreterGenerator() = default;
+    virtual ~InterpreterGenerator() = default;
+    InterpreterGenerator( const InterpreterGenerator & ) = default;
+    InterpreterGenerator &operator=( const InterpreterGenerator & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     // Instruction generation
     const char *generate_instruction( ByteCodes::Code code );

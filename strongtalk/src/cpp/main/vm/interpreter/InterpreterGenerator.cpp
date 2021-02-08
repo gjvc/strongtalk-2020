@@ -495,7 +495,7 @@ const char *InterpreterGenerator::store_temp_n( bool pop ) {
 
 extern "C" void trace_push_global( Oop assoc, Oop value ) {
     ResourceMark resourceMark;
-    spdlog::info( "Trace push_global: " );
+    SPDLOG_INFO( "Trace push_global: " );
     assoc->print_value();
     _console->cr();
     value->print_value();
@@ -2161,7 +2161,7 @@ const char *Interpreter::_illegal = nullptr;
 
 
 void InterpreterGenerator::generate_error_handler_code() {
-    spdlog::info( "interpreter-generate:  generate_error_handler_code" );
+    SPDLOG_INFO( "interpreter-generate:  generate_error_handler_code" );
 
     st_assert( not _boolean_expected.is_bound(), "code has been generated before" );
 
@@ -3420,7 +3420,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
 
 void InterpreterGenerator::info( const char *name ) {
 
-    spdlog::info( "interpreter-generate [{}]", name );
+    SPDLOG_INFO( "interpreter-generate [{}]", name );
 
     if ( not PrintInterpreter ) {
         return;
@@ -3488,7 +3488,7 @@ void InterpreterGenerator::generate_all() {
         if ( PrintInterpreter ) {
             std::int32_t length = _macroAssembler->pc() - start;
             const char   *name  = ByteCodes::name( (ByteCodes::Code) i );
-            spdlog::info( "bytecode # [0x%02x], address[0x{0:x}], size [0x%04x], name[{}]", i, entry, length, name );
+            SPDLOG_INFO( "bytecode # [0x%02x], address[0x{0:x}], size [0x%04x], name[{}]", i, entry, length, name );
             _macroAssembler->code()->decode();
             _console->cr();
         }
@@ -3529,7 +3529,7 @@ static const char             *interpreter_code;
 
 
 void interpreter_init() {
-    spdlog::info( "system-init:  interpreter_init" );
+    SPDLOG_INFO( "system-init:  interpreter_init" );
 
     interpreter_code = os::exec_memory( interpreter_size );
 
@@ -3538,7 +3538,7 @@ void interpreter_init() {
     const bool debug = true; // change this to switch between debug/optimized version
 
     InterpreterGenerator( code, debug ).generate_all();
-    spdlog::info( "interpreter-size:  [{}]  [0x{0:x}] bytes", code->code_size(), code->code_size() );
+    SPDLOG_INFO( "interpreter-size:  [{}]  [0x{0:x}] bytes", code->code_size(), code->code_size() );
 
     Interpreter::init();
 }

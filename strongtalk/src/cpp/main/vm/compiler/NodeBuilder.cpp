@@ -1045,13 +1045,13 @@ GrowableArray<Expression *> *NodeBuilder::splittablePaths( const Expression *exp
         Node       *start = okExprs->at( i )->node()->next();
         for ( Node *n     = start; n not_eq (Node *) test; n = n->next() ) {
             if ( exprNodes->contains( n ) ) {
-                spdlog::info( "error in splittable boolean expression:" );
+                SPDLOG_INFO( "error in splittable boolean expression:" );
                 m->print();
                 okExprs->at( i )->print();
                 printNodes( okExprs->at( i )->node() );
                 for ( std::int32_t j = 0; j < exprNodes->length(); j++ ) {
                     exprNodes->at( j )->print();
-                    spdlog::info( "" );
+                    SPDLOG_INFO( "" );
                 }
                 st_fatal( "compiler error" );
             }

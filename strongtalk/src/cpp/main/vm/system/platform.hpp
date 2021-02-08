@@ -84,6 +84,6 @@ namespace strongtalk::vm {
 // -----------------------------------------------------------------------------
 
 #define LOGI( ... )  \
- do{char buf[256]; snprintf(buf, 256,__VA_ARGS__);  spdlog::info(buf);}while(0)
+ do{char buf[256]; snprintf(buf, 256,__VA_ARGS__);  SPDLOG_INFO(buf);}while(0)
 //use:
 //LOGI("hello %d, %s", 0, "msg");

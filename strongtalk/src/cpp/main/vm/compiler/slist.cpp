@@ -82,18 +82,18 @@ void GenericSList::applyL( void f( void * ) ) {
 
 
 void GenericSList::print_short() {
-    spdlog::info( "GenericSList 0x{0:x}", static_cast<void *>( this ) );
+    SPDLOG_INFO( "GenericSList 0x{0:x}", static_cast<void *>( this ) );
 }
 
 
 static void print_them( void *p ) {
     ( (PrintableResourceObject *) p )->print_short();
-    spdlog::info( " " );
+    SPDLOG_INFO( " " );
 }
 
 
 void GenericSList::print() {
     print_short();
-    spdlog::info( ": " );
+    SPDLOG_INFO( ": " );
     ( (GenericSList *) this )->applyL( print_them );
 }

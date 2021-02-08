@@ -41,6 +41,13 @@ public:
         _context{ c } {
     }
 
+    FrameAndContextElement() = default;
+    virtual ~FrameAndContextElement() = default;
+    FrameAndContextElement( const FrameAndContextElement & ) = default;
+    FrameAndContextElement &operator=( const FrameAndContextElement & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 };
 
 

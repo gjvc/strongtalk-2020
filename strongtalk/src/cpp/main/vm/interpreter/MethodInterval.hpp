@@ -43,6 +43,13 @@ protected:
     friend class MethodIntervalFactory;
 
 public:
+
+    MethodInterval() = default;
+    virtual ~MethodInterval() = default;
+    MethodInterval( const MethodInterval & ) = default;
+    MethodInterval &operator=( const MethodInterval & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     // Test operations
     bool includes( std::int32_t byteCodeIndex ) const {
         return begin_byteCodeIndex() <= byteCodeIndex and byteCodeIndex < end_byteCodeIndex();
@@ -111,6 +118,10 @@ private:
 
 public:
     IntervalInfo( MethodInterval *interval, InlinedScope *scope );
+    IntervalInfo() = default;
+    virtual ~IntervalInfo() = default;
+    IntervalInfo( const IntervalInfo & ) = default;
+    IntervalInfo &operator=( const IntervalInfo & ) = default;
 
 
     MethodInterval *interval() const {

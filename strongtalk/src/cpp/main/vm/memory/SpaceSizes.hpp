@@ -29,11 +29,27 @@ public:
     // Reads debug variables for initial settings.
     void initialize();
 
-    SpaceSizes() = default;
+
+    SpaceSizes() :
+        _reserved_object_size{ 0 },
+        _eden_size{ 0 },
+        _surv_size{ 0 },
+        _old_size{ 0 },
+        _reserved_codes_size{ 0 },
+        _code_size{ 0 },
+        _reserved_pic_heap_size{ 0 },
+        _pic_heap_size{ 0 },
+        _jump_table_size{ 0 } {
+
+    }
+
+
     virtual ~SpaceSizes() = default;
     SpaceSizes( const SpaceSizes & ) = default;
     SpaceSizes &operator=( const SpaceSizes & ) = default;
-    void operator delete( void *ptr ) { (void)ptr; }
+
+
+    void operator delete( void *ptr ) { (void) ptr; }
 
 
 };

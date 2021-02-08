@@ -46,8 +46,12 @@ public:
     Expression   *next;                    // used for splittable MergeExprs
     std::int32_t flags;
 
+    Expression() = default;
     Expression( PseudoRegister *p, Node *n );
+    virtual ~Expression() = default;
     Expression( const Expression & ) = default;
+    Expression &operator=( const Expression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     virtual bool isUnknownExpression() const {
@@ -316,7 +320,11 @@ protected:
 public:
     KlassExpression( KlassOop m, PseudoRegister *p, Node *n );
 
+    KlassExpression() = default;
+    virtual ~KlassExpression() = default;
     KlassExpression( const KlassExpression & ) = default;
+    KlassExpression &operator=( const KlassExpression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isKlassExpression() const {
@@ -381,7 +389,12 @@ protected:
     InlinedScope *_blockScope;        // block's parent scope
 public:
     BlockExpression( BlockPseudoRegister *p, Node *n );
+    
+    BlockExpression() = default;
+    virtual ~BlockExpression() = default;
     BlockExpression( const BlockExpression & ) = default;
+    BlockExpression &operator=( const BlockExpression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isBlockExpression() const {
@@ -427,7 +440,13 @@ public:
         _c{ c } {
     }
 
+    ConstantExpression() = default;
+    virtual ~ConstantExpression() = default;
+    ConstantExpression( const ConstantExpression & ) = default;
+    ConstantExpression &operator=( const ConstantExpression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
+    
     bool isConstantExpression() const {
         return true;
     }
@@ -508,7 +527,13 @@ public:
     MergeExpression( Expression *e1, Expression *e2, PseudoRegister *p, Node *n );
 
     MergeExpression( PseudoRegister *p, Node *n );
+
+    MergeExpression() = default;
+    virtual ~MergeExpression() = default;
     MergeExpression( const MergeExpression & ) = default;
+    MergeExpression &operator=( const MergeExpression & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     // A MergeExpression's PseudoRegister says where the merged result is (i.e., it may be different from
     // the PseudoRegisters of the individual expressions); typically, there's an assigmnent from the
@@ -651,6 +676,13 @@ private:
 
 public:
     ExpressionStack( InlinedScope *scope, std::int32_t size );
+
+    ExpressionStack() = default;
+    virtual ~ExpressionStack() = default;
+    ExpressionStack( const ExpressionStack & ) = default;
+    ExpressionStack &operator=( const ExpressionStack & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void push( Expression *expr, InlinedScope *currentScope, std::int32_t byteCodeIndex );
 

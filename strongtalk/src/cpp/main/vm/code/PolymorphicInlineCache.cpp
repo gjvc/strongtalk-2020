@@ -353,7 +353,7 @@ MethodOop *PolymorphicInlineCacheIterator::methodOop_addr() const {
 
 
 void PolymorphicInlineCacheIterator::print() {
-    spdlog::info( "a PolymorphicInlineCacheIterator" );
+    SPDLOG_INFO( "a PolymorphicInlineCacheIterator" );
 }
 
 
@@ -452,7 +452,7 @@ PolymorphicInlineCache *PolymorphicInlineCache::replace( NativeMethod *nm ) {
     if ( is_megamorphic() )
         return this;
 
-    spdlog::info( "compiled PolymorphicInlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+    SPDLOG_INFO( "compiled PolymorphicInlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
                   static_cast<const void *>( this ),
                   static_cast<const void *>( nm ),
                   static_cast<const void *>( nm->_lookupKey.klass() ) );
@@ -837,10 +837,10 @@ void PolymorphicInlineCache::oops_do( void f( Oop * ) ) {
 
 
 void PolymorphicInlineCache::print() {
-    spdlog::info( "\tPolymorphicInlineCache with %d entr%s", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
-    spdlog::info( "\t- selector    : {}", selector()->print_value_string() );
+    SPDLOG_INFO( "\tPolymorphicInlineCache with %d entr%s", number_of_targets(), number_of_targets() == 1 ? "y" : "ies" );
+    SPDLOG_INFO( "\t- selector    : {}", selector()->print_value_string() );
     selector()->print_symbol_on();
-//    spdlog::info( "" );
+//    SPDLOG_INFO( "" );
 
     // Disassembler::decode(entry(), entry() + code_size());
 
@@ -849,17 +849,17 @@ void PolymorphicInlineCache::print() {
 
     std::int32_t i = 1;
     while ( not it.at_end() ) {
-        spdlog::info( "\t- %d. klass    : ", i );
+        SPDLOG_INFO( "\t- %d. klass    : ", i );
         it.get_klass()->print_value();
-        spdlog::info( "" );
+        SPDLOG_INFO( "" );
         switch ( it.state() ) {
             case InlineState::AT_SMI_NATIVE_METHOD:
                 [[fallthrough]];
             case InlineState::AT_NATIVE_METHOD:
-                spdlog::info( "\t-    NativeMethod  : 0x{0:x} (entry 0x{0:x})\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
+                SPDLOG_INFO( "\t-    NativeMethod  : 0x{0:x} (entry 0x{0:x})\n", (std::int32_t) it.compiled_method(), (std::int32_t) it.get_call_addr() );
                 break;
             case InlineState::AT_METHOD_OOP:
-                spdlog::info( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
+                SPDLOG_INFO( "\t-    methodOop: %s\n", it.interpreted_method()->print_value_string() );
                 break;
             default: ShouldNotReachHere();
         }
@@ -879,7 +879,7 @@ void PolymorphicInlineCache::verify() {
             if ( k->at( i ) == k->at( j ) ) {
                 _console->print( "The class " );
                 k->at( i )->klass_part()->print_name_on( _console );
-                spdlog::info( "is twice in PolymorphicInlineCache 0x%lx", static_cast<const void *>(this) );
+                SPDLOG_INFO( "is twice in PolymorphicInlineCache 0x%lx", static_cast<const void *>(this) );
                 spdlog::warn( "PolymorphicInlineCache verify error" );
             }
         }

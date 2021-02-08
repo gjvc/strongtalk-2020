@@ -65,6 +65,12 @@ public:
         _lastLookupFailed{ false } {
     }
 
+    Inliner() = default;
+    virtual ~Inliner() = default;
+    Inliner( const Inliner & ) = default;
+    Inliner &operator=( const Inliner & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     // The inlineXXX generate a non-inlined send if necessary, with the exception
     // of inlineBlockInvocation which returns nullptr (and does nothing) if the block

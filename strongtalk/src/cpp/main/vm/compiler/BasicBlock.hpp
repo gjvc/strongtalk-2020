@@ -38,11 +38,11 @@ public:
     BasicBlockDefinitionAndUsageTable &operator=( const BasicBlockDefinitionAndUsageTable & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void print_short() {
-        spdlog::info( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void *>( this ) );
+        SPDLOG_INFO( "BasicBlockDefinitionAndUsageTable 0x{0:x}", static_cast<void *>( this ) );
     }
 
 
@@ -84,6 +84,15 @@ public:
         BasicBlock::genCounter = 0;
 
     }
+
+
+    BasicBlock() = default;
+    virtual ~BasicBlock() = default;
+    BasicBlock( const BasicBlock & ) = default;
+    BasicBlock &operator=( const BasicBlock & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     BasicBlock *after_visit() {

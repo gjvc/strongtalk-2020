@@ -32,13 +32,13 @@ MethodIterator::MethodIterator( MethodInterval *interval, MethodClosure *blk, Ab
 
 
 void MethodIterator::unknown_code( std::uint8_t code ) {
-    spdlog::info( "Unknown code found 0x{0:x}", code );
+    SPDLOG_INFO( "Unknown code found 0x{0:x}", code );
     st_fatal( "aborting" );
 }
 
 
 void MethodIterator::should_never_encounter( std::uint8_t code ) {
-    spdlog::info( "Should never iterate through code 0x{0:x}", code );
+    SPDLOG_INFO( "Should never iterate through code 0x{0:x}", code );
     st_fatal( "aborting" );
 }
 

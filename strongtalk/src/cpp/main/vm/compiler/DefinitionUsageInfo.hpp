@@ -25,6 +25,14 @@ public:
     }
 
 
+    DefinitionUsageInfo() = default;
+    virtual ~DefinitionUsageInfo() = default;
+    DefinitionUsageInfo( const DefinitionUsageInfo & ) = default;
+    DefinitionUsageInfo &operator=( const DefinitionUsageInfo & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void getLiveRange( std::int32_t &firstNodeID, std::int32_t &lastNodeId );
 
     void propagateTo( BasicBlock *bb, const PseudoRegister *r, const Definition *def, Usage *use, const bool global );

@@ -76,6 +76,10 @@ private:
     const char   *_title;
 public:
     TraceTime( const char *title, bool doit = true );
+    TraceTime() : active{false}, t{}, _title{ nullptr} {}
+    virtual ~TraceTime();
+    TraceTime( const TraceTime & ) = default;
+    TraceTime &operator=( const TraceTime & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
-    ~TraceTime();
 };

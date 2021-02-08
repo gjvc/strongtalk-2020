@@ -26,6 +26,12 @@ protected:
 public:
     ProgramCounterDescriptorInfoClass( std::int32_t size );
 
+    ProgramCounterDescriptorInfoClass() = default;
+    virtual ~ProgramCounterDescriptorInfoClass() = default;
+    ProgramCounterDescriptorInfoClass( const ProgramCounterDescriptorInfoClass & ) = default;
+    ProgramCounterDescriptorInfoClass &operator=( const ProgramCounterDescriptorInfoClass & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     std::int32_t length() {
         return _end;

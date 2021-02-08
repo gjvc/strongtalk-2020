@@ -40,6 +40,11 @@ struct EventLog : public CHeapAllocatedObject {
     std::int32_t  _nestingDepth;               // current nesting depth
 
     EventLog();
+    virtual ~EventLog() = default;
+    EventLog( const EventLog & ) = default;
+    EventLog &operator=( const EventLog & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void init();
 

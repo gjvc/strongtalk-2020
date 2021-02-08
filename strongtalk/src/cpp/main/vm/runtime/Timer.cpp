@@ -28,7 +28,7 @@ double Timer::seconds() {
 
 
 void Timer::print() {
-    spdlog::info( "{3.3f}", _userTime );
+    SPDLOG_INFO( "{3.3f}", _userTime );
 }
 
 
@@ -50,7 +50,7 @@ double ElapsedTimer::seconds() {
 
 
 void ElapsedTimer::print() {
-    spdlog::info( "{3.3f}", seconds() );
+    SPDLOG_INFO( "{3.3f}", seconds() );
 }
 
 
@@ -78,7 +78,7 @@ TraceTime::TraceTime( const char *title, bool doit ) :
     t{} {
 
     if ( active ) {
-        spdlog::info( "start timer [{}]", _title );
+        SPDLOG_INFO( "start timer [{}]", _title );
         t.start();
     }
 
@@ -88,6 +88,6 @@ TraceTime::TraceTime( const char *title, bool doit ) :
 TraceTime::~TraceTime() {
     if ( active ) {
         t.stop();
-        spdlog::info( "end timer [{}] [{}]", _title, t.seconds() );
+        SPDLOG_INFO( "end timer [{}] [{}]", _title, t.seconds() );
     }
 }

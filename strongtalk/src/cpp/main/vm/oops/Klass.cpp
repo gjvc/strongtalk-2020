@@ -468,7 +468,7 @@ bool Klass::is_named_class() const {
 
 
 void Klass::print_klass() {
-    spdlog::info( "%sKlass (%s)", name(), name_from_format( format() ) );
+    SPDLOG_INFO( "%sKlass (%s)", name(), name_from_format( format() ) );
 }
 
 

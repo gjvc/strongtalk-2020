@@ -114,7 +114,7 @@ void BitVector::removeFromTo( std::int32_t first, std::int32_t last ) {
 
 
 void BitVector::print_short() {
-    spdlog::info( "BitVector {0:x}", static_cast<void *>(this) );
+    SPDLOG_INFO( "BitVector {0:x}", static_cast<void *>(this) );
 }
 
 
@@ -141,27 +141,27 @@ void BitVector::doForAllOnes( intDoFn f ) {
 void BitVector::print() {
 
     print_short();
-    spdlog::info( ": {" );
+    SPDLOG_INFO( ": {" );
     std::int32_t last = -1;
     std::int32_t i    = 0;
 
     for ( ; i < length; i++ ) {
         if ( includes( i ) ) {
             if ( last < 0 ) {
-                spdlog::info( " %ld", i );    // first bit after string of 0s
+                SPDLOG_INFO( " %ld", i );    // first bit after string of 0s
                 last = i;
             }
         } else {
             if ( last >= 0 ) {
-                spdlog::info( "..%ld", i - 1 );    // ended a group
+                SPDLOG_INFO( "..%ld", i - 1 );    // ended a group
             }
             last = -1;
         }
     }
 
     if ( last >= 0 ) {
-        spdlog::info( "..%ld", i - 1 );
+        SPDLOG_INFO( "..%ld", i - 1 );
     }
 
-    spdlog::info( " }" );
+    SPDLOG_INFO( " }" );
 }

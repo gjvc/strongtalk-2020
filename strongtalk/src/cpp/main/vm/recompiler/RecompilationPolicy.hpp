@@ -39,6 +39,11 @@ protected:
 
 public:
     RecompilationPolicy( RecompilerFrame *first );
+    RecompilationPolicy() = default;
+    virtual ~RecompilationPolicy() = default;
+    RecompilationPolicy( const RecompilationPolicy & ) = default;
+    RecompilationPolicy &operator=( const RecompilationPolicy & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     Recompilee *findRecompilee();       // determine what to recompile
     void cleanupStaleInlineCaches();    // clean up inline caches of top methods

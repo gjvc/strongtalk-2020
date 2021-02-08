@@ -374,7 +374,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
                     break;
                 }
                 default:
-                    spdlog::info( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
+                    SPDLOG_INFO( "Format unknown %s", ByteCodes::format_as_string( c.format() ) );
                     st_fatal( "aborting" );
             }
         }
@@ -416,7 +416,7 @@ public:
     virtual ~BlockFinderClosure() = default;
     BlockFinderClosure( const BlockFinderClosure & ) = default;
     BlockFinderClosure &operator=( const BlockFinderClosure & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     bool hasBlock;
 
@@ -1042,7 +1042,7 @@ public:
     virtual ~TransitiveMethodClosure() = default;
     TransitiveMethodClosure( const TransitiveMethodClosure & ) = default;
     TransitiveMethodClosure &operator=( const TransitiveMethodClosure & ) = default;
-    void operator delete( void *ptr ) { static_cast<void *>(ptr); }
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     void if_node( IfNode *node );
@@ -1377,6 +1377,13 @@ public:
     }
 
 
+    ReferencedInstVarNamesClosure() = default;
+    virtual ~ReferencedInstVarNamesClosure() = default;
+    ReferencedInstVarNamesClosure( const ReferencedInstVarNamesClosure & ) = default;
+    ReferencedInstVarNamesClosure &operator=( const ReferencedInstVarNamesClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     GrowableArray<Oop> *_result;
 };
 
@@ -1423,6 +1430,13 @@ public:
         _result{ new GrowableArray<Oop>( size ) } {
     }
 
+    ReferencedClassVarNamesClosure() = default;
+    virtual ~ReferencedClassVarNamesClosure() = default;
+    ReferencedClassVarNamesClosure( const ReferencedClassVarNamesClosure & ) = default;
+    ReferencedClassVarNamesClosure &operator=( const ReferencedClassVarNamesClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
     GrowableArray<Oop> *_result;
 };
@@ -1457,6 +1471,14 @@ public:
     ReferencedGlobalsClosure( std::int32_t size ) :
         result{ new GrowableArray<Oop>( size ) } {
     }
+
+
+    ReferencedGlobalsClosure() = default;
+    virtual ~ReferencedGlobalsClosure() = default;
+    ReferencedGlobalsClosure( const ReferencedGlobalsClosure & ) = default;
+    ReferencedGlobalsClosure &operator=( const ReferencedGlobalsClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     GrowableArray<Oop> *result;
@@ -1557,6 +1579,11 @@ public:
         result{ new GrowableArray<Oop>( size ) } {
     }
 
+    SendersClosure() = default;
+    virtual ~SendersClosure() = default;
+    SendersClosure( const SendersClosure & ) = default;
+    SendersClosure &operator=( const SendersClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     GrowableArray<Oop> *result;
 };

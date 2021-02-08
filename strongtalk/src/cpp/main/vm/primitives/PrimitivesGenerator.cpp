@@ -13,7 +13,7 @@
 
 const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
 
-    spdlog::info( "PrimitivesGenerator::allocateBlock [{}]", n );
+    SPDLOG_INFO( "PrimitivesGenerator::allocateBlock [{}]", n );
 
     KlassOopDescriptor **block_klass{ nullptr };
 
@@ -49,7 +49,7 @@ const char *PrimitivesGenerator::allocateBlock( std::int32_t n ) {
             block_klass = &::nineArgumentBlockKlassObject;
             break;
         default:
-            spdlog::info( "PrimitivesGenerator::allocateBlock [{}] -- block_klass unset", n );
+            SPDLOG_INFO( "PrimitivesGenerator::allocateBlock [{}] -- block_klass unset", n );
             break;
     }
 

@@ -103,6 +103,11 @@ public:
     static Node *EndOfCode;        // "at end of code" marker
 
     NodeBuilder();
+    virtual ~NodeBuilder() = default;
+    NodeBuilder( const NodeBuilder & ) = default;
+    NodeBuilder &operator=( const NodeBuilder & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void initialize( InlinedScope *scope );
 

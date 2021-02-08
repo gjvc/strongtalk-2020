@@ -97,12 +97,12 @@ bool Interpreter::has_timers() {
 
 void Interpreter::print_code_status() {
 
-    spdlog::info( "interpreter-status-optimized[{}]", is_optimized() ? "yes" : "no" );
-    spdlog::info( "interpreter-trace-bytecodes[{}]", can_trace_bytecodes() ? "yes" : "no" );
-    spdlog::info( "interpreter-trace-sends[{}]", can_trace_sends() ? "yes" : "no" );
-    spdlog::info( "interpreter-trace-assertions[{}]", has_assertions() ? "yes" : "no" );
-    spdlog::info( "interpreter-trace-stack_checks[{}]", has_stack_checks() ? "yes" : "no" );
-    spdlog::info( "interpreter-trace-timers[{}]", has_timers() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-status-optimized[{}]", is_optimized() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-trace-bytecodes[{}]", can_trace_bytecodes() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-trace-sends[{}]", can_trace_sends() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-trace-assertions[{}]", has_assertions() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-trace-stack_checks[{}]", has_stack_checks() ? "yes" : "no" );
+    SPDLOG_INFO( "interpreter-trace-timers[{}]", has_timers() ? "yes" : "no" );
 
 }
 
@@ -117,7 +117,7 @@ void Interpreter::loop_counter_overflow() {
 
     if ( debug ) {
         ResourceMark resourceMark;
-        spdlog::info( "loop_counter_overflow: loop counter [{}] exceeds loop counter limit [{}], method[{}]",
+        SPDLOG_INFO( "loop_counter_overflow: loop counter [{}] exceeds loop counter limit [{}], method[{}]",
                       loop_counter(), loop_counter_limit(), method->print_value_string() );
     }
 
@@ -171,21 +171,21 @@ void Interpreter::trace_bytecode() {
     if ( TraceInterpreterFramesAt ) {
         if ( TraceInterpreterFramesAt < NumberOfBytecodesExecuted ) {
             Frame f = DeltaProcess::active()->last_frame();
-            spdlog::info( "Frame: fp = 0x{0:x}, sp = 0x{0:x}]", static_cast<void *>( f.fp() ), static_cast<void *>( f.sp() ) );
+            SPDLOG_INFO( "Frame: fp = 0x{0:x}, sp = 0x{0:x}]", static_cast<void *>( f.fp() ), static_cast<void *>( f.sp() ) );
 
             for ( Oop    *p    = f.sp(); p <= f.temp_addr( 0 ); p++ ) {
-                spdlog::info( "\t[0x{0:x}]: ", static_cast<void *>( p ) );
+                SPDLOG_INFO( "\t[0x{0:x}]: ", static_cast<void *>( p ) );
                 ( *p )->print_value();
-                spdlog::info( "" );
+                SPDLOG_INFO( "" );
             }
             std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
             const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-            spdlog::info( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+            SPDLOG_INFO( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
         }
     } else if ( TraceBytecodes ) {
         std::uint8_t *ip   = DeltaProcess::active()->last_frame().hp();
         const char   *name = ByteCodes::name( (ByteCodes::Code) *ip );
-        spdlog::info( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
+        SPDLOG_INFO( "%9d 0x{0:x}: %02x %s", NumberOfBytecodesExecuted, ip, *ip, name );
     }
 }
 

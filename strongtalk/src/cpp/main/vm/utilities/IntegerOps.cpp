@@ -162,16 +162,16 @@ Digit IntegerOps::xmy( Digit x, Digit y, Digit &carry ) {
 
 Digit IntegerOps::axpy( Digit a, Digit x, Digit y, Digit &carry ) {
 
-//    spdlog::info( "axpy: a=[%u], x=[%u], y=[%u], carry=[%u]", a, x, y, carry );
+//    SPDLOG_INFO( "axpy: a=[%u], x=[%u], y=[%u], carry=[%u]", a, x, y, carry );
     // returns (a*x + y + c) mod B; sets carry = (a*x + y + c) div B
     DoubleDigit lx = x;
-//    spdlog::info( "axpy: lx=[%llu], x=[%u]", lx, x );
+//    SPDLOG_INFO( "axpy: lx=[%llu], x=[%u]", lx, x );
 
     DoubleDigit r = ( lx * a ) + y + carry;
-//    spdlog::info( "axpy: r=[%llu]", r );
+//    SPDLOG_INFO( "axpy: r=[%llu]", r );
 
     carry = r >> digitBitLength;
-//    spdlog::info( "axpy: carry=[%lu]", carry);
+//    SPDLOG_INFO( "axpy: carry=[%lu]", carry);
 
     return Digit( r & oneB );
 }

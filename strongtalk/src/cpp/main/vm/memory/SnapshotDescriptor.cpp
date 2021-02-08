@@ -25,6 +25,15 @@ public:
         _snapshotDescriptor{ s } {
     }
 
+
+    ReadClosure() = default;
+    virtual ~ReadClosure() = default;
+    ReadClosure( const ReadClosure & ) = default;
+    ReadClosure &operator=( const ReadClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 };
 
 
@@ -42,6 +51,16 @@ public:
     WriteClosure( SnapshotDescriptor *s ) :
         _snapshotDescriptor{ s } {
     }
+
+
+    WriteClosure() = default;
+    virtual ~WriteClosure() = default;
+    WriteClosure( const WriteClosure & ) = default;
+    WriteClosure &operator=( const WriteClosure & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 };
 

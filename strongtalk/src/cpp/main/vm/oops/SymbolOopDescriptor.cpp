@@ -35,6 +35,7 @@ bool SymbolOopDescriptor::verify() {
 
 void SymbolOopDescriptor::print_symbol_on( ConsoleOutputStream *stream ) {
     stream = stream ? stream : _console;
-    for ( std::int32_t i = 1; i <= length(); i++ )
+    for ( std::int32_t i = 1; i <= length(); i++ ) {
         stream->put( byte_at( i ) );
+    }
 }

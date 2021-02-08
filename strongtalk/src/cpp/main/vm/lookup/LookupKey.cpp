@@ -37,7 +37,7 @@ bool LookupKey::verify() const {
         flag = false;
     }
     if ( not selector_or_method()->is_symbol() and not selector_or_method()->is_method() ) {
-        spdlog::info( "\tin selector_or_method of LookupKey 0x{0:x}", static_cast<const void *>(this) );
+        SPDLOG_INFO( "\tin selector_or_method of LookupKey 0x{0:x}", static_cast<const void *>(this) );
         flag = false;
     }
     return flag;

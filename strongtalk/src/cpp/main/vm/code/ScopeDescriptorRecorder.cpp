@@ -292,7 +292,7 @@ Location ScopeDescriptorRecorder::convert_location( Location loc ) {
     ScopeInfo scope = theCompiler->scopes->at( scope_id )->getScopeInfo();
     st_assert( scope, "scope must exist" );
     if ( scope->_offset == INVALID_OFFSET ) {
-        spdlog::info( loc.name() );
+        SPDLOG_INFO( loc.name() );
         theCompiler->print_code( false );
         st_fatal( "compiler error: context location appears outside its scope" );    // Urs 5/96
     }

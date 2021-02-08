@@ -24,7 +24,7 @@ void console_init() {
     if ( _console )
         return;
     _console = new( true ) ConsoleOutputStream;
-    spdlog::info( "console-init:  ConsoleOutputStream-open" );
+    SPDLOG_INFO( "console-init:  ConsoleOutputStream-open" );
 }
 
 
@@ -38,9 +38,9 @@ void logging_init() {
     spdlog::set_default_logger( console );
 
     // announce
-    spdlog::info( "logging-init:  -----------------------------------------------------------------------------" );
-    spdlog::info( "logging-init:  >>> Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
-    spdlog::info( "logging-init:  >>> (C) 1994 - 2021, The Strongtalk authors and contributors" );
-    spdlog::info( "logging-init:  -----------------------------------------------------------------------------" );
+    SPDLOG_INFO( "logging-init:  -----------------------------------------------------------------------------" );
+    SPDLOG_INFO( "logging-init:  >>> Strongtalk Delta Virtual Machine, {}.{}{} ({}, {})", Universe::major_version(), Universe::minor_version(), Universe::beta_version(), __DATE__, __TIME__ );
+    SPDLOG_INFO( "logging-init:  >>> (C) 1994 - 2021, The Strongtalk authors and contributors" );
+    SPDLOG_INFO( "logging-init:  -----------------------------------------------------------------------------" );
 
 }

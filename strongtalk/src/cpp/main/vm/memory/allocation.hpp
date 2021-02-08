@@ -40,8 +40,11 @@
 // Calling new or delete will result in fatal error.
 class ValueObject {
 public:
-    void *operator new( std::size_t size ) throw();
-    void operator delete( void *p );
+//    ValueObject() = default;                     //  constructor causes problems
+    void *operator new( std::size_t size ) throw(); //  operator new() is ok
+    void operator delete( void *p );                //  operator delete() is ok
+//    virtual ~ValueObject() = default;               //  destructor causes problems
+
 };
 
 

@@ -34,6 +34,12 @@ public:
     ~BlockScavenge() {
         counter--;
     }
+
+
+    BlockScavenge( const BlockScavenge & ) = default;
+    BlockScavenge &operator=( const BlockScavenge & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 };
 
 
@@ -47,6 +53,9 @@ public:
         _scavengeCount{ Universe::scavengeCount } {
     }
 
+    VerifyNoScavenge( const VerifyNoScavenge & ) = default;
+    VerifyNoScavenge &operator=( const VerifyNoScavenge & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     virtual ~VerifyNoScavenge() {
         if ( _scavengeCount not_eq Universe::scavengeCount ) {
@@ -65,6 +74,9 @@ public:
         _top_of_eden{ Universe::new_gen.eden()->top() } {
     }
 
+    VerifyNoAllocation( const VerifyNoAllocation & ) = default;
+    VerifyNoAllocation &operator=( const VerifyNoAllocation & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     virtual ~VerifyNoAllocation() {
         if ( _top_of_eden not_eq Universe::new_gen.eden()->top() ) {

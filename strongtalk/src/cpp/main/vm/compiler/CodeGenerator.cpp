@@ -63,6 +63,15 @@ private:
     }
 
 
+
+    Stub() = default;
+    virtual ~Stub() = default;
+    Stub( const Stub & ) = default;
+    Stub &operator=( const Stub & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
 public:
     static Stub *new_jcc_stub( PseudoRegisterMapping *mapping, Node *dst, Assembler::Condition cc ) {
         Stub *s = new Stub( mapping, dst );
@@ -116,6 +125,12 @@ public:
         _present         = new GrowableArray<bool>( number_of_pseudoRegisters, number_of_pseudoRegisters, false );
     }
 
+    DebugInfoWriter() = default;
+    virtual ~DebugInfoWriter() = default;
+    DebugInfoWriter( const DebugInfoWriter & ) = default;
+    DebugInfoWriter &operator=( const DebugInfoWriter & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
 
@@ -156,7 +171,7 @@ public:
                 }
                 // debugging
                 if ( PrintDebugInfoGeneration ) {
-                    spdlog::info( "{:5d}: {:20s} @ {}", pc_offset, pseudoRegister->name(), new_loc.name() );
+                    SPDLOG_INFO( "{:5d}: {:20s} @ {}", pc_offset, pseudoRegister->name(), new_loc.name() );
                 }
                 rec->changeLogicalAddress( pseudoRegister->logicalAddress(), nameNode, pc_offset );
             }
@@ -167,7 +182,7 @@ public:
 
 
     void print() {
-        spdlog::info( "a DebugInfoWriter" );
+        SPDLOG_INFO( "a DebugInfoWriter" );
     }
 };
 
@@ -360,8 +375,8 @@ void CodeGenerator::generateMergeStubs() {
         _mergeStubs.pop()->generateMergeStub();
 
     if ( PrintCodeGeneration and _masm->pc() > start_pc ) {
-        spdlog::info( "---" );
-        spdlog::info( "fixup merge stubs" );
+        SPDLOG_INFO( "---" );
+        SPDLOG_INFO( "fixup merge stubs" );
         _masm->code()->decode();
     }
 }
@@ -439,10 +454,10 @@ void CodeGenerator::finalize( InlinedScope *scope ) {
         _masm->movl( eax, compilationCount );
 
     if ( PrintCodeGeneration ) {
-        spdlog::info( "---" );
-        spdlog::info( "merge stubs" );
+        SPDLOG_INFO( "---" );
+        SPDLOG_INFO( "merge stubs" );
         _masm->code()->decode();
-        spdlog::info( "---" );
+        SPDLOG_INFO( "---" );
     }
 }
 
@@ -533,10 +548,10 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
     if ( CompilerDebug ) _masm->movl( eax, _nofCompilations );
 
     if ( PrintCodeGeneration ) {
-        spdlog::info( "---" );
-        spdlog::info( "entry point" );
+        SPDLOG_INFO( "---" );
+        SPDLOG_INFO( "entry point" );
         _masm->code()->decode();
-        spdlog::info( "---" );
+        SPDLOG_INFO( "---" );
     }
 }
 
@@ -743,7 +758,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) 
         if ( TraceCalls ) {
             ResourceMark resourceMark;
             if ( print_args_long or ( *arg )->is_smi() ) {
-                spdlog::info( "{} ", ( *arg )->print_value_string() );
+                SPDLOG_INFO( "{} ", ( *arg )->print_value_string() );
             } else {
                 _console->print( "0x{0:x} ", *arg );
             }
@@ -770,7 +785,7 @@ void CodeGenerator::verifyReturn( Oop result ) {
     if ( TraceCalls ) {
         ResourceMark resourceMark;
         indent();
-        spdlog::info( ") {} -> {}", nativeMethodName(), result->print_value_string() );
+        SPDLOG_INFO( ") {} -> {}", nativeMethodName(), result->print_value_string() );
     }
     _callDepth--;
 }
@@ -780,7 +795,7 @@ void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, 
     static_cast<void>(nlrScopeID); // unused
 
     _numberOfNonLocalReturns++;
-    spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
+    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( result ) );
     if ( nlrFrame <= fp )
         spdlog::error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", static_cast<const void *>( nlrFrame ), static_cast<const void *>( fp ) );
 
@@ -794,7 +809,7 @@ void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, 
     if ( TraceCalls ) {
         ResourceMark resourceMark;
         indent();
-        spdlog::info( ") {} ^ {}", nativeMethodName(), result->print_value_string() );
+        SPDLOG_INFO( ") {} ^ {}", nativeMethodName(), result->print_value_string() );
     }
     _callDepth--;
 }
@@ -879,7 +894,7 @@ static bool bb_needs_jump;
 
 void CodeGenerator::beginOfBasicBlock( Node *node ) {
     if ( PrintCodeGeneration and WizardMode ) {
-        spdlog::info( "--- begin of basic block (N{}) ---", node->id() );
+        SPDLOG_INFO( "--- begin of basic block (N{}) ---", node->id() );
     }
     bindLabel( node );
 }
@@ -890,7 +905,7 @@ void CodeGenerator::endOfBasicBlock( Node *node ) {
         Node *from = node;
         Node *to   = node->next();
         if ( PrintCodeGeneration ) {
-            spdlog::info( "branch from N{} to N{}", from->id(), to->id() );
+            SPDLOG_INFO( "branch from N{} to N{}", from->id(), to->id() );
             if ( PrintPseudoRegisterMapping )
                 _currentMapping->print();
         }
@@ -901,7 +916,7 @@ void CodeGenerator::endOfBasicBlock( Node *node ) {
     }
 
     if ( PrintCodeGeneration and WizardMode ) {
-        spdlog::info( "--- end of basic block (N{}) ---", node->id() );
+        SPDLOG_INFO( "--- end of basic block (N{}) ---", node->id() );
     }
 }
 
@@ -932,9 +947,9 @@ void CodeGenerator::beginOfNode( Node *node ) {
 
     // debugging
     if ( PrintCodeGeneration ) {
-        spdlog::info( "begin node [{}]", node->id() );
+        SPDLOG_INFO( "begin node [{}]", node->id() );
         node->print();
-        spdlog::info( "end node [{}], byteCodeIndex [{}]", node->id(), node->byteCodeIndex() );
+        SPDLOG_INFO( "end node [{}], byteCodeIndex [{}]", node->id(), node->byteCodeIndex() );
         if ( PrintPseudoRegisterMapping ) {
             _currentMapping->print();
         }

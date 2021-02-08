@@ -81,6 +81,12 @@ private:
 public:
     PerformanceDebugger( Compiler *c );
 
+    PerformanceDebugger() = default;
+    virtual ~PerformanceDebugger() = default;
+    PerformanceDebugger( const PerformanceDebugger & ) = default;
+    PerformanceDebugger &operator=( const PerformanceDebugger & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     void report_context( InlinedScope *s );                                     // couldn't eliminate scope's context
     void report_block( Node *s, BlockPseudoRegister *blk, const char *what );   // couldn't eliminate block
     void report_toobig( InlinedScope *s );                                      // NativeMethod getting too big

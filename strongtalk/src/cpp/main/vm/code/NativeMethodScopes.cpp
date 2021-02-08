@@ -190,7 +190,7 @@ void NativeMethodScopes::verify() {
     // Verify all scopedesc
     FOR_EACH_SCOPE( this, s ) {
         if ( not s->verify() )
-            spdlog::info( "\t\tin NativeMethod at 0x{0:x} (scopes)", static_cast<void *>( my_nativeMethod() ) );
+            SPDLOG_INFO( "\t\tin NativeMethod at 0x{0:x} (scopes)", static_cast<void *>( my_nativeMethod() ) );
     }
 }
 
@@ -273,7 +273,7 @@ bool NativeMethodScopes::is_new() const {
 void NativeMethodScopes::print() {
     ResourceMark m;    // in case methods get printed via debugger
     printIndent();
-    spdlog::info( "scopes:" );
+    SPDLOG_INFO( "scopes:" );
     Indent++;
     FOR_EACH_SCOPE( this, d )d->print();
     Indent--;
@@ -288,5 +288,5 @@ void NativeMethodScopes::print_partition() {
     std::int32_t v_size = value_size() * sizeof( std::int32_t );
     std::int32_t total  = v_size + p_size + o_size + d_size;
 
-    spdlog::info( "{deps {}%%, oops {}%%, bytes {}%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
+    SPDLOG_INFO( "{deps {}%%, oops {}%%, bytes {}%%, pcs %d%%}", d_size * 100 / total, o_size * 100 / total, v_size * 100 / total, p_size * 100 / total );
 }

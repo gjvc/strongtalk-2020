@@ -68,7 +68,11 @@ private:
         }
     }
 
+    Thread( const Thread & ) = default;
+    Thread &operator=( const Thread & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
+    
     virtual ~Thread() {
         std::int32_t index = threads->find( this );
         threads->at_put( index, nullptr );

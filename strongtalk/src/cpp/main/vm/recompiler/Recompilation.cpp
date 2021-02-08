@@ -46,7 +46,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
         const char *msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
-        spdlog::info( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
+        SPDLOG_INFO( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");
         // continuing here is probably catastrophal because the invocation counter
@@ -75,7 +75,7 @@ const char *Recompilation::nativeMethod_invocation_counter_overflow( Oop receive
     // the invocation counter overflow).
     ResourceMark resourceMark;
     NativeMethod *trigger = findNativeMethod( retpc );
-    spdlog::info( "nativeMethod_invocation_counter_overflow: receiver = 0x{0:x}, pc = 0x{0:x} (NativeMethod 0x{0:x})", static_cast<const void *>( receiver ), static_cast<const void *>( retpc ), static_cast<const void *>( trigger ) );
+    SPDLOG_INFO( "nativeMethod_invocation_counter_overflow: receiver = 0x{0:x}, pc = 0x{0:x} (NativeMethod 0x{0:x})", static_cast<const void *>( receiver ), static_cast<const void *>( retpc ), static_cast<const void *>( trigger ) );
 
     const char        *continuationAddr = trigger->verifiedEntryPoint();   // where to continue
     DeltaVirtualFrame *vf               = DeltaProcess::active()->last_delta_vframe();
@@ -106,7 +106,7 @@ NativeMethod *compile_method( LookupKey *key, MethodOop m ) {
             VM_OptimizeRScope op( rscope );
             VMProcess::execute( &op );
             if ( TraceInliningDatabase ) {
-                spdlog::info( "Inlining database compile " );
+                SPDLOG_INFO( "Inlining database compile " );
                 key->print_on( _console );
                 _console->cr();
             }
@@ -144,7 +144,7 @@ void Recompilation::init() {
 void Recompilation::doit() {
     ResourceMark resourceMark;
     if ( PrintRecompilation ) {
-        spdlog::info( "recompilation trigger: %s (0x{0:x})", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
+        SPDLOG_INFO( "recompilation trigger: %s (0x{0:x})", _method->selector()->as_string(), isCompiled() ? (const char *) _nativeMethod : (const char *) _method );
     }
 
     _deltaVirtualFrame = calling_process()->last_delta_vframe();
@@ -168,7 +168,7 @@ void Recompilation::doit() {
         } else {
             r = policy.findRecompilee();
         }
-        _recompiledTrigger = r not_eq nullptr and r->rframe() == first;
+        _recompiledTrigger = r not_eq nullptr and r->recompilerFrame() == first;
         if ( r ) {
             recompile( r );
         }
@@ -180,7 +180,7 @@ void Recompilation::doit() {
             _console->cr();
             _method->print_value_on( _console );
             _console->cr();
-            spdlog::info( "uncommon? {}", _nativeMethod->isUncommonRecompiled() );
+            SPDLOG_INFO( "uncommon? {}", _nativeMethod->isUncommonRecompiled() );
         }
         //slr debugging
 
@@ -227,9 +227,9 @@ bool Recompilation::handleStaleInlineCache( RecompilerFrame *first ) {
             // replace it with the compiled one; no need to recompile anything now
             if ( PrintRecompilation ) {
                 if ( it->is_interpreted_ic() ) {
-                    spdlog::info( "replacing nm 0x{0:x} in InterpretedInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->interpreted_ic() ) );
+                    SPDLOG_INFO( "replacing nm 0x{0:x} in InterpretedInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->interpreted_ic() ) );
                 } else {
-                    spdlog::info( "replacing nm 0x{0:x} in CompiledInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->compiled_ic() ) );
+                    SPDLOG_INFO( "replacing nm 0x{0:x} in CompiledInlineCache 0x{0:x}", static_cast<void *>( nm ), static_cast<void *>( it->compiled_ic() ) );
                 }
             }
 
@@ -269,7 +269,7 @@ void Recompilation::recompile( Recompilee *r ) {
     // recompile r
     recompilee = r->is_compiled() ? r->code() : nullptr;    // previous version (if any)
 
-    if ( r->rframe()->is_blockMethod() ) {
+    if ( r->recompilerFrame()->is_blockMethod() ) {
         recompile_block( r );
     } else {
         recompile_method( r );
@@ -287,7 +287,7 @@ void Recompilation::recompile( Recompilee *r ) {
     recompilee = nullptr;
 
     // now install _newNM in calling inline cache
-    VirtualFrame        *vf = r->rframe()->top_vframe();
+    VirtualFrame        *vf = r->recompilerFrame()->top_vframe();
     InlineCacheIterator *it = vf->fr().sender_ic_iterator();
     if ( it ) {
         // Replace the element in the inline cache
@@ -348,7 +348,9 @@ void Recompilation::recompile_method( Recompilee *r ) {
 
 
 void Recompilation::recompile_block( Recompilee *r ) {
-    st_assert( r->rframe()->is_blockMethod(), "must be block recompilation" );
+
+
+    st_assert( r->recompilerFrame()->is_blockMethod(), "must be block recompilation" );
     if ( recompilee == nullptr ) {
         // Urs please fix this.
         // Sometimes recompilee is nullptr when this is called
@@ -360,7 +362,7 @@ void Recompilation::recompile_block( Recompilee *r ) {
     }
     st_assert( recompilee not_eq nullptr, "must have block recompilee" );
 
-    DeltaVirtualFrame *vf = r->rframe()->top_vframe();
+    DeltaVirtualFrame *vf = r->recompilerFrame()->top_vframe();
     Oop               block;
     if ( recompilee and recompilee->is_block() ) {
         DeltaVirtualFrame *sender = vf->sender_delta_frame();
@@ -381,11 +383,11 @@ void Recompilation::recompile_block( Recompilee *r ) {
 }
 
 
-Recompilee *Recompilee::new_Recompilee( RecompilerFrame *rf ) {
-    if ( rf->is_compiled() ) {
-        return new CompiledRecompilee( rf, ( (CompiledRecompilerFrame *) rf )->nm() );
+Recompilee *Recompilee::new_Recompilee( RecompilerFrame *recompilerFrame ) {
+    if ( recompilerFrame->is_compiled() ) {
+        return new CompiledRecompilee( recompilerFrame, ( (CompiledRecompilerFrame *) recompilerFrame )->nm() );
     } else {
-        InterpretedRecompilerFrame *irf = (InterpretedRecompilerFrame *) rf;
+        InterpretedRecompilerFrame *irf = (InterpretedRecompilerFrame *) recompilerFrame;
         // Urs, please check this!
         st_assert( irf->key() not_eq nullptr, "must have a key" );
         return new InterpretedRecompilee( irf, irf->key(), irf->top_method() );

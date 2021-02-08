@@ -179,38 +179,38 @@ bool TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo 
 
 
 void TempPrinter::decode( MethodOop method, std::int32_t byteCodeIndex ) {
-    spdlog::info( "TempDecoding:" );
+    SPDLOG_INFO( "TempDecoding:" );
     TempDecoder::decode( method, byteCodeIndex );
 }
 
 
 void TempPrinter::parameter( ByteArrayOop name, std::int32_t index ) {
-    spdlog::info( "  param:      %s@{}", name->as_string(), index );
+    SPDLOG_INFO( "  param:      %s@{}", name->as_string(), index );
 }
 
 
 void TempPrinter::stack_temp( ByteArrayOop name, std::int32_t no ) {
-    spdlog::info( "  stack temp: %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  stack temp: %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::stack_float_temp( ByteArrayOop name, std::int32_t fno ) {
-    spdlog::info( "  stack float temp: %s@{}", name->as_string(), fno );
+    SPDLOG_INFO( "  stack float temp: %s@{}", name->as_string(), fno );
 }
 
 
 void TempPrinter::heap_temp( ByteArrayOop name, std::int32_t no ) {
-    spdlog::info( "  heap temp:  %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  heap temp:  %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::heap_parameter( ByteArrayOop name, std::int32_t no ) {
-    spdlog::info( "  heap param:  %s@{}", name->as_string(), no );
+    SPDLOG_INFO( "  heap param:  %s@{}", name->as_string(), no );
 }
 
 
 void TempPrinter::no_debug_info() {
-    spdlog::info( "method has no debug information" );
+    SPDLOG_INFO( "method has no debug information" );
 }
 
 
@@ -219,6 +219,13 @@ private:
     std::int32_t the_no;
 public:
     ByteArrayOop result;
+
+    FindParam() : the_no{0}, result{} {}
+    virtual ~FindParam() =default;
+    FindParam( const FindParam & ) = default;
+    FindParam &operator=( const FindParam & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     void find( MethodOop method, std::int32_t no ) {
@@ -249,6 +256,16 @@ public:
     ByteArrayOop result;
 
 
+    FindStackTemp() : the_no{0}, result{} {
+
+    }
+    virtual ~FindStackTemp() = default;
+    FindStackTemp( const FindStackTemp & ) = default;
+    FindStackTemp &operator=( const FindStackTemp & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {
         result = nullptr;
         the_no = no;
@@ -268,6 +285,14 @@ private:
     std::int32_t the_fno;
 public:
     ByteArrayOop result;
+
+    FindStackFloatTemp() : the_fno{0}, result{} {}
+    virtual ~FindStackFloatTemp() = default;
+    FindStackFloatTemp( const FindStackFloatTemp & ) = default;
+    FindStackFloatTemp &operator=( const FindStackFloatTemp & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
 
     void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t fno ) {
@@ -292,6 +317,16 @@ private:
 
 public:
     ByteArrayOop result;
+
+
+    FindHeapTemp() : the_no{0}, result{} {
+
+    }
+    virtual ~FindHeapTemp() = default;
+    FindHeapTemp( const FindHeapTemp & ) = default;
+    FindHeapTemp &operator=( const FindHeapTemp & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     void find( MethodOop method, std::int32_t byteCodeIndex, std::int32_t no ) {

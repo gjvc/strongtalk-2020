@@ -18,7 +18,7 @@ void NativeCall::verify() {
 
 
 void NativeCall::print() {
-    spdlog::info( "0x{0:x}: call 0x{0:x}", instruction_address(), destination() );
+    SPDLOG_INFO( "0x{0:x}: call 0x{0:x}", instruction_address(), destination() );
 }
 
 
@@ -30,7 +30,7 @@ void NativeMov::verify() {
 
 
 void NativeMov::print() {
-    spdlog::info( "0x{0:x}: mov reg, 0x{0:x}", instruction_address(), data() );
+    SPDLOG_INFO( "0x{0:x}: mov reg, 0x{0:x}", instruction_address(), data() );
 }
 
 
@@ -42,5 +42,5 @@ void NativeTest::verify() {
 
 
 void NativeTest::print() {
-    spdlog::info( "0x{0:x}: test eax, 0x{0:x}", instruction_address(), data() );
+    SPDLOG_INFO( "0x{0:x}: test eax, 0x{0:x}", instruction_address(), data() );
 }

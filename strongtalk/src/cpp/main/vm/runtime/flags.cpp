@@ -172,10 +172,10 @@ bool debugFlags::intAtPut( const char *name, std::int32_t len, std::int32_t *val
 void debugFlags::printFlags() {
 
     for ( BooleanFlag *b = &booleanDebugFlags[ 0 ]; b->_name; b++ )
-        spdlog::info( "%30s = %s", b->_name, *b->_value ? "true" : "false" );
+        SPDLOG_INFO( "%30s = %s", b->_name, *b->_value ? "true" : "false" );
 
     for ( IntegerFlag *i = &integerDebugFlags[ 0 ]; i->_name; i++ )
-        spdlog::info( "%30s = 0x%08x", i->_name, *i->_value );
+        SPDLOG_INFO( "%30s = 0x%08x", i->_name, *i->_value );
 }
 
 

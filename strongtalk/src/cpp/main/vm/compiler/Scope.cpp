@@ -905,7 +905,7 @@ void print_selector_cr( SymbolOop selector ) {
     st_assert( length < 100, "selector longer than 99 characters - buffer overrun" );
     strncpy( buffer, selector->chars(), length );
     buffer[ length ] = '\0';
-    spdlog::info( "%s", buffer );
+    SPDLOG_INFO( "%s", buffer );
 }
 
 
@@ -916,7 +916,7 @@ void InlinedScope::generateDebugInfo() {
         if ( isMethodScope() ) {
             _console->print( "Method: " );
             print_selector_cr( method()->selector() );
-            spdlog::info( "self: %s", _self->pseudoRegister()->name() );
+            SPDLOG_INFO( "self: %s", _self->pseudoRegister()->name() );
         } else {
             MethodOop m;
             _console->print( "Method: " );
@@ -925,7 +925,7 @@ void InlinedScope::generateDebugInfo() {
             }
             print_selector_cr( m->selector() );
             method()->print_codes();
-            spdlog::info( "no receiver (block method)" );
+            SPDLOG_INFO( "no receiver (block method)" );
         }
     }
 
@@ -940,7 +940,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _temporaries->at( i )->pseudoRegister();
                 rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "temp[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "temp[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // float temporaries
@@ -950,7 +950,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _floatTemporaries->at( i )->pseudoRegister();
                 rec->addTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "float[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "float[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // context temporaries
@@ -960,7 +960,7 @@ void InlinedScope::generateDebugInfo() {
                 PseudoRegister *pseudoRegister = _contextTemporaries->at( i )->pseudoRegister();
                 rec->addContextTemporary( _scopeInfo, i, pseudoRegister->createLogicalAddress() );
                 if ( PrintDebugInfoGeneration )
-                    spdlog::info( "c_temp[%2d]: %s", i, pseudoRegister->name() );
+                    SPDLOG_INFO( "c_temp[%2d]: %s", i, pseudoRegister->name() );
             }
         }
         // expr stack
@@ -976,7 +976,7 @@ void InlinedScope::generateDebugInfo() {
                     //       this with Lars.
                     rec->addExprStack( _scopeInfo, i, r->createLogicalAddress() );
                     if ( PrintDebugInfoGeneration )
-                        spdlog::info( "expr[%2d]: %s", i, r->name() );
+                        SPDLOG_INFO( "expr[%2d]: %s", i, r->name() );
                 } else {
                     // r's scope is too low (i.e. it's not actually live anymore)
                     // this can only happen if the expression is discarded; thus it's safe not to describe this entry
@@ -992,7 +992,7 @@ void InlinedScope::generateDebugInfo() {
     for ( std::int32_t i = 0; i < len; i++ ) {
         InlinedScope *s = _subScopes->at( i );
         if ( PrintDebugInfoGeneration )
-            spdlog::info( "Subscope {} (id = {}):", i, s->scopeID() );
+            SPDLOG_INFO( "Subscope {} (id = {}):", i, s->scopeID() );
         s->generateDebugInfo();
     }
 }
@@ -1069,9 +1069,9 @@ KlassOop OutlinedMethodScope::methodHolder() const {
 // printing code
 
 void SendInfo::print() {
-    spdlog::info( "SendInfo 0x{0:x} ", static_cast<void *>( this ) );
+    SPDLOG_INFO( "SendInfo 0x{0:x} ", static_cast<void *>( this ) );
     _selector->print_symbol_on();
-    spdlog::info( "(receiver = 0x{0:x}, nsends = %ld)", static_cast<void *>( _receiver ), reinterpret_cast<void *>( _sendCount ) );
+    SPDLOG_INFO( "(receiver = 0x{0:x}, nsends = %ld)", static_cast<void *>( _receiver ), reinterpret_cast<void *>( _sendCount ) );
 }
 
 
@@ -1084,21 +1084,21 @@ void InlinedScope::printTree() {
 
 
 void InlinedScope::print() {
-    spdlog::info( " method: 0x{0:x}\n\tid: {:d}", static_cast<void *>( method() ), scopeID() );
-    spdlog::info( "self:   " );
+    SPDLOG_INFO( " method: 0x{0:x}\n\tid: {:d}", static_cast<void *>( method() ), scopeID() );
+    SPDLOG_INFO( "self:   " );
     self()->print();
     for ( std::int32_t i = 0; i < nofArguments(); i++ ) {
-        spdlog::info( "arg {:2d} : ", i );
+        SPDLOG_INFO( "arg {:2d} : ", i );
         argument( i )->print();
     }
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 
 void MethodScope::print_short() {
-    spdlog::info( "(MethodScope*)0x{0:x} (", static_cast<void *>( this ) );
+    SPDLOG_INFO( "(MethodScope*)0x{0:x} (", static_cast<void *>( this ) );
     selector()->print_symbol_on();
-    spdlog::info( ")" );
+    SPDLOG_INFO( ")" );
 }
 
 
@@ -1106,10 +1106,10 @@ void MethodScope::print() {
     print_short();
     InlinedScope::print();
     if ( sender() ) {
-        spdlog::info( "  sender: " );
+        SPDLOG_INFO( "  sender: " );
         sender()->print_short();
     }
-    spdlog::info( " @ {0:d}", senderByteCodeIndex() );
+    SPDLOG_INFO( " @ {0:d}", senderByteCodeIndex() );
     method()->pretty_print();
 }
 
@@ -1118,35 +1118,35 @@ void BlockScope::print() {
     print_short();
     InlinedScope::print();
     if ( parent() ) {
-        spdlog::info( "\tparent: " );
+        SPDLOG_INFO( "\tparent: " );
         parent()->print_short();
     }
     if ( sender() ) {
-        spdlog::info( "  sender: " );
+        SPDLOG_INFO( "  sender: " );
         sender()->print_short();
     }
-    spdlog::info( " @ {0:d}", senderByteCodeIndex() );
+    SPDLOG_INFO( " @ {0:d}", senderByteCodeIndex() );
     method()->pretty_print();
 }
 
 
 void BlockScope::print_short() {
-    spdlog::info( "(BlockScope*)0x{0:x} (", static_cast<void *>( this ) );
+    SPDLOG_INFO( "(BlockScope*)0x{0:x} (", static_cast<void *>( this ) );
     selector()->print_symbol_on();
-    spdlog::info( " 0x{0:x})", static_cast<void *>( method() ) );
+    SPDLOG_INFO( " 0x{0:x})", static_cast<void *>( method() ) );
 }
 
 
 void OutlinedScope::print_short( const char *name ) {
-    spdlog::info( "(%s*)0x{0:x} (", name, static_cast<void *>( this ) );
+    SPDLOG_INFO( "(%s*)0x{0:x} (", name, static_cast<void *>( this ) );
     _scope->selector()->print_symbol_on();
-    spdlog::info( ")" );
+    SPDLOG_INFO( ")" );
 }
 
 
 void OutlinedScope::print( const char *name ) {
     print_short( name );
-    spdlog::info( "  _nm = 0x{0:x}, _scope = 0x{0:x}", static_cast<void *>( _nm ), static_cast<void *>( _scope ) );
+    SPDLOG_INFO( "  _nm = 0x{0:x}, _scope = 0x{0:x}", static_cast<void *>( _nm ), static_cast<void *>( _scope ) );
 }
 
 
@@ -1163,10 +1163,10 @@ void OutlinedMethodScope::print() {
 void OutlinedBlockScope::print() {
     OutlinedScope::print( "OutlinedMethodScope" );
     if ( parent() ) {
-        spdlog::info( "    parent: " );
+        SPDLOG_INFO( "    parent: " );
         parent()->print_short();
     }
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 

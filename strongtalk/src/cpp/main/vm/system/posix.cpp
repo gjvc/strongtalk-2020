@@ -67,15 +67,15 @@ const auto STACK_SIZE = ThreadStackSize * 1024;
 
 void os_dump_context2( ucontext_t * context ) {
     mcontext_t mcontext = context->uc_mcontext;
-    spdlog::info( "EAX: %x", mcontext.gregs[ REG_EAX ] );
-    spdlog::info( "EBX: %x", mcontext.gregs[ REG_EBX ] );
-    spdlog::info( "ECX: %x", mcontext.gregs[ REG_ECX ] );
-    spdlog::info( "EDX: %x", mcontext.gregs[ REG_EDX ] );
-    spdlog::info( "EIP: %x", mcontext.gregs[ REG_EIP ] );
-    spdlog::info( "ESP: %x", mcontext.gregs[ REG_ESP ] );
-    spdlog::info( "EBP: %x", mcontext.gregs[ REG_EBP ] );
-    spdlog::info( "EDI: %x", mcontext.gregs[ REG_EDI ] );
-    spdlog::info( "ESI: %x", mcontext.gregs[ REG_ESI ] );
+    SPDLOG_INFO( "EAX: %x", mcontext.gregs[ REG_EAX ] );
+    SPDLOG_INFO( "EBX: %x", mcontext.gregs[ REG_EBX ] );
+    SPDLOG_INFO( "ECX: %x", mcontext.gregs[ REG_ECX ] );
+    SPDLOG_INFO( "EDX: %x", mcontext.gregs[ REG_EDX ] );
+    SPDLOG_INFO( "EIP: %x", mcontext.gregs[ REG_EIP ] );
+    SPDLOG_INFO( "ESP: %x", mcontext.gregs[ REG_ESP ] );
+    SPDLOG_INFO( "EBP: %x", mcontext.gregs[ REG_EBP ] );
+    SPDLOG_INFO( "EDI: %x", mcontext.gregs[ REG_EDI ] );
+    SPDLOG_INFO( "ESI: %x", mcontext.gregs[ REG_ESI ] );
 }
 
 
@@ -550,7 +550,7 @@ void * watcherMain( void * ignored ) {
 
 
 void segv_repeated( std::int32_t signum, siginfo_t * info, void * context ) {
-    spdlog::info( "SEGV during signal handling. Aborting." );
+    SPDLOG_INFO( "SEGV during signal handling. Aborting." );
     exit( EXIT_FAILURE );
 }
 
@@ -562,7 +562,7 @@ void install_dummy_handler() {
     sa.sa_flags     = SA_RESTART | SA_SIGINFO;
     sa.sa_sigaction = segv_repeated;
     if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
-        spdlog::info( "SIGSEGV\n" );
+        SPDLOG_INFO( "SIGSEGV\n" );
     }
 }
 
@@ -578,7 +578,7 @@ static void handler( std::int32_t signum, siginfo_t * info, void * context ) {
     trace_stack( os::current_thread_id() );
 
     if ( !userHandler ) {
-        spdlog::info( "signal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
+        SPDLOG_INFO( "signal: %d\ninfo: %x\ncontext: %x", signum, ( std::int32_t ) info, ( std::int32_t ) context );
         os_dump_context2( ( ucontext_t * ) context );
     } else {
         mcontext_t mcontext = ( ( ucontext_t * ) context )->uc_mcontext;
@@ -601,13 +601,13 @@ void install_signal_handlers() {
     sa.sa_flags     = SA_RESTART; // Restart functions if interrupted by handler
     sa.sa_handler   = suspendHandler;
     if ( sigaction( SIGUSR1, &sa, nullptr ) == -1 ) {
-        spdlog::info( "SIGUSR1\n" );
+        SPDLOG_INFO( "SIGUSR1\n" );
     }
 
     sa.sa_flags |= SA_SIGINFO;
     sa.sa_sigaction = handler;
     if ( sigaction( SIGSEGV, &sa, nullptr ) == -1 ) {
-        spdlog::info( "SIGSEGV\n" );
+        SPDLOG_INFO( "SIGSEGV\n" );
     }
 
 }
@@ -615,7 +615,7 @@ void install_signal_handlers() {
 
 void os_init() {
 
-    spdlog::info( "system-init:  os_init" );
+    SPDLOG_INFO( "system-init:  os_init" );
 
     ThreadCritical::intialize();
 

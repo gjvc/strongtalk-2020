@@ -148,17 +148,17 @@ void DefinitionUsageInfo::getLiveRange( std::int32_t &firstNodeNum, std::int32_t
 
 
 void DefinitionUsageInfo::print_short() {
-    spdlog::info( "DefinitionUsageInfo 0x{0:x}", static_cast<void *>( this ) );
+    SPDLOG_INFO( "DefinitionUsageInfo 0x{0:x}", static_cast<void *>( this ) );
 }
 
 
 void DefinitionUsageInfo::print() {
     print_short();
-    spdlog::info( " for " );
+    SPDLOG_INFO( " for " );
     _pseudoRegister->print_short();
-    spdlog::info( ": " );
+    SPDLOG_INFO( ": " );
     _usages.print();
-    spdlog::info( "; " );
+    SPDLOG_INFO( "; " );
     _definitions.print();
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }

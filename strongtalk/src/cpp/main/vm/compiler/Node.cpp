@@ -1902,7 +1902,7 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
         // also, unknown branch may be uncommon)
         if ( WizardMode ) {
             spdlog::warn( "Compiler: typetest didn't predict klass 0x{0:x}", static_cast<const void *>(theKlass) );
-            spdlog::info( "predicted klasses: " );
+            SPDLOG_INFO( "predicted klasses: " );
             _classes->print();
         }
         _next = un;        // keep unknown branch
@@ -3093,7 +3093,7 @@ const std::int32_t PrintStringLen = 40;    // width of output before printing ad
 
 void BasicNode::print_short() {
     char buf[1024];
-    spdlog::info( toString( buf, PrintHexAddresses ) );
+    SPDLOG_INFO( toString( buf, PrintHexAddresses ) );
 }
 
 
@@ -3528,7 +3528,7 @@ const char *CommentNode::toString( char *buf, bool printAddress ) const {
 
 
 void BasicNode::printID() const {
-    spdlog::info( "%4ld:%1s %-4s", id(), _deleted ? "D" : " ", " " );
+    SPDLOG_INFO( "%4ld:%1s %-4s", id(), _deleted ? "D" : " ", " " );
     //c hasSplitSig() ? splitSig()->prefix(buf) : " ");
 }
 
@@ -3828,6 +3828,6 @@ void printNodes( Node *n ) {
     for ( ; n; n = n->next() ) {
         n->printID();
         n->print_short();
-        spdlog::info( "" );
+        SPDLOG_INFO( "" );
     }
 }

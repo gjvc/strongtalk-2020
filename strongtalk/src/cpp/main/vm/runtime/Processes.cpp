@@ -69,7 +69,7 @@ bool Processes::has_completed_async_call() {
 
 
 void Processes::print() {
-    spdlog::info( "All processes:" );
+    SPDLOG_INFO( "All processes:" );
     ALL_PROCESSES( p ) {
         ResourceMark resourceMark;
         p->print();

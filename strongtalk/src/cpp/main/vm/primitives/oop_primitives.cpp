@@ -44,7 +44,11 @@ public:
         target( target ), replacement( replacement ) {
     }
 
-    void operator delete( void *p ) {}
+    TwoWayBecomeClosure() = default;
+    virtual ~TwoWayBecomeClosure() = default;
+    TwoWayBecomeClosure( const TwoWayBecomeClosure & ) = default;
+    TwoWayBecomeClosure &operator=( const TwoWayBecomeClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void do_object( MemOop obj ) {

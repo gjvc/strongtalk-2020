@@ -13,8 +13,8 @@
 
 
 void Generation::print() {
-    spdlog::info( " total {:d} KBytes, {:d} percent used ", capacity() / 1024, ( 100 * used() ) / capacity() );
-    spdlog::info( " [0x{0:x}, 0x{0:x}[", _lowBoundary, _highBoundary );
+    SPDLOG_INFO( " total {:d} KBytes, {:d} percent used ", capacity() / 1024, ( 100 * used() ) / capacity() );
+    SPDLOG_INFO( " [0x{0:x}, 0x{0:x}[", _lowBoundary, _highBoundary );
 }
 
 
@@ -111,7 +111,7 @@ void NewGeneration::switch_pointers( Oop f, Oop t ) {
 
 void NewGeneration::print() {
     if ( WizardMode ) {
-        spdlog::info( " New generation" );
+        SPDLOG_INFO( " New generation" );
         Generation::print();
     }
     eden()->print();
@@ -283,7 +283,7 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
 
 void OldGeneration::print() {
     if ( WizardMode ) {
-        spdlog::info( " Old generation" );
+        SPDLOG_INFO( " Old generation" );
         Generation::print();
     }
 
@@ -294,7 +294,7 @@ void OldGeneration::print() {
 
 
 void OldGeneration::print_remembered_set() {
-    spdlog::info( "Remembered set" );
+    SPDLOG_INFO( "Remembered set" );
     for ( OldSpace *s = _firstSpace; s not_eq nullptr; s = s->_nextSpace ) {
         Universe::remembered_set->print_set_for_space( s );
     }

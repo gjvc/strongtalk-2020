@@ -182,6 +182,6 @@ std::int32_t IntegerFreeList::length() {
 
 
 void IntegerFreeList::print() {
-    spdlog::info( "FreeList 0x{0:x}:", static_cast<const void *>(this) );
+    SPDLOG_INFO( "FreeList 0x{0:x}:", static_cast<const void *>(this) );
     _list->print();
 }

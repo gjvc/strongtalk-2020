@@ -104,6 +104,12 @@ private:
 public:
     PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc, MethodInterval *failure_block );
 
+    PrimitiveInliner() = default;
+    virtual ~PrimitiveInliner() = default;
+    PrimitiveInliner( const PrimitiveInliner & ) = default;
+    PrimitiveInliner &operator=( const PrimitiveInliner & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     void generate();
 
     static Expression *generate_cond( BranchOpCode cond, NodeBuilder *gen, PseudoRegister *resPseudoRegister );

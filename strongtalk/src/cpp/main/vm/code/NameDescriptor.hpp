@@ -129,6 +129,12 @@ struct ValueNameDescriptor : public NameDescriptor {
         _v{ v } {
     }
 
+    ValueNameDescriptor() = default;
+    virtual ~ValueNameDescriptor() = default;
+    ValueNameDescriptor( const ValueNameDescriptor & ) = default;
+    ValueNameDescriptor &operator=( const ValueNameDescriptor & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     bool isValue() const {
         return true;
@@ -159,6 +165,12 @@ struct BlockValueNameDescriptor : public NameDescriptor {
         _blockMethod{ block_method },
         _parentScope{ parent_scope } {
     }
+
+    BlockValueNameDescriptor() = default;
+    virtual ~BlockValueNameDescriptor() = default;
+    BlockValueNameDescriptor( const BlockValueNameDescriptor & ) = default;
+    BlockValueNameDescriptor &operator=( const BlockValueNameDescriptor & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isBlockValue() const {

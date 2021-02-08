@@ -83,7 +83,7 @@ inline void SCAVENGE_TEMPLATE( const auto &p ) {
 
 inline void VERIFY_TEMPLATE( const auto &p ) {
     if ( not Oop( *p )->verify() ) {
-        spdlog::info( "\tof object at {0:x}", static_cast<const void *>(p) );
+        SPDLOG_INFO( "\tof object at {0:x}", static_cast<const void *>(p) );
     }
 }
 

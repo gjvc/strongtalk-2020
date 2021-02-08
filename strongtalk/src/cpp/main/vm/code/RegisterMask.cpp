@@ -22,7 +22,7 @@ Location pick( RegisterMask & alloc, RegisterMask mask ) {
 
 void printAllocated( RegisterMask rs ) {
     Unimplemented();
-    spdlog::info( "{" );
+    SPDLOG_INFO( "{" );
     bool    first = true;
     unsigned  r     = rs;        // safer for >>
     for ( std::int32_t d     = 0; r; d++, r >>= 1 ) {
@@ -30,19 +30,19 @@ void printAllocated( RegisterMask rs ) {
             if ( first ) {
                 first = false;
             } else {
-                spdlog::info( "," );
+                SPDLOG_INFO( "," );
             }
-            spdlog::info( "%s", RegisterNames[ d ] );
+            SPDLOG_INFO( "%s", RegisterNames[ d ] );
             Unimplemented();
             // Location d1 = Location(d); <<< fix this
             Location   d1;
             for ( char c = RegisterNames[ d ][ 0 ];
                   isBitSet( r, 1 ) and c == RegisterNames[ d + 1 ][ 0 ];
                   d++, r >>= 1 );
-            if ( d > d1.no() ) spdlog::info( "-%s", RegisterNames[ d ] );
+            if ( d > d1.no() ) SPDLOG_INFO( "-%s", RegisterNames[ d ] );
         }
     }
-    spdlog::info( "}" );
+    SPDLOG_INFO( "}" );
     fflush( stdout );
 
 }

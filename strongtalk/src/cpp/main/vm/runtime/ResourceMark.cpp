@@ -38,7 +38,7 @@ ResourceMark::~ResourceMark() {
     st_assert( _resourceArea->_nestingLevel > 0, "_nesting must be positive" );
     _resourceArea->_nestingLevel--;
     if ( PrintResourceAllocation ) {
-        spdlog::info( "deallocating to mark 0x{0:x}", _top );
+        SPDLOG_INFO( "deallocating to mark 0x{0:x}", _top );
     }
 
     ResourceAreaChunk *prevc;

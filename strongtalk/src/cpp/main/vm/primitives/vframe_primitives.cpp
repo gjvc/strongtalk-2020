@@ -256,6 +256,15 @@ class DeoptimizeProcess : public FrameClosure {
 private:
     DeltaProcess *theProcess;
 public:
+    DeoptimizeProcess() : theProcess{ nullptr } {}
+    virtual ~DeoptimizeProcess() = default;
+    DeoptimizeProcess( const DeoptimizeProcess & ) = default;
+    DeoptimizeProcess &operator=( const DeoptimizeProcess & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
+
     void begin_process( Process *process ) {
         if ( process->is_deltaProcess() ) {
             theProcess = (DeltaProcess *) process;

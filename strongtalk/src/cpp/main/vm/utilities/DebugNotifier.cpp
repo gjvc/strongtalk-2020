@@ -64,14 +64,14 @@ Notifier *Notifier::current = nullptr;
 
 
 void DebugNotifier::error( const char *m, va_list ap ) {
-    spdlog::info( "VM Error:" );
+    SPDLOG_INFO( "VM Error:" );
     _console->vprint_cr( m, ap );
     error_breakpoint();
 }
 
 
 void DebugNotifier::warning( const char *m, va_list ap ) {
-    spdlog::info( "VM Warning:" );
+    SPDLOG_INFO( "VM Warning:" );
     _console->vprint_cr( m, ap );
     if ( BreakAtWarning )
         error_breakpoint();
@@ -79,7 +79,7 @@ void DebugNotifier::warning( const char *m, va_list ap ) {
 
 
 void DebugNotifier::compiler_warning( const char *m, va_list ap ) {
-    spdlog::info( "Compiler Warning:" );
+    SPDLOG_INFO( "Compiler Warning:" );
     _console->vprint_cr( m, ap );
     if ( BreakAtWarning )
         error_breakpoint();

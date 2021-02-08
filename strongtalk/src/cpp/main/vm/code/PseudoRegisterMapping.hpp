@@ -119,11 +119,10 @@ public:
 
     PseudoRegisterMapping( PseudoRegisterMapping *m );
 
-    auto operator<=>( const PseudoRegisterMapping & ) const = default;
-
+    virtual ~PseudoRegisterMapping() = default;
     PseudoRegisterMapping( const PseudoRegisterMapping & ) = default;
-
     PseudoRegisterMapping &operator=( const PseudoRegisterMapping & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     MacroAssembler *assembler() const {

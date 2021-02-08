@@ -53,6 +53,14 @@ private:
 public:
     ScopeInfo _root;
 
+
+    ScopeDescriptorRecorder() = default;
+    virtual ~ScopeDescriptorRecorder() = default;
+    ScopeDescriptorRecorder( const ScopeDescriptorRecorder & ) = default;
+    ScopeDescriptorRecorder &operator=( const ScopeDescriptorRecorder & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     // Returns the offset for a scopeDesc after generation of the scopeDesc info.
     std::int32_t offset( ScopeInfo scope );
 

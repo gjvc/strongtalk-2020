@@ -31,7 +31,7 @@ bool VirtualFrame::equal( const VirtualFrame *virtualFrame ) const {
 
 Oop VirtualFrame::callee_argument_at( std::int32_t index ) const {
     static_cast<void>(index); // unused
-    spdlog::info( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
+    SPDLOG_INFO( "VirtualFrame::callee_argument_at should be specialized for all vframes calling deltaVFrames" );
     st_fatal( "aborting" );
     return nullptr;
 }
@@ -119,7 +119,7 @@ Oop DeltaVirtualFrame::callee_argument_at( std::int32_t index ) const {
 
 
 void DeltaVirtualFrame::print() {
-    spdlog::info( "Delta frame: " );
+    SPDLOG_INFO( "Delta frame: " );
     VirtualFrame::print();
 }
 
@@ -152,7 +152,7 @@ void DeltaVirtualFrame::verify() const {
     for ( std::int32_t i = 0; i < number_of_arguments; i++ ) {
         Oop argument = argument_at( i );
         if ( argument->is_context() ) {
-            spdlog::info( "Argument is a context" );
+            SPDLOG_INFO( "Argument is a context" );
             print_activation( 0 );
             spdlog::warn( "verify failed" );
         }
@@ -220,13 +220,13 @@ GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
     std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
     if ( size not_eq computed_size ) {
         spdlog::warn( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), size, computed_size );
-        spdlog::info( "[expression stack:" );
+        SPDLOG_INFO( "[expression stack:" );
         for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
         }
-        spdlog::info( "]" );
+        SPDLOG_INFO( "]" );
         method()->pretty_print();
         method()->print_codes();
     }
@@ -355,7 +355,7 @@ CompiledVirtualFrame *CompiledVirtualFrame::new_vframe( const Frame *fr, ScopeDe
 void CompiledVirtualFrame::rewind_byteCodeIndex() {
     std::int32_t new_byteCodeIndex = method()->find_byteCodeIndex_from( _byteCodeIndex );
     st_assert( new_byteCodeIndex >= 0, "must be real byteCodeIndex" );
-    spdlog::info( "{} -> {}", _byteCodeIndex, new_byteCodeIndex );
+    SPDLOG_INFO( "{} -> {}", _byteCodeIndex, new_byteCodeIndex );
     _byteCodeIndex = new_byteCodeIndex;
 }
 
@@ -395,6 +395,13 @@ public:
     };
 
 
+    ContextTempFindClosure() = default;
+    virtual ~ContextTempFindClosure() = default;
+    ContextTempFindClosure( const ContextTempFindClosure & ) = default;
+    ContextTempFindClosure &operator=( const ContextTempFindClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
         static_cast<void>(pc); // unused
         if ( no == i ) {
@@ -432,6 +439,11 @@ public:
     CollectContextInfoClosure() :
         result{ new GrowableArray<NameDescriptor *>( 10 ) } {
     }
+
+    virtual ~CollectContextInfoClosure() = default;
+    CollectContextInfoClosure( const CollectContextInfoClosure & ) = default;
+    CollectContextInfoClosure &operator=( const CollectContextInfoClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void context_temp( std::int32_t no, NameDescriptor *a, char *pc ) {
@@ -487,13 +499,13 @@ GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
 
     if ( result->length() not_eq computed_size ) {
         spdlog::warn( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), result->length(), computed_size );
-        spdlog::info( "[expression stack:" );
+        SPDLOG_INFO( "[expression stack:" );
         for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
             result->at( i )->print_value_on( _console );
             _console->cr();
         }
-        spdlog::info( "]" );
+        SPDLOG_INFO( "]" );
         method()->pretty_print();
         method()->print_codes();
     }
@@ -695,7 +707,7 @@ void traceFrame( const CompiledVirtualFrame *vf, ContextOop con ) {
         FlagSetting flag( TraceCanonicalContext, false );
         _console->cr();
         _console->indent();
-        spdlog::info( "context(0x{0:x}), VirtualFrame(0x{0:x}), block? {}", static_cast<const void *>(con), static_cast<const void *>(vf), vf ? vf->method()->is_blockMethod() : false );
+        SPDLOG_INFO( "context(0x{0:x}), VirtualFrame(0x{0:x}), block? {}", static_cast<const void *>(con), static_cast<const void *>(vf), vf ? vf->method()->is_blockMethod() : false );
         if ( vf ) {
             vf->print_activation( 0 );
             vf->method()->print_codes();
@@ -803,7 +815,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *sco
     if ( TraceDeoptimization and comp_context ) {
         _console->print( " - " );
         comp_context->print_value();
-        spdlog::info( " -> " );
+        SPDLOG_INFO( " -> " );
         result->print_value();
         _console->cr();
     }
@@ -1086,7 +1098,7 @@ GrowableArray<Oop> *DeoptimizedVirtualFrame::expression_stack() const {
 
 void cVFrame::print() {
     VirtualFrame::print();
-    spdlog::info( "C frame" );
+    SPDLOG_INFO( "C frame" );
 }
 
 
@@ -1108,8 +1120,8 @@ void cChunk::print_value() const {
 
 void cChunk::print() {
     VirtualFrame::print();
-    spdlog::info( "C Chunk inbetween Delta" );
-    spdlog::info( "C     link 0x%lx", static_cast<const void *>(_frame.link()) );
+    SPDLOG_INFO( "C Chunk inbetween Delta" );
+    SPDLOG_INFO( "C     link 0x%lx", static_cast<const void *>(_frame.link()) );
 }
 
 

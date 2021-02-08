@@ -19,14 +19,14 @@ const char *rc_basename    = ".strongtalkrc";
 static void set_bool_flag( const char *name, bool value ) {
     bool s = value;
     if ( not debugFlags::boolAtPut( name, &s ) )
-        spdlog::info( "Boolean flag[{}] unknown.\n", name );
+        SPDLOG_INFO( "Boolean flag[{}] unknown.\n", name );
 }
 
 
 static void set_int_flag( const char *name, std::int32_t value ) {
     std::int32_t v = value;
     if ( not debugFlags::intAtPut( name, &v ) )
-        spdlog::info( "Integer flag[{}] unknown.\n", name );
+        SPDLOG_INFO( "Integer flag[{}] unknown.\n", name );
 }
 
 
@@ -52,7 +52,7 @@ void process_settings_file( const char *file_name, bool quiet ) {
     if ( not stream.good() ) {
         if ( quiet )
             return;
-        spdlog::info( "Could not open settings file [{:s}]\n", file_name );
+        SPDLOG_INFO( "Could not open settings file [{:s}]\n", file_name );
         exit( EXIT_FAILURE );
     }
 
@@ -119,7 +119,7 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
     bool parse_files = true;
 
     if ( argc > 1 and strcmp( argv[ 1 ], "-t" ) == 0 ) {
-        spdlog::info( "Timers turned off, flags file and -f arguments are ignored." );
+        SPDLOG_INFO( "Timers turned off, flags file and -f arguments are ignored." );
         UseTimers   = false;
         EnableTasks = false;
         parse_files = false;
@@ -141,7 +141,7 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
         } else if ( strcmp( argv[ i ], "-b" ) == 0 ) {
             i++;
             if ( i >= argc ) {
-                spdlog::info( "file name expected after '-b'\n" );
+                SPDLOG_INFO( "file name expected after '-b'\n" );
                 exit( EXIT_FAILURE );
             }
             image_basename = argv[ i ];
@@ -149,7 +149,7 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
         } else if ( strcmp( argv[ i ], "-f" ) == 0 ) {
             i++;
             if ( i >= argc ) {
-                spdlog::info( "file name expected after '-f'\n" );
+                SPDLOG_INFO( "file name expected after '-f'\n" );
                 exit( EXIT_FAILURE );
             }
             if ( parse_files ) {
@@ -161,7 +161,7 @@ void parse_arguments( std::int32_t argc, char *argv[] ) {
             // code, not here.  Here we just recognize it and skip over it.
             i++;
             if ( i >= argc ) {
-                spdlog::info( "file name expected after '-script'\n" );
+                SPDLOG_INFO( "file name expected after '-script'\n" );
                 exit( EXIT_FAILURE );
             }
 

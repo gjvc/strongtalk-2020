@@ -69,7 +69,7 @@ void Displacement::print() {
             s = "????";
             break;
     }
-    spdlog::info( "{} (info = 0x{0:x})", s, info() );
+    SPDLOG_INFO( "{} (info = 0x{0:x})", s, info() );
 }
 
 

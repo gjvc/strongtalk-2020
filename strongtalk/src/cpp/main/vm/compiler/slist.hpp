@@ -26,6 +26,13 @@ public:
     }
 
 
+    GenericSListElem() = default;
+    virtual ~GenericSListElem() = default;
+    GenericSListElem( const GenericSListElem & ) = default;
+    GenericSListElem &operator=( const GenericSListElem & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void *dataL() const {
 //        return this ? _data : nullptr;
         return _data;
@@ -72,6 +79,12 @@ public:
         _tail{ nullptr },
         _len{ 0 } {
     }
+
+    virtual ~GenericSList() = default;
+    GenericSList( const GenericSList & ) = default;
+    GenericSList &operator=( const GenericSList & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     void prependL( void *d ) {

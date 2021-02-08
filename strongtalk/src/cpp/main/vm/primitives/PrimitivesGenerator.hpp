@@ -79,6 +79,14 @@ protected:
     }
 
 
+    PrimitivesGenerator() = default;
+    virtual ~PrimitivesGenerator() = default;
+    PrimitivesGenerator( const PrimitivesGenerator & ) = default;
+    PrimitivesGenerator &operator=( const PrimitivesGenerator & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     enum arith_op {
         op_add, op_sub, op_mul, op_div
     };

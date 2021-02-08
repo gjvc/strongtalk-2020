@@ -109,7 +109,7 @@ void PseudoRegisterMapping::ensureOneFreeRegister() {
         // no free registers available => find a register to spill
         std::int32_t i = spillablePseudoRegisterIndex();
         if ( i < 0 ) st_fatal( "too many temporaries or locked pseudoRegisters: out of spillable registers" );
-        // spdlog::info("WARNING: Register spilling - check if this works");
+        // SPDLOG_INFO("WARNING: Register spilling - check if this works");
         spillRegister( regLoc( i ) );
         st_assert( _locations->freeRegisters(), "at least one register should be available now" );
         verify();
@@ -716,7 +716,7 @@ void PseudoRegisterMapping::old_makeConformant( PseudoRegisterMapping *with ) {
     const char *end_of_code = _macroAssembler->pc();
 
     if ( PrintMakeConformantCode and begin_of_code < end_of_code ) {
-        spdlog::info( "MakeConformant:" );
+        SPDLOG_INFO( "MakeConformant:" );
         Disassembler::decode( begin_of_code, end_of_code );
         _console->cr();
     }
@@ -733,6 +733,13 @@ private:
     MacroAssembler *_masm;
 
 public:
+    ConformanceHelper() : MapConformance(), _masm{nullptr} {}
+    virtual ~ConformanceHelper() = default;
+    ConformanceHelper( const ConformanceHelper & ) = default;
+    ConformanceHelper &operator=( const ConformanceHelper & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void generate( MacroAssembler *masm, Variable temp1, Variable temp2 );
 
     void move( Variable src, Variable dst );
@@ -877,7 +884,7 @@ void PseudoRegisterMapping::new_makeConformant( PseudoRegisterMapping *with ) {
         const char *end_of_code = _macroAssembler->pc();
         if ( PrintMakeConformantCode ) {
             chelper.print();
-            spdlog::info( "(using R{} & R{} as temporary registers)", temp1.register_number(), temp2.register_number() );
+            SPDLOG_INFO( "(using R{} & R{} as temporary registers)", temp1.register_number(), temp2.register_number() );
             Disassembler::decode( begin_of_code, end_of_code );
             _console->cr();
         }
@@ -894,7 +901,7 @@ void PseudoRegisterMapping::makeConformant( PseudoRegisterMapping *with ) {
     //guarantee(NonLocalReturninProgress() == with->NonLocalReturninProgress(), "cannot be made conformant");
 
     if ( PrintPseudoRegisterMapping and WizardMode ) {
-        spdlog::info( "make conformant:" );
+        SPDLOG_INFO( "make conformant:" );
         print();
         _console->print( "with " );
         with->print();
@@ -979,7 +986,7 @@ void PseudoRegisterMapping::print( std::int32_t i ) {
     st_assert( used( i ), "unused slot" );
     std::int32_t rloc = regLoc( i );
     std::int32_t sloc = stkLoc( i );
-    spdlog::info( "{} -> ", _pseudoRegisters->at( i )->name() );
+    SPDLOG_INFO( "{} -> ", _pseudoRegisters->at( i )->name() );
     if ( rloc >= 0 ) {
         _console->print( _locations->locationAsRegister( rloc ).name() );
     }
@@ -997,26 +1004,26 @@ void PseudoRegisterMapping::print() {
     if ( WizardMode )
         _locations->print();
     if ( nofPseudoRegisters() > 0 ) {
-        spdlog::info( "PseudoRegister mapping:" );
+        SPDLOG_INFO( "PseudoRegister mapping:" );
         for ( std::int32_t i = 0; i < size(); i++ ) {
             if ( used( i ) )
                 print( i );
         }
     } else {
-        spdlog::info( "PseudoRegister mapping is empty" );
+        SPDLOG_INFO( "PseudoRegister mapping is empty" );
     }
     _console->cr();
     if ( _temporaryLocations->length() > 0 ) {
-        spdlog::info( "Temporaries in use:" );
+        SPDLOG_INFO( "Temporaries in use:" );
         for ( std::int32_t i = 0; i < _temporaryLocations->length(); i++ ) {
             std::int32_t loc = _temporaryLocations->at( i );
             st_assert( _locations->isRegister( loc ), "temporaries must be in registers" );
-            spdlog::info( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
+            SPDLOG_INFO( "temp 0x%08x -> 0x%08x %s", i, loc, _locations->locationAsRegister( loc ).name() );
         }
         _console->cr();
     }
     if ( NonLocalReturninProgress() ) {
-        spdlog::info( "NonLocalReturn in progress" );
+        SPDLOG_INFO( "NonLocalReturn in progress" );
         _console->cr();
     }
 }

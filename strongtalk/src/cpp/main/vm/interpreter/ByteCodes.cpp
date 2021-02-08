@@ -1095,9 +1095,9 @@ void ByteCodes::print() {
     for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
         Code code = Code( i );
         if ( is_defined( code ) ) {
-            spdlog::info( "%s", name( code ) );
-            spdlog::info( "  %s", code_type_as_string( code_type( code ) ) );
-            spdlog::info( "  %s", send_type_as_string( send_type( code ) ) );
+            SPDLOG_INFO( "%s", name( code ) );
+            SPDLOG_INFO( "  %s", code_type_as_string( code_type( code ) ) );
+            SPDLOG_INFO( "  %s", send_type_as_string( send_type( code ) ) );
             _console->cr();
         }
     }
@@ -1107,10 +1107,10 @@ void ByteCodes::print() {
 // Smalltalk generation
 
 static void generate_comment() {
-    spdlog::info( "\t\"" );
-    spdlog::info( "\tGenerated method - do not modify manually" );
-    spdlog::info( "\t(use delta +GenerateSmalltalk to generate)." );
-    spdlog::info( "\t\"" );
+    SPDLOG_INFO( "\t\"" );
+    SPDLOG_INFO( "\tGenerated method - do not modify manually" );
+    SPDLOG_INFO( "\t(use delta +GenerateSmalltalk to generate)." );
+    SPDLOG_INFO( "\t\"" );
 }
 
 
@@ -1121,35 +1121,35 @@ static bool actually_generated( ByteCodes::Code code ) {
 
 static void generate_instr_method() {
 
-    spdlog::info( "instr: i" );
+    SPDLOG_INFO( "instr: i" );
     generate_comment();
-    spdlog::info( "\t| h l |" );
-    spdlog::info( "\th := i // 16r10." );
-    spdlog::info( "\tl := i \\\\ 16r10." );
+    SPDLOG_INFO( "\t| h l |" );
+    SPDLOG_INFO( "\th := i // 16r10." );
+    SPDLOG_INFO( "\tl := i \\\\ 16r10." );
     for ( std::int32_t h = 0; h < 0x10; h++ ) {
-        spdlog::info( "\th = 16r{0:x} ifTrue: [", h );
+        SPDLOG_INFO( "\th = 16r{0:x} ifTrue: [", h );
         for ( std::int32_t l = 0; l < 0x10; l++ ) {
             ByteCodes::Code code = ByteCodes::Code( h * 0x10 + l );
             if ( actually_generated( code ) ) {
-                spdlog::info( "\t\tl = 16r{0:x}\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
+                SPDLOG_INFO( "\t\tl = 16r{0:x}\tifTrue:\t[ ^ '%s' ].", l, ByteCodes::name( code ) );
             }
         }
-        spdlog::info( "\t\t^ ''" );
-        spdlog::info( "\t]." );
+        SPDLOG_INFO( "\t\t^ ''" );
+        SPDLOG_INFO( "\t]." );
     }
-    spdlog::info( "\tself halt" );
-    spdlog::info( "" );
+    SPDLOG_INFO( "\tself halt" );
+    SPDLOG_INFO( "" );
 }
 
 
 static void print_table_entry_for( const char *selector, ByteCodes::Code code ) {
-    spdlog::info( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
+    SPDLOG_INFO( "\tselector = #%s\t\tifTrue: [ ^ 16r%02X ].", selector, code );
 }
 
 
 static void generate_codeForPrimitive_method() {
 
-    spdlog::info( "codeForPrimitive: selector" );
+    SPDLOG_INFO( "codeForPrimitive: selector" );
     generate_comment();
     print_table_entry_for( "primitiveAdd:ifFail:", ByteCodes::Code::smi_add );
     print_table_entry_for( "primitiveSubtract:ifFail:", ByteCodes::Code::smi_sub );
@@ -1166,8 +1166,8 @@ static void generate_codeForPrimitive_method() {
     print_table_entry_for( "primitiveBitOr:ifFail:", ByteCodes::Code::smi_or );
     print_table_entry_for( "primitiveBitXor:ifFail:", ByteCodes::Code::smi_xor );
     print_table_entry_for( "primitiveRawBitShift:ifFail:", ByteCodes::Code::smi_shift );
-    spdlog::info( "\t^ nil" );
-    spdlog::info( "" );
+    SPDLOG_INFO( "\t^ nil" );
+    SPDLOG_INFO( "" );
 
 }
 
@@ -1224,27 +1224,27 @@ static void generate_gen_method( ByteCodes::Code code ) {
     generate_comment();
     _console->print( "\tself byte: 16r%02X", code );
     generate_signature( sig, ' ' );
-    spdlog::info( "." );
+    SPDLOG_INFO( "." );
     if ( has_instVar_access( code ) )
-        spdlog::info( "\tself has_instVar_access." );
+        SPDLOG_INFO( "\tself has_instVar_access." );
     if ( has_classVar_access( code ) )
-        spdlog::info( "\tself has_classVar_access." );
+        SPDLOG_INFO( "\tself has_classVar_access." );
     if ( has_inline_cache( code ) )
-        spdlog::info( "\tself has_inline_cache." );
-    spdlog::info( "" );
+        SPDLOG_INFO( "\tself has_inline_cache." );
+    SPDLOG_INFO( "" );
 }
 
 
 static void generate_float_function_constant_method( Floats::Function f ) {
-    spdlog::info( "float_%s", Floats::function_name_for( f ) );
+    SPDLOG_INFO( "float_%s", Floats::function_name_for( f ) );
     generate_comment();
-    spdlog::info( "\t^ {}", f );
-    spdlog::info( "" );
+    SPDLOG_INFO( "\t^ {}", f );
+    SPDLOG_INFO( "" );
 }
 
 
 static void generate_heap_code_methods() {
-    spdlog::info( "not DeltaHCode methods " );
+    SPDLOG_INFO( "not DeltaHCode methods " );
 
     generate_instr_method();
     generate_codeForPrimitive_method();
@@ -1261,7 +1261,7 @@ static void generate_heap_code_methods() {
         generate_float_function_constant_method( f );
     }
 
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 
@@ -1275,18 +1275,24 @@ private:
 public:
 
     Markup( const char *tag ) : _tag{ tag } {
-        spdlog::info( "<{}>", _tag );
+        SPDLOG_INFO( "<{}>", _tag );
     }
 
 
-    ~Markup() {
-        spdlog::info( "</{}>", _tag );
+    Markup() = default;
+    Markup( const Markup & ) = default;
+    Markup &operator=( const Markup & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+    virtual ~Markup() {
+        SPDLOG_INFO( "</{}>", _tag );
     }
+
 };
 
 
 static void markup( const char *tag, const char *text ) {
-    spdlog::info( "<{}>{}</{}>", tag, text, tag );
+    SPDLOG_INFO( "<{}>{}</{}>", tag, text, tag );
 }
 
 
@@ -1297,16 +1303,16 @@ static void print_format( ByteCodes::Format format ) {
     while ( *f ) {
         switch ( *f ) {
             case 'B':
-                spdlog::info( " byte " );
+                SPDLOG_INFO( " byte " );
                 break;
             case 'L':
-                spdlog::info( " std::int32_t " );
+                SPDLOG_INFO( " std::int32_t " );
                 break;
             case 'O':
-                spdlog::info( " Oop " );
+                SPDLOG_INFO( " Oop " );
                 break;
             case 'S':
-                spdlog::info( " {byte} " );
+                SPDLOG_INFO( " {byte} " );
                 break;
             default: ShouldNotReachHere();
                 break;
@@ -1338,7 +1344,7 @@ static void generate_HTML_for( ByteCodes::Code code ) {
 
     _console->print( "<td>%02X<sub>H</sub><td><B>%s</B><td>", std::int32_t( code ), ByteCodes::name( code ) );
     print_format( ByteCodes::format( code ) );
-    spdlog::info( "<td>{}", ByteCodes::single_step( code ) ? "intercepted" : "" );
+    SPDLOG_INFO( "<td>{}", ByteCodes::single_step( code ) ? "intercepted" : "" );
 
     //
     if ( ByteCodes::code_type( code ) == ByteCodes::CodeType::MESSAGE_SEND ) {
@@ -1346,7 +1352,7 @@ static void generate_HTML_for( ByteCodes::Code code ) {
         _console->print( "<td>%s", arguments_as_string( ByteCodes::argument_spec( code ) ) );
     }
 
-    spdlog::info( "<tr>" );
+    SPDLOG_INFO( "<tr>" );
 }
 
 
@@ -1354,32 +1360,32 @@ static void generate_HTML_for( ByteCodes::CodeType type ) {
 
     {
         Markup tag( "h3" );
-        spdlog::info( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
+        SPDLOG_INFO( "%s bytecodes", ByteCodes::code_type_as_string( type ) );
     }
     {
         Markup tag( "table" );
-        spdlog::info( "<th>Code</th><th>Name</th><th>Format</th><th>Single step</th>" );
+        SPDLOG_INFO( "<th>Code</th><th>Name</th><th>Format</th><th>Single step</th>" );
         if ( type == ByteCodes::CodeType::MESSAGE_SEND ) {
             _console->print( "<th>Send type</th><th>Arguments</th>" );
         }
-        spdlog::info( "<tr>" );
+        SPDLOG_INFO( "<tr>" );
         for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES); i++ ) {
             ByteCodes::Code code = ByteCodes::Code( i );
             if ( ByteCodes::is_defined( code ) and ByteCodes::code_type( code ) == type ) {
                 generate_HTML_for( code );
             }
         }
-        spdlog::info( "</tr>" );
+        SPDLOG_INFO( "</tr>" );
 
     }
 
-    spdlog::info( "<hr/>" );
+    SPDLOG_INFO( "<hr/>" );
 }
 
 
 static void generate_HTML_docu() {
     Markup tag( "html" );
-    spdlog::info( "<!-- do not modify - use delta +GenerateHTML to generate -->" );
+    SPDLOG_INFO( "<!-- do not modify - use delta +GenerateHTML to generate -->" );
     {
         Markup tag( "head" );
         markup( "title", "Delta ByteCodes" );
@@ -1388,7 +1394,7 @@ static void generate_HTML_docu() {
         Markup tag( "body" );
         {
             Markup tag( "h2" );
-            spdlog::info( "Delta ByteCodes (Version {})", ByteCodes::version() );
+            SPDLOG_INFO( "Delta ByteCodes (Version {})", ByteCodes::version() );
         }
 
         for ( std::int32_t i = 0; static_cast<ByteCodes::CodeType>(i) < ByteCodes::CodeType::NUMBER_OF_CODE_TYPES; i++ ) {
@@ -1400,7 +1406,7 @@ static void generate_HTML_docu() {
 
 
 void bytecodes_init() {
-    spdlog::info( "system-init:  bytecodes_init" );
+    SPDLOG_INFO( "system-init:  bytecodes_init" );
 
     ByteCodes::init();
 

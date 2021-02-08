@@ -32,18 +32,18 @@ typedef class OopDescriptor *Oop;
                         const char* s9 = nullptr, Oop a9 = nullptr, \
                         const char* s10 = nullptr, Oop a10 = nullptr) { \
       if (not flag) return; \
-      spdlog::info("{}::{}", label, name); \
-      if (s1) { spdlog::info(" {}=", s1); a1->print_value(); } \
-      if (s2) { spdlog::info(" {}=", s2); a2->print_value(); } \
-      if (s3) { spdlog::info(" {}=", s3); a3->print_value(); } \
-      if (s4) { spdlog::info(" {}=", s4); a4->print_value(); } \
-      if (s5) { spdlog::info(" {}=", s5); a5->print_value(); } \
-      if (s6) { spdlog::info(" {}=", s6); a6->print_value(); } \
-      if (s7) { spdlog::info(" {}=", s7); a7->print_value(); } \
-      if (s8) { spdlog::info(" {}=", s8); a8->print_value(); } \
-      if (s9) { spdlog::info(" {}=", s9); a9->print_value(); } \
-      if (s10) { spdlog::info(" {}=", s10); a10->print_value(); } \
-      spdlog::info("}"); \
+      SPDLOG_INFO("{}::{}", label, name); \
+      if (s1) { SPDLOG_INFO(" {}=", s1); a1->print_value(); } \
+      if (s2) { SPDLOG_INFO(" {}=", s2); a2->print_value(); } \
+      if (s3) { SPDLOG_INFO(" {}=", s3); a3->print_value(); } \
+      if (s4) { SPDLOG_INFO(" {}=", s4); a4->print_value(); } \
+      if (s5) { SPDLOG_INFO(" {}=", s5); a5->print_value(); } \
+      if (s6) { SPDLOG_INFO(" {}=", s6); a6->print_value(); } \
+      if (s7) { SPDLOG_INFO(" {}=", s7); a7->print_value(); } \
+      if (s8) { SPDLOG_INFO(" {}=", s8); a8->print_value(); } \
+      if (s9) { SPDLOG_INFO(" {}=", s9); a9->print_value(); } \
+      if (s10) { SPDLOG_INFO(" {}=", s10); a10->print_value(); } \
+      SPDLOG_INFO("}"); \
     }
 
 #define TRACE_0( name ) \

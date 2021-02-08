@@ -60,6 +60,9 @@ public:
     MethodClosure();
     virtual ~MethodClosure() = default;
     static void operator delete( void * ) {}
+    MethodClosure( const MethodClosure & ) = default;
+    MethodClosure &operator=( const MethodClosure & ) = default;
+
 
 
     std::int32_t byteCodeIndex() const {

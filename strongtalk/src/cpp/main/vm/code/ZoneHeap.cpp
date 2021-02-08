@@ -132,7 +132,7 @@ bool ChunkKlass::isValid() {
 
 
 void ChunkKlass::print() {
-    spdlog::info( "chunk [0x{0:x}..0x{0:x}[", static_cast<const void *>(this), static_cast<const void *>(next()) );
+    SPDLOG_INFO( "chunk [0x{0:x}..0x{0:x}[", static_cast<const void *>(this), static_cast<const void *>(next()) );
 }
 
 
@@ -313,7 +313,7 @@ void *ZoneHeap::allocFromLists( std::int32_t wantedBytes ) {
 
 //#ifdef LOG_LOTSA_STUFF
             if ( not bootstrappingInProgress ) {
-                spdlog::info( "zoneHeap: splitting allocated block" );
+                SPDLOG_INFO( "zoneHeap: splitting allocated block" );
             }
 //#endif
             std::int32_t freeChunkSize = blocks - wantedBlocks;
@@ -554,7 +554,7 @@ void ZoneHeap::verify() const {
     // verify map structure
     while ( m < end ) {
         if ( not m->verify() )
-            spdlog::info( " in heap {0:x}", static_cast<const void *>(this) );
+            SPDLOG_INFO( " in heap {0:x}", static_cast<const void *>(this) );
         m = m->next();
     }
 
@@ -567,7 +567,7 @@ void ZoneHeap::verify() const {
         for ( HeapChunk *h       = f->next(); h not_eq f; h = h->next(), j++ ) {
             ChunkKlass *p = mapAddr( h );
             if ( not p->verify() )
-                spdlog::info( " in free list{0:d} (elem{0:d}) of heap 0x{0:x}", i, j, static_cast<const void *>(this) );
+                SPDLOG_INFO( " in free list{0:d} (elem{0:d}) of heap 0x{0:x}", i, j, static_cast<const void *>(this) );
             if ( p->isUsed() ) {
                 error( "inconsistent freeList %ld elem 0x{0:x} in heap 0x{0:x} (map 0x{0:x})", i, h, this, p );
             }
@@ -586,7 +586,7 @@ void ZoneHeap::verify() const {
     for ( HeapChunk *h = f->next(); h not_eq f; h = h->next(), j++ ) {
         ChunkKlass *p = mapAddr( h );
         if ( not p->verify() )
-            spdlog::info( " in bigList (elem %ld) of heap 0x{0:x}", j, static_cast<const void *>(this) );
+            SPDLOG_INFO( " in bigList (elem %ld) of heap 0x{0:x}", j, static_cast<const void *>(this) );
         if ( p->isUsed() ) {
             error( "inconsistent freeList %ld elem 0x{0:x} in heap 0x{0:x} (map 0xlx)", i, h, this, p );
         }
@@ -598,14 +598,14 @@ void ZoneHeap::verify() const {
 
 
 void ZoneHeap::print() const {
-    spdlog::info( "0x{0:x}: [0x{0:x}..0x{0:x})", static_cast<const void *>(this), base, base + capacity() );
+    SPDLOG_INFO( "0x{0:x}: [0x{0:x}..0x{0:x})", static_cast<const void *>(this), base, base + capacity() );
     printIndent();
-    spdlog::info( "  size %ld (blk %ld), used %ld (%1.1f%%), ifrag %1.1f%%;", capacity(), blockSize, usedBytes(), 100.0 * usedBytes() / capacity(), 100.0 * intFrag() );
+    SPDLOG_INFO( "  size %ld (blk %ld), used %ld (%1.1f%%), ifrag %1.1f%%;", capacity(), blockSize, usedBytes(), 100.0 * usedBytes() / capacity(), 100.0 * intFrag() );
     printIndent();
-    spdlog::info( "  grand total allocs = %ld bytes", _total );
+    SPDLOG_INFO( "  grand total allocs = %ld bytes", _total );
     printIndent();
-    spdlog::info( "  free lists: " );
+    SPDLOG_INFO( "  free lists: " );
     for ( std::int32_t i = 0; i < nfree; i++ )
-        spdlog::info( "%ld ", _freeList[ i ].length() );
-    spdlog::info( "; %ld", _bigList->length() );
+        SPDLOG_INFO( "%ld ", _freeList[ i ].length() );
+    SPDLOG_INFO( "; %ld", _bigList->length() );
 }

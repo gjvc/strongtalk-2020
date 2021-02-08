@@ -19,7 +19,7 @@ void ProcessPreemptionTask::task() {
 
 
 void preemption_init() {
-    spdlog::info( "system-init:  preemption_init" );
+    SPDLOG_INFO( "system-init:  preemption_init" );
 
     ProcessPreemptionTask *task = new ProcessPreemptionTask;
     task->enroll();

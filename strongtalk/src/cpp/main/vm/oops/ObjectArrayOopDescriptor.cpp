@@ -21,7 +21,7 @@ bool ObjectArrayOopDescriptor::verify() {
 
 
 void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
-    spdlog::info( "ObjectArrayOopDescriptor::bootstrap_object" );
+    SPDLOG_INFO( "ObjectArrayOopDescriptor::bootstrap_object" );
     MemOopDescriptor::bootstrap_object( stream );
     stream->read_oop( length_addr() );
     for ( std::int32_t i = 1; i <= length(); i++ ) {

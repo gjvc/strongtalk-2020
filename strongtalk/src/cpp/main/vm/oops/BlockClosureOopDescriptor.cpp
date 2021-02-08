@@ -79,7 +79,7 @@ void BlockClosureOopDescriptor::deoptimize() {
     NativeMethod                   *nm    = jump_table_entry()->parent_nativeMethod( index );
     NonInlinedBlockScopeDescriptor *scope = nm->noninlined_block_scope_at( index );
 
-    spdlog::info( "Deoptimized context in blockClosure -> switch to methodOop [0x%lx]", static_cast<const void *>( nm ) );
+    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop [0x%lx]", static_cast<const void *>( nm ) );
     st_assert( nm, "NativeMethod must be present" );
 
     st_assert( not StackChunkBuilder::is_deoptimizing(), "you cannot be in deoptimization mode" );

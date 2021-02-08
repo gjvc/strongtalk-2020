@@ -66,7 +66,7 @@ static bool has_invalid_context( Frame *f ) {
     while ( true ) {
         ContextOop con = vf->compiled_context();
 
-        // spdlog::info("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
+        // SPDLOG_INFO("checking context fp = 0x%lx, pc = 0x%lx", f->fp(), f->pc());
         if ( con ) {
             con->print();
         }
@@ -137,7 +137,7 @@ void uncommon_trap() {
 
     nm->inc_uncommon_trap_counter();
 
-    spdlog::info( "Uncommon trap in 0x{x} @ {d} #{d}", static_cast<const void *>( nm ), vf->scope()->offset(), nm->uncommon_trap_counter() );
+    SPDLOG_INFO( "Uncommon trap in 0x{x} @ {d} #{d}", static_cast<const void *>( nm ), vf->scope()->offset(), nm->uncommon_trap_counter() );
 
     if ( nm->is_block() ) {
         PrintUncommonBranches = true;
@@ -149,12 +149,12 @@ void uncommon_trap() {
 
     if ( PrintUncommonBranches ) {
 
-        spdlog::info( "{} trap in ", used ? "Uncommon" : "New uncommon" );
+        SPDLOG_INFO( "{} trap in ", used ? "Uncommon" : "New uncommon" );
         nm->print_value_on( _console );
         _console->print( " #%d", nm->uncommon_trap_counter() );
 
         if ( WizardMode )
-            spdlog::info( "{:d} called from {:x}", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+            SPDLOG_INFO( "{:d} called from {:x}", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
         _console->cr();
 
         if ( TraceDeoptimization )

@@ -61,7 +61,7 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
         if ( m->is_gc_marked() ) {
             if ( first_free ) {
                 first_free->set_mark( q );
-                spdlog::info( "first_free [0x{0:x}] = first_free->mark() [0x{0:x}], q [0x{0:x}]", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
+                SPDLOG_INFO( "first_free [0x{0:x}] = first_free->mark() [0x{0:x}], q [0x{0:x}]", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
                 first_free = nullptr;
             }
 
@@ -81,14 +81,14 @@ void Space::prepare_for_compaction( OldWaterMark *mark ) {
         } else {
             if ( not first_free ) {
                 first_free = m;
-                spdlog::info( "First free 0x{0:x}", static_cast<const void *>(q) );
+                SPDLOG_INFO( "First free 0x{0:x}", static_cast<const void *>(q) );
             }
             q += m->size();
         }
     }
     if ( first_free ) {
         first_free->set_mark( q );
-        spdlog::info( "[0x{0:x}] = 0x{0:x}, 0x{0:x}", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
+        SPDLOG_INFO( "[0x{0:x}] = 0x{0:x}, 0x{0:x}", static_cast<const void *>(first_free), static_cast<const void *>(first_free->mark()), static_cast<const void *>(q) );
     }
     mark->_point = new_top;
 }
@@ -106,7 +106,7 @@ void Space::compact( OldWaterMark *mark ) {
     while ( q < t ) {
         MemOop m = as_memOop( q );
         if ( m->mark()->is_smi() ) {
-//            spdlog::info( "Space::compact()  expand [0x{0:x}] -> [0x{0:x}]", q, *q );
+//            SPDLOG_INFO( "Space::compact()  expand [0x{0:x}] -> [0x{0:x}]", q, *q );
             q = (Oop *) *q;
         } else {
             std::int32_t size = m->gc_retrieve_size();
@@ -116,7 +116,7 @@ void Space::compact( OldWaterMark *mark ) {
 
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
-//                spdlog::info( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] (%d)", q, new_top, size );
+//                SPDLOG_INFO( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] (%d)", q, new_top, size );
                 st_assert( ( *new_top )->is_mark(), "should be header" );
             }
             mark->_space->update_offsets( new_top, new_top + size );
@@ -173,7 +173,7 @@ SurvivorSpace::SurvivorSpace() :
 void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
 
 #ifdef VERBOSE_SCAVENGING
-    spdlog::info("{scavenge_contents [ 0x{0:x} <= 0x{0:x} <= 0x{0:x}]}", bottom(), mark->_point, top());
+    SPDLOG_INFO("{scavenge_contents [ 0x{0:x} <= 0x{0:x} <= 0x{0:x}]}", bottom(), mark->_point, top());
 #endif
 
     if ( top() == mark->_point )
@@ -188,8 +188,8 @@ void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
         MemOop m = as_memOop( p );
 
 #ifdef VERBOSE_SCAVENGING
-        spdlog::info("{scavenge 0x{0:x} (0x{0:x})} ", p, m->klass());
-        spdlog::info("{}", m->klass()->name());
+        SPDLOG_INFO("{scavenge 0x{0:x} (0x{0:x})} ", p, m->klass());
+        SPDLOG_INFO("{}", m->klass()->name());
         Oop *prev = p;
 #endif
 
@@ -348,7 +348,7 @@ void Space::object_iterate( ObjectClosure *blk ) {
 
 
 void NewSpace::verify() {
-    spdlog::info( "{}, ", name() );
+    SPDLOG_INFO( "{}, ", name() );
     Oop *p = bottom();
     Oop *t = top();
 
@@ -369,6 +369,14 @@ public:
     MemOop _the_obj;
 
 
+    VerifyOldOopClosure() : _the_obj{} {}
+    virtual ~VerifyOldOopClosure() = default;
+    VerifyOldOopClosure( const VerifyOldOopClosure & ) = default;
+    VerifyOldOopClosure &operator=( const VerifyOldOopClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void do_oop( Oop *o ) {
 
         Oop obj = *o;
@@ -378,10 +386,10 @@ public:
         if ( Universe::remembered_set->is_object_dirty( _the_obj ) != 0 ) return;
 
         _console->cr();
-        spdlog::info( "New obj reference found in non dirty page." );
-        spdlog::info( "- object containing the reference:" );
+        SPDLOG_INFO( "New obj reference found in non dirty page." );
+        SPDLOG_INFO( "- object containing the reference:" );
         _the_obj->print();
-        spdlog::info( "- the referred object:" );
+        SPDLOG_INFO( "- the referred object:" );
         _console->print( "[0x%lx]: 0x%lx = ", o, obj );
         obj->print_value();
         _console->cr();
@@ -394,7 +402,7 @@ public:
 
 void OldSpace::verify() {
     //
-    spdlog::info( "{} ", name() );
+    SPDLOG_INFO( "{} ", name() );
     Oop                 *p = _bottom;
     MemOop              m;
     VerifyOldOopClosure blk;

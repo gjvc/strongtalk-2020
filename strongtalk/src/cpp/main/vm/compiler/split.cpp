@@ -33,7 +33,7 @@ SplitSig * new_SplitSig( SplitSig * current, std::int32_t splitID ) {
 
 void SplitSig::print() {
     char buf[MaxSplitDepth + 1];
-    spdlog::info( "SplitSig 0x{0:x}: %s", this, prefix( buf ) );
+    SPDLOG_INFO( "SplitSig 0x{0:x}: %s", this, prefix( buf ) );
 }
 
 char * SplitSig::prefix( const char * buf ) {
@@ -77,7 +77,7 @@ bool CodeScope::shouldSplit( SendInfo * info ) {
                 // could fix this with better splitting (introduce temps to
                 // "synchronize" the value's scopes)
                 if ( PrintInlining ) {
-                    spdlog::info( "%*s*not splitting %s: too complicated (scopes)",
+                    SPDLOG_INFO( "%*s*not splitting %s: too complicated (scopes)",
                              depth, "", info->sel->copy_null_terminated() );
                 }
                 r->setSplittable( false );    // no sense trying again
@@ -88,7 +88,7 @@ bool CodeScope::shouldSplit( SendInfo * info ) {
                 cost -= n->cost();
                 if ( not n->isSplittable() ) {
                     if ( PrintInlining ) {
-                        spdlog::info( "%*s*not splitting %s: unsplittable node",
+                        SPDLOG_INFO( "%*s*not splitting %s: unsplittable node",
                                  depth, "", info->sel->copy_null_terminated() );
                     }
                     return false;
@@ -103,7 +103,7 @@ bool CodeScope::shouldSplit( SendInfo * info ) {
 done:
     if ( n not_eq current or cost < 0 ) {
         if ( PrintInlining ) {
-            spdlog::info( "%*s*not splitting %s: cost too high (>%ld)", depth, "",
+            SPDLOG_INFO( "%*s*not splitting %s: cost too high (>%ld)", depth, "",
                      info->sel->copy_null_terminated(),
                      theCompiler->inlineLimit[ InlineLimitType::SplitCostLimit ] - cost );
         }
@@ -130,7 +130,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
     std::int32_t ncases = r->exprs->length();
     memoizeBlocks( info->sel );
     if ( PrintInlining ) {
-        spdlog::info( "%*s*splitting %s", depth, "", selector_string( info->sel ) );
+        SPDLOG_INFO( "%*s*splitting %s", depth, "", selector_string( info->sel ) );
     }
     Node * current = theNodeGen->current;
     bool first = true;
@@ -218,7 +218,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
         std::int32_t diff;
         if ( WizardMode and PrintInlining and
              ( diff = r->exprs->length() - splitReceiverKlasss->length() ) > 1 ) {
-            spdlog::info( "*unnecessary %d-way type test for %d cases",
+            SPDLOG_INFO( "*unnecessary %d-way type test for %d cases",
                      splitReceiverKlasss->length(), diff );
         }
         Node * oldMerge = r->node();
@@ -250,7 +250,7 @@ Expression * CodeScope::splitMerge( SendInfo * info, MergeNode *& merge ) {
             }
             theNodeGen->uncommonBranch( currentExprStack( 0 ), info->restartPrim );
             if ( PrintInlining ) {
-                spdlog::info( "%*s*making %s uncommon (3)",
+                SPDLOG_INFO( "%*s*making %s uncommon (3)",
                          depth, "", selector_string( info->sel ) );
             }
         }

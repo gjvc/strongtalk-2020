@@ -108,12 +108,12 @@ void Bootstrap::initNameByTypeByte() {
 // -----------------------------------------------------------------------------
 
 void Bootstrap::load() {
-    spdlog::info( "%booststrap-load: entry" );
+    SPDLOG_INFO( "%booststrap-load: entry" );
     open_file();
     parse_file();
     close_file();
     summary();
-    spdlog::info( "%booststrap-load: exit" );
+    SPDLOG_INFO( "%booststrap-load: exit" );
 }
 
 
@@ -121,10 +121,10 @@ void Bootstrap::open_file() {
     _stream.open( _filename, std::ifstream::binary );
 
     if ( not _stream.good() ) {
-        spdlog::info( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
+        SPDLOG_INFO( "%bootstrap-file-error: failed to open file [{}] for reading", _filename.c_str() );
         exit( EXIT_FAILURE );
     }
-    spdlog::info( "%bootstrap-file-open: [{}]", _filename.c_str() );
+    SPDLOG_INFO( "%bootstrap-file-open: [{}]", _filename.c_str() );
 
     _version_number = read_uint32_t();
     check_version();
@@ -133,22 +133,22 @@ void Bootstrap::open_file() {
 
 void Bootstrap::parse_file() {
 
-    spdlog::info( "bootstrap-file-load: [{}]", _filename.c_str() );
+    SPDLOG_INFO( "bootstrap-file-load: [{}]", _filename.c_str() );
     parse_objects();
-    spdlog::info( "bootstrap-file-load-done: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
+    SPDLOG_INFO( "bootstrap-file-load-done: [{}] objects read from [{}]", _objectCount, _filename.c_str() );
 
 }
 
 
 void Bootstrap::close_file() {
     _stream.close();
-    spdlog::info( "bootstrap-file-close: [{}]", _filename.c_str() );
+    SPDLOG_INFO( "bootstrap-file-close: [{}]", _filename.c_str() );
 }
 
 
 void Bootstrap::summary() {
     for ( auto item : _countByType ) {
-        spdlog::info( "bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
+        SPDLOG_INFO( "bootstrap-object-count:    {} {:24s} {}", item.first, _nameByTypeByte[ item.first ].c_str(), item.second );
     }
 }
 
@@ -158,7 +158,7 @@ void Bootstrap::summary() {
 void Bootstrap::extend_oop_table() {
     std::int32_t new_size = _max_number_of_oops * 2;
 
-    spdlog::info( "bootstrap-expand: expanding oop_table to [0x{08:x}]", new_size );
+    SPDLOG_INFO( "bootstrap-expand: expanding oop_table to [0x{08:x}]", new_size );
     Oop *new_oop_table = new_c_heap_array<Oop>( new_size );
 
     for ( std::int32_t i = 0; i < _max_number_of_oops; i++ ) {
@@ -229,7 +229,7 @@ void Bootstrap::check_version() {
     std::int32_t expected = ByteCodes::version();
     std::int32_t observed = _version_number;
     if ( expected != observed ) {
-        spdlog::info( "fatal: filename[{}] has unexpected bytecode version: expected: [0x{08:x}], observed: [0x{08:x}]", _filename.c_str(), expected, observed );
+        SPDLOG_INFO( "fatal: filename[{}] has unexpected bytecode version: expected: [0x{08:x}], observed: [0x{08:x}]", _filename.c_str(), expected, observed );
         exit( EXIT_FAILURE );
     }
 
@@ -238,7 +238,7 @@ void Bootstrap::check_version() {
 
 void Bootstrap::parse_objects() {
 
-    spdlog::info( "%booststrap-parse-objects: entry" );
+    SPDLOG_INFO( "%booststrap-parse-objects: entry" );
 
     Universe::_systemDictionaryObject = ObjectArrayOop( readNextObject() );
     nilObject                         = MemOop( readNextObject() );
@@ -272,7 +272,7 @@ void Bootstrap::parse_objects() {
         platform_association->set_value( platform_klass );
     }
 
-    spdlog::info( "%booststrap-parse-objects: exit" );
+    SPDLOG_INFO( "%booststrap-parse-objects: exit" );
 
 }
 
@@ -286,7 +286,7 @@ void Bootstrap::insert_symbol( MemOop m ) {
     SymbolOopDescriptor *symbolOop = SymbolOop( static_cast<T>( m ) );
 
     if ( Universe::symbol_table->is_present( symbolOop ) ) {
-        spdlog::info( "Symbol[{}] already present in symbol_table", symbolOop->as_string() );
+        SPDLOG_INFO( "Symbol[{}] already present in symbol_table", symbolOop->as_string() );
     } else {
         Universe::symbol_table->add_symbol( symbolOop );
     }
@@ -466,7 +466,7 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "unknown object typeByte" );
     }
 
-//    spdlog::info( "[{:2d}] [{:s}]", size, memOop->print_value_string() );
+//    SPDLOG_INFO( "[{:2d}] [{:s}]", size, memOop->print_value_string() );
 
     return memOop;
 }
@@ -525,7 +525,7 @@ bool Bootstrap::new_format() const {
 /*
 
     if ( TraceBootstrap )
-        spdlog::info( "%8i  address [0x%lx]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
+        SPDLOG_INFO( "%8i  address [0x%lx]  size [0x%04x]  type [%c]", _objectCount, m, size, type );
     else
         if ( _objectCount % 1000 == 0 ) {
             if ( _objectCount % 10000 == 0 ) {

@@ -60,7 +60,7 @@ Oop MemOopDescriptor::scavenge() {
 
 void MemOopDescriptor::follow_contents() {
     st_assert( is_gc_marked(), "pointer reversal should have taken place" );
-    // spdlog::info("[%s, 0x%lx, 0x%lx]", blueprint()->name(), this, klass());
+    // SPDLOG_INFO("[%s, 0x%lx, 0x%lx]", blueprint()->name(), this, klass());
     blueprint()->oop_follow_contents( this );
 }
 
@@ -72,7 +72,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
     Oop  *x        = Universe::allocate_in_survivor_space( this, s, is_new );
 
 #ifdef VERBOSE_SCAVENGING
-    spdlog::info("{copy %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
+    SPDLOG_INFO("{copy %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
 #endif
 
     MemOop p = as_memOop( x );
@@ -83,7 +83,7 @@ Oop MemOopDescriptor::copy_to_survivor_space() {
         Universe::age_table->add( p, s );
     } else {
 # ifdef VERBOSE_SCAVENGING
-        spdlog::info("{tenuring %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
+        SPDLOG_INFO("{tenuring %s 0x{0:x} -> 0x{0:x} (%d)}", blueprint()->name(), oops(), x, s);
 # endif
     }
     forward_to( p );

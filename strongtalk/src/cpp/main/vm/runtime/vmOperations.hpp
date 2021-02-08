@@ -34,8 +34,10 @@ public:
 
 
     virtual ~VM_Operation() = default;
+    VM_Operation( const VM_Operation & ) = default;
+    VM_Operation &operator=( const VM_Operation & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
-    void operator delete( void *p ) {}
 
     void set_calling_process( DeltaProcess *p ) {
         _calling_process = p;
@@ -69,7 +71,7 @@ public:
 
 
     void print() {
-        spdlog::info( "{}", name() );
+        SPDLOG_INFO( "{}", name() );
     }
 
 
@@ -92,6 +94,12 @@ public:
         VM_Operation(), _addr{ addr } {
     }
 
+
+    VM_Scavenge() = default;
+    virtual ~VM_Scavenge() = default;
+    VM_Scavenge( const VM_Scavenge & ) = default;
+    VM_Scavenge &operator=( const VM_Scavenge & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     void doit();
 
@@ -133,6 +141,13 @@ public:
     }
 
 
+    virtual ~VM_GarbageCollect() = default;
+    VM_GarbageCollect( const VM_GarbageCollect & ) = default;
+    VM_GarbageCollect &operator=( const VM_GarbageCollect & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void doit();
 
 
@@ -150,6 +165,13 @@ private:
 public:
     VM_TerminateProcess( DeltaProcess *target ) : _target{ target } {
     }
+
+
+    VM_TerminateProcess() = default;
+    virtual ~VM_TerminateProcess() = default;
+    VM_TerminateProcess( const VM_TerminateProcess & ) = default;
+    VM_TerminateProcess &operator=( const VM_TerminateProcess & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void doit();
@@ -187,6 +209,14 @@ public:
     }
 
 
+    VM_OptimizeMethod() = default;
+    virtual ~VM_OptimizeMethod() = default;
+    VM_OptimizeMethod( const VM_OptimizeMethod & ) = default;
+    VM_OptimizeMethod &operator=( const VM_OptimizeMethod & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     NativeMethod *result() const {
         return _nativeMethod;
     }
@@ -219,6 +249,13 @@ public:
     }
 
 
+    VM_OptimizeRScope() = default;
+    virtual ~VM_OptimizeRScope() = default;
+    VM_OptimizeRScope( const VM_OptimizeRScope & ) = default;
+    VM_OptimizeRScope &operator=( const VM_OptimizeRScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     NativeMethod *result() const {
         return _nativeMethod;
     }
@@ -249,6 +286,13 @@ public:
         _scope{ scope },
         _nativeMethod{ nullptr } {
     }
+
+
+    VM_OptimizeBlockMethod() = default;
+    virtual ~VM_OptimizeBlockMethod() = default;
+    VM_OptimizeBlockMethod( const VM_OptimizeBlockMethod & ) = default;
+    VM_OptimizeBlockMethod &operator=( const VM_OptimizeBlockMethod & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void doit();

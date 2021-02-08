@@ -306,18 +306,18 @@ void Locations::print() {
     // print used locations
     for ( std::int32_t i = 0; i < len; i++ ) {
         if ( nofUses( i ) > 0 ) {
-            spdlog::info( "location: {}: {} uses", i, nofUses( i ) );
+            SPDLOG_INFO( "location: {}: {} uses", i, nofUses( i ) );
         }
     }
 
     // print whole free list
-    spdlog::info( "Free List:" );
-    spdlog::info( "no. of arguments    : {}", _nofArguments );
-    spdlog::info( "no. of registers    : {}", _nofRegisters );
-    spdlog::info( "first free register : {}", _firstFreeRegister );
-    spdlog::info( "first free stack loc: {}", _firstFreeStackTmp );
+    SPDLOG_INFO( "Free List:" );
+    SPDLOG_INFO( "no. of arguments    : {}", _nofArguments );
+    SPDLOG_INFO( "no. of registers    : {}", _nofRegisters );
+    SPDLOG_INFO( "first free register : {}", _firstFreeRegister );
+    SPDLOG_INFO( "first free stack loc: {}", _firstFreeStackTmp );
     for ( std::int32_t i = 0; i < len; i++ ) {
-        spdlog::info( "{}: {}", i, _freeList->at( i ) );
+        SPDLOG_INFO( "{}: {}", i, _freeList->at( i ) );
     }
 
 }

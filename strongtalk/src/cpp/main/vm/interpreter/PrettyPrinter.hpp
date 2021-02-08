@@ -172,6 +172,11 @@ private:
 
 public:
     ByteArrayPrettyPrintStream();
+    virtual ~ByteArrayPrettyPrintStream() = default;
+    ByteArrayPrettyPrintStream( const ByteArrayPrettyPrintStream & ) = default;
+    ByteArrayPrettyPrintStream &operator=( const ByteArrayPrettyPrintStream & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     void newline();
 

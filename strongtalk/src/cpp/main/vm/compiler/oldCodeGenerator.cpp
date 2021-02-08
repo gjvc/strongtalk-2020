@@ -317,9 +317,9 @@ static std::int32_t numberOfCalls = 0;    // # of traced calls since start
 static void indent() {
     const std::int32_t maxIndent = 30;
     if ( callDepth < maxIndent ) {
-        spdlog::info( "%*s", callDepth, " " );
+        SPDLOG_INFO( "%*s", callDepth, " " );
     } else {
-        spdlog::info( "%*s <%5d>", maxIndent - 9, " ", callDepth );
+        SPDLOG_INFO( "%*s <%5d>", maxIndent - 9, " ", callDepth );
     }
 }
 
@@ -434,7 +434,7 @@ extern "C" void verifyReturn( Oop obj ) {
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        spdlog::info( "return %s from %s", obj->print_value_string(), nativeMethodName() );
+        SPDLOG_INFO( "return %s from %s", obj->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -456,7 +456,7 @@ static void verifyReturnCode( Register reg ) {
 extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32_t nlrScopeID, Oop nlrResult ) {
     static_cast<void>(nlrScopeID); // unused
 
-    spdlog::info( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
+    SPDLOG_INFO( "verifyNonLocalReturn(0x{0:x}, 0x{0:x}, %d, 0x{0:x})", static_cast<const void *>( fp ), static_cast<const void *>( nlrFrame ), static_cast<const void *>( nlrResult ) );
     if ( nlrFrame <= fp ) {
         error( "NonLocalReturn went too far: 0x{0:x} <= 0x{0:x}", nlrFrame, fp );
     }
@@ -468,7 +468,7 @@ extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32
         ResourceMark resourceMark;
         callDepth--;
         indent();
-        spdlog::info( "NonLocalReturn %s from/thru %s", nlrResult->print_value_string(), nativeMethodName() );
+        SPDLOG_INFO( "NonLocalReturn %s from/thru %s", nlrResult->print_value_string(), nativeMethodName() );
     }
 }
 
@@ -534,7 +534,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
     if ( TraceCalls ) {
         callDepth++;
         indent();
-        spdlog::info( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
+        SPDLOG_INFO( "calling %s %s ", nativeMethodName(), recv->print_value_string() );
     }
     verifyObject( recv );
     std::int32_t i    = nofArgs;
@@ -544,7 +544,7 @@ extern "C" void verifyArguments( Oop recv, std::int32_t ebp, std::int32_t nofArg
         verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
-            spdlog::info( "%s, ", ( *arg )->print_value_string() );
+            SPDLOG_INFO( "%s, ", ( *arg )->print_value_string() );
         }
     }
     if ( VerifyDebugInfo ) {
@@ -578,7 +578,7 @@ static void trace_result( std::int32_t compilation, MethodOop method, Oop result
     ResourceMark resourceMark;
     _console->print( "%6d: 0x%08x (compilation %4d, ", result_counter++, std::int32_t( result ), compilation );
     method->selector()->print_value();
-    spdlog::info( ")", compilation );
+    SPDLOG_INFO( ")", compilation );
 }
 
 

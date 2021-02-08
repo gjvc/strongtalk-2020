@@ -15,7 +15,7 @@
 
 
 void printLookupType( LookupType l ) {
-    spdlog::info( lookupTypeName( l ) );
+    SPDLOG_INFO( lookupTypeName( l ) );
 }
 
 

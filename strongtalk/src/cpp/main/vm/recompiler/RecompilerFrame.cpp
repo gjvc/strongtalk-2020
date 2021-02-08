@@ -367,6 +367,13 @@ public:
     CumulCounter( MethodOop m ) : cumulSends{ 0 }, method{ m }, top{ true } {
     }
 
+    CumulCounter() = default;
+    virtual ~CumulCounter() = default;
+    CumulCounter( const CumulCounter & ) = default;
+    CumulCounter &operator=( const CumulCounter & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 
     void count() {
         if ( not top ) {
@@ -399,7 +406,7 @@ std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
 
 void RecompilerFrame::print( const char *kind ) {
 
-    spdlog::info( "{<16s} {:3d} {} {<15s}  invocations={:5d}  numberOfCallers={:3d}  sends={:6d}  cumulativeSends={:6d}  loopDepth={:2d}  cost={:4d}",
+    SPDLOG_INFO( "{<16s} {:3d} {} {<15s}  invocations={:5d}  numberOfCallers={:3d}  sends={:6d}  cumulativeSends={:6d}  loopDepth={:2d}  cost={:4d}",
                   kind,
                   _num,
                   is_interpreted() ? "I" : "C",

@@ -60,9 +60,10 @@ public:
 
 public:
     ProfiledNode();
-
-
     virtual ~ProfiledNode();
+    ProfiledNode( const ProfiledNode & ) = default;
+    ProfiledNode &operator=( const ProfiledNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     void set_next( ProfiledNode *n );
@@ -193,6 +194,12 @@ public:
         update( where );
     }
 
+    InterpretedNode() = default;
+    virtual ~InterpretedNode() = default;
+    InterpretedNode( const InterpretedNode & ) = default;
+    InterpretedNode &operator=( const InterpretedNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     bool is_interpreted() const {
         return true;
@@ -236,6 +243,14 @@ public:
         _nativeMethod{ nm } {
         update( where );
     }
+
+
+    CompiledNode() = default;
+    virtual ~CompiledNode() = default;
+    CompiledNode( const CompiledNode & ) = default;
+    CompiledNode &operator=( const CompiledNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     bool is_compiled() const {

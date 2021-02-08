@@ -92,7 +92,7 @@ memConverter *ClassChange::create_converter_for( KlassOopDescriptor *old_class, 
 
 void ClassChange::update_class_vars() {
     if ( TraceApplyChange ) {
-        spdlog::info( " - updating class variables for:" );
+        SPDLOG_INFO( " - updating class variables for:" );
         old_klass()->print_value();
         _console->cr();
     }
@@ -126,7 +126,7 @@ void ClassChange::update_class_vars() {
 void ClassChange::update_methods( std::int32_t instance_side ) {
 
     if ( TraceApplyChange ) {
-        spdlog::info( " updating {}-side methods for [{}] ", instance_side ? "instance" : "class", old_klass()->print_value_string() );
+        SPDLOG_INFO( " updating {}-side methods for [{}] ", instance_side ? "instance" : "class", old_klass()->print_value_string() );
     }
 
     if ( instance_side ) {

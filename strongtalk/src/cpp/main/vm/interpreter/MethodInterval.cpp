@@ -46,7 +46,7 @@ bool IntervalInfo::dominates( std::int32_t byteCodeIndex, IntervalInfo *other, s
 
 
 void IntervalInfo::print() {
-    spdlog::info( "(IntervalInfo*){0:x}", static_cast<void *>(this) );
+    SPDLOG_INFO( "(IntervalInfo*){0:x}", static_cast<void *>(this) );
 }
 
 

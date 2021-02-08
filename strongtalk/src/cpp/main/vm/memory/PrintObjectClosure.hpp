@@ -19,8 +19,12 @@ private:
     ConsoleOutputStream *_stream;
 public:
     PrintObjectClosure( ConsoleOutputStream *stream = nullptr );
+    PrintObjectClosure() = default;
     virtual ~PrintObjectClosure() = default;
-    void operator delete( void *p ) {}
+    PrintObjectClosure( const PrintObjectClosure & ) = default;
+    PrintObjectClosure &operator=( const PrintObjectClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
 
     void do_object( MemOop obj );

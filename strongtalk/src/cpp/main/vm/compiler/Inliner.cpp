@@ -847,7 +847,7 @@ InlinedScope *Inliner::notify( const char *msg ) {
 
 
 void Inliner::print() {
-    spdlog::info( "((Inliner*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0) );
+    SPDLOG_INFO( "((Inliner*)0x{0:x})", static_cast<const void *>(PrintHexAddresses ? this : 0) );
 }
 
 

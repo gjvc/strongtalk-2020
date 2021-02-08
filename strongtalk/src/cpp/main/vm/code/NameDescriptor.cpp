@@ -30,14 +30,14 @@
 
 
 void LocationNameDescriptor::print() {
-    spdlog::info( "[@{} = {}]  0x{0:x}", location().name(), offset );
+    SPDLOG_INFO( "[@{} = {}]  0x{0:x}", location().name(), offset );
 
 //    _console->print( "@%s  (0x%08x)", location().name(), offset );
 }
 
 
 void ValueNameDescriptor::print() {
-    spdlog::info( "={}  0x{0:x}", value()->print_value_string(), offset );
+    SPDLOG_INFO( "={}  0x{0:x}", value()->print_value_string(), offset );
 //    _console->print( "=" );
 //    value()->print_value();
 //    _console->print( " (0x%08x)", offset );
@@ -45,7 +45,7 @@ void ValueNameDescriptor::print() {
 
 
 void BlockValueNameDescriptor::print() {
-    spdlog::info( "[={}]  0x{0:x}", block_method()->print_value_string(), offset );
+    SPDLOG_INFO( "[={}]  0x{0:x}", block_method()->print_value_string(), offset );
 
 //    _console->print( "[=" );
 //    block_method()->print_value();
@@ -55,7 +55,7 @@ void BlockValueNameDescriptor::print() {
 
 
 void MemoizedBlockNameDescriptor::print() {
-    spdlog::info( "[@{} = {}]  0x{0:x}", location().name(), block_method()->print_value_string() );
+    SPDLOG_INFO( "[@{} = {}]  0x{0:x}", location().name(), block_method()->print_value_string() );
 
 //    _console->print( "[@%s =", location().name() );
 //    block_method()->print_value();
@@ -65,8 +65,8 @@ void MemoizedBlockNameDescriptor::print() {
 
 
 void IllegalNameDescriptor::print() {
-    spdlog::info( "###illegal###" );
-    spdlog::info( " (0x{0:x})", offset );
+    SPDLOG_INFO( "###illegal###" );
+    SPDLOG_INFO( " (0x{0:x})", offset );
 //    _console->print( "###illegal###" );
 //    _console->print( " (0x%08x)", offset );
 }

@@ -119,7 +119,7 @@ void JumpTable::freeID( std::int32_t index ) {
 
 
 void JumpTable::print() {
-    spdlog::info( "JumpTable 0x{0:x}: capacity{0:d} (%ld used)", static_cast<const void *>(this), length, usedIDs );
+    SPDLOG_INFO( "JumpTable 0x{0:x}: capacity{0:d} (%ld used)", static_cast<const void *>(this), length, usedIDs );
     for ( std::int32_t i = 0; i < length; i++ ) {
         if ( not major_at( i )->is_unused() ) {
             _console->print( " %3d: ", i );
@@ -340,7 +340,7 @@ NativeMethod *JumpTableEntry::parent_nativeMethod( std::int32_t &index ) const {
 
 void JumpTableEntry::print() {
     if ( is_unused() ) {
-        spdlog::info( "Unused {next = {}}", (std::int32_t) destination() );
+        SPDLOG_INFO( "Unused {next = {}}", (std::int32_t) destination() );
         return;
     }
     if ( is_NativeMethod_stub() ) {
@@ -350,7 +350,7 @@ void JumpTableEntry::print() {
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
-            spdlog::info( "{not pointing to NativeMethod}" );
+            SPDLOG_INFO( "{not pointing to NativeMethod}" );
         }
         return;
     }
@@ -362,13 +362,13 @@ void JumpTableEntry::print() {
         if ( nm ) {
             nm->_lookupKey.print();
         } else {
-            spdlog::info( "{not compiled yet}" );
+            SPDLOG_INFO( "{not compiled yet}" );
         }
         return;
     }
 
     if ( is_link() ) {
-        spdlog::info( "Link for:" );
+        SPDLOG_INFO( "Link for:" );
         JumpTable::jump_entry_for_at( link(), 0 )->print();
         return;
     }

@@ -16,7 +16,7 @@
 void trace( VirtualFrame *from_frame, std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
-    spdlog::info( "- Stack trace ({}, {})", start_frame, number_of_frames );
+    SPDLOG_INFO( "- Stack trace ({}, {})", start_frame, number_of_frames );
     std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = from_frame; f; f = f->sender() ) {
@@ -40,10 +40,10 @@ void traceCompiledFrame( Frame &f ) {
     CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( &f );
     st_assert( vf->is_compiled_frame(), "must be compiled frame" );
     NativeMethod *nm = vf->code();
-    spdlog::info( "Found NativeMethod: 0x{0:x}", static_cast<const void *>(nm) );
+    SPDLOG_INFO( "Found NativeMethod: 0x{0:x}", static_cast<const void *>(nm) );
     nm->print_value_on( _console );
 
-    spdlog::info( " @{} called from [0x{0:x}]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
+    SPDLOG_INFO( " @{} called from [0x{0:x}]", vf->scope()->offset(), f.pc() - static_cast<std::int32_t>( Assembler::Constants::sizeOfCall ) );
 
     trace( vf, 0, 10 );
 }
@@ -69,7 +69,7 @@ void traceDeltaFrame( Frame &f ) {
 void handle_exception( void *fp, void *sp, void *pc ) {
 
     Frame f( (Oop *) sp, (std::int32_t *) fp, (const char *) pc );
-    spdlog::info( "ebp: 0x{0:x}, esp: 0x{0:x}, pc: 0x{0:x}", fp, sp, pc );
+    SPDLOG_INFO( "ebp: 0x{0:x}, esp: 0x{0:x}, pc: 0x{0:x}", fp, sp, pc );
     if ( f.is_delta_frame() ) {
         traceDeltaFrame( f );
         return;
@@ -96,7 +96,7 @@ void handle_exception( void *fp, void *sp, void *pc ) {
         }
     }
 
-    spdlog::info( "Could not trace delta." );
+    SPDLOG_INFO( "Could not trace delta." );
 }
 
 
@@ -107,6 +107,6 @@ void handle_exception( void *fp, void *sp, void *pc ) {
  */
 void except_init() {
 
-    spdlog::info( "%except-init:  add_exception_handler" );
+    SPDLOG_INFO( "%except-init:  add_exception_handler" );
     os::add_exception_handler( handle_exception );
 }

@@ -691,7 +691,7 @@ bool BasicBlock::verifyLabels() {
             }
             if ( n->_label.is_unbound() ) {
                 ok = false;
-                spdlog::info( "unbound label at N%d", n->id() );
+                SPDLOG_INFO( "unbound label at N%d", n->id() );
             }
         }
     }
@@ -700,21 +700,21 @@ bool BasicBlock::verifyLabels() {
 
 
 static void printPrevBBs( BasicBlock *b, const char *str ) {
-    spdlog::info( "BasicBlock%ld%s", b->id(), str );
+    SPDLOG_INFO( "BasicBlock%ld%s", b->id(), str );
 }
 
 
 void BasicBlock::print_short() {
 
-    spdlog::info( "BasicBlock %-3ld [{}] {0:x} (%ld, %ld); prevs ", id(), _loopDepth, static_cast<void *>(this), _first->id(), _last->id() );
+    SPDLOG_INFO( "BasicBlock %-3ld [{}] {0:x} (%ld, %ld); prevs ", id(), _loopDepth, static_cast<void *>(this), _first->id(), _last->id() );
 
     for ( std::int32_t i = 0; i < nPredecessors(); i++ ) {
         printPrevBBs( prev( i ), ( i == nPredecessors() - 1 ) ? " : " : ", " );
     }
 
-    spdlog::info( "; " );
+    SPDLOG_INFO( "; " );
     if ( next() ) {
-        spdlog::info( "next BasicBlock%ld", next()->id() );
+        SPDLOG_INFO( "next BasicBlock%ld", next()->id() );
     }
 
     for ( std::int32_t i = 1; i < nSuccessors(); i++ ) {
@@ -726,9 +726,9 @@ void BasicBlock::print_short() {
 
 void BasicBlock::print() {
     print_short();
-    spdlog::info( "(%ld nodes):", _nodeCount );
+    SPDLOG_INFO( "(%ld nodes):", _nodeCount );
     print_code( false );
-    spdlog::info( "duInfo: " );
+    SPDLOG_INFO( "duInfo: " );
     duInfo.print();
 }
 
@@ -743,7 +743,7 @@ void BasicBlock::print_code( bool suppressTrivial ) {
         } else {
             n->printID();
             n->print_short();
-            spdlog::info( "" );
+            SPDLOG_INFO( "" );
         }
     }
 }

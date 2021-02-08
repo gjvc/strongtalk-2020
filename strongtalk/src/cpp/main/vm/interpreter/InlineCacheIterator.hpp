@@ -46,7 +46,7 @@ public:
     InlineCacheIterator &operator=( const InlineCacheIterator & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     // InlineCache information
@@ -140,7 +140,7 @@ public:
     InlineCache &operator=( const InlineCache & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     InlineCache( CompiledInlineCache *ic );
@@ -236,7 +236,7 @@ public:
     PolymorphicInlineCacheIterator &operator=( const PolymorphicInlineCacheIterator & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     // Iterating through PolymorphicInlineCache entries
@@ -293,6 +293,14 @@ private:
 
 public:
     CompiledInlineCacheIterator( CompiledInlineCache *ic );
+
+    CompiledInlineCacheIterator() = default;
+    virtual ~CompiledInlineCacheIterator() = default;
+    CompiledInlineCacheIterator( const CompiledInlineCacheIterator & ) = default;
+    CompiledInlineCacheIterator &operator=( const CompiledInlineCacheIterator & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     // InlineCache information

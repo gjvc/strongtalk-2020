@@ -11,7 +11,7 @@ EventLog *eventLog;
 
 
 void eventlog_init() {
-    spdlog::info( "system-init:  eventlog_init" );
+    SPDLOG_INFO( "system-init:  eventlog_init" );
     eventLog = new EventLog;
 }
 
@@ -91,16 +91,16 @@ void EventLog::printPartial( std::int32_t n ) {
                 s = "- ";
                 break;
         }
-        spdlog::info( "%*.s%s", 2 * indent, " ", s );
-        spdlog::info( "{}  {}  {}  {}", e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
-        spdlog::info( "" );
+        SPDLOG_INFO( "%*.s%s", 2 * indent, " ", s );
+        SPDLOG_INFO( "{}  {}  {}  {}", e->_name, e->args[ 0 ], e->args[ 1 ], e->args[ 2 ] );
+        SPDLOG_INFO( "" );
         if ( e->_status == EventLogEventStatus::starting ) {
             indent++;
         }
     }
 
     if ( indent not_eq _nestingDepth ) {
-        spdlog::info( "Actual event nesting is {} greater than shown.", _nestingDepth - indent );
+        SPDLOG_INFO( "Actual event nesting is {} greater than shown.", _nestingDepth - indent );
     }
 }
 

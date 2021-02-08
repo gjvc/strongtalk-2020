@@ -403,7 +403,7 @@ private:
         if ( UseNewBackend ) {
             _console->print( "%5d: ", pc - _pc0 );
         }
-        spdlog::info( "{}[%d]\t", title, no );
+        SPDLOG_INFO( "{}[%d]\t", title, no );
         nd->print();
         _console->cr();
     }
@@ -613,11 +613,11 @@ NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMeth
 
 
 void NonInlinedBlockScopeDescriptor::print() {
-    spdlog::info( "NonInlinedBlockScopeDescriptor" );
+    SPDLOG_INFO( "NonInlinedBlockScopeDescriptor" );
     _console->print( " - method: " );
     method()->print_value();
     _console->cr();
-    spdlog::info( " - parent offset: {}", _parentScopeOffset );
+    SPDLOG_INFO( " - parent offset: {}", _parentScopeOffset );
 }
 
 

@@ -40,7 +40,7 @@ void MethodKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
     blk->do_oop( "sizeCodes", (Oop *) &m->addr()->_size_and_flags );
 
     // indexables
-    spdlog::info( "MethodKlass::oop_layout_iterate not implemented yet" );
+    SPDLOG_INFO( "MethodKlass::oop_layout_iterate not implemented yet" );
     CodeIterator c( m );
     do {
         // Put in the meat here.

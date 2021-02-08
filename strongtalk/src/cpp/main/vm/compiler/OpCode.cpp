@@ -120,7 +120,7 @@ std::array<bool, static_cast<std::size_t >( ArithOpCode::LastArithOp )> ArithOpI
 
 
 void opcode_init() {
-    spdlog::info( "system-init:  opcode_init" );
+    SPDLOG_INFO( "system-init:  opcode_init" );
 
     // check sizes
     std::numeric_limits<typename std::underlying_type<BranchOpCode>::type>::max();

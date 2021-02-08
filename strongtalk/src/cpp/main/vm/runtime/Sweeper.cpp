@@ -92,19 +92,19 @@ void Sweeper::step() {
 
 
 void Sweeper::print() const {
-    spdlog::info( "%s", name() );
+    SPDLOG_INFO( "%s", name() );
 }
 
 
 void Sweeper::activate() {
     _is_active = true;
-    spdlog::info( "Activating %s", name() );
+    SPDLOG_INFO( "Activating %s", name() );
 }
 
 
 void Sweeper::deactivate() {
     _is_active = false;
-    spdlog::info( "Deactivating %s", name() );
+    SPDLOG_INFO( "Deactivating %s", name() );
 }
 
 // ---------------- HeapSweeper -----------------
@@ -128,7 +128,7 @@ void CodeSweeper::updateInterval() {
         const double log2 = 0.69314718055995;   // log(2)
         _decayFactor = exp( log2 * _codeSweeperInterval * _fractionPerTask / CounterHalfLifeTime );
         if ( PrintCodeSweep ) {
-            spdlog::info( "*method sweep: decay factor %f", _decayFactor );
+            SPDLOG_INFO( "*method sweep: decay factor %f", _decayFactor );
         }
     }
 }
@@ -210,7 +210,7 @@ void MethodSweeper::task() {
     std::int32_t   length            = array->length();
     std::int32_t   number_of_entries = length / _fractionPerTask;
     if ( PrintCodeSweep ) {
-        spdlog::info( "*method sweep: {} entries...", number_of_entries );
+        SPDLOG_INFO( "*method sweep: {} entries...", number_of_entries );
     }
     TraceTime t( "MethodSweep ", PrintCodeSweep );
 
@@ -230,7 +230,7 @@ void MethodSweeper::task() {
         }
     }
 
-    spdlog::info( "MethodSweeper task [%d, %d] #%d", begin, end, result );
+    SPDLOG_INFO( "MethodSweeper task [%d, %d] #%d", begin, end, result );
 
     if ( _index > length ) {
         deactivate();
@@ -269,7 +269,7 @@ void ZoneSweeper::task() {
     std::int32_t total = Universe::code->numberOfNativeMethods();
     std::int32_t todo  = total / _fractionPerTask;
     if ( PrintCodeSweep )
-        spdlog::info( "*zone sweep: {} of {} entries...", todo, total );
+        SPDLOG_INFO( "*zone sweep: {} of {} entries...", todo, total );
     TraceTime t( "ZoneSweep ", PrintCodeSweep );
 
     for ( std::int32_t i = 0; i < todo; i++ ) {
@@ -334,7 +334,7 @@ MethodSweeper *methodSweeper;
 
 
 void sweeper_init() {
-    spdlog::info( "system-init:  sweeper_init" );
+    SPDLOG_INFO( "system-init:  sweeper_init" );
 
     Sweeper::add( new HeapSweeper() );
     Sweeper::add( new ZoneSweeper() );

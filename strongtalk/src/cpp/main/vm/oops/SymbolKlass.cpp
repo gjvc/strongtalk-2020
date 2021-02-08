@@ -12,7 +12,7 @@
 
 
 SymbolOop SymbolKlass::allocateSymbol( const char *value, std::int32_t len ) {
-    spdlog::info( "oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol[{}]", value );
+    SPDLOG_INFO( "oops-SymbolKlass: SymbolKlass::allocateSymbol: symbol[{}]", value );
     SymbolOop sym = as_symbolOop( Universe::allocate_tenured( object_size( len ) ) );
     sym->init_untagged_contents_mark();
     sym->set_klass_field( Universe::symbolKlassObject() );

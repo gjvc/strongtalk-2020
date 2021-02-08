@@ -18,20 +18,20 @@ void report_vm_state() {
         recursive_error = true;
         if ( theCompiler ) {
 
-            spdlog::info( "-----------------------------------------------------------------------------" );
+            SPDLOG_INFO( "-----------------------------------------------------------------------------" );
             theCompiler->print_key( _console );
             _console->cr();
-            spdlog::info( "-----------------------------------------------------------------------------" );
+            SPDLOG_INFO( "-----------------------------------------------------------------------------" );
             if ( CompilerDebug ) {
-                spdlog::info( "-----------------------------------------------------------------------------" );
+                SPDLOG_INFO( "-----------------------------------------------------------------------------" );
                 print_cout();
-                spdlog::info( "-----------------------------------------------------------------------------" );
+                SPDLOG_INFO( "-----------------------------------------------------------------------------" );
             } else {
                 _console->print( "(No compiler debug output available -- run with +CompilerDebug to get it)" );
             }
 
         }
-        spdlog::info( "Last 10 internal VM events:" );
+        SPDLOG_INFO( "Last 10 internal VM events:" );
         eventLog->printPartial( 10 );
         recursive_error = false;
     }
@@ -47,7 +47,7 @@ void report_error( const char *title, const char *format, ... ) {
     vsprintf( buffer, format, ap );
     va_end( ap );
 
-    spdlog::info( "[A Runtime Error Occurred]" );
+    SPDLOG_INFO( "[A Runtime Error Occurred]" );
     _console->print_raw( buffer );
 
     if ( not bootstrappingInProgress )

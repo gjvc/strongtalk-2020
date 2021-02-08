@@ -279,6 +279,14 @@ public:
         theLoop{ l } {
     }
 
+
+    LoopClosure() = default;
+    virtual ~LoopClosure() = default;
+    LoopClosure( const LoopClosure & ) = default;
+    LoopClosure &operator=( const LoopClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 };
 
 
@@ -593,6 +601,13 @@ public:
     }
 
 
+    TTHoister() = default;
+    virtual ~TTHoister() = default;
+    TTHoister( const TTHoister & ) = default;
+    TTHoister &operator=( const TTHoister & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void do_it( InlinedScope *s ) {
 
         GrowableArray<NonTrivialNode *> *tests = s->typeTests();
@@ -813,8 +828,8 @@ void CompiledLoop::findRegCandidates() {
 
 
 void CompiledLoop::print() {
-    spdlog::info( "((CompiledLoop*)0x{0:x}) = [N{}..N{}], cond = [N{}..N%d], body = [N%d..N%d] (byteCodeIndex %d..%d)", static_cast<const void *>(this), _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
-    spdlog::info( "\tloopVar=%s, lower=%s, upper=%s", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
+    SPDLOG_INFO( "((CompiledLoop*)0x{0:x}) = [N{}..N{}], cond = [N{}..N%d], body = [N%d..N%d] (byteCodeIndex %d..%d)", static_cast<const void *>(this), _firstNodeID, _lastNodeID, _startOfCond->id(), _endOfCond->id(), _startOfBody->id(), _endOfBody->id(), _startOfLoop->byteCodeIndex(), _endOfLoop->byteCodeIndex() );
+    SPDLOG_INFO( "\tloopVar=%s, lower=%s, upper=%s", _loopVar->safeName(), _lowerBound->safeName(), _upperBound->safeName() );
 }
 
 
@@ -849,5 +864,5 @@ void HoistedTypeTest::print() {
 
 
 void LoopPseudoRegisterCandidate::print() {
-    spdlog::info( "((LoopPseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
+    SPDLOG_INFO( "((LoopPseudoRegisterCandidate*)0x{0:x}): %s, {} uses, {} definitions", static_cast<const void *>(this), _pseudoRegister->name(), _nuses, _ndefs );
 }

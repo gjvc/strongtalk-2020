@@ -35,6 +35,12 @@ public:
 
     RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex );
 
+    RecompilationScope() = default;
+    virtual ~RecompilationScope() = default;
+    RecompilationScope( const RecompilationScope & ) = default;
+    RecompilationScope &operator=( const RecompilationScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     // Type tests
     virtual bool isInterpretedScope() const {
@@ -305,6 +311,12 @@ public:
 
     NonDummyRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, MethodOop m, std::int32_t level );
 
+    NonDummyRecompilationScope() = default;
+    virtual ~NonDummyRecompilationScope() = default;
+    NonDummyRecompilationScope( const NonDummyRecompilationScope & ) = default;
+    NonDummyRecompilationScope &operator=( const NonDummyRecompilationScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     RecompilationScope *subScope( std::int32_t byteCodeIndex, LookupKey *l ) const;
 
     // return the subscope matching the lookup
@@ -366,6 +378,13 @@ public:
     InterpretedRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, LookupKey *key, MethodOop m, std::int32_t level, bool trusted );
 
 
+    InterpretedRecompilationScope() = default;
+    virtual ~InterpretedRecompilationScope() = default;
+    InterpretedRecompilationScope( const InterpretedRecompilationScope & ) = default;
+    InterpretedRecompilationScope &operator=( const InterpretedRecompilationScope & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     bool isInterpretedScope() const {
         return true;
     }
@@ -415,6 +434,15 @@ public:
     const ScopeDescriptor *desc;    // scope
 
     InlinedRecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex, const NativeMethod *nm, ScopeDescriptor *d, std::int32_t level );
+
+
+    InlinedRecompilationScope() = default;
+    virtual ~InlinedRecompilationScope() = default;
+    InlinedRecompilationScope( const InlinedRecompilationScope & ) = default;
+    InlinedRecompilationScope &operator=( const InlinedRecompilationScope & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool isInlinedScope() const {
@@ -562,6 +590,15 @@ public:
     InliningDatabaseRecompilationScope( NonDummyRecompilationScope *sender, std::int32_t byteCodeIndex, KlassOop receiver_klass, MethodOop method, std::int32_t level );
 
 
+    InliningDatabaseRecompilationScope() = default;
+    virtual ~InliningDatabaseRecompilationScope() = default;
+    InliningDatabaseRecompilationScope( const InliningDatabaseRecompilationScope & ) = default;
+    InliningDatabaseRecompilationScope &operator=( const InliningDatabaseRecompilationScope & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
+
     bool isDatabaseScope() const {
         return true;
     }
@@ -609,6 +646,15 @@ class UntakenRecompilationScope : public NonDummyRecompilationScope {
     const ProgramCounterDescriptor *pc;
 public:
     UntakenRecompilationScope( NonDummyRecompilationScope *sender, ProgramCounterDescriptor *pc, bool isUnlikely );
+
+
+    UntakenRecompilationScope() = default;
+    virtual ~UntakenRecompilationScope() = default;
+    UntakenRecompilationScope( const UntakenRecompilationScope & ) = default;
+    UntakenRecompilationScope &operator=( const UntakenRecompilationScope & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool isUntakenScope() const {
@@ -662,6 +708,7 @@ public:
 
     void print_short();
 
+
 protected:
     std::int32_t scopeID() const {
         return pc->_scope;
@@ -687,7 +734,7 @@ public:
     RUncommonBranch &operator=( const RUncommonBranch & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     std::int32_t byteCodeIndex() const {

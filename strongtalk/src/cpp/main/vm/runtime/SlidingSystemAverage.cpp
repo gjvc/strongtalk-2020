@@ -93,7 +93,7 @@ public:
 
 
 void systemAverage_init() {
-    spdlog::info( "system-init:  systemAverage_init" );
+    SPDLOG_INFO( "system-init:  systemAverage_init" );
 
     SlidingSystemAverage::reset();
     if ( UseSlidingSystemAverage ) {

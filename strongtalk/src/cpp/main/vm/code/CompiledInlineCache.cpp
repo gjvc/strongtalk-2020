@@ -94,16 +94,16 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
     //
     st_assert( not Interpreter::contains( begin_addr() ), "should be handled in the interpreter" );
     if ( Interpreter::contains( begin_addr() ) ) {
-        spdlog::info( "NativeMethod called from interpreter reports ic miss:" );
-        spdlog::info( "interpreter call at [0x{0:x}]", static_cast<const void *>( begin_addr() ) );
-        spdlog::info( "NativeMethod entry point [0x{0:x}]", Interpreter::_last_native_called );
+        SPDLOG_INFO( "NativeMethod called from interpreter reports ic miss:" );
+        SPDLOG_INFO( "interpreter call at [0x{0:x}]", static_cast<const void *>( begin_addr() ) );
+        SPDLOG_INFO( "NativeMethod entry point [0x{0:x}]", Interpreter::_last_native_called );
         InterpretedInlineCache *ic = as_InterpretedIC( next_instruction_address() );
-        spdlog::info( "[0x{0:x}]", static_cast<void *>( ic ) );
+        SPDLOG_INFO( "[0x{0:x}]", static_cast<void *>( ic ) );
         st_fatal( "please notify VM people" );
     }
 
     if ( TraceLookup ) {
-        spdlog::info( "CompiledInlineCache lookup( {}, {} )", recv->klass()->print_value_string(), selector()->print_value_string() );
+        SPDLOG_INFO( "CompiledInlineCache lookup( {}, {} )", recv->klass()->print_value_string(), selector()->print_value_string() );
 //        _console->print( "CompiledInlineCache lookup (" );
 //        recv->klass()->print_value();
 //        _console->print( ", " );
@@ -145,9 +145,9 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
             // doesNotUnderstand: not found ==> process error
             {
                 ResourceMark resourceMark;
-                spdlog::info( "LOOKUP ERROR" );
+                SPDLOG_INFO( "LOOKUP ERROR" );
                 sel->print_value();
-                spdlog::info( " not found" );
+                SPDLOG_INFO( " not found" );
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
@@ -160,7 +160,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
 
         // return marked result of doesNotUnderstand: message
         Oop result = Delta::call( recv, sel, msg );
-        spdlog::info( "result [0x{0:x}]", static_cast<void *>( result ) );
+        SPDLOG_INFO( "result [0x{0:x}]", static_cast<void *>( result ) );
 
         if ( not have_nlr_through_C ) {
             Unimplemented();
@@ -222,7 +222,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
 
         // result is a jump table entry for an NativeMethod
         if ( TraceLookup2 )
-            spdlog::info( "NativeMethod found, f = 0x{0:x}", static_cast<void *>( result.get_nativeMethod() ) );
+            SPDLOG_INFO( "NativeMethod found, f = 0x{0:x}", static_cast<void *>( result.get_nativeMethod() ) );
         // fetch the destination of the jump table entry to avoid the indirection
 
         // is the receiver is static we will use the verified entry point
@@ -233,7 +233,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         set_call_destination( entry_point );
     if ( TraceLookup2 )
         print();
-    spdlog::info( "CompiledICLookup (0x{0:x}, 0x{0:x}) --> 0x{0:x}", static_cast<const void *>( klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
+    SPDLOG_INFO( "CompiledICLookup (0x{0:x}, 0x{0:x}) --> 0x{0:x}", static_cast<const void *>( klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
     return entry_point;
 }
 
@@ -262,7 +262,7 @@ extern "C" const char *zombie_nativeMethod( const char *return_addr ) {
         // NativeMethod called from interpreted code
         Frame                  f   = DeltaProcess::active()->last_frame();
         InterpretedInlineCache *ic = f.current_interpretedIC();
-        spdlog::info( "zombie NativeMethod called => interpreted InlineCache 0x{0:x} cleared", static_cast<const void *>( ic ) );
+        SPDLOG_INFO( "zombie NativeMethod called => interpreted InlineCache 0x{0:x} cleared", static_cast<const void *>( ic ) );
         ic->cleanup();
         // reset instruction pointer => next instruction beeing executed is the same send
         f.set_hp( ic->send_code_addr() );
@@ -272,7 +272,7 @@ extern "C" const char *zombie_nativeMethod( const char *return_addr ) {
     } else {
         // NativeMethod called from compiled code
         CompiledInlineCache *ic = CompiledIC_from_return_addr( return_addr );
-        spdlog::info( "zombie NativeMethod called => compiled InlineCache 0x{0:x} cleaned up", static_cast<const void *>( ic ) );
+        SPDLOG_INFO( "zombie NativeMethod called => compiled InlineCache 0x{0:x} cleaned up", static_cast<const void *>( ic ) );
         ic->cleanup();
         // restart send entry point is call address
         return ic->begin_addr();
@@ -310,7 +310,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
     SymbolOop sel        = selector();
 
     if ( TraceLookup ) {
-        spdlog::info( "CompiledInlineCache super lookup ({}, {}, {})", recv_klass->print_value_string(), mhld_klass->print_value_string(), selector()->print_value_string() );
+        SPDLOG_INFO( "CompiledInlineCache super lookup ({}, {}, {})", recv_klass->print_value_string(), mhld_klass->print_value_string(), selector()->print_value_string() );
     }
 
     // The inline cache for super sends looks like the inline cache for normal sends.
@@ -320,7 +320,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
     if ( result.is_method() ) {
         // a methodOop
         if ( TraceLookup2 ) {
-            spdlog::info( "methodOop found, m = 0x{0:x}", static_cast<void *>( result.method() ) );
+            SPDLOG_INFO( "methodOop found, m = 0x{0:x}", static_cast<void *>( result.method() ) );
         }
         //result = (char*)&interpreter_call;
         //if (UseInlineCaching) set_call_destination(result);
@@ -329,7 +329,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
     } else {
         // result is a jump table entry for an NativeMethod
         if ( TraceLookup2 ) {
-            spdlog::info( "NativeMethod 0x{0:x} found", static_cast<void *>( result.get_nativeMethod() ) );
+            SPDLOG_INFO( "NativeMethod 0x{0:x} found", static_cast<void *>( result.get_nativeMethod() ) );
         }
         // fetch the destination of the jump table entry to avoid the indirection
         entry_point = result.entry()->destination();
@@ -343,7 +343,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
         print();
     }
 
-    spdlog::info( "SuperLookup (0x{0:x}, 0x{0:x}) to 0x{0:x}", static_cast<const void *>( recv_klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
+    SPDLOG_INFO( "SuperLookup (0x{0:x}, 0x{0:x}) to 0x{0:x}", static_cast<const void *>( recv_klass ), static_cast<const void *>( sel ), static_cast<const void *>( entry_point ) );
     return entry_point;
 }
 
@@ -371,7 +371,7 @@ bool CompiledInlineCache::is_megamorphic() const {
 
 void CompiledInlineCache::replace( NativeMethod *nm ) {
     st_assert( selector() == nm->_lookupKey.selector(), "mismatched selector" );
-    spdlog::info( "compiled InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+    SPDLOG_INFO( "compiled InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
                   static_cast<const void *>( this ),
                   static_cast<const void *>( nm ),
                   static_cast<const void *>( nm->_lookupKey.klass() ) );
@@ -518,54 +518,54 @@ void CompiledInlineCache::cleanup() {
 
 void CompiledInlineCache::print() {
     ResourceMark resourceMark;    // so we can print from debugger
-    spdlog::info( "\t((CompiledInlineCache*)0x{0:x}) ", static_cast<void *>( this ) );
+    SPDLOG_INFO( "\t((CompiledInlineCache*)0x{0:x}) ", static_cast<void *>( this ) );
     if ( is_empty() ) {
-        spdlog::info( "(empty) " );
+        SPDLOG_INFO( "(empty) " );
     } else {
-        spdlog::info( "(filled: 0x{0:x} targets) ", ntargets() );
+        SPDLOG_INFO( "(filled: 0x{0:x} targets) ", ntargets() );
     }
     if ( isReceiverStatic() )
-        spdlog::info( "static " );
+        SPDLOG_INFO( "static " );
     if ( isDirty() )
-        spdlog::info( "dirty " );
+        SPDLOG_INFO( "dirty " );
     if ( isOptimized() )
-        spdlog::info( "optimized " );
+        SPDLOG_INFO( "optimized " );
     if ( isUninlinable() )
-        spdlog::info( "uninlinable " );
+        SPDLOG_INFO( "uninlinable " );
     if ( isSuperSend() )
-        spdlog::info( "super " );
+        SPDLOG_INFO( "super " );
     if ( isMegamorphic() )
-        spdlog::info( "MEGAMORPHIC " );
-    spdlog::info( "" );
+        SPDLOG_INFO( "MEGAMORPHIC " );
+    SPDLOG_INFO( "" );
 
-    spdlog::info( "\t- selector    : " );
+    SPDLOG_INFO( "\t- selector    : " );
     selector()->print_symbol_on();
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 
     CompiledInlineCacheIterator it( this );
     while ( not it.at_end() ) {
-        spdlog::info( "\t- klass       : " );
+        SPDLOG_INFO( "\t- klass       : " );
         it.klass()->print_value();
         if ( it.is_compiled() ) {
-            spdlog::info( ";\tNativeMethod 0x{0:x}", static_cast<void *>( it.compiled_method() ) );
+            SPDLOG_INFO( ";\tNativeMethod 0x{0:x}", static_cast<void *>( it.compiled_method() ) );
         } else {
-            spdlog::info( ";\tmethod 0x{0:x}", static_cast<void *>( it.interpreted_method() ) );
+            SPDLOG_INFO( ";\tmethod 0x{0:x}", static_cast<void *>( it.interpreted_method() ) );
         }
         it.advance();
     }
 
-    spdlog::info( "\t- call address: " );
+    SPDLOG_INFO( "\t- call address: " );
     char *dest = destination();
     if ( dest == normalLookupRoutine() ) {
-        spdlog::info( "normalLookupRoutine" );
+        SPDLOG_INFO( "normalLookupRoutine" );
     } else if ( dest == superLookupRoutine() ) {
-        spdlog::info( "superLookupRoutine" );
+        SPDLOG_INFO( "superLookupRoutine" );
     } else {
         // non-empty icache
-        spdlog::info( "0x{0:x}", static_cast<void *>( destination() ) );
+        SPDLOG_INFO( "0x{0:x}", static_cast<void *>( destination() ) );
     }
 
-    spdlog::info( "\t- NonLocalReturn testcode: 0x{0:x}", static_cast<void *>( NonLocalReturn_testcode() ) );
+    SPDLOG_INFO( "\t- NonLocalReturn testcode: 0x{0:x}", static_cast<void *>( NonLocalReturn_testcode() ) );
 }
 
 
@@ -647,11 +647,11 @@ char *PrimitiveInlineCache::end_addr() {
 
 
 void PrimitiveInlineCache::print() {
-    spdlog::info( "\tPrimitive inline cache" );
+    SPDLOG_INFO( "\tPrimitive inline cache" );
     PrimitiveDescriptor *pd = primitive();
-    spdlog::info( "\t- name        : %s", pd->name() );
+    SPDLOG_INFO( "\t- name        : %s", pd->name() );
     if ( pd->can_perform_NonLocalReturn() ) {
-        spdlog::info( "\t- NonLocalReturn testcode: 0x{0:x}", NonLocalReturn_testcode() );
+        SPDLOG_INFO( "\t- NonLocalReturn testcode: 0x{0:x}", NonLocalReturn_testcode() );
     }
 }
 

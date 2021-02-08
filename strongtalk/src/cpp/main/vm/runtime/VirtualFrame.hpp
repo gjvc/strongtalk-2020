@@ -8,7 +8,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/assembler/Location.hpp"
 #include "vm/runtime/Frame.hpp"
-#include "ResourceObject.hpp"
+#include "vm/runtime/ResourceObject.hpp"
 
 
 //

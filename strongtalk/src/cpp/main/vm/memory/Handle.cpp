@@ -31,7 +31,7 @@ void BaseHandle::push() {
         _next->_prev = this;
     }
     if ( _log ) {
-        spdlog::info( "Pushing handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
+        SPDLOG_INFO( "Pushing handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
     }
     setFirst( this );
 }
@@ -39,7 +39,7 @@ void BaseHandle::push() {
 
 void BaseHandle::pop() {
     if ( _log ) {
-        spdlog::info( "Popping handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
+        SPDLOG_INFO( "Popping handle '%s': 0x{0:x}", _label, static_cast<const void *>(this) );
     }
     if ( _prev ) {
         _prev->_next = _next;
@@ -237,7 +237,7 @@ MemOop Handle::as_memOop() {
 
 
 KlassOop Handle::as_klass() {
-    spdlog::info( "klassOop as_klass()[{}]", Handles::oop_at( _index )->toString() );
+    SPDLOG_INFO( "klassOop as_klass()[{}]", Handles::oop_at( _index )->toString() );
     st_assert( Handles::oop_at( _index )->is_klass(), "as_klass() type check" );
     return KlassOop( Handles::oop_at( _index ) );
 }

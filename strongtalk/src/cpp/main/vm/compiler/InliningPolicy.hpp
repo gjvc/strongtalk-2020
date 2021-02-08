@@ -23,6 +23,10 @@ public:
         _methodOop{ nullptr },
         calleeCost{ 0 } {
     }
+    virtual ~InliningPolicy() = default;
+    InliningPolicy( const InliningPolicy & ) = default;
+    InliningPolicy &operator=( const InliningPolicy & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     const char *basic_shouldInline( MethodOop method );
@@ -80,6 +84,13 @@ public:
 
     }
 
+
+    virtual ~CompilerInliningPolicy() = default;
+    CompilerInliningPolicy( const CompilerInliningPolicy & ) = default;
+    CompilerInliningPolicy &operator=( const CompilerInliningPolicy & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     const char *shouldInline( InlinedScope *sender, InlinedScope *callee );
     // should send be inlined?  returns nullptr (--> yes) or rejection msg
 };
@@ -106,6 +117,11 @@ public:
         _deltaVirtualFrame{ nullptr } {
 
     }
+
+    virtual ~RecompilerInliningPolicy() = default;
+    RecompilerInliningPolicy( const RecompilerInliningPolicy & ) = default;
+    RecompilerInliningPolicy &operator=( const RecompilerInliningPolicy & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     const char *shouldInline( RecompilerFrame *recompilerFrame );
     // would send be inlined by compiler?  returns nullptr (--> yes) or rejection msg

@@ -114,7 +114,7 @@ RecompilerFrame *RecompilationPolicy::findTopInlinableFrame() {
         checkCurrent( current, prev, prevMethod );
 
     if ( PrintRecompilation and _msg )
-        spdlog::info( "%s", _msg );
+        SPDLOG_INFO( "%s", _msg );
 
     return current;
 }
@@ -126,7 +126,7 @@ void RecompilationPolicy::checkCurrent( RecompilerFrame *&current, RecompilerFra
         // can't recompile blocks in isolation, and this block is too big to inline
         // thus, optimize method called by block
         if ( PrintRecompilation and _msg )
-            spdlog::info( "%s", _msg );
+            SPDLOG_INFO( "%s", _msg );
         fixBlockParent( current );
         if ( prev and not prev->is_blockMethod() ) {
             current = prev;

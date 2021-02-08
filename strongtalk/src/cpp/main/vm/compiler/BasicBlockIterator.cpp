@@ -78,16 +78,16 @@ void BasicBlockIterator::localAlloc() {
     }
     if ( PrintLocalAllocation ) {
         std::int32_t total = globals->length() + done;
-        spdlog::info( "*local reg. allocations done; %ld out of %ld = (%3.1f%%).", done, total, 100.0 * done / total );
+        SPDLOG_INFO( "*local reg. allocations done; %ld out of %ld = (%3.1f%%).", done, total, 100.0 * done / total );
     }
 }
 
 
 void BasicBlockIterator::print() {
     for ( std::int32_t i = 0; i < _basicBlockCount; i++ ) {
-        spdlog::info( "  " );
+        SPDLOG_INFO( "  " );
         _basicBlockTable->at( i )->print_short();
-        spdlog::info( "" );
+        SPDLOG_INFO( "" );
     }
 }
 
@@ -227,9 +227,9 @@ void BasicBlockIterator::print_code( bool suppressTrivial ) {
         if ( bb->_nodeCount > 0 )
             bb->print_code( suppressTrivial );
         if ( bb->next() not_eq nullptr )
-            spdlog::info( "\tgoto N{}", bb->next()->_first->id() );
+            SPDLOG_INFO( "\tgoto N{}", bb->next()->_first->id() );
         if ( not suppressTrivial )
-            spdlog::info( "" );
+            SPDLOG_INFO( "" );
     }
 }
 

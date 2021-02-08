@@ -248,7 +248,7 @@ void Floats::generate( MacroAssembler *masm, Function f ) {
 
     std::int32_t length = masm->pc() - entry_point;
     const char   *name  = function_name_for( f );
-    spdlog::info( "%float-generate: Float function index [{}]: name[{}], length [{}] bytes, entry point [0x{0:x}]", f, name, length, entry_point );
+    SPDLOG_INFO( "%float-generate: Float function index [{}]: name[{}], length [{}] bytes, entry point [0x{0:x}]", f, name, length, entry_point );
     if ( PrintInterpreter ) {
         masm->code()->decode();
         _console->cr();
@@ -264,9 +264,9 @@ void Floats::init( MacroAssembler *masm ) {
     if ( is_initialized() )
         return;
 
-    spdlog::info( "system-init:  Floats::init" );
-    spdlog::info( "system-init:  _function_names.size() %ld", _function_names.size() );
-    spdlog::info( "system-init:  number_of_functions %ld", Floats::Function::number_of_functions );
+    SPDLOG_INFO( "system-init:  Floats::init" );
+    SPDLOG_INFO( "system-init:  _function_names.size() %ld", _function_names.size() );
+    SPDLOG_INFO( "system-init:  number_of_functions %ld", Floats::Function::number_of_functions );
 
     st_assert( _function_names.size() == static_cast<std::int32_t>( Floats::Function::number_of_functions ), "Floats: number of _functions_names not equal number_of_functions" );
     if ( sizeof( _function_names ) / sizeof( const char * ) not_eq static_cast<std::int32_t>( Floats::Function::number_of_functions ) ) {
@@ -278,12 +278,12 @@ void Floats::init( MacroAssembler *masm ) {
     // can be caught during execution without additional index range check)
     for ( std::int32_t i = max_number_of_functions; i-- > 0; ) {
         _function_table[ i ] = masm->pc();
-        spdlog::info( "system-init:  Floats::init() _function_table index [%ld] pc [0x{08:x}]", i, masm->pc() );
+        SPDLOG_INFO( "system-init:  Floats::init() _function_table index [%ld] pc [0x{08:x}]", i, masm->pc() );
     }
     masm->hlt();
 
     if ( PrintInterpreter ) {
-        spdlog::info( "system-init:  PrintInterpreter" );
+        SPDLOG_INFO( "system-init:  PrintInterpreter" );
         masm->code()->decode();
         _console->cr();
     }
@@ -329,12 +329,12 @@ void Floats::init( MacroAssembler *masm ) {
 
 void Floats::print() {
     if ( _is_initialized ) {
-        spdlog::info( "Float functions:" );
+        SPDLOG_INFO( "Float functions:" );
         for ( std::int32_t i = 0; i < static_cast<std::int32_t>( Floats::Function::number_of_functions ); i++ ) {
-            spdlog::info( "%3d: 0x{0:x} %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
+            SPDLOG_INFO( "%3d: 0x{0:x} %s", i, _function_table[ i ], function_name_for( Function( i ) ) );
         }
     } else {
-        spdlog::info( "Floats not yet initialized" );
+        SPDLOG_INFO( "Floats not yet initialized" );
     }
     _console->cr();
 }

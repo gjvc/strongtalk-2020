@@ -38,6 +38,10 @@ public:
         oop_end{ oop_start + 1000 - 1 },// account for pre-increment in append
         next{ oop_start - 1 } {
     }
+    virtual ~OopChunk() = default;
+    OopChunk( const OopChunk & ) = default;
+    OopChunk &operator=( const OopChunk & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     bool isFull() {
@@ -80,6 +84,12 @@ public:
         current = new OopChunk();
         chunks->append( current );
     }
+
+
+    virtual ~OopRelocations() = default;
+    OopRelocations( const OopRelocations & ) = default;
+    OopRelocations &operator=( const OopRelocations & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 
     Oop *relocate( Oop *toMove ) {
@@ -146,7 +156,7 @@ Oop MarkSweep::collect( Oop p ) {
     }
 
     if ( PrintGC ) {
-        spdlog::info( "%garbage-collection:  before [{:3f}M], after [{:3f}M]", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
+        SPDLOG_INFO( "%garbage-collection:  before [{:3f}M], after [{:3f}M]", (double) old_used / (double) ( 1024 * 1024 ), (double) Universe::old_gen.used() / (double) ( 1024 * 1024 ) );
     }
 
     return p;
@@ -169,7 +179,7 @@ void MarkSweep::deallocate() {
 
 void MarkSweep::trace( const char *msg ) {
     if ( TraceGC )
-        spdlog::info( "{}", msg );
+        SPDLOG_INFO( "{}", msg );
 }
 
 

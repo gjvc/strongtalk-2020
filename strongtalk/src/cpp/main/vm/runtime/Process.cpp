@@ -73,7 +73,7 @@ Process *Process::_current_process = nullptr;
 void handle_error( ProcessState error ) {
     DeltaProcess *proc = DeltaProcess::active();
     if ( proc->is_scheduler() ) {
-        spdlog::info( "Error happened in the scheduler" );
+        SPDLOG_INFO( "Error happened in the scheduler" );
         _console->print( "Status: " );
         proc->status_symbol()->print_symbol_on( _console );
         _console->cr();
@@ -161,7 +161,7 @@ extern "C" void suspend_on_NonLocalReturn_error() {
 void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *pc ) {
     ResourceMark resourceMark;
 
-    spdlog::info( "Trace at exception" );
+    SPDLOG_INFO( "Trace at exception" );
 
     VirtualFrame *vf;
     if ( last_Delta_fp ) {
@@ -184,7 +184,7 @@ void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, cons
     last_Delta_sp = (Oop *) sp;
 
     if ( proc->is_scheduler() ) {
-        spdlog::info( "Stack overflow happened in scheduler" );
+        SPDLOG_INFO( "Stack overflow happened in scheduler" );
     } else {
         proc->suspend( ProcessState::stack_overflow );
         proc->set_terminating();

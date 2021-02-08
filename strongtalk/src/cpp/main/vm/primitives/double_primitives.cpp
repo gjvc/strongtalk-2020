@@ -340,7 +340,7 @@ PRIM_DECL_2( doubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     } else {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     }
-    spdlog::info( format, DoubleOop( receiver )->value() );
+    SPDLOG_INFO( format, DoubleOop( receiver )->value() );
     return receiver;
 }
 

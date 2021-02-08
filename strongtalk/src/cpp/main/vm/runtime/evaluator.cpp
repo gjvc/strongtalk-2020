@@ -125,6 +125,14 @@ public:
     }
 
 
+    TokenStream() = default;
+    virtual ~TokenStream() = default;
+    TokenStream( const TokenStream & ) = default;
+    TokenStream &operator=( const TokenStream & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     char *current() {
         return tokens->at( pos );
     }
@@ -273,7 +281,7 @@ bool TokenStream::is_table_entry( Oop *addr ) {
     std::uint32_t length;
     if ( sscanf( current(), "!%d%u", &value, &length ) == 1 and strlen( current() ) == length ) {
         if ( not ObjectIDTable::is_index_ok( value ) ) {
-            spdlog::info( "Could not find index {} in object table.", value );
+            SPDLOG_INFO( "Could not find index {} in object table.", value );
             return true;
         }
         *addr = ObjectIDTable::at( value );
@@ -366,7 +374,7 @@ bool evaluator::get_oop( TokenStream *stream, Oop *addr ) {
         stream->advance();
         return true;
     }
-    spdlog::info( "Error: could not Oop'ify[{}]", stream->current() );
+    SPDLOG_INFO( "Error: could not Oop'ify[{}]", stream->current() );
     return false;
 }
 
@@ -374,7 +382,7 @@ bool evaluator::get_oop( TokenStream *stream, Oop *addr ) {
 bool validate_lookup( Oop receiver, SymbolOop selector ) {
     LookupKey key( receiver->klass(), selector );
     if ( LookupCache::lookup( &key ).is_empty() ) {
-        spdlog::info( "Lookup error" );
+        SPDLOG_INFO( "Lookup error" );
         key.print_on( _console );
         _console->cr();
         return false;
@@ -442,7 +450,7 @@ void evaluator::top_command( TokenStream *stream ) {
         }
         stream->advance();
         if ( not stream->eos() ) {
-            spdlog::info( "warning: garbage at end" );
+            SPDLOG_INFO( "warning: garbage at end" );
         }
     }
     DeltaProcess::active()->trace_top( 1, number_of_frames_to_show );
@@ -455,14 +463,14 @@ void evaluator::change_debug_flag( TokenStream *stream, bool value ) {
         stream->current();
         bool r = value;
         if ( not debugFlags::boolAtPut( stream->current(), &r ) ) {
-            spdlog::info( "boolean flag %s not found", stream->current() );
+            SPDLOG_INFO( "boolean flag %s not found", stream->current() );
         }
         stream->advance();
         if ( not stream->eos() ) {
-            spdlog::info( "warning: garbage at end" );
+            SPDLOG_INFO( "warning: garbage at end" );
         }
     } else {
-        spdlog::info( "boolean flag expected" );
+        SPDLOG_INFO( "boolean flag expected" );
     }
 }
 
@@ -484,7 +492,7 @@ void evaluator::show_command( TokenStream *stream ) {
             }
             stream->advance();
             if ( not stream->eos() ) {
-                spdlog::info( "warning: garbage at end" );
+                SPDLOG_INFO( "warning: garbage at end" );
             }
         }
     }
@@ -562,8 +570,8 @@ bool evaluator::process_line( const char *line ) {
         }
         if ( stream.is_abort() ) {
             if ( DeltaProcess::active()->is_scheduler() ) {
-                spdlog::info( "You cannot abort in the scheduler" );
-                spdlog::info( "Try another command" );
+                SPDLOG_INFO( "You cannot abort in the scheduler" );
+                SPDLOG_INFO( "Try another command" );
             } else {
                 DispatchTable::reset();
                 is_aborting = true;
@@ -580,7 +588,7 @@ bool evaluator::process_line( const char *line ) {
         if ( get_oop( &stream, &receiver ) ) {
             stream.advance();
             if ( not stream.eos() ) {
-                spdlog::info( "warning: garbage at end" );
+                SPDLOG_INFO( "warning: garbage at end" );
             }
             receiver->print();
             _console->cr();
@@ -632,7 +640,7 @@ void evaluator::read_eval_loop() {
 
 
 void evaluator::print_mini_help() {
-    spdlog::info( "Use '?' for help ('c' to continue)" );
+    SPDLOG_INFO( "Use '?' for help ('c' to continue)" );
 }
 
 
@@ -645,14 +653,14 @@ public:
 
 
     void do_process( DeltaProcess *p ) {
-        spdlog::info( "{:d}:{}", index++, DeltaProcess::active() == p ? "*" : " " );
+        SPDLOG_INFO( "{:d}:{}", index++, DeltaProcess::active() == p ? "*" : " " );
         p->print();
     }
 };
 
 
 void evaluator::print_status() {
-    spdlog::info( "Processes:" );
+    SPDLOG_INFO( "Processes:" );
     ProcessStatusClosure iter;
     Processes::process_iterate( &iter );
 }
@@ -660,30 +668,30 @@ void evaluator::print_status() {
 
 void evaluator::print_help() {
     _console->cr();
-    spdlog::info( "<command>  ::= 'q'     | 'quit'    -> quits the system" );
-    spdlog::info( "             | 's'     | 'step'    -> single step byte code" );
-    spdlog::info( "             | 'n'     | 'next'    -> single step statement" );
-    spdlog::info( "             | 'e'     | 'end'     -> single step to end of method" );
-    spdlog::info( "             | 'c'     | 'cont'    -> continue execution" );
-    spdlog::info( "                       | 'abort'   -> aborts the current process" );
-    spdlog::info( "                       | 'genesis' -> aborts all processes and restarts the scheduler" );
-    spdlog::info( "                       | 'break'   -> provokes fatal() to get into C++ debugger" );
-    spdlog::info( "                       | 'events'  -> prints the event log" );
-    spdlog::info( "                       | 'stack'   -> prints the stack of current process" );
-    spdlog::info( "                       | 'status'  -> prints the status all processes" );
-    spdlog::info( "                       | 'top' <n> -> prints the top of current process" );
-    spdlog::info( "                       | 'show' <s> <n> -> prints some activation" );
-    spdlog::info( "             | '?'     | 'help'    -> prints this help" );
-    spdlog::info( "             | '^' <expr>          -> evaluates the expression" );
-    spdlog::info( "             | '-' name            -> turns off debug flag" );
-    spdlog::info( "             | '+' name            -> turns on debug flag" );
-    spdlog::info( "             | <object>            -> prints this object" );
+    SPDLOG_INFO( "<command>  ::= 'q'     | 'quit'    -> quits the system" );
+    SPDLOG_INFO( "             | 's'     | 'step'    -> single step byte code" );
+    SPDLOG_INFO( "             | 'n'     | 'next'    -> single step statement" );
+    SPDLOG_INFO( "             | 'e'     | 'end'     -> single step to end of method" );
+    SPDLOG_INFO( "             | 'c'     | 'cont'    -> continue execution" );
+    SPDLOG_INFO( "                       | 'abort'   -> aborts the current process" );
+    SPDLOG_INFO( "                       | 'genesis' -> aborts all processes and restarts the scheduler" );
+    SPDLOG_INFO( "                       | 'break'   -> provokes fatal() to get into C++ debugger" );
+    SPDLOG_INFO( "                       | 'events'  -> prints the event log" );
+    SPDLOG_INFO( "                       | 'stack'   -> prints the stack of current process" );
+    SPDLOG_INFO( "                       | 'status'  -> prints the status all processes" );
+    SPDLOG_INFO( "                       | 'top' <n> -> prints the top of current process" );
+    SPDLOG_INFO( "                       | 'show' <s> <n> -> prints some activation" );
+    SPDLOG_INFO( "             | '?'     | 'help'    -> prints this help" );
+    SPDLOG_INFO( "             | '^' <expr>          -> evaluates the expression" );
+    SPDLOG_INFO( "             | '-' name            -> turns off debug flag" );
+    SPDLOG_INFO( "             | '+' name            -> turns on debug flag" );
+    SPDLOG_INFO( "             | <object>            -> prints this object" );
     _console->cr();
-    spdlog::info( "<expr>     ::= <unary>  | <binary>  | <keyword>" );
-    spdlog::info( "<object>   ::= <number>            -> smi_t(number)" );
-    spdlog::info( "             | !<number>           -> objectTable[number]" );
-    spdlog::info( "             | 0x<hex_number>      -> object_start(number)" );
-    spdlog::info( "             | name                -> Smalltalk at: #name" );
-    spdlog::info( "             | #name               -> new_symbol(name)" );
+    SPDLOG_INFO( "<expr>     ::= <unary>  | <binary>  | <keyword>" );
+    SPDLOG_INFO( "<object>   ::= <number>            -> smi_t(number)" );
+    SPDLOG_INFO( "             | !<number>           -> objectTable[number]" );
+    SPDLOG_INFO( "             | 0x<hex_number>      -> object_start(number)" );
+    SPDLOG_INFO( "             | name                -> Smalltalk at: #name" );
+    SPDLOG_INFO( "             | #name               -> new_symbol(name)" );
     _console->cr();
 }

@@ -199,16 +199,16 @@ const char *Frame::print_name() const {
 void Frame::print() const {
 
     if ( is_compiled_frame() ) {
-        spdlog::info( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, nm = 0x{0:x}]",
+        SPDLOG_INFO( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, nm = 0x{0:x}]",
                       print_name(), static_cast<const void *>(fp()), static_cast<const void *>(sp()), static_cast<const void *>(pc()), static_cast<const void *>(findNativeMethod( pc() )) );
     } else if ( is_interpreted_frame() ) {
-        spdlog::info( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, hp = 0x{0:x}, method = 0x{0:x}]",
+        SPDLOG_INFO( "[{} frame: fp = 0x{0:x}, sp = 0x{0:x}, pc = 0x{0:x}, hp = 0x{0:x}, method = 0x{0:x}]",
                       print_name(), static_cast<const void *>(fp()), static_cast<const void *>(sp()), static_cast<const void *>(pc()), static_cast<const void *>(hp()), static_cast<const void *>(method()) );
     }
 
     if ( PrintLongFrames ) {
         for ( Oop *p = sp(); p < (Oop *) fp(); p++ ) {
-            spdlog::info( "long frame [  - 0x{:x} : 0x{:x}]", static_cast<const void *>(p), static_cast<const void *>(*p) );
+            SPDLOG_INFO( "long frame [  - 0x{:x} : 0x{:x}]", static_cast<const void *>(p), static_cast<const void *>(*p) );
         }
     }
 
@@ -240,7 +240,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         if ( ActivationShowByteCodeIndex ) {
             stream->print( " byteCodeIndex=0x%08x ", vf->byteCodeIndex() );
         }
-        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
         print_context_chain( vf->interpreter_context(), stream );
         if ( ActivationShowExpressionStack ) {
             GrowableArray<Oop> *stack = vf->expression_stack();
@@ -258,12 +258,12 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
         CompiledVirtualFrame *vf = (CompiledVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_compiled_frame(), "should be compiled VirtualFrame" );
         vf->code()->print_value_on( stream );
-        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
 
         while ( true ) {
             stream->print( "    " );
             vf->method()->print_value_on( stream );
-            spdlog::info( " @ 0x%08x", vf->scope()->offset() );
+            SPDLOG_INFO( " @ 0x%08x", vf->scope()->offset() );
             print_context_chain( vf->compiled_context(), stream );
             if ( vf->is_top() )
                 break;
@@ -276,7 +276,7 @@ void Frame::print_for_deoptimization( ConsoleOutputStream *stream ) {
     if ( is_deoptimized_frame() ) {
         stream->print( "D " );
         frame_array()->print_value();
-        spdlog::info( " @ 0x%lx", static_cast<const void *>(fp()) );
+        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(fp()) );
 
         DeoptimizedVirtualFrame *vf = (DeoptimizedVirtualFrame *) VirtualFrame::new_vframe( this );
         st_assert( vf->is_deoptimized_frame(), "should be deoptimized VirtualFrame" );
@@ -362,16 +362,16 @@ void Frame::oop_iterate( OopClosure *blk ) {
         if ( has_interpreted_float_marker() and oop_iterate_interpreted_float_frame( blk ) )
             return;
 
-        // spdlog::info("Frame: fp = 0x{0:x}, sp = 0x{0:x}]", fp(), sp());
+        // SPDLOG_INFO("Frame: fp = 0x{0:x}, sp = 0x{0:x}]", fp(), sp());
         for ( Oop *p = sp(); p <= temp_addr( 0 ); p++ ) {
-            // spdlog::info("\t[0x{0:x}]: ", p);
+            // SPDLOG_INFO("\t[0x{0:x}]: ", p);
             // (*p)->short_print();
-            // spdlog::info("");
+            // SPDLOG_INFO("");
             blk->do_oop( p );
         }
-        // spdlog::info("\t{0x{0:x}}: ", receiver_addr());
+        // SPDLOG_INFO("\t{0x{0:x}}: ", receiver_addr());
         // (*receiver_addr())->short_print();
-        // spdlog::info("");
+        // SPDLOG_INFO("");
         blk->do_oop( receiver_addr() );
         return;
     }
@@ -499,7 +499,7 @@ void Frame::convert_heap_code_pointer() {
     // Save the offset
     MarkSweep::add_heap_code_offset( h - obj );
     if ( WizardMode )
-        spdlog::info( "[0x%lx+%d]", obj, h - obj );
+        SPDLOG_INFO( "[0x%lx+%d]", obj, h - obj );
 }
 
 
@@ -510,7 +510,7 @@ void Frame::restore_heap_code_pointer() {
     std::uint8_t *obj   = hp();
     std::int32_t offset = MarkSweep::next_heap_code_offset();
     if ( WizardMode )
-        spdlog::info( "[0x%lx+%d]", obj, offset );
+        SPDLOG_INFO( "[0x%lx+%d]", obj, offset );
     set_hp( obj + offset );
 }
 
@@ -523,7 +523,7 @@ public:
     void do_oop( Oop *o ) {
         Oop obj = *o;
         if ( not obj->verify() ) {
-            spdlog::info( "Verify failed in frame:" );
+            SPDLOG_INFO( "Verify failed in frame:" );
             fr->print();
         }
     }
@@ -531,8 +531,12 @@ public:
 
     VerifyOopClosure() :
         OopClosure(), fr{ nullptr } {
-
     }
+    virtual ~VerifyOopClosure() = default;
+    VerifyOopClosure( const VerifyOopClosure & ) = default;
+    VerifyOopClosure &operator=( const VerifyOopClosure & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 };
 
 

@@ -96,6 +96,11 @@ protected:
 
 public:
     Sweeper();
+    virtual ~Sweeper() = default;
+    Sweeper( const Sweeper & ) = default;
+    Sweeper &operator=( const Sweeper & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 
     virtual void task() = 0;
 
@@ -239,5 +244,10 @@ public:
         _excluded_nativeMethod{ nullptr },
         next{ nullptr } {
     }
+
+    virtual ~ZoneSweeper() = default;
+    ZoneSweeper( const ZoneSweeper & ) = default;
+    ZoneSweeper &operator=( const ZoneSweeper & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 };

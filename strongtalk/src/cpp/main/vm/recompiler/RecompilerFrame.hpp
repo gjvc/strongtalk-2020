@@ -135,7 +135,7 @@ public:
     }
 
 
-    RecompilerFrame *parent() const;        // rframe containing lexical scope (if any)
+    RecompilerFrame *parent() const;        // recompilerFrame containing lexical scope (if any)
     void print() = 0;
 
     static std::int32_t computeSends( MethodOop m );

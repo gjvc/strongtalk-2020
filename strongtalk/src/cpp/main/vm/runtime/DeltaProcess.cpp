@@ -192,7 +192,7 @@ void DeltaProcess::transfer_to_vm() {
 void DeltaProcess::suspend_at_creation() {
     // This is called as soon a DeltaProcess is created
     // Let's wait until we're given the torch.
-    spdlog::info( "status-delta-process-suspend-at-creation: thread_id [{}] waiting for event", this->thread_id() );
+    SPDLOG_INFO( "status-delta-process-suspend-at-creation: thread_id [{}] waiting for event", this->thread_id() );
     os::wait_for_event( _event );
 }
 
@@ -242,7 +242,7 @@ bool DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
     }
 
     if ( TraceProcessEvents ) {
-        spdlog::info( "Waiting for async {:d} ms", timeout_in_ms );
+        SPDLOG_INFO( "Waiting for async {:d} ms", timeout_in_ms );
     }
 
     _is_idle = true;
@@ -254,7 +254,7 @@ bool DeltaProcess::wait_for_async_dll( std::int32_t timeout_in_ms ) {
     }
 
     if ( TraceProcessEvents ) {
-        spdlog::info( result ? " {timeout}" : " {async}" );
+        SPDLOG_INFO( result ? " {timeout}" : " {async}" );
     }
 
     return result;
@@ -309,7 +309,7 @@ void DeltaProcess::runMainProcess() {
 // Code entry point for at Delta process
 std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 
-    spdlog::info( "delta-process-launch-delta-process:  thread_id [{:d}]", process->thread_id() );
+    SPDLOG_INFO( "delta-process-launch-delta-process:  thread_id [{:d}]", process->thread_id() );
 
     // Wait until we get the torch
     process->suspend_at_creation();
@@ -344,6 +344,11 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
     _receiver{ receiver },
     _selector{ selector },
     _state{ ProcessState::initialized },
+    stopping{ false },
+    _next{ nullptr },
+    _last_Delta_fp{ nullptr },
+    _last_Delta_pc{ nullptr },
+    _last_Delta_sp{ nullptr },
     _is_terminating{ false },
     _unwind_head{ nullptr },
     _firstHandle{ nullptr },
@@ -359,7 +364,7 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
 
     _stack_limit = (char *) os::stack_limit( _thread );
 
-    spdlog::info( "creating process 0x{0:x}", static_cast<const void *>( this ) );
+    SPDLOG_INFO( "creating process 0x{0:x}", static_cast<const void *>( this ) );
 
     set_last_Delta_fp( nullptr );
     set_last_Delta_sp( nullptr );
@@ -448,43 +453,43 @@ void DeltaProcess::print() {
 
     switch ( state() ) {
         case ProcessState::initialized:
-            spdlog::info( "{} initialized", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} initialized", processObject()->print_value_string() );
             break;
         case ProcessState::running:
-            spdlog::info( "{} running", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} running", processObject()->print_value_string() );
             break;
         case ProcessState::yielded:
-            spdlog::info( "{} yielded", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} yielded", processObject()->print_value_string() );
             break;
         case ProcessState::in_async_dll:
-            spdlog::info( "{} in asynchronous dll call", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} in asynchronous dll call", processObject()->print_value_string() );
             break;
         case ProcessState::yielded_after_async_dll:
-            spdlog::info( "{} yielded after asynchronous dll", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} yielded after asynchronous dll", processObject()->print_value_string() );
             break;
         case ProcessState::preempted:
-            spdlog::info( "{} preempted", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} preempted", processObject()->print_value_string() );
             break;
         case ProcessState::completed:
-            spdlog::info( "{} completed", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} completed", processObject()->print_value_string() );
             break;
         case ProcessState::boolean_error:
-            spdlog::info( "{} boolean error", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} boolean error", processObject()->print_value_string() );
             break;
         case ProcessState::lookup_error:
-            spdlog::info( "{} lookup error", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::primitive_lookup_error:
-            spdlog::info( "{} primitive lookup error", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} primitive lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::DLL_lookup_error:
-            spdlog::info( "{} DLL lookup error", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} DLL lookup error", processObject()->print_value_string() );
             break;
         case ProcessState::NonLocalReturn_error:
-            spdlog::info( "{} NonLocalReturn error", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} NonLocalReturn error", processObject()->print_value_string() );
             break;
         case ProcessState::stack_overflow:
-            spdlog::info( "{} stack overflow", processObject()->print_value_string() );
+            SPDLOG_INFO( "{} stack overflow", processObject()->print_value_string() );
             break;
         default:
             void(0);
@@ -683,15 +688,15 @@ void trace_deoptimization_start() {
 
     if ( TraceDeoptimization ) {
         if ( nlr_through_unpacking ) {
-            spdlog::info( " NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
+            SPDLOG_INFO( " NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
         } else {
-            spdlog::info( " Unpacking NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
+            SPDLOG_INFO( " Unpacking NonLocalReturn {}", ( nlr_home == (std::int32_t) cur_fp ) ? "inside" : "outside" );
         }
         _console->print( " - array " );
         frame_array->print_value();
 
         //
-        spdlog::info( " @ 0x%lx", static_cast<const void *>(old_fp) );
+        SPDLOG_INFO( " @ 0x%lx", static_cast<const void *>(old_fp) );
     }
 
 }
@@ -844,7 +849,7 @@ extern "C" void verify_at_end_of_deoptimization() {
         BlockScavenge bs;
         ResourceMark  rm;
         DeltaProcess::active()->verify();
-        spdlog::info( "[Stack after unpacking]" );
+        SPDLOG_INFO( "[Stack after unpacking]" );
         DeltaProcess::active()->trace_stack_for_deoptimization();
     }
 }
@@ -853,7 +858,7 @@ extern "C" void verify_at_end_of_deoptimization() {
 void DeltaProcess::deoptimize_stretch( Frame *first_frame, Frame *last_frame ) {
 
     if ( TraceDeoptimization ) {
-        spdlog::info( "[Deoptimizing]" );
+        SPDLOG_INFO( "[Deoptimizing]" );
         Frame c = *first_frame;
         c.print_for_deoptimization( _console );
         while ( c.fp() not_eq last_frame->fp() ) {
@@ -945,7 +950,7 @@ void DeltaProcess::trace_stack() {
 
 
 void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
-    spdlog::info( "- Stack trace" );
+    SPDLOG_INFO( "- Stack trace" );
     std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = start_frame; f; f = f->sender() ) {
@@ -955,7 +960,7 @@ void DeltaProcess::trace_stack_from( VirtualFrame *start_frame ) {
             f->print();
         }
         if ( vframe_no == StackPrintLimit ) {
-            spdlog::info( "...<more frames>..." );
+            SPDLOG_INFO( "...<more frames>..." );
             return;
         }
     }
@@ -970,7 +975,7 @@ void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
             v.print_for_deoptimization( _console );
             v = v.sender();
             if ( vframe_no == StackPrintLimit ) {
-                spdlog::info( "...<more frames>..." );
+                SPDLOG_INFO( "...<more frames>..." );
                 return;
             }
             vframe_no++;
@@ -982,7 +987,7 @@ void DeltaProcess::trace_stack_for_deoptimization( Frame *f ) {
 void DeltaProcess::trace_top( std::int32_t start_frame, std::int32_t number_of_frames ) {
     FlagSetting fs( ActivationShowCode, true );
 
-    spdlog::info( "- Stack trace ({}, {})", start_frame, number_of_frames );
+    SPDLOG_INFO( "- Stack trace ({}, {})", start_frame, number_of_frames );
     std::int32_t vframe_no = 1;
 
     for ( VirtualFrame *f = last_delta_vframe(); f; f = f->sender() ) {

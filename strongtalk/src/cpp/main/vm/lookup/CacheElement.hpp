@@ -22,7 +22,8 @@ public:
 
     CacheElement() :
         _lookupKey{},
-        _lookupResult{} {
+        _lookupResult{},
+        _filler{} {
     }
 
 

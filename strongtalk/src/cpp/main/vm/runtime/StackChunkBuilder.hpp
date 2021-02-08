@@ -9,7 +9,7 @@
 #include "vm/memory/allocation.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "ResourceObject.hpp"
+#include "vm/runtime/ResourceObject.hpp"
 
 
 
@@ -40,9 +40,12 @@ private:
     GrowableArray<Oop> *array;
 
 public:
+    StackChunkBuilder() = default;
     StackChunkBuilder( std::int32_t *fp, std::int32_t size = 100 );
-
-    ~StackChunkBuilder();
+    virtual ~StackChunkBuilder();
+    StackChunkBuilder( const StackChunkBuilder & ) = default;
+    StackChunkBuilder &operator=( const StackChunkBuilder & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
     void append( DeltaVirtualFrame *f );
 

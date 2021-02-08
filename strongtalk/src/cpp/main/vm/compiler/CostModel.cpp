@@ -63,18 +63,18 @@ void CostModel::set_cost_for_send( ByteCodes::SendType type, std::int32_t cost )
 
 void CostModel::print() {
 
-    spdlog::info( "%40s: %s", "Bytecode", "Cost" );
+    SPDLOG_INFO( "%40s: %s", "Bytecode", "Cost" );
     for ( std::int32_t i = 0; i < static_cast<std::int32_t>(ByteCodes::Code::NUMBER_OF_CODES ); i++ ) {
         ByteCodes::Code code = ByteCodes::Code( i );
         if ( ByteCodes::is_defined( code ) ) {
-            spdlog::info( "%40s: {}", ByteCodes::name( code ), cost_for( code ) );
+            SPDLOG_INFO( "%40s: {}", ByteCodes::name( code ), cost_for( code ) );
         }
     }
 }
 
 
 void costModel_init() {
-    spdlog::info( "system-init:  costModel_init" );
+    SPDLOG_INFO( "system-init:  costModel_init" );
 
     CostModel::set_default_costs();
 }

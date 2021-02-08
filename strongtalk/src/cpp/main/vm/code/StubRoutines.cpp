@@ -115,10 +115,10 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
         Oop arg = *arg_ptr;
         _console->print( "%6d. ", i );
         if ( arg->is_smi() ) {
-            spdlog::info( "smi_t   value = 0x%08x", static_cast<SMIOop>( arg )->value() );
+            SPDLOG_INFO( "smi_t   value = 0x%08x", static_cast<SMIOop>( arg )->value() );
 
         } else {
-            spdlog::info( "proxy   value = 0x%08x  address = 0x%08x", static_cast<const void *>(arg), static_cast<const void *>( static_cast<ProxyOop>( arg )->get_pointer() ) );
+            SPDLOG_INFO( "proxy   value = 0x%08x  address = 0x%08x", static_cast<const void *>(arg), static_cast<const void *>( static_cast<ProxyOop>( arg )->get_pointer() ) );
         }
 
 //            if ( i == 5 and static_cast<proxyOop>( arg )->get_pointer() == 0x80000000 ) {
@@ -137,14 +137,14 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
 void StubRoutines::trace_DLL_call_2( std::int32_t result ) {
     if ( not TraceDLLCalls )
         return; // in case it has been turned off during run-time
-    spdlog::info( "    result = 0x%08x", result );
+    SPDLOG_INFO( "    result = 0x%08x", result );
 }
 
 
 void StubRoutines::wrong_DLL_call() {
     {
         ResourceMark resourceMark;
-        spdlog::info( "DLL call error: number of arguments probably wrong" );
+        SPDLOG_INFO( "DLL call error: number of arguments probably wrong" );
     }
 
     if ( DeltaProcess::active()->is_scheduler() ) {
@@ -289,7 +289,7 @@ static bool validateContextChain( BlockClosureOop block ) {
     MethodOop    method = block->method();
     NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
-    spdlog::info( "Deoptimized context in blockClosure -> switch to methodOop 0x{x}", static_cast<const void *>( nm ) );
+    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop 0x{x}", static_cast<const void *>( nm ) );
     {
         block->set_method( method );
         ContextOop con    = block->lexical_scope();
@@ -313,7 +313,7 @@ static void deoptimize_context_and_patch_block( BlockClosureOop block ) {
     MethodOop    method = block->method();
     NativeMethod *nm    = block->jump_table_entry()->block_nativeMethod();
 
-    spdlog::info( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", static_cast<const void *>( nm ) );
+    SPDLOG_INFO( "Deoptimized context in blockClosure -> switch to methodOop 0x%lx", static_cast<const void *>( nm ) );
 
     ContextOop con = block->lexical_scope();
     block->set_method( method );
@@ -1825,7 +1825,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm );
     const char *new_pc      = masm->pc();
 
-    spdlog::info( "%stubroutine-generate[{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, new_pc - old_pc, entry_point );
+    SPDLOG_INFO( "%stubroutine-generate[{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1841,7 +1841,7 @@ const char *StubRoutines::generateStubRoutine( MacroAssembler *masm, const char 
     const char *entry_point = gen( masm, argument );
     const char *new_pc      = masm->pc();
 
-    spdlog::info( "%stubroutine-generate[{}], argument [{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, argument, new_pc - old_pc, entry_point );
+    SPDLOG_INFO( "%stubroutine-generate[{}], argument [{}], size [0x{08:x}] bytes, entry point address [0x{08:x}]", title, argument, new_pc - old_pc, entry_point );
     if ( PrintStubRoutines ) {
         masm->code()->decode();
         _console->cr();
@@ -1905,7 +1905,7 @@ void StubRoutines::init() {
     masm->finalize();
     st_assert( code->code_size() < _code_size, "Stub routines too large for allocated space" );
     _is_initialized = true;
-    spdlog::info( "%stubroutines-size: [0x{08:x}] bytes", masm->offset() );
+    SPDLOG_INFO( "%stubroutines-size: [0x{08:x}] bytes", masm->offset() );
 }
 
 /*

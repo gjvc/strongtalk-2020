@@ -14,17 +14,17 @@ static Closure<Definition *> *theDefIterator;
 
 
 void Usage::print() {
-    spdlog::info( "Use 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
+    SPDLOG_INFO( "Use 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
 }
 
 
 void PSoftUsage::print() {
-    spdlog::info( "PSoftUsage 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
+    SPDLOG_INFO( "PSoftUsage 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
 }
 
 
 void Definition::print() {
-    spdlog::info( "Def 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
+    SPDLOG_INFO( "Def 0x{0:x} nodeId {0:x}", PrintHexAddresses ? static_cast<void *>( this ) : 0, _node->id() );
 }
 
 
@@ -33,21 +33,21 @@ void BasicBlockDefinitionAndUsageTable::print() {
         return;        // not built yet
     print_short();
     for ( std::int32_t i = 0; i < info->length(); i++ ) {
-        spdlog::info( "%3ld: ", i );
+        SPDLOG_INFO( "%3ld: ", i );
         info->at( i )->print();
     }
 }
 
 
 void PseudoRegisterBasicBlockIndex::print_short() {
-    spdlog::info( "PseudoRegisterBasicBlockIndex [%ld] for", _index );
+    SPDLOG_INFO( "PseudoRegisterBasicBlockIndex [%ld] for", _index );
     _basicBlock->print_short();
 }
 
 
 void PseudoRegisterBasicBlockIndex::print() {
     print_short();
-    spdlog::info( ": " );
+    SPDLOG_INFO( ": " );
     _basicBlock->duInfo.info->at( _index )->print();
 }
 
@@ -106,12 +106,12 @@ Oop CopyPropagationInfo::constant() const {
 
 
 void CopyPropagationInfo::print() {
-    spdlog::info( "*(CopyPropagationInfo*)0x{0:x} : def 0x{0:x}, %s", static_cast<void *>( this ), static_cast<void *>( _definition ), _register->name() );
+    SPDLOG_INFO( "*(CopyPropagationInfo*)0x{0:x} : def 0x{0:x}, %s", static_cast<void *>( this ), static_cast<void *>( _definition ), _register->name() );
 }
 
 
 static void printNodeFn( DefinitionUsage *du ) {
-    spdlog::info( "N%d ", du->_node->id() );
+    SPDLOG_INFO( "N%d ", du->_node->id() );
 }
 
 
@@ -130,10 +130,10 @@ struct PrintNodeClosureU : public Closure<Usage *> {
 
 
 void printDefsAndUses( const GrowableArray<PseudoRegisterBasicBlockIndex *> *l ) {
-    spdlog::info( "definitions: " );
+    SPDLOG_INFO( "definitions: " );
     PrintNodeClosureD printNodeD;
     forAllDefsDo( l, &printNodeD );
-    spdlog::info( "; uses: " );
+    SPDLOG_INFO( "; uses: " );
     PrintNodeClosureU printNodeU;
     forAllUsesDo( l, &printNodeU );
 }

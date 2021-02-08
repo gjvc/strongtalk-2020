@@ -32,6 +32,12 @@ public:
     ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format new_format );
 
 
+    ClassChange() = default;
+    virtual ~ClassChange() = default;
+    ClassChange( const ClassChange & ) = default;
+    ClassChange &operator=( const ClassChange & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
     struct KlassOopDescriptor *old_klass() const;
 
 

@@ -28,7 +28,7 @@ ScopeDescriptor *ProgramCounterDescriptor::containingDesc( const NativeMethod *n
 
 void ProgramCounterDescriptor::print( NativeMethod *nm ) {
     printIndent();
-    spdlog::info( "ProgramCounterDescriptor {0:x}: pc: 0x{0:x}; scope: %5ld; byte code: %ld", static_cast<void *>(this), real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
+    SPDLOG_INFO( "ProgramCounterDescriptor {0:x}: pc: 0x{0:x}; scope: %5ld; byte code: %ld", static_cast<void *>(this), real_pc( nm ), _scope, (std::int32_t) _byteCodeIndex );
 }
 
 

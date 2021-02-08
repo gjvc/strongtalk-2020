@@ -110,8 +110,8 @@ TEST( IntegerOpsTest, test_string_conversion_negative_input ) {
     std::int32_t s2_out = z2.as_int32_t( ok );
     EXPECT_EQ( z2.as_int32_t( ok ), -123456 );
 
-    spdlog::info( "ok: [{}] converted to [{}]", s2_in, s2_out );
-    spdlog::info( "ok: z2._first_digit [{}], z._signed_length [{}]", z2._first_digit, z2._signed_length );
+    SPDLOG_INFO( "ok: [{}] converted to [{}]", s2_in, s2_out );
+    SPDLOG_INFO( "ok: z2._first_digit [{}], z._signed_length [{}]", z2._first_digit, z2._signed_length );
 
 }
 

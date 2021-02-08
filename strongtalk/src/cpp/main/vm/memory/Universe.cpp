@@ -94,9 +94,9 @@ void Universe::genesis() {
 
     ResourceMark resourceMark;
 
-    spdlog::info( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
+    SPDLOG_INFO( "%vm-backend-implementation[{}]", UseNewBackend | TryNewBackend ? "new" : "old" );
     if ( UseNewBackend | TryNewBackend ) {
-        spdlog::info( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
+        SPDLOG_INFO( "%vm-backend-makeConformant[{}]", UseNewMakeConformant ? "yes" : "no" );
     }
 
     if ( not Interpreter::is_optimized() ) {
@@ -211,34 +211,34 @@ bool Universe::verify_oop( MemOop p ) {
 
 void Universe::verify( bool postScavenge ) {
     ResourceMark resourceMark;
-    spdlog::info( "status-verify:  " );
+    SPDLOG_INFO( "status-verify:  " );
 
     new_gen.verify();
-    spdlog::info( "newgen, " );
+    SPDLOG_INFO( "newgen, " );
 
     old_gen.verify();
-    spdlog::info( "oldgen, " );
+    SPDLOG_INFO( "oldgen, " );
 
     remembered_set->verify( postScavenge );
-    spdlog::info( "remembered_set, " );
+    SPDLOG_INFO( "remembered_set, " );
 
     symbol_table->verify();
-    spdlog::info( "symbol_table, " );
+    SPDLOG_INFO( "symbol_table, " );
 
     Processes::verify();
-    spdlog::info( "processes " );
+    SPDLOG_INFO( "processes " );
 
-    spdlog::info( "ok" );
+    SPDLOG_INFO( "ok" );
 }
 
 
 void Universe::print() {
 
-    spdlog::info( "Memory:" );
+    SPDLOG_INFO( "Memory:" );
     new_gen.print();
     old_gen.print();
     if ( WizardMode ) {
-        spdlog::info( ", tenuring_threshold=[0x{08:x}]", tenuring_threshold );
+        SPDLOG_INFO( ", tenuring_threshold=[0x{08:x}]", tenuring_threshold );
     }
 
 }
@@ -347,7 +347,7 @@ void Universe::print_klass_name( KlassOop k ) {
             return;
         } else if ( assoc->value()->klass() == k ) {
             assoc->key()->print_symbol_on();
-            spdlog::info( " class" );
+            SPDLOG_INFO( " class" );
             return;
         }
     }
@@ -506,7 +506,7 @@ private:
     void (*_function)( MethodOop method );
 
 public:
-    MethodsClosure( void f( MethodOop method ) ) {
+    MethodsClosure( void f( MethodOop method ) ) : _function{ f } {
         _function = f;
     }
 
@@ -608,7 +608,7 @@ void Universe::cleanup_all_inline_caches() {
 
 
 void universe_init() {
-    spdlog::info( "system-init:  universe_init" );
+    SPDLOG_INFO( "system-init:  universe_init" );
 
     Universe::genesis();
 }
@@ -795,7 +795,7 @@ void Universe::scavenge( Oop *p ) {
         TraceTime   t( "Scavenge", PrintScavenge );
 
         if ( PrintScavenge and WizardMode ) {
-            spdlog::info( " {:d}", tenuring_threshold );
+            SPDLOG_INFO( " {:d}", tenuring_threshold );
         }
 
         if ( VerifyBeforeScavenge ) {
@@ -866,8 +866,7 @@ Space *Universe::spaceFor( void *p ) {
     }
 
     {
-        FOR_EACH_OLD_SPACE( s )
-            if ( s->contains( p ) )
+        FOR_EACH_OLD_SPACE( s )if ( s->contains( p ) )
                 return s;
     }
 

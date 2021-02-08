@@ -10,7 +10,7 @@
 void KlassOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 
 
-    spdlog::info("KlassOopDescriptor::bootstrap_object");
+    SPDLOG_INFO("KlassOopDescriptor::bootstrap_object");
     klass_part()->bootstrap_klass_part_one( stream );
     MemOopDescriptor::bootstrap_header( stream );
 

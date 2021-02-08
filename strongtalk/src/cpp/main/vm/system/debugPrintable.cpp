@@ -31,7 +31,7 @@ private:
 public:
     Command( const char *str ) :
         resourceMark{} {
-        spdlog::info( "Executing[{}]", str );
+        SPDLOG_INFO( "Executing[{}]", str );
     }
 
 
@@ -46,7 +46,7 @@ void pp( void *p ) {
     Command     c( "pp" );
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
-        spdlog::info( "0x0" );
+        SPDLOG_INFO( "0x0" );
         return;
     }
 
@@ -77,7 +77,7 @@ void pp_short( void *p ) {
     Command     c( "pp_short" );
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
-        spdlog::info( "0x0" );
+        SPDLOG_INFO( "0x0" );
     } else if ( Oop( p )->is_mem() ) {
         // guess that it's a MemOop
         Oop( p )->print();
@@ -160,7 +160,7 @@ void oat( std::int32_t index ) {
         Oop obj = ObjectIDTable::at( index );
         obj->print();
     } else {
-        spdlog::info( "index {} out of bounds", index );
+        SPDLOG_INFO( "index {} out of bounds", index );
     }
 }
 
@@ -262,19 +262,19 @@ void pm( std::int32_t m ) {
 
 void print_codes( const char *class_name, const char *selector ) {
     Command c( "print_codes" );
-    spdlog::info( "Finding %s in %s.", selector, class_name );
+    SPDLOG_INFO( "Finding %s in %s.", selector, class_name );
     Oop result = Universe::find_global( class_name );
     if ( not result ) {
-        spdlog::info( "Could not find global %s.", class_name );
+        SPDLOG_INFO( "Could not find global %s.", class_name );
     } else if ( not result->is_klass() ) {
-        spdlog::info( "Global %s is not a class.", class_name );
+        SPDLOG_INFO( "Global %s is not a class.", class_name );
     } else {
         SymbolOop sel    = oopFactory::new_symbol( selector );
         MethodOop method = KlassOop( result )->klass_part()->lookup( sel );
         if ( not method )
             method = result->blueprint()->lookup( sel );
         if ( not method ) {
-            spdlog::info( "Method %s is not in %s.", selector, class_name );
+            SPDLOG_INFO( "Method %s is not in %s.", selector, class_name );
         } else {
             method->pretty_print();
             method->print_codes();
@@ -287,27 +287,27 @@ void help() {
     Command c( "help" );
 
 
-    spdlog::info( "basic" );
-    spdlog::info( "  pp(void* p)   - try to make sense of p" );
-    spdlog::info( "  pv(std::int32_t p)     - ((PrintableResourceObject*) p)->print()" );
-    spdlog::info( "  ps()          - print current process stack" );
-    spdlog::info( "  pss()         - print all process stacks" );
-    spdlog::info( "  oat(std::int32_t i)    - print object with id = i" );
+    SPDLOG_INFO( "basic" );
+    SPDLOG_INFO( "  pp(void* p)   - try to make sense of p" );
+    SPDLOG_INFO( "  pv(std::int32_t p)     - ((PrintableResourceObject*) p)->print()" );
+    SPDLOG_INFO( "  ps()          - print current process stack" );
+    SPDLOG_INFO( "  pss()         - print all process stacks" );
+    SPDLOG_INFO( "  oat(std::int32_t i)    - print object with id = i" );
 
-    spdlog::info( "methodOop" );
-    spdlog::info( "  pm(std::int32_t m)     - pretty print methodOop(m)" );
-    spdlog::info( "  ph(std::int32_t hp)    - pretty print method containing hp" );
-    spdlog::info( "  findm(std::int32_t hp) - returns methodOop containing hp" );
+    SPDLOG_INFO( "methodOop" );
+    SPDLOG_INFO( "  pm(std::int32_t m)     - pretty print methodOop(m)" );
+    SPDLOG_INFO( "  ph(std::int32_t hp)    - pretty print method containing hp" );
+    SPDLOG_INFO( "  findm(std::int32_t hp) - returns methodOop containing hp" );
 
-    spdlog::info( "misc." );
-    spdlog::info( "  flush()       - flushes the log file" );
-    spdlog::info( "  events()      - dump last 50 event" );
+    SPDLOG_INFO( "misc." );
+    SPDLOG_INFO( "  flush()       - flushes the log file" );
+    SPDLOG_INFO( "  events()      - dump last 50 event" );
 
 
-    spdlog::info( "compiler debugging" );
-    spdlog::info( "  debug()       - to set things up for compiler debugging" );
-    spdlog::info( "  ndebug()      - undo debug" );
-    spdlog::info( "  pc()          - theCompiler->print_code(false)" );
-    spdlog::info( "  pscopes()     - theCompiler->topScope->printTree()" );
-    spdlog::info( "  urs_ps()      - print current process stack with many flags turned on" );
+    SPDLOG_INFO( "compiler debugging" );
+    SPDLOG_INFO( "  debug()       - to set things up for compiler debugging" );
+    SPDLOG_INFO( "  ndebug()      - undo debug" );
+    SPDLOG_INFO( "  pc()          - theCompiler->print_code(false)" );
+    SPDLOG_INFO( "  pscopes()     - theCompiler->topScope->printTree()" );
+    SPDLOG_INFO( "  urs_ps()      - print current process stack with many flags turned on" );
 }

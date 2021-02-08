@@ -32,6 +32,13 @@ public:
     }
 
 
+    TopLevelBlockScopeNode() = default;
+    virtual ~TopLevelBlockScopeNode() = default;
+    TopLevelBlockScopeNode( const TopLevelBlockScopeNode & ) = default;
+    TopLevelBlockScopeNode &operator=( const TopLevelBlockScopeNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
     void generate( ScopeDescriptorRecorder *rec, std::int32_t senderScopeOffset, bool bigHeader ) {
         ScopeDescriptorNode::generate( rec, senderScopeOffset, bigHeader );
         _receiverLocation->generate( rec );

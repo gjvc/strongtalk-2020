@@ -93,7 +93,7 @@ bool os::check_directory( const char *dir_name ) {
 
 
 void os::breakpoint() {
-    spdlog::info( "os::breakpoint()" );
+    SPDLOG_INFO( "os::breakpoint()" );
     DebugBreak();
 }
 
@@ -323,13 +323,13 @@ LONG WINAPI topLevelExceptionFilter( struct _EXCEPTION_POINTERS *exceptionInfo )
         return EXCEPTION_CONTINUE_SEARCH;
     }
 
-    spdlog::info( "Exception caught [{}]", exception_name( code ) );
+    SPDLOG_INFO( "Exception caught [{}]", exception_name( code ) );
 
     if ( code == EXCEPTION_STACK_OVERFLOW ) {
-        spdlog::info( "  Oops, we encountered a stack overflow." );
-        spdlog::info( "  You should check your program for infinite recursion" );
+        SPDLOG_INFO( "  Oops, we encountered a stack overflow." );
+        SPDLOG_INFO( "  You should check your program for infinite recursion" );
         suspend_process_at_stack_overflow( (std::int32_t *) exceptionInfo->ContextRecord->Esp, (std::int32_t *) exceptionInfo->ContextRecord->Ebp, (const char *) exceptionInfo->ContextRecord->Eip );
-        spdlog::info( "  Continue execution ?" );
+        SPDLOG_INFO( "  Continue execution ?" );
     } else {
         // Do not report vm state when getting stack overflow
         report_vm_state();
@@ -386,7 +386,7 @@ bool os::commit_memory( const char *addr, std::int32_t size ) {
     bool result = VirtualAlloc( const_cast<char *>( addr ), size, MEM_COMMIT, PAGE_READWRITE ) not_eq nullptr;
     if ( not result ) {
         std::int32_t error = GetLastError();
-        spdlog::info( "commit_memory error {:d} 0x{:0x}", error, error );
+        SPDLOG_INFO( "commit_memory error {:d} 0x{:0x}", error, error );
     }
 
     return result;
@@ -561,7 +561,7 @@ std::int32_t os::find_current_process_id() {
 
 void os::initialize_system_info() {
     find_system_page_size();
-    spdlog::info( "system page size detected as [{:d}] bytes", _vm_page_size );
+    SPDLOG_INFO( "system page size detected as [{:d}] bytes", _vm_page_size );
     initialize_performance_counter();
 }
 
@@ -611,7 +611,7 @@ bool handling_exception;
 
 LONG WINAPI testVectoredHandler( struct _EXCEPTION_POINTERS *exceptionInfo ) {
 
-    spdlog::info( "Caught exception." );
+    SPDLOG_INFO( "Caught exception." );
     if ( true and handler and not handling_exception ) {
         handling_exception = true;
         handler( (void *) exceptionInfo->ContextRecord->Ebp, (void *) exceptionInfo->ContextRecord->Esp, (void *) exceptionInfo->ContextRecord->Eip );
@@ -643,9 +643,9 @@ void os_init_processor_affinity() {
     while ( not( processMask & processorId ) and processorId < processMask )
         processorId >>= 1;
 
-    spdlog::info( "system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
+    SPDLOG_INFO( "system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
     if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) )
-        spdlog::info( "error code: {}", GetLastError() );
+        SPDLOG_INFO( "error code: {}", GetLastError() );
 
 }
 
@@ -654,18 +654,18 @@ static std::int32_t number_of_ctrl_c = 0;
 
 
 int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
-    spdlog::info( "strongtalkConsoleCtrlHandler" );
+    SPDLOG_INFO( "strongtalkConsoleCtrlHandler" );
 
     if ( CTRL_BREAK_EVENT == dwCtrlType ) {
-        spdlog::info( "%break" );
+        SPDLOG_INFO( "%break" );
         intercept_for_single_step();
 
     } else {
         if ( number_of_ctrl_c < 10 ) {
-            spdlog::info( "%break-loading-breakrc" );
+            SPDLOG_INFO( "%break-loading-breakrc" );
             process_settings_file( ".breakrc", false );
         } else {
-            spdlog::info( "{aborting}" );
+            SPDLOG_INFO( "{aborting}" );
 #ifdef __GNUC__
             __asm__("int3;");
 #else
@@ -683,7 +683,7 @@ int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
 
 
 void os_init() {
-    spdlog::info( "os-init:  Win32" );
+    SPDLOG_INFO( "os-init:  Win32" );
 
     ThreadCritical::intialize();
     Thread::initialize();

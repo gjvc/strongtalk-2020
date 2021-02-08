@@ -1800,6 +1800,13 @@ public:
     }
 
 
+    virtual ~AbstractMergeNode() = default;
+    AbstractMergeNode( const AbstractMergeNode & ) = default;
+    AbstractMergeNode &operator=( const AbstractMergeNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     bool hasSinglePredecessor() const {
         return _prevs->length() <= 1;
     }
@@ -1912,6 +1919,13 @@ protected:
     }
 
 
+    ArithNode() = default;
+    virtual ~ArithNode() = default;
+    ArithNode( const ArithNode & ) = default;
+    ArithNode &operator=( const ArithNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
 public:
     bool canCopyPropagate() const {
         return true;
@@ -1983,6 +1997,13 @@ protected:
     Usage          *_operUse;
 
     ArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d );
+
+
+    ArithRRNode() = default;
+    virtual ~ArithRRNode() = default;
+    ArithRRNode( const ArithRRNode & ) = default;
+    ArithRRNode &operator=( const ArithRRNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     PseudoRegister *operand() const {
@@ -2168,6 +2189,13 @@ protected:
     }
 
 
+    virtual ~AbstractBranchNode() = default;
+    AbstractBranchNode( const AbstractBranchNode & ) = default;
+    AbstractBranchNode &operator=( const AbstractBranchNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void removeFailureIfPossible();
 
     void verify( bool verifySuccessors ) const;
@@ -2242,6 +2270,12 @@ protected:
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
     TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool a1, bool a2 );
+
+    TArithRRNode() = default;
+    virtual ~TArithRRNode() = default;
+    TArithRRNode( const TArithRRNode & ) = default;
+    TArithRRNode &operator=( const TArithRRNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     ArithOpCode op() const {
@@ -2349,6 +2383,12 @@ class CallNode : public AbstractBranchNode {
 protected:
     CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprs );
 
+    CallNode() = default;
+    virtual ~CallNode() = default;
+    CallNode( const CallNode & ) = default;
+    CallNode &operator=( const CallNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
     GrowableArray<PseudoRegister *> *exprStack;   // current expr. stack for debugging info (nullptr if not needed)
     GrowableArray<Usage *>          *argUses;     // uses for args and receiver
@@ -2414,6 +2454,13 @@ protected:
 
     SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *exprStk, bool superSend, SendInfo *info );
 
+
+    SendNode() = default;
+    virtual ~SendNode() = default;
+    SendNode( const SendNode & ) = default;
+    SendNode &operator=( const SendNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
     bool isSendNode() const {
         return true;
@@ -2472,6 +2519,12 @@ protected:
 
     PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
 
+    PrimitiveNode() = default;
+    virtual ~PrimitiveNode() = default;
+    PrimitiveNode( const PrimitiveNode & ) = default;
+    PrimitiveNode &operator=( const PrimitiveNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
     bool canBeEliminated() const;
 
@@ -2513,6 +2566,12 @@ protected:
     bool           _async;
 
     DLLNode( SymbolOop dll_name, SymbolOop function_name, dll_func_ptr_t function, bool async, MergeNode *nlrTestPoint, GrowableArray<PseudoRegister *> *args, GrowableArray<PseudoRegister *> *expr_stack );
+
+    DLLNode() = default;
+    virtual ~DLLNode() = default;
+    DLLNode( const DLLNode & ) = default;
+    DLLNode &operator=( const DLLNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     bool canInvokeDelta() const;
@@ -2624,6 +2683,11 @@ protected:
     std::int32_t                                 _nofCalls;             // number of non-inlined calls in loop (excluding unlikely code)
 
     LoopHeaderNode();
+
+    virtual ~LoopHeaderNode() = default;
+    LoopHeaderNode( const LoopHeaderNode & ) = default;
+    LoopHeaderNode &operator=( const LoopHeaderNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     bool isLoopHeaderNode() const {
@@ -2763,6 +2827,12 @@ protected:
 
     BlockCreateNode( BlockPseudoRegister *b, GrowableArray<PseudoRegister *> *expr_stack );
 
+    BlockCreateNode() = default;
+    virtual ~BlockCreateNode() = default;
+    BlockCreateNode( const BlockCreateNode & ) = default;
+    BlockCreateNode &operator=( const BlockCreateNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
 
     bool isBlockCreateNode() const {
@@ -2895,6 +2965,12 @@ protected:
 
     ContextCreateNode( PseudoRegister *b, const ContextCreateNode *n, GrowableArray<PseudoRegister *> *expr_stack ); // for cloning
 
+    ContextCreateNode() = default;
+    virtual ~ContextCreateNode() = default;
+    ContextCreateNode( const ContextCreateNode & ) = default;
+    ContextCreateNode &operator=( const ContextCreateNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
 public:
     bool hasSrc() const {
         return _src not_eq nullptr;
@@ -2990,6 +3066,13 @@ protected:
     ContextInitNode( ContextCreateNode *creator );
 
     ContextInitNode( PseudoRegister *b, const ContextInitNode *node );    // for cloning
+
+
+    ContextInitNode() = default;
+    virtual ~ContextInitNode() = default;
+    ContextInitNode( const ContextInitNode & ) = default;
+    ContextInitNode &operator=( const ContextInitNode & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
 
 public:
     bool hasSrc() const {

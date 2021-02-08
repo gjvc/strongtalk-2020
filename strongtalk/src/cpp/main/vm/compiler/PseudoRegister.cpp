@@ -1027,6 +1027,14 @@ public:
     }
 
 
+    UplevelComputer() = default;
+    virtual ~UplevelComputer() = default;
+    UplevelComputer( const UplevelComputer & ) = default;
+    UplevelComputer &operator=( const UplevelComputer & ) = default;
+    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+
     void record_temporary( bool reading, std::int32_t no, std::int32_t ctx ) {
         // distance is the lexical nesting distance in source-level terms (i.e., regardless of what the interpreter
         // does or whether the intermediate scopes have contexts or not) between r's scope and the scope
@@ -1121,30 +1129,30 @@ const char *PseudoRegister::name() const {
 
 
 void PseudoRegister::print() {
-    spdlog::info( "%s: ", name() );
+    SPDLOG_INFO( "%s: ", name() );
     printDefsAndUses( &_dus );
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 
 void BlockPseudoRegister::print() {
     print_short();
-    spdlog::info( ": " );
+    SPDLOG_INFO( ": " );
     printDefsAndUses( &_dus );
     if ( _uplevelRead ) {
-        spdlog::info( "; uplevel-read: " );
+        SPDLOG_INFO( "; uplevel-read: " );
         _uplevelRead->print();
     }
     if ( _uplevelWritten ) {
-        spdlog::info( "; uplevel-written: " );
+        SPDLOG_INFO( "; uplevel-written: " );
         _uplevelWritten->print();
     }
     if ( _escapeNodes ) {
-        spdlog::info( "; escapes at: " );
+        SPDLOG_INFO( "; escapes at: " );
         for ( std::int32_t i = 0; i < _escapeNodes->length(); i++ )
-            spdlog::info( "N%d ", _escapeNodes->at( i )->id() );
+            SPDLOG_INFO( "N%d ", _escapeNodes->at( i )->id() );
     }
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 

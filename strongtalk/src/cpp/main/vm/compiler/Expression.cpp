@@ -605,57 +605,57 @@ NameNode *ConstantExpression::nameNode( bool mustBeLegal ) const {
 
 
 void Expression::print_helper( const char *type ) {
-    spdlog::info( " (Node 0x{0:x})", static_cast<void *>( node() ) );
+    SPDLOG_INFO( " (Node 0x{0:x})", static_cast<void *>( node() ) );
     if ( next ) {
-        spdlog::info( " (next 0x{0:x})", static_cast<void *>( next ) );
+        SPDLOG_INFO( " (next 0x{0:x})", static_cast<void *>( next ) );
     }
-    spdlog::info( "    ((%s*)0x{0:x})", type, static_cast<void *>( this ) );
+    SPDLOG_INFO( "    ((%s*)0x{0:x})", type, static_cast<void *>( this ) );
 }
 
 
 void UnknownExpression::print() {
-    spdlog::info( "UnknownExpression %s", isUnlikely() ? "unlikely" : "" );
+    SPDLOG_INFO( "UnknownExpression %s", isUnlikely() ? "unlikely" : "" );
     Expression::print_helper( "UnknownExpression" );
 }
 
 
 void NoResultExpression::print() {
-    spdlog::info( "NoResultExpression " );
+    SPDLOG_INFO( "NoResultExpression " );
     Expression::print_helper( "NoResultExpression" );
 }
 
 
 void ContextExpression::print() {
-    spdlog::info( "ContextExpression %s", pseudoRegister()->safeName() );
+    SPDLOG_INFO( "ContextExpression %s", pseudoRegister()->safeName() );
     Expression::print_helper( "ContextExpression" );
 }
 
 
 void ConstantExpression::print() {
-    spdlog::info( "ConstantExpression %s", constant()->print_value_string() );
+    SPDLOG_INFO( "ConstantExpression %s", constant()->print_value_string() );
     Expression::print_helper( "ConstantExpression" );
 }
 
 
 void KlassExpression::print() {
-    spdlog::info( "KlassExpression %s", klass()->print_value_string() );
+    SPDLOG_INFO( "KlassExpression %s", klass()->print_value_string() );
     Expression::print_helper( "KlassExpression" );
 }
 
 
 void BlockExpression::print() {
-    spdlog::info( "BlockExpression %s", pseudoRegister()->name() );
+    SPDLOG_INFO( "BlockExpression %s", pseudoRegister()->name() );
     Expression::print_helper( "BlockExpression" );
 }
 
 
 void MergeExpression::print() {
-    spdlog::info( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
+    SPDLOG_INFO( "MergeExpression %s(", isSplittable() ? "splittable " : "" );
     for ( std::int32_t i = 0; i < exprs->length(); i++ ) {
-        spdlog::info( "\t0x{0:x}%s ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
+        SPDLOG_INFO( "\t0x{0:x}%s ", static_cast<void *>( exprs->at( i ) ), exprs->at( i )->next ? "*" : "" );
         exprs->at( i )->print();
     }
-    spdlog::info( ")" );
+    SPDLOG_INFO( ")" );
     Expression::print_helper( "MergeExpression" );
 }
 
@@ -794,7 +794,7 @@ void ExpressionStack::pop( std::int32_t nofExprsToPop ) {
 void ExpressionStack::print() {
     const std::int32_t len = length();
     for ( std::int32_t i   = 0; i < len; i++ ) {
-        spdlog::info( "[TOS - %2d]:  ", len - i - 1 );
+        SPDLOG_INFO( "[TOS - %2d]:  ", len - i - 1 );
         at( i )->print();
     }
 }

@@ -5,7 +5,7 @@
 //
 
 
-#include "ResourceObject.hpp"
+#include "vm/runtime/ResourceObject.hpp"
 
 
 void *ResourceObject::operator new( std::size_t size, bool on_C_heap ) {

@@ -243,9 +243,9 @@ void InterpretedInlineCache::replace( LookupResult result, KlassOop receiver_kla
 //    Oop             word2_after = second_word();
 
     // log modification
-    spdlog::info( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition {:d})", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
-    spdlog::info( "  from ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
-    spdlog::info( "  to   ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+    SPDLOG_INFO( "InterpretedInlineCache::replace: InlineCache at 0x{0:x}: entry for klass 0x{0:x} replaced (transition {:d})", static_cast<const void *>( this ), static_cast<const void *>( receiver_klass ), transition );
+    SPDLOG_INFO( "  from ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_before ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
+    SPDLOG_INFO( "  to   ({}, 0x{0:x}, 0x{0:x})", ByteCodes::name( code_after ), static_cast<const void *>( word1_before ), static_cast<const void *>( word2_before ) );
 
 }
 
@@ -255,9 +255,12 @@ void InterpretedInlineCache::cleanup() {
         return; // Nothing to cleanup
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::ACCESSOR_SEND:      [[fallthrough]];
-        case ByteCodes::SendType::PRIMITIVE_SEND:     [[fallthrough]];
-        case ByteCodes::SendType::PREDICTED_SEND:     [[fallthrough]];
+        case ByteCodes::SendType::ACCESSOR_SEND:
+            [[fallthrough]];
+        case ByteCodes::SendType::PRIMITIVE_SEND:
+            [[fallthrough]];
+        case ByteCodes::SendType::PREDICTED_SEND:
+            [[fallthrough]];
         case ByteCodes::SendType::INTERPRETED_SEND: { // check if the interpreted send should be replaced by a compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
@@ -364,9 +367,12 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
         return;
 
     switch ( send_type() ) {
-        case ByteCodes::SendType::ACCESSOR_SEND:      [[fallthrough]];
-        case ByteCodes::SendType::PRIMITIVE_SEND:     [[fallthrough]];
-        case ByteCodes::SendType::PREDICTED_SEND:     [[fallthrough]];
+        case ByteCodes::SendType::ACCESSOR_SEND:
+            [[fallthrough]];
+        case ByteCodes::SendType::PRIMITIVE_SEND:
+            [[fallthrough]];
+        case ByteCodes::SendType::PREDICTED_SEND:
+            [[fallthrough]];
         case ByteCodes::SendType::INTERPRETED_SEND: { // replace the MONOMORPHIC interpreted send with compiled send
             KlassOop receiver_klass = KlassOop( second_word() );
             st_assert( receiver_klass->is_klass(), "receiver klass must be a klass" );
@@ -375,7 +381,8 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             }
         }
             break;
-        case ByteCodes::SendType::COMPILED_SEND:     [[fallthrough]];
+        case ByteCodes::SendType::COMPILED_SEND:
+            [[fallthrough]];
         case ByteCodes::SendType::MEGAMORPHIC_SEND:
             // replace the MONOMORPHIC compiled send with compiled send
             set( send_code(), entry_point, nm->_lookupKey.klass() );
@@ -395,10 +402,10 @@ void InterpretedInlineCache::replace( NativeMethod *nm ) {
             break;
         default: st_fatal( "unknown send type" );
     }
-    spdlog::info( "interpreted InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
-                  static_cast<const void *>( this ),
-                  static_cast<const void *>( nm ),
-                  static_cast<const void *>( nm->_lookupKey.klass() ) );
+    SPDLOG_INFO( "interpreted InlineCache at 0x{0:x}: new NativeMethod 0x{0:x} for klass 0x{0:x} replaces old entry",
+                 static_cast<const void *>( this ),
+                 static_cast<const void *>( nm ),
+                 static_cast<const void *>( nm->_lookupKey.klass() ) );
 }
 
 
@@ -417,9 +424,9 @@ void InterpretedInlineCache::print() {
         _console->print( "\t- klass: " );
         it.klass()->print_value();
         if ( it.is_interpreted() ) {
-            spdlog::info( ";\tmethod  0x{0:x}", static_cast<const void *>(it.interpreted_method()) );
+            SPDLOG_INFO( ";\tmethod  0x{0:x}", static_cast<const void *>(it.interpreted_method()) );
         } else {
-            spdlog::info( ";\tNativeMethod 0x{0:x}", static_cast<const void *>(it.compiled_method()) );
+            SPDLOG_INFO( ";\tNativeMethod 0x{0:x}", static_cast<const void *>(it.compiled_method()) );
         }
         it.advance();
     }
@@ -497,9 +504,12 @@ void InterpretedInlineCache::update_inline_cache( InterpretedInlineCache *ic, Fr
         // ic not empty
         switch ( ic->send_type() ) {
             // MONOMORPHIC send
-            case ByteCodes::SendType::ACCESSOR_SEND   :   [[fallthrough]];
-            case ByteCodes::SendType::PREDICTED_SEND  :   [[fallthrough]];
-            case ByteCodes::SendType::COMPILED_SEND   :   [[fallthrough]];
+            case ByteCodes::SendType::ACCESSOR_SEND   :
+                [[fallthrough]];
+            case ByteCodes::SendType::PREDICTED_SEND  :
+                [[fallthrough]];
+            case ByteCodes::SendType::COMPILED_SEND   :
+                [[fallthrough]];
             case ByteCodes::SendType::INTERPRETED_SEND: {
                 // switch to POLYMORPHIC send with 2 entries
                 ObjectArrayOop pic = Interpreter_PICs::allocate( 2 );
@@ -561,11 +571,14 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         Oop           obj      = msgKlass->klass_part()->allocateObject();
         st_assert( obj->is_mem(), "just checkin'..." );
         msg = MemOop( obj );
-        std::int32_t       nofArgs = ic->selector()->number_of_arguments();
-        ObjectArrayOop     args    = oopFactory::new_objArray( nofArgs );
-        for ( std::int32_t i       = 1; i <= nofArgs; i++ ) {
+        std::int32_t   nofArgs = ic->selector()->number_of_arguments();
+        ObjectArrayOop args    = oopFactory::new_objArray( nofArgs );
+
+        //
+        for ( std::int32_t i = 1; i <= nofArgs; i++ ) {
             args->obj_at_put( i, f->expr( nofArgs - i ) );
         }
+
         // for now: assume instance variables are there...
         // later: should check this or use a VM interface:
         // msg->set_receiver(recv);
@@ -579,9 +592,9 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
             // doesNotUnderstand: not found ==> process error
             {
                 ResourceMark resourceMark;
-                spdlog::info( "LOOKUP ERROR" );
+                SPDLOG_INFO( "LOOKUP ERROR" );
                 sel->print_value();
-                spdlog::info( " not found" );
+                SPDLOG_INFO( " not found" );
             }
             if ( DeltaProcess::active()->is_scheduler() ) {
                 DeltaProcess::active()->trace_stack();
@@ -612,6 +625,7 @@ void InterpretedInlineCache::trace_inline_cache_miss( InterpretedInlineCache *ic
     _console->print( ") --> " );
     result.print_short_on( _console );
     _console->cr();
+//    SPDLOG_INFO( "InterpretedInlineCache lookup({}, {}, {})", klass->print_value_string(), ic->selector()->print_value_string(), "" );
 }
 
 
@@ -637,8 +651,8 @@ Oop *InterpretedInlineCache::inline_cache_miss() {
     ByteCodes::Code        send_code = ic->send_code();
 
     Oop receiver = ic->argument_spec() == ByteCodes::ArgumentSpec::args_only // Are we at a self or super send?
-                   ? f.receiver()                                //  yes: take receiver of frame
-                   : f.expr( ic->nof_arguments() );                //  no:  take receiver pushed before the arguments
+                   ? f.receiver()                                            //  yes: take receiver of frame
+                   : f.expr( ic->nof_arguments() );                          //  no:  take receiver pushed before the arguments
 
     // do the lookup
     KlassOop     klass  = receiver->klass();
@@ -649,6 +663,7 @@ Oop *InterpretedInlineCache::inline_cache_miss() {
         _console->print( "InlineCache miss, " );
         trace_inline_cache_miss( ic, klass, result );
     }
+
     // handle the lookup result
     if ( not result.is_empty() ) {
         update_inline_cache( ic, &f, ic->send_code(), klass, result );
@@ -721,7 +736,8 @@ void InterpretedInlineCacheIterator::init_iteration() {
             set_method( _ic->first_word() );
             st_assert( is_compiled(), "bad type" );
             break;
-        case ByteCodes::SendType::ACCESSOR_SEND:   [[fallthrough]];
+        case ByteCodes::SendType::ACCESSOR_SEND:
+            [[fallthrough]];
         case ByteCodes::SendType::PRIMITIVE_SEND:
             _number_of_targets = 1;
             _info              = InlineCacheShape::MONOMORPHIC;
@@ -806,5 +822,5 @@ bool InterpretedInlineCacheIterator::is_super_send() const {
 
 
 void InterpretedInlineCacheIterator::print() {
-    spdlog::info( "InterpretedInlineCacheIterator 0x{0:x} for ic 0x{0:x} (%s)", static_cast<const void *>(this), static_cast<const void *>(_ic), selector()->as_string() );
+    SPDLOG_INFO( "InterpretedInlineCacheIterator 0x{0:x} for ic 0x{0:x} (%s)", static_cast<const void *>(this), static_cast<const void *>(_ic), selector()->as_string() );
 }

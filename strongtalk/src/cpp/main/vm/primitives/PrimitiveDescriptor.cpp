@@ -13,7 +13,7 @@
 void PrimitiveDescriptor::print() {
 
     //
-    spdlog::info( "%-72s  %d  {}{}{}{}{}{}{}{}{}",
+    SPDLOG_INFO( "%-72s  %d  {}{}{}{}{}{}{}{}{}",
                   name(),
                   number_of_parameters(),
                   has_receiver() ? 'R' : '_',
@@ -179,7 +179,7 @@ Oop PrimitiveDescriptor::eval( Oop *a ) {
 #endif
 
     if ( ebx_now not_eq ebx_on_stack ) {
-        spdlog::info( "ebx changed from ({0:x} to {0:x}) in:", ebx_on_stack, ebx_now );
+        SPDLOG_INFO( "ebx changed from ({0:x} to {0:x}) in:", ebx_on_stack, ebx_now );
         print();
     }
 

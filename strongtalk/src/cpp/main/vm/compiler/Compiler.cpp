@@ -34,7 +34,7 @@ BasicBlockIterator *last_bbIterator;
 
 
 void compiler_init() {
-    spdlog::info( "system-init:  compiler_init" );
+    SPDLOG_INFO( "system-init:  compiler_init" );
 
     CompilerDebug = true;
 }
@@ -478,7 +478,7 @@ NativeMethod *Compiler::compile() {
     if ( should_trace or PrintCode ) {
         print_key( _console );
         if ( PrintCode or PrintInlining ) {
-            spdlog::info( "" );
+            SPDLOG_INFO( "" );
         }
     }
 
@@ -566,7 +566,7 @@ NativeMethod *Compiler::compile() {
     if ( PrintDebugInfoGeneration ) {
         _console->cr();
         _console->cr();
-        spdlog::info( "Start of debugging info." );
+        SPDLOG_INFO( "Start of debugging info." );
     }
     topScope->generateDebugInfo();    // must come before gen to set getScopeInfo
     topScope->generateDebugInfoForNonInlinedBlocks();
@@ -602,7 +602,7 @@ NativeMethod *Compiler::compile() {
 
     reporter->finish_reporting();
     if ( should_trace ) {
-        spdlog::info( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void *>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
+        SPDLOG_INFO( ": 0x{0:x} (%d bytes; level %ld v%d)", static_cast<void *>( nm ), nm->instructionsLength(), nm->level(), nm->version() );
         //flush_logFile();
     }
 
@@ -810,15 +810,15 @@ void Compiler::initTopScope() {
 
 void Compiler::print() {
     print_short();
-    spdlog::info( ":" );
+    SPDLOG_INFO( ":" );
     key->print();
-    spdlog::info( "\tmethod: %s", method->toString() );
-    spdlog::info( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void *>( this ) );
+    SPDLOG_INFO( "\tmethod: %s", method->toString() );
+    SPDLOG_INFO( "\tp ((Compiler*)0x{0:x})->print_code()", static_cast<void *>( this ) );
 }
 
 
 void Compiler::print_short() {
-    spdlog::info( "(Compiler*) 0x{0:x}", static_cast<void *>( this ) );
+    SPDLOG_INFO( "(Compiler*) 0x{0:x}", static_cast<void *>( this ) );
 }
 
 
@@ -856,7 +856,7 @@ void Compiler::print_code( bool suppressTrivial ) {
             bbIterator = nullptr;
         }
     }
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 

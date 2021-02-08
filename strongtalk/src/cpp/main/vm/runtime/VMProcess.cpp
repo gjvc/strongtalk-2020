@@ -103,7 +103,7 @@ void VMProcess::loop() {
 
 
 void VMProcess::print() {
-    spdlog::info( "VMProcess" );
+    SPDLOG_INFO( "VMProcess" );
 }
 
 

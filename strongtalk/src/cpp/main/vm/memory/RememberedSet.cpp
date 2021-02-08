@@ -168,16 +168,16 @@ void RememberedSet::scavenge_contents( OldSpace *sp ) {
 void RememberedSet::print_set_for_space( OldSpace *sp ) {
     char *current_byte = byte_for( sp->bottom() );
     char *end_byte     = byte_for( sp->top() );
-    spdlog::info( "%s: [0x{0:x}, 0x{0:x}]", sp->name(), current_byte, end_byte );
+    SPDLOG_INFO( "%s: [0x{0:x}, 0x{0:x}]", sp->name(), current_byte, end_byte );
     while ( current_byte <= end_byte ) {
         if ( *current_byte ) {
-            spdlog::info( "_" );
+            SPDLOG_INFO( "_" );
         } else {
-            spdlog::info( "*" );
+            SPDLOG_INFO( "*" );
         }
         current_byte++;
     }
-    spdlog::info( "" );
+    SPDLOG_INFO( "" );
 }
 
 
@@ -267,7 +267,7 @@ void RememberedSet::print_set_for_object( MemOop obj ) {
     obj->print_value();
     _console->cr();
     if ( obj->is_new() ) {
-        spdlog::info( " object is in new Space" );
+        SPDLOG_INFO( " object is in new Space" );
     } else {
         _console->sp();
         char *current_byte = byte_for( obj->addr() );

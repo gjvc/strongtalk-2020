@@ -28,7 +28,7 @@ bool Reflection::needs_schema_change() {
         if ( TraceApplyChange and sub_result ) {
             _classChanges->at( i )->old_klass()->print_value();
             _console->cr();
-            spdlog::info( "  needs schema change because: %s.", _classChanges->at( i )->reason_for_schema_change() );
+            SPDLOG_INFO( "  needs schema change because: %s.", _classChanges->at( i )->reason_for_schema_change() );
         }
         result = result or sub_result;
     }
@@ -158,7 +158,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
     //
     ResourceMark resourceMark;
     if ( TraceApplyChange ) {
-        spdlog::info( "Reflective change  [new] {}  [old] {}", new_mixin->print_value_string(), old_mixin->print_value_string(), invocations->print_value_string() );
+        SPDLOG_INFO( "Reflective change  [new] {}  [old] {}", new_mixin->print_value_string(), old_mixin->print_value_string(), invocations->print_value_string() );
         Universe::verify();
     }
 
@@ -181,7 +181,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
     if ( format_changed ) {
 
         if ( TraceApplyChange ) {
-            spdlog::info( " - schema change is needed" );
+            SPDLOG_INFO( " - schema change is needed" );
         }
 
         _converted = new GrowableArray<MemOop>( 100 );
@@ -212,8 +212,8 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
         for ( std::int32_t j = 0; j < _converted->length(); j++ ) {
             MemOop obj = _converted->at( j );
             if ( TraceApplyChange ) {
-                spdlog::info( "Old: 0x%lx, 0x%lx", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
-                spdlog::info( "New: 0x%lx, 0x%lx", static_cast<const void *>(obj->forwardee()), static_cast<const void *>(obj->forwardee()->mark()) );
+                SPDLOG_INFO( "Old: 0x%lx, 0x%lx", static_cast<const void *>(obj), static_cast<const void *>(obj->mark()) );
+                SPDLOG_INFO( "New: 0x%lx, 0x%lx", static_cast<const void *>(obj->forwardee()), static_cast<const void *>(obj->forwardee()->mark()) );
             }
             obj->set_mark( obj->forwardee()->mark() );
         }
@@ -223,7 +223,7 @@ void Reflection::apply_change( MixinOop new_mixin, MixinOop old_mixin, ObjectArr
 
     } else {
         if ( TraceApplyChange ) {
-            spdlog::info( " - no schema change (%s%s%s)", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
+            SPDLOG_INFO( " - no schema change (%s%s%s)", class_vars_changed ? "class variables " : "", instance_methods_changed ? "instance methods " : "", class_methods_changed ? "class methods " : "" );
         }
         update_classes( class_vars_changed, instance_methods_changed, class_methods_changed );
     }
