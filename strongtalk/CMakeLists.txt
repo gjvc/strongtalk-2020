@@ -143,9 +143,9 @@ list ( FILTER st20-main-library-sources EXCLUDE REGEX "src/cpp/main/vm/main/main
 
 # library ---------------------------------------------------------------------
 
-include_directories ( PRIVATE ${cpp-main-dir} )
-include_directories ( PRIVATE ${cpp-test-dir} )
-include_directories ( PRIVATE ${cpp-auto-dir} )
+include_directories ( ${cpp-main-dir} )
+include_directories ( ${cpp-test-dir} )
+include_directories ( ${cpp-auto-dir} )
 
 include_directories ( SYSTEM ${ext-dir}/googletest/googletest/include )
 include_directories ( SYSTEM ${ext-dir}/nasm/include )

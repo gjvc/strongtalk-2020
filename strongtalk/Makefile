@@ -201,7 +201,7 @@ cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 cxx-machine-options         := arch=native
 cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
-cxx-no-warning-options      := reorder
+cxx-no-warning-options      :=
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
 cxx-optimisation-options    := 3
