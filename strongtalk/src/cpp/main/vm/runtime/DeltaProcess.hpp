@@ -13,15 +13,15 @@
 class DeltaProcess : public Process {
 
 private:
-    Oop          _receiver;      // receiver of the initial message.
-    SymbolOop    _selector;      // selector of the initial message.
-    DeltaProcess *_next;          // the next process in the list (see Processes).
+    Oop          _receiver;         // receiver of the initial message.
+    SymbolOop    _selector;         // selector of the initial message.
+    DeltaProcess *_next;            // the next process in the list (see Processes).
     ProcessOop   _processObject;    // the Delta level process object.
-    ProcessState _state;         // process state.
+    ProcessState _state;            // process state.
 
-    std::int32_t *_last_Delta_fp;
-    Oop          *_last_Delta_sp;
-    const char   *_last_Delta_pc;      // For now only used for stack overflow
+    std::int32_t *_last_delta_fp;
+    Oop          *_last_delta_sp;
+    const char   *_last_delta_pc;      // For now only used for stack overflow
 
     volatile bool _is_terminating;
 
@@ -31,6 +31,7 @@ private:
 
     friend class VMProcess;
 
+
 public:
     static bool stepping;
 
@@ -39,7 +40,10 @@ public:
     virtual ~DeltaProcess();
     DeltaProcess( const DeltaProcess & ) = default;
     DeltaProcess &operator=( const DeltaProcess & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
     void setIsCallback( bool isCallback );
 
@@ -57,48 +61,32 @@ public:
 
     void returnToDebugger();
 
-    // testers
     bool is_deltaProcess() const;
 
     bool isUncommon() const;
 
     // Accessors
     Oop receiver() const;
-
     SymbolOop selector() const;
 
     // process chain operations
     DeltaProcess *next() const;
-
     void set_next( DeltaProcess *p );
 
     // process Oop
     ProcessOop processObject() const;
-
     void set_processObject( ProcessOop p );
-
     bool is_terminating();
-
     void set_terminating();
-
     std::int32_t time_stamp() const;
-
     void inc_time_stamp();
 
-    // last_Delta_fp
-    std::int32_t *last_Delta_fp() const;
-
-    void set_last_Delta_fp( std::int32_t *fp );
-
-    // last_Delta_sp
-    Oop *last_Delta_sp() const;
-
-    void set_last_Delta_sp( Oop *sp );
-
-    // last_Delta_pc
-    const char *last_Delta_pc() const;
-
-    void set_last_Delta_pc( const char *pc );
+    std::int32_t *last_delta_fp() const;            //
+    void set_last_delta_fp( std::int32_t *fp );     //
+    Oop *last_delta_sp() const;                     //
+    void set_last_delta_sp( Oop *sp );              //
+    const char *last_delta_pc() const;              //
+    void set_last_delta_pc( const char *pc );       //
 
     ProcessState state() const;
 
@@ -118,15 +106,6 @@ public:
     void unwinds_do( void f( UnwindInfo *info ) );
 
     void update_nlr_targets( CompiledVirtualFrame *f, ContextOop con );
-
-private:
-    UnwindInfo *_unwind_head; // points to the most recent unwind protect activation.
-    BaseHandle *_firstHandle;
-
-private:
-    void set_state( ProcessState s ) {
-        _state = s;
-    }
 
 
 public:
@@ -196,9 +175,6 @@ public:
     // Profiling operation (see fprofile.cpp)
     Frame profile_top_frame();
 
-private:
-    void transfer( ProcessState reason, DeltaProcess *destination );
-
 public:
 
     // returns whether this process is the active delta process.
@@ -227,16 +203,6 @@ public:
     void transfer_to_vm();
 
     // Static operations
-private:
-    static DeltaProcess  *_active_delta_process;
-    static DeltaProcess  *_main_process;
-    static DeltaProcess  *_scheduler_process;
-    static bool          _is_idle;
-    static volatile char *_active_stack_limit;    //
-    static volatile bool _interrupt;              //
-
-    // The launch function for a new thread
-    static std::int32_t launch_delta( DeltaProcess *process );
 
 public:
     // sets the active process (note: public only to support testing)
@@ -265,12 +231,6 @@ public:
 
     static ProcessState state_of_terminated_process();
 
-private:
-    static volatile bool _process_has_terminated;
-    static ProcessState  _state_of_terminated_process;
-
-    static void check_stack_overflow();
-
 public:
     // Called whenever a async dll call completes
     static void async_dll_call_completed();
@@ -288,7 +248,33 @@ public:
 
     static void runMainProcess();
 
+
+
 private:
+    UnwindInfo *_unwind_head; // points to the most recent unwind protect activation.
+    BaseHandle *_firstHandle;
+
+    void set_state( ProcessState s ) {
+        _state = s;
+    }
+
+    void transfer( ProcessState reason, DeltaProcess *destination );
+
+    static DeltaProcess  *_active_delta_process;
+    static DeltaProcess  *_main_process;
+    static DeltaProcess  *_scheduler_process;
+    static bool          _is_idle;
+    static volatile char *_active_stack_limit;    //
+    static volatile bool _interrupt;              //
+
+    // The launch function for a new thread
+    static std::int32_t launch_delta( DeltaProcess *process );
+
+    static volatile bool _process_has_terminated;
+    static ProcessState  _state_of_terminated_process;
+
+    static void check_stack_overflow();
+
     // Event for waking up the process scheduler when a async dll completes
     static Event *_async_dll_completion_event;
 

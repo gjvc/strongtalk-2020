@@ -5,7 +5,7 @@
 //
 
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitives/dByteArray_primitives.hpp"
+#include "vm/primitives/DoubleByteArray_primitives.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "PrimitiveDescriptor.hpp"
 

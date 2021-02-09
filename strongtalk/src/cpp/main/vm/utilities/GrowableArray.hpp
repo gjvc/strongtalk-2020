@@ -49,9 +49,9 @@ protected:
 
     void raw_sort( std::int32_t f( const void *, const void * ) );
 
-    GenericGrowableArray( std::int32_t initial_size, bool on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, bool on_cxx_runtime_heap = false );
 
-    GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool on_C_heap = false );
+    GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool on_cxx_runtime_heap = false );
 
 
 public:
@@ -92,15 +92,15 @@ private:
 
 public:
 
-    GrowableArray( std::int32_t initial_size, bool on_C_heap = false ) :
-        GenericGrowableArray( initial_size, on_C_heap ),
+    GrowableArray( std::int32_t initial_size, bool on_cxx_runtime_heap = false ) :
+        GenericGrowableArray( initial_size, on_cxx_runtime_heap ),
         _vector(),
         _array() {
     }
 
 
-    GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool on_C_heap = false ) :
-        GenericGrowableArray( initial_size, initial_len, (void *) filler, on_C_heap ),
+    GrowableArray( std::int32_t initial_size, std::int32_t initial_len, T filler, bool on_cxx_runtime_heap = false ) :
+        GenericGrowableArray( initial_size, initial_len, (void *) filler, on_cxx_runtime_heap ),
         _vector(),
         _array() {
     }

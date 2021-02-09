@@ -87,7 +87,7 @@ void handle_error( ProcessState error ) {
 
 
 void handle_interpreter_error( const char *message ) {
-    spdlog::warn( "Interpreter error: %s", message );
+    SPDLOG_WARN( "Interpreter error: %s", message );
     handle_error( ProcessState::stopped );
 }
 
@@ -139,7 +139,7 @@ extern "C" void suspend_on_error( InterpreterErrorConstants error_code ) {
         case InterpreterErrorConstants::nlr_offset_wrong:
             handle_interpreter_error( "NonLocalReturn offset wrong" );
             break;
-        case InterpreterErrorConstants::last_Delta_fp_wrong:
+        case InterpreterErrorConstants::last_delta_fp_wrong:
             handle_interpreter_error( "last Delta frame wrong" );
             break;
         case InterpreterErrorConstants::primitive_result_wrong:
@@ -164,8 +164,8 @@ void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *p
     SPDLOG_INFO( "Trace at exception" );
 
     VirtualFrame *vf;
-    if ( last_Delta_fp ) {
-        Frame c( last_Delta_sp, last_Delta_fp );
+    if ( last_delta_fp ) {
+        Frame c( last_delta_sp, last_delta_fp );
         vf = VirtualFrame::new_vframe( &c );
     } else {
         Frame c( (Oop *) sp, fp, pc );
@@ -179,9 +179,9 @@ void trace_stack_at_exception( std::int32_t *sp, std::int32_t *fp, const char *p
 void suspend_process_at_stack_overflow( std::int32_t *sp, std::int32_t *fp, const char *pc ) {
     DeltaProcess *proc = DeltaProcess::active();
 
-    proc->set_last_Delta_pc( pc );
-    last_Delta_fp = fp;
-    last_Delta_sp = (Oop *) sp;
+    proc->set_last_delta_pc( pc );
+    last_delta_fp = fp;
+    last_delta_sp = (Oop *) sp;
 
     if ( proc->is_scheduler() ) {
         SPDLOG_INFO( "Stack overflow happened in scheduler" );

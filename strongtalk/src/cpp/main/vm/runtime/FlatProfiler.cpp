@@ -191,7 +191,7 @@ void FlatProfiler::record_tick() {
     {
         FlagSetting( processSemaphore, true );
         DeltaProcess *p = DeltaProcess::active();
-        if ( p->last_Delta_fp() ) {
+        if ( p->last_delta_fp() ) {
             record_tick_for_calling_frame( p->last_frame() );
         } else {
             record_tick_for_running_frame( p->profile_top_frame() );

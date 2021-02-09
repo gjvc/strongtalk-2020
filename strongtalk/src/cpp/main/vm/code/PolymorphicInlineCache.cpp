@@ -880,7 +880,7 @@ void PolymorphicInlineCache::verify() {
                 _console->print( "The class " );
                 k->at( i )->klass_part()->print_name_on( _console );
                 SPDLOG_INFO( "is twice in PolymorphicInlineCache 0x%lx", static_cast<const void *>(this) );
-                spdlog::warn( "PolymorphicInlineCache verify error" );
+                SPDLOG_WARN( "PolymorphicInlineCache verify error" );
             }
         }
     }

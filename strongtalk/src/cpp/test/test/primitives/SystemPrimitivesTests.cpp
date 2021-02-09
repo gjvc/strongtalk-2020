@@ -6,7 +6,7 @@
 
 #include "vm/system/platform.hpp"
 #include "vm/memory/Universe.hpp"
-#include "vm/primitives/system_primitives.hpp"
+#include "vm/primitives/SystemPrimitives.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
@@ -180,7 +180,7 @@ TEST( SystemPrimitivesTests, alienFreeShouldReturnMarkedSymbolWhenAddressLargeIn
 
 TEST( SystemPrimitivesTests, alienFreeShouldReturnMarkedSymbolWhenLargeIntegerAddressTooBig ) {
     Oop largeInteger = as_large_integer( 256 * 256 * 256 );
-    Oop tooBig       = byteArrayPrimitives::largeIntegerMultiply( largeInteger, largeInteger );
+    Oop tooBig       = ByteArrayPrimitives::largeIntegerMultiply( largeInteger, largeInteger );
     Oop result       = SystemPrimitives::alienFree( tooBig );
     EXPECT_TRUE( result->is_mark() ) << "return should be marked";
     EXPECT_EQ( markSymbol( vmSymbols::argument_is_invalid() ), result ) << "wrong symbol returned";

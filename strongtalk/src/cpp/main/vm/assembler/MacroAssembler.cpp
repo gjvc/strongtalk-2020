@@ -56,75 +56,75 @@ void MacroAssembler::inline_oop( Oop o ) {
 // Calls to C land
 //
 // When entering C land, the ebp & esp of the last Delta frame have to be recorded.
-// When leaving C land, last_Delta_fp has to be reset to 0. This is required to
+// When leaving C land, last_delta_fp has to be reset to 0. This is required to
 // allow proper stack traversal.
 
-void MacroAssembler::set_last_Delta_frame_before_call() {
-    movl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), ebp );
-    movl( Address( (std::int32_t) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ), esp );
+void MacroAssembler::set_last_delta_frame_before_call() {
+    movl( Address( (std::int32_t) &last_delta_fp, RelocationInformation::RelocationType::external_word_type ), ebp );
+    movl( Address( (std::int32_t) &last_delta_sp, RelocationInformation::RelocationType::external_word_type ), esp );
 }
 
 
-void MacroAssembler::set_last_Delta_frame_after_call() {
+void MacroAssembler::set_last_delta_frame_after_call() {
     addl( esp, OOP_SIZE );    // sets esp to value before call (i.e., before pushing the return address)
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     subl( esp, OOP_SIZE );    // resets esp to original value
 }
 
 
-void MacroAssembler::reset_last_Delta_frame() {
-    movl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ), 0 );
+void MacroAssembler::reset_last_delta_frame() {
+    movl( Address( (std::int32_t) &last_delta_fp, RelocationInformation::RelocationType::external_word_type ), 0 );
 }
 
 
 void MacroAssembler::call_C( Label &L ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( L );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 void MacroAssembler::call_C( Label &L, Label &nlrTestPoint ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( L );
     Assembler::ic_info( nlrTestPoint, 0 );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 void MacroAssembler::call_C( const char *entry, RelocationInformation::RelocationType rtype ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( entry, rtype );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 void MacroAssembler::call_C( const char *entry, RelocationInformation::RelocationType rtype, Label &nlrTestPoint ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( entry, rtype );
     Assembler::ic_info( nlrTestPoint, 0 );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 void MacroAssembler::call_C( const Register &entry ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( entry );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 void MacroAssembler::call_C( const Register &entry, Label &nlrTestPoint ) {
-    set_last_Delta_frame_before_call();
+    set_last_delta_frame_before_call();
     call( entry );
     Assembler::ic_info( nlrTestPoint, 0 );
-    reset_last_Delta_frame();
+    reset_last_delta_frame();
 }
 
 
 /*
     The following 3 macros implement C run-time calls with arguments. When setting up the
-    last Delta frame, the value pushed after last_Delta_sp MUST be a valid return address,
+    last Delta frame, the value pushed after last_delta_sp MUST be a valid return address,
     therefore an additional call to a little stub is required which does the parameter
     passing.
 
@@ -133,10 +133,10 @@ void MacroAssembler::call_C( const Register &entry, Label &nlrTestPoint ) {
     ...            |
     [argument n ] /
     [return addr] <=== must be valid return address  \
-    [...        ] <--- last_Delta_sp                  |
+    [...        ] <--- last_delta_sp                  |
      ...                                              | last Delta frame in Delta land
     [...        ]                                     |
-    [previous fp] <--- last_Delta_fp                 /
+    [previous fp] <--- last_delta_fp                 /
 
     Note: The routines could be implemented slightly more efficient and shorter by
     explicitly pushing/popping a valid return address instead of calling the extra

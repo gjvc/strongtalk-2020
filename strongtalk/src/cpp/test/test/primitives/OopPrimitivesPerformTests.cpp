@@ -7,7 +7,7 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/oopFactory.hpp"
-#include "vm/primitives/oop_primitives.hpp"
+#include "vm/primitives/OopPrimitives.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/OopDescriptor.hpp"
@@ -38,7 +38,7 @@ protected:
 TEST_F( OopPrimitivesPerformTest, noArgPerformWithUnknownShouldInvokeDoesNotUnderstand ) {
 
     SymbolOop selector      = oopFactory::new_symbol( "unknown" );
-    Oop       result        = oopPrimitives::perform( selector, fixture );
+    Oop       result        = OopPrimitives::perform( selector, fixture );
     KlassOop  expectedKlass = KlassOop( Universe::find_global( "Message" ) );
 
     EXPECT_TRUE( result->is_mem() ) << "result should be object";
@@ -52,7 +52,7 @@ TEST_F( OopPrimitivesPerformTest, oneArgPerformWithUnknownShouldInvokeDoesNotUnd
 
     SymbolOop selector      = oopFactory::new_symbol( "unknown:", 8 );
     SymbolOop arg1          = oopFactory::new_symbol( "arg1", 4 );
-    Oop       result        = oopPrimitives::performWith( arg1, selector, fixture );
+    Oop       result        = OopPrimitives::performWith( arg1, selector, fixture );
     KlassOop  expectedKlass = KlassOop( Universe::find_global( "Message" ) );
 
     EXPECT_TRUE( result->is_mem() ) << "result should be object";
@@ -71,7 +71,7 @@ TEST_F( OopPrimitivesPerformTest, twoArgPerformWithUnknownShouldInvokeDoesNotUnd
     SymbolOop selector      = oopFactory::new_symbol( "unknown:with:", 13 );
     SymbolOop arg1          = oopFactory::new_symbol( "arg1", 4 );
     SymbolOop arg2          = oopFactory::new_symbol( "arg2", 4 );
-    Oop       result        = oopPrimitives::performWithWith( arg2, arg1, selector, fixture );
+    Oop       result        = OopPrimitives::performWithWith( arg2, arg1, selector, fixture );
     KlassOop  expectedKlass = KlassOop( Universe::find_global( "Message" ) );
 
     EXPECT_TRUE( result->is_mem() ) << "result should be object";
@@ -92,7 +92,7 @@ TEST_F( OopPrimitivesPerformTest, threeArgPerformWithUnknownShouldInvokeDoesNotU
     SymbolOop                      arg1          = oopFactory::new_symbol( "arg1", 4 );
     SymbolOop                      arg2          = oopFactory::new_symbol( "arg2", 4 );
     SymbolOop                      arg3          = oopFactory::new_symbol( "arg3", 4 );
-    Oop                            result        = oopPrimitives::performWithWithWith( arg3, arg2, arg1, selector, fixture );
+    Oop                            result        = OopPrimitives::performWithWithWith( arg3, arg2, arg1, selector, fixture );
     KlassOop                       expectedKlass = KlassOop( Universe::find_global( "Message" ) );
     EXPECT_TRUE( result->is_mem() ) << "result should be object";
     EXPECT_EQ( expectedKlass, result->klass() ) << "wrong class returned";
@@ -118,7 +118,7 @@ TEST_F( OopPrimitivesPerformTest, varArgPerformWithUnknownShouldInvokeDoesNotUnd
     inputArgs->obj_at_put( 2, arg2 );
     inputArgs->obj_at_put( 3, arg3 );
     inputArgs->obj_at_put( 4, arg4 );
-    Oop      result        = oopPrimitives::performArguments( inputArgs, selector, fixture );
+    Oop      result        = OopPrimitives::performArguments( inputArgs, selector, fixture );
     KlassOop expectedKlass = KlassOop( Universe::find_global( "Message" ) );
 
     EXPECT_TRUE( result->is_mem() ) << "result should be object";

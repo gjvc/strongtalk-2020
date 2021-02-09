@@ -48,11 +48,11 @@ extern "C" void scavenge_and_allocate( std::int32_t size );
 // macros
 
 void PrimitivesGenerator::scavenge( std::int32_t size ) {
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( size );
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->addl( eax, size * OOP_SIZE );
 }
 

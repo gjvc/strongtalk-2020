@@ -93,7 +93,7 @@ bool DLLs::unload( DLL *library ) {
 dll_func_ptr_t DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
     // Call backs to Delta
     if ( Universe::dll_lookup_receiver()->is_nil() ) {
-        spdlog::warn( "dll lookup receiver is not set" );
+        SPDLOG_WARN( "dll lookup receiver is not set" );
     }
     st_assert( theCompiler == nullptr, "Cannot handle call back during compilation" );
 

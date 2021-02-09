@@ -380,7 +380,7 @@ void ScopeDescriptor::verify_expression_stack( std::int32_t byteCodeIndex ) {
     for ( std::int32_t          index    = 0; index < mapping->length(); index++ ) {
         NameDescriptor *nd = exprStackElem( mapping->at( index ) );
         if ( nd == nullptr ) {
-            spdlog::warn( "expression not found in NativeMethod" );
+            SPDLOG_WARN( "expression not found in NativeMethod" );
             continue;
         }
         // Fix this Lars (add parameter for checking registers

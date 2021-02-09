@@ -149,7 +149,7 @@ KlassOop MemOopKlass::create_subclass( MixinOop mixin, Format format ) {
         return WeakArrayKlass::create_class( as_klassOop(), mixin );
 
     if ( number_of_instance_variables() > 0 ) {
-        spdlog::warn( "super class has instance variables when mixing in special mixin" );
+        SPDLOG_WARN( "super class has instance variables when mixing in special mixin" );
         return nullptr;
     }
 

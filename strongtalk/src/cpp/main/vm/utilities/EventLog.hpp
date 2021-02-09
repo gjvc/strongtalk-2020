@@ -172,4 +172,5 @@ public:
             eventLog->log( &event );
         }
     }
+
 };

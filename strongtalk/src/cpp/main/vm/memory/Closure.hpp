@@ -29,7 +29,7 @@ public:
     Closure &operator=( const Closure & ) = default;
 
 
-    void operator delete( void *p ) {}
+    void operator delete( void *p ) { (void)(p);}
 
 };
 
@@ -47,7 +47,7 @@ public:
     ObjectClosure &operator=( const ObjectClosure & ) = default;
 
 
-    void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
     // Called when entering a Space.
@@ -164,7 +164,7 @@ public:
     FrameClosure( const FrameClosure & ) = default;
 
     FrameClosure &operator=( const FrameClosure & ) = default;
-    void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
 public:
@@ -235,7 +235,7 @@ public:
     OopClosure &operator=( const OopClosure & ) = default;
 
 
-    void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
     // Called for each Oop
@@ -255,7 +255,7 @@ public:
     klassOopClosure &operator=( const klassOopClosure & ) = default;
 
 
-    void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
     // Called for each Oop

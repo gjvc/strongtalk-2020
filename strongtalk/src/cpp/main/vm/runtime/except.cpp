@@ -75,8 +75,8 @@ void handle_exception( void *fp, void *sp, void *pc ) {
         return;
     }
 
-    if ( DeltaProcess::active() and last_Delta_fp ) {
-        Frame lastf( (Oop *) last_Delta_sp, (std::int32_t *) last_Delta_fp );
+    if ( DeltaProcess::active() and last_delta_fp ) {
+        Frame lastf( (Oop *) last_delta_sp, (std::int32_t *) last_delta_fp );
         if ( lastf.is_delta_frame() ) {
             traceDeltaFrame( lastf );
             return;
@@ -88,8 +88,8 @@ void handle_exception( void *fp, void *sp, void *pc ) {
         }
     }
 
-    if ( DeltaProcess::active() and DeltaProcess::active()->last_Delta_fp() ) {
-        Frame activef( (Oop *) DeltaProcess::active()->last_Delta_sp(), (std::int32_t *) DeltaProcess::active()->last_Delta_fp() );
+    if ( DeltaProcess::active() and DeltaProcess::active()->last_delta_fp() ) {
+        Frame activef( (Oop *) DeltaProcess::active()->last_delta_sp(), (std::int32_t *) DeltaProcess::active()->last_delta_fp() );
         if ( activef.is_delta_frame() ) {
             traceDeltaFrame( activef );
             return;

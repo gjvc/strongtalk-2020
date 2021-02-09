@@ -64,7 +64,7 @@ public:
 
     void task() {
         char type = '\0';
-        if ( last_Delta_fp ) {
+        if ( last_delta_fp ) {
             if ( theCompiler ) {
                 type = SlidingSystemAverage::in_compiler;
             } else if ( garbageCollectionInProgress ) {

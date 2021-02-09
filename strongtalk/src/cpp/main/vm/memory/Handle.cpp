@@ -66,7 +66,7 @@ public:
     }
     virtual ~FunctionProcessClosure() {}
 
-    void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
 

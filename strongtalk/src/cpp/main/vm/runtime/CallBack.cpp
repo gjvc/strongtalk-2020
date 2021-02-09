@@ -90,7 +90,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
     DeltaProcess *proc = nullptr;
 
     if ( Universe::callBack_receiver()->is_nil() ) {
-        spdlog::warn( "callBack receiver is not set" );
+        SPDLOG_WARN( "callBack receiver is not set" );
     }
 
     std::int32_t low  = get_unsigned_bitfield( params, 0, 16 );
@@ -118,7 +118,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
     if ( have_nlr_through_C ) {
         // Continues the NonLocalReturn after at the next Delta frame
         BaseHandle *handle = DeltaProcess::active()->firstHandle();
-        if ( handle and ( (const char *) handle < (const char *) DeltaProcess::active()->last_Delta_fp() ) )
+        if ( handle and ( (const char *) handle < (const char *) DeltaProcess::active()->last_delta_fp() ) )
             handle->pop();
 
         ErrorHandler::continue_nlr_in_delta();
@@ -129,7 +129,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
     } else if ( res->is_proxy() ) {
         result = (void *) ProxyOop( res )->get_pointer();
     } else {
-        spdlog::warn( "Wrong return type for call back, returning nullptr" );
+        SPDLOG_WARN( "Wrong return type for call back, returning nullptr" );
         result = nullptr;
     }
 

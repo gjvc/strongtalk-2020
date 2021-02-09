@@ -114,89 +114,19 @@ void VirtualSpace::shrink( std::int32_t size ) {
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     if ( low() == low_boundary() ) {
         _high -= size;
-        if ( not os::uncommit_memory( high(), size ) ) st_fatal( "os::uncommit_memory failed" );
+        if ( not os::uncommit_memory( high(), size ) ) {
+            st_fatal( "os::uncommit_memory failed" );
+        }
     } else {
-        if ( not os::uncommit_memory( low(), size ) ) st_fatal( "os::uncommit_memory failed" );
+        if ( not os::uncommit_memory( low(), size ) ) {
+            st_fatal( "os::uncommit_memory failed" );
+        }
         _low += size;
     }
 }
 
 
 void VirtualSpace::print() {
-    SPDLOG_INFO( "Virtual Space:" );
-    SPDLOG_INFO( " - uncommitted_size() [{}]", uncommitted_size() );
-    SPDLOG_INFO( " - committed_size() [{}]", committed_size() );
-    SPDLOG_INFO( " - reserved_size() [{}]", reserved_size() );
-    SPDLOG_INFO( " - [low, high]: [0x{0:x}, 0x{0:x}]", low(), high() );
-    SPDLOG_INFO( " - [low_boundary, high_boundary]: [0x{0:x}, 0x{0:x}", low_boundary(), high_boundary() );
-}
-
-
-VirtualSpace *VirtualSpaces::head = nullptr;
-
-
-void VirtualSpaces::add( VirtualSpace *sp ) {
-    sp->next = head;
-    head = sp;
-}
-
-
-void VirtualSpaces::remove( VirtualSpace *sp ) {
-    print();
-
-    if ( not head )
-        return;
-    if ( head == sp )
-        head = sp->next;
-    else {
-        for ( VirtualSpace *p = head; p->next; p = p->next )
-            if ( p->next == sp )
-                p->next = sp->next;
-    }
-}
-
-
-std::int32_t VirtualSpaces::committed_size() {
-    std::int32_t       total = 0;
-    for ( VirtualSpace *p    = head; p; p = p->next )
-        total += p->committed_size();
-    return total;
-}
-
-
-std::int32_t VirtualSpaces::reserved_size() {
-    std::int32_t       total = 0;
-    for ( VirtualSpace *p    = head; p; p = p->next )
-        total += p->reserved_size();
-    return total;
-}
-
-
-std::int32_t VirtualSpaces::uncommitted_size() {
-    std::int32_t       total = 0;
-    for ( VirtualSpace *p    = head; p; p = p->next )
-        total += p->uncommitted_size();
-    return total;
-}
-
-
-void VirtualSpaces::print() {
-    SPDLOG_INFO( "VirtualSpaces:" );
-    for ( VirtualSpace *p = head; p; p = p->next ) {
-        p->print();
-    }
-}
-
-
-void VirtualSpaces::test() {
-    VirtualSpace space( 128 * 1024, 4 * 1024 );
-    space.print();
-    space.expand( 4 * 1024 );
-    space.print();
-    space.expand( 4 * 1024 );
-    space.print();
-    space.shrink( 4 * 1024 );
-    space.print();
-    space.shrink( 4 * 1024 );
-    space.print();
+    SPDLOG_INFO( "Virtual Space [] committed_size [{}], uncommitted_size [{}], reserved_size [{}], low [0x{0:x}], high [0x{0:x}], low_boundary [0x{0:x}] high_boundary [0x{0:x}]",
+                 committed_size(), uncommitted_size(), reserved_size(), low(), high(), low_boundary(), high_boundary() );
 }

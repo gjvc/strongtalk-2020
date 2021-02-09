@@ -54,7 +54,7 @@ private:
     Label      _stack_misaligned;           // assertion errors
     Label      _ebx_wrong;                  //
     Label      _obj_wrong;                  //
-    Label      _last_Delta_fp_wrong;        //
+    Label      _last_delta_fp_wrong;        //
     Label      _primitive_result_wrong;     //
     const char *_illegal;                   //
 

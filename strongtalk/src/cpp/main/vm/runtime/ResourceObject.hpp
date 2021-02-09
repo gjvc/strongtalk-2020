@@ -42,7 +42,7 @@ class ResourceObject {
 
 public:
 
-    void *operator new( std::size_t size, bool on_C_heap = false );
+    void *operator new( std::size_t size, bool on_cxx_runtime_heap = false );
 
     void operator delete( void *p, std::int32_t ); // use explicit free() to deallocate heap-allocated objects
 

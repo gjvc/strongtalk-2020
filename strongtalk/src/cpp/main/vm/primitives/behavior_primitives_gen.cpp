@@ -7,7 +7,7 @@
 #include "vm/assembler/Label.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 
-#include "vm/primitives/behavior_primitives.hpp"
+#include "vm/primitives/BehaviorPrimitives.hpp"
 #include "vm/primitives/PrimitivesGenerator.hpp"
 
 

@@ -50,7 +50,7 @@ public:
         static_cast<void>(size); // unused
 
         ShouldNotCallThis();
-        return nullptr;
+        return static_cast<void *>(nilObject); // dummy to silence compiler warning
     }
 
 

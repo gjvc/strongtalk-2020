@@ -39,14 +39,12 @@ protected:
 };
 
 
-TEST_F( errorTests, strcmp
-) {
+TEST_F( errorTests, strcmp) {
     ASSERT_EQ( 0, strcmp( "format arg1", "format arg1" ) );
 }
 
 
-TEST_F( errorTests, errorShouldReportErrorWithOneArgToNotifier
-) {
+TEST_F( errorTests, errorShouldReportErrorWithOneArgToNotifier) {
     ::error( "format %s", "arg1" );
 
     ASSERT_EQ( 1, notifier->
@@ -56,8 +54,8 @@ TEST_F( errorTests, errorShouldReportErrorWithOneArgToNotifier
 }
 
 
-TEST_F( errorTests, errorShouldReportErrorWithTwoArgToNotifier
-) {
+TEST_F( errorTests, errorShouldReportErrorWithTwoArgToNotifier) {
+
     ::error( "format %s %s", "arg1", "arg2" );
 
     ASSERT_EQ( 1, notifier->
@@ -67,9 +65,8 @@ TEST_F( errorTests, errorShouldReportErrorWithTwoArgToNotifier
 }
 
 
-TEST_F( errorTests, warningShouldReportWarningWithOneArgToNotifier
-) {
-    ::spdlog::warn( "format %s", "arg1" );
+TEST_F( errorTests, warningShouldReportWarningWithOneArgToNotifier) {
+    SPDLOG_WARN( "format %s", "arg1" );
 
     ASSERT_EQ( 1, notifier->
         warningCount()
@@ -78,8 +75,7 @@ TEST_F( errorTests, warningShouldReportWarningWithOneArgToNotifier
 }
 
 
-TEST_F( errorTests, compiler_warningShouldReportWarningWithOneArgToNotifier
-) {
+TEST_F( errorTests, compiler_warningShouldReportWarningWithOneArgToNotifier) {
     ::compiler_warning( "format %s", "arg1" );
 
     ASSERT_EQ( 1, notifier->
@@ -89,8 +85,8 @@ TEST_F( errorTests, compiler_warningShouldReportWarningWithOneArgToNotifier
 }
 
 
-TEST_F( errorTests, compiler_warningShouldNotReportWarningWhenPrintCompilerWarningsIsFalse
-) {
+TEST_F( errorTests, compiler_warningShouldNotReportWarningWhenPrintCompilerWarningsIsFalse) {
+
     FlagSetting fl( PrintCompilerWarnings, false );
 
     ASSERT_EQ( 0, notifier->

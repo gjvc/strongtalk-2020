@@ -246,7 +246,7 @@ void Compiler::initialize( RecompilationScope *remote_scope ) {
     st_assert( VMProcess::vm_operation() not_eq nullptr, "must be in vmProcess to compile" );
 
     if ( VMProcess::vm_operation() == nullptr ) {
-        spdlog::warn( "should be in vmProcess to compile" ); // softened to a warning to support testing
+        SPDLOG_WARN( "should be in vmProcess to compile" ); // softened to a warning to support testing
     }
 
     compilationCount++;
@@ -308,7 +308,7 @@ void Compiler::initLimits() {
         } else {
             _nextLevel = recompilee->level() + 1;
             if ( _nextLevel >= MAX_RECOMPILATION_LEVELS ) {
-                spdlog::warn( "recompilation level too high -- should not happen" );
+                SPDLOG_WARN( "recompilation level too high -- should not happen" );
                 _nextLevel = MAX_RECOMPILATION_LEVELS;
             }
         }
@@ -418,7 +418,7 @@ public:
         if ( TryNewBackend ) {
             // print out a warning if this class is used
             if ( _first_use ) {
-                spdlog::warn( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
+                SPDLOG_WARN( "TryNewBackend automatically changes some flags for compilation - for temporary use only" );
                 _first_use = false;
             }
 

@@ -9,7 +9,7 @@
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/utilities/IntegerOps.hpp"
-#include "vm/primitives/byteArray_primitives.hpp"
+#include "vm/primitives/ByteArrayPrimitives.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/memory/oopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
@@ -103,9 +103,9 @@ protected:
 
     void allocateAlien( PersistentHandle *&alienHandle, std::int32_t arraySize, std::int32_t alienSize, void *ptr = nullptr ) {
         ByteArrayOop alien = ByteArrayOop( Universe::byteArrayKlassObject()->klass_part()->allocateObjectSize( arraySize ) );
-        byteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
+        ByteArrayPrimitives::alienSetSize( smiOopFromValue( alienSize ), alien );
         if ( ptr ) {
-            byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) ptr ), alien );
+            ByteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) ptr ), alien );
         }
         alienHandle = new PersistentHandle( alien );
         handles->append( &alienHandle );
@@ -125,7 +125,7 @@ protected:
 
         char         text[200];
         bool         ok;
-        std::int32_t actual = asInt( ok, byteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
+        std::int32_t actual = asInt( ok, ByteArrayPrimitives::alienSignedLongAt( smi1, alien->as_oop() ) );
 
         EXPECT_TRUE( ok ) << "not an integer result";
         sprintf( text, "Should be: %d, was: %d", expected, actual );
@@ -166,7 +166,7 @@ protected:
 
 
     void setAddress( PersistentHandle *handle, void *argument ) {
-        byteArrayPrimitives::alienSetAddress( asOop( (std::int32_t) argument ), handle->as_oop() );
+        ByteArrayPrimitives::alienSetAddress( asOop( (std::int32_t) argument ), handle->as_oop() );
     }
 
 
@@ -178,7 +178,7 @@ protected:
             argOops->obj_at_put( index + 1, arg[ index ] );
         }
 
-        return byteArrayPrimitives::alienCallResultWithArguments( argOops, result, address );
+        return ByteArrayPrimitives::alienCallResultWithArguments( argOops, result, address );
     }
 
 
@@ -242,12 +242,12 @@ TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShoul
 
 TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResult1Should16ByteAlignArgs ) {
     Oop fnAddress = asOop( (std::int32_t) &argAlignment2 );
-    byteArrayPrimitives::alienSetAddress( fnAddress, functionAlien->as_oop() );
+    ByteArrayPrimitives::alienSetAddress( fnAddress, functionAlien->as_oop() );
     std::array<Oop, argCount> arg;
     arg[ 1 ] = smi0;
     for ( std::int32_t size = -4; size > -20; size -= 4 ) {
         arg[ 0 ] = addressAlien->as_oop();
-        byteArrayPrimitives::alienSetSize( smiOopFromValue( size ), addressAlien->as_oop() );
+        ByteArrayPrimitives::alienSetSize( smiOopFromValue( size ), addressAlien->as_oop() );
         callout( arg );
         checkIntResult( "wrong result", 0, resultAlien );
     }
@@ -255,7 +255,7 @@ TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResult1Should16ByteAlign
 
 
 TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShouldCallIntPointerArgFunction ) {
-    byteArrayPrimitives::alienSignedLongAtPut( asOop( -1 ), smi1, pointerAlien->as_oop() );
+    ByteArrayPrimitives::alienSignedLongAtPut( asOop( -1 ), smi1, pointerAlien->as_oop() );
     for ( std::int32_t arg = 0; arg < argCount; arg++ ) {
         checkArgnPtrPassed( arg, pointerAlien->as_oop(), intPointerCalloutFunctions );
     }

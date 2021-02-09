@@ -253,7 +253,7 @@ Oop *OldGeneration::allocate_in_next_space( std::int32_t size ) {
     // Scavenge breaks the there is more than one old Space chunks
     // Fix this with VirtualSpace
     // 4/5/96 Lars
-    spdlog::warn( "Second old Space chunk allocated, this could mean trouble" );
+    SPDLOG_WARN( "Second old Space chunk allocated, this could mean trouble" );
     if ( _currentSpace == _oldSpace ) {
 
         std::int32_t space_size = _currentSpace->capacity();

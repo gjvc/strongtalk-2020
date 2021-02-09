@@ -318,7 +318,7 @@ public:
         if ( ++counter > 10 ) {
             if ( processSemaphore )
                 return;
-            if ( last_Delta_fp )
+            if ( last_delta_fp )
                 return;
 
             if ( Sweeper::register_active_frame( DeltaProcess::active()->profile_top_frame() ) ) {

@@ -12,7 +12,7 @@
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/compiler/Node.hpp"
-#include "vm/primitives/oop_primitives.hpp"
+#include "vm/primitives/OopPrimitives.hpp"
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/memory/MarkSweep.hpp"
@@ -54,7 +54,7 @@ protected:
         tenuredTargetContainer = tenuredReplacementContainer = nullptr;
         target                 = replacement                 = nullptr;
         if ( Universe::nilObject() != saveNil )
-            oopPrimitives::become( saveNil, Universe::nilObject() );
+            OopPrimitives::become( saveNil, Universe::nilObject() );
         MarkSweep::collect();
     }
 
@@ -68,41 +68,41 @@ protected:
 };
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacement ) {
-    oopPrimitives::become( replacement, target );
+    OopPrimitives::become( replacement, target );
     EXPECT_EQ( replacement, targetContainer->obj_at( 1 ) ) << "target of become: has not been replaced by replacement";
     EXPECT_EQ( target, replacementContainer->obj_at( 1 ) ) << "replacement has not been replaced by target of become:";
 }
 
 
-TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget ) { EXPECT_EQ( target, oopPrimitives::become( replacement, target ) ) << "should return target"; }
+TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnTarget ) { EXPECT_EQ( target, OopPrimitives::become( replacement, target ) ) << "should return target"; }
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldMarkStoredCards ) {
     Universe::remembered_set->clear();
-    oopPrimitives::become( replacement, target );
+    OopPrimitives::become( replacement, target );
     EXPECT_TRUE( Universe::remembered_set->is_dirty( targetContainer ) ) << "target container should be diry";
     EXPECT_TRUE( Universe::remembered_set->is_dirty( replacementContainer ) ) << "replacement container should be diry";
 }
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldSwapTargetAndReplacementReferencesInTenuredObjects ) {
-    oopPrimitives::become( replacement, target );
+    OopPrimitives::become( replacement, target );
     EXPECT_EQ( replacement, tenuredTargetContainer->value() ) << "target of become: has not been replaced by replacement";
     EXPECT_EQ( target, tenuredReplacementContainer->value() ) << "replacement has not been replaced by target of become:";
 }
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldUpdateRoots ) {
-    oopPrimitives::become( Universe::nilObject(), target );
+    OopPrimitives::become( Universe::nilObject(), target );
     EXPECT_EQ( target, Universe::nilObject() ) << "nilObject should now be target";
 }
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReceiverIsSmallInteger ) {
-    EXPECT_EQ( markSymbol( vmSymbols::first_argument_has_wrong_type() ), oopPrimitives::become( replacement, smiOop_one ) ) << "receiver cannot be small integer";
+    EXPECT_EQ( markSymbol( vmSymbols::first_argument_has_wrong_type() ), OopPrimitives::become( replacement, smiOop_one ) ) << "receiver cannot be small integer";
 }
 
 
 TEST_F( OopPrimitivesBecomeTest, becomeShouldReturnErrorWhenReplacementIsSmallInteger ) {
-    EXPECT_EQ( markSymbol( vmSymbols::second_argument_has_wrong_type() ), oopPrimitives::become( smiOop_one, replacement ) ) << "replacement cannot be small integer";
+    EXPECT_EQ( markSymbol( vmSymbols::second_argument_has_wrong_type() ), OopPrimitives::become( smiOop_one, replacement ) ) << "replacement cannot be small integer";
 }

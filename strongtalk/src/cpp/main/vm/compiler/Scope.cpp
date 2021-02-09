@@ -405,7 +405,7 @@ void InlinedScope::createFloatTemporaries( std::int32_t nofFloats ) {
         if ( isTop() ) {
             // floats are initialized by PrologueNode
         } else {
-            spdlog::warn( "float initialization of floats in inlined scopes not implemented yet" );
+            SPDLOG_WARN( "float initialization of floats in inlined scopes not implemented yet" );
         }
     }
 }
@@ -429,7 +429,7 @@ void InlinedScope::createContextTemporaries( std::int32_t nofTemps ) {
         // fast version, put in a warning so that we can look at this if it happens
         // again (couldn't re-create the situation yet) - gri 5/10/96
         st_assert( isMethodScope() or ( isBlockScope() and method()->block_info() == MethodOopDescriptor::expects_nil ), "check this" );
-        //if (isBlockScope()) spdlog::warn("possibly a bug in InlinedScope::createContextTemporaries - tell Robert");
+        //if (isBlockScope()) SPDLOG_WARN("possibly a bug in InlinedScope::createContextTemporaries - tell Robert");
         _context = new SinglyAssignedPseudoRegister( this, PrologueByteCodeIndex, EpilogueByteCodeIndex );
     }
     // The canonical model has the context in the first temporary.
@@ -882,7 +882,7 @@ void InlinedScope::genCode() {
             // float expression stack fits in FPU stack, use it instead and allocate only Space for the real float temporaries
             nofFloats = method()->number_of_float_temporaries();
         } else {
-            spdlog::warn( "possible performance bug: cannot use FPU stack for float expressions" );
+            SPDLOG_WARN( "possible performance bug: cannot use FPU stack for float expressions" );
         }
     }
     createFloatTemporaries( nofFloats );

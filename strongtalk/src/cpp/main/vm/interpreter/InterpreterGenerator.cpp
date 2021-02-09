@@ -740,9 +740,9 @@ const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_c
         _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into smi_t (pushed on the stack!)
         save_esi();                                             // save vital registers
         _macroAssembler->pushl( ebx );                                     // pass as argument
-        _macroAssembler->set_last_Delta_frame_before_call();               // allocateBlock needs last Delta frame!
+        _macroAssembler->set_last_delta_frame_before_call();               // allocateBlock needs last Delta frame!
         _macroAssembler->call( GeneratedPrimitives::allocateBlock( nofArgs ), RelocationInformation::RelocationType::runtime_call_type );    // eax: = block closure(nof. args)
-        _macroAssembler->reset_last_Delta_frame();
+        _macroAssembler->reset_last_delta_frame();
         _macroAssembler->popl( ebx );                            // get rid of argument
     } else {
         // no. of arguments implied by 1st byte
@@ -1403,7 +1403,7 @@ const char *InterpreterGenerator::call_DLL( bool async ) {
     _macroAssembler->bind( L );                                    // and continue
     _macroAssembler->movb( ebx, Address( esi, -1 ) );              // get no. of arguments
     _macroAssembler->movl( ecx, esp );                             // get address of last argument
-    save_esi();                                         // don't use call_C because no last_Delta_frame setup needed
+    save_esi();                                         // don't use call_C because no last_delta_frame setup needed
     _macroAssembler->call( StubRoutines::call_DLL_entry( async ), RelocationInformation::RelocationType::runtime_call_type ); // eax: = DLL call via a separate frame (parameter conversion)
     _macroAssembler->ic_info( _nlr_testpoint, 0 );
     restore_esi();
@@ -1485,7 +1485,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     Label deoptimized_nlr_continuation;
 
     _macroAssembler->bind( deoptimized_C_nlr_continuation );
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
 //      [[fallthrough]];
     _macroAssembler->bind( deoptimized_nlr_continuation );
     // mov	eax, [_nlr_result]
@@ -1552,7 +1552,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     maybeINT3()
     restore_esi();
     restore_ebx();                  // ebx: = 0
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
     if ( _debug ) {
         _macroAssembler->test( eax, MARK_TAG_BIT );
         _macroAssembler->jcc( Assembler::Condition::notZero, _primitive_result_wrong );
@@ -1571,7 +1571,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     maybeINT3()
     restore_esi();
     restore_ebx();                  // ebx: = 0
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
     _macroAssembler->test( eax, MARK_TAG_BIT );          // if not marked then
     _macroAssembler->jcc( Assembler::Condition::notZero, _deoptimized_return_from_primitive_call_with_failure_block_failed );
     _macroAssembler->movl( ecx, Address( esi, -OOP_SIZE ) );      // load jump offset
@@ -1592,7 +1592,7 @@ void InterpreterGenerator::generate_deoptimized_return_code() {
     Interpreter::_dr_from_dll_call = _macroAssembler->pc();
     _macroAssembler->ic_info( deoptimized_C_nlr_continuation, 0 );
     maybeINT3()
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
     restore_esi();
     restore_ebx();                  // ebx: = 0
     // eax: DLL result
@@ -1659,7 +1659,7 @@ void InterpreterGenerator::generate_forStubRoutines() {
 
     Interpreter::_nlr_single_step_continuation_entry = _macroAssembler->pc();
     _macroAssembler->bind( Interpreter::_nlr_single_step_continuation );
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
     _macroAssembler->jmp( _nlr_testpoint );
 }
 
@@ -1774,9 +1774,9 @@ void InterpreterGenerator::generate_method_entry_code() {
     _macroAssembler->bind( counter_overflow );
     // not necessary to store esi since it has been just initialized
     _macroAssembler->pushl( edi );                                                          // move tos on stack (temp0, always here)
-    _macroAssembler->set_last_Delta_frame_before_call();                                    //
+    _macroAssembler->set_last_delta_frame_before_call();                                    //
     _macroAssembler->call( handle_counter_overflow );                                       // introduce extra frame to pass arguments
-    _macroAssembler->reset_last_Delta_frame();                                              //
+    _macroAssembler->reset_last_delta_frame();                                              //
     _macroAssembler->popl( edi );                                                           // restore edi, used to initialize eax
 
     // Should check here if recompilation created a NativeMethod for this methodOop. If so, one should redo the send and thus start the NativeMethod.
@@ -1807,7 +1807,7 @@ void InterpreterGenerator::generate_method_entry_code() {
     block_entry_point = _macroAssembler->pc();
     _macroAssembler->bind( _block_entry );
     _macroAssembler->movl( ecx, Address( eax, BlockClosureOopDescriptor::method_or_entry_byte_offset() ) );    // get methodOop/jump table entry out of closure
-    _macroAssembler->reset_last_Delta_frame();                                                  // if called from the interpreter, the last Delta frame is setup
+    _macroAssembler->reset_last_delta_frame();                                                  // if called from the interpreter, the last Delta frame is setup
     _macroAssembler->test( ecx, MEMOOP_TAG ); // if methodOop then
     _macroAssembler->jcc( Assembler::Condition::notZero, is_interpreted ); // start methodOop execution
     _macroAssembler->jmp( ecx ); // else jump to jump table entry
@@ -2207,8 +2207,8 @@ void InterpreterGenerator::generate_error_handler_code() {
     _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::obj_wrong ) );
     _macroAssembler->jmp( suspend );
 
-    _macroAssembler->bind( _last_Delta_fp_wrong );
-    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::last_Delta_fp_wrong ) );
+    _macroAssembler->bind( _last_delta_fp_wrong );
+    _macroAssembler->movl( ecx, static_cast<std::int32_t>( InterpreterErrorConstants::last_delta_fp_wrong ) );
     _macroAssembler->jmp( suspend );
 
     _macroAssembler->bind( _primitive_result_wrong );
@@ -2311,7 +2311,7 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
     // esi: no. of arguments to pop (1s complement)
 
     _macroAssembler->bind( _C_nlr_testpoint );
-    _macroAssembler->reset_last_Delta_frame();
+    _macroAssembler->reset_last_delta_frame();
     nlr_testpoint_entry = _macroAssembler->pc();
     _macroAssembler->bind( _nlr_testpoint );
 
@@ -3518,7 +3518,7 @@ InterpreterGenerator::InterpreterGenerator( CodeBuffer *code, bool debug ) :
     _stack_misaligned{},
     _ebx_wrong{},
     _obj_wrong{},
-    _last_Delta_fp_wrong{},
+    _last_delta_fp_wrong{},
     _primitive_result_wrong{},
     _illegal{ nullptr } {
 }

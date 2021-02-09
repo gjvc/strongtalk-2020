@@ -19,7 +19,7 @@ public:
     virtual ~AbstractMethodIntervalFactory() = default;
 
 
-    void operator delete( void *ptr ) {}
+    static void operator delete( void *ptr ) { (void)ptr; }
 
 
 public:
@@ -51,7 +51,7 @@ public:
     virtual ~MethodIntervalFactory() = default;
 
 
-    void operator delete( void *ptr ) {}
+    static void operator delete( void *ptr ) { (void)ptr; }
 
 
 public:

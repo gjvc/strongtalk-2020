@@ -107,8 +107,9 @@ bool MemOopDescriptor::verify() {
         MarkOop m = mark();
         if ( not Oop( m )->is_mark() ) {
             error( "mark of MemOop 0x{0:x} isn't a markOop", this );
-            if ( not m->verify() )
+            if ( not m->verify() ) {
                 error( " mark of MemOop 0x{0:x} isn't even a legal Oop", this );
+            }
             flag = false;
         }
         KlassOop p = klass();

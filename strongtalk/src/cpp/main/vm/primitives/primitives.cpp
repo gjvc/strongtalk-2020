@@ -8,21 +8,21 @@
 #include "vm/compiler/Expression.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
-#include "vm/primitives/behavior_primitives.hpp"
+#include "vm/primitives/BehaviorPrimitives.hpp"
 #include "vm/primitives/block_primitives.hpp"
-#include "vm/primitives/byteArray_primitives.hpp"
-#include "vm/primitives/callBack_primitives.hpp"
-#include "vm/primitives/dByteArray_primitives.hpp"
-#include "vm/primitives/debug_primitives.hpp"
-#include "vm/primitives/double_primitives.hpp"
-#include "vm/primitives/method_primitives.hpp"
-#include "vm/primitives/mixin_primitives.hpp"
-#include "vm/primitives/objArray_primitives.hpp"
-#include "vm/primitives/oop_primitives.hpp"
-#include "vm/primitives/process_primitives.hpp"
-#include "vm/primitives/proxy_primitives.hpp"
-#include "vm/primitives/smi_primitives.hpp"
-#include "vm/primitives/system_primitives.hpp"
+#include "vm/primitives/ByteArrayPrimitives.hpp"
+#include "vm/primitives/CallBackPrimitives.hpp"
+#include "vm/primitives/DoubleByteArray_primitives.hpp"
+#include "vm/primitives/DebugPrimitives.hpp"
+#include "vm/primitives/DoubleOopPrimitives.hpp"
+#include "vm/primitives/MethodOopPrimitives.hpp"
+#include "vm/primitives/MixinOopPrimitives.hpp"
+#include "vm/primitives/ObjectArrayPrimitives.hpp"
+#include "vm/primitives/OopPrimitives.hpp"
+#include "vm/primitives/ProcessOopPrimitives.hpp"
+#include "vm/primitives/ProxyOopPrimitives.hpp"
+#include "vm/primitives/SmallIntegerOopPrimitives.hpp"
+#include "vm/primitives/SystemPrimitives.hpp"
 #include "vm/primitives/primitives_table.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/primitives/PrimitiveDescriptor.hpp"
@@ -72,7 +72,9 @@ const char *name_from_group( const PrimitiveGroup &group ) {
             return "BlockPrimitive";
         case PrimitiveGroup::NormalPrimitive:
             return "NormalPrimitive";
-        default: st_fatal( "Unknown primitive group" );
+        default:
+            st_fatal( "Unknown primitive group" );
+            return nullptr;
     }
 
 }
@@ -286,19 +288,19 @@ void Primitives::clear_counters() {
 
     SPDLOG_INFO( "%primitives-init:  primitive_table: clear counters" );
 
-    behaviorPrimitives::number_of_calls        = 0;
-    byteArrayPrimitives::number_of_calls       = 0;
-    callBackPrimitives::number_of_calls        = 0;
-    doubleByteArrayPrimitives::number_of_calls = 0;
-    debugPrimitives::number_of_calls           = 0;
-    doubleOopPrimitives::number_of_calls       = 0;
-    methodOopPrimitives::number_of_calls       = 0;
-    mixinOopPrimitives::number_of_calls        = 0;
-    objArrayPrimitives::number_of_calls        = 0;
-    oopPrimitives::number_of_calls             = 0;
-    processOopPrimitives::number_of_calls      = 0;
-    proxyOopPrimitives::number_of_calls        = 0;
-    smiOopPrimitives::number_of_calls          = 0;
+    BehaviorPrimitives::number_of_calls  = 0;
+    ByteArrayPrimitives::number_of_calls       = 0;
+    CallBackPrimitives::number_of_calls        = 0;
+    DoubleByteArrayPrimitives::number_of_calls = 0;
+    DebugPrimitives::number_of_calls           = 0;
+    DoubleOopPrimitives::number_of_calls       = 0;
+    MethodOopPrimitives::number_of_calls = 0;
+    MixinOopPrimitives::number_of_calls    = 0;
+    ObjectArrayPrimitives::number_of_calls = 0;
+    OopPrimitives::number_of_calls        = 0;
+    ProcessOopPrimitives::number_of_calls = 0;
+    ProxyOopPrimitives::number_of_calls        = 0;
+    SmallIntegerOopPrimitives::number_of_calls = 0;
     SystemPrimitives::number_of_calls          = 0;
 
 }
@@ -316,19 +318,19 @@ void Primitives::print_counters() {
     std::int32_t total{ 0 };
 
     SPDLOG_INFO( "Primitive call counters:" );
-    print_calls( "behavior", behaviorPrimitives::number_of_calls, &total );
-    print_calls( "byteArray", byteArrayPrimitives::number_of_calls, &total );
-    print_calls( "callBack", callBackPrimitives::number_of_calls, &total );
-    print_calls( "doubleByteArray", doubleByteArrayPrimitives::number_of_calls, &total );
-    print_calls( "debug", debugPrimitives::number_of_calls, &total );
-    print_calls( "double", doubleOopPrimitives::number_of_calls, &total );
-    print_calls( "method", methodOopPrimitives::number_of_calls, &total );
-    print_calls( "mixin", mixinOopPrimitives::number_of_calls, &total );
-    print_calls( "objArray", objArrayPrimitives::number_of_calls, &total );
-    print_calls( "oop", oopPrimitives::number_of_calls, &total );
-    print_calls( "process", processOopPrimitives::number_of_calls, &total );
-    print_calls( "proxy", proxyOopPrimitives::number_of_calls, &total );
-    print_calls( "smi_t", smiOopPrimitives::number_of_calls, &total );
+    print_calls( "behavior", BehaviorPrimitives::number_of_calls, &total );
+    print_calls( "byteArray", ByteArrayPrimitives::number_of_calls, &total );
+    print_calls( "callBack", CallBackPrimitives::number_of_calls, &total );
+    print_calls( "doubleByteArray", DoubleByteArrayPrimitives::number_of_calls, &total );
+    print_calls( "debug", DebugPrimitives::number_of_calls, &total );
+    print_calls( "double", DoubleOopPrimitives::number_of_calls, &total );
+    print_calls( "method", MethodOopPrimitives::number_of_calls, &total );
+    print_calls( "mixin", MixinOopPrimitives::number_of_calls, &total );
+    print_calls( "objArray", ObjectArrayPrimitives::number_of_calls, &total );
+    print_calls( "oop", OopPrimitives::number_of_calls, &total );
+    print_calls( "process", ProcessOopPrimitives::number_of_calls, &total );
+    print_calls( "proxy", ProxyOopPrimitives::number_of_calls, &total );
+    print_calls( "smi_t", SmallIntegerOopPrimitives::number_of_calls, &total );
     print_calls( "system", SystemPrimitives::number_of_calls, &total );
     SPDLOG_INFO( "{<16}{:d}", "total", total );
 

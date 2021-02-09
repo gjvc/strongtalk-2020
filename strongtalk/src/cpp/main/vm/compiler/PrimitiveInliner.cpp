@@ -81,7 +81,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
             res = oopFactory::clone_double_to_oldspace( DoubleOop( res ) );
         } else {
             // don't know how to tenure non-doubles
-            spdlog::warn( "const folding: primitive %s is returning non-tenured object", _primitiveDescriptor->name() );
+            SPDLOG_WARN( "const folding: primitive %s is returning non-tenured object", _primitiveDescriptor->name() );
             return nullptr;
         }
     }

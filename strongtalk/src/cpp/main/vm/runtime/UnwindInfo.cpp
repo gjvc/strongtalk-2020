@@ -24,12 +24,12 @@ UnwindInfo::UnwindInfo() :
     _nlr_result{ ::nlr_result },
     _next{ nullptr },
     saved_C_frame_return_addr{ C_frame_return_addr },
-    saved_C_frame_return_addr_location{ (char **) ( last_Delta_sp - 1 ) },
+    saved_C_frame_return_addr_location{ (char **) ( last_delta_sp - 1 ) },
     saved_patch_return_address{ *saved_C_frame_return_addr_location },
     _is_compiled{ _nlr_home_id >= 0 } {
 
     st_assert( have_nlr_through_C, "you must have have_nlr_through_C before using unwindInfo" );
-    st_assert( last_Delta_fp, "last_Delta_fp must be set" );
+    st_assert( last_delta_fp, "last_delta_fp must be set" );
 
     // Restore original return address
     *saved_C_frame_return_addr_location = saved_C_frame_return_addr;

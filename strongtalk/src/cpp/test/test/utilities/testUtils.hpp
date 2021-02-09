@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "vm/primitives/byteArray_primitives.hpp"
+#include "vm/primitives/ByteArrayPrimitives.hpp"
 
 
 #define as_large_integer( value ) \
-  byteArrayPrimitives::largeIntegerFromSmallInteger(smiOopFromValue(value), KlassOop(Universe::find_global("LargeInteger")))
+  ByteArrayPrimitives::largeIntegerFromSmallInteger(smiOopFromValue(value), KlassOop(Universe::find_global("LargeInteger")))

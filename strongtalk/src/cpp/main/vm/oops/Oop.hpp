@@ -40,9 +40,10 @@ constexpr std::int32_t OOP_SIZE = sizeof( Oop );
 
 // -----------------------------------------------------------------------------
 
-typedef Oop     (__CALLING_CONVENTION *primitiveFunctionType)( ... );
-typedef void    (__CALLING_CONVENTION *oopsDoFn)( Oop *p );
-typedef void    (__CALLING_CONVENTION *doFn)();
+typedef std::int32_t    (__CALLING_CONVENTION *mytype)( std::int32_t a, std::int32_t b );
+typedef Oop             (__CALLING_CONVENTION *primitiveFunctionType)( ... );
+typedef void            (__CALLING_CONVENTION *oopsDoFn)( Oop *p );
+typedef void            (__CALLING_CONVENTION *doFn)();
 
 
 // -----------------------------------------------------------------------------

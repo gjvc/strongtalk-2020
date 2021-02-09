@@ -707,7 +707,7 @@ const char *Inliner::checkSendInPrimFailure() {
         // never executed; shouldn't even generate code for failure!
         // (note: if failure block has several sends, this can happen, but in the standard system it's probably a performance bug)
         if ( WizardMode )
-            spdlog::warn( "probably should have made primitive failure uncommon" );
+            SPDLOG_WARN( "probably should have made primitive failure uncommon" );
 
         return "untaken send in primitive failure";
     }

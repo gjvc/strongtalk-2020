@@ -156,23 +156,23 @@ bool Frame::is_entry_frame() const {
 }
 
 
-bool Frame::has_next_Delta_fp() const {
-    return at( frame_next_Delta_fp_offset ) not_eq 0;
+bool Frame::has_next_delta_fp() const {
+    return at( frame_next_delta_fp_offset ) not_eq 0;
 }
 
 
-std::int32_t *Frame::next_Delta_fp() const {
-    return (std::int32_t *) at( frame_next_Delta_fp_offset );
+std::int32_t *Frame::next_delta_fp() const {
+    return (std::int32_t *) at( frame_next_delta_fp_offset );
 }
 
 
-Oop *Frame::next_Delta_sp() const {
-    return (Oop *) at( frame_next_Delta_sp_offset );
+Oop *Frame::next_delta_sp() const {
+    return (Oop *) at( frame_next_delta_sp_offset );
 }
 
 
 bool Frame::is_first_frame() const {
-    return is_entry_frame() and not has_next_Delta_fp();
+    return is_entry_frame() and not has_next_delta_fp();
 }
 
 
@@ -352,7 +352,7 @@ bool Frame::oop_iterate_interpreted_float_frame( OopClosure *blk ) {
 bool Frame::oop_iterate_compiled_float_frame( OopClosure *blk ) {
     static_cast<void>(blk); // unused
 
-    spdlog::warn( "oop_iterate_compiled_float_frame not implemented" );
+    SPDLOG_WARN( "oop_iterate_compiled_float_frame not implemented" );
     return false;
 }
 
@@ -437,7 +437,7 @@ bool Frame::follow_roots_interpreted_float_frame() {
 
 
 bool Frame::follow_roots_compiled_float_frame() {
-    spdlog::warn( "follow_roots_compiled_float_frame not implemented" );
+    SPDLOG_WARN( "follow_roots_compiled_float_frame not implemented" );
     return true;
 }
 
@@ -554,9 +554,9 @@ Frame Frame::sender() const {
     if ( is_entry_frame() ) {
         // Delta frame called from C; skip all C frames and return top C
         // frame of that chunk as the sender
-        st_assert( has_next_Delta_fp(), "next Delta fp must be non zero" );
-        st_assert( next_Delta_fp() > _fp, "must be above this frame on stack" );
-        result = Frame( next_Delta_sp(), next_Delta_fp() );
+        st_assert( has_next_delta_fp(), "next Delta fp must be non zero" );
+        st_assert( next_delta_fp() > _fp, "must be above this frame on stack" );
+        result = Frame( next_delta_sp(), next_delta_fp() );
     } else if ( is_deoptimized_frame() ) {
         result = Frame( real_sender_sp(), link(), return_addr() );
     } else {

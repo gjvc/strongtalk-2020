@@ -17,6 +17,9 @@ extern bool bootstrappingInProgress;
 
 
 std::int32_t WINAPI startThread( void *params ) {
+
+    SPDLOG_INFO( "Win32: startThread" );
+
     char *spptr;
     asm( "mov %%esp, %0;" :"=r"(spptr) );
     std::int32_t stackHeadroom = 2 * os::vm_page_size();
@@ -644,8 +647,9 @@ void os_init_processor_affinity() {
         processorId >>= 1;
 
     SPDLOG_INFO( "system-init:  os-init:  set-processor-affinity: processorId: [{:d}]", processorId );
-    if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) )
+    if ( not SetProcessAffinityMask( GetCurrentProcess(), processorId ) ) {
         SPDLOG_INFO( "error code: {}", GetLastError() );
+    }
 
 }
 
@@ -678,8 +682,6 @@ int WINAPI strongtalkConsoleCtrlHandler( DWORD dwCtrlType ) {
 
     return true;
 }
-
-
 
 
 void os_init() {

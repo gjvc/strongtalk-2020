@@ -102,7 +102,7 @@ bool KlassKlass::oop_verify( Oop obj ) {
         std::int32_t b = k->oop_header_size();
         std::int32_t c = k->number_of_instance_variables();
         if ( a not_eq b + c ) {
-            spdlog::warn( "KlassKlass::oop_verify: inconsistent non-indexable size {:d} not_eq {:d} + {:d}", a, b, c );
+            SPDLOG_WARN( "KlassKlass::oop_verify: inconsistent: non_indexable_size [{:d}] should be sum of oop_header_size [{:d}] and number_of_instance_variables [{:d}]", a, b, c );
         }
     }
 

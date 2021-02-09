@@ -30,16 +30,12 @@
 // The tricky part is to restore the original return address of the primitive before the delta call.
 // This is necessary for a consistent stack during the delta call.
 
-//
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Wmissing-noreturn"
-//
-
 // Interpreter entry point for redoing a send.
-//extern "C" void redo_bytecode_after_deoptimization();
-//extern "C" char redo_bytecode_after_deoptimization;
+extern "C" void redo_bytecode_after_deoptimization();
 
 extern "C" {
+
+
 bool         nlr_through_unpacking                 = false;
 Oop          result_through_unpacking              = nullptr;
 std::int32_t number_of_arguments_through_unpacking = 0;
@@ -53,64 +49,63 @@ extern Oop          nlr_result;
 }
 
 
-DeltaProcess  *DeltaProcess::_active_delta_process = nullptr;
-DeltaProcess  *DeltaProcess::_main_process         = nullptr;
-volatile char *DeltaProcess::_active_stack_limit   = nullptr;
-DeltaProcess  *DeltaProcess::_scheduler_process    = nullptr;
-bool          DeltaProcess::_is_idle               = false;
-volatile bool DeltaProcess::_interrupt             = false;
-
-volatile bool   DeltaProcess::_process_has_terminated      = false;
-ProcessState    DeltaProcess::_state_of_terminated_process = ProcessState::initialized;
+DeltaProcess  *DeltaProcess::_active_delta_process       = nullptr;
+DeltaProcess  *DeltaProcess::_main_process               = nullptr;
+volatile char *DeltaProcess::_active_stack_limit         = nullptr;
+DeltaProcess  *DeltaProcess::_scheduler_process          = nullptr;
+bool          DeltaProcess::_is_idle                     = false;
+volatile bool DeltaProcess::_interrupt                   = false;
+volatile bool DeltaProcess::_process_has_terminated      = false;
+ProcessState  DeltaProcess::_state_of_terminated_process = ProcessState::initialized;
 
 Event *DeltaProcess::_async_dll_completion_event = nullptr;
 
 
 bool processSemaphore = false;
 
+
 // For current Delta process, the last FP/Sp is stored in these global vars, not the instance vars of the process
-std::int32_t *last_Delta_fp = nullptr;
-Oop          *last_Delta_sp = nullptr;
+std::int32_t *last_delta_fp = nullptr;
+Oop          *last_delta_sp = nullptr;
 
-
-// last_Delta_fp
-std::int32_t *DeltaProcess::last_Delta_fp() const {
-    return this == _active_delta_process ? ::last_Delta_fp : _last_Delta_fp;
+// last_delta_fp
+std::int32_t *DeltaProcess::last_delta_fp() const {
+    return this == _active_delta_process ? ::last_delta_fp : _last_delta_fp;
 }
 
 
-void DeltaProcess::set_last_Delta_fp( std::int32_t *fp ) {
+void DeltaProcess::set_last_delta_fp( std::int32_t *fp ) {
     if ( this == _active_delta_process ) {
-        ::last_Delta_fp = fp;
+        ::last_delta_fp = fp;
     } else {
-        _last_Delta_fp = fp;
+        _last_delta_fp = fp;
     }
 }
 
 
-Oop *DeltaProcess::last_Delta_sp() const {
-    return this == _active_delta_process ? ::last_Delta_sp : _last_Delta_sp;
+Oop *DeltaProcess::last_delta_sp() const {
+    return this == _active_delta_process ? ::last_delta_sp : _last_delta_sp;
 }
 
 
-void DeltaProcess::set_last_Delta_sp( Oop *sp ) {
+void DeltaProcess::set_last_delta_sp( Oop *sp ) {
     if ( this == _active_delta_process ) {
-        ::last_Delta_sp = sp;
+        ::last_delta_sp = sp;
     } else {
-        _last_Delta_sp = sp;
+        _last_delta_sp = sp;
     }
 }
 
 
-const char *DeltaProcess::last_Delta_pc() const {
+const char *DeltaProcess::last_delta_pc() const {
 //    if ( this == nullptr )
 //        return nullptr;
-    return _last_Delta_pc;
+    return _last_delta_pc;
 }
 
 
-void DeltaProcess::set_last_Delta_pc( const char *pc ) {
-    _last_Delta_pc = pc;
+void DeltaProcess::set_last_delta_pc( const char *pc ) {
+    _last_delta_pc = pc;
 }
 
 
@@ -124,13 +119,13 @@ void DeltaProcess::transfer( ProcessState reason, DeltaProcess *target ) {
         st_assert( this == active(), "receiver must be the active process" );
 
         // save state
-        _last_Delta_fp = ::last_Delta_fp;    // *don't* use accessors! (check their implementation to see why)
-        _last_Delta_sp = ::last_Delta_sp;
+        _last_delta_fp = ::last_delta_fp;    // *don't* use accessors! (check their implementation to see why)
+        _last_delta_sp = ::last_delta_sp;
         set_state( reason );
 
         // restore state
-        ::last_Delta_fp = target->_last_Delta_fp;    // *don't* use accessors!
-        ::last_Delta_sp = target->_last_Delta_sp;
+        ::last_delta_fp = target->_last_delta_fp;    // *don't* use accessors!
+        ::last_delta_sp = target->_last_delta_sp;
         set_current( target );
         set_active( target );
         resetStepping();
@@ -180,8 +175,8 @@ void DeltaProcess::transfer_to_vm() {
         st_assert( this == active(), "receiver must be the active process" );
 
         // save state
-        _last_Delta_fp = ::last_Delta_fp;    // *don't* use accessors! (check their implementation to see why)
-        _last_Delta_sp = ::last_Delta_sp;
+        _last_delta_fp = ::last_delta_fp;    // *don't* use accessors! (check their implementation to see why)
+        _last_delta_sp = ::last_delta_sp;
         set_current( VMProcess::vm_process() );
         resetStepping();
     }
@@ -207,13 +202,13 @@ void DeltaProcess::transfer_and_continue() {
         st_assert( this == active(), "receiver must be the active process" );
 
         // save state
-        _last_Delta_fp = ::last_Delta_fp;    // *don't* use accessors! (check their implementation to see why)
-        _last_Delta_sp = ::last_Delta_sp;
+        _last_delta_fp = ::last_delta_fp;    // *don't* use accessors! (check their implementation to see why)
+        _last_delta_sp = ::last_delta_sp;
         set_state( ProcessState::in_async_dll );
 
         // restore state
-        ::last_Delta_fp = scheduler()->_last_Delta_fp;    // *don't* use accessors!
-        ::last_Delta_sp = scheduler()->_last_Delta_sp;
+        ::last_delta_fp = scheduler()->_last_delta_fp;    // *don't* use accessors!
+        ::last_delta_sp = scheduler()->_last_delta_sp;
         set_current( scheduler() );
         set_active( scheduler() );
 
@@ -346,9 +341,9 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
     _state{ ProcessState::initialized },
     stopping{ false },
     _next{ nullptr },
-    _last_Delta_fp{ nullptr },
-    _last_Delta_pc{ nullptr },
-    _last_Delta_sp{ nullptr },
+    _last_delta_fp{ nullptr },
+    _last_delta_pc{ nullptr },
+    _last_delta_sp{ nullptr },
     _is_terminating{ false },
     _unwind_head{ nullptr },
     _firstHandle{ nullptr },
@@ -366,9 +361,9 @@ DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread 
 
     SPDLOG_INFO( "creating process 0x{0:x}", static_cast<const void *>( this ) );
 
-    set_last_Delta_fp( nullptr );
-    set_last_Delta_sp( nullptr );
-    set_last_Delta_pc( nullptr );
+    set_last_delta_fp( nullptr );
+    set_last_delta_sp( nullptr );
+    set_last_delta_pc( nullptr );
 
     Processes::add( this );
 }
@@ -417,7 +412,7 @@ void DeltaProcess::check_stack_overflow() {
         interruptions++;
         _active_stack_limit = active()->_stack_limit;
         if ( interruptions % 1000 == 0 )
-            spdlog::warn( "Interruptions: %d", interruptions );
+            SPDLOG_WARN( "Interruptions: %d", interruptions );
         if ( DeltaProcess::active()->is_scheduler() )
             return;
         active()->suspend( ProcessState::yielded );
@@ -492,7 +487,7 @@ void DeltaProcess::print() {
             SPDLOG_INFO( "{} stack overflow", processObject()->print_value_string() );
             break;
         default:
-            void(0);
+            void( 0 );
     }
 
 }
@@ -901,15 +896,15 @@ void DeltaProcess::deoptimized_wrt_marked_native_methods() {
 
 
 Frame DeltaProcess::last_frame() {
-    st_assert( last_Delta_fp(), "must have last_Delta_fp() when suspended" );
-    if ( last_Delta_fp() == nullptr ) {
+    st_assert( last_delta_fp(), "must have last_delta_fp() when suspended" );
+    if ( last_delta_fp() == nullptr ) {
         trace_stack();
     }
-    if ( last_Delta_pc() == nullptr ) {
-        Frame c( last_Delta_sp(), last_Delta_fp() );
+    if ( last_delta_pc() == nullptr ) {
+        Frame c( last_delta_sp(), last_delta_fp() );
         return c;
     } else {
-        Frame c( last_Delta_sp(), last_Delta_fp(), last_Delta_pc() );
+        Frame c( last_delta_sp(), last_delta_fp(), last_delta_pc() );
         return c;
     }
 }

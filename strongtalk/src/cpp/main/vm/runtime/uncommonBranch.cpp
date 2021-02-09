@@ -112,7 +112,7 @@ void collect_compiled_contexts_for( Frame *f, GrowableArray<FrameAndContextEleme
 void uncommon_trap() {
 
     if ( UseNewBackend ) {
-        spdlog::warn( "uncommon traps not supported yet for new backend" );
+        SPDLOG_WARN( "uncommon traps not supported yet for new backend" );
         Unimplemented();
     }
 

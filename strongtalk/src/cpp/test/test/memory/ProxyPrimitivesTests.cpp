@@ -8,7 +8,7 @@
 #include "vm/oops/ProxyOopDescriptor.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/primitives/proxy_primitives.hpp"
+#include "vm/primitives/ProxyOopPrimitives.hpp"
 #include "vm/memory/oopFactory.hpp"
 #include "vm/memory/vmSymbols.hpp"
 
@@ -69,57 +69,57 @@ protected:
 
 
 TEST_F( ProxyPrimitivesTests, smiAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::smiAtPut( smi1, smi0, proxy );
+    Oop result = ProxyOopPrimitives::smiAtPut( smi1, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, smiAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::smiAt( smi0, proxy );
+    Oop result = ProxyOopPrimitives::smiAt( smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, byteAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::byteAtPut( smi1, smi0, proxy );
+    Oop result = ProxyOopPrimitives::byteAtPut( smi1, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, byteAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::byteAt( smi0, proxy );
+    Oop result = ProxyOopPrimitives::byteAt( smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, doubleByteAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::doubleByteAtPut( smi1, smi0, proxy );
+    Oop result = ProxyOopPrimitives::doubleByteAtPut( smi1, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, doubleByteAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::doubleByteAt( smi0, proxy );
+    Oop result = ProxyOopPrimitives::doubleByteAt( smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, subProxyAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::subProxyAt( subProxy, smi0, proxy );
+    Oop result = ProxyOopPrimitives::subProxyAt( subProxy, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
     EXPECT_TRUE( subProxy->is_null() ) << "subproxy should have null pointer";
 }
 
 
 TEST_F( ProxyPrimitivesTests, proxyAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::proxyAt( subProxy, smi0, proxy );
+    Oop result = ProxyOopPrimitives::proxyAt( subProxy, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
     EXPECT_TRUE( subProxy->is_null() ) << "subproxy should have null pointer";
 }
 
 
 TEST_F( ProxyPrimitivesTests, proxyAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::proxyAtPut( subProxy, smi0, proxy );
+    Oop result = ProxyOopPrimitives::proxyAtPut( subProxy, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
     EXPECT_TRUE( subProxy->is_null() ) << "subproxy should have null pointer";
 }
@@ -129,120 +129,120 @@ TEST_F( ProxyPrimitivesTests, proxyAtPutShouldFailWhenValuePointerIsNULL ) {
     std::int32_t addr;
     proxy->set_pointer( &addr );
     addr = 1;
-//    Oop result = proxyOopPrimitives::proxyAtPut( subProxy, smi0, proxy );
+//    Oop result = ProxyOopPrimitives::proxyAtPut( subProxy, smi0, proxy );
     EXPECT_EQ( 0, addr ) << "Should overwrite value";
 }
 
 
 TEST_F( ProxyPrimitivesTests, singlePrecisionFloatAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::singlePrecisionFloatAt( smi0, proxy );
+    Oop result = ProxyOopPrimitives::singlePrecisionFloatAt( smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, singlePrecisionFloatAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::singlePrecisionFloatAtPut( doubleValue, smi0, proxy );
+    Oop result = ProxyOopPrimitives::singlePrecisionFloatAtPut( doubleValue, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, doublePrecisionFloatAtShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::doublePrecisionFloatAt( smi0, proxy );
+    Oop result = ProxyOopPrimitives::doublePrecisionFloatAt( smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, doublePrecisionFloatAtPutShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::doublePrecisionFloatAtPut( doubleValue, smi0, proxy );
+    Oop result = ProxyOopPrimitives::doublePrecisionFloatAtPut( doubleValue, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout0ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut0( subProxy, proxy );
+    Oop result = ProxyOopPrimitives::callOut0( subProxy, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout1ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut1( subProxy, smi0, proxy );
+    Oop result = ProxyOopPrimitives::callOut1( subProxy, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout2ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut2( subProxy, smi0, smi0, proxy );
+    Oop result = ProxyOopPrimitives::callOut2( subProxy, smi0, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout3ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut3( subProxy, smi0, smi0, smi0, proxy );
+    Oop result = ProxyOopPrimitives::callOut3( subProxy, smi0, smi0, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout4ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut4( subProxy, smi0, smi0, smi0, smi0, proxy );
+    Oop result = ProxyOopPrimitives::callOut4( subProxy, smi0, smi0, smi0, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout5ShouldFailWhenPointerIsNULL ) {
-    Oop result = proxyOopPrimitives::callOut5( subProxy, smi0, smi0, smi0, smi0, smi0, proxy );
+    Oop result = ProxyOopPrimitives::callOut5( subProxy, smi0, smi0, smi0, smi0, smi0, proxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout5ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut5( subProxy, smi0, smi0, smi0, smi0, smi0, smi0 );
+    Oop result = ProxyOopPrimitives::callOut5( subProxy, smi0, smi0, smi0, smi0, smi0, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout4ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut4( subProxy, smi0, smi0, smi0, smi0, smi0 );
+    Oop result = ProxyOopPrimitives::callOut4( subProxy, smi0, smi0, smi0, smi0, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout3ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut3( subProxy, smi0, smi0, smi0, smi0 );
+    Oop result = ProxyOopPrimitives::callOut3( subProxy, smi0, smi0, smi0, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout2ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut2( subProxy, smi0, smi0, smi0 );
+    Oop result = ProxyOopPrimitives::callOut2( subProxy, smi0, smi0, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout1ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut1( subProxy, smi0, smi0 );
+    Oop result = ProxyOopPrimitives::callOut1( subProxy, smi0, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout0ShouldFailWhenReceiverNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut0( subProxy, smi0 );
+    Oop result = ProxyOopPrimitives::callOut0( subProxy, smi0 );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout3ShouldFailWhenResultNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut3( smi0, smi0, smi0, smi0, validProxy );
+    Oop result = ProxyOopPrimitives::callOut3( smi0, smi0, smi0, smi0, validProxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::fourth_argument_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout4ShouldFailWhenResultNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut4( smi0, smi0, smi0, smi0, smi0, validProxy );
+    Oop result = ProxyOopPrimitives::callOut4( smi0, smi0, smi0, smi0, smi0, validProxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::fifth_argument_has_wrong_type() );
 }
 
 
 TEST_F( ProxyPrimitivesTests, callout5ShouldFailWhenResultNotProxy ) {
-    Oop result = proxyOopPrimitives::callOut5( smi0, smi0, smi0, smi0, smi0, smi0, validProxy );
+    Oop result = ProxyOopPrimitives::callOut5( smi0, smi0, smi0, smi0, smi0, smi0, validProxy );
     checkMarkedSymbol( "receiver invalid", result, vmSymbols::sixth_argument_has_wrong_type() );
 }

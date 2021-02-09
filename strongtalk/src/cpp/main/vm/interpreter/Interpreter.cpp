@@ -191,7 +191,7 @@ void Interpreter::trace_bytecode() {
 
 
 void Interpreter::warning_illegal( std::int32_t ebx, std::int32_t esi ) {
-    spdlog::warn( "illegal instruction (ebx = 0x{0:x}, esi = 0x{0:x})", ebx, esi );
+    SPDLOG_WARN( "illegal instruction (ebx = 0x{0:x}, esi = 0x{0:x})", ebx, esi );
 }
 
 

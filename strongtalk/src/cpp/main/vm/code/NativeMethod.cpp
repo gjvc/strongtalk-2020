@@ -180,7 +180,7 @@ NativeMethod::NativeMethod( Compiler *c ) :
         }
     }
     if ( this == (NativeMethod *) catchThisOne )
-        spdlog::warn( "caught NativeMethod" );
+        SPDLOG_WARN( "caught NativeMethod" );
 
     // turned off because they're very slow  -Urs 4/96
     LookupCache::verify();
@@ -873,7 +873,7 @@ void NativeMethod::print_inlining( ConsoleOutputStream *stream, bool with_debug_
     stream->print_cr( "NativeMethod inlining structure" );
     ScopeDescriptor *result = print_scope_node( scopes(), scopes()->root(), 0, stream, with_debug_info );
     if ( result not_eq nullptr )
-        spdlog::warn( "print_inlining returned prematurely" );
+        SPDLOG_WARN( "print_inlining returned prematurely" );
 }
 
 

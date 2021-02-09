@@ -21,7 +21,7 @@ void AssociationOopDescriptor::set_is_constant( bool v ) {
     bool was_constant = is_constant();
     STORE_OOP( &addr()->_is_constant, v ? trueObject : falseObject );
     if ( was_constant and not v ) {
-        spdlog::warn( "We need invalidation of code when changing a constant association to variable" );
+        SPDLOG_WARN( "We need invalidation of code when changing a constant association to variable" );
         // Invalidate(value());
     }
 }

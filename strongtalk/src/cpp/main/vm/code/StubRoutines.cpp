@@ -75,8 +75,8 @@ extern std::int32_t nlr_home;
 extern std::int32_t nlr_home_id;
 extern char         *C_frame_return_addr;
 
-extern std::int32_t *last_Delta_fp;    // ebp of the last Delta frame before a C call
-extern Oop          *last_Delta_sp;    // esp of the last Delta frame before a C call
+extern std::int32_t *last_delta_fp;    // ebp of the last Delta frame before a C call
+extern Oop          *last_delta_sp;    // esp of the last Delta frame before a C call
 
 void popStackHandles( const char *nextFrame );
 
@@ -173,7 +173,7 @@ const char *StubRoutines::generate_ic_lookup( MacroAssembler *masm, const char *
     // tos: return address
     const char *entry_point = masm->pc();
 
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->movl( ebx, Address( esp ) );  // get return address (= ic address)
     masm->pushl( eax );                     // save receiver
     masm->pushl( ebx );                     // pass ic
@@ -183,7 +183,7 @@ const char *StubRoutines::generate_ic_lookup( MacroAssembler *masm, const char *
     masm->popl( eax );                      // get rid of receiver argument
     masm->popl( eax );                      // get rid of ic argument
     masm->popl( eax );                      // restore receiver (don't use argument, might be overwritten)
-    masm->reset_last_Delta_frame();         //
+    masm->reset_last_delta_frame();         //
     masm->jmp( ebx );                       // jump to target
 
     return entry_point;
@@ -222,7 +222,7 @@ const char *StubRoutines::generate_zombie_nativeMethod( MacroAssembler *masm ) {
     masm->popl( ebx );                // get rid of return address to zombie NativeMethod
     // eax: receiver
     // tos: return address to caller NativeMethod (which called the zombie NativeMethod)
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->movl( ebx, Address( esp ) ); // get return address (= ic address) - don't pop! (needed for correct Delta frame)
     masm->pushl( eax );                // save receiver
     masm->pushl( ebx );                // pass ic
@@ -231,7 +231,7 @@ const char *StubRoutines::generate_zombie_nativeMethod( MacroAssembler *masm ) {
     masm->popl( ebx );                 // get rid of ic argument
     masm->popl( eax );                 // restore receiver
     masm->popl( ebx );                 // get rid of return address
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->jmp( ecx );                  // redo send
     return entry_point;
 }
@@ -347,12 +347,12 @@ const char *StubRoutines::generate_zombie_block_nativeMethod( MacroAssembler *ma
     // tos-4: return address to caller NativeMethod (which called the zombie NativeMethod)
     const char *entry_point = masm->pc();
 
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( self_reg ); // pass argument (C calling convention)
     masm->call( (const char *) deoptimize_context_and_patch_block, RelocationInformation::RelocationType::runtime_call_type );
     masm->movl( ebx, eax );
     masm->popl( self_reg );
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->addl( esp, 4 );
     masm->movl( edx, Address( (std::int32_t) Interpreter::restart_primitiveValue(), RelocationInformation::RelocationType::external_word_type ) );
     masm->jmp( edx );
@@ -459,7 +459,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // edi: secondary cache index
     // tos: return address of MEGAMORPHIC send in compiled code (ic)
     masm->bind( do_lookup );
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( eax );                // save receiver
     masm->pushl( edx );                // pass 2nd argument: selector
     masm->pushl( ecx );                // pass 1st argument: receiver klass
@@ -468,7 +468,7 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     masm->popl( ebx );                // pop 1st argument
     masm->popl( ebx );                // pop 2nd argument
     masm->popl( eax );                // restore receiver
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->testl( ecx, ecx );            // test if method has been found in lookup cache
     masm->jcc( Assembler::Condition::notZero, call_method );
 
@@ -499,14 +499,14 @@ const char *StubRoutines::generate_compile_block( MacroAssembler *masm ) {
 
     // eax: receiver
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( eax );                // save receiver
     masm->pushl( eax );                // pass receiver
     masm->call( (const char *) JumpTable::compile_new_block, RelocationInformation::RelocationType::runtime_call_type );    // eax = block_closure_compile(receiver)
     masm->movl( ebx, eax );                // ebx = block code
     masm->popl( eax );                // get rid of receiver argument
     masm->popl( eax );                // restore receiver (don't use argument, might be overwritten)
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->jmp( ebx );                // jump to target
     return entry_point;
 }
@@ -550,13 +550,13 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
     // 	[ ptr to itself	] <----	ptr to itself	to check that the right no. of arguments is used
     // 	[ DLL state	]			used for DLL/interrupted DLL calls
     // 	[ return addr	] ------------------------------------------------------------------------
-    // 	[ argument n	] <----	last_Delta_sp	Delta land
+    // 	[ argument n	] <----	last_delta_sp	Delta land
     // 	[ argument n-1	]
     // 	  ...
     // 	[ argument 1	]
     //	[ return proxy	]
     //	  ...
-    // ebp->[ previous ebp	] <----	last_Delta_fp
+    // ebp->[ previous ebp	] <----	last_delta_fp
     //
     // The routine expects 3 arguments to be passed in registers as follows:
     //
@@ -567,7 +567,7 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
     Label loop_entry, no_arguments, smi_argument, next_argument, wrong_call, align_stack, convert_args;
 
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( 0 );                       // initial value for DLL state
     masm->movl( esi, esp );                 // save DLL state address
     masm->pushl( esp );                     // to check that the right no. of arguments is used
@@ -641,7 +641,7 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
         masm->popl( eax );              // restore result
     }
     masm->popl( ebx );                  // discard DLL state word
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->ret( 0 );
 
     // wrong DLL has been called (no. of popped arguments is incorrect)
@@ -687,14 +687,14 @@ const char *StubRoutines::generate_lookup_DLL( MacroAssembler *masm, bool async 
     // edx: some initial value for DLL function entry point
     st_assert( call_DLL_entry( async ) not_eq nullptr, "call_DLL_entry must have been generated before" );
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( ebx );                // save registers (edx has no valid value yet)
     masm->pushl( ecx );
     masm->call( (const char *) DLLs::lookup_and_patch_Compiled_DLLCache, RelocationInformation::RelocationType::runtime_call_type );    // eax := function entry point
     masm->popl( ecx );                // restore registers
     masm->popl( ebx );
     masm->movl( edx, eax );                // setup edx
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->jmp( call_DLL_entry( async ), RelocationInformation::RelocationType::runtime_call_type );    // now jump to real target
     return entry_point;
 }
@@ -708,7 +708,7 @@ const char *StubRoutines::generate_recompile_stub( MacroAssembler *masm ) {
     // eax: receiver
     const char *entry_point = masm->pc();
     //masm->int3();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
 //  masm->call((char*)SavedRegisters::save_registers, RelocationInformation::RelocationType::runtime_call_type);
     SavedRegisters::generate_save_registers( masm );
     masm->movl( ebx, Address( esp ) );        // get return address (trigger NativeMethod)
@@ -720,7 +720,7 @@ const char *StubRoutines::generate_recompile_stub( MacroAssembler *masm ) {
     masm->popl( eax );                // pop 1st argument
     masm->popl( ebx );                // pop 2nd argument
     masm->popl( eax );                // restore receiver
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->leave();                // remove trigger NativeMethod's stack frame
     masm->jmp( ecx );                // continue
     return entry_point;
@@ -753,11 +753,11 @@ char* StubRoutines::generate_recompile_stub(MacroAssembler* masm) {
 
 const char *StubRoutines::generate_uncommon_trap( MacroAssembler *masm ) {
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
 //  masm->call((char*)SavedRegisters::save_registers, RelocationInformation::RelocationType::runtime_call_type);
     SavedRegisters::generate_save_registers( masm );
     masm->call( (const char *) uncommon_trap, RelocationInformation::RelocationType::runtime_call_type );
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->ret( 0 );
     return entry_point;
 }
@@ -782,14 +782,14 @@ const char *StubRoutines::generate_verify_context_chain( MacroAssembler *masm ) 
     Label deoptimize;
 
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->pushl( self_reg ); // save self (argument can get corrupted in called function)
     masm->pushl( self_reg ); // pass argument (C calling convention)
     masm->call( (const char *) validateContextChain, RelocationInformation::RelocationType::runtime_call_type );
     masm->movl( ebx, eax );
     masm->popl( self_reg );
     masm->popl( self_reg );
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->testl( ebx, ebx );
     masm->jcc( MacroAssembler::Condition::zero, deoptimize );
     masm->ret( 0 );
@@ -841,11 +841,11 @@ const char *StubRoutines::generate_deoptimize_block( MacroAssembler *masm ) {
     // eax: block closure
     // tos: callee NativeMethod return address (returning to caller)
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();    // NativeMethod is treated as C routine
+    masm->set_last_delta_frame_after_call();    // NativeMethod is treated as C routine
     masm->pushl( self_reg );            // pass argument
     masm->call( (const char *) deoptimize_block, RelocationInformation::RelocationType::runtime_call_type );    // eax := deoptimize_block(self_reg)
     masm->popl( ebx );                // get rid of argument
-    masm->reset_last_Delta_frame();        // return & restart the primitive (eax must contain the block)
+    masm->reset_last_delta_frame();        // return & restart the primitive (eax must contain the block)
     masm->jmp( (const char *) Interpreter::restart_primitiveValue(), RelocationInformation::RelocationType::runtime_call_type );
     return entry_point;
 }
@@ -854,11 +854,11 @@ const char *StubRoutines::generate_deoptimize_block( MacroAssembler *masm ) {
 const char *StubRoutines::generate_call_inspector( MacroAssembler *masm ) {
 // Called for each MacroAssembler::inspect(...) - used for debugging only
     const char *entry_point = masm->pc();
-    masm->set_last_Delta_frame_after_call();    // just in case somebody wants to look at the stack
+    masm->set_last_delta_frame_after_call();    // just in case somebody wants to look at the stack
     masm->pushad();
     masm->call( (const char *) MacroAssembler::inspector, RelocationInformation::RelocationType::runtime_call_type );
     masm->popad();
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->ret( 0 );
     return entry_point;
 }
@@ -881,7 +881,7 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     // indeed we have to preserve EDI & ESI or else the debug mode stack
     // check assertions will fail (cmp esp, esi)				-Marc 04/07
 
-    const char *nlr_return_from_Delta_entry = generate_nlr_return_from_Delta( masm );
+    const char *nlr_return_from_delta_entry = generate_nlr_return_from_Delta( masm );
 
     Label _loop, _no_args, _is_compiled, _return, _nlr_test, _nlr_setup, _stack_ok;
 
@@ -897,17 +897,17 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     // setup stack frame
     masm->enter();
 
-    // last_Delta_fp & last_Delta_sp must be the first two words in
+    // last_delta_fp & last_delta_sp must be the first two words in
     // the stack frame; i.e. at ebp - 4 and ebp - 8. See also frame.hpp.
-    masm->pushl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ) );
-    masm->pushl( Address( (std::int32_t) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ) );
+    masm->pushl( Address( (std::int32_t) &last_delta_fp, RelocationInformation::RelocationType::external_word_type ) );
+    masm->pushl( Address( (std::int32_t) &last_delta_sp, RelocationInformation::RelocationType::external_word_type ) );
 
     masm->pushl( edi );    // save registers for C calling convetion
     masm->pushl( esi );
     masm->movl( edi, Address( esp, 12 ) );
 
     // reset last Delta frame
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     // test for stack corruption
     masm->testl( edi, edi );
     masm->jcc( Assembler::Condition::equal, _stack_ok );
@@ -955,8 +955,8 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     masm->leal( esp, Address( ebp, -4 * OOP_SIZE ) );
     masm->popl( esi );    // restore registers for C calling convetion
     masm->popl( edi );
-    masm->popl( Address( (std::int32_t) &last_Delta_sp, RelocationInformation::RelocationType::external_word_type ) ); // reset _last_Delta_sp
-    masm->popl( Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ) ); // reset _last_Delta_fp
+    masm->popl( Address( (std::int32_t) &last_delta_sp, RelocationInformation::RelocationType::external_word_type ) ); // reset _last_delta_sp
+    masm->popl( Address( (std::int32_t) &last_delta_fp, RelocationInformation::RelocationType::external_word_type ) ); // reset _last_delta_fp
     masm->popl( ebp );
     masm->ret( 0 );    // remove stack frame & return
 
@@ -964,7 +964,7 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     // sets up the global NonLocalReturn variables and patches the return address
     // of the first C frame in the last_C_chunk of the stack (see below).
     masm->bind( _nlr_test );
-    masm->movl( ecx, Address( ebp, -2 * OOP_SIZE ) );    // get pushed value of _last_Delta_sp
+    masm->movl( ecx, Address( ebp, -2 * OOP_SIZE ) );    // get pushed value of _last_delta_sp
     masm->testl( ecx, ecx );
     masm->jcc( Assembler::Condition::zero, _nlr_setup );
 
@@ -973,10 +973,10 @@ const char *StubRoutines::generate_call_delta( MacroAssembler *masm ) {
     masm->movl( Address( (std::int32_t) &C_frame_return_addr, RelocationInformation::RelocationType::external_word_type ), edx );
 //  masm->hlt();
 
-//  char* nlr_return_from_Delta_addr = StubRoutines::nlr_return_from_Delta();
-//  assert(nlr_return_from_Delta_addr, "nlr_return_from_Delta not initialized yet");
-//  masm->movl(Address(ecx, -OOP_SIZE), (std::int32_t)nlr_return_from_Delta_addr);  // patch return address
-    masm->movl( Address( ecx, -OOP_SIZE ), (std::int32_t) nlr_return_from_Delta_entry );  // patch return address
+//  char* nlr_return_from_delta_addr = StubRoutines::nlr_return_from_Delta();
+//  assert(nlr_return_from_delta_addr, "nlr_return_from_Delta not initialized yet");
+//  masm->movl(Address(ecx, -OOP_SIZE), (std::int32_t)nlr_return_from_delta_addr);  // patch return address
+    masm->movl( Address( ecx, -OOP_SIZE ), (std::int32_t) nlr_return_from_delta_entry );  // patch return address
     masm->pushl( eax );
     masm->pushl( ebx );
     masm->pushl( edx );
@@ -1011,7 +1011,7 @@ const char *StubRoutines::generate_nlr_return_from_Delta( MacroAssembler *masm )
 
     const char *entry_point = masm->pc();
 
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->movl( eax, Address( (std::int32_t) &nlr_result, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( edi, Address( (std::int32_t) &nlr_home, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( esi, Address( (std::int32_t) &nlr_home_id, RelocationInformation::RelocationType::external_word_type ) );
@@ -1050,7 +1050,7 @@ const char *StubRoutines::generate_single_step_stub( MacroAssembler *masm ) {
     masm->testl( eax, ic_info );
     //masm->ic_info(Interpreter::nlr_single_step_continuation(), 0);
 
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->popl( eax );
     // restore bytecode pointer
     masm->movl( esi, Address( ebp, -2 * OOP_SIZE ) );
@@ -1079,7 +1079,7 @@ const char *StubRoutines::generate_single_step_stub( MacroAssembler *masm ) {
     masm->bind( is_break );
     masm->movl( Address( ebp, -2 * OOP_SIZE ), esi );    // save esi
     masm->pushl( eax );                // save tos
-    masm->set_last_Delta_frame_before_call();
+    masm->set_last_delta_frame_before_call();
 
 //  masm->pushl(Address((std::int32_t)&nlr_single_step_continuation, RelocationInformation::RelocationType::external_word_type));
 //  assert(nlr_single_step_continuation, "%fix this");

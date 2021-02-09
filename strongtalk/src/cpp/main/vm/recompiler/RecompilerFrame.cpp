@@ -195,7 +195,7 @@ LookupKey *InterpretedRecompilerFrame::key() const {
             _lookupKey->initialize( superKlass, sel );
         } else {
             if ( WizardMode )
-                spdlog::warn( "sending method holder not found??" );
+                SPDLOG_WARN( "sending method holder not found??" );
             ( (InterpretedRecompilerFrame *) this )->_lookupKey = nullptr;
         }
     } else {

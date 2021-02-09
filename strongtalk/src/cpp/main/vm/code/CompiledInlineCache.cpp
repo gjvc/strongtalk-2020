@@ -178,7 +178,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         _console->cr();
 
         DeltaProcess::active()->trace_stack();
-        spdlog::warn("Lookup error: DoesNotUnderstand semantics not implemented for compiled code");
+        SPDLOG_WARN("Lookup error: DoesNotUnderstand semantics not implemented for compiled code");
         evaluator::read_eval_loop();
         Unimplemented();
         */
@@ -324,7 +324,7 @@ const char *CompiledInlineCache::superLookup( Oop recv ) {
         }
         //result = (char*)&interpreter_call;
         //if (UseInlineCaching) set_call_destination(result);
-        spdlog::warn( "CompiledInlineCache::superLookup didn't find a NativeMethod - check this" );
+        SPDLOG_WARN( "CompiledInlineCache::superLookup didn't find a NativeMethod - check this" );
         Unimplemented();
     } else {
         // result is a jump table entry for an NativeMethod

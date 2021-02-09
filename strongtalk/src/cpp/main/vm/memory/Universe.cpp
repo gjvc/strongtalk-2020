@@ -406,7 +406,7 @@ KlassOop Universe::method_holder_of( MethodOop m ) {
     }
 
     if ( WizardMode ) {
-        spdlog::warn( "could not find methodHolder of method at 0x{0:x}", static_cast<const void *>(m) );
+        SPDLOG_WARN( "could not find methodHolder of method at 0x{0:x}", static_cast<const void *>(m) );
     }
 
     return nullptr;
@@ -760,8 +760,8 @@ Oop *Universe::scavenge_and_allocate( std::int32_t size, Oop *p ) {
     VM_Scavenge op( p );
     VMProcess::execute( &op );
 //  The following assertions break the tests
-//  assert(DeltaProcess::active()->last_Delta_fp() not_eq nullptr, "last Delta fp should be present");
-//  assert(DeltaProcess::active()->last_Delta_sp() not_eq nullptr, "last Delta fp should be present");
+//  assert(DeltaProcess::active()->last_delta_fp() not_eq nullptr, "last Delta fp should be present");
+//  assert(DeltaProcess::active()->last_delta_sp() not_eq nullptr, "last Delta fp should be present");
     _scavenge_blocked = false;
     return allocate_without_scavenge( size );
 }

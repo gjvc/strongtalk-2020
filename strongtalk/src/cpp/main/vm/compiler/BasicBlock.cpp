@@ -790,7 +790,7 @@ void BasicBlock::verify() {
 
     // Fix this Urs, 3/11/96
     if ( _loopDepth > 9 ) {
-        spdlog::warn( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
+        SPDLOG_WARN( "BasicBlock 0x{0:x}: suspiciously high loopDepth {:d}", static_cast<const void *>(this), _loopDepth );
     }
 
 }

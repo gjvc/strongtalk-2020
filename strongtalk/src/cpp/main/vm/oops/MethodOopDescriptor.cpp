@@ -1019,17 +1019,17 @@ void MethodOopDescriptor::verify_context( ContextOop con ) {
 
     // Check if we should expect a context
     if ( not activation_has_context() ) {
-        spdlog::warn( "Activation has no context (0x{0:x})", static_cast<const void *>(con) );
+        SPDLOG_WARN( "Activation has no context (0x{0:x})", static_cast<const void *>(con) );
     }
 
     // Check the static vs. dynamic chain length
     if ( context_chain_length() not_eq con->chain_length() ) {
-        spdlog::warn( "Wrong context chain length (got %d expected %d)", con->chain_length(), context_chain_length() );
+        SPDLOG_WARN( "Wrong context chain length (got %d expected %d)", con->chain_length(), context_chain_length() );
     }
 
     // Check the context has no forward reference
     if ( con->unoptimized_context() not_eq nullptr ) {
-        spdlog::warn( "Context is optimized (0x{0:x})", static_cast<const void *>(con) );
+        SPDLOG_WARN( "Context is optimized (0x{0:x})", static_cast<const void *>(con) );
     }
 }
 
@@ -1620,7 +1620,7 @@ void stopInSelector( const char *name, MethodOop method ) {
     std::int32_t len      = strlen( name );
     SymbolOop    selector = selectorFrom( method );
     if ( selector == nullptr )
-        spdlog::warn( "Selector was nullptr" );
+        SPDLOG_WARN( "Selector was nullptr" );
     else if ( selector->length() == len and strncmp( name, selector->chars(), len ) == 0 ) {
         TraceCanonicalContext = true;
         //method->pretty_print();

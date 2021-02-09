@@ -33,8 +33,8 @@ void VMProcess::transfer_to( DeltaProcess *target ) {
         ThreadCritical tc;
 
         // restore state
-        ::last_Delta_fp = target->_last_Delta_fp;   // *don't* use accessors!
-        ::last_Delta_sp = target->_last_Delta_sp;   // *don't* use accessors!
+        ::last_delta_fp = target->_last_delta_fp;   // *don't* use accessors!
+        ::last_delta_sp = target->_last_delta_sp;   // *don't* use accessors!
         DeltaProcess::set_active( target );
         DeltaProcess::set_current( target );
         resetStepping();

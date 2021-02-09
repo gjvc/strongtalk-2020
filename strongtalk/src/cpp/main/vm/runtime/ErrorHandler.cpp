@@ -40,7 +40,7 @@ void ErrorHandler::abort_current_process() {
     nlr_home    = 0;
     nlr_home_id = aborting_nlr_home_id();
     nlr_result  = smiOop_zero;
-    provoke_nlr_at( DeltaProcess::active()->last_Delta_fp(), DeltaProcess::active()->last_Delta_sp() );
+    provoke_nlr_at( DeltaProcess::active()->last_delta_fp(), DeltaProcess::active()->last_delta_sp() );
     ShouldNotReachHere();
 }
 
@@ -48,7 +48,7 @@ void ErrorHandler::abort_current_process() {
 
 void ErrorHandler::continue_nlr_in_delta() {
     xxx_nlr_at_func *_continue_nlr_in_delta = (xxx_nlr_at_func *) StubRoutines::continue_nlr_in_delta();
-    _continue_nlr_in_delta( DeltaProcess::active()->last_Delta_fp(), DeltaProcess::active()->last_Delta_sp() );
+    _continue_nlr_in_delta( DeltaProcess::active()->last_delta_fp(), DeltaProcess::active()->last_delta_sp() );
     ShouldNotReachHere();
 }
 

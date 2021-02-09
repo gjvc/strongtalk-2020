@@ -35,8 +35,8 @@
 const std::int32_t frame_temp_offset          = -3; // For interpreter frames only
 const std::int32_t frame_hp_offset            = -2; // For interpreter frames only
 const std::int32_t frame_receiver_offset      = -1; // For interpreter frames only
-const std::int32_t frame_next_Delta_fp_offset = -1; // For entry frames only; see call_delta in interpreter_asm.asm
-const std::int32_t frame_next_Delta_sp_offset = -2; // For entry frames only; see call_delta in interpreter_asm.asm
+const std::int32_t frame_next_delta_fp_offset = -1; // For entry frames only; see call_delta in interpreter_asm.asm
+const std::int32_t frame_next_delta_sp_offset = -2; // For entry frames only; see call_delta in interpreter_asm.asm
 const std::int32_t frame_link_offset          = 0;
 const std::int32_t frame_return_addr_offset   = 1;
 const std::int32_t frame_arg_offset           = 2;
@@ -285,12 +285,12 @@ public:
     Frame delta_sender() const;
 
     // tells whether there is another chunk of Delta stack above (entry frames only)
-    bool has_next_Delta_fp() const;
+    bool has_next_delta_fp() const;
 
     // returns the next C entry frame (entry frames only)
-    std::int32_t *next_Delta_fp() const;
+    std::int32_t *next_delta_fp() const;
 
-    Oop *next_Delta_sp() const;
+    Oop *next_delta_sp() const;
 
     bool is_first_frame() const;            // oldest frame? (has no sender)
     bool is_first_delta_frame() const;        // same for Delta frame

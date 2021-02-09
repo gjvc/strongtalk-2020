@@ -27,7 +27,7 @@ void ConsoleOutputStream::print( const char *format, ... ) {
     va_list ap;
     va_start( ap, format );
     if ( vsnprintf( buffer, BUFLEN, format, ap ) < 0 ) {
-        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        SPDLOG_WARN( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     va_end( ap );
@@ -40,7 +40,7 @@ void ConsoleOutputStream::print_cr( const char *format, ... ) {
     va_list ap;
     va_start( ap, format );
     if ( vsnprintf( buffer, BUFLEN, format, ap ) < 0 ) {
-        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        SPDLOG_WARN( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     va_end( ap );
@@ -52,7 +52,7 @@ void ConsoleOutputStream::print_cr( const char *format, ... ) {
 void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
     char buffer[BUFLEN];
     if ( vsnprintf( buffer, BUFLEN, format, argptr ) < 0 ) {
-        spdlog::warn( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
+        SPDLOG_WARN( "increase BUFLEN in ConsoleOutputStream.cpp -- output truncated" );
         buffer[ BUFLEN - 1 ] = 0;
     }
     basic_print( buffer );

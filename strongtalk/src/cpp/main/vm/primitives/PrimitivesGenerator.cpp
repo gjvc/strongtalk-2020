@@ -4,7 +4,7 @@
 //
 
 
-#include "vm/primitives/behavior_primitives.hpp"
+#include "vm/primitives/BehaviorPrimitives.hpp"
 #include "vm/assembler/MacroAssembler.hpp"
 #include "vm/assembler/Label.hpp"
 #include "vm/assembler/Address.hpp"
@@ -121,13 +121,13 @@ const char *PrimitivesGenerator::allocateContext_var() {
     masm->ret( 0 );
 
     masm->bind( need_scavenge );
-    masm->set_last_Delta_frame_after_call();
+    masm->set_last_delta_frame_after_call();
     masm->shrl( ecx, TAG_SIZE );            // SMIOop->value()
     masm->addl( ecx, 3 );
     masm->pushl( ecx );
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
-    masm->reset_last_Delta_frame();
+    masm->reset_last_delta_frame();
     masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // reload length  (remember this is a SMIOop)
     masm->movl( edx, ecx );
     masm->addl( edx, 3 * OOP_SIZE );

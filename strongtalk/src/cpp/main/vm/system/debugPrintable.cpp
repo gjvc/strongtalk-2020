@@ -112,8 +112,8 @@ void ps() { // print stack
         p->print();
         _console->cr();
 
-        if ( p->last_Delta_fp() not_eq nullptr ) {
-            // If the last_Delta_fp is set we are in C land and can call the standard stack_trace function.
+        if ( p->last_delta_fp() not_eq nullptr ) {
+            // If the last_delta_fp is set we are in C land and can call the standard stack_trace function.
             p->trace_stack();
         } else {
             // fp point to the frame of the ps stub routine
@@ -141,8 +141,8 @@ void pd() { // print stack
         p->print();
         _console->cr();
 
-        if ( p->last_Delta_fp() not_eq nullptr ) {
-            // If the last_Delta_fp is set we are in C land and can call the standard stack_trace function.
+        if ( p->last_delta_fp() not_eq nullptr ) {
+            // If the last_delta_fp is set we are in C land and can call the standard stack_trace function.
             p->trace_stack_for_deoptimization();
         } else {
             // fp point to the frame of the ps stub routine

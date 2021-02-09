@@ -136,8 +136,8 @@ extern "C" void check_stack_overflow();
 // "semaphore" to protect some vm critical sections (process transfer etc.)
 extern "C" bool processSemaphore;
 
-extern "C" std::int32_t *last_Delta_fp;
-extern "C" Oop          *last_Delta_sp;
+extern "C" std::int32_t *last_delta_fp;
+extern "C" Oop          *last_delta_sp;
 
 extern std::int32_t CurrentHash;
 
@@ -161,7 +161,7 @@ enum class InterpreterErrorConstants {
     ebx_wrong                      = 8 + start_of_runtime_system_errors,    //
     obj_wrong                      = 9 + start_of_runtime_system_errors,    //
     nlr_offset_wrong               = 10 + start_of_runtime_system_errors,   //
-    last_Delta_fp_wrong            = 11 + start_of_runtime_system_errors,   //
+    last_delta_fp_wrong            = 11 + start_of_runtime_system_errors,   //
     primitive_result_wrong         = 12 + start_of_runtime_system_errors,   //
     float_expected                 = 13 + start_of_runtime_system_errors,   //
 

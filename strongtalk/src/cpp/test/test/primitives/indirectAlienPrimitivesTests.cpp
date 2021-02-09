@@ -10,7 +10,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/primitives/byteArray_primitives.hpp"
+#include "vm/primitives/ByteArrayPrimitives.hpp"
 #include "vm/utilities/Integer.hpp"
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
@@ -46,13 +46,13 @@ protected:
         IntegerOps::int_to_Integer( -1 << 31, ByteArrayOop( largeSignedInteger )->number() );
 
         alien = ByteArrayOop( ah.as_oop() );
-        byteArrayPrimitives::alienSetSize( smiOopFromValue( -16 ), alien );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) alien_byte_region ), alien );
+        ByteArrayPrimitives::alienSetSize( smiOopFromValue( -16 ), alien );
+        ByteArrayPrimitives::alienSetAddress( smiOopFromValue( (std::int32_t) alien_byte_region ), alien );
         memset( alien_byte_region, 0, 16 );
 
         invalidAlien = ByteArrayOop( iah.as_oop() );
-        byteArrayPrimitives::alienSetSize( smiOopFromValue( -16 ), invalidAlien );
-        byteArrayPrimitives::alienSetAddress( smiOopFromValue( 0 ), invalidAlien );
+        ByteArrayPrimitives::alienSetSize( smiOopFromValue( -16 ), invalidAlien );
+        ByteArrayPrimitives::alienSetAddress( smiOopFromValue( 0 ), invalidAlien );
     }
 
 
@@ -118,113 +118,113 @@ protected:
 };
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedByteAtPutShouldSetUnsignedByte ) {
-    byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, 255 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedByteAtPutShouldReturnAssignedByte ) {
-    Oop result = byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, 255 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtShouldReturnCorrectByte ) {
-    byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtPutShouldReturnCorrectByte ) {
-    Oop result = byteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtPutShouldSetCorrectByte ) {
-    byteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtPutShouldSetMaxValue ) {
-    byteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( 127 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( 127 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, 127 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtPutShouldSetMinValue ) {
-    byteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -128 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -128 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -128 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedShortAtShouldReturnCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
-    byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 2 ), alien );
-    Oop result = byteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 2 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, 65535 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedShortAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, 65535 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedShortAtShouldReturnCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedShortAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedLongAtShouldReturnCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
-    byteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 3 ), alien );
-    Oop result = byteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 3 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), alien );
     checkLargeUnsigned( result, 0xFFFFFFFF );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedLongAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedLongAtPut( largeUnsignedInteger, smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedLongAtPut( largeUnsignedInteger, smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), alien );
     checkLargeUnsigned( result, 0xFFFFFFFF );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedLongAtShouldReturnCorrectValue ) {
-    byteArrayPrimitives::alienUnsignedLongAtPut( largeUnsignedInteger, smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienUnsignedLongAtPut( largeUnsignedInteger, smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), alien );
     checkSmallInteger( result, -1 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedLongAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienSignedLongAtPut( largeSignedInteger, smiOopFromValue( 1 ), alien );
-    Oop result = byteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienSignedLongAtPut( largeSignedInteger, smiOopFromValue( 1 ), alien );
+    Oop result = ByteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), alien );
     checkLargeInteger( result, -1 << 31 );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 1 ), alien );
-    Oop                        result = byteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 1 ), alien );
+    Oop                        result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), alien );
     EXPECT_TRUE( result->is_double() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625, ( (double *) alien_byte_region )[ 0 ] ) << "value not set";
@@ -232,8 +232,8 @@ TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetCorrectValue ) {
 
 
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetValueAtSecondByte ) {
-    byteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 2 ), alien );
-    Oop                        result = byteArrayPrimitives::alienDoubleAt( smiOopFromValue( 2 ), alien );
+    ByteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 2 ), alien );
+    Oop                        result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 2 ), alien );
     EXPECT_TRUE( result->is_double() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625, ( (double *) ( alien_byte_region + 1 ) )[ 0 ] ) << "value not set";
@@ -241,8 +241,8 @@ TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetValueAtSecondByte ) {
 
 
 TEST_F( IndirectAlienPrimsTests, alienFloatAtPutShouldSetCorrectValue ) {
-    byteArrayPrimitives::alienFloatAtPut( doubleValue, smiOopFromValue( 1 ), alien );
-    Oop                        result = byteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), alien );
+    ByteArrayPrimitives::alienFloatAtPut( doubleValue, smiOopFromValue( 1 ), alien );
+    Oop                        result = ByteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), alien );
     EXPECT_TRUE( result->is_double() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625F, ( (float *) ( alien_byte_region ) )[ 0 ] ) << "value not set";
@@ -250,96 +250,96 @@ TEST_F( IndirectAlienPrimsTests, alienFloatAtPutShouldSetCorrectValue ) {
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedByteAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedByteAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedByteAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedShortAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedShortAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedShortAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedShortAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedLongAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienUnsignedLongAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienUnsignedLongAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienUnsignedLongAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedLongAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienSignedLongAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienSignedLongAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienSignedLongAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienFloatAtShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }
 
 
 TEST_F( IndirectAlienPrimsTests, alienFloatAtPutShouldReturnMarkedSymbolWhenAddressInvalid ) {
-    Oop result = byteArrayPrimitives::alienFloatAtPut( doubleValue, smiOopFromValue( 1 ), invalidAlien );
+    Oop result = ByteArrayPrimitives::alienFloatAtPut( doubleValue, smiOopFromValue( 1 ), invalidAlien );
     checkMarkedSymbol( "invalid address", result, vmSymbols::illegal_state() );
 }

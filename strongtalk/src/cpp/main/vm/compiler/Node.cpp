@@ -11,10 +11,10 @@
 #include "vm/compiler/Compiler.hpp"
 #include "vm/assembler/x86_mapping.hpp"
 #include "vm/primitives/primitives.hpp"
-#include "vm/primitives/behavior_primitives.hpp"
+#include "vm/primitives/BehaviorPrimitives.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/primitives/PrimitivesGenerator.hpp"
-#include "vm/primitives/smi_primitives.hpp"
+#include "vm/primitives/SmallIntegerOopPrimitives.hpp"
 #include "vm/compiler/CompiledLoop.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/PseudoRegister.hpp"
@@ -154,7 +154,7 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
     // FIX THIS
     // st_assert( (len > 1) or hasUnknown, "TypeTestNode is not necessary" );
     if ( ( len == 1 ) and not hasUnknown ) {
-        spdlog::warn( "TypeTestNode with only one klass & no uncommon case => performance bug" );
+        SPDLOG_WARN( "TypeTestNode with only one klass & no uncommon case => performance bug" );
     }
 
     //
@@ -518,7 +518,7 @@ SendNode::SendNode( LookupKey *key, MergeNode *nlrTestPoint, GrowableArray<Pseud
     // Fix this when compiler is more flexible not a fatal because it could happen for super sends that fail (no super method found)
 
     if ( _superSend and not UseNewBackend ) {
-        spdlog::warn( "We cannot yet have super sends in nativeMethods" );
+        SPDLOG_WARN( "We cannot yet have super sends in nativeMethods" );
     }
 
 }
@@ -563,7 +563,7 @@ ContextCreateNode::ContextCreateNode( PseudoRegister *b, const ContextCreateNode
     _parentContexts{ nullptr },
     _parentContextUses{ nullptr } {
 
-    spdlog::warn( "check this implementation" );
+    SPDLOG_WARN( "check this implementation" );
     Unimplemented();
     // Urs, don't we need a source here?
     // I've added hasSrc() (= true) to ContextCreateNode) - should double check this
@@ -814,7 +814,7 @@ bool PrimitiveNode::canBeEliminated() const {
 
     //%TODO these references get replaced with generated versions
     // so these tests will fail - fix this
-    if ( _pdesc->fn() == primitiveFunctionType( &behaviorPrimitives::allocate ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew0 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew1 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew2 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew3 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew4 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew5 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew6 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew7 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew8 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew9 ) ) {
+    if ( _pdesc->fn() == primitiveFunctionType( &BehaviorPrimitives::allocate ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew0 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew1 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew2 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew3 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew4 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew5 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew6 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew7 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew8 ) or _pdesc->fn() == primitiveFunctionType( &primitiveNew9 ) ) {
         return true;
     }
 
@@ -1901,7 +1901,7 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
         // (performance bug: should inline correct case since it's known now;
         // also, unknown branch may be uncommon)
         if ( WizardMode ) {
-            spdlog::warn( "Compiler: typetest didn't predict klass 0x{0:x}", static_cast<const void *>(theKlass) );
+            SPDLOG_WARN( "Compiler: typetest didn't predict klass 0x{0:x}", static_cast<const void *>(theKlass) );
             SPDLOG_INFO( "predicted klasses: " );
             _classes->print();
         }
@@ -2230,7 +2230,7 @@ bool CallNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool 
     static_cast<void>(u); // unused
     static_cast<void>(d); // unused
     static_cast<void>(replace); // unused
-    //spdlog::warn("fix this -- propagate args somewhere");
+    //SPDLOG_WARN("fix this -- propagate args somewhere");
     return false;
 }
 
@@ -2336,19 +2336,19 @@ bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, b
                 result = GeneratedPrimitives::smiOopPrimitives_mod( c1, c2 );
                 break;
             case ArithOpCode::tAndArithOp:
-                result = smiOopPrimitives::bitAnd( c1, c2 );
+                result = SmallIntegerOopPrimitives::bitAnd( c1, c2 );
                 break;
             case ArithOpCode::tOrArithOp:
-                result = smiOopPrimitives::bitOr( c1, c2 );
+                result = SmallIntegerOopPrimitives::bitOr( c1, c2 );
                 break;
             case ArithOpCode::tXOrArithOp:
-                result = smiOopPrimitives::bitXor( c1, c2 );
+                result = SmallIntegerOopPrimitives::bitXor( c1, c2 );
                 break;
             case ArithOpCode::tShiftArithOp:
-                spdlog::warn( "possible performance bug: constant folding of ArithOpCode::tShiftArithOp not implemented" );
+                SPDLOG_WARN( "possible performance bug: constant folding of ArithOpCode::tShiftArithOp not implemented" );
                 return false;
             case ArithOpCode::tCmpArithOp:
-                spdlog::warn( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
+                SPDLOG_WARN( "possible performance bug: constant folding of ArithOpCode::tCmpArithOp not implemented" );
                 return false;
             default           : st_fatal1( "unknown tagged opcode %ld", _op );
         }

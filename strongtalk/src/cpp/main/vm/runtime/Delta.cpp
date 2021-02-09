@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -12,55 +13,41 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
+#include "vm/lookup/LookupResult.hpp"
+#include "vm/code/JumpTable.hpp"
+#include "vm/runtime/DeltaCallCache.hpp"
+
 
 
 DeltaCallCache *DeltaCallCache::_root = nullptr;    // anchor of all DeltaCallCaches
 
 
-DeltaCallCache::DeltaCallCache() :
-    _key{},
-    _result{},
-    _link{ _root } {
-    _root = this;
-    clear();
-}
-
-
-void DeltaCallCache::clear() {
-    _key.clear();
-    _result.clear();
-}
-
-
-void DeltaCallCache::clearAll() {
-    DeltaCallCache *p = _root;
-    while ( p not_eq nullptr ) {
-        p->clear();
-        p = p->_link;
-    }
-}
-
-
-// Implementation of Delta
-
 typedef Oop (call_delta_func)( void *method, Oop receiver, std::int32_t nofArgs, Oop *args );
 
 
 Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, std::int32_t nofArgs, Oop *args ) {
+
+
+    //
     call_delta_func *_call_delta = (call_delta_func *) StubRoutines::call_delta();
 
     if ( ic->match( receiver->klass(), SymbolOop( selector ) ) ) { // use inline cache entry - but first make sure it's not a zombie NativeMethod
+
+
         JumpTableEntry *entry = ic->result().entry();
         if ( entry not_eq nullptr and entry->method()->isZombie() ) { // is a zombie NativeMethod => do a new lookup
             LookupResult result = ic->lookup( receiver->klass(), SymbolOop( selector ) );
-            if ( result.is_empty() ) st_fatal( "lookup failure - not treated" );
+            if ( result.is_empty() ) {
+                st_fatal( "lookup failure - not treated" );
+            }
             return _call_delta( result.value(), receiver, nofArgs, args );
         }
         return _call_delta( ic->result().value(), receiver, nofArgs, args );
     }
 
-    if ( not selector->is_symbol() )
+    if ( not selector->is_symbol() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
+    }
 
     LookupResult result = ic->lookup( receiver->klass(), SymbolOop( selector ) );
     if ( result.is_empty() ) {

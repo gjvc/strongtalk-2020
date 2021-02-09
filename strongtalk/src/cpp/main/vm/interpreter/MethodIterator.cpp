@@ -598,7 +598,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             case ByteCodes::Code::megamorphic_send_2:
                 [[fallthrough]];
             case ByteCodes::Code::megamorphic_send_n:
-                [[fallthrough]];
+//                [[fallthrough]];
                 blk->normal_send( iter.ic() );
                 break;
             case ByteCodes::Code::interpreted_send_0_pop:

@@ -809,7 +809,7 @@ void Assembler::bind_to( Label &L, std::int32_t pos ) {
     L.bind_to( pos );
 
     if ( tellRobert ) {
-        spdlog::warn( "jmp to next has not been eliminated - tell Robert, please" );
+        SPDLOG_WARN( "jmp to next has not been eliminated - tell Robert, please" );
         code()->decode();
     }
 

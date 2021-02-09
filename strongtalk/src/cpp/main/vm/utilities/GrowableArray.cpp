@@ -1,3 +1,4 @@
+
 //
 //  (C) 1994 - 2021, The Strongtalk authors and contributors
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
@@ -6,27 +7,18 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/utilities/GrowableArray.hpp"
-#include "vm/utilities/OutputStream.hpp"
-
-
 
 
 // -----------------------------------------------------------------------------
 
-
-
-
-
-// -----------------------------------------------------------------------------
-
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool c_heap ) :
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool on_cxx_runtime_heap ) :
     _length{ 0 },
     _maxLength{ initial_size * 4 },
     _data{ nullptr },
-    _allocatedOnSystemHeap{ c_heap } {
+    _allocatedOnSystemHeap{ on_cxx_runtime_heap } {
 
     st_assert( _length <= _maxLength, "initial_size too small" );
-    if ( c_heap ) {
+    if ( _allocatedOnSystemHeap ) {
         _data = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
     } else {
         _data = new_resource_array<void *>( _maxLength );
@@ -35,14 +27,14 @@ GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, bool c_he
 }
 
 
-GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool c_heap ) :
+GenericGrowableArray::GenericGrowableArray( std::int32_t initial_size, std::int32_t initial_len, void *filler, bool on_cxx_runtime_heap ) :
     _length{ initial_len },
     _maxLength{ initial_size },
     _data{ nullptr },
-    _allocatedOnSystemHeap{ c_heap } {
+    _allocatedOnSystemHeap{ on_cxx_runtime_heap } {
 
     st_assert( _length <= _maxLength, "initial_len too big" );
-    if ( c_heap ) {
+    if ( _allocatedOnSystemHeap ) {
         _data = (void **) AllocateHeap( _maxLength * sizeof( void * ), "bounded list" );
     } else {
         _data = new_resource_array<void *>( _maxLength );

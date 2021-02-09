@@ -35,7 +35,7 @@ static std::int32_t GetNumericEnvironmentVariable( const char *name, std::int32_
         if ( sscanf( n, "%d", &l ) == 1 ) {
             def = l * factor;
         } else {
-            spdlog::warn( "environment variable[{}] isn't a number", name );
+            SPDLOG_WARN( "environment variable[{}] isn't a number", name );
         }
     }
     return def;

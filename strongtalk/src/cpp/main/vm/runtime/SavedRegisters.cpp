@@ -61,7 +61,7 @@ Naked void SavedRegisters::save_registers() {
     mov	saved_esi, esi
     mov	saved_edi, edi
     // save frame pointer w/o destroying any register contents
-    mov eax, last_Delta_fp
+    mov eax, last_delta_fp
     mov stored_frame_pointer, eax
     mov eax, saved_eax
     // return
@@ -80,7 +80,7 @@ void SavedRegisters::generate_save_registers( MacroAssembler *masm ) {
     masm->movl( Address( (std::int32_t) &saved_esi, RelocationInformation::RelocationType::external_word_type ), esi );
     masm->movl( Address( (std::int32_t) &saved_edi, RelocationInformation::RelocationType::external_word_type ), edi );
     // save frame pointer w/o destroying any register contents
-    masm->movl( eax, Address( (std::int32_t) &last_Delta_fp, RelocationInformation::RelocationType::external_word_type ) );
+    masm->movl( eax, Address( (std::int32_t) &last_delta_fp, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( Address( (std::int32_t) &stored_frame_pointer, RelocationInformation::RelocationType::external_word_type ), eax );
     masm->movl( eax, Address( (std::int32_t) &saved_eax, RelocationInformation::RelocationType::external_word_type ) );
     // return

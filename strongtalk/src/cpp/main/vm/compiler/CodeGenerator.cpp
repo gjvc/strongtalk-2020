@@ -819,7 +819,7 @@ void CodeGenerator::callVerifyObject( Register obj ) {
     // generates transparent check code which verifies that obj is
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode ) {
-        spdlog::warn( ": verifyObject should not be called" );
+        SPDLOG_WARN( ": verifyObject should not be called" );
     }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyObject, obj );
@@ -831,7 +831,7 @@ void CodeGenerator::callVerifyContext( Register context ) {
     // generates transparent check code which verifies that context is
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode ) {
-        spdlog::warn( ": verifyContext should not be called" );
+        SPDLOG_WARN( ": verifyContext should not be called" );
     }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyContext, context );
@@ -843,7 +843,7 @@ void CodeGenerator::callVerifyArguments( Register recv, std::int32_t nofArgs ) {
     // generates transparent check code which verifies that all arguments
     // are legal oops and halts if not - for debugging purposes only
     if ( not VerifyCode and not TraceCalls and not TraceResults ) {
-        spdlog::warn( ": performance bug: verifyArguments should not be called" );
+        SPDLOG_WARN( ": performance bug: verifyArguments should not be called" );
     }
     st_assert( recv not_eq temp1, "use another temporary register" );
     _masm->pushad();
@@ -857,7 +857,7 @@ void CodeGenerator::callVerifyReturn() {
     // generates transparent check code which verifies that result contains
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode and not TraceCalls and not TraceResults ) {
-        spdlog::warn( ": verifyReturn should not be called" );
+        SPDLOG_WARN( ": verifyReturn should not be called" );
     }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyReturn, result_reg );
@@ -868,7 +868,7 @@ void CodeGenerator::callVerifyReturn() {
 void CodeGenerator::callVerifyNonLocalReturn() {
     // generates transparent check code which verifies NonLocalReturn check & continuation
     if ( not VerifyCode and not TraceCalls and not TraceResults ) {
-        spdlog::warn( ": verifyNonLocalReturn should not be called" );
+        SPDLOG_WARN( ": verifyNonLocalReturn should not be called" );
     }
     _masm->pushad();
     _masm->call_C( (const char *) CodeGenerator::verifyNonLocalReturn, ebp, NonLocalReturn_home_reg, NonLocalReturn_homeId_reg, NonLocalReturn_result_reg );
@@ -1224,7 +1224,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             [[fallthrough]];
         case ArithOpCode::AddArithOp:
             if ( y == 0 ) {
-                spdlog::warn( "code generated to add 0 (no load required)" );
+                SPDLOG_WARN( "code generated to add 0 (no load required)" );
             } else {
                 _masm->addl( x, y );
             }
@@ -1234,7 +1234,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
             [[fallthrough]];
         case ArithOpCode::SubArithOp:
             if ( y == 0 ) {
-                spdlog::warn( "code generated to subtract 0 (no load required)" );
+                SPDLOG_WARN( "code generated to subtract 0 (no load required)" );
             } else {
                 _masm->subl( x, y );
             }
@@ -1254,11 +1254,11 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
                     _masm->negl( x );
                     break;
                 case 0:
-                    spdlog::warn( "code generated to multiply with 0 (no load required)" );
+                    SPDLOG_WARN( "code generated to multiply with 0 (no load required)" );
                     _masm->xorl( x, x );
                     break;
                 case 1:
-                    spdlog::warn( "code generated to multiply with 1 (no load required)" );
+                    SPDLOG_WARN( "code generated to multiply with 1 (no load required)" );
                     // do nothing
                     break;
                 case 2:
@@ -1697,12 +1697,12 @@ void CodeGenerator::aPrimitiveNode( PrimitiveNode *node ) {
     _currentMapping->killRegisters();
     updateDebuggingInfo( node );
     // Note: cannot use call_C because inline cache code has to come immediately after call instruction!
-    _masm->set_last_Delta_frame_before_call();
+    _masm->set_last_delta_frame_before_call();
     _masm->call( (const char *) ( node->pdesc()->fn() ), RelocationInformation::RelocationType::primitive_type );
     _currentMapping->killRegisters();
     if ( nlr not_eq nullptr )
         inlineCache( node, nlr );
-    _masm->reset_last_Delta_frame();
+    _masm->reset_last_delta_frame();
     _currentMapping->mapToRegister( node->dst(), result_reg );    // NonLocalReturn mapping of node->dst is handled in NonLocalReturnTestNode
 }
 
@@ -2024,7 +2024,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
 void CodeGenerator::aLoopHeaderNode( LoopHeaderNode *node ) {
 
     if ( node->isActivated() ) {
-        spdlog::warn( "loop header node not yet implemented" );
+        SPDLOG_WARN( "loop header node not yet implemented" );
         return;
 
         // the loop header node performs all checks hoisted out of the loop:

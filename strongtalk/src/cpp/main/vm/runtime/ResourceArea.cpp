@@ -290,7 +290,7 @@ NoGCVerifier::NoGCVerifier() :
 
 NoGCVerifier::~NoGCVerifier() {
     if ( old_scavenge_count not_eq Universe::scavengeCount ) {
-        spdlog::warn( "scavenge in a NoGCVerifier secured function" );
+        SPDLOG_WARN( "scavenge in a NoGCVerifier secured function" );
     }
 }
 

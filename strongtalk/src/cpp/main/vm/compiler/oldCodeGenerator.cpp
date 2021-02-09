@@ -282,25 +282,25 @@ static void inlineCache( Label &nlrTestPoint, SendInfo *info, bool super ) {
 // Calls to C land
 //
 // When entering C land, the ebp & esp of the last Delta frame have to be recorded.
-// When leaving C land, last_Delta_fp has to be reset to 0. This is required to
+// When leaving C land, last_delta_fp has to be reset to 0. This is required to
 // allow proper stack traversal.
 
 static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool needsDeltaFPCode ) {
     if ( needsDeltaFPCode )
-        theMacroAssembler->set_last_Delta_frame_before_call();
+        theMacroAssembler->set_last_delta_frame_before_call();
     theMacroAssembler->call( dest, relocType );
     if ( needsDeltaFPCode )
-        theMacroAssembler->reset_last_Delta_frame();
+        theMacroAssembler->reset_last_delta_frame();
 }
 
 
 static void call_C( const char *dest, RelocationInformation::RelocationType relocType, bool needsDeltaFPCode, Label &nlrTestPoint ) {
     if ( needsDeltaFPCode )
-        theMacroAssembler->set_last_Delta_frame_before_call();
+        theMacroAssembler->set_last_delta_frame_before_call();
     theMacroAssembler->call( dest, relocType );
     inlineCache( nlrTestPoint, nullptr, false );
     if ( needsDeltaFPCode )
-        theMacroAssembler->reset_last_Delta_frame();
+        theMacroAssembler->reset_last_delta_frame();
 }
 
 
@@ -334,7 +334,7 @@ static void breakpointCode() {
     // generates a transparent call to a breakpoint routine where
     // a breakpoint can be set - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": breakpoint should not be called" );
+        SPDLOG_WARN( ": breakpoint should not be called" );
     theMacroAssembler->pushad();
     call_C( (const char *) breakpoint, RelocationInformation::RelocationType::runtime_call_type, true );
     theMacroAssembler->popad();
@@ -345,7 +345,7 @@ static void verifyOopCode( Register reg ) {
     // generates transparent check code which test the contents of
     // reg for the mark bit and halts if set - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": verifyOop should not be called" );
+        SPDLOG_WARN( ": verifyOop should not be called" );
     Label L;
     theMacroAssembler->test( reg, MARK_TAG_BIT );
     theMacroAssembler->jcc( Assembler::Condition::zero, L );
@@ -378,7 +378,7 @@ static void verifyContextCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode ) {
-        spdlog::warn( ": verifyContext should not be called" );
+        SPDLOG_WARN( ": verifyContext should not be called" );
     }
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
@@ -398,7 +398,7 @@ static void verifyNilOrContextCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": verifyNilOrContext should not be called" );
+        SPDLOG_WARN( ": verifyNilOrContext should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyNilOrContext, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -416,7 +416,7 @@ static void verifyBlockCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": verifyBlockCode should not be called" );
+        SPDLOG_WARN( ": verifyBlockCode should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyBlock, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -443,7 +443,7 @@ static void verifyReturnCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal context and halts if not - for debugging purposes only
     if ( not VerifyCode and not GenTraceCalls ) {
-        spdlog::warn( ": verifyReturn should not be called" );
+        SPDLOG_WARN( ": verifyReturn should not be called" );
     }
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
@@ -476,7 +476,7 @@ extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32
 static void verifyNonLocalReturnCode() {
     // generates transparent check code which verifies NonLocalReturn check & continuation
     if ( not VerifyCode )
-        spdlog::warn( ": verifyNonLocalReturnCode should not be called" );
+        SPDLOG_WARN( ": verifyNonLocalReturnCode should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( Mapping::asRegister( NonLocalReturnResultLoc ) );    // pass argument (C calling convention)
     theMacroAssembler->pushl( Mapping::asRegister( NonLocalReturnHomeIdLoc ) );
@@ -497,7 +497,7 @@ static void verifySmiCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal smi_t and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": verifySmi should not be called" );
+        SPDLOG_WARN( ": verifySmi should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifySmi, RelocationInformation::RelocationType::runtime_call_type, true );
@@ -519,7 +519,7 @@ static void verifyObjCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
     // a legal Oop and halts if not - for debugging purposes only
     if ( not VerifyCode )
-        spdlog::warn( ": verifyObject should not be called" );
+        SPDLOG_WARN( ": verifyObject should not be called" );
     theMacroAssembler->pushad();
     theMacroAssembler->pushl( reg );    // pass argument (C calling convention)
     call_C( (const char *) verifyObject, RelocationInformation::RelocationType::runtime_call_type, true );

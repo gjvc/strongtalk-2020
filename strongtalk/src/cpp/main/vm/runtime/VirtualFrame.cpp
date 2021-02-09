@@ -154,7 +154,7 @@ void DeltaVirtualFrame::verify() const {
         if ( argument->is_context() ) {
             SPDLOG_INFO( "Argument is a context" );
             print_activation( 0 );
-            spdlog::warn( "verify failed" );
+            SPDLOG_WARN( "verify failed" );
         }
     }
 }
@@ -219,7 +219,7 @@ GrowableArray<Oop> *InterpretedVirtualFrame::expression_stack() const {
 
     std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
     if ( size not_eq computed_size ) {
-        spdlog::warn( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), size, computed_size );
+        SPDLOG_WARN( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), size, computed_size );
         SPDLOG_INFO( "[expression stack:" );
         for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
@@ -313,7 +313,7 @@ DeltaVirtualFrame *InterpretedVirtualFrame::parent() const {
                 return (DeltaVirtualFrame *) p;
     }
 
-    spdlog::warn( "parent frame is not found on same stack" );
+    SPDLOG_WARN( "parent frame is not found on same stack" );
 
     return nullptr;
 }
@@ -326,10 +326,10 @@ void InterpretedVirtualFrame::verify() const {
         if ( not m->in_context_allocation( byteCodeIndex() ) ) {
             ContextOop con = interpreter_context();
             if ( not con->is_context() )
-                spdlog::warn( "expecting context" );
+                SPDLOG_WARN( "expecting context" );
             if ( not m->is_blockMethod() ) {
                 if ( con->parent_fp() == nullptr )
-                    spdlog::warn( "expecting frame in context" );
+                    SPDLOG_WARN( "expecting frame in context" );
             }
             m->verify_context( con );
         }
@@ -498,7 +498,7 @@ GrowableArray<Oop> *CompiledVirtualFrame::expression_stack() const {
     std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
 
     if ( result->length() not_eq computed_size ) {
-        spdlog::warn( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), result->length(), computed_size );
+        SPDLOG_WARN( "Expression stack size  @%d is %d but computed to %d", byteCodeIndex(), result->length(), computed_size );
         SPDLOG_INFO( "[expression stack:" );
         for ( std::int32_t i = 0; i < result->length(); i++ ) {
             _console->print( " - " );
@@ -607,7 +607,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
             // nameDesc instead - gri 8-5-96
             return nilObject;
         }
-        spdlog::warn( "Compiler Bug: Illegal name desc found in NativeMethod 0x{0:x} @ {:d}", static_cast<const void *>(vf->fr().code()), vf->scope()->offset() );
+        SPDLOG_WARN( "Compiler Bug: Illegal name desc found in NativeMethod 0x{0:x} @ {:d}", static_cast<const void *>(vf->fr().code()), vf->scope()->offset() );
         return oopFactory::new_symbol( "illegal nameDesc" );
     }
 
@@ -741,7 +741,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *sco
             return nullptr;
 
         if ( not scope->method()->expectsContext() and scope->method()->parent()->allocatesInterpretedContext() ) {
-            spdlog::warn( "May be allocating context when unneeded" );
+            SPDLOG_WARN( "May be allocating context when unneeded" );
         }
         return compute_canonical_parent_context( scope, vf, con );
     }
@@ -830,7 +830,7 @@ void CompiledVirtualFrame::verify() const {
     ContextOop con = compiled_context();
     if ( con ) {
         if ( con->mark()->has_context_forward() )
-            spdlog::warn( "context has forwarder" );
+            SPDLOG_WARN( "context has forwarder" );
     }
 }
 // ------------- compiledMethodVFrame --------------
@@ -1088,7 +1088,7 @@ GrowableArray<Oop> *DeoptimizedVirtualFrame::expression_stack() const {
 
     std::int32_t computed_size = method()->expression_stack_mapping( byteCodeIndex() )->length();
     if ( exp_size not_eq computed_size )
-        spdlog::warn( "Expression stack size is %d but computed to %d", exp_size, computed_size );
+        SPDLOG_WARN( "Expression stack size is %d but computed to %d", exp_size, computed_size );
 
     return array;
 }

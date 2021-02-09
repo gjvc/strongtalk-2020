@@ -31,6 +31,8 @@ typedef struct {
 
 std::int32_t WINAPI startThread( void *params );
 
+
+
 class Thread : public CHeapAllocatedObject {
 
 private:
@@ -72,7 +74,7 @@ private:
     Thread &operator=( const Thread & ) = default;
     void operator delete( void *ptr ) { (void)(ptr); }
 
-    
+
     virtual ~Thread() {
         std::int32_t index = threads->find( this );
         threads->at_put( index, nullptr );

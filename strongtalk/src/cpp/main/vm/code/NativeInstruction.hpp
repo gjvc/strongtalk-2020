@@ -20,7 +20,7 @@ class NativeInstruction : ValueObject {
 public:
     NativeInstruction() = default;
     virtual ~NativeInstruction() = default;
-    static void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 protected:
     char *addr_at( std::int32_t offset ) const {
@@ -68,7 +68,7 @@ class NativeCall : public NativeInstruction {
 public:
     NativeCall() = default;
     virtual ~NativeCall() = default;
-    static void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
     enum Intel_specific_constants {
         instruction_code      = 0xE8,   //

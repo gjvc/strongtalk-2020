@@ -18,7 +18,6 @@
 #include "vm/interpreter/MethodIterator.hpp"
 #include "vm/interpreter/MethodInterval.hpp"
 #include "vm/interpreter/MethodIntervalFactory.hpp"
-#include "vm/interpreter/CodeIterator.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -1653,7 +1652,7 @@ public:
 };
 
 
-class characterNode : public leafNode {
+class CharacterNode : public leafNode {
 
 private:
     Oop  _value;
@@ -1661,7 +1660,7 @@ private:
 
 public:
 
-    characterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
+    CharacterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
         _value{ value },
         _str{ new_resource_array<char>( 3 ) },
         leafNode( byteCodeIndex, scope ) {
@@ -1673,14 +1672,19 @@ public:
                 return;
             }
         }
-        _str = "$%c";
+
+        //
+        _str[0] = '$';
+        _str[1] = '%';
+        _str[2] = 'c';
+
     }
 
 
-    characterNode() = default;
-    virtual ~characterNode() = default;
-    characterNode( const characterNode & ) = default;
-    characterNode &operator=( const characterNode & ) = default;
+    CharacterNode() = default;
+    virtual ~CharacterNode() = default;
+    CharacterNode( const CharacterNode & ) = default;
+    CharacterNode &operator=( const CharacterNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -1692,7 +1696,7 @@ public:
 };
 
 
-class objArrayNode : public astNode {
+class ObjectArrayNode : public astNode {
 
 private:
     ObjectArrayOop           _value;
@@ -1700,7 +1704,7 @@ private:
     GrowableArray<astNode *> *_elements;
 
 public:
-    objArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool is_outer = true ) :
+    ObjectArrayNode( std::int32_t byteCodeIndex, scopeNode *scope, ObjectArrayOop value, bool is_outer = true ) :
         astNode( byteCodeIndex, scope ),
         _value{},
         _isOuter{ false },
@@ -1715,10 +1719,10 @@ public:
     }
 
 
-    objArrayNode() = default;
-    virtual ~objArrayNode() = default;
-    objArrayNode( const objArrayNode & ) = default;
-    objArrayNode &operator=( const objArrayNode & ) = default;
+    ObjectArrayNode() = default;
+    virtual ~ObjectArrayNode() = default;
+    ObjectArrayNode( const ObjectArrayNode & ) = default;
+    ObjectArrayNode &operator=( const ObjectArrayNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -2115,9 +2119,9 @@ static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode
     if ( obj->is_double() )
         return new doubleNode( byteCodeIndex, scope, DoubleOop( obj )->value() );
     if ( obj->is_objArray() )
-        return new objArrayNode( byteCodeIndex, scope, ObjectArrayOop( obj ) );
+        return new ObjectArrayNode( byteCodeIndex, scope, ObjectArrayOop( obj ) );
 
-    return new characterNode( byteCodeIndex, scope, obj );
+    return new CharacterNode( byteCodeIndex, scope, obj );
 }
 
 

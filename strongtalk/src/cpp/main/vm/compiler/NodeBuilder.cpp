@@ -58,7 +58,7 @@ void NodeBuilder::append( Node *node ) {
 
     //
     if ( node->isExitNode() ) {
-        spdlog::warn( "should use append_exit for consistency" );
+        SPDLOG_WARN( "should use append_exit for consistency" );
     }
 
     //

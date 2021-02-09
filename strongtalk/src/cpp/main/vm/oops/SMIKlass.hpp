@@ -17,7 +17,7 @@ public:
 //    ~SMIKlass() = default;
 
 
-    static void operator delete( void *p ) {}
+    static void operator delete( void *p ) { (void)p; }
 
 
     friend void setKlassVirtualTableFromSmiKlass( Klass *k );

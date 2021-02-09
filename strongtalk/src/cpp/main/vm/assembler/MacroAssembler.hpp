@@ -38,9 +38,9 @@ public:
     void inline_oop( Oop o );
 
     // C calls
-    void set_last_Delta_frame_before_call();   // assumes that the return address has not been pushed yet
-    void set_last_Delta_frame_after_call();    // assumes that the return address has been pushed already
-    void reset_last_Delta_frame();
+    void set_last_delta_frame_before_call();   // assumes that the return address has not been pushed yet
+    void set_last_delta_frame_after_call();    // assumes that the return address has been pushed already
+    void reset_last_delta_frame();
 
     void call_C( Label &L );
 

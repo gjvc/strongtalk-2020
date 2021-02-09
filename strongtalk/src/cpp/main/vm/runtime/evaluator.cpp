@@ -26,7 +26,7 @@
 // return the distance between the current and the next_byteCodeIndex
 extern "C" void single_step_handler() {
     ResourceMark resourceMark;
-    evaluator::single_step( DeltaProcess::active()->last_Delta_fp() );
+    evaluator::single_step( DeltaProcess::active()->last_delta_fp() );
 }
 
 std::int32_t *saved_frame;

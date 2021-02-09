@@ -11,8 +11,8 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/primitives/behavior_primitives.hpp"
-#include "vm/primitives/system_primitives.hpp"
+#include "vm/primitives/BehaviorPrimitives.hpp"
+#include "vm/primitives/SystemPrimitives.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
@@ -241,7 +241,7 @@ protected:
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeSuperclassToNewClass ) {
     EXPECT_TRUE( superclassOf( subclass() ) == objectClass() ) << "Original superclassHandle";
-    Oop result = behaviorPrimitives::setSuperclass( superclass(), subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( superclass(), subclass() );
     EXPECT_TRUE ( subclass() == result ) << "Should return receiver";
     EXPECT_TRUE( superclassOf( subclass() ) == superclass() ) << "Superclass should have changed";
     EXPECT_TRUE( superclassOf( subclass()->klass() ) == objectClass()->klass() ) << "Metasuperclass should be unchanged";
@@ -250,7 +250,7 @@ TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeSuperclassTo
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeSuperclassToNil ) {
     EXPECT_TRUE( superclassOf( subclass() ) == objectClass() ) << "Original superclassHandle";
-    Oop result = behaviorPrimitives::setSuperclass( nilObject, subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( nilObject, subclass() );
     EXPECT_TRUE ( subclass() == result ) << "Should return receiver";
     EXPECT_TRUE( superclassOf( subclass() ) == nilObject ) << "Superclass should have changed";
     EXPECT_TRUE( superclassOf( subclass()->klass() ) == objectClass()->klass() ) << "Metasuperclass should be unchanged";
@@ -260,16 +260,16 @@ TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeSuperclassTo
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeNilSuperclassToNotNil ) {
 
     EXPECT_TRUE( superclassOf( subclass() ) == objectClass() ) << "Original superclassHandle";
-    behaviorPrimitives::setSuperclass( nilObject, subclass() );
+    BehaviorPrimitives::setSuperclass( nilObject, subclass() );
 
     EXPECT_TRUE( superclassOf( subclass() ) == nilObject ) << "Superclass should have changed";
-    behaviorPrimitives::setSuperclass( objectClass(), subclass() );
+    BehaviorPrimitives::setSuperclass( objectClass(), subclass() );
     EXPECT_TRUE( superclassOf( subclass() ) == objectClass() ) << "Superclass should have changed back";
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeTopSuperclassToClass ) {
-    Oop result = behaviorPrimitives::setSuperclass( classClass(), topClass()->klass() );
+    Oop result = BehaviorPrimitives::setSuperclass( classClass(), topClass()->klass() );
     checkNotMarkedSymbol( result );
     EXPECT_TRUE ( topClass()->klass() == result ) << "Should return receiver";
     EXPECT_TRUE( superclassOf( topClass()->klass() ) == classClass() ) << "Superclass should have changed";
@@ -277,31 +277,31 @@ TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldChangeTopSuperclas
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldNotChangeSuperclassToNilWhenSuperclasHasIvars ) {
-    Oop result = behaviorPrimitives::setSuperclass( nilObject, delaySubclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( nilObject, delaySubclass() );
     checkMarkedSymbol( "Should report error", result, vmSymbols::argument_is_invalid() );
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenReceiverNotAClass ) {
-    Oop result = behaviorPrimitives::setSuperclass( superclass(), oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    Oop result = BehaviorPrimitives::setSuperclass( superclass(), oopFactory::new_objArray( std::int32_t{ 0 } ) );
     checkMarkedSymbol( "Should report error", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenNewSuperclassNotAClass ) {
-    Oop result = behaviorPrimitives::setSuperclass( oopFactory::new_objArray( std::int32_t{ 0 } ), subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( oopFactory::new_objArray( std::int32_t{ 0 } ), subclass() );
     checkMarkedSymbol( "Should report error", result, vmSymbols::first_argument_has_wrong_type() );
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenNewSuperclassHasDifferentSize ) {
-    Oop result = behaviorPrimitives::setSuperclass( classClass(), subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( classClass(), subclass() );
     checkMarkedSymbol( "Should report error", result, vmSymbols::invalid_klass() );
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenInstanceVariableNamesAreDifferent ) {
     subclass()->klass_part()->set_superKlass( classClass() );
-    Oop result = behaviorPrimitives::setSuperclass( metaclassClass(), subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( metaclassClass(), subclass() );
     checkMarkedSymbol( "Should report error", result, vmSymbols::invalid_klass() );
 }

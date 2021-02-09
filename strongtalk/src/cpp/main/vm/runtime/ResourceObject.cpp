@@ -8,8 +8,8 @@
 #include "vm/runtime/ResourceObject.hpp"
 
 
-void *ResourceObject::operator new( std::size_t size, bool on_C_heap ) {
-    return on_C_heap ? (void *) malloc( size ) : allocateResource( size );
+void *ResourceObject::operator new( std::size_t size, bool on_cxx_runtime_heap ) {
+    return on_cxx_runtime_heap ? (void *) malloc( size ) : allocateResource( size );
 }
 
 

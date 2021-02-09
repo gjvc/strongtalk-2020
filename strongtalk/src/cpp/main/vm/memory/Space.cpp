@@ -395,7 +395,7 @@ public:
         _console->cr();
 
         Universe::remembered_set->print_set_for_object( _the_obj );
-        spdlog::warn( "gc problem" );
+        SPDLOG_WARN( "gc problem" );
     }
 };
 

@@ -24,9 +24,6 @@ private:
 
     static std::uint32_t hash_value( LookupKey *key );
 
-    static std::int32_t number_of_primary_hits;
-    static std::int32_t number_of_secondary_hits;
-    static std::int32_t number_of_misses;
 
     static LookupResult ic_lookup( KlassOop receiver_klass, Oop selector_or_method );
 
@@ -37,6 +34,11 @@ private:
     static NativeMethod *compile_method( LookupKey *key, MethodOop method );
 
 public:
+
+    static std::int32_t number_of_primary_hits;
+    static std::int32_t number_of_secondary_hits;
+    static std::int32_t number_of_misses;
+
     // Lookup probe into the lookup cache
     static LookupResult lookup_probe( LookupKey *key );
 

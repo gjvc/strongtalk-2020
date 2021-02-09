@@ -23,6 +23,18 @@ NativeMethod  *recompilee = nullptr;            // method being recompiled
 Recompilation *theRecompilation;
 
 
+Recompilee *Recompilee::new_Recompilee( RecompilerFrame *recompilerFrame ) {
+    if ( recompilerFrame->is_compiled() ) {
+        return new CompiledRecompilee( recompilerFrame, ( (CompiledRecompilerFrame *) recompilerFrame )->nm() );
+    } else {
+        InterpretedRecompilerFrame *irf = (InterpretedRecompilerFrame *) recompilerFrame;
+        // Urs, please check this!
+        st_assert( irf->key() not_eq nullptr, "must have a key" );
+        return new InterpretedRecompilee( irf, irf->key(), irf->top_method() );
+    }
+}
+
+
 const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, MethodOop method ) {
 
     // called by the interpreter whenever a method's invocation counter reaches the limit
@@ -382,17 +394,6 @@ void Recompilation::recompile_block( Recompilee *r ) {
         recompilee->makeZombie( true );      // do this last (after recompilation)
 }
 
-
-Recompilee *Recompilee::new_Recompilee( RecompilerFrame *recompilerFrame ) {
-    if ( recompilerFrame->is_compiled() ) {
-        return new CompiledRecompilee( recompilerFrame, ( (CompiledRecompilerFrame *) recompilerFrame )->nm() );
-    } else {
-        InterpretedRecompilerFrame *irf = (InterpretedRecompilerFrame *) recompilerFrame;
-        // Urs, please check this!
-        st_assert( irf->key() not_eq nullptr, "must have a key" );
-        return new InterpretedRecompilee( irf, irf->key(), irf->top_method() );
-    }
-}
 
 
 LookupKey *CompiledRecompilee::key() const {
