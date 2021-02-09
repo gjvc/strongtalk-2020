@@ -89,7 +89,7 @@ void ContextKlass::oop_follow_contents( Oop obj ) {
     // %implementation note:
     //   implement this another way if possible
     Oop *root_or_mark = (Oop *) MemOop( obj )->mark();
-    while ( not Oop( root_or_mark )->is_mark() ) {
+    while ( not Oop( root_or_mark )->isMarkOop() ) {
         root_or_mark = (Oop *) *root_or_mark;
     }
     std::int32_t len = MarkOop( root_or_mark )->hash() - 1;

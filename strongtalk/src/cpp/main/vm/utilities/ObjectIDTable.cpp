@@ -5,7 +5,7 @@
 //
 
 #include "vm/utilities/ObjectIDTable.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 // Memory->ObjectIDTable[1.. numberOfIDs] contains the valid entries
 
@@ -56,6 +56,6 @@ std::int32_t ObjectIDTable::insert( Oop obj ) {
 
 
 void ObjectIDTable::cleanup_after_bootstrap() {
-    Universe::set_objectIDTable( oopFactory::new_objArray( 200 ) );
+    Universe::set_objectIDTable( OopFactory::new_objectArray( 200 ) );
     nextID = 1;
 }

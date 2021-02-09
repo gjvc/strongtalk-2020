@@ -39,7 +39,7 @@ public:
     enum class RelocationType {
 
         none               = -1,    //
-        oop_type           = 0,     // embedded Oop (non-smi_t)
+        oop_type           = 0,     // embedded Oop (non-small_int_t)
         ic_type            = 1,     // inline cache
         primitive_type     = 2,     // primitive call
         runtime_call_type  = 3,     // Relative reference to external segment

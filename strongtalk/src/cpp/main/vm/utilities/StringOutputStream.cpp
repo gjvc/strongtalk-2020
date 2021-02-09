@@ -38,7 +38,7 @@ char *StringOutputStream::as_string() {
 
 
 struct ByteArrayOopDescriptor *StringOutputStream::as_byteArray() {
-    ByteArrayOopDescriptor *a = oopFactory::new_byteArray( buffer_pos );
+    ByteArrayOopDescriptor *a = OopFactory::new_byteArray( buffer_pos );
     for ( int32_t          i  = 0; i < buffer_pos; i++ ) {
         a->byte_at_put( i + 1, buffer[ i ] );
     }

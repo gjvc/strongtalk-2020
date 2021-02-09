@@ -7,7 +7,7 @@
 #include "vm/oops/MixinKlass.hpp"
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/MemOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 void setKlassVirtualTableFromMixinKlass( Klass *k ) {
@@ -27,7 +27,7 @@ Oop MixinKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     // header + instance variables
     MemOop( obj )->initialize_header( true, k );
     MemOop( obj )->initialize_body( MemOopDescriptor::header_size(), size );
-    ObjectArrayOop filler = oopFactory::new_objArray( std::int32_t{ 0 } );
+    ObjectArrayOop filler = OopFactory::new_objectArray( std::int32_t{ 0 } );
     obj->set_methods( filler );
     obj->set_instVars( filler );
     obj->set_classVars( filler );

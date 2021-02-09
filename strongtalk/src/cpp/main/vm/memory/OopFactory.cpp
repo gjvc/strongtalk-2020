@@ -6,7 +6,7 @@
 #include "vm/system/platform.hpp"
 #include "vm/system/asserts.hpp"
 #include "vm/memory/util.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/VirtualFrameKlass.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/oops/AssociationKlass.hpp"
@@ -22,13 +22,13 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-ByteArrayOop oopFactory::new_byteArray( std::int32_t size ) {
+ByteArrayOop OopFactory::new_byteArray( std::int32_t size ) {
     ByteArrayKlass *bk = (ByteArrayKlass *) Universe::byteArrayKlassObject()->klass_part();
     return ByteArrayOop( bk->allocateObjectSize( size ) );
 }
 
 
-ByteArrayOop oopFactory::new_byteArray( const char *name ) {
+ByteArrayOop OopFactory::new_byteArray( const char *name ) {
     std::int32_t len    = strlen( name );
     ByteArrayOop result = new_byteArray( len );
 
@@ -39,19 +39,19 @@ ByteArrayOop oopFactory::new_byteArray( const char *name ) {
 }
 
 
-ObjectArrayOop oopFactory::new_objArray( std::int32_t size ) {
-    ObjectArrayKlass *ok    = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
+ObjectArrayOop OopFactory::new_objectArray( std::int32_t size ) {
+    ObjectArrayKlass *ok    = (ObjectArrayKlass *) Universe::objectArrayKlassObject()->klass_part();
     ObjectArrayOop   result = ObjectArrayOop( ok->allocateObjectSize( size ) );
     result->set_length( size );
     return result;
 }
 
 
-ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
+ObjectArrayOop OopFactory::new_objectArray( GrowableArray<Oop> *array ) {
     BlockScavenge bs;
     FlagSetting( processSemaphore, true );
     std::int32_t     size = array->length();
-    ObjectArrayKlass *ok  = (ObjectArrayKlass *) Universe::objArrayKlassObject()->klass_part();
+    ObjectArrayKlass *ok  = (ObjectArrayKlass *) Universe::objectArrayKlassObject()->klass_part();
 
     ObjectArrayOop result = ObjectArrayOop( ok->allocateObjectSize( size ) );
 
@@ -62,7 +62,7 @@ ObjectArrayOop oopFactory::new_objArray( GrowableArray<Oop> *array ) {
 }
 
 
-DoubleOop oopFactory::new_double( double value ) {
+DoubleOop OopFactory::new_double( double value ) {
     DoubleOop d = as_doubleOop( Universe::allocate( sizeof( DoubleOopDescriptor ) / OOP_SIZE ) );
     d->init_untagged_contents_mark();
     d->set_klass_field( doubleKlassObject );
@@ -71,7 +71,7 @@ DoubleOop oopFactory::new_double( double value ) {
 }
 
 
-DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
+DoubleOop OopFactory::clone_double_to_oldspace( DoubleOop value ) {
     DoubleOop d = as_doubleOop( Universe::allocate_tenured( sizeof( DoubleOopDescriptor ) / OOP_SIZE ) );
     d->init_untagged_contents_mark();
     d->set_klass_field( doubleKlassObject );
@@ -80,22 +80,22 @@ DoubleOop oopFactory::clone_double_to_oldspace( DoubleOop value ) {
 }
 
 
-SymbolOop oopFactory::new_symbol( const char *name, std::int32_t len ) {
+SymbolOop OopFactory::new_symbol( const char *name, std::int32_t len ) {
     return Universe::symbol_table->lookup( name, len );
 }
 
 
-SymbolOop oopFactory::new_symbol( const char *name ) {
+SymbolOop OopFactory::new_symbol( const char *name ) {
     return new_symbol( name, strlen( name ) );
 }
 
 
-SymbolOop oopFactory::new_symbol( ByteArrayOop b ) {
+SymbolOop OopFactory::new_symbol( ByteArrayOop b ) {
     return new_symbol( const_cast<char *>( b->chars()), b->length() );
 }
 
 
-AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool is_constant ) {
+AssociationOop OopFactory::new_association( SymbolOop key, Oop value, bool is_constant ) {
     AssociationOop as = AssociationOop( Universe::associationKlassObject()->klass_part()->allocateObject() );
     st_assert( as->is_association(), "type check" );
     as->set_key( key );
@@ -105,7 +105,7 @@ AssociationOop oopFactory::new_association( SymbolOop key, Oop value, bool is_co
 }
 
 
-VirtualFrameOop oopFactory::new_vframe( ProcessOop process, std::int32_t index ) {
+VirtualFrameOop OopFactory::new_vframe( ProcessOop process, std::int32_t index ) {
     BlockScavenge     bs;
     VirtualFrameKlass *vk = (VirtualFrameKlass *) Universe::vframeKlassObject()->klass_part();
 
@@ -119,6 +119,6 @@ VirtualFrameOop oopFactory::new_vframe( ProcessOop process, std::int32_t index )
 }
 
 
-SMIOop oopFactory::new_smi( std::int32_t value ) {
+SmallIntegerOop OopFactory::new_smi( std::int32_t value ) {
     return smiOopFromValue( value );
 }

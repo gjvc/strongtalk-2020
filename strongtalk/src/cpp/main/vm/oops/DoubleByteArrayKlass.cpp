@@ -15,7 +15,7 @@ Oop DoubleByteArrayKlass::allocateObject( bool permit_scavenge, bool tenured ) {
     static_cast<void>(tenured); // unused
 
     st_fatal( "should never call allocateObject in doubleByteArrayKlass" );
-    return badOop;
+    return MarkOopDescriptor::bad();
 }
 
 
@@ -53,7 +53,7 @@ Oop DoubleByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_sca
 
 
 KlassOop DoubleByteArrayKlass::create_subclass( MixinOop mixin, Format format ) {
-    if ( format == Format::mem_klass or format == Format::doubleByteArray_klass ) {
+    if ( format == Format::mem_klass or format == Format::double_byte_array_klass ) {
         return DoubleByteArrayKlass::create_class( as_klassOop(), mixin );
     }
     return nullptr;

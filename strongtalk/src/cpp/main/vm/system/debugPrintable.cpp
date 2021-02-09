@@ -17,7 +17,7 @@
 #include "vm/utilities/ObjectIDTable.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/compiler/Compiler.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 // All debug entries should be wrapped with a stack allocated Command object.
@@ -60,7 +60,7 @@ void pp( void *p ) {
         return;
     }
 
-    if ( Oop( p )->is_smi() or Oop( p )->is_mark() ) {
+    if ( Oop( p )->isSmallIntegerOop() or Oop( p )->isMarkOop() ) {
         Oop( p )->print();
         return;
     }
@@ -78,7 +78,7 @@ void pp_short( void *p ) {
     FlagSetting fl( PrintVMMessages, true );
     if ( p == nullptr ) {
         SPDLOG_INFO( "0x0" );
-    } else if ( Oop( p )->is_mem() ) {
+    } else if ( Oop( p )->isMemOop() ) {
         // guess that it's a MemOop
         Oop( p )->print();
     } else {
@@ -269,7 +269,7 @@ void print_codes( const char *class_name, const char *selector ) {
     } else if ( not result->is_klass() ) {
         SPDLOG_INFO( "Global %s is not a class.", class_name );
     } else {
-        SymbolOop sel    = oopFactory::new_symbol( selector );
+        SymbolOop sel    = OopFactory::new_symbol( selector );
         MethodOop method = KlassOop( result )->klass_part()->lookup( sel );
         if ( not method )
             method = result->blueprint()->lookup( sel );

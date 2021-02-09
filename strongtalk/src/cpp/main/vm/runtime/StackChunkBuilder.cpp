@@ -10,7 +10,7 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/Processes.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 
 
@@ -84,10 +84,10 @@ void StackChunkBuilder::append( DeltaVirtualFrame *f ) {
 }
 
 
-ObjectArrayOop StackChunkBuilder::as_objArray() {
+ObjectArrayOop StackChunkBuilder::as_objectArray() {
     std::int32_t length = header_size() + array->length();
 
-    ObjectArrayOop result = oopFactory::new_objArray( length );
+    ObjectArrayOop result = OopFactory::new_objectArray( length );
     result->obj_at_put( 1, smiOopFromValue( _virtualFrameCount ) );
     result->obj_at_put( 2, smiOopFromValue( _localExpressionCount ) );
 

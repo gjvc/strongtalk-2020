@@ -14,7 +14,7 @@
 
 
 extern std::int32_t nstages;                            // # of recompilation stages
-extern smi_t        *compileCounts;                     // # of compilations indexed by stage
+extern small_int_t  *compileCounts;                     // # of compilations indexed by stage
 extern std::int32_t *recompileLimits;                   // recompilation limits indexed by stage
 
 constexpr std::int32_t MAX_RECOMPILATION_LEVELS               = 4;      // max. # recompilation levels

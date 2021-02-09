@@ -25,9 +25,9 @@
 class VirtualFrameOopDescriptor : public MemOopDescriptor {
 
 private:
-    ProcessOop _process;
-    SMIOop     _index;
-    SMIOop     _time_stamp;
+    ProcessOop      _process;
+    SmallIntegerOop _index;
+    SmallIntegerOop _time_stamp;
 
 protected:
     VirtualFrameOopDescriptor *addr() const {

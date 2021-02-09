@@ -11,7 +11,7 @@
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/DoubleByteArrayOopDescriptor.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 
@@ -31,18 +31,18 @@ static Oop new_double( double value ) {
 }
 
 
-#define ASSERT_RECEIVER st_assert(receiver->is_double(), "receiver must be double")
+#define ASSERT_RECEIVER st_assert(receiver->isDouble(), "receiver must be double")
 
 #define DOUBLE_RELATIONAL_OP( op )                                      \
   ASSERT_RECEIVER;                                                      \
-  if (not argument->is_double())                                        \
+  if (not argument->isDouble())                                        \
     return markSymbol(vmSymbols::first_argument_has_wrong_type());      \
   return DoubleOop(receiver)->value() op DoubleOop(argument)->value()   \
          ? trueObject : falseObject
 
 #define DOUBLE_ARITH_OP( op )                                           \
   ASSERT_RECEIVER;                                                      \
-  if (not argument->is_double())                                        \
+  if (not argument->isDouble())                                        \
     return markSymbol(vmSymbols::first_argument_has_wrong_type());      \
   return new_double(DoubleOop(receiver)->value() op DoubleOop(argument)->value())
 
@@ -108,7 +108,7 @@ PRIM_DECL_2(DoubleOopPrimitives::divide, Oop receiver, Oop argument) {
 PRIM_DECL_2( DoubleOopPrimitives::mod, Oop receiver, Oop argument ) {
     PROLOGUE_2( "mod", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_double() )
+    if ( not argument->isDouble() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     double result = fmod( DoubleOop( receiver )->value(), DoubleOop( argument )->value() );
@@ -288,9 +288,9 @@ PRIM_DECL_1( DoubleOopPrimitives::truncated, Oop receiver ) {
 PRIM_DECL_2( DoubleOopPrimitives::timesTwoPower, Oop receiver, Oop argument ) {
     PROLOGUE_2( "timesTwoPower", receiver, argument )
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    return new_double( ldexp( DoubleOop( receiver )->value(), SMIOop( argument )->value() ) );
+    return new_double( ldexp( DoubleOop( receiver )->value(), SmallIntegerOop( argument )->value() ) );
 }
 
 
@@ -333,9 +333,9 @@ PRIM_DECL_2( DoubleOopPrimitives::printFormat, Oop receiver, Oop argument ) {
     const std::int32_t size = 100;
     char               format[size];
 
-    if ( argument->is_byteArray() ) {
+    if ( argument->isByteArray() ) {
         ByteArrayOop( argument )->copy_null_terminated( format, size );
-    } else if ( argument->is_doubleByteArray() ) {
+    } else if ( argument->isDoubleByteArray() ) {
         DoubleByteArrayOop( argument )->copy_null_terminated( format, size );
     } else {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -356,7 +356,7 @@ PRIM_DECL_1( DoubleOopPrimitives::printString, Oop receiver ) {
     result[ len ]         = '\0';
 
     BlockScavenge      bs;
-    ByteArrayOop       ba = oopFactory::new_byteArray( len );
+    ByteArrayOop       ba = OopFactory::new_byteArray( len );
     for ( std::int32_t i  = 0; i < len; i++ ) {
         ba->byte_at_put( i + 1, result[ i ] );
     }
@@ -384,7 +384,7 @@ PRIM_DECL_1( DoubleOopPrimitives::store_string, Oop receiver ) {
     double       value = DoubleOop( receiver )->value();
     std::uint8_t *addr = (std::uint8_t *) &value;
 
-    ByteArrayOop       result = oopFactory::new_byteArray( 8 );
+    ByteArrayOop       result = OopFactory::new_byteArray( 8 );
     for ( std::int32_t index  = 0; index < 8; index++ ) {
         result->byte_at_put( index + 1, addr[ index ] );
     }
@@ -395,11 +395,11 @@ PRIM_DECL_1( DoubleOopPrimitives::store_string, Oop receiver ) {
 PRIM_DECL_3( DoubleOopPrimitives::mandelbrot, Oop re, Oop im, Oop n ) {
     PROLOGUE_3( "mandelbrot", re, im, n );
 
-    if ( not re->is_double() )
+    if ( not re->isDouble() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not im->is_double() )
+    if ( not im->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    if ( not n->is_smi() )
+    if ( not n->isSmallIntegerOop() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
     double c_re = DoubleOop( re )->value();
@@ -410,7 +410,7 @@ PRIM_DECL_3( DoubleOopPrimitives::mandelbrot, Oop re, Oop im, Oop n ) {
     double d_im = z_im * z_im;
 
     std::int32_t i    = 0;
-    std::int32_t imax = SMIOop( n )->value() - 1;
+    std::int32_t imax = SmallIntegerOop( n )->value() - 1;
 
     while ( i < imax and d_re + d_im <= 4.0 ) {
         z_im = 2.0 * z_re * z_im + c_im;

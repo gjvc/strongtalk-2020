@@ -97,7 +97,7 @@ bool KlassKlass::oop_verify( Oop obj ) {
     st_assert( obj->is_klass(), "must be class" );
     Klass *k = KlassOop( obj )->klass_part();
 
-    if ( not k->oop_is_smi() ) {
+    if ( not k->oopIsSmallInteger() ) {
         std::int32_t a = k->non_indexable_size();
         std::int32_t b = k->oop_header_size();
         std::int32_t c = k->number_of_instance_variables();

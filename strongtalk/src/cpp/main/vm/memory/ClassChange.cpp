@@ -6,7 +6,7 @@
 
 #include "vm/memory/ClassChange.hpp"
 #include "vm/memory/Converter.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 
@@ -64,20 +64,20 @@ memConverter *ClassChange::create_converter_for( KlassOopDescriptor *old_class, 
     switch ( new_class->klass_part()->format() ) {
         case Klass::Format::mem_klass:
             return new memConverter( old_class, new_class );
-        case Klass::Format::byteArray_klass:
+        case Klass::Format::byte_array_klass:
             return new byteArrayConverter( old_class, new_class );
-        case Klass::Format::doubleByteArray_klass:
+        case Klass::Format::double_byte_array_klass:
             return new doubleByteArrayConverter( old_class, new_class );
-        case Klass::Format::doubleValueArray_klass:
+        case Klass::Format::double_value_array_klass:
             return new doubleValueArrayConverter( old_class, new_class );
         case Klass::Format::klass_klass:
             return new klassConverter( old_class, new_class );
         case Klass::Format::mixin_klass:
             return new mixinConverter( old_class, new_class );
-        case Klass::Format::objArray_klass:
-            return new objArrayConverter( old_class, new_class );
-        case Klass::Format::weakArray_klass:
-            return new objArrayConverter( old_class, new_class );
+        case Klass::Format::object_array_klass:
+            return new objectArrayConverter( old_class, new_class );
+        case Klass::Format::weak_array_klass:
+            return new objectArrayConverter( old_class, new_class );
         case Klass::Format::process_klass:
             return new processConverter( old_class, new_class );
         case Klass::Format::proxy_klass:
@@ -111,7 +111,7 @@ void ClassChange::update_class_vars() {
     for ( std::int32_t i = new_mixin()->number_of_classVars(); i > 0; i-- ) {
         struct SymbolOopDescriptor *name = new_mixin()->classVar_at( i );
         if ( not k->includes_classVar( name ) ) {
-            k->add_classVar( oopFactory::new_association( name, nilObject, false ) );
+            k->add_classVar( OopFactory::new_association( name, nilObject, false ) );
         }
     }
 

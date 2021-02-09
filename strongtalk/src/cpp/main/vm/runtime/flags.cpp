@@ -113,7 +113,7 @@ bool debugFlags::boolAtPut( const char *name, std::int32_t len, bool *value ) {
         TraceDoublePrims          = *value;
         TraceByteArrayPrims       = *value;
         TraceDoubleByteArrayPrims = *value;
-        TraceObjArrayPrims        = *value;
+        TraceObjectArrayPrims        = *value;
         TraceSmiPrims             = *value;
         TraceProxyPrims           = *value;
         TraceBehaviorPrims        = *value;

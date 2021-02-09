@@ -27,7 +27,7 @@
 // More precisely, the card being marked corresponds to the object start, not
 // necessarily to the word being updated (e.g., if the object starts towards the
 // end of a card, the updated instance variable may be on the next card).  But for
-// objArrays, the precise card is marked so that we don't need to scavenge the
+// objectArrays, the precise card is marked so that we don't need to scavenge the
 // entire array.
 //
 // During GC, the bytes are used to remember object sizes, see comment further below
@@ -40,8 +40,8 @@
 //    Speed up card scanning by comparing words for frequent case
 //    (A profile of Mark Sweep is necessary to make the call).
 //
-// 2. Handle objArrays in a more efficient way. Scavenge only parts of the objArray with dirty cards.
-//    The current implementation is REALLY slow for huge tenured objArrays with few new pointers.
+// 2. Handle objectArrays in a more efficient way. Scavenge only parts of the objectArray with dirty cards.
+//    The current implementation is REALLY slow for huge tenured objectArrays with few new pointers.
 //
 
 RememberedSet::RememberedSet() :

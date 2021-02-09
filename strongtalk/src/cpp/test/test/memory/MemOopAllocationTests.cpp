@@ -20,6 +20,9 @@ extern "C" Oop *eden_end;
 
 class MemOopAllocationTests : public ::testing::Test {
 
+public:
+    MemOopAllocationTests() : ::testing::Test() {}
+
 protected:
 
     void SetUp() override {

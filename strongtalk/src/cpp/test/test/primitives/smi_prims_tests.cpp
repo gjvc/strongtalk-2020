@@ -3,7 +3,7 @@
 //  Refer to the "COPYRIGHTS" file at the root of this source tree for complete licence and copyright terms
 //
 
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/primitives/primitives.hpp"
@@ -13,17 +13,20 @@
 #include <gtest/gtest.h>
 
 
-typedef Oop (__CALLING_CONVENTION *smifntype)( SMIOop, SMIOop );
+typedef Oop (__CALLING_CONVENTION *smifntype)( SmallIntegerOop, SmallIntegerOop );
 
 extern "C" std::int32_t expansion_count;
 
 
 class SmiPrimitivesTests : public ::testing::Test {
 
+public:
+    SmiPrimitivesTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
 
-        quoSymbol = oopFactory::new_symbol( "primitiveQuo:ifFail:" );
+        quoSymbol = OopFactory::new_symbol( "primitiveQuo:ifFail:" );
         PrimitiveDescriptor *prim = Primitives::lookup( quoSymbol );
         smiQuo = smifntype( prim->fn() );
     }
@@ -41,11 +44,11 @@ protected:
 
 
 TEST_F( SmiPrimitivesTests, quoShouldReturnDivideReceiverByArgument ) {
-    ASSERT_EQ( 5, SMIOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) ) )->value() );
+    ASSERT_EQ( 5, SmallIntegerOop( smiQuo( smiOopFromValue( 2 ), smiOopFromValue( 10 ) ) )->value() );
 }
 
 
 TEST_F( SmiPrimitivesTests, quoShouldReturnReceiverHasWrongTypeWhenNotSMI ) {
-    Oop result = smiQuo( smiOopFromValue( 2 ), SMIOop( quoSymbol ) );
+    Oop result = smiQuo( smiOopFromValue( 2 ), SmallIntegerOop( quoSymbol ) );
     ASSERT_EQ( (std::int32_t) markSymbol( vmSymbols::receiver_has_wrong_type() ), (std::int32_t) result );
 }

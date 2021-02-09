@@ -105,7 +105,7 @@ bool MemOopDescriptor::verify() {
     bool flag = true;
     if ( flag ) {
         MarkOop m = mark();
-        if ( not Oop( m )->is_mark() ) {
+        if ( not Oop( m )->isMarkOop() ) {
             error( "mark of MemOop 0x{0:x} isn't a markOop", this );
             if ( not m->verify() ) {
                 error( " mark of MemOop 0x{0:x} isn't even a legal Oop", this );
@@ -122,7 +122,7 @@ bool MemOopDescriptor::verify() {
 }
 
 
-void MemOopDescriptor::set_identity_hash( smi_t h ) {
+void MemOopDescriptor::set_identity_hash( small_int_t h ) {
     set_mark( mark()->set_hash( h ) );
 }
 
@@ -147,6 +147,7 @@ void MemOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 void MemOopDescriptor::bootstrap_body( Bootstrap *stream, std::int32_t h_size ) {
     std::int32_t offset = h_size;
     std::int32_t s      = blueprint()->non_indexable_size();
+
     while ( offset < s ) {
         stream->read_oop( (Oop *) addr() + offset );
         offset++;
@@ -177,14 +178,15 @@ void MemOopDescriptor::print_on( ConsoleOutputStream *stream ) {
 
 void MemOopDescriptor::print_id_on( ConsoleOutputStream *stream ) {
     std::int32_t id;
-    if ( garbageCollectionInProgress or not( id = ObjectIDTable::insert( MemOop( this ) ) ) )
+    if ( garbageCollectionInProgress or not( id = ObjectIDTable::insert( MemOop( this ) ) ) ) {
         stream->print( "(%#-6lx)", addr() );
-    else
+    } else {
         stream->print( "%d", id );
+    }
 }
 
 
-smi_t MemOopDescriptor::identity_hash() {
+small_int_t MemOopDescriptor::identity_hash() {
     // don't clean up the addr()->_mark below to mark(), since hash_markOop can modify its argument
     return hash_markOop( addr()->_mark );
 }
@@ -201,8 +203,9 @@ void MemOopDescriptor::scavenge_body( std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
-    while ( p < q )
+    while ( p < q ) {
         scavenge_oop( p++ );
+    }
 }
 
 
@@ -210,8 +213,9 @@ void MemOopDescriptor::scavenge_tenured_body( std::int32_t begin, std::int32_t e
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
-    while ( p < q )
+    while ( p < q ) {
         scavenge_tenured_oop( p++ );
+    }
 }
 
 
@@ -224,8 +228,9 @@ void MemOopDescriptor::follow_body( std::int32_t begin, std::int32_t end ) {
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
-    while ( p < q )
+    while ( p < q ) {
         MarkSweep::reverse_and_push( p++ );
+    }
 }
 
 
@@ -244,17 +249,19 @@ void MemOopDescriptor::oop_iterate_body( OopClosure *blk, std::int32_t begin, st
     Oop *p = (Oop *) addr();
     Oop *q = p + end;
     p += begin;
-    while ( p < q )
+    while ( p < q ) {
         blk->do_oop( p++ );
+    }
 }
 
 
 void MemOopDescriptor::initialize_header( bool has_untagged_contents, KlassOop klass ) {
     set_klass_field( klass );
-    if ( has_untagged_contents )
+    if ( has_untagged_contents ) {
         init_untagged_contents_mark();
-    else
+    } else {
         init_mark();
+    }
 }
 
 
@@ -263,8 +270,9 @@ void MemOopDescriptor::initialize_body( std::int32_t begin, std::int32_t end ) {
     Oop *p    = (Oop *) addr();
     Oop *q    = p + end;
     p += begin;
-    while ( p < q )
+    while ( p < q ) {
         Universe::store( p++, value, false );
+    }
 }
 
 
@@ -304,7 +312,8 @@ void MemOopDescriptor::gc_store_size() {
 
 // Retrieve object size from age field and remembered set
 std::int32_t MemOopDescriptor::gc_retrieve_size() {
-    if ( mark()->age() == 0 )
+    if ( mark()->age() == 0 ) {
         return Universe::remembered_set->get_size( this );
+    }
     return mark()->age();
 }

@@ -5,7 +5,7 @@
 
 #include "vm/primitives/OopPrimitives.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Reflection.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
@@ -69,9 +69,9 @@ public:
 
 PRIM_DECL_2( OopPrimitives::become, Oop receiver, Oop argument ) {
     PROLOGUE_2( "become", receiver, argument )
-    if ( receiver->is_smi() )
+    if ( receiver->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( argument->is_smi() )
+    if ( argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     {
         ResourceMark mark;
@@ -89,12 +89,12 @@ PRIM_DECL_2( OopPrimitives::become, Oop receiver, Oop argument ) {
 
 PRIM_DECL_2( OopPrimitives::instVarAt, Oop receiver, Oop index ) {
     PROLOGUE_2( "instVarAt", receiver, index )
-    if ( not receiver->is_mem() )
+    if ( not receiver->isMemOop() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    std::int32_t raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SmallIntegerOop( index )->value() - 1;
 
     if ( not MemOop( receiver )->is_within_instVar_bounds( raw_index ) )
         return markSymbol( vmSymbols::out_of_bounds() );
@@ -105,12 +105,12 @@ PRIM_DECL_2( OopPrimitives::instVarAt, Oop receiver, Oop index ) {
 
 PRIM_DECL_2( OopPrimitives::instance_variable_name_at, Oop obj, Oop index ) {
     PROLOGUE_2( "instance_variable_name_at", obj, index )
-    if ( not obj->is_mem() )
+    if ( not obj->isMemOop() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    std::int32_t raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SmallIntegerOop( index )->value() - 1;
 
     if ( not MemOop( obj )->is_within_instVar_bounds( raw_index ) )
         markSymbol( vmSymbols::out_of_bounds() );
@@ -121,12 +121,12 @@ PRIM_DECL_2( OopPrimitives::instance_variable_name_at, Oop obj, Oop index ) {
 
 PRIM_DECL_3( OopPrimitives::instVarAtPut, Oop receiver, Oop index, Oop value ) {
     PROLOGUE_3( "instVarAtPut", receiver, index, value )
-    if ( not receiver->is_mem() )
+    if ( not receiver->isMemOop() )
         return markSymbol( vmSymbols::receiver_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    std::int32_t raw_index = SMIOop( index )->value() - 1;
+    std::int32_t raw_index = SmallIntegerOop( index )->value() - 1;
 
     if ( not MemOop( receiver )->is_within_instVar_bounds( raw_index ) )
         return markSymbol( vmSymbols::out_of_bounds() );
@@ -173,7 +173,7 @@ PRIM_DECL_2( OopPrimitives::not_equal, Oop receiver, Oop argument ) {
 
 PRIM_DECL_1( OopPrimitives::oop_size, Oop receiver ) {
     PROLOGUE_1( "oop_size", receiver )
-    return smiOopFromValue( receiver->is_mem() ? MemOop( receiver )->size() : 0 );
+    return smiOopFromValue( receiver->isMemOop() ? MemOop( receiver )->size() : 0 );
 }
 
 
@@ -207,7 +207,7 @@ PRIM_DECL_1( OopPrimitives::printValue, Oop receiver ) {
 
 PRIM_DECL_1( OopPrimitives::asObjectID, Oop receiver ) {
     PROLOGUE_1( "asObjectID", receiver )
-    return SMIOop( ObjectIDTable::insert( receiver ) );
+    return SmallIntegerOop( ObjectIDTable::insert( receiver ) );
 }
 
 
@@ -237,7 +237,7 @@ PRIM_DECL_5( OopPrimitives::performWithWithWith, Oop receiver, Oop selector, Oop
 
 PRIM_DECL_3( OopPrimitives::performArguments, Oop receiver, Oop selector, Oop args ) {
     PROLOGUE_3( "performArguments", receiver, selector, args );
-    if ( not args->is_objArray() )
+    if ( not args->isObjectArray() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
     return Delta::call( receiver, selector, ObjectArrayOop( args ) );
 }

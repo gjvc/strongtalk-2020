@@ -51,7 +51,7 @@ public:
 
     Oop *append( Oop *anOop ) {
         st_assert( not isFull(), "Cannot append to full OopChunk" );
-        st_assert( ( *anOop )->is_mem(), "Must be a mem Oop" );
+        st_assert( ( *anOop )->isMemOop(), "Must be a mem Oop" );
         next++;
         next->anOop      = *anOop;
         next->oopPointer = anOop;
@@ -62,7 +62,7 @@ public:
     void fixupOops() {
         oopAssoc *current = next;
         while ( current >= oop_start ) {
-            st_assert( current->anOop->is_mem(), "Fixed up Oop should be MemOop" );
+            st_assert( current->anOop->isMemOop(), "Fixed up Oop should be MemOop" );
             *( current->oopPointer ) = current->anOop;
             current--;
         }
@@ -187,9 +187,9 @@ MemOop MarkSweep::reverse( Oop *p ) {
     Oop obj = *p;
 
     // Return nullptr if non MemOop
-    if ( not obj->is_mem() )
+    if ( not obj->isMemOop() )
         return nullptr;
-    if ( not Oop( p )->is_smi() ) {// ie. not word aligned
+    if ( not Oop( p )->isSmallIntegerOop() ) {// ie. not word aligned
         p = _oopRelocations->relocate( p );
     }
 
@@ -211,7 +211,7 @@ MemOop MarkSweep::reverse( Oop *p ) {
         *p = Oop( MemOop( obj )->mark() );
         MemOop( obj )->set_mark( p );
 
-        st_assert( MemOop(obj)->klass()->is_mem(), "just checking" );
+        st_assert( MemOop(obj)->klass()->isMemOop(), "just checking" );
 
         return MemOop( obj );
     }

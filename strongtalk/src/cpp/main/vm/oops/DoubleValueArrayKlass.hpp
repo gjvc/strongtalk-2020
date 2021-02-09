@@ -27,7 +27,7 @@ public:
     }
 
 
-    // Return the Oop size for a doubleValueArrayOop
+    // Return the Oop size for a DoubleValueArrayOop
     std::int32_t object_size( std::int32_t number_of_doubleValues ) const {
         return non_indexable_size() + 1 + roundTo( number_of_doubleValues * sizeof( double ), OOP_SIZE ) / OOP_SIZE;
     }
@@ -46,7 +46,7 @@ public:
 
     // Format
     Format format() {
-        return Format::doubleValueArray_klass;
+        return Format::double_value_array_klass;
     }
 
 
@@ -81,12 +81,12 @@ public:
 
 
     std::int32_t oop_size( Oop obj ) const {
-        return object_size( doubleValueArrayOop( obj )->length() );
+        return object_size( DoubleValueArrayOop( obj )->length() );
     }
 
 
     // testers
-    bool oop_is_doubleValueArray() const {
+    bool oopIsDoubleValueArray() const {
         return true;
     }
 

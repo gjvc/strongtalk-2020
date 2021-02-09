@@ -20,7 +20,7 @@ std::int32_t CallBackPrimitives::number_of_calls;
 
 PRIM_DECL_2( CallBackPrimitives::initialize, Oop receiver, Oop selector ) {
     PROLOGUE_2( "initialize", receiver, selector );
-    if ( not selector->is_symbol() )
+    if ( not selector->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     CallBack::initialize( receiver, SymbolOop( selector ) );
     return receiver;
@@ -29,24 +29,24 @@ PRIM_DECL_2( CallBackPrimitives::initialize, Oop receiver, Oop selector ) {
 
 PRIM_DECL_3( CallBackPrimitives::registerPascalCall, Oop index, Oop nofArgs, Oop result ) {
     PROLOGUE_3( "registerPascalCall", index, nofArgs, result );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not nofArgs->is_smi() )
+    if ( not nofArgs->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
-    ProxyOop( result )->set_pointer( CallBack::registerPascalCall( SMIOop( index )->value(), SMIOop( nofArgs )->value() ) );
+    ProxyOop( result )->set_pointer( CallBack::registerPascalCall( SmallIntegerOop( index )->value(), SmallIntegerOop( nofArgs )->value() ) );
     return result;
 }
 
 
 PRIM_DECL_2( CallBackPrimitives::registerCCall, Oop index, Oop result ) {
     PROLOGUE_2( "registerCCall", index, result );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    ProxyOop( result )->set_pointer( CallBack::registerCCall( SMIOop( index )->value() ) );
+    ProxyOop( result )->set_pointer( CallBack::registerCCall( SmallIntegerOop( index )->value() ) );
     return result;
 }
 

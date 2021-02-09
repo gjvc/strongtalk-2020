@@ -11,7 +11,7 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/runtime/Delta.hpp"
@@ -234,7 +234,7 @@ public:
     }
 
 
-    bool is_smi( Oop *addr );
+    bool isSmallIntegerOop( Oop *addr );
 
     bool is_table_entry( Oop *addr );
 
@@ -264,7 +264,7 @@ void TokenStream::tokenize( char *str ) {
 }
 
 
-bool TokenStream::is_smi( Oop *addr ) {
+bool TokenStream::isSmallIntegerOop( Oop *addr ) {
     std::int32_t  value;
     std::uint32_t length;
 
@@ -326,7 +326,7 @@ bool TokenStream::is_symbol( Oop *addr ) {
     char          name[200];
     std::uint32_t length;
     if ( sscanf( current(), "#%[a-zA-Z0-9_]%u", name, &length ) == 1 and strlen( current() ) == length ) {
-        *addr = oopFactory::new_symbol( name );
+        *addr = OopFactory::new_symbol( name );
         return true;
     }
     return false;
@@ -354,7 +354,7 @@ bool TokenStream::is_keyword() {
 
 bool evaluator::get_oop( TokenStream *stream, Oop *addr ) {
 
-    if ( stream->is_smi( addr ) ) {
+    if ( stream->isSmallIntegerOop( addr ) ) {
         stream->advance();
         return true;
     }
@@ -403,12 +403,12 @@ void evaluator::eval_message( TokenStream *stream ) {
     if ( stream->eos() ) {
         receiver->print();
     } else if ( stream->is_unary() ) {
-        SymbolOop selector = oopFactory::new_symbol( stream->current() );
+        SymbolOop selector = OopFactory::new_symbol( stream->current() );
         if ( not validate_lookup( receiver, selector ) )
             return;
         result = Delta::call( receiver, selector );
     } else if ( stream->is_binary() ) {
-        selector = oopFactory::new_symbol( stream->current() );
+        selector = OopFactory::new_symbol( stream->current() );
         if ( not validate_lookup( receiver, selector ) )
             return;
         Oop argument;
@@ -429,7 +429,7 @@ void evaluator::eval_message( TokenStream *stream ) {
                 return;
             arguments[ nofArgs++ ] = arg;
         }
-        selector = oopFactory::new_symbol( name );
+        selector = OopFactory::new_symbol( name );
         if ( not validate_lookup( receiver, selector ) )
             return;
         static DeltaCallCache cache;
@@ -445,8 +445,8 @@ void evaluator::top_command( TokenStream *stream ) {
     stream->advance();
     if ( not stream->eos() ) {
         Oop value;
-        if ( stream->is_smi( &value ) ) {
-            number_of_frames_to_show = SMIOop( value )->value();
+        if ( stream->isSmallIntegerOop( &value ) ) {
+            number_of_frames_to_show = SmallIntegerOop( value )->value();
         }
         stream->advance();
         if ( not stream->eos() ) {
@@ -482,13 +482,13 @@ void evaluator::show_command( TokenStream *stream ) {
     stream->advance();
     if ( not stream->eos() ) {
         Oop value;
-        if ( stream->is_smi( &value ) ) {
-            start_frame = SMIOop( value )->value();
+        if ( stream->isSmallIntegerOop( &value ) ) {
+            start_frame = SmallIntegerOop( value )->value();
         }
         stream->advance();
         if ( not stream->eos() ) {
-            if ( stream->is_smi( &value ) ) {
-                number_of_frames_to_show = SMIOop( value )->value();
+            if ( stream->isSmallIntegerOop( &value ) ) {
+                number_of_frames_to_show = SmallIntegerOop( value )->value();
             }
             stream->advance();
             if ( not stream->eos() ) {
@@ -688,7 +688,7 @@ void evaluator::print_help() {
     SPDLOG_INFO( "             | <object>            -> prints this object" );
     _console->cr();
     SPDLOG_INFO( "<expr>     ::= <unary>  | <binary>  | <keyword>" );
-    SPDLOG_INFO( "<object>   ::= <number>            -> smi_t(number)" );
+    SPDLOG_INFO( "<object>   ::= <number>            -> small_int_t(number)" );
     SPDLOG_INFO( "             | !<number>           -> objectTable[number]" );
     SPDLOG_INFO( "             | 0x<hex_number>      -> object_start(number)" );
     SPDLOG_INFO( "             | name                -> Smalltalk at: #name" );

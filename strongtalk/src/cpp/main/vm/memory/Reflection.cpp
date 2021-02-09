@@ -103,7 +103,7 @@ void Reflection::register_class_changes( MixinOop new_mixin, ObjectArrayOop invo
 
     for ( std::int32_t i = invocations_offset(); i <= length; i++ ) {
         ObjectArrayOop invocation = ObjectArrayOop( invocations->obj_at( i ) );
-        st_assert( invocation->is_objArray(), "type check" );
+        st_assert( invocation->isObjectArray(), "type check" );
 
         ClassChange *change = new ClassChange( KlassOop( invocation->obj_at( 1 ) ), new_mixin, Klass::format_from_symbol( SymbolOop( invocation->obj_at( 2 ) ) ), KlassOop( invocation->obj_at( 3 ) ) );
         change->set_super_change( find_change_for( change->old_klass()->klass_part()->superKlass() ) );
@@ -267,7 +267,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
     for ( std::int32_t i = 3; i <= length; i++ ) {
         ObjectArrayOop array = ObjectArrayOop( change->obj_at( i ) );
 
-        if ( not array->is_objArray() )
+        if ( not array->isObjectArray() )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
         if ( array->length() < 3 )
@@ -276,7 +276,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
         if ( not array->obj_at( 1 )->is_klass() )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
-        if ( not array->obj_at( 2 )->is_symbol() )
+        if ( not array->obj_at( 2 )->isSymbol() )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
         if ( not array->obj_at( 3 )->is_klass() and array->obj_at( 3 ) not_eq nilObject )
@@ -285,7 +285,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
         for ( std::int32_t j = 4; j <= array->length() - 1; j += 2 ) {
             if ( not array->obj_at( j )->is_klass() )
                 return markSymbol( vmSymbols::argument_is_invalid() );
-            if ( not array->obj_at( j + 1 )->is_symbol() )
+            if ( not array->obj_at( j + 1 )->isSymbol() )
                 return markSymbol( vmSymbols::argument_is_invalid() );
         }
     }
@@ -298,7 +298,7 @@ Oop Reflection::apply_change( ObjectArrayOop change ) {
 void Reflection::convert( Oop *p ) {
     Oop obj = *p;
 
-    if ( not obj->is_mem() )
+    if ( not obj->isMemOop() )
         return;
 
     if ( MemOop( obj )->is_forwarded() ) {

@@ -11,7 +11,7 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/interpreter/Floats.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/compiler/Scope.hpp"
 #include "vm/compiler/Compiler.hpp"
@@ -1314,10 +1314,10 @@ void NodeBuilder::float_nullary( Floats::Function f, std::int32_t to ) {
     // f refers to one of the functions in Floats
     switch ( f ) {
         case Floats::Function::zero:
-            float_set( to, oopFactory::new_double( 0.0 ) );
+            float_set( to, OopFactory::new_double( 0.0 ) );
             break;
         case Floats::Function::one:
-            float_set( to, oopFactory::new_double( 1.0 ) );
+            float_set( to, OopFactory::new_double( 1.0 ) );
             break;
         default        : st_fatal1( "bad float nullary code %d", f );
     }
@@ -1391,7 +1391,7 @@ void NodeBuilder::float_unaryToOop( Floats::Function f, std::int32_t fno ) {
         case Floats::Function::is_zero:
             [[fallthrough]];
         case Floats::Function::is_not_zero: {
-            ConstPseudoRegister *zero = new_ConstPseudoRegister( _scope, oopFactory::new_double( 0.0 ) );
+            ConstPseudoRegister *zero = new_ConstPseudoRegister( _scope, OopFactory::new_double( 0.0 ) );
             NodeFactory::createAndRegisterNode<FloatArithRRNode>( ArithOpCode::fCmpArithOp, src, zero, new NoResultPseudoRegister( _scope ) );
             BranchOpCode cond = f == Floats::Function::is_zero ? BranchOpCode::EQBranchOp : BranchOpCode::NEBranchOp;
             _expressionStack->push( PrimitiveInliner::generate_cond( cond, this, res ), scope(), scope()->byteCodeIndex() );

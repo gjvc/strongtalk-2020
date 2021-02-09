@@ -11,7 +11,7 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/interpreter/Floats.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/code/ScopeDescriptor.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/compiler/InliningPolicy.hpp"

@@ -19,6 +19,9 @@
 
 class AlienIntegerCallout0Tests : public ::testing::Test {
 
+public:
+    AlienIntegerCallout0Tests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         rm   = new HeapResourceMark();
@@ -55,9 +58,9 @@ protected:
     HeapResourceMark *rm;
     ByteArrayOop     fnAlien;
     ByteArrayOop     invalidFunctionAlien;
-    ByteArrayOop     resultAlien, addressAlien, pointerAlien, argumentAlien;
-    SMIOop           smi0, smi1;
-    char             address[8];
+    ByteArrayOop    resultAlien, addressAlien, pointerAlien, argumentAlien;
+    SmallIntegerOop smi0, smi1;
+    char            address[8];
 
 
     ByteArrayOop allocateAlien( std::int32_t arraySize, std::int32_t alienSize ) {
@@ -69,7 +72,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -84,9 +87,9 @@ protected:
 
 
     std::int32_t asInt( bool &ok, Oop intOop ) {
-        if ( intOop->is_smi() )
-            return SMIOop( intOop )->value();
-        if ( !intOop->is_byteArray() ) {
+        if ( intOop->isSmallIntegerOop() )
+            return SmallIntegerOop( intOop )->value();
+        if ( !intOop->isByteArray() ) {
             ok = false;
             return 0;
         }
@@ -130,7 +133,7 @@ TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldCallClock ) {
     ByteArrayPrimitives::alienCallResult0( resultAlien, fnAlien );
     EXPECT_TRUE( sizeof( std::clock_t ) == 4 ) << "wrong size";
     Oop alienClockResult     = ByteArrayPrimitives::alienUnsignedLongAt( smi1, resultAlien );
-    EXPECT_TRUE( clockResult == SMIOop( alienClockResult )->value() ) << "wrong result";
+    EXPECT_TRUE( clockResult == SmallIntegerOop( alienClockResult )->value() ) << "wrong result";
 }
 
 
@@ -138,7 +141,7 @@ TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldSetResultInPointerAlien
     std::clock_t clockResult = clock();
     ByteArrayPrimitives::alienCallResult0( pointerAlien, fnAlien );
     Oop alienClockResult = ByteArrayPrimitives::alienUnsignedLongAt( smi1, pointerAlien );
-    EXPECT_TRUE( clockResult == SMIOop( alienClockResult )->value() ) << "wrong result";
+    EXPECT_TRUE( clockResult == SmallIntegerOop( alienClockResult )->value() ) << "wrong result";
 }
 
 
@@ -146,11 +149,11 @@ TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldSetResultInAddressAlien
     std::clock_t clockResult = clock();
     ByteArrayPrimitives::alienCallResult0( addressAlien, fnAlien );
     Oop alienClockResult = ByteArrayPrimitives::alienUnsignedLongAt( smi1, addressAlien );
-    EXPECT_TRUE( clockResult == SMIOop( alienClockResult )->value() ) << "wrong result";
+    EXPECT_TRUE( clockResult == SmallIntegerOop( alienClockResult )->value() ) << "wrong result";
 }
 
 
 TEST_F( AlienIntegerCallout0Tests, alienCallResult0ShouldIgnoreResultWhenResultArgZero ) {
     Oop result = ByteArrayPrimitives::alienCallResult0( nilObject, fnAlien );
-    EXPECT_TRUE( !result->is_mark() ) << "Should not be marked";
+    EXPECT_TRUE( !result->isMarkOop() ) << "Should not be marked";
 }

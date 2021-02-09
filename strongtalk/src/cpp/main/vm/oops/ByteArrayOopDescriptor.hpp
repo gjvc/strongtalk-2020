@@ -55,13 +55,13 @@ public:
 
     std::int32_t length() const {
         Oop len = *length_addr();
-        st_assert( len->is_smi(), "length of indexable should be smi_t" );
-        auto value = SMIOop( len )->value();
+        st_assert( len->isSmallIntegerOop(), "length of indexable should be small_int_t" );
+        auto value = SmallIntegerOop( len )->value();
         return reinterpret_cast<std::int32_t>( value );
     }
 
 
-    void set_length( smi_t len ) {
+    void set_length( small_int_t len ) {
         *length_addr() = (Oop) smiOopFromValue( len );
     }
 

@@ -11,7 +11,7 @@
 
 class MethodKlass : public MemOopKlass {
 public:
-    bool oop_is_method() const {
+    bool oopIsMethod() const {
         return true;
     }
 

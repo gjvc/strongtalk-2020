@@ -16,6 +16,9 @@ extern "C" std::int32_t expansion_count;
 
 class OldSpaceTests : public ::testing::Test {
 
+public:
+    OldSpaceTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
     }

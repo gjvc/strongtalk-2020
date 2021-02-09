@@ -72,8 +72,8 @@ public:
     }
 
 
-    smi_t foreign_hash() const {
-        return smi_t( get_pointer() ) >> TAG_SIZE;
+    small_int_t foreign_hash() const {
+        return small_int_t( get_pointer() ) >> TAG_SIZE;
     }
 
 

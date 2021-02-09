@@ -23,13 +23,13 @@ public:
     friend void setKlassVirtualTableFromSmiKlass( Klass *k );
 
 
-    bool oop_is_smi() const {
+    bool oopIsSmallInteger() const {
         return true;
     }
 
 
     const char *name() const {
-        return "smi_t";
+        return "small_int_t";
     }
 
 

@@ -22,7 +22,7 @@ Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scaveng
     if ( not result )
         return nullptr;
 
-    ObjectArrayOop obj = as_objArrayOop( result );
+    ObjectArrayOop obj = as_objectArrayOop( result );
     // header
     MemOop( obj )->initialize_header( has_untagged_contents(), k );
 
@@ -44,10 +44,10 @@ Oop ObjectArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scaveng
 
 KlassOop ObjectArrayKlass::create_subclass( MixinOop mixin, Format format ) {
 
-    if ( format == Format::weakArray_klass )
+    if ( format == Format::weak_array_klass )
         return WeakArrayKlass::create_class( as_klassOop(), mixin );
 
-    if ( format == Format::mem_klass or format == Format::objArray_klass ) {
+    if ( format == Format::mem_klass or format == Format::object_array_klass ) {
         return ObjectArrayKlass::create_class( as_klassOop(), mixin );
     }
 
@@ -62,12 +62,12 @@ KlassOop ObjectArrayKlass::create_class( KlassOop super_class, MixinOop mixin ) 
 
 
 ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::int32_t size ) {
-    KlassOop     k        = Universe::objArrayKlassObject();
+    KlassOop     k        = Universe::objectArrayKlassObject();
     std::int32_t ni_size  = k->klass_part()->non_indexable_size();
     std::int32_t obj_size = ni_size + 1 + size;
 
     // allocate
-    ObjectArrayOop obj = as_objArrayOop( Universe::allocate_tenured( obj_size ) );
+    ObjectArrayOop obj = as_objectArrayOop( Universe::allocate_tenured( obj_size ) );
 
     // header
     MemOop( obj )->initialize_header( k->klass_part()->has_untagged_contents(), k );
@@ -88,7 +88,7 @@ ObjectArrayOop ObjectArrayKlass::allocate_tenured_pic( std::int32_t size ) {
 }
 
 
-void setKlassVirtualTableFromObjArrayKlass( Klass *k ) {
+void setKlassVirtualTableFromObjectArrayKlass( Klass *k ) {
     ObjectArrayKlass o;
     k->set_vtbl_value( o.vtbl_value() );
 }
@@ -115,7 +115,7 @@ void ObjectArrayKlass::oop_layout_iterate( Oop obj, ObjectLayoutClosure *blk ) {
 void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream ) {
 
     const std::int32_t MaxPrintLen = 255;    // to prevent excessive output -Urs
-    st_assert_objArray( obj, "Argument must be objArray" );
+    st_assert_objectArray( obj, "Argument must be objectArray" );
     ObjectArrayOop array = ObjectArrayOop( obj );
     std::int32_t   len   = array->length();
     std::int32_t   n     = min( MaxElementPrintSize, len );
@@ -125,10 +125,12 @@ void ObjectArrayKlass::oop_short_print_on( Oop obj, ConsoleOutputStream *stream 
         array->obj_at( i )->print_value_on( stream );
         stream->print( ", " );
     }
+
     if ( n < len )
         stream->print( "... " );
     else
         stream->print( "' " );
+
     oop_print_value_on( obj, stream );
 }
 

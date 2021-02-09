@@ -203,7 +203,7 @@ bool vframeOopDesc::equal( vframeOop v ) {
 bool vframeOopDesc::verify() {
     bool flag = memOopDesc::verify();
     if ( flag && is_live() ) {
-        if ( next() != nullptr && !next()->is_vframe() ) {
+        if ( next() != nullptr && !next()->is_VirtualFrame() ) {
             error( "vframeOop %#lx: next isn't a vframeOop", this );
             flag = false;
         }
@@ -211,17 +211,17 @@ bool vframeOopDesc::verify() {
             error( "vframeOop %#lx: method doesn't have code", this );
             flag = false;
         }
-        if ( !oop( locals() )->is_smi() ) {
-            error( "vframeOop %#lx: locals ptr isn't a smi_t", this );
+        if ( !oop( locals() )->isSmallIntegerOop() ) {
+            error( "vframeOop %#lx: locals ptr isn't a small_int_t", this );
             flag = false;
         }
         frame *f = fr();
-        if ( !oop( f )->is_smi() ) {
-            error( "vframeOop %#lx: frame ptr isn't a smi_t", this );
+        if ( !oop( f )->isSmallIntegerOop() ) {
+            error( "vframeOop %#lx: frame ptr isn't a small_int_t", this );
             flag = false;
         }
-        if ( !descOffset()->is_smi() ) {
-            error( "vframeOop %#lx: desc isn't a smi_t", this );
+        if ( !descOffset()->isSmallIntegerOop() ) {
+            error( "vframeOop %#lx: desc isn't a small_int_t", this );
             flag = false;
         }
         nmethod   *nm = f->code();

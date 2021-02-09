@@ -119,6 +119,10 @@ extern "C" std::int32_t __CALLING_CONVENTION forceScavenge5( std::int32_t ignore
 
 class AlienIntegerCallout5Tests : public ::testing::Test {
 
+public:
+    AlienIntegerCallout5Tests() : ::testing::Test() {}
+
+
 protected:
     void SetUp() override {
         rm      = new HeapResourceMark();
@@ -162,9 +166,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle                   *directAlien, *invalidFunctionAlien;
-    SMIOop                             smi0, smi1, smim1;
-    static const std::int32_t          argCount = 5;
+    PersistentHandle          *directAlien, *invalidFunctionAlien;
+    SmallIntegerOop           smi0, smi1, smim1;
+    static const std::int32_t argCount = 5;
     std::array<void *, argCount>       intCalloutFunctions;
     std::array<void *, argCount>       intPointerCalloutFunctions;
     char                               address[8];
@@ -182,7 +186,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "%s. Should be: %s, was: %s", message, expected->as_string(), unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -201,9 +205,9 @@ protected:
 
     std::int32_t asInt( bool &ok, Oop intOop ) {
         ok = true;
-        if ( intOop->is_smi() )
-            return SMIOop( intOop )->value();
-        if ( !intOop->is_byteArray() ) {
+        if ( intOop->isSmallIntegerOop() )
+            return SmallIntegerOop( intOop )->value();
+        if ( !intOop->isByteArray() ) {
             ok = false;
             return 0;
         }
@@ -307,7 +311,7 @@ TEST_F( AlienIntegerCallout5Tests, alienCallResult5ShouldCallIntPointerArgFuncti
 
 TEST_F( AlienIntegerCallout5Tests, alienCallResult5ShouldCallFunctionAndIgnoreResultWhenResultAlienNil ) {
     Oop result = ByteArrayPrimitives::alienCallResult5( smi0, smi0, smi0, smi0, smim1, nilObject, functionAlien->as_oop() );
-    EXPECT_TRUE( !result->is_mark() ) << "should not be marked";
+    EXPECT_TRUE( !result->isMarkOop() ) << "should not be marked";
 }
 
 

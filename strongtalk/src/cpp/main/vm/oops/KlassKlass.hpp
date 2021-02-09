@@ -18,7 +18,7 @@ public:
 
 
     // testers
-    bool oop_is_klass() const {
+    bool oopIsKlass() const {
         return true;
     }
 

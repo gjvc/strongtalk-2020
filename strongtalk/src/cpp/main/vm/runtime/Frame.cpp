@@ -48,7 +48,7 @@ ObjectArrayOop *Frame::frame_array_addr() const {
 
 ObjectArrayOop Frame::frame_array() const {
     ObjectArrayOop result = *frame_array_addr();
-    st_assert( result->is_objArray(), "must be objArray" );
+    st_assert( result->isObjectArray(), "must be objectArray" );
     return result;
 }
 

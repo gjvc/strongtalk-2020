@@ -138,7 +138,7 @@ class JumpTableEntry : public ValueObject {
 
 private:
     char *jump_inst_addr() const {
-        st_assert( Oop( this )->is_smi(), "misaligned" );
+        st_assert( Oop( this )->isSmallIntegerOop(), "misaligned" );
         return (char *) this;
     }
 

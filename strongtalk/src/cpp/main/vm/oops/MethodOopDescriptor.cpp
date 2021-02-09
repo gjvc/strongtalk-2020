@@ -12,7 +12,7 @@
 #include "vm/interpreter/MethodPrinterClosure.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/primitives/primitives.hpp"
 #include "vm/system/dll.hpp"
@@ -204,7 +204,7 @@ void MethodOopDescriptor::pretty_print() {
 
 
 SymbolOop MethodOopDescriptor::selector() const {
-    if ( selector_or_method()->is_symbol() )
+    if ( selector_or_method()->isSymbol() )
         return SymbolOop( selector_or_method() );
     return vmSymbols::selector_for_blockMethod();
 }
@@ -225,7 +225,7 @@ MethodOop MethodOopDescriptor::home() const {
 
 
 ByteArrayOop MethodOopDescriptor::source() {
-    return oopFactory::new_symbol( "<no source>" );
+    return OopFactory::new_symbol( "<no source>" );
 }
 
 
@@ -379,7 +379,7 @@ ObjectArrayOop MethodOopDescriptor::fileout_body() {
             }
         }
     } while ( c.advance() );
-    return oopFactory::new_objArray( out.result );
+    return OopFactory::new_objectArray( out.result );
 }
 
 
@@ -1392,7 +1392,7 @@ ObjectArrayOop MethodOopDescriptor::referenced_instance_variable_names( MixinOop
     ResourceMark                  rm;
     ReferencedInstVarNamesClosure blk( 20, mixin );
     MethodIterator( MethodOop( this ), &blk );
-    return oopFactory::new_objArray( blk._result );
+    return OopFactory::new_objectArray( blk._result );
 }
 
 
@@ -1446,7 +1446,7 @@ ObjectArrayOop MethodOopDescriptor::referenced_class_variable_names() const {
     ResourceMark                   rm;
     ReferencedClassVarNamesClosure blk( 20 );
     MethodIterator( MethodOop( this ), &blk );
-    return oopFactory::new_objArray( blk._result );
+    return OopFactory::new_objectArray( blk._result );
 }
 
 
@@ -1489,7 +1489,7 @@ ObjectArrayOop MethodOopDescriptor::referenced_global_names() const {
     ResourceMark             rm;
     ReferencedGlobalsClosure blk( 20 );
     MethodIterator( MethodOop( this ), &blk );
-    return oopFactory::new_objArray( blk.result );
+    return OopFactory::new_objectArray( blk.result );
 }
 
 
@@ -1593,7 +1593,7 @@ ObjectArrayOop MethodOopDescriptor::senders() const {
     ResourceMark   rm;
     SendersClosure blk( 20 );
     MethodIterator( MethodOop( this ), &blk );
-    return oopFactory::new_objArray( blk.result );
+    return OopFactory::new_objectArray( blk.result );
 }
 
 
@@ -1602,7 +1602,7 @@ SymbolOop selectorFrom( Oop method_or_selector ) {
     if ( method_or_selector == nullptr )
         return nullptr;
 
-    if ( method_or_selector->is_symbol() )
+    if ( method_or_selector->isSymbol() )
         return SymbolOop( method_or_selector );
 
     if ( not method_or_selector->is_method() )
@@ -1639,7 +1639,7 @@ SymbolOop className( KlassOop klass ) {
     if ( not klass->is_klass() )
         return nullptr;
     SymbolOop selector = SymbolOop( klass->instVarAt( class_name_index ) );
-    if ( selector->is_symbol() )
+    if ( selector->isSymbol() )
         return selector;
     if ( not selector->is_klass() )
         return nullptr;
@@ -1651,7 +1651,7 @@ bool selcmp( const char *name, SymbolOop selector ) {
     std::int32_t len = strlen( name );
     if ( selector == nullptr and name == nullptr )
         return true;
-    if ( selector == nullptr or not selector->is_symbol() )
+    if ( selector == nullptr or not selector->isSymbol() )
         return false;
 
     return ( ( selector->length() == len and strncmp( name, selector->chars(), len ) == 0 ) );

@@ -237,7 +237,7 @@ void NativeMethod::check_store() {
     while ( iter.next() ) {
         if ( iter.type() == RelocationInformation::RelocationType::oop_type ) {
             Oop obj = *iter.oop_addr();
-            if ( obj->is_mem() and obj->is_new() ) {
+            if ( obj->isMemOop() and obj->is_new() ) {
                 st_fatal( "must be tenured Oop in compiled code" );
             }
         }
@@ -682,13 +682,13 @@ void NativeMethod::verify() {
     // Make sure all entry points are aligned
     // The interpreter counts on it for InterpreterPICs
 
-    if ( not Oop( instructionsStart() )->is_smi() )
+    if ( not Oop( instructionsStart() )->isSmallIntegerOop() )
         error( "NativeMethod at 0x{0:x} has unaligned instruction start", this );
 
-    if ( not Oop( entryPoint() )->is_smi() )
+    if ( not Oop( entryPoint() )->isSmallIntegerOop() )
         error( "NativeMethod at 0x{0:x} has unaligned entryPoint", this );
 
-    if ( not Oop( verifiedEntryPoint() )->is_smi() )
+    if ( not Oop( verifiedEntryPoint() )->isSmallIntegerOop() )
         error( "NativeMethod at 0x{0:x} has unaligned verifiedEntryPoint", this );
 
     if ( not Universe::code->contains( this ) )

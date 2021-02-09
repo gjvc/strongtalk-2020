@@ -14,7 +14,10 @@ extern "C" Oop *eden_top;
 extern "C" Oop *eden_end;
 
 
-class ObjArrayKlassTests : public ::testing::Test {
+class ObjectArrayKlassTests : public ::testing::Test {
+
+public:
+    ObjectArrayKlassTests() : ::testing::Test() {}
 
 protected:
     void SetUp() override {
@@ -35,31 +38,31 @@ protected:
 };
 
 
-TEST_F( ObjArrayKlassTests, shouldBeObjArray ) {
+TEST_F( ObjectArrayKlassTests, shouldBeObjectArray ) {
     eden_top = eden_end;
-    ASSERT_TRUE( theClass->klass_part()->oop_is_objArray() );
+    ASSERT_TRUE( theClass->klass_part()->oopIsObjectArray() );
 }
 
 
-TEST_F( ObjArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
+TEST_F( ObjectArrayKlassTests, allocateShouldFailWhenAllowedAndNoSpace ) {
     eden_top = eden_end;
     ASSERT_EQ( (std::int32_t) nullptr, (std::int32_t) ( theClass->klass_part()->allocateObjectSize( 100, false ) ) );
 }
 
 
-TEST_F( ObjArrayKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
+TEST_F( ObjectArrayKlassTests, allocateShouldAllocateTenuredWhenRequired ) {
     ASSERT_TRUE( Universe::old_gen.contains( theClass->klass_part()->allocateObjectSize( 100, false, true ) ) );
 }
 
 
-TEST_F( ObjArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
+TEST_F( ObjectArrayKlassTests, allocateShouldNotFailWhenNotAllowedAndNoSpace ) {
     eden_top = eden_end;
     ASSERT_TRUE( Universe::new_gen.eden()->free() < 4 * OOP_SIZE );
     ASSERT_TRUE( Universe::new_gen.contains( theClass->klass_part()->allocateObjectSize( 100, true ) ) );
 }
 
 
-TEST_F( ObjArrayKlassTests, allocateShouldExpandOldSpaceDuringTenuredAllocWhenAllowed ) {
+TEST_F( ObjectArrayKlassTests, allocateShouldExpandOldSpaceDuringTenuredAllocWhenAllowed ) {
     OldSpaceMark mark  = Universe::old_gen.memo();
 //    OldSpace     *space = mark.theSpace;
     std::int32_t free  = Universe::old_gen.free() / OOP_SIZE;
@@ -69,7 +72,7 @@ TEST_F( ObjArrayKlassTests, allocateShouldExpandOldSpaceDuringTenuredAllocWhenAl
 }
 
 
-TEST_F( ObjArrayKlassTests, allocateShouldFailDuringTenuredAllocWhenOldSpaceExpansionNotAllowed ) {
+TEST_F( ObjectArrayKlassTests, allocateShouldFailDuringTenuredAllocWhenOldSpaceExpansionNotAllowed ) {
     OldSpaceMark mark  = Universe::old_gen.memo();
 //    OldSpace     *space = mark.theSpace;
     std::int32_t free  = Universe::old_gen.free() / OOP_SIZE;

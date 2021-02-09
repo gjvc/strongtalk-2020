@@ -13,7 +13,7 @@
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/NativeMethod.hpp"
@@ -41,10 +41,10 @@ PRIM_DECL_2( MixinOopPrimitives::method_at, Oop mixin, Oop index ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    std::int32_t i = SMIOop( index )->value();
+    std::int32_t i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_methods() )
         return MixinOop( mixin )->method_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -75,7 +75,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_method_at, Oop mixin, Oop index ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // Check the mixin is not installed
@@ -83,7 +83,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_method_at, Oop mixin, Oop index ) {
         return markSymbol( vmSymbols::is_installed() );
 
     BlockScavenge bs;
-    std::int32_t  i = SMIOop( index )->value();
+    std::int32_t  i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_methods() )
         return MixinOop( mixin )->remove_method_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -114,10 +114,10 @@ PRIM_DECL_2( MixinOopPrimitives::instance_variable_at, Oop mixin, Oop index ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    std::int32_t i = SMIOop( index )->value();
+    std::int32_t i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_instVars() )
         return MixinOop( mixin )->instVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -129,7 +129,7 @@ PRIM_DECL_2( MixinOopPrimitives::add_instance_variable, Oop mixin, Oop name ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // Check the mixin is not installed
@@ -147,7 +147,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_instance_variable_at, Oop mixin, Oop ind
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // Check the mixin is not installed
@@ -156,7 +156,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_instance_variable_at, Oop mixin, Oop ind
 
 
     BlockScavenge bs;
-    std::int32_t  i = SMIOop( index )->value();
+    std::int32_t  i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_instVars() )
         return MixinOop( mixin )->remove_instVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -187,10 +187,10 @@ PRIM_DECL_2( MixinOopPrimitives::class_variable_at, Oop mixin, Oop index ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    std::int32_t i = SMIOop( index )->value();
+    std::int32_t i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_classVars() )
         return MixinOop( mixin )->classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -202,7 +202,7 @@ PRIM_DECL_2( MixinOopPrimitives::add_class_variable, Oop mixin, Oop name ) {
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // Check the mixin is not installed
@@ -220,7 +220,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_class_variable_at, Oop mixin, Oop index 
     // Check parameters
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // Check the mixin is not installed
@@ -228,7 +228,7 @@ PRIM_DECL_2( MixinOopPrimitives::remove_class_variable_at, Oop mixin, Oop index 
         return markSymbol( vmSymbols::is_installed() );
 
     BlockScavenge bs;
-    std::int32_t  i = SMIOop( index )->value();
+    std::int32_t  i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= MixinOop( mixin )->number_of_classVars() )
         return MixinOop( mixin )->remove_classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );

@@ -14,6 +14,11 @@
 
 
 class AssociationKlassTests : public ::testing::Test {
+
+public:
+    AssociationKlassTests() : ::testing::Test() {}
+
+
 protected:
 
     void SetUp() override {

@@ -11,7 +11,7 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Sweeper.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 // ======= VMProcess ========
@@ -72,7 +72,7 @@ void VMProcess::activate_system() {
     }
 
     // Create the initial process
-    DeltaProcess::set_scheduler( new DeltaProcess( proc, oopFactory::new_symbol( "start" ) ) );
+    DeltaProcess::set_scheduler( new DeltaProcess( proc, OopFactory::new_symbol( "start" ) ) );
 
     // Bind the scheduler to Processor
     proc->set_process( DeltaProcess::scheduler() );

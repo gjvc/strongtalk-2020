@@ -16,6 +16,9 @@ extern "C" Oop *eden_end;
 
 class ProcessKlassTests : public ::testing::Test {
 
+public:
+    ProcessKlassTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "Process" ) );

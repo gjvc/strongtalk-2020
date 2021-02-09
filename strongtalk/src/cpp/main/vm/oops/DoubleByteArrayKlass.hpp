@@ -39,7 +39,7 @@ public:
 
     // Format
     Format format() {
-        return Format::doubleByteArray_klass;
+        return Format::double_byte_array_klass;
     }
 
 
@@ -79,7 +79,7 @@ public:
 
 
     // testers
-    bool oop_is_doubleByteArray() const {
+    bool oopIsDoubleByteArray() const {
         return true;
     }
 

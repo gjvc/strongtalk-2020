@@ -49,7 +49,7 @@ public:
     static BlockClosureOop create_clean_block( std::int32_t nofArgs, const char *entry_point );    // create a clean block
 
     inline bool isCompiledBlock() const {
-        return not Oop( addr()->_methodOrJumpAddr )->is_mem();
+        return not Oop( addr()->_methodOrJumpAddr )->isMemOop();
     }
 
 
@@ -59,7 +59,7 @@ public:
 
 
     void set_jumpAddr( const void *jmp_addr ) {
-        st_assert( not Oop( jmp_addr )->is_mem(), "not properly aligned" );
+        st_assert( not Oop( jmp_addr )->isMemOop(), "not properly aligned" );
         addr()->_methodOrJumpAddr = (Oop) jmp_addr;
     }
 

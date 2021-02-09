@@ -10,7 +10,7 @@
 #include "vm/oops/SMIOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/primitives/ByteArrayPrimitives.hpp"
 #include "vm/memory/vmSymbols.hpp"
 
@@ -39,32 +39,32 @@ typedef Oop(__CALLING_CONVENTION divfn)( Oop, Oop );
 #define CHECK_DIV_WITH_SMI( fn, xstring, ystring, expected ) \
   IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
   IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
-  SMIOop result = SMIOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->is_smi(), "Should be small integer"); \
+  SmallIntegerOop result = SmallIntegerOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
+  ASSERT_TRUE_M(result->isSmallIntegerOop(), "Should be small integer"); \
   ASSERT_EQ_MH(expected, result->value(), "Wrong result")
 
 #define CHECK_DIV_WITH_LRG( fn, xstring, ystring, expected ) \
   IntegerOps::string_to_Integer(xstring, 16, as_Integer(x)); \
   IntegerOps::string_to_Integer(ystring, 16, as_Integer(y)); \
   ByteArrayOop result = ByteArrayOop(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->is_byteArray(), "Should be byteArray"); \
+  ASSERT_TRUE_M(result->isByteArray(), "Should be byteArray"); \
   ASSERT_EQ_MS(expected, as_Hex(result->number()), "Wrong result")
 
 #define CHECK_ARG_TYPE( fn ) \
   IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
   SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(smiOopFromValue(10), x->as_oop())); \
-  ASSERT_TRUE_M(result->is_symbol(), "Should be symbol"); \
+  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
   ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_ARG_TYPE2( fn ) \
   IntegerOps::string_to_Integer("123456781234567812345678", 16, as_Integer(x)); \
   SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(x->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->is_symbol(), "Should be symbol"); \
+  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
   ASSERT_EQ_MS(vmSymbols::first_argument_has_wrong_type()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_INVALID( fn, x, y, errorSymbol ) \
   SymbolOop result = unmarkSymbol(ByteArrayPrimitives::fn(y->as_oop(), x->as_oop())); \
-  ASSERT_TRUE_M(result->is_symbol(), "Should be symbol"); \
+  ASSERT_TRUE_M(result->isSymbol(), "Should be symbol"); \
   ASSERT_EQ_MS(vmSymbols::errorSymbol()->chars(), result->chars(), "Wrong result")
 
 #define CHECK_X_INVALID( fn ) \
@@ -84,11 +84,14 @@ typedef Oop(__CALLING_CONVENTION divfn)( Oop, Oop );
 
 class LargeIntegerByteArrayPrimitivesTests : public ::testing::Test {
 
+public:
+    LargeIntegerByteArrayPrimitivesTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         rm = new HeapResourceMark();
-        x  = new PersistentHandle( oopFactory::new_byteArray( 24 ) );
-        y  = new PersistentHandle( oopFactory::new_byteArray( 24 ) );
+        x  = new PersistentHandle( OopFactory::new_byteArray( 24 ) );
+        y  = new PersistentHandle( OopFactory::new_byteArray( 24 ) );
     }
 
 
@@ -216,8 +219,8 @@ TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerXorShouldReturnCorrect
 
 TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerShiftShouldReturnSmallInteger ) {
     IntegerOps::string_to_Integer( "2", 16, as_Integer( x ) );
-    SMIOop result = SMIOop( ByteArrayPrimitives::largeIntegerShift( smiOopFromValue( -1 ), x->as_oop() ) );
-    EXPECT_TRUE( result->is_smi() ) << "Should be small integer";;
+    SmallIntegerOop result = SmallIntegerOop( ByteArrayPrimitives::largeIntegerShift( smiOopFromValue( -1 ), x->as_oop() ) );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";;
     ASSERT_EQ_MH( 1, result->value(), "Wrong result" );
 }
 
@@ -225,15 +228,15 @@ TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerShiftShouldReturnSmall
 TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerShiftShouldReturnLargeInteger ) {
     IntegerOps::string_to_Integer( "1", 16, as_Integer( x ) );
     ByteArrayOop result = ByteArrayOop( ByteArrayPrimitives::largeIntegerShift( smiOopFromValue( 32 ), x->as_oop() ) );
-    EXPECT_TRUE( result->is_byteArray() ) << "Should be byteArray";;
+    EXPECT_TRUE( result->isByteArray() ) << "Should be byteArray";;
     ASSERT_EQ_MS( "100000000", as_Hex( result->number() ), "Wrong result" );
 }
 
 
 TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerShiftWithUnderflowShouldReturnSmallInteger ) {
     IntegerOps::string_to_Integer( "100000000", 16, as_Integer( x ) );
-    SMIOop result = SMIOop( ByteArrayPrimitives::largeIntegerShift( smiOopFromValue( -4 ), x->as_oop() ) );
-    EXPECT_TRUE( result->is_smi() ) << "Should be small integer";;
+    SmallIntegerOop result = SmallIntegerOop( ByteArrayPrimitives::largeIntegerShift( smiOopFromValue( -4 ), x->as_oop() ) );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";;
     ASSERT_EQ_MH( 0x10000000, result->value(), "Wrong result" );
 }
 
@@ -312,7 +315,7 @@ TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerShiftShouldReportError
     ( (Digit *) ByteArrayOop( x->as_oop() )->bytes() )[ 0 ] = 1;
 
     SymbolOop result = unmarkSymbol( ByteArrayPrimitives::largeIntegerShift( 0, x->as_oop() ) );
-    EXPECT_TRUE( result->is_symbol() ) << "Should be symbol";;
+    EXPECT_TRUE( result->isSymbol() ) << "Should be symbol";;
     ASSERT_EQ_MS( vmSymbols::argument_is_invalid()->chars(), result->chars(), "Wrong result" );
 }
 
@@ -409,8 +412,8 @@ TEST_F( LargeIntegerByteArrayPrimitivesTests, largeIntegerModShouldReportErrorWh
 
 TEST_F( LargeIntegerByteArrayPrimitivesTests, hash ) {
     IntegerOps::string_to_Integer( "-12345678ffffffff", 16, as_Integer( x ) );
-    SMIOop result = SMIOop( ByteArrayPrimitives::largeIntegerHash( x->as_oop() ) );
-    EXPECT_TRUE( result->is_smi() ) << "Should be SMI";;
+    SmallIntegerOop result = SmallIntegerOop( ByteArrayPrimitives::largeIntegerHash( x->as_oop() ) );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be SMI";;
     ASSERT_EQ_M2( ( 0x12345678 ^ 0xffffffff ^ -2 ) >> 2, result->value(), "Wrong hash" );
 }
 

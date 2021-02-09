@@ -18,7 +18,7 @@ public:
     ProxyKlass() = default;
 
     // testers
-    bool oop_is_proxy() const {
+    bool oopIsProxy() const {
         return true;
     }
 

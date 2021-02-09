@@ -25,7 +25,7 @@
 //   - doubleValueArrayConverter
 //   - klassConverter
 //   - mixinConverter
-//   - objArrayConverter
+//   - objectArrayConverter
 //   - processConverter
 //   - proxyConverter
 
@@ -45,7 +45,7 @@ protected:
 
         for ( std::int32_t old_index = 0; old_index < n; old_index++ ) {
             SymbolOop name = _oldKlass->klass_part()->inst_var_name_at( old_index + old_header_size );
-            st_assert( name->is_symbol(), "instance variable name must be symbol" );
+            st_assert( name->isSymbol(), "instance variable name must be symbol" );
             std::int32_t new_index = _newKlass->klass_part()->lookup_inst_var( name );
             if ( new_index > 0 ) {
                 if ( TraceApplyChange ) {
@@ -118,8 +118,8 @@ public:
         memConverter( old_klass, new_klass ),
         _sourceIsProxy{ false } {
 
-        st_assert( new_klass->klass_part()->oop_is_proxy(), "new_klass must be a proxy klass" );
-        _sourceIsProxy = old_klass->klass_part()->oop_is_proxy();
+        st_assert( new_klass->klass_part()->oopIsProxy(), "new_klass must be a proxy klass" );
+        _sourceIsProxy = old_klass->klass_part()->oopIsProxy();
     }
 
 
@@ -140,8 +140,8 @@ public:
         memConverter( old_klass, new_klass ),
         _sourceIsProcess{ false } {
 
-        st_assert( new_klass->klass_part()->oop_is_process(), "new_klass must be a process klass" );
-        _sourceIsProcess = old_klass->klass_part()->oop_is_process();
+        st_assert( new_klass->klass_part()->oopIsProcess(), "new_klass must be a process klass" );
+        _sourceIsProcess = old_klass->klass_part()->oopIsProcess();
     }
 
 
@@ -164,8 +164,8 @@ public:
         memConverter( old_klass, new_klass ),
         _sourceIsByteArray{ false } {
 
-        st_assert( new_klass->klass_part()->oop_is_byteArray(), "new_klass must be a byteArray klass" );
-        _sourceIsByteArray = old_klass->klass_part()->oop_is_byteArray();
+        st_assert( new_klass->klass_part()->oopIsByteArray(), "new_klass must be a byteArray klass" );
+        _sourceIsByteArray = old_klass->klass_part()->oopIsByteArray();
     }
 
 
@@ -197,8 +197,8 @@ public:
     doubleByteArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
         memConverter( old_klass, new_klass ),
         _sourceIsDoubleByteArray{ false } {
-        st_assert( new_klass->klass_part()->oop_is_doubleByteArray(), "new_klass must be a byteArray klass" );
-        _sourceIsDoubleByteArray = old_klass->klass_part()->oop_is_doubleByteArray();
+        st_assert( new_klass->klass_part()->oopIsDoubleByteArray(), "new_klass must be a byteArray klass" );
+        _sourceIsDoubleByteArray = old_klass->klass_part()->oopIsDoubleByteArray();
     }
 
 
@@ -222,23 +222,23 @@ public:
 };
 
 
-class objArrayConverter : public memConverter {
+class objectArrayConverter : public memConverter {
 
 private:
-    bool _sourceIsObjArray;
+    bool _sourceIsObjectArray;
 
 public:
-    objArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
+    objectArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
         memConverter( old_klass, new_klass ),
-        _sourceIsObjArray{ false } {
-        st_assert( new_klass->klass_part()->oop_is_objArray(), "new_klass must be a objArray klass" );
-        _sourceIsObjArray = old_klass->klass_part()->oop_is_objArray();
+        _sourceIsObjectArray{ false } {
+        st_assert( new_klass->klass_part()->oopIsObjectArray(), "new_klass must be a objectArray klass" );
+        _sourceIsObjectArray = old_klass->klass_part()->oopIsObjectArray();
     }
 
 
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
-        if ( _sourceIsObjArray ) {
+        if ( _sourceIsObjectArray ) {
 
             std::int32_t length = ObjectArrayOop( src )->length();
 
@@ -251,7 +251,7 @@ public:
 
 
     MemOop allocate( MemOop src ) {
-        std::int32_t len = _sourceIsObjArray ? ObjectArrayOop( src )->length() : 0;
+        std::int32_t len = _sourceIsObjectArray ? ObjectArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
@@ -264,25 +264,25 @@ public:
     doubleValueArrayConverter( KlassOop old_klass, KlassOop new_klass ) :
         memConverter( old_klass, new_klass ),
         source_is_obj_array{ false } {
-        st_assert( new_klass->klass_part()->oop_is_doubleValueArray(), "new_klass must be a doubleValueArray klass" );
-        source_is_obj_array = old_klass->klass_part()->oop_is_doubleValueArray();
+        st_assert( new_klass->klass_part()->oopIsDoubleValueArray(), "new_klass must be a doubleValueArray klass" );
+        source_is_obj_array = old_klass->klass_part()->oopIsDoubleValueArray();
     }
 
 
     void transfer( MemOop src, MemOop dst ) {
         memConverter::transfer( src, dst );
         if ( source_is_obj_array ) {
-            std::int32_t length = doubleValueArrayOop( src )->length();
+            std::int32_t length = DoubleValueArrayOop( src )->length();
 
             for ( std::int32_t i = 1; i <= length; i++ ) {
-                doubleValueArrayOop( dst )->double_at_put( i, doubleValueArrayOop( src )->double_at( i ) );
+                DoubleValueArrayOop( dst )->double_at_put( i, DoubleValueArrayOop( src )->double_at( i ) );
             }
         }
     }
 
 
     MemOop allocate( MemOop src ) {
-        std::int32_t len = source_is_obj_array ? doubleValueArrayOop( src )->length() : 0;
+        std::int32_t len = source_is_obj_array ? DoubleValueArrayOop( src )->length() : 0;
         return MemOop( _newKlass->klass_part()->allocateObjectSize( len ) );
     }
 };
@@ -293,8 +293,8 @@ class klassConverter : public memConverter {
 public:
     klassConverter( KlassOop old_klass, KlassOop new_klass ) :
         memConverter( old_klass, new_klass ) {
-        st_assert( old_klass->klass_part()->oop_is_klass(), "new_klass must be a klass klass" );
-        st_assert( new_klass->klass_part()->oop_is_klass(), "new_klass must be a klass klass" );
+        st_assert( old_klass->klass_part()->oopIsKlass(), "new_klass must be a klass klass" );
+        st_assert( new_klass->klass_part()->oopIsKlass(), "new_klass must be a klass klass" );
     }
 
 
@@ -317,8 +317,8 @@ class mixinConverter : public memConverter {
 public:
     mixinConverter( KlassOop old_klass, KlassOop new_klass ) :
         memConverter( old_klass, new_klass ) {
-        st_assert( old_klass->klass_part()->oop_is_mixin(), "new_klass must be a mixin klass" );
-        st_assert( new_klass->klass_part()->oop_is_mixin(), "new_klass must be a mixin klass" );
+        st_assert( old_klass->klass_part()->oopIsMixin(), "new_klass must be a mixin klass" );
+        st_assert( new_klass->klass_part()->oopIsMixin(), "new_klass must be a mixin klass" );
     }
 
 

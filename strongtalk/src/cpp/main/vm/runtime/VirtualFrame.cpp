@@ -10,7 +10,7 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/oops/BlockClosureOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/SavedRegisters.hpp"
 #include "vm/runtime/StackChunkBuilder.hpp"
 #include "vm/oops/BlockClosureKlass.hpp"
@@ -425,7 +425,7 @@ Oop CompiledVirtualFrame::expression_at( std::int32_t index ) const {
     GrowableArray<DeferredExpression *> *stack = deferred_expression_stack();
     if ( stack->length() <= index ) {
         // Hack for Robert 1/15/96, probably wrong expression stack
-        return oopFactory::new_symbol( "invalid stack element" );
+        return OopFactory::new_symbol( "invalid stack element" );
     }
     return stack->at( index )->value();
 }
@@ -453,7 +453,7 @@ public:
     }
 };
 
-extern "C" ContextOop allocateContext( SMIOop nofVars );
+extern "C" ContextOop allocateContext( SmallIntegerOop nofVars );
 
 
 ContextOop CompiledVirtualFrame::compiled_context() const {
@@ -608,7 +608,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
             return nilObject;
         }
         SPDLOG_WARN( "Compiler Bug: Illegal name desc found in NativeMethod 0x{0:x} @ {:d}", static_cast<const void *>(vf->fr().code()), vf->scope()->offset() );
-        return oopFactory::new_symbol( "illegal nameDesc" );
+        return OopFactory::new_symbol( "illegal nameDesc" );
     }
 
     ShouldNotReachHere();
@@ -619,7 +619,7 @@ Oop CompiledVirtualFrame::resolve_name( NameDescriptor *nd, const CompiledVirtua
 Oop CompiledVirtualFrame::filler_oop() {
     return nilObject;
     // This is useful for debugging
-    // return oopFactory::new_symbol("CompiledVirtualFrame::filler_oop");
+    // return OopFactory::new_symbol("CompiledVirtualFrame::filler_oop");
 }
 
 
@@ -775,7 +775,7 @@ ContextOop CompiledVirtualFrame::compute_canonical_context( ScopeDescriptor *sco
         StringOutputStream stream( 50 );
         stream.print( "eliminated context in " );
         scope->selector()->print_symbol_on( &stream );
-        return (ContextOop) oopFactory::new_symbol( stream.as_string() );      // unsafe cast
+        return (ContextOop) OopFactory::new_symbol( stream.as_string() );      // unsafe cast
     }
 
     // collect all NameDescs
@@ -977,7 +977,7 @@ ScopeDescriptor *CompiledTopLevelBlockVirtualFrame::parent_scope() const {
 
 ObjectArrayOop DeoptimizedVirtualFrame::retrieve_frame_array() const {
     ObjectArrayOop array = _frame.frame_array();
-    st_assert( array->is_objArray(), "expecting objArray" );
+    st_assert( array->isObjectArray(), "expecting objectArray" );
     return array;
 }
 
@@ -993,8 +993,8 @@ bool DeoptimizedVirtualFrame::is_top() const {
 
 
 std::int32_t DeoptimizedVirtualFrame::end_of_expressions() const {
-    SMIOop n = SMIOop( obj_at( locals_size_offset ) );
-    st_assert( n->is_smi(), "expecting smi_t" );
+    SmallIntegerOop n = SmallIntegerOop( obj_at( locals_size_offset ) );
+    st_assert( n->isSmallIntegerOop(), "expecting small_int_t" );
     return first_temp_offset + n->value();
 }
 
@@ -1028,8 +1028,8 @@ MethodOop DeoptimizedVirtualFrame::method() const {
 
 
 std::int32_t DeoptimizedVirtualFrame::byteCodeIndex() const {
-    SMIOop b = SMIOop( obj_at( byteCodeIndex_offset ) );
-    st_assert( b->is_smi(), "expecting smi_t" );
+    SmallIntegerOop b = SmallIntegerOop( obj_at( byteCodeIndex_offset ) );
+    st_assert( b->isSmallIntegerOop(), "expecting small_int_t" );
     return b->value();
 }
 

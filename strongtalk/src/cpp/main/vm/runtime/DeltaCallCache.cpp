@@ -8,7 +8,7 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"

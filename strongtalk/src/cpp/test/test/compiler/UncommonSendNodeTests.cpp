@@ -12,7 +12,7 @@
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/code/NonInlinedBlockScopeNode.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/compiler/BasicBlock.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/compiler/Node.hpp"
@@ -34,7 +34,7 @@ protected:
         notifier            = new TestNotifier;
         Notifier::current   = notifier;
 
-        LookupKey    key( KlassOop( Universe::find_global( "Object" ) ), oopFactory::new_symbol( "=" ) );
+        LookupKey    key( KlassOop( Universe::find_global( "Object" ) ), OopFactory::new_symbol( "=" ) );
         LookupResult result = LookupCache::lookup( &key );
 
         theCompiler = new Compiler( &key, result.method() );

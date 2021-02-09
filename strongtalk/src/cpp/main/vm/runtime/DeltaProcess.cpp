@@ -19,7 +19,7 @@
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/runtime/ErrorHandler.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
@@ -287,7 +287,7 @@ extern "C" bool have_nlr_through_C;
 
 void DeltaProcess::createMainProcess() {
     Oop          mainProcess  = Universe::find_global( "MainProcess" );
-    SymbolOop    start        = oopFactory::new_symbol( "start" );
+    SymbolOop    start        = OopFactory::new_symbol( "start" );
     DeltaProcess *thisProcess = new DeltaProcess( mainProcess, start, false );
     DeltaProcess::set_main( thisProcess );
     DeltaProcess::initialize_async_dll_event();
@@ -655,11 +655,11 @@ extern "C" Oop *setup_deoptimization_and_return_new_sp( Oop *old_sp, std::int32_
     ::frame_array = frame_array;
     ::cur_fp      = current_frame;
 
-    SMIOop number_of_vframes = SMIOop( frame_array->obj_at( StackChunkBuilder::number_of_vframes_index ) );
-    SMIOop number_of_locals  = SMIOop( frame_array->obj_at( StackChunkBuilder::number_of_locals_index ) );
+    SmallIntegerOop number_of_vframes = SmallIntegerOop( frame_array->obj_at( StackChunkBuilder::number_of_vframes_index ) );
+    SmallIntegerOop number_of_locals  = SmallIntegerOop( frame_array->obj_at( StackChunkBuilder::number_of_locals_index ) );
 
-    st_assert( number_of_vframes->is_smi(), "must be smi_t" );
-    st_assert( number_of_locals->is_smi(), "must be smi_t" );
+    st_assert( number_of_vframes->isSmallIntegerOop(), "must be small_int_t" );
+    st_assert( number_of_locals->isSmallIntegerOop(), "must be small_int_t" );
 
     new_sp = old_sp - Frame::interpreter_stack_size( number_of_vframes->value(), number_of_locals->value() );
     return new_sp;
@@ -773,12 +773,12 @@ extern "C" void unpack_frame_array() {
         MethodOop method   = MethodOop( frame_array->obj_at( pos++ ) );
         st_assert( method->is_method(), "expecting method" );
 
-        SMIOop byteCodeIndex_obj = SMIOop( frame_array->obj_at( pos++ ) );
-        st_assert( byteCodeIndex_obj->is_smi(), "expecting smi_t" );
+        SmallIntegerOop byteCodeIndex_obj = SmallIntegerOop( frame_array->obj_at( pos++ ) );
+        st_assert( byteCodeIndex_obj->isSmallIntegerOop(), "expecting small_int_t" );
         std::int32_t byteCodeIndex = byteCodeIndex_obj->value();
 
-        SMIOop locals_obj = SMIOop( frame_array->obj_at( pos++ ) );
-        st_assert( locals_obj->is_smi(), "expecting smi_t" );
+        SmallIntegerOop locals_obj = SmallIntegerOop( frame_array->obj_at( pos++ ) );
+        st_assert( locals_obj->isSmallIntegerOop(), "expecting small_int_t" );
         std::int32_t locals = locals_obj->value();
 
         current = Frame( current_sp, (std::int32_t *) current_sp + locals + 2 );
@@ -876,7 +876,7 @@ void DeltaProcess::deoptimize_stretch( Frame *first_frame, Frame *last_frame ) {
     first_frame->patch_pc( StubRoutines::unpack_unoptimized_frames() );
     first_frame->set_return_addr( last_frame->return_addr() );
     first_frame->set_real_sender_sp( last_frame->sender_sp() );
-    first_frame->set_frame_array( packer.as_objArray() );
+    first_frame->set_frame_array( packer.as_objectArray() );
     first_frame->set_link( last_frame->link() );
 }
 

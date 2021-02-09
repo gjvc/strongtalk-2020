@@ -24,7 +24,7 @@ public:
 
 
     bool is_filled() const {
-        return SMIOop( _outer.klass() ) not_eq smiOop_zero;
+        return SmallIntegerOop( _outer.klass() ) not_eq smiOop_zero;
     }
 
 

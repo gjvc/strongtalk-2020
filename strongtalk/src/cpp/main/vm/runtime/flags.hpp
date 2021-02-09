@@ -140,7 +140,7 @@ public:
     develop( TraceByteArrayPrims,                 false, "Trace ByteArray primitives"                                                  ) \
     develop( TraceDoubleByteArrayPrims,           false, "Trace DoubleByteArray primitives"                                            ) \
     develop( TraceDoubleValueArrayPrims,          false, "Trace DoubleByteArray primitives"                                            ) \
-    develop( TraceObjArrayPrims,                  false, "Trace objArray primitives"                                                   ) \
+    develop( TraceObjectArrayPrims,                  false, "Trace objectArray primitives"                                                   ) \
     develop( TraceSmiPrims,                       false, "Trace SmallInteger primitives"                                               ) \
     develop( TraceProxyPrims,                     false, "Trace Proxy primitives"                                                      ) \
     develop( TraceBehaviorPrims,                  false, "Trace behavior primitives"                                                   ) \
@@ -212,7 +212,7 @@ public:
     develop( Inline,                               true, "Inline message sends"                                                        ) \
     develop( InlinePrims,                          true, "Inline some primitive calls"                                                 ) \
     develop( ConstantFoldPrims,                    true, "Constant-fold primitive calls"                                               ) \
-    develop( TypePredict,                          true, "Predict smi_t/bool/array message sends"                                    ) \
+    develop( TypePredict,                          true, "Predict small_int_t/bool/array message sends"                                    ) \
     develop( TypePredictArrays,                   false, "Predict at:/at:Put: message sends"                                           ) \
     develop( TypeFeedback,                         true, "use type feedback data"                                                      ) \
     develop( CodeSizeImpactsInlining,              true, "code size is used as parameter to guide inlining"                            ) \

@@ -5,13 +5,13 @@
 
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/memory/MarkSweep.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 std::array<SymbolOop, terminating_enum> vm_symbols;
 
 
 #define VMSYMBOL_INIT( name, string ) \
-  vm_symbols[ VMSYMBOL_ENUM_NAME( name ) ] = oopFactory::new_symbol( string );
+  vm_symbols[ VMSYMBOL_ENUM_NAME( name ) ] = OopFactory::new_symbol( string );
 
 
 void vmSymbols::initialize() {

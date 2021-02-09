@@ -17,7 +17,7 @@ public:
 
 
     // testers
-    bool oop_is_process() const {
+    bool oopIsProcess() const {
         return true;
     }
 

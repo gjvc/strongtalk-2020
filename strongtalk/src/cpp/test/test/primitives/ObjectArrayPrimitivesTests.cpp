@@ -14,7 +14,7 @@
 #include "vm/primitives/ObjectArrayPrimitives.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 #include <gtest/gtest.h>
@@ -23,6 +23,9 @@ extern "C" std::int32_t expansion_count;
 
 
 class ObjectArrayPrimitivesTests : public ::testing::Test {
+
+public:
+    ObjectArrayPrimitivesTests() : ::testing::Test() {}
 
 protected:
     void SetUp() override {
@@ -45,7 +48,7 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateArrayOfCorrectSiz
     Handle     arrayClassHandle( arrayClass );
     Oop        result = ObjectArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), arrayClass );
 
-    ASSERT_TRUE( result->is_objArray() );
+    ASSERT_TRUE( result->isObjectArray() );
     ASSERT_EQ( 10, ObjectArrayOop( result ) -> length() );
     ASSERT_EQ( (const char *) arrayClassHandle.as_klass(), (const char *) result->klass() );
 
@@ -59,7 +62,7 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredArrayOfCor
     Handle     arrayClassHandle( arrayClass );
     Oop        result = ObjectArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( 10 ), arrayClass );
 
-    ASSERT_TRUE( result->is_objArray() );
+    ASSERT_TRUE( result->isObjectArray() );
     ASSERT_EQ( 10, ObjectArrayOop( result ) -> length() );
     ASSERT_TRUE( result->is_old() );
     ASSERT_EQ( (const char *) arrayClassHandle.as_klass(), (const char *) result->klass() );
@@ -70,28 +73,28 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldAllocateTenuredArrayOfCor
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonObjectArray ) {
     Oop result = ObjectArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( 10 ), Universe::find_global( "Object" ) );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     ASSERT_EQ( (const char *) markSymbol( vmSymbols::invalid_klass() ), (const char *) result );
 }
 
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNonInteger ) {
     Oop result = ObjectArrayPrimitives::allocateSize2( falseObject, arrayClass, arrayClass );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     ASSERT_EQ( (const char *) markSymbol( vmSymbols::first_argument_has_wrong_type() ), (const char *) result );
 }
 
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWithNegativeSize ) {
     Oop result = ObjectArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( -1 ), arrayClass );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     ASSERT_EQ( (const char *) markSymbol( vmSymbols::negative_size() ), (const char *) result );
 }
 
 
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean ) {
     Oop result = ObjectArrayPrimitives::allocateSize2( Universe::nilObject(), smiOopFromValue( 10 ), arrayClass );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     ASSERT_EQ( (const char *) markSymbol( vmSymbols::second_argument_has_wrong_type() ), (const char *) result );
 }
 
@@ -99,7 +102,7 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTenuredNotBoolean
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace ) {
     std::int32_t size   = Universe::new_gen.eden()->free() / OOP_SIZE;
     Oop          result = ObjectArrayPrimitives::allocateSize2( falseObject, smiOopFromValue( size + 1 ), arrayClass );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();
 }
 
@@ -107,6 +110,6 @@ TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenInsufficientSpace
 TEST_F( ObjectArrayPrimitivesTests, allocateSize2ShouldFailWhenTooBigForOldGen ) {
     std::int32_t size   = Universe::old_gen.free() / OOP_SIZE;
     Oop          result = ObjectArrayPrimitives::allocateSize2( trueObject, smiOopFromValue( size + 1 ), arrayClass );
-    ASSERT_TRUE( result->is_mark() );
+    ASSERT_TRUE( result->isMarkOop() );
     EXPECT_EQ( markSymbol( vmSymbols::failed_allocation() ), result ) << unmarkSymbol( result )->as_string();
 }

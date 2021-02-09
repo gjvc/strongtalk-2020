@@ -96,7 +96,7 @@ bool LookupResult::is_empty() const {
 
 
 bool LookupResult::is_method() const {
-    return _result->is_mem();
+    return _result->isMemOop();
 }
 
 
@@ -117,6 +117,6 @@ void LookupResult::set( MethodOop method ) {
 
 
 void LookupResult::set( const NativeMethod *nm ) {
-    st_assert( Oop(nm)->is_smi(), "NativeMethod must be aligned" );
+    st_assert( Oop(nm)->isSmallIntegerOop(), "NativeMethod must be aligned" );
     _result = Oop( nm->jump_table_entry()->entry_point() );
 }

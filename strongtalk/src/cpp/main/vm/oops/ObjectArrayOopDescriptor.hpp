@@ -23,7 +23,7 @@
 
 class ObjectArrayOopDescriptor : public MemOopDescriptor {
 public:
-    friend ObjectArrayOop as_objArrayOop( void *p );
+    friend ObjectArrayOop as_objectArrayOop( void *p );
 
     void bootstrap_object( Bootstrap *stream );
 
@@ -56,13 +56,13 @@ public:
 
     std::int32_t length() const {
         Oop len = *length_addr();
-        st_assert( len->is_smi(), "length of indexable should be smi_t" );
-        auto value = SMIOop( len )->value();
+        st_assert( len->isSmallIntegerOop(), "length of indexable should be small_int_t" );
+        auto value = SmallIntegerOop( len )->value();
         return static_cast<std::int32_t>( value );
     }
 
 
-    void set_length( smi_t len ) {
+    void set_length( small_int_t len ) {
         *length_addr() = smiOopFromValue( len );
     }
 
@@ -75,7 +75,7 @@ public:
 
     void obj_at_put( std::int32_t which, Oop contents, bool cs = true ) {
         st_assert( which > 0 and which <= length(), "index out of bounds" );
-        st_assert( not is_symbol(), "shouldn't be modifying a canonical string" );
+        st_assert( not isSymbol(), "shouldn't be modifying a canonical string" );
         st_assert( contents->verify(), "check contents" );
         if ( cs ) {
             STORE_OOP( objs( which ), contents );
@@ -103,7 +103,7 @@ public:
 
     void replace_and_fill( std::int32_t from, std::int32_t start, ObjectArrayOop source );
 
-    friend class objArrayKlass;
+    friend class objectArrayKlass;
 
 private:
     // define the interval [begin .. end[ where the indexables are.
@@ -118,7 +118,7 @@ private:
 };
 
 
-inline ObjectArrayOop as_objArrayOop( void *p ) {
+inline ObjectArrayOop as_objectArrayOop( void *p ) {
     return ObjectArrayOop( as_memOop( p ) );
 }
 

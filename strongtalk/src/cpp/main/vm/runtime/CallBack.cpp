@@ -13,7 +13,7 @@
 
 
 void CallBack::initialize( Oop receiver, SymbolOop selector ) {
-    st_assert( selector->is_symbol(), "must be symbol" );
+    st_assert( selector->isSymbol(), "must be symbol" );
     Universe::set_callBack( receiver, selector );
 }
 
@@ -89,7 +89,7 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
 
     DeltaProcess *proc = nullptr;
 
-    if ( Universe::callBack_receiver()->is_nil() ) {
+    if ( Universe::callBack_receiver()->isNilObject() ) {
         SPDLOG_WARN( "callBack receiver is not set" );
     }
 
@@ -124,8 +124,8 @@ extern "C" volatile void *handleCallBack( std::int32_t index, std::int32_t param
         ErrorHandler::continue_nlr_in_delta();
     }
 
-    if ( res->is_smi() ) {
-        result = (void *) SMIOop( res )->value();
+    if ( res->isSmallIntegerOop() ) {
+        result = (void *) SmallIntegerOop( res )->value();
     } else if ( res->is_proxy() ) {
         result = (void *) ProxyOop( res )->get_pointer();
     } else {

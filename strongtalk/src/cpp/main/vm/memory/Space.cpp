@@ -105,7 +105,7 @@ void Space::compact( OldWaterMark *mark ) {
 
     while ( q < t ) {
         MemOop m = as_memOop( q );
-        if ( m->mark()->is_smi() ) {
+        if ( m->mark()->isSmallIntegerOop() ) {
 //            SPDLOG_INFO( "Space::compact()  expand [0x{0:x}] -> [0x{0:x}]", q, *q );
             q = (Oop *) *q;
         } else {
@@ -117,7 +117,7 @@ void Space::compact( OldWaterMark *mark ) {
             if ( q not_eq new_top ) {
                 copy_oops( q, new_top, size );
 //                SPDLOG_INFO( "Space::compact()  copy [0x{0:x}] -> [0x{0:x}] (%d)", q, new_top, size );
-                st_assert( ( *new_top )->is_mark(), "should be header" );
+                st_assert( ( *new_top )->isMarkOop(), "should be header" );
             }
             mark->_space->update_offsets( new_top, new_top + size );
             q += size;
@@ -193,7 +193,7 @@ void SurvivorSpace::scavenge_contents_from( NewWaterMark *mark ) {
         Oop *prev = p;
 #endif
 
-        st_assert( ( *p )->is_mark(), "Header should be mark" );
+        st_assert( ( *p )->isMarkOop(), "Header should be mark" );
         p += m->scavenge_contents();
 
 #ifdef VERBOSE_SCAVENGING
@@ -289,7 +289,7 @@ void OldSpace::scavenge_contents_from( OldWaterMark *mark ) {
     st_assert( this == mark->_space, "Match does not match Space" );
     Oop *p = mark->_point;
     while ( p < _top ) {
-        st_assert( Oop(*p)->is_mark(), "must be mark" );
+        st_assert( Oop(*p)->isMarkOop(), "must be MarkOop" );
         MemOop x = as_memOop( p );
         p += x->scavenge_tenured_contents();
     }
@@ -354,7 +354,7 @@ void NewSpace::verify() {
 
     MemOop m;
     while ( p < t ) {
-        st_assert( Oop(*p)->is_mark(), "First word must be mark" );
+        st_assert( Oop(*p)->isMarkOop(), "First word must be mark" );
         m = as_memOop( p );
         m->verify();
         p += m->size();
@@ -409,7 +409,7 @@ void OldSpace::verify() {
 
     //
     while ( p < _top ) {
-        st_assert( Oop(*p)->is_mark(), "First word must be mark" );
+        st_assert( Oop(*p)->isMarkOop(), "First word must be mark" );
         m = as_memOop( p );
 
         std::int32_t size = m->size();
@@ -440,11 +440,11 @@ Oop *OldSpace::object_start( Oop *p ) {
     }
     q -= offset;
     Oop *n = q;
-    st_assert( ( *n )->is_mark(), "check for header" );
+    st_assert( ( *n )->isMarkOop(), "check for header" );
     while ( n <= p ) {
         q = n;
         n += as_memOop( n )->size();
     }
-    st_assert( as_memOop( q )->mark()->is_mark(), "Must be mark" );
+    st_assert( as_memOop( q )->mark()->isMarkOop(), "Must be mark" );
     return q;
 }

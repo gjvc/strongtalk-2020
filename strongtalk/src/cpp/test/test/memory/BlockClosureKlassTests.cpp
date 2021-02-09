@@ -16,6 +16,10 @@ extern "C" Oop *eden_end;
 
 class BlockClosureKlassTests : public ::testing::Test {
 
+
+public:
+    BlockClosureKlassTests() : ::testing::Test() {}
+
 protected:
 
     KlassOop theClass;

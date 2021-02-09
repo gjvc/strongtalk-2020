@@ -20,6 +20,9 @@ extern "C" std::int32_t expansion_count;
 
 class DirectAlienPrimitivesTests : public ::testing::Test {
 
+public:
+    DirectAlienPrimitivesTests() : ::testing::Test() {}
+
 protected:
 
     HeapResourceMark *_heapResourceMark;
@@ -66,7 +69,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -74,7 +77,7 @@ protected:
 
     void checkLargeInteger( Oop result, std::int32_t expected ) {
         char         message[200];
-        EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
+        EXPECT_TRUE( result->isByteArray() ) << "Should be integer";
         bool         ok;
         std::int32_t actual = ByteArrayOop( result )->number().as_int32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
@@ -85,7 +88,7 @@ protected:
 
     void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
         char          message[200];
-        EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
+        EXPECT_TRUE( result->isByteArray() ) << "Should be integer";
         bool          ok;
         std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
@@ -96,8 +99,8 @@ protected:
 
     void checkSmallInteger( Oop result, std::int32_t expected ) {
         char         message[200];
-        EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-        std::int32_t actual = SMIOop( result )->value();
+        EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";
+        std::int32_t actual = SmallIntegerOop( result )->value();
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
     }
@@ -107,9 +110,9 @@ protected:
 
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedByteAtPutShouldSetUnsignedByte ) {
     ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), _alien );
-    Oop                   result = ByteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( 255, SMIOop( result ) -> value() ) << "Should set value";
+    Oop                            result = ByteArrayPrimitives::alienUnsignedByteAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( 255, SmallIntegerOop( result ) -> value() ) << "Should set value";
 }
 
 
@@ -117,16 +120,16 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedByteAtPutShouldReturnAssignedBy
 
     Oop result = ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( 255, SMIOop( result ) -> value() ) << "Should return value";
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( 255, SmallIntegerOop( result ) -> value() ) << "Should return value";
 }
 
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtShouldReturnSignedValue ) {
     ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), _alien );
-    Oop                  result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "Should return correct value";
+    Oop                           result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "Should return correct value";
 }
 
 
@@ -155,25 +158,25 @@ TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtShouldReturnMarkedSymbolWhe
 
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtPutShouldReturnSignedValue ) {
-    Oop                                                                                 result = ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( -1, SMIOop                                                               ( result ) -> value() ) << "Should return correct value";
+    Oop                                                                                          result = ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( -1, SmallIntegerOop                                                               ( result ) -> value() ) << "Should return correct value";
 }
 
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtPutShouldSetCorrectValue ) {
     ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), _alien );
-    Oop                  result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "Should return correct value";
+    Oop                           result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "Should return correct value";
 }
 
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtPutShouldSetCorrectValueWhenPositive ) {
     ByteArrayPrimitives::alienSignedByteAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), _alien );
-    Oop                 result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "result should be SmallInteger";
-    EXPECT_EQ( 1, SMIOop( result ) -> value() ) << "Should return correct value";
+    Oop                          result = ByteArrayPrimitives::alienSignedByteAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "result should be SmallInteger";
+    EXPECT_EQ( 1, SmallIntegerOop( result ) -> value() ) << "Should return correct value";
 }
 
 
@@ -222,9 +225,9 @@ TEST_F( DirectAlienPrimitivesTests, alienSignedByteAtPutShouldReturnMarkedSymbol
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedShortAtShouldReturnCorrectValue ) {
     ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 1 ), _alien );
     ByteArrayPrimitives::alienUnsignedByteAtPut( smiOopFromValue( 255 ), smiOopFromValue( 2 ), _alien );
-    Oop                     result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( 65535, SMIOop( result ) -> value() ) << "wrong value";
+    Oop                              result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( 65535, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -253,17 +256,17 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedShortAtShouldReturnMarkedSymbol
 
 
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedShortAtPutShouldReturnCorrectValue ) {
-    Oop                                                                                     result = ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( 65535, SMIOop                                                                ( result ) -> value() ) << "wrong value";
+    Oop                                                                                              result = ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( 65535, SmallIntegerOop                                                                ( result ) -> value() ) << "wrong value";
 }
 
 
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedShortAtPutShouldSetCorrectValue ) {
     ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), _alien );
-    Oop                     result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( 65535, SMIOop( result ) -> value() ) << "wrong value";
+    Oop                              result = ByteArrayPrimitives::alienUnsignedShortAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( 65535, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -311,9 +314,9 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedShortAtPutShouldReturnMarkedSym
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedShortAtShouldReturnCorrectValue ) {
     ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 65535 ), smiOopFromValue( 1 ), _alien );
-    Oop                  result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "wrong value";
+    Oop                           result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -345,8 +348,8 @@ TEST_F( DirectAlienPrimitivesTests, alienSignedShortAtPutShouldReturnCorrectValu
 
     Oop result = ByteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "wrong value";
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -354,8 +357,8 @@ TEST_F( DirectAlienPrimitivesTests, alienSignedShortAtPutShouldSetCorrectValue )
     ByteArrayPrimitives::alienSignedShortAtPut( smiOopFromValue( -1 ), smiOopFromValue( 1 ), _alien );
     Oop result = ByteArrayPrimitives::alienSignedShortAt( smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_smi() ) << "should be smi_t";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "wrong value";
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "should be small_int_t";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -412,9 +415,9 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtShouldReturnCorrectValue 
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtShouldReturnSmallIntegerWhenResultSmall ) {
     ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), _alien );
     ByteArrayPrimitives::alienUnsignedShortAtPut( smiOopFromValue( 0 ), smiOopFromValue( 3 ), _alien );
-    Oop                 result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-    EXPECT_EQ( 1, SMIOop( result ) -> value() ) << "wrong value";
+    Oop                          result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";
+    EXPECT_EQ( 1, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -464,8 +467,8 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtPutShouldReturnMarkedSymb
 TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtPutShouldSetCorrectValueWithSMI ) {
     ByteArrayPrimitives::alienUnsignedLongAtPut( smiOopFromValue( 1 ), smiOopFromValue( 1 ), _alien );
     Oop result = ByteArrayPrimitives::alienUnsignedLongAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-    EXPECT_TRUE( 1 == SMIOop( result )->value() ) << "wrong value";
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";
+    EXPECT_TRUE( 1 == SmallIntegerOop( result )->value() ) << "wrong value";
 }
 
 
@@ -501,9 +504,9 @@ TEST_F( DirectAlienPrimitivesTests, alienUnsignedLongAtPutShouldReturnMarkedSymb
 
 TEST_F( DirectAlienPrimitivesTests, alienSignedLongAtShouldReturnCorrectValue ) {
     ByteArrayPrimitives::alienUnsignedLongAtPut( _largeUnsignedInteger, smiOopFromValue( 1 ), _alien );
-    Oop                  result = ByteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_smi() ) << "Should be integer";
-    EXPECT_EQ( -1, SMIOop( result ) -> value() ) << "wrong value";
+    Oop                           result = ByteArrayPrimitives::alienSignedLongAt( smiOopFromValue( 1 ), _alien );
+    EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be integer";
+    EXPECT_EQ( -1, SmallIntegerOop( result ) -> value() ) << "wrong value";
 }
 
 
@@ -602,7 +605,7 @@ TEST_F( DirectAlienPrimitivesTests, alienSignedLongAtPutShouldReturnMarkedSymbol
 TEST_F( DirectAlienPrimitivesTests, alienDoubleAtPutShouldReturnValue ) {
     Oop result = ByteArrayPrimitives::alienDoubleAtPut( _doubleValue, smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
 }
 
@@ -610,7 +613,7 @@ TEST_F( DirectAlienPrimitivesTests, alienDoubleAtPutShouldReturnValue ) {
 TEST_F( DirectAlienPrimitivesTests, alienDoubleAtPutShouldSetCorrectValue ) {
     ByteArrayPrimitives::alienDoubleAtPut( _doubleValue, smiOopFromValue( 1 ), _alien );
     Oop                        result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), _alien );
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625, ( (double *) ( _alien->bytes() + 4 ) )[ 0 ] ) << "value not set";
 }
@@ -675,7 +678,7 @@ TEST_F( DirectAlienPrimitivesTests, alienFloatAtPutShouldSetCorrectValue ) {
 
     Oop result = ByteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625F, ( (float *) ( _alien->bytes() + 4 ) )[ 0 ] ) << "value not set";
 }
@@ -684,7 +687,7 @@ TEST_F( DirectAlienPrimitivesTests, alienFloatAtPutShouldSetCorrectValue ) {
 TEST_F( DirectAlienPrimitivesTests, alienFloatAtPutShouldSetCorrectValueAt2 ) {
     ByteArrayPrimitives::alienFloatAtPut( _doubleValue, smiOopFromValue( 2 ), _alien );
     Oop                        result = ByteArrayPrimitives::alienFloatAt( smiOopFromValue( 2 ), _alien );
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625F, ( (float *) ( _alien->bytes() + 5 ) )[ 0 ] ) << "value not set";
 }
@@ -694,7 +697,7 @@ TEST_F( DirectAlienPrimitivesTests, alienFloatAtPutShouldReturnCorrectValue ) {
 
     Oop result = ByteArrayPrimitives::alienFloatAtPut( _doubleValue, smiOopFromValue( 1 ), _alien );
 
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
 }
 

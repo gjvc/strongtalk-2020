@@ -273,10 +273,10 @@ void MacroAssembler::print_reg( const char *name, Oop obj ) {
     if ( obj == nullptr ) {
         SPDLOG_INFO( "nullptr" );
 
-    } else if ( obj->is_smi() ) {
-        SPDLOG_INFO( "smi_t ({})", SMIOop( obj )->value() );
+    } else if ( obj->isSmallIntegerOop() ) {
+        SPDLOG_INFO( "small_int_t ({})", SmallIntegerOop( obj )->value() );
 
-    } else if ( obj->is_mem() and Universe::is_heap( (Oop *) obj ) ) {
+    } else if ( obj->isMemOop() and Universe::is_heap( (Oop *) obj ) ) {
         // use explicit checks to avoid crashes even in a broken system
         if ( obj == Universe::nilObject() ) {
             SPDLOG_INFO( "nil (0x{:x})", static_cast<const void *>(obj) );

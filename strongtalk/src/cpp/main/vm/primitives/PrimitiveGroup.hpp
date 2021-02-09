@@ -32,7 +32,7 @@ enum class PrimitiveGroup {
     FloatComparisonPrimitive,   // FP comparison primitive
     FloatArithmeticPrimitive,   // FP arithmetic
 
-    ObjArrayPrimitive,          // access/size
+    ObjectArrayPrimitive,          // access/size
     ByteArrayPrimitive,         // access/size
     DoubleByteArrayPrimitive,   // access/size
 

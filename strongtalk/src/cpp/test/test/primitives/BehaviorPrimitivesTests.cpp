@@ -17,6 +17,9 @@
 
 class BehaviorPrimitivesTests : public ::testing::Test {
 
+public:
+    BehaviorPrimitivesTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         edenMark.setToEnd();
@@ -59,7 +62,7 @@ TEST_F( BehaviorPrimitivesTests, allocateForMemOopShouldScavengeAndAllocateWhenA
 
     Oop object = BehaviorPrimitives::allocate( objectClass );
 
-    EXPECT_TRUE( !object->is_mark() ) << "result should not be marked";
-    EXPECT_TRUE( object->is_mem() ) << "result should be mem";
+    EXPECT_TRUE( !object->isMarkOop() ) << "result should not be marked";
+    EXPECT_TRUE( object->isMemOop() ) << "result should be mem";
     EXPECT_EQ( MemOop( object ) -> klass(), objectClassHandle.as_memOop() ) << "wrong class";
 }

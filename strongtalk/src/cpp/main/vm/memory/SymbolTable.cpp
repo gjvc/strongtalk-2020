@@ -129,7 +129,7 @@ SymbolOop SymbolTable::lookup( const char *name, std::int32_t len ) {
 
 
 void SymbolTable::add( SymbolOop s ) {
-    st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
+    st_assert( s->isSymbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
     std::int32_t hashValue = hash( (const char *) s->bytes(), s->length() );
     basic_add( s, hashValue );
@@ -144,7 +144,7 @@ void SymbolTable::add_symbol( SymbolOop s ) {
 SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
 
     //
-    st_assert( s->is_symbol(), "adding something that's not a symbol to the symbol table" );
+    st_assert( s->isSymbol(), "adding something that's not a symbol to the symbol table" );
     st_assert( s->is_old(), "all symbols should be tenured" );
 
     // Add the identity hash for the new symbol
@@ -173,11 +173,11 @@ SymbolOop SymbolTable::basic_add( SymbolOop s, std::int32_t hashValue ) {
 void SymbolTable::switch_pointers( Oop from, Oop to ) {
 
     //
-    if ( not from->is_symbol() ) {
+    if ( not from->isSymbol() ) {
         return;
     }
 
-    st_assert( to->is_symbol(), "cannot replace a symbol with a non-symbol" );
+    st_assert( to->isSymbol(), "cannot replace a symbol with a non-symbol" );
 
     SymbolTableEntry *e{ nullptr };
     FOR_ALL_ENTRIES( e ) {
@@ -244,7 +244,7 @@ bool SymbolTableEntry::verify( std::int32_t i ) {
     bool flag = true;
 
     if ( is_symbol() ) {
-        if ( not get_symbol()->is_symbol() ) {
+        if ( not get_symbol()->isSymbol() ) {
             error( "entry 0x{0:x} in symbol table isn't a symbol", get_symbol() );
             flag = false;
         }
@@ -283,7 +283,7 @@ bool SymbolTableLink::verify( std::int32_t i ) {
 
     for ( SymbolTableLink *l = this; l; l = l->_next ) {
 
-        if ( not l->_symbol->is_symbol() ) {
+        if ( not l->_symbol->isSymbol() ) {
             error( "entry 0x{0:x} in symbol table isn't a symbol", l->_symbol );
             flag = false;
 

@@ -375,8 +375,8 @@ void ByteCodes::init() {
     def( ByteCodes::Code::smi_less_equal, "smi_less_equal", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
     def( ByteCodes::Code::smi_greater, "smi_greater", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
     def( ByteCodes::Code::smi_greater_equal, "smi_greater_equal", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
-    def( ByteCodes::Code::objArray_at, "objArray_at", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
-    def( ByteCodes::Code::objArray_at_put, "objArray_at_put", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
+    def( ByteCodes::Code::objectArray_at, "objectArray_at", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
+    def( ByteCodes::Code::objectArray_at_put, "objectArray_at_put", ByteCodes::Format::BOO, ByteCodes::ArgumentSpec::recv_1_args, ByteCodes::SendType::PREDICTED_SEND );
     def( ByteCodes::Code::double_equal, "double_equal", ByteCodes::Format::B, ByteCodes::CodeType::MISCELLANEOUS, do_sst );
     def( ByteCodes::Code::double_tilde, "double_tilde", ByteCodes::Format::B, ByteCodes::CodeType::MISCELLANEOUS, do_sst );
 
@@ -691,9 +691,9 @@ ByteCodes::Code ByteCodes::original_send_code_for( ByteCodes::Code code ) {
             [[fallthrough]];
         case ByteCodes::Code::smi_shift:
             [[fallthrough]];
-        case ByteCodes::Code::objArray_at:
+        case ByteCodes::Code::objectArray_at:
             [[fallthrough]];
-        case ByteCodes::Code::objArray_at_put:
+        case ByteCodes::Code::objectArray_at_put:
             [[fallthrough]];
         case ByteCodes::Code::double_equal:
             [[fallthrough]];
@@ -882,9 +882,9 @@ ByteCodes::Code ByteCodes::interpreted_send_code_for( ByteCodes::Code code ) {
             [[fallthrough]];
         case ByteCodes::Code::double_tilde:
             [[fallthrough]];
-        case ByteCodes::Code::objArray_at:
+        case ByteCodes::Code::objectArray_at:
             return ByteCodes::Code::interpreted_send_1;
-        case ByteCodes::Code::objArray_at_put:
+        case ByteCodes::Code::objectArray_at_put:
             return ByteCodes::Code::interpreted_send_2;
 
         default                : st_fatal( "not a send bytecode" );

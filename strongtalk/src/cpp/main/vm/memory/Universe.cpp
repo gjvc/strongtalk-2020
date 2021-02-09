@@ -15,7 +15,7 @@
 #include "vm/memory/AgeTable.hpp"
 #include "vm/memory/SymbolTable.hpp"
 #include "vm/memory/PrintObjectClosure.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/oops/MarkOopDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
@@ -52,41 +52,41 @@ std::int32_t   Universe::tenuring_threshold;
 std::int32_t   Universe::scavengeCount;
 
 // Classes
-KlassOop smiKlassObject     = KlassOop( badOop );
-KlassOop contextKlassObject = KlassOop( badOop );
-KlassOop doubleKlassObject  = KlassOop( badOop );
-KlassOop Universe::_memOopKlassObject    = KlassOop( badOop );
-KlassOop Universe::_objArrayKlassObject  = KlassOop( badOop );
-KlassOop Universe::_byteArrayKlassObject = KlassOop( badOop );
-KlassOop symbolKlassObject = KlassOop( badOop );
-KlassOop Universe::_associationKlassObject = KlassOop( badOop );
-KlassOop zeroArgumentBlockKlassObject  = KlassOop( badOop );
-KlassOop oneArgumentBlockKlassObject   = KlassOop( badOop );
-KlassOop twoArgumentBlockKlassObject   = KlassOop( badOop );
-KlassOop threeArgumentBlockKlassObject = KlassOop( badOop );
-KlassOop fourArgumentBlockKlassObject  = KlassOop( badOop );
-KlassOop fiveArgumentBlockKlassObject  = KlassOop( badOop );
-KlassOop sixArgumentBlockKlassObject   = KlassOop( badOop );
-KlassOop sevenArgumentBlockKlassObject = KlassOop( badOop );
-KlassOop eightArgumentBlockKlassObject = KlassOop( badOop );
-KlassOop nineArgumentBlockKlassObject  = KlassOop( badOop );
-KlassOop Universe::_methodKlassObject    = KlassOop( badOop );
-KlassOop Universe::_characterKlassObject = KlassOop( badOop );
-KlassOop doubleValueArrayKlassObject = KlassOop( badOop );
-KlassOop Universe::_vframeKlassObject = KlassOop( badOop );
+KlassOop smiKlassObject     = KlassOop( MarkOopDescriptor::bad() );
+KlassOop contextKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop doubleKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_memOopKlassObject    = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_objectArrayKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_byteArrayKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop symbolKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_associationKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop zeroArgumentBlockKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop oneArgumentBlockKlassObject   = KlassOop( MarkOopDescriptor::bad() );
+KlassOop twoArgumentBlockKlassObject   = KlassOop( MarkOopDescriptor::bad() );
+KlassOop threeArgumentBlockKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop fourArgumentBlockKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop fiveArgumentBlockKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop sixArgumentBlockKlassObject   = KlassOop( MarkOopDescriptor::bad() );
+KlassOop sevenArgumentBlockKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop eightArgumentBlockKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop nineArgumentBlockKlassObject  = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_methodKlassObject    = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_characterKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop doubleValueArrayKlassObject = KlassOop( MarkOopDescriptor::bad() );
+KlassOop Universe::_vframeKlassObject = KlassOop( MarkOopDescriptor::bad() );
 
 // Objects
-Oop nilObject   = Oop( badOop );
-Oop trueObject  = Oop( badOop );
-Oop falseObject = Oop( badOop );
-ObjectArrayOop Universe::_asciiCharacters        = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_systemDictionaryObject = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_objectIDTable          = ObjectArrayOop( badOop );
-ObjectArrayOop Universe::_pic_free_list          = ObjectArrayOop( badOop );
-Oop            Universe::_callBack_receiver      = Oop( badOop );
-SymbolOop      Universe::_callBack_selector      = SymbolOop( badOop );
-Oop            Universe::_dll_lookup_receiver    = Oop( badOop );
-SymbolOop      Universe::_dll_lookup_selector    = SymbolOop( badOop );
+Oop nilObject   = Oop( MarkOopDescriptor::bad() );
+Oop trueObject  = Oop( MarkOopDescriptor::bad() );
+Oop falseObject = Oop( MarkOopDescriptor::bad() );
+ObjectArrayOop Universe::_asciiCharacters        = ObjectArrayOop( MarkOopDescriptor::bad() );
+ObjectArrayOop Universe::_systemDictionaryObject = ObjectArrayOop( MarkOopDescriptor::bad() );
+ObjectArrayOop Universe::_objectIDTable          = ObjectArrayOop( MarkOopDescriptor::bad() );
+ObjectArrayOop Universe::_pic_free_list          = ObjectArrayOop( MarkOopDescriptor::bad() );
+Oop            Universe::_callBack_receiver      = Oop( MarkOopDescriptor::bad() );
+SymbolOop      Universe::_callBack_selector      = SymbolOop( MarkOopDescriptor::bad() );
+Oop            Universe::_dll_lookup_receiver    = Oop( MarkOopDescriptor::bad() );
+SymbolOop      Universe::_dll_lookup_selector    = SymbolOop( MarkOopDescriptor::bad() );
 MethodOop      Universe::_sweeper_method         = nullptr;
 
 
@@ -156,12 +156,12 @@ void Universe::cleanup_after_bootstrap() {
 
 
 void Universe::check_root( Oop *p ) {
-    if ( *p == badOop ) st_fatal( "badOop found in roots" );
+    if ( *p == MarkOopDescriptor::bad() ) st_fatal( "MarkOopDescriptor::bad() found in roots" );
 }
 
 
 void Universe::switch_pointers( Oop from, Oop to ) {
-    st_assert( from->is_mem() and to->is_mem(), "unexpected kind of pointer switching" );
+    st_assert( from->isMemOop() and to->isMemOop(), "unexpected kind of pointer switching" );
 
     // FIX LATER
     // st_assert(not from->is_old() or to->is_old(), "shouldn't be switching an old Oop to a new Oop");
@@ -447,7 +447,7 @@ Oop Universe::find_global( const char *name, bool must_be_constant ) {
             return nilObject();
     }
 
-    SymbolOop    sym = oopFactory::new_symbol( name );
+    SymbolOop    sym = OopFactory::new_symbol( name );
     std::int32_t l   = systemDictionaryObject()->length();
 
     for ( std::int32_t i = 1; i <= l; i++ ) {
@@ -463,7 +463,7 @@ Oop Universe::find_global( const char *name, bool must_be_constant ) {
 
 
 AssociationOop Universe::find_global_association( const char *name ) {
-    SymbolOop symbolOop = oopFactory::new_symbol( name );
+    SymbolOop symbolOop = OopFactory::new_symbol( name );
 
     std::int32_t l = systemDictionaryObject()->length();
 
@@ -627,7 +627,7 @@ void Universe::roots_do( void f( Oop * ) ) {
 
     // Classes
     f( (Oop *) &_memOopKlassObject );
-    f( (Oop *) &_objArrayKlassObject );
+    f( (Oop *) &_objectArrayKlassObject );
     f( (Oop *) &_byteArrayKlassObject );
     f( (Oop *) &::symbolKlassObject );
     f( (Oop *) &_associationKlassObject );
@@ -895,8 +895,8 @@ KlassOop Universe::memOopKlassObject() {
 }
 
 
-KlassOop Universe::objArrayKlassObject() {
-    return _objArrayKlassObject;
+KlassOop Universe::objectArrayKlassObject() {
+    return _objectArrayKlassObject;
 }
 
 

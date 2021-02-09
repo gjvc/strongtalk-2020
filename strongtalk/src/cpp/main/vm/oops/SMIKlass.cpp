@@ -30,5 +30,5 @@ Oop SMIKlass::oop_shallow_copy( Oop obj, bool tenured ) {
 
 
 void SMIKlass::oop_print_value( Oop obj, ConsoleOutputStream *stream ) {
-    stream->print( "%d", SMIOop( obj )->value() );
+    stream->print( "%d", SmallIntegerOop( obj )->value() );
 }

@@ -10,7 +10,7 @@
 
 
 KlassOop WeakArrayKlass::create_subclass( MixinOop mixin, Format format ) {
-    if ( format == Format::mem_klass or format == Format::weakArray_klass ) {
+    if ( format == Format::mem_klass or format == Format::weak_array_klass ) {
         return WeakArrayKlass::create_class( as_klassOop(), mixin );
     }
     return nullptr;
@@ -200,7 +200,7 @@ void WeakArrayRegister::follow_contents() {
         WeakArrayOop w                  = weakArrays->at( i );
         std::int32_t non_indexable_size = non_indexable_sizes->at( i );
 //        bool         encounted_near_death_objects = false;
-        std::int32_t length             = SMIOop( w->raw_at( non_indexable_size ) )->value();
+        std::int32_t length             = SmallIntegerOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
             MarkSweep::reverse_and_follow( w->oops( non_indexable_size + j ) );
@@ -211,7 +211,7 @@ void WeakArrayRegister::follow_contents() {
 
 
 bool WeakArrayRegister::mark_sweep_is_near_death( Oop obj ) {
-    return obj->is_mem() and not MemOop( obj )->is_gc_marked();
+    return obj->isMemOop() and not MemOop( obj )->is_gc_marked();
 }
 
 
@@ -222,7 +222,7 @@ void WeakArrayRegister::mark_sweep_check_for_dying_objects() {
         WeakArrayOop w                            = weakArrays->at( i );
         std::int32_t non_indexable_size           = non_indexable_sizes->at( i );
         bool         encounted_near_death_objects = false;
-        std::int32_t length                       = SMIOop( w->raw_at( non_indexable_size ) )->value();
+        std::int32_t length                       = SmallIntegerOop( w->raw_at( non_indexable_size ) )->value();
 
         for ( std::int32_t j = 1; j <= length; j++ ) {
             Oop obj = w->raw_at( non_indexable_size + j );
@@ -309,7 +309,7 @@ void NotificationQueue::oops_do( void f( Oop * ) ) {
 void NotificationQueue::mark_elements() {
     for ( std::int32_t i = first; i not_eq last; i = succ( i ) ) {
         Oop obj = array[ i ];
-        if ( obj->is_mem() )
+        if ( obj->isMemOop() )
             MemOop( obj )->set_queued();
     }
 }
@@ -318,7 +318,7 @@ void NotificationQueue::mark_elements() {
 void NotificationQueue::clear_elements() {
     for ( std::int32_t i = first; i not_eq last; i = succ( i ) ) {
         Oop obj = array[ i ];
-        if ( obj->is_mem() )
+        if ( obj->isMemOop() )
             MemOop( obj )->clear_queued();
     }
 }

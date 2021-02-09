@@ -16,6 +16,9 @@ extern "C" Oop *eden_end;
 
 class VirtualFrameKlassTests : public ::testing::Test {
 
+public:
+    VirtualFrameKlassTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "Activation" ) );

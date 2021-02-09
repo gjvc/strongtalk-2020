@@ -7,7 +7,7 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 
@@ -18,6 +18,9 @@ extern "C" Oop *eden_end;
 
 
 class MemOopKlassTests : public ::testing::Test {
+
+public:
+    MemOopKlassTests() : ::testing::Test() {}
 
 protected:
     void SetUp() override {
@@ -36,11 +39,11 @@ protected:
         PersistentHandle classMixinClass( Universe::find_global( "ClassMixin" ) );
         PersistentHandle metaClassMixinClass( Universe::find_global( "MetaClassMixin" ) );
 
-        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle classIvars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle methods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle ivars( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle classMethods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle classIvars( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle classVars( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
 
         PersistentHandle classMixin( classMixinClass.as_klassOop()->klass_part()->allocateObject() );
         PersistentHandle metaClassMixin( metaClassMixinClass.as_klassOop()->klass_part()->allocateObject() );

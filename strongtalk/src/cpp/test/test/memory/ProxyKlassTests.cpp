@@ -16,6 +16,9 @@ extern "C" Oop *eden_end;
 
 class ProxyKlassTests : public ::testing::Test {
 
+public:
+    ProxyKlassTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "ExternalProxy" ) );

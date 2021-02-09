@@ -11,15 +11,15 @@
 #include "vm/memory/vmSymbols.hpp"
 
 
-TRACE_FUNC( TraceSmiPrims, "smi_t" )
+TRACE_FUNC( TraceSmiPrims, "small_int_t" )
 
 
 std::int32_t SmallIntegerOopPrimitives::number_of_calls;
 
-#define ASSERT_RECEIVER st_assert(receiver->is_smi(), "receiver must be smi_t")
+#define ASSERT_RECEIVER st_assert(receiver->isSmallIntegerOop(), "receiver must be small_int_t")
 
 #define SMI_RELATIONAL_OP( op )                                     \
-  if (not argument->is_smi())                                       \
+  if (not argument->isSmallIntegerOop())                                       \
     return markSymbol(vmSymbols::first_argument_has_wrong_type());  \
   std::int32_t a = (std::int32_t) receiver;                                           \
   std::int32_t b = (std::int32_t) argument;                                           \
@@ -71,39 +71,39 @@ PRIM_DECL_2( SmallIntegerOopPrimitives::notEqual, Oop receiver, Oop argument ) {
 PRIM_DECL_2( SmallIntegerOopPrimitives::bitAnd, Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitAnd", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    return SMIOop( std::int32_t( receiver ) & std::int32_t( argument ) );
+    return SmallIntegerOop( std::int32_t( receiver ) & std::int32_t( argument ) );
 }
 
 
 PRIM_DECL_2( SmallIntegerOopPrimitives::bitOr, Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitOr", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    return SMIOop( std::int32_t( receiver ) | std::int32_t( argument ) );
+    return SmallIntegerOop( std::int32_t( receiver ) | std::int32_t( argument ) );
 }
 
 
 PRIM_DECL_2( SmallIntegerOopPrimitives::bitXor, Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitXor", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    return SMIOop( std::int32_t( receiver ) ^ std::int32_t( argument ) );
+    return SmallIntegerOop( std::int32_t( receiver ) ^ std::int32_t( argument ) );
 }
 
 
 PRIM_DECL_2( SmallIntegerOopPrimitives::bitShift, Oop receiver, Oop argument ) {
     PROLOGUE_2( "bitShift", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     st_assert( INTEGER_TAG == 0, "check this code" );
     constexpr std::int32_t bitsPerWord = OOP_SIZE * 8;
     constexpr std::int32_t maxShiftCnt = bitsPerWord - TAG_SIZE - 1;
-    std::int32_t           n           = SMIOop( argument )->value();
+    std::int32_t           n           = SmallIntegerOop( argument )->value();
     if ( n > 0 ) {
         // arithmetic shift left
         if ( n < maxShiftCnt ) {
@@ -113,7 +113,7 @@ PRIM_DECL_2( SmallIntegerOopPrimitives::bitShift, Oop receiver, Oop argument ) {
             if ( ( ( std::int32_t( receiver ) + mask1 ) & mask2 ) == 0 ) {
                 // i.e., the bit at position (32-(n+1)) is the same as the upper n bits, thus
                 // after shifting out the upper n bits the sign hasn't changed -> no overflow
-                return SMIOop( std::int32_t( receiver ) << n );
+                return SmallIntegerOop( std::int32_t( receiver ) << n );
             }
         }
         return markSymbol( vmSymbols::smi_overflow() );
@@ -121,7 +121,7 @@ PRIM_DECL_2( SmallIntegerOopPrimitives::bitShift, Oop receiver, Oop argument ) {
         // arithmetic shift right
         if ( n < -maxShiftCnt )
             n = -maxShiftCnt;
-        return SMIOop( ( std::int32_t( receiver ) >> -n ) & ( -1 << TAG_SIZE ) );
+        return SmallIntegerOop( ( std::int32_t( receiver ) >> -n ) & ( -1 << TAG_SIZE ) );
     }
 }
 
@@ -129,17 +129,17 @@ PRIM_DECL_2( SmallIntegerOopPrimitives::bitShift, Oop receiver, Oop argument ) {
 PRIM_DECL_2( SmallIntegerOopPrimitives::rawBitShift, Oop receiver, Oop argument ) {
     PROLOGUE_2( "rawBitShift", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     st_assert( INTEGER_TAG == 0, "check this code" );
     const std::int32_t bitsPerWord = OOP_SIZE * 8;
-    std::int32_t       n           = SMIOop( argument )->value();
+    std::int32_t       n           = SmallIntegerOop( argument )->value();
     if ( n >= 0 ) {
         // logical shift right
-        return SMIOop( (std::uint32_t) receiver << ( n % bitsPerWord ) );
+        return SmallIntegerOop( (std::uint32_t) receiver << ( n % bitsPerWord ) );
     } else {
         // logical shift left
-        return SMIOop( ( (std::uint32_t) receiver >> ( ( -n ) % bitsPerWord ) ) & ( -1 << TAG_SIZE ) );
+        return SmallIntegerOop( ( (std::uint32_t) receiver >> ( ( -n ) % bitsPerWord ) ) & ( -1 << TAG_SIZE ) );
     }
 }
 
@@ -147,7 +147,7 @@ PRIM_DECL_2( SmallIntegerOopPrimitives::rawBitShift, Oop receiver, Oop argument 
 PRIM_DECL_1( SmallIntegerOopPrimitives::asObject, Oop receiver ) {
     PROLOGUE_1( "asObject", receiver );
     ASSERT_RECEIVER;
-    std::int32_t id = SMIOop( receiver )->value();
+    std::int32_t id = SmallIntegerOop( receiver )->value();
     if ( ObjectIDTable::is_index_ok( id ) )
         return ObjectIDTable::at( id );
     return markSymbol( vmSymbols::index_not_valid() );
@@ -157,7 +157,7 @@ PRIM_DECL_1( SmallIntegerOopPrimitives::asObject, Oop receiver ) {
 PRIM_DECL_1( SmallIntegerOopPrimitives::printCharacter, Oop receiver ) {
     PROLOGUE_1( "printCharacter", receiver );
     ASSERT_RECEIVER;
-    SPDLOG_INFO( "%c", SMIOop( receiver )->value() );
+    SPDLOG_INFO( "%c", SmallIntegerOop( receiver )->value() );
     return receiver;
 }
 

@@ -13,7 +13,7 @@
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ProxyOopDescriptor.hpp"
 #include "vm/oops/BlockClosureKlass.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/primitives/block_primitives.hpp"
 #include "vm/runtime/UnwindInfo.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
@@ -37,7 +37,7 @@ static inline void inc_context_counter() {
 }
 
 
-extern "C" BlockClosureOop allocateTenuredBlock( SMIOop nofArgs ) {
+extern "C" BlockClosureOop allocateTenuredBlock( SmallIntegerOop nofArgs ) {
     PROLOGUE_1( "allocateBlock", nofArgs );
     BlockClosureOop blk = as_blockClosureOop( Universe::allocate_tenured( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
@@ -47,7 +47,7 @@ extern "C" BlockClosureOop allocateTenuredBlock( SMIOop nofArgs ) {
 }
 
 // TODO: Implement the following function (gri)
-extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs ) {
+extern "C" BlockClosureOop allocateBlock( SmallIntegerOop nofArgs ) {
     PROLOGUE_1( "allocateBlock", nofArgs );
     BlockClosureOop blk = as_blockClosureOop( Universe::allocate( sizeof( BlockClosureOopDescriptor ) / OOP_SIZE ) );
     blk->init_mark();
@@ -83,7 +83,7 @@ extern "C" BlockClosureOop allocateBlock2() {
     return static_cast<BlockClosureOop>(Oop( blk ));
 }
 
-extern "C" ContextOop allocateContext( SMIOop nofVars ) {
+extern "C" ContextOop allocateContext( SmallIntegerOop nofVars ) {
     PROLOGUE_1( "allocateContext", nofVars );
     ContextKlass *ok = (ContextKlass *) contextKlassObject->klass_part();
     inc_context_counter();
@@ -315,7 +315,7 @@ extern "C" BlockClosureOop allocateBlock9() {
 }
 
 /*
-extern "C" contextOop allocateContext(SMIOop nofVars) { trap(); return contextOop(markSymbol(vmSymbols::primitive_trap())); };
+extern "C" contextOop allocateContext(SmallIntegerOop nofVars) { trap(); return contextOop(markSymbol(vmSymbols::primitive_trap())); };
 extern "C" contextOop allocateContext0() { trap(); return contextOop(markSymbol(vmSymbols::primitive_trap())); };
 extern "C" contextOop allocateContext1() { trap(); return contextOop(markSymbol(vmSymbols::primitive_trap())); };
 extern "C" contextOop allocateContext2() { trap(); return contextOop(markSymbol(vmSymbols::primitive_trap())); };

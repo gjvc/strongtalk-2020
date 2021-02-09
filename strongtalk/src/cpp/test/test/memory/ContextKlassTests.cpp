@@ -19,6 +19,9 @@ extern "C" Oop *eden_end;
 
 class ContextKlassTests : public ::testing::Test {
 
+public:
+    ContextKlassTests() : ::testing::Test() {}
+
 protected:
 
     void SetUp() override {

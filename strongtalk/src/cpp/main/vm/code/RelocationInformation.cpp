@@ -19,7 +19,7 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"

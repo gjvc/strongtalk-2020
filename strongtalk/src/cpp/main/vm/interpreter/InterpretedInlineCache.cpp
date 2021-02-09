@@ -13,7 +13,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/utilities/EventLog.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -48,7 +48,7 @@ public:
         free_list()->obj_at_put( size - 1, ObjectArrayOop( first )->obj_at( 1 ) );
 
         ObjectArrayOop result = ObjectArrayOop( first );
-        st_assert( result->is_objArray(), "must be object array" );
+        st_assert( result->isObjectArray(), "must be object array" );
         st_assert( result->is_old(), "must be tenured" );
         st_assert( result->length() == size * 2, "checking size" );
         return result;
@@ -134,7 +134,7 @@ std::int32_t InterpretedInlineCache::findStartOfSend( MethodOop m, std::int32_t 
 
 SymbolOop InterpretedInlineCache::selector() const {
     Oop fw = first_word();
-    if ( fw->is_symbol() ) {
+    if ( fw->isSymbol() ) {
         return SymbolOop( fw );
     } else if ( fw->is_method() ) {
         return MethodOop( fw )->selector();
@@ -149,7 +149,7 @@ SymbolOop InterpretedInlineCache::selector() const {
 
 JumpTableEntry *InterpretedInlineCache::jump_table_entry() const {
     st_assert( send_type() == ByteCodes::SendType::COMPILED_SEND or send_type() == ByteCodes::SendType::MEGAMORPHIC_SEND, "must be a compiled call" );
-    st_assert( first_word()->is_smi(), "must be smi_t" );
+    st_assert( first_word()->isSmallIntegerOop(), "must be small_int_t" );
     return (JumpTableEntry *) first_word();
 }
 
@@ -195,7 +195,7 @@ void InterpretedInlineCache::clear() {
 
     if ( send_type() == ByteCodes::SendType::POLYMORPHIC_SEND ) {
         // recycle PolymorphicInlineCache
-        st_assert( second_word()->is_objArray(), "must be a pic" );
+        st_assert( second_word()->isObjectArray(), "must be a pic" );
         Interpreter_PICs::deallocate( ObjectArrayOop( second_word() ) );
     }
 
@@ -293,7 +293,7 @@ void InterpretedInlineCache::cleanup() {
             // since they store only the selector.
         {
             KlassOop receiver_klass = KlassOop( second_word() );
-            if ( first_word()->is_smi() ) {
+            if ( first_word()->isSmallIntegerOop() ) {
                 JumpTableEntry *entry = (JumpTableEntry *) first_word();
                 NativeMethod   *nm    = entry->method();
                 LookupResult   result = LookupCache::lookup( &nm->_lookupKey );
@@ -329,7 +329,7 @@ void InterpretedInlineCache::cleanup() {
                     KlassOop klass = KlassOop( pic->obj_at( index ) );
                     st_assert( klass->is_klass(), "receiver klass must be klass" );
                     Oop first = pic->obj_at( index - 1 );
-                    if ( first->is_smi() ) {
+                    if ( first->isSmallIntegerOop() ) {
                         JumpTableEntry *entry = (JumpTableEntry *) first;
                         NativeMethod   *nm    = entry->method();
                         LookupResult   result = LookupCache::lookup( &nm->_lookupKey );
@@ -361,7 +361,7 @@ void InterpretedInlineCache::clear_without_deallocation_pic() {
 
 void InterpretedInlineCache::replace( NativeMethod *nm ) {
     // replace entry with nm's klass by nm (if entry exists)
-    SMIOop entry_point = SMIOop( nm->jump_table_entry()->entry_point() );
+    SmallIntegerOop entry_point = SmallIntegerOop( nm->jump_table_entry()->entry_point() );
     st_assert( selector() == nm->_lookupKey.selector(), "mismatched selector" );
     if ( is_empty() )
         return;
@@ -436,7 +436,7 @@ void InterpretedInlineCache::print() {
 ObjectArrayOop InterpretedInlineCache::pic_array() {
     st_assert( send_type() == ByteCodes::SendType::POLYMORPHIC_SEND, "Must be a POLYMORPHIC send site" );
     ObjectArrayOop result = ObjectArrayOop( second_word() );
-    st_assert( result->is_objArray(), "interpreter pic must be object array" );
+    st_assert( result->isObjectArray(), "interpreter pic must be object array" );
     st_assert( result->length() >= 4, "pic should contain at least two entries" );
     return result;
 }
@@ -569,10 +569,10 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         BlockScavenge bs; // make sure that no scavenge happens
         KlassOop      msgKlass = KlassOop( Universe::find_global( "Message" ) );
         Oop           obj      = msgKlass->klass_part()->allocateObject();
-        st_assert( obj->is_mem(), "just checkin'..." );
+        st_assert( obj->isMemOop(), "just checkin'..." );
         msg = MemOop( obj );
         std::int32_t   nofArgs = ic->selector()->number_of_arguments();
-        ObjectArrayOop args    = oopFactory::new_objArray( nofArgs );
+        ObjectArrayOop args    = OopFactory::new_objectArray( nofArgs );
 
         //
         for ( std::int32_t i = 1; i <= nofArgs; i++ ) {
@@ -587,7 +587,7 @@ Oop InterpretedInlineCache::does_not_understand( Oop receiver, InterpretedInline
         msg->raw_at_put( 2, receiver );
         msg->raw_at_put( 3, ic->selector() );
         msg->raw_at_put( 4, args );
-        sel = oopFactory::new_symbol( "doesNotUnderstand:" );
+        sel = OopFactory::new_symbol( "doesNotUnderstand:" );
         if ( interpreter_normal_lookup( receiver->klass(), sel ).is_empty() ) {
             // doesNotUnderstand: not found ==> process error
             {
@@ -631,7 +631,7 @@ void InterpretedInlineCache::trace_inline_cache_miss( InterpretedInlineCache *ic
 
 ObjectArrayOop cacheMissResult( Oop result, std::int32_t argCount ) {
     BlockScavenge  bs;
-    ObjectArrayOop resultHolder = oopFactory::new_objArray( 2 );
+    ObjectArrayOop resultHolder = OopFactory::new_objectArray( 2 );
     resultHolder->obj_at_put( 1, smiOopFromValue( argCount ) );
     resultHolder->obj_at_put( 2, result );
     return resultHolder;
@@ -698,7 +698,7 @@ void InterpretedInlineCacheIterator::set_klass( Oop k ) {
 
 
 void InterpretedInlineCacheIterator::set_method( Oop m ) {
-    if ( m->is_mem() ) {
+    if ( m->isMemOop() ) {
         st_assert( m->is_method(), "must be a method" );
         _method       = (MethodOop) m;
         _nativeMethod = nullptr;
@@ -732,7 +732,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
             _number_of_targets = 1;
             _info              = InlineCacheShape::MONOMORPHIC;
             set_klass( _ic->second_word() );
-            st_assert( _ic->first_word()->is_smi(), "must have JumpTableEntry" );
+            st_assert( _ic->first_word()->isSmallIntegerOop(), "must have JumpTableEntry" );
             set_method( _ic->first_word() );
             st_assert( is_compiled(), "bad type" );
             break;
@@ -768,7 +768,7 @@ void InterpretedInlineCacheIterator::init_iteration() {
             }
             set_klass( smiKlassObject );
             set_method( interpreter_normal_lookup( smiKlassObject, selector() ).value() );
-            st_assert( _method not_eq nullptr and _method->is_mem(), "this method must be there" );
+            st_assert( _method not_eq nullptr and _method->isMemOop(), "this method must be there" );
             break;
         default: ShouldNotReachHere();
     }

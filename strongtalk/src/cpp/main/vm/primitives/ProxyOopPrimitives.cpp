@@ -16,7 +16,7 @@
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ProxyOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/code/NativeMethod.hpp"
 
 
@@ -48,8 +48,8 @@ PRIM_DECL_1( ProxyOopPrimitives::getSmi, Oop receiver ) {
 PRIM_DECL_2( ProxyOopPrimitives::set, Oop receiver, Oop value ) {
     PROLOGUE_2( "getSmi", receiver, value );
     ASSERT_RECEIVER;
-    if ( value->is_smi() ) {
-        ProxyOop( receiver )->set_pointer( (void *) SMIOop( value )->value() );
+    if ( value->isSmallIntegerOop() ) {
+        ProxyOop( receiver )->set_pointer( (void *) SmallIntegerOop( value )->value() );
     } else if ( value->is_proxy() ) {
         ProxyOop( receiver )->set_pointer( ProxyOop( value )->get_pointer() );
     } else
@@ -61,12 +61,12 @@ PRIM_DECL_2( ProxyOopPrimitives::set, Oop receiver, Oop value ) {
 PRIM_DECL_3( ProxyOopPrimitives::setHighLow, Oop receiver, Oop high, Oop low ) {
     PROLOGUE_3( "setHighLow", receiver, high, low );
     ASSERT_RECEIVER;
-    if ( not high->is_smi() )
+    if ( not high->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not low->is_smi() )
+    if ( not low->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    std::uint32_t h     = (std::uint32_t) SMIOop( high )->value();
-    std::uint32_t l     = (std::uint32_t) SMIOop( low )->value();
+    std::uint32_t h     = (std::uint32_t) SmallIntegerOop( high )->value();
+    std::uint32_t l     = (std::uint32_t) SmallIntegerOop( low )->value();
     std::uint32_t value = ( h << 16 ) | l;
     ProxyOop( receiver )->set_pointer( (void *) value );
     return receiver;
@@ -108,9 +108,9 @@ PRIM_DECL_1( ProxyOopPrimitives::isAllOnes, Oop receiver ) {
 PRIM_DECL_2( ProxyOopPrimitives::malloc, Oop receiver, Oop size ) {
     PROLOGUE_2( "malloc", receiver, size );
     ASSERT_RECEIVER;
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    ProxyOop( receiver )->set_pointer( os::malloc( SMIOop( size )->value() ) );
+    ProxyOop( receiver )->set_pointer( os::malloc( SmallIntegerOop( size )->value() ) );
     return receiver;
 }
 
@@ -118,9 +118,9 @@ PRIM_DECL_2( ProxyOopPrimitives::malloc, Oop receiver, Oop size ) {
 PRIM_DECL_2( ProxyOopPrimitives::calloc, Oop receiver, Oop size ) {
     PROLOGUE_2( "calloc", receiver, size );
     ASSERT_RECEIVER;
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    ProxyOop( receiver )->set_pointer( os::calloc( SMIOop( size )->value(), 1 ) );
+    ProxyOop( receiver )->set_pointer( os::calloc( SmallIntegerOop( size )->value(), 1 ) );
     return receiver;
 }
 
@@ -137,26 +137,26 @@ PRIM_DECL_1( ProxyOopPrimitives::free, Oop receiver ) {
 PRIM_DECL_2( ProxyOopPrimitives::byteAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "byteAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    return smiOopFromValue( ProxyOop( receiver )->byte_at( SMIOop( offset )->value() ) );
+    return smiOopFromValue( ProxyOop( receiver )->byte_at( SmallIntegerOop( offset )->value() ) );
 }
 
 
 PRIM_DECL_3( ProxyOopPrimitives::byteAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "byteAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->byte_at_put( SMIOop( offset )->value(), SMIOop( value )->value() );
+    ProxyOop( receiver )->byte_at_put( SmallIntegerOop( offset )->value(), SmallIntegerOop( value )->value() );
     return receiver;
 }
 
@@ -164,26 +164,26 @@ PRIM_DECL_3( ProxyOopPrimitives::byteAtPut, Oop receiver, Oop offset, Oop value 
 PRIM_DECL_2( ProxyOopPrimitives::doubleByteAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "doubleByteAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    return smiOopFromValue( ProxyOop( receiver )->doubleByte_at( SMIOop( offset )->value() ) );
+    return smiOopFromValue( ProxyOop( receiver )->doubleByte_at( SmallIntegerOop( offset )->value() ) );
 }
 
 
 PRIM_DECL_3( ProxyOopPrimitives::doubleByteAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "doubleByteAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->doubleByte_at_put( SMIOop( offset )->value(), SMIOop( value )->value() );
+    ProxyOop( receiver )->doubleByte_at_put( SmallIntegerOop( offset )->value(), SmallIntegerOop( value )->value() );
     return receiver;
 }
 
@@ -191,12 +191,12 @@ PRIM_DECL_3( ProxyOopPrimitives::doubleByteAtPut, Oop receiver, Oop offset, Oop 
 PRIM_DECL_2( ProxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "smiAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->long_at( SMIOop( offset )->value() );
+    std::uint32_t value   = (std::uint32_t) ProxyOop( receiver )->long_at( SmallIntegerOop( offset )->value() );
     std::uint32_t topBits = value >> ( BITS_PER_WORD - TAG_SIZE );
     if ( ( topBits not_eq 0 ) and ( topBits not_eq 3 ) )
         return markSymbol( vmSymbols::smi_conversion_failed() );
@@ -207,14 +207,14 @@ PRIM_DECL_2( ProxyOopPrimitives::smiAt, Oop receiver, Oop offset ) {
 PRIM_DECL_3( ProxyOopPrimitives::smiAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "smiAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->long_at_put( SMIOop( offset )->value(), SMIOop( value )->value() );
+    ProxyOop( receiver )->long_at_put( SmallIntegerOop( offset )->value(), SmallIntegerOop( value )->value() );
     return receiver;
 }
 
@@ -222,14 +222,14 @@ PRIM_DECL_3( ProxyOopPrimitives::smiAtPut, Oop receiver, Oop offset, Oop value )
 PRIM_DECL_3( ProxyOopPrimitives::subProxyAt, Oop receiver, Oop offset, Oop result ) {
     PROLOGUE_3( "subProxyAt", receiver, offset, result );
     ASSERT_RECEIVER;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( result )->set_pointer( (void *) ( (const char *) ProxyOop( receiver )->get_pointer() + SMIOop( offset )->value() ) );
+    ProxyOop( result )->set_pointer( (void *) ( (const char *) ProxyOop( receiver )->get_pointer() + SmallIntegerOop( offset )->value() ) );
     return result;
 }
 
@@ -237,14 +237,14 @@ PRIM_DECL_3( ProxyOopPrimitives::subProxyAt, Oop receiver, Oop offset, Oop resul
 PRIM_DECL_3( ProxyOopPrimitives::proxyAt, Oop receiver, Oop offset, Oop result ) {
     PROLOGUE_3( "proxyAt", receiver, offset, result );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not result->is_proxy() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( result )->set_pointer( (void *) ProxyOop( receiver )->long_at( SMIOop( offset )->value() ) );
+    ProxyOop( result )->set_pointer( (void *) ProxyOop( receiver )->long_at( SmallIntegerOop( offset )->value() ) );
     return result;
 }
 
@@ -252,14 +252,14 @@ PRIM_DECL_3( ProxyOopPrimitives::proxyAt, Oop receiver, Oop offset, Oop result )
 PRIM_DECL_3( ProxyOopPrimitives::proxyAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "proxyAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( not value->is_proxy() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->long_at_put( SMIOop( offset )->value(), (std::int32_t) ProxyOop( value )->get_pointer() );
+    ProxyOop( receiver )->long_at_put( SmallIntegerOop( offset )->value(), (std::int32_t) ProxyOop( value )->get_pointer() );
     return receiver;
 }
 
@@ -267,26 +267,26 @@ PRIM_DECL_3( ProxyOopPrimitives::proxyAtPut, Oop receiver, Oop offset, Oop value
 PRIM_DECL_2( ProxyOopPrimitives::singlePrecisionFloatAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "singlePrecisionFloatAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    return oopFactory::new_double( (double) ProxyOop( receiver )->float_at( SMIOop( offset )->value() ) );
+    return OopFactory::new_double( (double) ProxyOop( receiver )->float_at( SmallIntegerOop( offset )->value() ) );
 }
 
 
 PRIM_DECL_3( ProxyOopPrimitives::singlePrecisionFloatAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "singlePrecisionFloatAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_double() )
+    if ( not value->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->float_at_put( SMIOop( offset )->value(), (float) DoubleOop( value )->value() );
+    ProxyOop( receiver )->float_at_put( SmallIntegerOop( offset )->value(), (float) DoubleOop( value )->value() );
     return receiver;
 }
 
@@ -294,33 +294,33 @@ PRIM_DECL_3( ProxyOopPrimitives::singlePrecisionFloatAtPut, Oop receiver, Oop of
 PRIM_DECL_2( ProxyOopPrimitives::doublePrecisionFloatAt, Oop receiver, Oop offset ) {
     PROLOGUE_2( "doublePrecisionFloatAt", receiver, offset );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    return oopFactory::new_double( ProxyOop( receiver )->double_at( SMIOop( offset )->value() ) );
+    return OopFactory::new_double( ProxyOop( receiver )->double_at( SmallIntegerOop( offset )->value() ) );
 }
 
 
 PRIM_DECL_3( ProxyOopPrimitives::doublePrecisionFloatAtPut, Oop receiver, Oop offset, Oop value ) {
     PROLOGUE_3( "doublePrecisionFloatAtPut", receiver, offset, value );
     ASSERT_RECEIVER_ACCESS;
-    if ( not offset->is_smi() )
+    if ( not offset->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_double() )
+    if ( not value->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     if ( ProxyOop( receiver )->is_null() )
         return markSymbol( vmSymbols::illegal_state() );
 
-    ProxyOop( receiver )->double_at_put( SMIOop( offset )->value(), DoubleOop( value )->value() );
+    ProxyOop( receiver )->double_at_put( SmallIntegerOop( offset )->value(), DoubleOop( value )->value() );
     return receiver;
 }
 
 
 static bool convert_to_arg( Oop arg, std::int32_t *addr ) {
-    if ( arg->is_smi() ) {
-        *addr = SMIOop( arg )->value();
+    if ( arg->isSmallIntegerOop() ) {
+        *addr = SmallIntegerOop( arg )->value();
         return true;
     }
     if ( arg->is_proxy() ) {

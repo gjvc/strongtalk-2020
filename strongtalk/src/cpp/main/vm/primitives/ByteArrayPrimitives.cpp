@@ -13,7 +13,7 @@
 #include "vm/oops/MemOopKlass.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -27,21 +27,21 @@ TRACE_FUNC( TraceByteArrayPrims, "byteArray" )
 
 std::int32_t ByteArrayPrimitives::number_of_calls;
 
-#define ASSERT_RECEIVER st_assert( receiver->is_byteArray(), "receiver must be byte array" )
+#define ASSERT_RECEIVER st_assert( receiver->isByteArray(), "receiver must be byte array" )
 
 
 PRIM_DECL_2( ByteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "receiver must byte array class" );
-    if ( not argument->is_smi() )
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray(), "receiver must byte array class" );
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( SMIOop( argument )->value() < 0 )
+    if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop     k        = KlassOop( receiver );
     std::int32_t ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value(), OOP_SIZE ) / OOP_SIZE;
+    std::int32_t obj_size = ni_size + 1 + roundTo( SmallIntegerOop( argument )->value(), OOP_SIZE ) / OOP_SIZE;
 
     // allocate
     ByteArrayOop obj = as_byteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -70,22 +70,22 @@ PRIM_DECL_3( ByteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop
     PROLOGUE_3( "allocateSize2", receiver, argument, tenured )
 
     // These should be ordinary checks in case ST code erroneously passes an invalid value.
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "receiver must byte array class" );
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray(), "receiver must byte array class" );
 
-    if ( not( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray() ) )
+    if ( not( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray() ) )
         return markSymbol( vmSymbols::invalid_klass() );
 
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( SMIOop( argument )->value() < 0 )
+    if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
     if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     MemOopKlass *theKlass = (MemOopKlass *) KlassOop( receiver )->klass_part();
-    Oop         result    = theKlass->allocateObjectSize( SMIOop( argument )->value(), false, tenured == trueObject );
+    Oop         result    = theKlass->allocateObjectSize( SmallIntegerOop( argument )->value(), false, tenured == trueObject );
     if ( result == nullptr )
         return markSymbol( vmSymbols::failed_allocation() );
 
@@ -114,15 +114,15 @@ PRIM_DECL_2( ByteArrayPrimitives::at, Oop receiver, Oop index ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check index value
-    if ( not ByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not ByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // do the operation
-    return smiOopFromValue( ByteArrayOop( receiver )->byte_at( SMIOop( index )->value() ) );
+    return smiOopFromValue( ByteArrayOop( receiver )->byte_at( SmallIntegerOop( index )->value() ) );
 }
 
 
@@ -131,24 +131,24 @@ PRIM_DECL_3( ByteArrayPrimitives::atPut, Oop receiver, Oop index, Oop value ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check index type
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // check index value
-    if ( not ByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not ByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value range (must be byte)
-    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SmallIntegerOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
     // do the operation
-    ByteArrayOop( receiver )->byte_at_put( SMIOop( index )->value(), v );
+    ByteArrayOop( receiver )->byte_at_put( SmallIntegerOop( index )->value(), v );
     return receiver;
 }
 
@@ -160,10 +160,10 @@ PRIM_DECL_2( ByteArrayPrimitives::compare, Oop receiver, Oop argument ) {
     if ( receiver == argument )
         return smiOopFromValue( 0 );
 
-    if ( argument->is_byteArray() )
+    if ( argument->isByteArray() )
         return smiOopFromValue( ByteArrayOop( receiver )->compare( ByteArrayOop( argument ) ) );
 
-    if ( argument->is_doubleByteArray() )
+    if ( argument->isDoubleByteArray() )
         return smiOopFromValue( ByteArrayOop( receiver )->compare_doubleBytes( DoubleByteArrayOop( argument ) ) );
 
     return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -183,15 +183,15 @@ PRIM_DECL_2( ByteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // range check
-    if ( not ByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not ByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // fetch byte
-    std::int32_t byte = ByteArrayOop( receiver )->byte_at( SMIOop( index )->value() );
+    std::int32_t byte = ByteArrayOop( receiver )->byte_at( SmallIntegerOop( index )->value() );
 
     // return the n+1'th element in asciiCharacter
     return Universe::asciiCharacters()->obj_at( byte + 1 );
@@ -203,11 +203,11 @@ PRIM_DECL_2( ByteArrayPrimitives::at_all_put, Oop receiver, Oop value ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check value range (must be byte)
-    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SmallIntegerOop( value )->value();
     if ( v >= ( 1 << 8 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
@@ -232,14 +232,14 @@ Oop simplified( ByteArrayOop result ) {
 
 PRIM_DECL_2( ByteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oop number ) {
     PROLOGUE_2( "largeIntegerFromSmallInteger", receiver, number );
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray(), "just checking" );
 
     // Check arguments
-    if ( not number->is_smi() )
+    if ( not number->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
-    std::int32_t  i = SMIOop( number )->value();
+    std::int32_t  i = SmallIntegerOop( number )->value();
     ByteArrayOop  z;
 
     z = ByteArrayOop( KlassOop( receiver )->klass_part()->allocateObjectSize( IntegerOps::int_to_Integer_result_size_in_bytes( i ) ) );
@@ -251,9 +251,9 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerFromSmallInteger, Oop receiver, Oo
 
 PRIM_DECL_2( ByteArrayPrimitives::largeIntegerFromDouble, Oop receiver, Oop number ) {
     PROLOGUE_2( "largeIntegerFromDouble", receiver, number );
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray(), "just checking" );
 
-    if ( not number->is_double() )
+    if ( not number->isDouble() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -269,11 +269,11 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerFromDouble, Oop receiver, Oop numb
 
 PRIM_DECL_3( ByteArrayPrimitives::largeIntegerFromString, Oop receiver, Oop argument, Oop base ) {
     PROLOGUE_3( "largeIntegerFromString", receiver, argument, base );
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_byteArray(), "just checking" );
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsByteArray(), "just checking" );
 
-    if ( not argument->is_byteArray() )
+    if ( not argument->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not base->is_smi() )
+    if ( not base->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -281,8 +281,8 @@ PRIM_DECL_3( ByteArrayPrimitives::largeIntegerFromString, Oop receiver, Oop argu
     ByteArrayOop x = ByteArrayOop( argument );
     ByteArrayOop z;
 
-    z = ByteArrayOop( x->klass()->klass_part()->allocateObjectSize( IntegerOps::string_to_Integer_result_size_in_bytes( x->chars(), SMIOop( base )->value() ) ) );
-    IntegerOps::string_to_Integer( x->chars(), SMIOop( base )->value(), z->number() );
+    z = ByteArrayOop( x->klass()->klass_part()->allocateObjectSize( IntegerOps::string_to_Integer_result_size_in_bytes( x->chars(), SmallIntegerOop( base )->value() ) ) );
+    IntegerOps::string_to_Integer( x->chars(), SmallIntegerOop( base )->value(), z->number() );
 
     return z;
 }
@@ -292,7 +292,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerAdd, Oop receiver, Oop argument ) 
     PROLOGUE_2( "largeIntegerAdd", receiver, argument );
     ASSERT_RECEIVER;
 
-    if ( not argument->is_byteArray() )
+    if ( not argument->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -317,7 +317,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerSubtract, Oop receiver, Oop argume
     PROLOGUE_2( "largeIntegerSubtract", receiver, argument );
     ASSERT_RECEIVER;
 
-    if ( not argument->is_byteArray() )
+    if ( not argument->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -343,7 +343,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerMultiply, Oop
     PROLOGUE_2( "largeIntegerMultiply", receiver, argument );
     ASSERT_RECEIVER;
 
-    if ( not argument->is_byteArray() )
+    if ( not argument->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -384,7 +384,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerMultiply, Oop
   PROLOGUE_2(label, receiver, argument);\
   ASSERT_RECEIVER;\
 \
-  if (not argument->is_byteArray())\
+  if (not argument->isByteArray())\
     return markSymbol(vmSymbols::first_argument_has_wrong_type());\
 \
   ByteArrayOop x = ByteArrayOop(receiver);\
@@ -431,11 +431,11 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerXor, Oop receiver, Oop argument ) 
 PRIM_DECL_2( ByteArrayPrimitives::largeIntegerShift, Oop receiver, Oop argument ) {
     PROLOGUE_2( "largeIntegerShift", receiver, argument );
     ASSERT_RECEIVER;
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ByteArrayOop x     = ByteArrayOop( receiver );
-    std::int32_t shift = SMIOop( argument )->value();
+    std::int32_t shift = SmallIntegerOop( argument )->value();
 
     if ( not ByteArrayOop( receiver )->number().is_valid() )
         return markSymbol( vmSymbols::argument_is_invalid() );
@@ -453,7 +453,7 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerCompare, Oop receiver, Oop argumen
     ASSERT_RECEIVER;
 
     // Check argument
-    if ( not argument->is_byteArray() )
+    if ( not argument->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -484,7 +484,7 @@ PRIM_DECL_1( ByteArrayPrimitives::largeIntegerToFloat, Oop receiver ) {
         return markSymbol( vmSymbols::conversion_failed() );
 
     BlockScavenge bs;
-    return oopFactory::new_double( result );
+    return OopFactory::new_double( result );
 }
 
 
@@ -493,17 +493,17 @@ PRIM_DECL_2( ByteArrayPrimitives::largeIntegerToString, Oop receiver, Oop base )
     ASSERT_RECEIVER;
 
     // Check argument
-    if ( not base->is_smi() )
+    if ( not base->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
 
     ByteArrayOop x      = ByteArrayOop( receiver );
-    std::int32_t length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SMIOop( base )->value() );
+    std::int32_t length = IntegerOps::Integer_to_string_result_size_in_bytes( x->number(), SmallIntegerOop( base )->value() );
 
-    ByteArrayOop result = oopFactory::new_byteArray( length );
+    ByteArrayOop result = OopFactory::new_byteArray( length );
 
-    IntegerOps::Integer_to_string( x->number(), SMIOop( base )->value(), result->chars() );
+    IntegerOps::Integer_to_string( x->number(), SmallIntegerOop( base )->value(), result->chars() );
     return result;
 }
 
@@ -552,20 +552,20 @@ KlassOop unsafeAlienClass() {
 
 
 Oop unsafeContents( Oop unsafeAlien ) {
-    SymbolOop    ivarName = oopFactory::new_symbol( "nonPointerObject" );
+    SymbolOop    ivarName = OopFactory::new_symbol( "nonPointerObject" );
     std::int32_t offset   = unsafeAlienClass()->klass_part()->lookup_inst_var( ivarName );
     return MemOop( unsafeAlien )->instVarAt( offset );
 }
 
 
 #define checkAlienReceiver( receiver )\
-  if (not receiver->is_byteArray())\
+  if (not receiver->isByteArray())\
     return markSymbol(vmSymbols::receiver_has_wrong_type())
 
 #define isUnsafe( argument )\
-  (not Oop(argument)->is_smi()\
+  (not Oop(argument)->isSmallIntegerOop()\
   and MemOop(argument)->klass_field() == unsafeAlienClass()\
-  and unsafeContents(argument)->is_byteArray())
+  and unsafeContents(argument)->isByteArray())
 
 #define alienArg( argument )      (void*)argument
 
@@ -584,16 +584,16 @@ Oop unsafeContents( Oop unsafeAlien ) {
     return markSymbol(vmSymbols::illegal_state())
 
 #define checkAlienCalloutResult( argument ) \
-  if (not (argument->is_byteArray() or argument == nilObject))\
+  if (not (argument->isByteArray() or argument == nilObject))\
     return markSymbol(vmSymbols::argument_has_wrong_type())
 
 #define checkAlienCalloutResultArgs( argument ) \
-  if (not (argument->is_byteArray() or argument == nilObject))\
+  if (not (argument->isByteArray() or argument == nilObject))\
     return markSymbol(vmSymbols::first_argument_has_wrong_type())
 
 #define checkAlienCalloutArg( argument, symbol )\
-  if (not ((argument->is_byteArray() and MemOop(argument)->klass() not_eq largeIntegerClass())\
-      or argument->is_smi() or isUnsafe(argument)))\
+  if (not ((argument->isByteArray() and MemOop(argument)->klass() not_eq largeIntegerClass())\
+      or argument->isSmallIntegerOop() or isUnsafe(argument)))\
     return markSymbol(symbol)
 
 #define checkAlienCalloutArg1( argument )\
@@ -620,27 +620,27 @@ Oop unsafeContents( Oop unsafeAlien ) {
 #define checkAlienCalloutArg8( argument )\
   checkAlienCalloutArg(argument, vmSymbols::ninth_argument_has_wrong_type())
 
-#define alienIndex( argument ) (SMIOop(argument)->value())
+#define alienIndex( argument ) (SmallIntegerOop(argument)->value())
 
 #define checkAlienAtIndex( receiver, argument, type )\
-  if (not argument->is_smi())\
+  if (not argument->isSmallIntegerOop())\
     return markSymbol(vmSymbols::argument_has_wrong_type());\
   if (alienIndex(argument) < 1 or\
       (alienSize(receiver) not_eq 0 and ((std::uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
     return markSymbol(vmSymbols::index_not_valid())
 
 #define checkAlienAtPutIndex( receiver, argument, type )\
-  if (not argument->is_smi())\
+  if (not argument->isSmallIntegerOop())\
     return markSymbol(vmSymbols::first_argument_has_wrong_type());\
   if (alienIndex(argument) < 1 or\
       (alienSize(receiver) not_eq 0 and ((std::uint32_t)alienIndex(argument)) > abs(alienSize(receiver)) - sizeof(type) + 1))\
     return markSymbol(vmSymbols::index_not_valid())
 
 #define checkAlienAtPutValue( receiver, argument, type, min, max )\
-  if (not argument->is_smi())\
+  if (not argument->isSmallIntegerOop())\
     return markSymbol(vmSymbols::second_argument_has_wrong_type());\
   {\
-    std::int32_t value = SMIOop(argument)->value();\
+    std::int32_t value = SmallIntegerOop(argument)->value();\
     if (value < min or value > max)\
       return markSymbol(vmSymbols::argument_is_invalid());\
   }
@@ -674,7 +674,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienUnsignedByteAtPut, Oop receiver, Oop argu
     checkAlienAtPutIndex( receiver, argument1, std::uint8_t );
     checkAlienAtPutValue( receiver, argument2, std::uint8_t, 0, 255 );
 
-    alienAt( receiver, argument1, std::uint8_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::uint8_t ) = SmallIntegerOop( argument2 )->value();
 
     return argument2;
 }
@@ -697,7 +697,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienSignedByteAtPut, Oop receiver, Oop argume
     checkAlienAtPutIndex( receiver, argument1, char );
     checkAlienAtPutValue( receiver, argument2, char, -128, 127 );
 
-    alienAt( receiver, argument1, char ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, char ) = SmallIntegerOop( argument2 )->value();
 
     return argument2;
 }
@@ -718,7 +718,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienUnsignedShortAtPut, Oop receiver, Oop arg
     checkAlienAtPutIndex( receiver, argument1, std::uint16_t );
     checkAlienAtPutValue( receiver, argument2, std::uint16_t, 0, 65535 );
 
-    alienAt( receiver, argument1, std::uint16_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::uint16_t ) = SmallIntegerOop( argument2 )->value();
 
     return argument2;
 }
@@ -739,7 +739,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienSignedShortAtPut, Oop receiver, Oop argum
     checkAlienAtPutIndex( receiver, argument1, std::int16_t );
     checkAlienAtPutValue( receiver, argument2, std::int16_t, -32768, 32767 );
 
-    alienAt( receiver, argument1, std::int16_t ) = SMIOop( argument2 )->value();
+    alienAt( receiver, argument1, std::int16_t ) = SmallIntegerOop( argument2 )->value();
 
     return argument2;
 }
@@ -766,12 +766,12 @@ PRIM_DECL_3( ByteArrayPrimitives::alienUnsignedLongAtPut, Oop receiver, Oop argu
     PROLOGUE_3( "alienUnsignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, std::uint32_t );
-    if ( not argument2->is_smi() and not argument2->is_byteArray() )
+    if ( not argument2->isSmallIntegerOop() and not argument2->isByteArray() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     std::uint32_t value;
-    if ( argument2->is_smi() )
-        value = SMIOop( argument2 )->value();
+    if ( argument2->isSmallIntegerOop() )
+        value = SmallIntegerOop( argument2 )->value();
     else {
         bool ok;
         value = ByteArrayOop( argument2 )->number().as_uint32_t( ok );
@@ -805,13 +805,13 @@ PRIM_DECL_3( ByteArrayPrimitives::alienSignedLongAtPut, Oop receiver, Oop argume
     PROLOGUE_3( "alienSignedLongAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, std::int32_t );
-    if ( not argument2->is_smi() and not argument2->is_byteArray() )
+    if ( not argument2->isSmallIntegerOop() and not argument2->isByteArray() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     std::int32_t value;
 
-    if ( argument2->is_smi() )
-        value = SMIOop( argument2 )->value();
+    if ( argument2->isSmallIntegerOop() )
+        value = SmallIntegerOop( argument2 )->value();
     else {
         bool ok;
         value = ByteArrayOop( argument2 )->number().as_int32_t( ok );
@@ -841,7 +841,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienDoubleAtPut, Oop receiver, Oop argument1,
     PROLOGUE_3( "alienDoubleAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, double );
-    if ( not argument2->is_double() )
+    if ( not argument2->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     alienAt( receiver, argument1, double ) = DoubleOop( argument2 )->value();
@@ -866,7 +866,7 @@ PRIM_DECL_3( ByteArrayPrimitives::alienFloatAtPut, Oop receiver, Oop argument1, 
     PROLOGUE_3( "alienFloatAtPut", receiver, argument1, argument2 );
     checkAlienAtReceiver( receiver );
     checkAlienAtPutIndex( receiver, argument1, float );
-    if ( not argument2->is_double() )
+    if ( not argument2->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     alienAt( receiver, argument1, float ) = (float) DoubleOop( argument2 )->value();
@@ -886,10 +886,10 @@ PRIM_DECL_1( ByteArrayPrimitives::alienGetSize, Oop receiver ) {
 PRIM_DECL_2( ByteArrayPrimitives::alienSetSize, Oop receiver, Oop argument ) {
     PROLOGUE_2( "alienSetSize", receiver, argument );
     checkAlienReceiver( receiver );
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    alienSize( receiver ) = SMIOop( argument )->value();
+    alienSize( receiver ) = SmallIntegerOop( argument )->value();
     return receiver;
 }
 
@@ -916,12 +916,12 @@ PRIM_DECL_2( ByteArrayPrimitives::alienSetAddress, Oop receiver, Oop argument ) 
     checkAlienReceiver( receiver );
     if ( alienSize( receiver ) > 0 )
         return markSymbol( vmSymbols::illegal_state() );
-    if ( not argument->is_smi() and not( argument->is_byteArray() and ByteArrayOop( argument )->number().signed_length() > 0 ) )
+    if ( not argument->isSmallIntegerOop() and not( argument->isByteArray() and ByteArrayOop( argument )->number().signed_length() > 0 ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     std::uint32_t value;
-    if ( argument->is_smi() )
-        value = SMIOop( argument )->value();
+    if ( argument->isSmallIntegerOop() )
+        value = SmallIntegerOop( argument )->value();
     else {
         bool ok;
         value = ByteArrayOop( argument )->number().as_uint32_t( ok );
@@ -957,7 +957,7 @@ typedef void ( __CALLING_CONVENTION *call_out_func_args)( void *, void *, Oop, O
 void break_on_error( void *address, Oop result ) {
     if ( false )
         return;
-    if ( not result->is_byteArray() )
+    if ( not result->isByteArray() )
         return;
 
     std::int32_t value = alienAt( ByteArrayOop(result), smiOopFromValue( 1 ), std::int32_t );

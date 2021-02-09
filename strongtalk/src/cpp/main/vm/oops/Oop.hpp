@@ -21,7 +21,7 @@ typedef class SymbolOopDescriptor           *SymbolOop;
 typedef class ContextOopDescriptor          *ContextOop;
 typedef class DoubleByteArrayOopDescriptor  *DoubleByteArrayOop;
 typedef class DoubleOopDescriptor           *DoubleOop;
-typedef class DoubleValueArrayOopDescriptor *doubleValueArrayOop;
+typedef class DoubleValueArrayOopDescriptor *DoubleValueArrayOop;
 typedef class KlassOopDescriptor            *KlassOop;
 typedef class MethodOopDescriptor           *MethodOop;
 typedef class MixinOopDescriptor            *MixinOop;
@@ -30,7 +30,7 @@ typedef class WeakArrayOopDescriptor        *WeakArrayOop;
 typedef class ProcessOopDescriptor          *ProcessOop;
 typedef class ProxyOopDescriptor            *ProxyOop;
 typedef class VirtualFrameOopDescriptor     *VirtualFrameOop;
-typedef class SMIOopDescriptor              *SMIOop;
+typedef class SmallIntegerOopDescriptor     *SmallIntegerOop;
 
 
 // -----------------------------------------------------------------------------

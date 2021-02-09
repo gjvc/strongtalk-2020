@@ -17,6 +17,10 @@ extern "C" Oop *eden_end;
 
 class MixinKlassTests : public ::testing::Test {
 
+public:
+    MixinKlassTests() : ::testing::Test() {}
+
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "Object" ) )->klass_part()->mixin()->klass();

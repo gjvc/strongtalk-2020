@@ -18,12 +18,15 @@
 #include "vm/memory/MarkSweep.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 #include <gtest/gtest.h>
 
 
 class OopPrimitivesBecomeTest : public ::testing::Test {
+
+public:
+    OopPrimitivesBecomeTest() : ::testing::Test() {}
 
 protected:
     void SetUp() override {
@@ -32,15 +35,15 @@ protected:
         target      = MemOop( objectClass->primitive_allocate() );
         replacement = MemOop( objectClass->primitive_allocate() );
 
-        targetContainer      = oopFactory::new_objArray( 1 );
-        filler               = oopFactory::new_objArray( 128 ); // make sure containers are on different cards
-        replacementContainer = oopFactory::new_objArray( 1 );
+        targetContainer      = OopFactory::new_objectArray( 1 );
+        filler               = OopFactory::new_objectArray( 128 ); // make sure containers are on different cards
+        replacementContainer = OopFactory::new_objectArray( 1 );
 
         targetContainer->obj_at_put( 1, target );
         replacementContainer->obj_at_put( 1, replacement );
 
-        tenuredTargetContainer      = oopFactory::new_association( vmSymbols::value(), target, false );
-        tenuredReplacementContainer = oopFactory::new_association( vmSymbols::value(), replacement, false );
+        tenuredTargetContainer      = OopFactory::new_association( vmSymbols::value(), target, false );
+        tenuredReplacementContainer = OopFactory::new_association( vmSymbols::value(), replacement, false );
 
         st_assert( Universe::old_gen.contains( tenuredTargetContainer ), "target container should be tenured" );
         st_assert( Universe::old_gen.contains( tenuredReplacementContainer ), "replacement container should be tenured" );

@@ -13,7 +13,7 @@
 #include "vm/code/NativeMethod.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/Timer.hpp"
 #include "vm/code/InliningDatabase.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -337,7 +337,7 @@ bool scan_key( RecompilationScope *sender, char *line, KlassOop *receiver_klass,
         }
     }
 
-    SymbolOop selector = oopFactory::new_symbol( method_id );
+    SymbolOop selector = OopFactory::new_symbol( method_id );
 
     if ( is_super ) {
         st_assert( sender, "sender must be present" );
@@ -526,7 +526,7 @@ bool scan_key( char *line, LookupKey *key ) {
     }
 
 
-    SymbolOop selector = oopFactory::new_symbol( method_id );
+    SymbolOop selector = OopFactory::new_symbol( method_id );
 
     if ( is_block ) {
         MethodOop met = rec->klass_part()->lookup( selector );

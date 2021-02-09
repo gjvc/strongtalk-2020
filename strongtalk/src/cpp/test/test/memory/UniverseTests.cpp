@@ -11,6 +11,10 @@
 
 class UniverseTests : public ::testing::Test {
 
+public:
+    UniverseTests() : ::testing::Test() {}
+
+
 protected:
     void SetUp() override {
         eden_old_top = eden_top;

@@ -8,7 +8,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
 #include "test/main/TestDeltaProcess.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 void initializeSmalltalkEnvironment();

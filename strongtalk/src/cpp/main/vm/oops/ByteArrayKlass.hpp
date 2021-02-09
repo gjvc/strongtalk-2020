@@ -50,7 +50,7 @@ public:
 
     // Format
     Format format() {
-        return Format::byteArray_klass;
+        return Format::byte_array_klass;
     }
 
 
@@ -93,7 +93,7 @@ public:
 
 
     // testers
-    bool oop_is_byteArray() const {
+    bool oopIsByteArray() const {
         return true;
     }
 

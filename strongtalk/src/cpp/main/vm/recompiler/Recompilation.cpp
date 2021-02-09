@@ -57,7 +57,7 @@ const char *Recompilation::methodOop_invocation_counter_overflow( Oop receiver, 
     if ( not ok ) {
         // Possibly caused by a method sweeper bug: inline cache has been modified during the send.
         // To check: method is a JumpTable entry to an NativeMethod instead of a methodOop.
-        const char *msg = Oop( method )->is_smi() ? "(method might be jump table entry)" : "";
+        const char *msg = Oop( method )->isSmallIntegerOop() ? "(method might be jump table entry)" : "";
         SPDLOG_INFO( "invocation counter overflow with broken methodOop 0x{0:x} (recv = 0x{0:x}) %s", static_cast<const void *>( method ), static_cast<const void *>( receiver ), static_cast<const void *>( msg ) );
         st_fatal( "invocation counter overflow with illegal method - internal error" );
         // fatal("invocation counter overflow with illegal method - tell Robert");

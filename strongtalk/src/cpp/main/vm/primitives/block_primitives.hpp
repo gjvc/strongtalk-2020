@@ -108,14 +108,14 @@ extern "C" Oop primitiveValue9( Oop blk, Oop arg1, Oop arg2, Oop arg3, Oop arg4,
 
 // The following primitives are called directly by the interpreter.
 
-extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs );
+extern "C" BlockClosureOop allocateBlock( SmallIntegerOop nofArgs );
 //%prim
 // <NoReceiver> primitiveCompiledBlockAllocate: size <SmallInteger> ^<Block> =
 //   Internal {
 //     flags = #(Internal Block Allocate)
 //     name  = 'allocateBlock' }
 //%
-extern "C" BlockClosureOop allocateTenuredBlock( SMIOop nofArgs );  // for compiler
+extern "C" BlockClosureOop allocateTenuredBlock( SmallIntegerOop nofArgs );  // for compiler
 
 
 extern "C" BlockClosureOop allocateBlock0();
@@ -198,7 +198,7 @@ extern "C" BlockClosureOop allocateBlock9();
 //     name  = 'allocateBlock9' }
 //%
 
-extern "C" ContextOop allocateContext( SMIOop nofVars );
+extern "C" ContextOop allocateContext( SmallIntegerOop nofVars );
 //%prim
 // <NoReceiver> primitiveCompiledContextAllocate: size <SmallInteger> ^<Object> =
 //   Internal {

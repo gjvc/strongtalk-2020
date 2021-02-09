@@ -20,8 +20,8 @@ extern Compiler *theCompiler;
 
 void Interpreted_DLLCache::verify() {
     // check oops
-    if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
-    if ( not funct_name()->is_symbol() ) st_fatal( "function name is not a SymbolOop" );
+    if ( not dll_name()->isSymbol() ) st_fatal( "dll name is not a SymbolOop" );
+    if ( not funct_name()->isSymbol() ) st_fatal( "function name is not a SymbolOop" );
     if ( number_of_arguments() < 0 ) st_fatal( "illegal number of arguments" );
 }
 
@@ -50,8 +50,8 @@ void Compiled_DLLCache::verify() {
     test_at( test_2_instruction_offset )->verify();
     NativeCall::verify();
     // check oops
-    if ( not dll_name()->is_symbol() ) st_fatal( "dll name is not a SymbolOop" );
-    if ( not function_name()->is_symbol() ) st_fatal( "function name is not a SymbolOop" );
+    if ( not dll_name()->isSymbol() ) st_fatal( "dll name is not a SymbolOop" );
+    if ( not function_name()->isSymbol() ) st_fatal( "function name is not a SymbolOop" );
     // check destination
     char *d = destination();
     if ( d not_eq StubRoutines::lookup_DLL_entry( true ) and d not_eq StubRoutines::lookup_DLL_entry( false ) and d not_eq StubRoutines::call_DLL_entry( true ) and d not_eq StubRoutines::call_DLL_entry( false ) ) {
@@ -92,7 +92,7 @@ bool DLLs::unload( DLL *library ) {
 
 dll_func_ptr_t DLLs::lookup_fail( SymbolOop dll_name, SymbolOop function_name ) {
     // Call backs to Delta
-    if ( Universe::dll_lookup_receiver()->is_nil() ) {
+    if ( Universe::dll_lookup_receiver()->isNilObject() ) {
         SPDLOG_WARN( "dll lookup receiver is not set" );
     }
     st_assert( theCompiler == nullptr, "Cannot handle call back during compilation" );

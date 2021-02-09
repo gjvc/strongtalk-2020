@@ -72,13 +72,13 @@ Expression *PrimitiveInliner::tryConstantFold() {
     }
     // all parameters are constants, so call primitive
     Oop          res   = _primitiveDescriptor->eval( args );
-    if ( res->is_mark() ) {
+    if ( res->isMarkOop() ) {
         // primitive failed
         return primitiveFailure( unmarkSymbol( res ) );
-    } else if ( res->is_mem() and not res->is_old() ) {
+    } else if ( res->isMemOop() and not res->is_old() ) {
         // must tenure result because nativeMethods aren't scavenged
-        if ( res->is_double() ) {
-            res = oopFactory::clone_double_to_oldspace( DoubleOop( res ) );
+        if ( res->isDouble() ) {
+            res = OopFactory::clone_double_to_oldspace( DoubleOop( res ) );
         } else {
             // don't know how to tenure non-doubles
             SPDLOG_WARN( "const folding: primitive %s is returning non-tenured object", _primitiveDescriptor->name() );
@@ -90,7 +90,7 @@ Expression *PrimitiveInliner::tryConstantFold() {
     _gen->append( NodeFactory::createAndRegisterNode<AssignNode>( constResult, result ) );
     if ( CompilerDebug )
         cout( PrintInlining )->print( "%*sconstant-folding %s --> 0x{0:x}\n", _scope->depth + 2, "", _primitiveDescriptor->name(), res );
-    st_assert( not constResult->constant->is_mark(), "result must not be marked" );
+    st_assert( not constResult->constant->isMarkOop(), "result must not be marked" );
     return new ConstantExpression( res, constResult, _gen->current() );
 }
 
@@ -341,8 +341,8 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1            = arg1->is_smi();
-    bool                         intArg2            = arg2->is_smi();
+    bool                         intArg1            = arg1->isSmallIntegerOop();
+    bool                         intArg2            = arg2->isSmallIntegerOop();
     bool                         intBoth            = intArg1 and intArg2;            // if true, tag error cannot occur
     SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );            // holds the result if primitive didn't fail
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );            // holds the error message if primitive failed
@@ -413,8 +413,8 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1            = arg1->is_smi();
-    bool                         intArg2            = arg2->is_smi();
+    bool                         intArg1            = arg1->isSmallIntegerOop();
+    bool                         intArg2            = arg2->isSmallIntegerOop();
     bool                         intBoth            = intArg1 and intArg2;    // if true, tag error cannot occur
     SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
@@ -454,8 +454,8 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
 
 Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
     if ( y->pseudoRegister()->isConstPseudoRegister() ) {
-        st_assert( y->is_smi(), "type check should have failed" );
-        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
+        st_assert( y->isSmallIntegerOop(), "type check should have failed" );
+        std::int32_t d = SmallIntegerOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with shift
             ConstPseudoRegister *pseudoRegister = new_ConstPseudoRegister( _scope, smiOopFromValue( -log2( d ) ) );
@@ -469,8 +469,8 @@ Expression *PrimitiveInliner::smi_Div( Expression *x, Expression *y ) {
 
 Expression *PrimitiveInliner::smi_Mod( Expression *x, Expression *y ) {
     if ( y->pseudoRegister()->isConstPseudoRegister() ) {
-        st_assert( y->is_smi(), "type check should have failed" );
-        std::int32_t d = SMIOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
+        st_assert( y->isSmallIntegerOop(), "type check should have failed" );
+        std::int32_t d = SmallIntegerOop( ( (ConstPseudoRegister *) y->pseudoRegister() )->constant )->value();
         if ( is_power_of_2( d ) ) {
             // replace it with mask
             ConstPseudoRegister *pseudoRegister = new_ConstPseudoRegister( _scope, smiOopFromValue( d - 1 ) );
@@ -485,7 +485,7 @@ Expression *PrimitiveInliner::smi_Mod( Expression *x, Expression *y ) {
 Expression *PrimitiveInliner::smi_Shift( Expression *arg1, Expression *arg2 ) {
     if ( parameter( 1 )->pseudoRegister()->isConstPseudoRegister() ) {
         // inline if the shift count is a constant
-        st_assert( arg2->is_smi(), "type check should have failed" );
+        st_assert( arg2->isSmallIntegerOop(), "type check should have failed" );
         return smi_BitOp( ArithOpCode::tShiftArithOp, arg1, arg2 );
     }
     // otherwise leave it alone
@@ -561,8 +561,8 @@ Expression *PrimitiveInliner::smi_Comparison( BranchOpCode cond, Expression *arg
     assert_receiver();
 
     // parameters & result registers
-    bool                         intArg1            = arg1->is_smi();
-    bool                         intArg2            = arg2->is_smi();
+    bool                         intArg1            = arg1->isSmallIntegerOop();
+    bool                         intArg2            = arg2->isSmallIntegerOop();
     bool                         intBoth            = intArg1 and intArg2;    // if true, tag error cannot occur
     SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the result if primitive didn't fail
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
@@ -632,7 +632,7 @@ Expression *PrimitiveInliner::array_at_ifFail( ArrayAtNode::AccessType access_ty
     std::int32_t                 arrOffs            = lenOffs + 1;
 
     // at node
-    ArrayAtNode *at = NodeFactory::createAndRegisterNode<ArrayAtNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->is_smi(), resPseudoRegister, errPseudoRegister, arrOffs, lenOffs );
+    ArrayAtNode *at = NodeFactory::createAndRegisterNode<ArrayAtNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->isSmallIntegerOop(), resPseudoRegister, errPseudoRegister, arrOffs, lenOffs );
     _gen->append( at );
 
     // continuation
@@ -688,7 +688,7 @@ Expression *PrimitiveInliner::array_at_put_ifFail( ArrayAtPutNode::AccessType ac
     }
 
     // atPut node
-    ArrayAtPutNode *atPut = NodeFactory::createAndRegisterNode<ArrayAtPutNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->is_smi(), element->pseudoRegister(), element->is_smi(), nullptr, errPseudoRegister, arrOffs, lenOffs, storeCheck );
+    ArrayAtPutNode *atPut = NodeFactory::createAndRegisterNode<ArrayAtPutNode>( access_type, array->pseudoRegister(), index->pseudoRegister(), index->isSmallIntegerOop(), element->pseudoRegister(), element->isSmallIntegerOop(), nullptr, errPseudoRegister, arrOffs, lenOffs, storeCheck );
     _gen->append( atPut );
 
     // continuation
@@ -809,7 +809,7 @@ Expression *PrimitiveInliner::obj_hash( bool has_receiver ) {
         assert_receiver();
 
     Expression *obj = parameter( 0 );
-    if ( obj->is_smi() ) {
+    if ( obj->isSmallIntegerOop() ) {
         // hash value = self (no code necessary)
         return obj;
     } else {
@@ -837,7 +837,7 @@ Expression *PrimitiveInliner::proxy_byte_at() {
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // at node
-    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT, resPseudoRegister, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi() );
+    InlinedPrimitiveNode *at = NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT, resPseudoRegister, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->isSmallIntegerOop() );
     _gen->append( at );
 
     // continuation
@@ -869,7 +869,7 @@ Expression *PrimitiveInliner::proxy_byte_at_put() {
     SinglyAssignedPseudoRegister *errPseudoRegister = new SinglyAssignedPseudoRegister( _scope );    // holds the error message if primitive failed
 
     // atPut node
-    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT, nullptr, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->is_smi(), value->pseudoRegister(), value->is_smi() );
+    InlinedPrimitiveNode *atPut = NodeFactory::createAndRegisterNode<InlinedPrimitiveNode>( InlinedPrimitiveNode::Operation::PROXY_BYTE_AT_PUT, nullptr, errPseudoRegister, proxy->pseudoRegister(), index->pseudoRegister(), index->isSmallIntegerOop(), value->pseudoRegister(), value->isSmallIntegerOop() );
     _gen->append( atPut );
 
     // continuation
@@ -990,7 +990,7 @@ Expression *PrimitiveInliner::tryInline() {
             break;
         case PrimitiveGroup::FloatComparisonPrimitive:
             break;
-        case PrimitiveGroup::ObjArrayPrimitive:
+        case PrimitiveGroup::ObjectArrayPrimitive:
             if ( equal( name, "primitiveIndexedObjectSize" ) ) {
                 res = array_size();
                 break;

@@ -224,14 +224,14 @@ Oop Handle::as_oop() {
 }
 
 
-ObjectArrayOop Handle::as_objArray() {
-    st_assert( Handles::oop_at( _index )->is_objArray(), "as_objArray() type check" );
+ObjectArrayOop Handle::as_objectArray() {
+    st_assert( Handles::oop_at( _index )->isObjectArray(), "as_objectArray() type check" );
     return ObjectArrayOop( Handles::oop_at( _index ) );
 }
 
 
 MemOop Handle::as_memOop() {
-    st_assert( Handles::oop_at( _index )->is_mem(), "as_memOop() type check" );
+    st_assert( Handles::oop_at( _index )->isMemOop(), "as_memOop() type check" );
     return MemOop( Handles::oop_at( _index ) );
 }
 

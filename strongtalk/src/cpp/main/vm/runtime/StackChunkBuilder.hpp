@@ -50,7 +50,7 @@ public:
     void append( DeltaVirtualFrame *f );
 
     // Returns the packed frames as an object array.
-    ObjectArrayOop as_objArray();
+    ObjectArrayOop as_objectArray();
 
     // Constants for the resulting object array
     enum {

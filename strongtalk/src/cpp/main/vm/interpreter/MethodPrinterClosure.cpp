@@ -284,7 +284,7 @@ void MethodPrinterClosure::normal_send( InterpretedInlineCache *ic ) {
     print_sendtype( ic->send_type() );
     _outputStream->print( " " );
     Oop s = Oop( ic->selector() );
-    if ( not s->is_smi() and Universe::is_heap( (Oop *) s ) ) {
+    if ( not s->isSmallIntegerOop() and Universe::is_heap( (Oop *) s ) ) {
         st_assert_symbol( ic->selector(), "selector in ic must be a symbol" );
         ic->selector()->print_value_on( _outputStream );
     } else {

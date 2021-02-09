@@ -15,7 +15,7 @@
 #include "vm/oops/MethodOopDescriptor.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/code/NativeMethod.hpp"
 #include "vm/runtime/VirtualFrame.hpp"
@@ -31,7 +31,7 @@ TRACE_FUNC( TraceVirtualFramePrims, "VirtualFrame" )
 
 std::int32_t VirtualFrameOopPrimitives::number_of_calls;
 
-#define ASSERT_RECEIVER st_assert(receiver->is_vframe(), "receiver must be VirtualFrame")
+#define ASSERT_RECEIVER st_assert(receiver->is_VirtualFrame(), "receiver must be VirtualFrame")
 
 
 PRIM_DECL_1( VirtualFrameOopPrimitives::process, Oop receiver ) {
@@ -106,7 +106,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::expression_stack, Oop receiver ) {
 
     GrowableArray<Oop> *stack = ( (DeltaVirtualFrame *) vf )->expression_stack();
 
-    return oopFactory::new_objArray( stack );
+    return OopFactory::new_objectArray( stack );
 }
 
 
@@ -131,7 +131,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::method, Oop receiver ) {
 PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
     PROLOGUE_1( "receiver", receiver );
 
-    st_assert( receiver->is_vframe(), "receiver must be VirtualFrame" )
+    st_assert( receiver->is_VirtualFrame(), "receiver must be VirtualFrame" )
 
     ResourceMark resourceMark;
 
@@ -150,7 +150,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::receiver, Oop receiver ) {
 PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     PROLOGUE_1( "temporaries", receiver );
 
-    st_assert( receiver->is_vframe(), "receiver must be VirtualFrame" );
+    st_assert( receiver->is_VirtualFrame(), "receiver must be VirtualFrame" );
 
     BlockScavenge bs;
     ResourceMark  rm;
@@ -171,7 +171,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
     for ( std::int32_t offset = ( method->activation_has_context() ? 1 : 0 ); offset < tempCount; offset++ ) {
         ByteArrayOop name = find_stack_temp( method, df->byteCodeIndex(), offset );
         if ( name )
-            temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->temp_at( offset ), false ) );
+            temps->append( OopFactory::new_association( OopFactory::new_symbol( name ), df->temp_at( offset ), false ) );
     }
 
     while ( df ) {
@@ -181,7 +181,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
             for ( std::int32_t offset = 0; offset < contextTempCount; offset++ ) {
                 ByteArrayOop name = find_heap_temp( method, df->byteCodeIndex(), offset );
                 if ( name )
-                    temps->append( oopFactory::new_association( oopFactory::new_symbol( name ), df->context_temp_at( offset ), false ) );
+                    temps->append( OopFactory::new_association( OopFactory::new_symbol( name ), df->context_temp_at( offset ), false ) );
             }
         }
 
@@ -190,7 +190,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::temporaries, Oop receiver ) {
             method = df->method();
     }
 
-    return oopFactory::new_objArray( temps );
+    return OopFactory::new_objectArray( temps );
 }
 
 
@@ -212,7 +212,7 @@ PRIM_DECL_1( VirtualFrameOopPrimitives::arguments, Oop receiver ) {
 
     GrowableArray<Oop> *stack = ( (DeltaVirtualFrame *) vf )->arguments();
 
-    return oopFactory::new_objArray( stack );
+    return OopFactory::new_objectArray( stack );
 }
 
 

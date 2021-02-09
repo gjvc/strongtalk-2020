@@ -194,7 +194,7 @@ public:
     }
 
 
-    bool is_smi() const {
+    bool isSmallIntegerOop() const {
         return hasKlass() and klass() == smiKlassObject;
     }
 

@@ -4,7 +4,7 @@
 //
 
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 bool ObjectArrayOopDescriptor::verify() {
@@ -12,7 +12,7 @@ bool ObjectArrayOopDescriptor::verify() {
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "objArrayOop 0x{0:x} has negative length", this );
+            error( "objectArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }
@@ -32,7 +32,7 @@ void ObjectArrayOopDescriptor::bootstrap_object( Bootstrap *stream ) {
 
 ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( std::int32_t index, std::int32_t number ) {
 
-    ObjectArrayOop new_array = oopFactory::new_objArray( length() - number );
+    ObjectArrayOop new_array = OopFactory::new_objectArray( length() - number );
     // copy [1..i-1]
 
     for ( std::int32_t i = 1; i < index; i++ )
@@ -47,7 +47,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_remove( std::int32_t index, std::i
 
 
 ObjectArrayOop ObjectArrayOopDescriptor::copy() {
-    ObjectArrayOop new_array = oopFactory::new_objArray( length() );
+    ObjectArrayOop new_array = OopFactory::new_objectArray( length() );
 
     for ( std::int32_t i = 1; i <= length(); i++ )
         new_array->obj_at_put( i, obj_at( i ) );
@@ -57,7 +57,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy() {
 
 
 ObjectArrayOop ObjectArrayOopDescriptor::copy_add( Oop a ) {
-    ObjectArrayOop new_array = oopFactory::new_objArray( length() + 1 );
+    ObjectArrayOop new_array = OopFactory::new_objectArray( length() + 1 );
 
     std::int32_t i = 1;
     for ( ; i <= length(); i++ )
@@ -70,7 +70,7 @@ ObjectArrayOop ObjectArrayOopDescriptor::copy_add( Oop a ) {
 
 ObjectArrayOop ObjectArrayOopDescriptor::copy_add_two( Oop a, Oop b ) {
 
-    ObjectArrayOop new_array = oopFactory::new_objArray( length() + 2 );
+    ObjectArrayOop new_array = OopFactory::new_objectArray( length() + 2 );
 
     std::int32_t i = 1;
 

@@ -31,7 +31,7 @@ bool ContextOopDescriptor::is_dead() const {
 
 bool ContextOopDescriptor::has_parent_fp() const {
     st_assert( not mark()->has_context_forward(), "checking if context is deoptimized" );
-    return parent()->is_smi() and not is_dead();
+    return parent()->isSmallIntegerOop() and not is_dead();
 }
 
 

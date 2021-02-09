@@ -150,7 +150,7 @@ public:
 
     Oop as_oop();
 
-    ObjectArrayOop as_objArray();
+    ObjectArrayOop as_objectArray();
 
     MemOop as_memOop();
 

@@ -203,8 +203,10 @@ public:
 
 
     MarkOop set_hash( std::int32_t v ) const {
-        if ( ( v & hash_mask ) == 0 )
-            v       = first_hash; // avoid no_hash
+        if ( ( v & hash_mask ) == 0 ) {
+            v = first_hash; // avoid no_hash
+        }
+
         MarkOop val = MarkOop( ( value() & ~hash_mask_in_place ) | ( ( v & hash_mask ) << hash_shift ) );
         st_assert( val->hash() not_eq no_hash, "should have hash now" );
         return val;
@@ -227,7 +229,7 @@ public:
     }
 
 
-    // badOop
+    // MarkOopDescriptor::bad()
     static MarkOop bad() {
         return MarkOop( sentinel_is_place | first_hash_in_place | MARK_TAG );
     }
@@ -248,12 +250,10 @@ public:
     }
 };
 
-#define badOop MarkOopDescriptor::bad()
-
 
 // tells whether p is a root to an Oop or a markOop
 // used during pointer reversal during GC.
 // inline bool is_oop_root(Oop* p) { return not markOop(p)->has_sentinel(); }
 inline bool is_oop_root( Oop *p ) {
-    return not MarkOop( p )->is_mark();
+    return not MarkOop( p )->isMarkOop();
 }

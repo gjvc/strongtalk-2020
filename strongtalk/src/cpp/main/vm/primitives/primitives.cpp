@@ -4,7 +4,7 @@
 //
 
 #include "vm/primitives/primitives.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/compiler/Expression.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/interpreter/CodeIterator.hpp"
@@ -55,9 +55,9 @@ const char *name_from_group( const PrimitiveGroup &group ) {
 
     switch ( group ) {
         case PrimitiveGroup::IntComparisonPrimitive:
-            return "IntComparisonPrimitive / smi_t";
+            return "IntComparisonPrimitive / small_int_t";
         case PrimitiveGroup::IntArithmeticPrimitive:
-            return "IntArithmeticPrimitive / smi_t";
+            return "IntArithmeticPrimitive / small_int_t";
         case PrimitiveGroup::FloatComparisonPrimitive:
             return "FloatComparisonPrimitive";
         case PrimitiveGroup::FloatArithmeticPrimitive:
@@ -66,8 +66,8 @@ const char *name_from_group( const PrimitiveGroup &group ) {
             return "ByteArrayPrimitive";
         case PrimitiveGroup::DoubleByteArrayPrimitive:
             return "DoubleByteArrayPrimitive";
-        case PrimitiveGroup::ObjArrayPrimitive:
-            return "ObjArrayPrimitive";
+        case PrimitiveGroup::ObjectArrayPrimitive:
+            return "ObjectArrayPrimitive";
         case PrimitiveGroup::BlockPrimitive:
             return "BlockPrimitive";
         case PrimitiveGroup::NormalPrimitive:
@@ -125,7 +125,7 @@ bool PrimitiveDescriptor::can_walk_stack() const {
 
 
 SymbolOop PrimitiveDescriptor::selector() const {
-    return oopFactory::new_symbol( name() );
+    return OopFactory::new_symbol( name() );
 }
 
 
@@ -230,7 +230,7 @@ void Primitives::lookup_and_patch() {
     Oop          *selector_addr = it.aligned_oop( 1 );
 
     SymbolOop sel = SymbolOop( *selector_addr );
-    st_assert( sel->is_symbol(), "symbol expected" );
+    st_assert( sel->isSymbol(), "symbol expected" );
 
     // do lookup
     PrimitiveDescriptor *pdesc = Primitives::lookup( sel );
@@ -326,11 +326,11 @@ void Primitives::print_counters() {
     print_calls( "double", DoubleOopPrimitives::number_of_calls, &total );
     print_calls( "method", MethodOopPrimitives::number_of_calls, &total );
     print_calls( "mixin", MixinOopPrimitives::number_of_calls, &total );
-    print_calls( "objArray", ObjectArrayPrimitives::number_of_calls, &total );
+    print_calls( "objectArray", ObjectArrayPrimitives::number_of_calls, &total );
     print_calls( "oop", OopPrimitives::number_of_calls, &total );
     print_calls( "process", ProcessOopPrimitives::number_of_calls, &total );
     print_calls( "proxy", ProxyOopPrimitives::number_of_calls, &total );
-    print_calls( "smi_t", SmallIntegerOopPrimitives::number_of_calls, &total );
+    print_calls( "small_int_t", SmallIntegerOopPrimitives::number_of_calls, &total );
     print_calls( "system", SystemPrimitives::number_of_calls, &total );
     SPDLOG_INFO( "{<16}{:d}", "total", total );
 

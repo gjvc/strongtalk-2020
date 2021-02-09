@@ -23,7 +23,7 @@ extern "C" void set_oops( Oop *to, std::int32_t count, Oop value = nullptr );
 
 char *copy_string( const char *s );
 
-char *copy_string( const char *s, smi_t len );
+char *copy_string( const char *s, small_int_t len );
 
 char *copy_c_heap_string( const char *s );
 

@@ -41,7 +41,7 @@ private:
     Label _method_entry;                    // entry point to activate method execution
     Label _block_entry;                     // entry point to activate block execution (primitiveValue)
     Label _inline_cache_miss;               // inline cache misses handling
-    Label _smi_send_failure;                // handles predicted smi_t send failures
+    Label _smi_send_failure;                // handles predicted small_int_t send failures
     Label _issue_NonLocalReturn;            // the starting point for NonLocalReturns in interpreted code
     Label _nlr_testpoint;                   // the return point for NonLocalReturns in interpreted sends
     Label _C_nlr_testpoint;                 // the return point for NonLocalReturns in C
@@ -310,11 +310,11 @@ private:
 
     const char *smi_shift();
 
-    const char *objArray_size();
+    const char *objectArray_size();
 
-    const char *objArray_at();
+    const char *objectArray_at();
 
-    const char *objArray_at_put();
+    const char *objectArray_at_put();
 
     const char *compare( bool equal );
 

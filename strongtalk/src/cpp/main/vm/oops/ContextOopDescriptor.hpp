@@ -18,7 +18,7 @@ class ContextOopDescriptor : public MemOopDescriptor {
 
 
 private:
-    SMIOop _parent;
+    SmallIntegerOop _parent;
 
 
     //
@@ -65,7 +65,7 @@ public:
 
 
     void set_home_fp( std::int32_t *fp ) { /* this should be void ** or similar to allow for 64-bit */
-        st_assert( Oop(fp)->is_smi(), "checking alignment" );
+        st_assert( Oop(fp)->isSmallIntegerOop(), "checking alignment" );
         set_parent( Oop( fp ) );
     }
 

@@ -21,7 +21,7 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/runtime/ResourceMark.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/MethodClosure.hpp"
 
 
@@ -1665,10 +1665,10 @@ public:
         _str{ new_resource_array<char>( 3 ) },
         leafNode( byteCodeIndex, scope ) {
 
-        if ( value->is_mem() ) {
+        if ( value->isMemOop() ) {
             Oop ch = MemOop( value )->instVarAt( 2 );
-            if ( ch->is_smi() ) {
-                sprintf( _str, "$%c", SMIOop( ch )->value() );
+            if ( ch->isSmallIntegerOop() ) {
+                sprintf( _str, "$%c", SmallIntegerOop( ch )->value() );
                 return;
             }
         }
@@ -1925,8 +1925,8 @@ public:
         _obj{ obj },
         _str{ nullptr } {
 
-        if ( obj->is_smi() ) {
-            _str = scope->inst_var_string( SMIOop( obj )->value() );
+        if ( obj->isSmallIntegerOop() ) {
+            _str = scope->inst_var_string( SmallIntegerOop( obj )->value() );
         } else {
             _str = SymbolOop( obj )->as_string();
         }
@@ -2108,17 +2108,17 @@ static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode
         return new literalNode( byteCodeIndex, scope, "false" );
     if ( obj == nilObject )
         return new literalNode( byteCodeIndex, scope, "nil" );
-    if ( obj->is_doubleByteArray() )
+    if ( obj->isDoubleByteArray() )
         return new doubleByteArrayNode( byteCodeIndex, scope, DoubleByteArrayOop( obj ) );
-    if ( obj->is_symbol() )
+    if ( obj->isSymbol() )
         return new symbolNode( byteCodeIndex, scope, SymbolOop( obj ) );
-    if ( obj->is_byteArray() )
+    if ( obj->isByteArray() )
         return new byteArrayNode( byteCodeIndex, scope, ByteArrayOop( obj ) );
-    if ( obj->is_smi() )
-        return new smiNode( byteCodeIndex, scope, SMIOop( obj )->value() );
-    if ( obj->is_double() )
+    if ( obj->isSmallIntegerOop() )
+        return new smiNode( byteCodeIndex, scope, SmallIntegerOop( obj )->value() );
+    if ( obj->isDouble() )
         return new doubleNode( byteCodeIndex, scope, DoubleOop( obj )->value() );
-    if ( obj->is_objArray() )
+    if ( obj->isObjectArray() )
         return new ObjectArrayNode( byteCodeIndex, scope, ObjectArrayOop( obj ) );
 
     return new CharacterNode( byteCodeIndex, scope, obj );
@@ -2791,7 +2791,7 @@ void ByteArrayPrettyPrintStream::print_char( char c ) {
 
 ByteArrayOop ByteArrayPrettyPrintStream::asByteArray() {
     std::int32_t       l = _buffer->length();
-    ByteArrayOop       a = oopFactory::new_byteArray( l );
+    ByteArrayOop       a = OopFactory::new_byteArray( l );
     for ( std::int32_t i = 0; i < l; i++ ) {
         a->byte_at_put( i + 1, (char) _buffer->at( i ) );
     }

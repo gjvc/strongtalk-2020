@@ -11,11 +11,18 @@
 #include "vm/oops/MixinOopDescriptor.hpp"
 
 
+template<typename T>
+concept oopIsMixin = requires( T a ) {
+    a.get();
+};
+
+//template<oopIsMixin T>
 class MixinKlass : public MemOopKlass {
 
 public:
+
     // testers
-    bool oop_is_mixin() const {
+    bool oopIsMixin() const {
         return true;
     }
 

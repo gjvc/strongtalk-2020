@@ -153,9 +153,9 @@ public:
 
 
     // mark operations
-    smi_t identity_hash();
+    small_int_t identity_hash();
 
-    void set_identity_hash( smi_t );
+    void set_identity_hash( small_int_t );
 
     // memory operations
     Oop scavenge();
@@ -211,12 +211,12 @@ public:
 
     // forwarding operations
     bool is_forwarded() {
-        return mark()->is_mem();
+        return mark()->isMemOop();
     }
 
 
     void forward_to( MemOop p ) {
-        st_assert( p->is_mem(), "forwarding to something that's not a MemOop" );
+        st_assert( p->isMemOop(), "forwarding to something that's not a MemOop" );
         set_mark( p );
     }
 
@@ -228,10 +228,10 @@ public:
 
     // marking operations
     bool is_gc_marked() {
-        return not( mark()->is_mark() and mark()->has_sentinel() );
-    } // Changed from mark()->is_smi(), Lars
+        return not( mark()->isMarkOop() and mark()->has_sentinel() );
+    } // Changed from mark()->isSmallIntegerOop(), Lars
 
-//        bool is_gc_marked() { return not mark()->has_sentinel(); } // Changed from mark()->is_smi(), Lars
+//        bool is_gc_marked() { return not mark()->has_sentinel(); } // Changed from mark()->isSmallIntegerOop(), Lars
 
     // GC operations (see discussion in Universe.cpp for rationale)
     void gc_store_size();            // Store object size in age field and remembered set

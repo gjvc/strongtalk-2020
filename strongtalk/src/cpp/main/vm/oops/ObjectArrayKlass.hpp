@@ -33,7 +33,7 @@ public:
 
     // Format
     Format format() {
-        return Format::objArray_klass;
+        return Format::object_array_klass;
     }
 
 
@@ -41,7 +41,7 @@ public:
     static ObjectArrayOop allocate_tenured_pic( std::int32_t size );
 
 
-    // Return the Oop size for a objArrayOop
+    // Return the Oop size for a objectArrayOop
     std::int32_t object_size( std::int32_t size ) const {
         return non_indexable_size() + 1 + size;
     }
@@ -58,11 +58,11 @@ public:
     }
 
 
-    friend void setKlassVirtualTableFromObjArrayKlass( Klass *k );
+    friend void setKlassVirtualTableFromObjectArrayKlass( Klass *k );
 
 
     const char *name() const {
-        return "objArray";
+        return "objectArray";
     }
 
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
@@ -82,7 +82,7 @@ public:
 
 
     // testers
-    bool oop_is_objArray() const {
+    bool oopIsObjectArray() const {
         return true;
     }
 
@@ -106,4 +106,4 @@ public:
     }
 };
 
-void setKlassVirtualTableFromObjArrayKlass( Klass *k );
+void setKlassVirtualTableFromObjectArrayKlass( Klass *k );

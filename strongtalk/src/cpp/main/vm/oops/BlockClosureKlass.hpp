@@ -50,7 +50,7 @@ public:
 
     // Format
     Format format() {
-        return Format::blockClosure_klass;
+        return Format::block_closure_klass;
     }
 
 

@@ -17,7 +17,7 @@
 //
 //        a) <send type>_send_<argument specification>
 //        b) <send_type>_send_<argument specification>_pop
-//        c) <name of predicted smi_t selector>
+//        c) <name of predicted small_int_t selector>
 //
 //
 //    <send_type> is one of:
@@ -413,8 +413,8 @@ public:
         smi_less_equal    = 0xe9, //
         smi_greater       = 0xea, //
         smi_greater_equal = 0xeb, //
-        objArray_at       = 0xec, //
-        objArray_at_put   = 0xed, //
+        objectArray_at       = 0xec, //
+        objectArray_at_put   = 0xed, //
         double_equal      = 0xee, //
         double_tilde      = 0xef, //
 

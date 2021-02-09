@@ -7,7 +7,7 @@
 #pragma once
 
 #include "vm/oops/ByteArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/utilities/ConsoleOutputStream.hpp"
 
 

@@ -612,9 +612,9 @@ Expression *Inliner::typePredict() {
     if ( InliningPolicy::isPredictedSmiSelector( _info->_selector ) ) {
         r = r->mergeWith( new KlassExpression( smiKlassObject, r->pseudoRegister(), nullptr ), nullptr );
     } else if ( InliningPolicy::isPredictedArraySelector( _info->_selector ) ) {
-        // don't know what to predict -- objArray? byteArray?
+        // don't know what to predict -- objectArray? byteArray?
         if ( TypePredictArrays ) {
-            r = r->mergeWith( new KlassExpression( Universe::objArrayKlassObject(), r->pseudoRegister(), nullptr ), nullptr );
+            r = r->mergeWith( new KlassExpression( Universe::objectArrayKlassObject(), r->pseudoRegister(), nullptr ), nullptr );
         } else {
             return r;
         }

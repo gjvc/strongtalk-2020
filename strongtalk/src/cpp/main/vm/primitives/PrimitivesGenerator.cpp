@@ -87,7 +87,7 @@ const char *PrimitivesGenerator::allocateContext_var() {
 
     const char *entry_point = masm->pc();
 
-    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // load length  (remember this is a SMIOop)
+    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // load length  (remember this is a SmallIntegerOop)
     masm->movl( eax, Address( (std::int32_t) &eden_top, RelocationInformation::RelocationType::external_word_type ) );
     masm->movl( edx, ecx );
     masm->addl( edx, 3 * OOP_SIZE );
@@ -122,13 +122,13 @@ const char *PrimitivesGenerator::allocateContext_var() {
 
     masm->bind( need_scavenge );
     masm->set_last_delta_frame_after_call();
-    masm->shrl( ecx, TAG_SIZE );            // SMIOop->value()
+    masm->shrl( ecx, TAG_SIZE );            // SmallIntegerOop->value()
     masm->addl( ecx, 3 );
     masm->pushl( ecx );
     masm->call( (const char *) &scavenge_and_allocate, RelocationInformation::RelocationType::runtime_call_type );
     masm->addl( esp, 4 );
     masm->reset_last_delta_frame();
-    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // reload length  (remember this is a SMIOop)
+    masm->movl( ecx, Address( esp, +OOP_SIZE ) );    // reload length  (remember this is a SmallIntegerOop)
     masm->movl( edx, ecx );
     masm->addl( edx, 3 * OOP_SIZE );
     masm->addl( edx, eax );

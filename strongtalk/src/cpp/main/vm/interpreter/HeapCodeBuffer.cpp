@@ -60,7 +60,7 @@ ByteArrayOop HeapCodeBuffer::bytes() {
 
 ObjectArrayOop HeapCodeBuffer::oops() {
     BlockScavenge  bs;
-    Klass          *klass = Universe::objArrayKlassObject()->klass_part();
+    Klass          *klass = Universe::objectArrayKlassObject()->klass_part();
     ObjectArrayOop result = ObjectArrayOop( klass->allocateObjectSize( oopLength() ) );
 
     for ( std::int32_t i = 0; i < oopLength(); i++ ) {

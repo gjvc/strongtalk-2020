@@ -38,7 +38,7 @@ Oop VirtualFrameKlass::allocateObject( bool permit_scavenge, bool tenured ) {
 
 
 KlassOop VirtualFrameKlass::create_subclass( MixinOop mixin, Format format ) {
-    if ( format == Format::mem_klass or format == Format::vframe_klass ) {
+    if ( format == Format::mem_klass or format == Format::virtual_frame_klass ) {
         return VirtualFrameKlass::create_class( as_klassOop(), mixin );
     }
     return nullptr;

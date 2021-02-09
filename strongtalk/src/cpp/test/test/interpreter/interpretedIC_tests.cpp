@@ -6,7 +6,7 @@
 #include "vm/memory/Universe.hpp"
 #include "vm/memory/Array.hpp"
 #include "vm/code/NonInlinedBlockScopeNode.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/compiler/BasicBlockIterator.hpp"
 #include "vm/memory/MarkSweep.hpp"
@@ -42,14 +42,14 @@ TEST_F( InterpretedICTest, noArgSendWithUnknownSelectorShouldInvokeDoesNotUnders
 ) {
 
     BlockScavenge bs;
-    SymbolOop     selector         = oopFactory::new_symbol( "dnuTrigger1", 11 );
-    SymbolOop     returnedSelector = oopFactory::new_symbol( "quack", 5 );
+    SymbolOop     selector         = OopFactory::new_symbol( "dnuTrigger1", 11 );
+    SymbolOop     returnedSelector = OopFactory::new_symbol( "quack", 5 );
     Oop           result           = Delta::call( fixture, selector );
     KlassOop      expectedKlass    = KlassOop( Universe::find_global( "Message" ) );
 
     EXPECT_TRUE( result
                      ->
-                         is_mem()
+                         isMemOop()
     ) << "result should be object";
     EXPECT_EQ( expectedKlass, result
         ->

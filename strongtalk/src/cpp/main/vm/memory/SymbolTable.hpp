@@ -57,7 +57,7 @@ public:
 
 
     bool is_symbol() {
-        return Oop( symbol_or_link )->is_mem();
+        return Oop( symbol_or_link )->isMemOop();
     }
 
 

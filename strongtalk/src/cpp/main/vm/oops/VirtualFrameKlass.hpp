@@ -15,7 +15,7 @@ class VirtualFrameKlass : public MemOopKlass {
 
 public:
     // testers
-    bool oop_is_vframe() const {
+    bool oopIsVirtualFrame() const {
         return true;
     }
 
@@ -37,7 +37,7 @@ public:
 
     // Format
     Format format() {
-        return Format::vframe_klass;
+        return Format::virtual_frame_klass;
     }
 
 

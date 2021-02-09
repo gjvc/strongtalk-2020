@@ -416,9 +416,9 @@ bool CompiledLoop::isIncrement( PseudoRegister *p, ArithOpCode op ) {
     _increment = p;
     if ( p->isConstPseudoRegister() ) {
         Oop c         = ( (ConstPseudoRegister *) p )->constant;
-        if ( not c->is_smi() )
+        if ( not c->isSmallIntegerOop() )
             return false;
-        _isCountingUp = ( SMIOop( c )->value() > 0 ) ^ ( op == ArithOpCode::tSubArithOp );
+        _isCountingUp = ( SmallIntegerOop( c )->value() > 0 ) ^ ( op == ArithOpCode::tSubArithOp );
         return true;
     } else {
         // fix this: need to check sign in loop header
@@ -455,7 +455,7 @@ void CompiledLoop::optimizeIntegerLoop() {
     if ( not isIntegerLoop() )
         return;
 
-    // activate loop header (will check upper bound for smi_t-ness etc.)
+    // activate loop header (will check upper bound for small_int_t-ness etc.)
     PseudoRegister *u = _loopSizeLoad ? nullptr : _upperBound;
     _loopHeader->activate( _loopVar, _lowerBound, u, _loopSizeLoad );
     _loopHeader->_integerLoop = true;

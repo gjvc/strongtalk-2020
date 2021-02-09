@@ -9,7 +9,7 @@
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/primitives/ProxyOopPrimitives.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/vmSymbols.hpp"
 
 #include <gtest/gtest.h>
@@ -22,13 +22,16 @@ extern std::int32_t expansion_count;
 
 class ProxyPrimitivesTests : public ::testing::Test {
 
+public:
+    ProxyPrimitivesTests() : ::testing::Test() {}
+
 protected:
 
     HeapResourceMark *rm;
     ProxyOop         proxy, subProxy, validProxy;
-    DoubleOop        doubleValue;
-    SMIOop           smi0, smi1;
-    std::int32_t     address;
+    DoubleOop       doubleValue;
+    SmallIntegerOop smi0, smi1;
+    std::int32_t    address;
 
 
     void SetUp() override {
@@ -38,7 +41,7 @@ protected:
         PersistentHandle subProxyHandle( proxyClass.as_klassOop()->klass_part()->allocateObject() );
         PersistentHandle validProxyHandle( proxyClass.as_klassOop()->klass_part()->allocateObject() );
 
-        doubleValue = oopFactory::new_double( 1.2345 );
+        doubleValue = OopFactory::new_double( 1.2345 );
 
         smi0    = smiOopFromValue( 0 );
         smi1    = smiOopFromValue( 1 );
@@ -59,7 +62,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }

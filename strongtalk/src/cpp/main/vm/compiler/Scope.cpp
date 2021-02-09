@@ -16,7 +16,7 @@
 #include <cstring>
 
 
-smi_t Scope::_currentScopeID;
+small_int_t Scope::_currentScopeID;
 
 // SendInfo implementation
 

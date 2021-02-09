@@ -11,7 +11,7 @@
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/primitives/ByteArrayPrimitives.hpp"
 #include "vm/compiler/Node.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
@@ -53,6 +53,11 @@ extern "C" std::int32_t __CALLING_CONVENTION argAlignment2( std::int32_t a, std:
 
 class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
 
+public:
+    AlienIntegerCalloutWithArgumentsTests() : ::testing::Test() {}
+
+
+
 protected:
     void SetUp() override {
         rm      = new HeapResourceMark();
@@ -92,9 +97,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle                   *directAlien, *invalidFunctionAlien;
-    SMIOop                             smi0, smi1, smim1;
-    static const std::int32_t          argCount = 2;
+    PersistentHandle          *directAlien, *invalidFunctionAlien;
+    SmallIntegerOop           smi0, smi1, smim1;
+    static const std::int32_t argCount = 2;
     std::array<void *, argCount>       intCalloutFunctions;
     std::array<void *, argCount>       intPointerCalloutFunctions;
     std::array<Oop, argCount>          zeroes;
@@ -114,7 +119,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -135,11 +140,11 @@ protected:
 
     std::int32_t asInt( bool &ok, Oop intOop ) {
         ok = true;
-        if ( intOop->is_smi() ) {
-            return SMIOop( intOop )->value();
+        if ( intOop->isSmallIntegerOop() ) {
+            return SmallIntegerOop( intOop )->value();
         }
 
-        if ( !intOop->is_byteArray() ) {
+        if ( !intOop->isByteArray() ) {
             ok = false;
             return 0;
         }
@@ -172,7 +177,7 @@ protected:
 
     Oop callout( std::array<Oop, argCount> arg, Oop result, Oop address ) {
 
-        ObjectArrayOop argOops = oopFactory::new_objArray( 2 );
+        ObjectArrayOop argOops = OopFactory::new_objectArray( 2 );
 
         for ( std::int32_t index = 0; index < 2; index++ ) {
             argOops->obj_at_put( index + 1, arg[ index ] );
@@ -264,7 +269,7 @@ TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShoul
 
 TEST_F( AlienIntegerCalloutWithArgumentsTests, alienCallResultWithArgumentsShouldCallFunctionAndIgnoreResultWhenResultAlienNil ) {
     Oop result = callout( zeroes, nilObject, functionAlien->as_oop() );
-    EXPECT_TRUE( !result->is_mark() ) << "should not be marked";
+    EXPECT_TRUE( !result->isMarkOop() ) << "should not be marked";
 }
 
 

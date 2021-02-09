@@ -6,7 +6,7 @@
 #include "vm/oops/AssociationOopDescriptor.hpp"
 #include "vm/lookup/LookupResult.hpp"
 #include "vm/runtime/vmOperations.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/Process.hpp"
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
@@ -54,10 +54,10 @@ NativeMethod *CompilerTests::alloc_nativeMethod( LookupKey *key, std::int32_t si
 
 void CompilerTests::initializeSmalltalkEnvironment() {
     HandleMark mark;
-    Handle     _new( oopFactory::new_symbol( "new" ) );
-    Handle     initialize( oopFactory::new_symbol( "initialize" ) );
+    Handle     _new( OopFactory::new_symbol( "new" ) );
+    Handle     initialize( OopFactory::new_symbol( "initialize" ) );
     Handle     processorScheduler( Universe::find_global( "ProcessorScheduler" ) );
-    Handle     run( oopFactory::new_symbol( "run" ) );
+    Handle     run( OopFactory::new_symbol( "run" ) );
     Handle     systemInitializer( Universe::find_global( "SystemInitializer" ) );
 
     Handle         processor( Delta::call( processorScheduler.as_oop(), _new.as_oop() ) );
@@ -97,7 +97,7 @@ void CompilerTests::exhaustMethodHeap( LookupKey &key, std::int32_t requiredSize
 
 NativeMethod *CompilerTests::compile( const char *className, const char *selectorName ) {
     HandleMark mark;
-    Handle     toCompile( oopFactory::new_symbol( selectorName ) );
+    Handle     toCompile( OopFactory::new_symbol( selectorName ) );
     Handle     varClass( Universe::find_global( className ) );
     return compile( varClass, toCompile );
 }
@@ -122,7 +122,7 @@ NativeMethod *CompilerTests::compile( Handle &klassHandle, Handle &selectorHandl
 void CompilerTests::clearICs( const char *className, const char *selectorName ) {
     HandleMark mark;
     Handle     varClass( Universe::find_global( className ) );
-    Handle     setup( oopFactory::new_symbol( selectorName ) );
+    Handle     setup( OopFactory::new_symbol( selectorName ) );
     clearICs( varClass, setup );
 }
 
@@ -139,7 +139,7 @@ void CompilerTests::clearICs( Handle &klassHandle, Handle &selectorHandle ) {
 NativeMethod *CompilerTests::lookup( const char *className, const char *selectorName ) {
     HandleMark mark;
     Handle     classHandle( Universe::find_global( className ) );
-    Handle     selectorHandle( oopFactory::new_symbol( selectorName ) );
+    Handle     selectorHandle( OopFactory::new_symbol( selectorName ) );
 
     KlassOop  klass    = classHandle.as_klass();
     SymbolOop selector = SymbolOop( selectorHandle.as_oop() );
@@ -152,8 +152,8 @@ NativeMethod *CompilerTests::lookup( const char *className, const char *selector
 void CompilerTests::call( const char *className, const char *selectorName ) {
 
     HandleMark mark;
-    Handle     _new( oopFactory::new_symbol( "new" ) );
-    Handle     setup( oopFactory::new_symbol( selectorName ) );
+    Handle     _new( OopFactory::new_symbol( "new" ) );
+    Handle     setup( OopFactory::new_symbol( selectorName ) );
     Handle     testClass( Universe::find_global( className ) );
 
     Handle newTest( Delta::call( testClass.as_klass(), _new.as_oop() ) );
@@ -181,10 +181,10 @@ TEST_F( CompilerTests, uncommonTrap
     {
         HandleMark mark;
         initializeSmalltalkEnvironment();
-        Handle _new( oopFactory::new_symbol( "new" ) );
-        Handle setup( oopFactory::new_symbol( "populatePIC" ) );
-        Handle toCompile( oopFactory::new_symbol( "type" ) );
-        Handle triggerTrap( oopFactory::new_symbol( "testTriggerUncommonTrap" ) );
+        Handle _new( OopFactory::new_symbol( "new" ) );
+        Handle setup( OopFactory::new_symbol( "populatePIC" ) );
+        Handle toCompile( OopFactory::new_symbol( "type" ) );
+        Handle triggerTrap( OopFactory::new_symbol( "testTriggerUncommonTrap" ) );
         Handle testClass( Universe::find_global( "DeltaParameterTest" ) );
         Handle varClass( Universe::find_global( "DeltaParameter" ) );
         Handle newTest( Delta::call( testClass.as_klass(), _new.as_oop() ) );
@@ -258,7 +258,7 @@ TEST_F( CompilerTests, recompileZombieForcingFlush
     {
         HandleMark mark;
         initializeSmalltalkEnvironment();
-        Handle setup( oopFactory::new_symbol( "testSetup2" ) );
+        Handle setup( OopFactory::new_symbol( "testSetup2" ) );
         Handle varClass( Universe::find_global( "NonInlinedBlockTest" ) );
         Universe::code->
             flush();

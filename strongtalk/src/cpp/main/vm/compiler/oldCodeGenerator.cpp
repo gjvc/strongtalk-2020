@@ -358,7 +358,7 @@ extern "C" void verifyContext( Oop obj ) {
     // verify entire context chain
     ContextOop ctx = ContextOop( obj );
     while ( 1 ) {
-        if ( ctx->is_mark() )
+        if ( ctx->isMarkOop() )
             error( "context should never be mark" );
         if ( not Universe::is_heap( (Oop *) ctx ) )
             error( "context outside of heap" );
@@ -462,7 +462,7 @@ extern "C" void verifyNonLocalReturn( const char *fp, char *nlrFrame, std::int32
     }
     // treat >99 scopes as likely error -- might actually be ok
 //  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
-    if ( nlrResult->is_mark() )
+    if ( nlrResult->isMarkOop() )
         error( "NonLocalReturn result is a markOop" );
     if ( TraceCalls ) {
         ResourceMark resourceMark;
@@ -489,13 +489,13 @@ static void verifyNonLocalReturnCode() {
 
 
 extern "C" void verifySmi( Oop obj ) {
-    if ( not obj->is_smi() ) st_fatal( "should be a smi_t" );
+    if ( not obj->isSmallIntegerOop() ) st_fatal( "should be a small_int_t" );
 }
 
 
 static void verifySmiCode( Register reg ) {
     // generates transparent check code which verifies that reg contains
-    // a legal smi_t and halts if not - for debugging purposes only
+    // a legal small_int_t and halts if not - for debugging purposes only
     if ( not VerifyCode )
         SPDLOG_WARN( ": verifySmi should not be called" );
     theMacroAssembler->pushad();
@@ -507,9 +507,9 @@ static void verifySmiCode( Register reg ) {
 
 
 extern "C" void verifyObject( Oop obj ) {
-    if ( not obj->is_smi() and not obj->is_mem() ) st_fatal( "should be an ordinary Oop" );
+    if ( not obj->isSmallIntegerOop() and not obj->isMemOop() ) st_fatal( "should be an ordinary Oop" );
     KlassOop klass = obj->klass();
-    if ( klass == nullptr or not klass->is_mem() ) st_fatal( "should be an ordinary MemOop" );
+    if ( klass == nullptr or not klass->isMemOop() ) st_fatal( "should be an ordinary MemOop" );
     if ( obj->is_block() )
         BlockClosureOop( obj )->verify();
 }
@@ -877,11 +877,11 @@ void PrologueNode::gen() {
         // check class
         KlassOop klass = _scope->selfKlass();
         if ( klass == smiKlassObject ) {
-            // receiver must be a smi_t, check smi_t tag only
+            // receiver must be a small_int_t, check small_int_t tag only
             theMacroAssembler->test( recv, MEMOOP_TAG );
             theMacroAssembler->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
         } else {
-            // receiver could be a smi_t, check smi_t tag before loading class
+            // receiver could be a small_int_t, check small_int_t tag before loading class
             theMacroAssembler->test( recv, MEMOOP_TAG );
             theMacroAssembler->jcc( Assembler::Condition::zero, CompiledInlineCache::normalLookupRoutine() );
             theMacroAssembler->cmpl( Address( recv, MemOopDescriptor::klass_byte_offset() ), klass );
@@ -1259,7 +1259,7 @@ static void arithRCOp( ArithOpCode op, Register x, std::int32_t y ) {
 
 
 static void arithROOp( ArithOpCode op, Register x, Oop y ) {
-    st_assert( not y->is_smi(), "check this code" );
+    st_assert( not y->isSmallIntegerOop(), "check this code" );
     switch ( op ) {
         case ArithOpCode::CmpArithOp:
             theMacroAssembler->cmpl( x, y );
@@ -1275,7 +1275,7 @@ void TArithRRNode::gen() {
     PseudoRegister *arg2 = _oper;
     if ( arg2->isConstPseudoRegister() ) {
         Oop y = ( (ConstPseudoRegister *) arg2 )->constant;
-        st_assert( y->is_smi() == _arg2IsInt, "flag value inconsistent" );
+        st_assert( y->isSmallIntegerOop() == _arg2IsInt, "flag value inconsistent" );
         if ( _arg2IsInt ) {
             // perform operation
             Register x;
@@ -1285,7 +1285,7 @@ void TArithRRNode::gen() {
                 theMacroAssembler->test( x, MEMOOP_TAG );
                 theMacroAssembler->jcc( Assembler::Condition::notZero, next( 1 )->_label );
             }
-            arithRCOp( _op, x, std::int32_t( y ) );            // y is SMIOop -> needs no relocation info
+            arithRCOp( _op, x, std::int32_t( y ) );            // y is SmallIntegerOop -> needs no relocation info
             if ( result )
                 store( x, _dest, temp2, temp3 );
         } else {
@@ -1301,12 +1301,12 @@ void TArithRRNode::gen() {
             if ( _arg2IsInt ) {
                 // both x & y are smis => no tag check necessary
             } else {
-                // x is smi_t => check y
+                // x is small_int_t => check y
                 tags = y;
             }
         } else {
             if ( _arg2IsInt ) {
-                // y is smi_t => check x
+                // y is small_int_t => check x
                 tags = x;
             } else {
                 // check both x & y
@@ -1338,8 +1338,8 @@ void ArithRRNode::gen() {
         Oop      y      = ( (ConstPseudoRegister *) arg2 )->constant;
         Register x;
         bool     result = setupseudoRegisterister( _dest, arg1, _op, x, temp1 );
-        if ( y->is_smi() ) {
-            arithRCOp( _op, x, std::int32_t( y ) );        // y is SMIOop -> needs no relocation info
+        if ( y->isSmallIntegerOop() ) {
+            arithRCOp( _op, x, std::int32_t( y ) );        // y is SmallIntegerOop -> needs no relocation info
         } else {
             arithROOp( _op, x, y );
         }
@@ -1433,7 +1433,7 @@ static Oop oopify_float() {
   double x;
   __asm fstp x							// get top of FPU stack
     BlockScavenge bs;						// because all registers are saved on the stack
-  return oopFactory::new_double(x);				// box the FloatValue
+  return OopFactory::new_double(x);				// box the FloatValue
 }*/
 
 static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
@@ -1460,17 +1460,17 @@ static void floatArithROp( ArithOpCode op, Register reg, Register temp ) {
         }
             break;
         case ArithOpCode::f2FloatArithOp: {
-            Label is_smi, is_float, done;
-            theMacroAssembler->test( reg, MEMOOP_TAG );            // check if smi_t
-            theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
+            Label isSmallIntegerOop, is_float, done;
+            theMacroAssembler->test( reg, MEMOOP_TAG );            // check if small_int_t
+            theMacroAssembler->jcc( Assembler::Condition::zero, isSmallIntegerOop );
             theMacroAssembler->movl( temp, Address( reg, MemOopDescriptor::klass_byte_offset() ) );    // get object klass
             theMacroAssembler->cmpl( temp, doubleKlass_addr() );        // check if floatOop
             theMacroAssembler->jcc( Assembler::Condition::equal, is_float );
             theMacroAssembler->hlt(); // not yet implemented		// cannot be converted
 
-            // convert smi_t
-            theMacroAssembler->bind( is_smi );
-            theMacroAssembler->sarl( reg, TAG_SIZE );            // convert smi_t into std::int32_t
+            // convert small_int_t
+            theMacroAssembler->bind( isSmallIntegerOop );
+            theMacroAssembler->sarl( reg, TAG_SIZE );            // convert small_int_t into std::int32_t
             theMacroAssembler->movl( Address( esp, -OOP_SIZE ), reg );    // store it at end of stack
             theMacroAssembler->fild_s( Address( esp, -OOP_SIZE ) );        // load & convert into FloatValue
             theMacroAssembler->jmp( done );
@@ -1714,7 +1714,7 @@ static void testForSingleKlass( Register obj, KlassOop klass, Register klassReg,
         // only one instance: compare with nilObject
         theMacroAssembler->cmpl( obj, Universe::nilObject() );
     } else {
-        // compare against obj's klass - must check if smi_t first
+        // compare against obj's klass - must check if small_int_t first
         theMacroAssembler->test( obj, MEMOOP_TAG );
         theMacroAssembler->jcc( Assembler::Condition::zero, failure );
         theMacroAssembler->movl( klassReg, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
@@ -1755,12 +1755,12 @@ static bool testForBoolKlasses( Register obj, KlassOop klass1, KlassOop klass2, 
 
 static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, GrowableArray<KlassOop> *classes, GrowableArray<Label *> *next ) {
     // handle general case: N klasses, N+1 labels (first label = unknown case)
-    std::int32_t            smi_case = -1;            // index of smi_t case in next array (if there)
+    std::int32_t            smi_case = -1;            // index of small_int_t case in next array (if there)
     const std::int32_t      len      = classes->length();
-    GrowableArray<KlassOop> klasses( len );    // list of classes excluding smi_t case
-    GrowableArray<Label *>  labels( len );    // list of nodes   excluding smi_t case
+    GrowableArray<KlassOop> klasses( len );    // list of classes excluding small_int_t case
+    GrowableArray<Label *>  labels( len );    // list of nodes   excluding small_int_t case
 
-    // compute klasses & nodes list without smi_t case
+    // compute klasses & nodes list without small_int_t case
     std::int32_t i = 0;
     for ( ; i < len; i++ ) {
         const KlassOop klass = classes->at( i );
@@ -1773,7 +1773,7 @@ static void generalTypeTest( Register obj, Register klassReg, bool hasUnknown, G
     }
 
     if ( smi_case == -1 and hasUnknown ) {
-        // smi_t case is also unknown case
+        // small_int_t case is also unknown case
         smi_case = 0;
     }
 
@@ -1881,7 +1881,7 @@ void TypeTestNode::gen() {
         // only one instance: compare with nilObject
         theMacroAssm->cmpl(obj, Universe::nilObject());
       } else {
-        // compare against obj's klass - must check if smi_t first
+        // compare against obj's klass - must check if small_int_t first
 	theMacroAssm->test(obj, MEMOOP_TAG);
 	theMacroAssm->jcc(Assembler::Condition::zero, next()->label);
         theMacroAssm->movl(klassReg, Address(obj, memOopDescriptor::klass_byte_offset()));
@@ -1922,11 +1922,11 @@ void TypeTestNode::gen() {
     }
 
   // handle general case
-  Node* smi_case = nullptr;		// smi_t case if there
-  GrowableArray<klassOop> klasses(len);	// list of classes excluding smi_t case
-  GrowableArray<Node*>    nodes(len);	// list of nodes   excluding smi_t case
+  Node* smi_case = nullptr;		// small_int_t case if there
+  GrowableArray<klassOop> klasses(len);	// list of classes excluding small_int_t case
+  GrowableArray<Node*>    nodes(len);	// list of nodes   excluding small_int_t case
 
-  // compute klasses & nodes list without smi_t case
+  // compute klasses & nodes list without small_int_t case
   for (std::int32_t i = 0; i < len; i++) {
     const klassOop klass = classes()->at(i);
     if (klass == Universe::smiKlassObject()) {
@@ -1938,7 +1938,7 @@ void TypeTestNode::gen() {
   }
 
   if (smi_case == nullptr and hasUnknown()) {
-    // smi_t case is also unknown case
+    // small_int_t case is also unknown case
     smi_case = next();
   }
 
@@ -2131,7 +2131,7 @@ void LoopHeaderNode::gen() {
     //   - do all type tests in the list, uncommon branch if they fail
     //     (common case: true/false tests, single-klass tests)
     // additionally for integer loops:
-    //   - test lowerBound (may be nullptr), upperBound, loopVar for smi_t-ness (the first two may be ConstPseudoRegisters)
+    //   - test lowerBound (may be nullptr), upperBound, loopVar for small_int_t-ness (the first two may be ConstPseudoRegisters)
     //   - if upperBound is nullptr, upperLoad is load of the array size
     //   - if loopArray is non-nullptr, check lowerBound (if non-nullptr) or initial value of loopVar against 1
     TrivialNode::gen();
@@ -2221,8 +2221,8 @@ void LoopHeaderNode::generateIntegerLoopTests( Label &prev, Label &failure ) {
 
 
 void LoopHeaderNode::handleConstantTypeTest( ConstPseudoRegister *r, GrowableArray<KlassOop> *klasses ) {
-    // constant r is tested against klasses (efficiency hack: klasses == nullptr means {smi_t})
-    if ( ( klasses == nullptr and r->constant->is_smi() ) or ( klasses and klasses->contains( r->constant->klass() ) ) ) {
+    // constant r is tested against klasses (efficiency hack: klasses == nullptr means {small_int_t})
+    if ( ( klasses == nullptr and r->constant->isSmallIntegerOop() ) or ( klasses and klasses->contains( r->constant->klass() ) ) ) {
         // always ok, no need to test
     } else {
         compiler_warning( "loop header type test will always fail" );
@@ -2250,7 +2250,7 @@ void LoopHeaderNode::generateArrayLoopTests( Label &prev, Label &failure ) {
         }
         if ( i >= 0 ) {
             // loopVar is used to index into array; make sure lower & upper bound is within array range
-            if ( _lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ( (ConstPseudoRegister *) _lowerBound )->constant->is_smi() and ( (ConstPseudoRegister *) _lowerBound )->constant >= smiOopFromValue( 1 ) ) {
+            if ( _lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ( (ConstPseudoRegister *) _lowerBound )->constant->isSmallIntegerOop() and ( (ConstPseudoRegister *) _lowerBound )->constant >= smiOopFromValue( 1 ) ) {
                 // loopVar iterates from smi_const to array size, so no test necessary
             } else {
                 // test lower bound
@@ -2300,13 +2300,13 @@ void ArrayAtNode::gen() {
     Register index = temp2;
     load( _arg, index );    // index is modified -> load always into register
     Register array = movePseudoRegisterToReg( _src, temp1 );    // array is read_only
-    // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
+    // first element is at index 1 => subtract small_int_t(1) (doesn't change small_int_t/Oop property)
     theMacroAssembler->subl( index, std::int32_t( smiOop_one ) );
     // preload size for bounds check if necessary
     if ( _needBoundsCheck ) {
         theMacroAssembler->movl( size, Address( array, byteOffset( _sizeOffset ) ) );
     }
-    // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
+    // do index small_int_t check if necessary (still possible, even after subtracting small_int_t(1))
     Label indexNotSmi;
     if ( not _intArg ) {
         theMacroAssembler->test( index, MEMOOP_TAG );
@@ -2326,13 +2326,13 @@ void ArrayAtNode::gen() {
             theMacroAssembler->sarl( index, TAG_SIZE );    // adjust index
             theMacroAssembler->xorl( t, t );            // clear destination register
             theMacroAssembler->movb( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
-            theMacroAssembler->shll( t, TAG_SIZE );        // make result a smi_t
+            theMacroAssembler->shll( t, TAG_SIZE );        // make result a small_int_t
             break;
         case double_byte_at:
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );    // adjust index
             theMacroAssembler->movl( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             theMacroAssembler->andl( t, 0x0000FFFF );    // clear upper 2 bytes
-            theMacroAssembler->shll( t, TAG_SIZE );        // make result a smi_t
+            theMacroAssembler->shll( t, TAG_SIZE );        // make result a small_int_t
             break;
         case character_at: {
             theMacroAssembler->sarl( index, TAG_SIZE - 1 );// adjust index
@@ -2349,7 +2349,7 @@ void ArrayAtNode::gen() {
         }
             break;
         case object_at:
-            // smi_t index is already shifted the right way => no index adjustment necessary
+            // small_int_t index is already shifted the right way => no index adjustment necessary
             theMacroAssembler->movl( t, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
             break;
         default: ShouldNotReachHere();
@@ -2387,13 +2387,13 @@ void ArrayAtPutNode::gen() {
     load( _arg, index );    // index is modified -> load always into register
     Register array   = temp1;
     load( _src, array );    // array may be modified -> load always into register
-    // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
+    // first element is at index 1 => subtract small_int_t(1) (doesn't change small_int_t/Oop property)
     theMacroAssembler->subl( index, std::int32_t( smiOop_one ) );
     // preload size for bounds check if necessary
     if ( _needBoundsCheck ) {
         theMacroAssembler->movl( size, Address( array, byteOffset( _sizeOffset ) ) );
     }
-    // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
+    // do index small_int_t check if necessary (still possible, even after subtracting small_int_t(1))
     Label indexNotSmi;
     if ( not _intArg ) {
         theMacroAssembler->test( index, MEMOOP_TAG );
@@ -2448,7 +2448,7 @@ void ArrayAtPutNode::gen() {
             //       of the the 2nd byte in a register (otherwise two movb instructions would do).
             break;
         case object_at_put:
-            // smi_t index is already shifted the right way => no index adjustment necessary
+            // small_int_t index is already shifted the right way => no index adjustment necessary
             if ( _needs_store_check ) {
                 theMacroAssembler->leal( array, Address( array, index, Address::ScaleFactor::times_1, byteOffset( _dataOffset ) ) );
                 theMacroAssembler->movl( Address( array ), element );
@@ -2500,18 +2500,18 @@ void InlinedPrimitiveNode::gen() {
         case InlinedPrimitiveNode::Operation::OBJ_KLASS: {
             Register obj   = movePseudoRegisterToReg( _src, temp1 );            // obj is read_only
             Register klass = temp2;
-            Label    is_smi;
+            Label    isSmallIntegerOop;
             theMacroAssembler->movl( klass, Universe::smiKlassObject() );
             theMacroAssembler->test( obj, MEMOOP_TAG );
-            theMacroAssembler->jcc( Assembler::Condition::zero, is_smi );
+            theMacroAssembler->jcc( Assembler::Condition::zero, isSmallIntegerOop );
             theMacroAssembler->movl( klass, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
-            theMacroAssembler->bind( is_smi );
+            theMacroAssembler->bind( isSmallIntegerOop );
             store( klass, _dest, temp1, temp3 );
         }
             break;
         case InlinedPrimitiveNode::Operation::OBJ_HASH: {
             Unimplemented();
-            // Implemented for the smi_t klass only by now - can be resolved in
+            // Implemented for the small_int_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
@@ -2522,8 +2522,8 @@ void InlinedPrimitiveNode::gen() {
             load( _arg1, index );            // index is modified
             Register result = answerPseudoRegisterReg( _dest, temp3 );
             Label    indexNotSmi;
-            // do index smi_t check if necessary
-            if ( not _arg1_is_smi ) {
+            // do index small_int_t check if necessary
+            if ( not _arg1_is_SmallInteger ) {
                 theMacroAssembler->test( index, MEMOOP_TAG );
                 jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
             }
@@ -2532,7 +2532,7 @@ void InlinedPrimitiveNode::gen() {
             theMacroAssembler->sarl( index, TAG_SIZE );                // adjust index
             theMacroAssembler->xorl( result, result );                // clear destination register
             theMacroAssembler->movb( result, Address( proxy, index, Address::ScaleFactor::times_1, 0 ) );
-            theMacroAssembler->shll( result, TAG_SIZE );                // make result a smi_t
+            theMacroAssembler->shll( result, TAG_SIZE );                // make result a small_int_t
             // continue
             st_assert( result not_eq temp1 and result not_eq temp2, "just checking" );
             store( result, _dest, temp1, temp2 );
@@ -2541,7 +2541,7 @@ void InlinedPrimitiveNode::gen() {
                 Label exit;
                 theMacroAssembler->jmp( exit );
                 // error messages
-                if ( not _arg1_is_smi ) {
+                if ( not _arg1_is_SmallInteger ) {
                     theMacroAssembler->bind( indexNotSmi );
                     theMacroAssembler->movl( temp1, vmSymbols::first_argument_has_wrong_type() );
                     store( temp1, _error, temp2, temp3 );
@@ -2560,21 +2560,21 @@ void InlinedPrimitiveNode::gen() {
             Register value;
             if ( const_val ) {
                 // value doesn't have to be loaded -> do nothing here
-                if ( not _arg2_is_smi ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );
-                //if (not _arg2_is_smi) fatal("proxy_byte_at_put: should not happen - tell Robert");
+                if ( not _arg2_is_SmallInteger ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );
+                //if (not _arg2_is_SmallInteger) fatal("proxy_byte_at_put: should not happen - tell Robert");
             } else {
                 value = temp3;
                 load( _arg2, value );                // value is modified
             }
             Label indexNotSmi, valueNotSmi;
-            // do index smi_t check if necessary
-            if ( not _arg1_is_smi ) {
+            // do index small_int_t check if necessary
+            if ( not _arg1_is_SmallInteger ) {
                 theMacroAssembler->test( index, MEMOOP_TAG );
                 jcc_error( this, Assembler::Condition::notZero, indexNotSmi );
             }
-            // do value smi_t check if necessary
-            if ( not _arg2_is_smi ) {
-                st_assert( not const_val, "constant shouldn't need a smi_t check" );
+            // do value small_int_t check if necessary
+            if ( not _arg2_is_SmallInteger ) {
+                st_assert( not const_val, "constant shouldn't need a small_int_t check" );
                 theMacroAssembler->test( value, MEMOOP_TAG );
                 jcc_error( this, Assembler::Condition::notZero, valueNotSmi );
             }
@@ -2582,8 +2582,8 @@ void InlinedPrimitiveNode::gen() {
             theMacroAssembler->movl( proxy, Address( proxy, pointer_offset ) );    // unbox proxy
             theMacroAssembler->sarl( index, TAG_SIZE );                // adjust index
             if ( const_val ) {
-                SMIOop constant = SMIOop( ( (ConstPseudoRegister *) _arg2 )->constant );
-                st_assert( constant->is_smi(), "should be a smi_t" );
+                SmallIntegerOop constant = SmallIntegerOop( ( (ConstPseudoRegister *) _arg2 )->constant );
+                st_assert( constant->isSmallIntegerOop(), "should be a small_int_t" );
                 theMacroAssembler->movb( Address( proxy, index, Address::ScaleFactor::times_1, 0 ), constant->value() & 0xFF );
             } else {
                 theMacroAssembler->sarl( value, TAG_SIZE );                // adjust value
@@ -2594,13 +2594,13 @@ void InlinedPrimitiveNode::gen() {
                 Label exit;
                 theMacroAssembler->jmp( exit );
                 // error messages
-                if ( not _arg1_is_smi ) {
+                if ( not _arg1_is_SmallInteger ) {
                     theMacroAssembler->bind( indexNotSmi );
                     theMacroAssembler->movl( temp1, vmSymbols::first_argument_has_wrong_type() );
                     store( temp1, _error, temp2, temp3 );
                     theMacroAssembler->jmp( next( 1 )->_label );
                 }
-                if ( not _arg2_is_smi ) {
+                if ( not _arg2_is_SmallInteger ) {
                     theMacroAssembler->bind( valueNotSmi );
                     theMacroAssembler->movl( temp1, vmSymbols::second_argument_has_wrong_type() );
                     store( temp1, _error, temp2, temp3 );

@@ -78,7 +78,7 @@ void InterpreterGenerator::check_oop( Register reg ) {
 // structured construct (e.g., such as loops).
 // Check code is only generated if stack_checks are enabled.
 
-static constexpr std::int32_t STACK_CHECKER_MAGIC_VALUE = 0x0FCFCFCFC; // must be a smi_t
+static constexpr std::int32_t STACK_CHECKER_MAGIC_VALUE = 0x0FCFCFCFC; // must be a small_int_t
 
 void InterpreterGenerator::stack_check_push() {
     if ( not _stack_check )
@@ -589,7 +589,7 @@ const char *InterpreterGenerator::set_self_via_context() {
     _macroAssembler->bind( loop );                // search for home context
     _macroAssembler->movl( ecx, edx );            // save current context
     _macroAssembler->movl( edx, Address( edx, ContextOopDescriptor::parent_byte_offset() ) );
-    _macroAssembler->test( edx, MEMOOP_TAG );            // check if parent is_smi
+    _macroAssembler->test( edx, MEMOOP_TAG );            // check if parent isSmallIntegerOop
     _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // if not, current context is not home context
     _macroAssembler->movl( edx, Address( ecx, ContextOopDescriptor::temp0_byte_offset() ) );
     _macroAssembler->movl( self_addr(), edx );        // set self in activation frame
@@ -722,7 +722,7 @@ const char *InterpreterGenerator::copy_params_into_context( bool self, std::int3
 // counter is incremented.
 
 /*
-extern "C" Oop allocateBlock(SMIOop nofArgs);	// Note: needs last Delta frame setup!
+extern "C" Oop allocateBlock(SmallIntegerOop nofArgs);	// Note: needs last Delta frame setup!
 
 // Note: The following routines don't need the last Delta frame to be setup
 extern "C" Oop allocateBlock0();
@@ -737,7 +737,7 @@ const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_c
         // no. of arguments specified by 2nd byte
         _macroAssembler->movb( ebx, Address( esi, 1 ) );    //  get no. of arguments
         advance_aligned( 2 + OOP_SIZE );                      // go to next instruction
-        _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into smi_t (pushed on the stack!)
+        _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into small_int_t (pushed on the stack!)
         save_esi();                                             // save vital registers
         _macroAssembler->pushl( ebx );                                     // pass as argument
         _macroAssembler->set_last_delta_frame_before_call();               // allocateBlock needs last Delta frame!
@@ -795,7 +795,7 @@ const char *InterpreterGenerator::push_closure( std::int32_t nofArgs, bool use_c
 
 /*
 // Note: The following routines don't need the last Delta frame to be setup
-extern "C" Oop allocateContext(SMIOop nofVars);
+extern "C" Oop allocateContext(SmallIntegerOop nofVars);
 extern "C" Oop allocateContext0();
 extern "C" Oop allocateContext1();
 extern "C" Oop allocateContext2();
@@ -808,7 +808,7 @@ const char *InterpreterGenerator::install_context( std::int32_t nofArgs, bool fo
         // no. of variables specified by 2nd byte
         _macroAssembler->movb( ebx, Address( esi, 1 ) );   // get no. of variables
         _macroAssembler->addl( esi, 2 );                           // go to next instruction
-        _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into smi_t (pushed on the stack!)
+        _macroAssembler->shll( ebx, TAG_SIZE );                            // convert into small_int_t (pushed on the stack!)
         save_esi();                                             // no last Delta frame setup needed => save vital registers
         _macroAssembler->pushl( ebx );                                     // pass as argument
         _macroAssembler->call( GeneratedPrimitives::allocateContext( nofArgs ), RelocationInformation::RelocationType::runtime_call_type );        // eax: = context(nof. vars)
@@ -1116,7 +1116,7 @@ const char *InterpreterGenerator::float_allocate() {
 // <floatExprStackSize>		no. of uninitialized floats to allocate
 
     Label      tLoop, tDone, fLoop, fDone;
-//    st_assert( Oop( Floats::magic )->is_smi(), "InterpreterGenerator::float_allocate():  must be a smi_t" );
+//    st_assert( Oop( Floats::magic )->isSmallIntegerOop(), "InterpreterGenerator::float_allocate():  must be a small_int_t" );
     const char *ep = entry_point();
     if ( _debug ) {
         // This instruction must be the first bytecode executed in a method (if there).
@@ -1181,11 +1181,11 @@ const char *InterpreterGenerator::float_allocate() {
 
 
 const char *InterpreterGenerator::float_floatify() {
-    Label      is_smi;
+    Label      isSmallIntegerOop;
     const char *ep = entry_point();
     _macroAssembler->addl( esi, 2 );                // advance to next instruction
-    _macroAssembler->testb( eax, MEMOOP_TAG );            // check if smi_t
-    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );
+    _macroAssembler->testb( eax, MEMOOP_TAG );            // check if small_int_t
+    _macroAssembler->jcc( Assembler::Condition::zero, isSmallIntegerOop );
     _macroAssembler->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // check if float
     _macroAssembler->cmpl( ecx, doubleKlass_addr() );
     _macroAssembler->jcc( Assembler::Condition::notEqual, _float_expected );
@@ -1198,11 +1198,11 @@ const char *InterpreterGenerator::float_floatify() {
     _macroAssembler->popl( eax );                // discard argument
     jump_ebx();
 
-    // convert smi_t
-    _macroAssembler->bind( is_smi );
+    // convert small_int_t
+    _macroAssembler->bind( isSmallIntegerOop );
     _macroAssembler->movb( ebx, Address( esi, -1 ) );        // get float number
     _macroAssembler->leal( ecx, float_addr( ebx ) );
-    _macroAssembler->sarl( eax, TAG_SIZE );            // convert smi_t argument into std::int32_t
+    _macroAssembler->sarl( eax, TAG_SIZE );            // convert small_int_t argument into std::int32_t
     _macroAssembler->movl( Address( ecx ), eax );        // store it in memory (use float target location)
     _macroAssembler->fild_s( Address( ecx ) );            // convert it into float
     _macroAssembler->fstp_d( Address( ecx ) );            // store float
@@ -1861,7 +1861,7 @@ void InterpreterGenerator::generate_inline_cache_miss_handler() {
 
 
 //-----------------------------------------------------------------------------------------
-// smi_t predicted sends
+// small_int_t predicted sends
 
 
 void InterpreterGenerator::generate_predicted_smi_send_failure_handler() {
@@ -2042,28 +2042,28 @@ const char *InterpreterGenerator::smi_shift() {
 
 
 //-----------------------------------------------------------------------------------------
-// objArray predicted sends
+// objectArray predicted sends
 //
 // Problem: Implementation requires InterpretedICIterator to be adjusted: in case of
 //          special predicted primitive methods, the (non-cached) receiver is not simply
-//          a smi_t but can be an object array (or something else) depending on the primitive
+//          a small_int_t but can be an object array (or something else) depending on the primitive
 //          that is predicted. Think about this.
 
-const char *InterpreterGenerator::objArray_size() {
+const char *InterpreterGenerator::objectArray_size() {
     const char *ep = entry_point();
     Unimplemented();
     return ep;
 }
 
 
-const char *InterpreterGenerator::objArray_at() {
+const char *InterpreterGenerator::objectArray_at() {
     const char *ep = entry_point();
     Unimplemented();
     return ep;
 }
 
 
-const char *InterpreterGenerator::objArray_at_put() {
+const char *InterpreterGenerator::objectArray_at_put() {
     const char *ep = entry_point();
     Unimplemented();
     return ep;
@@ -2293,7 +2293,7 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
     _macroAssembler->movl( eax, edi );            //   eax: = last context used
     _macroAssembler->movl( edi, Address( edi, ContextOopDescriptor::parent_byte_offset() ) );
     _macroAssembler->test( edi, MEMOOP_TAG );            //   edi: = edi.home
-    _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // until is_smi(edi)
+    _macroAssembler->jcc( Assembler::Condition::notZero, loop );        // until isSmallIntegerOop(edi)
     _macroAssembler->testl( edi, edi );            // if edi = 0 then
     _macroAssembler->jcc( Assembler::Condition::zero, zapped_context );    //   context has been zapped
     _macroAssembler->movl( Address( std::int32_t( &nlr_home_context ), RelocationInformation::RelocationType::external_word_type ), eax );
@@ -2322,7 +2322,7 @@ void InterpreterGenerator::generate_nonlocal_return_code() {
     //_masm->jcc(Assembler::positive, compiled_code_NonLocalReturn);
 
     _macroAssembler->movl( ecx, context_addr() );        // get potential context
-    _macroAssembler->test( ecx, MEMOOP_TAG );            // if is_smi(ecx) then
+    _macroAssembler->test( ecx, MEMOOP_TAG );            // if isSmallIntegerOop(ecx) then
     _macroAssembler->jcc( Assembler::Condition::zero, no_zapping );    //   can't be a context pointer
     _macroAssembler->movl( edx, Address( ecx, MemOopDescriptor::klass_byte_offset() ) );    // else isOop: get its class
     _macroAssembler->cmpl( edx, contextKlass_addr() );    // if class # ContextKlass then
@@ -2383,9 +2383,9 @@ const char *InterpreterGenerator::nonlocal_return_self() {
 //	[icache (class)	]	(1 dword)
 //	...	  	  <---	esi
 //
-// Access methods cannot exist for the smi_t class which simplifies
-// the inline cache test: if the receiver is a smi_t it is always
-// a cache miss because the cache never caches the smi_t class.
+// Access methods cannot exist for the small_int_t class which simplifies
+// the inline cache test: if the receiver is a small_int_t it is always
+// a cache miss because the cache never caches the small_int_t class.
 //
 // Note: Currently _load_recv is used to get the receiver. This
 // is suboptimal since the receiver is also pushed on the stack
@@ -2416,10 +2416,10 @@ const char *InterpreterGenerator::access_send( bool self ) {
     // mov edx, [edx]
     // mov eax, [eax + edx - MEMOOP_TAG]	; load instVar at offset
 
-    _macroAssembler->test( eax, MEMOOP_TAG );                // check if smi_t
+    _macroAssembler->test( eax, MEMOOP_TAG );                // check if small_int_t
     _macroAssembler->movl( ecx, method_addr );                // get cached method (assuming infrequent cache misses)
     _macroAssembler->movl( edx, klass_addr );                // get cached klass
-    _macroAssembler->jcc( Assembler::Condition::zero, _inline_cache_miss );    // if smi_t then it's a cache miss
+    _macroAssembler->jcc( Assembler::Condition::zero, _inline_cache_miss );    // if small_int_t then it's a cache miss
     _macroAssembler->movl( edi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     // eax: receiver
@@ -2466,7 +2466,7 @@ const char *InterpreterGenerator::access_send( bool self ) {
 const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_methodOop, bool allow_nativeMethod, bool primitive_send ) {
     st_assert( allow_methodOop or allow_nativeMethod or primitive_send, "must allow at least one method representation" );
 
-    Label is_smi, compare_class, is_methodOop, is_nativeMethod;
+    Label isSmallIntegerOop, compare_class, is_methodOop, is_nativeMethod;
 
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
     bool                    pop_tos  = ByteCodes::pop_tos( code );
@@ -2476,17 +2476,17 @@ const char *InterpreterGenerator::normal_send( ByteCodes::Code code, bool allow_
     Address      method_addr = Address( esi, -2 * OOP_SIZE );
     Address      klass_addr  = Address( esi, -1 * OOP_SIZE );
 
-    _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
-    _macroAssembler->movl( edi, smiKlass_addr() );        // load smi_t klass
+    _macroAssembler->bind( isSmallIntegerOop );                // small_int_t case (assumed to be infrequent)
+    _macroAssembler->movl( edi, smiKlass_addr() );        // load small_int_t klass
     _macroAssembler->jmp( compare_class );
 
     const char *ep = entry_point();
     load_recv( arg_spec );
     advance_aligned( length );
-    _macroAssembler->test( eax, MEMOOP_TAG );            // check if smi_t
+    _macroAssembler->test( eax, MEMOOP_TAG );            // check if small_int_t
     _macroAssembler->movl( ecx, method_addr );            // get cached method (assuming infrequent cache misses)
     _macroAssembler->movl( edx, klass_addr );            // get cached klass
-    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );
+    _macroAssembler->jcc( Assembler::Condition::zero, isSmallIntegerOop );
     _macroAssembler->movl( edi, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     _macroAssembler->bind( compare_class );
@@ -2568,7 +2568,7 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     if ( ByteCodes::is_super_send( code ) )
         return normal_send( code, true, true );
 
-    Label                   is_smi, probe_primary_cache, is_methodOop, is_nativeMethod, probe_secondary_cache;
+    Label                   isSmallIntegerOop, probe_primary_cache, is_methodOop, is_nativeMethod, probe_secondary_cache;
     ByteCodes::ArgumentSpec arg_spec = ByteCodes::argument_spec( code );
 
     // inline cache layout
@@ -2577,16 +2577,16 @@ const char *InterpreterGenerator::megamorphic_send( ByteCodes::Code code ) {
     Address      selector_addr = Address( esi, -2 * OOP_SIZE );
 //    Address      klass_addr    = Address( esi, -1 * OOP_SIZE );
 
-    _macroAssembler->bind( is_smi );                // smi_t case (assumed to be infrequent)
-    _macroAssembler->movl( ecx, smiKlass_addr() );        // load smi_t klass
+    _macroAssembler->bind( isSmallIntegerOop );                // small_int_t case (assumed to be infrequent)
+    _macroAssembler->movl( ecx, smiKlass_addr() );        // load small_int_t klass
     _macroAssembler->jmp( probe_primary_cache );
 
     const char *ep = entry_point();
 
     load_recv( arg_spec );
     advance_aligned( length );
-    _macroAssembler->test( eax, MEMOOP_TAG );            // check if smi_t
-    _macroAssembler->jcc( Assembler::Condition::zero, is_smi );        // otherwise
+    _macroAssembler->test( eax, MEMOOP_TAG );            // check if small_int_t
+    _macroAssembler->jcc( Assembler::Condition::zero, isSmallIntegerOop );        // otherwise
     _macroAssembler->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get recv class
 
     // probe primary cache
@@ -2683,19 +2683,19 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
     load_recv( arg_spec );
     advance_aligned( length );
     _macroAssembler->movl( ebx, pic_addr );            // get pic
-    _macroAssembler->movl( ecx, Address( ebx, length_offset ) );// get pic length (smi_t)
+    _macroAssembler->movl( ecx, Address( ebx, length_offset ) );// get pic length (small_int_t)
     _macroAssembler->sarl( ecx, TAG_SIZE + 1 );        // get pic length (std::int32_t)
     // verifyPIC here
 
-    _macroAssembler->movl( edx, smiKlass_addr() );        // preload smi_t klass
-    _macroAssembler->testl( eax, MEMOOP_TAG );            // check if smi_t
+    _macroAssembler->movl( edx, smiKlass_addr() );        // preload small_int_t klass
+    _macroAssembler->testl( eax, MEMOOP_TAG );            // check if small_int_t
     _macroAssembler->jcc( Assembler::Condition::zero, loop );        // otherwise
     _macroAssembler->movl( edx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // get receiver klass
 
     // search pic for appropriate entry
     _macroAssembler->bind( loop );
     // eax: receiver
-    // ebx: pic (objArrayOop)
+    // ebx: pic (objectArrayOop)
     // ecx: counter
     // edx: receiver class
     // esi: next instruction
@@ -2709,7 +2709,7 @@ const char *InterpreterGenerator::polymorphic_send( ByteCodes::Code code ) {
 
     _macroAssembler->bind( found );
     // eax: receiver
-    // ebx: pic (objArrayOop)
+    // ebx: pic (objectArrayOop)
     // ecx: counter (> 0)
     // edx: receiver class
     // esi: next instruction
@@ -3234,7 +3234,7 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
         case ByteCodes::Code::megamorphic_send_super_pop:
             return megamorphic_send( code );
 
-            // predicted smi_t sends
+            // predicted small_int_t sends
         case ByteCodes::Code::smi_add:
             return smi_add();
         case ByteCodes::Code::smi_sub:
@@ -3327,9 +3327,9 @@ const char *InterpreterGenerator::generate_instruction( ByteCodes::Code code ) {
         case ByteCodes::Code::smi_create_point:
             [[fallthrough]];
 
-        case ByteCodes::Code::objArray_at:
+        case ByteCodes::Code::objectArray_at:
             [[fallthrough]];
-        case ByteCodes::Code::objArray_at_put:
+        case ByteCodes::Code::objectArray_at_put:
             [[fallthrough]];
 
         case ByteCodes::Code::return_instVar_name:
@@ -3458,7 +3458,7 @@ void InterpreterGenerator::generate_all() {
     info( "inline cache miss handler" );
 
     generate_predicted_smi_send_failure_handler();
-    info( "predicted smi_t send failure handler" );
+    info( "predicted small_int_t send failure handler" );
 
     generate_redo_send_code();
     info( "redo send code" );

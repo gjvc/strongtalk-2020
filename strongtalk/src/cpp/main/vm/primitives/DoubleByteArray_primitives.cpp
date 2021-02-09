@@ -18,21 +18,21 @@ TRACE_FUNC( TraceDoubleByteArrayPrims, "doubleByteArray" )
 
 std::int32_t DoubleByteArrayPrimitives::number_of_calls;
 
-#define ASSERT_RECEIVER st_assert(receiver->is_doubleByteArray(), "receiver must be double byte array")
+#define ASSERT_RECEIVER st_assert(receiver->isDoubleByteArray(), "receiver must be double byte array")
 
 
 PRIM_DECL_2( DoubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_doubleByteArray(), "receiver must double byte array class" );
-    if ( not argument->is_smi() )
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsDoubleByteArray(), "receiver must double byte array class" );
+    if ( not argument->isSmallIntegerOop() )
         markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( SMIOop( argument )->value() < 0 )
+    if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
     KlassOop     k        = KlassOop( receiver );
     std::int32_t ni_size  = k->klass_part()->non_indexable_size();
-    std::int32_t obj_size = ni_size + 1 + roundTo( SMIOop( argument )->value() * 2, OOP_SIZE ) / OOP_SIZE;
+    std::int32_t obj_size = ni_size + 1 + roundTo( SmallIntegerOop( argument )->value() * 2, OOP_SIZE ) / OOP_SIZE;
 
     // allocate
     DoubleByteArrayOop obj = as_doubleByteArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
@@ -60,19 +60,19 @@ PRIM_DECL_2( DoubleByteArrayPrimitives::allocateSize, Oop receiver, Oop argument
 
 PRIM_DECL_3( DoubleByteArrayPrimitives::allocateSize2, Oop receiver, Oop argument, Oop tenured ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
-    if ( not receiver->is_klass() or not KlassOop( receiver )->klass_part()->oop_is_doubleByteArray() )
+    if ( not receiver->is_klass() or not KlassOop( receiver )->klass_part()->oopIsDoubleByteArray() )
         return markSymbol( vmSymbols::invalid_klass() );
 
-    if ( not argument->is_smi() )
+    if ( not argument->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( SMIOop( argument )->value() < 0 )
+    if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
     if ( tenured not_eq Universe::trueObject() and tenured not_eq Universe::falseObject() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    Oop result = KlassOop( receiver )->klass_part()->allocateObjectSize( SMIOop( argument )->value(), false, Universe::trueObject() == tenured );
+    Oop result = KlassOop( receiver )->klass_part()->allocateObjectSize( SmallIntegerOop( argument )->value(), false, Universe::trueObject() == tenured );
     if ( result == nullptr )
         return markSymbol( vmSymbols::failed_allocation() );
 
@@ -94,14 +94,14 @@ PRIM_DECL_2( DoubleByteArrayPrimitives::at, Oop receiver, Oop index ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check index value
-    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
-    return smiOopFromValue( DoubleByteArrayOop( receiver )->doubleByte_at( SMIOop( index )->value() ) );
+    return smiOopFromValue( DoubleByteArrayOop( receiver )->doubleByte_at( SmallIntegerOop( index )->value() ) );
 }
 
 
@@ -110,24 +110,24 @@ PRIM_DECL_3( DoubleByteArrayPrimitives::atPut, Oop receiver, Oop index, Oop valu
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check value type
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // check index value
-    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // check value as double byte
-    std::uint32_t v = (std::uint32_t) SMIOop( value )->value();
+    std::uint32_t v = (std::uint32_t) SmallIntegerOop( value )->value();
     if ( v >= ( 1 << 16 ) )
         return markSymbol( vmSymbols::value_out_of_range() );
 
     // do the operation
-    DoubleByteArrayOop( receiver )->doubleByte_at_put( SMIOop( index )->value(), v );
+    DoubleByteArrayOop( receiver )->doubleByte_at_put( SmallIntegerOop( index )->value(), v );
     return receiver;
 }
 
@@ -139,10 +139,10 @@ PRIM_DECL_2( DoubleByteArrayPrimitives::compare, Oop receiver, Oop argument ) {
     if ( receiver == argument )
         return smiOopFromValue( 0 );
 
-    if ( argument->is_doubleByteArray() )
+    if ( argument->isDoubleByteArray() )
         return smiOopFromValue( DoubleByteArrayOop( receiver )->compare( DoubleByteArrayOop( argument ) ) );
 
-    if ( argument->is_byteArray() )
+    if ( argument->isByteArray() )
         return smiOopFromValue( -ByteArrayOop( argument )->compare_doubleBytes( DoubleByteArrayOop( receiver ) ) );
 
     return markSymbol( vmSymbols::first_argument_has_wrong_type() );
@@ -175,15 +175,15 @@ PRIM_DECL_2( DoubleByteArrayPrimitives::characterAt, Oop receiver, Oop index ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // range check
-    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not DoubleByteArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // fetch double byte
-    std::uint16_t byte = DoubleByteArrayOop( receiver )->doubleByte_at( SMIOop( index )->value() );
+    std::uint16_t byte = DoubleByteArrayOop( receiver )->doubleByte_at( SmallIntegerOop( index )->value() );
 
     if ( byte < 256 ) {
         // return the byte+1'th element in asciiCharacter

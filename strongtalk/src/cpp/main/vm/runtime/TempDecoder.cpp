@@ -37,7 +37,7 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
 
     { // scan parameters
         _num_of_params = 0;
-        while ( current->is_byteArray() ) {
+        while ( current->isByteArray() ) {
             parameter( ByteArrayOop( current ), _num_of_params++ );
             {
                 pos++;
@@ -48,15 +48,15 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     }
 
     { // scan global stack temps
-        st_assert_smi( current, "expecting smi_t" );
-        std::int32_t offset = SMIOop( current )->value();
+        st_assert_smi( current, "expecting small_int_t" );
+        std::int32_t offset = SmallIntegerOop( current )->value();
         {
             pos++;
             if ( pos > len ) return;
             current = tempInfo->obj_at( pos );
         } // advance-to-next
 
-        while ( current->is_byteArray() ) {
+        while ( current->isByteArray() ) {
             stack_temp( ByteArrayOop( current ), offset++ );
             {
                 pos++;
@@ -67,16 +67,16 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     }
 
     { // scan global stack float temps
-        st_assert_smi( current, "expecting smi_t" );
-        st_assert( SMIOop(current)->value() == 0, "should be zero" )
-        std::int32_t fno = SMIOop( current )->value();
+        st_assert_smi( current, "expecting small_int_t" );
+        st_assert( SmallIntegerOop(current)->value() == 0, "should be zero" )
+        std::int32_t fno = SmallIntegerOop( current )->value();
         {
             pos++;
             if ( pos > len ) return;
             current = tempInfo->obj_at( pos );
         } // advance-to-next
 
-        while ( current->is_byteArray() ) {
+        while ( current->isByteArray() ) {
             stack_float_temp( ByteArrayOop( current ), fno++ );
             {
                 pos++;
@@ -87,14 +87,14 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     }
 
     { // scan global heap temps
-        st_assert_smi( current, "expecting smi_t" );
-        std::int32_t offset = SMIOop( current )->value();
+        st_assert_smi( current, "expecting small_int_t" );
+        std::int32_t offset = SmallIntegerOop( current )->value();
         {
             pos++;
             if ( pos > len ) return;
             current = tempInfo->obj_at( pos );
         } // advance-to-next
-        while ( current->is_byteArray() ) {
+        while ( current->isByteArray() ) {
             if ( is_heap_parameter( ByteArrayOop( current ), tempInfo ) ) {
                 heap_parameter( ByteArrayOop( current ), offset++ );
             } else {
@@ -109,29 +109,29 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
     }
     { // scan inlined temps
         while ( 1 ) {
-            st_assert_smi( current, "expecting smi_t" );
-            std::int32_t begin = SMIOop( current )->value();
+            st_assert_smi( current, "expecting small_int_t" );
+            std::int32_t begin = SmallIntegerOop( current )->value();
             {
                 pos++;
                 if ( pos > len ) return;
                 current = tempInfo->obj_at( pos );
             } // advance-to-next
-            st_assert_smi( current, "expecting smi_t" );
-            std::int32_t end = SMIOop( current )->value();
+            st_assert_smi( current, "expecting small_int_t" );
+            std::int32_t end = SmallIntegerOop( current )->value();
             {
                 pos++;
                 if ( pos > len ) return;
                 current = tempInfo->obj_at( pos );
             } // advance-to-next
             // Oop temps
-            st_assert_smi( current, "expecting smi_t" );
-            std::int32_t offset = SMIOop( current )->value();
+            st_assert_smi( current, "expecting small_int_t" );
+            std::int32_t offset = SmallIntegerOop( current )->value();
             {
                 pos++;
                 if ( pos > len ) return;
                 current = tempInfo->obj_at( pos );
             } // advance-to-next
-            while ( current->is_byteArray() ) {
+            while ( current->isByteArray() ) {
                 if ( ( begin <= byteCodeIndex ) and ( byteCodeIndex <= end ) ) {
                     stack_temp( ByteArrayOop( current ), offset );
                 }
@@ -143,14 +143,14 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
                 } // advance-to-next
             }
             // Floats
-            st_assert_smi( current, "expecting smi_t" );
-            offset = SMIOop( current )->value();
+            st_assert_smi( current, "expecting small_int_t" );
+            offset = SmallIntegerOop( current )->value();
             {
                 pos++;
                 if ( pos > len ) return;
                 current = tempInfo->obj_at( pos );
             } // advance-to-next
-            while ( current->is_byteArray() ) {
+            while ( current->isByteArray() ) {
                 if ( ( begin <= byteCodeIndex ) and ( byteCodeIndex <= end ) ) {
                     stack_float_temp( ByteArrayOop( current ), offset );
                 }
@@ -167,10 +167,10 @@ void TempDecoder::decode( MethodOop method, std::int32_t byteCodeIndex ) {
 
 
 bool TempDecoder::is_heap_parameter( ByteArrayOop name, ObjectArrayOop tempInfo ) {
-    st_assert( name->is_symbol(), "Must be symbol" );
+    st_assert( name->isSymbol(), "Must be symbol" );
     for ( std::int32_t i = 1; i <= _num_of_params; i++ ) {
         ByteArrayOop par = ByteArrayOop( tempInfo->obj_at( i ) );
-        st_assert( par->is_symbol(), "Must be symbol" );
+        st_assert( par->isSymbol(), "Must be symbol" );
         if ( name == par )
             return true;
     }

@@ -25,9 +25,9 @@ typedef std::uint64_t  address_t;    //
 
 // -----------------------------------------------------------------------------
 
-typedef std::intptr_t smi_t;        //
+typedef std::intptr_t small_int_t;        //
 
-static_assert( sizeof( smi_t ) == sizeof( address_t ) );
+static_assert( sizeof( small_int_t ) == sizeof( address_t ) );
 
 
 // -----------------------------------------------------------------------------

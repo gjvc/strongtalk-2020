@@ -72,8 +72,8 @@ TypeTestNode *NodeFactory::TypeTestNode( PseudoRegister *recv, GrowableArray<Kla
 }
 
 
-InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) {
-    class InlinedPrimitiveNode *res = new class InlinedPrimitiveNode( op, result, error, recv, arg1, arg1_is_smi, arg2, arg2_is_smi );
+InlinedPrimitiveNode *NodeFactory::InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_SmallInteger, PseudoRegister *arg2, bool arg2_is_SmallInteger ) {
+    class InlinedPrimitiveNode *res = new class InlinedPrimitiveNode( op, result, error, recv, arg1, arg1_is_SmallInteger, arg2, arg2_is_SmallInteger );
     registerNode( res );
     return res;
 }

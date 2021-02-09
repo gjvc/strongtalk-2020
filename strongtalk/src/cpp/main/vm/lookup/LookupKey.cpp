@@ -36,7 +36,7 @@ bool LookupKey::verify() const {
         error( "klass 0x{0:x} isn't a klass", klass() );
         flag = false;
     }
-    if ( not selector_or_method()->is_symbol() and not selector_or_method()->is_method() ) {
+    if ( not selector_or_method()->isSymbol() and not selector_or_method()->is_method() ) {
         SPDLOG_INFO( "\tin selector_or_method of LookupKey 0x{0:x}", static_cast<const void *>(this) );
         flag = false;
     }

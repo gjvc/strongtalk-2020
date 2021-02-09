@@ -13,7 +13,7 @@
 #include "vm/oops/MethodKlass.hpp"
 #include "vm/oops/ContextKlass.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/code/StubRoutines.hpp"
@@ -60,7 +60,7 @@ PRIM_DECL_1( MethodOopPrimitives::fileout_body, Oop receiver ) {
 PRIM_DECL_2( MethodOopPrimitives::setSelector, Oop receiver, Oop name ) {
     PROLOGUE_2( "setSelector", receiver, name );
     ASSERT_RECEIVER;
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     MethodOop( receiver )->set_selector_or_method( Oop( name ) );
     return receiver;
@@ -162,17 +162,17 @@ PRIM_DECL_1( MethodOopPrimitives::printCodes, Oop receiver ) {
 
 PRIM_DECL_6( MethodOopPrimitives::constructMethod, Oop selector_or_method, Oop flags, Oop nofArgs, Oop debugInfo, Oop bytes, Oop oops ) {
     PROLOGUE_6( "constructMethod", selector_or_method, flags, nofArgs, debugInfo, bytes, oops );
-    if ( not selector_or_method->is_symbol() and ( selector_or_method not_eq nilObject ) )
+    if ( not selector_or_method->isSymbol() and ( selector_or_method not_eq nilObject ) )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not flags->is_smi() )
+    if ( not flags->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    if ( not nofArgs->is_smi() )
+    if ( not nofArgs->isSmallIntegerOop() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
-    if ( not debugInfo->is_objArray() )
+    if ( not debugInfo->isObjectArray() )
         return markSymbol( vmSymbols::fourth_argument_has_wrong_type() );
-    if ( not bytes->is_byteArray() )
+    if ( not bytes->isByteArray() )
         return markSymbol( vmSymbols::fifth_argument_has_wrong_type() );
-    if ( not oops->is_objArray() )
+    if ( not oops->isObjectArray() )
         return markSymbol( vmSymbols::sixth_argument_has_wrong_type() );
 
     if ( ObjectArrayOop( oops )->length() * OOP_SIZE not_eq ByteArrayOop( bytes )->length() ) {
@@ -180,14 +180,14 @@ PRIM_DECL_6( MethodOopPrimitives::constructMethod, Oop selector_or_method, Oop f
     }
 
     MethodKlass *k     = (MethodKlass *) Universe::methodKlassObject()->klass_part();
-    MethodOop   result = k->constructMethod( selector_or_method, SMIOop( flags )->value(), SMIOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
+    MethodOop   result = k->constructMethod( selector_or_method, SmallIntegerOop( flags )->value(), SmallIntegerOop( nofArgs )->value(), ObjectArrayOop( debugInfo ), ByteArrayOop( bytes ), ObjectArrayOop( oops ) );
     if ( result )
         return result;
     return markSymbol( vmSymbols::method_construction_failed() );
 }
 
 
-extern "C" BlockClosureOop allocateBlock( SMIOop nof );
+extern "C" BlockClosureOop allocateBlock( SmallIntegerOop nof );
 
 
 static Oop allocate_block_for( MethodOop method, Oop self ) {
@@ -236,11 +236,11 @@ PRIM_DECL_2( MethodOopPrimitives::allocate_block_self, Oop receiver, Oop self ) 
 
 static SymbolOop symbol_from_method_inlining_info( MethodOopDescriptor::Method_Inlining_Info info ) {
     if ( info == MethodOopDescriptor::normal_inline )
-        return oopFactory::new_symbol( "Normal" );
+        return OopFactory::new_symbol( "Normal" );
     if ( info == MethodOopDescriptor::never_inline )
-        return oopFactory::new_symbol( "Never" );
+        return OopFactory::new_symbol( "Never" );
     if ( info == MethodOopDescriptor::always_inline )
-        return oopFactory::new_symbol( "Always" );
+        return OopFactory::new_symbol( "Always" );
     ShouldNotReachHere();
     return nullptr;
 }
@@ -249,7 +249,7 @@ static SymbolOop symbol_from_method_inlining_info( MethodOopDescriptor::Method_I
 PRIM_DECL_2( MethodOopPrimitives::set_inlining_info, Oop receiver, Oop info ) {
     PROLOGUE_2( "set_inlining_info", receiver, info );
     ASSERT_RECEIVER;
-    if ( not info->is_symbol() )
+    if ( not info->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // Check argument value

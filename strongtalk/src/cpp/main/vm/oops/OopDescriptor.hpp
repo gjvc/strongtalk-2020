@@ -56,17 +56,17 @@ public:
     }
 
 
-    bool is_smi() const {
+    bool isSmallIntegerOop() const {
         return tag() == INTEGER_TAG;
     }
 
 
-    bool is_mem() const {
+    bool isMemOop() const {
         return tag() == MEMOOP_TAG;
     }
 
 
-    bool is_mark() const {
+    bool isMarkOop() const {
         return tag() == MARK_TAG;
     }
 
@@ -76,7 +76,7 @@ public:
 
     KlassOop klass() const;
 
-    smi_t identity_hash();
+    small_int_t identity_hash();
 
     // memory management
     Oop scavenge();
@@ -91,19 +91,19 @@ public:
     Generation *my_generation();
 
     // type test operations (inlined in Oop.inline.h)
-    bool is_double() const;
+    bool isDouble() const;
 
     bool is_block() const;
 
-    bool is_byteArray() const;
+    bool isByteArray() const;
 
-    bool is_doubleByteArray() const;
+    bool isDoubleByteArray() const;
 
-    bool is_doubleValueArray() const;
+    bool isDoubleValueArray() const;
 
-    bool is_symbol() const;
+    bool isSymbol() const;
 
-    bool is_objArray() const;
+    bool isObjectArray() const;
 
     bool is_weakArray() const;
 
@@ -111,7 +111,7 @@ public:
 
     bool is_process() const;
 
-    bool is_vframe() const;
+    bool is_VirtualFrame() const;
 
     bool is_method() const;
 
@@ -127,7 +127,7 @@ public:
 
 
     // Returns is the Oop is the nil object
-    bool is_nil() const {
+    bool isNilObject() const {
         return this == nilObject;
     }
 

@@ -16,7 +16,7 @@
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 #include <gtest/gtest.h>
@@ -26,6 +26,10 @@ extern "C" std::int32_t expansion_count;
 
 
 class IndirectAlienPrimsTests : public ::testing::Test {
+
+public:
+    IndirectAlienPrimsTests() : ::testing::Test() {}
+
 
 protected:
     void SetUp() override {
@@ -78,7 +82,7 @@ protected:
 
     void checkLargeInteger( Oop result, std::int32_t expected ) {
         char         message[200];
-        EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
+        EXPECT_TRUE( result->isByteArray() ) << "Should be integer";
         bool         ok;
         std::int32_t actual = asInteger( result, ok );
         EXPECT_TRUE( ok ) << "should be integer";
@@ -89,7 +93,7 @@ protected:
 
     void checkLargeUnsigned( Oop result, std::uint32_t expected ) {
         char          message[200];
-        EXPECT_TRUE( result->is_byteArray() ) << "Should be integer";
+        EXPECT_TRUE( result->isByteArray() ) << "Should be integer";
         bool          ok;
         std::uint32_t actual = ByteArrayOop( result )->number().as_uint32_t( ok );
         EXPECT_TRUE( ok ) << "should be integer";
@@ -100,8 +104,8 @@ protected:
 
     void checkSmallInteger( Oop result, std::int32_t expected ) {
         char         message[200];
-        EXPECT_TRUE( result->is_smi() ) << "Should be small integer";
-        std::int32_t actual = SMIOop( result )->value();
+        EXPECT_TRUE( result->isSmallIntegerOop() ) << "Should be small integer";
+        std::int32_t actual = SmallIntegerOop( result )->value();
         sprintf( message, "wrong value. expected: %d, was: %d", expected, actual );
         EXPECT_EQ( expected, actual ) << message;
     }
@@ -109,7 +113,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -225,7 +229,7 @@ TEST_F( IndirectAlienPrimsTests, alienSignedLongAtPutShouldSetCorrectValue ) {
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetCorrectValue ) {
     ByteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 1 ), alien );
     Oop                        result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 1 ), alien );
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625, ( (double *) alien_byte_region )[ 0 ] ) << "value not set";
 }
@@ -234,7 +238,7 @@ TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetCorrectValue ) {
 TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetValueAtSecondByte ) {
     ByteArrayPrimitives::alienDoubleAtPut( doubleValue, smiOopFromValue( 2 ), alien );
     Oop                        result = ByteArrayPrimitives::alienDoubleAt( smiOopFromValue( 2 ), alien );
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625, ( (double *) ( alien_byte_region + 1 ) )[ 0 ] ) << "value not set";
 }
@@ -243,7 +247,7 @@ TEST_F( IndirectAlienPrimsTests, alienDoubleAtPutShouldSetValueAtSecondByte ) {
 TEST_F( IndirectAlienPrimsTests, alienFloatAtPutShouldSetCorrectValue ) {
     ByteArrayPrimitives::alienFloatAtPut( doubleValue, smiOopFromValue( 1 ), alien );
     Oop                        result = ByteArrayPrimitives::alienFloatAt( smiOopFromValue( 1 ), alien );
-    EXPECT_TRUE( result->is_double() ) << "should be double";
+    EXPECT_TRUE( result->isDouble() ) << "should be double";
     EXPECT_EQ( 1.625, DoubleOop( result ) -> value() ) << "wrong value";
     EXPECT_EQ( 1.625F, ( (float *) ( alien_byte_region ) )[ 0 ] ) << "value not set";
 }

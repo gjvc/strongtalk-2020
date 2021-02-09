@@ -2265,8 +2265,8 @@ protected:
     ArithOpCode         _op;
     PseudoRegister      *_oper;
     Usage               *_operUse;
-    bool                _arg1IsInt;            // is _src a smi_t?
-    bool                _arg2IsInt;            // is _operand a smi_t?
+    bool                _arg1IsInt;            // is _src a small_int_t?
+    bool                _arg2IsInt;            // is _operand a small_int_t?
     ConstPseudoRegister *_constResult;            // non-nullptr if constant-folded
 
     TArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d, bool a1, bool a2 );
@@ -3431,7 +3431,7 @@ public:
     }
 
 
-    Node *smiCase() const;            // the continuation for the smi_t case, nullptr if there is none
+    Node *smiCase() const;            // the continuation for the small_int_t case, nullptr if there is none
 
     bool doesTypeTests() const {
         return true;
@@ -3602,7 +3602,7 @@ protected:
     ArrayAtNode( AccessType access_type,    // specifies the operation
                  PseudoRegister *array,     // holds the array
                  PseudoRegister *index,     // holds the index
-                 bool smiIndex,             // true if index is known to be a smi_t, false otherwise
+                 bool smiIndex,             // true if index is known to be a small_int_t, false otherwise
                  PseudoRegister *result,    // where the result is stored
                  PseudoRegister *error,     // where the error symbol is stored if the operation fails
                  std::int32_t data_offset,  // data offset in oops relative to array
@@ -3630,7 +3630,7 @@ public:
     }
 
 
-    bool index_is_smi() const {
+    bool index_is_SmallInteger() const {
         return _intArg;
     }
 
@@ -3641,7 +3641,7 @@ public:
 
 
     bool canFail() const {
-        return not index_is_smi() or index_needs_bounds_check();
+        return not index_is_SmallInteger() or index_needs_bounds_check();
     }
 
 
@@ -3738,9 +3738,9 @@ protected:
     ArrayAtPutNode( AccessType access_type,     // specifies the operation
                     PseudoRegister *array,     // holds the array
                     PseudoRegister *index,     // holds the index
-                    bool smi_index,           // true if index is known to be a smi_t, false otherwise
+                    bool smi_index,           // true if index is known to be a small_int_t, false otherwise
                     PseudoRegister *element,   // holds the element
-                    bool smi_element,         // true if element is known to be a smi_t, false otherwise
+                    bool smi_element,         // true if element is known to be a small_int_t, false otherwise
                     PseudoRegister *result,    // where the result is stored
                     PseudoRegister *error,     // where the error symbol is stored if the operation fails
                     std::int32_t data_offset,            // data offset in oops relative to array
@@ -3774,12 +3774,12 @@ public:
     }
 
 
-    bool index_is_smi() const {
+    bool index_is_SmallInteger() const {
         return _intArg;
     }
 
 
-    bool element_is_smi() const {
+    bool element_is_SmallInteger() const {
         return _smi_element;
     }
 
@@ -3795,7 +3795,7 @@ public:
 
 
     bool canFail() const {
-        return not index_is_smi() or index_needs_bounds_check() or ( access_type() not_eq object_at_put and ( not element_is_smi() or element_needs_range_check() ) );
+        return not index_is_SmallInteger() or index_needs_bounds_check() or ( access_type() not_eq object_at_put and ( not element_is_SmallInteger() or element_needs_range_check() ) );
     }
 
 
@@ -3853,12 +3853,12 @@ private:
     Usage          *_arg1_use;      //
     Usage          *_arg2_use;      //
     Definition     *_error_def;     //
-    bool           _arg1_is_smi;    // true if 1st argument is known to be a smi_t
-    bool           _arg2_is_smi;    // true if 2nd argument is known to be a smi_t
+    bool           _arg1_is_SmallInteger;    // true if 1st argument is known to be a small_int_t
+    bool           _arg2_is_SmallInteger;    // true if 2nd argument is known to be a small_int_t
     Operation      _operation;      //
     // _src is	_recv;			    // receiver or nullptr
 
-    InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi );
+    InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_SmallInteger, PseudoRegister *arg2, bool arg2_is_SmallInteger );
 
     InlinedPrimitiveNode() = default;
     virtual ~InlinedPrimitiveNode() = default;
@@ -3890,13 +3890,13 @@ public:
     }
 
 
-    bool arg1_is_smi() const {
-        return _arg1_is_smi;
+    bool arg1_is_SmallInteger() const {
+        return _arg1_is_SmallInteger;
     }
 
 
-    bool arg2_is_smi() const {
-        return _arg2_is_smi;
+    bool arg2_is_SmallInteger() const {
+        return _arg2_is_SmallInteger;
     }
 
 

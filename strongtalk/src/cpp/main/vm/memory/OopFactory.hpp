@@ -13,20 +13,20 @@
 #include "vm/utilities/GrowableArray.hpp"
 
 
-// The oopFactory is a utility to create new objects.
+// The OopFactory is a utility to create new objects.
 
-class oopFactory : AllStatic {
+class OopFactory : AllStatic {
 
 public:
     static ByteArrayOop new_byteArray( std::int32_t size );
 
     static ByteArrayOop new_byteArray( const char *name );
 
-    static ObjectArrayOop new_objArray( std::int32_t size );
+    static ObjectArrayOop new_objectArray( std::int32_t size );
 
-    static ObjectArrayOop new_objArray( GrowableArray<Oop> *array );
+    static ObjectArrayOop new_objectArray( GrowableArray<Oop> *array );
 
-    static SMIOop new_smi( std::int32_t value );
+    static SmallIntegerOop new_smi( std::int32_t value );
 
     static DoubleOop new_double( double value );
 

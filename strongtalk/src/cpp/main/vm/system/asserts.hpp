@@ -35,14 +35,17 @@ void error_breakpoint();                        // called at every error or fata
 
 // -----------------------------------------------------------------------------
 
-#define st_assert_is_type( obj, t, msg )       st_assert( CONC( Oop( obj )->is_, t() ), msg )
-#define st_assert_smi( obj, msg )              st_assert_is_type( obj, smi, msg )
-#define st_assert_objArray( obj, msg )         st_assert_is_type( obj, objArray, msg )
-#define st_assert_byteArray( obj, msg )        st_assert_is_type( obj, byteArray, msg )
-#define st_assert_doubleByteArray( obj, msg )  st_assert_is_type( obj, doubleByteArray,msg )
-#define st_assert_doubleValueArray( obj, msg ) st_assert_is_type( obj, doubleValueArray, msg )
-#define st_assert_symbol( obj, msg )           st_assert_is_type( obj, symbol, msg )
-#define st_assert_double( obj, msg )           st_assert_is_type( obj, double, msg )
+#define st_assert_is_type( obj, t, msg )       st_assert( CONC( Oop( obj )->is, t() ), msg )
+
+#define st_assert_smi( obj, msg )              st_assert_is_type( obj, SmallIntegerOop, msg )
+#define st_assert_objectArray( obj, msg )      st_assert_is_type( obj, ObjectArray, msg )
+#define st_assert_byteArray( obj, msg )        st_assert_is_type( obj, ByteArray, msg )
+#define st_assert_doubleByteArray( obj, msg )  st_assert_is_type( obj, DoubleByteArray,msg )
+#define st_assert_doubleValueArray( obj, msg ) st_assert_is_type( obj, DoubleValueArray, msg )
+#define st_assert_symbol( obj, msg )           st_assert_is_type( obj, Symbol, msg )
+#define st_assert_double( obj, msg )           st_assert_is_type( obj, Double, msg )
+
+
 #define st_assert_oop_aligned( p )             st_assert( reinterpret_cast<std::int32_t>(p) % 4 == 0, "not word aligned" )
 
 

@@ -59,8 +59,8 @@ std::int32_t DoubleByteArrayOopDescriptor::compare( DoubleByteArrayOop arg ) {
     const std::uint32_t *b = (const std::uint32_t *) arg->length_addr();
 
     // Get the word sizes of the arays
-    std::int32_t a_size = roundTo( SMIOop( *a++ )->value() * sizeof( std::uint16_t ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
-    std::int32_t b_size = roundTo( SMIOop( *b++ )->value() * sizeof( std::uint16_t ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
+    std::int32_t a_size = roundTo( SmallIntegerOop( *a++ )->value() * sizeof( std::uint16_t ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
+    std::int32_t b_size = roundTo( SmallIntegerOop( *b++ )->value() * sizeof( std::uint16_t ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
 
     const std::uint32_t *a_end = a + min( a_size, b_size );
     while ( a < a_end ) {

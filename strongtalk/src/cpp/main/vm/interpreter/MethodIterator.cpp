@@ -195,7 +195,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::return_instVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->push_instVar_name( name );
                 blk->method_return( 0 );
             }
@@ -220,28 +220,28 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
             }
                 break;
             case ByteCodes::Code::return_instVar: {
-                SMIOop offset = SMIOop( iter.oop_at( 1 ) );
-                st_assert( offset->is_smi(), "must be smi_t" );
+                SmallIntegerOop offset = SmallIntegerOop( iter.oop_at( 1 ) );
+                st_assert( offset->isSmallIntegerOop(), "must be small_int_t" );
                 blk->push_instVar( offset->value() );
                 blk->method_return( 0 );
             }
                 break;
             case ByteCodes::Code::push_instVar: {
-                SMIOop offset = SMIOop( iter.oop_at( 1 ) );
-                st_assert( offset->is_smi(), "must be smi_t" );
+                SmallIntegerOop offset = SmallIntegerOop( iter.oop_at( 1 ) );
+                st_assert( offset->isSmallIntegerOop(), "must be small_int_t" );
                 blk->push_instVar( offset->value() );
             }
                 break;
             case ByteCodes::Code::store_instVar_pop: {
-                SMIOop offset = SMIOop( iter.oop_at( 1 ) );
-                st_assert( offset->is_smi(), "must be smi_t" );
+                SmallIntegerOop offset = SmallIntegerOop( iter.oop_at( 1 ) );
+                st_assert( offset->isSmallIntegerOop(), "must be small_int_t" );
                 blk->store_instVar( offset->value() );
                 blk->pop();
             }
                 break;
             case ByteCodes::Code::store_instVar: {
-                SMIOop offset = SMIOop( iter.oop_at( 1 ) );
-                st_assert( offset->is_smi(), "must be smi_t" );
+                SmallIntegerOop offset = SmallIntegerOop( iter.oop_at( 1 ) );
+                st_assert( offset->isSmallIntegerOop(), "must be small_int_t" );
                 blk->store_instVar( offset->value() );
             }
                 break;
@@ -287,20 +287,20 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::push_instVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->push_instVar_name( name );
             }
                 break;
             case ByteCodes::Code::store_instVar_pop_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->store_instVar_name( name );
                 blk->pop();
             }
                 break;
             case ByteCodes::Code::store_instVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->store_instVar_name( name );
             }
                 break;
@@ -779,7 +779,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 [[fallthrough]];
             case ByteCodes::Code::primitive_call_self_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "name must be SymbolOop" );
+                st_assert( name->isSymbol(), "name must be SymbolOop" );
                 PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_lookup, name, nullptr );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self_lookup: just checking" );
                 blk->primitive_call_node( node );
@@ -793,7 +793,7 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 [[fallthrough]];
             case ByteCodes::Code::primitive_call_self_failure_lookup: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "name must be SymbolOop" );
+                st_assert( name->isSymbol(), "name must be SymbolOop" );
                 PrimitiveCallNode *node = MethodIterator::factory->new_PrimitiveCallNode( _interval->method(), _interval, iter.byteCodeIndex(), iter.next_byteCodeIndex(), iter.code() == ByteCodes::Code::primitive_call_self_failure_lookup, name, nullptr, iter.word_at( 1 + OOP_SIZE ) );
                 st_assert( node->end_byteCodeIndex() <= _interval->end_byteCodeIndex(), "ByteCodes::Code::primitive_call_self_failure_lookup just checking" );
                 blk->primitive_call_node( node );
@@ -855,9 +855,9 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 [[fallthrough]];
             case ByteCodes::Code::smi_greater_equal:
                 [[fallthrough]];
-            case ByteCodes::Code::objArray_at:
+            case ByteCodes::Code::objectArray_at:
                 [[fallthrough]];
-            case ByteCodes::Code::objArray_at_put:
+            case ByteCodes::Code::objectArray_at_put:
                 [[fallthrough]];
             case ByteCodes::Code::smi_and:
                 [[fallthrough]];
@@ -889,20 +889,20 @@ void MethodIterator::dispatch( MethodClosure *blk ) {
                 break;
             case ByteCodes::Code::push_classVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->push_classVar_name( name );
                 break;
             }
             case ByteCodes::Code::store_classVar_pop_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->store_classVar_name( name );
                 blk->pop();
                 break;
             }
             case ByteCodes::Code::store_classVar_name: {
                 SymbolOop name = SymbolOop( iter.oop_at( 1 ) );
-                st_assert( name->is_symbol(), "must be symbol" );
+                st_assert( name->isSymbol(), "must be symbol" );
                 blk->store_classVar_name( name );
                 break;
             }

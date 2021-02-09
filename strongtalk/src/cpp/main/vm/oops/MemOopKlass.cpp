@@ -139,13 +139,13 @@ KlassOop MemOopKlass::create_subclass( MixinOop mixin, Format format ) {
     if ( format == Format::mem_klass )
         return MemOopKlass::create_class( as_klassOop(), mixin );
 
-    if ( format == Format::objArray_klass )
+    if ( format == Format::object_array_klass )
         return ObjectArrayKlass::create_class( as_klassOop(), mixin );
-    if ( format == Format::byteArray_klass )
+    if ( format == Format::byte_array_klass )
         return ByteArrayKlass::create_class( as_klassOop(), mixin );
-    if ( format == Format::doubleByteArray_klass )
+    if ( format == Format::double_byte_array_klass )
         return DoubleByteArrayKlass::create_class( as_klassOop(), mixin );
-    if ( format == Format::weakArray_klass )
+    if ( format == Format::weak_array_klass )
         return WeakArrayKlass::create_class( as_klassOop(), mixin );
 
     if ( number_of_instance_variables() > 0 ) {

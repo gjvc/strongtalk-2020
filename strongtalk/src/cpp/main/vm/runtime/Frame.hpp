@@ -28,7 +28,7 @@
 //    [&unpack_unoptimized_frame ]		// patched return address
 //    [scrap area                ] * <- sp
 //    [sender sp                 ]
-//    [frame array               ]              // objArrayOop holding the deoptimized frames
+//    [frame array               ]              // objectArrayOop holding the deoptimized frames
 //    [old frame                 ]   <- fp	// old frame may skip real frames deoptimized away.
 //    [return pc                 ]
 

@@ -56,7 +56,7 @@ Oop ByteArrayKlass::allocateObjectSize( std::int32_t size, bool permit_scavenge,
 
 
 KlassOop ByteArrayKlass::create_subclass( MixinOop mixin, Format format ) {
-    if ( format == Format::mem_klass or format == Format::byteArray_klass ) {
+    if ( format == Format::mem_klass or format == Format::byte_array_klass ) {
         return ByteArrayKlass::create_class( as_klassOop(), mixin );
     }
     return nullptr;

@@ -98,7 +98,7 @@ public:
 
     static class ArrayAtPutNode *ArrayAtPutNode( ArrayAtPutNode::AccessType access_type, PseudoRegister *array, PseudoRegister *index, bool smi_index, PseudoRegister *element, bool smi_element, PseudoRegister *result, PseudoRegister *error, std::int32_t data_offset, std::int32_t length_offset, bool needs_store_check );
 
-    static class InlinedPrimitiveNode *InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error = nullptr, PseudoRegister *recv = nullptr, PseudoRegister *arg1 = nullptr, bool arg1_is_smi = false, PseudoRegister *arg2 = nullptr, bool arg2_is_smi = false );
+    static class InlinedPrimitiveNode *InlinedPrimitiveNode( InlinedPrimitiveNode::Operation op, PseudoRegister *result, PseudoRegister *error = nullptr, PseudoRegister *recv = nullptr, PseudoRegister *arg1 = nullptr, bool arg1_is_SmallInteger = false, PseudoRegister *arg2 = nullptr, bool arg2_is_SmallInteger = false );
 
     static class UncommonNode *UncommonNode( GrowableArray<PseudoRegister *> *exprStack, std::int32_t byteCodeIndex );
 

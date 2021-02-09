@@ -82,7 +82,7 @@ public:
 
 class Scope : public PrintableResourceObject {
 private:
-    static smi_t _currentScopeID;            // for scope descs
+    static small_int_t _currentScopeID;            // for scope descs
 
 public:
     // scopes are numbered starting at 0
@@ -91,12 +91,12 @@ public:
     }
 
 
-    smi_t currentScopeID() {
+    small_int_t currentScopeID() {
         return _currentScopeID++;
     }
 
 
-    virtual smi_t scopeID() const = 0;
+    virtual small_int_t scopeID() const = 0;
 
 
     // test functions
@@ -266,7 +266,7 @@ protected:
     void initialize( MethodOop method, KlassOop methodHolder, InlinedScope *sender, RecompilationScope *rs, SendInfo *info );
 
 public:
-    smi_t scopeID() const {
+    small_int_t scopeID() const {
         return _scopeID;
     }
 
@@ -760,7 +760,7 @@ public:
     }
 
 
-    smi_t scopeID() const {
+    small_int_t scopeID() const {
         return _scope->scopeID();
     }
 
@@ -827,7 +827,7 @@ public:
     }
 
 
-    smi_t scopeID() const {
+    small_int_t scopeID() const {
         return _scope->scopeID();
     }
 

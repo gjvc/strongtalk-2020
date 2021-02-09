@@ -50,9 +50,9 @@ constexpr std::int32_t VTBL_OFFSET = 0;
 class Klass : ValueObject {
 
 protected:
-    SMIOop         _non_indexable_size;
-    SMIOop         _has_untagged_contents;
-    ObjectArrayOop _classVars;
+    SmallIntegerOop _non_indexable_size;
+    SmallIntegerOop _has_untagged_contents;
+    ObjectArrayOop  _classVars;
     ObjectArrayOop _methods;
     KlassOop       _superKlass;
     MixinOop       _mixin;
@@ -85,12 +85,12 @@ public:
     }
 
 
-    smi_t non_indexable_size() const {
+    small_int_t non_indexable_size() const {
         return _non_indexable_size->value();
     }
 
 
-    void set_non_indexable_size( smi_t size ) {
+    void set_non_indexable_size( small_int_t size ) {
         _non_indexable_size = smiOopFromValue( size );
     }
 
@@ -152,16 +152,16 @@ public:
 
 
 public:
-    std::int32_t number_of_methods() const;                  // Returns the number of methods in this class.
-    MethodOop method_at( std::int32_t index ) const;         // Returns the method at index.
-    void add_method( MethodOop method );            // Adds or overwrites with method.
-    MethodOop remove_method_at( std::int32_t index );        // Removes method at index and returns the removed method.
+    std::int32_t number_of_methods() const;                     // Returns the number of methods in this class.
+    MethodOop method_at( std::int32_t index ) const;            // Returns the method at index.
+    void add_method( MethodOop method );                        // Adds or overwrites with method.
+    MethodOop remove_method_at( std::int32_t index );           // Removes method at index and returns the removed method.
 
-    std::int32_t number_of_classVars() const;                // Returns the number of class variables.
-    AssociationOop classVar_at( std::int32_t index ) const;  // Returns the class variable at index.
-    void add_classVar( AssociationOop assoc );      // Adds or overwrites class variable.
-    AssociationOop remove_classVar_at( std::int32_t index ); // Removes class variable at index and returns the removed association.
-    bool includes_classVar( SymbolOop name );     // Tells whether the name is present
+    std::int32_t number_of_classVars() const;                   // Returns the number of class variables.
+    AssociationOop classVar_at( std::int32_t index ) const;     // Returns the class variable at index.
+    void add_classVar( AssociationOop assoc );                  // Adds or overwrites class variable.
+    AssociationOop remove_classVar_at( std::int32_t index );    // Removes class variable at index and returns the removed association.
+    bool includes_classVar( SymbolOop name );                   // Tells whether the name is present
 
     // virtual pointer value
     std::int32_t vtbl_value() const {
@@ -220,26 +220,26 @@ public:
 
     // KlassFormat
     enum class Format {
-        no_klass,               //
-        mem_klass,              //
-        association_klass,      //
-        blockClosure_klass,     //
-        byteArray_klass,        //
-        symbol_klass,           //
-        context_klass,          //
-        doubleByteArray_klass,  //
-        doubleValueArray_klass, //
-        double_klass,           //
-        klass_klass,            //
-        method_klass,           //
-        mixin_klass,            //
-        objArray_klass,         //
-        weakArray_klass,        //
-        process_klass,          //
-        vframe_klass,           //
-        proxy_klass,            //
-        smi_klass,              //
-        special_klass           //
+        no_klass,                   //
+        mem_klass,                  //
+        association_klass,          //
+        block_closure_klass,        //
+        byte_array_klass,           //
+        symbol_klass,               //
+        context_klass,              //
+        double_byte_array_klass,    //
+        double_value_array_klass,   //
+        double_klass,               //
+        klass_klass,                //
+        method_klass,               //
+        mixin_klass,                //
+        object_array_klass,         //
+        weak_array_klass,           //
+        process_klass,              //
+        virtual_frame_klass,        //
+        proxy_klass,                //
+        smi_klass,                  //
+        special_klass               //
     };
 
 
@@ -346,7 +346,7 @@ public:
 
 
     // type testing operations
-    virtual bool oop_is_smi() const {
+    virtual bool oopIsSmallInteger() const {
         return false;
     }
 
@@ -361,62 +361,62 @@ public:
     }
 
 
-    virtual bool oop_is_byteArray() const {
+    virtual bool oopIsByteArray() const {
         return false;
     }
 
 
-    virtual bool oop_is_doubleByteArray() const {
+    virtual bool oopIsDoubleByteArray() const {
         return false;
     }
 
 
-    virtual bool oop_is_doubleValueArray() const {
+    virtual bool oopIsDoubleValueArray() const {
         return false;
     }
 
 
-    virtual bool oop_is_symbol() const {
+    virtual bool oopIsSymbol() const {
         return false;
     }
 
 
-    virtual bool oop_is_objArray() const {
+    virtual bool oopIsObjectArray() const {
         return false;
     }
 
 
-    virtual bool oop_is_weakArray() const {
+    virtual bool oopIsWeakArray() const {
         return false;
     }
 
 
-    virtual bool oop_is_klass() const {
+    virtual bool oopIsKlass() const {
         return false;
     }
 
 
-    virtual bool oop_is_process() const {
+    virtual bool oopIsProcess() const {
         return false;
     }
 
 
-    virtual bool oop_is_vframe() const {
+    virtual bool oopIsVirtualFrame() const {
         return false;
     }
 
 
-    virtual bool oop_is_method() const {
+    virtual bool oopIsMethod() const {
         return false;
     }
 
 
-    virtual bool oop_is_proxy() const {
+    virtual bool oopIsProxy() const {
         return false;
     }
 
 
-    virtual bool oop_is_mixin() const {
+    virtual bool oopIsMixin() const {
         return false;
     }
 

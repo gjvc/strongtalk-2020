@@ -8,7 +8,7 @@
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/interpreter/HeapCodeBuffer.hpp"
 #include "vm/interpreter/ByteCodes.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
@@ -68,15 +68,14 @@ TEST_F( HCodeBufferTests, pushingByteShouldAddByteToBytesArray
 ) {
     BlockScavenge  bs;
     KlassOop       messageClass  = KlassOop( Universe::find_global( "Message" ) );
-    SymbolOop      errorSelector = SymbolOop( oopFactory::new_symbol( "value" ) );
-    SymbolOop      selector      = SymbolOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
-    SymbolOop      dnuSelector   = SymbolOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
-    ObjectArrayOop args          = ObjectArrayOop( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    SymbolOop      errorSelector = SymbolOop( OopFactory::new_symbol( "value" ) );
+    SymbolOop      selector      = SymbolOop( OopFactory::new_symbol( "receiver:selector:arguments:" ) );
+    SymbolOop      dnuSelector   = SymbolOop( OopFactory::new_symbol( "doesNotUnderstand:" ) );
+    ObjectArrayOop args          = ObjectArrayOop( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
     code->pushByte( static_cast
                         <std::uint8_t>(ByteCodes::Code::push_literal)
     );
-    code->
-        pushOop( messageClass );
+    code->pushOop( messageClass );
     checkByteLength( 8, "Message" );
     checkOopLength( 2, "Message" );
     code->pushByte( static_cast

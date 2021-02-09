@@ -15,7 +15,7 @@
 #include "vm/compiler/OpCode.hpp"
 #include "vm/compiler/Node.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceObject.hpp"
 
 

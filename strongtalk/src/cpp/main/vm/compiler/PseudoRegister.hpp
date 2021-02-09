@@ -652,7 +652,7 @@ protected:
     ConstPseudoRegister( InlinedScope *s, Oop c ) :
         PseudoRegister( s ),
         constant{ c } {
-        st_assert( not c->is_mem() or c->is_old(), "constant must be tenured" );
+        st_assert( not c->isMemOop() or c->is_old(), "constant must be tenured" );
     }
 
 

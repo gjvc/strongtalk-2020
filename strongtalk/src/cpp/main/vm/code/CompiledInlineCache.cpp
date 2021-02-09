@@ -16,7 +16,7 @@
 #include "vm/interpreter/InterpretedInlineCache.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/primitives/primitives.hpp"
 #include "vm/utilities/EventLog.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -129,9 +129,9 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         BlockScavenge bs; // make sure that no scavenge happens
         KlassOop      msgKlass = KlassOop( Universe::find_global( "Message" ) );
         Oop           obj      = msgKlass->klass_part()->allocateObject();
-        st_assert( obj->is_mem(), "just checkin'..." );
+        st_assert( obj->isMemOop(), "just checkin'..." );
         MemOop         msg  = MemOop( obj );
-        ObjectArrayOop args = oopFactory::new_objArray( std::int32_t{ 0 } );
+        ObjectArrayOop args = OopFactory::new_objectArray( std::int32_t{ 0 } );
         // for now: assume instance variables are there...
         // later: should check this or use a VM interface:
         // msg->set_receiver(recv);
@@ -140,7 +140,7 @@ const char *CompiledInlineCache::normalLookup( Oop recv ) {
         msg->raw_at_put( 2, recv );
         msg->raw_at_put( 3, selector() );
         msg->raw_at_put( 4, args );
-        SymbolOop sel = oopFactory::new_symbol( "doesNotUnderstand:" );
+        SymbolOop sel = OopFactory::new_symbol( "doesNotUnderstand:" );
         if ( interpreter_normal_lookup( recv->klass(), sel ).is_empty() ) {
             // doesNotUnderstand: not found ==> process error
             {

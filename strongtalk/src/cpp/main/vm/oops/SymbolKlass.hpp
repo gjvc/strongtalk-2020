@@ -17,7 +17,7 @@
 class SymbolKlass : public ByteArrayKlass {
 public:
     // testers
-    bool oop_is_symbol() const {
+    bool oopIsSymbol() const {
         return true;
     }
 

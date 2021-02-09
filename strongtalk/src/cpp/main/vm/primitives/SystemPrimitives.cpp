@@ -6,7 +6,7 @@
 #include "vm/primitives/SystemPrimitives.hpp"
 #include "vm/runtime/flags.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/Reflection.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
 #include "vm/oops/ProxyOopDescriptor.hpp"
@@ -43,7 +43,7 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
     if ( not mixin->is_mixin() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     if ( not( primary == trueObject or primary == falseObject ) )
@@ -52,7 +52,7 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
     if ( not superclass->is_klass() )
         return markSymbol( vmSymbols::fourth_argument_has_wrong_type() );
 
-    if ( not format->is_symbol() )
+    if ( not format->isSymbol() )
         return markSymbol( vmSymbols::fifth_argument_has_wrong_type() );
 
     Klass::Format f = Klass::format_from_symbol( SymbolOop( format ) );
@@ -81,7 +81,7 @@ PRIM_DECL_5( SystemPrimitives::createNamedInvocation, Oop mixin, Oop name, Oop p
     // Make sure mixin->classMixin is present
 
     // Add the global
-    Universe::add_global( oopFactory::new_association( SymbolOop( name ), new_klass, true ) );
+    Universe::add_global( OopFactory::new_association( SymbolOop( name ), new_klass, true ) );
     return new_klass;
 }
 
@@ -96,7 +96,7 @@ PRIM_DECL_3( SystemPrimitives::createInvocation, Oop mixin, Oop superclass, Oop 
     if ( not superclass->is_klass() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    if ( not format->is_symbol() )
+    if ( not format->isSymbol() )
         return markSymbol( vmSymbols::third_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -124,7 +124,7 @@ PRIM_DECL_1( SystemPrimitives::applyChange, Oop change ) {
     PROLOGUE_1( "applyChange", change )
 
     // Check argument types
-    if ( not change->is_objArray() )
+    if ( not change->isObjectArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     BlockScavenge bs;
@@ -168,9 +168,9 @@ PRIM_DECL_1( SystemPrimitives::garbageGollect, Oop receiver ) {
 
 PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
     PROLOGUE_1( "expandMemory", sizeOop );
-    if ( not sizeOop->is_smi() )
+    if ( not sizeOop->isSmallIntegerOop() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
-    std::int32_t size = SMIOop( sizeOop )->value();
+    std::int32_t size = SmallIntegerOop( sizeOop )->value();
     if ( size < 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
     Universe::old_gen.expand( size );
@@ -180,11 +180,11 @@ PRIM_DECL_1( SystemPrimitives::expandMemory, Oop sizeOop ) {
 
 PRIM_DECL_1( SystemPrimitives::shrinkMemory, Oop sizeOop ) {
     PROLOGUE_1( "shrinkMemory", sizeOop );
-    if ( not sizeOop->is_smi() )
+    if ( not sizeOop->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( SMIOop( sizeOop )->value() < 0 or SMIOop( sizeOop )->value() > Universe::old_gen.free() )
+    if ( SmallIntegerOop( sizeOop )->value() < 0 or SmallIntegerOop( sizeOop )->value() > Universe::old_gen.free() )
         return markSymbol( vmSymbols::value_out_of_range() );
-    Universe::old_gen.shrink( SMIOop( sizeOop )->value() );
+    Universe::old_gen.shrink( SmallIntegerOop( sizeOop )->value() );
     return trueObject;
 }
 
@@ -240,7 +240,7 @@ PRIM_DECL_0( SystemPrimitives::halt ) {
 
 static Oop fake_time() {
     static std::int32_t time = 0;
-    return oopFactory::new_double( (double) time++ );
+    return OopFactory::new_double( (double) time++ );
 }
 
 
@@ -248,7 +248,7 @@ PRIM_DECL_0( SystemPrimitives::userTime ) {
     PROLOGUE_0( "userTime" )
     if ( UseTimers ) {
         os::updateTimes();
-        return oopFactory::new_double( os::userTime() );
+        return OopFactory::new_double( os::userTime() );
     } else {
         return fake_time();
     }
@@ -259,7 +259,7 @@ PRIM_DECL_0( SystemPrimitives::systemTime ) {
     PROLOGUE_0( "systemTime" )
     if ( UseTimers ) {
         os::updateTimes();
-        return oopFactory::new_double( os::systemTime() );
+        return OopFactory::new_double( os::systemTime() );
     } else {
         return fake_time();
     }
@@ -269,7 +269,7 @@ PRIM_DECL_0( SystemPrimitives::systemTime ) {
 PRIM_DECL_0( SystemPrimitives::elapsedTime ) {
     PROLOGUE_0( "elapsedTime" )
     if ( UseTimers ) {
-        return oopFactory::new_double( os::elapsedTime() );
+        return OopFactory::new_double( os::elapsedTime() );
     } else {
         return fake_time();
     }
@@ -297,7 +297,7 @@ PRIM_DECL_1( SystemPrimitives::globalAssociationKey, Oop receiver ) {
 PRIM_DECL_2( SystemPrimitives::globalAssociationSetKey, Oop receiver, Oop key ) {
     PROLOGUE_2( "globalAssociationSetKey", receiver, key );
     st_assert( receiver->is_association(), "receiver must be association" );
-    if ( not key->is_symbol() )
+    if ( not key->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     AssociationOop( receiver )->set_key( SymbolOop( key ) );
     return receiver;
@@ -344,13 +344,13 @@ PRIM_DECL_2( SystemPrimitives::globalAssociationSetConstant, Oop receiver, Oop v
 
 PRIM_DECL_1( SystemPrimitives::smalltalk_at, Oop index ) {
     PROLOGUE_1( "smalltalk_at", index );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not Universe::systemDictionaryObject()->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not Universe::systemDictionaryObject()->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
-    return Universe::systemDictionaryObject()->obj_at( SMIOop( index )->value() );
+    return Universe::systemDictionaryObject()->obj_at( SmallIntegerOop( index )->value() );
 }
 
 
@@ -358,7 +358,7 @@ PRIM_DECL_2( SystemPrimitives::smalltalk_at_put, Oop key, Oop value ) {
     PROLOGUE_2( "smalltalk_at_put", key, value );
 
     BlockScavenge  bs;
-    AssociationOop assoc = oopFactory::new_association( SymbolOop( key ), value, false );
+    AssociationOop assoc = OopFactory::new_association( SymbolOop( key ), value, false );
     Universe::add_global( assoc );
     return assoc;
 }
@@ -367,16 +367,16 @@ PRIM_DECL_2( SystemPrimitives::smalltalk_at_put, Oop key, Oop value ) {
 PRIM_DECL_1( SystemPrimitives::smalltalk_remove_at, Oop index ) {
     PROLOGUE_1( "smalltalk_remove_at", index );
 
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not Universe::systemDictionaryObject()->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not Universe::systemDictionaryObject()->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     BlockScavenge bs;
 
-    AssociationOop assoc = AssociationOop( Universe::systemDictionaryObject()->obj_at( SMIOop( index )->value() ) );
-    Universe::remove_global_at( SMIOop( index )->value() );
+    AssociationOop assoc = AssociationOop( Universe::systemDictionaryObject()->obj_at( SmallIntegerOop( index )->value() ) );
+    Universe::remove_global_at( SmallIntegerOop( index )->value() );
     return assoc;
 }
 
@@ -396,7 +396,7 @@ PRIM_DECL_0( SystemPrimitives::smalltalk_array ) {
 PRIM_DECL_0( SystemPrimitives::quit ) {
     PROLOGUE_0( "quit" );
     exit( EXIT_SUCCESS );
-    return badOop;
+    return MarkOopDescriptor::bad();
 }
 
 
@@ -426,7 +426,7 @@ PRIM_DECL_1( SystemPrimitives::defWindowProc, Oop resultProxy ) {
     if ( not resultProxy->is_proxy() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     SPDLOG_INFO( "Please use the new Platform DLLLookup system to retrieve DefWindowProcA" );
-    dll_func_ptr_t func = DLLs::lookup( oopFactory::new_symbol( "user" ), oopFactory::new_symbol( "DefWindowProcA" ) );
+    dll_func_ptr_t func = DLLs::lookup( OopFactory::new_symbol( "user" ), OopFactory::new_symbol( "DefWindowProcA" ) );
     ProxyOop( resultProxy )->set_pointer( (void *) func );
     return resultProxy;
 }
@@ -460,12 +460,12 @@ PRIM_DECL_1( SystemPrimitives::characterFor, Oop value ) {
     PROLOGUE_1( "characterFor", value );
 
     // check value type
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( (std::uint32_t) SMIOop( value )->value() < 256 )
+    if ( (std::uint32_t) SmallIntegerOop( value )->value() < 256 )
         // return the n+1'th element in asciiCharacter
-        return Universe::asciiCharacters()->obj_at( SMIOop( value )->value() + 1 );
+        return Universe::asciiCharacters()->obj_at( SmallIntegerOop( value )->value() + 1 );
     else
         return markSymbol( vmSymbols::out_of_bounds() );
 }
@@ -536,14 +536,14 @@ PRIM_DECL_1( SystemPrimitives::notificationQueuePut, Oop value ) {
 
 PRIM_DECL_1( SystemPrimitives::hadNearDeathExperience, Oop value ) {
     PROLOGUE_1( "hadNearDeathExperience", value );
-    return ( value->is_mem() and MemOop( value )->mark()->is_near_death() ) ? trueObject : falseObject;
+    return ( value->isMemOop() and MemOop( value )->mark()->is_near_death() ) ? trueObject : falseObject;
 }
 
 
 PRIM_DECL_2( SystemPrimitives::dll_setup, Oop receiver, Oop selector ) {
     PROLOGUE_2( "dll_setup", receiver, selector );
 
-    if ( not selector->is_symbol() )
+    if ( not selector->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     if ( SymbolOop( selector )->number_of_arguments() not_eq 2 )
@@ -557,7 +557,7 @@ PRIM_DECL_2( SystemPrimitives::dll_setup, Oop receiver, Oop selector ) {
 PRIM_DECL_3( SystemPrimitives::dll_lookup, Oop name, Oop library, Oop result ) {
     PROLOGUE_3( "dll_lookup", name, library, result );
 
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     if ( not library->is_proxy() )
@@ -579,7 +579,7 @@ PRIM_DECL_3( SystemPrimitives::dll_lookup, Oop name, Oop library, Oop result ) {
 PRIM_DECL_2( SystemPrimitives::dll_load, Oop name, Oop library ) {
     PROLOGUE_2( "dll_load", name, library );
 
-    if ( not name->is_symbol() )
+    if ( not name->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     if ( not library->is_proxy() )
@@ -608,7 +608,7 @@ PRIM_DECL_1( SystemPrimitives::dll_unload, Oop library ) {
 
 PRIM_DECL_0( SystemPrimitives::inlining_database_directory ) {
     PROLOGUE_0( "inlining_database_directory" );
-    return oopFactory::new_symbol( InliningDatabase::directory() );
+    return OopFactory::new_symbol( InliningDatabase::directory() );
 }
 
 
@@ -616,14 +616,14 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_set_directory, Oop name ) {
     PROLOGUE_1( "inlining_database_set_directory", name );
 
     // Check type on argument
-    if ( not name->is_byteArray() and not name->is_doubleByteArray() )
+    if ( not name->isByteArray() and not name->isDoubleByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ResourceMark resourceMark;
 
-    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len  = name->isByteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char         *str = new_c_heap_array<char>( len + 1 );
-    name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
+    name->isByteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
     // Potential memory leak, but this is temporary
     InliningDatabase::set_directory( str );
     return trueObject;
@@ -654,14 +654,14 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_compile, Oop file_name ) {
     PROLOGUE_1( "inlining_database_compile", file_name );
 
     // Check type on argument
-    if ( not file_name->is_byteArray() and not file_name->is_doubleByteArray() )
+    if ( not file_name->isByteArray() and not file_name->isDoubleByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ResourceMark resourceMark;
 
-    std::int32_t len  = file_name->is_byteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
+    std::int32_t len  = file_name->isByteArray() ? ByteArrayOop( file_name )->length() : DoubleByteArrayOop( file_name )->length();
     char         *str = new_resource_array<char>( len + 1 );
-    file_name->is_byteArray() ? ByteArrayOop( file_name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( file_name )->copy_null_terminated( str, len + 1 );
+    file_name->isByteArray() ? ByteArrayOop( file_name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( file_name )->copy_null_terminated( str, len + 1 );
 
     RecompilationScope *rs = InliningDatabase::file_in( str );
     if ( rs ) {
@@ -715,30 +715,30 @@ PRIM_DECL_1( SystemPrimitives::inlining_database_mangle, Oop name ) {
     PROLOGUE_1( "inlining_database_mangle", name );
 
     // Check type on argument
-    if ( not name->is_byteArray() and not name->is_doubleByteArray() )
+    if ( not name->isByteArray() and not name->isDoubleByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ResourceMark resourceMark;
 
-    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len  = name->isByteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char         *str = new_resource_array<char>( len + 1 );
-    name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
-    return oopFactory::new_byteArray( InliningDatabase::mangle_name( str ) );
+    name->isByteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
+    return OopFactory::new_byteArray( InliningDatabase::mangle_name( str ) );
 }
 
 
 PRIM_DECL_1( SystemPrimitives::inlining_database_demangle, Oop name ) {
     PROLOGUE_1( "inlining_database_demangle", name );
     // Check type on argument
-    if ( not name->is_byteArray() and not name->is_doubleByteArray() )
+    if ( not name->isByteArray() and not name->isDoubleByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ResourceMark resourceMark;
 
-    std::int32_t len  = name->is_byteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
+    std::int32_t len  = name->isByteArray() ? ByteArrayOop( name )->length() : DoubleByteArrayOop( name )->length();
     char         *str = new_resource_array<char>( len + 1 );
-    name->is_byteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
-    return oopFactory::new_byteArray( InliningDatabase::unmangle_name( str ) );
+    name->isByteArray() ? ByteArrayOop( name )->copy_null_terminated( str, len + 1 ) : DoubleByteArrayOop( name )->copy_null_terminated( str, len + 1 );
+    return OopFactory::new_byteArray( InliningDatabase::unmangle_name( str ) );
 }
 
 
@@ -750,7 +750,7 @@ PRIM_DECL_2( SystemPrimitives::inlining_database_add_entry, Oop receiver_class, 
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // Check type of argument
-    if ( not method_selector->is_symbol() )
+    if ( not method_selector->isSymbol() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     LookupKey key( KlassOop( receiver_class ), method_selector );
@@ -768,7 +768,7 @@ PRIM_DECL_0( SystemPrimitives::sliding_system_average ) {
 //    std::uint32_t * array = SlidingSystemAverage::update();
     std::array<std::uint32_t, SlidingSystemAverage::number_of_cases> _array = SlidingSystemAverage::update();
 
-    ObjectArrayOop result = oopFactory::new_objArray( SlidingSystemAverage::number_of_cases - 1 );
+    ObjectArrayOop result = OopFactory::new_objectArray( SlidingSystemAverage::number_of_cases - 1 );
 
     for ( std::int32_t i = 1; i < SlidingSystemAverage::number_of_cases; i++ ) {
         result->obj_at_put( i, smiOopFromValue( _array[ i ] ) );
@@ -824,17 +824,17 @@ PRIM_DECL_2( SystemPrimitives::instances_of, Oop klass, Oop limit ) {
     if ( not klass->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not limit->is_smi() )
+    if ( not limit->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
     ResourceMark  rm;
 
-    InstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
+    InstancesOfClosure blk( KlassOop( klass ), SmallIntegerOop( limit )->value() );
     Universe::object_iterate( &blk );
 
     std::int32_t   length = blk._result->length();
-    ObjectArrayOop result = oopFactory::new_objArray( length );
+    ObjectArrayOop result = OopFactory::new_objectArray( length );
 
     for ( std::int32_t i = 1; i <= length; i++ ) {
         result->obj_at_put( i, blk._result->at( i - 1 ) );
@@ -930,18 +930,18 @@ PRIM_DECL_2( SystemPrimitives::references_to, Oop obj, Oop limit ) {
     PROLOGUE_2( "references_to", obj, limit );
 
     // Check type of argument
-    if ( not limit->is_smi() ) {
+    if ( not limit->isSmallIntegerOop() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     }
 
     BlockScavenge bs;
     ResourceMark  rm;
 
-    ReferencesToClosure blk( obj, SMIOop( limit )->value() );
+    ReferencesToClosure blk( obj, SmallIntegerOop( limit )->value() );
     Universe::object_iterate( &blk );
 
     std::int32_t       length = blk._result->length();
-    ObjectArrayOop     result = oopFactory::new_objArray( length );
+    ObjectArrayOop     result = OopFactory::new_objectArray( length );
     for ( std::int32_t index  = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
     }
@@ -1028,17 +1028,17 @@ PRIM_DECL_2( SystemPrimitives::references_to_instances_of, Oop klass, Oop limit 
     if ( not klass->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( not limit->is_smi() )
+    if ( not limit->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     BlockScavenge bs;
     ResourceMark  rm;
 
-    ReferencesToInstancesOfClosure blk( KlassOop( klass ), SMIOop( limit )->value() );
+    ReferencesToInstancesOfClosure blk( KlassOop( klass ), SmallIntegerOop( limit )->value() );
     Universe::object_iterate( &blk );
 
     std::int32_t   length = blk._result->length();
-    ObjectArrayOop result = oopFactory::new_objArray( length );
+    ObjectArrayOop result = OopFactory::new_objectArray( length );
 
     for ( std::int32_t index = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
@@ -1084,18 +1084,18 @@ PRIM_DECL_1( SystemPrimitives::all_objects, Oop limit ) {
     PROLOGUE_1( "all_objects", limit );
 
     // Check type of argument
-    if ( not limit->is_smi() ) {
+    if ( not limit->isSmallIntegerOop() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     }
 
     BlockScavenge bs;
     ResourceMark  rm;
 
-    AllObjectsClosure blk( SMIOop( limit )->value() );
+    AllObjectsClosure blk( SmallIntegerOop( limit )->value() );
     Universe::object_iterate( &blk );
 
     std::int32_t   length = blk._result->length();
-    ObjectArrayOop result = oopFactory::new_objArray( length );
+    ObjectArrayOop result = OopFactory::new_objectArray( length );
 
     for ( std::int32_t index = 1; index <= length; index++ ) {
         result->obj_at_put( index, blk._result->at( index - 1 ) );
@@ -1125,11 +1125,11 @@ PRIM_DECL_0( SystemPrimitives::command_line_args ) {
     std::int32_t argc   = os::argc();
     char         **argv = os::argv();
 
-    ObjectArrayOop result = oopFactory::new_objArray( argc );
+    ObjectArrayOop result = OopFactory::new_objectArray( argc );
     result->set_length( argc );
 
     for ( std::int32_t i = 0; i < argc; i++ ) {
-        ByteArrayOop arg = oopFactory::new_byteArray( argv[ i ] );
+        ByteArrayOop arg = OopFactory::new_byteArray( argv[ i ] );
         result->obj_at_put( i + 1, arg );
     }
 
@@ -1145,7 +1145,7 @@ PRIM_DECL_0( SystemPrimitives::current_thread_id ) {
 
 PRIM_DECL_0( SystemPrimitives::object_memory_size ) {
     PROLOGUE_0( "object_memory_size" );
-    return oopFactory::new_double( double( Universe::old_gen.used() ) / Universe::old_gen.capacity() );
+    return OopFactory::new_double( double( Universe::old_gen.used() ) / Universe::old_gen.capacity() );
 }
 
 
@@ -1164,10 +1164,10 @@ PRIM_DECL_0( SystemPrimitives::nurseryFreeSpace ) {
 PRIM_DECL_1( SystemPrimitives::alienMalloc, Oop size ) {
     PROLOGUE_0( "alienMalloc" );
 
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    std::int32_t theSize = SMIOop( size )->value();
+    std::int32_t theSize = SmallIntegerOop( size )->value();
     if ( theSize <= 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
@@ -1177,28 +1177,28 @@ PRIM_DECL_1( SystemPrimitives::alienMalloc, Oop size ) {
 
 PRIM_DECL_1( SystemPrimitives::alienCalloc, Oop size ) {
     PROLOGUE_0( "alienCalloc" );
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    std::int32_t theSize = SMIOop( size )->value();
+    std::int32_t theSize = SmallIntegerOop( size )->value();
     if ( theSize <= 0 )
         return markSymbol( vmSymbols::argument_is_invalid() );
 
-    return smiOopFromValue( (std::int32_t) calloc( SMIOop( size )->value(), 1 ) );
+    return smiOopFromValue( (std::int32_t) calloc( SmallIntegerOop( size )->value(), 1 ) );
 }
 
 
 PRIM_DECL_1( SystemPrimitives::alienFree, Oop address ) {
     PROLOGUE_0( "alienFree" );
 
-    if ( not address->is_smi() and not( address->is_byteArray() and address->klass() == Universe::find_global( "LargeInteger" ) ) )
+    if ( not address->isSmallIntegerOop() and not( address->isByteArray() and address->klass() == Universe::find_global( "LargeInteger" ) ) )
         return markSymbol( vmSymbols::argument_has_wrong_type() );
 
-    if ( address->is_smi() ) {
-        if ( SMIOop( address )->value() == 0 )
+    if ( address->isSmallIntegerOop() ) {
+        if ( SmallIntegerOop( address )->value() == 0 )
             return markSymbol( vmSymbols::argument_is_invalid() );
 
-        free( (void *) SMIOop( address )->value() );
+        free( (void *) SmallIntegerOop( address )->value() );
 
     } else { // LargeInteger
         BlockScavenge bs;

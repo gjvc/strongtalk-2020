@@ -707,7 +707,7 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoin
 }
 
 
-InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_smi, PseudoRegister *arg2, bool arg2_is_smi ) :
+InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_SmallInteger, PseudoRegister *arg2, bool arg2_is_SmallInteger ) :
 //    _dest{ result },
 //    _src{ recv },
     _operation{ op },
@@ -717,8 +717,8 @@ InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result
     _arg2{ arg2 },
     _arg1_use{ nullptr },
     _arg2_use{ nullptr },
-    _arg1_is_smi{ arg1_is_smi },
-    _arg2_is_smi{ arg2_is_smi } {
+    _arg1_is_SmallInteger{ arg1_is_SmallInteger },
+    _arg2_is_SmallInteger{ arg2_is_SmallInteger } {
 
     _dest = result;
     _src  = recv;
@@ -734,9 +734,9 @@ bool InlinedPrimitiveNode::canFail() const {
         case Operation::OBJ_HASH:
             return false;
         case Operation::PROXY_BYTE_AT:
-            return not arg1_is_smi();
+            return not arg1_is_SmallInteger();
         case Operation::PROXY_BYTE_AT_PUT:
-            return not arg1_is_smi() or not arg2_is_smi();
+            return not arg1_is_SmallInteger() or not arg2_is_SmallInteger();
         default:
             return false;
     };
@@ -1860,7 +1860,7 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *rr, bool rem, bool
         return;
 
     eliminate( bb, rr, (ConstPseudoRegister *)
-        nullptr, (KlassOop) badOop );
+        nullptr, (KlassOop) MarkOopDescriptor::bad() );
 }
 
 
@@ -1890,9 +1890,9 @@ void TypeTestNode::eliminate( BasicBlock *bb, PseudoRegister *r, ConstPseudoRegi
         succ->removePrev( this );
     }
 
-    if ( keep or theKlass == KlassOop( badOop ) ) {
+    if ( keep or theKlass == KlassOop( MarkOopDescriptor::bad() ) ) {
         // found correct prediction, so can delete unknown branch, or
-        // delete everything (theKlass == badOop)
+        // delete everything (theKlass == MarkOopDescriptor::bad())
         _next = un;
         un->removeUpToMerge();    // delete unknown branch
         _next = nullptr;
@@ -2352,7 +2352,7 @@ bool TArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, b
                 return false;
             default           : st_fatal1( "unknown tagged opcode %ld", _op );
         }
-        bool ok = not result->is_mark();
+        bool ok = not result->isMarkOop();
         if ( ok ) {
             // constant-fold this operation
             if ( CompilerDebug ) {
@@ -2398,12 +2398,12 @@ bool TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d,
     bool res{ false };
 
     if ( u == _srcUse ) {
-        if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->is_smi() )
+        if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->isSmallIntegerOop() )
             _arg1IsInt = true;
         CP_HELPER( _src, _srcUse, res = );
 
     } else if ( u == _operUse ) {
-        if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->is_smi() )
+        if ( d->isConstPseudoRegister() and ( (ConstPseudoRegister *) d )->constant->isSmallIntegerOop() )
             _arg2IsInt = true;
         CP_HELPER( _oper, _operUse, res = );
 
@@ -2417,7 +2417,7 @@ bool TArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d,
 
 
 bool FloatArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
-    if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->is_double() ) {
+    if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->isDouble() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
@@ -2428,7 +2428,7 @@ bool FloatArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
 
 
 bool FloatUnaryArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
-    if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->is_double() ) {
+    if ( d->isConstPseudoRegister() and not( (ConstPseudoRegister *) d )->constant->isDouble() ) {
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
@@ -2819,7 +2819,7 @@ void ArrayAtPutNode::computeEscapingBlocks( GrowableArray<BlockPseudoRegister *>
 // ==================================================================================
 
 bool TypeTestNode::needsKlassLoad() const {
-    // a test needs a klass load if it tests for any non-smi_t/bool/nil klass
+    // a test needs a klass load if it tests for any non-small_int_t/bool/nil klass
     const std::int32_t len = _hasUnknown ? _classes->length() : _classes->length() - 1;
     for ( std::int32_t i   = 0; i < len; i++ ) {
         KlassOop klass = _classes->at( i );
@@ -2931,7 +2931,7 @@ void LoopHeaderNode::addRegisterCandidate( LoopPseudoRegisterCandidate *c ) {
 }
 
 
-bool is_smi_type( GrowableArray<KlassOop> *klasses ) {
+bool is_SmallInteger_type( GrowableArray<KlassOop> *klasses ) {
     return klasses->length() == 1 and klasses->at( 0 ) == smiKlassObject;
 }
 
@@ -2945,7 +2945,7 @@ GrowableArray<KlassOop> *make_smi_type() {
 
 void StoreNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
     static_cast<void>(n); // unused
-    if ( is_smi_type( klasses ) and r == src() ) {
+    if ( is_SmallInteger_type( klasses ) and r == src() ) {
         if ( CompilerDebug )
             cout( PrintLoopOpts )->print( "*removing store check from N%d\n", id() );
         setStoreCheck( false );
@@ -2966,7 +2966,7 @@ void AbstractArrayAtNode::assert_in_bounds( PseudoRegister *r, LoopHeaderNode *n
 
 void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
 > &klasses ) const {
-// ArrayAt node tests index for smi_t-ness
+// ArrayAt node tests index for small_int_t-ness
     regs.
         append( _arg );
     klasses.
@@ -2975,7 +2975,7 @@ void AbstractArrayAtNode::collectTypeTests( GrowableArray<PseudoRegister *> &reg
 
 
 void AbstractArrayAtNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
-    if ( is_smi_type( klasses ) and r == _arg ) {
+    if ( is_SmallInteger_type( klasses ) and r == _arg ) {
         if ( CompilerDebug and not _intArg )
             cout( PrintLoopOpts )->print( "*removing index tag check from N%d\n", id() );
         _intArg = true;
@@ -2989,7 +2989,7 @@ void AbstractArrayAtNode::assert_pseudoRegister_type( PseudoRegister *r, Growabl
 
 void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
 > &klasses ) const {
-// atPut node tests element for smi_t-ness if character array
+// atPut node tests element for small_int_t-ness if character array
     AbstractArrayAtNode::collectTypeTests( regs, klasses
     );
     if (
@@ -2998,19 +2998,19 @@ void ArrayAtPutNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, Gr
         regs.
             append( elem );
 
-        st_assert( klasses.first()->first() == smiKlassObject, "must be smi_t type for index" );
+        st_assert( klasses.first()->first() == smiKlassObject, "must be small_int_t type for index" );
 
         klasses.
             append( klasses
                         .
                             first()
-        );    /* reuse smi_t type descriptor*/
+        );    /* reuse small_int_t type descriptor*/
     }
 }
 
 
 void ArrayAtPutNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
-    if ( is_smi_type( klasses ) and r == elem ) {
+    if ( is_SmallInteger_type( klasses ) and r == elem ) {
         if ( CompilerDebug and _needs_store_check )
             cout( PrintLoopOpts )->print( "*removing array store check from N%d\n", id() );
         _needs_store_check = false;
@@ -3023,7 +3023,7 @@ void ArrayAtPutNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArra
 
 void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, GrowableArray<GrowableArray<KlassOop> *
 > &klasses ) const {
-// tests receiver and/or arg for smi_t-ness
+// tests receiver and/or arg for small_int_t-ness
     if (
         canFail()
         ) {
@@ -3047,13 +3047,13 @@ void TArithRRNode::collectTypeTests( GrowableArray<PseudoRegister *> &regs, Grow
 void TArithRRNode::assert_pseudoRegister_type( PseudoRegister *r, GrowableArray<KlassOop> *klasses, LoopHeaderNode *n ) {
     static_cast<void>(n); // unused
 
-    if ( is_smi_type( klasses ) and r == _src ) {
+    if ( is_SmallInteger_type( klasses ) and r == _src ) {
         if ( CompilerDebug and not _arg1IsInt )
             cout( PrintLoopOpts )->print( "*removing arith arg1 tag check from N%d\n", id() );
         _arg1IsInt = true;
     }
 
-    if ( is_smi_type( klasses ) and r == _oper ) {
+    if ( is_SmallInteger_type( klasses ) and r == _oper ) {
         if ( CompilerDebug and not _arg2IsInt )
             cout( PrintLoopOpts )->print( "*removing arith arg2 tag check from N%d\n", id() );
         _arg2IsInt = true;

@@ -17,7 +17,7 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/Handle.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 #include <gtest/gtest.h>
@@ -33,12 +33,16 @@
   }
 
 #define checkClass( classHandle ) {\
-    EXPECT_TRUE( classHandle->as_oop()->is_mem() ) << "Should be MemOop";\
+    EXPECT_TRUE( classHandle->as_oop()->isMemOop() ) << "Should be MemOop";\
     EXPECT_TRUE( Universe::really_contains( classHandle->as_oop() ) ) << "Should be in Universe";\
   }
 
 
 class BehaviorPrimitivesSuperclassTests : public ::testing::Test {
+
+public:
+    BehaviorPrimitivesSuperclassTests() : ::testing::Test() {}
+
 
 protected:
     void SetUp() override {
@@ -48,10 +52,10 @@ protected:
         delayClassHandle     = new PersistentHandle( Universe::find_global( "Delay" ) );
         metaclassClassHandle = new PersistentHandle( Universe::find_global( "Metaclass" ) );
         classMetaclass       = new PersistentHandle( classClassHandle->as_klassOop()->klass_part()->superKlass() );
-        subclassName         = new PersistentHandle( oopFactory::new_symbol( "BehaviorPrimsSubclassFixture" ) );
-        superclassName       = new PersistentHandle( oopFactory::new_symbol( "BehaviorPrimsSuperclassFixture" ) );
-        topClassName         = new PersistentHandle( oopFactory::new_symbol( "BehaviorPrimsTopClassFixture" ) );
-        delaySubclassName    = new PersistentHandle( oopFactory::new_symbol( "BehaviorPrimsDelayFixture" ) );
+        subclassName         = new PersistentHandle( OopFactory::new_symbol( "BehaviorPrimsSubclassFixture" ) );
+        superclassName       = new PersistentHandle( OopFactory::new_symbol( "BehaviorPrimsSuperclassFixture" ) );
+        topClassName         = new PersistentHandle( OopFactory::new_symbol( "BehaviorPrimsTopClassFixture" ) );
+        delaySubclassName    = new PersistentHandle( OopFactory::new_symbol( "BehaviorPrimsDelayFixture" ) );
 
         checkDoesntExist( superclassName );
         checkDoesntExist( subclassName );
@@ -122,10 +126,10 @@ protected:
 
     MixinOop createMixinSide( const char *mixinClassName ) {
         PersistentHandle classHandle( Universe::find_global( mixinClassName ) );
-        PersistentHandle methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle ivars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle classMethods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
-        PersistentHandle classVars( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        PersistentHandle methods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle ivars( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle classMethods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
+        PersistentHandle classVars( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
 
         MixinOop mixin = MixinOop( classHandle.as_klassOop()->klass_part()->allocateObject() );
         mixin->set_methods( ObjectArrayOop( methods.as_oop() ) );
@@ -146,7 +150,7 @@ protected:
         }
 
         PersistentHandle classNameHandle( className );
-        SymbolOop        format = oopFactory::new_symbol( "Oops" );
+        SymbolOop        format = OopFactory::new_symbol( "Oops" );
         MixinOop         mixin  = createEmptyMixin();
         return KlassOop( SystemPrimitives::createNamedInvocation( format, superclassHandle.as_oop(), trueObject, className, mixin ) );
     }
@@ -169,7 +173,7 @@ protected:
         const char   *name     = className->as_string();
 
         if ( Universe::find_global( name ) )
-            Delta::call( delta->as_oop(), oopFactory::new_symbol( "removeKey:" ), className );
+            Delta::call( delta->as_oop(), OopFactory::new_symbol( "removeKey:" ), className );
     }
 
 
@@ -221,14 +225,14 @@ protected:
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         ResourceMark resourceMark;
         char         text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "%s. Should be: %s, was: %s", message, expected->as_string(), unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
 
 
     void checkNotMarkedSymbol( Oop result ) {
-        if ( !result->is_mark() )
+        if ( !result->isMarkOop() )
             return;
         ResourceMark resourceMark;
         char         text[200];
@@ -283,13 +287,13 @@ TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldNotChangeSuperclas
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenReceiverNotAClass ) {
-    Oop result = BehaviorPrimitives::setSuperclass( superclass(), oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    Oop result = BehaviorPrimitives::setSuperclass( superclass(), OopFactory::new_objectArray( std::int32_t{ 0 } ) );
     checkMarkedSymbol( "Should report error", result, vmSymbols::receiver_has_wrong_type() );
 }
 
 
 TEST_F( BehaviorPrimitivesSuperclassTests, setSuperclassShouldReportErrorWhenNewSuperclassNotAClass ) {
-    Oop result = BehaviorPrimitives::setSuperclass( oopFactory::new_objArray( std::int32_t{ 0 } ), subclass() );
+    Oop result = BehaviorPrimitives::setSuperclass( OopFactory::new_objectArray( std::int32_t{ 0 } ), subclass() );
     checkMarkedSymbol( "Should report error", result, vmSymbols::first_argument_has_wrong_type() );
 }
 

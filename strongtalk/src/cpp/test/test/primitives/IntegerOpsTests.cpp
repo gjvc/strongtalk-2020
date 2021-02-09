@@ -76,6 +76,10 @@
 
 class IntegerOpsTests : public ::testing::Test {
 
+public:
+    IntegerOpsTests() : ::testing::Test() {}
+
+
 protected:
     void SetUp() override {
         rm = new HeapResourceMark();

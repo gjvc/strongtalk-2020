@@ -17,6 +17,9 @@ extern "C" Oop *eden_end;
 
 class DoubleKlassTests : public ::testing::Test {
 
+public:
+    DoubleKlassTests() : ::testing::Test() {}
+
 protected:
     void SetUp() override {
         theClass   = KlassOop( Universe::find_global( "Float" ) );

@@ -15,7 +15,7 @@ bool DoubleValueArrayOopDescriptor::verify() {
     if ( flag ) {
         std::int32_t l = length();
         if ( l < 0 ) {
-            error( "doubleValueArrayOop 0x{0:x} has negative length", this );
+            error( "DoubleValueArrayOop 0x{0:x} has negative length", this );
             flag = false;
         }
     }

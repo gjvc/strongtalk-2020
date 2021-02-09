@@ -95,7 +95,7 @@ void MixinOopDescriptor::add_instVar( SymbolOop name ) {
     ObjectArrayOop     old_array = instVars();
     // Find out if it already exists.
     for ( std::int32_t index     = 1; index <= old_array->length(); index++ ) {
-        st_assert( old_array->obj_at( index )->is_symbol(), "must be symbol" );
+        st_assert( old_array->obj_at( index )->isSymbol(), "must be symbol" );
         if ( old_array->obj_at( index ) == name )
             return;
     }

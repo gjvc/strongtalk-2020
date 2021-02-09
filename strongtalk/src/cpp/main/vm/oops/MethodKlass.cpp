@@ -326,7 +326,7 @@ MethodOop MethodKlass::constructMethod( Oop selector_or_method, std::int32_t fla
 
         if ( copyOop ) {
             Oop value = tenured( oops->obj_at( i ) );
-            st_assert( value->is_smi() or value->is_old(), "literal must be tenured" );
+            st_assert( value->isSmallIntegerOop() or value->is_old(), "literal must be tenured" );
             method->oop_at_put( bc_index, value );
         }
     }

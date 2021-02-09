@@ -76,7 +76,7 @@ private:
 
     // Known classes in the VM
     static KlassOop _memOopKlassObject;
-    static KlassOop _objArrayKlassObject;
+    static KlassOop _objectArrayKlassObject;
     static KlassOop _byteArrayKlassObject;
     static KlassOop _associationKlassObject;
     static KlassOop _doubleKlassObject;
@@ -107,7 +107,7 @@ public:
     static KlassOop contextKlassObject();
     static KlassOop doubleKlassObject();
     static KlassOop memOopKlassObject();
-    static KlassOop objArrayKlassObject();
+    static KlassOop objectArrayKlassObject();
     static KlassOop byteArrayKlassObject();
     static KlassOop symbolKlassObject();
     static KlassOop associationKlassObject();
@@ -180,7 +180,7 @@ public:
     }
 
 
-    // Check root is not badOop
+    // Check root is not MarkOopDescriptor::bad()
     static void check_root( Oop *p );
 
     // Iterates over roots defined in Universe
@@ -330,8 +330,8 @@ public:
 public:
 
     // operations: we need extras because of include file orderings
-    static void store( Oop *p, SMIOop contents ) {
-        *(SMIOop *) p = contents;
+    static void store( Oop *p, SmallIntegerOop contents ) {
+        *(SmallIntegerOop *) p = contents;
     }
 
 

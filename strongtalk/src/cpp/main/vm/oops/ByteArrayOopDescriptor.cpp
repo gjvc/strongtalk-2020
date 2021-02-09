@@ -42,8 +42,8 @@ char *ByteArrayOopDescriptor::copy_null_terminated( std::int32_t &Clength ) {
         return res;                   // Simple case, no '\0' in byte array.
 
     // Simple case failed ...
-    smi_t t = length();               // Copy and 'escape' null chars.
-//    smi_t              i;
+    small_int_t t = length();               // Copy and 'escape' null chars.
+//    small_int_t              i;
 
     for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) == '\0' ) {
@@ -74,8 +74,8 @@ char *ByteArrayOopDescriptor::copy_c_heap_null_terminated() {
     // NOTE: The resulting string is allocated in Cheap
 
     st_assert_byteArray( this, "should be a byte array" );
-    smi_t t = length();               // Copy and 'escape' null chars.
-//    smi_t              i;
+    small_int_t t = length();               // Copy and 'escape' null chars.
+//    small_int_t              i;
 
     for ( std::int32_t i = length() - 1; i >= 0; i-- ) {
         if ( byte_at( i ) == '\0' ) {
@@ -161,8 +161,8 @@ std::int32_t ByteArrayOopDescriptor::compare( ByteArrayOop arg ) {
     const std::uint32_t *b = (std::uint32_t *) arg->length_addr();
 
     // Get the word sizes of the arays
-    std::int32_t a_size = roundTo( SMIOop( *a++ )->value() * sizeof( char ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
-    std::int32_t b_size = roundTo( SMIOop( *b++ )->value() * sizeof( char ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
+    std::int32_t a_size = roundTo( SmallIntegerOop( *a++ )->value() * sizeof( char ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
+    std::int32_t b_size = roundTo( SmallIntegerOop( *b++ )->value() * sizeof( char ), sizeof( std::int32_t ) ) / sizeof( std::int32_t );
 
     const std::uint32_t *a_end = a + min( a_size, b_size );
     while ( a < a_end ) {

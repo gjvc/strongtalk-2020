@@ -23,7 +23,7 @@ bool InliningPolicy::shouldNotInline() const {
 
 
 bool InliningPolicy::isCriticalSmiSelector( const SymbolOop sel ) {
-    // true if performance-critical smi_t method in standard library
+    // true if performance-critical small_int_t method in standard library
     // could also handle these by putting a bit in the methodOops
     return sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() or sel == vmSymbols::mod() or sel == vmSymbols::equal() or sel == vmSymbols::not_equal() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than_or_equal() or sel == vmSymbols::greater_than() or sel == vmSymbols::greater_than_or_equal() or sel == vmSymbols::double_equal() or sel == vmSymbols::bitAnd_() or sel == vmSymbols::bitOr_() or sel == vmSymbols::bitXor_() or sel == vmSymbols::bitShift_() or sel == vmSymbols::bitInvert();
 }
@@ -85,7 +85,7 @@ bool InliningPolicy::isPredictedBoolSelector( const SymbolOop sel ) {
 
 
 bool InliningPolicy::isInterpreterPredictedSmiSelector( const SymbolOop sel ) {
-    // true if performance-critical smi_t method in standard library
+    // true if performance-critical small_int_t method in standard library
     // could also handle these by putting a bit in the methodOops
     return sel == vmSymbols::plus() or sel == vmSymbols::minus() or sel == vmSymbols::multiply() or sel == vmSymbols::divide() or sel == vmSymbols::mod() or sel == vmSymbols::equal() or sel == vmSymbols::not_equal() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than() or sel == vmSymbols::less_than_or_equal() or sel == vmSymbols::greater_than() or sel == vmSymbols::greater_than_or_equal();
 }
@@ -114,7 +114,7 @@ bool InliningPolicy::isBuiltinMethod() const {
     if ( isNum and isCriticalSmiSelector( sel ) )
         return true;
 
-    const bool isArr = klass == Universe::objArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
+    const bool isArr = klass == Universe::objectArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
     if ( isArr and isCriticalArraySelector( sel ) )
         return true;
 

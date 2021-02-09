@@ -24,7 +24,7 @@ Thread           *vmThread;
 
 
 Oop newProcess() {
-    return Delta::call( Universe::find_global( "Process" ), oopFactory::new_symbol( "new" ) );
+    return Delta::call( Universe::find_global( "Process" ), OopFactory::new_symbol( "new" ) );
 }
 
 

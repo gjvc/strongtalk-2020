@@ -8,7 +8,7 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/runtime/ResourceMark.hpp"
@@ -45,7 +45,7 @@ Oop Delta::call_generic( DeltaCallCache *ic, Oop receiver, Oop selector, std::in
         return _call_delta( ic->result().value(), receiver, nofArgs, args );
     }
 
-    if ( not selector->is_symbol() ) {
+    if ( not selector->isSymbol() ) {
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
     }
 
@@ -68,11 +68,11 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, std::int32_t n
         BlockScavenge      bs; // make sure that no scavenge happens
         KlassOop           msgKlass = KlassOop( Universe::find_global( "Message" ) );
         Oop                obj      = msgKlass->klass_part()->allocateObject();
-        ObjectArrayOop     args     = oopFactory::new_objArray( nofArgs );
+        ObjectArrayOop     args     = OopFactory::new_objectArray( nofArgs );
         for ( std::int32_t index    = 0; index < nofArgs; index++ )
             args->obj_at_put( index + 1, argArray[ index ] );
 
-        st_assert( obj->is_mem(), "just checkin'..." );
+        st_assert( obj->isMemOop(), "just checkin'..." );
         msg = MemOop( obj );
         // for now: assume instance variables are there...
         // later: should check this or use a VM interface:
@@ -82,7 +82,7 @@ Oop Delta::does_not_understand( Oop receiver, SymbolOop selector, std::int32_t n
         msg->raw_at_put( 2, receiver );
         msg->raw_at_put( 3, selector );
         msg->raw_at_put( 4, args );
-        sel = oopFactory::new_symbol( "doesNotUnderstand:" );
+        sel = OopFactory::new_symbol( "doesNotUnderstand:" );
         if ( interpreter_normal_lookup( receiver->klass(), sel ).is_empty() ) {
             // doesNotUnderstand: not found ==> process error
             {

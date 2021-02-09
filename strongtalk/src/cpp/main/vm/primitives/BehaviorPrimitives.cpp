@@ -13,7 +13,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/primitives/BehaviorPrimitives.hpp"
 
 
@@ -167,10 +167,10 @@ PRIM_DECL_2( BehaviorPrimitives::classVariableAt, Oop behavior, Oop index ) {
     PROLOGUE_2( "classVariableAt", behavior, index );
     if ( not behavior->is_klass() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
-    std::int32_t i = SMIOop( index )->value();
+    std::int32_t i = SmallIntegerOop( index )->value();
     if ( i > 0 and i <= KlassOop( behavior )->klass_part()->number_of_classVars() )
         return KlassOop( behavior )->klass_part()->classVar_at( i );
     return markSymbol( vmSymbols::out_of_bounds() );
@@ -189,7 +189,7 @@ PRIM_DECL_1( BehaviorPrimitives::classVariables, Oop behavior ) {
 PRIM_DECL_2( BehaviorPrimitives::printMethod, Oop receiver, Oop name ) {
     PROLOGUE_2( "printMethod", receiver, name );
     ASSERT_RECEIVER;
-    if ( not name->is_byteArray() )
+    if ( not name->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     MethodOop m = KlassOop( receiver )->klass_part()->lookup( SymbolOop( name ) );
@@ -373,7 +373,7 @@ PRIM_DECL_2( BehaviorPrimitives::methodFor, Oop receiver, Oop selector ) {
     PROLOGUE_2( "methodFor", receiver, selector );
     ASSERT_RECEIVER;
 
-    if ( not selector->is_symbol() )
+    if ( not selector->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     MethodOop m = KlassOop( receiver )->klass_part()->lookup( SymbolOop( selector ) );
@@ -389,7 +389,7 @@ PRIM_DECL_1( BehaviorPrimitives::format, Oop behavior ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     const char *format_name = Klass::name_from_format( KlassOop( behavior )->klass_part()->format() );
-    return oopFactory::new_symbol( format_name );
+    return OopFactory::new_symbol( format_name );
 }
 
 
@@ -405,17 +405,17 @@ PRIM_DECL_1( BehaviorPrimitives::vm_type, Oop behavior ) {
             return vmSymbols::mem_klass();
         case Klass::Format::association_klass:
             return vmSymbols::association_klass();
-        case Klass::Format::blockClosure_klass:
+        case Klass::Format::block_closure_klass:
             return vmSymbols::blockClosure_klass();
-        case Klass::Format::byteArray_klass:
+        case Klass::Format::byte_array_klass:
             return vmSymbols::byteArray_klass();
         case Klass::Format::symbol_klass:
             return vmSymbols::symbol_klass();
         case Klass::Format::context_klass:
             return vmSymbols::context_klass();
-        case Klass::Format::doubleByteArray_klass:
+        case Klass::Format::double_byte_array_klass:
             return vmSymbols::doubleByteArray_klass();
-        case Klass::Format::doubleValueArray_klass:
+        case Klass::Format::double_value_array_klass:
             return vmSymbols::doubleValueArray_klass();
         case Klass::Format::double_klass:
             return vmSymbols::double_klass();
@@ -425,13 +425,13 @@ PRIM_DECL_1( BehaviorPrimitives::vm_type, Oop behavior ) {
             return vmSymbols::method_klass();
         case Klass::Format::mixin_klass:
             return vmSymbols::mixin_klass();
-        case Klass::Format::objArray_klass:
-            return vmSymbols::objArray_klass();
-        case Klass::Format::weakArray_klass:
+        case Klass::Format::object_array_klass:
+            return vmSymbols::objectArray_klass();
+        case Klass::Format::weak_array_klass:
             return vmSymbols::weakArray_klass();
         case Klass::Format::process_klass:
             return vmSymbols::process_klass();
-        case Klass::Format::vframe_klass:
+        case Klass::Format::virtual_frame_klass:
             return vmSymbols::vframe_klass();
         case Klass::Format::proxy_klass:
             return vmSymbols::proxy_klass();

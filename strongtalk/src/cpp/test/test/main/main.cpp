@@ -9,7 +9,7 @@
 #include "vm/runtime/Delta.hpp"
 #include "vm/runtime/arguments.hpp"
 #include "vm/runtime/init.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/ProcessOopDescriptor.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
@@ -56,13 +56,13 @@ void initializeSmalltalkEnvironment() {
 
     AddTestProcess ap;
 
-    PersistentHandle _new( oopFactory::new_symbol( "new" ) );
-    PersistentHandle initialize( oopFactory::new_symbol( "initialize" ) );
-    PersistentHandle runBaseClassInitializers( oopFactory::new_symbol( "runBaseClassInitializers" ) );
+    PersistentHandle _new( OopFactory::new_symbol( "new" ) );
+    PersistentHandle initialize( OopFactory::new_symbol( "initialize" ) );
+    PersistentHandle runBaseClassInitializers( OopFactory::new_symbol( "runBaseClassInitializers" ) );
     PersistentHandle processorScheduler( Universe::find_global( "ProcessorScheduler" ) );
     PersistentHandle smalltalk( Universe::find_global( "Smalltalk" ) );
     PersistentHandle systemInitializer( Universe::find_global( "SystemInitializer" ) );
-    PersistentHandle forSeconds( oopFactory::new_symbol( "forSeconds:" ) );
+    PersistentHandle forSeconds( OopFactory::new_symbol( "forSeconds:" ) );
 
     PersistentHandle processor( Delta::call( processorScheduler.as_oop(), _new.as_oop() ) );
 

@@ -29,10 +29,10 @@ void PrimitiveDescriptor::print() {
     //
     switch ( group() ) {
         case PrimitiveGroup::IntComparisonPrimitive:
-            _console->print( "IntComparisonPrimitive / smi_t" );
+            _console->print( "IntComparisonPrimitive / small_int_t" );
             break;
         case PrimitiveGroup::IntArithmeticPrimitive:
-            _console->print( "IntArithmeticPrimitive / smi_t" );
+            _console->print( "IntArithmeticPrimitive / small_int_t" );
             break;
         case PrimitiveGroup::FloatComparisonPrimitive:
             _console->print( "FloatComparisonPrimitive" );
@@ -46,8 +46,8 @@ void PrimitiveDescriptor::print() {
         case PrimitiveGroup::DoubleByteArrayPrimitive:
             _console->print( "DoubleByteArrayPrimitive" );
             break;
-        case PrimitiveGroup::ObjArrayPrimitive:
-            _console->print( "ObjArrayPrimitive" );
+        case PrimitiveGroup::ObjectArrayPrimitive:
+            _console->print( "ObjectArrayPrimitive" );
             break;
         case PrimitiveGroup::BlockPrimitive:
             _console->print( "BlockPrimitive" );

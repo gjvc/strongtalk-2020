@@ -35,8 +35,8 @@
 // ------------------------ Type and value checking macros --------------------
 
 // Macro to verify the type of an Oop, and create a requalified Oop.
-// E.g. CHECKOOPTYPE(host, is_byteArray, ByteArrayOop, host1) expands to:
-//      if(not host->is_byteArray()) return primitive_error(BADTYPEERROR);
+// E.g. CHECKOOPTYPE(host, isByteArray, ByteArrayOop, host1) expands to:
+//      if(not host->isByteArray()) return primitive_error(BADTYPEERROR);
 //      ByteArrayOop host1 = ByteArrayOop(host);
 // Warning: does not wrap in '{' and '}'!
 
@@ -46,13 +46,13 @@
     newType newRef = newType(ref);
 
 
-// Check that ref is a SMIOop, and set up variable to hold value.
+// Check that ref is a SmallIntegerOop, and set up variable to hold value.
 // Warning: does not wrap in '{' and '}'!
 
 #define CHECKOOPSMI( ref, val )         \
-    if (not ref->is_smi())                  \
+    if (not ref->isSmallIntegerOop())                  \
       return primitive_error(BADTYPEERROR); \
-    smi val = SMIOop(ref)->value();
+    smi val = SmallIntegerOop(ref)->value();
 
 
 // Check that ref is either trueObject or falseObject. Set up boolean var corresp.

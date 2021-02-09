@@ -19,7 +19,7 @@
 #include "vm/interpreter/Interpreter.hpp"
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/recompiler/Recompilation.hpp"
 #include "vm/oops/ContextOopDescriptor.hpp"
 #include "vm/memory/Scavenge.hpp"
@@ -114,8 +114,8 @@ void StubRoutines::trace_DLL_call_1( dll_func_ptr_t function, Oop *last_argument
     for ( std::int32_t i = 1; i <= nof_arguments; i++, arg_ptr-- ) {
         Oop arg = *arg_ptr;
         _console->print( "%6d. ", i );
-        if ( arg->is_smi() ) {
-            SPDLOG_INFO( "smi_t   value = 0x%08x", static_cast<SMIOop>( arg )->value() );
+        if ( arg->isSmallIntegerOop() ) {
+            SPDLOG_INFO( "small_int_t   value = 0x%08x", static_cast<SmallIntegerOop>( arg )->value() );
 
         } else {
             SPDLOG_INFO( "proxy   value = 0x%08x  address = 0x%08x", static_cast<const void *>(arg), static_cast<const void *>( static_cast<ProxyOop>( arg )->get_pointer() ) );
@@ -374,9 +374,9 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     //
     // Note: Don't use this for MEGAMORPHIC super sends!
 
-    Label is_smi, probe_primary_cache, probe_secondary_cache, call_method, is_methodOop, do_lookup;
+    Label isSmallIntegerOop, probe_primary_cache, probe_secondary_cache, call_method, is_methodOop, do_lookup;
 
-    masm->bind( is_smi );                // smi_t case (assumed to be infrequent)
+    masm->bind( isSmallIntegerOop );                // small_int_t case (assumed to be infrequent)
     masm->movl( ecx, Address( (std::int32_t) &smiKlassObject, RelocationInformation::RelocationType::external_word_type ) );
     masm->jmp( probe_primary_cache );
 
@@ -386,8 +386,8 @@ const char *StubRoutines::generate_megamorphic_ic( MacroAssembler *masm ) {
     // tos + 8: last argument/receiver
     const char *entry_point = masm->pc();
     masm->popl( ebx );                // get return address (MIC cache)
-    masm->test( eax, MEMOOP_TAG );            // check if smi_t
-    masm->jcc( Assembler::Condition::zero, is_smi );        // if so, get smi_t class directly
+    masm->test( eax, MEMOOP_TAG );            // check if small_int_t
+    masm->jcc( Assembler::Condition::zero, isSmallIntegerOop );        // if so, get small_int_t class directly
     masm->movl( ecx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // otherwise, load receiver class
 
     // probe primary cache
@@ -649,9 +649,9 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
     masm->call( (const char *) wrong_DLL_call, RelocationInformation::RelocationType::runtime_call_type );
     masm->hlt();                                        // should never reach here
 
-    // smi_t argument -> convert it to std::int32_t
+    // small_int_t argument -> convert it to std::int32_t
     masm->bind( smi_argument );
-    masm->sarl( eax, TAG_SIZE );                        // convert smi_t into C std::int32_t
+    masm->sarl( eax, TAG_SIZE );                        // convert small_int_t into C std::int32_t
 
     // next argument
     masm->bind( next_argument );
@@ -666,7 +666,7 @@ const char *StubRoutines::generate_call_DLL( MacroAssembler *masm, bool async ) 
     // ebx: argument count
     // ecx: current argument address
     masm->movl( eax, Address( ecx ) );                  // get argument
-    masm->testb( eax, MEMOOP_TAG );                        // check if smi_t or proxy
+    masm->testb( eax, MEMOOP_TAG );                        // check if small_int_t or proxy
     masm->jcc( MacroAssembler::Condition::zero, smi_argument );
 
     // boxed argument -> unbox it
@@ -1341,7 +1341,7 @@ static Oop oopify_float() {
   double x;
   __asm fstp x							// get top of FPU stack
     BlockScavenge bs;						// because all registers are saved on the stack
-  return oopFactory::new_double(x);				// box the FloatValue
+  return OopFactory::new_double(x);				// box the FloatValue
 }
 */
 
@@ -1355,7 +1355,7 @@ const char *StubRoutines::generate_oopify_float( MacroAssembler *masm ) {
     masm->subl( esp, 8 );
     masm->fstp_d( Address( esp ) );
     masm->incl( Address( (std::int32_t) BlockScavenge::counter_addr(), RelocationInformation::RelocationType::external_word_type ) );
-    masm->call( (const char *) oopFactory::new_double, RelocationInformation::RelocationType::runtime_call_type );
+    masm->call( (const char *) OopFactory::new_double, RelocationInformation::RelocationType::runtime_call_type );
     masm->decl( Address( (std::int32_t) BlockScavenge::counter_addr(), RelocationInformation::RelocationType::external_word_type ) );
     masm->leave();
     masm->ret();
@@ -1406,7 +1406,7 @@ const char *StubRoutines::generate_PolymorphicInlineCache_stub( MacroAssembler *
     const char *entry_point = masm->pc();
     masm->popl( ebx );                // get return address (PolymorphicInlineCache table pointer)
     masm->movl( edx, Address( (std::int32_t) &smiKlassObject, RelocationInformation::RelocationType::external_word_type ) );
-    masm->test( eax, MEMOOP_TAG );            // check if smi_t
+    masm->test( eax, MEMOOP_TAG );            // check if small_int_t
     masm->jcc( Assembler::Condition::zero, loop );        // if so, class is already in ecx
     masm->movl( edx, Address( eax, MemOopDescriptor::klass_byte_offset() ) );    // otherwise, load receiver class
 
@@ -1494,7 +1494,7 @@ void StubRoutines::push_alien_arg( MacroAssembler *masm, Label &nextArg ) {
 
     masm->movl( esi, Address( eax, sizeof( MemOopDescriptor ) - MEMOOP_TAG ) );
     // load the first ivar
-    //   either SMIOop for normal alien
+    //   either SmallIntegerOop for normal alien
     //   or MemOop for unsafe alien
     masm->testl( esi, MEMOOP_TAG );
     masm->jcc( Assembler::Condition::notEqual, isUnsafe );

@@ -132,7 +132,7 @@ static inline const char *get_disp( const char *p ) {
 // Structure for storing the entries of a PolymorphicInlineCache
 class PolymorphicInlineCacheContents {
 public:
-    // smi_t case
+    // small_int_t case
     char      *smi_nativeMethod;
     MethodOop smi_methodOop;
 
@@ -201,7 +201,7 @@ public:
 void PolymorphicInlineCacheContents::append_NativeMethod_entry( KlassOop klass, char *entry ) {
     // add new entry
     if ( klass == smiKlassObject ) {
-        st_assert( not has_smi_case(), "cannot overwrite smi_t case" );
+        st_assert( not has_smi_case(), "cannot overwrite small_int_t case" );
         smi_nativeMethod = entry;
     } else {
         nativeMethod_klasses[ n ] = klass;
@@ -215,7 +215,7 @@ void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop me
     // add new entry
     st_assert( method->is_method(), "must be methodOop" );
     if ( klass == smiKlassObject ) {
-        st_assert( not has_smi_case(), "cannot overwrite smi_t case" );
+        st_assert( not has_smi_case(), "cannot overwrite small_int_t case" );
         smi_methodOop = method;
     } else {
         methodOop_klasses[ m ] = klass;
@@ -253,11 +253,11 @@ PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlin
         // nativeMethods -> handle smis first
         const char *dest = get_disp( _pos + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_smi_nativeMethodOffset ) );
         if ( dest == CompiledInlineCache::normalLookupRoutine() or _pic->contains( dest ) ) {
-            // no smis or smi_t case is treated in methodOop section
+            // no smis or small_int_t case is treated in methodOop section
             _state = InlineState::AT_NATIVE_METHOD;
             _pos += static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_NativeMethod_entry_offset );
         } else {
-            // smi_t entry is treated here
+            // small_int_t entry is treated here
             _state = InlineState::AT_SMI_NATIVE_METHOD;
         }
     }
@@ -594,12 +594,12 @@ std::int32_t PolymorphicInlineCache::code_for_methodOops_only( const char *entry
     char *p = const_cast<char *>(entry);
     put_byte( p, call_opcode );
     if ( c->smi_methodOop == nullptr ) {
-        // no smi_t methodOop
+        // no small_int_t methodOop
         put_disp( p, StubRoutines::PolymorphicInlineCache_stub_entry( c->m ) );
         st_assert( entry + static_cast<std::int32_t>( PolymorphicInlineCache::Constant::PolymorphicInlineCache_methodOop_only_offset ) == p, "constant inconsistent" );
 
     } else {
-        // handle smi_t methodOop first
+        // handle small_int_t methodOop first
         put_disp( p, StubRoutines::PolymorphicInlineCache_stub_entry( 1 + c->m ) );
         put_word( p, std::int32_t( smiKlassObject ) );
         put_word( p, std::int32_t( c->smi_methodOop ) );
@@ -635,11 +635,11 @@ std::int32_t PolymorphicInlineCache::code_for_polymorphic_case( char *entry, Pol
             st_assert( c->smi_methodOop == nullptr, "can only have one method for smis" );
             put_disp( p, c->smi_nativeMethod );
         } else if ( c->smi_methodOop not_eq nullptr ) {
-            // smi_t method is methodOop -> handle it in methodOop section
+            // small_int_t method is methodOop -> handle it in methodOop section
             fixup = p;
             put_disp( p, 0 );
         } else {
-            // no smi_t entries
+            // no small_int_t entries
             put_disp( p, const_cast<char *>( CompiledInlineCache::normalLookupRoutine() ) ); // Fix this for super sends!
         }
         // always load klass to simplify decoding/iteration of PolymorphicInlineCache

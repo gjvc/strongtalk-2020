@@ -8,7 +8,7 @@
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/DoubleOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 
 TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )
@@ -16,25 +16,25 @@ TRACE_FUNC( TraceDoubleValueArrayPrims, "doubleValueArray" )
 
 std::int32_t DoubleValueArrayPrimitives::number_of_calls;
 
-#define ASSERT_RECEIVER st_assert(receiver->is_doubleValueArray(), "receiver must be double value array")
+#define ASSERT_RECEIVER st_assert(receiver->isDoubleValueArray(), "receiver must be double value array")
 
 
 PRIM_DECL_2( DoubleValueArrayPrimitives::allocateSize, Oop receiver, Oop argument ) {
     PROLOGUE_2( "allocateSize", receiver, argument )
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_doubleValueArray(), "receiver must double byte array class" );
-    if ( not argument->is_smi() )
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsDoubleValueArray(), "receiver must double byte array class" );
+    if ( not argument->isSmallIntegerOop() )
         markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    if ( SMIOop( argument )->value() < 0 )
+    if ( SmallIntegerOop( argument )->value() < 0 )
         return markSymbol( vmSymbols::negative_size() );
 
-    std::int32_t length = SMIOop( argument )->value();
+    std::int32_t length = SmallIntegerOop( argument )->value();
 
     KlassOop            k        = KlassOop( receiver );
     std::int32_t        ni_size  = k->klass_part()->non_indexable_size();
     std::int32_t        obj_size = ni_size + 1 + roundTo( length * sizeof( double ), OOP_SIZE ) / OOP_SIZE;
     // allocate
-    doubleValueArrayOop obj      = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
+    DoubleValueArrayOop obj = as_doubleValueArrayOop( Universe::allocate( obj_size, (MemOop *) &k ) );
     // header
     MemOop( obj )->initialize_header( true, k );
     // instance variables
@@ -54,7 +54,7 @@ PRIM_DECL_1( DoubleValueArrayPrimitives::size, Oop receiver ) {
     ASSERT_RECEIVER;
 
     // do the operation
-    return smiOopFromValue( doubleValueArrayOop( receiver )->length() );
+    return smiOopFromValue( DoubleValueArrayOop( receiver )->length() );
 }
 
 
@@ -63,14 +63,14 @@ PRIM_DECL_2( DoubleValueArrayPrimitives::at, Oop receiver, Oop index ) {
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check index value
-    if ( not doubleValueArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not DoubleValueArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
-    return oopFactory::new_double( doubleValueArrayOop( receiver )->double_at( SMIOop( index )->value() ) );
+    return OopFactory::new_double( DoubleValueArrayOop( receiver )->double_at( SmallIntegerOop( index )->value() ) );
 }
 
 
@@ -79,18 +79,18 @@ PRIM_DECL_3( DoubleValueArrayPrimitives::atPut, Oop receiver, Oop index, Oop val
     ASSERT_RECEIVER;
 
     // check index type
-    if ( not index->is_smi() )
+    if ( not index->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // check value type
-    if ( not value->is_double() )
+    if ( not value->isDouble() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
 
     // check index value
-    if ( not doubleValueArrayOop( receiver )->is_within_bounds( SMIOop( index )->value() ) )
+    if ( not DoubleValueArrayOop( receiver )->is_within_bounds( SmallIntegerOop( index )->value() ) )
         return markSymbol( vmSymbols::out_of_bounds() );
 
     // do the operation
-    doubleValueArrayOop( receiver )->double_at_put( SMIOop( index )->value(), DoubleOop( value )->value() );
+    DoubleValueArrayOop( receiver )->double_at_put( SmallIntegerOop( index )->value(), DoubleOop( value )->value() );
     return receiver;
 }

@@ -479,7 +479,7 @@ void CodeGenerator::finalize2( InlinedScope *scope ) {
         // check class
         KlassOop klass = scope->selfKlass();
         if ( klass == smiKlassObject ) {
-            // receiver must be a smi_t, check smi_t tag only
+            // receiver must be a small_int_t, check small_int_t tag only
             _masm->testl( self_reg, MEMOOP_TAG );            // testl instead of test => no alignment nop's needed later
             _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
         } else {
@@ -701,12 +701,12 @@ const char *CodeGenerator::nativeMethodName() {
 
 void CodeGenerator::verifyObject( Oop obj ) {
 
-    if ( not obj->is_smi() and not obj->is_mem() ) {
+    if ( not obj->isSmallIntegerOop() and not obj->isMemOop() ) {
         st_fatal( "should be an ordinary Oop" );
     }
 
     KlassOop klass = obj->klass();
-    if ( klass == nullptr or not klass->is_mem() ) {
+    if ( klass == nullptr or not klass->isMemOop() ) {
         st_fatal( "should be an ordinary MemOop" );
     }
 
@@ -718,7 +718,7 @@ void CodeGenerator::verifyObject( Oop obj ) {
 
 
 void CodeGenerator::verifyContext( Oop obj ) {
-    if ( obj->is_mark() ) {
+    if ( obj->isMarkOop() ) {
         error( "context should never be mark" );
     }
 
@@ -731,7 +731,7 @@ void CodeGenerator::verifyContext( Oop obj ) {
     }
 
     Oop c = (Oop) ( ContextOop( obj )->parent() );
-    if ( c->is_mem() ) {
+    if ( c->isMemOop() ) {
         verifyContext( c );
     }
 
@@ -757,7 +757,7 @@ void CodeGenerator::verifyArguments( Oop recv, Oop *ebp, std::int32_t nofArgs ) 
         verifyObject( *arg );
         if ( TraceCalls ) {
             ResourceMark resourceMark;
-            if ( print_args_long or ( *arg )->is_smi() ) {
+            if ( print_args_long or ( *arg )->isSmallIntegerOop() ) {
                 SPDLOG_INFO( "{} ", ( *arg )->print_value_string() );
             } else {
                 _console->print( "0x{0:x} ", *arg );
@@ -801,7 +801,7 @@ void CodeGenerator::verifyNonLocalReturn( const char *fp, const char *nlrFrame, 
 
     // treat >99 scopes as likely error -- might actually be ok
 //  if (nlrScopeID < 0 or nlrScopeID > 99) error("illegal NonLocalReturn scope ID 0x{0:x}", nlrScopeID);
-    if ( result->is_mark() ) {
+    if ( result->isMarkOop() ) {
         spdlog::error( "NonLocalReturn result is a markOop" );
     }
     result->verify();
@@ -990,7 +990,7 @@ void CodeGenerator::aPrologueNode( PrologueNode *node ) {
         // check class
         KlassOop klass = scope->selfKlass();
         if ( klass == smiKlassObject ) {
-            // receiver must be a smi_t, check smi_t tag only
+            // receiver must be a small_int_t, check small_int_t tag only
             _masm->test( use( recv ), MEMOOP_TAG );
             _masm->jcc( Assembler::Condition::notZero, CompiledInlineCache::normalLookupRoutine() );
         } else {
@@ -1324,7 +1324,7 @@ void CodeGenerator::arithRCOp( ArithOpCode op, Register x, std::int32_t y ) { //
 
 
 void CodeGenerator::arithROOp( ArithOpCode op, Register x, Oop y ) { // x := x op y
-    st_assert( not y->is_smi(), "check this code" );
+    st_assert( not y->isSmallIntegerOop(), "check this code" );
     switch ( op ) {
         case ArithOpCode::CmpArithOp:
             _masm->cmpl( x, y );
@@ -1335,8 +1335,8 @@ void CodeGenerator::arithROOp( ArithOpCode op, Register x, Oop y ) { // x := x o
 
 
 void CodeGenerator::arithRXOp( ArithOpCode op, Register x, Oop y ) { // x := x op y
-    if ( y->is_smi() ) {
-        arithRCOp( op, x, std::int32_t( y ) );                // y is SMIOop -> needs no relocation info
+    if ( y->isSmallIntegerOop() ) {
+        arithRCOp( op, x, std::int32_t( y ) );                // y is SmallIntegerOop -> needs no relocation info
     } else {
         arithROOp( op, x, y );
     }
@@ -1419,12 +1419,12 @@ void CodeGenerator::aTArithRRNode( TArithRRNode *node ) {
         if ( y_is_int ) {
             // both x & y are smis => no tag check necessary
         } else {
-            // x is smi_t => check y
+            // x is small_int_t => check y
             tags = use( y );
         }
     } else {
         if ( y_is_int ) {
-            // y is smi_t => check x
+            // y is small_int_t => check x
             tags = use( x );
         } else {
             // check both x & y
@@ -1754,7 +1754,7 @@ static void testForSingleKlass(Register obj, klassOop klass, Register klassReg, 
     // only one instance: compare with nilObject
     theMacroAssm->cmpl(obj, Universe::nilObject());
   } else {
-    // compare against obj's klass - must check if smi_t first
+    // compare against obj's klass - must check if small_int_t first
     theMacroAssm->test(obj, MEMOOP_TAG);
     theMacroAssm->jcc(Assembler::Condition::zero, failure);
     theMacroAssm->movl(klassReg, Address(obj, memOopDescriptor::klass_byte_offset()));
@@ -1781,7 +1781,7 @@ void CodeGenerator::testForSingleKlass( Register obj, KlassOop klass, Register k
         // only one instance: compare with nilObject
         _masm->cmpl( obj, Universe::nilObject() );
     } else {
-        // compare against obj's klass - must check if smi_t first
+        // compare against obj's klass - must check if small_int_t first
         _masm->test( obj, MEMOOP_TAG );
         _masm->jcc( Assembler::Condition::zero, failure );
         _masm->movl( klassReg, Address( obj, MemOopDescriptor::klass_byte_offset() ) );
@@ -1855,8 +1855,8 @@ void LoopHeaderNode::generateTypeTests(Label& cont, Label& failure) {
 
 /*
 void CodeGenerator::handleConstantTypeTest(ConstPseudoRegister* r, GrowableArray<klassOop>* klasses) {
-  // constant r is tested against klasses (efficiency hack: klasses == nullptr means {smi_t})
-  if ((klasses == nullptr and r->constant->is_smi()) or (klasses and klasses->contains(r->constant->klass()))) {
+  // constant r is tested against klasses (efficiency hack: klasses == nullptr means {small_int_t})
+  if ((klasses == nullptr and r->constant->isSmallIntegerOop()) or (klasses and klasses->contains(r->constant->klass()))) {
     // always ok, no need to test
   } else {
     compiler_warning("loop header type test will always fail");
@@ -1961,7 +1961,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
 
     if ( ( lo not_eq nullptr ) and
          ( lo->isConstPseudoRegister() ) and
-         ( (ConstPseudoRegister *) lo )->constant->is_smi() and
+        ( (ConstPseudoRegister *) lo )->constant->isSmallIntegerOop() and
          ( (ConstPseudoRegister *) lo )->constant >= smiOopFromValue( 1 ) ) {
         // nothing
 
@@ -1995,7 +1995,7 @@ void LoopHeaderNode::generateArrayLoopTests(Label& prev, Label& failure) {
     }
     if (i >= 0) {
       // loopVar is used to index into array; make sure lower & upper bound is within array range
-      if (_lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ((ConstPseudoRegister*)_lowerBound)->constant->is_smi() and ((ConstPseudoRegister*)_lowerBound)->constant >= smiOopFromValue(1)) {
+      if (_lowerBound not_eq nullptr and _lowerBound->isConstPseudoRegister() and ((ConstPseudoRegister*)_lowerBound)->constant->isSmallIntegerOop() and ((ConstPseudoRegister*)_lowerBound)->constant >= smiOopFromValue(1)) {
 	// loopVar iterates from smi_const to array size, so no test necessary
       } else {
 	// test lower bound
@@ -2032,7 +2032,7 @@ void CodeGenerator::aLoopHeaderNode( LoopHeaderNode *node ) {
         //   - do all type tests in the list, uncommon branch if they fail
         //     (common case: true/false tests, single-klass tests)
         // additionally for integer loops:
-        //   - test lowerBound (may be nullptr), upperBound, loopVar for smi_t-ness (the first two may be ConstPseudoRegisters)
+        //   - test lowerBound (may be nullptr), upperBound, loopVar for small_int_t-ness (the first two may be ConstPseudoRegisters)
         //   - if upperBound is nullptr, upperLoad is load of the array size
         //   - if loopArray is non-nullptr, check lowerBound (if non-nullptr) or initial value of loopVar against 1
         Label failure;
@@ -2061,7 +2061,7 @@ void LoopHeaderNode::gen() {
   //   - do all type tests in the list, uncommon branch if they fail
   //     (common case: true/false tests, single-klass tests)
   // additionally for integer loops:
-  //   - test lowerBound (may be nullptr), upperBound, loopVar for smi_t-ness (the first two may be ConstPseudoRegisters)
+  //   - test lowerBound (may be nullptr), upperBound, loopVar for small_int_t-ness (the first two may be ConstPseudoRegisters)
   //   - if upperBound is nullptr, upperLoad is load of the array size
   //   - if loopArray is non-nullptr, check lowerBound (if non-nullptr) or initial value of loopVar against 1
 
@@ -2246,7 +2246,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
                 // only one instance: compare with nilObject
                 _masm->cmpl( obj, Universe::nilObject() );
             } else {
-                // compare against obj's klass - must check if smi_t first
+                // compare against obj's klass - must check if small_int_t first
                 Temporary objKlass( _currentMapping );
                 _masm->test( obj, MEMOOP_TAG );
                 _masm->jcc( Assembler::Condition::zero, node->next()->_label );
@@ -2326,7 +2326,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
             _masm->cmpl( obj, nilObject );
             jcc( Assembler::Condition::equal, node, node->next( i + 1 ) );
         } else if ( klass == smiKlassObject ) {
-            // check smi_t tag only if not checked already, otherwise ignore
+            // check small_int_t tag only if not checked already, otherwise ignore
             if ( not smiHasBeenChecked ) {
                 _masm->test( obj, MEMOOP_TAG );
                 jcc( Assembler::Condition::zero, node, node->next( i + 1 ) );
@@ -2338,7 +2338,7 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
                 if ( not smiHasBeenChecked ) {
                     Node *smiCase = node->smiCase();
                     if ( smiCase not_eq nullptr or node->hasUnknown() ) {
-                        // smi_t can actually appear => check for it
+                        // small_int_t can actually appear => check for it
                         _masm->test( obj, MEMOOP_TAG );
                         if ( smiCase not_eq nullptr ) {
                             // jump to smiCase if there's one
@@ -2360,9 +2360,9 @@ void CodeGenerator::aTypeTestNode( TypeTestNode *node ) {
     // bind label in any case to avoid unbound label assertion bug
     _masm->bind( unknownCase );
 
-    // Note: Possible problem: if the smi_t case is checked before the class
+    // Note: Possible problem: if the small_int_t case is checked before the class
     //       is loaded, there's possibly a jump to the end of the TypeTestNode
-    //       from the smi_t case. However, then the klass register isn't defined.
+    //       from the small_int_t case. However, then the klass register isn't defined.
     //       if later there's the uncommon case, the klass register is defined.
     //       What if one refers to that register? Or is it not possible because
     //       it's not a regular PseudoRegister but a temporary? Think about this!
@@ -2424,11 +2424,11 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
     Register             array_reg = use( array );
     // use temporary register for index - will be modified
     Temporary            offset( _currentMapping, index );
-    // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
+    // first element is at index 1 => subtract small_int_t(1) (doesn't change small_int_t/Oop property)
     theMacroAssembler->subl( offset.reg(), std::int32_t( smiOop_one ) );
-    // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
+    // do index small_int_t check if necessary (still possible, even after subtracting small_int_t(1))
     Label indexNotSmi;
-    if ( not node->index_is_smi() ) {
+    if ( not node->index_is_SmallInteger() ) {
         _masm->test( offset.reg(), MEMOOP_TAG );
         jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
     }
@@ -2456,7 +2456,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
                 _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
                 _masm->andl( result_reg, 0x000000FF );    // clear uppper 3 bytes
             }
-            _masm->shll( result_reg, TAG_SIZE );    // make result a smi_t
+            _masm->shll( result_reg, TAG_SIZE );    // make result a small_int_t
         }
             break;
         case ArrayAtNode::double_byte_at: {
@@ -2464,7 +2464,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
             _masm->sarl( offset.reg(), TAG_SIZE - 1 );// adjust index
             _masm->movl( result_reg, Address( array_reg, offset.reg(), Address::ScaleFactor::times_1, data_offset ) );
             _masm->andl( result_reg, 0x0000FFFF );    // clear upper 2 bytes
-            _masm->shll( result_reg, TAG_SIZE );    // make result a smi_t
+            _masm->shll( result_reg, TAG_SIZE );    // make result a small_int_t
         }
             break;
         case ArrayAtNode::character_at: {
@@ -2494,7 +2494,7 @@ void CodeGenerator::anArrayAtNode( ArrayAtNode *node ) {
         Label exit;
         _masm->jmp( exit );
         // error messages
-        if ( not node->index_is_smi() ) {
+        if ( not node->index_is_SmallInteger() ) {
             _masm->bind( indexNotSmi );
             _masm->hlt();
         }
@@ -2524,11 +2524,11 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
     Register             array_reg = use( array );
     // use temporary register for index - will be modified
     Temporary            offset( _currentMapping, index );
-    // first element is at index 1 => subtract smi_t(1) (doesn't change smi_t/Oop property)
+    // first element is at index 1 => subtract small_int_t(1) (doesn't change small_int_t/Oop property)
     theMacroAssembler->subl( offset.reg(), std::int32_t( smiOop_one ) );
-    // do index smi_t check if necessary (still possible, even after subtracting smi_t(1))
+    // do index small_int_t check if necessary (still possible, even after subtracting small_int_t(1))
     Label indexNotSmi;
-    if ( not node->index_is_smi() ) {
+    if ( not node->index_is_SmallInteger() ) {
         _masm->test( offset.reg(), MEMOOP_TAG );
         jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
     }
@@ -2549,8 +2549,8 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
         case ArrayAtPutNode::byte_at_put: { // use temporary register for element - will be modified
             Temporary elt( _currentMapping, element );
             _masm->sarl( offset.reg(), TAG_SIZE );    // adjust index
-            // do element smi_t check if necessary
-            if ( not node->element_is_smi() ) {
+            // do element small_int_t check if necessary
+            if ( not node->element_is_SmallInteger() ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
@@ -2579,8 +2579,8 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
         case ArrayAtPutNode::double_byte_at_put: { // use temporary register for element - will be modified
             Temporary elt( _currentMapping, element );
             _masm->sarl( offset.reg(), TAG_SIZE - 1 );// adjust index
-            // do element smi_t check if necessary
-            if ( not node->element_is_smi() ) {
+            // do element small_int_t check if necessary
+            if ( not node->element_is_SmallInteger() ) {
                 _masm->test( elt.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, elementNotSmi );
             }
@@ -2626,7 +2626,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
         Label exit;
         _masm->jmp( exit );
         // error messages
-        if ( not node->index_is_smi() ) {
+        if ( not node->index_is_SmallInteger() ) {
             _masm->bind( indexNotSmi );
             _masm->hlt();
         }
@@ -2634,7 +2634,7 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
             _masm->bind( indexOutOfBounds );
             _masm->hlt();
         }
-        if ( not node->element_is_smi() ) {
+        if ( not node->element_is_SmallInteger() ) {
             _masm->bind( elementNotSmi );
             _masm->hlt();
         }
@@ -2656,20 +2656,20 @@ void CodeGenerator::anArrayAtPutNode( ArrayAtPutNode *node ) {
 void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
     switch ( node->op() ) {
         case InlinedPrimitiveNode::Operation::OBJ_KLASS: {
-            Label                is_smi;
+            Label                isSmallIntegerOop;
             PseudoRegisterLocker lock( node->src() );
             Register             obj_reg   = use( node->src() );
             Register             klass_reg = def( node->dst() );
             _masm->movl( klass_reg, Universe::smiKlassObject() );
             _masm->test( obj_reg, MEMOOP_TAG );
-            _masm->jcc( Assembler::Condition::zero, is_smi );
+            _masm->jcc( Assembler::Condition::zero, isSmallIntegerOop );
             _masm->movl( klass_reg, Address( obj_reg, MemOopDescriptor::klass_byte_offset() ) );
-            _masm->bind( is_smi );
+            _masm->bind( isSmallIntegerOop );
         };
             break;
         case InlinedPrimitiveNode::Operation::OBJ_HASH: {
             Unimplemented();
-            // Implemented for the smi_t klass only by now - can be resolved in
+            // Implemented for the small_int_t klass only by now - can be resolved in
             // the PrimitiveInliner for that case without using an InlinedPrimitiveNode.
         };
             break;
@@ -2682,9 +2682,9 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             // use Temporary register for proxy & index - will be modified
             Temporary            base( _currentMapping, proxy );
             Temporary            offset( _currentMapping, index );
-            // do index smi_t check if necessary
+            // do index small_int_t check if necessary
             Label                indexNotSmi;
-            if ( not node->arg1_is_smi() ) {
+            if ( not node->arg1_is_SmallInteger() ) {
                 _masm->test( offset.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
             }
@@ -2703,13 +2703,13 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
                 _masm->movl( result_reg, Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ) );
                 _masm->andl( result_reg, 0x000000FF );                // clear uppper 3 bytes
             }
-            _masm->shll( result_reg, TAG_SIZE );                // make result a smi_t
+            _masm->shll( result_reg, TAG_SIZE );                // make result a small_int_t
             // handle error cases if not uncommon
             if ( node->canFail() and not node->next( 1 )->isUncommonNode() ) {
                 Label exit;
                 _masm->jmp( exit );
                 // error messages
-                if ( not node->arg1_is_smi() ) {
+                if ( not node->arg1_is_SmallInteger() ) {
                     _masm->bind( indexNotSmi );
                     _masm->hlt();
                 }
@@ -2745,21 +2745,21 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             Temporary      val( _currentMapping );
             if ( const_val ) {
                 // value doesn't have to be loaded -> do nothing here
-                if ( not node->arg2_is_smi() ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );
-                //if (not node->arg2_is_smi()) fatal("proxy_byte_at_put: should not happen - tell Robert");
+                if ( not node->arg2_is_SmallInteger() ) st_fatal( "proxy_byte_at_put: should not happen - internal error" );
+                //if (not node->arg2_is_SmallInteger()) fatal("proxy_byte_at_put: should not happen - tell Robert");
             } else {
                 _masm->movl( val.reg(), use( value ) );
             }
-            // do index smi_t check if necessary
+            // do index small_int_t check if necessary
             Label indexNotSmi;
-            if ( not node->arg1_is_smi() ) {
+            if ( not node->arg1_is_SmallInteger() ) {
                 _masm->test( offset.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, indexNotSmi );
             }
-            // do value smi_t check if necessary
+            // do value small_int_t check if necessary
             Label valueNotSmi;
-            if ( not node->arg2_is_smi() ) {
-                st_assert( not const_val, "constant shouldn't need a smi_t check" );
+            if ( not node->arg2_is_SmallInteger() ) {
+                st_assert( not const_val, "constant shouldn't need a small_int_t check" );
                 _masm->test( val.reg(), MEMOOP_TAG );
                 jcc_error( Assembler::Condition::notZero, node, valueNotSmi );
             }
@@ -2768,11 +2768,11 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
             _masm->movl( base.reg(), Address( base.reg(), pointer_offset ) );    // unbox proxy
             _masm->sarl( offset.reg(), TAG_SIZE );                // adjust index
             if ( const_val ) {
-                SMIOop constant = SMIOop( ( (ConstPseudoRegister *) value )->constant );
-                st_assert( constant->is_smi(), "should be a smi_t" );
+                SmallIntegerOop constant = SmallIntegerOop( ( (ConstPseudoRegister *) value )->constant );
+                st_assert( constant->isSmallIntegerOop(), "should be a small_int_t" );
                 _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), constant->value() & 0xFF );
             } else {
-                _masm->sarl( val.reg(), TAG_SIZE );                // convert (smi_t)value into std::int32_t
+                _masm->sarl( val.reg(), TAG_SIZE );                // convert (small_int_t)value into std::int32_t
                 if ( val.reg().hasByteRegister() ) {
                     // val.reg() has byte register -> can use byte store instruction
                     _masm->movb( Address( base.reg(), offset.reg(), Address::ScaleFactor::times_1, 0 ), val.reg() );
@@ -2794,12 +2794,12 @@ void CodeGenerator::anInlinedPrimitiveNode( InlinedPrimitiveNode *node ) {
                 _masm->jmp( exit );
 
                 // error messages
-                if ( not node->arg1_is_smi() ) {
+                if ( not node->arg1_is_SmallInteger() ) {
                     _masm->bind( indexNotSmi );
                     _masm->hlt();
                 }
 
-                if ( not node->arg2_is_smi() ) {
+                if ( not node->arg2_is_SmallInteger() ) {
                     _masm->bind( valueNotSmi );
                     _masm->hlt();
                 }

@@ -34,7 +34,7 @@ public:
 
 
     void set_process( DeltaProcess *p ) {
-        st_assert( Oop(p)->is_smi(), "not a smi_t" );
+        st_assert( Oop(p)->isSmallIntegerOop(), "not a small_int_t" );
         addr()->_process = p;
     }
 

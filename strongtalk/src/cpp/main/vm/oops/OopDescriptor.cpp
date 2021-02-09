@@ -23,10 +23,10 @@ OopDescriptor::OopDescriptor() : _mark{ nullptr } {
 
 void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
 
-    if ( is_mark() ) {
+    if ( isMarkOop() ) {
         MarkOop( this )->print_on( stream );
-    } else if ( is_smi() ) {
-        SMIOop( this )->print_on( stream );
+    } else if ( isSmallIntegerOop() ) {
+        SmallIntegerOop( this )->print_on( stream );
     } else {
         // In the debug version unused Space is cleared after scavenge.
         // This means if we try printing an Oop pointing to unused Space
@@ -43,10 +43,10 @@ void OopDescriptor::print_value_on( ConsoleOutputStream *stream ) {
 
 
 void OopDescriptor::print_on( ConsoleOutputStream *stream ) {
-    if ( is_mark() ) {
+    if ( isMarkOop() ) {
         MarkOop( this )->print_on( stream );
-    } else if ( is_smi() ) {
-        SMIOop( this )->print_on( stream );
+    } else if ( isSmallIntegerOop() ) {
+        SmallIntegerOop( this )->print_on( stream );
     } else {
         MemOop( this )->print_on( stream );
     }
@@ -78,9 +78,9 @@ char *OopDescriptor::print_value_string() {
 
 
 KlassOop OopDescriptor::klass() const {
-    if ( is_mem() )
+    if ( isMemOop() )
         return MemOop( this )->klass_field();
-    st_assert( is_smi(), "tag must be smi_t" );
+    st_assert( isSmallIntegerOop(), "tag must be small_int_t" );
     return smiKlassObject;
 }
 
@@ -90,16 +90,16 @@ Klass *OopDescriptor::blueprint() const {
 }
 
 
-smi_t OopDescriptor::identity_hash() {
-    if ( is_smi() )
-        return SMIOop( this )->identity_hash();
-    st_assert( is_mem(), "tag must be mem" );
+small_int_t OopDescriptor::identity_hash() {
+    if ( isSmallIntegerOop() )
+        return SmallIntegerOop( this )->identity_hash();
+    st_assert( isMemOop(), "tag must be mem" );
     return MemOop( this )->identity_hash();
 }
 
 
 Oop OopDescriptor::scavenge() {
-    return is_mem() ? MemOop( this )->scavenge() : this;
+    return isMemOop() ? MemOop( this )->scavenge() : this;
 }
 
 
@@ -111,12 +111,12 @@ Oop OopDescriptor::relocate() {
 
 // generation testers
 bool OopDescriptor::is_old() const {
-    return is_mem() and MemOop( this )->is_old();
+    return isMemOop() and MemOop( this )->is_old();
 }
 
 
 bool OopDescriptor::is_new() const {
-    return is_mem() and MemOop( this )->is_new();
+    return isMemOop() and MemOop( this )->is_new();
 }
 
 
@@ -126,88 +126,88 @@ Generation *OopDescriptor::my_generation() {
 
 
 // type test operations
-bool OopDescriptor::is_double() const {
-    return is_mem() and MemOop( this )->klass_field() == doubleKlassObject;
+bool OopDescriptor::isDouble() const {
+    return isMemOop() and MemOop( this )->klass_field() == doubleKlassObject;
 }
 
 
 bool OopDescriptor::is_block() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_block();
+    return isMemOop() and MemOop( this )->blueprint()->oop_is_block();
 }
 
 
-bool OopDescriptor::is_byteArray() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_byteArray();
+bool OopDescriptor::isByteArray() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsByteArray();
 }
 
 
-bool OopDescriptor::is_doubleByteArray() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_doubleByteArray();
+bool OopDescriptor::isDoubleByteArray() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsDoubleByteArray();
 }
 
 
-bool OopDescriptor::is_doubleValueArray() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_doubleValueArray();
+bool OopDescriptor::isDoubleValueArray() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsDoubleValueArray();
 }
 
 
-bool OopDescriptor::is_symbol() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_symbol();
+bool OopDescriptor::isSymbol() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsSymbol();
 }
 
 
-bool OopDescriptor::is_objArray() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_objArray();
+bool OopDescriptor::isObjectArray() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsObjectArray();
 }
 
 
 bool OopDescriptor::is_weakArray() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_weakArray();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsWeakArray();
 }
 
 
 bool OopDescriptor::is_association() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_association();
+    return isMemOop() and MemOop( this )->blueprint()->oop_is_association();
 }
 
 
 bool OopDescriptor::is_context() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_context();
+    return isMemOop() and MemOop( this )->blueprint()->oop_is_context();
 }
 
 
 bool OopDescriptor::is_klass() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_klass();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsKlass();
 }
 
 
 bool OopDescriptor::is_proxy() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_proxy();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsProxy();
 }
 
 
 bool OopDescriptor::is_mixin() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_mixin();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsMixin();
 }
 
 
 bool OopDescriptor::is_process() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_process();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsProcess();
 }
 
 
-bool OopDescriptor::is_vframe() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_vframe();
+bool OopDescriptor::is_VirtualFrame() const {
+    return isMemOop() and MemOop( this )->blueprint()->oopIsVirtualFrame();
 }
 
 
 bool OopDescriptor::is_method() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_method();
+    return isMemOop() and MemOop( this )->blueprint()->oopIsMethod();
 }
 
 
 bool OopDescriptor::is_indexable() const {
-    return is_mem() and MemOop( this )->blueprint()->oop_is_indexable();
+    return isMemOop() and MemOop( this )->blueprint()->oop_is_indexable();
 }
 
 

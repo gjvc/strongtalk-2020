@@ -14,7 +14,7 @@
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/utilities/disassembler.hpp"
 #include "vm/interpreter/Floats.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 
 
@@ -158,7 +158,7 @@ extern "C" void inline_cache_miss() {
 
 extern "C" void verifyPIC( Oop pic ) {
     if ( not Universe::is_heap( (Oop *) pic ) ) st_fatal( "pic should be in heap" );
-    if ( not pic->is_objArray() ) st_fatal( "pic should be an objArray" );
+    if ( not pic->isObjectArray() ) st_fatal( "pic should be an objectArray" );
     std::int32_t length = ObjectArrayOop( pic )->length();
     if ( not( 2 * size_of_smallest_interpreterPIC <= length and length <= 2 * size_of_largest_interpreterPIC ) ) st_fatal( "pic has wrong length field" );
 }
@@ -227,7 +227,7 @@ DoubleOop Interpreter::oopify_FloatValue() {
     std::int32_t float_index = *( f.hp() - 2 );
     st_assert( 0 <= float_index and float_index < max_nof_floats, "illegal float index" );
     double *float_address = (double *) ( (const char *) f.fp() + ( float_0_offset - ( max_nof_floats - 1 ) * SIZEOF_FLOAT ) + float_index * SIZEOF_FLOAT );
-    return oopFactory::new_double( *float_address );
+    return OopFactory::new_double( *float_address );
 }
 
 

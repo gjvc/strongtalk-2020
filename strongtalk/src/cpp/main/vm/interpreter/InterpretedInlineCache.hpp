@@ -24,7 +24,7 @@
 //
 // 1) empty					{selector,         0}
 // 2) filled with a call to interpreted code	{method,           klass}
-// 3) filled with an interpreter PolymorphicInlineCache		{selector,         objArrayObject}
+// 3) filled with an interpreter PolymorphicInlineCache		{selector,         objectArrayObject}
 // 4) filled with a call to compiled code	{jump table entry, klass}
 //
 //
@@ -35,7 +35,7 @@
 //    halt byte codes for alignment
 //    ...
 // 0: selector/method/jump table entry	<-----	first_word_addr()
-// 4: 0/klass/objArray			<-----	second_word_addr()
+// 4: 0/klass/objectArray			<-----	second_word_addr()
 // 8: ...
 
 class InterpretedInlineCache : ValueObject {

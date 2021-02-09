@@ -9,7 +9,7 @@
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/code/StubRoutines.hpp"
 #include "vm/oops/AssociationOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/MissingMethodBuilder.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
@@ -33,7 +33,7 @@ void MissingMethodBuilder::build() {
 
     if ( argCount == 0 ) {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_literal) );
-        _buffer.pushOop( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+        _buffer.pushOop( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
 
     } else {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_global) );
@@ -41,7 +41,7 @@ void MissingMethodBuilder::build() {
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_succ_n) );
         _buffer.pushByte( argCount - 1 );
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_1) );
-        _buffer.pushOop( oopFactory::new_symbol( "new:" ) );
+        _buffer.pushOop( OopFactory::new_symbol( "new:" ) );
         _buffer.pushOop( smiOopFromValue( 0 ) );
         _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::store_temp_n) );
         _buffer.pushByte( 0xFF );
@@ -52,17 +52,17 @@ void MissingMethodBuilder::build() {
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_arg_n) );
             _buffer.pushByte( argCount - i - 1 );
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_2_pop) );
-            _buffer.pushOop( oopFactory::new_symbol( "at:put:" ) );
+            _buffer.pushOop( OopFactory::new_symbol( "at:put:" ) );
             _buffer.pushOop( smiOopFromValue( 0 ) );
             _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::push_temp_0) );
         }
     }
     _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_n) );
     _buffer.pushByte( 3 );
-    _buffer.pushOop( oopFactory::new_symbol( "receiver:selector:arguments:" ) );
+    _buffer.pushOop( OopFactory::new_symbol( "receiver:selector:arguments:" ) );
     _buffer.pushOop( smiOopFromValue( 0 ) );
     _buffer.pushByte( static_cast<std::uint8_t>(ByteCodes::Code::interpreted_send_self) );
-    _buffer.pushOop( oopFactory::new_symbol( "doesNotUnderstand:" ) );
+    _buffer.pushOop( OopFactory::new_symbol( "doesNotUnderstand:" ) );
     _buffer.pushOop( smiOopFromValue( 0 ) );
 
     switch ( argCount ) {
@@ -83,7 +83,7 @@ void MissingMethodBuilder::build() {
     MethodKlass *k = (MethodKlass *) Universe::methodKlassObject()->klass_part();
     _method = k->constructMethod( _selector, 0,         // flags
                                   argCount,  // number of arguments
-                                  oopFactory::new_objArray( std::int32_t{ 0 } ), // debug info
+                                  OopFactory::new_objectArray( std::int32_t{ 0 } ), // debug info
                                   bytes(), oops() );
 }
 

@@ -8,6 +8,6 @@
 #include "vm/utilities/ConsoleOutputStream.hpp"
 
 
-void SMIOopDescriptor::print_on( ConsoleOutputStream *stream ) {
+void SmallIntegerOopDescriptor::print_on( ConsoleOutputStream *stream ) {
     stream->print( "%ld", (std::int32_t) value() );
 }

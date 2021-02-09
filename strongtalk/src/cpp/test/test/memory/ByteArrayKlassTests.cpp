@@ -20,6 +20,9 @@ extern "C" Oop *eden_end;
 
 class ByteArrayKlassTests : public ::testing::Test {
 
+public:
+    ByteArrayKlassTests() : ::testing::Test() {}
+
 protected:
 
     void SetUp() override {
@@ -43,7 +46,7 @@ protected:
 
 TEST_F( ByteArrayKlassTests, shouldBeDoubleByteArray ) {
     eden_top = eden_end;
-    ASSERT_TRUE( theClass->klass_part()->oop_is_byteArray() );
+    ASSERT_TRUE( theClass->klass_part()->oopIsByteArray() );
 }
 
 

@@ -17,7 +17,7 @@
 #include "vm/runtime/Process.hpp"
 #include "vm/system/dll.hpp"
 #include "vm/lookup/LookupCache.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/code/ProgramCounterDescriptor.hpp"
 #include "vm/compiler/RecompilationScope.hpp"
 #include "vm/compiler/BasicBlock.hpp"
@@ -109,7 +109,7 @@ bool IllegalNameDescriptor::equal( NameDescriptor *other ) const {
 }
 
 
-extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs );
+extern "C" BlockClosureOop allocateBlock( SmallIntegerOop nofArgs );
 
 
 Oop BlockValueNameDescriptor::value( const Frame *fr ) const {
@@ -126,7 +126,7 @@ Oop BlockValueNameDescriptor::value( const Frame *fr ) const {
         StringOutputStream stream( 50 );
         stream.print( "eliminated [] in " );
         block_method()->home()->selector()->print_symbol_on( &stream );
-        return oopFactory::new_symbol( stream.as_string() );
+        return OopFactory::new_symbol( stream.as_string() );
     }
 }
 
@@ -152,6 +152,6 @@ Oop MemoizedBlockNameDescriptor::value( const Frame *fr ) const {
         StringOutputStream stream( 50 );
         stream.print( "memoized [] in " );
         block_method()->home()->selector()->print_symbol_on( &stream );
-        return oopFactory::new_symbol( stream.as_string() );
+        return OopFactory::new_symbol( stream.as_string() );
     }
 }

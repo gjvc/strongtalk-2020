@@ -157,7 +157,7 @@ oop vframeKlass::mirror_expr_stack( oop obj ) {
     smi len;
     oop *vec;
     vfo->as_vframe()->get_expr_stack( vec, len );
-    objArrayOop objVec = Memory->objArrayObject->cloneSize( len );
+    objectArrayOop objVec = Memory->objectArrayObject->cloneSize( len );
     for ( smi   i      = 0; i < len; i++ )
         objVec->obj_at_put( i, vec[ i ] );
     return objVec;

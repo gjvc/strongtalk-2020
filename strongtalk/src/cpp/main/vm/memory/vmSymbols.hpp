@@ -137,7 +137,7 @@
     s( klass_klass,                         "Class" )                            \
     s( method_klass,                        "Method" )                           \
     s( mixin_klass,                         "Mixin" )                            \
-    s( objArray_klass,                      "Array" )                            \
+    s( objectArray_klass,                      "Array" )                            \
     s( weakArray_klass,                     "WeakArray" )                        \
     s( process_klass,                       "Process" )                          \
     s( vframe_klass,                        "Activation" )                       \
@@ -197,14 +197,14 @@ public:
 
 // for primitive failures
 inline Oop markSymbol( SymbolOop sym ) {
-    st_assert( sym->is_mem(), "must have MEMOOP_TAG tag" );
+    st_assert( sym->isMemOop(), "must have MEMOOP_TAG tag" );
     return Oop( (const char *) sym - MEMOOP_TAG + MARK_TAG );
 }
 
 
 inline SymbolOop unmarkSymbol( Oop sym ) {
-    st_assert( sym->is_mark(), "must have MARK_TAG tag" );
+    st_assert( sym->isMarkOop(), "must have MARK_TAG tag" );
     Oop res = Oop( (const char *) sym - MARK_TAG + MEMOOP_TAG );
-    st_assert( res->is_symbol(), "must be symbol" );
+    st_assert( res->isSymbol(), "must be symbol" );
     return SymbolOop( res );
 }

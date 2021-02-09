@@ -20,7 +20,7 @@
 #include "vm/oops/VirtualFrameOopDescriptor.hpp"
 #include "vm/oops/ObjectArrayOopDescriptor.hpp"
 #include "vm/memory/vmSymbols.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/runtime/ResourceMark.hpp"
 #include "vm/memory/Scavenge.hpp"
 
@@ -35,13 +35,13 @@ std::int32_t ProcessOopPrimitives::number_of_calls;
 
 PRIM_DECL_2( ProcessOopPrimitives::create, Oop receiver, Oop block ) {
     PROLOGUE_2( "create", receiver, block )
-    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oop_is_process(), "must be process class" );
+    st_assert( receiver->is_klass() and KlassOop( receiver )->klass_part()->oopIsProcess(), "must be process class" );
     if ( block->klass() not_eq Universe::zeroArgumentBlockKlassObject() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     ProcessOop process = ProcessOop( receiver->primitive_allocate() );
     st_assert( process->is_process(), "must be process" );
 
-    DeltaProcess *p = new DeltaProcess( block, oopFactory::new_symbol( "value" ) );
+    DeltaProcess *p = new DeltaProcess( block, OopFactory::new_symbol( "value" ) );
     process->set_process( p );
     p->set_processObject( process );
     return process;
@@ -238,11 +238,11 @@ PRIM_DECL_1( ProcessOopPrimitives::status, Oop process ) {
 PRIM_DECL_1( ProcessOopPrimitives::scheduler_wait, Oop milliseconds ) {
     PROLOGUE_1( "scheduler_wait", milliseconds );
 
-    // Check if argument is a smi_t
-    if ( not milliseconds->is_smi() )
+    // Check if argument is a small_int_t
+    if ( not milliseconds->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
-    return DeltaProcess::wait_for_async_dll( SMIOop( milliseconds )->value() ) ? trueObject : falseObject;
+    return DeltaProcess::wait_for_async_dll( SmallIntegerOop( milliseconds )->value() ) ? trueObject : falseObject;
 }
 
 
@@ -251,7 +251,7 @@ PRIM_DECL_2( ProcessOopPrimitives::trace_stack, Oop receiver, Oop size ) {
     ASSERT_RECEIVER;
 
     // Check argument
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // Make sure process is not dead
@@ -261,7 +261,7 @@ PRIM_DECL_2( ProcessOopPrimitives::trace_stack, Oop receiver, Oop size ) {
     // Print the stack
     {
         ResourceMark resourceMark;
-        ProcessOop( receiver )->process()->trace_top( 1, SMIOop( size )->value() );
+        ProcessOop( receiver )->process()->trace_top( 1, SmallIntegerOop( size )->value() );
     }
 
     return receiver;
@@ -295,14 +295,14 @@ PRIM_DECL_0( ProcessOopPrimitives::yield_in_critical ) {
 PRIM_DECL_1( ProcessOopPrimitives::user_time, Oop receiver ) {
     PROLOGUE_1( "enter_critical", receiver );
     ASSERT_RECEIVER;
-    return oopFactory::new_double( ProcessOop( receiver )->user_time() );
+    return OopFactory::new_double( ProcessOop( receiver )->user_time() );
 }
 
 
 PRIM_DECL_1( ProcessOopPrimitives::system_time, Oop receiver ) {
     PROLOGUE_1( "enter_critical", receiver );
     ASSERT_RECEIVER;
-    return oopFactory::new_double( ProcessOop( receiver )->system_time() );
+    return OopFactory::new_double( ProcessOop( receiver )->system_time() );
 }
 
 
@@ -311,7 +311,7 @@ PRIM_DECL_2( ProcessOopPrimitives::stack, Oop receiver, Oop limit ) {
     ASSERT_RECEIVER;
 
     // Check type of limit
-    if ( not limit->is_smi() )
+    if ( not limit->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     // Make sure process is not dead
@@ -326,16 +326,16 @@ PRIM_DECL_2( ProcessOopPrimitives::stack, Oop receiver, Oop limit ) {
     ResourceMark  rm;
     BlockScavenge bs;
 
-    std::int32_t       l       = SMIOop( limit )->value();
+    std::int32_t       l       = SmallIntegerOop( limit )->value();
     ProcessOop         process = ProcessOop( receiver );
     GrowableArray<Oop> *stack  = new GrowableArray<Oop>( 100 );
 
     VirtualFrame *vf = ProcessOop( receiver )->process()->last_delta_vframe();
 
     for ( std::int32_t i = 1; i <= l and vf; i++ ) {
-        stack->push( oopFactory::new_vframe( process, i ) );
+        stack->push( OopFactory::new_vframe( process, i ) );
         vf = vf->sender();
     }
 
-    return oopFactory::new_objArray( stack );
+    return OopFactory::new_objectArray( stack );
 }

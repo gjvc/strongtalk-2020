@@ -23,6 +23,8 @@ extern "C" Oop *eden_end;
 
 class DoubleValueArrayKlassTests : public ::testing::Test {
 
+public:
+    DoubleValueArrayKlassTests() : ::testing::Test() {}
 
 protected:
 
@@ -46,7 +48,7 @@ protected:
 
 TEST_F( DoubleValueArrayKlassTests, shouldBeDoubleValueArray ) {
     eden_top = eden_end;
-    ASSERT_TRUE( theClass->klass_part()->oop_is_doubleValueArray() );
+    ASSERT_TRUE( theClass->klass_part()->oopIsDoubleValueArray() );
 }
 
 
@@ -82,7 +84,7 @@ public:
 
     void do_klass( KlassOop klass ) {
         Oop instance = klass->primitive_allocate_size( 1 );
-        if ( instance->is_doubleValueArray() ) {
+        if ( instance->isDoubleValueArray() ) {
             SymbolOop name   = SymbolOop( klass->instVarAt( KlassOopDescriptor::header_size() ) );
             char      *sname = name->chars();
             className = sname;

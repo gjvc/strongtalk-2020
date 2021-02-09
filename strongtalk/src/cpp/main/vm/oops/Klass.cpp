@@ -5,7 +5,7 @@
 
 #include "vm/oops/Klass.hpp"
 #include "vm/oops/KlassKlass.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/memory/vmSymbols.hpp"
 #include "vm/oops/KlassOopDescriptor.hpp"
 #include "vm/oops/MixinOopDescriptor.hpp"
@@ -19,8 +19,8 @@
 
 void Klass::initialize() {
     set_untagged_contents( false );
-    set_classVars( ObjectArrayOop( oopFactory::new_objArray( std::int32_t{ 0 } ) ) );
-    set_methods( ObjectArrayOop( oopFactory::new_objArray( std::int32_t{ 0 } ) ) );
+    set_classVars( ObjectArrayOop( OopFactory::new_objectArray( std::int32_t{ 0 } ) ) );
+    set_methods( ObjectArrayOop( OopFactory::new_objectArray( std::int32_t{ 0 } ) ) );
     set_superKlass( KlassOop( nilObject ) );
     set_mixin( MixinOop( nilObject ) );
 }
@@ -59,13 +59,13 @@ Klass::Format Klass::format_from_symbol( SymbolOop format ) {
     if ( format->equals( "Process" ) )
         return Klass::Format::process_klass;
     if ( format->equals( "IndexedInstanceVariables" ) )
-        return Klass::Format::objArray_klass;
+        return Klass::Format::object_array_klass;
     if ( format->equals( "IndexedByteInstanceVariables" ) )
-        return Klass::Format::byteArray_klass;
+        return Klass::Format::byte_array_klass;
     if ( format->equals( "IndexedDoubleByteInstanceVariables" ) )
-        return Klass::Format::doubleByteArray_klass;
+        return Klass::Format::double_byte_array_klass;
     if ( format->equals( "IndexedNextOfKinInstanceVariables" ) )
-        return Klass::Format::weakArray_klass;
+        return Klass::Format::weak_array_klass;
     if ( format->equals( "Special" ) )
         return Klass::Format::special_klass;
 
@@ -81,13 +81,13 @@ const char *Klass::name_from_format( Format format ) {
             return "ExternalProxy";
         case Format::process_klass: // was commented
             return "Process";       // was commented
-        case Format::objArray_klass:
+        case Format::object_array_klass:
             return "IndexedInstanceVariables";
-        case Format::byteArray_klass:
+        case Format::byte_array_klass:
             return "IndexedByteInstanceVariables";
-        case Format::doubleByteArray_klass:
+        case Format::double_byte_array_klass:
             return "IndexedDoubleByteInstanceVariables";
-        case Format::weakArray_klass:
+        case Format::weak_array_klass:
             return "IndexedNextOfKinInstanceVariables";
         default:
             return "Special";
@@ -172,15 +172,15 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 
     BlockScavenge bs;
 
-    st_assert( mixin->classVars()->is_objArray(), "checking instance side class var names" );
-    st_assert( mixin->class_mixin()->classVars()->is_objArray(), "checking class side class var names" );
+    st_assert( mixin->classVars()->isObjectArray(), "checking instance side class var names" );
+    st_assert( mixin->class_mixin()->classVars()->isObjectArray(), "checking class side class var names" );
     st_assert( mixin->class_mixin()->classVars()->length() == 0, "checking class side class var names" );
 
-    ObjectArrayOop class_vars = oopFactory::new_objArray( mixin->number_of_classVars() );
+    ObjectArrayOop class_vars = OopFactory::new_objectArray( mixin->number_of_classVars() );
     std::int32_t   length     = mixin->number_of_classVars();
 
     for ( std::int32_t index = 1; index <= length; index++ ) {
-        AssociationOop assoc = oopFactory::new_association( mixin->classVar_at( index ), nilObject, false );
+        AssociationOop assoc = OopFactory::new_association( mixin->classVar_at( index ), nilObject, false );
         class_vars->obj_at_put( index, assoc );
     }
 
@@ -189,7 +189,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
     Klass    *mk        = meta_klass->klass_part();
     mk->set_untagged_contents( false );
     mk->set_classVars( class_vars );
-    mk->set_methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    mk->set_methods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
     mk->set_superKlass( superMetaClass );
     mk->set_mixin( mixin->class_mixin() );
     mk->set_non_indexable_size( KlassOopDescriptor::header_size() + mk->number_of_instance_variables() );
@@ -200,7 +200,7 @@ KlassOop Klass::create_generic_class( KlassOop superMetaClass, KlassOop superCla
 
     k->set_untagged_contents( false );
     k->set_classVars( class_vars );
-    k->set_methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    k->set_methods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
     k->set_superKlass( superClass );
     k->set_mixin( mixin );
     k->set_vtbl_value( vtbl );
@@ -452,7 +452,7 @@ KlassOop Klass::lookup_method_holder_for( MethodOop method ) {
 
 
 void Klass::flush_methods() {
-    set_methods( oopFactory::new_objArray( std::int32_t{ 0 } ) );
+    set_methods( OopFactory::new_objectArray( std::int32_t{ 0 } ) );
 }
 
 
@@ -474,12 +474,12 @@ void Klass::print_klass() {
 
 char *Klass::delta_name() {
     bool         meta   = false;
-    std::int32_t offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
+    std::int32_t offset = as_klassOop()->blueprint()->lookup_inst_var( OopFactory::new_symbol( "name" ) );
     SymbolOop    name   = nullptr;
 
     if ( offset >= 0 ) {
         name     = SymbolOop( as_klassOop()->raw_at( offset ) );
-        if ( not name->is_symbol() )
+        if ( not name->isSymbol() )
             name = nullptr;
     }
 
@@ -502,12 +502,12 @@ char *Klass::delta_name() {
 
 
 void Klass::print_name_on( ConsoleOutputStream *stream ) {
-    std::int32_t offset = as_klassOop()->blueprint()->lookup_inst_var( oopFactory::new_symbol( "name" ) );
+    std::int32_t offset = as_klassOop()->blueprint()->lookup_inst_var( OopFactory::new_symbol( "name" ) );
     SymbolOop    name   = nullptr;
 
     if ( offset >= 0 ) {
         name     = SymbolOop( as_klassOop()->raw_at( offset ) );
-        if ( not name->is_symbol() )
+        if ( not name->isSymbol() )
             name = nullptr;
     }
 

@@ -20,7 +20,7 @@
 
 class DoubleValueArrayOopDescriptor : public MemOopDescriptor {
 public:
-    friend doubleValueArrayOop as_doubleValueArrayOop( void *p );
+    friend DoubleValueArrayOop as_doubleValueArrayOop( void *p );
 
     void bootstrap_object( Bootstrap *stream );
 
@@ -47,14 +47,14 @@ public:
     }
 
 
-    smi_t length() const {
+    small_int_t length() const {
         Oop len = *length_addr();
-        st_assert( len->is_smi(), "length of indexable should be smi_t" );
-        return SMIOop( len )->value();
+        st_assert( len->isSmallIntegerOop(), "length of indexable should be small_int_t" );
+        return SmallIntegerOop( len )->value();
     }
 
 
-    void set_length( smi_t len ) {
+    void set_length( small_int_t len ) {
         *length_addr() = (Oop) smiOopFromValue( len );
     }
 
@@ -88,6 +88,6 @@ public:
 };
 
 
-inline doubleValueArrayOop as_doubleValueArrayOop( void *p ) {
-    return doubleValueArrayOop( as_memOop( p ) );
+inline DoubleValueArrayOop as_doubleValueArrayOop( void *p ) {
+    return DoubleValueArrayOop( as_memOop( p ) );
 }

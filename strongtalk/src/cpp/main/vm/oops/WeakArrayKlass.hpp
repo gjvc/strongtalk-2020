@@ -28,7 +28,7 @@ public:
 
     // Format
     Format format() {
-        return Format::weakArray_klass;
+        return Format::weak_array_klass;
     }
 
     // ALL FUNCTIONS BELOW THIS POINT ARE DISPATCHED FROM AN OOP
@@ -42,7 +42,7 @@ public:
 
 
     // testers
-    bool oop_is_weakArray() const {
+    bool oopIsWeakArray() const {
         return true;
     }
 

@@ -30,10 +30,10 @@ class InterpretedInlineCache;
 
 class MethodOopDescriptor : public MemOopDescriptor {
 private:
-    ObjectArrayOop _debugInfo;             //
-    Oop            _selector_or_method;    // selector for normal methods, enclosing method for blocks
-    std::int32_t   _counters;              // invocation counter and sharing counter
-    SMIOop         _size_and_flags;        //
+    ObjectArrayOop  _debugInfo;             //
+    Oop             _selector_or_method;    // selector for normal methods, enclosing method for blocks
+    std::int32_t    _counters;              // invocation counter and sharing counter
+    SmallIntegerOop _size_and_flags;        //
 
 
     // [flags (8 bits),  nofArgs (4 bits), size in oops (18 bits), tag (2 bits)]
@@ -65,13 +65,13 @@ public:
     }
 
 
-    SMIOop size_and_flags() const {
+    SmallIntegerOop size_and_flags() const {
         return addr()->_size_and_flags;
     }
 
 
     void set_size_and_flags( std::int32_t size, std::int32_t nofArgs, std::int32_t flags ) {
-        addr()->_size_and_flags = (SMIOop) ( ( flags << method_flags_mask_bitno ) + ( nofArgs << method_args_mask_bitno ) + ( size << method_size_mask_bitno ) );
+        addr()->_size_and_flags = (SmallIntegerOop) ( ( flags << method_flags_mask_bitno ) + ( nofArgs << method_args_mask_bitno ) + ( size << method_size_mask_bitno ) );
     }
 
 
@@ -98,7 +98,7 @@ public:
 
     // Tester
     bool is_blockMethod() const {
-        return not selector_or_method()->is_symbol();
+        return not selector_or_method()->isSymbol();
     }
 
 
@@ -310,7 +310,7 @@ public:
     bool is_primitiveMethod() const;
 
 
-    // For predicted sends (smi_t +, -, *, etc.)
+    // For predicted sends (small_int_t +, -, *, etc.)
     bool is_special_primitiveMethod() const {
         return *codes( 1 ) == static_cast<std::uint8_t>(ByteCodes::Code::special_primitive_send_1_hint);
     }

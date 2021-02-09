@@ -141,7 +141,7 @@ const char *GeneratedPrimitives::primitiveNew( std::int32_t n ) {
 }
 
 
-extern "C" BlockClosureOop allocateBlock( SMIOop nofArgs );
+extern "C" BlockClosureOop allocateBlock( SmallIntegerOop nofArgs );
 extern "C" BlockClosureOop allocateBlock0();
 extern "C" BlockClosureOop allocateBlock1();
 extern "C" BlockClosureOop allocateBlock2();
@@ -165,7 +165,7 @@ const char *GeneratedPrimitives::allocateBlock( std::int32_t n ) {
 }
 
 
-extern "C" ContextOop allocateContext( SMIOop nofVars );
+extern "C" ContextOop allocateContext( SmallIntegerOop nofVars );
 extern "C" ContextOop allocateContext0();
 extern "C" ContextOop allocateContext1();
 extern "C" ContextOop allocateContext2();

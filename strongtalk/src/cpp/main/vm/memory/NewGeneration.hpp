@@ -131,7 +131,7 @@ protected:
 
 
     inline bool is_new( Oop p, char *boundary ) {
-        return p->is_mem() and is_new( MemOop( p ), boundary );
+        return p->isMemOop() and is_new( MemOop( p ), boundary );
     }
 
 

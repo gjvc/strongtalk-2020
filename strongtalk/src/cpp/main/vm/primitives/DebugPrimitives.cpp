@@ -12,7 +12,7 @@
 #include "vm/lookup/LookupCache.hpp"
 #include "vm/lookup/LookupKey.hpp"
 #include "vm/oops/MethodOopDescriptor.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 #include "vm/interpreter/PrettyPrinter.hpp"
 #include "vm/runtime/vmOperations.hpp"
 #include "vm/code/NativeMethod.hpp"
@@ -42,7 +42,7 @@ void boring_template_fn( T t ) {
 
 PRIM_DECL_1( DebugPrimitives::boolAt, Oop name ) {
     PROLOGUE_1( "boolAt", name )
-    if ( not name->is_byteArray() )
+    if ( not name->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     bool result;
     if ( debugFlags::boolAt( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &result ) )
@@ -53,7 +53,7 @@ PRIM_DECL_1( DebugPrimitives::boolAt, Oop name ) {
 
 PRIM_DECL_2( DebugPrimitives::boolAtPut, Oop name, Oop value ) {
     PROLOGUE_2( "boolAtPut", name, value )
-    if ( not name->is_byteArray() )
+    if ( not name->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     bool b;
     if ( value == trueObject )
@@ -71,7 +71,7 @@ PRIM_DECL_2( DebugPrimitives::boolAtPut, Oop name, Oop value ) {
 
 PRIM_DECL_1( DebugPrimitives::smiAt, Oop name ) {
     PROLOGUE_1( "smiAt", name )
-    if ( not name->is_byteArray() )
+    if ( not name->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     std::int32_t result;
     if ( debugFlags::intAt( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &result ) )
@@ -82,11 +82,11 @@ PRIM_DECL_1( DebugPrimitives::smiAt, Oop name ) {
 
 PRIM_DECL_2( DebugPrimitives::smiAtPut, Oop name, Oop value ) {
     PROLOGUE_2( "smiAtPut", name, value )
-    if ( not name->is_byteArray() )
+    if ( not name->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    if ( not value->is_smi() )
+    if ( not value->isSmallIntegerOop() )
         return markSymbol( vmSymbols::second_argument_has_wrong_type() );
-    std::int32_t v = SMIOop( value )->value();
+    std::int32_t v = SmallIntegerOop( value )->value();
     if ( debugFlags::intAtPut( ByteArrayOop( name )->chars(), ByteArrayOop( name )->length(), &v ) )
         return smiOopFromValue( v );
     return markSymbol( vmSymbols::not_found() );
@@ -130,9 +130,9 @@ PRIM_DECL_0( DebugPrimitives::decodeAllMethods ) {
 
 PRIM_DECL_2( DebugPrimitives::printMethodCodes, Oop receiver, Oop sel ) {
     PROLOGUE_2( "printMethodCodes", receiver, sel )
-    if ( not sel->is_byteArray() )
+    if ( not sel->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    SymbolOop s = oopFactory::new_symbol( ByteArrayOop( sel ) );
+    SymbolOop s = OopFactory::new_symbol( ByteArrayOop( sel ) );
     MethodOop m = receiver->blueprint()->lookup( s );
     if ( not m )
         return markSymbol( vmSymbols::not_found() );
@@ -150,9 +150,9 @@ PRIM_DECL_2( DebugPrimitives::generateIR, Oop receiver, Oop sel ) {
     SPDLOG_INFO( "primitiveGenerateIR called..." );
     ResourceMark resourceMark;    // needed to avoid memory leaks!
     PROLOGUE_2( "generateIR", receiver, sel )
-    if ( not sel->is_byteArray() )
+    if ( not sel->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    SymbolOop s = oopFactory::new_symbol( ByteArrayOop( sel ) );
+    SymbolOop s = OopFactory::new_symbol( ByteArrayOop( sel ) );
     MethodOop m = receiver->blueprint()->lookup( s );
     if ( not m )
         return markSymbol( vmSymbols::not_found() );
@@ -167,9 +167,9 @@ PRIM_DECL_2( DebugPrimitives::generateIR, Oop receiver, Oop sel ) {
 PRIM_DECL_2( DebugPrimitives::optimizeMethod, Oop receiver, Oop sel ) {
     PROLOGUE_2( "optimizeMethod", receiver, sel );
 
-    if ( not sel->is_byteArray() )
+    if ( not sel->isByteArray() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    SymbolOop s = oopFactory::new_symbol( ByteArrayOop( sel ) );
+    SymbolOop s = OopFactory::new_symbol( ByteArrayOop( sel ) );
     MethodOop m = receiver->blueprint()->lookup( s );
     if ( not m )
         return markSymbol( vmSymbols::not_found() );
@@ -185,7 +185,7 @@ PRIM_DECL_2( DebugPrimitives::optimizeMethod, Oop receiver, Oop sel ) {
 
 PRIM_DECL_2( DebugPrimitives::decodeMethod, Oop receiver, Oop sel ) {
     PROLOGUE_2( "decodeMethod", receiver, sel );
-    if ( not sel->is_symbol() )
+    if ( not sel->isSymbol() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     LookupResult result = LookupCache::ic_normal_lookup( receiver->klass(), SymbolOop( sel ) );
     if ( result.is_empty() )
@@ -236,9 +236,9 @@ PRIM_DECL_0( DebugPrimitives::interpreterInvocationCounterLimit ) {
 
 PRIM_DECL_1( DebugPrimitives::setInterpreterInvocationCounterLimit, Oop limit ) {
     PROLOGUE_1( "setInterpreterInvocationCounterLimit", limit );
-    if ( not limit->is_smi() )
+    if ( not limit->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
-    std::int32_t value = SMIOop( limit )->value();
+    std::int32_t value = SmallIntegerOop( limit )->value();
     if ( value < 0 or value > MethodOopDescriptor::_invocation_count_max )
         return markSymbol( vmSymbols::out_of_bounds() );
     Interpreter::set_invocation_counter_limit( value );
@@ -303,14 +303,14 @@ static std::int32_t compare_method_counters( MethodOop *a, MethodOop *b ) {
 PRIM_DECL_1( DebugPrimitives::printInvocationCounterHistogram, Oop size ) {
     PROLOGUE_1( "printInvocationCounterHistogram", size );
 
-    if ( not size->is_smi() ) {
+    if ( not size->isSmallIntegerOop() ) {
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
     }
     ResourceMark             rm;
     GrowableArray<MethodOop> *col = new GrowableArray<MethodOop>( 1024 );
 
     // Collect the methods
-    CollectMethodClosure blk( col, SMIOop( size )->value() );
+    CollectMethodClosure blk( col, SmallIntegerOop( size )->value() );
     Universe::object_iterate( &blk );
     SPDLOG_INFO( "Collected {} methods", col->length() );
 
@@ -356,7 +356,7 @@ static std::int32_t compare_NativeMethod_counters( NativeMethod **a, NativeMetho
 
 PRIM_DECL_1( DebugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     PROLOGUE_1( "printNativeMethodCounterHistogram", size );
-    if ( not size->is_smi() )
+    if ( not size->isSmallIntegerOop() )
         return markSymbol( vmSymbols::first_argument_has_wrong_type() );
 
     ResourceMark                  rm;
@@ -369,7 +369,7 @@ PRIM_DECL_1( DebugPrimitives::printNativeMethodCounterHistogram, Oop size ) {
     col->sort( &compare_NativeMethod_counters );
 
     // Print out the result
-    std::int32_t end = ( col->length() > SMIOop( size )->value() ) ? SMIOop( size )->value() : col->length();
+    std::int32_t end = ( col->length() > SmallIntegerOop( size )->value() ) ? SmallIntegerOop( size )->value() : col->length();
 
     for ( std::int32_t i = 0; i < end; i++ ) {
         NativeMethod *m = col->at( i );
@@ -501,7 +501,7 @@ class ObjectHistogram : public ObjectClosure {
 private:
     Counter                  *doubles;
     Counter                  *blocks;
-    Counter                  *objArrays;
+    Counter                  *objectArrays;
     Counter                  *symbols;
     Counter                  *byteArrays;
     Counter                  *doubleByteArrays;
@@ -539,7 +539,7 @@ public:
 ObjectHistogram::ObjectHistogram() :
     doubles{ nullptr },
     blocks{ nullptr },
-    objArrays{ nullptr },
+    objectArrays{ nullptr },
     symbols{ nullptr },
     byteArrays{ nullptr },
     doubleByteArrays{ nullptr },
@@ -558,7 +558,7 @@ ObjectHistogram::ObjectHistogram() :
     counters = new GrowableArray<Counter *>( 20 );
     counters->push( doubles          = new Counter( "doubles" ) );
     counters->push( blocks           = new Counter( "blocks" ) );
-    counters->push( objArrays        = new Counter( "arrays" ) );
+    counters->push( objectArrays        = new Counter( "arrays" ) );
     counters->push( symbols          = new Counter( "symbols" ) );
     counters->push( byteArrays       = new Counter( "byte arrays" ) );
     counters->push( doubleByteArrays = new Counter( "double byte arrays" ) );
@@ -576,23 +576,23 @@ ObjectHistogram::ObjectHistogram() :
 
 Counter *ObjectHistogram::counter( MemOop obj ) {
 
-    if ( obj->is_double() )
+    if ( obj->isDouble() )
         return doubles;
     if ( obj->is_block() )
         return blocks;
-    if ( obj->is_objArray() )
-        return objArrays;
-    if ( obj->is_symbol() )
+    if ( obj->isObjectArray() )
+        return objectArrays;
+    if ( obj->isSymbol() )
         return symbols;        // Must be before byteArray
-    if ( obj->is_byteArray() )
+    if ( obj->isByteArray() )
         return byteArrays;
-    if ( obj->is_doubleByteArray() )
+    if ( obj->isDoubleByteArray() )
         return doubleByteArrays;
     if ( obj->is_klass() )
         return klasses;
     if ( obj->is_process() )
         return processes;
-    if ( obj->is_vframe() )
+    if ( obj->is_VirtualFrame() )
         return vframes;
     if ( obj->is_method() )
         return methods;

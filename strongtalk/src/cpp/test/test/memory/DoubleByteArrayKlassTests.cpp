@@ -19,6 +19,9 @@ extern "C" Oop *eden_end;
 
 class DoubleByteArrayKlassTests : public ::testing::Test {
 
+public:
+    DoubleByteArrayKlassTests() : ::testing::Test() {}
+
 protected:
 
     void SetUp() override {
@@ -44,7 +47,7 @@ protected:
 
 TEST_F( DoubleByteArrayKlassTests, shouldBeDoubleByteArray ) {
     eden_top = eden_end;
-    ASSERT_TRUE( theClass->klass_part()->oop_is_doubleByteArray() );
+    ASSERT_TRUE( theClass->klass_part()->oopIsDoubleByteArray() );
 }
 
 

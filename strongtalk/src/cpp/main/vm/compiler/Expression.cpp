@@ -537,9 +537,9 @@ bool KlassExpression::needsStoreCheck() const {
 
 bool ConstantExpression::needsStoreCheck() const {
     // don't need a check if either
-    // - it's a smi_t, or
+    // - it's a small_int_t, or
     // - it's an old object (old objects never become young again)
-    return not( _c->is_smi() or _c->is_old() );
+    return not( _c->isSmallIntegerOop() or _c->is_old() );
 }
 
 

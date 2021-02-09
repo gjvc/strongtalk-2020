@@ -12,7 +12,7 @@
 #include "vm/utilities/IntegerOps.hpp"
 #include "vm/primitives/ByteArrayPrimitives.hpp"
 #include "vm/compiler/Node.hpp"
-#include "vm/memory/oopFactory.hpp"
+#include "vm/memory/OopFactory.hpp"
 
 #include <gtest/gtest.h>
 
@@ -46,6 +46,9 @@ extern "C" const char *__CALLING_CONVENTION argUnsafe1( const char *a ) {
 
 
 class AlienIntegerCallout1Tests : public ::testing::Test {
+public:
+    AlienIntegerCallout1Tests() : ::testing::Test() {}
+
 
 protected:
     void SetUp() override {
@@ -79,9 +82,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle                   *directAlien, *invalidFunctionAlien, *unsafeAlien, *unsafeContents;
-    SMIOop                             smi0, smi1;
-    char                               address[16];
+    PersistentHandle *directAlien, *invalidFunctionAlien, *unsafeAlien, *unsafeContents;
+    SmallIntegerOop  smi0, smi1;
+    char             address[16];
 
 
     void allocateAlien( PersistentHandle *&alienHandle, std::int32_t arraySize, std::int32_t alienSize, void *ptr = nullptr ) {
@@ -96,7 +99,7 @@ protected:
 
     void checkMarkedSymbol( const char *message, Oop result, SymbolOop expected ) {
         char text[200];
-        EXPECT_TRUE( result->is_mark() ) << "Should be marked";
+        EXPECT_TRUE( result->isMarkOop() ) << "Should be marked";
         sprintf( text, "Should be: %s, was: %s", message, unmarkSymbol( result )->as_string() );
         EXPECT_TRUE( unmarkSymbol( result ) == expected ) << text;
     }
@@ -115,9 +118,9 @@ protected:
 
     std::int32_t asInt( bool &ok, Oop intOop ) {
         ok = true;
-        if ( intOop->is_smi() )
-            return SMIOop( intOop )->value();
-        if ( !intOop->is_byteArray() ) {
+        if ( intOop->isSmallIntegerOop() )
+            return SmallIntegerOop( intOop )->value();
+        if ( !intOop->isByteArray() ) {
             ok = false;
             return 0;
         }
@@ -145,7 +148,7 @@ protected:
         static_cast<void>(handle); // unused
         KlassOop unsafeKlass = KlassOop( Universe::find_global( "UnsafeAlien" ) );
         unsafeAlien = new PersistentHandle( unsafeKlass->primitive_allocate() );
-        std::int32_t offset = unsafeKlass->klass_part()->lookup_inst_var( oopFactory::new_symbol( "nonPointerObject" ) );
+        std::int32_t offset = unsafeKlass->klass_part()->lookup_inst_var( OopFactory::new_symbol( "nonPointerObject" ) );
 
         contents = new PersistentHandle( Universe::byteArrayKlassObject()->primitive_allocate_size( 12 ) );
         MemOop( unsafeAlien->as_oop() )->instVarAtPut( offset, contents->as_oop() );
@@ -174,7 +177,7 @@ TEST_F( AlienIntegerCallout1Tests, alienCallResult1WithUnsafeAlienShouldCallFunc
 
 TEST_F( AlienIntegerCallout1Tests, alienCallResult1ShouldCallFunctionAndIgnoreResultWhenResultAlienNil ) {
     Oop result = ByteArrayPrimitives::alienCallResult1( smiOopFromValue( -1 ), nilObject, functionAlien->as_oop() );
-    EXPECT_TRUE( !result->is_mark() ) << "shoult not be marked";
+    EXPECT_TRUE( !result->isMarkOop() ) << "shoult not be marked";
 }
 
 
@@ -205,7 +208,7 @@ TEST_F( AlienIntegerCallout1Tests, alienCallResult1Should16ByteAlignArgs ) {
     Oop fnAddress = asOop( (std::int32_t) &argAlignment );
     ByteArrayPrimitives::alienSetAddress( fnAddress, functionAlien->as_oop() );
     Oop result = ByteArrayPrimitives::alienCallResult1( addressAlien->as_oop(), resultAlien->as_oop(), functionAlien->as_oop() );
-    EXPECT_TRUE( !result->is_mark() ) << "Should not be marked";
+    EXPECT_TRUE( !result->isMarkOop() ) << "Should not be marked";
     checkIntResult( "wrong result", 0, resultAlien );
     ByteArrayPrimitives::alienSetSize( smiOopFromValue( -8 ), addressAlien->as_oop() );
     ByteArrayPrimitives::alienCallResult1( addressAlien->as_oop(), resultAlien->as_oop(), functionAlien->as_oop() );

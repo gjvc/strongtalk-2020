@@ -60,8 +60,8 @@ Bootstrap::~Bootstrap() {
 void Bootstrap::initNameByTypeByte() {
 
     //
-    _nameByTypeByte[ '-' ] = "SMIOop (negative)";
-    _nameByTypeByte[ '0' ] = "SMIOop";
+    _nameByTypeByte[ '-' ] = "SmallIntegerOop (negative)";
+    _nameByTypeByte[ '0' ] = "SmallIntegerOop";
     _nameByTypeByte[ '3' ] = "Oop";
 
     //
@@ -70,7 +70,7 @@ void Bootstrap::initNameByTypeByte() {
     _nameByTypeByte[ 'C' ] = "memOopKlass";
     _nameByTypeByte[ 'D' ] = "byteArrrayKlass";
     _nameByTypeByte[ 'E' ] = "doubleByteArrrayKlass";
-    _nameByTypeByte[ 'F' ] = "objArrayKlass";
+    _nameByTypeByte[ 'F' ] = "objectArrayKlass";
     _nameByTypeByte[ 'G' ] = "symbolKlass";
     _nameByTypeByte[ 'H' ] = "doubleKlass";
     _nameByTypeByte[ 'I' ] = "associationKlass";
@@ -86,11 +86,11 @@ void Bootstrap::initNameByTypeByte() {
 
     //
     _nameByTypeByte[ 'a' ] = "klass";
-    _nameByTypeByte[ 'b' ] = "smi_t";
+    _nameByTypeByte[ 'b' ] = "small_int_t";
     _nameByTypeByte[ 'c' ] = "MemOop";
     _nameByTypeByte[ 'd' ] = "ByteArrayOop";
     _nameByTypeByte[ 'e' ] = "ByteArrayOop";
-    _nameByTypeByte[ 'f' ] = "objArrayOop";
+    _nameByTypeByte[ 'f' ] = "objectArrayOop";
     _nameByTypeByte[ 'g' ] = "SymbolOop";
     _nameByTypeByte[ 'h' ] = "DoubleOop";
     _nameByTypeByte[ 'i' ] = "associationOop";
@@ -246,7 +246,7 @@ void Bootstrap::parse_objects() {
     falseObject                       = MemOop( readNextObject() );
     smiKlassObject                    = KlassOop( readNextObject() );
     Universe::_memOopKlassObject      = KlassOop( readNextObject() );
-    Universe::_objArrayKlassObject    = KlassOop( readNextObject() );
+    Universe::_objectArrayKlassObject    = KlassOop( readNextObject() );
     Universe::_byteArrayKlassObject   = KlassOop( readNextObject() );
     symbolKlassObject                 = KlassOop( readNextObject() );
     doubleKlassObject                 = KlassOop( readNextObject() );
@@ -374,7 +374,7 @@ Oop Bootstrap::readNextObject() {
             klass_case_func( setKlassVirtualTableFromDoubleByteArrayKlass, memOop );
             break;
         case 'F': // 
-            klass_case_func( setKlassVirtualTableFromObjArrayKlass, memOop );
+            klass_case_func( setKlassVirtualTableFromObjectArrayKlass, memOop );
             break;
         case 'G': // 
             klass_case_func( setKlassVirtualTableFromSymbolKlass, memOop );
@@ -418,7 +418,7 @@ Oop Bootstrap::readNextObject() {
         st_fatal( "klass" );
             break;
         case 'b': // 
-        st_fatal( "smi_t" );
+        st_fatal( "small_int_t" );
             break;
         case 'c': // 
             object_case_func<MemOop>( memOop );

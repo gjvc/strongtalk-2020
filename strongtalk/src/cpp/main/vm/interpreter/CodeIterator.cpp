@@ -241,7 +241,7 @@ void CodeIterator::customize_class_var_code( KlassOop to_klass ) {
 
     Oop       *p   = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
-    st_assert( name->is_symbol(), "name must be symbol" );
+    st_assert( name->isSymbol(), "name must be symbol" );
     AssociationOop assoc = to_klass->klass_part()->lookup_class_var( name );
     if ( !assoc ) return;
     st_assert( assoc->is_old(), "must be tenured" );
@@ -300,7 +300,7 @@ void CodeIterator::customize_inst_var_code( KlassOop to_klass ) {
 
     Oop       *p   = aligned_oop( 1 );
     SymbolOop name = SymbolOop( *p );
-    st_assert( name->is_symbol(), "name must be symbol" );
+    st_assert( name->isSymbol(), "name must be symbol" );
     std::int32_t offset = to_klass->klass_part()->lookup_inst_var( name );
     if ( offset < 0 ) return;
 
@@ -320,8 +320,8 @@ void CodeIterator::uncustomize_inst_var_code( KlassOop from_klass ) {
     st_assert( code() == ByteCodes::Code::push_instVar or code() == ByteCodes::Code::store_instVar_pop or code() == ByteCodes::Code::store_instVar or code() == ByteCodes::Code::return_instVar, "must be instance variable byte code" );
 
     Oop *p = aligned_oop( 1 );
-    st_assert( ( *p )->is_smi(), "must be smi_t" );
-    std::int32_t old_offset = SMIOop( *p )->value();
+    st_assert( ( *p )->isSmallIntegerOop(), "must be small_int_t" );
+    std::int32_t old_offset = SmallIntegerOop( *p )->value();
     SymbolOop    name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
@@ -342,8 +342,8 @@ void CodeIterator::recustomize_inst_var_code( KlassOop from_klass, KlassOop to_k
     st_assert( code() == ByteCodes::Code::push_instVar or code() == ByteCodes::Code::store_instVar_pop or code() == ByteCodes::Code::store_instVar or code() == ByteCodes::Code::return_instVar, "must be instance variable byte code" );
 
     Oop *p = aligned_oop( 1 );
-    st_assert( ( *p )->is_smi(), "must be smi_t" );
-    std::int32_t old_offset = SMIOop( *p )->value();
+    st_assert( ( *p )->isSmallIntegerOop(), "must be small_int_t" );
+    std::int32_t old_offset = SmallIntegerOop( *p )->value();
     SymbolOop    name       = from_klass->klass_part()->inst_var_name_at( old_offset );
     if ( not name ) {
         st_fatal( "instance variable not found" );
