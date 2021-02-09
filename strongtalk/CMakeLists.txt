@@ -31,7 +31,7 @@ execute_process ( COMMAND git rev-parse ${GIT_CURRENT_BRANCH} WORKING_DIRECTORY 
 
 set ( arch i686 )
 set ( platform w64-mingw32 )
-set ( compiler-family gnu )
+set ( compiler-family gcc )
 set ( compiler-version 10 )
 set ( runtime posix )
 set ( toolchain-name ${arch}-${platform}-${compiler-family}-${compiler-version}-${runtime} )
@@ -47,11 +47,11 @@ set ( build-type debug )
 
 set ( object-path ${CMAKE_CURRENT_SOURCE_DIR}/obj/${toolchain-name}-${runtime-variant}/${build-type} )
 
-set ( CMAKE_CXX_COMPILER ${g++} )
-set ( CMAKE_CXX_COMPILER ${g++} )
-set ( CMAKE_CXX_LINKER_PREFERENCE ${g++} )
-set ( CMAKE_C_COMPILER ${gcc} )
-set ( CMAKE_C_LINKER_PREFERENCE ${gcc} )
+set ( CMAKE_CXX_COMPILER ${cxx-compiler} )
+set ( CMAKE_CXX_COMPILER ${cxx-compiler} )
+set ( CMAKE_CXX_LINKER_PREFERENCE ${cxx-compiler} )
+set ( CMAKE_C_COMPILER ${cc-compiler} )
+set ( CMAKE_C_LINKER_PREFERENCE ${cc-compiler} )
 set ( CMAKE_VERBOSE_MAKEFILE ON )
 
 
@@ -91,7 +91,6 @@ message ( STATUS "--------------------------------------------------------------
 message ( STATUS ">>> CMAKE_ variables" )
 message ( STATUS "-----------------------------------------------------------------------------" )
 message ( STATUS "" )
-
 message ( STATUS "CMAKE_BUILD_TYPE             [${CMAKE_BUILD_TYPE}]" )
 message ( STATUS "CMAKE_CURRENT_BINARY_DIR     [${CMAKE_CURRENT_BINARY_DIR}]" )
 message ( STATUS "CMAKE_CURRENT_SOURCE_DIR     [${CMAKE_CURRENT_SOURCE_DIR}]" )

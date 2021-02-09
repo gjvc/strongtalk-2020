@@ -12,13 +12,10 @@
 .SHELLFLAGS := -eu -o pipefail -c
 SHELL       := /bin/bash
 
-MAKEFLAGS   += --jobs $(shell nproc)
+MAKEFLAGS   += --jobs $(shell nproc --all)
 MAKEFLAGS   += --keep-going
 MAKEFLAGS   += --no-builtin-rules
 MAKEFLAGS   += --warn-undefined-variables
-
-null 		:=
-space   	:= $(null) $(null)
 
 
 # location --------------------------------------------------------------------
@@ -26,6 +23,7 @@ space   	:= $(null) $(null)
 this-file       := $(abspath $(firstword $(MAKEFILE_LIST)))
 this-file-dir   := $(dir $(this-file))
 ROOT            := $(this-file-dir:/=)
+
 
 
 
@@ -55,29 +53,28 @@ wine-winetricks         := /usr/bin/winetricks
 export WINEARCH=win32
 
 
-# toolchain -------------------------------------------------------------------
+# compiler --------------------------------------------------------------------
 
-compiler-family := gnu
+compiler-family := gcc
 
-ifeq ($(compiler-family),gnu)
+
+# GCC -------------------------------------------------------------------------
+
+ifeq ($(compiler-family),gcc)
 machine             := i686
 platform            := w64-mingw32
-compiler-family     := gnu
+compiler-family     := gcc
 compiler-version    := 10
 runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
-# toolchain-name-debian-style  := $(compiler-family)/$(machine)-$(platform)/$(compiler-version)-$(runtime) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
-
-ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
-ar-flags            := Dcrs
+toolchain-name-deb  := $(compiler-family)/$(machine)-$(platform)/$(compiler-version)-$(runtime) # following /usr/lib/gcc/i686-w64-mingw32/10-posix/
 
 cc-compiler         := /usr/bin/$(machine)-$(platform)-gcc-$(runtime)
 cxx-compiler        := /usr/bin/$(machine)-$(platform)-g++-$(runtime)
-
-export CC=$(ccache) $(cc-compiler)
-export CXX=$(ccache) $(cxx-compiler)
 endif
 
+
+# LLVM ------------------------------------------------------------------------
 
 ifeq ($(compiler-family),llvm)
 machine             := i686
@@ -87,42 +84,45 @@ compiler-version    := 11
 runtime             := posix
 toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-version)-$(runtime)
 
+cc-compiler         := /usr/bin/clang-$(compiler-version)
+cxx-compiler        := /usr/bin/clang++-$(compiler-version)
+endif
+
+run-clang-tidy-py   := /usr/lib/$(compiler-family)-$(compiler-version)/share/clang/run-clang-tidy.py
+run-clang-tidy-py   := /usr/lib/llvm-11/share/clang/run-clang-tidy.py
+
+
+# common ----------------------------------------------------------------------
+
 ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
 ar-flags            := Dcrs
 
-cc-compiler         := /usr/bin/clang-$(compiler-version)
-cxx-compiler        := /usr/bin/clang++-$(compiler-version)
-
-run-clang-tidy-py   := /usr/lib/$(compiler-family)-$(compiler-version)/share/clang/run-clang-tidy.py
-
 export CC=$(ccache) $(cc-compiler)
 export CXX=$(ccache) $(cxx-compiler)
-endif
 
 
 # cmake -----------------------------------------------------------------------
 
-ifeq ($(compiler-family),gnu)
-cmake-system-name   := Windows
+ifeq ($(compiler-family),gcc)
+cmake-system-name := Windows
 endif
 
 ifeq ($(compiler-family),llvm)
-cmake-system-name   := Linux
+cmake-system-name := Linux
 endif
 
 cmake  := /usr/bin/cmake
-cmake-generator-name    := Ninja
+cmake-generator-name := Ninja
 ninja  := /usr/bin/ninja
 
 
 # object files ----------------------------------------------------------------
 
-build-type      ?= debug
-build-system    ?= gnu-make
-object-path     := $(toolchain-name)/$(build-system)/$(build-type)
-object-root     := obj/$(object-path)
-
-object-root-cmake := obj/$(toolchain-name)/cmake/$(build-type)
+build-type          ?= debug
+build-system        ?= gnu-make
+object-path         := $(toolchain-name)/$(build-system)/$(build-type)
+object-root         := obj/$(object-path)
+object-root-cmake   := obj/$(toolchain-name)/cmake/$(build-type)
 
 
 
@@ -204,7 +204,7 @@ cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 cxx-no-warning-options      := reorder
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
-cxx-optimisation-options    := 0
+cxx-optimisation-options    := 3
 cxx-optimisation-flags      := $(addprefix -O,$(cxx-optimisation-options))
 
 cxx-other-options           := 
@@ -236,6 +236,8 @@ cxx-link-flags = \
 libgcc-link-flags := \
     -static-libgcc \
     -static-libstdc++
+
+
 
 
 # ==== RULES ====================================================================
@@ -292,6 +294,8 @@ st20-test-define-values     :=
 st20-test-define-flags      := $(addprefix -D ,$(st20-test-define-values))
 
 
+
+
 # ==== TARGETS ==================================================================
 
 # targets -----------------------------------------------------------------------
@@ -313,8 +317,30 @@ cmake-build :
         -B $(object-root-cmake)
 	@$(ninja) -C $(object-root-cmake) -k 0 
 
+
+#  /home/gjvc/project/SMALLTALK/strongtalk/strongtalk-2020/strongtalk/obj/i686-w64-mingw32-gcc-10-posix/cmake/debug
 run-clang-tidy :
-	$(run-clang-tidy-py) -p $(object-root) 
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-avoid-bind'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-deprecated-headers'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-loop-convert'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-make-shared'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-make-unique'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-pass-by-value'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-raw-string-literal'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-redundant-void-arg'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-replace-auto-ptr'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-shrink-to-fit'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-auto'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-bool-literals'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-default-member-init'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-emplace'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-equals-default'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-equals-delete'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-nullptr'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-override'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-transparent-functors'
+	cd $(object-root-cmake) && $(run-clang-tidy-py) -fix -checks='-*,modernize-use-using'
+
 
 help :
 	@echo ""
@@ -585,3 +611,14 @@ nasm : $(nasm-root-dir)
 	install --verbose $(nasm-root-dir)/include/* 	-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/x86/* 		-D --target-directory $(nasm-object-dir)/include
 	install --verbose $(nasm-root-dir)/libnasm.a 	-D --target-directory $(nasm-object-dir)/lib
+
+
+# ==== NOTES ==================================================================
+
+# -----------------------------------------------------------------------------
+#
+#
+#
+#
+#
+
