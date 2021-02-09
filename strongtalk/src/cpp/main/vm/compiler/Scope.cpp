@@ -23,17 +23,18 @@ small_int_t Scope::_currentScopeID;
 SendInfo::SendInfo( InlinedScope *senderScope, LookupKey *lookupKey, Expression *receiver ) :
     _senderScope{ senderScope },
     _receiver{ receiver },
-    _receiverStatic{ false },
-    _selector{ lookupKey->selector() },
     _lookupKey{ lookupKey },
+    _resultRegister{ nullptr },
+    _selector{ lookupKey->selector() },
+    _needRealSend{ false },
     _counting{ false },
+    _sendCount{ -1 },
     _predicted{ false },
     uninlinable{ false },
-    _needRealSend{ false },
-    _resultRegister{ nullptr },
-    _sendCount{ -1 },
+    _receiverStatic{ false },
     _inPrimitiveFailure{ false } {
 
+    //
     _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
 
 }
@@ -43,16 +44,17 @@ SendInfo::SendInfo( InlinedScope *sen, Expression *r, SymbolOop s ) :
     _senderScope{ sen },
     _receiver{ r },
     _lookupKey{ nullptr },
-    _counting{ false },
-    _needRealSend{ false },
     _resultRegister{ nullptr },
     _selector{ nullptr },
+    _needRealSend{ false },
+    _counting{ false },
     _sendCount{ -1 },
     _predicted{ false },
     uninlinable{ false },
     _receiverStatic{ false },
     _inPrimitiveFailure{ false } {
 
+    //
     _inPrimitiveFailure = _senderScope and _senderScope->gen()->in_primitive_failure_block();
 
 }
@@ -90,14 +92,6 @@ InlinedScope::InlinedScope() :
     _self{ nullptr },
     _gen{},
 
-    depth{ 0 },
-    loopDepth{ 0 },
-    nlrResult{ 0 },
-    predicted{ false },
-    result{ nullptr },
-    resultPR{ nullptr },
-    rscope{ nullptr },
-
     _context{ nullptr },
     _arguments{ nullptr },
     _temporaries{ nullptr },
@@ -116,7 +110,15 @@ InlinedScope::InlinedScope() :
     _NonLocalReturneturnPoint{ nullptr },
     _nlrTestPoint{ nullptr },
     _contextInitializer{ nullptr },
-    _hasBeenGenerated{ false } {
+    _hasBeenGenerated{ false },
+
+    rscope{ nullptr },
+    predicted{ false },
+    depth{ 0 },
+    loopDepth{ 0 },
+    result{ nullptr },
+    nlrResult{ nullptr },
+    resultPR{ nullptr } {
 }
 
 
@@ -202,8 +204,8 @@ MethodScope::MethodScope() {
 
 
 BlockScope::BlockScope() :
-    _self_is_initialized{ false },
-    _parent{ nullptr } {
+    _parent{ nullptr },
+    _self_is_initialized{ false } {
 }
 
 

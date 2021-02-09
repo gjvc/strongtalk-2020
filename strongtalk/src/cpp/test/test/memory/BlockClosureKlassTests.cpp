@@ -18,7 +18,11 @@ class BlockClosureKlassTests : public ::testing::Test {
 
 
 public:
-    BlockClosureKlassTests() : ::testing::Test() {}
+    BlockClosureKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
 

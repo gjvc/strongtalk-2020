@@ -18,7 +18,10 @@ extern "C" Oop *eden_end;
 class MixinKlassTests : public ::testing::Test {
 
 public:
-    MixinKlassTests() : ::testing::Test() {}
+    MixinKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
 
 
 protected:

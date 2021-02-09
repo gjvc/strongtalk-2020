@@ -20,7 +20,11 @@ extern "C" Oop *eden_end;
 class DoubleByteArrayKlassTests : public ::testing::Test {
 
 public:
-    DoubleByteArrayKlassTests() : ::testing::Test() {}
+    DoubleByteArrayKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
 

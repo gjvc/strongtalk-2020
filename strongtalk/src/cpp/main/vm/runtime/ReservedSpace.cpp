@@ -10,7 +10,9 @@
 #include "vm/system/os.hpp"
 
 
-ReservedSpace::ReservedSpace( std::int32_t size ) : _size{ size }, _base{ nullptr } {
+ReservedSpace::ReservedSpace( std::int32_t size ) :
+    _base{ nullptr },
+    _size{ size } {
     st_assert( ( size % os::vm_page_size() ) == 0, "size not page aligned" );
     _base = os::reserve_memory( size );
 }

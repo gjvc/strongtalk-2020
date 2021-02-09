@@ -20,15 +20,15 @@ const RecompilerFrame *noCallerYet = reinterpret_cast<RecompilerFrame *>(0x0 ); 
 
 RecompilerFrame::RecompilerFrame( Frame frame, const RecompilerFrame *callee ) :
     _frame( frame ),
-    _cumulSends{},
-    _loopDepth{},
-    _ncallers{},
-    _sends{},
     _caller{ (RecompilerFrame *) noCallerYet },
     _callee{ (RecompilerFrame *) callee },
-    _invocations{ _sends = _cumulSends = _loopDepth = 0 },
     _num{ callee ? callee->num() + 1 : 0 },
-    _distance{ -1 } {
+    _distance{ -1 },
+    _invocations{ _sends = _cumulSends = _loopDepth = 0 },
+    _ncallers{},
+    _sends{},
+    _cumulSends{},
+    _loopDepth{} {
 }
 
 
@@ -78,15 +78,15 @@ InterpretedRecompilerFrame::InterpretedRecompilerFrame( Frame fr, MethodOop m, K
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr, const RecompilerFrame *callee ) :
     RecompilerFrame( fr, callee ),
-    _deltaVirtualFrame{},
-    _nativeMethod{} {
+    _nativeMethod{},
+    _deltaVirtualFrame{} {
 }
 
 
 CompiledRecompilerFrame::CompiledRecompilerFrame( Frame fr ) :
     RecompilerFrame( fr, nullptr ),
-    _deltaVirtualFrame{},
-    _nativeMethod{} {
+    _nativeMethod{},
+    _deltaVirtualFrame{} {
     init();
 }
 
@@ -364,15 +364,20 @@ public:
     bool         top;
 
 
-    CumulCounter( MethodOop m ) : cumulSends{ 0 }, method{ m }, top{ true } {
+    CumulCounter( MethodOop m ) :
+        method{ m },
+        cumulSends{ 0 },
+        top{ true } {
     }
+
 
     CumulCounter() = default;
     virtual ~CumulCounter() = default;
     CumulCounter( const CumulCounter & ) = default;
     CumulCounter &operator=( const CumulCounter & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void count() {
@@ -407,16 +412,16 @@ std::int32_t RecompilerFrame::computeCumulSends( MethodOop m ) {
 void RecompilerFrame::print( const char *kind ) {
 
     SPDLOG_INFO( "{<16s} {:3d} {} {<15s}  invocations={:5d}  numberOfCallers={:3d}  sends={:6d}  cumulativeSends={:6d}  loopDepth={:2d}  cost={:4d}",
-                  kind,
-                  _num,
-                  is_interpreted() ? "I" : "C",
-                  top_method()->selector()->as_string(),
-                  _invocations,
-                  _ncallers,
-                  _sends,
-                  _cumulSends,
-                  _loopDepth,
-                  cost()
+                 kind,
+                 _num,
+                 is_interpreted() ? "I" : "C",
+                 top_method()->selector()->as_string(),
+                 _invocations,
+                 _ncallers,
+                 _sends,
+                 _cumulSends,
+                 _loopDepth,
+                 cost()
     );
 
 }

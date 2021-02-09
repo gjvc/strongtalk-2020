@@ -101,7 +101,8 @@ class PseudoRegister;
 
 class Expression;
 
-class ScopeDescriptor : public PrintableResourceObject {        // abstract
+class ScopeDescriptor : public PrintableResourceObject {
+    // abstract
 
 protected:
     // Creation information
@@ -326,7 +327,7 @@ public:
     MethodScopeDescriptor &operator=( const MethodScopeDescriptor & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool s_equivalent( ScopeDescriptor *s ) const;
@@ -477,7 +478,7 @@ public:
     NonInlinedBlockScopeDescriptor &operator=( const NonInlinedBlockScopeDescriptor & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     MethodOop method() const {

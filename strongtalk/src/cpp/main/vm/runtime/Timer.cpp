@@ -74,8 +74,8 @@ double TimeStamp::seconds() {
 
 TraceTime::TraceTime( const char *title, bool doit ) :
     active{ doit },
-    _title{ title },
-    t{} {
+    t{},
+    _title{ title } {
 
     if ( active ) {
         SPDLOG_INFO( "start timer [{}]", _title );

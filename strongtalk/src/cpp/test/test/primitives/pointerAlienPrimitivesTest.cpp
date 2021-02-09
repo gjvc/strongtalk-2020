@@ -19,7 +19,7 @@
 class PointerAlienPrimsTests : public ::testing::Test {
 
 public:
-    PointerAlienPrimsTests() : ::testing::Test() {}
+    PointerAlienPrimsTests() : ::testing::Test(), rm{ nullptr}, alien{},invalidAlien{},largeUnsignedInteger{}, largeSignedInteger{},alien_byte_region{},doubleValue{} {}
 
 protected:
     void SetUp() override {

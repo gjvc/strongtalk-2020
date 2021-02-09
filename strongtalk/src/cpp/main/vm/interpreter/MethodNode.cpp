@@ -70,8 +70,7 @@ WhileNode::WhileNode( MethodOop method, MethodInterval *parent, std::int32_t beg
         case ByteCodes::Code::whileFalse_word:
             _cond = false;
             break;
-        default:
-            st_fatal( "expecting while jump" );
+        default: st_fatal( "expecting while jump" );
     }
     std::int32_t jump_end = c.next_byteCodeIndex();
 
@@ -99,11 +98,11 @@ SymbolOop WhileNode::selector() const {
 
 IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool cond, std::int32_t else_offset, std::uint8_t structure ) :
     InlineSendNode( method, parent, begin_byteCodeIndex ),
-    _cond{},
-    _produces_result{},
-    _ignore_else_while_printing{},
-    _then_code{},
-    _else_code{} {
+    _cond{ false },
+    _ignore_else_while_printing{ false },
+    _produces_result{ false },
+    _then_code{ nullptr },
+    _else_code{ nullptr } {
     bool         has_else_branch;
     std::int32_t else_jump_size;
     _cond                       = cond;
@@ -124,8 +123,7 @@ IfNode::IfNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byt
             case ByteCodes::Code::jump_else_word:
                 end_offset = c.word_at( 1 );
                 break;
-            default:
-                st_fatal( "expecting an else jump" );
+            default: st_fatal( "expecting an else jump" );
         }
         _else_code = MethodIterator::factory->new_MethodInterval( method, this, next_byteCodeIndex + else_offset, next_byteCodeIndex + else_offset + end_offset );
         set_end_byteCodeIndex( else_code()->end_byteCodeIndex() );
@@ -163,9 +161,9 @@ ExternalCallNode::ExternalCallNode( MethodOop method, MethodInterval *parent, st
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc ) :
     ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex ),
-    _name{ nullptr },
+    _pdesc{},
     _has_receiver{ has_receiver },
-    _pdesc{} {
+    _name{ nullptr } {
 
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _name  = ( name == nullptr ) ? pdesc->selector() : name;
@@ -176,9 +174,9 @@ PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, 
 
 PrimitiveCallNode::PrimitiveCallNode( MethodOop method, MethodInterval *parent, std::int32_t begin_byteCodeIndex, std::int32_t next_byteCodeIndex, bool has_receiver, SymbolOop name, PrimitiveDescriptor *pdesc, std::int32_t end_offset ) :
     ExternalCallNode( method, parent, begin_byteCodeIndex, next_byteCodeIndex, end_offset ),
-    _name{ nullptr },
+    _pdesc{},
     _has_receiver{ has_receiver },
-    _pdesc{} {
+    _name{ nullptr } {
 
     st_assert( ( name == nullptr ) not_eq ( pdesc == nullptr ), "we need one an only one kind" );
     _name  = ( name == nullptr ) ? pdesc->selector() : name;
@@ -209,5 +207,7 @@ DLLCallNode::DLLCallNode( MethodOop method, MethodInterval *parent, std::int32_t
     _nofArgs{ 0 },
     _function{},
     _async{ false } {
+
+    //
     initialize( cache );
 }

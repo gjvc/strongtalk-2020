@@ -52,7 +52,7 @@ public:
 
     static class NonLocalReturnTestNode *NonLocalReturnTestNode( std::int32_t byteCodeIndex );
 
-    static ArithRRNode *ArithRRNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *o2, PseudoRegister *dst );
+    static RegisterRegisterArithmeticNode *ArithRRNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *o2, PseudoRegister *dst );
 
     static ArithRCNode *ArithRCNode( ArithOpCode op, PseudoRegister *src, std::int32_t o2, PseudoRegister *dst );
 

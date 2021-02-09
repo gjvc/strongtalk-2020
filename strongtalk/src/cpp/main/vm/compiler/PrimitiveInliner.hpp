@@ -26,16 +26,15 @@
 class PrimitiveInliner : public PrintableResourceObject {
 
 private:
-    NodeBuilder         *_gen;                // the active node generator
-    std::int32_t        _byteCodeIndex;                // byteCodeIndex of primitive call
-    PrimitiveDescriptor *_primitiveDescriptor;                // the primitive
-    MethodInterval      *_failure_block;            // code in primitive failure block
-
+    NodeBuilder                 *_gen;                  // the active node generator
+    std::int32_t                _byteCodeIndex;         // byteCodeIndex of primitive call
+    PrimitiveDescriptor         *_primitiveDescriptor;  // the primitive
+    MethodInterval              *_failure_block;        // code in primitive failure block
     InlinedScope                *_scope;                // the current scope
-    ExpressionStack             *_expressionStack;            // the current expression stack
-    GrowableArray<Expression *> *_params;            // the copy of the top number_of_parameters() elements of _exprStack NB: don't use _params->at(...) -- use parameter() below
-    bool                        _usingUncommonTrap;                // using uncommon trap for prim. failure?
-    bool                        _cannotFail;                        // true if primitive can't fail
+    ExpressionStack             *_expressionStack;      // the current expression stack
+    GrowableArray<Expression *> *_params;               // the copy of the top number_of_parameters() elements of _exprStack NB: don't use _params->at(...) -- use parameter() below
+    bool                        _usingUncommonTrap;     // using uncommon trap for prim. failure?
+    bool                        _cannotFail;            // true if primitive can't fail
 
     std::int32_t number_of_parameters() const {
         return _primitiveDescriptor->number_of_parameters();
@@ -108,7 +107,10 @@ public:
     virtual ~PrimitiveInliner() = default;
     PrimitiveInliner( const PrimitiveInliner & ) = default;
     PrimitiveInliner &operator=( const PrimitiveInliner & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
     void generate();
 

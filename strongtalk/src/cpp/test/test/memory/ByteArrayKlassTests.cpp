@@ -21,7 +21,11 @@ extern "C" Oop *eden_end;
 class ByteArrayKlassTests : public ::testing::Test {
 
 public:
-    ByteArrayKlassTests() : ::testing::Test() {}
+    ByteArrayKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
 

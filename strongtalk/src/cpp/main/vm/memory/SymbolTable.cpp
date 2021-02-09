@@ -59,13 +59,16 @@ std::uint32_t hash( const char *name, std::int32_t len ) {
 }
 
 
-SymbolTable::SymbolTable() : buckets{}, end_block{}, first_free_link{}, free_list{} {
+SymbolTable::SymbolTable() :
+    buckets{},
+    free_list{ nullptr },
+    first_free_link{ nullptr },
+    end_block{ nullptr } {
 
     for ( std::int32_t i = 0; i < symbol_table_size; i++ ) {
         buckets[ i ].clear();
     }
 
-    free_list = first_free_link = end_block = nullptr;
 }
 
 

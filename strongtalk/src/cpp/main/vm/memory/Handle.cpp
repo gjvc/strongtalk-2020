@@ -64,10 +64,12 @@ private:
 public:
     FunctionProcessClosure( void f( Oop * ) ) : function{ f } {
     }
+
+
     virtual ~FunctionProcessClosure() {}
 
-    static void operator delete( void *p ) { (void)p; }
 
+    static void operator delete( void *p ) { (void) p; }
 
 
     void do_process( DeltaProcess *p ) {
@@ -117,9 +119,9 @@ StackHandle::~StackHandle() {
 
 
 PersistentHandle::PersistentHandle( Oop toSave ) :
+    _saved( toSave ),
     _next{ nullptr },
-    _prev{ nullptr },
-    _saved( toSave ) {
+    _prev{ nullptr } {
     _next = _first;
     if ( _first ) {
         _first->_prev = this;

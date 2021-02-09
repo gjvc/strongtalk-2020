@@ -191,13 +191,13 @@ void PseudoRegisterMapping::destroy() {
 
 
 PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::int32_t nofArgs, std::int32_t nofRegs, std::int32_t nofTemps ) :
-    _stackLocations{ nullptr },
-    _temporaryLocations{ nullptr },
+    _macroAssembler{ nullptr },
+    _nonLocalReturnInProgress{ false },
+    _locations{ nullptr },
     _pseudoRegisters{ nullptr },
     _registerLocations{ nullptr },
-    _locations{ nullptr },
-    _macroAssembler{ nullptr },
-    _nonLocalReturnInProgress{ false } {
+    _stackLocations{ nullptr },
+    _temporaryLocations{ nullptr } {
 
     constexpr std::int32_t initialSize = 8;
     _macroAssembler           = assm;
@@ -212,13 +212,13 @@ PseudoRegisterMapping::PseudoRegisterMapping( MacroAssembler *assm, std::int32_t
 
 
 PseudoRegisterMapping::PseudoRegisterMapping( PseudoRegisterMapping *m ) :
-    _stackLocations{ nullptr },
-    _temporaryLocations{ nullptr },
+    _macroAssembler{ nullptr },
+    _nonLocalReturnInProgress{ false },
+    _locations{ nullptr },
     _pseudoRegisters{ nullptr },
     _registerLocations{ nullptr },
-    _locations{ nullptr },
-    _macroAssembler{ nullptr },
-    _nonLocalReturnInProgress{ false } {
+    _stackLocations{ nullptr },
+    _temporaryLocations{ nullptr } {
 
     //
     _macroAssembler           = m->_macroAssembler;

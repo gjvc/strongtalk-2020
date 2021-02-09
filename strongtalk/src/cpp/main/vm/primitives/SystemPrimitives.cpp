@@ -888,8 +888,8 @@ class ReferencesToClosure : public ObjectClosure {
 
 public:
     ReferencesToClosure( Oop target, std::int32_t limit ) :
-        _target{ target },
         _limit{ limit },
+        _target{ target },
         _result{ nullptr } {
         _result = new GrowableArray<Oop>( 100 );
     }
@@ -998,9 +998,9 @@ public:
     void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
-    std::int32_t       _limit;
-    KlassOop           _target;
     GrowableArray<Oop> *_result;
+    KlassOop           _target;
+    std::int32_t       _limit;
 
 
     bool has_reference( MemOop obj ) {

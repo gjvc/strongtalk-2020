@@ -165,8 +165,8 @@ EdenSpace::EdenSpace() {
 
 SurvivorSpace::SurvivorSpace() :
     _bottom{ nullptr },
-    _end{ nullptr },
-    _top{ nullptr } {
+    _top{ nullptr },
+    _end{ nullptr } {
 }
 
 
@@ -215,13 +215,13 @@ void OldSpace::initialize_threshold() {
 
 
 OldSpace::OldSpace( const char *name, std::int32_t &size ) :
-    _end{ nullptr },
-    _top{ nullptr },
     _bottom{ nullptr },
-    _nextOffsetIndex{ 0 },
-    _nextOffsetThreshold{ nullptr },
+    _top{ nullptr },
+    _end{ nullptr },
     _nextSpace{ nullptr },
-    _offsetArray{ nullptr } {
+    _offsetArray{ nullptr },
+    _nextOffsetThreshold{ nullptr },
+    _nextOffsetIndex{ 0 } {
 
     //
     static_cast<void>(size); // unused
@@ -237,11 +237,14 @@ OldSpace::OldSpace( const char *name, std::int32_t &size ) :
 
 void OldSpace::update_offset_array( Oop *p, Oop *p_end ) {
     st_assert( p_end >= _nextOffsetThreshold, "should be past threshold" );
+
     //  [    ][    ][   ]       "card pages"
-    //    ^p  ^t     ^p_end
+    //  ^p    ^t    ^p_end
+
     st_assert( ( _nextOffsetThreshold - p ) <= card_size_in_oops, "Offset should be <= card_size_in_oops" );
     _offsetArray[ _nextOffsetIndex++ ] = _nextOffsetThreshold - p;
     _nextOffsetThreshold += card_size_in_oops;
+
     while ( _nextOffsetThreshold < p_end ) {
         _offsetArray[ _nextOffsetIndex++ ] = card_size_in_oops;
         _nextOffsetThreshold += card_size_in_oops;
@@ -370,11 +373,14 @@ public:
 
 
     VerifyOldOopClosure() : _the_obj{} {}
+
+
     virtual ~VerifyOldOopClosure() = default;
     VerifyOldOopClosure( const VerifyOldOopClosure & ) = default;
     VerifyOldOopClosure &operator=( const VerifyOldOopClosure & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void do_oop( Oop *o ) {

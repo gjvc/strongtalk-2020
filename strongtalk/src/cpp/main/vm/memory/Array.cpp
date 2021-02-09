@@ -17,19 +17,24 @@
 
 
 Array::Array( std::int32_t sz ) :
-    _offset{ 0 },
-    _size{ sz },
     _index{ 0 },
+    _size{ sz },
+    _offset{ 0 },
     _values{ new_resource_array<std::int32_t>( sz ) } {
 }
 
 
 std::int32_t Array::insertIfAbsent( std::int32_t value ) {
-    for ( std::int32_t i = 0; i < _index; i++ )
-        if ( _values[ i ] == value )
+    for ( std::int32_t i = 0; i < _index; i++ ) {
+        if ( _values[ i ] == value ) {
             return i;
-    if ( _index == _size )
+        }
+    }
+
+    if ( _index == _size ) {
         extend( _size * 2 );
+    }
+
     _values[ _index ] = value;
     return _index++;
 }
@@ -38,8 +43,9 @@ std::int32_t Array::insertIfAbsent( std::int32_t value ) {
 void Array::extend( std::int32_t newSize ) {
     std::int32_t *newValues = new_resource_array<std::int32_t>( newSize );
 
-    for ( std::int32_t i = 0; i < _index; i++ )
+    for ( std::int32_t i = 0; i < _index; i++ ) {
         newValues[ i ] = _values[ i ];
+    }
 
     _values = newValues;
     _size   = newSize;
@@ -55,8 +61,8 @@ void Array::copy_to( std::int32_t *&addr ) {
 
 ByteArray::ByteArray( std::int32_t size ) :
     _array{ new_resource_array<std::uint8_t>( size ) },
-    _max{ size },
-    _top{ 0 } {
+    _top{ 0 },
+    _max{ size } {
 }
 
 

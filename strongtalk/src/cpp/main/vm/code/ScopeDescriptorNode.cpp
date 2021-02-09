@@ -19,12 +19,12 @@ constexpr std::int32_t INITIAL_EXPR_STACK_SIZE   = 10;
 
 ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compiled_context, std::int32_t scopeID, bool lite, std::int32_t senderByteCodeIndex, bool visible ) :
 
-    _scopeID{ scopeID },
     _method{ method },
+    _allocates_compiled_context{ allocates_compiled_context },
+    _scopeID{ scopeID },
     _lite{ lite },
     _senderByteCodeIndex{ senderByteCodeIndex },
     _visible{ visible },
-    _allocates_compiled_context{ allocates_compiled_context },
 
     _arg_list{ new GrowableArray<LogicalAddress *>( INITIAL_ARG_SIZE ) },
     _temp_list{ new GrowableArray<LogicalAddress *>( INITIAL_TEMP_SIZE ) },
@@ -32,10 +32,10 @@ ScopeDescriptorNode::ScopeDescriptorNode( MethodOop method, bool allocates_compi
     _expr_stack_list{ new GrowableArray<LogicalAddress *>( INITIAL_EXPR_STACK_SIZE ) },
 
     _offset{ INVALID_OFFSET },
+    _usedInPcs{ false },
     _scopesHead{ nullptr },
     _scopesTail{ nullptr },
-    _next{ nullptr },
-    _usedInPcs{ false } {
+    _next{ nullptr } {
 
 }
 

@@ -77,7 +77,13 @@
 class IntegerOpsTests : public ::testing::Test {
 
 public:
-    IntegerOpsTests() : ::testing::Test() {}
+    IntegerOpsTests() :
+    ::testing::Test(),
+    rm{nullptr},
+    x{nullptr},
+    y{nullptr},
+    z{nullptr}
+    {}
 
 
 protected:

@@ -48,7 +48,6 @@ void IntervalInfo::print() {
 }
 
 
-
 MethodInterval::MethodInterval( MethodOop method, MethodInterval *parent ) :
     _method{ method },
     _parent{ parent },

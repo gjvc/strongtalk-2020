@@ -17,7 +17,10 @@ extern "C" Oop *eden_end;
 class ProxyKlassTests : public ::testing::Test {
 
 public:
-    ProxyKlassTests() : ::testing::Test() {}
+    ProxyKlassTests() :
+    ::testing::Test(),
+    theClass{},
+    oldEdenTop{ nullptr } {}
 
 protected:
     void SetUp() override {

@@ -14,17 +14,19 @@
 class StringOutputStream : public ConsoleOutputStream {
 
 protected:
-    std::string  _string;
-    char         *buffer;
-    int32_t buffer_pos;
-    int32_t buffer_length;
+    std::string _string;
+    char        *buffer;
+    int32_t     buffer_pos;
+    int32_t     buffer_length;
 
 public:
     StringOutputStream( const int32_t initial_size = 1 * 1024 );
     virtual ~StringOutputStream() = default;
     StringOutputStream( const StringOutputStream & ) = default;
     StringOutputStream &operator=( const StringOutputStream & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void put( char c );

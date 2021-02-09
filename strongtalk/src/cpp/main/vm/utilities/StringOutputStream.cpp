@@ -9,10 +9,10 @@
 
 StringOutputStream::StringOutputStream( const int32_t initial_size ) :
     ConsoleOutputStream(),
-    buffer_length{ initial_size },
+    _string{},
     buffer{ new_resource_array<char>( buffer_length ) },
     buffer_pos{ 0 },
-    _string{} {
+    buffer_length{ initial_size } {
 }
 
 

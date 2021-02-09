@@ -22,9 +22,9 @@ private:
 
 public:
     MissingMethodBuilder( SymbolOop selector ) :
-        _method(),
-        _buffer(),
-        _selector( selector ) {
+        _buffer{},
+        _selector{ selector },
+        _method{} {
     };
 
     MissingMethodBuilder() = default;
@@ -33,7 +33,7 @@ public:
     MissingMethodBuilder &operator=( const MissingMethodBuilder & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void build();

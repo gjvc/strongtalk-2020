@@ -18,7 +18,11 @@ extern "C" Oop *eden_end;
 class DoubleKlassTests : public ::testing::Test {
 
 public:
-    DoubleKlassTests() : ::testing::Test() {}
+    DoubleKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
     void SetUp() override {

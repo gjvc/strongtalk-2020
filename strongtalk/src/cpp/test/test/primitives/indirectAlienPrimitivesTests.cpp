@@ -28,7 +28,15 @@ extern "C" std::int32_t expansion_count;
 class IndirectAlienPrimsTests : public ::testing::Test {
 
 public:
-    IndirectAlienPrimsTests() : ::testing::Test() {}
+    IndirectAlienPrimsTests() : ::testing::Test(),
+    heapResourceMark{nullptr},
+    alien{},
+    invalidAlien{},
+    largeUnsignedInteger{},
+    largeSignedInteger{},
+    alien_byte_region{},
+    doubleValue{}
+    {}
 
 
 protected:

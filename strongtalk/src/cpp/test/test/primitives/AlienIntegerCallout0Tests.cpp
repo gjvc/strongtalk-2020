@@ -20,7 +20,19 @@
 class AlienIntegerCallout0Tests : public ::testing::Test {
 
 public:
-    AlienIntegerCallout0Tests() : ::testing::Test() {}
+    AlienIntegerCallout0Tests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        fnAlien{},
+        invalidFunctionAlien{},
+        resultAlien{},
+        addressAlien{},
+        pointerAlien{},
+        argumentAlien{},
+        smi0{},
+        smi1{},
+        address{} {}
+
 
 protected:
     void SetUp() override {
@@ -58,9 +70,9 @@ protected:
     HeapResourceMark *rm;
     ByteArrayOop     fnAlien;
     ByteArrayOop     invalidFunctionAlien;
-    ByteArrayOop    resultAlien, addressAlien, pointerAlien, argumentAlien;
-    SmallIntegerOop smi0, smi1;
-    char            address[8];
+    ByteArrayOop     resultAlien, addressAlien, pointerAlien, argumentAlien;
+    SmallIntegerOop  smi0, smi1;
+    char             address[8];
 
 
     ByteArrayOop allocateAlien( std::int32_t arraySize, std::int32_t alienSize ) {

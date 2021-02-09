@@ -23,7 +23,12 @@ extern "C" std::int32_t expansion_count;
 class ByteArrayPrimsTests : public ::testing::Test {
 
 public:
-    ByteArrayPrimsTests() : ::testing::Test() {}
+    ByteArrayPrimsTests() :
+    ::testing::Test(),
+    byteArrayClass{},
+    alien{},
+    alien_byte_region{}
+    {}
 
 protected:
     void SetUp() override {

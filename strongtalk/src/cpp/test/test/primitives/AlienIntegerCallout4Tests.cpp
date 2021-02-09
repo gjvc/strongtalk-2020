@@ -93,7 +93,22 @@ extern "C" std::int32_t __CALLING_CONVENTION forceScavenge4( std::int32_t ignore
 
 class AlienIntegerCallout4Tests : public ::testing::Test {
 public:
-    AlienIntegerCallout4Tests() : ::testing::Test() {}
+    AlienIntegerCallout4Tests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        handles{ nullptr },
+        resultAlien{ nullptr },
+        addressAlien{ nullptr },
+        pointerAlien{ nullptr },
+        functionAlien{ nullptr },
+        directAlien{ nullptr },
+        invalidFunctionAlien{ nullptr },
+        smi0{},
+        smi1{},
+        smim1{},
+        intCalloutFunctions{},
+        intPointerCalloutFunctions{},
+        address{} {}
 
 
 protected:
@@ -137,9 +152,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle          *directAlien, *invalidFunctionAlien;
-    SmallIntegerOop           smi0, smi1, smim1;
-    static const std::int32_t argCount = 4;
+    PersistentHandle                   *directAlien, *invalidFunctionAlien;
+    SmallIntegerOop                    smi0, smi1, smim1;
+    static const std::int32_t          argCount = 4;
     std::array<void *, argCount>       intCalloutFunctions;
     std::array<void *, argCount>       intPointerCalloutFunctions;
     char                               address[8];

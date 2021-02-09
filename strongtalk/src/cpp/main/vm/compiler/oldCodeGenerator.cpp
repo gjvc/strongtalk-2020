@@ -108,7 +108,7 @@ void OldCodeGenerator::aStoreUplevelNode( StoreUplevelNode *node ) {
 }
 
 
-void OldCodeGenerator::anArithRRNode( ArithRRNode *node ) {
+void OldCodeGenerator::anArithRRNode( RegisterRegisterArithmeticNode *node ) {
     node->gen();
 }
 
@@ -1330,7 +1330,7 @@ void TArithRRNode::gen() {
 }
 
 
-void ArithRRNode::gen() {
+void RegisterRegisterArithmeticNode::gen() {
     BasicNode::gen();
     PseudoRegister *arg1 = _src;
     PseudoRegister *arg2 = _oper;

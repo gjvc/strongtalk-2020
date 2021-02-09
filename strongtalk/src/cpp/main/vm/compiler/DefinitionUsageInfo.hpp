@@ -19,9 +19,9 @@ public:
 
 
     DefinitionUsageInfo( PseudoRegister *r ) :
+        _pseudoRegister{ r },
         _usages{},
-        _definitions{},
-        _pseudoRegister{ r } {
+        _definitions{} {
     }
 
 
@@ -29,8 +29,9 @@ public:
     virtual ~DefinitionUsageInfo() = default;
     DefinitionUsageInfo( const DefinitionUsageInfo & ) = default;
     DefinitionUsageInfo &operator=( const DefinitionUsageInfo & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void getLiveRange( std::int32_t &firstNodeID, std::int32_t &lastNodeId );

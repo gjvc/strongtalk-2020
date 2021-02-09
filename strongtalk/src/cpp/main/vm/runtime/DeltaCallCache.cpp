@@ -15,11 +15,10 @@
 #include "vm/memory/Scavenge.hpp"
 
 
-
 DeltaCallCache::DeltaCallCache() :
+    _link{ _root },
     _key{},
-    _result{},
-    _link{ _root } {
+    _result{} {
     _root = this;
     clear();
 }

@@ -276,10 +276,10 @@ void MappingTask::print( std::int32_t index ) {
 
 
 MapConformance::MapConformance() :
+    _free_register{},
     _mappings{ new GrowableArray<MappingTask *>( 20 ) },
     _usedVariables{ nullptr },
-    _numberOfUsedVariables{ 0 },
-    _free_register{} {
+    _numberOfUsedVariables{ 0 } {
     _free_register.set_unused();
 }
 

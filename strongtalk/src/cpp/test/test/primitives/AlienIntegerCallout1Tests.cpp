@@ -47,7 +47,21 @@ extern "C" const char *__CALLING_CONVENTION argUnsafe1( const char *a ) {
 
 class AlienIntegerCallout1Tests : public ::testing::Test {
 public:
-    AlienIntegerCallout1Tests() : ::testing::Test() {}
+    AlienIntegerCallout1Tests()
+        : ::testing::Test(),
+          rm{ nullptr },
+          handles{nullptr},
+          resultAlien{nullptr},
+          addressAlien{nullptr},
+          pointerAlien{nullptr},
+          functionAlien{nullptr},
+          directAlien{nullptr},
+          invalidFunctionAlien{nullptr},
+          unsafeAlien{nullptr},
+          unsafeContents{nullptr},
+          smi0{},
+          smi1{},
+          address{} {}
 
 
 protected:
@@ -82,9 +96,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle *directAlien, *invalidFunctionAlien, *unsafeAlien, *unsafeContents;
-    SmallIntegerOop  smi0, smi1;
-    char             address[16];
+    PersistentHandle                   *directAlien, *invalidFunctionAlien, *unsafeAlien, *unsafeContents;
+    SmallIntegerOop                    smi0, smi1;
+    char                               address[16];
 
 
     void allocateAlien( PersistentHandle *&alienHandle, std::int32_t arraySize, std::int32_t alienSize, void *ptr = nullptr ) {

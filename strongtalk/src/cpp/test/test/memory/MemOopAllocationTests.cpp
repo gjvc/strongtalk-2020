@@ -21,7 +21,10 @@ extern "C" Oop *eden_end;
 class MemOopAllocationTests : public ::testing::Test {
 
 public:
-    MemOopAllocationTests() : ::testing::Test() {}
+    MemOopAllocationTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
 
 protected:
 

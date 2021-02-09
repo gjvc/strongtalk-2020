@@ -12,7 +12,9 @@
 class UniverseTests : public ::testing::Test {
 
 public:
-    UniverseTests() : ::testing::Test() {}
+    UniverseTests() :
+        ::testing::Test(),
+        eden_old_top{ nullptr } {}
 
 
 protected:

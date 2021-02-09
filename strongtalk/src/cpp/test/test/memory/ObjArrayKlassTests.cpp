@@ -17,7 +17,10 @@ extern "C" Oop *eden_end;
 class ObjectArrayKlassTests : public ::testing::Test {
 
 public:
-    ObjectArrayKlassTests() : ::testing::Test() {}
+    ObjectArrayKlassTests():
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
 
 protected:
     void SetUp() override {

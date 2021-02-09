@@ -229,10 +229,10 @@ void PolymorphicInlineCacheContents::append_method( KlassOop klass, MethodOop me
 
 PolymorphicInlineCacheIterator::PolymorphicInlineCacheIterator( PolymorphicInlineCache *pic ) :
 
-    _methodOop_counter{ 0 },
-    _state{},
     _pic{ pic },
-    _pos{ nullptr } {
+    _pos{ nullptr },
+    _state{},
+    _methodOop_counter{ 0 } {
 
     //
     _pos = pic->entry();

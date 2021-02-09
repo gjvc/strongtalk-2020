@@ -245,12 +245,12 @@ ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, struct MixinOopD
     _old_klass{ old_klass },
     _new_mixin{ new_mixin },
     _new_format{ new_format },
-    _new_super{ new_super },
     _new_klass{ nullptr },
+    _new_super{ new_super },
     _converter{ nullptr },
     _super_change{ nullptr },
-    _needs_schema_change{ 0 },
     _is_schema_change_computed{ false },
+    _needs_schema_change{ 0 },
     _reason_for_schema_change{ "" } {
 }
 
@@ -259,8 +259,8 @@ ClassChange::ClassChange( struct KlassOopDescriptor *old_klass, Klass::Format ne
     _old_klass{ old_klass },
     _new_mixin{ old_klass->klass_part()->mixin() },
     _new_format{ new_format },
-    _new_super{ nullptr },
     _new_klass{ nullptr },
+    _new_super{ nullptr },
     _converter{ nullptr },
     _super_change{ nullptr },
     _is_schema_change_computed{ false },

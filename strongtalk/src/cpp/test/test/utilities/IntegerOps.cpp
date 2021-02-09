@@ -12,7 +12,8 @@
 #include <gtest/gtest.h>
 
 
-class IntegerOpsTests : public testing::Test {
+class IntegerOpsTests :
+    public testing::Test {
 };
 
 

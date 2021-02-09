@@ -27,9 +27,9 @@ VirtualSpace::VirtualSpace( ReservedSpace reserved, std::int32_t committed_size,
 VirtualSpace::VirtualSpace() :
     _low_boundary{ nullptr },
     _high_boundary{ nullptr },
-    _low_to_high{ true },
     _low{ nullptr },
     _high{ nullptr },
+    _low_to_high{ true },
     next{ nullptr } {
 }
 

@@ -385,8 +385,8 @@ Oop CompiledVirtualFrame::temp_at( std::int32_t offset ) const {
 
 class ContextTempFindClosure : public NameDescriptorClosure {
 public:
-    NameDescriptor *result;
     std::int32_t   i;
+    NameDescriptor *result;
 
 
     ContextTempFindClosure( std::int32_t index ) :

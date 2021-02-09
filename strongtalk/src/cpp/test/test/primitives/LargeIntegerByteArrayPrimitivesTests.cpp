@@ -85,7 +85,14 @@ typedef Oop(__CALLING_CONVENTION divfn)( Oop, Oop );
 class LargeIntegerByteArrayPrimitivesTests : public ::testing::Test {
 
 public:
-    LargeIntegerByteArrayPrimitivesTests() : ::testing::Test() {}
+    LargeIntegerByteArrayPrimitivesTests()  :
+    ::testing::Test(),
+    rm{nullptr},
+    x{nullptr},
+    y{nullptr},
+    resultString{}
+    {}
+
 
 protected:
     void SetUp() override {

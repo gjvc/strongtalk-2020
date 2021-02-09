@@ -66,7 +66,10 @@ void *RememberedSet::operator new( std::size_t size ) {
 
 
 // copy the bits from an older, smaller bitmap, add area [start,end)
-RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char *end ) : _highBoundary{}, _lowBoundary{} {
+RememberedSet::RememberedSet( RememberedSet *old, const char *start, const char *end ) :
+    _lowBoundary{},
+    _highBoundary{},
+    _byteMap{} {
     static_cast<void>(old); // unused
     static_cast<void>(start); // unused
     static_cast<void>(end); // unused

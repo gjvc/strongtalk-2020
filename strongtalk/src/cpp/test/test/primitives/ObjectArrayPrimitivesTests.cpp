@@ -25,7 +25,8 @@ extern "C" std::int32_t expansion_count;
 class ObjectArrayPrimitivesTests : public ::testing::Test {
 
 public:
-    ObjectArrayPrimitivesTests() : ::testing::Test() {}
+    ObjectArrayPrimitivesTests()
+        : ::testing::Test(), arrayClass{} {}
 
 protected:
     void SetUp() override {
@@ -36,7 +37,6 @@ protected:
     void TearDown() override {
         MarkSweep::collect();
     }
-
 
     KlassOop arrayClass;
 

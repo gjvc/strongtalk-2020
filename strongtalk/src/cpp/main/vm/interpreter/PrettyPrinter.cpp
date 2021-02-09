@@ -126,8 +126,8 @@ public:
 class PrintWrapper {
 private:
     astNode           *_astNode;
-    bool              _hit;
     PrettyPrintStream *_output;
+    bool              _hit;
 public:
     PrintWrapper( astNode *astNode, PrettyPrintStream *output );
 
@@ -240,7 +240,7 @@ public:
     GrowableArray<astNode *> *_elements;
 
 
-    PrintParams() : _scope{nullptr}, _elements{nullptr} {};
+    PrintParams() : _scope{ nullptr }, _elements{ nullptr } {};
     virtual ~PrintParams() = default;
     PrintParams( const PrintParams & ) = default;
     PrintParams &operator=( const PrintParams & ) = default;
@@ -260,18 +260,18 @@ public:
 };
 
 
-class leafNode : public astNode {
+class LeafNode : public astNode {
 
 public:
-    leafNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
+    LeafNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
         astNode( byteCodeIndex, scope ) {
     }
 
 
-    leafNode() = default;
-    virtual ~leafNode() = default;
-    leafNode( const leafNode & ) = default;
-    leafNode &operator=( const leafNode & ) = default;
+    LeafNode() = default;
+    virtual ~LeafNode() = default;
+    LeafNode( const LeafNode & ) = default;
+    LeafNode &operator=( const LeafNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -294,20 +294,20 @@ public:
 };
 
 
-class paramNode : public leafNode {
+class ParamNode : public LeafNode {
 
 private:
     std::int32_t _no;
     const char   *_str;
 
 public:
-    paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no );
+    ParamNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no );
 
 
-    paramNode() = default;
-    virtual ~paramNode() = default;
-    paramNode( const paramNode & ) = default;
-    paramNode &operator=( const paramNode & ) = default;
+    ParamNode() = default;
+    virtual ~ParamNode() = default;
+    ParamNode( const ParamNode & ) = default;
+    ParamNode &operator=( const ParamNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -324,24 +324,24 @@ public:
 };
 
 
-class nameValueNode : public astNode {
+class NameValueNode : public astNode {
 
 private:
     const char *_name;
     const char *_value;
 
 public:
-    nameValueNode( const char *name, char *value ) :
+    NameValueNode( const char *name, char *value ) :
         astNode( 0, 0 ),
         _name{ name },
         _value{ value } {
     }
 
 
-    nameValueNode() = default;
-    virtual ~nameValueNode() = default;
-    nameValueNode( const nameValueNode & ) = default;
-    nameValueNode &operator=( const nameValueNode & ) = default;
+    NameValueNode() = default;
+    virtual ~NameValueNode() = default;
+    NameValueNode( const NameValueNode & ) = default;
+    NameValueNode &operator=( const NameValueNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -362,14 +362,14 @@ public:
 };
 
 
-class nameNode : public leafNode {
+class nameNode : public LeafNode {
 
 private:
     const char *_str;
 
 public:
     nameNode( const char *str ) :
-        leafNode( 0, 0 ), _str{ str } {
+        LeafNode( 0, 0 ), _str{ str } {
     }
 
 
@@ -476,8 +476,8 @@ public:
         _hotByteCodeIndex{ 0 },
         _frameIndex{ 0 },
         _deltaVirtualFrame{ nullptr },
-        _parentScope{ nullptr },
         _scopeDescriptor{ nullptr },
+        _parentScope{ nullptr },
         _innerScope{ scope } {
 
         _frameIndex        = index;
@@ -495,25 +495,22 @@ public:
 
     scopeNode( MethodOop method, KlassOop klass, std::int32_t hot_byteCodeIndex, scopeNode *scope = nullptr ) :
 
+        astNode( 0, nullptr ),
         _methodOop{},
         _klassOop{},
         _in{ 0 },
         _hotByteCodeIndex{ 0 },
         _frameIndex{ 0 },
         _deltaVirtualFrame{ nullptr },
-        _parentScope{ nullptr },
         _scopeDescriptor{ nullptr },
-        _innerScope{ nullptr },
+        _parentScope{ nullptr },
+        _innerScope{ nullptr } {
 
-        astNode( 0, nullptr ) {
-
-        _methodOop         = method;
-        _klassOop          = klass;
-        _hotByteCodeIndex  = hot_byteCodeIndex;
-        _deltaVirtualFrame = nullptr;
-        _in                = 0;
-        _scopeDescriptor   = nullptr;
-        _innerScope        = scope;
+        _methodOop        = method;
+        _klassOop         = klass;
+        _in               = 0;
+        _hotByteCodeIndex = hot_byteCodeIndex;
+        _innerScope       = scope;
 
         initParent();
     }
@@ -684,7 +681,7 @@ public:
         if ( not fr() )
             return new nameNode( name );
         char *value = fr()->context_temp_at( no )->print_value_string();
-        return new nameValueNode( name, value );
+        return new NameValueNode( name, value );
     }
 
 
@@ -694,7 +691,7 @@ public:
         if ( not fr() )
             return new nameNode( name );
         char *value = fr()->temp_at( no )->print_value_string();
-        return new nameValueNode( name, value );
+        return new NameValueNode( name, value );
     }
 
 
@@ -703,7 +700,7 @@ public:
         if ( not fr() )
             return new nameNode( name );
         char *value = fr()->argument_at( index )->print_value_string();
-        return new nameValueNode( name, value );
+        return new NameValueNode( name, value );
     }
 
 
@@ -793,11 +790,10 @@ public:
 };
 
 
-paramNode::paramNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no ) :
+ParamNode::ParamNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t no ) :
+    LeafNode( byteCodeIndex, scope ),
     _no{ no },
-    _str{ nullptr },
-    leafNode( byteCodeIndex, scope ) {
-    _no  = no;
+    _str{ nullptr } {
     _str = scope->param_string( no );
 }
 
@@ -978,8 +974,8 @@ public:
 
     statement( std::int32_t byteCodeIndex, scopeNode *scope, astNode *stat, bool has_return ) :
         astNode( byteCodeIndex, scope ),
-        _stat{ stat },
-        _hasReturn{ has_return } {
+        _hasReturn{ has_return },
+        _stat{ stat } {
     }
 
 
@@ -1213,11 +1209,11 @@ private:
 
 public:
     messageNode( std::int32_t byteCodeIndex, scopeNode *scope, SymbolOop selector, bool is_prim = false ) :
+        astNode( byteCodeIndex, scope ),
+        _receiver{ nullptr },
         _selector{ selector },
         _arguments{ new GrowableArray<astNode *>( 10 ) },
-        _receiver{ nullptr },
-        _is_prim{ is_prim },
-        astNode( byteCodeIndex, scope ) {
+        _is_prim{ is_prim } {
     }
 
 
@@ -1374,11 +1370,11 @@ public:
 };
 
 
-class selfNode : public leafNode {
+class selfNode : public LeafNode {
 
 public:
     selfNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ) {
+        LeafNode( byteCodeIndex, scope ) {
     }
 
 
@@ -1397,11 +1393,11 @@ public:
 };
 
 
-class ignoreReceiver : public leafNode {
+class ignoreReceiver : public LeafNode {
 
 public:
     ignoreReceiver( std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ) {
+        LeafNode( byteCodeIndex, scope ) {
     }
 
 
@@ -1420,11 +1416,11 @@ public:
 };
 
 
-class superNode : public leafNode {
+class superNode : public LeafNode {
 
 public:
     superNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ) {
+        LeafNode( byteCodeIndex, scope ) {
     }
 
 
@@ -1443,14 +1439,14 @@ public:
 };
 
 
-class literalNode : public leafNode {
+class literalNode : public LeafNode {
 
 private:
     const char *_str;
 
 public:
     literalNode( std::int32_t byteCodeIndex, scopeNode *scope, const char *str ) :
-        leafNode( byteCodeIndex, scope ),
+        LeafNode( byteCodeIndex, scope ),
         _str{ str } {
     }
 
@@ -1592,7 +1588,7 @@ public:
 };
 
 
-class smiNode : public leafNode {
+class smiNode : public LeafNode {
 
 private:
     std::int32_t _value;
@@ -1600,9 +1596,9 @@ private:
 
 public:
     smiNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t value ) :
+        LeafNode( byteCodeIndex, scope ),
         _value{ value },
-        _str{ new_resource_array<char>( 10 ) },
-        leafNode( byteCodeIndex, scope ) {
+        _str{ new_resource_array<char>( 10 ) } {
         sprintf( _str, "%d", value );
     }
 
@@ -1622,25 +1618,25 @@ public:
 };
 
 
-class doubleNode : public leafNode {
+class DoubleNode : public LeafNode {
 
 private:
     double _value;
     char   *_str;
 
 public:
-    doubleNode( std::int32_t byteCodeIndex, scopeNode *scope, double value ) :
+    DoubleNode( std::int32_t byteCodeIndex, scopeNode *scope, double value ) :
+        LeafNode( byteCodeIndex, scope ),
         _value{ value },
-        _str{ new_resource_array<char>( 10 ) },
-        leafNode( byteCodeIndex, scope ) {
+        _str{ new_resource_array<char>( 10 ) } {
         sprintf( _str, "%1.10gd", value );
     }
 
 
-    doubleNode() = default;
-    virtual ~doubleNode() = default;
-    doubleNode( const doubleNode & ) = default;
-    doubleNode &operator=( const doubleNode & ) = default;
+    DoubleNode() = default;
+    virtual ~DoubleNode() = default;
+    DoubleNode( const DoubleNode & ) = default;
+    DoubleNode &operator=( const DoubleNode & ) = default;
 
 
     void operator delete( void *ptr ) { (void) ( ptr ); }
@@ -1652,7 +1648,7 @@ public:
 };
 
 
-class CharacterNode : public leafNode {
+class CharacterNode : public LeafNode {
 
 private:
     Oop  _value;
@@ -1661,9 +1657,9 @@ private:
 public:
 
     CharacterNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop value ) :
+        LeafNode( byteCodeIndex, scope ),
         _value{ value },
-        _str{ new_resource_array<char>( 3 ) },
-        leafNode( byteCodeIndex, scope ) {
+        _str{ new_resource_array<char>( 3 ) } {
 
         if ( value->isMemOop() ) {
             Oop ch = MemOop( value )->instVarAt( 2 );
@@ -1674,9 +1670,9 @@ public:
         }
 
         //
-        _str[0] = '$';
-        _str[1] = '%';
-        _str[2] = 'c';
+        _str[ 0 ] = '$';    //
+        _str[ 1 ] = '%';    //
+        _str[ 2 ] = 'c';    //
 
     }
 
@@ -1822,7 +1818,7 @@ public:
 };
 
 
-class stackTempNode : public leafNode {
+class stackTempNode : public LeafNode {
 
 private:
     std::int32_t _offset;
@@ -1830,9 +1826,9 @@ private:
 
 public:
     stackTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset ) :
+        LeafNode( byteCodeIndex, scope ),
         _offset{ offset },
-        _str{},
-        leafNode( byteCodeIndex, scope ) {
+        _str{ nullptr } {
         _str = scope->stack_temp_string( this_byteCodeIndex(), offset );
     }
 
@@ -1852,7 +1848,7 @@ public:
 };
 
 
-class heapTempNode : public leafNode {
+class heapTempNode : public LeafNode {
 
 private:
     std::int32_t _offset;
@@ -1861,10 +1857,10 @@ private:
 
 public:
     heapTempNode( std::int32_t byteCodeIndex, scopeNode *scope, std::int32_t offset, std::int32_t context_level ) :
-        leafNode( byteCodeIndex, scope ),
-        _str{ nullptr },
+        LeafNode( byteCodeIndex, scope ),
         _offset{ offset },
-        _contextLevel{ context_level } {
+        _contextLevel{ context_level },
+        _str{ nullptr } {
 
         _str = scope->heap_temp_string( this_byteCodeIndex(), offset, context_level );
     }
@@ -1885,14 +1881,14 @@ public:
 };
 
 
-class floatNode : public leafNode {
+class floatNode : public LeafNode {
 
 private:
     const char *_str;
 
 public:
     floatNode( std::int32_t no, std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ),
+        LeafNode( byteCodeIndex, scope ),
         _str{ nullptr } {
         _str = scope->stack_temp_string( this_byteCodeIndex(), no );
     }
@@ -1913,7 +1909,7 @@ public:
 };
 
 
-class instVarNode : public leafNode {
+class instVarNode : public LeafNode {
 
 private:
     Oop        _obj;
@@ -1921,7 +1917,7 @@ private:
 
 public:
     instVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
-        leafNode( byteCodeIndex, scope ),
+        LeafNode( byteCodeIndex, scope ),
         _obj{ obj },
         _str{ nullptr } {
 
@@ -1948,7 +1944,7 @@ public:
 };
 
 
-class classVarNode : public leafNode {
+class classVarNode : public LeafNode {
 
 private:
     Oop        _obj;
@@ -1956,7 +1952,7 @@ private:
 
 public:
     classVarNode( std::int32_t byteCodeIndex, scopeNode *scope, Oop obj ) :
-        leafNode( byteCodeIndex, scope ),
+        LeafNode( byteCodeIndex, scope ),
         _obj{ nullptr },
         _str{ nullptr } {
         _obj = obj;
@@ -1983,7 +1979,7 @@ public:
 };
 
 
-class primitiveResultNode : public leafNode {
+class primitiveResultNode : public LeafNode {
 
 public:
     bool is_primitive_result() {
@@ -1992,7 +1988,7 @@ public:
 
 
     primitiveResultNode( std::int32_t byteCodeIndex, scopeNode *scope ) :
-        leafNode( byteCodeIndex, scope ) {
+        LeafNode( byteCodeIndex, scope ) {
     }
 
 
@@ -2002,7 +1998,7 @@ public:
 };
 
 
-class assocNode : public leafNode {
+class assocNode : public LeafNode {
 
 private:
     AssociationOop _assoc;
@@ -2010,7 +2006,7 @@ private:
 
 public:
     assocNode( std::int32_t byteCodeIndex, scopeNode *scope, AssociationOop assoc ) :
-        leafNode( byteCodeIndex, scope ),
+        LeafNode( byteCodeIndex, scope ),
         _assoc{ nullptr },
         _str{ nullptr } {
         _assoc = assoc;
@@ -2117,7 +2113,7 @@ static astNode *get_literal_node( Oop obj, std::int32_t byteCodeIndex, scopeNode
     if ( obj->isSmallIntegerOop() )
         return new smiNode( byteCodeIndex, scope, SmallIntegerOop( obj )->value() );
     if ( obj->isDouble() )
-        return new doubleNode( byteCodeIndex, scope, DoubleOop( obj )->value() );
+        return new DoubleNode( byteCodeIndex, scope, DoubleOop( obj )->value() );
     if ( obj->isObjectArray() )
         return new ObjectArrayNode( byteCodeIndex, scope, ObjectArrayOop( obj ) );
 
@@ -2336,7 +2332,7 @@ public:
 
 
     void push_argument( std::int32_t no ) {
-        _push( new paramNode( byteCodeIndex(), scope(), no ) );
+        _push( new ParamNode( byteCodeIndex(), scope(), no ) );
     }
 
 

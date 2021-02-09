@@ -41,8 +41,20 @@
 class BehaviorPrimitivesSuperclassTests : public ::testing::Test {
 
 public:
-    BehaviorPrimitivesSuperclassTests() : ::testing::Test() {}
-
+    BehaviorPrimitivesSuperclassTests() :
+        ::testing::Test(),
+        delta{ nullptr },
+        objectClassHandle{ nullptr },
+        classClassHandle{ nullptr },
+        delayClassHandle{ nullptr },
+        metaclassClassHandle{ nullptr },
+        classMetaclass{ nullptr },
+        subclassHandle{ nullptr },
+        topClassHandle{ nullptr },
+        superclassHandle{ nullptr },
+        subclassName{ nullptr },
+        topClassName{ nullptr },
+        superclassName{ nullptr } {}
 
 protected:
     void SetUp() override {

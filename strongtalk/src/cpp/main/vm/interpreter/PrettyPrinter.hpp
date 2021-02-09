@@ -46,8 +46,8 @@ public:
     // creation
     PrettyPrintStream() :
         _indentation{ 0 },
-        _inHighlight{ false },
-        _position{ 0 } {
+        _position{ 0 },
+        _inHighlight{ false } {
     }
 
 
@@ -175,7 +175,9 @@ public:
     virtual ~ByteArrayPrettyPrintStream() = default;
     ByteArrayPrettyPrintStream( const ByteArrayPrettyPrintStream & ) = default;
     ByteArrayPrettyPrintStream &operator=( const ByteArrayPrettyPrintStream & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void newline();

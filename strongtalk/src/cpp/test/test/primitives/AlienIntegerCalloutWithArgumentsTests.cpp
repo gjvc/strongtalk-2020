@@ -54,8 +54,22 @@ extern "C" std::int32_t __CALLING_CONVENTION argAlignment2( std::int32_t a, std:
 class AlienIntegerCalloutWithArgumentsTests : public ::testing::Test {
 
 public:
-    AlienIntegerCalloutWithArgumentsTests() : ::testing::Test() {}
-
+    AlienIntegerCalloutWithArgumentsTests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        handles{ nullptr },
+        resultAlien{ nullptr },
+        addressAlien{ nullptr },
+        pointerAlien{ nullptr },
+        functionAlien{ nullptr },
+        directAlien{ nullptr },
+        invalidFunctionAlien{ nullptr },
+        smi0{},
+        smi1{},
+        smim1{},
+        intCalloutFunctions{},
+        intPointerCalloutFunctions{},
+        address{} {}
 
 
 protected:
@@ -97,9 +111,9 @@ protected:
     HeapResourceMark                   *rm;
     GrowableArray<PersistentHandle **> *handles;
     PersistentHandle                   *resultAlien, *addressAlien, *pointerAlien, *functionAlien;
-    PersistentHandle          *directAlien, *invalidFunctionAlien;
-    SmallIntegerOop           smi0, smi1, smim1;
-    static const std::int32_t argCount = 2;
+    PersistentHandle                   *directAlien, *invalidFunctionAlien;
+    SmallIntegerOop                    smi0, smi1, smim1;
+    static const std::int32_t          argCount = 2;
     std::array<void *, argCount>       intCalloutFunctions;
     std::array<void *, argCount>       intPointerCalloutFunctions;
     std::array<Oop, argCount>          zeroes;

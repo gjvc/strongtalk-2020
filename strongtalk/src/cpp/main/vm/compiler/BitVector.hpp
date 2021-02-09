@@ -116,8 +116,8 @@ protected:
 
 public:
     BitVector( std::int32_t l ) :
-        length{ l },
         _maxLength{ l },
+        length{ l },
         _bits{ createBitString( l ) } {
         st_assert( l > 0, "should have some length" );
     }

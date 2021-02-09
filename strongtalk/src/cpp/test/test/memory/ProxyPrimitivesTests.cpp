@@ -23,15 +23,25 @@ extern std::int32_t expansion_count;
 class ProxyPrimitivesTests : public ::testing::Test {
 
 public:
-    ProxyPrimitivesTests() : ::testing::Test() {}
+    ProxyPrimitivesTests() :
+        ::testing::Test(),
+        rm{ nullptr },
+        proxy{},
+        subProxy{},
+        validProxy{},
+        doubleValue{},
+        smi0{},
+        smi1{},
+        address{} {}
+
 
 protected:
 
     HeapResourceMark *rm;
     ProxyOop         proxy, subProxy, validProxy;
-    DoubleOop       doubleValue;
-    SmallIntegerOop smi0, smi1;
-    std::int32_t    address;
+    DoubleOop        doubleValue;
+    SmallIntegerOop  smi0, smi1;
+    std::int32_t     address;
 
 
     void SetUp() override {

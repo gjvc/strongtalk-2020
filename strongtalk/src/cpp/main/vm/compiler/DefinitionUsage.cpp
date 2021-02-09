@@ -66,8 +66,8 @@ CopyPropagationInfo *new_CPInfo( NonTrivialNode *n ) {
 
 
 CopyPropagationInfo::CopyPropagationInfo( NonTrivialNode *n ) :
-    _register{ nullptr },
-    _definition{ n } {
+    _definition{ n },
+    _register{ nullptr } {
 
     //
     if ( not n->hasSrc() ) {

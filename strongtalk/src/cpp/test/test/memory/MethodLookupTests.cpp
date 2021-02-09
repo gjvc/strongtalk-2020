@@ -16,7 +16,9 @@
 class MethodLookupTests : public ::testing::Test {
 
 public:
-    MethodLookupTests() : ::testing::Test() {}
+    MethodLookupTests() :
+        ::testing::Test(),
+        fixture{ nullptr } {}
 
 protected:
     void SetUp() override {

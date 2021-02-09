@@ -32,8 +32,8 @@ class OldSpace;
 
 class OldWaterMark : ValueObject {
 public:
-    OldSpace *_space;
     Oop      *_point;
+    OldSpace *_space;
 
     Oop *pseudo_allocate( std::int32_t size );
 

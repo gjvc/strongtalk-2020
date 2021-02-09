@@ -60,9 +60,9 @@ void ConsoleOutputStream::vprint( const char *format, va_list argptr ) {
 
 
 ConsoleOutputStream::ConsoleOutputStream( std::int32_t width ) :
+    _indentation{ 0 },
     _width{ width },
-    _position{ 0 },
-    _indentation{ 0 } {
+    _position{ 0 } {
 }
 
 

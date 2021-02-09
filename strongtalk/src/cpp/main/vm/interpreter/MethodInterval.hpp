@@ -20,8 +20,8 @@ class IntervalInfo;
 class MethodInterval : public ResourceObject {
 
 protected:
-    MethodInterval *_parent;                // enclosing interval (or nullptr if top-level)
     MethodOop      _method;                 //
+    MethodInterval *_parent;                // enclosing interval (or nullptr if top-level)
     std::int32_t   _begin_byteCodeIndex;    //
     std::int32_t   _end_byteCodeIndex;      //
     bool           _in_primitive_failure;   // currently in primitive failure block?

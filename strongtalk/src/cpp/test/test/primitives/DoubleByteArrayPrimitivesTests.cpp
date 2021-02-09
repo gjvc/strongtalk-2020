@@ -25,7 +25,10 @@ extern "C" std::int32_t expansion_count;
 class DoubleByteArrayPrimitivesTests : public ::testing::Test {
 
 public:
-    DoubleByteArrayPrimitivesTests() : ::testing::Test() {}
+    DoubleByteArrayPrimitivesTests() :
+    ::testing::Test(),
+    dByteArrayClass{}
+    {}
 
 protected:
     void SetUp() override {

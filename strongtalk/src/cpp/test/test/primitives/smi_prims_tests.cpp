@@ -21,7 +21,7 @@ extern "C" std::int32_t expansion_count;
 class SmiPrimitivesTests : public ::testing::Test {
 
 public:
-    SmiPrimitivesTests() : ::testing::Test() {}
+    SmiPrimitivesTests() : ::testing::Test(), smiQuo{}, quoSymbol{} {}
 
 protected:
     void SetUp() override {

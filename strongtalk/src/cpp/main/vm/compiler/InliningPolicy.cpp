@@ -15,8 +15,9 @@
 
 
 bool InliningPolicy::shouldNotInline() const {
-    if ( _methodOop->method_inlining_info() == MethodOopDescriptor::never_inline )
+    if ( _methodOop->method_inlining_info() == MethodOopDescriptor::never_inline ) {
         return true;
+    }
     const SymbolOop sel = _methodOop->selector();
     return ( sel == vmSymbols::error() or sel == vmSymbols::error_() or sel == vmSymbols::subclassResponsibility() );
 }
@@ -32,8 +33,9 @@ bool InliningPolicy::isCriticalSmiSelector( const SymbolOop sel ) {
 const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
 
     // should the interpreted method be inlined?
-    if ( method->method_inlining_info() == MethodOopDescriptor::always_inline )
+    if ( method->method_inlining_info() == MethodOopDescriptor::always_inline ) {
         return nullptr;
+    }
     calleeCost = method->estimated_inline_cost( receiverKlass() );
 
     if ( method->is_blockMethod() ) {
@@ -48,13 +50,16 @@ const char *InliningPolicy::basic_shouldInline( MethodOop method ) {
     std::int32_t       cost_limit = method->is_blockMethod() ? MaxBlockInlineCost : MaxFnInlineCost;
     for ( std::int32_t i          = method->number_of_arguments() - 1; i >= 0; i-- ) {
         KlassOop k = nthArgKlass( i );
-        if ( k and k->klass_part()->oop_is_block() )
+        if ( k and k->klass_part()->oop_is_block() ) {
             cost_limit += BlockArgAdditionalAllowedInlineCost;
+        }
     }
-    if ( calleeCost < cost_limit )
+    if ( calleeCost < cost_limit ) {
         return nullptr;
-    if ( isBuiltinMethod() )
+    }
+    if ( isBuiltinMethod() ) {
         return nullptr;
+    }
     return "too big";
 }
 
@@ -106,21 +111,23 @@ bool InliningPolicy::isInterpreterPredictedBoolSelector( const SymbolOop sel ) {
 bool InliningPolicy::isBuiltinMethod() const {
     // true if performance-critical method in standard library
     // could also handle these by putting a bit in the methodOops
-    if ( _methodOop->method_inlining_info() == MethodOopDescriptor::always_inline )
+    if ( _methodOop->method_inlining_info() == MethodOopDescriptor::always_inline ) {
         return true;
+    }
     const SymbolOop sel   = _methodOop->selector();
     const KlassOop  klass = receiverKlass();
     const bool      isNum = klass == Universe::smiKlassObject() or klass == Universe::doubleKlassObject();
-    if ( isNum and isCriticalSmiSelector( sel ) )
+    if ( isNum and isCriticalSmiSelector( sel ) ) {
         return true;
-
+    }
     const bool isArr = klass == Universe::objectArrayKlassObject() or klass == Universe::byteArrayKlassObject() or klass == Universe::symbolKlassObject() or false;    // probably should add doubleByteArray et al
-    if ( isArr and isCriticalArraySelector( sel ) )
+    if ( isArr and isCriticalArraySelector( sel ) ) {
         return true;
-
+    }
     const bool isBool = klass == Universe::trueObject()->klass() or klass == Universe::falseObject()->klass();
-    if ( isBool and isCriticalBoolSelector( sel ) )
+    if ( isBool and isCriticalBoolSelector( sel ) ) {
         return true;
+    }
     return false;
 }
 
@@ -161,13 +168,18 @@ const char *CompilerInliningPolicy::shouldInline( InlinedScope *s, InlinedScope 
         theCompiler->reporter->report_toobig( callee );
         return "method getting too big";
     }
-    if ( shouldNotInline() )
+
+    if ( shouldNotInline() ) {
         return "should not inline (special)";
+    }
+
     // performance bug: should check how many recursive calls the method has -- unrolling factorial
     // to depth N gives N copies, but unrolling fibonacci gives 2**N
     // also, should look at call chain to estimate how big inlined recursion will get
-    if ( _sender->isRecursiveCall( _methodOop, callee->selfKlass(), MaxRecursionUnroll ) )
+    if ( _sender->isRecursiveCall( _methodOop, callee->selfKlass(), MaxRecursionUnroll ) ) {
         return "recursive";
+    }
+
     return basic_shouldInline( _methodOop );
 }
 

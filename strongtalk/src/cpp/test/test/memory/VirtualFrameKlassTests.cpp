@@ -17,7 +17,11 @@ extern "C" Oop *eden_end;
 class VirtualFrameKlassTests : public ::testing::Test {
 
 public:
-    VirtualFrameKlassTests() : ::testing::Test() {}
+    VirtualFrameKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
+
 
 protected:
     void SetUp() override {

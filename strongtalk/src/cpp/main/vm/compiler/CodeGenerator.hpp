@@ -179,7 +179,7 @@ public:
 
     void aStoreUplevelNode( StoreUplevelNode *node );
 
-    void anArithRRNode( ArithRRNode *node );
+    void anArithRRNode( RegisterRegisterArithmeticNode *node );
 
     void anArithRCNode( ArithRCNode *node );
 

@@ -355,7 +355,7 @@ Expression *PrimitiveInliner::smi_ArithmeticOp( ArithOpCode op, Expression *arg1
 
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
+        n1 = NodeFactory::createAndRegisterNode<RegisterRegisterArithmeticNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
     } else {
         // tag error can occur
         n1 = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister, intArg1, intArg2 );
@@ -425,7 +425,7 @@ Expression *PrimitiveInliner::smi_BitOp( ArithOpCode op, Expression *arg1, Expre
     ConstantExpression *n1Expression;
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
+        n1 = NodeFactory::createAndRegisterNode<RegisterRegisterArithmeticNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister );
     } else {
         // tag error can occur
         n1                                    = NodeFactory::createAndRegisterNode<TArithRRNode>( op, arg1->pseudoRegister(), arg2->pseudoRegister(), resPseudoRegister, intArg1, intArg2 );
@@ -574,7 +574,7 @@ Expression *PrimitiveInliner::smi_Comparison( BranchOpCode cond, Expression *arg
     ConstantExpression  *n1Expression;
     if ( intBoth ) {
         // tag error cannot occur
-        n1 = NodeFactory::createAndRegisterNode<ArithRRNode>( ArithOpCode::tCmpArithOp, arg1->pseudoRegister(), arg2->pseudoRegister(), new NoResultPseudoRegister( _scope ) );
+        n1 = NodeFactory::createAndRegisterNode<RegisterRegisterArithmeticNode>( ArithOpCode::tCmpArithOp, arg1->pseudoRegister(), arg2->pseudoRegister(), new NoResultPseudoRegister( _scope ) );
     } else {
         // tag error can occur
         n1               = NodeFactory::createAndRegisterNode<TArithRRNode>( ArithOpCode::tCmpArithOp, arg1->pseudoRegister(), arg2->pseudoRegister(), new NoResultPseudoRegister( _scope ), intArg1, intArg2 );
@@ -777,7 +777,7 @@ Expression *PrimitiveInliner::obj_equal() {
     PseudoRegister *arg1 = parameter( 0 )->pseudoRegister();
     PseudoRegister *arg2 = parameter( 1 )->pseudoRegister();
     // comparison
-    _gen->append( NodeFactory::createAndRegisterNode<ArithRRNode>( ArithOpCode::CmpArithOp, arg1, arg2, new NoResultPseudoRegister( _scope ) ) );
+    _gen->append( NodeFactory::createAndRegisterNode<RegisterRegisterArithmeticNode>( ArithOpCode::CmpArithOp, arg1, arg2, new NoResultPseudoRegister( _scope ) ) );
     SinglyAssignedPseudoRegister *resPseudoRegister = new SinglyAssignedPseudoRegister( _scope );
     return generate_cond( BranchOpCode::EQBranchOp, _gen, resPseudoRegister );
 }
@@ -1095,14 +1095,14 @@ Expression *PrimitiveInliner::tryInline() {
 
 PrimitiveInliner::PrimitiveInliner( NodeBuilder *gen, PrimitiveDescriptor *pdesc, MethodInterval *failure_block ) :
     _gen{ gen },
+    _byteCodeIndex{ gen->byteCodeIndex() },
     _primitiveDescriptor{ pdesc },
     _failure_block{ failure_block },
     _scope{ gen->_scope },
-    _byteCodeIndex{ gen->byteCodeIndex() },
     _expressionStack{ gen->_expressionStack },
-    _cannotFail{ true },
     _params{ new GrowableArray<Expression *>( number_of_parameters(), number_of_parameters(), nullptr ) },
-    _usingUncommonTrap{ false } {
+    _usingUncommonTrap{ false },
+    _cannotFail{ true } {
 
     //
     st_assert( pdesc, "must have a primitive desc to inline" );

@@ -605,8 +605,8 @@ public:
 
 class BlockScope : public InlinedScope {        // block methods
 protected:
-    Scope *_parent;                // lexically enclosing scope
-    bool  _self_is_initialized;            // true if self has been loaded
+    Scope *_parent;                 // lexically enclosing scope
+    bool  _self_is_initialized;     // true if self has been loaded
     void initialize( MethodOop method, KlassOop methodHolder, Scope *p, InlinedScope *s, RecompilationScope *rs, SendInfo *info );
 
     void initializeSelf();

@@ -72,17 +72,15 @@ public:
 
 public:
     BasicBlock( Node *f, Node *l, std::int16_t n ) :
+        _visited{ false },
         _first{ f },
         _last{ l },
         _nodeCount{ n },
         _id{ 0 },
-        _genCount{ 0 },
-        duInfo{},
         _loopDepth{ 0 },
-        _visited{ false } {
-
+        _genCount{ 0 },
+        duInfo{} {
         BasicBlock::genCounter = 0;
-
     }
 
 

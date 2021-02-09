@@ -20,7 +20,10 @@ extern "C" Oop *eden_end;
 class MemOopKlassTests : public ::testing::Test {
 
 public:
-    MemOopKlassTests() : ::testing::Test() {}
+    MemOopKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
 
 protected:
     void SetUp() override {

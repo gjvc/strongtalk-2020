@@ -73,13 +73,13 @@ std::int32_t RelocationInformation::print( NativeMethod *m, std::int32_t last_of
 
 
 RelocationInformationIterator::RelocationInformationIterator( const NativeMethod *nm ) :
+    _address{ nullptr },
     _current{ nullptr },
-    _end{ nullptr },
-    _address{ nullptr } {
+    _end{ nullptr } {
 
+    _address = nm->instructionsStart();
     _current = nm->locs() - 1;
     _end     = nm->locsEnd();
-    _address = nm->instructionsStart();
 }
 
 

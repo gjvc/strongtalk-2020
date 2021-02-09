@@ -32,9 +32,9 @@ std::uint8_t *CodeIterator::align( std::uint8_t *p ) const {
 
 
 CodeIterator::CodeIterator( MethodOop method, std::int32_t startByteCodeIndex ) :
+    _methodOop{ method },
     _current{},
-    _end{},
-    _methodOop{ method } {
+    _end{} {
 
     st_assert( ( PrologueByteCodeIndex <= startByteCodeIndex ) and ( startByteCodeIndex <= method->size_of_codes() * OOP_SIZE ), "startByteCodeIndex out of range" );
     set_byteCodeIndex( startByteCodeIndex );

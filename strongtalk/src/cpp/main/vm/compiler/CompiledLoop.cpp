@@ -17,29 +17,28 @@ GrowableArray<BasicBlock *> *CompiledLoop::_bbs;
 
 
 CompiledLoop::CompiledLoop() :
-    _startOfLoop{ nullptr },
+    _scope{ nullptr },               // in case loop creation is aborted
     _beforeLoop{ nullptr },
+    _loopHeader{ nullptr },
+    _startOfLoop{ nullptr },
     _endOfLoop{ nullptr },
     _startOfBody{ nullptr },
-    _firstNodeID{ 0 },
-    _incNode{ nullptr },
-    _increment{ nullptr },
-    _lastNodeID{ 0 },
-    _loopArray{ nullptr },
-    _loopHeader{ nullptr },
-    _loopSizeLoad{ nullptr },
     _endOfBody{ nullptr },
     _startOfCond{ nullptr },
     _endOfCond{ nullptr },
+    _loopBranch{ nullptr },
+    _firstNodeID{ 0 },
+    _lastNodeID{ 0 },
+    _isIntegerLoop{ false },
     _loopVar{ nullptr },
     _lowerBound{ nullptr },
     _upperBound{ nullptr },
-    _isIntegerLoop{ false },
-    _hoistableTests{ nullptr },
-    _loopBranch{ nullptr },
+    _increment{ nullptr },
     _isCountingUp{ true },          // initial guess
-    _scope{ nullptr }               // in case loop creation is aborted
-{
+    _incNode{ nullptr },
+    _loopArray{ nullptr },
+    _loopSizeLoad{ nullptr },
+    _hoistableTests{ nullptr } {
     CompiledLoop::_bbs = nullptr;
 }
 
@@ -234,7 +233,7 @@ const char *CompiledLoop::findUpperBound() {
     if ( n->isTArithNode() ) {
         operand = ( (TArithRRNode *) n )->operand();
     } else if ( n->isArithNode() ) {
-        operand = ( (ArithRRNode *) n )->operand();
+        operand = ( (RegisterRegisterArithmeticNode *) n )->operand();
     } else {
         return "loop condition: comparison not found";
     }
@@ -284,7 +283,9 @@ public:
     virtual ~LoopClosure() = default;
     LoopClosure( const LoopClosure & ) = default;
     LoopClosure &operator=( const LoopClosure & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 };
@@ -380,8 +381,8 @@ const char *CompiledLoop::checkLoopVar() {
         operand = ( (TArithRRNode *) n2 )->operand();
         op      = ( (TArithRRNode *) n2 )->op();
     } else if ( n2->isArithNode() ) {
-        operand = ( (ArithRRNode *) n2 )->operand();
-        op      = ( (ArithRRNode *) n2 )->op();
+        operand = ( (RegisterRegisterArithmeticNode *) n2 )->operand();
+        op      = ( (RegisterRegisterArithmeticNode *) n2 )->op();
     } else {
         return "loopVar def not an arithmetic operation";
     }
@@ -483,19 +484,23 @@ public:
     GrowableArray<KlassOop> *smi_type;
 
 
-    UntagClosure( CompiledLoop *l, PseudoRegister *r ) :
-        smi_type{ nullptr },
-        theLoop{ l },
-        theLoopPseudoRegister{ r } {
+    UntagClosure( CompiledLoop *l, PseudoRegister *r ) : Closure<Usage *>(),
+                                                         theLoop{ l },
+                                                         theLoopPseudoRegister{ r },
+                                                         smi_type{ nullptr } {
+
         smi_type = new GrowableArray<KlassOop>( 1 );
         smi_type->append( smiKlassObject );
     }
+
 
     UntagClosure() = default;
     virtual ~UntagClosure() = default;
     UntagClosure( const UntagClosure & ) = default;
     UntagClosure &operator=( const UntagClosure & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void do_it( Usage *u ) {
@@ -605,7 +610,9 @@ public:
     virtual ~TTHoister() = default;
     TTHoister( const TTHoister & ) = default;
     TTHoister &operator=( const TTHoister & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void do_it( InlinedScope *s ) {
@@ -724,12 +731,15 @@ public:
         theArrayList{ arrays } {
     }
 
+
     BoundsCheckRemover() = default;
     virtual ~BoundsCheckRemover() = default;
     BoundsCheckRemover( const BoundsCheckRemover & ) = default;
     BoundsCheckRemover &operator=( const BoundsCheckRemover & ) = default;
+
+
     void operator delete( void *ptr ) { (void) ptr; }
-    
+
 
     void do_it( Usage *u ) {
         if ( theLoop->isInLoop( u->_node ) and

@@ -22,10 +22,10 @@ const std::int32_t MaxMergeExprSize = 5;    // max. # exprs in a merge expressio
 
 
 Expression::Expression( PseudoRegister *p, Node *n ) :
-    _unlikelyByteCodeIndex{ 0 },
-    _unlikelyScope{ nullptr },
     _pseudoRegister{ p },
     _node{ n },
+    _unlikelyScope{ nullptr },
+    _unlikelyByteCodeIndex{ 0 },
     next{ nullptr },
     flags{ 0 } {
 

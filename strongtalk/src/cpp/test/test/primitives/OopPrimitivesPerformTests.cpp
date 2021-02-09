@@ -18,7 +18,7 @@
 class OopPrimitivesPerformTest : public ::testing::Test {
 
 public:
-    OopPrimitivesPerformTest() : ::testing::Test() {}
+    OopPrimitivesPerformTest() : ::testing::Test(), fixture{} {}
 
 protected:
     void SetUp() override {

@@ -466,8 +466,8 @@ void ProfiledNode::print_receiver_klass_on( ConsoleOutputStream *stream ) const 
 
 
 ProfiledNode::ProfiledNode() :
-    ticks{},
-    _next{ nullptr } {
+    _next{ nullptr },
+    ticks{} {
 }
 
 

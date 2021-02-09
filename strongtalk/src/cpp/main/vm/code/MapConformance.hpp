@@ -195,14 +195,14 @@ private:
 
 public:
     MappingTask( Variable src_register, Variable src_stack, Variable dst_register, Variable dst_stack ) :
-        src( src_register, src_stack ),
-        dst( dst_register, dst_stack ),
         _next{ nullptr },
+        _parent{ nullptr },
         _is_processed{ false },
         _what_happened{ "Nothing" },
-        _parent{ nullptr },
         _uses_top_of_stack{ false },
-        _variable_to_free{ Variable::unused() } {
+        _variable_to_free{ Variable::unused() },
+        src( src_register, src_stack ),
+        dst( dst_register, dst_stack ) {
     }
 
 
@@ -212,7 +212,7 @@ public:
     MappingTask &operator=( const MappingTask & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool is_processed() const {
@@ -322,7 +322,7 @@ public:
     MapConformance &operator=( const MapConformance & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     // Appends mapping

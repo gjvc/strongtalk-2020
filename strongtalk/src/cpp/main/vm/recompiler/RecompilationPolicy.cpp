@@ -13,8 +13,8 @@
 
 
 RecompilationPolicy::RecompilationPolicy( RecompilerFrame *first ) :
-    _msg{ nullptr },
-    _stack{ nullptr } {
+    _stack{ nullptr },
+    _msg{ nullptr } {
     _stack = new GrowableArray<RecompilerFrame *>( 50 );
     _stack->push( first );
 }
@@ -28,8 +28,9 @@ Recompilee *RecompilationPolicy::findRecompilee() {
     }
     RecompilerFrame *r  = findTopInlinableFrame();
     if ( r ) {
-        if ( PrintRecompilation )
+        if ( PrintRecompilation ) {
             r->print();
+        }
         return Recompilee::new_Recompilee( r );
     } else {
         return nullptr;
@@ -38,9 +39,11 @@ Recompilee *RecompilationPolicy::findRecompilee() {
 
 
 void RecompilationPolicy::cleanupStaleInlineCaches() {
-    std::int32_t       len = min( 20, _stack->length() );
-    for ( std::int32_t i   = 0; i < len; i++ )
+    std::int32_t len = min( 20, _stack->length() );
+
+    for ( std::int32_t i = 0; i < len; i++ ) {
         _stack->at( i )->cleanupStaleInlineCaches();
+    }
 }
 
 

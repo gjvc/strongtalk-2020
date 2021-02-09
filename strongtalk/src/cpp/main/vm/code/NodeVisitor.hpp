@@ -24,7 +24,7 @@ class StoreOffsetNode;
 
 class StoreUplevelNode;
 
-class ArithRRNode;
+class RegisterRegisterArithmeticNode;
 
 class ArithRCNode;
 
@@ -111,7 +111,7 @@ public:
 
     virtual void aStoreUplevelNode( StoreUplevelNode *node ) = 0;
 
-    virtual void anArithRRNode( ArithRRNode *node ) = 0;
+    virtual void anArithRRNode( RegisterRegisterArithmeticNode *node ) = 0;
 
     virtual void aFloatArithRRNode( FloatArithRRNode *node ) = 0;
 

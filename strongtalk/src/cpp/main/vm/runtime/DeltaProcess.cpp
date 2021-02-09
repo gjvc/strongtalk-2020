@@ -68,6 +68,7 @@ bool processSemaphore = false;
 std::int32_t *last_delta_fp = nullptr;
 Oop          *last_delta_sp = nullptr;
 
+
 // last_delta_fp
 std::int32_t *DeltaProcess::last_delta_fp() const {
     return this == _active_delta_process ? ::last_delta_fp : _last_delta_fp;
@@ -338,19 +339,19 @@ std::int32_t DeltaProcess::launch_delta( DeltaProcess *process ) {
 DeltaProcess::DeltaProcess( Oop receiver, SymbolOop selector, bool createThread ) :
     _receiver{ receiver },
     _selector{ selector },
-    _state{ ProcessState::initialized },
-    stopping{ false },
     _next{ nullptr },
-    _last_delta_fp{ nullptr },
-    _last_delta_pc{ nullptr },
-    _last_delta_sp{ nullptr },
-    _is_terminating{ false },
-    _unwind_head{ nullptr },
-    _firstHandle{ nullptr },
-    _time_stamp{ 0 },
     _processObject{},
+    _state{ ProcessState::initialized },
+    _last_delta_fp{ nullptr },
+    _last_delta_sp{ nullptr },
+    _last_delta_pc{ nullptr },
+    _is_terminating{ false },
+    _time_stamp{ 0 },
     _debugInfo{},
-    _isCallback{ false } {
+    _isCallback{ false },
+    stopping{ false },
+    _unwind_head{ nullptr },
+    _firstHandle{ nullptr } {
 
     _event  = os::create_event( false );
     _thread = createThread

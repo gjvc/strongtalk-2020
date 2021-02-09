@@ -33,10 +33,7 @@ std::int32_t compareByteCodeIndex( std::int32_t byteCodeIndex1, std::int32_t byt
 
 ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
 
-
-//    _next{ 0 },
-//    _name_desc_offset{ 0 },
-
+    //
     _hasTemporaries{ false },
     _hasContextTemporaries{ false },
     _hasExpressionStack{ false },
@@ -46,11 +43,8 @@ ScopeDescriptor::ScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t
     _senderScopeOffset{ 0 },
     _senderByteCodeIndex{ 0 },
     _allocatesCompiledContext{ false },
-    _next{ 0 },
-    _scopes{ scopes },
-    _offset{ offset },
-    _pc{ pc },
-    _name_desc_offset{ offset } {
+    _name_desc_offset{ offset },
+    _next{ 0 } {
 
     //
     ScopeDescriptorHeaderByte b;
@@ -235,7 +229,7 @@ protected:
     IterationHelper &operator=( const IterationHelper & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -422,7 +416,7 @@ public:
     PrintNameDescClosure &operator=( const PrintNameDescClosure & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void arg( std::int32_t no, NameDescriptor *a, char *pc ) {
@@ -503,8 +497,8 @@ MethodScopeDescriptor::MethodScopeDescriptor( NativeMethodScopes *scopes, std::i
     ScopeDescriptor( scopes, offset, pc ),
 //    _next{ 0 },
 //    _name_desc_offset{ 0 },
-    _self_name{ nullptr },
-    _key{ nullptr } {
+    _key{ nullptr },
+    _self_name{ nullptr } {
 
     Oop k = _scopes->unpackOopAt( _name_desc_offset );
     Oop s = _scopes->unpackOopAt( _name_desc_offset );
@@ -600,10 +594,10 @@ LookupKey *TopLevelBlockScopeDescriptor::key() const {
 
 
 NonInlinedBlockScopeDescriptor::NonInlinedBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset ) :
-    _method{},
-    _parentScopeOffset{ 0 },
+    _scopes{ scopes },
     _offset{ offset },
-    _scopes{ scopes } {
+    _method{},
+    _parentScopeOffset{ 0 } {
 
     ScopeDescriptorHeaderByte b;
     b.unpack( _scopes->get_next_char( offset ) );
@@ -628,8 +622,8 @@ ScopeDescriptor *NonInlinedBlockScopeDescriptor::parent() const {
 
 TopLevelBlockScopeDescriptor::TopLevelBlockScopeDescriptor( const NativeMethodScopes *scopes, std::int32_t offset, const char *pc ) :
     ScopeDescriptor( scopes, offset, pc ),
-    _self_klass{ nullptr },
-    _self_name{ nullptr } {
+    _self_name{ nullptr },
+    _self_klass{ nullptr } {
 
     _self_name  = _scopes->unpackNameDescAt( _name_desc_offset, pc );
     _self_klass = KlassOop( scopes->unpackOopAt( _name_desc_offset ) );

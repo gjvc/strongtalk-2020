@@ -20,18 +20,21 @@ public:
 
 public:
     NonInlinedBlockScopeNode( MethodOop method, ScopeInfo parent ) :
-        _method{ method },
-        _parent{ parent },
         _offset{ INVALID_OFFSET },
-        _next{ nullptr } {
+        _next{ nullptr },
+        _method{ method },
+        _parent{ parent } {
     }
+
 
     NonInlinedBlockScopeNode() = default;
     virtual ~NonInlinedBlockScopeNode() = default;
     NonInlinedBlockScopeNode( const NonInlinedBlockScopeNode & ) = default;
     NonInlinedBlockScopeNode &operator=( const NonInlinedBlockScopeNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
-    
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
     std::uint8_t code() {
         return NON_INLINED_BLOCK_CODE;

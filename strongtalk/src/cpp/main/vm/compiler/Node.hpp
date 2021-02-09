@@ -46,7 +46,7 @@ class ReturnNode;                       // method return
 class NonLocalReturnSetupNode;          // setup NonLocalReturn leaving this compiled method
 class InlinedReturnNode;                // inlined method return (old backend only)
 class NonLocalReturnContinuationNode;   // continue NonLocalReturn going through this method
-class ArithNode;                        // all computations (incl comparisons)
+class ArithmeticNode;                        // all computations (incl comparisons)
 class AbstractBranchNode;               // nodes with (potentially) >1 sucessors
 class TArithRRNode;                     // tagged arithmetic nodes
 class CallNode;                         // abstract
@@ -145,7 +145,7 @@ public:
     BasicNode &operator=( const BasicNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     auto operator<=>( const BasicNode & ) const = default;
@@ -515,9 +515,7 @@ protected:
     auto operator<=>( const Node & ) const = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
-
-
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -701,7 +699,7 @@ public:
     TrivialNode &operator=( const TrivialNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool isTrivial() const {
@@ -748,7 +746,7 @@ protected:
     NonTrivialNode &operator=( const NonTrivialNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -803,7 +801,7 @@ protected:
     PrologueNode &operator=( const PrologueNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -867,7 +865,7 @@ protected:
     LoadNode &operator=( const LoadNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -915,7 +913,7 @@ protected:
     LoadIntNode &operator=( const LoadIntNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -964,7 +962,7 @@ protected:
     LoadOffsetNode &operator=( const LoadOffsetNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1029,7 +1027,7 @@ protected:
     LoadUplevelNode &operator=( const LoadUplevelNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1091,7 +1089,7 @@ protected:
     StoreNode &operator=( const StoreNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1170,7 +1168,7 @@ protected:
     StoreOffsetNode &operator=( const StoreOffsetNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1257,7 +1255,7 @@ protected:
     StoreUplevelNode &operator=( const StoreUplevelNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1329,7 +1327,7 @@ protected:
     AssignNode &operator=( const AssignNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1422,7 +1420,7 @@ protected:
     AbstractReturnNode &operator=( const AbstractReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1498,7 +1496,7 @@ protected:
     InlinedReturnNode &operator=( const InlinedReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1568,7 +1566,7 @@ protected:
     NonLocalReturnSetupNode &operator=( const NonLocalReturnSetupNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1644,7 +1642,7 @@ protected:
     NonLocalReturnContinuationNode &operator=( const NonLocalReturnContinuationNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1722,7 +1720,7 @@ protected:
     ReturnNode &operator=( const ReturnNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1779,7 +1777,7 @@ public:
 class AbstractMergeNode : public TrivialNode {
 private:
     enum {
-        N = 3         /* n-way merge */
+        N = 3         // n-way merge
     };
 
 protected:
@@ -1803,8 +1801,9 @@ public:
     virtual ~AbstractMergeNode() = default;
     AbstractMergeNode( const AbstractMergeNode & ) = default;
     AbstractMergeNode &operator=( const AbstractMergeNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool hasSinglePredecessor() const {
@@ -1903,13 +1902,13 @@ public:
 };
 
 
-class ArithNode : public NonTrivialNode {    // abstract
+class ArithmeticNode : public NonTrivialNode {    // abstract
     // NB: ArithNodes are not used for tagged std::int32_t arithmetic -- see TArithNode
 protected:
     ArithOpCode         _op;
     ConstPseudoRegister *_constResult;    // non-nullptr if constant-folded
 
-    ArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
+    ArithmeticNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
         _op{ op },
 //        _src{ src },
 //        _dest{ dst },
@@ -1919,11 +1918,13 @@ protected:
     }
 
 
-    ArithNode() = default;
-    virtual ~ArithNode() = default;
-    ArithNode( const ArithNode & ) = default;
-    ArithNode &operator=( const ArithNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+    ArithmeticNode() = default;
+    virtual ~ArithmeticNode() = default;
+    ArithmeticNode( const ArithmeticNode & ) = default;
+    ArithmeticNode &operator=( const ArithmeticNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -1990,20 +1991,23 @@ public:
 };
 
 
-class ArithRRNode : public ArithNode {  // reg op reg => reg
+class RegisterRegisterArithmeticNode : public ArithmeticNode {  // reg op reg => reg
 
 protected:
     PseudoRegister *_oper;
     Usage          *_operUse;
 
-    ArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d );
+    RegisterRegisterArithmeticNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d );
 
 
-    ArithRRNode() = default;
-    virtual ~ArithRRNode() = default;
-    ArithRRNode( const ArithRRNode & ) = default;
-    ArithRRNode &operator=( const ArithRRNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+    RegisterRegisterArithmeticNode() = default;
+    virtual ~RegisterRegisterArithmeticNode() = default;
+    RegisterRegisterArithmeticNode( const RegisterRegisterArithmeticNode & ) = default;
+    RegisterRegisterArithmeticNode &operator=( const RegisterRegisterArithmeticNode & ) = default;
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     PseudoRegister *operand() const {
@@ -2043,10 +2047,10 @@ public:
 };
 
 
-class FloatArithRRNode : public ArithRRNode {  // for untagged float operations
+class FloatArithRRNode : public RegisterRegisterArithmeticNode {  // for untagged float operations
 
     FloatArithRRNode( ArithOpCode o, PseudoRegister *s, PseudoRegister *o2, PseudoRegister *d ) :
-        ArithRRNode( o, s, o2, d ) {
+        RegisterRegisterArithmeticNode( o, s, o2, d ) {
     }
 
 
@@ -2074,11 +2078,11 @@ public:
 };
 
 
-class FloatUnaryArithNode : public ArithNode {
+class FloatUnaryArithNode : public ArithmeticNode {
     // unary untagged float operation; src is an untagged float, dest is either another
     // untagged float or a floatOop
     FloatUnaryArithNode( ArithOpCode op, PseudoRegister *src, PseudoRegister *dst ) :
-        ArithNode( op, src, dst ) {
+        ArithmeticNode( op, src, dst ) {
     }
 
 
@@ -2123,7 +2127,7 @@ public:
 };
 
 
-class ArithRCNode : public ArithNode {  // reg op const => reg
+class ArithRCNode : public ArithmeticNode {  // reg op const => reg
     // used to compare against non-Oop constants (e.g. for markOop test)
     // DO NOT USE to add a reg and an Oop constant -- use ArithRR + ConstPseudoRegisters for that
 protected:
@@ -2131,7 +2135,7 @@ protected:
 
 
     ArithRCNode( ArithOpCode o, PseudoRegister *s, std::int32_t o2, PseudoRegister *d ) :
-        ArithNode( o, s, d ),
+        ArithmeticNode( o, s, d ),
         _operand{ o2 } {
     }
 
@@ -2192,8 +2196,9 @@ protected:
     virtual ~AbstractBranchNode() = default;
     AbstractBranchNode( const AbstractBranchNode & ) = default;
     AbstractBranchNode &operator=( const AbstractBranchNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void removeFailureIfPossible();
@@ -2275,7 +2280,10 @@ protected:
     virtual ~TArithRRNode() = default;
     TArithRRNode( const TArithRRNode & ) = default;
     TArithRRNode &operator=( const TArithRRNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     ArithOpCode op() const {
@@ -2387,7 +2395,10 @@ protected:
     virtual ~CallNode() = default;
     CallNode( const CallNode & ) = default;
     CallNode &operator=( const CallNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     GrowableArray<PseudoRegister *> *exprStack;   // current expr. stack for debugging info (nullptr if not needed)
@@ -2459,7 +2470,10 @@ protected:
     virtual ~SendNode() = default;
     SendNode( const SendNode & ) = default;
     SendNode &operator=( const SendNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool isSendNode() const {
@@ -2523,7 +2537,10 @@ protected:
     virtual ~PrimitiveNode() = default;
     PrimitiveNode( const PrimitiveNode & ) = default;
     PrimitiveNode &operator=( const PrimitiveNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool canBeEliminated() const;
@@ -2571,7 +2588,10 @@ protected:
     virtual ~DLLNode() = default;
     DLLNode( const DLLNode & ) = default;
     DLLNode &operator=( const DLLNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool canInvokeDelta() const;
@@ -2687,7 +2707,10 @@ protected:
     virtual ~LoopHeaderNode() = default;
     LoopHeaderNode( const LoopHeaderNode & ) = default;
     LoopHeaderNode &operator=( const LoopHeaderNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool isLoopHeaderNode() const {
@@ -2831,7 +2854,10 @@ protected:
     virtual ~BlockCreateNode() = default;
     BlockCreateNode( const BlockCreateNode & ) = default;
     BlockCreateNode &operator=( const BlockCreateNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
 
@@ -2969,7 +2995,10 @@ protected:
     virtual ~ContextCreateNode() = default;
     ContextCreateNode( const ContextCreateNode & ) = default;
     ContextCreateNode &operator=( const ContextCreateNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool hasSrc() const {
@@ -3072,7 +3101,10 @@ protected:
     virtual ~ContextInitNode() = default;
     ContextInitNode( const ContextInitNode & ) = default;
     ContextInitNode &operator=( const ContextInitNode & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
 public:
     bool hasSrc() const {
@@ -3377,7 +3409,7 @@ protected:
     TypeTestNode &operator=( const TypeTestNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -3517,7 +3549,7 @@ protected:
     AbstractArrayAtNode &operator=( const AbstractArrayAtNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -3692,7 +3724,7 @@ protected:
     AbstractArrayAtPutNode &operator=( const AbstractArrayAtPutNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -3847,16 +3879,16 @@ public:
     };
 
 private:
-    PseudoRegister *_arg1;          // 1st argument or nullptr
-    PseudoRegister *_arg2;          // 2nd argument or nullptr
-    PseudoRegister *_error;         // primitive error or nullptr if primitive can't fail
-    Usage          *_arg1_use;      //
-    Usage          *_arg2_use;      //
-    Definition     *_error_def;     //
-    bool           _arg1_is_SmallInteger;    // true if 1st argument is known to be a small_int_t
-    bool           _arg2_is_SmallInteger;    // true if 2nd argument is known to be a small_int_t
-    Operation      _operation;      //
-    // _src is	_recv;			    // receiver or nullptr
+    PseudoRegister *_arg1;                  // 1st argument or nullptr
+    PseudoRegister *_arg2;                  // 2nd argument or nullptr
+    PseudoRegister *_error;                 // primitive error or nullptr if primitive can't fail
+    Usage          *_arg1_use;              //
+    Usage          *_arg2_use;              //
+    Definition     *_error_def;             //
+    bool           _arg1_is_SmallInteger;   // true if 1st argument is known to be a small_int_t
+    bool           _arg2_is_SmallInteger;   // true if 2nd argument is known to be a small_int_t
+    Operation      _operation;              //
+    // _src is	_recv;			            // receiver or nullptr
 
     InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_SmallInteger, PseudoRegister *arg2, bool arg2_is_SmallInteger );
 
@@ -3866,7 +3898,7 @@ private:
     InlinedPrimitiveNode &operator=( const InlinedPrimitiveNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -3966,7 +3998,7 @@ protected:
     UncommonNode &operator=( const UncommonNode & ) = default;
 
 
-    void operator delete( void *ptr ) { (void)(ptr); }
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:

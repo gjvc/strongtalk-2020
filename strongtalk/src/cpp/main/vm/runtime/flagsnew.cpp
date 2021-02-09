@@ -15,36 +15,33 @@ private:
     T           _value;
     std::string _description;
     T           _default_value;
+
 public:
     explicit ConfigurationValue( const T &value ) :
         _name{ "" },
+        _value{ value },
         _default_value{},
-        _description{ "" },
-        _value{ value } {
-
-    }
+        _description{ "" } {}
 
 
     ConfigurationValue( const char *name, const T &value ) :
         _name{ name },
+        _value{ value },
         _default_value{},
-        _description{ "" },
-        _value{ value } {
-
-    }
+        _description{ "" } {}
 
 
     ConfigurationValue( const char *name, const T &value, const char *description ) :
         _name{ name },
-        _default_value{},
         _value{ value },
-        _description{ description } {
-
-    }
+        _description{ description },
+        _default_value{} {}
 
 
     ConfigurationValue &operator=( const ConfigurationValue &other ) {
-        if ( this == &other ) return *this;  // ignore self-assignment attempts
+        if ( &other == this ) {
+            return *this;  // self-assignment
+        }
 
         _name        = other._name;
         _description = other._description;
@@ -296,7 +293,7 @@ auto _TraceLookupAtMiss                   = _flag<bool>( "TraceLookupAtMiss", fa
 auto _TraceMessageSend                    = _flag<bool>( "TraceMessageSend", false, "Trace all message sends" );
 auto _TraceMethodPrims                    = _flag<bool>( "TraceMethodPrims", false, "Trace method prims" );
 auto _TraceMixinPrims                     = _flag<bool>( "TraceMixinPrims", false, "Trace mixin prims" );
-auto _TraceObjectArrayPrims                  = _flag<bool>( "TraceObjectArrayPrims", false, "Trace objectArray primitives" );
+auto _TraceObjectArrayPrims               = _flag<bool>( "TraceObjectArrayPrims", false, "Trace objectArray primitives" );
 auto _TraceOopPrims                       = _flag<bool>( "TraceOopPrims", false, "Trace Oop primitives" );
 auto _TraceProcessEvents                  = _flag<bool>( "TraceProcessEvents", false, "Trace all process events" );
 auto _TraceProcessPrims                   = _flag<bool>( "TraceProcessPrims", false, "Trace process primitives" );

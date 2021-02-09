@@ -18,7 +18,11 @@
 class BehaviorPrimitivesTests : public ::testing::Test {
 
 public:
-    BehaviorPrimitivesTests() : ::testing::Test() {}
+    BehaviorPrimitivesTests() :
+        ::testing::Test(),
+        edenMark{},
+        objectClass{} {}
+
 
 protected:
     void SetUp() override {

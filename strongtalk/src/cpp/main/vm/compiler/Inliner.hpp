@@ -53,23 +53,26 @@ public:
 
     Inliner( InlinedScope *s ) :
         _sender{ s },
+        _callee{ nullptr },
         _info{ nullptr },
         _result{ nullptr },
-        _callee{ nullptr },
+        _resultPR{ nullptr },
         _generator{ nullptr },
         _merge{ nullptr },
-        _resultPR{ nullptr },
-        depth{ 0 },
         _msg{ nullptr },
         _sendKind{},
-        _lastLookupFailed{ false } {
+        _lastLookupFailed{ false },
+        depth{ 0 } {
     }
+
 
     Inliner() = default;
     virtual ~Inliner() = default;
     Inliner( const Inliner & ) = default;
     Inliner &operator=( const Inliner & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     // The inlineXXX generate a non-inlined send if necessary, with the exception

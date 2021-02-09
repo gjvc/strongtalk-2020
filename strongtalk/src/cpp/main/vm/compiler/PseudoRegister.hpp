@@ -68,7 +68,8 @@ public:
         _definitionCount{},
         _softUsageCount{},
         _logicalAddress{ nullptr },
-        _scope{ nullptr },
+        _dus{},
+        _scope{ s },
         _location{ Location::UNALLOCATED_LOCATION },
         _copyPropagationInfo{ nullptr },
         cpseudoRegisters{ nullptr },
@@ -78,10 +79,8 @@ public:
         _uplevelReaders{ nullptr },
         _uplevelWriters{ nullptr },
         _debug{ false },
-        _map_index_cache{},
-        _dus( AvgBBIndexLen ) {
-        _scope = s;
-        st_assert( s, "must have a scope" );
+        _map_index_cache{} {
+        st_assert( _scope, "must have a scope" );
     }
 
 
@@ -91,6 +90,7 @@ public:
         _definitionCount{},
         _softUsageCount{},
         _logicalAddress{ nullptr },
+        _dus( AvgBBIndexLen ),
         _scope{ nullptr },
         _location{ Location::UNALLOCATED_LOCATION },
         _copyPropagationInfo{ nullptr },
@@ -101,8 +101,7 @@ public:
         _uplevelReaders{ nullptr },
         _uplevelWriters{ nullptr },
         _debug{ false },
-        _map_index_cache{},
-        _dus( AvgBBIndexLen ) {
+        _map_index_cache{} {
 
         st_assert( s, "must have a scope" );
         st_assert( not l.equals( Location::ILLEGAL_LOCATION ), "illegal location" );
@@ -125,7 +124,10 @@ public:
     virtual ~PseudoRegister() = default;
     PseudoRegister( const PseudoRegister & ) = default;
     PseudoRegister &operator=( const PseudoRegister & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
+
 
     std::int32_t id() const {
         return _id;
@@ -435,11 +437,12 @@ public:
 
 
     SinglyAssignedPseudoRegister( InlinedScope *s, Location l, bool incU, bool incD, std::int32_t stream, std::int32_t en ) :
-        PseudoRegister( (InlinedScope *) s, l, incU, incD ), _isInContext( false ),
-        _begByteCodeIndex{ stream },
+        PseudoRegister( (InlinedScope *) s, l, incU, incD ),
+        _creationScope{ s },
         _creationStartByteCodeIndex{ stream },
+        _begByteCodeIndex{ stream },
         _endByteCodeIndex{ en },
-        _creationScope{ s } {
+        _isInContext( false ) {
     }
 
 
@@ -447,8 +450,9 @@ public:
     virtual ~SinglyAssignedPseudoRegister() = default;
     SinglyAssignedPseudoRegister( const SinglyAssignedPseudoRegister & ) = default;
     SinglyAssignedPseudoRegister &operator=( const SinglyAssignedPseudoRegister & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     std::int32_t begByteCodeIndex() const {
@@ -520,7 +524,9 @@ public:
     virtual ~BlockPseudoRegister() = default;
     BlockPseudoRegister( const BlockPseudoRegister & ) = default;
     BlockPseudoRegister &operator=( const BlockPseudoRegister & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     bool isBlockPseudoRegister() const {
@@ -660,8 +666,9 @@ protected:
     virtual ~ConstPseudoRegister() = default;
     ConstPseudoRegister( const ConstPseudoRegister & ) = default;
     ConstPseudoRegister &operator=( const ConstPseudoRegister & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:

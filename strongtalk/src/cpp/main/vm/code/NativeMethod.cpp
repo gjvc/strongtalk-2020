@@ -95,23 +95,20 @@ NativeMethod::NativeMethod( Compiler *c ) :
 
 //    _instructionsLength{},
 //    _locsLen{},
+    _specialHandlerCallOffset{},
+    _entryPointOffset{},
+    _verifiedEntryPointOffset{},
     _scopeLen{},
-    _mainId{},
-    _promotedId{},
     _numberOfNoninlinedBlocks{},
+    _numberOfLinks{},
+    _numberOfFloatTemporaries{},
+    _floatSectionStartOffset{},
     _invocationCount{},
     _uncommonTrapCounter{},
-    _numberOfLinks{},
-    _entryPointOffset{},
-    _floatSectionSize{},
-    _floatSectionStartOffset{},
     _nativeMethodFlags{},
-    _numberOfFloatTemporaries{},
-    _specialHandlerCallOffset{},
-    _verifiedEntryPointOffset{},
-
-    _lookupKey( c->key->klass(), c->key->selector_or_method() ) {
-
+    _lookupKey( c->key->klass(), c->key->selector_or_method() ),
+    _mainId{},
+    _promotedId{} {
     LookupCache::verify();
 
     st_assert( instruction_length <= 10 * MaxNmInstrSize, "too many instructions" );

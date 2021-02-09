@@ -176,6 +176,7 @@ std::int32_t FreeList::length() const {
 
 
 ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) :
+    size{},
     blockSize{},
     nfree{ 30 },
     log2BS{},
@@ -184,7 +185,6 @@ ZoneHeap::ZoneHeap( std::int32_t s, std::int32_t bs ) :
     _ifrag{},
     _base{},
     base{},
-    size{},
     _heapKlass{},
     _freeList{},
     _bigList{},

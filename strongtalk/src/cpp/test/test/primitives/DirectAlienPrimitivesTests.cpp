@@ -21,7 +21,16 @@ extern "C" std::int32_t expansion_count;
 class DirectAlienPrimitivesTests : public ::testing::Test {
 
 public:
-    DirectAlienPrimitivesTests() : ::testing::Test() {}
+    DirectAlienPrimitivesTests() :
+    ::testing::Test(),
+    _heapResourceMark{},
+    _alien{},
+    _largeUnsignedInteger{},
+    _largeUnsignedInteger2{},
+    _veryLargeUnsignedInteger{},
+    _largeSignedInteger{},
+    _doubleValue{}
+    {}
 
 protected:
 

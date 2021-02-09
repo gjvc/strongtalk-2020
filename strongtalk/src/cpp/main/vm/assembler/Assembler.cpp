@@ -24,8 +24,8 @@ Assembler::Assembler( CodeBuffer *code ) :
     _code_begin{ code->code_begin() },
     _code_limit{ code->code_limit() },
     _code_pos{ code->code_end() },
-    _binding_pos{ 0 },
-    _unbound_label{} {
+    _unbound_label{},
+    _binding_pos{ 0 } {
 }
 
 

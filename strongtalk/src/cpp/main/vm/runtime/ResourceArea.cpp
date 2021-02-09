@@ -47,12 +47,12 @@ constexpr std::int32_t min_resource_chunk_size = 256 * 1024;
 
 
 ResourceAreaChunk::ResourceAreaChunk( std::int32_t min_capacity, ResourceAreaChunk *previous ) :
-    _allocated{ 0 },
-    _previous_used{ 0 },
     _bottom{ nullptr },
     _top{ nullptr },
     _firstFree{ nullptr },
-    _prev{ nullptr } {
+    _prev{ nullptr },
+    _allocated{ 0 },
+    _previous_used{ 0 } {
 
     std::int32_t size = max( min_capacity + min_resource_free_size, min_resource_chunk_size );
     _bottom = (char *) AllocateHeap( size, "resourceAreaChunk" );

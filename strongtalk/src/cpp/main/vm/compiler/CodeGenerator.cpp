@@ -63,13 +63,13 @@ private:
     }
 
 
-
     Stub() = default;
     virtual ~Stub() = default;
     Stub( const Stub & ) = default;
     Stub &operator=( const Stub & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
 public:
@@ -125,11 +125,14 @@ public:
         _present         = new GrowableArray<bool>( number_of_pseudoRegisters, number_of_pseudoRegisters, false );
     }
 
+
     DebugInfoWriter() = default;
     virtual ~DebugInfoWriter() = default;
     DebugInfoWriter( const DebugInfoWriter & ) = default;
     DebugInfoWriter &operator=( const DebugInfoWriter & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
+
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void pseudoRegister_do( PseudoRegister *pseudoRegister ) {
@@ -190,15 +193,15 @@ public:
 // Implementation of CodeGenerator
 
 CodeGenerator::CodeGenerator( MacroAssembler *masm, PseudoRegisterMapping *mapping ) :
-    _mergeStubs( 16 ),
     _masm{ masm },
     _currentMapping{ mapping },
-    _nofCompilations{ 0 },
-    _maxNofStackTmps{ 0 },
+    _mergeStubs{ 16 },
     _debugInfoWriter{ nullptr },
+    _maxNofStackTmps{ 0 },
     _previousNode{ nullptr },
     _nilReg{ noreg },
-    _pushCode{ nullptr } {
+    _pushCode{ nullptr },
+    _nofCompilations{ 0 } {
 
     st_assert( masm == mapping->assembler(), "should be the same" );
     PseudoRegisterLocker::initialize();
@@ -1372,7 +1375,7 @@ Register CodeGenerator::targetRegister( ArithOpCode op, PseudoRegister *z, Pseud
 }
 
 
-void CodeGenerator::anArithRRNode( ArithRRNode *node ) {
+void CodeGenerator::anArithRRNode( RegisterRegisterArithmeticNode *node ) {
 
     ArithOpCode op = node->op();
 
@@ -1961,7 +1964,7 @@ void CodeGenerator::generateArrayLoopTests( LoopHeaderNode *node, Label &failure
 
     if ( ( lo not_eq nullptr ) and
          ( lo->isConstPseudoRegister() ) and
-        ( (ConstPseudoRegister *) lo )->constant->isSmallIntegerOop() and
+         ( (ConstPseudoRegister *) lo )->constant->isSmallIntegerOop() and
          ( (ConstPseudoRegister *) lo )->constant >= smiOopFromValue( 1 ) ) {
         // nothing
 

@@ -24,9 +24,9 @@
 
 
 RecompilationScope::RecompilationScope( NonDummyRecompilationScope *s, std::int32_t byteCodeIndex ) :
+    _sender{ s },
     _senderByteCodeIndex( byteCodeIndex ),
-    _invocationCount{ 0 },
-    _sender{ s } {
+    _invocationCount{ 0 } {
 
     if ( s ) {
         s->addScope( byteCodeIndex, this );
@@ -79,9 +79,9 @@ PICRecompilationScope::PICRecompilationScope( const NativeMethod *c, ProgramCoun
     programCounterDescriptor{ pc },
     klass{ k },
     nm{ n },
-    _extended{ false },
     _method{ m },
     trusted{ tr },
+    _extended{ false },
     _desc{ dsc } {
 
     //

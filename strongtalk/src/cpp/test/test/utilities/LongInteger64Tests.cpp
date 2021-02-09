@@ -9,7 +9,8 @@
 #include <gtest/gtest.h>
 
 
-class LongInteger64Tests : public ::testing::Test {
+class LongInteger64Tests :
+    public ::testing::Test {
 
 protected:
     void SetUp() override {

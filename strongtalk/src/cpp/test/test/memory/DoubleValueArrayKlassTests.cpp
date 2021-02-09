@@ -24,7 +24,10 @@ extern "C" Oop *eden_end;
 class DoubleValueArrayKlassTests : public ::testing::Test {
 
 public:
-    DoubleValueArrayKlassTests() : ::testing::Test() {}
+    DoubleValueArrayKlassTests() :
+        ::testing::Test(),
+        theClass{},
+        oldEdenTop{ nullptr } {}
 
 protected:
 

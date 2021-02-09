@@ -29,19 +29,18 @@
 #include "vm/oops/ContextKlass.hpp"
 
 
-// -----------------------------------------------------------------------------
-
 Bootstrap::Bootstrap( const std::string &name ) :
-    _filename{ name },
+    _oop_table{ nullptr },
     _number_of_oops{ 0 },
     _max_number_of_oops{ 512 * 1024 },
     _new_format{ false },
     _objectCount{ 0 },
-//    _filename{},
+    _filename{ name },
     _stream{},
-    _version_number{ 0 },
     _counter{ 0 },
-    _oop_table{ nullptr } {
+    _countByType{},
+    _nameByTypeByte{},
+    _version_number{ 0 } {
 
     //
     initNameByTypeByte();
@@ -246,7 +245,7 @@ void Bootstrap::parse_objects() {
     falseObject                       = MemOop( readNextObject() );
     smiKlassObject                    = KlassOop( readNextObject() );
     Universe::_memOopKlassObject      = KlassOop( readNextObject() );
-    Universe::_objectArrayKlassObject    = KlassOop( readNextObject() );
+    Universe::_objectArrayKlassObject = KlassOop( readNextObject() );
     Universe::_byteArrayKlassObject   = KlassOop( readNextObject() );
     symbolKlassObject                 = KlassOop( readNextObject() );
     doubleKlassObject                 = KlassOop( readNextObject() );

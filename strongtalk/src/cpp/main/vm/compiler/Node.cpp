@@ -45,15 +45,15 @@ void BasicNode::setScope( InlinedScope *s ) {
 
 
 BasicNode::BasicNode() :
-    _byteCodeIndex{},
-    _label{},
-    _scope{},
     _id{ currentID++ },
-    _basicBlock{ nullptr },
     _num{ -1 },
+    _byteCodeIndex{},
+    _basicBlock{ nullptr },
+    _scope{},
+    _pseudoRegisterMapping{ nullptr },
+    _label{},
     _dontEliminate{ false },
-    _deleted{ false },
-    _pseudoRegisterMapping{ nullptr } {
+    _deleted{ false } {
     setScope( theCompiler->currentScope() );
 
 }
@@ -71,8 +71,8 @@ void BasicNode::setMapping( PseudoRegisterMapping *mapping ) {
 
 
 NonTrivialNode::NonTrivialNode() :
-    _src{ nullptr },
     _dest{ nullptr },
+    _src{ nullptr },
     _srcUse{ nullptr },
     _destDef{ nullptr } {
 
@@ -81,8 +81,8 @@ NonTrivialNode::NonTrivialNode() :
 
 LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name ) :
     LoadNode( dst ),
-    _context0{ context0 },
     _context0Use{ nullptr },
+    _context0{ context0 },
     _nofLevels{ nofLevels },
     _offset{ offset },
     _name{ name } {
@@ -94,11 +94,11 @@ LoadUplevelNode::LoadUplevelNode( PseudoRegister *dst, PseudoRegister *context0,
 
 StoreUplevelNode::StoreUplevelNode( PseudoRegister *src, PseudoRegister *context0, std::int32_t nofLevels, std::int32_t offset, SymbolOop name, bool needsStoreCheck ) :
     StoreNode( src ),
-    _context0{ context0 },
     _context0Use{ nullptr },
+    _context0{ context0 },
     _nofLevels{ nofLevels },
-    _needsStoreCheck{ needsStoreCheck },
     _offset{ offset },
+    _needsStoreCheck{ needsStoreCheck },
     _name{ name } {
     st_assert( context0 not_eq nullptr, "context0 is nullptr" );
     st_assert( nofLevels >= 0, "nofLevels must be >= 0" );
@@ -133,8 +133,8 @@ ArrayAtPutNode::ArrayAtPutNode( AccessType access_type, PseudoRegister *array, P
     AbstractArrayAtPutNode( array, index, smi_index, element, result, error, data_offset, length_offset ),
     _access_type{ access_type },
     _needs_store_check{ needs_store_check },
-    _needs_element_range_check{ false },
-    _smi_element{ smi_element } {
+    _smi_element{ smi_element },
+    _needs_element_range_check{ false } {
     _needs_element_range_check = ( access_type == byte_at_put or access_type == double_byte_at_put );
 }
 
@@ -167,10 +167,10 @@ TypeTestNode::TypeTestNode( PseudoRegister *rr, GrowableArray<KlassOop> *classes
 }
 
 
-ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst ) :
-    ArithNode( op, arg1, dst ),
-    _operUse{ nullptr },
-    _oper{ arg2 } {
+RegisterRegisterArithmeticNode::RegisterRegisterArithmeticNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst ) :
+    ArithmeticNode( op, arg1, dst ),
+    _oper{ arg2 },
+    _operUse{ nullptr } {
 
     if ( _src->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( _op ) ] ) { // is this _op or op ? XXX ???
         // make sure that if there's a constant argument, it's the 2nd one
@@ -184,15 +184,11 @@ ArithRRNode::ArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *
 TArithRRNode::TArithRRNode( ArithOpCode op, PseudoRegister *arg1, PseudoRegister *arg2, PseudoRegister *dst, bool arg1IsInt, bool arg2IsInt ) :
 
     _op{ op },
-//    _src{ arg1 },
     _oper{ arg2 },
     _operUse{ nullptr },
-//    _dest{ dst },
     _arg1IsInt{ arg1IsInt },
     _arg2IsInt{ arg2IsInt },
-    _constResult{ nullptr }
-//    _dontEliminate{ true }
-{
+    _constResult{ nullptr } {
 
     if ( arg1->isConstPseudoRegister() and ArithOpIsCommutative[ static_cast<std::int32_t>( op ) ] ) {
         // make sure that if there's a constant argument, it's the 2nd one
@@ -429,9 +425,9 @@ BasicBlock *BasicNode::newBasicBlock() {
 
 MergeNode::MergeNode( Node *prev1, Node *prev2 ) :
     AbstractMergeNode( prev1, prev2 ),
-    _didStartBasicBlock{ false },
+    _isLoopStart{ false },
     _isLoopEnd{ false },
-    _isLoopStart{ false } {
+    _didStartBasicBlock{ false } {
     _byteCodeIndex = max( prev1->byteCodeIndex(), prev2->byteCodeIndex() );
 }
 
@@ -469,8 +465,8 @@ ReturnNode::ReturnNode( PseudoRegister *res, std::int32_t byteCodeIndex ) :
 
 NonLocalReturnSetupNode::NonLocalReturnSetupNode( PseudoRegister *result, std::int32_t byteCodeIndex ) :
     AbstractReturnNode( byteCodeIndex, result, new TemporaryPseudoRegister( theCompiler->currentScope(), resultLoc, true, true ) ),
-    _contextUse{ nullptr },
-    _resultUse{ nullptr } {
+    _resultUse{ nullptr },
+    _contextUse{ nullptr } {
     st_assert( result->_location == NonLocalReturnResultLoc, "must be in special location" );
 }
 
@@ -487,15 +483,14 @@ MergeNode *CallNode::nlrTestPoint() const {
 
 CallNode::CallNode( MergeNode *n, GrowableArray<PseudoRegister *> *a, GrowableArray<PseudoRegister *> *e ) :
 
-    nblocks{ 0 },
-//    _dest{ nullptr },
     exprStack{ e },
-    args{ a },
     argUses{ nullptr },
+    uplevelUsed{ nullptr },
+    uplevelDefd{ nullptr },
     uplevelUses{ nullptr },
     uplevelDefs{ nullptr },
-    uplevelDefd{ nullptr },
-    uplevelUsed{ nullptr } {
+    args{ a },
+    nblocks{ 0 } {
 
     //
     if ( n not_eq nullptr ) {
@@ -589,10 +584,10 @@ ContextInitNode::ContextInitNode( ContextCreateNode *creator ) :
 
 
 ContextInitNode::ContextInitNode( PseudoRegister *b, const ContextInitNode *node ) :
+    _initializers{ node->_initializers },
     _contentDefs{ nullptr },
     _initializerUses{ nullptr },
-    _materializedBlocks{ nullptr },
-    _initializers{ node->_initializers } {
+    _materializedBlocks{ nullptr } {
     _src = b;
     st_assert( _src, "must have context" );
     st_assert( ( node->_contentDefs == nullptr ) and ( node->_initializerUses == nullptr ), "shouldn't copy after uses have been built" );
@@ -710,15 +705,15 @@ PrimitiveNode::PrimitiveNode( PrimitiveDescriptor *pdesc, MergeNode *nlrTestPoin
 InlinedPrimitiveNode::InlinedPrimitiveNode( Operation op, PseudoRegister *result, PseudoRegister *error, PseudoRegister *recv, PseudoRegister *arg1, bool arg1_is_SmallInteger, PseudoRegister *arg2, bool arg2_is_SmallInteger ) :
 //    _dest{ result },
 //    _src{ recv },
-    _operation{ op },
-    _error{ error },
-    _error_def{ nullptr },
     _arg1{ arg1 },
     _arg2{ arg2 },
+    _error{ error },
     _arg1_use{ nullptr },
     _arg2_use{ nullptr },
+    _error_def{ nullptr },
     _arg1_is_SmallInteger{ arg1_is_SmallInteger },
-    _arg2_is_SmallInteger{ arg2_is_SmallInteger } {
+    _arg2_is_SmallInteger{ arg2_is_SmallInteger },
+    _operation{ op } {
 
     _dest = result;
     _src  = recv;
@@ -1013,8 +1008,8 @@ Node *AssignNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
 }
 
 
-Node *ArithRRNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
-    return NodeFactory::createAndRegisterNode<ArithRRNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ) );
+Node *RegisterRegisterArithmeticNode::clone( PseudoRegister *from, PseudoRegister *to ) const {
+    return NodeFactory::createAndRegisterNode<RegisterRegisterArithmeticNode>( _op, TRANSLATE( _src ), _oper, TRANSLATE( _dest ) );
 }
 
 
@@ -1279,16 +1274,16 @@ void NonLocalReturnContinuationNode::makeUses( BasicBlock *bb ) {
 }
 
 
-void ArithNode::makeUses( BasicBlock *bb ) {
+void ArithmeticNode::makeUses( BasicBlock *bb ) {
     _srcUse  = bb->addUse( this, _src );
     _destDef = bb->addDef( this, _dest );
     NonTrivialNode::makeUses( bb );
 }
 
 
-void ArithRRNode::makeUses( BasicBlock *bb ) {
+void RegisterRegisterArithmeticNode::makeUses( BasicBlock *bb ) {
     _operUse = bb->addUse( this, _oper );
-    ArithNode::makeUses( bb );
+    ArithmeticNode::makeUses( bb );
 }
 
 
@@ -1521,16 +1516,16 @@ void NonLocalReturnContinuationNode::removeUses( BasicBlock *bb ) {
 }
 
 
-void ArithNode::removeUses( BasicBlock *bb ) {
+void ArithmeticNode::removeUses( BasicBlock *bb ) {
     _src->removeUse( bb, _srcUse );
     _dest->removeDef( bb, _destDef );
     NonTrivialNode::removeUses( bb );
 }
 
 
-void ArithRRNode::removeUses( BasicBlock *bb ) {
+void RegisterRegisterArithmeticNode::removeUses( BasicBlock *bb ) {
     _oper->removeUse( bb, _operUse );
-    ArithNode::removeUses( bb );
+    ArithmeticNode::removeUses( bb );
 }
 
 
@@ -1739,7 +1734,7 @@ void ReturnNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp
 }
 
 
-void ArithNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
+void ArithmeticNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
     NonTrivialNode::eliminate( bb, r, rem, cp );
@@ -1748,10 +1743,10 @@ void ArithNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp 
 }
 
 
-void ArithRRNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
+void RegisterRegisterArithmeticNode::eliminate( BasicBlock *bb, PseudoRegister *r, bool rem, bool cp ) {
     if ( _deleted )
         return;
-    ArithNode::eliminate( bb, r, rem, cp );
+    ArithmeticNode::eliminate( bb, r, rem, cp );
     CHECK( _oper, r );
 }
 
@@ -2235,18 +2230,18 @@ bool CallNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool 
 }
 
 
-bool ArithRRNode::operIsConst() const {
+bool RegisterRegisterArithmeticNode::operIsConst() const {
     return _oper->isConstPseudoRegister();
 }
 
 
-std::int32_t ArithRRNode::operConst() const {
+std::int32_t RegisterRegisterArithmeticNode::operConst() const {
     st_assert( operIsConst(), "not a constant" );
     return _oper->isConstPseudoRegister();
 }
 
 
-bool ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+bool ArithmeticNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     bool success = doCopyPropagate( bb, u, d, replace );
     if ( _src->isConstPseudoRegister() and operIsConst() ) {
         st_assert( success, "CP must have worked" );
@@ -2296,16 +2291,16 @@ bool ArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool
 }
 
 
-bool ArithNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+bool ArithmeticNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     return NonTrivialNode::copyPropagate( bb, u, d, replace );
 }
 
 
-bool ArithRRNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
+bool RegisterRegisterArithmeticNode::doCopyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *d, bool replace ) {
     if ( u == _operUse ) {
         CP_HELPER( _oper, _operUse, return );
     } else {
-        return ArithNode::doCopyPropagate( bb, u, d, replace );
+        return ArithmeticNode::doCopyPropagate( bb, u, d, replace );
     }
     return false;
 }
@@ -2421,7 +2416,7 @@ bool FloatArithRRNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegister *
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
-    bool res = ArithRRNode::copyPropagate( bb, u, d, replace );
+    bool res = RegisterRegisterArithmeticNode::copyPropagate( bb, u, d, replace );
     // should check for constant folding opportunity here -- fix this
     return res;
 }
@@ -2432,7 +2427,7 @@ bool FloatUnaryArithNode::copyPropagate( BasicBlock *bb, Usage *u, PseudoRegiste
         // can't handle non-float arguments (don't optimize guaranteed failure)
         return false;
     }
-    bool res = ArithNode::copyPropagate( bb, u, d, replace );
+    bool res = ArithmeticNode::copyPropagate( bb, u, d, replace );
     // should check for constant folding opportunity here -- fix this
     return res;
 }
@@ -2579,15 +2574,15 @@ void ReturnNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count
 }
 
 
-void ArithNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+void ArithmeticNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _src );
     D_CHECK( _dest );
 }
 
 
-void ArithRRNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
+void RegisterRegisterArithmeticNode::markAllocated( std::int32_t *use_count, std::int32_t *def_count ) {
     U_CHECK( _oper );
-    ArithNode::markAllocated( use_count, def_count );
+    ArithmeticNode::markAllocated( use_count, def_count );
 }
 
 
@@ -2869,18 +2864,18 @@ Node *TypeTestNode::smiCase() const {
 // ==================================================================================
 
 LoopHeaderNode::LoopHeaderNode() :
-    _activated{ false },
     _integerLoop{ false },
-    _tests{ nullptr },
-    _enclosingLoop{ nullptr },
-    _nestedLoops{ nullptr },
-    _nofCalls{ 0 },
-    _loopVar{ 0 },
-    _lowerBound{ 0 },
-    _upperBound{ 0 },
+    _loopVar{ nullptr },
+    _lowerBound{ nullptr },
+    _upperBound{ nullptr },
     _upperLoad{ nullptr },
     _arrayAccesses{ nullptr },
-    _registerCandidates{ nullptr } {
+    _enclosingLoop{ nullptr },
+    _tests{ nullptr },
+    _nestedLoops{ nullptr },
+    _registerCandidates{ nullptr },
+    _activated{ false },
+    _nofCalls{ 0 } {
 
 }
 
@@ -3264,16 +3259,16 @@ const char *NonLocalReturnTestNode::toString( char *buf, bool printAddress ) con
 }
 
 
-const char *ArithNode::opName() const {
+const char *ArithmeticNode::opName() const {
     return ArithOpName[ static_cast<std::int32_t>( _op ) ];
 }
 
 
-const char *ArithRRNode::toString( char *buf, bool printAddress ) const {
+const char *RegisterRegisterArithmeticNode::toString( char *buf, bool printAddress ) const {
     char *b = buf;
     my_sprintf_len( buf, PrintStringLen, "%s := %s %s %s", _dest->safeName(), _src->safeName(), opName(), _oper->safeName() );
     if ( printAddress )
-        my_sprintf( buf, " ((ArithRRNode*)0x{0:x})", this );
+        my_sprintf( buf, " ((RegisterRegisterArithmeticNode*)0x{0:x})", this );
     return b;
 }
 
@@ -3753,10 +3748,10 @@ void CallNode::verify() const {
 }
 
 
-void ArithRRNode::verify() const {
+void RegisterRegisterArithmeticNode::verify() const {
     if ( _deleted )
         return;
-    ArithNode::verify();
+    ArithmeticNode::verify();
     _oper->verify();
 }
 
@@ -3774,7 +3769,7 @@ void TArithRRNode::verify() const {
 void FloatArithRRNode::verify() const {
     if ( _deleted )
         return;
-    ArithRRNode::verify();
+    RegisterRegisterArithmeticNode::verify();
     // fix this -- check opcode
 }
 
@@ -3782,7 +3777,7 @@ void FloatArithRRNode::verify() const {
 void FloatUnaryArithNode::verify() const {
     if ( _deleted )
         return;
-    ArithNode::verify();
+    ArithmeticNode::verify();
     // fix this -- check opcode
 }
 

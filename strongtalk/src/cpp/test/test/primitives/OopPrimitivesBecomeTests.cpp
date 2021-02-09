@@ -26,7 +26,7 @@
 class OopPrimitivesBecomeTest : public ::testing::Test {
 
 public:
-    OopPrimitivesBecomeTest() : ::testing::Test() {}
+    OopPrimitivesBecomeTest() : ::testing::Test(), targetContainer{},replacementContainer{},tenuredTargetContainer{}, tenuredReplacementContainer{},target{},replacement{} {}
 
 protected:
     void SetUp() override {

@@ -55,11 +55,11 @@ void PseudoRegister::initPseudoRegisters() {
 
 SinglyAssignedPseudoRegister::SinglyAssignedPseudoRegister( InlinedScope *s, std::int32_t stream, std::int32_t en, bool inContext ) :
     PseudoRegister( s ),
-    _isInContext( inContext ),
     _creationScope{ nullptr },
+    _creationStartByteCodeIndex{ 0 },
     _begByteCodeIndex{ 0 },
     _endByteCodeIndex{ 0 },
-    _creationStartByteCodeIndex{ 0 } {
+    _isInContext( inContext ) {
 
     //
     _creationStartByteCodeIndex = stream == IllegalByteCodeIndex ? s->byteCodeIndex() : stream;
@@ -1031,8 +1031,9 @@ public:
     virtual ~UplevelComputer() = default;
     UplevelComputer( const UplevelComputer & ) = default;
     UplevelComputer &operator=( const UplevelComputer & ) = default;
-    void operator delete( void *ptr ) { (void)(ptr); }
 
+
+    void operator delete( void *ptr ) { (void) ( ptr ); }
 
 
     void record_temporary( bool reading, std::int32_t no, std::int32_t ctx ) {
