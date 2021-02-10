@@ -15,6 +15,7 @@ SHELL       := /bin/bash
 MAKEFLAGS   += --jobs $(shell nproc --all)
 MAKEFLAGS   += --keep-going
 MAKEFLAGS   += --no-builtin-rules
+MAKEFLAGS   += --output-sync=target
 MAKEFLAGS   += --warn-undefined-variables
 
 
@@ -201,7 +202,7 @@ cxx-language-flags          := $(addprefix -std=,$(cxx-language-options))
 cxx-machine-options         := arch=native
 cxx-machine-flags           := $(addprefix -m,$(cxx-machine-options))
 
-cxx-no-warning-options      :=
+cxx-no-warning-options      := non-virtual-dtor
 cxx-no-warning-flags        := $(addprefix -Wno-,$(cxx-no-warning-options))
 
 cxx-optimisation-options    := 3
@@ -621,4 +622,3 @@ nasm : $(nasm-root-dir)
 #
 #
 #
-

@@ -154,7 +154,11 @@ include_directories ( SYSTEM ${ext-dir}/nasm/disasm )
 include_directories ( SYSTEM ${ext-dir}/nasm/x86 )
 include_directories ( SYSTEM ${ext-dir}/spdlog/include )
 
+add_compile_definitions ( GIT_CURRENT_BRANCH=${GIT_CURRENT_BRANCH} )
+add_compile_definitions ( GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
+
 add_compile_options ( -fpermissive )
+
 
 # library ----------------------------------------------------------------------
 
@@ -174,8 +178,6 @@ set_target_properties ( st20-main-binary PROPERTIES OUTPUT_NAME st20-main )
 target_link_directories ( st20-main-binary PUBLIC ${spdlog-object-dir} )
 target_link_options ( st20-main-binary PUBLIC -static -static-libgcc -static-libstdc++ )
 target_link_libraries ( st20-main-binary PUBLIC st20-main-library-static spdlog )
-add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_BRANCH=${GIT_CURRENT_BRANCH} )
-add_compile_definitions ( st20-main-binary PUBLIC GIT_CURRENT_REVISION=${GIT_CURRENT_REVISION} )
 
 
 # test ------------------------------------------------------------------------
