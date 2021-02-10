@@ -72,6 +72,9 @@ toolchain-name-deb  := $(compiler-family)/$(machine)-$(platform)/$(compiler-vers
 
 cc-compiler         := /usr/bin/$(machine)-$(platform)-gcc-$(runtime)
 cxx-compiler        := /usr/bin/$(machine)-$(platform)-g++-$(runtime)
+
+ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
+ar-flags            := Dcrs
 endif
 
 
@@ -87,6 +90,9 @@ toolchain-name      := $(machine)-$(platform)-$(compiler-family)-$(compiler-vers
 
 cc-compiler         := /usr/bin/clang-$(compiler-version)
 cxx-compiler        := /usr/bin/clang++-$(compiler-version)
+
+ar                  := /usr/bin/$(compiler-family)-ar-$(compiler-version)
+ar-flags            := Dcrs
 endif
 
 run-clang-tidy-py   := /usr/lib/$(compiler-family)-$(compiler-version)/share/clang/run-clang-tidy.py
@@ -94,9 +100,6 @@ run-clang-tidy-py   := /usr/lib/llvm-11/share/clang/run-clang-tidy.py
 
 
 # common ----------------------------------------------------------------------
-
-ar   		        := /usr/bin/$(machine)-$(platform)-gcc-ar-$(runtime)
-ar-flags            := Dcrs
 
 export CC=$(ccache) $(cc-compiler)
 export CXX=$(ccache) $(cxx-compiler)
